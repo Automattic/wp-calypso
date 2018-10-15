@@ -21,6 +21,7 @@ import FormToggle from 'components/forms/form-toggle';
 import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
 import { protectForm } from 'lib/protect-form';
+import { localizeUrl } from 'lib/i18n-utils';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import ReauthRequired from 'me/reauth-required';
 import SectionHeader from 'components/section-header';
@@ -58,10 +59,10 @@ const Privacy = createReactClass( {
 		);
 
 		const cookiePolicyLink = (
-			<ExternalLink href="https://www.automattic.com/cookies" target="_blank" />
+			<ExternalLink href={ localizeUrl( 'https://automattic.com/cookies' ) } target="_blank" />
 		);
 		const privacyPolicyLink = (
-			<ExternalLink href="https://www.automattic.com/privacy" target="_blank" />
+			<ExternalLink href={ localizeUrl( 'https://automattic.com/privacy' ) } target="_blank" />
 		);
 
 		return (

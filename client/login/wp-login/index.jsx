@@ -21,7 +21,7 @@ import LoginBlock from 'blocks/login';
 import LoginLinks from './login-links';
 import Main from 'components/main';
 import PrivateSite from './private-site';
-import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'lib/i18n-utils';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import {
@@ -111,7 +111,7 @@ export class Login extends React.Component {
 				{ isOauthLogin ? (
 					<div className="wp-login__footer-links">
 						<a
-							href="https://wordpress.com/about/"
+							href={ localizeUrl( 'https://wordpress.com/about/' ) }
 							rel="noopener noreferrer"
 							target="_blank"
 							title={ translate( 'About' ) }
@@ -119,7 +119,7 @@ export class Login extends React.Component {
 							{ translate( 'About' ) }
 						</a>
 						<a
-							href="https://automattic.com/privacy/"
+							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
 							rel="noopener noreferrer"
 							target="_blank"
 							title={ translate( 'Privacy' ) }
@@ -127,7 +127,7 @@ export class Login extends React.Component {
 							{ translate( 'Privacy' ) }
 						</a>
 						<a
-							href="https://wordpress.com/tos/"
+							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 							rel="noopener noreferrer"
 							target="_blank"
 							title={ translate( 'Terms of Service' ) }
@@ -186,7 +186,7 @@ export class Login extends React.Component {
 			translate,
 			twoFactorAuthType,
 		} = this.props;
-		const canonicalUrl = addLocaleToWpcomUrl( 'https://wordpress.com/log-in', locale );
+		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		return (
 			<div>
 				<Main className="wp-login__main">

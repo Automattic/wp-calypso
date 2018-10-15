@@ -271,6 +271,17 @@ describe( 'utils', () => {
 			} );
 		} );
 
+		test( 'localize trailing slash variations', () => {
+			getLocaleSlug.mockImplementationOnce( () => 'de' );
+			expect( localizeUrl( 'https://automattic.com/cookies/' ) ).toEqual(
+				'https://automattic.com/de/cookies/'
+			);
+			getLocaleSlug.mockImplementationOnce( () => 'de' );
+			expect( localizeUrl( 'https://automattic.com/cookies' ) ).toEqual(
+				'https://automattic.com/de/cookies/'
+			);
+		} );
+
 		test( 'localize logged-out homepage', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'en' );
 			expect( localizeUrl( 'https://wordpress.com/' ) ).toEqual( 'https://wordpress.com/' );

@@ -180,6 +180,16 @@ const urlLocalizationMapping = {
 		}
 		return urlParts;
 	},
+	'wordpress.com/tos': ( urlParts, localeSlug ) => {
+		if ( magnificentNonEnLocales.includes( localeSlug ) ) {
+			if ( localeSlug in localesToSubdomains ) {
+				urlParts.host = localesToSubdomains[ localeSlug ] + '.wordpress.com';
+			} else {
+				urlParts.host = localeSlug + '.wordpress.com';
+			}
+		}
+		return urlParts;
+	},
 	'jetpack.com': ( urlParts, localeSlug ) => {
 		if ( localesForJetpackCom.includes( localeSlug ) ) {
 			if ( localeSlug in localesToSubdomains ) {
@@ -234,11 +244,16 @@ const urlLocalizationMapping = {
 	},
 };
 
-export function localizeUrl( fullUrl ) {
-	const localeSlug = getLocaleSlug();
-	// Let's trailingslashit() the URL
-	const urlParts = url.parse( fullUrl.replace( /\/+$/, '/' ) );
+export function localizeUrl( fullUrl, locale ) {
+	const localeSlug = locale ? locale : getLocaleSlug();
+	const urlParts = url.parse( fullUrl );
+
+	// Let's unify the URL.
 	urlParts.protocol = 'https';
+	if ( 'en.wordpress.com' === urlParts.hostname ) {
+		urlParts.host = 'wordpress.com';
+	}
+	urlParts.pathname = ( urlParts.pathname + '/' ).replace( /\/+$/, '/' );
 
 	if ( ! localeSlug || 'en' === localeSlug ) {
 		if ( 'en.wordpress.com' === urlParts.hostname ) {
@@ -250,12 +265,13 @@ export function localizeUrl( fullUrl ) {
 
 	const lookup = [ urlParts.hostname, urlParts.hostname + urlParts.pathname ];
 
-	for ( let i = lookup.length; i >= 0; i-- ) {
+	for ( let i = lookup.length - 1; i >= 0; i-- ) {
 		if ( lookup[ i ] in urlLocalizationMapping ) {
 			return url.format( urlLocalizationMapping[ lookup[ i ] ]( urlParts, localeSlug ) );
 		}
 	}
 
+	// Nothing needed to be changed, just return it unmodified.
 	return fullUrl;
 }
 
