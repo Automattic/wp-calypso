@@ -143,11 +143,11 @@ class ImportURLStepComponent extends Component {
 		page.show( target );
 	};
 
-	recordHelpView = helpPage => {
-		this.props.recordTracksEvent( 'calypso_signup_help_view', {
+	recordSupportClicked = helpPage => {
+		this.props.recordTracksEvent( 'calypso_signup_support_clicked', {
 			flow: this.props.flowName,
 			step: this.props.stepName,
-			page: helpPage,
+			support_page: helpPage,
 		} );
 	};
 
@@ -214,7 +214,7 @@ class ImportURLStepComponent extends Component {
 									<ExternalLink
 										href={ helpPage }
 										target="_blank"
-										onClick={ () => this.recordHelpView( helpPage ) }
+										onClick={ () => this.recordSupportClicked( helpPage ) }
 									/>
 								),
 							},
