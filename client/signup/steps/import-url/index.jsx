@@ -6,12 +6,15 @@ import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { flow, isEqual } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import ExampleDomainBrowser from 'components/domains/example-domain-browser';
+import ExternalLink from 'components/external-link';
 import Notice from 'components/notice';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
@@ -181,6 +184,21 @@ class ImportURLStepComponent extends Component {
 						<li className="import-url__example-url">account.wixsite.com/my-site</li>
 					</ul>
 					<ExampleDomainBrowser className="import-url__example-browser" />
+				</div>
+
+				<div className="import-url__escape">
+					{ translate(
+						"Don't have a Wix site? We also support importing from {{a}}other sources{{/a}}.",
+						{
+							components: {
+								a: <ExternalLink href="https://en.support.wordpress.com/import/" target="_blank" />,
+							},
+						}
+					) }
+					&nbsp;
+					<Button compact onClick={ () => page.show( '/start' ) }>
+						{ translate( 'Sign up' ) }
+					</Button>
 				</div>
 			</Fragment>
 		);

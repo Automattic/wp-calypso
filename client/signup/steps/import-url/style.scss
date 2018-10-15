@@ -60,7 +60,11 @@
 		flex-flow: row wrap;
 		justify-content: center;
 		max-width: 600px;
-		margin: 0 auto 16px;
+		margin: 0 auto 40px;
+
+		@include breakpoint( ">660px" ) {
+			margin-bottom: 48px;
+		}
 	}
 
 	&__example-urls {
@@ -81,5 +85,14 @@
 
 	&__example-browser {
 		margin-left: 40px;
+	}
+
+	&__escape {
+		padding-bottom: 24px;
+		text-align: center;
+
+		.button {
+			vertical-align: baseline;
+		}
 	}
 }
