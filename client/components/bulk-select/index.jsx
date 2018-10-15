@@ -13,6 +13,11 @@ import { localize } from 'i18n-calypso';
  */
 import Count from 'components/count';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class BulkSelect extends React.Component {
 	static displayName = 'BulkSelect';
 
