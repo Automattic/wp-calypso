@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
 import { filter, find, flow, get, includes, keyBy, keys, pickBy } from 'lodash';
+import { parse } from 'qs';
 
 /**
  * Internal dependencies
@@ -38,6 +39,7 @@ import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import { getImporterOption } from 'state/ui/importers/selectors';
+import { selectImporterOption } from 'state/ui/importers/actions';
 
 /**
  * Configuration for each of the importers to be rendered in this section. If
@@ -92,8 +94,14 @@ class SiteSettingsImport extends Component {
 	state = getImporterState();
 
 	componentDidMount() {
+		const { engine: engineParam } = parse( window.location.search.replace( '?', '' ) );
+
 		ImporterStore.on( 'change', this.updateState );
+
 		this.updateFromAPI();
+
+		// If the engine param is valid and enabled, set it in redux.
+		includes( enabledImporterTypes, engineParam ) && this.props.selectImporterOption( engineParam );
 	}
 
 	componentWillUnmount() {
@@ -108,11 +116,13 @@ class SiteSettingsImport extends Component {
 	 * @param {string} state The state constant for the importer components
 	 * @returns {Array} A list of react elements for each enabled importer
 	 */
-	renderIdleImporters( site, siteTitle, state ) {
-		// TODO: It feels like renderIdleImporters shouldn't have the responsibility
-		// of supplying the above arguments. state is always either disabled or inactive.
-		// We could use redux state instead to work out if the UI should be disabled, based
-		// on whether or not it's been hydrated yet.
+	renderIdleImporters() {
+		const {
+			api: { isHydrated },
+		} = this.state;
+		const { site } = this.props;
+		const siteTitle = getSiteTitle( site );
+
 		const importerElements = importers.map( importer => {
 			const { type, isImporterEnabled, component: ImporterComponent } = importer;
 
@@ -125,7 +135,7 @@ class SiteSettingsImport extends Component {
 					key={ type }
 					site={ site }
 					importerStatus={ {
-						importerState: state,
+						importerState: isHydrated ? appStates.INACTIVE : appStates.DISABLED,
 						siteTitle,
 						type,
 					} }
@@ -170,6 +180,8 @@ class SiteSettingsImport extends Component {
 			return null;
 		}
 
+		const siteTitle = getSiteTitle( site );
+
 		// TODO: activeImporter is initially a locally generated instance that later
 		// gets replaced with a proper importer instance.
 		// We hope to eliminate the need for this and will need to make changes here
@@ -178,9 +190,10 @@ class SiteSettingsImport extends Component {
 			<ImporterComponent
 				site={ site }
 				importerStatus={ {
+					// activeImporter can be undefined... Is this an issue?
 					...activeImporter,
 					site,
-					siteTitle: getSiteTitle( site ),
+					siteTitle,
 				} }
 			/>
 		);
@@ -196,32 +209,22 @@ class SiteSettingsImport extends Component {
 			api: { isHydrated },
 			importers: imports,
 		} = this.state;
-		// TODO: site and siteTitle should be taken from props where needed,
-		// rather than passed along to methods
-		const { importerOption, site } = this.props;
-		const siteTitle = getSiteTitle( site );
+		const { importerOption } = this.props;
 
-		if ( ! isHydrated ) {
-			return this.renderIdleImporters( site, siteTitle, appStates.DISABLED );
+		if ( ! isHydrated && ! importerOption ) {
+			return this.renderIdleImporters();
 		}
 
 		const activeImporter = flow(
 			// Pick only imports for the current site
-			items => filterImportsForSite( site.ID, items ),
-			// Add in the 'site' and 'siteTitle' properties
-			items =>
-				items.map( item => ( {
-					...item,
-					site,
-					siteTitle,
-				} ) ),
+			items => filterImportsForSite( get( this, 'props.site.ID' ), items ),
 			// Find the first enabled import
 			items => find( items, item => includes( enabledImporterTypes, item.type ) )
 		)( imports );
 
 		return activeImporter || importerOption
 			? this.renderImporterScreen( activeImporter )
-			: this.renderIdleImporters( site, siteTitle, appStates.INACTIVE );
+			: this.renderIdleImporters();
 	}
 
 	updateFromAPI = () => {
@@ -296,8 +299,14 @@ class SiteSettingsImport extends Component {
 	}
 }
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-	siteSlug: getSelectedSiteSlug( state ),
-	importerOption: getImporterOption( state ),
-} ) )( localize( SiteSettingsImport ) );
+export default flow(
+	connect(
+		state => ( {
+			site: getSelectedSite( state ),
+			siteSlug: getSelectedSiteSlug( state ),
+			importerOption: getImporterOption( state ),
+		} ),
+		{ selectImporterOption }
+	),
+	localize
+)( SiteSettingsImport );

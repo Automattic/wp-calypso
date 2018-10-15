@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import { noop, every, has, defer, get, trim, sortBy, reverse } from 'lodash';
 import url from 'url';
 import moment from 'moment';
+import { parse } from 'qs';
 
 /**
  * Internal dependencies
@@ -73,6 +74,12 @@ class SiteImporterInputPane extends React.Component {
 	componentWillMount = () => {
 		if ( config.isEnabled( 'manage/import/site-importer-endpoints' ) ) {
 			this.fetchEndpoints();
+		}
+
+		const { url: urlParam } = parse( window.location.search.replace( '?', '' ) );
+
+		if ( urlParam ) {
+			this.setState( { siteURLInput: urlParam }, this.validateSite );
 		}
 	};
 
