@@ -3,12 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
-/**
- * Internal dependencies
- */
 import { likeComment, updateCommentLikes, handleLikeFailure } from '../';
 import { COMMENTS_LIKE, COMMENTS_UNLIKE, NOTICE_CREATE } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
@@ -25,12 +19,7 @@ const action = {
 
 describe( '#likeComment()', () => {
 	test( 'should dispatch a http action to create a new like', () => {
-		const dispatch = spy();
-
-		likeComment( { dispatch }, action );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( likeComment( action ) ).toEqual(
 			http(
 				{
 					apiVersion: '1.1',
@@ -45,18 +34,14 @@ describe( '#likeComment()', () => {
 
 describe( '#updateCommentLikes()', () => {
 	test( 'should dispatch a comment like update action', () => {
-		const dispatch = spy();
-
-		updateCommentLikes(
-			{ dispatch },
+		const result = updateCommentLikes(
 			{ siteId: SITE_ID, postId: POST_ID, commentId: 1 },
 			{
 				like_count: 4,
 			}
 		);
 
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( result ).toEqual(
 			bypassDataLayer( {
 				type: COMMENTS_LIKE,
 				siteId: SITE_ID,
@@ -70,12 +55,9 @@ describe( '#updateCommentLikes()', () => {
 
 describe( '#handleLikeFailure()', () => {
 	test( 'should dispatch an unlike action to rollback optimistic update', () => {
-		const dispatch = spy();
+		const result = handleLikeFailure( { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
 
-		handleLikeFailure( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
-
-		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( result[ 0 ] ).toEqual(
 			bypassDataLayer( {
 				type: COMMENTS_UNLIKE,
 				siteId: SITE_ID,
@@ -86,17 +68,16 @@ describe( '#handleLikeFailure()', () => {
 	} );
 
 	test( 'should dispatch an error notice', () => {
-		const dispatch = spy();
+		const result = handleLikeFailure( { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
 
-		handleLikeFailure( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
-
-		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWithMatch( {
-			type: NOTICE_CREATE,
-			notice: {
-				status: 'is-error',
-				text: 'Could not like this comment',
-			},
-		} );
+		expect( result[ 1 ] ).toEqual(
+			expect.objectContaining( {
+				type: NOTICE_CREATE,
+				notice: expect.objectContaining( {
+					status: 'is-error',
+					text: 'Could not like this comment',
+				} ),
+			} )
+		);
 	} );
 } );
