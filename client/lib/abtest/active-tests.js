@@ -115,6 +115,7 @@ export default {
 			variation3_front: 25,
 		},
 		defaultVariation: 'domainsbot_front',
+		assignmentMethod: 'userId',
 		allowExistingUsers: true,
 	},
 };
