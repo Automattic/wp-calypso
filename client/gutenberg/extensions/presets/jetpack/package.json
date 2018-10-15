@@ -8,7 +8,7 @@
 	},
 	"scripts": {
 		"build": "../../../../../bin/sdk-cli.js gutenberg .",
-		"prepublishOnly": "npm run build"
+		"prepublishOnly": "NODE_ENV=production npm run build"
 	},
 	"repository": {
 		"type": "git",
