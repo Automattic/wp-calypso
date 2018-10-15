@@ -3,17 +3,17 @@ import getNotes from './get-notes';
 
 import { getActions } from '../../helpers/notes';
 
-export const getIsNoteLiked = (notesState, note) => {
-  const noteLikes = notesState.noteLikes;
+export const getIsNoteLiked = ( notesState, note ) => {
+	const noteLikes = notesState.noteLikes;
 
-  if (noteLikes.hasOwnProperty(note.id)) {
-    return noteLikes[note.id];
-  }
+	if ( noteLikes.hasOwnProperty( note.id ) ) {
+		return noteLikes[ note.id ];
+	}
 
-  const actionMeta = getActions(note);
-  const likeProperty = note.meta.ids.comment ? 'like-comment' : 'like-post';
+	const actionMeta = getActions( note );
+	const likeProperty = note.meta.ids.comment ? 'like-comment' : 'like-post';
 
-  return actionMeta[likeProperty];
+	return actionMeta[ likeProperty ];
 };
 
-export default (state, note) => getIsNoteLiked(getNotes(state), note);
+export default ( state, note ) => getIsNoteLiked( getNotes( state ), note );

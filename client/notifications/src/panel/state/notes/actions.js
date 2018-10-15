@@ -1,36 +1,36 @@
 /** @format */
 import * as types from '../action-types';
 
-export const addNotes = notes => ({
-  type: types.NOTES_ADD,
-  notes,
-});
+export const addNotes = notes => ( {
+	type: types.NOTES_ADD,
+	notes,
+} );
 
-export const removeNotes = noteIds => ({
-  type: types.NOTES_REMOVE,
-  noteIds,
-});
+export const removeNotes = noteIds => ( {
+	type: types.NOTES_REMOVE,
+	noteIds,
+} );
 
-export const noteAction = action => noteId => ({
-  type: action,
-  noteId,
-});
+export const noteAction = action => noteId => ( {
+	type: action,
+	noteId,
+} );
 
-export const readNote = noteAction(types.READ_NOTE);
-export const spamNote = noteAction(types.SPAM_NOTE);
-export const trashNote = noteAction(types.TRASH_NOTE);
+export const readNote = noteAction( types.READ_NOTE );
+export const spamNote = noteAction( types.SPAM_NOTE );
+export const trashNote = noteAction( types.TRASH_NOTE );
 
-export const approveNote = (noteId, isApproved) => ({
-  type: types.APPROVE_NOTE,
-  noteId,
-  isApproved,
-});
+export const approveNote = ( noteId, isApproved ) => ( {
+	type: types.APPROVE_NOTE,
+	noteId,
+	isApproved,
+} );
 
-export const likeNote = (noteId, isLiked) => ({
-  type: types.LIKE_NOTE,
-  noteId,
-  isLiked,
-});
+export const likeNote = ( noteId, isLiked ) => ( {
+	type: types.LIKE_NOTE,
+	noteId,
+	isLiked,
+} );
 
 /**
  * Resets the local cache overrride on note approval status
@@ -45,10 +45,10 @@ export const likeNote = (noteId, isLiked) => ({
  * @param {Number} noteId
  * @returns {Object} action object
  */
-export const resetLocalApproval = noteId => ({
-  type: types.RESET_LOCAL_APPROVAL,
-  noteId,
-});
+export const resetLocalApproval = noteId => ( {
+	type: types.RESET_LOCAL_APPROVAL,
+	noteId,
+} );
 
 /**
  * Resets the local cache overrride on note like status
@@ -63,19 +63,19 @@ export const resetLocalApproval = noteId => ({
  * @param {Number} noteId
  * @returns {Object} action object
  */
-export const resetLocalLike = noteId => ({
-  type: types.RESET_LOCAL_LIKE,
-  noteId,
-});
+export const resetLocalLike = noteId => ( {
+	type: types.RESET_LOCAL_LIKE,
+	noteId,
+} );
 
 export default {
-  addNotes,
-  approveNote,
-  likeNote,
-  readNote,
-  removeNotes,
-  resetLocalApproval,
-  resetLocalLike,
-  spamNote,
-  trashNote,
+	addNotes,
+	approveNote,
+	likeNote,
+	readNote,
+	removeNotes,
+	resetLocalApproval,
+	resetLocalLike,
+	spamNote,
+	trashNote,
 };

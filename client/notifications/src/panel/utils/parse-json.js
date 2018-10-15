@@ -6,9 +6,9 @@
  * @returns {*} parsed data or null on failure
  */
 export const parseJson = input => {
-  try {
-    return JSON.parse(input);
-  } catch (e) {
-    return null;
-  }
+	try {
+		return JSON.parse( input );
+	} catch ( e ) {
+		return null;
+	}
 };
