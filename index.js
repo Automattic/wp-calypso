@@ -43,27 +43,26 @@ console.log(
 if ( protocol === 'https' ) {
 	const { execSync } = require( 'child_process' );
 	const execOptions = { encoding: 'utf-8', windowsHide: true };
-	let key;
-	let certificate;
+	let key = './config/server/key.pem';
+	let certificate = './config/server/certificate.pem';
 
-	try {
-		execSync( 'openssl version', execOptions );
-		execSync( 'openssl req -x509 -newkey rsa:2048 -keyout ./config/server/key.tmp.pem -out ./config/server/certificate.pem -days 365 -nodes -subj "/C=US/ST=Foo/L=Bar/O=Baz/CN=calypso.localhost"', execOptions );
-		execSync( 'openssl rsa -in ./config/server/key.tmp.pem -out ./config/server/key.pem', execOptions );
-		execSync( 'rm ./config/server/key.tmp.pem', execOptions );
+	if ( ! fs.existsSync( './config/server/key.pem' ) || ! fs.existsSync( './config/server/certificate.pem' ) ) {
+		try {
+			execSync( 'openssl version', execOptions );
+			execSync( 'openssl req -x509 -newkey rsa:2048 -keyout ./config/server/key.tmp.pem -out ./config/server/certificate.pem -days 365 -nodes -subj "/C=US/ST=Foo/L=Bar/O=Baz/CN=calypso.localhost"', execOptions );
+			execSync( 'openssl rsa -in ./config/server/key.tmp.pem -out ./config/server/key.pem', execOptions );
+			execSync( 'rm ./config/server/key.tmp.pem', execOptions );
+		} catch ( error ) {
+			key = './config/server/key.default.pem';
+			certificate = './config/server/certificate.default.pem';
 
-		key = './config/server/key.pem';
-		certificate = './config/server/certificate.pem';
-	} catch ( error ) {
-		key = './config/server/key.default.pem';
-		certificate = './config/server/certificate.default.pem';
+			console.error( error );
+		}
+        }
 
-		console.error( error );
-	}
-
-	const options = {
-		key: fs.readFileSync( key ),
-		cert: fs.readFileSync( certificate )
+        const options = {
+                key: fs.readFileSync( key ),
+                cert: fs.readFileSync( certificate )
 	};
 	server = require( 'https' ).createServer( options, app );
 } else {
