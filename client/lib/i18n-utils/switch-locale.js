@@ -46,7 +46,7 @@ export function getLanguageFileUrl( localeSlug, fileType = 'json', languageRevis
 	const revision = languageRevisions[ localeSlug ];
 	const fileUrl = `${ getLanguageFilePathUrl() }${ localeSlug }.${ fileType }`;
 
-	return revision ? fileUrl + `?v=${ revision }` : fileUrl;
+	return typeof revision === 'number' ? fileUrl + `?v=${ revision }` : fileUrl;
 }
 
 function setLocaleInDOM( localeSlug, isRTL ) {
