@@ -58,6 +58,7 @@ class ActivityLogAggregatedItem extends Component {
 			section,
 			intent: 'toggle',
 			is_aggregate: true,
+			stream_count: activity.streamCount,
 		} );
 	};
 

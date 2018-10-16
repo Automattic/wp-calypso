@@ -56,13 +56,13 @@ class FoldableCard extends Component {
 		}
 	}
 
-	onClick = target => {
+	onClick = () => {
 		if ( this.props.children ) {
 			this.setState( { expanded: ! this.state.expanded } );
 		}
 
 		if ( this.props.onClick ) {
-			this.props.onClick( target );
+			this.props.onClick();
 		}
 
 		if ( this.state.expanded ) {
