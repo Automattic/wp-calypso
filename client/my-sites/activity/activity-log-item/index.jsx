@@ -58,13 +58,17 @@ class ActivityLogItem extends Component {
 
 	renderHeader() {
 		const {
-			activityTitle,
-			actorAvatarUrl,
-			actorName,
-			actorRole,
-			actorType,
-			activityMedia,
-		} = this.props.activity;
+			hideRestore,
+			activity: {
+				activityIsRewindable,
+				activityTitle,
+				actorAvatarUrl,
+				actorName,
+				actorRole,
+				actorType,
+				activityMedia,
+			},
+		} = this.props;
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
@@ -99,6 +103,7 @@ class ActivityLogItem extends Component {
 						fullImage={ activityMedia.available && activityMedia.medium_url }
 					/>
 				) }
+				{ ! hideRestore && activityIsRewindable && this.renderRewindAction() }
 			</div>
 		);
 	}
@@ -106,7 +111,6 @@ class ActivityLogItem extends Component {
 	renderItemAction() {
 		const {
 			enableClone,
-			hideRestore,
 			activity: { activityIsRewindable, activityName, activityMeta },
 		} = this.props;
 
@@ -121,10 +125,6 @@ class ActivityLogItem extends Component {
 				return 'bad_credentials' === activityMeta.errorCode
 					? this.renderFixCredsAction()
 					: this.renderHelpAction();
-		}
-
-		if ( ! hideRestore && activityIsRewindable ) {
-			return this.renderRewindAction();
 		}
 	}
 
@@ -296,6 +296,7 @@ class ActivityLogItem extends Component {
 					</div>
 					<FoldableCard
 						className="activity-log-item__card"
+						expandedSummary={ this.renderItemAction() }
 						header={ this.renderHeader() }
 						summary={ this.renderItemAction() }
 					/>
