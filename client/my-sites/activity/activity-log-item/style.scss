@@ -316,12 +316,25 @@
 }
 
 .activity-log-item__action {
-	// Mild hack so split button doesn't break
-	white-space: pre;
+	display: flex;
 
 	@include breakpoint( '<480px' ) {
 		margin-top: 16px;
 		text-align: left;
+	}
+
+	.ellipsis-menu {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 0;
+
+		.button {
+			position: relative;
+			top: 50%;
+			width: 48px;
+			transform: translateY( -50% );
+		}
 	}
 }
 
