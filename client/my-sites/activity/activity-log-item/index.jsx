@@ -138,7 +138,19 @@ class ActivityLogItem extends Component {
 	performCloneAction = () => this.props.cloneOnClick( this.props.activity.activityTs );
 
 	renderRewindAction() {
-		const { createBackup, createRewind, disableRestore, disableBackup, translate } = this.props;
+		const {
+			createBackup,
+			createRewind,
+			disableRestore,
+			disableBackup,
+			hideRestore,
+			activity,
+			translate,
+		} = this.props;
+
+		if ( hideRestore || ! activity.activityIsRewindable ) {
+			return null;
+		}
 
 		return (
 			<div className="activity-log-item__action">
@@ -217,7 +229,6 @@ class ActivityLogItem extends Component {
 			mightRewind,
 			moment,
 			timezone,
-			hideRestore,
 			translate,
 		} = this.props;
 		const { activityIcon, activityStatus, activityTs } = activity;
@@ -289,9 +300,7 @@ class ActivityLogItem extends Component {
 						className="activity-log-item__card"
 						expandedSummary={ this.renderItemAction() }
 						header={ this.renderHeader() }
-						actionButton={
-							! hideRestore && activity.activityIsRewindable && this.renderRewindAction()
-						}
+						actionButton={ this.renderRewindAction() }
 						summary={ this.renderItemAction() }
 					/>
 				</div>
