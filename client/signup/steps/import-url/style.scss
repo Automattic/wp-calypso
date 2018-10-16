@@ -23,7 +23,7 @@
 		max-width: 500px;
 		position: absolute;
 			top: -128px;
-			right: 0;
+			right: 5px;
 
 		@include breakpoint( ">660px" ) {
 			top: -118px;
@@ -47,7 +47,7 @@
 		font-size: 14px;
 		margin: 0;
 		padding-top: 6px;
-		padding-bottom: 4px;
+		padding-bottom: 0;
 	}
 
 	&__submit-button {
@@ -88,6 +88,7 @@
 	}
 
 	&__escape {
+		color: $gray-darken-20;
 		padding-bottom: 24px;
 		text-align: center;
 
