@@ -21237,9 +21237,9 @@
       }
     },
     "webpack-bundle-analyzer": {
-      "version": "3.0.2",
-      "resolved": "https://registry.npmjs.org/webpack-bundle-analyzer/-/webpack-bundle-analyzer-3.0.2.tgz",
-      "integrity": "sha512-cZG4wSQtKrSpk5RJ33dxiaAyo8bP0V+JvycAyIDFEiDIhw4LHhhVKhn40YT1w6TR9E4scHA00LnIoBtTA13Mow==",
+      "version": "3.0.3",
+      "resolved": "https://registry.npmjs.org/webpack-bundle-analyzer/-/webpack-bundle-analyzer-3.0.3.tgz",
+      "integrity": "sha512-naLWiRfmtH4UJgtUktRTLw6FdoZJ2RvCR9ePbwM9aRMsS/KjFerkPZG9epEvXRAw5d5oPdrs9+3p+afNjxW8Xw==",
       "requires": {
         "acorn": "^5.7.3",
         "bfj": "^6.1.1",
