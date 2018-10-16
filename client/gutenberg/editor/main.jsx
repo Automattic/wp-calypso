@@ -22,8 +22,8 @@ import { getHttpData } from 'state/data-layer/http-data';
 import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
 import { translate } from 'i18n-calypso';
-
-import './hooks';
+import 'tinymce/plugins/lists/plugin.js'; // Make list indent/outdent work
+import './hooks'; // Needed for integrating Calypso's media library (and other hooks)
 
 class GutenbergEditor extends Component {
 	componentDidMount() {
