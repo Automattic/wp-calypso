@@ -58,16 +58,7 @@ class ActivityLogItem extends Component {
 
 	renderHeader() {
 		const {
-			hideRestore,
-			activity: {
-				activityIsRewindable,
-				activityTitle,
-				actorAvatarUrl,
-				actorName,
-				actorRole,
-				actorType,
-				activityMedia,
-			},
+			activity: { activityTitle, actorAvatarUrl, actorName, actorRole, actorType, activityMedia },
 		} = this.props;
 		return (
 			<div className="activity-log-item__card-header">
@@ -103,7 +94,6 @@ class ActivityLogItem extends Component {
 						fullImage={ activityMedia.available && activityMedia.medium_url }
 					/>
 				) }
-				{ ! hideRestore && activityIsRewindable && this.renderRewindAction() }
 			</div>
 		);
 	}
@@ -227,6 +217,7 @@ class ActivityLogItem extends Component {
 			mightRewind,
 			moment,
 			timezone,
+			hideRestore,
 			translate,
 		} = this.props;
 		const { activityIcon, activityStatus, activityTs } = activity;
@@ -298,6 +289,9 @@ class ActivityLogItem extends Component {
 						className="activity-log-item__card"
 						expandedSummary={ this.renderItemAction() }
 						header={ this.renderHeader() }
+						actionButton={
+							! hideRestore && activity.activityIsRewindable && this.renderRewindAction()
+						}
 						summary={ this.renderItemAction() }
 					/>
 				</div>
