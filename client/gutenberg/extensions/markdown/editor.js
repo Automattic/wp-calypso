@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { compose } from '@wordpress/compose';
 import { ExternalLink } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import { registerBlockType } from '@wordpress/blocks';
@@ -14,6 +15,26 @@ import { registerBlockType } from '@wordpress/blocks';
 import './editor.scss';
 import edit from './edit';
 import save from './save';
+import requireConnection from 'gutenberg/extensions/jetpack/require-connection';
+import requireModules from 'gutenberg/extensions/jetpack/require-modules';
+
+/**
+ * @TODO Jetpack specific registerBlockType wrapper
+ *
+ * Individual blocks could be declarative about their needs. A block could export:
+ *   - Its register block definition, the second arg to `@wordpress/blocks` `registerBlockType`.
+ *   - Some spec about its requirements like:
+ *       {
+ *         modules: [ 'markdown' ],
+ *         connection: {
+ *           allowDevMode: true,
+ *         }
+ *       }
+ *
+ *    - We might, then, have 2 presets for Calypso and WP Admin that detect the
+ */
+
+const title = __( 'Markdown', 'jetpack' );
 
 registerBlockType( 'jetpack/markdown', {
 	title: __( 'Markdown', 'jetpack' ),
@@ -57,7 +78,10 @@ registerBlockType( 'jetpack/markdown', {
 		source: { type: 'string' },
 	},
 
-	edit,
+	edit: compose(
+		requireConnection( { blockName: title, allowDevMode: true } ),
+		requireModules( [ 'markdown' ] )
+	)( edit ),
 
 	save,
 } );

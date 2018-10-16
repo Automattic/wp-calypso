@@ -18,7 +18,7 @@ import MarkdownRenderer from './renderer';
 const PANEL_EDITOR = 'editor';
 const PANEL_PREVIEW = 'preview';
 
-class MarkdownEdit extends Component {
+export default class MarkdownEdit extends Component {
 	input = null;
 
 	state = {
@@ -104,5 +104,3 @@ class MarkdownEdit extends Component {
 		);
 	}
 }
-
-export default MarkdownEdit;
