@@ -31,7 +31,7 @@ const NOTICE_GREEN = '#4ab866';
 
 class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {
-		domainFirst: PropTypes.bool,
+		isDomainOnly: PropTypes.bool,
 		isSignupStep: PropTypes.bool,
 		isFeatured: PropTypes.bool,
 		cart: PropTypes.object,
@@ -125,8 +125,8 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	getPriceRule() {
-		const { cart, domainFirst, domainsWithPlansOnly, selectedSite, suggestion } = this.props;
-		return getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion, domainFirst );
+		const { cart, isDomainOnly, domainsWithPlansOnly, selectedSite, suggestion } = this.props;
+		return getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion, isDomainOnly );
 	}
 
 	renderDomain() {

@@ -29,7 +29,7 @@ export class FeaturedDomainSuggestions extends Component {
 	getChildProps() {
 		const childKeys = [
 			'cart',
-			'domainFirst',
+			'isDomainOnly',
 			'domainsWithPlansOnly',
 			'isSignupStep',
 			'onButtonClick',

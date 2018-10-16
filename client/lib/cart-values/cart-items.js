@@ -1027,7 +1027,7 @@ export function hasToUpgradeToPayForADomain( selectedSite, cart ) {
 	return false;
 }
 
-export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion, domainFirst ) {
+export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion, isDomainOnly ) {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
 	}
@@ -1036,7 +1036,7 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		return 'FREE_WITH_PLAN';
 	}
 
-	if ( domainFirst ) {
+	if ( isDomainOnly ) {
 		return 'PRICE';
 	}
 

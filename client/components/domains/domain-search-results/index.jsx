@@ -30,7 +30,7 @@ import { DESIGN_TYPE_STORE } from 'signup/constants';
 
 class DomainSearchResults extends React.Component {
 	static propTypes = {
-		domainFirst: PropTypes.bool,
+		isDomainOnly: PropTypes.bool,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		lastDomainIsTransferrable: PropTypes.bool,
 		lastDomainStatus: PropTypes.string,
@@ -198,7 +198,7 @@ class DomainSearchResults extends React.Component {
 	}
 
 	renderDomainSuggestions() {
-		const { domainFirst, suggestions } = this.props;
+		const { isDomainOnly, suggestions } = this.props;
 		let suggestionCount;
 		let featuredSuggestionElement;
 		let suggestionElements;
@@ -224,7 +224,7 @@ class DomainSearchResults extends React.Component {
 				<FeaturedDomainSuggestions
 					cart={ this.props.cart }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					domainFirst={ domainFirst }
+					isDomainOnly={ isDomainOnly }
 					fetchAlgo={ this.props.fetchAlgo }
 					isSignupStep={ this.props.isSignupStep }
 					key="featured"
@@ -244,7 +244,7 @@ class DomainSearchResults extends React.Component {
 
 				return (
 					<DomainRegistrationSuggestion
-						domainFirst={ domainFirst }
+						isDomainOnly={ isDomainOnly }
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
