@@ -169,83 +169,39 @@ const localesWithTranslatedSupport = [ 'ja', 'de', 'ru', 'pt-br', 'es' ];
 const localesWithPrivacyPolicy = [ 'en', 'fr', 'de' ];
 const localesWithCookiePolicy = [ 'en', 'fr', 'de' ];
 
+const setLocalizedUrlHost = ( hostname, validLocales = [] ) => ( urlParts, localeSlug ) => {
+	if ( validLocales.includes( localeSlug ) ) {
+		urlParts.host = `${ localesToSubdomains[ localeSlug ] || localeSlug }.${ hostname }`;
+	}
+	return urlParts;
+};
+
+const prefixLocalizedUrlPath = ( validLocales = [] ) => ( urlParts, localeSlug ) => {
+	if ( validLocales.includes( localeSlug ) ) {
+		urlParts.pathname = localeSlug + urlParts.pathname;
+	}
+	return urlParts;
+};
+
 const urlLocalizationMapping = {
-	'wordpress.com': ( urlParts, localeSlug ) => {
-		if ( magnificentNonEnLocales.includes( localeSlug ) ) {
-			if ( localeSlug in localesToSubdomains ) {
-				urlParts.host = localesToSubdomains[ localeSlug ] + '.wordpress.com';
-			} else {
-				urlParts.host = localeSlug + '.wordpress.com';
-			}
-		}
-		return urlParts;
-	},
-	'wordpress.com/tos': ( urlParts, localeSlug ) => {
-		if ( magnificentNonEnLocales.includes( localeSlug ) ) {
-			if ( localeSlug in localesToSubdomains ) {
-				urlParts.host = localesToSubdomains[ localeSlug ] + '.wordpress.com';
-			} else {
-				urlParts.host = localeSlug + '.wordpress.com';
-			}
-		}
-		return urlParts;
-	},
-	'jetpack.com': ( urlParts, localeSlug ) => {
-		if ( localesForJetpackCom.includes( localeSlug ) ) {
-			if ( localeSlug in localesToSubdomains ) {
-				urlParts.host = localesToSubdomains[ localeSlug ] + '.jetpack.com';
-			} else {
-				urlParts.host = localeSlug + '.jetpack.com';
-			}
-		}
-		return urlParts;
-	},
-	'en.support.wordpress.com': ( urlParts, localeSlug ) => {
-		if ( localesWithTranslatedSupport.includes( localeSlug ) ) {
-			if ( localeSlug in localesToSubdomains ) {
-				urlParts.host = localesToSubdomains[ localeSlug ] + '.support.wordpress.com';
-			} else {
-				urlParts.host = localeSlug + '.support.wordpress.com';
-			}
-		}
-		return urlParts;
-	},
-	'en.blog.wordpress.com': ( urlParts, localeSlug ) => {
-		if ( localesWithBlog.includes( localeSlug ) ) {
-			if ( localeSlug in localesToSubdomains ) {
-				urlParts.host = localesToSubdomains[ localeSlug ] + '.blog.wordpress.com';
-			} else {
-				urlParts.host = localeSlug + '.blog.wordpress.com';
-			}
-		}
-		return urlParts;
-	},
-	'en.forums.wordpress.com': ( urlParts, localeSlug ) => {
-		if ( config( 'forum_locales' ).includes( localeSlug ) ) {
-			if ( localeSlug in localesToSubdomains ) {
-				urlParts.host = localesToSubdomains[ localeSlug ] + '.forums.wordpress.com';
-			} else {
-				urlParts.host = localeSlug + '.forums.wordpress.com';
-			}
-		}
-		return urlParts;
-	},
-	'automattic.com/privacy/': ( urlParts, localeSlug ) => {
-		if ( localesWithPrivacyPolicy.includes( localeSlug ) ) {
-			urlParts.pathname = localeSlug + urlParts.pathname;
-		}
-		return urlParts;
-	},
-	'automattic.com/cookies/': ( urlParts, localeSlug ) => {
-		if ( localesWithCookiePolicy.includes( localeSlug ) ) {
-			urlParts.pathname = localeSlug + urlParts.pathname;
-		}
-		return urlParts;
-	},
+	'wordpress.com': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
+	'wordpress.com/tos/': setLocalizedUrlHost( 'jetpack.com', magnificentNonEnLocales ),
+	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', localesForJetpackCom ),
+	'en.support.wordpress.com': setLocalizedUrlHost(
+		'support.wordpress.com',
+		localesWithTranslatedSupport
+	),
+	'en.blog.wordpress.com': setLocalizedUrlHost( 'blog.wordpress.com', localesWithBlog ),
+	'en.forums.wordpress.com': setLocalizedUrlHost(
+		'forums.wordpress.com',
+		config( 'forum_locales' )
+	),
+	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
+	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),
 };
 
 export function localizeUrl( fullUrl, locale ) {
-	const localeSlug = locale ? locale : getLocaleSlug();
+	const localeSlug = locale || getLocaleSlug();
 	const urlParts = url.parse( fullUrl );
 
 	// Let's unify the URL.
