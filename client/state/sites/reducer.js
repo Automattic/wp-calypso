@@ -219,17 +219,18 @@ export function items( state = null, action ) {
 		}
 
 		case EDITOR_TYPE_SET: {
-			const { siteId } = action;
-			if ( ! state[ siteId ] ) {
-				return state;
+			const { siteId, editor } = action;
+			if ( state[ siteId ] ) {
+				const validatedEditor = ( 'classic' || 'gutenberg' ) === editor ? editor : 'classic';
+				return {
+					...state,
+					[ siteId ]: {
+						...state[ siteId ],
+						editor: validatedEditor,
+					},
+				};
 			}
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					editor: action.editor,
-				},
-			};
+			return state;
 		}
 	}
 
