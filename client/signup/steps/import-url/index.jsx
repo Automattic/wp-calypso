@@ -209,9 +209,9 @@ class ImportURLStepComponent extends Component {
 						{ translate( 'Example URLs', {
 							comment: 'Title for list of example urls, such as "example.com"',
 						} ) }
-						<li className="import-url__example-url">example.com</li>
+						<li className="import-url__example-url">https://example.com</li>
 
-						<li className="import-url__example-url">account.wixsite.com/my-site</li>
+						<li className="import-url__example-url">https://account.wixsite.com/my-site</li>
 					</ul>
 					<ExampleDomainBrowser className="import-url__example-browser" />
 				</div>
