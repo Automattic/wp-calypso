@@ -78,31 +78,31 @@ class BusinessNeeds extends Component {
 		const options = {
 			contact: {
 				key: 'contact',
-				formLabel: translate( 'Allow people to get in touch with you' ),
+				formLabel: translate( 'Allow people to contact me' ),
 			},
 			payments: {
 				key: 'payments',
-				formLabel: translate( 'Collect payments for your services' ),
+				formLabel: translate( 'Collect payments' ),
 			},
 			appointments: {
 				key: 'appointments',
-				formLabel: translate( 'Book appointments into your calendar' ),
+				formLabel: translate( 'Schedule appointments' ),
 			},
 			showcase: {
 				key: 'showcase',
-				formLabel: translate( 'Showcase your products or work' ),
+				formLabel: translate( 'Sell products' ),
 			},
 			sell: {
 				key: 'sell',
-				formLabel: translate( 'Sell your products online' ),
+				formLabel: translate( 'Share news or blog posts' ),
 			},
 			share: {
 				key: 'share',
-				formLabel: translate( 'Share your news, updates, or blog posts' ),
+				formLabel: translate( 'Share your work' ),
 			},
 			capture: {
 				key: 'capture',
-				formLabel: translate( 'Capture email addresses' ),
+				formLabel: translate( 'Collect emails' ),
 			},
 		};
 
@@ -149,9 +149,7 @@ class BusinessNeeds extends Component {
 				<div className="business-needs__form-wrapper ">
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
-							<h3>{ translate( 'Choose what you need' ) }</h3>
-							{ translate( "Don't stress, you can change this later." ) }
-
+							<h3>{ translate( 'Choose all the options that you need' ) }</h3>
 							<FormFieldset>{ this.renderNeedsCheckboxes() }</FormFieldset>
 
 							<div className="business-needs__submit-wrapper">
@@ -174,8 +172,8 @@ class BusinessNeeds extends Component {
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
-				headerText={ translate( 'What does your site need to do?' ) }
-				subHeaderText={ translate( "We'll use your answer add sections to your website." ) }
+				headerText={ 'How will you use your site?' }
+				subHeaderText={ translate( "We'll use your answers to add features to your website." ) }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
 			/>
