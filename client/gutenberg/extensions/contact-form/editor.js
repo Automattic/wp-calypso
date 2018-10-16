@@ -394,7 +394,6 @@ registerBlockType( 'grunion/form', {
 } );
 
 const FieldDefaults = {
-	icon: 'feedback',
 	category: 'common',
 	parent: [ 'grunion/form' ],
 	supports: {
@@ -414,7 +413,6 @@ const FieldDefaults = {
 			'default': []
 		}
 	},
-
 	transforms: {
 		to: [
 			{
@@ -493,7 +491,8 @@ const FieldDefaults = {
 };
 
 registerBlockType( 'grunion/field-text', Object.assign( {
-	title       : __( 'Text', 'jetpack' ),
+	title: __( 'Text', 'jetpack' ),
+	icon: 'feedback',
 	edit: function( props ) {
 		return ( <GrunionField
 			label={ props.attributes.label }
@@ -504,8 +503,8 @@ registerBlockType( 'grunion/field-text', Object.assign( {
 }, FieldDefaults ) );
 
 registerBlockType( 'grunion/field-name', Object.assign( {
-	title       : __( 'Name', 'jetpack' ),
-	icon        : 'admin-users',
+	title: __( 'Name', 'jetpack' ),
+	icon: 'admin-users',
 	edit: function( props ) {
 		return ( <GrunionField
 			type="text"
@@ -517,8 +516,8 @@ registerBlockType( 'grunion/field-name', Object.assign( {
 }, FieldDefaults ) );
 
 registerBlockType( 'grunion/field-email', Object.assign( {
-	title       : __( 'Email', 'jetpack' ),
-	icon        : 'email',
+	title: __( 'Email', 'jetpack' ),
+	icon: 'email',
 	edit: function( props ) {
 		return ( <GrunionField
 			type="email"
@@ -530,8 +529,8 @@ registerBlockType( 'grunion/field-email', Object.assign( {
 }, FieldDefaults ) );
 
 registerBlockType( 'grunion/field-url', Object.assign( {
-	title       : __( 'URL', 'jetpack' ),
-	icon        : 'share-alt2',
+	title: __( 'URL', 'jetpack' ),
+	icon: 'share-alt2',
 	edit: function( props ) {
 		return ( <GrunionField
 			type="url"
@@ -543,8 +542,8 @@ registerBlockType( 'grunion/field-url', Object.assign( {
 }, FieldDefaults ) );
 
 registerBlockType( 'grunion/field-date', Object.assign( {
-	title       : __( 'Date', 'jetpack' ),
-	icon        : 'calendar-alt',
+	title: __( 'Date', 'jetpack' ),
+	icon: 'calendar-alt',
 	edit: function( props ) {
 		return ( <GrunionField
 			type="text"
@@ -556,8 +555,8 @@ registerBlockType( 'grunion/field-date', Object.assign( {
 }, FieldDefaults ) );
 
 registerBlockType( 'grunion/field-telephone', Object.assign( {
-	title       : __( 'Telephone', 'jetpack' ),
-	icon        : 'phone',
+	title: __( 'Telephone', 'jetpack' ),
+	icon: 'phone',
 	edit: function( props ) {
 		return ( <GrunionField
 			type="tel"
@@ -569,7 +568,8 @@ registerBlockType( 'grunion/field-telephone', Object.assign( {
 }, FieldDefaults ) );
 
 registerBlockType( 'grunion/field-textarea', Object.assign( {
-	title       : __( 'Textarea', 'jetpack' ),
+	title: __( 'Textarea', 'jetpack' ),
+	icon: 'feedback',
 	edit: function( props ) {
 		return ( <GrunionFieldTextarea
 			label={ props.attributes.label }
@@ -580,8 +580,8 @@ registerBlockType( 'grunion/field-textarea', Object.assign( {
 }, FieldDefaults ) );
 
 registerBlockType( 'grunion/field-checkbox', Object.assign( {
-	title       : __( 'Checkbox', 'jetpack' ),
-	icon        : 'forms',
+	title: __( 'Checkbox', 'jetpack' ),
+	icon: 'forms',
 	edit: function( props ) {
 		return ( <GrunionFieldCheckbox
 			label={ props.attributes.label }
@@ -592,8 +592,8 @@ registerBlockType( 'grunion/field-checkbox', Object.assign( {
 }, FieldDefaults ) );
 
 registerBlockType( 'grunion/field-checkbox-multiple', Object.assign( {
-	title       : __( 'Checkbox Multiple', 'jetpack' ),
-	icon        : 'forms',
+	title: __( 'Checkbox Multiple', 'jetpack' ),
+	icon: 'forms',
 	edit: function( props ) {
 		return (<GrunionFieldMultiple
 			required={ props.attributes.required }
@@ -605,7 +605,8 @@ registerBlockType( 'grunion/field-checkbox-multiple', Object.assign( {
 }, FieldDefaults ) );
 
 registerBlockType( 'grunion/field-radio', Object.assign( {
-	title       : __( 'Radio', 'jetpack' ),
+	title: __( 'Radio', 'jetpack' ),
+	icon: 'feedback',
 	edit: function( props ) {
 		return (<GrunionFieldMultiple
 			required={ props.attributes.required }
@@ -617,7 +618,8 @@ registerBlockType( 'grunion/field-radio', Object.assign( {
 }, FieldDefaults ) );
 
 registerBlockType( 'grunion/field-select', Object.assign( {
-	title       : __( 'Select', 'jetpack' ),
+	title: __( 'Select', 'jetpack' ),
+	icon: 'feedback',
 	edit: function( props ) {
 		return (<GrunionFieldMultiple
 			required={ props.attributes.required }
