@@ -59,11 +59,8 @@
 		display: flex;
 		flex-flow: row wrap;
 		justify-content: center;
-		margin: 0 -10px 40px;
-
-		@include breakpoint( ">660px" ) {
-			margin-bottom: 48px;
-		}
+		margin-bottom: 48px;
+		position: relative;
 
 		& > * {
 			padding-left: 20px;
@@ -91,6 +88,10 @@
 		color: $gray-darken-20;
 		padding-bottom: 24px;
 		text-align: center;
+
+		@include breakpoint( "<480px" ) {
+			padding: 0 15px;
+		}
 
 		.button {
 			vertical-align: middle;
