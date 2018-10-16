@@ -46,12 +46,18 @@ class RelatedPostsEdit extends Component {
 
 		apiFetch( {
 			path: '/jetpack/v4/site/posts/related?http_envelope=1&post_id=' + postId,
-		} ).then( response => {
-			this.setState( {
-				posts: response.posts,
-				fetchingPosts: false,
+		} )
+			.then( response => {
+				this.setState( {
+					posts: response.posts,
+					fetchingPosts: false,
+				} );
+			} )
+			.catch( () => {
+				this.setState( {
+					fetchingPosts: false,
+				} );
 			} );
-		} );
 	}
 
 	render() {
