@@ -13,6 +13,11 @@ import config from 'config';
  */
 import { ACCOUNT_RECOVERY_ERROR_CODE as ERROR_CODE } from 'account-recovery/constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class AccountRecoveryErrorMessage extends Component {
 	getErrorMessage = () => {
 		const { translate, error } = this.props;
