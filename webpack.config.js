@@ -170,7 +170,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 										test: './client/gutenberg/extensions',
 										plugins: [
 											[
-												'@wordpress/babel-plugin-import-jsx-pragma',
+												'@wordpress/import-jsx-pragma',
 												{
 													scopeVariable: 'createElement',
 													source: '@wordpress/element',
