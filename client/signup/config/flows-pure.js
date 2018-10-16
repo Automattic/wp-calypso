@@ -299,7 +299,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 				addQueryArgs(
 					{
 						engine: importSiteDetails.engine === 'wix' ? 'wix' : null,
-						'from-site': importUrl && ( encodeURIComponent( importUrl ) || null ),
+						'from-site': ( importUrl && encodeURIComponent( importUrl ) ) || null,
 					},
 					`/settings/import/${ siteSlug }`
 				),
