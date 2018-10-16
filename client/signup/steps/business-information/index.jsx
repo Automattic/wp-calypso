@@ -21,6 +21,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
+import InfoPopover from 'components/info-popover';
 
 class BusinessInformation extends Component {
 	constructor( props ) {
@@ -65,39 +66,49 @@ class BusinessInformation extends Component {
 							{ translate( 'How do people find and contact your business?' ) }
 
 							<FormFieldset>
+								<FormLabel htmlFor="name">
+									{ translate( 'Business Name' ) }
+
+									<InfoPopover position="top">
+										{ translate( 'This will be used for the title of your site.' ) }
+									</InfoPopover>
+								</FormLabel>
 								<FormTextInput
 									id="name"
 									name="name"
-									placeholder={ translate( 'Business Name' ) }
+									placeholder={ translate( 'eg. Google, Automattic, AirBnb' ) }
 									onChange={ this.handleChangeEvent }
 								/>
-								<FormLabel htmlFor="name">
-									{ translate( 'This will be used for the title of your site.' ) }
-								</FormLabel>
 							</FormFieldset>
 
 							<FormFieldset>
+								<FormLabel htmlFor="address">
+									{ translate( 'Address' ) }
+									<InfoPopover position="top">
+										{ translate( 'Where can people find your business?' ) }
+									</InfoPopover>
+								</FormLabel>
 								<FormTextarea
 									id="address"
 									name="address"
-									placeholder={ translate( 'Address' ) }
+									placeholder={ 'eg. 21 Main street\nOttawa  ON\nK1V 2K5' }
 									onChange={ this.handleChangeEvent }
 								/>
-								<FormLabel htmlFor="address">
-									{ translate( 'Where can people find your business?' ) }
-								</FormLabel>
 							</FormFieldset>
 
 							<FormFieldset>
+								<FormLabel htmlFor="phone">
+									{ translate( 'Phone number' ) }
+									<InfoPopover position="top">
+										{ translate( 'How can people contact you?' ) }
+									</InfoPopover>
+								</FormLabel>
 								<FormTextInput
 									id="phone"
 									name="phone"
-									placeholder={ translate( 'Phone Number' ) }
+									placeholder={ translate( 'eg. (613) 425-0183' ) }
 									onChange={ this.handleChangeEvent }
 								/>
-								<FormLabel htmlFor="phone">
-									{ translate( 'How can people contact you?' ) }
-								</FormLabel>
 							</FormFieldset>
 
 							<div className="business-information__submit-wrapper">
