@@ -6,6 +6,11 @@
 
 import React, { PureComponent } from 'react';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class TwitterSharePreview extends PureComponent {
 	render() {
 		const {

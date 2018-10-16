@@ -8,6 +8,11 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class LinkedinSharePreview extends PureComponent {
 	static propTypes = {
 		articleUrl: PropTypes.string,

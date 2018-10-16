@@ -13,6 +13,11 @@ import { isNull } from 'lodash';
  */
 import FacebookPreview from 'components/seo/facebook-preview';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class FacebookSharePreview extends PureComponent {
 	static propTypes = {
 		articleContent: PropTypes.string,
