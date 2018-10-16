@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import { filter, get } from 'lodash';
+import { filter, flow, get, isEmpty, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +23,7 @@ import MediumImporter from 'my-sites/importer/importer-medium';
 import BloggerImporter from 'my-sites/importer/importer-blogger';
 import SiteImporter from 'my-sites/importer/importer-site-importer';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
-import { fetchState } from 'lib/importer/actions';
+import { fetchState, startImport } from 'lib/importer/actions';
 import {
 	appStates,
 	WORDPRESS,
@@ -34,6 +34,7 @@ import {
 } from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Placeholder from 'my-sites/site-settings/placeholder';
@@ -84,9 +85,20 @@ class SiteSettingsImport extends Component {
 
 	state = getImporterState();
 
+	onceAutoStartImport = once( ( siteId, importerType ) => startImport( siteId, importerType ) );
+
 	componentDidMount() {
 		ImporterStore.on( 'change', this.updateState );
 		this.updateFromAPI();
+	}
+
+	componentDidUpdate() {
+		const { engine, site } = this.props;
+		const { importers: imports } = this.state;
+
+		if ( isEmpty( imports ) && 'wix' === engine && site && site.ID ) {
+			this.onceAutoStartImport( site.ID, 'importer-type-site-importer' );
+		}
 	}
 
 	componentWillUnmount() {
@@ -162,6 +174,7 @@ class SiteSettingsImport extends Component {
 					<ImporterComponent
 						key={ type + idx }
 						site={ importItem.site }
+						fromSite={ this.props.fromSite }
 						importerStatus={ importItem }
 					/>
 				) );
@@ -268,7 +281,12 @@ class SiteSettingsImport extends Component {
 	}
 }
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-	siteSlug: getSelectedSiteSlug( state ),
-} ) )( localize( SiteSettingsImport ) );
+export default flow(
+	connect( state => ( {
+		engine: getSelectedImportEngine( state ),
+		fromSite: getImporterSiteUrl( state ),
+		site: getSelectedSite( state ),
+		siteSlug: getSelectedSiteSlug( state ),
+	} ) ),
+	localize
+)( SiteSettingsImport );
