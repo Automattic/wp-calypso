@@ -152,7 +152,6 @@ class BusinessType extends Component {
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
 							<h3>{ translate( 'Search for your type of business' ) }</h3>
-							{ translate( "Don't stress, you can change this later." ) }
 
 							<FormFieldset>
 								<FormTextInput
