@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import ReactDom from 'react-dom';
 
 import { calculateOffset, getBlockStyle, getDimensions, getDimensionUpdates } from '..';
@@ -15,8 +14,10 @@ beforeAll( () => {
 	const header = {
 		getBoundingClientRect: () => ( { height: 123 } ),
 	};
-	sinon.stub( document, 'getElementById' ).callsFake( id => ( id === 'header' ? header : null ) );
-	sinon.stub( ReactDom, 'findDOMNode' ).callsFake( node => node );
+	jest
+		.spyOn( document, 'getElementById' )
+		.mockImplementation( id => ( id === 'header' ? header : null ) );
+	jest.spyOn( ReactDom, 'findDOMNode' ).mockImplementation( node => node );
 } );
 
 describe( 'calculateOffset', () => {
@@ -70,4 +71,4 @@ describe( 'getDimensionUpdates', () => {
 	} );
 } );
 
-afterAll( () => sinon.restore() );
+afterAll( () => jest.restoreAllMocks() );
