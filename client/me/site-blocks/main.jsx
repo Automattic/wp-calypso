@@ -38,7 +38,7 @@ class SiteBlockList extends Component {
 			return;
 		}
 
-		//this.props.requestSiteBlocks( { page: currentPage + 1 } );
+		this.props.requestSiteBlocks( { page: currentPage + 1 } );
 	};
 
 	renderPlaceholders() {}
