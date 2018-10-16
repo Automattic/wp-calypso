@@ -135,6 +135,7 @@ class BusinessInformation extends Component {
 				subHeaderText={ translate( "We'll add this information to your new website." ) }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
+				backUrl={ '/start/main-onboarding-continue/business-needs' }
 			/>
 		);
 	}

@@ -199,6 +199,7 @@ class BusinessType extends Component {
 				) }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
+				backUrl={ '/start/main-onboarding-continue/site-type' }
 			/>
 		);
 	}
