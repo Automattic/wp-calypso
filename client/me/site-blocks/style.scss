@@ -1,0 +1,10 @@
+.site-blocks__list {
+	border-bottom: 1px solid $gray-lighten-30;
+}
+
+.site-blocks__list-item {
+	border-top: 1px solid $gray-lighten-30;
+	min-height: 40px;
+	line-height: 40px;
+	vertical-align: middle;
+}

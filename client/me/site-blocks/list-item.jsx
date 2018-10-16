@@ -17,7 +17,7 @@ class SiteBlockListItem extends Component {
 	render() {
 		const { site } = this.props;
 		return (
-			<div>
+			<div className="site-blocks__list-item">
 				<ExternalLink href={ site.URL }>{ site.name }</ExternalLink>
 			</div>
 		);

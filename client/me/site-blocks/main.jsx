@@ -22,6 +22,11 @@ import getBlockedSites from 'state/selectors/get-blocked-sites';
 import SiteBlockListItem from './list-item';
 import InfiniteList from 'components/infinite-list';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SiteBlockList extends Component {
 	fetchNextPage() {}
 
