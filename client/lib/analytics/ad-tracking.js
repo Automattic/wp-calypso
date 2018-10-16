@@ -1174,6 +1174,7 @@ function recordParamsInDonutsGtag( event_type, send_to, order_summary = false ) 
 		send_to: send_to,
 		...( order_summary && { u90: order_summary } ),
 	};
+	debug( 'Recording Donuts Gtag "' + event_type + '" event with parameters:', params );
 	window.gtag( 'event', event_type, params );
 }
 
@@ -1438,6 +1439,13 @@ function recordViewCheckoutInDonutsGtag( cart ) {
 	);
 }
 
+function domainNameToTld( domainName ) {
+	if ( domainName.indexOf( '.' ) === -1 ) {
+		return null;
+	}
+	return domainName.slice( domainName.indexOf( '.' ) + 1 ).toLowerCase();
+}
+
 /**
  * Converts the products in a cart to the format Donuts expects for its `u90` order summary property
  *
@@ -1445,12 +1453,111 @@ function recordViewCheckoutInDonutsGtag( cart ) {
  * @returns {Array} - An array of items to include in the Criteo tracking call
  */
 function cartToDonutsOrderSummary( cart ) {
+	const DONUTS_TLDS = [
+		'associates',
+		'business',
+		'careers',
+		'center',
+		'company',
+		'consulting',
+		'enterprises',
+		'gmbh',
+		'group',
+		'industries',
+		'international',
+		'limited',
+		'ltd',
+		'management',
+		'network',
+		'partners',
+		'sarl',
+		'services',
+		'solutions',
+		'support',
+		'ventures',
+		'actor',
+		'band',
+		'bingo',
+		'casino',
+		'dance',
+		'dating',
+		'dog',
+		'events',
+		'games',
+		'live',
+		'media',
+		'movie',
+		'rocks',
+		'show',
+		'singles',
+		'studio',
+		'theater',
+		'video',
+		'camera',
+		'equipment',
+		'gallery',
+		'graphics',
+		'media',
+		'photography',
+		'photos',
+		'pictures',
+		'studio',
+		'video',
+		'agency',
+		'consulting',
+		'digital',
+		'direct',
+		'email',
+		'marketing',
+		'media',
+		'productions',
+		'social',
+		'studio',
+		'video',
+		'chat',
+		'directory',
+		'fyi',
+		'media',
+		'memorial',
+		'news',
+		'reviews',
+		'social',
+		'tips',
+		'video',
+		'zone',
+	];
 	// for each domain: if domain ending is in list of donuts domain endings, add to u99 string
-	// format: [{"domain_name":"upstartauction.uk","duration":"1","price":"9.99","tld":"uk","type":"registrat ion"},{"domain_name":"upstart.auction","duration":"1","price":"9.99","tld":"auction","type":"r egistration"},{"domain_name":"upstart.auction","duration":"1","price":"4.99","tld":"auction","t ype":"whois_privacy"},,{"domain_name":"upstart.solutions","duration":"1","price":"9.99","tld": "solutions","type":"registration"}]
-	// types of products to record: domain registration, renewal, transfer, whois_privacy
-	debug( 'cartToDonutsOrderSummary - cart: ', cart );
-	// TODO
-	return [];
+	// types of products covered: domain registration, whois_privacy
+	// TODO: add support for 'renewal' and 'transfer' products
+	debug( 'cartToDonutsOrderSummary:cart', cart );
+	const domain_registrations = cart.products
+		.filter( p => p.is_domain_registration || p.product_slug === 'private_whois' )
+		.map( p => {
+			let donuts_type = 'unknown';
+			if ( p.is_domain_registration ) {
+				donuts_type = 'registration';
+			} else if ( p.product_slug === 'private_whois' ) {
+				donuts_type = 'whois_privacy';
+			}
+			return Object.assign( p, { tld: domainNameToTld( p.meta ), donuts_type: donuts_type } );
+		} );
+	const donuts_domain_registrations = domain_registrations.filter( p =>
+		includes( DONUTS_TLDS, p.tld )
+	);
+	const order_summary = donuts_domain_registrations.map( p => {
+		return {
+			domain_name: p.meta,
+			duration: Math.round( p.bill_period / 365 ),
+			price: costToUSD( p.cost, p.currency ),
+			tld: p.tld,
+			type: p.donuts_type,
+		};
+	} );
+	debug( 'cartToDonutsOrderSummary:order_summary', order_summary );
+	if ( order_summary && order_summary.length > 0 ) {
+		return JSON.stringify( order_summary );
+	}
+	return false;
 }
 
 /**
