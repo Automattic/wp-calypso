@@ -50,16 +50,24 @@ class ActivityLogAggregatedItem extends Component {
 
 		return addQueryArgs( query, window.location.pathname + window.location.hash );
 	}
-	trackContentLinkClick = () => {
+	trackClick = intent => {
 		const { activity } = this.props;
 		const section = activity.activityGroup;
 		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', {
 			activity: activity.activityName,
 			section,
-			intent: 'toggle',
+			intent: intent,
 			is_aggregate: true,
 			stream_count: activity.streamCount,
 		} );
+	};
+
+	trackAggregateExpandToggle = () => {
+		this.trackClick( 'toggle' );
+	};
+
+	trackAggregateViewAll = () => {
+		this.trackClick( 'view_all' );
 	};
 
 	renderHeader() {
@@ -139,7 +147,7 @@ class ActivityLogAggregatedItem extends Component {
 				<FoldableCard
 					className="activity-log-item__card"
 					header={ this.renderHeader() }
-					onClick={ this.trackContentLinkClick }
+					onClick={ this.trackAggregateExpandToggle }
 				>
 					{ activity.streams.map( log => (
 						<Fragment key={ log.activityId }>
@@ -160,7 +168,12 @@ class ActivityLogAggregatedItem extends Component {
 									args: { number: MAX_STREAM_ITEMS_IN_AGGREGATE, total: streamCount },
 								} ) }
 							</p>
-							<Button href={ this.getViewAllUrl() } compact borderless>
+							<Button
+								href={ this.getViewAllUrl() }
+								compact
+								borderless
+								onClick={ this.trackAggregateViewAll() }
+							>
 								{ translate( 'View All' ) }
 							</Button>
 						</div>
