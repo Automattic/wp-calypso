@@ -25,6 +25,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
+import { waitForData } from 'state/data-layer/http-data';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -81,7 +82,7 @@ function getPressThisContent( query ) {
 			ReactDomServer.renderToStaticMarkup(
 				<p>
 					<a href={ url }>
-						<img src={ image } />
+						<img src={ image } alt="" />
 					</a>
 				</p>
 			)
@@ -254,13 +255,17 @@ export default {
 		return false;
 	},
 
-	gutenberg: async function( context, next ) {
-		const siteId = await getSelectedSiteId( context.store.getState() );
-		const editor = await getSelectedEditor( siteId );
-		if ( 'gutenberg' === editor ) {
-			page.redirect( `/gutenberg${ context.path }` );
-			return false;
-		}
+	gutenberg: function( context, next ) {
+		const siteId = getSelectedSiteId( context.store.getState() );
+		waitForData( {
+			editor: () => getSelectedEditor( siteId ),
+		} ).then( editor => {
+			if ( 'gutenberg' === editor ) {
+				page.redirect( `/gutenberg${ context.path }` );
+				return false;
+			}
+		} );
+
 		next();
 	},
 };
