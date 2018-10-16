@@ -83,7 +83,7 @@ export class Checkout extends React.Component {
 		cartSettled: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		resetTransaction();
 		this.props.recordApplePayStatus();
 	}
@@ -104,13 +104,13 @@ export class Checkout extends React.Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
 			if ( this.props.product ) {
 				this.addProductToCart();
 			}
 
-			this.trackPageView();
+			this.trackPageView( nextProps );
 		}
 
 		if ( ! this.state.cartSettled && ! nextProps.cart.hasPendingServerUpdates ) {
@@ -130,7 +130,6 @@ export class Checkout extends React.Component {
 
 		if ( ! isEqual( previousCart, nextCart ) ) {
 			this.redirectIfEmptyCart();
-			this.setState( { previousCart: nextCart } );
 		}
 
 		if (
@@ -636,8 +635,8 @@ export class Checkout extends React.Component {
 		}
 
 		return (
-			<div className="main main-column" role="main">
-				<div className="checkout">
+			<div role="main">
+				<div className="checkout__checkout">
 					<QuerySitePlans siteId={ this.props.selectedSiteId } />
 					<QueryPlans />
 					<QueryProducts />
