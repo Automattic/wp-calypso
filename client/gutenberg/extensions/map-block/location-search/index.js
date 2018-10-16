@@ -2,26 +2,30 @@
  * Wordpress dependencies
  */
 
-import { Autocomplete } from '@wordpress/editor';
+import { __ } from '@wordpress/i18n';
 
 import {
 	Component,
 	createRef
 } from '@wordpress/element';
 
-import { BaseControl } from '@wordpress/components';
+import {
+	BaseControl,
+	TextControl
+} from '@wordpress/components';
 
 /**
  * External dependencies
  */
 
-import classnames from 'classnames';
-
 /**
  * Internal dependencies
  */
 
+import Lookup from '../lookup';
 import './style.scss';
+
+const placeholderText = __( 'Add a marker...' );
 
 export class LocationSearch extends Component {
 
@@ -34,31 +38,32 @@ export class LocationSearch extends Component {
 		this.state = {
 			isEmpty: true
 		};
-		this.autocompleters = [
-			{
-				name: 'placeSearch',
-				triggerPrefix: '',
-				options: this.search.bind(this),
-				isDebounced: true,
-				getOptionLabel: option => (
-					<span>{ option.description }</span>
-				),
-				getOptionKeywords: option => [ option.description ],
-				getOptionCompletion: this.getOptionCompletion.bind(this)
-			}
-		];
+		this.searchChanged = this.searchChanged.bind( this );
+		this.onReset = this.onReset.bind( this );
+		this.autocompleter = {
+
+			name: 'placeSearch',
+			options: this.search.bind(this),
+			isDebounced: true,
+			getOptionLabel: option => (
+				<span>{ option.description }</span>
+			),
+			getOptionKeywords: option => [ option.description ],
+			getOptionCompletion: this.getOptionCompletion.bind(this)
+
+		};
 
 	}
 
 	getOptionCompletion( option ) {
-
+		const { value } = option;
 		const placesService = new window.google.maps.places.PlacesService( this.testRef.current );
-		placesService.getDetails( { placeId: option.place_id }, function( place ) {
+		placesService.getDetails( { placeId: value.place_id }, function( place ) {
 			const point = {
-				place_title: option.description,
-				title: option.description,
+				place_title: place.name,
+				title: place.name,
 				caption: '',
-				id: option.place_id,
+				id: place.place_id,
 				viewport: place.geometry.viewport,
 				coordinates:  {
 					latitude: place.geometry.location.lat(),
@@ -71,14 +76,11 @@ export class LocationSearch extends Component {
 
 	}
 
-	search() {
-
-		const searchText = this.textRef.current.innerText;
-		const placeSearch = new window.google.maps.places.AutocompleteService()
-		if ( searchText.length < 2 ) return
+	search( value ) {
+		const placeSearch = new window.google.maps.places.AutocompleteService();
 		return new Promise( function( resolve, reject ) {
 			placeSearch.getPlacePredictions( {
-				input: searchText
+				input: value
 			}, function ( place, status ) {
 				if ( status !== window.google.maps.places.PlacesServiceStatus.OK ) {
 					reject( new Error( status ) );
@@ -90,36 +92,33 @@ export class LocationSearch extends Component {
 
 	}
 
-	searchChanged( e ) {
+	searchChanged( value ) {
 
-		this.setState( { isEmpty: e.target.innerText.length < 1 } );
+		this.setState( { isEmpty: value.length < 1 } );
 
+	}
+
+	onReset() {
+		this.textRef.current.value = null;
 	}
 
 	render() {
 
 		const { label } = this.props;
-		const classes = classnames(
-			'input-control',
-			'component-location_search__search-field',
-			this.state.isEmpty ? 'is-empty' : null
-		);
 		return (
 			<BaseControl label={ label } className='components-location-search'>
-				<Autocomplete onfindmatch={ this.findMatch } completers={ this.autocompleters }>
-					{ ( { isExpanded, listBoxId } ) => (
-						<div
-							className={ classes }
-							contentEditable
-							suppressContentEditableWarning
-							aria-autocomplete="list"
-							aria-expanded={ isExpanded }
-							aria-owns={ listBoxId }
+				<Lookup completer={ this.autocompleter } onReset={ this.onReset }>
+					{ ( { isExpanded, listBoxId, activeId, onChange } ) => (
+						<TextControl
+							placeholder={ placeholderText }
 							ref={ this.textRef }
-							onInput={ this.searchChanged.bind(this) }
-						/>
+					        onChange={ onChange }
+					        aria-expanded={ isExpanded }
+	                        aria-owns={ listBoxId }
+	                        aria-activedescendant={ activeId }
+					    />
 					) }
-				</Autocomplete>
+				</Lookup>
 				<div ref={ this.testRef }></div>
 			</BaseControl>
 		);
