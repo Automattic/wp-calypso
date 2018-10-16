@@ -513,7 +513,7 @@ class Signup extends React.Component {
 					isDomainMapping( domainItem ) ) &&
 					this.props.domainsWithPlansOnly )
 			);
-		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
+		const shouldRenderLocaleSuggestions = false;
 
 		return (
 			<CSSTransition classNames="signup__step" timeout={ 400 } key={ stepKey }>
