@@ -302,10 +302,6 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 		// no chunks or dll here, just one big file for the desktop app
 		webpackConfig.output.filename = '[name].js';
 		webpackConfig.output.chunkFilename = '[name].js';
-	} else {
-		// jquery is only needed in the build for the desktop app
-		// see electron bug: https://github.com/atom/electron/issues/254
-		webpackConfig.externals.push( 'jquery' );
 	}
 
 	if ( isDevelopment ) {

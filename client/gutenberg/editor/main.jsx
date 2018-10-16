@@ -45,6 +45,7 @@ class GutenbergEditor extends Component {
 			autosaveInterval: 3, //interval to debounce autosaving events, in seconds.
 			titlePlaceholder: translate( 'Add title' ),
 			bodyPlaceholder: translate( 'Write your story' ),
+			postLock: {},
 		};
 
 		return (
