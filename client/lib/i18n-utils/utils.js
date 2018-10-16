@@ -165,7 +165,7 @@ const localesForJetpackCom = [
 	'zh-cn',
 	'zh-tw',
 ];
-const localesWithTranslatedSupport = [ 'ja', 'de', 'ru', 'pt-br', 'es' ];
+
 const localesWithPrivacyPolicy = [ 'en', 'fr', 'de' ];
 const localesWithCookiePolicy = [ 'en', 'fr', 'de' ];
 
@@ -189,7 +189,7 @@ const urlLocalizationMapping = {
 	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', localesForJetpackCom ),
 	'en.support.wordpress.com': setLocalizedUrlHost(
 		'support.wordpress.com',
-		localesWithTranslatedSupport
+		config( 'support_site_locales' )
 	),
 	'en.blog.wordpress.com': setLocalizedUrlHost( 'blog.wordpress.com', localesWithBlog ),
 	'en.forums.wordpress.com': setLocalizedUrlHost(
