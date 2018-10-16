@@ -65,7 +65,7 @@ export const items = createReducer(
 
 export const currentPage = createReducer( 1, {
 	[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
-		if ( ! action.payload ) {
+		if ( ! action.payload || ! action.payload.page ) {
 			return state;
 		}
 
@@ -75,7 +75,7 @@ export const currentPage = createReducer( 1, {
 
 export const lastPage = createReducer( null, {
 	[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
-		if ( ! action.payload || action.payload.count > 0 ) {
+		if ( ! action.payload || ! action.payload.page || action.payload.count > 0 ) {
 			return state;
 		}
 

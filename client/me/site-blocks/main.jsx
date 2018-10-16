@@ -52,10 +52,11 @@ class SiteBlockList extends Component {
 	};
 
 	render() {
-		const { translate, isLoading, currentPage, lastPage } = this.props;
+		const { translate, isLoading, blockedSites, currentPage, lastPage } = this.props;
 		const containerClasses = classnames( 'site-block-list', 'main', {
 			'is-loading': isLoading,
 		} );
+		const hasNoBlocks = blockedSites.length === 0 && currentPage === lastPage;
 
 		return (
 			<Main className={ containerClasses }>
@@ -71,17 +72,21 @@ class SiteBlockList extends Component {
 						) }
 					</p>
 
-					<InfiniteList
-						items={ this.props.blockedSites }
-						className="site-blocks__list"
-						fetchNextPage={ this.fetchNextPage }
-						renderLoadingPlaceholders={ this.renderPlaceholders }
-						renderItem={ this.renderItem }
-						fetchingNextPage={ false }
-						lastPage={ currentPage === lastPage }
-						guessedItemHeight={ 126 }
-						getItemRef={ this.getItemRef }
-					/>
+					{ hasNoBlocks && <p>{ translate( "You haven't blocked any sites yet." ) }</p> }
+
+					{ ! hasNoBlocks && (
+						<InfiniteList
+							items={ this.props.blockedSites }
+							className="site-blocks__list"
+							fetchNextPage={ this.fetchNextPage }
+							renderLoadingPlaceholders={ this.renderPlaceholders }
+							renderItem={ this.renderItem }
+							fetchingNextPage={ false }
+							lastPage={ currentPage === lastPage }
+							guessedItemHeight={ 126 }
+							getItemRef={ this.getItemRef }
+						/>
+					) }
 				</Card>
 			</Main>
 		);
