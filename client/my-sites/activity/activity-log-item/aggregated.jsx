@@ -24,6 +24,7 @@ import { filterStateToQuery } from 'state/activity-log/utils';
 import { addQueryArgs } from 'lib/url';
 import ActivityActor from './activity-actor';
 import ActivityMedia from './activity-media';
+import analytics from 'lib/analytics';
 
 const MAX_STREAM_ITEMS_IN_AGGREGATE = 10;
 
@@ -49,6 +50,17 @@ class ActivityLogAggregatedItem extends Component {
 
 		return addQueryArgs( query, window.location.pathname + window.location.hash );
 	}
+	trackContentLinkClick = () => {
+		const { activity } = this.props;
+		const section = activity.activityGroup;
+		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', {
+			activity: activity.activityName,
+			section,
+			intent: 'toggle',
+			is_aggregate: true,
+			stream_count: activity.streamCount,
+		} );
+	};
 
 	renderHeader() {
 		const { activity } = this.props;
@@ -124,7 +136,11 @@ class ActivityLogAggregatedItem extends Component {
 					</div>
 					<ActivityIcon activityIcon={ activityIcon } activityStatus={ activityStatus } />
 				</div>
-				<FoldableCard className="activity-log-item__card" header={ this.renderHeader() }>
+				<FoldableCard
+					className="activity-log-item__card"
+					header={ this.renderHeader() }
+					onClick={ this.trackContentLinkClick }
+				>
 					{ activity.streams.map( log => (
 						<Fragment key={ log.activityId }>
 							<ActivityLogItem
