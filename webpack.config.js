@@ -66,16 +66,6 @@ function getAliasesForExtensions() {
 	return aliasesMap;
 }
 
-const babelLoader = {
-	loader: 'babel-loader',
-	options: {
-		configFile: path.resolve( __dirname, 'babel.config.js' ),
-		babelrc: false,
-		cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
-		cacheIdentifier,
-	},
-};
-
 /**
  * Converts @wordpress require into window reference
  *
@@ -168,7 +158,36 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 								workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ),
 							},
 						},
-						babelLoader,
+						{
+							loader: 'babel-loader',
+							options: {
+								configFile: path.resolve( __dirname, 'babel.config.js' ),
+								babelrc: false,
+								cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+								cacheIdentifier,
+								overrides: [
+									{
+										test: './client/gutenberg/extensions',
+										plugins: [
+											[
+												'@wordpress/babel-plugin-import-jsx-pragma',
+												{
+													scopeVariable: 'createElement',
+													source: '@wordpress/element',
+													isDefault: false,
+												},
+											],
+											[
+												'@babel/transform-react-jsx',
+												{
+													pragma: 'createElement',
+												},
+											],
+										],
+									},
+								],
+							},
+						},
 					],
 				},
 				{
