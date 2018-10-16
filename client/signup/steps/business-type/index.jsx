@@ -19,6 +19,7 @@ import { isUserLoggedIn } from 'state/current-user/selectors';
 import Card from 'components/card';
 import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
+import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
 import Suggestions from 'components/suggestions';
 
@@ -151,13 +152,16 @@ class BusinessType extends Component {
 				<div className="business-type__form-wrapper ">
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
-							<h3>{ translate( 'Search for your type of business' ) }</h3>
+							<h3>{ translate( 'Search for your business type' ) }</h3>
 
 							<FormFieldset>
+								<FormLabel htmlFor="phone">{ translate( 'Business Type' ) }</FormLabel>
 								<FormTextInput
 									id="siteTopic"
 									name="siteTopic"
-									placeholder={ translate( 'e.g. Fashion, travel, design, plumber, electrician' ) }
+									placeholder={ translate(
+										'e.g. Marketing, travel, fashion, translation, plumbing'
+									) }
 									value={ this.state.siteTopicValue }
 									onChange={ this.handleSuggestionChangeEvent }
 									onBlur={ this.hideSuggestions }

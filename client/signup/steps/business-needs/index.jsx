@@ -172,7 +172,7 @@ class BusinessNeeds extends Component {
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
-				headerText={ 'How will you use your site?' }
+				headerText={ 'How will you use your website?' }
 				subHeaderText={ translate( "We'll use your answers to add features to your website." ) }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }

@@ -62,8 +62,7 @@ class BusinessInformation extends Component {
 				<div className="business-information__form-wrapper ">
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
-							<h3>{ translate( 'Basic Information' ) }</h3>
-							{ translate( 'How do people find and contact your business?' ) }
+							<h3>{ translate( 'Enter your basic information' ) }</h3>
 
 							<FormFieldset>
 								<FormLabel htmlFor="name">
