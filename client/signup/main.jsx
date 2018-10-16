@@ -496,9 +496,6 @@ class Signup extends React.Component {
 	}
 
 	getFlowLength() {
-		if ( [ 'main-onboarding', 'main-onboarding-continue' ].includes( this.props.flowName ) ) {
-			return 6;
-		}
 		return flows.getFlow( this.props.flowName ).steps.length;
 	}
 

@@ -43,7 +43,7 @@ class MasterbarLoggedOut extends PureComponent {
 
 	renderLoginItem() {
 		const { currentQuery, currentRoute, sectionName, translate, redirectUri } = this.props;
-		if ( includes( [ 'login', 'jetpack-onboarding' ], sectionName ) ) {
+		if ( includes( [ 'login', 'jetpack-onboarding' ], sectionName ) || startsWith( currentRoute, '/start/main-onboarding-continue/' ) ) {
 			return null;
 		}
 
