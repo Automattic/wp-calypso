@@ -63,6 +63,7 @@ class ImportURLStepComponent extends Component {
 		// We have a verified, importable site url.
 		if ( ! isEqual( prevProps.siteDetails, siteDetails ) && siteDetails ) {
 			SignupActions.submitSignupStep( { stepName }, [], {
+				importSiteDetails: siteDetails,
 				importUrl: urlInputValue,
 				themeSlugWithRepo: 'pub/radcliffe-2',
 			} );
