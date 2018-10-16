@@ -33,12 +33,12 @@ const commonDefaultProps = {
 	minLimit: false,
 };
 
-function calculateOffset() {
+export function calculateOffset() {
 	// Offset to account for Master Bar
 	return document.getElementById( 'header' ).getBoundingClientRect().height;
 }
 
-function getBlockStyle( state ) {
+export function getBlockStyle( state ) {
 	if ( state.isSticky ) {
 		return {
 			top: calculateOffset(),
@@ -47,14 +47,14 @@ function getBlockStyle( state ) {
 	}
 }
 
-function getDimensions( node, isSticky ) {
+export function getDimensions( node, isSticky ) {
 	return {
 		spacerHeight: isSticky ? ReactDom.findDOMNode( node ).clientHeight : 0,
 		blockWidth: isSticky ? ReactDom.findDOMNode( node ).clientWidth : 0,
 	};
 }
 
-function getDimensionUpdates( node, previous ) {
+export function getDimensionUpdates( node, previous ) {
 	const newDimensions = getDimensions( node, previous.isSticky );
 	return previous.spacerHeight !== newDimensions.spacerHeight ||
 		previous.blockWidth !== newDimensions.blockWidth
