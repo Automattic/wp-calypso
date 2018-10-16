@@ -34,7 +34,7 @@ class StartButton extends React.PureComponent {
 		} = this.props;
 		const tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
 
-		this.props.startImport( siteId, type );
+		startImport( siteId, type );
 
 		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
 			blog_id: siteId,
@@ -56,7 +56,7 @@ class StartButton extends React.PureComponent {
 export default flow(
 	connect(
 		null,
-		{ recordTracksEvent, startImport }
+		{ recordTracksEvent }
 	),
 	localize
 )( StartButton );
