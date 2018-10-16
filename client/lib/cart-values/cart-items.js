@@ -1027,13 +1027,17 @@ export function hasToUpgradeToPayForADomain( selectedSite, cart ) {
 	return false;
 }
 
-export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion ) {
+export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion, domainFirst ) {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
 	}
 
 	if ( isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) {
 		return 'FREE_WITH_PLAN';
+	}
+
+	if ( domainFirst ) {
+		return 'PRICE';
 	}
 
 	if ( isNextDomainFree( cart, suggestion.domain_name ) ) {

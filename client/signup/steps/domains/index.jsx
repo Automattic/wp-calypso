@@ -329,6 +329,7 @@ class DomainsStep extends React.Component {
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
 				offerUnavailableOption={ ! this.props.isDomainOnly && ! this.isDomainsFirstFlow() }
+				domainFirst={ this.isDomainsFirstFlow() }
 				analyticsSection={ this.getAnalyticsSection() }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom={

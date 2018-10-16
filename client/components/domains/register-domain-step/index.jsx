@@ -114,6 +114,7 @@ function getQueryObject( props ) {
 class RegisterDomainStep extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object,
+		domainFirst: PropTypes.bool,
 		onDomainsAvailabilityChange: PropTypes.func,
 		products: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
@@ -136,6 +137,7 @@ class RegisterDomainStep extends React.Component {
 
 	static defaultProps = {
 		analyticsSection: 'domains',
+		domainFirst: false,
 		onAddDomain: noop,
 		onAddMapping: noop,
 		onDomainsAvailabilityChange: noop,
@@ -993,6 +995,7 @@ class RegisterDomainStep extends React.Component {
 				key="domain-search-results" // key is required for CSS transition of content/
 				availableDomain={ availableDomain }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+				domainFirst={ this.props.domainFirst }
 				lastDomainSearched={ lastDomainSearched }
 				lastDomainStatus={ lastDomainStatus }
 				lastDomainIsTransferrable={ lastDomainIsTransferrable }
