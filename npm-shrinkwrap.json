@@ -2111,7 +2111,6 @@
       "version": "1.1.2",
       "resolved": "https://registry.npmjs.org/@wordpress/babel-plugin-import-jsx-pragma/-/babel-plugin-import-jsx-pragma-1.1.2.tgz",
       "integrity": "sha512-0w43MP56yecSLUNr1ayus2bFM7y2k9O1SpFvc7c6bAlabJ6euTpkZscVIZSjzTR+d90wSu1BclzxiX58Y4oAwQ==",
-      "dev": true,
       "requires": {
         "@babel/runtime": "^7.0.0"
       }
