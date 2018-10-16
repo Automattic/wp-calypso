@@ -35,28 +35,19 @@ import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/p
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const changeCommentStatus = action => ( dispatch, getState ) => {
+const changeCommentStatus = action => {
 	const { siteId, commentId, status } = action;
-	const previousStatus = get(
-		getSiteComment( getState(), action.siteId, action.commentId ),
-		'status'
-	);
 
-	dispatch(
-		http(
-			{
-				method: 'POST',
-				path: `/sites/${ siteId }/comments/${ commentId }`,
-				apiVersion: '1.1',
-				body: {
-					status,
-				},
+	return http(
+		{
+			method: 'POST',
+			path: `/sites/${ siteId }/comments/${ commentId }`,
+			apiVersion: '1.1',
+			body: {
+				status,
 			},
-			{
-				...action,
-				meta: Object.assign( {}, action.meta, { comment: { previousStatus } } ),
-			}
-		)
+		},
+		action
 	);
 };
 
