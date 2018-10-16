@@ -117,7 +117,7 @@
     "html-loader": "0.5.5",
     "html-to-react": "1.3.3",
     "html-webpack-plugin": "3.2.0",
-    "i18n-calypso": "2.0.1",
+    "i18n-calypso": "3.0.0",
     "ignore-loader": "0.1.2",
     "immutability-helper": "2.8.1",
     "immutable": "3.7.6",
