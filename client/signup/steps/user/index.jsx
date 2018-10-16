@@ -295,8 +295,10 @@ export class UserStep extends Component {
 			<StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
-				headerText={ this.getHeaderText() }
-				subHeaderText={ this.state.subHeaderText }
+				headerText={ this.props.translate( 'Create your account.' ) }
+				subHeaderText={ this.props.translate(
+					"Fill in some basic info - we'll create your WordPress.com account now, and you can finish sign up any time."
+				) }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 				signupProgress={ this.props.signupProgress }

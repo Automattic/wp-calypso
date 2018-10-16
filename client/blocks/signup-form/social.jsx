@@ -15,7 +15,6 @@ import classNames from 'classnames';
  */
 import Card from 'components/card';
 import config from 'config';
-import { preventWidows } from 'lib/formatting';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -56,13 +55,7 @@ class SocialSignupForm extends Component {
 					this.props.showFirst && 'signup-form__social-top'
 				) }
 			>
-				<p>
-					{ preventWidows(
-						this.props.showFirst
-							? this.props.translate( 'Connect your existing profile to get started.' )
-							: this.props.translate( 'Or connect your existing profile to get started faster.' )
-					) }
-				</p>
+				<h3>Use your existing Google account…</h3>
 
 				<div className="signup-form__social-buttons">
 					<GoogleLoginButton

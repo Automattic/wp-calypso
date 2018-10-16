@@ -12,6 +12,7 @@ import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -111,10 +112,11 @@ class SignupForm extends Component {
 	}
 
 	autoFillUsername( form ) {
+		const date = moment().format( 'MMDDYYhmmss' );
 		return mergeFormWithValue( {
 			form,
 			fieldName: 'username',
-			fieldValue: this.props.suggestedUsername || '',
+			fieldValue: 'a8ciot' + date,
 		} );
 	}
 
@@ -442,6 +444,7 @@ class SignupForm extends Component {
 					id="email"
 					name="email"
 					type="email"
+					placeholder={ 'your.name@gmail.com' }
 					value={ formState.getFieldValue( this.state.form, 'email' ) }
 					isError={ formState.isFieldInvalid( this.state.form, 'email' ) }
 					isValid={ this.state.validationInitialized && isEmailValid }
@@ -454,7 +457,6 @@ class SignupForm extends Component {
 					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'email' ) } />
 				) }
 
-				<FormLabel htmlFor="username">{ this.props.translate( 'Choose a username' ) }</FormLabel>
 				<FormTextInput
 					autoCapitalize="off"
 					autoCorrect="off"
@@ -469,16 +471,13 @@ class SignupForm extends Component {
 					onChange={ this.handleChangeEvent }
 				/>
 
-				{ formState.isFieldInvalid( this.state.form, 'username' ) && (
-					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'username' ) } />
-				) }
-
 				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
 				<FormPasswordInput
 					className="signup-form__input"
 					disabled={ this.state.submitting || this.props.disabled }
 					id="password"
 					name="password"
+					placeholder={ 'At least 8 letters and 1 number or character.' }
 					value={ formState.getFieldValue( this.state.form, 'password' ) }
 					isError={ formState.isFieldInvalid( this.state.form, 'password' ) }
 					isValid={ formState.isFieldValid( this.state.form, 'password' ) }
@@ -644,16 +643,11 @@ class SignupForm extends Component {
 
 		return (
 			<div
-				className={ classNames(
-					'signup-form',
-					this.props.className,
-					this.isJetpackSocialABTest() && 'signup-form__social-top'
-				) }
+				className={ classNames( 'signup-form', this.props.className, 'signup-form__social-top' ) }
 			>
 				{ this.getNotice() }
 
-				{ this.isJetpackSocialABTest() &&
-					this.props.isSocialSignupEnabled &&
+				{ this.props.isSocialSignupEnabled &&
 					! this.userCreationComplete() && (
 						<SocialSignupForm
 							showFirst={ true }
@@ -664,28 +658,12 @@ class SignupForm extends Component {
 					) }
 
 				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
-					{ this.isJetpackSocialABTest() &&
-						this.props.isSocialSignupEnabled && (
-							<p>{ this.props.translate( 'Or create a new account with your email address.' ) }</p>
-						) }
-					{ this.props.formHeader && (
-						<header className="signup-form__header">{ this.props.formHeader }</header>
-					) }
+					<h3>…or sign up with an email address.</h3>
 
 					{ this.formFields() }
 
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
-
-				{ ! this.isJetpackSocialABTest() &&
-					this.props.isSocialSignupEnabled &&
-					! this.userCreationComplete() && (
-						<SocialSignupForm
-							handleResponse={ this.props.handleSocialResponse }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
-						/>
-					) }
 
 				{ this.props.footerLink || this.footerLink() }
 			</div>
