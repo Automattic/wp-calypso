@@ -85,9 +85,7 @@ class SiteSettingsImport extends Component {
 
 	state = getImporterState();
 
-	onceAutoStartImport = once( ( siteId, importerType ) =>
-		this.props.startImport( siteId, importerType )
-	);
+	onceAutoStartImport = once( ( siteId, importerType ) => startImport( siteId, importerType ) );
 
 	componentDidMount() {
 		ImporterStore.on( 'change', this.updateState );
@@ -284,14 +282,11 @@ class SiteSettingsImport extends Component {
 }
 
 export default flow(
-	connect(
-		state => ( {
-			engine: getSelectedImportEngine( state ),
-			fromSite: getImporterSiteUrl( state ),
-			site: getSelectedSite( state ),
-			siteSlug: getSelectedSiteSlug( state ),
-		} ),
-		{ startImport }
-	),
+	connect( state => ( {
+		engine: getSelectedImportEngine( state ),
+		fromSite: getImporterSiteUrl( state ),
+		site: getSelectedSite( state ),
+		siteSlug: getSelectedSiteSlug( state ),
+	} ) ),
 	localize
 )( SiteSettingsImport );
