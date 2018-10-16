@@ -17,7 +17,7 @@ import moment from 'moment';
  */
 import wpLib from 'lib/wp';
 import config from 'config';
-import { validateImportUrl } from './url-validation';
+import { validateImportUrl } from 'lib/importers/url-validation';
 
 const wpcom = wpLib.undocumented();
 

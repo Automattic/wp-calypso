@@ -29,8 +29,12 @@ import {
 	getSiteDetails,
 	isUrlInputDisabled,
 } from 'state/importer-nux/temp-selectors';
-import { validateImportUrl } from '../../../my-sites/importer/site-importer/url-validation';
+import { validateImportUrl } from 'lib/importers/url-validation';
 import { recordTracksEvent } from 'state/analytics/actions';
+import {
+	SITE_IMPORTER_ERR_BAD_REMOTE,
+	SITE_IMPORTER_ERR_INVALID_URL,
+} from 'lib/importers/constants';
 
 class ImportURLStepComponent extends Component {
 	state = {
@@ -107,7 +111,9 @@ class ImportURLStepComponent extends Component {
 	getUrlMessage = () => {
 		if ( this.state.urlValidationMessage ) {
 			return this.state.urlValidationMessage;
-		} else if ( this.props.isSiteImportableError ) {
+		}
+
+		if ( this.props.isSiteImportableError ) {
 			return this.getIsSiteImportableError();
 		}
 
@@ -122,10 +128,10 @@ class ImportURLStepComponent extends Component {
 		const { isSiteImportableError, translate } = this.props;
 
 		switch ( isSiteImportableError.code ) {
-			case 1000001:
+			case SITE_IMPORTER_ERR_INVALID_URL:
 				return translate( 'This does not appear to be a valid URL or website address.' );
 			// @TODO differentiate an unreachable site from one that's not compatible.
-			case 1000002:
+			case SITE_IMPORTER_ERR_BAD_REMOTE:
 				return translate(
 					"We're not able to reach that site at this time, or it's not compatible with our URL importer."
 				);
@@ -177,7 +183,7 @@ class ImportURLStepComponent extends Component {
 							busy={ isLoading }
 							type="submit"
 						>
-							{ isLoading ? translate( 'Checking' ) + '...' : translate( 'Continue' ) }
+							{ isLoading ? translate( 'Checking' ) : translate( 'Continue' ) }
 						</FormButton>
 					</form>
 					{ showUrlMessage && urlMessage ? (
@@ -231,9 +237,6 @@ class ImportURLStepComponent extends Component {
 
 	render() {
 		const { flowName, isLoading, positionInFlow, signupProgress, stepName, translate } = this.props;
-		const noticeText = translate(
-			"Please wait, we're checking to see if we can import this site."
-		);
 
 		return (
 			<div className="import-url">
@@ -243,7 +246,7 @@ class ImportURLStepComponent extends Component {
 						status="is-info"
 						icon="info"
 						isLoading={ true }
-						text={ noticeText }
+						text={ translate( "Please wait, we're checking to see if we can import this site." ) }
 						showDismiss={ false }
 					/>
 				) }
