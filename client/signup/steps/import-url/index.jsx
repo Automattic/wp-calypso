@@ -162,6 +162,7 @@ class ImportURLStepComponent extends Component {
 		const { showUrlMessage } = this.state;
 		const urlMessage = this.getUrlMessage();
 		const helpPage = 'https://en.support.wordpress.com/import/';
+		const exampleWixUrl = 'https://username.wixsite.com/my-site';
 
 		return (
 			<Fragment>
@@ -169,7 +170,7 @@ class ImportURLStepComponent extends Component {
 					<form className="import-url__form" onSubmit={ this.handleSubmit }>
 						<FormTextInput
 							className="import-url__url-input"
-							placeholder="https://example.wixsite.com/mysite"
+							placeholder={ exampleWixUrl }
 							disabled={ isLoading }
 							defaultValue={ urlInputValue }
 							onChange={ this.handleInputChange }
@@ -211,7 +212,7 @@ class ImportURLStepComponent extends Component {
 						} ) }
 						<li className="import-url__example-url">https://example.com</li>
 
-						<li className="import-url__example-url">https://account.wixsite.com/my-site</li>
+						<li className="import-url__example-url">{ exampleWixUrl }</li>
 					</ul>
 					<ExampleDomainBrowser className="import-url__example-browser" />
 				</div>

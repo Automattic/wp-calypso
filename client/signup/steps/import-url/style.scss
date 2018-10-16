@@ -59,11 +59,15 @@
 		display: flex;
 		flex-flow: row wrap;
 		justify-content: center;
-		max-width: 650px;
-		margin: 0 auto 40px;
+		margin: 0 -10px 40px;
 
 		@include breakpoint( ">660px" ) {
 			margin-bottom: 48px;
+		}
+
+		& > * {
+			padding-left: 20px;
+			padding-right: 20px;
 		}
 	}
 
@@ -81,10 +85,6 @@
 		&:first-of-type {
 			padding-top: 8px;
 		}
-	}
-
-	&__example-browser {
-		margin-left: 40px;
 	}
 
 	&__escape {
