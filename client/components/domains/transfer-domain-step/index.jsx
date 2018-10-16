@@ -18,7 +18,7 @@ import {
 	checkAuthCode,
 	checkDomainAvailability,
 	checkInboundTransferStatus,
-	getDomainPrice,
+	getRawDomainPrice,
 	getDomainProductSlug,
 	getFixedDomainSearch,
 	getTld,
@@ -50,6 +50,7 @@ import {
 	isNextDomainFree,
 	hasToUpgradeToPayForADomain,
 } from 'lib/cart-values/cart-items';
+import formatCurrency, { getCurrencyObject } from 'lib/format-currency';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -158,8 +159,13 @@ class TransferDomainStep extends React.Component {
 		const productSlug = getDomainProductSlug( searchQuery );
 		const domainsWithPlansOnlyButNoPlan =
 			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
+		const rawDomainPrice = getRawDomainPrice( productSlug, productsList );
 
-		let domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
+		let domainProductPrice = formatCurrency( rawDomainPrice, currencyCode, { precision: 0 } );
+
+		if ( rawDomainPrice - getCurrencyObject( rawDomainPrice, currencyCode ).integer > 0 ) {
+			domainProductPrice = formatCurrency( rawDomainPrice, currencyCode );
+		}
 
 		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
 			domainProductPrice = translate( 'Free with your plan' );

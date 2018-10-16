@@ -283,6 +283,15 @@ function getDomainPrice( slug, productsList, currencyCode ) {
 	return price;
 }
 
+function getRawDomainPrice( slug, productsList ) {
+	let price = get( productsList, [ slug, 'cost' ], null );
+	if ( price ) {
+		price += get( productsList, [ 'domain_map', 'cost' ], 0 );
+	}
+
+	return price;
+}
+
 function getAvailableTlds( query = {} ) {
 	return wpcom.undocumented().getAvailableTlds( query );
 }
@@ -294,6 +303,7 @@ export {
 	checkDomainAvailability,
 	checkInboundTransferStatus,
 	getDomainPrice,
+	getRawDomainPrice,
 	getDomainProductSlug,
 	getFixedDomainSearch,
 	getGoogleAppsSupportedDomains,
