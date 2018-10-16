@@ -9,7 +9,6 @@ import { has, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import GutenbergEditor from 'gutenberg/editor/main';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -68,6 +67,7 @@ export const post = ( context, next ) => {
 		}
 
 		registerDataPlugins( userId );
+		const GutenbergEditor = require( 'gutenberg/editor/main' ).default;
 
 		context.primary = (
 			<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />
