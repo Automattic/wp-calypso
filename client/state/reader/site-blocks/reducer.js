@@ -63,6 +63,28 @@ export const items = createReducer(
 	}
 );
 
+export const currentPage = createReducer( 1, {
+	[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
+		if ( ! action.payload ) {
+			return state;
+		}
+
+		return action.payload.page;
+	},
+} );
+
+export const lastPage = createReducer( null, {
+	[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
+		if ( ! action.payload || action.payload.count > 0 ) {
+			return state;
+		}
+
+		return action.payload.page;
+	},
+} );
+
 export default combineReducers( {
 	items,
+	currentPage,
+	lastPage,
 } );
