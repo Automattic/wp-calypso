@@ -30,7 +30,7 @@
 .example-domain-suggestions__browser {
 	position: absolute;
 		top: 0;
-	right: 0;
+		right: 0;
 	width: 300px;
 
 	@include breakpoint( "<660px" ) {
