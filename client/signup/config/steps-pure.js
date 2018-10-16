@@ -144,8 +144,8 @@ export function generateSteps( {
 		plans: {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],
-			providesDependencies: [ 'cartItem', 'privacyItem' ],
+			/*dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],*/
+			providesDependencies: [ 'plans' ],
 		},
 
 		'plans-store-nux': {
