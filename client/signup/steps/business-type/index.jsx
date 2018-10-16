@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +27,7 @@ class BusinessType extends Component {
 		super( props );
 		this.state = {
 			query: '',
-			siteTopicValue: '',
+			siteTopicValue: get( this.props, 'signupProgress[1].providedDependencies.businessType', '' ),
 		};
 	}
 
@@ -135,7 +136,7 @@ class BusinessType extends Component {
 			},
 			[],
 			{
-				businessType: 'boom',
+				businessType: this.state.siteTopicValue,
 			}
 		);
 

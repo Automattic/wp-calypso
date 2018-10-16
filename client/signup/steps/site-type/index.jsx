@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +25,7 @@ class SiteType extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			checkedRadio: false,
+			checkedRadio: get( this.props, 'signupProgress[0].providedDependencies.siteType', '' ),
 		};
 	}
 
@@ -44,7 +45,7 @@ class SiteType extends Component {
 			},
 			[],
 			{
-				siteType: 'boom',
+				siteType: this.state.checkedRadio,
 			}
 		);
 

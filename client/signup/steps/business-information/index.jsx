@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +26,11 @@ class BusinessInformation extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			businessInformation: '',
+			businessInformation: get(
+				this.props,
+				'signupProgress[3].providedDependencies.businessInformation',
+				{}
+			),
 		};
 	}
 
@@ -41,7 +46,7 @@ class BusinessInformation extends Component {
 			},
 			[],
 			{
-				businessInformation: 'boom',
+				businessInformation: this.state.businessInformation,
 			}
 		);
 
@@ -64,7 +69,7 @@ class BusinessInformation extends Component {
 									id="name"
 									name="name"
 									placeholder={ translate( 'Business Name' ) }
-									//onChange={ this.handleChangeEvent }
+									onChange={ this.handleChangeEvent }
 								/>
 								<FormLabel htmlFor="name">
 									{ translate( 'This will be used for the title of your site.' ) }

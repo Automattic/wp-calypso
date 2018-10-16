@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +25,7 @@ class BusinessNeeds extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			businessNeeds: '',
+			businessNeeds: get( this.props, 'signupProgress[2].providedDependencies.businessNeeds', '' ),
 		};
 	}
 
@@ -63,7 +64,7 @@ class BusinessNeeds extends Component {
 			},
 			[],
 			{
-				businessNeeds: 'boom',
+				businessNeeds: this.state.businessNeeds,
 			}
 		);
 
