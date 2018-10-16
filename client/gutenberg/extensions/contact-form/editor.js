@@ -45,16 +45,16 @@ class GrunionForm extends Component {
 		this.onChangeSubmit = this.onChangeSubmit.bind( this );
 	}
 
-	onChangeSubject( x ) {
-		this.props.setAttributes( { subject: x } );
+	onChangeSubject( subject ) {
+		this.props.setAttributes( { subject } );
 	}
 
-	onChangeTo( x ) {
-		this.props.setAttributes( { to: x } );
+	onChangeTo( to ) {
+		this.props.setAttributes( { to } );
 	}
 
-	onChangeSubmit( x ) {
-		this.props.setAttributes( { submit_button_text: x } );
+	onChangeSubmit( submit_button_text ) {
+		this.props.setAttributes( { submit_button_text } );
 	}
 
 	render() {
@@ -63,29 +63,29 @@ class GrunionForm extends Component {
 				<InspectorControls>
 					<PanelBody title={ __( 'Submission Details', 'jetpack' ) }>
 						<TextControl
-							label={ __( 'What would you like the subject of the email to be?' ) }
+							label={ __( 'What would you like the subject of the email to be?', 'jetpack' ) }
 							value={ this.props.subject }
 							onChange={ this.onChangeSubject }
 						/>
 						<TextControl
-							label={ __( 'Which email address should we send the submissions to?' ) }
+							label={ __( 'Which email address should we send the submissions to?', 'jetpack' ) }
 							value={ this.props.to }
 							onChange={ this.onChangeTo }
 						/>
 						<TextControl
-							label={ __( 'What should the label on the form’s submit button say?' ) }
+							label={ __( 'What should the label on the form’s submit button say?', 'jetpack' ) }
 							value={ this.props.submit_button_text }
-							placeholder={ __( 'Submit »' ) }
+							placeholder={ __( 'Submit »', 'jetpack' ) }
 							onChange={ this.onChangeSubmit }
 						/>
 					</PanelBody>
 				</InspectorControls>
-				<div className="grunion-form">
-					{this.props.children}
+				<div className={ this.props.className + ' grunion-form' }>
+					{ this.props.children }
 					<TextControl
 						className="button button-primary button-default grunion-submit-button"
 						value={ this.props.submit_button_text }
-						placeholder={ __( 'Submit »' ) }
+						placeholder={ __( 'Submit »', 'jetpack' ) }
 						onChange={ this.onChangeSubmit }
 					/>
 				</div>
@@ -97,7 +97,7 @@ class GrunionForm extends Component {
 function GrunionFieldRequiredToggle( props ) {
 	return (
 		<ToggleControl
-			label={ __( 'Required' ) }
+			label={ __( 'Required', 'jetpack' ) }
 			checked={ props.required }
 			onChange={ props.onChange }
 		/>
@@ -110,8 +110,8 @@ class GrunionFieldSettings extends Component {
 		this.onChangeRequired = this.onChangeRequired.bind( this );
 	}
 
-	onChangeRequired( x ) {
-		this.props.setAttributes( { required: x } );
+	onChangeRequired( required ) {
+		this.props.setAttributes( { required } );
 	}
 
 	render() {
@@ -134,8 +134,8 @@ class GrunionFieldLabel extends Component {
 		this.onChangeLabel = this.onChangeLabel.bind( this );
 	}
 
-	onChangeLabel( x ) {
-		this.props.setAttributes( { label: x.target.value } );
+	onChangeLabel( event ) {
+		this.props.setAttributes( { label: event.target.value } );
 	}
 
 	render() {
@@ -147,7 +147,7 @@ class GrunionFieldLabel extends Component {
 					className='grunion-field-label'
 					onChange={ this.onChangeLabel }
 				/>
-				{ this.props.required && <span className="required">{ __( '(required)' ) }</span> }
+				{ this.props.required && <span className="required">{ __( '(required)', 'jetpack' ) }</span> }
 			</Fragment>
 		);
 	}
@@ -168,7 +168,7 @@ function GrunionField( props ) {
 						label={ props.label }
 						setAttributes={ props.setAttributes }
 					/> }
-					disabled={ true }
+					disabled
 				/>
 			</div>
 		</Fragment>
@@ -189,7 +189,7 @@ function GrunionFieldTextarea( props ) {
 						label={ props.label }
 						setAttributes={ props.setAttributes }
 					/> }
-					disabled={ true }
+					disabled
 				/>
 			</div>
 		</Fragment>
@@ -210,7 +210,7 @@ function GrunionFieldCheckbox( props ) {
 						label={ props.label }
 						setAttributes={ props.setAttributes }
 					/> }
-					disabled={ true }
+					disabled
 				/>
 			</div>
 		</Fragment>
@@ -260,9 +260,9 @@ class GrunionFieldMultiple extends Component {
 					</ol>
 					<IconButton
 						icon="insert"
-						label={ __( 'Insert option' ) }
+						label={ __( 'Insert option', 'jetpack' ) }
 						onClick={ this.onChangeOption }
-					> { __( 'Add' ) }</IconButton>
+					> { __( 'Add', 'jetpack' ) }</IconButton>
 				</div>
 			</Fragment>
 		)
@@ -276,8 +276,8 @@ class GrunionOption extends Component {
 		this.onDeleteOption = this.onDeleteOption.bind( this );
 	}
 
-	onChangeOption( x ) {
-		this.props.onChangeOption( this.props.index, x.target.value );
+	onChangeOption( event ) {
+		this.props.onChangeOption( this.props.index, event.target.value );
 	}
 
 	onDeleteOption() {
@@ -291,12 +291,12 @@ class GrunionOption extends Component {
 					type="text"
 					className="option"
 					value={ this.props.option }
-					placeholder={ __( 'Enter your option value here…' ) }
+					placeholder={ __( 'Enter your option value here…', 'jetpack' ) }
 					onChange={ this.onChangeOption }
 				/>
 				<IconButton
 					icon="no"
-					label={ __( 'Remove option' ) }
+					label={ __( 'Remove option', 'jetpack' ) }
 					onClick={ this.onDeleteOption }
 				/>
 			</li>
@@ -358,7 +358,7 @@ registerBlockType( 'grunion/form', {
 		},
 		submit_button_text: {
 			type: 'string',
-			'default': __( 'Submit »' )
+			'default': __( 'Submit »', 'jetpack' )
 		}
 	},
 
@@ -376,10 +376,10 @@ registerBlockType( 'grunion/form', {
 					allowedBlocks={ [] }
 					templateLock={false}
 					template={ [
-						[ 'grunion/field-name', { label: __( 'Name' ) } ],
-						[ 'grunion/field-email', { label: __( 'Email' ) } ],
-						[ 'grunion/field-text', { label: __( 'Subject' ) } ],
-						[ 'grunion/field-textarea', { label: __( 'Message' ) } ]
+						[ 'grunion/field-name', { label: __( 'Name', 'jetpack' ) } ],
+						[ 'grunion/field-email', { label: __( 'Email', 'jetpack' ) } ],
+						[ 'grunion/field-text', { label: __( 'Subject', 'jetpack' ) } ],
+						[ 'grunion/field-textarea', { label: __( 'Message', 'jetpack' ) } ]
 					] }
 				/>
 			</GrunionForm>
@@ -403,7 +403,7 @@ const FieldDefaults = {
 	attributes: {
 		label: {
 			type: 'string',
-			'default': __( 'Type here...' )
+			'default': __( 'Type here...', 'jetpack' )
 		},
 		required: {
 			type: 'boolean',
