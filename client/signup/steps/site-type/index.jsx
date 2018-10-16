@@ -60,10 +60,9 @@ class SiteType extends Component {
 				<div className="site-type__form-wrapper">
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
-							<h3>{ translate( 'Choose the type of site you want' ) }</h3>
-							{ translate( "Don't stress, you can change this later." ) }
+							<h3>{ translate( 'Pick the option that best describes you' ) }</h3>
 							<FormFieldset>
-								<FormLabel>
+								<FormLabel className="site-type__option">
 									<FormRadio
 										value="blogger"
 										checked={ 'blogger' === this.state.checkedRadio }
@@ -75,7 +74,7 @@ class SiteType extends Component {
 									</span>
 								</FormLabel>
 
-								<FormLabel>
+								<FormLabel className="site-type__option">
 									<FormRadio
 										value="business"
 										checked={ 'business' === this.state.checkedRadio }
@@ -87,7 +86,7 @@ class SiteType extends Component {
 									</span>
 								</FormLabel>
 
-								<FormLabel>
+								<FormLabel className="site-type__option">
 									<FormRadio
 										value="professional"
 										checked={ 'professional' === this.state.checkedRadio }
@@ -99,7 +98,7 @@ class SiteType extends Component {
 									</span>
 								</FormLabel>
 
-								<FormLabel>
+								<FormLabel className="site-type__option">
 									<FormRadio
 										value="educator"
 										checked={ 'educator' === this.state.checkedRadio }
@@ -111,7 +110,7 @@ class SiteType extends Component {
 									</span>
 								</FormLabel>
 
-								<FormLabel>
+								<FormLabel className="site-type__option">
 									<FormRadio
 										value="non-profit"
 										checked={ 'non-profit' === this.state.checkedRadio }
