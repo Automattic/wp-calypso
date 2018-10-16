@@ -945,11 +945,12 @@ class RegisterDomainStep extends React.Component {
 	renderExampleSuggestions() {
 		return (
 			<ExampleDomainSuggestions
-				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-				url={ this.getUseYourDomainUrl() }
-				path={ this.props.path }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+				offerUnavailableOption={ this.props.offerUnavailableOption }
+				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
+				path={ this.props.path }
 				products={ this.props.products }
+				url={ this.getUseYourDomainUrl() }
 			/>
 		);
 	}
