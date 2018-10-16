@@ -28,6 +28,7 @@ import {
 	SITE_PLUGIN_UPDATED,
 } from 'state/action-types';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants';
+import 'state/data-layer/wpcom/sites/gutenberg';
 
 /**
  * Returns an action object to be used in signalling that a site has been
