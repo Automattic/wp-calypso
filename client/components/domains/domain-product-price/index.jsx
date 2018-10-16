@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { replace } from 'lodash';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -13,7 +14,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
+import {
+	currentUserHasFlag,
+	getCurrentUser,
+	getCurrentUserCurrencyCode,
+} from 'state/current-user/selectors';
+import formatCurrency, { getCurrencyObject } from 'lib/format-currency';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 
 class DomainProductPrice extends React.Component {
@@ -40,11 +46,23 @@ class DomainProductPrice extends React.Component {
 		);
 	}
 
+	renderFormattedPrice() {
+		const { price, currencyCode } = this.props;
+		const rawPrice = replace( price, /[^0-9\.]/g, '' );
+		const priceObject = getCurrencyObject( rawPrice, currencyCode );
+
+		if ( rawPrice - priceObject.integer > 0 ) {
+			return formatCurrency( rawPrice, currencyCode );
+		}
+
+		return formatCurrency( rawPrice, currencyCode, { precision: 0 } );
+	}
+
 	renderFreeWithPlanPrice() {
 		return (
 			<span className="domain-product-price__price">
 				{ this.props.translate( '%(cost)s {{small}}/year{{/small}}', {
-					args: { cost: this.props.price },
+					args: { cost: this.renderFormattedPrice() },
 					components: { small: <small /> },
 				} ) }
 			</span>
@@ -84,7 +102,7 @@ class DomainProductPrice extends React.Component {
 			<div className="domain-product-price">
 				<span className="domain-product-price__price">
 					{ this.props.translate( '%(cost)s {{small}}/year{{/small}}', {
-						args: { cost: this.props.price },
+						args: { cost: this.renderFormattedPrice() },
 						components: { small: <small /> },
 					} ) }
 				</span>
@@ -118,6 +136,7 @@ class DomainProductPrice extends React.Component {
 }
 
 export default connect( state => ( {
+	currencyCode: getCurrentUserCurrencyCode( state ),
 	domainsWithPlansOnly: getCurrentUser( state )
 		? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 		: true,
