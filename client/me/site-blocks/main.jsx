@@ -19,8 +19,11 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteBlocks from 'components/data/query-site-blocks';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
+import getSiteBlocksCurrentPage from 'state/selectors/get-site-blocks-current-page';
+import getSiteBlocksLastPage from 'state/selectors/get-site-blocks-last-page';
 import SiteBlockListItem from './list-item';
 import InfiniteList from 'components/infinite-list';
+import { requestSiteBlocks } from 'state/reader/site-blocks/actions';
 
 /**
  * Style dependencies
@@ -28,7 +31,15 @@ import InfiniteList from 'components/infinite-list';
 import './style.scss';
 
 class SiteBlockList extends Component {
-	fetchNextPage() {}
+	fetchNextPage = () => {
+		const { currentPage, lastPage } = this.props;
+
+		if ( currentPage === lastPage ) {
+			return;
+		}
+
+		//this.props.requestSiteBlocks( { page: currentPage + 1 } );
+	};
 
 	renderPlaceholders() {}
 
@@ -41,7 +52,7 @@ class SiteBlockList extends Component {
 	};
 
 	render() {
-		const { translate, isLoading } = this.props;
+		const { translate, isLoading, currentPage, lastPage } = this.props;
 		const containerClasses = classnames( 'site-block-list', 'main', {
 			'is-loading': isLoading,
 		} );
@@ -67,7 +78,7 @@ class SiteBlockList extends Component {
 						renderLoadingPlaceholders={ this.renderPlaceholders }
 						renderItem={ this.renderItem }
 						fetchingNextPage={ false }
-						lastPage={ true }
+						lastPage={ currentPage === lastPage }
 						guessedItemHeight={ 126 }
 						getItemRef={ this.getItemRef }
 					/>
@@ -77,8 +88,13 @@ class SiteBlockList extends Component {
 	}
 }
 
-export default connect( state => {
-	return {
-		blockedSites: getBlockedSites( state ),
-	};
-} )( localize( SiteBlockList ) );
+export default connect(
+	state => {
+		return {
+			blockedSites: getBlockedSites( state ),
+			currentPage: getSiteBlocksCurrentPage( state ),
+			lastPage: getSiteBlocksLastPage( state ),
+		};
+	},
+	{ requestSiteBlocks }
+)( localize( SiteBlockList ) );
