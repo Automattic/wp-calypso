@@ -50,13 +50,15 @@ class ActivityLogAggregatedItem extends Component {
 
 		return addQueryArgs( query, window.location.pathname + window.location.hash );
 	}
-	trackContentLinkClick = ( {
-		target: {
-			dataset: { activity, section, intent },
-		},
-	} ) => {
-		const params = { activity, section, intent };
-		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', params );
+	trackContentLinkClick = () => {
+		const { activity } = this.props;
+		const section = activity.activityGroup;
+		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', {
+			activity: activity.activityName,
+			section,
+			intent: 'toggle',
+			is_aggregate: true,
+		} );
 	};
 
 	renderHeader() {
