@@ -138,7 +138,7 @@ class Signup extends React.Component {
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
 
-		this.updateLoadingScreenStartTime();
+		//this.updateLoadingScreenStartTime();
 
 		if ( canResumeFlow( this.props.flowName, this.props.progress ) ) {
 			// Resume progress if possible

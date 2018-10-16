@@ -8,13 +8,13 @@
 
 /* WP.com Logo */
 .signup-process-screen__wpcom-logo {
-	height: 120px;
-	width: 120px;
+	height: 100px;
+	width: 100px;
 	display: block;
-	margin: 10px auto 40px auto;
+	margin: 50px auto 60px auto;
 	border-radius: 100%;
 	box-shadow: 0 0 10px 10px rgba(0,0,0,0.05);
-	fill: $white;
+	fill: #C8D7E1;
 	background: $blue-signup-dark;
 
 	@include breakpoint( "<660px" ) {
