@@ -19,6 +19,7 @@ import sharingButtons from './sharing-buttons/reducer';
 import mediaStorage from './media-storage/reducer';
 import blogStickers from './blog-stickers/reducer';
 import {
+	EDITOR_TYPE_SET,
 	MEDIA_DELETE,
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,
@@ -213,6 +214,20 @@ export function items( state = null, action ) {
 						plugins: siteUpdates.plugins - 1,
 						total: siteUpdates.total - 1,
 					},
+				},
+			};
+		}
+
+		case EDITOR_TYPE_SET: {
+			const { siteId } = action;
+			if ( ! state[ siteId ] ) {
+				return state;
+			}
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					editor: action.editor,
 				},
 			};
 		}

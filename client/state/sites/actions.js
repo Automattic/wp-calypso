@@ -12,6 +12,7 @@ import i18n from 'i18n-calypso';
  */
 import wpcom from 'lib/wp';
 import {
+	EDITOR_TYPE_SET,
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,
 	SITE_DELETE_RECEIVE,
@@ -185,4 +186,10 @@ export function deleteSite( siteId ) {
 export const sitePluginUpdated = siteId => ( {
 	type: SITE_PLUGIN_UPDATED,
 	siteId,
+} );
+
+export const setSiteEditor = ( siteId, editor ) => ( {
+	type: EDITOR_TYPE_SET,
+	siteId,
+	editor,
 } );
