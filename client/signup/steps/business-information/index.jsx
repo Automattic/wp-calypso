@@ -69,7 +69,7 @@ class BusinessInformation extends Component {
 								<FormLabel htmlFor="name">
 									{ translate( 'Business Name' ) }
 
-									<InfoPopover position="top">
+									<InfoPopover className="business-information__info-popover" position="top">
 										{ translate( 'This will be used for the title of your site.' ) }
 									</InfoPopover>
 								</FormLabel>
@@ -84,7 +84,7 @@ class BusinessInformation extends Component {
 							<FormFieldset>
 								<FormLabel htmlFor="address">
 									{ translate( 'Address' ) }
-									<InfoPopover position="top">
+									<InfoPopover className="business-information__info-popover" position="top">
 										{ translate( 'Where can people find your business?' ) }
 									</InfoPopover>
 								</FormLabel>
@@ -99,7 +99,7 @@ class BusinessInformation extends Component {
 							<FormFieldset>
 								<FormLabel htmlFor="phone">
 									{ translate( 'Phone number' ) }
-									<InfoPopover position="top">
+									<InfoPopover className="business-information__info-popover" position="top">
 										{ translate( 'How can people contact you?' ) }
 									</InfoPopover>
 								</FormLabel>
