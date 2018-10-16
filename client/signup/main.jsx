@@ -80,7 +80,7 @@ import WpcomLoginForm from './wpcom-login-form';
  * Constants
  */
 const debug = debugModule( 'calypso:signup' );
-const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 3000;
+const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 0;
 
 class Signup extends React.Component {
 	static displayName = 'Signup';
@@ -496,6 +496,9 @@ class Signup extends React.Component {
 	}
 
 	getFlowLength() {
+		if ( [ 'main-onboarding', 'main-onboarding-continue' ].includes( this.props.flowName ) ) {
+			return 6;
+		}
 		return flows.getFlow( this.props.flowName ).steps.length;
 	}
 

@@ -38,7 +38,7 @@ export class SignupProcessingScreen extends Component {
 		hasPaidSubscription: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const dependencies = nextProps.signupDependencies;
 
 		if ( isEmpty( dependencies ) ) {
@@ -56,7 +56,7 @@ export class SignupProcessingScreen extends Component {
 
 	renderConfirmationNotice() {
 		// we want these flows to stay focused, don't try to send them to their inbox
-		if ( [ 'user-first', 'import' ].includes( this.props.flowName ) ) {
+		if ( [ 'user-first', 'main-onboarding', 'import' ].includes( this.props.flowName ) ) {
 			return null;
 		}
 
