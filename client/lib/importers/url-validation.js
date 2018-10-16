@@ -26,7 +26,7 @@ export function validateImportUrl( value ) {
 	try {
 		parsedUrl = parseUrl( value );
 		formattedUrl = url.format( parsedUrl );
-	} catch {
+	} catch ( error ) {
 		return translate( 'Error parsing URL. Please check the URL and try again.' );
 	}
 
