@@ -172,7 +172,7 @@ class ActivityLogAggregatedItem extends Component {
 								href={ this.getViewAllUrl() }
 								compact
 								borderless
-								onClick={ this.trackAggregateViewAll() }
+								onClick={ this.trackAggregateViewAll }
 							>
 								{ translate( 'View All' ) }
 							</Button>
