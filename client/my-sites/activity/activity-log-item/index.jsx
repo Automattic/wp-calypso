@@ -58,13 +58,8 @@ class ActivityLogItem extends Component {
 
 	renderHeader() {
 		const {
-			activityTitle,
-			actorAvatarUrl,
-			actorName,
-			actorRole,
-			actorType,
-			activityMedia,
-		} = this.props.activity;
+			activity: { activityTitle, actorAvatarUrl, actorName, actorRole, actorType, activityMedia },
+		} = this.props;
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
@@ -106,7 +101,6 @@ class ActivityLogItem extends Component {
 	renderItemAction() {
 		const {
 			enableClone,
-			hideRestore,
 			activity: { activityIsRewindable, activityName, activityMeta },
 		} = this.props;
 
@@ -121,10 +115,6 @@ class ActivityLogItem extends Component {
 				return 'bad_credentials' === activityMeta.errorCode
 					? this.renderFixCredsAction()
 					: this.renderHelpAction();
-		}
-
-		if ( ! hideRestore && activityIsRewindable ) {
-			return this.renderRewindAction();
 		}
 	}
 
@@ -148,7 +138,19 @@ class ActivityLogItem extends Component {
 	performCloneAction = () => this.props.cloneOnClick( this.props.activity.activityTs );
 
 	renderRewindAction() {
-		const { createBackup, createRewind, disableRestore, disableBackup, translate } = this.props;
+		const {
+			createBackup,
+			createRewind,
+			disableRestore,
+			disableBackup,
+			hideRestore,
+			activity,
+			translate,
+		} = this.props;
+
+		if ( hideRestore || ! activity.activityIsRewindable ) {
+			return null;
+		}
 
 		return (
 			<div className="activity-log-item__action">
@@ -298,6 +300,7 @@ class ActivityLogItem extends Component {
 						className="activity-log-item__card"
 						expandedSummary={ this.renderItemAction() }
 						header={ this.renderHeader() }
+						actionButton={ this.renderRewindAction() }
 						summary={ this.renderItemAction() }
 					/>
 				</div>
