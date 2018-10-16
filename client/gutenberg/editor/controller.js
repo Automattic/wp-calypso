@@ -37,7 +37,6 @@ function getPostID( context ) {
 function registerDataPlugins( userId ) {
 	const storageKey = 'WP_DATA_USER_' + userId;
 
-	// Load data package plugins
 	use( plugins.persistence, { storageKey: storageKey } );
 	use( plugins.asyncGenerator );
 	use( plugins.controls );
@@ -62,11 +61,9 @@ export const post = ( context, next ) => {
 
 		unsubscribe();
 
-		if ( ! userId ) {
-			return;
-		}
-
 		registerDataPlugins( userId );
+
+		// Avoids initializing core-data store before data package plugins are registered in registerDataPlugins.
 		const GutenbergEditor = require( 'gutenberg/editor/main' ).default;
 
 		context.primary = (
