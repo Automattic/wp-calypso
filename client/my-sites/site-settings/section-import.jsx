@@ -284,7 +284,6 @@ class SiteSettingsImport extends Component {
 }
 
 export default flow(
-	localize,
 	connect(
 		state => ( {
 			engine: getSelectedImportEngine( state ),
@@ -292,8 +291,7 @@ export default flow(
 			site: getSelectedSite( state ),
 			siteSlug: getSelectedSiteSlug( state ),
 		} ),
-		{
-			startImport,
-		}
-	)
+		{ startImport }
+	),
+	localize
 )( SiteSettingsImport );
