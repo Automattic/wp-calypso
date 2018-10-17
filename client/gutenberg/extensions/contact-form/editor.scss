@@ -1,17 +1,20 @@
 
+.jetpack-field-label {
+	&.jetpack-field-label {
+		&.jetpack-field-label {
+			border-color: #fff;
+			font-weight: bold;
+			margin: 0;
+			margin-bottom: 2px;
+			padding-left: 1px;
+			width: calc( 100% - 100px );
 
-.jetpack-field-label.jetpack-field-label.jetpack-field-label {
-	border-color: #fff;
-	font-weight: bold;
-	margin: 0;
-	margin-bottom: 2px;
-	padding-left: 1px;
-	width: calc( 100% - 100px );
-}
-
-.jetpack-field-label.jetpack-field-label.jetpack-field-label:focus,
-.jetpack-field-label.jetpack-field-label.jetpack-field-label:hover {
-	border-color: #8d96a0;
+			&:focus,
+			&:hover {
+				border-color: #8d96a0;
+			}
+		}
+	}
 }
 
 .jetpack-field input:disabled,
@@ -20,65 +23,73 @@
 	padding: 10px 8px;
 }
 
-.jetpack-form .components-base-control * {
-	margin: 0;
+.jetpack-form {
+	.components-base-control * {
+		margin: 0;
+	}
+
+	span.required {
+		float: right;
+	}
 }
 
-.jetpack-form span.required {
-	float: right;
-}
+.editor-block-list__block {
+	&[data-type="jetpack/field-checkbox-multiple"],
+	&[data-type="jetpack/field-radio"],
+	&[data-type="jetpack/field-select"] {
+		ol {
+			list-style-type: none;
 
-.editor-block-list__block[data-type="jetpack/field-checkbox-multiple"] ol,
-.editor-block-list__block[data-type="jetpack/field-radio"] ol,
-.editor-block-list__block[data-type="jetpack/field-select"] ol {
-	list-style-type: none;
-}
-.editor-block-list__block[data-type="jetpack/field-checkbox-multiple"] ol:empty,
-.editor-block-list__block[data-type="jetpack/field-radio"] ol:empty,
-.editor-block-list__block[data-type="jetpack/field-select"] ol:empty {
-	display: none;
-}
-.editor-block-list__block[data-type="jetpack/field-select"] ol {
-	border: 1px solid #8d96a0;
-	border-radius: 4px;
-	padding: 4px;
-}
+			&:empty {
+				display: none;
+			}
+		}
+	}
 
+	&[data-type="jetpack/field-checkbox-multiple"] ol li:before {
+		content: '☐ ';
+	}
 
-.editor-block-list__block input.option {
-	border-color: #fff;
-	width: calc( 100% - 7em );
-	display: inline-block;
-}
-.editor-block-list__block input.option:focus,
-.editor-block-list__block input.option:hover {
-	border-color: #8d96a0;
-}
+	&[data-type="jetpack/field-radio"] ol li:before {
+		content: '🔘 ';
+	}
 
+	&[data-type="jetpack/field-select"] {
+		ol {
+			border: 1px solid #8d96a0;
+			border-radius: 4px;
+			padding: 4px;
+		}
+	}
 
-.editor-block-list__block[data-type="jetpack/field-checkbox-multiple"] ol li:before {
-	content: '☐ ';
-}
-.editor-block-list__block[data-type="jetpack/field-radio"] ol li:before {
-	content: '🔘 ';
-}
+	ol li button.components-icon-button {
+		display: inline-block;
+	}
 
-.editor-block-list__block ol li button.components-icon-button {
-	display: inline-block;
+	input.option {
+		border-color: #fff;
+		width: calc( 100% - 7em );
+		display: inline-block;
+
+		&:focus,
+		&:hover {
+			border-color: #8d96a0;
+		}
+	}
 }
 
 .jetpack-submit-button {
 	padding: 5px;
-}
-.jetpack-submit-button.jetpack-submit-button .components-text-control__input {
-	background: transparent;
-	border: none;
-	outline: none;
-	text-align: center;
-	color: #fff;
-}
+	&.jetpack-submit-button .components-text-control__input {
+		background: transparent;
+		border: none;
+		outline: none;
+		text-align: center;
+		color: #fff;
 
-.jetpack-submit-button.jetpack-submit-button .components-text-control__input:focus,
-.jetpack-submit-button.jetpack-submit-button .components-text-control__input::placeholder{
-	color: #fff;
+		&:focus,
+		&::placeholder {
+			color: #fff;
+		}
+	}
 }
