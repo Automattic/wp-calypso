@@ -221,7 +221,7 @@ export function items( state = null, action ) {
 		case EDITOR_TYPE_SET: {
 			const { siteId, editor } = action;
 			if ( state[ siteId ] ) {
-				const validatedEditor = ( 'classic' || 'gutenberg' ) === editor ? editor : 'classic';
+				const validatedEditor = editor.match( /^(classic|gutenberg)$/ ) ? editor : 'classic';
 				return {
 					...state,
 					[ siteId ]: {
