@@ -6,7 +6,6 @@ import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { flow, invoke, isEqual } from 'lodash';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -168,7 +167,9 @@ class ImportURLStepComponent extends Component {
 			step: this.props.stepName,
 			target,
 		} );
-		page.show( target );
+
+		// Exit to main signup flow.
+		this.props.goToNextStep( 'main' );
 	};
 
 	recordSupportClicked = () => {
