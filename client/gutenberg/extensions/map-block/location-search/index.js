@@ -62,7 +62,7 @@ export class LocationSearch extends Component {
 			const point = {
 				place_title: place.name,
 				title: place.name,
-				caption: '',
+				caption: place.formatted_address,
 				id: place.place_id,
 				viewport: place.geometry.viewport,
 				coordinates:  {
