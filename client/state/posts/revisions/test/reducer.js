@@ -27,7 +27,13 @@ const TEST_POST_ID = 165;
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'diffs', 'requesting', 'selection', 'ui' ] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'diffs',
+			'requesting',
+			'selection',
+			'ui',
+			'authors',
+		] );
 	} );
 
 	describe( '#diffs', () => {

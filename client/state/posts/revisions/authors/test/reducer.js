@@ -4,7 +4,8 @@
  * Internal dependencies
  */
 import { items } from '../reducer';
-import { USER_RECEIVE } from 'state/action-types';
+import { receivePostRevisionAuthors } from '../actions';
+import { POST_REVISION_AUTHORS_RECEIVE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
@@ -16,8 +17,8 @@ describe( 'reducer', () => {
 
 		test( 'should index users by ID', () => {
 			const state = items( null, {
-				type: USER_RECEIVE,
-				user: { ID: 73705554, login: 'testonesite2014' },
+				type: POST_REVISION_AUTHORS_RECEIVE,
+				users: [ { ID: 73705554, login: 'testonesite2014' } ],
 			} );
 
 			expect( state ).toEqual( {
@@ -31,8 +32,8 @@ describe( 'reducer', () => {
 			} );
 
 			const state = items( original, {
-				type: USER_RECEIVE,
-				user: { ID: 73705672, login: 'testtwosites2014' },
+				type: POST_REVISION_AUTHORS_RECEIVE,
+				users: [ { ID: 73705672, login: 'testtwosites2014' } ],
 			} );
 
 			expect( state ).toEqual( {
@@ -47,12 +48,31 @@ describe( 'reducer', () => {
 			} );
 
 			const state = items( original, {
-				type: USER_RECEIVE,
-				user: { ID: 73705554, login: 'testtwosites2014' },
+				type: POST_REVISION_AUTHORS_RECEIVE,
+				users: [ { ID: 73705554, login: 'testtwosites2014' } ],
 			} );
 
 			expect( state ).toEqual( {
 				73705554: { ID: 73705554, login: 'testtwosites2014' },
+			} );
+		} );
+
+		test( 'should receive list of users', () => {
+			const original = Object.freeze( {
+				73705554: { ID: 73705554, login: 'testonesite2014' },
+			} );
+
+			const state = items(
+				original,
+				receivePostRevisionAuthors( [
+					{ ID: 73705554, login: 'testtwosites2014' },
+					{ ID: 73705672, login: 'testthreesites2018' },
+				] )
+			);
+
+			expect( state ).toEqual( {
+				73705554: { ID: 73705554, login: 'testtwosites2014' },
+				73705672: { ID: 73705672, login: 'testthreesites2018' },
 			} );
 		} );
 	} );

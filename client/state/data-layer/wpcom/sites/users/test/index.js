@@ -8,9 +8,17 @@ import { chunk, times } from 'lodash';
 /**
  * Internal dependencies
  */
-import { DEFAULT_PER_PAGE, fetchUsers, normalizeUser, receiveSuccess } from '../';
+import {
+	DEFAULT_PER_PAGE,
+	fetchPostRevisionAuthors,
+	normalizeUser,
+	receivePostRevisionAuthorsSuccess,
+} from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveUsers, requestUsers } from 'state/users/actions';
+import {
+	receivePostRevisionAuthors,
+	requestPostRevisionAuthors,
+} from 'state/posts/revisions/authors/actions';
 import { POST_REVISION_AUTHORS_RECEIVE } from 'state/action-types';
 
 describe( '#normalizeRevision', () => {
@@ -39,11 +47,11 @@ describe( '#normalizeRevision', () => {
 	} );
 } );
 
-describe( '#fetchUsers', () => {
+describe( '#fetchPostRevisionAuthors', () => {
 	test( 'should dispatch HTTP request to users endpoint', () => {
-		const action = requestUsers( 12345678, [ 10, 11 ] );
+		const action = requestPostRevisionAuthors( 12345678, [ 10, 11 ] );
 
-		expect( fetchUsers( action ) ).toEqual(
+		expect( fetchPostRevisionAuthors( action ) ).toEqual(
 			http(
 				{
 					method: 'GET',
@@ -61,11 +69,11 @@ describe( '#fetchUsers', () => {
 	} );
 
 	test( 'should respect pagination information coming from action', () => {
-		const action = requestUsers( 12345678, [ 10 ] );
+		const action = requestPostRevisionAuthors( 12345678, [ 10 ] );
 		action.page = 2;
 		action.perPage = 42;
 
-		expect( fetchUsers( action ) ).toEqual(
+		expect( fetchPostRevisionAuthors( action ) ).toEqual(
 			http(
 				{
 					method: 'GET',
@@ -85,14 +93,19 @@ describe( '#fetchUsers', () => {
 
 describe( '#receiveSuccess', () => {
 	test( 'should normalize the users and dispatch `receiveUsers` with their list', () => {
-		const requestAction = requestUsers( 12345678, [ 10, 11 ] );
-		const successAction = receiveSuccess( requestAction, [ { id: 10 }, { id: 11 } ] );
+		const requestAction = requestPostRevisionAuthors( 12345678, [ 10, 11 ] );
+		const successAction = receivePostRevisionAuthorsSuccess( requestAction, [
+			{ id: 10 },
+			{ id: 11 },
+		] );
 
 		const dispatch = jest.fn();
 		successAction( dispatch );
 
 		expect( dispatch ).toHaveBeenCalledTimes( 1 );
-		expect( dispatch ).toHaveBeenCalledWith( receiveUsers( [ { ID: 10 }, { ID: 11 } ] ) );
+		expect( dispatch ).toHaveBeenCalledWith(
+			receivePostRevisionAuthors( [ { ID: 10 }, { ID: 11 } ] )
+		);
 	} );
 
 	test( 'should fetch another page if it receives a full page of users (default per page)', () => {
@@ -101,8 +114,8 @@ describe( '#receiveSuccess', () => {
 		const users = times( nbUsers, id => ( { id } ) );
 		const usersChunks = chunk( users, DEFAULT_PER_PAGE );
 
-		const requestAction = requestUsers( 12345678, ids );
-		const successAction = receiveSuccess(
+		const requestAction = requestPostRevisionAuthors( 12345678, ids );
+		const successAction = receivePostRevisionAuthorsSuccess(
 			{
 				...requestAction,
 				meta: {
@@ -154,8 +167,8 @@ describe( '#receiveSuccess', () => {
 		const users = times( nbUsers, id => ( { id } ) );
 		const usersChunks = chunk( users, perPage );
 
-		const requestAction = { ...requestUsers( 12345678, ids ), perPage };
-		const successAction = receiveSuccess(
+		const requestAction = { ...requestPostRevisionAuthors( 12345678, ids ), perPage };
+		const successAction = receivePostRevisionAuthorsSuccess(
 			{
 				...requestAction,
 				meta: {
