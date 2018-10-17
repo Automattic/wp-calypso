@@ -106,8 +106,8 @@ export default {
 		defaultVariation: 'simple',
 		allowExistingUsers: true,
 	},
-	krackenRebootM327: {
-		datestamp: '20181015',
+	krackenRebootM327_: {
+		datestamp: '20181018',
 		variations: {
 			domainsbot_front: 25,
 			variation1_front: 25,
