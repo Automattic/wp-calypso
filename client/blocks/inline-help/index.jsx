@@ -24,7 +24,6 @@ import ResizableIframe from 'components/resizable-iframe';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 
 /**
@@ -43,7 +42,6 @@ const InlineHelpPopover = props => (
 class InlineHelp extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
-		siteId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -229,13 +227,9 @@ class InlineHelp extends Component {
 }
 
 const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-
 	return {
-		siteId,
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
-		selectedSite: getSelectedSite( state ),
 	};
 };
 
