@@ -27,7 +27,7 @@ export function validateImportUrl( value ) {
 		parsedUrl = parseUrl( value );
 		formattedUrl = url.format( parsedUrl );
 	} catch ( error ) {
-		return translate( 'Error parsing URL. Please check the URL and try again.' );
+		return translate( 'Please enter a valid URL.' );
 	}
 
 	const { hostname, pathname } = parsedUrl;

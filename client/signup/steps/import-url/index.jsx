@@ -5,7 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, isEqual } from 'lodash';
+import { flow, invoke, isEqual } from 'lodash';
 import page from 'page';
 
 /**
@@ -18,10 +18,12 @@ import ExternalLink from 'components/external-link';
 import Notice from 'components/notice';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTextInput from 'components/forms/form-text-input';
+import ScreenReaderText from 'components/screen-reader-text';
 import { fetchIsSiteImportable, setNuxUrlInputValue } from 'state/importer-nux/actions';
 import {
 	getNuxUrlError,
@@ -77,12 +79,14 @@ class ImportURLStepComponent extends Component {
 	};
 
 	handleInputBlur = event => {
-		if ( event.target.value ) this.validateUrl();
+		if ( event.target.value ) {
+			this.validateUrl();
+		}
 	};
 
 	handleInputRef = el => ( this.inputRef = el );
 
-	focusInput = () => this.inputRef && this.inputRef.focus();
+	focusInput = () => invoke( this.inputRef, 'focus' );
 
 	handleSubmit = event => {
 		event.preventDefault();
@@ -169,7 +173,12 @@ class ImportURLStepComponent extends Component {
 			<Fragment>
 				<Card className="import-url__card" tagName="div">
 					<form className="import-url__form" onSubmit={ this.handleSubmit }>
+						<ScreenReaderText>
+							<FormLabel htmlFor="url-input">Site URL</FormLabel>
+						</ScreenReaderText>
+
 						<FormTextInput
+							id="url-input"
 							className="import-url__url-input"
 							placeholder={ exampleWixUrl }
 							disabled={ isLoading }
@@ -179,6 +188,7 @@ class ImportURLStepComponent extends Component {
 							inputRef={ this.handleInputRef }
 							isError={ !! urlMessage }
 						/>
+
 						<FormButton
 							className="import-url__submit-button"
 							disabled={ isLoading }
@@ -227,14 +237,14 @@ class ImportURLStepComponent extends Component {
 									<ExternalLink
 										href={ helpPage }
 										target="_blank"
-										onClick={ () => this.recordSupportClicked( helpPage ) }
+										onClick={ this.recordSupportClicked.bind( this, helpPage ) }
 									/>
 								),
 							},
 						}
 					) }
 					&nbsp;
-					<Button compact onClick={ () => this.exitFlow( '/start' ) }>
+					<Button compact onClick={ this.exitFlow.bind( this, '/start' ) }>
 						{ translate( 'Sign up' ) }
 					</Button>
 				</div>
