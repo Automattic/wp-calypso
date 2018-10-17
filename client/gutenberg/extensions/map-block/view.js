@@ -5,7 +5,7 @@
  */
 
 import './style.scss';
-import component from './map-component.js';
+import component from './component.js';
 import { CONFIG } from './config.js';
 import FrontendManagement from 'gutenberg/extensions/shared/atavist/frontend-management.js';
 
@@ -15,16 +15,12 @@ window.addEventListener( 'load', function() {
 		return;
 	}
 	const frontendManagement = new FrontendManagement();
-	frontendManagement.blockIterator(
-		document,
-		[
-			{
-				component: component,
-				options: {
-					config: CONFIG,
-					selector: '.map__map-container'
-				}
-			}
-		]
-	);
+	frontendManagement.blockIterator( document, [
+		{
+			component: component,
+			options: {
+				config: CONFIG,
+			},
+		},
+	] );
 } );
