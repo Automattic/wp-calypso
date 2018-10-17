@@ -106,27 +106,11 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			lastModified: '2016-10-31',
 		},
 
-		/**
-		 * The `main` flow does not need the user step when used ordinarily as the
-		 * second flow, but it will be used in some scenarios, particularly in a
-		 * vertical-specific flow coming from a vertical landing page with a
-		 * `?vertical=vertical-slug` query string.
-		 *
-		 * The user step will be automatically removed for logged-in users.
-		 */
 		main: {
-			steps: [ 'about', 'domains', 'plans', 'user' ],
+			steps: [ 'user', 'about', 'domains', 'plans' ],
 			destination: getSiteDestination,
-			description: 'Second phase for user-first',
-			lastModified: '2018-10-11',
-		},
-
-		'user-first': {
-			steps: [ 'user' ],
-			destination: '/start/about',
-			description: 'The current best performing flow in AB tests.',
-			lastModified: '2018-10-11',
-			autoContinue: true,
+			description: 'The current best performing flow in AB tests',
+			lastModified: '2018-10-16',
 		},
 
 		'delta-discover': {

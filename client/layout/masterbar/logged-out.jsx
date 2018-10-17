@@ -23,7 +23,6 @@ import getCurrentQueryArguments from 'state/selectors/get-current-query-argument
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { login } from 'lib/paths';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
-import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
 
 class MasterbarLoggedOut extends PureComponent {
 	static propTypes = {
@@ -43,18 +42,8 @@ class MasterbarLoggedOut extends PureComponent {
 	};
 
 	renderLoginItem() {
-		const {
-			currentQuery,
-			currentRoute,
-			sectionName,
-			translate,
-			redirectUri,
-			userSiteCount,
-		} = this.props;
-		if (
-			includes( [ 'login', 'jetpack-onboarding' ], sectionName ) ||
-			( sectionName === 'signup' && userSiteCount === 0 )
-		) {
+		const { currentQuery, currentRoute, sectionName, translate, redirectUri } = this.props;
+		if ( includes( [ 'login', 'jetpack-onboarding' ], sectionName ) ) {
 			return null;
 		}
 
@@ -180,5 +169,4 @@ class MasterbarLoggedOut extends PureComponent {
 export default connect( state => ( {
 	currentQuery: getCurrentQueryArguments( state ),
 	currentRoute: getCurrentRoute( state ),
-	userSiteCount: getCurrentUserVisibleSiteCount( state ),
 } ) )( localize( MasterbarLoggedOut ) );

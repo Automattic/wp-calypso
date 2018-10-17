@@ -5,7 +5,6 @@
  */
 import { assign, includes, reject } from 'lodash';
 import i18n from 'i18n-calypso';
-import { parse } from 'url';
 
 /**
  * Internal dependencies
@@ -14,7 +13,6 @@ import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
 import { generateFlows } from './flows-pure';
-import { isValidLandingPageVertical } from 'lib/signup/verticals';
 
 const user = userFactory();
 
@@ -122,21 +120,8 @@ function filterDesignTypeInFlow( flowName, flow ) {
 function filterFlowName( flowName ) {
 	// temporary while there are still emails out there that will take people here
 	if ( flowName === 'user-continue' ) {
-		return 'main';
+		flowName = 'main';
 	}
-	const url = parse( window.location.href, true );
-	/**
-	 * We want logged out users who aren't in a valid vertical flow to get
-	 * redirected into the user-first step.
-	 */
-	if (
-		! user.get() &&
-		flowName === 'main' &&
-		! ( url.query.vertical && isValidLandingPageVertical( url.query.vertical ) )
-	) {
-		flowName = 'user-first';
-	}
-
 	return flowName;
 }
 

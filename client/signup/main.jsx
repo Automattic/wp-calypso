@@ -48,12 +48,7 @@ import { disableCart } from 'lib/upgrades/actions';
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import {
-	currentUserHasFlag,
-	getCurrentUser,
-	isUserLoggedIn,
-	getCurrentUserVisibleSiteCount,
-} from 'state/current-user/selectors';
+import { currentUserHasFlag, getCurrentUser, isUserLoggedIn } from 'state/current-user/selectors';
 import { affiliateReferral } from 'state/refer/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
@@ -489,22 +484,13 @@ class Signup extends React.Component {
 		return flowSteps.length === completedSteps.length;
 	};
 
-	getPositionInFlow( fakedForTwoPartFlows = false ) {
-		const { flowName, stepName, userSiteCount } = this.props;
-		let position = indexOf( flows.getFlow( flowName ).steps, stepName );
-		if ( fakedForTwoPartFlows && flowName === 'main' && userSiteCount === 0 ) {
-			position++;
-		}
-		return position;
+	getPositionInFlow() {
+		const { flowName, stepName } = this.props;
+		return indexOf( flows.getFlow( flowName ).steps, stepName );
 	}
 
 	getFlowLength() {
-		const { flowName, userSiteCount } = this.props;
-		// fake it for our two-step flow
-		if ( flowName === 'user-first' || ( flowName === 'main' && userSiteCount === 0 ) ) {
-			return 4;
-		}
-		return flows.getFlow( flowName ).steps.length;
+		return flows.getFlow( this.props.flowName ).steps.length;
 	}
 
 	renderCurrentStep() {
@@ -584,7 +570,7 @@ class Signup extends React.Component {
 				{ ! this.state.loadingScreenStartTime &&
 					showProgressIndicator && (
 						<FlowProgressIndicator
-							positionInFlow={ this.getPositionInFlow( true ) }
+							positionInFlow={ this.getPositionInFlow() }
 							flowLength={ this.getFlowLength() }
 							flowName={ this.props.flowName }
 						/>
@@ -612,7 +598,6 @@ export default connect(
 		progress: getSignupProgress( state ),
 		signupDependencies: getSignupDependencyStore( state ),
 		isLoggedIn: isUserLoggedIn( state ),
-		userSiteCount: getCurrentUserVisibleSiteCount( state ),
 	} ),
 	{ setSurvey, loadTrackingTool, trackAffiliateReferral: affiliateReferral },
 	undefined,

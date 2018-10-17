@@ -7,7 +7,6 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
-import { startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -17,9 +16,8 @@ import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
 import { login } from 'lib/paths';
 import { makeLayoutMiddleware } from './shared.js';
-import { isUserLoggedIn, getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
+import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getImmediateLoginEmail, getImmediateLoginLocale } from 'state/immediate-login/selectors';
-import { getCurrentRoute } from 'state/selectors/get-current-route';
 
 /**
  * Re-export
@@ -28,12 +26,10 @@ export { setSection, setUpLocale } from './shared.js';
 
 export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
 	const state = store.getState();
-	const currentRoute = getCurrentRoute( state );
 	const userLoggedIn = isUserLoggedIn( state );
-	const userSiteCount = getCurrentUserVisibleSiteCount( state );
 	let layout = <Layout primary={ primary } secondary={ secondary } />;
 
-	if ( ! userLoggedIn || ( startsWith( currentRoute, '/start/' ) && userSiteCount === 0 ) ) {
+	if ( ! userLoggedIn ) {
 		layout = (
 			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
 		);
