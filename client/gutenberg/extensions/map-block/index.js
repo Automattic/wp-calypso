@@ -13,7 +13,6 @@ import {
 } from '@wordpress/components';
 
 import {
-	RichText,
 	InspectorControls,
 	BlockControls,
 	BlockAlignmentToolbar,
@@ -57,7 +56,6 @@ registerBlockType( CONFIG.name, {
 	},
 	edit: function( { attributes, setAttributes, className } ) {
 		const {
-			the_caption,
 			map_style,
 			points,
 			zoom,
@@ -133,19 +131,12 @@ registerBlockType( CONFIG.name, {
 							setAttributes( { points: value } )
 						} }
 					/>
-					<RichText
-						tagName='p'
-						className="atavist-caption"
-						value={ the_caption }
-						placeholder="Type a caption..."
-						onChange={ ( value ) => setAttributes( { the_caption: value } ) }
-					/>
 				</div>
 			</Fragment>
 		);
 	},
 	save: function( { attributes, className } ) {
-		const { the_caption, map_style, points, zoom, map_center, marker_color, align } = attributes;
+		const { map_style, points, zoom, map_center, marker_color, align } = attributes;
 		const atavistAlignClass = ( value ) => {
 			switch ( value ) {
 				case 'left':
@@ -172,7 +163,6 @@ registerBlockType( CONFIG.name, {
 				data-api_key={ CONFIG.GOOGLE_MAPS_API_KEY }
 			>
 				<div className='map__map-container' />
-				<p className="atavist-caption">{ the_caption }</p>
 			</div>
 		);
 	}
