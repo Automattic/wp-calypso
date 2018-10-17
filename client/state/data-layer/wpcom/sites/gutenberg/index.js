@@ -12,7 +12,7 @@ import { noop } from 'lodash';
 import { EDITOR_TYPE_SET } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { setSiteEditor } from 'state/sites/actions';
+import { setSiteEditor } from 'state/sites/editor/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
