@@ -22,10 +22,12 @@ export class ChecklistNavigation extends Component {
 	static propTypes = {
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
-		setStoredTask: PropTypes.func,
-		setNotification: PropTypes.func,
+		setStoredTask: PropTypes.func.isRequired,
+		setNotification: PropTypes.func.isRequired,
 		showNotification: PropTypes.bool,
 		canShowChecklist: PropTypes.bool,
+		closePopover: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
 	handleClick = () => {
