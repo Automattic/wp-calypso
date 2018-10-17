@@ -17,6 +17,7 @@ registerBlockType( 'a8c/vr', {
 	description: __( 'Embed 360° photos and Virtual Reality (VR) Content', 'jetpack' ),
 	icon: 'embed-photo',
 	category: 'jetpack',
+	keywords: [ __( 'vr', 'jetpack' ), __( 'panorama', 'jetpack' ), __( '360', 'jetpack' ) ],
 	support: {
 		html: false,
 	},
