@@ -61,7 +61,7 @@ class ActivityLogExample extends Component {
 		return (
 			<div className="activity-log-example">
 				<FormattedHeader
-					headerText={ translate( 'Welcome to Activity!' ) }
+					headerText={ translate( 'Welcome to Activity' ) }
 					subHeaderText={ translate( 'All of your site activity will appear here.' ) }
 				/>
 				<FeatureExample role="presentation">
