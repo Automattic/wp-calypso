@@ -96,7 +96,6 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		return {
-			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 		};
 	},
