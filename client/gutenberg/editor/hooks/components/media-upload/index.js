@@ -77,19 +77,17 @@ export class MediaUpload extends Component {
 	};
 
 	getEnabledFilters = () => {
-		// TODO: Replace with `allowedTypes` (array) after updating Gutenberg
-		const { type } = this.props;
-		switch ( type ) {
-			case 'image':
-				return [ 'images' ];
-			case 'audio':
-				return [ 'audio' ];
-			case 'video':
-				return [ 'videos' ];
-			case 'document':
-				return [ 'documents' ];
-		}
-		return undefined;
+		const { allowedTypes } = this.props;
+
+		const enabledFiltersMap = {
+			image: 'images',
+			audio: 'audio',
+			video: 'videos',
+		};
+
+		return isArray( allowedTypes )
+			? allowedTypes.map( type => enabledFiltersMap[ type ] )
+			: undefined;
 	};
 
 	getSelectedItems = () => {
