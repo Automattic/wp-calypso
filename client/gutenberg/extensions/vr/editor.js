@@ -14,7 +14,7 @@ import VRImageSave from './save';
 
 registerBlockType( 'a8c/vr', {
 	title: __( 'VR Image', 'jetpack' ),
-	description: __( 'Embed 360° photos and Virtual Reality (VR) Content', 'jetpack' ),
+	description: __( 'Embed 360° photos and Virtual Reality (VR) content', 'jetpack' ),
 	icon: 'embed-photo',
 	category: 'jetpack',
 	keywords: [ __( 'vr', 'jetpack' ), __( 'panorama', 'jetpack' ), __( '360', 'jetpack' ) ],
