@@ -2983,12 +2983,12 @@
       "integrity": "sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg=="
     },
     "autoprefixer": {
-      "version": "9.2.0",
-      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.2.0.tgz",
-      "integrity": "sha512-OuxUyTvzRe9EvKyouPqfr8QUkQ0pH400NOFzI1LFINO8zwgJr7ZTybLql03P//LjR0iWile2lCoy2vRTRSFpMw==",
+      "version": "9.2.1",
+      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.2.1.tgz",
+      "integrity": "sha512-qlK4GnZk8OXLK+8kBn9ttfzu2PkhRe8kVYoWcc9HsrZEMWiBkQuRYdXyJg9cIIKxfMzhh6UbvlJ1CsstMIzxwA==",
       "requires": {
         "browserslist": "^4.2.1",
-        "caniuse-lite": "^1.0.30000890",
+        "caniuse-lite": "^1.0.30000892",
         "normalize-range": "^0.1.2",
         "num2fraction": "^1.2.2",
         "postcss": "^7.0.5",
