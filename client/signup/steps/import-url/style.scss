@@ -62,11 +62,6 @@
 		padding: 0 15px 24px;
 		text-align: center;
 
-		@include breakpoint( ">480px" ) {
-			padding-left: 0;
-			padding-right: 0;
-		}
-
 		.button {
 			vertical-align: middle;
 		}
