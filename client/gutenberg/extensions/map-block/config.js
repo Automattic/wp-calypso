@@ -25,10 +25,6 @@ export const CONFIG = {
 		align: {
 			type: 'string'
 		},
-		the_caption: {
-			source: 'text',
-			selector: '.atavist-caption'
-		},
 		points: {
 			type: 'array',
 			default: []
