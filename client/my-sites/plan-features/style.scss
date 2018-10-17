@@ -107,8 +107,6 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__table-item {
-	border-right: solid 1px lighten( $gray, 27% );
-	border-left: solid 1px lighten( $gray, 27% );
 	background-color: $white;
 	position: relative;
 
@@ -150,13 +148,7 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
-.plan-features__table-item.has-border-bottom {
-	border-bottom: solid 1px lighten( $gray, 27% );
-}
 
-.plan-features__table-item.has-border-top {
-	border-top: solid 1px lighten( $gray, 27% );
-}
 
 .plan-features__table-item.is-placeholder {
 	.spinner-line {
