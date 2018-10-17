@@ -23,8 +23,6 @@ import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
 import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
@@ -33,7 +31,6 @@ class InlineHelpPopover extends Component {
 	static propTypes = {
 		onClose: PropTypes.func.isRequired,
 		setDialogState: PropTypes.func.isRequired,
-		siteId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -171,15 +168,9 @@ class InlineHelpPopover extends Component {
 }
 
 function mapStateToProps( state ) {
-	const siteId = getSelectedSiteId( state );
-	const site = getSite( state, siteId );
-
 	return {
 		searchQuery: getSearchQuery( state ),
 		selectedSite: getHelpSelectedSite( state ),
-		siteId,
-		site,
-		siteSuffix: site ? '/' + site.slug : '',
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 	};
 }
