@@ -27,6 +27,18 @@ export const WEB_PAYMENT_BASIC_CARD_METHOD = 'basic-card';
 export const WEB_PAYMENT_APPLE_PAY_METHOD = 'https://apple.com/apple-pay';
 
 /**
+ *
+ */
+const SUPPORTED_NETWORKS = [ 'visa', 'mastercard', 'amex' ];
+const APPLE_PAY_MERCHANT_IDENTIFIER = 'merchant.com.wordpress.test';
+const PAYMENT_REQUEST_OPTIONS = {
+	requestPayerName: false,
+	requestPayerPhone: false,
+	requestPayerEmail: false,
+	requestShipping: false,
+};
+
+/**
  * Returns an available Web Payment method.
  *
  * Web Payments (`PaymentRequest` API) are available only if the
@@ -89,14 +101,18 @@ export class WebPaymentBox extends React.Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	getPaymentRequestForBasicCard = () => {
+	getPaymentRequestForApplePay = () => {
 		const { cart } = this.props;
 
 		const supportedPaymentMethods = [
 			{
-				supportedMethods: 'basic-card',
+				supportedMethods: WEB_PAYMENT_APPLE_PAY_METHOD,
 				data: {
-					supportedNetworks: [ 'visa', 'mastercard', 'amex' ],
+					version: 3,
+					merchantIdentifier: APPLE_PAY_MERCHANT_IDENTIFIER,
+					merchantCapabilities: [ 'supports3DS', 'supportsCredit', 'supportsDebit' ],
+					supportedNetworks: SUPPORTED_NETWORKS,
+					countryCode: cart.country,
 				},
 			},
 		];
@@ -118,13 +134,78 @@ export class WebPaymentBox extends React.Component {
 				};
 			} ),
 		};
-		const options = {
-			requestPayerName: false,
-			requestPayerPhone: false,
-			requestPayerEmail: false,
+
+		const paymentRequest = new PaymentRequest(
+			supportedPaymentMethods,
+			paymentDetails,
+			PAYMENT_REQUEST_OPTIONS
+		);
+
+		paymentRequest.onmerchantvalidation = merchantValidationEvent => {
+			const request = new Request(
+				'https://public-api.wordpress.com/rest/v1/apple-pay/merchant-validation/?validation_url=' +
+					merchantValidationEvent.validationURL,
+				{
+					method: 'GET',
+					mode: 'cors',
+					credentials: 'omit',
+					cache: 'no-store',
+				}
+			);
+
+			fetch( request )
+				.then( response => {
+					if ( 200 !== response.status ) {
+						return; // error
+					}
+
+					return response.json();
+				} )
+				.then( json => {
+					console.log( json );
+
+					return merchantValidationEvent.complete( json );
+				} )
+				.catch( error => {
+					console.error( 'onmerchantvalidation error' );
+					console.error( error );
+				} );
 		};
 
-		return new PaymentRequest( supportedPaymentMethods, paymentDetails, options );
+		return paymentRequest;
+	};
+
+	getPaymentRequestForBasicCard = () => {
+		const { cart } = this.props;
+
+		const supportedPaymentMethods = [
+			{
+				supportedMethods: WEB_PAYMENT_BASIC_CARD_METHOD,
+				data: {
+					supportedNetworks: SUPPORTED_NETWORKS,
+				},
+			},
+		];
+		const paymentDetails = {
+			total: {
+				label: 'Total',
+				amount: {
+					currency: cart.currency,
+					value: cart.total_cost,
+				},
+			},
+			displayItems: cart.products.map( product => {
+				return {
+					label: product.product_name,
+					amount: {
+						currency: product.currency,
+						value: product.cost,
+					},
+				};
+			} ),
+		};
+
+		return new PaymentRequest( supportedPaymentMethods, paymentDetails, PAYMENT_REQUEST_OPTIONS );
 	};
 
 	/**
@@ -136,47 +217,109 @@ export class WebPaymentBox extends React.Component {
 		event.preventDefault();
 
 		switch ( paymentMethod ) {
+			case WEB_PAYMENT_APPLE_PAY_METHOD:
+				{
+					const paymentRequest = getPaymentRequestForApplePay();
+
+					try {
+						paymentRequest
+							.show()
+							.then( paymentResponse => {
+								const { details } = paymentResponse;
+
+								if ( 'EC_v1' !== details.token.paymentData.version ) {
+									return; // Not supported yet.
+								}
+
+								/*
+							const request = new Request(
+								'/decrypt_token.php',
+								{
+									method: 'POST',
+									headers: new Headers({'Content-Type': 'application/json'}),
+									body: JSON.stringify(paymentResponse.details.token.paymentData),
+									mode: 'cors',
+									credentials: 'omit',
+									cache: 'no-store',
+								}
+							);
+
+							return fetch(request)
+								.then(response => {
+									if (200 !== response.status) {
+										return; // error
+									}
+
+									return response.json();
+								})
+								.then(json => {
+									console.log(json);
+
+									return paymentResponse.complete('success');
+								})
+								.catch(error => {
+									console.error('decrypt-token error');
+									console.log(error);
+
+									return paymentResponse.retry({
+										'error': 'Cannot decrypt token.'
+									});
+								});
+							*/
+							} )
+							.catch( error => {
+								console.error( 'show error' );
+								console.error( error );
+							} );
+					} catch ( e ) {
+						console.error( 'show catch' );
+						console.error( e );
+					}
+				}
+				break;
+
 			case WEB_PAYMENT_BASIC_CARD_METHOD:
-				const paymentRequest = this.getPaymentRequestForBasicCard();
+				{
+					const paymentRequest = this.getPaymentRequestForBasicCard();
 
-				try {
-					paymentRequest
-						.show()
-						.then( paymentResponse => {
-							const { details } = paymentResponse;
-							const { billingAddress } = details;
+					try {
+						paymentRequest
+							.show()
+							.then( paymentResponse => {
+								const { details } = paymentResponse;
+								const { billingAddress } = details;
 
-							// Map the `BasicCardResponse` dictionnary to `transaction.payment`.
-							const cardRawDetails = {
-								number: details.cardNumber,
-								cvv: details.cardSecurityCode,
-								'expiration-date': details.expiryMonth + '/' + details.expiryYear.substr( 2 ),
-								name: details.cardholderName,
-								country: billingAddress.country,
-								'postal-code': billingAddress.postalCode,
-							};
+								// Map the `BasicCardResponse` dictionnary to `transaction.payment`.
+								const cardRawDetails = {
+									number: details.cardNumber,
+									cvv: details.cardSecurityCode,
+									'expiration-date': details.expiryMonth + '/' + details.expiryYear.substr( 2 ),
+									name: details.cardholderName,
+									country: billingAddress.country,
+									'postal-code': billingAddress.postalCode,
+								};
 
-							console.log( cardRawDetails );
+								console.log( cardRawDetails );
 
-							//this.props.transaction.payment = newCardPayment( cardRawDetails );
+								//this.props.transaction.payment = newCardPayment( cardRawDetails );
 
-							paymentResponse.complete();
+								paymentResponse.complete();
 
-							return this.props.transaction.payment;
-						} )
-						/*
+								return this.props.transaction.payment;
+							} )
+							/*
 						.then( transactionPayment => {
 							setPayment( transactionPayment );
 							this.props.onSubmit( event );
 						} )
 						*/
-						.catch( error => {
-							console.error( error );
-						} );
-				} catch ( e ) {
-					console.error( e );
+							.catch( error => {
+								console.error( error );
+							} );
+					} catch ( e ) {
+						console.error( e );
+					}
 				}
-
 				break;
 
 			default:
