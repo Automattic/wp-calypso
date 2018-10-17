@@ -5,19 +5,24 @@
 .wp-block-jetpack-tiled-gallery {
 	display: flex;
 	flex-wrap: wrap;
-	list-style-type: none;
 	padding: 0;
 
 	// Allow gallery items to go edge to edge.
 	margin: 0 -$tiled-gallery-margin 0 -$tiled-gallery-margin;
 
-	.tiled-gallery__item {
-		margin: $tiled-gallery-margin;
+	.tiled-gallery__row {
+		// flex-grow: 1;
 		display: flex;
-		flex-grow: 1;
 		flex-direction: column;
+		flex-wrap: wrap;
 		justify-content: center;
-		position: relative;
+		margin: 0;
+
+		.tiled-gallery__item {
+			justify-content: center;
+			margin: $tiled-gallery-margin;
+			position: relative;
+		}
 
 		figure {
 			margin: 0;
@@ -57,12 +62,15 @@
 			color: $white;
 			text-align: center;
 			font-size: $root-font-size;
+			// @TODO: conflicting linting rules
+			// stylelint-disable function-parentheses-space-inside
 			background: linear-gradient(
 				0deg,
 				rgba( $color: $tiled-gallery-caption-background-color, $alpha: 0.7 ) 0,
 				rgba( $color: $tiled-gallery-caption-background-color, $alpha: 0.3 ) 60%,
 				transparent
 			);
+			// stylelint-enable function-parentheses-space-inside
 
 			img {
 				display: inline;

@@ -24,6 +24,9 @@ import {
 	mediaUpload,
 	MediaUpload,
 } from '@wordpress/editor';
+// @TODO: add to Calypso deps
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { create } from '@wordpress/rich-text';
 // @TODO:
 // Adding `@wordpress/token-list` to dependencies conflicts with current 3.0.0 version of `@wordpress/editor`
 // This will still work for Jetpack, but will fail when importing the block in Calypso
@@ -34,9 +37,9 @@ import TokenList from '@wordpress/token-list';
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { LAYOUTS, MAX_COLUMNS, DEFAULT_COLUMNS } from './constants';
+import { ALLOWED_MEDIA_TYPES, LAYOUTS, MAX_COLUMNS, DEFAULT_COLUMNS } from './constants';
 import GalleryImage from './gallery-image';
-import LayoutStyles from './layout-styles';
+import { getLayout } from './layouts';
 
 export function defaultColumnsNumber( attributes ) {
 	return Math.min( DEFAULT_COLUMNS, attributes.images.length );
@@ -71,6 +74,19 @@ function getActiveStyle( styles, className ) {
 const getActiveStyleName = className => {
 	const activeStyle = getActiveStyle( LAYOUTS, className );
 	return activeStyle.name;
+};
+
+const pickRelevantMediaFiles = image => {
+	let { caption } = image;
+
+	if ( typeof caption !== 'object' ) {
+		caption = create( { html: caption } );
+	}
+
+	return {
+		...pick( image, [ 'alt', 'id', 'link', 'url' ] ),
+		caption,
+	};
 };
 
 class TiledGalleryEdit extends Component {
@@ -118,7 +134,7 @@ class TiledGalleryEdit extends Component {
 
 	onSelectImages( images ) {
 		this.props.setAttributes( {
-			images: images.map( image => pick( image, [ 'alt', 'caption', 'id', 'link', 'url' ] ) ),
+			images: images.map( image => pickRelevantMediaFiles( image ) ),
 		} );
 	}
 
@@ -174,11 +190,12 @@ class TiledGalleryEdit extends Component {
 		const currentImages = this.props.attributes.images || [];
 		const { noticeOperations, setAttributes } = this.props;
 		mediaUpload( {
-			allowedType: 'image',
+			allowedTypes: ALLOWED_MEDIA_TYPES,
 			filesList: files,
 			onFileChange: images => {
+				const imagesNormalized = images.map( image => pickRelevantMediaFiles( image ) );
 				setAttributes( {
-					images: currentImages.concat( images ),
+					images: currentImages.concat( imagesNormalized ),
 				} );
 			},
 			onError: noticeOperations.createErrorNotice,
@@ -206,6 +223,7 @@ class TiledGalleryEdit extends Component {
 
 	render() {
 		const { attributes, isSelected, className, noticeOperations, noticeUI } = this.props;
+
 		const {
 			images,
 			columns = defaultColumnsNumber( attributes ),
@@ -224,7 +242,7 @@ class TiledGalleryEdit extends Component {
 					<Toolbar>
 						<MediaUpload
 							onSelect={ this.onSelectImages }
-							type="image"
+							allowedTypes={ ALLOWED_MEDIA_TYPES }
 							multiple
 							gallery
 							value={ images.map( img => img.id ) }
@@ -255,7 +273,7 @@ class TiledGalleryEdit extends Component {
 						} }
 						onSelect={ this.onSelectImages }
 						accept="image/*"
-						type="image"
+						allowedTypes={ ALLOWED_MEDIA_TYPES }
 						multiple
 						notices={ noticeUI }
 						onError={ noticeOperations.createErrorNotice }
@@ -264,11 +282,19 @@ class TiledGalleryEdit extends Component {
 			);
 		}
 
+		const rows = getLayout( {
+			layout: this.state.layout,
+			columns,
+			images,
+		} );
+
+		let imageIndex = 0;
+
 		return (
 			<Fragment>
 				{ controls }
 				<InspectorControls>
-					<PanelBody title={ __( 'Tiled gallery Settings', 'jetpack' ) }>
+					<PanelBody title={ __( 'Tiled gallery settings', 'jetpack' ) }>
 						{ images.length > 1 && (
 							<RangeControl
 								label={ __( 'Columns', 'jetpack' ) }
@@ -280,60 +306,76 @@ class TiledGalleryEdit extends Component {
 							/>
 						) }
 						<ToggleControl
-							label={ __( 'Crop Images', 'jetpack' ) }
+							label={ __( 'Crop images', 'jetpack' ) }
 							checked={ !! imageCrop }
 							onChange={ this.toggleImageCrop }
 							help={ this.getImageCropHelp }
 						/>
 						<SelectControl
-							label={ __( 'Link To', 'jetpack' ) }
+							label={ __( 'Link to', 'jetpack' ) }
 							value={ linkTo }
 							onChange={ this.setLinkTo }
 							options={ [
-								{ value: 'attachment', label: __( 'Attachment Page', 'jetpack' ) },
-								{ value: 'media', label: __( 'Media File', 'jetpack' ) },
+								{ value: 'attachment', label: __( 'Attachment page', 'jetpack' ) },
+								{ value: 'media', label: __( 'Media file', 'jetpack' ) },
 								{ value: 'none', label: __( 'None', 'jetpack' ) },
 							] }
 						/>
 					</PanelBody>
 				</InspectorControls>
 				{ noticeUI }
-				<LayoutStyles
-					layout={ this.state.layout }
-					columns={ columns }
-					images={ images }
-					className={ className }
-				/>
 				{ dropZone }
-				<ul
+				<div
 					className={ classnames( className, {
 						'is-cropped': imageCrop,
 						[ `align${ align }` ]: align,
 						[ `columns-${ columns }` ]: columns,
 					} ) }
 				>
-					{ images.map( ( img, index ) => {
+					{ rows.map( ( row, rowIndex ) => {
 						return (
-							<li
-								className={ `tiled-gallery__item tiled-gallery__item-${ index }` }
-								key={ img.id || img.url }
+							<div
+								key={ `tiled-gallery-row-${ rowIndex }` }
+								className="tiled-gallery__row"
+								style={ {
+									width: row.width,
+									height: row.height,
+								} }
 							>
-								<GalleryImage
-									url={ img.url }
-									alt={ img.alt }
-									id={ img.id }
-									isSelected={ isSelected && this.state.selectedImage === index }
-									onRemove={ this.onRemoveImage( index ) }
-									onSelect={ this.onSelectImage( index ) }
-									setAttributes={ attrs => this.setImageAttributes( index, attrs ) }
-									caption={ this.state.layout !== 'circle' ? img.caption : '' }
-									captionEnabled={ this.state.layout !== 'circle' }
-								/>
-							</li>
+								{ row.tiles.map( tile => {
+									const image = images[ imageIndex ];
+
+									const galleryItem = (
+										<div
+											className="tiled-gallery__item"
+											key={ image.id || image.url }
+											style={ {
+												width: tile.width,
+												height: tile.height,
+											} }
+										>
+											<GalleryImage
+												url={ image.url }
+												alt={ image.alt }
+												id={ image.id }
+												isSelected={ isSelected && this.state.selectedImage === imageIndex }
+												onRemove={ this.onRemoveImage( imageIndex ) }
+												onSelect={ this.onSelectImage( imageIndex ) }
+												setAttributes={ attrs => this.setImageAttributes( imageIndex, attrs ) }
+												caption={ image.caption }
+											/>
+										</div>
+									);
+
+									imageIndex++;
+
+									return galleryItem;
+								} ) }
+							</div>
 						);
 					} ) }
 					{ isSelected && (
-						<li className={ `tiled-gallery__item has-add-item-button` }>
+						<div className="tiled-gallery__row tiled-gallery__upload">
 							<FormFileUpload
 								multiple
 								isLarge
@@ -344,9 +386,9 @@ class TiledGalleryEdit extends Component {
 							>
 								{ __( 'Upload an image', 'jetpack' ) }
 							</FormFileUpload>
-						</li>
+						</div>
 					) }
-				</ul>
+				</div>
 			</Fragment>
 		);
 	}

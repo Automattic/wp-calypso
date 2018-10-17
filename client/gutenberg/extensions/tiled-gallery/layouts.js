@@ -1,58 +1,70 @@
 /** @format */
 
-export const squareLayout = options => {
-	const { columns, margin, maxWidth, images } = options;
+/**
+ * External Dependencies
+ */
+import { select } from '@wordpress/data';
 
-	const imagesPerRow = columns > 1 ? columns : 1;
+/**
+ * Internal dependencies
+ */
+import { TILE_MARGIN } from './constants';
 
-	const marginSpace = imagesPerRow * margin * 2;
-	const size = Math.floor( ( maxWidth - marginSpace ) / imagesPerRow );
+const squareLayout = ( { columns, margin, maxWidth, images } ) => {
+	const tileCount = images.length;
+	const tilesPerRow = columns > 1 ? columns : 1;
+	const marginSpace = tilesPerRow * margin * 2;
+	const size = Math.floor( ( maxWidth - marginSpace ) / tilesPerRow );
 	let remainderSize = size;
-	let imgSize = remainderSize;
-	const remainder = images.length % imagesPerRow;
+	let tileSize = remainderSize;
+	const remainder = tileCount % tilesPerRow;
 	let remainderSpace = 0;
+
 	if ( remainder > 0 ) {
 		remainderSpace = remainder * margin * 2;
 		remainderSize = Math.floor( ( maxWidth - remainderSpace ) / remainder );
 	}
 
 	let c = 1;
-	let itemsInRow = 0;
+	let tilesInRow = 0;
 	const rows = [];
 	let row = {
-		images: [],
+		tiles: [],
 	};
-	for ( const image of images ) {
+
+	for ( let i = 0; i < tileCount; i++ ) {
 		if ( remainder > 0 && c <= remainder ) {
-			imgSize = remainderSize;
+			tileSize = remainderSize;
 		} else {
-			imgSize = size;
+			tileSize = size;
 		}
 
-		image.width = image.height = imgSize;
+		row.tiles.push( {
+			height: tileSize,
+			width: tileSize,
+		} );
 
-		row.images.push( image );
 		c++;
-		itemsInRow++;
+		tilesInRow++;
 
-		if ( imagesPerRow === itemsInRow || remainder + 1 === c ) {
+		if ( tilesPerRow === tilesInRow || remainder + 1 === c ) {
 			rows.push( row );
-			itemsInRow = 0;
+			tilesInRow = 0;
 
-			row.height = imgSize + margin * 2;
+			row.height = tileSize + margin * 2;
 			row.width = maxWidth;
-			row.groupSize = imgSize + 2 * margin;
+			row.groupSize = tileSize + 2 * margin;
 
 			row = {
-				images: [],
+				tiles: [],
 			};
 		}
 	}
 
-	if ( row.images.length > 0 ) {
-		row.height = imgSize + margin * 2;
+	if ( row.tiles.length > 0 ) {
+		row.height = tileSize + margin * 2;
 		row.width = maxWidth;
-		row.groupSize = imgSize + 2 * margin;
+		row.groupSize = tileSize + 2 * margin;
 
 		rows.push( row );
 	}
@@ -61,6 +73,37 @@ export const squareLayout = options => {
 };
 
 // @TODO
-export const rectangularLayout = options => squareLayout( options );
-export const circleLayout = options => squareLayout( options );
-export const columnsLayout = options => squareLayout( options );
+const rectangularLayout = options => squareLayout( options );
+const columnsLayout = options => squareLayout( options );
+
+export const getLayout = ( { columns, images, layout } ) => {
+	if ( ! images.length ) {
+		return [];
+	}
+
+	const { getEditorSettings } = select( 'core/editor' );
+	const editorSettings = getEditorSettings();
+
+	//eslint-disable-next-line
+	console.log( '->editorSettings:', editorSettings );
+
+	const layoutOptions = {
+		columns,
+		maxWidth: editorSettings.maxWidth,
+		images,
+		margin: TILE_MARGIN,
+	};
+
+	switch ( layout ) {
+		case 'square':
+			return squareLayout( layoutOptions );
+		case 'circle':
+			// Circle and square layouts are identical by size calculations
+			return squareLayout( layoutOptions );
+		case 'columns':
+			return columnsLayout( layoutOptions );
+		case 'rectangular':
+		default:
+			return rectangularLayout( layoutOptions );
+	}
+};

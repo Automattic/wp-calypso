@@ -85,18 +85,7 @@ class GalleryImage extends Component {
 	}
 
 	render() {
-		const {
-			url,
-			alt,
-			id,
-			linkTo,
-			link,
-			isSelected,
-			caption,
-			captionEnabled,
-			onRemove,
-			setAttributes,
-		} = this.props;
+		const { url, alt, id, linkTo, link, isSelected, caption, onRemove, setAttributes } = this.props;
 
 		let href;
 
@@ -143,7 +132,7 @@ class GalleryImage extends Component {
 					</div>
 				) }
 				{ href ? <a href={ href }>{ img }</a> : img }
-				{ captionEnabled && ( ( caption && caption.length > 0 ) || isSelected ) ? (
+				{ ! RichText.isEmpty( caption ) || isSelected ? (
 					<RichText
 						tagName="figcaption"
 						placeholder={ __( 'Write caption…', 'jetpack' ) }

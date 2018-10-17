@@ -5,6 +5,7 @@
  */
 import { _x } from '@wordpress/i18n';
 
+export const ALLOWED_MEDIA_TYPES = [ 'image' ];
 export const DEFAULT_COLUMNS = 3;
 export const MAX_COLUMNS = 20;
 export const TILE_MARGIN = 2;

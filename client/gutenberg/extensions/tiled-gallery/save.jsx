@@ -11,7 +11,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import { defaultColumnsNumber } from './edit';
-import LayoutStyles from './layout-styles';
+import { getLayout } from './layouts';
 
 export default ( { attributes, className } ) => {
 	const {
@@ -21,60 +21,82 @@ export default ( { attributes, className } ) => {
 		layout,
 		linkTo,
 	} = attributes;
+
+	const rows = getLayout( { layout, columns, images } );
+	let imageIndex = 0;
+
+	// @TODO why is this not getting set dynamicly?
+	className = 'wp-block-a8c-tiled-gallery';
+
 	return (
 		<Fragment>
-			<LayoutStyles
-				layout={ layout }
-				columns={ columns }
-				images={ images }
-				className={ className }
-			/>
-			<ul
+			<div
 				className={ classnames( className, `columns-${ columns }`, {
 					'is-cropped': imageCrop,
 				} ) }
 			>
-				{ images.map( ( image, index ) => {
-					let href;
-
-					switch ( linkTo ) {
-						case 'media':
-							href = image.url;
-							break;
-						case 'attachment':
-							href = image.link;
-							break;
-					}
-
-					const img = (
-						<img
-							src={ image.url }
-							alt={ image.alt }
-							data-id={ image.id }
-							data-link={ image.link }
-							className={ classnames( {
-								[ `wp-image-${ image.id }` ]: image.id,
-							} ) }
-						/>
-					);
-
+				{ rows.map( ( row, rowIndex ) => {
 					return (
-						<li
-							key={ image.id || image.url }
-							className={ `tiled-gallery__item tiled-gallery__item-${ index }` }
+						<div
+							key={ `tiled-gallery-row-${ rowIndex }` }
+							className="tiled-gallery__row"
+							style={ {
+								width: row.width,
+								height: row.height,
+							} }
 						>
-							<figure>
-								{ href ? <a href={ href }>{ img }</a> : img }
-								{ layout !== 'circle' &&
-									image.caption &&
-									image.caption.length > 0 && (
-										<RichText.Content tagName="figcaption" value={ image.caption } />
-									) }
-							</figure>
-						</li>
+							{ row.tiles.map( tile => {
+								let href;
+								const image = images[ imageIndex ];
+
+								switch ( linkTo ) {
+									case 'media':
+										href = image.url;
+										break;
+									case 'attachment':
+										href = image.link;
+										break;
+								}
+
+								const img = (
+									<img
+										src={ image.url }
+										alt={ image.alt }
+										data-id={ image.id }
+										data-link={ image.link }
+										className={ classnames( {
+											[ `wp-image-${ image.id }` ]: image.id,
+										} ) }
+									/>
+								);
+
+								const galleryItem = (
+									<div
+										key={ image.id || image.url }
+										className="tiled-gallery__item"
+										style={ {
+											width: tile.width,
+											height: tile.height,
+										} }
+									>
+										<figure>
+											{ href ? <a href={ href }>{ img }</a> : img }
+											{ layout !== 'circle' &&
+												! RichText.isEmpty( image.caption ) && (
+													<RichText.Content tagName="figcaption" value={ image.caption } />
+												) }
+										</figure>
+									</div>
+								);
+
+								imageIndex++;
+
+								return galleryItem;
+							} ) }
+						</div>
 					);
 				} ) }
-			</ul>
+			</div>
 		</Fragment>
 	);
 };
