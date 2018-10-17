@@ -50,7 +50,7 @@ import {
 	isNextDomainFree,
 	hasToUpgradeToPayForADomain,
 } from 'lib/cart-values/cart-items';
-import formatCurrency, { getCurrencyObject } from 'lib/format-currency';
+import formatCurrency from 'lib/format-currency';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -163,7 +163,7 @@ class TransferDomainStep extends React.Component {
 
 		let domainProductPrice = formatCurrency( rawDomainPrice, currencyCode, { precision: 0 } );
 
-		if ( rawDomainPrice - getCurrencyObject( rawDomainPrice, currencyCode ).integer > 0 ) {
+		if ( rawDomainPrice % 1 !== 0 ) {
 			domainProductPrice = formatCurrency( rawDomainPrice, currencyCode );
 		}
 
