@@ -4,7 +4,7 @@
 	"description": "Gutenberg blocks for the Jetpack WordPress plugin",
 	"main": "build/editor.js",
 	"files": [
-		"build"
+		"build/"
 	],
 	"publishConfig": {
 		"access": "public"
