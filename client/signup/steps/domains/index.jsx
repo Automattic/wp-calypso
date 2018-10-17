@@ -340,7 +340,7 @@ class DomainsStep extends React.Component {
 				surveyVertical={ this.props.surveyVertical }
 				suggestion={ get( this.props, 'queryObject.new', '' ) }
 				designType={ this.getDesignType() }
-				vendor={ abtest( 'krackenRebootM327_' ) }
+				vendor={ abtest( 'krackenRebootM327V2' ) }
 			/>
 		);
 	};
