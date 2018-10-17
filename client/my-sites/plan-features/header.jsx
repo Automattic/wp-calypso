@@ -75,7 +75,7 @@ export class PlanFeaturesHeader extends Component {
 			<div className="plan-features__header-wrapper">
 				<header className={ headerClasses } onClick={ this.props.onClick }>
 					{ newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
-					{ popular && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
+					{ popular && <Ribbon>{ translate( 'Suggested' ) }</Ribbon> }
 					{ bestValue && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
 					<div className="plan-features__header-text">
 						<h4 className="plan-features__header-title">{ title }</h4>

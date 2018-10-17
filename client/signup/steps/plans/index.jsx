@@ -77,6 +77,7 @@ class PlansStep extends Component {
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
+				subHeaderText="Based on what you told us, we recommend the Premium plan."
 				fallbackHeaderText={ headerText }
 				signupProgress={ signupProgress }
 				isWideLayout={ true }
