@@ -83,7 +83,6 @@ export class MediaUpload extends Component {
 			image: 'images',
 			audio: 'audio',
 			video: 'videos',
-			// No proper mapping for File block yet (allowedTypes undefined).
 		};
 
 		return isArray( allowedTypes )
