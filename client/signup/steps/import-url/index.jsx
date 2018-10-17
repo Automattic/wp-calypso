@@ -39,6 +39,8 @@ import {
 } from 'lib/importers/constants';
 
 const CHECKING_SITE_IMPORTABLE_NOTICE = 'checking-site-importable';
+const IMPORT_HELP_LINK = 'https://en.support.wordpress.com/import/';
+const EXAMPLE_WIX_URL = 'https://username.wixsite.com/my-site';
 
 class ImportURLStepComponent extends Component {
 	state = {
@@ -159,7 +161,8 @@ class ImportURLStepComponent extends Component {
 		return translate( 'There was an error with the importer, please try again.' );
 	};
 
-	exitFlow = target => {
+	exitFlow = () => {
+		const target = '/start';
 		this.props.recordTracksEvent( 'calypso_signup_flow_exit', {
 			flow: this.props.flowName,
 			step: this.props.stepName,
@@ -168,11 +171,11 @@ class ImportURLStepComponent extends Component {
 		page.show( target );
 	};
 
-	recordSupportClicked = helpPage => {
+	recordSupportClicked = () => {
 		this.props.recordTracksEvent( 'calypso_signup_support_clicked', {
 			flow: this.props.flowName,
 			step: this.props.stepName,
-			support_page: helpPage,
+			support_page: IMPORT_HELP_LINK,
 		} );
 	};
 
@@ -180,8 +183,6 @@ class ImportURLStepComponent extends Component {
 		const { isLoading, urlInputValue, translate } = this.props;
 		const { showUrlMessage } = this.state;
 		const urlMessage = this.getUrlMessage();
-		const helpPage = 'https://en.support.wordpress.com/import/';
-		const exampleWixUrl = 'https://username.wixsite.com/my-site';
 
 		return (
 			<Fragment>
@@ -194,7 +195,7 @@ class ImportURLStepComponent extends Component {
 						<FormTextInput
 							id="url-input"
 							className="import-url__url-input"
-							placeholder={ exampleWixUrl }
+							placeholder={ EXAMPLE_WIX_URL }
 							disabled={ isLoading }
 							defaultValue={ urlInputValue }
 							onChange={ this.handleInputChange }
@@ -237,7 +238,7 @@ class ImportURLStepComponent extends Component {
 						} ) }
 						<li className="import-url__example-url">https://example.com</li>
 
-						<li className="import-url__example-url">{ exampleWixUrl }</li>
+						<li className="import-url__example-url">{ EXAMPLE_WIX_URL }</li>
 					</ul>
 					<ExampleDomainBrowser className="import-url__example-browser" />
 				</div>
@@ -249,16 +250,16 @@ class ImportURLStepComponent extends Component {
 							components: {
 								a: (
 									<ExternalLink
-										href={ helpPage }
+										href={ IMPORT_HELP_LINK }
 										target="_blank"
-										onClick={ this.recordSupportClicked.bind( this, helpPage ) }
+										onClick={ this.recordSupportClicked }
 									/>
 								),
 							},
 						}
 					) }
 					&nbsp;
-					<Button compact onClick={ this.exitFlow.bind( this, '/start' ) }>
+					<Button compact onClick={ this.exitFlow }>
 						{ translate( 'Sign up' ) }
 					</Button>
 				</div>
