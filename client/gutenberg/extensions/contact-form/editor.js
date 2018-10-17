@@ -22,6 +22,7 @@ import {
  * Internal dependencies
  */
 
+import './editor.scss';
 import JetpackForm from './components/JetpackForm';
 import JetpackField from './components/JetpackField';
 import JetpackFieldTextarea from './components/JetpackFieldTextarea';
