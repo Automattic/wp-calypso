@@ -150,6 +150,11 @@ class WpcomChecklist extends PureComponent {
 			translate,
 			viewMode,
 			updateCompletion,
+			setNotification,
+			setStoredTask,
+			closePopover,
+			showNotification,
+			storedTask,
 		} = this.props;
 
 		const canShowChecklist = this.canShow();
@@ -173,7 +178,11 @@ class WpcomChecklist extends PureComponent {
 					isPlaceholder={ ! taskStatuses }
 					updateCompletion={ updateCompletion }
 					canShowChecklist={ canShowChecklist }
-					{ ...this.props }
+					closePopover={ closePopover }
+					showNotification={ showNotification }
+					setNotification={ setNotification }
+					setStoredTask={ setStoredTask }
+					storedTask={ storedTask }
 				>
 					<TaskComponent
 						bannerImageSrc="/calypso/images/illustrations/checkEmailsDesktop.svg"
