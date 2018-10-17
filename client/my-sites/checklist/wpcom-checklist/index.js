@@ -158,16 +158,20 @@ class WpcomChecklist extends PureComponent {
 		} = this.props;
 
 		const canShowChecklist = this.canShow();
-
-		let ChecklistComponent = 'banner' === viewMode ? ChecklistBanner : Checklist;
 		const TaskComponent = 'banner' === viewMode ? ChecklistBannerTask : Task;
 
-		if ( 'navigation' === viewMode ) {
-			ChecklistComponent = ChecklistNavigation;
-		}
+		let ChecklistComponent = Checklist;
 
-		if ( 'notification' === viewMode ) {
-			ChecklistComponent = ChecklistNotification;
+		switch ( viewMode ) {
+			case 'banner':
+				ChecklistComponent = ChecklistBanner;
+				break;
+			case 'navigation':
+				ChecklistComponent = ChecklistNavigation;
+				break;
+			case 'notification':
+				ChecklistComponent = ChecklistNotification;
+				break;
 		}
 
 		return (
