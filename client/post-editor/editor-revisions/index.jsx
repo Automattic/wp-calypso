@@ -40,7 +40,7 @@ class EditorRevisions extends Component {
 		} = this.props;
 
 		return (
-			<div className="editor-revisions__wrapper">
+			<div className="editor-revisions">
 				<QueryPostRevisions
 					postId={ postId }
 					siteId={ siteId }
