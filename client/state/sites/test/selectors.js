@@ -58,6 +58,7 @@ import {
 	hasDefaultSiteTitle,
 	siteSupportsJetpackSettingsUi,
 	getSiteComputedAttributes,
+	getSiteEditor,
 } from '../selectors';
 import config from 'config';
 import { userState } from 'state/selectors/test/fixtures/user-state';
@@ -4033,6 +4034,31 @@ describe( 'selectors', () => {
 
 		test( "should return false if site doesn't have WordAds and user can not manage it", () => {
 			expect( canCurrentUserUseAds( createState( false, false, 'free_plan' ) ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'getSiteEditor()', () => {
+		test( 'should return null if site is not found', () => {
+			expect( getSiteEditor( stateWithNoItems, nonExistingSiteId ) ).toBeNull();
+		} );
+
+		test( 'should return null if a valid site has no editor set', () => {
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+				},
+			} );
+			expect( getSiteEditor( state, siteId ) ).toBeNull();
+		} );
+
+		test( 'should return editor value for a valid site with an editor set', () => {
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					editor: 'gutenberg',
+				},
+			} );
+			expect( getSiteEditor( state, siteId ) ).toBe( 'gutenberg' );
 		} );
 	} );
 } );
