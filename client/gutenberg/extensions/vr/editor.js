@@ -11,7 +11,7 @@ import { registerBlockType } from '@wordpress/blocks';
  */
 import './editor.scss';
 
-registerBlockType( 'jetpack/vr', {
+registerBlockType( 'a8c/vr', {
 	title: __( 'VR Image', 'jetpack' ),
 	description: __( 'Embed 360° photos and Virtual Reality (VR) Content', 'jetpack' ),
 	icon: 'embed-photo',
