@@ -9,6 +9,8 @@ import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 
 import {
+	Button,
+	BaseControl,
 	SelectControl,
 	IconButton,
 	Toolbar,
@@ -70,6 +72,7 @@ registerBlockType( CONFIG.name, {
 			shimOpacityRatio,
 			shimColor,
 			focalPoint,
+			videoPoster,
 		} = attributes;
 
 		const onSelectImage = media => {
@@ -120,6 +123,13 @@ registerBlockType( CONFIG.name, {
 			</Fragment>
 		);
 
+		const onSelectVideoPoster = image => {
+			setAttributes( { videoPoster: image.url } );
+		};
+
+		const onRemoveVideoPoster = () => {
+			setAttributes( { videoPoster: '' } );
+		};
 		const inspectorControls = (
 			<InspectorControls>
 				<PanelBody title={ __( 'Title Design Settings' ) }>
@@ -159,6 +169,29 @@ registerBlockType( CONFIG.name, {
 								setFocalPoint={ value => setAttributes( { focalPoint: value } ) }
 							/>
 						</PanelBody>
+					) }
+					{ type === 'video' && (
+						<BaseControl
+							className="editor-video-poster-control"
+							label={ __( 'Video Fallback Image' ) }
+						>
+							<MediaUpload
+								title={ __( 'Select Video Fallback Image' ) }
+								onSelect={ onSelectVideoPoster }
+								render={ ( { open } ) => (
+									<Button isDefault onClick={ open }>
+										{ ! videoPoster
+											? __( 'Select Video Fallback Image' )
+											: __( 'Replace Video Fallback Image' ) }
+									</Button>
+								) }
+							/>
+							{ !! videoPoster && (
+								<Button onClick={ onRemoveVideoPoster } isLink isDestructive>
+									{ __( 'Remove Video Fallback Image' ) }
+								</Button>
+							) }
+						</BaseControl>
 					) }
 				</PanelBody>
 			</InspectorControls>
@@ -210,6 +243,7 @@ registerBlockType( CONFIG.name, {
 						mediaURL={ url }
 						mediaType={ type }
 						focalPoint={ focalPoint }
+						videoPoster={ videoPoster }
 					/>
 					<div
 						class="cover-text-outside-wrapper atavist-cover-left-gutter-padding-left atavist-cover-right-gutter-padding-right"
@@ -255,6 +289,7 @@ registerBlockType( CONFIG.name, {
 			shimOpacityRatio,
 			shimColor,
 			focalPoint,
+			videoPoster,
 		} = attributes;
 
 		const classes = classnames( className );
@@ -267,6 +302,7 @@ registerBlockType( CONFIG.name, {
 					mediaType={ type }
 					mediaURL={ url }
 					focalPoint={ focalPoint }
+					videoPoster={ videoPoster }
 				/>
 				<div
 					class="cover-text-outside-wrapper atavist-cover-left-gutter-padding-left atavist-cover-right-gutter-padding-right"

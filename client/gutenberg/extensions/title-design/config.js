@@ -71,7 +71,10 @@ export const CONFIG = {
 				x: 0.5,
 				y: 0.5
 			}
-		}
+		},
+		videoPoster: {
+			type: 'string',
+		},
 	},
 	titlePositionOptions: [
 		{

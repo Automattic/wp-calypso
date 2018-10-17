@@ -18,7 +18,7 @@ import { Component, Fragment } from '@wordpress/element';
 export class MultiBackground extends Component {
 
 	render() {
-		const { shimColor, mediaURL, mediaType, shimOpacity, focalPoint } = this.props;
+		const { shimColor, mediaURL, mediaType, shimOpacity, focalPoint, videoPoster } = this.props;
 		const shimStyle = { opacity: shimOpacity / 100, 'background-color': shimColor };
 		const left = focalPoint ? focalPoint.x * 100 : 50;
 		const top = focalPoint ? focalPoint.y * 100 : 50;
@@ -38,6 +38,7 @@ export class MultiBackground extends Component {
 					autoplay='true'
 					loop='true'
 					muted='true'
+					poster={ videoPoster }
 				>
 					<source src={ mediaURL } type="video/mp4" />
 				</video>;
