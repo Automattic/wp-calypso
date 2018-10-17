@@ -1,16 +1,18 @@
-.wp-block-jetpack-vr {
+/** @format */
+
+.wp-block-a8c-vr {
 	position: relative;
 	max-width: 525px;
 	margin-left: auto;
 	margin-right: auto;
 	overflow: hidden;
+
+	.components-placeholder__fieldset {
+		justify-content: space-around;
+	}
 }
 
-.wp-block-jetpack-vr .components-placeholder__fieldset {
-	justify-content: space-around;
-}
-
-iframe.wp-block-jetpack-vr {
+iframe.wp-block-a8c-vr {
 	position: absolute;
 	top: 0;
 	right: 0;
