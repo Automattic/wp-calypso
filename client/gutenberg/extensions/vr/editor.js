@@ -6,6 +6,11 @@ import { __ } from '@wordpress/i18n';
 import { Placeholder, SelectControl, TextControl } from '@wordpress/components';
 import { registerBlockType } from '@wordpress/blocks';
 
+/**
+ * Internal dependencies
+ */
+import './editor.scss';
+
 registerBlockType( 'jetpack/vr', {
 	title: __( 'VR Image', 'jetpack' ),
 	description: __( 'Embed 360° photos and Virtual Reality (VR) Content', 'jetpack' ),
