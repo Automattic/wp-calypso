@@ -11,6 +11,24 @@ import { registerBlockType } from '@wordpress/blocks';
  */
 import './editor.scss';
 
+const VRImage = ( { className, url, view } ) => (
+	<div className={ className }>
+		<iframe
+			title={ __( 'VR Image', 'jetpack' ) }
+			allowFullScreen="true"
+			frameBorder="0"
+			width="100%"
+			height="300"
+			src={
+				'https://vr.me.sh/view/?view=' +
+				encodeURIComponent( view ) +
+				'&url=' +
+				encodeURIComponent( url )
+			}
+		/>
+	</div>
+);
+
 registerBlockType( 'a8c/vr', {
 	title: __( 'VR Image', 'jetpack' ),
 	description: __( 'Embed 360° photos and Virtual Reality (VR) Content', 'jetpack' ),
@@ -30,30 +48,12 @@ registerBlockType( 'a8c/vr', {
 		},
 	},
 
-	edit: props => {
-		const { attributes, setAttributes } = props;
-
+	edit: ( { attributes, className, setAttributes } ) => {
 		const onChangeUrl = value => setAttributes( { url: value.trim() } );
 		const onChangeView = value => setAttributes( { view: value } );
 
 		if ( attributes.url && attributes.view ) {
-			return (
-				<div className={ props.className }>
-					<iframe
-						title={ __( 'VR Image', 'jetpack' ) }
-						allowFullScreen="true"
-						frameBorder="0"
-						width="100%"
-						height="300"
-						src={
-							'https://vr.me.sh/view/?view=' +
-							encodeURIComponent( attributes.view ) +
-							'&url=' +
-							encodeURIComponent( attributes.url )
-						}
-					/>
-				</div>
-			);
+			return <VRImage className={ className } url={ attributes.url } view={ attributes.view } />;
 		}
 		return (
 			<div>
@@ -61,7 +61,7 @@ registerBlockType( 'a8c/vr', {
 					key="placeholder"
 					icon="format-image"
 					label={ __( 'VR Image', 'jetpack' ) }
-					className={ props.className }
+					className={ className }
 				>
 					<TextControl
 						type="url"
@@ -85,23 +85,7 @@ registerBlockType( 'a8c/vr', {
 			</div>
 		);
 	},
-	save: props => {
-		return (
-			<div className={ props.className }>
-				<iframe
-					title={ __( 'VR Image', 'jetpack' ) }
-					allowFullScreen="true"
-					frameBorder="0"
-					width="100%"
-					height="300"
-					src={
-						'https://vr.me.sh/view/?view=' +
-						encodeURIComponent( props.attributes.view ) +
-						'&url=' +
-						encodeURIComponent( props.attributes.url )
-					}
-				/>
-			</div>
-		);
-	},
+	save: ( { className, attributes } ) => (
+		<VRImage className={ className } url={ attributes.url } view={ attributes.view } />
+	),
 } );
