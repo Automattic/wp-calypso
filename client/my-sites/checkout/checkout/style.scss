@@ -533,6 +533,20 @@
 		}
 	}
 
+	// Web Payment Box
+	// -----------------------------------
+	.web-payment-box {
+		.web-payment-box__button-explanation {
+			margin-bottom: 1rem;
+		}
+
+		.web-payment-box__apple-pay-button {
+			-webkit-appearance: -apple-pay-button;
+			-apple-pay-button-type: buy;
+			-apple-pay-button-style: black;
+		}
+	}
+
 	// Supporting Text / Fine Print
 	// -----------------------------------
 	.supporting-text {

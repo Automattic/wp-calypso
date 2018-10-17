@@ -20,6 +20,7 @@ import SectionNav from 'components/section-nav';
 import SectionHeader from 'components/section-header';
 import analytics from 'lib/analytics';
 import cartValues, { paymentMethodName } from 'lib/cart-values';
+import { detectWebPaymentMethod, getWebPaymentMethodName } from './web-payment-box';
 
 export class PaymentBox extends PureComponent {
 	constructor() {
@@ -73,6 +74,11 @@ export class PaymentBox extends PureComponent {
 			case 'wechat':
 				labelAdditionalText = paymentMethodName( method );
 				break;
+
+			case 'web-payment':
+				labelLogo = <Gridicon icon="folder" />;
+				labelAdditionalText = getWebPaymentMethodName( detectWebPaymentMethod() );
+				break;
 		}
 
 		return (
@@ -85,6 +91,10 @@ export class PaymentBox extends PureComponent {
 
 	paymentMethod( method ) {
 		if ( ! cartValues.isPaymentMethodEnabled( this.props.cart, method ) ) {
+			return null;
+		}
+
+		if ( 'web-payment' === method && null === detectWebPaymentMethod() ) {
 			return null;
 		}
 
