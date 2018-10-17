@@ -41,7 +41,7 @@ const cloneDestination = ( state = null, { type, payload } ) => {
 
 export default combineReducers( {
 	activationRequesting,
-	cloneDestinination: keyedReducer( 'siteId', cloneDestination ),
+	cloneDestination: keyedReducer( 'siteId', cloneDestination ),
 	filter: keyedReducer( 'siteId', filterState ),
 	restoreProgress,
 	restoreRequest,

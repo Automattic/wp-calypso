@@ -223,8 +223,8 @@ class ActivityLog extends Component {
 			timestamp,
 			rewindId,
 			context,
-			destinationSiteName,
 		} = actionProgress;
+
 		return (
 			<ProgressBanner
 				key={ `progress-${ restoreId || downloadId }` }
@@ -237,7 +237,7 @@ class ActivityLog extends Component {
 				timestamp={ timestamp || rewindId }
 				action={ action }
 				context={ context }
-				destinationSiteName={ destinationSiteName }
+				destinationSiteName={ this.props.destinationSiteName }
 			/>
 		);
 	}
