@@ -18,8 +18,8 @@ import vouchers from './vouchers/reducer';
 import sharingButtons from './sharing-buttons/reducer';
 import mediaStorage from './media-storage/reducer';
 import blogStickers from './blog-stickers/reducer';
+import editor from './editor/reducer';
 import {
-	EDITOR_TYPE_SET,
 	MEDIA_DELETE,
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,
@@ -217,20 +217,6 @@ export function items( state = null, action ) {
 				},
 			};
 		}
-
-		case EDITOR_TYPE_SET: {
-			const { siteId, editor } = action;
-			if ( state[ siteId ] && editor.match( /^(classic|gutenberg)$/ ) ) {
-				return {
-					...state,
-					[ siteId ]: {
-						...state[ siteId ],
-						editor: editor,
-					},
-				};
-			}
-			return state;
-		}
 	}
 
 	return state;
@@ -325,4 +311,5 @@ export default combineReducers( {
 	sharingButtons,
 	blogStickers,
 	hasAllSitesList,
+	editor,
 } );
