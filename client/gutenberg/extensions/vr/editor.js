@@ -36,58 +36,54 @@ registerBlockType( 'jetpack/vr', {
 		const onChangeUrl = value => setAttributes( { url: value.trim() } );
 		const onChangeView = value => setAttributes( { view: value } );
 
-		const renderEdit = () => {
-			if ( attributes.url && attributes.view ) {
-				return (
-					<div className={ props.className }>
-						<iframe
-							title={ __( 'VR Image', 'jetpack' ) }
-							allowFullScreen="true"
-							frameBorder="0"
-							width="100%"
-							height="300"
-							src={
-								'https://vr.me.sh/view/?view=' +
-								encodeURIComponent( attributes.view ) +
-								'&url=' +
-								encodeURIComponent( attributes.url )
-							}
-						/>
-					</div>
-				);
-			}
+		if ( attributes.url && attributes.view ) {
 			return (
-				<div>
-					<Placeholder
-						key="placeholder"
-						icon="format-image"
-						label={ __( 'VR Image', 'jetpack' ) }
-						className={ props.className }
-					>
-						<TextControl
-							type="url"
-							style={ { flex: '1 1 auto' } }
-							label={ __( 'Enter URL to VR image', 'jetpack' ) }
-							value={ attributes.url }
-							onChange={ onChangeUrl }
-						/>
-						<SelectControl
-							label={ __( 'View Type', 'jetpack' ) }
-							disabled={ ! attributes.url }
-							value={ attributes.view }
-							onChange={ onChangeView }
-							options={ [
-								{ label: '', value: '' },
-								{ label: __( '360°', 'jetpack' ), value: '360' },
-								{ label: __( 'Cinema', 'jetpack' ), value: 'cinema' },
-							] }
-						/>
-					</Placeholder>
+				<div className={ props.className }>
+					<iframe
+						title={ __( 'VR Image', 'jetpack' ) }
+						allowFullScreen="true"
+						frameBorder="0"
+						width="100%"
+						height="300"
+						src={
+							'https://vr.me.sh/view/?view=' +
+							encodeURIComponent( attributes.view ) +
+							'&url=' +
+							encodeURIComponent( attributes.url )
+						}
+					/>
 				</div>
 			);
-		};
-
-		return renderEdit();
+		}
+		return (
+			<div>
+				<Placeholder
+					key="placeholder"
+					icon="format-image"
+					label={ __( 'VR Image', 'jetpack' ) }
+					className={ props.className }
+				>
+					<TextControl
+						type="url"
+						style={ { flex: '1 1 auto' } }
+						label={ __( 'Enter URL to VR image', 'jetpack' ) }
+						value={ attributes.url }
+						onChange={ onChangeUrl }
+					/>
+					<SelectControl
+						label={ __( 'View Type', 'jetpack' ) }
+						disabled={ ! attributes.url }
+						value={ attributes.view }
+						onChange={ onChangeView }
+						options={ [
+							{ label: '', value: '' },
+							{ label: __( '360°', 'jetpack' ), value: '360' },
+							{ label: __( 'Cinema', 'jetpack' ), value: 'cinema' },
+						] }
+					/>
+				</Placeholder>
+			</div>
+		);
 	},
 	save: props => {
 		return (
