@@ -1539,7 +1539,7 @@ function cartToDonutsOrderSummary( cart ) {
 			} else if ( p.product_slug === 'private_whois' ) {
 				donuts_type = 'whois_privacy';
 			}
-			return Object.assign( p, { tld: domainNameToTld( p.meta ), donuts_type: donuts_type } );
+			return Object.assign( {}, p, { tld: domainNameToTld( p.meta ), donuts_type: donuts_type } );
 		} );
 	const donuts_domain_registrations = domain_registrations.filter( p =>
 		includes( DONUTS_TLDS, p.tld )
