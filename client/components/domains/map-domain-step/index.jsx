@@ -19,7 +19,7 @@ import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainProductPrice from 'components/domains/domain-product-price';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
@@ -30,6 +30,7 @@ import {
 	recordGoButtonClickInMapDomain,
 } from 'state/domains/actions';
 import Notice from 'components/notice';
+import formatCurrency from 'lib/format-currency';
 
 class MapDomainStep extends React.Component {
 	static propTypes = {
@@ -80,12 +81,26 @@ class MapDomainStep extends React.Component {
 	}
 
 	render() {
-		const suggestion = get( this.props, 'products.domain_map', false )
-			? {
-					cost: this.props.products.domain_map.cost_display,
-					product_slug: this.props.products.domain_map.product_slug,
-			  }
-			: { cost: null, product_slug: '' };
+		const { currencyCode } = this.props;
+		const product = get( this.props, 'products.domain_map', false );
+		let cost, suggestion;
+
+		if ( product ) {
+			const productCost = product.cost;
+			cost = formatCurrency( productCost, currencyCode, { precision: 0 } );
+
+			if ( productCost % 1 !== 0 ) {
+				cost = this.props.products.domain_map.cost_display;
+			}
+
+			suggestion = {
+				cost: cost,
+				product_slug: this.props.products.domain_map.product_slug,
+			};
+		} else {
+			suggestion = { cost: null, product_slug: '' };
+		}
+
 		const { searchQuery } = this.state;
 		const { translate } = this.props;
 
@@ -254,6 +269,7 @@ export default connect(
 	state => ( {
 		currentUser: getCurrentUser( state ),
 		selectedSite: getSelectedSite( state ),
+		currencyCode: getCurrentUserCurrencyCode( state ),
 	} ),
 	{
 		recordAddDomainButtonClickInMapDomain,
