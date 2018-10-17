@@ -36,7 +36,7 @@ describe( 'getBlockStyle', () => {
 	test( 'returns undefined if not sticky', () => {
 		const state = { isSticky: false, blockWidth: 200 };
 
-		expect( getBlockStyle( state ) ).toBeUndefined;
+		expect( getBlockStyle( state ) ).toBeUndefined();
 	} );
 } );
 
