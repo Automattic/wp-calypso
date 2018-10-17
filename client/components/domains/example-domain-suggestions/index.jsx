@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -18,13 +17,16 @@ import { DESIGN_TYPE_STORE } from 'signup/constants';
 
 class DomainSuggestionsExample extends React.Component {
 	static propTypes = {
+		offerUnavailableOption: PropTypes.bool,
+		siteDesignType: PropTypes.string,
 		url: PropTypes.string.isRequired,
 	};
 
 	render() {
 		const { translate, siteDesignType } = this.props;
 
-		const showDomainOption = siteDesignType !== DESIGN_TYPE_STORE;
+		const showDomainOption =
+			this.props.offerUnavailableOption && siteDesignType !== DESIGN_TYPE_STORE;
 
 		return (
 			<div className="example-domain-suggestions">
