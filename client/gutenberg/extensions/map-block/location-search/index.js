@@ -108,7 +108,7 @@ export class LocationSearch extends Component {
 		return (
 			<BaseControl label={ label } className='components-location-search'>
 				<Lookup completer={ this.autocompleter } onReset={ this.onReset }>
-					{ ( { isExpanded, listBoxId, activeId, onChange } ) => (
+					{ ( { isExpanded, listBoxId, activeId, onChange, onKeyDown } ) => (
 						<TextControl
 							placeholder={ placeholderText }
 							ref={ this.textRef }
@@ -116,6 +116,7 @@ export class LocationSearch extends Component {
 					        aria-expanded={ isExpanded }
 	                        aria-owns={ listBoxId }
 	                        aria-activedescendant={ activeId }
+	                        onKeyDown={ onKeyDown }
 					    />
 					) }
 				</Lookup>
