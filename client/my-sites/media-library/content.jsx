@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { groupBy, head, map, noop, values } from 'lodash';
+import { groupBy, head, isEmpty, map, noop, size, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { localize } from 'i18n-calypso';
@@ -33,6 +33,8 @@ import MediaLibraryExternalHeader from './external-media-header';
 import MediaLibraryList from './list';
 import InlineConnection from 'my-sites/sharing/connections/inline-connection';
 import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
+import { pauseGuidedTour, resumeGuidedTour } from 'state/ui/guided-tours/actions';
+import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 
 class MediaLibraryContent extends React.Component {
 	static propTypes = {
@@ -58,21 +60,23 @@ class MediaLibraryContent extends React.Component {
 		source: '',
 	};
 
+	componentDidUpdate( prevProps ) {
+		if ( this.props.shouldPauseGuidedTour !== prevProps.shouldPauseGuidedTour ) {
+			this.props.toggleGuidedTour( this.props.shouldPauseGuidedTour );
+		}
+	}
+
 	renderErrors() {
-		const errorTypes = values( this.props.mediaValidationErrors ).map( head );
-		return map( groupBy( errorTypes ), ( occurrences, errorType ) => {
+		const { mediaValidationErrorTypes, site, translate } = this.props;
+		return map( groupBy( mediaValidationErrorTypes ), ( occurrences, errorType ) => {
 			let message, onDismiss;
 			const i18nOptions = {
 				count: occurrences.length,
 				args: occurrences.length,
 			};
 
-			if ( this.props.site ) {
-				onDismiss = MediaActions.clearValidationErrorsByType.bind(
-					null,
-					this.props.site.ID,
-					errorType
-				);
+			if ( site ) {
+				onDismiss = MediaActions.clearValidationErrorsByType.bind( null, site.ID, errorType );
 			}
 
 			let status = 'is-error';
@@ -85,28 +89,28 @@ class MediaLibraryContent extends React.Component {
 					status = 'is-warning';
 					upgradeNudgeName = 'plan-media-storage-error-video';
 					upgradeNudgeFeature = 'video-upload';
-					message = this.props.translate(
+					message = translate(
 						'%d file could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.',
 						'%d files could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.',
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.FILE_TYPE_UNSUPPORTED:
-					message = this.props.translate(
+					message = translate(
 						'%d file could not be uploaded because the file type is not supported.',
 						'%d files could not be uploaded because their file types are unsupported.',
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.UPLOAD_VIA_URL_404:
-					message = this.props.translate(
+					message = translate(
 						'%d file could not be uploaded because no image exists at the specified URL.',
 						'%d files could not be uploaded because no images exist at the specified URLs',
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE:
-					message = this.props.translate(
+					message = translate(
 						'%d file could not be uploaded because it exceeds the maximum upload size.',
 						'%d files could not be uploaded because they exceed the maximum upload size.',
 						i18nOptions
@@ -115,7 +119,7 @@ class MediaLibraryContent extends React.Component {
 				case MediaValidationErrors.NOT_ENOUGH_SPACE:
 					upgradeNudgeName = 'plan-media-storage-error';
 					upgradeNudgeFeature = 'extra-storage';
-					message = this.props.translate(
+					message = translate(
 						'%d file could not be uploaded because there is not enough space left.',
 						'%d files could not be uploaded because there is not enough space left.',
 						i18nOptions
@@ -124,18 +128,18 @@ class MediaLibraryContent extends React.Component {
 				case MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT:
 					upgradeNudgeName = 'plan-media-storage-error';
 					upgradeNudgeFeature = 'extra-storage';
-					message = this.props.translate(
+					message = translate(
 						'%d file could not be uploaded because you have reached your plan storage limit.',
 						'%d files could not be uploaded because you have reached your plan storage limit.',
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.SERVICE_FAILED:
-					message = this.props.translate( 'We are unable to retrieve your full media library.' );
+					message = translate( 'We are unable to retrieve your full media library.' );
 					tryAgain = true;
 					break;
 				default:
-					message = this.props.translate(
+					message = translate(
 						'%d file could not be uploaded because an error occurred while uploading.',
 						'%d files could not be uploaded because errors occurred while uploading.',
 						i18nOptions
@@ -329,11 +333,24 @@ class MediaLibraryContent extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
-		isRequesting: isKeyringConnectionsFetching( state ),
+	( state, ownProps ) => {
+		const guidedTourState = getGuidedTourState( state );
+		const mediaValidationErrorTypes = values( ownProps.mediaValidationErrors ).map( head );
+		const shouldPauseGuidedTour =
+			! isEmpty( guidedTourState.tour ) && 0 < size( mediaValidationErrorTypes );
+		return {
+			siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
+			isRequesting: isKeyringConnectionsFetching( state ),
+			mediaValidationErrorTypes,
+			shouldPauseGuidedTour,
+		};
+	},
+	dispatch => ( {
+		toggleGuidedTour: shouldPause =>
+			// We're wrapping this in a `setTimeout` to avoid dispatch clashes with the media data Flux implementation.
+			// The eventual Reduxification of the media store should prevent this. See: #26168
+			setTimeout( () => dispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() ), 0 ),
 	} ),
-	null,
 	null,
 	{ pure: false }
 )( localize( MediaLibraryContent ) );
