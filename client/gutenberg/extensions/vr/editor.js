@@ -55,34 +55,33 @@ registerBlockType( 'a8c/vr', {
 		if ( attributes.url && attributes.view ) {
 			return <VRImage className={ className } url={ attributes.url } view={ attributes.view } />;
 		}
+
 		return (
-			<div>
-				<Placeholder
-					key="placeholder"
-					icon="format-image"
-					label={ __( 'VR Image', 'jetpack' ) }
-					className={ className }
-				>
-					<TextControl
-						type="url"
-						style={ { flex: '1 1 auto' } }
-						label={ __( 'Enter URL to VR image', 'jetpack' ) }
-						value={ attributes.url }
-						onChange={ onChangeUrl }
-					/>
-					<SelectControl
-						label={ __( 'View Type', 'jetpack' ) }
-						disabled={ ! attributes.url }
-						value={ attributes.view }
-						onChange={ onChangeView }
-						options={ [
-							{ label: '', value: '' },
-							{ label: __( '360°', 'jetpack' ), value: '360' },
-							{ label: __( 'Cinema', 'jetpack' ), value: 'cinema' },
-						] }
-					/>
-				</Placeholder>
-			</div>
+			<Placeholder
+				key="placeholder"
+				icon="format-image"
+				label={ __( 'VR Image', 'jetpack' ) }
+				className={ className }
+			>
+				<TextControl
+					type="url"
+					style={ { flex: '1 1 auto' } }
+					label={ __( 'Enter URL to VR image', 'jetpack' ) }
+					value={ attributes.url }
+					onChange={ onChangeUrl }
+				/>
+				<SelectControl
+					label={ __( 'View Type', 'jetpack' ) }
+					disabled={ ! attributes.url }
+					value={ attributes.view }
+					onChange={ onChangeView }
+					options={ [
+						{ label: '', value: '' },
+						{ label: __( '360°', 'jetpack' ), value: '360' },
+						{ label: __( 'Cinema', 'jetpack' ), value: 'cinema' },
+					] }
+				/>
+			</Placeholder>
 		);
 	},
 	save: ( { className, attributes } ) => (
