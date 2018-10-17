@@ -1231,3 +1231,13 @@ export function getSiteComputedAttributes( state, siteId ) {
 
 	return computedAttributes;
 }
+
+/**
+ * Returns the editor of the selected site
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {String} "gutenberg" or "classic" or null
+ */
+export function getSiteEditor( state, siteId ) {
+	return get( getRawSite( state, siteId ), 'editor', null );
+}
