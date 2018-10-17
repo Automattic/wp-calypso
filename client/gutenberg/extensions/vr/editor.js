@@ -24,11 +24,9 @@ registerBlockType( 'a8c/vr', {
 	attributes: {
 		url: {
 			type: 'string',
-			default: '',
 		},
 		view: {
 			type: 'string',
-			default: '',
 		},
 	},
 	edit: VRImageEdit,
