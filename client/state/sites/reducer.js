@@ -220,13 +220,12 @@ export function items( state = null, action ) {
 
 		case EDITOR_TYPE_SET: {
 			const { siteId, editor } = action;
-			if ( state[ siteId ] ) {
-				const validatedEditor = editor.match( /^(classic|gutenberg)$/ ) ? editor : 'classic';
+			if ( state[ siteId ] && editor.match( /^(classic|gutenberg)$/ ) ) {
 				return {
 					...state,
 					[ siteId ]: {
 						...state[ siteId ],
-						editor: validatedEditor,
+						editor: editor,
 					},
 				};
 			}
