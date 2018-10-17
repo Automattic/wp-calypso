@@ -1,9 +1,12 @@
-// @TODO: key commands, spoken messages, consider suggesting as a core Gutenberg component
-
 /**
  * WordPress dependencies
  */
 import { Component } from '@wordpress/element';
+import {
+	__,
+	_n,
+	sprintf
+} from '@wordpress/i18n';
 import {
 	withInstanceId,
 	compose
@@ -21,7 +24,8 @@ import {
 import {
 	Button,
 	Popover,
-	withFocusOutside
+	withFocusOutside,
+	withSpokenMessages
 } from '@wordpress/components';
 
 /**
@@ -135,8 +139,8 @@ export class Lookup extends Component {
 				selectedIndex,
 				isOpen: filteredOptions.length > 0
 			} );
+			this.announce( filteredOptions );
 		} );
-
 	}
 
 	onChange( query ) {
@@ -201,7 +205,21 @@ export class Lookup extends Component {
 		event.preventDefault();
 		event.stopPropagation();
 	}
-
+	announce( filteredOptions ) {
+		const { debouncedSpeak } = this.props;
+		if ( ! debouncedSpeak ) {
+			return;
+		}
+		if ( !! filteredOptions.length ) {
+			debouncedSpeak( sprintf( _n(
+				'%d result found, use up and down arrow keys to navigate.',
+				'%d results found, use up and down arrow keys to navigate.',
+				filteredOptions.length
+			), filteredOptions.length ), 'assertive' );
+		} else {
+			debouncedSpeak( __( 'No results.' ), 'assertive' );
+		}
+	}
 	render() {
 
 		const { onChange, onKeyDown } = this;
@@ -254,6 +272,7 @@ export class Lookup extends Component {
 }
 
 export default compose( [
+	withSpokenMessages,
 	withInstanceId,
 	withFocusOutside, // this MUST be the innermost HOC as it calls handleFocusOutside
 ] )( Lookup );
