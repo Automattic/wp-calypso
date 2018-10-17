@@ -31,7 +31,6 @@ export default class VRImageEdit extends Component {
 			>
 				<TextControl
 					type="url"
-					style={ { flex: '1 1 auto' } }
 					label={ __( 'Enter URL to VR image', 'jetpack' ) }
 					value={ attributes.url }
 					onChange={ this.onChangeUrl }
