@@ -4,28 +4,15 @@
  * Wordpress dependencies
  */
 
-import {
-	Component,
-	createRef,
-	Fragment
-} from '@wordpress/element';
+import { Component, createRef, Fragment } from '@wordpress/element';
 
-import {
-	Button,
-	Dashicon,
-	TextareaControl,
-	TextControl
-} from '@wordpress/components';
+import { Button, Dashicon, TextareaControl, TextControl } from '@wordpress/components';
 
 /**
  * External dependencies
  */
 
-import {
-	get,
-	clone,
-	assign
-} from 'lodash';
+import { get, clone, assign } from 'lodash';
 
 /**
  * Internal dependencies
@@ -41,17 +28,15 @@ import { loadScript } from './load-script';
 // import { loadScript } from 'lib/load-script';
 
 export class Map extends Component {
-
 	// Lifecycle
 	constructor() {
-
 		super( ...arguments );
 
 		this.state = {
 			map: null,
 			fit_to_bounds: false,
 			loaded: false,
-			google: null
+			google: null,
 		};
 
 		// Event Handlers as methods
@@ -67,92 +52,74 @@ export class Map extends Component {
 		// Refs
 		this.mapRef = createRef();
 		this.addPointRef = createRef();
-
 	}
 
 	render() {
-		const {
-			points,
-			admin
-		} = this.props;
+		const { points, admin } = this.props;
 
-		const {
-			map,
-			activeMarker,
-			google,
-		} = this.state;
+		const { map, activeMarker, google } = this.state;
 
-		const {
-			onMarkerClick,
-			deleteActiveMarker,
-			updateActiveMarker,
-			addPoint
-		} = this;
+		const { onMarkerClick, deleteActiveMarker, updateActiveMarker, addPoint } = this;
 
-		const mapMarkers = ( map && google ) && points.map( ( point, index ) => {
-
-			return (
-				<MapMarker
-					key={ index }
-					point={ point }
-					index={ index }
-					map={ map }
-					google={ google.maps }
-					icon={ this.getMarkerIcon() }
-					onClick={ onMarkerClick }
-				/>
-			);
-
-		});
+		const mapMarkers =
+			map &&
+			google &&
+			points.map( ( point, index ) => {
+				return (
+					<MapMarker
+						key={ index }
+						point={ point }
+						index={ index }
+						map={ map }
+						google={ google.maps }
+						icon={ this.getMarkerIcon() }
+						onClick={ onMarkerClick }
+					/>
+				);
+			} );
 
 		const currentPoint = get( activeMarker, 'props.point' ) || {};
 
-		const {
-			title,
-			caption
-		} = currentPoint;
+		const { title, caption } = currentPoint;
 
-		const infoWindow = ( google ) &&
-			(
-				<InfoWindow
-					activeMarker={ activeMarker }
-					map={ map }
-					google={ google }
-					unsetActiveMarker={ () => this.setState( { activeMarker: null } ) }
-				>
-					{ activeMarker && admin &&
+		const infoWindow = google && (
+			<InfoWindow
+				activeMarker={ activeMarker }
+				map={ map }
+				google={ google }
+				unsetActiveMarker={ () => this.setState( { activeMarker: null } ) }
+			>
+				{ activeMarker &&
+					admin && (
 						<Fragment>
 							<TextControl
 								label="Marker Title"
 								value={ title }
-								onChange={ ( value ) => updateActiveMarker( { title: value } ) }
+								onChange={ value => updateActiveMarker( { title: value } ) }
 							/>
 							<TextareaControl
-								className='wp-block-atavist-maps__marker-caption'
+								className="wp-block-atavist-maps__marker-caption"
 								label="Marker Caption"
 								value={ caption }
-								rows='3'
-								tag='textarea'
-								onChange={ ( value ) => updateActiveMarker( { caption: value } ) }
+								rows="3"
+								tag="textarea"
+								onChange={ value => updateActiveMarker( { caption: value } ) }
 							/>
-							<Button
-								onClick={ deleteActiveMarker }
-								className='wp-block-atavist-maps__delete-btn'
-							>
-								<Dashicon icon='trash' size='15' /> Delete Marker
+							<Button onClick={ deleteActiveMarker } className="wp-block-atavist-maps__delete-btn">
+								<Dashicon icon="trash" size="15" /> Delete Marker
 							</Button>
 						</Fragment>
-					}
+					) }
 
-					{ activeMarker && ! admin &&
+				{ activeMarker &&
+					! admin && (
 						<Fragment>
 							<h3>{ title }</h3>
 							<p>{ caption }</p>
 						</Fragment>
-					}
-
-				</InfoWindow>
-			);
+					) }
+			</InfoWindow>
+		);
 
 		return (
 			<Fragment>
@@ -160,22 +127,23 @@ export class Map extends Component {
 					{ mapMarkers }
 				</div>
 				{ infoWindow }
-				{ admin &&
-					<AddPoint onAddPoint={ addPoint } isVisible={ activeMarker ? false : true } ref={ this.addPointRef } />
-				}
+				{ admin && (
+					<AddPoint
+						onAddPoint={ addPoint }
+						isVisible={ activeMarker ? false : true }
+						ref={ this.addPointRef }
+					/>
+				) }
 			</Fragment>
 		);
 	}
 
 	componentDidMount() {
-
 		this.loadMapLibraries();
-
 	}
 
 	// This implementation of componentDidUpdate is a reusable way to approximate Polymer observers
 	componentDidUpdate( prevProps ) {
-
 		for ( const propName in this.props ) {
 			const functionName = propName + 'Changed';
 			if (
@@ -185,46 +153,33 @@ export class Map extends Component {
 				this[ functionName ]( this.props[ propName ] );
 			}
 		}
-
 	}
 
 	// Observers
 	pointsChanged() {
-
 		this.setBoundsByMarkers();
-
 	}
 
 	map_styleChanged() {
-
-		const {
-			map,
-			google
-		} = this.state;
+		const { map, google } = this.state;
 
 		map.setOptions( {
 			styles: this.getMapStyle(),
 			mapTypeId: google.maps.MapTypeId[ this.getMapType() ],
 		} );
-
 	}
 
 	// Event handling
 	onMarkerClick( marker ) {
-
 		this.setState( { activeMarker: marker } );
 		this.setAddPointVisibility( false );
-
 	}
 
 	onMapClick() {
-
 		this.setState( { activeMarker: null } );
-
 	}
 
 	addPoint( point ) {
-
 		const { points } = this.props;
 		const newPoints = clone( points );
 
@@ -232,11 +187,9 @@ export class Map extends Component {
 		this.props.onSetPoints( newPoints );
 
 		this.setAddPointVisibility( false );
-
 	}
 
-	updateActiveMarker( updates) {
-
+	updateActiveMarker( updates ) {
 		const { points } = this.props;
 		const { activeMarker } = this.state;
 		const { index } = activeMarker.props;
@@ -244,11 +197,9 @@ export class Map extends Component {
 
 		assign( newPoints[ index ], updates );
 		this.props.onSetPoints( newPoints );
-
 	}
 
 	deleteActiveMarker() {
-
 		const { points } = this.props;
 		const { activeMarker } = this.state;
 		const { index } = activeMarker.props;
@@ -257,18 +208,15 @@ export class Map extends Component {
 		newPoints.splice( index, 1 );
 		this.props.onSetPoints( newPoints );
 		this.setState( { activeMarker: null } );
-
 	}
 
 	setAddPointVisibility( visible = true ) {
-
 		if ( this.addPointRef.current ) {
 			this.addPointRef.current.setState( { isVisible: visible } );
 		}
 		if ( visible ) {
 			this.setState( { activeMarker: null } );
 		}
-
 	}
 
 	// Various map functions
@@ -282,17 +230,9 @@ export class Map extends Component {
 
 	// Calculate the appropriate zoom and center point of the map based on defined markers
 	setBoundsByMarkers() {
+		const { zoom, points } = this.props;
 
-		const {
-			zoom,
-			points
-		} = this.props;
-
-		const {
-			map,
-			activeMarker,
-			google
-		} = this.state;
+		const { map, activeMarker, google } = this.state;
 
 		const bounds = new google.maps.LatLngBounds();
 
@@ -311,56 +251,44 @@ export class Map extends Component {
 		// If there are multiple points, zoom is determined by the area they cover,
 		// and zoom control is removed.
 		if ( points.length > 1 ) {
-
 			map.fitBounds( bounds );
 			this.setState( { fit_to_bounds: true } );
 			map.setOptions( { zoomControl: false } );
 			return;
-
 		}
 
 		// If there are one (or zero) points, user can set zoom
 		map.setZoom( parseInt( zoom, 10 ) );
 		this.setState( { fit_to_bounds: false } );
 		map.setOptions( { zoomControl: true } );
-
 	}
 
 	getMapStyle() {
-
 		return CONFIG.styles[ this.props.map_style ].styles;
-
 	}
 
 	getMapType() {
-
 		return CONFIG.styles[ this.props.map_style ].map_type;
-
 	}
 
 	getMarkerIcon() {
-
 		const { marker_color } = this.props;
 		const svgPath = {
-		    path: 'M16,38 C16,38 32,26.692424 32,16 C32,5.307576 24.836556,0 16,0 C7.163444,0 0,5.307576 0,16 C0,26.692424 16,38 16,38 Z',
-		    fillColor: marker_color,
-		    fillOpacity: 0.8,
-		    scale: 1,
-		    strokeWeight: 0
-		  };
-	    return svgPath;
-
+			path:
+				'M16,38 C16,38 32,26.692424 32,16 C32,5.307576 24.836556,0 16,0 C7.163444,0 0,5.307576 0,16 C0,26.692424 16,38 16,38 Z',
+			fillColor: marker_color,
+			fillOpacity: 0.8,
+			scale: 1,
+			strokeWeight: 0,
+		};
+		return svgPath;
 	}
 
 	// Script loading, browser geolocation
 	scriptsLoaded() {
+		const { map_center, points } = this.props;
 
-		const {
-			map_center,
-			points
-		} = this.props;
-
-		this.setState({ loaded: true });
+		this.setState( { loaded: true } );
 
 		// If the map has any points, skip geolocation and use what we have.
 		if ( points.length > 0 ) {
@@ -368,52 +296,33 @@ export class Map extends Component {
 			return;
 		}
 
-		// If there are no points, attempt to use geolocation to center the map on
-		// the user's current location.
-
-		const getMapCenter = () => {
-			return new Promise(function (resolve, reject) {
-				navigator.geolocation.getCurrentPosition(resolve, reject)
-			})
-		}
-		getMapCenter()
-			.then( ( position ) => {
-				this.initMap( {
-					latitude: position.coords.latitude,
-					longitude: position.coords.longitude
-				} );
-			})
-			.catch( () => {
-		    	this.initMap( map_center );
-		    } );
+		this.initMap( map_center );
 	}
 
 	loadMapLibraries() {
-
 		const { api_key } = this.props;
 
 		const src = [
 			'https://maps.googleapis.com/maps/api/js?key=',
 			api_key,
-			'&libraries=places' ].join( '' );
+			'&libraries=places',
+		].join( '' );
 
 		if ( window.google ) {
 			this.setState( { google: window.google }, this.scriptsLoaded );
 			return;
 		}
 
-		loadScript( src, ( error ) => {
+		loadScript( src, error => {
 			if ( error ) {
 				return;
 			}
 			this.setState( { google: window.google }, this.scriptsLoaded );
 		} );
-
 	}
 
 	// Create the map object.
 	initMap( map_center ) {
-
 		const { google } = this.state;
 		const { zoom } = this.props;
 		const mapOptions = {
@@ -429,10 +338,7 @@ export class Map extends Component {
 			zoom: parseInt( zoom, 10 ),
 		};
 
-		const map = new google.maps.Map(
-			this.mapRef.current,
-			mapOptions
-		);
+		const map = new google.maps.Map( this.mapRef.current, mapOptions );
 
 		map.addListener(
 			'zoom_changed',
@@ -443,7 +349,6 @@ export class Map extends Component {
 		map.addListener( 'click', this.onMapClick );
 
 		this.setState( { map }, () => {
-
 			this.sizeMap();
 			this.mapRef.current.addEventListener( 'alignmentChanged', this.sizeMap );
 			window.addEventListener( 'resize', this.sizeMap );
@@ -452,9 +357,7 @@ export class Map extends Component {
 			this.setBoundsByMarkers();
 			this.setAddPointVisibility( true );
 			this.setState( { loaded: true } );
-
-		});
-
+		} );
 	}
 }
 
@@ -466,7 +369,7 @@ Map.defaultProps = {
 	// Default center point is San Francisco
 	map_center: {
 		latitude: 37.7749295,
-		longitude: -122.41941550000001
+		longitude: -122.41941550000001,
 	},
 	marker_color: 'red',
 	api_key: null,
