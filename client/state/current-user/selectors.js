@@ -9,7 +9,6 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getUser } from 'state/users/selectors';
 
 /**
  * Returns the current user ID
@@ -18,7 +17,7 @@ import { getUser } from 'state/users/selectors';
  * @return {?Number}        Current user ID
  */
 export function getCurrentUserId( state ) {
-	return get( state, [ 'currentUser', 'id' ] );
+	return get( state, [ 'currentUser', 'data', 'id' ] );
 }
 
 /**
@@ -38,12 +37,7 @@ export function isUserLoggedIn( state ) {
  * @return {?Object}        Current user
  */
 export function getCurrentUser( state ) {
-	const userId = getCurrentUserId( state );
-	if ( ! userId ) {
-		return null;
-	}
-
-	return getUser( state, userId );
+	return get( state, [ 'currentUser', 'data' ] );
 }
 
 /**

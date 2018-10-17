@@ -46,7 +46,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
-	USER_RECEIVE,
+	CURRENT_USER_RECEIVE,
 } from 'state/action-types';
 import { login } from 'lib/paths';
 
@@ -260,7 +260,7 @@ export const socialAccount = createReducer(
 			...state,
 			requestError: error,
 		} ),
-		[ USER_RECEIVE ]: state => ( {
+		[ CURRENT_USER_RECEIVE ]: state => ( {
 			...state,
 			bearerToken: null,
 			username: null,
@@ -289,7 +289,7 @@ export const socialAccountLink = createReducer(
 		[ SOCIAL_LOGIN_REQUEST_FAILURE ]: userExistsErrorHandler,
 		[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => ( { isLinking: false } ),
 		[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => ( { isLinking: false } ),
-		[ USER_RECEIVE ]: () => ( { isLinking: false } ),
+		[ CURRENT_USER_RECEIVE ]: () => ( { isLinking: false } ),
 	}
 );
 

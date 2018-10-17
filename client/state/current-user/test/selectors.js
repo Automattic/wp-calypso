@@ -25,7 +25,7 @@ describe( 'selectors', () => {
 		test( 'should return the current user ID', () => {
 			const currentUserId = getCurrentUserId( {
 				currentUser: {
-					id: 73705554,
+					data: { id: 73705554 },
 				},
 			} );
 
@@ -45,7 +45,7 @@ describe( 'selectors', () => {
 		test( 'should return false if we have a null user id', () => {
 			expect(
 				isUserLoggedIn( {
-					currentUser: { id: null },
+					currentUser: { data: { id: null } },
 				} )
 			).to.be.false;
 		} );
@@ -54,7 +54,7 @@ describe( 'selectors', () => {
 		test( 'should return null if no current user', () => {
 			const selected = getCurrentUser( {
 				currentUser: {
-					id: null,
+					data: null,
 				},
 			} );
 
@@ -63,13 +63,8 @@ describe( 'selectors', () => {
 
 		test( 'should return the object for the current user', () => {
 			const selected = getCurrentUser( {
-				users: {
-					items: {
-						73705554: { ID: 73705554, login: 'testonesite2014' },
-					},
-				},
 				currentUser: {
-					id: 73705554,
+					data: { ID: 73705554, login: 'testonesite2014' },
 				},
 			} );
 
@@ -90,13 +85,8 @@ describe( 'selectors', () => {
 
 		test( 'should return null if the current user locale slug is not set', () => {
 			const locale = getCurrentUserLocale( {
-				users: {
-					items: {
-						73705554: { ID: 73705554, login: 'testonesite2014' },
-					},
-				},
 				currentUser: {
-					id: 73705554,
+					data: { ID: 73705554, login: 'testonesite2014' },
 				},
 			} );
 
@@ -105,13 +95,8 @@ describe( 'selectors', () => {
 
 		test( 'should return the current user locale slug', () => {
 			const locale = getCurrentUserLocale( {
-				users: {
-					items: {
-						73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'fr' },
-					},
-				},
 				currentUser: {
-					id: 73705554,
+					data: { ID: 73705554, login: 'testonesite2014', localeSlug: 'fr' },
 				},
 			} );
 
@@ -132,13 +117,8 @@ describe( 'selectors', () => {
 
 		test( 'should return null if the current user locale slug is not set', () => {
 			const locale = getCurrentUserLocaleVariant( {
-				users: {
-					items: {
-						73705554: { ID: 73705554, login: 'testonesite2014' },
-					},
-				},
 				currentUser: {
-					id: 73705554,
+					data: { ID: 73705554, login: 'testonesite2014' },
 				},
 			} );
 
@@ -147,18 +127,13 @@ describe( 'selectors', () => {
 
 		test( 'should return the current user locale variant slug', () => {
 			const locale = getCurrentUserLocaleVariant( {
-				users: {
-					items: {
-						73705554: {
-							ID: 73705554,
-							login: 'testonesite2014',
-							localeSlug: 'fr',
-							localeVariant: 'fr_formal',
-						},
-					},
-				},
 				currentUser: {
-					id: 73705554,
+					data: {
+						ID: 73705554,
+						login: 'testonesite2014',
+						localeSlug: 'fr',
+						localeVariant: 'fr_formal',
+					},
 				},
 			} );
 
@@ -169,13 +144,8 @@ describe( 'selectors', () => {
 	describe( 'getCurrentUserDate()', () => {
 		test( 'should return the current user registration date', () => {
 			const currentUserDate = getCurrentUserDate( {
-				users: {
-					items: {
-						73705554: { ID: 73705554, login: 'testonesite2014', date: '2014-10-18T17:14:52+00:00' },
-					},
-				},
 				currentUser: {
-					id: 73705554,
+					data: { ID: 73705554, login: 'testonesite2014', date: '2014-10-18T17:14:52+00:00' },
 				},
 			} );
 
@@ -300,15 +270,8 @@ describe( 'selectors', () => {
 
 		test( 'should return a null if the primary email is not set', () => {
 			const selected = getCurrentUserEmail( {
-				users: {
-					items: {
-						123456: {
-							ID: 123456,
-						},
-					},
-				},
 				currentUser: {
-					id: 123456,
+					data: { id: 123456 },
 				},
 			} );
 
@@ -318,16 +281,11 @@ describe( 'selectors', () => {
 		test( 'should return value if the email is set', () => {
 			const testEmail = 'test@example.com';
 			const selected = getCurrentUserEmail( {
-				users: {
-					items: {
-						123456: {
-							ID: 123456,
-							email: testEmail,
-						},
-					},
-				},
 				currentUser: {
-					id: 123456,
+					data: {
+						ID: 123456,
+						email: testEmail,
+					},
 				},
 			} );
 

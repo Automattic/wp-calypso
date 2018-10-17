@@ -10,32 +10,17 @@ import { get, isEqual, reduce } from 'lodash';
  * Internal dependencies
  */
 import {
-	CURRENT_USER_ID_SET,
 	CURRENT_USER_FLAGS_RECEIVE,
 	SITE_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
 	PLANS_RECEIVE,
+	CURRENT_USER_RECEIVE,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
-import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
+import { capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
 import gravatarStatus from './gravatar-status/reducer';
 import emailVerification from './email-verification/reducer';
-
-/**
- * Tracks the current user ID.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export const id = createReducer(
-	null,
-	{
-		[ CURRENT_USER_ID_SET ]: ( state, action ) => action.userId,
-	},
-	idSchema
-);
 
 export const flags = createReducer(
 	[],
@@ -102,11 +87,20 @@ export function capabilities( state = {}, action ) {
 }
 capabilities.schema = capabilitiesSchema;
 
+export function data( state = null, action ) {
+	switch ( action.type ) {
+		case CURRENT_USER_RECEIVE:
+			return action.user;
+		default:
+			return state;
+	}
+}
+
 export default combineReducers( {
-	id,
 	currencyCode,
 	capabilities,
 	flags,
 	gravatarStatus,
 	emailVerification,
+	data,
 } );
