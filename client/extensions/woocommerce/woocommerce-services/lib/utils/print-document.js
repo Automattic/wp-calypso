@@ -72,7 +72,7 @@ export default ( { b64Content, mimeType }, fileName ) => {
 		case 'addon':
 			// window.open will be blocked by the browser if this code isn't being executed from a direct user interaction
 			const success = window.open( blobUrl );
-			URL.revokeObjectURL( blobUrl );
+			setTimeout( () => URL.revokeObjectURL( blobUrl ), 1000 );
 			return success
 				? Promise.resolve()
 				: Promise.reject( new Error( 'Unable to open label PDF in new tab' ) );
