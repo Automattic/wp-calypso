@@ -270,7 +270,6 @@ export class Lookup extends Component {
 		);
 	}
 }
-
 export default compose( [
 	withSpokenMessages,
 	withInstanceId,
