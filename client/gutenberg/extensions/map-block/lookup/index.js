@@ -1,16 +1,6 @@
 // @TODO: key commands, spoken messages, consider suggesting as a core Gutenberg component
 
 /**
- * External dependencies
- */
-
-import classnames from 'classnames';
-import {
-	map,
-	debounce
-} from 'lodash';
-
-/**
  * WordPress dependencies
  */
 import { Component } from '@wordpress/element';
@@ -20,10 +10,29 @@ import {
 } from '@wordpress/compose';
 
 import {
+	ENTER,
+	ESCAPE,
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT
+} from '@wordpress/keycodes';
+
+import {
 	Button,
 	Popover,
 	withFocusOutside
 } from '@wordpress/components';
+
+/**
+ * External dependencies
+ */
+
+import classnames from 'classnames';
+import {
+	map,
+	debounce
+} from 'lodash';
 
 function filterOptions( options = [], maxResults = 10 ) {
 	const filtered = [];
@@ -55,6 +64,7 @@ export class Lookup extends Component {
 			selectedIndex: 0,
 			query: undefined,
 			filteredOptions: [],
+			isOpen: false
 		};
 
 	}
@@ -69,13 +79,13 @@ export class Lookup extends Component {
 
 		this.state = this.constructor.getInitialState();
 		this.onChange = this.onChange.bind( this );
+		this.onKeyDown = this.onKeyDown.bind( this );
 
 	}
 
 	componentWillUnmount() {
 
 		this.debouncedLoadOptions.cancel();
-
 	}
 
 	select( option ) {
@@ -123,6 +133,7 @@ export class Lookup extends Component {
 				[ 'options' ]: keyedOptions,
 				filteredOptions,
 				selectedIndex,
+				isOpen: filteredOptions.length > 0
 			} );
 		} );
 
@@ -153,9 +164,47 @@ export class Lookup extends Component {
 
 	}
 
+	onKeyDown( event ) {
+
+		const { isOpen, selectedIndex, filteredOptions } = this.state;
+		if ( ! isOpen ) {
+			return;
+		}
+		let nextSelectedIndex;
+		switch ( event.keyCode ) {
+			case UP:
+				nextSelectedIndex = ( selectedIndex === 0 ? filteredOptions.length : selectedIndex ) - 1;
+				this.setState( { selectedIndex: nextSelectedIndex } );
+				break;
+
+			case DOWN:
+				nextSelectedIndex = ( selectedIndex + 1 ) % filteredOptions.length;
+				this.setState( { selectedIndex: nextSelectedIndex } );
+				break;
+
+			case ENTER:
+				this.select( filteredOptions[ selectedIndex ] );
+				break;
+
+			case LEFT:
+			case RIGHT:
+			case ESCAPE:
+				this.reset();
+				return;
+
+			default:
+				return;
+		}
+
+		// Any handled keycode should prevent original behavior. This relies on
+		// the early return in the default case.
+		event.preventDefault();
+		event.stopPropagation();
+	}
+
 	render() {
 
-		const { onChange } = this;
+		const { onChange, onKeyDown } = this;
 		const { children, instanceId, completer } = this.props;
 		const { selectedIndex, filteredOptions } = this.state;
 		const { key: selectedKey = '' } = filteredOptions[ selectedIndex ] || {};
@@ -167,7 +216,7 @@ export class Lookup extends Component {
 			<div
 				className="components-autocomplete"
 			>
-				{ children( { isExpanded, listBoxId, activeId, onChange } ) }
+				{ children( { isExpanded, listBoxId, activeId, onChange, onKeyDown } ) }
 				{ isExpanded && (
 					<Popover
 						focusOnMount={ false }
