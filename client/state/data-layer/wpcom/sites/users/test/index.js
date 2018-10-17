@@ -11,7 +11,7 @@ import { chunk, times } from 'lodash';
 import { DEFAULT_PER_PAGE, fetchUsers, normalizeUser, receiveSuccess } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveUsers, requestUsers } from 'state/users/actions';
-import { USERS_RECEIVE } from 'state/action-types';
+import { POST_REVISION_AUTHORS_RECEIVE } from 'state/action-types';
 
 describe( '#normalizeRevision', () => {
 	test( 'should rename `id`, `name` and `slug`', () => {
@@ -123,7 +123,7 @@ describe( '#receiveSuccess', () => {
 		expect( dispatch ).toHaveBeenCalledTimes( 2 );
 		expect( dispatch ).toHaveBeenNthCalledWith(
 			1,
-			expect.objectContaining( { type: USERS_RECEIVE } )
+			expect.objectContaining( { type: POST_REVISION_AUTHORS_RECEIVE } )
 		);
 		expect( dispatch ).toHaveBeenNthCalledWith(
 			2,
@@ -176,7 +176,7 @@ describe( '#receiveSuccess', () => {
 		expect( dispatch ).toHaveBeenCalledTimes( 2 );
 		expect( dispatch ).toHaveBeenNthCalledWith(
 			1,
-			expect.objectContaining( { type: USERS_RECEIVE } )
+			expect.objectContaining( { type: POST_REVISION_AUTHORS_RECEIVE } )
 		);
 		expect( dispatch ).toHaveBeenNthCalledWith(
 			2,

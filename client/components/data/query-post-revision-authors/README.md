@@ -1,7 +1,8 @@
-Query Users
-===========
+<!-- @format -->
 
-`<QueryUsers />` is a React component used to request users data.
+# Query Post Revision Authors
+
+`<QueryPostRevisionAuthors />` is a React component used to request post revision authors data.
 
 ## Usage
 
@@ -11,14 +12,11 @@ Render the component, passing `siteId` and `userIds`. It does not accept any chi
 import React from 'react';
 import QueryUsers from 'components/data/query-users';
 
-export default function Users( { users } ) {
+export default function PostRevisionAuthors( { authors } ) {
 	return (
 		<div>
-			<QueryUsers
-				siteId={ 12345678 }
-				userIds={ userIds }
-			/>
-			<div>{ users }</div>
+			<QueryPostRevisionAuthors siteId={ 12345678 } userIds={ userIds } />
+			<div>{ authors }</div>
 		</div>
 	);
 }
@@ -34,7 +32,6 @@ export default function Users( { users } ) {
 </table>
 
 The site ID for which we request post revisions.
-
 
 ### `userIds`
 
