@@ -1,40 +1,9 @@
-.signup {
-	&.is-import {
-		margin-top: 69px;
-
-		@include breakpoint( ">660px" ) {
-			margin-top: 45px;
-		}
-
-		@include breakpoint( ">960px" ) {
-			margin-top: 37px;
-		}
-	}
-
-	&__step.is-from-url {
-		// Show .import-url__notice that is position: absolute.
-		overflow: visible;
-		margin-bottom: 64px;
-	}
+.signup__step.is-from-url {
+	margin-bottom: 64px;
 }
 
 .import-url {
 	position: relative;
-
-	.step-wrapper {
-		overflow: hidden;
-	}
-
-	&__notice {
-		max-width: 500px;
-		position: absolute;
-			top: -84px;
-			right: 5px;
-
-		@include breakpoint( ">660px" ) {
-			top: -75px;
-		}
-	}
 
 	&__form {
 		display: flex;
@@ -49,7 +18,8 @@
 		font-size: 14px;
 		margin: 0;
 		padding-top: 6px;
-		padding-bottom: 0;
+		// Normalize height with bottom padding so it doesn't change when an error is shown.
+		padding-bottom: 4px;
 	}
 
 	&__submit-button {

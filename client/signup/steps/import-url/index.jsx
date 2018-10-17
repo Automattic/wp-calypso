@@ -15,7 +15,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import ExampleDomainBrowser from 'components/domains/example-domain-browser';
 import ExternalLink from 'components/external-link';
-import Notice from 'components/notice';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import FormButton from 'components/forms/form-button';
@@ -24,6 +23,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import ScreenReaderText from 'components/screen-reader-text';
+import { infoNotice, removeNotice } from 'state/notices/actions';
 import { fetchIsSiteImportable, setNuxUrlInputValue } from 'state/importer-nux/actions';
 import {
 	getNuxUrlError,
@@ -37,6 +37,8 @@ import {
 	SITE_IMPORTER_ERR_BAD_REMOTE,
 	SITE_IMPORTER_ERR_INVALID_URL,
 } from 'lib/importers/constants';
+
+const CHECKING_SITE_IMPORTABLE_NOTICE = 'checking-site-importable';
 
 class ImportURLStepComponent extends Component {
 	state = {
@@ -52,6 +54,7 @@ class ImportURLStepComponent extends Component {
 			urlInputValue,
 			stepName,
 			siteDetails,
+			isLoading,
 		} = this.props;
 
 		// isSiteImportable error, focus input to revise url.
@@ -71,6 +74,17 @@ class ImportURLStepComponent extends Component {
 			} );
 
 			goToNextStep();
+		}
+
+		if ( isLoading !== prevProps.isLoading ) {
+			if ( isLoading ) {
+				this.props.infoNotice(
+					this.props.translate( "Please wait, we're checking to see if we can import this site." ),
+					{ id: CHECKING_SITE_IMPORTABLE_NOTICE, icon: 'info', isLoading: true }
+				);
+			} else {
+				this.props.removeNotice( CHECKING_SITE_IMPORTABLE_NOTICE );
+			}
 		}
 	}
 
@@ -253,32 +267,21 @@ class ImportURLStepComponent extends Component {
 	};
 
 	render() {
-		const { flowName, isLoading, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
 
 		return (
-			<div className="import-url">
-				{ isLoading && (
-					<Notice
-						className="import-url__notice"
-						status="is-info"
-						icon="info"
-						isLoading={ true }
-						text={ translate( "Please wait, we're checking to see if we can import this site." ) }
-						showDismiss={ false }
-					/>
+			<StepWrapper
+				className="import-url"
+				flowName={ flowName }
+				stepName={ stepName }
+				positionInFlow={ positionInFlow }
+				headerText={ translate( 'Where can we find your old site?' ) }
+				subHeaderText={ translate(
+					"Enter your Wix site's URL, sometimes called a domain name or site address."
 				) }
-				<StepWrapper
-					flowName={ flowName }
-					stepName={ stepName }
-					positionInFlow={ positionInFlow }
-					headerText={ translate( 'Where can we find your old site?' ) }
-					subHeaderText={ translate(
-						"Enter your Wix site's URL, sometimes called a domain name or site address."
-					) }
-					signupProgress={ signupProgress }
-					stepContent={ this.renderContent() }
-				/>
-			</div>
+				signupProgress={ signupProgress }
+				stepContent={ this.renderContent() }
+			/>
 		);
 	}
 }
@@ -295,6 +298,8 @@ export default flow(
 			fetchIsSiteImportable,
 			setNuxUrlInputValue,
 			recordTracksEvent,
+			infoNotice,
+			removeNotice,
 		}
 	),
 	localize
