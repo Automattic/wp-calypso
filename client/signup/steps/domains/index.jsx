@@ -299,7 +299,8 @@ class DomainsStep extends React.Component {
 			// 'subdomain' flow coming from .blog landing pages
 			flowName === 'subdomain' ||
 			// User picked only 'share' on the `about` step
-			( siteGoalsArray.length === 1 &&
+			( ! this.props.isDomainOnly &&
+				siteGoalsArray.length === 1 &&
 				siteGoalsArray.indexOf( 'share' ) !== -1 &&
 				// abtest() assignment should come last
 				abtest( 'includeDotBlogSubdomainV2' ) === 'yes' )
