@@ -45,6 +45,7 @@ function ProgressBanner( {
 	downloadId,
 	action,
 	context,
+	destinationSiteName,
 } ) {
 	let title = '';
 	let description = '';
@@ -57,8 +58,8 @@ function ProgressBanner( {
 			if ( 'alternate' === context ) {
 				title = translate( 'Currently cloning your site' );
 				description = translate(
-					"We're cloning your site to %(dateTime)s. You'll be notified once it's complete.",
-					{ args: { dateTime } }
+					"We're cloning your site to %(destinationSiteName)s. You'll be notified once it's complete.",
+					{ args: { destinationSiteName } }
 				);
 				statusMessage =
 					'queued' === status

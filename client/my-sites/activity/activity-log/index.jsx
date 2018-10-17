@@ -60,6 +60,7 @@ import getRequestedBackup from 'state/selectors/get-requested-backup';
 import getRequestedRewind from 'state/selectors/get-requested-rewind';
 import getRestoreProgress from 'state/selectors/get-restore-progress';
 import getRewindState from 'state/selectors/get-rewind-state';
+import getRewindCloneDestinationSiteName from 'state/selectors/get-rewind-clone-destination-site-name';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import isVipSite from 'state/selectors/is-vip-site';
@@ -222,6 +223,7 @@ class ActivityLog extends Component {
 			timestamp,
 			rewindId,
 			context,
+			destinationSiteName,
 		} = actionProgress;
 		return (
 			<ProgressBanner
@@ -235,6 +237,7 @@ class ActivityLog extends Component {
 				timestamp={ timestamp || rewindId }
 				action={ action }
 				context={ context }
+				destinationSiteName={ destinationSiteName }
 			/>
 		);
 	}
@@ -577,6 +580,7 @@ export default connect(
 
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
+			destinationSiteName: getRewindCloneDestinationSiteName( state, siteId ),
 			gmtOffset,
 			enableRewind:
 				'active' === rewindState.state &&
