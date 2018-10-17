@@ -20,7 +20,7 @@ import { requestGeoLocation } from 'state/data-getters';
  * two letter lang code really). Return value precedence is in that order.
  */
 
-const DEFAULT_PAYMENT_METHODS = [ 'credit-card', 'paypal' ];
+const DEFAULT_PAYMENT_METHODS = [ 'credit-card', 'paypal', 'web-payment' ];
 
 const paymentMethods = {
 	byLocale: {},

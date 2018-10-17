@@ -494,7 +494,7 @@
 				@include breakpoint( '>960px' ) {
 					float: left;
 					margin-left: 20px;
-					width: calc(25% - 20px);
+					width: calc( 25% - 20px );
 				}
 			}
 
@@ -506,7 +506,7 @@
 				@include breakpoint( '>960px' ) {
 					clear: none;
 					float: left;
-					width: calc(75% - 20px);
+					width: calc( 75% - 20px );
 				}
 			}
 		}
@@ -530,6 +530,20 @@
 		form.loading {
 			opacity: 0.5;
 			pointer-events: none;
+		}
+	}
+
+	// Web Payment Box
+	// -----------------------------------
+	.web-payment-box {
+		.web-payment-box__button-explanation {
+			margin-bottom: 1rem;
+		}
+
+		.web-payment-box__apple-pay-button {
+			-webkit-appearance: -apple-pay-button;
+			-apple-pay-button-type: buy;
+			-apple-pay-button-style: black;
 		}
 	}
 

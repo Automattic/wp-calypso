@@ -21,6 +21,7 @@ import CreditCardPaymentBox from './credit-card-payment-box';
 import PayPalPaymentBox from './paypal-payment-box';
 import WechatPaymentBox from './wechat-payment-box';
 import RedirectPaymentBox from './redirect-payment-box';
+import WebPaymentBox from './web-payment-box';
 import { fullCreditsPayment, newCardPayment, storedCardPayment } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import TransactionStepsMixin from './transaction-steps-mixin';
@@ -295,7 +296,7 @@ const SecurePaymentForm = createReactClass( {
 		);
 	},
 
-	renderWechatPaymentBox( ) {
+	renderWechatPaymentBox() {
 		return (
 			<PaymentBox
 				classSet="wechat-payment-box"
@@ -314,6 +315,27 @@ const SecurePaymentForm = createReactClass( {
 				>
 					{ this.props.children }
 				</WechatPaymentBox>
+			</PaymentBox>
+		);
+	},
+
+	renderWebPaymentBox() {
+		return (
+			<PaymentBox
+				classSet="web-payment-box"
+				cart={ this.props.cart }
+				paymentMethods={ this.props.paymentMethods }
+				currentPaymentMethod="web-payment"
+				onSelectPaymentMethod={ this.selectPaymentBox }
+			>
+				<WebPaymentBox
+					cart={ this.props.cart }
+					transaction={ this.props.transaction }
+					onSubmit={ this.handlePaymentBoxSubmit }
+					translate={ this.props.translate }
+				>
+					{ this.props.children }
+				</WebPaymentBox>
 			</PaymentBox>
 		);
 	},
@@ -395,6 +417,13 @@ const SecurePaymentForm = createReactClass( {
 					<div>
 						{ this.renderGreatChoiceHeader() }
 						{ this.renderRedirectPaymentBox( visiblePaymentBox ) }
+					</div>
+				);
+			case 'web-payment':
+				return (
+					<div>
+						{ this.renderGreatChoiceHeader() }
+						{ this.renderWebPaymentBox() }
 					</div>
 				);
 			default:

@@ -223,6 +223,7 @@ function paymentMethodClassName( method ) {
 		p24: 'WPCOM_Billing_Stripe_Source_P24',
 		'brazil-tef': 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef',
 		wechat: 'WPCOM_Billing_Stripe_Source_Wechat',
+		'web-payment': 'WPCOM_Billing_Web_Payment',
 	};
 
 	return paymentMethodsClassNames[ method ] || '';
@@ -247,6 +248,7 @@ function paymentMethodName( method ) {
 		p24: 'Przelewy24',
 		'brazil-tef': 'Transferência bancária',
 		'wechat': i18n.translate( 'WeChat Pay', { comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/' } ),
+		'web-payment': 'Web Payment',
 	};
 
 	// Temporarily override 'credit or debit' with just 'credit' for india
