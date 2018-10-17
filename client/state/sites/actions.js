@@ -12,6 +12,7 @@ import i18n from 'i18n-calypso';
  */
 import wpcom from 'lib/wp';
 import {
+	EDITOR_TYPE_SET,
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,
 	SITE_DELETE_RECEIVE,
@@ -27,6 +28,7 @@ import {
 	SITE_PLUGIN_UPDATED,
 } from 'state/action-types';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants';
+import 'state/data-layer/wpcom/sites/gutenberg';
 
 /**
  * Returns an action object to be used in signalling that a site has been
@@ -185,4 +187,10 @@ export function deleteSite( siteId ) {
 export const sitePluginUpdated = siteId => ( {
 	type: SITE_PLUGIN_UPDATED,
 	siteId,
+} );
+
+export const setSiteEditor = ( siteId, editor ) => ( {
+	type: EDITOR_TYPE_SET,
+	siteId,
+	editor,
 } );
