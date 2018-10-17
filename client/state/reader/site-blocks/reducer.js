@@ -10,6 +10,7 @@ import { omit, reduce } from 'lodash';
 import {
 	READER_SITE_BLOCK,
 	READER_SITE_BLOCKS_RECEIVE,
+	READER_SITE_BLOCKS_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_UNBLOCK,
 } from 'state/action-types';
@@ -83,8 +84,32 @@ export const lastPage = createReducer( null, {
 	},
 } );
 
+export const inflightPages = createReducer(
+	{},
+	{
+		[ READER_SITE_BLOCKS_REQUEST ]: ( state, action ) => {
+			if ( ! action.payload || ! action.payload.page ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ action.payload.page ]: true,
+			};
+		},
+		[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
+			if ( ! action.payload || ! action.payload.page ) {
+				return state;
+			}
+
+			return omit( state, action.payload.page );
+		},
+	}
+);
+
 export default combineReducers( {
 	items,
 	currentPage,
 	lastPage,
+	inflightPages,
 } );

@@ -7,4 +7,9 @@
 	min-height: 40px;
 	line-height: 40px;
 	vertical-align: middle;
+
+	&.is-placeholder span {
+		@include placeholder();
+		padding-right: 150px;
+	}
 }

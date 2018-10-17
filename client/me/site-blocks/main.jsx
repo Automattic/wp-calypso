@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
+import { times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,11 +20,13 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteBlocks from 'components/data/query-site-blocks';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
+import isFetchingSiteBlocks from 'state/selectors/is-fetching-site-blocks';
 import getSiteBlocksCurrentPage from 'state/selectors/get-site-blocks-current-page';
 import getSiteBlocksLastPage from 'state/selectors/get-site-blocks-last-page';
 import SiteBlockListItem from './list-item';
 import InfiniteList from 'components/infinite-list';
 import { requestSiteBlocks } from 'state/reader/site-blocks/actions';
+import SiteBlockListItemPlaceholder from './list-item-placeholder';
 
 /**
  * Style dependencies
@@ -41,7 +44,11 @@ class SiteBlockList extends Component {
 		this.props.requestSiteBlocks( { page: currentPage + 1 } );
 	};
 
-	renderPlaceholders() {}
+	renderPlaceholders() {
+		return times( 2, i => (
+			<SiteBlockListItemPlaceholder key={ 'site-block-list-item-placeholder-' + i } />
+		) );
+	}
 
 	renderItem( siteId ) {
 		return <SiteBlockListItem key={ 'site-block-list-item-' + siteId } siteId={ siteId } />;
@@ -81,7 +88,7 @@ class SiteBlockList extends Component {
 							fetchNextPage={ this.fetchNextPage }
 							renderLoadingPlaceholders={ this.renderPlaceholders }
 							renderItem={ this.renderItem }
-							fetchingNextPage={ false }
+							fetchingNextPage={ this.props.isFetching }
 							lastPage={ currentPage === lastPage }
 							guessedItemHeight={ 126 }
 							getItemRef={ this.getItemRef }
@@ -99,6 +106,7 @@ export default connect(
 			blockedSites: getBlockedSites( state ),
 			currentPage: getSiteBlocksCurrentPage( state ),
 			lastPage: getSiteBlocksLastPage( state ),
+			isFetching: isFetchingSiteBlocks( state ),
 		};
 	},
 	{ requestSiteBlocks }

@@ -16,6 +16,11 @@ import ExternalLink from 'components/external-link';
 class SiteBlockListItem extends Component {
 	render() {
 		const { site } = this.props;
+
+		if ( ! site ) {
+			return null;
+		}
+
 		return (
 			<div className="site-blocks__list-item">
 				<ExternalLink href={ site.URL }>{ site.name }</ExternalLink>
