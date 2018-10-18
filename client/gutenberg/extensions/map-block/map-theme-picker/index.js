@@ -16,7 +16,7 @@ import {
  * External dependencies
  */
 
- import classnames from 'classnames';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies

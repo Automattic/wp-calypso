@@ -23,8 +23,6 @@ import './style.scss';
  * External dependencies
  */
 
-import { clone } from 'lodash';
-
 export class Locations extends Component {
 
 	constructor() {
@@ -42,7 +40,7 @@ export class Locations extends Component {
 			onChange
 		} = this.props;
 
-		const newPoints = clone( points );
+		const newPoints = points.slice( 0 );
 		newPoints.splice( index, 1 );
 		onChange( newPoints );
 	}
@@ -53,7 +51,7 @@ export class Locations extends Component {
 			onChange
 		} = this.props;
 
-		const newPoints = clone( points );
+		const newPoints = points.slice( 0 );
 		newPoints[index][field] = value;
 		onChange( newPoints );
 	}
