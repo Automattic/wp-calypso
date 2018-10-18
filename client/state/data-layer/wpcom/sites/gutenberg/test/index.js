@@ -5,7 +5,7 @@
  */
 import { setType, receiveEditorTypeError } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { setSiteEditor } from 'state/sites/actions';
+import { setSiteEditor } from 'state/sites/editor/actions';
 import { EDITOR_TYPE_SET } from 'state/action-types';
 
 describe( 'setType()', () => {
