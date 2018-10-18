@@ -1,5 +1,3 @@
-<!-- @format -->
-
 # Query Post Revision Authors
 
 `<QueryPostRevisionAuthors />` is a React component used to request post revision authors data.
