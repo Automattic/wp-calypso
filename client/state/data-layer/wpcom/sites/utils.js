@@ -84,14 +84,13 @@ export const dispatchNewCommentRequest = ( dispatch, action, path ) => {
  * updates the placeholder comments with server values
  *
  * @param {Function} dispatch redux dispatcher
- * @param {Object}   action   redux action
  * @param {Object}   comment  updated comment from the request response
+ * @return {Function} thunk
  */
 export const updatePlaceholderComment = (
-	{ dispatch },
 	{ siteId, postId, parentCommentId, placeholderId, refreshCommentListQuery },
 	comment
-) => {
+) => dispatch => {
 	// remove placeholder from state
 	dispatch(
 		bypassDataLayer( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } )
@@ -120,16 +119,14 @@ export const updatePlaceholderComment = (
 /**
  * dispatches a error notice if creating a new comment request failed
  *
- * @param {Function} dispatch redux dispatcher
- * @param {Function} getState access the redux state
- * @param {Number}   siteId   site identifier
- * @param {Number}   postId   post identifier
+ * @param {Object}   action   redux action
+ * @param {Object} rawError plain error object
+ * @return {Function} thunk
  */
 export const handleWriteCommentFailure = (
-	{ dispatch, getState },
 	{ siteId, postId, parentCommentId, placeholderId },
 	rawError
-) => {
+) => ( dispatch, getState ) => {
 	// Dispatch error notice
 	const post = getSitePost( getState(), siteId, postId );
 	const postTitle =
