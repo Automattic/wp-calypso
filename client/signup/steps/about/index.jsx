@@ -437,7 +437,8 @@ class AboutStep extends Component {
 		if ( isLoggedIn ) {
 			return null;
 		}
-
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/no-static-element-interactions */
 		return (
 			<FormFieldset className="about__last-fieldset">
 				<FormLegend>{ translate( 'How comfortable are you with creating a website?' ) }</FormLegend>
@@ -503,6 +504,8 @@ class AboutStep extends Component {
 				</div>
 			</FormFieldset>
 		);
+		/* eslint-enable jsx-a11y/click-events-have-key-events */
+		/* eslint-enable jsx-a11y/no-static-element-interactions */
 	}
 
 	scrollUp() {
@@ -608,15 +611,20 @@ class AboutStep extends Component {
 	render() {
 		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
 
+		const headerText = translate( 'Let’s create a site.' );
+		const subHeaderText = translate(
+			'Please answer these questions so we can help you make the site you need.'
+		);
+
 		return (
 			<StepWrapper
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
-				headerText={ translate( 'Let’s create a site.' ) }
-				subHeaderText={ translate(
-					'Please answer these questions so we can help you make the site you need.'
-				) }
+				headerText={ headerText }
+				fallbackHeaderText={ headerText }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
 			/>

@@ -20,6 +20,7 @@ import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import wpcom from 'lib/wp';
 import config from 'config';
 import analytics from 'lib/analytics';
+import Button from 'components/button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormPasswordInput from 'components/forms/form-password-input';
@@ -121,7 +122,7 @@ class SignupForm extends Component {
 		analytics.tracks.recordEvent( 'calypso_signup_back_link_click' );
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		debug( 'Mounting the SignupForm React component.' );
 		this.formStateController = new formState.Controller( {
 			initialFields: this.getInitialFields(),
@@ -178,7 +179,7 @@ class SignupForm extends Component {
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.step && nextProps.step && this.props.step.status !== nextProps.step.status ) {
 			this.maybeRedirectToSocialConnect( nextProps );
 		}
@@ -542,6 +543,14 @@ class SignupForm extends Component {
 		if ( this.state.notice ) {
 			return this.globalNotice( this.state.notice );
 		}
+		if ( this.userCreationComplete() ) {
+			return this.globalNotice( {
+				info: true,
+				message: this.props.translate(
+					'Your account has already been created. You can change your email, username, and password later.'
+				),
+			} );
+		}
 		return false;
 	}
 
@@ -574,6 +583,15 @@ class SignupForm extends Component {
 	}
 
 	formFooter() {
+		if ( this.userCreationComplete() ) {
+			return (
+				<LoggedOutFormFooter>
+					<Button primary onClick={ () => this.props.goToNextStep() }>
+						{ this.props.translate( 'Continue' ) }
+					</Button>
+				</LoggedOutFormFooter>
+			);
+		}
 		return (
 			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
 				{ this.termsOfServiceLink() }
@@ -615,6 +633,10 @@ class SignupForm extends Component {
 		return this.isJetpack() && abtest( 'jetpackSignupGoogleTop' ) === 'top';
 	}
 
+	userCreationComplete() {
+		return this.props.step && 'completed' === this.props.step.status;
+	}
+
 	render() {
 		if ( this.getUserExistsError( this.props ) ) {
 			return null;
@@ -631,7 +653,8 @@ class SignupForm extends Component {
 				{ this.getNotice() }
 
 				{ this.isJetpackSocialABTest() &&
-					this.props.isSocialSignupEnabled && (
+					this.props.isSocialSignupEnabled &&
+					! this.userCreationComplete() && (
 						<SocialSignupForm
 							showFirst={ true }
 							handleResponse={ this.props.handleSocialResponse }
@@ -655,7 +678,8 @@ class SignupForm extends Component {
 				</LoggedOutForm>
 
 				{ ! this.isJetpackSocialABTest() &&
-					this.props.isSocialSignupEnabled && (
+					this.props.isSocialSignupEnabled &&
+					! this.userCreationComplete() && (
 						<SocialSignupForm
 							handleResponse={ this.props.handleSocialResponse }
 							socialService={ this.props.socialService }

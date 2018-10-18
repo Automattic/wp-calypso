@@ -485,19 +485,12 @@ class Signup extends React.Component {
 		return flowSteps.length === completedSteps.length;
 	};
 
-	getPositionInFlow( fakedForTwoPartFlows = false ) {
-		let position = indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
-		if ( fakedForTwoPartFlows && this.props.flowName === 'user-continue' ) {
-			position++;
-		}
-		return position;
+	getPositionInFlow() {
+		const { flowName, stepName } = this.props;
+		return indexOf( flows.getFlow( flowName ).steps, stepName );
 	}
 
 	getFlowLength() {
-		// fake it for our two-step flow
-		if ( [ 'user-first', 'user-continue' ].includes( this.props.flowName ) ) {
-			return 4;
-		}
 		return flows.getFlow( this.props.flowName ).steps.length;
 	}
 
@@ -578,7 +571,7 @@ class Signup extends React.Component {
 				{ ! this.state.loadingScreenStartTime &&
 					showProgressIndicator && (
 						<FlowProgressIndicator
-							positionInFlow={ this.getPositionInFlow( true ) }
+							positionInFlow={ this.getPositionInFlow() }
 							flowLength={ this.getFlowLength() }
 							flowName={ this.props.flowName }
 						/>
