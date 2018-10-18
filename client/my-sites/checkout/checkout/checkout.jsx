@@ -133,10 +133,10 @@ export class Checkout extends React.Component {
 		const nextCart = this.props.cart;
 
 		if ( ! isEqual( previousCart, nextCart ) ) {
+			this.redirectIfEmptyCart();
 			// TODO: rewrite state management so we don't have to call setState here
 			/* eslint-disable-next-line react/no-did-update-set-state */
 			this.setState( { previousCart: nextCart } );
-			this.redirectIfEmptyCart();
 		}
 
 		if (
