@@ -1,0 +1,69 @@
+.signup__step.is-from-url {
+	// Create room for floating support button for logged in users.
+	margin-bottom: 64px;
+}
+
+.import-url {
+	position: relative;
+
+	&__form {
+		display: flex;
+	}
+
+	&__url-input {
+		flex-grow: 1;
+		flex-shrink: 1;
+	}
+
+	&__url-input-message {
+		font-size: 14px;
+		margin: 0;
+		padding-top: 6px;
+		// Normalize height with bottom padding so it doesn't change when an error is shown.
+		padding-bottom: 4px;
+	}
+
+	&__submit-button {
+		flex-grow: 0;
+		flex-shrink: 0;
+	}
+
+	&__example {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: center;
+		margin-bottom: 48px;
+		position: relative;
+
+		& > * {
+			padding-left: 20px;
+			padding-right: 20px;
+		}
+	}
+
+	&__example-urls {
+		color: $gray-darken-20;
+		list-style: none;
+		margin: 1em 0 1.5em 0;
+	}
+
+	&__example-url {
+		font-family: monospace;
+		font-size: 14px;
+		color: $blue-medium;
+
+		&:first-of-type {
+			padding-top: 8px;
+		}
+	}
+
+	&__escape {
+		color: $gray-darken-20;
+		padding: 0 15px 24px;
+		text-align: center;
+
+		.button {
+			vertical-align: middle;
+		}
+	}
+}

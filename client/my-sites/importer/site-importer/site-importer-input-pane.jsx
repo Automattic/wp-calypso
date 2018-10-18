@@ -17,6 +17,7 @@ import moment from 'moment';
  */
 import wpLib from 'lib/wp';
 import config from 'config';
+import { validateImportUrl } from 'lib/importers/url-validation';
 
 const wpcom = wpLib.undocumented();
 
@@ -201,16 +202,7 @@ class SiteImporterInputPane extends React.Component {
 			return;
 		}
 
-		let errorMessage;
-		if ( hostname === 'editor.wix.com' || hostname === 'www.wix.com' ) {
-			errorMessage = this.props.translate(
-				"You've entered the URL for the Wix editor, which only you can access. Please enter your site's public URL. It should look like one of the examples below."
-			);
-		} else if ( hostname.indexOf( '.wixsite.com' ) > -1 && pathname === '/' ) {
-			errorMessage = this.props.translate(
-				"You haven't entered the full URL. Please include the part of the URL that comes after wixsite.com. See below for an example."
-			);
-		}
+		const errorMessage = validateImportUrl( siteURL );
 
 		if ( errorMessage ) {
 			this.setState( {
