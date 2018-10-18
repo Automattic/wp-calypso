@@ -22,7 +22,7 @@ describe( 'selectors', () => {
 
 	describe( 'getSiteEditor()', () => {
 		test( 'should return null if site is not found', () => {
-			expect( getSiteEditor( stateWithNoItems, nonExistingSiteId ) ).toBeNull();
+			expect( getSiteEditor( stateWithNoItems, nonExistingSiteId ) ).to.be.null;
 		} );
 
 		test( 'should return null if a valid site has no editor set', () => {
@@ -31,7 +31,7 @@ describe( 'selectors', () => {
 					ID: siteId,
 				},
 			} );
-			expect( getSiteEditor( state, siteId ) ).toBeNull();
+			expect( getSiteEditor( state, siteId ) ).to.be.null;
 		} );
 
 		test( 'should return editor value for a valid site with an editor set', () => {
@@ -41,7 +41,7 @@ describe( 'selectors', () => {
 					editor: 'gutenberg',
 				},
 			} );
-			expect( getSiteEditor( state, siteId ) ).toBe( 'gutenberg' );
+			expect( getSiteEditor( state, siteId ) ).to.eql( 'gutenberg' );
 		} );
 	} );
 } );
