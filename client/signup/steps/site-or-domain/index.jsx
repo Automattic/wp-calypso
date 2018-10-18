@@ -25,18 +25,6 @@ import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getDomainProductSlug } from 'lib/domains';
 
 class SiteOrDomain extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.skipRender = false;
-
-		if ( ! props.isLoggedIn ) {
-			this.skipRender = true;
-			this.submitDomain( 'domain' );
-			this.submitDomainOnlyChoice();
-		}
-	}
-
 	getDomainName() {
 		const { signupDependencies } = this.props;
 		let domain;
@@ -116,8 +104,8 @@ class SiteOrDomain extends Component {
 		);
 	}
 
-	submitDomain( designType ) {
-		const { stepName } = this.props;
+	handleClickChoice = designType => {
+		const { stepName, goToStep, goToNextStep } = this.props;
 
 		const domain = this.getDomainName();
 		const productSlug = getDomainProductSlug( domain );
@@ -136,31 +124,19 @@ class SiteOrDomain extends Component {
 			[],
 			{ designType, domainItem, siteUrl }
 		);
-	}
-
-	submitDomainOnlyChoice() {
-		const { goToStep } = this.props;
-
-		// we can skip the next two steps in the `domain-first` flow if the
-		// user is only purchasing a domain
-		SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
-		SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
-			themeSlugWithRepo: 'pub/twentysixteen',
-		} );
-		SignupActions.submitSignupStep( { stepName: 'plans-site-selected', wasSkipped: true }, [], {
-			cartItem: null,
-			privacyItem: null,
-		} );
-		goToStep( 'user' );
-	}
-
-	handleClickChoice = designType => {
-		const { goToStep, goToNextStep } = this.props;
-
-		this.submitDomain( designType );
 
 		if ( designType === 'domain' ) {
-			this.submitDomainOnlyChoice();
+			// we can skip the next two steps in the `domain-first` flow if the
+			// user is only purchasing a domain
+			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
+			SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
+				themeSlugWithRepo: 'pub/twentysixteen',
+			} );
+			SignupActions.submitSignupStep( { stepName: 'plans-site-selected', wasSkipped: true }, [], {
+				cartItem: null,
+				privacyItem: null,
+			} );
+			goToStep( 'user' );
 		} else if ( designType === 'existing-site' ) {
 			goToNextStep();
 		} else {
@@ -170,10 +146,6 @@ class SiteOrDomain extends Component {
 	};
 
 	render() {
-		if ( this.skipRender ) {
-			return null;
-		}
-
 		const { translate, productsLoaded } = this.props;
 
 		if ( productsLoaded && ! this.getDomainName() ) {
