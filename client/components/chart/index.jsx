@@ -108,7 +108,7 @@ class Chart extends React.Component {
 
 		this.setState( {
 			data: nextData,
-			isEmptyChart: nextVals.length && ! nextVals.some( a => a > 0 ),
+			isEmptyChart: Boolean( nextVals.length && ! nextVals.some( a => a > 0 ) ),
 			yMax: this.getYAxisMax( nextVals ),
 		} );
 	};
