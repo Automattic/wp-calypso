@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -21,17 +20,22 @@ class EditorGutenbergOptInNotice extends Component {
 	static propTypes = {
 		// connected properties
 		translate: PropTypes.func,
-		// isNoticeVisible: PropTypes.bool,
-		dismissNotice: PropTypes.func,
 		showDialog: PropTypes.func,
 	};
 
-	dismissNotice = () => {
-		// this.props.hideNotice();
+	state = {
+		dismissed: false,
 	};
 
+	dismissNotice = () => this.setState( { dismissed: true } );
+
 	render() {
-		const { translate, dismissNotice, showDialog } = this.props;
+		if ( this.state.dismissed ) {
+			return null;
+		}
+
+		const { translate, showDialog } = this.props;
+
 		return (
 			<Notice
 				className="editor-gutenberg-opt-in-notice"
@@ -46,16 +50,10 @@ class EditorGutenbergOptInNotice extends Component {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	// hideNotice: () => dispatch( hideGutenbergOptInDialog() ),
 	showDialog: () => dispatch( showGutenbergOptInDialog() ),
 } );
 
 export default connect(
-	state => {
-		// const isDialogVisible = isGutenbergOptInDialogShowing( state );
-		return {
-			// showDialog: showGutenbergOptInDialog,
-		};
-	},
+	null,
 	mapDispatchToProps
 )( localize( EditorGutenbergOptInNotice ) );

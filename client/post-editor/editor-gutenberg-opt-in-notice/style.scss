@@ -1,6 +1,7 @@
 /** @format */
 
 .editor-gutenberg-opt-in-notice {
-	width: 90%;
+	/* matches the tiny-mce container width */
+	max-width: 700px;
 	margin: 0 auto;
 }
