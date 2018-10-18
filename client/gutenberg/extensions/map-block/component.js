@@ -4,28 +4,15 @@
  * Wordpress dependencies
  */
 
-import {
-	Component,
-	createRef,
-	Fragment
-} from '@wordpress/element';
+import { Component, createRef, Fragment } from '@wordpress/element';
 
-import {
-	Button,
-	Dashicon,
-	TextareaControl,
-	TextControl
-} from '@wordpress/components';
+import { Button, Dashicon, TextareaControl, TextControl } from '@wordpress/components';
 
 /**
  * External dependencies
  */
 
-import {
-	get,
-	clone,
-	assign
-} from 'lodash';
+import { get, assign } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,29 +49,13 @@ export class Map extends Component {
 
 		// Refs
 		this.mapRef = createRef();
-		this.addPointRef = createRef();
 	}
 	render() {
-		const {
-			points,
-			admin,
-			children } = this.props;
-		const {
-			map,
-			activeMarker,
-			google
-		} = this.state;
-		const {
-			onMarkerClick,
-			deleteActiveMarker,
-			updateActiveMarker,
-			addPoint
-		} = this;
+		const { points, admin, children } = this.props;
+		const { map, activeMarker, google } = this.state;
+		const { onMarkerClick, deleteActiveMarker, updateActiveMarker } = this;
 		const currentPoint = get( activeMarker, 'props.point' ) || {};
-		const {
-			title,
-			caption
-		} = currentPoint;
+		const { title, caption } = currentPoint;
 		const mapMarkers =
 			map &&
 			google &&
@@ -155,9 +126,8 @@ export class Map extends Component {
 	componentDidUpdate( prevProps ) {
 		// If the user has just clicked to show the Add Point component, hide info window.
 		// AddPoint is the only possible child.
-		if ( this.props.children !== prevProps.children
-			&& this.props.children !== false) {
-				this.setState( { activeMarker: null } );
+		if ( this.props.children !== prevProps.children && this.props.children !== false ) {
+			this.clearCurrentMarker();
 		}
 		// This implementation of componentDidUpdate is a reusable way to approximate Polymer observers
 		for ( const propName in this.props ) {
@@ -191,11 +161,14 @@ export class Map extends Component {
 	onMapClick() {
 		this.setState( { activeMarker: null } );
 	}
+	clearCurrentMarker() {
+		this.setState( { activeMarker: null } );
+	}
 	updateActiveMarker( updates ) {
 		const { points } = this.props;
 		const { activeMarker } = this.state;
 		const { index } = activeMarker.props;
-		const newPoints = clone( points );
+		const newPoints = points.slice( 0 );
 
 		assign( newPoints[ index ], updates );
 		this.props.onSetPoints( newPoints );
@@ -204,7 +177,7 @@ export class Map extends Component {
 		const { points } = this.props;
 		const { activeMarker } = this.state;
 		const { index } = activeMarker.props;
-		const newPoints = clone( points );
+		const newPoints = points.slice( 0 );
 
 		newPoints.splice( index, 1 );
 		this.props.onSetPoints( newPoints );
@@ -268,10 +241,7 @@ export class Map extends Component {
 	}
 	// Script loading, browser geolocation
 	scriptsLoaded() {
-		const {
-			map_center,
-			points
-		} = this.props;
+		const { map_center, points } = this.props;
 		this.setState( { loaded: true } );
 
 		// If the map has any points, skip geolocation and use what we have.

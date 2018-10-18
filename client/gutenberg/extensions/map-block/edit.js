@@ -21,8 +21,6 @@ import {
  * External dependencies
  */
 
-import { clone } from 'lodash';
-
 /**
  * Internal dependencies
  */
@@ -50,7 +48,7 @@ class MapEdit extends Component {
 	addPoint( point ) {
 		const { attributes, setAttributes } = this.props;
 		const { points } = attributes;
-		const newPoints = clone( points );
+		const newPoints = points.slice( 0 );
 		newPoints.push( point );
 		setAttributes( { points: newPoints } );
 		this.setState( { addPointVisibility: false } );
