@@ -84,7 +84,9 @@ export class Checkout extends React.Component {
 		cartSettled: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	// TODO: update this component to not use deprecated life cycle methods
+	/* eslint-disable-next-line react/no-deprecated */
+	componentWillMount() {
 		resetTransaction();
 		this.props.recordApplePayStatus();
 	}
@@ -105,7 +107,9 @@ export class Checkout extends React.Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	// TODO: update this component to not use deprecated life cycle methods
+	/* eslint-disable-next-line react/no-deprecated */
+	componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
 			if ( this.props.product ) {
 				this.addProductToCart();
@@ -130,6 +134,9 @@ export class Checkout extends React.Component {
 		const nextCart = this.props.cart;
 
 		if ( ! isEqual( previousCart, nextCart ) ) {
+			// TODO: rewrite state management so we don't have to call setState here
+			/* eslint-disable-next-line react/no-did-update-set-state */
+			this.setState( { previousCart: nextCart } );
 			this.redirectIfEmptyCart();
 		}
 
