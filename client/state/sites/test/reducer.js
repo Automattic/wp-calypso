@@ -596,23 +596,6 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( "should not update the given site's editor property if an invalid value is received", () => {
-			const original = deepFreeze( {
-				2916284: {
-					ID: 2916284,
-					name: 'WordPress.com Example Blog',
-					editor: 'gutenberg',
-				},
-			} );
-			const state = items( original, {
-				type: EDITOR_TYPE_SET,
-				siteId: 2916284,
-				editor: 'puppers',
-			} );
-
-			expect( state ).to.eql( original );
-		} );
-
 		test( 'should persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
