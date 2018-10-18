@@ -80,6 +80,7 @@ const TransactionStepsMixin = {
 			case 'input-validation':
 				if ( step.error ) {
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+						error_code: step.error.error,
 						reason: step.error.code,
 					} );
 				} else {
@@ -98,6 +99,7 @@ const TransactionStepsMixin = {
 			case 'received-wpcom-response':
 				if ( step.error ) {
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+						error_code: step.error.error,
 						reason: this._formatError( step.error ),
 					} );
 
@@ -136,6 +138,7 @@ const TransactionStepsMixin = {
 			default:
 				if ( step.error ) {
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+						error_code: step.error.error,
 						reason: this._formatError( step.error ),
 					} );
 				}
