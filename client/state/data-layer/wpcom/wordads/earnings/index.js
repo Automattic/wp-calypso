@@ -27,5 +27,3 @@ registerHandlers( 'state/data-layer/wpcom/wordads/earnings/index.js', {
 		} ),
 	],
 } );
-
-export default {};

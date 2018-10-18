@@ -29,11 +29,12 @@ export class FeaturedDomainSuggestions extends Component {
 	getChildProps() {
 		const childKeys = [
 			'cart',
-			'isSignupStep',
-			'selectedSite',
+			'isDomainOnly',
 			'domainsWithPlansOnly',
-			'query',
+			'isSignupStep',
 			'onButtonClick',
+			'query',
+			'selectedSite',
 		];
 		return pick( this.props, childKeys );
 	}

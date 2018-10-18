@@ -88,41 +88,25 @@ export default {
 		},
 		defaultVariation: 'control',
 	},
-	readerSearchPlaceholder: {
-		datestamp: '20180830',
-		variations: {
-			justSearch: 34,
-			nextGreatRead: 33,
-			newFavorite: 33,
-		},
-		defaultVariation: 'justSearch',
-	},
-	domainManagementSuggestionV2: {
-		datestamp: '20181001',
-		variations: {
-			domainsbot_front: 80,
-			variation_front: 20,
-		},
-		defaultVariation: 'domainsbot_front',
-		assignmentMethod: 'userId',
-		allowExistingUsers: true,
-	},
-	userFirstSignup: {
-		datestamp: '20180913',
-		variations: {
-			default: 1,
-			userFirst: 1,
-		},
-		defaultVariation: 'default',
-		allowExistingUsers: false,
-	},
-	dotBlogSuggestions: {
-		datestamp: '20181001',
+	dotBlogSuggestionsv2: {
+		datestamp: '20181012',
 		variations: {
 			simple: 50,
 			complex: 50,
 		},
 		defaultVariation: 'simple',
+		allowExistingUsers: true,
+	},
+	krackenRebootM327V2: {
+		datestamp: '20181018',
+		variations: {
+			domainsbot_front: 25,
+			variation1_front: 25,
+			variation2_front: 25,
+			variation3_front: 25,
+		},
+		defaultVariation: 'domainsbot_front',
+		assignmentMethod: 'userId',
 		allowExistingUsers: true,
 	},
 };

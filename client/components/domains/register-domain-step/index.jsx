@@ -114,6 +114,7 @@ function getQueryObject( props ) {
 class RegisterDomainStep extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object,
+		isDomainOnly: PropTypes.bool,
 		onDomainsAvailabilityChange: PropTypes.func,
 		products: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
@@ -136,6 +137,7 @@ class RegisterDomainStep extends React.Component {
 
 	static defaultProps = {
 		analyticsSection: 'domains',
+		isDomainOnly: false,
 		onAddDomain: noop,
 		onAddMapping: noop,
 		onDomainsAvailabilityChange: noop,
@@ -761,7 +763,7 @@ class RegisterDomainStep extends React.Component {
 			include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor:
-				this.props.includeDotBlogSubdomain && abtest( 'dotBlogSuggestions' ) === 'complex'
+				this.props.includeDotBlogSubdomain && abtest( 'dotBlogSuggestionsv2' ) === 'complex'
 					? 'complex'
 					: 'wpcom',
 			vertical: this.props.surveyVertical,
@@ -770,15 +772,17 @@ class RegisterDomainStep extends React.Component {
 
 		domains
 			.suggestions( subdomainQuery )
-			.then( this.handleSubdomainSuggestions( domain, timestamp ) )
+			.then( this.handleSubdomainSuggestions( domain, subdomainQuery.vendor, timestamp ) )
 			.catch( this.handleSubdomainSuggestionsFailure( domain, timestamp ) );
 	};
 
-	handleSubdomainSuggestions = ( domain, timestamp ) => subdomainSuggestions => {
+	handleSubdomainSuggestions = ( domain, vendor, timestamp ) => subdomainSuggestions => {
 		subdomainSuggestions = subdomainSuggestions.map( suggestion => {
 			suggestion.fetch_algo = endsWith( suggestion.domain_name, '.wordpress.com' )
 				? '/domains/search/wpcom'
 				: '/domains/search/dotblogsub';
+			suggestion.vendor = vendor;
+
 			return suggestion;
 		} );
 
@@ -943,11 +947,12 @@ class RegisterDomainStep extends React.Component {
 	renderExampleSuggestions() {
 		return (
 			<ExampleDomainSuggestions
-				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-				url={ this.getUseYourDomainUrl() }
-				path={ this.props.path }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+				offerUnavailableOption={ this.props.offerUnavailableOption }
+				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
+				path={ this.props.path }
 				products={ this.props.products }
+				url={ this.getUseYourDomainUrl() }
 			/>
 		);
 	}
@@ -991,6 +996,7 @@ class RegisterDomainStep extends React.Component {
 				key="domain-search-results" // key is required for CSS transition of content/
 				availableDomain={ availableDomain }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+				isDomainOnly={ this.props.isDomainOnly }
 				lastDomainSearched={ lastDomainSearched }
 				lastDomainStatus={ lastDomainStatus }
 				lastDomainIsTransferrable={ lastDomainIsTransferrable }

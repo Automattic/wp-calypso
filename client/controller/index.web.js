@@ -16,26 +16,27 @@ import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
 import { login } from 'lib/paths';
 import { makeLayoutMiddleware } from './shared.js';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getImmediateLoginEmail, getImmediateLoginLocale } from 'state/immediate-login/selectors';
-import userFactory from 'lib/user';
 
 /**
  * Re-export
  */
 export { setSection, setUpLocale } from './shared.js';
 
-const user = userFactory();
+export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
+	const state = store.getState();
+	const userLoggedIn = isUserLoggedIn( state );
+	let layout = <Layout primary={ primary } secondary={ secondary } />;
 
-export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => (
-	<ReduxProvider store={ store }>
-		{ getCurrentUser( store.getState() ) ? (
-			<Layout primary={ primary } secondary={ secondary } user={ user } />
-		) : (
+	if ( ! userLoggedIn ) {
+		layout = (
 			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
-		) }
-	</ReduxProvider>
-);
+		);
+	}
+
+	return <ReduxProvider store={ store }>{ layout }</ReduxProvider>;
+};
 
 export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 
@@ -58,9 +59,9 @@ export function clientRouter( route, ...middlewares ) {
 }
 
 export function redirectLoggedIn( context, next ) {
-	const currentUser = getCurrentUser( context.store.getState() );
+	const userLoggedIn = isUserLoggedIn( context.store.getState() );
 
-	if ( currentUser ) {
+	if ( userLoggedIn ) {
 		page.redirect( '/' );
 		return;
 	}
@@ -70,9 +71,9 @@ export function redirectLoggedIn( context, next ) {
 
 export function redirectLoggedOut( context, next ) {
 	const state = context.store.getState();
-	const currentUser = getCurrentUser( state );
+	const userLoggedOut = ! isUserLoggedIn( state );
 
-	if ( ! currentUser ) {
+	if ( userLoggedOut ) {
 		const loginParameters = {
 			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo: context.path,

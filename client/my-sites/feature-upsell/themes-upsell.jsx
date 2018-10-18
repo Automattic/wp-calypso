@@ -208,7 +208,7 @@ class ThemesUpsellComponent extends Component {
 							<li className="feature-upsell__checklist-item">
 								<Gridicon icon="checkmark-circle" className="feature-upsell__checklist-item-icon" />
 								<span className="feature-upsell__checklist-item-text">
-									$100 advertising credit to Google AdWords.
+									$100 advertising credit to Google Ads.
 								</span>
 							</li>
 							<li className="feature-upsell__checklist-item">

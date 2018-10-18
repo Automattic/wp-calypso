@@ -48,9 +48,7 @@ describe( '#signupStep User', () => {
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
-		expect( rendered.state.subHeaderText ).to.equal(
-			'Welcome to the wonderful WordPress.com community'
-		);
+		expect( rendered.state.subHeaderText ).to.equal( 'Welcome to the WordPress.com community.' );
 	} );
 
 	test( 'should show provided subheader text if User step is not first in the flow', () => {
@@ -93,9 +91,7 @@ describe( '#signupStep User', () => {
 			ReactDOM.render( React.createElement( User, testProps ), node );
 
 			expect( spyComponentProps.calledOnce ).to.equal( true );
-			expect( component.state.subHeaderText ).to.equal(
-				'Welcome to the wonderful WordPress.com community'
-			);
+			expect( component.state.subHeaderText ).to.equal( 'Welcome to the WordPress.com community.' );
 		} );
 
 		test( "should show provided subheader text when new flow doesn't have user as first step", () => {

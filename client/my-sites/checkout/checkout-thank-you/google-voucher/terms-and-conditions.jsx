@@ -22,7 +22,7 @@ const googleTermsAndConditions = ( { translate } ) => (
 		<h3>{ translate( 'Terms and conditions for this offer:' ) }</h3>
 		<p>
 			{ translate(
-				'In the below terms, “AdWords” may mean AdWords or AdWords Express, as appropriate.'
+				'In the below terms, “Google Ads” may mean Google Ads or AdWords Express, as appropriate.'
 			) }
 		</p>
 		<ol>
@@ -37,7 +37,7 @@ const googleTermsAndConditions = ( { translate } ) => (
 				{ translate(
 					'To activate this offer: Enter the promotional code in your account before %(expirationDate)s. ' +
 						'In order to participate in this offer, ' +
-						'you must enter the code within 14 days of your first ad impression being served from your first AdWords account.',
+						'you must enter the code within 14 days of your first ad impression being served from your first Google Ads account.',
 					{
 						args: {
 							expirationDate: moment( expirationDate ).format( 'LL' ),
@@ -77,7 +77,7 @@ const googleTermsAndConditions = ( { translate } ) => (
 
 			<li className="google-voucher__terms-and-conditions">
 				{ translate(
-					'Your account must be successfully billed by AdWords ' +
+					'Your account must be successfully billed by Google Ads ' +
 						'and remain in good standing in order to qualify for the promotional credit.'
 				) }
 			</li>
@@ -85,11 +85,11 @@ const googleTermsAndConditions = ( { translate } ) => (
 			<li className="google-voucher__terms-and-conditions">
 				{ translate( 'Full terms and conditions can be found here ' ) }
 				<ExternalLink
-					href="http://www.google.com/adwords/coupons/terms.html"
+					href="https://www.google.com/ads/coupons/terms.html"
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					http://www.google.com/adwords/coupons/terms.html
+					https://www.google.com/ads/coupons/terms.html
 				</ExternalLink>
 				.
 			</li>

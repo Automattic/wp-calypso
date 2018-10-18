@@ -20,16 +20,28 @@ ActionCardExample.displayName = 'ActionCard';
 
 ActionCardExample.defaultProps = {
 	exampleCode: (
-		<ActionCard
-			headerText="This is a header text"
-			mainText="This is a description of the action. It gives a bit more detail and explains what we are inviting the user to do."
-			buttonText="Call to action!"
-			buttonIcon="external"
-			buttonPrimary={ true }
-			buttonHref="https://wordpress.com"
-			buttonTarget="_blank"
-			buttonOnClick={ null }
-		/>
+		<div>
+			<ActionCard
+				headerText="This is a header text"
+				mainText="This is a description of the action. It gives a bit more detail and explains what we are inviting the user to do."
+				buttonText="Call to action!"
+				buttonIcon="external"
+				buttonPrimary={ true }
+				buttonHref="https://wordpress.com"
+				buttonTarget="_blank"
+				buttonOnClick={ null }
+			/>
+			<ActionCard
+				headerText="This one has a disabled button."
+				mainText="You can also disable the CTA button if necessary."
+				buttonText="Disabled button"
+				buttonIcon="external"
+				buttonPrimary={ true }
+				buttonHref="https://wordpress.com"
+				buttonOnClick={ null }
+				buttonDisabled={ true }
+			/>
+		</div>
 	),
 };
 

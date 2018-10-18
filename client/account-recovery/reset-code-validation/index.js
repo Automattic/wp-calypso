@@ -24,6 +24,11 @@ import {
 import getAccountRecoveryValidationError from 'state/selectors/get-account-recovery-validation-error';
 import getAccountRecoveryValidationKey from 'state/selectors/get-account-recovery-validation-key';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ResetPasswordEmailValidation extends Component {
 	getQueryString = () => {
 		const queryString = get( window, 'location.search', null );

@@ -2,132 +2,269 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, indexOf, inRange } from 'lodash';
-import { isWebUri } from 'valid-url';
-import { parse as parseURL } from 'url';
+import { flow, invoke, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
+import Card from 'components/card';
+import ExampleDomainBrowser from 'components/domains/example-domain-browser';
+import ExternalLink from 'components/external-link';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-import { setNuxUrlInputValue, setValidationMessage } from 'state/importer-nux/actions';
+import FormButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTextInput from 'components/forms/form-text-input';
+import ScreenReaderText from 'components/screen-reader-text';
+import { infoNotice, removeNotice } from 'state/notices/actions';
+import { fetchIsSiteImportable, setNuxUrlInputValue } from 'state/importer-nux/actions';
 import {
+	getNuxUrlError,
 	getNuxUrlInputValue,
 	getSiteDetails,
-	getUrlInputValidationMessage,
 	isUrlInputDisabled,
 } from 'state/importer-nux/temp-selectors';
+import { validateImportUrl } from 'lib/importers/url-validation';
+import { recordTracksEvent } from 'state/analytics/actions';
+import {
+	SITE_IMPORTER_ERR_BAD_REMOTE,
+	SITE_IMPORTER_ERR_INVALID_URL,
+} from 'lib/importers/constants';
 
-const normalizeUrlForImportSource = url => {
-	// @TODO sanitize? Prepend https:// ..?
-	return url;
-};
-
-const isValidUrl = ( value = '' ) => {
-	const { protocol } = parseURL( value );
-	const withProtocol = protocol ? value : 'http://' + value;
-	const { hostname } = parseURL( withProtocol );
-	const hasDot = inRange( indexOf( hostname, '.' ), 1, hostname.length - 2 );
-
-	return isWebUri( withProtocol ) && hasDot;
-};
+const CHECKING_SITE_IMPORTABLE_NOTICE = 'checking-site-importable';
+const IMPORT_HELP_LINK = 'https://en.support.wordpress.com/import/';
+const EXAMPLE_WIX_URL = 'https://username.wixsite.com/my-site';
 
 class ImportURLStepComponent extends Component {
-	componentDidMount() {
-		const { queryObject } = this.props;
-		const urlFromQueryArg = normalizeUrlForImportSource( get( queryObject, 'url' ) );
-
-		if ( urlFromQueryArg ) {
-			this.handleInputChange( urlFromQueryArg );
-		}
-	}
-
 	state = {
-		showValidation: false,
+		// Url message could be client-side validation or server-side error.
+		showUrlMessage: false,
+		urlValidationMessage: '',
 	};
 
-	handleAction = () => {
-		if ( this.props.urlInputValidationMessage ) {
-			return this.setState( {
-				showValidation: true,
-			} );
+	componentDidUpdate( prevProps ) {
+		const {
+			isSiteImportableError,
+			goToNextStep,
+			urlInputValue,
+			stepName,
+			siteDetails,
+			isLoading,
+		} = this.props;
+
+		// isSiteImportable error, focus input to revise url.
+		if (
+			! isEqual( prevProps.isSiteImportableError, isSiteImportableError ) &&
+			isSiteImportableError
+		) {
+			this.focusInput();
 		}
 
-		this.goToNextStep( {} );
-	};
+		// We have a verified, importable site url.
+		if ( ! isEqual( prevProps.siteDetails, siteDetails ) && siteDetails ) {
+			SignupActions.submitSignupStep( { stepName }, [], {
+				importSiteDetails: siteDetails,
+				importUrl: urlInputValue,
+				themeSlugWithRepo: 'pub/radcliffe-2',
+			} );
 
-	goToNextStep = () => {
-		const { urlInputValue } = this.props;
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			importUrl: urlInputValue,
-			themeSlugWithRepo: 'pub/radcliffe-2',
-		} );
+			goToNextStep();
+		}
 
-		this.props.goToNextStep();
-	};
-
-	handleInputChange = value => {
-		const validationMessage = isValidUrl( value )
-			? ''
-			: this.props.translate( 'Please enter a valid URL.' );
-
-		this.setState( {
-			showValidation: false,
-		} );
-
-		this.props.setNuxUrlInputValue( value );
-		this.props.setValidationMessage( validationMessage );
-	};
-
-	handleInputBlur = () => {
-		this.setState( {
-			showValidation: true,
-		} );
-	};
-
-	checkValidation( value ) {
-		const { translate } = this.props;
-		const message = isValidUrl( value )
-			? ''
-			: translate( 'Please enter the full URL of your site.' );
-
-		this.props.setValidationMessage( message );
+		if ( isLoading !== prevProps.isLoading ) {
+			if ( isLoading ) {
+				this.props.infoNotice(
+					this.props.translate( "Please wait, we're checking to see if we can import this site." ),
+					{ id: CHECKING_SITE_IMPORTABLE_NOTICE, icon: 'info', isLoading: true }
+				);
+			} else {
+				this.props.removeNotice( CHECKING_SITE_IMPORTABLE_NOTICE );
+			}
+		}
 	}
+
+	handleInputChange = event => {
+		this.props.setNuxUrlInputValue( event.target.value );
+	};
+
+	handleInputBlur = event => {
+		if ( event.target.value ) {
+			this.validateUrl();
+		}
+	};
+
+	handleInputRef = el => ( this.inputRef = el );
+
+	focusInput = () => invoke( this.inputRef, 'focus' );
+
+	handleSubmit = event => {
+		event.preventDefault();
+
+		const isValid = this.validateUrl();
+
+		if ( ! isValid ) {
+			this.focusInput();
+			return;
+		}
+
+		this.props.fetchIsSiteImportable( this.props.urlInputValue );
+	};
+
+	validateUrl = () => {
+		const validationMessage = validateImportUrl( this.props.urlInputValue );
+		const isValid = ! validationMessage;
+
+		this.setState( {
+			urlValidationMessage: isValid ? '' : validationMessage,
+			showUrlMessage: true,
+		} );
+
+		return isValid;
+	};
+
+	getUrlMessage = () => {
+		if ( this.state.urlValidationMessage ) {
+			return this.state.urlValidationMessage;
+		}
+
+		if ( this.props.isSiteImportableError ) {
+			return this.getIsSiteImportableError();
+		}
+
+		return '';
+	};
+
+	getIsSiteImportableError = () => {
+		if ( ! this.props.isSiteImportableError ) {
+			return null;
+		}
+
+		const { isSiteImportableError, translate } = this.props;
+
+		switch ( isSiteImportableError.code ) {
+			case SITE_IMPORTER_ERR_INVALID_URL:
+				return translate( 'This does not appear to be a valid URL or website address.' );
+			// @TODO differentiate an unreachable site from one that's not compatible.
+			case SITE_IMPORTER_ERR_BAD_REMOTE:
+				return translate(
+					"We're not able to reach that site at this time, or it's not compatible with our URL importer."
+				);
+		}
+
+		return translate( 'There was an error with the importer, please try again.' );
+	};
+
+	exitFlow = () => {
+		const target = '/start';
+		this.props.recordTracksEvent( 'calypso_signup_flow_exit', {
+			flow: this.props.flowName,
+			step: this.props.stepName,
+			target,
+		} );
+
+		// Exit to main signup flow.
+		this.props.goToNextStep( 'main' );
+	};
+
+	recordSupportClicked = () => {
+		this.props.recordTracksEvent( 'calypso_signup_support_clicked', {
+			flow: this.props.flowName,
+			step: this.props.stepName,
+			support_page: IMPORT_HELP_LINK,
+		} );
+	};
 
 	renderContent = () => {
-		const { isInputDisabled, urlInputValidationMessage, urlInputValue, translate } = this.props;
-		const { showValidation } = this.state;
+		const { isLoading, urlInputValue, translate } = this.props;
+		const { showUrlMessage } = this.state;
+		const urlMessage = this.getUrlMessage();
 
 		return (
-			<div className="import-url__wrapper">
-				<FormTextInputWithAction
-					placeholder={ translate( 'Please enter the full URL of your site.' ) }
-					action="Continue"
-					onAction={ this.handleAction }
-					label={ translate( 'URL' ) }
-					onChange={ this.handleInputChange }
-					defaultValue={ urlInputValue }
-					disabled={ isInputDisabled }
-					onBlur={ this.handleInputBlur }
-				/>
-				{ showValidation ? (
-					<FormInputValidation
-						text={ urlInputValidationMessage || translate( 'This URL is valid.' ) }
-						isError={ !! urlInputValidationMessage }
-					/>
-				) : (
-					<FormSettingExplanation>
-						{ translate( 'Please enter the full URL of your site.' ) }
-					</FormSettingExplanation>
-				) }
-			</div>
+			<Fragment>
+				<Card className="import-url__card" tagName="div">
+					<form className="import-url__form" onSubmit={ this.handleSubmit }>
+						<ScreenReaderText>
+							<FormLabel htmlFor="url-input">Site URL</FormLabel>
+						</ScreenReaderText>
+
+						<FormTextInput
+							id="url-input"
+							className="import-url__url-input"
+							placeholder={ EXAMPLE_WIX_URL }
+							disabled={ isLoading }
+							defaultValue={ urlInputValue }
+							onChange={ this.handleInputChange }
+							onBlur={ this.handleInputBlur }
+							inputRef={ this.handleInputRef }
+							isError={ !! urlMessage }
+						/>
+
+						<FormButton
+							className="import-url__submit-button"
+							disabled={ isLoading }
+							busy={ isLoading }
+							type="submit"
+						>
+							{ isLoading
+								? translate( 'Checking{{ellipsis/}}', {
+										components: { ellipsis: <Fragment>&hellip;</Fragment> },
+										comment: 'Indicates user input is being processed.',
+								  } )
+								: translate( 'Continue' ) }
+						</FormButton>
+					</form>
+					{ showUrlMessage && urlMessage ? (
+						<FormInputValidation
+							className="import-url__url-input-message"
+							text={ urlMessage }
+							isError={ !! urlMessage }
+						/>
+					) : (
+						<FormSettingExplanation className="import-url__url-input-message">
+							{ translate( 'Please enter the full URL of your site.' ) }
+						</FormSettingExplanation>
+					) }
+				</Card>
+
+				<div className="import-url__example">
+					<ul className="import-url__example-urls">
+						{ translate( 'Example URLs', {
+							comment: 'Title for list of example urls, such as "example.com"',
+						} ) }
+						<li className="import-url__example-url">https://example.com</li>
+
+						<li className="import-url__example-url">{ EXAMPLE_WIX_URL }</li>
+					</ul>
+					<ExampleDomainBrowser className="import-url__example-browser" />
+				</div>
+
+				<div className="import-url__escape">
+					{ translate(
+						"Don't have a Wix site? We also support importing from {{a}}other sources{{/a}}.",
+						{
+							components: {
+								a: (
+									<ExternalLink
+										href={ IMPORT_HELP_LINK }
+										target="_blank"
+										onClick={ this.recordSupportClicked }
+									/>
+								),
+							},
+						}
+					) }
+					&nbsp;
+					<Button compact onClick={ this.exitFlow }>
+						{ translate( 'Sign up' ) }
+					</Button>
+				</div>
+			</Fragment>
 		);
 	};
 
@@ -136,12 +273,13 @@ class ImportURLStepComponent extends Component {
 
 		return (
 			<StepWrapper
+				className="import-url"
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
 				headerText={ translate( 'Where can we find your old site?' ) }
 				subHeaderText={ translate(
-					"Enter your site's URL, sometimes called a domain name or site address."
+					"Enter your Wix site's URL, sometimes called a domain name or site address."
 				) }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
@@ -153,14 +291,17 @@ class ImportURLStepComponent extends Component {
 export default flow(
 	connect(
 		state => ( {
+			isSiteImportableError: getNuxUrlError( state ),
 			urlInputValue: getNuxUrlInputValue( state ),
 			siteDetails: getSiteDetails( state ),
-			isInputDisabled: isUrlInputDisabled( state ),
-			urlInputValidationMessage: getUrlInputValidationMessage( state ),
+			isLoading: isUrlInputDisabled( state ),
 		} ),
 		{
+			fetchIsSiteImportable,
 			setNuxUrlInputValue,
-			setValidationMessage,
+			recordTracksEvent,
+			infoNotice,
+			removeNotice,
 		}
 	),
 	localize

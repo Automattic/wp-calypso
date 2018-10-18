@@ -44,7 +44,7 @@ describe( 'SubscriptionLengthPicker basic tests', () => {
 				translate={ translate }
 			/>
 		);
-		expect( picker.find( '.subscription-length-picker' ).length ).toBe( 1 );
+		expect( picker.find( '.subscription-length-picker' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should contain as many <SubscriptionLengthOption/> as products passed', () => {
@@ -55,7 +55,7 @@ describe( 'SubscriptionLengthPicker basic tests', () => {
 				translate={ translate }
 			/>
 		);
-		expect( picker.find( 'SubscriptionLengthOption' ).length ).toBe( 2 );
+		expect( picker.find( 'SubscriptionLengthOption' ) ).toHaveLength( 2 );
 	} );
 
 	test( 'should mark appropriate SubscriptionLengthOption as checked', () => {

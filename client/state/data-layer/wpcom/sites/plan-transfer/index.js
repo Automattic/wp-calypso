@@ -73,5 +73,3 @@ registerHandlers( 'state/data-layer/wpcom/sites/plan-transfer/index.js', {
 		} ),
 	],
 } );
-
-export default {};

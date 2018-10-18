@@ -29,6 +29,11 @@ import { getSeoTitle } from 'state/sites/selectors';
 import { getSectionName, getSelectedSite } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const PREVIEW_IMAGE_WIDTH = 512;
 const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium );
 

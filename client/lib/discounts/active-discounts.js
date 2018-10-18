@@ -56,20 +56,16 @@ export default [
 			'Improve your SEO, branding, credibility, and even word-of-mouth marketing with a custom domain. All plan upgrades include a free domain name of your choice.',
 	},
 	{
-		name: 'september20',
-		startsAt: new Date( 2018, 8, 6, 0, 0, 0 ),
-		endsAt: new Date( 2018, 8, 21, 0, 0, 0 ),
-		nudgeText: translate( '%(discount)d%% Off All Plans', {
-			args: {
-				discount: 20,
-			},
-		} ),
+		name: 'october10',
+		startsAt: new Date( 2018, 9, 6, 0, 0, 0 ),
+		endsAt: new Date( 2018, 9, 11, 0, 0, 0 ),
+		nudgeText: 'One-Day Flash Sale 20% Off',
 		ctaText: translate( 'Upgrade' ),
 		plansPageNoticeText: translate(
 			'Enter coupon code “%(coupon)s” during checkout to claim your %(discount)d%% discount.',
 			{
 				args: {
-					coupon: 'SEPTEMBER20',
+					coupon: 'OCTOBERFLASH',
 					discount: 20,
 				},
 			}

@@ -12,8 +12,6 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import './draft-js-polyfills';
-// draft-js needs to be loaded *after* the polyfills
 import {
 	CompositeDecorator,
 	Editor,
@@ -28,6 +26,11 @@ import Token from './token';
 import { buildSeoTitle } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const Chip = onClick => props => <Token { ...props } onClick={ onClick } />;
 

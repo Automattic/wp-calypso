@@ -215,7 +215,7 @@ export const convertToApiPackage = ( pckg, customsItems ) => {
 				quantity,
 				value: quantity * customsItems[ product_id ].value,
 				weight: quantity * customsItems[ product_id ].weight,
-				hs_tariff_number: customsItems[ product_id ].tariffNumber,
+				hs_tariff_number: customsItems[ product_id ].tariffNumber || '',
 				origin_country: customsItems[ product_id ].originCountry,
 				product_id,
 			};

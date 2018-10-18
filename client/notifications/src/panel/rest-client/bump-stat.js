@@ -6,7 +6,7 @@ export const bumpStat = (group, name) => {
   }
 
   if (typeof group === 'object') {
-    for (let key in group) {
+    for (const key in group) {
       if (typeof group[key] === 'string') {
         uriComponent += '&x_' + encodeURIComponent(key) + '=' + encodeURIComponent(group[key]);
       }

@@ -6,6 +6,7 @@ import { HTTP_DATA_REQUEST, HTTP_DATA_TICK } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 
 export const httpData = new Map();
+export const listeners = new Set();
 
 const empty = Object.freeze( {
 	state: 'uninitialized',
@@ -17,7 +18,13 @@ const empty = Object.freeze( {
 
 export const getHttpData = id => httpData.get( id ) || empty;
 
-export const update = ( id, state, data ) => {
+export const subscribe = f => {
+	listeners.add( f );
+
+	return () => listeners.delete( f );
+};
+
+export const updateData = ( id, state, data ) => {
 	const lastUpdated = Date.now();
 	const item = httpData.get( id );
 	const hasItem = item !== undefined;
@@ -54,6 +61,14 @@ export const update = ( id, state, data ) => {
 				pendingSince: undefined,
 			} );
 	}
+};
+
+export const update = ( id, state, data ) => {
+	const updated = updateData( id, state, data );
+
+	listeners.forEach( f => f() );
+
+	return updated;
 };
 
 const fetch = action => {
@@ -184,8 +199,82 @@ export const requestHttpData = ( requestId, fetchAction, { fromApi, freshness = 
 	return data;
 };
 
+/**
+ * Blocks execution until requested data has been fulfilled
+ *
+ *  - May return without data if data hasn't been fulfilled or failed
+ *  - Use for SSR contexts or when we _want_ to block rendering or execution
+ *    until the requested data has been fulfilled, e.g. when URL routing
+ *    depends on some data property
+ *  - _DO NOT USE_ when normal synchronous/data interactions suffice such
+ *    as is the case in 99.999% of React component contexts
+ *
+ * @example:
+ * waitForData( {
+ *     geo: () => requestGeoLocation(),
+ *     splines: () => requestSplines( siteId ),
+ * } ).then( ( { geo, splines } ) => {
+ *     return ( geo.state === 'success' || splines.state === 'success' )
+ *         ? res.send( renderToStaticMarkup( <LocalSplines geo={ geo.data } splines={ splines.data } /> ) )
+ *         : res.send( renderToStaticMarkup( <UnvailableData /> ) );
+ * }
+ *
+ * @param {object} query key/value pairs of data name and request
+ * @param {int} timeout how many ms to wait until giving up on requests
+ * @return {Promise<object>} fulfilled data of request (or partial if could not fulfill)
+ */
+export const waitForData = ( query, { timeout } = {} ) =>
+	new Promise( ( resolve, reject ) => {
+		let unsubscribe = () => {};
+		let timer = null;
+		const names = Object.keys( query );
+
+		const getValues = () =>
+			names.reduce(
+				( [ values, allGood, allBad ], name ) => {
+					const value = query[ name ]();
+
+					return [
+						{ ...values, [ name ]: value },
+						allGood && value.state === 'success',
+						allBad && value.state === 'failure',
+					];
+				},
+				[ {}, true, true ]
+			);
+
+		const listener = () => {
+			const [ values, allGood, allBad ] = getValues();
+
+			if ( allBad ) {
+				clearTimeout( timer );
+				unsubscribe();
+				reject( values );
+			}
+
+			if ( allGood ) {
+				clearTimeout( timer );
+				unsubscribe();
+				resolve( values );
+			}
+		};
+
+		if ( timeout ) {
+			timer = setTimeout( () => {
+				const [ values ] = getValues();
+
+				unsubscribe();
+				reject( values );
+			}, timeout );
+		}
+
+		unsubscribe = subscribe( listener );
+		listener();
+	} );
+
 if ( 'object' === typeof window && window.app && window.app.isDebug ) {
 	window.getHttpData = getHttpData;
 	window.httpData = httpData;
 	window.requestHttpData = requestHttpData;
+	window.waitForData = waitForData;
 }

@@ -16,13 +16,18 @@ import edit from './edit';
 import save from './save';
 
 registerBlockType( 'a8c/markdown', {
-	title: __( 'Markdown' ),
+	title: __( 'Markdown', 'jetpack' ),
 
 	description: (
 		<Fragment>
-			<p>{ __( 'Write your content in plain-text Markdown syntax.' ) }</p>
+			<p>
+				{ __(
+					'Use regular characters and punctuation to style text, links, and lists.',
+					'jetpack'
+				) }
+			</p>
 			<ExternalLink href="https://en.support.wordpress.com/markdown-quick-reference/">
-				{ __( 'Support reference' ) }
+				{ __( 'Support reference', 'jetpack' ) }
 			</ExternalLink>
 		</Fragment>
 	),
@@ -45,7 +50,7 @@ registerBlockType( 'a8c/markdown', {
 
 	category: 'jetpack',
 
-	keywords: [ __( 'formatting' ), __( 'syntax' ), __( 'markup' ) ],
+	keywords: [ __( 'formatting', 'jetpack' ), __( 'syntax', 'jetpack' ), __( 'markup', 'jetpack' ) ],
 
 	attributes: {
 		//The Markdown source is saved in the block content comments delimiter

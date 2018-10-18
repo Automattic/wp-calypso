@@ -14,6 +14,11 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 
+/**
+ * Style dependences
+ */
+import './style.scss';
+
 export class RemoveButton extends React.Component {
 	static propTypes = {
 		onRemove: PropTypes.func.isRequired,

@@ -67,5 +67,3 @@ registerHandlers( 'state/data-layer/wpcom/me/devices/index.js', {
 		} ),
 	],
 } );
-
-export default {};

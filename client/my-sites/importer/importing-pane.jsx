@@ -8,14 +8,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { numberFormat, translate, localize } from 'i18n-calypso';
-import { has, omit } from 'lodash';
+import { get, has, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { mapAuthor, startImporting } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
-import { connectDispatcher } from './dispatcher-converter';
 import ProgressBar from 'components/progress-bar';
 import AuthorMappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
@@ -121,6 +120,10 @@ class ImportingPane extends React.PureComponent {
 		);
 	};
 
+	getHeadingTextProcessing = () => {
+		return translate( 'Processing your file. Please wait a few moments.' );
+	};
+
 	getSuccessText = () => {
 		const {
 				site: { slug },
@@ -187,6 +190,10 @@ class ImportingPane extends React.PureComponent {
 		return this.isInState( appStates.IMPORTING );
 	};
 
+	isProcessing = () => {
+		return this.isInState( appStates.UPLOAD_PROCESSING );
+	};
+
 	isInState = state => {
 		return state === this.props.importerStatus.importerState;
 	};
@@ -213,10 +220,12 @@ class ImportingPane extends React.PureComponent {
 		this.maybeLoadHotJar();
 	}
 
+	handleOnMap = ( source, target ) =>
+		mapAuthor( get( this.props, 'importerStatus.importerId' ), source, target );
+
 	render() {
 		const {
-			importerStatus: { importerId, errorData = {}, customData },
-			mapAuthorFor,
+			importerStatus: { customData },
 			site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor },
 			sourceType,
 		} = this.props;
@@ -229,7 +238,11 @@ class ImportingPane extends React.PureComponent {
 		let blockingMessage;
 
 		if ( this.isError() ) {
-			statusMessage = this.getErrorMessage( errorData );
+			/**
+			 * TODO: This is for the status message that appears at the bottom
+			 * of the import section. This shouldn't be used for Error reporting.
+			 */
+			statusMessage = '';
 		}
 
 		if ( this.isFinished() ) {
@@ -246,10 +259,11 @@ class ImportingPane extends React.PureComponent {
 		return (
 			<div className="importer__importing-pane">
 				{ this.isImporting() && <p>{ this.getHeadingText() }</p> }
+				{ this.isProcessing() && <p>{ this.getHeadingTextProcessing() }</p> }
 				{ this.isMapping() && (
 					<AuthorMappingPane
 						hasSingleAuthor={ hasSingleAuthor }
-						onMap={ mapAuthorFor( importerId ) }
+						onMap={ this.handleOnMap }
 						onStartImport={ () => startImporting( this.props.importerStatus ) }
 						siteId={ siteId }
 						sourceType={ sourceType }
@@ -258,7 +272,7 @@ class ImportingPane extends React.PureComponent {
 						targetTitle={ siteName }
 					/>
 				) }
-				{ this.isImporting() &&
+				{ ( this.isImporting() || this.isProcessing() ) &&
 					( percentComplete >= 0 ? (
 						<ProgressBar className={ progressClasses } value={ percentComplete } />
 					) : (
@@ -276,14 +290,7 @@ class ImportingPane extends React.PureComponent {
 	}
 }
 
-const mapFluxDispatchToProps = dispatch => ( {
-	mapAuthorFor: importerId => ( source, target ) =>
-		setTimeout( () => {
-			dispatch( mapAuthor( importerId, source, target ) );
-		}, 0 ),
-} );
-
 export default connect(
 	null,
 	{ loadTrackingTool }
-)( connectDispatcher( null, mapFluxDispatchToProps )( localize( ImportingPane ) ) );
+)( localize( ImportingPane ) );

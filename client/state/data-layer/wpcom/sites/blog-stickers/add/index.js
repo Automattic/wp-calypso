@@ -66,5 +66,3 @@ registerHandlers( 'state/data-layer/wpcom/sites/blog-stickers/add/index.js', {
 		} ),
 	],
 } );
-
-export default {};

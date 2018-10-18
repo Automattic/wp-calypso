@@ -181,7 +181,7 @@ describe( 'replaceItem()', () => {
 		};
 		const newCart = replaceItem( oldProduct, newProduct )( cart );
 		expect( typeof newCart ).toBe( 'object' );
-		expect( newCart.products.length ).toBe( 1 );
+		expect( newCart.products ).toHaveLength( 1 );
 		expect( newCart.products[ 0 ] ).toBe( newProduct );
 	} );
 
@@ -194,7 +194,7 @@ describe( 'replaceItem()', () => {
 		};
 		const newCart = replaceItem( oldProduct, newProduct )( cart );
 		expect( typeof newCart ).toBe( 'object' );
-		expect( newCart.products.length ).toBe( 2 );
+		expect( newCart.products ).toHaveLength( 2 );
 		expect( newCart.products[ 0 ] ).toBe( neutralProduct );
 		expect( newCart.products[ 1 ] ).toBe( newProduct );
 	} );
@@ -208,7 +208,7 @@ describe( 'replaceItem()', () => {
 		};
 		const newCart = replaceItem( oldProduct, newProduct )( cart );
 		expect( typeof newCart ).toBe( 'object' );
-		expect( newCart.products.length ).toBe( 2 );
+		expect( newCart.products ).toHaveLength( 2 );
 		expect( newCart.products[ 0 ] ).toBe( neutralProduct );
 		expect( newCart.products[ 1 ] ).toBe( newProduct );
 	} );
@@ -367,6 +367,18 @@ describe( 'getDomainPriceRule()', () => {
 					{ plan: { product_slug: 'free_plan' } },
 					{},
 					{ domain_name: 'domain.com', product_slug: 'domain' }
+				)
+			).toBe( 'PRICE' );
+		} );
+
+		test( 'should return PRICE if it is a domain only flow (NUX, isDomainOnly: true)', () => {
+			expect(
+				getDomainPriceRule(
+					false,
+					{},
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' },
+					true
 				)
 			).toBe( 'PRICE' );
 		} );

@@ -5,13 +5,25 @@
 
 	@include breakpoint( '<480px' ) {
 		margin-left: 8px;
+
+		.is-expanded & {
+			margin-left: 0px;
+		}
+	}
+
+	.card {
+		flex: 1;
+		margin-top: 8px;
+		margin-bottom: 16px;
+
+		.is-expanded & {
+			margin-bottom: 8px;
+		}
 	}
 }
 
-.activity-log-item .card {
-	flex: 1;
-	margin-top: 8px;
-	margin-bottom: 16px;
+.activity-log-item.activity-log-item__restore-confirm .card {
+	white-space: normal;
 }
 
 .activity-log-item .foldable-card {
@@ -44,6 +56,8 @@
 	flex-grow: 0;
 
 	.foldable-card__summary {
+		display: flex;
+		align-items: center;
 		margin-right: 0;
 	}
 }
@@ -62,6 +76,12 @@
 
 	.is-loading & {
 		align-self: center;
+	}
+
+	.activity-log-item__card.is-expanded & {
+		margin-left: 0px;
+		margin-right: 16px;
+		background: $white;
 	}
 }
 
@@ -143,7 +163,6 @@
 	.foldable-card__content {
 		padding: 16px;
 		font-size: 14px;
-		color: $gray-darken-20;
 	}
 
 	.is-loading & {
@@ -154,12 +173,10 @@
 
 .activity-log-item__card-header {
 	display: flex;
-	flex-wrap: wrap;
-	margin-right: 32px;
-	padding-left: 56px;
 	align-items: center;
-	min-width: 0;
 	width: 100%;
+	min-width: 0;
+	padding-left: 56px;
 
 	@include breakpoint( '<960px' ) {
 		flex-direction: column;
@@ -214,6 +231,32 @@
 	.jetpack-logo__icon-circle {
 		fill: $gray-darken-10;
 	}
+
+	.gridicon {
+		width: 24px;
+		height: 24px;
+		background: $gray;
+		color: $white;
+		display: flex;
+		padding: 8px;
+		border-radius: 50%;
+		margin-right: 14px;
+		margin-top: 2px;
+		fill: $white;
+
+		@include breakpoint( '<480px' ) {
+			padding: 7px;
+			box-sizing: border-box;
+			width: 32px;
+			height: 32px;
+			display: inline-block;
+
+			.gridicon {
+				width: 18px;
+				height: 18px;
+			}
+		}
+	}
 }
 
 .activity-log-item__actor-info {
@@ -266,15 +309,32 @@
 
 .activity-log-item__description-content {
 	margin-bottom: 8px;
+
+	.activity-log-item.is-aggregated & {
+		margin-bottom: 0;
+	}
 }
 
 .activity-log-item__action {
-	// Mild hack so split button doesn't break
-	white-space: pre;
+	display: flex;
 
 	@include breakpoint( '<480px' ) {
 		margin-top: 16px;
 		text-align: left;
+	}
+
+	.ellipsis-menu {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 0;
+
+		.button {
+			position: relative;
+			top: 50%;
+			width: 48px;
+			transform: translateY( -50% );
+		}
 	}
 }
 
@@ -362,6 +422,24 @@
 		&.is-desktop {
 			display: inline-block;
 		}
+	}
+}
+
+.activity-log-item__footer {
+	display: flex;
+	justify-content: space-between;
+	padding: 16px 0 0;
+	margin: 0;
+	border-top: 1px solid $gray-light;
+
+	p {
+		margin-bottom: 0;
+	}
+}
+
+.activity-log-item.is-aggregated > .foldable-card > .foldable-card__header {
+	@include breakpoint( '<480px' ) {
+		padding-right: 44px;
 	}
 }
 

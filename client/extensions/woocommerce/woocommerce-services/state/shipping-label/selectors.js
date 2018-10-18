@@ -300,7 +300,7 @@ export const getCustomsErrors = (
 
 	const valuesByTariffNumber = {};
 	forEach( pick( customs.items, usedProductIds ), ( itemData, productId ) => {
-		if ( 6 === itemData.tariffNumber.length ) {
+		if ( itemData.tariffNumber && 6 === itemData.tariffNumber.length ) {
 			if ( ! valuesByTariffNumber[ itemData.tariffNumber ] ) {
 				valuesByTariffNumber[ itemData.tariffNumber ] = 0;
 			}
@@ -379,10 +379,7 @@ export const getCustomsErrors = (
 					itemErrors.value = translate( 'Declared value must be greater than zero' );
 				}
 			}
-			if (
-				! customs.ignoreTariffNumberValidation[ productId ] &&
-				6 !== itemData.tariffNumber.length
-			) {
+			if ( itemData.tariffNumber && 6 !== itemData.tariffNumber.length ) {
 				itemErrors.tariffNumber = translate( 'The tariff code must be 6 digits long' );
 			}
 			return itemErrors;
@@ -468,7 +465,7 @@ export const isCustomsFormStepSubmitted = (
 	return ! some(
 		usedProductIds.map(
 			productId =>
-				form.customs.ignoreTariffNumberValidation[ productId ] ||
+				isNil( form.customs.items[ productId ].tariffNumber ) ||
 				form.customs.ignoreWeightValidation[ productId ] ||
 				form.customs.ignoreValueValidation[ productId ]
 		)

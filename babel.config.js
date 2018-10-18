@@ -3,8 +3,6 @@ const _ = require( 'lodash' );
 const path = require( 'path' );
 
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
-const isCalypsoServer = process.env.CALYPSO_SERVER === 'true';
-const isCalypso = isCalypsoClient || isCalypsoServer;
 
 const modules = isCalypsoClient ? false : 'commonjs'; // only calypso should keep es6 modules
 const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
@@ -32,7 +30,7 @@ const config = {
 		[ '@babel/plugin-proposal-class-properties', { loose: true } ],
 		[ '@babel/plugin-transform-classes', { loose: false } ],
 		[ '@babel/plugin-transform-template-literals', { loose: true } ],
-		isCalypso && [
+		[
 			path.join(
 				__dirname,
 				'server',

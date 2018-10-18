@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import i18n from 'i18n-calypso';
 import { get, includes, some } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
@@ -84,6 +83,7 @@ export class PluginMeta extends Component {
 				<div className="plugin-meta__banner">
 					<img
 						className="plugin-meta__banner-image"
+						alt={ this.props.plugin.name }
 						src={ this.props.plugin.banners.high || this.props.plugin.banners.low }
 					/>
 				</div>
@@ -244,8 +244,11 @@ export class PluginMeta extends Component {
 			'file-manager-advanced',
 			'file-manager',
 			'plugins-garbage-collector',
+			'post-type-switcher',
 			'reset-wp',
 			'ultimate-wp-reset',
+			'username-changer',
+			'username-updater',
 			'wd-youtube',
 			'wordpress-database-reset',
 			'wordpress-reset',
@@ -256,6 +259,7 @@ export class PluginMeta extends Component {
 			'wp-prefix-changer',
 			'wp-reset',
 			'wpmu-database-reset',
+			'wps-hide-login',
 			'z-inventory-manager',
 
 			// backup
@@ -300,6 +304,7 @@ export class PluginMeta extends Component {
 
 			// security
 			'wordfence',
+			'wp-simple-firewall',
 
 			// spam
 			'e-mail-broadcasting',
@@ -315,6 +320,7 @@ export class PluginMeta extends Component {
 			'automatic-video-posts',
 			'bwp-minify',
 			'cryptocurrency-pricing-list',
+			'event-espresso-decaf',
 			'fast-velocity-minify',
 			'nginx-helper',
 			'porn-embed',
@@ -407,7 +413,7 @@ export class PluginMeta extends Component {
 			return (
 				<Notice
 					className="plugin-meta__version-notice"
-					text={ i18n.translate(
+					text={ this.props.translate(
 						'The new version of this plugin may not be compatible with your version of WordPress'
 					) }
 					status="is-warning"
@@ -419,6 +425,8 @@ export class PluginMeta extends Component {
 
 	getUpdateWarning() {
 		const newVersions = this.getAvailableNewVersions();
+		const { translate } = this.props;
+
 		if ( newVersions.length > 0 ) {
 			if ( this.props.selectedSite ) {
 				return (
@@ -427,35 +435,32 @@ export class PluginMeta extends Component {
 						className="plugin-meta__version-notice"
 						showDismiss={ false }
 						icon="sync"
-						text={ i18n.translate( 'Version %(newPluginVersion)s is available', {
+						text={ translate( 'Version %(newPluginVersion)s is available', {
 							args: { newPluginVersion: newVersions[ 0 ].newVersion },
 						} ) }
 					>
 						<NoticeAction onClick={ this.handlePluginUpdatesSingleSite }>
-							{ i18n.translate( 'Update' ) }
+							{ translate( 'Update' ) }
 						</NoticeAction>
 					</Notice>
 				);
 			}
 			const noticeMessage =
 				newVersions.length > 1
-					? i18n.translate(
-							'Version %(newPluginVersion)s is available for %(numberOfSites)s sites',
-							{
-								args: {
-									numberOfSites: newVersions.length,
-									newPluginVersion: this.props.plugin.version,
-								},
-							}
-					  )
-					: i18n.translate( 'Version %(newPluginVersion)s is available for %(siteName)s', {
+					? translate( 'Version %(newPluginVersion)s is available for %(numberOfSites)s sites', {
+							args: {
+								numberOfSites: newVersions.length,
+								newPluginVersion: this.props.plugin.version,
+							},
+					  } )
+					: translate( 'Version %(newPluginVersion)s is available for %(siteName)s', {
 							args: {
 								siteName: newVersions[ 0 ].title,
 								newPluginVersion: this.props.plugin.version,
 							},
 					  } );
 			const noticeActionMessage =
-				newVersions.length > 1 ? i18n.translate( 'Update all' ) : i18n.translate( 'Update' );
+				newVersions.length > 1 ? translate( 'Update all' ) : translate( 'Update' );
 			return (
 				<Notice
 					status="is-warning"

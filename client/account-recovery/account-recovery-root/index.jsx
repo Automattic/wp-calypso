@@ -31,6 +31,11 @@ import isAccountRecoveryResetOptionsReady from 'state/selectors/is-account-recov
 import isAccountRecoveryResetPasswordSucceeded from 'state/selectors/is-account-recovery-reset-password-succeeded';
 import isAccountRecoveryUserDataReady from 'state/selectors/is-account-recovery-user-data-ready';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const getPageInfo = ( translate, step ) => {
 	const concatHeadTitle = ( parentTitle, childTitle ) => parentTitle + ' ‹ ' + childTitle;
 

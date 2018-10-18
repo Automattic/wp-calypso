@@ -189,6 +189,7 @@
 	}
 
 	&-description {
+		word-break: break-word;
 		font-size: 14px;
 	}
 
@@ -295,4 +296,8 @@
 			width: 50%;
 		}
 	}
+}
+
+.checklist__task-title {
+	text-align: left;
 }

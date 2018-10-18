@@ -20,6 +20,8 @@ import {
 	USER_SETTINGS_UNSAVED_REMOVE,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/me/settings';
+
 const debug = debugFactory( 'calypso:user:settings' );
 
 /**

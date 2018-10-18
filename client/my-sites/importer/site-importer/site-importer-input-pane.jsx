@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import Dispatcher from 'dispatcher';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop, every, has, defer, get, trim, sortBy, reverse } from 'lodash';
+import { noop, every, flow, has, defer, get, trim, sortBy, reverse } from 'lodash';
 import url from 'url';
 import moment from 'moment';
 
@@ -17,12 +17,18 @@ import moment from 'moment';
  */
 import wpLib from 'lib/wp';
 import config from 'config';
+import { validateImportUrl } from 'lib/importers/url-validation';
 
 const wpcom = wpLib.undocumented();
 
 import { toApi, fromApi } from 'lib/importer/common';
 
-import { startMappingAuthors, startImporting, mapAuthor, finishUpload } from 'lib/importer/actions';
+import {
+	mapAuthor,
+	startMappingAuthors,
+	startImporting,
+	createFinishUploadAction,
+} from 'lib/importer/actions';
 import user from 'lib/user';
 
 import { appStates } from 'state/imports/constants';
@@ -32,7 +38,6 @@ import TextInput from 'components/forms/form-text-input';
 import FormSelect from 'components/forms/form-select';
 
 import SiteImporterSitePreview from './site-importer-site-preview';
-import { connectDispatcher } from '../dispatcher-converter';
 
 import { loadmShotsPreview } from './site-preview-actions';
 
@@ -65,7 +70,7 @@ class SiteImporterInputPane extends React.Component {
 		error: false,
 		errorMessage: '',
 		errorType: null,
-		siteURLInput: '',
+		siteURLInput: this.props.fromSite || '',
 		selectedEndpoint: '',
 		availableEndpoints: [],
 	};
@@ -75,6 +80,10 @@ class SiteImporterInputPane extends React.Component {
 			this.fetchEndpoints();
 		}
 	};
+
+	componentDidMount() {
+		this.validateSite();
+	}
 
 	// TODO This can be improved if we move to Redux.
 	componentWillReceiveProps = nextProps => {
@@ -93,11 +102,10 @@ class SiteImporterInputPane extends React.Component {
 						name: currentUserData.display_name,
 					};
 
-					const mappingFunction = this.props.mapAuthorFor( props.importerStatus.importerId );
-
 					// map all the authors to the current user
+					// TODO: when converting to redux, allow for multiple mappings in a single action
 					props.importerStatus.customData.sourceAuthors.forEach( author => {
-						mappingFunction( author, currentUser );
+						mapAuthor( props.importerStatus.importerId, author, currentUser );
 					} );
 				}, nextProps );
 			} else {
@@ -181,22 +189,20 @@ class SiteImporterInputPane extends React.Component {
 
 	validateSite = () => {
 		const siteURL = trim( this.state.siteURLInput );
+
+		if ( ! siteURL ) {
+			return;
+		}
+
 		const { hostname, pathname } = url.parse(
 			siteURL.startsWith( 'http' ) ? siteURL : 'https://' + siteURL
 		);
 
-		let errorMessage;
-		if ( ! siteURL ) {
-			errorMessage = this.props.translate( 'Please enter a valid URL.' );
-		} else if ( hostname === 'editor.wix.com' || hostname === 'www.wix.com' ) {
-			errorMessage = this.props.translate(
-				"You've entered the URL for the Wix editor, which only you can access. Please enter your site's public URL. It should look like one of the examples below."
-			);
-		} else if ( hostname.indexOf( '.wixsite.com' ) > -1 && pathname === '/' ) {
-			errorMessage = this.props.translate(
-				"You haven't entered the full URL. Please include the part of the URL that comes after wixsite.com. See below for an example."
-			);
+		if ( ! hostname ) {
+			return;
 		}
+
+		const errorMessage = validateImportUrl( siteURL );
 
 		if ( errorMessage ) {
 			this.setState( {
@@ -329,7 +335,7 @@ class SiteImporterInputPane extends React.Component {
 				} );
 
 				const data = fromApi( resp );
-				const action = finishUpload( this.props.importerStatus.importerId )( data );
+				const action = createFinishUploadAction( this.props.importerStatus.importerId, data );
 				defer( () => {
 					Dispatcher.handleViewAction( action );
 				} );
@@ -454,14 +460,10 @@ class SiteImporterInputPane extends React.Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	mapAuthorFor: importerId => ( source, target ) =>
-		defer( () => {
-			dispatch( mapAuthor( importerId, source, target ) );
-		} ),
-} );
-
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( connectDispatcher( null, mapDispatchToProps )( localize( SiteImporterInputPane ) ) );
+export default flow(
+	connect(
+		null,
+		{ recordTracksEvent }
+	),
+	localize
+)( SiteImporterInputPane );

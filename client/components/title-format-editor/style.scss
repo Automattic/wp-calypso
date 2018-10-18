@@ -1,18 +1,4 @@
-.seo-settings__page-title-header {
-	display: flex;
-	justify-content: center;
-	flex-wrap: wrap;
-}
-
-.seo-settings__page-title-header-image {
-	margin: 0 10px 10px 10px;
-}
-
-.seo-settings__page-title-header-text {
-	flex-basis: 330px;
-	margin: 0 10px 10px 10px;
-
-}
+/** @format */
 
 .title-format-editor {
 	margin-bottom: 20px;
@@ -23,7 +9,8 @@
 			background-color: $gray-light;
 		}
 
-		.title-format-editor__token, .title-format-editor__button {
+		.title-format-editor__token,
+		.title-format-editor__button {
 			pointer-events: none;
 		}
 

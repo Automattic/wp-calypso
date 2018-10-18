@@ -16,6 +16,16 @@
 
 // OVERRIDES
 
+//======================================================
+//static post css values: theme(primary), theme(toggle)
+//https://github.com/WordPress/gutenberg/pull/6739
+//We don't need to worry about wp-admin skins, so let's use a static value here.
+//when updating `edit-post`, search for theme( and replace with static values
+$gutenberg-theme-primary: #0085ba;
+$gutenberg-theme-toggle: #11a0d2;
+//end static post css values
+//========================================================
+
 .is-section-gutenberg-editor {
 	.layout__content {
 		padding-left: 32px;
@@ -101,6 +111,12 @@
 			z-index: 100000; /* Above WP toolbar. */
 		}
 	}
+
+	.editor-block-list__block {
+		ul ul, ol ol {
+			list-style-type: circle;
+		}
+	}
 }
 
 //needed for oembed iframes to appear
@@ -112,4 +128,8 @@
 .components-toolbar__control.components-button > svg,
 .editor-block-settings-menu__content {
 	box-sizing: border-box;
+}
+
+.components-panel__header.edit-post-sidebar-header.edit-post-sidebar__panel-tabs {
+	border-bottom: 0;
 }

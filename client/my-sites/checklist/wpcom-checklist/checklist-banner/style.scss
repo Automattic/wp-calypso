@@ -103,11 +103,11 @@
 }
 
 .checklist-banner__image {
-	position: absolute;
-	top: 0;
-	right: 0;
-	height: 100%;
+	height: 95%;
 	max-width: 40%;
+	position: absolute;
+	right: 10px;
+	top: 10px;
 
 	@include breakpoint( '<1040px' ) {
 		display: none;

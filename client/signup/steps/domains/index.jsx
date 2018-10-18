@@ -68,7 +68,7 @@ class DomainsStep extends React.Component {
 		const { flowName, signupDependencies } = props;
 		const importUrl = get( signupDependencies, 'importUrl' );
 
-		if ( flowName === 'from-site' && importUrl ) {
+		if ( flowName === 'import' && importUrl ) {
 			this.skipRender = true;
 
 			SignupActions.submitSignupStep( {
@@ -85,7 +85,7 @@ class DomainsStep extends React.Component {
 
 		const domain = get( props, 'queryObject.new', false );
 		if (
-			this.isDomainsFirstFlow() &&
+			props.isDomainOnly &&
 			domain &&
 			// If someone has a better idea on how to figure if the user landed anew
 			// Because we persist the signupDependencies, but still want the user to be able to go back to search screen
@@ -299,7 +299,8 @@ class DomainsStep extends React.Component {
 			// 'subdomain' flow coming from .blog landing pages
 			flowName === 'subdomain' ||
 			// User picked only 'share' on the `about` step
-			( siteGoalsArray.length === 1 &&
+			( ! this.props.isDomainOnly &&
+				siteGoalsArray.length === 1 &&
 				siteGoalsArray.indexOf( 'share' ) !== -1 &&
 				// abtest() assignment should come last
 				abtest( 'includeDotBlogSubdomainV2' ) === 'yes' )
@@ -328,19 +329,18 @@ class DomainsStep extends React.Component {
 				useYourDomainUrl={ this.getUseYourDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
-				offerUnavailableOption={ ! this.props.isDomainOnly && ! this.isDomainsFirstFlow() }
+				offerUnavailableOption={ ! this.props.isDomainOnly }
+				isDomainOnly={ this.props.isDomainOnly }
 				analyticsSection={ this.getAnalyticsSection() }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom={
-					! this.props.isDomainOnly && ! this.isDomainForAtomicSite() && ! this.isDomainsFirstFlow()
-				}
+				includeWordPressDotCom={ ! this.props.isDomainOnly && ! this.isDomainForAtomicSite() }
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
 				suggestion={ get( this.props, 'queryObject.new', '' ) }
 				designType={ this.getDesignType() }
-				vendor="domainsbot"
+				vendor={ abtest( 'krackenRebootM327V2' ) }
 			/>
 		);
 	};
@@ -420,12 +420,8 @@ class DomainsStep extends React.Component {
 			: translate( "Enter your site's name or some keywords that describe it to get started." );
 	}
 
-	isDomainsFirstFlow() {
-		return 'domain' === this.props.flowName;
-	}
-
 	getAnalyticsSection() {
-		return this.isDomainsFirstFlow() ? 'domain-first' : 'signup';
+		return this.props.isDomainOnly ? 'domain-first' : 'signup';
 	}
 
 	renderContent() {
@@ -443,7 +439,7 @@ class DomainsStep extends React.Component {
 			content = this.useYourDomainForm();
 		}
 
-		if ( ! this.props.stepSectionName || this.isDomainsFirstFlow() ) {
+		if ( ! this.props.stepSectionName || this.props.isDomainOnly ) {
 			content = this.domainForm();
 		}
 

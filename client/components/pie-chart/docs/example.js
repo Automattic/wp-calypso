@@ -76,7 +76,7 @@ class PieChartExample extends Component {
 	render() {
 		const data = [];
 
-		for ( let seriesName of [ 'direct', 'discovery', 'referral' ] ) {
+		for ( const seriesName of [ 'direct', 'discovery', 'referral' ] ) {
 			if ( this.state[ seriesName ].show ) {
 				data.push( {
 					value: this.state[ seriesName ].value || 0,
@@ -103,16 +103,13 @@ class PieChartExample extends Component {
 							return (
 								<div key={ seriesName }>
 									<h2>{ this.state[ seriesName ].name }</h2>
-
 									<input
 										name={ seriesName }
 										type="number"
 										value={ this.state[ seriesName ].value }
 										onChange={ this.changeValue }
 									/>
-
-									<label>{ 'Show' }</label>{ ' ' }
-
+									<label>{ 'Show' }</label>{' '}
 									<input
 										name={ seriesName }
 										type="checkbox"

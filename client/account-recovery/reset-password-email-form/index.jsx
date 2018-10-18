@@ -15,6 +15,11 @@ import Button from 'components/button';
 import Card from 'components/card';
 import { clearResetMethod } from 'state/account-recovery/reset/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const ResetPasswordEmailSent = props => {
 	const { email, translate } = props;
 

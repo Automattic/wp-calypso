@@ -27,6 +27,11 @@ import {
 	clearResetMethod,
 } from 'state/account-recovery/reset/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ResetPasswordSmsForm extends Component {
 	constructor( props ) {
 		super( props );

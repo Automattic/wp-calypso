@@ -20,6 +20,7 @@
 		"pt-br"
 	],
 	"features": {
+		"activity-log-aggregated-events": true,
 		"ad-tracking": false,
 		"apple-pay": true,
 		"automated-transfer": true,
@@ -58,6 +59,7 @@
 		"login/magic-login": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,
+		"mailchimp": true,
 		"manage/comments": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,
@@ -100,7 +102,6 @@
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"press-this": true,
-		"preview-layout": true,
 		"privacy-policy": true,
 		"publicize-preview": true,
 		"push-notifications": true,
@@ -169,5 +170,7 @@
 	"boom_analytics_key": "stage",
 	"google_adwords_conversion_id": 1067250390,
 	"google_adwords_conversion_id_jetpack": 937115306,
+	"google_adwords_signup_conversion_id": 1067250390,
+	"google_adwords_signup_conversion_id_jetpack": 937115306,
 	"hotjar_enabled": true
 }

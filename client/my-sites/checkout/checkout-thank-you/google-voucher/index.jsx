@@ -122,7 +122,7 @@ class GoogleVoucherDetails extends Component {
 
 				<TipInfo
 					info={ this.props.translate(
-						'Offer valid in US after spending the first $25 on Google AdWords.'
+						'Offer valid in US after spending the first $25 on Google Ads.'
 					) }
 				/>
 			</div>
@@ -145,7 +145,7 @@ class GoogleVoucherDetails extends Component {
 
 					<div className="google-voucher-dialog__header__text">
 						<h1>{ this.props.translate( 'Terms of Service' ) }</h1>
-						<p>{ this.props.translate( 'Google AdWords credit' ) }</p>
+						<p>{ this.props.translate( 'Google Ads credit' ) }</p>
 					</div>
 				</div>
 
@@ -179,7 +179,7 @@ class GoogleVoucherDetails extends Component {
 				<div className="google-voucher-code">
 					<p className="form-setting-explanation">
 						{ this.props.translate(
-							'Copy this unique, one-time use code to your clipboard and setup your Google AdWords account. {{a}}View help guide{{/a}}',
+							'Copy this unique, one-time use code to your clipboard and setup your Google Ads account. {{a}}View help guide{{/a}}',
 							{
 								components: {
 									a: (
@@ -197,19 +197,19 @@ class GoogleVoucherDetails extends Component {
 
 					<PurchaseButton
 						className="google-voucher-code__setup-google-adwords"
-						href="https://www.google.com/adwords/"
+						href="https://ads.google.com/home/"
 						target="_blank"
 						rel="noopener noreferrer"
 						onClick={ this.onSetupGoogleAdWordsLink }
 						primary={ false }
-						text={ this.props.translate( 'Setup Google AdWords' ) }
+						text={ this.props.translate( 'Setup Google Ads' ) }
 					/>
 				</div>
 
 				<TipInfo
 					className="google-voucher-advice"
 					info={ this.props.translate(
-						'Offer valid in US after spending the first $25 on Google AdWords.'
+						'Offer valid in US after spending the first $25 on Google Ads.'
 					) }
 				/>
 			</div>
@@ -240,7 +240,7 @@ class GoogleVoucherDetails extends Component {
 					alt=""
 					id="google-credits"
 					icon={ <img alt="" src="/calypso/images/illustrations/google-adwords.svg" /> }
-					title={ translate( 'Google AdWords credit' ) }
+					title={ translate( 'Google Ads credit' ) }
 					description={ translate(
 						'Use a $100 credit with Google to bring traffic to your most important Posts and Pages.'
 					) }

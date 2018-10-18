@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import { get, find } from 'lodash';
 
 /**
@@ -87,7 +86,7 @@ export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
 };
 
 /**
- * Returns a list of Purchases associated with a User from the state using its userId
+ * Does the user have any current purchases?
  * @param  {Object}  state       global state
  * @param  {Number}  userId      the user id
  * @return {Boolean} if the user currently has any purchases.

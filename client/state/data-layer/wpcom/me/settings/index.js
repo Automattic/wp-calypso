@@ -9,12 +9,10 @@ import { isEmpty, keys, mapValues, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import profileLinks from './profile-links';
 import { decodeEntities } from 'lib/formatting';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import getUnsavedUserSettings from 'state/selectors/get-unsaved-user-settings';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { mergeHandlers } from 'state/action-watchers/utils';
 import { updateUserSettings, clearUnsavedUserSettings } from 'state/user-settings/actions';
 import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'state/action-types';
 
@@ -95,17 +93,9 @@ export const finishUserSettingsSave = ( { dispatch }, { settingsOverride }, data
 	userLib().fetch();
 };
 
-registerHandlers(
-	'state/data-layer/wpcom/me/settings/index.js',
-	mergeHandlers(
-		{
-			[ USER_SETTINGS_REQUEST ]: [
-				dispatchRequest( requestUserSettings, storeFetchedUserSettings, noop ),
-			],
-			[ USER_SETTINGS_SAVE ]: [ dispatchRequest( saveUserSettings, finishUserSettingsSave, noop ) ],
-		},
-		profileLinks
-	)
-);
-
-export default {};
+registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
+	[ USER_SETTINGS_REQUEST ]: [
+		dispatchRequest( requestUserSettings, storeFetchedUserSettings, noop ),
+	],
+	[ USER_SETTINGS_SAVE ]: [ dispatchRequest( saveUserSettings, finishUserSettingsSave, noop ) ],
+} );

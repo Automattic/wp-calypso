@@ -17,6 +17,11 @@ import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class TransactionIdFormComponent extends Component {
 	static defaultProps = {
 		translate: identity,
