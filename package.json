@@ -35,6 +35,7 @@
     "@babel/runtime": "7.1.2",
     "@wordpress/a11y": "2.0.2",
     "@wordpress/api-fetch": "2.0.2",
+    "@wordpress/babel-plugin-import-jsx-pragma": "1.1.2",
     "@wordpress/block-library": "2.1.0",
     "@wordpress/block-serialization-spec-parser": "1.0.3",
     "@wordpress/blocks": "4.0.1",
@@ -135,6 +136,7 @@
     "lodash": "4.17.11",
     "lru": "3.1.0",
     "lunr": "2.3.3",
+    "markdown-it": "8.4.2",
     "marked": "0.5.1",
     "mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl",
     "mkdirp": "0.5.1",
@@ -270,6 +272,7 @@
     "whybundled": "whybundled stats.json"
   },
   "devDependencies": {
+    "@babel/plugin-transform-react-jsx": "7.0.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
     "babel-jest": "23.6.0",
@@ -294,7 +297,6 @@
     "jest-docblock": "23.2.0",
     "jest-junit": "5.2.0",
     "lerna": "3.4.0",
-    "markdown-it": "8.4.2",
     "md5-file": "4.0.0",
     "mixedindentlint": "1.2.0",
     "nock": "10.0.1",

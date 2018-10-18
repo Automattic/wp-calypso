@@ -16,6 +16,8 @@ import { StrictMode } from '@wordpress/element';
 import Layout from './components/layout';
 import './store';
 
+import 'gutenberg/extensions/presets/jetpack/editor.js';
+
 function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...props } ) {
 	if ( ! post ) {
 		return null;
