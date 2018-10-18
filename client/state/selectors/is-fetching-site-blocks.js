@@ -14,6 +14,8 @@ export default function isFetchingSiteBlocks( state ) {
 	if ( ! inflightPages || inflightPages.length < 1 ) {
 		return false;
 	}
+
 	const fetchingPages = filter( inflightPages, inflightPage => inflightPage === true );
+
 	return fetchingPages.length > 0;
 }

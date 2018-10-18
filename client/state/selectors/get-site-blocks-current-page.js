@@ -6,7 +6,13 @@
 import { get } from 'lodash';
 
 export const getSiteBlocksCurrentPage = state => {
-	return get( state, [ 'reader', 'siteBlocks', 'currentPage' ], 1 );
+	const page = get( state, [ 'reader', 'siteBlocks', 'currentPage' ], 1 );
+
+	if ( ! page ) {
+		return 1;
+	}
+
+	return page;
 };
 
 export default getSiteBlocksCurrentPage;
