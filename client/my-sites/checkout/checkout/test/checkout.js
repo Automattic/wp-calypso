@@ -80,7 +80,7 @@ describe( 'Checkout', () => {
 
 	test( 'should render and not blow up', () => {
 		const checkout = shallow( <Checkout { ...defaultProps } /> );
-		expect( checkout.find( '.checkout__main' ) ).toHaveLength( 1 );
+		expect( checkout.find( '.checkout' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should set state.cartSettled to false', () => {

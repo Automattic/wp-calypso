@@ -28,7 +28,6 @@ import { hasDomainDetails } from 'lib/store-transactions';
 import notices from 'notices';
 import { managePurchase } from 'me/purchases/paths';
 import SubscriptionLengthPicker from 'blocks/subscription-length-picker';
-import Main from 'components/main';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -642,19 +641,23 @@ export class Checkout extends React.Component {
 			analyticsPath = '/checkout/no-site';
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Main className="checkout__main">
-				<QuerySitePlans siteId={ this.props.selectedSiteId } />
-				<QueryPlans />
-				<QueryProducts />
-				<QueryContactDetailsCache />
-				<QueryStoredCards />
+			<div className="main main-column" role="main">
+				<div className="checkout">
+					<QuerySitePlans siteId={ this.props.selectedSiteId } />
+					<QueryPlans />
+					<QueryProducts />
+					<QueryContactDetailsCache />
+					<QueryStoredCards />
 
-				<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
+					<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
 
-				{ this.content() }
-			</Main>
+					{ this.content() }
+				</div>
+			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
