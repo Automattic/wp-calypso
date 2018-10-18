@@ -371,6 +371,18 @@ describe( 'getDomainPriceRule()', () => {
 			).toBe( 'PRICE' );
 		} );
 
+		test( 'should return PRICE if it is a domain only flow (NUX, isDomainOnly: true)', () => {
+			expect(
+				getDomainPriceRule(
+					false,
+					{},
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' },
+					true
+				)
+			).toBe( 'PRICE' );
+		} );
+
 		test( 'should return FREE_WITH_YOUR_PLAN if site has plan in cart and next_domain_is_free is true', () => {
 			expect(
 				getDomainPriceRule(

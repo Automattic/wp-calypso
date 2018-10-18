@@ -105,7 +105,8 @@ class MapDomainStep extends React.Component {
 							this.props.domainsWithPlansOnly,
 							this.props.selectedSite,
 							this.props.cart,
-							suggestion
+							suggestion,
+							false
 						) }
 						price={ suggestion.cost }
 					/>
