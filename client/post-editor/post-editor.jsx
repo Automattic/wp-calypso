@@ -65,6 +65,8 @@ import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import EditorForbidden from 'post-editor/editor-forbidden';
 import EditorNotice from 'post-editor/editor-notice';
+import { isEnabled } from 'config';
+import EditorGutenbergOptInNotice from 'post-editor/editor-gutenberg-opt-in-notice';
 import EditorWordCount from 'post-editor/editor-word-count';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
@@ -358,6 +360,7 @@ export class PostEditor extends React.Component {
 									onTextEditorChange={ this.onEditorTextContentChange }
 								/>
 								<EditorWordCount selectedText={ this.state.selectedText } />
+								{ isEnabled( 'gutenberg/opt-in' ) && <EditorGutenbergOptInNotice /> }
 							</div>
 						</div>
 					</div>
