@@ -3,14 +3,14 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
 import { writeReplyComment } from '../';
-import * as Utils from 'state/data-layer/wpcom/sites/utils';
+import { dispatchNewCommentRequest } from 'state/data-layer/wpcom/sites/utils';
+
+jest.mock( 'state/data-layer/wpcom/sites/utils' );
 
 describe( '#writeReplyComment()', () => {
 	const action = {
@@ -22,14 +22,12 @@ describe( '#writeReplyComment()', () => {
 	};
 
 	test( 'should dispatch a http request action to the new comment replies endpoint', () => {
-		const dispatchNewCommentRequestSpy = spy( Utils, 'dispatchNewCommentRequest' );
 		writeReplyComment( action );
 
-		expect( dispatchNewCommentRequestSpy ).to.have.been.calledOnce;
-		expect( dispatchNewCommentRequestSpy ).to.have.been.calledWith(
+		expect( dispatchNewCommentRequest ).toHaveBeendCalledOnce;
+		expect( dispatchNewCommentRequest ).toHaveBeenCalledWith(
 			action,
 			'/sites/2916284/comments/1/replies/new'
 		);
-		dispatchNewCommentRequestSpy.restore();
 	} );
 } );
