@@ -2,11 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { requestRecommendedSites, receiveRecommendedSitesResponse, fromApi } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
@@ -48,7 +43,7 @@ describe( 'recommended sites', () => {
 		test( 'should dispatch an http request and call through next', () => {
 			const action = requestRecommendedSitesAction( { seed } );
 			const result = requestRecommendedSites( action );
-			expect( result ).to.eql(
+			expect( result ).toEqual(
 				http( {
 					method: 'GET',
 					path: '/read/recommendations/sites',
@@ -65,7 +60,7 @@ describe( 'recommended sites', () => {
 		test( 'should dispatch action with sites if successful', () => {
 			const action = requestRecommendedSitesAction( { seed } );
 			const result = receiveRecommendedSitesResponse( action, response );
-			expect( result ).to.eql(
+			expect( result ).toEqual(
 				receiveRecommendedSites( {
 					sites: fromApi( response ),
 					seed,
@@ -77,9 +72,9 @@ describe( 'recommended sites', () => {
 
 	describe( '#fromApi', () => {
 		test( 'should convert to empty sites if given bad input', () => {
-			expect( fromApi( null ) ).eql( [] );
-			expect( fromApi( undefined ) ).eql( [] );
-			expect( fromApi( new Error( 'this is an error' ) ) ).eql( [] );
+			expect( fromApi( null ) ).toEqual( [] );
+			expect( fromApi( undefined ) ).toEqual( [] );
+			expect( fromApi( new Error( 'this is an error' ) ) ).toEqual( [] );
 		} );
 
 		test( 'should extract only what we care about from the api response. and decode entities', () => {
@@ -110,7 +105,7 @@ describe( 'recommended sites', () => {
 				},
 			];
 
-			expect( fromApi( response ) ).eql( expected );
+			expect( fromApi( response ) ).toEqual( expected );
 		} );
 	} );
 } );
