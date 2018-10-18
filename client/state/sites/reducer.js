@@ -18,7 +18,6 @@ import vouchers from './vouchers/reducer';
 import sharingButtons from './sharing-buttons/reducer';
 import mediaStorage from './media-storage/reducer';
 import blogStickers from './blog-stickers/reducer';
-import editor from './editor/reducer';
 import {
 	MEDIA_DELETE,
 	SITE_DELETE,
@@ -39,6 +38,7 @@ import {
 	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
+	EDITOR_TYPE_SET,
 } from 'state/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
@@ -217,6 +217,20 @@ export function items( state = null, action ) {
 				},
 			};
 		}
+
+		case EDITOR_TYPE_SET: {
+			const { siteId, editor } = action;
+			if ( state[ siteId ] ) {
+				return {
+					...state,
+					[ siteId ]: {
+						...state[ siteId ],
+						editor: editor,
+					},
+				};
+			}
+			return state;
+		}
 	}
 
 	return state;
@@ -311,5 +325,4 @@ export default combineReducers( {
 	sharingButtons,
 	blogStickers,
 	hasAllSitesList,
-	editor,
 } );
