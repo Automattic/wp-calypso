@@ -160,17 +160,20 @@ class TransferDomainStep extends React.Component {
 		const domainsWithPlansOnlyButNoPlan =
 			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
 		const rawDomainPrice = getRawDomainPrice( productSlug, productsList );
+		let domainProductPrice;
 
-		let domainProductPrice = formatCurrency( rawDomainPrice, currencyCode, { precision: 0 } );
+		if ( rawDomainPrice ) {
+			domainProductPrice = formatCurrency( rawDomainPrice, currencyCode, { precision: 0 } );
 
-		if ( rawDomainPrice % 1 !== 0 ) {
-			domainProductPrice = formatCurrency( rawDomainPrice, currencyCode );
-		}
+			if ( rawDomainPrice % 1 !== 0 ) {
+				domainProductPrice = formatCurrency( rawDomainPrice, currencyCode );
+			}
 
-		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
-			domainProductPrice = translate( 'Free with your plan' );
-		} else if ( domainsWithPlansOnlyButNoPlan ) {
-			domainProductPrice = translate( 'Included in paid plans' );
+			if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
+				domainProductPrice = translate( 'Free with your plan' );
+			} else if ( domainsWithPlansOnlyButNoPlan ) {
+				domainProductPrice = translate( 'Included in paid plans' );
+			}
 		}
 
 		return domainProductPrice;
