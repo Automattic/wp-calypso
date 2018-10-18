@@ -28,6 +28,7 @@ import { hasDomainDetails } from 'lib/store-transactions';
 import notices from 'notices';
 import { managePurchase } from 'me/purchases/paths';
 import SubscriptionLengthPicker from 'blocks/subscription-length-picker';
+import Main from 'components/main';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -635,19 +636,17 @@ export class Checkout extends React.Component {
 		}
 
 		return (
-			<div role="main">
-				<div className="checkout__checkout">
-					<QuerySitePlans siteId={ this.props.selectedSiteId } />
-					<QueryPlans />
-					<QueryProducts />
-					<QueryContactDetailsCache />
-					<QueryStoredCards />
+			<Main className="checkout__main">
+				<QuerySitePlans siteId={ this.props.selectedSiteId } />
+				<QueryPlans />
+				<QueryProducts />
+				<QueryContactDetailsCache />
+				<QueryStoredCards />
 
-					<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
+				<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
 
-					{ this.content() }
-				</div>
-			</div>
+				{ this.content() }
+			</Main>
 		);
 	}
 }
