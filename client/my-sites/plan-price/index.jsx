@@ -15,7 +15,7 @@ import { getCurrencyObject } from 'lib/format-currency';
 
 export default class PlanPrice extends Component {
 	render() {
-		const { currencyCode, rawPrice, original, discounted, className, isInSignup } = this.props;
+		const { currencyCode, rawPrice, original, discounted, className, isInSignup, shouldShowTaxes, taxRate } = this.props;
 
 		if ( ! currencyCode || ( rawPrice !== 0 && ! rawPrice ) ) {
 			return null;
@@ -43,6 +43,7 @@ export default class PlanPrice extends Component {
 				<sup className="plan-price__fraction">
 					{ rawPrice - price.integer > 0 && price.fraction }
 				</sup>
+				{ shouldShowTaxes && (<sup className="plan-price__tax">+ local taxes</sup>) }
 			</h4>
 		);
 	}
@@ -54,6 +55,8 @@ PlanPrice.propTypes = {
 	discounted: PropTypes.bool,
 	currencyCode: PropTypes.string,
 	className: PropTypes.string,
+	shouldShowTaxes: PropTypes.bool,
+	taxRate: PropTypes.number,
 };
 
 PlanPrice.defaultProps = {
@@ -61,4 +64,6 @@ PlanPrice.defaultProps = {
 	original: false,
 	discounted: false,
 	className: '',
+	shouldShowTaxes: false,
+	taxRate: undefined,
 };
