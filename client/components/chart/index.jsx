@@ -51,12 +51,12 @@ class Chart extends React.Component {
 	};
 
 	componentDidMount() {
-		this.resize = afterLayoutFlush( this.resize );
-		window.addEventListener( 'resize', this.resize );
-
 		if ( this.props.data && this.props.data.length && ! this.props.loading ) {
 			this.resize();
 		}
+
+		this.resize = afterLayoutFlush( this.resize );
+		window.addEventListener( 'resize', this.resize );
 	}
 
 	componentDidUpdate( prevProps ) {
