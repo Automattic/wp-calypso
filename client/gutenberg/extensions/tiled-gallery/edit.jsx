@@ -30,6 +30,7 @@ import {
 /**
  * Internal dependencies
  */
+import JetpackBranding from 'gutenberg/components/jetpack-branding';
 import TiledGallerySave from './save.jsx';
 
 /**
@@ -163,6 +164,7 @@ class TiledGalleryEdit extends Component {
 			return (
 				<Fragment>
 					{ controls }
+					<JetpackBranding />
 					{ noticeUI }
 					<MediaPlaceholder
 						key="gallery-placeholder"
@@ -219,6 +221,7 @@ class TiledGalleryEdit extends Component {
 						</PanelBody>
 					</InspectorControls>
 				) }
+				<JetpackBranding />
 				{ dropZone }
 				{ noticeUI }
 				{ imageTiles }

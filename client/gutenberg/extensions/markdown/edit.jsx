@@ -10,6 +10,7 @@ import { Component } from '@wordpress/element';
 /**
  * Internal dependencies
  */
+import JetpackBranding from 'gutenberg/components/jetpack-branding';
 import MarkdownRenderer from './renderer';
 
 /**
@@ -76,6 +77,8 @@ class MarkdownEdit extends Component {
 						{ this.renderToolbarButton( PANEL_PREVIEW, __( 'Preview', 'jetpack' ) ) }
 					</div>
 				</BlockControls>
+
+				<JetpackBranding />
 
 				{ activePanel === PANEL_PREVIEW || ! isSelected ? (
 					<MarkdownRenderer className={ `${ className }__preview` } source={ source } />

@@ -14,6 +14,7 @@ import { withSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
+import JetpackBranding from 'gutenberg/components/jetpack-branding';
 import { ALIGNMENT_OPTIONS, DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
 
 class RelatedPostsEdit extends Component {
@@ -120,6 +121,8 @@ class RelatedPostsEdit extends Component {
 						/>
 					</PanelBody>
 				</InspectorControls>
+
+				<JetpackBranding />
 
 				<BlockControls>
 					<BlockAlignmentToolbar
