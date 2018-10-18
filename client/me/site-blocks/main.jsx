@@ -5,7 +5,6 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { times } from 'lodash';
 
@@ -59,14 +58,11 @@ class SiteBlockList extends Component {
 	};
 
 	render() {
-		const { translate, isLoading, blockedSites, currentPage, lastPage } = this.props;
-		const containerClasses = classnames( 'site-block-list', 'main', {
-			'is-loading': isLoading,
-		} );
+		const { translate, blockedSites, currentPage, lastPage } = this.props;
 		const hasNoBlocks = blockedSites.length === 0 && currentPage === lastPage;
 
 		return (
-			<Main className={ containerClasses }>
+			<Main className="site-blocks">
 				<QuerySiteBlocks />
 				<PageViewTracker path="/me/site-blocks" title="Me > Blocked Sites" />
 				<DocumentHead title={ translate( 'Blocked Sites' ) } />
@@ -90,7 +86,7 @@ class SiteBlockList extends Component {
 							renderItem={ this.renderItem }
 							fetchingNextPage={ this.props.isFetching }
 							lastPage={ currentPage === lastPage }
-							guessedItemHeight={ 126 }
+							guessedItemHeight={ 100 }
 							getItemRef={ this.getItemRef }
 						/>
 					) }
