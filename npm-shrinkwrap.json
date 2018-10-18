@@ -12115,9 +12115,9 @@
       }
     },
     "lunr": {
-      "version": "2.3.3",
-      "resolved": "https://registry.npmjs.org/lunr/-/lunr-2.3.3.tgz",
-      "integrity": "sha512-rlAEsgU9Bnavca2w1WJ6+6cdeHMXNyadcersyk3ZpuhgWb5HBNj8l4WwJz9PjksAhYDlpQffCVXPctOn+wCIVA=="
+      "version": "2.3.4",
+      "resolved": "https://registry.npmjs.org/lunr/-/lunr-2.3.4.tgz",
+      "integrity": "sha512-o0D846XyAlPkBMVK3ZgVYrLHho3yhJHgpm0BxZT3dGdFa+tpQwdQdI4EUihsmWz8Fr3aaux4eahO9Ih7Z3e1eQ=="
     },
     "magic-string": {
       "version": "0.25.1",
