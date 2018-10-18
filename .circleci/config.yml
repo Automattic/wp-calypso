@@ -340,7 +340,7 @@ jobs:
       - prepare
       - restore_cache: *restore-babel-client-cache
       - run:
-          name: Build Stats and Notify ICFY
+          name: Build Stats
           environment:
             NODE_ENV: "production"
             CALYPSO_CLIENT: "true"
@@ -350,12 +350,25 @@ jobs:
             # The shell should never error and exit 0 to indicate success.
             #
             set +o errexit
-            ANCESTOR_SHA1=$(git merge-base HEAD master)
-            npm run build-css                                                           \
-            && npm run preanalyze-bundles                                               \
-            && node bin/icfy-analyze.js                                                 \
-            && mv stats.json chart.json "$CIRCLE_ARTIFACTS/icfy"                        \
-            && curl                                                                     \
+            npm run build-css                                      \
+              && npm run preanalyze-bundles                        \
+              && node bin/icfy-analyze.js                          \
+              && mv stats.json chart.json "$CIRCLE_ARTIFACTS/icfy" \
+              || rm -fr build/.babel-client-cache # In case of failure do not save a potentially bad cache
+            exit 0
+      - save_cache: *save-babel-client-cache
+      - store-artifacts-and-test-results
+      - run:
+          name: Notify ICFY
+          command: |
+            #
+            # This block should not cause a test failure and block PRs.
+            # The shell should never error and exit 0 to indicate success.
+            #
+            set +o errexit
+            if [ -e "$CIRCLE_ARTIFACTS/icfy/stats.json" ] && [ -e "$CIRCLE_ARTIFACTS/icfy/chart.json" ]; then
+              ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
+              curl                                                                      \
                 -X POST                                                                 \
                 "http://api.iscalypsofastyet.com:5000/submit-stats?secret=$ICFY_SECRET" \
                 -H 'Cache-Control: no-cache'                                            \
@@ -367,11 +380,8 @@ jobs:
                         "sha": "'"$CIRCLE_SHA1"'",
                         "ancestor": "'"$ANCESTOR_SHA1"'"
                       }
-                    }'                                                                  \
-            || rm -fr build/.babel-client-cache # In case of failure do not save a potentially bad cache
-            exit 0
-      - save_cache: *save-babel-client-cache
-      - store-artifacts-and-test-results
+                    }'
+            fi
 
 workflows:
   version: 2
