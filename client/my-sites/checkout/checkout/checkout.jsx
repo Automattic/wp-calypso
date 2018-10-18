@@ -112,7 +112,7 @@ export class Checkout extends React.Component {
 				this.addProductToCart();
 			}
 
-			this.trackPageView();
+			this.trackPageView( nextProps );
 		}
 
 		if ( ! this.state.cartSettled && ! nextProps.cart.hasPendingServerUpdates ) {
