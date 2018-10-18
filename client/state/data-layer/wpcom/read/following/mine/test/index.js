@@ -21,8 +21,7 @@ import {
 	updateSeenOnFollow,
 } from '../';
 import { subscriptionsFromApi } from '../utils';
-import { READER_FOLLOWS_SYNC_START } from 'state/action-types';
-import { NOTICE_CREATE } from 'state/action-types';
+import { READER_FOLLOWS_SYNC_START, NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	receiveFollows as receiveFollowsAction,
@@ -70,12 +69,9 @@ describe( 'get follow subscriptions', () => {
 	describe( '#requestPage', () => {
 		test( 'should dispatch HTTP request to following/mine endpoint', () => {
 			const action = requestPageAction();
-			const dispatch = sinon.spy();
+			const result = requestPage( action );
 
-			requestPage( { dispatch }, action );
-
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
+			expect( result ).to.eql(
 				http( {
 					method: 'GET',
 					path: '/read/following/mine',
@@ -95,7 +91,7 @@ describe( 'get follow subscriptions', () => {
 			const dispatch = sinon.spy();
 
 			syncReaderFollows( { dispatch }, startSyncAction );
-			receivePage( { dispatch }, action, successfulApiResponse );
+			receivePage( action, successfulApiResponse );
 
 			expect( dispatch ).to.have.been.calledThrice;
 			expect( dispatch ).to.have.been.calledWith( requestPageAction( 1 ) );
@@ -202,14 +198,10 @@ describe( 'get follow subscriptions', () => {
 	describe( '#receiveError', () => {
 		test( 'should dispatch an error notice', () => {
 			const action = requestPageAction();
-			const dispatch = sinon.spy();
+			const result = receiveError( action );
 
-			receiveError( { dispatch }, action );
-
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWithMatch( {
-				type: NOTICE_CREATE,
-			} );
+			expect( result.type ).to.eql( NOTICE_CREATE );
+			expect( result.notice.status ).to.eql( 'is-error' );
 			expect( isSyncingFollows() ).not.ok;
 		} );
 	} );
