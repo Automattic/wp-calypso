@@ -11,11 +11,20 @@ import classNames from 'classnames';
 /**
  * Internal Dependencies
  **/
-import { getCurrencyObject } from 'lib/format-currency';
+import formatCurrency, { getCurrencyObject } from 'lib/format-currency';
 
 export default class PlanPrice extends Component {
 	render() {
-		const { currencyCode, rawPrice, original, discounted, className, isInSignup, shouldShowTaxes, taxRate } = this.props;
+		const {
+			currencyCode,
+			rawPrice,
+			original,
+			discounted,
+			className,
+			isInSignup,
+			shouldShowTax,
+			taxRate,
+		} = this.props;
 
 		if ( ! currencyCode || ( rawPrice !== 0 && ! rawPrice ) ) {
 			return null;
@@ -25,6 +34,9 @@ export default class PlanPrice extends Component {
 			'is-original': original,
 			'is-discounted': discounted,
 		} );
+		const displayTax = taxRate
+			? `+${ formatCurrency( rawPrice * taxRate, currencyCode, { symbol: '' } ) } tax`
+			: '+tax';
 
 		if ( isInSignup ) {
 			return (
@@ -43,7 +55,7 @@ export default class PlanPrice extends Component {
 				<sup className="plan-price__fraction">
 					{ rawPrice - price.integer > 0 && price.fraction }
 				</sup>
-				{ shouldShowTaxes && (<sup className="plan-price__tax">+ local taxes</sup>) }
+				{ shouldShowTax && <sup className="plan-price__tax">{ displayTax }</sup> }
 			</h4>
 		);
 	}
@@ -55,7 +67,7 @@ PlanPrice.propTypes = {
 	discounted: PropTypes.bool,
 	currencyCode: PropTypes.string,
 	className: PropTypes.string,
-	shouldShowTaxes: PropTypes.bool,
+	shouldShowTax: PropTypes.bool,
 	taxRate: PropTypes.number,
 };
 
@@ -64,6 +76,6 @@ PlanPrice.defaultProps = {
 	original: false,
 	discounted: false,
 	className: '',
-	shouldShowTaxes: false,
+	shouldShowTax: false,
 	taxRate: undefined,
 };
