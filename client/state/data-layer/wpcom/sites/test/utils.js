@@ -100,7 +100,7 @@ describe( 'utility functions', () => {
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
-			updatePlaceholderComment( { dispatch }, action, comment );
+			updatePlaceholderComment( action, comment )( dispatch );
 
 			expect( dispatch ).to.have.been.calledThrice;
 			expect( dispatch ).to.have.been.calledWithMatch( {
@@ -121,7 +121,7 @@ describe( 'utility functions', () => {
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
-			updatePlaceholderComment( { dispatch }, action, comment );
+			updatePlaceholderComment( action, comment )( dispatch );
 
 			expect( dispatch ).to.have.been.calledThrice;
 			expect( dispatch ).to.have.been.calledWith( {
@@ -144,7 +144,7 @@ describe( 'utility functions', () => {
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
-			updatePlaceholderComment( { dispatch }, action, comment );
+			updatePlaceholderComment( action, comment )( dispatch );
 
 			expect( dispatch ).to.have.been.calledThrice;
 			expect( dispatch ).to.have.been.calledWith( {
@@ -157,7 +157,6 @@ describe( 'utility functions', () => {
 		test( 'should request a fresh copy of a comments page when the query object is filled', () => {
 			const dispatch = spy();
 			updatePlaceholderComment(
-				{ dispatch },
 				{
 					siteId: 12345678,
 					postId: 1234,
@@ -173,7 +172,7 @@ describe( 'utility functions', () => {
 					},
 				},
 				{ ID: 1, content: 'this is the content' }
-			);
+			)( dispatch );
 			expect( dispatch ).to.have.callCount( 4 );
 			expect( dispatch.lastCall ).to.have.been.calledWithExactly( {
 				type: 'COMMENTS_LIST_REQUEST',
@@ -198,7 +197,7 @@ describe( 'utility functions', () => {
 				},
 			} );
 
-			handleWriteCommentFailure( { dispatch, getState }, { siteId: 2916284, postId: 1010 } );
+			handleWriteCommentFailure( { siteId: 2916284, postId: 1010 } )( dispatch, getState );
 
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				type: NOTICE_CREATE,

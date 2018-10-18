@@ -23,7 +23,7 @@ describe( '#writePostComment()', () => {
 		const dispatch = spy();
 		const dispatchNewCommentRequestSpy = spy( Utils, 'dispatchNewCommentRequest' );
 
-		writePostComment( { dispatch }, action );
+		writePostComment( action )( dispatch );
 
 		expect( dispatchNewCommentRequestSpy ).to.have.been.calledOnce;
 		expect( dispatchNewCommentRequestSpy ).to.have.been.calledWith(
