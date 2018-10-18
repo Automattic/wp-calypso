@@ -59,7 +59,7 @@ registerBlockType( 'a8c/related-posts', {
 		},
 		displayContext: {
 			type: 'boolean',
-			default: true,
+			default: false,
 		},
 		postsToShow: {
 			type: 'number',
