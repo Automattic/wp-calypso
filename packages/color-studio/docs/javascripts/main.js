@@ -4,7 +4,9 @@ const chroma = require('chroma-js')
 const compact = require('lodash/compact')
 const copyToClipboard = require('copy-text-to-clipboard')
 const flatten = require('lodash/flatten')
+const { saveAs } = require('file-saver')
 const toArray = require('lodash/toArray')
+const toSketchPalette = require('../../utilities/to-sketch-palette')
 
 const createPaletteColors = require('../../formula')
 
@@ -13,6 +15,9 @@ const COLOR_BLACK = '#000000'
 
 const input = document.getElementById('base-color')
 const output = document.getElementById('color-tiles')
+const button = document.getElementById('download-button')
+
+let currentBaseColor = null
 
 input.addEventListener('input', event => {
   handleColor(String(event.target.value).trim())
@@ -22,28 +27,38 @@ setTimeout(init, 0)
 
 function init() {
   handleRandomColor()
+  button.addEventListener('click', handleButtonClick, false)
 }
 
 function handleColor(color) {
-  let baseColor
-
   try {
-    baseColor = chroma(color).hex()
-  } catch (e) {}
-
-  if (baseColor) {
-    setBodyBackground(baseColor)
-    setContent(createColorTiles(baseColor))
-  } else {
-    setBodyBackground(COLOR_WHITE)
-    setContent()
+    currentBaseColor = chroma(color).hex()
+  } catch (e) {
+    currentBaseColor = null
   }
+
+  setBodyBackground()
+  setContent()
+  setButton()
 }
 
 function handleRandomColor() {
   const color = chroma.random().hex()
   input.value = color
   handleColor(color)
+}
+
+function handleButtonClick() {
+  if (!currentBaseColor) {
+    return
+  }
+
+  const colors = createPaletteColors(currentBaseColor).map(c => c.color)
+  const contents = toSketchPalette(colors)
+  const blob = new Blob([contents], { type: 'text/plain;charset=utf-8' })
+  const name = `colors-${Date.now()}-${currentBaseColor.replace('#', '')}.sketchpalette`
+
+  saveAs(blob, name)
 }
 
 function createColorTiles(color) {
@@ -60,15 +75,24 @@ function createColorTiles(color) {
   return tiles
 }
 
-function setBodyBackground(color) {
-  document.body.style.background = color
+function setBodyBackground() {
+  document.body.style.background = currentBaseColor || COLOR_WHITE
 }
 
-function setContent(html = '') {
-  output.innerHTML = html
-
-  if (html) {
+function setContent() {
+  if (!currentBaseColor) {
+    output.innerHTML = ''
+  } else {
+    output.innerHTML = createColorTiles(currentBaseColor)
     activateTiles(output)
+  }
+}
+
+function setButton() {
+  if (!currentBaseColor) {
+    button.setAttribute('disabled', '')
+  } else {
+    button.removeAttribute('disabled')
   }
 }
 

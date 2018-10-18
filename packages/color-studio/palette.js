@@ -2,6 +2,8 @@ const _ = require('lodash')
 const chroma = require('chroma-js')
 
 const createPaletteColors = require('./formula')
+const toSketchPalette = require('./utilities/to-sketch-palette')
+
 const FOUNDATIONS = require('./foundations')
 const PACKAGE = require('./package.json')
 
@@ -28,14 +30,7 @@ function printPalette(palette, type) {
 }
 
 function convertToSketchPalette(palette) {
-  const sketchPalette = {
-    _paletteVersion: PACKAGE.version,
-    compatibleVersion: '2',
-    pluginVersion: '2.14',
-    gradients: [],
-    colors: [],
-    images: []
-  }
+  const colors = []
 
   palette.forEach(colorArray => {
     let colorArrayChunks = _(splitColorsByType(colorArray))
@@ -50,11 +45,12 @@ function convertToSketchPalette(palette) {
 
     _(colorArrayChunks)
       .flatten()
-      .map(convertToSketchPaletteColor)
-      .each(c => sketchPalette.colors.push(c))
+      .each(c => colors.push(c.color))
   })
 
-  return printJSON(sketchPalette)
+  return toSketchPalette(colors, {
+    _paletteVersion: PACKAGE.version
+  })
 }
 
 function printJSON(data, padding = 2) {
@@ -68,14 +64,14 @@ function splitColorsByType(colorArray) {
   return [defaultColors, auxiliaryColors].filter(a => a.length > 0)
 }
 
-function convertToSketchPaletteColor(colorObject) {
-  const color = chroma(colorObject.color)
+function convertToRGBA(colorValue) {
+  const color = chroma(colorValue)
 
   return {
     red:   color.get('rgb.r') / 255,
     green: color.get('rgb.g') / 255,
     blue:  color.get('rgb.b') / 255,
-    alpha: 1
+    alpha: color.alpha()
   }
 }
 
@@ -101,7 +97,7 @@ function convertToJSON(palette) {
       name: `${colorObject.name} ${printedIndex}${colorObject.auxiliary ? 'A' : ''}`,
       values: {
         hex: formatHex(colorObject.color),
-        rgba: convertToSketchPaletteColor(colorObject)
+        rgba: convertToRGBA(colorObject.color)
       }
     }
   })
