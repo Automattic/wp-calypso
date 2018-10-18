@@ -118,10 +118,6 @@ function filterDesignTypeInFlow( flowName, flow ) {
  * @return {string}          New flow name.
  */
 function filterFlowName( flowName ) {
-	// temporary while there are still emails out there that will take people here
-	if ( flowName === 'user-continue' ) {
-		flowName = 'main';
-	}
 	return flowName;
 }
 
