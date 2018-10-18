@@ -2972,9 +2972,9 @@
       }
     },
     "agentkeepalive": {
-      "version": "3.5.1",
-      "resolved": "https://registry.npmjs.org/agentkeepalive/-/agentkeepalive-3.5.1.tgz",
-      "integrity": "sha512-Cte/sTY9/XcygXjJ0q58v//SnEQ7ViWExKyJpLJlLqomDbQyMLh6Is4KuWJ/wmxzhiwkGRple7Gqv1zf6Syz5w==",
+      "version": "3.5.2",
+      "resolved": "https://registry.npmjs.org/agentkeepalive/-/agentkeepalive-3.5.2.tgz",
+      "integrity": "sha512-e0L/HNe6qkQ7H19kTlRRqUibEAwDK5AFk6y3PtMsuut2VAH6+Q4xZml1tNDJD7kSAyqmbG/K08K5WEJYtUrSlQ==",
       "dev": true,
       "requires": {
         "humanize-ms": "^1.2.1"
@@ -4209,9 +4209,9 @@
       "dev": true
     },
     "byte-size": {
-      "version": "4.0.3",
-      "resolved": "https://registry.npmjs.org/byte-size/-/byte-size-4.0.3.tgz",
-      "integrity": "sha512-JGC3EV2bCzJH/ENSh3afyJrH4vwxbHTuO5ljLoI5+2iJOcEpMgP8T782jH9b5qGxf2mSUIp1lfGnfKNrRHpvVg==",
+      "version": "4.0.4",
+      "resolved": "https://registry.npmjs.org/byte-size/-/byte-size-4.0.4.tgz",
+      "integrity": "sha512-82RPeneC6nqCdSwCX2hZUz3JPOvN5at/nTEw/CMf05Smu3Hrpo9Psb7LjN+k+XndNArG1EY8L4+BM3aTM4BCvw==",
       "dev": true
     },
     "bytes": {
@@ -12131,26 +12131,26 @@
       "dev": true
     },
     "lerna": {
-      "version": "3.4.0",
-      "resolved": "https://registry.npmjs.org/lerna/-/lerna-3.4.0.tgz",
-      "integrity": "sha512-RCLm0gMi8PESEF8PzMxo35foA2NGGC/NKnKiUmJyRrhLybOIUfVPdPStSAWCjW1c+DYCgLZCbxu57/KWt4ZWZA==",
+      "version": "3.4.3",
+      "resolved": "https://registry.npmjs.org/lerna/-/lerna-3.4.3.tgz",
+      "integrity": "sha512-tWq1LvpHqkyB+FaJCmkEweivr88yShDMmauofPVdh0M5gU1cVucszYnIgWafulKYu2LMQ3IfUMUU5Pp3+MvADQ==",
       "dev": true,
       "requires": {
-        "@lerna/add": "^3.3.2",
-        "@lerna/bootstrap": "^3.3.2",
-        "@lerna/changed": "^3.3.2",
+        "@lerna/add": "^3.4.1",
+        "@lerna/bootstrap": "^3.4.1",
+        "@lerna/changed": "^3.4.1",
         "@lerna/clean": "^3.3.2",
         "@lerna/cli": "^3.2.0",
-        "@lerna/create": "^3.3.1",
+        "@lerna/create": "^3.4.1",
         "@lerna/diff": "^3.3.0",
         "@lerna/exec": "^3.3.2",
         "@lerna/import": "^3.3.1",
         "@lerna/init": "^3.3.0",
         "@lerna/link": "^3.3.0",
         "@lerna/list": "^3.3.2",
-        "@lerna/publish": "^3.4.0",
+        "@lerna/publish": "^3.4.3",
         "@lerna/run": "^3.3.2",
-        "@lerna/version": "^3.3.2",
+        "@lerna/version": "^3.4.1",
         "import-local": "^1.0.0",
         "npmlog": "^4.1.2"
       },

@@ -298,7 +298,7 @@
     "jest": "23.6.0",
     "jest-docblock": "23.2.0",
     "jest-junit": "5.2.0",
-    "lerna": "3.4.0",
+    "lerna": "3.4.3",
     "md5-file": "4.0.0",
     "mixedindentlint": "1.2.0",
     "nock": "10.0.1",
