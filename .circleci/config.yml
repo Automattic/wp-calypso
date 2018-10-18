@@ -373,7 +373,7 @@ jobs:
             #
             set +o errexit
             if [ -e "$CIRCLE_ARTIFACTS/icfy/stats.json" ] && [ -e "$CIRCLE_ARTIFACTS/icfy/chart.json" ]; then
-              ANCESTOR_SHA1=$(git merge-base HEAD master)
+              ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
               curl                                                                      \
                 -X POST                                                                 \
                 "http://api.iscalypsofastyet.com:5000/submit-stats?secret=$ICFY_SECRET" \
