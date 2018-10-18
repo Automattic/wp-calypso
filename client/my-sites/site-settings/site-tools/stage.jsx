@@ -12,39 +12,63 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import { requestStage } from 'state/stage/actions';
-import ExternalLink from 'components/external-link';
+import SpinnerLine from 'components/spinner-line';
 
 class Stage extends Component {
-	onClick = () => this.props.requestStage( this.props.siteId );
+	state = {
+		isProvisioning: false,
+	};
+
+	onClick = () => {
+		this.setState( { isProvisioning: true } );
+		this.props.requestStage( this.props.siteId );
+	};
 
 	render() {
-		const { translate } = this.props;
+		const { isProvisioning } = this.state;
+		const { credentials, translate } = this.props;
 
-		return 'undefined' !== typeof this.props.credentials ? (
+		let description;
+
+		if ( credentials ) {
+			description = translate(
+				'Your staging site URL is https://%(url)s. You can log in using your WordPress credentials from your production site.',
+				{
+					args: {
+						url: credentials.host,
+					},
+				}
+			);
+		} else if ( isProvisioning ) {
+			description = translate(
+				'Our systems are hard at work creating a new staging site just for you. Your URL will be available shortly.'
+			);
+		} else {
+			description = translate(
+				'Create an instant clone of your site for testing without altering your live site.'
+			);
+		}
+
+		return (
 			<CompactCard>
 				<p className="site-tools__section-title">{ translate( 'Staging Site' ) }</p>
-				<ExternalLink href={ 'https://' + this.props.credentials.host } target="_blank">
-					{ 'https://' + this.props.credentials.host }
-				</ExternalLink>
-				<p className="site-tools__section-desc">
-					{ this.props.credentials.type +
-						' -P ' +
-						this.props.credentials.port +
-						' ' +
-						this.props.credentials.user +
-						'@' +
-						this.props.credentials.host }
-				</p>
-			</CompactCard>
-		) : (
-			<CompactCard>
-				<p className="site-tools__section-title">{ translate( 'Staging Site' ) }</p>
-				<p className="site-tools__section-desc">
-					{ translate( 'An instant clone of your site for testing.' ) }
-				</p>
-				<Button primary onClick={ this.onClick }>
-					Create
-				</Button>
+				<p className="site-tools__section-desc">{ description }</p>
+				{ isProvisioning && (
+					<p className="site-tools__section-desc">
+						<SpinnerLine />
+					</p>
+				) }
+				{ ! isProvisioning &&
+					! credentials && (
+						<Button primary compact onClick={ this.onClick }>
+							{ translate( 'Create' ) }
+						</Button>
+					) }
+				{ credentials && (
+					<Button primary compact target="_blank" href={ `https://${ credentials.host }` }>
+						{ translate( 'Visit Staging' ) }
+					</Button>
+				) }
 			</CompactCard>
 		);
 	}

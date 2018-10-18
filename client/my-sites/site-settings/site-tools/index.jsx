@@ -63,6 +63,7 @@ class SiteTools extends Component {
 			showThemeSetup,
 			showManageConnection,
 			siteId,
+			stagingSiteCredentials,
 		} = this.props;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }`;
@@ -122,7 +123,7 @@ class SiteTools extends Component {
 					config.isEnabled( 'rewind/clone-site' ) && (
 						<Fragment>
 							<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
-							<Stage siteId={ siteId } credentials={ this.props.stagingSite } />
+							<Stage siteId={ siteId } credentials={ stagingSiteCredentials } />
 						</Fragment>
 					) }
 				{ showThemeSetup && (
@@ -223,6 +224,6 @@ export default connect( state => {
 		showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 		showManageConnection: isJetpack && ! isAtomic,
 		siteId,
-		stagingSite: find( rewindState.credentials, { role: 'staging' } ),
+		stagingSiteCredentials: find( rewindState.credentials, { role: 'staging' } ),
 	};
 } )( localize( SiteTools ) );
