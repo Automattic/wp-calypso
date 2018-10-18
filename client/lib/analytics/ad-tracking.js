@@ -1450,7 +1450,7 @@ function domainNameToTld( domainName ) {
  * Converts the products in a cart to the format Donuts expects for its `u90` order summary property
  *
  * @param {Object} cart - cart as `CartValue` object
- * @returns {Array} - An array of items to include in the Criteo tracking call
+ * @returns {Array} - An array of items to include in the Donuts Gtag tracking call
  */
 function cartToDonutsOrderSummary( cart ) {
 	const DONUTS_TLDS = [
@@ -1528,7 +1528,7 @@ function cartToDonutsOrderSummary( cart ) {
 	];
 	// for each domain: if domain ending is in list of donuts domain endings, add to u99 string
 	// types of products covered: domain registration, whois_privacy
-	// TODO: add support for 'renewal' and 'transfer' products
+	// TODO: consider adding support for 'renewal' and 'transfer' products
 	debug( 'cartToDonutsOrderSummary:cart', cart );
 	const domain_registrations = cart.products
 		.filter( p => p.is_domain_registration || p.product_slug === 'private_whois' )
@@ -1539,16 +1539,25 @@ function cartToDonutsOrderSummary( cart ) {
 			} else if ( p.product_slug === 'private_whois' ) {
 				donuts_type = 'whois_privacy';
 			}
-			return Object.assign( {}, p, { tld: domainNameToTld( p.meta ), donuts_type: donuts_type } );
+			return Object.assign(
+				{},
+				{
+					domain_name: p.meta,
+					donuts_type: donuts_type,
+					duration: Math.round( p.bill_period / 365 ),
+					price: costToUSD( p.cost, p.currency ),
+					tld: domainNameToTld( p.meta ),
+				}
+			);
 		} );
 	const donuts_domain_registrations = domain_registrations.filter( p =>
 		includes( DONUTS_TLDS, p.tld )
 	);
 	const order_summary = donuts_domain_registrations.map( p => {
 		return {
-			domain_name: p.meta,
-			duration: Math.round( p.bill_period / 365 ),
-			price: costToUSD( p.cost, p.currency ),
+			domain_name: p.domain_name,
+			duration: p.duration,
+			price: p.price,
 			tld: p.tld,
 			type: p.donuts_type,
 		};
