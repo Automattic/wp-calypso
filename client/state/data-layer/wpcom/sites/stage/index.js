@@ -17,7 +17,7 @@ const stage = action =>
 	http(
 		{
 			method: 'POST',
-			path: '/sites/' + action.siteId + '/stage',
+			path: '/sites/' + action.siteId + '/stage?force=wpcom',
 		},
 		action
 	);
