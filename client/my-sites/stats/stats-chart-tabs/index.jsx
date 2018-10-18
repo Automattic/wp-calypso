@@ -55,7 +55,7 @@ class StatModuleChartTabs extends Component {
 				period: PropTypes.string,
 				posts: PropTypes.number,
 				visitors: PropTypes.number,
-				visits: PropTypes.number,
+				views: PropTypes.number,
 			} )
 		),
 		isActiveTabLoading: PropTypes.bool,
