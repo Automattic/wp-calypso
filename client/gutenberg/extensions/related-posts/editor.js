@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import includes from 'lodash/includes';
 import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 
@@ -12,7 +11,7 @@ import { registerBlockType } from '@wordpress/blocks';
  */
 import './style.scss';
 import edit from './edit';
-import { ALIGNMENT_OPTIONS, MAX_POSTS_TO_SHOW } from './constants';
+import { MAX_POSTS_TO_SHOW } from './constants';
 
 registerBlockType( 'a8c/related-posts', {
 	title: __( 'Related Posts', 'jetpack' ),
@@ -65,14 +64,6 @@ registerBlockType( 'a8c/related-posts', {
 			type: 'number',
 			default: MAX_POSTS_TO_SHOW,
 		},
-	},
-
-	getEditWrapperProps: attributes => {
-		const { align } = attributes;
-
-		if ( includes( ALIGNMENT_OPTIONS, align ) ) {
-			return { 'data-align': align };
-		}
 	},
 
 	transforms: {

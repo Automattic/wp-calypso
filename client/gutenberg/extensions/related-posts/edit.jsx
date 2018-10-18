@@ -7,14 +7,14 @@ import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
-import { BlockAlignmentToolbar, BlockControls, InspectorControls } from '@wordpress/editor';
+import { BlockControls, InspectorControls } from '@wordpress/editor';
 import { Button, PanelBody, RangeControl, ToggleControl, Toolbar } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { ALIGNMENT_OPTIONS, DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
+import { DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
 
 class RelatedPostsEdit extends Component {
 	state = {
@@ -60,6 +60,16 @@ class RelatedPostsEdit extends Component {
 			} );
 	}
 
+	toggleCenterAlign = () => {
+		const {
+			attributes: { align },
+			setAttributes,
+		} = this.props;
+		setAttributes( {
+			align: align === 'center' ? '' : 'center',
+		} );
+	};
+
 	render() {
 		const { attributes, className, setAttributes } = this.props;
 		const { posts } = this.state;
@@ -71,6 +81,20 @@ class RelatedPostsEdit extends Component {
 			postLayout,
 			postsToShow,
 		} = attributes;
+
+		const alignmentControls = [
+			{
+				icon: (
+					<svg width="24" height="24" viewBox="0 0 24 24">
+						<path fill="none" d="M0 0h24v24H0V0z" />
+						<path d="M7 15v2h10v-2H7zm-4 6h18v-2H3v2zm0-8h18v-2H3v2zm4-6v2h10V7H7zM3 3v2h18V3H3z" />
+					</svg>
+				),
+				title: __( 'Align center', 'jetpack' ),
+				onClick: this.toggleCenterAlign,
+				isActive: align === 'center',
+			},
+		];
 
 		const layoutControls = [
 			{
@@ -122,13 +146,7 @@ class RelatedPostsEdit extends Component {
 				</InspectorControls>
 
 				<BlockControls>
-					<BlockAlignmentToolbar
-						value={ align }
-						onChange={ nextAlign => {
-							setAttributes( { align: nextAlign } );
-						} }
-						controls={ ALIGNMENT_OPTIONS }
-					/>
+					<Toolbar controls={ alignmentControls } />
 					<Toolbar controls={ layoutControls } />
 				</BlockControls>
 
@@ -136,7 +154,7 @@ class RelatedPostsEdit extends Component {
 					className={ classNames( `${ className }`, {
 						'is-grid': postLayout === 'grid',
 						[ `columns-${ postsToShow }` ]: postLayout === 'grid',
-						[ `align${ align }` ]: align,
+						aligncenter: align === 'center',
 					} ) }
 				>
 					<div className={ `${ className }__preview-items` }>

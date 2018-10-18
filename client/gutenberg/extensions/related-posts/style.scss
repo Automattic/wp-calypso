@@ -1,15 +1,13 @@
+/** @format */
+
 // @TODO: Replace with Gutenberg variables
 $dark-gray-300: #6c7781;
 
 .wp-block-a8c-related-posts {
-	&.alignfull {
-		padding: 0 20px;
-	}
-
-	&.aligncenter {
-		.wp-block-a8c-related-posts__preview-post-link {
-			text-align: center;
-		}
+	&.aligncenter,
+	// .button.is-link from Gutenberg adds left alignment. Override
+	&.aligncenter .wp-block-a8c-related-posts__preview-post-link {
+		text-align: center;
 	}
 }
 
