@@ -9,24 +9,22 @@ import { map, noop } from 'lodash';
  */
 import { READER_RECOMMENDED_SITES_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { receiveRecommendedSites } from 'state/reader/recommended-sites/actions';
 import { decodeEntities } from 'lib/formatting';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestRecommendedSites = ( { dispatch }, action ) => {
+export const requestRecommendedSites = action => {
 	const { seed = 1, number = 10, offset = 0 } = action.payload;
-	dispatch(
-		http( {
-			method: 'GET',
-			path: '/read/recommendations/sites',
-			query: { number, offset, seed, posts_per_site: 0 },
-			apiVersion: '1.2',
-			onSuccess: action,
-			onFailure: action,
-		} )
-	);
+	return http( {
+		method: 'GET',
+		path: '/read/recommendations/sites',
+		query: { number, offset, seed, posts_per_site: 0 },
+		apiVersion: '1.2',
+		onSuccess: action,
+		onFailure: action,
+	} );
 };
 
 export const fromApi = response => {
@@ -44,22 +42,24 @@ export const fromApi = response => {
 	} ) );
 };
 
-export const receiveRecommendedSitesResponse = ( store, action, response ) => {
+export const receiveRecommendedSitesResponse = ( action, response ) => {
 	if ( ! response.sites ) {
 		return;
 	}
 
-	store.dispatch(
-		receiveRecommendedSites( {
-			sites: fromApi( response ),
-			seed: action.payload.seed,
-			offset: action.payload.offset,
-		} )
-	);
+	return receiveRecommendedSites( {
+		sites: fromApi( response ),
+		seed: action.payload.seed,
+		offset: action.payload.offset,
+	} );
 };
 
 registerHandlers( 'state/data-layer/wpcom/read/recommendations/sites/index.js', {
 	[ READER_RECOMMENDED_SITES_REQUEST ]: [
-		dispatchRequest( requestRecommendedSites, receiveRecommendedSitesResponse, noop ),
+		dispatchRequestEx( {
+			fetch: requestRecommendedSites,
+			onSuccess: receiveRecommendedSitesResponse,
+			onError: noop,
+		} ),
 	],
 } );

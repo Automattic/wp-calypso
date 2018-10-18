@@ -3,7 +3,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -47,10 +46,9 @@ const response = {
 describe( 'recommended sites', () => {
 	describe( '#requestRecommendedSites', () => {
 		test( 'should dispatch an http request and call through next', () => {
-			const dispatch = spy();
 			const action = requestRecommendedSitesAction( { seed } );
-			requestRecommendedSites( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith(
+			const result = requestRecommendedSites( action );
+			expect( result ).to.eql(
 				http( {
 					method: 'GET',
 					path: '/read/recommendations/sites',
@@ -65,11 +63,9 @@ describe( 'recommended sites', () => {
 
 	describe( '#receiveRecommendedSites', () => {
 		test( 'should dispatch action with sites if successful', () => {
-			const dispatch = spy();
 			const action = requestRecommendedSitesAction( { seed } );
-
-			receiveRecommendedSitesResponse( { dispatch }, action, response );
-			expect( dispatch ).calledWith(
+			const result = receiveRecommendedSitesResponse( action, response );
+			expect( result ).to.eql(
 				receiveRecommendedSites( {
 					sites: fromApi( response ),
 					seed,
