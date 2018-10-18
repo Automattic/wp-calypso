@@ -3,7 +3,7 @@ const MiniExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
   mode: 'production',
-  context: path.join(__dirname, '/ui'),
+  context: path.join(__dirname, '/docs'),
   entry: [
     './javascripts/main.js',
     './stylesheets/main.scss'
@@ -56,7 +56,7 @@ module.exports = {
     ]
   },
   output: {
-    path: path.join(__dirname, '/ui/build'),
+    path: path.join(__dirname, '/docs/build'),
     filename: '[name].js'
   },
   plugins: [

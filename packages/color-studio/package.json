@@ -29,9 +29,11 @@
     "build:json": "node palette json > dist/colors.json",
     "build:scss": "node palette scss > dist/_colors.scss",
     "build:sketch": "node palette sketch > dist/Colors.sketchpalette",
-    "development": "open index.html && webpack --watch --mode=development",
     "lint": "xo",
-    "precommit": "yarn lint && yarn build && webpack --display=errors-only && git add --update"
+    "precommit": "yarn lint && yarn build && yarn studio && git add --update",
+    "studio": "yarn studio:build",
+    "studio:build": "webpack --display=errors-only",
+    "studio:development": "open docs/index.html && webpack --watch --mode=development"
   },
   "xo": {
     "ignores": [
