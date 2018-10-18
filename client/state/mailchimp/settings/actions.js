@@ -13,6 +13,8 @@ import {
 } from 'state/action-types';
 import wpcom from 'lib/wp';
 
+import 'state/data-layer/wpcom/sites/mailchimp';
+
 export const requestSettings = siteId => ( {
 	siteId,
 	type: MAILCHIMP_SETTINGS_LIST,
@@ -36,11 +38,11 @@ export const requestSettingsUpdate = ( siteId, settings ) => {
 
 		return wpcom.req
 			.post( `/sites/${ siteId }/mailchimp/settings`, settings )
-			.then( () => {
+			.then( data => {
 				dispatch( {
 					type: MAILCHIMP_SETTINGS_UPDATE_SUCCESS,
 					siteId,
-					settings,
+					settings: data,
 				} );
 			} )
 			.catch( error => {

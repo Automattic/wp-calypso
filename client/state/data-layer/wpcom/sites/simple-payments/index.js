@@ -229,5 +229,3 @@ registerHandlers( 'state/data-layer/wpcom/sites/simple-payments/index.js', {
 	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_EDIT ]: [ handleProductListEdit ],
 	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_DELETE ]: [ handleProductListDelete ],
 } );
-
-export default {};

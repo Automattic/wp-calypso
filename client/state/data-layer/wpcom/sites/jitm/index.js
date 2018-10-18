@@ -210,5 +210,3 @@ registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 
 	[ JITM_DISMISS ]: [ dispatchRequest( doDismissJITM, noop, noop, {} ) ],
 } );
-
-export default {};

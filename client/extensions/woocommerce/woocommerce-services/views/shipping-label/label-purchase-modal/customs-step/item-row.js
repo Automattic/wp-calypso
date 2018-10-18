@@ -57,6 +57,7 @@ const ItemRow = ( props ) => {
 			id={ packageId + '_' + productId + '_tariffNumber' }
 			className="customs-step__item-code-column"
 			title={ <TariffCodeTitle /> }
+			placeholder={ translate( 'Optional' ) }
 			value={ tariffNumber }
 			updateValue={ props.setCustomsItemTariffNumber }
 			error={ errors.tariffNumber } />
@@ -113,7 +114,7 @@ const mapStateToProps = ( state, { orderId, siteId, productId } ) => {
 	return {
 		description,
 		defaultDescription,
-		tariffNumber,
+		tariffNumber: tariffNumber || '',
 		weight,
 		value,
 		originCountry,

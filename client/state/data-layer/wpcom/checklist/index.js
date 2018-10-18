@@ -62,5 +62,3 @@ registerHandlers( 'state/data-layer/wpcom/checklist/index.js', {
 	[ SITE_CHECKLIST_REQUEST ]: [ dispatchChecklistRequest ],
 	[ SITE_CHECKLIST_TASK_UPDATE ]: [ dispatchChecklistTaskUpdate ],
 } );
-
-export default {};

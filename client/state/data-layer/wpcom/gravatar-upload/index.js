@@ -70,5 +70,3 @@ registerHandlers( 'state/data-layer/wpcom/gravatar-upload/index.js', {
 		dispatchRequest( uploadGravatar, announceSuccess, announceFailure ),
 	],
 } );
-
-export default {};

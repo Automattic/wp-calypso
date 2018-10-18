@@ -101,13 +101,11 @@ class FeaturesComponent extends Component {
 				<div className="product-purchase-features-list__item">
 					<PurchaseDetail
 						icon={ <img alt="" src="/calypso/images/illustrations/google-adwords.svg" /> }
-						title={ '$100 for Google AdWords' }
-						description={ 'Attract new (and more!) traffic immediately with Google AdWords.' }
+						title={ '$100 for Google Ads' }
+						description={ 'Attract new (and more!) traffic immediately with Google Ads.' }
 						body={
 							<div className="google-voucher__initial-step">
-								<TipInfo
-									info={ 'Offer valid in US after spending the first $25 on Google AdWords.' }
-								/>
+								<TipInfo info={ 'Offer valid in US after spending the first $25 on Google Ads.' } />
 							</div>
 						}
 					/>

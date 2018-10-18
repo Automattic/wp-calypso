@@ -25,6 +25,11 @@ import getAccountRecoveryValidationKey from 'state/selectors/get-account-recover
 import isRequestingResetPassword from 'state/selectors/is-requesting-reset-password';
 import { requestResetPassword } from 'state/account-recovery/reset/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ResetPasswordConfirmForm extends Component {
 	constructor( props ) {
 		super( props );

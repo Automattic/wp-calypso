@@ -50,7 +50,6 @@ import PostStatus from 'blocks/post-status/docs/example';
 import PostTime from 'blocks/post-time/docs/example';
 import ReaderAuthorLink from 'blocks/reader-author-link/docs/example';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link/docs/example';
-import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
 import RelatedPostCard from 'blocks/reader-related-card/docs/example';
 import PlanPrice from 'my-sites/plan-price/docs/example';
@@ -165,7 +164,6 @@ export default class AppComponents extends React.Component {
 					<ReaderAuthorLink readmeFilePath="reader-author-link" />
 					<ReaderSubscriptionListItem />
 					<ReaderSiteStreamLink readmeFilePath="reader-site-stream-link" />
-					<ReaderFullPostHeader />
 					<AuthorCompactProfile />
 					<ReaderPostCard />
 					<ReaderCombinedCard />

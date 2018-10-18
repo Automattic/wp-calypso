@@ -4,6 +4,8 @@
  */
 import { JITM_DISMISS, JITM_SET } from 'state/action-types';
 
+import 'state/data-layer/wpcom/sites/jitm';
+
 /**
  * Dismisses a jitm
  * @param {int} siteId The site id to dismiss the jitm for

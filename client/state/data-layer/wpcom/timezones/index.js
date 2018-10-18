@@ -66,5 +66,3 @@ registerHandlers( 'state/data-layer/wpcom/timezones/index.js', {
 		} ),
 	],
 } );
-
-export default {};

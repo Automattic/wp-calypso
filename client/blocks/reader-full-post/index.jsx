@@ -1,6 +1,6 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -11,7 +11,7 @@ import { get, startsWith, pickBy } from 'lodash';
 import config from 'config';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
 import ReaderMain from 'components/reader-main';
@@ -65,6 +65,11 @@ import QueryPostLikes from 'components/data/query-post-likes';
 import getCurrentStream from 'state/selectors/get-reader-current-stream';
 import getNextItem from 'state/selectors/get-reader-stream-next-item';
 import getPreviousItem from 'state/selectors/get-reader-stream-prev-item';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class FullPostView extends React.Component {
 	static propTypes = {

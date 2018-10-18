@@ -118,5 +118,3 @@ registerHandlers( 'state/data-layer/wpcom/sites/plugins/new/index.js', {
 		} ),
 	],
 } );
-
-export default {};

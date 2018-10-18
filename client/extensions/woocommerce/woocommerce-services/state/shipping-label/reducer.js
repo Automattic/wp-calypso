@@ -865,10 +865,6 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_TARIFF_NUMBER ] =
 						tariffNumber: tariffNumber.replace( /\D/g, '' ).substr( 0, 6 ),
 					},
 				},
-				ignoreTariffNumberValidation: {
-					...state.form.customs.ignoreTariffNumberValidation,
-					[ productId ]: false,
-				},
 			},
 		},
 	};
@@ -955,7 +951,10 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS ] = state => {
 			...state.form,
 			customs: {
 				...state.form.customs,
-				ignoreTariffNumberValidation: {},
+				items: mapValues( state.form.customs.items, item => ( {
+					...item,
+					tariffNumber: item.tariffNumber || '',
+				} ) ),
 				ignoreWeightValidation: {},
 				ignoreValueValidation: {},
 			},

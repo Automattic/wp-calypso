@@ -11,6 +11,8 @@ import {
 	VIDEO_EDITOR_UPDATE_POSTER,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/videos/poster';
+
 /**
  * Returns an action object to indicate that a request has been made to update the video poster.
  *

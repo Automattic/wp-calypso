@@ -39,5 +39,3 @@ registerHandlers( 'state/data-layer/wpcom/read/teams/index.js', {
 		} ),
 	],
 } );
-
-export default {};

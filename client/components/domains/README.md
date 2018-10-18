@@ -21,6 +21,10 @@ domain-suggestion
 -----------------
 A single registration suggestion
 
+example-domain-browser
+----------------------
+A svg illustration of a browser URL bar
+
 example-domain-suggestions
 --------------------------
 Gives examples of what domains are available

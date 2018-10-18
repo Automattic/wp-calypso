@@ -88,14 +88,12 @@ class Task extends PureComponent {
 						</ScreenReaderText>
 						<Gridicon icon="checkmark" size={ 18 } />
 					</Focusable>
-				) : (
+				) : completed ? (
 					<div className="checklist__task-icon">
-						<ScreenReaderText>
-							{ completed ? translate( 'Complete' ) : translate( 'Not complete' ) }
-						</ScreenReaderText>
+						<ScreenReaderText>{ translate( 'Complete' ) }</ScreenReaderText>
 						<Gridicon icon="checkmark" size={ 18 } />
 					</div>
-				) }
+				) : null }
 			</CompactCard>
 		);
 	}

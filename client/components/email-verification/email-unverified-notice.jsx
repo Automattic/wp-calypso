@@ -131,7 +131,7 @@ export default class EmailUnverifiedNotice extends React.Component {
 				<p>
 					{ i18n.translate(
 						'To post and keep using WordPress.com you need to confirm your email address. ' +
-							'Please click the link in the email we sent at %(email)s.',
+							'Please click the link in the email we sent to %(email)s.',
 						{
 							args: {
 								email: this.props.userEmail,

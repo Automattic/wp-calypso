@@ -18,6 +18,11 @@ import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import Popover from 'components/popover';
 import PostSchedule from 'components/post-schedule';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CalendarPopover extends Component {
 	static propTypes = {
 		// connect props

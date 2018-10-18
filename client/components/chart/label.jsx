@@ -3,23 +3,20 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export default class ModuleChartLabel extends React.Component {
+export default class ChartLabel extends React.PureComponent {
 	static propTypes = {
 		isRtl: PropTypes.bool,
+		label: PropTypes.string.isRequired,
 		width: PropTypes.number.isRequired,
 		x: PropTypes.number.isRequired,
-		label: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { isRtl } = this.props;
-
 		const labelStyle = {
-			[ isRtl ? 'right' : 'left' ]: this.props.x + 'px',
+			[ this.props.isRtl ? 'right' : 'left' ]: this.props.x + 'px',
 			width: this.props.width + 'px',
 		};
 

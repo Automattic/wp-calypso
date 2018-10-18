@@ -61,5 +61,3 @@ registerHandlers( 'state/data-layer/wpcom/meta/sms-country-codes/index.js', {
 		dispatchRequest( fetchCountriesSms, updateCountriesSms, showCountriesSmsLoadingError ),
 	],
 } );
-
-export default {};

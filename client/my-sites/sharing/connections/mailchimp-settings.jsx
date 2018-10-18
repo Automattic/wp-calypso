@@ -26,6 +26,14 @@ const MailchimpSettings = ( {
 	translate,
 } ) => {
 	const chooseMailchimpList = event => {
+		if ( event.target.value === '0' ) {
+			// This means we want to turn off sharing for this site.
+			requestSettingsUpdateAction( siteId, {
+				follower_list_id: 0,
+				keyring_id: 0,
+			} );
+			return;
+		}
 		requestSettingsUpdateAction( siteId, {
 			follower_list_id: event.target.value,
 			keyring_id: keyringConnections[ 0 ].ID,
@@ -39,6 +47,9 @@ const MailchimpSettings = ( {
 			<QueryMailchimpSettings siteId={ siteId } />
 			<p>{ translate( 'What MailChimp list should we sync follower emails to for this site?' ) }</p>
 			<select value={ mailchimpListId } onChange={ chooseMailchimpList }>
+				<option key="none" value={ 0 }>
+					{ translate( 'Do not sync follower emails for this site' ) }
+				</option>
 				{ mailchimpLists &&
 					mailchimpLists.map( list => (
 						<option key={ list.id } value={ list.id }>

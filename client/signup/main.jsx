@@ -19,6 +19,7 @@ import {
 	indexOf,
 	isEmpty,
 	isEqual,
+	kebabCase,
 	last,
 	pick,
 	startsWith,
@@ -213,9 +214,10 @@ class Signup extends React.Component {
 		const parsedUrl = url.parse( urlPath, true );
 		const affiliateId = parsedUrl.query.aff;
 		const campaignId = parsedUrl.query.cid;
+		const subId = parsedUrl.query.sid;
 
 		if ( affiliateId && ! isNaN( affiliateId ) ) {
-			this.props.trackAffiliateReferral( { affiliateId, campaignId, urlPath } );
+			this.props.trackAffiliateReferral( { affiliateId, campaignId, subId, urlPath } );
 			// Record the referral in Tracks
 			analytics.tracks.recordEvent( 'calypso_refer_visit', {
 				flow: this.props.flowName,
@@ -517,7 +519,7 @@ class Signup extends React.Component {
 
 		return (
 			<CSSTransition classNames="signup__step" timeout={ 400 } key={ stepKey }>
-				<div className="signup__step">
+				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
 					{ shouldRenderLocaleSuggestions && (
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
@@ -571,7 +573,7 @@ class Signup extends React.Component {
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (
-			<span>
+			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 				<DocumentHead title={ pageTitle } />
 				{ ! this.state.loadingScreenStartTime &&
 					showProgressIndicator && (
@@ -591,7 +593,7 @@ class Signup extends React.Component {
 						redirectTo={ this.state.redirectTo }
 					/>
 				) }
-			</span>
+			</div>
 		);
 	}
 }

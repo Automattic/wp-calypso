@@ -9,6 +9,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
+import { addQueryArgs } from 'lib/route';
 
 export function generateFlows( { getSiteDestination = noop, getPostsDestination = noop } = {} ) {
 	const flows = {
@@ -24,8 +25,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			destination: function( dependencies ) {
 				return '/plans/select/business/' + dependencies.siteSlug;
 			},
-			description:
-				'Create an account and a blog and then add the business plan to the users cart.',
+			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2018-01-24',
 			meta: {
 				skipBundlingPlan: true,
@@ -37,8 +37,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			destination: function( dependencies ) {
 				return '/plans/select/premium/' + dependencies.siteSlug;
 			},
-			description:
-				'Create an account and a blog and then add the premium plan to the users cart.',
+			description: 'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2018-01-24',
 			meta: {
 				skipBundlingPlan: true,
@@ -50,8 +49,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			destination: function( dependencies ) {
 				return '/plans/select/personal/' + dependencies.siteSlug;
 			},
-			description:
-				'Create an account and a blog and then add the personal plan to the users cart.',
+			description: 'Create an account and a blog and then add the personal plan to the users cart.',
 			lastModified: '2018-01-24',
 		},
 
@@ -297,10 +295,18 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	if ( config.isEnabled( 'signup/import-landing-handler' ) ) {
 		flows.import = {
 			steps: [ 'from-url', 'user', 'domains' ],
-			destination: ( { siteSlug } ) => `/settings/import/${ siteSlug }`,
+			destination: ( { importSiteDetails, importUrl, siteSlug } ) =>
+				addQueryArgs(
+					{
+						engine: importSiteDetails.engine === 'wix' ? 'wix' : null,
+						'from-site': ( importUrl && encodeURIComponent( importUrl ) ) || null,
+					},
+					`/settings/import/${ siteSlug }`
+				),
 			description: 'A flow to kick off an import during signup',
 			disallowResume: true,
 			lastModified: '2018-09-12',
+			autoContinue: true,
 		};
 	}
 

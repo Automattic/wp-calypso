@@ -149,5 +149,3 @@ registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/eligibility/i
 		),
 	],
 } );
-
-export default {};

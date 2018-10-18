@@ -26,6 +26,8 @@ import {
 } from 'state/action-types';
 import wpcom from 'lib/wp';
 
+import 'state/data-layer/wpcom/sites/plan-transfer';
+
 /**
  * Cancels the specified plan trial for the given site.
  *

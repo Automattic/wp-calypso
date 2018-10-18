@@ -17,6 +17,7 @@ import { find, get, includes, isEmpty, isEqual } from 'lodash';
 import ActivityLogBanner from '../activity-log-banner';
 import ActivityLogExample from '../activity-log-example';
 import ActivityLogItem from '../activity-log-item';
+import ActivityLogAggregatedItem from '../activity-log-item/aggregated';
 import ActivityLogSwitch from '../activity-log-switch';
 import ActivityLogTasklist from '../activity-log-tasklist';
 import Banner from 'components/banner';
@@ -453,19 +454,35 @@ class ActivityLog extends Component {
 						/>
 						<section className="activity-log__wrapper">
 							{ siteIsOnFreePlan && <div className="activity-log__fader" /> }
-							{ theseLogs.map( log => (
-								<Fragment key={ log.activityId }>
-									{ timePeriod( log ) }
-									<ActivityLogItem
-										key={ log.activityId }
-										activity={ log }
-										disableRestore={ disableRestore }
-										disableBackup={ disableBackup }
-										hideRestore={ 'active' !== rewindState.state }
-										siteId={ siteId }
-									/>
-								</Fragment>
-							) ) }
+							{ theseLogs.map(
+								log =>
+									config.isEnabled( 'activity-log-aggregated-events' ) && log.isAggregate ? (
+										<Fragment key={ log.activityId }>
+											{ timePeriod( log ) }
+											<ActivityLogAggregatedItem
+												key={ log.activityId }
+												activity={ log }
+												disableRestore={ disableRestore }
+												disableBackup={ disableBackup }
+												hideRestore={ 'active' !== rewindState.state }
+												siteId={ siteId }
+												rewindState={ rewindState.state }
+											/>
+										</Fragment>
+									) : (
+										<Fragment key={ log.activityId }>
+											{ timePeriod( log ) }
+											<ActivityLogItem
+												key={ log.activityId }
+												activity={ log }
+												disableRestore={ disableRestore }
+												disableBackup={ disableBackup }
+												hideRestore={ 'active' !== rewindState.state }
+												siteId={ siteId }
+											/>
+										</Fragment>
+									)
+							) }
 						</section>
 						{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
@@ -494,12 +511,12 @@ class ActivityLog extends Component {
 		}
 
 		return (
-				<Filterbar
-					siteId={ siteId }
-					filter={ filter }
-					isLoading={ logLoadingState !== 'success' }
-					isVisible={ ! ( isEmpty( logs ) && isFilterEmpty ) }
-				/>
+			<Filterbar
+				siteId={ siteId }
+				filter={ filter }
+				isLoading={ logLoadingState !== 'success' }
+				isVisible={ ! ( isEmpty( logs ) && isFilterEmpty ) }
+			/>
 		);
 	}
 

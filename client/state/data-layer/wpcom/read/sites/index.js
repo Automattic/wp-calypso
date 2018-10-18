@@ -4,9 +4,6 @@
  * Internal Dependencies
  */
 import { READER_SITE_REQUEST } from 'state/action-types';
-import { mergeHandlers } from 'state/action-watchers/utils';
-import notificationSubscriptions from './notification-subscriptions';
-import posts from './posts';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { bypassDataLayer } from 'state/data-layer/utils';
@@ -43,7 +40,7 @@ export function receiveReadSiteError( action, response ) {
 	return bypassDataLayer( receiveReaderSiteRequestFailure( action, response ) );
 }
 
-const index = {
+registerHandlers( 'state/data-layer/wpcom/read/sites/index.js', {
 	[ READER_SITE_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestReadSite,
@@ -51,11 +48,4 @@ const index = {
 			onError: receiveReadSiteError,
 		} ),
 	],
-};
-
-registerHandlers(
-	'state/data-layer/wpcom/read/sites/index.js',
-	mergeHandlers( index, notificationSubscriptions, posts )
-);
-
-export default {};
+} );

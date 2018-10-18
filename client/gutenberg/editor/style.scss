@@ -111,6 +111,12 @@ $gutenberg-theme-toggle: #11a0d2;
 			z-index: 100000; /* Above WP toolbar. */
 		}
 	}
+
+	.editor-block-list__block {
+		ul ul, ol ol {
+			list-style-type: circle;
+		}
+	}
 }
 
 //needed for oembed iframes to appear

@@ -312,7 +312,7 @@ class ManagePurchase extends Component {
 			description = theme.description;
 		} else if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
 			description = translate(
-				"Replaces your site's free address with the domain %(domain)s, " +
+				"Replaces your site's free address, %(domain)s, with the domain, " +
 					'making it easier to remember and easier to share.',
 				{
 					args: {

@@ -1,8 +1,4 @@
-#!/usr/bin/env node
-
-/**
- * A blank docblock to prevent prettier from formatting this file
- */
+/** @format */
 
 /**
  * External dependencies
@@ -30,40 +26,46 @@ function parseGitDiffToPathArray( command ) {
 	return execSync( command, { encoding: 'utf8' } )
 		.split( '\n' )
 		.map( name => name.trim() )
-		.filter( name => /\.(jsx?|scss)$/.test( name ) )
+		.filter( name => /\.(jsx?|scss)$/.test( name ) );
 }
 
 const dirtyFiles = new Set( parseGitDiffToPathArray( 'git diff --name-only --diff-filter=ACM' ) );
 const files = parseGitDiffToPathArray( 'git diff --cached --name-only --diff-filter=ACM' );
 
-dirtyFiles.forEach( file => console.log(
-				chalk.red( `${ file } will not be auto-formatted because it has unstaged changes.` )
-) );
+dirtyFiles.forEach( file =>
+	console.log(
+		chalk.red( `${ file } will not be auto-formatted because it has unstaged changes.` )
+	)
+);
 
 const toPrettify = files.filter( file => ! dirtyFiles.has( file ) );
 toPrettify.forEach( file => console.log( `Prettier formatting staged file: ${ file }` ) );
 
 if ( toPrettify.length ) {
-	execSync( `./node_modules/.bin/prettier --ignore-path .eslintignore --write --require-pragma ${ toPrettify.join( ' ' ) }` );
+	execSync(
+		`./node_modules/.bin/prettier --ignore-path .eslintignore --write --require-pragma ${ toPrettify.join(
+			' '
+		) }`
+	);
 	execSync( `git add ${ toPrettify.join( ' ' ) }` );
 }
 
 // linting should happen after formatting
-const lintResult = spawnSync(
-	'eslint-eslines',
-	[ ...files.filter( file => ! file.endsWith( '.scss' ) ), '--', '--diff=index' ],
-	{
+const toLint = files.filter( file => ! file.endsWith( '.scss' ) );
+
+if ( toLint.length ) {
+	const lintResult = spawnSync( './node_modules/.bin/eslint', [ '--quiet', ...toLint ], {
 		shell: true,
 		stdio: 'inherit',
-	}
-);
+	} );
 
-if ( lintResult.status ) {
-	console.log(
-		chalk.red( 'COMMIT ABORTED:' ),
-		'The linter reported some problems. ' +
-			'If you are aware of them and it is OK, ' +
-			'repeat the commit command with --no-verify to avoid this check.'
-	);
-	process.exit( 1 );
+	if ( lintResult.status ) {
+		console.log(
+			chalk.red( 'COMMIT ABORTED:' ),
+			'The linter reported some problems. ' +
+				'If you are aware of them and it is OK, ' +
+				'repeat the commit command with --no-verify to avoid this check.'
+		);
+		process.exit( 1 );
+	}
 }

@@ -88,5 +88,3 @@ registerHandlers( 'state/data-layer/wpcom/read/sites/posts/follow/index.js', {
 		),
 	],
 } );
-
-export default {};

@@ -118,12 +118,12 @@ class StoreUpsellComponent extends Component {
 					<div className="feature-upsell__features-list-item">
 						<Feature
 							icon={ <Gridicon icon="money" size={ 48 } /> }
-							title={ '$100 for Google AdWords' }
-							description={ 'Attract new (and more!) traffic immediately with Google AdWords.' }
+							title={ '$100 for Google Ads' }
+							description={ 'Attract new (and more!) traffic immediately with Google Ads.' }
 							body={
 								<div className="google-voucher__initial-step">
 									<TipInfo
-										info={ 'Offer valid in US after spending the first $25 on Google AdWords.' }
+										info={ 'Offer valid in US after spending the first $25 on Google Ads.' }
 									/>
 								</div>
 							}

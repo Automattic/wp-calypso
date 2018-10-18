@@ -65,6 +65,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
 	ADWORDS_CONVERSION_ID = config( 'google_adwords_conversion_id' ),
 	ADWORDS_CONVERSION_ID_JETPACK = config( 'google_adwords_conversion_id_jetpack' ),
+	ADWORDS_SIGNUP_CONVERSION_ID = config( 'google_adwords_signup_conversion_id' ),
+	ADWORDS_SIGNUP_CONVERSION_ID_JETPACK = config( 'google_adwords_signup_conversion_id_jetpack' ),
 	YAHOO_GEMINI_CONVERSION_PIXEL_URL =
 		'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088&ec=wordpresspurchase',
 	YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL =
@@ -94,10 +96,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		facebookJetpackInit: '919484458159593',
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
-		googleFreeSignupConversionId: '1067250390',
-		googleFreeSignupConversionLabel: 'zKK-CKPG7ocBENbl8_wD',
-		googleFreeSignupConversionIdJetpack: '937115306',
-		googleFreeSignupConversionLabelJetpack: 'J8Z5CNTi14cBEKr97L4D',
+		googleSignupConversionLabel: 'zKK-CKPG7ocBENbl8_wD',
+		googleSignupConversionLabelJetpack: 'J8Z5CNTi14cBEKr97L4D',
 		criteo: '31321',
 		quantcast: 'p-3Ma3jHaQMB_bS',
 		yahooProjectId: '10000',
@@ -682,30 +682,30 @@ export function recordViewCheckout( cart ) {
 }
 
 /**
- * Tracks a free signup conversion by generating a
- * synthetic cart and then treating it like any other order.
+ * Tracks a signup conversion by generating a
+ * synthetic cart and then treating it like an order.
  *
  * @param {String} slug - Signup slug.
  * @returns {void}
  */
-export function recordFreeSignup( slug ) {
+export function recordSignup( slug ) {
 	if ( ! isAdTrackingAllowed() ) {
-		debug( 'recordFreeSignup: skipping as ad tracking is disallowed' );
+		debug( 'recordSignup: skipping as ad tracking is disallowed' );
 		return;
 	}
 
 	if ( ! hasStartedFetchingScripts ) {
-		return loadTrackingScripts( recordFreeSignup.bind( null, slug ) );
+		return loadTrackingScripts( recordSignup.bind( null, slug ) );
 	}
 
-	// Synthesize a cart object for free signup tracking.
+	// Synthesize a cart object for signup tracking.
 	const syntheticCart = {
-		is_free_signup: true,
+		is_signup: true,
 		currency: 'USD',
 		total_cost: 0,
 		products: [
 			{
-				is_free_signup: true,
+				is_signup: true,
 				product_id: slug,
 				product_slug: slug,
 				product_name: slug,
@@ -716,8 +716,8 @@ export function recordFreeSignup( slug ) {
 		],
 	};
 
-	// 35-byte free signup tracking ID.
-	const syntheticOrderId = 'fs_' + uuid().replace( /-/g, '' );
+	// 35-byte signup tracking ID.
+	const syntheticOrderId = 's_' + uuid().replace( /-/g, '' );
 
 	recordOrder( syntheticCart, syntheticOrderId );
 }
@@ -766,25 +766,25 @@ export function recordOrder( cart, orderId ) {
 	// 3. Fire a single tracking event without any details about what was purchased
 
 	// Experian / One 2 One Media
-	if ( isExperianEnabled && ! cart.is_free_signup ) {
+	if ( isExperianEnabled && ! cart.is_signup ) {
 		new Image().src = EXPERIAN_CONVERSION_PIXEL_URL;
 	}
 
 	// Yahoo Gemini
-	if ( isGeminiEnabled && ! cart.is_free_signup ) {
+	if ( isGeminiEnabled && ! cart.is_signup ) {
 		new Image().src =
 			YAHOO_GEMINI_CONVERSION_PIXEL_URL + ( usdTotalCost !== null ? '&gv=' + usdTotalCost : '' );
 	}
 
-	if ( isAolEnabled && ! cart.is_free_signup ) {
+	if ( isAolEnabled && ! cart.is_signup ) {
 		new Image().src = ONE_BY_AOL_CONVERSION_PIXEL_URL;
 	}
 
-	if ( isPandoraEnabled && ! cart.is_free_signup ) {
+	if ( isPandoraEnabled && ! cart.is_signup ) {
 		new Image().src = PANDORA_CONVERSION_PIXEL_URL;
 	}
 
-	if ( isQuoraEnabled && ! cart.is_free_signup ) {
+	if ( isQuoraEnabled && ! cart.is_signup ) {
 		window.qp( 'track', 'Generic' );
 	}
 }
@@ -834,13 +834,13 @@ function recordProduct( product, orderId ) {
 			if ( window.google_trackConversion ) {
 				let googleConversionId, googleConversionLabel;
 
-				if ( product.is_free_signup ) {
+				if ( product.is_signup ) {
 					if ( isJetpackPlan ) {
-						googleConversionId = TRACKING_IDS.googleFreeSignupConversionIdJetpack;
-						googleConversionLabel = TRACKING_IDS.googleFreeSignupConversionLabelJetpack;
+						googleConversionId = ADWORDS_SIGNUP_CONVERSION_ID_JETPACK;
+						googleConversionLabel = TRACKING_IDS.googleSignupConversionLabelJetpack;
 					} else {
-						googleConversionId = TRACKING_IDS.googleFreeSignupConversionId;
-						googleConversionLabel = TRACKING_IDS.googleFreeSignupConversionLabel;
+						googleConversionId = ADWORDS_SIGNUP_CONVERSION_ID;
+						googleConversionLabel = TRACKING_IDS.googleSignupConversionLabel;
 					}
 				} else if ( isJetpackPlan ) {
 					googleConversionId = ADWORDS_CONVERSION_ID_JETPACK;
@@ -867,7 +867,7 @@ function recordProduct( product, orderId ) {
 
 		// Facebook (disabled for now as we are not sure this works as intended).
 		// The entire order is already reported to Facebook, so not absolutely necessary.
-		/* if ( isFacebookEnabled && ! product.is_free_signup ) {
+		/* if ( isFacebookEnabled && ! product.is_signup ) {
 			window.fbq(
 				'trackSingle',
 				isJetpackPlan ? TRACKING_IDS.facebookJetpackInit : TRACKING_IDS.facebookInit,
@@ -883,7 +883,7 @@ function recordProduct( product, orderId ) {
 		} */
 
 		// Twitter
-		if ( isTwitterEnabled && ! product.is_free_signup ) {
+		if ( isTwitterEnabled && ! product.is_signup ) {
 			window.twq( 'track', 'Purchase', {
 				value: product.cost.toString(),
 				currency: product.currency,
@@ -896,7 +896,7 @@ function recordProduct( product, orderId ) {
 		}
 
 		// Yandex Goal
-		if ( isYandexEnabled && ! product.is_free_signup ) {
+		if ( isYandexEnabled && ! product.is_signup ) {
 			window.yaCounter45268389.reachGoal( 'ProductPurchase', {
 				order_id: orderId,
 				product_slug: product.product_slug,
@@ -909,7 +909,7 @@ function recordProduct( product, orderId ) {
 			const costUSD = costToUSD( product.cost, product.currency );
 
 			// Bing
-			if ( isBingEnabled && ! product.is_free_signup ) {
+			if ( isBingEnabled && ! product.is_signup ) {
 				const bingParams = {
 					ec: 'purchase',
 					gv: costUSD,
@@ -922,7 +922,7 @@ function recordProduct( product, orderId ) {
 			}
 
 			// Quantcast
-			if ( isQuantcastEnabled && ! product.is_free_signup ) {
+			if ( isQuantcastEnabled && ! product.is_signup ) {
 				// Note that all properties have to be strings or they won't get tracked
 				window._qevents.push( {
 					qacct: TRACKING_IDS.quantcast,
@@ -934,7 +934,7 @@ function recordProduct( product, orderId ) {
 			}
 
 			// Yahoo
-			if ( isYahooEnabled && ! product.is_free_signup ) {
+			if ( isYahooEnabled && ! product.is_signup ) {
 				// Like the Quantcast tracking above, the price has to be passed as a string
 				// See: https://developer.yahoo.com/gemini/guide/dottags/installing-tags/
 				/*global YAHOO*/
@@ -972,7 +972,7 @@ function recordOrderInFloodlight( cart, orderId ) {
 		return;
 	}
 
-	if ( cart.is_free_signup ) {
+	if ( cart.is_signup ) {
 		return;
 	}
 
@@ -1004,7 +1004,7 @@ function recordOrderInNanigans( cart, orderId ) {
 		return;
 	}
 
-	if ( cart.is_free_signup ) {
+	if ( cart.is_signup ) {
 		return;
 	}
 
@@ -1053,7 +1053,7 @@ function recordOrderInFacebook( cart, orderId ) {
 		return;
 	}
 
-	if ( cart.is_free_signup ) {
+	if ( cart.is_signup ) {
 		return;
 	}
 
@@ -1330,7 +1330,7 @@ function recordOrderInCriteo( cart, orderId ) {
 		return;
 	}
 
-	if ( cart.is_free_signup ) {
+	if ( cart.is_signup ) {
 		return;
 	}
 
@@ -1352,7 +1352,7 @@ function recordViewCheckoutInCriteo( cart ) {
 		return;
 	}
 
-	if ( cart.is_free_signup ) {
+	if ( cart.is_signup ) {
 		return;
 	}
 
@@ -1577,11 +1577,11 @@ export function recordSignupStart() {
  *
  * @returns {void}
  */
-export function recordSignupCompletion( { isNewUserOnFreePlan } ) {
+export function recordSignupCompletion( { isNewUser, isNewSite } ) {
 	recordSignupCompletionInFloodlight();
 
-	if ( isNewUserOnFreePlan ) {
-		recordFreeSignup( 'free-plan' );
+	if ( isNewUser && isNewSite ) {
+		recordSignup( 'new-user-site' );
 	}
 }
 

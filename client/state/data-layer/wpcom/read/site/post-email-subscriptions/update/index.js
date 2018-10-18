@@ -69,5 +69,3 @@ registerHandlers( 'state/data-layer/wpcom/read/site/post-email-subscriptions/upd
 		),
 	],
 } );
-
-export default {};

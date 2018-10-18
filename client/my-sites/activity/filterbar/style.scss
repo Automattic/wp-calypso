@@ -7,7 +7,7 @@
  		background-color: $gray-lighten-20;
 		animation: loading-fade 1.6s ease-in-out infinite;
  }
- 
+
 .filterbar__wrap {
 	position: relative;
 	display: flex;
@@ -17,6 +17,10 @@
 	height: 51px;
 	padding: 0;
 	margin: 0;
+
+	.back-button {
+		position: static;
+	}
 
 	.filterbar__icon-reset {
 		width: 48px;

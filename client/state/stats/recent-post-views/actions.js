@@ -8,6 +8,8 @@ import {
 	STATS_RECENT_POST_VIEWS_RECEIVE,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/sites/stats/views/posts';
+
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve views for a post or posts.

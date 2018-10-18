@@ -15,11 +15,11 @@ import TiledGallerySave from './save.jsx';
 const blockType = 'a8c/tiled-gallery';
 
 const blockSettings = {
-	title: __( 'Tiled Gallery' ),
-	description: __( 'Display multiple images in an elegantly organized tiled layout.' ),
+	title: __( 'Tiled Gallery', 'jetpack' ),
+	description: __( 'Display multiple images in an elegantly organized tiled layout.', 'jetpack' ),
 	icon: 'format-gallery',
 	category: 'jetpack',
-	keywords: [ __( 'images' ), __( 'photos' ) ],
+	keywords: [ __( 'images', 'jetpack' ), __( 'photos', 'jetpack' ) ],
 	attributes: {
 		columns: {
 			type: 'integer',
