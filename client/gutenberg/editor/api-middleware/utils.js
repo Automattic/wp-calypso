@@ -9,13 +9,7 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Internal dependencies
  */
-import {
-	debugMiddleware,
-	pathRewriteMiddleware,
-	urlRewriteMiddleware,
-	wpcomProxyMiddleware,
-	oembedMiddleware,
-} from './index';
+import { debugMiddleware, wpcomProxyMiddleware, wpcomPathMappingMiddleware } from './index';
 
 export class WithAPIMiddleware extends Component {
 	state = { hasMiddleware: false };
@@ -47,11 +41,7 @@ export class WithAPIMiddleware extends Component {
 
 		apiFetch.use( ( options, next ) => debugMiddleware( options, next ) );
 
-		apiFetch.use( ( options, next ) => oembedMiddleware( options, next, siteSlug ) );
-
-		apiFetch.use( ( options, next ) => urlRewriteMiddleware( options, next, siteSlug ) );
-
-		apiFetch.use( ( options, next ) => pathRewriteMiddleware( options, next, siteSlug ) );
+		apiFetch.use( ( options, next ) => wpcomPathMappingMiddleware( options, next, siteSlug ) );
 
 		apiFetch.use( apiFetch.createRootURLMiddleware( 'https://public-api.wordpress.com/' ) );
 

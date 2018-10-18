@@ -26,20 +26,66 @@ export const debugMiddleware = ( options, next ) => {
 	return next( options );
 };
 
-export const urlRewriteMiddleware = ( options, next, siteSlug ) => {
-	// Rewrite default API paths to match WP.com equivalents.
-	// Example: https://public-api.wordpress.com/wp/v2/posts -> https://public-api.wordpress.com/sites/{siteSlug}/posts
-	const wpcomUrl = options.url.replace( '/wp/v2/', `/sites/${ siteSlug }/` );
+// Rewrite default API paths to match WP.com equivalents. Note that
+// passed apiNamespace will be prepended to the replaced path.
+export const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
+	// wp/v2 namespace mapping
+	//
+	// Path rewrite example:
+	// 		/wp/v2/types/post →
+	//		/wp/v2/sites/example.wordpress.com/types/post
+	if ( /\/wp\/v2\//.test( options.path ) ) {
+		const path = options.path.replace( '/wp/v2/', `/sites/${ siteSlug }/` );
 
-	return next( { ...options, url: wpcomUrl } );
-};
+		return next( { ...options, path, apiNamespace: 'wp/v2' } );
+	}
 
-export const pathRewriteMiddleware = ( options, next, siteSlug ) => {
-	// Rewrite default API paths to match WP.com equivalents.
-	// Example: /wp/v2/posts -> /wp/v2/sites/{siteSlug}/posts
-	const wpcomPath = options.path.replace( '/wp/v2/', `/sites/${ siteSlug }/` );
+	// gutenberg/v1 namespace mapping
+	//
+	// Path rewrite example:
+	//		/gutenberg/v1/block-renderer/core/latest-comments →
+	//		/gutenberg/v1/sites/example.wordpress.com/block-renderer/core/latest-comments
+	if ( /\/gutenberg\/v1\//.test( options.path ) ) {
+		const path = options.path.replace( '/gutenberg/v1/', `/sites/${ siteSlug }/` );
 
-	return next( { ...options, path: wpcomPath } );
+		return next( { ...options, path, apiNamespace: 'gutenberg/v1' } );
+	}
+
+	/*
+	 * oembed/1.0 namespace mapping
+	 *
+	 * Path rewrite example:
+	 * 		/oembed/1.0/proxy?url=<source URL> →
+	 * 		/oembed/1.0/sites/example.wordpress.com/proxy?url=<source URL>&force=wpcom
+	 */
+	if ( /\/oembed\/1\.0\/proxy/.test( options.path ) ) {
+		const handleOembedError = embedUrl => errorResponse => {
+			debug( 'oembed failed with error: ', errorResponse );
+			// we've tried to embed a URL that can't be embedded. Emulate core's fallback link here.
+			return {
+				html: `<a href="${ embedUrl }">${ embedUrl }</a>`,
+				type: 'rich',
+				provider_name: 'Embed',
+			};
+		};
+
+		const urlObject = url.parse( options.path, { parseQueryString: true } );
+		const embedUrl = urlObject.query.url;
+		const query = {
+			force: 'wpcom',
+			url: embedUrl,
+		};
+		const oembedPath = `/sites/${ siteSlug }/proxy?${ stringify( query ) }`;
+
+		return next( {
+			...options,
+			path: oembedPath,
+			apiNamespace: 'oembed/1.0',
+			onError: handleOembedError( embedUrl ),
+		} );
+	}
+
+	return next( options );
 };
 
 const wpcomRequest = method => {
@@ -95,40 +141,4 @@ export const wpcomProxyMiddleware = parameters => {
 			}
 		);
 	} );
-};
-
-/**
- * Error handling for an oembed error
- * @param   {String}  embedUrl the fallback embed url
- * @returns {Object}  transformed response
- */
-const handleOembedError = embedUrl => errorResponse => {
-	debug( 'oembed failed with error: ', errorResponse );
-	// we've tried to embed a URL that can't be embedded. Emulate core's fallback link here.
-	return {
-		html: `<a href="${ embedUrl }">${ embedUrl }</a>`,
-		type: 'rich',
-		provider_name: 'Embed',
-	};
-};
-
-export const oembedMiddleware = ( options, next, siteSlug ) => {
-	// Updates https://public-api.wordpress.com/oembed/1.0/proxy?url=<source URL> to
-	// https://public-api.wordpress.com/oembed/1.0/sites/<site ID>/proxy?url=<source URL>&force=wpcom
-	if ( /oembed\/1.0\/proxy/.test( options.url ) ) {
-		const urlObject = url.parse( options.url, { parseQueryString: true } );
-		const embedUrl = urlObject.query.url;
-		const query = {
-			force: 'wpcom',
-			url: embedUrl,
-		};
-		const oembedPath = `/sites/${ siteSlug }/proxy?${ stringify( query ) }`;
-		return next( {
-			...options,
-			path: oembedPath,
-			apiNamespace: 'oembed/1.0',
-			onError: handleOembedError( embedUrl ),
-		} );
-	}
-	return next( options );
 };
