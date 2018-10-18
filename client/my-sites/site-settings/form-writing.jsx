@@ -82,6 +82,7 @@ class SiteSettingsFormWriting extends Component {
 			translate,
 			updateFields,
 			jetpackVersionSupportsLazyImages,
+			siteAcceleratorSupported,
 		} = this.props;
 
 		const jetpackSettingsUI = siteIsJetpack && jetpackSettingsUISupported;
@@ -134,6 +135,7 @@ class SiteSettingsFormWriting extends Component {
 							isRequestingSettings={ isRequestingSettings }
 							fields={ fields }
 							jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
+							siteAcceleratorSupported={ siteAcceleratorSupported }
 						/>
 					</div>
 				) }
@@ -147,6 +149,7 @@ class SiteSettingsFormWriting extends Component {
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
 								jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
+								siteAcceleratorSupported={ siteAcceleratorSupported }
 							/>
 						</div>
 					) }
@@ -225,6 +228,7 @@ const connectComponent = connect(
 			siteIsJetpack,
 			siteId,
 			jetpackVersionSupportsLazyImages: isJetpackMinimumVersion( state, siteId, '5.8-alpha' ),
+			siteAcceleratorSupported: isJetpackMinimumVersion( state, siteId, '6.6-alpha' ),
 			isMasterbarSectionVisible:
 				siteIsJetpack &&
 				isJetpackMinimumVersion( state, siteId, '4.8' ) &&
@@ -282,6 +286,7 @@ const getFormSettings = settings => {
 		'timezone_string',
 		'lazy-images',
 		'podcasting_category_id',
+		'photon-cdn',
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values
