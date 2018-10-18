@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { requestRecommendedSites, receiveRecommendedSitesResponse, fromApi } from '../';
+import { requestRecommendedSites, addRecommendedSites, fromApi } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	requestRecommendedSites as requestRecommendedSitesAction,
@@ -59,10 +59,10 @@ describe( 'recommended sites', () => {
 	describe( '#receiveRecommendedSites', () => {
 		test( 'should dispatch action with sites if successful', () => {
 			const action = requestRecommendedSitesAction( { seed } );
-			const result = receiveRecommendedSitesResponse( action, response );
+			const result = addRecommendedSites( action, response );
 			expect( result ).toEqual(
 				receiveRecommendedSites( {
-					sites: fromApi( response ),
+					sites: response,
 					seed,
 					offset: 0,
 				} )

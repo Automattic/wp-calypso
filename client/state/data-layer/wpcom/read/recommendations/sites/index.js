@@ -42,24 +42,21 @@ export const fromApi = response => {
 	} ) );
 };
 
-export const receiveRecommendedSitesResponse = ( action, response ) => {
+export const addRecommendedSites = ( { payload: { seed, offset } }, response ) => {
 	if ( ! response.sites ) {
 		return;
 	}
 
-	return receiveRecommendedSites( {
-		sites: fromApi( response ),
-		seed: action.payload.seed,
-		offset: action.payload.offset,
-	} );
+	return receiveRecommendedSites( { sites: response, seed, offset } );
 };
 
 registerHandlers( 'state/data-layer/wpcom/read/recommendations/sites/index.js', {
 	[ READER_RECOMMENDED_SITES_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestRecommendedSites,
-			onSuccess: receiveRecommendedSitesResponse,
+			onSuccess: addRecommendedSites,
 			onError: noop,
+			fromApi,
 		} ),
 	],
 } );
