@@ -14,13 +14,11 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const writePostComment = action => dispatch => {
+export const writePostComment = action =>
 	dispatchNewCommentRequest(
-		dispatch,
 		action,
 		`/sites/${ action.siteId }/posts/${ action.postId }/replies/new`
 	);
-};
 
 registerHandlers( 'state/data-layer/wpcom/sites/posts/replies/new/index.js', {
 	[ COMMENTS_WRITE ]: [
