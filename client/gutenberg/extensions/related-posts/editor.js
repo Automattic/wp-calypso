@@ -84,6 +84,10 @@ registerBlockType( 'a8c/related-posts', {
 		],
 	},
 
+	supports: {
+		multiple: false,
+	},
+
 	edit,
 
 	save: () => null,
