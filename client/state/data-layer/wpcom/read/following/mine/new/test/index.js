@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -18,18 +17,19 @@ describe( 'requestFollow', () => {
 		const action = follow( 'http://example.com' );
 		const result = requestFollow( action );
 
-		expect( result ).to.eql(
-			http( {
-				method: 'POST',
-				path: '/read/following/mine/new',
-				apiVersion: '1.1',
-				body: {
-					url: 'http://example.com',
-					source: 'calypso',
+		expect( result ).toEqual(
+			http(
+				{
+					method: 'POST',
+					path: '/read/following/mine/new',
+					apiVersion: '1.1',
+					body: {
+						url: 'http://example.com',
+						source: 'calypso',
+					},
 				},
-				onSuccess: action,
-				onFailure: action,
-			} )
+				action
+			)
 		);
 	} );
 } );
@@ -50,7 +50,7 @@ describe( 'receiveFollow', () => {
 			},
 		};
 		const result = receiveFollow( action, response );
-		expect( result ).to.eql(
+		expect( result ).toEqual(
 			bypassDataLayer(
 				follow( 'http://example.com', {
 					ID: 1,
@@ -73,9 +73,13 @@ describe( 'receiveFollow', () => {
 		};
 
 		const result = receiveFollow( action, response );
-		expect( result[ 0 ].type ).to.eql( NOTICE_CREATE );
-		expect( result[ 0 ].notice.status ).to.eql( 'is-error' );
-		expect( result[ 1 ] ).to.eql( bypassDataLayer( unfollow( 'http://example.com' ) ) );
+		expect( result[ 0 ] ).toMatchObject( {
+			type: NOTICE_CREATE,
+			notice: {
+				status: 'is-error',
+			},
+		} );
+		expect( result[ 1 ] ).toEqual( bypassDataLayer( unfollow( 'http://example.com' ) ) );
 	} );
 } );
 
@@ -84,7 +88,7 @@ describe( 'followError', () => {
 		const action = follow( 'http://example.com' );
 
 		const result = followError( action );
-		expect( result[ 0 ].type ).to.eql( NOTICE_CREATE );
-		expect( result[ 1 ] ).to.eql( bypassDataLayer( unfollow( 'http://example.com' ) ) );
+		expect( result[ 0 ] ).toMatchObject( { type: NOTICE_CREATE } );
+		expect( result[ 1 ] ).toEqual( bypassDataLayer( unfollow( 'http://example.com' ) ) );
 	} );
 } );
