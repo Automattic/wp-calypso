@@ -48,6 +48,10 @@ class ImportURLStepComponent extends Component {
 		urlValidationMessage: '',
 	};
 
+	componentDidMount() {
+		this.focusInput();
+	}
+
 	componentDidUpdate( prevProps ) {
 		const {
 			isSiteImportableError,
