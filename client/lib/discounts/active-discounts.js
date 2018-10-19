@@ -57,7 +57,7 @@ export default [
 	},
 	{
 		name: 'october25',
-		startsAt: new Date( 2018, 9, 20, 0, 0, 0 ),
+		startsAt: new Date( 2018, 9, 18, 0, 0, 0 ),
 		endsAt: new Date( 2018, 9, 25, 0, 0, 0 ),
 		nudgeText: 'One-Day Flash Sale 20% Off',
 		ctaText: translate( 'Upgrade' ),
