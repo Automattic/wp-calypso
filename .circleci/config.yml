@@ -400,7 +400,10 @@ jobs:
       - run:
           name: Prime calypso.live build
           command:
-            curl "https://hash-${$CIRCLE_SHA1}.calypso.live"
+            set +o errexit
+            set -o nounset
+            curl "https://hash-${CIRCLE_SHA1}.calypso.live"
+            exit 0
 
 workflows:
   version: 2
