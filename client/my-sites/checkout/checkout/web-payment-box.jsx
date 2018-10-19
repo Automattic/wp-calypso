@@ -219,7 +219,7 @@ export class WebPaymentBox extends React.Component {
 		switch ( paymentMethod ) {
 			case WEB_PAYMENT_APPLE_PAY_METHOD:
 				{
-					const paymentRequest = getPaymentRequestForApplePay();
+					const paymentRequest = this.getPaymentRequestForApplePay();
 
 					try {
 						paymentRequest
