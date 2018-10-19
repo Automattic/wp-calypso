@@ -17,18 +17,6 @@ import {
 import LocationSearch from '../location-search';
 import './style.scss';
 export class AddPoint extends Component {
-
-	constructor() {
-		super( ...arguments );
-		this.onAddPoint = this.onAddPoint.bind( this );
-	}
-
-	onAddPoint( point ) {
-
-		this.props.onAddPoint( point );
-
-	}
-
 	render() {
 		const {
 			onClose,
@@ -54,7 +42,6 @@ export class AddPoint extends Component {
 			</Button>
 		);
 	}
-
 }
 
 AddPoint.defaultProps = {

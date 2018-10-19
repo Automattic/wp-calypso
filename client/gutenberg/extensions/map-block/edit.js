@@ -29,10 +29,8 @@ class MapEdit extends Component {
 			addPointVisibility: false,
 		};
 		this.mapRef = createRef();
-		this.addPoint = this.addPoint.bind( this );
-		this.updateAlignment = this.updateAlignment.bind( this );
 	}
-	addPoint( point ) {
+	addPoint = ( point ) => {
 		const { attributes, setAttributes } = this.props;
 		const { points } = attributes;
 		const newPoints = points.slice( 0 );
@@ -40,7 +38,7 @@ class MapEdit extends Component {
 		setAttributes( { points: newPoints } );
 		this.setState( { addPointVisibility: false } );
 	}
-	updateAlignment( value ) {
+	updateAlignment = ( value ) => {
 		this.props.setAttributes( { align: value } );
 		// Allow one cycle for alignment change to take effect
 		setTimeout( this.mapRef.current.sizeMap, 0 );

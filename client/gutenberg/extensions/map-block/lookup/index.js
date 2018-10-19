@@ -68,17 +68,9 @@ export class Lookup extends Component {
 	}
 
 	constructor() {
-
 		super( ...arguments );
-
-		this.select = this.select.bind( this );
-		this.reset = this.reset.bind( this );
 		this.debouncedLoadOptions = debounce( this.loadOptions, 250 );
-
 		this.state = this.constructor.getInitialState();
-		this.onChange = this.onChange.bind( this );
-		this.onKeyDown = this.onKeyDown.bind( this );
-
 	}
 
 	componentWillUnmount() {
@@ -86,7 +78,7 @@ export class Lookup extends Component {
 		this.debouncedLoadOptions.cancel();
 	}
 
-	select( option ) {
+	select = ( option ) => {
 
 		const { completer } = this.props;
 		const getOptionCompletion = completer.getOptionCompletion || {};
@@ -95,7 +87,7 @@ export class Lookup extends Component {
 
 	}
 
-	reset() {
+	reset = () => {
 
 		this.setState( this.constructor.getInitialState() );
 
@@ -137,8 +129,7 @@ export class Lookup extends Component {
 		} );
 	}
 
-	onChange( query ) {
-
+	onChange = ( query ) => {
 		const { completer } = this.props;
 		const { options } = this.state;
 
@@ -159,11 +150,9 @@ export class Lookup extends Component {
 		if ( completer ) {
 			this.setState( { selectedIndex: 0, filteredOptions, query } );
 		}
-
 	}
 
-	onKeyDown( event ) {
-
+	onKeyDown = ( event ) => {
 		const { isOpen, selectedIndex, filteredOptions } = this.state;
 		if ( ! isOpen ) {
 			return;

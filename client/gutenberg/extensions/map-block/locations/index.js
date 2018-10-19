@@ -22,13 +22,12 @@ export class Locations extends Component {
 
 	constructor() {
 		super( ...arguments );
-		this.onDeletePoint = this.onDeletePoint.bind(this);
 		this.state = {
 			selectedCell: null
 		};
 	}
 
-	onDeletePoint( e ) {
+	onDeletePoint = ( e ) => {
 		const index = parseInt( e.target.getAttribute( 'data-id' ) );
 		const {
 			points,
