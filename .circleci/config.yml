@@ -402,7 +402,7 @@ jobs:
           command: |
             set +o errexit
             set -o nounset
-            curl "https://hash-${CIRCLE_SHA1}.calypso.live"
+            curl --silent "https://hash-${CIRCLE_SHA1}.calypso.live" > /dev/null
             exit 0
 
 workflows:
