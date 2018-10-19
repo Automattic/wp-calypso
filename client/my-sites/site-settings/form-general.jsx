@@ -528,7 +528,7 @@ export class SiteSettingsFormGeneral extends Component {
 				);
 			}
 
-			return this.renderLaunchSite();
+			// TODO return this.renderLaunchSite();
 		}
 
 		return this.privacySettings();
