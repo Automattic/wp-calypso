@@ -64,6 +64,8 @@ function handleFoundationTiles() {
   tiles.innerHTML = foundations.baseColors
     .map(c => createColorTiles(c.value, true))
     .join('')
+
+  activateTiles(tiles)
 }
 
 function createColorTiles(color, pad) {
@@ -101,17 +103,16 @@ function activateTiles(scope = document) {
 }
 
 function createColorTile(colorObject) {
-  /* eslint-disable-next-line no-unused-vars */
-  const { index, color, base, auxiliary } = colorObject
+  const { index, color } = colorObject
 
-  const printedIndex = join([index, auxiliary ? 'A' : ''])
-  const [primaryTextColor, secondaryTextColor] = determineTextColors(color, auxiliary)
+  const [primaryTextColor, secondaryTextColor] = determineTextColor(color)
+  const className = `tile tile--${index} text-center`
 
   /* eslint-disable indent */
   return join([
-    `<div class="tile text-center" style="background: ${color}; color: ${primaryTextColor}" data-color="${color}">`,
+    `<div class="${className}" style="background: ${color}; color: ${primaryTextColor}" data-color="${color}">`,
       `<div class="tile__title font-weight-bold">`,
-        printedIndex,
+        index,
       '</div>',
       `<div class="tile__meta text-uppercase" style="color: ${secondaryTextColor}">`,
         color,
@@ -128,7 +129,7 @@ function join(html, delimiter = '') {
   return compact(flatten(html)).join(delimiter).trim()
 }
 
-function determineTextColors(backgroundColor, auxiliary = false) {
+function determineTextColor(backgroundColor) {
   const hasContrast = c => chroma.contrast(backgroundColor, c) >= 6
   const fadeColor = (c, r = 0.65) => chroma.mix(backgroundColor, c, r).hex()
 
@@ -142,8 +143,5 @@ function determineTextColors(backgroundColor, auxiliary = false) {
     } while (!hasContrast(color) && color !== COLOR_BLACK)
   }
 
-  return [
-    auxiliary ? fadeColor(color, 0.85) : color,
-    fadeColor(color)
-  ]
+  return [color, fadeColor(color)]
 }
