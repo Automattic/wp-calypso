@@ -73,7 +73,6 @@ export default class PopoverMenuItem extends Component {
 				onMouseOver={ this.handleMouseOver }
 				tabIndex="-1"
 				className={ classes }
-				data-e2e-item={ children }
 				{ ...itemProps }
 			>
 				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
