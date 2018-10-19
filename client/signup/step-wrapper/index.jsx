@@ -173,9 +173,7 @@ class StepWrapper extends Component {
 					</FormattedHeader>
 				) }
 
-				{ 'domains' === stepName || 'rebrand-cities-welcome' === stepName || 'plans' === stepName
-					? null
-					: this.testimonial() }
+				{ 'about' === stepName || 'user' === stepName ? this.testimonial() : null }
 
 				<div className="step-wrapper__content is-animated-content">
 					{ stepContent }
