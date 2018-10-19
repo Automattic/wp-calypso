@@ -25,7 +25,7 @@ import {
 import isRTL from 'state/selectors/is-rtl';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
-import { reducer } from 'state';
+import initialReducer from 'state/reducer';
 import { SERIALIZE } from 'state/action-types';
 import stateCache from 'state-cache';
 import { getNormalizedPath } from 'isomorphic-routing';
@@ -170,7 +170,7 @@ export function serverRender( req, res ) {
 		// And cache on the server, too.
 		if ( cacheKey ) {
 			const cacheableInitialState = pick( context.store.getState(), cacheableReduxSubtrees );
-			const serverState = reducer( cacheableInitialState, { type: SERIALIZE } );
+			const serverState = initialReducer( cacheableInitialState, { type: SERIALIZE } );
 			stateCache.set( cacheKey, serverState );
 		}
 
