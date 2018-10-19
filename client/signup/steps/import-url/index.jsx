@@ -49,11 +49,7 @@ class ImportURLStepComponent extends Component {
 	};
 
 	componentDidMount() {
-		const { queryObject } = this.props;
-		const urlFromQueryArg = get( queryObject, 'url' );
-		if ( urlFromQueryArg ) {
-			this.props.setNuxUrlInputValue( urlFromQueryArg );
-		}
+		this.setInputValueFromQueryArg();
 		this.focusInput();
 	}
 
@@ -122,6 +118,11 @@ class ImportURLStepComponent extends Component {
 		}
 
 		this.props.fetchIsSiteImportable( this.props.urlInputValue );
+	};
+
+	setInputValueFromQueryArg = () => {
+		const urlFromQueryArg = get( this.props, 'queryObject.url' );
+		urlFromQueryArg && this.props.setNuxUrlInputValue( urlFromQueryArg );
 	};
 
 	validateUrl = () => {
