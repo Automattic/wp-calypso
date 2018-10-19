@@ -14,7 +14,7 @@ function MyNotice() {
 			status="is-error"
 			icon="mention"
 		>
-			I'm an error notice with a custom icon.
+			This is an error notice with a custom icon.
 		</Notice>
 	)
 }
@@ -51,7 +51,7 @@ function MyNotice() {
 			status="is-error"
 			icon="mention"
 		>
-			I'm an error notice with a custom icon.
+			This is an error notice with a custom icon.
 			<NoticeAction href="#" external>{ 'Update' }</NoticeAction>
 		</Notice>
 	)
