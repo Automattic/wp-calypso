@@ -43,7 +43,7 @@ registerBlockType( 'a8c/related-posts', {
 	attributes: {
 		align: {
 			type: 'string',
-			default: '',
+			default: 'center',
 		},
 		postLayout: {
 			type: 'string',
