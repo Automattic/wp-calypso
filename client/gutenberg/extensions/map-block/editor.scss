@@ -1,5 +1,8 @@
-.wp-block-atavist-maps {
-	.wp-block-atavist-maps__delete-btn {
-		padding: 0;
+.wp-block-atavist-maps {}
+
+.wp-block-atavist-maps__delete-btn {
+	padding: 0;
+	svg {
+		margin-right: 0.4em;
 	}
 }

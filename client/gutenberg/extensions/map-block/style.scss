@@ -1,18 +1,13 @@
 .wp-block-atavist-maps {
-	.map__map-container {
+	.wp-block-atavist-maps__gm-container {
 		width: 100%;
 		overflow: hidden;
 		background: lightgray;
 		min-height: 400px;
 		text-align: left;
 	}
+	// Ensure that right edge of Title/Caption inputs aren't cut off
 	.gm-style-iw > div {
 		padding-right: 1px;
-	}
-	.wp-block-atavist-maps__delete-btn {
-		margin-top: 1px solid black;
-		svg {
-			margin-right: 0.4em;
-		}
 	}
 }
