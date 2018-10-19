@@ -103,14 +103,20 @@ class SpeedUpSiteSettings extends Component {
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }
 								moduleSlug="photon"
-								label={ translate( 'Speed up images' ) }
+								label={ translate( 'Speed up image load times' ) }
+								description={ translate(
+									'Jetpack will optimize your images and serve them from the server ' +
+										'location nearest to your visitors.'
+								) }
 								disabled={ isRequestingOrSaving || photonModuleUnavailable }
 							/>
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }
 								moduleSlug="photon-cdn"
-								label={ translate(
-									'Speed up all static files (CSS and JavaScript) for WordPress, WooCommerce, and Jetpack'
+								label={ translate( 'Speed up static file load times' ) }
+								description={ translate(
+									'All static files (CSS and JavaScript) for WordPress, WooCommerce, and Jetpack ' +
+										'will be served via our global CDN.'
 								) }
 								disabled={ isRequestingOrSaving || ! siteAcceleratorSupported }
 							/>
