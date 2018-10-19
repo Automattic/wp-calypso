@@ -16,6 +16,11 @@ export class ChecklistNotification extends Component {
 
 	shouldShowNotification = () => {
 		const { storedTask, canShowChecklist, children } = this.props;
+
+		// The redux state for getSiteChecklist() is injected from an API response
+		// so the selector's results and the task list will not always match
+		// Therefore, we're accessing the child Tasks directly for accuracy
+
 		const childrenArray = Children.toArray( children );
 		const task = find( childrenArray, child => ! child.props.completed );
 		const total = childrenArray.length;

@@ -31,6 +31,10 @@ export class ChecklistNavigation extends Component {
 	};
 
 	handleClick = () => {
+		// The redux state for getSiteChecklist() is injected from an API response
+		// so the selector's results and the task list will not always match
+		// Therefore, we're accessing the child Tasks directly for accuracy
+
 		const childrenArray = Children.toArray( this.props.children );
 		const task = find( childrenArray, child => ! child.props.completed );
 
