@@ -1,0 +1,25 @@
+/** @format */
+
+.product-icon {
+	margin: 0 8px 0 0;
+	max-width: 32px;
+	width: 32px;
+
+	.gridicon {
+		padding: 4px;
+		background: $blue-medium;
+		fill: $white;
+	}
+
+	// round icon
+	.gridicons-domains {
+		border-radius: 50%;
+	}
+
+	// square rounded corners
+	.gridicons-themes {
+		border-radius: 4px;
+	}
+
+	// mail: square (no radius required)
+}

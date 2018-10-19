@@ -22,16 +22,9 @@ import {
 	showCreditCardExpiringWarning,
 	subscribedWithinPastWeek,
 } from 'lib/purchases';
-import {
-	isDomainProduct,
-	isDomainTransfer,
-	isGoogleApps,
-	isPlan,
-	isTheme,
-} from 'lib/products-values';
+import { isDomainTransfer } from 'lib/products-values';
 import Notice from 'components/notice';
-import PlanIcon from 'components/plans/plan-icon';
-import Gridicon from 'gridicons';
+import ProductIcon from '../product-icon';
 import { managePurchase } from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
@@ -121,7 +114,7 @@ class PurchaseItem extends Component {
 	placeholder() {
 		return (
 			<span className="purchase-item__wrapper">
-				<div className="purchase-item__plan-icon" />
+				<div className="purchase-item__plan-icon purchase-icon" />
 				<div className="purchase-item__details">
 					<div className="purchase-item__title" />
 					<div className="purchase-item__purchase-type" />
@@ -133,41 +126,6 @@ class PurchaseItem extends Component {
 
 	scrollToTop() {
 		window.scrollTo( 0, 0 );
-	}
-
-	renderIcon() {
-		const { purchase } = this.props;
-
-		if ( ! purchase ) {
-			return null;
-		}
-
-		if ( isPlan( purchase ) ) {
-			return (
-				<div className="purchase-item__plan-icon">
-					<PlanIcon plan={ purchase.productSlug } />
-				</div>
-			);
-		}
-
-		let icon;
-		if ( isDomainProduct( purchase ) || isDomainTransfer( purchase ) ) {
-			icon = 'domains';
-		} else if ( isTheme( purchase ) ) {
-			icon = 'themes';
-		} else if ( isGoogleApps( purchase ) ) {
-			icon = 'mail';
-		}
-
-		if ( ! icon ) {
-			return null;
-		}
-
-		return (
-			<div className="purchase-item__plan-icon">
-				<Gridicon icon={ icon } size={ 24 } />
-			</div>
-		);
 	}
 
 	render() {
@@ -185,7 +143,7 @@ class PurchaseItem extends Component {
 		} else {
 			content = (
 				<span className="purchase-item__wrapper">
-					{ this.renderIcon() }
+					<ProductIcon className="purchase-item__plan-icon" productSlug={ purchase.productSlug } />
 					<div className="purchase-item__details">
 						<div className="purchase-item__title">{ getName( purchase ) }</div>
 						<div className="purchase-item__purchase-type">{ purchaseType( purchase ) }</div>
