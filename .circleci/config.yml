@@ -399,7 +399,7 @@ jobs:
     steps:
       - run:
           name: Prime calypso.live build
-          command:
+          command: |
             set +o errexit
             set -o nounset
             curl "https://hash-${CIRCLE_SHA1}.calypso.live"
