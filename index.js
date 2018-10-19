@@ -46,11 +46,11 @@ if ( protocol === 'https' ) {
 	let key = './config/server/key.pem';
 	let certificate = './config/server/certificate.pem';
 
-	if ( ! fs.existsSync( './config/server/key.pem' ) || ! fs.existsSync( './config/server/certificate.pem' ) ) {
+	if ( ! fs.existsSync( key ) || ! fs.existsSync( certificate ) ) {
 		try {
 			execSync( 'openssl version', execOptions );
-			execSync( 'openssl req -x509 -newkey rsa:2048 -keyout ./config/server/key.tmp.pem -out ./config/server/certificate.pem -days 365 -nodes -subj "/C=US/ST=Foo/L=Bar/O=Baz/CN=calypso.localhost"', execOptions );
-			execSync( 'openssl rsa -in ./config/server/key.tmp.pem -out ./config/server/key.pem', execOptions );
+			execSync( `openssl req -x509 -newkey rsa:2048 -keyout ./config/server/key.tmp.pem -out ${ certificate } -days 365 -nodes -subj "/C=US/ST=Foo/L=Bar/O=Baz/CN=calypso.localhost"`, execOptions );
+			execSync( `openssl rsa -in ./config/server/key.tmp.pem -out ${ key }`, execOptions );
 			execSync( 'rm ./config/server/key.tmp.pem', execOptions );
 		} catch ( error ) {
 			key = './config/server/key.default.pem';
