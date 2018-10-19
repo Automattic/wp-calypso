@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * External dependencies
  */
@@ -81,8 +82,6 @@ class DomainsStep extends React.Component {
 			return;
 		}
 
-		this.skipRender = false;
-
 		const domain = get( props, 'queryObject.new', false );
 		if (
 			props.isDomainOnly &&
@@ -93,7 +92,11 @@ class DomainsStep extends React.Component {
 		) {
 			this.skipRender = true;
 			const productSlug = getDomainProductSlug( domain );
-			const domainItem = cartItems.domainRegistration( { productSlug, domain } );
+			const domainItem = cartItems.domainRegistration( {
+				productSlug,
+				domain,
+				extra: { skipSiteOrDomain: true },
+			} );
 
 			SignupActions.submitSignupStep(
 				Object.assign( {
