@@ -20,6 +20,7 @@ describe( 'hasCancelableSitePurchases', () => {
 			product_slug: 'domain_registration',
 			blog_id: targetSiteId,
 			user_id: targetUserId,
+			active: true,
 		},
 		{
 			ID: 2,
@@ -27,6 +28,7 @@ describe( 'hasCancelableSitePurchases', () => {
 			blog_id: targetSiteId,
 			user_id: targetUserId,
 			product_slug: 'premium_plan',
+			active: true,
 		},
 		{
 			ID: 3,
@@ -34,6 +36,7 @@ describe( 'hasCancelableSitePurchases', () => {
 			product_slug: 'premium_theme',
 			blog_id: targetSiteId,
 			user_id: targetUserId,
+			active: true,
 		},
 	];
 
@@ -108,6 +111,7 @@ describe( 'hasCancelableSitePurchases', () => {
 						blog_id: targetSiteId,
 						user_id: targetUserId,
 						is_refundable: false,
+						active: true,
 					},
 				],
 				error: null,
@@ -132,6 +136,7 @@ describe( 'hasCancelableSitePurchases', () => {
 						blog_id: targetSiteId,
 						user_id: targetUserId,
 						is_refundable: true,
+						active: true,
 					},
 				],
 				error: null,
@@ -143,5 +148,30 @@ describe( 'hasCancelableSitePurchases', () => {
 		} );
 
 		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( true );
+	} );
+
+	test( 'should return false if the only purchase is inactive', () => {
+		const state = deepFreeze( {
+			purchases: {
+				data: [
+					{
+						ID: 3,
+						product_name: 'premium_plan',
+						product_slug: 'premium_plan',
+						blog_id: targetSiteId,
+						user_id: targetUserId,
+						is_refundable: true,
+						active: false,
+					},
+				],
+				error: null,
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true,
+			},
+		} );
+
+		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( false );
 	} );
 } );
