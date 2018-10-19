@@ -3938,7 +3938,7 @@
     },
     "camelcase-keys": {
       "version": "2.1.0",
-      "resolved": "https://registry.npmjs.org/camelcase-keys/-/camelcase-keys-2.1.0.tgz",
+      "resolved": "http://registry.npmjs.org/camelcase-keys/-/camelcase-keys-2.1.0.tgz",
       "integrity": "sha1-MIvur/3ygRkFHvodkyITyRuPkuc=",
       "requires": {
         "camelcase": "^2.0.0",
@@ -4066,11 +4066,6 @@
       "resolved": "https://registry.npmjs.org/chardet/-/chardet-0.7.0.tgz",
       "integrity": "sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==",
       "dev": true
-    },
-    "charenc": {
-      "version": "0.0.2",
-      "resolved": "https://registry.npmjs.org/charenc/-/charenc-0.0.2.tgz",
-      "integrity": "sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc="
     },
     "check-error": {
       "version": "1.0.2",
@@ -5323,11 +5318,6 @@
         "shebang-command": "^1.2.0",
         "which": "^1.2.9"
       }
-    },
-    "crypt": {
-      "version": "0.0.2",
-      "resolved": "https://registry.npmjs.org/crypt/-/crypt-0.0.2.tgz",
-      "integrity": "sha1-iNf/fsDfuG9xPch7u0LQRNPmxBs="
     },
     "crypto-browserify": {
       "version": "3.12.0",
@@ -9466,23 +9456,23 @@
       }
     },
     "i18n-calypso": {
-      "version": "2.0.1",
-      "resolved": "https://registry.npmjs.org/i18n-calypso/-/i18n-calypso-2.0.1.tgz",
-      "integrity": "sha512-Pgl9f4ExfVeRIxI650OpjI68WzL1EH1wmSN4vNYAV+xtWui/6mScpwoY8+3RJDhaTQIHhYEGeye+5vD0WH3MJw==",
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/i18n-calypso/-/i18n-calypso-3.0.0.tgz",
+      "integrity": "sha512-zfhbuG4tbD3CWTCP2Kd1GPcf3sFOWQIeqtUQxHJVOKqVd3A2kLtWHom4Ecme18Uyl/KpDUIZGJF9tqoavbtLVw==",
       "requires": {
         "commander": "^2.9.0",
         "create-react-class": "^15.6.2",
         "debug": "^3.1.0",
         "globby": "^6.1.0",
+        "hash.js": "^1.1.5",
         "interpolate-components": "1.1.1",
-        "jed": "1.0.2",
+        "jed": "1.1.1",
         "jstimezonedetect": "1.0.5",
         "lodash.assign": "^4.0.8",
         "lodash.flatten": "^4.4.0",
         "lru": "^3.1.0",
-        "moment-timezone": "0.5.11",
+        "moment-timezone": "^0.5.16",
         "react": "0.14.8 || ^15.5.0 || ^16.0.0",
-        "sha1": "^1.1.1",
         "xgettext-js": "^2.0.0"
       },
       "dependencies": {
@@ -9496,19 +9486,6 @@
             "object-assign": "^4.0.1",
             "pify": "^2.0.0",
             "pinkie-promise": "^2.0.0"
-          }
-        },
-        "jed": {
-          "version": "1.0.2",
-          "resolved": "https://registry.npmjs.org/jed/-/jed-1.0.2.tgz",
-          "integrity": "sha1-coueFHXyrvR0fvk+J4cTqEiQQPo="
-        },
-        "moment-timezone": {
-          "version": "0.5.11",
-          "resolved": "http://registry.npmjs.org/moment-timezone/-/moment-timezone-0.5.11.tgz",
-          "integrity": "sha1-m3bAPY71FMfkJJp7vOZJ7tOe8p8=",
-          "requires": {
-            "moment": ">= 2.6.0"
           }
         },
         "pify": {
@@ -18728,15 +18705,6 @@
       "requires": {
         "inherits": "^2.0.1",
         "safe-buffer": "^5.0.1"
-      }
-    },
-    "sha1": {
-      "version": "1.1.1",
-      "resolved": "https://registry.npmjs.org/sha1/-/sha1-1.1.1.tgz",
-      "integrity": "sha1-rdqnqTFo85PxnrKxUJFhjicA+Eg=",
-      "requires": {
-        "charenc": ">= 0.0.1",
-        "crypt": ">= 0.0.1"
       }
     },
     "shallow-clone": {

@@ -44,7 +44,7 @@ export function getLanguageFileUrl( localeSlug, fileType = 'json', languageRevis
 	}
 
 	const revision = languageRevisions[ localeSlug ];
-	const fileUrl = `${ getLanguageFilePathUrl() }${ localeSlug }.${ fileType }`;
+	const fileUrl = `${ getLanguageFilePathUrl() }${ localeSlug }-v1.1.${ fileType }`;
 
 	return typeof revision === 'number' ? fileUrl + `?v=${ revision }` : fileUrl;
 }
