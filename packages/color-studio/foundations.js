@@ -2,15 +2,15 @@ module.exports = {
   baseColors: [
     {
       name: 'Gray',
-      value: '#707070'
+      value: '#5e6265'
     },
     {
-      name: 'Product Blue',
+      name: 'Blue',
       value: '#006086'
     },
     {
       name: 'Purple',
-      value: '#6f4689'
+      value: '#794689'
     },
     {
       name: 'Pink',
