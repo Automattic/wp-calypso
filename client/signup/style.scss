@@ -64,11 +64,27 @@
 
 /* New Signup Styles */
 
+.step-wrapper__two-columns.step-wrapper {
+	display: -ms-grid;
+	display: grid;
+	-ms-grid-columns: 100%;
+	grid-template-columns: 100%;
+	grid-column-gap: 24px;
+}
+
+.step-wrapper__two-columns .formatted-header,
+.step-wrapper__two-columns .step-wrapper__content {
+	order: 1;
+}
+
 .step-wrapper__testimonial {
 	color: $gray-darken-10;
 	font-size: 16px;
 	font-family: "Noto Sans";
-	margin: 48px 18px;
+	margin: 12px auto 48px;
+	padding: 0 18px;
+	max-width: 500px;
+	order: 3;
 }
 
 .step-wrapper__testimonial-image {
@@ -190,8 +206,10 @@
 
 	.step-wrapper__testimonial {
 		font-size: 18px;
+		margin-top: 48px;
 		margin-left: 0;
 		margin-right: 0;
+		padding: 0;
 
 		-ms-grid-column: 1;
 		grid-column-start: 1;
@@ -201,7 +219,6 @@
 		grid-row-start: 5;
 		-ms-grid-row-span: 1;
 		grid-row-end: span 1;
-		margin-top: 48px;
 	}
 
  	.step-wrapper__testimonial-name {

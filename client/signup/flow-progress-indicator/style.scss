@@ -24,13 +24,15 @@
 	display: none;
 }
 
-.step-wrapper__two-columns .flow-progress-indicator {
-	-ms-grid-column: 1;
-	grid-column-start: 1;
-	-ms-grid-column-span: 12;
-	grid-column-end: span 12;
-	-ms-grid-row: 1;
-	grid-row-start: 1;
-	align-self: end;
-	margin-bottom: 12px;
+@include breakpoint( '>1040px' ) {
+	.step-wrapper__two-columns .flow-progress-indicator {
+		-ms-grid-column: 1;
+		grid-column-start: 1;
+		-ms-grid-column-span: 12;
+		grid-column-end: span 12;
+		-ms-grid-row: 1;
+		grid-row-start: 1;
+		align-self: end;
+		margin-bottom: 12px;
+	}
 }
