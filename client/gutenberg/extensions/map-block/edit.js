@@ -16,7 +16,7 @@ import {
  * Internal dependencies
  */
 
-import { CONFIG } from './config.js';
+import { settings } from './settings.js';
 import AddPoint from './add-point';
 import Locations from './locations';
 import Map from './component.js';
@@ -53,7 +53,7 @@ class MapEdit extends Component {
 					<BlockAlignmentToolbar value={ align } onChange={ this.updateAlignment } />
 					<Toolbar>
 						<IconButton
-							icon={ CONFIG.markerIcon }
+							icon={ settings.markerIcon }
 							label="Add a marker"
 							onClick={ () => this.setState( { addPointVisibility: true } ) }
 						/>
@@ -66,7 +66,7 @@ class MapEdit extends Component {
 							onChange={ value => {
 								setAttributes( { map_style: value } );
 							} }
-							options={ CONFIG.map_styleOptions }
+							options={ settings.map_styleOptions }
 						/>
 					</PanelBody>
 					<PanelColorSettings
@@ -107,7 +107,7 @@ class MapEdit extends Component {
 						onSetZoom={ value => {
 							setAttributes( { zoom: value } );
 						} }
-						api_key={ CONFIG.GOOGLE_MAPS_API_KEY }
+						api_key={ settings.GOOGLE_MAPS_API_KEY }
 						admin={ true }
 						onSetPoints={ value => setAttributes( { points: value } ) }
 						onMapLoaded={ () => this.setState( { addPointVisibility: true } ) }

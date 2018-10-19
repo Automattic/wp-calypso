@@ -22,7 +22,7 @@ import {
  * Internal dependencies
  */
 
-import { CONFIG } from './config.js';
+import { settings } from './settings.js';
 import MapMarker from './map-marker/';
 import InfoWindow from './info-window/';
 // @TODO: replace with import from lib/load-script after resolution of https://github.com/Automattic/wp-calypso/issues/27821
@@ -224,10 +224,10 @@ export class Map extends Component {
 		map.setOptions( { zoomControl: true } );
 	}
 	getMapStyle() {
-		return CONFIG.styles[ this.props.map_style ].styles;
+		return settings.styles[ this.props.map_style ].styles;
 	}
 	getMapType() {
-		return CONFIG.styles[ this.props.map_style ].map_type;
+		return settings.styles[ this.props.map_style ].map_type;
 	}
 	getMarkerIcon() {
 		const { marker_color } = this.props;
