@@ -59,7 +59,24 @@ export default [
 		name: 'october25',
 		startsAt: new Date( 2018, 9, 18, 0, 0, 0 ),
 		endsAt: new Date( 2018, 9, 25, 0, 0, 0 ),
-		nudgeText: 'One-Day Flash Sale 20% Off',
+		nudgeText: '20% Off All Plans — UPGRADE',
+		ctaText: translate( 'Upgrade' ),
+		plansPageNoticeText: translate(
+			'Enter coupon code “%(coupon)s” during checkout to claim your %(discount)d%% discount.',
+			{
+				args: {
+					coupon: 'OCTOBER20',
+					discount: 20,
+				},
+			}
+		),
+		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
+	},
+	{
+		name: 'october25',
+		startsAt: new Date( 2018, 9, 25, 0, 0, 1 ),
+		endsAt: new Date( 2018, 9, 26, 0, 0, 0 ),
+		nudgeText: 'Last chance: 20% Off  — UPGRADE',
 		ctaText: translate( 'Upgrade' ),
 		plansPageNoticeText: translate(
 			'Enter coupon code “%(coupon)s” during checkout to claim your %(discount)d%% discount.',
