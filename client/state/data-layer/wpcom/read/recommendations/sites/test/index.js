@@ -71,12 +71,6 @@ describe( 'recommended sites', () => {
 	} );
 
 	describe( '#fromApi', () => {
-		test( 'should convert to empty sites if given bad input', () => {
-			expect( fromApi( null ) ).toEqual( [] );
-			expect( fromApi( undefined ) ).toEqual( [] );
-			expect( fromApi( new Error( 'this is an error' ) ) ).toEqual( [] );
-		} );
-
 		test( 'should extract only what we care about from the api response. and decode entities', () => {
 			const expected = [
 				{
