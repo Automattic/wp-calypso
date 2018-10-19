@@ -20,7 +20,11 @@ import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/acti
 import { addSiteFragment } from 'lib/route';
 import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { startEditingNewPost, stopEditingPost, getSelectedEditor } from 'state/ui/editor/actions';
+import {
+	startEditingNewPost,
+	stopEditingPost,
+	requestSelectedEditor,
+} from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
@@ -258,14 +262,17 @@ export default {
 	gutenberg: function( context, next ) {
 		const siteId = getSelectedSiteId( context.store.getState() );
 		waitForData( {
-			editor: () => getSelectedEditor( siteId ),
-		} ).then( editor => {
-			if ( 'gutenberg' === editor ) {
-				page.redirect( `/gutenberg${ context.path }` );
-				return false;
+			editor: () => requestSelectedEditor( siteId ),
+		} ).then(
+			( { editor } ) => {
+				if ( 'gutenberg' === editor.data ) {
+					page.redirect( `/gutenberg${ context.path }` );
+					return false;
+				}
+			},
+			() => {
+				next();
 			}
-		} );
-
-		next();
+		);
 	},
 };
