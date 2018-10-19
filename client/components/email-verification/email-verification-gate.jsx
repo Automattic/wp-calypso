@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
 
 import EmailUnverifiedNotice from './email-unverified-notice.jsx';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 
 export class EmailVerificationGate extends React.Component {
 	static propTypes = {
