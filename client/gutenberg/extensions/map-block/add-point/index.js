@@ -26,7 +26,7 @@ export class AddPoint extends Component {
 			<Button
 				className='map__add_btn'
 			>
-				Add point
+				{ __( 'Add marker' ) }
 				<Popover className='map__popover'>
 					<Button
 						className='map__popover_close'
