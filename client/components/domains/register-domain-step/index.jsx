@@ -32,7 +32,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import config from 'config';
 import wpcom from 'lib/wp';
 import Card from 'components/card';
@@ -762,10 +761,7 @@ class RegisterDomainStep extends React.Component {
 			include_wordpressdotcom: ! this.props.includeDotBlogSubdomain,
 			include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
-			vendor:
-				this.props.includeDotBlogSubdomain && abtest( 'dotBlogSuggestionsv2' ) === 'complex'
-					? 'complex'
-					: 'wpcom',
+			vendor: 'dot',
 			vertical: this.props.surveyVertical,
 			...this.getActiveFiltersForAPI(),
 		};
