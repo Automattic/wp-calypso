@@ -1,15 +1,8 @@
-/** @format */
-
-/**
- * Wordpress dependencies
- */
-
-import { Component } from '@wordpress/element';
-
 /**
  * External dependencies
  */
 
+import { Component } from '@wordpress/element';
 import classnames from 'classnames';
 
 /**
@@ -17,10 +10,6 @@ import classnames from 'classnames';
  */
 
 import { CONFIG } from './config.js';
-
-/**
- * Module variables
- */
 
 class MapSave extends Component {
 	render() {

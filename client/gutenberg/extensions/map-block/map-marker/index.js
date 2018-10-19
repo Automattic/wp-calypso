@@ -1,12 +1,9 @@
 /**
- * Wordpress dependencies
+ * External dependencies
  */
 
 import { Component } from '@wordpress/element';
 
-/**
- * External dependencies
- */
 
 /**
  * Internal dependencies

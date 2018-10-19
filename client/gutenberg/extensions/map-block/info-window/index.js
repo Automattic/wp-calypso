@@ -1,15 +1,11 @@
 /**
- * Wordpress dependencies
+ * External dependencies
  */
 
 import {
 	Component,
 	createPortal
 } from '@wordpress/element';
-
-/**
- * External dependencies
- */
 
 /**
  * Internal dependencies

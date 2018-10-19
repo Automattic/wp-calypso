@@ -1,11 +1,9 @@
 /**
- * Wordpress dependencies
+ * External dependencies
  */
 
 import { __ } from '@wordpress/i18n';
-
 import { Component } from '@wordpress/element';
-
 import {
 	Button,
 	Dashicon,
@@ -13,17 +11,11 @@ import {
 } from '@wordpress/components';
 
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
 
 import LocationSearch from '../location-search';
-
 import './style.scss';
-
 export class AddPoint extends Component {
 
 	constructor() {

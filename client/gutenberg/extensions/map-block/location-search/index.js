@@ -1,22 +1,16 @@
 /**
- * Wordpress dependencies
+ * External dependencies
  */
 
 import { __ } from '@wordpress/i18n';
-
 import {
 	Component,
 	createRef
 } from '@wordpress/element';
-
 import {
 	BaseControl,
 	TextControl
 } from '@wordpress/components';
-
-/**
- * External dependencies
- */
 
 /**
  * Internal dependencies
