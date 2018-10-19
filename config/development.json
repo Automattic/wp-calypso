@@ -158,6 +158,7 @@
 		"restore-last-location": false,
 		"rewind-alerts": true,
 		"rewind/clone-site": true,
+		"rewind/staging": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,

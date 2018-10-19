@@ -123,7 +123,9 @@ class SiteTools extends Component {
 					config.isEnabled( 'rewind/clone-site' ) && (
 						<Fragment>
 							<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
-							<Stage siteId={ siteId } credentials={ stagingSiteCredentials } />
+							{ config.isEnabled( 'rewind/staging' ) && (
+								<Stage siteId={ siteId } credentials={ stagingSiteCredentials } />
+							) }
 						</Fragment>
 					) }
 				{ showThemeSetup && (
