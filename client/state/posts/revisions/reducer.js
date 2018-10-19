@@ -22,6 +22,7 @@ import {
 	POST_REVISIONS_DIFF_UNIFY_VIEW,
 	SELECTED_SITE_SET,
 } from 'state/action-types';
+import authors from './authors/reducer';
 import { combineReducers } from 'state/utils';
 
 export function diffs( state = {}, { diffs: diffsFromServer, postId, revisions, siteId, type } ) {
@@ -128,4 +129,5 @@ export default combineReducers( {
 	requesting,
 	selection,
 	ui,
+	authors,
 } );
