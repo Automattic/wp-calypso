@@ -16,13 +16,16 @@ import { localize } from 'i18n-calypso';
 import Checklist from 'components/checklist';
 import ChecklistBanner from './checklist-banner';
 import ChecklistBannerTask from './checklist-banner/task';
+import ChecklistNavigation from './checklist-navigation';
+import ChecklistNotification from './checklist-notification';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import QueryPosts from 'components/data/query-posts';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import Task from 'components/checklist/task';
 import { createNotice } from 'state/notices/actions';
 import { getPostsForQuery } from 'state/posts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
@@ -44,7 +47,7 @@ class WpcomChecklist extends PureComponent {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		taskStatuses: PropTypes.object,
-		viewMode: PropTypes.oneOf( [ 'checklist', 'banner' ] ),
+		viewMode: PropTypes.oneOf( [ 'checklist', 'banner', 'navigation', 'notification' ] ),
 	};
 
 	static defaultProps = {
@@ -60,6 +63,14 @@ class WpcomChecklist extends PureComponent {
 	isComplete( taskId ) {
 		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
 	}
+
+	canShow = () => {
+		if ( ! this.props.isEligibleForDotcomChecklist || ! this.props.isSiteSection ) {
+			return false;
+		}
+
+		return true;
+	};
 
 	handleTaskStart = ( { taskId, tourId, url } ) => () => {
 		if ( ! tourId && ! url ) {
@@ -138,10 +149,30 @@ class WpcomChecklist extends PureComponent {
 			taskUrls,
 			translate,
 			viewMode,
+			updateCompletion,
+			setNotification,
+			setStoredTask,
+			closePopover,
+			showNotification,
+			storedTask,
 		} = this.props;
 
-		const ChecklistComponent = 'banner' === viewMode ? ChecklistBanner : Checklist;
+		const canShowChecklist = this.canShow();
 		const TaskComponent = 'banner' === viewMode ? ChecklistBannerTask : Task;
+
+		let ChecklistComponent = Checklist;
+
+		switch ( viewMode ) {
+			case 'banner':
+				ChecklistComponent = ChecklistBanner;
+				break;
+			case 'navigation':
+				ChecklistComponent = ChecklistNavigation;
+				break;
+			case 'notification':
+				ChecklistComponent = ChecklistNotification;
+				break;
+		}
 
 		return (
 			<>
@@ -149,7 +180,13 @@ class WpcomChecklist extends PureComponent {
 				{ siteId && <QueryPosts siteId={ siteId } query={ query } /> }
 				<ChecklistComponent
 					isPlaceholder={ ! taskStatuses }
-					updateCompletion={ this.props.updateCompletion }
+					updateCompletion={ updateCompletion }
+					canShowChecklist={ canShowChecklist }
+					closePopover={ closePopover }
+					showNotification={ showNotification }
+					setNotification={ setNotification }
+					setStoredTask={ setStoredTask }
+					storedTask={ storedTask }
 				>
 					<TaskComponent
 						bannerImageSrc="/calypso/images/illustrations/checkEmailsDesktop.svg"
@@ -351,6 +388,8 @@ export default connect(
 
 		return {
 			designType: getSiteOption( state, siteId, 'design_type' ),
+			isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
+			isSiteSection: isSiteSection( state ),
 			siteId,
 			siteSlug,
 			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),

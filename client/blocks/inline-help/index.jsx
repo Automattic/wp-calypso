@@ -24,6 +24,7 @@ import ResizableIframe from 'components/resizable-iframe';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
+import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 
 /**
  * Module variables
@@ -49,6 +50,8 @@ class InlineHelp extends Component {
 
 	state = {
 		showInlineHelp: false,
+		showChecklistNotification: false,
+		storedTask: null,
 	};
 
 	componentDidMount() {
@@ -81,6 +84,7 @@ class InlineHelp extends Component {
 
 	toggleInlineHelp = () => {
 		const { showInlineHelp } = this.state;
+
 		if ( showInlineHelp ) {
 			this.closeInlineHelp();
 		} else {
@@ -131,10 +135,29 @@ class InlineHelp extends Component {
 		return [];
 	}
 
+	setNotification = status => {
+		this.setState( { showChecklistNotification: status } );
+	};
+
+	setStoredTask = taskKey => {
+		this.setState( { storedTask: taskKey } );
+	};
+
 	render() {
 		const { translate } = this.props;
-		const { showInlineHelp, showDialog, videoLink, dialogType } = this.state;
-		const inlineHelpButtonClasses = { 'inline-help__button': true, 'is-active': showInlineHelp };
+		const {
+			showInlineHelp,
+			showDialog,
+			videoLink,
+			dialogType,
+			showChecklistNotification,
+			storedTask,
+		} = this.state;
+		const inlineHelpButtonClasses = {
+			'inline-help__button': true,
+			'is-active': showInlineHelp,
+			'has-notification': showChecklistNotification,
+		};
 
 		/* @TODO: This class is not valid and this tricks the linter
 		 		  fix this class and fix the linter to catch similar instances.
@@ -145,6 +168,11 @@ class InlineHelp extends Component {
 
 		return (
 			<div className="inline-help">
+				<WpcomChecklist
+					viewMode="notification"
+					setNotification={ this.setNotification }
+					storedTask={ storedTask }
+				/>
 				<Button
 					className={ classNames( inlineHelpButtonClasses ) }
 					onClick={ this.handleHelpButtonClicked }
@@ -161,6 +189,9 @@ class InlineHelp extends Component {
 						context={ this.inlineHelpToggle }
 						onClose={ this.closeInlineHelp }
 						setDialogState={ this.setDialogState }
+						setNotification={ this.setNotification }
+						setStoredTask={ this.setStoredTask }
+						showNotification={ showChecklistNotification }
 					/>
 				) }
 				{ showDialog && (
@@ -195,12 +226,18 @@ class InlineHelp extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
+const mapStateToProps = state => {
+	return {
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
-	} ),
-	{
-		recordTracksEvent,
-	}
+	};
+};
+
+const mapDispatchToProps = {
+	recordTracksEvent,
+};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
 )( localize( InlineHelp ) );

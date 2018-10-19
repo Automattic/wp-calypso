@@ -25,6 +25,7 @@ import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inli
 import { getHelpSelectedSite } from 'state/help/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
+import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -97,7 +98,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, showNotification, setNotification, setStoredTask } = this.props;
 		const { showSecondaryView } = this.state;
 		const popoverClasses = { 'is-secondary-view-active': showSecondaryView };
 
@@ -122,6 +123,14 @@ class InlineHelpPopover extends Component {
 				</div>
 
 				{ this.renderSecondaryView() }
+
+				<WpcomChecklist
+					viewMode="navigation"
+					closePopover={ this.props.onClose }
+					showNotification={ showNotification }
+					setNotification={ setNotification }
+					setStoredTask={ setStoredTask }
+				/>
 
 				<div className="inline-help__footer">
 					<Button
@@ -158,12 +167,16 @@ class InlineHelpPopover extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
+function mapStateToProps( state ) {
+	return {
 		searchQuery: getSearchQuery( state ),
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
-	} ),
+	};
+}
+
+export default connect(
+	mapStateToProps,
 	{
 		recordTracksEvent,
 		selectResult,

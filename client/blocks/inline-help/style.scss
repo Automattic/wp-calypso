@@ -48,6 +48,7 @@
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
 	border: 1px solid darken( $blue-wordpress, 5 );
 	transition: all 0.2s ease-in-out;
+	overflow: visible;
 
 	.gridicon {
 		fill: $white;
@@ -69,6 +70,19 @@
 	&.is-active {
 		background: $blue-medium;
 		border-color: darken( $blue-medium, 5 )
+	}
+
+	&.has-notification::before {
+		display: block;
+		background-color: $orange-jazzy;
+		border: 2px solid $white;
+		content: "";
+		border-radius: 50%;
+		width: 10px;
+		height: 10px;
+		position: absolute;
+			top: -2px;
+			left: -3px;
 	}
 }
 
