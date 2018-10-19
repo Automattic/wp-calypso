@@ -17,6 +17,7 @@ import Button from 'components/button';
 import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
 import TermsOfService from './terms-of-service';
 import cartValues from 'lib/cart-values';
+import wpcom from 'lib/wp';
 //import { newCardPayment } from 'lib/store-transactions';
 //import { setPayment } from 'lib/upgrades/actions';
 
@@ -44,8 +45,8 @@ const PAYMENT_REQUEST_OPTIONS = {
  * Web Payments (`PaymentRequest` API) are available only if the
  * document is served through HTTPS.
  *
- * The configuration feature `my-sites/checkout/web-payment` must also
- * be enabled.
+ * The configuration features `my-sites/checkout/web-payment/*` must
+ * also be enabled.
  *
  * @returns {string|null}  One of the `WEB_PAYMENT_*_METHOD` or `null`
  *                         if none can be detected.
@@ -55,11 +56,14 @@ export function detectWebPaymentMethod() {
 		return null;
 	}
 
-	if ( window.ApplePaySession && window.ApplePaySession.canMakePayments() ) {
+	if ( config.isEnabled( 'my-sites/checkout/web-payment/apple-pay' ) &&
+		window.ApplePaySession &&
+		window.ApplePaySession.canMakePayments() ) {
 		return WEB_PAYMENT_APPLE_PAY_METHOD;
 	}
 
-	if ( window.PaymentRequest ) {
+	if ( config.isEnabled( 'my-sites/checkout/web-payment/basic-card' ) &&
+		window.PaymentRequest ) {
 		return WEB_PAYMENT_BASIC_CARD_METHOD;
 	}
 
@@ -112,7 +116,7 @@ export class WebPaymentBox extends React.Component {
 					merchantIdentifier: APPLE_PAY_MERCHANT_IDENTIFIER,
 					merchantCapabilities: [ 'supports3DS', 'supportsCredit', 'supportsDebit' ],
 					supportedNetworks: SUPPORTED_NETWORKS,
-					countryCode: cart.country,
+					countryCode: 'US',
 				},
 			},
 		];
@@ -142,25 +146,8 @@ export class WebPaymentBox extends React.Component {
 		);
 
 		paymentRequest.onmerchantvalidation = merchantValidationEvent => {
-			const request = new Request(
-				'https://public-api.wordpress.com/rest/v1/apple-pay/merchant-validation/?validation_url=' +
-					merchantValidationEvent.validationURL,
-				{
-					method: 'GET',
-					mode: 'cors',
-					credentials: 'omit',
-					cache: 'no-store',
-				}
-			);
-
-			fetch( request )
-				.then( response => {
-					if ( 200 !== response.status ) {
-						return; // error
-					}
-
-					return response.json();
-				} )
+			wpcom.undocumented()
+				.applePayMerchantValidation( merchantValidationEvent.validationURL )
 				.then( json => {
 					console.log( json );
 
