@@ -34,7 +34,7 @@ export const ChecklistContactPageTour = makeTour(
 			placement="right"
 			style={ {
 				animationDelay: '0.7s',
-				zIndex: 1,
+				zIndex: 2,
 			} }
 			when={ isPostEditorSection }
 			canSkip={ false }
