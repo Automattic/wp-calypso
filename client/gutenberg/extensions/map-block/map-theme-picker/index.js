@@ -1,21 +1,15 @@
 /**
- * Wordpress dependencies
+ * External dependencies
  */
 
 import {
 	Component,
 	Fragment
 } from '@wordpress/element';
-
 import {
 	Button,
 	ButtonGroup
 } from '@wordpress/components';
-
-/**
- * External dependencies
- */
-
 import classnames from 'classnames';
 
 /**

@@ -1,5 +1,5 @@
 /**
- * Wordpress dependencies
+ * External dependencies
  */
 
 import {
@@ -10,7 +10,6 @@ import {
 	TextareaControl,
 	TextControl
 } from '@wordpress/components';
-
 import { Component } from '@wordpress/element';
 
 /**
@@ -18,10 +17,6 @@ import { Component } from '@wordpress/element';
  */
 
 import './style.scss';
-
-/**
- * External dependencies
- */
 
 export class Locations extends Component {
 

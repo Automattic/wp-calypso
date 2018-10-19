@@ -1,12 +1,8 @@
 /**
- * Wordpress dependencies
- */
-
-import { registerBlockType } from '@wordpress/blocks';
-
-/**
  * External dependencies
  */
+
+ import { registerBlockType } from '@wordpress/blocks';
 
  /**
  * Internal dependencies
@@ -15,7 +11,6 @@ import { registerBlockType } from '@wordpress/blocks';
 import { CONFIG } from './config.js';
 import edit from './edit';
 import save from './save';
-
 import './style.scss';
 import './editor.scss';
 

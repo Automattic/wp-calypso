@@ -1,6 +1,7 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
+
 import { Component } from '@wordpress/element';
 import {
 	__,
@@ -11,7 +12,6 @@ import {
 	withInstanceId,
 	compose
 } from '@wordpress/compose';
-
 import {
 	ENTER,
 	ESCAPE,
@@ -20,18 +20,12 @@ import {
 	LEFT,
 	RIGHT
 } from '@wordpress/keycodes';
-
 import {
 	Button,
 	Popover,
 	withFocusOutside,
 	withSpokenMessages
 } from '@wordpress/components';
-
-/**
- * External dependencies
- */
-
 import classnames from 'classnames';
 import {
 	map,

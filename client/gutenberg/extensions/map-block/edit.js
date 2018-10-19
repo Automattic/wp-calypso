@@ -1,25 +1,16 @@
-/** @format */
-
 /**
- * Wordpress dependencies
+ * External dependencies
  */
 
 import { __ } from '@wordpress/i18n';
-
 import { Component, createRef, Fragment } from '@wordpress/element';
-
 import { IconButton, PanelBody, Toolbar } from '@wordpress/components';
-
 import {
 	InspectorControls,
 	BlockControls,
 	BlockAlignmentToolbar,
 	PanelColorSettings,
 } from '@wordpress/editor';
-
-/**
- * External dependencies
- */
 
 /**
  * Internal dependencies
@@ -30,10 +21,6 @@ import AddPoint from './add-point';
 import Locations from './locations';
 import Map from './component.js';
 import MapThemePicker from './map-theme-picker';
-
-/**
- * Module variables
- */
 
 class MapEdit extends Component {
 	constructor() {

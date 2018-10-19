@@ -1,18 +1,22 @@
-/** @format */
-
-/**
- * Wordpress dependencies
- */
-
-import { Component, createRef, Fragment } from '@wordpress/element';
-
-import { Button, Dashicon, TextareaControl, TextControl } from '@wordpress/components';
-
 /**
  * External dependencies
  */
 
-import { get, assign } from 'lodash';
+import {
+	Component,
+	createRef,
+	Fragment
+} from '@wordpress/element';
+import {
+	Button,
+	Dashicon,
+	TextareaControl,
+	TextControl
+} from '@wordpress/components';
+import {
+	get,
+	assign
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +25,6 @@ import { get, assign } from 'lodash';
 import { CONFIG } from './config.js';
 import MapMarker from './map-marker/';
 import InfoWindow from './info-window/';
-
 // @TODO: replace with import from lib/load-script after resolution of https://github.com/Automattic/wp-calypso/issues/27821
 import { loadScript } from './load-script';
 // import { loadScript } from 'lib/load-script';
