@@ -32,8 +32,6 @@ export class LocationSearch extends Component {
 		this.state = {
 			isEmpty: true
 		};
-		this.searchChanged = this.searchChanged.bind( this );
-		this.onReset = this.onReset.bind( this );
 		this.autocompleter = {
 
 			name: 'placeSearch',
@@ -85,17 +83,9 @@ export class LocationSearch extends Component {
 		});
 
 	}
-
-	searchChanged( value ) {
-
-		this.setState( { isEmpty: value.length < 1 } );
-
-	}
-
-	onReset() {
+	onReset = () => {
 		this.textRef.current.value = null;
 	}
-
 	render() {
 
 		const { label } = this.props;

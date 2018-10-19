@@ -10,42 +10,22 @@ import { Component } from '@wordpress/element';
  */
 
 export class MapMarker extends Component {
-
-	constructor() {
-
-		super( ...arguments );
-		this.handleClick = this.handleClick.bind( this );
-
-	}
-
 	componentDidMount() {
-
 		this.renderMarker();
-
 	}
-
 	componentWillUnmount() {
-
 		if ( this.marker ) {
 			this.marker.setMap( null );
 		}
 	}
-
 	componentDidUpdate() {
-
 		this.renderMarker();
-
 	}
-
-	handleClick() {
-
+	handleClick = () => {
 		const { onClick } = this.props;
 		onClick( this );
-
 	}
-
 	renderMarker() {
-
 		const {
 			map,
 			point,
@@ -67,13 +47,9 @@ export class MapMarker extends Component {
 			this.marker = new google.Marker( { position, map, icon } );
 			this.marker.addListener( 'click',  handleClick );
 		}
-
 	}
-
 	render() {
-
 		return null;
-
 	}
 }
 

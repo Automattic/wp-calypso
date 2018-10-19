@@ -13,7 +13,6 @@ import { createElement, render } from '@wordpress/element';
  */
 
 export class FrontendManagement {
-
 	blockIterator( rootNode, blocks ) {
 		blocks.forEach( block => {
 			this.initializeFrontendReactBlocks(
@@ -22,8 +21,7 @@ export class FrontendManagement {
 				rootNode
 			)
 		} )
-	}
-
+	};
 	initializeFrontendReactBlocks( component, options = {}, rootNode ) {
 		const { name, attributes } = options.config;
 		const { selector } = options;
