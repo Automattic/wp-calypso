@@ -1,7 +1,7 @@
 .tile {
   position: relative;
   flex: 1;
-  padding: 2.65em 0;
+  padding: 2.15em 0;
   font-size: 0.65em;
   text-align: center;
   text-transform: uppercase;
@@ -36,15 +36,10 @@
   flex: 2;
 }
 
-.tile--auxiliary {
-  padding: 1.65em 0;
-}
-
 .tile--standard .tile__title {
   font-size: 1.15em;
 }
 
-.tile--auxiliary .tile__title,
-.tile__subtitle {
+.tile__meta {
   font-size: 0.85em;
 }

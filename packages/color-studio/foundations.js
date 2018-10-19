@@ -2,43 +2,27 @@ module.exports = {
   baseColors: [
     {
       name: 'Gray',
-      value: '#52585e'
+      value: '#707070'
     },
     {
-      name: 'Teal',
-      value: '#029fc9'
-    },
-    {
-      name: 'Blue',
-      value: '#0f82ff'
+      name: 'Product Blue',
+      value: '#006086'
     },
     {
       name: 'Purple',
-      value: '#8437c2'
+      value: '#6f4689'
     },
     {
       name: 'Pink',
-      value: '#f61567'
-    },
-    {
-      name: 'Red',
-      value: '#ff2600'
+      value: '#dd3c57'
     },
     {
       name: 'Orange',
-      value: '#ff9902'
-    },
-    {
-      name: 'Yellow',
-      value: '#f4d301'
+      value: '#df762f'
     },
     {
       name: 'Green',
-      value: '#00a300'
-    },
-    {
-      name: 'Celadon',
-      value: '#1abc97'
+      value: '#049f70'
     }
   ],
 

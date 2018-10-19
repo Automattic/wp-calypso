@@ -4,6 +4,7 @@ const chroma = require('chroma-js')
 const compact = require('lodash/compact')
 const copyToClipboard = require('copy-text-to-clipboard')
 const flatten = require('lodash/flatten')
+const round = require('lodash/round')
 const { saveAs } = require('file-saver')
 const toArray = require('lodash/toArray')
 const toSketchPalette = require('../../utilities/to-sketch-palette')
@@ -28,7 +29,7 @@ input.addEventListener('input', event => {
 setTimeout(init, 0)
 
 function init() {
-  handleRandomColor()
+  handleColor(input.value)
   button.addEventListener('click', handleButtonClick, false)
 
   handleFoundationTiles()
@@ -46,12 +47,6 @@ function handleColor(color) {
   setButton()
 }
 
-function handleRandomColor() {
-  const color = chroma.random().hex()
-  input.value = color
-  handleColor(color)
-}
-
 function handleButtonClick() {
   if (!currentBaseColor) {
     return
@@ -66,22 +61,15 @@ function handleButtonClick() {
 }
 
 function handleFoundationTiles() {
-  const html = foundations.baseColors.map(c => createColorTiles(c.value)).join('')
-  tiles.innerHTML = `<div style="background: #fff; padding: 12px">${html}</div>`
+  tiles.innerHTML = foundations.baseColors
+    .map(c => createColorTiles(c.value, true))
+    .join('')
 }
 
-function createColorTiles(color) {
+function createColorTiles(color, pad) {
   const colors = createPaletteColors(color)
-
-  const defaultColors = colors.filter(c => !c.auxiliary)
-  const auxiliaryColors = colors.filter(c => c.auxiliary)
-
-  const tiles = join([defaultColors, auxiliaryColors].map(colorArray => {
-    const html = join(colorArray.map(createColorTile))
-    return `<div class="d-flex">${html}</div>`
-  }))
-
-  return tiles
+  const html = join(colors.map(createColorTile))
+  return `<div class="d-flex bg-white${pad ? ' pt-1' : ''}">${html}</div>`
 }
 
 function setBodyBackground() {
@@ -125,8 +113,11 @@ function createColorTile(colorObject) {
       `<div class="tile__title font-weight-bold">`,
         printedIndex,
       '</div>',
-      `<div class="tile__subtitle text-uppercase" style="color: ${secondaryTextColor}">`,
+      `<div class="tile__meta text-uppercase" style="color: ${secondaryTextColor}">`,
         color,
+      '</div>',
+      `<div class="tile__meta text-uppercase" style="color: ${secondaryTextColor}">`,
+        round(chroma.contrast(color, COLOR_WHITE), 2),
       '</div>',
     '</div>'
   ])
