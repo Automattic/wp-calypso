@@ -53,9 +53,6 @@ class ImportURLStepComponent extends Component {
 		const urlFromQueryArg = get( queryObject, 'url' );
 		if ( urlFromQueryArg ) {
 			this.props.setNuxUrlInputValue( urlFromQueryArg );
-			setTimeout( () => {
-				! this.props.isLoading && this.processSubmit();
-			}, 400 );
 		}
 		this.focusInput();
 	}
@@ -117,10 +114,6 @@ class ImportURLStepComponent extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		this.processSubmit();
-	};
-
-	processSubmit = () => {
 		const isValid = this.validateUrl();
 
 		if ( ! isValid ) {
