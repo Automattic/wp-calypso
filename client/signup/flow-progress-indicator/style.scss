@@ -27,12 +27,10 @@
 .step-wrapper__two-columns .flow-progress-indicator {
 	-ms-grid-column: 1;
 	grid-column-start: 1;
-	-ms-grid-column-span: 5;
-	grid-column-end: span 5;
-	-ms-grid-row: 2;
-	grid-row-start: 2;
+	-ms-grid-column-span: 12;
+	grid-column-end: span 12;
+	-ms-grid-row: 1;
+	grid-row-start: 1;
 	align-self: end;
-	justify-content: start;
-	text-align: left;
-	margin-top: 48px;
+	margin-bottom: 12px;
 }
