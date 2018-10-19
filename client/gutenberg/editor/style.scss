@@ -27,6 +27,14 @@ $gutenberg-theme-toggle: #11a0d2;
 //========================================================
 
 .is-section-gutenberg-editor {
+	box-sizing: border-box !important;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: inherit !important;
+	}
+
 	.layout__content {
 		padding-left: 32px;
 		padding-top: 0;
@@ -45,40 +53,24 @@ $gutenberg-theme-toggle: #11a0d2;
 		top: 0;
 	}
 
+
 	@media (min-width: 600px) {
 		.edit-post-sidebar {
-			top: 57px;
+			top: 56px;
 		}
 	}
 
-	.editor-inserter__menu {
-		.editor-inserter__search {
-			width: auto;
-		}
-		.editor-block-types-list__list-item {
-			box-sizing: border-box;
-		}
+	.edit-post-layout .editor-post-publish-panel {
+		top: 0;
 	}
 
-	.edit-post-sidebar {
-		.components-panel__body {
-			&:first-child {
-				margin-top: 0;
-			}
-			&:last-child {
-				margin-bottom: 0;
-			}
-			&.editor-block-inspector__advanced {
-				margin-bottom: -16px;
-			}
-		}
+	.editor-inserter__menu .editor-inserter__search {
+		width: auto;
+	}
 
-		.editor-block-inspector__card {
-			margin-bottom: 0;
-		}
-
-		.editor-post-last-revision__title {
-			width: auto;
+	.editor-block-list__block {
+		ul ul, ol ol {
+			list-style-type: circle;
 		}
 	}
 
@@ -108,28 +100,7 @@ $gutenberg-theme-toggle: #11a0d2;
 			text-decoration: none;
 			top: 5px;
 			width: auto;
-			z-index: 100000; /* Above WP toolbar. */
+			z-index: 100000; // Above WP toolbar.
 		}
 	}
-
-	.editor-block-list__block {
-		ul ul, ol ol {
-			list-style-type: circle;
-		}
-	}
-}
-
-//needed for oembed iframes to appear
-.wp-block-embed__wrapper > iframe {
-	width: 100%;
-}
-
-//block icons sizing
-.components-toolbar__control.components-button > svg,
-.editor-block-settings-menu__content {
-	box-sizing: border-box;
-}
-
-.components-panel__header.edit-post-sidebar-header.edit-post-sidebar__panel-tabs {
-	border-bottom: 0;
 }
