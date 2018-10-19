@@ -17,7 +17,6 @@ import {
  */
 
 import Lookup from '../lookup';
-import './style.scss';
 
 const placeholderText = __( 'Add a marker...' );
 

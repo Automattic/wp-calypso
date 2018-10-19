@@ -68,14 +68,15 @@ export class Locations extends Component {
 				<Button
 					data-id={ index }
 					onClick={ this.onDeletePoint }
+					className="component__locations__delete-btn"
 				>
 					<Dashicon icon='trash' size='15' /> Delete Marker
 				</Button>
 			</PanelBody>
 		);
 		return (
-			<div className='components-locations'>
-				<Panel className='components-locations__panel'>
+			<div className='component__locations'>
+				<Panel className='component__locations__panel'>
 					{ rows }
 				</Panel>
 			</div>

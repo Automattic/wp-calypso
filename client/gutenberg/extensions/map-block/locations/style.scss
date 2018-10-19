@@ -1,4 +1,4 @@
-.components-locations__panel {
+.component__locations__panel {
 	margin-bottom: 1em;
 	&:empty {
 		display: none;
@@ -11,5 +11,11 @@
 	}
 	.components-panel__body button {
 		padding-right: 40px;
+	}
+}
+.component__locations__delete-btn {
+	padding: 0;
+	svg {
+		margin-right: 0.4em;
 	}
 }

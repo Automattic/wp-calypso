@@ -24,12 +24,12 @@ export class AddPoint extends Component {
 		} = this.props;
 		return (
 			<Button
-				className='map__add_btn'
+				className='component__add-point'
 			>
 				{ __( 'Add marker' ) }
-				<Popover className='map__popover'>
+				<Popover className='component__add-point__popover'>
 					<Button
-						className='map__popover_close'
+						className='component__add-point__close'
 						onClick={ onClose }
 					>
 						<Dashicon icon="no" />

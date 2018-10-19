@@ -115,7 +115,7 @@ export class Map extends Component {
 		);
 		return (
 			<Fragment>
-				<div className="map__map-container" ref={ this.mapRef }>
+				<div className="wp-block-atavist-maps__gm-container" ref={ this.mapRef }>
 					{ mapMarkers }
 				</div>
 				{ infoWindow }

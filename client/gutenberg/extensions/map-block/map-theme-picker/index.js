@@ -31,9 +31,9 @@ export class MapThemePicker extends Component {
 
 		const buttons = options.map( ( option, index ) => {
 			const classes = classnames(
-				'component_map-theme-picker__button',
-				option.value,
-				option.value === value ? 'isSelected' : ''
+				'component__map-theme-picker__button',
+				'is-theme-' + option.value,
+				option.value === value ? 'is-selected' : ''
 			);
 			return (
 				<Button

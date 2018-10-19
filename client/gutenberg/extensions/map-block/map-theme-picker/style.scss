@@ -1,4 +1,4 @@
-.component_map-theme-picker__button {
+.component__map-theme-picker__button {
 	border: 1px solid lightgray;
 	border-radius: 100%;
 	width: 70px;
@@ -14,25 +14,25 @@
 	&:hover {
 		transform: scale(1.1);
 	}
-	&.isSelected {
+	&.is-selected {
 		border-color: black;
 	}
-	&.default {
+	&.is-theme-default {
 		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-default.jpg' );
 	}
-	&.black_and_white {
+	&.is-theme-black_and_white {
 		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-black_and_white.jpg' );
 	}
-	&.satellite {
+	&.is-theme-satellite {
 		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-satellite.jpg' );
 	}
-	&.satellite_with_features {
+	&.is-theme-satellite_with_features {
 		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-satellite_with_features.jpg' );
 	}
-	&.terrain {
+	&.is-theme-terrain {
 		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-terrain.jpg' );
 	}
-	&.terrain_with_features {
+	&.is-theme-terrain_with_features {
 		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-terrain_with_features.jpg' );
 	}
 }
