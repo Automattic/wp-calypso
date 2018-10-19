@@ -128,6 +128,8 @@
 		"me/notifications": true,
 		"me/trophies": false,
 		"my-sites/checkout/web-payment": true,
+		"my-sites/checkout/web-payment/basic-card": true,
+		"my-sites/checkout/web-payment/apple-pay": true,
 		"nps-survey/devdocs": true,
 		"nps-survey/dev-trigger": true,
 		"nps-survey/notice": true,

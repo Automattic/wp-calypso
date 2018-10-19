@@ -2473,4 +2473,8 @@ Undocumented.prototype.getDomainConnectSyncUxUrl = function(
 	);
 };
 
+Undocumented.prototype.applePayMerchantValidation = function( validationURL ) {
+	return this.wpcom.req.get( '/apple-pay/merchant-validation', { validation_url: validationURL } );
+};
+
 export default Undocumented;
