@@ -117,7 +117,7 @@ class SpeedUpSiteSettings extends Component {
 						<FormSettingExplanation isIndented>
 							{ translate(
 								'Load pages faster by allowing Jetpack to optimize your images and serve your images ' +
-									'and static files (like CSS and Javascript) from our global network of servers.'
+									'and static files (like CSS and JavaScript) from our global network of servers.'
 							) }
 						</FormSettingExplanation>
 						<div className="site-settings__child-settings">
