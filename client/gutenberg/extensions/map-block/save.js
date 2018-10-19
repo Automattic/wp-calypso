@@ -9,7 +9,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 
-import { CONFIG } from './config.js';
+import { settings } from './settings.js';
 
 class MapSave extends Component {
 	render() {
@@ -26,7 +26,7 @@ class MapSave extends Component {
 					return 'atavist-block-align-center';
 			}
 		};
-		const classes = classnames( CONFIG.baseClasses, className, atavistAlignClass( align ) );
+		const classes = classnames( settings.baseClasses, className, atavistAlignClass( align ) );
 		return (
 			<div
 				className={ classes }
@@ -35,7 +35,7 @@ class MapSave extends Component {
 				data-zoom={ zoom }
 				data-map_center={ JSON.stringify( map_center ) }
 				data-marker_color={ marker_color }
-				data-api_key={ CONFIG.GOOGLE_MAPS_API_KEY }
+				data-api_key={ settings.GOOGLE_MAPS_API_KEY }
 			/>
 		);
 	}
