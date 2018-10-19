@@ -260,6 +260,9 @@ class DeleteSite extends Component {
 								<li className="delete-site__content-list-item">
 									{ translate( 'Purchased Upgrades' ) }
 								</li>
+								<li className="delete-site__content-list-item">
+									{ translate( 'Premium Themes' ) }
+								</li>
 							</ul>
 						</ActionPanelFigure>
 						{ ! isAtomic && (
@@ -267,7 +270,7 @@ class DeleteSite extends Component {
 								<p>
 									{ translate(
 										'Deletion {{strong}}can not{{/strong}} be undone, ' +
-											'and will remove all content, contributors, domains, and upgrades from this site.',
+											'and will remove all content, contributors, domains, themes and upgrades from this site.',
 										{
 											components: {
 												strong: <strong />,
@@ -296,7 +299,7 @@ class DeleteSite extends Component {
 								<p>
 									{ translate(
 										"To delete this site, you'll need to contact our support team. Deletion can not be undone, " +
-											'and will remove all content, contributors, domains, and upgrades from this site.'
+											'and will remove all content, contributors, domains, themes and upgrades from this site.'
 									) }
 								</p>
 								<p>
