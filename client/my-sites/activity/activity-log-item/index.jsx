@@ -54,7 +54,8 @@ class ActivityLogItem extends Component {
 
 	confirmBackup = () => this.props.confirmBackup( this.props.activity.rewindId );
 
-	confirmRewind = () => this.props.confirmRewind( this.props.activity.rewindId );
+	confirmRewind = () =>
+		this.props.confirmRewind( this.props.activity.rewindId, this.props.activity.activityName );
 
 	renderHeader() {
 		const {
@@ -364,11 +365,14 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 			)
 		)
 	),
-	confirmRewind: rewindId => (
+	confirmRewind: ( rewindId, activityName ) => (
 		scrollTo( { x: 0, y: 0, duration: 250 } ),
 		dispatch(
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_confirm', { action_id: rewindId } ),
+				recordTracksEvent( 'calypso_activitylog_restore_confirm', {
+					action_id: rewindId,
+					activity_name: activityName,
+				} ),
 				rewindRestore( siteId, rewindId )
 			)
 		)
