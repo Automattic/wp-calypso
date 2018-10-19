@@ -16,7 +16,7 @@ const gutenberg = require( './sdk/gutenberg.js' );
 const notifications = require( './sdk/notifications.js' );
 
 // Script name is used in help instructions;
-// pick between `npm run calypso-sdk` and `npx calypso-sdk`.
+// pick between `npm run muriel-sdk` and `npx muriel-sdk`.
 // Show also how npm scripts require delimiter to pass arguments.
 const calleeScript = path.basename( process.argv[ 1 ] );
 const scriptName =

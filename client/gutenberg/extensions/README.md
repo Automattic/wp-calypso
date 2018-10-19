@@ -1,6 +1,6 @@
 # Gutenberg extensions
 
-This folder holds extensions for Gutenberg editor. You can either import them directly from here or build them using Calypso SDK. See [SDK documentation](../../../docs/sdk.md).
+This folder holds extensions for Gutenberg editor. You can either import them directly from here or build them using Muriel SDK. See [SDK documentation](../../../docs/sdk.md).
 
 Your extension should follow this structure:
 

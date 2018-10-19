@@ -10,7 +10,7 @@
   },
   "main": "index.js",
   "bin": {
-    "calypso-sdk": "./bin/sdk-cli.js"
+    "muriel-sdk": "./bin/sdk-cli.js"
   },
   "browserslist": [
     "last 2 versions",

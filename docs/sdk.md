@@ -1,7 +1,7 @@
-Calypso SDK
-===========
+Muriel SDK
+==========
 
-Calypso <abbr title="software development kit">SDK</abbr> is an early stage tool with the goal to build, visualize, test, and deliver interfaces for multiple platforms from a single source.
+Muriel <abbr title="software development kit">SDK</abbr> is an early stage tool with the goal to build, visualize, test, and deliver interfaces for multiple platforms from a single source.
 
 
 ## Using SDK CLI
@@ -15,14 +15,14 @@ To build production ready assets, use `NODE_ENV`:
 NODE_ENV=production npm run sdk -- ...
 ```
 
-Note: It's also possible to run the SDK command "globally" by linking within the Calypso repository with [`npm link`](https://docs.npmjs.com/cli/link). After running this command you can replace all invocations of `npm run sdk --` in the examples below with `calypso-sdk` and may do so from any other directory in the filesystem:
+Note: It's also possible to run the SDK command "globally" by linking within the Calypso repository with [`npm link`](https://docs.npmjs.com/cli/link). After running this command you can replace all invocations of `npm run sdk --` in the examples below with `muriel-sdk` and may do so from any other directory in the filesystem:
 ```
-calypso-sdk --help
+muriel-sdk --help
 ```
 
 ## SDK modules
 
-SDK can be extended with modules to perform different tasks. Currently we have only one task; build Gutenberg extensions.
+SDK can be extended with modules to perform different tasks. Currently we have two tasks; build Gutenberg extensions and Notifications client.
 
 ### Gutenberg extensions
 
@@ -39,6 +39,18 @@ These extensions live under `client/gutenberg/extensions` directory. There are s
 By default, these extensions will be built under `build` folder in the same folder with entry script.
 
 Read more from [Gutenberg extension docs](../client/gutenberg/extensions/README.md).
+
+### Notifications
+
+SDK module to build standalone notifications client.
+
+See usage instructions:
+
+```
+npm run sdk -- notifications --help
+```
+
+Read more from [Notifications docs](../client/notifications/README.md).
 
 ## Extending the SDK
 
