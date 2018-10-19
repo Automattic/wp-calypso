@@ -19,9 +19,13 @@ const PANEL_EDITOR = 'editor';
 const PANEL_PREVIEW = 'preview';
 
 class MarkdownEdit extends Component {
+	input = null;
+
 	state = {
 		activePanel: PANEL_EDITOR,
 	};
+
+	bindInput = ref => void ( this.input = ref );
 
 	componentDidUpdate( prevProps ) {
 		if (
@@ -30,6 +34,14 @@ class MarkdownEdit extends Component {
 			this.state.activePanel === PANEL_PREVIEW
 		) {
 			this.toggleMode( PANEL_EDITOR )();
+		}
+		if (
+			! prevProps.isSelected &&
+			this.props.isSelected &&
+			this.state.activePanel === PANEL_EDITOR &&
+			this.input
+		) {
+			this.input.focus();
 		}
 	}
 
@@ -84,6 +96,7 @@ class MarkdownEdit extends Component {
 						className={ `${ className }__editor` }
 						onChange={ this.updateSource }
 						aria-label={ __( 'Markdown', 'jetpack' ) }
+						innerRef={ this.bindInput }
 						value={ source }
 					/>
 				) }
