@@ -59,7 +59,7 @@ export default [
 		name: 'october25',
 		startsAt: new Date( 2018, 9, 18, 0, 0, 0 ),
 		endsAt: new Date( 2018, 9, 25, 0, 0, 0 ),
-		nudgeText: '20% Off All Plans — UPGRADE',
+		nudgeText: '20% Off All Plans',
 		ctaText: translate( 'Upgrade' ),
 		plansPageNoticeText: translate(
 			'Enter coupon code “%(coupon)s” during checkout to claim your %(discount)d%% discount.',
@@ -76,7 +76,7 @@ export default [
 		name: 'october25',
 		startsAt: new Date( 2018, 9, 25, 0, 0, 1 ),
 		endsAt: new Date( 2018, 9, 26, 0, 0, 0 ),
-		nudgeText: 'Last chance: 20% Off  — UPGRADE',
+		nudgeText: 'Last chance: 20% Off',
 		ctaText: translate( 'Upgrade' ),
 		plansPageNoticeText: translate(
 			'Enter coupon code “%(coupon)s” during checkout to claim your %(discount)d%% discount.',

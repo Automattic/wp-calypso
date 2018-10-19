@@ -3938,7 +3938,7 @@
     },
     "camelcase-keys": {
       "version": "2.1.0",
-      "resolved": "http://registry.npmjs.org/camelcase-keys/-/camelcase-keys-2.1.0.tgz",
+      "resolved": "https://registry.npmjs.org/camelcase-keys/-/camelcase-keys-2.1.0.tgz",
       "integrity": "sha1-MIvur/3ygRkFHvodkyITyRuPkuc=",
       "requires": {
         "camelcase": "^2.0.0",
@@ -12863,7 +12863,7 @@
       "dependencies": {
         "semver": {
           "version": "5.3.0",
-          "resolved": "http://registry.npmjs.org/semver/-/semver-5.3.0.tgz",
+          "resolved": "https://registry.npmjs.org/semver/-/semver-5.3.0.tgz",
           "integrity": "sha1-myzl094C0XxgEq0yaqa00M9U+U8="
         }
       }
@@ -17019,7 +17019,7 @@
     },
     "pretty-hrtime": {
       "version": "1.0.3",
-      "resolved": "http://registry.npmjs.org/pretty-hrtime/-/pretty-hrtime-1.0.3.tgz",
+      "resolved": "https://registry.npmjs.org/pretty-hrtime/-/pretty-hrtime-1.0.3.tgz",
       "integrity": "sha1-t+PqQkNaTJsnWdmeDyAesZWALuE="
     },
     "prismjs": {
