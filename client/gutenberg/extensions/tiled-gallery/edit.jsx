@@ -38,8 +38,8 @@ import TokenList from '@wordpress/token-list';
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { ALLOWED_MEDIA_TYPES, LAYOUTS, MAX_COLUMNS, DEFAULT_COLUMNS } from './constants';
+import GalleryGrid from './gallery-grid';
 import GalleryImage from './gallery-image';
-import { getLayout } from './layouts';
 
 export function defaultColumnsNumber( attributes ) {
 	return Math.min( DEFAULT_COLUMNS, attributes.images.length );
@@ -222,6 +222,8 @@ class TiledGalleryEdit extends Component {
 	}
 
 	render() {
+		const { selectedImage } = this.state;
+
 		const { attributes, isSelected, className, noticeOperations, noticeUI } = this.props;
 
 		const {
@@ -282,13 +284,26 @@ class TiledGalleryEdit extends Component {
 			);
 		}
 
-		const rows = getLayout( {
-			layout: this.state.layout,
-			columns,
-			images,
-		} );
+		const renderGalleryImage = index => {
+			if ( ! images[ index ] ) {
+				return null;
+			}
 
-		let imageIndex = 0;
+			const image = images[ index ];
+
+			return (
+				<GalleryImage
+					alt={ image.alt }
+					caption={ image.caption }
+					id={ image.id }
+					isSelected={ isSelected && selectedImage === index }
+					onRemove={ this.onRemoveImage( index ) }
+					onSelect={ this.onSelectImage( index ) }
+					setAttributes={ attrs => this.setImageAttributes( index, attrs ) }
+					url={ image.url }
+				/>
+			);
+		};
 
 		return (
 			<Fragment>
@@ -332,48 +347,12 @@ class TiledGalleryEdit extends Component {
 						[ `columns-${ columns }` ]: columns,
 					} ) }
 				>
-					{ rows.map( ( row, rowIndex ) => {
-						return (
-							<div
-								key={ `tiled-gallery-row-${ rowIndex }` }
-								className="tiled-gallery__row"
-								style={ {
-									width: row.width,
-									height: row.height,
-								} }
-							>
-								{ row.tiles.map( tile => {
-									const image = images[ imageIndex ];
-
-									const galleryItem = (
-										<div
-											className="tiled-gallery__item"
-											key={ image.id || image.url }
-											style={ {
-												width: tile.width,
-												height: tile.height,
-											} }
-										>
-											<GalleryImage
-												url={ image.url }
-												alt={ image.alt }
-												id={ image.id }
-												isSelected={ isSelected && this.state.selectedImage === imageIndex }
-												onRemove={ this.onRemoveImage( imageIndex ) }
-												onSelect={ this.onSelectImage( imageIndex ) }
-												setAttributes={ attrs => this.setImageAttributes( imageIndex, attrs ) }
-												caption={ image.caption }
-											/>
-										</div>
-									);
-
-									imageIndex++;
-
-									return galleryItem;
-								} ) }
-							</div>
-						);
-					} ) }
+					<GalleryGrid
+						columns={ columns }
+						images={ images }
+						layout={ this.state.layout }
+						renderGalleryImage={ renderGalleryImage }
+					/>
 					{ isSelected && (
 						<div className="tiled-gallery__row tiled-gallery__upload">
 							<FormFileUpload

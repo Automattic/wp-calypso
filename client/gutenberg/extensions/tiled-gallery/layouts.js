@@ -84,9 +84,6 @@ export const getLayout = ( { columns, images, layout } ) => {
 	const { getEditorSettings } = select( 'core/editor' );
 	const editorSettings = getEditorSettings();
 
-	//eslint-disable-next-line
-	console.log( '->editorSettings:', editorSettings );
-
 	const layoutOptions = {
 		columns,
 		maxWidth: editorSettings.maxWidth,

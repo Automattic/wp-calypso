@@ -4,10 +4,6 @@
  * External dependencies
  */
 import filter from 'lodash/filter';
-
-/**
- * WordPress dependencies
- */
 import { __ } from '@wordpress/i18n';
 import { createBlock, registerBlockStyle, registerBlockType } from '@wordpress/blocks';
 
