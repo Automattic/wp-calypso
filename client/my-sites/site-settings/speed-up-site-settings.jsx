@@ -98,7 +98,7 @@ class SpeedUpSiteSettings extends Component {
 									'files and images so your visitors enjoy ' +
 									'the fastest experience regardless of device or location.'
 							) }
-							link="https://jetpack.com/support/image-cdn/"
+							link="http://jetpack.com/support/site-accelerator/"
 						/>
 						<CompactFormToggle
 							checked={ !! cdnStatus }
