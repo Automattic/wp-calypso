@@ -9,6 +9,7 @@ const toArray = require('lodash/toArray')
 const toSketchPalette = require('../../utilities/to-sketch-palette')
 
 const createPaletteColors = require('../../formula')
+const foundations = require('../../foundations')
 
 const COLOR_WHITE = '#ffffff'
 const COLOR_BLACK = '#000000'
@@ -16,6 +17,7 @@ const COLOR_BLACK = '#000000'
 const input = document.getElementById('base-color')
 const output = document.getElementById('color-tiles')
 const button = document.getElementById('download-button')
+const tiles = document.getElementById('foundation-tiles')
 
 let currentBaseColor = null
 
@@ -28,6 +30,8 @@ setTimeout(init, 0)
 function init() {
   handleRandomColor()
   button.addEventListener('click', handleButtonClick, false)
+
+  handleFoundationTiles()
 }
 
 function handleColor(color) {
@@ -59,6 +63,11 @@ function handleButtonClick() {
   const name = `colors-${Date.now()}-${currentBaseColor.replace('#', '')}.sketchpalette`
 
   saveAs(blob, name)
+}
+
+function handleFoundationTiles() {
+  const html = foundations.baseColors.map(c => createColorTiles(c.value)).join('')
+  tiles.innerHTML = `<div style="background: #fff; padding: 12px">${html}</div>`
 }
 
 function createColorTiles(color) {
