@@ -2,7 +2,7 @@
 /**
  * External Dependencies
  */
-import { map, noop } from 'lodash';
+import { noop } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -27,28 +27,18 @@ export const requestRecommendedSites = action => {
 	} );
 };
 
-export const fromApi = response => {
-	if ( ! response ) {
-		return [];
-	}
-
-	return map( response.sites, site => ( {
+export const fromApi = ( { algorithm, sites } ) =>
+	sites.map( site => ( {
 		feedId: site.feed_id,
 		blogId: site.blog_id,
 		title: decodeEntities( site.blog_title ),
 		url: site.blog_url,
 		railcar: site.railcar,
-		algorithm: response.algorithm,
+		algorithm,
 	} ) );
-};
 
-export const addRecommendedSites = ( { payload: { seed, offset } }, response ) => {
-	if ( ! response.sites ) {
-		return;
-	}
-
-	return receiveRecommendedSites( { sites: response, seed, offset } );
-};
+export const addRecommendedSites = ( { payload: { seed, offset } }, sites ) =>
+	receiveRecommendedSites( { sites, seed, offset } );
 
 registerHandlers( 'state/data-layer/wpcom/read/recommendations/sites/index.js', {
 	[ READER_RECOMMENDED_SITES_REQUEST ]: [
