@@ -2,6 +2,7 @@
 	"env": "development",
 	"env_id": "test",
 	"client_slug": "browser",
+	"protocol": "http",
 	"hostname": "calypso.localhost",
 	"port": 3000,
 	"i18n_default_locale_slug": "en",
