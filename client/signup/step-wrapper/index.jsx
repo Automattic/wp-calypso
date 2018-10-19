@@ -15,6 +15,7 @@ import { indexOf } from 'lodash';
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
 import FlowProgressIndicator from 'signup/flow-progress-indicator';
+import Testimonial from 'signup/testimonial';
 import flows from 'signup/config/flows';
 
 class StepWrapper extends Component {
@@ -111,34 +112,6 @@ class StepWrapper extends Component {
 		return flows.getFlow( this.props.flowName ).steps.length;
 	}
 
-	testimonial() {
-		const { translate } = this.props;
-		return (
-			<div className="step-wrapper__testimonial">
-				<div className="step-wrapper__testimonial-image">
-					<img src="/calypso/images/signup/debperlman.jpg" alt="" />
-				</div>
-				<div className="step-wrapper__testimonial-content">
-					{ translate(
-						'“I love having a place where I can share what I’m working on in an immediate way and have a conversation with people who are equally excited about it.”'
-					) }
-				</div>
-				<div className="step-wrapper__testimonial-author">
-					{ translate(
-						'{{spanName}}Deb Perlman{{/spanName}}, {{spanSite}}smittenkitchen.com{{/spanSite}}',
-						{
-							components: {
-								spanName: <span className="step-wrapper__testimonial-name" />,
-								spanSite: <span className="step-wrapper__testimonial-site" />,
-							},
-							comment: 'Customer name with comma, followed by domain name',
-						}
-					) }
-				</div>
-			</div>
-		);
-	}
-
 	render() {
 		const {
 			stepContent,
@@ -173,7 +146,7 @@ class StepWrapper extends Component {
 					</FormattedHeader>
 				) }
 
-				{ 'about' === stepName || 'user' === stepName ? this.testimonial() : null }
+				{ 'about' === stepName || 'user' === stepName ? <Testimonial /> : null }
 
 				<div className="step-wrapper__content is-animated-content">
 					{ stepContent }
