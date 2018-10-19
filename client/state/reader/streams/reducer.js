@@ -72,7 +72,7 @@ export const items = ( state = [], action ) => {
 			return combineXPosts( newState );
 
 		case READER_STREAMS_SHOW_UPDATES:
-			return [ ...action.payload.items, ...state ];
+			return combineXPosts( [ ...action.payload.items, ...state ] );
 		case READER_DISMISS_POST: {
 			const postKey = action.payload.postKey;
 			const indexToRemove = findIndex( state, item => keysAreEqual( item, postKey ) );
@@ -81,9 +81,9 @@ export const items = ( state = [], action ) => {
 				return state;
 			}
 
-			const newState = [ ...state ];
-			newState[ indexToRemove ] = newState.pop(); // set the dismissed post location to the last item from the recs stream
-			return newState;
+			const updatedState = [ ...state ];
+			updatedState[ indexToRemove ] = updatedState.pop(); // set the dismissed post location to the last item from the recs stream
+			return updatedState;
 		}
 	}
 	return state;
