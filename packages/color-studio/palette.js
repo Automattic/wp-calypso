@@ -11,7 +11,6 @@ const PALETTE_COLORS = FOUNDATIONS.baseColors.map(color => {
   return createPaletteColors(color.value, color.name)
 })
 
-const SKETCH_PALETTE_ROW_COUNT = 8
 const SCSS_VARIABLE_PREFIX = '$wpc'
 
 console.log(printPalette(PALETTE_COLORS, process.argv[2]))
@@ -30,22 +29,8 @@ function printPalette(palette, type) {
 }
 
 function convertToSketchPalette(palette) {
-  const colors = []
-
-  palette.forEach(colorArray => {
-    let colorArrayChunks = _(splitColorsByType(colorArray))
-      .map(a => _.chunk(a, SKETCH_PALETTE_ROW_COUNT))
-      .flatten()
-      .reverse()
-      .value()
-
-    if (colorArrayChunks.length === 4) {
-      colorArrayChunks = [2, 0, 3, 1].map(i => colorArrayChunks[i])
-    }
-
-    _(colorArrayChunks)
-      .flatten()
-      .each(c => colors.push(c.color))
+  const colors = _.flatten(palette).map(colorObject => {
+    return colorObject.color
   })
 
   return toSketchPalette(colors, {
@@ -76,7 +61,7 @@ function convertToRGBA(colorValue) {
 }
 
 function convertToSCSS(palette) {
-  const printedColorArrays = _.flatten(skipWhiteColors(palette).map(splitColorsByType))
+  const printedColorArrays = _.flatten(palette.map(splitColorsByType))
   printedColorArrays.unshift([{ color: '#fff', name: 'white' }])
 
   const printedColorArray = printedColorArrays.map(colorArray => {
@@ -88,7 +73,7 @@ function convertToSCSS(palette) {
 }
 
 function convertToJSON(palette) {
-  const printedColorArray = _.flatten(skipWhiteColors(palette)).map(colorObject => {
+  const printedColorArray = _.flatten(palette).map(colorObject => {
     const index = colorObject.index
     const indexLength = String(index).replace(/\D/g, '').length
     const printedIndex = _.repeat(0, Math.max(3 - indexLength, 0)) + index
@@ -121,12 +106,6 @@ function convertToJSON(palette) {
   }
 
   return printJSON(jsonPalette)
-}
-
-function skipWhiteColors(palette) {
-  return palette.map(paletteRow => {
-    return paletteRow.filter(c => formatHex(c.color) !== '#fff')
-  })
 }
 
 function formatColorVariable(colorObject) {

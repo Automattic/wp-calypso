@@ -90,7 +90,7 @@ function createPaletteColors(baseColor, baseColorName = '') {
   const colors = mergePaletteShades(correctedBrightShades, correctedDarkShades)
 
   const standardPalette = colors.map((color, index) => {
-    const colorIndex = index * 10
+    const colorIndex = (index + 1) * 10
     const colorObject = {
       color,
       index: colorIndex,
@@ -105,31 +105,12 @@ function createPaletteColors(baseColor, baseColorName = '') {
     return colorObject
   })
 
-  const auxiliaryPalette = standardPalette.map(colorObject => {
-    const color = chroma(colorObject.color).desaturate(1).hex()
-
-    return Object.assign({}, colorObject, {
-      color,
-      distance: chroma.distance(colorObject.color, color),
-      auxiliary: true
-    })
-  })
-
-  const distantAuxiliaryPalette = auxiliaryPalette.filter(colorObject => {
-    return colorObject.distance > 10
-  })
-
-  if (distantAuxiliaryPalette.length > 0) {
-    return standardPalette.concat(auxiliaryPalette)
-  }
   return standardPalette
 }
 
 function mergePaletteShades(brightShades, darkShades) {
   const shades = [].concat(brightShades)
   shades.length -= 1
-  shades.unshift(chroma(COLOR_WHITE).hex())
-
   return shades.concat(darkShades)
 }
 

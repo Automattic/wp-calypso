@@ -62,7 +62,7 @@ function handleButtonClick() {
 }
 
 function createColorTiles(color) {
-  const colors = createPaletteColors(color).filter(c => c.index > 0)
+  const colors = createPaletteColors(color)
 
   const defaultColors = colors.filter(c => !c.auxiliary)
   const auxiliaryColors = colors.filter(c => c.auxiliary)
@@ -104,20 +104,15 @@ function activateTiles(scope = document) {
 }
 
 function createColorTile(colorObject) {
+  /* eslint-disable-next-line no-unused-vars */
   const { index, color, base, auxiliary } = colorObject
 
   const printedIndex = join([index, auxiliary ? 'A' : ''])
   const [primaryTextColor, secondaryTextColor] = determineTextColors(color, auxiliary)
 
-  const tileClassNames = join([
-    'tile',
-    base ? 'tile--base' : '',
-    auxiliary ? 'tile--auxiliary' : 'tile--standard'
-  ], ' ')
-
   /* eslint-disable indent */
   return join([
-    `<div class="${tileClassNames} text-center" style="background: ${color}; color: ${primaryTextColor}" data-color="${color}">`,
+    `<div class="tile text-center" style="background: ${color}; color: ${primaryTextColor}" data-color="${color}">`,
       `<div class="tile__title font-weight-bold">`,
         printedIndex,
       '</div>',
