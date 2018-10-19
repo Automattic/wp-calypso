@@ -12,22 +12,22 @@ import { registerBlockType } from '@wordpress/blocks';
  * Internal dependencies
  */
 
-import { CONFIG } from './config.js';
+import { settings } from './settings.js';
 import edit from './edit';
 import save from './save';
 
 import './style.scss';
 import './editor.scss';
 
-registerBlockType( CONFIG.name, {
-	title: CONFIG.title,
-	icon: CONFIG.icon,
-	category: CONFIG.category,
-	keywords: CONFIG.keywords,
-	attributes: CONFIG.attributes,
+registerBlockType( settings.name, {
+	title: settings.title,
+	icon: settings.icon,
+	category: settings.category,
+	keywords: settings.keywords,
+	attributes: settings.attributes,
 	getEditWrapperProps( attributes ) {
 		const { align } = attributes;
-		if ( -1 !== CONFIG.validAlignments.indexOf( align ) ) {
+		if ( -1 !== settings.validAlignments.indexOf( align ) ) {
 			return { 'data-align': align };
 		}
 	},

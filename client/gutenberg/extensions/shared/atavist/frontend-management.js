@@ -25,7 +25,7 @@ export class FrontendManagement {
 	}
 
 	initializeFrontendReactBlocks( component, options = {}, rootNode ) {
-		const { name, attributes } = options.config;
+		const { name, attributes } = options.settings;
 		const { selector } = options;
 		const blockClass = [ '.wp-block', name.replace('/', '-') ].join( '-' );
 		rootNode

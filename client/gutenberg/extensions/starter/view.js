@@ -4,7 +4,7 @@
 
 import './style.scss';
 import component from './component.js';
-import { CONFIG } from './config.js';
+import { settings } from './settings.js';
 import FrontendManagement from 'gutenberg/extensions/shared/atavist/frontend-management.js';
 
 window.addEventListener( 'load', function() {
@@ -16,9 +16,7 @@ window.addEventListener( 'load', function() {
 	frontendManagement.blockIterator( document, [
 		{
 			component: component,
-			options: {
-				config: CONFIG,
-			},
+			options: { settings },
 		},
 	] );
 } );

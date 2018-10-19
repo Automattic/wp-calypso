@@ -8,8 +8,6 @@ This is a starter template for blocks built around a React component. Functional
 
 `component.js` is the React component that is rendered in the editor and the view. All view logic goes here.
 
-`config.js` contains all the basic information for the block, including title, keywords, and attributes. Any other constants should be defined here.
-
 `edit.js` is the complete Gutenberg edit() function.
 
 `editor.scss` is the stylesheet that will be used only in the editor. This typically contains almost no styles, since `view.scss` is also included in the editor environment.
@@ -17,6 +15,8 @@ This is a starter template for blocks built around a React component. Functional
 `index.js` is just the Gutenberg initialization - registerBlockType(). This example includes `getEditWrapperProps` but its not required.
 
 `save.js` is the complete Gutenberg save() function.
+
+`settings.js` contains all the basic information for the block, including title, keywords, and attributes. Any other constants should be defined here.
 
 `style.scss` is the stylesheet that will be used in editor and view. Nearly all of the styles associated with the block belong here.
 
