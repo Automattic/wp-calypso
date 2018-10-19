@@ -7977,9 +7977,9 @@
       }
     },
     "flag-icon-css": {
-      "version": "3.2.0",
-      "resolved": "https://registry.npmjs.org/flag-icon-css/-/flag-icon-css-3.2.0.tgz",
-      "integrity": "sha512-XwbQgswfJ19jVrYL92+MKK3HJfIG+6lC8oifaG6mOtahWaXHbDFXQ7UVbw1+I+zidM1azOD8aFC0DO+xZzK0Xg=="
+      "version": "3.2.1",
+      "resolved": "https://registry.npmjs.org/flag-icon-css/-/flag-icon-css-3.2.1.tgz",
+      "integrity": "sha512-0t7zPm2crM2cBIm3epZQ+EmiHuzgFNTTSMUMkWlrztDDGL+y31D+eY8zaB9zYCzJGAsn4KEMAKY+jCU1mt9jwg=="
     },
     "flat-cache": {
       "version": "1.3.0",
