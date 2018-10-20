@@ -16,24 +16,24 @@ export class InfoWindow extends Component {
 		const { google } = this.props;
 		this.el = document.createElement( 'DIV' );
 		this.infowindow = new google.maps.InfoWindow( {
-      		content: this.el
-    	} );
-    	google.maps.event.addListener( this.infowindow,'closeclick', this.closeClick );
+			content: this.el
+		} );
+		google.maps.event.addListener( this.infowindow,'closeclick', this.closeClick );
 	}
 	componentDidUpdate( prevProps ) {
-	    if ( this.props.activeMarker !== prevProps.activeMarker ) {
-      		this.props.activeMarker ?
-        		this.openWindow() :
-        		this.closeWindow();
-    	}
+		if ( this.props.activeMarker !== prevProps.activeMarker ) {
+			this.props.activeMarker ?
+				this.openWindow() :
+				this.closeWindow();
+		}
 	}
 	render() {
 		// Use React portal to render components directly into the Google Maps info window.
 		return this.el ?
 			createPortal(
-		    	this.props.children,
-		    	this.el,
-		    ) : null;
+				this.props.children,
+				this.el,
+			) : null;
 
 	}
 	closeClick = () => {
@@ -41,7 +41,7 @@ export class InfoWindow extends Component {
 	}
 	openWindow() {
 		this.infowindow
-      		.open( this.props.map, this.props.activeMarker.marker );
+			.open( this.props.map, this.props.activeMarker.marker );
 	}
 	closeWindow() {
 		this.infowindow.close();
