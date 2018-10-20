@@ -89,6 +89,7 @@ import pushNotifications from './push-notifications/reducer';
 import reader from './reader/reducer';
 import receipts from './receipts/reducer';
 import { rewindReducer as rewind } from './rewind';
+import selectedEditor from './selected-editor/reducer';
 import sharing from './sharing/reducer';
 import shortcodes from './shortcodes/reducer';
 import signup from './signup/reducer';
@@ -183,6 +184,7 @@ const reducers = {
 	reader,
 	receipts,
 	rewind,
+	selectedEditor,
 	sharing,
 	shortcodes,
 	signup,

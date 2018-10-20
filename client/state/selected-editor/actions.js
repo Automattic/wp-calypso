@@ -9,7 +9,7 @@
  */
 import { EDITOR_TYPE_SET } from 'state/action-types';
 
-export const setSiteEditor = ( siteId, editor ) => ( {
+export const setSelectedEditor = ( siteId, editor ) => ( {
 	type: EDITOR_TYPE_SET,
 	siteId,
 	editor,
