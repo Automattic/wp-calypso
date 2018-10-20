@@ -11,10 +11,36 @@ import {
  * Internal dependencies
  */
 
+ import { loadScript } from './load-script';
+
 export class Chart extends Component {
 	constructor() {
 		super( ...arguments );
 		this.state = {};
+	}
+	componentDidMount() {
+		this.loadMultipleLibraries( [
+			'https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js',
+			'https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.js',
+		], this.initialize );
+	}
+	loadMultipleLibraries( libraries, callback ) {
+		const status = [];
+		libraries.forEach( ( library ) => {
+			status.push( library );
+			loadScript( library, error => {
+				if ( error ) {
+					return;
+				}
+				status.splice( 0, 1 );
+				if ( status.length === 0 ) {
+					callback();
+				}
+			} );
+		} );
+	}
+	initialize = () => {
+
 	}
 	render() {
 		const {
