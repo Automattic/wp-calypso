@@ -5,12 +5,12 @@
  */
 import { setType, receiveEditorTypeError } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { setSiteEditor } from 'state/sites/editor/actions';
+import { setSelectedEditor } from 'state/selected-editor/actions';
 import { EDITOR_TYPE_SET } from 'state/action-types';
 
 describe( 'setType()', () => {
 	test( 'should dispatch a http request', () => {
-		const action = setSiteEditor( 123, 'gutenberg' );
+		const action = setSelectedEditor( 123, 'gutenberg' );
 		const output = setType( action );
 		expect( output ).toEqual(
 			http(
