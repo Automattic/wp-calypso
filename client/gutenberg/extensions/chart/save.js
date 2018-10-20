@@ -16,12 +16,16 @@ import classnames from 'classnames';
 class ChartSave extends Component {
 	render() {
 		const {
+			attributes,
 			className,
-			attributes
 		} = this.props;
 		const {
-			foo,
-			align
+			align,
+			chart_type,
+			googlesheet_url,
+			number_format,
+			x_axis_label,
+			y_axis_label,
 		} = attributes;
 		const classes = classnames(
 			className,
@@ -30,7 +34,11 @@ class ChartSave extends Component {
 		return (
 			<div
 				className={ classes }
-				data-foo={ foo }
+				data-googlesheet_url={ googlesheet_url }
+				data-x_axis_label={ x_axis_label }
+				data-y_axis_label={ y_axis_label }
+				data-chart_type={ chart_type }
+				data-number_format={ number_format }
 			/>
 		);
 	}
