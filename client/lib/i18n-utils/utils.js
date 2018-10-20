@@ -170,6 +170,9 @@ const localesWithPrivacyPolicy = [ 'en', 'fr', 'de' ];
 const localesWithCookiePolicy = [ 'en', 'fr', 'de' ];
 
 const setLocalizedUrlHost = ( hostname, validLocales = [] ) => ( urlParts, localeSlug ) => {
+	if ( typeof validLocales === 'string' ) {
+		validLocales = config( validLocales );
+	}
 	if ( validLocales.includes( localeSlug ) ) {
 		urlParts.host = `${ localesToSubdomains[ localeSlug ] || localeSlug }.${ hostname }`;
 	}
@@ -177,6 +180,9 @@ const setLocalizedUrlHost = ( hostname, validLocales = [] ) => ( urlParts, local
 };
 
 const prefixLocalizedUrlPath = ( validLocales = [] ) => ( urlParts, localeSlug ) => {
+	if ( typeof validLocales === 'string' ) {
+		validLocales = config( validLocales );
+	}
 	if ( validLocales.includes( localeSlug ) ) {
 		urlParts.pathname = localeSlug + urlParts.pathname;
 	}
@@ -189,13 +195,10 @@ const urlLocalizationMapping = {
 	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', localesForJetpackCom ),
 	'en.support.wordpress.com': setLocalizedUrlHost(
 		'support.wordpress.com',
-		config( 'support_site_locales' )
+		'support_site_locales'
 	),
 	'en.blog.wordpress.com': setLocalizedUrlHost( 'blog.wordpress.com', localesWithBlog ),
-	'en.forums.wordpress.com': setLocalizedUrlHost(
-		'forums.wordpress.com',
-		config( 'forum_locales' )
-	),
+	'en.forums.wordpress.com': setLocalizedUrlHost( 'forums.wordpress.com', 'forum_locales' ),
 	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
 	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),
 };
