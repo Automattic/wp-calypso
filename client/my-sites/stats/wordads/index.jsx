@@ -8,6 +8,7 @@ import page from 'page';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, numberFormat } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -71,7 +72,7 @@ class WordAds extends Component {
 
 	formatCurrency = value => {
 		return '$' + numberFormat( value, 2 );
-	}
+	};
 
 	render() {
 		const { date, site, siteId, slug, translate } = this.props;
@@ -144,7 +145,7 @@ class WordAds extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
-				<div id="my-stats-content">
+				<div id="my-stats-content" className="wordads">
 					<WordAdsChartTabs
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
@@ -156,6 +157,10 @@ class WordAds extends Component {
 					<StickyPanel className="stats__sticky-navigation">
 						<StatsPeriodNavigation
 							date={ queryDate }
+							hidePreviousArrow={
+								( 'day' === period || 'week' === period ) &&
+								moment( queryDate ).isSameOrBefore( '2018-10-01' )
+							} // @TODO is there a more elegant way to do this? Similar to in_array() for php?
 							hideNextArrow={ yesterday === queryDate }
 							period={ period }
 							url={ `/stats/wordads/${ period }/${ slug }` }

@@ -92,10 +92,11 @@ class Chart extends React.Component {
 
 	getYAxisMax = values => {
 		const max = Math.max.apply( null, values );
-		const operand = Math.pow( 10, Math.floor( max ).toString().length - 1 );
-		const rounded = Math.ceil( ( max + 1 ) / operand ) * operand;
 
-		return Math.max( 10, rounded );
+		const unit = max < 1 ? 0.1 : Math.pow( 10, Math.floor( max ).toString().length - 1 );
+		const numberOfUnits = Math.ceil( max / unit );
+
+		return unit * numberOfUnits;
 	};
 
 	storeChart = ref => ( this.chart = ref );
@@ -158,8 +159,12 @@ class Chart extends React.Component {
 				</div>
 				<div className="chart__y-axis">
 					<div className="chart__y-axis-width-fix">{ numberFormat( 100000 ) }</div>
-					<div className="chart__y-axis-label is-hundred">{ numberFormat( yMax ) }</div>
-					<div className="chart__y-axis-label is-fifty">{ numberFormat( yMax / 2 ) }</div>
+					<div className="chart__y-axis-label is-hundred">
+						{ yMax > 1 ? numberFormat( yMax ) : numberFormat( yMax, 2 ) }
+					</div>
+					<div className="chart__y-axis-label is-fifty">
+						{ yMax > 1 ? numberFormat( yMax / 2 ) : numberFormat( yMax / 2, 2 ) }
+					</div>
 					<div className="chart__y-axis-label is-zero">{ numberFormat( 0 ) }</div>
 				</div>
 				<BarContainer

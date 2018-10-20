@@ -1,0 +1,9 @@
+.wordads {
+	.stats-tabs {
+		.stats-tab {
+			@include breakpoint( ">480px" ) {
+				width: 33.33%;
+			}
+		}
+	}
+}
