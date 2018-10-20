@@ -35,7 +35,6 @@ export class FrontendManagement {
 				render( el, selector ? node.querySelector( selector ) : node );
 			} )
 	}
-
 	extractAttributesFromContainer( dataset, attributes ) {
 		const data = {};
 		for ( const name in attributes ) {
@@ -54,23 +53,21 @@ export class FrontendManagement {
 		}
 		return data;
 	}
-
 	extractChildrenFromContainer( node ) {
-    	const children = [];
-    	node.childNodes.forEach( childNode => children.push( childNode ) );
-    	return children.map( child => {
-      		const attr = {};
-      		for ( let i = 0; i < child.attributes.length; i++ ) {
-	        	const attribute = child.attributes[ i ];
-	          	attr[ attribute.nodeName ] = attribute.nodeValue
-	      	}
-	      	attr.dangerouslySetInnerHTML = {
-	        	__html: child.innerHTML
-	      	};
-	      	return createElement( child.tagName.toLowerCase(), attr );
-    	} );
-  	}
-
+		const children = [];
+		node.childNodes.forEach( childNode => children.push( childNode ) );
+		return children.map( child => {
+			const attr = {};
+			for ( let i = 0; i < child.attributes.length; i++ ) {
+				const attribute = child.attributes[ i ];
+				attr[ attribute.nodeName ] = attribute.nodeValue
+			}
+			attr.dangerouslySetInnerHTML = {
+				__html: child.innerHTML
+			};
+			return createElement( child.tagName.toLowerCase(), attr );
+		} );
+	}
 }
 
 export default FrontendManagement;
