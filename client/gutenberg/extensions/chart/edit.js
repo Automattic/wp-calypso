@@ -92,6 +92,8 @@ class ChartEdit extends Component {
 						number_format={ number_format }
 						x_axis_label={ x_axis_label }
 						y_axis_label={ y_axis_label }
+						admin={ true }
+						align={ align }
 					 />
 				</div>
 			</Fragment>

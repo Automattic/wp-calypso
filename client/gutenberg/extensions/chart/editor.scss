@@ -1,1 +1,19 @@
-.wp-block-atavist-chart {}
+.wp-block-atavist-chart {
+	padding-top: 2rem;
+	.top-legend .legend-label {
+		font-family: "Atlas Grotesk Web";
+	}
+	.chart-title {
+		font-size: 1.2em;
+	}
+	.c3 svg,
+	.top-legend {
+		font-size: 0.8em;
+	}
+	.c3 svg, .c3-tooltip {
+		font-family: 'Atlas Grotesk Web', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	}
+	.atavist-chart-wrapper.atavist-cover-text-color {
+		color: rgb(88,88,88);
+	}
+}

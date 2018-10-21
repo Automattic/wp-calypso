@@ -39,6 +39,7 @@ class ChartSave extends Component {
 				data-y_axis_label={ y_axis_label }
 				data-chart_type={ chart_type }
 				data-number_format={ number_format }
+				data-align={ align }
 			/>
 		);
 	}
