@@ -79,7 +79,7 @@ export default [
 		nudgeText: 'Last chance: 20% Off',
 		ctaText: translate( 'Upgrade' ),
 		plansPageNoticeText: translate(
-			'Enter coupon code “%(coupon)s” during checkout to claim your %(discount)d%% discount.',
+			'Sale ends today! Enter coupon code “%(coupon)s” during checkout to claim your %(discount)d%% discount.',
 			{
 				args: {
 					coupon: 'OCTOBER20',
