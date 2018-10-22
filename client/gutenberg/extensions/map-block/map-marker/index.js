@@ -1,9 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
  */
 
 import { Component } from '@wordpress/element';
-
 
 /**
  * Internal dependencies
@@ -24,28 +25,20 @@ export class MapMarker extends Component {
 	handleClick = () => {
 		const { onClick } = this.props;
 		onClick( this );
-	}
+	};
 	renderMarker() {
-		const {
-			map,
-			point,
-			google,
-			icon
-		} = this.props;
+		const { map, point, google, icon } = this.props;
 
 		const { handleClick } = this;
 
-		const position = new google.LatLng(
-			point.coordinates.latitude,
-			point.coordinates.longitude
-		);
+		const position = new google.LatLng( point.coordinates.latitude, point.coordinates.longitude );
 
 		if ( this.marker ) {
 			this.marker.setPosition( position );
 			this.marker.setIcon( icon );
 		} else {
 			this.marker = new google.Marker( { position, map, icon } );
-			this.marker.addListener( 'click',  handleClick );
+			this.marker.addListener( 'click', handleClick );
 		}
 	}
 	render() {
@@ -58,7 +51,7 @@ MapMarker.defaultProps = {
 	map: null,
 	icon: null,
 	google: null,
-	onClick: () => {}
-}
+	onClick: () => {},
+};
 
 export default MapMarker;

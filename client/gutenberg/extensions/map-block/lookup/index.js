@@ -1,36 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
  */
 
 import { Component } from '@wordpress/element';
-import {
-	__,
-	_n,
-	sprintf
-} from '@wordpress/i18n';
-import {
-	withInstanceId,
-	compose
-} from '@wordpress/compose';
-import {
-	ENTER,
-	ESCAPE,
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-} from '@wordpress/keycodes';
-import {
-	Button,
-	Popover,
-	withFocusOutside,
-	withSpokenMessages
-} from '@wordpress/components';
+import { __, _n, sprintf } from '@wordpress/i18n';
+import { withInstanceId, compose } from '@wordpress/compose';
+import { ENTER, ESCAPE, UP, DOWN, LEFT, RIGHT } from '@wordpress/keycodes';
+import { Button, Popover, withFocusOutside, withSpokenMessages } from '@wordpress/components';
 import classnames from 'classnames';
-import {
-	map,
-	debounce
-} from 'lodash';
+import { map, debounce } from 'lodash';
 
 function filterOptions( options = [], maxResults = 10 ) {
 	const filtered = [];
@@ -55,16 +35,13 @@ function filterOptions( options = [], maxResults = 10 ) {
 }
 
 export class Lookup extends Component {
-
 	static getInitialState() {
-
 		return {
 			selectedIndex: 0,
 			query: undefined,
 			filteredOptions: [],
-			isOpen: false
+			isOpen: false,
 		};
-
 	}
 
 	constructor() {
@@ -74,37 +51,29 @@ export class Lookup extends Component {
 	}
 
 	componentWillUnmount() {
-
 		this.debouncedLoadOptions.cancel();
 	}
 
-	select = ( option ) => {
-
+	select = option => {
 		const { completer } = this.props;
 		const getOptionCompletion = completer.getOptionCompletion || {};
 		getOptionCompletion( option );
 		this.reset();
-
-	}
+	};
 
 	reset = () => {
-
 		this.setState( this.constructor.getInitialState() );
-
-	}
+	};
 
 	handleFocusOutside() {
-
 		this.reset();
-
 	}
 
 	loadOptions( completer, query ) {
-
 		const { options } = completer;
-		const promise = this.activePromise = Promise.resolve(
+		const promise = ( this.activePromise = Promise.resolve(
 			typeof options === 'function' ? options( query ) : options
-		).then( ( optionsData ) => {
+		).then( optionsData => {
 			if ( promise !== this.activePromise ) {
 				// Another promise has become active since this one was asked to resolve, so do nothing,
 				// or else we might end triggering a race condition updating the state.
@@ -114,22 +83,23 @@ export class Lookup extends Component {
 				key: `${ optionIndex }`,
 				value: optionData,
 				label: completer.getOptionLabel( optionData ),
-				keywords: completer.getOptionKeywords ? completer.getOptionKeywords( optionData ) : []
+				keywords: completer.getOptionKeywords ? completer.getOptionKeywords( optionData ) : [],
 			} ) );
 
 			const filteredOptions = filterOptions( keyedOptions );
-			const selectedIndex = filteredOptions.length === this.state.filteredOptions.length ? this.state.selectedIndex : 0;
+			const selectedIndex =
+				filteredOptions.length === this.state.filteredOptions.length ? this.state.selectedIndex : 0;
 			this.setState( {
 				[ 'options' ]: keyedOptions,
 				filteredOptions,
 				selectedIndex,
-				isOpen: filteredOptions.length > 0
+				isOpen: filteredOptions.length > 0,
 			} );
 			this.announce( filteredOptions );
-		} );
+		} ) );
 	}
 
-	onChange = ( query ) => {
+	onChange = query => {
 		const { completer } = this.props;
 		const { options } = this.state;
 
@@ -150,9 +120,9 @@ export class Lookup extends Component {
 		if ( completer ) {
 			this.setState( { selectedIndex: 0, filteredOptions, query } );
 		}
-	}
+	};
 
-	onKeyDown = ( event ) => {
+	onKeyDown = event => {
 		const { isOpen, selectedIndex, filteredOptions } = this.state;
 		if ( ! isOpen ) {
 			return;
@@ -187,24 +157,29 @@ export class Lookup extends Component {
 		// the early return in the default case.
 		event.preventDefault();
 		event.stopPropagation();
-	}
+	};
 	announce( filteredOptions ) {
 		const { debouncedSpeak } = this.props;
 		if ( ! debouncedSpeak ) {
 			return;
 		}
 		if ( !! filteredOptions.length ) {
-			debouncedSpeak( sprintf( _n(
-				'%d result found, use up and down arrow keys to navigate.',
-				'%d results found, use up and down arrow keys to navigate.',
-				filteredOptions.length
-			), filteredOptions.length ), 'assertive' );
+			debouncedSpeak(
+				sprintf(
+					_n(
+						'%d result found, use up and down arrow keys to navigate.',
+						'%d results found, use up and down arrow keys to navigate.',
+						filteredOptions.length
+					),
+					filteredOptions.length
+				),
+				'assertive'
+			);
 		} else {
 			debouncedSpeak( __( 'No results.', 'jetpack' ), 'assertive' );
 		}
 	}
 	render() {
-
 		const { onChange, onKeyDown } = this;
 		const { children, instanceId, completer } = this.props;
 		const { selectedIndex, filteredOptions } = this.state;
@@ -212,11 +187,11 @@ export class Lookup extends Component {
 		const { className } = completer;
 		const isExpanded = filteredOptions.length > 0;
 		const listBoxId = isExpanded ? `components-autocomplete-listbox-${ instanceId }` : null;
-		const activeId = isExpanded ? `components-autocomplete-item-${ instanceId }-${ selectedKey }` : null;
+		const activeId = isExpanded
+			? `components-autocomplete-item-${ instanceId }-${ selectedKey }`
+			: null;
 		return (
-			<div
-				className="components-autocomplete"
-			>
+			<div className="components-autocomplete">
 				{ children( { isExpanded, listBoxId, activeId, onChange, onKeyDown } ) }
 				{ isExpanded && (
 					<Popover
@@ -226,11 +201,7 @@ export class Lookup extends Component {
 						className="components-autocomplete__popover"
 						noArrow
 					>
-						<div
-							id={ listBoxId }
-							role="listbox"
-							className="components-autocomplete__results"
-						>
+						<div id={ listBoxId } role="listbox" className="components-autocomplete__results">
 							{ map( filteredOptions, ( option, index ) => (
 								<Button
 									key={ option.key }
