@@ -40,7 +40,7 @@ class ActivityDescription extends Component {
 		);
 	}
 
-	getPlanTextDescription() {
+	getPlainTextDescription() {
 		const {
 			activity: { activityDescription },
 		} = this.props;
@@ -49,9 +49,7 @@ class ActivityDescription extends Component {
 		if ( this.isRewindCredentialError() ) {
 			return this.getRewindCredentialErrorMessage();
 		}
-		/* There is no great way to generate a more valid React key here
-        * but the index is probably sufficient because these sub-items
-        * shouldn't be changing. */
+
 		return activityDescription
 			.map( part => {
 				return part.children
@@ -78,7 +76,7 @@ class ActivityDescription extends Component {
 		return (
 			<div
 				className="activity-log-item__description-content"
-				data-e2e-activity={ this.getPlanTextDescription() }
+				data-e2e-activity={ this.getPlainTextDescription() }
 			>
 				{ /* There is no great way to generate a more valid React key here
 					 * but the index is probably sufficient because these sub-items
