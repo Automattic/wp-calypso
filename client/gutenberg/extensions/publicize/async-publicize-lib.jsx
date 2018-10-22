@@ -12,7 +12,7 @@
 /**
  * External Dependencies
  */
-import wp from 'wp';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Module variables
@@ -55,12 +55,8 @@ export function getStaticPublicizeConnections() {
  * @return {Promise} Promise for connection request.
  */
 export function requestPublicizeConnections( postId ) {
-	return wp.apiRequest( {
+	return apiFetch( {
 		path: '/publicize/posts/' + postId.toString() + '/connections',
-		contentType: 'application/json',
-		dataType: 'json',
-		processData: false,
-		method: 'GET',
 	} );
 }
 
