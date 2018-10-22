@@ -42,6 +42,6 @@ const dispatchEditorTypeRequest = dispatchRequestEx( {
 	onError: receiveEditorTypeError,
 } );
 
-registerHandlers( 'state/data-layer/wpcom/gutenberg/index.js', {
+registerHandlers( 'state/data-layer/wpcom/sites/gutenberg/index.js', {
 	[ EDITOR_TYPE_SET ]: [ dispatchEditorTypeRequest ],
 } );
