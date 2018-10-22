@@ -13,7 +13,7 @@ import config from 'config';
 import { abtest } from 'lib/abtest';
 
 jest.mock( 'lib/user', () => null );
-jest.mock( 'lib/user/index', () => null );
+jest.mock( 'lib/user/index', () => () => {} );
 jest.mock( 'lib/analytics/index', () => null );
 jest.mock( 'lib/abtest', () => ( {
 	abtest: jest.fn( () => {
