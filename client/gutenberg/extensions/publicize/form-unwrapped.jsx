@@ -100,7 +100,7 @@ class PublicizeFormUnwrapped extends Component {
 			<div className="misc-pub-section misc-pub-section-last">
 				<div id="publicize-form">
 					<ul>
-						{staticConnections.map( c =>
+						{ staticConnections.map( c =>
 							<PublicizeConnection
 								connectionData={ c }
 								key={ c.unique_id }
