@@ -32,5 +32,5 @@ registerBlockType( 'a8c/simple-payment', {
 		</div>
 	),
 
-	save: x => x,
+	save: () => null,
 } );
