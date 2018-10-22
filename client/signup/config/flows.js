@@ -12,6 +12,7 @@ import i18n from 'i18n-calypso';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
+import { abtest } from 'lib/abtest';
 import { generateFlows } from './flows-pure';
 
 const user = userFactory();
@@ -220,8 +221,9 @@ const Flows = {
 	 */
 	getABTestFilteredFlow( flowName, flow ) {
 		// Only do this on the main flow
-		// if ( 'main' === flowName ) {
-		// }
+		if ( 'main' === flowName ) {
+			return Flows.getFlows()[ abtest( 'improvedOnboarding' ) ] || flow;
+		}
 
 		return flow;
 	},
