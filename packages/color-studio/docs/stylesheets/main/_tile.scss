@@ -4,7 +4,6 @@
   padding: 2.15em 0;
   font-size: 0.65em;
   text-align: center;
-  text-transform: uppercase;
   overflow: hidden;
   transition: 0.15s ease-out;
   transition-property: border-radius, box-shadow, transform;
@@ -34,10 +33,6 @@
 
 .tile--500 {
   flex: 1.5;
-}
-
-.tile__title {
-  font-size: 1.15em;
 }
 
 .tile__meta {

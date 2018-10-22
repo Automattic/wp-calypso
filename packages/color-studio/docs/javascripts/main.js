@@ -65,7 +65,7 @@ function makeDownloadable(colors) {
 
 function handleFoundationTiles() {
   output.innerHTML = foundations.baseColors
-    .map(c => createColorTiles(c.value, true))
+    .map(c => createColorTiles(c.value, c.name, true))
     .join('')
 
   activateTiles(output)
@@ -96,8 +96,8 @@ function handleRandomColor() {
   handleColor(color)
 }
 
-function createColorTiles(color, pad) {
-  const colors = createPaletteColors(color)
+function createColorTiles(color, name, pad) {
+  const colors = createPaletteColors(color, name)
   const html = colors.map(createColorTile).join('')
   return `<div class="d-flex bg-white${pad ? ' pt-1' : ''}">${html}</div>`
 }
@@ -131,16 +131,17 @@ function activateTiles(scope = document) {
 }
 
 function createColorTile(colorObject) {
-  const { index, color } = colorObject
+  const { index, color, name } = colorObject
 
   const [primaryTextColor, secondaryTextColor] = determineTextColor(color)
   const className = `tile tile--${index} text-center`
+  const title = name && index === 500 ? `${name} ${index}` : index
 
   /* eslint-disable indent */
   return [
     `<div class="${className}" style="background: ${color}; color: ${primaryTextColor}" data-color="${color}">`,
       `<div class="tile__title font-weight-bold">`,
-        index,
+        title,
       '</div>',
       `<div class="tile__meta text-uppercase" style="color: ${secondaryTextColor}">`,
         color,
