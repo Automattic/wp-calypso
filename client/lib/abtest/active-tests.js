@@ -1,5 +1,13 @@
 /** @format */
 export default {
+	improvedSignupFlow: {
+		datestamp: '20190808',
+		variations: {
+			main: 90,
+			onboarding: 10,
+		},
+		defaultVariation: 'main',
+	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
