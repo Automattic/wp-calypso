@@ -1,0 +1,140 @@
+
+.jetpack-field-label {
+	&.jetpack-field-label {
+		&.jetpack-field-label {
+			border-color: #fff;
+			border-radius: 0;
+			font-weight: bold;
+			margin: 0;
+			margin-bottom: 2px;
+			width: calc( 100% - 100px );
+
+			&:hover {
+				border-color: #357CB5;
+			}
+
+			&:focus {
+				border-color: #E3E5E8;
+				box-shadow: none;
+			}
+		}
+	}
+}
+
+.jetpack-field input:disabled,
+.jetpack-field textarea:disabled {
+	border-color: #8d96a0;
+	padding: 10px 8px;
+}
+
+.jetpack-form {
+	.components-base-control * {
+		margin: 0;
+	}
+
+	span.required {
+		float: right;
+	}
+}
+
+.editor-block-list__block {
+	&[data-type="jetpack/field-checkbox-multiple"],
+	&[data-type="jetpack/field-radio"],
+	&[data-type="jetpack/field-select"] {
+		ol {
+			list-style-type: none;
+
+			&:empty {
+				display: none;
+			}
+		}
+	}
+
+	&[data-type="jetpack/field-checkbox-multiple"] ol li:before {
+		content: '☐ ';
+		display: inline-block;
+		font-size: 28px;
+		line-height: 1;
+    	position: relative;
+    	top: 2px;
+	}
+
+	&[data-type="jetpack/field-radio"] ol li:before {
+		content: '🔘 ';
+		display: inline-block;
+		line-height: 1;
+    	position: relative;
+    	top: 2px;
+	}
+
+	&[data-type="jetpack/field-select"] {
+		ol {
+			border: 1px solid #8d96a0;
+			border-radius: 4px;
+			padding: 4px;
+		}
+	}
+
+	ol li button.components-icon-button {
+		display: inline-flex;
+		float: right;
+		padding: 6px;
+		vertical-align: bottom;
+	}
+
+	input.option {
+		border-color: #fff;
+		border-radius: 0;
+		width: calc( 100% - 5em );
+		display: inline-block;
+
+		&:hover {
+			border-color: #357CB5;
+		}
+
+		&:focus {
+			border-color: #E3E5E8;
+			box-shadow: none;
+		}
+	}
+
+	input.components-checkbox-control__input {
+		border-color: #191E23;
+		margin: 0 5px 0 2px;
+	}
+
+	.block-list-appender__toggle {
+		background-color: #f7f7f7;
+		display: none;
+		margin: 32px auto;
+		width: calc(100% - 32px);
+
+		&:hover {
+			outline: 1px solid #555d66;
+		}
+	}
+}
+
+.editor-block-list__block.is-selected,
+.editor-block-list__block.is-selected-parent {
+	
+	.block-list-appender__toggle {
+		display: block;
+	}
+}
+
+.jetpack-submit-button {
+	padding: 5px;
+	&.jetpack-submit-button .components-text-control__input {
+		background: transparent;
+		border: none;
+		outline: none;
+		text-align: center;
+		color: #fff;
+
+		&:focus,
+		&::placeholder {
+			color: #fff;
+		}
+	}
+}
