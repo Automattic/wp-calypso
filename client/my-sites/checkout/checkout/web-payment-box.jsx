@@ -56,14 +56,15 @@ export function detectWebPaymentMethod() {
 		return null;
 	}
 
-	if ( config.isEnabled( 'my-sites/checkout/web-payment/apple-pay' ) &&
+	if (
+		config.isEnabled( 'my-sites/checkout/web-payment/apple-pay' ) &&
 		window.ApplePaySession &&
-		window.ApplePaySession.canMakePayments() ) {
+		window.ApplePaySession.canMakePayments()
+	) {
 		return WEB_PAYMENT_APPLE_PAY_METHOD;
 	}
 
-	if ( config.isEnabled( 'my-sites/checkout/web-payment/basic-card' ) &&
-		window.PaymentRequest ) {
+	if ( config.isEnabled( 'my-sites/checkout/web-payment/basic-card' ) && window.PaymentRequest ) {
 		return WEB_PAYMENT_BASIC_CARD_METHOD;
 	}
 
@@ -145,9 +146,12 @@ export class WebPaymentBox extends React.Component {
 			PAYMENT_REQUEST_OPTIONS
 		);
 
+		const environment = 'production' === config( 'env' ) ? undefined : 'sandbox';
+
 		paymentRequest.onmerchantvalidation = merchantValidationEvent => {
-			wpcom.undocumented()
-				.applePayMerchantValidation( merchantValidationEvent.validationURL )
+			wpcom
+				.undocumented()
+				.applePayMerchantValidation( merchantValidationEvent.validationURL, environment )
 				.then( json => {
 					console.log( json );
 
