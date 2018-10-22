@@ -21,6 +21,8 @@ import {
 	dismissRewindRestoreProgress,
 	dismissRewindBackupProgress,
 } from 'state/activity-log/actions';
+import { getSelectedSite } from 'state/ui/selectors';
+import getRewindCloneDestinationSiteName from 'state/selectors/get-rewind-clone-destination-site-name';
 
 /**
  * Normalize timestamp values
@@ -75,15 +77,18 @@ class SuccessBanner extends PureComponent {
 	render() {
 		const {
 			applySiteOffset,
+			destinationSiteName,
 			moment,
 			siteUrl,
 			timestamp,
 			translate,
 			backupUrl,
 			context,
+			selectedSite,
 			trackHappyChatBackup,
 			trackHappyChatRestore,
 		} = this.props;
+
 		const date = applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' );
 		const params = backupUrl
 			? {
@@ -108,7 +113,8 @@ class SuccessBanner extends PureComponent {
 			: {
 					title:
 						'alternate' === context
-							? translate( 'Your site has been successfully cloned' )
+							? selectedSite.name +
+							  translate( ' has successfully been cloned to ' + destinationSiteName )
 							: translate( 'Your site has been successfully rewound' ),
 					icon: 'history',
 					track: (
@@ -119,7 +125,7 @@ class SuccessBanner extends PureComponent {
 					),
 					taskFinished:
 						'alternate' === context
-							? translate( 'We successfully cloned your site to the state as of %(date)s!', {
+							? translate( 'Please take a moment to visit your site and take a look around.', {
 									args: { date },
 							  } )
 							: translate( 'We successfully rewound your site back to %(date)s!', {
@@ -164,7 +170,9 @@ class SuccessBanner extends PureComponent {
 
 export default connect(
 	( state, { siteId } ) => ( {
+		destinationSiteName: getRewindCloneDestinationSiteName( state, siteId ),
 		siteUrl: getSiteUrl( state, siteId ),
+		selectedSite: getSelectedSite( state, siteId ),
 	} ),
 	{
 		dismissRestoreProgress: dismissRewindRestoreProgress,
