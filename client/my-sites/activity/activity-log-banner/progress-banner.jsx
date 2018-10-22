@@ -56,10 +56,11 @@ function ProgressBanner( {
 	switch ( action ) {
 		case 'restore':
 			if ( 'alternate' === context ) {
+				const siteName = destinationSiteName ? destinationSiteName : translate( 'a new host' );
 				title = translate( 'Currently cloning your site' );
 				description = translate(
-					"We're cloning your site to %(destinationSiteName)s. You'll be notified once it's complete.",
-					{ args: { destinationSiteName } }
+					"We're cloning your site to %(siteName)s. You'll be notified once it's complete.",
+					{ args: { siteName } }
 				);
 				statusMessage =
 					'queued' === status
