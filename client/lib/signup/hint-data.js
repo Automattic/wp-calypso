@@ -260,7 +260,7 @@ export const hints = {
 	'Financial consultant': i18n.translate( 'Financial consultant' ),
 	'Financial services': i18n.translate( 'Financial services' ),
 	'Fine art': i18n.translate( 'Fine art' ),
-	'Fine dining': i18n.translate( 'Fine dining' ),
+	'Fine dining restaurant': i18n.translate( 'Fine dining restaurant' ),
 	'First nations': i18n.translate( 'First nations' ),
 	Fishing: i18n.translate( 'Fishing' ),
 	Fitness: i18n.translate( 'Fitness' ),
