@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -30,19 +32,19 @@ class MapEdit extends Component {
 		};
 		this.mapRef = createRef();
 	}
-	addPoint = ( point ) => {
+	addPoint = point => {
 		const { attributes, setAttributes } = this.props;
 		const { points } = attributes;
 		const newPoints = points.slice( 0 );
 		newPoints.push( point );
 		setAttributes( { points: newPoints } );
 		this.setState( { addPointVisibility: false } );
-	}
-	updateAlignment = ( value ) => {
+	};
+	updateAlignment = value => {
 		this.props.setAttributes( { align: value } );
 		// Allow one cycle for alignment change to take effect
 		setTimeout( this.mapRef.current.sizeMap, 0 );
-	}
+	};
 	render() {
 		const { className, setAttributes, attributes } = this.props;
 		const { map_style, points, zoom, map_center, marker_color, align } = attributes;

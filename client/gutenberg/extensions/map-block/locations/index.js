@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,7 +10,7 @@ import {
 	Panel,
 	PanelBody,
 	TextareaControl,
-	TextControl
+	TextControl,
 } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 
@@ -19,66 +21,57 @@ import { Component } from '@wordpress/element';
 import './style.scss';
 
 export class Locations extends Component {
-
 	constructor() {
 		super( ...arguments );
 		this.state = {
-			selectedCell: null
+			selectedCell: null,
 		};
 	}
 
-	onDeletePoint = ( e ) => {
+	onDeletePoint = e => {
 		const index = parseInt( e.target.getAttribute( 'data-id' ) );
-		const {
-			points,
-			onChange
-		} = this.props;
+		const { points, onChange } = this.props;
 
 		const newPoints = points.slice( 0 );
 		newPoints.splice( index, 1 );
 		onChange( newPoints );
-	}
+	};
 
 	setMarkerField( field, value, index ) {
-		const {
-			points,
-			onChange
-		} = this.props;
+		const { points, onChange } = this.props;
 
 		const newPoints = points.slice( 0 );
-		newPoints[index][field] = value;
+		newPoints[ index ][ field ] = value;
 		onChange( newPoints );
 	}
 
 	render() {
 		const { points } = this.props;
-		const rows = points.map( ( point, index ) =>
+		const rows = points.map( ( point, index ) => (
 			<PanelBody title={ point.place_title } key={ point.place_id } initialOpen={ false }>
 				<TextControl
 					label="Marker Title"
 					value={ point.title }
-					onChange={ ( title ) => this.setMarkerField( 'title', title, index ) }
+					onChange={ title => this.setMarkerField( 'title', title, index ) }
 				/>
 				<TextareaControl
 					label="Marker Caption"
 					value={ point.caption }
-					rows='3'
-					onChange={ ( caption ) => this.setMarkerField( 'caption', caption, index ) }
+					rows="3"
+					onChange={ caption => this.setMarkerField( 'caption', caption, index ) }
 				/>
 				<Button
 					data-id={ index }
 					onClick={ this.onDeletePoint }
 					className="component__locations__delete-btn"
 				>
-					<Dashicon icon='trash' size='15' /> Delete Marker
+					<Dashicon icon="trash" size="15" /> Delete Marker
 				</Button>
 			</PanelBody>
-		);
+		) );
 		return (
-			<div className='component__locations'>
-				<Panel className='component__locations__panel'>
-					{ rows }
-				</Panel>
+			<div className="component__locations">
+				<Panel className="component__locations__panel">{ rows }</Panel>
 			</div>
 		);
 	}
@@ -86,7 +79,7 @@ export class Locations extends Component {
 
 Locations.defaultProps = {
 	points: Object.freeze( [] ),
-	onChange: () => {}
+	onChange: () => {},
 };
 
 export default Locations;

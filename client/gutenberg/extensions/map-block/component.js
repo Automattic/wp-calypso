@@ -1,23 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
  */
 
 import { __ } from '@wordpress/i18n';
-import {
-	Component,
-	createRef,
-	Fragment
-} from '@wordpress/element';
-import {
-	Button,
-	Dashicon,
-	TextareaControl,
-	TextControl
-} from '@wordpress/components';
-import {
-	get,
-	assign
-} from 'lodash';
+import { Component, createRef, Fragment } from '@wordpress/element';
+import { Button, Dashicon, TextareaControl, TextControl } from '@wordpress/components';
+import { get, assign } from 'lodash';
 
 /**
  * Internal dependencies
@@ -87,20 +77,20 @@ export class Map extends Component {
 					admin && (
 						<Fragment>
 							<TextControl
-								label={ __( "Marker Title", "jetpack" ) }
+								label={ __( 'Marker Title', 'jetpack' ) }
 								value={ title }
 								onChange={ value => updateActiveMarker( { title: value } ) }
 							/>
 							<TextareaControl
 								className="wp-block-atavist-maps__marker-caption"
-								label={ __( "Marker Caption", "jetpack" ) }
+								label={ __( 'Marker Caption', 'jetpack' ) }
 								value={ caption }
 								rows="3"
 								tag="textarea"
 								onChange={ value => updateActiveMarker( { caption: value } ) }
 							/>
 							<Button onClick={ deleteActiveMarker } className="wp-block-atavist-maps__delete-btn">
-								<Dashicon icon="trash" size="15" /> { __( "Delete Marker", "jetpack" ) }
+								<Dashicon icon="trash" size="15" /> { __( 'Delete Marker', 'jetpack' ) }
 							</Button>
 						</Fragment>
 					) }

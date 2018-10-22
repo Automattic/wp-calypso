@@ -1,3 +1,5 @@
+/** @format */
+
 .component__add-point {
 	position: absolute;
 	left: 50%;
@@ -12,11 +14,12 @@
 	text-indent: -9999px;
 	box-shadow: none;
 	background-color: transparent;
-	&.components-button:not(:disabled):not([aria-disabled=true]):focus {
+	&.components-button:not( :disabled ):not( [aria-disabled='true'] ):focus {
 		background-color: transparent;
 		box-shadow: none;
 	}
-	&:focus, &:active {
+	&:focus,
+	&:active {
 		background-color: transparent;
 		box-shadow: none;
 	}
@@ -24,10 +27,10 @@
 .component__add-point__popover {
 	// Default z-index for components-popover places it above Edit Post Header and Notices
 	&.components-popover,
-	&.components-popover:not(.is-mobile).is-bottom {
+	&.components-popover:not( .is-mobile ).is-bottom {
 		z-index: 20;
 	}
-	.components-button:not(:disabled):not([aria-disabled=true]):focus {
+	.components-button:not( :disabled ):not( [aria-disabled='true'] ):focus {
 		background-color: transparent;
 		box-shadow: none;
 	}
