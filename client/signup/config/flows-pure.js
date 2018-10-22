@@ -277,6 +277,13 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		lastModified: '2017-01-19',
 	};
 
+	flows.private = {
+		steps: [ 'user', 'site' ],
+		destination: getSiteDestination,
+		description: 'Test private site signup',
+		lastModified: '2018-10-22',
+	};
+
 	if ( config.isEnabled( 'signup/import-landing-handler' ) ) {
 		flows.import = {
 			steps: [ 'from-url', 'user', 'domains' ],
