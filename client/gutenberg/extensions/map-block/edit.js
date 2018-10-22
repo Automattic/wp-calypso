@@ -60,7 +60,7 @@ class MapEdit extends Component {
 					</Toolbar>
 				</BlockControls>
 				<InspectorControls>
-					<PanelBody title={ __( 'Map Theme' ) }>
+					<PanelBody title={ __( 'Map Theme', 'jetpack' ) }>
 						<MapThemePicker
 							value={ map_style }
 							onChange={ value => {
@@ -70,7 +70,7 @@ class MapEdit extends Component {
 						/>
 					</PanelBody>
 					<PanelColorSettings
-						title={ __( 'Colors' ) }
+						title={ __( 'Colors', 'jetpack' ) }
 						initialOpen={ true }
 						colorSettings={ [
 							{
@@ -81,7 +81,7 @@ class MapEdit extends Component {
 						] }
 					/>
 					{ points.length ? (
-						<PanelBody title={ __( 'Markers' ) }>
+						<PanelBody title={ __( 'Markers', 'jetpack' ) }>
 							<Locations
 								points={ points }
 								onChange={ value => {

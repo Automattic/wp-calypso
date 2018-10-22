@@ -26,7 +26,7 @@ export class AddPoint extends Component {
 			<Button
 				className='component__add-point'
 			>
-				{ __( 'Add marker' ) }
+				{ __( 'Add marker', 'jetpack' ) }
 				<Popover className='component__add-point__popover'>
 					<Button
 						className='component__add-point__close'
@@ -36,7 +36,7 @@ export class AddPoint extends Component {
 					</Button>
 					<LocationSearch
 						onAddPoint={ onAddPoint }
-						label={ __( 'Add a location' ) }
+						label={ __( 'Add a location', 'jetpack' ) }
 					/>
 				</Popover>
 			</Button>

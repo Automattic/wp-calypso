@@ -2,6 +2,7 @@
  * External dependencies
  */
 
+import { __ } from '@wordpress/i18n';
 import {
 	Component,
 	createRef,
@@ -86,20 +87,20 @@ export class Map extends Component {
 					admin && (
 						<Fragment>
 							<TextControl
-								label="Marker Title"
+								label={ __( "Marker Title", "jetpack" ) }
 								value={ title }
 								onChange={ value => updateActiveMarker( { title: value } ) }
 							/>
 							<TextareaControl
 								className="wp-block-atavist-maps__marker-caption"
-								label="Marker Caption"
+								label={ __( "Marker Caption", "jetpack" ) }
 								value={ caption }
 								rows="3"
 								tag="textarea"
 								onChange={ value => updateActiveMarker( { caption: value } ) }
 							/>
 							<Button onClick={ deleteActiveMarker } className="wp-block-atavist-maps__delete-btn">
-								<Dashicon icon="trash" size="15" /> Delete Marker
+								<Dashicon icon="trash" size="15" /> { __( "Delete Marker", "jetpack" ) }
 							</Button>
 						</Fragment>
 					) }

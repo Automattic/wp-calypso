@@ -18,7 +18,7 @@ import {
 
 import Lookup from '../lookup';
 
-const placeholderText = __( 'Add a marker...' );
+const placeholderText = __( 'Add a marker...', 'jetpack' );
 
 export class LocationSearch extends Component {
 
