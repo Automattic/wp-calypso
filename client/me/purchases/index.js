@@ -10,6 +10,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import * as billingController from 'me/billing-history/controller';
+import * as pendingController from 'me/pending-payments/controller';
 import * as membershipsController from 'me/memberships/controller';
 import * as controller from './controller';
 import * as paths from './paths';
@@ -40,6 +41,17 @@ export default function( router ) {
 		makeLayout,
 		clientRender
 	);
+
+	if ( config.isEnabled( 'async-payments' ) ) {
+		router(
+			paths.purchasesRoot + '/pending',
+			redirectLoggedOut,
+			sidebar,
+			pendingController.pendingPayments,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	if ( config.isEnabled( 'memberships' ) ) {
 		router(
