@@ -10,13 +10,13 @@ import { __ } from '@wordpress/i18n';
 
 export const settings = {
 	name: 'atavist/maps',
-	title: __( 'Map' ),
+	title: __( 'Map', 'jetpack' ),
 	icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/><path d="M0 0h24v24H0z" fill="none"/></svg>,
 	category: 'common',
 	keywords: [
-		__( 'map' ),
-		__( 'jetpack' ),
-		__( 'atavist' )
+		__( 'map', 'jetpack' ),
+		__( 'jetpack', 'jetpack' ),
+		__( 'atavist', 'jetpack' )
 	],
 	attributes: {
 		align: {
@@ -296,27 +296,27 @@ export const settings = {
 	map_styleOptions: [
 		{
 			value: 'default',
-			label: 'Basic'
+			label: __( 'Basic', 'jetpack' )
 		},
 		{
 			value: 'black_and_white',
-			label: 'Black and white'
+			label: __( 'Black and white', 'jetpack' )
 		},
 		{
 			value: 'satellite',
-			label: 'Satellite'
+			label: __( 'Satellite', 'jetpack' )
 		},
 		{
 			value: 'satellite_with_features',
-			label: 'Satellite (with features)'
+			label: __( 'Satellite (with features)', 'jetpack' )
 		},
 		{
 			value: 'terrain',
-			label: 'Terrain'
+			label: __( 'Terrain', 'jetpack' )
 		},
 		{
 			value: 'terrain_with_features',
-			label: 'Terrain (with features)'
+			label: __( 'Terrain (with features)', 'jetpack' )
 		}
 	],
 	GOOGLE_MAPS_API_KEY: 'AIzaSyDaj7klnWKpzGx0W5PonA73Dgr68Me8cyg',

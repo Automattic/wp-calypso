@@ -200,7 +200,7 @@ export class Lookup extends Component {
 				filteredOptions.length
 			), filteredOptions.length ), 'assertive' );
 		} else {
-			debouncedSpeak( __( 'No results.' ), 'assertive' );
+			debouncedSpeak( __( 'No results.', 'jetpack' ), 'assertive' );
 		}
 	}
 	render() {
