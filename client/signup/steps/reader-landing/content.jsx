@@ -17,8 +17,42 @@ class ReaderLandingStepContent extends PureComponent {
 		return (
 			<div className="reader-landing__step-content">
 				<Button primary={ true } type="submit" onClick={ onButtonClick }>
-					{ translate( 'Continue' ) }
+					{ translate( 'Start using the Reader' ) }
 				</Button>
+
+				<section className="reader-landing__features">
+					<div className="reader-landing__feature">
+						<div className="reader-landing__feature-image-placeholder" />
+						<div className="reader-landing__feature-detail">
+							<h2>Discover new content</h2>
+							<p>blah</p>
+						</div>
+					</div>
+
+					<div className="reader-landing__feature">
+						<div className="reader-landing__feature-image-placeholder" />
+						<div className="reader-landing__feature-detail">
+							<h2>Discover new content</h2>
+							<p>blah</p>
+						</div>
+					</div>
+
+					<div className="reader-landing__feature">
+						<div className="reader-landing__feature-image-placeholder" />
+						<div className="reader-landing__feature-detail">
+							<h2>Discover new content</h2>
+							<p>blah</p>
+						</div>
+					</div>
+
+					<div className="reader-landing__feature">
+						<div className="reader-landing__feature-image-placeholder" />
+						<div className="reader-landing__feature-detail">
+							<h2>Discover new content</h2>
+							<p>blah</p>
+						</div>
+					</div>
+				</section>
 			</div>
 		);
 	}
