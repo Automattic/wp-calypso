@@ -20,7 +20,6 @@ import apiFetch from '@wordpress/api-fetch';
 const {
 	gutenberg_publicize_setup,
 	ajaxurl,
-	$,
 } = window;
 
 /**
@@ -84,5 +83,9 @@ export function getAllConnections() {
  * @return {object} List of possible services that can be connected to
  */
 export function requestTestPublicizeConnections() {
-	return $.post( ajaxurl, { action: 'test_publicize_conns' } );
+	return apiFetch( {
+		body: { action: 'test_publicize_conns' },
+		method: 'POST',
+		url: ajaxurl,
+	} );
 }
