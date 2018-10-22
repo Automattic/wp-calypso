@@ -38,7 +38,7 @@ describe( 'conversation-follow', () => {
 					},
 				};
 			};
-			requestConversationFollow( { dispatch, getState }, action );
+			requestConversationFollow( action )( dispatch, getState );
 			expect( dispatch ).toHaveBeenCalledWith(
 				http(
 					{
@@ -55,28 +55,22 @@ describe( 'conversation-follow', () => {
 
 	describe( 'receiveConversationFollow', () => {
 		test( 'should dispatch a success notice', () => {
-			const dispatch = jest.fn();
-			receiveConversationFollow(
-				{ dispatch },
+			const result = receiveConversationFollow(
 				{
 					payload: { siteId: 123, postId: 456 },
 					meta: { previousState: CONVERSATION_FOLLOW_STATUS.muting },
 				},
 				{ success: true }
 			);
-			expect( dispatch ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					notice: expect.objectContaining( {
-						status: 'is-success',
-					} ),
-				} )
-			);
+			expect( result ).toMatchObject( {
+				notice: {
+					status: 'is-success',
+				},
+			} );
 		} );
 
 		test( 'should revert to the previous follow state if it fails', () => {
-			const dispatch = jest.fn();
-			receiveConversationFollow(
-				{ dispatch },
+			const result = receiveConversationFollow(
 				{
 					payload: { siteId: 123, postId: 456 },
 					meta: { previousState: CONVERSATION_FOLLOW_STATUS.muting },
@@ -85,14 +79,12 @@ describe( 'conversation-follow', () => {
 					success: false,
 				}
 			);
-			expect( dispatch ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					notice: expect.objectContaining( {
-						status: 'is-error',
-					} ),
-				} )
-			);
-			expect( dispatch ).toHaveBeenCalledWith(
+			expect( result[ 0 ] ).toMatchObject( {
+				notice: {
+					status: 'is-error',
+				},
+			} );
+			expect( result[ 1 ] ).toMatchObject(
 				bypassDataLayer(
 					updateConversationFollowStatus( {
 						siteId: 123,
