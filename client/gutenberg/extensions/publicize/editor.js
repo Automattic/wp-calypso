@@ -20,9 +20,9 @@ import { registerStore } from '@wordpress/data';
 /**
  * Internal dependencies
  */
+import JetpackLogo from 'components/jetpack-logo';
 import PublicizePanel from './panel';
 import publicizeStore from './gutenberg-store';
-import JetpackLogo from 'components/jetpack-logo';
 
 const PluginRender = () => (
 	<Fragment>

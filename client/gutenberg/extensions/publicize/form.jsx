@@ -11,8 +11,8 @@
 /**
  * External dependencies
  */
-import { compose } from '@wordpress/compose';
 import isNil from 'lodash/isNil';
+import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 
 /**

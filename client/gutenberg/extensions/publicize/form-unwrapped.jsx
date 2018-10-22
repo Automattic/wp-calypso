@@ -16,9 +16,9 @@
  * External dependencies
  */
 import classnames from 'classnames';
+import isNil from 'lodash/isNil';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
-import isNil from 'lodash/isNil';
 
 /**
  * Internal dependencies
