@@ -34,7 +34,7 @@
     "precommit": "yarn lint && yarn build && yarn studio && git add --update",
     "studio": "yarn studio:build",
     "studio:build": "webpack --display=errors-only",
-    "studio:development": "open docs/index.html && webpack --watch --mode=development"
+    "studio:development": "webpack --watch --mode=development"
   },
   "xo": {
     "ignores": [

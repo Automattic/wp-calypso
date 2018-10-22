@@ -8,9 +8,7 @@ function createPaletteColors(baseColor, baseColorName = '') {
   const brightShades = createBrightShades(baseColor)
   const darkShades = createDarkShades(baseColor)
 
-  const colors = mergePaletteShades(brightShades, darkShades)
-
-  const standardPalette = colors.map((color, index) => {
+  const palette = mergePaletteShades(brightShades, darkShades).map((color, index) => {
     const colorIndex = (index * 100) || 50
     const colorObject = {
       color,
@@ -26,7 +24,7 @@ function createPaletteColors(baseColor, baseColorName = '') {
     return colorObject
   })
 
-  return standardPalette
+  return palette
 }
 
 function createBrightShades(baseColor) {
@@ -38,7 +36,7 @@ function createBrightShades(baseColor) {
 }
 
 function createDarkShades(baseColor) {
-  const shade900 = chroma(baseColor).darken(2).desaturate(1)
+  const shade900 = chroma(baseColor).darken(1.85).desaturate(1)
   const colors = chroma.scale([baseColor, shade900]).mode('lch').colors(5)
   return colors
 }

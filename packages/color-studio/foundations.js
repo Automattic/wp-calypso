@@ -21,8 +21,12 @@ module.exports = {
       value: '#df762f'
     },
     {
+      name: 'Yellow',
+      value: '#dbb21b'
+    },
+    {
       name: 'Green',
-      value: '#049f70'
+      value: '#049f76'
     }
   ],
 

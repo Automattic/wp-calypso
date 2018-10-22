@@ -1,7 +1,6 @@
 /* eslint-env browser */
 
 const chroma = require('chroma-js')
-const compact = require('lodash/compact')
 const copyToClipboard = require('copy-text-to-clipboard')
 const flatten = require('lodash/flatten')
 const round = require('lodash/round')
@@ -14,25 +13,27 @@ const foundations = require('../../foundations')
 
 const COLOR_WHITE = '#ffffff'
 const COLOR_BLACK = '#000000'
+const SKETCH_COLOR_PICKER_ROW_COUNT = 8
 
 const input = document.getElementById('base-color')
 const output = document.getElementById('color-tiles')
 const button = document.getElementById('download-button')
-const tiles = document.getElementById('foundation-tiles')
 
 let currentBaseColor = null
-
-input.addEventListener('input', event => {
-  handleColor(String(event.target.value).trim())
-})
 
 setTimeout(init, 0)
 
 function init() {
-  handleColor(input.value)
-  button.addEventListener('click', handleButtonClick, false)
-
-  handleFoundationTiles()
+  if (!input) {
+    handleFoundationTiles()
+    handleFoundationButton()
+  } else {
+    button.addEventListener('click', handleButtonClick)
+    input.addEventListener('input', event => {
+      handleColor(String(event.target.value).trim())
+    })
+    handleRandomColor()
+  }
 }
 
 function handleColor(color) {
@@ -48,29 +49,56 @@ function handleColor(color) {
 }
 
 function handleButtonClick() {
-  if (!currentBaseColor) {
-    return
+  if (currentBaseColor) {
+    const colors = createPaletteColors(currentBaseColor).map(c => c.color)
+    makeDownloadable(colors)
   }
+}
 
-  const colors = createPaletteColors(currentBaseColor).map(c => c.color)
+function makeDownloadable(colors) {
   const contents = toSketchPalette(colors)
   const blob = new Blob([contents], { type: 'text/plain;charset=utf-8' })
-  const name = `colors-${Date.now()}-${currentBaseColor.replace('#', '')}.sketchpalette`
+  const name = `colors-${Date.now()}.sketchpalette`
 
   saveAs(blob, name)
 }
 
 function handleFoundationTiles() {
-  tiles.innerHTML = foundations.baseColors
+  output.innerHTML = foundations.baseColors
     .map(c => createColorTiles(c.value, true))
     .join('')
 
-  activateTiles(tiles)
+  activateTiles(output)
+}
+
+function handleFoundationButton() {
+  const palettes = foundations.baseColors.map(color => {
+    const palette = createPaletteColors(color.value).map(colorObject => {
+      return colorObject.color
+    })
+
+    while (palette.length % SKETCH_COLOR_PICKER_ROW_COUNT > 0) {
+      palette.unshift(COLOR_WHITE)
+    }
+
+    return palette
+  })
+
+  const colors = flatten(palettes)
+  button.addEventListener('click', () => {
+    makeDownloadable(colors)
+  })
+}
+
+function handleRandomColor() {
+  const color = chroma.random().hex()
+  input.value = color
+  handleColor(color)
 }
 
 function createColorTiles(color, pad) {
   const colors = createPaletteColors(color)
-  const html = join(colors.map(createColorTile))
+  const html = colors.map(createColorTile).join('')
   return `<div class="d-flex bg-white${pad ? ' pt-1' : ''}">${html}</div>`
 }
 
@@ -109,7 +137,7 @@ function createColorTile(colorObject) {
   const className = `tile tile--${index} text-center`
 
   /* eslint-disable indent */
-  return join([
+  return [
     `<div class="${className}" style="background: ${color}; color: ${primaryTextColor}" data-color="${color}">`,
       `<div class="tile__title font-weight-bold">`,
         index,
@@ -117,16 +145,14 @@ function createColorTile(colorObject) {
       `<div class="tile__meta text-uppercase" style="color: ${secondaryTextColor}">`,
         color,
       '</div>',
-      `<div class="tile__meta text-uppercase" style="color: ${secondaryTextColor}">`,
-        round(chroma.contrast(color, COLOR_WHITE), 2),
+      `<div class="tile__meta tile__meta--tiny text-uppercase" style="color: ${secondaryTextColor}">`,
+        '<span title="Contrast / Saturation / Lightness">',
+          getColorProperties(color),
+        '</span>',
       '</div>',
     '</div>'
-  ])
+  ].join('')
   /* eslint-enable indent */
-}
-
-function join(html, delimiter = '') {
-  return compact(flatten(html)).join(delimiter).trim()
 }
 
 function determineTextColor(backgroundColor) {
@@ -144,4 +170,15 @@ function determineTextColor(backgroundColor) {
   }
 
   return [color, fadeColor(color)]
+}
+
+function getColorProperties(colorValue) {
+  const color = chroma(colorValue)
+  const numbers = [
+    chroma.contrast(colorValue, COLOR_WHITE),
+    color.get('hsl.s'),
+    color.get('hsl.l')
+  ]
+
+  return numbers.map(n => round(n, 2)).join(' / ')
 }

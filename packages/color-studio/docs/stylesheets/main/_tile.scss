@@ -23,11 +23,11 @@
     z-index: 1;
     border-radius: 4px;
     box-shadow: 0 0 36px rgba(#000, 0.35);
-    transform: scale(1.15);
+    transform: scale(1.25);
   }
 
   &:active {
-    transform: scale(1.125);
+    transform: scale(1.195);
     transition: none;
   }
 }
@@ -42,4 +42,8 @@
 
 .tile__meta {
   font-size: 0.85em;
+}
+
+.tile__meta--tiny {
+  font-size: 0.65em;
 }
