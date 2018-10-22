@@ -13,10 +13,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { DEFAULT_HEARTBEAT } from 'components/data/query-site-stats/constants';
 import compareProps from 'lib/compare-props';
 import Chart from 'components/chart';
 import Legend from 'components/chart/legend';
-import StatTabs from '../stats-tabs';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import Card from 'components/card';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -26,6 +26,7 @@ import { QUERY_FIELDS } from 'state/stats/chart-tabs/constants';
 import { getSiteOption } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { buildChartData, getQueryDate } from './utility';
+import StatTabs from '../stats-tabs';
 
 class StatModuleChartTabs extends Component {
 	static propTypes = {
@@ -60,14 +61,15 @@ class StatModuleChartTabs extends Component {
 		onChangeLegend: PropTypes.func.isRequired,
 	};
 
+	intervalId = null;
+
 	componentDidMount() {
-		this.props.query && this.props.requestChartCounts( this.props.query );
+		this.props.query && this.startQueryInterval();
 	}
 
 	componentDidUpdate( prevProps ) {
-		// TODO: Implement update logic
 		if ( this.props.query && prevProps.queryKey !== this.props.queryKey ) {
-			this.props.requestChartCounts( this.props.query );
+			this.startQueryInterval();
 		}
 	}
 
@@ -88,6 +90,15 @@ class StatModuleChartTabs extends Component {
 		);
 		this.props.onChangeLegend( activeLegend );
 	};
+
+	startQueryInterval() {
+		// NOTE: Unpredictable behavior will arise if DEFAULT_HEARTBEAT < request duration!
+		Number.isFinite( this.intervalId ) && clearInterval( this.intervalId );
+		this.makeQuery();
+		this.intervalId = setInterval( this.makeQuery, DEFAULT_HEARTBEAT );
+	}
+
+	makeQuery = () => this.props.requestChartCounts( this.props.query );
 
 	render() {
 		const { isActiveTabLoading } = this.props;
