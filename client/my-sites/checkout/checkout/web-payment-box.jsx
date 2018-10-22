@@ -18,8 +18,8 @@ import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
 import TermsOfService from './terms-of-service';
 import cartValues from 'lib/cart-values';
 import wpcom from 'lib/wp';
-//import { newCardPayment } from 'lib/store-transactions';
-//import { setPayment } from 'lib/upgrades/actions';
+import { newCardPayment } from 'lib/store-transactions';
+import { setPayment } from 'lib/upgrades/actions';
 
 /**
  * Web Payment method identifier.
@@ -290,20 +290,16 @@ export class WebPaymentBox extends React.Component {
 									'postal-code': billingAddress.postalCode,
 								};
 
-								console.log( cardRawDetails );
-
-								//this.props.transaction.payment = newCardPayment( cardRawDetails );
+								this.props.transaction.payment = newCardPayment( cardRawDetails );
 
 								paymentResponse.complete();
 
 								return this.props.transaction.payment;
 							} )
-							/*
-						.then( transactionPayment => {
-							setPayment( transactionPayment );
-							this.props.onSubmit( event );
-						} )
-						*/
+							.then( transactionPayment => {
+								setPayment( transactionPayment );
+								this.props.onSubmit( event );
+							} )
 							.catch( error => {
 								console.error( error );
 							} );
