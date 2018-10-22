@@ -22,6 +22,7 @@ class ChartSave extends Component {
 		const {
 			align,
 			chart_type,
+			colors,
 			googlesheet_url,
 			number_format,
 			x_axis_label,
@@ -39,6 +40,7 @@ class ChartSave extends Component {
 				data-y_axis_label={ y_axis_label }
 				data-chart_type={ chart_type }
 				data-number_format={ number_format }
+				data-colors={ JSON.stringify( colors ) }
 				data-align={ align }
 			/>
 		);

@@ -15,6 +15,7 @@ import {
 	InspectorControls,
 	BlockAlignmentToolbar,
 	BlockControls,
+	PanelColorSettings,
 } from '@wordpress/editor';
 
 /**
@@ -31,6 +32,34 @@ import Chart from './component.js';
 class ChartEdit extends Component {
 	constructor() {
 		super( ...arguments );
+		this.state = {
+			rowsForColors: []
+		}
+	}
+	onUpdateColors = ( rows ) => {
+		const {
+			attributes,
+			setAttributes,
+		} = this.props;
+		const newColors = attributes.colors.slice( 0 );
+		rows.forEach( (row, index) => {
+			if ( ! newColors[index] ) {
+				newColors[index] = settings.allColors[index];
+			}
+		})
+		if ( newColors !== attributes.colors ) {
+			setAttributes( { colors: newColors } );
+		}
+		this.setState( { rowsForColors: rows } );
+	}
+	updateColorForRow = ( color, index ) => {
+		const {
+			attributes,
+			setAttributes,
+		} = this.props;
+		const newColors = attributes.colors.slice( 0 );
+		newColors[ index ] = color;
+		setAttributes( { colors: newColors } );
 	}
 	render() {
 		const {
@@ -39,13 +68,33 @@ class ChartEdit extends Component {
 			setAttributes,
 		} = this.props;
 		const {
+			rowsForColors
+		} = this.state;
+		const {
 			align,
 			chart_type,
 			googlesheet_url,
 			number_format,
 			x_axis_label,
 			y_axis_label,
+			colors,
 		} = attributes;
+		const colorControl =
+			rowsForColors.map( ( point, index ) => {
+				return (
+					<PanelColorSettings
+						title={ __( 'Color for ' + point[0] )  }
+						initialOpen={ true }
+						colorSettings={ [
+							{
+								value: colors[ index ],
+								onChange: value => this.updateColorForRow( value, index ),
+								label: 'X Axis Color',
+							},
+						] }
+					/>
+				);
+			} );
 		return (
 			<Fragment>
 				<BlockControls>
@@ -84,6 +133,7 @@ class ChartEdit extends Component {
 						options={ settings.number_formatOptions }
 						onChange={ ( value ) => setAttributes( { number_format: value } ) }
 					/>
+					{ colorControl }
 				</InspectorControls>
 				<div className={ className }>
 					<Chart
@@ -92,8 +142,10 @@ class ChartEdit extends Component {
 						number_format={ number_format }
 						x_axis_label={ x_axis_label }
 						y_axis_label={ y_axis_label }
+						colors={ colors }
 						admin={ true }
 						align={ align }
+						onUpdateColors={ this.onUpdateColors }
 					 />
 				</div>
 			</Fragment>

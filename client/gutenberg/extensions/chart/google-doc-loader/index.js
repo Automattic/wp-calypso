@@ -8,8 +8,6 @@
 
 import { assign } from 'lodash';
 
-const jQuery = window.jQuery;
-
 export class GoogleDocLoader {
 	constructor( options ) {
 		const { url } = options;
@@ -37,7 +35,7 @@ export class GoogleDocLoader {
 	fetch( key ) {
 
 		const worksheetAPI = this.apis.base + this.apis.worksheets + key + this.apis.suffix + this.apis.query;
-		jQuery.ajax({
+		this.options.jQuery.ajax({
 			url: worksheetAPI,
 			context: this
 		}).success(function(data) {
@@ -68,7 +66,7 @@ export class GoogleDocLoader {
 	};
 
 	fetchCells( cellsAPI ) {
-		jQuery.ajax({
+		this.options.jQuery.ajax({
 			url: cellsAPI,
 			context: this
 		}).success(function(data) {

@@ -61,7 +61,7 @@ export class Chart extends Component {
 			googlesheet_url,
 			number_format,
 			x_axis_label,
-			y_axis_label
+			y_axis_label,
 		} = this.props;
 		if ( chart_type !== prevProps.chart_type ) {
 			this.chart_typeChanged( chart_type );
@@ -517,6 +517,8 @@ export class Chart extends Component {
 
 	}
 	parseData( data ) {
+
+		const { onUpdateColors } = this.props;
 		const rows = [];
 		let header = [],
 			type = 'category';
@@ -543,7 +545,7 @@ export class Chart extends Component {
 				format: timeseriesAssessment ? timeseriesAssessment.format : null
 			}
 		}, this.makeChartFromData );
-
+		onUpdateColors( rows );
 		this.colors = this.colorsForData(rows, 'array');
 	}
 	validateYear( year ) {
@@ -652,6 +654,7 @@ export class Chart extends Component {
 	init( url ) {
 		const googleDocLoader = new GoogleDocLoader( {
 			url: url,
+			jQuery: window.jQuery,
 			success: function( data ) {
 				this.parseData( data );
 			}.bind(this)
@@ -724,7 +727,8 @@ Chart.defaultProps = {
 	number_format: '',
 	admin: false,
 	align: null,
-	colors: []
+	colors: [],
+	onUpdateColors: () => {}
 };
 
 export default Chart;

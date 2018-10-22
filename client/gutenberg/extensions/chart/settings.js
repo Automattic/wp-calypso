@@ -27,11 +27,12 @@ export const settings = {
 			default: 'area-spline'
 		},
 		colors: {
-			type: 'string'
+			type: 'array',
+			default: []
 		},
 		googlesheet_url: {
 			type: 'string',
-			defatul: 'https://docs.google.com/spreadsheets/d/1Ta7QDLsMGTC6vW03DnkvtQ5AE4IY1IeHnrFX7_7PZPE/pubhtml'
+			default: 'https://docs.google.com/spreadsheets/d/1Ta7QDLsMGTC6vW03DnkvtQ5AE4IY1IeHnrFX7_7PZPE/pubhtml'
 		},
 		number_format: {
 			type: 'string'
