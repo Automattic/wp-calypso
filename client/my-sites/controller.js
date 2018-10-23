@@ -122,7 +122,7 @@ function renderEmptySites( context ) {
 function renderNoVisibleSites( context ) {
 	const { getState } = getStore( context );
 	const currentUser = getCurrentUser( getState() );
-	const hiddenSites = currentUser.site_count - currentUser.visible_site_count;
+	const hiddenSites = currentUser && currentUser.site_count - currentUser.visible_site_count;
 	const signup_url = config( 'signup_url' );
 
 	removeSidebar( context );
@@ -300,7 +300,7 @@ export function siteSelection( context, next ) {
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 	const basePath = sectionify( context.path, siteFragment );
 	const currentUser = getCurrentUser( getState() );
-	const hasOneSite = currentUser.visible_site_count === 1;
+	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
 	const allSitesPath = sectionify( context.path, siteFragment );
 
 	if ( currentUser && currentUser.site_count === 0 ) {
