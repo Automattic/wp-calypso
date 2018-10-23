@@ -21,9 +21,9 @@ import PublicizeFormUnwrapped from './form-unwrapped';
 
 const PublicizeForm = compose( [
 	withSelect( ( select ) => ( {
-		activeConnections: ( select( 'core/editor' ).getEditedPostAttribute( 'publicize' ) == null )
+		activeConnections: ( ! select( 'core/editor' ).getEditedPostAttribute( 'publicize' ) )
 			? [] : select( 'core/editor' ).getEditedPostAttribute( 'publicize' ).connections,
-		shareMessage: ( select( 'core/editor' ).getEditedPostAttribute( 'publicize' ) == null )
+		shareMessage: ( ! select( 'core/editor' ).getEditedPostAttribute( 'publicize' ) )
 			? '' : select( 'core/editor' ).getEditedPostAttribute( 'publicize' ).title,
 	} ) ),
 	withDispatch( ( dispatch, ownProps ) => ( {

@@ -74,7 +74,7 @@ class PublicizeFormUnwrapped extends Component {
 	isConnectionOn( uniqueId ) {
 		const { activeConnections } = this.props;
 		const matchingConnection = activeConnections.find( c => uniqueId === c.unique_id );
-		if ( matchingConnection == null ) {
+		if ( ! matchingConnection ) {
 			return false;
 		}
 		return matchingConnection.should_share;
