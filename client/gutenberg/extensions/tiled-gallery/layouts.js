@@ -4,11 +4,6 @@
  * External dependencies
  */
 import find from 'lodash/find';
-// @TODO:
-// Adding `@wordpress/token-list` to dependencies in wp-calypso conflicts with
-// current 3.0.0 version of `@wordpress/editor`.
-// This will still work for Jetpack, but will fail when importing the block in Calypso
-// eslint-disable-next-line import/no-extraneous-dependencies
 import TokenList from '@wordpress/token-list';
 
 /**

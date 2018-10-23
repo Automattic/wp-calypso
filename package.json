@@ -52,6 +52,7 @@
     "@wordpress/i18n": "3.1.0",
     "@wordpress/keycodes": "2.0.5",
     "@wordpress/plugins": "2.0.9",
+    "@wordpress/token-list": "1.0.2",
     "@wordpress/url": "2.3.1",
     "@wordpress/viewport": "2.0.12",
     "autoprefixer": "9.2.1",
