@@ -263,6 +263,7 @@ describe( 'utils', () => {
 				'https://wordpress.com/',
 				'https://de.wordpress.com/',
 				'https://wordpress.com/start',
+				'https://wordpress.com/wp-login.php?action=lostpassword',
 			].forEach( fullUrl => {
 				getLocaleSlug.mockImplementationOnce( () => 'en' );
 				expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
@@ -411,6 +412,17 @@ describe( 'utils', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'pl' );
 			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
 				'https://jetpack.com/features/comparison/'
+			);
+		} );
+
+		test( 'WordPress.com URLs', () => {
+			getLocaleSlug.mockImplementationOnce( () => 'en' );
+			expect( localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword' ) ).toEqual(
+				'https://wordpress.com/wp-login.php?action=lostpassword'
+			);
+			getLocaleSlug.mockImplementationOnce( () => 'de' );
+			expect( localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword' ) ).toEqual(
+				'https://de.wordpress.com/wp-login.php?action=lostpassword'
 			);
 		} );
 	} );

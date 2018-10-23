@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find, isString, map, pickBy, includes } from 'lodash';
+import { find, isString, map, pickBy, includes, endsWith } from 'lodash';
 import url from 'url';
 import { getLocaleSlug } from 'i18n-calypso';
 
@@ -212,7 +212,9 @@ export function localizeUrl( fullUrl, locale ) {
 	if ( 'en.wordpress.com' === urlParts.hostname ) {
 		urlParts.host = 'wordpress.com';
 	}
-	urlParts.pathname = ( urlParts.pathname + '/' ).replace( /\/+$/, '/' );
+	if ( ! endsWith( urlParts.pathname, '.php' ) ) {
+		urlParts.pathname = ( urlParts.pathname + '/' ).replace( /\/+$/, '/' );
+	}
 
 	if ( ! localeSlug || 'en' === localeSlug ) {
 		if ( 'en.wordpress.com' === urlParts.hostname ) {
@@ -231,14 +233,6 @@ export function localizeUrl( fullUrl, locale ) {
 	}
 
 	// Nothing needed to be changed, just return it unmodified.
-	return fullUrl;
-}
-
-export function addLocaleToWpcomUrl( fullUrl, locale ) {
-	if ( locale && locale !== 'en' ) {
-		return fullUrl.replace( 'https://wordpress.com', 'https://' + locale + '.wordpress.com' );
-	}
-
 	return fullUrl;
 }
 

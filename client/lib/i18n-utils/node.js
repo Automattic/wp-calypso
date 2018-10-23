@@ -12,7 +12,6 @@ import config from 'config';
 // export * from './utils';
 export {
 	addLocaleToPath,
-	addLocaleToWpcomUrl,
 	getLanguage,
 	getLanguageSlugs,
 	getLocaleFromPath,

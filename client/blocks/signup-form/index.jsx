@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'lib/i18n-utils';
 import wpcom from 'lib/wp';
 import config from 'config';
 import analytics from 'lib/analytics';
@@ -612,7 +612,7 @@ class SignupForm extends Component {
 
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
 			? this.getLoginLink()
-			: addLocaleToWpcomUrl( config( 'login_url' ), this.props.locale );
+			: localizeUrl( config( 'login_url' ), this.props.locale );
 
 		return (
 			<LoggedOutFormLinks>
