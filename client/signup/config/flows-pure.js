@@ -284,23 +284,21 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		lastModified: '2018-10-22',
 	};
 
-	if ( config.isEnabled( 'signup/import-landing-handler' ) ) {
-		flows.import = {
-			steps: [ 'from-url', 'user', 'domains' ],
-			destination: ( { importSiteDetails, importUrl, siteSlug } ) =>
-				addQueryArgs(
-					{
-						engine: importSiteDetails.engine === 'wix' ? 'wix' : null,
-						'from-site': ( importUrl && encodeURIComponent( importUrl ) ) || null,
-					},
-					`/settings/import/${ siteSlug }`
-				),
-			description: 'A flow to kick off an import during signup',
-			disallowResume: true,
-			lastModified: '2018-09-12',
-			autoContinue: true,
-		};
-	}
+	flows.import = {
+		steps: [ 'from-url', 'user', 'domains' ],
+		destination: ( { importSiteDetails, importUrl, siteSlug } ) =>
+			addQueryArgs(
+				{
+					engine: importSiteDetails.engine === 'wix' ? 'wix' : null,
+					'from-site': ( importUrl && encodeURIComponent( importUrl ) ) || null,
+				},
+				`/settings/import/${ siteSlug }`
+			),
+		description: 'A flow to kick off an import during signup',
+		disallowResume: true,
+		lastModified: '2018-09-12',
+		autoContinue: true,
+	};
 
 	if ( config.isEnabled( 'signup/reader' ) ) {
 		flows.reader = {
