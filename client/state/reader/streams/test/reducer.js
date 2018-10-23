@@ -174,6 +174,57 @@ describe( 'streams.pendingItems reducer', () => {
 
 		expect( nextState ).toBe( prevState );
 	} );
+
+	it( 'should combine consecutive x-posts for the same original post', () => {
+		const xPostMetadata = {
+			blogId: 123,
+			postId: 1,
+		};
+
+		// First x-post
+		const postKey1 = {
+			...time2PostKey,
+			url: 'http://example.com/posts/one',
+			xPostMetadata,
+		};
+
+		// Second x-post (should merge into first x-post)
+		const postKey2 = {
+			...time2PostKey,
+			url: 'http://example.com/posts/two',
+			xPostMetadata,
+		};
+
+		// Third x-post (should also merge into first x-post)
+		const postKey3 = {
+			...time2PostKey,
+			postId: 3,
+			url: 'http://example.com/posts/three',
+			xPostMetadata,
+		};
+
+		const postKey4 = {
+			...time2PostKey,
+			postId: 4,
+			url: 'http://example.com/posts/four',
+			xPostMetadata: null,
+		};
+
+		const prevState = deepfreeze( { items: [], lastUpdated: moment( TIME1 ) } );
+		const action = receiveUpdates( {
+			streamItems: [ postKey1, postKey2, postKey3, postKey4 ],
+		} );
+		const nextState = pendingItems( prevState, action );
+
+		expect( nextState.items ).toEqual( [
+			{
+				...postKey1,
+				xPostUrls: [ postKey2.url, postKey3.url ],
+			},
+			postKey4,
+			{ isGap: true, from: moment( TIME1 ), to: moment( TIME2 ) },
+		] );
+	} );
 } );
 
 describe( 'streams.selected reducer', () => {

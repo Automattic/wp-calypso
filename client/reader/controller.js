@@ -240,6 +240,7 @@ const exported = {
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > A8C';
 		const mcKey = 'a8c';
 		const streamKey = 'a8c';
+		const startDate = getStartDate( context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
@@ -253,6 +254,7 @@ const exported = {
 				className="is-a8c"
 				listName="Automattic"
 				streamKey={ streamKey }
+				startDate={ startDate }
 				trackScrollPage={ trackScrollPage.bind(
 					null,
 					basePath,
