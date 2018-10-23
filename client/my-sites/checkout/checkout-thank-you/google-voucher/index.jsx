@@ -74,7 +74,7 @@ class GoogleVoucherDetails extends Component {
 	onGenerateCode() {
 		analytics.ga.recordEvent(
 			'calypso_plans_google_voucher_generate_click',
-			'Cliked Generate Code Button'
+			'Clicked Generate Code Button'
 		);
 
 		this.changeStep();
@@ -87,7 +87,7 @@ class GoogleVoucherDetails extends Component {
 	onAcceptTermsAndConditions() {
 		analytics.ga.recordEvent(
 			'calypso_plans_google_voucher_toc_accept_click',
-			'Cliked Agree Button'
+			'Clicked Agree Button'
 		);
 
 		this.props.assignVoucher( this.props.selectedSite.ID, GOOGLE_CREDITS );
@@ -97,7 +97,7 @@ class GoogleVoucherDetails extends Component {
 	onSetupGoogleAdWordsLink() {
 		analytics.ga.recordEvent(
 			'calypso_plans_google_voucher_setup_click',
-			'Cliked Setup Goole AdWords Button'
+			'Clicked Setup Google Ads Button'
 		);
 	}
 
@@ -185,7 +185,7 @@ class GoogleVoucherDetails extends Component {
 									a: (
 										<a
 											className="google-voucher-code__help-link"
-											href="https://en.support.wordpress.com/google-adwords-credit/"
+											href="https://en.support.wordpress.com/google-ads-credit/"
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
