@@ -6,13 +6,14 @@
 
 import { __ } from '@wordpress/i18n';
 import { Component, createRef, Fragment } from '@wordpress/element';
-import { IconButton, PanelBody, Toolbar } from '@wordpress/components';
+import { Button, IconButton, PanelBody, Toolbar, TextControl } from '@wordpress/components';
 import {
 	InspectorControls,
 	BlockControls,
 	BlockAlignmentToolbar,
 	PanelColorSettings,
 } from '@wordpress/editor';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -45,10 +46,28 @@ class MapEdit extends Component {
 		// Allow one cycle for alignment change to take effect
 		setTimeout( this.mapRef.current.sizeMap, 0 );
 	};
+	updateAPIKey = () => {
+		const { apiKeyControl } = this.state;
+		this.apiCall( apiKeyControl );
+	};
+	apiCall( api_key = null ) {
+		const method = api_key ? 'POST' : 'GET';
+		const url = '/wp-json/jetpack/v4/api-key/googlemaps';
+		const fetch = api_key ? { url, method, data: { api_key } } : { url, method };
+		apiFetch( fetch ).then( result => {
+			this.setState( {
+				api_key: result.api_key,
+				apiKeyControl: result.api_key,
+			} );
+		} );
+	}
+	componentDidMount() {
+		this.apiCall();
+	}
 	render() {
 		const { className, setAttributes, attributes } = this.props;
 		const { map_style, points, zoom, map_center, marker_color, align } = attributes;
-		const { addPointVisibility } = this.state;
+		const { addPointVisibility, api_key, apiKeyControl } = this.state;
 		const inspectorControls = (
 			<Fragment>
 				<BlockControls>
@@ -92,6 +111,14 @@ class MapEdit extends Component {
 							/>
 						</PanelBody>
 					) : null }
+					<TextControl
+						label={ __( 'Google Maps API Key' ) }
+						value={ apiKeyControl }
+						onChange={ value => this.setState( { apiKeyControl: value } ) }
+					/>
+					<Button type="button" onClick={ this.updateAPIKey } isSmall isDefault>
+						{ __( 'Update Key' ) }
+					</Button>
 				</InspectorControls>
 			</Fragment>
 		);
@@ -109,8 +136,8 @@ class MapEdit extends Component {
 						onSetZoom={ value => {
 							setAttributes( { zoom: value } );
 						} }
-						api_key={ settings.GOOGLE_MAPS_API_KEY }
 						admin={ true }
+						api_key={ api_key }
 						onSetPoints={ value => setAttributes( { points: value } ) }
 						onMapLoaded={ () => this.setState( { addPointVisibility: true } ) }
 						onMarkerClick={ () => this.setState( { addPointVisibility: false } ) }

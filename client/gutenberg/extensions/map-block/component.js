@@ -16,6 +16,7 @@ import { get, assign } from 'lodash';
 import { settings } from './settings.js';
 import MapMarker from './map-marker/';
 import InfoWindow from './info-window/';
+
 // @TODO: replace with import from lib/load-script after resolution of https://github.com/Automattic/wp-calypso/issues/27821
 import { loadScript } from './load-script';
 // import { loadScript } from 'lib/load-script';
@@ -114,13 +115,15 @@ export class Map extends Component {
 			</Fragment>
 		);
 	}
-	componentDidMount() {
-		this.loadMapLibraries();
-	}
 	componentDidUpdate( prevProps ) {
+		const { api_key, children } = this.props;
+		if ( api_key && api_key.length > 0 && api_key !== prevProps.api_key ) {
+			window.google = null;
+			this.loadMapLibraries();
+		}
 		// If the user has just clicked to show the Add Point component, hide info window.
 		// AddPoint is the only possible child.
-		if ( this.props.children !== prevProps.children && this.props.children !== false ) {
+		if ( children !== prevProps.children && children !== false ) {
 			this.clearCurrentMarker();
 		}
 		// This implementation of componentDidUpdate is a reusable way to approximate Polymer observers
