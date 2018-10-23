@@ -36,7 +36,7 @@ export const getNewMailbox = ( domain: string ): Mailbox => {
 		[ FIELD_ALTERNATIVE_EMAIL ]: getNewMailboxField(),
 		[ FIELD_DOMAIN ]: getNewMailboxField( domain ),
 		[ FIELD_FIRSTNAME ]: getNewMailboxField(),
-		[ FIELD_IS_ADMIN ]: getNewMailboxField(),
+		[ FIELD_IS_ADMIN ]: getNewMailboxField( false ),
 		[ FIELD_LASTNAME ]: getNewMailboxField(),
 		[ FIELD_MAILBOX ]: getNewMailboxField(),
 		[ FIELD_PASSWORD ]: getNewMailboxField(),

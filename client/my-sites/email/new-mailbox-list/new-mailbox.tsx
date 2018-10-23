@@ -16,10 +16,9 @@ import {
 	FIELD_LASTNAME,
 	FIELD_MAILBOX,
 	FIELD_PASSWORD,
-	PROVIDER_SLUG_TITAN,
 } from 'calypso/my-sites/email/new-mailbox-list/constants';
 import DomainSelect from 'calypso/my-sites/email/new-mailbox-list/domain-select';
-import { Mailbox, StringOrBoolean } from 'calypso/my-sites/email/new-mailbox-list/types';
+import { Mailbox, Provider, StringOrBoolean } from 'calypso/my-sites/email/new-mailbox-list/types';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 
 interface NewMailboxProps {
@@ -32,7 +31,7 @@ interface NewMailboxProps {
 		mailBoxFieldTouched?: boolean
 	) => void;
 	onReturnKeyPress: ( event: Event ) => void;
-	provider: string;
+	provider: Provider;
 	selectedDomainName: string;
 	showAllErrors?: boolean;
 }
@@ -151,8 +150,12 @@ const NewMailbox = ( {
 		</FormLabel>
 	);
 
-	const isTitan = provider === PROVIDER_SLUG_TITAN;
+	const isTitan = provider === Provider.Titan;
 	const firstNameText = isTitan ? translate( 'Full name' ) : translate( 'First name' );
+	// Always hide the last name for Titan
+	if ( isTitan ) {
+		hiddenFieldNames.push( FIELD_LASTNAME );
+	}
 
 	return (
 		<>

@@ -9,19 +9,23 @@ import {
 	sanitizeValueForEmail,
 	validateMailboxes,
 } from 'calypso/my-sites/email/new-mailbox-list/utilities';
-import type { Mailbox } from 'calypso/my-sites/email/new-mailbox-list/types';
+import type {
+	Mailbox,
+	Provider,
+	StringOrBoolean,
+} from 'calypso/my-sites/email/new-mailbox-list/types';
 import type { SiteDomain } from 'calypso/state/sites/domains/types';
 import type { ReactElement, ReactNode } from 'react';
 
 interface NewMailboxListProps {
 	children?: ReactNode;
 	domains?: SiteDomain[];
-	extraValidation: ( mailbox: Mailbox ) => Mailbox;
+	extraValidation?: ( mailbox: Mailbox ) => Mailbox;
 	hiddenFieldNames: string[];
 	mailboxes: Mailbox[];
 	onMailboxesChange: ( mailboxes: Mailbox[] ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
-	provider: string;
+	provider: Provider;
 	selectedDomainName: string;
 	showAddAnotherMailboxButton?: boolean;
 	validatedMailboxUuids?: string[];
@@ -30,21 +34,21 @@ interface NewMailboxListProps {
 const NewMailboxList = ( {
 	children,
 	domains,
-	extraValidation,
+	extraValidation = ( mailbox: Mailbox ) => mailbox,
 	hiddenFieldNames = [],
 	mailboxes = [],
 	onMailboxesChange,
 	onReturnKeyPress,
 	provider,
 	selectedDomainName,
-	showAddAnotherMailboxButton = true,
+	showAddAnotherMailboxButton = false,
 	validatedMailboxUuids = [],
 }: NewMailboxListProps ): ReactElement => {
 	const translate = useTranslate();
 
 	const onMailboxValueChange = ( uuid: string ) => (
 		fieldName: string,
-		fieldValue: string,
+		fieldValue: StringOrBoolean,
 		mailBoxFieldTouched = false
 	) => {
 		const updatedMailboxes = mailboxes.map( ( mailbox ) => {
@@ -57,7 +61,7 @@ const NewMailboxList = ( {
 			if ( FIELD_FIRSTNAME === fieldName && ! mailBoxFieldTouched ) {
 				return {
 					...updatedMailbox,
-					mailBox: { value: sanitizeValueForEmail( fieldValue ), error: null },
+					mailBox: { value: sanitizeValueForEmail( fieldValue as string ), error: null },
 				};
 			}
 

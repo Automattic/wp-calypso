@@ -10,5 +10,5 @@ export const FIELD_UUID = 'uuid';
 /**
  * Providers
  */
-export const PROVIDER_SLUG_TITAN = 'titan';
-export const PROVIDER_SLUG_GOOGLE = 'google';
+export const PROVIDER_SLUG_GOOGLE = 0;
+export const PROVIDER_SLUG_TITAN = 1;
