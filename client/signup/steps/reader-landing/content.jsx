@@ -16,18 +16,24 @@ class ReaderLandingStepContent extends PureComponent {
 		const { translate, onButtonClick } = this.props;
 		return (
 			<div className="reader-landing__step-content">
-				<Button
-					primary={ true }
-					type="submit"
-					onClick={ onButtonClick }
-					className="reader-landing__button"
-				>
-					{ translate( 'Start using the Reader' ) }
-				</Button>
+				<div className="reader-landing__button-wrapper">
+					<Button
+						primary={ true }
+						type="submit"
+						onClick={ onButtonClick }
+						className="reader-landing__button"
+					>
+						{ translate( 'Start using the Reader' ) }
+					</Button>
+				</div>
 
 				<section className="reader-landing__features">
 					<div className="reader-landing__feature">
-						<img src="/calypso/images/signup/reader-landing/animals.jpg" alt="placeholder" />
+						<img
+							src="/calypso/images/signup/reader-landing/animals.jpg"
+							alt="placeholder"
+							className="reader-landing__feature-image"
+						/>
 						<div className="reader-landing__feature-detail">
 							<h2 className="reader-landing__feature-heading">
 								{ translate( 'Explore the best content on WordPress' ) }
@@ -41,7 +47,11 @@ class ReaderLandingStepContent extends PureComponent {
 					</div>
 
 					<div className="reader-landing__feature">
-						<img src="/calypso/images/signup/reader-landing/animals.jpg" alt="placeholder" />
+						<img
+							src="/calypso/images/signup/reader-landing/animals.jpg"
+							alt="placeholder"
+							className="reader-landing__feature-image"
+						/>
 						<div className="reader-landing__feature-detail">
 							<h2 className="reader-landing__feature-heading">
 								{ translate( 'Never miss a post from your favorite sites' ) }
@@ -55,7 +65,11 @@ class ReaderLandingStepContent extends PureComponent {
 					</div>
 
 					<div className="reader-landing__feature">
-						<img src="/calypso/images/signup/reader-landing/animals.jpg" alt="placeholder" />
+						<img
+							src="/calypso/images/signup/reader-landing/animals.jpg"
+							alt="placeholder"
+							className="reader-landing__feature-image"
+						/>
 						<div className="reader-landing__feature-detail">
 							<h2 className="reader-landing__feature-heading">
 								{ translate( 'Dive into your reading from any mobile device' ) }
@@ -69,7 +83,11 @@ class ReaderLandingStepContent extends PureComponent {
 					</div>
 
 					<div className="reader-landing__feature">
-						<img src="/calypso/images/signup/reader-landing/animals.jpg" alt="placeholder" />
+						<img
+							src="/calypso/images/signup/reader-landing/animals.jpg"
+							alt="placeholder"
+							className="reader-landing__feature-image"
+						/>
 						<div className="reader-landing__feature-detail">
 							<h2 className="reader-landing__feature-heading">
 								{ translate( 'Lively conversations made easy' ) }
@@ -83,14 +101,16 @@ class ReaderLandingStepContent extends PureComponent {
 					</div>
 				</section>
 
-				<Button
-					primary={ true }
-					type="submit"
-					onClick={ onButtonClick }
-					className="reader-landing__button"
-				>
-					{ translate( 'Start using the Reader' ) }
-				</Button>
+				<div className="reader-landing__button-wrapper">
+					<Button
+						primary={ true }
+						type="submit"
+						onClick={ onButtonClick }
+						className="reader-landing__button"
+					>
+						{ translate( 'Start using the Reader' ) }
+					</Button>
+				</div>
 			</div>
 		);
 	}
