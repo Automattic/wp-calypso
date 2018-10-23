@@ -271,7 +271,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		test( 'localize trailing slash variations', () => {
+		test( 'trailing slash variations', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'de' );
 			expect( localizeUrl( 'https://automattic.com/cookies/' ) ).toEqual(
 				'https://automattic.com/de/cookies/'
@@ -282,7 +282,7 @@ describe( 'utils', () => {
 			);
 		} );
 
-		test( 'localize logged-out homepage', () => {
+		test( 'logged-out homepage', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'en' );
 			expect( localizeUrl( 'https://wordpress.com/' ) ).toEqual( 'https://wordpress.com/' );
 			getLocaleSlug.mockImplementationOnce( () => 'de' );
@@ -295,7 +295,7 @@ describe( 'utils', () => {
 			expect( localizeUrl( 'https://en.wordpress.com/' ) ).toEqual( 'https://wordpress.com/' );
 		} );
 
-		test( 'localize blog url', () => {
+		test( 'blog url', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'en' );
 			expect( localizeUrl( 'https://en.blog.wordpress.com/' ) ).toEqual(
 				'https://en.blog.wordpress.com/'
@@ -314,7 +314,7 @@ describe( 'utils', () => {
 			);
 		} );
 
-		test( 'localize support url', () => {
+		test( 'support url', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'en' );
 			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
 				'https://en.support.wordpress.com/'
@@ -333,7 +333,7 @@ describe( 'utils', () => {
 			);
 		} );
 
-		test( 'localize forums url', () => {
+		test( 'forums url', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'en' );
 			expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
 				'https://en.forums.wordpress.com/'
@@ -352,7 +352,7 @@ describe( 'utils', () => {
 			);
 		} );
 
-		test( 'localize privacy policy', () => {
+		test( 'privacy policy', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'en' );
 			expect( localizeUrl( 'https://automattic.com/privacy/' ) ).toEqual(
 				'https://automattic.com/privacy/'
@@ -367,7 +367,7 @@ describe( 'utils', () => {
 			);
 		} );
 
-		test( 'localize cookie policy', () => {
+		test( 'cookie policy', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'en' );
 			expect( localizeUrl( 'https://automattic.com/cookies/' ) ).toEqual(
 				'https://automattic.com/cookies/'
@@ -381,7 +381,8 @@ describe( 'utils', () => {
 				'https://automattic.com/cookies/'
 			);
 		} );
-		test( 'localize tos', () => {
+
+		test( 'tos', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'en' );
 			expect( localizeUrl( 'https://wordpress.com/tos/' ) ).toEqual( 'https://wordpress.com/tos/' );
 			getLocaleSlug.mockImplementationOnce( () => 'de' );
@@ -390,6 +391,25 @@ describe( 'utils', () => {
 			);
 			getLocaleSlug.mockImplementationOnce( () => 'pl' );
 			expect( localizeUrl( 'https://wordpress.com/tos/' ) ).toEqual( 'https://wordpress.com/tos/' );
+		} );
+
+		test( 'jetpack', () => {
+			getLocaleSlug.mockImplementationOnce( () => 'en' );
+			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
+				'https://jetpack.com/features/comparison/'
+			);
+			getLocaleSlug.mockImplementationOnce( () => 'de' );
+			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
+				'https://de.jetpack.com/features/comparison/'
+			);
+			getLocaleSlug.mockImplementationOnce( () => 'zh-tw' );
+			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
+				'https://zh-tw.jetpack.com/features/comparison/'
+			);
+			getLocaleSlug.mockImplementationOnce( () => 'pl' );
+			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
+				'https://jetpack.com/features/comparison/'
+			);
 		} );
 	} );
 
