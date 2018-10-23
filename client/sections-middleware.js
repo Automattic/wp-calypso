@@ -13,7 +13,7 @@ import { bumpStat } from 'state/analytics/actions';
 import * as LoadingError from 'layout/error';
 import * as controller from './controller/index.web';
 import { pathToRegExp } from './utils';
-import { receiveSections, preload } from './sections-helper';
+import { receiveSections, load } from './sections-helper';
 
 import sections from './sections';
 receiveSections( sections );
@@ -40,9 +40,10 @@ function createPageDefinition( path, sectionDefinition ) {
 			return next();
 		}
 
-		if ( _loadedSections[ sectionDefinition.module ] ) {
+		if ( _loadedSections[ sectionDefinition.module ] === true ) {
 			return activateSection( sectionDefinition, context, next );
 		}
+
 		dispatch( { type: 'SECTION_SET', isLoading: true } );
 
 		// If the section chunk is not loaded within 400ms, report it to analytics
@@ -51,10 +52,10 @@ function createPageDefinition( path, sectionDefinition ) {
 			400
 		);
 
-		preload( sectionDefinition.name )
-			.then( requiredModules => {
+		load( sectionDefinition.name, sectionDefinition.module )
+			.then( requiredModule => {
 				if ( ! _loadedSections[ sectionDefinition.module ] ) {
-					requiredModules.forEach( mod => mod.default( controller.clientRouter ) );
+					requiredModule.default( controller.clientRouter );
 					_loadedSections[ sectionDefinition.module ] = true;
 				}
 				return activateSection( sectionDefinition, context, next );
