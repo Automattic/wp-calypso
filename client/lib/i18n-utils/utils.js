@@ -191,7 +191,7 @@ const prefixLocalizedUrlPath = ( validLocales = [] ) => ( urlParts, localeSlug )
 
 const urlLocalizationMapping = {
 	'wordpress.com': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
-	'wordpress.com/tos/': setLocalizedUrlHost( 'jetpack.com', magnificentNonEnLocales ),
+	'wordpress.com/tos/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', localesForJetpackCom ),
 	'en.support.wordpress.com': setLocalizedUrlHost(
 		'support.wordpress.com',

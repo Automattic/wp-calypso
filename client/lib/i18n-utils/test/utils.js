@@ -381,6 +381,16 @@ describe( 'utils', () => {
 				'https://automattic.com/cookies/'
 			);
 		} );
+		test( 'localize tos', () => {
+			getLocaleSlug.mockImplementationOnce( () => 'en' );
+			expect( localizeUrl( 'https://wordpress.com/tos/' ) ).toEqual( 'https://wordpress.com/tos/' );
+			getLocaleSlug.mockImplementationOnce( () => 'de' );
+			expect( localizeUrl( 'https://wordpress.com/tos/' ) ).toEqual(
+				'https://de.wordpress.com/tos/'
+			);
+			getLocaleSlug.mockImplementationOnce( () => 'pl' );
+			expect( localizeUrl( 'https://wordpress.com/tos/' ) ).toEqual( 'https://wordpress.com/tos/' );
+		} );
 	} );
 
 	describe( '#getSupportSiteLocale', () => {
