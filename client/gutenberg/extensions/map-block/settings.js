@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
  */
 
 export const settings = {
-	name: 'atavist/maps',
+	name: 'a8c/maps',
 	title: __( 'Map', 'jetpack' ),
 	icon: (
 		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
