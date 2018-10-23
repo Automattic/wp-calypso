@@ -7,7 +7,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { localizeUrl } from 'i18n-utils';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Internal dependencies
