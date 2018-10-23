@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Data access functions for Publicizing in Gutenberg.
  *
@@ -14,10 +15,7 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Module variables
  */
-const {
-	gutenberg_publicize_setup,
-	ajaxurl,
-} = window;
+const { gutenberg_publicize_setup } = window;
 
 /**
  * Get connection form set up data.
@@ -62,14 +60,10 @@ export function getAllConnections() {
 /**
  * Verifies that all connections are still functioning.
  *
- * Ajax request handled by 'wp_ajax_test_publicize_conns' action
- *
  * @return {object} List of possible services that can be connected to
  */
 export function requestTestPublicizeConnections() {
 	return apiFetch( {
-		body: { action: 'test_publicize_conns' },
-		method: 'POST',
-		url: ajaxurl,
+		path: '/publicize/connections',
 	} );
 }
