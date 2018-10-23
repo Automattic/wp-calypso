@@ -273,6 +273,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 			! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
 			new webpack.DefinePlugin( {
 				'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+				BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
 				PROJECT_NAME: JSON.stringify( config( 'project' ) ),
 				global: 'window',
 			} ),
