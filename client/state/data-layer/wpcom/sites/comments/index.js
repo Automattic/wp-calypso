@@ -25,6 +25,7 @@ import { errorNotice, removeNotice } from 'state/notices/actions';
 import getRawSite from 'state/selectors/get-raw-site';
 import getSiteComment from 'state/selectors/get-site-comment';
 import {
+	changeCommentStatus,
 	receiveComments,
 	receiveCommentsError as receiveCommentErrorAction,
 	requestComment as requestCommentAction,
@@ -35,28 +36,19 @@ import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/p
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const changeCommentStatus = action => ( dispatch, getState ) => {
+const requestChangeCommentStatus = action => {
 	const { siteId, commentId, status } = action;
-	const previousStatus = get(
-		getSiteComment( getState(), action.siteId, action.commentId ),
-		'status'
-	);
 
-	dispatch(
-		http(
-			{
-				method: 'POST',
-				path: `/sites/${ siteId }/comments/${ commentId }`,
-				apiVersion: '1.1',
-				body: {
-					status,
-				},
+	return http(
+		{
+			method: 'POST',
+			path: `/sites/${ siteId }/comments/${ commentId }`,
+			apiVersion: '1.1',
+			body: {
+				status,
 			},
-			{
-				...action,
-				meta: Object.assign( {}, action.meta, { comment: { previousStatus } } ),
-			}
-		)
+		},
+		action
 	);
 };
 
@@ -69,16 +61,15 @@ export const handleChangeCommentStatusSuccess = ( { commentId, refreshCommentLis
 };
 
 const announceStatusChangeFailure = action => dispatch => {
-	const { commentId, status } = action;
+	const { siteId, postId, commentId, status, refreshCommentListQuery } = action;
 	const previousStatus = get( action, 'meta.comment.previousStatus' );
 
 	dispatch( removeNotice( `comment-notice-${ commentId }` ) );
 
 	dispatch(
-		bypassDataLayer( {
-			...omit( action, [ 'meta' ] ),
-			status: previousStatus,
-		} )
+		bypassDataLayer(
+			changeCommentStatus( siteId, postId, commentId, previousStatus, refreshCommentListQuery )
+		)
 	);
 
 	const errorMessage = {
@@ -93,7 +84,10 @@ const announceStatusChangeFailure = action => dispatch => {
 		errorNotice( get( errorMessage, status, defaultErrorMessage ), {
 			button: translate( 'Try again' ),
 			id: `comment-notice-error-${ commentId }`,
-			onClick: () => dispatch( omit( action, [ 'meta' ] ) ),
+			onClick: () =>
+				dispatch(
+					changeCommentStatus( siteId, postId, commentId, action.status, refreshCommentListQuery )
+				),
 		} )
 	);
 };
@@ -269,7 +263,7 @@ export const announceEditFailure = ( { dispatch }, action ) => {
 export const fetchHandler = {
 	[ COMMENTS_CHANGE_STATUS ]: [
 		dispatchRequestEx( {
-			fetch: changeCommentStatus,
+			fetch: requestChangeCommentStatus,
 			onSuccess: handleChangeCommentStatusSuccess,
 			onError: announceStatusChangeFailure,
 		} ),
