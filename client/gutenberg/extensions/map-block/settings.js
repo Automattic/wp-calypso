@@ -20,7 +20,7 @@ export const settings = {
 		</svg>
 	),
 	category: 'common',
-	keywords: [ __( 'map', 'jetpack' ), __( 'jetpack', 'jetpack' ), __( 'atavist', 'jetpack' ) ],
+	keywords: [ __( 'map', 'jetpack' ), __( 'jetpack', 'jetpack' ), __( 'jetpack' ) ],
 	attributes: {
 		align: {
 			type: 'string',
@@ -387,7 +387,6 @@ export const settings = {
 		},
 	],
 	GOOGLE_MAPS_API_KEY: 'AIzaSyDaj7klnWKpzGx0W5PonA73Dgr68Me8cyg',
-	baseClasses: [ 'atavist-block', 'atavist-simple-map' ],
 	validAlignments: [ 'left', 'center', 'right', 'wide', 'full' ],
 	markerIcon: (
 		<svg width="14" height="20" viewBox="0 0 14 20" xmlns="http://www.w3.org/2000/svg">

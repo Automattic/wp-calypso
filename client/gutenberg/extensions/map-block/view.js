@@ -7,7 +7,7 @@
 import './style.scss';
 import component from './component.js';
 import { settings } from './settings.js';
-import FrontendManagement from 'gutenberg/extensions/shared/atavist/frontend-management.js';
+import FrontendManagement from 'gutenberg/extensions/shared/frontend-management.js';
 
 window.addEventListener( 'load', function() {
 	// Do not initialize in editor.
