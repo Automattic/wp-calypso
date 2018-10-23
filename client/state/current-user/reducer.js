@@ -10,7 +10,7 @@ import { get, isEqual, reduce } from 'lodash';
  * Internal dependencies
  */
 import {
-	CURRENT_USER_ID_SET,
+	CURRENT_USER_RECEIVE,
 	CURRENT_USER_FLAGS_RECEIVE,
 	SITE_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,
@@ -38,7 +38,7 @@ import emailVerification from './email-verification/reducer';
 export const id = createReducer(
 	null,
 	{
-		[ CURRENT_USER_ID_SET ]: ( state, action ) => action.userId,
+		[ CURRENT_USER_RECEIVE ]: ( state, action ) => action.user.ID,
 	},
 	idSchema
 );
