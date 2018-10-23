@@ -44,6 +44,7 @@ import { fetchSiteDomains } from 'state/sites/domains/actions';
 import { domainManagementTransferIn } from 'my-sites/domains/paths';
 import { errorNotice } from 'state/notices/actions';
 import QueryProducts from 'components/data/query-products-list';
+import QueryPlans from 'components/data/query-plans';
 import { isPlan } from 'lib/products-values';
 import {
 	isDomainBundledWithPlan,
@@ -90,7 +91,7 @@ class TransferDomainStep extends React.Component {
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.initialState ) {
 			this.setState( Object.assign( {}, this.props.initialState, this.getDefaultState() ) );
 		}
@@ -167,6 +168,10 @@ class TransferDomainStep extends React.Component {
 			domainProductPrice = translate( 'Included in paid plans' );
 		}
 
+		if ( ! currencyCode ) {
+			return null;
+		}
+
 		return domainProductPrice;
 	};
 
@@ -199,6 +204,7 @@ class TransferDomainStep extends React.Component {
 		return (
 			<div>
 				<QueryProducts />
+				<QueryPlans />
 				{ this.notice() }
 				<form className="transfer-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="transfer-domain-step__domain-description">
@@ -218,7 +224,6 @@ class TransferDomainStep extends React.Component {
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
 							onFocus={ this.recordInputFocus }
-							autoFocus
 						/>
 						<Button
 							disabled={ ! getTld( searchQuery ) || submitting }
