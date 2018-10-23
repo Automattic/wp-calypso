@@ -5,7 +5,7 @@
  */
 import url from 'url';
 import { stringify } from 'qs';
-import { toPairs, identity } from 'lodash';
+import { toPairs, identity, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -89,10 +89,17 @@ export const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
 };
 
 const wpcomRequest = method => {
-	if ( method !== 'GET' ) {
-		return wpcom.req.post.bind( wpcom.req );
+	/* wpcom.req.del is just a wrapper around wpcom.req.post
+	 * and it always uses the `POST` method.
+	 * https://github.com/Automattic/wpcom.js/blob/master/lib/util/request.js#L70
+	 *
+	 * Instead we use wpcom.req.get for `DELETE`, that passes the method
+	 * along with the rest of the request parameters.
+	 */
+	if ( includes( [ 'GET', 'DELETE' ], method ) ) {
+		return wpcom.req.get.bind( wpcom.req );
 	}
-	return wpcom.req.get.bind( wpcom.req );
+	return wpcom.req.post.bind( wpcom.req );
 };
 
 export const wpcomProxyMiddleware = parameters => {
