@@ -30,7 +30,7 @@ jest.mock( 'config', () => key => {
 	}
 
 	if ( 'forum_locales' === key ) {
-		return [ 'en', 'es', 'de', 'ja', 'pt-br' ];
+		return [ 'en', 'es', 'de', 'ja', 'pt-br', 'th' ];
 	}
 
 	if ( 'languages' === key ) {
@@ -345,6 +345,10 @@ describe( 'utils', () => {
 			expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
 				'https://br.forums.wordpress.com/'
 			);
+			getLocaleSlug.mockImplementationOnce( () => 'th' );
+			expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
+				'https://th.forums.wordpress.com/'
+			);
 			getLocaleSlug.mockImplementationOnce( () => 'pl' );
 			expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
 				'https://en.forums.wordpress.com/'
@@ -389,6 +393,8 @@ describe( 'utils', () => {
 				'https://de.wordpress.com/tos/'
 			);
 			getLocaleSlug.mockImplementationOnce( () => 'pl' );
+			expect( localizeUrl( 'https://wordpress.com/tos/' ) ).toEqual( 'https://wordpress.com/tos/' );
+			getLocaleSlug.mockImplementationOnce( () => 'th' );
 			expect( localizeUrl( 'https://wordpress.com/tos/' ) ).toEqual( 'https://wordpress.com/tos/' );
 		} );
 
