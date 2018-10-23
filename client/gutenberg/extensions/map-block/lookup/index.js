@@ -169,7 +169,8 @@ export class Lookup extends Component {
 					_n(
 						'%d result found, use up and down arrow keys to navigate.',
 						'%d results found, use up and down arrow keys to navigate.',
-						filteredOptions.length
+						filteredOptions.length,
+						'jetpack'
 					),
 					filteredOptions.length
 				),
