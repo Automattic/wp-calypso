@@ -39,9 +39,9 @@ export class Chart extends Component {
 		);
 		return (
 			<div className={ classes }>
-				<p className="chart-title" is="atavist-caption" placeholder="Write a chart title…" ref={ this.chartTitleRef }>{ chart_title }</p>
-				<div class="atavist-chart-wrapper atavist-cover-text-color" ref={ this.chartRef }></div>
-				<p class="chart-caption" is="atavist-caption">{ the_caption }</p>
+				<p className="chart-title" placeholder="Write a chart title…" ref={ this.chartTitleRef }>{ chart_title }</p>
+				<div class="a8c-chart-wrapper a8c-cover-text-color" ref={ this.chartRef }></div>
+				<p class="chart-caption">{ the_caption }</p>
 			</div>
 		);
 	}
@@ -423,7 +423,7 @@ export class Chart extends Component {
 			legendItems.push(item);
 		});
 		d3.select( this.chartRef.current )
-			.insert( 'div', '.atavist-chart-wrapper' )
+			.insert( 'div', '.a8c-chart-wrapper' )
 			.attr( 'class', 'top-legend' )
 			.style( {
 				'margin-left': yAxisOffset + 'px'
