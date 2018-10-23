@@ -10,6 +10,7 @@ import {
 	MAILCHIMP_SETTINGS_UPDATE,
 	MAILCHIMP_SETTINGS_UPDATE_SUCCESS,
 	MAILCHIMP_SETTINGS_UPDATE_FAILURE,
+	NOTICE_CREATE,
 } from 'state/action-types';
 import wpcom from 'lib/wp';
 
@@ -28,7 +29,7 @@ export function receiveSettings( siteId, lists ) {
 	};
 }
 
-export const requestSettingsUpdate = ( siteId, settings ) => {
+export const requestSettingsUpdate = ( siteId, settings, noticeText ) => {
 	return dispatch => {
 		dispatch( {
 			type: MAILCHIMP_SETTINGS_UPDATE,
@@ -43,6 +44,14 @@ export const requestSettingsUpdate = ( siteId, settings ) => {
 					type: MAILCHIMP_SETTINGS_UPDATE_SUCCESS,
 					siteId,
 					settings: data,
+				} );
+				dispatch( {
+					type: NOTICE_CREATE,
+					notice: {
+						duration: 5000,
+						text: noticeText,
+						status: 'is-success',
+					},
 				} );
 			} )
 			.catch( error => {

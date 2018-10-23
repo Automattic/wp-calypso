@@ -64,13 +64,15 @@ export default {
 		let authUrl;
 
 		if ( config( 'oauth_client_id' ) ) {
+			const protocol = process.env.PROTOCOL || config( 'protocol' );
+			const host = process.env.HOST || config( 'hostname' );
 			const port = process.env.PORT || config( 'port' );
 			const oauthSettings = {
 				response_type: 'token',
 				client_id: config( 'oauth_client_id' ),
 				client_secret: 'n/a',
 				url: {
-					redirect: `http://calypso.localhost:${ port }/api/oauth/token`,
+					redirect: `${ protocol }://${ host }:${ port }/api/oauth/token`,
 				},
 			};
 

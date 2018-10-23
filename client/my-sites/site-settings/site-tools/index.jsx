@@ -3,10 +3,9 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, some } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,12 +22,9 @@ import { isJetpackSite, getSiteAdminUrl } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
 import getRewindState from 'state/selectors/get-rewind-state';
-import {
-	getSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-	getPurchasesError,
-} from 'state/purchases/selectors';
+import { hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
 import notices from 'notices';
+import hasCancelableSitePurchases from 'state/selectors/has-cancelable-site-purchases';
 
 const trackDeleteSiteOption = option => {
 	tracks.recordEvent( 'calypso_settings_delete_site_options', {
@@ -42,9 +38,9 @@ class SiteTools extends Component {
 		showStartOverDialog: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.purchasesError ) {
-			notices.error( nextProps.purchasesError );
+	componentDidUpdate( prevProps ) {
+		if ( ! prevProps.purchasesError && this.props.purchasesError ) {
+			notices.error( this.props.purchasesError );
 		}
 	}
 
@@ -173,11 +169,12 @@ class SiteTools extends Component {
 	checkForSubscriptions = event => {
 		trackDeleteSiteOption( 'delete-site' );
 
-		if ( this.props.isAtomic || ! some( this.props.sitePurchases, 'active' ) ) {
+		if ( this.props.isAtomic || ! this.props.hasCancelablePurchases ) {
 			return true;
 		}
 
 		event.preventDefault();
+
 		this.setState( { showDialog: true } );
 	};
 
@@ -206,7 +203,6 @@ export default connect( state => {
 	return {
 		isAtomic,
 		siteSlug,
-		sitePurchases: getSitePurchases( state, siteId ),
 		purchasesError: getPurchasesError( state ),
 		importUrl,
 		exportUrl,
@@ -219,5 +215,6 @@ export default connect( state => {
 		showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 		showManageConnection: isJetpack && ! isAtomic,
 		siteId,
+		hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
 	};
 } )( localize( SiteTools ) );

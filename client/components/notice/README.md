@@ -14,7 +14,7 @@ function MyNotice() {
 			status="is-error"
 			icon="mention"
 		>
-			I'm an error notice with a custom icon.
+			This is an error notice with a custom icon.
 		</Notice>
 	)
 }
@@ -24,7 +24,7 @@ function MyNotice() {
 
 Name | Type | Default | Description
 ---- | ---- | ---- | ----
-`status` | `string` | null | The status of the notice can be `success`, `warning`, `error`, or `info`.
+`status` | `string` | null | The status of the notice can be `is-success`, `is-warning`, `is-error`, or `is-info`.
 `icon` | `string` | null | A reference to a Gridicon.
 `isLoading` | `bool` | false | If true, the icon is in an animated loading state.
 `text` | `string` | null | The message that shows in the notice.
@@ -51,7 +51,7 @@ function MyNotice() {
 			status="is-error"
 			icon="mention"
 		>
-			I'm an error notice with a custom icon.
+			This is an error notice with a custom icon.
 			<NoticeAction href="#" external>{ 'Update' }</NoticeAction>
 		</Notice>
 	)

@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,8 +28,6 @@ class SiteOrDomain extends Component {
 	constructor( props ) {
 		super( props );
 
-		this.skipRender = false;
-
 		if ( ! props.isLoggedIn ) {
 			this.skipRender = true;
 			this.submitDomain( 'domain' );
@@ -39,18 +37,15 @@ class SiteOrDomain extends Component {
 
 	getDomainName() {
 		const { signupDependencies } = this.props;
-		let domain;
 		let isValidDomain = false;
-
-		if ( signupDependencies && signupDependencies.domainItem ) {
-			domain = signupDependencies.domainItem.meta;
-		}
+		const domain = get( signupDependencies, 'domainItem.meta', false );
 
 		if ( domain ) {
 			if ( domain.split( '.' ).length > 1 ) {
 				const productSlug = getDomainProductSlug( domain );
 
-				isValidDomain = !! this.props.productsList[ productSlug ];
+				const skip = get( signupDependencies, 'domainItem.extra.skipSiteOrDomain', false );
+				isValidDomain = skip || !! this.props.productsList[ productSlug ];
 			}
 		}
 

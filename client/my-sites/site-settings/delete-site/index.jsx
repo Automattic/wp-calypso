@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
-import { some } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
@@ -23,7 +22,7 @@ import ActionPanelFooter from 'components/action-panel/footer';
 import Button from 'components/button';
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
 import Dialog from 'components/dialog';
-import { getSitePurchases, hasLoadedSitePurchasesFromServer } from 'state/purchases/selectors';
+import { hasLoadedSitePurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSite, getSiteDomain } from 'state/sites/selectors';
 import Notice from 'components/notice';
@@ -32,6 +31,7 @@ import { deleteSite } from 'state/sites/actions';
 import { setSelectedSiteId } from 'state/ui/actions';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import FormLabel from 'components/forms/form-label';
+import hasCancelableSitePurchases from 'state/selectors/has-cancelable-site-purchases';
 
 class DeleteSite extends Component {
 	static propTypes = {
@@ -40,7 +40,6 @@ class DeleteSite extends Component {
 		siteDomain: PropTypes.string,
 		siteExists: PropTypes.bool,
 		siteId: PropTypes.number,
-		sitePurchases: PropTypes.array,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
@@ -79,9 +78,7 @@ class DeleteSite extends Component {
 			return;
 		}
 
-		const hasActiveSubscriptions = some( this.props.sitePurchases, 'active' );
-
-		if ( hasActiveSubscriptions ) {
+		if ( this.props.hasCancelablePurchases ) {
 			this.setState( { showWarningDialog: true } );
 		} else {
 			this.setState( { showConfirmDialog: true } );
@@ -101,10 +98,10 @@ class DeleteSite extends Component {
 		page( '/settings/general/' + siteSlug );
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		const { siteId, siteExists } = this.props;
 
-		if ( siteId && siteExists && ! nextProps.siteExists ) {
+		if ( siteId && prevProps.siteExists && ! siteExists ) {
 			this.props.setSelectedSiteId( null );
 			page.redirect( '/stats' );
 		}
@@ -263,6 +260,9 @@ class DeleteSite extends Component {
 								<li className="delete-site__content-list-item">
 									{ translate( 'Purchased Upgrades' ) }
 								</li>
+								<li className="delete-site__content-list-item">
+									{ translate( 'Premium Themes' ) }
+								</li>
 							</ul>
 						</ActionPanelFigure>
 						{ ! isAtomic && (
@@ -270,7 +270,7 @@ class DeleteSite extends Component {
 								<p>
 									{ translate(
 										'Deletion {{strong}}can not{{/strong}} be undone, ' +
-											'and will remove all content, contributors, domains, and upgrades from this site.',
+											'and will remove all content, contributors, domains, themes and upgrades from this site.',
 										{
 											components: {
 												strong: <strong />,
@@ -299,7 +299,7 @@ class DeleteSite extends Component {
 								<p>
 									{ translate(
 										"To delete this site, you'll need to contact our support team. Deletion can not be undone, " +
-											'and will remove all content, contributors, domains, and upgrades from this site.'
+											'and will remove all content, contributors, domains, themes and upgrades from this site.'
 									) }
 								</p>
 								<p>
@@ -379,9 +379,9 @@ export default connect(
 			isAtomic: isSiteAutomatedTransfer( state, siteId ),
 			siteDomain,
 			siteId,
-			sitePurchases: getSitePurchases( state, siteId ),
 			siteSlug,
 			siteExists: !! getSite( state, siteId ),
+			hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
 		};
 	},
 	{

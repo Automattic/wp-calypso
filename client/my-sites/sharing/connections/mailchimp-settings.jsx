@@ -30,16 +30,25 @@ const MailchimpSettings = ( {
 	const chooseMailchimpList = event => {
 		if ( event.target.value === '0' ) {
 			// This means we want to turn off sharing for this site.
-			requestSettingsUpdateAction( siteId, {
-				follower_list_id: 0,
-				keyring_id: 0,
-			} );
+			requestSettingsUpdateAction(
+				siteId,
+				{
+					follower_list_id: 0,
+					keyring_id: 0,
+				},
+				translate( 'Follower emails will not be synced to MailChimp any more' )
+			);
 			return;
 		}
-		requestSettingsUpdateAction( siteId, {
-			follower_list_id: event.target.value,
-			keyring_id: keyringConnections[ 0 ].ID,
-		} );
+		const list = mailchimpLists.filter( mcList => mcList.id === event.target.value )[ 0 ];
+		requestSettingsUpdateAction(
+			siteId,
+			{
+				follower_list_id: event.target.value,
+				keyring_id: keyringConnections[ 0 ].ID,
+			},
+			translate( 'Follower emails will be synced to the %s MailChimp list', { args: list.name } )
+		);
 	};
 
 	/* eslint-disable jsx-a11y/no-onchange */

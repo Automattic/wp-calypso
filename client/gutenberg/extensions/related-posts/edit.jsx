@@ -159,7 +159,9 @@ class RelatedPostsEdit extends Component {
 										{ post.date }
 									</span>
 								) }
-								{ displayContext && <p>{ post.context }</p> }
+								{ displayContext && (
+									<p className={ `${ className }__preview-post-context` }>{ post.context }</p>
+								) }
 							</div>
 						) ) }
 					</div>

@@ -14,7 +14,7 @@ import { flow, get } from 'lodash';
  * Internal dependencies
  */
 import { selectPostRevision } from 'state/posts/revisions/actions';
-import { getUser } from 'state/users/selectors';
+import { getPostRevisionAuthor } from 'state/posts/revisions/authors/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
 import TimeSince from 'components/time-since';
 
@@ -111,7 +111,11 @@ export default flow(
 	localize,
 	connect(
 		( state, { revision, siteId } ) => ( {
-			authorName: get( getUser( state, get( revision, 'post_author' ) ), 'display_name', '' ),
+			authorName: get(
+				getPostRevisionAuthor( state, get( revision, 'post_author' ) ),
+				'display_name',
+				''
+			),
 			isMultiUserSite: ! isSingleUserSite( state, siteId ),
 		} ),
 		{ selectPostRevision }

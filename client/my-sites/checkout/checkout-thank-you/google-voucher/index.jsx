@@ -50,14 +50,14 @@ class GoogleVoucherDetails extends Component {
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const voucher = this.getVoucher();
 		if ( voucher && voucher.status === 'assigned' ) {
 			this.setState( { step: CODE_REDEEMED } );
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.googleAdCredits ) {
 			return null;
 		}
@@ -74,7 +74,7 @@ class GoogleVoucherDetails extends Component {
 	onGenerateCode() {
 		analytics.ga.recordEvent(
 			'calypso_plans_google_voucher_generate_click',
-			'Cliked Generate Code Button'
+			'Clicked Generate Code Button'
 		);
 
 		this.changeStep();
@@ -87,7 +87,7 @@ class GoogleVoucherDetails extends Component {
 	onAcceptTermsAndConditions() {
 		analytics.ga.recordEvent(
 			'calypso_plans_google_voucher_toc_accept_click',
-			'Cliked Agree Button'
+			'Clicked Agree Button'
 		);
 
 		this.props.assignVoucher( this.props.selectedSite.ID, GOOGLE_CREDITS );
@@ -97,7 +97,7 @@ class GoogleVoucherDetails extends Component {
 	onSetupGoogleAdWordsLink() {
 		analytics.ga.recordEvent(
 			'calypso_plans_google_voucher_setup_click',
-			'Cliked Setup Goole AdWords Button'
+			'Clicked Setup Google Ads Button'
 		);
 	}
 
@@ -134,32 +134,32 @@ class GoogleVoucherDetails extends Component {
 			<Dialog
 				isVisible={ true }
 				onClose={ this.onDialogCancel }
-				additionalClassNames="google-voucher-dialog"
+				additionalClassNames="google-voucher__dialog"
 			>
-				<div className="google-voucher-dialog__header">
+				<div className="google-voucher__dialog-header">
 					<img
 						alt=""
 						src="/calypso/images/google-vouchers/google-voucher.svg"
-						className="google-voucher-dialog__header__image"
+						className="google-voucher__dialog-header-image"
 					/>
 
-					<div className="google-voucher-dialog__header__text">
+					<div className="google-voucher__dialog-header-text">
 						<h1>{ this.props.translate( 'Terms of Service' ) }</h1>
 						<p>{ this.props.translate( 'Google Ads credit' ) }</p>
 					</div>
 				</div>
 
-				<div className="google-voucher-dialog__body">
+				<div className="google-voucher__dialog-body">
 					<TermsAndConditions />
 				</div>
 
-				<div className="google-voucher-dialog__footer">
-					<Button className="google-vouchers-dialog__cancel-button" onClick={ this.onDialogCancel }>
+				<div className="google-voucher__dialog-footer">
+					<Button className="google-voucher__dialog-cancel-button" onClick={ this.onDialogCancel }>
 						{ this.props.translate( 'Cancel' ) }
 					</Button>
 
 					<Button
-						className="google-vouchers-dialog__agree-button"
+						className="google-voucher__dialog-agree-button"
 						onClick={ this.onAcceptTermsAndConditions }
 						primary={ true }
 					>
@@ -173,19 +173,19 @@ class GoogleVoucherDetails extends Component {
 	renderCodeRedeemed() {
 		const { code } = this.getVoucher();
 		return (
-			<div className="google-voucher">
+			<div className="google-voucher__code-redeemed">
 				<ClipboardButtonInput value={ code } disabled={ ! code } />
 
-				<div className="google-voucher-code">
-					<p className="form-setting-explanation">
+				<div className="google-voucher__copy-code">
+					<p className="google-voucher__explanation form-setting-explanation">
 						{ this.props.translate(
 							'Copy this unique, one-time use code to your clipboard and setup your Google Ads account. {{a}}View help guide{{/a}}',
 							{
 								components: {
 									a: (
 										<a
-											className="google-voucher-code__help-link"
-											href="https://en.support.wordpress.com/google-adwords-credit/"
+											className="google-voucher__help-link"
+											href="https://en.support.wordpress.com/google-ads-credit/"
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
@@ -196,7 +196,7 @@ class GoogleVoucherDetails extends Component {
 					</p>
 
 					<PurchaseButton
-						className="google-voucher-code__setup-google-adwords"
+						className="google-voucher__setup-google-adwords"
 						href="https://ads.google.com/home/"
 						target="_blank"
 						rel="noopener noreferrer"
@@ -207,7 +207,7 @@ class GoogleVoucherDetails extends Component {
 				</div>
 
 				<TipInfo
-					className="google-voucher-advice"
+					className="google-voucher__advice"
 					info={ this.props.translate(
 						'Offer valid in US after spending the first $25 on Google Ads.'
 					) }

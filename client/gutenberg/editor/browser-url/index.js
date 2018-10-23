@@ -1,10 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { Component } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
 import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
+import { flowRight, endsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,11 +23,14 @@ import { replaceHistory } from 'state/ui/actions';
  * https://wordpress.com/gutenberg/post/mysiteslug/1234
  */
 export class BrowserURL extends Component {
-
 	componentDidUpdate( prevProps ) {
 		const { postId, postStatus, currentRoute } = this.props;
 
-		if ( postStatus === 'draft' && prevProps.postStatus === 'auto-draft' ) {
+		if (
+			postStatus === 'draft' &&
+			prevProps.postStatus === 'auto-draft' &&
+			! endsWith( currentRoute, `/${ postId }` )
+		) {
 			this.props.replaceHistory( `${ currentRoute }/${ postId }` );
 		}
 	}
@@ -36,7 +41,7 @@ export class BrowserURL extends Component {
 }
 
 export default flowRight(
-	withSelect( ( select ) => {
+	withSelect( select => {
 		const { getCurrentPost } = select( 'core/editor' );
 		const { id, status } = getCurrentPost();
 
@@ -46,11 +51,11 @@ export default flowRight(
 		};
 	} ),
 	connect(
-		( state ) => {
+		state => {
 			return {
 				currentRoute: getCurrentRoute( state ),
-			}
+			};
 		},
 		{ replaceHistory }
-	),
+	)
 )( BrowserURL );
