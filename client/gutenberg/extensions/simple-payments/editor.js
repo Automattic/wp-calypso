@@ -42,6 +42,10 @@ registerBlockType( 'jetpack/simple-payments', {
 					paymentId: {
 						type: 'number',
 						shortcode: ( { named: { id } } ) => {
+							if ( ! id ) {
+								return;
+							}
+
 							return parseInt( id, 10 );
 						},
 					},
