@@ -1321,6 +1321,11 @@ const toursForSection = {
 };
 
 export function getContextResults( section ) {
+	// Posts and Pages have a common help section
+	if ( section === 'posts' || section === 'pages' ) {
+		section = 'posts-pages';
+	}
+
 	// make sure editorially to show at most one tour and one video at once
 	// `first` is a safe-guard in case that fails
 	const video = first( get( videosForSection, section ) );
