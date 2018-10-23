@@ -136,6 +136,8 @@ UndocumentedMe.prototype.changeUsername = function( username, action, callback )
  *
  * @param {object} [cardToken] Payment key
  * @param {Function} [callback] The callback function
+ *
+ * @return {Promise} A promise for the request
  * @api public
  */
 UndocumentedMe.prototype.storedCardAdd = function( cardToken, callback ) {
@@ -294,11 +296,12 @@ UndocumentedMe.prototype.deletePurchase = function( purchaseId, fn ) {
 /**
  * Connect the current account with a social service (e.g. Google/Facebook).
  *
- * @param {string} service - Social service associated with token, e.g. google.
- * @param {string} access_token - OAuth2 Token returned from service.
- * @param {string} id_token - (Optional) OpenID Connect Token returned from service.
- * @param {string} redirect_to - The URL to redirect to after connecting.
- * @param {Function} fn - callback
+ * @param {object} An object containing the keys:
+ *	{string} service - Social service associated with token, e.g. google.
+ *  {string} access_token - OAuth2 Token returned from service.
+ *  {string} id_token - (Optional) OpenID Connect Token returned from service.
+ *  {string} redirect_to - The URL to redirect to after connecting.
+ * @param {function} fn - The callback for the request.
  *
  * @return {Promise} A promise for the request
  */
@@ -357,6 +360,25 @@ UndocumentedMe.prototype.socialDisconnect = function( service, fn ) {
 	};
 
 	return this.wpcom.req.post( args, fn );
+};
+
+/**
+ * Send an SMS to the provided phone number with a link to download the app.s
+ *
+ * @param {string} phone - phone number
+ *
+ * @return {Promise} A promise for the request
+ */
+UndocumentedMe.prototype.sendAppDownloadSMS = function( phone ) {
+	const args = {
+		apiVersion: '1.1',
+		path: '/me/get-apps/send-download-sms',
+		body: {
+			phone_number: phone,
+		},
+	};
+
+	return this.wpcom.req.post( args );
 };
 
 UndocumentedMe.prototype.preferences = MePreferences;
