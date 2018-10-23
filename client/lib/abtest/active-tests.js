@@ -1,7 +1,7 @@
 /** @format */
 export default {
-	improvedSignupFlow: {
-		datestamp: '20190808',
+	improvedOnboarding: {
+		datestamp: '20181023',
 		variations: {
 			main: 90,
 			onboarding: 10,
