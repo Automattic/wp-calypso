@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React, { Children, Component } from 'react';
 import { connect } from 'react-redux';
-import { find, reduce } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -55,11 +54,7 @@ export class ChecklistNavigation extends Component {
 		};
 		const childrenArray = Children.toArray( children );
 		const total = childrenArray.length;
-		const completeCount = reduce(
-			childrenArray,
-			( sum, child ) => ( !! child.props.completed ? sum + 1 : sum ),
-			0
-		);
+		const completeCount = childrenArray.filter( child => child.props.completed ).length;
 		const isFinished = completeCount >= total;
 		const checklistLink = '/checklist/' + siteSlug;
 

@@ -3,7 +3,6 @@
  * External dependencies
  */
 import { Children, Component } from 'react';
-import { find, reduce } from 'lodash';
 
 export class ChecklistNotification extends Component {
 	componentDidMount() {
@@ -22,13 +21,9 @@ export class ChecklistNotification extends Component {
 		// Therefore, we're accessing the child Tasks directly for accuracy
 
 		const childrenArray = Children.toArray( children );
-		const task = find( childrenArray, child => ! child.props.completed );
+		const task = childrenArray.find( child => ! child.props.completed );
 		const total = childrenArray.length;
-		const completeCount = reduce(
-			childrenArray,
-			( sum, child ) => ( !! child.props.completed ? sum + 1 : sum ),
-			0
-		);
+		const completeCount = childrenArray.filter( child => child.props.completed ).length;
 		const isFinished = completeCount >= total;
 
 		this.props.setNotification( false );

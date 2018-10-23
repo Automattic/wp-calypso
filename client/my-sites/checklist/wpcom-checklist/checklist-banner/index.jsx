@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Children, Component } from 'react';
 import store from 'store';
 import { connect } from 'react-redux';
-import { find, get, reduce } from 'lodash';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -73,11 +73,7 @@ export class ChecklistBanner extends Component {
 
 		const childrenArray = Children.toArray( this.props.children );
 		const total = childrenArray.length;
-		const completeCount = reduce(
-			childrenArray,
-			( sum, child ) => ( !! child.props.completed ? sum + 1 : sum ),
-			0
-		);
+		const completeCount = childrenArray.filter( child => child.props.completed ).length;
 		const isFinished = completeCount >= total;
 		const completePercentage = Math.round( ! total ? 0 : ( completeCount / total ) * 100 );
 
@@ -137,7 +133,7 @@ export class ChecklistBanner extends Component {
 						</Button>
 					</>
 				) : (
-					find( childrenArray, child => ! child.props.completed )
+					childrenArray.find( child => ! child.props.completed )
 				) }
 			</Card>
 		);
