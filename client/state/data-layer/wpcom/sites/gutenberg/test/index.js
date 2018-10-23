@@ -3,10 +3,9 @@
 /**
  * Internal dependencies
  */
-import { setType, receiveEditorTypeError } from '../';
+import { setType } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { setSelectedEditor } from 'state/selected-editor/actions';
-import { EDITOR_TYPE_SET } from 'state/action-types';
 
 describe( 'setType()', () => {
 	test( 'should dispatch a http request', () => {
@@ -27,25 +26,5 @@ describe( 'setType()', () => {
 				action
 			)
 		);
-	} );
-} );
-
-describe( 'receiveEditorTypeError()', () => {
-	test( 'should return an action to undo the optimistic update, bypassing the data layer', () => {
-		const output = receiveEditorTypeError( {
-			type: EDITOR_TYPE_SET,
-			siteId: 123,
-			editor: 'gutenberg',
-		} );
-		expect( output ).toEqual( {
-			type: EDITOR_TYPE_SET,
-			siteId: 123,
-			editor: 'classic',
-			meta: {
-				dataLayer: {
-					doBypass: true,
-				},
-			},
-		} );
 	} );
 } );

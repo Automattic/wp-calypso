@@ -12,8 +12,6 @@ import { noop } from 'lodash';
 import { EDITOR_TYPE_SET } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { setSelectedEditor } from 'state/selected-editor/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const setType = action =>
@@ -31,15 +29,10 @@ export const setType = action =>
 		action
 	);
 
-export const receiveEditorTypeError = action => {
-	const editor = 'classic' === action.editor ? 'gutenberg' : 'classic';
-	return bypassDataLayer( setSelectedEditor( action.siteId, editor ) );
-};
-
 const dispatchEditorTypeRequest = dispatchRequestEx( {
 	fetch: setType,
 	onSuccess: noop,
-	onError: receiveEditorTypeError,
+	onError: noop,
 } );
 
 registerHandlers( 'state/data-layer/wpcom/sites/gutenberg/index.js', {
