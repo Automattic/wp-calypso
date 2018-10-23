@@ -1,8 +1,50 @@
-.reader-landing__step-content {
-	text-align: center;
+.reader-landing {
+	margin: 0 20px;
 }
 
-.reader-landing__step-content-illustration {
-	max-height: 140px;
-	margin-bottom: 20px;
+.reader-landing__step-content {
+	text-align: left;
+	padding-bottom: 20px;
+}
+
+.reader-landing .formatted-header__title {
+	font-size: 1.8em;
+	text-align: left;
+	padding: 0;
+}
+
+.reader-landing .formatted-header__subtitle {
+	text-align: left;
+	padding: 0;
+}
+
+.reader-landing .formatted-header {
+	margin-bottom: 16px;
+}
+
+.reader-landing__button {
+	width: 100%;
+}
+
+.reader-landing__features {
+	margin-top: 30px;
+}
+
+.reader-landing__feature {
+	margin-bottom: 30px;
+}
+
+.reader-landing__feature-heading {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.reader-landing__feature-description {
+	color: darken( $gray, 20 );
+	font-size: 14px;
+	margin-top: 4px;
+}
+
+.reader-landing__feature-detail {
+	margin-top: 10px;
 }
