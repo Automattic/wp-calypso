@@ -25,12 +25,10 @@ describe( '#uploadGravatar()', () => {
 			file: 'file',
 			email: 'email',
 		};
-		const dispatch = spy();
 
-		uploadGravatar( { dispatch }, action );
+		const result = uploadGravatar( action );
 
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( result ).to.eql(
 			http(
 				{
 					apiNamespace: 'wpcom/v2',
@@ -72,7 +70,7 @@ describe( '#announceSuccess()', () => {
 		};
 		const dispatch = spy();
 
-		announceSuccess( { dispatch }, action, noop, { success: true } );
+		announceSuccess( action, noop, { success: true } )( dispatch );
 		expect( dispatch ).to.have.been.calledWith(
 			sinon.match( { type: GRAVATAR_UPLOAD_REQUEST_SUCCESS } )
 		);
@@ -86,7 +84,7 @@ describe( '#announceSuccess()', () => {
 		};
 		const dispatch = spy();
 
-		announceSuccess( { dispatch }, action, noop, { success: true } );
+		announceSuccess( action, noop, { success: true } )( dispatch );
 		expect( dispatch ).to.have.been.calledWith(
 			sinon.match( { type: GRAVATAR_UPLOAD_RECEIVE, src: 'tempImageSrc' } )
 		);
@@ -95,13 +93,8 @@ describe( '#announceSuccess()', () => {
 
 describe( '#announceFailure()', () => {
 	test( 'should dispatch an error notice', () => {
-		const dispatch = spy();
+		const result = announceFailure();
 
-		announceFailure( { dispatch } );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
-			sinon.match( { type: GRAVATAR_UPLOAD_REQUEST_FAILURE } )
-		);
+		expect( result.type ).to.eql( GRAVATAR_UPLOAD_REQUEST_FAILURE );
 	} );
 } );
