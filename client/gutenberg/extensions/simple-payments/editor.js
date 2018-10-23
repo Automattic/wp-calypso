@@ -8,9 +8,12 @@ import { registerBlockType } from '@wordpress/blocks';
 import GridiconMoney from 'gridicons/dist/money';
 
 registerBlockType( 'a8c/simple-payments', {
-	title: __( 'Simple Payment', 'jetpack' ),
+	title: __( 'Payment button', 'jetpack' ),
 
-	description: <p>{ __( 'Payment Button', 'jetpack' ) }</p>,
+	description: __(
+		'Simple Payments lets you create and embed credit and debit card payment buttons on your WordPress.com and Jetpack-enabled sites with minimal setup.',
+		'jetpack'
+	),
 
 	icon: <GridiconMoney />,
 
