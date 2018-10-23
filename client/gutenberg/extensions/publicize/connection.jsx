@@ -3,8 +3,6 @@
  *
  * Component to display connection label and a
  * checkbox to enable/disable the connection for sharing.
- *
- * @since  5.9.1
  */
 
 // Since this is a Jetpack originated block in Calypso codebase,
@@ -23,8 +21,6 @@ class PublicizeConnection extends Component {
 	 *
 	 * Calls parent's change handler in this.prop so
 	 * state change can be handled by parent.
-	 *
-	 * @since 5.9.1
 	 */
 	onConnectionChange = () => {
 		const { unique_id } = this.props.connectionData;

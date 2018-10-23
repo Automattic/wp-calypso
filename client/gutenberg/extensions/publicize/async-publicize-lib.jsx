@@ -4,9 +4,6 @@
  * This file contains a set of helper functions that
  * gather data and/or send requests for data to support
  * the features of Publicize in Gutenberg.
- *
- * @file Data access functions for Gutenberg Publicize extension.
- * @since  5.9.1
  */
 
 /**
@@ -28,10 +25,6 @@ const {
  * Retrieves array of filtered connection UI data (labels, checked value,
  * URLs, etc.) from window global. This data only updates on refresh.
  *
- * @see ui.php
- *
- * @since 5.9.1
- *
  * @return {object} List of filtered connection UI data.
  */
 export function getStaticPublicizeConnections() {
@@ -44,10 +37,6 @@ export function getStaticPublicizeConnections() {
  * Retrieves array of filtered connection UI data (labels, checked value).
  * Connection list is queried based on post id because the connection
  * filtering depends on current post.
- *
- * @see ui.php
- *
- * @since 5.9.1
  *
  * @param {integer} postId ID of post to query connection defaults for.
  *
@@ -64,8 +53,6 @@ export function requestPublicizeConnections( postId ) {
  *
  * Gets list of possible social sites ('twitter', 'facebook, etc..')
  *
- * @since 5.9.1
- *
  * @return {object} List of possible services that can be connected to
  */
 export function getAllConnections() {
@@ -76,9 +63,6 @@ export function getAllConnections() {
  * Verifies that all connections are still functioning.
  *
  * Ajax request handled by 'wp_ajax_test_publicize_conns' action
- * in {@see publicize.php}.
- *
- * @since 5.9.1
  *
  * @return {object} List of possible services that can be connected to
  */

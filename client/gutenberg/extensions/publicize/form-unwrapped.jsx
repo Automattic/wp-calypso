@@ -4,8 +4,6 @@
  * Displays text area and connection list to allow user
  * to select connections to share to and write a custom
  * sharing message.
- *
- * @since  5.9.1
  */
 
 // Since this is a Jetpack originated block in Calypso codebase,
@@ -30,7 +28,7 @@ class PublicizeFormUnwrapped extends Component {
 		super( props );
 		const { initializePublicize, staticConnections } = this.props;
 		const initialTitle = '';
-		// Connection data format must match 'publicize' REST field registered in {@see class-jetpack-publicize-gutenberg.php}.
+		// Connection data format must match 'publicize' REST field.
 		const initialActiveConnections = staticConnections.map( ( c ) => {
 			return ( {
 				unique_id: c.unique_id,
@@ -45,8 +43,6 @@ class PublicizeFormUnwrapped extends Component {
 	 *
 	 * Checks full connection list to determine if all are disabled.
 	 * If they all are, it returns true to disable whole form.
-	 *
-	 * @since 5.9.1
 	 *
 	 * @return {boolean} True if whole form should be disabled.
 	 */
@@ -65,8 +61,6 @@ class PublicizeFormUnwrapped extends Component {
 	 * looks for an array entry with a 'unique_id' property that matches
 	 * the parameter value. If found, the connection 'should_share' value
 	 * is returned.
-	 *
-	 * @since 5.9.1
 	 *
 	 * @param {string} uniqueId Connection ID.
 	 * @return {boolean} True if the connection is currently switched on.

@@ -6,8 +6,6 @@
  * a refresh link may be provided to the user. If
  * no connection tests fail, this component will
  * not render anything.
- *
- * @since  5.9.1
  */
 
 /**
@@ -37,9 +35,7 @@ class PublicizeConnectionVerify extends Component {
 	 * updates component state to display potentially
 	 * failed connections.
 	 *
-	 * @since 5.9.1
-	 *
-	 * @param {object} response Response from ajax action 'wp_ajax_test_publicize_conns' {@see publicize.php}
+	 * @param {object} response Response from ajax action 'wp_ajax_test_publicize_conns'
 	 */
 	connectionTestComplete = ( response ) => {
 		const failureList = response.data.filter( connection => ( ! connection.connectionTestPassed ) );
@@ -53,10 +49,6 @@ class PublicizeConnectionVerify extends Component {
 	 * Starts request to check connections
 	 *
 	 * Checks connections with ajax action 'wp_ajax_test_publicize_conns'
-	 *
-	 * @see publicize.php
-	 *
-	 * @since 5.9.1
 	 */
 	connectionTestStart = () => {
 		requestTestPublicizeConnections().then(
@@ -69,8 +61,6 @@ class PublicizeConnectionVerify extends Component {
 	 *
 	 * Displays pop up with to specified URL where user
 	 * can refresh a specific connection.
-	 *
-	 * @since 5.9.1
 	 *
 	 * @param {object} event Event instance for onClick.
 	 */
