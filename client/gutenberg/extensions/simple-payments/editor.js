@@ -20,7 +20,9 @@ registerBlockType( 'jetpack/simple-payments', {
 	category: 'jetpack',
 
 	keywords: [
-		/** @TODO add keywords */
+		'simple',
+		'payment',
+		/** @TODO add more */
 	],
 
 	attributes: {
