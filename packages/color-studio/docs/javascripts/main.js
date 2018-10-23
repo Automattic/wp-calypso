@@ -73,12 +73,14 @@ function handleFoundationTiles() {
 
 function handleFoundationButton() {
   const palettes = foundations.baseColors.map(color => {
-    const palette = createPaletteColors(color.value).map(colorObject => {
-      return colorObject.color
+    const palette = []
+
+    createPaletteColors(color.value).forEach(colorObject => {
+      palette.unshift(colorObject.color)
     })
 
     while (palette.length % SKETCH_COLOR_PICKER_ROW_COUNT > 0) {
-      palette.unshift(COLOR_WHITE)
+      palette.push(COLOR_WHITE)
     }
 
     return palette
@@ -147,7 +149,7 @@ function createColorTile(colorObject) {
         color,
       '</div>',
       `<div class="tile__meta tile__meta--tiny text-uppercase" style="color: ${secondaryTextColor}">`,
-        '<span title="Contrast / Saturation / Lightness">',
+        '<span title="Saturation / Lightness / Contrast (against white)">',
           getColorProperties(color),
         '</span>',
       '</div>',
@@ -176,10 +178,27 @@ function determineTextColor(backgroundColor) {
 function getColorProperties(colorValue) {
   const color = chroma(colorValue)
   const numbers = [
-    chroma.contrast(colorValue, COLOR_WHITE),
-    color.get('hsl.s'),
-    color.get('hsl.l')
+    round(color.get('hsl.s'), 1),
+    round(color.get('hsl.l'), 1),
+    getContrastScore(colorValue, COLOR_WHITE)
   ]
 
-  return numbers.map(n => round(n, 2)).join(' / ')
+  return numbers.join(' / ')
+}
+
+function getContrastScore(foregroundColor, backgroundColor) {
+  const ratio = chroma.contrast(foregroundColor, backgroundColor)
+  let score = round(ratio, 1)
+
+  if (ratio >= 7.5) {
+    score = 'AAA'
+  } else if (ratio >= 4.5) {
+    score = 'AA'
+  }
+
+  if (ratio >= 3) {
+    score += ' ✓'
+  }
+
+  return score
 }

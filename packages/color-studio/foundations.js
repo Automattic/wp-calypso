@@ -1,12 +1,14 @@
+const chroma = require('chroma-js')
+
 module.exports = {
   baseColors: [
     {
       name: 'Gray',
-      value: '#5e6265'
+      value: chroma.mix('#707070', '#016087', 0.05, 'lch').hex()
     },
     {
       name: 'Blue',
-      value: '#006086'
+      value: '#016087'
     },
     {
       name: 'Purple',
@@ -14,6 +16,10 @@ module.exports = {
     },
     {
       name: 'Pink',
+      value: '#d52b82'
+    },
+    {
+      name: 'Red',
       value: '#dd3c57'
     },
     {
