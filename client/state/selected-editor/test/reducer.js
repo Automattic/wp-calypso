@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -20,7 +19,7 @@ describe( 'reducer', () => {
 			editor: 'gutenberg',
 		} );
 
-		expect( state ).to.eql( {
+		expect( state ).toEqual( {
 			2916284: 'gutenberg',
 		} );
 	} );
@@ -35,7 +34,7 @@ describe( 'reducer', () => {
 			editor: 'gutenberg',
 		} );
 
-		expect( state ).to.eql( {
+		expect( state ).toEqual( {
 			2916284: 'gutenberg',
 		} );
 	} );
