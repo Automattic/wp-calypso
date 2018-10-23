@@ -11,7 +11,6 @@ export {
 	getLanguage,
 	getLanguageSlugs,
 	getLocaleFromPath,
-	getSupportSiteLocale,
 	isDefaultLocale,
 	isLocaleVariant,
 	localizeUrl,

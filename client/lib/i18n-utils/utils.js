@@ -262,23 +262,6 @@ export function removeLocaleFromPath( path ) {
 }
 
 /**
- * Returns the slug for the WordPress.com support site for the current user, if
- * any.
- *
- * Uses a (short) list of relatively well-updated *.support.wordpress.com
- * support sites defined in config/_shared.json.
- *
- * @returns {string} A slug which is a valid subdomain of *.support.wordpress.com.
- */
-export function getSupportSiteLocale() {
-	const localeSlug = getLocaleSlug();
-	if ( config( 'support_site_locales' ).indexOf( localeSlug ) > -1 ) {
-		return localeSlug;
-	}
-	return 'en';
-}
-
-/**
  * Returns the base url for the forums, for example //{locale}.forums.wordpress.com
  *
  * Checks for a valid bb forum against a list `forum_locales` defined in config/_shared.json.

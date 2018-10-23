@@ -16,7 +16,6 @@ import {
 	isLocaleVariant,
 	localizeUrl,
 	canBeTranslated,
-	getSupportSiteLocale,
 	getForumUrl,
 	getPathParts,
 	filterLanguageRevisions,
@@ -402,6 +401,10 @@ describe( 'utils', () => {
 			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
 				'https://de.jetpack.com/features/comparison/'
 			);
+			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
+			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
+				'https://br.jetpack.com/features/comparison/'
+			);
 			getLocaleSlug.mockImplementationOnce( () => 'zh-tw' );
 			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
 				'https://zh-tw.jetpack.com/features/comparison/'
@@ -410,22 +413,6 @@ describe( 'utils', () => {
 			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
 				'https://jetpack.com/features/comparison/'
 			);
-		} );
-	} );
-
-	describe( '#getSupportSiteLocale', () => {
-		test( 'should return `en` by default', () => {
-			expect( getSupportSiteLocale() ).toEqual( 'en' );
-		} );
-
-		test( 'should return support slug for current i18n locale slug if available in config', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'ja' );
-			expect( getSupportSiteLocale() ).toEqual( 'ja' );
-		} );
-
-		test( 'should return `en` for current i18n locale slug if not available in config', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'ar' );
-			expect( getSupportSiteLocale() ).toEqual( 'en' );
 		} );
 	} );
 
