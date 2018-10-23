@@ -74,6 +74,11 @@ $gutenberg-theme-toggle: #11a0d2;
 		}
 	}
 
+	//needed for oembed iframes to appear
+	.wp-block-embed__wrapper > iframe {
+		width: 100%;
+	}
+
 	// @see https://make.wordpress.org/accessibility/handbook/markup/the-css-class-screen-reader-text/
 	.screen-reader-text {
 		border: 0;
