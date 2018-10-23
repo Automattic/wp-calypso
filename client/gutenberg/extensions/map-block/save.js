@@ -10,8 +10,6 @@ import { Component } from '@wordpress/element';
  * Internal dependencies
  */
 
-import { settings } from './settings.js';
-
 class MapSave extends Component {
 	render() {
 		const { className, attributes } = this.props;
@@ -24,7 +22,6 @@ class MapSave extends Component {
 				data-zoom={ zoom }
 				data-map_center={ JSON.stringify( map_center ) }
 				data-marker_color={ marker_color }
-				data-api_key={ settings.GOOGLE_MAPS_API_KEY }
 			/>
 		);
 	}
