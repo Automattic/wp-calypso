@@ -20,14 +20,11 @@ const config = {
 				targets,
 				useBuiltIns: 'entry',
 				shippedProposals: true, // allows es7 features like Promise.prototype.finally
-				loose: true, // very slightly diverges from spec but also is more concise
 			},
 		],
 		'@babel/react',
 	],
 	plugins: _.compact( [
-		// http://new.babeljs.io/docs/en/next/v7-migration.html#babel-plugin-proposal-class-properties
-		[ '@babel/plugin-proposal-class-properties', { loose: true } ],
 		[
 			path.join(
 				__dirname,
@@ -38,6 +35,7 @@ const config = {
 			),
 			{ async: isCalypsoClient && codeSplit },
 		],
+		'@babel/plugin-proposal-class-properties',
 		'@babel/plugin-proposal-export-default-from',
 		'@babel/plugin-proposal-export-namespace-from',
 		'@babel/plugin-syntax-dynamic-import',
