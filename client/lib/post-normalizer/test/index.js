@@ -1072,7 +1072,12 @@ describe( 'index', () => {
 				}
 			);
 		} );
-		test( 'links to embedded Polldaddy polls', done => {
+		test.each( [
+			[ 'http://polldaddy.com/poll/8980420', 8980420 ],
+			[ 'https://polldaddy.com/poll/8980420', 8980420 ],
+			[ 'https://poll.fm/12345678', 12345678 ],
+			[ 'https://survey.fm/12345678', 12345678 ],
+		] )( 'links to embedded Crowdsignal polls', ( url, id, done ) => {
 			normalizer(
 				{
 					content:
@@ -1080,36 +1085,39 @@ describe( 'index', () => {
 						'<div class="PDS_Poll" id="PDI_container8980420" style="display:inline-block;"></div>' +
 						'<div id="PD_superContainer"></div>' +
 						'<script type="text/javascript" charset="UTF-8" src="//static.polldaddy.com/p/8980420.js"></script>' +
-						'<noscript><a href="http://polldaddy.com/poll/8980420">Take Our Poll</a></noscript>',
+						`<noscript><a href="${ url }">Take Our Poll</a></noscript>`,
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectPolls ] ) ],
 				function( err, normalized ) {
 					assert.include(
 						normalized.content,
-						'<p><a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/8980420">Take our poll</a></p>'
+						`<p><a target="_blank" rel="external noopener noreferrer" href="https://poll.fm/${ id }">Take our poll</a></p>`
 					);
 					done( err );
 				}
 			);
 		} );
-		test( 'links to embedded Polldaddy surveys', done => {
-			normalizer(
-				{
-					content:
-						'<div class="embed-polldaddy">' +
-						'<div class="pd-embed" data-settings="{&quot;type&quot;:&quot;iframe&quot;,&quot;auto&quot;:true,&quot;domain&quot;:&quot;bluefuton.polldaddy.com/s/&quot;,&quot;id&quot;:&quot;what-s-your-favourite-bird&quot;}">' +
-						'</div>',
-				},
-				[ normalizer.withContentDOM( [ normalizer.content.detectSurveys ] ) ],
-				function( err, normalized ) {
-					assert.include(
-						normalized.content,
-						'<p><a target="_blank" rel="external noopener noreferrer" href="https://bluefuton.polldaddy.com/s/what-s-your-favourite-bird">Take our survey</a></p>'
-					);
-					done( err );
-				}
-			);
-		} );
+		test.each( [ [ 'pd-embed' ], [ 'cs-embed' ] ] )(
+			'links to embedded Crowdsignal surveys',
+			( className, done ) => {
+				normalizer(
+					{
+						content:
+							'<div class="embed-polldaddy">' +
+							`<div class="${ className }" data-settings="{&quot;type&quot;:&quot;iframe&quot;,&quot;auto&quot;:true,&quot;domain&quot;:&quot;bluefuton.polldaddy.com/s/&quot;,&quot;id&quot;:&quot;what-s-your-favourite-bird&quot;}">` +
+							'</div>',
+					},
+					[ normalizer.withContentDOM( [ normalizer.content.detectSurveys ] ) ],
+					function( err, normalized ) {
+						assert.include(
+							normalized.content,
+							'<p><a target="_blank" rel="external noopener noreferrer" href="https://bluefuton.polldaddy.com/s/what-s-your-favourite-bird">Take our survey</a></p>'
+						);
+						done( err );
+					}
+				);
+			}
+		);
 
 		test( 'removes elements by selector', done => {
 			normalizer(
