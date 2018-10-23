@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import Gridicon from 'gridicons';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -45,15 +46,16 @@ class EditorGutenbergOptInDialog extends Component {
 	};
 
 	optInToGutenberg = () => {
-		const { hideDialog, optIn, siteId } = this.props;
+		const { gutenbergURL, hideDialog, optIn, siteId } = this.props;
 		hideDialog();
 		optIn( siteId );
+		page.redirect( gutenbergURL );
 	};
 
 	render() {
-		const { translate, gutenbergURL, isDialogVisible, optOut } = this.props;
+		const { translate, isDialogVisible, optOut } = this.props;
 		const buttons = [
-			<Button key="gutenberg" href={ gutenbergURL } onClick={ this.optInToGutenberg } primary>
+			<Button key="gutenberg" onClick={ this.optInToGutenberg } primary>
 				{ translate( 'Try the new editor' ) }
 			</Button>,
 			{
