@@ -11,7 +11,7 @@ import { createBlock, registerBlockStyle, registerBlockType } from '@wordpress/b
  * Internal dependencies
  */
 import './editor.scss';
-import { DEFAULT_COLUMNS, LAYOUTS } from './constants';
+import { DEFAULT_COLUMNS, DEFAULT_LAYOUT, LAYOUT_STYLES, LAYOUTS } from './constants';
 import { default as edit } from './edit';
 import { default as save } from './save';
 
@@ -63,7 +63,7 @@ const blockAttributes = {
 	},
 };
 
-const blockName = 'jetpack/tiled-gallery';
+export const blockName = 'jetpack/tiled-gallery';
 
 const blockSettings = {
 	title: __( 'Tiled gallery', 'jetpack' ),
@@ -83,7 +83,6 @@ const blockSettings = {
 	supports: {
 		align: true,
 	},
-
 	transforms: {
 		from: [
 			{
@@ -108,7 +107,7 @@ const blockSettings = {
 				type: 'shortcode',
 				tag: 'gallery',
 				attributes: {
-					// @TODO: other params (https://en.support.wordpress.com/gallery/#gallery-shortcode)
+					// @TODO: other params: https://en.support.wordpress.com/gallery/#gallery-shortcode
 					images: {
 						type: 'array',
 						shortcode: ( { named: { ids } } ) => {
@@ -131,6 +130,13 @@ const blockSettings = {
 						type: 'string',
 						shortcode: ( { named: { link = 'attachment' } } ) => {
 							return link === 'file' ? 'media' : link;
+						},
+					},
+					layout: {
+						type: 'string',
+						shortcode: ( { named: { type = DEFAULT_LAYOUT } } ) => {
+							// @TODO: if `type=slideshow`, return a slideshow block
+							return LAYOUTS.indexOf( type ) > -1 ? type : DEFAULT_LAYOUT;
 						},
 					},
 				},
@@ -157,13 +163,12 @@ const blockSettings = {
 			},
 		],
 	},
-
 	edit,
 	save,
 };
 
-LAYOUTS.forEach( layout => {
-	registerBlockStyle( blockName, layout );
+LAYOUT_STYLES.forEach( style => {
+	registerBlockStyle( blockName, style );
 } );
 
 registerBlockType( blockName, blockSettings );

@@ -1,15 +1,20 @@
 /** @format */
 
 /**
+ * This component is originally from Gutenberg Gallery block:
+ * @link https://github.com/WordPress/gutenberg/blob/1cd604df7e9017e0dbe3ab64897ac3af35ca35c5/packages/block-library/src/gallery/gallery-image.js
+ */
+
+/**
  * External Dependencies
  */
-import classnames from 'classnames';
-import { Component } from '@wordpress/element';
-import { IconButton, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { BACKSPACE, DELETE } from '@wordpress/keycodes';
-import { withSelect } from '@wordpress/data';
+import { Component } from '@wordpress/element';
+import { IconButton, Spinner } from '@wordpress/components';
 import { RichText } from '@wordpress/editor';
+import { withSelect } from '@wordpress/data';
+import classnames from 'classnames';
 
 class GalleryImage extends Component {
 	constructor() {

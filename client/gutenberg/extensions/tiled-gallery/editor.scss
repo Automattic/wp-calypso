@@ -84,7 +84,12 @@
 		}
 	}
 
-	.tiled-gallery__upload {
+	// Circle layout doesn't support captions
+	&.is-style-circle .tiled-gallery__item .editor-rich-text {
+		display: none;
+	}
+
+	.tiled-gallery__row-extras {
 		&,
 		.components-form-file-upload,
 		.components-button.block-library-gallery-add-item-button {
