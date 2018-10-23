@@ -497,3 +497,8 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 .site-settings__search-block {
 		margin-bottom: 16px;
 }
+
+.site-settings__general-settings-launch-site {
+	display: flex;
+	justify-content: space-between;
+}
