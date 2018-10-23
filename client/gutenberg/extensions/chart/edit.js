@@ -12,6 +12,7 @@ import {
 	BlockAlignmentToolbar,
 	BlockControls,
 	PanelColorSettings,
+	RichText,
 } from '@wordpress/editor';
 
 /**
@@ -56,6 +57,7 @@ class ChartEdit extends Component {
 		const { rowsForColors } = this.state;
 		const {
 			align,
+			chart_title,
 			chart_type,
 			googlesheet_url,
 			number_format,
@@ -66,7 +68,7 @@ class ChartEdit extends Component {
 		const colorControl = rowsForColors.map( ( point, index ) => {
 			return (
 				<PanelColorSettings
-					title={ __( 'Color for ' + point[ 0 ] ) }
+					title={ __( 'Color: ' + point[ 0 ] ) }
 					initialOpen={ true }
 					colorSettings={ [
 						{
@@ -129,7 +131,13 @@ class ChartEdit extends Component {
 						admin={ true }
 						align={ align }
 						onUpdateColors={ this.onUpdateColors }
-					/>
+					>
+						<RichText
+							placeholder={ __( 'Write a chart title…', 'jetpack' ) }
+							value={ chart_title }
+							onChange={ value => setAttributes( { chart_title: value } ) }
+						/>
+					</Chart>
 				</div>
 			</Fragment>
 		);

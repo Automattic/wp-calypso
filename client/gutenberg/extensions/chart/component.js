@@ -24,7 +24,7 @@ export class Chart extends Component {
 		this.chartTitleRef = createRef();
 	}
 	render() {
-		const { chart_type, chart_title, the_caption } = this.props;
+		const { chart_type, children } = this.props;
 		const { hasPoints } = this.state;
 		const classes = classnames(
 			includes( [ 'donut', 'pie' ], chart_type ) ? 'centered-legend' : null,
@@ -32,11 +32,10 @@ export class Chart extends Component {
 		);
 		return (
 			<div className={ classes }>
-				<p className="chart-title" placeholder="Write a chart title…" ref={ this.chartTitleRef }>
-					{ chart_title }
+				<p className="chart-title" ref={ this.chartTitleRef }>
+					{ children }
 				</p>
 				<div class="a8c-chart-wrapper a8c-cover-text-color" ref={ this.chartRef } />
-				<p class="chart-caption">{ the_caption }</p>
 			</div>
 		);
 	}
@@ -180,7 +179,7 @@ export class Chart extends Component {
 		}
 	}
 	makeChart( header, rows, type ) {
-		const { admin, chart_type, x_axis_label, y_axis_label } = this.props;
+		const { admin, chart_type, x_axis_label, y_axis_label, number_format } = this.props;
 		const { chart_data, c3, d3, jQuery } = this.state;
 		const containerHeight = jQuery( this.chartRef.current ).height();
 		const clean = jQuery.extend( true, [], rows );
@@ -202,19 +201,19 @@ export class Chart extends Component {
 						return result.replace( /\.0+$/, '' );
 					};
 
-				if ( this.number_format === 'percent' ) {
+				if ( number_format === 'percent' ) {
 					return function( d ) {
 						return stripTrailingZeros( d ) + '%';
 					};
-				} else if ( this.number_format === 'euro' ) {
+				} else if ( number_format === 'euro' ) {
 					return function( d ) {
 						return stripTrailingZeros( d ) + '€';
 					};
-				} else if ( this.number_format === 'pound' ) {
+				} else if ( number_format === 'pound' ) {
 					return function( d ) {
 						return '£' + stripTrailingZeros( d );
 					};
-				} else if ( this.number_format === 'dollar' ) {
+				} else if ( number_format === 'dollar' ) {
 					return function( d ) {
 						return '$' + stripTrailingZeros( d );
 					};
@@ -309,7 +308,7 @@ export class Chart extends Component {
 			clonedC3 = jQuery.extend( true, {}, c3Object );
 
 		clonedC3.bindto = null;
-		clonedC3.axis.y.tick.format = this.number_format;
+		clonedC3.axis.y.tick.format = number_format;
 		const stringifiedC3 = JSON.stringify( clonedC3 );
 
 		if (

@@ -4,6 +4,7 @@
  * @format
  */
 
+import { RichText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 import classnames from 'classnames';
 
@@ -20,6 +21,7 @@ class ChartSave extends Component {
 		const { attributes, className } = this.props;
 		const {
 			align,
+			chart_title,
 			chart_type,
 			colors,
 			googlesheet_url,
@@ -38,7 +40,9 @@ class ChartSave extends Component {
 				data-number_format={ number_format }
 				data-colors={ JSON.stringify( colors ) }
 				data-align={ align }
-			/>
+			>
+				<RichText.Content tagName="p" value={ chart_title } />
+			</div>
 		);
 	}
 }

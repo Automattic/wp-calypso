@@ -47,6 +47,9 @@ export const settings = {
 		y_axis_label: {
 			type: 'string',
 		},
+		chart_title: {
+			type: 'string',
+		},
 	},
 	chart_typeOptions: [
 		{
