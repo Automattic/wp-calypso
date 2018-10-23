@@ -16,7 +16,6 @@ import {
 	isLocaleVariant,
 	localizeUrl,
 	canBeTranslated,
-	getForumUrl,
 	getPathParts,
 	filterLanguageRevisions,
 } from 'lib/i18n-utils';
@@ -413,37 +412,6 @@ describe( 'utils', () => {
 			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
 				'https://jetpack.com/features/comparison/'
 			);
-		} );
-	} );
-
-	describe( '#getForumUrl', () => {
-		test( 'should return `en` forum url by default', () => {
-			expect( getForumUrl() ).toEqual( '//en.forums.wordpress.com' );
-		} );
-
-		test( 'should return forum url for current i18n locale slug if available in config', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( getForumUrl() ).toEqual( '//de.forums.wordpress.com' );
-		} );
-
-		test( 'should return `en` for current i18n locale slug if not available in config', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'xxxx' );
-			expect( getForumUrl() ).toEqual( '//en.forums.wordpress.com' );
-		} );
-
-		test( 'should prioritize passed argument over current local', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( getForumUrl( 'ja' ) ).toEqual( '//ja.forums.wordpress.com' );
-		} );
-
-		test( 'should return `en` if passed argument is not available in config', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( getForumUrl( 'boom!' ) ).toEqual( '//en.forums.wordpress.com' );
-		} );
-
-		test( 'should return `en` for if neither current i18n locale slug nor passed argument is available in config', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'bonnie' );
-			expect( getForumUrl( 'clyde' ) ).toEqual( '//en.forums.wordpress.com' );
 		} );
 	} );
 

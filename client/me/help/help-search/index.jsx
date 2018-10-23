@@ -17,7 +17,7 @@ import HelpResults from 'me/help/help-results';
 import NoResults from 'my-sites/no-results';
 import QueryHelpLinks from 'components/data/query-help-links';
 import SearchCard from 'components/search-card';
-import { getForumUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 export class HelpSearch extends React.PureComponent {
@@ -80,8 +80,8 @@ export class HelpSearch extends React.PureComponent {
 		}
 
 		const forumBaseUrl = helpLinks.wordpress_forum_links_localized
-			? getForumUrl()
-			: getForumUrl( 'en' );
+			? localizeUrl( 'https://en.forums.wordpress.com/' )
+			: 'https://en.forums.wordpress.com/';
 
 		return (
 			<div>
