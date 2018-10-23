@@ -128,7 +128,7 @@ class CloneStartStep extends Component {
 				<p className="clone-start__description">
 					{ translate(
 						"You're about to clone {{strong}}%(originSiteSlug)s{{/strong}}. " +
-							'All of its content, plugins, and themes will be copied to the ' +
+							'All content, plugins, and themes will be copied to the ' +
 							'destination site.',
 						{
 							components: {
@@ -142,9 +142,8 @@ class CloneStartStep extends Component {
 				</p>
 				<p className="clone-start__description">
 					{ translate(
-						'To clone your site, you will need {{strong}}WordPress already ' +
-							'installed{{/strong}} on the destination site and the {{strong}}server ' +
-							'credentials{{/strong}} for the destination site.',
+						'To clone your site, you will need the {{strong}}server credentials' +
+							'{{/strong}} for the destination, which must be a WordPress site.',
 						{
 							components: {
 								strong: <strong />,
@@ -171,7 +170,7 @@ class CloneStartStep extends Component {
 
 		const headerText = translate( "Let's clone %(origin)s", { args: { origin: originSiteName } } );
 		const subHeaderText = translate(
-			"Create a test site, migrate your site, or just back up your data for safekeeping — it's up to you!"
+			"Create a test or staging site, migrate your site, or just back up your data for safekeeping — it's up to you!"
 		);
 
 		return (
