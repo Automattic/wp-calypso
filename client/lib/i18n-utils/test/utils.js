@@ -281,6 +281,33 @@ describe( 'utils', () => {
 			);
 		} );
 
+		test( 'overriding locale', () => {
+			getLocaleSlug.mockImplementationOnce( () => 'ru' );
+			expect( localizeUrl( 'https://automattic.com/cookies/', 'de' ) ).toEqual(
+				'https://automattic.com/de/cookies/'
+			);
+			getLocaleSlug(); // make sure to consume it.
+
+			getLocaleSlug.mockImplementationOnce( () => 'en' );
+			expect( localizeUrl( 'https://automattic.com/cookies', 'fr' ) ).toEqual(
+				'https://automattic.com/fr/cookies/'
+			);
+			getLocaleSlug(); // make sure to consume it.
+
+			// Finally make sure that no overriding has stuck and it uses the getLocaleSlug() when no override is specified.
+			getLocaleSlug.mockImplementationOnce( () => 'ru' );
+			expect( localizeUrl( 'https://automattic.com/cookies/' ) ).toEqual(
+				'https://automattic.com/cookies/'
+			);
+			getLocaleSlug(); // make sure to consume it.
+
+			getLocaleSlug.mockImplementationOnce( () => 'de' );
+			expect( localizeUrl( 'https://automattic.com/cookies/' ) ).toEqual(
+				'https://automattic.com/de/cookies/'
+			);
+			getLocaleSlug(); // make sure to consume it.
+		} );
+
 		test( 'logged-out homepage', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'en' );
 			expect( localizeUrl( 'https://wordpress.com/' ) ).toEqual( 'https://wordpress.com/' );
