@@ -35,6 +35,7 @@ import InlineConnection from 'my-sites/sharing/connections/inline-connection';
 import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
 import { pauseGuidedTour, resumeGuidedTour } from 'state/ui/guided-tours/actions';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
+import { reduxDispatch } from 'lib/redux-bridge';
 
 class MediaLibraryContent extends React.Component {
 	static propTypes = {
@@ -345,11 +346,12 @@ export default connect(
 			shouldPauseGuidedTour,
 		};
 	},
-	dispatch => ( {
-		toggleGuidedTour: shouldPause =>
-			// We're wrapping this in a `setTimeout` to avoid dispatch clashes with the media data Flux implementation.
+	() => ( {
+		toggleGuidedTour: shouldPause => {
+			// We're using `reduxDispatch` to avoid dispatch clashes with the media data Flux implementation.
 			// The eventual Reduxification of the media store should prevent this. See: #26168
-			setTimeout( () => dispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() ), 0 ),
+			reduxDispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() );
+		},
 	} ),
 	null,
 	{ pure: false }
