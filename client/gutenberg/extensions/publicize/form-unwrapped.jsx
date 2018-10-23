@@ -16,9 +16,9 @@
  * External dependencies
  */
 import classnames from 'classnames';
+import isNil from 'lodash/isNil';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
-import { isNil } from 'lodash';
 
 /**
  * Internal dependencies
@@ -100,7 +100,7 @@ class PublicizeFormUnwrapped extends Component {
 			<div className="misc-pub-section misc-pub-section-last">
 				<div id="publicize-form">
 					<ul>
-						{staticConnections.map( c =>
+						{ staticConnections.map( c =>
 							<PublicizeConnection
 								connectionData={ c }
 								key={ c.unique_id }

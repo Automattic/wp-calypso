@@ -11,27 +11,18 @@
 /**
  * External dependencies
  */
-import wp from 'wp';
 import { __ } from '@wordpress/i18n';
 import { Fragment } from '@wordpress/element';
+import { PluginPrePublishPanel, PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 import { registerPlugin } from '@wordpress/plugins';
 import { registerStore } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
+import JetpackLogo from 'components/jetpack-logo';
 import PublicizePanel from './panel';
 import publicizeStore from './gutenberg-store';
-import JetpackLogo from 'components/jetpack-logo';
-
-/**
- * Module variables
- */
-const {
-	PluginPrePublishPanel,
-	PluginSidebar,
-	PluginSidebarMoreMenuItem,
-} = wp.editPost;
 
 const PluginRender = () => (
 	<Fragment>

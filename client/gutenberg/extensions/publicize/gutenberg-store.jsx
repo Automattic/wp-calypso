@@ -54,7 +54,7 @@ const publicizeStore = {
 		 * Action function for when request for connections starts.
 		 *
 		 * @since 5.9.1
-		 * @return {Object} action type 'GET_CONNECTIONS_START['
+		 * @return {Object} action type 'GET_CONNECTIONS_START'
 		 */
 		getConnectionsStart() {
 			return {

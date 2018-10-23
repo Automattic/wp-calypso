@@ -12,7 +12,7 @@
 /**
  * External Dependencies
  */
-import wp from 'wp';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Module variables
@@ -20,7 +20,6 @@ import wp from 'wp';
 const {
 	gutenberg_publicize_setup,
 	ajaxurl,
-	$,
 } = window;
 
 /**
@@ -55,12 +54,8 @@ export function getStaticPublicizeConnections() {
  * @return {Promise} Promise for connection request.
  */
 export function requestPublicizeConnections( postId ) {
-	return wp.apiRequest( {
+	return apiFetch( {
 		path: '/publicize/posts/' + postId.toString() + '/connections',
-		contentType: 'application/json',
-		dataType: 'json',
-		processData: false,
-		method: 'GET',
 	} );
 }
 
@@ -88,5 +83,9 @@ export function getAllConnections() {
  * @return {object} List of possible services that can be connected to
  */
 export function requestTestPublicizeConnections() {
-	return $.post( ajaxurl, { action: 'test_publicize_conns' } );
+	return apiFetch( {
+		body: { action: 'test_publicize_conns' },
+		method: 'POST',
+		url: ajaxurl,
+	} );
 }
