@@ -1,10 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
 
- import { registerBlockType } from '@wordpress/blocks';
+import { registerBlockType } from '@wordpress/blocks';
 
- /**
+/**
  * Internal dependencies
  */
 
@@ -28,5 +30,5 @@ registerBlockType( settings.name, {
 		}
 	},
 	edit,
-	save
+	save,
 } );

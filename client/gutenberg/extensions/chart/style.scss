@@ -1,10 +1,14 @@
+/** @format */
+
 .wp-block-a8c-chart {
 	/*-- Chart --*/
 
-	.c3 svg, .top-legend {
+	.c3 svg,
+	.top-legend {
 		font-size: 0.875em;
 	}
-	.c3 path, .c3 line {
+	.c3 path,
+	.c3 line {
 		fill: none;
 		stroke: currentColor;
 		color: inherit;
@@ -41,7 +45,8 @@
 	.c3-grid text {
 		fill: #aaa;
 	}
-	.c3-xgrid, .c3-ygrid {
+	.c3-xgrid,
+	.c3-ygrid {
 		stroke-dasharray: 3 3;
 	}
 
@@ -89,25 +94,25 @@
 	.c3-target.c3-focused {
 		opacity: 1;
 	}
-	.c3-target.c3-focused path.c3-line, .c3-target.c3-focused path.c3-step {
+	.c3-target.c3-focused path.c3-line,
+	.c3-target.c3-focused path.c3-step {
 		stroke-width: 2px;
 	}
 	.c3-target.c3-defocused {
 		opacity: 0.3 !important;
 	}
 
-
 	/*-- Region --*/
 
 	.c3-region {
 		fill: steelblue;
-		fill-opacity: .1;
+		fill-opacity: 0.1;
 	}
 
 	/*-- Brush --*/
 
 	.c3-brush .extent {
-		fill-opacity: .1;
+		fill-opacity: 0.1;
 	}
 
 	/*-- Legend --*/
@@ -123,7 +128,7 @@
 		opacity: 0.75;
 		fill: white;
 		stroke: lightgray;
-		stroke-width: 1
+		stroke-width: 1;
 	}
 
 	/*-- Tooltip --*/
@@ -137,17 +142,17 @@
 		background-color: #fff;
 		empty-cells: show;
 		width: auto;
-		-webkit-box-shadow: 7px 7px 12px -9px rgb(119,119,119);
-		-moz-box-shadow: 7px 7px 12px -9px rgb(119,119,119);
-		box-shadow: 7px 7px 12px -9px rgb(119,119,119);
+		-webkit-box-shadow: 7px 7px 12px -9px rgb( 119, 119, 119 );
+		-moz-box-shadow: 7px 7px 12px -9px rgb( 119, 119, 119 );
+		box-shadow: 7px 7px 12px -9px rgb( 119, 119, 119 );
 		opacity: 0.9;
 	}
 	.c3-tooltip th {
-		background-color: rgb(30,30,30);
+		background-color: rgb( 30, 30, 30 );
 		font-size: 14px;
 		padding: 2px 5px;
 		text-align: left;
-		color: #FFF;
+		color: #fff;
 	}
 	.c3-tooltip td {
 		font-size: 13px;
@@ -161,7 +166,7 @@
 		height: 10px;
 		margin-right: 6px;
 	}
-	.c3-tooltip td.value{
+	.c3-tooltip td.value {
 		text-align: right;
 	}
 	.c3-area {
@@ -185,7 +190,7 @@
 	.c3-chart-arc .c3-gauge-value {
 		fill: #000;
 	}
-	body:not(.page-compose) .a8c-block.a8c-block-align-full.a8c-chart {
+	body:not( .page-compose ) .a8c-block.a8c-block-align-full.a8c-chart {
 		padding-left: 2rem;
 		padding-right: 2rem;
 		max-width: 70rem;
@@ -218,7 +223,8 @@
 		vertical-align: middle;
 		font-size: 1em;
 	}
-	.centered-legend .top-legend, .centered-legend .chart-title {
+	.centered-legend .top-legend,
+	.centered-legend .chart-title {
 		text-align: center;
 	}
 	.chart-title,

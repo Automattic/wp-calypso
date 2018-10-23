@@ -1,7 +1,9 @@
+/** @format */
+
 .wp-block-a8c-chart {
 	padding-top: 2rem;
 	.top-legend .legend-label {
-		font-family: "Atlas Grotesk Web";
+		font-family: 'Atlas Grotesk Web';
 	}
 	.chart-title {
 		font-size: 1.2em;
@@ -10,10 +12,11 @@
 	.top-legend {
 		font-size: 0.8em;
 	}
-	.c3 svg, .c3-tooltip {
+	.c3 svg,
+	.c3-tooltip {
 		font-family: 'Atlas Grotesk Web', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	}
 	.a8c-chart-wrapper.a8c-cover-text-color {
-		color: rgb(88,88,88);
+		color: rgb( 88, 88, 88 );
 	}
 }

@@ -1,5 +1,7 @@
 /**
  * External dependencies
+ *
+ * @format
  */
 
 import { Component } from '@wordpress/element';
@@ -15,10 +17,7 @@ import classnames from 'classnames';
 
 class ChartSave extends Component {
 	render() {
-		const {
-			attributes,
-			className,
-		} = this.props;
+		const { attributes, className } = this.props;
 		const {
 			align,
 			chart_type,
@@ -28,10 +27,7 @@ class ChartSave extends Component {
 			x_axis_label,
 			y_axis_label,
 		} = attributes;
-		const classes = classnames(
-			className,
-			align ? `align${ align }` : null,
-		);
+		const classes = classnames( className, align ? `align${ align }` : null );
 		return (
 			<div
 				className={ classes }

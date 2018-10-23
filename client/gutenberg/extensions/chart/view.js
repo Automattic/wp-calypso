@@ -1,11 +1,17 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
 
 import './style.scss';
 import component from './component.js';
 import { settings } from './settings.js';
 import FrontendManagement from 'gutenberg/extensions/shared/frontend-management.js';
+
+/**
+ * External dependencies
+ */
 
 window.addEventListener( 'load', function() {
 	// Do not initialize in editor.

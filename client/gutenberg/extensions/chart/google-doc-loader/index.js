@@ -1,5 +1,7 @@
 /**
  * External dependencies
+ *
+ * @format
  */
 
 /**
@@ -19,169 +21,164 @@ export class GoogleDocLoader {
 		success: null,
 		error: null,
 		url: null,
-		context: null
-	}
+		context: null,
+	};
 	extractKeyFromUrl = function( url ) {
-		if (/pubhtml/.test( url ) ) {
-			return url.match( 'd\\/(.*?)\\/pubhtml' )[1];
-		} else if (/spreadsheets\/d/.test(url)) {
-			return url.match('d\\/(.*?)\/')[1];
-		} else if (/key=/.test(url)) {
-			return url.this.key.match('key=(.*?)(&|#|$)')[1];
+		if ( /pubhtml/.test( url ) ) {
+			return url.match( 'd\\/(.*?)\\/pubhtml' )[ 1 ];
+		} else if ( /spreadsheets\/d/.test( url ) ) {
+			return url.match( 'd\\/(.*?)/' )[ 1 ];
+		} else if ( /key=/.test( url ) ) {
+			return url.this.key.match( 'key=(.*?)(&|#|$)' )[ 1 ];
 		}
 		// console.log('Couldn\'t parse chart URL');
 		return null;
 	};
 	fetch( key ) {
-
-		const worksheetAPI = this.apis.base + this.apis.worksheets + key + this.apis.suffix + this.apis.query;
-		this.options.jQuery.ajax({
-			url: worksheetAPI,
-			context: this
-		}).success(function(data) {
-
-			const cellsAPI = this.extractChartIDFromWorksheetsResponse(data);
-			if (cellsAPI) {
-				this.fetchCells(cellsAPI + this.apis.query);
-			}
-
-		}).error(function(data) {
-
-			if (this.options.error) {
-				this.options.error(data.statusText);
-			}
-
-		});
-
-	};
+		const worksheetAPI =
+			this.apis.base + this.apis.worksheets + key + this.apis.suffix + this.apis.query;
+		this.options.jQuery
+			.ajax( {
+				url: worksheetAPI,
+				context: this,
+			} )
+			.success( function( data ) {
+				const cellsAPI = this.extractChartIDFromWorksheetsResponse( data );
+				if ( cellsAPI ) {
+					this.fetchCells( cellsAPI + this.apis.query );
+				}
+			} )
+			.error( function( data ) {
+				if ( this.options.error ) {
+					this.options.error( data.statusText );
+				}
+			} );
+	}
 	apis = {
 		base: 'https://spreadsheets.google.com/',
 		worksheets: 'feeds/worksheets/',
 		cells: 'feeds/cells/',
 		suffix: '/public/values',
-		query: '?alt=json'
-	}
+		query: '?alt=json',
+	};
 	rel = {
-		cells: 'http://schemas.google.com/spreadsheets/2006#cellsfeed'
+		cells: 'http://schemas.google.com/spreadsheets/2006#cellsfeed',
 	};
 
 	fetchCells( cellsAPI ) {
-		this.options.jQuery.ajax({
-			url: cellsAPI,
-			context: this
-		}).success(function(data) {
-
-			const parsedData = this.parseSheet(data);
-			/* Size sanity check */
-			if (parsedData.info.colCount > 100 || parsedData.info.rowCount > 100) {
-				if (this.options.error) {
-					this.options.error({
-						error: 'sheet_too_big'
-					});
+		this.options.jQuery
+			.ajax( {
+				url: cellsAPI,
+				context: this,
+			} )
+			.success( function( data ) {
+				const parsedData = this.parseSheet( data );
+				/* Size sanity check */
+				if ( parsedData.info.colCount > 100 || parsedData.info.rowCount > 100 ) {
+					if ( this.options.error ) {
+						this.options.error( {
+							error: 'sheet_too_big',
+						} );
+					}
+				} else if ( this.options.success ) {
+					this.options.success( parsedData );
 				}
-			} else if (this.options.success) {
-				this.options.success( parsedData );
-			}
-
-		}).error(function(data) {
-
-			if (this.options.error) {
-				this.options.error(data.statusText);
-			}
-
-		});
+			} )
+			.error( function( data ) {
+				if ( this.options.error ) {
+					this.options.error( data.statusText );
+				}
+			} );
 	}
 	extractChartIDFromWorksheetsResponse( data ) {
 		const links = [];
 		for ( const a in data.feed.entry ) {
-			const entry = data.feed.entry[a];
+			const entry = data.feed.entry[ a ];
 			for ( const b in entry.link ) {
-				if ( entry.link[b].rel === this.rel.cells ) {
-					links.push(entry.link[b].href);
+				if ( entry.link[ b ].rel === this.rel.cells ) {
+					links.push( entry.link[ b ].href );
 				}
 			}
 		}
 
-		return links[0];
-
+		return links[ 0 ];
 	}
-	parseCell = function(text) {
-		if (this.options.context === 'table') {
+	parseCell = function( text ) {
+		if ( this.options.context === 'table' ) {
 			return text;
 		}
 
-		return parseFloat(text.replace(',', ''));
-	}
+		return parseFloat( text.replace( ',', '' ) );
+	};
 	parseSheet( data ) {
 		const parsedData = {
 			info: {
 				rowCount: 0,
-				colCount: 0
+				colCount: 0,
 			},
-			rows: []
+			rows: [],
 		};
 		let lastCol = 0;
 		let lastRow = 1;
 		for ( const key in data.feed.entry ) {
-			const entry = data.feed.entry[key];
-			const row = parseInt(entry.gs$cell.row);
-			const col = parseInt(entry.gs$cell.col);
+			const entry = data.feed.entry[ key ];
+			const row = parseInt( entry.gs$cell.row );
+			const col = parseInt( entry.gs$cell.col );
 			let text = entry.content.$t;
 
-			if (row > lastRow) {
+			if ( row > lastRow ) {
 				lastCol = 0;
 			}
 
 			const rowIndex = row - 1;
-			if ( typeof parsedData.rows[rowIndex] === 'undefined' ) {
-				parsedData.rows[rowIndex] = {
+			if ( typeof parsedData.rows[ rowIndex ] === 'undefined' ) {
+				parsedData.rows[ rowIndex ] = {
 					info: {
-						gaIndex: row
+						gaIndex: row,
 					},
-					cells: []
+					cells: [],
 				};
 			}
 
-			for (let a = 1; a < (col - lastCol); a++) {
-				parsedData.rows[rowIndex].cells.push('');
+			for ( let a = 1; a < col - lastCol; a++ ) {
+				parsedData.rows[ rowIndex ].cells.push( '' );
 			}
 
-			if (rowIndex > 0 && parsedData.rows[rowIndex].cells.length > 0) {
-				text = this.parseCell(text);
+			if ( rowIndex > 0 && parsedData.rows[ rowIndex ].cells.length > 0 ) {
+				text = this.parseCell( text );
 			}
 
-			parsedData.rows[rowIndex].cells.push(text);
-			if (row > parsedData.info.rowCount) {
+			parsedData.rows[ rowIndex ].cells.push( text );
+			if ( row > parsedData.info.rowCount ) {
 				parsedData.info.rowCount = row;
 			}
 
-			if (col > parsedData.info.colCount) {
+			if ( col > parsedData.info.colCount ) {
 				parsedData.info.colCount = col;
 			}
 
 			lastCol = col;
 			lastRow = row;
-		};
+		}
 
 		// Add additional cells at the end of rows
-		for (let i = 0; i < parsedData.rows.length; i++) {
-			if (typeof parsedData.rows[i] === 'undefined') {
-				parsedData.rows[i] = {
+		for ( let i = 0; i < parsedData.rows.length; i++ ) {
+			if ( typeof parsedData.rows[ i ] === 'undefined' ) {
+				parsedData.rows[ i ] = {
 					info: {},
-					cells: []
+					cells: [],
 				};
 
-				for (let a = 0; a < parsedData.info.colCount; a++) {
-					parsedData.rows[i].cells.push('');
-				};
-
-			} else if (parsedData.rows[i].cells.length < parsedData.info.colCount) {
-				const difference = (parsedData.info.colCount - parsedData.rows[i].cells.length);
-				for (let b = 0; b < difference; b++) {
-					parsedData.rows[i].cells.push('');
+				for ( let a = 0; a < parsedData.info.colCount; a++ ) {
+					parsedData.rows[ i ].cells.push( '' );
+				}
+			} else if ( parsedData.rows[ i ].cells.length < parsedData.info.colCount ) {
+				const difference = parsedData.info.colCount - parsedData.rows[ i ].cells.length;
+				for ( let b = 0; b < difference; b++ ) {
+					parsedData.rows[ i ].cells.push( '' );
 				}
 			}
-		};
+		}
 		return parsedData;
 	}
 }
