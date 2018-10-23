@@ -83,6 +83,8 @@ export class Checkout extends React.Component {
 		cartSettled: false,
 	};
 
+	// TODO: update this component to not use deprecated life cycle methods
+	/* eslint-disable-next-line react/no-deprecated */
 	componentWillMount() {
 		resetTransaction();
 		this.props.recordApplePayStatus();
@@ -104,13 +106,15 @@ export class Checkout extends React.Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	// TODO: update this component to not use deprecated life cycle methods
+	/* eslint-disable-next-line react/no-deprecated */
 	componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
 			if ( this.props.product ) {
 				this.addProductToCart();
 			}
 
-			this.trackPageView();
+			this.trackPageView( nextProps );
 		}
 
 		if ( ! this.state.cartSettled && ! nextProps.cart.hasPendingServerUpdates ) {
@@ -130,6 +134,8 @@ export class Checkout extends React.Component {
 
 		if ( ! isEqual( previousCart, nextCart ) ) {
 			this.redirectIfEmptyCart();
+			// TODO: rewrite state management so we don't have to call setState here
+			/* eslint-disable-next-line react/no-did-update-set-state */
 			this.setState( { previousCart: nextCart } );
 		}
 
@@ -635,6 +641,7 @@ export class Checkout extends React.Component {
 			analyticsPath = '/checkout/no-site';
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="main main-column" role="main">
 				<div className="checkout">
@@ -650,6 +657,7 @@ export class Checkout extends React.Component {
 				</div>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

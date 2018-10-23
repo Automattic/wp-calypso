@@ -33,6 +33,7 @@ const isAdwordsEnabled = true;
 const isFacebookEnabled = true;
 const isBingEnabled = true;
 const isGeminiEnabled = true;
+const isDonutsGtagEnabled = true;
 const isQuantcastEnabled = true;
 const isTwitterEnabled = true;
 const isAolEnabled = true;
@@ -61,6 +62,7 @@ let lastFloodlightPageViewTime = 0;
  */
 const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js',
 	GOOGLE_TRACKING_SCRIPT_URL = 'https://www.googleadservices.com/pagead/conversion_async.js',
+	DONUTS_GOOGLE_GTAG_SCRIPT_URL = 'https://www.googletagmanager.com/gtag/js?id=DC-8907854',
 	BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js',
 	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
 	ADWORDS_CONVERSION_ID = config( 'google_adwords_conversion_id' ),
@@ -311,6 +313,10 @@ async function loadTrackingScripts( callback ) {
 		scripts.push( GOOGLE_TRACKING_SCRIPT_URL );
 	}
 
+	if ( isDonutsGtagEnabled ) {
+		scripts.push( DONUTS_GOOGLE_GTAG_SCRIPT_URL );
+	}
+
 	if ( isBingEnabled ) {
 		scripts.push( BING_TRACKING_SCRIPT_URL );
 	}
@@ -368,6 +374,10 @@ async function loadTrackingScripts( callback ) {
 	// init Facebook
 	if ( isFacebookEnabled ) {
 		initFacebook();
+	}
+
+	if ( isDonutsGtagEnabled ) {
+		initDonutsGtag();
 	}
 
 	// init Bing
@@ -679,6 +689,9 @@ export function recordViewCheckout( cart ) {
 	if ( isCriteoEnabled ) {
 		recordViewCheckoutInCriteo( cart );
 	}
+	if ( isDonutsGtagEnabled ) {
+		recordViewCheckoutInDonutsGtag( cart );
+	}
 }
 
 /**
@@ -749,6 +762,7 @@ export function recordOrder( cart, orderId ) {
 	recordOrderInFloodlight( cart, orderId );
 	recordOrderInFacebook( cart, orderId );
 	recordOrderInNanigans( cart, orderId );
+	recordOrderInDonutsGtag( cart, orderId );
 
 	// This has to come before we add the items to the Google Analytics cart
 	recordOrderInGoogleAnalytics( cart, orderId );
@@ -1041,6 +1055,23 @@ function recordOrderInNanigans( cart, orderId ) {
 	window.NaN_api.push( eventStruct ); // NaN api is either an array that supports push, either the real Nanigans API
 }
 
+function recordOrderInDonutsGtag( cart, orderId ) {
+	debug( 'recordOrderInDonutsGtag', cart, orderId );
+	if ( ! isAdTrackingAllowed() || ! isDonutsGtagEnabled ) {
+		return;
+	}
+
+	if ( cart.is_free_signup ) {
+		return;
+	}
+
+	recordParamsInDonutsGtag(
+		'purchase',
+		'DC-8907854/purch0/wpress+transactions',
+		cartToDonutsOrderSummary( cart )
+	);
+}
+
 /**
  * Records an order in Facebook (a single event for the entire order)
  *
@@ -1122,6 +1153,29 @@ export function recordAliasInFloodlight() {
 	};
 
 	recordParamsInFloodlight( params );
+}
+
+function recordSignupStartInDonutsGtag() {
+	if ( ! isAdTrackingAllowed() || ! isDonutsGtagEnabled ) {
+		return;
+	}
+
+	debug( 'Donuts Gtag: Recording sign up start' );
+
+	recordParamsInDonutsGtag( 'conversion', 'DC-8907854/visit0/wpresslp+unique' );
+}
+
+function recordParamsInDonutsGtag( event_type, send_to, order_summary = false ) {
+	initDonutsGtag();
+	const params = {
+		allow_custom_scripts: false,
+		u1: document.referrer,
+		u2: document.location.href,
+		send_to: send_to,
+		...( order_summary && { u90: order_summary } ),
+	};
+	debug( 'Recording Donuts Gtag "' + event_type + '" event with parameters:', params );
+	window.gtag( 'event', event_type, params );
 }
 
 /**
@@ -1364,6 +1418,158 @@ function recordViewCheckoutInCriteo( cart ) {
 }
 
 /**
+ * Records that a user viewed the checkout page
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {void}
+ */
+function recordViewCheckoutInDonutsGtag( cart ) {
+	if ( ! isAdTrackingAllowed() || ! isDonutsGtagEnabled ) {
+		return;
+	}
+
+	if ( cart.is_free_signup ) {
+		return;
+	}
+
+	recordParamsInDonutsGtag(
+		'conversion',
+		'DC-8907854/cartd0/wpress+unique',
+		cartToDonutsOrderSummary( cart )
+	);
+}
+
+function domainNameToTld( domainName ) {
+	if ( domainName.indexOf( '.' ) === -1 ) {
+		return null;
+	}
+	return domainName.slice( domainName.indexOf( '.' ) + 1 ).toLowerCase();
+}
+
+/**
+ * Converts the products in a cart to the format Donuts expects for its `u90` order summary property
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {Array} - An array of items to include in the Donuts Gtag tracking call
+ */
+function cartToDonutsOrderSummary( cart ) {
+	const DONUTS_TLDS = [
+		'associates',
+		'business',
+		'careers',
+		'center',
+		'company',
+		'consulting',
+		'enterprises',
+		'gmbh',
+		'group',
+		'industries',
+		'international',
+		'limited',
+		'ltd',
+		'management',
+		'network',
+		'partners',
+		'sarl',
+		'services',
+		'solutions',
+		'support',
+		'ventures',
+		'actor',
+		'band',
+		'bingo',
+		'casino',
+		'dance',
+		'dating',
+		'dog',
+		'events',
+		'games',
+		'live',
+		'media',
+		'movie',
+		'rocks',
+		'show',
+		'singles',
+		'studio',
+		'theater',
+		'video',
+		'camera',
+		'equipment',
+		'gallery',
+		'graphics',
+		'media',
+		'photography',
+		'photos',
+		'pictures',
+		'studio',
+		'video',
+		'agency',
+		'consulting',
+		'digital',
+		'direct',
+		'email',
+		'marketing',
+		'media',
+		'productions',
+		'social',
+		'studio',
+		'video',
+		'chat',
+		'directory',
+		'fyi',
+		'media',
+		'memorial',
+		'news',
+		'reviews',
+		'social',
+		'tips',
+		'video',
+		'zone',
+	];
+	// for each domain: if domain ending is in list of donuts domain endings, add to u99 string
+	// types of products covered: domain registration, whois_privacy
+	// TODO: consider adding support for 'renewal' and 'transfer' products
+	debug( 'cartToDonutsOrderSummary:cart', cart );
+	const domain_registrations = cart.products
+		.filter( p => p.is_domain_registration || p.product_slug === 'private_whois' )
+		.map( p => {
+			let donuts_type = 'unknown';
+			if ( p.is_domain_registration ) {
+				donuts_type = 'registration';
+			} else if ( p.product_slug === 'private_whois' ) {
+				donuts_type = 'whois_privacy';
+			}
+			return Object.assign(
+				{},
+				{
+					domain_name: p.meta,
+					donuts_type: donuts_type,
+					duration: Math.round( p.bill_period / 365 ),
+					price: costToUSD( p.cost, p.currency ),
+					tld: domainNameToTld( p.meta ),
+				}
+			);
+		} );
+	const donuts_domain_registrations = domain_registrations.filter( p =>
+		includes( DONUTS_TLDS, p.tld )
+	);
+	const order_summary = donuts_domain_registrations.map( p => {
+		return {
+			domain_name: p.domain_name,
+			duration: p.duration,
+			price: p.price,
+			tld: p.tld,
+			type: p.donuts_type,
+		};
+	} );
+	debug( 'cartToDonutsOrderSummary:order_summary', order_summary );
+	if ( order_summary && order_summary.length > 0 ) {
+		return JSON.stringify( order_summary );
+	}
+	return false;
+}
+
+/**
  * Converts the products in a cart to the format Criteo expects for its `items` property
  *
  * @param {Object} cart - cart as `CartValue` object
@@ -1513,6 +1719,18 @@ function isSupportedCurrency( currency ) {
 	return Object.keys( EXCHANGE_RATES ).indexOf( currency ) !== -1;
 }
 
+function initDonutsGtag() {
+	if ( window.dataLayer && window.gtag ) {
+		return;
+	}
+	window.dataLayer = window.dataLayer || [];
+	window.gtag = function() {
+		window.dataLayer.push( arguments );
+	};
+	window.gtag( 'js', new Date() );
+	window.gtag( 'config', 'DC-8907854' );
+}
+
 /**
  * Initializes the Facebook pixel.
  *
@@ -1568,6 +1786,7 @@ function initFacebookAdvancedMatching() {
  */
 export function recordSignupStart() {
 	recordSignupStartInFloodlight();
+	recordSignupStartInDonutsGtag();
 }
 
 /**
