@@ -3,8 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import sinon, { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -16,7 +14,6 @@ import {
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( '#uploadGravatar()', () => {
 	test( 'dispatches an HTTP request to the gravatar upload endpoint', () => {
@@ -28,7 +25,7 @@ describe( '#uploadGravatar()', () => {
 
 		const result = uploadGravatar( action );
 
-		expect( result ).to.eql(
+		expect( result ).toEqual(
 			http(
 				{
 					apiNamespace: 'wpcom/v2',
@@ -44,22 +41,27 @@ describe( '#uploadGravatar()', () => {
 } );
 
 describe( '#announceSuccess()', () => {
-	let sandbox;
+	let oFormData, oFileReader;
 	const noop = () => {};
-
 	const tempImageSrc = 'tempImageSrc';
-	useSandbox( newSandbox => {
-		sandbox = newSandbox;
-		global.FormData = sandbox.stub().returns( {
+
+	beforeAll( () => {
+		oFormData = global.FormData;
+		oFileReader = global.FileReader;
+		global.FormData = jest.fn( () => ( {
 			append: noop,
-		} );
-		global.FileReader = sandbox.stub().returns( {
+		} ) );
+		global.FileReader = jest.fn( () => ( {
 			readAsDataURL: noop,
 			addEventListener: function( event, callback ) {
 				this.result = tempImageSrc;
 				callback();
 			},
-		} );
+		} ) );
+	} );
+	afterAll( () => {
+		global.FormData = oFormData;
+		global.FileReader = oFileReader;
 	} );
 
 	test( 'dispatches a success action when the file is read', () => {
@@ -68,11 +70,11 @@ describe( '#announceSuccess()', () => {
 			file: 'file',
 			email: 'email',
 		};
-		const dispatch = spy();
+		const dispatch = jest.fn();
 
 		announceSuccess( action, noop, { success: true } )( dispatch );
-		expect( dispatch ).to.have.been.calledWith(
-			sinon.match( { type: GRAVATAR_UPLOAD_REQUEST_SUCCESS } )
+		expect( dispatch ).toHaveBeenCalledWith(
+			expect.objectContaining( { type: GRAVATAR_UPLOAD_REQUEST_SUCCESS } )
 		);
 	} );
 
@@ -82,12 +84,13 @@ describe( '#announceSuccess()', () => {
 			file: 'file',
 			email: 'email',
 		};
-		const dispatch = spy();
+		const dispatch = jest.fn();
 
 		announceSuccess( action, noop, { success: true } )( dispatch );
-		expect( dispatch ).to.have.been.calledWith(
-			sinon.match( { type: GRAVATAR_UPLOAD_RECEIVE, src: 'tempImageSrc' } )
-		);
+		expect( dispatch ).toHaveBeenCalledWith( {
+			type: GRAVATAR_UPLOAD_RECEIVE,
+			src: 'tempImageSrc',
+		} );
 	} );
 } );
 
@@ -95,6 +98,6 @@ describe( '#announceFailure()', () => {
 	test( 'should dispatch an error notice', () => {
 		const result = announceFailure();
 
-		expect( result.type ).to.eql( GRAVATAR_UPLOAD_REQUEST_FAILURE );
+		expect( result.type ).toEqual( GRAVATAR_UPLOAD_REQUEST_FAILURE );
 	} );
 } );
