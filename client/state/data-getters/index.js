@@ -176,6 +176,20 @@ export const requestGutenbergDemoContent = () =>
 		{ fromApi: () => data => [ [ 'gutenberg-demo-content', data ] ] }
 	);
 
+export const requestSelectedEditor = siteId =>
+	requestHttpData(
+		'selected-editor',
+		http(
+			{
+				path: `/sites/${ siteId }/gutenberg`,
+				method: 'GET',
+				apiNamespace: 'wpcom/v2',
+			},
+			{}
+		),
+		{ fromApi: () => data => [ [ 'selected-editor', data ] ] }
+	);
+
 export const requestSitePost = ( siteId, postId, postType ) => {
 	//post and page types are plural except for custom post types
 	//eg /sites/<siteId>/posts/1234 vs /sites/<siteId>/jetpack-testimonial/4

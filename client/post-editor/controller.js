@@ -20,15 +20,12 @@ import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/acti
 import { addSiteFragment } from 'lib/route';
 import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
-import {
-	startEditingNewPost,
-	stopEditingPost,
-	requestSelectedEditor,
-} from 'state/ui/editor/actions';
+import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
+import { requestSelectedEditor } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 
 function getPostID( context ) {
