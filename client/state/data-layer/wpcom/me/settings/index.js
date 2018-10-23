@@ -23,7 +23,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * that the REST API returns already HTML-encoded
  */
 const PROPERTIES_TO_DECODE = new Set( [ 'display_name', 'description', 'user_URL' ] );
-const fromApi = apiResponse =>
+export const fromApi = apiResponse =>
 	mapValues(
 		apiResponse,
 		( value, name ) => ( PROPERTIES_TO_DECODE.has( name ) ? decodeEntities( value ) : value )
