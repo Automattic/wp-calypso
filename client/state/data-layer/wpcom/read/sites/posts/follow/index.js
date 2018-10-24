@@ -5,7 +5,6 @@
 /**
  * External Dependencies
  */
-import { merge } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -17,29 +16,17 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
-import getReaderConversationFollowStatus from 'state/selectors/get-reader-conversation-follow-status';
-
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestConversationFollow = action => ( dispatch, getState ) => {
-	const actionWithRevert = merge( {}, action, {
-		meta: {
-			previousState: getReaderConversationFollowStatus( getState(), {
-				siteId: action.payload.siteId,
-				postId: action.payload.postId,
-			} ),
+export const requestConversationFollow = action => {
+	return http(
+		{
+			method: 'POST',
+			apiNamespace: 'wpcom/v2',
+			path: `/read/sites/${ action.payload.siteId }/posts/${ action.payload.postId }/follow`,
+			body: {}, // have to have an empty body to make wpcom-http happy
 		},
-	} );
-	dispatch(
-		http(
-			{
-				method: 'POST',
-				apiNamespace: 'wpcom/v2',
-				path: `/read/sites/${ action.payload.siteId }/posts/${ action.payload.postId }/follow`,
-				body: {}, // have to have an empty body to make wpcom-http happy
-			},
-			actionWithRevert
-		)
+		action
 	);
 };
 
