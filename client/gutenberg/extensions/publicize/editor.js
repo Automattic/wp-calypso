@@ -25,8 +25,8 @@ const PluginRender = () => (
 	</PluginPrePublishPanel>
 );
 
-registerPlugin( 'a8c-publicize', {
+registerPlugin( 'jetpack-publicize', {
 	render: PluginRender
 } );
 
-registerStore( 'a8c/publicize', publicizeStore );
+registerStore( 'jetpack/publicize', publicizeStore );
