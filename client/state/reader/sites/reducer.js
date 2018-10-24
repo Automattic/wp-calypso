@@ -8,6 +8,7 @@ import { assign, includes, keyBy, map, omit, omitBy, reduce, trim } from 'lodash
  * Internal Dependencies
  */
 import {
+	READER_SITE_BLOCKS_RECEIVE,
 	READER_SITE_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
@@ -87,6 +88,19 @@ export const items = createReducer(
 	{},
 	{
 		[ SERIALIZE ]: handleSerialize,
+		[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
+			if ( ! action.payload || ! action.payload.sites ) {
+				return state;
+			}
+
+			const newBlocks = keyBy( action.payload.sites, 'ID' );
+
+			// Prefer existing state if we have it - site details provided by blocks are limited (only name, URL)
+			return {
+				...newBlocks,
+				...state,
+			};
+		},
 		[ READER_SITE_REQUEST_SUCCESS ]: handleRequestSuccess,
 		[ READER_SITE_REQUEST_FAILURE ]: handleRequestFailure,
 		[ READER_SITE_UPDATE ]: handleSiteUpdate,

@@ -15,7 +15,7 @@ There is simpler implementation of infinite scroll - the [InfiniteScroll](../inf
 
 * `items` Array of all items in list
 * `lastPage` Boolean, if last page of list was fetched
-* `fechingNextPage` Boolean, if we are currently fetching more items
+* `fetchingNextPage` Boolean, if we are currently fetching more items
 * `guessedItemHeight` Number, height to be used when real rendered height is unknown
 * `itemsPerRow` Number (default: `1`), number of items per row if rendered as rows of items
 * `fetchNextPage` Function, called to trigger loading of next page, takes `options` as argument, described below
