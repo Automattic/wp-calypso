@@ -33,6 +33,13 @@ class ChartEdit extends Component {
 			rowsForColors: [],
 		};
 	}
+	componentDidMount() {
+		const { attributes, setAttributes } = this.props;
+		const { googlesheet_url } = attributes;
+		if ( ! googlesheet_url.length ) {
+			setAttributes( { googlesheet_url: settings.default_googlesheet_url } );
+		}
+	}
 	onUpdateColors = rows => {
 		const { attributes, setAttributes } = this.props;
 		const newColors = attributes.colors.slice( 0 );

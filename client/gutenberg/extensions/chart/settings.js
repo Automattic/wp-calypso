@@ -10,6 +10,9 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 
+const default_googlesheet_url =
+	'https://docs.google.com/spreadsheets/d/1Ta7QDLsMGTC6vW03DnkvtQ5AE4IY1IeHnrFX7_7PZPE/pubhtml';
+
 export const settings = {
 	name: 'a8c/chart',
 	title: __( 'Chart' ),
@@ -35,8 +38,7 @@ export const settings = {
 		},
 		googlesheet_url: {
 			type: 'string',
-			default:
-				'https://docs.google.com/spreadsheets/d/1Ta7QDLsMGTC6vW03DnkvtQ5AE4IY1IeHnrFX7_7PZPE/pubhtml',
+			default: default_googlesheet_url,
 		},
 		number_format: {
 			type: 'string',
@@ -138,4 +140,5 @@ export const settings = {
 		'#17becf',
 		'#9edae5',
 	],
+	default_googlesheet_url: default_googlesheet_url,
 };
