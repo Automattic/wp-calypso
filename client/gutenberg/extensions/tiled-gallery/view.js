@@ -88,7 +88,7 @@ const throttleOnResize = throttle( entries => {
  * @returns {NodeList} List of gallery nodes on the page
  */
 const getGalleries = () => {
-	return document ? document.querySelectorAll( '.wp-block-a8c-tiled-gallery' ) : [];
+	return document ? document.querySelectorAll( '.wp-block-jetpack-tiled-gallery' ) : [];
 };
 
 /**

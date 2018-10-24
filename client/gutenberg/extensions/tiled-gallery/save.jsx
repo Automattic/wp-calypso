@@ -70,7 +70,7 @@ export default ( { attributes } ) => {
 	return (
 		<GalleryGrid
 			align={ align }
-			className={ `wp-block-a8c-tiled-gallery ${ className }` }
+			className={ `wp-block-jetpack-tiled-gallery ${ className }` }
 			columns={ columns }
 			imageCrop={ imageCrop }
 			images={ images }

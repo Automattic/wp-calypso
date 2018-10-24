@@ -2,25 +2,25 @@
 
 @import './variables.scss';
 
-.wp-block-a8c-tiled-gallery.components-placeholder {
+.wp-block-jetpack-tiled-gallery.components-placeholder {
 	margin: 0;
 }
 
 .gutenberg {
 	// Allow gallery items to go edge to edge.
-	.wp-block-a8c-tiled-gallery:not( .components-placeholder ) {
+	.wp-block-jetpack-tiled-gallery:not( .components-placeholder ) {
 		margin-left: -$tiled-gallery-margin;
 		margin-right: -$tiled-gallery-margin;
 	}
 
 	// Don't use negative margins when full-wide.
-	[data-align='full'] .wp-block-a8c-tiled-gallery:not( .components-placeholder ) {
+	[data-align='full'] .wp-block-jetpack-tiled-gallery:not( .components-placeholder ) {
 		margin-left: auto;
 		margin-right: auto;
 	}
 }
 
-.wp-block-a8c-tiled-gallery {
+.wp-block-jetpack-tiled-gallery {
 	.tiled-gallery__row {
 		.tiled-gallery__item {
 			// Hide the focus outline that otherwise briefly appears when selecting a block.
