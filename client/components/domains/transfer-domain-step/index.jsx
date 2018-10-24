@@ -90,7 +90,7 @@ class TransferDomainStep extends React.Component {
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.initialState ) {
 			this.setState( Object.assign( {}, this.props.initialState, this.getDefaultState() ) );
 		}
@@ -136,9 +136,7 @@ class TransferDomainStep extends React.Component {
 		return buildMapDomainUrl;
 	}
 
-	goToMapDomainStep = event => {
-		event.preventDefault();
-
+	goToMapDomainStep = () => {
 		this.props.recordMapDomainButtonClick( this.props.analyticsSection );
 
 		page( this.getMapDomainUrl() );
@@ -218,7 +216,7 @@ class TransferDomainStep extends React.Component {
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
 							onFocus={ this.recordInputFocus }
-							autoFocus
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						/>
 						<Button
 							disabled={ ! getTld( searchQuery ) || submitting }
@@ -475,12 +473,12 @@ class TransferDomainStep extends React.Component {
 							this.setState( {
 								notice: this.props.translate(
 									"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
-										'but you can {{a}}map it{{/a}} instead.',
+										'but you can {{button}}map it{{/button}} instead.',
 									{
 										args: { tld },
 										components: {
 											strong: <strong />,
-											a: <a href="#" onClick={ this.goToMapDomainStep } />,
+											button: <button onClick={ this.goToMapDomainStep } />,
 										},
 									}
 								),
@@ -494,12 +492,12 @@ class TransferDomainStep extends React.Component {
 								this.setState( {
 									notice: this.props.translate(
 										"{{strong}}%(domain)s{{/strong}} can't be transferred. " +
-											'You can {{a}}manually connect it{{/a}} if you still want to use it for your site.',
+											'You can {{button}}manually connect it{{/button}} if you still want to use it for your site.',
 										{
 											args: { domain },
 											components: {
 												strong: <strong />,
-												a: <a href="#" onClick={ this.goToMapDomainStep } />,
+												button: <button onClick={ this.goToMapDomainStep } />,
 											},
 										}
 									),

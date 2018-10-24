@@ -32,6 +32,16 @@
 
 	.notice {
 		margin-top: 25px;
+
+		button {
+			color: $white;
+			text-decoration: underline;
+			cursor: pointer;
+
+			&:hover {
+				text-decoration: none;
+			}
+		}
 	}
 
 	.transfer-domain-step__domain-availability {
