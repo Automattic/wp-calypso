@@ -7,14 +7,14 @@ $light-gray-200: #f3f4f5;
 $light-gray-500: #e2e4e7;
 $text-editor-font-size: inherit;
 
-.wp-block-a8c-markdown__placeholder {
+.wp-block-jetpack-markdown__placeholder {
 	opacity: 0.5;
 	pointer-events: none;
 }
 
 // @TODO: Remove all these specific styles when related Gutenberg core styles become more generic
 .editor-block-list__block {
-	.wp-block-a8c-markdown__preview {
+	.wp-block-jetpack-markdown__preview {
 		min-height: 1.8em;
 		line-height: 1.8;
 
@@ -137,8 +137,8 @@ $text-editor-font-size: inherit;
 	}
 }
 
-.wp-block-a8c-markdown {
-	.wp-block-a8c-markdown__editor {
+.wp-block-jetpack-markdown {
+	.wp-block-jetpack-markdown__editor {
 		&:focus {
 			border-color: transparent;
 			box-shadow: 0 0 0 transparent;
