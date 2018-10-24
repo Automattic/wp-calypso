@@ -46,7 +46,7 @@ registerBlockType( 'jetpack/simple-payments', {
 								return;
 							}
 
-							const result === parseInt( id, 10 );
+							const result = parseInt( id, 10 );
 							if ( result ) {
 								return result;
 							}
