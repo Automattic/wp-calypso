@@ -116,63 +116,24 @@ export function addLocaleToPath( path, locale ) {
 	return removeLocaleFromPath( urlParts.pathname ) + `/${ locale }` + queryString;
 }
 
-const localesToSubdomains = {
-	'pt-br': 'br',
-	br: 'bre',
-	zh: 'zh-cn',
-	'zh-hk': 'zh-tw',
-	'zh-sg': 'zh-cn',
-	kr: 'ko',
-};
-
-const magnificentNonEnLocales = [
-	'es',
-	'pt-br',
-	'de',
-	'fr',
-	'he',
-	'ja',
-	'it',
-	'nl',
-	'ru',
-	'tr',
-	'id',
-	'zh-cn',
-	'zh-tw',
-	'ko',
-	'ar',
-	'sv',
-];
-
 const localesWithBlog = [ 'en', 'ja', 'es', 'pt', 'fr', 'pt-br' ];
-const localesForJetpackCom = [
-	'en',
-	'ar',
-	'de',
-	'es',
-	'fr',
-	'he',
-	'id',
-	'it',
-	'ja',
-	'ko',
-	'nl',
-	'pt-br',
-	'ro',
-	'ru',
-	'sv',
-	'tr',
-	'zh-cn',
-	'zh-tw',
-];
-
 const localesWithPrivacyPolicy = [ 'en', 'fr', 'de' ];
 const localesWithCookiePolicy = [ 'en', 'fr', 'de' ];
 
 const setLocalizedUrlHost = ( hostname, validLocales = [] ) => ( urlParts, localeSlug ) => {
+	const localesToSubdomains = {
+		'pt-br': 'br',
+		br: 'bre',
+		zh: 'zh-cn',
+		'zh-hk': 'zh-tw',
+		'zh-sg': 'zh-cn',
+		kr: 'ko',
+	};
+
 	if ( typeof validLocales === 'string' ) {
 		validLocales = config( validLocales );
 	}
+
 	if ( validLocales.includes( localeSlug ) ) {
 		urlParts.host = `${ localesToSubdomains[ localeSlug ] || localeSlug }.${ hostname }`;
 	}
@@ -190,9 +151,9 @@ const prefixLocalizedUrlPath = ( validLocales = [] ) => ( urlParts, localeSlug )
 };
 
 const urlLocalizationMapping = {
-	'wordpress.com': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
-	'wordpress.com/tos/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
-	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', localesForJetpackCom ),
+	'wordpress.com': setLocalizedUrlHost( 'wordpress.com', 'magnificent_non_en_locales' ),
+	'wordpress.com/tos/': setLocalizedUrlHost( 'wordpress.com', 'magnificent_non_en_locales' ),
+	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', 'jetpack_com_locales' ),
 	'en.support.wordpress.com': setLocalizedUrlHost(
 		'support.wordpress.com',
 		'support_site_locales'

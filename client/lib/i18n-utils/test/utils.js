@@ -33,6 +33,49 @@ jest.mock( 'config', () => key => {
 		return [ 'en', 'es', 'de', 'ja', 'pt-br', 'th' ];
 	}
 
+	if ( 'magnificent_non_en_locales' === key ) {
+		return [
+			'es',
+			'pt-br',
+			'de',
+			'fr',
+			'he',
+			'ja',
+			'it',
+			'nl',
+			'ru',
+			'tr',
+			'id',
+			'zh-cn',
+			'zh-tw',
+			'ko',
+			'ar',
+		];
+	}
+
+	if ( 'jetpack_com_locales' === key ) {
+		return [
+			'en',
+			'ar',
+			'de',
+			'es',
+			'fr',
+			'he',
+			'id',
+			'it',
+			'ja',
+			'ko',
+			'nl',
+			'pt-br',
+			'ro',
+			'ru',
+			'sv',
+			'tr',
+			'zh-cn',
+			'zh-tw',
+		];
+	}
+
 	if ( 'languages' === key ) {
 		return [
 			{ value: 420, langSlug: 'ast', name: 'Asturianu', wpLocale: 'ast', territories: [ '039' ] },
