@@ -163,6 +163,8 @@ $gutenberg-theme-toggle: #11a0d2;
 
 	input[type=checkbox],
 	input[type=radio] {
+		float: none;
+
 		& + span {
 			margin-left: 0;
 		}
@@ -216,5 +218,5 @@ $gutenberg-theme-toggle: #11a0d2;
 		vertical-align: middle;
 		cursor: pointer;
 	}
-	// End Missing Core styles
+	// END Missing Core styles
 }
