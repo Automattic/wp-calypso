@@ -17,7 +17,7 @@ const JetpackSiteActivity = ( { site, translate } ) => (
 	<div className="product-purchase-features-list__item">
 		<PurchaseDetail
 			icon={ <img alt="" src="/calypso/images/illustrations/jetpack-site-activity.svg" /> }
-			title={ translate( 'Site Activity' ) }
+			title={ translate( 'Activity' ) }
 			description={ translate(
 				'View a chronological list of all the changes and updates to your site in an organized, readable way.'
 			) }
