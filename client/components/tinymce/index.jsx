@@ -354,7 +354,7 @@ export default class extends React.Component {
 			setup: setup,
 		} );
 
-		autosize( this.textInput );
+		autosize( this.textInput.current );
 	}
 
 	componentWillUnmount() {
