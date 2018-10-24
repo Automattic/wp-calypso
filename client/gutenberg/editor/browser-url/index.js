@@ -13,7 +13,6 @@ import { flowRight, endsWith, get } from 'lodash';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
-
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { navigate, replaceHistory } from 'state/ui/actions';
 
