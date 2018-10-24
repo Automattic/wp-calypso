@@ -100,4 +100,12 @@ export default {
 		assignmentMethod: 'userId',
 		allowExistingUsers: true,
 	},
+	skipDomainOrSiteStep: {
+		datestamp: '20181025',
+		variations: {
+			yes: 50,
+			no: 50,
+		},
+		defaultVariation: 'old',
+	},
 };
