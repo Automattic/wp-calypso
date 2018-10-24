@@ -38,8 +38,8 @@ export default router => {
 				`/log-in/${ lang }`,
 			],
 			redirectJetpack,
-			redirectDefaultLocale,
 			setUpLocale,
+			redirectDefaultLocale,
 			login,
 			setShouldServerSideRenderLogin,
 			makeLayout

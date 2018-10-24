@@ -118,7 +118,7 @@ export function redirectDefaultLocale( context, next ) {
 		return next();
 	}
 
-	// Do not redirect if user bootrapping is disabled
+	// Do not redirect if user bootsrapping is disabled
 	if (
 		! getCurrentUser( context.store.getState() ) &&
 		! config.isEnabled( 'wpcom-user-bootstrap' )
@@ -126,17 +126,16 @@ export function redirectDefaultLocale( context, next ) {
 		return next();
 	}
 
-	// Do not redirect if user is logged in and the locale is different than english
-	// so we force the page to display in english
+	// Do not redirect if user is logged in and the locale is different than English
 	const currentUserLocale = getCurrentUserLocale( context.store.getState() );
 	if ( currentUserLocale && currentUserLocale !== 'en' ) {
 		return next();
 	}
 
 	if ( context.params.isJetpack === 'jetpack' ) {
-		context.redirect( '/log-in/jetpack' );
+		page.redirect( '/log-in/jetpack' );
 	} else {
-		context.redirect( '/log-in' );
+		page.redirect( '/log-in' );
 	}
 }
 

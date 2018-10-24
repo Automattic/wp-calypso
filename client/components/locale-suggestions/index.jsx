@@ -38,6 +38,8 @@ export class LocaleSuggestions extends Component {
 	UNSAFE_componentWillMount() {
 		let { locale } = this.props;
 
+		// In case no default locale is specified, we try to set on based on the user's
+		// first browser language.
 		if ( ! locale && typeof navigator === 'object' && 'languages' in navigator ) {
 			for ( const langSlug of navigator.languages ) {
 				const language = getLanguage( langSlug.toLowerCase() );
@@ -46,14 +48,10 @@ export class LocaleSuggestions extends Component {
 					break;
 				}
 			}
-		}
 
-		this.props.setLocale( locale );
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.locale !== nextProps.locale ) {
-			this.props.setLocale( nextProps.locale );
+			if ( locale ) {
+				this.props.setLocale( locale );
+			}
 		}
 	}
 
