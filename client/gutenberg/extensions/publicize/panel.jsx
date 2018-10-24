@@ -54,12 +54,12 @@ class PublicizePanel extends Component {
 				}
 			>
 				<div>{ __( 'Connect and select social media services to share this post.' ) }</div>
-				{ ( connections.length > 0 ) && <PublicizeForm staticConnections={ connections } refreshCallback={ getConnectionsStart } /> }
-				{ ( 0 === connections.length ) && <PublicizeNoConnections refreshCallback={ getConnectionsStart } /> }
+				{ ( connections && connections.length > 0 ) && <PublicizeForm staticConnections={ connections } refreshCallback={ getConnectionsStart } /> }
+				{ ( connections && 0 === connections.length ) && <PublicizeNoConnections refreshCallback={ getConnectionsStart } /> }
 				<a tabIndex="0" onClick={ getConnectionsStart } disabled={ isLoading }>
 					{ refreshText }
 				</a>
-				{ ( connections.length > 0 ) && <PublicizeConnectionVerify /> }
+				{ ( connections && connections.length > 0 ) && <PublicizeConnectionVerify /> }
 			</PanelBody>
 		);
 	}
