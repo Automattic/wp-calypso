@@ -16,6 +16,9 @@ import {
 import { combineReducers, createReducer } from 'state/utils';
 import { billingTransactionsSchema } from './schema';
 import individualTransactions from './individual-transactions/reducer';
+import { registerActionForward } from 'lib/redux-bridge';
+
+registerActionForward( 'TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET' );
 
 /**
  * Returns the updated items state after an action has been dispatched.
