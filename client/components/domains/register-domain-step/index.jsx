@@ -196,8 +196,10 @@ class RegisterDomainStep extends React.Component {
 		return {
 			availableTlds: [],
 			clickedExampleSuggestion: false,
-			error: null,
-			errorData: null,
+			availabilityError: null,
+			suggestionError: null,
+			availabilityErrorData: null,
+			suggestionErrorData: null,
 			filters: this.getInitialFiltersState(),
 			lastFilters: this.getInitialFiltersState(),
 			lastQuery: suggestion,
@@ -208,7 +210,8 @@ class RegisterDomainStep extends React.Component {
 			loadingSubdomainResults:
 				( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) &&
 				loadingResults,
-			showNotice: false,
+			showAvailabilityNotice: false,
+			showSuggestionNotice: false,
 			pageNumber: 1,
 			searchResults: null,
 			subdomainSearchResults: null,
@@ -256,7 +259,7 @@ class RegisterDomainStep extends React.Component {
 			// don't modify global state
 			const queryObject = getQueryObject( nextProps );
 			if ( queryObject ) {
-				this.showValidationErrorMessage( queryObject.query, error.error );
+				this.showSuggestionErrorMessage( queryObject.query, error.error );
 			}
 		}
 	}
@@ -328,9 +331,20 @@ class RegisterDomainStep extends React.Component {
 
 	render() {
 		const queryObject = getQueryObject( this.props );
-		const { errorData, error, lastDomainSearched, showNotice } = this.state;
-		const { message, severity } = showNotice
-			? getAvailabilityNotice( lastDomainSearched, error, errorData )
+		const {
+			availabilityErrorData,
+			availabilityError,
+			suggestionErrorData,
+			suggestionError,
+			lastDomainSearched,
+			showAvailabilityNotice,
+			showSuggestionNotice,
+		} = this.state;
+		const { message: suggestionMessage, severity: suggestionSeverity } = showSuggestionNotice
+			? getAvailabilityNotice( lastDomainSearched, suggestionError, suggestionErrorData )
+			: {};
+		const { message: availabilityMessage, severity: availabilitySeverity } = showAvailabilityNotice
+			? getAvailabilityNotice( lastDomainSearched, availabilityError, availabilityErrorData )
 			: {};
 		return (
 			<div className="register-domain-step">
@@ -355,11 +369,19 @@ class RegisterDomainStep extends React.Component {
 						{ this.renderSearchFilters() }
 					</CompactCard>
 				</StickyPanel>
-				{ message && (
+				{ availabilityMessage && (
 					<Notice
 						className="register-domain-step__notice"
-						text={ message }
-						status={ `is-${ severity }` }
+						text={ availabilityMessage }
+						status={ `is-${ availabilitySeverity }` }
+						showDismiss={ false }
+					/>
+				) }
+				{ suggestionMessage && (
+					<Notice
+						className="register-domain-step__notice"
+						text={ suggestionMessage }
+						status={ `is-${ suggestionSeverity }` }
 						showDismiss={ false }
 					/>
 				) }
@@ -475,13 +497,16 @@ class RegisterDomainStep extends React.Component {
 		const loadingResults = Boolean( getFixedDomainSearch( lastQuery ) );
 
 		const nextState = {
-			error: null,
-			errorData: null,
+			availabilityError: null,
+			availabilityErrorData: null,
+			suggestionError: null,
+			suggestionErrorData: null,
 			exactMatchDomain: null,
 			lastDomainSearched: null,
 			loadingResults,
 			loadingSubdomainResults: loadingResults,
-			showNotice: false,
+			showAvailabilityNotice: false,
+			showSuggestionNotice: false,
 			...stateOverride,
 		};
 		debug( 'Repeating a search with the following input for setState', nextState );
@@ -564,14 +589,17 @@ class RegisterDomainStep extends React.Component {
 
 		this.setState(
 			{
-				error: null,
-				errorData: null,
+				availabilityError: null,
+				availabilityErrorData: null,
+				suggestionError: null,
+				suggestionErrorData: null,
 				exactMatchDomain: null,
 				lastQuery: cleanedQuery,
 				lastDomainSearched: null,
 				loadingResults,
 				loadingSubdomainResults: loadingResults,
-				showNotice: false,
+				showAvailabilityNotice: false,
+				showSuggestionNotice: false,
 				pageNumber: 1,
 				searchResults: null,
 				subdomainSearchResults: null,
@@ -626,16 +654,16 @@ class RegisterDomainStep extends React.Component {
 					} );
 					if ( isDomainAvailable ) {
 						this.setState( {
-							showNotice: false,
-							error: null,
-							errorData: null,
+							showAvailabilityNotice: false,
+							availabilityError: null,
+							availabilityErrorData: null,
 						} );
 					} else {
 						let site = get( result, 'other_site_domain', null );
 						if ( MAPPED_SAME_SITE_TRANSFERRABLE === status ) {
 							site = get( this.props, 'selectedSite.slug', null );
 						}
-						this.showValidationErrorMessage( domain, status, {
+						this.showAvailabilityErrorMessage( domain, status, {
 							site,
 							maintenanceEndTime: get( result, 'maintenance_end_time', null ),
 						} );
@@ -700,7 +728,7 @@ class RegisterDomainStep extends React.Component {
 					const maintenanceEndTime = get( error, 'data.maintenance_end_time', 0 );
 					this.props.onDomainsAvailabilityChange( false, maintenanceEndTime );
 				} else if ( error && error.error ) {
-					this.showValidationErrorMessage( domain, error.error, {
+					this.showSuggestionErrorMessage( domain, error.error, {
 						maintenanceEndTime: get( error, 'data.maintenance_end_time', null ),
 					} );
 				}
@@ -809,7 +837,7 @@ class RegisterDomainStep extends React.Component {
 		if ( error && error.statusCode === 503 ) {
 			this.props.onDomainsAvailabilityChange( false );
 		} else if ( error && error.error ) {
-			this.showValidationErrorMessage( domain, error.error );
+			this.showSuggestionErrorMessage( domain, error.error );
 		}
 
 		const analyticsResults = [ error.code || error.error || 'ERROR' + ( error.statusCode || '' ) ];
@@ -1104,7 +1132,7 @@ class RegisterDomainStep extends React.Component {
 		page( this.getUseYourDomainUrl() );
 	};
 
-	showValidationErrorMessage( domain, error, errorData ) {
+	showAvailabilityErrorMessage( domain, error, errorData ) {
 		const { DOTBLOG_SUBDOMAIN, TRANSFERRABLE } = domainAvailability;
 		if (
 			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
@@ -1112,7 +1140,26 @@ class RegisterDomainStep extends React.Component {
 		) {
 			return;
 		}
-		this.setState( { showNotice: true, error, errorData } );
+		this.setState( {
+			showAvailabilityNotice: true,
+			availabilityError: error,
+			availabilityErrorData: errorData,
+		} );
+	}
+
+	showSuggestionErrorMessage( domain, error, errorData ) {
+		const { DOTBLOG_SUBDOMAIN, TRANSFERRABLE } = domainAvailability;
+		if (
+			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
+			( this.props.isSignupStep && DOTBLOG_SUBDOMAIN === error )
+		) {
+			return;
+		}
+		this.setState( {
+			showSuggestionNotice: true,
+			suggestionError: error,
+			suggestionErrorData: errorData,
+		} );
 	}
 }
 
