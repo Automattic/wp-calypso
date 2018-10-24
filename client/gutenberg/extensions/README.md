@@ -45,7 +45,7 @@ Blocks are registered by providing a `name` and `settings` like this:
 registerBlockType( 'prefix/name', { /* settings */ } );
 ```
 
-Public WordPress.com blocks should use the `jetpack/` prefix, e.g. `jetpack/markdown`.
+Public blocks should use the `jetpack/` prefix, e.g. `jetpack/markdown`.
 
 Private and internal blocks should use the `a8c/` prefix.
 
