@@ -310,8 +310,8 @@
 		background: linear-gradient( to bottom, #e6e6e6, transparent );
 	}
 
-	&.is-section-signup:before,
-	&.is-section-signup .layout__primary:before {
+	&.is-section-signup::before,
+	&.is-section-signup .layout__primary::before {
 		display: none;
 	}
 }

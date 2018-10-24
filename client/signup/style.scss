@@ -1,3 +1,6 @@
+// Importing z-index function manually
+@import './assets/stylesheets/shared/functions/z-index';
+
 .step-wrapper {
 	max-width: 960px;
 	margin: 0 auto;
@@ -79,8 +82,8 @@
 	overflow: visible;
 }
 
-.is-section-signup:before,
-.is-section-signup .layout__primary:before {
+.is-section-signup::before,
+.is-section-signup .layout__primary::before {
 	content: "";
 	background: $gray-lighten-30;
 	display: block;
@@ -90,13 +93,15 @@
 	transform: rotate(-10deg);
 	left: -30px;
 	bottom: -30px;
+	z-index: z-index( '.is-section-signup', '.is-section-signup::before' );
 }
 
-.is-section-signup .layout__primary:before {
+.is-section-signup .layout__primary::before {
 	left: auto;
 	bottom: auto;
 	top: -30px;
 	right: -30px;
+	z-index: z-index( '.is-section-signup', '.layout__primary::before' );
 }
 
 @include breakpoint( '>1040px' ) {
