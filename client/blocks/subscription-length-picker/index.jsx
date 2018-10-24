@@ -6,6 +6,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { isNumber } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -20,6 +21,8 @@ import { PLANS_LIST } from 'lib/plans/constants';
 import QueryPlans from 'components/data/query-plans';
 import QueryProductsList from 'components/data/query-products-list';
 import SubscriptionLengthOption from './option';
+import getTaxRate from 'state/selectors/get-tax-rate';
+import getShouldShowTax from 'state/selectors/get-should-show-tax';
 
 export class SubscriptionLengthPicker extends React.Component {
 	static propTypes = {
@@ -42,11 +45,34 @@ export class SubscriptionLengthPicker extends React.Component {
 		checked: this.props.initialValue,
 	};
 
+	formatTax( taxRate, price, currencyCode ) {
+		const { translate } = this.props;
+
+		// taxRate unknown
+		if ( ! isNumber( taxRate ) ) {
+			// translators: This string is displayed immediately next to a localized price with a currency symbol, and is indicating that there may be an additional charge on top of the displayed price.
+			return translate( '+tax' );
+		}
+
+		// a zero tax rate - don't display anything
+		if ( ! taxRate ) {
+			return '';
+		}
+
+		// translators: taxAmount is a price with localised formatting but not currency symbol, like 1.234,56 or 1,234.56. The string is displayed immediately next to a price with a currency symbol, and is showing the amount of local sales tax added to that "sticker price".
+		return translate( '+%(taxAmount)s tax', {
+			args: {
+				taxAmount: myFormatCurrency( price * taxRate, currencyCode, { symbol: '' } ),
+			},
+		} );
+	}
+
 	render() {
-		const { productsWithPrices, translate } = this.props;
+		const { productsWithPrices, translate, taxRate, shouldShowTax } = this.props;
 		const hasDiscount = productsWithPrices.some(
 			( { priceFullBeforeDiscount, priceFull } ) => priceFull !== priceFullBeforeDiscount
 		);
+
 		return (
 			<div className="subscription-length-picker">
 				{ ! productsWithPrices.length && (
@@ -83,6 +109,11 @@ export class SubscriptionLengthPicker extends React.Component {
 									) }
 									value={ planSlug }
 									onCheck={ this.handleCheck }
+									shouldShowTax={ shouldShowTax }
+									taxRate={ taxRate }
+									taxDisplay={
+										shouldShowTax && this.formatTax( taxRate, priceFull, this.props.currencyCode )
+									}
 								/>
 							</div>
 						)
@@ -106,12 +137,12 @@ export class SubscriptionLengthPicker extends React.Component {
 	};
 }
 
-export function myFormatCurrency( price, code ) {
+export function myFormatCurrency( price, code, options = {} ) {
 	const precision = CURRENCIES[ code ].precision;
 	const EPSILON = Math.pow( 10, -precision ) - 0.000000001;
 
 	const hasCents = Math.abs( price % 1 ) >= EPSILON;
-	return formatCurrency( price, code, hasCents ? {} : { precision: 0 } );
+	return formatCurrency( price, code, hasCents ? options : { ...options, precision: 0 } );
 }
 
 export const mapStateToProps = ( state, { plans } ) => {
@@ -120,6 +151,8 @@ export const mapStateToProps = ( state, { plans } ) => {
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		productsWithPrices: computeProductsWithPrices( state, selectedSiteId, plans ),
+		shouldShowTax: getShouldShowTax( state ),
+		taxRate: getTaxRate( state ),
 	};
 };
 

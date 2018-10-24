@@ -111,6 +111,12 @@
     margin-left: 5px;
   }
 
+  .subscription-length-picker__option-tax {
+    color: $gray-text-min;
+    vertical-align: super;
+    font-size: 12px;
+  }
+
   &:not( .is-active ) {
     border: 1px solid $gray;
     padding: $padding-size + 2px;

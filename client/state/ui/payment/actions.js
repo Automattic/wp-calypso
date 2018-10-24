@@ -9,6 +9,8 @@ import {
 	PAYMENT_TAX_RATE_SET,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/tax';
+
 /**
  * Returns an action object used to set the payment country.
  *
