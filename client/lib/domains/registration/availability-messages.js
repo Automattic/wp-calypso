@@ -204,7 +204,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 
 		case domainAvailability.EMPTY_RESULTS:
 			message = translate(
-				"Sorry, we weren't able to generate any domain name suggestions for that serach term. Please try a different set of keywords."
+				"Sorry, we weren't able to generate any domain name suggestions for that search term. Please try a different set of keywords."
 			);
 			break;
 
