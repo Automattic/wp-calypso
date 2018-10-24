@@ -140,7 +140,7 @@ class MapEdit extends Component {
 						] }
 					/>
 					{ points.length ? (
-						<PanelBody title={ __( 'Markers', 'jetpack' ) }>
+						<PanelBody title={ __( 'Markers', 'jetpack' ) } initialOpen={ false }>
 							<Locations
 								points={ points }
 								onChange={ value => {
@@ -149,19 +149,20 @@ class MapEdit extends Component {
 							/>
 						</PanelBody>
 					) : null }
-					<TextControl
-						label={ __( 'Google Maps API Key' ) }
-						value={ apiKeyControl }
-						onChange={ value => this.setState( { apiKeyControl: value } ) }
-					/>
-					<ButtonGroup>
-						<Button type="button" onClick={ this.updateAPIKey } isSmall isDefault>
-							{ __( 'Update Key' ) }
-						</Button>
-						<Button type="button" onClick={ this.removeAPIKey } isSmall isDangerous>
-							{ __( 'Remove Key' ) }
-						</Button>
-					</ButtonGroup>
+					<PanelBody title={ __( 'Google Maps API Key', 'jetpack' ) } initialOpen={ false }>
+						<TextControl
+							value={ apiKeyControl }
+							onChange={ value => this.setState( { apiKeyControl: value } ) }
+						/>
+						<ButtonGroup>
+							<Button type="button" onClick={ this.updateAPIKey } isSmall isDefault>
+								{ __( 'Update Key' ) }
+							</Button>
+							<Button type="button" onClick={ this.removeAPIKey } isSmall isDangerous>
+								{ __( 'Remove Key' ) }
+							</Button>
+						</ButtonGroup>
+					</PanelBody>
 				</InspectorControls>
 			</Fragment>
 		);
