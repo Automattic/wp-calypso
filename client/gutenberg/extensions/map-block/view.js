@@ -8,6 +8,7 @@ import './style.scss';
 import component from './component.js';
 import { settings } from './settings.js';
 import FrontendManagement from 'gutenberg/extensions/shared/frontend-management.js';
+import apiFetch from '@wordpress/api-fetch';
 
 window.addEventListener( 'load', function() {
 	// Do not initialize in editor.
@@ -15,10 +16,16 @@ window.addEventListener( 'load', function() {
 		return;
 	}
 	const frontendManagement = new FrontendManagement();
-	frontendManagement.blockIterator( document, [
-		{
-			component: component,
-			options: { settings },
-		},
-	] );
+	const url = '/wp-json/jetpack/v4/api-key/googlemaps';
+	apiFetch( { url, method: 'GET' } ).then( result => {
+		frontendManagement.blockIterator( document, [
+			{
+				component: component,
+				options: {
+					settings,
+					props: { api_key: result.api_key },
+				},
+			},
+		] );
+	} );
 } );

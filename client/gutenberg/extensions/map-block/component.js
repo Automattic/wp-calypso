@@ -115,6 +115,12 @@ export class Map extends Component {
 			</Fragment>
 		);
 	}
+	componentDidMount() {
+		const { api_key } = this.props;
+		if ( api_key ) {
+			this.loadMapLibraries();
+		}
+	}
 	componentDidUpdate( prevProps ) {
 		const { api_key, children } = this.props;
 		if ( api_key && api_key.length > 0 && api_key !== prevProps.api_key ) {
