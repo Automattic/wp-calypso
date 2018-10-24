@@ -14,7 +14,7 @@ import { createStore } from 'redux';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import { reducer } from 'state';
+import reducer from 'state/reducer';
 import SignupActions from '../actions';
 import SignupProgressStore from '../progress-store';
 
