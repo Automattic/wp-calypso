@@ -28,10 +28,15 @@ describe( 'actions', () => {
 
 	describe( '#muteConversation', () => {
 		test( 'should return an action when a conversation is muted', () => {
-			const action = muteConversation( { siteId: 123, postId: 456 } );
-			expect( action ).toEqual( {
+			const dispatch = jest.fn();
+			const getState = () => ( {} );
+			muteConversation( { siteId: 123, postId: 456 } )( dispatch, getState );
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: READER_CONVERSATION_MUTE,
 				payload: { siteId: 123, postId: 456 },
+				meta: {
+					previousState: null,
+				},
 			} );
 		} );
 	} );

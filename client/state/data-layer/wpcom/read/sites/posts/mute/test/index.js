@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,35 +10,19 @@ import { merge } from 'lodash';
 import { requestConversationMute, receiveConversationMute } from '../';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	muteConversation,
-	updateConversationFollowStatus,
-} from 'state/reader/conversations/actions';
+import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
 
 describe( 'conversation-mute', () => {
 	describe( 'requestConversationMute', () => {
 		test( 'should dispatch an http request', () => {
-			const dispatch = jest.fn();
-			const action = muteConversation( { siteId: 123, postId: 456 } );
-			const actionWithRevert = merge( {}, action, {
-				meta: {
-					previousState: CONVERSATION_FOLLOW_STATUS.following,
-				},
-			} );
-			const getState = () => {
-				return {
-					reader: {
-						conversations: {
-							items: {
-								'123-456': 'F',
-							},
-						},
-					},
-				};
+			const action = {
+				payload: { siteId: 123, postId: 456 },
+				meta: { previousState: CONVERSATION_FOLLOW_STATUS.following },
 			};
-			requestConversationMute( action )( dispatch, getState );
-			expect( dispatch ).toHaveBeenCalledWith(
+
+			const result = requestConversationMute( action );
+			expect( result ).toEqual(
 				http(
 					{
 						method: 'POST',
@@ -47,7 +30,7 @@ describe( 'conversation-mute', () => {
 						body: {},
 						apiNamespace: 'wpcom/v2',
 					},
-					actionWithRevert
+					action
 				)
 			);
 		} );
