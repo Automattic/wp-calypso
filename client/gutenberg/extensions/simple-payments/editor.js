@@ -33,6 +33,30 @@ registerBlockType( 'jetpack/simple-payments', {
 		},
 	},
 
+	transforms: {
+		from: [
+			{
+				type: 'shortcode',
+				tag: 'simple-payment',
+				attributes: {
+					paymentId: {
+						type: 'number',
+						shortcode: ( { named: { id } } ) => {
+							if ( ! id ) {
+								return;
+							}
+
+							const result = parseInt( id, 10 );
+							if ( result ) {
+								return result;
+							}
+						},
+					},
+				},
+			},
+		]
+	},
+
 	edit,
 
 	save,
