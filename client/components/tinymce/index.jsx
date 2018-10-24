@@ -5,7 +5,6 @@
  */
 
 import { assign, forEach } from 'lodash';
-import ReactDom from 'react-dom';
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -90,6 +89,11 @@ import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import isRtlSelector from 'state/selectors/is-rtl';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Internal Variables
@@ -213,10 +217,9 @@ export default class extends React.Component {
 
 	_editor = null;
 
-	componentWillMount() {
-		this._id = 'tinymce-' + _instance;
-		_instance++;
-	}
+	_id = 'tinymce-' + _instance++;
+
+	textInput = React.createRef();
 
 	componentDidUpdate( prevProps ) {
 		if ( ! this._editor ) {
@@ -316,7 +319,7 @@ export default class extends React.Component {
 			keep_styles: false,
 			wpeditimage_html5_captions: true,
 			redux_store: this.context.store,
-			textarea: this.refs.text,
+			textarea: this.textInput.current,
 
 			// Limit the preview styles in the menu/toolbar
 			preview_styles: 'font-family font-size font-weight font-style text-decoration text-transform',
@@ -351,7 +354,7 @@ export default class extends React.Component {
 			setup: setup,
 		} );
 
-		autosize( ReactDom.findDOMNode( this.refs.text ) );
+		autosize( this.textInput.current );
 	}
 
 	componentWillUnmount() {
@@ -373,11 +376,11 @@ export default class extends React.Component {
 
 		tinymce.remove( this._editor );
 		this._editor = null;
-		autosize.destroy( ReactDom.findDOMNode( this.refs.text ) );
+		autosize.destroy( this.textInput.current );
 	};
 
 	doAutosizeUpdate = () => {
-		autosize.update( ReactDom.findDOMNode( this.refs.text ) );
+		autosize.update( this.textInput.current );
 	};
 
 	bindEditorEvents = prevProps => {
@@ -419,7 +422,7 @@ export default class extends React.Component {
 
 	focusEditor = () => {
 		if ( this.props.mode === 'html' ) {
-			const textNode = ReactDom.findDOMNode( this.refs.text );
+			const textNode = this.textInput.current;
 
 			// Collapse selection to avoid scrolling to the bottom of the textarea
 			if ( this.state.selection ) {
@@ -499,7 +502,7 @@ export default class extends React.Component {
 			return;
 		}
 
-		const textNode = ReactDom.findDOMNode( this.refs.text );
+		const textNode = this.textInput.current;
 
 		const start = selection.start;
 		const end = selection.end || selection.start;
@@ -563,12 +566,12 @@ export default class extends React.Component {
 				{ 'html' === mode &&
 					config.isEnabled( 'post-editor/html-toolbar' ) && (
 						<EditorHtmlToolbar
-							content={ this.refs.text }
+							content={ this.textInput.current }
 							onToolbarChangeContent={ this.onToolbarChangeContent }
 						/>
 					) }
 				<textarea
-					ref="text"
+					ref={ this.textInput }
 					className={ className }
 					id={ this._id }
 					onChange={ this.onTextAreaChange }
