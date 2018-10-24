@@ -18,18 +18,6 @@ import apiFetch from '@wordpress/api-fetch';
 const { gutenberg_publicize_setup } = window;
 
 /**
- * Get connection form set up data.
- *
- * Retrieves array of filtered connection UI data (labels, checked value,
- * URLs, etc.) from window global. This data only updates on refresh.
- *
- * @return {object} List of filtered connection UI data.
- */
-export function getStaticPublicizeConnections() {
-	return JSON.parse( gutenberg_publicize_setup.staticConnectionList );
-}
-
-/**
  * Get up-to-date connection list data for post.
  *
  * Retrieves array of filtered connection UI data (labels, checked value).
