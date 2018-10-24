@@ -383,6 +383,28 @@ jobs:
                     }'
             fi
 
+  #
+  # Prime calypso.live so it has a build ready
+  #
+  # We can send a request to calypso.live so that it gets a build ready.
+  # This saves time if folks want to test and also saves having e2e jobs wasting container time waiting for the image to build.
+  #
+  # Expected usage:
+  #   - After main tests have passed (test-client, test-server)
+  #   - Only on branches (!master)
+  #
+  prime-calypso-live:
+    docker:
+    - image: buildpack-deps
+    steps:
+      - run:
+          name: Prime calypso.live build
+          command: |
+            set +o errexit
+            set -o nounset
+            curl --silent "https://hash-${CIRCLE_SHA1}.calypso.live" > /dev/null
+            exit 0
+
 workflows:
   version: 2
   calypso:
@@ -412,6 +434,14 @@ workflows:
       - test-server:
           requires:
             - setup
+      - prime-calypso-live:
+          requires:
+            - test-client
+            - test-server
+          filters:
+            branches:
+              ignore: master
+
 
   calypso-nightly:
     jobs:
