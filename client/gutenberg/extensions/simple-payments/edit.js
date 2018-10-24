@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import get from 'lodash/get';
 import { Component, Fragment } from '@wordpress/element';
 import { withInstanceId } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
@@ -34,19 +35,37 @@ class Edit extends Component {
 					type="number"
 					value={ attributes.paymentId || '' }
 				/>
-				<pre>
-					{ JSON.stringify( this.props.simplePayments, undefined, 2 ) }
-				</pre>
+				<br />
+				content: <input type="text" disabled value={ this.props.content || '' } />
+				<br />
+				featuredMedia: <input type="number" disabled value={ this.props.featuredMedia || '' } />
+				<br />
+				title: <input type="text" disabled value={ this.props.title || '' } />
+				<details>
+					<summary>Simple payments object</summary>
+					<pre>{ JSON.stringify( this.props.simplePayment, undefined, 2 ) }</pre>
+				</details>
 			</Fragment>
 		);
 	}
 }
 
-export default withSelect( select => {
-	const { getEntityRecords } = select( 'core' );
-	return {
-		simplePayments: getEntityRecords( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, {
-			status: 'publish',
-		} ),
-	};
+export default withSelect( ( select, { attributes } ) => {
+	if ( attributes.paymentId ) {
+		const { getEntityRecord } = select( 'core' );
+		const simplePayment = getEntityRecord(
+			'postType',
+			SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
+			attributes.paymentId
+		);
+
+		return simplePayment
+			? {
+					content: get( simplePayment, 'content.raw', '' ),
+					featuredMedia: parseInt( simplePayment.featured_media, 10 ) || undefined,
+					simplePayment,
+					title: get( simplePayment, 'title.raw', '' ),
+			  }
+			: {};
+	}
 } )( withInstanceId( Edit ) );
