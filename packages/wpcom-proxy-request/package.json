@@ -39,7 +39,7 @@
   "devDependencies": {
     "babel-eslint": "^8.2.6",
     "chai": "^4.1.0",
-    "chokidar-cli": "^1.2.0",
+    "chokidar-cli": "^1.2.1",
     "eslint": "^5.1.0",
     "mocha": "^5.2.0",
     "n8-make": "^1.8.6",
