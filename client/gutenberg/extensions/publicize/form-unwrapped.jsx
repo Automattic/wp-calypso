@@ -16,7 +16,6 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import isNil from 'lodash/isNil';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 
@@ -75,7 +74,7 @@ class PublicizeFormUnwrapped extends Component {
 	isConnectionOn( uniqueId ) {
 		const { activeConnections } = this.props;
 		const matchingConnection = activeConnections.find( c => uniqueId === c.unique_id );
-		if ( isNil( matchingConnection ) ) {
+		if ( ! matchingConnection ) {
 			return false;
 		}
 		return matchingConnection.should_share;

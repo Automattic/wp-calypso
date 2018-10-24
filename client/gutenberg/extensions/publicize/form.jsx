@@ -11,7 +11,6 @@
 /**
  * External dependencies
  */
-import isNil from 'lodash/isNil';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 
@@ -22,9 +21,9 @@ import PublicizeFormUnwrapped from './form-unwrapped';
 
 const PublicizeForm = compose( [
 	withSelect( ( select ) => ( {
-		activeConnections: ( isNil( select( 'core/editor' ).getEditedPostAttribute( 'publicize' ) ) )
+		activeConnections: ( ! select( 'core/editor' ).getEditedPostAttribute( 'publicize' ) )
 			? [] : select( 'core/editor' ).getEditedPostAttribute( 'publicize' ).connections,
-		shareMessage: ( isNil( select( 'core/editor' ).getEditedPostAttribute( 'publicize' ) ) )
+		shareMessage: ( ! select( 'core/editor' ).getEditedPostAttribute( 'publicize' ) )
 			? '' : select( 'core/editor' ).getEditedPostAttribute( 'publicize' ).title,
 	} ) ),
 	withDispatch( ( dispatch, ownProps ) => ( {
