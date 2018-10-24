@@ -3,6 +3,8 @@
  *
  * Implements reducer, actions, and selector
  * for 'a8c/publicize' store.
+ *
+ * @format
  */
 
 /**
@@ -75,21 +77,14 @@ const publicizeStore = {
 		 *
 		 * Updates component state in response to request finishing.
 		 *
-		 * @param {string} resultString JSON encoded result of connection request
+		 * @param {string} result Result of connection request
 		 * @return {Object} action type and (maybe) decoded JSON connection list
 		 */
-		getConnectionsDone( resultString ) {
-			try {
-				const result = JSON.parse( resultString );
-				return {
-					type: 'GET_CONNECTIONS_SUCCESS',
-					result,
-				};
-			} catch ( e ) { // JSON parse fail.
-				return {
-					type: 'GET_CONNECTIONS_FAIL',
-				};
-			}
+		getConnectionsDone( result ) {
+			return {
+				type: 'GET_CONNECTIONS_SUCCESS',
+				result,
+			};
 		},
 	},
 
