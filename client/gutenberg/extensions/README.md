@@ -36,3 +36,16 @@ Presets follow the same structure as blocks, just under `presets` folder:
         ├── view.js
         └── view.scss
 ```
+
+## Block naming conventions
+
+Blocks are registered by providing a `name` and `settings` like this:
+
+```js
+registerBlockType( 'prefix/name', { /* settings */ } );
+```
+
+Public WordPress.com blocks should use the `jetpack/` prefix, e.g. `jetpack/markdown`.
+
+Private and internal blocks should use the `a8c/` prefix.
+
