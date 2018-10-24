@@ -69,6 +69,15 @@ const MailchimpSettings = ( {
 						<NoticeAction href="https://login.mailchimp.com" external={ true } />
 					</Notice>
 				) }
+			{ mailchimpListId === 0 && (
+				<Notice
+					status="is-warning"
+					text={ translate(
+						'Followers will not be synced for this site. Please select a list to sign them up for your MailChimp content'
+					) }
+					showDismiss={ false }
+				/>
+			) }
 			<select value={ mailchimpListId } onChange={ chooseMailchimpList }>
 				<option key="none" value={ 0 }>
 					{ translate( 'Do not sync follower emails for this site' ) }
