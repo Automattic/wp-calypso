@@ -101,3 +101,8 @@ export function tryToGuessPostalCodeFormat( postalCode, countryCode ) {
 
 	return postalCode;
 }
+
+export function isValidPostalCode( postalCode, countryCode = 'US' ) {
+	// TODO - every other country
+	return countryCode !== 'US' || postalCode.match( /^\d{5}$/ );
+}
