@@ -10,6 +10,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import page from 'page';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -407,19 +408,37 @@ export class MySitesSidebar extends Component {
 			} );
 		}
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		// hasPendingPayment( getCart() ) ) {
+		if ( config.isEnabled( 'async-payments' ) ) {
+			return (
+				<li className={ linkClass } data-tip-target={ tipTarget }>
+					<a onClick={ this.trackPlanClick } href={ planLink }>
+						<JetpackLogo size={ 24 } />
+						<span className="sidebar__menu-link-text menu-link-text">
+							{ translate( 'Plan', { context: 'noun' } ) }
+						</span>
+					</a>
+					<SidebarButton
+						onClick={ this.trackSidebarButtonClick( 'pending_payment' ) }
+						href={ '/me/purchases/pending' }
+					>
+						{ translate( 'Confirm', { comment: 'Link to page where you can confirm a payment' } ) }
+					</SidebarButton>
+				</li>
+			);
+		}
+
 		return (
 			<li className={ linkClass } data-tip-target={ tipTarget }>
 				<a onClick={ this.trackPlanClick } href={ planLink }>
 					<JetpackLogo size={ 24 } />
-					<span className="menu-link-text" data-e2e-sidebar={ 'Plan' }>
+					<span className="sidebar__menu-link-text menu-link-text" data-e2e-sidebar={ 'Plan' }>
 						{ translate( 'Plan', { context: 'noun' } ) }
 					</span>
 					<span className="sidebar__menu-link-secondary-text">{ planName }</span>
 				</a>
 			</li>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	trackStoreClick = () => {
