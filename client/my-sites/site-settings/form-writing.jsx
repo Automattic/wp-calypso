@@ -143,7 +143,7 @@ class SiteSettingsFormWriting extends Component {
 				{ jetpackSettingsUI &&
 					jetpackVersionSupportsLazyImages && (
 						<div>
-							{ this.renderSectionHeader( translate( 'Speed up your site' ), false ) }
+							{ this.renderSectionHeader( translate( 'Performance & speed' ), false ) }
 							<SpeedUpYourSite
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
