@@ -133,9 +133,9 @@ export function redirectDefaultLocale( context, next ) {
 	}
 
 	if ( context.params.isJetpack === 'jetpack' ) {
-		context.redirect( '/log-in/jetpack' );
+		page.redirect( '/log-in/jetpack' );
 	} else {
-		context.redirect( '/log-in' );
+		page.redirect( '/log-in' );
 	}
 }
 
