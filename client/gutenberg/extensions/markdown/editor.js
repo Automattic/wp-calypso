@@ -15,7 +15,7 @@ import './editor.scss';
 import edit from './edit';
 import save from './save';
 
-registerBlockType( 'a8c/markdown', {
+registerBlockType( 'jetpack/markdown', {
 	title: __( 'Markdown', 'jetpack' ),
 
 	description: (

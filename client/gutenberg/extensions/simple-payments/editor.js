@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 import GridiconMoney from 'gridicons/dist/money';
 
-registerBlockType( 'a8c/simple-payments', {
+registerBlockType( 'jetpack/simple-payments', {
 	title: __( 'Payment button', 'jetpack' ),
 
 	description: __(
