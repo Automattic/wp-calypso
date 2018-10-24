@@ -21,6 +21,7 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redux-form-fieldset';
 import { getCurrencyDefaults } from 'lib/format-currency';
 import ProductImagePicker from './product-image-picker';
+import { SUPPORTED_CURRENCY_LIST } from 'lib/simple-payments/constants';
 
 export const REDUX_FORM_NAME = 'simplePaymentsForm';
 
@@ -28,34 +29,6 @@ export const REDUX_FORM_NAME = 'simplePaymentsForm';
 export const getProductFormValues = state => getFormValues( REDUX_FORM_NAME )( state );
 export const isProductFormValid = state => isValid( REDUX_FORM_NAME )( state );
 export const isProductFormDirty = state => isDirty( REDUX_FORM_NAME )( state );
-
-// https://developer.paypal.com/docs/integration/direct/rest/currency-codes/
-const SUPPORTED_CURRENCY_LIST = [
-	'USD',
-	'EUR',
-	'AUD',
-	'BRL',
-	'CAD',
-	'CZK',
-	'DKK',
-	'HKD',
-	'HUF',
-	'ILS',
-	'JPY',
-	'MYR',
-	'MXN',
-	'TWD',
-	'NZD',
-	'NOK',
-	'PHP',
-	'PLN',
-	'GBP',
-	'RUB',
-	'SGD',
-	'SEK',
-	'CHF',
-	'THB',
-];
 
 const VISUAL_CURRENCY_LIST = SUPPORTED_CURRENCY_LIST.map( code => {
 	const { symbol } = getCurrencyDefaults( code );
