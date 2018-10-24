@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Publicize connections verification component.
  *
@@ -35,25 +36,23 @@ class PublicizeConnectionVerify extends Component {
 	 * updates component state to display potentially
 	 * failed connections.
 	 *
-	 * @param {object} response Response from ajax action 'wp_ajax_test_publicize_conns'
+	 * @param {object} response Response from '/publicize/connections' endpoint
 	 */
-	connectionTestComplete = ( response ) => {
-		const failureList = response.data.filter( connection => ( ! connection.connectionTestPassed ) );
+	connectionTestComplete = response => {
+		const failureList = response.data.filter( connection => ! connection.connectionTestPassed );
 		this.setState( {
 			failedConnections: failureList,
 			isLoading: false,
 		} );
-	}
+	};
 
 	/**
 	 * Starts request to check connections
 	 *
-	 * Checks connections with ajax action 'wp_ajax_test_publicize_conns'
+	 * Checks connections with using the '/publicize/connections' endpoint
 	 */
 	connectionTestStart = () => {
-		requestTestPublicizeConnections().then(
-			() => this.connectionTestComplete
-		);
+		requestTestPublicizeConnections().then( () => this.connectionTestComplete );
 	};
 
 	/**
@@ -64,7 +63,7 @@ class PublicizeConnectionVerify extends Component {
 	 *
 	 * @param {object} event Event instance for onClick.
 	 */
-	refreshConnectionClick = ( event ) => {
+	refreshConnectionClick = event => {
 		const { href, title } = event.target;
 		event.preventDefault();
 		// open a popup window
@@ -75,7 +74,7 @@ class PublicizeConnectionVerify extends Component {
 				this.connectionTestStart();
 			}
 		}, 500 );
-	}
+	};
 
 	componentDidMount() {
 		this.connectionTestStart();
@@ -86,8 +85,12 @@ class PublicizeConnectionVerify extends Component {
 		if ( failedConnections.length > 0 ) {
 			return (
 				<div className="below-h2 error publicize-token-refresh-message">
-					<p key="error-title">{ __( 'Before you hit Publish, please refresh the following connection(s) to make sure we can Publicize your post:' ) }</p>
-					{ failedConnections.filter( c => c.userCanRefresh ).map( c =>
+					<p key="error-title">
+						{ __(
+							'Before you hit Publish, please refresh the following connection(s) to make sure we can Publicize your post:'
+						) }
+					</p>
+					{ failedConnections.filter( c => c.userCanRefresh ).map( c => (
 						<a
 							className="pub-refresh-button button"
 							title={ c.refreshText }
@@ -95,12 +98,10 @@ class PublicizeConnectionVerify extends Component {
 							target={ '_refresh_' + c.serviceName }
 							onClick={ this.refreshConnectionClick }
 							key={ c.connectionID }
-
 						>
 							{ c.refreshText }
 						</a>
-					) }
-
+					) ) }
 				</div>
 			);
 		}
