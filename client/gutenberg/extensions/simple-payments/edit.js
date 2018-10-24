@@ -26,7 +26,7 @@ class Edit extends Component {
 					id={ inputId }
 					onChange={ this.handleChange }
 					type="number"
-					value={ attributes.paymentId }
+					value={ attributes.paymentId || '' }
 				/>
 			</Fragment>
 		);
