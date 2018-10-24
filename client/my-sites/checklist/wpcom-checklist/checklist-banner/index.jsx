@@ -65,16 +65,18 @@ export class ChecklistBanner extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
-
 		if ( ! this.canShow() ) {
 			return null;
 		}
 
+		const { translate, taskList } = this.props;
+		const tasks = taskList.getAll();
+
 		const childrenArray = Children.toArray( this.props.children );
-		const total = childrenArray.length;
-		const completeCount = childrenArray.filter( child => child.props.completed ).length;
-		const isFinished = completeCount >= total;
+		const total = tasks.length;
+		const completeCount = tasks.filter( task => task.isCompleted ).length;
+		const isFinished = taskList.areAllTasksCompleted();
+		const firstIncomplete = taskList.getFirstIncompleteTask();
 		const completePercentage = Math.round( ! total ? 0 : ( completeCount / total ) * 100 );
 
 		return (
@@ -133,7 +135,7 @@ export class ChecklistBanner extends Component {
 						</Button>
 					</>
 				) : (
-					childrenArray.find( child => ! child.props.completed )
+					childrenArray.find( child => child.props.id === firstIncomplete.id )
 				) }
 			</Card>
 		);

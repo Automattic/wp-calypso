@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { Children, Component } from 'react';
+import { Component } from 'react';
 
 export class ChecklistNotification extends Component {
 	componentDidMount() {
@@ -14,27 +14,16 @@ export class ChecklistNotification extends Component {
 	}
 
 	shouldShowNotification = () => {
-		const { storedTask, canShowChecklist, children } = this.props;
-
-		// The redux state for getSiteChecklist() is injected from an API response
-		// so the selector's results and the task list will not always match
-		// Therefore, we're accessing the child Tasks directly for accuracy
-
-		const childrenArray = Children.toArray( children );
-		const task = childrenArray.find( child => ! child.props.completed );
-		const total = childrenArray.length;
-		const completeCount = childrenArray.filter( child => child.props.completed ).length;
-		const isFinished = completeCount >= total;
-
-		this.props.setNotification( false );
+		const { storedTask, canShowChecklist, taskList } = this.props;
 
 		if (
-			task &&
-			( storedTask !== task.key || storedTask === null ) &&
-			! isFinished &&
+			! taskList.areAllTasksCompleted() &&
+			( storedTask !== taskList.getFirstIncompleteTask().id || storedTask === null ) &&
 			canShowChecklist
 		) {
 			this.props.setNotification( true );
+		} else {
+			this.props.setNotification( false );
 		}
 	};
 
