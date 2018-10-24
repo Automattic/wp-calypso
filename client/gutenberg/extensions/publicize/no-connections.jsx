@@ -18,12 +18,16 @@ import { Component } from '@wordpress/element';
 import { getAllConnections } from './async-publicize-lib';
 
 class PublicizeNoConnections extends Component {
-	constructor( props ) {
-		super( props );
-		const allConnections = getAllConnections();
-		this.state = {
-			allConnections: allConnections,
-		};
+	state = {
+		allConnections: [],
+	};
+
+	componentDidMount() {
+		getAllConnections().then( allConnections => {
+			this.setState( {
+				allConnections,
+			} );
+		} );
 	}
 
 	/**

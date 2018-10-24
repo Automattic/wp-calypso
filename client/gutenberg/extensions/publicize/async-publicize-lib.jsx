@@ -13,11 +13,6 @@
 import apiFetch from '@wordpress/api-fetch';
 
 /**
- * Module variables
- */
-const { gutenberg_publicize_setup } = window;
-
-/**
  * Get up-to-date connection list data for post.
  *
  * Retrieves array of filtered connection UI data (labels, checked value).
@@ -42,7 +37,9 @@ export function requestPublicizeConnections( postId ) {
  * @return {object} List of possible services that can be connected to
  */
 export function getAllConnections() {
-	return JSON.parse( gutenberg_publicize_setup.allServices );
+	return apiFetch( {
+		path: '/publicize/services',
+	} );
 }
 
 /**
