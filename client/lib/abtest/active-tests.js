@@ -106,6 +106,6 @@ export default {
 			yes: 50,
 			no: 50,
 		},
-		defaultVariation: 'old',
+		defaultVariation: 'yes',
 	},
 };
