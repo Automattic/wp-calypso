@@ -68,12 +68,9 @@ class JetpackForm extends Component {
 				</InspectorControls>
 				<div className={ this.props.className + ' jetpack-form' }>
 					{ this.props.children }
-					<TextControl
-						className="button button-primary button-default jetpack-submit-button"
-						value={ this.props.submit_button_text }
-						placeholder={ __( 'Submit', 'jetpack' ) }
-						onChange={ this.onChangeSubmit }
-					/>
+					<div className="button button-primary button-default jetpack-submit-button">
+						{ this.props.submit_button_text ? this.props.submit_button_text : __( 'Submit', 'jetpack' ) }
+					</div>
 				</div>
 			</Fragment>
 		);

@@ -99,13 +99,23 @@ registerBlockType( 'jetpack/form', {
 				setAttributes={ props.setAttributes }
 			>
 				<InnerBlocks
-					allowedBlocks={ [] }
+				//	allowedBlocks={ [] }
 					templateLock={false}
 					template={ [
-						[ 'jetpack/field-name', { label: __( 'Name', 'jetpack' ) } ],
-						[ 'jetpack/field-email', { label: __( 'Email', 'jetpack' ) } ],
-						[ 'jetpack/field-text', { label: __( 'Subject', 'jetpack' ) } ],
-						[ 'jetpack/field-textarea', { label: __( 'Message', 'jetpack' ) } ]
+						[ 'jetpack/field-name', {
+							label: __( 'Name', 'jetpack' ),
+							required: true
+						} ],
+						[ 'jetpack/field-email', {
+							label: __( 'Email', 'jetpack' ),
+							required: true
+						} ],
+						[ 'jetpack/field-text', {
+							label: __( 'Subject', 'jetpack' )
+						} ],
+						[ 'jetpack/field-textarea', {
+							label: __( 'Message', 'jetpack' )
+						} ]
 					] }
 				/>
 			</JetpackForm>
@@ -334,6 +344,7 @@ registerBlockType( 'jetpack/field-checkbox-multiple', Object.assign( {
 			required={ props.attributes.required }
 			options={ props.attributes.options }
 			setAttributes={ props.setAttributes }
+			type="checkbox"
 		/> );
 	}
 }, FieldDefaults ) );
@@ -347,6 +358,7 @@ registerBlockType( 'jetpack/field-radio', Object.assign( {
 			required={ props.attributes.required }
 			options={ props.attributes.options }
 			setAttributes={ props.setAttributes }
+			type="radio"
 		/> );
 	}
 }, FieldDefaults ) );
@@ -363,4 +375,3 @@ registerBlockType( 'jetpack/field-select', Object.assign( {
 		/> );
 	}
 }, FieldDefaults ) );
-

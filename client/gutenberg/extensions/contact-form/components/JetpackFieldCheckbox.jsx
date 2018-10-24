@@ -6,8 +6,13 @@
  * External dependencies
  */
 import {
+	BaseControl,
 	CheckboxControl
 } from '@wordpress/components';
+
+import {
+	withInstanceId
+} from '@wordpress/compose';
 
 import {
 	Fragment
@@ -26,8 +31,12 @@ function JetpackFieldCheckbox( props ) {
 				required={ props.required }
 				setAttributes={ props.setAttributes }
 			/>
-			<div className="jetpack-field">
+			<BaseControl
+				id={ `jetpack-field-checkbox-${ props.instanceId }` }
+				className="jetpack-field"
+			>
 				<CheckboxControl
+					id={ `jetpack-field-checkbox-${ props.instanceId }` }
 					label={ <JetpackFieldLabel
 						required={ props.required }
 						label={ props.label }
@@ -35,9 +44,9 @@ function JetpackFieldCheckbox( props ) {
 					/> }
 					disabled
 				/>
-			</div>
+			</BaseControl>
 		</Fragment>
 	);
 }
 
-export default JetpackFieldCheckbox;
+export default withInstanceId( JetpackFieldCheckbox );
