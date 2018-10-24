@@ -194,27 +194,27 @@ class RegisterDomainStep extends React.Component {
 		const loadingResults = Boolean( suggestion );
 
 		return {
+			availabilityError: null,
+			availabilityErrorData: null,
 			availableTlds: [],
 			clickedExampleSuggestion: false,
-			availabilityError: null,
-			suggestionError: null,
-			availabilityErrorData: null,
-			suggestionErrorData: null,
 			filters: this.getInitialFiltersState(),
-			lastFilters: this.getInitialFiltersState(),
-			lastQuery: suggestion,
+			lastDomainIsTransferrable: false,
 			lastDomainSearched: null,
 			lastDomainStatus: null,
-			lastDomainIsTransferrable: false,
+			lastFilters: this.getInitialFiltersState(),
+			lastQuery: suggestion,
 			loadingResults,
 			loadingSubdomainResults:
 				( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) &&
 				loadingResults,
-			showAvailabilityNotice: false,
-			showSuggestionNotice: false,
 			pageNumber: 1,
 			searchResults: null,
+			showAvailabilityNotice: false,
+			showSuggestionNotice: false,
 			subdomainSearchResults: null,
+			suggestionError: null,
+			suggestionErrorData: null,
 		};
 	}
 
@@ -332,13 +332,13 @@ class RegisterDomainStep extends React.Component {
 	render() {
 		const queryObject = getQueryObject( this.props );
 		const {
-			availabilityErrorData,
 			availabilityError,
-			suggestionErrorData,
-			suggestionError,
+			availabilityErrorData,
 			lastDomainSearched,
 			showAvailabilityNotice,
 			showSuggestionNotice,
+			suggestionError,
+			suggestionErrorData,
 		} = this.state;
 		const { message: suggestionMessage, severity: suggestionSeverity } = showSuggestionNotice
 			? getAvailabilityNotice( lastDomainSearched, suggestionError, suggestionErrorData )
@@ -499,14 +499,14 @@ class RegisterDomainStep extends React.Component {
 		const nextState = {
 			availabilityError: null,
 			availabilityErrorData: null,
-			suggestionError: null,
-			suggestionErrorData: null,
 			exactMatchDomain: null,
 			lastDomainSearched: null,
 			loadingResults,
 			loadingSubdomainResults: loadingResults,
 			showAvailabilityNotice: false,
 			showSuggestionNotice: false,
+			suggestionError: null,
+			suggestionErrorData: null,
 			...stateOverride,
 		};
 		debug( 'Repeating a search with the following input for setState', nextState );
@@ -591,18 +591,18 @@ class RegisterDomainStep extends React.Component {
 			{
 				availabilityError: null,
 				availabilityErrorData: null,
-				suggestionError: null,
-				suggestionErrorData: null,
 				exactMatchDomain: null,
-				lastQuery: cleanedQuery,
 				lastDomainSearched: null,
+				lastQuery: cleanedQuery,
 				loadingResults,
 				loadingSubdomainResults: loadingResults,
-				showAvailabilityNotice: false,
-				showSuggestionNotice: false,
 				pageNumber: 1,
 				searchResults: null,
+				showAvailabilityNotice: false,
+				showSuggestionNotice: false,
 				subdomainSearchResults: null,
+				suggestionError: null,
+				suggestionErrorData: null,
 			},
 			callback
 		);
