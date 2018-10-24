@@ -193,11 +193,14 @@ class SiteSettingsImport extends Component {
 			api: { isHydrated },
 			importers: imports,
 		} = this.state;
-		const { site } = this.props;
+		const { engine, site } = this.props;
 		const { slug, title } = site;
 		const siteTitle = title.length ? title : slug;
 
 		if ( ! isHydrated ) {
+			if ( engine ) {
+				return <Placeholder />;
+			}
 			return this.renderIdleImporters( site, siteTitle, appStates.DISABLED );
 		}
 
@@ -222,11 +225,8 @@ class SiteSettingsImport extends Component {
 	};
 
 	renderImportersList() {
-		const { site, siteSlug, translate } = this.props;
-		const {
-			slug,
-			title: siteTitle,
-		} = site;
+		const { site, translate } = this.props;
+		const { slug, title: siteTitle } = site;
 
 		const title = siteTitle.length ? siteTitle : slug;
 		const description = translate(
@@ -262,11 +262,7 @@ class SiteSettingsImport extends Component {
 
 	renderImportersListGate() {
 		if ( this.props.needsVerification && ! this.props.isUnlaunchedSite ) {
-			return (
-				<EmailVerificationGate>
-					{ this.renderImportersList() }
-				</EmailVerificationGate>
-			);
+			return <EmailVerificationGate>{ this.renderImportersList() }</EmailVerificationGate>;
 		}
 
 		return this.renderImportersList();

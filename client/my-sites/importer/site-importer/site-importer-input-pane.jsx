@@ -75,18 +75,18 @@ class SiteImporterInputPane extends React.Component {
 		availableEndpoints: [],
 	};
 
-	componentWillMount = () => {
+	UNSAFE_componentWillMount() {
 		if ( config.isEnabled( 'manage/import/site-importer-endpoints' ) ) {
 			this.fetchEndpoints();
 		}
-	};
+	}
 
 	componentDidMount() {
 		this.validateSite();
 	}
 
 	// TODO This can be improved if we move to Redux.
-	componentWillReceiveProps = nextProps => {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// TODO test on a site without posts
 		const newImporterState = nextProps.importerStatus.importerState;
 		const oldImporterState = this.props.importerStatus.importerState;
@@ -137,7 +137,7 @@ class SiteImporterInputPane extends React.Component {
 				} );
 			}
 		}
-	};
+	}
 
 	fetchEndpoints = () => {
 		wpcom.wpcom.req
@@ -188,6 +188,10 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	validateSite = () => {
+		if ( this.state.loading ) {
+			return;
+		}
+
 		const siteURL = trim( this.state.siteURLInput );
 
 		if ( ! siteURL ) {
