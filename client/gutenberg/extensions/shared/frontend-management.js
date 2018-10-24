@@ -1,5 +1,5 @@
 /**
- * Wordpress dependencies
+ * External dependencies
  *
  * @format
  */
@@ -7,12 +7,10 @@
 import { createElement, render } from '@wordpress/element';
 
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
+
+import { assign } from 'lodash';
 
 export class FrontendManagement {
 	blockIterator( rootNode, blocks ) {
@@ -26,6 +24,7 @@ export class FrontendManagement {
 		const blockClass = [ '.wp-block', name.replace( '/', '-' ) ].join( '-' );
 		rootNode.querySelectorAll( blockClass ).forEach( node => {
 			const data = this.extractAttributesFromContainer( node.dataset, attributes );
+			assign( data, options.props );
 			const children = this.extractChildrenFromContainer( node );
 			const el = createElement( component, data, children );
 			render( el, selector ? node.querySelector( selector ) : node );
