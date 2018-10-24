@@ -56,7 +56,7 @@
     "@wordpress/rich-text": "1.0.0-beta.1",
     "@wordpress/url": "2.0.2",
     "@wordpress/viewport": "2.0.2",
-    "autoprefixer": "9.2.1",
+    "autoprefixer": "9.3.1",
     "autosize": "4.0.2",
     "babel-loader": "8.0.4",
     "babel-plugin-add-module-exports": "1.0.0",
