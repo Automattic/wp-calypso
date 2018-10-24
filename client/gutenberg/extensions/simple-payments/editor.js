@@ -7,6 +7,12 @@ import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 import GridiconMoney from 'gridicons/dist/money';
 
+/**
+ * Internal dependencies
+ */
+import edit from './edit';
+import save from './save';
+
 registerBlockType( 'jetpack/simple-payments', {
 	title: __( 'Payment button', 'jetpack' ),
 
@@ -22,16 +28,18 @@ registerBlockType( 'jetpack/simple-payments', {
 	keywords: [ 'simple payments', 'PayPal' ],
 
 	attributes: {
-		paymentId: { type: 'number' },
+		paymentId: {
+			type: 'number',
+		},
 	},
 
-	edit: () => (
-		<div>
-			A simple payment.
-			<br />
-			This block is under development and not ready for production.
-		</div>
-	),
+	edit,
 
-	save: () => null,
+	save,
+
+	supports: {
+		className: false,
+		customClassName: false,
+		html: false,
+	},
 } );
