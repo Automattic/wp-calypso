@@ -6,11 +6,6 @@
 import { RawHTML } from '@wordpress/element';
 
 export default function Save( { attributes } ) {
-	return (
-		<RawHTML>
-			[simple-payment id="
-			{ attributes.paymentId }
-			"]
-		</RawHTML>
-	);
+	const { paymentId } = attributes;
+	return paymentId ? <RawHTML>{ `[simple-payment id="${ paymentId }"]` }</RawHTML> : null;
 }

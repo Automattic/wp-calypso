@@ -17,7 +17,12 @@ class Edit extends Component {
 		return (
 			<Fragment>
 				<label htmlFor={ inputId }>Simple Payment ID</label>
-				<input type="number" id={ inputId } value={ attributes.paymentId } />
+				<input
+					id={ inputId }
+					onChange={ this.handleChange }
+					type="number"
+					value={ attributes.paymentId }
+				/>
 			</Fragment>
 		);
 	}
