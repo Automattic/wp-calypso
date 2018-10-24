@@ -151,14 +151,15 @@ class MapEdit extends Component {
 					) : null }
 					<PanelBody title={ __( 'Google Maps API Key', 'jetpack' ) } initialOpen={ false }>
 						<TextControl
+							label={ __( 'Google Maps API Key', 'jetpack' ) }
 							value={ apiKeyControl }
 							onChange={ value => this.setState( { apiKeyControl: value } ) }
 						/>
 						<ButtonGroup>
-							<Button type="button" onClick={ this.updateAPIKey } isSmall isDefault>
+							<Button type="button" onClick={ this.updateAPIKey } isDefault>
 								{ __( 'Update Key' ) }
 							</Button>
-							<Button type="button" onClick={ this.removeAPIKey } isSmall isDangerous>
+							<Button type="button" onClick={ this.removeAPIKey } isDefault>
 								{ __( 'Remove Key' ) }
 							</Button>
 						</ButtonGroup>
