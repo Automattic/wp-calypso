@@ -52,7 +52,7 @@ describe( 'getAvailabilityNotice()', () => {
 
 	test( 'Should return default message when search results are empty', () => {
 		expect( getAvailabilityNotice( null, domainAvailability.EMPTY_RESULTS, null ) ).toEqual( {
-			message: undefined,
+			message: 'default',
 			severity: 'error',
 		} );
 	} );
