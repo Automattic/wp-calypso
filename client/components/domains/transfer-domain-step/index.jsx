@@ -485,7 +485,7 @@ class TransferDomainStep extends React.Component {
 										args: { tld },
 										components: {
 											strong: <strong />,
-											a: <a href="#" onClick={ this.goToMapDomainStep } />,
+											a: <a href="#" onClick={ this.goToMapDomainStep } />, // eslint-disable-line jsx-a11y/anchor-is-valid
 										},
 									}
 								),
@@ -504,7 +504,7 @@ class TransferDomainStep extends React.Component {
 											args: { domain },
 											components: {
 												strong: <strong />,
-												a: <a href="#" onClick={ this.goToMapDomainStep } />,
+												a: <a href="#" onClick={ this.goToMapDomainStep } />, // eslint-disable-line jsx-a11y/anchor-is-valid
 											},
 										}
 									),
