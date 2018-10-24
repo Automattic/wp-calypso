@@ -198,9 +198,14 @@ function getAvailabilityNotice( domain, error, errorData ) {
 		case domainAvailability.TLD_NOT_SUPPORTED:
 		case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
 		case domainAvailability.UNKNOWN:
-		case domainAvailability.EMPTY_RESULTS:
 			// unavailable domains are displayed in the search results, not as a notice OR
 			// domain registrations are closed, in which case it is handled in parent
+			break;
+
+		case domainAvailability.EMPTY_RESULTS:
+			message = translate(
+				"Sorry, we weren't able to generate any domain name suggestions for that serach term. Please try a different set of keywords."
+			);
 			break;
 
 		case domainAvailability.BLACKLISTED:
