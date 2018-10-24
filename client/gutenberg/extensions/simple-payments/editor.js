@@ -36,4 +36,10 @@ registerBlockType( 'jetpack/simple-payments', {
 	edit,
 
 	save,
+
+	supports: {
+		className: false,
+		customClassName: false,
+		html: false,
+	},
 } );
