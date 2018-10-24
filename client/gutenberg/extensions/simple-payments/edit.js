@@ -8,7 +8,12 @@ import { withInstanceId } from '@wordpress/compose';
 
 class Edit extends Component {
 	handleChange = event => {
-		this.props.setAttributes( { paymentId: event.target.value } );
+		const paymentId = parseInt( event.target.value, 10 );
+		if ( paymentId ) {
+			this.props.setAttributes( { paymentId } );
+		} else {
+			this.props.setAttributes( { paymentId: undefined } );
+		}
 	};
 
 	render() {
