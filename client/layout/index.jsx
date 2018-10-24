@@ -30,7 +30,7 @@ import { isOffline } from 'state/application/selectors';
 import { hasSidebar, masterbarIsVisible } from 'state/ui/selectors';
 import InlineHelp from 'blocks/inline-help';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
-import SitePreview from 'blocks/site-preview';
+
 import SupportArticleDialog from 'blocks/support-article-dialog';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
@@ -116,7 +116,9 @@ class Layout extends Component {
 				) : (
 					<TranslatorLauncher />
 				) }
-				{ this.props.section.group === 'sites' && <SitePreview /> }
+				{ this.props.section.group === 'sites' && (
+					<AsyncLoad require="blocks/site-preview" placeholder={ null } />
+				) }
 				{ config.isEnabled( 'happychat' ) &&
 					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
 				{ 'development' === process.env.NODE_ENV && (
