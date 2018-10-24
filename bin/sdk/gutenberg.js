@@ -18,6 +18,7 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 		entry: {
 			editor: editorScript,
 			...( fs.existsSync( viewScript ) ? { view: viewScript } : {} ),
+			...( fs.existsSync( path.join( inputDir, 'view/tiled-gallery.js' ) ) ? { 'tiled-gallery/view' : path.join( inputDir, 'view/tiled-gallery.js' ) } : {} ),
 		},
 		output: {
 			path: outputDir || path.join( inputDir, 'build' ),
