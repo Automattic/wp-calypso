@@ -3,8 +3,6 @@
  *
  * Hooks into Gutenberg's PluginPrePublishPanel
  * to display Jetpack's Publicize UI in the pre-publish flow.
- *
- * @since  5.9.1
  */
 
 /**

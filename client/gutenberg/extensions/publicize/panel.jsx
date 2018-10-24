@@ -4,10 +4,6 @@
  * Displays Publicize notifications if no
  * services are connected or displays form if
  * services are connected.
- *
- * {@see publicize.php/save_meta()}
- *
- * @since  5.9.1
  */
 
 // Since this is a Jetpack originated block in Calypso codebase,
@@ -78,11 +74,7 @@ export default PublicizePanel = compose( [
 	withDispatch( ( dispatch, ownProps ) => ( {
 		getConnectionsDone: dispatch( 'a8c/publicize' ).getConnectionsDone,
 		getConnectionsFail: dispatch( 'a8c/publicize' ).getConnectionsFail,
-		/**
-		 * Starts request for current list of connections.
-		 *
-		 * @since 5.9.1
-		 */
+		// Starts request for current list of connections.
 		getConnectionsStart() {
 			const { postId } = ownProps;
 			const {
