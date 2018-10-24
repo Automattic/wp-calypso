@@ -4,12 +4,15 @@
  * External dependencies
  */
 
-import { __ } from '@wordpress/i18n';
-import { Component, createRef, Fragment } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+import { Component, createRef, Fragment, RawHTML } from '@wordpress/element';
 import {
 	Button,
+	ButtonGroup,
 	IconButton,
 	PanelBody,
+	Placeholder,
+	Spinner,
 	Toolbar,
 	TextControl,
 	withNotices,
@@ -21,6 +24,7 @@ import {
 	PanelColorSettings,
 } from '@wordpress/editor';
 import apiFetch from '@wordpress/api-fetch';
+import { debounce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,13 +36,22 @@ import Locations from './locations';
 import Map from './component.js';
 import MapThemePicker from './map-theme-picker';
 
+const API_STATE_LOADING = 0;
+const API_STATE_FAILURE = 1;
+const API_STATE_SUCCESS = 2;
+
 class MapEdit extends Component {
 	constructor() {
 		super( ...arguments );
 		this.state = {
 			addPointVisibility: false,
+			apiState: API_STATE_LOADING,
 		};
 		this.mapRef = createRef();
+		this.debouncedUpdateAPIKey = debounce( this.updateAPIKey, 800 );
+	}
+	componentWillUnmount() {
+		this.debouncedAPIKey.cancel();
 	}
 	addPoint = point => {
 		const { attributes, setAttributes } = this.props;
@@ -53,9 +66,14 @@ class MapEdit extends Component {
 		// Allow one cycle for alignment change to take effect
 		setTimeout( this.mapRef.current.sizeMap, 0 );
 	};
+	updateAPIKeyControl = value => {
+		this.setState( { apiKeyControl: value }, this.debouncedUpdateAPIKey );
+	};
 	updateAPIKey = () => {
+		const { noticeOperations } = this.props;
 		const { apiKeyControl } = this.state;
-		this.apiCall( apiKeyControl, 'POST' );
+		noticeOperations.removeAllNotices();
+		apiKeyControl && this.apiCall( apiKeyControl, 'POST' );
 	};
 	removeAPIKey = () => {
 		this.apiCall( null, 'DELETE' );
@@ -68,6 +86,7 @@ class MapEdit extends Component {
 			.then( result => {
 				noticeOperations.removeAllNotices();
 				this.setState( {
+					apiState: result.api_key ? API_STATE_SUCCESS : API_STATE_FAILURE,
 					api_key: result.api_key,
 					apiKeyControl: result.api_key,
 				} );
@@ -75,15 +94,18 @@ class MapEdit extends Component {
 			.catch( result => {
 				noticeOperations.removeAllNotices();
 				noticeOperations.createErrorNotice( result.message );
+				this.setState( {
+					apiState: API_STATE_FAILURE,
+				} );
 			} );
 	}
 	componentDidMount() {
 		this.apiCall();
 	}
 	render() {
-		const { className, setAttributes, attributes, noticeUI } = this.props;
+		const { className, setAttributes, attributes, noticeUI, notices } = this.props;
 		const { map_style, points, zoom, map_center, marker_color, align } = attributes;
-		const { addPointVisibility, api_key, apiKeyControl } = this.state;
+		const { addPointVisibility, api_key, apiKeyControl, apiState } = this.state;
 		const inspectorControls = (
 			<Fragment>
 				<BlockControls>
@@ -132,18 +154,42 @@ class MapEdit extends Component {
 						value={ apiKeyControl }
 						onChange={ value => this.setState( { apiKeyControl: value } ) }
 					/>
-					<Button type="button" onClick={ this.updateAPIKey } isSmall isDefault>
-						{ __( 'Update Key' ) }
-					</Button>
-					<Button type="button" onClick={ this.removeAPIKey } isSmall isDangerous>
-						{ __( 'Remove Key' ) }
-					</Button>
+					<ButtonGroup>
+						<Button type="button" onClick={ this.updateAPIKey } isSmall isDefault>
+							{ __( 'Update Key' ) }
+						</Button>
+						<Button type="button" onClick={ this.removeAPIKey } isSmall isDangerous>
+							{ __( 'Remove Key' ) }
+						</Button>
+					</ButtonGroup>
 				</InspectorControls>
 			</Fragment>
 		);
-		return (
+		const placholderAPIStateLoading = (
+			<Placeholder icon={ settings.icon }>
+				<Spinner />
+			</Placeholder>
+		);
+		const getAPIInstructions = sprintf(
+			"This is your first map block. You need to get a Google Maps API key. <a href='%s' target='_blank'>Here's how to do it</a>.",
+			'https://developers.google.com/maps/documentation/javascript/get-api-key'
+		);
+		const placeholderAPIStateFailure = (
+			<Placeholder icon={ settings.icon } label={ __( 'Map', 'jetpack' ) } notices={ notices }>
+				<Fragment>
+					<div className="components-placeholder__instructions">
+						<RawHTML>{ getAPIInstructions }</RawHTML>
+					</div>
+					<TextControl
+						placeholder="Paste Key Here"
+						value={ apiKeyControl }
+						onChange={ this.updateAPIKeyControl }
+					/>
+				</Fragment>
+			</Placeholder>
+		);
+		const placeholderAPIStateSuccess = (
 			<Fragment>
-				{ noticeUI }
 				{ inspectorControls }
 				<div className={ className }>
 					<Map
@@ -170,6 +216,14 @@ class MapEdit extends Component {
 						) }
 					</Map>
 				</div>
+			</Fragment>
+		);
+		return (
+			<Fragment>
+				{ noticeUI }
+				{ apiState === API_STATE_LOADING && placholderAPIStateLoading }
+				{ apiState === API_STATE_FAILURE && placeholderAPIStateFailure }
+				{ apiState === API_STATE_SUCCESS && placeholderAPIStateSuccess }
 			</Fragment>
 		);
 	}
