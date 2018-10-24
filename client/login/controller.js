@@ -118,7 +118,7 @@ export function redirectDefaultLocale( context, next ) {
 		return next();
 	}
 
-	// Do not redirect if user bootsrapping is disabled
+	// Do not redirect if user bootstrapping is disabled
 	if (
 		! getCurrentUser( context.store.getState() ) &&
 		! config.isEnabled( 'wpcom-user-bootstrap' )
@@ -133,9 +133,9 @@ export function redirectDefaultLocale( context, next ) {
 	}
 
 	if ( context.params.isJetpack === 'jetpack' ) {
-		page.redirect( '/log-in/jetpack' );
+		context.redirect( '/log-in/jetpack' );
 	} else {
-		page.redirect( '/log-in' );
+		context.redirect( '/log-in' );
 	}
 }
 
