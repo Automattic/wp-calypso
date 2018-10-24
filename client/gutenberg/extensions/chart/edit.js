@@ -96,6 +96,26 @@ class ChartEdit extends Component {
 					/>
 				</BlockControls>
 				<InspectorControls>
+					<p>
+						Create a spreadsheet with Google Sheets,{' '}
+						<a
+							href="https://support.google.com/docs/answer/37579?hl=en"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							publish it
+						</a>
+						, and paste the <strong>Share</strong> URL here. The spreadsheet’s format should
+						resemble{' '}
+						<a
+							href="https://docs.google.com/a/atavist.net/spreadsheets/d/1Ta7QDLsMGTC6vW03DnkvtQ5AE4IY1IeHnrFX7_7PZPE/pubhtml"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							this example
+						</a>
+						.
+					</p>
 					<TextControl
 						label={ __( 'Google Sheets URL' ) }
 						value={ googlesheet_url }
