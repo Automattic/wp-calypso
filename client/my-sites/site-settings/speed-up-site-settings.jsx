@@ -101,6 +101,12 @@ class SpeedUpSiteSettings extends Component {
 							) }
 							link="http://jetpack.com/support/site-accelerator/"
 						/>
+						<FormSettingExplanation>
+							{ translate(
+								'Load pages faster by allowing Jetpack to optimize your images and serve your images ' +
+									'and static files (like CSS and JavaScript) from our global network of servers.'
+							) }
+						</FormSettingExplanation>
 						<CompactFormToggle
 							checked={ !! cdnStatus }
 							disabled={
@@ -114,12 +120,6 @@ class SpeedUpSiteSettings extends Component {
 						>
 							{ translate( 'Enable site accelerator' ) }
 						</CompactFormToggle>
-						<FormSettingExplanation isIndented>
-							{ translate(
-								'Load pages faster by allowing Jetpack to optimize your images and serve your images ' +
-									'and static files (like CSS and JavaScript) from our global network of servers.'
-							) }
-						</FormSettingExplanation>
 						<div className="site-settings__child-settings">
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }
