@@ -23,7 +23,7 @@ export default localize( ( { selectedSite, translate } ) => {
 						'from your computer with a drag-and-drop interface.'
 				) }
 				buttonText={ translate( 'Upload a plugin now' ) }
-				href={ '/plugins/upload/' + selectedSite.slug }
+				href={ '/plugins/manage/' + selectedSite.slug }
 			/>
 		</div>
 	);
