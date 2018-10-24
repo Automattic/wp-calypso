@@ -6,7 +6,14 @@
 
 import { __ } from '@wordpress/i18n';
 import { Component, createRef, Fragment } from '@wordpress/element';
-import { Button, IconButton, PanelBody, Toolbar, TextControl } from '@wordpress/components';
+import {
+	Button,
+	IconButton,
+	PanelBody,
+	Toolbar,
+	TextControl,
+	withNotices,
+} from '@wordpress/components';
 import {
 	InspectorControls,
 	BlockControls,
@@ -48,24 +55,33 @@ class MapEdit extends Component {
 	};
 	updateAPIKey = () => {
 		const { apiKeyControl } = this.state;
-		this.apiCall( apiKeyControl );
+		this.apiCall( apiKeyControl, 'POST' );
 	};
-	apiCall( api_key = null ) {
-		const method = api_key ? 'POST' : 'GET';
+	removeAPIKey = () => {
+		this.apiCall( null, 'DELETE' );
+	};
+	apiCall( api_key = null, method = 'GET' ) {
+		const { noticeOperations } = this.props;
 		const url = '/wp-json/jetpack/v4/api-key/googlemaps';
 		const fetch = api_key ? { url, method, data: { api_key } } : { url, method };
-		apiFetch( fetch ).then( result => {
-			this.setState( {
-				api_key: result.api_key,
-				apiKeyControl: result.api_key,
+		apiFetch( fetch )
+			.then( result => {
+				noticeOperations.removeAllNotices();
+				this.setState( {
+					api_key: result.api_key,
+					apiKeyControl: result.api_key,
+				} );
+			} )
+			.catch( result => {
+				noticeOperations.removeAllNotices();
+				noticeOperations.createErrorNotice( result.message );
 			} );
-		} );
 	}
 	componentDidMount() {
 		this.apiCall();
 	}
 	render() {
-		const { className, setAttributes, attributes } = this.props;
+		const { className, setAttributes, attributes, noticeUI } = this.props;
 		const { map_style, points, zoom, map_center, marker_color, align } = attributes;
 		const { addPointVisibility, api_key, apiKeyControl } = this.state;
 		const inspectorControls = (
@@ -119,11 +135,15 @@ class MapEdit extends Component {
 					<Button type="button" onClick={ this.updateAPIKey } isSmall isDefault>
 						{ __( 'Update Key' ) }
 					</Button>
+					<Button type="button" onClick={ this.removeAPIKey } isSmall isDangerous>
+						{ __( 'Remove Key' ) }
+					</Button>
 				</InspectorControls>
 			</Fragment>
 		);
 		return (
 			<Fragment>
+				{ noticeUI }
 				{ inspectorControls }
 				<div className={ className }>
 					<Map
@@ -155,4 +175,4 @@ class MapEdit extends Component {
 	}
 }
 
-export default MapEdit;
+export default withNotices( MapEdit );
