@@ -15,10 +15,6 @@ module.exports = {
       value: '#794689'
     },
     {
-      name: 'Pink',
-      value: '#d52b82'
-    },
-    {
       name: 'Red',
       value: '#dd3c57'
     },
@@ -31,8 +27,20 @@ module.exports = {
       value: '#dbb21b'
     },
     {
-      name: 'Green',
-      value: '#049f76'
+      name: 'Hot Pink',
+      value: '#d52b82'
+    },
+    {
+      name: 'Hot Red',
+      value: '#eb0001'
+    },
+    {
+      name: 'Hot Yellow',
+      value: '#f6c200'
+    },
+    {
+      name: 'Hot Green',
+      value: '#008a00'
     }
   ],
 
