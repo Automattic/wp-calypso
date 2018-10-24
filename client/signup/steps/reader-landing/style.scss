@@ -71,12 +71,14 @@
 	}
 }
 
-@include breakpoint( ">660px" ) {
-	.reader-landing__feature-image, .reader-landing__feature-detail {
+.reader-landing__feature-image, .reader-landing__feature-detail {
+	@include breakpoint( ">660px" ) {
 		flex: 50%;
 	}
+}
 
-	.reader-landing__feature-image {
+.reader-landing__feature-image {
+	@include breakpoint( ">660px" ) {
 		align-self: center;
 		max-width: 50%;
 	}
@@ -101,7 +103,7 @@
 
 .reader-landing__feature-description {
 	color: darken( $gray, 20 );
-	font-size: 14px;
+	font-size: 1.1em;
 	margin-top: 4px;
 
 	@include breakpoint( ">660px" ) {
