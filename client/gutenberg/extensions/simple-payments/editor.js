@@ -30,6 +30,18 @@ registerBlockType( 'jetpack/simple-payments', {
 		paymentId: {
 			type: 'number',
 		},
+		title: {
+			type: 'string',
+			default: '',
+		},
+		price: {
+			type: 'number',
+			default: '',
+		},
+		email: {
+			type: 'string',
+			default: '',
+		},
 	},
 
 	transforms: {
