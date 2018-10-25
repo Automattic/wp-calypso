@@ -120,5 +120,10 @@ $gutenberg-theme-toggle: #11a0d2;
 			margin-left: 0;
 		}
 	}
+
+	select {
+		background-image: none;
+		appearance: menulist-button;
+	}
 	// END Unset Calypso default styles
 }

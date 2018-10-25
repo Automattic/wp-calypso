@@ -163,8 +163,7 @@ body.gutenberg-editor-page {
 	}
 
 	select {
-		background-image: none;
-		appearance: menulist-button;
+		padding: 2px;
 
 		&:focus {
 			border-color: $blue-medium-600;
