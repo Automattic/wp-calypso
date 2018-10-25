@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import PurchaseDetail from 'components/purchase-detail';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
-const JetpackSiteActivity = ( { siteSlug, translate } ) => (
+const SiteActivity = ( { siteSlug, translate } ) => (
 	<div className="product-purchase-features-list__item">
 		<PurchaseDetail
 			icon={ <img alt="" src="/calypso/images/illustrations/jetpack-site-activity.svg" /> }
@@ -29,4 +29,4 @@ const JetpackSiteActivity = ( { siteSlug, translate } ) => (
 
 export default connect( state => ( {
 	siteSlug: getSelectedSiteSlug( state ),
-} ) )( localize( JetpackSiteActivity ) );
+} ) )( localize( SiteActivity ) );
