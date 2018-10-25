@@ -550,7 +550,7 @@ export const PLANS_LIST = {
 	[ PLAN_BUSINESS_MONTHLY ]: {
 		...getPlanBusinessDetails(),
 		term: TERM_MONTHLY,
-		getBillingTimeFrame: i18n.translate( '/month, billed monthly' ),
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		availableFor: plan =>
 			includes(
 				[
