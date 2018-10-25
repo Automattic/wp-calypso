@@ -14,7 +14,7 @@ import wpcom from 'lib/wp';
  */
 export function sendSMS( phoneNumber ) {
 	const args = {
-		apiVersion: '1.1',
+		apiNamespace: 'wpcom/v2',
 		path: '/me/get-apps/send-download-sms',
 		body: {
 			phone_number: phoneNumber,
