@@ -82,22 +82,23 @@ class MapEdit extends Component {
 		const { noticeOperations } = this.props;
 		const url = '/wp-json/jetpack/v4/service-api-keys/googlemaps';
 		const fetch = service_api_key ? { url, method, data: { service_api_key } } : { url, method };
-		apiFetch( fetch )
-			.then( result => {
+		apiFetch( fetch ).then(
+			result => {
 				noticeOperations.removeAllNotices();
 				this.setState( {
 					apiState: result.service_api_key ? API_STATE_SUCCESS : API_STATE_FAILURE,
 					api_key: result.service_api_key,
 					apiKeyControl: result.service_api_key,
 				} );
-			} )
-			.catch( result => {
+			},
+			result => {
 				noticeOperations.removeAllNotices();
 				noticeOperations.createErrorNotice( result.message );
 				this.setState( {
 					apiState: API_STATE_FAILURE,
 				} );
-			} );
+			}
+		);
 	}
 	componentDidMount() {
 		this.apiCall();
