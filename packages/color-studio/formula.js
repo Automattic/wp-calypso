@@ -31,7 +31,7 @@ function createPaletteColors(baseColor, baseColorName = '') {
 }
 
 function createBrightShades(baseColor) {
-  const shade50 = chroma.mix(baseColor, COLOR_WHITE, 0.93, 'lch').desaturate(0.05)
+  const shade50 = chroma.mix(baseColor, COLOR_WHITE, 0.85, 'lch').desaturate(0.1)
   const colors = chroma.scale([shade50, baseColor]).mode('lch').colors(6)
   return colors
 }

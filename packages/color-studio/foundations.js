@@ -4,7 +4,7 @@ module.exports = {
   baseColors: [
     {
       name: 'Gray',
-      value: chroma.mix('#707070', '#016087', 0.05, 'lch').hex()
+      value: chroma.mix('#707070', '#016087', 0.2, 'lch').hex()
     },
     {
       name: 'Blue',
