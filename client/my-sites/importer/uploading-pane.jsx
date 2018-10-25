@@ -35,6 +35,8 @@ class UploadingPane extends React.PureComponent {
 
 	static defaultProps = { description: null };
 
+	fileSelectorRef = React.createRef();
+
 	componentWillUnmount() {
 		window.clearInterval( this.randomizeTimer );
 	}
@@ -90,12 +92,10 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	initiateFromForm = event => {
-		const fileSelector = this.refs.fileSelector;
-
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.startUpload( fileSelector.files[ 0 ] );
+		this.startUpload( this.fileSelectorRef.current.files[ 0 ] );
 	};
 
 	isReadyForImport = () => {
@@ -106,9 +106,7 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	openFileSelector = () => {
-		const fileSelector = this.refs.fileSelector;
-
-		fileSelector.click();
+		this.fileSelectorRef.current.click();
 	};
 
 	startUpload = file => {
@@ -129,7 +127,7 @@ class UploadingPane extends React.PureComponent {
 					</div>
 					{ this.isReadyForImport() ? (
 						<input
-							ref="fileSelector"
+							ref={ this.fileSelectorRef }
 							type="file"
 							name="exportFile"
 							onChange={ this.initiateFromForm }
