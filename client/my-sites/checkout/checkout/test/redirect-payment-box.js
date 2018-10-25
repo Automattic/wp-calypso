@@ -73,8 +73,8 @@ const defaultProps = {
 		},
 	],
 	paymentType: 'default',
-	transaction: identity,
-	redirectTo: 'http://here',
+	transaction: {},
+	redirectTo: () => 'http://here',
 };
 
 describe( 'RedirectPaymentBox', () => {
