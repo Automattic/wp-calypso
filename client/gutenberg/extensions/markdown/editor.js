@@ -5,7 +5,6 @@
  */
 import { ExternalLink } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
-import { registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -14,8 +13,9 @@ import './editor.scss';
 import edit from './edit';
 import save from './save';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import JetpackBlockType from 'gutenberg/extensions/presets/jetpack/utils/jetpack-block-type';
 
-registerBlockType( 'jetpack/markdown', {
+const MarkdownBlock = new JetpackBlockType( 'markdown', {
 	title: __( 'Markdown' ),
 
 	description: (
@@ -56,3 +56,5 @@ registerBlockType( 'jetpack/markdown', {
 
 	save,
 } );
+
+MarkdownBlock.register();
