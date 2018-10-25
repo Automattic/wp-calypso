@@ -26,8 +26,8 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 		viewBlocksPoints = reduce( presetBlocks, (obj, block) => ( { [ block + '/view'] : [path.join( inputDir, '../../'+ block +'/view.js' )]  } )  );
 
 		utilScripts = fs.readdirSync( utilsPath ).map( utilFile => path.join( utilsPath, utilFile ) ).filter( fs.existsSync );
-		editorScripts = preset.map( block => path.join( inputDir, '../../'+ block +'/editor.js' ) ).filter( fs.existsSync );
-		viewScripts = preset.map( block => path.join( inputDir, '../../'+ block +'/view.js' ) ).filter( fs.existsSync );
+		editorScripts = presetBlocks.map( block => path.join( inputDir, '../../'+ block +'/editor.js' ) ).filter( fs.existsSync );
+		viewScripts = presetBlocks.map( block => path.join( inputDir, '../../'+ block +'/view.js' ) ).filter( fs.existsSync );
 		// Combines all the different blocks into one Edit script
 		editorScript = utilScripts.concat( editorScripts ).concat( viewScripts );
 
