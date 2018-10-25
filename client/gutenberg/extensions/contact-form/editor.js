@@ -99,7 +99,7 @@ registerBlockType( 'jetpack/form', {
 				setAttributes={ props.setAttributes }
 			>
 				<InnerBlocks
-				//	allowedBlocks={ [] }
+					allowedBlocks={ [] }
 					templateLock={false}
 					template={ [
 						[ 'jetpack/field-name', {
@@ -110,8 +110,8 @@ registerBlockType( 'jetpack/form', {
 							label: __( 'Email', 'jetpack' ),
 							required: true
 						} ],
-						[ 'jetpack/field-text', {
-							label: __( 'Subject', 'jetpack' )
+						[ 'jetpack/field-url', {
+							label: __( 'Website', 'jetpack' )
 						} ],
 						[ 'jetpack/field-textarea', {
 							label: __( 'Message', 'jetpack' )
