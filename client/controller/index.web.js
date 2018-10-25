@@ -29,10 +29,7 @@ export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } )
 	const userLoggedIn = isUserLoggedIn( state );
 	let layout = <Layout primary={ primary } secondary={ secondary } />;
 
-if (
-		! userLoggedIn ||
-		startsWith( currentRoute, '/start/main-onboarding-continue/' )
-	) {
+	if ( ! userLoggedIn ) {
 		layout = (
 			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
 		);

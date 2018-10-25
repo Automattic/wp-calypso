@@ -119,16 +119,6 @@ function filterDesignTypeInFlow( flowName, flow ) {
  * @return {string}          New flow name.
  */
 function filterFlowName( flowName ) {
-	if ( user.get() ) {
-		if ( flowName === 'main-onboarding' ) {
-			flowName = 'main-onboarding-continue';
-		}
-	} else {
-		// don't allow user-first phase two when logged out, has no user step
-		if ( flowName === 'user-continue' ) {
-			flowName === 'main';
-		}
-	}
 	return flowName;
 }
 

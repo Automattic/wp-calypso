@@ -114,26 +114,18 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			lastModified: '2018-01-24',
 		},
 
-		'main-onboarding-continue': {
+		'main-onboarding': {
 			steps: [
+				'user',
 				'site-type',
 				'business-type',
 				'business-needs',
 				'business-information',
 				'plans',
-				'user',
 			],
 			destination: getSiteDestination,
-			description: 'The current best performing flow in AB tests',
-			lastModified: '2018-01-24',
-		},
-
-		'main-onboarding': {
-			steps: [ 'user' ],
-			destination: '/start/main-onboarding-continue',
-			description: 'User-first signup flow.',
-			lastModified: '2018-09-13',
-			autoContinue: true,
+			description: 'Onboarding usability testing flow.',
+			lastModified: '2018-10-25',
 		},
 
 		onboarding: {

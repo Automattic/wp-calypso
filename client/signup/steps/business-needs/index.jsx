@@ -176,7 +176,7 @@ class BusinessNeeds extends Component {
 				subHeaderText={ translate( "We'll use your answers to add features to your website." ) }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
-				backUrl={ '/start/main-onboarding-continue/business-type' }
+				backUrl={ '/start/main-onboarding/business-type' }
 			/>
 		);
 	}
