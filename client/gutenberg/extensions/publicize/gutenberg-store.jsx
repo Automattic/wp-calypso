@@ -78,7 +78,7 @@ const publicizeStore = {
 		 * Updates component state in response to request finishing.
 		 *
 		 * @param {string} result Result of connection request
-		 * @return {Object} action type and (maybe) decoded JSON connection list
+		 * @return {Object} action type 'GET_CONNECTIONS_SUCCESS' and connection list
 		 */
 		getConnectionsDone( result ) {
 			return {
