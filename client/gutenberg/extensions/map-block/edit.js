@@ -80,7 +80,7 @@ class MapEdit extends Component {
 	};
 	apiCall( api_key = null, method = 'GET' ) {
 		const { noticeOperations } = this.props;
-		const url = '/wp-json/jetpack/v4/api-key/googlemaps';
+		const url = '/wp-json/jetpack/v4/api-keys/googlemaps';
 		const fetch = api_key ? { url, method, data: { api_key } } : { url, method };
 		apiFetch( fetch )
 			.then( result => {
