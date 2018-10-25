@@ -11,9 +11,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
-const JetpackSiteActivity = ( { site, translate } ) => (
+const JetpackSiteActivity = ( { siteSlug, translate } ) => (
 	<div className="product-purchase-features-list__item">
 		<PurchaseDetail
 			icon={ <img alt="" src="/calypso/images/illustrations/jetpack-site-activity.svg" /> }
@@ -22,13 +22,11 @@ const JetpackSiteActivity = ( { site, translate } ) => (
 				'View a chronological list of all the changes and updates to your site in an organized, readable way.'
 			) }
 			buttonText={ translate( 'View your site activity' ) }
-			href={ `/activity-log/${ site.slug }` }
+			href={ `/activity-log/${ siteSlug }` }
 		/>
 	</div>
 );
 
-export default connect( state => {
-	return {
-		site: getSelectedSite( state ),
-	};
-} )( localize( JetpackSiteActivity ) );
+export default connect( state => ( {
+	siteSlug: getSelectedSiteSlug( state ),
+} ) )( localize( JetpackSiteActivity ) );
