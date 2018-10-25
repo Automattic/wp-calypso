@@ -7,13 +7,14 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { requestChartCounts, receiveChartCounts } from 'state/stats/chart-tabs/actions';
 
 describe( 'fetch', () => {
-	it( 'should dispatch http requests corresponding to the number of stat fields', () => {
+	it( 'should dispatch two http requests: one for the currently selected tab and another for the other tabs', () => {
 		const action = requestChartCounts( {
+			chartTab: 'views',
 			date: '2100-01-01',
 			period: 'day',
 			quantity: 10,
 			siteId: 1,
-			statFields: [ 'views', 'visitors' ],
+			statFields: [ 'views', 'visitors', 'likes', 'comments', 'post_titles' ],
 		} );
 		const output = fetch( action );
 		expect( output ).toHaveLength( 2 );
@@ -27,7 +28,7 @@ describe( 'fetch', () => {
 						unit: 'day',
 						date: '2100-01-01',
 						quantity: 10,
-						stat_fields: 'views',
+						stat_fields: 'views,visitors',
 					},
 				},
 				action
@@ -41,7 +42,7 @@ describe( 'fetch', () => {
 						unit: 'day',
 						date: '2100-01-01',
 						quantity: 10,
-						stat_fields: 'visitors',
+						stat_fields: 'likes,comments,post_titles',
 					},
 				},
 				action

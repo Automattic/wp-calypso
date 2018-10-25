@@ -17,9 +17,10 @@ import 'state/data-layer/wpcom/sites/stats/visits';
  * @param  {Array}   statFields    Comma separated list of stat fields
  * @return {Object}  Action object
  */
-export function requestChartCounts( { date, period, quantity, siteId, statFields } ) {
+export function requestChartCounts( { chartTab, date, period, quantity, siteId, statFields } ) {
 	return {
 		type: STATS_CHART_COUNTS_REQUEST,
+		chartTab,
 		date,
 		period,
 		quantity,

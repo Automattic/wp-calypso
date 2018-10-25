@@ -154,9 +154,17 @@ const connectComponent = connect(
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
-		const query = { date, period, quantity, siteId, statFields: QUERY_FIELDS };
+		const query = { chartTab, date, period, quantity, siteId, statFields: QUERY_FIELDS };
 
-		return { chartData, counts, isActiveTabLoading, loadingTabs, query, queryKey, siteId };
+		return {
+			chartData,
+			counts,
+			isActiveTabLoading,
+			loadingTabs,
+			query,
+			queryKey,
+			siteId,
+		};
 	},
 	{ recordGoogleEvent, requestChartCounts },
 	null,
