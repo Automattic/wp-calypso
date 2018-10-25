@@ -33,8 +33,9 @@
 }
 
 .reader-landing .formatted-header__subtitle {
-	text-align: left;
+	font-size: 1em;
 	padding: 0;
+	text-align: left;
 
 	@include breakpoint( ">660px" ) {
 		text-align: center;
@@ -88,7 +89,7 @@
 	margin-top: 10px;
 
 	@include breakpoint( ">660px" ) {
-		padding-left: 10px;
+		padding-left: 20px;
 	}
 }
 
@@ -103,7 +104,7 @@
 
 .reader-landing__feature-description {
 	color: darken( $gray, 20 );
-	font-size: 1.1em;
+	font-size: 1em;
 	margin-top: 4px;
 
 	@include breakpoint( ">660px" ) {
