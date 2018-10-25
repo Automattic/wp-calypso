@@ -4,18 +4,15 @@
  * External dependencies
  */
 import { pick } from 'lodash';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/http/actions';
 import { AFFILIATE_REFERRAL } from 'state/action-types';
-
-const debug = debugFactory( 'calypso:analytics:aff-tracking' );
+import { recordTracksEvent } from 'state/analytics/actions';
+import { registerHandlers } from 'state/data-layer/handler-registry';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 
 const whitelistedEventProps = [
 	'status',
@@ -30,7 +27,7 @@ const whitelistedEventProps = [
 	'referrer',
 ];
 
-const trackAffiliatePageLoad = action => {
+const fetch = action => {
 	const { affiliateId, campaignId, subId, urlPath } = action;
 
 	if ( ! affiliateId || isNaN( affiliateId ) ) {
@@ -55,55 +52,39 @@ const trackAffiliatePageLoad = action => {
 	);
 };
 
-const onTrackAffiliatePageLoadSuccess = ( action, response ) => {
-	if (
-		'object' !== typeof response ||
-		'object' !== typeof response.body ||
-		'object' !== typeof response.body.data
-	) {
-		debug( 'Unexpected referral response: ', response );
-		return; // Not possible.
-	}
-
-	const responseBody = response.body;
-	const responseData = responseBody.data;
-	const eventProps = pick( responseData, whitelistedEventProps );
-
-	eventProps.status = response.status || '';
-	eventProps.success = responseBody.success || '';
-	eventProps.description = responseBody.message || 'success';
-
-	analytics.tracks.recordEvent( 'calypso_refer_visit_response', eventProps );
+const onSuccess = ( action, eventProps ) => {
+	return recordTracksEvent( 'calypso_refer_visit_response', eventProps );
 };
 
-const onTrackAffiliatePageLoadError = ( action, error ) => {
-	if (
-		'object' !== typeof error ||
-		'object' !== typeof error.response ||
-		'string' !== typeof error.response.text
-	) {
-		debug( 'Unexpected referral error: ', error );
-		return; // Not possible.
+const onError = ( action, error ) => {
+	if ( ! ( error && error.response && 'string' === typeof error.response.text ) ) {
+		return;
 	}
 
-	const response = error.response;
-	let responseBody = JSON.parse( response.text );
-	responseBody = 'object' === typeof responseBody ? responseBody : {};
-	const eventProps = pick( responseBody, whitelistedEventProps );
+	const data = JSON.parse( error.response.text );
+	if ( 'object' !== typeof data ) {
+		return;
+	}
 
-	eventProps.status = response.status || '';
-	eventProps.success = responseBody.success || '';
-	eventProps.description = responseBody.message || 'error';
-
-	analytics.tracks.recordEvent( 'calypso_refer_visit_response', eventProps );
+	return recordTracksEvent( 'calypso_refer_visit_response', {
+		...pick( data, whitelistedEventProps ),
+		status: error.response.status || '',
+		success: data.success || '',
+		description: data.message || 'error',
+	} );
 };
+
+const fromApi = ( {
+	body: {
+		data: { message, status, success, ...responseData },
+	},
+} ) => ( {
+	...pick( responseData, whitelistedEventProps ),
+	status: status || '',
+	success: success || '',
+	description: message || 'success',
+} );
 
 registerHandlers( 'state/data-layer/third-party/refer', {
-	[ AFFILIATE_REFERRAL ]: [
-		dispatchRequestEx( {
-			fetch: trackAffiliatePageLoad,
-			onSuccess: onTrackAffiliatePageLoadSuccess,
-			onError: onTrackAffiliatePageLoadError,
-		} ),
-	],
+	[ AFFILIATE_REFERRAL ]: [ dispatchRequestEx( { fetch, fromApi, onSuccess, onError } ) ],
 } );
