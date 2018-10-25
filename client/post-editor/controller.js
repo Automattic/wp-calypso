@@ -260,16 +260,11 @@ export default {
 		const siteId = getSelectedSiteId( context.store.getState() );
 		waitForData( {
 			editor: () => requestSelectedEditor( siteId ),
-		} ).then(
-			( { editor } ) => {
-				if ( 'gutenberg' === editor.data ) {
-					page.redirect( `/gutenberg${ context.path }` );
-					return false;
-				}
-			},
-			() => {
-				next();
+		} ).then( ( { editor } ) => {
+			if ( 'gutenberg' === editor.data ) {
+				page.redirect( `/gutenberg${ context.path }` );
+				return false;
 			}
-		);
+		}, next );
 	},
 };
