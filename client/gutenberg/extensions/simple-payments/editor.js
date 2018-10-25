@@ -7,7 +7,13 @@ import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 import GridiconMoney from 'gridicons/dist/money';
 
-registerBlockType( 'a8c/simple-payments', {
+/**
+ * Internal dependencies
+ */
+import edit from './edit';
+import save from './save';
+
+registerBlockType( 'jetpack/simple-payments', {
 	title: __( 'Payment button', 'jetpack' ),
 
 	description: __(
@@ -19,21 +25,45 @@ registerBlockType( 'a8c/simple-payments', {
 
 	category: 'jetpack',
 
-	keywords: [
-		/** @TODO add keywords */
-	],
+	keywords: [ 'simple payments', 'PayPal' ],
 
 	attributes: {
-		paymentId: { type: 'number' },
+		paymentId: {
+			type: 'number',
+		},
 	},
 
-	edit: () => (
-		<div>
-			A simple payment.
-			<br />
-			This block is under development and not ready for production.
-		</div>
-	),
+	transforms: {
+		from: [
+			{
+				type: 'shortcode',
+				tag: 'simple-payment',
+				attributes: {
+					paymentId: {
+						type: 'number',
+						shortcode: ( { named: { id } } ) => {
+							if ( ! id ) {
+								return;
+							}
 
-	save: () => null,
+							const result = parseInt( id, 10 );
+							if ( result ) {
+								return result;
+							}
+						},
+					},
+				},
+			},
+		]
+	},
+
+	edit,
+
+	save,
+
+	supports: {
+		className: false,
+		customClassName: false,
+		html: false,
+	},
 } );

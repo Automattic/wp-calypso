@@ -4,8 +4,6 @@
  * Displays notification if there are no connected
  * social accounts, and includes a list of links to
  * connect specific services.
- *
- * @since  5.9.1
  */
 
 /**
@@ -20,18 +18,20 @@ import { Component } from '@wordpress/element';
 import { getAllConnections } from './async-publicize-lib';
 
 class PublicizeNoConnections extends Component {
-	constructor( props ) {
-		super( props );
-		const allConnections = getAllConnections();
-		this.state = {
-			allConnections: allConnections,
-		};
+	state = {
+		allConnections: [],
+	};
+
+	componentDidMount() {
+		getAllConnections().then( allConnections => {
+			this.setState( {
+				allConnections,
+			} );
+		} );
 	}
 
 	/**
 	 * Opens up popup so user can view/modify the associated connection
-	 *
-	 * @since 5.9.1
 	 *
 	 * @param {object} event Event instance for onClick.
 	 */

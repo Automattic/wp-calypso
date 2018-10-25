@@ -52,10 +52,11 @@ export class CloseButton extends React.PureComponent {
 		const {
 			importerStatus: { importerState },
 			isEnabled,
+			isUploading,
 			translate,
 		} = this.props;
 
-		const disabled = ! isEnabled || appStates.UPLOADING === importerState;
+		const disabled = ! isEnabled || isUploading || appStates.UPLOADING === importerState;
 
 		return (
 			<Button

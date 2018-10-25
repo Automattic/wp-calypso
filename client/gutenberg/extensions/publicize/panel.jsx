@@ -4,10 +4,6 @@
  * Displays Publicize notifications if no
  * services are connected or displays form if
  * services are connected.
- *
- * {@see publicize.php/save_meta()}
- *
- * @since  5.9.1
  */
 
 // Since this is a Jetpack originated block in Calypso codebase,
@@ -58,12 +54,12 @@ class PublicizePanel extends Component {
 				}
 			>
 				<div>{ __( 'Connect and select social media services to share this post.' ) }</div>
-				{ ( connections.length > 0 ) && <PublicizeForm staticConnections={ connections } refreshCallback={ getConnectionsStart } /> }
-				{ ( 0 === connections.length ) && <PublicizeNoConnections refreshCallback={ getConnectionsStart } /> }
+				{ ( connections && connections.length > 0 ) && <PublicizeForm staticConnections={ connections } refreshCallback={ getConnectionsStart } /> }
+				{ ( connections && 0 === connections.length ) && <PublicizeNoConnections refreshCallback={ getConnectionsStart } /> }
 				<a tabIndex="0" onClick={ getConnectionsStart } disabled={ isLoading }>
 					{ refreshText }
 				</a>
-				{ ( connections.length > 0 ) && <PublicizeConnectionVerify /> }
+				{ ( connections && connections.length > 0 ) && <PublicizeConnectionVerify /> }
 			</PanelBody>
 		);
 	}
@@ -71,25 +67,20 @@ class PublicizePanel extends Component {
 
 export default PublicizePanel = compose( [
 	withSelect( ( select ) => ( {
-		connections: select( 'a8c/publicize' ).getConnections(),
-		isLoading: select( 'a8c/publicize' ).getIsLoading(),
+		connections: select( 'jetpack/publicize' ).getConnections(),
+		isLoading: select( 'jetpack/publicize' ).getIsLoading(),
 		postId: select( 'core/editor' ).getCurrentPost().id,
 	} ) ),
 	withDispatch( ( dispatch, ownProps ) => ( {
-		getConnectionsDone: dispatch( 'a8c/publicize' ).getConnectionsDone,
-		getConnectionsFail: dispatch( 'a8c/publicize' ).getConnectionsFail,
-		/**
-		 * Starts request for current list of connections.
-		 *
-		 * @since 5.9.1
-		 */
+		getConnectionsDone: dispatch( 'jetpack/publicize' ).getConnectionsDone,
+		getConnectionsFail: dispatch( 'jetpack/publicize' ).getConnectionsFail,
 		getConnectionsStart() {
 			const { postId } = ownProps;
 			const {
 				getConnectionsDone,
 				getConnectionsFail,
-			} = dispatch( 'a8c/publicize' );
-			dispatch( 'a8c/publicize' ).getConnectionsStart();
+			} = dispatch( 'jetpack/publicize' );
+			dispatch( 'jetpack/publicize' ).getConnectionsStart();
 			requestPublicizeConnections( postId ).then(
 				( result ) => getConnectionsDone( result ),
 				() => getConnectionsFail(),

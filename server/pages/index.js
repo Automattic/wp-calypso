@@ -37,7 +37,8 @@ import sections from '../../client/sections';
 import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
 import { serverRender, renderJsx } from 'render';
 import stateCache from 'state-cache';
-import { createReduxStore, reducer } from 'state';
+import { createReduxStore } from 'state';
+import initialReducer from 'state/reducer';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
 import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
@@ -78,7 +79,7 @@ const prideLocations = [];
 // TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
 function getInitialServerState( serializedServerState ) {
 	// Bootstrapped state from a server-render
-	const serverState = reducer( serializedServerState, { type: DESERIALIZE } );
+	const serverState = initialReducer( serializedServerState, { type: DESERIALIZE } );
 	return pick( serverState, Object.keys( serializedServerState ) );
 }
 

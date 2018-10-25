@@ -17,7 +17,7 @@ import LocaleSuggestionsListItem from './list-item';
 import QueryLocaleSuggestions from 'components/data/query-locale-suggestions';
 import Notice from 'components/notice';
 import getLocaleSuggestions from 'state/selectors/get-locale-suggestions';
-import switchLocale from 'lib/i18n-utils/switch-locale';
+import { setLocale } from 'state/ui/language/actions';
 
 export class LocaleSuggestions extends Component {
 	static propTypes = {
@@ -35,7 +35,7 @@ export class LocaleSuggestions extends Component {
 		dismissed: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		let { locale } = this.props;
 
 		if ( ! locale && typeof navigator === 'object' && 'languages' in navigator ) {
@@ -48,12 +48,12 @@ export class LocaleSuggestions extends Component {
 			}
 		}
 
-		switchLocale( locale );
+		this.props.setLocale( locale );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.locale !== nextProps.locale ) {
-			switchLocale( nextProps.locale );
+			this.props.setLocale( nextProps.locale );
 		}
 	}
 
@@ -101,6 +101,9 @@ export class LocaleSuggestions extends Component {
 	}
 }
 
-export default connect( state => ( {
-	localeSuggestions: getLocaleSuggestions( state ),
-} ) )( LocaleSuggestions );
+export default connect(
+	state => ( {
+		localeSuggestions: getLocaleSuggestions( state ),
+	} ),
+	{ setLocale }
+)( LocaleSuggestions );

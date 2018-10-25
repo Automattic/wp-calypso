@@ -45,6 +45,7 @@
     "@wordpress/data": "2.1.1",
     "@wordpress/date": "2.0.2",
     "@wordpress/deprecated": "2.0.2",
+    "@wordpress/edit-post": "1.0.4",
     "@wordpress/editor": "4.0.1",
     "@wordpress/element": "2.1.1",
     "@wordpress/hooks": "2.0.2",

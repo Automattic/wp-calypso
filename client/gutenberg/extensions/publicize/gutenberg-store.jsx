@@ -4,21 +4,14 @@
  * Implements reducer, actions, and selector
  * for 'a8c/publicize' store.
  *
- * @since  5.9.1
+ * @format
  */
-
-/**
- * Internal dependencies
- */
-import { getStaticPublicizeConnections } from './async-publicize-lib';
 
 /**
  * Module variables
  */
-const staticConnectionList = getStaticPublicizeConnections();
-
 const DEFAULT_STATE = {
-	connections: staticConnectionList,
+	connections: null,
 	isLoading: false,
 	didFail: false,
 };
@@ -53,8 +46,7 @@ const publicizeStore = {
 		/**
 		 * Action function for when request for connections starts.
 		 *
-		 * @since 5.9.1
-		 * @return {Object} action type 'GET_CONNECTIONS_START['
+		 * @return {Object} action type 'GET_CONNECTIONS_START'
 		 */
 		getConnectionsStart() {
 			return {
@@ -65,7 +57,6 @@ const publicizeStore = {
 		/**
 		 * Action function for when connection request fails
 		 *
-		 * @since 5.9.1
 		 * @return {Object} action type 'GET_CONNECTIONS_FAIL'
 		 */
 		getConnectionsFail() {
@@ -79,23 +70,14 @@ const publicizeStore = {
 		 *
 		 * Updates component state in response to request finishing.
 		 *
-		 * @since 5.9.1
-		 *
-		 * @param {string} resultString JSON encoded result of connection request
-		 * @return {Object} action type and (maybe) decoded JSON connection list
+		 * @param {string} result Result of connection request
+		 * @return {Object} action type 'GET_CONNECTIONS_SUCCESS' and connection list
 		 */
-		getConnectionsDone( resultString ) {
-			try {
-				const result = JSON.parse( resultString );
-				return {
-					type: 'GET_CONNECTIONS_SUCCESS',
-					result,
-				};
-			} catch ( e ) { // JSON parse fail.
-				return {
-					type: 'GET_CONNECTIONS_FAIL',
-				};
-			}
+		getConnectionsDone( result ) {
+			return {
+				type: 'GET_CONNECTIONS_SUCCESS',
+				result,
+			};
 		},
 	},
 

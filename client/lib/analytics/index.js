@@ -370,8 +370,9 @@ const analytics = {
 
 		recordPageView: function( urlPath, params ) {
 			let eventProperties = {
-				path: urlPath,
+				build_timestamp: BUILD_TIMESTAMP,
 				do_not_track: doNotTrack() ? 1 : 0,
+				path: urlPath,
 			};
 
 			// add optional path params
@@ -475,8 +476,11 @@ const analytics = {
 				if ( _user && _user.get() ) {
 					parameters.userId = hashPii( _user.get().ID );
 				}
-
 				window.ga( 'create', config( 'google_analytics_key' ), 'auto', parameters );
+				window.ga( function( tracker ) {
+					const clientId = tracker.get( 'clientId' );
+					window.ga( 'set', 'dimension3', clientId );
+				} );
 				window.ga( 'set', 'anonymizeIp', true );
 				analytics.ga.initialized = true;
 			}

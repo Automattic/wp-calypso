@@ -12,7 +12,7 @@ import './editor.scss';
 import VRImageEdit from './edit';
 import VRImageSave from './save';
 
-registerBlockType( 'a8c/vr', {
+registerBlockType( 'jetpack/vr', {
 	title: __( 'VR Image', 'jetpack' ),
 	description: __( 'Embed 360° photos and Virtual Reality (VR) content', 'jetpack' ),
 	icon: 'embed-photo',

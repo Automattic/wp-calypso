@@ -91,7 +91,6 @@ class PostLifecycle extends React.Component {
 			return <PostBlocked post={ post } />;
 		} else if ( isXPost( post ) ) {
 			const xMetadata = XPostHelper.getXPostMetadata( post );
-			// @TODO: xposts don't dedupe. we need to add that to redux.
 			return (
 				<CrossPost
 					{ ...omit( this.props, 'store' ) }
