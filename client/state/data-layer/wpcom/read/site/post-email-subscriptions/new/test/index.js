@@ -2,11 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import {
 	requestPostEmailSubscription,
 	receivePostEmailSubscription,
@@ -25,7 +20,7 @@ describe( 'comment-email-subscriptions', () => {
 		test( 'should dispatch an http request and call through next', () => {
 			const action = subscribeToNewPostEmail( 1234 );
 			const result = requestPostEmailSubscription( action );
-			expect( result ).to.eql(
+			expect( result ).toEqual(
 				http( {
 					method: 'POST',
 					path: '/read/site/1234/post_email_subscriptions/new',
@@ -46,7 +41,9 @@ describe( 'comment-email-subscriptions', () => {
 					delivery_frequency: 'daily',
 				},
 			} );
-			expect( result ).to.eql( bypassDataLayer( updateNewPostEmailSubscription( 1234, 'daily' ) ) );
+			expect( result ).toEqual(
+				bypassDataLayer( updateNewPostEmailSubscription( 1234, 'daily' ) )
+			);
 		} );
 
 		test( 'should dispatch an unsubscribe if it fails using next', () => {
@@ -54,20 +51,20 @@ describe( 'comment-email-subscriptions', () => {
 				{ payload: { blogId: 1234 } },
 				{ subscribed: false }
 			);
-			expect( result[ 0 ].notice.text ).to.eql(
+			expect( result[ 0 ].notice.text ).toBe(
 				'Sorry, we had a problem subscribing. Please try again.'
 			);
-			expect( result[ 1 ] ).to.eql( bypassDataLayer( unsubscribeToNewPostEmail( 1234 ) ) );
+			expect( result[ 1 ] ).toEqual( bypassDataLayer( unsubscribeToNewPostEmail( 1234 ) ) );
 		} );
 	} );
 
 	describe( 'receivePostEmailSubscriptionError', () => {
 		test( 'should dispatch an error notice and unsubscribe action using next', () => {
 			const result = receivePostEmailSubscriptionError( { payload: { blogId: 1234 } }, null );
-			expect( result[ 0 ].notice.text ).to.eql(
+			expect( result[ 0 ].notice.text ).toBe(
 				'Sorry, we had a problem subscribing. Please try again.'
 			);
-			expect( result[ 1 ] ).to.eql( bypassDataLayer( unsubscribeToNewPostEmail( 1234 ) ) );
+			expect( result[ 1 ] ).toEqual( bypassDataLayer( unsubscribeToNewPostEmail( 1234 ) ) );
 		} );
 	} );
 } );
