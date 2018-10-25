@@ -6,5 +6,5 @@
  * @return {String} API endpoint path.
  */
 export function getFetchConnectionsPath( postId ) {
-	return '/publicize/posts/' + postId.toString() + '/connections';
+	return '/jetpack/v4/publicize/posts/' + postId.toString() + '/connections';
 }

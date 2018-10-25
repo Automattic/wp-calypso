@@ -49,7 +49,7 @@ class PublicizeConnectionVerify extends Component {
 	 */
 	connectionTestStart = () => {
 		apiFetch( {
-			path: '/publicize/connections',
+			path: '/jetpack/v4/publicize/connections',
 		} ).then( () => this.connectionTestComplete );
 	};
 

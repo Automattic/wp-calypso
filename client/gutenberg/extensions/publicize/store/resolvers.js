@@ -19,7 +19,7 @@ export function* getConnections( postId ) {
  * Requests the Publicize services available for connection.
  */
 export function* getServices() {
-	const services = yield fetchFromAPI( '/publicize/services' );
+	const services = yield fetchFromAPI( '/jetpack/v4/publicize/services' );
 
 	yield setServices( services );
 };
