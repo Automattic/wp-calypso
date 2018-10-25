@@ -98,15 +98,22 @@ class UploadingPane extends React.PureComponent {
 		this.startUpload( this.fileSelectorRef.current.files[ 0 ] );
 	};
 
-	isReadyForImport = () => {
+	isReadyForImport() {
 		const { importerState } = this.props.importerStatus;
 		const { READY_FOR_UPLOAD, UPLOAD_FAILURE } = appStates;
 
 		return includes( [ READY_FOR_UPLOAD, UPLOAD_FAILURE ], importerState );
-	};
+	}
 
 	openFileSelector = () => {
 		this.fileSelectorRef.current.click();
+	};
+
+	handleKeyPress = event => {
+		// Open file selector on Enter or Space
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			this.openFileSelector();
+		}
 	};
 
 	startUpload = file => {
@@ -114,26 +121,31 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	render() {
+		const isReadyForImport = this.isReadyForImport();
+
 		return (
 			<div>
 				<p>{ this.props.description }</p>
 				<div
 					className="importer__uploading-pane"
-					onClick={ this.isReadyForImport() ? this.openFileSelector : null }
+					role="button"
+					tabIndex={ 0 }
+					onClick={ isReadyForImport ? this.openFileSelector : null }
+					onKeyPress={ isReadyForImport ? this.handleKeyPress : null }
 				>
 					<div className="importer__upload-content">
 						<Gridicon className="importer__upload-icon" icon="cloud-upload" />
 						{ this.getMessage() }
 					</div>
-					{ this.isReadyForImport() ? (
+					{ isReadyForImport && (
 						<input
 							ref={ this.fileSelectorRef }
 							type="file"
 							name="exportFile"
 							onChange={ this.initiateFromForm }
 						/>
-					) : null }
-					<DropZone onFilesDrop={ this.isReadyForImport() ? this.initiateFromDrop : noop } />
+					) }
+					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
 				</div>
 			</div>
 		);
