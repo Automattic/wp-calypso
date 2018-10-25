@@ -25,7 +25,7 @@ export const setType = action =>
 			},
 			body: {},
 		},
-		{}
+		noop
 	);
 
 const dispatchEditorTypeRequest = dispatchRequestEx( {
