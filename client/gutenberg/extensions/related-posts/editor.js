@@ -36,7 +36,7 @@ registerBlockType( 'jetpack/related-posts', {
 		</svg>
 	),
 
-	category: 'layout',
+	category: 'jetpack',
 
 	keywords: [ __( 'similar', 'jetpack' ), __( 'linked', 'jetpack' ), __( 'connected', 'jetpack' ) ],
 
