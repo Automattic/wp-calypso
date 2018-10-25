@@ -13,9 +13,7 @@ import { RawHTML } from '@wordpress/element';
 const markdownConverter = new MarkdownIt();
 const handleLinkClick = event => {
 	if ( event.target.nodeName === 'A' ) {
-		const hasConfirmed = window.confirm(
-			__( 'Are you sure you wish to leave this page?', 'jetpack' )
-		);
+		const hasConfirmed = window.confirm( __( 'Are you sure you wish to leave this page?' ) );
 
 		if ( ! hasConfirmed ) {
 			event.preventDefault();

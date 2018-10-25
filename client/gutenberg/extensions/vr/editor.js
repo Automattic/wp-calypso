@@ -13,11 +13,11 @@ import VRImageEdit from './edit';
 import VRImageSave from './save';
 
 registerBlockType( 'jetpack/vr', {
-	title: __( 'VR Image', 'jetpack' ),
-	description: __( 'Embed 360° photos and Virtual Reality (VR) content', 'jetpack' ),
+	title: __( 'VR Image' ),
+	description: __( 'Embed 360° photos and Virtual Reality (VR) content' ),
 	icon: 'embed-photo',
 	category: 'jetpack',
-	keywords: [ __( 'vr', 'jetpack' ), __( 'panorama', 'jetpack' ), __( '360', 'jetpack' ) ],
+	keywords: [ __( 'vr' ), __( 'panorama' ), __( '360' ) ],
 	support: {
 		html: false,
 	},

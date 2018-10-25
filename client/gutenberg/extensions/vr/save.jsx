@@ -8,7 +8,7 @@ import { addQueryArgs } from '@wordpress/url';
 export default ( { attributes: { url, view }, className } ) => (
 	<div className={ className }>
 		<iframe
-			title={ __( 'VR Image', 'jetpack' ) }
+			title={ __( 'VR Image' ) }
 			allowFullScreen="true"
 			frameBorder="0"
 			width="100%"
