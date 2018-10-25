@@ -33,8 +33,7 @@ import TextEditor from '../text-editor';
 import VisualEditor from '../visual-editor';
 import EditorModeKeyboardShortcuts from '../keyboard-shortcuts';
 import Sidebar from '../sidebar';
-import PluginPostPublishPanel from '../sidebar/plugin-post-publish-panel';
-import PluginPrePublishPanel from '../sidebar/plugin-pre-publish-panel';
+import { PluginPostPublishPanel, PluginPrePublishPanel } from '@wordpress/edit-post';
 
 function Layout( {
 	mode,
