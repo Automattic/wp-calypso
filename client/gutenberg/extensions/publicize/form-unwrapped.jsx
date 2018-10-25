@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Publicize sharing form component.
  *
@@ -29,11 +30,11 @@ class PublicizeFormUnwrapped extends Component {
 		const { initializePublicize, staticConnections } = this.props;
 		const initialTitle = '';
 		// Connection data format must match 'publicize' REST field.
-		const initialActiveConnections = staticConnections.map( ( c ) => {
-			return ( {
+		const initialActiveConnections = staticConnections.map( c => {
+			return {
 				unique_id: c.unique_id,
-				should_share: c.checked,
-			} );
+				should_share: c.enabled,
+			};
 		} );
 		initializePublicize( initialTitle, initialActiveConnections );
 	}
@@ -84,23 +85,22 @@ class PublicizeFormUnwrapped extends Component {
 		} = this.props;
 		const MAXIMUM_MESSAGE_LENGTH = 256;
 		const charactersRemaining = MAXIMUM_MESSAGE_LENGTH - shareMessage.length;
-		const characterCountClass = classnames(
-			'jetpack-publicize-character-count',
-			{ 'wpas-twitter-length-limit': ( charactersRemaining <= 0 ) }
-		);
+		const characterCountClass = classnames( 'jetpack-publicize-character-count', {
+			'wpas-twitter-length-limit': charactersRemaining <= 0,
+		} );
 
 		return (
 			<div className="misc-pub-section misc-pub-section-last">
 				<div id="publicize-form">
 					<ul>
-						{ staticConnections.map( c =>
+						{ staticConnections.map( c => (
 							<PublicizeConnection
 								connectionData={ c }
 								key={ c.unique_id }
 								connectionOn={ this.isConnectionOn( c.unique_id ) }
 								connectionChange={ connectionChange }
 							/>
-						) }
+						) ) }
 					</ul>
 					<PublicizeSettingsButton refreshCallback={ refreshCallback } />
 					<label className="jetpack-publicize-message-note" htmlFor="wpas-title">
@@ -115,7 +115,10 @@ class PublicizeFormUnwrapped extends Component {
 							maxLength={ MAXIMUM_MESSAGE_LENGTH }
 						/>
 						<div className={ characterCountClass }>
-							{ sprintf( _n( '%d character remaining', '%d characters remaining', charactersRemaining ), charactersRemaining ) }
+							{ sprintf(
+								_n( '%d character remaining', '%d characters remaining', charactersRemaining ),
+								charactersRemaining
+							) }
 						</div>
 					</div>
 				</div>
