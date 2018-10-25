@@ -39,6 +39,7 @@
 		"gdpr-banner": true,
 		"google-analytics": true,
 		"google-my-business": true,
+		"get-apps-sms": false,
 		"gutenberg": false,
 		"gutenberg/opt-in": false,
 		"happychat": true,

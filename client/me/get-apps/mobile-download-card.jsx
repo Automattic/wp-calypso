@@ -29,6 +29,7 @@ import {
 } from 'state/account-recovery/settings/selectors';
 
 import { sendSMS } from 'state/mobile-download-sms/actions';
+import config from 'config';
 
 class MobileDownloadCard extends React.Component {
 	static displayName = 'SecurityAccountRecoveryRecoveryPhoneEdit';
@@ -60,6 +61,8 @@ class MobileDownloadCard extends React.Component {
 		const phoneNumberIsValid =
 			this.state.phoneNumber == null ? hasStoredPhone : this.state.phoneNumberIsValid;
 
+		const mobile_sms_is_enabled = config.isEnabled( 'get-apps-sms' );
+
 		return (
 			<Card className="get-apps__mobile">
 				<div className="get-apps__store-subpanel">
@@ -84,39 +87,43 @@ class MobileDownloadCard extends React.Component {
 						/>
 					</div>
 				</div>
-				<div className="get-apps__sms-subpanel">
-					<div className="get-apps__sms-field-wrapper">
-						{ hasLoadedStoredPhone ? (
-							<FormPhoneInput
-								countriesList={ this.props.countriesList }
-								initialCountryCode={ hasStoredPhone ? this.props.storedPhone.countryCode : null }
-								initialPhoneNumber={ hasStoredPhone ? this.props.storedPhone.number : null }
-								phoneInputProps={ {
-									onKeyUp: this.onKeyUp,
-								} }
-								onChange={ this.onChange }
-							/>
-						) : (
-							<>
-								<QuerySmsCountries />
-								<QueryAccountRecoverySettings />
+				{ mobile_sms_is_enabled ? (
+					<div className="get-apps__sms-subpanel">
+						<div className="get-apps__sms-field-wrapper">
+							{ hasLoadedStoredPhone ? (
+								<FormPhoneInput
+									countriesList={ this.props.countriesList }
+									initialCountryCode={ hasStoredPhone ? this.props.storedPhone.countryCode : null }
+									initialPhoneNumber={ hasStoredPhone ? this.props.storedPhone.number : null }
+									phoneInputProps={ {
+										onKeyUp: this.onKeyUp,
+									} }
+									onChange={ this.onChange }
+								/>
+							) : (
+								<>
+									<QuerySmsCountries />
+									<QueryAccountRecoverySettings />
 
-								<FormPhoneInput countriesList={ this.props.countriesList } isDisabled={ true } />
-							</>
-						) }
-					</div>
-					<div className="get-apps__sms-button-wrapper">
-						<p>{ translate( 'Standard SMS rates may apply' ) }</p>
+									<FormPhoneInput countriesList={ this.props.countriesList } isDisabled={ true } />
+								</>
+							) }
+						</div>
+						<div className="get-apps__sms-button-wrapper">
+							<p>{ translate( 'Standard SMS rates may apply' ) }</p>
 
-						<Button
-							className="get-apps__sms-button"
-							onClick={ this.onSubmit }
-							disabled={ ! phoneNumberIsValid }
-						>
-							{ translate( 'Text me a link' ) }
-						</Button>
+							<Button
+								className="get-apps__sms-button"
+								onClick={ this.onSubmit }
+								disabled={ ! phoneNumberIsValid }
+							>
+								{ translate( 'Text me a link' ) }
+							</Button>
+						</div>
 					</div>
-				</div>
+				) : (
+					''
+				) }
 			</Card>
 		);
 	}
