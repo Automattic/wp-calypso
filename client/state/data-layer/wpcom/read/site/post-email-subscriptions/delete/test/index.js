@@ -36,7 +36,7 @@ describe( 'comment-email-subscriptions', () => {
 	describe( 'receivePostEmailUnsubscription', () => {
 		test( 'should do nothing if successful', () => {
 			const result = receivePostEmailUnsubscription( null, { subscribed: false } );
-			expect( result ).toEqual( [] );
+			expect( result ).toBeUndefined();
 		} );
 
 		test( 'should dispatch a subscribe if it fails using next', () => {
