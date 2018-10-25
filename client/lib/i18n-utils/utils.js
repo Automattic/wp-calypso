@@ -166,7 +166,11 @@ const urlLocalizationMapping = {
 
 export function localizeUrl( fullUrl, locale ) {
 	const localeSlug = locale || getLocaleSlug();
-	const urlParts = url.parse( fullUrl );
+	const urlParts = url.parse( String( fullUrl ) );
+
+	if ( ! urlParts ) {
+		return fullUrl;
+	}
 
 	// Let's unify the URL.
 	urlParts.protocol = 'https';
