@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -21,7 +20,7 @@ describe( 'comment-email-subscriptions', () => {
 		test( 'should dispatch an http request and call through next', () => {
 			const action = unsubscribeToNewPostEmail( 1234 );
 			const result = requestPostEmailUnsubscription( action );
-			expect( result ).to.eql(
+			expect( result ).toEqual(
 				http( {
 					method: 'POST',
 					path: '/read/site/1234/post_email_subscriptions/delete',
@@ -37,7 +36,7 @@ describe( 'comment-email-subscriptions', () => {
 	describe( 'receivePostEmailUnsubscription', () => {
 		test( 'should do nothing if successful', () => {
 			const result = receivePostEmailUnsubscription( null, { subscribed: false } );
-			expect( result ).to.eql( [] );
+			expect( result ).toEqual( [] );
 		} );
 
 		test( 'should dispatch a subscribe if it fails using next', () => {
@@ -48,20 +47,20 @@ describe( 'comment-email-subscriptions', () => {
 				}
 			);
 
-			expect( result[ 0 ].notice.text ).to.eql(
+			expect( result[ 0 ].notice.text ).toBe(
 				'Sorry, we had a problem unsubscribing. Please try again.'
 			);
-			expect( result[ 1 ] ).to.eql( bypassDataLayer( subscribeToNewPostEmail( 1234 ) ) );
+			expect( result[ 1 ] ).toEqual( bypassDataLayer( subscribeToNewPostEmail( 1234 ) ) );
 		} );
 	} );
 
 	describe( 'receivePostEmailUnsubscriptionError', () => {
 		test( 'should dispatch an error notice and subscribe action using next', () => {
 			const result = receivePostEmailUnsubscriptionError( { payload: { blogId: 1234 } }, null );
-			expect( result[ 0 ].notice.text ).to.eql(
+			expect( result[ 0 ].notice.text ).toBe(
 				'Sorry, we had a problem unsubscribing. Please try again.'
 			);
-			expect( result[ 1 ] ).to.eql( bypassDataLayer( subscribeToNewPostEmail( 1234 ) ) );
+			expect( result[ 1 ] ).toEqual( bypassDataLayer( subscribeToNewPostEmail( 1234 ) ) );
 		} );
 	} );
 } );
