@@ -22,7 +22,7 @@ You can try out the user-side of Calypso on [WordPress.com](https://wordpress.co
 
 Need more detailed installation instructions? [We have them](./docs/install.md).
 
-## Contributing
+## Contributing To
 
 If Calypso sparks your interest, don’t hesitate to send a pull request, send a suggestion, file a bug, or just ask a question. We promise we’ll be nice. Just don’t forget to check out our [CONTRIBUTING](./.github/CONTRIBUTING.md) doc – it includes a few technical details that will make the process a lot smoother.
 
