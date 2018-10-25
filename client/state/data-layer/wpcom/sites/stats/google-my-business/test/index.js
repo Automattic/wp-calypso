@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -21,7 +20,7 @@ describe( '#fetchStats', () => {
 
 		const result = fetchStats( action );
 
-		expect( result ).to.eql(
+		expect( result ).toEqual(
 			http(
 				{
 					path: '/sites/12345/stats/google-my-business/queries',
@@ -80,7 +79,7 @@ describe( '#receiveStats', () => {
 			} )
 		);
 
-		expect( result ).to.eql(
+		expect( result ).toEqual(
 			receiveGoogleMyBusinessStats(
 				action.siteId,
 				action.statType,
@@ -131,7 +130,7 @@ describe( '#receiveStats', () => {
 
 		const result = fromApi( receiveStats( action, { hello_world: 'hello' } ) );
 
-		expect( result ).to.eql(
+		expect( result ).toEqual(
 			receiveGoogleMyBusinessStats(
 				action.siteId,
 				action.statType,
