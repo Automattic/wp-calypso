@@ -314,17 +314,19 @@ describe( 'utils', () => {
 		} );
 
 		test( 'handles invalid URLs', () => {
-			[ undefined, null, [], {}, { href: 'https://test' }, 'not-an-url' ].forEach( fullUrl => {
-				getLocaleSlug.mockImplementationOnce( () => 'en' );
-				expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
-				getLocaleSlug(); // make sure to consume it.
-				getLocaleSlug.mockImplementationOnce( () => 'en' );
-				expect( localizeUrl( fullUrl, 'fr' ) ).toEqual( fullUrl );
-				getLocaleSlug(); // make sure to consume it.
-				getLocaleSlug.mockImplementationOnce( () => 'fr' );
-				expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
-				getLocaleSlug(); // make sure to consume it.
-			} );
+			[ undefined, null, [], {}, { href: 'https://test' }, 'not-a-url', () => {} ].forEach(
+				fullUrl => {
+					getLocaleSlug.mockImplementationOnce( () => 'en' );
+					expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
+					getLocaleSlug(); // make sure to consume it.
+					getLocaleSlug.mockImplementationOnce( () => 'en' );
+					expect( localizeUrl( fullUrl, 'fr' ) ).toEqual( fullUrl );
+					getLocaleSlug(); // make sure to consume it.
+					getLocaleSlug.mockImplementationOnce( () => 'fr' );
+					expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
+					getLocaleSlug(); // make sure to consume it.
+				}
+			);
 		} );
 
 		test( 'trailing slash variations', () => {
