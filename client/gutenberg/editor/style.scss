@@ -108,4 +108,17 @@ $gutenberg-theme-toggle: #11a0d2;
 			z-index: 100000; // Above WP toolbar.
 		}
 	}
+
+	// UNSET CALYPSO DEFAULT STYLES
+	input[type='number'].components-range-control__number {
+		width: 50px;
+	}
+
+	input[type=checkbox],
+	input[type=radio] {
+		& + span {
+			margin-left: 0;
+		}
+	}
+	// END Unset Calypso default styles
 }
