@@ -20,11 +20,10 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	let viewBlocksPoints;
 	let viewScriptEntry;
 	if ( fs.existsSync( presetPath ) ) {
+		const presetBlocks = require( presetPath );
 
-		const preset = require( presetPath );
-
-	  // Helps split up each block into its own folder view script 
-		viewBlocksPoints = pickBy( reduce( preset, (obj, block) => ( { [ block + '/view'] : [path.join( inputDir, '../../'+ block +'/view.js' )]  } )  ), fs.existsSync );
+	  // Helps split up each block into its own folder view script
+		viewBlocksPoints = reduce( presetBlocks, (obj, block) => ( { [ block + '/view'] : [path.join( inputDir, '../../'+ block +'/view.js' )]  } )  );
 
 		utilScripts = fs.readdirSync( utilsPath ).map( utilFile => path.join( utilsPath, utilFile ) ).filter( fs.existsSync );
 		editorScripts = preset.map( block => path.join( inputDir, '../../'+ block +'/editor.js' ) ).filter( fs.existsSync );
@@ -34,13 +33,13 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 
 		// Create a all the different View.js scripts into one View script
 		if ( ! isEmpty( viewScripts ) ) {
-			viewScriptEntry = { view:  utilScripts.concat(viewScripts) };
+			viewScriptEntry = { view:  utilScripts.concat( viewScripts ) };
 		}
 
 	} else {
 		const editorScript = path.join( inputDir, 'editor.js' );
 		const viewScript = path.join( inputDir, 'view.js' );
-		viewScriptEntry = (fs.existsSync( viewScript ) ? { view: viewScript } : {} )
+		viewScriptEntry = ( fs.existsSync( viewScript ) ? { view: viewScript } : {} );
 	}
 
 	return {
@@ -48,7 +47,7 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 		entry: {
 			editor: editorScript,
 			...viewScriptEntry,
-			...viewBlocksPoints,
+			...viewBlocksPoints
 		},
 		output: {
 			path: outputDir || path.join( inputDir, 'build' ),
