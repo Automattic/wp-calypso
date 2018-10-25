@@ -7,7 +7,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -57,7 +57,7 @@ const MailchimpSettings = ( {
 			<QueryMailchimpLists siteId={ siteId } />
 			<QueryMailchimpSettings siteId={ siteId } />
 			<p>{ translate( 'What MailChimp list should we sync follower emails to for this site?' ) }</p>
-			{ mailchimpLists &&
+			{ isArray( mailchimpLists ) &&
 				mailchimpLists.length === 0 && (
 					<Notice
 						status="is-info"
