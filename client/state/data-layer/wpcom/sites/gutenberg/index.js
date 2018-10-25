@@ -22,11 +22,10 @@ export const setType = action =>
 			apiNamespace: 'wpcom/v2',
 			query: {
 				editor: action.editor,
-				http_envelope: 1,
 			},
 			body: {},
 		},
-		action
+		{}
 	);
 
 const dispatchEditorTypeRequest = dispatchRequestEx( {
