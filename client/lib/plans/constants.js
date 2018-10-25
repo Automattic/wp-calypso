@@ -564,7 +564,7 @@ export const PLANS_LIST = {
 				],
 				plan
 			),
-		getProductId: () => 0, //TODO @yoavf: Not Yet created.
+		getProductId: () => 1018,
 		getStoreSlug: () => PLAN_BUSINESS_MONTHLY,
 		getPathSlug: () => 'business-monthly',
 	},
