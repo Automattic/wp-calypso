@@ -44,9 +44,8 @@ class MobileDownloadCard extends React.Component {
 			numberFull: PropTypes.string,
 		} ),
 		hasLoadedStoredPhone: PropTypes.bool,
-		// onSave: PropTypes.func,
-		// onCancel: PropTypes.func,
-		// onDelete: PropTypes.func,
+		successNotice: PropTypes.func,
+		errorNotice: PropTypes.func,
 	};
 
 	state = {
@@ -153,10 +152,12 @@ class MobileDownloadCard extends React.Component {
 
 		sendSMS( phoneNumber )
 			.then( (/* response */) => {
-				successNotice( translate( 'SMS Sent. Go check your messages on your phone!' ) );
+				this.props.successNotice( translate( 'SMS Sent. Go check your messages on your phone!' ) );
 			} )
 			.catch( (/* error */) => {
-				errorNotice( translate( 'There was a problem sending the SMS. Please try again.' ) );
+				this.props.errorNotice(
+					translate( 'There was a problem sending the SMS. Please try again.' )
+				);
 			} );
 	};
 }
