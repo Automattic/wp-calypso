@@ -5,22 +5,29 @@
  */
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ReaderLandingStepContent extends PureComponent {
+	handleButtonClick = () => {
+		this.props.recordTracksEvent( 'calypso_signup_reader_landing_cta' );
+		this.props.onButtonClick();
+	};
+
 	render() {
-		const { translate, onButtonClick } = this.props;
+		const { translate } = this.props;
 		return (
 			<div className="reader-landing__step-content">
 				<div className="reader-landing__button-wrapper">
 					<Button
 						primary={ true }
 						type="submit"
-						onClick={ onButtonClick }
+						onClick={ this.handleButtonClick }
 						className="reader-landing__button"
 					>
 						{ translate( 'Start using the Reader' ) }
@@ -105,7 +112,7 @@ class ReaderLandingStepContent extends PureComponent {
 					<Button
 						primary={ true }
 						type="submit"
-						onClick={ onButtonClick }
+						onClick={ this.handleButtonClick }
 						className="reader-landing__button"
 					>
 						{ translate( 'Start using the Reader' ) }
@@ -116,4 +123,7 @@ class ReaderLandingStepContent extends PureComponent {
 	}
 }
 
-export default localize( ReaderLandingStepContent );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( ReaderLandingStepContent ) );
