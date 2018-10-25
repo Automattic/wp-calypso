@@ -197,10 +197,11 @@ class SiteSettingsImport extends Component {
 		const { slug, title } = site;
 		const siteTitle = title.length ? title : slug;
 
+		if ( engine === 'wix' ) {
+			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
+		}
+
 		if ( ! isHydrated ) {
-			if ( engine ) {
-				return <Placeholder />;
-			}
 			return this.renderIdleImporters( site, siteTitle, appStates.DISABLED );
 		}
 
