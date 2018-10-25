@@ -9,6 +9,7 @@ import { assign, difference, get, isEmpty, pick } from 'lodash';
  * Internal dependencies
  */
 import {
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -43,6 +44,9 @@ const productDependencies = {
 		gapps_extra_license: true,
 		gapps_unlimited: true,
 		private_whois: true,
+	},
+	[ PLAN_BUSINESS_MONTHLY ]: {
+		domain_redemption: true,
 	},
 	[ PLAN_BUSINESS ]: {
 		domain_redemption: true,

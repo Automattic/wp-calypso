@@ -16,6 +16,7 @@ import { isEnabled } from 'config';
 import { isBusinessPlan, isFreePlan, isBloggerPlan, isPersonalPlan, isPremiumPlan } from './index';
 
 // plans constants
+export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_BUSINESS = 'business-bundle';
 export const PLAN_BUSINESS_2_YEARS = 'business-bundle-2y';
 export const PLAN_PREMIUM = 'value_bundle';
@@ -473,7 +474,7 @@ export const PLANS_LIST = {
 	[ PLAN_BLOGGER ]: {
 		...getPlanBloggerDetails(),
 		term: TERM_ANNUALLY,
-		getBillingTimeFrame: WPComGetBillingTimeframe,
+		getBillingTimeFrame: () => WPComGetBillingTimeframe,
 		availableFor: plan => includes( [ PLAN_FREE ], plan ),
 		getProductId: () => 1010,
 		getStoreSlug: () => PLAN_BLOGGER,
@@ -546,6 +547,28 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium-2-years',
 	},
 
+	[ PLAN_BUSINESS_MONTHLY ]: {
+		...getPlanBusinessDetails(),
+		term: TERM_MONTHLY,
+		getBillingTimeFrame: i18n.translate( '/month, billed monthly' ),
+		availableFor: plan =>
+			includes(
+				[
+					PLAN_FREE,
+					PLAN_BLOGGER,
+					PLAN_BLOGGER_2_YEARS,
+					PLAN_PERSONAL,
+					PLAN_PERSONAL_2_YEARS,
+					PLAN_PREMIUM,
+					PLAN_PREMIUM_2_YEARS,
+				],
+				plan
+			),
+		getProductId: () => 0, //TODO @yoavf: Not Yet created.
+		getStoreSlug: () => PLAN_BUSINESS_MONTHLY,
+		getPathSlug: () => 'business-monthly',
+	},
+
 	[ PLAN_BUSINESS ]: {
 		...getPlanBusinessDetails(),
 		term: TERM_ANNUALLY,
@@ -560,6 +583,7 @@ export const PLANS_LIST = {
 					PLAN_PERSONAL_2_YEARS,
 					PLAN_PREMIUM,
 					PLAN_PREMIUM_2_YEARS,
+					PLAN_BUSINESS_MONTHLY,
 				],
 				plan
 			),
@@ -583,6 +607,7 @@ export const PLANS_LIST = {
 					PLAN_PREMIUM,
 					PLAN_PREMIUM_2_YEARS,
 					PLAN_BUSINESS,
+					PLAN_BUSINESS_MONTHLY,
 				],
 				plan
 			),
