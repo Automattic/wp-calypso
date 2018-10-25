@@ -21,7 +21,7 @@ import apiFetch from '@wordpress/api-fetch';
  *
  * @param {integer} postId ID of post to query connection defaults for.
  *
- * @return {Promise} Promise for connection request.
+ * @return {Promise} Promise for post connections request.
  */
 export function requestPublicizeConnections( postId ) {
 	return apiFetch( {
@@ -34,7 +34,7 @@ export function requestPublicizeConnections( postId ) {
  *
  * Gets list of possible social sites ('twitter', 'facebook, etc..')
  *
- * @return {object} List of possible services that can be connected to
+ * @return {Promise} Promise for connection services request.
  */
 export function getAllConnections() {
 	return apiFetch( {
@@ -45,7 +45,7 @@ export function getAllConnections() {
 /**
  * Verifies that all connections are still functioning.
  *
- * @return {object} List of possible services that can be connected to
+ * @return {Promise} Promise for connections request.
  */
 export function requestTestPublicizeConnections() {
 	return apiFetch( {
