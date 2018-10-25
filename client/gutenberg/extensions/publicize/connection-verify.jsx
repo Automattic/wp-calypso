@@ -12,13 +12,9 @@
 /**
  * External dependencies
  */
+import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
-import { requestTestPublicizeConnections } from './async-publicize-lib';
 
 class PublicizeConnectionVerify extends Component {
 	constructor( props ) {
@@ -52,7 +48,9 @@ class PublicizeConnectionVerify extends Component {
 	 * Checks connections with using the '/publicize/connections' endpoint
 	 */
 	connectionTestStart = () => {
-		requestTestPublicizeConnections().then( () => this.connectionTestComplete );
+		apiFetch( {
+			path: '/publicize/connections',
+		} ).then( () => this.connectionTestComplete );
 	};
 
 	/**
