@@ -30,8 +30,8 @@ class ReaderLandingStepContent extends PureComponent {
 				<section className="reader-landing__features">
 					<div className="reader-landing__feature">
 						<img
-							src="/calypso/images/signup/reader-landing/animals.jpg"
-							alt="placeholder"
+							src="/calypso/images/reader/reader-discover.png"
+							alt={ translate( 'Screenshot of Reader Discover' ) }
 							className="reader-landing__feature-image"
 						/>
 						<div className="reader-landing__feature-detail">
@@ -48,8 +48,8 @@ class ReaderLandingStepContent extends PureComponent {
 
 					<div className="reader-landing__feature">
 						<img
-							src="/calypso/images/signup/reader-landing/animals.jpg"
-							alt="placeholder"
+							src="/calypso/images/reader/reader-notifications.png"
+							alt={ translate( 'Screenshot of Reader notifications' ) }
 							className="reader-landing__feature-image"
 						/>
 						<div className="reader-landing__feature-detail">
@@ -66,8 +66,8 @@ class ReaderLandingStepContent extends PureComponent {
 
 					<div className="reader-landing__feature">
 						<img
-							src="/calypso/images/signup/reader-landing/animals.jpg"
-							alt="placeholder"
+							src="/calypso/images/reader/reader-mobile.png"
+							alt={ translate( 'Person holding a tablet and using Reader' ) }
 							className="reader-landing__feature-image"
 						/>
 						<div className="reader-landing__feature-detail">
@@ -84,8 +84,8 @@ class ReaderLandingStepContent extends PureComponent {
 
 					<div className="reader-landing__feature">
 						<img
-							src="/calypso/images/signup/reader-landing/animals.jpg"
-							alt="placeholder"
+							src="/calypso/images/reader/reader-conversations.png"
+							alt={ translate( 'Screenshot of Reader Conversations' ) }
 							className="reader-landing__feature-image"
 						/>
 						<div className="reader-landing__feature-detail">
