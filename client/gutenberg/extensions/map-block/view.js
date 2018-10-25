@@ -16,7 +16,7 @@ window.addEventListener( 'load', function() {
 		return;
 	}
 	const frontendManagement = new FrontendManagement();
-	const url = '/wp-json/jetpack/v4/api-keys/googlemaps';
+	const url = '/wp-json/jetpack/v4/service-api-keys/googlemaps';
 	apiFetch( { url, method: 'GET' } ).then( result => {
 		frontendManagement.blockIterator( document, [
 			{
