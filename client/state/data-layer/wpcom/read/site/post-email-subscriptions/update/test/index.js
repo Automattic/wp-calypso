@@ -27,7 +27,7 @@ describe( 'comment-email-subscriptions', () => {
 							items: {
 								foo: {
 									blog_ID: 1234,
-									delivery_frequency: {
+									delivery_methods: {
 										email: {
 											post_delivery_frequency: 'instantly',
 										},
