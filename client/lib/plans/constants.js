@@ -1971,7 +1971,7 @@ export const getPlanFeaturesObject = planFeaturesList => {
 };
 
 export function isMonthly( plan ) {
-	return includes( JETPACK_MONTHLY_PLANS, plan );
+	return plan === PLAN_BUSINESS_MONTHLY || includes( JETPACK_MONTHLY_PLANS, plan );
 }
 
 export function isNew( plan ) {

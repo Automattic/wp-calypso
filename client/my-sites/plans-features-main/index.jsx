@@ -45,7 +45,6 @@ import { getDiscountByName } from 'lib/discounts';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 
 export class PlansFeaturesMain extends Component {
-
 	componentDidUpdate( prevProps ) {
 		/**
 		 * Happychat does not update with the selected site right now :(
@@ -131,9 +130,17 @@ export class PlansFeaturesMain extends Component {
 			term = TERM_ANNUALLY;
 		}
 
+		const group = displayJetpackPlans ? GROUP_JETPACK : GROUP_WPCOM;
+
+		// In WPCOM, only the business plan is available in monthly term
+		// For any other plan, switch to annually.
+		const businessPlanTerm = term;
+		if ( group === GROUP_WPCOM && term === TERM_MONTHLY ) {
+			term = TERM_ANNUALLY;
+		}
+
 		let plans;
-		if ( displayJetpackPlans ) {
-			const group = GROUP_JETPACK;
+		if ( group === GROUP_JETPACK ) {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
@@ -141,13 +148,12 @@ export class PlansFeaturesMain extends Component {
 				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
 			];
 		} else {
-			const group = GROUP_WPCOM;
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
-				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
+				findPlansKeys( { group, term: businessPlanTerm, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ],
 			];
 		}
