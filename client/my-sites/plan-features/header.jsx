@@ -31,11 +31,7 @@ import { planLevelsMatch } from 'lib/plans/index';
 export class PlanFeaturesHeader extends Component {
 	render() {
 		const { isInSignup } = this.props;
-		let content = this.renderPlansHeader();
-
-		if ( isInSignup ) {
-			content = this.renderSignupHeader();
-		}
+		const content = isInSignup ? this.renderSignupHeader() : this.renderPlansHeader();
 
 		return content;
 	}
