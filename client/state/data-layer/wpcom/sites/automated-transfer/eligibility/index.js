@@ -9,7 +9,7 @@ import { get, identity, isEmpty, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST } from 'state/action-types';
 
@@ -111,41 +111,33 @@ const trackEligibility = data => {
 /**
  * Issues an API request to fetch eligibility information for a site
  *
- * @param {Object} store Redux store
  * @param {Function} store.dispatch action dispatcher
  * @param {action} action Action object
+ * @return {Object} action
  */
-export const requestAutomatedTransferEligibility = ( { dispatch }, action ) => {
-	const { siteId } = action;
-
-	dispatch(
-		http(
-			{
-				method: 'GET',
-				path: `/sites/${ siteId }/automated-transfers/eligibility`,
-				apiVersion: '1',
-			},
-			action
-		)
+export const requestAutomatedTransferEligibility = action =>
+	http(
+		{
+			method: 'GET',
+			path: `/sites/${ action.siteId }/automated-transfers/eligibility`,
+			apiVersion: '1',
+		},
+		action
 	);
-};
 
-export const updateAutomatedTransferEligibility = ( { dispatch }, { siteId }, data ) => {
-	dispatch(
-		withAnalytics( trackEligibility( data ), updateEligibility( siteId, fromApi( data ) ) )
-	);
-};
+export const updateAutomatedTransferEligibility = ( { siteId }, data ) =>
+	withAnalytics( trackEligibility( data ), updateEligibility( siteId, fromApi( data ) ) );
 
-export const throwRequestError = ( store, action, error ) => {
+export const throwRequestError = ( action, error ) => {
 	throw new Error( error );
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/eligibility/index.js', {
 	[ AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST ]: [
-		dispatchRequest(
-			requestAutomatedTransferEligibility,
-			updateAutomatedTransferEligibility,
-			throwRequestError
-		),
+		dispatchRequestEx( {
+			fetch: requestAutomatedTransferEligibility,
+			onSuccess: updateAutomatedTransferEligibility,
+			onError: throwRequestError,
+		} ),
 	],
 } );
