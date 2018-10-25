@@ -63,11 +63,6 @@ $gutenberg-theme-toggle: #11a0d2;
 		}
 	}
 
-	.editor-inserter__menu .editor-inserter__search,
-	.edit-post-post-visibility__dialog .editor-post-visibility__dialog-password-input {
-		width: auto;
-	}
-
 	.edit-post-visual-editor .editor-post-title__block > div {
 		margin-left: 0px;
 		margin-right: 0px;
@@ -157,6 +152,11 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 
 	// UNSET CALYPSO DEFAULT STYLES
+	input[type='text'],
+	input[type='search'] {
+		width: auto;
+	}
+
 	input[type='number'].components-range-control__number {
 		width: 50px;
 	}
@@ -168,10 +168,6 @@ $gutenberg-theme-toggle: #11a0d2;
 		& + span {
 			margin-left: 0;
 		}
-	}
-
-	input[type=checkbox] {
-		float: none;
 	}
 
 	select {
