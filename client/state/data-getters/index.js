@@ -176,9 +176,10 @@ export const requestGutenbergDemoContent = () =>
 		{ fromApi: () => data => [ [ 'gutenberg-demo-content', data ] ] }
 	);
 
-export const requestSelectedEditor = siteId =>
-	requestHttpData(
-		'selected-editor',
+export const requestSelectedEditor = siteId => {
+	const requestId = `selected-editor-${ siteId }`;
+	return requestHttpData(
+		requestId,
 		http(
 			{
 				path: `/sites/${ siteId }/gutenberg`,
@@ -187,8 +188,9 @@ export const requestSelectedEditor = siteId =>
 			},
 			{}
 		),
-		{ fromApi: () => data => [ [ 'selected-editor', data ] ] }
+		{ fromApi: () => data => [ [ requestId, data ] ] }
 	);
+};
 
 export const requestSitePost = ( siteId, postId, postType ) => {
 	//post and page types are plural except for custom post types
