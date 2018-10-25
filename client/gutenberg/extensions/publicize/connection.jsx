@@ -33,14 +33,10 @@ class PublicizeConnection extends Component {
 	};
 
 	render() {
-		const { service_name: name, label, disabled } = this.props.connectionData;
+		const { service_name: name, label, disabled, display_name } = this.props.connectionData;
 		const { connectionOn } = this.props;
 		// Genericon names are dash separated
 		const socialName = name.replace( '_', '-' );
-
-		// FIXME: Use prop again after https://github.com/Automattic/jetpack/pull/10396/files#r228300077
-		// is resolved.
-		const display_name = label.split( ':', 2 )[ 1 ].trim();
 
 		return (
 			<li>
