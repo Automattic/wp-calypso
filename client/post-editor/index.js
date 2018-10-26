@@ -18,8 +18,8 @@ export default function() {
 	page(
 		'/post/:site?/:post?',
 		siteSelection,
-		controller.post,
 		controller.gutenberg,
+		controller.post,
 		makeLayout,
 		clientRender
 	);
@@ -30,8 +30,8 @@ export default function() {
 	page(
 		'/page/:site?/:post?',
 		siteSelection,
-		controller.post,
 		controller.gutenberg,
+		controller.post,
 		makeLayout,
 		clientRender
 	);
@@ -43,8 +43,8 @@ export default function() {
 		page(
 			'/edit/:type/:site?/:post?',
 			siteSelection,
-			controller.post,
 			controller.gutenberg,
+			controller.post,
 			makeLayout,
 			clientRender
 		);
