@@ -1,7 +1,7 @@
 .tile {
   position: relative;
   flex: 1;
-  padding: 2.15em 0;
+  padding: 1.65em 0;
   font-size: 0.65em;
   text-align: center;
   overflow: hidden;
@@ -31,7 +31,7 @@
   }
 }
 
-.tile--500 {
+.tile--base {
   flex: 1.5;
 }
 

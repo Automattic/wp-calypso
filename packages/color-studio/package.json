@@ -1,6 +1,6 @@
 {
   "name": "color-studio",
-  "version": "0.2.1",
+  "version": "0.9.9",
   "private": true,
   "dependencies": {
     "autoprefixer": "^8.2.0",

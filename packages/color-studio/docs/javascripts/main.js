@@ -2,6 +2,8 @@
 
 const chroma = require('chroma-js')
 const copyToClipboard = require('copy-text-to-clipboard')
+const chunk = require('lodash/chunk')
+const endsWith = require('lodash/endsWith')
 const flatten = require('lodash/flatten')
 const round = require('lodash/round')
 const { saveAs } = require('file-saver')
@@ -10,6 +12,8 @@ const toSketchPalette = require('../../utilities/to-sketch-palette')
 
 const createPrimaryShades = require('../../utilities/create-primary-shades')
 const createSecondaryShades = require('../../utilities/create-secondary-shades')
+
+const archive = require('../../data/colors-v0.2.1.json')
 const foundations = require('../../foundations')
 
 const COLOR_WHITE = '#ffffff'
@@ -25,15 +29,17 @@ let currentBaseColor = null
 setTimeout(init, 0)
 
 function init() {
-  if (!input) {
-    handleFoundationTiles()
-    handleFoundationButton()
-  } else {
+  if (input) {
     button.addEventListener('click', handleButtonClick)
     input.addEventListener('input', event => {
       handleColor(String(event.target.value).trim())
     })
     handleRandomColor()
+  } else if (output.dataset.archive) {
+    handleArchiveTiles()
+  } else {
+    handleFoundationTiles()
+    handleFoundationButton()
   }
 }
 
@@ -93,17 +99,42 @@ function handleFoundationButton() {
   })
 }
 
+function handleArchiveTiles() {
+  const palette = archive.colors.filter(c => c.name !== 'White').map(color => {
+    const [name, index] = color.name.split(' ')
+    return {
+      name,
+      index: parseInt(index, 10),
+      color: color.values.hex,
+      auxiliary: endsWith(color.name, 'A')
+    }
+  })
+
+  output.innerHTML = chunk(palette, 15)
+    .map(colors => {
+      const html = colors.map(color => createColorTile(color, true)).join('')
+      return wrapColorTile(html, true)
+    })
+    .join('')
+
+  activateTiles(output)
+}
+
 function handleRandomColor() {
   const color = chroma.random().hex()
   input.value = color
   handleColor(color)
 }
 
+function wrapColorTile(html, pad) {
+  return `<div class="d-flex bg-white${pad ? ' px-1 pb-1' : ''}">${html}</div>`
+}
+
 function createColorTiles(color, name, semantic, pad) {
   const createShades = semantic ? createSecondaryShades : createPrimaryShades
   const colors = createShades(color).map(c => Object.assign({ name, semantic }, c))
-  const html = colors.map(createColorTile).join('')
-  return `<div class="d-flex bg-white${pad ? ' pt-1' : ''}">${html}</div>`
+  const html = colors.map(c => createColorTile(c)).join('')
+  return wrapColorTile(html, pad)
 }
 
 function setBodyBackground() {
@@ -134,12 +165,13 @@ function activateTiles(scope = document) {
   })
 }
 
-function createColorTile(colorObject) {
-  const { index, color, name, semantic } = colorObject
+function createColorTile(colorObject, previous = false) {
+  const baseIndex = previous ? 80 : 500
+  const { index, color, name, auxiliary } = colorObject
 
   const [primaryTextColor, secondaryTextColor] = determineTextColor(color)
-  const className = `tile tile--${index}${semantic ? ' tile--small' : ''} text-center`
-  const title = name && index === 500 ? `${name} ${index}` : index
+  const className = `tile ${index === baseIndex ? ' tile--base' : ''} text-center`
+  const title = (name && index === baseIndex ? `${name} ${index}` : index) + (auxiliary ? 'A' : '')
 
   /* eslint-disable indent */
   return [
@@ -178,14 +210,7 @@ function determineTextColor(backgroundColor) {
 }
 
 function getColorProperties(colorValue) {
-  const color = chroma(colorValue)
-  const numbers = [
-    round(color.get('hsl.s'), 1),
-    round(color.get('hsl.l'), 1),
-    getContrastScore(colorValue, COLOR_WHITE)
-  ]
-
-  return numbers.join(' / ')
+  return getContrastScore(colorValue, COLOR_WHITE)
 }
 
 function getContrastScore(foregroundColor, backgroundColor) {
