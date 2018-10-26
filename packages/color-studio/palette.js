@@ -7,9 +7,9 @@ const toSketchPalette = require('./utilities/to-sketch-palette')
 const FOUNDATIONS = require('./foundations')
 const PACKAGE = require('./package.json')
 
-const PALETTE_COLORS = FOUNDATIONS.baseColors.map(color => {
-  return createPaletteColors(color.value, color.name)
-})
+const PALETTE_COLORS = FOUNDATIONS.baseColors
+  .filter(color => !color.semantic)
+  .map(color => createPaletteColors(color.value, color.name))
 
 const SCSS_VARIABLE_PREFIX = '$wpc'
 

@@ -1,41 +1,66 @@
+const chroma = require('chroma-js')
+const flatten = require('lodash/flatten')
+
+const values = {
+  gray: '#707070',
+  blue: '#016087',
+  pink: '#c54475',
+  red: '#d21d3e',
+  yellow: '#dbb422',
+  green: '#0d7d2e'
+}
+
+const derivatives = []
+
 module.exports = {
-  baseColors: [
+  baseColors: flatten([
     {
       name: 'Gray',
-      // chroma.mix('#707070', '#016087', 0.2, 'lch').hex()
-      value: '#636d75'
+      value: mix(values.gray, values.blue, 0.2)
     },
-    {
+    createColorPair({
       name: 'Blue',
-      value: '#016087'
-    },
+      value: values.blue
+    }),
     {
+      name: 'Purple',
+      value: mix(values.blue, values.pink)
+    },
+    createColorPair({
       name: 'Pink',
-      value: '#d52b82',
-      semantic: true
-    },
-    {
+      value: values.pink
+    }),
+    createColorPair({
       name: 'Red',
-      value: '#dd3c57'
-    },
+      value: values.red
+    }),
     {
-      name: 'Red',
-      value: '#eb0001',
-      semantic: true
+      name: 'Orange',
+      value: mix(values.red, values.yellow)
     },
-    {
+    createColorPair({
       name: 'Yellow',
-      value: '#dbb21b'
-    },
-    {
-      name: 'Yellow',
-      value: '#f6c200',
-      semantic: true
-    },
-    {
+      value: values.yellow
+    }),
+    createColorPair({
       name: 'Green',
-      value: '#008a00',
-      semantic: true
-    }
-  ]
+      value: values.green
+    }),
+    derivatives
+  ])
+}
+
+function mix(color1, color2, ratio = 0.5) {
+  return chroma.mix(color1, color2, ratio, 'lch').hex()
+}
+
+function createColorPair(colorObject) {
+  const semanticObject = Object.assign({}, colorObject, {
+    name: `Hot ${colorObject.name}`,
+    value: chroma(colorObject.value).saturate(1.5).hex(),
+    semantic: true
+  })
+
+  derivatives.push(semanticObject)
+  return colorObject
 }

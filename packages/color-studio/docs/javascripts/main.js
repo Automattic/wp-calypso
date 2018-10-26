@@ -9,6 +9,7 @@ const toArray = require('lodash/toArray')
 const toSketchPalette = require('../../utilities/to-sketch-palette')
 
 const createPrimaryShades = require('../../utilities/create-primary-shades')
+const createSecondaryShades = require('../../utilities/create-secondary-shades')
 const foundations = require('../../foundations')
 
 const COLOR_WHITE = '#ffffff'
@@ -65,7 +66,7 @@ function makeDownloadable(colors) {
 
 function handleFoundationTiles() {
   output.innerHTML = foundations.baseColors
-    .map(c => createColorTiles(c.value, c.name, true))
+    .map(c => createColorTiles(c.value, c.name, c.semantic, true))
     .join('')
 
   activateTiles(output)
@@ -98,8 +99,9 @@ function handleRandomColor() {
   handleColor(color)
 }
 
-function createColorTiles(color, name, pad) {
-  const colors = createPrimaryShades(color).map(c => Object.assign({ name }, c))
+function createColorTiles(color, name, semantic, pad) {
+  const createShades = semantic ? createSecondaryShades : createPrimaryShades
+  const colors = createShades(color).map(c => Object.assign({ name, semantic }, c))
   const html = colors.map(createColorTile).join('')
   return `<div class="d-flex bg-white${pad ? ' pt-1' : ''}">${html}</div>`
 }
@@ -133,10 +135,10 @@ function activateTiles(scope = document) {
 }
 
 function createColorTile(colorObject) {
-  const { index, color, name } = colorObject
+  const { index, color, name, semantic } = colorObject
 
   const [primaryTextColor, secondaryTextColor] = determineTextColor(color)
-  const className = `tile tile--${index} text-center`
+  const className = `tile tile--${index}${semantic ? ' tile--small' : ''} text-center`
   const title = name && index === 500 ? `${name} ${index}` : index
 
   /* eslint-disable indent */
