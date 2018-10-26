@@ -26,7 +26,7 @@
 	padding: 0;
 
 	@include breakpoint( ">660px" ) {
-		font-size: 2.4em;
+		font-size: 3.3em;
 		text-align: center;
 		margin-top: 0;
 	}
@@ -79,6 +79,8 @@
 }
 
 .reader-landing__feature-image {
+	width: 100%;
+
 	@include breakpoint( ">660px" ) {
 		align-self: center;
 		max-width: 50%;
