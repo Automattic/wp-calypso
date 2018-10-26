@@ -149,11 +149,11 @@ class Edit extends Component {
 				<div>ID: { paymentId || 'N/A' }</div>
 				<div>Formatted price: { formattedPrice }</div>
 				<div>
-					<label htmlFor={ titleId }>{ __( 'Title' ) }</label>
+					<label htmlFor={ titleId }>{ __( 'Title', 'jetpack' ) }</label>
 					<input id={ titleId } onChange={ this.handleTitleChange } type="text" value={ title } />
 				</div>
 				<div>
-					<label htmlFor={ descriptionId }>{ __( 'Description' ) }</label>
+					<label htmlFor={ descriptionId }>{ __( 'Description', 'jetpack' ) }</label>
 					<textarea
 						id={ descriptionId }
 						onChange={ this.handleDescriptionChange }
@@ -161,7 +161,7 @@ class Edit extends Component {
 					/>
 				</div>
 				<div>
-					<label htmlFor={ currencyId }>{ __( 'Currency' ) }</label>
+					<label htmlFor={ currencyId }>{ __( 'Currency', 'jetpack' ) }</label>
 					<input
 						id={ currencyId }
 						maxLength="3"
@@ -171,7 +171,7 @@ class Edit extends Component {
 					/>
 				</div>
 				<div>
-					<label htmlFor={ priceId }>{ __( 'Price' ) }</label>
+					<label htmlFor={ priceId }>{ __( 'Price', 'jetpack' ) }</label>
 					<input
 						id={ priceId }
 						min={ 1 }
@@ -183,7 +183,7 @@ class Edit extends Component {
 				</div>
 				<div>
 					<label htmlFor={ multipleId }>
-						{ __( 'Allow multiple' ) }
+						{ __( 'Allow multiple', 'jetpack' ) }
 						<input
 							checked={ Boolean( multiple ) }
 							id={ multipleId }
@@ -193,7 +193,7 @@ class Edit extends Component {
 					</label>
 				</div>
 				<div>
-					<label htmlFor={ emailId }>{ __( 'Email' ) }</label>
+					<label htmlFor={ emailId }>{ __( 'Email', 'jetpack' ) }</label>
 					<input id={ emailId } onChange={ this.handleEmailChange } type="email" value={ email } />
 				</div>
 			</Fragment>
@@ -203,8 +203,6 @@ class Edit extends Component {
 
 const applyWithSelect = withSelect( ( select, { attributes } ) => {
 	if ( attributes.paymentId ) {
-		// @FIXME: Do not allow multiple reads to be in flight
-
 		const { getEntityRecord } = select( 'core' );
 
 		const simplePayment = getEntityRecord(
