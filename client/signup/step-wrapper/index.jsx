@@ -13,6 +13,7 @@ import classNames from 'classnames';
  */
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
+import Testimonial from 'signup/testimonial';
 
 class StepWrapper extends Component {
 	static propTypes = {
@@ -93,7 +94,14 @@ class StepWrapper extends Component {
 	}
 
 	render() {
-		const { stepContent, headerButton, hideFormattedHeader, hideBack, hideSkip } = this.props;
+		const {
+			stepContent,
+			headerButton,
+			hideFormattedHeader,
+			hideBack,
+			hideSkip,
+			stepName,
+		} = this.props;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': this.props.isWideLayout,
 		} );
@@ -112,6 +120,8 @@ class StepWrapper extends Component {
 
 				<div className="step-wrapper__content is-animated-content">
 					{ stepContent }
+
+					{ 'about' === stepName || 'user' === stepName ? <Testimonial /> : null }
 
 					<div className="step-wrapper__buttons">
 						{ ! hideBack && this.renderBack() }
