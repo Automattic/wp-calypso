@@ -81,8 +81,7 @@ import { removep } from 'lib/formatting';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
-import { quitGuidedTour } from 'state/ui/guided-tours/actions';
+import { pauseGuidedTour } from 'state/ui/guided-tours/selectors';
 
 export class PostEditor extends React.Component {
 	static propTypes = {
@@ -849,12 +848,10 @@ export class PostEditor extends React.Component {
 			page.replace( editUrl, null, false, false );
 		}
 
-		// The saveEdited() action will return a result of `null` if the post is unchanged.
-		if ( ! saveResult && this.props.isTourActive ) {
-			this.props.quitGuidedTour( {
-				...this.props.guidedTourState,
-				finished: true,
-			} );
+		// The saveEdited() action will return a result of `null` if the post is unchanged
+		// so we hide any guided tours
+		if ( ! saveResult ) {
+			this.props.pauseGuidedTour();
 		}
 	};
 
@@ -1129,7 +1126,6 @@ const enhance = flow(
 			const siteId = getSelectedSiteId( state );
 			const postId = getEditorPostId( state );
 			const userId = getCurrentUserId( state );
-			const tourState = getGuidedTourState( state );
 
 			return {
 				siteId,
@@ -1152,8 +1148,6 @@ const enhance = flow(
 				isAutosaving: isEditorAutosaving( state ),
 				isLoading: isEditorLoading( state ),
 				loadingError: getEditorLoadingError( state ),
-				isTourActive: !! tourState.tour,
-				guidedTourState: tourState,
 			};
 		},
 		{
@@ -1172,7 +1166,7 @@ const enhance = flow(
 			openEditorSidebar,
 			editorEditRawContent,
 			editorResetRawContent,
-			quitGuidedTour,
+			pauseGuidedTour,
 		}
 	)
 );
