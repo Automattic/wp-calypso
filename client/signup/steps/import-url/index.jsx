@@ -5,8 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, invoke, isEmpty, isEqual } from 'lodash';
-
+import { flow, get, invoke, isEmpty, isEqual, noop } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -36,6 +35,7 @@ import {
 	SITE_IMPORTER_ERR_BAD_REMOTE,
 	SITE_IMPORTER_ERR_INVALID_URL,
 } from 'lib/importers/constants';
+import { loadmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
 
 const CHECKING_SITE_IMPORTABLE_NOTICE = 'checking-site-importable';
 const IMPORT_HELP_LINK = 'https://en.support.wordpress.com/import/';
@@ -78,6 +78,13 @@ class ImportURLStepComponent extends Component {
 				importUrl: urlInputValue,
 				themeSlugWithRepo: 'pub/radcliffe-2',
 			} );
+
+			if ( urlInputValue ) {
+				loadmShotsPreview( {
+					url: urlInputValue,
+					maxRetries: 1,
+				} ).catch( noop ); // We don't care about the error, this is just a prefetch
+			}
 
 			goToNextStep();
 		}
