@@ -387,7 +387,7 @@ export const settings = {
 		},
 	],
 	GOOGLE_MAPS_API_KEY: 'AIzaSyDaj7klnWKpzGx0W5PonA73Dgr68Me8cyg',
-	validAlignments: [ 'left', 'center', 'right', 'wide', 'full' ],
+	validAlignments: [ 'center', 'wide', 'full' ],
 	markerIcon: (
 		<svg width="14" height="20" viewBox="0 0 14 20" xmlns="http://www.w3.org/2000/svg">
 			<g id="Page-1" fill="none" fillRule="evenodd">
