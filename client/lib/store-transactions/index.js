@@ -293,6 +293,15 @@ function createEbanxToken( requestType, cardDetails, callback ) {
 }
 
 function getPaygateParameters( cardDetails ) {
+	if ( cardDetails.tokenized_payment_data ) {
+		return {
+			token: {
+				name: cardDetails.name,
+				...cardDetails.tokenized_payment_data,
+			},
+		};
+	}
+
 	return {
 		name: cardDetails.name,
 		number: cardDetails.number,

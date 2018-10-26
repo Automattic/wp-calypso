@@ -33,10 +33,10 @@ export const WEB_PAYMENT_APPLE_PAY_METHOD = 'https://apple.com/apple-pay';
 const SUPPORTED_NETWORKS = [ 'visa', 'mastercard', 'amex' ];
 const APPLE_PAY_MERCHANT_IDENTIFIER = 'merchant.com.wordpress.test';
 const PAYMENT_REQUEST_OPTIONS = {
-	requestPayerName: false,
+	requestPayerName: true,
 	requestPayerPhone: false,
 	requestPayerEmail: false,
-	requestShipping: false,
+	requestShipping: true,
 };
 
 /**
@@ -216,47 +216,26 @@ export class WebPaymentBox extends React.Component {
 						paymentRequest
 							.show()
 							.then( paymentResponse => {
-								const { details } = paymentResponse;
+								const { payerName, shippingAddress, details } = paymentResponse;
+								const { token } = details;
 
-								if ( 'EC_v1' !== details.token.paymentData.version ) {
+								if ( 'EC_v1' !== token.paymentData.version ) {
 									return; // Not supported yet.
 								}
 
-								/*
-							const request = new Request(
-								'/decrypt_token.php',
-								{
-									method: 'POST',
-									headers: new Headers({'Content-Type': 'application/json'}),
-									body: JSON.stringify(paymentResponse.details.token.paymentData),
-									mode: 'cors',
-									credentials: 'omit',
-									cache: 'no-store',
-								}
-							);
+								this.props.transaction.payment = newCardPayment( {
+									tokenized_payment_data: token.paymentData,
+									name: payerName,
+									country: shippingAddress.country,
+									'postal-code': shippingAddress.postalCode,
+									card_brand: token.paymentMethod.network,
+								} );
 
-							return fetch(request)
-								.then(response => {
-									if (200 !== response.status) {
-										return; // error
-									}
+								paymentResponse.complete( 'success' );
 
-									return response.json();
-								})
-								.then(json => {
-									console.log(json);
+								setPayment( this.props.transaction.payment );
 
-									return paymentResponse.complete('success');
-								})
-								.catch(error => {
-									console.error('decrypt-token error');
-									console.log(error);
-
-									return paymentResponse.retry({
-										'error': 'Cannot decrypt token.'
-									});
-								});
-							*/
+								this.props.onSubmit( event );
 							} )
 							.catch( error => {
 								console.error( 'show error' );
@@ -280,7 +259,6 @@ export class WebPaymentBox extends React.Component {
 								const { details } = paymentResponse;
 								const { billingAddress } = details;
 
-								// Map the `BasicCardResponse` dictionnary to `transaction.payment`.
 								const cardRawDetails = {
 									number: details.cardNumber,
 									cvv: details.cardSecurityCode,
