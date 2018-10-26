@@ -1,5 +1,6 @@
 /** @format */
-/*
+
+/**
  * Internal dependencies
  */
 import './utils/public-path';
