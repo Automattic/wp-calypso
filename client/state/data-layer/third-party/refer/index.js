@@ -61,25 +61,21 @@ const onError = ( action, error ) => {
 		return;
 	}
 
-	const data = JSON.parse( error.response.text );
-	if ( 'object' !== typeof data ) {
+	const response = JSON.parse( error.response.text );
+	if ( 'object' !== typeof response ) {
 		return;
 	}
 
 	return recordTracksEvent( 'calypso_refer_visit_response', {
-		...pick( data, whitelistedEventProps ),
+		...pick( response.data || {}, whitelistedEventProps ),
 		status: error.response.status || '',
-		success: data.success || '',
-		description: data.message || 'error',
+		success: response.success || '',
+		description: response.message || 'error',
 	} );
 };
 
-const fromApi = ( {
-	body: {
-		data: { message, status, success, ...responseData },
-	},
-} ) => ( {
-	...pick( responseData, whitelistedEventProps ),
+const fromApi = ( { status, body: { success, message, data } } ) => ( {
+	...pick( data, whitelistedEventProps ),
 	status: status || '',
 	success: success || '',
 	description: message || 'success',
