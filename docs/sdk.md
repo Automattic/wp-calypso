@@ -40,6 +40,36 @@ By default, these extensions will be built under `build` folder in the same fold
 
 Read more from [Gutenberg extension docs](../client/gutenberg/extensions/README.md).
 
+#### Gutenberg extensions presets
+
+Presets are bundles of multiple extensions or blocks that live in a particular plugin.
+They can be found in `client/gutenberg/extensions/presets` directory.
+
+To create a new preset, create a new folder in that directory and add an `index.json` file.
+The file should be an array an array of the extensions folder names that you want to bundle together.
+```
+["markdown", "tiled-gallery"]
+```
+
+When you run the sdk command `npm run sdk -- gutenberg client/gutenberg/extensions/presets/your-new-preset`
+You will end up with something like this.
+
+```
+editor.js
+editor.css
+editot.rtl.css
+tiled-gallery/view.js
+tiled-gallery/view.css
+tiled-gallery/view.rtl.css
+view.js
+view.css
+view.rtl.css
+```
+Note the individual folders get created for each of the extensions only if they contain a view.js file. (In this case markdown only has a editor.js file)
+Also the `editor` (js and css) file also contains the code present in the `view` (js and css) files so you don't need to load both files.
+
+If the preset contains a `/utils` directory the utils files will also be bundled into the editor (js and css).
+
 ### Notifications
 
 SDK module to build standalone notifications client.
