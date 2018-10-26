@@ -11,6 +11,48 @@ import { fetchStats, receiveStats, fromApi } from '..';
 import { receiveGoogleMyBusinessStats } from 'state/google-my-business/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
+describe( '#fromApi', () => {
+	const data = {
+		time_zone: 'Europe/London',
+		metric_values: [
+			{
+				metric: 'QUERIES_DIRECT',
+				total_value: {
+					time_dimension: {
+						timeRange: {
+							endTime: '2018-04-19T23:59:59.900Z',
+							startTime: '2018-04-13T00:00:00Z',
+						},
+					},
+					metric_option: 'AGGREGATED_TOTAL',
+					value: 0,
+				},
+			},
+		],
+	};
+
+	test( 'should transform snake_case to camelCase', () => {
+		expect( fromApi( data ) ).toEqual( {
+			timeZone: 'Europe/London',
+			metricValues: [
+				{
+					metric: 'QUERIES_DIRECT',
+					totalValue: {
+						timeDimension: {
+							timeRange: {
+								endTime: '2018-04-19T23:59:59.900Z',
+								startTime: '2018-04-13T00:00:00Z',
+							},
+						},
+						metricOption: 'AGGREGATED_TOTAL',
+						value: 0,
+					},
+				},
+			],
+		} );
+	} );
+} );
+
 describe( '#fetchStats', () => {
 	test( 'should dispatch HTTP request to Google My Business stats endpoint', () => {
 		const action = {
@@ -45,39 +87,37 @@ describe( '#receiveStats', () => {
 			statType: 'views',
 		};
 
-		const result = fromApi(
-			receiveStats( action, {
-				time_zone: 'Europe/London',
-				metric_values: [
-					{
-						metric: 'QUERIES_DIRECT',
-						total_value: {
-							time_dimension: {
-								timeRange: {
-									endTime: '2018-04-19T23:59:59.900Z',
-									startTime: '2018-04-13T00:00:00Z',
-								},
+		const result = receiveStats( action, {
+			time_zone: 'Europe/London',
+			metric_values: [
+				{
+					metric: 'QUERIES_DIRECT',
+					total_value: {
+						time_dimension: {
+							timeRange: {
+								endTime: '2018-04-19T23:59:59.900Z',
+								startTime: '2018-04-13T00:00:00Z',
 							},
-							metric_option: 'AGGREGATED_TOTAL',
-							value: 0,
 						},
+						metric_option: 'AGGREGATED_TOTAL',
+						value: 0,
 					},
-					{
-						metric: 'QUERIES_INDIRECT',
-						total_value: {
-							time_dimension: {
-								timeRange: {
-									endTime: '2018-04-19T23:59:59.900Z',
-									startTime: '2018-04-13T00:00:00Z',
-								},
+				},
+				{
+					metric: 'QUERIES_INDIRECT',
+					total_value: {
+						time_dimension: {
+							timeRange: {
+								endTime: '2018-04-19T23:59:59.900Z',
+								startTime: '2018-04-13T00:00:00Z',
 							},
-							metric_option: 'AGGREGATED_TOTAL',
-							value: 1,
 						},
+						metric_option: 'AGGREGATED_TOTAL',
+						value: 1,
 					},
-				],
-			} )
-		);
+				},
+			],
+		} );
 
 		expect( result ).toEqual(
 			receiveGoogleMyBusinessStats(
@@ -86,31 +126,31 @@ describe( '#receiveStats', () => {
 				action.interval,
 				action.aggregation,
 				{
-					timeZone: 'Europe/London',
-					metricValues: [
+					time_zone: 'Europe/London',
+					metric_values: [
 						{
 							metric: 'QUERIES_DIRECT',
-							totalValue: {
-								timeDimension: {
+							total_value: {
+								time_dimension: {
 									timeRange: {
 										endTime: '2018-04-19T23:59:59.900Z',
 										startTime: '2018-04-13T00:00:00Z',
 									},
 								},
-								metricOption: 'AGGREGATED_TOTAL',
+								metric_option: 'AGGREGATED_TOTAL',
 								value: 0,
 							},
 						},
 						{
 							metric: 'QUERIES_INDIRECT',
-							totalValue: {
-								timeDimension: {
+							total_value: {
+								time_dimension: {
 									timeRange: {
 										endTime: '2018-04-19T23:59:59.900Z',
 										startTime: '2018-04-13T00:00:00Z',
 									},
 								},
-								metricOption: 'AGGREGATED_TOTAL',
+								metric_option: 'AGGREGATED_TOTAL',
 								value: 1,
 							},
 						},
@@ -128,7 +168,7 @@ describe( '#receiveStats', () => {
 			statType: 'actions',
 		};
 
-		const result = fromApi( receiveStats( action, { hello_world: 'hello' } ) );
+		const result = receiveStats( action, { hello_world: 'hello' } );
 
 		expect( result ).toEqual(
 			receiveGoogleMyBusinessStats(
@@ -137,7 +177,7 @@ describe( '#receiveStats', () => {
 				action.interval,
 				action.aggregation,
 				{
-					helloWorld: 'hello',
+					hello_world: 'hello',
 				}
 			)
 		);
