@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { ExternalLink } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import { registerBlockType } from '@wordpress/blocks';
@@ -14,6 +13,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import './editor.scss';
 import edit from './edit';
 import save from './save';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 registerBlockType( 'jetpack/markdown', {
 	title: __( 'Markdown' ),

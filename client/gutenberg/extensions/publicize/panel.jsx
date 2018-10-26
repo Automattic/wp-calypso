@@ -16,7 +16,6 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { PanelBody } from '@wordpress/components';
@@ -28,6 +27,7 @@ import { withDispatch, withSelect } from '@wordpress/data';
 import PublicizeConnectionVerify from './connection-verify';
 import PublicizeForm from './form';
 import PublicizeNoConnections from './no-connections';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class PublicizePanel extends Component {
 	render() {

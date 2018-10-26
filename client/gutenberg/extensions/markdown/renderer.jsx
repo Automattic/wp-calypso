@@ -4,8 +4,12 @@
  * External dependencies
  */
 import MarkdownIt from 'markdown-it';
-import { __ } from '@wordpress/i18n';
 import { RawHTML } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 /**
  * Module variables

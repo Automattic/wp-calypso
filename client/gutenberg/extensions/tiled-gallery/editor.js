@@ -3,7 +3,6 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 
 /**
@@ -11,6 +10,7 @@ import { createBlock, registerBlockType } from '@wordpress/blocks';
  */
 import TiledGalleryEdit from './edit.jsx';
 import TiledGallerySave from './save.jsx';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const blockType = 'jetpack/tiled-gallery';
 

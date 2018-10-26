@@ -8,7 +8,6 @@ import pick from 'lodash/pick';
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import {
 	BlockControls,
@@ -30,6 +29,7 @@ import {
 /**
  * Internal dependencies
  */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import TiledGallerySave from './save.jsx';
 
 /**

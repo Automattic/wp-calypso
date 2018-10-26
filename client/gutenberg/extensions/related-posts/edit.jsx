@@ -5,7 +5,6 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
-import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { BlockAlignmentToolbar, BlockControls, InspectorControls } from '@wordpress/editor';
 import { Button, PanelBody, RangeControl, ToggleControl, Toolbar } from '@wordpress/components';
@@ -14,6 +13,7 @@ import { withSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { ALIGNMENT_OPTIONS, DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
 
 class RelatedPostsEdit extends Component {

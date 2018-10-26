@@ -4,7 +4,6 @@
  * External dependencies
  */
 import includes from 'lodash/includes';
-import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 
 /**
@@ -12,6 +11,7 @@ import { registerBlockType } from '@wordpress/blocks';
  */
 import './style.scss';
 import edit from './edit';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { ALIGNMENT_OPTIONS, MAX_POSTS_TO_SHOW } from './constants';
 
 registerBlockType( 'jetpack/related-posts', {

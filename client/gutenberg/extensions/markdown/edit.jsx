@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { BlockControls, PlainText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 
@@ -11,6 +10,7 @@ import { Component } from '@wordpress/element';
  * Internal dependencies
  */
 import MarkdownRenderer from './renderer';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 /**
  * Module variables
