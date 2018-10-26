@@ -9,9 +9,10 @@
 import get from 'lodash/get';
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
-import apiFetch from '@wordpress/api-fetch';
 import { compose, withInstanceId } from '@wordpress/compose';
+import { Panel, PanelBody, PanelRow, Spinner } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -19,20 +20,36 @@ import { withSelect } from '@wordpress/data';
 import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
 
 class Edit extends Component {
-	componentDidUpdate( prevProps ) {
-		// Saves on block-deselect
-		// @TODO: Add save on post save?
-		// @FIXME: Do not allow multiple saves to be in flight
-		if ( prevProps.isSelected && ! this.props.isSelected ) {
-			this.savePayment();
-		}
+	constructor() {
+		super( ...arguments );
+		this.state = {
+			savingProduct: false,
+		};
 	}
 
-	componentDidMount() {
-		const { attributes, setAttributes } = this.props;
-		setAttributes( {
-			formattedPrice: this.formatPrice( attributes.price ),
-		} );
+	componentDidUpdate( prevProps ) {
+		const { simplePayment, attributes, setAttributes, isSelected, isSaving } = this.props;
+
+		if ( ! prevProps.simplePayment && simplePayment ) {
+			setAttributes( {
+				description: get( simplePayment, 'content.raw', attributes.description ),
+				currency: get( simplePayment, 'meta.spay_currency', attributes.currency ),
+				email: get( simplePayment, 'meta.spay_email', attributes.email ),
+				formattedPrice: get(
+					simplePayment,
+					'meta.spay_formatted_price',
+					attributes.formattedPrice
+				),
+				multiple: get( simplePayment, 'meta.spay_multiple', attributes.multiple ),
+				price: get( simplePayment, 'meta.spay_price', attributes.price ),
+				title: get( simplePayment, 'title.raw', attributes.title ),
+			} );
+		}
+
+		// Saves on block-deselect and when editor is saving a post
+		if ( ( prevProps.isSelected && ! isSelected ) || ( prevProps.isSaving && ! isSaving ) ) {
+			this.savePayment();
+		}
 	}
 
 	attributesToPost = attributes => {
@@ -54,28 +71,36 @@ class Edit extends Component {
 	};
 
 	savePayment = async () => {
+		if ( this.state.savingProduct ) {
+			return;
+		}
+
+		this.setState( { savingProduct: true } );
+
 		const { attributes, setAttributes } = this.props;
 		const { paymentId } = attributes;
 
 		// @TODO field validation
+
 		const path = `/wp/v2/${ SIMPLE_PAYMENTS_PRODUCT_POST_TYPE }/${ paymentId ? paymentId : '' }`;
-		console.log( path );
 
 		try {
-			const simplePayment = await apiFetch( {
+			// @TODO: then/catch
+			const { id } = await apiFetch( {
 				path,
 				method: 'POST',
 				data: this.attributesToPost( attributes ),
 			} );
 
-			console.log( '->POST:', simplePayment );
+			this.setState( { savingProduct: false } );
 
-			const { id } = simplePayment;
 			if ( id ) {
 				setAttributes( { paymentId: id } );
 			}
 		} catch ( err ) {
+			// @TODO: error handling
 			console.error( err );
+			this.setState( { savingProduct: false } );
 		}
 	};
 
@@ -125,7 +150,7 @@ class Edit extends Component {
 	};
 
 	render() {
-		const { attributes, instanceId } = this.props;
+		const { attributes, instanceId, simplePayment, isSelected } = this.props;
 		const {
 			paymentId,
 			title,
@@ -144,85 +169,148 @@ class Edit extends Component {
 		const multipleId = `${ baseId }__multiple`;
 		const emailId = `${ baseId }__email`;
 
+		if ( ! isSelected ) {
+			// @TODO component
+			return (
+				<Panel>
+					<PanelBody>
+						<Fragment>
+							<PanelRow>
+								<span>paymentId:</span>
+								<span>{ paymentId || 'N/A' }</span>
+							</PanelRow>
+							<PanelRow>
+								<span>title:</span>
+								<span>{ title || 'N/A' }</span>
+							</PanelRow>
+							<PanelRow>
+								<span>description:</span>
+								<span>{ description || 'N/A' }</span>
+							</PanelRow>
+							<PanelRow>
+								<span>currency:</span>
+								<span>{ currency || 'N/A' }</span>
+							</PanelRow>
+							<PanelRow>
+								<span>price:</span>
+								<span>{ price || 'N/A' }</span>
+							</PanelRow>
+							<PanelRow>
+								<span>formattedPrice:</span>
+								<span>{ formattedPrice || 'N/A' }</span>
+							</PanelRow>
+							<PanelRow>
+								<span>multiple:</span>
+								<span>{ multiple || 'N/A' }</span>
+							</PanelRow>
+							<PanelRow>
+								<span>email:</span>
+								<span>{ email || 'N/A' }</span>
+							</PanelRow>
+						</Fragment>
+					</PanelBody>
+				</Panel>
+			);
+		}
+
 		return (
-			<Fragment>
-				<div>ID: { paymentId || 'N/A' }</div>
-				<div>Formatted price: { formattedPrice }</div>
-				<div>
-					<label htmlFor={ titleId }>{ __( 'Title', 'jetpack' ) }</label>
-					<input id={ titleId } onChange={ this.handleTitleChange } type="text" value={ title } />
-				</div>
-				<div>
-					<label htmlFor={ descriptionId }>{ __( 'Description', 'jetpack' ) }</label>
-					<textarea
-						id={ descriptionId }
-						onChange={ this.handleDescriptionChange }
-						value={ description }
-					/>
-				</div>
-				<div>
-					<label htmlFor={ currencyId }>{ __( 'Currency', 'jetpack' ) }</label>
-					<input
-						id={ currencyId }
-						maxLength="3"
-						onChange={ this.handleCurrencyChange }
-						type="text"
-						value={ currency }
-					/>
-				</div>
-				<div>
-					<label htmlFor={ priceId }>{ __( 'Price', 'jetpack' ) }</label>
-					<input
-						id={ priceId }
-						min={ 1 }
-						onChange={ this.handlePriceChange }
-						step={ 1 }
-						type="number"
-						value={ price || '' }
-					/>
-				</div>
-				<div>
-					<label htmlFor={ multipleId }>
-						{ __( 'Allow multiple', 'jetpack' ) }
-						<input
-							checked={ Boolean( multiple ) }
-							id={ multipleId }
-							onChange={ this.handleMultipleChange }
-							type="checkbox"
-						/>
-					</label>
-				</div>
-				<div>
-					<label htmlFor={ emailId }>{ __( 'Email', 'jetpack' ) }</label>
-					<input id={ emailId } onChange={ this.handleEmailChange } type="email" value={ email } />
-				</div>
-			</Fragment>
+			<Panel>
+				<PanelBody>
+					<Fragment>
+						<PanelRow>
+							<span>paymentId: { paymentId || 'N/A' }</span>
+							<button onClick={ this.savePayment } style={ { float: 'right' } }>
+								Save
+							</button>
+						</PanelRow>
+						<PanelRow>
+							<label htmlFor={ titleId }>{ __( 'Title', 'jetpack' ) }</label>
+							<input
+								id={ titleId }
+								onChange={ this.handleTitleChange }
+								type="text"
+								value={ title }
+							/>
+						</PanelRow>
+						<PanelRow>
+							<label htmlFor={ descriptionId }>{ __( 'Description', 'jetpack' ) }</label>
+							<textarea
+								id={ descriptionId }
+								onChange={ this.handleDescriptionChange }
+								value={ description }
+							/>
+						</PanelRow>
+						<PanelRow>
+							<label htmlFor={ currencyId }>{ __( 'Currency', 'jetpack' ) }</label>
+							<input
+								id={ currencyId }
+								maxLength="3"
+								onChange={ this.handleCurrencyChange }
+								type="text"
+								value={ currency }
+							/>
+						</PanelRow>
+						<PanelRow>
+							<label htmlFor={ priceId }>{ __( 'Price', 'jetpack' ) }</label>
+							<input
+								id={ priceId }
+								min={ 1 }
+								onChange={ this.handlePriceChange }
+								step={ 1 }
+								type="number"
+								value={ price || '' }
+							/>
+						</PanelRow>
+						<span>formattedPrice:</span>
+						<span>{ formattedPrice || '' }</span>
+						<PanelRow>
+							<label htmlFor={ multipleId }>{ __( 'Allow multiple', 'jetpack' ) }</label>
+							<input
+								checked={ Boolean( multiple ) }
+								id={ multipleId }
+								onChange={ this.handleMultipleChange }
+								type="checkbox"
+							/>
+						</PanelRow>
+						<PanelRow>
+							<label htmlFor={ emailId }>{ __( 'Email', 'jetpack' ) }</label>
+							<input
+								id={ emailId }
+								onChange={ this.handleEmailChange }
+								type="email"
+								value={ email }
+							/>
+						</PanelRow>
+						<PanelRow>
+							{ paymentId && ! simplePayment ? (
+								<Spinner />
+							) : (
+								<details>
+									<summary>Simple payments object</summary>
+									<pre>{ JSON.stringify( simplePayment, undefined, 2 ) }</pre>
+								</details>
+							) }
+						</PanelRow>
+					</Fragment>
+				</PanelBody>
+			</Panel>
 		);
 	}
 }
 
-const applyWithSelect = withSelect( ( select, { attributes } ) => {
-	if ( attributes.paymentId ) {
-		const { getEntityRecord } = select( 'core' );
+const applyWithSelect = withSelect( ( select, props ) => {
+	const { paymentId } = props.attributes;
+	const { getEntityRecord } = select( 'core' );
+	const { isSavingPost } = select( 'core/editor' );
 
-		const simplePayment = getEntityRecord(
-			'postType',
-			SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
-			attributes.paymentId
-		);
+	const simplePayment = paymentId
+		? getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId )
+		: undefined;
 
-		console.log( '->GET:', simplePayment );
-
-		return {
-			content: get( simplePayment, 'content.raw', attributes.content ),
-			currency: get( simplePayment, 'meta.spay_currency', attributes.currency ),
-			email: get( simplePayment, 'meta.spay_email', attributes.email ),
-			formattedPrice: get( simplePayment, 'meta.spay_formatted_price', attributes.formattedPrice ),
-			multiple: get( simplePayment, 'meta.spay_multiple', attributes.multiple ),
-			price: get( simplePayment, 'meta.spay_price', attributes.price ),
-			title: get( simplePayment, 'title.raw', attributes.title ),
-		};
-	}
+	return {
+		isSaving: !! isSavingPost(),
+		simplePayment,
+	};
 } );
 
 export default compose( [ applyWithSelect, withInstanceId ] )( Edit );
