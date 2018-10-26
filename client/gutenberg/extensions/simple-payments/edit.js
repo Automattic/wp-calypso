@@ -28,6 +28,13 @@ class Edit extends Component {
 		}
 	}
 
+	componentDidMount() {
+		const { attributes, setAttributes } = this.props;
+		setAttributes( {
+			formattedPrice: this.formatPrice( attributes.price ),
+		} );
+	}
+
 	attributesToPost = attributes => {
 		const { title, description, currency, price, email, multiple } = attributes;
 
@@ -74,7 +81,10 @@ class Edit extends Component {
 
 	// @FIXME: toFixed should be replaced with proper decimal calculations. See simple-payments/form
 	// const { precision } = getCurrencyDefaults( values.currency );
-	formatPrice = price => ( price ? '$' + price.toFixed( 2 ) : '' );
+	formatPrice = price => {
+		price = parseInt( price, 10 );
+		return ! isNaN( price ) ? '$' + price.toFixed( 2 ) : '';
+	};
 
 	handleEmailChange = event => {
 		this.props.setAttributes( { email: event.target.value } );
@@ -102,7 +112,7 @@ class Edit extends Component {
 	handleCurrencyChange = event => {
 		this.props.setAttributes( {
 			currency: event.target.value,
-			formattedPrice: this.formatPrice( event.target.value ),
+			formattedPrice: this.formatPrice( this.props.attributes.price ),
 		} );
 	};
 
@@ -133,8 +143,6 @@ class Edit extends Component {
 		const priceId = `${ baseId }__price`;
 		const multipleId = `${ baseId }__multiple`;
 		const emailId = `${ baseId }__email`;
-
-		console.log( 'formattedPrice:', formattedPrice );
 
 		return (
 			<Fragment>
