@@ -133,25 +133,20 @@ export const fetchTaxRate = action => ( dispatch, getState ) => {
 	// we can drop that extra `(dispatch, getState) => ...` and simplify things
 	// here
 
-	if ( ! config.isEnabled( 'show-tax' ) ) {
-		log( 'not enabled' );
-		return [];
-	}
-
-	const postalCode = get( action, 'postalCode' ) || getPaymentPostalCode( getState() );
+	const state = getState();
+	const postalCode = get( action, 'postalCode' ) || getPaymentPostalCode( state );
 	if ( ! postalCode ) {
 		log( 'no postalCode' );
 		return [];
 	}
-
-	const countryCode = action.countryCode || getPaymentCountryCode( getState() );
-	const countriesWithTaxEnabled = { US: true };
 
 	if ( ! isValidPostalCode( postalCode ) ) {
 		log( 'invalid postal code', postalCode );
 		return [];
 	}
 
+	const countryCode = action.countryCode || getPaymentCountryCode( state );
+	const countriesWithTaxEnabled = { US: true };
 	if ( ! countriesWithTaxEnabled[ countryCode ] ) {
 		log( 'country not enabled', countryCode );
 		return [];
@@ -159,21 +154,20 @@ export const fetchTaxRate = action => ( dispatch, getState ) => {
 
 	log( 'fetching tax rate', countryCode, postalCode );
 
+	// Placeholder until the http request will trigger this
+	if ( config.isEnabled( 'show-tax' ) ) {
+		setTimeout( () =>
+			receiveSuccess( action, { combined_rate: dummyTaxRate( postalCode, countryCode ) } ).map(
+				dispatch
+			)
+		);
+	}
+
 	const tracksData = convertToSnakeCase( {
 		countryCode,
 		postalCode,
 		source_action: JSON.stringify( action ),
 	} );
-
-	// Placeholder until the http request will trigger this
-	setTimeout( () =>
-		receiveSuccess( action, { combined_rate: dummyTaxRate( postalCode, countryCode ) } ).map(
-			dispatch
-		)
-	);
-	// 	setPaymentTaxRate( dummyTaxRate( postalCode, countryCode ) ),
-	// dispatch(  );
-
 	return (
 		[
 			// Note: Once we get a path, we need to:
