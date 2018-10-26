@@ -20,6 +20,7 @@
  */
 import classnames from 'classnames';
 import { Component } from '@wordpress/element';
+import { Dashicon } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -57,8 +58,8 @@ class PublicizeSettingsButton extends Component {
 
 		return (
 			<div className={ className }>
+				<Dashicon icon="plus-alt" className="jetpack-publicize-add-icon" size={ 24 } />
 				<a onClick={ this.settingsClick } tabIndex="0">
-					<span className="jetpack-publicize-add-icon dashicons-plus-alt" />
 					{ __( 'Connect new service' ) }
 				</a>
 			</div>
