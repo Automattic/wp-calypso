@@ -17,7 +17,6 @@ import './style.scss';
 export class MapThemePicker extends Component {
 	render() {
 		const { options, value, onChange, label } = this.props;
-
 		const buttons = options.map( ( option, index ) => {
 			const classes = classnames(
 				'component__map-theme-picker__button',
@@ -25,7 +24,12 @@ export class MapThemePicker extends Component {
 				option.value === value ? 'is-selected' : ''
 			);
 			return (
-				<Button className={ classes } key={ index } onClick={ () => onChange( option.value ) }>
+				<Button
+					className={ classes }
+					title={ option.label }
+					key={ index }
+					onClick={ () => onChange( option.value ) }
+				>
 					{ option.label }
 				</Button>
 			);

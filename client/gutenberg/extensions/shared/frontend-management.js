@@ -35,6 +35,9 @@ export class FrontendManagement {
 		for ( const name in attributes ) {
 			const attribute = attributes[ name ];
 			data[ name ] = dataset[ name ];
+			if ( attribute.type === 'boolean' ) {
+				data[ name ] = data[ name ] === 'false' ? false : !! data[ name ];
+			}
 			if ( attribute.type === 'array' || attribute.type === 'object' ) {
 				try {
 					data[ name ] = JSON.parse( data[ name ] );

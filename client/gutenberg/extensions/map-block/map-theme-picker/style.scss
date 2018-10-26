@@ -3,9 +3,9 @@
 .component__map-theme-picker__button {
 	border: 1px solid lightgray;
 	border-radius: 100%;
-	width: 70px;
-	height: 70px;
-	margin: 5px;
+	width: 56px;
+	height: 56px;
+	margin: 2px;
 	text-indent: -9999px;
 	background-color: lightgray;
 	background-position: center center;
@@ -26,15 +26,9 @@
 		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-black_and_white.jpg' );
 	}
 	&.is-theme-satellite {
-		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-satellite.jpg' );
-	}
-	&.is-theme-satellite_with_features {
 		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-satellite_with_features.jpg' );
 	}
 	&.is-theme-terrain {
-		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-terrain.jpg' );
-	}
-	&.is-theme-terrain_with_features {
 		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-terrain_with_features.jpg' );
 	}
 }

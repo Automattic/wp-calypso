@@ -13,6 +13,7 @@ import {
 	PanelBody,
 	Placeholder,
 	Spinner,
+	ToggleControl,
 	Toolbar,
 	TextControl,
 	withNotices,
@@ -105,7 +106,7 @@ class MapEdit extends Component {
 	}
 	render() {
 		const { className, setAttributes, attributes, noticeUI, notices } = this.props;
-		const { map_style, points, zoom, map_center, marker_color, align } = attributes;
+		const { map_style, map_details, points, zoom, map_center, marker_color, align } = attributes;
 		const { addPointVisibility, api_key, apiKeyControl, apiState } = this.state;
 		const inspectorControls = (
 			<Fragment>
@@ -127,10 +128,15 @@ class MapEdit extends Component {
 					<PanelBody title={ __( 'Map Theme', 'jetpack' ) }>
 						<MapThemePicker
 							value={ map_style }
-							onChange={ value => {
-								setAttributes( { map_style: value } );
-							} }
+							onChange={ value => setAttributes( { map_style: value } ) }
 							options={ settings.map_styleOptions }
+						/>
+					</PanelBody>
+					<PanelBody title={ __( 'Map Details', 'jetpack' ) }>
+						<ToggleControl
+							label={ __( 'Show details on map', 'jetpack' ) }
+							checked={ map_details }
+							onChange={ value => setAttributes( { map_details: value } ) }
 						/>
 					</PanelBody>
 					<PanelColorSettings
@@ -202,6 +208,7 @@ class MapEdit extends Component {
 					<Map
 						ref={ this.mapRef }
 						map_style={ map_style }
+						map_details={ map_details }
 						points={ points }
 						zoom={ zoom }
 						map_center={ map_center }
