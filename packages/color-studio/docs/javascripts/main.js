@@ -8,7 +8,7 @@ const { saveAs } = require('file-saver')
 const toArray = require('lodash/toArray')
 const toSketchPalette = require('../../utilities/to-sketch-palette')
 
-const createPaletteColors = require('../../formula')
+const createPrimaryShades = require('../../utilities/create-primary-shades')
 const foundations = require('../../foundations')
 
 const COLOR_WHITE = '#ffffff'
@@ -50,7 +50,7 @@ function handleColor(color) {
 
 function handleButtonClick() {
   if (currentBaseColor) {
-    const colors = createPaletteColors(currentBaseColor).map(c => c.color)
+    const colors = createPrimaryShades(currentBaseColor).map(c => c.color)
     makeDownloadable(colors)
   }
 }
@@ -75,7 +75,7 @@ function handleFoundationButton() {
   const palettes = foundations.baseColors.map(color => {
     const palette = []
 
-    createPaletteColors(color.value).forEach(colorObject => {
+    createPrimaryShades(color.value).forEach(colorObject => {
       palette.unshift(colorObject.color)
     })
 
@@ -99,7 +99,7 @@ function handleRandomColor() {
 }
 
 function createColorTiles(color, name, pad) {
-  const colors = createPaletteColors(color, name)
+  const colors = createPrimaryShades(color).map(c => Object.assign({ name }, c))
   const html = colors.map(createColorTile).join('')
   return `<div class="d-flex bg-white${pad ? ' pt-1' : ''}">${html}</div>`
 }
