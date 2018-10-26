@@ -6,29 +6,45 @@
 /**
  * External dependencies
  */
+//import get from 'lodash/get';
+import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import { withInstanceId } from '@wordpress/compose';
+import { compose, withInstanceId } from '@wordpress/compose';
+import { withSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
 
-/**
- * @FIXME: toFixed should be replaced with proper decimal calculations. See simple-payments/form
- * const { precision } = getCurrencyDefaults( values.currency );
- */
-
 class Edit extends Component {
 	componentDidUpdate( prevProps ) {
-		// Save on deselect
+		// Saves on block-deselect
 		// @TODO: Add save on post save?
 		// @FIXME: Do not allow multiple saves to be in flight
 		if ( prevProps.isSelected && ! this.props.isSelected ) {
 			this.savePayment();
 		}
 	}
+
+	attributesToPost = attributes => {
+		const { title, description, currency, price, email, multiple } = attributes;
+
+		return {
+			title,
+			status: 'publish',
+			content: description,
+			featured_media: 0,
+			meta: {
+				spay_currency: currency,
+				spay_email: email,
+				spay_formatted_price: this.formatPrice( price ),
+				spay_multiple: multiple,
+				spay_price: price,
+			},
+		};
+	};
 
 	savePayment = async () => {
 		const { attributes, setAttributes } = this.props;
@@ -39,16 +55,26 @@ class Edit extends Component {
 		console.log( path );
 
 		try {
-			const { id } = await apiFetch( {
+			const simplePayment = await apiFetch( {
 				path,
 				method: 'POST',
-				body: JSON.stringify( attributesToPost( attributes ) ),
+				data: this.attributesToPost( attributes ),
 			} );
-			setAttributes( { paymentId: id } );
+
+			console.log( simplePayment );
+
+			const { id } = simplePayment;
+			if ( id ) {
+				setAttributes( { paymentId: id } );
+			}
 		} catch ( err ) {
 			console.error( err );
 		}
 	};
+
+	// @FIXME: toFixed should be replaced with proper decimal calculations. See simple-payments/form
+	// const { precision } = getCurrencyDefaults( values.currency );
+	formatPrice = price => ( price ? '$' + price.toFixed( 2 ) : '' );
 
 	handleEmailChange = event => {
 		this.props.setAttributes( { email: event.target.value } );
@@ -59,12 +85,29 @@ class Edit extends Component {
 	};
 
 	handlePriceChange = event => {
-		const price = parseFloat( event.target.value );
+		const price = parseInt( event.target.value, 10 );
 		if ( ! isNaN( price ) ) {
-			this.props.setAttributes( { price } );
+			this.props.setAttributes( {
+				formattedPrice: this.formatPrice( event.target.value ),
+				price,
+			} );
 		} else {
-			this.props.setAttributes( { price: undefined } );
+			this.props.setAttributes( {
+				formattedPrice: '',
+				price: undefined,
+			} );
 		}
+	};
+
+	handleCurrencyChange = event => {
+		this.props.setAttributes( {
+			currency: event.target.value,
+			formattedPrice: this.formatPrice( event.target.value ),
+		} );
+	};
+
+	handleMultipleChange = event => {
+		this.props.setAttributes( { multiple: event.target.checked ? 1 : 0 } );
 	};
 
 	handleTitleChange = event => {
@@ -73,7 +116,16 @@ class Edit extends Component {
 
 	render() {
 		const { attributes, instanceId } = this.props;
-		const { title, /*currency,*/ description, price, /*multiple,*/ email } = attributes;
+		const {
+			paymentId,
+			title,
+			currency,
+			description,
+			price,
+			formattedPrice,
+			multiple,
+			email,
+		} = attributes;
 		const baseId = `simplepayments-${ instanceId }`;
 		const titleId = `${ baseId }__title`;
 		const descriptionId = `${ baseId }__description`;
@@ -82,14 +134,18 @@ class Edit extends Component {
 		const multipleId = `${ baseId }__multiple`;
 		const emailId = `${ baseId }__email`;
 
+		console.log( 'formattedPrice:', formattedPrice );
+
 		return (
 			<Fragment>
+				<div>ID: { paymentId || 'N/A' }</div>
+				<div>Formatted price: { formattedPrice }</div>
 				<div>
-					<label htmlFor={ titleId }>Title</label>
+					<label htmlFor={ titleId }>{ __( 'Title' ) }</label>
 					<input id={ titleId } onChange={ this.handleTitleChange } type="text" value={ title } />
 				</div>
 				<div>
-					<label htmlFor={ descriptionId }>Description</label>
+					<label htmlFor={ descriptionId }>{ __( 'Description' ) }</label>
 					<textarea
 						id={ descriptionId }
 						onChange={ this.handleDescriptionChange }
@@ -97,28 +153,39 @@ class Edit extends Component {
 					/>
 				</div>
 				<div>
-					<label htmlFor={ currencyId }>Currency</label>
-					<input id={ currencyId } type="text" value="USD" />
+					<label htmlFor={ currencyId }>{ __( 'Currency' ) }</label>
+					<input
+						id={ currencyId }
+						maxLength="3"
+						onChange={ this.handleCurrencyChange }
+						type="text"
+						value={ currency }
+					/>
 				</div>
 				<div>
-					<label htmlFor={ priceId }>Price</label>
+					<label htmlFor={ priceId }>{ __( 'Price' ) }</label>
 					<input
 						id={ priceId }
-						min={ 0.01 }
+						min={ 1 }
 						onChange={ this.handlePriceChange }
-						step={ 0.01 }
+						step={ 1 }
 						type="number"
-						value={ price ? price.toFixed( 2 ) : '' }
+						value={ price || '' }
 					/>
 				</div>
 				<div>
 					<label htmlFor={ multipleId }>
-						Allow multiple
-						<input disabled id={ multipleId } type="checkbox" />
+						{ __( 'Allow multiple' ) }
+						<input
+							checked={ Boolean( multiple ) }
+							id={ multipleId }
+							onChange={ this.handleMultipleChange }
+							type="checkbox"
+						/>
 					</label>
 				</div>
 				<div>
-					<label htmlFor={ emailId }>Email</label>
+					<label htmlFor={ emailId }>{ __( 'Email' ) }</label>
 					<input id={ emailId } onChange={ this.handleEmailChange } type="email" value={ email } />
 				</div>
 			</Fragment>
@@ -126,38 +193,32 @@ class Edit extends Component {
 	}
 }
 
-export default withInstanceId( Edit );
+export default compose( [
+	withSelect( ( select, { attributes } ) => {
+		if ( attributes.paymentId ) {
+			// @TODO: read object when opening a block with paymentId
+			/*
+			const { getEntityRecord } = select( 'core' );
 
-function attributesToPost( attributes ) {
-	const { title, description, price, email } = attributes;
+			const simplePayment = getEntityRecord(
+				'postType',
+				SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
+				attributes.paymentId
+			);
 
-	return {
-		title,
-		status: 'publish',
-		content: description,
-		featured_media: '',
-		// @FIXME: meta isn't saving. Tried { spay_price: … } simple object literal and it didn't work either :(
-		meta: [
-			{
-				key: 'spay_price',
-				value: price,
-			},
-			{
-				key: 'spay_currency',
-				value: 'USD',
-			},
-			{
-				key: 'spay_multiple',
-				value: 0,
-			},
-			{
-				key: 'spay_email',
-				value: email,
-			},
-			{
-				key: 'spay_formatted_price',
-				value: '$' + price.toFixed( 2 ),
-			},
-		],
-	};
-}
+			console.log( '->getSimplePayment:', simplePayment );
+
+			return {
+				content: get( simplePayment, 'content.raw', '' ),
+				currency: get( simplePayment, 'meta.spay_currency', '' ),
+				email: get( simplePayment, 'meta.spay_email', '' ),
+				formattedPrice: get( simplePayment, 'meta.spay_formatted_price', '' ),
+				multiple: get( simplePayment, 'meta.spay_multiple', 0 ),
+				price: get( simplePayment, 'meta.spay_price', undefined ),
+				title: get( simplePayment, 'title.raw', '' ),
+			};
+			*/
+		}
+	} ),
+	withInstanceId,
+] )( Edit );
