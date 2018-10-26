@@ -14,8 +14,6 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fromApi = data => convertToCamelCase( data );
-
 export const fetchStats = action => {
 	const { siteId, statType, interval = 'week', aggregation = 'total' } = action;
 
@@ -64,7 +62,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/stats/google-my-business/index.j
 			fetch: fetchStats,
 			onSuccess: receiveStats,
 			onError: receiveStatsError,
-			fromApi,
+			fromApi: convertToCamelCase,
 		} ),
 	],
 } );

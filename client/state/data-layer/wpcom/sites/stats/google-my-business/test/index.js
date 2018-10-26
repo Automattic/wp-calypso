@@ -7,51 +7,9 @@
 /**
  * Internal dependencies
  */
-import { fetchStats, receiveStats, fromApi } from '..';
+import { fetchStats, receiveStats } from '..';
 import { receiveGoogleMyBusinessStats } from 'state/google-my-business/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-
-describe( '#fromApi', () => {
-	const data = {
-		time_zone: 'Europe/London',
-		metric_values: [
-			{
-				metric: 'QUERIES_DIRECT',
-				total_value: {
-					time_dimension: {
-						timeRange: {
-							endTime: '2018-04-19T23:59:59.900Z',
-							startTime: '2018-04-13T00:00:00Z',
-						},
-					},
-					metric_option: 'AGGREGATED_TOTAL',
-					value: 0,
-				},
-			},
-		],
-	};
-
-	test( 'should transform snake_case to camelCase', () => {
-		expect( fromApi( data ) ).toEqual( {
-			timeZone: 'Europe/London',
-			metricValues: [
-				{
-					metric: 'QUERIES_DIRECT',
-					totalValue: {
-						timeDimension: {
-							timeRange: {
-								endTime: '2018-04-19T23:59:59.900Z',
-								startTime: '2018-04-13T00:00:00Z',
-							},
-						},
-						metricOption: 'AGGREGATED_TOTAL',
-						value: 0,
-					},
-				},
-			],
-		} );
-	} );
-} );
 
 describe( '#fetchStats', () => {
 	test( 'should dispatch HTTP request to Google My Business stats endpoint', () => {
@@ -87,7 +45,7 @@ describe( '#receiveStats', () => {
 			statType: 'views',
 		};
 
-		const result = receiveStats( action, {
+		const data = {
 			time_zone: 'Europe/London',
 			metric_values: [
 				{
@@ -117,7 +75,9 @@ describe( '#receiveStats', () => {
 					},
 				},
 			],
-		} );
+		};
+
+		const result = receiveStats( action, data );
 
 		expect( result ).toEqual(
 			receiveGoogleMyBusinessStats(
@@ -125,37 +85,7 @@ describe( '#receiveStats', () => {
 				action.statType,
 				action.interval,
 				action.aggregation,
-				{
-					time_zone: 'Europe/London',
-					metric_values: [
-						{
-							metric: 'QUERIES_DIRECT',
-							total_value: {
-								time_dimension: {
-									timeRange: {
-										endTime: '2018-04-19T23:59:59.900Z',
-										startTime: '2018-04-13T00:00:00Z',
-									},
-								},
-								metric_option: 'AGGREGATED_TOTAL',
-								value: 0,
-							},
-						},
-						{
-							metric: 'QUERIES_INDIRECT',
-							total_value: {
-								time_dimension: {
-									timeRange: {
-										endTime: '2018-04-19T23:59:59.900Z',
-										startTime: '2018-04-13T00:00:00Z',
-									},
-								},
-								metric_option: 'AGGREGATED_TOTAL',
-								value: 1,
-							},
-						},
-					],
-				}
+				data
 			)
 		);
 	} );
