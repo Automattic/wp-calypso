@@ -70,6 +70,17 @@
 	@include breakpoint( ">660px" ) {
 		display: flex;
 	}
+
+	&.is-even {
+		flex-direction: row-reverse;
+
+		.reader-landing__feature-detail {
+			@include breakpoint( ">660px" ) {
+				padding-left: 0;
+				padding-right: 20px;
+			}
+		}
+	}
 }
 
 .reader-landing__feature-image, .reader-landing__feature-detail {
@@ -84,6 +95,7 @@
 	@include breakpoint( ">660px" ) {
 		align-self: center;
 		max-width: 50%;
+		width: inherit;
 	}
 }
 

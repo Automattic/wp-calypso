@@ -53,7 +53,7 @@ class ReaderLandingStepContent extends PureComponent {
 						</div>
 					</div>
 
-					<div className="reader-landing__feature">
+					<div className="reader-landing__feature is-even">
 						<img
 							src="/calypso/images/reader/reader-notifications.png"
 							alt={ translate( 'Screenshot of Reader notifications' ) }
@@ -89,7 +89,7 @@ class ReaderLandingStepContent extends PureComponent {
 						</div>
 					</div>
 
-					<div className="reader-landing__feature">
+					<div className="reader-landing__feature is-even">
 						<img
 							src="/calypso/images/reader/reader-conversations.png"
 							alt={ translate( 'Screenshot of Reader Conversations' ) }
