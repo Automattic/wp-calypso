@@ -10,11 +10,7 @@ import { get, isEmpty, keyBy, mapValues } from 'lodash';
  */
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 // import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	PAYMENT_COUNTRY_CODE_SET,
-	PAYMENT_POSTAL_CODE_SET,
-	PAYMENT_TAX_RATE_REQUEST,
-} from 'state/action-types';
+import { PAYMENT_COUNTRY_CODE_SET, PAYMENT_TAX_RATE_REQUEST } from 'state/action-types';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
 import debug from 'debug';
@@ -22,6 +18,7 @@ import {
 	setPaymentTaxRate,
 	setPaymentPostalCode,
 	setPaymentCountryCode,
+	requestPaymentTaxRate,
 } from 'state/ui/payment/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
@@ -90,10 +87,12 @@ export function setIfChanged( { dispatch, getState }, { countryCode, postalCode 
 
 	if ( countryCode !== undefined && countryCode !== getPaymentCountryCode( state ) ) {
 		dispatch( setPaymentCountryCode( countryCode ) );
+		dispatch( requestPaymentTaxRate() );
 	}
 
 	if ( postalCode !== undefined && postalCode !== getPaymentPostalCode( state ) ) {
 		dispatch( setPaymentPostalCode( postalCode ) );
+		dispatch( requestPaymentTaxRate() );
 	}
 }
 
@@ -145,7 +144,15 @@ export const fetchTaxRate = action => ( dispatch, getState ) => {
 		return [];
 	}
 
-	const countryCode = action.countryCode || getPaymentCountryCode( state );
+	// PAYMENT_COUNTRY_CODE_SET is wired up alongside
+	// FLUX_TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET, but fires first, so we need
+	// to fire on it, but only when it's a change.
+	const previousCountryCode = getPaymentCountryCode( state );
+	if ( action.type === PAYMENT_COUNTRY_CODE_SET && action.countryCode === previousCountryCode ) {
+		log( 'country unchanged', action.countryCode );
+		return [];
+	}
+	const countryCode = action.countryCode || previousCountryCode;
 	const countriesWithTaxEnabled = { US: true };
 	if ( ! countriesWithTaxEnabled[ countryCode ] ) {
 		log( 'country not enabled', countryCode );
@@ -200,7 +207,6 @@ const fetchTaxRateRequest = dispatchRequestEx( {
 
 registerHandlers( 'state/data-layer/wpcom/tax/index.js', {
 	[ PAYMENT_TAX_RATE_REQUEST ]: [ fetchTaxRateRequest ],
-	[ PAYMENT_POSTAL_CODE_SET ]: [ fetchTaxRateRequest ],
 	[ PAYMENT_COUNTRY_CODE_SET ]: [ fetchTaxRateRequest ],
 	[ 'FLUX_TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET' ]: [
 		handleFluxTransactionNewCreditCardDetailsSet,

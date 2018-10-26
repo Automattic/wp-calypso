@@ -7,6 +7,7 @@ import {
 	PAYMENT_COUNTRY_CODE_SET,
 	PAYMENT_POSTAL_CODE_SET,
 	PAYMENT_TAX_RATE_SET,
+	PAYMENT_TAX_RATE_REQUEST,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/tax';
@@ -47,5 +48,16 @@ export function setPaymentTaxRate( taxRate ) {
 	return {
 		type: PAYMENT_TAX_RATE_SET,
 		taxRate,
+	};
+}
+
+/**
+ * Returns an action object used to request the local sales tax rate from the server (US only).
+ *
+ * @return {Object} - The action object.
+ */
+export function requestPaymentTaxRate() {
+	return {
+		type: PAYMENT_TAX_RATE_REQUEST,
 	};
 }
