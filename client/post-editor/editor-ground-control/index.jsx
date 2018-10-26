@@ -195,7 +195,7 @@ export class EditorGroundControl extends React.Component {
 						/>
 						{ this.getVerificationNoticeLabel() }{' '}
 						<span className="editor-ground-control__email-verification-notice-more">
-							{ translate( 'Learuseore' ) }
+							{ translate( 'Learn More' ) }
 						</span>
 					</button>
 				) }
