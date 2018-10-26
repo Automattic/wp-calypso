@@ -46,6 +46,7 @@
 }
 
 .reader-landing__button-wrapper {
+
 	@include breakpoint( ">660px" ) {
 		text-align: center;
 	}
@@ -75,15 +76,22 @@
 		flex-direction: row-reverse;
 
 		.reader-landing__feature-detail {
+
 			@include breakpoint( ">660px" ) {
 				padding-left: 0;
-				padding-right: 20px;
 			}
+		}
+
+		.reader-landing__feature-image {
+			margin-left: 25px;
+			margin-right: 0;
 		}
 	}
 }
 
-.reader-landing__feature-image, .reader-landing__feature-detail {
+.reader-landing__feature-image,
+.reader-landing__feature-detail {
+
 	@include breakpoint( ">660px" ) {
 		flex: 50%;
 	}
@@ -94,17 +102,13 @@
 
 	@include breakpoint( ">660px" ) {
 		align-self: center;
-		max-width: 50%;
-		width: inherit;
+		margin: 0 25px 0 0;
+		width: 48%;
 	}
 }
 
 .reader-landing__feature-detail {
 	margin-top: 10px;
-
-	@include breakpoint( ">660px" ) {
-		padding-left: 20px;
-	}
 }
 
 .reader-landing__feature-heading {
