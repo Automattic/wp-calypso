@@ -1,8 +1,5 @@
 /** @format */
 
-/** @TODO remove */
-/* eslint-disable no-console */
-
 /**
  * External dependencies
  */
@@ -10,7 +7,7 @@ import get from 'lodash/get';
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
-import { Panel, PanelBody, PanelRow, Spinner } from '@wordpress/components';
+import { Panel, PanelBody, PanelRow } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 
@@ -99,7 +96,6 @@ class Edit extends Component {
 			}
 		} catch ( err ) {
 			// @TODO: error handling
-			console.error( err );
 			this.setState( { savingProduct: false } );
 		}
 	};
@@ -150,24 +146,24 @@ class Edit extends Component {
 	};
 
 	render() {
-		const { attributes, instanceId, simplePayment, isSelected } = this.props;
+		const { attributes, instanceId, isSelected } = this.props;
 		const {
-			paymentId,
-			title,
 			currency,
 			description,
-			price,
+			email,
 			formattedPrice,
 			multiple,
-			email,
+			paymentId,
+			price,
+			title,
 		} = attributes;
 		const baseId = `simplepayments-${ instanceId }`;
-		const titleId = `${ baseId }__title`;
-		const descriptionId = `${ baseId }__description`;
 		const currencyId = `${ baseId }__currency`;
-		const priceId = `${ baseId }__price`;
-		const multipleId = `${ baseId }__multiple`;
+		const descriptionId = `${ baseId }__description`;
 		const emailId = `${ baseId }__email`;
+		const multipleId = `${ baseId }__multiple`;
+		const priceId = `${ baseId }__price`;
+		const titleId = `${ baseId }__title`;
 
 		if ( ! isSelected ) {
 			// @TODO component
@@ -282,16 +278,6 @@ class Edit extends Component {
 								type="email"
 								value={ email }
 							/>
-						</PanelRow>
-						<PanelRow>
-							{ paymentId && ! simplePayment ? (
-								<Spinner />
-							) : (
-								<details>
-									<summary>Simple payments object</summary>
-									<pre>{ JSON.stringify( simplePayment, undefined, 2 ) }</pre>
-								</details>
-							) }
 						</PanelRow>
 					</Fragment>
 				</PanelBody>
