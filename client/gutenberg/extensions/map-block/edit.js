@@ -110,7 +110,11 @@ class MapEdit extends Component {
 		const inspectorControls = (
 			<Fragment>
 				<BlockControls>
-					<BlockAlignmentToolbar value={ align } onChange={ this.updateAlignment } />
+					<BlockAlignmentToolbar
+						value={ align }
+						onChange={ this.updateAlignment }
+						controls={ [ 'center', 'wide', 'full' ] }
+					/>
 					<Toolbar>
 						<IconButton
 							icon={ settings.markerIcon }
