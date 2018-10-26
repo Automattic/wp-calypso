@@ -79,6 +79,7 @@ class SiteImporterSitePreview extends React.Component {
 	};
 
 	render = () => {
+		const { siteUrl } = this.props;
 		const isLoading = this.props.isLoading || this.state.loadingPreviewImage;
 		const isError = this.state.sitePreviewFailed;
 
@@ -102,6 +103,7 @@ class SiteImporterSitePreview extends React.Component {
 							</Button>
 						</div>
 						<div className={ containerClass }>
+							<div className="site-importer__source-url">{ siteUrl }</div>
 							<div className="site-importer__site-preview-column-container">
 								<MiniSitePreview
 									className="site-importer__site-preview"
