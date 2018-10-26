@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -41,7 +40,7 @@ const INITIATE_FAILURE_RESPONSE = {
 describe( 'initiateTransferWithPluginZip', () => {
 	test( 'should dispatch an http request', () => {
 		const result = initiateTransferWithPluginZip( { siteId, pluginZip: 'foo' } );
-		expect( result[ 1 ] ).to.eql(
+		expect( result[ 1 ] ).toEqual(
 			http(
 				{
 					method: 'POST',
@@ -56,7 +55,7 @@ describe( 'initiateTransferWithPluginZip', () => {
 
 	test( 'should dispatch a tracks call', () => {
 		const result = initiateTransferWithPluginZip( { siteId, pluginZip: 'foo' } );
-		expect( result[ 0 ] ).to.eql(
+		expect( result[ 0 ] ).toEqual(
 			recordTracksEvent( 'calypso_automated_transfer_inititate_transfer', {
 				context: 'plugin_upload',
 			} )
@@ -67,12 +66,12 @@ describe( 'initiateTransferWithPluginZip', () => {
 describe( 'receiveResponse', () => {
 	test( 'should dispatch a status request', () => {
 		const result = receiveResponse( { siteId }, INITIATE_SUCCESS_RESPONSE );
-		expect( result[ 1 ] ).to.eql( fetchAutomatedTransferStatus( siteId ) );
+		expect( result[ 1 ] ).toEqual( fetchAutomatedTransferStatus( siteId ) );
 	} );
 
 	test( 'should dispatch a tracks call', () => {
 		const result = receiveResponse( { siteId }, INITIATE_SUCCESS_RESPONSE );
-		expect( result[ 0 ] ).to.eql(
+		expect( result[ 0 ] ).toEqual(
 			recordTracksEvent( 'calypso_automated_transfer_inititate_success', {
 				context: 'plugin_upload',
 			} )
@@ -81,12 +80,12 @@ describe( 'receiveResponse', () => {
 
 	test( 'should dispatch error notice on unsuccessful initiation', () => {
 		const result = receiveResponse( { siteId }, INITIATE_FAILURE_RESPONSE );
-		expect( result[ 1 ].notice.text ).to.eql( 'The uploaded file is not a valid plugin.' );
+		expect( result[ 1 ].notice.text ).toBe( 'The uploaded file is not a valid plugin.' );
 	} );
 
 	test( 'should dispatch a tracks call on unsuccessful initiation', () => {
 		const result = receiveResponse( { siteId }, INITIATE_FAILURE_RESPONSE );
-		expect( result[ 0 ] ).to.eql(
+		expect( result[ 0 ] ).toEqual(
 			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
 				context: 'plugin_upload',
 				error: 'api_success_false',
@@ -98,17 +97,17 @@ describe( 'receiveResponse', () => {
 describe( 'receiveError', () => {
 	test( 'should dispatch a plugin upload error', () => {
 		const result = receiveError( { siteId }, ERROR_RESPONSE );
-		expect( result[ 2 ] ).to.eql( pluginUploadError( siteId, ERROR_RESPONSE ) );
+		expect( result[ 2 ] ).toEqual( pluginUploadError( siteId, ERROR_RESPONSE ) );
 	} );
 
 	test( 'should dispatch an error notice', () => {
 		const result = receiveError( { siteId }, ERROR_RESPONSE );
-		expect( result[ 1 ].notice.text ).to.eql( 'The uploaded file is not a valid zip.' );
+		expect( result[ 1 ].notice.text ).toBe( 'The uploaded file is not a valid zip.' );
 	} );
 
 	test( 'should dispatch a tracks call', () => {
 		const result = receiveError( { siteId }, ERROR_RESPONSE );
-		expect( result[ 0 ] ).to.eql(
+		expect( result[ 0 ] ).toEqual(
 			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
 				context: 'plugin_upload',
 				error: 'invalid_input',
@@ -120,6 +119,6 @@ describe( 'receiveError', () => {
 describe( 'updateUploadProgress', () => {
 	test( 'should dispatch plugin upload progress update', () => {
 		const result = updateUploadProgress( { siteId }, { loaded: 200, total: 400 } );
-		expect( result ).to.eql( updatePluginUploadProgress( siteId, 50 ) );
+		expect( result ).toEqual( updatePluginUploadProgress( siteId, 50 ) );
 	} );
 } );
