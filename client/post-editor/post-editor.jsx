@@ -81,7 +81,7 @@ import { removep } from 'lib/formatting';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { pauseGuidedTour } from 'state/ui/guided-tours/selectors';
+import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
 
 export class PostEditor extends React.Component {
 	static propTypes = {
