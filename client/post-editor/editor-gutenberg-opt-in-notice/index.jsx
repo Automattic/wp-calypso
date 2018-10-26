@@ -49,9 +49,7 @@ class EditorGutenbergOptInNotice extends Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	showDialog: () => dispatch( showGutenbergOptInDialog() ),
-} );
+const mapDispatchToProps = { showDialog: showGutenbergOptInDialog };
 
 export default connect(
 	null,
