@@ -31,11 +31,8 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 		// Combines all the different blocks into one Edit script
 		editorScript = utilScripts.concat( editorScripts ).concat( viewScripts );
 
-		// Create a all the different View.js scripts into one View script
-		if ( ! isEmpty( viewScripts ) ) {
-			viewScriptEntry = { view:  utilScripts.concat( viewScripts ) };
-		}
-
+		// We explicitly don't create a view.js bundle since all the views are
+		// bundled into the editor and also available via the individual folders. 
 	} else {
 		const editorScript = path.join( inputDir, 'editor.js' );
 		const viewScript = path.join( inputDir, 'view.js' );
