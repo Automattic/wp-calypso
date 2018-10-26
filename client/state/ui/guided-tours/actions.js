@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { GUIDED_TOUR_UPDATE } from 'state/action-types';
+import { GUIDED_TOUR_UPDATE, GUIDED_TOUR_PAUSE, GUIDED_TOUR_RESUME } from 'state/action-types';
 
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
@@ -30,6 +30,7 @@ export function nextGuidedTourStep( { tour, stepName } ) {
 		type: GUIDED_TOUR_UPDATE,
 		tour,
 		stepName,
+		isPaused: false,
 	};
 }
 
@@ -57,4 +58,18 @@ function addSeenGuidedTour( getState, tourName, finished = false ) {
 
 export function resetGuidedToursHistory() {
 	return savePreference( 'guided-tours-history', [] );
+}
+
+export function pauseGuidedTour() {
+	return {
+		type: GUIDED_TOUR_PAUSE,
+		isPaused: true,
+	};
+}
+
+export function resumeGuidedTour() {
+	return {
+		type: GUIDED_TOUR_RESUME,
+		isPaused: false,
+	};
 }

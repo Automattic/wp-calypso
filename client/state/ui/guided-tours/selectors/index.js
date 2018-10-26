@@ -207,6 +207,7 @@ export const getGuidedTourState = createSelector(
 		const tourState = getRawGuidedTourState( state );
 		const tour = findEligibleTour( state );
 		const shouldShow = !! tour;
+		const isPaused = !! tourState.isPaused;
 
 		debug(
 			'tours: reached',
@@ -225,6 +226,7 @@ export const getGuidedTourState = createSelector(
 			...tourState,
 			tour,
 			shouldShow,
+			isPaused,
 		};
 	},
 	[ getRawGuidedTourState, getActionLog, preferencesLastFetchedTimestamp ]

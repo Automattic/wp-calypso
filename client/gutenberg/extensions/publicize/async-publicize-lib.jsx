@@ -13,23 +13,6 @@
 import apiFetch from '@wordpress/api-fetch';
 
 /**
- * Module variables
- */
-const { gutenberg_publicize_setup } = window;
-
-/**
- * Get connection form set up data.
- *
- * Retrieves array of filtered connection UI data (labels, checked value,
- * URLs, etc.) from window global. This data only updates on refresh.
- *
- * @return {object} List of filtered connection UI data.
- */
-export function getStaticPublicizeConnections() {
-	return JSON.parse( gutenberg_publicize_setup.staticConnectionList );
-}
-
-/**
  * Get up-to-date connection list data for post.
  *
  * Retrieves array of filtered connection UI data (labels, checked value).
@@ -38,11 +21,11 @@ export function getStaticPublicizeConnections() {
  *
  * @param {integer} postId ID of post to query connection defaults for.
  *
- * @return {Promise} Promise for connection request.
+ * @return {Promise} Promise for post connections request.
  */
 export function requestPublicizeConnections( postId ) {
 	return apiFetch( {
-		path: '/publicize/posts/' + postId.toString() + '/connections',
+		path: '/jetpack/v4/publicize/posts/' + postId.toString() + '/connections',
 	} );
 }
 
@@ -51,19 +34,21 @@ export function requestPublicizeConnections( postId ) {
  *
  * Gets list of possible social sites ('twitter', 'facebook, etc..')
  *
- * @return {object} List of possible services that can be connected to
+ * @return {Promise} Promise for connection services request.
  */
 export function getAllConnections() {
-	return JSON.parse( gutenberg_publicize_setup.allServices );
+	return apiFetch( {
+		path: '/jetpack/v4/publicize/services',
+	} );
 }
 
 /**
  * Verifies that all connections are still functioning.
  *
- * @return {object} List of possible services that can be connected to
+ * @return {Promise} Promise for connections request.
  */
 export function requestTestPublicizeConnections() {
 	return apiFetch( {
-		path: '/publicize/connections',
+		path: '/jetpack/v4/publicize/connections',
 	} );
 }

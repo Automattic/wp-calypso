@@ -36,15 +36,7 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 
 	.layout__content {
-		padding-left: 32px;
-		padding-top: 0;
-
-		@include breakpoint( '<960px' ) {
-			padding-left: 24px;
-		}
-		@include breakpoint( '<660px' ) {
-			padding-left: 0px;
-		}
+		padding: 0;
 	}
 
 	.edit-post-header {
@@ -66,6 +58,22 @@ $gutenberg-theme-toggle: #11a0d2;
 
 	.editor-inserter__menu .editor-inserter__search {
 		width: auto;
+	}
+
+	.edit-post-visual-editor .editor-post-title__block > div {
+		margin-left: 0px;
+		margin-right: 0px;
+
+		@media (min-width: 600px) {
+			margin-left: -2px;
+			margin-right: -2px;
+		}
+	}
+
+	.wp-block-heading {
+		h1, h2, h3, h4, h5, h6 {
+			font-weight: 600;
+		}
 	}
 
 	.editor-block-list__block {
@@ -108,4 +116,22 @@ $gutenberg-theme-toggle: #11a0d2;
 			z-index: 100000; // Above WP toolbar.
 		}
 	}
+
+	// UNSET CALYPSO DEFAULT STYLES
+	input[type='number'].components-range-control__number {
+		width: 50px;
+	}
+
+	input[type=checkbox],
+	input[type=radio] {
+		& + span {
+			margin-left: 0;
+		}
+	}
+
+	select {
+		background-image: none;
+		appearance: menulist-button;
+	}
+	// END Unset Calypso default styles
 }

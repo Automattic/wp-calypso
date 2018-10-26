@@ -12,6 +12,7 @@ import i18n from 'i18n-calypso';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
+import { abtest } from 'lib/abtest';
 import { generateFlows } from './flows-pure';
 
 const user = userFactory();
@@ -129,7 +130,7 @@ const Flows = {
 	filterFlowName,
 	filterDestination,
 
-	defaultFlowName: 'main',
+	defaultFlowName: abtest( 'improvedOnboarding' ) || 'main',
 	resumingFlow: false,
 
 	/**
@@ -179,7 +180,7 @@ const Flows = {
 	 * This gives the option to set the AB variation as late as possible in the
 	 * signup flow.
 	 *
-	 * Currently only the `main` flow is whitelisted.
+	 * Currently only the default flow is whitelisted.
 	 *
 	 * @param {String} flowName The current flow
 	 * @param {String} stepName The step that is being completed right now
@@ -200,7 +201,7 @@ const Flows = {
 		 * If there is need to test the first step in a flow,
 		 * the best way to do it is to check for:
 		 *
-		 * 	if ( 'main' === flowName && '' === stepName ) { ... }
+		 * 	if ( Flow.defaultFlowName === flowName && '' === stepName ) { ... }
 		 *
 		 * This will be fired at the beginning of the signup flow.
 		 */
@@ -219,8 +220,8 @@ const Flows = {
 	 * @return {Object} A filtered flow object
 	 */
 	getABTestFilteredFlow( flowName, flow ) {
-		// Only do this on the main flow
-		// if ( 'main' === flowName ) {
+		// Only do this on the default flow
+		// if ( Flow.defaultFlowName === flowName ) {
 		// }
 
 		return flow;

@@ -31,7 +31,7 @@ class GuidedTours extends Component {
 		return this.props.tourState !== nextProps.tourState;
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.requestedTour === 'reset' && this.props.requestedTour !== 'reset' ) {
 			this.props.resetGuidedToursHistory();
 		}
@@ -95,11 +95,11 @@ class GuidedTours extends Component {
 
 		return (
 			<RootChild>
-				<div className="guided-tours">
+				<div className="guided-tours__root">
 					<QueryPreferences />
 					<AllTours
 						sectionName={ this.props.sectionName }
-						shouldPause={ this.props.isSectionLoading }
+						shouldPause={ this.props.shouldPause }
 						tourName={ tourName }
 						stepName={ stepName }
 						lastAction={ this.props.lastAction }
@@ -114,15 +114,21 @@ class GuidedTours extends Component {
 	}
 }
 
+const getTourWhenState = state => when => !! when( state );
+
 export default connect(
-	state => ( {
-		sectionName: getSectionName( state ),
-		isSectionLoading: isSectionLoading( state ),
-		tourState: getGuidedTourState( state ),
-		isValid: when => !! when( state ),
-		lastAction: getLastAction( state ),
-		requestedTour: getInitialQueryArguments( state ).tour,
-	} ),
+	state => {
+		const tourState = getGuidedTourState( state );
+		const shouldPause = isSectionLoading( state ) || tourState.isPaused;
+		return {
+			sectionName: getSectionName( state ),
+			shouldPause,
+			tourState,
+			isValid: getTourWhenState( state ),
+			lastAction: getLastAction( state ),
+			requestedTour: getInitialQueryArguments( state ).tour,
+		};
+	},
 	{
 		nextGuidedTourStep,
 		quitGuidedTour,

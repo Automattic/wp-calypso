@@ -11,6 +11,7 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import { cartItems } from 'lib/cart-values';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
@@ -28,7 +29,11 @@ class SiteOrDomain extends Component {
 	constructor( props ) {
 		super( props );
 
-		if ( ! props.isLoggedIn ) {
+		if (
+			! props.isLoggedIn &&
+			get( props, 'signupDependencies.domainItem.extra.skipSiteOrDomain', false ) &&
+			'yes' === abtest( 'skipDomainOrSiteStep' )
+		) {
 			this.skipRender = true;
 			this.submitDomain( 'domain' );
 			this.submitDomainOnlyChoice();
