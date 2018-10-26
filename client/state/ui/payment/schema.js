@@ -4,7 +4,7 @@ export const paymentCountryCodeSchema = {
 	type: [ 'string', 'null' ],
 };
 
-export const paymentPostcodeSchema = {
+export const paymentPostalCodeSchema = {
 	type: [ 'string', 'null' ],
 };
 

@@ -5,7 +5,7 @@
  */
 import {
 	PAYMENT_COUNTRY_CODE_SET,
-	PAYMENT_POSTCODE_SET,
+	PAYMENT_POSTAL_CODE_SET,
 	PAYMENT_TAX_RATE_SET,
 } from 'state/action-types';
 
@@ -25,15 +25,15 @@ export function setPaymentCountryCode( countryCode ) {
 }
 
 /**
- * Returns an action object used to set the payment postcode (US only).
+ * Returns an action object used to set the payment postal code (US only).
  *
- * @param {string} postcode - The 5 digit postcode to set.
+ * @param {string} postalCode - The 5 digit postal code to set.
  * @return {Object} - The action object.
  */
-export function setPaymentPostcode( postcode ) {
+export function setPaymentPostalCode( postalCode ) {
 	return {
-		type: PAYMENT_POSTCODE_SET,
-		postcode,
+		type: PAYMENT_POSTAL_CODE_SET,
+		postalCode,
 	};
 }
 

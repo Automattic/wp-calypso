@@ -83,7 +83,7 @@ export const fetchTaxRate = action => ( dispatch, getState ) => {
 			// 	action
 			// ),
 			// TEMP: this belongs in the form, or at least in it's own middleware
-			setPaymentPostcode( postalCode ),
+			setPaymentPostalcode( postalCode ),
 			recordTracksEvent( 'calypso_tax_rate_request', tracksData ),
 		]
 			// if we drop the thunk we should be able to skip this dispatch step,
@@ -123,5 +123,7 @@ const fetchTaxRateRequest = dispatchRequestEx( {
 
 registerHandlers( 'state/data-layer/wpcom/tax/index.js', {
 	// [ PAYMENT_TAX_RATE_REQUEST ]: [ fetchTaxRateRequest ]
+	[ PAYMENT_POSTAL_CODE_SET ]: [ fetchTaxRateRequest ],
+	[ PAYMENT_COUNTRY_CODE_SET ]: [ fetchTaxRateRequest ],
 	[ 'FLUX_TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET' ]: [ fetchTaxRateRequest ],
 } );

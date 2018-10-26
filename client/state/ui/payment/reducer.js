@@ -5,11 +5,11 @@
  */
 import {
 	PAYMENT_COUNTRY_CODE_SET,
-	PAYMENT_POSTCODE_SET,
+	PAYMENT_POSTAL_CODE_SET,
 	PAYMENT_TAX_RATE_SET,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
-import { paymentCountryCodeSchema, paymentPostcodeSchema, paymentTaxRateSchema } from './schema';
+import { paymentCountryCodeSchema, paymentPostalCodeSchema, paymentTaxRateSchema } from './schema';
 
 /**
  * Returns the updated state after a country code has been set.
@@ -27,18 +27,18 @@ export const countryCode = createReducer(
 );
 
 /**
- * Returns the updated state after a postcode has been set.
+ * Returns the updated state after a postalCode has been set.
  *
  * @param  {Object} state - The current global state.
- * @param  {Object} action - The action object containing the new postcode.
+ * @param  {Object} action - The action object containing the new postalCode.
  * @return {Object} - The updated global state.
  */
-export const postcode = createReducer(
+export const postalCode = createReducer(
 	null,
 	{
-		[ PAYMENT_POSTCODE_SET ]: ( state, action ) => action.postcode,
+		[ PAYMENT_POSTAL_CODE_SET ]: ( state, action ) => action.postalCode,
 	},
-	paymentPostcodeSchema
+	paymentPostalCodeSchema
 );
 
 /**
@@ -58,6 +58,6 @@ export const taxRate = createReducer(
 
 export default combineReducers( {
 	countryCode,
-	postcode,
+	postalCode,
 	taxRate,
 } );
