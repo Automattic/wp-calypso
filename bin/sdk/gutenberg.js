@@ -4,9 +4,7 @@
  */
 const fs = require( 'fs' );
 const path = require( 'path' );
-const reduce = require( 'lodash/reduce' );
-const pickBy = require( 'lodash/pickBy' );
-const isEmpty = require( 'lodash/isEmpty' );
+const forEach = require( 'lodash/forEach' );
 
 exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	const baseConfig = getBaseConfig( {
@@ -21,18 +19,25 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	let viewScriptEntry;
 	if ( fs.existsSync( presetPath ) ) {
 		const presetBlocks = require( presetPath );
-
-	  // Helps split up each block into its own folder view script
-		viewBlocksPoints = reduce( presetBlocks, (obj, block) => ( { [ block + '/view'] : [path.join( inputDir, '../../'+ block +'/view.js' )]  } )  );
-
+		// Find all the utils scripts
 		utilScripts = fs.readdirSync( utilsPath ).map( utilFile => path.join( utilsPath, utilFile ) ).filter( fs.existsSync );
+
+		viewBlocksPoints = {}
+		// Helps split up each block into its own folder view script
+		forEach( presetBlocks, block => {
+				const viewScriptPath = path.join( inputDir, '../../'+ block +'/view.js' );
+				if ( fs.existsSync( viewScriptPath ) ) {
+					viewBlocksPoints = Object.assign( viewBlocksPoints, { [ block + '/view' ] : utilScripts.concat( [  viewScriptPath ] ) } );
+				}
+		} );
+
 		editorScripts = presetBlocks.map( block => path.join( inputDir, '../../'+ block +'/editor.js' ) ).filter( fs.existsSync );
 		viewScripts = presetBlocks.map( block => path.join( inputDir, '../../'+ block +'/view.js' ) ).filter( fs.existsSync );
 		// Combines all the different blocks into one Edit script
 		editorScript = utilScripts.concat( editorScripts ).concat( viewScripts );
 
 		// We explicitly don't create a view.js bundle since all the views are
-		// bundled into the editor and also available via the individual folders. 
+		// bundled into the editor and also available via the individual folders.
 	} else {
 		const editorScript = path.join( inputDir, 'editor.js' );
 		const viewScript = path.join( inputDir, 'view.js' );
