@@ -6,7 +6,7 @@
 /**
  * External dependencies
  */
-//import get from 'lodash/get';
+import get from 'lodash/get';
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
@@ -68,7 +68,7 @@ class Edit extends Component {
 				data: this.attributesToPost( attributes ),
 			} );
 
-			console.log( simplePayment );
+			console.log( '->POST:', simplePayment );
 
 			const { id } = simplePayment;
 			if ( id ) {
@@ -201,32 +201,30 @@ class Edit extends Component {
 	}
 }
 
-export default compose( [
-	withSelect( ( select, { attributes } ) => {
-		if ( attributes.paymentId ) {
-			// @TODO: read object when opening a block with paymentId
-			/*
-			const { getEntityRecord } = select( 'core' );
+const applyWithSelect = withSelect( ( select, { attributes } ) => {
+	if ( attributes.paymentId ) {
+		// @FIXME: Do not allow multiple reads to be in flight
 
-			const simplePayment = getEntityRecord(
-				'postType',
-				SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
-				attributes.paymentId
-			);
+		const { getEntityRecord } = select( 'core' );
 
-			console.log( '->getSimplePayment:', simplePayment );
+		const simplePayment = getEntityRecord(
+			'postType',
+			SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
+			attributes.paymentId
+		);
 
-			return {
-				content: get( simplePayment, 'content.raw', '' ),
-				currency: get( simplePayment, 'meta.spay_currency', '' ),
-				email: get( simplePayment, 'meta.spay_email', '' ),
-				formattedPrice: get( simplePayment, 'meta.spay_formatted_price', '' ),
-				multiple: get( simplePayment, 'meta.spay_multiple', 0 ),
-				price: get( simplePayment, 'meta.spay_price', undefined ),
-				title: get( simplePayment, 'title.raw', '' ),
-			};
-			*/
-		}
-	} ),
-	withInstanceId,
-] )( Edit );
+		console.log( '->GET:', simplePayment );
+
+		return {
+			content: get( simplePayment, 'content.raw', attributes.content ),
+			currency: get( simplePayment, 'meta.spay_currency', attributes.currency ),
+			email: get( simplePayment, 'meta.spay_email', attributes.email ),
+			formattedPrice: get( simplePayment, 'meta.spay_formatted_price', attributes.formattedPrice ),
+			multiple: get( simplePayment, 'meta.spay_multiple', attributes.multiple ),
+			price: get( simplePayment, 'meta.spay_price', attributes.price ),
+			title: get( simplePayment, 'title.raw', attributes.title ),
+		};
+	}
+} );
+
+export default compose( [ applyWithSelect, withInstanceId ] )( Edit );
