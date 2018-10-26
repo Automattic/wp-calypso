@@ -5,7 +5,7 @@ const values = {
   gray: '#707070',
   blue: '#016087',
   pink: '#c54475',
-  red: '#d21d3e',
+  red: '#cf1c3d',
   yellow: '#dbb422',
   green: '#0d7d2e'
 }
@@ -24,7 +24,7 @@ module.exports = {
     }),
     {
       name: 'Purple',
-      value: mix(values.blue, values.pink)
+      value: mix(values.blue, values.pink, 0.6)
     },
     createColorPair({
       name: 'Pink',
@@ -36,7 +36,7 @@ module.exports = {
     }),
     {
       name: 'Orange',
-      value: mix(values.red, values.yellow)
+      value: mix(values.red, values.yellow, 0.4)
     },
     createColorPair({
       name: 'Yellow',
