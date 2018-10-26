@@ -70,7 +70,6 @@
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
 		"gutenberg": true,
-		"gutenberg/block/simple-payments": false,
 		"gutenberg/opt-in": true,
 		"help": true,
 		"help/courses": true,
