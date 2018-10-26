@@ -13,9 +13,9 @@ import { get, assign } from 'lodash';
  * Internal dependencies
  */
 
-import { settings } from './settings.js';
 import MapMarker from './map-marker/';
 import InfoWindow from './info-window/';
+import { googleMapFormatter } from './google-map-formatter/';
 
 // @TODO: replace with import from lib/load-script after resolution of https://github.com/Automattic/wp-calypso/issues/27821
 import { loadScript } from './load-script';
@@ -147,13 +147,18 @@ export class Map extends Component {
 	pointsChanged() {
 		this.setBoundsByMarkers();
 	}
-	map_styleChanged() {
+	mapStyleAndDetailsChanged() {
 		const { map, google } = this.state;
-
 		map.setOptions( {
 			styles: this.getMapStyle(),
 			mapTypeId: google.maps.MapTypeId[ this.getMapType() ],
 		} );
+	}
+	map_styleChanged() {
+		this.mapStyleAndDetailsChanged();
+	}
+	map_detailsChanged() {
+		this.mapStyleAndDetailsChanged();
 	}
 	// Event handling
 	onMarkerClick( marker ) {
@@ -224,10 +229,20 @@ export class Map extends Component {
 		map.setOptions( { zoomControl: true } );
 	}
 	getMapStyle() {
-		return settings.styles[ this.props.map_style ].styles;
+		const { map_style, map_details } = this.props;
+		return googleMapFormatter( map_style, map_details );
 	}
 	getMapType() {
-		return settings.styles[ this.props.map_style ].map_type;
+		const { map_style } = this.props;
+		switch ( map_style ) {
+			case 'satellite':
+				return 'HYBRID';
+			case 'terrain':
+				return 'TERRAIN';
+			case 'black_and_white':
+			default:
+				return 'ROADMAP';
+		}
 	}
 	getMarkerIcon() {
 		const { marker_color } = this.props;
