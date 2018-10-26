@@ -25,7 +25,7 @@ import apiFetch from '@wordpress/api-fetch';
  */
 export function requestPublicizeConnections( postId ) {
 	return apiFetch( {
-		path: '/publicize/posts/' + postId.toString() + '/connections',
+		path: '/jetpack/v4/publicize/posts/' + postId.toString() + '/connections',
 	} );
 }
 
@@ -38,7 +38,7 @@ export function requestPublicizeConnections( postId ) {
  */
 export function getAllConnections() {
 	return apiFetch( {
-		path: '/publicize/services',
+		path: '/jetpack/v4/publicize/services',
 	} );
 }
 
@@ -49,6 +49,6 @@ export function getAllConnections() {
  */
 export function requestTestPublicizeConnections() {
 	return apiFetch( {
-		path: '/publicize/connections',
+		path: '/jetpack/v4/publicize/connections',
 	} );
 }
