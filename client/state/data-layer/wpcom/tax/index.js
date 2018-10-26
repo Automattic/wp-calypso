@@ -128,8 +128,8 @@ export const receiveError = ( action, { error: code, message } ) => [
 ];
 
 export const fetchTaxRate = action => ( dispatch, getState ) => {
-	// We need to return a thunk here to get the countryCode.
-	// If we can have the original action pass the postalCode + countryCode
+	// We need to return a thunk here to get missing fields out of the state,
+	// but if we can have the source  action pass the postalCode + countryCode
 	// we can drop that extra `(dispatch, getState) => ...` and simplify things
 	// here
 
