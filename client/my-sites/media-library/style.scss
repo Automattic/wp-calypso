@@ -112,6 +112,17 @@
 		min-width: 65px;
 		margin-bottom: 17px;
 
+		&.is-single-source {
+			min-width: 50px;
+			width: 50px;
+			.media-library__source-button.is-borderless {
+				&:hover, &:focus {
+					color: var( --button-is-borderless-color );
+					cursor: default;
+				}
+			}
+		}
+
 		@include breakpoint( "<480px" ) {
 			align-items: normal;
 			padding-top: 6px;
