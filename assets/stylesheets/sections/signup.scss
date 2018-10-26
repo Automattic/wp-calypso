@@ -4,6 +4,7 @@
 @import '../shared/mixins/hide-content-accessibly';
 @import '../shared/mixins/placeholder';
 @import '../shared/typography';
+@import '../shared/functions/z-index';
 
 @import 'signup/style';
 @import 'signup/flow-progress-indicator/style';
