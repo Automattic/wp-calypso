@@ -261,8 +261,10 @@ class Edit extends Component {
 								value={ price || '' }
 							/>
 						</PanelRow>
-						<span>formattedPrice:</span>
-						<span>{ formattedPrice || '' }</span>
+						<PanelRow>
+							<span>formattedPrice:</span>
+							<span>{ formattedPrice || '' }</span>
+						</PanelRow>
 						<PanelRow>
 							<label htmlFor={ multipleId }>{ __( 'Allow multiple', 'jetpack' ) }</label>
 							<input
