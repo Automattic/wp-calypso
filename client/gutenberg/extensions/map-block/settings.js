@@ -20,7 +20,7 @@ export const settings = {
 		</svg>
 	),
 	category: 'common',
-	keywords: [ __( 'map', 'jetpack' ), __( 'jetpack', 'jetpack' ), __( 'jetpack' ) ],
+	keywords: [ __( 'map', 'jetpack' ), __( 'location', 'jetpack' ), 'jetpack' ],
 	attributes: {
 		align: {
 			type: 'string',
