@@ -4,7 +4,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { debounce, isArray, map } from 'lodash';
+import { debounce, includes, isArray, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +22,9 @@ export class MediaUpload extends Component {
 	};
 
 	componentDidMount() {
-		MediaStore.on( 'change', this.updateMedia );
+		if ( includes( this.props.allowedTypes, 'image' ) ) {
+			MediaStore.on( 'change', this.updateMedia );
+		}
 		MediaActions.setLibrarySelectedItems( this.props.siteId, this.getSelectedItems() );
 	}
 
