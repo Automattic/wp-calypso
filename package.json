@@ -67,6 +67,7 @@
     "bounding-client-rect": "1.0.5",
     "browser-filesaver": "1.1.1",
     "buble": "0.19.4",
+    "cancelable-promise": "2.4.1",
     "chalk": "2.4.1",
     "chokidar": "2.0.4",
     "chrono-node": "1.3.5",

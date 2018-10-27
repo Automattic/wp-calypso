@@ -4404,6 +4404,11 @@
         }
       }
     },
+    "cancelable-promise": {
+      "version": "2.4.1",
+      "resolved": "https://registry.npmjs.org/cancelable-promise/-/cancelable-promise-2.4.1.tgz",
+      "integrity": "sha512-SgJduvUzurSwFSHT+5cf7Z0aUeQfMUUI66BXYqWi5BMoOTR/AcqiU7kpRoSyTCsCWg0yZgEojTdXloE7bin6GA=="
+    },
     "caniuse-api": {
       "version": "1.6.1",
       "resolved": "https://registry.npmjs.org/caniuse-api/-/caniuse-api-1.6.1.tgz",

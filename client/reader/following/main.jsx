@@ -23,6 +23,8 @@ import { getSearchPlaceholderText } from 'reader/search/utils';
 import Banner from 'components/banner';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 
+import { useApi } from 'hooks';
+
 function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {
 		query,
@@ -48,9 +50,18 @@ const FollowingStream = props => {
 	const now = new Date();
 	const showRegistrationMsg = props.userInUSA && now < lastDayForVoteBanner;
 
+	const { data, loading, error } = useApi( '1.1', '/read/feed/123456' );
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Stream { ...props }>
+			<div>
+				loading: { loading ? 'loading...' : 'loaded' }
+				<br />
+				error: { error ? 'error' : 'ok' }
+				<br />
+				data: { data && JSON.stringify( data ) }
+			</div>
 			{ config.isEnabled( 'reader/following-intro' ) && <FollowingIntro /> }
 			{ showRegistrationMsg && (
 				<Banner
