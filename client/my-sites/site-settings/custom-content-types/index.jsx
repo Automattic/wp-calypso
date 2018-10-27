@@ -158,14 +158,7 @@ class CustomContentTypes extends Component {
 		const { translate } = this.props;
 		return (
 			<Card className="custom-content-types site-settings">
-				<FormFieldset>
-					<SupportInfo
-						text={ translate( 'Showcases your portfolio or displays testimonials on your site.' ) }
-						link="https://support.wordpress.com/custom-post-types/"
-						privacyLink={ false }
-					/>
-					{ this.renderBlogPostSettings() }
-				</FormFieldset>
+				<FormFieldset>{ this.renderBlogPostSettings() }</FormFieldset>
 
 				<FormFieldset>
 					<SupportInfo
