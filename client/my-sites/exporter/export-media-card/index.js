@@ -34,7 +34,7 @@ class ExportMediaCard extends Component {
 					className="export-media-card__content export-card"
 					headerText={ translate( 'Export media library' ) }
 					mainText={ translate(
-						'Download all the media library files (images, videos, audio and documents) of your site.'
+						'Download all the media library files (images, videos, audio and documents) from your site.'
 					) }
 					buttonText={ translate( 'Download' ) }
 					buttonHref={ mediaExportUrl }
