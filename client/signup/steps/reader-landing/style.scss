@@ -76,15 +76,16 @@
 		flex-direction: row-reverse;
 
 		.reader-landing__feature-detail {
-
 			@include breakpoint( ">660px" ) {
 				padding-left: 0;
 			}
 		}
 
 		.reader-landing__feature-image {
-			margin-left: 25px;
-			margin-right: 0;
+			@include breakpoint( ">660px" ) {
+				margin-left: 25px;
+				margin-right: 0;
+			}
 		}
 	}
 }
