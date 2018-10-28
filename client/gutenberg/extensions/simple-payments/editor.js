@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { registerBlockType } from '@wordpress/blocks';
+import { addFilter, registerBlockType } from '@wordpress/blocks';
 import GridiconMoney from 'gridicons/dist/money';
 
 /**
@@ -13,7 +13,43 @@ import GridiconMoney from 'gridicons/dist/money';
 import edit from './edit';
 import save from './save';
 
-registerBlockType( 'jetpack/simple-payments', {
+const blockName = 'jetpack/simple-payments';
+
+/*
+ * Ensure we can load blocks containing valid shortcode even without attributes:
+ *
+ * Turns this:
+ * ```
+ * <!-- wp:jetpack/simple-payments -->
+ * [simple-payment id="324"]
+ * <!-- /wp:jetpack/simple-payments -->
+ * ```
+ *
+ * Into:
+ * ```
+ * <!-- wp:jetpack/simple-payments {"paymentId":"324"} -->
+ * [simple-payment id="324"]
+ * <!-- /wp:jetpack/simple-payments -->
+ * ```
+ */
+const getBlockAttributes = ( attributes, blockType, blockContent ) => {
+	if ( blockType.name !== blockName ) {
+		return attributes;
+	}
+
+	const shortcode = /\[simple-payment\s+id="(\d+)"\]/;
+	const [ , paymentId ] = shortcode.exec( blockContent );
+
+	if ( paymentId ) {
+		attributes.paymentId = paymentId;
+	}
+
+	return attributes;
+};
+
+addFilter( 'blocks.getBlockAttributes', `${ blockName }-block-attributes`, getBlockAttributes );
+
+registerBlockType( blockName, {
 	title: __( 'Payment button', 'jetpack' ),
 
 	description: __(
@@ -54,7 +90,7 @@ registerBlockType( 'jetpack/simple-payments', {
 					},
 				},
 			},
-		]
+		],
 	},
 
 	edit,
