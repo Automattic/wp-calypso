@@ -307,14 +307,12 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		autoContinue: true,
 	};
 
-	if ( config.isEnabled( 'signup/reader' ) ) {
-		flows.reader = {
-			steps: [ 'reader-landing', 'user' ],
-			destination: '/',
-			description: 'Signup for an account and migrate email subs to the reader.',
-			lastModified: '2018-09-04',
-		};
-	}
+	flows.reader = {
+		steps: [ 'reader-landing', 'user' ],
+		destination: '/',
+		description: 'Signup for an account and migrate email subs to the Reader.',
+		lastModified: '2018-10-29',
+	};
 
 	return flows;
 }
