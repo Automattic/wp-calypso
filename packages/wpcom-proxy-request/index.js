@@ -45,6 +45,19 @@ const postStrings = ( () => {
 } )();
 
 /**
+ * Test if the browser supports constructing a new `File` object. Not present on Edge and IE.
+ */
+const supportsFileConstructor = ( () => {
+	try {
+		// eslint-disable-next-line no-new
+		new File( [ 'a' ], 'test.jpg', { type: 'image/jpeg' } );
+		return true;
+	} catch ( e ) {
+		return false;
+	}
+} )();
+
+/**
  * Reference to the <iframe> DOM element.
  * Gets set in the install() function.
  */
@@ -61,17 +74,6 @@ let loaded = false;
  * iframe occurs.
  */
 let buffered;
-
-/**
- * Firefox apparently doesn't like sending `File` instances cross-domain.
- * It results in a "DataCloneError: The object could not be cloned." error.
- * Apparently this is for "security purposes" but it's actually silly if that's
- * the argument because we can just read the File manually into an ArrayBuffer
- * and we can work around this "security restriction".
- *
- * See: https://bugzilla.mozilla.org/show_bug.cgi?id=722126#c8
- */
-let hasFileSerializationBug = false;
 
 /**
  * In-flight API request XMLHttpRequest dummy "proxy" instances.
@@ -180,50 +182,19 @@ const request = ( originalParams, fn ) => {
 function submitRequest( params ) {
 	debug( 'sending API request to proxy <iframe> %o', params );
 
-	if ( hasFileSerializationBug && hasFile( params ) ) {
-		postAsArrayBuffer( params );
-	} else {
-		try {
-			iframe.contentWindow.postMessage( postStrings ? JSON.stringify( params ) : params, proxyOrigin );
-		} catch ( e ) {
-			// were we trying to serialize a `File`?
-			if ( hasFile( params ) ) {
-				debug( 'this browser has the File serialization bug' );
-				// cache this check for the next API request
-				hasFileSerializationBug = true;
-				postAsArrayBuffer( params );
-			} else {
-				// not interested, rethrow
-				throw e;
-			}
-		}
+	// `formData` needs to be patched if it contains `File` objects to work around
+	// a Chrome bug. See `patchFileObjects` description for more details.
+	if ( params.formData && supportsFileConstructor ) {
+		patchFileObjects( params.formData );
 	}
-}
 
-/**
- * Returns `true` if there's a `File` instance in the `params`, or `false`
- * otherwise.
- *
- * @param {Object} params - request parameter
- * @return {Boolean} `true` if there's a `File`
- * @private
- */
-function hasFile( params ) {
-	const formData = params.formData;
-	if ( formData && formData.length > 0 ) {
-		for ( let i = 0; i < formData.length; i++ ) {
-			if ( isFile( formData[ i ][ 1 ] ) ) {
-				return true;
-			}
-		}
-	}
-	return false;
+	iframe.contentWindow.postMessage( postStrings ? JSON.stringify( params ) : params, proxyOrigin );
 }
 
 /**
  * Returns `true` if `v` is a DOM File instance, `false` otherwise.
  *
- * @param {Mixed} v - instance to analize
+ * @param {Mixed} v - instance to analyze
  * @return {Boolean} `true` if `v` is a DOM File instance
  * @private
  */
@@ -231,87 +202,40 @@ function isFile( v ) {
 	return v && Object.prototype.toString.call( v ) === '[object File]';
 }
 
-/**
- * Turns all `File` instances into `ArrayBuffer` objects in order to serialize
- * the data over the iframe `postMessage()` call.
- *
- * @param {Object} params
- * @private
+/*
+ * Find a `File` object in a form data value. It can be either the value itself, or
+ * in a `fileContents` property of the value.
  */
-
-function postAsArrayBuffer( params ) {
-	debug( 'converting File instances to ArrayBuffer before invoking postMessage()' );
-
-	const formData = params.formData;
-	let count = 0;
-	let called = false;
-	for ( let i = 0; i < formData.length; i++ ) {
-		const val = formData[ i ][ 1 ];
-		if ( isFile( val ) ) {
-			count++;
-			fileToArrayBuffer( val, i, onLoadFile );
-		}
+function getFileValue( v ) {
+	if ( isFile( v ) ) {
+		return v;
 	}
 
-	if ( 0 === count ) {
-		postMessage();
+	if ( typeof v === 'object' && isFile( v.fileContents ) ) {
+		return v.fileContents;
 	}
 
-	function onLoadFile( err, file, j ) {
-		if ( called ) {
-			return;
-		}
-
-		if ( err ) {
-			called = true;
-			reject( err );
-			return;
-		}
-
-		formData[ j ][ 1 ] = file;
-
-		count--;
-		if ( 0 === count ) {
-			postMessage();
-		}
-	}
-
-	function postMessage() {
-		debug( 'finished reading all Files' );
-		iframe.contentWindow.postMessage( params, proxyOrigin );
-	}
+	return null;
 }
 
 /**
- * Turns a `File` instance into a regular JavaScript object with `fileContents`
- * as an ArrayBuffer, and `fileName` and `mimeTypes`.
+ * Finds all `File` instances in `formData` and creates a new `File` instance whose storage is
+ * forced to be a `Blob` instead of being backed by a file on disk. That works around a bug in
+ * Chrome where `File` instances with `has_backing_file` flag cannot be sent over a process
+ * boundary when site isolation is on.
  *
- * @param {File} file
- * @param {Number} index
- * @param {Function} fn
- * @private
+ * @see https://bugs.chromium.org/p/chromium/issues/detail?id=866805
+ * @see https://bugs.chromium.org/p/chromium/issues/detail?id=631877
+ *
+ * @param {Array} formData Form data to patch
  */
-
-function fileToArrayBuffer( file, index, fn ) {
-	const reader = new FileReader();
-
-	reader.onload = function( e ) {
-		const arrayBuffer = e.target.result;
-		debug( 'finished reading file %o (%o bytes)', file.name, arrayBuffer.byteLength );
-
-		fn( null, {
-			fileContents: arrayBuffer,
-			fileName: file.name,
-			mimeType: file.type
-		}, index );
-	};
-
-	reader.onerror = function( err ) {
-		debug( 'got error reading file %o (%o bytes)', file.name, err );
-		fn( err );
-	};
-
-	reader.readAsArrayBuffer( file );
+function patchFileObjects( formData ) {
+	for ( let i = 0; i < formData.length; i++ ) {
+		const val = getFileValue( formData[ i ][ 1 ] );
+		if ( val ) {
+			formData[ i ][ 1 ] = new File( [ val ], val.name, { type: val.type } );
+		}
+	}
 }
 
 /**

@@ -12,14 +12,15 @@
   "scripts": {
     "prepublish": "make build"
   },
-  "version": "5.0.0",
+  "version": "5.0.1",
   "author": "Automattic, Inc.",
   "contributors": [
     "Damian Suarez <rdsuarez@gmail.com>",
     "Nathan Rajlich <nathan@automattic.com>",
     "Andy Skelton <andy@automattic.com>",
     "Gary Pendergast <gary@pento.net>",
-    "Ben Lowery <blowery@automattic.com>"
+    "Ben Lowery <blowery@automattic.com>",
+    "Jarda Snajdr <jsnajdr@gmail.com>"
   ],
   "files": [
     "build",
