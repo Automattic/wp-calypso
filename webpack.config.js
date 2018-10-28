@@ -213,10 +213,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 							loader: 'sass-loader',
 							options: {
 								includePaths: [ path.join( __dirname, 'client' ) ],
-								data: `@import '${ path.join(
-									__dirname,
-									'assets/stylesheets/shared/_utils.scss'
-								) }';`,
+								data: `@import 'assets/stylesheets/shared/utils';`,
 							},
 						},
 					],
