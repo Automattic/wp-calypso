@@ -331,6 +331,7 @@ const SecurePaymentForm = createReactClass( {
 				<WebPaymentBox
 					cart={ this.props.cart }
 					transaction={ this.props.transaction }
+					transactionStep={ this.props.transaction.step }
 					onSubmit={ this.handlePaymentBoxSubmit }
 					translate={ this.props.translate }
 				>

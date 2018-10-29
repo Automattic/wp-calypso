@@ -20,6 +20,14 @@ import cartValues from 'lib/cart-values';
 import wpcom from 'lib/wp';
 import { newCardPayment } from 'lib/store-transactions';
 import { setPayment } from 'lib/upgrades/actions';
+import {
+	BEFORE_SUBMIT,
+	INPUT_VALIDATION,
+	RECEIVED_PAYMENT_KEY_RESPONSE,
+	RECEIVED_WPCOM_RESPONSE,
+	SUBMITTING_PAYMENT_KEY_REQUEST,
+	SUBMITTING_WPCOM_REQUEST,
+} from 'lib/store-transactions/step-types';
 
 /**
  * Web Payment method identifier.
@@ -102,8 +110,73 @@ export class WebPaymentBox extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
 		transaction: PropTypes.object.isRequired,
+		transactionStep: PropTypes.object.isRequired,
 		onSubmit: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+	};
+
+        buttonState = () => {
+		const { transactionStep, translate } = this.props;
+
+		const defaultState = () => {
+			return {
+				disabled: false,
+				text: translate( 'Select a payment card', {
+					context: 'Loading state on /checkout',
+				} ),
+			};
+		};
+		const ongoingState = () => {
+			return {
+				disabled: true,
+				text: translate( 'Sending your purchase', {
+					context: 'Loading state on /checkout',
+				} ),
+			};
+		};
+		const completingState = () => {
+			return {
+				disabled: true,
+				text: translate( 'Completing your purchase', {
+					context: 'Loading state on /checkout',
+				} ),
+			};
+		};
+
+		switch ( transactionStep.name ) {
+			case BEFORE_SUBMIT:
+				return defaultState();
+
+			case INPUT_VALIDATION:
+				if ( transactionStep.error ) {
+					return defaultState();
+				}
+
+				return ongoingState();
+
+			case SUBMITTING_PAYMENT_KEY_REQUEST:
+				return ongoingState();
+
+			case RECEIVED_PAYMENT_KEY_RESPONSE:
+				if ( transactionStep.error ) {
+					return defaultState();
+				}
+
+				return ongoingState();
+
+			case SUBMITTING_WPCOM_REQUEST:
+				return completingState();
+
+			case RECEIVED_WPCOM_RESPONSE:
+				if ( transactionStep.error || ! transactionStep.data.success ) {
+					return defaultState()
+				}
+
+				return completingState();
+
+			default:
+				throw new Error( 'Unknown transaction step: ' + transactionStep.name );
+		}
 	};
 
 	getPaymentRequestForApplePay = () => {
@@ -300,6 +373,7 @@ export class WebPaymentBox extends React.Component {
 			return <></>;
 		}
 
+		const buttonState = this.buttonState();
 		let introduction_text;
 		let button;
 
@@ -314,6 +388,7 @@ export class WebPaymentBox extends React.Component {
 					<button
 						type="submit"
 						onClick={ this.submit.bind( this, paymentMethod ) }
+						disabled={ buttonState.disabled }
 						className="web-payment-box__apple-pay-button"
 					/>
 				);
@@ -328,10 +403,12 @@ export class WebPaymentBox extends React.Component {
 				button = (
 					<Button
 						type="submit"
-						onClick={ this.submit.bind( this, paymentMethod ) }
 						className="button is-primary button-pay pay-button__button"
+						onClick={ this.submit.bind( this, paymentMethod ) }
+						busy={ buttonState.disabled }
+						disabled = { buttonState.disabled }
 					>
-						{ translate( 'Select a payment card' ) }
+						{ buttonState.text }
 					</Button>
 				);
 		}
