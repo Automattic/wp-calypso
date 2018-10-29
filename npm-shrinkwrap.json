@@ -12287,9 +12287,9 @@
       }
     },
     "localforage": {
-      "version": "1.7.2",
-      "resolved": "https://registry.npmjs.org/localforage/-/localforage-1.7.2.tgz",
-      "integrity": "sha1-+kRCYC+Abt0rympUq05lbwMfEhw=",
+      "version": "1.7.3",
+      "resolved": "https://registry.npmjs.org/localforage/-/localforage-1.7.3.tgz",
+      "integrity": "sha512-1TulyYfc4udS7ECSBT2vwJksWbkwwTX8BzeUIiq8Y07Riy7bDAAnxDaPU/tWyOVmQAcWJIEIFP9lPfBGqVoPgQ==",
       "requires": {
         "lie": "3.1.1"
       }
