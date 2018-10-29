@@ -115,7 +115,7 @@ export class WebPaymentBox extends React.Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-        buttonState = () => {
+	buttonState = () => {
 		const { transactionStep, translate } = this.props;
 
 		const defaultState = () => {
@@ -169,7 +169,7 @@ export class WebPaymentBox extends React.Component {
 
 			case RECEIVED_WPCOM_RESPONSE:
 				if ( transactionStep.error || ! transactionStep.data.success ) {
-					return defaultState()
+					return defaultState();
 				}
 
 				return completingState();
@@ -226,9 +226,9 @@ export class WebPaymentBox extends React.Component {
 				.undocumented()
 				.applePayMerchantValidation( merchantValidationEvent.validationURL, environment )
 				.then( json => {
-					console.log( json );
+					console.log( json, merchantValidationEvent );
 
-					return merchantValidationEvent.complete( json );
+					merchantValidationEvent.complete( json );
 				} )
 				.catch( error => {
 					console.error( 'onmerchantvalidation error' );
@@ -406,7 +406,7 @@ export class WebPaymentBox extends React.Component {
 						className="button is-primary button-pay pay-button__button"
 						onClick={ this.submit.bind( this, paymentMethod ) }
 						busy={ buttonState.disabled }
-						disabled = { buttonState.disabled }
+						disabled={ buttonState.disabled }
 					>
 						{ buttonState.text }
 					</Button>
