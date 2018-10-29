@@ -19,12 +19,12 @@ import { setConnections } from './actions';
  *
  * @return {Object} Set connections action.
  */
-export async function refreshConnections( action, store ) {
+export async function refreshConnections( { postId }, store ) {
 	const { dispatch } = store;
 
-	const connections = await apiFetch( { path: getFetchConnectionsPath( action.postId ) } );
+	const connections = await apiFetch( { path: getFetchConnectionsPath( postId ) } );
 
-	return dispatch( setConnections( action.postId, connections ) );
+	return dispatch( setConnections( postId, connections ) );
 }
 
 export default {

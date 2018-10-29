@@ -10,8 +10,8 @@ import apiFetch from '@wordpress/api-fetch';
  *
  * @return {Promise} Fetch request promise.
  */
-const fetchFromApi = action => {
-	return apiFetch( { path: action.path } );
+const fetchFromApi = ( { path } ) => {
+	return apiFetch( { path } );
 };
 
 export default {
