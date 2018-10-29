@@ -1,3 +1,11 @@
+$gutenberg-breakpoint-sm: 782px;
+
+@mixin gutenberg-sm() {
+	@media ( max-width: $gutenberg-breakpoint-sm ) {
+		@content;
+	}
+}
+
 .is-group-gutenberg::before {
 	content: '';
 	position: fixed;
@@ -151,6 +159,12 @@ $gutenberg-theme-toggle: #11a0d2;
 		}
 	}
 
+	.edit-post-post-visibility__dialog .editor-post-visibility__dialog-info {
+		@include gutenberg-sm() {
+			margin-left: 36px;
+		}
+	}
+
 	// UNSET CALYPSO DEFAULT STYLES
 	input[type='text'],
 	input[type='search'] {
@@ -189,7 +203,7 @@ $gutenberg-theme-toggle: #11a0d2;
 	input[type='radio'] {
 		padding: 0 !important;
 
-		@media screen and ( max-width: 782px ) {
+		@include gutenberg-sm() {
 			height: 25px;
 			width: 25px;
 		}
@@ -204,15 +218,21 @@ $gutenberg-theme-toggle: #11a0d2;
 		height: 12px;
 		margin: 0;
 
-		@media screen and ( max-width: 782px ) {
+		@include gutenberg-sm() {
 			width: 20px;
 			height: 20px;
 		}
 	}
 
-	input[type='checkbox']:checked::before {
+	input[type='radio']:checked::before {
 		height: 6px;
 		width: 6px;
+
+		@include gutenberg-sm() {
+			width: 11px;
+			height: 11px;
+			margin: 5px;
+		}
 	}
 
 	label {
