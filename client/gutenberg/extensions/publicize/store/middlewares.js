@@ -2,7 +2,7 @@
  * External dependencies
  */
 import refx from 'refx';
-import { flowRight } from 'lodash';
+import flowRight from 'lodash/flowRight';
 
 /**
  * Internal dependencies
