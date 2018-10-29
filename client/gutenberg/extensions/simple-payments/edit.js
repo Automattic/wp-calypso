@@ -16,13 +16,13 @@ import get from 'lodash/get';
  */
 import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
 
-class Edit extends Component {
 	constructor() {
 		super( ...arguments );
 		this.state = {
 			savingProduct: false,
 		};
 	}
+class SimplePaymentsEdit extends Component {
 
 	componentDidUpdate( prevProps ) {
 		const { simplePayment, attributes, setAttributes, isSelected, isSaving } = this.props;
@@ -301,4 +301,4 @@ const applyWithSelect = withSelect( ( select, props ) => {
 	};
 } );
 
-export default compose( [ applyWithSelect, withInstanceId ] )( Edit );
+export default compose( [ applyWithSelect, withInstanceId ] )( SimplePaymentsEdit );
