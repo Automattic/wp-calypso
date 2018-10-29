@@ -26,17 +26,17 @@ class SimplePaymentsEdit extends Component {
 
 		if ( ! prevProps.simplePayment && simplePayment ) {
 			setAttributes( {
-				description: get( simplePayment, 'content.raw', attributes.description ),
-				currency: get( simplePayment, 'meta.spay_currency', attributes.currency ),
-				email: get( simplePayment, 'meta.spay_email', attributes.email ),
+				description: get( simplePayment, [ 'content', 'raw' ], attributes.description ),
+				currency: get( simplePayment, [ 'meta', 'spay_currency' ], attributes.currency ),
+				email: get( simplePayment, [ 'meta', 'spay_email' ], attributes.email ),
 				formattedPrice: get(
 					simplePayment,
-					'meta.spay_formatted_price',
+					[ 'meta', 'spay_formatted_price' ],
 					attributes.formattedPrice
 				),
-				multiple: get( simplePayment, 'meta.spay_multiple', attributes.multiple ),
-				price: get( simplePayment, 'meta.spay_price', attributes.price ),
-				title: get( simplePayment, 'title.raw', attributes.title ),
+				multiple: get( simplePayment, [ 'meta', 'spay_multiple' ], attributes.multiple ),
+				price: get( simplePayment, [ 'meta', 'spay_price' ], attributes.price ),
+				title: get( simplePayment, [ 'title', 'raw' ], attributes.title ),
 			} );
 		}
 
