@@ -27,8 +27,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
-import getShouldShowTax from 'state/selectors/get-should-show-tax';
-import getTaxRate from 'state/selectors/get-tax-rate';
 
 export class PlanFeaturesHeader extends Component {
 	render() {
@@ -205,7 +203,7 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
-		const { currencyCode, isInSignup, shouldShowTax, taxRate } = this.props;
+		const { currencyCode, isInSignup } = this.props;
 
 		if ( fullPrice && discountedPrice ) {
 			return (
@@ -221,8 +219,6 @@ export class PlanFeaturesHeader extends Component {
 							currencyCode={ currencyCode }
 							rawPrice={ discountedPrice }
 							isInSignup={ isInSignup }
-							shouldShowTax={ shouldShowTax }
-							taxRate={ taxRate }
 							discounted
 						/>
 					</div>
@@ -232,13 +228,7 @@ export class PlanFeaturesHeader extends Component {
 		}
 
 		return (
-			<PlanPrice
-				currencyCode={ currencyCode }
-				rawPrice={ fullPrice }
-				isInSignup={ isInSignup }
-				shouldShowTax={ shouldShowTax }
-				taxRate={ taxRate }
-			/>
+			<PlanPrice currencyCode={ currencyCode } rawPrice={ fullPrice } isInSignup={ isInSignup } />
 		);
 	}
 
@@ -360,7 +350,5 @@ export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) 
 		isYearly,
 		relatedYearlyPlan: isYearly ? null : getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
 		siteSlug: getSiteSlug( state, selectedSiteId ),
-		shouldShowTax: getShouldShowTax( state ),
-		taxRate: getTaxRate( state ),
 	};
 } )( localize( PlanFeaturesHeader ) );
