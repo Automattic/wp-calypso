@@ -3,66 +3,76 @@
 /**
  * External dependencies
  */
-
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
+import Card from 'components/card';
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
-import SignupSiteTitle from 'components/signup-site-title';
-import SiteTitleExample from 'components/site-title-example';
-import { setSiteTitle } from 'state/signup/steps/site-title/actions';
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
+import FormFieldset from 'components/forms/form-fieldset';
 
-import { translate } from 'i18n-calypso';
-
-class SiteTitleStep extends React.Component {
+class SiteTopicStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
-		positionInFlow: PropTypes.number,
-		setSiteTitle: PropTypes.func.isRequired,
+		positionInFlow: PropTypes.number.isRequired,
+		setSiteTopic: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 	};
 
-	submitSiteTitleStep = siteTitle => {
-		this.props.setSiteTitle( siteTitle );
-
-		SignupActions.submitSignupStep(
-			{
-				processingMessage: translate( 'Setting up your site' ),
-				stepName: this.props.stepName,
-				siteTitle,
-			},
-			[],
-			{ siteTitle }
-		);
-
-		this.props.goToNextStep();
+	state = {
+		siteTopic: '',
 	};
 
-	skipStep = () => {
-		this.submitSiteTitleStep( '' );
+	onChangeTopic = event => {
+		this.setState( {
+			siteTopic: event.target.value,
+		} );
 	};
 
-	renderSiteTitleStep = () => {
+	// TODO:
+	// Handle submission.
+	submitSiteTopic( event ) {
+		event.preventDefault();
+	}
+
+	renderContent() {
+		const { translate } = this.props;
+
 		return (
-			<div>
-				<SignupSiteTitle onSubmit={ this.submitSiteTitleStep } />
-				<SiteTitleExample />
-			</div>
+			<Card>
+				<form onSubmit={ this.submitSiteTopic }>
+					<FormFieldset>
+						<FormLabel htmlFor="siteTopic">{ translate( 'Type of Business' ) }</FormLabel>
+						<FormTextInput
+							id="siteTopic"
+							name="siteTopic"
+							placeholder={ translate( 'e.g. Fashion, travel, design, plumber, electrician' ) }
+							value={ this.state.siteTopic }
+							onChange={ this.onChangeTopic }
+							autoComplete="off"
+						/>
+					</FormFieldset>
+					<Button type="submit" primary>
+						{ translate( 'Continue' ) }
+					</Button>
+				</form>
+			</Card>
 		);
-	};
+	}
 
 	render() {
-		const headerText = translate( 'Bah Bah Black Sheep' );
-		const subHeaderText = translate(
-			'Enter a Site Title that will be displayed for visitors. You can always change this later.'
-		);
+		const { translate } = this.props;
+		const headerText = translate( 'Search for your type of business.' );
+		const subHeaderText = translate( "Don't stress, you can change this later." );
 
 		return (
 			<div>
@@ -71,11 +81,9 @@ class SiteTitleStep extends React.Component {
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
 					headerText={ headerText }
-					fallbackHeaderText={ headerText }
 					subHeaderText={ subHeaderText }
-					fallbackSubHeaderText={ subHeaderText }
 					signupProgress={ this.props.signupProgress }
-					stepContent={ this.renderSiteTitleStep() }
+					stepContent={ this.renderContent() }
 					goToNextStep={ this.skipStep }
 				/>
 			</div>
@@ -83,7 +91,9 @@ class SiteTitleStep extends React.Component {
 	}
 }
 
+// TODO:
+// Connect to the real action creators and selectors.
 export default connect(
 	null,
-	{ setSiteTitle }
-)( SiteTitleStep );
+	{ setSiteTopic: () => {} }
+)( localize( SiteTopicStep ) );
