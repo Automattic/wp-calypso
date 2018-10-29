@@ -33,12 +33,12 @@ describe( 'LocaleSuggestions', () => {
 
 	test( 'should not render without suggestions', () => {
 		const wrapper = shallow( <LocaleSuggestions path="" locale="x" setLocale={ () => {} } /> );
-		expect( wrapper.equals( null ) );
+		expect( wrapper.type() ).toBe( null );
 	} );
 
 	test( 'should have `locale-suggestions` class', () => {
 		const wrapper = shallow( <LocaleSuggestions { ...defaultProps } /> );
-		expect( wrapper.contains( '.locale-suggestions' ) );
+		expect( wrapper.contains( '.locale-suggestions' ) ).toBe( true );
 	} );
 
 	// check that content within a card renders correctly
