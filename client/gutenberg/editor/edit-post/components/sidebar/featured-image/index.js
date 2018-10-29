@@ -18,7 +18,11 @@ import { withSelect, withDispatch } from '@wordpress/data';
  */
 const PANEL_NAME = 'featured-image';
 
-function FeaturedImage( { isOpened, postType, onTogglePanel } ) {
+function FeaturedImage( { isEnabled, isOpened, postType, onTogglePanel } ) {
+	if ( ! isEnabled ) {
+		return null;
+	}
+
 	return (
 		<PostFeaturedImageCheck>
 			<PanelBody
@@ -39,19 +43,20 @@ function FeaturedImage( { isOpened, postType, onTogglePanel } ) {
 const applyWithSelect = withSelect( ( select ) => {
 	const { getEditedPostAttribute } = select( 'core/editor' );
 	const { getPostType } = select( 'core' );
-	const { isEditorSidebarPanelOpened } = select( 'core/edit-post' );
+	const { isEditorPanelEnabled, isEditorPanelOpened } = select( 'core/edit-post' );
 
 	return {
 		postType: getPostType( getEditedPostAttribute( 'type' ) ),
-		isOpened: isEditorSidebarPanelOpened( PANEL_NAME ),
+		isEnabled: isEditorPanelEnabled( PANEL_NAME ),
+		isOpened: isEditorPanelOpened( PANEL_NAME ),
 	};
 } );
 
 const applyWithDispatch = withDispatch( ( dispatch ) => {
-	const { toggleGeneralSidebarEditorPanel } = dispatch( 'core/edit-post' );
+	const { toggleEditorPanelOpened } = dispatch( 'core/edit-post' );
 
 	return {
-		onTogglePanel: partial( toggleGeneralSidebarEditorPanel, PANEL_NAME ),
+		onTogglePanel: partial( toggleEditorPanelOpened, PANEL_NAME ),
 	};
 } );
 
