@@ -69,6 +69,13 @@ $plan-features-sidebar-width: 272px;
 	height: 50px;
 }
 
+.plan-features__table.has-2-cols {
+	display: block;
+	max-width: 720px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .plan-features__mobile-plan {
 	font-size: 14px;
 	border: solid 1px lighten( $gray, 27% );
@@ -305,6 +312,33 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.segmented-control.is-customer-type-toggle {
+	flex-wrap: wrap;
+	width: 500px;
+	max-width: 100%;
+	margin: 0 auto 20px;
+
+	& + .plans-features-main__group {
+		padding-top: 8px;
+	}
+
+	.segmented-control__item {
+		min-width: 50%;
+	}
+
+    @include breakpoint( '<480px' ) {
+		margin-bottom: 9px;
+		.segmented-control__item {
+			width: 100%;
+		}
+		.segmented-control__link {
+			border-left: 0;
+			border-right: 0;
+			border-radius: 0;
+		}
+	}
+}
+
 .info-popover.plan-features__header-tip-info {
 	position: relative;
 	top: 4px;
@@ -323,7 +357,6 @@ $plan-features-sidebar-width: 272px;
 		margin-bottom: 5px;
 	}
 }
-
 .plan-features__price-jetpack {
 	&.is-placeholder {
 		@include placeholder( 23% );
@@ -486,6 +519,13 @@ $plan-features-sidebar-width: 272px;
 	overflow-x: auto;
 }
 
+.signup {
+	.is-customer-type-toggle {
+		margin-top: 32px;
+		margin-bottom: 28px;
+	}
+}
+
 .plan-features--signup {
 	margin: 0 auto;
 
@@ -495,6 +535,11 @@ $plan-features-sidebar-width: 272px;
 		@include breakpoint( '>660px' ) {
 			max-width: 1000px;
 		}
+	}
+
+	.plan-features__table.has-3-cols {
+		margin: 0 auto;
+		max-width: 75%;
 	}
 
 	.signup__steps & {

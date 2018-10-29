@@ -38,8 +38,35 @@ import SegmentedControlItem from 'components/segmented-control/item';
 import PaymentMethods from 'blocks/payment-methods';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
+
+const getOldStylePlans = ( group, term ) => [
+	findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
+	findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
+	findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
+	findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
+];
+
+const getPersonalPlans = ( group, term ) => [
+	findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
+	findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
+	findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
+	findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
+];
+
+const getBusinessPlans = ( group, term ) => [
+	findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
+	findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
+	findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
+];
+
+const getWPComBusinessPlanSlugs = () =>
+	[]
+		.concat( getBusinessPlans( GROUP_WPCOM, TERM_ANNUALLY ) )
+		.concat( getBusinessPlans( GROUP_WPCOM, TERM_BIENNIALLY ) )
+		.map( planKey => getPlan( planKey ) )
+		.map( plan => plan.getStoreSlug() );
 
 export class PlansFeaturesMain extends Component {
 	componentWillUpdate( nextProps ) {
@@ -94,7 +121,14 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan } = this.props;
+		const {
+			displayJetpackPlans,
+			customerType,
+			intervalType,
+			selectedPlan,
+			hideFreePlan,
+			withWPPlanTabs,
+		} = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
 
@@ -112,30 +146,33 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		const group = displayJetpackPlans ? GROUP_JETPACK : GROUP_WPCOM;
-		const personalPlan = findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ];
-		const plans = [
-			findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
-			findPlansKeys( { group, type: TYPE_BLOGGER } )[ 0 ],
-			personalPlan,
-			findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
-			findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
-		];
+		let plans;
+		if ( withWPPlanTabs ) {
+			if ( customerType === 'personal' ) {
+				plans = getPersonalPlans( group, term );
+			} else {
+				plans = getBusinessPlans( group, term );
+			}
+		} else {
+			plans = getOldStylePlans( group, term );
+		}
 
 		if ( hideFreePlan ) {
 			plans.shift();
 		}
 
 		if ( ! isEnabled( 'plans/personal-plan' ) && ! displayJetpackPlans ) {
-			plans.splice( plans.indexOf( personalPlan ), 1 );
+			plans.splice( plans.indexOf( plans.filter( p => p.type === TYPE_PERSONAL )[ 0 ] ), 1 );
 		}
 
 		return plans;
 	}
 
-	constructPath( plansUrl, intervalType ) {
+	constructPath( plansUrl, intervalType, customerType = '' ) {
 		const { selectedFeature, selectedPlan, siteSlug } = this.props;
 		return addQueryArgs(
 			{
+				customerType,
 				feature: selectedFeature,
 				plan: selectedPlan,
 			},
@@ -172,8 +209,48 @@ export class PlansFeaturesMain extends Component {
 		);
 	}
 
+	getCustomerTypeToggle() {
+		const { basePlansPath, customerType, intervalType, translate } = this.props;
+		const segmentClasses = classNames( 'plan-features__interval-type', 'is-customer-type-toggle' );
+
+		let plansUrl = '/plans';
+
+		if ( basePlansPath ) {
+			plansUrl = basePlansPath;
+		}
+
+		return (
+			<SegmentedControl compact className={ segmentClasses } primary={ true }>
+				<SegmentedControlItem
+					selected={ customerType === 'personal' }
+					path={ '?customerType=personal' }
+				>
+					{ translate( 'Blogs and Personal Sites' ) }
+				</SegmentedControlItem>
+
+				<SegmentedControlItem
+					selected={ customerType === 'business' }
+					path={ '?customerType=business' }
+				>
+					{ translate( 'Online Stores and Business Sites' ) }
+				</SegmentedControlItem>
+			</SegmentedControl>
+		);
+	}
+
+	renderToggle() {
+		const { displayJetpackPlans, withWPPlanTabs } = this.props;
+		if ( displayJetpackPlans ) {
+			return this.getIntervalTypeToggle();
+		}
+		if ( withWPPlanTabs ) {
+			return this.getCustomerTypeToggle();
+		}
+		return false;
+	}
+
 	render() {
-		const { displayJetpackPlans, isInSignup, siteId } = this.props;
+		const { displayJetpackPlans, isInSignup, siteId, withWPPlanTabs } = this.props;
 		let faqs = null;
 
 		if ( ! isInSignup ) {
@@ -184,7 +261,7 @@ export class PlansFeaturesMain extends Component {
 			<div className="plans-features-main">
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
-				{ displayJetpackPlans ? this.getIntervalTypeToggle() : null }
+				{ this.renderToggle() }
 				<QueryPlans />
 				<QuerySitePlans siteId={ siteId } />
 				{ this.getPlanFeatures() }
@@ -201,6 +278,7 @@ PlansFeaturesMain.propTypes = {
 	basePlansPath: PropTypes.string,
 	displayJetpackPlans: PropTypes.bool.isRequired,
 	hideFreePlan: PropTypes.bool,
+	customerType: PropTypes.string,
 	intervalType: PropTypes.string,
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
@@ -211,6 +289,7 @@ PlansFeaturesMain.propTypes = {
 	showFAQ: PropTypes.bool,
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
+	withWPPlanTabs: PropTypes.bool,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -221,13 +300,35 @@ PlansFeaturesMain.defaultProps = {
 	showFAQ: true,
 	siteId: null,
 	siteSlug: '',
+	withWPPlanTabs: false,
+};
+
+const guessCustomerType = ( state, props ) => {
+	const site = props.site;
+	let customerType = props.customerType;
+	if ( ! customerType ) {
+		const currentPlan = getSitePlan( state, get( site, [ 'ID' ] ) );
+		if ( currentPlan ) {
+			const isPlanInBusinessGroup =
+				getWPComBusinessPlanSlugs().indexOf( currentPlan.product_slug ) !== -1;
+			customerType = isPlanInBusinessGroup ? 'business' : 'personal';
+		}
+	}
+	if ( ! customerType ) {
+		customerType = 'personal';
+	}
+	return customerType;
 };
 
 export default connect(
-	( state, { site } ) => ( {
-		isChatAvailable: isHappychatAvailable( state ),
-		siteId: get( site, [ 'ID' ] ),
-		siteSlug: getSiteSlug( state, get( site, [ 'ID' ] ) ),
-	} ),
+	( state, props ) => {
+		return {
+			withWPPlanTabs: true,
+			customerType: guessCustomerType( state, props ),
+			isChatAvailable: isHappychatAvailable( state ),
+			siteId: get( props.site, [ 'ID' ] ),
+			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
+		};
+	},
 	{ selectHappychatSiteId }
 )( localize( PlansFeaturesMain ) );
