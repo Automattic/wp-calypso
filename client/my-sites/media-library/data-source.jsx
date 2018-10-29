@@ -7,7 +7,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import { find } from 'lodash';
+import { find, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
@@ -75,7 +75,7 @@ export class MediaLibraryDataSource extends Component {
 				icon: <Gridicon icon="image-multiple" size={ 24 } />,
 			} );
 		}
-		return sources.filter( ( { value } ) => -1 === disabledSources.indexOf( value ) );
+		return sources.filter( ( { value } ) => ! includes( disabledSources, value ) );
 	};
 
 	renderScreenReader( selected ) {
