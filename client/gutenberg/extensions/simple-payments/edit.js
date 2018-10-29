@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
 import { Panel, PanelBody, PanelRow } from '@wordpress/components';
@@ -220,7 +220,7 @@ class Edit extends Component {
 							</button>
 						</PanelRow>
 						<PanelRow>
-							<label htmlFor={ titleId }>{ __( 'Title', 'jetpack' ) }</label>
+							<label htmlFor={ titleId }>{ __( 'Title' ) }</label>
 							<input
 								id={ titleId }
 								onChange={ this.handleTitleChange }
@@ -229,7 +229,7 @@ class Edit extends Component {
 							/>
 						</PanelRow>
 						<PanelRow>
-							<label htmlFor={ descriptionId }>{ __( 'Description', 'jetpack' ) }</label>
+							<label htmlFor={ descriptionId }>{ __( 'Description' ) }</label>
 							<textarea
 								id={ descriptionId }
 								onChange={ this.handleDescriptionChange }
@@ -237,7 +237,7 @@ class Edit extends Component {
 							/>
 						</PanelRow>
 						<PanelRow>
-							<label htmlFor={ currencyId }>{ __( 'Currency', 'jetpack' ) }</label>
+							<label htmlFor={ currencyId }>{ __( 'Currency' ) }</label>
 							<input
 								id={ currencyId }
 								maxLength="3"
@@ -247,7 +247,7 @@ class Edit extends Component {
 							/>
 						</PanelRow>
 						<PanelRow>
-							<label htmlFor={ priceId }>{ __( 'Price', 'jetpack' ) }</label>
+							<label htmlFor={ priceId }>{ __( 'Price' ) }</label>
 							<input
 								id={ priceId }
 								min={ 1 }
@@ -262,7 +262,7 @@ class Edit extends Component {
 							<span>{ formattedPrice || '' }</span>
 						</PanelRow>
 						<PanelRow>
-							<label htmlFor={ multipleId }>{ __( 'Allow multiple', 'jetpack' ) }</label>
+							<label htmlFor={ multipleId }>{ __( 'Allow multiple' ) }</label>
 							<input
 								checked={ Boolean( multiple ) }
 								id={ multipleId }
@@ -271,7 +271,7 @@ class Edit extends Component {
 							/>
 						</PanelRow>
 						<PanelRow>
-							<label htmlFor={ emailId }>{ __( 'Email', 'jetpack' ) }</label>
+							<label htmlFor={ emailId }>{ __( 'Email' ) }</label>
 							<input
 								id={ emailId }
 								onChange={ this.handleEmailChange }

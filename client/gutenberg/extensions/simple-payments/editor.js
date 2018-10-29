@@ -14,7 +14,7 @@ import save from './save';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 registerBlockType( 'jetpack/simple-payments', {
-	title: __( 'Payment button', 'jetpack' ),
+	title: __( 'Payment button' ),
 
 	description: __(
 		'Simple Payments lets you create and embed credit and debit card payment buttons on your WordPress.com and Jetpack-enabled sites with minimal setup.'
@@ -24,7 +24,7 @@ registerBlockType( 'jetpack/simple-payments', {
 
 	category: 'jetpack',
 
-	keywords: [ __( 'simple payments', 'jetpack' ), __( 'PayPal', 'jetpack' ) ],
+	keywords: [ __( 'simple payments' ), 'PayPal' ],
 
 	attributes: {
 		currency: {
