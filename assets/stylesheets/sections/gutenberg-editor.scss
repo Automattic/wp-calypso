@@ -9,14 +9,16 @@
 
 // Block library
 @import '../../../node_modules/@wordpress/block-library/build-style/style';
-@import '../../../node_modules/@wordpress/block-library/build-style/editor';
-@import '../../../node_modules/@wordpress/block-library/build-style/theme';
 
 // Components
 @import '../../../node_modules/@wordpress/components/build-style/style';
 
 // Editor package styles
 @import '../../../node_modules/@wordpress/editor/build-style/style';
+
+// Block library theme & editor
+@import '../../../node_modules/@wordpress/block-library/build-style/theme';
+@import '../../../node_modules/@wordpress/block-library/build-style/editor';
 
 // Calypso specific Gutenberg editor styles
 @import 'gutenberg/editor/style';
