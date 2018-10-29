@@ -31,6 +31,7 @@ import hasUserSettings from 'state/selectors/has-user-settings';
 import { sendSMS } from 'state/mobile-download-sms/actions';
 import phoneValidation from 'lib/phone-validation';
 import config from 'config';
+import userAgent from 'lib/user-agent';
 
 class MobileDownloadCard extends React.Component {
 	static displayName = 'SecurityAccountRecoveryRecoveryPhoneEdit';
@@ -132,7 +133,8 @@ class MobileDownloadCard extends React.Component {
 
 		const has_all_data = this.props.hasUserSettings && this.props.hasLoadedAccountRecoveryPhone;
 		const { countryCode, number, isValid } = this.getPreferredNumber( has_all_data );
-		const feature_is_enabled = config.isEnabled( 'get-apps-sms' );
+		const { isMobile } = userAgent;
+		const feature_is_enabled = config.isEnabled( 'get-apps-sms' ) && ! isMobile;
 
 		return (
 			<Card className="get-apps__mobile">
