@@ -12,6 +12,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Spinner from 'components/spinner';
+import ExternalLink from 'components/external-link';
 import Button from 'components/forms/form-button';
 import MiniSitePreview from 'components/mini-site-preview';
 import ErrorPane from 'my-sites/importer/error-pane';
@@ -79,7 +80,7 @@ class SiteImporterSitePreview extends React.Component {
 	};
 
 	render = () => {
-		const { siteUrl } = this.props;
+		const { siteURL } = this.props;
 		const isLoading = this.props.isLoading || this.state.loadingPreviewImage;
 		const isError = this.state.sitePreviewFailed;
 
@@ -94,16 +95,26 @@ class SiteImporterSitePreview extends React.Component {
 						<div className="site-importer__site-importer-confirm-site-pane-container">
 							<div className="site-importer__site-importer-confirm-site-label">
 								{ this.props.translate( 'Is this your site?' ) }
+								<div className="site-importer__source-url">
+									<ExternalLink href={ siteURL } target="_blank">
+										{ siteURL }
+									</ExternalLink>
+								</div>
 							</div>
-							<Button disabled={ isLoading } onClick={ this.props.startImport }>
-								{ this.props.translate( 'Yes! Start import' ) }
-							</Button>
-							<Button disabled={ isLoading } isPrimary={ false } onClick={ this.props.resetImport }>
-								{ this.props.translate( 'No' ) }
-							</Button>
+							<div className="site-importer__site-importer-confirm-actions">
+								<Button disabled={ isLoading } onClick={ this.props.startImport }>
+									{ this.props.translate( 'Yes! Start import' ) }
+								</Button>
+								<Button
+									disabled={ isLoading }
+									isPrimary={ false }
+									onClick={ this.props.resetImport }
+								>
+									{ this.props.translate( 'No' ) }
+								</Button>
+							</div>
 						</div>
 						<div className={ containerClass }>
-							<div className="site-importer__source-url">{ siteUrl }</div>
 							<div className="site-importer__site-preview-column-container">
 								<MiniSitePreview
 									className="site-importer__site-preview"
