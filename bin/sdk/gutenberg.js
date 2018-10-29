@@ -27,7 +27,7 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 
 		// Helps split up each block into its own folder view script
 		viewBlocksScripts = presetBlocks.reduce( ( viewBlocks, block ) => {
-				const viewScriptPath = path.join( inputDir, DIRECETORY_DEPTH + block + '/view.js' );
+				const viewScriptPath = path.join( inputDir, `${ DIRECETORY_DEPTH }${ block }/view.js` );
 				if ( fs.existsSync( viewScriptPath ) ) {
 					viewBlocks[ block + '/view' ] = [ ...sharedUtilsScripts, ...[  viewScriptPath ] ];
 				}
@@ -38,8 +38,8 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 
 		const sharedEditorPath =  path.join( inputDir, 'editor-shared' );
 		const sharedEditorUtilsScripts = fs.readdirSync( sharedEditorPath ).map( file => path.join( sharedEditorPath, file ) ).filter( ( fullPathToFile ) => ( fullPathToFile.endsWith( '.js' ) ) );
-		const editorScripts = presetBlocks.map( block => path.join( inputDir, DIRECETORY_DEPTH + block + '/editor.js' ) ).filter( fs.existsSync );
-		const viewScripts = presetBlocks.map( block => path.join( inputDir, DIRECETORY_DEPTH + block + '/view.js' ) ).filter( fs.existsSync );
+		const editorScripts = presetBlocks.map( block => path.join( inputDir, `${ DIRECETORY_DEPTH }${ block }/editor.js` ) ).filter( fs.existsSync );
+		const viewScripts = presetBlocks.map( block => path.join( inputDir, `${ DIRECETORY_DEPTH }${ block }/view.js` ) ).filter( fs.existsSync );
 		// Combines all the different blocks into one editor.js script
 		editorScript = [ ...sharedUtilsScripts, ...sharedEditorUtilsScripts, ...editorScripts, ...viewScripts ];
 
