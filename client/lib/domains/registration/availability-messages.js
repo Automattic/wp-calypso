@@ -297,6 +297,12 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 
+		case domainAvailability.AVAILABILITY_CHECK_ERROR:
+			message = translate(
+				'Sorry, an error occurred when checking the availability of this domain. Please try again in a few minutes.'
+			);
+			break;
+
 		default:
 			message = translate(
 				'Sorry, there was a problem processing your request. Please try again in a few minutes.'
