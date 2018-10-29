@@ -81,7 +81,7 @@ describe( 'actions', () => {
 						thumbnailUrl,
 					} );
 
-					expect( dispatchSpy.calledTwice );
+					expect( dispatchSpy.calledThrice ).to.be.true;
 				} )
 				.catch( err => {
 					assert.fail( err, undefined, 'errback should not have been called' );
@@ -97,7 +97,7 @@ describe( 'actions', () => {
 				embedUrl: youtubeEmbedUrl,
 				thumbnailUrl: youtubeThumbnailUrl,
 			} );
-			expect( dispatchSpy.calledOnce );
+			expect( dispatchSpy.calledOnce ).to.be.true;
 		} );
 
 		test( 'should dispatch the right actions if network request fails', () => {
@@ -116,7 +116,7 @@ describe( 'actions', () => {
 						embedUrl: failureEmbedUrl,
 					} );
 
-					expect( dispatchSpy.calledTwice );
+					expect( dispatchSpy.calledTwice ).to.be.true;
 				} )
 				.catch( err => {
 					assert.fail( err, undefined, 'errback should not have been called' );
@@ -133,7 +133,7 @@ describe( 'actions', () => {
 				error: { type: 'UNSUPPORTED_EMBED' },
 			} );
 
-			expect( dispatchSpy.calledOnce );
+			expect( dispatchSpy.calledOnce ).to.be.true;
 		} );
 	} );
 } );
