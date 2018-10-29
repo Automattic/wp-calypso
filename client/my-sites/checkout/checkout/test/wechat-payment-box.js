@@ -8,7 +8,6 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,35 +41,9 @@ jest.mock( 'lib/cart-values', () => ( {
 	},
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Component => props => <Component { ...props } translate={ x => x } />,
-	translate: x => x,
-} ) );
-
-jest.mock( '../terms-of-service', () => {
-	const react = require( 'react' );
-	return class TermsOfService extends react.Component {};
-} );
-
-import TermsOfService from '../terms-of-service';
-
-jest.mock( '../payment-chat-button', () => {
-	const react = require( 'react' );
-	return class PaymentChatButton extends react.Component {};
-} );
-
-import PaymentChatButton from '../payment-chat-button';
-
-jest.mock( '../wechat-payment-qrcode', () => {
-	const react = require( 'react' );
-	return class WechatPaymentQRCode extends react.Component {};
-} );
-
-import WechatPaymentQRCode from '../wechat-payment-qrcode';
-
 const defaultProps = {
 	cart: { total_cost: 100, products: [] },
-	translate: identity,
+	translate: x => x,
 	countriesList: [
 		{
 			code: 'US',
@@ -83,85 +56,102 @@ const defaultProps = {
 	],
 	paymentType: 'default',
 	transaction: {},
-	redirectTo: identity,
+	redirectTo: x => x,
 	selectedSite: { slug: 'example.com' },
-	showErrorNotice: identity,
-	showInfoNotice: identity,
-	createRedirect: identity,
+	showErrorNotice: x => x,
+	showInfoNotice: x => x,
+	createRedirect: x => x,
 	pending: false,
 	failure: false,
-	reset: identity,
+	reset: x => x,
 	redirectUrl: null,
 	orderId: null,
 	isMobile: false,
 };
 
 describe( 'WechatPaymentBox', () => {
-	test( 'has correct components and css', () => {
+	describe( 'contains', () => {
 		const wrapper = shallow( <WechatPaymentBox { ...defaultProps } /> );
-		expect( wrapper.find( '.checkout__payment-box-section' ) ).toHaveLength( 1 );
-		expect( wrapper.find( '.checkout__payment-box-actions' ) ).toHaveLength( 1 );
-		expect( wrapper.find( '[name="name"]' ) ).toHaveLength( 1 );
-		expect( wrapper.contains( <TermsOfService /> ) );
-	} );
 
-	const businessPlans = [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ];
+		// Tests correct usage of classes we've borrowed and depend on from CreditCardPaymentBox
+		const rules = [
+			'.checkout__payment-box-sections .checkout__payment-box-section [label="Your Name"]',
+			'.checkout__payment-box-actions .payment-box__payment-buttons',
+			'.payment-box__payment-buttons .pay-button .button.is-primary.button-pay.pay-button__button',
+			'.payment-box__payment-buttons .checkout__secure-payment .checkout__secure-payment-content [icon="lock"]',
+			'Localized(TermsOfService)',
+			'Localized(SubscriptionText)',
+			'Localized(CartToggle)',
+			'Connect(Localized(CartCoupon))',
+		];
 
-	businessPlans.forEach( product_slug => {
-		test( 'should render PaymentChatButton if any WP.com business plan is in the cart', () => {
-			const props = {
-				...defaultProps,
-				presaleChatAvailable: true,
-				cart: {
-					products: [ { product_slug } ],
-				},
-			};
-			const wrapper = shallow( <WechatPaymentBox { ...props } /> );
-			expect( wrapper.contains( <PaymentChatButton /> ) );
+		rules.forEach( rule => {
+			test( rule, () => {
+				expect( wrapper.find( rule ) ).toHaveLength( 1 );
+			} );
 		} );
 	} );
 
-	businessPlans.forEach( product_slug => {
-		test( 'should not render PaymentChatButton if presaleChatAvailable is false', () => {
-			const props = {
-				...defaultProps,
-				presaleChatAvailable: false,
-				cart: {
-					products: [ { product_slug } ],
-				},
-			};
-			const wrapper = shallow( <WechatPaymentBox { ...props } /> );
-			expect( ! wrapper.contains( <PaymentChatButton /> ) );
+	describe( 'PaymentChatButton', () => {
+		const otherPlans = [
+			PLAN_PREMIUM,
+			PLAN_PREMIUM_2_YEARS,
+			PLAN_PERSONAL,
+			PLAN_PERSONAL_2_YEARS,
+			PLAN_BLOGGER,
+			PLAN_BLOGGER_2_YEARS,
+			PLAN_FREE,
+			PLAN_JETPACK_FREE,
+			PLAN_JETPACK_PERSONAL,
+			PLAN_JETPACK_PERSONAL_MONTHLY,
+			PLAN_JETPACK_PREMIUM,
+			PLAN_JETPACK_PREMIUM_MONTHLY,
+			PLAN_JETPACK_BUSINESS,
+			PLAN_JETPACK_BUSINESS_MONTHLY,
+		];
+
+		otherPlans.forEach( product_slug => {
+			test( 'renders if only non-business plan products are in the cart', () => {
+				const props = {
+					...defaultProps,
+					cart: {
+						products: [ { product_slug } ],
+					},
+				};
+				const wrapper = shallow( <WechatPaymentBox { ...props } /> );
+				expect( wrapper.find( 'Connect(Localized(PaymentChatButton))' ) ).toHaveLength( 0 );
+			} );
 		} );
-	} );
 
-	const otherPlans = [
-		PLAN_PREMIUM,
-		PLAN_PREMIUM_2_YEARS,
-		PLAN_PERSONAL,
-		PLAN_PERSONAL_2_YEARS,
-		PLAN_BLOGGER,
-		PLAN_BLOGGER_2_YEARS,
-		PLAN_FREE,
-		PLAN_JETPACK_FREE,
-		PLAN_JETPACK_PERSONAL,
-		PLAN_JETPACK_PERSONAL_MONTHLY,
-		PLAN_JETPACK_PREMIUM,
-		PLAN_JETPACK_PREMIUM_MONTHLY,
-		PLAN_JETPACK_BUSINESS,
-		PLAN_JETPACK_BUSINESS_MONTHLY,
-	];
+		const businessPlans = [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ];
 
-	otherPlans.forEach( product_slug => {
-		test( 'should not render PaymentChatButton if only non-business plan products are in the cart', () => {
-			const props = {
-				...defaultProps,
-				cart: {
-					products: [ { product_slug } ],
-				},
-			};
-			const wrapper = shallow( <WechatPaymentBox { ...props } /> );
-			expect( ! wrapper.contains( <PaymentChatButton /> ) );
+		businessPlans.forEach( product_slug => {
+			test( 'renders if any WP.com business plan is in the cart', () => {
+				const props = {
+					...defaultProps,
+					presaleChatAvailable: true,
+					cart: {
+						products: [ { product_slug } ],
+					},
+				};
+				const wrapper = shallow( <WechatPaymentBox { ...props } /> );
+
+				expect( wrapper.find( 'Connect(Localized(PaymentChatButton))' ) ).toHaveLength( 1 );
+			} );
+		} );
+
+		businessPlans.forEach( product_slug => {
+			test( 'does not render if presaleChatAvailable is false', () => {
+				const props = {
+					...defaultProps,
+					presaleChatAvailable: false,
+					cart: {
+						products: [ { product_slug } ],
+					},
+				};
+				const wrapper = shallow( <WechatPaymentBox { ...props } /> );
+				expect( wrapper.find( 'Connect(Localized(PaymentChatButton))' ) ).toHaveLength( 0 );
+			} );
 		} );
 	} );
 
@@ -204,7 +194,7 @@ describe( 'WechatPaymentBox', () => {
 				<WechatPaymentBox { ...defaultProps } redirectUrl={ redirectUrl } isMobile={ false } />
 			);
 
-			expect( wrapper.contains( <WechatPaymentQRCode /> ) );
+			expect( wrapper.find( 'Connect(Localized(WechatPaymentQRCode))' ) ).toHaveLength( 1 );
 		} );
 	} );
 } );
