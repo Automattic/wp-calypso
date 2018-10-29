@@ -16,27 +16,22 @@ import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 const { Provider, Consumer } = React.createContext( moment );
 
 class MomentProvider extends React.Component {
-	state = {
-		currentLocale: 'en',
-	};
+	state = {};
 
-	checkAndLoad() {
+	async checkAndLoad() {
+		const { currentLocale } = this.props;
+
 		// is moment set to the current locale?
-		if ( this.props.currentLocale === moment.locale() ) {
+		if ( currentLocale === moment.locale() ) {
 			return;
 		}
-		if ( this.props.currentLocale !== 'en' ) {
-			const loadingLocale = this.props.currentLocale;
-			import( /* webpackChunkName: "moment-locale-[request]", webpackInclude: /\.js$/ */ `moment/locale/${ loadingLocale }` ).then(
-				() => {
-					moment.locale( loadingLocale );
-					this.setState( { currentLocale: loadingLocale } );
-				}
-			);
-		} else {
-			moment.locale( 'en' );
-			this.setState( { currentLocale: 'en' } );
+
+		if ( currentLocale !== 'en' ) {
+			await import( /* webpackChunkName: "moment-locale-[request]", webpackInclude: /\.js$/ */ `moment/locale/${ currentLocale }` );
 		}
+
+		moment.locale( currentLocale );
+		this.setState( {} );
 	}
 
 	componentDidMount() {
@@ -48,7 +43,7 @@ class MomentProvider extends React.Component {
 	}
 
 	render() {
-		return <Provider value={ this.state.currentLocale }>{ this.props.children }</Provider>;
+		return <Provider value={ moment }>{ this.props.children }</Provider>;
 	}
 }
 
