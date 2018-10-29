@@ -210,14 +210,8 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getCustomerTypeToggle() {
-		const { basePlansPath, customerType, translate } = this.props;
+		const { customerType, translate } = this.props;
 		const segmentClasses = classNames( 'plan-features__interval-type', 'is-customer-type-toggle' );
-
-		let plansUrl = '/plans';
-
-		if ( basePlansPath ) {
-			plansUrl = basePlansPath;
-		}
 
 		return (
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
