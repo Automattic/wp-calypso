@@ -80,7 +80,6 @@
 		"me/find-friends": false,
 		"me/my-profile": true,
 		"me/notifications": true,
-		"me/site-block-list": true,
 		"me/trophies": false,
 		"network-connection": true,
 		"onboarding-checklist": false,

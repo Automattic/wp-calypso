@@ -178,16 +178,14 @@ class MeSidebar extends React.Component {
 								preloadSectionName="notification-settings"
 							/>
 
-							{ config.isEnabled( 'me/site-block-list' ) && (
-								<SidebarItem
-									selected={ selected === 'site-blocks' }
-									link={ '/me/site-blocks' }
-									label={ translate( 'Blocked Sites' ) }
-									icon="block"
-									onNavigate={ this.onNavigate }
-									preloadSectionName="site-blocks"
-								/>
-							) }
+							<SidebarItem
+								selected={ selected === 'site-blocks' }
+								link={ '/me/site-blocks' }
+								label={ translate( 'Blocked Sites' ) }
+								icon="block"
+								onNavigate={ this.onNavigate }
+								preloadSectionName="site-blocks"
+							/>
 						</ul>
 					</SidebarMenu>
 
