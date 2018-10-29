@@ -228,7 +228,7 @@ export class WebPaymentBox extends React.Component {
 				.then( json => {
 					console.log( json, merchantValidationEvent );
 
-					merchantValidationEvent.complete( json );
+					merchantValidationEvent.complete( new Promise(resolve => resolve( json ) ) );
 				} )
 				.catch( error => {
 					console.error( 'onmerchantvalidation error' );
