@@ -22355,30 +22355,15 @@
       }
     },
     "wpcom-proxy-request": {
-      "version": "5.0.0",
-      "resolved": "https://registry.npmjs.org/wpcom-proxy-request/-/wpcom-proxy-request-5.0.0.tgz",
-      "integrity": "sha512-dHCBAWDi/DMVQ+bF2PZ+ySDuBVjobFXMHGJdqAjcGoM8H4O7f046I0qf9tvhuzcKsjBBhK8SEIdK0PU979gh9w==",
+      "version": "5.0.1",
+      "resolved": "https://registry.npmjs.org/wpcom-proxy-request/-/wpcom-proxy-request-5.0.1.tgz",
+      "integrity": "sha512-ncPeUfwgmMXBldcXB/kWh3btogjZvgTW3rE1xdJrdLpGetOsJ+EYSpZYdg/oD487OSI0ImSbFN97V76nZ56qPg==",
       "requires": {
         "component-event": "0.1.4",
-        "debug": "~2.2.0",
+        "debug": "^3.1.0",
         "progress-event": "~1.0.0",
         "uid": "0.0.2",
         "wp-error": "^1.3.0"
-      },
-      "dependencies": {
-        "debug": {
-          "version": "2.2.0",
-          "resolved": "http://registry.npmjs.org/debug/-/debug-2.2.0.tgz",
-          "integrity": "sha1-+HBX6ZWxofauaklgZkE3vFbwOdo=",
-          "requires": {
-            "ms": "0.7.1"
-          }
-        },
-        "ms": {
-          "version": "0.7.1",
-          "resolved": "http://registry.npmjs.org/ms/-/ms-0.7.1.tgz",
-          "integrity": "sha1-nNE8A62/8ltl7/3nzoZO6VIBcJg="
-        }
       }
     },
     "wpcom-xhr-request": {

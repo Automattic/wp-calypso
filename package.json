@@ -201,7 +201,7 @@
     "webpack-rtl-plugin": "1.7.0",
     "wpcom": "5.4.2",
     "wpcom-oauth": "0.3.4",
-    "wpcom-proxy-request": "5.0.0",
+    "wpcom-proxy-request": "5.0.1",
     "wpcom-xhr-request": "1.1.2",
     "yargs": "12.0.2"
   },
