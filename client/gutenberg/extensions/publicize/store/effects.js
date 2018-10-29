@@ -11,7 +11,7 @@ import { setConnections } from './actions';
 
 /**
  * Effect handler which will refresh the connections for a post.
- * Internally, it will trigger a fetch the post's connections, and after they
+ * Internally, it will trigger a fetch for the post's connections, and after they
  * are loaded, they will be updated for the specified post.
  *
  * @param {Object} action Action which had initiated the effect handler.
