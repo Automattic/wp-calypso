@@ -3,7 +3,6 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 
 /**
@@ -11,15 +10,16 @@ import { createBlock, registerBlockType } from '@wordpress/blocks';
  */
 import TiledGalleryEdit from './edit.jsx';
 import TiledGallerySave from './save.jsx';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const blockType = 'jetpack/tiled-gallery';
 
 const blockSettings = {
-	title: __( 'Tiled Gallery', 'jetpack' ),
-	description: __( 'Display multiple images in an elegantly organized tiled layout.', 'jetpack' ),
+	title: __( 'Tiled Gallery' ),
+	description: __( 'Display multiple images in an elegantly organized tiled layout.' ),
 	icon: 'format-gallery',
 	category: 'jetpack',
-	keywords: [ __( 'images', 'jetpack' ), __( 'photos', 'jetpack' ) ],
+	keywords: [ __( 'images' ), __( 'photos' ) ],
 	attributes: {
 		columns: {
 			type: 'integer',

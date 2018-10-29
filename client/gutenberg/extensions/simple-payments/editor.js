@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 import GridiconMoney from 'gridicons/dist/money';
 
@@ -12,13 +11,13 @@ import GridiconMoney from 'gridicons/dist/money';
  */
 import edit from './edit';
 import save from './save';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 registerBlockType( 'jetpack/simple-payments', {
-	title: __( 'Payment button', 'jetpack' ),
+	title: __( 'Payment button' ),
 
 	description: __(
-		'Simple Payments lets you create and embed credit and debit card payment buttons on your WordPress.com and Jetpack-enabled sites with minimal setup.',
-		'jetpack'
+		'Simple Payments lets you create and embed credit and debit card payment buttons on your WordPress.com and Jetpack-enabled sites with minimal setup.'
 	),
 
 	icon: <GridiconMoney />,
@@ -54,7 +53,7 @@ registerBlockType( 'jetpack/simple-payments', {
 					},
 				},
 			},
-		]
+		],
 	},
 
 	edit,

@@ -9,9 +9,14 @@
 /**
  * External dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
+
+/**
+ * Internal dependencies
+ */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class PublicizeNoConnections extends Component {
 	/**

@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { BlockControls, PlainText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 
@@ -11,6 +10,7 @@ import { Component } from '@wordpress/element';
  * Internal dependencies
  */
 import MarkdownRenderer from './renderer';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 /**
  * Module variables
@@ -75,7 +75,7 @@ class MarkdownEdit extends Component {
 		if ( ! isSelected && this.isEmpty() ) {
 			return (
 				<p className={ `${ className }__placeholder` }>
-					{ __( 'Write your _Markdown_ **here**...', 'jetpack' ) }
+					{ __( 'Write your _Markdown_ **here**...' ) }
 				</p>
 			);
 		}
@@ -84,8 +84,8 @@ class MarkdownEdit extends Component {
 			<div className={ className }>
 				<BlockControls>
 					<div className="components-toolbar">
-						{ this.renderToolbarButton( PANEL_EDITOR, __( 'Markdown', 'jetpack' ) ) }
-						{ this.renderToolbarButton( PANEL_PREVIEW, __( 'Preview', 'jetpack' ) ) }
+						{ this.renderToolbarButton( PANEL_EDITOR, __( 'Markdown' ) ) }
+						{ this.renderToolbarButton( PANEL_PREVIEW, __( 'Preview' ) ) }
 					</div>
 				</BlockControls>
 
@@ -95,7 +95,7 @@ class MarkdownEdit extends Component {
 					<PlainText
 						className={ `${ className }__editor` }
 						onChange={ this.updateSource }
-						aria-label={ __( 'Markdown', 'jetpack' ) }
+						aria-label={ __( 'Markdown' ) }
 						innerRef={ this.bindInput }
 						value={ source }
 					/>

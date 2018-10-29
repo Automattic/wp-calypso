@@ -13,8 +13,12 @@
  * External dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { __ } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class PublicizeConnectionVerify extends Component {
 	constructor( props ) {
