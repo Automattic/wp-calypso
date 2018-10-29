@@ -40,7 +40,7 @@ class CloneStartStep extends Component {
 	};
 
 	renderStepContent = () => {
-		const { translate } = this.props;
+		const { originSiteSlug, translate } = this.props;
 
 		return (
 			<Card className="clone-start__card">
@@ -127,9 +127,28 @@ class CloneStartStep extends Component {
 				</svg>
 				<p className="clone-start__description">
 					{ translate(
-						'To clone your site, you will need WordPress already ' +
-							'installed on the destination site and the server ' +
-							'credentials for the destination site.'
+						"You're about to clone {{strong}}%(originSiteSlug)s{{/strong}}. " +
+							'All content, plugins, and themes will be copied to the ' +
+							'destination site.',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								originSiteSlug,
+							},
+						}
+					) }
+				</p>
+				<p className="clone-start__description">
+					{ translate(
+						'To clone your site, you will need the {{strong}}server credentials' +
+							'{{/strong}} for the destination, which must be a WordPress site.',
+						{
+							components: {
+								strong: <strong />,
+							},
+						}
 					) }
 				</p>
 				<Button primary className="clone-start__button" onClick={ this.goToNextStep }>
@@ -151,7 +170,7 @@ class CloneStartStep extends Component {
 
 		const headerText = translate( "Let's clone %(origin)s", { args: { origin: originSiteName } } );
 		const subHeaderText = translate(
-			"You can use this to create a test or staging site, or just back up your data for safekeeping — it's up to you!"
+			"Create a test or staging site, migrate your site, or just back up your data for safekeeping — it's up to you!"
 		);
 
 		return (

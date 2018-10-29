@@ -14,7 +14,7 @@ import './style.scss';
 import edit from './edit';
 import { ALIGNMENT_OPTIONS, MAX_POSTS_TO_SHOW } from './constants';
 
-registerBlockType( 'a8c/related-posts', {
+registerBlockType( 'jetpack/related-posts', {
 	title: __( 'Related Posts', 'jetpack' ),
 
 	icon: (
@@ -36,7 +36,7 @@ registerBlockType( 'a8c/related-posts', {
 		</svg>
 	),
 
-	category: 'layout',
+	category: 'jetpack',
 
 	keywords: [ __( 'similar', 'jetpack' ), __( 'linked', 'jetpack' ), __( 'connected', 'jetpack' ) ],
 

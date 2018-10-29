@@ -456,7 +456,7 @@ class ActivityLog extends Component {
 							{ siteIsOnFreePlan && <div className="activity-log__fader" /> }
 							{ theseLogs.map(
 								log =>
-									config.isEnabled( 'activity-log-aggregated-events' ) && log.isAggregate ? (
+									log.isAggregate ? (
 										<Fragment key={ log.activityId }>
 											{ timePeriod( log ) }
 											<ActivityLogAggregatedItem

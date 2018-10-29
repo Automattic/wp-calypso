@@ -5,7 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, invoke, isEqual } from 'lodash';
+import { flow, get, invoke, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -49,6 +49,7 @@ class ImportURLStepComponent extends Component {
 	};
 
 	componentDidMount() {
+		this.setInputValueFromQueryArg();
 		this.focusInput();
 	}
 
@@ -109,7 +110,6 @@ class ImportURLStepComponent extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-
 		const isValid = this.validateUrl();
 
 		if ( ! isValid ) {
@@ -118,6 +118,11 @@ class ImportURLStepComponent extends Component {
 		}
 
 		this.props.fetchIsSiteImportable( this.props.urlInputValue );
+	};
+
+	setInputValueFromQueryArg = () => {
+		const urlFromQueryArg = get( this.props, 'queryObject.url' );
+		urlFromQueryArg && this.props.setNuxUrlInputValue( urlFromQueryArg );
 	};
 
 	validateUrl = () => {

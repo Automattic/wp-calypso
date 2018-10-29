@@ -16,6 +16,7 @@ import wrapSettingsForm from './wrap-settings-form';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
+import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import LanguagePicker from 'components/language-picker';
@@ -38,6 +39,8 @@ import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -467,6 +470,70 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	handleLaunchSite() {
+		// TODO
+	}
+
+	renderLaunchSite() {
+		const {
+			translate,
+		} = this.props;
+
+		return (
+			<>
+				<SectionHeader label={ translate( 'Launch site' ) }></SectionHeader>
+				<Card className="site-settings__general-settings-launch-site">
+					<p>{ translate( "Your site hasn't been launched yet. Only you can see it until it is launched." ) }</p>
+					<Button onClick={ this.props.handleLaunchSite }>{ translate( 'Launch site' ) }</Button>
+				</Card>
+			</>
+		);
+	}
+
+	privacySettings() {
+		const {
+			isRequestingSettings,
+			translate,
+			handleSubmitForm,
+			isSavingSettings,
+		} = this.props;
+
+		return (
+			<>
+				<SectionHeader label={ translate( 'Privacy' ) } id="site-privacy-settings">
+					<Button
+						compact={ true }
+						onClick={ handleSubmitForm }
+						primary={ true }
+						type="submit"
+						disabled={ isRequestingSettings || isSavingSettings }
+					>
+						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+					</Button>
+				</SectionHeader>
+				<Card>
+					<form>{ this.visibilityOptions() }</form>
+				</Card>
+			</>
+		);
+	}
+
+	privacySettingsWrapper() {
+		if ( this.props.isUnlaunchedSite ) {
+			if ( this.props.needsVerification ) {
+				return (
+					<EmailVerificationGate>
+						{ this.privacySettings() }
+					</EmailVerificationGate>
+				);
+			}
+
+			// TODO return this.renderLaunchSite();
+		}
+
+		return this.privacySettings();
+	}
+
 	render() {
 		const {
 			handleSubmitForm,
@@ -513,20 +580,7 @@ export class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
-				<SectionHeader label={ translate( 'Privacy' ) } id="site-privacy-settings">
-					<Button
-						compact={ true }
-						onClick={ handleSubmitForm }
-						primary={ true }
-						type="submit"
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</SectionHeader>
-				<Card>
-					<form>{ this.visibilityOptions() }</form>
-				</Card>
+				{ this.privacySettingsWrapper() }
 
 				{ ! siteIsJetpack && (
 					<div className="site-settings__footer-credit-container">
@@ -594,6 +648,8 @@ const connectComponent = connect(
 		const selectedSite = getSelectedSite( state );
 
 		return {
+			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
+			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
 			supportsLanguageSelection:

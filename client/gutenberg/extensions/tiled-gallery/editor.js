@@ -12,7 +12,7 @@ import { createBlock, registerBlockType } from '@wordpress/blocks';
 import TiledGalleryEdit from './edit.jsx';
 import TiledGallerySave from './save.jsx';
 
-const blockType = 'a8c/tiled-gallery';
+const blockType = 'jetpack/tiled-gallery';
 
 const blockSettings = {
 	title: __( 'Tiled Gallery', 'jetpack' ),

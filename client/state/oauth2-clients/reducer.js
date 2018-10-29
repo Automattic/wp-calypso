@@ -22,9 +22,9 @@ export const initialClientsData = {
 	},
 	978: {
 		id: 978,
-		name: 'polldaddy',
-		title: 'Polldaddy',
-		icon: 'https://polldaddy.com/images/polldaddy-wpcc-logo-2x.png',
+		name: 'crowdsignal',
+		title: 'Crowdsignal',
+		icon: 'https://app.crowdsignal.com/images/crowdsignal-wpcc-logo.png',
 	},
 	1854: {
 		id: 1854,

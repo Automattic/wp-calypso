@@ -22,6 +22,7 @@ import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-butto
 import Drafts from 'layout/masterbar/drafts';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEditorPublishButtonStatus } from 'state/ui/editor/selectors';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import isVipSite from 'state/selectors/is-vip-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { getRouteHistory } from 'state/ui/action-log/selectors';
@@ -215,8 +216,8 @@ const mapStateToProps = ( state, ownProps ) => {
 	return {
 		publishButtonStatus: getEditorPublishButtonStatus( state ),
 		routeHistory: getRouteHistory( state ),
-		// do not allow publish for unverified e-mails, but allow if the site is VIP
-		userNeedsVerification: ! isCurrentUserEmailVerified( state ) && ! isVipSite( state, siteId ),
+		// do not allow publish for unverified e-mails, but allow if the site is VIP, or if the site is unlaunched
+		userNeedsVerification: ! isCurrentUserEmailVerified( state ) && ! isVipSite( state, siteId ) && ! isUnlaunchedSite( state, siteId ),
 	};
 };
 

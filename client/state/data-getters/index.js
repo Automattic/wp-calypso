@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { sortBy } from 'lodash';
+import { omit, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -31,7 +31,7 @@ export const requestActivityActionTypeCounts = (
 				apiNamespace: 'wpcom/v2',
 				method: 'GET',
 				path: `/sites/${ siteId }/activity/count/group`,
-				query: filterStateToApiQuery( filter ),
+				query: omit( filterStateToApiQuery( filter ), 'aggregate' ),
 			},
 			{}
 		),

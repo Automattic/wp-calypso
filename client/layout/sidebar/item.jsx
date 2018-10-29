@@ -58,7 +58,9 @@ export default class SidebarItem extends React.Component {
 					onMouseEnter={ this.preload }
 				>
 					<Gridicon icon={ this.props.icon } size={ 24 } />
-					<span className="menu-link-text">{ this.props.label }</span>
+					<span className="menu-link-text" data-e2e-sidebar={ this.props.label }>
+						{ this.props.label }
+					</span>
 					{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
 				</a>
 				{ this.props.children }

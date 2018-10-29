@@ -114,6 +114,13 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			lastModified: '2018-10-16',
 		},
 
+		onboarding: {
+			steps: [ 'user', 'about', 'domains', 'plans' ],
+			destination: getSiteDestination,
+			description: 'The improved onboarding flow.',
+			lastModified: '2018-10-22',
+		},
+
 		'delta-discover': {
 			steps: [ 'user' ],
 			destination: '/',
@@ -277,23 +284,28 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		lastModified: '2017-01-19',
 	};
 
-	if ( config.isEnabled( 'signup/import-landing-handler' ) ) {
-		flows.import = {
-			steps: [ 'from-url', 'user', 'domains' ],
-			destination: ( { importSiteDetails, importUrl, siteSlug } ) =>
-				addQueryArgs(
-					{
-						engine: importSiteDetails.engine === 'wix' ? 'wix' : null,
-						'from-site': ( importUrl && encodeURIComponent( importUrl ) ) || null,
-					},
-					`/settings/import/${ siteSlug }`
-				),
-			description: 'A flow to kick off an import during signup',
-			disallowResume: true,
-			lastModified: '2018-09-12',
-			autoContinue: true,
-		};
-	}
+	flows.private = {
+		steps: [ 'user', 'site' ],
+		destination: getSiteDestination,
+		description: 'Test private site signup',
+		lastModified: '2018-10-22',
+	};
+
+	flows.import = {
+		steps: [ 'from-url', 'user', 'domains' ],
+		destination: ( { importSiteDetails, importUrl, siteSlug } ) =>
+			addQueryArgs(
+				{
+					engine: importSiteDetails.engine === 'wix' ? 'wix' : null,
+					'from-site': ( importUrl && encodeURIComponent( importUrl ) ) || null,
+				},
+				`/settings/import/${ siteSlug }`
+			),
+		description: 'A flow to kick off an import during signup',
+		disallowResume: true,
+		lastModified: '2018-09-12',
+		autoContinue: true,
+	};
 
 	if ( config.isEnabled( 'signup/reader' ) ) {
 		flows.reader = {

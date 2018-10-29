@@ -50,6 +50,13 @@ describe( 'getAvailabilityNotice()', () => {
 		} );
 	} );
 
+	test( 'Should return default message when search results are empty', () => {
+		expect( getAvailabilityNotice( null, domainAvailability.EMPTY_RESULTS, null ) ).toEqual( {
+			message: 'default',
+			severity: 'error',
+		} );
+	} );
+
 	test( 'Should return no message when domain unavailable, unmappable, unknown, tld not supported, or search results are empty', () => {
 		// These are special cases where the error notice should not be handled by client/components/domains/register-domain-step/index.jsx
 		// but in client/components/domains/domain-search-results/index.jsx
@@ -58,7 +65,6 @@ describe( 'getAvailabilityNotice()', () => {
 			domainAvailability.AVAILABLE,
 			domainAvailability.TLD_NOT_SUPPORTED,
 			domainAvailability.UNKNOWN,
-			domainAvailability.EMPTY_RESULTS,
 		].forEach( error => {
 			expect( getAvailabilityNotice( null, error, null ) ).toEqual( {
 				message: undefined,

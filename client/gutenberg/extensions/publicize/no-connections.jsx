@@ -4,8 +4,6 @@
  * Displays notification if there are no connected
  * social accounts, and includes a list of links to
  * connect specific services.
- *
- * @since  5.9.1
  */
 
 /**
@@ -13,25 +11,11 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
-import { getAllConnections } from './async-publicize-lib';
+import { withSelect } from '@wordpress/data';
 
 class PublicizeNoConnections extends Component {
-	constructor( props ) {
-		super( props );
-		const allConnections = getAllConnections();
-		this.state = {
-			allConnections: allConnections,
-		};
-	}
-
 	/**
 	 * Opens up popup so user can view/modify the associated connection
-	 *
-	 * @since 5.9.1
 	 *
 	 * @param {object} event Event instance for onClick.
 	 */
@@ -53,13 +37,13 @@ class PublicizeNoConnections extends Component {
 	}
 
 	render() {
-		const { allConnections } = this.state;
+		const { services } = this.props;
 		return (
 			<div>
 				<strong>{ __( 'Connect social accounts to share post: ' ) }</strong>
 				<br />
 				<ul className="not-connected">
-					{ allConnections.map( c =>
+					{ services && services.map( c =>
 						<li key={ c.name }>
 							<a
 								className="pub-service"
@@ -78,4 +62,8 @@ class PublicizeNoConnections extends Component {
 	}
 }
 
-export default PublicizeNoConnections;
+export default withSelect(
+	select => ( {
+		services: select( 'jetpack/publicize' ).getServices(),
+	} )
+)( PublicizeNoConnections );
