@@ -20075,17 +20075,17 @@
       }
     },
     "terminal-kit": {
-      "version": "1.26.3",
-      "resolved": "https://registry.npmjs.org/terminal-kit/-/terminal-kit-1.26.3.tgz",
-      "integrity": "sha512-1iVYF0yTrKtlRUYjnw0xplCJkhbECt45dIFqRCahJeiD/416tPBFqJ3NkM498gDKwyKILGPrBRJZRlUAHChzVw==",
+      "version": "1.26.4",
+      "resolved": "https://registry.npmjs.org/terminal-kit/-/terminal-kit-1.26.4.tgz",
+      "integrity": "sha512-6MWV8CGnsuGe1hlfbUsWM/BMMBryqnxb0S/XUjCBsBSWwM21Zhmsra4dHLRS0iJvE/fsmmyZ0CTau346K9uXcw==",
       "dev": true,
       "requires": {
         "@cronvel/get-pixels": "^3.3.1",
         "lazyness": "^1.0.1",
         "ndarray": "^1.0.18",
         "nextgen-events": "^1.1.0",
-        "seventh": "^0.7.15",
-        "string-kit": "^0.8.8",
+        "seventh": "^0.7.17",
+        "string-kit": "^0.8.14",
         "tree-kit": "^0.5.27"
       }
     },
