@@ -7,7 +7,8 @@
 	max-width: 500px;
 	text-align: center;
 }
- .testimonial__image {
+
+.testimonial__image {
 	width: 72px;
 	height: 72px;
 	margin: 0 auto;
@@ -17,25 +18,23 @@
 		height: 100%;
 	}
 }
- .testimonial__content {
+
+.testimonial__content {
 	margin-top: 12px;
 }
- .testimonial__author {
+
+.testimonial__author {
 	font-size: 14px;
 	margin-top: 12px;
 }
- .testimonial__name {
-	font-weight: 700;
-}
- .testimonial__site {
+
+.testimonial__site {
 	font-style: italic;
 }
- @include breakpoint( '>1040px' ) {
+
+@include breakpoint( '>1040px' ) {
 	.testimonial {
 		font-size: 18px;
 		margin-top: 48px;
-	}
-  	.testimonial__name {
-		font-size: 16px;
 	}
 } 
