@@ -99,10 +99,6 @@
 	input {
 		visibility: hidden;
 	}
-	
-	.accessible-focus &:focus {
-		border-color: $gray-lighten-10;
-	}
 }
 
 .importer__upload-content {
