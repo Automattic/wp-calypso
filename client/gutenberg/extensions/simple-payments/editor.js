@@ -27,7 +27,6 @@ registerBlockType( 'jetpack/simple-payments', {
 	keywords: [ __( 'simple payments', 'jetpack' ), __( 'PayPal', 'jetpack' ) ],
 
 	attributes: {
-		// @TODO move everything else except `paymentId` to state instead?
 		currency: {
 			type: 'string',
 			default: 'USD',

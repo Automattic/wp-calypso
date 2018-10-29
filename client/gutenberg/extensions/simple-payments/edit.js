@@ -3,13 +3,13 @@
 /**
  * External dependencies
  */
-import get from 'lodash/get';
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
 import { Panel, PanelBody, PanelRow } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
