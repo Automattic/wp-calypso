@@ -16,13 +16,10 @@ import get from 'lodash/get';
  */
 import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
 
-	constructor() {
-		super( ...arguments );
-		this.state = {
-			savingProduct: false,
-		};
-	}
 class SimplePaymentsEdit extends Component {
+	state = {
+		savingProduct: false,
+	};
 
 	componentDidUpdate( prevProps ) {
 		const { simplePayment, attributes, setAttributes, isSelected, isSaving } = this.props;
