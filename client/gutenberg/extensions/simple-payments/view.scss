@@ -1,0 +1,129 @@
+.jetpack-simple-payments-wrapper {
+	margin-bottom: 1.5em;
+}
+
+/* Higher specificity in order to reset paragraph style */
+body .jetpack-simple-payments-wrapper .jetpack-simple-payments-details p {
+	margin: 0 0 1.5em;
+	padding: 0;
+}
+
+.jetpack-simple-payments-product {
+	display: flex;
+	flex-direction: column;
+}
+
+.jetpack-simple-payments-product-image {
+	flex: 0 0 30%;
+	margin-bottom: 1.5em;
+}
+
+.jetpack-simple-payments-image {
+	box-sizing: border-box;
+	min-width: 70px;
+	padding-top: 100%;
+	position: relative;
+}
+
+/* Higher specificity in order to trump theme's style */
+body .jetpack-simple-payments-wrapper .jetpack-simple-payments-product-image .jetpack-simple-payments-image img.size-full {
+	border-radius: 0;
+	border: 0;
+	height: auto;
+	left: 50%;
+	margin: 0;
+	max-height: 100%;
+	max-width: 100%;
+	padding: 0;
+	position: absolute;
+	top: 50%;
+	transform: translate( -50%, -50% );
+	width: auto;
+}
+
+.jetpack-simple-payments-title p,
+.jetpack-simple-payments-price p {
+	font-weight: bold;
+}
+
+.jetpack-simple-payments-purchase-box {
+	align-items: flex-start;
+	display: flex;
+}
+
+.jetpack-simple-payments-items {
+	flex: 0 0 auto;
+	margin-right: 10px;
+}
+
+input[type='number'].jetpack-simple-payments-items-number {
+	font-size: 16px;
+	line-height: 1;
+	max-width: 60px;
+	padding: 4px 8px;
+}
+
+.jetpack-simple-payments-button iframe {
+	margin: 0;
+}
+
+.jetpack-simple-payments-purchase-message {
+	background-color: rgba( 255, 255, 255, 0.7 );
+	border-radius: 2px;
+	border: 2px solid #fff;
+	box-shadow: 0 0 0 1px rgba( 200, 215, 225, 0.5 ), 0 1px 2px #e9eff3;
+	display: none;
+	margin-bottom: 1.5em;
+	min-height: 48px;
+	padding: 1em;
+	position: relative;
+}
+
+.jetpack-simple-payments-purchase-message::before {
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+	font-family: dashicons !important;
+	font-size: 48px !important;
+	left: 0;
+	line-height: 1 !important;
+	position: absolute;
+	speak: none;
+	top: 50%;
+	transform: translateY( -50% );
+}
+
+.jetpack-simple-payments-purchase-message.show {
+	display: block;
+}
+
+.jetpack-simple-payments-purchase-message.success::before {
+	color: #4ab866;
+	content: '\f147';
+}
+
+.jetpack-simple-payments-purchase-message.error::before {
+	color: #d94f4f;
+	content: '\f335';
+}
+
+/* Higher specificity in order to reset */
+body .jetpack-simple-payments-wrapper .jetpack-simple-payments-purchase-message p {
+	color: #222;
+	margin: 0 0 0.5em;
+	padding: 0 0 0 40px;
+}
+
+body .jetpack-simple-payments-wrapper .jetpack-simple-payments-purchase-message p:last-child {
+	margin: 0;
+}
+
+@media screen and ( min-width: 400px ) {
+	.jetpack-simple-payments-product {
+		flex-direction: row;
+	}
+
+	.jetpack-simple-payments-product-image + .jetpack-simple-payments-details {
+		flex-basis: 70%;
+		padding-left: 1em;
+	}
+}
