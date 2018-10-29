@@ -210,7 +210,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getCustomerTypeToggle() {
-		const { basePlansPath, customerType, intervalType, translate } = this.props;
+		const { basePlansPath, customerType, translate } = this.props;
 		const segmentClasses = classNames( 'plan-features__interval-type', 'is-customer-type-toggle' );
 
 		let plansUrl = '/plans';
@@ -250,7 +250,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { displayJetpackPlans, isInSignup, siteId, withWPPlanTabs } = this.props;
+		const { displayJetpackPlans, isInSignup, siteId } = this.props;
 		let faqs = null;
 
 		if ( ! isInSignup ) {
