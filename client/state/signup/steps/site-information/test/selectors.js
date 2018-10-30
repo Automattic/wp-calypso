@@ -10,15 +10,19 @@ describe( 'selectors', () => {
 		expect( getSiteInformation( { siteInformation: undefined } ) ).toEqual( {} );
 	} );
 
-	test( 'should return site type from the state', () => {
+	test( 'should return site information from the state', () => {
 		expect(
 			getSiteInformation( {
 				signup: {
 					steps: {
-						siteInformation: {},
+						siteInformation: {
+							name: 'Slappy Junior',
+						},
 					},
 				},
 			} )
-		).toEqual( 'halloumi-salad' );
+		).toEqual( {
+			name: 'Slappy Junior',
+		} );
 	} );
 } );
