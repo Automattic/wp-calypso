@@ -267,6 +267,7 @@ export class PostEditor extends React.Component {
 			<div className={ classes }>
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
 				<QueryPreferences />
+				{ isEnabled( 'gutenberg/opt-in' ) && <EditorGutenbergOptInNotice /> }
 				<EditorConfirmationSidebar
 					handlePreferenceChange={ this.handleConfirmationSidebarPreferenceChange }
 					onPrivatePublish={ this.onPublish }
@@ -360,7 +361,6 @@ export class PostEditor extends React.Component {
 									onTextEditorChange={ this.onEditorTextContentChange }
 								/>
 								<EditorWordCount selectedText={ this.state.selectedText } />
-								{ isEnabled( 'gutenberg/opt-in' ) && <EditorGutenbergOptInNotice /> }
 							</div>
 						</div>
 					</div>
