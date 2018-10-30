@@ -24,7 +24,6 @@ import FeaturedImage from '../featured-image';
 import PostExcerpt from '../post-excerpt';
 import DiscussionPanel from '../discussion-panel';
 import PageAttributes from '../page-attributes';
-import MetaBoxes from '../../meta-boxes';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const SettingsSidebar = ( { sidebarName } ) => (
@@ -43,7 +42,6 @@ const SettingsSidebar = ( { sidebarName } ) => (
 					<PostExcerpt />
 					<DiscussionPanel />
 					<PageAttributes />
-					<MetaBoxes location="side" />
 				</Fragment>
 			) }
 			{ sidebarName === 'edit-post/block' && (
