@@ -18,6 +18,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 import ExternalLink from 'components/external-link';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -192,7 +193,7 @@ class CloneDestinationStep extends Component {
 							TOS: (
 								<ExternalLink
 									className="clone-destination__tos-link"
-									href="https://wordpress.com/tos/"
+									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 									target="_blank"
 								>
 									{ translate( 'Terms of Service.' ) }

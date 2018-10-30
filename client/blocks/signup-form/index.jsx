@@ -22,7 +22,7 @@ import {
 } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 
@@ -571,8 +571,7 @@ class SignupForm extends Component {
 	};
 
 	getTermsOfServiceUrl() {
-		// locales where we don't have translated TOS will simply show the English one
-		return 'https://' + i18n.getLocaleSlug() + '.wordpress.com/tos/';
+		return localizeUrl( 'https://wordpress.com/tos/' );
 	}
 
 	termsOfServiceLink() {

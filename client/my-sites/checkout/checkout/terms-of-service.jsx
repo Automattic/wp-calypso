@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
 import Gridicon from 'gridicons';
+import { localizeUrl } from 'lib/i18n-utils';
 
 class TermsOfService extends React.Component {
 	static displayName = 'TermsOfService';
@@ -27,7 +28,13 @@ class TermsOfService extends React.Component {
 			'By checking out, you agree to our {{link}}fascinating terms and conditions{{/link}}.',
 			{
 				components: {
-					link: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+					link: (
+						<a
+							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
 				},
 			}
 		);

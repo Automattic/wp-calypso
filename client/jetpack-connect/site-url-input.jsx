@@ -5,7 +5,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 
 /**
@@ -16,6 +16,7 @@ import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import Spinner from 'components/spinner';
+import { localizeUrl } from 'lib/i18n-utils';
 
 class JetpackConnectSiteUrlInput extends PureComponent {
 	static propTypes = {
@@ -68,11 +69,11 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 	}
 
 	getTermsOfJetpackSyncUrl() {
-		return 'https://jetpack.com/support/what-data-does-jetpack-sync/';
+		return localizeUrl( 'https://jetpack.com/support/what-data-does-jetpack-sync/' );
 	}
 
 	getTermsOfServiceUrl() {
-		return 'https://' + getLocaleSlug() + '.wordpress.com/tos/';
+		return localizeUrl( 'https://wordpress.com/tos/' );
 	}
 
 	isFormSubmitDisabled() {
