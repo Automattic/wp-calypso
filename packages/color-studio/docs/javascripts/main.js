@@ -169,20 +169,19 @@ function createColorTile(colorObject, previous = false) {
   const baseIndex = previous ? 80 : 500
   const { index, color, name, auxiliary } = colorObject
 
-  const [primaryTextColor, secondaryTextColor] = determineTextColor(color)
   const className = `tile ${index === baseIndex ? ' tile--base' : ''} text-center`
   const title = (name && index === baseIndex ? `${name} ${index}` : index) + (auxiliary ? 'A' : '')
 
   /* eslint-disable indent */
   return [
-    `<div class="${className}" style="background: ${color}; color: ${primaryTextColor}" data-color="${color}">`,
+    `<div class="${className}" style="background: ${color}; color: ${determineTextColor(color)}" data-color="${color}">`,
       `<div class="tile__title font-weight-bold">`,
         title,
       '</div>',
-      `<div class="tile__meta text-uppercase" style="color: ${secondaryTextColor}">`,
+      `<div class="tile__meta text-uppercase">`,
         color,
       '</div>',
-      `<div class="tile__meta tile__meta--tiny text-uppercase pt-1" style="color: ${secondaryTextColor}">`,
+      `<div class="tile__meta tile__meta--tiny text-uppercase pt-1">`,
         getColorProperties(color),
       '</div>',
     '</div>'
@@ -191,20 +190,8 @@ function createColorTile(colorObject, previous = false) {
 }
 
 function determineTextColor(backgroundColor) {
-  const hasContrast = c => chroma.contrast(backgroundColor, c) >= 6
-  const fadeColor = (c, r = 0.65) => chroma.mix(backgroundColor, c, r).hex()
-
-  let color = backgroundColor
-
-  if (hasContrast(COLOR_WHITE)) {
-    color = COLOR_WHITE
-  } else {
-    do {
-      color = chroma(color).darken().hex()
-    } while (!hasContrast(color) && color !== COLOR_BLACK)
-  }
-
-  return [color, fadeColor(color)]
+  const ratio = chroma.contrast(COLOR_WHITE, backgroundColor)
+  return ratio > 4.5 ? COLOR_WHITE : COLOR_BLACK
 }
 
 function getColorProperties(colorValue) {
