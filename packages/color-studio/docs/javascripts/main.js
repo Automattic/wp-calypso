@@ -182,10 +182,8 @@ function createColorTile(colorObject, previous = false) {
       `<div class="tile__meta text-uppercase" style="color: ${secondaryTextColor}">`,
         color,
       '</div>',
-      `<div class="tile__meta tile__meta--tiny text-uppercase" style="color: ${secondaryTextColor}">`,
-        '<span title="Contrast against white">',
-          getColorProperties(color),
-        '</span>',
+      `<div class="tile__meta tile__meta--tiny text-uppercase pt-1" style="color: ${secondaryTextColor}">`,
+        getColorProperties(color),
       '</div>',
     '</div>'
   ].join('')
@@ -210,12 +208,15 @@ function determineTextColor(backgroundColor) {
 }
 
 function getColorProperties(colorValue) {
-  return getContrastScore(colorValue, COLOR_WHITE)
+  return [
+    getContrastScore(COLOR_BLACK, colorValue, 'B'),
+    getContrastScore(COLOR_WHITE, colorValue, 'W')
+  ].join(' &nbsp; ')
 }
 
-function getContrastScore(foregroundColor, backgroundColor) {
-  const ratio = chroma.contrast(foregroundColor, backgroundColor)
-  let score = round(ratio, 1)
+function getContrastScore(foregroundColor, backgroundColor, prefix) {
+  const ratio = round(chroma.contrast(foregroundColor, backgroundColor), 1)
+  let score = String(ratio)
 
   if (ratio >= 7.5) {
     score = 'AAA'
@@ -223,9 +224,9 @@ function getContrastScore(foregroundColor, backgroundColor) {
     score = 'AA'
   }
 
-  if (ratio >= 3) {
-    score += ' ✓'
+  if (prefix) {
+    score = [prefix, score].join(':')
   }
 
-  return score
+  return `<span style="color: ${foregroundColor}" title="${ratio}">${score}</span>`
 }
