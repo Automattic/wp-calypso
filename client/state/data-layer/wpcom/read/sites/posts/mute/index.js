@@ -15,7 +15,6 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, plainNotice } from 'state/notices/actions';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
@@ -51,13 +50,11 @@ export function receiveConversationMuteError( {
 		errorNotice(
 			translate( 'Sorry, we had a problem unfollowing that conversation. Please try again.' )
 		),
-		bypassDataLayer(
-			updateConversationFollowStatus( {
-				siteId,
-				postId,
-				followStatus: previousState,
-			} )
-		),
+		updateConversationFollowStatus( {
+			siteId,
+			postId,
+			followStatus: previousState,
+		} ),
 	];
 }
 
