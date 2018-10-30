@@ -104,7 +104,9 @@ class ActivityLogAggregatedItem extends Component {
 					/>
 				) }
 				<div className="activity-log-item__description">
-					<ActivityDescription activity={ activity } />
+					<div className="activity-log-item__description-content">
+						<ActivityDescription activity={ activity } />
+					</div>
 				</div>
 				{ activityMedia && (
 					<ActivityMedia

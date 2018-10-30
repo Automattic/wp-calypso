@@ -78,10 +78,12 @@ class ActivityLogItem extends Component {
 					/>
 				) }
 				<div className="activity-log-item__description">
-					<ActivityDescription
-						activity={ this.props.activity }
-						rewindIsActive={ this.props.rewindIsActive }
-					/>
+					<div className="activity-log-item__description-content">
+						<ActivityDescription
+							activity={ this.props.activity }
+							rewindIsActive={ this.props.rewindIsActive }
+						/>
+					</div>
 					<div className="activity-log-item__description-summary">{ activityTitle }</div>
 				</div>
 				{ activityMedia && (
