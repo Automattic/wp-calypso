@@ -59,4 +59,4 @@ export const loadmShotsPreview = ( options = {} ) => {
 	} );
 };
 
-export const prefetchmShotsPreview = url => querymShotsEndpoint( { url, maxRetries: 0 } );
+export const prefetchmShotsPreview = url => querymShotsEndpoint( { url, currentRetries: 1 } );
