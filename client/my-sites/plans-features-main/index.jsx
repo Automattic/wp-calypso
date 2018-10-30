@@ -32,7 +32,7 @@ import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
-import { plansLink, findPlansKeys, getPlan } from 'lib/plans';
+import { plansLink, planMatches, findPlansKeys, getPlan } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import PaymentMethods from 'blocks/payment-methods';
@@ -41,35 +41,8 @@ import isHappychatAvailable from 'state/happychat/selectors/is-happychat-availab
 import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 
-const getOldStylePlans = ( group, term ) => [
-	findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
-	findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
-	findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
-	findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
-];
-
-const getPersonalPlans = ( group, term ) => [
-	findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
-	findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
-	findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
-	findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
-];
-
-const getBusinessPlans = ( group, term ) => [
-	findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
-	findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
-	findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
-];
-
-const getWPComBusinessPlanSlugs = () =>
-	[]
-		.concat( getBusinessPlans( GROUP_WPCOM, TERM_ANNUALLY ) )
-		.concat( getBusinessPlans( GROUP_WPCOM, TERM_BIENNIALLY ) )
-		.map( planKey => getPlan( planKey ) )
-		.map( plan => plan.getStoreSlug() );
-
 export class PlansFeaturesMain extends Component {
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		/**
 		 * Happychat does not update with the selected site right now :(
 		 * This ensures that Happychat groups are correct in case we switch sites while on the plans
@@ -98,6 +71,8 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 		} = this.props;
 
+		const plans = this.getPlansForPlanFeatures();
+		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 		return (
 			<div
 				className="plans-features-main__group"
@@ -110,7 +85,8 @@ export class PlansFeaturesMain extends Component {
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
 					onUpgradeClick={ onUpgradeClick }
-					plans={ this.getPlansForPlanFeatures() }
+					plans={ plans }
+					visiblePlans={ visiblePlans }
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
 					withDiscount={ withDiscount }
@@ -121,14 +97,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const {
-			displayJetpackPlans,
-			customerType,
-			intervalType,
-			selectedPlan,
-			hideFreePlan,
-			withWPPlanTabs,
-		} = this.props;
+		const { displayJetpackPlans, intervalType, selectedPlan, hideFreePlan } = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
 
@@ -145,16 +114,24 @@ export class PlansFeaturesMain extends Component {
 			term = TERM_ANNUALLY;
 		}
 
-		const group = displayJetpackPlans ? GROUP_JETPACK : GROUP_WPCOM;
 		let plans;
-		if ( withWPPlanTabs ) {
-			if ( customerType === 'personal' ) {
-				plans = getPersonalPlans( group, term );
-			} else {
-				plans = getBusinessPlans( group, term );
-			}
+		if ( displayJetpackPlans ) {
+			const group = GROUP_JETPACK;
+			plans = [
+				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
+				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
+				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
+				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
+			];
 		} else {
-			plans = getOldStylePlans( group, term );
+			const group = GROUP_WPCOM;
+			plans = [
+				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
+				findPlansKeys( { group, term, type: TYPE_BLOGGER } )[ 0 ],
+				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
+				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
+				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
+			];
 		}
 
 		if ( hideFreePlan ) {
@@ -166,6 +143,33 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		return plans;
+	}
+
+	getVisiblePlansForPlanFeatures( plans ) {
+		const { displayJetpackPlans, customerType, withWPPlanTabs } = this.props;
+
+		const isPlanOneOfType = ( plan, types ) =>
+			types.filter( type => planMatches( plan, { type } ) ).length > 0;
+
+		if ( displayJetpackPlans ) {
+			return plans;
+		}
+
+		if ( ! withWPPlanTabs ) {
+			return plans.filter( plan =>
+				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ] )
+			);
+		}
+
+		if ( customerType === 'personal' ) {
+			return plans.filter( plan =>
+				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_BLOGGER, TYPE_PERSONAL, TYPE_PREMIUM ] )
+			);
+		}
+
+		return plans.filter( plan =>
+			isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PREMIUM, TYPE_BUSINESS ] )
+		);
 	}
 
 	constructPath( plansUrl, intervalType, customerType = '' ) {
@@ -303,8 +307,16 @@ const guessCustomerType = ( state, props ) => {
 	if ( ! customerType ) {
 		const currentPlan = getSitePlan( state, get( site, [ 'ID' ] ) );
 		if ( currentPlan ) {
-			const isPlanInBusinessGroup =
-				getWPComBusinessPlanSlugs().indexOf( currentPlan.product_slug ) !== -1;
+			const group = GROUP_WPCOM;
+			const businessPlanSlugs = [
+				findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PREMIUM } )[ 0 ],
+				findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_BUSINESS } )[ 0 ],
+				findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
+				findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
+			]
+				.map( planKey => getPlan( planKey ) )
+				.map( plan => plan.getStoreSlug() );
+			const isPlanInBusinessGroup = businessPlanSlugs.indexOf( currentPlan.product_slug ) !== -1;
 			customerType = isPlanInBusinessGroup ? 'business' : 'personal';
 		}
 	}
@@ -317,7 +329,7 @@ const guessCustomerType = ( state, props ) => {
 export default connect(
 	( state, props ) => {
 		return {
-			withWPPlanTabs: true,
+			withWPPlanTabs: false,
 			customerType: guessCustomerType( state, props ),
 			isChatAvailable: isHappychatAvailable( state ),
 			siteId: get( props.site, [ 'ID' ] ),

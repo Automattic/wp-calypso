@@ -603,6 +603,7 @@ PlanFeatures.propTypes = {
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plans prop or isPlaceholder prop
 	plans: PropTypes.array,
+	visiblePlans: PropTypes.array,
 	planProperties: PropTypes.array,
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
@@ -617,6 +618,7 @@ PlanFeatures.defaultProps = {
 	isJetpack: false,
 	selectedSiteSlug: '',
 	siteId: null,
+	visiblePlans: null,
 	onUpgradeClick: noop,
 };
 
@@ -662,6 +664,7 @@ export default connect(
 			isLandingPage,
 			siteId,
 			displayJetpackPlans,
+			visiblePlans,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -674,7 +677,7 @@ export default connect(
 		const siteType = signupDependencies.designType;
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 
-		const planProperties = compact(
+		let planProperties = compact(
 			map( plans, plan => {
 				let isPlaceholder = false;
 				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
@@ -773,6 +776,10 @@ export default connect(
 		);
 
 		const planCredits = calculatePlanCredits( state, siteId, planProperties );
+
+		if ( visiblePlans !== null ) {
+			planProperties = planProperties.filter( p => visiblePlans.indexOf( p.planName ) !== -1 );
+		}
 
 		return {
 			canPurchase,

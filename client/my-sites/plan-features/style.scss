@@ -67,7 +67,8 @@ $plan-features-sidebar-width: 272px;
 .plan-features__table.has-2-cols {
 	display: block;
 	max-width: 720px;
-	margin: 0 auto;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .plan-features__mobile-plan {
@@ -309,7 +310,7 @@ $plan-features-sidebar-width: 272px;
 .segmented-control.is-customer-type-toggle {
 	width: 500px;
 	max-width: 100%;
-	margin: 0 auto 20px;
+	margin: 30px auto 35px;
 
 	& + .plans-features-main__group {
 		padding-top: 8px;
