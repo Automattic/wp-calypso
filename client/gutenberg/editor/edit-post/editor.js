@@ -20,10 +20,6 @@ if ( isEnabled( 'gutenberg/block/jetpack-preset' ) ) {
 	require( 'gutenberg/extensions/presets/jetpack/editor.js' );
 }
 
-if ( isEnabled('gutenberg/block/simple-payments') ) {
-	require( 'gutenberg/extensions/simple-payments/editor.js' );
-}
-
 function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...props } ) {
 	if ( ! post ) {
 		return null;
