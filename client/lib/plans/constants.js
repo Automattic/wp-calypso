@@ -13,7 +13,14 @@ import { compact, includes } from 'lodash';
  */
 
 import { isEnabled } from 'config';
-import { isBusinessPlan, isFreePlan, isBloggerPlan, isPersonalPlan, isPremiumPlan } from './index';
+import {
+	isBusinessPlan,
+	isEcommercePlan,
+	isFreePlan,
+	isBloggerPlan,
+	isPersonalPlan,
+	isPremiumPlan,
+} from './index';
 
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
@@ -1890,6 +1897,10 @@ export function getPlanClass( planKey ) {
 
 	if ( isBusinessPlan( planKey ) ) {
 		return 'is-business-plan';
+	}
+
+	if ( isEcommercePlan( planKey ) ) {
+		return 'is-ecommerce-plan';
 	}
 
 	return '';
