@@ -296,7 +296,7 @@ class AboutStep extends Component {
 		//Site Goals
 		if ( shouldHideSiteGoals ) {
 			themeRepo = hasPrepopulatedVertical ? 'pub/radcliffe-2' : getThemeForSiteType( siteType );
-			designType = getDesignTypeForSiteType( siteType, this.props.flowName );
+			designType = getDesignTypeForSiteType( siteType, flowName );
 			eventAttributes.site_type = siteType;
 		} else {
 			const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
@@ -307,7 +307,7 @@ class AboutStep extends Component {
 			themeRepo = hasPrepopulatedVertical
 				? 'pub/radcliffe-2'
 				: getThemeForSiteGoals( siteGoalsInput );
-			designType = getDesignTypeForSiteGoals( siteGoalsInput, this.props.flowName );
+			designType = getDesignTypeForSiteGoals( siteGoalsInput, flowName );
 
 			for ( let i = 0; i < siteGoalsArray.length; i++ ) {
 				eventAttributes[ `site_goal_${ siteGoalsArray[ i ] }` ] = true;
