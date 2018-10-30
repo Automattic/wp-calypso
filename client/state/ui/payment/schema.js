@@ -7,7 +7,3 @@ export const paymentCountryCodeSchema = {
 export const paymentPostalCodeSchema = {
 	type: [ 'string', 'null' ],
 };
-
-export const paymentTaxRateSchema = {
-	type: [ 'number', 'null' ],
-};

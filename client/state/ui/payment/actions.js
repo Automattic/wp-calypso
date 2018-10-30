@@ -8,9 +8,8 @@ import {
 	PAYMENT_POSTAL_CODE_SET,
 	PAYMENT_TAX_RATE_SET,
 	PAYMENT_TAX_RATE_REQUEST,
+	PAYMENT_TAX_RATE_FAILURE,
 } from 'state/action-types';
-
-import 'state/data-layer/wpcom/tax';
 
 /**
  * Returns an action object used to set the payment country.
@@ -59,5 +58,12 @@ export function setPaymentTaxRate( taxRate ) {
 export function requestPaymentTaxRate() {
 	return {
 		type: PAYMENT_TAX_RATE_REQUEST,
+	};
+}
+
+export function requestPaymentTaxRateFailure( error = { message: 'Unknown error.' } ) {
+	return {
+		type: PAYMENT_TAX_RATE_FAILURE,
+		error,
 	};
 }

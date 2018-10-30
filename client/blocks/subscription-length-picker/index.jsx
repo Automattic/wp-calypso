@@ -21,8 +21,10 @@ import { PLANS_LIST } from 'lib/plans/constants';
 import QueryPlans from 'components/data/query-plans';
 import QueryProductsList from 'components/data/query-products-list';
 import SubscriptionLengthOption from './option';
-import getTaxRate from 'state/selectors/get-tax-rate';
 import getShouldShowTax from 'state/selectors/get-should-show-tax';
+import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
+import getPaymentPostalCode from 'state/selectors/get-payment-postal-code';
+import { requestTaxRate } from 'state/data-getters';
 
 export class SubscriptionLengthPicker extends React.Component {
 	static propTypes = {
@@ -110,7 +112,6 @@ export class SubscriptionLengthPicker extends React.Component {
 									value={ planSlug }
 									onCheck={ this.handleCheck }
 									shouldShowTax={ shouldShowTax }
-									taxRate={ taxRate }
 									taxDisplay={
 										shouldShowTax && this.formatTax( taxRate, priceFull, this.props.currencyCode )
 									}
@@ -147,12 +148,16 @@ export function myFormatCurrency( price, code, options = {} ) {
 
 export const mapStateToProps = ( state, { plans } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
+	const paymentCountryCode = getPaymentCountryCode( state );
+	const paymentPostalCode = getPaymentPostalCode( state );
+	const taxRateRequest = requestTaxRate( paymentCountryCode, paymentPostalCode );
+	const taxRate = taxRateRequest.state === 'success' ? taxRateRequest.data : undefined;
 
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		productsWithPrices: computeProductsWithPrices( state, selectedSiteId, plans ),
 		shouldShowTax: getShouldShowTax( state ),
-		taxRate: getTaxRate( state ),
+		taxRate,
 	};
 };
 

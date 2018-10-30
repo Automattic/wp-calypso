@@ -34,7 +34,6 @@ export class SubscriptionLengthOption extends React.Component {
 		onCheck: PropTypes.func,
 		translate: PropTypes.func.isRequired,
 		shouldShowTax: PropTypes.bool,
-		taxRate: PropTypes.number,
 		taxDisplay: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	};
 
