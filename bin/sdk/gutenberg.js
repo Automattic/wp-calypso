@@ -41,7 +41,6 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 
 		const presetBlocks = require( presetPath );
 		const presetBetaBlocks = fs.existsSync( presetBetaPath ) ? require( presetBetaPath ) : [];
-
 		const allPresetBlocks = [ ...presetBlocks, ...presetBetaBlocks ]
 
 		// Find all the shared scripts
@@ -55,28 +54,24 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 			}
 			return viewBlocks;
 		}, {} );
-	
+		
+		// Find all the editor shared scripts
 		const sharedEditorUtilsScripts = sharedScripts( 'editor-shared', inputDir )
-		const editorScripts = blockScripts( 'editor', inputDir, presetBlocks );
-		const editorBetaScripts = blockScripts( 'editor', inputDir, presetBetaBlocks );
-		const viewScripts = blockScripts( 'view', inputDir, allPresetBlocks );
-
 
 		// Combines all the different blocks into one editor.js script
 		editorScript = [
 			...sharedUtilsScripts,
 			...sharedEditorUtilsScripts,
-			...editorScripts,
-			...viewScripts,
+			...blockScripts( 'editor', inputDir, presetBlocks ),
+			...blockScripts( 'view', inputDir, presetBlocks ),
 		];
 
 		// Combines all the different blocks into one editor-beta.js script
 		editorBetaScript = [
 			...sharedUtilsScripts,
 			...sharedEditorUtilsScripts,
-			...editorScripts,
-			...editorBetaScripts,
-			...viewScripts,
+			...blockScripts( 'editor', inputDir, allPresetBlocks ),
+			...blockScripts( 'view', inputDir, allPresetBlocks ),
 		];
 
 		// We explicitly don't create a view.js bundle since all the views are
