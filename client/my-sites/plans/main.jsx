@@ -74,7 +74,7 @@ class Plans extends React.Component {
 				<Main wideLayout={ true }>
 					<SidebarNavigation />
 
-					<div id="plans" className="plans has-sidebar" />
+					<div id="plans" className="plans plans__has-sidebar" />
 				</Main>
 			</div>
 		);
@@ -96,7 +96,7 @@ class Plans extends React.Component {
 				<Main wideLayout={ true }>
 					<SidebarNavigation />
 
-					<div id="plans" className="plans has-sidebar">
+					<div id="plans" className="plans plans__has-sidebar">
 						<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
 						<PlansFeaturesMain
 							displayJetpackPlans={ displayJetpackPlans }
