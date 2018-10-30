@@ -11,6 +11,11 @@ import { __ } from '@wordpress/i18n';
 import './view.scss';
 
 export default ( { title = '', content = '', formattedPrice = '' } ) => {
+	const assetUrl =
+		typeof window !== undefined && window.Jetpack_Block_Assets_Base_Url
+			? window.Jetpack_Block_Assets_Base_Url
+			: '/wp-content/plugins/jetpack/_inc/blocks';
+
 	return (
 		<div className="jetpack-simple-payments-wrapper">
 			<div className="jetpack-simple-payments-product">
@@ -31,7 +36,11 @@ export default ( { title = '', content = '', formattedPrice = '' } ) => {
 						</div>
 					) : null }
 					<div className="jetpack-simple-payments-purchase-box">
-						<img src="paypal-placeholder.png" alt={ __( 'Pay with PayPal', 'jetpack' ) } />
+						<img
+							alt={ __( 'Pay with PayPal', 'jetpack' ) }
+							src={ `${ assetUrl }paypal-button.png` }
+							srcset={ `${ assetUrl }paypal-button@2x.png 2x` }
+						/>
 					</div>
 				</div>
 			</div>

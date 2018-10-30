@@ -7,12 +7,15 @@
 		}
 	}
 
-	.simple-payments__field-title,
-	.simple-payments__field-content {
-		&:not( .simple-payments__field-has-error ) {
-			.components-text-control__input {
-				border-width: 0;
-			}
+	.simple-payments__field-title:not( .simple-payments__field-has-error ) {
+		.components-text-control__input {
+			border-width: 0;
+		}
+	}
+
+	.simple-payments__field-content:not( .simple-payments__field-has-error ) {
+		.components-textarea-control__input {
+			border-width: 0;
 		}
 	}
 
