@@ -2419,6 +2419,20 @@
         "@wordpress/keycodes": "^2.0.2",
         "@wordpress/rich-text": "^1.0.2",
         "@wordpress/url": "^2.2.0"
+      },
+      "dependencies": {
+        "@wordpress/rich-text": {
+          "version": "1.0.2",
+          "resolved": "https://registry.npmjs.org/@wordpress/rich-text/-/rich-text-1.0.2.tgz",
+          "integrity": "sha512-y5nPtsTiP2DAZLGfcyre2ePHmbEsGHMCOOvh+U9BJ9H8Z+WyGzsHGKHO+TkY8pI/4eBapkutlBp1ADnmB8d5Ng==",
+          "requires": {
+            "@babel/runtime": "^7.0.0",
+            "@wordpress/data": "^3.0.0",
+            "@wordpress/escape-html": "^1.0.1",
+            "lodash": "^4.17.10",
+            "rememo": "^3.0.0"
+          }
+        }
       }
     },
     "@wordpress/hooks": {
@@ -2516,9 +2530,9 @@
       }
     },
     "@wordpress/rich-text": {
-      "version": "1.0.2",
-      "resolved": "https://registry.npmjs.org/@wordpress/rich-text/-/rich-text-1.0.2.tgz",
-      "integrity": "sha512-y5nPtsTiP2DAZLGfcyre2ePHmbEsGHMCOOvh+U9BJ9H8Z+WyGzsHGKHO+TkY8pI/4eBapkutlBp1ADnmB8d5Ng==",
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/@wordpress/rich-text/-/rich-text-2.0.0.tgz",
+      "integrity": "sha512-5enciqzSzUIQSy9oaPHO9x0K2YTa2zB7qj0CgLio+21l3zeNo9uagZFTunIOH90foa4OtAhK1vDzEhSZRF9NpQ==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "@wordpress/data": "^3.0.0",
