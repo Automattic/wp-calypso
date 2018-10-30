@@ -41,10 +41,10 @@ export const WEB_PAYMENT_APPLE_PAY_METHOD = 'https://apple.com/apple-pay';
 const SUPPORTED_NETWORKS = [ 'visa', 'mastercard', 'amex' ];
 const APPLE_PAY_MERCHANT_IDENTIFIER = 'merchant.com.wordpress.test';
 const PAYMENT_REQUEST_OPTIONS = {
-	requestPayerName: true,
+	requestPayerName: false,
 	requestPayerPhone: false,
 	requestPayerEmail: false,
-	requestShipping: true,
+	requestShipping: false,
 };
 
 /**
@@ -199,7 +199,7 @@ export class WebPaymentBox extends React.Component {
 				label: 'Total',
 				amount: {
 					currency: cart.currency,
-					value: cart.total_cost,
+					value: cart.total_cost + '',
 				},
 			},
 			displayItems: cart.products.map( product => {
@@ -207,7 +207,7 @@ export class WebPaymentBox extends React.Component {
 					label: product.product_name,
 					amount: {
 						currency: product.currency,
-						value: product.cost,
+						value: product.cost + ''
 					},
 				};
 			} ),
@@ -221,14 +221,14 @@ export class WebPaymentBox extends React.Component {
 
 		const environment = 'production' === config( 'env' ) ? undefined : 'sandbox';
 
-		paymentRequest.onmerchantvalidation = merchantValidationEvent => {
+		paymentRequest.onmerchantvalidation = event => {
 			wpcom
 				.undocumented()
-				.applePayMerchantValidation( merchantValidationEvent.validationURL, environment )
+				.applePayMerchantValidation( event.validationURL, environment )
 				.then( json => {
-					console.log( json, merchantValidationEvent );
+					console.log( json );
 
-					merchantValidationEvent.complete( new Promise(resolve => resolve( json ) ) );
+					event.complete( json );
 				} )
 				.catch( error => {
 					console.error( 'onmerchantvalidation error' );
@@ -289,6 +289,9 @@ export class WebPaymentBox extends React.Component {
 						paymentRequest
 							.show()
 							.then( paymentResponse => {
+								console.log(paymentResponse);
+return;
+
 								const { payerName, shippingAddress, details } = paymentResponse;
 								const { token } = details;
 
