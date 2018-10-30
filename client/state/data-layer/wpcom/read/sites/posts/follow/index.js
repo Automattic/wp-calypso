@@ -15,7 +15,6 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const requestConversationFollow = action => {
@@ -50,13 +49,11 @@ export function receiveConversationFollowError( {
 		errorNotice(
 			translate( 'Sorry, we had a problem following that conversation. Please try again.' )
 		),
-		bypassDataLayer(
-			updateConversationFollowStatus( {
-				siteId,
-				postId,
-				followStatus: previousState,
-			} )
-		),
+		updateConversationFollowStatus( {
+			siteId,
+			postId,
+			followStatus: previousState,
+		} ),
 	];
 }
 
