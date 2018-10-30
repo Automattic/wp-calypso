@@ -31,34 +31,47 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	} );
 
 	const presetPath = path.join( inputDir, 'index.json' );
+	const presetBetaPath = path.join( inputDir, 'index-beta.json' ); // beta blocks live here
 
 	let editorScript;
+	let editorBetaScript;
 	let viewBlocksScripts;
 	let viewScriptEntry;
 	if ( fs.existsSync( presetPath ) ) {
 
 		const presetBlocks = require( presetPath );
+		const presetBetaBlocks = fs.existsSync( presetBetaPath ) ? require( presetBetaPath ) : [];
+		const allPresetBlocks = [ ...presetBlocks, ...presetBetaBlocks ]
+
 		// Find all the shared scripts
 		const sharedUtilsScripts = sharedScripts( 'shared', inputDir );
 
 		// Helps split up each block into its own folder view script
-		viewBlocksScripts = presetBlocks.reduce( ( viewBlocks, block ) => {
+		viewBlocksScripts = allPresetBlocks.reduce( ( viewBlocks, block ) => {
 			const viewScriptPath = path.join( inputDir, `${ DIRECTORY_DEPTH }${ block }/view.js` );
 			if ( fs.existsSync( viewScriptPath ) ) {
 				viewBlocks[ block + '/view' ] = [ ...sharedUtilsScripts, ...[ viewScriptPath ] ];
 			}
 			return viewBlocks;
 		}, {} );
-
+		
+		// Find all the editor shared scripts
 		const sharedEditorUtilsScripts = sharedScripts( 'editor-shared', inputDir )
-		const editorScripts = blockScripts( 'editor', inputDir, presetBlocks );
-		const viewScripts = blockScripts( 'view', inputDir, presetBlocks );
+
 		// Combines all the different blocks into one editor.js script
 		editorScript = [
 			...sharedUtilsScripts,
 			...sharedEditorUtilsScripts,
-			...editorScripts,
-			...viewScripts,
+			...blockScripts( 'editor', inputDir, presetBlocks ),
+			...blockScripts( 'view', inputDir, presetBlocks ),
+		];
+
+		// Combines all the different blocks into one editor-beta.js script
+		editorBetaScript = [
+			...sharedUtilsScripts,
+			...sharedEditorUtilsScripts,
+			...blockScripts( 'editor', inputDir, allPresetBlocks ),
+			...blockScripts( 'view', inputDir, allPresetBlocks ),
 		];
 
 		// We explicitly don't create a view.js bundle since all the views are
@@ -74,6 +87,7 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 		...baseConfig,
 		entry: {
 			editor: editorScript,
+			"editor-beta": editorBetaScript,
 			...viewScriptEntry,
 			...viewBlocksScripts,
 		},
