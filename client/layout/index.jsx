@@ -116,9 +116,10 @@ class Layout extends Component {
 				) : (
 					<TranslatorLauncher />
 				) }
-				{ this.props.section.group === 'sites' && (
-					<AsyncLoad require="blocks/site-preview" placeholder={ null } />
-				) }
+				{ this.props.section.group === 'sites' &&
+					this.props.currentLayoutFocus === 'preview' && (
+						<AsyncLoad require="blocks/site-preview" placeholder={ null } />
+					) }
 				{ config.isEnabled( 'happychat' ) &&
 					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
 				{ 'development' === process.env.NODE_ENV && (
