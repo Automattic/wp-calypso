@@ -15,6 +15,8 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
+import PaymentCountrySelect from 'components/payment-country-select';
+import Input from 'my-sites/domains/components/form/input';
 import TermsOfService from './terms-of-service';
 import cartValues from 'lib/cart-values';
 import wpcom from 'lib/wp';
@@ -111,8 +113,14 @@ export class WebPaymentBox extends React.Component {
 		cart: PropTypes.object.isRequired,
 		transaction: PropTypes.object.isRequired,
 		transactionStep: PropTypes.object.isRequired,
+		countriesList: PropTypes.array.isRequired,
 		onSubmit: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+	};
+
+	state = {
+		country: null,
+		postalCode: null,
 	};
 
 	buttonState = () => {
@@ -304,8 +312,8 @@ export class WebPaymentBox extends React.Component {
 								this.props.transaction.payment = newCardPayment( {
 									tokenized_payment_data: token.paymentData,
 									name: payerName,
-									country: 'CH',
-									'postal-code': '1350',
+									country: this.state.country,
+									'postal-code': this.state.postalCode,
 									card_brand: token.paymentMethod.network,
 								} );
 
@@ -370,9 +378,23 @@ export class WebPaymentBox extends React.Component {
 		}
 	};
 
+	updateSelectedCountry = ( key, value ) => {
+		if ( 'country' === key ) {
+			this.setState( { country: value } );
+		}
+	};
+
+	updateSelectedPostalCode = ( event ) => {
+		const { name: key, value } = event.target;
+
+		if ( 'postal-code' === key ) {
+			this.setState( { postalCode: value } );
+		}
+	};
+
 	render() {
 		const paymentMethod = detectWebPaymentMethod();
-		const { cart, translate } = this.props;
+		const { cart, translate, countriesList } = this.props;
 
 		if ( ! paymentMethod ) {
 			return <></>;
@@ -381,6 +403,7 @@ export class WebPaymentBox extends React.Component {
 		const buttonState = this.buttonState();
 		let introductionText;
 		let button;
+		let buttonDisabled = buttonState.disabled || ! this.state.country || ! this.state.postalCode;
 
 		switch ( paymentMethod ) {
 			case WEB_PAYMENT_APPLE_PAY_METHOD:
@@ -395,7 +418,7 @@ export class WebPaymentBox extends React.Component {
 						<button
 							type="submit"
 							onClick={ this.submit.bind( this, paymentMethod ) }
-							disabled={ buttonState.disabled }
+							disabled={ buttonDisabled }
 							className="web-payment-box__apple-pay-button"
 						/>
 					);
@@ -405,7 +428,7 @@ export class WebPaymentBox extends React.Component {
 							type="button"
 							className="button is-primary button-pay pay-button__button"
 							busy={ buttonState.disabled }
-							disabled={ buttonState.disabled }
+							disabled={ buttonDisabled }
 						>
 							{ buttonState.text }
 						</Button>
@@ -425,7 +448,7 @@ export class WebPaymentBox extends React.Component {
 						className="button is-primary button-pay pay-button__button"
 						onClick={ this.submit.bind( this, paymentMethod ) }
 						busy={ buttonState.disabled }
-						disabled={ buttonState.disabled }
+						disabled={ buttonDisabled }
 					>
 						{ buttonState.text }
 					</Button>
@@ -434,6 +457,26 @@ export class WebPaymentBox extends React.Component {
 
 		return (
 			<form autoComplete="off">
+				<div className="checkout__payment-box-sections">
+					<div className="checkout__payment-box-section">
+						<PaymentCountrySelect
+							additionalClasses="checkout-field"
+							name="country"
+							label={ translate( 'Country', { textOnly: true } ) }
+							countriesList={ countriesList }
+							onCountrySelected={ this.updateSelectedCountry }
+							eventFormName="Checkout Form"
+						/>
+						<Input
+							additionalClasses="checkout-field"
+							name="postal-code"
+							label={ translate( 'Postal Code', { textOnly: true } ) }
+							onChange={ this.updateSelectedPostalCode }
+							eventFormName="Checkout Form"
+						/>
+					</div>
+				</div>
+
 				{ this.props.children }
 
 				<TermsOfService
