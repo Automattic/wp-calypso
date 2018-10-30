@@ -68,7 +68,7 @@ class StatsNavigation extends Component {
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
 		return (
 			<div className="stats-navigation">
-				<QueryBlogStickers blogId={ siteId } />
+				{ siteId && <QueryBlogStickers blogId={ siteId } /> }
 				<SectionNav selectedText={ label }>
 					<NavTabs label={ 'Stats' } selectedText={ label }>
 						{ Object.keys( navItems )

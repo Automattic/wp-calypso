@@ -94,7 +94,7 @@ class Chart extends React.Component {
 		const max = Math.max.apply( null, values );
 
 		const unit = max < 1 ? 0.5 : Math.pow( 10, Math.floor( max ).toString().length - 1 );
-		const numberOfUnits = Math.ceil( max / unit );
+		const numberOfUnits = 1 === unit && max >= 1 ? 2 : Math.ceil( max / unit );
 
 		return unit * numberOfUnits;
 	};
