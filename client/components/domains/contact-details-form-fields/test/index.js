@@ -17,6 +17,7 @@ import { noop, omit } from 'lodash';
 import { ContactDetailsFormFields } from '../';
 
 jest.mock( 'i18n-calypso', () => ( {
+	getLocaleSlug: () => 'en',
 	localize: x => x,
 	translate: x => x,
 } ) );

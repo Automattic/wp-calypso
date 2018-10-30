@@ -23,6 +23,7 @@ jest.mock( 'lib/analytics', () => ( {
 	},
 } ) );
 jest.mock( 'i18n-calypso', () => ( {
+	getLocaleSlug: () => 'en',
 	localize: x => x,
 	translate: x => x,
 } ) );
