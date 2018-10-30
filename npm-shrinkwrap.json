@@ -19588,9 +19588,9 @@
       "dev": true
     },
     "stylelint": {
-      "version": "9.7.0",
-      "resolved": "https://registry.npmjs.org/stylelint/-/stylelint-9.7.0.tgz",
-      "integrity": "sha512-3PxEZ/8HKpKvdWWIeFSZ0gdTz1eEHo2IgLcliN7RJtXxCIHdyI44ffaRgxCyQN3sAGWJO41UXOIFyJxfwznIBA==",
+      "version": "9.7.1",
+      "resolved": "https://registry.npmjs.org/stylelint/-/stylelint-9.7.1.tgz",
+      "integrity": "sha512-w3Xxnm2YElBmNAhmTjkTEyklAU2P+R8QMqDVM3S98zRLNPNLcCRXWzqtYsItbZYHQzSNOa6K20KxPVPfD8SFAw==",
       "dev": true,
       "requires": {
         "autoprefixer": "^9.0.0",
