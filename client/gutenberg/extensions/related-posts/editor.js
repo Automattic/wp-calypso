@@ -4,7 +4,6 @@
  * External dependencies
  */
 import includes from 'lodash/includes';
-import { registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -13,8 +12,9 @@ import './style.scss';
 import edit from './edit';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { ALIGNMENT_OPTIONS, MAX_POSTS_TO_SHOW } from './constants';
+import JetpackBlockType from 'gutenberg/extensions/presets/jetpack/utils/jetpack-block-type';
 
-registerBlockType( 'jetpack/related-posts', {
+const RelatedPostsBlock = new JetpackBlockType( 'related-posts', {
 	title: __( 'Related Posts' ),
 
 	icon: (
@@ -88,3 +88,5 @@ registerBlockType( 'jetpack/related-posts', {
 
 	save: () => null,
 } );
+
+RelatedPostsBlock.register();
