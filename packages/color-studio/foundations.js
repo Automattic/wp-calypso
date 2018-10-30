@@ -34,10 +34,10 @@ module.exports = {
       name: 'Red',
       value: values.red
     }),
-    {
+    createColorPair({
       name: 'Orange',
-      value: mix(values.red, values.yellow, 0.4)
-    },
+      value: mix(values.red, values.yellow)
+    }),
     createColorPair({
       name: 'Yellow',
       value: values.yellow
