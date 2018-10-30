@@ -27,14 +27,7 @@ import WordAdsEarnings from './earnings';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
-
-// @TODO unused
-import statsStrings from '../stats-strings';
 import StickyPanel from 'components/sticky-panel';
-import config from 'config';
-import { getSiteOption } from 'state/sites/selectors';
-import QuerySiteKeyrings from 'components/data/query-site-keyrings';
-import QueryKeyringConnections from 'components/data/query-keyring-connections';
 
 class WordAds extends Component {
 	constructor( props ) {
@@ -98,8 +91,7 @@ class WordAds extends Component {
 			},
 		];
 
-		const { period, endOf } = this.props.period;
-		const moduleStrings = statsStrings(); // @TODO unused
+		const { period } = this.props.period;
 
 		const currentDate = new Date();
 		const today =
@@ -117,9 +109,7 @@ class WordAds extends Component {
 			( '0' + ( currentDate.getDate() - 1 ) ).slice( -2 );
 
 		const queryDate =
-			today === date.format( 'YYYY-MM-DD' ) && 'day' === period
-				? yesterday
-				: date.format( 'YYYY-MM-DD' );
+			today === date.format( 'YYYY-MM-DD' ) ? yesterday : date.format( 'YYYY-MM-DD' );
 
 		const query = {
 			period: period,

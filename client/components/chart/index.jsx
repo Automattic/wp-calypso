@@ -93,7 +93,7 @@ class Chart extends React.Component {
 	getYAxisMax = values => {
 		const max = Math.max.apply( null, values );
 
-		const unit = max < 1 ? 0.1 : Math.pow( 10, Math.floor( max ).toString().length - 1 );
+		const unit = max < 1 ? 0.5 : Math.pow( 10, Math.floor( max ).toString().length - 1 );
 		const numberOfUnits = Math.ceil( max / unit );
 
 		return unit * numberOfUnits;

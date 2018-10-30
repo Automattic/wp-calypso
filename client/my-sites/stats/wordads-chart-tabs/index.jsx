@@ -13,23 +13,19 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import compareProps from 'lib/compare-props';
 import ElementChart from 'components/chart';
 import Legend from 'components/chart/legend';
 import StatTabs from '../stats-tabs';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import Card from 'components/card';
 import QuerySiteStats from 'components/data/query-site-stats';
-import QuerySiteWordAdsStats from 'components/data/query-site-wordads-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getWordAdsStats } from 'state/wordads/stats/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { rangeOfPeriod } from 'state/stats/lists/utils';
-import { getSiteOption } from 'state/sites/selectors';
 
 class WordAdsChartTabs extends Component {
 	constructor( props ) {
@@ -79,50 +75,25 @@ class WordAdsChartTabs extends Component {
 			value: null,
 		} );
 
-		// @TODO update these tooltips
 		switch ( this.props.chartTab ) {
-			case 'impressions':
-				tooltipData.push( {
-					label: this.props.translate( 'Ads Served' ),
-					value: this.props.numberFormat( item.value ),
-					className: 'is-impressions',
-					icon: 'visible',
-				} );
-				break;
-			case 'revenue':
-				tooltipData.push( {
-					label: this.props.translate( 'Revenue' ),
-					value: '$ ' + this.props.numberFormat( item.value, { decimals: 2 } ),
-					className: 'is-revenue',
-					icon: 'visible',
-				} );
-				break;
-			case 'cpm':
-				tooltipData.push( {
-					label: this.props.translate( 'Avg. CPM' ),
-					value: '$ ' + this.props.numberFormat( item.value, { decimals: 2 } ),
-					className: 'is-cpm',
-					icon: 'visible',
-				} );
-				break;
 			default:
 				tooltipData.push( {
-					label: this.props.translate( 'Impressions' ),
+					label: this.props.translate( 'Ads Served' ),
 					value: this.props.numberFormat( item.data.impressions ),
 					className: 'is-impressions',
 					icon: 'visible',
 				} );
 				tooltipData.push( {
-					label: this.props.translate( 'Revenue' ),
-					value: this.props.numberFormat( item.data.revenue, { decimals: 2 } ),
-					className: 'is-revenue',
-					icon: 'visible',
+					label: this.props.translate( 'Avg. CPM' ),
+					value: '$ ' + this.props.numberFormat( item.data.cpm, { decimals: 2 } ),
+					className: 'is-cpm',
+					icon: 'stats-alt',
 				} );
 				tooltipData.push( {
-					label: this.props.translate( 'CPM' ),
-					value: this.props.numberFormat( item.data.impressions / item.data.revenue ),
-					className: 'is-cpm',
-					icon: 'visible',
+					label: this.props.translate( 'Revenue' ),
+					value: '$ ' + this.props.numberFormat( item.data.revenue, { decimals: 2 } ),
+					className: 'is-revenue',
+					icon: 'money',
 				} );
 				break;
 		}
@@ -156,7 +127,7 @@ class WordAdsChartTabs extends Component {
 	}
 
 	getLoadedData() {
-		const { fullQueryData, fullQueryRequesting } = this.props;
+		const { fullQueryData } = this.props;
 		return fullQueryData;
 	}
 
@@ -194,7 +165,8 @@ class WordAdsChartTabs extends Component {
 	}
 
 	render() {
-		const { query, fullQuery, fullQueryRequesting, siteId } = this.props;
+		const { query, fullQueryRequesting, siteId } = this.props;
+
 		const chartData = this.buildChartData();
 		const activeTab = this.getActiveTab();
 		const data = this.getLoadedData();
@@ -243,20 +215,22 @@ class WordAdsChartTabs extends Component {
 }
 
 const connectComponent = connect(
-	( state, { moment, period: periodObject, chartTab, queryDate } ) => {
+	( state, { moment, period: periodObject, queryDate } ) => {
 		const siteId = getSelectedSiteId( state );
 		const { period } = periodObject;
-		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
-		const momentSiteZone = moment().utcOffset( timezoneOffset );
-		let date = rangeOfPeriod( period, momentSiteZone.locale( 'en' ) ).endOf;
+		let date = rangeOfPeriod( period, moment().add( -1, 'days' ) ).endOf;
 
 		let quantity = 30;
 		switch ( period ) {
+			case 'month':
+				quantity = 12;
+				break;
 			case 'year':
 				quantity = 10;
 				break;
 		}
 		const periodDifference = moment( date ).diff( moment( queryDate ), period );
+
 		if ( periodDifference >= quantity ) {
 			date = moment( date )
 				.subtract( Math.floor( periodDifference / quantity ) * quantity, period )
@@ -268,12 +242,6 @@ const connectComponent = connect(
 			date,
 			quantity,
 		};
-		const fullQuery = {
-			...query,
-			stat_fields: 'impressions, revenue, cpm',
-		};
-
-		const statsData = getSiteStatsNormalizedData( state, siteId, 'statsAds', query );
 
 		return {
 			query: query,
