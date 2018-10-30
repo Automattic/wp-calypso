@@ -183,7 +183,7 @@ function createColorTile(colorObject, previous = false) {
         color,
       '</div>',
       `<div class="tile__meta tile__meta--tiny text-uppercase" style="color: ${secondaryTextColor}">`,
-        '<span title="Saturation / Lightness / Contrast (against white)">',
+        '<span title="Contrast against white">',
           getColorProperties(color),
         '</span>',
       '</div>',

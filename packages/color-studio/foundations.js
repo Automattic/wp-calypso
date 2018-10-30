@@ -7,7 +7,7 @@ const values = {
   pink: '#c54475',
   red: '#cf1c3d',
   yellow: '#dbb422',
-  green: '#0d7d2e'
+  green: '#017b52'
 }
 
 const derivatives = []
