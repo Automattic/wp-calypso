@@ -323,7 +323,7 @@ class DomainsStep extends React.Component {
 
 		// If we have a different search query, refresh the domain search results
 		const initialQuery = get( this.props, 'queryObject.new', false );
-		if ( initialQuery !== initialState.lastQuery ) {
+		if ( initialQuery && initialState.lastQuery && initialQuery !== initialState.lastQuery ) {
 			initialState.searchResults = null;
 			initialState.subdomainSearchResults = null;
 			initialState.loadingResults = true;
