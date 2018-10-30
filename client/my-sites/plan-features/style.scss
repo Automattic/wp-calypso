@@ -72,8 +72,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__table.has-2-cols {
 	display: block;
 	max-width: 720px;
-	margin-left: auto;
-	margin-right: auto;
+	margin: 0 auto;
 }
 
 .plan-features__mobile-plan {
@@ -313,7 +312,6 @@ $plan-features-sidebar-width: 272px;
 }
 
 .segmented-control.is-customer-type-toggle {
-	flex-wrap: wrap;
 	width: 500px;
 	max-width: 100%;
 	margin: 0 auto 20px;
@@ -327,7 +325,9 @@ $plan-features-sidebar-width: 272px;
 	}
 
     @include breakpoint( '<480px' ) {
+		flex-wrap: wrap;
 		margin-bottom: 9px;
+
 		.segmented-control__item {
 			width: 100%;
 		}
@@ -439,18 +439,17 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__item-title {
 	flex: 1 0 0;
-	margin-left: 10px;
 	width: 100%;
 }
 
 .plan-features__item-checkmark {
 	flex: 0 1 auto;
 	fill: $blue-wordpress;
+	margin-right: 10px;
 }
 
 .plan-features__item-tip-info {
 	flex: 0 1 auto;
-	align-self: center;
 }
 
 .popover__plan-features {
@@ -519,11 +518,9 @@ $plan-features-sidebar-width: 272px;
 	overflow-x: auto;
 }
 
-.signup {
-	.is-customer-type-toggle {
-		margin-top: 32px;
-		margin-bottom: 28px;
-	}
+.signup .is-customer-type-toggle {
+	margin-top: 32px;
+	margin-bottom: 28px;
 }
 
 .plan-features--signup {
