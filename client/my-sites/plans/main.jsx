@@ -63,7 +63,7 @@ class Plans extends React.Component {
 		const { selectedSite } = this.props;
 
 		if ( this.isNonJetpackMonthly() ) {
-			page.redirect( '/plans/' + selectedSite.slug );
+			page.redirect( '/plans/yearly/' + selectedSite.slug );
 		}
 	}
 
