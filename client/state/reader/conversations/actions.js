@@ -33,12 +33,20 @@ export function followConversation( { siteId, postId } ) {
 	};
 }
 export function muteConversation( { siteId, postId } ) {
-	return {
-		type: READER_CONVERSATION_MUTE,
-		payload: {
-			siteId,
-			postId,
-		},
+	return ( dispatch, getState ) => {
+		dispatch( {
+			type: READER_CONVERSATION_MUTE,
+			payload: {
+				siteId,
+				postId,
+			},
+			meta: {
+				previousState: getReaderConversationFollowStatus( getState(), {
+					siteId,
+					postId,
+				} ),
+			},
+		} );
 	};
 }
 
