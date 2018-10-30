@@ -137,7 +137,7 @@
     "localforage": "1.7.3",
     "lodash": "4.17.11",
     "lru": "3.1.0",
-    "lunr": "2.3.4",
+    "lunr": "2.3.5",
     "markdown-it": "8.4.2",
     "marked": "0.5.1",
     "mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl",
