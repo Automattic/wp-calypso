@@ -165,7 +165,7 @@ const urlLocalizationMapping = {
 };
 
 export function localizeUrl( fullUrl, locale ) {
-	const localeSlug = locale || getLocaleSlug();
+	const localeSlug = locale || ( typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en' );
 	const urlParts = url.parse( String( fullUrl ) );
 
 	if ( ! urlParts ) {
