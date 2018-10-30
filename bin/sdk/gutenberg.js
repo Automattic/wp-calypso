@@ -7,6 +7,23 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 
+
+const DIRECTORY_DEPTH = '../../'; // Relative path of the extensions to preset directory
+
+function sharedScripts( folderName, inputDir ) {
+	const sharedPath = path.join( inputDir, folderName );
+	return fs
+		.readdirSync( sharedPath )
+		.map( file => path.join( sharedPath, file ) )
+		.filter( fullPathToFile => fullPathToFile.endsWith( '.js' ) );
+}
+
+function blockScripts( type, inputDir, presetBlocks ) {
+		return presetBlocks
+	 		.map( block => path.join( inputDir, `${ DIRECTORY_DEPTH }${ block }/${type}.js` ) )
+	 		.filter( fs.existsSync );
+}
+
 exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	const baseConfig = getBaseConfig( {
 		cssFilename: '[name].css',
@@ -19,35 +36,23 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	let viewBlocksScripts;
 	let viewScriptEntry;
 	if ( fs.existsSync( presetPath ) ) {
-		const DIRECETORY_DEPTH = '../../';
+
 		const presetBlocks = require( presetPath );
 		// Find all the shared scripts
-		const sharedPath = path.join( inputDir, 'shared' );
-		const sharedUtilsScripts = fs
-			.readdirSync( sharedPath )
-			.map( file => path.join( sharedPath, file ) )
-			.filter( fullPathToFile => fullPathToFile.endsWith( '.js' ) );
+		const sharedUtilsScripts = sharedScripts( 'shared', inputDir );
 
 		// Helps split up each block into its own folder view script
 		viewBlocksScripts = presetBlocks.reduce( ( viewBlocks, block ) => {
-			const viewScriptPath = path.join( inputDir, `${ DIRECETORY_DEPTH }${ block }/view.js` );
+			const viewScriptPath = path.join( inputDir, `${ DIRECTORY_DEPTH }${ block }/view.js` );
 			if ( fs.existsSync( viewScriptPath ) ) {
 				viewBlocks[ block + '/view' ] = [ ...sharedUtilsScripts, ...[ viewScriptPath ] ];
 			}
 			return viewBlocks;
 		}, {} );
 
-		const sharedEditorPath = path.join( inputDir, 'editor-shared' );
-		const sharedEditorUtilsScripts = fs
-			.readdirSync( sharedEditorPath )
-			.map( file => path.join( sharedEditorPath, file ) )
-			.filter( fullPathToFile => fullPathToFile.endsWith( '.js' ) );
-		const editorScripts = presetBlocks
-			.map( block => path.join( inputDir, `${ DIRECETORY_DEPTH }${ block }/editor.js` ) )
-			.filter( fs.existsSync );
-		const viewScripts = presetBlocks
-			.map( block => path.join( inputDir, `${ DIRECETORY_DEPTH }${ block }/view.js` ) )
-			.filter( fs.existsSync );
+		const sharedEditorUtilsScripts = sharedScripts( 'editor-shared', inputDir )
+		const editorScripts = blockScripts( 'editor', inputDir, presetBlocks );
+		const viewScripts = blockScripts( 'view', inputDir, presetBlocks );
 		// Combines all the different blocks into one editor.js script
 		editorScript = [
 			...sharedUtilsScripts,
