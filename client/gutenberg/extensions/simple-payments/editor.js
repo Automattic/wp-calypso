@@ -24,11 +24,38 @@ registerBlockType( 'jetpack/simple-payments', {
 
 	category: 'jetpack',
 
-	keywords: [ 'simple payments', 'PayPal' ],
+	keywords: [ __( 'simple payments' ), 'PayPal' ],
 
 	attributes: {
+		currency: {
+			type: 'string',
+			default: 'USD',
+		},
+		description: {
+			type: 'string',
+			default: '',
+		},
+		email: {
+			type: 'string',
+			default: '',
+		},
+		formattedPrice: {
+			type: 'string',
+			default: '',
+		},
+		multiple: {
+			type: 'number',
+			default: 0,
+		},
 		paymentId: {
 			type: 'number',
+		},
+		price: {
+			type: 'number',
+		},
+		title: {
+			type: 'string',
+			default: '',
 		},
 	},
 
