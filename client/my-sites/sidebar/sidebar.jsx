@@ -212,7 +212,7 @@ export class MySitesSidebar extends Component {
 				<SidebarItem
 					label={ this.props.isJetpack ? 'Ads' : 'WordAds' }
 					selected={ itemLinkMatches( '/ads', path ) }
-					link={ '/ads/settings' + this.props.siteSuffix }
+					link={ '/ads/earnings' + this.props.siteSuffix }
 					onNavigate={ this.trackAdsClick }
 					icon="speaker"
 					tipTarget="wordads"
