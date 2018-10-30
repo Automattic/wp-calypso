@@ -41,7 +41,7 @@ export const WEB_PAYMENT_APPLE_PAY_METHOD = 'https://apple.com/apple-pay';
 const SUPPORTED_NETWORKS = [ 'visa', 'mastercard', 'amex' ];
 const APPLE_PAY_MERCHANT_IDENTIFIER = 'merchant.com.wordpress.test';
 const PAYMENT_REQUEST_OPTIONS = {
-	requestPayerName: false,
+	requestPayerName: true,
 	requestPayerPhone: false,
 	requestPayerEmail: false,
 	requestShipping: false,
@@ -120,6 +120,7 @@ export class WebPaymentBox extends React.Component {
 
 		const defaultState = () => {
 			return {
+				default: true,
 				disabled: false,
 				text: translate( 'Select a payment card', {
 					context: 'Loading state on /checkout',
@@ -128,6 +129,7 @@ export class WebPaymentBox extends React.Component {
 		};
 		const ongoingState = () => {
 			return {
+				default: false,
 				disabled: true,
 				text: translate( 'Sending your purchase', {
 					context: 'Loading state on /checkout',
@@ -136,6 +138,7 @@ export class WebPaymentBox extends React.Component {
 		};
 		const completingState = () => {
 			return {
+				default: false,
 				disabled: true,
 				text: translate( 'Completing your purchase', {
 					context: 'Loading state on /checkout',
@@ -290,9 +293,8 @@ export class WebPaymentBox extends React.Component {
 							.show()
 							.then( paymentResponse => {
 								console.log(paymentResponse);
-return;
 
-								const { payerName, shippingAddress, details } = paymentResponse;
+								const { payerName, details } = paymentResponse;
 								const { token } = details;
 
 								if ( 'EC_v1' !== token.paymentData.version ) {
@@ -302,16 +304,16 @@ return;
 								this.props.transaction.payment = newCardPayment( {
 									tokenized_payment_data: token.paymentData,
 									name: payerName,
-									country: shippingAddress.country,
-									'postal-code': shippingAddress.postalCode,
+									country: 'CH',
+									'postal-code': '1350',
 									card_brand: token.paymentMethod.network,
 								} );
-
-								paymentResponse.complete( 'success' );
 
 								setPayment( this.props.transaction.payment );
 
 								this.props.onSubmit( event );
+
+								paymentResponse.complete( 'success' );
 							} )
 							.catch( error => {
 								console.error( 'show error' );
@@ -377,28 +379,42 @@ return;
 		}
 
 		const buttonState = this.buttonState();
-		let introduction_text;
+		let introductionText;
 		let button;
 
 		switch ( paymentMethod ) {
 			case WEB_PAYMENT_APPLE_PAY_METHOD:
-				introduction_text = translate(
+				introductionText = translate(
 					'Use your secure and private Apple Wallet to pick up a card to pay with. ' +
 						'Once the button has been clicked, your browser will promt you a payment sheet. ' +
 						'Please, follow this secure interface.'
 				);
-				button = (
-					<button
-						type="submit"
-						onClick={ this.submit.bind( this, paymentMethod ) }
-						disabled={ buttonState.disabled }
-						className="web-payment-box__apple-pay-button"
-					/>
-				);
+
+				if ( buttonState.default ) {
+					button = (
+						<button
+							type="submit"
+							onClick={ this.submit.bind( this, paymentMethod ) }
+							disabled={ buttonState.disabled }
+							className="web-payment-box__apple-pay-button"
+						/>
+					);
+				} else {
+					button = (
+						<Button
+							type="button"
+							className="button is-primary button-pay pay-button__button"
+							busy={ buttonState.disabled }
+							disabled={ buttonState.disabled }
+						>
+							{ buttonState.text }
+						</Button>
+					);
+				}
 				break;
 
 			case WEB_PAYMENT_BASIC_CARD_METHOD:
-				introduction_text = translate(
+				introductionText = translate(
 					'Use your private and safeguarded browser wallet to pick up a card to pay with. ' +
 						'Once the button has been clicked, your browser will prompt you a payment sheet. ' +
 						'Please, follow this secure interface.'
@@ -425,7 +441,7 @@ return;
 				/>
 
 				<span className="payment-box__payment-buttons">
-					<span className="web-payment-box__button-explanation">{ introduction_text }</span>
+					<span className="web-payment-box__button-explanation">{ introductionText }</span>
 					<span className="pay-button">
 						<span className="payment-request-button">{ button }</span>
 						<SubscriptionText cart={ this.props.cart } />
