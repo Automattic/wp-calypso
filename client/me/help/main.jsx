@@ -26,7 +26,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import SectionHeader from 'components/section-header';
 import { getCurrentUserId, isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import { getSupportSiteLocale } from 'lib/i18n-utils';
+import { localizeUrl } from 'lib/i18n-utils';
 import { getUserPurchases, isFetchingUserPurchases } from 'state/purchases/selectors';
 import { isWpComBusinessPlan } from 'lib/plans';
 
@@ -63,7 +63,7 @@ class Help extends React.PureComponent {
 				),
 			},
 			{
-				link: `https://${ getSupportSiteLocale() }.support.wordpress.com/start/`,
+				link: localizeUrl( 'https://en.support.wordpress.com/start/' ),
 				title: this.props.translate( 'Get Started' ),
 				description: this.props.translate(
 					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
@@ -108,7 +108,7 @@ class Help extends React.PureComponent {
 			<div className="help__support-links">
 				<CompactCard
 					className="help__support-link"
-					href={ `https://${ getSupportSiteLocale() }.support.wordpress.com` }
+					href={ localizeUrl( 'https://en.support.wordpress.com/' ) }
 					target="__blank"
 				>
 					<div className="help__support-link-section">
