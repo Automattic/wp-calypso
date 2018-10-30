@@ -46,9 +46,10 @@ class SiteTopicStep extends Component {
 
 	renderContent() {
 		const { translate } = this.props;
+		const { siteTopic } = this.state;
 
 		return (
-			<Card>
+			<Card className="site-topic__content">
 				<form onSubmit={ this.submitSiteTopic }>
 					<FormFieldset>
 						<FormLabel htmlFor="siteTopic">{ translate( 'Type of Business' ) }</FormLabel>
@@ -61,9 +62,12 @@ class SiteTopicStep extends Component {
 							autoComplete="off"
 						/>
 					</FormFieldset>
-					<Button type="submit" primary>
+					<Button type="submit" disabled={ ! siteTopic } primary>
 						{ translate( 'Continue' ) }
 					</Button>
+					<span className="site-topic__form-description">
+						{ translate( 'Search above to continue' ) }
+					</span>
 				</form>
 			</Card>
 		);
