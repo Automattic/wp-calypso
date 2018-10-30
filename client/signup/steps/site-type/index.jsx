@@ -55,7 +55,7 @@ class SiteType extends Component {
 									/>
 									<span>
 										<strong>Blogger</strong>
-										<span>Share your story with a collection of posts.</span>
+										<span>{ translate( 'Share your story with a collection of posts.' ) }</span>
 									</span>
 								</FormLabel>
 
@@ -66,8 +66,8 @@ class SiteType extends Component {
 										onChange={ this.handleRadioChange }
 									/>
 									<span>
-										<strong>Business</strong>
-										<span>Promote your products or services.</span>
+										<strong>{ translate( 'Business' ) }</strong>
+										<span>{ translate( 'Promote your products or services.' ) }</span>
 									</span>
 								</FormLabel>
 
@@ -78,8 +78,8 @@ class SiteType extends Component {
 										onChange={ this.handleRadioChange }
 									/>
 									<span>
-										<strong>Professional</strong>
-										<span>Showcase your portfolio, skills, or work.</span>
+										<strong>{ translate( 'Professional' ) }</strong>
+										<span>{ translate( 'Showcase your portfolio, skills, or work.' ) }</span>
 									</span>
 								</FormLabel>
 
@@ -90,8 +90,8 @@ class SiteType extends Component {
 										onChange={ this.handleRadioChange }
 									/>
 									<span>
-										<strong>Educator</strong>
-										<span>Share school projects or classroom information.</span>
+										<strong>{ translate( 'Educator' ) }</strong>
+										<span>{ translate( 'Share school projects or classroom information.' ) }</span>
 									</span>
 								</FormLabel>
 
@@ -102,8 +102,8 @@ class SiteType extends Component {
 										onChange={ this.handleRadioChange }
 									/>
 									<span>
-										<strong>Non-profit Organization</strong>
-										<span>Raise money or awareness for a case.</span>
+										<strong>{ translate( 'Non-profit Organization' ) }</strong>
+										<span>{ translate( 'Raise money or awareness for a cause.' ) }</span>
 									</span>
 								</FormLabel>
 							</FormFieldset>
