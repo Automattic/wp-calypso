@@ -76,7 +76,7 @@ export class OrgCredentialsForm extends Component {
 		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { installError } = nextProps;
 
 		if ( installError ) {
@@ -84,13 +84,13 @@ export class OrgCredentialsForm extends Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { siteToConnect } = this.props;
 
 		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
 			if ( ! siteToConnect ) {
-				const path = getLocaleFromPath( page.current ) || '';
-				page.redirect( `/jetpack/connect/${ path }` );
+				const locale = getLocaleFromPath( page.current ) || '';
+				page.redirect( `/jetpack/connect/${ locale }` );
 			}
 		}
 
