@@ -77,7 +77,8 @@ export class PlanFeatures extends Component {
 			'plan-features--signup': isInSignup,
 		} );
 		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
-		let mobileView, planDescriptions;
+		const mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
+		let planDescriptions;
 		let bottomButtons = null;
 
 		if ( ! isInSignup ) {
@@ -85,8 +86,6 @@ export class PlanFeatures extends Component {
 
 			bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
 		}
-
-		mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
 
 		return (
 			<div className={ planWrapperClasses }>
@@ -212,10 +211,12 @@ export class PlanFeatures extends Component {
 			return null;
 		}
 
-		return (
+		const bannerContainer = this.getBannerContainer();
+		return ReactDOM.createPortal(
 			<Notice className="plan-features__notice" showDismiss={ false } status="is-info">
 				{ translate( 'You need to be the plan owner to manage this site.' ) }
-			</Notice>
+			</Notice>,
+			bannerContainer
 		);
 	}
 
@@ -587,7 +588,7 @@ export class PlanFeatures extends Component {
 		} );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
 	}
@@ -650,6 +651,7 @@ export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 const hasPlaceholders = planProperties =>
 	planProperties.filter( planProps => planProps.isPlaceholder ).length > 0;
 
+/* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
 		const {
@@ -792,3 +794,5 @@ export default connect(
 		recordTracksEvent,
 	}
 )( localize( PlanFeatures ) );
+
+/* eslint-enable wpcalypso/redux-no-bound-selectors */

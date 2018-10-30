@@ -17,11 +17,6 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__notice {
 	margin-bottom: 16px;
-
-	@include breakpoint( '>1040px' ) {
-		margin-bottom: 32px;
-		margin-top: -19px;
-	}
 }
 
 .plan-features__mobile {
