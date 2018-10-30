@@ -39,6 +39,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import canCurrentUser from 'state/selectors/can-current-user';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import {
 	domainManagementAddGoogleApps,
 	domainManagementContactsPrivacy,
@@ -379,7 +380,7 @@ export function siteSelection( context, next ) {
 			config.isEnabled( 'gutenberg' ) &&
 			config.isEnabled( 'gutenberg/opt-in' ) &&
 			config.isEnabled( 'calypsoify/gutenberg' ) &&
-			isAtomicSite;
+			'gutenberg' === getSelectedEditor( state, siteId );
 
 		if (
 			window &&
