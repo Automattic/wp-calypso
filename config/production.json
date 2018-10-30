@@ -115,6 +115,7 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
+        "signup/onboarding-flow": true,
 		"signup/social": true,
 		"signup/social-management": true,
 		"signup/atomic-store-flow": true,
