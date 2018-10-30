@@ -17506,8 +17506,7 @@
     "react-is": {
       "version": "16.6.0",
       "resolved": "https://registry.npmjs.org/react-is/-/react-is-16.6.0.tgz",
-      "integrity": "sha512-q8U7k0Fi7oxF1HvQgyBjPwDXeMplEsArnKt2iYhuIF86+GBbgLHdAmokL3XUFjTd7Q363OSNG55FOGUdONVn1g==",
-      "dev": true
+      "integrity": "sha512-q8U7k0Fi7oxF1HvQgyBjPwDXeMplEsArnKt2iYhuIF86+GBbgLHdAmokL3XUFjTd7Q363OSNG55FOGUdONVn1g=="
     },
     "react-lazily-render": {
       "version": "1.1.0",
@@ -17601,16 +17600,27 @@
       "integrity": "sha1-nYqSjH8sN1E8LQZOV7Pjw1bp+rs="
     },
     "react-redux": {
-      "version": "5.0.7",
-      "resolved": "http://registry.npmjs.org/react-redux/-/react-redux-5.0.7.tgz",
-      "integrity": "sha512-5VI8EV5hdgNgyjfmWzBbdrqUkrVRKlyTKk1sGH3jzM2M2Mhj/seQgPXaz6gVAj2lz/nz688AdTqMO18Lr24Zhg==",
+      "version": "5.1.0",
+      "resolved": "https://registry.npmjs.org/react-redux/-/react-redux-5.1.0.tgz",
+      "integrity": "sha512-CRMpEx8+ccpoVxQrQDkG1obExNYpj6dZ1Ni7lUNFB9wcxOhy02tIqpFo4IUXc0kYvCGMu6ABj9A4imEX2VGZJQ==",
       "requires": {
-        "hoist-non-react-statics": "^2.5.0",
-        "invariant": "^2.0.0",
-        "lodash": "^4.17.5",
-        "lodash-es": "^4.17.5",
+        "@babel/runtime": "^7.1.2",
+        "hoist-non-react-statics": "^3.0.0",
+        "invariant": "^2.2.4",
         "loose-envify": "^1.1.0",
-        "prop-types": "^15.6.0"
+        "prop-types": "^15.6.1",
+        "react-is": "^16.6.0",
+        "react-lifecycles-compat": "^3.0.0"
+      },
+      "dependencies": {
+        "hoist-non-react-statics": {
+          "version": "3.1.0",
+          "resolved": "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-3.1.0.tgz",
+          "integrity": "sha512-MYcYuROh7SBM69xHGqXEwQqDux34s9tz+sCnxJmN18kgWh6JFdTw/5YdZtqsOdZJXddE/wUpCzfEdDrJj8p0Iw==",
+          "requires": {
+            "react-is": "^16.3.2"
+          }
+        }
       }
     },
     "react-test-renderer": {
