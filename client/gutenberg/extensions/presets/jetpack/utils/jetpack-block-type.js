@@ -28,7 +28,7 @@ export default class JetpackBlockType {
 	};
 
 	register() {
-		if ( ! this.jetpackData || ! this.hasRequiredModule() ) {
+		if ( this.jetpackData && ! this.hasRequiredModule() ) {
 			return;
 		}
 		registerBlockType( 'jetpack/' + this.name, this.config );
