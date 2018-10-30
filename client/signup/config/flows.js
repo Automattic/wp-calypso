@@ -130,7 +130,7 @@ const Flows = {
 	filterFlowName,
 	filterDestination,
 
-	defaultFlowName: config.isEnabled( 'signup/atomic-store-flow' )
+	defaultFlowName: config.isEnabled( 'signup/onboarding-flow' )
 		? abtest( 'improvedOnboarding' )
 		: 'main',
 	resumingFlow: false,
