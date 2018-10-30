@@ -45,7 +45,13 @@ class TermsOfService extends React.Component {
 				'By checking out, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
 				{
 					components: {
-						tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+						tosLink: (
+							<a
+								href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
 						autoRenewalSupportPage: (
 							<a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
 						),
