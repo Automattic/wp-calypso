@@ -267,7 +267,7 @@ function paymentMethodName( method ) {
 		wechat: i18n.translate( 'WeChat Pay', {
 			comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
 		} ),
-		'web-payment': 'Web Payment',
+		'web-payment': i18n.translate( 'Wallet' ),
 	};
 
 	// Temporarily override 'credit or debit' with just 'credit' for india
