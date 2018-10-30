@@ -64,7 +64,7 @@ class Help extends React.PureComponent {
 				),
 			},
 			{
-				link: localizeUrl( 'https://en.support.wordpress.com/start/' ),
+				link: 'https://en.support.wordpress.com/start/',
 				title: this.props.translate( 'Get Started' ),
 				description: this.props.translate(
 					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
@@ -125,7 +125,7 @@ class Help extends React.PureComponent {
 				</CompactCard>
 				<CompactCard
 					className="help__support-link"
-					href="https://en.support.wordpress.com/video-tutorials/"
+					href={ localizeUrl( 'https://en.support.wordpress.com/video-tutorials/' ) }
 					target="__blank"
 				>
 					<div className="help__support-link-section">
