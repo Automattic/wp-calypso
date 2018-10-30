@@ -8,7 +8,6 @@
  * Internal dependencies
  */
 import { requestConversationFollow, receiveConversationFollow } from '../';
-import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
@@ -67,13 +66,11 @@ describe( 'conversation-follow', () => {
 				},
 			} );
 			expect( result[ 1 ] ).toMatchObject(
-				bypassDataLayer(
-					updateConversationFollowStatus( {
-						siteId: 123,
-						postId: 456,
-						followStatus: CONVERSATION_FOLLOW_STATUS.muting,
-					} )
-				)
+				updateConversationFollowStatus( {
+					siteId: 123,
+					postId: 456,
+					followStatus: CONVERSATION_FOLLOW_STATUS.muting,
+				} )
 			);
 		} );
 	} );
