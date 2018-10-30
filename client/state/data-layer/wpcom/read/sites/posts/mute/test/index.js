@@ -8,7 +8,6 @@
  * Internal dependencies
  */
 import { requestConversationMute, receiveConversationMute } from '../';
-import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
@@ -68,13 +67,11 @@ describe( 'conversation-mute', () => {
 				},
 			} );
 			expect( result[ 1 ] ).toMatchObject(
-				bypassDataLayer(
-					updateConversationFollowStatus( {
-						siteId: 123,
-						postId: 456,
-						followStatus: CONVERSATION_FOLLOW_STATUS.following,
-					} )
-				)
+				updateConversationFollowStatus( {
+					siteId: 123,
+					postId: 456,
+					followStatus: CONVERSATION_FOLLOW_STATUS.following,
+				} )
 			);
 		} );
 	} );
