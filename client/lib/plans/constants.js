@@ -24,6 +24,8 @@ export const PLAN_PERSONAL = 'personal-bundle';
 export const PLAN_PERSONAL_2_YEARS = 'personal-bundle-2y';
 export const PLAN_BLOGGER = 'blogger-bundle';
 export const PLAN_BLOGGER_2_YEARS = 'blogger-bundle-2y';
+export const PLAN_ECOMMERCE = 'ecommerce-bundle';
+export const PLAN_ECOMMERCE_2_YEARS = 'ecommerce-bundle-2y';
 export const PLAN_FREE = 'free_plan';
 export const PLAN_JETPACK_FREE = 'jetpack_free';
 export const PLAN_JETPACK_PREMIUM = 'jetpack_premium';
@@ -165,6 +167,7 @@ export const TYPE_BLOGGER = 'TYPE_BLOGGER';
 export const TYPE_PERSONAL = 'TYPE_PERSONAL';
 export const TYPE_PREMIUM = 'TYPE_PREMIUM';
 export const TYPE_BUSINESS = 'TYPE_BUSINESS';
+export const TYPE_ECOMMERCE = 'TYPE_ECOMMERCE';
 
 const WPComGetBillingTimeframe = () =>
 	i18n.translate( '/month, billed annually or every two years' );
@@ -424,6 +427,59 @@ const getPlanBusinessDetails = () => ( {
 	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 } );
 
+const getPlanEcommerceDetails = () => ( {
+	group: GROUP_WPCOM,
+	type: TYPE_ECOMMERCE,
+	getTitle: () => i18n.translate( 'eCommerce' ),
+	getAudience: () => i18n.translate( 'Best for eCommerce sites' ),
+	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
+	getStoreAudience: () => i18n.translate( 'The plan for stores and small businesses' ),
+	getDescription: () => {
+		return i18n.translate(
+			'{{strong}}Best for eCommerce:{{/strong}} Start your' +
+				' online store with a specifically designed WooCommerce software bundle, unlimited' +
+				' storage, premium themes, and the ability to remove WordPress.com branding.',
+			{
+				components: {
+					strong: (
+						<strong className="plans__features plan-features__targeted-description-heading" />
+					),
+				},
+			}
+		);
+	},
+	getTagline: () =>
+		i18n.translate(
+			'Learn more about everything included with eCommerce and take advantage of its powerful marketplace features.'
+		),
+	getPlanCompareFeatures: () =>
+		compact( [
+			// pay attention to ordering, shared features should align on /plan page
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_JETPACK_ESSENTIAL,
+			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_UNLIMITED_PREMIUM_THEMES,
+			FEATURE_ADVANCED_DESIGN,
+			FEATURE_UNLIMITED_STORAGE,
+			FEATURE_NO_ADS,
+			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
+			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
+		] ),
+	getPromotedFeatures: () => [
+		FEATURE_UNLIMITED_STORAGE,
+		FEATURE_UNLIMITED_PREMIUM_THEMES,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_NO_ADS,
+		FEATURE_ADVANCED_DESIGN,
+	],
+	getSignupFeatures: () => [ FEATURE_UNLIMITED_STORAGE, FEATURE_NO_ADS ],
+	getBlogSignupFeatures: () => [ FEATURE_UPLOAD_THEMES_PLUGINS ],
+	getPortfolioSignupFeatures: () => [ FEATURE_UPLOAD_THEMES_PLUGINS ],
+	// Features not displayed but used for checking plan abilities
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
+} );
+
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
 export const PLANS_LIST = {
 	[ PLAN_FREE ]: {
@@ -589,6 +645,51 @@ export const PLANS_LIST = {
 		getProductId: () => 1028,
 		getStoreSlug: () => PLAN_BUSINESS_2_YEARS,
 		getPathSlug: () => 'business-2-years',
+	},
+
+	[ PLAN_ECOMMERCE ]: {
+		...getPlanEcommerceDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: plan =>
+			includes(
+				[
+					PLAN_FREE,
+					PLAN_BLOGGER,
+					PLAN_BLOGGER_2_YEARS,
+					PLAN_PERSONAL,
+					PLAN_PERSONAL_2_YEARS,
+					PLAN_PREMIUM,
+					PLAN_PREMIUM_2_YEARS,
+				],
+				plan
+			),
+		getProductId: () => 1011,
+		getStoreSlug: () => PLAN_ECOMMERCE,
+		getPathSlug: () => 'ecommerce',
+	},
+
+	[ PLAN_ECOMMERCE_2_YEARS ]: {
+		...getPlanEcommerceDetails(),
+		term: TERM_BIENNIALLY,
+		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
+		availableFor: plan =>
+			includes(
+				[
+					PLAN_FREE,
+					PLAN_BLOGGER,
+					PLAN_BLOGGER_2_YEARS,
+					PLAN_PERSONAL,
+					PLAN_PERSONAL_2_YEARS,
+					PLAN_PREMIUM,
+					PLAN_PREMIUM_2_YEARS,
+					PLAN_BUSINESS,
+				],
+				plan
+			),
+		getProductId: () => 1031,
+		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
+		getPathSlug: () => 'ecommerce-2-years',
 	},
 
 	[ PLAN_JETPACK_FREE ]: {
