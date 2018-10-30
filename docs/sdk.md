@@ -1,8 +1,8 @@
-Calypso SDK
-===========
+<!-- @format -->
+
+# Calypso SDK
 
 Calypso <abbr title="software development kit">SDK</abbr> is an early stage tool with the goal to build, visualize, test, and deliver interfaces for multiple platforms from a single source.
-
 
 ## Using SDK CLI
 
@@ -11,11 +11,13 @@ npm run sdk -- --help
 ```
 
 To build production ready assets, use `NODE_ENV`:
+
 ```
 NODE_ENV=production npm run sdk -- ...
 ```
 
 Note: It's also possible to run the SDK command "globally" by linking within the Calypso repository with [`npm link`](https://docs.npmjs.com/cli/link). After running this command you can replace all invocations of `npm run sdk --` in the examples below with `calypso-sdk` and may do so from any other directory in the filesystem:
+
 ```
 calypso-sdk --help
 ```
@@ -40,6 +42,40 @@ By default, these extensions will be built under `build` folder in the same fold
 
 Read more from [Gutenberg extension docs](../client/gutenberg/extensions/README.md).
 
+#### Gutenberg extensions presets
+
+Presets are bundles of multiple extensions or blocks that live in a particular plugin.
+They can be found in `client/gutenberg/extensions/presets` directory.
+
+To create a new preset, create a new folder in that directory and add an `index.json` file.
+The file should be an array of the extensions folder names that you want to bundle together.
+
+```
+["markdown", "tiled-gallery"]
+```
+
+When you run the sdk command `npm run sdk -- gutenberg client/gutenberg/extensions/presets/your-new-preset`
+You will end up with something like this.
+
+```
+editor.js
+editor.css
+editot.rtl.css
+tiled-gallery/view.js
+tiled-gallery/view.css
+tiled-gallery/view.rtl.css
+```
+
+Note the individual folders get created for each of the extensions only if they contain
+a view.js file. (In this case markdown only has a editor.js file) Also the `editor` (js and css) file
+also contains the code present for the frontend (js and css) files so you don't need to load both files.
+
+If the preset contains a `/editor-shared` directory the shared files will also be
+bundled into the editor (js and css).
+
+If the preset contains a `/shared` directory the shared files will also be bundled
+into the editor (js and css) as well as the individual blocks view (js and css) bundles.
+
 ### Notifications
 
 SDK module to build standalone notifications client.
@@ -63,8 +99,9 @@ Add new modules to SDK by extending the CLI using [`yargs.command`](http://yargs
 Here is a very basic example to follow:
 
 In `bin/sdk-cli.js`:
+
 ```js
-const example = require('./sdk/example.js');
+const example = require( './sdk/example.js' );
 
 yargs.command( {
 	command: 'example',
@@ -84,6 +121,7 @@ yargs.command( {
 ```
 
 `bin/sdk/example.js`:
+
 ```js
 const path = require( 'path' );
 
@@ -105,6 +143,7 @@ exports.config = ( {
 ```
 
 This gives you commands:
+
 ```bash
 npm run sdk -- example --help
 npm run sdk -- example --output-dir=./example
