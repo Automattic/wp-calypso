@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey } from 'lodash';
+import { invoke, noop, findKey, includes } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -21,8 +21,14 @@ import { setSiteGoals } from 'state/signup/steps/site-goals/actions';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { setUserExperience } from 'state/signup/steps/user-experience/actions';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getThemeForSiteGoals, getSiteTypeForSiteGoals } from 'signup/utils';
+import {
+	getThemeForSiteType,
+	getThemeForSiteGoals,
+	getDesignTypeForSiteType,
+	getDesignTypeForSiteGoals,
+} from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { hints } from 'lib/signup/hint-data';
@@ -49,16 +55,12 @@ class AboutStep extends Component {
 	constructor( props ) {
 		super( props );
 		this._isMounted = false;
-		const hasPrepopulatedVertical =
-			isValidLandingPageVertical( props.siteTopic ) &&
-			props.queryObject.vertical === props.siteTopic;
 		this.state = {
 			query: '',
 			siteTopicValue: this.props.siteTopic,
 			userExperience: this.props.userExperience,
 			showStore: false,
 			pendingStoreClick: false,
-			hasPrepopulatedVertical,
 		};
 	}
 
@@ -88,21 +90,13 @@ class AboutStep extends Component {
 		this._isMounted = false;
 	}
 
-	setFormState = state => {
-		this._isMounted && this.setState( { form: state } );
-	};
+	setFormState = state => this._isMounted && this.setState( { form: state } );
 
-	setPressableStore = ref => {
-		this.pressableStore = ref;
-	};
+	setPressableStore = ref => ( this.pressableStore = ref );
 
-	setSuggestionsRef = ref => {
-		this.suggestionsRef = ref;
-	};
+	setSuggestionsRef = ref => ( this.suggestionsRef = ref );
 
-	hideSuggestions = () => {
-		this.setState( { query: '' } );
-	};
+	hideSuggestions = () => this.setState( { query: '' } );
 
 	handleSuggestionChangeEvent = ( { target: { name, value } } ) => {
 		this.setState( { query: value, siteTopicValue: value } );
@@ -252,7 +246,16 @@ class AboutStep extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const { goToNextStep, stepName, flowName, previousFlowName, translate } = this.props;
+		const {
+			goToNextStep,
+			stepName,
+			flowName,
+			hasPrepopulatedVertical,
+			shouldHideSiteGoals,
+			previousFlowName,
+			translate,
+			siteType,
+		} = this.props;
 
 		//Defaults
 		let themeRepo = 'pub/radcliffe-2',
@@ -262,12 +265,8 @@ class AboutStep extends Component {
 
 		//Inputs
 		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
-		const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
-		const siteGoalsArray = siteGoalsInput.split( ',' );
-		const siteGoalsGroup = siteGoalsArray.sort().join();
 		const userExperienceInput = this.state.userExperience;
 		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
-
 		const eventAttributes = {};
 
 		//Site Title
@@ -279,7 +278,7 @@ class AboutStep extends Component {
 		eventAttributes.site_title = siteTitleInput || 'N/A';
 
 		//Site Topic
-		const englishSiteTopicInput = this.state.hasPrepopulatedVertical
+		const englishSiteTopicInput = hasPrepopulatedVertical
 			? this.state.siteTopicValue
 			: findKey( hints, siteTopic => siteTopic === siteTopicInput ) || siteTopicInput;
 
@@ -295,19 +294,37 @@ class AboutStep extends Component {
 		} );
 
 		//Site Goals
-		this.props.setSiteGoals( siteGoalsInput );
-		themeRepo = this.state.hasPrepopulatedVertical
-			? 'pub/radcliffe-2'
-			: getThemeForSiteGoals( siteGoalsInput );
-		designType = getSiteTypeForSiteGoals( siteGoalsInput, this.props.flowName );
+		if ( shouldHideSiteGoals ) {
+			themeRepo = hasPrepopulatedVertical ? 'pub/radcliffe-2' : getThemeForSiteType( siteType );
+			designType = getDesignTypeForSiteType( siteType, this.props.flowName );
+			eventAttributes.site_type = siteType;
+		} else {
+			const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
+			const siteGoalsArray = siteGoalsInput.split( ',' );
+			const siteGoalsGroup = siteGoalsArray.sort().join();
 
-		for ( let i = 0; i < siteGoalsArray.length; i++ ) {
-			eventAttributes[ `site_goal_${ siteGoalsArray[ i ] }` ] = true;
+			this.props.setSiteGoals( siteGoalsInput );
+			themeRepo = hasPrepopulatedVertical
+				? 'pub/radcliffe-2'
+				: getThemeForSiteGoals( siteGoalsInput );
+			designType = getDesignTypeForSiteGoals( siteGoalsInput, this.props.flowName );
+
+			for ( let i = 0; i < siteGoalsArray.length; i++ ) {
+				eventAttributes[ `site_goal_${ siteGoalsArray[ i ] }` ] = true;
+			}
+
+			eventAttributes.site_goal_selections = siteGoalsGroup;
+
+			//Store
+			if ( designType === DESIGN_TYPE_STORE ) {
+				nextFlowName =
+					siteGoalsArray.indexOf( 'sell' ) === -1 && previousFlowName
+						? previousFlowName
+						: 'store-nux';
+			}
 		}
 
-		eventAttributes.site_goal_selections = siteGoalsGroup;
-
-		//SET SITETYPE
+		//SET DESIGN TYPE
 		this.props.setDesignType( designType );
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', {
 			category: designType,
@@ -320,14 +337,6 @@ class AboutStep extends Component {
 		}
 
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', eventAttributes );
-
-		//Store
-		if ( designType === DESIGN_TYPE_STORE ) {
-			nextFlowName =
-				siteGoalsArray.indexOf( 'sell' ) === -1 && previousFlowName
-					? previousFlowName
-					: 'store-nux';
-		}
 
 		//Pressable
 		if (
@@ -516,7 +525,7 @@ class AboutStep extends Component {
 	}
 
 	renderContent() {
-		const { translate, siteTitle } = this.props;
+		const { hasPrepopulatedVertical, translate, siteTitle, shouldHideSiteGoals } = this.props;
 
 		const pressableWrapperClassName = classNames( 'about__pressable-wrapper', {
 			'about__wrapper-is-hidden': ! this.state.showStore,
@@ -559,7 +568,7 @@ class AboutStep extends Component {
 								/>
 							</FormFieldset>
 
-							{ ! this.state.hasPrepopulatedVertical && (
+							{ ! hasPrepopulatedVertical && (
 								<FormFieldset>
 									<FormLabel htmlFor="siteTopic">
 										{ translate( 'What will your site be about?' ) }
@@ -588,12 +597,14 @@ class AboutStep extends Component {
 								</FormFieldset>
 							) }
 
-							<FormFieldset>
-								<FormLegend>
-									{ translate( 'What’s the primary goal you have for your site?' ) }
-								</FormLegend>
-								{ this.renderGoalCheckboxes() }
-							</FormFieldset>
+							{ ! shouldHideSiteGoals && (
+								<FormFieldset>
+									<FormLegend>
+										{ translate( 'What’s the primary goal you have for your site?' ) }
+									</FormLegend>
+									{ this.renderGoalCheckboxes() }
+								</FormFieldset>
+							) }
 
 							{ this.renderExperienceOptions() }
 						</Card>
@@ -610,7 +621,6 @@ class AboutStep extends Component {
 
 	render() {
 		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
-
 		const headerText = translate( 'Let’s create a site.' );
 		const subHeaderText = translate(
 			'Please answer these questions so we can help you make the site you need.'
@@ -633,12 +643,18 @@ class AboutStep extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state, ownProps ) => ( {
 		siteTitle: getSiteTitle( state ),
 		siteGoals: getSiteGoals( state ),
 		siteTopic: getSurveyVertical( state ),
 		userExperience: getUserExperience( state ),
+		siteType: getSiteType( state ),
 		isLoggedIn: isUserLoggedIn( state ),
+		shouldHideSiteGoals:
+			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
+		hasPrepopulatedVertical:
+			isValidLandingPageVertical( ownProps.siteTopic ) &&
+			ownProps.queryObject.vertical === ownProps.siteTopic,
 	} ),
 	{
 		setSiteTitle,

@@ -9,6 +9,15 @@ export default {
 		defaultVariation: 'main',
 		localeTargets: 'any',
 	},
+	signupSegmentationStep: {
+		datestamp: '20181029',
+		variations: {
+			include: 50,
+			exclude: 50,
+		},
+		defaultVariation: 'exclude',
+		localeTargets: 'any',
+	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
