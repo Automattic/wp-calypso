@@ -3636,9 +3636,9 @@
       "integrity": "sha512-DYWGk01lDcxeS/K9IHPGWfT8PsJmbXRtRd2Sx72Tnb8pcYZQFF1oSDb8hJtS1vhp212q1Rzi5dUf9+nq0o9UIg=="
     },
     "blob": {
-      "version": "0.0.4",
-      "resolved": "https://registry.npmjs.org/blob/-/blob-0.0.4.tgz",
-      "integrity": "sha1-vPEwUspURj8w+fx+lbmkdjCpSSE="
+      "version": "0.0.5",
+      "resolved": "https://registry.npmjs.org/blob/-/blob-0.0.5.tgz",
+      "integrity": "sha512-gaqbzQPqOoamawKg0LGVd7SzLgXS+JH61oWprSLH+P+abTczqJbhTR8CmJ2u9/bUYNmHTGJx/UEmn6doAvvuig=="
     },
     "block-stream": {
       "version": "0.0.9",
@@ -6460,6 +6460,13 @@
         "base64-arraybuffer": "0.1.5",
         "blob": "0.0.4",
         "has-binary2": "~1.0.2"
+      },
+      "dependencies": {
+        "blob": {
+          "version": "0.0.4",
+          "resolved": "http://registry.npmjs.org/blob/-/blob-0.0.4.tgz",
+          "integrity": "sha1-vPEwUspURj8w+fx+lbmkdjCpSSE="
+        }
       }
     },
     "enhanced-resolve": {
