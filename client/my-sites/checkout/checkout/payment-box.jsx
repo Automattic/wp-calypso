@@ -33,6 +33,14 @@ export class PaymentBox extends PureComponent {
 		this.handlePaymentMethodChange = this.handlePaymentMethodChange.bind( this );
 	}
 
+	componentDidUpdate( prevProps ) {
+		// If the payment methods list changes, switch to the first one available.
+		// Useful when some methods may be dropped based on payment option, like subscription length.
+		if ( this.props.paymentMethods && this.props.paymentMethods !== prevProps.paymentMethods ) {
+			this.props.onSelectPaymentMethod( this.props.paymentMethods[ 0 ] );
+		}
+	}
+
 	handlePaymentMethodChange( paymentMethod ) {
 		const onSelectPaymentMethod = this.props.onSelectPaymentMethod;
 		return function() {
