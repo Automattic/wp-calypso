@@ -38,7 +38,7 @@ describe( 'LocaleSuggestions', () => {
 
 	test( 'should have `locale-suggestions` class', () => {
 		const wrapper = shallow( <LocaleSuggestions { ...defaultProps } /> );
-		expect( wrapper.contains( '.locale-suggestions' ) ).toBe( true );
+		expect( wrapper.hasClass( 'locale-suggestions' ) ).toBe( true );
 	} );
 
 	// check that content within a card renders correctly
