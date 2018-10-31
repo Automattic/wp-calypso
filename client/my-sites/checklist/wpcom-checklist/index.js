@@ -365,7 +365,8 @@ function getContactPage( posts ) {
 		posts,
 		post =>
 			post.type === 'page' &&
-			some( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } )
+			( some( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } ) ||
+				post.slug === 'contact' )
 	);
 }
 
@@ -378,12 +379,15 @@ export default connect(
 
 		const firstPost = find( posts, { type: 'post' } );
 		const contactPage = getContactPage( posts );
+		const contactPageUrl = contactPage
+			? [ '/page', siteSlug, get( contactPage, [ 'ID' ] ) ].join( '/' )
+			: `/pages/${ siteSlug }`;
 
 		const user = getCurrentUser( state );
 
 		const taskUrls = {
 			post_published: compact( [ '/post', siteSlug, get( firstPost, [ 'ID' ] ) ] ).join( '/' ),
-			contact_page_updated: [ '/page', siteSlug, get( contactPage, [ 'ID' ], 2 ) ].join( '/' ),
+			contact_page_updated: contactPageUrl,
 		};
 
 		return {
