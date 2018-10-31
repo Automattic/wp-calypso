@@ -21,7 +21,7 @@ function createBrightShades(baseColor) {
 }
 
 function createDarkShades(baseColor) {
-  const last = chroma(baseColor).darken(1.8).desaturate(2)
+  const last = chroma(baseColor).darken(2).desaturate(1.2)
   const colors = chroma.scale([baseColor, last]).mode('lch').colors(5)
   return colors
 }

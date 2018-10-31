@@ -63,11 +63,16 @@ function handleButtonClick() {
 }
 
 function makeDownloadable(colors) {
+  /* eslint-disable no-alert, no-unreachable */
+  return alert('Download is buggy and has been disabled.')
+  /* eslint-enable no-alert */
+
   const contents = toSketchPalette(colors)
   const blob = new Blob([contents], { type: 'text/plain;charset=utf-8' })
   const name = `colors-${Date.now()}.sketchpalette`
 
   saveAs(blob, name)
+  /* eslint-enable no-unreachable */
 }
 
 function handleFoundationTiles() {
