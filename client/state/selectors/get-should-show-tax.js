@@ -15,10 +15,6 @@ import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
  */
 export default createSelector(
 	state => {
-		if ( config.isEnabled( 'show-tax-force' ) ) {
-			return true;
-		}
-
 		if ( ! config.isEnabled( 'show-tax' ) ) {
 			return false;
 		}
