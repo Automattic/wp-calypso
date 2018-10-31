@@ -47,14 +47,23 @@ class PublicizeConnectionVerify extends Component {
 	};
 
 	/**
+	 * Callback for connection test request failure
+	 */
+	connectionTestRequestFailed = () => {
+		this.setState( {
+			isLoading: false,
+		} );
+	};
+
+	/**
 	 * Starts request to check connections
 	 *
 	 * Checks connections with using the '/publicize/connections' endpoint
 	 */
 	connectionTestStart = () => {
-		apiFetch( {
-			path: '/jetpack/v4/publicize/connections',
-		} ).then( () => this.connectionTestComplete );
+		apiFetch( { path: '/jetpack/v4/publicize/connections' } )
+			.then( () => this.connectionTestComplete )
+			.catch( () => this.connectionTestRequestFailed );
 	};
 
 	/**
