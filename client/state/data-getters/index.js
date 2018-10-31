@@ -201,10 +201,9 @@ export const requestSitePost = ( siteId, postId, postType ) => {
 	);
 };
 
-// data-getter:
 export const requestTaxRate = ( countryCode, postalCode, httpOptions ) => {
 	const defaultOptions = {
-		freshness: /*24 * */ 60 * 1000,
+		freshness: 2 * 24 * 60 * 60 * 1000, // 2 days
 	};
 
 	const optionsWithDefaults = { ...defaultOptions, ...httpOptions };
