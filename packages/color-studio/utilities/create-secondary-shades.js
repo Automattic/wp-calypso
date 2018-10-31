@@ -16,7 +16,7 @@ module.exports = baseColor => {
 
 function createBrightShades(baseColor) {
   const first = chroma.mix(baseColor, 'white', 0.95, 'lch').saturate(0.5)
-  const middle = chroma(baseColor).saturate(1)
+  const middle = chroma(baseColor).saturate(2)
   const colors = chroma.scale([first, middle, baseColor]).mode('lch').correctLightness().colors(6)
   return colors
 }

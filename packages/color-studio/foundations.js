@@ -3,54 +3,93 @@ const flatten = require('lodash/flatten')
 
 const values = {
   gray: '#707070',
-  green: '#108440',
+  hotGreen: '#008a00',
   blue: '#016087',
-  pink: '#c54475',
-  red: '#cf1c3d',
-  yellow: '#dbb422'
+  hotPink: '#d52c82',
+  hotRed: '#eb0001',
+  hotYellow: '#f6c200'
 }
 
-const derivatives = []
+values.green = colden(values.hotGreen)
+values.hotBlue = hotten(values.blue)
+values.pink = colden(values.hotPink)
+values.red = colden(values.hotRed)
+values.yellow = colden(values.hotYellow)
+
+values.gray = mix(values.gray, values.blue, 0.2)
+values.celadon = mix(values.blue, values.green, 0.6)
+values.purple = mix(values.blue, values.pink, 0.6)
+values.orange = mix(values.red, values.yellow)
+values.hotOrange = mix(values.hotRed, values.hotYellow)
 
 module.exports = {
   baseColors: flatten([
     {
       name: 'Gray',
-      value: mix(values.gray, values.blue, 0.2)
+      value: values.gray
     },
-    createColorPair({
+    {
       name: 'Green',
       value: values.green
-    }),
+    },
     {
       name: 'Celadon',
-      value: mix(values.blue, values.green, 0.7)
+      value: values.celadon
     },
-    createColorPair({
+    {
       name: 'Blue',
       value: values.blue
-    }),
+    },
     {
       name: 'Purple',
-      value: mix(values.blue, values.pink, 0.6)
+      value: values.purple
     },
-    createColorPair({
+    {
       name: 'Pink',
       value: values.pink
-    }),
-    createColorPair({
+    },
+    {
       name: 'Red',
       value: values.red
-    }),
-    createColorPair({
+    },
+    {
       name: 'Orange',
-      value: mix(values.red, values.yellow)
-    }),
-    createColorPair({
+      value: values.orange
+    },
+    {
       name: 'Yellow',
       value: values.yellow
-    }),
-    derivatives
+    },
+    {
+      name: 'Hot Blue',
+      value: values.hotBlue,
+      semantic: true
+    },
+    {
+      name: 'Hot Pink',
+      value: values.hotPink,
+      semantic: true
+    },
+    {
+      name: 'Hot Red',
+      value: values.hotRed,
+      semantic: true
+    },
+    {
+      name: 'Hot Orange',
+      value: values.hotOrange,
+      semantic: true
+    },
+    {
+      name: 'Hot Yellow',
+      value: values.hotYellow,
+      semantic: true
+    },
+    {
+      name: 'Hot Green',
+      value: values.hotGreen,
+      semantic: true
+    }
   ])
 }
 
@@ -58,13 +97,10 @@ function mix(color1, color2, ratio = 0.5) {
   return chroma.mix(color1, color2, ratio, 'lch').hex()
 }
 
-function createColorPair(colorObject) {
-  const semanticObject = Object.assign({}, colorObject, {
-    name: `Hot ${colorObject.name}`,
-    value: chroma(colorObject.value).saturate(1.5).hex(),
-    semantic: true
-  })
+function hotten(color) {
+  return chroma(color).darken(0.2).saturate(2).hex()
+}
 
-  derivatives.push(semanticObject)
-  return colorObject
+function colden(color) {
+  return chroma(color).set('hsl.s', '*0.75').desaturate(0.2).hex()
 }
