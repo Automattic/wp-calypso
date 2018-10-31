@@ -98,19 +98,7 @@ export function tokenFieldRules() {
 			rules: [ 'required' ],
 		},
 
-		country: {
-			description: i18n.translate( 'Country' ),
-			rules: [ 'required' ],
-		},
-
-		'postal-code': {
-			description: i18n.translate( 'Postal Code', {
-				context: 'Upgrades: Postal code on credit card form',
-			} ),
-			rules: [ 'required' ],
-		},
-
-		'tokenized_payment_data': {
+		tokenized_payment_data: {
 			description: i18n.translate( 'Tokenized Payment Data', {
 				context: 'Upgrades: Tokenized payment data from the token provider',
 			} ),
