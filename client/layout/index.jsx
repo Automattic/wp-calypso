@@ -60,9 +60,10 @@ class Layout extends Component {
 		colorSchemePreference: PropTypes.string,
 	};
 
-	pageHandler = e => {
-		page.onclick( e.nativeEvent );
-	};
+	// Intercepts <a href> clicks in the document and passes them to the `page` router to handle.
+	// If the link is internal to Calypso, the router will handle the navigation with `pushState`
+	// instead of letting the browser reload the whole app by performing a classic navigation.
+	pageClickHandler = e => page.clickHandler( e.nativeEvent );
 
 	render() {
 		const sectionClass = classnames(
@@ -83,7 +84,8 @@ class Layout extends Component {
 			} );
 
 		return (
-			<div className={ sectionClass } onClick={ this.pageHandler }>
+			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+			<div className={ sectionClass } onClick={ this.pageClickHandler }>
 				<DocumentHead />
 				<QuerySites primaryAndRecent />
 				<QuerySites allSites />
