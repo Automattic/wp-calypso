@@ -3,8 +3,6 @@
 /**
  * External dependencies
  */
-import { ExternalLink } from '@wordpress/components';
-import { Fragment } from '@wordpress/element';
 import { registerBlockType } from '@wordpress/blocks';
 import GridiconMoney from 'gridicons/dist/money';
 
@@ -23,30 +21,17 @@ import './editor.scss';
 registerBlockType( 'jetpack/simple-payments', {
 	title: __( 'Payment button' ),
 
-	description: (
-		<Fragment>
-			<p>
-				{ __(
-					'Simple Payments lets you create and embed credit and ' +
-						'debit card payment buttons on your WordPress.com and ' +
-						'Jetpack-enabled sites with minimal setup.'
-				) }
-			</p>
-			<ExternalLink href="https://support.wordpress.com/simple-payments/">
-				{ __( 'Support reference' ) }
-			</ExternalLink>
-		</Fragment>
+	description: __(
+		'Simple Payments lets you create and embed credit and ' +
+			'debit card payment buttons on your WordPress.com and ' +
+			'Jetpack-enabled sites with minimal setup.'
 	),
 
 	icon: <GridiconMoney />,
 
 	category: 'jetpack',
 
-	keywords: [
-		__( 'simple payments' ),
-		__( 'shop' ),
-		__( 'PayPal' ),
-	],
+	keywords: [ __( 'simple payments' ), __( 'shop' ), 'PayPal' ],
 
 	attributes: {
 		currency: {

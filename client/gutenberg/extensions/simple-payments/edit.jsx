@@ -5,7 +5,15 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
-import { SelectControl, TextareaControl, TextControl, ToggleControl } from '@wordpress/components';
+import {
+	ExternalLink,
+	PanelBody,
+	SelectControl,
+	TextareaControl,
+	TextControl,
+	ToggleControl,
+} from '@wordpress/components';
+import { InspectorControls } from '@wordpress/editor';
 import { withSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
@@ -247,6 +255,13 @@ class Edit extends Component {
 		return (
 			<div className="wp-block-jetpack-simple-payments">
 				<Fragment>
+					<InspectorControls key="inspector">
+						<PanelBody>
+							<ExternalLink href="https://support.wordpress.com/simple-payments/">
+								{ __( 'Support reference' ) }
+							</ExternalLink>
+						</PanelBody>
+					</InspectorControls>
 					<TextControl
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
 							'simple-payments__field-has-error': fieldTitleVisited && fieldTitleError,
