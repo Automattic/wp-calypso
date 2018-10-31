@@ -15,6 +15,7 @@ import {
 	isPersonal,
 	isPremium,
 	isBusiness,
+	isEcommerce,
 } from '..';
 import {
 	JETPACK_PLANS,
@@ -25,6 +26,8 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
@@ -96,6 +99,20 @@ describe( 'isBusiness', () => {
 		[ PLAN_PREMIUM, PLAN_JETPACK_PERSONAL ]
 			.map( makeProductFromSlug )
 			.forEach( product => expect( isBusiness( product ) ).toBe( false ) );
+	} );
+} );
+
+describe( 'isEcommerce', () => {
+	test( 'should return true for eCommerce products', () => {
+		[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ]
+			.map( makeProductFromSlug )
+			.forEach( product => expect( isEcommerce( product ) ).toBe( true ) );
+	} );
+
+	test( 'should return false for non-eCommerec products', () => {
+		[ PLAN_PREMIUM, PLAN_JETPACK_PERSONAL, PLAN_BUSINESS ]
+			.map( makeProductFromSlug )
+			.forEach( product => expect( isEcommerce( product ) ).toBe( false ) );
 	} );
 } );
 

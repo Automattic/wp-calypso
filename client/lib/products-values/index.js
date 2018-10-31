@@ -28,6 +28,7 @@ import {
 
 import {
 	planMatches,
+	isEcommercePlan,
 	isBusinessPlan,
 	isPremiumPlan,
 	isPersonalPlan,
@@ -150,6 +151,13 @@ export function isBusiness( product ) {
 	assertValidProduct( product );
 
 	return isBusinessPlan( product.product_slug );
+}
+
+export function isEcommerce( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isEcommercePlan( product.product_slug );
 }
 
 export function isEnterprise( product ) {
