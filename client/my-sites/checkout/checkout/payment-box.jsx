@@ -20,7 +20,12 @@ import SectionNav from 'components/section-nav';
 import SectionHeader from 'components/section-header';
 import analytics from 'lib/analytics';
 import cartValues, { paymentMethodName } from 'lib/cart-values';
-import { detectWebPaymentMethod, getWebPaymentMethodName } from './web-payment-box';
+import {
+	detectWebPaymentMethod,
+	getWebPaymentMethodName,
+	WEB_PAYMENT_BASIC_CARD_METHOD,
+	WEB_PAYMENT_APPLE_PAY_METHOD,
+} from './web-payment-box';
 
 export class PaymentBox extends PureComponent {
 	constructor() {
@@ -76,8 +81,25 @@ export class PaymentBox extends PureComponent {
 				break;
 
 			case 'web-payment':
-				labelLogo = <Gridicon icon="folder" />;
-				labelAdditionalText = getWebPaymentMethodName( detectWebPaymentMethod() );
+				let webPaymentMethod = detectWebPaymentMethod();
+
+				switch ( webPaymentMethod ) {
+					case WEB_PAYMENT_BASIC_CARD_METHOD:
+						labelLogo = <Gridicon icon="folder" />;
+						break;
+
+					case WEB_PAYMENT_APPLE_PAY_METHOD:
+						labelLogo = (
+							<img
+								src={ `/calypso/images/upgrades/apple.svg` }
+								alt="🍎"
+								className="checkout__apple-pay"
+							/>
+						);
+						break;
+				}
+
+				labelAdditionalText = getWebPaymentMethodName( webPaymentMethod );
 				break;
 		}
 

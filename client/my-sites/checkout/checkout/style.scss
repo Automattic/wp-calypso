@@ -409,7 +409,8 @@
 	// -----------------------------------
 
 	.paypal-payment-box,
-	.credits-payment-box {
+	.credits-payment-box,
+	.web-payment-box {
 		.payment-box-section,
 		.checkout__payment-box-section {
 			background-color: $white;
@@ -422,7 +423,8 @@
 		}
 	}
 
-	.paypal-payment-box {
+	.paypal-payment-box,
+	.web-payment-box {
 		.payment-box-section,
 		.checkout__payment-box-section {
 			display: flex;
@@ -983,6 +985,11 @@
 	.checkout__wechat {
 		height: 24px;
 		margin-right: 5px;
+	}
+
+	.checkout__apple-pay {
+		height: 22px;
+		margin-right: 6px;
 	}
 
 	.select-dropdown__item-text {

@@ -98,7 +98,7 @@ export function getWebPaymentMethodName( webPaymentMethod ) {
 			return 'Browser wallet';
 
 		case WEB_PAYMENT_APPLE_PAY_METHOD:
-			return ' Apple Pay';
+			return 'Apple Pay';
 
 		default:
 			return webPaymentMethod;
@@ -218,7 +218,7 @@ export class WebPaymentBox extends React.Component {
 					label: product.product_name,
 					amount: {
 						currency: product.currency,
-						value: product.cost + ''
+						value: product.cost + '',
 					},
 				};
 			} ),
@@ -300,7 +300,7 @@ export class WebPaymentBox extends React.Component {
 						paymentRequest
 							.show()
 							.then( paymentResponse => {
-								console.log(paymentResponse);
+								console.log( paymentResponse );
 
 								const { payerName, details } = paymentResponse;
 								const { token } = details;
@@ -384,7 +384,7 @@ export class WebPaymentBox extends React.Component {
 		}
 	};
 
-	updateSelectedPostalCode = ( event ) => {
+	updateSelectedPostalCode = event => {
 		const { name: key, value } = event.target;
 
 		if ( 'postal-code' === key ) {
