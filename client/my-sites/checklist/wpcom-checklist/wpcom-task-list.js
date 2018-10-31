@@ -52,4 +52,15 @@ export default class WpcomTaskList {
 	getFirstIncompleteTask() {
 		return this.tasks.find( task => ! task.isCompleted );
 	}
+
+	getCompletionStatus() {
+		const completed = this.tasks.filter( task => task.isCompleted ).length;
+		const total = this.tasks.length;
+
+		return {
+			completed,
+			total,
+			percentage: Math.round( ! total ? 0 : ( completed / total ) * 100 ),
+		};
+	}
 }

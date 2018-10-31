@@ -42,14 +42,12 @@ export class ChecklistNavigation extends Component {
 
 	render() {
 		const { siteSlug, translate, showNotification, canShowChecklist, taskList } = this.props;
-		const tasks = taskList.getAll();
 
 		const buttonClasses = {
 			'has-notification': showNotification,
 			'checklist-navigation__count': true,
 		};
-		const total = tasks.length;
-		const completeCount = tasks.filter( task => task.isCompleted ).length;
+		const { total, completed } = taskList.getCompletionStatus();
 		const isFinished = ! taskList.getFirstIncompleteTask();
 		const checklistLink = '/checklist/' + siteSlug;
 
@@ -73,14 +71,14 @@ export class ChecklistNavigation extends Component {
 						{ translate( '%(complete)d/%(total)d', {
 							comment: 'Numerical progress indicator, like 5/9',
 							args: {
-								complete: completeCount,
+								complete: completed,
 								total: total,
 							},
 						} ) }
 					</span>
 
 					<div className="checklist-navigation__progress-bar-margin">
-						<ProgressBar total={ total } value={ completeCount } compact />
+						<ProgressBar total={ total } value={ completed } compact />
 					</div>
 				</Button>
 			</div>

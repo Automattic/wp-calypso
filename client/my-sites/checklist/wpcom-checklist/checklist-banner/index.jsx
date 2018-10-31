@@ -70,14 +70,12 @@ export class ChecklistBanner extends Component {
 		}
 
 		const { translate, taskList } = this.props;
-		const tasks = taskList.getAll();
 
 		const childrenArray = Children.toArray( this.props.children );
-		const total = tasks.length;
-		const completeCount = tasks.filter( task => task.isCompleted ).length;
+		const { total, completed, percentage } = taskList.getCompletionStatus();
+
 		const firstIncomplete = taskList.getFirstIncompleteTask();
 		const isFinished = ! firstIncomplete;
-		const completePercentage = Math.round( ! total ? 0 : ( completeCount / total ) * 100 );
 
 		return (
 			<Card className="checklist-banner">
@@ -87,7 +85,7 @@ export class ChecklistBanner extends Component {
 						width={ 152 }
 						height={ 152 }
 						lineWidth={ 18 }
-						percentage={ completePercentage }
+						percentage={ percentage }
 						metric={ translate( 'completed' ) }
 						colors={ [ '#ffffff', '#47b766' ] }
 					/>
@@ -96,7 +94,7 @@ export class ChecklistBanner extends Component {
 					<span className="checklist-banner__progress-title">{ translate( 'Site setup' ) }</span>
 					<span className="checklist-banner__progress-desc">
 						{ translate( '%(percentage)s%% completed', {
-							args: { percentage: completePercentage },
+							args: { percentage: percentage },
 						} ) }
 
 						{ isFinished && (
@@ -109,7 +107,7 @@ export class ChecklistBanner extends Component {
 							</Button>
 						) }
 					</span>
-					<ProgressBar value={ completeCount } total={ total } color="#47b766" />
+					<ProgressBar value={ completed } total={ total } color="#47b766" />
 				</div>
 				{ isFinished ? (
 					<>
