@@ -267,7 +267,7 @@
     "test-server": "jest -c=test/server/jest.config.js",
     "test-server:coverage": "npm run -s test-server -- --coverage",
     "test-server:watch": "npm run -s test-server -- --watch",
-    "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -e date \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
+    "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -k translate,__,_x,_n -e date \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
     "update-deps": "npm run -s rm -- node_modules && npm run -s rm -- npm-shrinkwrap.json && npm install && npm shrinkwrap",
     "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
     "prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons npm run -s build-client",
