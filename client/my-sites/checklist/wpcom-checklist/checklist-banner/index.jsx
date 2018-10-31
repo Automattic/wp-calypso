@@ -75,8 +75,8 @@ export class ChecklistBanner extends Component {
 		const childrenArray = Children.toArray( this.props.children );
 		const total = tasks.length;
 		const completeCount = tasks.filter( task => task.isCompleted ).length;
-		const isFinished = taskList.areAllTasksCompleted();
 		const firstIncomplete = taskList.getFirstIncompleteTask();
+		const isFinished = ! firstIncomplete;
 		const completePercentage = Math.round( ! total ? 0 : ( completeCount / total ) * 100 );
 
 		return (

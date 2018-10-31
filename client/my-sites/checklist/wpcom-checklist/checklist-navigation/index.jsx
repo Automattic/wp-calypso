@@ -50,7 +50,7 @@ export class ChecklistNavigation extends Component {
 		};
 		const total = tasks.length;
 		const completeCount = tasks.filter( task => task.isCompleted ).length;
-		const isFinished = taskList.areAllTasksCompleted();
+		const isFinished = ! taskList.getFirstIncompleteTask();
 		const checklistLink = '/checklist/' + siteSlug;
 
 		if ( ! canShowChecklist || isFinished ) {

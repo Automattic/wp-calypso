@@ -15,10 +15,11 @@ export class ChecklistNotification extends Component {
 
 	shouldShowNotification = () => {
 		const { storedTask, canShowChecklist, taskList } = this.props;
+		const firstIncomplete = taskList.getFirstIncompleteTask();
 
 		if (
-			! taskList.areAllTasksCompleted() &&
-			( storedTask !== taskList.getFirstIncompleteTask().id || storedTask === null ) &&
+			firstIncomplete &&
+			( storedTask !== firstIncomplete.id || storedTask === null ) &&
 			canShowChecklist
 		) {
 			this.props.setNotification( true );
