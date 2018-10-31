@@ -48,7 +48,7 @@ export default class PageList extends Component {
 		page: 1,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.search !== this.props.search ||
 			nextProps.siteId !== this.props.siteId ||
@@ -117,7 +117,7 @@ class Pages extends Component {
 		shadowItems: {},
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.pages !== this.props.pages &&
 			( size( this.state.shadowItems ) === 0 || ! isEqual( nextProps.query, this.props.query ) )
