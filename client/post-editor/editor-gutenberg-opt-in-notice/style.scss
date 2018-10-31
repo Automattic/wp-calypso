@@ -11,7 +11,7 @@
 	animation: slide-in-bottom cubic-bezier( 0.175, 0.885, 0.32, 1.275 ) 0.3s forwards;
 	animation-delay: 4s;
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.25 );
-	z-index: z-index( 'root', '.notices-list.is-pinned' );
+	z-index: z-index( 'root', '.editor-gutenberg-opt-in-notice' );
 
 	@include breakpoint( '<660px' ) {
 		border-radius: 0;
