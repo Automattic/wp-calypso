@@ -27,54 +27,48 @@ export class LocationSearch extends Component {
 		};
 		this.autocompleter = {
 			name: 'placeSearch',
-			options: this.search.bind( this ),
+			options: this.search,
 			isDebounced: true,
-			getOptionLabel: option => <span>{ option.description }</span>,
-			getOptionKeywords: option => [ option.description ],
-			getOptionCompletion: this.getOptionCompletion.bind( this ),
+			getOptionLabel: option => <span>{ option.place_name }</span>,
+			getOptionKeywords: option => [ option.place_name ],
+			getOptionCompletion: this.getOptionCompletion,
 		};
 	}
-
-	getOptionCompletion( option ) {
+	getOptionCompletion = option => {
 		const { value } = option;
-		const placesService = new window.google.maps.places.PlacesService( this.testRef.current );
-		placesService.getDetails(
-			{ placeId: value.place_id },
-			function( place ) {
-				const point = {
-					place_title: place.name,
-					title: place.name,
-					caption: place.formatted_address,
-					id: place.place_id,
-					viewport: place.geometry.viewport,
-					coordinates: {
-						latitude: place.geometry.location.lat(),
-						longitude: place.geometry.location.lng(),
-					},
-				};
-				this.props.onAddPoint( point );
-			}.bind( this )
-		);
-		return option.description;
-	}
+		const point = {
+			place_title: value.text,
+			title: value.text,
+			caption: value.place_name,
+			id: value.id,
+			coordinates: {
+				latitude: value.geometry.coordinates[ 0 ],
+				longitude: value.geometry.coordinates[ 1 ],
+			},
+		};
+		this.props.onAddPoint( point );
+		return value.text;
+	};
 
-	search( value ) {
-		const placeSearch = new window.google.maps.places.AutocompleteService();
+	search = value => {
+		const { api_key } = this.props;
+		const url =
+			'https://api.mapbox.com/geocoding/v5/mapbox.places/' +
+			encodeURI( value ) +
+			'.json?access_token=' +
+			api_key;
 		return new Promise( function( resolve, reject ) {
-			placeSearch.getPlacePredictions(
-				{
-					input: value,
-				},
-				function( place, status ) {
-					if ( status !== window.google.maps.places.PlacesServiceStatus.OK ) {
-						reject( new Error( status ) );
-					} else {
-						resolve( place );
-					}
-				}
-			);
+			/* TODO: Replace with pure JS */
+			window.jQuery
+				.ajax( url )
+				.done( function( data ) {
+					resolve( data.features );
+				} )
+				.fail( function() {
+					reject( new Error( 'Mapbox Places Error' ) );
+				} );
 		} );
-	}
+	};
 	onReset = () => {
 		this.textRef.current.value = null;
 	};

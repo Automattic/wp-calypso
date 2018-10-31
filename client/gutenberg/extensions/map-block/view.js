@@ -5,6 +5,8 @@
  */
 
 import './style.scss';
+/* TODO: Load Mapbox stylesheet dynamically, from CDN */
+import './mapbox.scss';
 import component from './component.js';
 import { settings } from './settings.js';
 import FrontendManagement from 'gutenberg/extensions/shared/frontend-management.js';
@@ -16,7 +18,7 @@ window.addEventListener( 'load', function() {
 		return;
 	}
 	const frontendManagement = new FrontendManagement();
-	const url = '/wp-json/jetpack/v4/service-api-keys/googlemaps';
+	const url = '/wp-json/jetpack/v4/service-api-keys/mapbox';
 	apiFetch( { url, method: 'GET' } ).then( result => {
 		frontendManagement.blockIterator( document, [
 			{

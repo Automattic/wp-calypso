@@ -15,7 +15,7 @@ import { get, assign } from 'lodash';
 
 import MapMarker from './map-marker/';
 import InfoWindow from './info-window/';
-import { googleMapFormatter } from './google-map-formatter/';
+import { mapboxMapFormatter } from './mapbox-map-formatter/';
 
 // @TODO: replace with import from lib/load-script after resolution of https://github.com/Automattic/wp-calypso/issues/27821
 import { loadScript } from './load-script';
@@ -30,30 +30,21 @@ export class Map extends Component {
 			map: null,
 			fit_to_bounds: false,
 			loaded: false,
-			google: null,
+			mapboxgl: null,
 		};
-
-		// Event Handlers as methods
-		this.sizeMap = this.sizeMap.bind( this );
-		this.onMarkerClick = this.onMarkerClick.bind( this );
-		this.deleteActiveMarker = this.deleteActiveMarker.bind( this );
-		this.updateActiveMarker = this.updateActiveMarker.bind( this );
-		this.onMapClick = this.onMapClick.bind( this );
-		this.setBoundsByMarkers = this.setBoundsByMarkers.bind( this );
-		this.scriptsLoaded = this.scriptsLoaded.bind( this );
 
 		// Refs
 		this.mapRef = createRef();
 	}
 	render() {
-		const { points, admin, children } = this.props;
-		const { map, activeMarker, google } = this.state;
+		const { points, admin, children, marker_color } = this.props;
+		const { map, activeMarker, mapboxgl } = this.state;
 		const { onMarkerClick, deleteActiveMarker, updateActiveMarker } = this;
 		const currentPoint = get( activeMarker, 'props.point' ) || {};
 		const { title, caption } = currentPoint;
 		const mapMarkers =
 			map &&
-			google &&
+			mapboxgl &&
 			points.map( ( point, index ) => {
 				return (
 					<MapMarker
@@ -61,17 +52,17 @@ export class Map extends Component {
 						point={ point }
 						index={ index }
 						map={ map }
-						google={ google.maps }
-						icon={ this.getMarkerIcon() }
+						mapboxgl={ mapboxgl }
+						marker_color={ marker_color }
 						onClick={ onMarkerClick }
 					/>
 				);
 			} );
-		const infoWindow = google && (
+		const infoWindow = mapboxgl && (
 			<InfoWindow
 				activeMarker={ activeMarker }
 				map={ map }
-				google={ google }
+				mapboxgl={ mapboxgl }
 				unsetActiveMarker={ () => this.setState( { activeMarker: null } ) }
 			>
 				{ activeMarker &&
@@ -124,7 +115,7 @@ export class Map extends Component {
 	componentDidUpdate( prevProps ) {
 		const { api_key, children } = this.props;
 		if ( api_key && api_key.length > 0 && api_key !== prevProps.api_key ) {
-			window.google = null;
+			window.mapboxgl = null;
 			this.loadMapLibraries();
 		}
 		// If the user has just clicked to show the Add Point component, hide info window.
@@ -148,11 +139,8 @@ export class Map extends Component {
 		this.setBoundsByMarkers();
 	}
 	mapStyleAndDetailsChanged() {
-		const { map, google } = this.state;
-		map.setOptions( {
-			styles: this.getMapStyle(),
-			mapTypeId: google.maps.MapTypeId[ this.getMapType() ],
-		} );
+		const { map } = this.state;
+		map.setStyle( this.getMapStyle() );
 	}
 	map_styleChanged() {
 		this.mapStyleAndDetailsChanged();
@@ -160,19 +148,19 @@ export class Map extends Component {
 	map_detailsChanged() {
 		this.mapStyleAndDetailsChanged();
 	}
-	// Event handling
-	onMarkerClick( marker ) {
+	/* Event handling */
+	onMarkerClick = marker => {
 		const { onMarkerClick } = this.props;
 		this.setState( { activeMarker: marker } );
 		onMarkerClick();
-	}
-	onMapClick() {
+	};
+	onMapClick = () => {
 		this.setState( { activeMarker: null } );
-	}
-	clearCurrentMarker() {
+	};
+	clearCurrentMarker = () => {
 		this.setState( { activeMarker: null } );
-	}
-	updateActiveMarker( updates ) {
+	};
+	updateActiveMarker = updates => {
 		const { points } = this.props;
 		const { activeMarker } = this.state;
 		const { index } = activeMarker.props;
@@ -180,8 +168,8 @@ export class Map extends Component {
 
 		assign( newPoints[ index ], updates );
 		this.props.onSetPoints( newPoints );
-	}
-	deleteActiveMarker() {
+	};
+	deleteActiveMarker = () => {
 		const { points } = this.props;
 		const { activeMarker } = this.state;
 		const { index } = activeMarker.props;
@@ -190,47 +178,55 @@ export class Map extends Component {
 		newPoints.splice( index, 1 );
 		this.props.onSetPoints( newPoints );
 		this.setState( { activeMarker: null } );
-	}
+	};
 	// Various map functions
-	sizeMap() {
+	sizeMap = () => {
+		const { map } = this.state;
 		const mapEl = this.mapRef.current;
 		const blockWidth = mapEl.offsetWidth;
 		const maxHeight = window.innerHeight * 0.8;
 		const blockHeight = Math.min( blockWidth * ( 3 / 4 ), maxHeight );
 		mapEl.style.height = blockHeight + 'px';
-	}
-	// Calculate the appropriate zoom and center point of the map based on defined markers
-	setBoundsByMarkers() {
+		map.resize();
+		this.setBoundsByMarkers();
+	};
+	setBoundsByMarkers = () => {
 		const { zoom, points } = this.props;
-		const { map, activeMarker, google } = this.state;
-		const bounds = new google.maps.LatLngBounds();
+		const { map, activeMarker, mapboxgl, zoomControl } = this.state;
+
+		const bounds = new mapboxgl.LngLatBounds();
 		if ( ! map || ! points.length || activeMarker ) {
 			return;
 		}
 		points.forEach( point => {
-			bounds.extend(
-				new google.maps.LatLng( point.coordinates.latitude, point.coordinates.longitude )
-			);
+			bounds.extend( [ point.coordinates.latitude, point.coordinates.longitude ] );
 		} );
 		map.setCenter( bounds.getCenter() );
 
 		// If there are multiple points, zoom is determined by the area they cover,
 		// and zoom control is removed.
 		if ( points.length > 1 ) {
-			map.fitBounds( bounds );
+			map.fitBounds( bounds, {
+				padding: {
+					top: 40,
+					bottom: 40,
+					left: 20,
+					right: 20,
+				},
+			} );
 			this.setState( { fit_to_bounds: true } );
-			map.setOptions( { zoomControl: false } );
+			map.removeControl( zoomControl );
 			return;
 		}
 
 		// If there are one (or zero) points, user can set zoom
 		map.setZoom( parseInt( zoom, 10 ) );
 		this.setState( { fit_to_bounds: false } );
-		map.setOptions( { zoomControl: true } );
-	}
+		map.addControl( zoomControl );
+	};
 	getMapStyle() {
 		const { map_style, map_details } = this.props;
-		return googleMapFormatter( map_style, map_details );
+		return mapboxMapFormatter( map_style, map_details );
 	}
 	getMapType() {
 		const { map_style } = this.props;
@@ -244,21 +240,8 @@ export class Map extends Component {
 				return 'ROADMAP';
 		}
 	}
-	getMarkerIcon() {
-		const { marker_color } = this.props;
-		const { google } = this.state;
-		return {
-			path:
-				'M16,38 C16,38 32,26.692424 32,16 C32,5.307576 24.836556,0 16,0 C7.163444,0 0,5.307576 0,16 C0,26.692424 16,38 16,38 Z',
-			fillColor: marker_color,
-			fillOpacity: 0.8,
-			scale: 1,
-			strokeWeight: 0,
-			anchor: new google.maps.Point( 16, 38 ),
-		};
-	}
 	// Script loading, browser geolocation
-	scriptsLoaded() {
+	scriptsLoaded = () => {
 		const { map_center, points } = this.props;
 		this.setState( { loaded: true } );
 
@@ -268,59 +251,64 @@ export class Map extends Component {
 			return;
 		}
 		this.initMap( map_center );
-	}
+	};
 	loadMapLibraries() {
 		const { api_key } = this.props;
-		const src = [
-			'https://maps.googleapis.com/maps/api/js?key=',
-			api_key,
-			'&libraries=places',
-		].join( '' );
-		if ( window.google ) {
-			this.setState( { google: window.google }, this.scriptsLoaded );
+		const src = 'https://api.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.js';
+		if ( window.mapboxgl ) {
+			this.setState( { mapboxgl: window.mapboxgl }, this.scriptsLoaded );
 			return;
 		}
 		loadScript( src, error => {
 			if ( error ) {
 				return;
 			}
-			this.setState( { google: window.google }, this.scriptsLoaded );
+			window.mapboxgl.accessToken = api_key;
+			this.setState( { mapboxgl: window.mapboxgl }, this.scriptsLoaded );
 		} );
 	}
-	// Create the map object.
 	initMap( map_center ) {
-		const { google } = this.state;
-		const { zoom, onMapLoaded } = this.props;
-		const mapOptions = {
-			streetViewControl: false,
-			mapTypeControl: false,
-			panControl: false,
-			scrollwheel: false,
-			zoomControlOptions: {
-				style: 'SMALL',
-			},
-			styles: this.getMapStyle(),
-			mapTypeId: google.maps.MapTypeId[ this.getMapType() ],
+		const { mapboxgl } = this.state;
+		const { zoom, onMapLoaded, admin } = this.props;
+		const map = new mapboxgl.Map( {
+			container: this.mapRef.current,
+			style: 'mapbox://styles/mapbox/streets-v9',
+			center: this.googlePoint2Mapbox( map_center ),
 			zoom: parseInt( zoom, 10 ),
-		};
-		const map = new google.maps.Map( this.mapRef.current, mapOptions );
-		map.addListener(
-			'zoom_changed',
-			function() {
-				this.props.onSetZoom( map.getZoom() );
-			}.bind( this )
-		);
-		map.addListener( 'click', this.onMapClick );
-		this.setState( { map }, () => {
+			pitchWithRotate: false,
+			attributionControl: false,
+			dragRotate: false,
+		} );
+		const zoomControl = new mapboxgl.NavigationControl( {
+			showCompass: false,
+			showZoom: true,
+		} );
+		map.on( 'zoomend', () => {
+			this.props.onSetZoom( map.getZoom() );
+		} );
+
+		/* Listen for clicks on the Map background, which hides the current popup. */
+		map.getCanvas().addEventListener( 'click', this.onMapClick );
+		this.setState( { map, zoomControl }, () => {
 			this.sizeMap();
+			map.addControl( zoomControl );
+			if ( ! admin ) {
+				map.addControl( new mapboxgl.FullscreenControl() );
+			}
 			this.mapRef.current.addEventListener( 'alignmentChanged', this.sizeMap );
-			window.addEventListener( 'resize', this.sizeMap );
-			google.maps.event.trigger( map, 'resize' );
-			map.setCenter( new google.maps.LatLng( map_center.latitude, map_center.longitude ) );
-			this.setBoundsByMarkers();
+			map.resize();
 			onMapLoaded();
 			this.setState( { loaded: true } );
+			map.setStyle( this.getMapStyle() );
+			window.addEventListener( 'resize', this.sizeMap );
 		} );
+	}
+	googlePoint2Mapbox( google_point ) {
+		const map_center = [
+			google_point.latitude ? google_point.latitude : 0,
+			google_point.longitude ? google_point.longitude : 0,
+		];
+		return map_center;
 	}
 }
 
@@ -333,11 +321,7 @@ Map.defaultProps = {
 	onMarkerClick: () => {},
 	marker_color: 'red',
 	api_key: null,
-	// Default center point is San Francisco
-	map_center: {
-		latitude: 37.7749295,
-		longitude: -122.41941550000001,
-	},
+	map_center: {},
 };
 
 export default Map;

@@ -81,7 +81,7 @@ class MapEdit extends Component {
 	};
 	apiCall( service_api_key = null, method = 'GET' ) {
 		const { noticeOperations } = this.props;
-		const url = '/wp-json/jetpack/v4/service-api-keys/googlemaps';
+		const url = '/wp-json/jetpack/v4/service-api-keys/mapbox';
 		const fetch = service_api_key ? { url, method, data: { service_api_key } } : { url, method };
 		apiFetch( fetch ).then(
 			result => {
@@ -160,9 +160,9 @@ class MapEdit extends Component {
 							/>
 						</PanelBody>
 					) : null }
-					<PanelBody title={ __( 'Google Maps API Key', 'jetpack' ) } initialOpen={ false }>
+					<PanelBody title={ __( 'Mapbox Access Token', 'jetpack' ) } initialOpen={ false }>
 						<TextControl
-							label={ __( 'Google Maps API Key', 'jetpack' ) }
+							label={ __( 'Mapbox Access Token', 'jetpack' ) }
 							value={ apiKeyControl }
 							onChange={ value => this.setState( { apiKeyControl: value } ) }
 						/>
@@ -184,8 +184,8 @@ class MapEdit extends Component {
 			</Placeholder>
 		);
 		const getAPIInstructions = sprintf(
-			"This is your first map block. You need to get a Google Maps API key. <a href='%s' target='_blank'>Here's how to do it</a>.",
-			'https://developers.google.com/maps/documentation/javascript/get-api-key'
+			"This is your first map block. You need to get a Mapbox Access Token. <a href='%s' target='_blank'>Here's how to do it</a>.",
+			'https://www.mapbox.com/help/how-access-tokens-work/'
 		);
 		const placeholderAPIStateFailure = (
 			<Placeholder icon={ settings.icon } label={ __( 'Map', 'jetpack' ) } notices={ notices }>
@@ -226,6 +226,7 @@ class MapEdit extends Component {
 							<AddPoint
 								onAddPoint={ this.addPoint }
 								onClose={ () => this.setState( { addPointVisibility: false } ) }
+								api_key={ api_key }
 							/>
 						) }
 					</Map>
