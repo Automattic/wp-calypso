@@ -202,8 +202,8 @@ function getColorProperties(colorValue) {
 }
 
 function getContrastScore(foregroundColor, backgroundColor, prefix) {
-  const ratio = round(chroma.contrast(foregroundColor, backgroundColor), 1)
-  let score = String(ratio)
+  const ratio = chroma.contrast(foregroundColor, backgroundColor)
+  let score = round(ratio, 2)
 
   if (ratio >= 7.5) {
     score = 'AAA'

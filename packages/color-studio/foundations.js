@@ -3,11 +3,11 @@ const flatten = require('lodash/flatten')
 
 const values = {
   gray: '#707070',
+  green: '#108440',
   blue: '#016087',
   pink: '#c54475',
   red: '#cf1c3d',
-  yellow: '#dbb422',
-  green: '#017b52'
+  yellow: '#dbb422'
 }
 
 const derivatives = []
@@ -17,6 +17,14 @@ module.exports = {
     {
       name: 'Gray',
       value: mix(values.gray, values.blue, 0.2)
+    },
+    createColorPair({
+      name: 'Green',
+      value: values.green
+    }),
+    {
+      name: 'Celadon',
+      value: mix(values.blue, values.green, 0.6)
     },
     createColorPair({
       name: 'Blue',
@@ -41,10 +49,6 @@ module.exports = {
     createColorPair({
       name: 'Yellow',
       value: values.yellow
-    }),
-    createColorPair({
-      name: 'Green',
-      value: values.green
     }),
     derivatives
   ])
