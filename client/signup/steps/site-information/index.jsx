@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -15,6 +15,7 @@ import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import { setSiteInformation } from 'state/signup/steps/site-information/actions';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import Card from 'components/card';
 import Button from 'components/button';
@@ -42,7 +43,10 @@ class SiteInformation extends Component {
 	};
 
 	renderContent() {
-		const { translate } = this.props;
+		const { translate, isBusinessSiteSelected, isBlogSelected } = this.props;
+		const siteNameLabelText = translate( 'Site name' );
+
+		//Business Name", "Blog Name", or "Site Name
 
 		return (
 			<div className="site-information__wrapper">
@@ -68,38 +72,40 @@ class SiteInformation extends Component {
 								/>
 							</FormFieldset>
 
-							<FormFieldset>
-								<FormLabel htmlFor="address">
-									{ translate( 'Address' ) }
-									<InfoPopover className="site-information__info-popover" position="top">
-										{ translate( 'Where can people find your business?' ) }
-									</InfoPopover>
-								</FormLabel>
-								<FormTextarea
-									id="address"
-									name="address"
-									placeholder={ 'eg. 21 Main street\nOttawa  ON\nK1V 2K5' }
-									onChange={ this.handleInputChange }
-									value={ this.state.address }
-								/>
-							</FormFieldset>
-
-							<FormFieldset>
-								<FormLabel htmlFor="phone">
-									{ translate( 'Phone number' ) }
-									<InfoPopover className="site-information__info-popover" position="top">
-										{ translate( 'How can people contact you?' ) }
-									</InfoPopover>
-								</FormLabel>
-								<FormTextInput
-									id="phone"
-									name="phone"
-									placeholder={ translate( 'eg. (613) 425-0183' ) }
-									onChange={ this.handleInputChange }
-									value={ this.state.phone }
-								/>
-							</FormFieldset>
-
+							{ isBusinessSiteSelected && (
+								<Fragment>
+									<FormFieldset>
+										<FormLabel htmlFor="address">
+											{ translate( 'Address' ) }
+											<InfoPopover className="site-information__info-popover" position="top">
+												{ translate( 'Where can people find your business?' ) }
+											</InfoPopover>
+										</FormLabel>
+										<FormTextarea
+											id="address"
+											name="address"
+											placeholder={ 'eg. 21 Main street\nOttawa  ON\nK1V 2K5' }
+											onChange={ this.handleInputChange }
+											value={ this.state.address }
+										/>
+									</FormFieldset>
+									<FormFieldset>
+										<FormLabel htmlFor="phone">
+											{ translate( 'Phone number' ) }
+											<InfoPopover className="site-information__info-popover" position="top">
+												{ translate( 'How can people contact you?' ) }
+											</InfoPopover>
+										</FormLabel>
+										<FormTextInput
+											id="phone"
+											name="phone"
+											placeholder={ translate( 'eg. (613) 425-0183' ) }
+											onChange={ this.handleInputChange }
+											value={ this.state.phone }
+										/>
+									</FormFieldset>
+								</Fragment>
+							) }
 							<div className="site-information__submit-wrapper">
 								<Button primary={ true } type="submit">
 									{ translate( 'Continue' ) }
@@ -131,11 +137,16 @@ class SiteInformation extends Component {
 }
 
 export default connect(
-	state => ( {
-		isLoggedIn: isUserLoggedIn( state ),
-		siteInformation: getSiteInformation( state ),
-		siteTitle: getSiteTitle( state ),
-	} ),
+	state => {
+		const siteType = getSiteType( state );
+		return {
+			isLoggedIn: isUserLoggedIn( state ),
+			siteInformation: getSiteInformation( state ),
+			siteTitle: getSiteTitle( state ),
+			isBusinessSiteSelected: 'business' === siteType,
+			isBlogSelected: 'blog' === siteType,
+		};
+	},
 	( dispatch, ownProps ) => ( {
 		submitStep: ( { name, address, phone } ) => {
 			dispatch( setSiteTitle( name ) );
