@@ -118,7 +118,6 @@ export class EditorGroundControl extends React.Component {
 					className="editor-ground-control__preview-button"
 					disabled={ ! this.isPreviewEnabled() }
 					onClick={ this.onPreviewButtonClick }
-					tabIndex={ 0 }
 				>
 					<span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
 				</Button>
@@ -126,7 +125,6 @@ export class EditorGroundControl extends React.Component {
 					<EditorPublishButton
 						onSave={ this.props.onSave }
 						onPublish={ this.props.onPublish }
-						tabIndex={ 0 }
 						isConfirmationSidebarEnabled={ this.props.isConfirmationSidebarEnabled }
 						isSaving={ this.props.isSaving }
 						isPublishing={ this.props.isPublishing }
@@ -186,7 +184,6 @@ export class EditorGroundControl extends React.Component {
 				{ userNeedsVerification && (
 					<button
 						className="editor-ground-control__email-verification-notice"
-						tabIndex={ 0 }
 						onClick={ this.props.onMoreInfoAboutEmailVerify }
 					>
 						<Gridicon

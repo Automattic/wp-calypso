@@ -323,7 +323,7 @@ export class PostEditor extends React.Component {
 							<div className="post-editor__inner-content">
 								<FeaturedImage maxWidth={ 1462 } hasDropZone />
 								<div className="post-editor__header">
-									<EditorTitle onChange={ this.onEditorTitleChange } tabIndex={ 0 } />
+									<EditorTitle onChange={ this.onEditorTitleChange } />
 									<EditorPageSlug />
 									<SegmentedControl className="post-editor__switch-mode" compact={ true }>
 										<SegmentedControlItem
@@ -346,7 +346,6 @@ export class PostEditor extends React.Component {
 								<TinyMCE
 									ref={ this.storeEditor }
 									mode={ mode }
-									tabIndex={ 0 }
 									isNew={ this.props.isNew }
 									onSetContent={ this.debouncedSaveRawContent }
 									onInit={ this.onEditorInitialized }
