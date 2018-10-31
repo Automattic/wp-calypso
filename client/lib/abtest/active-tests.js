@@ -89,14 +89,6 @@ export default {
 		},
 		defaultVariation: 'no',
 	},
-	gSuiteDiscountV2: {
-		datestamp: '20180822',
-		variations: {
-			control: 100,
-			discount: 0,
-		},
-		defaultVariation: 'control',
-	},
 	krackenRebootM327V2: {
 		datestamp: '20181018',
 		variations: {
