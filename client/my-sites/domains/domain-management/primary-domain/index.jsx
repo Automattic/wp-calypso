@@ -117,7 +117,7 @@ class PrimaryDomain extends React.Component {
 									'when visiting your site.'
 							) }{' '}
 							<a href={ primaryDomainSupportUrl } target="_blank" rel="noopener noreferrer">
-								{ translate( 'Learn More' ) }
+								{ translate( 'Learn More.' ) }
 							</a>
 						</div>
 					</section>
