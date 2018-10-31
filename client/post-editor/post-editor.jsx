@@ -16,7 +16,7 @@ import { v4 as uuid } from 'uuid';
 /**
  * Internal dependencies
  */
-import { autosave, saveEdited } from 'state/posts/actions';
+import { autosave, editPost, saveEdited } from 'state/posts/actions';
 import { addSiteFragment } from 'lib/route';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import FeaturedImage from 'post-editor/editor-featured-image';
@@ -50,7 +50,6 @@ import {
 	getEditorLoadingError,
 } from 'state/ui/editor/selectors';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import { editPost } from 'state/posts/actions';
 import {
 	getSitePost,
 	getEditedPost,
@@ -82,6 +81,7 @@ import { removep } from 'lib/formatting';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
 
 export class PostEditor extends React.Component {
 	static propTypes = {
@@ -123,7 +123,7 @@ export class PostEditor extends React.Component {
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.debouncedSaveRawContent = debounce( this.saveRawContent, 200 );
 		this.throttledAutosave = throttle( this.autosave, 20000 );
 		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
@@ -138,7 +138,7 @@ export class PostEditor extends React.Component {
 		} );
 	}
 
-	componentWillUpdate( nextProps, nextState ) {
+	UNSAFE_componentWillUpdate( nextProps, nextState ) {
 		// Cancel pending changes or autosave when user initiates a save. These
 		// will have been reflected in the save payload.
 		if ( nextState.isSaving && ! this.state.isSaving ) {
@@ -174,7 +174,7 @@ export class PostEditor extends React.Component {
 		clearTimeout( this._switchEditorTimeout );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId, postId } = this.props;
 
 		if ( nextProps.siteId !== siteId || nextProps.postId !== postId ) {
@@ -323,7 +323,7 @@ export class PostEditor extends React.Component {
 							<div className="post-editor__inner-content">
 								<FeaturedImage maxWidth={ 1462 } hasDropZone />
 								<div className="post-editor__header">
-									<EditorTitle onChange={ this.onEditorTitleChange } tabIndex={ 1 } />
+									<EditorTitle onChange={ this.onEditorTitleChange } />
 									<EditorPageSlug />
 									<SegmentedControl className="post-editor__switch-mode" compact={ true }>
 										<SegmentedControlItem
@@ -346,7 +346,6 @@ export class PostEditor extends React.Component {
 								<TinyMCE
 									ref={ this.storeEditor }
 									mode={ mode }
-									tabIndex={ 2 }
 									isNew={ this.props.isNew }
 									onSetContent={ this.debouncedSaveRawContent }
 									onInit={ this.onEditorInitialized }
@@ -847,6 +846,12 @@ export class PostEditor extends React.Component {
 			const editUrl = utils.getEditURL( saveResult.receivedPost, this.props.selectedSite );
 			page.replace( editUrl, null, false, false );
 		}
+
+		// The saveEdited() action will return a result of `null` if the post is unchanged
+		// so we hide any guided tours
+		if ( ! saveResult ) {
+			this.props.pauseGuidedTour();
+		}
 	};
 
 	getContainingTagInfo = ( content, cursorPosition ) => {
@@ -1160,6 +1165,7 @@ const enhance = flow(
 			openEditorSidebar,
 			editorEditRawContent,
 			editorResetRawContent,
+			pauseGuidedTour,
 		}
 	)
 );
