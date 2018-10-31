@@ -14151,9 +14151,9 @@
       }
     },
     "page": {
-      "version": "1.9.0",
-      "resolved": "https://registry.npmjs.org/page/-/page-1.9.0.tgz",
-      "integrity": "sha512-vdvkkw+ow7vg/XM54hHw+r0BT9UXeGzeGupG1ICdIn7GTWe8wrr2xmo7ErlUImw22datzgUEbbqwAME18FJnJw==",
+      "version": "1.11.1",
+      "resolved": "https://registry.npmjs.org/page/-/page-1.11.1.tgz",
+      "integrity": "sha512-JzTLZPZ1muQzx87ITX4R0EFiRdfNolFClYvAAK2f61mq2Kwut8VWvZdGC0lNMvdISG5AINkW02XVE+GjNtTiDQ==",
       "requires": {
         "path-to-regexp": "~1.2.1"
       },
