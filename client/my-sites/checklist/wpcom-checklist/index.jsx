@@ -6,7 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { compact, find, get, some } from 'lodash';
+import { compact, find, get, some, memoize } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
@@ -37,6 +37,10 @@ import userFactory from 'lib/user';
 const userLib = userFactory();
 
 const query = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
+
+const getTaskList = memoize(
+	( taskStatuses, designType ) => new WpcomTaskList( taskStatuses, { designType } )
+);
 
 class WpcomChecklist extends PureComponent {
 	static propTypes = {
@@ -158,7 +162,7 @@ class WpcomChecklist extends PureComponent {
 		} = this.props;
 
 		const canShowChecklist = this.canShow();
-		const taskList = new WpcomTaskList( taskStatuses, { designType } );
+		const taskList = getTaskList( taskStatuses, designType );
 
 		let ChecklistComponent = Checklist;
 
