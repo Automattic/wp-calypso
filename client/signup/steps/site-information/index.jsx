@@ -17,8 +17,8 @@ import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import { setSiteInformation } from 'state/signup/steps/site-information/actions';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import Card from 'components/card';
 import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
@@ -66,11 +66,13 @@ class SiteInformation extends Component {
 				showEmailError: true,
 			} );
 		}
+
 		this.props.submitStep( ...this.state );
 	};
 
 	renderContent() {
 		const { translate, isBusinessSiteSelected, siteNameLabelText } = this.props;
+
 		return (
 			<div className="site-information__wrapper">
 				<div className="site-information__form-wrapper ">
@@ -151,6 +153,7 @@ class SiteInformation extends Component {
 									</FormFieldset>
 								</Fragment>
 							) }
+
 							<div className="site-information__submit-wrapper">
 								<Button primary={ true } type="submit">
 									{ translate( 'Continue' ) }
@@ -212,6 +215,7 @@ export default connect(
 		submitStep: ( { name, address, email, phone } ) => {
 			dispatch( setSiteTitle( name ) );
 			dispatch( setSiteInformation( { address, email, phone } ) );
+
 			// Create site
 			SignupActions.submitSignupStep(
 				{
