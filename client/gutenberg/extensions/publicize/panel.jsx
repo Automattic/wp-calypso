@@ -18,7 +18,7 @@
  */
 import { Component } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
-import { PanelBody } from '@wordpress/components';
+import { PluginPrePublishPanel } from '@wordpress/edit-post';
 import { withDispatch, withSelect } from '@wordpress/data';
 
 /**
@@ -34,7 +34,7 @@ class PublicizePanel extends Component {
 		const { connections, refreshConnections } = this.props;
 		const refreshText = ! connections ? __( 'Refreshing…' ) : __( 'Refresh connections' );
 		return (
-			<PanelBody
+			<PluginPrePublishPanel
 				initialOpen={ true }
 				id="publicize-title"
 				title={
@@ -50,7 +50,7 @@ class PublicizePanel extends Component {
 					{ refreshText }
 				</a>
 				{ ( connections && connections.length > 0 ) && <PublicizeConnectionVerify /> }
-			</PanelBody>
+			</PluginPrePublishPanel>
 		);
 	}
 }

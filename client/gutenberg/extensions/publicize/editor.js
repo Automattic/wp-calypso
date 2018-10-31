@@ -8,7 +8,6 @@
 /**
  * External dependencies
  */
-import { PluginPrePublishPanel } from '@wordpress/edit-post';
 import { registerPlugin } from '@wordpress/plugins';
 
 /**
@@ -18,11 +17,7 @@ import './editor.scss';
 import './store/index';
 import PublicizePanel from './panel';
 
-const PluginRender = () => (
-	<PluginPrePublishPanel>
-		<PublicizePanel />
-	</PluginPrePublishPanel>
-);
+const PluginRender = () => <PublicizePanel />;
 
 registerPlugin( 'jetpack-publicize', {
 	render: PluginRender
