@@ -17,8 +17,6 @@ import './editor.scss';
 import './store/index';
 import PublicizePanel from './panel';
 
-const PluginRender = () => <PublicizePanel />;
-
 registerPlugin( 'jetpack-publicize', {
-	render: PluginRender
+	render: () => <PublicizePanel />,
 } );
