@@ -3,13 +3,7 @@
 /**
  * Internal dependencies
  */
-import {
-	PAYMENT_COUNTRY_CODE_SET,
-	PAYMENT_POSTAL_CODE_SET,
-	PAYMENT_TAX_RATE_SET,
-	PAYMENT_TAX_RATE_REQUEST,
-	PAYMENT_TAX_RATE_FAILURE,
-} from 'state/action-types';
+import { PAYMENT_COUNTRY_CODE_SET, PAYMENT_POSTAL_CODE_SET } from 'state/action-types';
 
 /**
  * Returns an action object used to set the payment country.
@@ -34,36 +28,5 @@ export function setPaymentPostalCode( postalCode ) {
 	return {
 		type: PAYMENT_POSTAL_CODE_SET,
 		postalCode,
-	};
-}
-
-/**
- * Returns an action object used to set the local sales tax rate (US only).
- *
- * @param {float} taxRate - the tax rate to set.
- * @return {Object} - The action object.
- */
-export function setPaymentTaxRate( taxRate ) {
-	return {
-		type: PAYMENT_TAX_RATE_SET,
-		taxRate,
-	};
-}
-
-/**
- * Returns an action object used to request the local sales tax rate from the server (US only).
- *
- * @return {Object} - The action object.
- */
-export function requestPaymentTaxRate() {
-	return {
-		type: PAYMENT_TAX_RATE_REQUEST,
-	};
-}
-
-export function requestPaymentTaxRateFailure( error = { message: 'Unknown error.' } ) {
-	return {
-		type: PAYMENT_TAX_RATE_FAILURE,
-		error,
 	};
 }
