@@ -32,11 +32,7 @@ class SiteTopicStep extends Component {
 		siteTopic: '',
 	};
 
-	onChangeTopic = event => {
-		this.setState( {
-			siteTopic: event.target.value,
-		} );
-	};
+	onChangeTopic = event => this.setState( { siteTopic: event.target.value } );
 
 	// TODO:
 	// Handle submission.
