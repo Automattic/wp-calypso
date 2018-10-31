@@ -658,19 +658,7 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: plan =>
-			includes(
-				[
-					PLAN_FREE,
-					PLAN_BLOGGER,
-					PLAN_BLOGGER_2_YEARS,
-					PLAN_PERSONAL,
-					PLAN_PERSONAL_2_YEARS,
-					PLAN_PREMIUM,
-					PLAN_PREMIUM_2_YEARS,
-				],
-				plan
-			),
+		availableFor: () => [],
 		getProductId: () => 1011,
 		getStoreSlug: () => PLAN_ECOMMERCE,
 		getPathSlug: () => 'ecommerce',
@@ -680,20 +668,7 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		term: TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
-		availableFor: plan =>
-			includes(
-				[
-					PLAN_FREE,
-					PLAN_BLOGGER,
-					PLAN_BLOGGER_2_YEARS,
-					PLAN_PERSONAL,
-					PLAN_PERSONAL_2_YEARS,
-					PLAN_PREMIUM,
-					PLAN_PREMIUM_2_YEARS,
-					PLAN_BUSINESS,
-				],
-				plan
-			),
+		availableFor: () => [],
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
 		getPathSlug: () => 'ecommerce-2-years',
