@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import {
 	ExternalLink,
@@ -32,19 +32,13 @@ import {
 } from 'lib/simple-payments/constants';
 import ProductPlaceholder from './product-placeholder';
 
-class Edit extends Component {
-	constructor() {
-		super( ...arguments );
-		this.state = {
-			savingProduct: false,
-			fieldTitleError: '',
-			fieldPriceError: '',
-			fieldEmailError: '',
-			fieldTitleVisited: false,
-			fieldPriceVisited: false,
-			fieldEmailVisited: false,
-		};
-	}
+class SimplePaymentsEdit extends Component {
+	state = {
+		isSavingProduct: false,
+		fieldTitleError: '',
+		fieldPriceError: '',
+		fieldEmailError: '',
+	};
 
 	componentDidUpdate( prevProps ) {
 		const { simplePayment, attributes, setAttributes, isSelected, isSaving } = this.props;
@@ -60,10 +54,18 @@ class Edit extends Component {
 					'meta.spay_formatted_price',
 					attributes.formattedPrice
 				),
-				multiple: get( simplePayment, 'meta.spay_multiple', attributes.multiple ),
+				multiple: Boolean( get( simplePayment, 'meta.spay_multiple', attributes.multiple ) ),
 				price: get( simplePayment, 'meta.spay_price', attributes.price ),
 				title: get( simplePayment, 'title.raw', attributes.title ),
 			} );
+		}
+
+		// Validate fields on block-deselect
+		if ( prevProps.isSelected && ! isSelected ) {
+			const { currency, price, title, email } = attributes;
+			this.validatePrice( price, currency );
+			this.validateTitle( title );
+			this.validateEmail( email );
 		}
 
 		// Saves on block-deselect and when editor is saving a post
@@ -83,38 +85,23 @@ class Edit extends Component {
 			meta: {
 				spay_currency: currency,
 				spay_email: email,
-				spay_formatted_price: this.formatPrice( price ),
-				spay_multiple: parseInt( multiple, 10 ),
+				spay_formatted_price: this.formatPrice( price, currency ),
+				spay_multiple: multiple ? 1 : 0,
 				spay_price: price,
 			},
 		};
 	};
 
-	validateEmail = email => {
-		if ( ! email ) {
-			return __(
-				'We want to make sure payments reach you, so please add an email address.',
-				'jetpack'
-			);
-		}
-
-		if ( ! emailValidator.validate( email ) ) {
-			return sprintf( __( '%s is not a valid email address.', 'jetpack' ), 'email' );
-		}
-
-		return false;
-	};
-
 	savePayment = async () => {
 		const { attributes, setAttributes } = this.props;
 		const { currency, email, paymentId, price, title } = attributes;
-		const { fieldTitleError, fieldPriceError, fieldEmailError, savingProduct } = this.state;
+		const { fieldTitleError, fieldPriceError, fieldEmailError, isSavingProduct } = this.state;
 
 		// Do not save while already saving
 		// Do not save if missing required fields
 		// Do not save if fields have invalid data
 		if (
-			savingProduct ||
+			isSavingProduct ||
 			! currency ||
 			! email ||
 			! price ||
@@ -126,7 +113,7 @@ class Edit extends Component {
 			return;
 		}
 
-		this.setState( { savingProduct: true } );
+		this.setState( { isSavingProduct: true } );
 
 		const path = `/wp/v2/${ SIMPLE_PAYMENTS_PRODUCT_POST_TYPE }/${ paymentId ? paymentId : '' }`;
 
@@ -138,30 +125,114 @@ class Edit extends Component {
 				data: this.attributesToPost( attributes ),
 			} );
 
-			this.setState( { savingProduct: false } );
+			this.setState( { isSavingProduct: false } );
 
 			if ( id ) {
 				setAttributes( { paymentId: id } );
 			}
 		} catch ( err ) {
 			// @TODO: error handling
-			this.setState( { savingProduct: false } );
+			// eslint-disable-next-line
+			console.error( err );
+			this.setState( { isSavingProduct: false } );
 		}
 	};
 
-	// @FIXME: toFixed should be replaced with proper decimal calculations. See simple-payments/form
-	// const { precision } = getCurrencyDefaults( values.currency );
-	formatPrice = price => {
-		price = parseInt( price, 10 );
-		return ! isNaN( price ) ? '$' + price.toFixed( 2 ) : '';
+	// based on https://stackoverflow.com/a/10454560/59752
+	decimalPlaces = number => {
+		const match = ( '' + number ).match( /(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/ );
+		if ( ! match ) {
+			return 0;
+		}
+		return Math.max( 0, ( match[ 1 ] ? match[ 1 ].length : 0 ) - ( match[ 2 ] ? +match[ 2 ] : 0 ) );
+	};
+
+	validatePrice = ( price, currency ) => {
+		const { precision } = getCurrencyDefaults( currency );
+
+		if ( ! price || parseFloat( price ) === 0 ) {
+			return this.setState( {
+				fieldPriceError: __( 'Everything comes with a price tag these days. Add yours here.' ),
+			} );
+		}
+
+		if ( Number.isNaN( parseFloat( price ) ) ) {
+			return this.setState( {
+				fieldPriceError: __( 'Invalid price' ),
+			} );
+		}
+
+		if ( parseFloat( price ) < 0 ) {
+			return this.setState( {
+				fieldPriceError: __( "Your price is negative — now that doesn't sound right, does it?" ),
+			} );
+		}
+
+		if ( this.decimalPlaces( price ) > precision ) {
+			if ( precision === 0 ) {
+				return this.setState( {
+					fieldPriceError: __(
+						"We know every penny counts, but prices can't contain decimal values."
+					),
+				} );
+			}
+
+			this.setState( {
+				fieldPriceError: sprintf(
+					_n(
+						'Price cannot have more than %d decimal place.',
+						'Price cannot have more than %d decimal places.',
+						precision
+					),
+					precision
+				),
+			} );
+		}
+
+		if ( this.state.fieldPriceError ) {
+			this.setState( { fieldPriceError: '' } );
+		}
+	};
+
+	validateEmail = email => {
+		if ( ! email ) {
+			return this.setState( {
+				fieldEmailError: __(
+					'We want to make sure payments reach you, so please add an email address.',
+					'jetpack'
+				),
+			} );
+		}
+
+		if ( ! emailValidator.validate( email ) ) {
+			return this.setState( {
+				fieldEmailError: sprintf( __( '%s is not a valid email address.' ), email ),
+			} );
+		}
+
+		if ( this.state.fieldEmailError ) {
+			this.setState( { fieldEmailError: '' } );
+		}
+	};
+
+	validateTitle = title => {
+		if ( ! title ) {
+			this.setState( {
+				fieldTitleError: __(
+					"People need to know what they're paying for! Please add a brief title.",
+					'jetpack'
+				),
+			} );
+		}
+
+		if ( this.state.fieldTitleError ) {
+			this.setState( { fieldTitleError: '' } );
+		}
 	};
 
 	handleEmailChange = email => {
-		this.props.setAttributes( {
-			email,
-			fieldEmailVisited: true,
-			fieldEmailError: this.validateEmail( email ),
-		} );
+		this.validateEmail( email );
+		this.props.setAttributes( { email } );
 	};
 
 	handleContentChange = content => {
@@ -169,16 +240,16 @@ class Edit extends Component {
 	};
 
 	handlePriceChange = price => {
+		const { currency } = this.props.attributes;
+		this.validatePrice( price, currency );
 		price = parseFloat( price );
 		if ( ! isNaN( price ) ) {
 			this.props.setAttributes( {
-				fieldEmailVisited: true,
-				formattedPrice: this.formatPrice( price ),
+				formattedPrice: this.formatPrice( price, currency ),
 				price,
 			} );
 		} else {
 			this.props.setAttributes( {
-				fieldEmailVisited: true,
 				formattedPrice: '',
 				price: undefined,
 			} );
@@ -186,9 +257,11 @@ class Edit extends Component {
 	};
 
 	handleCurrencyChange = currency => {
+		const { price } = this.props.attributes;
+		this.validatePrice( price, currency );
 		this.props.setAttributes( {
 			currency,
-			formattedPrice: this.formatPrice( this.props.attributes.price ),
+			formattedPrice: this.formatPrice( price, currency ),
 		} );
 	};
 
@@ -197,14 +270,11 @@ class Edit extends Component {
 	};
 
 	handleTitleChange = title => {
-		this.setState( {
-			title,
-			fieldTitleVisited: true,
-		} );
+		this.validateTitle( title );
 		this.props.setAttributes( { title } );
 	};
 
-	pricePlaceholder = ( price, currency ) => {
+	formatPrice = ( price, currency ) => {
 		const { precision } = getCurrencyDefaults( currency );
 		// Tune the placeholder to the precision value: 0 -> '1', 1 -> '1.0', 2 -> '1.00'
 		return precision > 0 ? padEnd( '1.', precision + 2, '0' ) : '1';
@@ -219,15 +289,17 @@ class Edit extends Component {
 	} );
 
 	render() {
-		const {
-			fieldEmailError,
-			fieldPriceError,
-			fieldPriceVisited,
-			fieldTitleError,
-			fieldTitleVisited,
-		} = this.state;
-		const { attributes, isSelected } = this.props;
+		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
+		const { attributes, isSelected, isLoadingInitial } = this.props;
 		const { content, currency, email, formattedPrice, multiple, price, title } = attributes;
+
+		if ( ! isSelected && isLoadingInitial ) {
+			return (
+				<div className="simple-payments__loading">
+					<ProductPlaceholder content={ '█████' } formattedPrice={ '█████' } title={ '█████' } />
+				</div>
+			);
+		}
 
 		if (
 			! isSelected &&
@@ -243,14 +315,6 @@ class Edit extends Component {
 			);
 		}
 
-		// @TODO: fix link
-		// sprintf( '<a href="%s" target="_blank" rel="noopener noreferrer">PayPal</a>', 'https://www.paypal.com/' );
-		const emailHelp = __(
-			"This is where PayPal will send your money. To claim a payment, you'll " +
-				'need a  need a PayPal account connected to a bank account.',
-			'jetpack'
-		);
-
 		// @TODO: Form should be disabled while fetching data
 		return (
 			<div className="wp-block-jetpack-simple-payments">
@@ -262,54 +326,50 @@ class Edit extends Component {
 							</ExternalLink>
 						</PanelBody>
 					</InspectorControls>
+
 					<TextControl
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
-							'simple-payments__field-has-error': fieldTitleVisited && fieldTitleError,
+							'simple-payments__field-has-error': fieldTitleError,
 						} ) }
-						help={
-							fieldTitleVisited && fieldTitleError
-								? __(
-										"People need to know what they're paying for! Please add a brief title.",
-										'jetpack'
-								  )
-								: null
-						}
-						label={ __( 'Item name', 'jetpack' ) }
+						disabled={ isLoadingInitial }
+						help={ fieldTitleError }
+						label={ __( 'Item name' ) }
 						onChange={ this.handleTitleChange }
-						placeholder={ __( 'Item name', 'jetpack' ) }
+						placeholder={ __( 'Item name' ) }
+						required
 						type="text"
 						value={ title }
 					/>
 
 					<TextareaControl
+						disabled={ isLoadingInitial }
 						className="simple-payments__field simple-payments__field-content"
-						label={ __( 'Enter a description for your item', 'jetpack' ) }
+						label={ __( 'Enter a description for your item' ) }
 						onChange={ this.handleContentChange }
-						placeholder={ __( 'Enter a description for your item', 'jetpack' ) }
+						placeholder={ __( 'Enter a description for your item' ) }
 						value={ content }
 					/>
 
 					<div className="simple-payments__price-container">
 						<SelectControl
+							disabled={ isLoadingInitial }
 							className="simple-payments__field simple-payments__field-currency"
-							label={ __( 'Currency', 'jetpack' ) }
+							label={ __( 'Currency' ) }
 							onChange={ this.handleCurrencyChange }
 							options={ this.getCurrencyList }
 							value={ currency }
 						/>
 						<TextControl
+							disabled={ isLoadingInitial }
 							className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
 								'simple-payments__field-has-error': fieldPriceError,
 							} ) }
-							help={
-								fieldPriceVisited && fieldPriceError
-									? __( 'Everything comes with a price tag these days. Add yours here.', 'jetpack' )
-									: null
-							}
-							label={ __( 'Price', 'jetpack' ) }
+							help={ fieldPriceError }
+							label={ __( 'Price' ) }
 							min={ 0 }
 							onChange={ this.handlePriceChange }
-							placeholder={ this.pricePlaceholder( price || 0, currency ) }
+							placeholder={ this.formatPrice( 0, currency ) }
+							required
 							step="1"
 							type="number"
 							value={ price || '' }
@@ -318,26 +378,34 @@ class Edit extends Component {
 
 					<div className="simple-payments__field-multiple">
 						<ToggleControl
+							disabled={ isLoadingInitial }
 							checked={ Boolean( multiple ) }
-							label={ __( 'Allow people buy more than one item at a time', 'jetpack' ) }
+							label={ __( 'Allow people buy more than one item at a time' ) }
 							onChange={ this.handleMultipleChange }
 						/>
 					</div>
 
 					<TextControl
+						disabled={ isLoadingInitial }
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
 							'simple-payments__field-has-error': fieldEmailError,
 						} ) }
-						help={ fieldEmailError ? fieldEmailError : emailHelp }
-						label={ __( 'Email', 'jetpack' ) }
+						help={ fieldEmailError ? fieldEmailError : '' }
+						label={ __( 'Email' ) }
 						onChange={ this.handleEmailChange }
-						placeholder={ __( 'Email', 'jetpack' ) }
+						placeholder={ __( 'Email' ) }
+						required
 						type="email"
 						value={ email }
 					/>
-					{ fieldEmailError ? (
-						<p className="components-base-control__help">{ emailHelp }</p>
-					) : null }
+
+					<p className="components-base-control__help">
+						{ __(
+							"This is where PayPal will send your money. To claim a payment, you'll " +
+								'need a PayPal account connected to a bank account.',
+							'jetpack'
+						) }
+					</p>
 				</Fragment>
 			</div>
 		);
@@ -354,7 +422,8 @@ export default withSelect( ( select, props ) => {
 		: undefined;
 
 	return {
+		isLoadingInitial: paymentId && ! simplePayment,
 		isSaving: !! isSavingPost(),
 		simplePayment,
 	};
-} )( Edit );
+} )( SimplePaymentsEdit );
