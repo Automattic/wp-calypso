@@ -25,8 +25,8 @@ export class ConciergeSessionNudge extends React.Component {
 	};
 
 	render() {
-		const { receiptId, selectedSiteId, translate } = this.props;
-		const title = translate( 'My Sites > Checkout > Expert Session' );
+		const { receiptId, selectedSiteId } = this.props;
+		const title = 'Checkout < Expert Session';
 
 		return (
 			<Main className="concierge-session-nudge">
