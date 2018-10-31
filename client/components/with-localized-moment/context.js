@@ -16,7 +16,7 @@ import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 const { Provider, Consumer } = React.createContext( moment );
 
 class MomentProvider extends React.Component {
-	state = {};
+	state = { moment };
 
 	async checkAndLoad() {
 		const { currentLocale } = this.props;
@@ -43,7 +43,7 @@ class MomentProvider extends React.Component {
 	}
 
 	render() {
-		return <Provider value={ moment }>{ this.props.children }</Provider>;
+		return <Provider value={ this.state }>{ this.props.children }</Provider>;
 	}
 }
 

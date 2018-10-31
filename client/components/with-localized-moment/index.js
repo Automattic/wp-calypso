@@ -16,7 +16,7 @@ export default createHigherOrderComponent( Wrapped => {
 	return function WithLocalizedMoment( props ) {
 		return (
 			<MomentConsumer>
-				{ momentLocale => <Wrapped { ...props } moment={ momentLocale } /> }
+				{ momentState => <Wrapped { ...props } moment={ momentState.moment } /> }
 			</MomentConsumer>
 		);
 	};
