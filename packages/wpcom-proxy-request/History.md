@@ -1,3 +1,12 @@
+5.0.2 / 2018-10-30
+==================
+
+ * Fix the Chrome site isolation workaround to not break file uploads on Safari 10
+
+5.0.1 / 2018-10-29
+==================
+
+ * Work around a Chrome site isolation bug when uploading files
 
 3.0.0 / 2016-07-27
 ==================

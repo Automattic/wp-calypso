@@ -184,7 +184,7 @@ function submitRequest( params ) {
 
 	// `formData` needs to be patched if it contains `File` objects to work around
 	// a Chrome bug. See `patchFileObjects` description for more details.
-	if ( params.formData && supportsFileConstructor ) {
+	if ( params.formData ) {
 		patchFileObjects( params.formData );
 	}
 
@@ -230,6 +230,18 @@ function getFileValue( v ) {
  * @param {Array} formData Form data to patch
  */
 function patchFileObjects( formData ) {
+	// There are several landmines to avoid when making file uploads work on all browsers:
+	// - the `new File()` constructor trick breaks file uploads on Safari 10 in a way that's
+	//   impossible to detect: it will send empty files in the multipart/form-data body.
+	//   Therefore we need to detect Chrome.
+	// - IE11 and Edge don't support the `new File()` constructor at all. It will throw exception,
+	//   so it's detectable by the `supportsFileConstructor` code.
+	// - `window.chrome` exists also on Edge (!), `window.chrome.webstore` is only in Chrome and
+	//   not in other Chromium based browsers (which have the site isolation bug, too).
+	if ( ! window.chrome || ! supportsFileConstructor ) {
+		return;
+	}
+
 	for ( let i = 0; i < formData.length; i++ ) {
 		const val = getFileValue( formData[ i ][ 1 ] );
 		if ( val ) {
