@@ -9,7 +9,10 @@ import { has, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import { getSiteAdminUrl } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 function determinePostType( context ) {
@@ -56,6 +59,27 @@ export const post = ( context, next ) => {
 
 		if ( ! siteId ) {
 			return;
+		}
+
+		const calypsoifyGutenberg =
+			isEnabled( 'gutenberg' ) &&
+			isEnabled( 'gutenberg/opt-in' ) &&
+			isEnabled( 'calypsoify/gutenberg' ) &&
+			'gutenberg' === getSelectedEditor( state, siteId );
+
+		if ( has( window, 'location.replace' ) && calypsoifyGutenberg ) {
+			let gutenbergURL = 'post-new.php?calypsoify=1'; // Defaults to post type: `post`
+
+			if ( isFinite( parseInt( context.params.post, 10 ) ) ) {
+				// If there is a post ID, the URL ignores the post type
+				gutenbergURL = `post.php?calypsoify=1&post=${ context.params.post }&action=edit`;
+			} else if ( /^\/gutenberg\/page/.test( context.path ) ) {
+				gutenbergURL += '&post_type=page';
+			} else if ( /^\/gutenberg\/edit/.test( context.path ) ) {
+				gutenbergURL += `&post_type=${ context.params.customPostType }`;
+			}
+
+			return window.location.replace( getSiteAdminUrl( state, siteId ) + gutenbergURL );
 		}
 
 		unsubscribe();

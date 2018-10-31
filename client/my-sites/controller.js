@@ -5,7 +5,7 @@
 import page from 'page';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { get, has, isFinite, noop, some, startsWith, uniq } from 'lodash';
+import { get, noop, some, startsWith, uniq } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -39,7 +39,6 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import canCurrentUser from 'state/selectors/can-current-user';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import {
 	domainManagementAddGoogleApps,
 	domainManagementContactsPrivacy,
@@ -374,20 +373,14 @@ export function siteSelection( context, next ) {
 		const state = getState();
 		const isAtomicSite = isSiteAutomatedTransfer( state, siteId );
 		const userCanManagePlugins = canCurrentUser( state, siteId, 'manage_options' );
-		const calypsoifyPlugins = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
-		// TODO: add actual opt in setting
-		const calypsoifyGutenberg =
-			config.isEnabled( 'gutenberg' ) &&
-			config.isEnabled( 'gutenberg/opt-in' ) &&
-			config.isEnabled( 'calypsoify/gutenberg' ) &&
-			'gutenberg' === getSelectedEditor( state, siteId );
+		const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
 
 		if (
 			window &&
 			window.location &&
 			window.location.replace &&
 			userCanManagePlugins &&
-			calypsoifyPlugins &&
+			calypsoify &&
 			/^\/plugins/.test( basePath )
 		) {
 			const plugin = get( context, 'params.plugin' );
@@ -406,25 +399,6 @@ export function siteSelection( context, next ) {
 			const pluginLink = getSiteAdminUrl( state, siteId ) + pluginIstallURL;
 
 			return window.location.replace( pluginLink );
-		}
-
-		if (
-			has( window, 'location.replace' ) &&
-			calypsoifyGutenberg &&
-			/^\/gutenberg\//.test( basePath )
-		) {
-			let gutenbergURL = 'post-new.php?calypsoify=1'; // Defaults to post type: `post`
-			if ( isFinite( parseInt( context.params.post, 10 ) ) ) {
-				// If there is a post ID, the URL ignores the post type
-				gutenbergURL = `post.php?calypsoify=1&post=${ context.params.post }&action=edit`;
-			} else if ( /^\/gutenberg\/page/.test( basePath ) ) {
-				gutenbergURL += '&post_type=page';
-			} else if ( /^\/gutenberg\/edit/.test( basePath ) ) {
-				gutenbergURL += `&post_type=${ context.params.customPostType }`;
-			}
-			const gutenbergLink = getSiteAdminUrl( state, siteId ) + gutenbergURL;
-
-			return window.location.replace( gutenbergLink );
 		}
 
 		dispatch( setSelectedSiteId( siteId ) );
