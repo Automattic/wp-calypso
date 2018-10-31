@@ -16,13 +16,13 @@ describe( 'selectors', () => {
 				signup: {
 					steps: {
 						siteInformation: {
-							name: 'Slappy Junior',
+							address: '23 Slappy Junior St',
 						},
 					},
 				},
 			} )
 		).toEqual( {
-			name: 'Slappy Junior',
+			address: '23 Slappy Junior St',
 		} );
 	} );
 } );
