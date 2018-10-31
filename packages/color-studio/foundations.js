@@ -24,7 +24,7 @@ module.exports = {
     }),
     {
       name: 'Celadon',
-      value: mix(values.blue, values.green, 0.6)
+      value: mix(values.blue, values.green, 0.7)
     },
     createColorPair({
       name: 'Blue',
