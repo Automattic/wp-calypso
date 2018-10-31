@@ -115,7 +115,7 @@ class PrimaryDomain extends React.Component {
 								'Your primary domain is the address ' +
 									'visitors will see in their browser ' +
 									'when visiting your site.'
-							) }
+							) }{' '}
 							<a href={ primaryDomainSupportUrl } target="_blank" rel="noopener noreferrer">
 								{ translate( 'Learn More' ) }
 							</a>
