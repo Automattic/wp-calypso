@@ -16,7 +16,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Notice from 'components/notice';
 import analytics from 'lib/analytics';
 import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import config from 'config';
@@ -38,7 +37,7 @@ export class SignupProcessingScreen extends Component {
 		hasPaidSubscription: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const dependencies = nextProps.signupDependencies;
 
 		if ( isEmpty( dependencies ) ) {
@@ -52,47 +51,6 @@ export class SignupProcessingScreen extends Component {
 
 		const hasPaidSubscription = !! ( dependencies.cartItem || dependencies.domainItem );
 		this.setState( { hasPaidSubscription } );
-	}
-
-	renderConfirmationNotice() {
-		// we want these flows to stay focused, don't try to send them to their inbox
-		if ( [ 'user-first', 'import' ].includes( this.props.flowName ) ) {
-			return null;
-		}
-
-		if ( this.props.user && this.props.user.email_verified ) {
-			return;
-		}
-
-		if ( this.props.hasCartItems ) {
-			return;
-		}
-
-		let email = this.props.user && this.props.user.email;
-
-		if ( ! email ) {
-			for ( const step of this.props.steps ) {
-				if ( step.form && step.form.email && step.form.email.value ) {
-					email = step.form.email.value;
-				}
-			}
-		}
-
-		if ( ! email ) {
-			return;
-		}
-
-		return (
-			<Notice showDismiss={ false }>
-				{ this.props.translate(
-					'We’ve sent a message to {{strong}}%(email)s{{/strong}}. Please use this time to confirm your email address.',
-					{
-						args: { email },
-						components: { strong: <strong /> },
-					}
-				) }
-			</Notice>
-		);
 	}
 
 	renderFloaties() {
@@ -362,7 +320,6 @@ export class SignupProcessingScreen extends Component {
 					<p className="signup-process-screen__title">{ this.getTitle() }</p>
 
 					{ this.renderActionButton() }
-					{ this.renderConfirmationNotice() }
 				</div>
 				<div className="signup-processing-screen__loader">
 					{ this.props.translate( 'Loading…' ) }
