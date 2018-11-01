@@ -43,10 +43,7 @@ class SiteInformation extends Component {
 	};
 
 	renderContent() {
-		const { translate, isBusinessSiteSelected, isBlogSelected } = this.props;
-		const siteNameLabelText = translate( 'Site name' );
-
-		//Business Name", "Blog Name", or "Site Name
+		const { translate, isBusinessSiteSelected, siteNameLabelText } = this.props;
 
 		return (
 			<div className="site-information__wrapper">
@@ -57,8 +54,7 @@ class SiteInformation extends Component {
 
 							<FormFieldset>
 								<FormLabel htmlFor="name">
-									{ translate( 'Business Name' ) }
-
+									{ siteNameLabelText }
 									<InfoPopover className="site-information__info-popover" position="top">
 										{ translate( 'This will be used for the title of your site.' ) }
 									</InfoPopover>
@@ -136,6 +132,22 @@ class SiteInformation extends Component {
 	}
 }
 
+/**
+ * Returns translated text for the name field depending on the site type
+ *
+ * @param   {String} siteType E.g,'business', 'blog'
+ * @returns {String|Object} TranslatableString
+ */
+function getSiteNameLabelText( siteType ) {
+	switch ( siteType ) {
+		case 'business':
+			return i18n.translate( 'Business name' );
+		case 'blog':
+			return i18n.translate( 'Blog name' );
+	}
+	return i18n.translate( 'Site name' );
+}
+
 export default connect(
 	state => {
 		const siteType = getSiteType( state );
@@ -144,7 +156,7 @@ export default connect(
 			siteInformation: getSiteInformation( state ),
 			siteTitle: getSiteTitle( state ),
 			isBusinessSiteSelected: 'business' === siteType,
-			isBlogSelected: 'blog' === siteType,
+			siteNameLabelText: getSiteNameLabelText( siteType ),
 		};
 	},
 	( dispatch, ownProps ) => ( {
@@ -159,7 +171,8 @@ export default connect(
 				},
 				[],
 				{
-					siteInformation,
+					address,
+					phone,
 				}
 			);
 			ownProps.goToNextStep( ownProps.flowName );
