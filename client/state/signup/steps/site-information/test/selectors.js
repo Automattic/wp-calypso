@@ -17,12 +17,16 @@ describe( 'selectors', () => {
 					steps: {
 						siteInformation: {
 							address: '23 Slappy Junior St',
+							email: 'allo@o.la',
+							phone: '+49 76543210',
 						},
 					},
 				},
 			} )
 		).toEqual( {
 			address: '23 Slappy Junior St',
+			email: 'allo@o.la',
+			phone: '+49 76543210',
 		} );
 	} );
 } );

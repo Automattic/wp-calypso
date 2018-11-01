@@ -6,6 +6,9 @@ export const siteInformationSchema = {
 		address: {
 			type: 'string',
 		},
+		email: {
+			type: 'string',
+		},
 		phone: {
 			type: 'string',
 		},
