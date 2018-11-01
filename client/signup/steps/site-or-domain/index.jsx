@@ -66,7 +66,7 @@ class SiteOrDomain extends Component {
 				label: translate( 'New site' ),
 				image: <NewSiteImage />,
 				description: translate(
-					'Choose a theme, customize, and launch your site. Free domain included with all plans.'
+					'Choose a theme, customize, and launch your site. A free domain is included with all plans.'
 				),
 			},
 		];
@@ -77,7 +77,7 @@ class SiteOrDomain extends Component {
 				label: translate( 'Existing WordPress.com site' ),
 				image: <ExistingSite />,
 				description: translate(
-					'Use with a site you already started. Free domain included with all plans.'
+					'Use with a site you already started. A free domain is included with all plans.'
 				),
 			} );
 		}
