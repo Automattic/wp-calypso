@@ -99,7 +99,7 @@
 	input {
 		visibility: hidden;
 	}
-	
+
 	.accessible-focus &:focus {
 		border-color: $gray-lighten-10;
 	}
@@ -274,7 +274,7 @@
 }
 
 .site-importer__source-url {
-	margin-top: 6px;
+	margin-top: 4px;
 	margin-bottom: 8px;
 }
 
