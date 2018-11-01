@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -14,6 +14,19 @@ import { localize } from 'i18n-calypso';
 import { cartItems } from 'lib/cart-values';
 
 class CartTotal extends React.Component {
+	static propTypes = {
+		cart: PropTypes.shape( {
+			tax: PropTypes.shape( {
+				location: PropTypes.object.isRequired,
+				display_tax: PropTypes.bool.isRequired,
+			} ).isRequired,
+			sub_total: PropTypes.number.isRequired,
+			sub_total_display: PropTypes.string.isRequired,
+			total_tax: PropTypes.number.isRequired,
+			total_tax_display: PropTypes.string.isRequired,
+		} ).isRequired,
+	};
+
 	render() {
 		const cart = this.props.cart;
 
