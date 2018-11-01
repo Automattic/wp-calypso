@@ -164,22 +164,22 @@ export class SignupProcessingScreen extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className="signup-pricessing__upgrade-nudge">
-				<p className="signup-pricessing__title-subdomain">{ translate( 'Your subdomain' ) }</p>
-				<div className="signup-pricessing__address-bar">
+			<div className="signup-processing__upgrade-nudge">
+				<p className="signup-processing__title-subdomain">{ translate( 'Your subdomain' ) }</p>
+				<div className="signup-processing__address-bar">
 					<Gridicon icon="refresh" size={ 24 } />
 					<Gridicon icon="house" size={ 24 } />
 					<p
-						className={ classnames( 'signup-pricessing__address-field', {
+						className={ classnames( 'signup-processing__address-field', {
 							'is-placeholder': ! this.state.siteSlug,
 						} ) }
 					>
 						{ this.state.siteSlug }
 					</p>
 				</div>
-				<div className="signup-pricessing__bubble">
+				<div className="signup-processing__bubble">
 					<svg
-						className="signup-pricessing__bubble-tail"
+						className="signup-processing__bubble-tail"
 						viewBox="0 0 47 31"
 						xmlns="http://www.w3.org/2000/svg"
 					>
@@ -191,13 +191,13 @@ export class SignupProcessingScreen extends Component {
 						) }
 					</p>
 				</div>
-				<p className="signup-pricessing__nudge-message">
+				<p className="signup-processing__nudge-message">
 					{ translate( "Looks like your new online home doesn't have its own domain name." ) }
 				</p>
 				<Button
 					primary
 					disabled={ ! this.props.loginHandler }
-					className="signup-pricessing__upgrade-button"
+					className="signup-processing__upgrade-button"
 					onClick={ this.handleClickUpgradeButton }
 				>
 					{ translate( 'Upgrade Plan & Get A Domain' ) }
@@ -229,11 +229,14 @@ export class SignupProcessingScreen extends Component {
 					</p>
 
 					{ this.props.loginHandler ? (
-						<Button className="email-confirmation__button" onClick={ this.props.loginHandler }>
+						<Button
+							className="processing-screen__continue-button"
+							onClick={ this.props.loginHandler }
+						>
 							{ translate( 'View My Site' ) }
 						</Button>
 					) : (
-						<Button disabled className="email-confirmation__button">
+						<Button disabled className="processing-screen__continue-button">
 							{ translate( 'Please wait…' ) }
 						</Button>
 					) }
@@ -275,7 +278,7 @@ export class SignupProcessingScreen extends Component {
 
 		if ( ! loginHandler ) {
 			return (
-				<Button primary disabled className="email-confirmation__button">
+				<Button primary disabled className="processing-screen__continue-button">
 					{ translate( 'Please wait…' ) }
 				</Button>
 			);
@@ -284,7 +287,7 @@ export class SignupProcessingScreen extends Component {
 		const clickHandler = this.shouldShowChecklist() ? this.showChecklistAfterLogin : loginHandler;
 
 		return (
-			<Button primary className="email-confirmation__button" onClick={ clickHandler }>
+			<Button primary className="processing-screen__continue-button" onClick={ clickHandler }>
 				{ translate( 'Continue' ) }
 			</Button>
 		);
