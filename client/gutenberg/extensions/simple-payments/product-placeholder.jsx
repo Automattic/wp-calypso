@@ -41,11 +41,13 @@ export default ( { title = '', content = '', formattedPrice = '', multiple = fal
 								<input className="jetpack-simple-payments-items-number" type="number" value="1" />
 							</div>
 						) : null }
-						<img
-							alt={ __( 'Pay with PayPal', 'jetpack' ) }
-							src={ `${ assetUrl }paypal-button.png` }
-							srcSet={ `${ assetUrl }paypal-button@2x.png 2x` }
-						/>
+						<div className="jetpack-simple-payments-button">
+							<img
+								alt={ __( 'Pay with PayPal', 'jetpack' ) }
+								src={ `${ assetUrl }paypal-button.png` }
+								srcSet={ `${ assetUrl }paypal-button@2x.png 2x` }
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
