@@ -25,6 +25,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
 import InfoPopover from 'components/info-popover';
 
 /**
@@ -39,6 +40,8 @@ class SiteInformation extends Component {
 			name: props.siteTitle,
 			address: props.siteInformation.address,
 			email: props.siteInformation.email,
+			showEmailError: props.siteInformation.email,
+			isEmailValid: true,
 			phone: props.siteInformation.phone,
 		};
 	}
@@ -69,7 +72,6 @@ class SiteInformation extends Component {
 
 	renderContent() {
 		const { translate, isBusinessSiteSelected, siteNameLabelText } = this.props;
-
 		return (
 			<div className="site-information__wrapper">
 				<div className="site-information__form-wrapper ">
@@ -120,10 +122,18 @@ class SiteInformation extends Component {
 										<FormTextInput
 											id="email"
 											name="email"
+											isValid={ this.state.isEmailValid }
+											isError={ this.state.isEmailValid }
 											placeholder={ 'E.g. email@domain.com' }
 											onChange={ this.handleInputChange }
 											value={ this.state.email }
 										/>
+										{ this.state.shouldShowEmailError && (
+											<FormInputValidation
+												isError={ this.state.shouldShowEmailError }
+												text={ translate( 'Please provide a valid email address.' ) }
+											/>
+										) }
 									</FormFieldset>
 									<FormFieldset>
 										<FormLabel htmlFor="phone">
