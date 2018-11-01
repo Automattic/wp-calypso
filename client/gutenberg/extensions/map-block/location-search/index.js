@@ -58,16 +58,19 @@ export class LocationSearch extends Component {
 			'.json?access_token=' +
 			api_key;
 		return new Promise( function( resolve, reject ) {
-			/* TODO: Replace with pure JS */
-			window.jQuery
-				.ajax( url )
-				.done( function( data ) {
-					resolve( data.features );
-				} )
-				.fail( function( data ) {
-					onError( data.statusText, data.responseJSON.message );
+			const xhr = new XMLHttpRequest();
+			xhr.open( 'GET', url );
+			xhr.onload = function() {
+				if ( xhr.status === 200 ) {
+					const res = JSON.parse( xhr.responseText );
+					resolve( res.features );
+				} else {
+					const res = JSON.parse( xhr.responseText );
+					onError( res.statusText, res.responseJSON.message );
 					reject( new Error( 'Mapbox Places Error' ) );
-				} );
+				}
+			};
+			xhr.send();
 		} );
 	};
 	onReset = () => {
