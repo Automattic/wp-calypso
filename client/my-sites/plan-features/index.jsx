@@ -618,7 +618,6 @@ PlanFeatures.defaultProps = {
 	isJetpack: false,
 	selectedSiteSlug: '',
 	siteId: null,
-	visiblePlans: null,
 	onUpgradeClick: noop,
 };
 
@@ -777,7 +776,7 @@ export default connect(
 
 		const planCredits = calculatePlanCredits( state, siteId, planProperties );
 
-		if ( visiblePlans !== null ) {
+		if ( Array.isArray( visiblePlans ) ) {
 			planProperties = planProperties.filter( p => visiblePlans.indexOf( p.planName ) !== -1 );
 		}
 
