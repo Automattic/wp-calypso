@@ -46,6 +46,13 @@ function preprocessCartForServer( {
 	temporary,
 	extra,
 	products,
+	// #tax-on-checout-placeholder
+	tax = {
+		location: {
+			country_code: 'US',
+			postal_code: '90210',
+		},
+	},
 } ) {
 	const needsUrlCoupon = ! (
 		coupon ||
@@ -61,6 +68,7 @@ function preprocessCartForServer( {
 			is_coupon_applied,
 			is_coupon_removed,
 			currency,
+			tax,
 			temporary,
 			extra,
 			products: products.map(
