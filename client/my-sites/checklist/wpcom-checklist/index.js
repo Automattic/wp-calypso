@@ -103,6 +103,11 @@ class WpcomChecklist extends PureComponent {
 		}
 	};
 
+	handleTaskStartThenDismiss = arg => () => {
+		this.handleTaskStart( arg )();
+		this.handleTaskDismiss( arg.taskId )();
+	};
+
 	handleSendVerificationEmail = e => {
 		e.preventDefault();
 
@@ -354,6 +359,23 @@ class WpcomChecklist extends PureComponent {
 						siteSlug={ siteSlug }
 						title={ translate( 'Register a custom domain' ) }
 					/>
+					<TaskComponent
+						bannerImageSrc="/calypso/images/stats/tasks/mobile-app.svg"
+						completed={ this.isComplete( 'mobile_app_installed' ) }
+						completedButtonText={ translate( 'Download' ) }
+						completedTitle={ translate( 'You downloaded the WordPress app' ) }
+						description={ translate(
+							'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
+						) }
+						duration={ translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ) }
+						onClick={ this.handleTaskStartThenDismiss( {
+							taskId: 'mobile_app_installed',
+							url: '/me/get-apps',
+							dismiss: true,
+						} ) }
+						onDismiss={ this.handleTaskDismiss( 'mobile_app_installed' ) }
+						title={ translate( 'Get the WordPress app' ) }
+					/>
 				</ChecklistComponent>
 			</>
 		);
@@ -365,7 +387,8 @@ function getContactPage( posts ) {
 		posts,
 		post =>
 			post.type === 'page' &&
-			some( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } )
+			( some( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } ) ||
+				post.slug === 'contact' )
 	);
 }
 
@@ -378,12 +401,15 @@ export default connect(
 
 		const firstPost = find( posts, { type: 'post' } );
 		const contactPage = getContactPage( posts );
+		const contactPageUrl = contactPage
+			? [ '/page', siteSlug, get( contactPage, [ 'ID' ] ) ].join( '/' )
+			: `/pages/${ siteSlug }`;
 
 		const user = getCurrentUser( state );
 
 		const taskUrls = {
 			post_published: compact( [ '/post', siteSlug, get( firstPost, [ 'ID' ] ) ] ).join( '/' ),
-			contact_page_updated: [ '/page', siteSlug, get( contactPage, [ 'ID' ], 2 ) ].join( '/' ),
+			contact_page_updated: contactPageUrl,
 		};
 
 		return {

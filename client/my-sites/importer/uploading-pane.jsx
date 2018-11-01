@@ -7,8 +7,9 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { includes, noop } from 'lodash';
+import { flow, get, includes, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -26,32 +27,35 @@ class UploadingPane extends React.PureComponent {
 	static propTypes = {
 		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
 		importerStatus: PropTypes.shape( {
-			filename: PropTypes.string,
 			importerState: PropTypes.string.isRequired,
-			percentComplete: PropTypes.number,
 		} ),
+		filename: PropTypes.string,
+		percentComplete: PropTypes.number,
 	};
 
 	static defaultProps = { description: null };
+
+	fileSelectorRef = React.createRef();
 
 	componentWillUnmount() {
 		window.clearInterval( this.randomizeTimer );
 	}
 
 	getMessage = () => {
-		const { importerState, percentComplete = 0, filename } = this.props.importerStatus;
+		const { importerState } = this.props.importerStatus;
+		const { filename, percentComplete = 0 } = this.props;
 
 		switch ( importerState ) {
 			case appStates.READY_FOR_UPLOAD:
 			case appStates.UPLOAD_FAILURE:
 				return <p>{ this.props.translate( 'Drag a file here, or click to upload a file' ) }</p>;
 
-			case appStates.UPLOADING:
-				let uploadPercent = percentComplete,
-					progressClasses = classNames( 'importer__upload-progress', {
-						'is-complete': uploadPercent > 95,
-					} ),
-					uploaderPrompt;
+			case appStates.UPLOADING: {
+				const uploadPercent = percentComplete;
+				const progressClasses = classNames( 'importer__upload-progress', {
+					'is-complete': uploadPercent > 95,
+				} );
+				let uploaderPrompt;
 
 				if ( uploadPercent < 99 ) {
 					uploaderPrompt = this.props.translate( 'Uploading %(filename)s\u2026', {
@@ -67,7 +71,7 @@ class UploadingPane extends React.PureComponent {
 						<ProgressBar className={ progressClasses } value={ uploadPercent } total={ 100 } />
 					</div>
 				);
-
+			}
 			case appStates.UPLOAD_SUCCESS:
 				return (
 					<div>
@@ -88,71 +92,70 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	initiateFromForm = event => {
-		const fileSelector = this.refs.fileSelector;
-
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.startUpload( fileSelector.files[ 0 ] );
+		this.startUpload( this.fileSelectorRef.current.files[ 0 ] );
 	};
 
-	isReadyForImport = () => {
+	isReadyForImport() {
 		const { importerState } = this.props.importerStatus;
 		const { READY_FOR_UPLOAD, UPLOAD_FAILURE } = appStates;
 
 		return includes( [ READY_FOR_UPLOAD, UPLOAD_FAILURE ], importerState );
-	};
+	}
 
 	openFileSelector = () => {
-		const fileSelector = this.refs.fileSelector;
-
-		fileSelector.click();
+		this.fileSelectorRef.current.click();
 	};
 
-	startUpload = file => {
-		if ( window.chrome && window.chrome.webstore ) {
-			/**
-			 * This is a workaround for a Chrome issue that prevents file uploads from `calypso.localhost` through
-			 * the proxy iframe we use.
-			 *
-			 * It shouldn't add any side effects to the way the uploads work in Chrome and the workaround should be
-			 * removed once the issues listed below get fixed.
-			 *
-			 * @see https://bugs.chromium.org/p/chromium/issues/detail?id=866805
-			 * @see https://bugs.chromium.org/p/chromium/issues/detail?id=631877
-			 */
-			const newFile = new File( [ file.slice( 0, file.size ) ], file.name, { type: file.type } );
-			startUpload( this.props.importerStatus, newFile );
-		} else {
-			startUpload( this.props.importerStatus, file );
+	handleKeyPress = event => {
+		// Open file selector on Enter or Space
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			this.openFileSelector();
 		}
 	};
 
+	startUpload = file => {
+		startUpload( this.props.importerStatus, file );
+	};
+
 	render() {
+		const isReadyForImport = this.isReadyForImport();
+
 		return (
 			<div>
 				<p>{ this.props.description }</p>
 				<div
 					className="importer__uploading-pane"
-					onClick={ this.isReadyForImport() ? this.openFileSelector : null }
+					role="button"
+					tabIndex={ 0 }
+					onClick={ isReadyForImport ? this.openFileSelector : null }
+					onKeyPress={ isReadyForImport ? this.handleKeyPress : null }
 				>
 					<div className="importer__upload-content">
 						<Gridicon className="importer__upload-icon" icon="cloud-upload" />
 						{ this.getMessage() }
 					</div>
-					{ this.isReadyForImport() ? (
+					{ isReadyForImport && (
 						<input
-							ref="fileSelector"
+							ref={ this.fileSelectorRef }
 							type="file"
 							name="exportFile"
 							onChange={ this.initiateFromForm }
 						/>
-					) : null }
-					<DropZone onFilesDrop={ this.isReadyForImport() ? this.initiateFromDrop : noop } />
+					) }
+					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
 				</div>
 			</div>
 		);
 	}
 }
 
-export default localize( UploadingPane );
+export default flow(
+	connect( state => ( {
+		filename: get( state, 'imports.uploads.filename' ),
+		percentComplete: get( state, 'imports.uploads.percentComplete' ),
+	} ) ),
+	localize
+)( UploadingPane );

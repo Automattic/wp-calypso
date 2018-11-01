@@ -24,12 +24,15 @@ import { WithAPIMiddleware } from './api-middleware/utils';
 import { translate } from 'i18n-calypso';
 import 'tinymce/plugins/lists/plugin.js'; // Make list indent/outdent work
 import './hooks'; // Needed for integrating Calypso's media library (and other hooks)
+import { removeUnsupportedCoreBlocks } from './setup';
 
 class GutenbergEditor extends Component {
 	componentDidMount() {
 		registerCoreBlocks();
 		// Prevent Guided tour from showing when editor loads.
 		dispatch( 'core/nux' ).disableTips();
+
+		removeUnsupportedCoreBlocks();
 
 		const { siteId, postId, uniqueDraftKey, postType } = this.props;
 		if ( ! postId ) {

@@ -49,6 +49,7 @@ $z-layers: (
 		'.reader-full-post__sidebar-comment-like': 1,
 		'.list-stream__header-follow': 0,
 		'.following__intro-close-icon-bg' : 0,
+		'.is-section-signup': 1,
 		'.media-library .search.is-expanded-to-container': 1,
 		'.ribbon': 1,
 		'.reader__featured-post-title': 1,
@@ -143,6 +144,7 @@ $z-layers: (
 		'.app-banner': 180,
 		'.notices-list.is-pinned': 180,
 		'.notices-list.is-pinned .notice': 180,
+		'.editor-gutenberg-opt-in-notice': 180,
 		'.masterbar': 180,
 		'.gdpr-banner': 185,
 		'.detail-page__backdrop': 190,
@@ -182,6 +184,10 @@ $z-layers: (
 		'.webpack-build-monitor': 99999999,
 		'.image-selector__item.is-transient::after': 1,
 		'.image-selector__item .spinner': 2,
+	),
+	'.is-section-signup': (
+		'.is-section-signup::before': -1,
+		'.layout__primary::before': -1,
 	),
 	'.ribbon': (
 		'.ribbon__title::before': -1,

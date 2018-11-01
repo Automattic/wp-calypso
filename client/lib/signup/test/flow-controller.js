@@ -12,7 +12,7 @@ import { createStore } from 'redux';
 /**
  * Internal dependencies
  */
-import { reducer } from 'state';
+import reducer from 'state/reducer';
 import SignupActions from '../actions';
 import SignupDependencyStore from '../dependency-store';
 import SignupFlowController from '../flow-controller';

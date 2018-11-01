@@ -50,7 +50,9 @@ export function handleReviewsRequest( { dispatch }, action ) {
 	const requestQuery = { ...DEFAULT_QUERY, ...query };
 	const queryString = stringify( omitBy( requestQuery, val => '' === val ) );
 
-	dispatch( request( siteId, action ).get( `products/reviews?${ queryString }&_envelope` ) );
+	dispatch(
+		request( siteId, action ).get( `products/calypso-reviews?${ queryString }&_envelope` )
+	);
 }
 
 export function handleReviewsRequestSuccess( store, action, { data } ) {

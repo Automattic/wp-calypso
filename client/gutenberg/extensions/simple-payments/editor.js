@@ -3,37 +3,93 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 import GridiconMoney from 'gridicons/dist/money';
 
-registerBlockType( 'a8c/simple-payments', {
-	title: __( 'Payment button', 'jetpack' ),
+/**
+ * Internal dependencies
+ */
+import edit from './edit';
+import save from './save';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+
+registerBlockType( 'jetpack/simple-payments', {
+	title: __( 'Payment button' ),
 
 	description: __(
-		'Simple Payments lets you create and embed credit and debit card payment buttons on your WordPress.com and Jetpack-enabled sites with minimal setup.',
-		'jetpack'
+		'Simple Payments lets you create and embed credit and debit card payment buttons on your WordPress.com and Jetpack-enabled sites with minimal setup.'
 	),
 
 	icon: <GridiconMoney />,
 
 	category: 'jetpack',
 
-	keywords: [
-		/** @TODO add keywords */
-	],
+	keywords: [ __( 'simple payments' ), 'PayPal' ],
 
 	attributes: {
-		paymentId: { type: 'number' },
+		currency: {
+			type: 'string',
+			default: 'USD',
+		},
+		description: {
+			type: 'string',
+			default: '',
+		},
+		email: {
+			type: 'string',
+			default: '',
+		},
+		formattedPrice: {
+			type: 'string',
+			default: '',
+		},
+		multiple: {
+			type: 'number',
+			default: 0,
+		},
+		paymentId: {
+			type: 'number',
+		},
+		price: {
+			type: 'number',
+		},
+		title: {
+			type: 'string',
+			default: '',
+		},
 	},
 
-	edit: () => (
-		<div>
-			A simple payment.
-			<br />
-			This block is under development and not ready for production.
-		</div>
-	),
+	transforms: {
+		from: [
+			{
+				type: 'shortcode',
+				tag: 'simple-payment',
+				attributes: {
+					paymentId: {
+						type: 'number',
+						shortcode: ( { named: { id } } ) => {
+							if ( ! id ) {
+								return;
+							}
 
-	save: () => null,
+							const result = parseInt( id, 10 );
+							if ( result ) {
+								return result;
+							}
+						},
+					},
+				},
+			},
+		],
+	},
+
+	edit,
+
+	save,
+
+	supports: {
+		className: false,
+		customClassName: false,
+		html: false,
+	},
 } );

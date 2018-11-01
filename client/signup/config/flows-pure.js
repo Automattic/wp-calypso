@@ -114,6 +114,20 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			lastModified: '2018-10-16',
 		},
 
+		onboarding: {
+			steps: [ 'user', 'about', 'domains', 'plans' ],
+			destination: getSiteDestination,
+			description: 'The improved onboarding flow.',
+			lastModified: '2018-10-22',
+		},
+
+		'onboarding-dev': {
+			steps: [ 'site-topic' ],
+			destination: getSiteDestination,
+			description: 'A temporary flow for holding under-development steps',
+			lastModified: '2018-10-29',
+		},
+
 		'delta-discover': {
 			steps: [ 'user' ],
 			destination: '/',
@@ -284,32 +298,28 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		lastModified: '2018-10-22',
 	};
 
-	if ( config.isEnabled( 'signup/import-landing-handler' ) ) {
-		flows.import = {
-			steps: [ 'from-url', 'user', 'domains' ],
-			destination: ( { importSiteDetails, importUrl, siteSlug } ) =>
-				addQueryArgs(
-					{
-						engine: importSiteDetails.engine === 'wix' ? 'wix' : null,
-						'from-site': ( importUrl && encodeURIComponent( importUrl ) ) || null,
-					},
-					`/settings/import/${ siteSlug }`
-				),
-			description: 'A flow to kick off an import during signup',
-			disallowResume: true,
-			lastModified: '2018-09-12',
-			autoContinue: true,
-		};
-	}
+	flows.import = {
+		steps: [ 'from-url', 'user', 'domains' ],
+		destination: ( { importSiteDetails, importUrl, siteSlug } ) =>
+			addQueryArgs(
+				{
+					engine: importSiteDetails.engine === 'wix' ? 'wix' : null,
+					'from-site': ( importUrl && encodeURIComponent( importUrl ) ) || null,
+				},
+				`/settings/import/${ siteSlug }`
+			),
+		description: 'A flow to kick off an import during signup',
+		disallowResume: true,
+		lastModified: '2018-09-12',
+		autoContinue: true,
+	};
 
-	if ( config.isEnabled( 'signup/reader' ) ) {
-		flows.reader = {
-			steps: [ 'reader-landing', 'user' ],
-			destination: '/',
-			description: 'Signup for an account and migrate email subs to the reader.',
-			lastModified: '2018-09-04',
-		};
-	}
+	flows.reader = {
+		steps: [ 'reader-landing', 'user' ],
+		destination: '/',
+		description: 'Signup for an account and migrate email subs to the Reader.',
+		lastModified: '2018-10-29',
+	};
 
 	return flows;
 }

@@ -3,43 +3,25 @@
 /**
  * External dependencies
  */
-import { merge } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { requestConversationMute, receiveConversationMute } from '../';
-import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	muteConversation,
-	updateConversationFollowStatus,
-} from 'state/reader/conversations/actions';
+import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
 
 describe( 'conversation-mute', () => {
 	describe( 'requestConversationMute', () => {
 		test( 'should dispatch an http request', () => {
-			const dispatch = jest.fn();
-			const action = muteConversation( { siteId: 123, postId: 456 } );
-			const actionWithRevert = merge( {}, action, {
-				meta: {
-					previousState: CONVERSATION_FOLLOW_STATUS.following,
-				},
-			} );
-			const getState = () => {
-				return {
-					reader: {
-						conversations: {
-							items: {
-								'123-456': 'F',
-							},
-						},
-					},
-				};
+			const action = {
+				payload: { siteId: 123, postId: 456 },
+				meta: { previousState: CONVERSATION_FOLLOW_STATUS.following },
 			};
-			requestConversationMute( { dispatch, getState }, action );
-			expect( dispatch ).toHaveBeenCalledWith(
+
+			const result = requestConversationMute( action );
+			expect( result ).toEqual(
 				http(
 					{
 						method: 'POST',
@@ -47,7 +29,7 @@ describe( 'conversation-mute', () => {
 						body: {},
 						apiNamespace: 'wpcom/v2',
 					},
-					actionWithRevert
+					action
 				)
 			);
 		} );
@@ -55,28 +37,22 @@ describe( 'conversation-mute', () => {
 
 	describe( 'receiveConversationMute', () => {
 		test( 'should dispatch a success notice', () => {
-			const dispatch = jest.fn();
-			receiveConversationMute(
-				{ dispatch },
+			const result = receiveConversationMute(
 				{
 					payload: { siteId: 123, postId: 456 },
 					meta: { previousState: CONVERSATION_FOLLOW_STATUS.following },
 				},
 				{ success: true }
 			);
-			expect( dispatch ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					notice: expect.objectContaining( {
-						status: 'is-plain',
-					} ),
-				} )
-			);
+			expect( result ).toMatchObject( {
+				notice: {
+					status: 'is-plain',
+				},
+			} );
 		} );
 
 		test( 'should revert to the previous follow state if it fails', () => {
-			const dispatch = jest.fn();
-			receiveConversationMute(
-				{ dispatch },
+			const result = receiveConversationMute(
 				{
 					payload: { siteId: 123, postId: 456 },
 					meta: { previousState: CONVERSATION_FOLLOW_STATUS.following },
@@ -85,21 +61,17 @@ describe( 'conversation-mute', () => {
 					success: false,
 				}
 			);
-			expect( dispatch ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					notice: expect.objectContaining( {
-						status: 'is-error',
-					} ),
+			expect( result[ 0 ] ).toMatchObject( {
+				notice: {
+					status: 'is-error',
+				},
+			} );
+			expect( result[ 1 ] ).toMatchObject(
+				updateConversationFollowStatus( {
+					siteId: 123,
+					postId: 456,
+					followStatus: CONVERSATION_FOLLOW_STATUS.following,
 				} )
-			);
-			expect( dispatch ).toHaveBeenCalledWith(
-				bypassDataLayer(
-					updateConversationFollowStatus( {
-						siteId: 123,
-						postId: 456,
-						followStatus: CONVERSATION_FOLLOW_STATUS.following,
-					} )
-				)
 			);
 		} );
 	} );

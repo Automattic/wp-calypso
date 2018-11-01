@@ -6,13 +6,25 @@
 import { Component } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
 import { connect } from 'react-redux';
-import { flowRight, endsWith } from 'lodash';
+import { flowRight, endsWith, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import getCurrentRoute from 'state/selectors/get-current-route';
-import { replaceHistory } from 'state/ui/actions';
+import { navigate, replaceHistory } from 'state/ui/actions';
+
+const getPostTypeTrashUrl = ( postType, siteSlug, isSiteJetpack, isSiteSingleUser ) => {
+	const postTypeUrl = get( { page: 'pages', post: 'posts' }, postType, `types/${ postType }` );
+
+	if ( postType === 'post' && ! isSiteJetpack && ! isSiteSingleUser ) {
+		return `/${ postTypeUrl }/my/trashed/${ siteSlug }`;
+	}
+
+	return `/${ postTypeUrl }/trashed/${ siteSlug }`;
+};
 
 /**
  * After making changes to a new post, this component will update the url to append the post id:
@@ -24,7 +36,15 @@ import { replaceHistory } from 'state/ui/actions';
  */
 export class BrowserURL extends Component {
 	componentDidUpdate( prevProps ) {
-		const { postId, postStatus, currentRoute } = this.props;
+		const {
+			postId,
+			postStatus,
+			postType,
+			currentRoute,
+			siteSlug,
+			isSiteJetpack,
+			isSiteSingleUser,
+		} = this.props;
 
 		if (
 			postStatus === 'draft' &&
@@ -32,6 +52,12 @@ export class BrowserURL extends Component {
 			! endsWith( currentRoute, `/${ postId }` )
 		) {
 			this.props.replaceHistory( `${ currentRoute }/${ postId }` );
+		}
+
+		if ( postStatus === 'trash' && endsWith( currentRoute, `/${ postId }` ) ) {
+			this.props.navigate(
+				getPostTypeTrashUrl( postType, siteSlug, isSiteJetpack, isSiteSingleUser )
+			);
 		}
 	}
 
@@ -43,19 +69,25 @@ export class BrowserURL extends Component {
 export default flowRight(
 	withSelect( select => {
 		const { getCurrentPost } = select( 'core/editor' );
-		const { id, status } = getCurrentPost();
+		const { id, status, type } = getCurrentPost();
 
 		return {
 			postId: id,
 			postStatus: status,
+			postType: type,
 		};
 	} ),
 	connect(
 		state => {
+			const siteId = getSelectedSiteId( state );
+
 			return {
 				currentRoute: getCurrentRoute( state ),
+				siteSlug: getSiteSlug( state, siteId ),
+				isSiteJetpack: isJetpackSite( state, siteId ),
+				isSiteSingleUser: isSingleUserSite( state, siteId ),
 			};
 		},
-		{ replaceHistory }
+		{ navigate, replaceHistory }
 	)
 )( BrowserURL );

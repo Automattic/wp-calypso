@@ -193,9 +193,13 @@ class SiteSettingsImport extends Component {
 			api: { isHydrated },
 			importers: imports,
 		} = this.state;
-		const { site } = this.props;
+		const { engine, site } = this.props;
 		const { slug, title } = site;
 		const siteTitle = title.length ? title : slug;
+
+		if ( engine === 'wix' ) {
+			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
+		}
 
 		if ( ! isHydrated ) {
 			return this.renderIdleImporters( site, siteTitle, appStates.DISABLED );
@@ -222,11 +226,8 @@ class SiteSettingsImport extends Component {
 	};
 
 	renderImportersList() {
-		const { site, siteSlug, translate } = this.props;
-		const {
-			slug,
-			title: siteTitle,
-		} = site;
+		const { site, translate } = this.props;
+		const { slug, title: siteTitle } = site;
 
 		const title = siteTitle.length ? siteTitle : slug;
 		const description = translate(
@@ -252,7 +253,7 @@ class SiteSettingsImport extends Component {
 						<h1 className="site-settings__importer-section-title importer__section-title">
 							{ translate( 'Import Another Site' ) }
 						</h1>
-						<p className="importer__section-description">{ description }</p>
+						<p className="site-settings__importer-section-description">{ description }</p>
 					</header>
 				</CompactCard>
 				{ this.renderImporters() }
@@ -262,11 +263,7 @@ class SiteSettingsImport extends Component {
 
 	renderImportersListGate() {
 		if ( this.props.needsVerification && ! this.props.isUnlaunchedSite ) {
-			return (
-				<EmailVerificationGate>
-					{ this.renderImportersList() }
-				</EmailVerificationGate>
-			);
+			return <EmailVerificationGate>{ this.renderImportersList() }</EmailVerificationGate>;
 		}
 
 		return this.renderImportersList();

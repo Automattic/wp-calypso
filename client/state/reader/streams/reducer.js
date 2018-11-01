@@ -56,7 +56,7 @@ export const items = ( state = [], action ) => {
 					nextGap = [ { isGap: true, from, to } ];
 				}
 
-				return [ ...beforeGap, ...streamItems, ...nextGap, ...afterGap ];
+				return combineXPosts( [ ...beforeGap, ...streamItems, ...nextGap, ...afterGap ] );
 			}
 
 			const newState = [ ...state, ...streamItems ];
@@ -72,7 +72,7 @@ export const items = ( state = [], action ) => {
 			return combineXPosts( newState );
 
 		case READER_STREAMS_SHOW_UPDATES:
-			return [ ...action.payload.items, ...state ];
+			return combineXPosts( [ ...action.payload.items, ...state ] );
 		case READER_DISMISS_POST: {
 			const postKey = action.payload.postKey;
 			const indexToRemove = findIndex( state, item => keysAreEqual( item, postKey ) );
@@ -81,9 +81,9 @@ export const items = ( state = [], action ) => {
 				return state;
 			}
 
-			const newState = [ ...state ];
-			newState[ indexToRemove ] = newState.pop(); // set the dismissed post location to the last item from the recs stream
-			return newState;
+			const updatedState = [ ...state ];
+			updatedState[ indexToRemove ] = updatedState.pop(); // set the dismissed post location to the last item from the recs stream
+			return updatedState;
 		}
 	}
 	return state;
@@ -131,7 +131,14 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 				return state;
 			}
 
-			const newItems = [ ...streamItems ];
+			let newItems = [ ...streamItems ];
+
+			// Find any x-posts and filter out duplicates
+			const newXPosts = filter( newItems, postKey => postKey.xPostMetadata );
+
+			if ( newXPosts ) {
+				newItems = combineXPosts( newItems );
+			}
 
 			// there is a gap if the oldest item in the poll is newer than last update time
 			if ( state.lastUpdated && minDate.isAfter( state.lastUpdated ) ) {

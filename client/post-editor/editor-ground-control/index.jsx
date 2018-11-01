@@ -26,6 +26,7 @@ import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import isVipSite from 'state/selectors/is-vip-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { getRouteHistory } from 'state/ui/action-log/selectors';
+import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
 
 export class EditorGroundControl extends React.Component {
 	static propTypes = {
@@ -117,7 +118,6 @@ export class EditorGroundControl extends React.Component {
 					className="editor-ground-control__preview-button"
 					disabled={ ! this.isPreviewEnabled() }
 					onClick={ this.onPreviewButtonClick }
-					tabIndex={ 4 }
 				>
 					<span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
 				</Button>
@@ -125,7 +125,6 @@ export class EditorGroundControl extends React.Component {
 					<EditorPublishButton
 						onSave={ this.props.onSave }
 						onPublish={ this.props.onPublish }
-						tabIndex={ 5 }
 						isConfirmationSidebarEnabled={ this.props.isConfirmationSidebarEnabled }
 						isSaving={ this.props.isSaving }
 						isPublishing={ this.props.isPublishing }
@@ -149,6 +148,7 @@ export class EditorGroundControl extends React.Component {
 
 	onCloseButtonClick = () => {
 		this.props.recordCloseButtonClick();
+		this.props.pauseEditorTour();
 		page.show( this.getCloseButtonPath() );
 	};
 
@@ -182,9 +182,8 @@ export class EditorGroundControl extends React.Component {
 				/>
 				<Drafts />
 				{ userNeedsVerification && (
-					<div
+					<button
 						className="editor-ground-control__email-verification-notice"
-						tabIndex={ 7 }
 						onClick={ this.props.onMoreInfoAboutEmailVerify }
 					>
 						<Gridicon
@@ -195,7 +194,7 @@ export class EditorGroundControl extends React.Component {
 						<span className="editor-ground-control__email-verification-notice-more">
 							{ translate( 'Learn More' ) }
 						</span>
-					</div>
+					</button>
 				) }
 				<QuickSaveButtons
 					isSaving={ isSaving }
@@ -217,13 +216,17 @@ const mapStateToProps = ( state, ownProps ) => {
 		publishButtonStatus: getEditorPublishButtonStatus( state ),
 		routeHistory: getRouteHistory( state ),
 		// do not allow publish for unverified e-mails, but allow if the site is VIP, or if the site is unlaunched
-		userNeedsVerification: ! isCurrentUserEmailVerified( state ) && ! isVipSite( state, siteId ) && ! isUnlaunchedSite( state, siteId ),
+		userNeedsVerification:
+			! isCurrentUserEmailVerified( state ) &&
+			! isVipSite( state, siteId ) &&
+			! isUnlaunchedSite( state, siteId ),
 	};
 };
 
 const mapDispatchToProps = {
 	recordSiteButtonClick: () => recordTracksEvent( 'calypso_editor_site_button_click' ),
 	recordCloseButtonClick: () => recordTracksEvent( 'calypso_editor_close_button_click' ),
+	pauseEditorTour: () => pauseGuidedTour(),
 };
 
 export default connect(

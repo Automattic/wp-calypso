@@ -7,10 +7,11 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { items } from '../reducer';
+import { items, currentPage, lastPage, inflightPages } from '../reducer';
 import {
 	READER_SITE_BLOCK,
 	READER_SITE_BLOCKS_RECEIVE,
+	READER_SITE_BLOCKS_REQUEST,
 	READER_SITE_UNBLOCK,
 	READER_SITE_REQUEST_SUCCESS,
 } from 'state/action-types';
@@ -103,6 +104,82 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).toEqual( { 122: true, 123: true, 124: true, 125: true } );
+		} );
+	} );
+
+	describe( '#currentPage()', () => {
+		test( 'should default to 1', () => {
+			const state = currentPage( undefined, {} );
+			expect( state ).toEqual( 1 );
+		} );
+
+		test( 'should update from a successful page response', () => {
+			const original = deepFreeze( {} );
+
+			const state = currentPage( original, {
+				type: READER_SITE_BLOCKS_RECEIVE,
+				payload: { page: 4 },
+			} );
+
+			expect( state ).toEqual( 4 );
+		} );
+	} );
+
+	describe( '#lastPage()', () => {
+		test( 'should default to null', () => {
+			const state = lastPage( undefined, {} );
+			expect( state ).toEqual( null );
+		} );
+
+		test( 'should not update when a page with some items is received', () => {
+			const original = null;
+
+			const state = lastPage( original, {
+				type: READER_SITE_BLOCKS_RECEIVE,
+				payload: { page: 4, count: 2 },
+			} );
+
+			expect( state ).toEqual( null );
+		} );
+
+		test( 'should update when a page with no items is received', () => {
+			const original = null;
+
+			const state = lastPage( original, {
+				type: READER_SITE_BLOCKS_RECEIVE,
+				payload: { page: 5, count: 0 },
+			} );
+
+			expect( state ).toEqual( 5 );
+		} );
+	} );
+
+	describe( '#inflightPages()', () => {
+		test( 'should default to an empty object', () => {
+			const state = inflightPages( undefined, {} );
+			expect( state ).toEqual( {} );
+		} );
+
+		test( 'should update when a page request is made', () => {
+			const original = deepFreeze( { 2: true } );
+
+			const state = inflightPages( original, {
+				type: READER_SITE_BLOCKS_REQUEST,
+				payload: { page: 4 },
+			} );
+
+			expect( state ).toEqual( { 2: true, 4: true } );
+		} );
+
+		test( 'should remove a page when a page response is received', () => {
+			const original = deepFreeze( { 2: true } );
+
+			const state = inflightPages( original, {
+				type: READER_SITE_BLOCKS_RECEIVE,
+				payload: { page: 4 },
+			} );
+
+			expect( state ).toEqual( original );
 		} );
 	} );
 } );

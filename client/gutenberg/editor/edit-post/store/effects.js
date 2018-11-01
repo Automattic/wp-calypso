@@ -1,7 +1,7 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
-import { select, subscribe } from '@wordpress/data';
+import { select, subscribe, dispatch } from '@wordpress/data';
 import { speak } from '@wordpress/a11y';
 import { __ } from '@wordpress/i18n';
 
@@ -17,6 +17,11 @@ import { onChangeListener } from './utils';
 
 const effects = {
 	SWITCH_MODE( action ) {
+		// Unselect blocks when we switch to the code editor.
+		if ( action.mode !== 'visual' ) {
+			dispatch( 'core/editor' ).clearSelectedBlock();
+		}
+
 		const message = action.mode === 'visual' ? __( 'Visual editor selected' ) : __( 'Code editor selected' );
 		speak( message, 'assertive' );
 	},

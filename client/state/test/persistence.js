@@ -3,7 +3,8 @@
  * Internal dependencies
  */
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
-import { createReduxStore, reducer } from 'state';
+import { createReduxStore } from 'state';
+import reducer from 'state/reducer';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );

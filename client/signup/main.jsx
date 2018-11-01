@@ -217,13 +217,13 @@ class Signup extends React.Component {
 		const subId = parsedUrl.query.sid;
 
 		if ( affiliateId && ! isNaN( affiliateId ) ) {
-			this.props.trackAffiliateReferral( { affiliateId, campaignId, subId, urlPath } );
 			// Record the referral in Tracks
 			analytics.tracks.recordEvent( 'calypso_refer_visit', {
 				flow: this.props.flowName,
 				// The current page without any query params
 				page: `${ parsedUrl.host }${ parsedUrl.pathname }`,
 			} );
+			this.props.trackAffiliateReferral( { affiliateId, campaignId, subId, urlPath } );
 		}
 	}
 

@@ -57,7 +57,7 @@ class MapDomainStep extends React.Component {
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.initialState ) {
 			this.setState( Object.assign( {}, this.props.initialState, this.getDefaultState() ) );
 		}
@@ -121,7 +121,7 @@ class MapDomainStep extends React.Component {
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
 							onClick={ this.recordInputFocus }
-							autoFocus
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						/>
 						<button
 							disabled={ ! getTld( searchQuery ) }
@@ -174,7 +174,7 @@ class MapDomainStep extends React.Component {
 		}
 
 		return (
-			<div className="domain-search-results__domain-availability is-mapping-suggestion">
+			<div className="map-domain-step__domain-availability">
 				<DomainRegistrationSuggestion
 					suggestion={ suggestion }
 					selectedSite={ this.props.selectedSite }
@@ -223,14 +223,23 @@ class MapDomainStep extends React.Component {
 			( error, result ) => {
 				const mappableStatus = get( result, 'mappable', error );
 				const status = get( result, 'status', error );
-				const { AVAILABLE, MAPPABLE, NOT_REGISTRABLE, UNKNOWN } = domainAvailability;
+				const {
+					AVAILABLE,
+					AVAILABILITY_CHECK_ERROR,
+					MAPPABLE,
+					NOT_REGISTRABLE,
+					UNKNOWN,
+				} = domainAvailability;
 
 				if ( status === AVAILABLE ) {
 					this.setState( { suggestion: result } );
 					return;
 				}
 
-				if ( status !== NOT_REGISTRABLE && includes( [ MAPPABLE, UNKNOWN ], mappableStatus ) ) {
+				if (
+					! includes( [ AVAILABILITY_CHECK_ERROR, NOT_REGISTRABLE ], status ) &&
+					includes( [ MAPPABLE, UNKNOWN ], mappableStatus )
+				) {
 					this.props.onMapDomain( domain );
 					return;
 				}

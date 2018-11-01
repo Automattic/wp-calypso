@@ -18,7 +18,7 @@
 	margin-bottom: 16px;
 }
 
-.importer__section-description {
+.site-settings__importer-section-description {
 	font-size: 14px;
 	color: $gray-dark;
 }
@@ -98,6 +98,10 @@
 
 	input {
 		visibility: hidden;
+	}
+	
+	.accessible-focus &:focus {
+		border-color: $gray-lighten-10;
 	}
 }
 

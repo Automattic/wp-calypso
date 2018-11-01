@@ -39,7 +39,7 @@ import FormSelect from 'components/forms/form-select';
 
 import SiteImporterSitePreview from './site-importer-site-preview';
 
-import { loadmShotsPreview } from './site-preview-actions';
+import { prefetchmShotsPreview } from './site-preview-actions';
 
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -75,7 +75,7 @@ class SiteImporterInputPane extends React.Component {
 		availableEndpoints: [],
 	};
 
-	componentWillMount = () => {
+	UNSAFE_componentWillMount = () => {
 		if ( config.isEnabled( 'manage/import/site-importer-endpoints' ) ) {
 			this.fetchEndpoints();
 		}
@@ -86,7 +86,7 @@ class SiteImporterInputPane extends React.Component {
 	}
 
 	// TODO This can be improved if we move to Redux.
-	componentWillReceiveProps = nextProps => {
+	UNSAFE_componentWillReceiveProps = nextProps => {
 		// TODO test on a site without posts
 		const newImporterState = nextProps.importerStatus.importerState;
 		const oldImporterState = this.props.importerStatus.importerState;
@@ -227,10 +227,7 @@ class SiteImporterInputPane extends React.Component {
 			site_url: urlForImport,
 		} );
 
-		loadmShotsPreview( {
-			url: urlForImport,
-			maxRetries: 1,
-		} ).catch( noop ); // We don't care about the error, this is just a preload
+		prefetchmShotsPreview( urlForImport );
 
 		const endpointParam =
 			this.state.selectedEndpoint && `&force_endpoint=${ this.state.selectedEndpoint }`;
