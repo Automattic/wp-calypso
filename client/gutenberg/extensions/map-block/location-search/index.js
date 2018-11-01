@@ -21,7 +21,7 @@ export class LocationSearch extends Component {
 		super( ...arguments );
 
 		this.textRef = createRef();
-		this.testRef = createRef();
+		this.containerRef = createRef();
 		this.state = {
 			isEmpty: true,
 		};
@@ -33,6 +33,11 @@ export class LocationSearch extends Component {
 			getOptionKeywords: option => [ option.place_name ],
 			getOptionCompletion: this.getOptionCompletion,
 		};
+	}
+	componentDidMount() {
+		setTimeout( () => {
+			this.containerRef.current.querySelector( 'input' ).focus();
+		}, 50 );
 	}
 	getOptionCompletion = option => {
 		const { value } = option;
@@ -79,22 +84,23 @@ export class LocationSearch extends Component {
 	render() {
 		const { label } = this.props;
 		return (
-			<BaseControl label={ label } className="components-location-search">
-				<Lookup completer={ this.autocompleter } onReset={ this.onReset }>
-					{ ( { isExpanded, listBoxId, activeId, onChange, onKeyDown } ) => (
-						<TextControl
-							placeholder={ placeholderText }
-							ref={ this.textRef }
-							onChange={ onChange }
-							aria-expanded={ isExpanded }
-							aria-owns={ listBoxId }
-							aria-activedescendant={ activeId }
-							onKeyDown={ onKeyDown }
-						/>
-					) }
-				</Lookup>
-				<div ref={ this.testRef } />
-			</BaseControl>
+			<div ref={ this.containerRef }>
+				<BaseControl label={ label } className="components-location-search">
+					<Lookup completer={ this.autocompleter } onReset={ this.onReset }>
+						{ ( { isExpanded, listBoxId, activeId, onChange, onKeyDown } ) => (
+							<TextControl
+								placeholder={ placeholderText }
+								ref={ this.textRef }
+								onChange={ onChange }
+								aria-expanded={ isExpanded }
+								aria-owns={ listBoxId }
+								aria-activedescendant={ activeId }
+								onKeyDown={ onKeyDown }
+							/>
+						) }
+					</Lookup>
+				</BaseControl>
+			</div>
 		);
 	}
 }
