@@ -241,8 +241,8 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	}
 
 	if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
-		flows[ 'store-nux' ] = {
-			steps: [ 'about', 'themes', 'domains', 'plans-store-nux', 'user' ],
+		flows.ecommerce = {
+			steps: [ 'about', 'domains', 'plans-store-nux', 'user' ],
 			destination: getSiteDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2018-01-24',

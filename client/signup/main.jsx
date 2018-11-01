@@ -410,7 +410,7 @@ class Signup extends React.Component {
 	};
 
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
-	// to `store-nux`. If not specified, the current flow (`this.props.flowName`) continues.
+	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToStep = ( stepName, stepSectionName, flowName = this.props.flowName ) => {
 		if ( this.state.scrolling ) {
 			return;
@@ -441,7 +441,7 @@ class Signup extends React.Component {
 	};
 
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
-	// to `store-nux`. If not specified, the current flow (`this.props.flowName`) continues.
+	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
 		const flowSteps = flows.getFlow( nextFlowName, this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
