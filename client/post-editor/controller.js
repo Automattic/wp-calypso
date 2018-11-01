@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
 import { isWebUri as isValidUrl } from 'valid-url';
-import { startsWith } from 'lodash';
+import { has, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,9 +22,10 @@ import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
+import { getSite, getSiteAdminUrl } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -81,7 +82,7 @@ function getPressThisContent( query ) {
 			ReactDomServer.renderToStaticMarkup(
 				<p>
 					<a href={ url }>
-						<img src={ image } />
+						<img alt="" src={ image } />
 					</a>
 				</p>
 			)
@@ -252,5 +253,29 @@ export default {
 
 		page.redirect( redirectWithParams );
 		return false;
+	},
+
+	gutenberg: ( context, next ) => {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const calypsoifyGutenberg = getSelectedEditor( state, siteId );
+
+		if ( has( window, 'location.replace' ) && calypsoifyGutenberg ) {
+			const postType = determinePostType( context );
+			const postId = getPostID( context );
+			const siteAdminUrl = getSiteAdminUrl( state, siteId );
+
+			if ( postId ) {
+				return window.location.replace(
+					siteAdminUrl + `post.php?calypsoify=1&post=${ postId }&action=edit`
+				);
+			}
+			if ( 'post' === postType ) {
+				return window.location.replace( siteAdminUrl + 'post-new.php?calypsoify=1' );
+			}
+			return window.location.replace( siteAdminUrl + `&post_type=${ postType }` );
+		}
+
+		next();
 	},
 };
