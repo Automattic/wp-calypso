@@ -335,7 +335,7 @@ export default connect(
 			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
 			// pretty versatile, we could rename it from discounts to flags/features/anything else and make it more
 			// universal.
-			withWPPlanTabs: true || isDiscountActive( getDiscountByName( 'new_plans' ), state ),
+			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
 			customerType: guessCustomerType( state, props ),
 			isChatAvailable: isHappychatAvailable( state ),
 			siteId: get( props.site, [ 'ID' ] ),
