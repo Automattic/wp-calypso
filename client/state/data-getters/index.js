@@ -14,7 +14,12 @@ import { filterStateToApiQuery } from 'state/activity-log/utils';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
 import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
 import { isValidPostalCode } from 'lib/postal-code';
-import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import {
+	bumpStat,
+	composeAnalytics,
+	withAnalytics,
+	recordTracksEvent,
+} from 'state/analytics/actions';
 import { convertToSnakeCase } from 'state/data-layer/utils';
 import { dummyTaxRate } from 'lib/tax'; // #tax-on-checout-placeholder
 
@@ -220,12 +225,17 @@ export const requestTaxRate = ( countryCode, postalCode, httpOptions ) => {
 	const path = `/tax-rate/${ countryCode }/${ postalCode }` && '/sites/example.wordpress.com/hello'; // #tax-on-checout-placeholder
 
 	const fetchAction = withAnalytics(
-		recordTracksEvent(
-			'calypso_tax_rate_request',
-			convertToSnakeCase( {
-				countryCode,
-				postalCode,
-			} )
+		composeAnalytics(
+			bumpStat( 'calypso_tax_rate_request', 'request' ),
+			bumpStat( 'calypso_tax_rate_request_country_code', countryCode ),
+			bumpStat( 'calypso_tax_rate_request_postal_code', postalCode ),
+			recordTracksEvent(
+				'calypso_tax_rate_request',
+				convertToSnakeCase( {
+					countryCode,
+					postalCode,
+				} )
+			)
 		),
 		http(
 			{
