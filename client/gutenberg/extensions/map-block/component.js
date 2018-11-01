@@ -269,7 +269,7 @@ export class Map extends Component {
 	}
 	initMap( map_center ) {
 		const { mapboxgl } = this.state;
-		const { zoom, onMapLoaded, admin } = this.props;
+		const { zoom, onMapLoaded, onError, admin } = this.props;
 		const map = new mapboxgl.Map( {
 			container: this.mapRef.current,
 			style: 'mapbox://styles/mapbox/streets-v9',
@@ -278,6 +278,9 @@ export class Map extends Component {
 			pitchWithRotate: false,
 			attributionControl: false,
 			dragRotate: false,
+		} );
+		map.on( 'error', e => {
+			onError( 'mapbox_error', e.error.message );
 		} );
 		const zoomControl = new mapboxgl.NavigationControl( {
 			showCompass: false,
@@ -319,6 +322,7 @@ Map.defaultProps = {
 	onSetZoom: () => {},
 	onMapLoaded: () => {},
 	onMarkerClick: () => {},
+	onError: () => {},
 	marker_color: 'red',
 	api_key: null,
 	map_center: {},
