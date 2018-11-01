@@ -21,7 +21,24 @@ import { preprocessCartForServer } from 'lib/cart-values';
 const debug = debugFactory( 'calypso:cart-data:cart-synchronizer' );
 
 function preprocessCartFromServer( cart ) {
-	return assign( {}, cart, {
+
+	// #tax-on-checkout-placeholder
+	const taxOnCheckoutPlaceholder = {
+		tax: {
+			location: {
+				country_code: 'US',
+				postal_code: '90210',
+			},
+			display_tax: true, // **NEW** Whether to show the tax lines to the user or not.
+		},
+		sub_total: cart.total_cost,
+		sub_total_display: cart.total_cost_display,
+		total_tax: cart.total_cost,
+		total_tax_display: cart.total_cost_display,
+	};
+
+	// #tax-on-checkout-placeholder
+	return assign( {}, taxOnCheckoutPlaceholder, cart, {
 		client_metadata: createClientMetadata(),
 		products: castProductIDsToNumbers( cart.products ),
 	} );

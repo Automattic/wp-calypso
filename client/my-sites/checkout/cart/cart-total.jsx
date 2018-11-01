@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { cartItems } from 'lib/cart-values';
+import config from 'config';
 
 class CartTotal extends React.Component {
 	static propTypes = {
@@ -44,10 +45,16 @@ class CartTotal extends React.Component {
 			return <div className="cart__total" />;
 		}
 
+		const showTax = cart.tax.display_tax && config.isEnabled( 'show-tax' );
 		return (
 			<div className="cart__total">
-				<span className="cart__total-label">{ this.totalLabel() }</span>
-				<span className="cart__total-amount">{ cart.total_cost_display }</span>
+				{ showTax && <span className="cart-total__label">Subtotal:</span> }
+				{ showTax && <span className="cart-total__amount">{ cart.sub_total_display }</span> }
+				{ showTax && <span className="cart-total__label">Tax:</span> }
+				{ showTax && <span className="cart-total__amount">{ cart.total_tax_display }</span> }
+				<span className="cart__total-label grand-total">
+{ this.totalLabel() }</span>
+				<span className="cart__total-amount grand-total">{ cart.total_cost_display }</span>
 			</div>
 		);
 	}
