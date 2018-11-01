@@ -370,7 +370,6 @@ class SimplePaymentsEdit extends Component {
 							help={ fieldPriceError }
 							label={ __( 'Price' ) }
 							onChange={ this.handlePriceChange }
-							x
 							placeholder={ this.formatPrice( 0, currency, false ) }
 							required
 							step="1"
