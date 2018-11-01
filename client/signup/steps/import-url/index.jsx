@@ -5,7 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, invoke, isEmpty, isEqual } from 'lodash';
+import { flow, get, invoke, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +23,11 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import ScreenReaderText from 'components/screen-reader-text';
 import { infoNotice, removeNotice } from 'state/notices/actions';
-import { fetchIsSiteImportable, setNuxUrlInputValue } from 'state/importer-nux/actions';
+import {
+	fetchIsSiteImportable,
+	setImportOriginSiteDetails,
+	setNuxUrlInputValue,
+} from 'state/importer-nux/actions';
 import {
 	getNuxUrlError,
 	getNuxUrlInputValue,
@@ -55,14 +59,7 @@ class ImportURLStepComponent extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const {
-			isSiteImportableError,
-			goToNextStep,
-			urlInputValue,
-			stepName,
-			siteDetails,
-			isLoading,
-		} = this.props;
+		const { isSiteImportableError, goToNextStep, stepName, siteDetails, isLoading } = this.props;
 
 		// isSiteImportable error, focus input to revise url.
 		if (
@@ -73,15 +70,15 @@ class ImportURLStepComponent extends Component {
 		}
 
 		// We have a verified, importable site url.
-		if ( ! isEqual( prevProps.siteDetails, siteDetails ) && ! isEmpty( siteDetails ) ) {
+		if ( ! isEqual( prevProps.siteDetails, siteDetails ) && siteDetails ) {
 			SignupActions.submitSignupStep( { stepName }, [], {
 				importSiteDetails: siteDetails,
-				importUrl: urlInputValue,
+				importUrl: siteDetails.siteUrl,
 				themeSlugWithRepo: 'pub/radcliffe-2',
 			} );
 
 			goToNextStep();
-			prefetchmShotsPreview( urlInputValue );
+			prefetchmShotsPreview( siteDetails.siteUrl );
 		}
 
 		if ( isLoading !== prevProps.isLoading ) {
@@ -118,6 +115,9 @@ class ImportURLStepComponent extends Component {
 			this.focusInput();
 			return;
 		}
+
+		// Clear out the site details so the step knows when to progress
+		this.props.setImportOriginSiteDetails();
 
 		this.props.fetchIsSiteImportable( this.props.urlInputValue );
 	};
@@ -311,6 +311,7 @@ export default flow(
 		{
 			fetchIsSiteImportable,
 			setNuxUrlInputValue,
+			setImportOriginSiteDetails,
 			recordTracksEvent,
 			infoNotice,
 			removeNotice,
