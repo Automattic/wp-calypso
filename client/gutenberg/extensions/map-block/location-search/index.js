@@ -42,8 +42,8 @@ export class LocationSearch extends Component {
 			caption: value.place_name,
 			id: value.id,
 			coordinates: {
-				latitude: value.geometry.coordinates[ 0 ],
-				longitude: value.geometry.coordinates[ 1 ],
+				longitude: value.geometry.coordinates[ 0 ],
+				latitude: value.geometry.coordinates[ 1 ],
 			},
 		};
 		this.props.onAddPoint( point );

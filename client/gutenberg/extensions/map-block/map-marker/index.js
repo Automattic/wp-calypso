@@ -30,12 +30,12 @@ export class MapMarker extends Component {
 	};
 	getPoint = () => {
 		const { point } = this.props;
-		return [ point.coordinates.latitude, point.coordinates.longitude ];
+		return [ point.coordinates.longitude, point.coordinates.latitude ];
 	};
 	renderMarker() {
 		const { map, point, mapboxgl, marker_color } = this.props;
 		const { handleClick } = this;
-		const mapboxPoint = [ point.coordinates.latitude, point.coordinates.longitude ];
+		const mapboxPoint = [ point.coordinates.longitude, point.coordinates.latitude ];
 		const el = this.marker ? this.marker.getElement() : document.createElement( 'div' );
 		if ( this.marker ) {
 			this.marker.setLngLat( mapboxPoint );

@@ -5,7 +5,7 @@
  */
 
 import { __ } from '@wordpress/i18n';
-import { Component, createRef, Fragment } from '@wordpress/element';
+import { Component, createRef, Fragment, Children } from '@wordpress/element';
 import { Button, Dashicon, TextareaControl, TextControl } from '@wordpress/components';
 import { get, assign } from 'lodash';
 
@@ -42,6 +42,12 @@ export class Map extends Component {
 		const { onMarkerClick, deleteActiveMarker, updateActiveMarker } = this;
 		const currentPoint = get( activeMarker, 'props.point' ) || {};
 		const { title, caption } = currentPoint;
+		let addPoint = null;
+		Children.map( children, element => {
+			if ( element && 'AddPoint' === element.type.name ) {
+				addPoint = element;
+			}
+		} );
 		const mapMarkers =
 			map &&
 			mapboxgl &&
@@ -102,7 +108,7 @@ export class Map extends Component {
 					{ mapMarkers }
 				</div>
 				{ infoWindow }
-				{ children }
+				{ addPoint }
 			</Fragment>
 		);
 	}
@@ -199,7 +205,7 @@ export class Map extends Component {
 			return;
 		}
 		points.forEach( point => {
-			bounds.extend( [ point.coordinates.latitude, point.coordinates.longitude ] );
+			bounds.extend( [ point.coordinates.longitude, point.coordinates.latitude ] );
 		} );
 		map.setCenter( bounds.getCenter() );
 
@@ -308,8 +314,8 @@ export class Map extends Component {
 	}
 	googlePoint2Mapbox( google_point ) {
 		const map_center = [
-			google_point.latitude ? google_point.latitude : 0,
 			google_point.longitude ? google_point.longitude : 0,
+			google_point.latitude ? google_point.latitude : 0,
 		];
 		return map_center;
 	}
