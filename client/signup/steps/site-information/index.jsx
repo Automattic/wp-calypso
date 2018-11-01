@@ -3,8 +3,10 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
-import i18n, { localize } from 'i18n-calypso';
+import EmailValidator from 'email-validator';
 import { connect } from 'react-redux';
+import i18n, { localize } from 'i18n-calypso';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,6 +25,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
 import InfoPopover from 'components/info-popover';
 
 class SiteInformation extends Component {
@@ -32,20 +35,37 @@ class SiteInformation extends Component {
 			name: props.siteTitle,
 			address: props.siteInformation.address,
 			email: props.siteInformation.email,
+			showEmailError: props.siteInformation.email,
+			isEmailValid: true,
 			phone: props.siteInformation.phone,
 		};
 	}
 
-	handleInputChange = ( { target: { name, value } } ) => this.setState( { [ name ]: [ value ] } );
+	handleInputChange = ( { target: { name, value } } ) => {
+		value = trim( value );
+		if ( 'email' === name ) {
+			const isEmailValid = EmailValidator.validate( value );
+			return this.setState( {
+				[ name ]: value,
+				isEmailValid,
+				showEmailError: false,
+			} );
+		}
+		this.setState( { [ name ]: value } );
+	};
 
 	handleSubmit = event => {
 		event.preventDefault();
+		if ( ! this.state.isEmailValid ) {
+			return this.setState( {
+				showEmailError: true,
+			} );
+		}
 		this.props.submitStep( ...this.state );
 	};
 
 	renderContent() {
 		const { translate, isBusinessSiteSelected, siteNameLabelText } = this.props;
-
 		return (
 			<div className="site-information__wrapper">
 				<div className="site-information__form-wrapper ">
@@ -96,10 +116,18 @@ class SiteInformation extends Component {
 										<FormTextInput
 											id="email"
 											name="email"
+											isValid={ this.state.isEmailValid }
+											isError={ this.state.isEmailValid }
 											placeholder={ 'E.g. email@domain.com' }
 											onChange={ this.handleInputChange }
 											value={ this.state.email }
 										/>
+										{ this.state.shouldShowEmailError && (
+											<FormInputValidation
+												isError={ this.state.shouldShowEmailError }
+												text={ translate( 'Please provide a valid email address.' ) }
+											/>
+										) }
 									</FormFieldset>
 									<FormFieldset>
 										<FormLabel htmlFor="phone">
