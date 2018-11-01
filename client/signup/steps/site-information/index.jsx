@@ -31,6 +31,7 @@ class SiteInformation extends Component {
 		this.state = {
 			name: props.siteTitle,
 			address: props.siteInformation.address,
+			email: props.siteInformation.email,
 			phone: props.siteInformation.phone,
 		};
 	}
@@ -80,9 +81,24 @@ class SiteInformation extends Component {
 										<FormTextarea
 											id="address"
 											name="address"
-											placeholder={ 'eg. 21 Main street\nOttawa  ON\nK1V 2K5' }
+											placeholder={ 'E.g. 21 Main street\nOttawa  ON\nK1V 2K5' }
 											onChange={ this.handleInputChange }
 											value={ this.state.address }
+										/>
+									</FormFieldset>
+									<FormFieldset>
+										<FormLabel htmlFor="email">
+											{ translate( 'Contact Email' ) }
+											<InfoPopover className="site-information__info-popover" position="top">
+												{ translate( 'Does your business have an email address?' ) }
+											</InfoPopover>
+										</FormLabel>
+										<FormTextInput
+											id="email"
+											name="email"
+											placeholder={ 'E.g. email@domain.com' }
+											onChange={ this.handleInputChange }
+											value={ this.state.email }
 										/>
 									</FormFieldset>
 									<FormFieldset>
@@ -95,7 +111,7 @@ class SiteInformation extends Component {
 										<FormTextInput
 											id="phone"
 											name="phone"
-											placeholder={ translate( 'eg. (613) 425-0183' ) }
+											placeholder={ translate( 'E.g. (613) 425-0183' ) }
 											onChange={ this.handleInputChange }
 											value={ this.state.phone }
 										/>
@@ -160,9 +176,9 @@ export default connect(
 		};
 	},
 	( dispatch, ownProps ) => ( {
-		submitStep: ( { name, address, phone } ) => {
+		submitStep: ( { name, address, email, phone } ) => {
 			dispatch( setSiteTitle( name ) );
-			dispatch( setSiteInformation( { address, phone } ) );
+			dispatch( setSiteInformation( { address, email, phone } ) );
 			// Create site
 			SignupActions.submitSignupStep(
 				{
@@ -172,6 +188,7 @@ export default connect(
 				[],
 				{
 					address,
+					email,
 					phone,
 				}
 			);
