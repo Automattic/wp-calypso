@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
 import { isWebUri as isValidUrl } from 'valid-url';
-import { has, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,10 +22,11 @@ import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite, getSiteAdminUrl } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import { requestSelectedEditor } from 'state/data-getters';
+import { waitForData } from 'state/data-layer/http-data';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -256,26 +257,37 @@ export default {
 	},
 
 	gutenberg: ( context, next ) => {
-		const state = context.store.getState();
-		const siteId = getSelectedSiteId( state );
-		const calypsoifyGutenberg = getSelectedEditor( state, siteId );
-
-		if ( has( window, 'location.replace' ) && calypsoifyGutenberg ) {
-			const postType = determinePostType( context );
-			const postId = getPostID( context );
-			const siteAdminUrl = getSiteAdminUrl( state, siteId );
-
-			if ( postId ) {
-				return window.location.replace(
-					siteAdminUrl + `post.php?calypsoify=1&post=${ postId }&action=edit`
-				);
+		const siteId = getSelectedSiteId( context.store.getState() );
+		waitForData( {
+			editor: () => requestSelectedEditor( siteId ),
+		} ).then( ( { editor } ) => {
+			if ( 'gutenberg' === editor.data.editor_web ) {
+				page.redirect( `/gutenberg${ context.path }` );
+			} else {
+				next();
 			}
-			if ( 'post' === postType ) {
-				return window.location.replace( siteAdminUrl + 'post-new.php?calypsoify=1' );
-			}
-			return window.location.replace( siteAdminUrl + `&post_type=${ postType }` );
-		}
+		} );
 
-		next();
+		// const state = context.store.getState();
+		// const siteId = getSelectedSiteId( state );
+		// const calypsoifyGutenberg = getSelectedEditor( state, siteId );
+
+		// if ( has( window, 'location.replace' ) && calypsoifyGutenberg ) {
+		// 	const postType = determinePostType( context );
+		// 	const postId = getPostID( context );
+		// 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+
+		// 	if ( postId ) {
+		// 		return window.location.replace(
+		// 			siteAdminUrl + `post.php?calypsoify=1&post=${ postId }&action=edit`
+		// 		);
+		// 	}
+		// 	if ( 'post' === postType ) {
+		// 		return window.location.replace( siteAdminUrl + 'post-new.php?calypsoify=1' );
+		// 	}
+		// 	return window.location.replace( siteAdminUrl + `&post_type=${ postType }` );
+		// }
+
+		// next();
 	},
 };
