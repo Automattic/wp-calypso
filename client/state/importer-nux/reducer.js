@@ -27,20 +27,19 @@ export const isUrlInputDisabled = createReducer( false, {
 	[ 'FLUX_IMPORTS_IMPORT_CANCEL' ]: () => false,
 } );
 
-export const siteDetails = createReducer(
-	{},
-	{
-		[ IMPORT_IS_SITE_IMPORTABLE_RECEIVE ]: ( state, { engine, favicon, siteTitle, siteUrl } ) => ( {
-			engine,
-			favicon,
-			siteTitle,
-			siteUrl,
-			tick: state.tick++,
-		} ),
-		[ IMPORT_IS_SITE_IMPORTABLE_ERROR ]: () => ( {} ),
-		[ 'FLUX_IMPORTS_IMPORT_CANCEL' ]: () => ( {} ),
-	}
-);
+export const siteDetails = createReducer( null, {
+	[ IMPORT_IS_SITE_IMPORTABLE_RECEIVE ]: ( state, { engine, favicon, siteTitle, siteUrl } ) =>
+		engine && siteUrl
+			? {
+					engine,
+					favicon,
+					siteTitle,
+					siteUrl,
+			  }
+			: null,
+	[ IMPORT_IS_SITE_IMPORTABLE_ERROR ]: () => null,
+	[ 'FLUX_IMPORTS_IMPORT_CANCEL' ]: () => null,
+} );
 
 export const error = createReducer( null, {
 	[ IMPORT_IS_SITE_IMPORTABLE_START_FETCH ]: () => null,
