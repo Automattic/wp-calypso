@@ -10,6 +10,8 @@ import { includes } from 'lodash';
  */
 import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
 import {
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_FREE,
@@ -47,6 +49,8 @@ describe( 'canUpgradeToPlan', () => {
 
 	test( 'should return true from lower-tier plans to higher-tier plans', () => {
 		[
+			[ PLAN_FREE, PLAN_ECOMMERCE ],
+			[ PLAN_FREE, PLAN_ECOMMERCE_2_YEARS ],
 			[ PLAN_FREE, PLAN_BUSINESS ],
 			[ PLAN_FREE, PLAN_BUSINESS_2_YEARS ],
 			[ PLAN_FREE, PLAN_PERSONAL ],
@@ -134,6 +138,7 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS ],
 			[ PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ],
 			[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ],
+			[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ],
 		].forEach( ( [ planOwned, planToPurchase ] ) =>
 			expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).toBe(
 				true
