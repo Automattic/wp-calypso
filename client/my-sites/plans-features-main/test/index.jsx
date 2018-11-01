@@ -6,10 +6,12 @@ jest.mock( 'lib/abtest', () => ( {
 
 jest.mock( 'lib/analytics/index', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'lib/user', () => ( {} ) );
-jest.mock( 'config', () => ( {
-	isEnabled: () => true,
-} ) );
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'config', () => {
+	const fn = () => {};
+	fn.isEnabled = jest.fn( () => true );
+	return fn;
+} );
 jest.mock( 'components/main', () => 'MainComponent' );
 jest.mock( 'components/popover', () => 'Popover' );
 jest.mock( 'my-sites/plan-features', () => 'PlanFeatures' );

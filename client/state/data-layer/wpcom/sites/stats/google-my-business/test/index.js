@@ -3,8 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -15,16 +13,14 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( '#fetchStats', () => {
 	test( 'should dispatch HTTP request to Google My Business stats endpoint', () => {
-		const dispatch = sinon.spy();
 		const action = {
 			siteId: 12345,
 			statType: 'queries',
 		};
 
-		fetchStats( { dispatch }, action );
+		const result = fetchStats( action );
 
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( result ).toEqual(
 			http(
 				{
 					path: '/sites/12345/stats/google-my-business/queries',
@@ -42,7 +38,6 @@ describe( '#fetchStats', () => {
 
 describe( '#receiveStats', () => {
 	test( 'should dispatch receive stats action', () => {
-		const dispatch = sinon.spy();
 		const action = {
 			interval: 'month',
 			aggregation: 'total',
@@ -50,7 +45,7 @@ describe( '#receiveStats', () => {
 			statType: 'views',
 		};
 
-		receiveStats( { dispatch }, action, {
+		const data = {
 			time_zone: 'Europe/London',
 			metric_values: [
 				{
@@ -80,52 +75,22 @@ describe( '#receiveStats', () => {
 					},
 				},
 			],
-		} );
+		};
 
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		const result = receiveStats( action, data );
+
+		expect( result ).toEqual(
 			receiveGoogleMyBusinessStats(
 				action.siteId,
 				action.statType,
 				action.interval,
 				action.aggregation,
-				{
-					timeZone: 'Europe/London',
-					metricValues: [
-						{
-							metric: 'QUERIES_DIRECT',
-							totalValue: {
-								timeDimension: {
-									timeRange: {
-										endTime: '2018-04-19T23:59:59.900Z',
-										startTime: '2018-04-13T00:00:00Z',
-									},
-								},
-								metricOption: 'AGGREGATED_TOTAL',
-								value: 0,
-							},
-						},
-						{
-							metric: 'QUERIES_INDIRECT',
-							totalValue: {
-								timeDimension: {
-									timeRange: {
-										endTime: '2018-04-19T23:59:59.900Z',
-										startTime: '2018-04-13T00:00:00Z',
-									},
-								},
-								metricOption: 'AGGREGATED_TOTAL',
-								value: 1,
-							},
-						},
-					],
-				}
+				data
 			)
 		);
 	} );
 
 	test( 'should transform data snake_case to camelCase', () => {
-		const dispatch = sinon.spy();
 		const action = {
 			interval: 'quarter',
 			aggregation: 'daily',
@@ -133,17 +98,16 @@ describe( '#receiveStats', () => {
 			statType: 'actions',
 		};
 
-		receiveStats( { dispatch }, action, { hello_world: 'hello' } );
+		const result = receiveStats( action, { hello_world: 'hello' } );
 
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( result ).toEqual(
 			receiveGoogleMyBusinessStats(
 				action.siteId,
 				action.statType,
 				action.interval,
 				action.aggregation,
 				{
-					helloWorld: 'hello',
+					hello_world: 'hello',
 				}
 			)
 		);

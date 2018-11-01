@@ -1,8 +1,133 @@
-.reader-landing__step-content {
-	text-align: center;
+.reader-landing {
+	margin: 0 20px;
 }
 
-.reader-landing__step-content-illustration {
-	max-height: 140px;
-	margin-bottom: 20px;
+.reader-landing__step-content {
+	text-align: left;
+	padding-bottom: 20px;
+}
+
+.reader-landing .formatted-header {
+	margin-bottom: 16px;
+
+	@include breakpoint( ">660px" ) {
+		display: flex;
+		justify-content: center;
+		max-width: 800px;
+		flex-direction: column;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+.reader-landing .formatted-header__title {
+	font-size: 1.8em;
+	text-align: left;
+	padding: 0;
+
+	@include breakpoint( ">660px" ) {
+		font-size: 3.3em;
+		text-align: center;
+		margin-top: 0;
+	}
+}
+
+.reader-landing .formatted-header__subtitle {
+	font-size: 1em;
+	padding: 0;
+	text-align: left;
+
+	@include breakpoint( ">660px" ) {
+		text-align: center;
+		margin-top: 10px;
+		margin-bottom: 0;
+		font-size: 1.1em;
+	}
+}
+
+.reader-landing__button-wrapper {
+
+	@include breakpoint( ">660px" ) {
+		text-align: center;
+	}
+}
+
+.reader-landing__button {
+	width: 100%;
+
+	@include breakpoint( ">660px" ) {
+		width: inherit;
+		text-align: center;
+	}
+}
+
+.reader-landing__features {
+	margin-top: 30px;
+}
+
+.reader-landing__feature {
+	margin-bottom: 30px;
+
+	@include breakpoint( ">660px" ) {
+		display: flex;
+	}
+
+	&.is-even {
+		flex-direction: row-reverse;
+
+		.reader-landing__feature-detail {
+			@include breakpoint( ">660px" ) {
+				padding-left: 0;
+			}
+		}
+
+		.reader-landing__feature-image {
+			@include breakpoint( ">660px" ) {
+				margin-left: 25px;
+				margin-right: 0;
+			}
+		}
+	}
+}
+
+.reader-landing__feature-image,
+.reader-landing__feature-detail {
+
+	@include breakpoint( ">660px" ) {
+		flex: 50%;
+	}
+}
+
+.reader-landing__feature-image {
+	width: 100%;
+
+	@include breakpoint( ">660px" ) {
+		align-self: center;
+		margin: 0 25px 0 0;
+		width: 48%;
+	}
+}
+
+.reader-landing__feature-detail {
+	margin-top: 10px;
+}
+
+.reader-landing__feature-heading {
+	font-size: 1.2em;
+	font-weight: bold;
+
+	@include breakpoint( ">660px" ) {
+		font-size: 1.6em;
+	}
+}
+
+.reader-landing__feature-description {
+	color: darken( $gray, 20 );
+	font-size: 1em;
+	margin-top: 4px;
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 10px;
+		font-size: 1.1em;
+	}
 }

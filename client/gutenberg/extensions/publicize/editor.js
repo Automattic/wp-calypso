@@ -10,14 +10,13 @@
  */
 import { PluginPrePublishPanel } from '@wordpress/edit-post';
 import { registerPlugin } from '@wordpress/plugins';
-import { registerStore } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import './editor.scss';
+import './store/index';
 import PublicizePanel from './panel';
-import publicizeStore from './gutenberg-store';
 
 const PluginRender = () => (
 	<PluginPrePublishPanel>
@@ -28,5 +27,3 @@ const PluginRender = () => (
 registerPlugin( 'jetpack-publicize', {
 	render: PluginRender
 } );
-
-registerStore( 'jetpack/publicize', publicizeStore );

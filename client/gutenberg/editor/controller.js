@@ -38,7 +38,6 @@ function registerDataPlugins( userId ) {
 	const storageKey = 'WP_DATA_USER_' + userId;
 
 	use( plugins.persistence, { storageKey: storageKey } );
-	use( plugins.asyncGenerator );
 	use( plugins.controls );
 }
 

@@ -35,8 +35,9 @@ export const siteDetails = createReducer(
 			favicon,
 			siteTitle,
 			siteUrl,
+			tick: state.tick++,
 		} ),
-		[ IMPORT_IS_SITE_IMPORTABLE_ERROR ]: () => null,
+		[ IMPORT_IS_SITE_IMPORTABLE_ERROR ]: () => ( {} ),
 		[ 'FLUX_IMPORTS_IMPORT_CANCEL' ]: () => ( {} ),
 	}
 );

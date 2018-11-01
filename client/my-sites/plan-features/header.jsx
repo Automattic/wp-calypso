@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -31,11 +31,7 @@ import { planLevelsMatch } from 'lib/plans/index';
 export class PlanFeaturesHeader extends Component {
 	render() {
 		const { isInSignup } = this.props;
-		let content = this.renderPlansHeader();
-
-		if ( isInSignup ) {
-			content = this.renderSignupHeader();
-		}
+		const content = isInSignup ? this.renderSignupHeader() : this.renderPlansHeader();
 
 		return content;
 	}
@@ -46,7 +42,7 @@ export class PlanFeaturesHeader extends Component {
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
 		return (
-			<header className={ headerClasses } onClick={ this.props.onClick }>
+			<header className={ headerClasses }>
 				{ planLevelsMatch( selectedPlan, planType ) && (
 					<Ribbon>{ translate( 'Suggested' ) }</Ribbon>
 				) }
@@ -73,7 +69,7 @@ export class PlanFeaturesHeader extends Component {
 
 		return (
 			<div className="plan-features__header-wrapper">
-				<header className={ headerClasses } onClick={ this.props.onClick }>
+				<header className={ headerClasses }>
 					{ newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
 					{ popular && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
 					{ bestValue && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
@@ -312,7 +308,6 @@ PlanFeaturesHeader.propTypes = {
 	isJetpack: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	newPlan: PropTypes.bool,
-	onClick: PropTypes.func,
 	planType: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
 	popular: PropTypes.bool,
 	rawPrice: PropTypes.number,
@@ -339,7 +334,6 @@ PlanFeaturesHeader.defaultProps = {
 	isPlaceholder: false,
 	isSiteAT: false,
 	newPlan: false,
-	onClick: noop,
 	popular: false,
 	showPlanCreditsApplied: false,
 	siteSlug: '',

@@ -5,7 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, invoke, isEqual } from 'lodash';
+import { flow, get, invoke, isEmpty, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,6 +36,7 @@ import {
 	SITE_IMPORTER_ERR_BAD_REMOTE,
 	SITE_IMPORTER_ERR_INVALID_URL,
 } from 'lib/importers/constants';
+import { prefetchmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
 
 const CHECKING_SITE_IMPORTABLE_NOTICE = 'checking-site-importable';
 const IMPORT_HELP_LINK = 'https://en.support.wordpress.com/import/';
@@ -49,7 +50,7 @@ class ImportURLStepComponent extends Component {
 	};
 
 	componentDidMount() {
-		this.setInputValueFromQueryArg();
+		this.setInputValueFromProps();
 		this.focusInput();
 	}
 
@@ -72,7 +73,7 @@ class ImportURLStepComponent extends Component {
 		}
 
 		// We have a verified, importable site url.
-		if ( ! isEqual( prevProps.siteDetails, siteDetails ) && siteDetails ) {
+		if ( ! isEqual( prevProps.siteDetails, siteDetails ) && ! isEmpty( siteDetails ) ) {
 			SignupActions.submitSignupStep( { stepName }, [], {
 				importSiteDetails: siteDetails,
 				importUrl: urlInputValue,
@@ -80,6 +81,7 @@ class ImportURLStepComponent extends Component {
 			} );
 
 			goToNextStep();
+			prefetchmShotsPreview( urlInputValue );
 		}
 
 		if ( isLoading !== prevProps.isLoading ) {
@@ -120,9 +122,10 @@ class ImportURLStepComponent extends Component {
 		this.props.fetchIsSiteImportable( this.props.urlInputValue );
 	};
 
-	setInputValueFromQueryArg = () => {
-		const urlFromQueryArg = get( this.props, 'queryObject.url' );
-		urlFromQueryArg && this.props.setNuxUrlInputValue( urlFromQueryArg );
+	setInputValueFromProps = () => {
+		const { queryObject, urlInputValue } = this.props;
+		const inputValue = urlInputValue || get( queryObject, 'url', '' );
+		this.props.setNuxUrlInputValue( inputValue );
 	};
 
 	validateUrl = () => {

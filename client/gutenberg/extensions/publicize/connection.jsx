@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Publicize connection form component.
  *
@@ -29,15 +30,10 @@ class PublicizeConnection extends Component {
 			connectionID: unique_id,
 			shouldShare: ! connectionOn,
 		} );
-	}
+	};
 
 	render() {
-		const {
-			name,
-			label,
-			disabled,
-			display_name,
-		} = this.props.connectionData;
+		const { service_name: name, label, disabled, display_name } = this.props.connectionData;
 		const { connectionOn } = this.props;
 		// Genericon names are dash separated
 		const socialName = name.replace( '_', '-' );
@@ -45,12 +41,13 @@ class PublicizeConnection extends Component {
 		return (
 			<li>
 				<div className="publicize-jetpack-connection-container">
-					<label htmlFor={ label }className="jetpack-publicize-connection-label">
+					<label htmlFor={ label } className="jetpack-publicize-connection-label">
 						<span
 							title={ label }
-							className={ 'jetpack-publicize-gutenberg-social-icon social-logo social-logo__' + socialName }
-						>
-						</span>
+							className={
+								'jetpack-publicize-gutenberg-social-icon social-logo social-logo__' + socialName
+							}
+						/>
 						<span>{ display_name }</span>
 					</label>
 					<FormToggle

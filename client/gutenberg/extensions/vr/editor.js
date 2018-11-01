@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 
 /**
@@ -11,13 +10,14 @@ import { registerBlockType } from '@wordpress/blocks';
 import './editor.scss';
 import VRImageEdit from './edit';
 import VRImageSave from './save';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 registerBlockType( 'jetpack/vr', {
-	title: __( 'VR Image', 'jetpack' ),
-	description: __( 'Embed 360° photos and Virtual Reality (VR) content', 'jetpack' ),
+	title: __( 'VR Image' ),
+	description: __( 'Embed 360° photos and Virtual Reality (VR) content' ),
 	icon: 'embed-photo',
 	category: 'jetpack',
-	keywords: [ __( 'vr', 'jetpack' ), __( 'panorama', 'jetpack' ), __( '360', 'jetpack' ) ],
+	keywords: [ __( 'vr' ), __( 'panorama' ), __( '360' ) ],
 	support: {
 		html: false,
 	},

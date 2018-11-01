@@ -114,6 +114,20 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			lastModified: '2018-10-16',
 		},
 
+		onboarding: {
+			steps: [ 'user', 'about', 'domains', 'plans' ],
+			destination: getSiteDestination,
+			description: 'The improved onboarding flow.',
+			lastModified: '2018-10-22',
+		},
+
+		'onboarding-dev': {
+			steps: [ 'site-topic' ],
+			destination: getSiteDestination,
+			description: 'A temporary flow for holding under-development steps',
+			lastModified: '2018-10-29',
+		},
+
 		'delta-discover': {
 			steps: [ 'user' ],
 			destination: '/',
@@ -300,14 +314,12 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		autoContinue: true,
 	};
 
-	if ( config.isEnabled( 'signup/reader' ) ) {
-		flows.reader = {
-			steps: [ 'reader-landing', 'user' ],
-			destination: '/',
-			description: 'Signup for an account and migrate email subs to the reader.',
-			lastModified: '2018-09-04',
-		};
-	}
+	flows.reader = {
+		steps: [ 'reader-landing', 'user' ],
+		destination: '/',
+		description: 'Signup for an account and migrate email subs to the Reader.',
+		lastModified: '2018-10-29',
+	};
 
 	return flows;
 }

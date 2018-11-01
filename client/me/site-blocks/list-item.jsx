@@ -12,10 +12,21 @@ import { connect } from 'react-redux';
  */
 import { getSite } from 'state/reader/sites/selectors';
 import ExternalLink from 'components/external-link';
+import Button from 'components/button';
+import { unblockSite } from 'state/reader/site-blocks/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class SiteBlockListItem extends Component {
+	unblockSite = () => {
+		const { siteId } = this.props;
+		this.props.recordTracksEvent( 'calypso_me_unblock_site', {
+			blog_id: siteId,
+		} );
+		this.props.unblockSite( siteId );
+	};
+
 	render() {
-		const { site } = this.props;
+		const { site, translate } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -24,13 +35,25 @@ class SiteBlockListItem extends Component {
 		return (
 			<div className="site-blocks__list-item">
 				<ExternalLink href={ site.URL }>{ site.name }</ExternalLink>
+				<Button
+					scary
+					borderless
+					className="site-blocks__remove-button"
+					title={ translate( 'Unblock site' ) }
+					onClick={ this.unblockSite }
+				>
+					<span>{ translate( 'Unblock' ) }</span>
+				</Button>
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	return {
-		site: getSite( state, ownProps.siteId ),
-	};
-} )( localize( SiteBlockListItem ) );
+export default connect(
+	( state, ownProps ) => {
+		return {
+			site: getSite( state, ownProps.siteId ),
+		};
+	},
+	{ unblockSite, recordTracksEvent }
+)( localize( SiteBlockListItem ) );

@@ -51,6 +51,7 @@ jest.mock( 'lib/cart-values', () => ( {
 	},
 	isPaymentMethodEnabled: jest.fn( false ),
 	paymentMethodName: jest.fn( false ),
+	getEnabledPaymentMethods: jest.fn( false ),
 } ) );
 //jsdom doesn't properly mock scrollTo
 global.scrollTo = () => {};

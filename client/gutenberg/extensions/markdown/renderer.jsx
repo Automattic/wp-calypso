@@ -4,8 +4,12 @@
  * External dependencies
  */
 import MarkdownIt from 'markdown-it';
-import { __ } from '@wordpress/i18n';
 import { RawHTML } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 /**
  * Module variables
@@ -13,9 +17,7 @@ import { RawHTML } from '@wordpress/element';
 const markdownConverter = new MarkdownIt();
 const handleLinkClick = event => {
 	if ( event.target.nodeName === 'A' ) {
-		const hasConfirmed = window.confirm(
-			__( 'Are you sure you wish to leave this page?', 'jetpack' )
-		);
+		const hasConfirmed = window.confirm( __( 'Are you sure you wish to leave this page?' ) );
 
 		if ( ! hasConfirmed ) {
 			event.preventDefault();

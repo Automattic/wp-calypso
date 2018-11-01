@@ -3,10 +3,8 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { ExternalLink } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
-import { registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -14,20 +12,17 @@ import { registerBlockType } from '@wordpress/blocks';
 import './editor.scss';
 import edit from './edit';
 import save from './save';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import JetpackBlockType from 'gutenberg/extensions/presets/jetpack/utils/jetpack-block-type';
 
-registerBlockType( 'jetpack/markdown', {
-	title: __( 'Markdown', 'jetpack' ),
+const MarkdownBlock = new JetpackBlockType( 'markdown', {
+	title: __( 'Markdown' ),
 
 	description: (
 		<Fragment>
-			<p>
-				{ __(
-					'Use regular characters and punctuation to style text, links, and lists.',
-					'jetpack'
-				) }
-			</p>
+			<p>{ __( 'Use regular characters and punctuation to style text, links, and lists.' ) }</p>
 			<ExternalLink href="https://en.support.wordpress.com/markdown-quick-reference/">
-				{ __( 'Support reference', 'jetpack' ) }
+				{ __( 'Support reference' ) }
 			</ExternalLink>
 		</Fragment>
 	),
@@ -50,7 +45,7 @@ registerBlockType( 'jetpack/markdown', {
 
 	category: 'jetpack',
 
-	keywords: [ __( 'formatting', 'jetpack' ), __( 'syntax', 'jetpack' ), __( 'markup', 'jetpack' ) ],
+	keywords: [ __( 'formatting' ), __( 'syntax' ), __( 'markup' ) ],
 
 	attributes: {
 		//The Markdown source is saved in the block content comments delimiter
@@ -61,3 +56,5 @@ registerBlockType( 'jetpack/markdown', {
 
 	save,
 } );
+
+MarkdownBlock.register();

@@ -11,7 +11,6 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -25,7 +24,7 @@ import {
 	validate as validateGappsUsers,
 	filter as filterUsers,
 } from 'lib/domains/google-apps-users';
-import { getAnnualPrice, getMonthlyPrice, formatPrice } from 'lib/google-apps';
+import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import QueryProducts from 'components/data/query-products-list';
@@ -40,11 +39,6 @@ class GoogleAppsDialog extends React.Component {
 		onGoBack: PropTypes.func,
 		analyticsSection: PropTypes.string,
 		initialGoogleAppsCartItem: PropTypes.object,
-		showDiscount: PropTypes.bool.isRequired,
-	};
-
-	static defaultProps = {
-		showDiscount: false,
 	};
 
 	state = {
@@ -66,24 +60,11 @@ class GoogleAppsDialog extends React.Component {
 	getPrices() {
 		const { currencyCode, productsList } = this.props;
 		const price = get( productsList, [ 'gapps', 'prices', currencyCode ], 0 );
-		let prices = {
+
+		return {
 			annualPrice: getAnnualPrice( price, currencyCode ),
 			monthlyPrice: getMonthlyPrice( price, currencyCode ),
 		};
-
-		if ( this.props.showDiscount ) {
-			const discountRate = 50;
-			const discountPrice = price * ( 1 - discountRate / 100 );
-			prices = {
-				...prices,
-				monthlyPrice: formatPrice( price / 12, currencyCode, { precision: 1 } ),
-				discountAnnualPrice: formatPrice( discountPrice, currencyCode ),
-				discountMonthlyPrice: formatPrice( discountPrice / 12, currencyCode, { precision: 1 } ),
-				discountRate,
-			};
-		}
-
-		return prices;
 	}
 
 	render() {
@@ -94,11 +75,7 @@ class GoogleAppsDialog extends React.Component {
 				<QueryProducts />
 				<CompactCard>{ this.header() }</CompactCard>
 				<CompactCard>
-					<GoogleAppsProductDetails
-						showDiscount={ this.props.showDiscount }
-						domain={ this.props.domain }
-						{ ...prices }
-					/>
+					<GoogleAppsProductDetails domain={ this.props.domain } { ...prices } />
 					<TransitionGroup>
 						{ this.state.isAddingEmail && (
 							<CSSTransition classNames="google-apps-dialog__users" timeout={ 200 }>
@@ -152,29 +129,22 @@ class GoogleAppsDialog extends React.Component {
 	}
 
 	footer() {
-		const { translate, showDiscount } = this.props;
+		const { translate } = this.props;
 		const continueButtonHandler = this.state.isAddingEmail
 			? this.handleFormSubmit
 			: this.handleAddEmail;
 		const continueButtonText = this.state.isAddingEmail
 			? translate( 'Continue \u00BB' )
 			: translate( 'Yes, Add Email \u00BB' );
-		const skipText = showDiscount
-			? // Do not translate this string as it is a part of an abtest.
-			  "No thanks, I don't need email or I'll use another provider"
-			: translate( 'Skip' );
 
 		return (
 			<footer className="google-apps-dialog__footer">
 				{ ! this.state.isAddingEmail && (
 					<Button
-						className={ classnames( 'google-apps-dialog__checkout-button', {
-							'with-discount': showDiscount,
-						} ) }
+						className="google-apps-dialog__checkout-button"
 						onClick={ this.handleFormCheckout }
-						borderless={ this.props.showDiscount }
 					>
-						{ skipText }
+						{ translate( 'Skip' ) }
 					</Button>
 				) }
 				<Button

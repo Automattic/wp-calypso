@@ -309,4 +309,15 @@
 	.signup__step {
 		background: linear-gradient( to bottom, #e6e6e6, transparent );
 	}
+
+	&.is-section-signup::before,
+	&.is-section-signup .layout__primary::before {
+		display: none;
+  }
+  
+	.formatted-header__title {
+		font-size: 2em;
+		font-family: $sans;
+		margin-top: 2em;
+	}
 }

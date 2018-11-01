@@ -26,15 +26,13 @@ import { compose } from '@wordpress/compose';
  * Internal dependencies
  */
 import BrowserURL from 'gutenberg/editor/browser-url';
-import BlockSidebar from '../sidebar/block-sidebar';
-import DocumentSidebar from '../sidebar/document-sidebar';
 import Header from '../header';
 import TextEditor from '../text-editor';
 import VisualEditor from '../visual-editor';
 import EditorModeKeyboardShortcuts from '../keyboard-shortcuts';
+import SettingsSidebar from '../sidebar/settings-sidebar';
 import Sidebar from '../sidebar';
-import PluginPostPublishPanel from '../sidebar/plugin-post-publish-panel';
-import PluginPrePublishPanel from '../sidebar/plugin-pre-publish-panel';
+import { PluginPostPublishPanel, PluginPrePublishPanel } from '@wordpress/edit-post';
 
 function Layout( {
 	mode,
@@ -99,8 +97,7 @@ function Layout( {
 							{ __( 'Open publish panel' ) }
 						</Button>
 					</div>
-					<DocumentSidebar />
-					<BlockSidebar />
+					<SettingsSidebar />
 					<Sidebar.Slot />
 					{
 						isMobileViewport && sidebarIsOpened && <ScrollLock />
