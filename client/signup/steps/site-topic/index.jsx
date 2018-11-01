@@ -17,6 +17,8 @@ import StepWrapper from 'signup/step-wrapper';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
+import { setSiteTopic } from 'state/signup/site-topic/actions';
+import getSignupStepsSiteTopic from 'state/selectors/get-signup-steps-site-topic';
 
 class SiteTopicStep extends Component {
 	static propTypes = {
@@ -26,23 +28,36 @@ class SiteTopicStep extends Component {
 		setSiteTopic: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
+		siteTopic: PropTypes.string,
 	};
 
 	state = {
-		siteTopic: '',
+		siteTopicInputValue: '',
 	};
 
-	onChangeTopic = event => this.setState( { siteTopic: event.target.value } );
+	componentDidMount( props ) {
+		const { siteTopic } = props;
 
-	// TODO:
-	// Handle submission.
+		if ( siteTopic ) {
+			this.state.siteTopicInputValue = siteTopic;
+		}
+	}
+
+	onChangeTopic = event => this.setState( { siteTopicInputValue: event.target.value } );
+
 	submitSiteTopic( event ) {
 		event.preventDefault();
+
+		const { goToNextStep, flowName } = this.props;
+
+		this.props.setSiteTopic( this.state.siteTopicInputValue );
+
+		goToNextStep( flowName );
 	}
 
 	renderContent() {
 		const { translate } = this.props;
-		const { siteTopic } = this.state;
+		const { siteTopicInputValue } = this.state;
 
 		return (
 			<Card className="site-topic__content">
@@ -53,12 +68,12 @@ class SiteTopicStep extends Component {
 							id="siteTopic"
 							name="siteTopic"
 							placeholder={ translate( 'e.g. Fashion, travel, design, plumber, electrician' ) }
-							value={ this.state.siteTopic }
+							value={ this.state.siteTopicInputValue }
 							onChange={ this.onChangeTopic }
 							autoComplete="off"
 						/>
 					</FormFieldset>
-					<Button type="submit" disabled={ ! siteTopic } primary>
+					<Button type="submit" disabled={ ! siteTopicInputValue } primary>
 						{ translate( 'Continue' ) }
 					</Button>
 					<span className="site-topic__form-description">
@@ -91,9 +106,11 @@ class SiteTopicStep extends Component {
 	}
 }
 
-// TODO:
-// Connect to the real action creators and selectors.
 export default connect(
-	null,
-	{ setSiteTopic: () => {} }
+	state => ( {
+		siteTopic: getSignupStepsSiteTopic( state ),
+	} ),
+	{
+		setSiteTopic,
+	}
 )( localize( SiteTopicStep ) );
