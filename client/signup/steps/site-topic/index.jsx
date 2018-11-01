@@ -17,7 +17,7 @@ import StepWrapper from 'signup/step-wrapper';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
-import { setSiteTopic } from 'state/signup/site-topic/actions';
+import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
 import getSignupStepsSiteTopic from 'state/selectors/get-signup-steps-site-topic';
 
 class SiteTopicStep extends Component {
@@ -35,8 +35,8 @@ class SiteTopicStep extends Component {
 		siteTopicInputValue: '',
 	};
 
-	componentDidMount( props ) {
-		const { siteTopic } = props;
+	componentDidMount() {
+		const { siteTopic } = this.props;
 
 		if ( siteTopic ) {
 			this.state.siteTopicInputValue = siteTopic;
@@ -45,7 +45,7 @@ class SiteTopicStep extends Component {
 
 	onChangeTopic = event => this.setState( { siteTopicInputValue: event.target.value } );
 
-	submitSiteTopic( event ) {
+	submitSiteTopic = event => {
 		event.preventDefault();
 
 		const { goToNextStep, flowName } = this.props;
@@ -53,7 +53,7 @@ class SiteTopicStep extends Component {
 		this.props.setSiteTopic( this.state.siteTopicInputValue );
 
 		goToNextStep( flowName );
-	}
+	};
 
 	renderContent() {
 		const { translate } = this.props;
