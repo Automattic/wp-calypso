@@ -93,8 +93,7 @@ class MapEdit extends Component {
 				} );
 			},
 			result => {
-				noticeOperations.removeAllNotices();
-				noticeOperations.createErrorNotice( result.message );
+				this.onError( null, result.message );
 				this.setState( {
 					apiState: API_STATE_FAILURE,
 				} );
@@ -104,6 +103,11 @@ class MapEdit extends Component {
 	componentDidMount() {
 		this.apiCall();
 	}
+	onError = ( code, message ) => {
+		const { noticeOperations } = this.props;
+		noticeOperations.removeAllNotices();
+		noticeOperations.createErrorNotice( message );
+	};
 	render() {
 		const { className, setAttributes, attributes, noticeUI, notices } = this.props;
 		const { map_style, map_details, points, zoom, map_center, marker_color, align } = attributes;
@@ -221,12 +225,14 @@ class MapEdit extends Component {
 						onSetPoints={ value => setAttributes( { points: value } ) }
 						onMapLoaded={ () => this.setState( { addPointVisibility: true } ) }
 						onMarkerClick={ () => this.setState( { addPointVisibility: false } ) }
+						onError={ this.onError }
 					>
 						{ addPointVisibility && (
 							<AddPoint
 								onAddPoint={ this.addPoint }
 								onClose={ () => this.setState( { addPointVisibility: false } ) }
 								api_key={ api_key }
+								onError={ this.onError }
 							/>
 						) }
 					</Map>

@@ -51,7 +51,7 @@ export class LocationSearch extends Component {
 	};
 
 	search = value => {
-		const { api_key } = this.props;
+		const { api_key, onError } = this.props;
 		const url =
 			'https://api.mapbox.com/geocoding/v5/mapbox.places/' +
 			encodeURI( value ) +
@@ -64,7 +64,8 @@ export class LocationSearch extends Component {
 				.done( function( data ) {
 					resolve( data.features );
 				} )
-				.fail( function() {
+				.fail( function( data ) {
+					onError( data.statusText, data.responseJSON.message );
 					reject( new Error( 'Mapbox Places Error' ) );
 				} );
 		} );
@@ -94,5 +95,9 @@ export class LocationSearch extends Component {
 		);
 	}
 }
+
+LocationSearch.defaultProps = {
+	onError: () => {},
+};
 
 export default LocationSearch;
