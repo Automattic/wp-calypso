@@ -135,10 +135,8 @@ class MapEdit extends Component {
 							onChange={ value => setAttributes( { map_style: value } ) }
 							options={ settings.map_styleOptions }
 						/>
-					</PanelBody>
-					<PanelBody title={ __( 'Map Details', 'jetpack' ) }>
 						<ToggleControl
-							label={ __( 'Show details on map', 'jetpack' ) }
+							label={ __( 'Show street names', 'jetpack' ) }
 							checked={ map_details }
 							onChange={ value => setAttributes( { map_details: value } ) }
 						/>
