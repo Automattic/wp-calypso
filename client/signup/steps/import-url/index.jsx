@@ -36,6 +36,7 @@ import {
 	SITE_IMPORTER_ERR_BAD_REMOTE,
 	SITE_IMPORTER_ERR_INVALID_URL,
 } from 'lib/importers/constants';
+import { prefetchmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
 
 const CHECKING_SITE_IMPORTABLE_NOTICE = 'checking-site-importable';
 const IMPORT_HELP_LINK = 'https://en.support.wordpress.com/import/';
@@ -80,6 +81,7 @@ class ImportURLStepComponent extends Component {
 			} );
 
 			goToNextStep();
+			prefetchmShotsPreview( urlInputValue );
 		}
 
 		if ( isLoading !== prevProps.isLoading ) {
