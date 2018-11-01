@@ -16,7 +16,7 @@ Introduce the `wpcom` dependency into your `package.json` ...
 npm install --save wpcom
 ```
 
-... and then initialize it with your API token ( [optional ] ( #authentication ) ).
+... and then initialize it with your API token ([optional](#authentication)).
 
 
 ```js
