@@ -186,8 +186,8 @@ class MapEdit extends Component {
 			</Placeholder>
 		);
 		const getAPIInstructions = sprintf(
-			"This is your first map block. You need to get a Mapbox Access Token. <a href='%s' target='_blank'>Here's how to do it</a>.",
-			'https://www.mapbox.com/help/how-access-tokens-work/'
+			"<p>Before you use a map block, you will need to get a key from <a href='%1$s'>Mapbox</a>. You will only have to do this once.</p><p>Go to <a href='%1$s'>Mapbox</a> and either create an account or sign in. Once you sign in, locate and copy the default access token. Finally, paste it into the token field below.</p>",
+			'https://www.mapbox.com'
 		);
 		const placeholderAPIStateFailure = (
 			<Placeholder icon={ settings.icon } label={ __( 'Map', 'jetpack' ) } notices={ notices }>
