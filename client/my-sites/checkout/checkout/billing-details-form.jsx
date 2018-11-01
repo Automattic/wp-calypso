@@ -6,8 +6,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import debugFactory from 'debug';
-import { debounce, first, includes, intersection, isEqual, map, noop } from 'lodash';
+import { debounce, intersection, map, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,21 +38,16 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder';
 import PaymentBox from './payment-box';
 
-const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented();
 
 export class BillingDetailsForm extends PureComponent {
 	constructor( props ) {
 		super( props );
-		const steps = [ 'mainForm', ...this.getTldsWithAdditionalForm() ];
-		debug( 'steps:', steps );
 		this.debounced = {
 			validateBillingDetails: debounce( this.validateBillingDetails, 300, { leading: true } ),
 			validateDomainDetails: debounce( this.validateDomainDetails, 300, { leading: true } ),
 		};
 		this.state = {
-			steps,
-			currentStep: first( steps ),
 			showDomainContactDetails: false,
 			billingDetails: null,
 		};
@@ -63,24 +57,6 @@ export class BillingDetailsForm extends PureComponent {
 		if ( this.props.recordTracksEvent ) {
 			this.props.recordTracksEvent( 'calypso_checkout_billing_contact_information_view' );
 		}
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( ! isEqual( prevProps.cart, this.props.cart ) ) {
-			this.validateSteps();
-		}
-	}
-
-	validateSteps() {
-		const updatedSteps = [ 'mainForm', ...this.getTldsWithAdditionalForm() ];
-		const newState = {
-			steps: updatedSteps,
-		};
-		if ( updatedSteps.indexOf( this.state.currentStep ) < 0 ) {
-			debug( 'Switching to step: mainForm' );
-			newState.currentStep = 'mainForm';
-		}
-		this.setState( newState );
 	}
 
 	validateBillingDetails = ( fieldValues, onComplete ) => {
@@ -345,13 +321,6 @@ export class BillingDetailsForm extends PureComponent {
 				"review this to be sure it's correct."
 		);
 
-		if ( this.state.currentStep === 'fr' ) {
-			return {
-				title: translate( '.FR Registration' ),
-				message: '',
-			};
-		}
-
 		if ( this.needsDomainDetails() ) {
 			//@TODO Need to figure out how to display this only if domains are in the cart
 			return {
@@ -372,13 +341,6 @@ export class BillingDetailsForm extends PureComponent {
 		}
 	};
 
-	renderCurrentForm() {
-		const { currentStep } = this.state;
-		return includes( tldsWithAdditionalDetailsForms, currentStep )
-			? this.renderExtraDetailsForm( this.state.currentStep )
-			: this.renderDetailsForm();
-	}
-
 	render() {
 		const { title, message } = this.getFormHeaderText();
 		const classSet = classNames( {
@@ -398,7 +360,7 @@ export class BillingDetailsForm extends PureComponent {
 		return (
 			<div>
 				<QueryTldValidationSchemas tlds={ this.getTldsWithAdditionalForm() } />
-				<PaymentBox currentPage={ this.state.currentStep } classSet={ classSet } title={ title }>
+				<PaymentBox currentPage="main-form" classSet={ classSet } title={ title }>
 					{ message && <p>{ message }</p> }
 					<form onSubmit={ this.handleSubmit }>{ this.renderContactDetailsFields() }</form>
 				</PaymentBox>

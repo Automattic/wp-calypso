@@ -3,7 +3,17 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { flatten, filter, find, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import {
+	flatten,
+	filter,
+	find,
+	get,
+	isEmpty,
+	isEqual,
+	reduce,
+	startsWith,
+	intersection,
+} from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -70,6 +80,7 @@ import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import { tldsWithAdditionalDetailsForms } from 'components/domains/registrant-extra-info';
 import { abtest } from 'lib/abtest';
 
 export class Checkout extends React.Component {
@@ -677,6 +688,10 @@ export class Checkout extends React.Component {
 export default connect(
 	( state, props ) => {
 		const selectedSiteId = getSelectedSiteId( state );
+		const isBillingInfoTest =
+			0 ===
+				intersection( cartItems.getTlds( props.cart ), tldsWithAdditionalDetailsForms ).length &&
+			'test' === abtest( 'collectBillingInformation' );
 
 		return {
 			cards: getStoredCards( state ),
@@ -698,7 +713,7 @@ export default connect(
 			isPlansListFetching: isRequestingPlans( state ),
 			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
 			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
-			isBillingInfoTest: 'test' === abtest( 'collectBillingInformation' ),
+			isBillingInfoTest,
 			isJetpackNotAtomic:
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
 		};
