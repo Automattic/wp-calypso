@@ -108,7 +108,6 @@
 
 	.cart__total {
 		color: $gray-text-min;
-		font-weight: 600;
 		font-size: 14px;
 
 		.cart__total-label {
@@ -120,6 +119,16 @@
 			display: inline-block;
 			text-align: right;
 			width: 30%;
+
+			&.grand-total {
+				border-top: 1px solid $gray-lighten-20;
+				padding-top: 7px;
+				margin-top: 5px;
+			}
+		}
+
+		.grand-total {
+			font-weight: 600;
 		}
 	}
 
