@@ -112,7 +112,6 @@ class PeopleNotices extends React.Component {
 							components: {
 								strong: <strong />,
 							},
-							context: 'Error message after A site has failed to perform actions on a user.',
 						}
 					);
 				}
