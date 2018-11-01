@@ -167,9 +167,47 @@ $gutenberg-theme-toggle: #11a0d2;
 		}
 	}
 
+	input[type=checkbox] {
+		float: none;
+	}
+
 	select {
 		background-image: none;
 		appearance: menulist-button;
 	}
 	// END Unset Calypso default styles
+
+	// MISSING CORE STYLES (TODO: Remove them once Gutenberg include the Core styles)
+	font-size: 13px;
+	line-height: 1.4em;
+
+	input[type='checkbox'] {
+		padding: 0 !important;
+
+		&:checked::before {
+			content: '';
+			background-image: url( 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Crect%20x%3D%220%22%20fill%3D%22none%22%20width%3D%2224%22%20height%3D%2224%22%2F%3E%3Cg%3E%3Cpath%20d%3D%22M9%2019.414l-6.707-6.707%201.414-1.414L9%2016.586%2020.293%205.293l1.414%201.414%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E' );
+			background-size: 100%;
+			display: inline-block;
+			width: 12px;
+			height: 12px;
+			margin: 0;
+		}
+
+		@media screen and ( max-width: 782px ) {
+			height: 25px;
+			width: 25px;
+
+			&:checked::before {
+				width: 20px;
+				height: 20px;
+			}
+		}
+	}
+
+	label {
+		vertical-align: middle;
+		cursor: pointer;
+	}
+	// End Missing Core styles
 }
