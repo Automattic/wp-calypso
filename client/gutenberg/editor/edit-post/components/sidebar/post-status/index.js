@@ -54,11 +54,11 @@ function PostStatus( { isOpened, onTogglePanel } ) {
 
 export default compose( [
 	withSelect( ( select ) => ( {
-		isOpened: select( 'core/edit-post' ).isEditorSidebarPanelOpened( PANEL_NAME ),
+		isOpened: select( 'core/edit-post' ).isEditorPanelOpened( PANEL_NAME ),
 	} ) ),
 	withDispatch( ( dispatch ) => ( {
 		onTogglePanel() {
-			return dispatch( 'core/edit-post' ).toggleGeneralSidebarEditorPanel( PANEL_NAME );
+			return dispatch( 'core/edit-post' ).toggleEditorPanelOpened( PANEL_NAME );
 		},
 	} ) ),
 ] )( PostStatus );

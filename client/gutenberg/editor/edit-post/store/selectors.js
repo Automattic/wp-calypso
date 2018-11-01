@@ -4,6 +4,11 @@
 import { get, includes } from 'lodash';
 
 /**
+ * WordPress dependencies
+ */
+import deprecated from '@wordpress/deprecated';
+
+/**
  * Returns the current editing mode.
  *
  * @param {Object} state Global application state.
@@ -18,10 +23,11 @@ export function getEditorMode( state ) {
  * Returns true if the editor sidebar is opened.
  *
  * @param {Object} state Global application state
- * @return {boolean}     Whether the editor sidebar is opened.
+ *
+ * @return {boolean} Whether the editor sidebar is opened.
  */
 export function isEditorSidebarOpened( state ) {
-	const activeGeneralSidebar = getPreference( state, 'activeGeneralSidebar', null );
+	const activeGeneralSidebar = getActiveGeneralSidebarName( state );
 
 	return includes( [ 'edit-post/document', 'edit-post/block' ], activeGeneralSidebar );
 }
@@ -38,14 +44,27 @@ export function isPluginSidebarOpened( state ) {
 }
 
 /**
- * Returns the current active general sidebar name.
+ * Returns the current active general sidebar name, or null if there is no
+ * general sidebar active. The active general sidebar is a unique name to
+ * identify either an editor or plugin sidebar.
+ *
+ * Examples:
+ *
+ *  - `edit-post/document`
+ *  - `my-plugin/insert-image-sidebar`
  *
  * @param {Object} state Global application state.
  *
  * @return {?string} Active general sidebar name.
  */
 export function getActiveGeneralSidebarName( state ) {
-	return getPreference( state, 'activeGeneralSidebar', null );
+	// Dismissal takes precedent.
+	const isDismissed = getPreference( state, 'isGeneralSidebarDismissed', false );
+	if ( isDismissed ) {
+		return null;
+	}
+
+	return state.activeGeneralSidebar;
 }
 
 /**
@@ -77,22 +96,69 @@ export function getPreference( state, preferenceKey, defaultValue ) {
  * Returns true if the publish sidebar is opened.
  *
  * @param {Object} state Global application state
- * @return {boolean}       Whether the publish sidebar is open.
+ *
+ * @return {boolean} Whether the publish sidebar is open.
  */
 export function isPublishSidebarOpened( state ) {
 	return state.publishSidebarActive;
 }
 
 /**
- * Returns true if the editor sidebar panel is open, or false otherwise.
+ * Returns true if the given panel is enabled, or false otherwise. Panels are
+ * enabled by default.
  *
- * @param  {Object}  state Global application state.
- * @param  {string}  panel Sidebar panel name.
- * @return {boolean}       Whether the sidebar panel is open.
+ * @param {Object} state     Global application state.
+ * @param {string} panelName A string that identifies the panel.
+ *
+ * @return {boolean} Whether or not the panel is enabled.
+ */
+export function isEditorPanelEnabled( state, panelName ) {
+	const panels = getPreference( state, 'panels' );
+	return get( panels, [ panelName, 'enabled' ], true );
+}
+
+/**
+ * Returns true if the given panel is enabled, or false otherwise. Panels are
+ * enabled by default.
+ *
+ * @param {Object} state Global application state.
+ * @param {string} panel A string that identifies the panel.
+ *
+ * @return {boolean} Whether or not the panel is enabled.
  */
 export function isEditorSidebarPanelOpened( state, panel ) {
+	deprecated( 'isEditorSidebarPanelOpened', {
+		alternative: 'isEditorPanelEnabled',
+		plugin: 'Gutenberg',
+		version: '4.3',
+	} );
+	return isEditorPanelEnabled( state, panel );
+}
+
+/**
+ * Returns true if the given panel is open, or false otherwise. Panels are
+ * closed by default.
+ *
+ * @param  {Object}  state     Global application state.
+ * @param  {string}  panelName A string that identifies the panel.
+ *
+ * @return {boolean} Whether or not the panel is open.
+ */
+export function isEditorPanelOpened( state, panelName ) {
 	const panels = getPreference( state, 'panels' );
-	return panels ? !! panels[ panel ] : false;
+	return panels[ panelName ] === true || get( panels, [ panelName, 'opened' ], false );
+}
+
+/**
+ * Returns true if a modal is active, or false otherwise.
+ *
+ * @param  {Object}  state 	   Global application state.
+ * @param  {string}  modalName A string that uniquely identifies the modal.
+ *
+ * @return {boolean} Whether the modal is active.
+ */
+export function isModalActive( state, modalName ) {
+	return state.activeModal === modalName;
 }
 
 /**
@@ -108,7 +174,7 @@ export function isFeatureActive( state, feature ) {
 }
 
 /**
- * Returns true if the the plugin item is pinned to the header.
+ * Returns true if the plugin item is pinned to the header.
  * When the value is not set it defaults to true.
  *
  * @param  {Object}  state      Global application state.
