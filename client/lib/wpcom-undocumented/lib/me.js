@@ -374,7 +374,7 @@ UndocumentedMe.prototype.sendAppDownloadSMS = function( phone ) {
 		apiVersion: '1.1',
 		path: '/me/get-apps/send-download-sms',
 		body: {
-			phone_number: phone,
+			phone: phone,
 		},
 	};
 
