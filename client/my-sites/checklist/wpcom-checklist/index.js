@@ -103,6 +103,11 @@ class WpcomChecklist extends PureComponent {
 		}
 	};
 
+	handleTaskStartThenDismiss = arg => () => {
+		this.handleTaskStart( arg )();
+		this.handleTaskDismiss( arg.taskId )();
+	};
+
 	handleSendVerificationEmail = e => {
 		e.preventDefault();
 
@@ -353,6 +358,23 @@ class WpcomChecklist extends PureComponent {
 						onDismiss={ this.handleTaskDismiss( 'custom_domain_registered' ) }
 						siteSlug={ siteSlug }
 						title={ translate( 'Register a custom domain' ) }
+					/>
+					<TaskComponent
+						bannerImageSrc="/calypso/images/stats/tasks/mobile-app.svg"
+						completed={ this.isComplete( 'mobile_app_installed' ) }
+						completedButtonText={ translate( 'Download' ) }
+						completedTitle={ translate( 'You downloaded the WordPress app' ) }
+						description={ translate(
+							'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
+						) }
+						duration={ translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ) }
+						onClick={ this.handleTaskStartThenDismiss( {
+							taskId: 'mobile_app_installed',
+							url: '/me/get-apps',
+							dismiss: true,
+						} ) }
+						onDismiss={ this.handleTaskDismiss( 'mobile_app_installed' ) }
+						title={ translate( 'Get the WordPress app' ) }
 					/>
 				</ChecklistComponent>
 			</>
