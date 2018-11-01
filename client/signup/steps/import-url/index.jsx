@@ -69,18 +69,6 @@ class ImportURLStepComponent extends Component {
 			this.focusInput();
 		}
 
-		// We have a verified, importable site url.
-		if ( ! isEqual( prevProps.siteDetails, siteDetails ) && siteDetails ) {
-			SignupActions.submitSignupStep( { stepName }, [], {
-				importSiteDetails: siteDetails,
-				importUrl: siteDetails.siteUrl,
-				themeSlugWithRepo: 'pub/radcliffe-2',
-			} );
-
-			goToNextStep();
-			prefetchmShotsPreview( siteDetails.siteUrl );
-		}
-
 		if ( isLoading !== prevProps.isLoading ) {
 			if ( isLoading ) {
 				this.props.infoNotice(
@@ -91,6 +79,22 @@ class ImportURLStepComponent extends Component {
 				this.props.removeNotice( CHECKING_SITE_IMPORTABLE_NOTICE );
 			}
 		}
+
+		if ( isEqual( prevProps.siteDetails, siteDetails ) || ! siteDetails ) {
+			return;
+		}
+
+		// We have a verified, importable site url.
+		SignupActions.submitSignupStep( { stepName }, [], {
+			importSiteDetails: siteDetails,
+			importUrl: siteDetails.siteUrl,
+			themeSlugWithRepo: 'pub/radcliffe-2',
+		} );
+
+		goToNextStep();
+
+		// Defer the mshot call as to not compete with the flow transition
+		setTimeout( () => prefetchmShotsPreview( siteDetails.siteUrl ), 200 );
 	}
 
 	handleInputChange = event => {
