@@ -64,6 +64,7 @@
 }
 
 .site-type__submit-wrapper .button {
+	width: 180px;
 	@include breakpoint( '<480px' ) {
 		width: 100%;
 	}
@@ -84,15 +85,9 @@ h3 {
 	margin-bottom: 20px;
 }
 
-#header {
-	background: transparent;
-	border: 0 none;
-}
 .form-fieldset {
 	margin-top: 25px;
 }
-
-
 
 .site-type__option {
 	border-bottom: 1px solid #c8d7e1;

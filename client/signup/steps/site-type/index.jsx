@@ -45,7 +45,6 @@ class SiteType extends Component {
 				<div className="site-type__form-wrapper">
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
-							<h3>{ translate( 'Pick the option that best describes you' ) }</h3>
 							<FormFieldset>
 								<FormLabel className="site-type__option">
 									<FormRadio
@@ -54,8 +53,8 @@ class SiteType extends Component {
 										onChange={ this.handleRadioChange }
 									/>
 									<span>
-										<strong>Blogger</strong>
-										<span>{ translate( 'Share your story with a collection of posts.' ) }</span>
+										<strong>{ translate( 'Blogger' ) }</strong>
+										<span>{ translate( 'Share a collection of posts.' ) }</span>
 									</span>
 								</FormLabel>
 
@@ -67,7 +66,7 @@ class SiteType extends Component {
 									/>
 									<span>
 										<strong>{ translate( 'Business' ) }</strong>
-										<span>{ translate( 'Promote your products or services.' ) }</span>
+										<span>{ translate( 'Promote products and services.' ) }</span>
 									</span>
 								</FormLabel>
 
@@ -79,7 +78,7 @@ class SiteType extends Component {
 									/>
 									<span>
 										<strong>{ translate( 'Professional' ) }</strong>
-										<span>{ translate( 'Showcase your portfolio, skills, or work.' ) }</span>
+										<span>{ translate( 'Showcase your portfolio and services.' ) }</span>
 									</span>
 								</FormLabel>
 
@@ -91,7 +90,7 @@ class SiteType extends Component {
 									/>
 									<span>
 										<strong>{ translate( 'Educator' ) }</strong>
-										<span>{ translate( 'Share school projects or classroom information.' ) }</span>
+										<span>{ translate( 'Share school projects and class info.' ) }</span>
 									</span>
 								</FormLabel>
 
@@ -103,7 +102,7 @@ class SiteType extends Component {
 									/>
 									<span>
 										<strong>{ translate( 'Non-profit Organization' ) }</strong>
-										<span>{ translate( 'Raise money or awareness for a cause.' ) }</span>
+										<span>{ translate( 'Raise money and awareness for a cause.' ) }</span>
 									</span>
 								</FormLabel>
 							</FormFieldset>
