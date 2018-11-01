@@ -39,6 +39,8 @@ import PaymentMethods from 'blocks/payment-methods';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
+import { isDiscountActive } from 'state/selectors/get-active-discount.js';
+import { getDiscountByName } from 'lib/discounts';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 
 export class PlansFeaturesMain extends Component {
@@ -329,7 +331,11 @@ const guessCustomerType = ( state, props ) => {
 export default connect(
 	( state, props ) => {
 		return {
-			withWPPlanTabs: false,
+			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
+			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
+			// pretty versatile, we could rename it from discounts to flags/features/anything else and make it more
+			// universal.
+			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
 			customerType: guessCustomerType( state, props ),
 			isChatAvailable: isHappychatAvailable( state ),
 			siteId: get( props.site, [ 'ID' ] ),
