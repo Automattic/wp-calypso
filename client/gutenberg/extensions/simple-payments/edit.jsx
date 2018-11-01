@@ -19,7 +19,6 @@ import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
 import get from 'lodash/get';
-import padEnd from 'lodash/padEnd';
 import trimEnd from 'lodash/trimEnd';
 
 /**
@@ -41,21 +40,25 @@ class SimplePaymentsEdit extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const { simplePayment, attributes, setAttributes, isSelected, isSaving } = this.props;
+		const {
+			simplePayment,
+			attributes,
+			setAttributes,
+			isSelected,
+			isSavingPost,
+			isLoadingInitial,
+		} = this.props;
 
 		// @TODO check componentDidMount for the case where post was already loaded
 		if ( ! prevProps.simplePayment && simplePayment ) {
 			setAttributes( {
 				content: get( simplePayment, 'content.raw', attributes.content ),
-				currency: get( simplePayment, 'meta.spay_currency', attributes.currency ),
+				currency: get( simplePayment, 'meta.spay_currency', attributes.currency || 'USD' ),
 				email: get( simplePayment, 'meta.spay_email', attributes.email ),
-				formattedPrice: get(
-					simplePayment,
-					'meta.spay_formatted_price',
-					attributes.formattedPrice
+				multiple: Boolean(
+					get( simplePayment, 'meta.spay_multiple', attributes.multiple || false )
 				),
-				multiple: Boolean( get( simplePayment, 'meta.spay_multiple', attributes.multiple ) ),
-				price: get( simplePayment, 'meta.spay_price', attributes.price ),
+				price: get( simplePayment, 'meta.spay_price', attributes.price || undefined ),
 				title: get( simplePayment, 'title.raw', attributes.title ),
 			} );
 		}
@@ -69,7 +72,10 @@ class SimplePaymentsEdit extends Component {
 		}
 
 		// Saves on block-deselect and when editor is saving a post
-		if ( ( prevProps.isSelected && ! isSelected ) || ( prevProps.isSaving && ! isSaving ) ) {
+		if (
+			! isLoadingInitial &&
+			( ( prevProps.isSelected && ! isSelected ) || ( prevProps.isSavingPost && ! isSavingPost ) )
+		) {
 			this.savePayment();
 		}
 	}
@@ -244,25 +250,16 @@ class SimplePaymentsEdit extends Component {
 		this.validatePrice( price, currency );
 		price = parseFloat( price );
 		if ( ! isNaN( price ) ) {
-			this.props.setAttributes( {
-				formattedPrice: this.formatPrice( price, currency ),
-				price,
-			} );
+			this.props.setAttributes( { price } );
 		} else {
-			this.props.setAttributes( {
-				formattedPrice: '',
-				price: undefined,
-			} );
+			this.props.setAttributes( { price: undefined } );
 		}
 	};
 
 	handleCurrencyChange = currency => {
 		const { price } = this.props.attributes;
 		this.validatePrice( price, currency );
-		this.props.setAttributes( {
-			currency,
-			formattedPrice: this.formatPrice( price, currency ),
-		} );
+		this.props.setAttributes( { currency } );
 	};
 
 	handleMultipleChange = multiple => {
@@ -274,10 +271,11 @@ class SimplePaymentsEdit extends Component {
 		this.props.setAttributes( { title } );
 	};
 
-	formatPrice = ( price, currency ) => {
-		const { precision } = getCurrencyDefaults( currency );
-		// Tune the placeholder to the precision value: 0 -> '1', 1 -> '1.0', 2 -> '1.00'
-		return precision > 0 ? padEnd( '1.', precision + 2, '0' ) : '1';
+	formatPrice = ( price, currency, withSymbol = true ) => {
+		const { precision, symbol } = getCurrencyDefaults( currency );
+		const value = price.toFixed( precision );
+		// Trim the dot at the end of symbol, e.g., 'kr.' becomes 'kr'
+		return withSymbol ? `${ value } ${ trimEnd( symbol, '.' ) }` : value;
 	};
 
 	getCurrencyList = SUPPORTED_CURRENCY_LIST.map( value => {
@@ -291,7 +289,7 @@ class SimplePaymentsEdit extends Component {
 	render() {
 		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
 		const { attributes, isSelected, isLoadingInitial } = this.props;
-		const { content, currency, email, formattedPrice, multiple, price, title } = attributes;
+		const { content, currency, email, multiple, price, title } = attributes;
 
 		if ( ! isSelected && isLoadingInitial ) {
 			return (
@@ -303,6 +301,7 @@ class SimplePaymentsEdit extends Component {
 
 		if (
 			! isSelected &&
+			currency &&
 			email &&
 			price &&
 			title &&
@@ -311,11 +310,15 @@ class SimplePaymentsEdit extends Component {
 			! fieldTitleError
 		) {
 			return (
-				<ProductPlaceholder content={ content } formattedPrice={ formattedPrice } title={ title } />
+				<ProductPlaceholder
+					content={ content }
+					formattedPrice={ this.formatPrice( price, currency ) }
+					multiple={ multiple }
+					title={ title }
+				/>
 			);
 		}
 
-		// @TODO: Form should be disabled while fetching data
 		return (
 			<div className="wp-block-jetpack-simple-payments">
 				<Fragment>
@@ -357,7 +360,7 @@ class SimplePaymentsEdit extends Component {
 							label={ __( 'Currency' ) }
 							onChange={ this.handleCurrencyChange }
 							options={ this.getCurrencyList }
-							value={ currency }
+							value={ currency || 'USD' }
 						/>
 						<TextControl
 							disabled={ isLoadingInitial }
@@ -366,9 +369,9 @@ class SimplePaymentsEdit extends Component {
 							} ) }
 							help={ fieldPriceError }
 							label={ __( 'Price' ) }
-							min={ 0 }
 							onChange={ this.handlePriceChange }
-							placeholder={ this.formatPrice( 0, currency ) }
+							x
+							placeholder={ this.formatPrice( 0, currency, false ) }
 							required
 							step="1"
 							type="number"
@@ -423,7 +426,7 @@ export default withSelect( ( select, props ) => {
 
 	return {
 		isLoadingInitial: paymentId && ! simplePayment,
-		isSaving: !! isSavingPost(),
+		isSavingPost: !! isSavingPost(),
 		simplePayment,
 	};
 } )( SimplePaymentsEdit );

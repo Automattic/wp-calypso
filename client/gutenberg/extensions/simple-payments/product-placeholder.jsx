@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
  */
 import './view.scss';
 
-export default ( { title = '', content = '', formattedPrice = '' } ) => {
+export default ( { title = '', content = '', formattedPrice = '', multiple = false } ) => {
 	const assetUrl =
 		typeof window !== undefined && window.Jetpack_Block_Assets_Base_Url
 			? window.Jetpack_Block_Assets_Base_Url
@@ -36,10 +36,15 @@ export default ( { title = '', content = '', formattedPrice = '' } ) => {
 						</div>
 					) : null }
 					<div className="jetpack-simple-payments-purchase-box">
+						{ multiple ? (
+							<div className="jetpack-simple-payments-items">
+								<input className="jetpack-simple-payments-items-number" type="number" value="1" />
+							</div>
+						) : null }
 						<img
 							alt={ __( 'Pay with PayPal', 'jetpack' ) }
 							src={ `${ assetUrl }paypal-button.png` }
-							srcset={ `${ assetUrl }paypal-button@2x.png 2x` }
+							srcSet={ `${ assetUrl }paypal-button@2x.png 2x` }
 						/>
 					</div>
 				</div>

@@ -36,7 +36,6 @@ registerBlockType( 'jetpack/simple-payments', {
 	attributes: {
 		currency: {
 			type: 'string',
-			default: 'USD',
 		},
 		content: {
 			type: 'string',
@@ -46,13 +45,8 @@ registerBlockType( 'jetpack/simple-payments', {
 			type: 'string',
 			default: '',
 		},
-		formattedPrice: {
-			type: 'string',
-			default: '',
-		},
 		multiple: {
 			type: 'number',
-			default: 0,
 		},
 		paymentId: {
 			type: 'number',
