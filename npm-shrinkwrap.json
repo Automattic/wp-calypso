@@ -5779,7 +5779,7 @@
         },
         "regjsgen": {
           "version": "0.2.0",
-          "resolved": "https://registry.npmjs.org/regjsgen/-/regjsgen-0.2.0.tgz",
+          "resolved": "http://registry.npmjs.org/regjsgen/-/regjsgen-0.2.0.tgz",
           "integrity": "sha1-bAFq3qxVT3WCP+N6wFuS1aTtsfc="
         },
         "regjsparser": {
