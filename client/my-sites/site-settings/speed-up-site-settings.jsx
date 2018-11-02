@@ -126,13 +126,17 @@ class SpeedUpSiteSettings extends Component {
 								siteId={ selectedSiteId }
 								moduleSlug="photon"
 								label={ translate( 'Speed up image load times' ) }
-								disabled={ isRequestingOrSaving || photonModuleUnavailable }
+								disabled={
+									isRequestingOrSaving || photonModuleUnavailable || togglingSiteAccelerator
+								}
 							/>
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }
 								moduleSlug="photon-cdn"
 								label={ translate( 'Speed up static file load times' ) }
-								disabled={ isRequestingOrSaving || ! siteAcceleratorSupported }
+								disabled={
+									isRequestingOrSaving || ! siteAcceleratorSupported || togglingSiteAccelerator
+								}
 							/>
 						</div>
 					</FormFieldset>
@@ -185,38 +189,8 @@ export default connect(
 			'photon-cdn'
 		);
 
-		let togglingSiteAccelerator;
-		// First Photon activating.
-		if ( isPhotonActivating ) {
-			if ( assetCdnModuleActive ) {
-				togglingSiteAccelerator = false;
-			} else {
-				togglingSiteAccelerator = true;
-			}
-			// Then Asset CDN activating.
-		} else if ( isAssetCdnActivating ) {
-			if ( photonModuleActive ) {
-				togglingSiteAccelerator = false;
-			} else {
-				togglingSiteAccelerator = true;
-			}
-			// Then Photon deactivating.
-		} else if ( isPhotonDeactivating ) {
-			if ( assetCdnModuleActive ) {
-				togglingSiteAccelerator = false;
-			} else {
-				togglingSiteAccelerator = true;
-			}
-			// Then Asset CDN deactivating.
-		} else if ( isAssetCdnDeactivating ) {
-			if ( photonModuleActive ) {
-				togglingSiteAccelerator = false;
-			} else {
-				togglingSiteAccelerator = true;
-			}
-		} else {
-			togglingSiteAccelerator = false;
-		}
+		const togglingSiteAccelerator =
+			isAssetCdnActivating || isAssetCdnDeactivating || isPhotonActivating || isPhotonDeactivating;
 
 		// Status of the main site accelerator toggle.
 		const siteAcceleratorStatus = photonModuleActive || assetCdnModuleActive;
