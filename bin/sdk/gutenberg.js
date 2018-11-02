@@ -37,11 +37,13 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	let editorBetaScript;
 	let viewBlocksScripts;
 	let viewScriptEntry;
-	let allPresetBlocks;
+	let presetBlocks;
+	let presetBetaBlocks;
+
 	if ( fs.existsSync( presetPath ) ) {
-		const presetBlocks = require( presetPath );
-		const presetBetaBlocks = fs.existsSync( presetBetaPath ) ? require( presetBetaPath ) : [];
-		allPresetBlocks = [ ...presetBlocks, ...presetBetaBlocks ];
+		presetBlocks = require( presetPath );
+		presetBetaBlocks = fs.existsSync( presetBetaPath ) ? require( presetBetaPath ) : [];
+		const allPresetBlocks = [ ...presetBlocks, ...presetBetaBlocks ];
 
 		// Find all the shared scripts
 		const sharedUtilsScripts = sharedScripts( 'shared', inputDir );
@@ -87,10 +89,13 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 		...baseConfig,
 		plugins: [
 			...baseConfig.plugins,
-			allPresetBlocks &&
+			fs.existsSync( presetPath ) &&
 				new GenerateJsonFile( {
 					filename: 'block-manifest.json',
-					value: { blocks: allPresetBlocks },
+					value: {
+						blocks: presetBlocks,
+						betaBlocks: presetBetaBlocks,
+					},
 				} ),
 		],
 		entry: {
