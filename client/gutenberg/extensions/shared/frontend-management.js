@@ -10,7 +10,7 @@ import { createElement, render } from '@wordpress/element';
  * Internal dependencies
  */
 
-import { assign } from 'lodash';
+import assign from 'lodash/assign';
 
 export class FrontendManagement {
 	blockIterator( rootNode, blocks ) {

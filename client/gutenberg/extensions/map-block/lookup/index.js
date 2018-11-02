@@ -10,7 +10,8 @@ import { withInstanceId, compose } from '@wordpress/compose';
 import { ENTER, ESCAPE, UP, DOWN, LEFT, RIGHT } from '@wordpress/keycodes';
 import { Button, Popover, withFocusOutside, withSpokenMessages } from '@wordpress/components';
 import classnames from 'classnames';
-import { map, debounce } from 'lodash';
+import map from 'lodash/map';
+import debounce from 'lodash/debounce';
 
 function filterOptions( options = [], maxResults = 10 ) {
 	const filtered = [];
