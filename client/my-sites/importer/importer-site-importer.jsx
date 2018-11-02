@@ -17,7 +17,7 @@ class ImporterSiteImporter extends React.PureComponent {
 	static displayName = 'ImporterSiteImporter';
 
 	importerData = {
-		title: 'Wix.com (Beta)',
+		title: 'Wix',
 		icon: 'site-importer',
 		description: this.props.translate( 'Import posts, pages, and media from your Wix.com site.' ),
 		// TODO: we could move this to the component itself. Here were trying to stick to a generalisation
