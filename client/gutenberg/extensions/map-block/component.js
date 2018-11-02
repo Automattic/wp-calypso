@@ -7,7 +7,8 @@
 import { __ } from '@wordpress/i18n';
 import { Component, createRef, Fragment } from '@wordpress/element';
 import { Button, Dashicon, TextareaControl, TextControl } from '@wordpress/components';
-import { get, assign } from 'lodash';
+import get from 'lodash/get';
+import assign from 'lodash/assign';
 
 /**
  * Internal dependencies

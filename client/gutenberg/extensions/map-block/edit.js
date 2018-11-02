@@ -25,7 +25,7 @@ import {
 	PanelColorSettings,
 } from '@wordpress/editor';
 import apiFetch from '@wordpress/api-fetch';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 
 /**
  * Internal dependencies
