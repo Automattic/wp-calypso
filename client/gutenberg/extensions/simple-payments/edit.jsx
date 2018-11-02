@@ -55,12 +55,12 @@ class SimplePaymentsEdit extends Component {
 		// @TODO check componentDidMount for the case where post was already loaded
 		if ( ! prevProps.simplePayment && simplePayment ) {
 			setAttributes( {
-				content: get( simplePayment, 'content.raw', content ),
-				currency: get( simplePayment, 'meta.spay_currency', currency || 'USD' ),
-				email: get( simplePayment, 'meta.spay_email', email ),
-				multiple: Boolean( get( simplePayment, 'meta.spay_multiple', Boolean( multiple ) ) ),
-				price: get( simplePayment, 'meta.spay_price', price || undefined ),
-				title: get( simplePayment, 'title.raw', title ),
+				content: get( simplePayment, [ 'content', 'raw' ], content ),
+				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency || 'USD' ),
+				email: get( simplePayment, [ 'meta', 'spay_email' ], email ),
+				multiple: Boolean( get( simplePayment, [ 'meta', 'spay_multiple' ], Boolean( multiple ) ) ),
+				price: get( simplePayment, [ 'meta', 'spay_price' ], price || undefined ),
+				title: get( simplePayment, [ 'title', 'raw' ], title ),
 			} );
 		}
 
@@ -131,27 +131,25 @@ class SimplePaymentsEdit extends Component {
 
 		this.setState( { isSavingProduct: true } );
 
-		const path = `/wp/v2/${ SIMPLE_PAYMENTS_PRODUCT_POST_TYPE }/${ paymentId ? paymentId : '' }`;
+		apiFetch( {
+			path: `/wp/v2/${ SIMPLE_PAYMENTS_PRODUCT_POST_TYPE }/${ paymentId ? paymentId : '' }`,
+			method: 'POST',
+			data: this.attributesToPost( attributes ),
+		} )
+			.then( response => {
+				const { id } = response;
+				this.setState( { isSavingProduct: false } );
 
-		try {
-			// @TODO: then/catch
-			const { id } = await apiFetch( {
-				path,
-				method: 'POST',
-				data: this.attributesToPost( attributes ),
+				if ( id ) {
+					setAttributes( { paymentId: id } );
+				}
+			} )
+			.catch( error => {
+				// @TODO: error handling
+				// eslint-disable-next-line
+				console.error( error );
+				this.setState( { isSavingProduct: false } );
 			} );
-
-			this.setState( { isSavingProduct: false } );
-
-			if ( id ) {
-				setAttributes( { paymentId: id } );
-			}
-		} catch ( err ) {
-			// @TODO: error handling
-			// eslint-disable-next-line
-			console.error( err );
-			this.setState( { isSavingProduct: false } );
-		}
 	};
 
 	// based on https://stackoverflow.com/a/10454560/59752
