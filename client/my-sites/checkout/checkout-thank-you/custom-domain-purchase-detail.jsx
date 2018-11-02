@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
-import { hasCustomDomain } from 'lib/site/utils';
 
 const CustomDomainPurchaseDetail = ( {
 	selectedSite,
@@ -40,24 +39,6 @@ const CustomDomainPurchaseDetail = ( {
 				}
 				buttonText={ translate( 'Claim your free domain' ) }
 				href={ `/domains/add/${ selectedSite.slug }` }
-			/>
-		);
-	} else if ( ! hasDomainCredit && hasCustomDomain( selectedSite ) ) {
-		const actionButton = {};
-		actionButton.buttonText = translate( 'Manage my domains' );
-		actionButton.href = `/domains/manage/${ selectedSite.slug }`;
-		return (
-			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/custom-domain.svg" /> }
-				title={ translate( 'Custom Domain' ) }
-				description={ translate(
-					'Your plan includes the custom domain {{em}}%(siteDomain)s{{/em}}, your own personal corner of the web.',
-					{
-						args: { siteDomain: selectedSite.domain },
-						components: { em: <em /> },
-					}
-				) }
-				{ ...actionButton }
 			/>
 		);
 	}
