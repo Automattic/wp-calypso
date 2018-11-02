@@ -33,15 +33,11 @@ class SiteTopicStep extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = {
-		siteTopicInputValue: '',
-	};
+	constructor( props ) {
+		super( props );
 
-	componentDidMount() {
-		const { siteTopic } = this.props;
-
-		if ( siteTopic ) {
-			this.state.siteTopicInputValue = siteTopic;
+		this.state = {
+			siteTopicInputValue: props.siteTopic || '',
 		}
 	}
 
