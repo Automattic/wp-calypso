@@ -152,10 +152,9 @@ function canRemoveFromCart( cart, cartItem ) {
  * @returns {array} [nextCartMessages] - an array of messages about the state of the cart
  */
 function getNewMessages( previousCartValue, nextCartValue ) {
-	let previousDate, nextDate, hasNewServerData, nextCartMessages;
 	previousCartValue = previousCartValue || {};
 	nextCartValue = nextCartValue || {};
-	nextCartMessages = nextCartValue.messages || [];
+	const nextCartMessages = nextCartValue.messages || [];
 
 	// If there is no previous cart then just return the messages for the new cart
 	if (
@@ -166,9 +165,9 @@ function getNewMessages( previousCartValue, nextCartValue ) {
 		return nextCartMessages;
 	}
 
-	previousDate = previousCartValue.client_metadata.last_server_response_date;
-	nextDate = nextCartValue.client_metadata.last_server_response_date;
-	hasNewServerData = i18n.moment( nextDate ).isAfter( previousDate );
+	const previousDate = previousCartValue.client_metadata.last_server_response_date;
+	const nextDate = nextCartValue.client_metadata.last_server_response_date;
+	const hasNewServerData = i18n.moment( nextDate ).isAfter( previousDate );
 
 	return hasNewServerData ? nextCartMessages : [];
 }
@@ -199,8 +198,8 @@ function fillInAllCartItemAttributes( cart, products ) {
 }
 
 function fillInSingleCartItemAttributes( cartItem, products ) {
-	let product = products[ cartItem.product_slug ],
-		attributes = productsValues.whitelistAttributes( product );
+	const product = products[ cartItem.product_slug ];
+	const attributes = productsValues.whitelistAttributes( product );
 
 	return extend( {}, cartItem, attributes );
 }
