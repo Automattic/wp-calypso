@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import {
 	capitalize,
 	deburr,
@@ -34,6 +34,7 @@ import Search from 'components/search';
 import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
 import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 export class LanguagePickerModal extends PureComponent {
 	static propTypes = {
@@ -64,7 +65,6 @@ export class LanguagePickerModal extends PureComponent {
 			search: false,
 			selectedLanguageSlug: this.props.selected,
 			suggestedLanguages: this.getSuggestedLanguages(),
-			localeSlug: getLocaleSlug(),
 		};
 	}
 
@@ -156,7 +156,7 @@ export class LanguagePickerModal extends PureComponent {
 			return null;
 		}
 
-		const { languages } = this.props;
+		const { languages, currentUserLocale } = this.props;
 		const suggestedLanguages = [];
 
 		for ( const langSlug of navigator.languages ) {
@@ -168,7 +168,12 @@ export class LanguagePickerModal extends PureComponent {
 			if ( ! language ) {
 				language = find( languages, lang => startsWith( lcLangSlug, lang.langSlug + '-' ) );
 			}
-			if ( language && ! includes( suggestedLanguages, language ) ) {
+
+			if (
+				language &&
+				currentUserLocale !== language.langSlug &&
+				! includes( suggestedLanguages, language )
+			) {
 				suggestedLanguages.push( language );
 			}
 		}
@@ -324,4 +329,5 @@ export class LanguagePickerModal extends PureComponent {
 
 export default connect( state => ( {
 	localizedLanguageNames: getLocalizedLanguageNames( state ),
+	currentUserLocale: getCurrentUserLocale( state ),
 } ) )( localize( LanguagePickerModal ) );
