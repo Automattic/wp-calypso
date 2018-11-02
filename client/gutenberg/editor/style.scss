@@ -170,6 +170,15 @@ $gutenberg-theme-toggle: #11a0d2;
 		resize: none;
 	}
 
+	.edit-post-visual-editor {
+		&,
+		& p {
+			font-family: 'Noto Serif', serif;
+			font-size: 16px;
+			line-height: 1.8;
+		}
+	}
+
 	// UNSET CALYPSO DEFAULT STYLES
 	input[type='text'],
 	input[type='search'] {
