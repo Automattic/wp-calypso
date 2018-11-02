@@ -14,9 +14,9 @@ import InfoTooltip from 'woocommerce/woocommerce-services/components/info-toolti
 import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 export const TariffCodeTitle = localize( ( { translate } ) =>
-	<span>{ translate( 'Tariff code' ) } (
-		<ExternalLink icon href="https://hts.usitc.gov/" target="_blank">
-			{ translate( 'look up', { comment: 'To search for' } ) }
+	<span>{ translate( 'HS Tariff number' ) } (
+		<ExternalLink icon href="https://docs.woocommerce.com/document/print-shipping-labels-woocommerce-shipping/#section-1" target="_blank">
+			{ translate( 'more info' ) }
 		</ExternalLink>
 		)
 	</span>
