@@ -276,7 +276,9 @@ export default {
 				if ( 'post' === postType ) {
 					return window.location.replace( siteAdminUrl + 'post-new.php?calypsoify=1' );
 				}
-				return window.location.replace( siteAdminUrl + `&post_type=${ postType }` );
+				return window.location.replace(
+					siteAdminUrl + `post-new.php?calypsoify=1&post_type=${ postType }`
+				);
 			}
 			next();
 		} );
