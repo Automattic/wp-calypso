@@ -2,13 +2,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { requestRecommendedSites, receiveRecommendedSitesResponse, fromApi } from '../';
+import { requestRecommendedSites, addRecommendedSites, fromApi } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	requestRecommendedSites as requestRecommendedSitesAction,
@@ -47,10 +41,9 @@ const response = {
 describe( 'recommended sites', () => {
 	describe( '#requestRecommendedSites', () => {
 		test( 'should dispatch an http request and call through next', () => {
-			const dispatch = spy();
 			const action = requestRecommendedSitesAction( { seed } );
-			requestRecommendedSites( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith(
+			const result = requestRecommendedSites( action );
+			expect( result ).toEqual(
 				http( {
 					method: 'GET',
 					path: '/read/recommendations/sites',
@@ -65,13 +58,11 @@ describe( 'recommended sites', () => {
 
 	describe( '#receiveRecommendedSites', () => {
 		test( 'should dispatch action with sites if successful', () => {
-			const dispatch = spy();
 			const action = requestRecommendedSitesAction( { seed } );
-
-			receiveRecommendedSitesResponse( { dispatch }, action, response );
-			expect( dispatch ).calledWith(
+			const result = addRecommendedSites( action, response );
+			expect( result ).toEqual(
 				receiveRecommendedSites( {
-					sites: fromApi( response ),
+					sites: response,
 					seed,
 					offset: 0,
 				} )
@@ -80,12 +71,6 @@ describe( 'recommended sites', () => {
 	} );
 
 	describe( '#fromApi', () => {
-		test( 'should convert to empty sites if given bad input', () => {
-			expect( fromApi( null ) ).eql( [] );
-			expect( fromApi( undefined ) ).eql( [] );
-			expect( fromApi( new Error( 'this is an error' ) ) ).eql( [] );
-		} );
-
 		test( 'should extract only what we care about from the api response. and decode entities', () => {
 			const expected = [
 				{
@@ -114,7 +99,7 @@ describe( 'recommended sites', () => {
 				},
 			];
 
-			expect( fromApi( response ) ).eql( expected );
+			expect( fromApi( response ) ).toEqual( expected );
 		} );
 	} );
 } );

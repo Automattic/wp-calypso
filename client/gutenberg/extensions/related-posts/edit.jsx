@@ -5,7 +5,6 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
-import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { BlockAlignmentToolbar, BlockControls, InspectorControls } from '@wordpress/editor';
 import { Button, PanelBody, RangeControl, ToggleControl, Toolbar } from '@wordpress/components';
@@ -14,6 +13,7 @@ import { withSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { ALIGNMENT_OPTIONS, DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
 
 class RelatedPostsEdit extends Component {
@@ -75,13 +75,13 @@ class RelatedPostsEdit extends Component {
 		const layoutControls = [
 			{
 				icon: 'grid-view',
-				title: __( 'Grid View', 'jetpack' ),
+				title: __( 'Grid View' ),
 				onClick: () => setAttributes( { postLayout: 'grid' } ),
 				isActive: postLayout === 'grid',
 			},
 			{
 				icon: 'list-view',
-				title: __( 'List View', 'jetpack' ),
+				title: __( 'List View' ),
 				onClick: () => setAttributes( { postLayout: 'list' } ),
 				isActive: postLayout === 'list',
 			},
@@ -93,24 +93,24 @@ class RelatedPostsEdit extends Component {
 		return (
 			<Fragment>
 				<InspectorControls>
-					<PanelBody title={ __( 'Related Posts Settings', 'jetpack' ) }>
+					<PanelBody title={ __( 'Related Posts Settings' ) }>
 						<ToggleControl
-							label={ __( 'Display thumbnails', 'jetpack' ) }
+							label={ __( 'Display thumbnails' ) }
 							checked={ displayThumbnails }
 							onChange={ value => setAttributes( { displayThumbnails: value } ) }
 						/>
 						<ToggleControl
-							label={ __( 'Display date', 'jetpack' ) }
+							label={ __( 'Display date' ) }
 							checked={ displayDate }
 							onChange={ value => setAttributes( { displayDate: value } ) }
 						/>
 						<ToggleControl
-							label={ __( 'Display context (category or tag)', 'jetpack' ) }
+							label={ __( 'Display context (category or tag)' ) }
 							checked={ displayContext }
 							onChange={ value => setAttributes( { displayContext: value } ) }
 						/>
 						<RangeControl
-							label={ __( 'Number of posts', 'jetpack' ) }
+							label={ __( 'Number of posts' ) }
 							value={ postsToShow }
 							onChange={ value =>
 								setAttributes( { postsToShow: Math.min( value, MAX_POSTS_TO_SHOW ) } )

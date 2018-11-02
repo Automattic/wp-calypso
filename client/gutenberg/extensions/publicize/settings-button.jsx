@@ -4,8 +4,6 @@
  * Component which allows user to click to open settings
  * in a new window/tab. If window/tab is closed, then
  * connections will be automatically refreshed.
- *
- * @since  5.9.1
  */
 
 // Since this is a Jetpack originated block in Calypso codebase,
@@ -18,14 +16,16 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class PublicizeSettingsButton extends Component {
 	/**
 	 * Opens up popup so user can view/modify connections
-	 *
-	 * @since 5.9.1
 	 *
 	 * @param {object} event Event instance for onClick.
 	 */

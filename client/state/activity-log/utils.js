@@ -5,22 +5,9 @@
  */
 import { isUndefined } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import config from 'config';
-
 export const filterStateToApiQuery = filter => {
-	let aggregate;
-	if ( config.isEnabled( 'activity-log-aggregated-events' ) ) {
-		if ( ! isUndefined( filter.aggregate ) ) {
-			aggregate = filter.aggregate;
-		} else {
-			aggregate = true;
-		}
-	} else {
-		aggregate = false;
-	}
+	// by default, we'll tell the api to create aggregate events
+	const aggregate = isUndefined( filter.aggregate ) ? true : filter.aggregate;
 
 	return Object.assign(
 		{},

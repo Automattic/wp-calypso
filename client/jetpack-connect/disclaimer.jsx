@@ -7,6 +7,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Internal dependencies
@@ -30,7 +31,7 @@ class JetpackConnectDisclaimer extends PureComponent {
 				target="_blank"
 				rel="noopener noreferrer"
 				onClick={ this.handleClickDisclaimer }
-				href="https://jetpack.com/support/what-data-does-jetpack-sync/"
+				href={ localizeUrl( 'https://jetpack.com/support/what-data-does-jetpack-sync/' ) }
 				className="jetpack-connect__sso-actions-modal-link"
 			/>
 		);

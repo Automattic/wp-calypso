@@ -5,7 +5,7 @@
  */
 
 import { addQueryArgs } from 'lib/url';
-import { addLocaleToPath, addLocaleToWpcomUrl } from 'lib/i18n-utils';
+import { addLocaleToPath, localizeUrl } from 'lib/i18n-utils';
 import config, { isEnabled } from 'config';
 
 export function login( {
@@ -39,7 +39,7 @@ export function login( {
 		if ( isNative ) {
 			url = addLocaleToPath( url, locale );
 		} else {
-			url = addLocaleToWpcomUrl( url, locale );
+			url = localizeUrl( url, locale );
 		}
 	}
 

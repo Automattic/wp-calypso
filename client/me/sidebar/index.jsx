@@ -81,6 +81,7 @@ class MeSidebar extends React.Component {
 			[ billingHistory ]: 'purchases',
 			[ addCreditCard ]: 'purchases',
 			'/me/chat': 'happychat',
+			'/me/site-blocks': 'site-blocks',
 		};
 		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
 		let selected;
@@ -175,6 +176,15 @@ class MeSidebar extends React.Component {
 								icon="bell"
 								onNavigate={ this.onNavigate }
 								preloadSectionName="notification-settings"
+							/>
+
+							<SidebarItem
+								selected={ selected === 'site-blocks' }
+								link={ '/me/site-blocks' }
+								label={ translate( 'Blocked Sites' ) }
+								icon="block"
+								onNavigate={ this.onNavigate }
+								preloadSectionName="site-blocks"
 							/>
 						</ul>
 					</SidebarMenu>

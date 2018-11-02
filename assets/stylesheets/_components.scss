@@ -197,7 +197,6 @@
 @import 'components/text-diff/style';
 @import 'components/theme/style';
 @import 'components/themes-list/style';
-@import 'components/tinymce/style';
 @import 'components/pagination/style';
 @import 'components/tooltip/style';
 @import 'components/upgrades/google-apps/google-apps-dialog/style';
@@ -415,6 +414,7 @@
 @import 'my-sites/checkout/checkout/subscription-text.scss';
 @import 'my-sites/checkout/checkout-thank-you/style';
 @import 'my-sites/checkout/checkout-thank-you/google-voucher/style';
+@import 'my-sites/checkout/concierge-session-nudge/style';
 @import 'my-sites/checkout/gsuite-nudge/style';
 @import 'my-sites/domains/components/domain-warnings/style';
 @import 'my-sites/domains/domain-management/components/designated-agent-notice/style';

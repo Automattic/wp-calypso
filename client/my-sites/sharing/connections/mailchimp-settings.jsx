@@ -7,7 +7,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,16 +30,25 @@ const MailchimpSettings = ( {
 	const chooseMailchimpList = event => {
 		if ( event.target.value === '0' ) {
 			// This means we want to turn off sharing for this site.
-			requestSettingsUpdateAction( siteId, {
-				follower_list_id: 0,
-				keyring_id: 0,
-			} );
+			requestSettingsUpdateAction(
+				siteId,
+				{
+					follower_list_id: 0,
+					keyring_id: 0,
+				},
+				translate( 'Follower emails will not be synced to MailChimp any more' )
+			);
 			return;
 		}
-		requestSettingsUpdateAction( siteId, {
-			follower_list_id: event.target.value,
-			keyring_id: keyringConnections[ 0 ].ID,
-		} );
+		const list = mailchimpLists.filter( mcList => mcList.id === event.target.value )[ 0 ];
+		requestSettingsUpdateAction(
+			siteId,
+			{
+				follower_list_id: event.target.value,
+				keyring_id: keyringConnections[ 0 ].ID,
+			},
+			translate( 'Follower emails will be synced to the %s MailChimp list', { args: list.name } )
+		);
 	};
 
 	/* eslint-disable jsx-a11y/no-onchange */
@@ -48,7 +57,7 @@ const MailchimpSettings = ( {
 			<QueryMailchimpLists siteId={ siteId } />
 			<QueryMailchimpSettings siteId={ siteId } />
 			<p>{ translate( 'What MailChimp list should we sync follower emails to for this site?' ) }</p>
-			{ mailchimpLists &&
+			{ isArray( mailchimpLists ) &&
 				mailchimpLists.length === 0 && (
 					<Notice
 						status="is-info"
@@ -59,6 +68,17 @@ const MailchimpSettings = ( {
 					>
 						<NoticeAction href="https://login.mailchimp.com" external={ true } />
 					</Notice>
+				) }
+			{ mailchimpLists &&
+				mailchimpLists.length > 0 &&
+				mailchimpListId === 0 && (
+					<Notice
+						status="is-warning"
+						text={ translate(
+							'Followers will not be synced for this site. Please select a list to sign them up for your MailChimp content'
+						) }
+						showDismiss={ false }
+					/>
 				) }
 			<select value={ mailchimpListId } onChange={ chooseMailchimpList }>
 				<option key="none" value={ 0 }>

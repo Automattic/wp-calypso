@@ -13,7 +13,7 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { cartItems } from 'lib/cart-values';
+import { cartItems, getEnabledPaymentMethods } from 'lib/cart-values';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
@@ -47,7 +47,6 @@ import {
 	setDomainDetails,
 } from 'lib/upgrades/actions';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-import getCurrentUserPaymentMethods from 'state/selectors/get-current-user-payment-methods';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isEligibleForCheckoutToChecklist from 'state/selectors/is-eligible-for-checkout-to-checklist';
@@ -83,6 +82,8 @@ export class Checkout extends React.Component {
 		cartSettled: false,
 	};
 
+	// TODO: update this component to not use deprecated life cycle methods
+	/* eslint-disable-next-line react/no-deprecated */
 	componentWillMount() {
 		resetTransaction();
 		this.props.recordApplePayStatus();
@@ -104,13 +105,15 @@ export class Checkout extends React.Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	// TODO: update this component to not use deprecated life cycle methods
+	/* eslint-disable-next-line react/no-deprecated */
 	componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
 			if ( this.props.product ) {
 				this.addProductToCart();
 			}
 
-			this.trackPageView();
+			this.trackPageView( nextProps );
 		}
 
 		if ( ! this.state.cartSettled && ! nextProps.cart.hasPendingServerUpdates ) {
@@ -130,6 +133,8 @@ export class Checkout extends React.Component {
 
 		if ( ! isEqual( previousCart, nextCart ) ) {
 			this.redirectIfEmptyCart();
+			// TODO: rewrite state management so we don't have to call setState here
+			/* eslint-disable-next-line react/no-did-update-set-state */
 			this.setState( { previousCart: nextCart } );
 		}
 
@@ -579,8 +584,7 @@ export class Checkout extends React.Component {
 	paymentMethodsAbTestFilter() {
 		// This methods can be used to filter payment methods
 		// For example, for the purpose of AB tests.
-
-		return this.props.paymentMethods;
+		return getEnabledPaymentMethods( this.props.cart );
 	}
 
 	isLoading() {
@@ -635,6 +639,7 @@ export class Checkout extends React.Component {
 			analyticsPath = '/checkout/no-site';
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="main main-column" role="main">
 				<div className="checkout">
@@ -650,6 +655,7 @@ export class Checkout extends React.Component {
 				</div>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
@@ -659,7 +665,6 @@ export default connect(
 
 		return {
 			cards: getStoredCards( state ),
-			paymentMethods: getCurrentUserPaymentMethods( state ),
 			isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,

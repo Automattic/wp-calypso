@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 import { Placeholder, SelectControl, TextControl } from '@wordpress/components';
 
@@ -10,6 +9,7 @@ import { Placeholder, SelectControl, TextControl } from '@wordpress/components';
  * Internal dependencies
  */
 import VRImageSave from './save';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 export default class VRImageEdit extends Component {
 	onChangeUrl = value => void this.props.setAttributes( { url: value.trim() } );
@@ -26,24 +26,24 @@ export default class VRImageEdit extends Component {
 			<Placeholder
 				key="placeholder"
 				icon="format-image"
-				label={ __( 'VR Image', 'jetpack' ) }
+				label={ __( 'VR Image' ) }
 				className={ className }
 			>
 				<TextControl
 					type="url"
-					label={ __( 'Enter URL to VR image', 'jetpack' ) }
+					label={ __( 'Enter URL to VR image' ) }
 					value={ attributes.url }
 					onChange={ this.onChangeUrl }
 				/>
 				<SelectControl
-					label={ __( 'View Type', 'jetpack' ) }
+					label={ __( 'View Type' ) }
 					disabled={ ! attributes.url }
 					value={ attributes.view }
 					onChange={ this.onChangeView }
 					options={ [
 						{ label: '', value: '' },
-						{ label: __( '360°', 'jetpack' ), value: '360' },
-						{ label: __( 'Cinema', 'jetpack' ), value: 'cinema' },
+						{ label: __( '360°' ), value: '360' },
+						{ label: __( 'Cinema' ), value: 'cinema' },
 					] }
 				/>
 			</Placeholder>

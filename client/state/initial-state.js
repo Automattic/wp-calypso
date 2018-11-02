@@ -10,7 +10,8 @@ import { pick, throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReduxStore, reducer } from 'state';
+import { createReduxStore } from 'state';
+import initialReducer from 'state/reducer';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 import localforage from 'lib/localforage';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
@@ -28,23 +29,23 @@ const HOUR_IN_MS = 3600000;
 export const SERIALIZE_THROTTLE = 5000;
 export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 
-function getInitialServerState() {
-	// Bootstrapped state from a server-render
-	if ( typeof window === 'object' && window.initialReduxState && ! isSupportUserSession() ) {
-		const serverState = reducer( window.initialReduxState, { type: DESERIALIZE } );
-		return pick( serverState, Object.keys( window.initialReduxState ) );
-	}
-	return {};
-}
-
-function serialize( state ) {
+function serialize( state, reducer ) {
 	const serializedState = reducer( state, { type: SERIALIZE } );
 	return Object.assign( serializedState, { _timestamp: Date.now() } );
 }
 
-function deserialize( state ) {
+function deserialize( state, reducer ) {
 	delete state._timestamp;
 	return reducer( state, { type: DESERIALIZE } );
+}
+
+function getInitialServerState() {
+	// Bootstrapped state from a server-render
+	if ( typeof window === 'object' && window.initialReduxState && ! isSupportUserSession() ) {
+		const serverState = deserialize( window.initialReduxState, initialReducer );
+		return pick( serverState, Object.keys( window.initialReduxState ) );
+	}
+	return {};
 }
 
 /**
@@ -91,7 +92,7 @@ function getStateFromLocalStorage() {
 			debug( 'stored state is too old, building redux store from scratch' );
 			return {};
 		}
-		const deserializedState = deserialize( initialState );
+		const deserializedState = deserialize( initialState, initialReducer );
 		// This check is most important to do on save (to prevent bad data
 		// from being written to local storage in the first place). But it
 		// is worth doing here also, on load, to prevent using historical
@@ -165,9 +166,11 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 			state = nextState;
 
-			localforage.setItem( reduxStateKey, serializeState( state ) ).catch( setError => {
-				debug( 'failed to set redux-store state', setError );
-			} );
+			// TODO: serialize with the current reducer rather than initial one once we
+			// start updating the reducer dynamically.
+			localforage
+				.setItem( reduxStateKey, serializeState( state, initialReducer ) )
+				.catch( setError => debug( 'failed to set redux-store state', setError ) );
 		},
 		SERIALIZE_THROTTLE,
 		{ leading: false, trailing: true }

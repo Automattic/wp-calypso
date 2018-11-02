@@ -29,9 +29,9 @@ class UpgradeBanner extends Component {
 						event="activity_log_upgrade_click_jetpack"
 						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
 						plan={ PLAN_JETPACK_PERSONAL_MONTHLY }
-						title={ translate( "Upgrade to a plan to access your site's complete log" ) }
+						title={ translate( "Upgrade to a plan to access your site's complete activity" ) }
 						description={ translate(
-							"With your free plan, your site's activity log will only display the last 20 events. Upgrade and get:"
+							"With your free plan, your site's Activity will only display the last 20 events. Upgrade and get:"
 						) }
 						list={ [
 							translate( 'Full activity for the past 30 days' ),
@@ -46,9 +46,9 @@ class UpgradeBanner extends Component {
 						event="activity_log_upgrade_click_wpcom"
 						feature={ FEATURE_JETPACK_ESSENTIAL }
 						plan={ PLAN_PERSONAL }
-						title={ translate( "Upgrade to a plan to access your site's complete log" ) }
+						title={ translate( "Upgrade to a plan to access your site's complete activity" ) }
 						description={ translate(
-							"With your free plan, your site's activity log will only display the last 20 events. Upgrade and get:"
+							"With your free plan, your site's Activity will only display the last 20 events. Upgrade and get:"
 						) }
 						list={ [
 							translate( 'Full activity for the past 30 days' ),

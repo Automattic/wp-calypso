@@ -24,13 +24,11 @@ class ImporterSquarespace extends React.PureComponent {
 			title: PropTypes.string.isRequired,
 		} ).isRequired,
 		importerStatus: PropTypes.shape( {
-			filename: PropTypes.string,
 			importerState: PropTypes.string.isRequired,
 			errorData: PropTypes.shape( {
 				type: PropTypes.string.isRequired,
 				description: PropTypes.string.isRequired,
 			} ),
-			percentComplete: PropTypes.number,
 			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
 		} ),

@@ -420,6 +420,7 @@ export function createSite( callback, { themeSlugWithRepo }, { site }, reduxStor
 	const data = {
 		blog_name: site,
 		blog_title: '',
+		public: -1,
 		options: { theme: themeSlugWithRepo },
 		validate: false,
 	};

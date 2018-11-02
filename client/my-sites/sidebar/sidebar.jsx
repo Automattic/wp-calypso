@@ -404,7 +404,9 @@ export class MySitesSidebar extends Component {
 			<li className={ linkClass } data-tip-target={ tipTarget }>
 				<a onClick={ this.trackPlanClick } href={ planLink }>
 					<JetpackLogo size={ 24 } />
-					<span className="menu-link-text">{ translate( 'Plan', { context: 'noun' } ) }</span>
+					<span className="menu-link-text" data-e2e-sidebar={ 'Plan' }>
+						{ translate( 'Plan', { context: 'noun' } ) }
+					</span>
 					<span className="sidebar__menu-link-secondary-text">{ planName }</span>
 				</a>
 			</li>

@@ -11,7 +11,7 @@ export default function detectSurveys( post, dom ) {
 		throw new Error( 'this transform must be used as part of withContentDOM' );
 	}
 
-	const surveys = dom.querySelectorAll( '.pd-embed' );
+	const surveys = dom.querySelectorAll( '.pd-embed, .cs-embed' );
 
 	if ( ! surveys ) {
 		return post;

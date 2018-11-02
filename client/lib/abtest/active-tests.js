@@ -1,5 +1,14 @@
 /** @format */
 export default {
+	improvedOnboarding: {
+		datestamp: '20181023',
+		variations: {
+			main: 90,
+			onboarding: 10,
+		},
+		defaultVariation: 'main',
+		localeTargets: 'any',
+	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
@@ -80,14 +89,6 @@ export default {
 		},
 		defaultVariation: 'no',
 	},
-	gSuiteDiscountV2: {
-		datestamp: '20180822',
-		variations: {
-			control: 100,
-			discount: 0,
-		},
-		defaultVariation: 'control',
-	},
 	krackenRebootM327V2: {
 		datestamp: '20181018',
 		variations: {
@@ -99,5 +100,13 @@ export default {
 		defaultVariation: 'domainsbot_front',
 		assignmentMethod: 'userId',
 		allowExistingUsers: true,
+	},
+	skipDomainOrSiteStep: {
+		datestamp: '20181025',
+		variations: {
+			yes: 50,
+			no: 50,
+		},
+		defaultVariation: 'yes',
 	},
 };

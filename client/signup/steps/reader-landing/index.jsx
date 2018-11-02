@@ -28,10 +28,9 @@ class ReaderLandingStep extends Component {
 					flowName={ flowName }
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }
-					headerText={ translate( 'Create an account and start using the Reader' ) }
+					headerText={ translate( 'Keep track of all your favorite sites in one place' ) }
 					subHeaderText={ translate(
-						'Use your existing email subscriptions in the WordPress.com Reader ' +
-							'and keep updated on your favorite sites.'
+						'Read posts from all the sites you follow, find great new reads, and stay up-to-date on comments and replies in one convenient place: the WordPress.com Reader.'
 					) }
 					signupProgress={ signupProgress }
 					stepContent={ <ReaderLandingStepContent onButtonClick={ this.handleButtonClick } /> }

@@ -1,0 +1,24 @@
+.site-blocks__list {
+	border-bottom: 1px solid $gray-lighten-30;
+}
+
+.site-blocks__list-item {
+	border-top: 1px solid $gray-lighten-30;
+	min-height: 40px;
+	line-height: 40px;
+	vertical-align: middle;
+	display: flex;
+
+	&.is-placeholder {
+		display: block;
+	}
+}
+
+.site-blocks__list-item-placeholder-text {
+	@include placeholder();
+	padding-right: 150px;
+}
+
+.site-blocks__remove-button {
+	margin-left: auto;
+}
