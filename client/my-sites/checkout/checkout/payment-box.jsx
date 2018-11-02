@@ -81,7 +81,7 @@ export class PaymentBox extends PureComponent {
 				break;
 
 			case 'web-payment':
-				let webPaymentMethod = detectWebPaymentMethod();
+				const webPaymentMethod = detectWebPaymentMethod();
 
 				switch ( webPaymentMethod ) {
 					case WEB_PAYMENT_BASIC_CARD_METHOD:

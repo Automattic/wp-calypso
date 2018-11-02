@@ -41,7 +41,7 @@ export const WEB_PAYMENT_APPLE_PAY_METHOD = 'https://apple.com/apple-pay';
  *
  */
 const SUPPORTED_NETWORKS = [ 'visa', 'mastercard', 'amex' ];
-const APPLE_PAY_MERCHANT_IDENTIFIER = 'merchant.com.wordpress.test';
+const APPLE_PAY_MERCHANT_IDENTIFIER = config( 'apple_pay_merchant_id' );
 const PAYMENT_REQUEST_OPTIONS = {
 	requestPayerName: true,
 	requestPayerPhone: false,
@@ -191,7 +191,7 @@ export class WebPaymentBox extends React.Component {
 	};
 
 	getPaymentRequestForApplePay = () => {
-		const { cart } = this.props;
+		const { cart, translate } = this.props;
 
 		const supportedPaymentMethods = [
 			{
@@ -207,7 +207,7 @@ export class WebPaymentBox extends React.Component {
 		];
 		const paymentDetails = {
 			total: {
-				label: 'Total',
+				label: translate( 'Total' ),
 				amount: {
 					currency: cart.currency,
 					value: cart.total_cost + '',
@@ -236,11 +236,7 @@ export class WebPaymentBox extends React.Component {
 			wpcom
 				.undocumented()
 				.applePayMerchantValidation( event.validationURL, environment )
-				.then( json => {
-					console.log( json );
-
-					event.complete( json );
-				} )
+				.then( json => event.complete( json ) )
 				.catch( error => {
 					console.error( 'onmerchantvalidation error' );
 					console.error( error );
@@ -251,7 +247,7 @@ export class WebPaymentBox extends React.Component {
 	};
 
 	getPaymentRequestForBasicCard = () => {
-		const { cart } = this.props;
+		const { cart, translate } = this.props;
 
 		const supportedPaymentMethods = [
 			{
@@ -263,7 +259,7 @@ export class WebPaymentBox extends React.Component {
 		];
 		const paymentDetails = {
 			total: {
-				label: 'Total',
+				label: translate( 'Total' ),
 				amount: {
 					currency: cart.currency,
 					value: cart.total_cost,
@@ -300,8 +296,6 @@ export class WebPaymentBox extends React.Component {
 						paymentRequest
 							.show()
 							.then( paymentResponse => {
-								console.log( paymentResponse );
-
 								const { payerName, details } = paymentResponse;
 								const { token } = details;
 
@@ -401,9 +395,9 @@ export class WebPaymentBox extends React.Component {
 		}
 
 		const buttonState = this.buttonState();
+		const buttonDisabled = buttonState.disabled || ! this.state.country || ! this.state.postalCode;
 		let introductionText;
 		let button;
-		let buttonDisabled = buttonState.disabled || ! this.state.country || ! this.state.postalCode;
 
 		switch ( paymentMethod ) {
 			case WEB_PAYMENT_APPLE_PAY_METHOD:
