@@ -17,7 +17,12 @@ export class InfoWindow extends Component {
 		this.infowindow = new mapboxgl.Popup( {
 			closeButton: true,
 			closeOnClick: false,
-			offset: 25,
+			offset: {
+				left: [ 0, 0 ],
+				top: [ 0, 5 ],
+				right: [ 0, 0 ],
+				bottom: [ 0, -40 ],
+			},
 		} );
 		this.infowindow.setDOMContent( this.el );
 		this.infowindow.on( 'close', this.closeClick );

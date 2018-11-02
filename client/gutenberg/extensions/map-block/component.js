@@ -84,7 +84,7 @@ export class Map extends Component {
 								className="wp-block-jetpack-maps__marker-caption"
 								label={ __( 'Marker Caption', 'jetpack' ) }
 								value={ caption }
-								rows="3"
+								rows="2"
 								tag="textarea"
 								onChange={ value => updateActiveMarker( { caption: value } ) }
 							/>
@@ -132,8 +132,10 @@ export class Map extends Component {
 			this.clearCurrentMarker();
 		}
 		if ( points !== prevProps.points ) {
-			this.clearCurrentMarker();
 			this.setBoundsByMarkers();
+		}
+		if ( points.length !== prevProps.points.length ) {
+			this.clearCurrentMarker();
 		}
 		if ( map_style !== prevProps.map_style || map_details !== prevProps.map_details ) {
 			map.setStyle( this.getMapStyle() );
