@@ -162,6 +162,15 @@ class SimplePaymentsEdit extends Component {
 		return Math.max( 0, ( match[ 1 ] ? match[ 1 ].length : 0 ) - ( match[ 2 ] ? +match[ 2 ] : 0 ) );
 	};
 
+	/**
+	 * Validate price
+	 *
+	 * Stores error message in state.fieldPriceError
+	 *
+	 * @param {Number} price A price
+	 * @param {String} currency three-character ISO-4217 currency code
+	 * @returns {Boolean} True when valid, false when invalid
+	 */
 	validatePrice = ( price, currency ) => {
 		const { precision } = getCurrencyDefaults( currency );
 
@@ -216,6 +225,14 @@ class SimplePaymentsEdit extends Component {
 		return true;
 	};
 
+	/**
+	 * Validate email
+	 *
+	 * Stores error message in state.fieldEmailError
+	 *
+	 * @param {String} email An email
+	 * @returns {Boolean} True when valid, false when invalid
+	 */
 	validateEmail = email => {
 		if ( ! email ) {
 			this.setState( {
@@ -236,12 +253,19 @@ class SimplePaymentsEdit extends Component {
 
 		if ( this.state.fieldEmailError ) {
 			this.setState( { fieldEmailError: '' } );
-			return false;
 		}
 
 		return true;
 	};
 
+	/**
+	 * Validate title
+	 *
+	 * Stores error message in state.fieldTitleError
+	 *
+	 * @param {String} title A title
+	 * @returns {Boolean} True when valid, false when invalid
+	 */
 	validateTitle = title => {
 		if ( ! title ) {
 			this.setState( {
@@ -256,11 +280,11 @@ class SimplePaymentsEdit extends Component {
 		if ( this.state.fieldTitleError ) {
 			this.setState( { fieldTitleError: '' } );
 		}
+
 		return true;
 	};
 
 	handleEmailChange = email => {
-		this.validateEmail( email );
 		this.props.setAttributes( { email } );
 	};
 
