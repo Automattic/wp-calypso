@@ -54,7 +54,6 @@ class AboutStep extends Component {
 			isValidLandingPageVertical( props.siteTopic ) &&
 			props.queryObject.vertical === props.siteTopic;
 		this.state = {
-			query: '',
 			siteTopicValue: this.props.siteTopic,
 			userExperience: this.props.userExperience,
 			showStore: false,
@@ -97,105 +96,11 @@ class AboutStep extends Component {
 		this.pressableStore = ref;
 	};
 
-	setSuggestionsRef = ref => {
-		this.suggestionsRef = ref;
-	};
-
-	hideSuggestions = () => {
-		this.setState( { query: '' } );
-	};
-
-	handleSuggestionChangeEvent = ( { name, value } ) => {
+	onSiteTopicChange = ( { name, value } ) => {
+		this.setState( { siteTopicValue: value } );
 		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { value } );
 		this.formStateController.handleFieldChange( { name, value } );
 	};
-
-	handleSuggestionKeyDown = event => {
-		if ( this.suggestionsRef.props.suggestions.length > 0 ) {
-			const fieldName = event.target.name;
-			let suggestionPosition = this.suggestionsRef.state.suggestionPosition;
-
-			switch ( event.key ) {
-				case 'ArrowRight':
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition ),
-						fieldName
-					);
-
-					break;
-				case 'ArrowUp':
-					if ( suggestionPosition === 0 ) {
-						suggestionPosition = this.suggestionsRef.props.suggestions.length;
-					}
-
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition - 1 ),
-						fieldName
-					);
-
-					break;
-				case 'ArrowDown':
-					suggestionPosition++;
-
-					if ( suggestionPosition === this.suggestionsRef.props.suggestions.length ) {
-						suggestionPosition = 0;
-					}
-
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition ),
-						fieldName
-					);
-
-					break;
-				case 'Tab':
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition ),
-						fieldName
-					);
-
-					break;
-				case 'Enter':
-					event.preventDefault();
-					break;
-			}
-		}
-
-		this.suggestionsRef.handleKeyEvent( event );
-	};
-
-	handleSuggestionMouseDown = position => {
-		this.setState( { siteTopicValue: position.label } );
-		this.hideSuggestions();
-
-		this.formStateController.handleFieldChange( {
-			name: 'siteTopic',
-			value: position.label,
-		} );
-	};
-
-	getSuggestions() {
-		if ( ! this.state.query ) {
-			return [];
-		}
-
-		const query = this.state.query.trim().toLocaleLowerCase();
-		return Object.values( hints )
-			.filter( hint => hint.toLocaleLowerCase().includes( query ) )
-			.map( hint => ( { label: hint } ) );
-	}
-
-	getSuggestionLabel( suggestionPosition ) {
-		return this.suggestionsRef.props.suggestions[ suggestionPosition ].label;
-	}
-
-	updateFieldFromSuggestion( term, field ) {
-		this.setState( { siteTopicValue: term } );
-
-		this.formStateController.handleFieldChange( {
-			name: field,
-			value: term,
-		} );
-	}
 
 	handleChangeEvent = event => {
 		this.formStateController.handleFieldChange( {
@@ -573,7 +478,7 @@ class AboutStep extends Component {
 										placeholder={ translate(
 											'e.g. Fashion, travel, design, plumber, electrician'
 										) }
-										onChange={ this.handleSuggestionChangeEvent }
+										onChange={ this.onSiteTopicChange }
 										suggestions={ hints }
 									/>
 								</FormFieldset>
