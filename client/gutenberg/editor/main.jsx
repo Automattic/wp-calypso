@@ -9,6 +9,7 @@ import { get, noop } from 'lodash';
 import { dispatch } from '@wordpress/data';
 import '@wordpress/core-data'; // Initializes core data store
 import { registerCoreBlocks } from '@wordpress/block-library';
+import { setLocaleData } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -21,12 +22,45 @@ import { createAutoDraft, requestSitePost, requestGutenbergDemoContent } from 's
 import { getHttpData } from 'state/data-layer/http-data';
 import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
-import { translate } from 'i18n-calypso';
+import { translate, getLocaleSlug } from 'i18n-calypso';
 import 'tinymce/plugins/lists/plugin.js'; // Make list indent/outdent work
 import './hooks'; // Needed for integrating Calypso's media library (and other hooks)
 import { removeUnsupportedCoreBlocks } from './setup';
 
+let loadedLocale;
+const fetchLocale = () => {
+	const locale = getLocaleSlug();
+	if ( loadedLocale === locale ) {
+		return;
+	}
+	loadedLocale = locale;
+	const xhr = new XMLHttpRequest();
+
+	xhr.open(
+		'GET',
+		`https://widgets.wp.com/languages/jetpack-gutenberg-blocks/${ locale }.json`,
+		true
+	);
+
+	xhr.onload = ( { target } ) => {
+		if ( 200 !== target.status ) {
+			return;
+		}
+
+		try {
+			// TODO: This loads too late, we receive the error: Error: Domain `jetpack` was not found.
+			setLocaleData( JSON.parse( xhr.response ) );
+		} catch ( e ) {}
+	};
+
+	xhr.send();
+};
+
 class GutenbergEditor extends Component {
+	static getDerivedStateFromProps() {
+		fetchLocale();
+	}
+
 	componentDidMount() {
 		registerCoreBlocks();
 		// Prevent Guided tour from showing when editor loads.
