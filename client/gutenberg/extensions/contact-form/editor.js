@@ -5,40 +5,24 @@
 /**
  * External dependencies
  */
-import {
-	registerBlockType,
-	getBlockType,
-	createBlock
-} from '@wordpress/blocks';
-
-import {
-    SVG,
-    Path
-} from '@wordpress/components';
-
-import {
-	InnerBlocks
-} from '@wordpress/editor';
-
-import {
-	__
-} from '@wordpress/i18n';
+import { registerBlockType, getBlockType, createBlock } from '@wordpress/blocks';
+import { SVG, Path } from '@wordpress/components';
+import { InnerBlocks } from '@wordpress/editor';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-
 import './editor.scss';
-import JetpackForm from './components/JetpackForm';
-import JetpackField from './components/JetpackField';
-import JetpackFieldTextarea from './components/JetpackFieldTextarea';
-import JetpackFieldCheckbox from './components/JetpackFieldCheckbox';
-import JetpackFieldMultiple from './components/JetpackFieldMultiple';
+import JetpackForm from './components/jetpack-form';
+import JetpackField from './components/jetpack-field';
+import JetpackFieldTextarea from './components/jetpack-field-textarea';
+import JetpackFieldCheckbox from './components/jetpack-field-checkbox';
+import JetpackFieldMultiple from './components/jetpack-field-multiple';
 
 /**
  * Block Registrations:
  */
-
 registerBlockType( 'jetpack/form', {
 	title: __( 'Contact Form', 'jetpack' ),
 	icon: 'feedback',

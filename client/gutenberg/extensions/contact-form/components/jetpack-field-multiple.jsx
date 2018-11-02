@@ -5,30 +5,20 @@
 /**
  * External dependencies
  */
-import {
-	BaseControl,
-	IconButton
-} from '@wordpress/components';
+import { BaseControl, IconButton } from '@wordpress/components';
 
-import {
-	withInstanceId
-} from '@wordpress/compose';
+import { withInstanceId } from '@wordpress/compose';
 
-import {
-	Component,
-	Fragment
-} from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
 
-import {
-	__
-} from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import JetpackFieldSettings from './JetpackFieldSettings';
-import JetpackFieldLabel from './JetpackFieldLabel';
-import JetpackOption from './JetpackOption';
+import JetpackFieldSettings from './jetpack-field-settings';
+import JetpackFieldLabel from './jetpack-field-label';
+import JetpackOption from './jetpack-option';
 
 class JetpackFieldMultiple extends Component {
 	constructor( ...args ) {

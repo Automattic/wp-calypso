@@ -5,19 +5,14 @@
 /**
  * External dependencies
  */
-import {
-	TextControl
-} from '@wordpress/components';
-
-import {
-	Fragment
-} from '@wordpress/element';
+import { TextControl } from '@wordpress/components';
+import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import JetpackFieldSettings from './JetpackFieldSettings';
-import JetpackFieldLabel from './JetpackFieldLabel';
+import JetpackFieldSettings from './jetpack-field-settings';
+import JetpackFieldLabel from './jetpack-field-label';
 
 function JetpackField( props ) {
 	return (

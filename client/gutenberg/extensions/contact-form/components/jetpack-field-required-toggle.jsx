@@ -5,13 +5,9 @@
 /**
  * External dependencies
  */
-import {
-	ToggleControl
-} from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 
-import {
-	__
-} from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 function JetpackFieldRequiredToggle( props ) {
 	return (

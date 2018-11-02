@@ -5,23 +5,10 @@
 /**
  * External dependencies
  */
-import {
-	PanelBody,
-	TextControl
-} from '@wordpress/components';
-
-import {
-	InspectorControls
-} from '@wordpress/editor';
-
-import {
-	Component,
-	Fragment
-} from '@wordpress/element';
-
-import {
-	__
-} from '@wordpress/i18n';
+import { PanelBody, TextControl } from '@wordpress/components';
+import { InspectorControls } from '@wordpress/editor';
+import { Component, Fragment } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 class JetpackForm extends Component {
 	constructor( ...args ) {

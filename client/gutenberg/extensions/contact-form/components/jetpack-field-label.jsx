@@ -6,14 +6,9 @@
  * External dependencies
  */
 
-import {
-	Component,
-	Fragment
-} from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
 
-import {
-	__
-} from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 class JetpackFieldLabel extends Component {
 	constructor( ...args ) {

@@ -5,24 +5,17 @@
 /**
  * External dependencies
  */
-import {
-	BaseControl,
-	CheckboxControl
-} from '@wordpress/components';
+import { BaseControl, CheckboxControl } from '@wordpress/components';
 
-import {
-	withInstanceId
-} from '@wordpress/compose';
+import { withInstanceId } from '@wordpress/compose';
 
-import {
-	Fragment
-} from '@wordpress/element';
+import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import JetpackFieldSettings from './JetpackFieldSettings';
-import JetpackFieldLabel from './JetpackFieldLabel';
+import JetpackFieldSettings from './jetpack-field-settings';
+import JetpackFieldLabel from './jetpack-field-label';
 
 function JetpackFieldCheckbox( props ) {
 	return (

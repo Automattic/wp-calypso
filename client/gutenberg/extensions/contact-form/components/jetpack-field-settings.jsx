@@ -5,27 +5,15 @@
 /**
  * External dependencies
  */
-import {
-	PanelBody
-} from '@wordpress/components';
-
-import {
-	InspectorControls
-} from '@wordpress/editor';
-
-import {
-	Component
-} from '@wordpress/element';
-
-import {
-	__
-} from '@wordpress/i18n';
+import { PanelBody } from '@wordpress/components';
+import { InspectorControls } from '@wordpress/editor';
+import { Component } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-
-import JetpackFieldRequiredToggle from './JetpackFieldRequiredToggle';
+import JetpackFieldRequiredToggle from './jetpack-field-required-toggle';
 
 class JetpackFieldSettings extends Component {
 	constructor( ...args ) {

@@ -5,19 +5,14 @@
 /**
  * External dependencies
  */
-import {
-	TextareaControl
-} from '@wordpress/components';
-
-import {
-	Fragment
-} from '@wordpress/element';
+import { TextareaControl } from '@wordpress/components';
+import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import JetpackFieldSettings from './JetpackFieldSettings';
-import JetpackFieldLabel from './JetpackFieldLabel';
+import JetpackFieldSettings from './jetpack-field-settings';
+import JetpackFieldLabel from './jetpack-field-label';
 
 function JetpackFieldTextarea( props ) {
 	return (

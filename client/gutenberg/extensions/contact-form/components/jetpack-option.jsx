@@ -5,17 +5,9 @@
 /**
  * External dependencies
  */
-import {
-	IconButton
-} from '@wordpress/components';
-
-import {
-	Component
-} from '@wordpress/element';
-
-import {
-	__
-} from '@wordpress/i18n';
+import { IconButton } from '@wordpress/components';
+import { Component } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 class JetpackOption extends Component {
 	constructor( ...args ) {
