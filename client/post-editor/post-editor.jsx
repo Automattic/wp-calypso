@@ -64,7 +64,6 @@ import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import EditorForbidden from 'post-editor/editor-forbidden';
 import EditorNotice from 'post-editor/editor-notice';
-import { isEnabled } from 'config';
 import EditorGutenbergOptInNotice from 'post-editor/editor-gutenberg-opt-in-notice';
 import EditorWordCount from 'post-editor/editor-word-count';
 import { savePreference } from 'state/preferences/actions';
@@ -267,7 +266,7 @@ export class PostEditor extends React.Component {
 			<div className={ classes }>
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
 				<QueryPreferences />
-				{ isEnabled( 'gutenberg/opt-in' ) && <EditorGutenbergOptInNotice /> }
+				<EditorGutenbergOptInNotice />
 				<EditorConfirmationSidebar
 					handlePreferenceChange={ this.handleConfirmationSidebarPreferenceChange }
 					onPrivatePublish={ this.onPublish }
