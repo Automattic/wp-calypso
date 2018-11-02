@@ -33,7 +33,7 @@ class MapSave extends Component {
 				data-map_center={ JSON.stringify( map_center ) }
 				data-marker_color={ marker_color }
 			>
-				{ points.length && <ul>{ pointsList }</ul> }
+				{ points.length > 0 && <ul>{ pointsList }</ul> }
 			</div>
 		);
 	}
