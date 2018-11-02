@@ -39,6 +39,7 @@ const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'fa
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
+const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
@@ -279,7 +280,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 			new webpack.IgnorePlugin( /^props$/ ),
-			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
+			isCalypsoClient && new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
 			new MiniCssExtractPluginWithRTL( {
 				filename: cssFilename,
 				rtlEnabled: true,
