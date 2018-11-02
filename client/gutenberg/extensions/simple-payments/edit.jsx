@@ -49,11 +49,7 @@ class SimplePaymentsEdit extends Component {
 			isLoadingInitial,
 		} = this.props;
 		const { currency, price, title, email, content, multiple } = attributes;
-		const {
-			fieldEmailError,
-			fieldPriceError,
-			fieldTitleError,
-		} = this.state;
+		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
 
 		// @TODO check componentDidMount for the case where post was already loaded
 		if ( ! prevProps.simplePayment && simplePayment ) {
@@ -61,9 +57,7 @@ class SimplePaymentsEdit extends Component {
 				content: get( simplePayment, 'content.raw', content ),
 				currency: get( simplePayment, 'meta.spay_currency', currency || 'USD' ),
 				email: get( simplePayment, 'meta.spay_email', email ),
-				multiple: Boolean(
-					get( simplePayment, 'meta.spay_multiple', multiple || false )
-				),
+				multiple: Boolean( get( simplePayment, 'meta.spay_multiple', multiple || false ) ),
 				price: get( simplePayment, 'meta.spay_price', price || undefined ),
 				title: get( simplePayment, 'title.raw', title ),
 			} );
@@ -431,6 +425,10 @@ class SimplePaymentsEdit extends Component {
 								'need a PayPal account connected to a bank account.',
 							'jetpack'
 						) }
+						<br />
+						<ExternalLink href="https://www.paypal.com/">
+							{ __( 'Create an account at PayPal' ) }
+						</ExternalLink>
 					</p>
 				</Fragment>
 			</div>
