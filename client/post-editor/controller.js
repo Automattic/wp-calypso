@@ -15,6 +15,7 @@ import { get, has, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
 import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/actions';
 import { addSiteFragment } from 'lib/route';
@@ -257,6 +258,10 @@ export default {
 	},
 
 	gutenberg: ( context, next ) => {
+		if ( ! isEnabled( 'calypsoify/gutenberg' ) ) {
+			return next();
+		}
+
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );
