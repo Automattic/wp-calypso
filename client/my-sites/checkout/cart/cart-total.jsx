@@ -19,7 +19,7 @@ class CartTotal extends React.Component {
 
 		if ( cart.hasPendingServerUpdates ) {
 			return (
-				<div className="cart-total">
+				<div className="cart__total">
 					{ this.props.translate( 'Recalculating…', {
 						context: 'Upgrades: Updating cart cost in checkout',
 					} ) }
@@ -28,13 +28,13 @@ class CartTotal extends React.Component {
 		}
 
 		if ( ! cart.total_cost_display ) {
-			return <div className="cart-total" />;
+			return <div className="cart__total" />;
 		}
 
 		return (
-			<div className="cart-total">
-				<span className="cart-total-label">{ this.totalLabel() }</span>
-				<span className="cart-total-amount">{ cart.total_cost_display }</span>
+			<div className="cart__total">
+				<span className="cart__total-label">{ this.totalLabel() }</span>
+				<span className="cart__total-amount">{ cart.total_cost_display }</span>
 			</div>
 		);
 	}
