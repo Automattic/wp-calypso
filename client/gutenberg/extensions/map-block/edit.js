@@ -58,6 +58,15 @@ class MapEdit extends Component {
 		const { attributes, setAttributes } = this.props;
 		const { points } = attributes;
 		const newPoints = points.slice( 0 );
+		let duplicateFound = false;
+		points.map( existingPoint => {
+			if ( existingPoint.id === point.id ) {
+				duplicateFound = true;
+			}
+		} );
+		if ( duplicateFound ) {
+			return;
+		}
 		newPoints.push( point );
 		setAttributes( { points: newPoints } );
 		this.setState( { addPointVisibility: false } );
