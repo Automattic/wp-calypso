@@ -38,7 +38,7 @@ class SiteTopicStep extends Component {
 
 		this.state = {
 			siteTopicInputValue: props.siteTopic || '',
-		}
+		};
 	}
 
 	onChangeTopic = event => this.setState( { siteTopicInputValue: event.target.value } );
@@ -48,6 +48,8 @@ class SiteTopicStep extends Component {
 
 		this.props.submitSiteTopic( this.trimmedSiteTopicInputValue() );
 	};
+
+	trimmedSiteTopicInputValue = () => this.state.siteTopicInputValue.trim();
 
 	renderContent() {
 		const { translate } = this.props;
@@ -62,12 +64,12 @@ class SiteTopicStep extends Component {
 							id="siteTopic"
 							name="siteTopic"
 							placeholder={ translate( 'e.g. Fashion, travel, design, plumber, electrician' ) }
-							value={ this.state.siteTopicInputValue }
+							value={ siteTopicInputValue }
 							onChange={ this.onChangeTopic }
 							autoComplete="off"
 						/>
 					</FormFieldset>
-					<Button type="submit" disabled={ ! siteTopicInputValue } primary>
+					<Button type="submit" disabled={ ! this.trimmedSiteTopicInputValue() } primary>
 						{ translate( 'Continue' ) }
 					</Button>
 					<span className="site-topic__form-description">
@@ -102,12 +104,7 @@ class SiteTopicStep extends Component {
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	submitSiteTopic: siteTopicInputValue => {
-		const {
-			translate,
-			flowName,
-			stepName,
-			goToNextStep,
-		} = ownProps;
+		const { translate, flowName, stepName, goToNextStep } = ownProps;
 
 		dispatch( setSiteTopic( siteTopicInputValue ) );
 
@@ -126,9 +123,11 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	},
 } );
 
-export default localize( connect(
-	state => ( {
-		siteTopic: getSignupStepsSiteTopic( state ),
-	} ),
-	mapDispatchToProps
-)( SiteTopicStep ) );
+export default localize(
+	connect(
+		state => ( {
+			siteTopic: getSignupStepsSiteTopic( state ),
+		} ),
+		mapDispatchToProps
+	)( SiteTopicStep )
+);
