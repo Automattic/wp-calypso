@@ -11,7 +11,7 @@ import GridiconMoney from 'gridicons/dist/money';
  */
 import edit from './edit';
 import save from './save';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 /**
  * Styles
@@ -31,7 +31,7 @@ registerBlockType( 'jetpack/simple-payments', {
 
 	category: 'jetpack',
 
-	keywords: [ __( 'simple payments' ), __( 'shop' ), 'PayPal' ],
+	keywords: [ __( 'Simple Payments' ), _x( 'shop', 'block search term' ), 'PayPal' ],
 
 	attributes: {
 		currency: {

@@ -5,6 +5,7 @@
  */
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
+import { compose, withInstanceId } from '@wordpress/compose';
 import {
 	ExternalLink,
 	PanelBody,
@@ -33,10 +34,10 @@ import ProductPlaceholder from './product-placeholder';
 
 class SimplePaymentsEdit extends Component {
 	state = {
-		isSavingProduct: false,
-		fieldTitleError: '',
-		fieldPriceError: '',
 		fieldEmailError: '',
+		fieldPriceError: '',
+		fieldTitleError: '',
+		isSavingProduct: false,
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -57,7 +58,7 @@ class SimplePaymentsEdit extends Component {
 				content: get( simplePayment, 'content.raw', content ),
 				currency: get( simplePayment, 'meta.spay_currency', currency || 'USD' ),
 				email: get( simplePayment, 'meta.spay_email', email ),
-				multiple: Boolean( get( simplePayment, 'meta.spay_multiple', multiple || false ) ),
+				multiple: Boolean( get( simplePayment, 'meta.spay_multiple', Boolean( multiple ) ) ),
 				price: get( simplePayment, 'meta.spay_price', price || undefined ),
 				title: get( simplePayment, 'title.raw', title ),
 			} );
@@ -330,13 +331,18 @@ class SimplePaymentsEdit extends Component {
 
 	render() {
 		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
-		const { attributes, isSelected, isLoadingInitial } = this.props;
+		const { attributes, isSelected, isLoadingInitial, instanceId } = this.props;
 		const { content, currency, email, multiple, price, title } = attributes;
 
 		if ( ! isSelected && isLoadingInitial ) {
 			return (
 				<div className="simple-payments__loading">
-					<ProductPlaceholder content={ '█████' } formattedPrice={ '█████' } title={ '█████' } />
+					<ProductPlaceholder
+						content={ '█████' }
+						formattedPrice={ '█████' }
+						title={ '█████' }
+						ariaBusy="true"
+					/>
 				</div>
 			);
 		}
@@ -357,6 +363,7 @@ class SimplePaymentsEdit extends Component {
 					formattedPrice={ this.formatPrice( price, currency ) }
 					multiple={ multiple }
 					title={ title }
+					ariaBusy="false"
 				/>
 			);
 		}
@@ -430,10 +437,11 @@ class SimplePaymentsEdit extends Component {
 					</div>
 
 					<TextControl
-						disabled={ isLoadingInitial }
+						aria-describedby={ `${ instanceId }-email-help` }
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
 							'simple-payments__field-has-error': fieldEmailError,
 						} ) }
+						disabled={ isLoadingInitial }
 						help={ fieldEmailError ? fieldEmailError : '' }
 						label={ __( 'Email' ) }
 						onChange={ this.handleEmailChange }
@@ -443,13 +451,12 @@ class SimplePaymentsEdit extends Component {
 						value={ email }
 					/>
 
-					<p className="components-base-control__help">
+					<p className="components-base-control__help" id={ `${ instanceId }-email-help` }>
 						{ __(
 							"This is where PayPal will send your money. To claim a payment, you'll " +
 								'need a PayPal account connected to a bank account.',
 							'jetpack'
 						) }
-						<br />
 						<ExternalLink href="https://www.paypal.com/">
 							{ __( 'Create an account at PayPal' ) }
 						</ExternalLink>
@@ -460,7 +467,7 @@ class SimplePaymentsEdit extends Component {
 	}
 }
 
-export default withSelect( ( select, props ) => {
+const applyWithSelect = withSelect( ( select, props ) => {
 	const { paymentId } = props.attributes;
 	const { getEntityRecord } = select( 'core' );
 	const { isSavingPost } = select( 'core/editor' );
@@ -474,4 +481,6 @@ export default withSelect( ( select, props ) => {
 		isSavingPost: !! isSavingPost(),
 		simplePayment,
 	};
-} )( SimplePaymentsEdit );
+} );
+
+export default compose( [ applyWithSelect, withInstanceId ] )( SimplePaymentsEdit );
