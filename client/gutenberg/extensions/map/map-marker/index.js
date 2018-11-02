@@ -40,7 +40,7 @@ export class MapMarker extends Component {
 		if ( this.marker ) {
 			this.marker.setLngLat( mapboxPoint );
 		} else {
-			el.className = 'wp-block-jetpack-maps-marker';
+			el.className = 'wp-block-jetpack-map-marker';
 			this.marker = new mapboxgl.Marker( el )
 				.setLngLat( mapboxPoint )
 				.setOffset( [ 0, -19 ] )

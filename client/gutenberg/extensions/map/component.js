@@ -81,14 +81,14 @@ export class Map extends Component {
 								onChange={ value => updateActiveMarker( { title: value } ) }
 							/>
 							<TextareaControl
-								className="wp-block-jetpack-maps__marker-caption"
+								className="wp-block-jetpack-map__marker-caption"
 								label={ __( 'Marker Caption', 'jetpack' ) }
 								value={ caption }
 								rows="2"
 								tag="textarea"
 								onChange={ value => updateActiveMarker( { caption: value } ) }
 							/>
-							<Button onClick={ deleteActiveMarker } className="wp-block-jetpack-maps__delete-btn">
+							<Button onClick={ deleteActiveMarker } className="wp-block-jetpack-map__delete-btn">
 								<Dashicon icon="trash" size="15" /> { __( 'Delete Marker', 'jetpack' ) }
 							</Button>
 						</Fragment>
@@ -105,7 +105,7 @@ export class Map extends Component {
 		);
 		return (
 			<Fragment>
-				<div className="wp-block-jetpack-maps__gm-container" ref={ this.mapRef }>
+				<div className="wp-block-jetpack-map__gm-container" ref={ this.mapRef }>
 					{ mapMarkers }
 				</div>
 				{ infoWindow }
