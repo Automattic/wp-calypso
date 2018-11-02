@@ -32,7 +32,9 @@ class MomentProvider extends React.Component {
 		if ( currentLocale !== 'en' ) {
 			debug( 'Loading moment locale for %s', currentLocale );
 			try {
-				await import( /* webpackChunkName: "moment-locale-[request]", webpackInclude: /\.js$/ */ `moment/locale/${ currentLocale }` );
+				// expose the import load promise as instance property. Useful for tests that wait for it
+				this.loadingLocalePromise = import( /* webpackChunkName: "moment-locale-[request]", webpackInclude: /\.js$/ */ `moment/locale/${ currentLocale }` );
+				await this.loadingLocalePromise;
 			} catch ( e ) {
 				debug( 'Failed to load moment locale for %s', currentLocale );
 				return;
