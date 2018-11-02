@@ -5,9 +5,7 @@
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Children, Component } from 'react';
-import store from 'store';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -22,8 +20,7 @@ import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom
 import ProgressBar from 'components/progress-bar';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-
-const storeKeyForNeverShow = 'sitesNeverShowChecklistBanner';
+import { getNeverShowBannerStatus, setNeverShowBannerStatus } from './never-show';
 
 export class ChecklistBanner extends Component {
 	static propTypes = {
@@ -36,15 +33,15 @@ export class ChecklistBanner extends Component {
 
 	handleClose = () => {
 		const { siteId } = this.props;
-		const sitesNeverShowBanner = store.get( storeKeyForNeverShow ) || {};
-		sitesNeverShowBanner[ `${ siteId }` ] = true;
-		store.set( storeKeyForNeverShow, sitesNeverShowBanner );
+		setNeverShowBannerStatus( siteId, true );
 
 		this.setState( { closed: true } );
 
-		this.props.track( 'calypso_checklist_banner_close', {
-			site_id: siteId,
-		} );
+		if ( this.props.track ) {
+			this.props.track( 'calypso_checklist_banner_close', {
+				site_id: siteId,
+			} );
+		}
 	};
 
 	canShow() {
@@ -56,8 +53,7 @@ export class ChecklistBanner extends Component {
 			return false;
 		}
 
-		const sitesNeverShowBanner = store.get( storeKeyForNeverShow );
-		if ( get( sitesNeverShowBanner, String( this.props.siteId ) ) === true ) {
+		if ( getNeverShowBannerStatus( this.props.siteId ) ) {
 			return false;
 		}
 
