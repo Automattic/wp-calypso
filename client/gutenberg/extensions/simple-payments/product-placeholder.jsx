@@ -20,27 +20,27 @@ export default ( { title = '', content = '', formattedPrice = '', multiple = fal
 		<div className="jetpack-simple-payments-wrapper">
 			<div className="jetpack-simple-payments-product">
 				<div className="jetpack-simple-payments-details">
-{ title && <div className="jetpack-simple-payments-title"><p>{ title }</p></div> }
+					{ title && (
 						<div className="jetpack-simple-payments-title">
 							<p>{ title }</p>
 						</div>
-					) : null }
-					{ content ? (
+					) }
+					{ content && (
 						<div className="jetpack-simple-payments-description">
 							<p>{ content }</p>
 						</div>
-					) : null }
-					{ formattedPrice ? (
+					) }
+					{ formattedPrice && (
 						<div className="jetpack-simple-payments-price">
 							<p>{ formattedPrice }</p>
 						</div>
-					) : null }
+					) }
 					<div className="jetpack-simple-payments-purchase-box">
-						{ multiple ? (
+						{ multiple && (
 							<div className="jetpack-simple-payments-items">
 								<input className="jetpack-simple-payments-items-number" type="number" value="1" />
 							</div>
-						) : null }
+						) }
 						<div className="jetpack-simple-payments-button">
 							<img
 								alt={ __( 'Pay with PayPal', 'jetpack' ) }
