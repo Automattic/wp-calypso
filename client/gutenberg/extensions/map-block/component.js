@@ -197,8 +197,8 @@ export class Map extends Component {
 		this.setBoundsByMarkers();
 	};
 	setBoundsByMarkers = () => {
-		const { zoom, points } = this.props;
-		const { map, activeMarker, mapboxgl, zoomControl } = this.state;
+		const { zoom, points, onSetZoom } = this.props;
+		const { map, activeMarker, mapboxgl, zoomControl, fit_to_bounds } = this.state;
 
 		const bounds = new mapboxgl.LngLatBounds();
 		if ( ! map || ! points.length || activeMarker ) {
@@ -224,9 +224,15 @@ export class Map extends Component {
 			map.removeControl( zoomControl );
 			return;
 		}
-
-		// If there are one (or zero) points, user can set zoom
-		map.setZoom( parseInt( zoom, 10 ) );
+		/* Case where points go from multiple to just one. Set zoom to an arbitrarily high level. */
+		if ( fit_to_bounds ) {
+			const newZoom = 12;
+			map.setZoom( newZoom );
+			onSetZoom( newZoom );
+		} else {
+			// If there are one (or zero) points, user can set zoom
+			map.setZoom( parseInt( zoom, 10 ) );
+		}
 		this.setState( { fit_to_bounds: false } );
 		map.addControl( zoomControl );
 	};
