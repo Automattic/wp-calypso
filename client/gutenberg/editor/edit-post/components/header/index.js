@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,13 +10,10 @@ import React from 'react';
  */
 import { __ } from '@wordpress/i18n';
 import { IconButton } from '@wordpress/components';
-import {
-	PostPreviewButton,
-	PostSavedState,
-	PostPublishPanelToggle,
-} from '@wordpress/editor';
+import { PostPreviewButton, PostSavedState } from '@wordpress/editor';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
+import { DotTip } from '@wordpress/nux';
 
 /**
  * Internal dependencies
@@ -22,17 +21,17 @@ import { compose } from '@wordpress/compose';
 import MoreMenu from './more-menu';
 import HeaderToolbar from './header-toolbar';
 import PinnedPlugins from './pinned-plugins';
+import shortcuts from '../../keyboard-shortcuts';
+import PostPublishButtonOrToggle from './post-publish-button-or-toggle';
 
 function Header( {
-	isEditorSidebarOpened,
-	openGeneralSidebar,
 	closeGeneralSidebar,
+	isEditorSidebarOpened,
 	isPublishSidebarOpened,
-	togglePublishSidebar,
+	openGeneralSidebar,
 } ) {
 	const toggleGeneralSidebar = isEditorSidebarOpened ? closeGeneralSidebar : openGeneralSidebar;
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
 			role="region"
@@ -44,43 +43,45 @@ function Header( {
 			<HeaderToolbar />
 			{ ! isPublishSidebarOpened && (
 				<div className="edit-post-header__settings">
-					<PostSavedState	/>
+					<PostSavedState />
 					<PostPreviewButton />
-					<PostPublishPanelToggle
-						isOpen={ isPublishSidebarOpened }
-						onToggle={ togglePublishSidebar }
-					/>
-					<IconButton
-						icon="admin-generic"
-						label={ __( 'Settings' ) }
-						onClick={ toggleGeneralSidebar }
-						isToggled={ isEditorSidebarOpened }
-						aria-expanded={ isEditorSidebarOpened }
-					>
-					</IconButton>
+					<PostPublishButtonOrToggle />
+					<div>
+						<IconButton
+							icon="admin-generic"
+							label={ __( 'Settings' ) }
+							onClick={ toggleGeneralSidebar }
+							isToggled={ isEditorSidebarOpened }
+							aria-expanded={ isEditorSidebarOpened }
+							shortcut={ shortcuts.toggleSidebar }
+						/>
+						<DotTip tipId="core/editor.settings">
+							{ __(
+								'You’ll find more settings for your page and blocks in the sidebar. Click “Settings” to open it.'
+							) }
+						</DotTip>
+					</div>
 					<PinnedPlugins.Slot />
 					<MoreMenu />
 				</div>
 			) }
 		</div>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default compose(
-	withSelect( ( select ) => ( {
+	withSelect( select => ( {
+		hasBlockSelection: !! select( 'core/editor' ).getBlockSelectionStart(),
 		isEditorSidebarOpened: select( 'core/edit-post' ).isEditorSidebarOpened(),
 		isPublishSidebarOpened: select( 'core/edit-post' ).isPublishSidebarOpened(),
-		hasBlockSelection: !! select( 'core/editor' ).getBlockSelectionStart(),
 	} ) ),
 	withDispatch( ( dispatch, { hasBlockSelection } ) => {
-		const { openGeneralSidebar, closeGeneralSidebar, togglePublishSidebar } = dispatch( 'core/edit-post' );
+		const { openGeneralSidebar, closeGeneralSidebar } = dispatch( 'core/edit-post' );
 		const sidebarToOpen = hasBlockSelection ? 'edit-post/block' : 'edit-post/document';
 		return {
 			openGeneralSidebar: () => openGeneralSidebar( sidebarToOpen ),
 			closeGeneralSidebar: closeGeneralSidebar,
-			togglePublishSidebar: togglePublishSidebar,
 			hasBlockSelection: undefined,
 		};
-	} ),
+	} )
 )( Header );
