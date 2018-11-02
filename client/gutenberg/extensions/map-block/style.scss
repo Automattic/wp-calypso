@@ -8,8 +8,15 @@
 		min-height: 400px;
 		text-align: left;
 	}
-	// Ensure that right edge of Title/Caption inputs aren't cut off
-	.gm-style-iw > div {
-		padding-right: 1px;
+	.mapboxgl-popup {
+		h3 {
+			font-size: 1.3125em;
+			font-weight: 400;
+			margin-bottom: 0.5rem;
+		}
+		p {
+			margin-bottom: 0;
+		}
+		max-width: 300px;
 	}
 }

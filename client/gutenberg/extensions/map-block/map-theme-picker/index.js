@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { Component, Fragment } from '@wordpress/element';
+import { Component } from '@wordpress/element';
 import { Button, ButtonGroup } from '@wordpress/components';
 import classnames from 'classnames';
 
@@ -35,10 +35,10 @@ export class MapThemePicker extends Component {
 			);
 		} );
 		return (
-			<Fragment>
+			<div className="component__map-theme-picker components-base-control">
 				<label className="components-base-control__label">{ label }</label>
 				<ButtonGroup>{ buttons }</ButtonGroup>
-			</Fragment>
+			</div>
 		);
 	}
 }

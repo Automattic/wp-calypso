@@ -44,8 +44,8 @@ export const settings = {
 		map_center: {
 			type: 'object',
 			default: {
-				latitude: 37.7749295,
 				longitude: -122.41941550000001,
+				latitude: 37.7749295,
 			},
 		},
 		marker_color: {
@@ -53,6 +53,9 @@ export const settings = {
 			default: 'red',
 		},
 		api_key: {
+			type: 'string',
+		},
+		mapbox_key: {
 			type: 'string',
 		},
 	},
@@ -74,7 +77,6 @@ export const settings = {
 			label: __( 'Terrain', 'jetpack' ),
 		},
 	],
-	GOOGLE_MAPS_API_KEY: 'AIzaSyDaj7klnWKpzGx0W5PonA73Dgr68Me8cyg',
 	validAlignments: [ 'center', 'wide', 'full' ],
 	markerIcon: (
 		<svg width="14" height="20" viewBox="0 0 14 20" xmlns="http://www.w3.org/2000/svg">

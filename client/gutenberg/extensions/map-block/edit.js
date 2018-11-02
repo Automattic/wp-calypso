@@ -58,6 +58,15 @@ class MapEdit extends Component {
 		const { attributes, setAttributes } = this.props;
 		const { points } = attributes;
 		const newPoints = points.slice( 0 );
+		let duplicateFound = false;
+		points.map( existingPoint => {
+			if ( existingPoint.id === point.id ) {
+				duplicateFound = true;
+			}
+		} );
+		if ( duplicateFound ) {
+			return;
+		}
 		newPoints.push( point );
 		setAttributes( { points: newPoints } );
 		this.setState( { addPointVisibility: false } );
@@ -81,7 +90,7 @@ class MapEdit extends Component {
 	};
 	apiCall( service_api_key = null, method = 'GET' ) {
 		const { noticeOperations } = this.props;
-		const url = '/wp-json/jetpack/v4/service-api-keys/googlemaps';
+		const url = '/wp-json/jetpack/v4/service-api-keys/mapbox';
 		const fetch = service_api_key ? { url, method, data: { service_api_key } } : { url, method };
 		apiFetch( fetch ).then(
 			result => {
@@ -93,8 +102,7 @@ class MapEdit extends Component {
 				} );
 			},
 			result => {
-				noticeOperations.removeAllNotices();
-				noticeOperations.createErrorNotice( result.message );
+				this.onError( null, result.message );
 				this.setState( {
 					apiState: API_STATE_FAILURE,
 				} );
@@ -104,6 +112,11 @@ class MapEdit extends Component {
 	componentDidMount() {
 		this.apiCall();
 	}
+	onError = ( code, message ) => {
+		const { noticeOperations } = this.props;
+		noticeOperations.removeAllNotices();
+		noticeOperations.createErrorNotice( message );
+	};
 	render() {
 		const { className, setAttributes, attributes, noticeUI, notices } = this.props;
 		const { map_style, map_details, points, zoom, map_center, marker_color, align } = attributes;
@@ -131,10 +144,8 @@ class MapEdit extends Component {
 							onChange={ value => setAttributes( { map_style: value } ) }
 							options={ settings.map_styleOptions }
 						/>
-					</PanelBody>
-					<PanelBody title={ __( 'Map Details', 'jetpack' ) }>
 						<ToggleControl
-							label={ __( 'Show details on map', 'jetpack' ) }
+							label={ __( 'Show street names', 'jetpack' ) }
 							checked={ map_details }
 							onChange={ value => setAttributes( { map_details: value } ) }
 						/>
@@ -160,9 +171,9 @@ class MapEdit extends Component {
 							/>
 						</PanelBody>
 					) : null }
-					<PanelBody title={ __( 'Google Maps API Key', 'jetpack' ) } initialOpen={ false }>
+					<PanelBody title={ __( 'Mapbox Access Token', 'jetpack' ) } initialOpen={ false }>
 						<TextControl
-							label={ __( 'Google Maps API Key', 'jetpack' ) }
+							label={ __( 'Mapbox Access Token', 'jetpack' ) }
 							value={ apiKeyControl }
 							onChange={ value => this.setState( { apiKeyControl: value } ) }
 						/>
@@ -184,8 +195,8 @@ class MapEdit extends Component {
 			</Placeholder>
 		);
 		const getAPIInstructions = sprintf(
-			"This is your first map block. You need to get a Google Maps API key. <a href='%s' target='_blank'>Here's how to do it</a>.",
-			'https://developers.google.com/maps/documentation/javascript/get-api-key'
+			"<p>Before you use a map block, you will need to get a key from <a href='%1$s'>Mapbox</a>. You will only have to do this once.</p><p>Go to <a href='%1$s'>Mapbox</a> and either create an account or sign in. Once you sign in, locate and copy the default access token. Finally, paste it into the token field below.</p>",
+			'https://www.mapbox.com'
 		);
 		const placeholderAPIStateFailure = (
 			<Placeholder icon={ settings.icon } label={ __( 'Map', 'jetpack' ) } notices={ notices }>
@@ -221,11 +232,14 @@ class MapEdit extends Component {
 						onSetPoints={ value => setAttributes( { points: value } ) }
 						onMapLoaded={ () => this.setState( { addPointVisibility: true } ) }
 						onMarkerClick={ () => this.setState( { addPointVisibility: false } ) }
+						onError={ this.onError }
 					>
 						{ addPointVisibility && (
 							<AddPoint
 								onAddPoint={ this.addPoint }
 								onClose={ () => this.setState( { addPointVisibility: false } ) }
+								api_key={ api_key }
+								onError={ this.onError }
 							/>
 						) }
 					</Map>
