@@ -41,14 +41,7 @@ class SimplePaymentsEdit extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const {
-			simplePayment,
-			attributes,
-			setAttributes,
-			isSelected,
-			isSavingPost,
-			isLoadingInitial,
-		} = this.props;
+		const { simplePayment, attributes, setAttributes, isSelected, isLoadingInitial } = this.props;
 		const { currency, price, title, email, content, multiple } = attributes;
 
 		// @TODO check componentDidMount for the case where post was already loaded
@@ -64,18 +57,7 @@ class SimplePaymentsEdit extends Component {
 		}
 
 		// Validate and save on block-deselect
-		const shouldSaveOnBlockDeselect =
-			prevProps.isSelected &&
-			! isSelected &&
-			! isLoadingInitial &&
-			! isSavingPost &&
-			this.validateAttributes();
-
-		// Save when editor has finished saving a post (even just a draft)
-		const shouldSaveOnPageSave = prevProps.isSavingPost && ! isSavingPost && ! isLoadingInitial;
-
-		if ( shouldSaveOnBlockDeselect || shouldSaveOnPageSave ) {
-			// saveProduct won't actually save if there are errors with field values
+		if ( prevProps.isSelected && ! isSelected && ! isLoadingInitial && this.validateAttributes() ) {
 			this.saveProduct();
 		}
 	}
@@ -464,7 +446,7 @@ class SimplePaymentsEdit extends Component {
 							"This is where PayPal will send your money. To claim a payment, you'll " +
 								'need a PayPal account connected to a bank account.',
 							'jetpack'
-						) }
+						) + ' ' }
 						<ExternalLink href="https://www.paypal.com/">
 							{ __( 'Create an account at PayPal' ) }
 						</ExternalLink>
@@ -478,7 +460,6 @@ class SimplePaymentsEdit extends Component {
 const applyWithSelect = withSelect( ( select, props ) => {
 	const { paymentId } = props.attributes;
 	const { getEntityRecord } = select( 'core' );
-	const { isSavingPost } = select( 'core/editor' );
 
 	const simplePayment = paymentId
 		? getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId )
@@ -486,7 +467,6 @@ const applyWithSelect = withSelect( ( select, props ) => {
 
 	return {
 		isLoadingInitial: paymentId && ! simplePayment,
-		isSavingPost: !! isSavingPost(),
 		simplePayment,
 	};
 } );
