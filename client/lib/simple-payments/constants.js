@@ -12,6 +12,7 @@ export const SUPPORTED_CURRENCY_LIST = [
 	'DKK',
 	'HKD',
 	'HUF',
+	'INR',
 	'ILS',
 	'JPY',
 	'MYR',
