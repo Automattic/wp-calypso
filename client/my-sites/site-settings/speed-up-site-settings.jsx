@@ -44,16 +44,22 @@ class SpeedUpSiteSettings extends Component {
 		photonModuleActive: PropTypes.bool,
 		photonModuleUnavailable: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
+		siteAcceleratorStatus: PropTypes.bool,
 		siteAcceleratorSupported: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		togglingSiteAccelerator: PropTypes.bool,
 	};
 
 	handleCdnChange = () => {
-		const { assetCdnModuleActive, photonModuleActive, selectedSiteId } = this.props;
+		const {
+			assetCdnModuleActive,
+			photonModuleActive,
+			selectedSiteId,
+			siteAcceleratorStatus,
+		} = this.props;
 
 		// If one of them is on, we turn everything off.
-		if ( photonModuleActive || assetCdnModuleActive ) {
+		if ( siteAcceleratorStatus ) {
 			if ( true === photonModuleActive ) {
 				this.props.deactivateModule( selectedSiteId, 'photon', true );
 			}
@@ -72,19 +78,17 @@ class SpeedUpSiteSettings extends Component {
 
 	render() {
 		const {
-			selectedSiteId,
-			photonModuleUnavailable,
 			isRequestingSettings,
 			isSavingSettings,
-			translate,
 			jetpackVersionSupportsLazyImages,
+			photonModuleUnavailable,
+			selectedSiteId,
 			siteAcceleratorSupported,
-			photonModuleActive,
-			assetCdnModuleActive,
+			siteAcceleratorStatus,
+			translate,
 			togglingSiteAccelerator,
 		} = this.props;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
-		const cdnStatus = photonModuleActive || assetCdnModuleActive;
 
 		return (
 			<div className="site-settings__module-settings site-settings__speed-up-site-settings">
@@ -105,7 +109,7 @@ class SpeedUpSiteSettings extends Component {
 							) }
 						</FormSettingExplanation>
 						<CompactFormToggle
-							checked={ !! cdnStatus }
+							checked={ siteAcceleratorStatus }
 							disabled={
 								isRequestingOrSaving ||
 								photonModuleUnavailable ||
@@ -214,11 +218,15 @@ export default connect(
 			togglingSiteAccelerator = false;
 		}
 
+		// Status of the main site accelerator toggle.
+		const siteAcceleratorStatus = photonModuleActive || assetCdnModuleActive;
+
 		return {
 			assetCdnModuleActive,
 			photonModuleActive,
 			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 			selectedSiteId,
+			siteAcceleratorStatus,
 			siteAcceleratorSupported,
 			siteSlug: getSiteSlug( state, selectedSiteId ),
 			togglingSiteAccelerator,
