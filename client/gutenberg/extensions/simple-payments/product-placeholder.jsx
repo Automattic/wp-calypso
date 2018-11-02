@@ -20,7 +20,7 @@ export default ( { title = '', content = '', formattedPrice = '', multiple = fal
 		<div className="jetpack-simple-payments-wrapper">
 			<div className="jetpack-simple-payments-product">
 				<div className="jetpack-simple-payments-details">
-					{ title ? (
+{ title && <div className="jetpack-simple-payments-title"><p>{ title }</p></div> }
 						<div className="jetpack-simple-payments-title">
 							<p>{ title }</p>
 						</div>
