@@ -1203,15 +1203,15 @@ export const FEATURES_LIST = {
 			}
 
 			return i18n.translate(
-				'Get a free custom domain name (example.blog) with this plan ' +
-					'to use for your website. Does not apply to premium domains.'
+				'Get a free .blog domain for one year when you purchase this plan. ' +
+					'Does not apply to premium domains. Domains renew at regular prices.'
 			);
 		},
 	},
 
 	[ FEATURE_CUSTOM_DOMAIN ]: {
 		getSlug: () => FEATURE_CUSTOM_DOMAIN,
-		getTitle: () => i18n.translate( 'Custom Domain Name' ),
+		getTitle: () => i18n.translate( 'Free Domain for 1 Year' ),
 		getDescription: ( abtest, domainName ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
@@ -1220,8 +1220,8 @@ export const FEATURES_LIST = {
 			}
 
 			return i18n.translate(
-				'Get a free custom domain name (example.com) with this plan ' +
-					'to use for your website. Does not apply to premium domains.'
+				'Get a free domain for one year when you purchase this plan. ' +
+					'Does not apply to premium domains. Domains renew at regular prices.'
 			);
 		},
 	},
