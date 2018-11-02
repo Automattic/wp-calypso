@@ -23,7 +23,7 @@ class SuggestionSearch extends Component {
 
 		this.state = {
 			query: '',
-			siteTopicValue: '',
+			inputValue: '',
 		};
 	}
 
@@ -36,7 +36,7 @@ class SuggestionSearch extends Component {
 	};
 
 	handleSuggestionChangeEvent = ( { target: { name, value } } ) => {
-		this.setState( { query: value, siteTopicValue: value } );
+		this.setState( { query: value, inputValue: value } );
 
 		this.props.onChange( { name, value } );
 	};
@@ -95,11 +95,11 @@ class SuggestionSearch extends Component {
 	};
 
 	handleSuggestionMouseDown = position => {
-		this.setState( { siteTopicValue: position.label } );
+		this.setState( { inputValue: position.label } );
 		this.hideSuggestions();
 
 		this.props.onChange( {
-			name: 'siteTopic',
+			name: this.props.name,
 			value: position.label,
 		} );
 	};
@@ -112,7 +112,7 @@ class SuggestionSearch extends Component {
 		const { suggestions } = this.props;
 
 		const query = this.state.query.trim().toLocaleLowerCase();
-		return Object.values( suggestions )
+		return suggestions
 			.filter( hint => hint.toLocaleLowerCase().includes( query ) )
 			.map( hint => ( { label: hint } ) );
 	}
@@ -122,14 +122,8 @@ class SuggestionSearch extends Component {
 	}
 
 	updateFieldFromSuggestion( term, field ) {
-		this.setState( { siteTopicValue: term } );
+		this.setState( { inputValue: term } );
 
-		// this.formStateController.handleFieldChange( {
-		// 	name: field,
-		// 	value: term,
-		// } );
-		//
-		// Probably need this
 		this.props.onChange( {
 			name: field,
 			value: term,
@@ -137,15 +131,15 @@ class SuggestionSearch extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { id, name, placeholder } = this.props;
 
 		return (
 			<>
 				<FormTextInput
-					id="siteTopic"
-					name="siteTopic"
-					placeholder={ translate( 'e.g. Fashion, travel, design, plumber, electrician' ) }
-					value={ this.state.siteTopicValue }
+					id={ id }
+					name={ name }
+					placeholder={ placeholder }
+					value={ this.state.inputValue }
 					onChange={ this.handleSuggestionChangeEvent }
 					onBlur={ this.hideSuggestions }
 					onKeyDown={ this.handleSuggestionKeyDown }

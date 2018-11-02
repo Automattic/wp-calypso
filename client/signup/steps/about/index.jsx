@@ -44,7 +44,6 @@ import FormInputCheckbox from 'components/forms/form-checkbox';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
 import SuggestionSearch from 'components/suggestion-search';
-// import Suggestions from 'components/suggestions';
 
 class AboutStep extends Component {
 	constructor( props ) {
@@ -479,7 +478,7 @@ class AboutStep extends Component {
 											'e.g. Fashion, travel, design, plumber, electrician'
 										) }
 										onChange={ this.onSiteTopicChange }
-										suggestions={ hints }
+										suggestions={ Object.values( hints ) }
 									/>
 								</FormFieldset>
 							) }
