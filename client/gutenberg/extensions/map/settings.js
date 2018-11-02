@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
  */
 
 export const settings = {
-	name: 'jetpack/maps',
+	name: 'jetpack/map',
 	title: __( 'Map', 'jetpack' ),
 	icon: (
 		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -19,7 +19,7 @@ export const settings = {
 			<path d="M0 0h24v24H0z" fill="none" />
 		</svg>
 	),
-	category: 'common',
+	category: 'jetpack',
 	keywords: [ __( 'map', 'jetpack' ), __( 'location', 'jetpack' ), 'jetpack' ],
 	attributes: {
 		align: {
