@@ -21,43 +21,42 @@ const { Provider, Consumer } = React.createContext( moment );
 class MomentProvider extends React.Component {
 	state = { moment, momentLocale: 'en' };
 
-	async checkAndLoad() {
+	async checkAndLoad( previousLocale ) {
 		const { currentLocale } = this.props;
 
-		// is moment set to the current locale?
-		if ( currentLocale === moment.locale() ) {
+		// has the requested locale changed?
+		if ( currentLocale === previousLocale ) {
 			return;
 		}
 
-		if ( currentLocale !== 'en' ) {
+		if ( currentLocale === 'en' ) {
+			// always pre-loaded, expose a promise that resolves immediately
+			this.loadingLocalePromise = Promise.resolve();
+		} else {
 			debug( 'Loading moment locale for %s', currentLocale );
 			try {
 				// expose the import load promise as instance property. Useful for tests that wait for it
 				this.loadingLocalePromise = import( /* webpackChunkName: "moment-locale-[request]", webpackInclude: /\.js$/ */ `moment/locale/${ currentLocale }` );
 				await this.loadingLocalePromise;
-			} catch ( e ) {
-				debug( 'Failed to load moment locale for %s', currentLocale );
+			} catch ( error ) {
+				debug( 'Failed to load moment locale for %s', currentLocale, error );
 				return;
 			}
 			debug( 'Loaded moment locale for %s', currentLocale );
 		}
 
-		// validate that someone else hasn't already changed the moment locale
 		if ( moment.locale() !== currentLocale ) {
 			moment.locale( currentLocale );
-			this.setState( {
-				moment,
-				momentLocale: currentLocale,
-			} );
 		}
+		this.setState( { momentLocale: currentLocale } );
 	}
 
 	componentDidMount() {
-		this.checkAndLoad();
+		this.checkAndLoad( 'en' );
 	}
 
-	componentDidUpdate() {
-		this.checkAndLoad();
+	componentDidUpdate( prevProps ) {
+		this.checkAndLoad( prevProps.currentLocale );
 	}
 
 	render() {
