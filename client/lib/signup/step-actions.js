@@ -29,7 +29,7 @@ import { getUserExperience } from 'state/signup/steps/user-experience/selectors'
 import { requestSites } from 'state/sites/actions';
 import { supportsPrivacyProtectionPurchase } from 'lib/cart-values/cart-items';
 import { getProductsList } from 'state/products-list/selectors';
-import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
+import { getImporterSiteUrl, getSelectedImportEngine } from 'state/importer-nux/temp-selectors';
 import { normalizeImportUrl } from 'state/importer-nux/utils';
 import { promisify } from '../../utils';
 
@@ -120,24 +120,31 @@ export function createSiteWithCart(
 	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 	const siteGoals = getSiteGoals( reduxStore.getState() ).trim();
-	const importingFromUrl =
-		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( reduxStore.getState() ) ) : '';
+	const importEngine = getSelectedImportEngine( reduxStore.getState() );
+	const importSiteUrl = getImporterSiteUrl( reduxStore.getState() ).trim();
+
+	const importFromSite =
+		'import' === flowName && 'wix' === importEngine && importSiteUrl
+			? normalizeImportUrl( importSiteUrl )
+			: '';
 
 	wpcom.undocumented().sitesNew(
 		{
-			blog_name: importingFromUrl || siteUrl,
+			blog_name: importFromSite || siteUrl,
 			blog_title: siteTitle,
 			options: {
 				designType: designType || undefined,
 				// the theme can be provided in this step's dependencies or the
 				// step object itself depending on if the theme is provided in a
 				// query. See `getThemeSlug` in `DomainsStep`.
+				importEngine: importEngine || undefined,
+				importSiteUrl: importSiteUrl || undefined,
 				theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 				vertical: surveyVertical || undefined,
 				siteGoals: siteGoals || undefined,
 			},
 			validate: false,
-			find_available_url: !! ( isPurchasingItem || importingFromUrl ),
+			find_available_url: !! ( isPurchasingItem || importFromSite ),
 		},
 		function( error, response ) {
 			if ( error ) {
@@ -339,7 +346,10 @@ export function createAccount(
 	const userExperience = getUserExperience( reduxStore.getState() );
 	const importEngine =
 		'import' === flowName ? getSelectedImportEngine( reduxStore.getState() ) : '';
-	const importFromSite = 'import' === flowName ? getNuxUrlInputValue( reduxStore.getState() ) : '';
+	const importSiteUrl = getImporterSiteUrl( reduxStore.getState() ).trim();
+
+	const importFromSite =
+		'import' === flowName && 'wix' === importEngine && importSiteUrl ? importSiteUrl : '';
 
 	if ( service ) {
 		// We're creating a new social account
