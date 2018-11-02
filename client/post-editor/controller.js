@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
 import { isWebUri as isValidUrl } from 'valid-url';
-import { has, startsWith } from 'lodash';
+import { get, has, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -257,30 +257,41 @@ export default {
 	},
 
 	gutenberg: ( context, next ) => {
-		const state = context.store.getState();
-		const siteId = getSelectedSiteId( state );
-		const postType = determinePostType( context );
-		const postId = getPostID( context );
-		const siteAdminUrl = getSiteAdminUrl( state, siteId );
+		const unsubscribe = context.store.subscribe( () => {
+			const state = context.store.getState();
+			const siteId = getSelectedSiteId( state );
 
-		waitForData( {
-			editor: () => requestSelectedEditor( siteId ),
-		} ).then( ( { editor } ) => {
-			if ( has( window, 'location.replace' ) && 'gutenberg' === editor.data.editor_web ) {
-				// If the current editor is Gutenberg, redirect to Calypsoify.
-				if ( postId ) {
+			if ( ! siteId ) {
+				return;
+			}
+			unsubscribe();
+
+			const postType = determinePostType( context );
+			const postId = getPostID( context );
+			const siteAdminUrl = getSiteAdminUrl( state, siteId );
+
+			waitForData( {
+				editor: () => requestSelectedEditor( siteId ),
+			} ).then( ( { editor } ) => {
+				if (
+					has( window, 'location.replace' ) &&
+					'gutenberg' === get( editor, 'data.editor_web' )
+				) {
+					// If the current editor is Gutenberg, redirect to Calypsoify.
+					if ( postId ) {
+						return window.location.replace(
+							siteAdminUrl + `post.php?calypsoify=1&post=${ postId }&action=edit`
+						);
+					}
+					if ( 'post' === postType ) {
+						return window.location.replace( siteAdminUrl + 'post-new.php?calypsoify=1' );
+					}
 					return window.location.replace(
-						siteAdminUrl + `post.php?calypsoify=1&post=${ postId }&action=edit`
+						siteAdminUrl + `post-new.php?calypsoify=1&post_type=${ postType }`
 					);
 				}
-				if ( 'post' === postType ) {
-					return window.location.replace( siteAdminUrl + 'post-new.php?calypsoify=1' );
-				}
-				return window.location.replace(
-					siteAdminUrl + `post-new.php?calypsoify=1&post_type=${ postType }`
-				);
-			}
-			next();
+				next();
+			}, next );
 		} );
 	},
 };
