@@ -120,7 +120,8 @@ export class Map extends Component {
 		}
 	}
 	componentDidUpdate( prevProps ) {
-		const { api_key, children } = this.props;
+		const { api_key, children, points, map_style, map_details } = this.props;
+		const { map } = this.state;
 		if ( api_key && api_key.length > 0 && api_key !== prevProps.api_key ) {
 			window.mapboxgl = null;
 			this.loadMapLibraries();
@@ -130,30 +131,13 @@ export class Map extends Component {
 		if ( children !== prevProps.children && children !== false ) {
 			this.clearCurrentMarker();
 		}
-		// This implementation of componentDidUpdate is a reusable way to approximate Polymer observers
-		for ( const propName in this.props ) {
-			const functionName = propName + 'Changed';
-			if (
-				this.props[ propName ] !== prevProps[ propName ] &&
-				typeof this[ functionName ] === 'function'
-			) {
-				this[ functionName ]( this.props[ propName ] );
-			}
+		if ( points !== prevProps.points ) {
+			this.clearCurrentMarker();
+			this.setBoundsByMarkers();
 		}
-	}
-	// Observers
-	pointsChanged() {
-		this.setBoundsByMarkers();
-	}
-	mapStyleAndDetailsChanged() {
-		const { map } = this.state;
-		map.setStyle( this.getMapStyle() );
-	}
-	map_styleChanged() {
-		this.mapStyleAndDetailsChanged();
-	}
-	map_detailsChanged() {
-		this.mapStyleAndDetailsChanged();
+		if ( map_style !== prevProps.map_style || map_details !== prevProps.map_details ) {
+			map.setStyle( this.getMapStyle() );
+		}
 	}
 	/* Event handling */
 	onMarkerClick = marker => {
