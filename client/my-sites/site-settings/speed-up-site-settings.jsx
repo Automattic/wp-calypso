@@ -50,25 +50,22 @@ class SpeedUpSiteSettings extends Component {
 	};
 
 	handleCdnChange = () => {
-		const { photonModuleActive, assetCdnModuleActive, selectedSiteId } = this.props;
-
-		// Check if any of the CDN options are on.
-		const cdnStatus = photonModuleActive || assetCdnModuleActive;
+		const { assetCdnModuleActive, photonModuleActive, selectedSiteId } = this.props;
 
 		// If one of them is on, we turn everything off.
-		if ( true === cdnStatus ) {
-			if ( false === ! photonModuleActive ) {
-				this.props.deactivateModule( selectedSiteId, 'photon' );
+		if ( photonModuleActive || assetCdnModuleActive ) {
+			if ( true === photonModuleActive ) {
+				this.props.deactivateModule( selectedSiteId, 'photon', true );
 			}
-			if ( false === ! assetCdnModuleActive ) {
-				this.props.deactivateModule( selectedSiteId, 'photon-cdn' );
+			if ( true === assetCdnModuleActive ) {
+				this.props.deactivateModule( selectedSiteId, 'photon-cdn', true );
 			}
 		} else {
 			if ( false === photonModuleActive ) {
-				this.props.activateModule( selectedSiteId, 'photon' );
+				this.props.activateModule( selectedSiteId, 'photon', true );
 			}
 			if ( false === assetCdnModuleActive ) {
-				this.props.activateModule( selectedSiteId, 'photon-cdn' );
+				this.props.activateModule( selectedSiteId, 'photon-cdn', true );
 			}
 		}
 	};
