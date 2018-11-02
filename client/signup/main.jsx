@@ -303,17 +303,7 @@ class Signup extends React.Component {
 		} );
 		recordSignupCompletion( { isNewUser, isNewSite, hasCartItems, isNewUserOnFreePlan } );
 
-		if (
-			dependencies.cartItem ||
-			dependencies.domainItem ||
-			this.signupFlowController.shouldAutoContinue()
-		) {
-			this.handleLogin( dependencies, destination );
-		} else {
-			this.setState( {
-				loginHandler: this.handleLogin.bind( this, dependencies, destination ),
-			} );
-		}
+		this.handleLogin( dependencies, destination );
 	};
 
 	handleLogin = ( dependencies, destination, event ) => {
