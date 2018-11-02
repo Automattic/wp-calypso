@@ -15,11 +15,12 @@ import Button from 'components/button';
 import Card from 'components/card';
 import StepWrapper from 'signup/step-wrapper';
 import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
+import SuggestionSearch from 'components/suggestion-search';
 import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
 import getSignupStepsSiteTopic from 'state/selectors/get-signup-steps-site-topic';
 import SignupActions from 'lib/signup/actions';
+import { hints } from 'lib/signup/hint-data';
 
 class SiteTopicStep extends Component {
 	static propTypes = {
@@ -37,39 +38,40 @@ class SiteTopicStep extends Component {
 		super( props );
 
 		this.state = {
-			siteTopicInputValue: props.siteTopic || '',
+			siteTopicValue: props.siteTopic || '',
 		};
 	}
 
-	onChangeTopic = event => this.setState( { siteTopicInputValue: event.target.value } );
+	onSiteTopicChange = value => {
+		this.setState( { siteTopicValue: value } );
+		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { value } );
+	};
 
 	onSubmit = event => {
 		event.preventDefault();
 
-		this.props.submitSiteTopic( this.trimmedSiteTopicInputValue() );
+		this.props.submitSiteTopic( this.trimedSiteTopicValue() );
 	};
 
-	trimmedSiteTopicInputValue = () => this.state.siteTopicInputValue.trim();
+	trimedSiteTopicValue = () => this.state.siteTopicValue.trim();
 
 	renderContent() {
 		const { translate } = this.props;
-		const { siteTopicInputValue } = this.state;
 
 		return (
 			<Card className="site-topic__content">
 				<form onSubmit={ this.onSubmit }>
 					<FormFieldset>
 						<FormLabel htmlFor="siteTopic">{ translate( 'Type of Business' ) }</FormLabel>
-						<FormTextInput
+						<SuggestionSearch
 							id="siteTopic"
 							name="siteTopic"
 							placeholder={ translate( 'e.g. Fashion, travel, design, plumber, electrician' ) }
-							value={ siteTopicInputValue }
 							onChange={ this.onChangeTopic }
-							autoComplete="off"
+							suggestions={ Object.values( hints ) }
 						/>
 					</FormFieldset>
-					<Button type="submit" disabled={ ! this.trimmedSiteTopicInputValue() } primary>
+					<Button type="submit" disabled={ ! this.trimedSiteTopicValue() } primary>
 						{ translate( 'Continue' ) }
 					</Button>
 					<span className="site-topic__form-description">
@@ -103,10 +105,10 @@ class SiteTopicStep extends Component {
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteTopic: siteTopicInputValue => {
+	submitSiteTopic: siteTopicValue => {
 		const { translate, flowName, stepName, goToNextStep } = ownProps;
 
-		dispatch( setSiteTopic( siteTopicInputValue ) );
+		dispatch( setSiteTopic( siteTopicValue ) );
 
 		SignupActions.submitSignupStep(
 			{
@@ -115,7 +117,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 			},
 			[],
 			{
-				siteTopic: siteTopicInputValue,
+				siteTopic: siteTopicValue,
 			}
 		);
 
