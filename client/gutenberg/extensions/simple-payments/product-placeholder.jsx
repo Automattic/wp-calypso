@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import './view.scss';
+import './product-placeholder.scss';
 
 export default ( { title = '', content = '', formattedPrice = '', multiple = false } ) => {
 	const assetUrl =
@@ -38,7 +38,12 @@ export default ( { title = '', content = '', formattedPrice = '', multiple = fal
 					<div className="jetpack-simple-payments-purchase-box">
 						{ multiple && (
 							<div className="jetpack-simple-payments-items">
-								<input className="jetpack-simple-payments-items-number" type="number" value="1" />
+								<input
+									className="jetpack-simple-payments-items-number"
+									type="number"
+									value="1"
+									readOnly
+								/>
 							</div>
 						) }
 						<div className="jetpack-simple-payments-button">

@@ -31,7 +31,8 @@
 
 	.simple-payments__field-title {
 		.components-text-control__input {
-			font-size: 21px;
+			font-weight: bold;
+			font-size: 16px;
 		}
 	}
 
@@ -90,7 +91,7 @@
 		opacity: 0.5;
 	}
 	50% {
-		opacity: 0.8;
+		opacity: 0.7;
 	}
 	100% {
 		opacity: 0.5;

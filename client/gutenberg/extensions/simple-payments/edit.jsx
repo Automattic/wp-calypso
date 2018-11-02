@@ -48,35 +48,50 @@ class SimplePaymentsEdit extends Component {
 			isSavingPost,
 			isLoadingInitial,
 		} = this.props;
+		const { currency, price, title, email, content, multiple } = attributes;
+		const {
+			fieldEmailError,
+			fieldPriceError,
+			fieldTitleError,
+		} = this.state;
 
 		// @TODO check componentDidMount for the case where post was already loaded
 		if ( ! prevProps.simplePayment && simplePayment ) {
 			setAttributes( {
-				content: get( simplePayment, 'content.raw', attributes.content ),
-				currency: get( simplePayment, 'meta.spay_currency', attributes.currency || 'USD' ),
-				email: get( simplePayment, 'meta.spay_email', attributes.email ),
+				content: get( simplePayment, 'content.raw', content ),
+				currency: get( simplePayment, 'meta.spay_currency', currency || 'USD' ),
+				email: get( simplePayment, 'meta.spay_email', email ),
 				multiple: Boolean(
-					get( simplePayment, 'meta.spay_multiple', attributes.multiple || false )
+					get( simplePayment, 'meta.spay_multiple', multiple || false )
 				),
-				price: get( simplePayment, 'meta.spay_price', attributes.price || undefined ),
-				title: get( simplePayment, 'title.raw', attributes.title ),
+				price: get( simplePayment, 'meta.spay_price', price || undefined ),
+				title: get( simplePayment, 'title.raw', title ),
 			} );
 		}
 
-		// Validate fields on block-deselect
-		if ( prevProps.isSelected && ! isSelected ) {
-			const { currency, price, title, email } = attributes;
-			this.validatePrice( price, currency );
-			this.validateTitle( title );
-			this.validateEmail( email );
+		// Validate and save on block-deselect
+		if (
+			prevProps.isSelected &&
+			! isSelected &&
+			! isLoadingInitial &&
+			! isSavingPost &&
+			this.validatePrice( price, currency ) &&
+			this.validateTitle( title ) &&
+			this.validateEmail( email )
+		) {
+			this.saveProduct();
 		}
 
-		// Saves on block-deselect and when editor is saving a post
+		// Save when editor has done saving a post (even just a draft)
 		if (
+			prevProps.isSavingPost &&
+			! isSavingPost &&
 			! isLoadingInitial &&
-			( ( prevProps.isSelected && ! isSelected ) || ( prevProps.isSavingPost && ! isSavingPost ) )
+			! fieldEmailError &&
+			! fieldPriceError &&
+			! fieldTitleError
 		) {
-			this.savePayment();
+			this.saveProduct();
 		}
 	}
 
@@ -98,7 +113,7 @@ class SimplePaymentsEdit extends Component {
 		};
 	};
 
-	savePayment = async () => {
+	saveProduct = async () => {
 		const { attributes, setAttributes } = this.props;
 		const { currency, email, paymentId, price, title } = attributes;
 		const { fieldTitleError, fieldPriceError, fieldEmailError, isSavingProduct } = this.state;
@@ -157,30 +172,34 @@ class SimplePaymentsEdit extends Component {
 		const { precision } = getCurrencyDefaults( currency );
 
 		if ( ! price || parseFloat( price ) === 0 ) {
-			return this.setState( {
+			this.setState( {
 				fieldPriceError: __( 'Everything comes with a price tag these days. Add yours here.' ),
 			} );
+			return false;
 		}
 
 		if ( Number.isNaN( parseFloat( price ) ) ) {
-			return this.setState( {
+			this.setState( {
 				fieldPriceError: __( 'Invalid price' ),
 			} );
+			return false;
 		}
 
 		if ( parseFloat( price ) < 0 ) {
-			return this.setState( {
+			this.setState( {
 				fieldPriceError: __( "Your price is negative — now that doesn't sound right, does it?" ),
 			} );
+			return false;
 		}
 
 		if ( this.decimalPlaces( price ) > precision ) {
 			if ( precision === 0 ) {
-				return this.setState( {
+				this.setState( {
 					fieldPriceError: __(
 						"We know every penny counts, but prices can't contain decimal values."
 					),
 				} );
+				return false;
 			}
 
 			this.setState( {
@@ -193,32 +212,40 @@ class SimplePaymentsEdit extends Component {
 					precision
 				),
 			} );
+			return false;
 		}
 
 		if ( this.state.fieldPriceError ) {
 			this.setState( { fieldPriceError: '' } );
 		}
+
+		return true;
 	};
 
 	validateEmail = email => {
 		if ( ! email ) {
-			return this.setState( {
+			this.setState( {
 				fieldEmailError: __(
 					'We want to make sure payments reach you, so please add an email address.',
 					'jetpack'
 				),
 			} );
+			return false;
 		}
 
 		if ( ! emailValidator.validate( email ) ) {
-			return this.setState( {
+			this.setState( {
 				fieldEmailError: sprintf( __( '%s is not a valid email address.' ), email ),
 			} );
+			return false;
 		}
 
 		if ( this.state.fieldEmailError ) {
 			this.setState( { fieldEmailError: '' } );
+			return false;
 		}
+
+		return true;
 	};
 
 	validateTitle = title => {
@@ -229,11 +256,13 @@ class SimplePaymentsEdit extends Component {
 					'jetpack'
 				),
 			} );
+			return false;
 		}
 
 		if ( this.state.fieldTitleError ) {
 			this.setState( { fieldTitleError: '' } );
 		}
+		return true;
 	};
 
 	handleEmailChange = email => {
@@ -246,8 +275,6 @@ class SimplePaymentsEdit extends Component {
 	};
 
 	handlePriceChange = price => {
-		const { currency } = this.props.attributes;
-		this.validatePrice( price, currency );
 		price = parseFloat( price );
 		if ( ! isNaN( price ) ) {
 			this.props.setAttributes( { price } );
@@ -257,8 +284,6 @@ class SimplePaymentsEdit extends Component {
 	};
 
 	handleCurrencyChange = currency => {
-		const { price } = this.props.attributes;
-		this.validatePrice( price, currency );
 		this.props.setAttributes( { currency } );
 	};
 
@@ -267,7 +292,6 @@ class SimplePaymentsEdit extends Component {
 	};
 
 	handleTitleChange = title => {
-		this.validateTitle( title );
 		this.props.setAttributes( { title } );
 	};
 
