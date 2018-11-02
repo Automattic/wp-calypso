@@ -19,16 +19,18 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
 import getSignupStepsSiteTopic from 'state/selectors/get-signup-steps-site-topic';
+import SignupActions from 'lib/signup/actions';
 
 class SiteTopicStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number.isRequired,
-		setSiteTopic: PropTypes.func.isRequired,
+		submitSiteTopic: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		siteTopic: PropTypes.string,
+		translate: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -45,14 +47,10 @@ class SiteTopicStep extends Component {
 
 	onChangeTopic = event => this.setState( { siteTopicInputValue: event.target.value } );
 
-	submitSiteTopic = event => {
+	onSubmit = event => {
 		event.preventDefault();
 
-		const { goToNextStep, flowName } = this.props;
-
-		this.props.setSiteTopic( this.state.siteTopicInputValue );
-
-		goToNextStep( flowName );
+		this.props.submitSiteTopic( this.trimmedSiteTopicInputValue() );
 	};
 
 	renderContent() {
@@ -61,7 +59,7 @@ class SiteTopicStep extends Component {
 
 		return (
 			<Card className="site-topic__content">
-				<form onSubmit={ this.submitSiteTopic }>
+				<form onSubmit={ this.onSubmit }>
 					<FormFieldset>
 						<FormLabel htmlFor="siteTopic">{ translate( 'Type of Business' ) }</FormLabel>
 						<FormTextInput
@@ -106,11 +104,35 @@ class SiteTopicStep extends Component {
 	}
 }
 
-export default connect(
+const mapDispatchToProps = ( dispatch, ownProps ) => ( {
+	submitSiteTopic: siteTopicInputValue => {
+		const {
+			translate,
+			flowName,
+			stepName,
+			goToNextStep,
+		} = ownProps;
+
+		dispatch( setSiteTopic( siteTopicInputValue ) );
+
+		SignupActions.submitSignupStep(
+			{
+				processingMessage: translate( 'Collecting your information' ),
+				stepName,
+			},
+			[],
+			{
+				siteTopic: siteTopicInputValue,
+			}
+		);
+
+		goToNextStep( flowName );
+	},
+} );
+
+export default localize( connect(
 	state => ( {
 		siteTopic: getSignupStepsSiteTopic( state ),
 	} ),
-	{
-		setSiteTopic,
-	}
-)( localize( SiteTopicStep ) );
+	mapDispatchToProps
+)( SiteTopicStep ) );
