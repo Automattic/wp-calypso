@@ -38,7 +38,7 @@ class SuggestionSearch extends Component {
 	handleSuggestionChangeEvent = ( { target: { value } } ) => {
 		this.setState( { query: value, inputValue: value } );
 
-		this.props.onChange( { value } );
+		this.props.onChange( value );
 	};
 
 	handleSuggestionKeyDown = event => {

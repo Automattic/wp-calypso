@@ -44,7 +44,6 @@ class SiteTopicStep extends Component {
 
 	onSiteTopicChange = value => {
 		this.setState( { siteTopicValue: value } );
-		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { value } );
 	};
 
 	onSubmit = event => {
@@ -65,9 +64,8 @@ class SiteTopicStep extends Component {
 						<FormLabel htmlFor="siteTopic">{ translate( 'Type of Business' ) }</FormLabel>
 						<SuggestionSearch
 							id="siteTopic"
-							name="siteTopic"
 							placeholder={ translate( 'e.g. Fashion, travel, design, plumber, electrician' ) }
-							onChange={ this.onChangeTopic }
+							onChange={ this.onSiteTopicChange }
 							suggestions={ Object.values( hints ) }
 						/>
 					</FormFieldset>

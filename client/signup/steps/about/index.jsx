@@ -476,7 +476,6 @@ class AboutStep extends Component {
 									</FormLabel>
 									<SuggestionSearch
 										id="siteTopic"
-										name="siteTopic"
 										placeholder={ translate(
 											'e.g. Fashion, travel, design, plumber, electrician'
 										) }
