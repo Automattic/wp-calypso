@@ -120,16 +120,20 @@
 			text-align: right;
 			width: 30%;
 
-			&.grand-total {
-				border-top: 1px solid $gray-lighten-20;
-				padding-top: 7px;
-				margin-top: 5px;
-			}
 		}
 
 		.grand-total {
 			font-weight: 600;
 		}
+	}
+
+	.cart__total-divider {
+		border-top: 1px solid $gray-lighten-20;
+		height: 0;
+		width: 30%;
+		margin-left: 70%;
+		padding-top: 5px;
+		margin-top: 5px;
 	}
 
 	.cart__coupon {
