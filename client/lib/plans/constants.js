@@ -1034,19 +1034,19 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_FREE_BLOG_DOMAIN ]: {
 		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Free .blog domain' ),
+		getTitle: () => i18n.translate( 'Free .blog domain for 1 year' ),
 		getDescription: () =>
 			i18n.translate(
-				'Get a free custom domain name (example.blog) with this plan to use for your website.'
+				'Get a free .blog domain for one year when you purchase this plan. Does not apply to premium domains. Domains renew at regular prices.'
 			),
 	},
 
 	[ FEATURE_FREE_DOMAIN ]: {
 		getSlug: () => FEATURE_FREE_DOMAIN,
-		getTitle: () => i18n.translate( 'Free custom domain' ),
+		getTitle: () => i18n.translate( 'Free domain for 1 year' ),
 		getDescription: () =>
 			i18n.translate(
-				'Get a free custom domain name (example.com) with this plan to use for your website.'
+				'Get a free domain for one year when you purchase this plan. Does not apply to premium domains. Domains renew at regular prices.'
 			),
 	},
 
