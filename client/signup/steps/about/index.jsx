@@ -43,7 +43,8 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
-import Suggestions from 'components/suggestions';
+import SuggestionSearch from 'components/suggestion-search';
+// import Suggestions from 'components/suggestions';
 
 class AboutStep extends Component {
 	constructor( props ) {
@@ -104,8 +105,7 @@ class AboutStep extends Component {
 		this.setState( { query: '' } );
 	};
 
-	handleSuggestionChangeEvent = ( { target: { name, value } } ) => {
-		this.setState( { query: value, siteTopicValue: value } );
+	handleSuggestionChangeEvent = ( { name, value } ) => {
 		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { value } );
 		this.formStateController.handleFieldChange( { name, value } );
 	};
@@ -567,23 +567,14 @@ class AboutStep extends Component {
 											{ translate( "We'll use this to personalize your site and experience." ) }
 										</InfoPopover>
 									</FormLabel>
-									<FormTextInput
+									<SuggestionSearch
 										id="siteTopic"
 										name="siteTopic"
 										placeholder={ translate(
 											'e.g. Fashion, travel, design, plumber, electrician'
 										) }
-										value={ this.state.siteTopicValue }
 										onChange={ this.handleSuggestionChangeEvent }
-										onBlur={ this.hideSuggestions }
-										onKeyDown={ this.handleSuggestionKeyDown }
-										autoComplete="off"
-									/>
-									<Suggestions
-										ref={ this.setSuggestionsRef }
-										query={ this.state.query }
-										suggestions={ this.getSuggestions() }
-										suggest={ this.handleSuggestionMouseDown }
+										suggestions={ hints }
 									/>
 								</FormFieldset>
 							) }
