@@ -23,7 +23,7 @@ import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackMinimumVersion } from 'state/sites/selectors';
 import SupportInfo from 'components/support-info';
 
 class SpeedUpSiteSettings extends Component {
@@ -32,20 +32,20 @@ class SpeedUpSiteSettings extends Component {
 	};
 
 	static propTypes = {
+		activateModule: PropTypes.func,
+		deactivateModule: PropTypes.func,
 		fields: PropTypes.object,
 		isRequestingSettings: PropTypes.bool,
 		isSavingSettings: PropTypes.bool,
 		jetpackVersionSupportsLazyImages: PropTypes.bool,
-		siteAcceleratorSupported: PropTypes.bool,
-		activateModule: PropTypes.func,
-		deactivateModule: PropTypes.func,
 
 		// Connected props
+		assetCdnModuleActive: PropTypes.bool,
+		photonModuleActive: PropTypes.bool,
 		photonModuleUnavailable: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
+		siteAcceleratorSupported: PropTypes.bool,
 		siteSlug: PropTypes.string,
-		photonModuleActive: PropTypes.bool,
-		assetCdnModuleActive: PropTypes.bool,
 		togglingSiteAccelerator: PropTypes.bool,
 	};
 
@@ -167,6 +167,7 @@ export default connect(
 	state => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+		const siteAcceleratorSupported = isJetpackMinimumVersion( state, selectedSiteId, '6.6-alpha' );
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
 			state,
 			selectedSiteId,
@@ -217,11 +218,12 @@ export default connect(
 		}
 
 		return {
+			assetCdnModuleActive,
+			photonModuleActive,
 			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 			selectedSiteId,
+			siteAcceleratorSupported,
 			siteSlug: getSiteSlug( state, selectedSiteId ),
-			photonModuleActive,
-			assetCdnModuleActive,
 			togglingSiteAccelerator,
 		};
 	},
