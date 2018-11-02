@@ -92,7 +92,8 @@
 
 	.form-toggle__wrapper + p.form-setting-explanation.is-indented,
 	.indented-form-field,
-	.indented-form-field + p.form-setting-explanation.is-indented {
+	.indented-form-field + p.form-setting-explanation.is-indented,
+	#posts_per_page.custom-content-types__label {
 		margin-left: 36px;
 	}
 
