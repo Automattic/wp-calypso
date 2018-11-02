@@ -47,7 +47,7 @@ const DomainListNotice = ( {
 				),
 				status: 'is-success',
 				children: (
-					<NoticeAction icon="refresh" key="undo-btn" onClick={ onUndoClick }>
+					<NoticeAction icon="undo" key="undo-btn" onClick={ onUndoClick }>
 						{ translate( 'Undo' ) }
 					</NoticeAction>
 				),
