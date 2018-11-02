@@ -6,7 +6,6 @@ import page from 'page';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -60,11 +59,9 @@ class ChecklistMain extends PureComponent {
 			this.props.siteSlug &&
 			false === this.props.isAtomic &&
 			this.props.isJetpack &&
-			some( [
-				this.props.siteSlug !== prevProps.siteSlug,
-				this.props.isAtomic !== prevProps.isAtomic,
-				this.props.isJetpack !== prevProps.isJetpack,
-			] )
+			( this.props.siteSlug !== prevProps.siteSlug ||
+				this.props.isAtomic !== prevProps.isAtomic ||
+				this.props.isJetpack !== prevProps.isJetpack )
 		) {
 			page.redirect( `/plans/my-plan/${ this.props.siteSlug }` );
 		}

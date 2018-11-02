@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Children, Component } from 'react';
 import store from 'store';
 import { connect } from 'react-redux';
-import { find, get, reduce } from 'lodash';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -65,21 +65,17 @@ export class ChecklistBanner extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
-
 		if ( ! this.canShow() ) {
 			return null;
 		}
 
+		const { translate, taskList } = this.props;
+
 		const childrenArray = Children.toArray( this.props.children );
-		const total = childrenArray.length;
-		const completeCount = reduce(
-			childrenArray,
-			( sum, child ) => ( !! child.props.completed ? sum + 1 : sum ),
-			0
-		);
-		const isFinished = completeCount >= total;
-		const completePercentage = Math.round( ! total ? 0 : ( completeCount / total ) * 100 );
+		const { total, completed, percentage } = taskList.getCompletionStatus();
+
+		const firstIncomplete = taskList.getFirstIncompleteTask();
+		const isFinished = ! firstIncomplete;
 
 		return (
 			<Card className="checklist-banner">
@@ -89,7 +85,7 @@ export class ChecklistBanner extends Component {
 						width={ 152 }
 						height={ 152 }
 						lineWidth={ 18 }
-						percentage={ completePercentage }
+						percentage={ percentage }
 						metric={ translate( 'completed' ) }
 						colors={ [ '#ffffff', '#47b766' ] }
 					/>
@@ -98,7 +94,7 @@ export class ChecklistBanner extends Component {
 					<span className="checklist-banner__progress-title">{ translate( 'Site setup' ) }</span>
 					<span className="checklist-banner__progress-desc">
 						{ translate( '%(percentage)s%% completed', {
-							args: { percentage: completePercentage },
+							args: { percentage: percentage },
 						} ) }
 
 						{ isFinished && (
@@ -111,7 +107,7 @@ export class ChecklistBanner extends Component {
 							</Button>
 						) }
 					</span>
-					<ProgressBar value={ completeCount } total={ total } color="#47b766" />
+					<ProgressBar value={ completed } total={ total } color="#47b766" />
 				</div>
 				{ isFinished ? (
 					<>
@@ -137,7 +133,7 @@ export class ChecklistBanner extends Component {
 						</Button>
 					</>
 				) : (
-					find( childrenArray, child => ! child.props.completed )
+					childrenArray.find( child => child.props.id === firstIncomplete.id )
 				) }
 			</Card>
 		);
