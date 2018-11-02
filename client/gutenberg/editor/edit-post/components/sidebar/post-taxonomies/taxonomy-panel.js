@@ -11,11 +11,16 @@ import { compose } from '@wordpress/compose';
 import { PanelBody } from '@wordpress/components';
 import { withSelect, withDispatch } from '@wordpress/data';
 
-function TaxonomyPanel( { taxonomy, isOpened, onTogglePanel, children } ) {
+function TaxonomyPanel( { isEnabled, taxonomy, isOpened, onTogglePanel, children } ) {
+	if ( ! isEnabled ) {
+		return null;
+	}
+
 	const taxonomyMenuName = get( taxonomy, [ 'labels', 'menu_name' ] );
 	if ( ! taxonomyMenuName ) {
 		return null;
 	}
+
 	return (
 		<PanelBody
 			title={ taxonomyMenuName }
@@ -33,15 +38,17 @@ export default compose(
 		const panelName = slug ? `taxonomy-panel-${ slug }` : '';
 		return {
 			panelName,
+			isEnabled: slug ?
+				select( 'core/edit-post' ).isEditorPanelEnabled( panelName ) :
+				false,
 			isOpened: slug ?
-				select( 'core/edit-post' ).isEditorSidebarPanelOpened( panelName ) :
+				select( 'core/edit-post' ).isEditorPanelOpened( panelName ) :
 				false,
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => ( {
 		onTogglePanel: () => {
-			dispatch( 'core/edit-post' ).
-				toggleGeneralSidebarEditorPanel( ownProps.panelName );
+			dispatch( 'core/edit-post' ).toggleEditorPanelOpened( ownProps.panelName );
 		},
 	} ) ),
 )( TaxonomyPanel );

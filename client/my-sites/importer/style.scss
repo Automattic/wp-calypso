@@ -99,6 +99,10 @@
 	input {
 		visibility: hidden;
 	}
+
+	.accessible-focus &:focus {
+		border-color: $gray-lighten-10;
+	}
 }
 
 .importer__upload-content {
@@ -215,54 +219,65 @@
 	& > div {
 		margin-bottom: 10px;
 	}
+}
 
-	.site-importer__site-importer-url-input {
-		display: flex;
-		margin-bottom: 1.5em;
+.site-importer__site-importer-url-input {
+	display: flex;
+	margin-bottom: 1.5em;
 
-		.form-text-input {
-			flex-grow: 1;
-			flex-shrink: 1;
-		}
-
-		button {
-			flex-grow: 0;
-			flex-shrink: 0;
-		}
+	.form-text-input {
+		flex-grow: 1;
+		flex-shrink: 1;
 	}
 
-	.site-importer__site-importer-endpoint-select {
-		width: 100%;
+	button {
+		flex-grow: 0;
+		flex-shrink: 0;
 	}
+}
 
-	.site-importer__site-importer-example-domain {
-		font-family: monospace;
-		color: $blue-medium;
+.site-importer__site-importer-endpoint-select {
+	width: 100%;
+}
+
+.site-importer__site-importer-example-domain {
+	font-family: monospace;
+	color: $blue-medium;
+}
+
+.site-importer__site-importer-confirm-site-pane-container {
+	display: flex;
+	align-content: center;
+	align-items: flex-start;
+	flex-wrap: wrap;
+	width: 100%;
+	margin-bottom: 18px;
+
+	button {
+		float: none;
+		flex-grow: 0;
+		flex-shrink: 0;
+
+		&:first-of-type {
+			margin-left: 0;
+		}
 	}
+}
 
-	.site-importer__site-importer-confirm-site-pane-container {
-		display: flex;
-		align-content: center;
-		justify-content: center;
-		width: 100%;
-		margin-bottom: 18px;
+.site-importer__site-importer-confirm-site-label {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	margin-right: 10px;
+}
 
-		.site-importer__site-importer-confirm-site-label {
-			flex-grow: 1;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-		}
-		.site-importer__site-importer-confirm-site-pane-container-text {
-			margin: inherit;
-		}
+.site-importer__source-url {
+	margin-top: 4px;
+	margin-bottom: 8px;
+}
 
-		button {
-			float: none;
-			flex-grow: 0;
-			flex-shrink: 0;
-		}
-	}
+.site-importer__site-importer-confirm-site-pane-container-text {
+	margin: inherit;
 }
 
 .site-importer__site-preview {

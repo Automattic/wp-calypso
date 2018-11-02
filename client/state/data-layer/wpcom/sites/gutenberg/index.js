@@ -22,6 +22,7 @@ export const setType = action =>
 			apiNamespace: 'wpcom/v2',
 			query: {
 				editor: action.editor,
+				platform: 'web',
 			},
 			body: {},
 		},

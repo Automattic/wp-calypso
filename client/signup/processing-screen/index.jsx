@@ -16,7 +16,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Notice from 'components/notice';
 import analytics from 'lib/analytics';
 import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import config from 'config';
@@ -38,7 +37,7 @@ export class SignupProcessingScreen extends Component {
 		hasPaidSubscription: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const dependencies = nextProps.signupDependencies;
 
 		if ( isEmpty( dependencies ) ) {
@@ -52,47 +51,6 @@ export class SignupProcessingScreen extends Component {
 
 		const hasPaidSubscription = !! ( dependencies.cartItem || dependencies.domainItem );
 		this.setState( { hasPaidSubscription } );
-	}
-
-	renderConfirmationNotice() {
-		// we want these flows to stay focused, don't try to send them to their inbox
-		if ( [ 'user-first', 'import' ].includes( this.props.flowName ) ) {
-			return null;
-		}
-
-		if ( this.props.user && this.props.user.email_verified ) {
-			return;
-		}
-
-		if ( this.props.hasCartItems ) {
-			return;
-		}
-
-		let email = this.props.user && this.props.user.email;
-
-		if ( ! email ) {
-			for ( const step of this.props.steps ) {
-				if ( step.form && step.form.email && step.form.email.value ) {
-					email = step.form.email.value;
-				}
-			}
-		}
-
-		if ( ! email ) {
-			return;
-		}
-
-		return (
-			<Notice showDismiss={ false }>
-				{ this.props.translate(
-					'We’ve sent a message to {{strong}}%(email)s{{/strong}}. Please use this time to confirm your email address.',
-					{
-						args: { email },
-						components: { strong: <strong /> },
-					}
-				) }
-			</Notice>
-		);
 	}
 
 	renderFloaties() {
@@ -206,22 +164,22 @@ export class SignupProcessingScreen extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className="signup-pricessing__upgrade-nudge">
-				<p className="signup-pricessing__title-subdomain">{ translate( 'Your subdomain' ) }</p>
-				<div className="signup-pricessing__address-bar">
+			<div className="signup-processing__upgrade-nudge">
+				<p className="signup-processing__title-subdomain">{ translate( 'Your subdomain' ) }</p>
+				<div className="signup-processing__address-bar">
 					<Gridicon icon="refresh" size={ 24 } />
 					<Gridicon icon="house" size={ 24 } />
 					<p
-						className={ classnames( 'signup-pricessing__address-field', {
+						className={ classnames( 'signup-processing__address-field', {
 							'is-placeholder': ! this.state.siteSlug,
 						} ) }
 					>
 						{ this.state.siteSlug }
 					</p>
 				</div>
-				<div className="signup-pricessing__bubble">
+				<div className="signup-processing__bubble">
 					<svg
-						className="signup-pricessing__bubble-tail"
+						className="signup-processing__bubble-tail"
 						viewBox="0 0 47 31"
 						xmlns="http://www.w3.org/2000/svg"
 					>
@@ -233,13 +191,13 @@ export class SignupProcessingScreen extends Component {
 						) }
 					</p>
 				</div>
-				<p className="signup-pricessing__nudge-message">
+				<p className="signup-processing__nudge-message">
 					{ translate( "Looks like your new online home doesn't have its own domain name." ) }
 				</p>
 				<Button
 					primary
 					disabled={ ! this.props.loginHandler }
-					className="signup-pricessing__upgrade-button"
+					className="signup-processing__upgrade-button"
 					onClick={ this.handleClickUpgradeButton }
 				>
 					{ translate( 'Upgrade Plan & Get A Domain' ) }
@@ -271,11 +229,14 @@ export class SignupProcessingScreen extends Component {
 					</p>
 
 					{ this.props.loginHandler ? (
-						<Button className="email-confirmation__button" onClick={ this.props.loginHandler }>
+						<Button
+							className="processing-screen__continue-button"
+							onClick={ this.props.loginHandler }
+						>
 							{ translate( 'View My Site' ) }
 						</Button>
 					) : (
-						<Button disabled className="email-confirmation__button">
+						<Button disabled className="processing-screen__continue-button">
 							{ translate( 'Please wait…' ) }
 						</Button>
 					) }
@@ -317,7 +278,7 @@ export class SignupProcessingScreen extends Component {
 
 		if ( ! loginHandler ) {
 			return (
-				<Button primary disabled className="email-confirmation__button">
+				<Button primary disabled className="processing-screen__continue-button">
 					{ translate( 'Please wait…' ) }
 				</Button>
 			);
@@ -326,7 +287,7 @@ export class SignupProcessingScreen extends Component {
 		const clickHandler = this.shouldShowChecklist() ? this.showChecklistAfterLogin : loginHandler;
 
 		return (
-			<Button primary className="email-confirmation__button" onClick={ clickHandler }>
+			<Button primary className="processing-screen__continue-button" onClick={ clickHandler }>
 				{ translate( 'Continue' ) }
 			</Button>
 		);
@@ -362,7 +323,6 @@ export class SignupProcessingScreen extends Component {
 					<p className="signup-process-screen__title">{ this.getTitle() }</p>
 
 					{ this.renderActionButton() }
-					{ this.renderConfirmationNotice() }
 				</div>
 				<div className="signup-processing-screen__loader">
 					{ this.props.translate( 'Loading…' ) }

@@ -11,17 +11,17 @@
 	justify-content: space-between;
 	padding: 15px 15px 15px 95px;
 
-	.stored-card__name {
+	.checkout__stored-card-name {
 		color: $gray-darken-10;
 	}
 
-	.stored-card__number {
+	.checkout__stored-card-number {
 		color: $gray-dark;
 		flex-basis: 100%;
 		font-weight: 600;
 	}
 
-	.stored-card__expiration-date {
+	.checkout__stored-card-expiration-date {
 		color: $gray-darken-10;
 		font-style: italic;
 		opacity: 0.7;

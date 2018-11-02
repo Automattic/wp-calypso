@@ -20,11 +20,11 @@
 @import '../../../node_modules/@wordpress/block-library/build-style/theme';
 @import '../../../node_modules/@wordpress/block-library/build-style/editor';
 
-// Calypso specific Gutenberg editor styles
-@import 'gutenberg/editor/style';
-
 // Edit-post component styles
 @import '../../../node_modules/@wordpress/edit-post/build-style/style';
+
+// Calypso specific Gutenberg editor styles
+@import 'gutenberg/editor/style';
 
 // Media Modal styles
 @import './media';

@@ -22,7 +22,9 @@ export class MediaUpload extends Component {
 	};
 
 	componentDidMount() {
-		MediaStore.on( 'change', this.updateMedia );
+		if ( includes( this.props.allowedTypes, 'image' ) ) {
+			MediaStore.on( 'change', this.updateMedia );
+		}
 		MediaActions.setLibrarySelectedItems( this.props.siteId, this.getSelectedItems() );
 	}
 

@@ -16,7 +16,6 @@
 /**
  * External dependencies
  */
-import { Component } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { PluginPrePublishPanel } from '@wordpress/edit-post';
 import { withDispatch, withSelect } from '@wordpress/data';
@@ -29,7 +28,7 @@ import PublicizeForm from './form';
 import PublicizeNoConnections from './no-connections';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
-class PublicizePanel extends Component {
+const PublicizePanel = ( { connections, refreshConnections } ) => (
 	render() {
 		const { connections, refreshConnections } = this.props;
 		const refreshText = ! connections ? __( 'Refreshing…' ) : __( 'Refresh connections' );
@@ -53,7 +52,7 @@ class PublicizePanel extends Component {
 			</PluginPrePublishPanel>
 		);
 	}
-}
+);
 
 export default compose( [
 	withSelect(
