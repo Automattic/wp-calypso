@@ -95,10 +95,13 @@ class AboutStep extends Component {
 		this.pressableStore = ref;
 	};
 
-	onSiteTopicChange = ( { name, value } ) => {
+	onSiteTopicChange = value => {
 		this.setState( { siteTopicValue: value } );
 		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { value } );
-		this.formStateController.handleFieldChange( { name, value } );
+		this.formStateController.handleFieldChange( {
+			name: 'siteTopic',
+			value,
+		} );
 	};
 
 	handleChangeEvent = event => {

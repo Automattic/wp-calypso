@@ -35,23 +35,19 @@ class SuggestionSearch extends Component {
 		this.setState( { query: '' } );
 	};
 
-	handleSuggestionChangeEvent = ( { target: { name, value } } ) => {
+	handleSuggestionChangeEvent = ( { target: { value } } ) => {
 		this.setState( { query: value, inputValue: value } );
 
-		this.props.onChange( { name, value } );
+		this.props.onChange( { value } );
 	};
 
 	handleSuggestionKeyDown = event => {
 		if ( this.suggestionsRef.props.suggestions.length > 0 ) {
-			const fieldName = event.target.name;
 			let suggestionPosition = this.suggestionsRef.state.suggestionPosition;
 
 			switch ( event.key ) {
 				case 'ArrowRight':
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition ),
-						fieldName
-					);
+					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition ) );
 
 					break;
 				case 'ArrowUp':
@@ -59,10 +55,7 @@ class SuggestionSearch extends Component {
 						suggestionPosition = this.suggestionsRef.props.suggestions.length;
 					}
 
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition - 1 ),
-						fieldName
-					);
+					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition - 1 ) );
 
 					break;
 				case 'ArrowDown':
@@ -72,17 +65,11 @@ class SuggestionSearch extends Component {
 						suggestionPosition = 0;
 					}
 
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition ),
-						fieldName
-					);
+					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition ) );
 
 					break;
 				case 'Tab':
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition ),
-						fieldName
-					);
+					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition ) );
 
 					break;
 				case 'Enter':
@@ -98,10 +85,7 @@ class SuggestionSearch extends Component {
 		this.setState( { inputValue: position.label } );
 		this.hideSuggestions();
 
-		this.props.onChange( {
-			name: this.props.name,
-			value: position.label,
-		} );
+		this.props.onChange( position.label );
 	};
 
 	getSuggestions() {
@@ -121,13 +105,10 @@ class SuggestionSearch extends Component {
 		return this.suggestionsRef.props.suggestions[ suggestionPosition ].label;
 	}
 
-	updateFieldFromSuggestion( term, field ) {
-		this.setState( { inputValue: term } );
+	updateFieldFromSuggestion( newValue ) {
+		this.setState( { inputValue: newValue } );
 
-		this.props.onChange( {
-			name: field,
-			value: term,
-		} );
+		this.props.onChange( newValue );
 	}
 
 	render() {
