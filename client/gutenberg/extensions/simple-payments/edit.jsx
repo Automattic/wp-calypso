@@ -50,7 +50,6 @@ class SimplePaymentsEdit extends Component {
 			isLoadingInitial,
 		} = this.props;
 		const { currency, price, title, email, content, multiple } = attributes;
-		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
 
 		// @TODO check componentDidMount for the case where post was already loaded
 		if ( ! prevProps.simplePayment && simplePayment ) {
@@ -65,27 +64,18 @@ class SimplePaymentsEdit extends Component {
 		}
 
 		// Validate and save on block-deselect
-		if (
+		const shouldSaveOnBlockDeselect =
 			prevProps.isSelected &&
 			! isSelected &&
 			! isLoadingInitial &&
 			! isSavingPost &&
-			this.validatePrice( price, currency ) &&
-			this.validateTitle( title ) &&
-			this.validateEmail( email )
-		) {
-			this.saveProduct();
-		}
+			this.validateAttributes();
 
-		// Save when editor has done saving a post (even just a draft)
-		if (
-			prevProps.isSavingPost &&
-			! isSavingPost &&
-			! isLoadingInitial &&
-			! fieldEmailError &&
-			! fieldPriceError &&
-			! fieldTitleError
-		) {
+		// Save when editor has finished saving a post (even just a draft)
+		const shouldSaveOnPageSave = prevProps.isSavingPost && ! isSavingPost && ! isLoadingInitial;
+
+		if ( shouldSaveOnBlockDeselect || shouldSaveOnPageSave ) {
+			// saveProduct won't actually save if there are errors with field values
 			this.saveProduct();
 		}
 	}
@@ -145,10 +135,23 @@ class SimplePaymentsEdit extends Component {
 				}
 			} )
 			.catch( error => {
-				// @TODO: error handling
+				// @TODO: complete error handling
 				// eslint-disable-next-line
 				console.error( error );
-				this.setState( { isSavingProduct: false } );
+
+				const {
+					data: { key: apiErrorKey },
+				} = error;
+
+				// @TODO errors in other fields
+				this.setState( {
+					fieldEmailError:
+						apiErrorKey === 'spay_email'
+							? sprintf( __( '%s is not a valid email address.' ), email )
+							: '',
+					fieldPriceError: apiErrorKey === 'spay_price' ? __( 'Invalid price.' ) : '',
+					isSavingProduct: false,
+				} );
 			} );
 	};
 
@@ -161,16 +164,23 @@ class SimplePaymentsEdit extends Component {
 		return Math.max( 0, ( match[ 1 ] ? match[ 1 ].length : 0 ) - ( match[ 2 ] ? +match[ 2 ] : 0 ) );
 	};
 
+	validateAttributes = () => {
+		const isPriceValid = this.validatePrice();
+		const isTitleValid = this.validateTitle();
+		const isEmailValid = this.validateEmail();
+
+		return isPriceValid && isTitleValid && isEmailValid;
+	};
+
 	/**
 	 * Validate price
 	 *
 	 * Stores error message in state.fieldPriceError
 	 *
-	 * @param {Number} price A price
-	 * @param {String} currency three-character ISO-4217 currency code
 	 * @returns {Boolean} True when valid, false when invalid
 	 */
-	validatePrice = ( price, currency ) => {
+	validatePrice = () => {
+		const { currency, price } = this.props.attributes;
 		const { precision } = getCurrencyDefaults( currency );
 
 		if ( ! price || parseFloat( price ) === 0 ) {
@@ -229,10 +239,10 @@ class SimplePaymentsEdit extends Component {
 	 *
 	 * Stores error message in state.fieldEmailError
 	 *
-	 * @param {String} email An email
 	 * @returns {Boolean} True when valid, false when invalid
 	 */
-	validateEmail = email => {
+	validateEmail = () => {
+		const { email } = this.props.attributes;
 		if ( ! email ) {
 			this.setState( {
 				fieldEmailError: __(
@@ -262,10 +272,10 @@ class SimplePaymentsEdit extends Component {
 	 *
 	 * Stores error message in state.fieldTitleError
 	 *
-	 * @param {String} title A title
 	 * @returns {Boolean} True when valid, false when invalid
 	 */
-	validateTitle = title => {
+	validateTitle = () => {
+		const { title } = this.props.attributes;
 		if ( ! title ) {
 			this.setState( {
 				fieldTitleError: __(
