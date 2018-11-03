@@ -33,6 +33,12 @@ import phoneValidation from 'lib/phone-validation';
 import config from 'config';
 import userAgent from 'lib/user-agent';
 
+import {
+	isAppSMSRequestSending,
+	didAppSMSRequestCompleteSuccessfully,
+	didAppSMSRequestCompleteWithError,
+} from 'state/selectors/get-apps-sms-request';
+
 class MobileDownloadCard extends React.Component {
 	static displayName = 'SecurityAccountRecoveryRecoveryPhoneEdit';
 
@@ -45,8 +51,10 @@ class MobileDownloadCard extends React.Component {
 			number: PropTypes.string,
 			numberFull: PropTypes.string,
 		} ),
-		// userSettings: PropTypes.array.isRequired,
+
 		hasLoadedStoredPhone: PropTypes.bool,
+		hasSendingError: PropTypes.bool,
+		didSend: PropTypes.bool,
 		successNotice: PropTypes.func,
 		errorNotice: PropTypes.func,
 	};
@@ -54,6 +62,20 @@ class MobileDownloadCard extends React.Component {
 	state = {
 		phoneNumber: null,
 	};
+
+	componentDidUpdate( previousProps ) {
+		if ( previousProps.hasSendingError === false && this.props.hasSendingError === true ) {
+			this.props.errorNotice(
+				this.props.translate( 'There was a problem sending the SMS. Please try again.' )
+			);
+		}
+
+		if ( previousProps.didSend === false && this.props.didSend === true ) {
+			this.props.successNotice(
+				this.props.translate( 'SMS Sent. Go check your messages on your phone!' )
+			);
+		}
+	}
 
 	getPreferredNumber = ( data_has_been_fetched = true ) => {
 		const noPreferredNumber = {
@@ -216,19 +238,8 @@ class MobileDownloadCard extends React.Component {
 	};
 
 	onSubmit = () => {
-		const { translate } = this.props;
-
-		const phoneNumber = this.getPreferredNumber();
-
-		sendSMS( phoneNumber )
-			.then( (/* response */) => {
-				this.props.successNotice( translate( 'SMS Sent. Go check your messages on your phone!' ) );
-			} )
-			.catch( (/* error */) => {
-				this.props.errorNotice(
-					translate( 'There was a problem sending the SMS. Please try again.' )
-				);
-			} );
+		const phoneNumber = this.getPreferredNumber().numberFull;
+		this.props.sendSMS( phoneNumber );
 	};
 }
 
@@ -241,7 +252,11 @@ export default connect(
 
 			userSettings: getUserSettings( state ),
 			hasUserSettings: hasUserSettings( state ),
+
+			isSending: isAppSMSRequestSending( state ),
+			didSend: didAppSMSRequestCompleteSuccessfully( state ),
+			hasSendingError: didAppSMSRequestCompleteWithError( state ),
 		};
 	},
-	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
+	dispatch => bindActionCreators( { successNotice, errorNotice, sendSMS }, dispatch )
 )( localize( MobileDownloadCard ) );

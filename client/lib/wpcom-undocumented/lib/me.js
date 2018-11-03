@@ -362,25 +362,6 @@ UndocumentedMe.prototype.socialDisconnect = function( service, fn ) {
 	return this.wpcom.req.post( args, fn );
 };
 
-/**
- * Send an SMS to the provided phone number with a link to download the app.s
- *
- * @param {string} phone - phone number
- *
- * @return {Promise} A promise for the request
- */
-UndocumentedMe.prototype.sendAppDownloadSMS = function( phone ) {
-	const args = {
-		apiVersion: '1.1',
-		path: '/me/get-apps/send-download-sms',
-		body: {
-			phone: phone,
-		},
-	};
-
-	return this.wpcom.req.post( args );
-};
-
 UndocumentedMe.prototype.preferences = MePreferences;
 
 export default UndocumentedMe;

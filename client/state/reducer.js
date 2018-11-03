@@ -57,6 +57,7 @@ import login from './login/reducer';
 import media from './media/reducer';
 import memberships from './memberships/reducer';
 import mailchimp from './mailchimp/reducer';
+import mobileDownloadSMS from './mobile-download-sms/reducer';
 import notices from './notices/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
 import npsSurvey from './nps-survey/reducer';
@@ -153,6 +154,7 @@ const reducers = {
 	jitm,
 	login,
 	media,
+	mobileDownloadSMS,
 	notices,
 	notificationsUnseenCount,
 	npsSurvey,
