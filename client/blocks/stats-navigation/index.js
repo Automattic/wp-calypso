@@ -36,7 +36,7 @@ class StatsNavigation extends Component {
 
 		switch ( item ) {
 			case 'wordads':
-				return isWordAds;
+				return config.isEnabled( 'wordads/daily-stats' ) && isWordAds;
 
 			case 'store':
 				return isStore;
