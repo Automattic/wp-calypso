@@ -96,7 +96,7 @@ class Chart extends React.Component {
 		const unit = max < 1 ? 0.5 : Math.pow( 10, Math.floor( max ).toString().length - 1 );
 		const numberOfUnits = 1 === unit && max >= 1 ? 2 : Math.ceil( max / unit );
 
-		return unit * numberOfUnits;
+		return 0 === max ? 2 : unit * numberOfUnits;
 	};
 
 	storeChart = ref => ( this.chart = ref );
