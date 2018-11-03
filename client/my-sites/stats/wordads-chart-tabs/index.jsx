@@ -182,9 +182,6 @@ class WordAdsChartTabs extends Component {
 
 		return (
 			<div>
-				{ /* siteId && (
-					<QuerySiteWordAdsStats statType="statsAds" siteId={ siteId } query={ query } />
-				) */ }
 				{ siteId && <QuerySiteStats statType="statsAds" siteId={ siteId } query={ query } /> }
 
 				<Card className={ classNames( ...classes ) }>
@@ -246,7 +243,7 @@ const connectComponent = connect(
 		return {
 			query: query,
 			fullQueryRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsAds', query ),
-			fullQueryData: getSiteStatsNormalizedData( state, siteId, 'statsAds', query ), // getWordAdsStats( state, siteId ),
+			fullQueryData: getSiteStatsNormalizedData( state, siteId, 'statsAds', query ),
 			siteId,
 		};
 	},

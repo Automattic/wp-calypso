@@ -19,8 +19,6 @@ import isSiteStore from 'state/selectors/is-site-store';
 import { getSite } from 'state/sites/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
 import config from 'config';
-import getBlogStickers from 'state/selectors/get-blog-stickers';
-import QueryBlogStickers from 'components/data/query-blog-stickers';
 
 class StatsNavigation extends Component {
 	static propTypes = {
@@ -34,17 +32,11 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = item => {
-		const {
-			isGoogleMyBusinessLocationConnected,
-			isStore,
-			isWordAds,
-			siteId,
-			stickers,
-		} = this.props;
+		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
 
 		switch ( item ) {
 			case 'wordads':
-				return isWordAds && stickers && stickers.includes( 'wordads-daily-stats' );
+				return isWordAds;
 
 			case 'store':
 				return isStore;
@@ -62,13 +54,12 @@ class StatsNavigation extends Component {
 	};
 
 	render() {
-		const { slug, selectedItem, interval, siteId } = this.props;
+		const { slug, selectedItem, interval } = this.props;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
 		return (
 			<div className="stats-navigation">
-				{ siteId && <QueryBlogStickers blogId={ siteId } /> }
 				<SectionNav selectedText={ label }>
 					<NavTabs label={ 'Stats' } selectedText={ label }>
 						{ Object.keys( navItems )
@@ -110,7 +101,6 @@ export default connect( ( state, { siteId } ) => {
 			siteId
 		),
 		isStore: isSiteStore( state, siteId ),
-		stickers: siteId ? getBlogStickers( state, siteId ) : undefined,
 		isWordAds: site && site.options.wordads,
 		siteId,
 	};
