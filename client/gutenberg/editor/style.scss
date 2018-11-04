@@ -22,6 +22,11 @@ $gutenberg-breakpoint-sm: 782px;
 	background: none;
 }
 
+//history dialog
+@import 'post-editor/editor-revisions/style';
+@import 'post-editor/editor-diff-viewer/style';
+@import 'post-editor/editor-revisions-list/style';
+
 // OVERRIDES
 
 //======================================================

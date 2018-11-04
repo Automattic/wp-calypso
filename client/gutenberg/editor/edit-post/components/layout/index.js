@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,6 +34,7 @@ import EditorModeKeyboardShortcuts from '../keyboard-shortcuts';
 import SettingsSidebar from '../sidebar/settings-sidebar';
 import Sidebar from '../sidebar';
 import { PluginPostPublishPanel, PluginPrePublishPanel } from '@wordpress/edit-post';
+import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 
 function Layout( {
 	mode,
@@ -43,6 +45,8 @@ function Layout( {
 	closePublishSidebar,
 	togglePublishSidebar,
 	isMobileViewport,
+	updatePost,
+	post,
 } ) {
 	const sidebarIsOpened = editorSidebarOpened || pluginSidebarOpened || publishSidebarOpened;
 
@@ -57,11 +61,19 @@ function Layout( {
 		'aria-label': __( 'Editor publish' ),
 		tabIndex: -1,
 	};
+
+	const loadRevision = revision => {
+		const { post_content: content, post_title: title, post_excerpt: excerpt } = revision;
+		const postRevision = { ...post, content, title, excerpt };
+		//TODO: what's the better action here? This only loads title, also tried other actions in core/editor without luck
+		updatePost( postRevision );
+	};
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className={ className }>
 			<BrowserURL />
-			<UnsavedChangesWarning/>
+			<UnsavedChangesWarning />
 			<AutosaveMonitor />
 			<Header />
 			<div
@@ -77,6 +89,7 @@ function Layout( {
 				{ mode === 'text' && <TextEditor /> }
 				{ mode === 'visual' && <VisualEditor /> }
 			</div>
+			<EditorRevisionsDialog loadRevision={ loadRevision } />
 			{ publishSidebarOpened ? (
 				<PostPublishPanel
 					{ ...publishLandmarkProps }
@@ -99,9 +112,7 @@ function Layout( {
 					</div>
 					<SettingsSidebar />
 					<Sidebar.Slot />
-					{
-						isMobileViewport && sidebarIsOpened && <ScrollLock />
-					}
+					{ isMobileViewport && sidebarIsOpened && <ScrollLock /> }
 				</Fragment>
 			) }
 			<Popover.Slot />
@@ -112,20 +123,23 @@ function Layout( {
 }
 
 export default compose(
-	withSelect( ( select ) => ( {
+	withSelect( select => ( {
+		post: select( 'core/editor' ).getCurrentPost(),
 		mode: select( 'core/edit-post' ).getEditorMode(),
 		editorSidebarOpened: select( 'core/edit-post' ).isEditorSidebarOpened(),
 		pluginSidebarOpened: select( 'core/edit-post' ).isPluginSidebarOpened(),
 		publishSidebarOpened: select( 'core/edit-post' ).isPublishSidebarOpened(),
 		hasFixedToolbar: select( 'core/edit-post' ).isFeatureActive( 'fixedToolbar' ),
 	} ) ),
-	withDispatch( ( dispatch ) => {
+	withDispatch( dispatch => {
+		const { updatePost } = dispatch( 'core/editor' );
 		const { closePublishSidebar, togglePublishSidebar } = dispatch( 'core/edit-post' );
 		return {
 			closePublishSidebar,
 			togglePublishSidebar,
+			updatePost,
 		};
 	} ),
 	navigateRegions,
-	withViewportMatch( { isMobileViewport: '< small' } ),
+	withViewportMatch( { isMobileViewport: '< small' } )
 )( Layout );
