@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -16,9 +15,14 @@ import {
 import { debounce, noop, get, pickBy } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { recordTracksRailcarRender } from 'reader/stats';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class ReaderInfiniteStream extends Component {
 	static propTypes = {
@@ -110,7 +114,7 @@ class ReaderInfiniteStream extends Component {
 		return Promise.resolve();
 	};
 
-	componentWillMount() {
+	componentDidMount() {
 		window.addEventListener( 'resize', this.handleResize );
 	}
 
