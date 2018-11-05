@@ -43,7 +43,6 @@ class ExportMediaCard extends Component {
 			<div className="export-media-card">
 				<QueryMediaExport siteId={ siteId } />
 				<FoldableCard
-					// actionButtonIcon="cog"
 					header={
 						<div>
 							<h1 className="export-media-card__title">{ translate( 'Export media library' ) }</h1>
