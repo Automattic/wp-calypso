@@ -1,9 +1,8 @@
 /** @format */
+
 /**
  * External dependencies
  */
-
-/* eslint import/no-nodejs-modules: ["error", {"allow": ["path", "fs"]}] */
 const fs = require( 'fs' );
 const path = require( 'path' );
 const GenerateJsonFile = require( 'generate-json-file-webpack-plugin' );
