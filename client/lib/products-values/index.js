@@ -236,6 +236,7 @@ export function isPlan( product ) {
 		isPersonal( product ) ||
 		isPremium( product ) ||
 		isBusiness( product ) ||
+		isEcommerce( product ) ||
 		isEnterprise( product ) ||
 		isJpphpBundle( product )
 	);

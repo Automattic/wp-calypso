@@ -16,6 +16,7 @@ import {
 	isPremium,
 	isBusiness,
 	isEcommerce,
+	isPlan,
 } from '..';
 import {
 	JETPACK_PLANS,
@@ -43,6 +44,33 @@ import {
  * @return {Object}              Object containing product_slug
  */
 const makeProductFromSlug = product_slug => ( { product_slug } );
+
+describe( 'isPlan', () => {
+	test( 'should return true for paid products', () => {
+		[
+			PLAN_PERSONAL,
+			PLAN_PERSONAL_2_YEARS,
+			PLAN_PREMIUM,
+			PLAN_PREMIUM_2_YEARS,
+			PLAN_BUSINESS,
+			PLAN_BUSINESS_2_YEARS,
+			PLAN_ECOMMERCE,
+			PLAN_ECOMMERCE_2_YEARS,
+			PLAN_JETPACK_PERSONAL,
+			PLAN_JETPACK_PERSONAL_MONTHLY,
+			PLAN_JETPACK_PREMIUM,
+			PLAN_JETPACK_PREMIUM_MONTHLY,
+			PLAN_JETPACK_BUSINESS,
+			PLAN_JETPACK_BUSINESS_MONTHLY,
+		]
+			.map( makeProductFromSlug )
+			.forEach( product => expect( isPlan( product ) ).toBe( true ) );
+	} );
+
+	test( 'should return false for free products', () => {
+		expect( isPlan( makeProductFromSlug( PLAN_FREE ) ) ).toBe( false );
+	} );
+} );
 
 describe( 'isJetpackPlan', () => {
 	test( 'should return true for Jetpack products', () => {
