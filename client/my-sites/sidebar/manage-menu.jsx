@@ -78,11 +78,11 @@ class ManageMenu extends PureComponent {
 		let pageButtonLink = '/page';
 		let postButtonLink = '/post';
 		if ( calypsoifyGutenberg ) {
-			pageButtonLink = siteAdminUrl + 'post-new.php?calypsoify=1&post_type=page';
-			postButtonLink = siteAdminUrl + 'post-new.php?calypsoify=1';
+			pageButtonLink = `${ siteAdminUrl }post-new.php?post_type=page&calypsoify=1`;
+			postButtonLink = `${ siteAdminUrl }post-new.php?calypsoify=1`;
 		} else if ( siteSlug ) {
-			pageButtonLink = '/page/' + siteSlug;
-			postButtonLink = '/post/' + siteSlug;
+			pageButtonLink = `/page/${ siteSlug }`;
+			postButtonLink = `/post/${ siteSlug }`;
 		}
 
 		return [
@@ -303,7 +303,7 @@ class ManageMenu extends PureComponent {
 	};
 
 	getCustomMenuItems() {
-		const { calypsoifyGutenberg } = this.props;
+		const { calypsoifyGutenberg, siteAdminUrl } = this.props;
 		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page' ] );
 		return reduce(
 			customPostTypes,
@@ -316,7 +316,7 @@ class ManageMenu extends PureComponent {
 
 				let buttonLink;
 				if ( calypsoifyGutenberg ) {
-					buttonLink = `post-new.php?calypsoify=1&post_type=${ postTypeSlug }`;
+					buttonLink = `${ siteAdminUrl }post-new.php?post_type=${ postTypeSlug }&calypsoify=1`;
 				} else if ( config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable ) {
 					buttonLink = this.props.getNewPostPathFn( postTypeSlug );
 				}
