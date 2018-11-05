@@ -11,6 +11,7 @@ import { has, uniqueId } from 'lodash';
  */
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { EDITOR_START } from 'state/action-types';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/gutenberg/post/' ) ) {
@@ -38,7 +39,6 @@ function registerDataPlugins( userId ) {
 	const storageKey = 'WP_DATA_USER_' + userId;
 
 	use( plugins.persistence, { storageKey: storageKey } );
-	use( plugins.asyncGenerator );
 	use( plugins.controls );
 }
 
@@ -62,6 +62,9 @@ export const post = ( context, next ) => {
 		unsubscribe();
 
 		registerDataPlugins( userId );
+
+		//set postId on state.ui.editor.postId, so components like editor revisions can read from it
+		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
 		// Avoids initializing core-data store before data package plugins are registered in registerDataPlugins.
 		const GutenbergEditor = require( 'gutenberg/editor/main' ).default;

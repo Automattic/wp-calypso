@@ -73,9 +73,9 @@ class CloneCloningStep extends Component {
 						/>
 					</g>
 					<g className="clone-cloning__dots">
-						<circle fill="#C8D7E2" cx="238.8" cy="94.1" r="5.2" />
-						<circle fill="#C8D7E2" cx="261.9" cy="94.1" r="5.2" />
-						<circle fill="#C8D7E2" cx="284.5" cy="94.1" r="5.2" />
+						<circle className="clone-cloning__dot" fill="#FFFFFF" cx="238.8" cy="94.1" r="5.2" />
+						<circle className="clone-cloning__dot" fill="#FFFFFF" cx="261.9" cy="94.1" r="5.2" />
+						<circle className="clone-cloning__dot" fill="#FFFFFF" cx="284.5" cy="94.1" r="5.2" />
 					</g>
 					<g className="clone-cloning__origin">
 						<path

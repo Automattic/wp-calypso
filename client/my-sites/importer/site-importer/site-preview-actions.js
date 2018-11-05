@@ -3,12 +3,12 @@
  * External dependencies
  */
 import request from 'superagent';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 
 const querymShotsEndpoint = options => {
-	const maxRetries = options.maxRetries || 1;
-	const retryTimeout = options.retryTimeout || 1000;
-	const currentRetries = options.currentRetries || 0;
+	const maxRetries = get( options, 'maxRetries', 1 );
+	const retryTimeout = get( options, 'retryTimeout', 1000 );
+	const currentRetries = get( options, 'currentRetries', 0 );
 	const url = options.url || '';
 
 	const resolve = options.resolve || noop;
@@ -58,3 +58,5 @@ export const loadmShotsPreview = ( options = {} ) => {
 		querymShotsEndpoint( { ...options, resolve, reject } );
 	} );
 };
+
+export const prefetchmShotsPreview = url => querymShotsEndpoint( { url, currentRetries: 1 } );

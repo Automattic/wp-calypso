@@ -211,7 +211,6 @@
 	font-size: 13px;
 	padding: 8px 8px 8px 40px;
 	background: white;
-	position: relative;
 	color: $blue-wordpress;
 	border: 1px solid $gray-lighten-20;
 	cursor: pointer;
@@ -221,10 +220,10 @@
 	right: 16px;
 	top: 40px;
 	border-radius: 2px;
-	box-shadow: 0 1px 4px rgba($gray-dark, 0.2);;
+	box-shadow: 0 1px 4px rgba( $gray-dark, 0.2 );
 	max-width: 264px;
 	box-sizing: border-box;
-
+	text-align: left;
 	&::before {
 		content: '';
 		display: block;

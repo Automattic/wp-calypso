@@ -40,8 +40,11 @@ class PlansLanding extends Component {
 	};
 
 	componentDidMount() {
+		const { cta_id, cta_from } = this.props.context.query;
 		this.props.recordTracksEvent( 'calypso_jpc_plans_landing_view', {
 			jpc_from: 'jetpack',
+			cta_id,
+			cta_from,
 		} );
 
 		this.goToPlansIfAlreadyConnected();

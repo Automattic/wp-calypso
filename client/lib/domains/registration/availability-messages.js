@@ -198,9 +198,14 @@ function getAvailabilityNotice( domain, error, errorData ) {
 		case domainAvailability.TLD_NOT_SUPPORTED:
 		case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
 		case domainAvailability.UNKNOWN:
-		case domainAvailability.EMPTY_RESULTS:
 			// unavailable domains are displayed in the search results, not as a notice OR
 			// domain registrations are closed, in which case it is handled in parent
+			break;
+
+		case domainAvailability.EMPTY_RESULTS:
+			message = translate(
+				"Sorry, we weren't able to generate any domain name suggestions for that search term. Please try a different set of keywords."
+			);
 			break;
 
 		case domainAvailability.BLACKLISTED:
@@ -289,6 +294,12 @@ function getAvailabilityNotice( domain, error, errorData ) {
 		case domainAvailability.INVALID_QUERY:
 			message = translate(
 				'Your search term can only contain alphanumeric characters, spaces, dots, or hyphens.'
+			);
+			break;
+
+		case domainAvailability.AVAILABILITY_CHECK_ERROR:
+			message = translate(
+				'Sorry, an error occurred when checking the availability of this domain. Please try again in a few minutes.'
 			);
 			break;
 

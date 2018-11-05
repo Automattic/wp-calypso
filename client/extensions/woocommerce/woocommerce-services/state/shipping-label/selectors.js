@@ -341,8 +341,8 @@ export const getCustomsErrors = (
 			} else if ( 'CA' !== destinationCountryCode ) {
 				if ( ! isEmpty( classesAbove2500usd ) ) {
 					errors.itn = translate(
-						'International Transaction Number is required for shipping items valued over $2,500 per tariff code. ' +
-							'Products with tariff code %(code)s add up to more than $2,500.',
+						'International Transaction Number is required for shipping items valued over $2,500 per tariff number. ' +
+							'Products with tariff number %(code)s add up to more than $2,500.',
 						{
 							args: { code: classesAbove2500usd.values().next().value }, // Just pick the first code
 						}
@@ -380,7 +380,7 @@ export const getCustomsErrors = (
 				}
 			}
 			if ( itemData.tariffNumber && 6 !== itemData.tariffNumber.length ) {
-				itemErrors.tariffNumber = translate( 'The tariff code must be 6 digits long' );
+				itemErrors.tariffNumber = translate( 'The tariff number must be 6 digits long' );
 			}
 			return itemErrors;
 		} ),

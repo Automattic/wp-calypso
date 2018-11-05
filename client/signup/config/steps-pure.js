@@ -137,6 +137,11 @@ export function generateSteps( {
 			providesDependencies: [ 'siteTitle' ],
 		},
 
+		'site-topic': {
+			stepName: 'site-topic',
+			providesDependencies: [ 'siteTopic' ],
+		},
+
 		test: {
 			stepName: 'test',
 		},

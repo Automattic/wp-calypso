@@ -42,6 +42,7 @@
     "support_site_locales": [ "en", "es", "de", "ja", "pt-br" ],
     "forum_locales": [ "ar", "de", "el", "en", "es", "fa", "fi", "fr", "he", "id", "it", "ja", "nl", "pt", "pt-br", "ru", "sv", "th", "tl", "tr" ],
     "magnificent_non_en_locales": [ "es", "pt-br", "de", "fr", "he", "ja", "it", "nl", "ru", "tr", "id", "zh-cn", "zh-tw", "ko", "ar", "sv" ],
+    "jetpack_com_locales": [ "en", "ar", "de", "es", "fr", "he", "id", "it", "ja", "ko", "nl", "pt-br", "ro", "ru", "sv", "tr", "zh-cn", "zh-tw" ],
     "english_locales": [ "en", "en-gb"],
     "languages": [
         { "value": 2, "langSlug": "af", "name": "Afrikaans", "wpLocale": "af", "territories": [ "002" ] },

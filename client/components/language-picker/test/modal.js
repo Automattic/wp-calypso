@@ -249,6 +249,17 @@ describe( 'LanguagePickerModal', () => {
 			expect( suggestedLanguagesTexts.at( 2 ).text() ).toEqual( 'Italiano' );
 		} );
 
+		test( 'should omit the current user locale from suggestions', () => {
+			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } currentUserLocale="it" /> );
+			const suggestedLanguagesTexts = wrapper.find(
+				'.language-picker__modal-suggested-list .language-picker__modal-text'
+			);
+
+			expect( suggestedLanguagesTexts ).toHaveLength( 2 );
+			expect( suggestedLanguagesTexts.at( 0 ).text() ).toEqual( 'English (UK)' );
+			expect( suggestedLanguagesTexts.at( 1 ).text() ).toEqual( 'English' );
+		} );
+
 		test( 'should not render when there are no suggested languages', () => {
 			Object.defineProperty( global.navigator, 'languages', {
 				get: () => [],

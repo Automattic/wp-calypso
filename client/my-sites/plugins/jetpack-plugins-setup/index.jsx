@@ -185,9 +185,7 @@ class PlansSetup extends React.Component {
 	};
 
 	renderNoJetpackSiteSelected = () => {
-		this.trackConfigFinished( 'calypso_plans_autoconfig_error_wordpresscom', {
-			referrer: document.referrer,
-		} );
+		this.trackConfigFinished( 'calypso_plans_autoconfig_error_wordpresscom' );
 		return (
 			<JetpackManageErrorPage
 				siteId={ this.props.siteId }

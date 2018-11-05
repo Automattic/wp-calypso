@@ -9,12 +9,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import Gridicon from 'gridicons';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import isGutenbergOptInDialogShowing from 'state/selectors/is-gutenberg-opt-in-dialog-showing';
 import { hideGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { setSelectedEditor } from 'state/selected-editor/actions';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
@@ -35,16 +38,24 @@ class EditorGutenbergOptInDialog extends Component {
 		hideDialog: PropTypes.func,
 		optIn: PropTypes.func,
 		optOut: PropTypes.func,
+		siteId: PropTypes.number,
 	};
 
 	onCloseDialog = () => {
 		this.props.hideDialog();
 	};
 
+	optInToGutenberg = () => {
+		const { gutenbergURL, hideDialog, optIn, siteId } = this.props;
+		hideDialog();
+		optIn( siteId );
+		page.redirect( gutenbergURL );
+	};
+
 	render() {
-		const { translate, gutenbergURL, isDialogVisible, optIn, optOut } = this.props;
+		const { translate, isDialogVisible, optOut } = this.props;
 		const buttons = [
-			<Button key="gutenberg" href={ gutenbergURL } onClick={ optIn } primary>
+			<Button key="gutenberg" onClick={ this.optInToGutenberg } primary>
 				{ translate( 'Try the new editor' ) }
 			</Button>,
 			{
@@ -87,7 +98,7 @@ class EditorGutenbergOptInDialog extends Component {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	optIn: () => {
+	optIn: siteId => {
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
@@ -102,7 +113,7 @@ const mapDispatchToProps = dispatch => ( {
 					} ),
 					bumpStat( 'gutenberg-opt-in', 'Calypso Dialog Opt In' )
 				),
-				hideGutenbergOptInDialog()
+				setSelectedEditor( siteId, 'gutenberg' )
 			)
 		);
 	},
@@ -132,9 +143,11 @@ export default connect(
 	state => {
 		const currentRoute = getCurrentRoute( state );
 		const isDialogVisible = isGutenbergOptInDialogShowing( state );
+		const siteId = getSelectedSiteId( state );
 		return {
 			gutenbergURL: `/gutenberg${ currentRoute }`,
 			isDialogVisible,
+			siteId,
 		};
 	},
 	mapDispatchToProps

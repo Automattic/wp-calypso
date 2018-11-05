@@ -12,13 +12,13 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
 import { Component } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import { requestTestPublicizeConnections } from './async-publicize-lib';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class PublicizeConnectionVerify extends Component {
 	constructor( props ) {
@@ -47,12 +47,23 @@ class PublicizeConnectionVerify extends Component {
 	};
 
 	/**
+	 * Callback for connection test request failure
+	 */
+	connectionTestRequestFailed = () => {
+		this.setState( {
+			isLoading: false,
+		} );
+	};
+
+	/**
 	 * Starts request to check connections
 	 *
 	 * Checks connections with using the '/publicize/connections' endpoint
 	 */
 	connectionTestStart = () => {
-		requestTestPublicizeConnections().then( () => this.connectionTestComplete );
+		apiFetch( { path: '/jetpack/v4/publicize/connections' } )
+			.then( () => this.connectionTestComplete )
+			.catch( () => this.connectionTestRequestFailed );
 	};
 
 	/**

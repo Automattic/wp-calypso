@@ -35,7 +35,13 @@ export const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
 	// 		/wp/v2/types/post →
 	//		/wp/v2/sites/example.wordpress.com/types/post
 	if ( /\/wp\/v2\//.test( options.path ) ) {
-		const path = options.path.replace( '/wp/v2/', `/sites/${ siteSlug }/` );
+		let path = options.path.replace( '/wp/v2/', `/sites/${ siteSlug }/` );
+
+		//TODO: temporary fix, we need to add fetchAllMiddleware from Gutenberg core, a -1 value is rewritten to fetch _all_ values
+		// https://github.com/WordPress/gutenberg/blob/master/packages/api-fetch/src/middlewares/fetch-all-middleware.js
+		if ( /per_page=-1/.test( path ) ) {
+			path = path.replace( 'per_page=-1', 'per_page=100' );
+		}
 
 		return next( { ...options, path, apiNamespace: 'wp/v2' } );
 	}

@@ -1,0 +1,24 @@
+.concierge-session-nudge__footer {
+	.concierge-session-nudge__decline-offer-button {
+		color: $blue-medium;
+
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+		}
+
+		@include breakpoint( '>480px' ) {
+			float: left;
+		}
+	}
+
+	.concierge-session-nudge__accept-offer-button {
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+			margin-top: 10px;
+		}
+
+		@include breakpoint( '>480px' ) {
+			float: right;
+		}
+	}
+}

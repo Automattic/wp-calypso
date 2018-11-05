@@ -23,7 +23,11 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import ScreenReaderText from 'components/screen-reader-text';
 import { infoNotice, removeNotice } from 'state/notices/actions';
-import { fetchIsSiteImportable, setNuxUrlInputValue } from 'state/importer-nux/actions';
+import {
+	fetchIsSiteImportable,
+	setImportOriginSiteDetails,
+	setNuxUrlInputValue,
+} from 'state/importer-nux/actions';
 import {
 	getNuxUrlError,
 	getNuxUrlInputValue,
@@ -36,6 +40,7 @@ import {
 	SITE_IMPORTER_ERR_BAD_REMOTE,
 	SITE_IMPORTER_ERR_INVALID_URL,
 } from 'lib/importers/constants';
+import { prefetchmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
 
 const CHECKING_SITE_IMPORTABLE_NOTICE = 'checking-site-importable';
 const IMPORT_HELP_LINK = 'https://en.support.wordpress.com/import/';
@@ -49,19 +54,12 @@ class ImportURLStepComponent extends Component {
 	};
 
 	componentDidMount() {
-		this.setInputValueFromQueryArg();
+		this.setInputValueFromProps();
 		this.focusInput();
 	}
 
 	componentDidUpdate( prevProps ) {
-		const {
-			isSiteImportableError,
-			goToNextStep,
-			urlInputValue,
-			stepName,
-			siteDetails,
-			isLoading,
-		} = this.props;
+		const { isSiteImportableError, goToNextStep, stepName, siteDetails, isLoading } = this.props;
 
 		// isSiteImportable error, focus input to revise url.
 		if (
@@ -69,17 +67,6 @@ class ImportURLStepComponent extends Component {
 			isSiteImportableError
 		) {
 			this.focusInput();
-		}
-
-		// We have a verified, importable site url.
-		if ( ! isEqual( prevProps.siteDetails, siteDetails ) && siteDetails ) {
-			SignupActions.submitSignupStep( { stepName }, [], {
-				importSiteDetails: siteDetails,
-				importUrl: urlInputValue,
-				themeSlugWithRepo: 'pub/radcliffe-2',
-			} );
-
-			goToNextStep();
 		}
 
 		if ( isLoading !== prevProps.isLoading ) {
@@ -92,6 +79,22 @@ class ImportURLStepComponent extends Component {
 				this.props.removeNotice( CHECKING_SITE_IMPORTABLE_NOTICE );
 			}
 		}
+
+		if ( isEqual( prevProps.siteDetails, siteDetails ) || ! siteDetails ) {
+			return;
+		}
+
+		// We have a verified, importable site url.
+		SignupActions.submitSignupStep( { stepName }, [], {
+			importSiteDetails: siteDetails,
+			importUrl: siteDetails.siteUrl,
+			themeSlugWithRepo: 'pub/radcliffe-2',
+		} );
+
+		goToNextStep();
+
+		// Defer the mshot call as to not compete with the flow transition
+		setTimeout( () => prefetchmShotsPreview( siteDetails.siteUrl ), 200 );
 	}
 
 	handleInputChange = event => {
@@ -117,12 +120,16 @@ class ImportURLStepComponent extends Component {
 			return;
 		}
 
+		// Clear out the site details so the step knows when to progress
+		this.props.setImportOriginSiteDetails();
+
 		this.props.fetchIsSiteImportable( this.props.urlInputValue );
 	};
 
-	setInputValueFromQueryArg = () => {
-		const urlFromQueryArg = get( this.props, 'queryObject.url' );
-		urlFromQueryArg && this.props.setNuxUrlInputValue( urlFromQueryArg );
+	setInputValueFromProps = () => {
+		const { queryObject, urlInputValue } = this.props;
+		const inputValue = urlInputValue || get( queryObject, 'url', '' );
+		this.props.setNuxUrlInputValue( inputValue );
 	};
 
 	validateUrl = () => {
@@ -308,6 +315,7 @@ export default flow(
 		{
 			fetchIsSiteImportable,
 			setNuxUrlInputValue,
+			setImportOriginSiteDetails,
 			recordTracksEvent,
 			infoNotice,
 			removeNotice,

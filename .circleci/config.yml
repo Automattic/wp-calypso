@@ -6,7 +6,7 @@ references:
     CIRCLE_TEST_REPORTS: /tmp/test_results
 
   docker-image: &docker-image
-    - image: circleci/node:10.12.0-browsers
+    - image: circleci/node:10.13.0-browsers
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -341,6 +341,7 @@ jobs:
       - restore_cache: *restore-babel-client-cache
       - run:
           name: Build Stats
+          no_output_timeout: 20m
           environment:
             NODE_ENV: "production"
             CALYPSO_CLIENT: "true"

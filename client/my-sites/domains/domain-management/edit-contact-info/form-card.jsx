@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-
 import Card from 'components/card';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
@@ -21,7 +20,7 @@ import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
 import { updateWhois } from 'lib/upgrades/actions';
 import wp from 'lib/wp';
 import { successNotice } from 'state/notices/actions';
-import { UPDATE_CONTACT_INFORMATION } from 'lib/url/support';
+import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'lib/url/support';
 import { registrar as registrarNames } from 'lib/domains/constants';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
 import Dialog from 'components/dialog';
@@ -62,7 +61,7 @@ class EditContactInfoFormCard extends React.Component {
 		);
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.setState( {
 			transferLock: true,
 		} );
@@ -116,7 +115,7 @@ class EditContactInfoFormCard extends React.Component {
 							components: {
 								link: (
 									<a
-										href={ UPDATE_CONTACT_INFORMATION }
+										href={ UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
