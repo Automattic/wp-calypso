@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import FoldableCard from 'components/foldable-card';
 import Button from 'components/button';
-import ActionCard from 'components/action-card';
 import QueryMediaExport from 'components/data/query-media-export';
 import getMediaExportUrl from 'state/selectors/get-media-export-url';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -56,19 +55,6 @@ class ExportMediaCard extends Component {
 						</div>
 					}
 					summary={ exportMediaButton }
-				/>
-				<ActionCard
-					className="export-media-card__content export-card"
-					headerText={ translate( 'Export media library' ) }
-					mainText={ translate(
-						'Download all the media library files (images, videos, audio and documents) from your site.'
-					) }
-					buttonText={ translate( 'Download' ) }
-					buttonHref={ mediaExportUrl }
-					buttonDisabled={ ! mediaExportUrl }
-					buttonOnClick={ recordMediaExportClick }
-					compact={ false }
-					buttonPrimary
 				/>
 			</div>
 		);
