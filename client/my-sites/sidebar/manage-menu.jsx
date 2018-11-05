@@ -77,17 +77,14 @@ class ManageMenu extends PureComponent {
 		const { calypsoifyGutenberg, siteAdminUrl, siteSlug } = this.props;
 
 		if ( calypsoifyGutenberg ) {
-			if ( 'post' === postType ) {
-				return `${ siteAdminUrl }post-new.php?calypsoify=1`;
-			}
-			return `${ siteAdminUrl }post-new.php?post_type=${ postType }&calypsoify=1`;
+			return 'post' === postType
+				? `${ siteAdminUrl }post-new.php?calypsoify=1`
+				: `${ siteAdminUrl }post-new.php?post_type=${ postType }&calypsoify=1`;
 		}
 
-		const siteSlugFragment = siteSlug ? `/${ siteSlug }` : '';
-		if ( 'post' === postType || 'page' === postType ) {
-			return `/${ postType }${ siteSlugFragment }`;
-		}
-		return `/edit/${ postType }${ siteSlugFragment }`;
+		return 'post' === postType || 'page' === postType
+			? `/${ postType }/${ siteSlug }`
+			: `/edit/${ postType }/${ siteSlug }`;
 	};
 
 	getDefaultMenuItems() {
