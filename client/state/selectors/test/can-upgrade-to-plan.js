@@ -49,8 +49,6 @@ describe( 'canUpgradeToPlan', () => {
 
 	test( 'should return true from lower-tier plans to higher-tier plans', () => {
 		[
-			[ PLAN_FREE, PLAN_ECOMMERCE ],
-			[ PLAN_FREE, PLAN_ECOMMERCE_2_YEARS ],
 			[ PLAN_FREE, PLAN_BUSINESS ],
 			[ PLAN_FREE, PLAN_BUSINESS_2_YEARS ],
 			[ PLAN_FREE, PLAN_PERSONAL ],
