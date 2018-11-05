@@ -50,6 +50,7 @@
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
 		"gutenberg": true,
+		"gutenberg/revisions": true,
 		"gutenberg/opt-in": false,
 		"gutenberg/block/jetpack-preset": true,
 		"happychat": true,

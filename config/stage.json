@@ -43,6 +43,7 @@
 		"google-my-business": true,
 		"google-analytics": false,
 		"gutenberg": false,
+		"gutenberg/revisions": false,
 		"gutenberg/opt-in": false,
 		"gutenberg/block/jetpack-preset": false,
 		"happychat": true,
