@@ -7,6 +7,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -59,6 +60,11 @@ class Layout extends Component {
 		colorSchemePreference: PropTypes.string,
 	};
 
+	// Intercepts <a href> clicks in the document and passes them to the `page` router to handle.
+	// If the link is internal to Calypso, the router will handle the navigation with `pushState`
+	// instead of letting the browser reload the whole app by performing a classic navigation.
+	pageClickHandler = e => page.clickHandler( e.nativeEvent );
+
 	render() {
 		const sectionClass = classnames(
 				'layout',
@@ -78,7 +84,8 @@ class Layout extends Component {
 			} );
 
 		return (
-			<div className={ sectionClass }>
+			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+			<div className={ sectionClass } onClick={ this.pageClickHandler }>
 				<DocumentHead />
 				<QuerySites primaryAndRecent />
 				<QuerySites allSites />
