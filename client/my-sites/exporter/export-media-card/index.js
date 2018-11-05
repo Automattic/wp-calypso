@@ -11,6 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import FoldableCard from 'components/foldable-card';
+import Button from 'components/button';
 import ActionCard from 'components/action-card';
 import QueryMediaExport from 'components/data/query-media-export';
 import getMediaExportUrl from 'state/selectors/get-media-export-url';
@@ -27,9 +29,34 @@ class ExportMediaCard extends Component {
 	render() {
 		const { mediaExportUrl, siteId, translate, recordMediaExportClick } = this.props;
 
+		const exportMediaButton = (
+			<Button
+				href={ mediaExportUrl }
+				className="export-media-card__download is-primary"
+				disabled={ ! mediaExportUrl }
+				onClick={ recordMediaExportClick }
+			>
+				{ translate( 'Download' ) }
+			</Button>
+		);
+
 		return (
 			<div className="export-media-card">
 				<QueryMediaExport siteId={ siteId } />
+				<FoldableCard
+					// actionButtonIcon="cog"
+					header={
+						<div>
+							<h1 className="export-media-card__title">{ translate( 'Export media library' ) }</h1>
+							<h2 className="export-media-card__subtitle">
+								{ translate(
+									'Download all the media library files (images, videos, audio and documents) from your site.'
+								) }
+							</h2>
+						</div>
+					}
+					summary={ exportMediaButton }
+				/>
 				<ActionCard
 					className="export-media-card__content export-card"
 					headerText={ translate( 'Export media library' ) }
