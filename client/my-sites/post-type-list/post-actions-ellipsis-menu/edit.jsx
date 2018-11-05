@@ -11,11 +11,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getPost } from 'state/posts/selectors';
 import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import { getSiteAdminUrl } from 'state/sites/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { preload } from 'sections-helper';
 
@@ -55,11 +58,17 @@ const mapStateToProps = ( state, { globalId } ) => {
 		return {};
 	}
 
+	const siteAdminUrl = getSiteAdminUrl( state, post.site_ID );
+	const editUrl =
+		isEnabled( 'calypsoify/gutenberg' ) && 'gutenberg' === getSelectedEditor( state, post.site_ID )
+			? `${ siteAdminUrl }post.php?post=${ post.ID }&action=edit&calypsoify=1`
+			: getEditorPath( state, post.site_ID, post.ID );
+
 	return {
 		canEdit: canCurrentUserEditPost( state, globalId ),
 		status: post.status,
 		type: post.type,
-		editUrl: getEditorPath( state, post.site_ID, post.ID ),
+		editUrl,
 	};
 };
 
