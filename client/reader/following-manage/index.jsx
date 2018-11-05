@@ -16,7 +16,7 @@ import { stringify } from 'qs';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
-import ReaderMain from 'components/reader-main';
+import ReaderMain from 'reader/components/reader-main';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
 import getDismissedSites from 'state/selectors/get-dismissed-sites';
 import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';

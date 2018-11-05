@@ -3,14 +3,18 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Main from 'components/main';
 import SyncReaderFollows from 'components/data/sync-reader-follows';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /*
  * We ref-count number of ReaderMains on screen in order to avoid a race condition
@@ -40,7 +44,7 @@ const setIsReaderPage = add => {
  * Notably, this overrides the background color of the document and is used as a hook by other parts to override styles.
  */
 export default class ReaderMain extends React.Component {
-	componentWillMount() {
+	componentDidMount() {
 		activeReaderMainRefCount++;
 		setIsReaderPage( true );
 	}

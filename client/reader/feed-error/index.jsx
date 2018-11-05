@@ -9,7 +9,7 @@ import i18n, { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ReaderMain from 'components/reader-main';
+import ReaderMain from 'reader/components/reader-main';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import EmptyContent from 'components/empty-content';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
