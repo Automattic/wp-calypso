@@ -360,6 +360,7 @@ jobs:
       - store-artifacts-and-test-results
       - run:
           name: Notify ICFY
+          no_output_timeout: 20m
           command: |
             #
             # This block should not cause a test failure and block PRs.
