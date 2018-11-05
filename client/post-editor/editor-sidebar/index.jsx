@@ -15,6 +15,11 @@ import EditorDeletePost from 'post-editor/editor-delete-post';
 import EditorGutenbergOptInDialog from 'post-editor/editor-gutenberg-opt-in-dialog';
 import EditorGutenbergOptInSidebar from 'post-editor/editor-gutenberg-opt-in-sidebar';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class EditorSidebar extends Component {
 	static propTypes = {
 		// passed props

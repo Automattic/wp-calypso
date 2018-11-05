@@ -30,6 +30,11 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorGutenbergOptInDialog extends Component {
 	static propTypes = {
 		// connected properties
