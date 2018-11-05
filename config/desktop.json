@@ -101,6 +101,7 @@
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
 		"signup/onboarding-flow": false,
+		"signup/ecommerce-flow": false,
 		"signup/social": false,
 		"signup/social-management": true,
 		"signup/wpcc": true,
