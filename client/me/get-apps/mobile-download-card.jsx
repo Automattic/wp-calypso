@@ -66,14 +66,12 @@ class MobileDownloadCard extends React.Component {
 	componentDidUpdate( previousProps ) {
 		if ( previousProps.hasSendingError === false && this.props.hasSendingError === true ) {
 			this.props.errorNotice(
-				this.props.translate( 'There was a problem sending the SMS. Please try again.' )
+				this.props.translate( 'We couldn’t send the SMS — double check your number.' )
 			);
 		}
 
 		if ( previousProps.didSend === false && this.props.didSend === true ) {
-			this.props.successNotice(
-				this.props.translate( 'SMS Sent. Go check your messages on your phone!' )
-			);
+			this.props.successNotice( this.props.translate( 'SMS Sent. Go check your messages!' ) );
 		}
 	}
 
@@ -185,6 +183,14 @@ class MobileDownloadCard extends React.Component {
 
 				{ feature_is_enabled ? (
 					<div className="get-apps__sms-subpanel">
+						<p>
+							<strong>{ translate( 'Ready to WordPress on the go?' ) }</strong>
+							<br />
+							{ translate(
+								'We’ll send you an SMS message with a download link for the right app for your mobile device.'
+							) }
+						</p>
+
 						<div className="get-apps__sms-field-wrapper">
 							{ has_all_data ? (
 								<FormPhoneInput
