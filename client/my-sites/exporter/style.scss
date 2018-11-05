@@ -10,6 +10,14 @@
 	clear: left;
 }
 
+.export-media-card__title {
+	font-size: 21px;
+	font-weight: 300;
+	color: $gray-dark;
+	margin-bottom: 16px;
+	clear: left;
+}
+
 .export-card .foldable-card__header {
 	padding: 24px;
 }
@@ -27,6 +35,11 @@
 }
 
 .export-card__subtitle {
+	font-size: 14px;
+	color: $gray-dark;
+}
+
+.export-media-card__subtitle {
 	font-size: 14px;
 	color: $gray-dark;
 }
