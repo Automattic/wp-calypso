@@ -95,22 +95,25 @@ class PrimaryDomain extends React.Component {
 		const primaryDomainSupportUrl = SETTING_PRIMARY_DOMAIN;
 
 		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<Main className="domain-management-primary-domain">
+				/* eslint-enable wpcalypso/jsx-classname-namespace */
 				<Header selectedDomainName={ selectedDomainName } onClick={ this.goToEditDomainRoot }>
 					{ translate( 'Primary Domain' ) }
 				</Header>
-
 				{ this.errors() }
-
 				<SectionHeader
 					label={ translate( 'Make %(domainName)s the Primary Domain', {
 						args: { domainName: selectedDomainName },
 					} ) }
 				/>
-
+				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				<Card className="primary-domain-card">
+					/* eslint-enable wpcalypso/jsx-classname-namespace */
 					<section>
+						/* eslint-disable wpcalypso/jsx-classname-namespace */
 						<div className="primary-domain-explanation">
+							/* eslint-enable wpcalypso/jsx-classname-namespace */
 							{ translate(
 								'Your primary domain is the address ' +
 									'visitors will see in their browser ' +
@@ -121,8 +124,9 @@ class PrimaryDomain extends React.Component {
 							</a>
 						</div>
 					</section>
-
+					/* eslint-disable wpcalypso/jsx-classname-namespace */
 					<Notice showDismiss={ false } className="primary-domain-notice">
+						/* eslint-enable wpcalypso/jsx-classname-namespace */
 						{ translate(
 							'The primary domain for this site is currently ' +
 								'%(oldDomainName)s. If you update the primary ' +
@@ -136,10 +140,11 @@ class PrimaryDomain extends React.Component {
 							}
 						) }
 					</Notice>
-
 					<section className="primary-domain__actions">
 						<button
+							/* eslint-disable wpcalypso/jsx-classname-namespace */
 							className="button is-primary"
+							/* eslint-enable wpcalypso/jsx-classname-namespace */
 							disabled={ this.state.loading }
 							onClick={ this.handleConfirmClick }
 						>
@@ -147,7 +152,9 @@ class PrimaryDomain extends React.Component {
 						</button>
 
 						<button
+							/* eslint-disable wpcalypso/jsx-classname-namespace */
 							className="button"
+							/* eslint-enable wpcalypso/jsx-classname-namespace */
 							disabled={ this.state.loading }
 							onClick={ this.handleCancelClick }
 						>
