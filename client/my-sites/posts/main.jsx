@@ -30,11 +30,11 @@ import {
 } from 'state/sites/selectors';
 
 class PostsMain extends React.Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.setWarning( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.siteId !== this.props.siteId ||
 			nextProps.hasMinimumJetpackVersion !== this.props.hasMinimumJetpackVersion
