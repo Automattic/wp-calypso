@@ -29,7 +29,7 @@ export const navItems = {
 		showIntervals: true,
 	},
 	wordads: {
-		label: translate( 'WordAds' ),
+		label: 'WordAds',
 		path: '/stats/wordads',
 		showIntervals: true,
 	},
