@@ -16,11 +16,10 @@ import Card from 'components/card';
 import ChecklistBannerTask from './task';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import Gauge from 'components/gauge';
-import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import ProgressBar from 'components/progress-bar';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getNeverShowBannerStatus, setNeverShowBannerStatus } from './never-show';
+import { setNeverShowBannerStatus } from './never-show';
 
 export class ChecklistBanner extends Component {
 	static propTypes = {
@@ -44,24 +43,8 @@ export class ChecklistBanner extends Component {
 		}
 	};
 
-	canShow() {
-		if ( ! this.props.isEligibleForDotcomChecklist ) {
-			return false;
-		}
-
-		if ( this.state.closed ) {
-			return false;
-		}
-
-		if ( getNeverShowBannerStatus( this.props.siteId ) ) {
-			return false;
-		}
-
-		return true;
-	}
-
 	render() {
-		if ( ! this.canShow() ) {
+		if ( this.state.closed ) {
 			return null;
 		}
 
@@ -139,7 +122,6 @@ export class ChecklistBanner extends Component {
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	return {
-		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	};
