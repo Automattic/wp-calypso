@@ -22,7 +22,7 @@ import { registerActionForward } from 'lib/redux-bridge';
 registerActionForward( 'TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET' );
 registerActionForward( 'TRANSACTION_PAYMENT_SET' );
 
-const extractStoredCardMetaValue = ( action, meta_key ) =>
+export const extractStoredCardMetaValue = ( action, meta_key ) =>
 	( find( get( action, 'payment.storedCard.meta' ), { meta_key } ) || {} ).meta_value;
 
 /**
