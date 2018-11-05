@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getEditorPath } from 'state/ui/editor/selectors';
+import getEditorUrl from 'state/selectors/get-editor-url';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
@@ -240,7 +240,7 @@ export default connect(
 
 		// Avoid rendering an external link while loading.
 		const externalPostLink = false === canCurrentUserEditPost( state, globalId );
-		const postUrl = externalPostLink ? post.URL : getEditorPath( state, siteId, post.ID );
+		const postUrl = externalPostLink ? post.URL : getEditorUrl( state, siteId, post.ID, post.type );
 
 		const hasExpandedContent = isSharePanelOpen( state, globalId ) || false;
 
