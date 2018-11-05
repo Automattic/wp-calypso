@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import { SITE_LAUNCH } from 'state/action-types';
@@ -15,7 +10,7 @@ describe( 'actions', () => {
 	describe( '#launchSite', () => {
 		test( 'should return an action when a site is launched', () => {
 			const action = launchSite( 123 );
-			expect( action ).to.deep.equal( {
+			expect( action ).toEqual( {
 				type: SITE_LAUNCH,
 				siteId: 123,
 			} );
