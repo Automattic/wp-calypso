@@ -13,6 +13,7 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import { setSiteType } from 'state/signup/steps/site-type/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { getThemeForSiteType } from 'signup/utils';
 
 //Form components
 import Card from 'components/card';
@@ -34,7 +35,10 @@ class SiteType extends Component {
 	handleSubmit = event => {
 		event.preventDefault();
 		// Default siteType is 'blogger'
-		this.props.submitStep( this.state.siteType || 'blogger' );
+		const siteTypeInputVal = this.state.siteType || 'blogger';
+		const themeRepo = getThemeForSiteType( siteTypeInputVal );
+
+		this.props.submitStep( siteTypeInputVal, themeRepo );
 	};
 
 	renderContent() {
@@ -148,7 +152,7 @@ export default connect(
 		siteType: getSiteType( state ),
 	} ),
 	( dispatch, ownProps ) => ( {
-		submitStep: siteTypeValue => {
+		submitStep: ( siteTypeValue, themeRepo ) => {
 			dispatch( setSiteType( siteTypeValue ) );
 			// Create site
 			SignupActions.submitSignupStep(
@@ -159,6 +163,7 @@ export default connect(
 				[],
 				{
 					siteType: siteTypeValue,
+					themeSlugWithRepo: themeRepo,
 				}
 			);
 			ownProps.goToNextStep( ownProps.flowName );

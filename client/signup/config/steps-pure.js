@@ -365,7 +365,7 @@ export function generateSteps( {
 		/* Improved Onboarding */
 		'site-type': {
 			stepName: 'site-type',
-			providesDependencies: [ 'siteType' ],
+			providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
 		},
 	};
 }
