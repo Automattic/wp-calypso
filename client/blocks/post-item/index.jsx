@@ -14,12 +14,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
-import { isSingleUserSite } from 'state/sites/selectors';
+import { isSingleUserSite, getSiteAdminUrl } from 'state/sites/selectors';
 import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import {
 	isSharePanelOpen,
 	isMultiSelectEnabled,
@@ -240,7 +242,22 @@ export default connect(
 
 		// Avoid rendering an external link while loading.
 		const externalPostLink = false === canCurrentUserEditPost( state, globalId );
-		const postUrl = externalPostLink ? post.URL : getEditorPath( state, siteId, post.ID );
+
+		let postUrl = '';
+		if ( externalPostLink ) {
+			postUrl = post.URL;
+		} else if (
+			isEnabled( 'calypsoify/gutenberg' ) &&
+			'gutenberg' === getSelectedEditor( state, siteId )
+		) {
+			const siteAdminUrl = getSiteAdminUrl( state, siteId );
+			postUrl =
+				'post' === post.type
+					? `${ siteAdminUrl }post-new.php?calypsoify=1`
+					: `${ siteAdminUrl }post-new.php?post_type=${ post.type }&calypsoify=1`;
+		} else {
+			postUrl = getEditorPath( state, siteId, post.ID );
+		}
 
 		const hasExpandedContent = isSharePanelOpen( state, globalId ) || false;
 
