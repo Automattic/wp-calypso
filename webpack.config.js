@@ -289,11 +289,6 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					],
 				},
 				{
-					test: /extensions[\/\\]index/,
-					exclude: path.join( __dirname, 'node_modules' ),
-					loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
-				},
-				{
 					include: path.join( __dirname, 'client/sections.js' ),
 					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
 				},
