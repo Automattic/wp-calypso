@@ -14,8 +14,11 @@ import { navigation, sites, siteSelection } from 'my-sites/controller';
 import { settings } from './app/controller';
 import { Tabs } from './app/constants';
 import { makeLayout, render as clientRender } from 'controller';
+import reducer from './state/reducer';
 
-export default function() {
+export default async function( _, addReducer ) {
+	await addReducer( [ 'extensions', 'wpSuperCache' ], reducer );
+
 	const validTabSlugs = compact( map( Tabs, ( { slug } ) => slug ) ).join( '|' );
 	page( '/extensions/wp-super-cache', siteSelection, sites, makeLayout, clientRender );
 	page(
