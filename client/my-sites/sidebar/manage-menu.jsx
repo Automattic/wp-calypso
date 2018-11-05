@@ -35,6 +35,7 @@ import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 
 class ManageMenu extends PureComponent {
 	static propTypes = {
@@ -51,6 +52,7 @@ class ManageMenu extends PureComponent {
 		siteAdminUrl: PropTypes.string,
 		site: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string,
+		calypsoifyGutenberg: PropTypes.bool,
 	};
 
 	// We default to `/my` posts when appropriate
@@ -71,8 +73,25 @@ class ManageMenu extends PureComponent {
 		return allSingleSites ? '' : '/my';
 	}
 
+	getEditorUrl = postType => {
+		const { calypsoifyGutenberg, siteAdminUrl, siteSlug } = this.props;
+
+		if ( calypsoifyGutenberg ) {
+			if ( 'post' === postType ) {
+				return `${ siteAdminUrl }post-new.php?calypsoify=1`;
+			}
+			return `${ siteAdminUrl }post-new.php?post_type=${ postType }&calypsoify=1`;
+		}
+
+		const siteSlugFragment = siteSlug ? `/${ siteSlug }` : '';
+		if ( 'post' === postType || 'page' === postType ) {
+			return `/${ postType }${ siteSlugFragment }`;
+		}
+		return `/edit/${ postType }${ siteSlugFragment }`;
+	};
+
 	getDefaultMenuItems() {
-		const { siteSlug, translate } = this.props;
+		const { calypsoifyGutenberg, siteSlug, translate } = this.props;
 
 		return [
 			{
@@ -82,7 +101,8 @@ class ManageMenu extends PureComponent {
 				queryable: true,
 				config: 'manage/pages',
 				link: '/pages',
-				buttonLink: siteSlug ? '/page/' + siteSlug : '/page',
+				buttonLink: this.getEditorUrl( 'page' ),
+				forceButtonTargetInternal: calypsoifyGutenberg,
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
 			},
@@ -94,7 +114,8 @@ class ManageMenu extends PureComponent {
 				queryable: true,
 				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
-				buttonLink: siteSlug ? '/post/' + siteSlug : '/post',
+				buttonLink: this.getEditorUrl( 'post' ),
+				forceButtonTargetInternal: calypsoifyGutenberg,
 				wpAdminLink: 'edit.php',
 				showOnAllMySites: true,
 			},
@@ -271,6 +292,7 @@ class ManageMenu extends PureComponent {
 						onClick={ this.trackSidebarButtonClick( menuItem.name ) }
 						href={ menuItem.buttonLink }
 						preloadSectionName="post-editor"
+						forceTargetInternal={ menuItem.forceButtonTargetInternal }
 					>
 						{ menuItem.buttonText || this.props.translate( 'Add' ) }
 					</SidebarButton>
@@ -299,10 +321,10 @@ class ManageMenu extends PureComponent {
 					return memo;
 				}
 
-				let buttonLink;
-				if ( config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable ) {
-					buttonLink = this.props.getNewPostPathFn( postTypeSlug );
-				}
+				const buttonLink =
+					config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable
+						? this.getEditorUrl( postTypeSlug )
+						: undefined;
 
 				return memo.concat( {
 					name: postType.name,
@@ -320,6 +342,7 @@ class ManageMenu extends PureComponent {
 					wpAdminLink: 'edit.php?post_type=' + postType.name,
 					showOnAllMySites: false,
 					buttonLink,
+					forceButtonTargetInternal: this.props.calypsoifyGutenberg,
 				} );
 			},
 			[]
@@ -373,6 +396,9 @@ export default connect(
 		site: getSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		calypsoifyGutenberg:
+			config.isEnabled( 'calypsoify/gutenberg' ) &&
+			'gutenberg' === getSelectedEditor( state, siteId ),
 	} ),
 	{
 		recordTracksEvent,
