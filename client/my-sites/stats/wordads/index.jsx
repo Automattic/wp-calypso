@@ -75,18 +75,18 @@ class WordAds extends Component {
 				attr: 'impressions',
 				legendOptions: [ 'impressions' ],
 				gridicon: 'visible',
-				label: translate( 'Ads Served', { context: 'noun' } ),
+				label: translate( 'Ads Served' ),
 			},
 			{
 				attr: 'cpm',
 				gridicon: 'stats-alt',
-				label: translate( 'Average CPM', { context: 'noun' } ),
+				label: translate( 'Average CPM' ),
 				format: this.formatCurrency,
 			},
 			{
 				attr: 'revenue',
 				gridicon: 'money',
-				label: translate( 'Revenue', { context: 'noun' } ),
+				label: translate( 'Revenue' ),
 				format: this.formatCurrency,
 			},
 		];
