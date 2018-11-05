@@ -300,7 +300,7 @@
     "lerna": "3.4.3",
     "md5-file": "4.0.0",
     "mixedindentlint": "1.2.0",
-    "nock": "10.0.1",
+    "nock": "10.0.2",
     "npm-merge-driver": "2.3.5",
     "prettier": "github:Automattic/wp-prettier#wp-prettier-1.14.0",
     "pretty-bytes": "5.1.0",
