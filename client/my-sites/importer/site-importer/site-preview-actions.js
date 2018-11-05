@@ -58,3 +58,5 @@ export const loadmShotsPreview = ( options = {} ) => {
 		querymShotsEndpoint( { ...options, resolve, reject } );
 	} );
 };
+
+export const prefetchmShotsPreview = url => querymShotsEndpoint( { url, currentRetries: 1 } );

@@ -13,14 +13,14 @@ import { connect } from 'react-redux';
 import getReaderFeedsCountForQuery from 'state/selectors/get-reader-feeds-count-for-query';
 import getReaderFeedsForQuery from 'state/selectors/get-reader-feeds-for-query';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
-import ReaderInfiniteStream from 'components/reader-infinite-stream';
+import ReaderInfiniteStream from 'reader/components/reader-infinite-stream';
 import {
 	requestFeedSearch,
 	SORT_BY_RELEVANCE,
 	SORT_BY_LAST_UPDATED,
 } from 'state/reader/feed-searches/actions';
 import { SEARCH_RESULTS_SITES } from 'reader/follow-sources';
-import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
+import { siteRowRenderer } from 'reader/components/reader-infinite-stream/row-renderers';
 import withDimensions from 'lib/with-dimensions';
 
 class SiteResults extends React.Component {

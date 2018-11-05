@@ -295,13 +295,13 @@
 	}
 }
 
-.email-confirmation__button {
+.processing-screen__continue-button {
 	display: block;
 	padding: 10px 24px;
 	margin: 24px auto 48px auto;
 }
 
-.email-confirmation__button:disabled {
+.processing-screen__continue-button:disabled {
 	animation: pulse 1s infinite linear;
 
 }
@@ -346,13 +346,13 @@
 	font-size: 1.35em;
 	font-weight: 300;
 }
-.signup-pricessing__upgrade-nudge {
+.signup-processing__upgrade-nudge {
 	background: $white;
 	text-align: center;
 	outline: 30px solid $white;
 	margin-bottom: 30px;
 }
-.signup-pricessing__title-subdomain {
+.signup-processing__title-subdomain {
 	text-transform: uppercase;
 	color: $gray-darken-20;
 	font-size: 0.7em;
@@ -363,7 +363,7 @@
 		text-align: inherit;
 	}
 }
-.signup-pricessing__address-bar {
+.signup-processing__address-bar {
 	display: flex;
 	background: $gray-darken-10;
 	border-radius: 8px;
@@ -375,13 +375,13 @@
 		border-radius: 0;
 	}
 }
-.signup-pricessing__address-bar .gridicon {
+.signup-processing__address-bar .gridicon {
 	fill: $gray-dark;
 	margin-right: 10px;
 	align-self: center;
 	flex: 0 0 24px;
 }
-.signup-pricessing__address-field {
+.signup-processing__address-field {
 	flex: 1;
 	background: $white;
 	margin: 0 0 0 5px;
@@ -390,13 +390,13 @@
 	width: 100%;
 	overflow: auto;
 }
-.signup-pricessing__address-field.is-placeholder:after {
+.signup-processing__address-field.is-placeholder:after {
 	content: 'placeholder.wordpress.com';
 	color: transparent;
 	background-color: $gray-lighten-30;
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
-.signup-pricessing__bubble {
+.signup-processing__bubble {
 	position: relative;
 	background: #c2f4ff url('/calypso/images/signup/seo-guy.svg') no-repeat 28px 50%;
 	background-size: 121px auto;
@@ -422,7 +422,7 @@
 		}
 	}
 }
-.signup-pricessing__bubble-tail {
+.signup-processing__bubble-tail {
 	position: absolute;
 	fill: #c2f4ff;
 	width: 47px;
@@ -430,7 +430,7 @@
 	top: -30px;
 	left: 30%;
 }
-.signup-pricessing__nudge-message {
+.signup-processing__nudge-message {
 	width: 400px;
 	max-width: 96%;
 	color: $gray-darken-10;

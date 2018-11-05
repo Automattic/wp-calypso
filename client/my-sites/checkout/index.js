@@ -13,10 +13,12 @@ import {
 	checkoutThankYou,
 	gsuiteNudge,
 	sitelessCheckout,
+	conciergeSessionNudge,
 } from './controller';
 import SiftScience from 'lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 import { noSite, siteSelection } from 'my-sites/controller';
+import config from 'config';
 
 export default function() {
 	SiftScience.recordUser();
@@ -122,6 +124,17 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
+
+	if ( config.isEnabled( 'upsell/concierge-session' ) ) {
+		page(
+			'/checkout/:site/add-expert-session/:receiptId?',
+			redirectLoggedOut,
+			siteSelection,
+			conciergeSessionNudge,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	// Visting /checkout without a plan or product should be redirected to /plans
 	page( '/checkout', '/plans' );
