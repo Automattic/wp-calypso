@@ -341,7 +341,6 @@ jobs:
       - restore_cache: *restore-babel-client-cache
       - run:
           name: Build Stats
-          no_output_timeout: 20m
           environment:
             NODE_ENV: "production"
             CALYPSO_CLIENT: "true"
