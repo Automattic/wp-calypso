@@ -29,6 +29,11 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import StickyPanel from 'components/sticky-panel';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class WordAds extends Component {
 	constructor( props ) {
 		super( props );
