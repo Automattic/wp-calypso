@@ -26,7 +26,6 @@ import { getSections } from 'sections-helper';
 import { checkFormHandler } from 'lib/protect-form';
 import notices from 'notices';
 import authController from 'auth/controller';
-import { makeLayout, render as clientRender } from 'controller';
 
 const debug = debugFactory( 'calypso' );
 
@@ -103,10 +102,9 @@ const loggedOutMiddleware = currentUser => {
 			}
 		} );
 	} else if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
-		page( '/', '/devdocs/start' );
-	} else {
-		// render an empty layout with masterbar links for logged-out home page
-		page( '/', makeLayout, clientRender );
+		page( '/', () => {
+			page.redirect( '/devdocs/start' );
+		} );
 	}
 
 	const validSections = getSections().reduce( ( acc, section ) => {
