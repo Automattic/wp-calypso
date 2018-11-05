@@ -89,6 +89,7 @@ class PostsMain extends React.Component {
 			status,
 			tag,
 			type: 'post',
+			context: 'edit',
 		};
 
 		return (
