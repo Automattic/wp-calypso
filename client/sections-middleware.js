@@ -98,7 +98,9 @@ function createPageDefinition( path, sectionDefinition ) {
 }
 
 export const setupRoutes = () => {
-	sections.forEach( section =>
-		section.paths.forEach( path => createPageDefinition( path, section ) )
-	);
+	for ( const section of sections ) {
+		for ( const path of section.paths ) {
+			createPageDefinition( path, section );
+		}
+	}
 };
