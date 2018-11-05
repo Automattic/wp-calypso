@@ -73,7 +73,6 @@ class SimplePaymentsEdit extends Component {
 			meta: {
 				spay_currency: currency,
 				spay_email: email,
-				spay_formatted_price: this.formatPrice( price, currency ),
 				spay_multiple: multiple ? 1 : 0,
 				spay_price: price,
 			},
