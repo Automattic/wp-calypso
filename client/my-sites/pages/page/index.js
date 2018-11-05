@@ -27,9 +27,15 @@ import classNames from 'classnames';
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
 import { preload } from 'sections-helper';
-import { getSite, hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
+import {
+	getSite,
+	getSiteAdminUrl,
+	hasStaticFrontPage,
+	isSitePreviewable,
+} from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isFrontPage, isPostsPage } from 'state/pages/selectors';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -131,7 +137,7 @@ class Page extends Component {
 	}
 
 	childPageInfo() {
-		const { page, site, translate } = this.props;
+		const { calypsoifyGutenbergOptions, page, site, translate } = this.props;
 
 		// If we're in hierarchical view, we don't show child info in the context menu, as it's redudant.
 		if ( this.props.hierarchical || ! page.parent ) {
@@ -143,7 +149,7 @@ class Page extends Component {
 		// This is technically if you can edit the current page, not the parent.
 		// Capabilities are not exposed on the parent page.
 		const parentHref = utils.userCan( 'edit_post', this.props.page )
-			? editLinkForPage( page.parent, site )
+			? editLinkForPage( page.parent, site, calypsoifyGutenbergOptions )
 			: page.parent.URL;
 		const parentLink = <a href={ parentHref }>{ parentTitle }</a>;
 
@@ -310,7 +316,9 @@ class Page extends Component {
 
 	editPage = () => {
 		this.props.recordEditPage();
-		pageRouter( editLinkForPage( this.props.page, this.props.site ) );
+		pageRouter(
+			editLinkForPage( this.props.page, this.props.site, this.props.calypsoifyGutenbergOptions )
+		);
 	};
 
 	getPageStatusInfo() {
@@ -363,7 +371,7 @@ class Page extends Component {
 	undoPostStatus = () => this.updatePostStatus( this.props.shadowStatus.undo );
 
 	render() {
-		const { page, site = {}, shadowStatus, translate } = this.props;
+		const { calypsoifyGutenbergOptions, page, site = {}, shadowStatus, translate } = this.props;
 		const title = page.title || translate( 'Untitled' );
 		const canEdit = utils.userCan( 'edit_post', page );
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
@@ -436,7 +444,7 @@ class Page extends Component {
 				<div className="page__main">
 					<a
 						className="page__title"
-						href={ canEdit ? editLinkForPage( page, site ) : page.URL }
+						href={ canEdit ? editLinkForPage( page, site, calypsoifyGutenbergOptions ) : page.URL }
 						title={
 							canEdit
 								? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
@@ -613,6 +621,11 @@ const mapState = ( state, props ) => {
 	const isPreviewable =
 		false !== isSitePreviewable( state, pageSiteId ) && site && site.ID === selectedSiteId;
 
+	const calypsoifyGutenbergOptions = isEnabled( 'calypsoify/gutenberg' ) &&
+		'gutenberg' === getSelectedEditor( state, pageSiteId ) && {
+			siteAdminUrl: getSiteAdminUrl( state, pageSiteId ),
+		};
+
 	return {
 		hasStaticFrontPage: hasStaticFrontPage( state, pageSiteId ),
 		isFrontPage: isFrontPage( state, pageSiteId, props.page.ID ),
@@ -621,6 +634,7 @@ const mapState = ( state, props ) => {
 		previewURL: utils.getPreviewURL( site, props.page ),
 		site,
 		siteSlugOrId,
+		calypsoifyGutenbergOptions,
 	};
 };
 

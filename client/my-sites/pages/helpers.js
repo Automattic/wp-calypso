@@ -8,7 +8,12 @@ import { assign, forEach, groupBy, includes, map, reduce, sortBy } from 'lodash'
 const sortByMenuOrder = list => sortBy( list, 'menu_order' );
 const getParentId = page => page.parent && page.parent.ID;
 
-export const editLinkForPage = ( page, site ) => {
+export const editLinkForPage = ( page, site, calypsoifyGutenbergOptions ) => {
+	const { siteAdminUrl } = calypsoifyGutenbergOptions;
+	if ( siteAdminUrl ) {
+		return `${ siteAdminUrl }post.php?post=${ page.ID }&action=edit&calypsoify=1`;
+	}
+
 	if ( ! page || ! site ) {
 		return null;
 	}
