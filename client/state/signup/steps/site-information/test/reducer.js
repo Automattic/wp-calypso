@@ -11,6 +11,7 @@ describe( 'reducer', () => {
 		const siteInformation = {
 			address: '27 Pleasant Crescent',
 			phone: '+39 1234 1234',
+			email: 'hello@123.com',
 		};
 		expect(
 			signupDependencyStore(
