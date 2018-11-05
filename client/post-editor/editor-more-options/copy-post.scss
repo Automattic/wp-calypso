@@ -1,16 +1,3 @@
-.editor-slug.editor-more-options__slug-field {
-	margin: 0;
-}
-
-.editor-slug.editor-more-options__slug-field .editor-slug__url-path {
-	display: none;
-}
-
-.editor-slug.editor-more-options__slug-field input[type="text"].form-text-input {
-	@extend %form-field;
-	font-size: 13px;
-}
-
 // Copy Post Dialog
 .editor-more-options__copy-post-select-dialog .dialog__content {
 	min-width: 40vw;

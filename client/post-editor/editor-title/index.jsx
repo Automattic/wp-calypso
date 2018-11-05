@@ -27,6 +27,11 @@ import { getEditedPost } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Constants
  */
 const REGEXP_NEWLINES = /[\r\n]+/g;
