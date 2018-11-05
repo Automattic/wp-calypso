@@ -251,10 +251,7 @@ export default connect(
 			'gutenberg' === getSelectedEditor( state, siteId )
 		) {
 			const siteAdminUrl = getSiteAdminUrl( state, siteId );
-			postUrl =
-				'post' === post.type
-					? `${ siteAdminUrl }post-new.php?calypsoify=1`
-					: `${ siteAdminUrl }post-new.php?post_type=${ post.type }&calypsoify=1`;
+			postUrl = `${ siteAdminUrl }post.php?post=${ post.ID }&action=edit&calypsoify=1`;
 		} else {
 			postUrl = getEditorPath( state, siteId, post.ID );
 		}
