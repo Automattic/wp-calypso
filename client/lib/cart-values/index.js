@@ -16,6 +16,11 @@ import cartItems from './cart-items';
 import productsValues from 'lib/products-values';
 import { requestGeoLocation } from 'state/data-getters';
 
+// #tax-on-checout-placeholder
+import { reduxGetState } from 'lib/redux-bridge';
+import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
+import getPaymentPostalCode from 'state/selectors/get-payment-postal-code';
+
 const PAYMENT_METHODS = {
 	alipay: 'WPCOM_Billing_Stripe_Source_Alipay',
 	bancontact: 'WPCOM_Billing_Stripe_Source_Bancontact',
@@ -46,13 +51,7 @@ function preprocessCartForServer( {
 	temporary,
 	extra,
 	products,
-	// #tax-on-checout-placeholder
-	tax = {
-		location: {
-			country_code: 'US',
-			postal_code: '90210',
-		},
-	},
+	tax,
 } ) {
 	const needsUrlCoupon = ! (
 		coupon ||
@@ -62,13 +61,31 @@ function preprocessCartForServer( {
 	);
 	const urlCoupon = needsUrlCoupon ? url.parse( document.URL, true ).query.coupon : '';
 
+	// #tax-on-checout-placeholder
+	const reduxState = reduxGetState();
+	const placeholderTax =
+		tax ||
+		( reduxState
+			? {
+					location: {
+						country_code: getPaymentCountryCode( reduxState ),
+						postal_code: getPaymentPostalCode( reduxState ),
+					},
+			  }
+			: {
+					location: {
+						country_code: 'US',
+						postal_code: '90210',
+					},
+			  } );
+
 	return Object.assign(
 		{
 			coupon,
 			is_coupon_applied,
 			is_coupon_removed,
 			currency,
-			tax,
+			tax: placeholderTax,
 			temporary,
 			extra,
 			products: products.map(
@@ -121,6 +138,30 @@ function removeCoupon() {
 			coupon: { $set: '' },
 			is_coupon_applied: { $set: false },
 			$merge: { is_coupon_removed: true },
+		} );
+	};
+}
+
+function setTaxCountryCode( countryCode ) {
+	return function( cart ) {
+		return update( cart, {
+			tax: { location: { country_code: { $set: countryCode } } },
+		} );
+	};
+}
+
+function setTaxPostalCode( postalCode ) {
+	return function( cart ) {
+		return update( cart, {
+			tax: { location: { postal_code: { $set: postalCode } } },
+		} );
+	};
+}
+
+function setTaxLocation( { postalCode, countryCode } ) {
+	return function( cart ) {
+		return update( cart, {
+			tax: { location: { $set: { postal_code: postalCode, country_code: countryCode } } },
 		} );
 	};
 }
@@ -352,6 +393,9 @@ export {
 	paymentMethodClassName,
 	paymentMethodName,
 	getLocationOrigin,
+	setTaxCountryCode,
+	setTaxPostalCode,
+	setTaxLocation,
 };
 
 export default {

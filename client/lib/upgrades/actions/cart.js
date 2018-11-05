@@ -20,6 +20,8 @@ import {
 	CART_PRIVACY_PROTECTION_ADD,
 	CART_PRIVACY_PROTECTION_REMOVE,
 	GOOGLE_APPS_REGISTRATION_DATA_ADD,
+	CART_TAX_COUNTRY_CODE_SET,
+	CART_TAX_POSTAL_CODE_SET,
 } from 'lib/upgrades/action-types';
 import Dispatcher from 'dispatcher';
 import { cartItems } from 'lib/cart-values';
@@ -133,5 +135,19 @@ export function applyCoupon( coupon ) {
 export function removeCoupon() {
 	Dispatcher.handleViewAction( {
 		type: CART_COUPON_REMOVE,
+	} );
+}
+
+export function setTaxCountryCode( countryCode ) {
+	Dispatcher.handleViewAction( {
+		type: CART_TAX_COUNTRY_CODE_SET,
+		countryCode,
+	} );
+}
+
+export function setTaxPostalCode( postalCode ) {
+	Dispatcher.handleViewAction( {
+		type: CART_TAX_POSTAL_CODE_SET,
+		postalCode,
 	} );
 }
