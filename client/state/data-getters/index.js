@@ -13,6 +13,7 @@ import { requestHttpData } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
 import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
+import { setSelectedEditor } from 'state/selected-editor/actions';
 
 export const requestActivityActionTypeCounts = (
 	siteId,
@@ -175,6 +176,20 @@ export const requestGutenbergDemoContent = () =>
 		),
 		{ fromApi: () => data => [ [ 'gutenberg-demo-content', data ] ] }
 	);
+
+export const requestSelectedEditor = siteId => {
+	const requestId = `selected-editor-${ siteId }`;
+	const fetchAction = editor =>
+		http( {
+			path: `/sites/${ siteId }/gutenberg`,
+			method: 'GET',
+			apiNamespace: 'wpcom/v2',
+			onSuccess: setSelectedEditor( siteId, editor ),
+		} );
+	return requestHttpData( requestId, fetchAction, {
+		fromApi: () => data => [ [ requestId, data ] ],
+	} );
+};
 
 export const requestSitePost = ( siteId, postId, postType ) => {
 	//post and page types are plural except for custom post types
