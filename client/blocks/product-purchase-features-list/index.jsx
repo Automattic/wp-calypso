@@ -39,6 +39,7 @@ import JetpackPublicize from './jetpack-publicize';
 import JetpackVideo from './jetpack-video';
 import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackSearch from './jetpack-search';
+import JetpackSiteAccelerator from './jetpack-site-accelerator';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
 import JetpackWordPressCom from './jetpack-wordpress-com';
 import MobileApps from './mobile-apps';
@@ -88,6 +89,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<FindNewTheme selectedSite={ selectedSite } />
 				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
 				<SiteActivity />
+				<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				<MobileApps />
 				<SellOnlinePaypal isJetpack={ false } />
 			</Fragment>
@@ -109,6 +111,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
 				<SiteActivity />
+				<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				<MobileApps />
 				<SellOnlinePaypal isJetpack={ false } />
 			</Fragment>
@@ -124,6 +127,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
 				<SiteActivity />
+				<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				<MobileApps />
 			</Fragment>
 		);
@@ -142,6 +146,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				/>
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
 				<SiteActivity />
+				<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				<MobileApps />
 			</Fragment>
 		);
@@ -163,6 +168,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				/>
 				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<SiteActivity />
+				<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				<MobileApps />
 				<JetpackReturnToDashboard
 					onClick={ recordReturnToDashboardClick }
@@ -192,6 +198,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackAntiSpam selectedSite={ selectedSite } />
 				<JetpackPublicize selectedSite={ selectedSite } />
 				<JetpackVideo selectedSite={ selectedSite } />
+				<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				<MobileApps />
 				<SellOnlinePaypal isJetpack />
 				<JetpackReturnToDashboard
@@ -220,6 +227,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackBackupSecurity />
 				<SiteActivity />
 				<JetpackAntiSpam selectedSite={ selectedSite } />
+				<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				<MobileApps />
 				<JetpackReturnToDashboard
 					onClick={ recordReturnToDashboardClick }
@@ -259,6 +267,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackBackupSecurity />
 				<SiteActivity />
 				<JetpackAntiSpam selectedSite={ selectedSite } />
+				<JetpackSiteAccelerator selectedSite={ selectedSite } />
 				<MobileApps />
 				<SellOnlinePaypal isJetpack />
 				<JetpackReturnToDashboard
