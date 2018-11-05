@@ -202,6 +202,21 @@ class Page extends Component {
 			return null;
 		}
 
+		if ( !! this.props.calypsoifyGutenbergOptions ) {
+			return (
+				<PopoverMenuItem
+					href={ editLinkForPage(
+						this.props.page,
+						this.props.site,
+						this.props.calypsoifyGutenbergOptions
+					) }
+				>
+					<Gridicon icon="pencil" size={ 18 } />
+					{ this.props.translate( 'Edit' ) }
+				</PopoverMenuItem>
+			);
+		}
+
 		return (
 			<PopoverMenuItem onClick={ this.editPage } onMouseOver={ preloadEditor }>
 				<Gridicon icon="pencil" size={ 18 } />
@@ -268,7 +283,8 @@ class Page extends Component {
 		const { page: post, siteSlugOrId } = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
-			! utils.userCan( 'edit_post', post )
+			! utils.userCan( 'edit_post', post ) ||
+			!! this.props.calypsoifyGutenbergOptions
 		) {
 			return null;
 		}
