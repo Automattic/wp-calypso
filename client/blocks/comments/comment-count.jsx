@@ -30,7 +30,7 @@ const CommentCount = ( { count, translate } ) => {
 			{ count === 0 &&
 				'- ' +
 					translate( 'add the first!', {
-						context: 'Used after "no comments", inviting user to add the first comment',
+						comment: 'Add the first comment. Shown when a post has no comments yet.',
 					} ) }
 		</div>
 	);
