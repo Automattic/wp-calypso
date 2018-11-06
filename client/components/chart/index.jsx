@@ -91,12 +91,23 @@ class Chart extends React.Component {
 	};
 
 	getYAxisMax = values => {
+		// Calculate max value in the dataset.
 		const max = Math.max.apply( null, values );
 
-		const unit = max < 1 ? 0.5 : Math.pow( 10, Math.floor( max ).toString().length - 1 );
-		const numberOfUnits = 1 === unit && max >= 1 ? 2 : Math.ceil( max / unit );
+		const log10 = Math.log10( max );
+		const sign = Math.sign( log10 );
 
-		return 0 === max ? 2 : unit * numberOfUnits;
+		// Magnitude of the number by a factor fo 10 (e.g. thousands, hundreds, tens, ones, tenths, hundredths, thousandths).
+		const magnitude = Math.ceil( Math.abs( log10 ) ) * sign;
+
+		// Determine the base unit size, based on the magnitude of the number.
+		const unitSize =
+			sign > 0 && 1 < magnitude ? Math.pow( 10, magnitude - sign ) : Math.pow( 10, magnitude );
+
+		// Determine how many units are needed to accommodate the chart's max value.
+		const numberOfUnits = Math.ceil( max / unitSize );
+
+		return unitSize * numberOfUnits;
 	};
 
 	storeChart = ref => ( this.chart = ref );
