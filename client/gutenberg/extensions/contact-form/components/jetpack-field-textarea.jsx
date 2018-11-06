@@ -15,17 +15,16 @@ import JetpackFieldLabel from './jetpack-field-label';
 function JetpackFieldTextarea( props ) {
 	return (
 		<Fragment>
-			<JetpackFieldSettings
-				required={ props.required }
-				setAttributes={ props.setAttributes }
-			/>
+			<JetpackFieldSettings required={ props.required } setAttributes={ props.setAttributes } />
 			<div className="jetpack-field">
 				<TextareaControl
-					label={ <JetpackFieldLabel
-						required={ props.required }
-						label={ props.label }
-						setAttributes={ props.setAttributes }
-					/> }
+					label={
+						<JetpackFieldLabel
+							required={ props.required }
+							label={ props.label }
+							setAttributes={ props.setAttributes }
+						/>
+					}
 					disabled
 				/>
 			</div>
