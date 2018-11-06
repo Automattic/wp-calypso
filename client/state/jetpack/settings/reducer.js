@@ -33,7 +33,6 @@ export const settingsReducer = keyedReducer(
 			[ JETPACK_MODULES_ACTIVATE_SUCCESS ]: ( state, { modules } ) => ( {
 				...state,
 				modules,
-				active: true,
 			} ),
 			[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: ( state, { moduleSlug } ) => ( {
 				...state,
@@ -42,7 +41,6 @@ export const settingsReducer = keyedReducer(
 			[ JETPACK_MODULES_DEACTIVATE_SUCCESS ]: ( state, { modules } ) => ( {
 				...state,
 				modules,
-				active: false,
 			} ),
 			[ JETPACK_MODULES_RECEIVE ]: ( state, { modules } ) => {
 				const modulesActivationState = mapValues( modules, module => module.active );

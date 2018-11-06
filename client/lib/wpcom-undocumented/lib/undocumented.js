@@ -108,7 +108,6 @@ Undocumented.prototype.jetpackModulesActivate = function( siteId, modules, fn ) 
 			path: '/jetpack/v4/module/all/active/',
 			body: JSON.stringify( {
 				modules,
-				active: true,
 			} ),
 		},
 		fn
@@ -151,7 +150,6 @@ Undocumented.prototype.jetpackModulesDeactivate = function( siteId, modules, fn 
 			path: '/jetpack/v4/module/all/active/',
 			body: JSON.stringify( {
 				modules,
-				active: false,
 			} ),
 		},
 		fn
