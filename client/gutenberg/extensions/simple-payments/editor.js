@@ -11,6 +11,7 @@ import GridiconMoney from 'gridicons/dist/money';
  */
 import edit from './edit';
 import save from './save';
+import { DEFAULT_CURRENCY } from './constants';
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 /**
@@ -36,6 +37,7 @@ registerBlockType( 'jetpack/simple-payments', {
 	attributes: {
 		currency: {
 			type: 'string',
+			default: DEFAULT_CURRENCY,
 		},
 		content: {
 			type: 'string',

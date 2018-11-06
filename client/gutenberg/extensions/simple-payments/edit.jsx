@@ -31,6 +31,7 @@ import {
 	SUPPORTED_CURRENCY_LIST,
 } from 'lib/simple-payments/constants';
 import ProductPlaceholder from './product-placeholder';
+import { DEFAULT_CURRENCY } from './constants';
 
 class SimplePaymentsEdit extends Component {
 	state = {
@@ -42,13 +43,13 @@ class SimplePaymentsEdit extends Component {
 
 	componentDidUpdate( prevProps ) {
 		const { simplePayment, attributes, setAttributes, isSelected, isLoadingInitial } = this.props;
-		const { currency, price, title, email, content, multiple } = attributes;
+		const { content, currency, email, multiple, price, title } = attributes;
 
 		// @TODO check componentDidMount for the case where post was already loaded
 		if ( ! prevProps.simplePayment && simplePayment ) {
 			setAttributes( {
 				content: get( simplePayment, [ 'content', 'raw' ], content ),
-				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency || 'USD' ),
+				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency ),
 				email: get( simplePayment, [ 'meta', 'spay_email' ], email ),
 				multiple: Boolean( get( simplePayment, [ 'meta', 'spay_multiple' ], Boolean( multiple ) ) ),
 				price: get( simplePayment, [ 'meta', 'spay_price' ], price || undefined ),
@@ -63,7 +64,7 @@ class SimplePaymentsEdit extends Component {
 	}
 
 	attributesToPost = attributes => {
-		const { title, content, currency, price, email, multiple } = attributes;
+		const { content, currency = DEFAULT_CURRENCY, email, multiple, price, title } = attributes;
 
 		return {
 			title,
@@ -89,7 +90,7 @@ class SimplePaymentsEdit extends Component {
 		// Do not save if fields have invalid data
 		if (
 			isSavingProduct ||
-			! currency ||
+			( !! currency && ! SUPPORTED_CURRENCY_LIST.includes( currency ) ) ||
 			! email ||
 			! price ||
 			! title ||
@@ -303,7 +304,7 @@ class SimplePaymentsEdit extends Component {
 		this.props.setAttributes( { title } );
 	};
 
-	formatPrice = ( price, currency, withSymbol = true ) => {
+	formatPrice = ( price, currency = DEFAULT_CURRENCY, withSymbol = true ) => {
 		const { precision, symbol } = getCurrencyDefaults( currency );
 		const value = price.toFixed( precision );
 		// Trim the dot at the end of symbol, e.g., 'kr.' becomes 'kr'
@@ -338,7 +339,6 @@ class SimplePaymentsEdit extends Component {
 
 		if (
 			! isSelected &&
-			currency &&
 			email &&
 			price &&
 			title &&
@@ -398,7 +398,8 @@ class SimplePaymentsEdit extends Component {
 							label={ __( 'Currency' ) }
 							onChange={ this.handleCurrencyChange }
 							options={ this.getCurrencyList }
-							value={ currency || 'USD' }
+							value={ currency }
+							defaultValue={ DEFAULT_CURRENCY }
 						/>
 						<TextControl
 							disabled={ isLoadingInitial }
