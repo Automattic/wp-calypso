@@ -28,6 +28,7 @@ import { getEditURL } from 'state/posts/utils';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import getEditorUrl from 'state/selectors/get-editor-url';
+import { requestSelectedEditor } from 'state/selected-editor/actions';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -153,11 +154,19 @@ function waitForSiteIdAndSelectedEditor( context ) {
 			unsubscribe();
 			resolve();
 		} );
+		// Trigger a `store.subscribe()` callback
+		context.store.dispatch(
+			requestSelectedEditor( getSelectedSiteId( context.store.getState() ) )
+		);
 	} );
 }
 
 async function maybeCalypsoifyGutenberg( context, next ) {
-	await waitForSiteIdAndSelectedEditor( context );
+	const tmpState = context.store.getState();
+	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
+	if ( ! selectedEditor ) {
+		await waitForSiteIdAndSelectedEditor( context );
+	}
 
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
