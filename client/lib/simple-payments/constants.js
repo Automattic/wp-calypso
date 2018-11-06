@@ -1,9 +1,11 @@
 /** @format */
 export const SIMPLE_PAYMENTS_PRODUCT_POST_TYPE = 'jp_pay_product';
 
+export const DEFAULT_CURRENCY = 'USD';
+
 // https://developer.paypal.com/docs/integration/direct/rest/currency-codes/
 export const SUPPORTED_CURRENCY_LIST = [
-	'USD',
+	DEFAULT_CURRENCY,
 	'EUR',
 	'AUD',
 	'BRL',

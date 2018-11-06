@@ -11,7 +11,7 @@ import GridiconMoney from 'gridicons/dist/money';
  */
 import edit from './edit';
 import save from './save';
-import { DEFAULT_CURRENCY } from './constants';
+import { DEFAULT_CURRENCY } from 'lib/simple-payments/constants';
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 /**

@@ -27,11 +27,11 @@ import trimEnd from 'lodash/trimEnd';
  */
 import { getCurrencyDefaults } from 'lib/format-currency';
 import {
+	DEFAULT_CURRENCY,
 	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 	SUPPORTED_CURRENCY_LIST,
 } from 'lib/simple-payments/constants';
 import ProductPlaceholder from './product-placeholder';
-import { DEFAULT_CURRENCY } from './constants';
 
 class SimplePaymentsEdit extends Component {
 	state = {
