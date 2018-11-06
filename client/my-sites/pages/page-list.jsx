@@ -32,6 +32,7 @@ import {
 	isPostsLastPageForQuery,
 } from 'state/posts/selectors';
 import { getSite } from 'state/sites/selectors';
+import getEditorUrl from 'state/selectors/get-editor-url';
 
 function preloadEditor() {
 	preload( 'post-editor' );
@@ -200,7 +201,7 @@ class Pages extends Component {
 		);
 
 	getNoContentMessage() {
-		const { query, translate, site, siteId } = this.props;
+		const { newPageLink, query, translate } = this.props;
 		const { search, status } = query;
 
 		if ( search ) {
@@ -216,8 +217,6 @@ class Pages extends Component {
 			);
 		}
 
-		const sitePart = ( site && site.slug ) || siteId;
-		const newPageLink = siteId ? '/page/' + sitePart : '/page';
 		let attributes;
 
 		switch ( status ) {
@@ -409,6 +408,7 @@ const mapState = ( state, { query, siteId } ) => ( {
 	lastPage: isPostsLastPageForQuery( state, siteId, query ),
 	pages: getPostsForQueryIgnoringPage( state, siteId, query ) || [],
 	site: getSite( state, siteId ),
+	newPageLink: getEditorUrl( state, siteId, null, 'page' ),
 } );
 
 const ConnectedPages = flowRight(
