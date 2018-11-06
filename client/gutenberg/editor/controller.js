@@ -9,7 +9,7 @@ import { has, uniqueId } from 'lodash';
  * Internal dependencies
  */
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { EDITOR_START } from 'state/action-types';
 import { initGutenberg } from './init';
 
@@ -45,6 +45,7 @@ export const post = ( context, next ) => {
 	const unsubscribe = context.store.subscribe( () => {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
 		const userId = getCurrentUserId( state );
 
 		if ( ! siteId ) {
@@ -56,7 +57,7 @@ export const post = ( context, next ) => {
 		//set postId on state.ui.editor.postId, so components like editor revisions can read from it
 		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
-		const GutenbergEditor = initGutenberg( userId );
+		const GutenbergEditor = initGutenberg( userId, siteSlug );
 
 		context.primary = (
 			<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />

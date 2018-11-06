@@ -9,6 +9,7 @@ import { once } from 'lodash';
 /**
  * Internal dependencies
  */
+import { applyAPIMiddleware } from './api-middleware';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:gutenberg' );
@@ -21,7 +22,7 @@ const WPCOM_UNSUPPORTED_CORE_BLOCKS = [
 
 // We need to ensure that his function is executed only once to avoid
 // registering core blocks and applying middleware twice.
-export const initGutenberg = once( userId => {
+export const initGutenberg = once( ( userId, siteSlug ) => {
 	debug( 'Starting Gutenberg editor initialization...' );
 
 	debug( 'Registering data plugins' );
@@ -54,6 +55,9 @@ export const initGutenberg = once( userId => {
 
 	// Prevent Guided tour from showing when editor loads.
 	dispatch( 'core/nux' ).disableTips();
+
+	debug( 'Applying API middleware' );
+	applyAPIMiddleware( siteSlug );
 
 	debug( 'Gutenberg editor initialization complete.' );
 
