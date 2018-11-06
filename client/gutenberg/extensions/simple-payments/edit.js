@@ -25,12 +25,29 @@ import trimEnd from 'lodash/trimEnd';
 /**
  * Internal dependencies
  */
-import { getCurrencyDefaults } from 'lib/format-currency';
+import { CURRENCIES } from 'lib/format-currency/currencies';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 	SUPPORTED_CURRENCY_LIST,
 } from 'lib/simple-payments/constants';
 import ProductPlaceholder from './product-placeholder';
+
+/**
+ * Returns currency defaults.
+ * Taken from 'lib/format-currency' to optimize SDK build size.
+ * @param   {String} code      currency code
+ * @returns {?Object}          currency defaults
+ */
+const getCurrencyDefaults = code => {
+	const defaultCurrency = {
+		symbol: '$',
+		grouping: ',',
+		decimal: '.',
+		precision: 2,
+	};
+
+	return CURRENCIES[ code ] || defaultCurrency;
+};
 
 class SimplePaymentsEdit extends Component {
 	state = {
