@@ -89,8 +89,9 @@ class MapEdit extends Component {
 		this.apiCall( null, 'DELETE' );
 	};
 	apiCall( service_api_key = null, method = 'GET' ) {
-		const { noticeOperations } = this.props;
-		const url = '/wp-json/jetpack/v4/service-api-keys/mapbox';
+		const { noticeOperations, attributes } = this.props;
+		const { map_service } = attributes;
+		const url = this.apiURLForService( map_service );
 		const fetch = service_api_key ? { url, method, data: { service_api_key } } : { url, method };
 		apiFetch( fetch ).then(
 			result => {
@@ -109,6 +110,9 @@ class MapEdit extends Component {
 			}
 		);
 	}
+	apiURLForService = map_service => {
+		return '/wp-json/jetpack/v4/service-api-keys/' + map_service;
+	};
 	componentDidMount() {
 		this.apiCall();
 	}
@@ -119,7 +123,16 @@ class MapEdit extends Component {
 	};
 	render() {
 		const { className, setAttributes, attributes, noticeUI, notices } = this.props;
-		const { map_style, map_details, points, zoom, map_center, marker_color, align } = attributes;
+		const {
+			map_style,
+			map_details,
+			points,
+			zoom,
+			map_center,
+			marker_color,
+			align,
+			map_service,
+		} = attributes;
 		const { addPointVisibility, api_key, apiKeyControl, apiState } = this.state;
 		const inspectorControls = (
 			<Fragment>
@@ -171,21 +184,40 @@ class MapEdit extends Component {
 							/>
 						</PanelBody>
 					) : null }
-					<PanelBody title={ __( 'Mapbox Access Token', 'jetpack' ) } initialOpen={ false }>
-						<TextControl
-							label={ __( 'Mapbox Access Token', 'jetpack' ) }
-							value={ apiKeyControl }
-							onChange={ value => this.setState( { apiKeyControl: value } ) }
-						/>
-						<ButtonGroup>
-							<Button type="button" onClick={ this.updateAPIKey } isDefault>
-								{ __( 'Update Key' ) }
-							</Button>
-							<Button type="button" onClick={ this.removeAPIKey } isDefault>
-								{ __( 'Remove Key' ) }
-							</Button>
-						</ButtonGroup>
-					</PanelBody>
+					{ 'mapbox' === map_service && (
+						<PanelBody title={ __( 'Mapbox Access Token', 'jetpack' ) } initialOpen={ false }>
+							<TextControl
+								label={ __( 'Mapbox Access Token', 'jetpack' ) }
+								value={ apiKeyControl }
+								onChange={ value => this.setState( { apiKeyControl: value } ) }
+							/>
+							<ButtonGroup>
+								<Button type="button" onClick={ this.updateAPIKey } isDefault>
+									{ __( 'Update Key' ) }
+								</Button>
+								<Button type="button" onClick={ this.removeAPIKey } isDefault>
+									{ __( 'Remove Key' ) }
+								</Button>
+							</ButtonGroup>
+						</PanelBody>
+					) }
+					{ 'googlemaps' === map_service && (
+						<PanelBody title={ __( 'Google Maps API Key', 'jetpack' ) } initialOpen={ false }>
+							<TextControl
+								label={ __( 'Mapbox Access Token', 'jetpack' ) }
+								value={ apiKeyControl }
+								onChange={ value => this.setState( { apiKeyControl: value } ) }
+							/>
+							<ButtonGroup>
+								<Button type="button" onClick={ this.updateAPIKey } isDefault>
+									{ __( 'Update Key' ) }
+								</Button>
+								<Button type="button" onClick={ this.removeAPIKey } isDefault>
+									{ __( 'Remove Key' ) }
+								</Button>
+							</ButtonGroup>
+						</PanelBody>
+					) }
 				</InspectorControls>
 			</Fragment>
 		);
@@ -194,15 +226,12 @@ class MapEdit extends Component {
 				<Spinner />
 			</Placeholder>
 		);
-		const getAPIInstructions = sprintf(
-			"<p>Before you use a map block, you will need to get a key from <a href='%1$s'>Mapbox</a>. You will only have to do this once.</p><p>Go to <a href='%1$s'>Mapbox</a> and either create an account or sign in. Once you sign in, locate and copy the default access token. Finally, paste it into the token field below.</p>",
-			'https://www.mapbox.com'
-		);
+		const apiInstructions = this.apiInstructionsForMapService( map_service );
 		const placeholderAPIStateFailure = (
 			<Placeholder icon={ settings.icon } label={ __( 'Map', 'jetpack' ) } notices={ notices }>
 				<Fragment>
 					<div className="components-placeholder__instructions">
-						<RawHTML>{ getAPIInstructions }</RawHTML>
+						<RawHTML>{ apiInstructions }</RawHTML>
 					</div>
 					<TextControl
 						placeholder="Paste Key Here"
@@ -229,6 +258,7 @@ class MapEdit extends Component {
 						} }
 						admin={ true }
 						api_key={ api_key }
+						map_service={ map_service }
 						onSetPoints={ value => setAttributes( { points: value } ) }
 						onMapLoaded={ () => this.setState( { addPointVisibility: true } ) }
 						onMarkerClick={ () => this.setState( { addPointVisibility: false } ) }
@@ -239,6 +269,7 @@ class MapEdit extends Component {
 								onAddPoint={ this.addPoint }
 								onClose={ () => this.setState( { addPointVisibility: false } ) }
 								api_key={ api_key }
+								map_service={ map_service }
 								onError={ this.onError }
 							/>
 						) }
@@ -255,6 +286,20 @@ class MapEdit extends Component {
 			</Fragment>
 		);
 	}
+	apiInstructionsForMapService = map_service => {
+		switch ( map_service ) {
+			case 'googlemaps':
+				return sprintf(
+					"This is your first map block. You need to get a Google Maps API key. <a href='%s' target='_blank'>Here's how to do it</a>.",
+					'https://developers.google.com/maps/documentation/javascript/get-api-key'
+				);
+			case 'mapbox':
+				return sprintf(
+					"<p>Before you use a map block, you will need to get a key from <a href='%1$s'>Mapbox</a>. You will only have to do this once.</p><p>Go to <a href='%1$s'>Mapbox</a> and either create an account or sign in. Once you sign in, locate and copy the default access token. Finally, paste it into the token field below.</p>",
+					'https://www.mapbox.com'
+				);
+		}
+	};
 }
 
 export default withNotices( MapEdit );

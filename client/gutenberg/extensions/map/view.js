@@ -18,16 +18,29 @@ window.addEventListener( 'load', function() {
 		return;
 	}
 	const frontendManagement = new FrontendManagement();
-	const url = '/wp-json/jetpack/v4/service-api-keys/mapbox';
-	apiFetch( { url, method: 'GET' } ).then( result => {
-		frontendManagement.blockIterator( document, [
-			{
-				component: component,
-				options: {
-					settings,
-					props: { api_key: result.service_api_key },
+	/* Retrieve API key based on service before the block is rendered */
+	const beforeRender = data => {
+		return new Promise( ( resolve, reject ) => {
+			const { map_service } = data;
+			const url = '/wp-json/jetpack/v4/service-api-keys/' + map_service;
+			apiFetch( { url, method: 'GET' } ).then(
+				result => {
+					data.api_key = result.service_api_key;
+					resolve( data );
 				},
+				error => {
+					reject( error );
+				}
+			);
+		} );
+	};
+	frontendManagement.blockIterator( document, [
+		{
+			component,
+			options: {
+				settings,
+				beforeRender,
 			},
-		] );
-	} );
+		},
+	] );
 } );

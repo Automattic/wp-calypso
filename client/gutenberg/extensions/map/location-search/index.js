@@ -25,21 +25,37 @@ export class LocationSearch extends Component {
 		this.state = {
 			isEmpty: true,
 		};
-		this.autocompleter = {
-			name: 'placeSearch',
-			options: this.search,
-			isDebounced: true,
-			getOptionLabel: option => <span>{ option.place_name }</span>,
-			getOptionKeywords: option => [ option.place_name ],
-			getOptionCompletion: this.getOptionCompletion,
-		};
+		const { map_service } = this.props;
+		this.autocompleter = this.autocompleterForService( map_service );
 	}
+	autocompleterForService = map_service => {
+		switch ( map_service ) {
+			case 'googlemaps':
+				return {
+					name: 'placeSearch',
+					options: this.searchGoogle,
+					isDebounced: true,
+					getOptionLabel: option => <span>{ option.description }</span>,
+					getOptionKeywords: option => [ option.description ],
+					getOptionCompletion: this.getOptionCompletionGoogle,
+				};
+			case 'mapbox':
+				return {
+					name: 'placeSearch',
+					options: this.searchMapbox,
+					isDebounced: true,
+					getOptionLabel: option => <span>{ option.place_name }</span>,
+					getOptionKeywords: option => [ option.place_name ],
+					getOptionCompletion: this.getOptionCompletionMapbox,
+				};
+		}
+	};
 	componentDidMount() {
 		setTimeout( () => {
 			this.containerRef.current.querySelector( 'input' ).focus();
 		}, 50 );
 	}
-	getOptionCompletion = option => {
+	getOptionCompletionMapbox = option => {
 		const { value } = option;
 		const point = {
 			place_title: value.text,
@@ -55,7 +71,7 @@ export class LocationSearch extends Component {
 		return value.text;
 	};
 
-	search = value => {
+	searchMapbox = value => {
 		const { api_key, onError } = this.props;
 		const url =
 			'https://api.mapbox.com/geocoding/v5/mapbox.places/' +
@@ -76,6 +92,46 @@ export class LocationSearch extends Component {
 				}
 			};
 			xhr.send();
+		} );
+	};
+	getOptionCompletionGoogle = option => {
+		const { value } = option;
+		const placesService = new window.google.maps.places.PlacesService( this.containerRef.current );
+		placesService.getDetails(
+			{ placeId: value.place_id },
+			function( place ) {
+				const point = {
+					place_title: place.name,
+					title: place.name,
+					caption: place.formatted_address,
+					id: place.place_id,
+					viewport: place.geometry.viewport,
+					coordinates: {
+						latitude: place.geometry.location.lat(),
+						longitude: place.geometry.location.lng(),
+					},
+				};
+				this.props.onAddPoint( point );
+			}.bind( this )
+		);
+		return option.description;
+	};
+
+	searchGoogle = value => {
+		const placeSearch = new window.google.maps.places.AutocompleteService();
+		return new Promise( function( resolve, reject ) {
+			placeSearch.getPlacePredictions(
+				{
+					input: value,
+				},
+				function( place, status ) {
+					if ( status !== window.google.maps.places.PlacesServiceStatus.OK ) {
+						reject( new Error( status ) );
+					} else {
+						resolve( place );
+					}
+				}
+			);
 		} );
 	};
 	onReset = () => {

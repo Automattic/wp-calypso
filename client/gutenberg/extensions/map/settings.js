@@ -58,6 +58,10 @@ export const settings = {
 		mapbox_key: {
 			type: 'string',
 		},
+		map_service: {
+			type: 'string',
+			default: 'googlemaps',
+		},
 	},
 	map_styleOptions: [
 		{

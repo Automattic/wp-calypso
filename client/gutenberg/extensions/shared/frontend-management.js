@@ -26,10 +26,20 @@ export class FrontendManagement {
 			const data = this.extractAttributesFromContainer( node.dataset, attributes );
 			assign( data, options.props );
 			const children = this.extractChildrenFromContainer( node );
-			const el = createElement( component, data, children );
-			render( el, selector ? node.querySelector( selector ) : node );
+			const targetNode = selector ? node.querySelector( selector ) : node;
+			if ( options.beforeRender ) {
+				options.beforeRender( data ).then( processedData => {
+					this.createAndRenderElement( component, processedData, children, targetNode );
+				} );
+			} else {
+				this.createAndRenderElement( component, data, children, targetNode );
+			}
 		} );
 	}
+	createAndRenderElement = ( component, data, children, node ) => {
+		const el = createElement( component, data, children );
+		return render( el, node );
+	};
 	extractAttributesFromContainer( dataset, attributes ) {
 		const data = {};
 		for ( const name in attributes ) {
