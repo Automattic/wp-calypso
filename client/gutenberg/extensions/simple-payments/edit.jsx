@@ -35,9 +35,9 @@ import ProductPlaceholder from './product-placeholder';
 
 class SimplePaymentsEdit extends Component {
 	state = {
-		fieldEmailError: '',
-		fieldPriceError: '',
-		fieldTitleError: '',
+		fieldEmailError: null,
+		fieldPriceError: null,
+		fieldTitleError: null,
 		isSavingProduct: false,
 	};
 
@@ -121,8 +121,8 @@ class SimplePaymentsEdit extends Component {
 					fieldEmailError:
 						apiErrorKey === 'spay_email'
 							? sprintf( __( '%s is not a valid email address.' ), email )
-							: '',
-					fieldPriceError: apiErrorKey === 'spay_price' ? __( 'Invalid price.' ) : '',
+							: null,
+					fieldPriceError: apiErrorKey === 'spay_price' ? __( 'Invalid price.' ) : null,
 					isSavingProduct: false,
 				} );
 			} );
@@ -215,7 +215,7 @@ class SimplePaymentsEdit extends Component {
 		}
 
 		if ( this.state.fieldPriceError ) {
-			this.setState( { fieldPriceError: '' } );
+			this.setState( { fieldPriceError: null } );
 		}
 
 		return true;
@@ -248,7 +248,7 @@ class SimplePaymentsEdit extends Component {
 		}
 
 		if ( this.state.fieldEmailError ) {
-			this.setState( { fieldEmailError: '' } );
+			this.setState( { fieldEmailError: null } );
 		}
 
 		return true;
@@ -274,7 +274,7 @@ class SimplePaymentsEdit extends Component {
 		}
 
 		if ( this.state.fieldTitleError ) {
-			this.setState( { fieldTitleError: '' } );
+			this.setState( { fieldTitleError: null } );
 		}
 
 		return true;
