@@ -29,7 +29,7 @@ const debugMiddleware = ( options, next ) => {
 
 // Rewrite default API paths to match WP.com equivalents. Note that
 // passed apiNamespace will be prepended to the replaced path.
-const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
+export const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
 	// wp/v2 namespace mapping
 	//
 	// Path rewrite example:

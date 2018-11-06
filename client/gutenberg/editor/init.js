@@ -10,6 +10,7 @@ import { once } from 'lodash';
  * Internal dependencies
  */
 import { applyAPIMiddleware } from './api-middleware';
+import { isEnabled } from 'config';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:gutenberg' );
@@ -20,8 +21,16 @@ const WPCOM_UNSUPPORTED_CORE_BLOCKS = [
 	'core/file', // see D19851 for more details.
 ];
 
-// We need to ensure that his function is executed only once to avoid
-// registering core blocks and applying middleware twice.
+const loadA8CExtensions = () => {
+	require( '../extensions/classic-block/editor' );
+
+	if ( isEnabled( 'gutenberg/block/jetpack-preset' ) ) {
+		require( 'gutenberg/extensions/presets/jetpack/editor.js' );
+	}
+};
+
+// We need to ensure that his function is executed only once to avoid duplicate
+// block registration, API middleware application etc.
 export const initGutenberg = once( ( userId, siteSlug ) => {
 	debug( 'Starting Gutenberg editor initialization...' );
 
@@ -36,18 +45,14 @@ export const initGutenberg = once( ( userId, siteSlug ) => {
 
 	// Avoid using top level imports for this since they will statically
 	// initialize core-data before required plugins are loaded.
-	const blockLibrary = require( '@wordpress/block-library' );
-	const blocks = require( '@wordpress/blocks' );
+	const { registerCoreBlocks } = require( '@wordpress/block-library' );
+	const { unregisterBlockType, setFreeformContentHandlerName } = require( '@wordpress/blocks' );
 
 	debug( 'Registering core blocks' );
-	blockLibrary.registerCoreBlocks();
+	registerCoreBlocks();
 
 	debug( 'Removing core blocks that are not yet supported in Calypso' );
-	WPCOM_UNSUPPORTED_CORE_BLOCKS.forEach( blockName => blocks.unregisterBlockType( blockName ) );
-
-	debug( 'Registering Calypso Classic Block handler' );
-	require( '../extensions/classic-block/editor' );
-	blocks.setFreeformContentHandlerName( 'a8c/classic' );
+	WPCOM_UNSUPPORTED_CORE_BLOCKS.forEach( blockName => unregisterBlockType( blockName ) );
 
 	// Needed for list block indent/outdent functionality
 	debug( 'Loading required TinyMCE plugins' );
@@ -58,6 +63,12 @@ export const initGutenberg = once( ( userId, siteSlug ) => {
 
 	debug( 'Applying API middleware' );
 	applyAPIMiddleware( siteSlug );
+
+	debug( 'Loading A8C editor extensions' );
+	loadA8CExtensions();
+
+	debug( 'Registering Calypso Classic Block handler' );
+	setFreeformContentHandlerName( 'a8c/classic' );
 
 	debug( 'Gutenberg editor initialization complete.' );
 
