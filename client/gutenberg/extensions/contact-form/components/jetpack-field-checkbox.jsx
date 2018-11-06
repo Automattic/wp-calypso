@@ -6,9 +6,7 @@
  * External dependencies
  */
 import { BaseControl, CheckboxControl } from '@wordpress/components';
-
 import { withInstanceId } from '@wordpress/compose';
-
 import { Fragment } from '@wordpress/element';
 
 /**
