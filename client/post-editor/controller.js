@@ -15,7 +15,6 @@ import { get, has, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
 import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/actions';
 import { addSiteFragment } from 'lib/route';
@@ -23,11 +22,14 @@ import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite, getSiteAdminUrl } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
 import { requestSelectedEditor } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
+import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import getEditorUrl from 'state/selectors/get-editor-url';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -258,10 +260,6 @@ export default {
 	},
 
 	gutenberg: ( context, next ) => {
-		if ( ! isEnabled( 'calypsoify/gutenberg' ) ) {
-			return next();
-		}
-
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );
@@ -271,29 +269,28 @@ export default {
 			}
 			unsubscribe();
 
+			const selectedEditor = getSelectedEditor( state, siteId );
+			if (
+				! has( window, 'location.replace' ) ||
+				! isCalypsoifyGutenbergEnabled( state, siteId, { skipSelectedEditorCheck: true } ) ||
+				( !! selectedEditor && 'gutenberg' !== selectedEditor )
+			) {
+				return next();
+			}
+
 			const postType = determinePostType( context );
 			const postId = getPostID( context );
-			const siteAdminUrl = getSiteAdminUrl( state, siteId );
+
+			if ( 'gutenberg' === selectedEditor ) {
+				return window.location.replace( getEditorUrl( state, siteId, postId, postType ) );
+			}
 
 			waitForData( {
 				editor: () => requestSelectedEditor( siteId ),
 			} ).then( ( { editor } ) => {
-				if (
-					has( window, 'location.replace' ) &&
-					'gutenberg' === get( editor, 'data.editor_web' )
-				) {
+				if ( 'gutenberg' === get( editor, 'data.editor_web' ) ) {
 					// If the current editor is Gutenberg, redirect to Calypsoify.
-					if ( postId ) {
-						return window.location.replace(
-							siteAdminUrl + `post.php?calypsoify=1&post=${ postId }&action=edit`
-						);
-					}
-					if ( 'post' === postType ) {
-						return window.location.replace( siteAdminUrl + 'post-new.php?calypsoify=1' );
-					}
-					return window.location.replace(
-						siteAdminUrl + `post-new.php?calypsoify=1&post_type=${ postType }`
-					);
+					return window.location.replace( getEditorUrl( state, siteId, postId, postType ) );
 				}
 				next();
 			}, next );
