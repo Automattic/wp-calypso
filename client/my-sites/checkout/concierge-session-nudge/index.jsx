@@ -22,6 +22,7 @@ import { addItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getSiteSlug } from 'state/sites/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export class ConciergeSessionNudge extends React.Component {
 	static propTypes = {
@@ -30,19 +31,12 @@ export class ConciergeSessionNudge extends React.Component {
 	};
 
 	render() {
-		const { receiptId, selectedSiteId } = this.props;
+		const { selectedSiteId } = this.props;
 		const title = 'Checkout ‹ Expert Session';
 
 		return (
 			<Main className="concierge-session-nudge">
-				<PageViewTracker
-					path={
-						receiptId
-							? '/checkout/:site/add-expert-session/:receipt_id'
-							: '/checkout/:site/add-expert-session'
-					}
-					title={ title }
-				/>
+				<PageViewTracker path="/checkout/:site/add-expert-session/:receipt_id" title={ title } />
 				<DocumentHead title={ title } />
 				<QuerySites siteId={ selectedSiteId } />
 
@@ -86,7 +80,9 @@ export class ConciergeSessionNudge extends React.Component {
 	}
 
 	handleClickDecline = () => {
-		const { siteSlug, receiptId, isEligibleForChecklist } = this.props;
+		const { siteSlug, receiptId, isEligibleForChecklist, trackUpsellButtonClick } = this.props;
+
+		trackUpsellButtonClick( 'decline' );
 
 		page(
 			isEligibleForChecklist
@@ -96,7 +92,9 @@ export class ConciergeSessionNudge extends React.Component {
 	};
 
 	handleClickAccept = () => {
-		const { siteSlug } = this.props;
+		const { siteSlug, trackUpsellButtonClick } = this.props;
+
+		trackUpsellButtonClick( 'accept' );
 
 		addItem( cartItems.conciergeSessionItem() );
 
@@ -104,11 +102,23 @@ export class ConciergeSessionNudge extends React.Component {
 	};
 }
 
-export default connect( ( state, props ) => {
-	const { selectedSiteId } = props;
+const trackUpsellButtonClick = buttonAction => {
+	// Track calypso_concierge_session_upsell_decline_button_click and calypso_concierge_session_upsell_accept_button_click events
+	return recordTracksEvent( `calypso_concierge_session_upsell_${ buttonAction }_button_click`, {
+		section: 'checkout',
+	} );
+};
 
-	return {
-		siteSlug: getSiteSlug( state, selectedSiteId ),
-		isEligibleForChecklist: isEligibleForDotcomChecklist( state, selectedSiteId ),
-	};
-} )( localize( ConciergeSessionNudge ) );
+export default connect(
+	( state, props ) => {
+		const { selectedSiteId } = props;
+
+		return {
+			siteSlug: getSiteSlug( state, selectedSiteId ),
+			isEligibleForChecklist: isEligibleForDotcomChecklist( state, selectedSiteId ),
+		};
+	},
+	{
+		trackUpsellButtonClick,
+	}
+)( localize( ConciergeSessionNudge ) );
