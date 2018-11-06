@@ -328,9 +328,9 @@ class SimplePaymentsEdit extends Component {
 			return (
 				<div className="simple-payments__loading">
 					<ProductPlaceholder
-						content={ '█████' }
-						formattedPrice={ '█████' }
-						title={ '█████' }
+						content="█████"
+						formattedPrice="█████"
+						title="█████"
 						ariaBusy="true"
 					/>
 				</div>
