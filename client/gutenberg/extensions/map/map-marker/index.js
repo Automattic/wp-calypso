@@ -43,6 +43,18 @@ export class MapMarker extends Component {
 		const { point } = this.props;
 		return [ point.coordinates.longitude, point.coordinates.latitude ];
 	};
+	getGoogleMarkerIcon() {
+		const { marker_color, service_script } = this.props;
+		return {
+			path:
+				'M16,38 C16,38 32,26.692424 32,16 C32,5.307576 24.836556,0 16,0 C7.163444,0 0,5.307576 0,16 C0,26.692424 16,38 16,38 Z',
+			fillColor: marker_color,
+			fillOpacity: 0.8,
+			scale: 1,
+			strokeWeight: 0,
+			anchor: new service_script.maps.Point( 16, 38 ),
+		};
+	}
 	renderMarker = () => {
 		const { map_service } = this.props;
 		switch ( map_service ) {
@@ -75,12 +87,13 @@ export class MapMarker extends Component {
 			'" mask="url(#c)"/></g></svg>';
 	};
 	renderMarkerGoogle = () => {
-		const { map, point, icon, service_script } = this.props;
+		const { map, point, service_script } = this.props;
 		const { handleClick } = this;
 		const position = new service_script.maps.LatLng(
 			point.coordinates.latitude,
 			point.coordinates.longitude
 		);
+		const icon = this.getGoogleMarkerIcon();
 
 		if ( this.marker ) {
 			this.marker.setPosition( position );

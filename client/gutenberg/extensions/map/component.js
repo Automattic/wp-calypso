@@ -43,7 +43,6 @@ export class Map extends Component {
 		const { onMarkerClick, deleteActiveMarker, updateActiveMarker } = this;
 		const currentPoint = get( activeMarker, 'props.point' ) || {};
 		const { title, caption } = currentPoint;
-		const icon = service_script && this.getGoogleMarkerIcon();
 		let addPoint = null;
 		Children.map( children, element => {
 			if ( element && 'AddPoint' === element.type.name ) {
@@ -63,7 +62,6 @@ export class Map extends Component {
 						service_script={ service_script }
 						map_service={ map_service }
 						marker_color={ marker_color }
-						icon={ icon }
 						onClick={ onMarkerClick }
 					/>
 				);
@@ -476,20 +474,6 @@ export class Map extends Component {
 		this.setState( { fit_to_bounds: false } );
 		this.setZoomControlForService( map_service, true );
 	};
-
-	getGoogleMarkerIcon() {
-		const { marker_color } = this.props;
-		const { service_script } = this.state;
-		return {
-			path:
-				'M16,38 C16,38 32,26.692424 32,16 C32,5.307576 24.836556,0 16,0 C7.163444,0 0,5.307576 0,16 C0,26.692424 16,38 16,38 Z',
-			fillColor: marker_color,
-			fillOpacity: 0.8,
-			scale: 1,
-			strokeWeight: 0,
-			anchor: new service_script.maps.Point( 16, 38 ),
-		};
-	}
 }
 
 Map.defaultProps = {

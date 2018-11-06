@@ -12,6 +12,7 @@ import {
 	IconButton,
 	PanelBody,
 	Placeholder,
+	SelectControl,
 	Spinner,
 	ToggleControl,
 	Toolbar,
@@ -52,7 +53,7 @@ class MapEdit extends Component {
 		this.debouncedUpdateAPIKey = debounce( this.updateAPIKey, 800 );
 	}
 	componentWillUnmount() {
-		this.debouncedAPIKey.cancel();
+		this.debouncedAPIKey && this.debouncedAPIKey.cancel();
 	}
 	addPoint = point => {
 		const { attributes, setAttributes } = this.props;
@@ -88,9 +89,20 @@ class MapEdit extends Component {
 	removeAPIKey = () => {
 		this.apiCall( null, 'DELETE' );
 	};
+	changeMapService = map_service => {
+		this.props.setAttributes( {
+			map_service,
+			api_key: null,
+		} );
+		this.apiCallForMapService( null, 'GET', map_service );
+	};
 	apiCall( service_api_key = null, method = 'GET' ) {
-		const { noticeOperations, attributes } = this.props;
+		const { attributes } = this.props;
 		const { map_service } = attributes;
+		this.apiCallForMapService( service_api_key, method, map_service );
+	}
+	apiCallForMapService( service_api_key = null, method = 'GET', map_service ) {
+		const { noticeOperations } = this.props;
 		const url = this.apiURLForService( map_service );
 		const fetch = service_api_key ? { url, method, data: { service_api_key } } : { url, method };
 		apiFetch( fetch ).then(
@@ -184,6 +196,17 @@ class MapEdit extends Component {
 							/>
 						</PanelBody>
 					) : null }
+					<PanelBody title={ __( 'Map Service', 'jetpack' ) } initialOpen={ false }>
+						<SelectControl
+							label="Map Service"
+							value={ map_service }
+							options={ [
+								{ label: 'Mapbox', value: 'mapbox' },
+								{ label: 'Google Maps', value: 'googlemaps' },
+							] }
+							onChange={ this.changeMapService }
+						/>
+					</PanelBody>
 					{ 'mapbox' === map_service && (
 						<PanelBody title={ __( 'Mapbox Access Token', 'jetpack' ) } initialOpen={ false }>
 							<TextControl

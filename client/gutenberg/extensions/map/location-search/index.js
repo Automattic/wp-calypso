@@ -50,6 +50,10 @@ export class LocationSearch extends Component {
 				};
 		}
 	};
+	componentDidUpdate() {
+		const { map_service } = this.props;
+		this.autocompleter = this.autocompleterForService( map_service );
+	}
 	componentDidMount() {
 		setTimeout( () => {
 			this.containerRef.current.querySelector( 'input' ).focus();
