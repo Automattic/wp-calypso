@@ -1,8 +1,4 @@
-/**
- * /* eslint-disable wpcalypso/jsx-classname-namespace
- *
- * @format
- */
+/** @format */
 
 /**
  * External dependencies
@@ -23,6 +19,7 @@ import FormRadio from 'components/forms/form-radio';
 import log from 'lib/catch-js-errors/log';
 import PopoverMenuItem from 'components/popover/menu-item';
 import ProductImage from './product-image';
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 class ProductListItem extends Component {
 	static propTypes = {
