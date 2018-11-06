@@ -8,7 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { siteSelection, sites } from 'my-sites/controller';
-import { post } from './controller';
+import { jetpackBlocki18n, post } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -17,11 +17,25 @@ export default function() {
 		page( '/gutenberg', '/gutenberg/post' );
 
 		page( '/gutenberg/post', siteSelection, sites, makeLayout, clientRender );
-		page( '/gutenberg/post/:site/:post?', siteSelection, post, makeLayout, clientRender );
+		page(
+			'/gutenberg/post/:site/:post?',
+			siteSelection,
+			jetpackBlocki18n,
+			post,
+			makeLayout,
+			clientRender
+		);
 		page( '/gutenberg/post/:site?', siteSelection, makeLayout, clientRender );
 
 		page( '/gutenberg/page', siteSelection, sites, makeLayout, clientRender );
-		page( '/gutenberg/page/:site/:post?', siteSelection, post, makeLayout, clientRender );
+		page(
+			'/gutenberg/page/:site/:post?',
+			siteSelection,
+			jetpackBlocki18n,
+			post,
+			makeLayout,
+			clientRender
+		);
 		page( '/gutenberg/page/:site?', siteSelection, makeLayout, clientRender );
 
 		if ( config.isEnabled( 'manage/custom-post-types' ) ) {
@@ -29,6 +43,7 @@ export default function() {
 			page(
 				'/gutenberg/edit/:customPostType/:site/:post?',
 				siteSelection,
+				jetpackBlocki18n,
 				post,
 				makeLayout,
 				clientRender
