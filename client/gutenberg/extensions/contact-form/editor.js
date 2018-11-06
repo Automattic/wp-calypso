@@ -23,9 +23,7 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
  */
 registerBlockType( 'jetpack/form', {
 	title: __( 'Contact Form', 'jetpack' ),
-	description: __(
-		'A form enabling readers to recieve notifications when new posts are published from this site.'
-	),
+	description: __( 'A simple way to get feedback from folks visiting your site.' ),
 	icon: 'feedback',
 	category: 'widgets',
 	supports: {
