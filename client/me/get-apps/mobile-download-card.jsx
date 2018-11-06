@@ -74,27 +74,29 @@ class MobileDownloadCard extends React.Component {
 		}
 	}
 
-	getPreferredNumber = ( data_has_been_fetched = true ) => {
+	getPreferredNumber = () => {
 		const noPreferredNumber = {
 			countryCode: null,
+			countryNumericCode: null,
 			number: null,
+			numberFull: null,
 			isValid: false,
 		};
 
-		if ( ! data_has_been_fetched ) {
+		if ( ! this.userSettingsHaveBeenLoadedWithAccountRecoveryPhone() ) {
 			return noPreferredNumber;
 		}
 
-		const tfa_number =
+		const tfaNumber =
 			this.props.userSettings != null ? this.props.userSettings.two_step_sms_phone_number : null;
 
-		const tfa_country_code =
+		const tfaCountryCode =
 			this.props.userSettings != null ? this.props.userSettings.two_step_sms_country : null;
 
-		const tfa_sms_enabled =
+		const tfaSMSEnabled =
 			this.props.userSettings != null ? this.props.userSettings.two_step_sms_enabled : null;
 
-		const account_recovery_number = this.props.accountRecoveryPhone;
+		const accountRecoveryNumber = this.props.accountRecoveryPhone;
 
 		// If the user has typed their own phone number,
 		// that's the most preferred.
@@ -105,26 +107,26 @@ class MobileDownloadCard extends React.Component {
 		// We proritize TFA over the account recovery number.
 		// Also, if we have their TFA phone number, but they're not using
 		// it for TFA, we won't show it to them, to avoid creeping them out.
-		if ( tfa_number !== null && tfa_country_code !== null && tfa_sms_enabled ) {
-			const country_code = this.numericCountryCodeForCountryCode( tfa_country_code );
-			const full_number = country_code + tfa_number;
+		if ( tfaNumber !== null && tfaCountryCode !== null && tfaSMSEnabled ) {
+			const countryCode = this.numericCountryCodeForCountryCode( tfaCountryCode );
+			const fullNumber = countryCode + tfaNumber;
 
 			return {
-				countryCode: tfa_country_code,
-				countryNumericCode: country_code,
-				number: tfa_number,
-				numberFull: full_number,
-				isValid: this.phoneNumberIsValid( full_number ),
+				countryCode: tfaCountryCode,
+				countryNumericCode: countryCode,
+				number: tfaNumber,
+				numberFull: fullNumber,
+				isValid: this.phoneNumberIsValid( fullNumber ),
 			};
 		}
 
 		// Account recovery number already has the keys formatted in the
 		// way we want, so we can just return it directly.
-		if ( account_recovery_number !== null ) {
-			const isValid = this.phoneNumberIsValid( account_recovery_number.numberFull );
-			account_recovery_number.isValid = isValid;
+		if ( accountRecoveryNumber !== null ) {
+			const isValid = this.phoneNumberIsValid( accountRecoveryNumber.numberFull );
+			accountRecoveryNumber.isValid = isValid;
 
-			return account_recovery_number;
+			return accountRecoveryNumber;
 		}
 
 		// Fallback if we didn't match anything
@@ -147,13 +149,17 @@ class MobileDownloadCard extends React.Component {
 		return null;
 	}
 
+	userSettingsHaveBeenLoadedWithAccountRecoveryPhone() {
+		return this.props.hasUserSettings && this.props.hasLoadedAccountRecoveryPhone;
+	}
+
 	render() {
 		const translate = this.props.translate;
 
-		const has_all_data = this.props.hasUserSettings && this.props.hasLoadedAccountRecoveryPhone;
-		const { countryCode, number, isValid } = this.getPreferredNumber( has_all_data );
+		const hasAllData = this.userSettingsHaveBeenLoadedWithAccountRecoveryPhone();
+		const { countryCode, number, isValid } = this.getPreferredNumber( hasAllData );
 		const { isMobile } = userAgent;
-		const feature_is_enabled = config.isEnabled( 'get-apps-sms' ) && ! isMobile;
+		const featureIsEnabled = config.isEnabled( 'get-apps-sms' ) && ! isMobile;
 
 		return (
 			<Card className="get-apps__mobile">
@@ -180,7 +186,7 @@ class MobileDownloadCard extends React.Component {
 					</div>
 				</div>
 
-				{ feature_is_enabled ? (
+				{ featureIsEnabled ? (
 					<div className="get-apps__sms-subpanel">
 						<p>
 							<strong>{ translate( 'Ready to WordPress on the go?' ) }</strong>
@@ -191,7 +197,7 @@ class MobileDownloadCard extends React.Component {
 						</p>
 
 						<div className="get-apps__sms-field-wrapper">
-							{ has_all_data ? (
+							{ hasAllData ? (
 								<FormPhoneInput
 									countriesList={ this.props.countriesList }
 									initialCountryCode={ countryCode }
