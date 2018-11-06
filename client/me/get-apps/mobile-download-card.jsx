@@ -39,7 +39,7 @@ import {
 } from 'state/selectors/get-apps-sms-request';
 
 class MobileDownloadCard extends React.Component {
-	static displayName = 'SecurityAccountRecoveryRecoveryPhoneEdit';
+	static displayName = 'MobileDownloadCard';
 
 	static propTypes = {
 		translate: PropTypes.func,
