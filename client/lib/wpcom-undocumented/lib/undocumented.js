@@ -106,9 +106,7 @@ Undocumented.prototype.jetpackModulesActivate = function( siteId, modules, fn ) 
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
 		{
 			path: '/jetpack/v4/module/all/active/',
-			body: JSON.stringify( {
-				modules,
-			} ),
+			body: JSON.stringify( { modules } ),
 		},
 		fn
 	);
@@ -148,9 +146,7 @@ Undocumented.prototype.jetpackModulesDeactivate = function( siteId, modules, fn 
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
 		{
 			path: '/jetpack/v4/module/all/active/',
-			body: JSON.stringify( {
-				modules,
-			} ),
+			body: JSON.stringify( { modules } ),
 		},
 		fn
 	);
