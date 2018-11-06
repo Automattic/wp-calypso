@@ -39,8 +39,6 @@ import {
 } from 'state/selectors/get-apps-sms-request';
 
 class MobileDownloadCard extends React.Component {
-	static displayName = 'MobileDownloadCard';
-
 	static propTypes = {
 		translate: PropTypes.func,
 		countriesList: PropTypes.array.isRequired,
