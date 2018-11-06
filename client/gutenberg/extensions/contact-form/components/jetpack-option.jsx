@@ -1,5 +1,3 @@
-/*global wp*/
-/** @jsx wp.element.createElement */
 /** @format */
 
 /**

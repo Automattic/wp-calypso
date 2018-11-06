@@ -1,5 +1,3 @@
-/*global wp*/
-/** @jsx wp.element.createElement */
 /** @format */
 
 /**
@@ -18,21 +16,17 @@ import JetpackFieldLabel from './jetpack-field-label';
 function JetpackFieldCheckbox( props ) {
 	return (
 		<Fragment>
-			<JetpackFieldSettings
-				required={ props.required }
-				setAttributes={ props.setAttributes }
-			/>
-			<BaseControl
-				id={ `jetpack-field-checkbox-${ props.instanceId }` }
-				className="jetpack-field"
-			>
+			<JetpackFieldSettings required={ props.required } setAttributes={ props.setAttributes } />
+			<BaseControl id={ `jetpack-field-checkbox-${ props.instanceId }` } className="jetpack-field">
 				<CheckboxControl
 					id={ `jetpack-field-checkbox-${ props.instanceId }` }
-					label={ <JetpackFieldLabel
-						required={ props.required }
-						label={ props.label }
-						setAttributes={ props.setAttributes }
-					/> }
+					label={
+						<JetpackFieldLabel
+							required={ props.required }
+							label={ props.label }
+							setAttributes={ props.setAttributes }
+						/>
+					}
 					disabled
 				/>
 			</BaseControl>
