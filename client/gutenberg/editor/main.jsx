@@ -6,10 +6,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { get, noop } from 'lodash';
-import { dispatch } from '@wordpress/data';
-import '@wordpress/core-data'; // Initializes core data store
-import { registerCoreBlocks } from '@wordpress/block-library';
-import { setFreeformContentHandlerName } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -23,22 +19,10 @@ import { getHttpData } from 'state/data-layer/http-data';
 import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
 import { translate } from 'i18n-calypso';
-import 'tinymce/plugins/lists/plugin.js'; // Make list indent/outdent work
-import './hooks'; // Needed for integrating Calypso's media library (and other hooks)
-import { removeUnsupportedCoreBlocks } from './setup';
-import '../extensions/classic-block/editor';
+import './hooks'; // Load hooks that are needed for integrating Calypso's Media Modal
 
 class GutenbergEditor extends Component {
 	componentDidMount() {
-		registerCoreBlocks();
-		// Prevent Guided tour from showing when editor loads.
-		dispatch( 'core/nux' ).disableTips();
-
-		// Handle posts that were created with classic editor
-		setFreeformContentHandlerName( 'a8c/classic' );
-
-		removeUnsupportedCoreBlocks();
-
 		const { siteId, postId, uniqueDraftKey, postType } = this.props;
 		if ( ! postId ) {
 			createAutoDraft( siteId, uniqueDraftKey, postType );
