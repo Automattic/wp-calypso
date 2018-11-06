@@ -35,13 +35,10 @@ import StickyPanel from 'components/sticky-panel';
 import './style.scss';
 
 class WordAds extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			chartTab: this.props.chartTab,
-			tabSwitched: false,
-		};
-	}
+	state = {
+		chartTab: this.props.chartTab,
+		tabSwitched: false,
+	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// @TODO update
