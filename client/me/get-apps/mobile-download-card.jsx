@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -264,5 +263,5 @@ export default connect(
 			hasSendingError: didAppSMSRequestCompleteWithError( state ),
 		};
 	},
-	dispatch => bindActionCreators( { successNotice, errorNotice, sendSMS }, dispatch )
+	{ successNotice, errorNotice, sendSMS }
 )( localize( MobileDownloadCard ) );
