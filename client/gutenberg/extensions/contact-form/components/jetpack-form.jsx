@@ -6,7 +6,11 @@
 import { PanelBody, TextControl } from '@wordpress/components';
 import { InspectorControls } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class JetpackForm extends Component {
 	constructor( ...args ) {
@@ -32,19 +36,19 @@ class JetpackForm extends Component {
 		return (
 			<Fragment>
 				<InspectorControls>
-					<PanelBody title={ __( 'Submission Details', 'jetpack' ) }>
+					<PanelBody title={ __( 'Submission Details' ) }>
 						<TextControl
-							label={ __( 'What would you like the subject of the email to be?', 'jetpack' ) }
+							label={ __( 'What would you like the subject of the email to be?' ) }
 							value={ this.props.subject }
 							onChange={ this.onChangeSubject }
 						/>
 						<TextControl
-							label={ __( 'Which email address should we send the submissions to?', 'jetpack' ) }
+							label={ __( 'Which email address should we send the submissions to?' ) }
 							value={ this.props.to }
 							onChange={ this.onChangeTo }
 						/>
 						<TextControl
-							label={ __( 'What should the label on the form’s submit button say?', 'jetpack' ) }
+							label={ __( 'What should the label on the form’s submit button say?' ) }
 							value={ this.props.submit_button_text }
 							placeholder={ __( 'Submit', 'jetpack' ) }
 							onChange={ this.onChangeSubmit }
@@ -54,7 +58,7 @@ class JetpackForm extends Component {
 				<div className={ this.props.className + ' jetpack-form' }>
 					{ this.props.children }
 					<div className="button button-primary button-default jetpack-submit-button">
-						{ this.props.submit_button_text ? this.props.submit_button_text : __( 'Submit', 'jetpack' ) }
+						{ this.props.submit_button_text ? this.props.submit_button_text : __( 'Submit' ) }
 					</div>
 				</div>
 			</Fragment>

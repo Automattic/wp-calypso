@@ -5,7 +5,11 @@
  */
 import { IconButton } from '@wordpress/components';
 import { Component } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class JetpackOption extends Component {
 	constructor( ...args ) {
@@ -30,14 +34,10 @@ class JetpackOption extends Component {
 					type="text"
 					className="option"
 					value={ this.props.option }
-					placeholder={ __( 'Enter your option value here…', 'jetpack' ) }
+					placeholder={ __( 'Enter your option value here…' ) }
 					onChange={ this.onChangeOption }
 				/>
-				<IconButton
-					icon="no"
-					label={ __( 'Remove option', 'jetpack' ) }
-					onClick={ this.onDeleteOption }
-				/>
+				<IconButton icon="no" label={ __( 'Remove option' ) } onClick={ this.onDeleteOption } />
 			</li>
 		);
 	}

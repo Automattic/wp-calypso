@@ -6,12 +6,12 @@
 import { PanelBody } from '@wordpress/components';
 import { InspectorControls } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import JetpackFieldRequiredToggle from './jetpack-field-required-toggle';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class JetpackFieldSettings extends Component {
 	constructor( ...args ) {
@@ -26,7 +26,7 @@ class JetpackFieldSettings extends Component {
 	render() {
 		return (
 			<InspectorControls>
-				<PanelBody title={ __( 'Field Settings', 'jetpack' ) }>
+				<PanelBody title={ __( 'Field Settings' ) }>
 					<JetpackFieldRequiredToggle
 						required={ this.props.required }
 						onChange={ this.onChangeRequired }

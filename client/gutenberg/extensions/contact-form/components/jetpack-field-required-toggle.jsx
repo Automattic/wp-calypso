@@ -5,12 +5,15 @@
  */
 import { ToggleControl } from '@wordpress/components';
 
-import { __ } from '@wordpress/i18n';
+/**
+ * Internal dependencies
+ */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 function JetpackFieldRequiredToggle( props ) {
 	return (
 		<ToggleControl
-			label={ __( 'Required', 'jetpack' ) }
+			label={ __( 'Required' ) }
 			checked={ props.required }
 			onChange={ props.onChange }
 		/>

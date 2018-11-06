@@ -7,13 +7,13 @@ import { BaseControl, IconButton } from '@wordpress/components';
 import { withInstanceId } from '@wordpress/compose';
 import { Component, Fragment } from '@wordpress/element';
 
-import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
 import JetpackFieldSettings from './jetpack-field-settings';
 import JetpackFieldLabel from './jetpack-field-label';
 import JetpackOption from './jetpack-option';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class JetpackFieldMultiple extends Component {
 	constructor( ...args ) {
@@ -45,14 +45,16 @@ class JetpackFieldMultiple extends Component {
 				<BaseControl
 					id={ `jetpack-field-multiple-${ this.props.instanceId }` }
 					className="jetpack-field"
-					label={ <JetpackFieldLabel
-						required={ this.props.required }
-						label={ this.props.label }
-						setAttributes={ this.props.setAttributes }
-					/> }
+					label={
+						<JetpackFieldLabel
+							required={ this.props.required }
+							label={ this.props.label }
+							setAttributes={ this.props.setAttributes }
+						/>
+					}
 				>
 					<ol id={ `jetpack-field-multiple-${ this.props.instanceId }` }>
-						{ this.props.options.map( ( option, index )=>(
+						{ this.props.options.map( ( option, index ) => (
 							<JetpackOption
 								type={ this.type }
 								key={ index }
@@ -62,11 +64,10 @@ class JetpackFieldMultiple extends Component {
 							/>
 						) ) }
 					</ol>
-					<IconButton
-						icon="insert"
-						label={ __( 'Insert option', 'jetpack' ) }
-						onClick={ this.onChangeOption }
-					> { __( 'Add', 'jetpack' ) }</IconButton>
+					<IconButton icon="insert" label={ __( 'Insert option' ) } onClick={ this.onChangeOption }>
+						{' '}
+						{ __( 'Add' ) }
+					</IconButton>
 				</BaseControl>
 			</Fragment>
 		);
