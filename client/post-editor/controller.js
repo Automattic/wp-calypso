@@ -138,6 +138,38 @@ const getAnalyticsPathAndTitle = ( postType, postId, postToCopyId ) => {
 	}
 };
 
+function waitForSiteIdAndSelectedEditor( context ) {
+	return new Promise( resolve => {
+		const unsubscribe = context.store.subscribe( () => {
+			const state = context.store.getState();
+			const siteId = getSelectedSiteId( state );
+			if ( ! siteId ) {
+				return;
+			}
+			const selectedEditor = getSelectedEditor( state, siteId );
+			if ( ! selectedEditor ) {
+				return;
+			}
+			unsubscribe();
+			resolve();
+		} );
+	} );
+}
+
+async function maybeCalypsoifyGutenberg( context, next ) {
+	await waitForSiteIdAndSelectedEditor( context );
+
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	const postType = determinePostType( context );
+	const postId = getPostID( context );
+
+	if ( isCalypsoifyGutenbergEnabled( state, siteId ) ) {
+		return window.location.replace( getEditorUrl( state, siteId, postId, postType ) );
+	}
+	next();
+}
+
 export default {
 	post: function( context, next ) {
 		const postType = determinePostType( context );
@@ -261,30 +293,6 @@ export default {
 		if ( ! has( window, 'location.replace' ) ) {
 			next();
 		}
-		const unsubscribe = context.store.subscribe( () => {
-			console.log( 'SUBSCRIBE CALLBACK' );
-			const state = context.store.getState();
-			const siteId = getSelectedSiteId( state );
-
-			console.log( 'siteId:', siteId );
-			if ( ! siteId ) {
-				return;
-			}
-			const selectedEditor = getSelectedEditor( state, siteId );
-			console.log( 'selectedEditor:', selectedEditor );
-			if ( ! selectedEditor ) {
-				return;
-			}
-			unsubscribe();
-			console.log( 'UNSUBSCRIBED' );
-
-			const postType = determinePostType( context );
-			const postId = getPostID( context );
-
-			if ( isCalypsoifyGutenbergEnabled( state, siteId ) ) {
-				return window.location.replace( getEditorUrl( state, siteId, postId, postType ) );
-			}
-			next();
-		} );
+		maybeCalypsoifyGutenberg( context, next );
 	},
 };
