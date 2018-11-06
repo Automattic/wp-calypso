@@ -23,6 +23,9 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
  */
 registerBlockType( 'jetpack/form', {
 	title: __( 'Contact Form', 'jetpack' ),
+	description: __(
+		'A form enabling readers to recieve notifications when new posts are published from this site.'
+	),
 	icon: 'feedback',
 	category: 'widgets',
 	supports: {
@@ -235,9 +238,7 @@ registerBlockType(
 	Object.assign(
 		{
 			title: __( 'Text' ),
-			description: __(
-				'When you need just a small amount of text, add a text input. Add a text input.'
-			),
+			description: __( 'When you need just a small amount of text, add a text input.' ),
 			icon: (
 				<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 					<Path fill="none" d="M0 0h24v24H0z" />
