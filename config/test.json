@@ -45,7 +45,6 @@
 		"google-analytics": false,
 		"google-my-business": false,
 		"gutenberg": true,
-		"gutenberg/revisions": true,
 		"gutenberg/opt-in": true,
 		"help": true,
 		"jetpack/checklist": true,
