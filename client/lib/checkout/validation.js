@@ -5,6 +5,7 @@
 import creditcards from 'creditcards';
 import { capitalize, compact, isArray, isEmpty } from 'lodash';
 import i18n from 'i18n-calypso';
+import { isValidPostalCode } from 'lib/postal-code';
 
 /**
  * Internal dependencies
@@ -204,6 +205,15 @@ validators.validCPF = {
 	},
 };
 
+validators.validPostalCodeUS = {
+	isValid: value => isValidPostalCode( value, 'US' ),
+	error: function( description ) {
+		return i18n.translate( '%(description)s is invalid. Must be a 5 digit number', {
+			args: { description: description },
+		} );
+	},
+};
+
 /**
  * Runs payment fields through the relevant validation rules
  * use these validation rules, for example, in <CreditCardForm />, <PayPalPaymentBox /> and <RedirectPaymentBox />
@@ -289,10 +299,22 @@ function getErrors( field, value, paymentDetails ) {
  * otherwise `null`
  */
 function getAdditionalFieldRules( { country } ) {
-	if ( country && isEbanxCreditCardProcessingEnabledForCountry( country ) ) {
-		return ebanxFieldRules( country );
-	}
-	return null;
+	return {
+		// Ebanx rules
+		...( ( country &&
+			isEbanxCreditCardProcessingEnabledForCountry( country ) &&
+			ebanxFieldRules( country ) ) ||
+			{} ),
+		// Enforce valid postcode for tax purposes
+		...( country === 'US' && {
+			'postal-code': {
+				description: i18n.translate( 'Postal Code', {
+					context: 'Upgrades: Postal code on credit card form',
+				} ),
+				rules: [ 'required', 'validPostalCodeUS' ],
+			},
+		} ),
+	};
 }
 
 function getValidator( rule ) {
