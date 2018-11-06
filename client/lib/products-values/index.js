@@ -28,6 +28,7 @@ import {
 
 import {
 	planMatches,
+	isEcommercePlan,
 	isBusinessPlan,
 	isPremiumPlan,
 	isPersonalPlan,
@@ -152,6 +153,13 @@ export function isBusiness( product ) {
 	return isBusinessPlan( product.product_slug );
 }
 
+export function isEcommerce( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isEcommercePlan( product.product_slug );
+}
+
 export function isEnterprise( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -228,6 +236,7 @@ export function isPlan( product ) {
 		isPersonal( product ) ||
 		isPremium( product ) ||
 		isBusiness( product ) ||
+		isEcommerce( product ) ||
 		isEnterprise( product ) ||
 		isJpphpBundle( product )
 	);
