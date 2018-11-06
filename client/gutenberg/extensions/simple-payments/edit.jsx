@@ -92,44 +92,44 @@ class SimplePaymentsEdit extends Component {
 		const { attributes, setAttributes } = this.props;
 		const { email, paymentId } = attributes;
 
-		this.setState( { isSavingProduct: true } );
-
-		apiFetch( {
-			path: `/wp/v2/${ SIMPLE_PAYMENTS_PRODUCT_POST_TYPE }/${ paymentId ? paymentId : '' }`,
-			method: 'POST',
-			data: this.attributesToPost( attributes ),
-		} )
-			.then( response => {
-				const { id } = response;
-
-				if ( id ) {
-					setAttributes( { paymentId: id } );
-				}
+		this.setState( { isSavingProduct: true }, () => {
+			apiFetch( {
+				path: `/wp/v2/${ SIMPLE_PAYMENTS_PRODUCT_POST_TYPE }/${ paymentId ? paymentId : '' }`,
+				method: 'POST',
+				data: this.attributesToPost( attributes ),
 			} )
-			.catch( error => {
-				// @TODO: complete error handling
-				// eslint-disable-next-line
-				console.error( error );
+				.then( response => {
+					const { id } = response;
 
-				const {
-					data: { key: apiErrorKey },
-				} = error;
+					if ( id ) {
+						setAttributes( { paymentId: id } );
+					}
+				} )
+				.catch( error => {
+					// @TODO: complete error handling
+					// eslint-disable-next-line
+					console.error( error );
 
-				// @TODO errors in other fields
-				this.setState( {
-					fieldEmailError:
-						apiErrorKey === 'spay_email'
-							? sprintf( __( '%s is not a valid email address.' ), email )
-							: null,
-					fieldPriceError: apiErrorKey === 'spay_price' ? __( 'Invalid price.' ) : null,
+					const {
+						data: { key: apiErrorKey },
+					} = error;
+
+					// @TODO errors in other fields
+					this.setState( {
+						fieldEmailError:
+							apiErrorKey === 'spay_email'
+								? sprintf( __( '%s is not a valid email address.' ), email )
+								: null,
+						fieldPriceError: apiErrorKey === 'spay_price' ? __( 'Invalid price.' ) : null,
+					} );
+				} )
+				.finally( () => {
+					this.setState( {
+						isSavingProduct: false,
+					} );
 				} );
-			} )
-			.finally( () => {
-				this.setState( {
-					isSavingProduct: false,
-				} );
-			} );
-	};
+		} );
+	}
 
 	// based on https://stackoverflow.com/a/10454560/59752
 	decimalPlaces = number => {
