@@ -16,7 +16,7 @@ import Intervals from './intervals';
 import FollowersCount from 'blocks/followers-count';
 import isGoogleMyBusinessLocationConnectedSelector from 'state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'state/selectors/is-site-store';
-import { getSite } from 'state/sites/selectors';
+import { getSiteOption } from 'state/sites/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
 import config from 'config';
 
@@ -93,15 +93,13 @@ class StatsNavigation extends Component {
 }
 
 export default connect( ( state, { siteId } ) => {
-	const site = getSite( state, siteId );
-
 	return {
 		isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
 			state,
 			siteId
 		),
 		isStore: isSiteStore( state, siteId ),
-		isWordAds: site && site.options.wordads,
+		isWordAds: getSiteOption( state, siteId, 'wordads' ),
 		siteId,
 	};
 } )( StatsNavigation );
