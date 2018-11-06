@@ -58,7 +58,7 @@ class SimplePaymentsEdit extends Component {
 		}
 
 		// Validate and save on block-deselect
-		if ( prevProps.isSelected && ! isSelected && ! isLoadingInitial && this.validateAttributes() ) {
+		if ( prevProps.isSelected && ! isSelected && ! isLoadingInitial ) {
 			this.saveProduct();
 		}
 	}
@@ -81,25 +81,16 @@ class SimplePaymentsEdit extends Component {
 	};
 
 	saveProduct = async () => {
-		const { attributes, setAttributes } = this.props;
-		const { currency, email, paymentId, price, title } = attributes;
-		const { fieldTitleError, fieldPriceError, fieldEmailError, isSavingProduct } = this.state;
-
-		// Do not save while already saving
-		// Do not save if missing required fields
-		// Do not save if fields have invalid data
-		if (
-			isSavingProduct ||
-			( !! currency && ! SUPPORTED_CURRENCY_LIST.includes( currency ) ) ||
-			! email ||
-			! price ||
-			! title ||
-			fieldEmailError ||
-			fieldPriceError ||
-			fieldTitleError
-		) {
+		if ( this.state.isSavingProduct ) {
 			return;
 		}
+
+		if ( ! this.validateAttributes() ) {
+			return;
+		}
+
+		const { attributes, setAttributes } = this.props;
+		const { email, paymentId } = attributes;
 
 		this.setState( { isSavingProduct: true } );
 
@@ -150,8 +141,22 @@ class SimplePaymentsEdit extends Component {
 		const isPriceValid = this.validatePrice();
 		const isTitleValid = this.validateTitle();
 		const isEmailValid = this.validateEmail();
+		const isCurrencyValid = this.validateCurrency();
 
-		return isPriceValid && isTitleValid && isEmailValid;
+		return isPriceValid && isTitleValid && isEmailValid && isCurrencyValid;
+	};
+
+	/**
+	 * Validate currency
+	 *
+	 * This method does not include validation UI. Currency selection should not allow for invalid
+	 * values. It is primarily to ensure that the currency is valid to save.
+	 *
+	 * @return  {boolean} True if currency is valid
+	 */
+	validateCurrency = () => {
+		const { currency } = this.props.attributes;
+		return SUPPORTED_CURRENCY_LIST.includes( currency );
 	};
 
 	/**
