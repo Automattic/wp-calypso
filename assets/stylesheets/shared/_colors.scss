@@ -1,8 +1,8 @@
 // Primary Accent (Blues)
-$blue-wordpress:         #0087be;
-$blue-light:             #78dcfa;
-$blue-medium:            #00aadc;
-$blue-dark:              #005082;
+$blue-wordpress:         #016087;
+$blue-light:             lighten($blue-wordpress, 20%);
+$blue-medium:            #d52c82;
+$blue-dark:              darken($blue-wordpress, 20%);
 
 // Jetpack Green
 $green-jetpack:          #00be28;
@@ -28,8 +28,8 @@ $gray-darken-30:  darken( $gray, 30% );  // #3d596d
 // See wordpress.com/design-handbook/colors/ for more info.
 
 // Secondary Accent (Oranges)
-$orange-jazzy:           #f0821e;
-$orange-fire:            #d54e21;
+$orange-jazzy:           #d52c82;
+$orange-fire:            #d52c82;
 
 // Alerts
 $alert-yellow:           #f0b849;
