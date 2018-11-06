@@ -66,9 +66,16 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__table.has-2-cols {
 	display: block;
-	max-width: 720px;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.plan-features__table.has-2-cols {
+	max-width: 720px;
+}
+
+.plan-features__table.has-1-cols {
+	max-width: 337px;
 }
 
 .plan-features__mobile-plan {
@@ -530,11 +537,6 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 
-	.plan-features__table.has-3-cols {
-		margin: 0 auto;
-		max-width: 75%;
-	}
-
 	.signup__steps & {
 		width: auto;
 
@@ -549,7 +551,7 @@ $plan-features-sidebar-width: 272px;
 		@include breakpoint( '>660px' ) {
 			display: table;
 			width: 100%;
-			margin: 0;
+			margin: 0 auto;
 			padding: 0 16px;
 		}
 
