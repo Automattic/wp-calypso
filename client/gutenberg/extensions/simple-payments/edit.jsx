@@ -101,7 +101,6 @@ class SimplePaymentsEdit extends Component {
 		} )
 			.then( response => {
 				const { id } = response;
-				this.setState( { isSavingProduct: false } );
 
 				if ( id ) {
 					setAttributes( { paymentId: id } );
@@ -123,6 +122,10 @@ class SimplePaymentsEdit extends Component {
 							? sprintf( __( '%s is not a valid email address.' ), email )
 							: null,
 					fieldPriceError: apiErrorKey === 'spay_price' ? __( 'Invalid price.' ) : null,
+				} );
+			} )
+			.finally( () => {
+				this.setState( {
 					isSavingProduct: false,
 				} );
 			} );
