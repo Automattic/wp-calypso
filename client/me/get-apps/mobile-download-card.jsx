@@ -154,7 +154,7 @@ class MobileDownloadCard extends React.Component {
 	}
 
 	render() {
-		const translate = this.props.translate;
+		const { translate } = this.props;
 
 		const hasAllData = this.userSettingsHaveBeenLoadedWithAccountRecoveryPhone();
 		const { countryCode, number, isValid } = this.getPreferredNumber( hasAllData );
