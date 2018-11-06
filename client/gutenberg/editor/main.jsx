@@ -17,7 +17,7 @@ import QueryPostTypes from 'components/data/query-post-types';
 import { createAutoDraft, requestSitePost, requestGutenbergDemoContent } from 'state/data-getters';
 import { getHttpData } from 'state/data-layer/http-data';
 import { translate } from 'i18n-calypso';
-import './hooks'; // Load hooks that are needed for integrating Calypso's Media Modal
+import './hooks'; // Needed for integrating Calypso's media library (and other hooks)
 
 class GutenbergEditor extends Component {
 	componentDidMount() {
