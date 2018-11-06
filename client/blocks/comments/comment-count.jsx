@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -28,7 +27,11 @@ const CommentCount = ( { count, translate } ) => {
 	return (
 		<div className="comments__comment-count">
 			<span className="comments__comment-count-phrase">{ countPhrase }</span>
-			{ count === 0 && translate( ' - Add the first! ' ) }
+			{ count === 0 &&
+				'- ' +
+					translate( 'add the first!', {
+						context: 'Used after "no comments", inviting user to add the first comment',
+					} ) }
 		</div>
 	);
 };
