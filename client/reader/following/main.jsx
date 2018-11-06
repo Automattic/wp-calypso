@@ -51,7 +51,8 @@ const FollowingStream = props => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Stream { ...props }>
-			{ config.isEnabled( 'reader/following-intro' ) && <FollowingIntro /> }
+			{ config.isEnabled( 'reader/following-intro' ) &&
+				! showRegistrationMsg && <FollowingIntro /> }
 			{ showRegistrationMsg && (
 				<Banner
 					className="following__reader-vote"
