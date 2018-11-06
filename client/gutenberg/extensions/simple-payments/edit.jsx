@@ -64,7 +64,7 @@ class SimplePaymentsEdit extends Component {
 	}
 
 	attributesToPost = attributes => {
-		const { content, currency = DEFAULT_CURRENCY, email, multiple, price, title } = attributes;
+		const { content, currency, email, multiple, price, title } = attributes;
 
 		return {
 			title,
@@ -312,7 +312,7 @@ class SimplePaymentsEdit extends Component {
 		this.props.setAttributes( { title } );
 	};
 
-	formatPrice = ( price, currency = DEFAULT_CURRENCY, withSymbol = true ) => {
+	formatPrice = ( price, currency, withSymbol = true ) => {
 		const { precision, symbol } = getCurrencyDefaults( currency );
 		const value = price.toFixed( precision );
 		// Trim the dot at the end of symbol, e.g., 'kr.' becomes 'kr'
