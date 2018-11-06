@@ -27,6 +27,33 @@ import {
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { rangeOfPeriod } from 'state/stats/lists/utils';
 
+const buildQuery = ( moment, period, queryDate ) => {
+	let date = rangeOfPeriod( period, moment().add( -1, 'days' ) ).endOf;
+
+	let quantity = 30;
+	switch ( period ) {
+		case 'month':
+			quantity = 12;
+			break;
+		case 'year':
+			quantity = 10;
+			break;
+	}
+	const periodDifference = moment( date ).diff( moment( queryDate ), period );
+
+	if ( periodDifference >= quantity ) {
+		date = moment( date )
+			.subtract( Math.floor( periodDifference / quantity ) * quantity, period )
+			.format( 'YYYY-MM-DD' );
+	}
+
+	return {
+		unit: period,
+		date,
+		quantity,
+	};
+};
+
 class WordAdsChartTabs extends Component {
 	constructor( props ) {
 		super( props );
@@ -170,7 +197,6 @@ class WordAdsChartTabs extends Component {
 		const chartData = this.buildChartData();
 		const activeTab = this.getActiveTab();
 		const data = this.getLoadedData();
-
 		const activeTabLoading = fullQueryRequesting && ! ( data && data.length );
 		const classes = [
 			'stats-module',
@@ -213,33 +239,9 @@ class WordAdsChartTabs extends Component {
 
 const connectComponent = connect(
 	( state, { moment, period: periodObject, queryDate } ) => {
-		const siteId = getSelectedSiteId( state );
 		const { period } = periodObject;
-		let date = rangeOfPeriod( period, moment().add( -1, 'days' ) ).endOf;
-
-		let quantity = 30;
-		switch ( period ) {
-			case 'month':
-				quantity = 12;
-				break;
-			case 'year':
-				quantity = 10;
-				break;
-		}
-		const periodDifference = moment( date ).diff( moment( queryDate ), period );
-
-		if ( periodDifference >= quantity ) {
-			date = moment( date )
-				.subtract( Math.floor( periodDifference / quantity ) * quantity, period )
-				.format( 'YYYY-MM-DD' );
-		}
-
-		const query = {
-			unit: period,
-			date,
-			quantity,
-		};
-
+		const query = buildQuery( moment, period, queryDate );
+		const siteId = getSelectedSiteId( state );
 		return {
 			query: query,
 			fullQueryRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsAds', query ),
