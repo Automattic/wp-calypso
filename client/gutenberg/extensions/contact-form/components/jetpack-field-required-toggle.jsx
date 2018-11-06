@@ -10,7 +10,7 @@ import { ToggleControl } from '@wordpress/components';
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
-function JetpackFieldRequiredToggle( props ) {
+const JetpackFieldRequiredToggle = props => {
 	return (
 		<ToggleControl
 			label={ __( 'Required' ) }
@@ -18,6 +18,6 @@ function JetpackFieldRequiredToggle( props ) {
 			onChange={ props.onChange }
 		/>
 	);
-}
+};
 
 export default JetpackFieldRequiredToggle;
