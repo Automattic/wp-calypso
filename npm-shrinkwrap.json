@@ -2967,7 +2967,7 @@
         },
         "util": {
           "version": "0.10.3",
-          "resolved": "http://registry.npmjs.org/util/-/util-0.10.3.tgz",
+          "resolved": "https://registry.npmjs.org/util/-/util-0.10.3.tgz",
           "integrity": "sha1-evsa/lCAUkZInj23/g7TeTNqwPk=",
           "requires": {
             "inherits": "2.0.1"
@@ -20716,7 +20716,7 @@
       "dependencies": {
         "cacache": {
           "version": "10.0.4",
-          "resolved": "http://registry.npmjs.org/cacache/-/cacache-10.0.4.tgz",
+          "resolved": "https://registry.npmjs.org/cacache/-/cacache-10.0.4.tgz",
           "integrity": "sha512-Dph0MzuH+rTQzGPNT9fAnrPmMmjKfST6trxJeK7NQuHRaVw24VzPRWTmg9MpcwOVQZO0E1FBICUlFeNaKPIfHA==",
           "requires": {
             "bluebird": "^3.5.1",

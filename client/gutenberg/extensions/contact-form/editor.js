@@ -235,6 +235,9 @@ registerBlockType(
 	Object.assign(
 		{
 			title: __( 'Text' ),
+			description: __(
+				'When you need just a small amount of text, add a text input. Add a text input.'
+			),
 			icon: (
 				<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 					<Path fill="none" d="M0 0h24v24H0z" />
@@ -261,6 +264,7 @@ registerBlockType(
 	Object.assign(
 		{
 			title: __( 'Name' ),
+			description: __( 'Introductions are important. Add an input for folks to add their name.' ),
 			icon: (
 				<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 					<Path fill="none" d="M0 0h24v24H0V0z" />
@@ -287,6 +291,7 @@ registerBlockType(
 	Object.assign(
 		{
 			title: __( 'Email' ),
+			description: __( 'Want to reply to folks? Add an email address input.' ),
 			icon: (
 				<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 					<Path fill="none" d="M0 0h24v24H0V0z" />
@@ -313,6 +318,7 @@ registerBlockType(
 	Object.assign(
 		{
 			title: __( 'URL' ),
+			description: __( 'Add an address input for a website.' ),
 			icon: (
 				<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 					<Path fill="none" d="M0 0h24v24H0V0z" />
@@ -339,6 +345,7 @@ registerBlockType(
 	Object.assign(
 		{
 			title: __( 'Date' ),
+			description: __( 'The best way to set a date. Add a date picker.' ),
 			icon: (
 				<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 					<Path fill="none" d="M0 0h24v24H0V0z" />
@@ -365,6 +372,7 @@ registerBlockType(
 	Object.assign(
 		{
 			title: __( 'Telephone' ),
+			description: __( 'Add a phone number input.' ),
 			icon: (
 				<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 					<Path fill="none" d="M0 0h24v24H0V0z" />
@@ -391,6 +399,7 @@ registerBlockType(
 	Object.assign(
 		{
 			title: __( 'Textarea' ),
+			description: __( 'Let folks speak their mind. A textarea is great for longer responses.' ),
 			icon: (
 				<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 					<Path fill="none" d="M0 0h24v24H0V0z" />
@@ -416,6 +425,7 @@ registerBlockType(
 	Object.assign(
 		{
 			title: __( 'Checkbox' ),
+			description: __( 'Add a single checkbox.' ),
 			icon: (
 				<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 					<Path fill="none" d="M0 0h24v24H0V0z" />
@@ -441,6 +451,7 @@ registerBlockType(
 	Object.assign(
 		{
 			title: __( 'Checkbox Multiple' ),
+			description: __( 'People love options. Add several checkbox items.' ),
 			icon: (
 				<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 					<Path fill="none" d="M0 0h24v24H0V0z" />
@@ -468,6 +479,9 @@ registerBlockType(
 	Object.assign(
 		{
 			title: __( 'Radio' ),
+			description: __(
+				'Inpsired by radios, only one radio item can be selected at a time. Add several radio button items.'
+			),
 			icon: (
 				<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 					<Path fill="none" d="M0 0h24v24H0V0z" />
@@ -496,6 +510,7 @@ registerBlockType(
 	Object.assign(
 		{
 			title: __( 'Select' ),
+			description: __( 'Compact, but powerful. Add a select box with several items.' ),
 			icon: (
 				<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 					<Path fill="none" d="M0 0h24v24H0V0z" />
