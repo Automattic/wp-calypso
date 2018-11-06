@@ -549,7 +549,9 @@ export class Checkout extends React.Component {
 		const availableTerms = findPlansKeys( {
 			group: chosenPlan.group,
 			type: chosenPlan.type,
-		} ).filter( planSlug => getPlan( planSlug ).availableFor( currentPlanSlug ) );
+		} ).filter( function( planSlug ) {
+			return planSlug === currentPlanSlug || getPlan( planSlug ).availableFor( currentPlanSlug );
+		} );
 
 		if ( availableTerms.length < 2 ) {
 			return false;
