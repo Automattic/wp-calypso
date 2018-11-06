@@ -48,6 +48,12 @@ export const jetpackBlocki18n = ( context, next ) => {
 
 	const state = context.store.getState();
 	const localeSlug = getCurrentLocaleSlug( state );
+
+	// We don't need to localize English
+	if ( localeSlug === 'en' ) {
+		return next();
+	}
+
 	const languageFileUrl =
 		'https://widgets.wp.com/languages/jetpack-gutenberg-blocks/' + localeSlug + '.json';
 
