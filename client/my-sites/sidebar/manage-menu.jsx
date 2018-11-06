@@ -35,7 +35,7 @@ import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 
 class ManageMenu extends PureComponent {
 	static propTypes = {
@@ -393,9 +393,7 @@ export default connect(
 		site: getSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		calypsoifyGutenberg:
-			config.isEnabled( 'calypsoify/gutenberg' ) &&
-			'gutenberg' === getSelectedEditor( state, siteId ),
+		calypsoifyGutenberg: isCalypsoifyGutenbergEnabled( state, siteId ),
 	} ),
 	{
 		recordTracksEvent,

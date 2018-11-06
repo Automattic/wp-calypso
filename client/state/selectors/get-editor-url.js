@@ -2,16 +2,12 @@
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
-	const calypsoifyGutenberg = isEnabled( 'calypsoify/gutenberg' );
-	const selectedEditor = getSelectedEditor( state, siteId );
-
-	if ( calypsoifyGutenberg && 'gutenberg' === selectedEditor ) {
+	if ( isCalypsoifyGutenbergEnabled( state, siteId ) ) {
 		const siteAdminUrl = getSiteAdminUrl( state, siteId );
 
 		if ( postId ) {
