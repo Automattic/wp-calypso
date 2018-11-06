@@ -5,7 +5,7 @@
  */
 
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import {
 	GET_APPS_SMS_REQUEST,
 	GET_APPS_SMS_REQUEST_FAILURE,
@@ -14,33 +14,36 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestSendSMS = function( { dispatch }, action ) {
-	dispatch(
-		http(
-			{
-				apiNamespace: 'wpcom/v2',
-				method: 'POST',
-				path: '/me/get-apps/send-download-sms',
-				body: {
-					phone: action.phone,
-				},
+export const sendRequest = action =>
+	http(
+		{
+			apiNamespace: 'wpcom/v2',
+			method: 'POST',
+			path: '/me/get-apps/send-download-sms',
+			body: {
+				phone: action.phone,
 			},
-			action
-		)
+		},
+		action
 	);
-};
 
-export const handleError = ( { dispatch }, action, rawError ) => {
-	dispatch( {
+export const handleError = ( action, rawError ) => {
+	return {
 		type: GET_APPS_SMS_REQUEST_FAILURE,
 		message: rawError.message,
-	} );
+	};
 };
 
-export const handleSuccess = ( { dispatch } ) => {
-	dispatch( { type: GET_APPS_SMS_REQUEST_SUCCESS } );
+export const handleSuccess = (/* action, response */) => {
+	return { type: GET_APPS_SMS_REQUEST_SUCCESS };
 };
+
+export const requestSendSMS = dispatchRequestEx( {
+	fetch: sendRequest,
+	onSuccess: handleSuccess,
+	onError: handleError,
+} );
 
 registerHandlers( 'state/data-layer/wpcom/me/send-app-sms/index.js', {
-	[ GET_APPS_SMS_REQUEST ]: [ dispatchRequest( requestSendSMS, handleSuccess, handleError ) ],
+	[ GET_APPS_SMS_REQUEST ]: [ requestSendSMS ],
 } );
