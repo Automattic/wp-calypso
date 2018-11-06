@@ -1,26 +1,19 @@
 
 .jetpack-form {
-	.components-base-control * {
-		margin: 0;
-	}
-
+	padding: 10px 18px;
 	.jetpack-field {
 		.jetpack-field-label {
 			&.jetpack-field-label {
 				&.jetpack-field-label {
-					border-color: #fff;
+					border-color: #FFF;
 					border-radius: 0;
 					font-weight: bold;
 					margin: 0;
 					margin-bottom: 2px;
 					width: calc( 100% - 100px );
 
-					&:hover {
-						border-color: #357CB5;
-					}
-
 					&:focus {
-						border-color: #E3E5E8;
+						border-color: #FFF;
 						box-shadow: none;
 					}
 				}
