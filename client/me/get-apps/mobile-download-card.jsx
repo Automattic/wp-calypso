@@ -197,7 +197,6 @@ class MobileDownloadCard extends React.Component {
 						</p>
 
 						<div className="get-apps__sms-field-wrapper">
-
 							<QuerySmsCountries />
 							<QueryAccountRecoverySettings />
 							<QueryUserSettings />
@@ -239,7 +238,13 @@ class MobileDownloadCard extends React.Component {
 
 	onChange = phoneNumber => {
 		this.setState( {
-			phoneNumber,
+			phoneNumber: {
+				countryCode: phoneNumber.countryData.code,
+				countryNumericCode: phoneNumber.countryData.numeric_code,
+				number: phoneNumber.phoneNumber,
+				numberFull: phoneNumber.phoneNumberFull,
+				isValid: phoneNumber.isValid,
+			},
 		} );
 	};
 
