@@ -446,8 +446,10 @@ export default {
 		// eslint-disable-next-line no-nested-ternary
 		const numPeriodAgo = parsedPeriod ? ( parsedPeriod > 9 ? '10plus' : '-' + parsedPeriod ) : '';
 
-		analytics.mc.bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
-		recordPlaceholdersTiming();
+		analytics.mc.bumpStat(
+			'calypso_wordads_stats_site_period',
+			activeFilter.period + numPeriodAgo
+		);
 
 		context.primary = (
 			<WordAds
