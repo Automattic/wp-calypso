@@ -22,6 +22,7 @@ import { Fragment } from '@wordpress/element';
 import { PluginArea } from '@wordpress/plugins';
 import { withViewportMatch } from '@wordpress/viewport';
 import { compose } from '@wordpress/compose';
+import { parse } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -46,6 +47,7 @@ function Layout( {
 	togglePublishSidebar,
 	isMobileViewport,
 	updatePost,
+	resetBlocks,
 	post,
 } ) {
 	const sidebarIsOpened = editorSidebarOpened || pluginSidebarOpened || publishSidebarOpened;
@@ -65,8 +67,10 @@ function Layout( {
 	const loadRevision = revision => {
 		const { post_content: content, post_title: title, post_excerpt: excerpt } = revision;
 		const postRevision = { ...post, content, title, excerpt };
-		//TODO: what's the better action here? This only loads title, also tried other actions in core/editor without luck
+		//update post does not automatically update content/blocks intentionally
 		updatePost( postRevision );
+		const blocks = parse( content );
+		resetBlocks( blocks );
 	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -132,12 +136,13 @@ export default compose(
 		hasFixedToolbar: select( 'core/edit-post' ).isFeatureActive( 'fixedToolbar' ),
 	} ) ),
 	withDispatch( dispatch => {
-		const { updatePost } = dispatch( 'core/editor' );
+		const { updatePost, resetBlocks } = dispatch( 'core/editor' );
 		const { closePublishSidebar, togglePublishSidebar } = dispatch( 'core/edit-post' );
 		return {
 			closePublishSidebar,
 			togglePublishSidebar,
 			updatePost,
+			resetBlocks,
 		};
 	} ),
 	navigateRegions,
