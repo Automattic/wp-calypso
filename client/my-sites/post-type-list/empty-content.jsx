@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import { getPostType } from 'state/post-types/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPath } from 'state/ui/editor/selectors';
+import getEditorUrl from 'state/selectors/get-editor-url';
 import QueryPostTypes from 'components/data/query-post-types';
 import EmptyContent from 'components/empty-content';
 import { preload } from 'sections-helper';
@@ -66,6 +66,6 @@ export default connect( ( state, ownProps ) => {
 	return {
 		siteId,
 		typeObject: getPostType( state, siteId, ownProps.type ),
-		editPath: getEditorPath( state, siteId, null, ownProps.type ),
+		editPath: getEditorUrl( state, siteId, null, ownProps.type ),
 	};
 } )( localize( PostTypeListEmptyContent ) );
