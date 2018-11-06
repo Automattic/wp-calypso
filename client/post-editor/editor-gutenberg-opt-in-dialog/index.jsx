@@ -7,9 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import getCurrentRoute from 'state/selectors/get-current-route';
 import Gridicon from 'gridicons';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -28,6 +26,10 @@ import {
 	withAnalytics,
 	bumpStat,
 } from 'state/analytics/actions';
+import isVipSite from 'state/selectors/is-vip-site';
+import { isJetpackSite } from 'state/sites/selectors';
+import getCurrentRoute from 'state/selectors/get-current-route';
+import { isEnabled } from 'config';
 
 class EditorGutenbergOptInDialog extends Component {
 	static propTypes = {
@@ -48,8 +50,7 @@ class EditorGutenbergOptInDialog extends Component {
 	optInToGutenberg = () => {
 		const { gutenbergURL, hideDialog, optIn, siteId } = this.props;
 		hideDialog();
-		optIn( siteId );
-		page.redirect( gutenbergURL );
+		optIn( siteId, gutenbergURL );
 	};
 
 	render() {
@@ -98,7 +99,7 @@ class EditorGutenbergOptInDialog extends Component {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	optIn: siteId => {
+	optIn: ( siteId, gutenbergURL ) => {
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
@@ -113,7 +114,7 @@ const mapDispatchToProps = dispatch => ( {
 					} ),
 					bumpStat( 'gutenberg-opt-in', 'Calypso Dialog Opt In' )
 				),
-				setSelectedEditor( siteId, 'gutenberg' )
+				setSelectedEditor( siteId, 'gutenberg', gutenbergURL )
 			)
 		);
 	},
@@ -144,8 +145,16 @@ export default connect(
 		const currentRoute = getCurrentRoute( state );
 		const isDialogVisible = isGutenbergOptInDialogShowing( state );
 		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isVip = isVipSite( state, siteId );
+		const isCalypsoifyEnabled = isEnabled( 'calypsoify/gutenberg' ) && ! isJetpack && ! isVip;
+
+		//TODO: build the calypsoified admin url! We can't quite use get-editor-url
+
 		return {
-			gutenbergURL: `/gutenberg${ currentRoute }`,
+			gutenbergURL: isCalypsoifyEnabled
+				? 'build a calypsoified url'
+				: `/gutenberg${ currentRoute }`,
 			isDialogVisible,
 			siteId,
 		};
