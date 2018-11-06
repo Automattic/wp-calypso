@@ -10,12 +10,11 @@ import i18n from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
 import { isWebUri as isValidUrl } from 'valid-url';
-import { get, has, startsWith } from 'lodash';
+import { has, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
 import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/actions';
 import { addSiteFragment } from 'lib/route';
@@ -23,11 +22,12 @@ import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite, getSiteAdminUrl } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
-import { requestSelectedEditor } from 'state/data-getters';
-import { waitForData } from 'state/data-layer/http-data';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
+import getEditorUrl from 'state/selectors/get-editor-url';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -258,45 +258,33 @@ export default {
 	},
 
 	gutenberg: ( context, next ) => {
-		if ( ! isEnabled( 'calypsoify/gutenberg' ) ) {
-			return next();
+		if ( ! has( window, 'location.replace' ) ) {
+			next();
 		}
-
 		const unsubscribe = context.store.subscribe( () => {
+			console.log( 'SUBSCRIBE CALLBACK' );
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );
 
+			console.log( 'siteId:', siteId );
 			if ( ! siteId ) {
 				return;
 			}
+			const selectedEditor = getSelectedEditor( state, siteId );
+			console.log( 'selectedEditor:', selectedEditor );
+			if ( ! selectedEditor ) {
+				return;
+			}
 			unsubscribe();
+			console.log( 'UNSUBSCRIBED' );
 
 			const postType = determinePostType( context );
 			const postId = getPostID( context );
-			const siteAdminUrl = getSiteAdminUrl( state, siteId );
 
-			waitForData( {
-				editor: () => requestSelectedEditor( siteId ),
-			} ).then( ( { editor } ) => {
-				if (
-					has( window, 'location.replace' ) &&
-					'gutenberg' === get( editor, 'data.editor_web' )
-				) {
-					// If the current editor is Gutenberg, redirect to Calypsoify.
-					if ( postId ) {
-						return window.location.replace(
-							siteAdminUrl + `post.php?calypsoify=1&post=${ postId }&action=edit`
-						);
-					}
-					if ( 'post' === postType ) {
-						return window.location.replace( siteAdminUrl + 'post-new.php?calypsoify=1' );
-					}
-					return window.location.replace(
-						siteAdminUrl + `post-new.php?calypsoify=1&post_type=${ postType }`
-					);
-				}
-				next();
-			}, next );
+			if ( isCalypsoifyGutenbergEnabled( state, siteId ) ) {
+				return window.location.replace( getEditorUrl( state, siteId, postId, postType ) );
+			}
+			next();
 		} );
 	},
 };
