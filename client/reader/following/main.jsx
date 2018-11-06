@@ -33,7 +33,7 @@ function handleSearch( query ) {
 	}
 }
 
-const lastDayForVoteBanner = new Date( '2018-10-02T00:00:00' );
+const lastDayForVoteBanner = new Date( '2018-11-07T00:00:00' );
 
 const FollowingStream = props => {
 	const suggestionList =
@@ -51,16 +51,17 @@ const FollowingStream = props => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Stream { ...props }>
-			{ config.isEnabled( 'reader/following-intro' ) && <FollowingIntro /> }
+			{ config.isEnabled( 'reader/following-intro' ) &&
+				! showRegistrationMsg && <FollowingIntro /> }
 			{ showRegistrationMsg && (
 				<Banner
 					className="following__reader-vote"
-					title="The Internet can wait."
-					callToAction="Be a Voter"
-					description="Register to vote."
-					dismissPreferenceName="reader-vote-register"
-					event="reader-vote-register"
-					href="https://iamavoter.turbovote.org/?r=wordpress"
+					title="Election Day: Tuesday November 6th"
+					callToAction="How to vote"
+					description="Remember to vote."
+					dismissPreferenceName="reader-vote-prompt"
+					event="reader-vote-prompt"
+					href="https://www.usa.gov/election-office"
 					icon="star"
 				/>
 			) }
