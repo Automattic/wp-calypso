@@ -8396,6 +8396,12 @@
         "is-property": "^1.0.2"
       }
     },
+    "generate-json-file-webpack-plugin": {
+      "version": "0.0.3",
+      "resolved": "https://registry.npmjs.org/generate-json-file-webpack-plugin/-/generate-json-file-webpack-plugin-0.0.3.tgz",
+      "integrity": "sha512-/BGIsuujFjgwhWpQTXFAR6toFvtkKyL2L8sOXx3mCh1daWFA48zd+uunh9nFMmtmNlgKgKq8kTuIgL3vo7hYMw==",
+      "dev": true
+    },
     "generate-object-property": {
       "version": "1.2.0",
       "resolved": "https://registry.npmjs.org/generate-object-property/-/generate-object-property-1.2.0.tgz",
