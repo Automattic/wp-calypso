@@ -121,6 +121,9 @@ export class PlanFeatures extends Component {
 		}
 
 		const bannerContainer = this.getBannerContainer();
+		if ( ! bannerContainer ) {
+			return false;
+		}
 		const activeDiscount = getDiscountByName( this.props.withDiscount );
 		return ReactDOM.createPortal(
 			<Notice
@@ -212,6 +215,9 @@ export class PlanFeatures extends Component {
 		}
 
 		const bannerContainer = this.getBannerContainer();
+		if ( ! bannerContainer ) {
+			return false;
+		}
 		return ReactDOM.createPortal(
 			<Notice className="plan-features__notice" showDismiss={ false } status="is-info">
 				{ translate( 'You need to be the plan owner to manage this site.' ) }
