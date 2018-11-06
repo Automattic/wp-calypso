@@ -11,7 +11,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
+import {
+	activateModule,
+	deactivateModule,
+	activateModules,
+	deactivateModules,
+} from 'state/jetpack/modules/actions';
 import Card from 'components/card';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -32,7 +37,9 @@ class SpeedUpSiteSettings extends Component {
 
 	static propTypes = {
 		activateModule: PropTypes.func,
+		activateModules: PropTypes.func,
 		deactivateModule: PropTypes.func,
+		deactivateModules: PropTypes.func,
 		fields: PropTypes.object,
 		isRequestingSettings: PropTypes.bool,
 		isSavingSettings: PropTypes.bool,
@@ -50,28 +57,13 @@ class SpeedUpSiteSettings extends Component {
 	};
 
 	handleCdnChange = () => {
-		const {
-			assetCdnModuleActive,
-			photonModuleActive,
-			selectedSiteId,
-			siteAcceleratorStatus,
-		} = this.props;
+		const { selectedSiteId, siteAcceleratorStatus } = this.props;
 
 		// If one of them is on, we turn everything off.
 		if ( siteAcceleratorStatus ) {
-			if ( true === photonModuleActive ) {
-				this.props.deactivateModule( selectedSiteId, 'photon', true );
-			}
-			if ( true === assetCdnModuleActive ) {
-				this.props.deactivateModule( selectedSiteId, 'photon-cdn', true );
-			}
+			this.props.deactivateModules( selectedSiteId, [ 'photon', 'photon-cdn' ] );
 		} else {
-			if ( false === photonModuleActive ) {
-				this.props.activateModule( selectedSiteId, 'photon', true );
-			}
-			if ( false === assetCdnModuleActive ) {
-				this.props.activateModule( selectedSiteId, 'photon-cdn', true );
-			}
+			this.props.activateModules( selectedSiteId, [ 'photon', 'photon-cdn' ] );
 		}
 	};
 
@@ -108,7 +100,7 @@ class SpeedUpSiteSettings extends Component {
 							) }
 						</p>
 						<CompactFormToggle
-							checked={ siteAcceleratorStatus }
+							checked={ siteAcceleratorStatus || false }
 							disabled={
 								isRequestingOrSaving ||
 								photonModuleUnavailable ||
@@ -207,6 +199,8 @@ export default connect(
 	},
 	{
 		activateModule,
+		activateModules,
 		deactivateModule,
+		deactivateModules,
 	}
 )( localize( SpeedUpSiteSettings ) );

@@ -93,6 +93,29 @@ Undocumented.prototype.jetpackModuleActivate = function( siteId, moduleSlug, fn 
 };
 
 /*
+ * Activate multiple Jetpack modules for a site with id siteid.
+ * Uses the REST API of the Jetpack site.
+ *
+ * @param {int} [siteId]
+ * @param {array} modules An array of modules we want to activate.
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.jetpackModulesActivate = function( siteId, modules, fn ) {
+	return this.wpcom.req.post(
+		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+		{
+			path: '/jetpack/v4/module/all/active/',
+			body: JSON.stringify( {
+				modules,
+				active: true,
+			} ),
+		},
+		fn
+	);
+};
+
+/*
  * Deactivate a Jetpack module with slug moduleSlug for a site with id siteid.
  * Uses the REST API of the Jetpack site.
  *
@@ -107,6 +130,29 @@ Undocumented.prototype.jetpackModuleDeactivate = function( siteId, moduleSlug, f
 		{
 			path: '/jetpack/v4/module/' + moduleSlug + '/active/',
 			body: JSON.stringify( { active: false } ),
+		},
+		fn
+	);
+};
+
+/*
+ * Deactivate multiple Jetpack modules for a site with id siteid.
+ * Uses the REST API of the Jetpack site.
+ *
+ * @param {int} [siteId]
+ * @param {array} modules Array of modules to deactivate
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.jetpackModulesDeactivate = function( siteId, modules, fn ) {
+	return this.wpcom.req.post(
+		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+		{
+			path: '/jetpack/v4/module/all/active/',
+			body: JSON.stringify( {
+				modules,
+				active: false,
+			} ),
 		},
 		fn
 	);

@@ -13,7 +13,9 @@ import { jetpackSettingsSchema } from './schema';
 import { normalizeSettings } from './utils';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
+	JETPACK_MODULES_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
+	JETPACK_MODULES_DEACTIVATE_SUCCESS,
 	JETPACK_MODULES_RECEIVE,
 	JETPACK_SETTINGS_SAVE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE,
@@ -28,9 +30,19 @@ export const settingsReducer = keyedReducer(
 				...state,
 				[ moduleSlug ]: true,
 			} ),
+			[ JETPACK_MODULES_ACTIVATE_SUCCESS ]: ( state, { modules } ) => ( {
+				...state,
+				modules,
+				active: true,
+			} ),
 			[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: ( state, { moduleSlug } ) => ( {
 				...state,
 				[ moduleSlug ]: false,
+			} ),
+			[ JETPACK_MODULES_DEACTIVATE_SUCCESS ]: ( state, { modules } ) => ( {
+				...state,
+				modules,
+				active: false,
 			} ),
 			[ JETPACK_MODULES_RECEIVE ]: ( state, { modules } ) => {
 				const modulesActivationState = mapValues( modules, module => module.active );

@@ -13,9 +13,15 @@ import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
+	JETPACK_MODULES_ACTIVATE,
+	JETPACK_MODULES_ACTIVATE_FAILURE,
+	JETPACK_MODULES_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE,
 	JETPACK_MODULE_DEACTIVATE_FAILURE,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
+	JETPACK_MODULES_DEACTIVATE,
+	JETPACK_MODULES_DEACTIVATE_FAILURE,
+	JETPACK_MODULES_DEACTIVATE_SUCCESS,
 	JETPACK_MODULES_RECEIVE,
 	JETPACK_MODULES_REQUEST,
 	JETPACK_MODULES_REQUEST_FAILURE,
@@ -55,6 +61,38 @@ export const activateModule = ( siteId, moduleSlug, silent = false ) => {
 	};
 };
 
+export const activateModules = ( siteId, modules, silent = false ) => {
+	return dispatch => {
+		dispatch( {
+			type: JETPACK_MODULES_ACTIVATE,
+			siteId,
+			modules,
+			silent,
+		} );
+
+		return wp
+			.undocumented()
+			.jetpackModulesActivate( siteId, modules )
+			.then( () => {
+				dispatch( {
+					type: JETPACK_MODULES_ACTIVATE_SUCCESS,
+					siteId,
+					modules,
+					silent,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: JETPACK_MODULES_ACTIVATE_FAILURE,
+					siteId,
+					modules,
+					silent,
+					error: error.message,
+				} );
+			} );
+	};
+};
+
 export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
 	return dispatch => {
 		dispatch( {
@@ -80,6 +118,38 @@ export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
 					type: JETPACK_MODULE_DEACTIVATE_FAILURE,
 					siteId,
 					moduleSlug,
+					silent,
+					error: error.message,
+				} );
+			} );
+	};
+};
+
+export const deactivateModules = ( siteId, modules, silent = false ) => {
+	return dispatch => {
+		dispatch( {
+			type: JETPACK_MODULES_DEACTIVATE,
+			siteId,
+			modules,
+			silent,
+		} );
+
+		return wp
+			.undocumented()
+			.jetpackModulesDeactivate( siteId, modules )
+			.then( () => {
+				dispatch( {
+					type: JETPACK_MODULES_DEACTIVATE_SUCCESS,
+					siteId,
+					modules,
+					silent,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: JETPACK_MODULES_DEACTIVATE_FAILURE,
+					siteId,
+					modules,
 					silent,
 					error: error.message,
 				} );

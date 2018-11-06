@@ -12,8 +12,12 @@ import { translate } from 'i18n-calypso';
 import {
 	JETPACK_MODULE_ACTIVATE_FAILURE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
+	JETPACK_MODULES_ACTIVATE_FAILURE,
+	JETPACK_MODULES_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_FAILURE,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
+	JETPACK_MODULES_DEACTIVATE_FAILURE,
+	JETPACK_MODULES_DEACTIVATE_SUCCESS,
 } from 'state/action-types';
 import { MODULE_NOTICES } from './constants';
 import { successNotice, errorNotice } from 'state/notices/actions';
@@ -29,19 +33,16 @@ export const onJetpackModuleActivationActionMessage = ( { type, moduleSlug, sile
 
 	switch ( type ) {
 		case JETPACK_MODULE_ACTIVATE_SUCCESS:
-			message = message || translate( 'Settings saved successfully!' );
-			messageType = 'success';
-			break;
+		case JETPACK_MODULES_ACTIVATE_SUCCESS:
 		case JETPACK_MODULE_DEACTIVATE_SUCCESS:
+		case JETPACK_MODULES_DEACTIVATE_SUCCESS:
 			message = message || translate( 'Settings saved successfully!' );
 			messageType = 'success';
 			break;
 		case JETPACK_MODULE_ACTIVATE_FAILURE:
-			message =
-				message || translate( 'There was a problem saving your changes. Please try again.' );
-			messageType = 'error';
-			break;
+		case JETPACK_MODULES_ACTIVATE_FAILURE:
 		case JETPACK_MODULE_DEACTIVATE_FAILURE:
+		case JETPACK_MODULES_DEACTIVATE_FAILURE:
 			message =
 				message || translate( 'There was a problem saving your changes. Please try again.' );
 			messageType = 'error';
