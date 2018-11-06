@@ -15,7 +15,6 @@ import { activateModule, deactivateModule } from 'state/jetpack/modules/actions'
 import Card from 'components/card';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackMinimumVersion } from 'state/sites/selectors';
 import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
@@ -102,12 +101,12 @@ class SpeedUpSiteSettings extends Component {
 							) }
 							link="http://jetpack.com/support/site-accelerator/"
 						/>
-						<FormSettingExplanation className="site-settings__feature-description">
+						<p className="site-settings__feature-description form-setting-explanation">
 							{ translate(
 								'Load pages faster by allowing Jetpack to optimize your images and serve your images ' +
 									'and static files (like CSS and JavaScript) from our global network of servers.'
 							) }
-						</FormSettingExplanation>
+						</p>
 						<CompactFormToggle
 							checked={ siteAcceleratorStatus }
 							disabled={
