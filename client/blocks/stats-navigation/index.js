@@ -36,7 +36,7 @@ class StatsNavigation extends Component {
 
 		switch ( item ) {
 			case 'wordads':
-				return config.isEnabled( 'wordads/daily-stats' ) && isWordAds;
+				return isWordAds;
 
 			case 'store':
 				return isStore;
@@ -99,7 +99,8 @@ export default connect( ( state, { siteId } ) => {
 			siteId
 		),
 		isStore: isSiteStore( state, siteId ),
-		isWordAds: getSiteOption( state, siteId, 'wordads' ),
+		isWordAds:
+			getSiteOption( state, siteId, 'wordads' ) && config.isEnabled( 'wordads/daily-stats' ),
 		siteId,
 	};
 } )( StatsNavigation );
