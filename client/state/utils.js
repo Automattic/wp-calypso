@@ -425,6 +425,37 @@ function setupReducerPersistence( reducer ) {
 	return withoutPersistence( reducer );
 }
 
+// SERIALIZE needs behavior that's slightly different from `combineReducers` from Redux:
+// - `undefined` is a valid value returned from SERIALIZE reducer, but `combineReducers`
+//   would throw an exception when seeing it.
+// - if a particular subreducer returns `undefined`, then that property won't be included
+//   in the result object at all.
+// - if none of the subreducers produced anything to persist, the combined result will be
+//   `undefined` rather than an empty object.
+// - if the state to serialize is `undefined` (happens when some key in state is missing)
+//   the serialized value is `undefined` and there's no need to reduce anything.
+function serializeState( reducers, state, action ) {
+	if ( state === undefined ) {
+		return undefined;
+	}
+
+	return reduce(
+		reducers,
+		( result, reducer, key ) => {
+			const serialized = reducer( state[ key ], action );
+			if ( serialized !== undefined ) {
+				if ( ! result ) {
+					// instantiate the result object only when it's going to have at least one property
+					result = {};
+				}
+				result[ key ] = serialized;
+			}
+			return result;
+		},
+		undefined
+	);
+}
+
 /**
  * Returns a single reducing function that ensures that persistence is opt-in.
  * If you don't need state to be stored, simply use this method instead of
@@ -499,41 +530,19 @@ export function combineReducers( reducers ) {
 
 function createCombinedReducer( reducers ) {
 	const combined = combine( reducers );
-	const combinedWithSerializer = ( state, action ) => {
-		// SERIALIZE needs behavior that's slightly different from `combineReducers` from Redux:
-		// - `undefined` is a valid value returned from SERIALIZE reducer, but `combineReducers`
-		//   would throw an exception when seeing it.
-		// - if a particular subreducer returns `undefined`, then that property won't be included
-		//   in the result object at all.
-		// - if none of the subreducers produced anything to persist, the combined result will be
-		//   `undefined` rather than an empty object.
-		// - if the state to serialize is `undefined` (happens when some key in state is missing)
-		//   the serialized value is `undefined` and there's no need to reduce anything.
-		if ( action.type === SERIALIZE ) {
-			if ( state === undefined ) {
-				return undefined;
-			}
-			return reduce(
-				reducers,
-				( result, reducer, key ) => {
-					const serialized = reducer( state[ key ], action );
-					if ( serialized !== undefined ) {
-						if ( ! result ) {
-							// instantiate the result object only when it's going to have at least one property
-							result = {};
-						}
-						result[ key ] = serialized;
-					}
-					return result;
-				},
-				undefined
-			);
-		}
 
-		return combined( state, action );
+	const combinedReducer = ( state, action ) => {
+		switch ( action.type ) {
+			case SERIALIZE:
+				return serializeState( reducers, state, action );
+			default:
+				return combined( state, action );
+		}
 	};
-	combinedWithSerializer.hasCustomPersistence = true;
-	return combinedWithSerializer;
+
+	combinedReducer.hasCustomPersistence = true;
+
+	return combinedReducer;
 }
 
 /**
