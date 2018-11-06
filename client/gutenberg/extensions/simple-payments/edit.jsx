@@ -80,7 +80,7 @@ class SimplePaymentsEdit extends Component {
 		};
 	};
 
-	saveProduct = async () => {
+	saveProduct() {
 		if ( this.state.isSavingProduct ) {
 			return;
 		}
