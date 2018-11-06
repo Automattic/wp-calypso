@@ -6,6 +6,7 @@
 import url from 'url';
 import { stringify } from 'qs';
 import { toPairs, identity, includes } from 'lodash';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ import wpcom from 'lib/wp';
 
 const debug = debugFactory( 'calypso:gutenberg' );
 
-export const debugMiddleware = ( options, next ) => {
+const debugMiddleware = ( options, next ) => {
 	const { path, apiNamespace = 'wp/v2', apiVersion } = options;
 	if ( apiVersion ) {
 		debug( 'Sending API request to: ', `/rest/v${ apiVersion }${ path }` );
@@ -28,7 +29,7 @@ export const debugMiddleware = ( options, next ) => {
 
 // Rewrite default API paths to match WP.com equivalents. Note that
 // passed apiNamespace will be prepended to the replaced path.
-export const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
+const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
 	// wp/v2 namespace mapping
 	//
 	// Path rewrite example:
@@ -108,7 +109,7 @@ const wpcomRequest = method => {
 	return wpcom.req.post.bind( wpcom.req );
 };
 
-export const wpcomProxyMiddleware = parameters => {
+const wpcomProxyMiddleware = parameters => {
 	// Make authenticated calls using the WordPress.com REST Proxy
 	// bypassing the apiFetch call that uses window.fetch.
 	// This intentionally breaks the middleware chain.
@@ -154,4 +155,18 @@ export const wpcomProxyMiddleware = parameters => {
 			}
 		);
 	} );
+};
+
+// Utility function to apply all required API middleware in correct order.
+export const applyAPIMiddleware = siteSlug => {
+	// First middleware in, last out.
+
+	// This call intentionally breaks the middleware chain.
+	apiFetch.use( options => wpcomProxyMiddleware( options ) );
+
+	apiFetch.use( ( options, next ) => debugMiddleware( options, next ) );
+
+	apiFetch.use( ( options, next ) => wpcomPathMappingMiddleware( options, next, siteSlug ) );
+
+	apiFetch.use( apiFetch.createRootURLMiddleware( 'https://public-api.wordpress.com/' ) );
 };

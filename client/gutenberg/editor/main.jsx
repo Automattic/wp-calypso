@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get, noop } from 'lodash';
 
@@ -16,8 +16,6 @@ import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported'
 import QueryPostTypes from 'components/data/query-post-types';
 import { createAutoDraft, requestSitePost, requestGutenbergDemoContent } from 'state/data-getters';
 import { getHttpData } from 'state/data-layer/http-data';
-import { getSiteSlug } from 'state/sites/selectors';
-import { WithAPIMiddleware } from './api-middleware/utils';
 import { translate } from 'i18n-calypso';
 import './hooks'; // Load hooks that are needed for integrating Calypso's Media Modal
 
@@ -30,7 +28,7 @@ class GutenbergEditor extends Component {
 	}
 
 	render() {
-		const { postType, siteId, siteSlug, post, overridePost } = this.props;
+		const { postType, siteId, post, overridePost } = this.props;
 
 		//see also https://github.com/WordPress/gutenberg/blob/45bc8e4991d408bca8e87cba868e0872f742230b/lib/client-assets.php#L1451
 		const editorSettings = {
@@ -41,7 +39,7 @@ class GutenbergEditor extends Component {
 		};
 
 		return (
-			<WithAPIMiddleware siteSlug={ siteSlug }>
+			<Fragment>
 				<QueryPostTypes siteId={ siteId } />
 				<EditorPostTypeUnsupported type={ postType } />
 				<EditorDocumentHead postType={ postType } />
@@ -52,7 +50,7 @@ class GutenbergEditor extends Component {
 					onError={ noop }
 					overridePost={ overridePost }
 				/>
-			</WithAPIMiddleware>
+			</Fragment>
 		);
 	}
 }
@@ -83,7 +81,6 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 	}
 
 	return {
-		siteSlug: getSiteSlug( state, siteId ),
 		post,
 		overridePost,
 	};
