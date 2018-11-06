@@ -21,6 +21,7 @@ import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
 import { adjustMoment } from 'my-sites/activity/activity-log/utils';
 import { requestActivityLogs } from 'state/data-getters';
+import withLocalizedMoment from 'components/with-localized-moment';
 
 const PAGE_SIZE = 20;
 
@@ -201,4 +202,4 @@ export default connect( ( state, ownProps ) => {
 		siteId,
 		logs: ( siteId && logs.data ) || [],
 	};
-} )( localize( ClonePointStep ) );
+} )( localize( withLocalizedMoment( ClonePointStep ) ) );

@@ -59,6 +59,7 @@ import FeatureGate from 'components/feature-example/docs/example';
 import FilePickers from 'components/file-picker/docs/example';
 import FocusableExample from 'components/focusable/docs/example';
 import FoldableCard from 'components/foldable-card/docs/example';
+import FormattedDate from 'components/formatted-date/docs/example';
 import FormattedHeader from 'components/formatted-header/docs/example';
 import FormFields from 'components/forms/docs/example';
 import Gauge from 'components/gauge/docs/example';
@@ -204,6 +205,7 @@ class DesignAssets extends React.Component {
 					<FilePickers readmeFilePath="file-picker" />
 					<FocusableExample readmeFilePath="focusable" />
 					<FoldableCard readmeFilePath="foldable-card" />
+					<FormattedDate readmeFilePath="formatted-date" />
 					<FormattedHeader readmeFilePath="formatted-header" />
 					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />
 					<Gauge readmeFilePath="gauge" />
