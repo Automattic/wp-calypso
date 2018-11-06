@@ -181,13 +181,14 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 				// set both
 				let postalCode, countryCode;
 
-				switch ( action.paymentMethod ) {
+				const paymentMethod = get( action, [ 'payment', 'paymentMethod' ] );
+				switch ( paymentMethod ) {
 					case 'WPCOM_Billing_MoneyPress_Stored':
 						postalCode = extractStoredCardMetaValue( action, 'card_zip' );
 						countryCode = extractStoredCardMetaValue( action, 'country_code' );
 						break;
 					case 'WPCOM_Billing_MoneyPress_Paygate':
-						const paymentDetails = get( action, 'payment.newCardDetails' );
+						const paymentDetails = get( action, 'payment.newCardDetails', {} );
 						postalCode = paymentDetails[ 'postal-code' ];
 						countryCode = paymentDetails.country;
 						break;
