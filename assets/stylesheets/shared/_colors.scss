@@ -1,8 +1,8 @@
 // Primary Accent (Blues)
 $blue-wordpress:         #016087;
-$blue-light:             lighten($blue-wordpress, 20%);
+$blue-light:             lighten($blue-wordpress, 10%);
 $blue-medium:            #d52c82;
-$blue-dark:              darken($blue-wordpress, 20%);
+$blue-dark:              darken($blue-wordpress, 10%);
 
 // Jetpack Green
 $green-jetpack:          #00be28;
@@ -33,8 +33,8 @@ $orange-fire:            #d52c82;
 
 // Alerts
 $alert-yellow:           #f0b849;
-$alert-red:              #d94f4f;
-$alert-green:            #4ab866;
+$alert-red:              #EB0834;
+$alert-green:            #0E821D;
 $alert-purple:           #855DA6;
 
 // Link hovers
