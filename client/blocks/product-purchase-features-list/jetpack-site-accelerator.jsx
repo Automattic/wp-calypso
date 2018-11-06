@@ -19,8 +19,8 @@ export default localize( ( { selectedSite, translate } ) => {
 				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-search.svg" /> }
 				title={ translate( 'Site accelerator' ) }
 				description={ translate(
-					'Load pages faster, optimize your images, and serve your ' +
-						'images and static files from our global network of servers.'
+					'Load pages faster, and serve your images and ' +
+						'static files from our global network of servers.'
 				) }
 				buttonText={ translate( 'View settings' ) }
 				href={ '/settings/writing/' + selectedSite.slug }
