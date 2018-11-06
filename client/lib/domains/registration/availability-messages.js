@@ -244,6 +244,10 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			message = translate( 'Only the owner of the domain can map its subdomains.' );
 			break;
 
+		case domainAvailability.WPCOM_STAGING_DOMAIN:
+			message = translate( 'This domain is a reserved WordPress.com staging domain' );
+			break;
+
 		case domainAvailability.INVALID_TLD:
 		case domainAvailability.INVALID:
 			message = translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
