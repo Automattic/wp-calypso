@@ -66,7 +66,11 @@ class WpcomChecklist extends PureComponent {
 	};
 
 	canShow = () => {
-		if ( ! this.props.isEligibleForDotcomChecklist || ! this.props.isSiteSection ) {
+		if (
+			! this.props.isEligibleForDotcomChecklist ||
+			! this.props.isSiteSection ||
+			! this.props.taskStatuses
+		) {
 			return false;
 		}
 
@@ -163,6 +167,10 @@ class WpcomChecklist extends PureComponent {
 
 		const canShowChecklist = this.canShow();
 		const taskList = getTaskList( taskStatuses, designType );
+
+		if ( ! canShowChecklist ) {
+			return null;
+		}
 
 		let ChecklistComponent = Checklist;
 
