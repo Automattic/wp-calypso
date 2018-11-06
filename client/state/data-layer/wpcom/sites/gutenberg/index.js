@@ -9,10 +9,31 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { EDITOR_TYPE_SET } from 'state/action-types';
+import { EDITOR_TYPE_REQUEST, EDITOR_TYPE_SET } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
+import { bypassDataLayer } from 'state/data-layer/utils';
+
+export const fetchSelectedEditor = action =>
+	http(
+		{
+			method: 'GET',
+			path: `/sites/${ action.siteId }/gutenberg`,
+			apiNamespace: 'wpcom/v2',
+		},
+		action
+	);
+
+export const setSelectedEditor = ( { siteId }, { editor_web: editor } ) => dispatch => {
+	dispatch( bypassDataLayer( { type: EDITOR_TYPE_SET, siteId, editor } ) );
+};
+
+const dispatchSelectedEditorRequest = dispatchRequestEx( {
+	fetch: fetchSelectedEditor,
+	onSuccess: setSelectedEditor,
+	onError: noop,
+} );
 
 export const setType = action =>
 	http(
@@ -29,12 +50,13 @@ export const setType = action =>
 		noop
 	);
 
-const dispatchEditorTypeRequest = dispatchRequestEx( {
+const dispatchEditorTypeSetRequest = dispatchRequestEx( {
 	fetch: setType,
 	onSuccess: noop,
 	onError: noop,
 } );
 
 registerHandlers( 'state/data-layer/wpcom/sites/gutenberg/index.js', {
-	[ EDITOR_TYPE_SET ]: [ dispatchEditorTypeRequest ],
+	[ EDITOR_TYPE_REQUEST ]: [ dispatchSelectedEditorRequest ],
+	[ EDITOR_TYPE_SET ]: [ dispatchEditorTypeSetRequest ],
 } );
