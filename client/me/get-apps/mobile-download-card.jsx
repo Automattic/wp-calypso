@@ -197,6 +197,11 @@ class MobileDownloadCard extends React.Component {
 						</p>
 
 						<div className="get-apps__sms-field-wrapper">
+
+							<QuerySmsCountries />
+							<QueryAccountRecoverySettings />
+							<QueryUserSettings />
+
 							{ hasAllData ? (
 								<FormPhoneInput
 									countriesList={ this.props.countriesList }
@@ -209,10 +214,6 @@ class MobileDownloadCard extends React.Component {
 								/>
 							) : (
 								<>
-									<QuerySmsCountries />
-									<QueryAccountRecoverySettings />
-									<QueryUserSettings />
-
 									<FormPhoneInput countriesList={ this.props.countriesList } isDisabled={ true } />
 								</>
 							) }
