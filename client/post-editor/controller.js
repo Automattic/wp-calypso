@@ -302,6 +302,12 @@ export default {
 		if ( ! has( window, 'location.replace' ) ) {
 			next();
 		}
+
+		// Bypass the selected editor check if the URL contains a force=true param
+		if ( get( context.query, 'force', false ) ) {
+			return next();
+		}
+
 		maybeCalypsoifyGutenberg( context, next );
 	},
 };
