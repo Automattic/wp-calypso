@@ -27,7 +27,6 @@ import trimEnd from 'lodash/trimEnd';
  */
 import { getCurrencyDefaults } from 'lib/format-currency';
 import {
-	DEFAULT_CURRENCY,
 	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 	SUPPORTED_CURRENCY_LIST,
 } from 'lib/simple-payments/constants';
@@ -407,7 +406,6 @@ class SimplePaymentsEdit extends Component {
 							onChange={ this.handleCurrencyChange }
 							options={ this.getCurrencyList }
 							value={ currency }
-							defaultValue={ DEFAULT_CURRENCY }
 						/>
 						<TextControl
 							disabled={ isLoadingInitial }
