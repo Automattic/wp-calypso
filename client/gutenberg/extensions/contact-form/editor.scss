@@ -31,9 +31,10 @@
 		}
 
 		span.required {
-			// float: right;
+			margin-left: auto;
 		}
 	}
+
 	.components-checkbox-control__input {
 		margin-top: -10px;
 	}
@@ -48,6 +49,11 @@
 		.components-form-toggle {
 			margin: 2px 8px 0 0;
 		}
+	}
+
+	.components-toggle-control .components-base-control__field {
+		margin-bottom: 0;
+	}
 }
 
 .editor-block-list__block {
