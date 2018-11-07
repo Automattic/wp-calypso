@@ -28,6 +28,11 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import InfoPopover from 'components/info-popover';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SiteInformation extends Component {
 	constructor( props ) {
 		super( props );

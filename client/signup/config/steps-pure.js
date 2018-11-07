@@ -132,19 +132,9 @@ export function generateSteps( {
 			},
 		},
 
-		'site-information': {
-			stepName: 'site-information',
-			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
-		},
-
 		'site-title': {
 			stepName: 'site-title',
 			providesDependencies: [ 'siteTitle' ],
-		},
-
-		'site-topic': {
-			stepName: 'site-topic',
-			providesDependencies: [ 'siteTopic' ],
 		},
 
 		test: {
@@ -384,6 +374,16 @@ export function generateSteps( {
 		'site-type': {
 			stepName: 'site-type',
 			providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
+		},
+
+		'site-topic': {
+			stepName: 'site-topic',
+			providesDependencies: [ 'siteTopic' ],
+		},
+
+		'site-information': {
+			stepName: 'site-information',
+			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
 		},
 	};
 }
