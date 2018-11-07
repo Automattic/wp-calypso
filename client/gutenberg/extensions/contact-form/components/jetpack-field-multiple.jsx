@@ -44,7 +44,7 @@ class JetpackFieldMultiple extends Component {
 				/>
 				<BaseControl
 					id={ `jetpack-field-multiple-${ this.props.instanceId }` }
-					className="jetpack-field"
+					className="jetpack-field jetpack-field-multiple"
 					label={
 						<JetpackFieldLabel
 							required={ this.props.required }
@@ -54,7 +54,10 @@ class JetpackFieldMultiple extends Component {
 						/>
 					}
 				>
-					<ol id={ `jetpack-field-multiple-${ this.props.instanceId }` }>
+					<ol
+						className="jetpack-field-multiple__list"
+						id={ `jetpack-field-multiple-${ this.props.instanceId }` }
+					>
 						{ this.props.options.map( ( option, index ) => (
 							<JetpackOption
 								type={ this.type }
@@ -66,7 +69,7 @@ class JetpackFieldMultiple extends Component {
 						) ) }
 					</ol>
 					<IconButton
-						className="jetpack-form-multiple__add-option"
+						className="jetpack-field-multiple__add-option"
 						icon="insert"
 						label={ __( 'Insert option' ) }
 						onClick={ this.onChangeOption }

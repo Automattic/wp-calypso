@@ -1,51 +1,15 @@
 
 .jetpack-form {
 	padding: 10px 18px;
-	.jetpack-field {
-		.jetpack-field-label {
-			&.jetpack-field-label {
-				&.jetpack-field-label {
-					border-color: #FFF;
-					border-radius: 0;
-					font-weight: bold;
-					margin: 0;
-					margin-bottom: 2px;
-					width: calc( 100% - 100px );
+}
 
-					&:focus {
-						border-color: #FFF;
-						box-shadow: none;
-					}
-				}
-			}
-		}
+.jetpack-field-label {
+	display: flex;
+	flex-direction: row;
 
-		input:disabled,
-		textarea:disabled {
-			border-color: #8d96a0;
-			padding: 10px 8px;
-		}
-
-		input:disabled {
-			margin-right: 4px;
-		}
-
-		span.required {
-			margin-left: auto;
-		}
-	}
-
-	.components-checkbox-control__input {
-		margin-top: -10px;
-	}
-
-	.components-base-control__label {
-		display: flex;
-		flex-direction: row;
-	}
-
-	.components-base-control__label .components-base-control {
+	.components-base-control {
 		margin-bottom: -3px;
+
 		.components-form-toggle {
 			margin: 2px 8px 0 0;
 		}
@@ -56,70 +20,81 @@
 	}
 }
 
-.editor-block-list__block {
-	&[data-type="jetpack/field-checkbox-multiple"],
-	&[data-type="jetpack/field-radio"],
-	&[data-type="jetpack/field-select"] {
-		ol {
-			list-style-type: none;
+.jetpack-field-label__input {
+	flex-grow: 1;
+}
 
-			&:empty {
-				display: none;
-			}
-		}
-	}
+// Duplicated to elevate specificity in order to overwrite core styles
+.jetpack-field-label__input.jetpack-field-label__input.jetpack-field-label__input {
+	border-color: #FFF;
+	border-radius: 0;
+	font-weight: 600;
+	margin: 0;
+	margin-bottom: 2px;
 
-	&[data-type="jetpack/field-select"] {
-		ol {
-			border: 1px solid #8d96a0;
-			border-radius: 4px;
-			padding: 4px;
-		}
-	}
-
-	ol li button.components-icon-button {
-		display: inline-flex;
-		padding: 6px;
-		vertical-align: bottom;
-	}
-
-	input.option {
-		border-color: #fff;
-		border-radius: 0;
-		width: calc( 100% - 5em );
-		display: inline-block;
-
-		&:hover {
-			border-color: #357CB5;
-		}
-
-		&:focus {
-			border-color: #E3E5E8;
-			box-shadow: none;
-		}
-	}
-
-	.block-list-appender__toggle {
-		background-color: #f7f7f7;
-		display: none;
-		margin: 32px auto;
-		width: calc(100% - 32px);
-
-		&:hover {
-			outline: 1px solid #555d66;
-		}
-	}
-
-	&.is-selected,
-	&.is-selected-parent,
-	&.is-typing ~ .block-list-appender {
-		.block-list-appender__toggle {
-			display: block;
-		}
+	&:focus {
+		border-color: #FFF;
+		box-shadow: none;
 	}
 }
 
-.jetpack-form-multiple__add-option {
+/* TODO see if possible to use classes for these */
+.jetpack-field {
+	input:disabled,
+	textarea:disabled {
+		border-color: #8d96a0;
+		padding: 10px 8px;
+	}
+
+	input:disabled {
+		margin-right: 4px;
+	}
+
+	span.required {
+		margin-left: auto;
+	}
+}
+
+// Duplicated to elevate specificity in order to overwrite core styles
+.jetpack-field-multiple__list.jetpack-field-multiple__list {
+	list-style-type: none;
+
+	&:empty {
+		display: none;
+	}
+
+	// TODO: make this a class, @enej
+	[data-type="jetpack/field-select"] & {
+		border: 1px solid #8d96a0;
+		border-radius: 4px;
+		padding: 4px;
+	}
+}
+
+// Duplicated to elevate specificity in order to overwrite core styles
+.jetpack-option__input.jetpack-option__input.jetpack-option__input {
+	border-color: #fff;
+	border-radius: 0;
+	width: calc( 100% - 5em );
+	display: inline-block;
+
+	&:hover {
+		border-color: #357CB5;
+	}
+
+	&:focus {
+		border-color: #E3E5E8;
+		box-shadow: none;
+	}
+}
+
+.jetpack-option__remove {
+	display: inline-flex;
+	padding: 6px;
+	vertical-align: bottom;
+}
+
+.jetpack-field-multiple__add-option {
 	margin-left: -6px;
 	padding: 4px;
 	padding-right: 8px;

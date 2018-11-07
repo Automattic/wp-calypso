@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { Fragment } from '@wordpress/element';
 import { PlainText } from '@wordpress/editor';
 import { ToggleControl } from '@wordpress/components';
 
@@ -15,23 +14,24 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 const JetpackFieldLabel = props => {
 	const { setAttributes } = props;
 	return (
-		<Fragment>
+		<div className="jetpack-field-label">
 			<PlainText
 				value={ props.label }
-				className="jetpack-field-label"
+				className="jetpack-field-label__input"
 				onChange={ label => setAttributes( { label } ) }
 				placeholder={ __( 'Type label…' ) }
 			/>
 			{ props.isSelected && (
 				<ToggleControl
 					label={ __( 'Required' ) }
+					className="jetpack-field-label__required"
 					checked={ props.required }
 					onChange={ required => setAttributes( { required } ) }
 				/>
 			) }
 			{ ! props.isSelected &&
 				props.required && <span className="required">{ __( '(required)' ) }</span> }
-		</Fragment>
+		</div>
 	);
 };
 

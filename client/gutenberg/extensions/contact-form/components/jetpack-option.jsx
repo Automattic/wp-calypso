@@ -28,17 +28,22 @@ class JetpackOption extends Component {
 
 	render() {
 		return (
-			<li>
+			<li className="jetpack-option">
 				{ this.props.type &&
 					this.props.type !== 'select' && <input type={ this.props.type } disabled /> }
 				<input
 					type="text"
-					className="option"
+					className="jetpack-option__input"
 					value={ this.props.option }
 					placeholder={ __( 'Enter your option value here…' ) }
 					onChange={ this.onChangeOption }
 				/>
-				<IconButton icon="no" label={ __( 'Remove option' ) } onClick={ this.onDeleteOption } />
+				<IconButton
+					className="jetpack-option__remove"
+					icon="no"
+					label={ __( 'Remove option' ) }
+					onClick={ this.onDeleteOption }
+				/>
 			</li>
 		);
 	}
