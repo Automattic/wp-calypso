@@ -25,7 +25,7 @@ import trimEnd from 'lodash/trimEnd';
 /**
  * Internal dependencies
  */
-import { getCurrencyDefaults } from 'lib/format-currency';
+import { getCurrencyDefaults } from 'lib/format-currency/currencies';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 	SUPPORTED_CURRENCY_LIST,
