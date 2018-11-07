@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
+import { localizeUrl } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
 
 const OauthClientMasterbar = ( { oauth2Client } ) => (
@@ -35,7 +35,7 @@ const OauthClientMasterbar = ( { oauth2Client } ) => (
 				) : (
 					<li className="masterbar__oauth-client-wpcc-sign-in">
 						<a
-							href={ addLocaleToWpcomUrl( 'https://wordpress.com/', getLocaleSlug() ) }
+							href={ localizeUrl( 'https://wordpress.com/' ) }
 							className="masterbar__oauth-client-wpcom"
 							target="_self"
 						>

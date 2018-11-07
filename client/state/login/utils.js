@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export function getSMSMessageFromResponse( response ) {
 	const phoneNumber = get( response, 'body.data.phone_number' );
@@ -55,10 +55,7 @@ export function getErrorFromHTTPError( httpError ) {
 		if ( code in errorFields ) {
 			field = errorFields[ code ];
 		} else if ( code === 'admin_login_attempt' ) {
-			const url = addLocaleToWpcomUrl(
-				'https://wordpress.com/wp-login.php?action=lostpassword',
-				getLocaleSlug()
-			);
+			const url = localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword' );
 
 			return {
 				code,

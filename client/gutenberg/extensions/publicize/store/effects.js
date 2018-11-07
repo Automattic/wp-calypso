@@ -22,9 +22,13 @@ import { setConnections } from './actions';
 export async function refreshConnections( { postId }, store ) {
 	const { dispatch } = store;
 
-	const connections = await apiFetch( { path: getFetchConnectionsPath( postId ) } );
+	try {
+		const connections = await apiFetch( { path: getFetchConnectionsPath( postId ) } );
 
-	return dispatch( setConnections( postId, connections ) );
+		return dispatch( setConnections( postId, connections ) );
+	} catch ( error ) {
+		// Refreshing connections failed
+	}
 }
 
 export default {

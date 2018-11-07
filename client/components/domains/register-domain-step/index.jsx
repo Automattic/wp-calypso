@@ -62,6 +62,7 @@ import {
 	getTldWeightOverrides,
 	isNumberString,
 	isUnknownSuggestion,
+	isMissingVendor,
 	markFeaturedSuggestions,
 } from 'components/domains/register-domain-step/utility';
 import {
@@ -766,7 +767,10 @@ class RegisterDomainStep extends React.Component {
 				? suggestionMap.set( domainName, { ...suggestionMap.get( domainName ), ...result } )
 				: suggestionMap.set( domainName, result );
 		} );
-		const suggestions = reject( [ ...suggestionMap.values() ], isUnknownSuggestion );
+		const suggestions = reject(
+			reject( [ ...suggestionMap.values() ], isUnknownSuggestion ),
+			isMissingVendor
+		);
 		const markedSuggestions = markFeaturedSuggestions(
 			suggestions,
 			this.state.exactMatchDomain,

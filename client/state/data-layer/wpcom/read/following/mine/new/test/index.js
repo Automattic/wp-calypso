@@ -2,8 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -16,39 +14,28 @@ import { follow, unfollow } from 'state/reader/follows/actions';
 
 describe( 'requestFollow', () => {
 	test( 'should dispatch a http request', () => {
-		const dispatch = spy();
 		const action = follow( 'http://example.com' );
-		const getState = () => ( {
-			reader: {
-				sites: {
-					items: {},
-				},
-				feeds: {
-					items: {},
-				},
-			},
-		} );
+		const result = requestFollow( action );
 
-		requestFollow( { dispatch, getState }, action );
-		expect( dispatch ).to.have.been.calledWith(
-			http( {
-				method: 'POST',
-				path: '/read/following/mine/new',
-				apiVersion: '1.1',
-				body: {
-					url: 'http://example.com',
-					source: 'calypso',
+		expect( result ).toEqual(
+			http(
+				{
+					method: 'POST',
+					path: '/read/following/mine/new',
+					apiVersion: '1.1',
+					body: {
+						url: 'http://example.com',
+						source: 'calypso',
+					},
 				},
-				onSuccess: action,
-				onFailure: action,
-			} )
+				action
+			)
 		);
 	} );
 } );
 
 describe( 'receiveFollow', () => {
 	test( 'should dispatch updateFollow with new subscription info', () => {
-		const dispatch = spy();
 		const action = follow( 'http://example.com' );
 		const response = {
 			subscribed: true,
@@ -62,8 +49,8 @@ describe( 'receiveFollow', () => {
 				is_owner: false,
 			},
 		};
-		receiveFollow( { dispatch }, action, response );
-		expect( dispatch ).to.be.calledWith(
+		const result = receiveFollow( action, response );
+		expect( result ).toEqual(
 			bypassDataLayer(
 				follow( 'http://example.com', {
 					ID: 1,
@@ -80,28 +67,28 @@ describe( 'receiveFollow', () => {
 	} );
 
 	test( 'should dispatch an error notice when subscribed is false', () => {
-		const dispatch = spy();
 		const action = follow( 'http://example.com' );
 		const response = {
 			subscribed: false,
 		};
 
-		receiveFollow( { dispatch }, action, response );
-		expect( dispatch ).to.be.calledWithMatch( {
+		const result = receiveFollow( action, response );
+		expect( result[ 0 ] ).toMatchObject( {
 			type: NOTICE_CREATE,
-			notice: { status: 'is-error' },
+			notice: {
+				status: 'is-error',
+			},
 		} );
-		expect( dispatch ).to.be.calledWith( bypassDataLayer( unfollow( 'http://example.com' ) ) );
+		expect( result[ 1 ] ).toEqual( bypassDataLayer( unfollow( 'http://example.com' ) ) );
 	} );
 } );
 
 describe( 'followError', () => {
 	test( 'should dispatch an error notice', () => {
-		const dispatch = spy();
 		const action = follow( 'http://example.com' );
 
-		followError( { dispatch }, action );
-		expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
-		expect( dispatch ).to.be.calledWith( bypassDataLayer( unfollow( 'http://example.com' ) ) );
+		const result = followError( action );
+		expect( result[ 0 ] ).toMatchObject( { type: NOTICE_CREATE } );
+		expect( result[ 1 ] ).toEqual( bypassDataLayer( unfollow( 'http://example.com' ) ) );
 	} );
 } );

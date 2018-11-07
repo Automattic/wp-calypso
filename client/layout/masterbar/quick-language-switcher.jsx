@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { getLocaleSlug } from 'i18n-calypso';
 
 /**
@@ -12,6 +13,7 @@ import MasterbarItem from './item';
 import LanguagePickerModal from 'components/language-picker/modal';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 import config from 'config';
+import { setLocale } from 'state/ui/language/actions';
 
 class QuickLanguageSwitcher extends React.Component {
 	state = {
@@ -25,7 +27,10 @@ class QuickLanguageSwitcher extends React.Component {
 		event.preventDefault();
 	};
 
-	onSelected = languageSlug => switchLocale( languageSlug );
+	onSelected = languageSlug => {
+		switchLocale( languageSlug );
+		this.props.setLocale( languageSlug );
+	};
 
 	render() {
 		const selectedLanguageSlug = getLocaleSlug();
@@ -48,4 +53,7 @@ class QuickLanguageSwitcher extends React.Component {
 	}
 }
 
-export default QuickLanguageSwitcher;
+export default connect(
+	null,
+	{ setLocale }
+)( QuickLanguageSwitcher );

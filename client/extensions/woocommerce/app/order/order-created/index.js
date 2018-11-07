@@ -7,6 +7,8 @@ import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
+import withLocalizedMoment from 'components/with-localized-moment';
+
 class OrderCreated extends Component {
 	static propTypes = {
 		order: PropTypes.shape( {
@@ -39,4 +41,4 @@ class OrderCreated extends Component {
 	}
 }
 
-export default localize( OrderCreated );
+export default localize( withLocalizedMoment( OrderCreated ) );

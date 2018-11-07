@@ -41,6 +41,7 @@ export FeatureGate from 'components/feature-example';
 export FilePickers from 'components/file-picker';
 export Focusable from 'components/focusable';
 export FoldableCard from 'components/foldable-card';
+export FormattedDate from 'components/formatted-date';
 export FormattedHeader from 'components/formatted-header';
 export FormButton from 'components/forms/form-button';
 export FormButtonsBar from 'components/forms/form-buttons-bar';

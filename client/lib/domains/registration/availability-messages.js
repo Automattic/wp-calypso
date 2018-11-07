@@ -244,6 +244,10 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			message = translate( 'Only the owner of the domain can map its subdomains.' );
 			break;
 
+		case domainAvailability.WPCOM_STAGING_DOMAIN:
+			message = translate( 'This domain is a reserved WordPress.com staging domain' );
+			break;
+
 		case domainAvailability.INVALID_TLD:
 		case domainAvailability.INVALID:
 			message = translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
@@ -294,6 +298,12 @@ function getAvailabilityNotice( domain, error, errorData ) {
 		case domainAvailability.INVALID_QUERY:
 			message = translate(
 				'Your search term can only contain alphanumeric characters, spaces, dots, or hyphens.'
+			);
+			break;
+
+		case domainAvailability.AVAILABILITY_CHECK_ERROR:
+			message = translate(
+				'Sorry, an error occurred when checking the availability of this domain. Please try again in a few minutes.'
 			);
 			break;
 

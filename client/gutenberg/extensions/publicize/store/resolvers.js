@@ -10,16 +10,22 @@ import { getFetchConnectionsPath } from './utils';
  * @param {Number} postId Post ID.
  */
 export function* getConnections( postId ) {
-	const connections = yield fetchFromAPI( getFetchConnectionsPath( postId ) );
-
-	yield setConnections( postId, connections );
+	try {
+		const connections = yield fetchFromAPI( getFetchConnectionsPath( postId ) );
+		yield setConnections( postId, connections );
+	} catch ( error ) {
+		// Fetching connections failed
+	}
 };
 
 /**
  * Requests the Publicize services available for connection.
  */
 export function* getServices() {
-	const services = yield fetchFromAPI( '/jetpack/v4/publicize/services' );
-
-	yield setServices( services );
+	try {
+		const services = yield fetchFromAPI( '/jetpack/v4/publicize/services' );
+		yield setServices( services );
+	} catch ( error ) {
+		// Fetching available services failed
+	}
 };

@@ -2,9 +2,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { merge } from 'lodash';
-import { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -21,7 +19,7 @@ import { updateNewPostEmailSubscription } from 'state/reader/follows/actions';
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestUpdatePostEmailSubscription', () => {
 		test( 'should dispatch an http request with revert info on the success and failure actions', () => {
-			const dispatch = spy();
+			const dispatch = jest.fn();
 			const getState = () => {
 				return {
 					reader: {
@@ -29,7 +27,7 @@ describe( 'comment-email-subscriptions', () => {
 							items: {
 								foo: {
 									blog_ID: 1234,
-									delivery_frequency: {
+									delivery_methods: {
 										email: {
 											post_delivery_frequency: 'instantly',
 										},
@@ -46,52 +44,43 @@ describe( 'comment-email-subscriptions', () => {
 					previousState: 'instantly',
 				},
 			} );
-			requestUpdatePostEmailSubscription( { dispatch, getState }, action );
+			requestUpdatePostEmailSubscription( action )( dispatch, getState );
 
-			expect( dispatch ).to.have.been.calledWith(
-				http( {
-					method: 'POST',
-					path: '/read/site/1234/post_email_subscriptions/update',
-					body: {
-						delivery_frequency: 'daily',
+			expect( dispatch ).toHaveBeenCalledWith(
+				http(
+					{
+						method: 'POST',
+						path: '/read/site/1234/post_email_subscriptions/update',
+						body: {
+							delivery_frequency: 'daily',
+						},
+						apiVersion: '1.2',
 					},
-					apiVersion: '1.2',
-					onSuccess: actionWithRevert,
-					onFailure: actionWithRevert,
-				} )
+					actionWithRevert
+				)
 			);
 		} );
 	} );
 
 	describe( 'receiveUpdatePostEmailSubscription', () => {
 		test( 'should dispatch an update with the previous state if it is called with null', () => {
-			const dispatch = spy();
 			const previousState = 'instantly';
-			receiveUpdatePostEmailSubscription(
-				{ dispatch },
-				{
-					payload: { blogId: 1234 },
-					meta: { previousState },
-				},
+			const result = receiveUpdatePostEmailSubscription(
+				{ payload: { blogId: 1234 }, meta: { previousState } },
 				null
 			);
-			expect( dispatch ).to.have.been.calledWith(
+			expect( result[ 1 ] ).toEqual(
 				bypassDataLayer( updateNewPostEmailSubscription( 1234, previousState ) )
 			);
 		} );
 
 		test( 'should dispatch an update with the previous state if it fails', () => {
-			const dispatch = spy();
 			const previousState = 'instantly';
-			receiveUpdatePostEmailSubscription(
-				{ dispatch },
-				{
-					payload: { blogId: 1234 },
-					meta: { previousState },
-				},
+			const result = receiveUpdatePostEmailSubscription(
+				{ payload: { blogId: 1234 }, meta: { previousState } },
 				{ success: false }
 			);
-			expect( dispatch ).to.have.been.calledWith(
+			expect( result[ 1 ] ).toEqual(
 				bypassDataLayer( updateNewPostEmailSubscription( 1234, previousState ) )
 			);
 		} );
@@ -99,21 +88,17 @@ describe( 'comment-email-subscriptions', () => {
 
 	describe( 'receiveUpdatePostEmailSubscriptionError', () => {
 		test( 'should dispatch an error and an update to the previous state', () => {
-			const dispatch = spy();
 			const previousState = 'instantly';
-			receiveUpdatePostEmailSubscriptionError(
-				{ dispatch },
-				{
-					payload: { blogId: 1234 },
-					meta: { previousState },
-				}
+			const result = receiveUpdatePostEmailSubscriptionError( {
+				payload: { blogId: 1234 },
+				meta: { previousState },
+			} );
+			expect( result[ 0 ].notice.text ).toBe(
+				'Sorry, we had a problem updating that subscription. Please try again.'
 			);
-			expect( dispatch ).to.have.been.calledWith(
+			expect( result[ 1 ] ).toEqual(
 				bypassDataLayer( updateNewPostEmailSubscription( 1234, previousState ) )
 			);
-			expect( dispatch ).to.have.been.calledWithMatch( {
-				notice: { text: 'Sorry, we had a problem updating that subscription. Please try again.' },
-			} );
 		} );
 	} );
 } );

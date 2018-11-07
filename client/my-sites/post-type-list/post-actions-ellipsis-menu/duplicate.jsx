@@ -18,6 +18,7 @@ import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
+import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 
 function PostActionsEllipsisMenuDuplicate( {
 	translate,
@@ -26,10 +27,11 @@ function PostActionsEllipsisMenuDuplicate( {
 	type,
 	duplicateUrl,
 	onDuplicateClick,
+	calypsoifyGutenberg,
 } ) {
 	const validStatus = includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], status );
 
-	if ( ! canEdit || ! validStatus || 'post' !== type ) {
+	if ( ! canEdit || ! validStatus || 'post' !== type || calypsoifyGutenberg ) {
 		return null;
 	}
 
@@ -48,6 +50,7 @@ PostActionsEllipsisMenuDuplicate.propTypes = {
 	type: PropTypes.string,
 	duplicateUrl: PropTypes.string,
 	onDuplicateClick: PropTypes.func,
+	calypsoifyGutenberg: PropTypes.bool,
 };
 
 const mapStateToProps = ( state, { globalId } ) => {
@@ -61,6 +64,7 @@ const mapStateToProps = ( state, { globalId } ) => {
 		status: post.status,
 		type: post.type,
 		duplicateUrl: getEditorDuplicatePostPath( state, post.site_ID, post.ID ),
+		calypsoifyGutenberg: isCalypsoifyGutenbergEnabled( state, post.site_ID ),
 	};
 };
 

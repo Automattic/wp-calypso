@@ -7,7 +7,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import CSSTransition from 'react-transition-group/CSSTransition';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import emailValidator from 'email-validator';
 import { debounce, flowRight as compose, get, has, map, size, update } from 'lodash';
@@ -52,6 +52,7 @@ import { canDisplayCommunityTranslator } from 'components/community-translator/u
 import { ENABLE_TRANSLATOR_KEY } from 'components/community-translator/constants';
 import AccountSettingsCloseLink from './close-link';
 import { requestGeoLocation } from 'state/data-getters';
+import withLocalizedMoment from 'components/with-localized-moment';
 
 const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
@@ -387,8 +388,8 @@ const Account = createReactClass( {
 	},
 
 	renderJoinDate() {
-		const { translate } = this.props;
-		const dateMoment = i18n.moment( user.get().date );
+		const { translate, moment } = this.props;
+		const dateMoment = moment( user.get().date );
 
 		return (
 			<span>
@@ -823,5 +824,6 @@ export default compose(
 		{ errorNotice, recordGoogleEvent, recordTracksEvent, successNotice }
 	),
 	localize,
+	withLocalizedMoment,
 	protectForm
 )( Account );

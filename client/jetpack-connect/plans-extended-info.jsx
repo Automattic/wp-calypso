@@ -6,6 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Internal dependencies
@@ -30,14 +31,16 @@ const PlansExtendedInfo = ( { recordTracks, translate } ) => (
 		<div className="jetpack-connect__plan-info-buttons">
 			<Button
 				primary
-				href="https://jetpack.com/2017/02/01/a-simple-guide-to-choosing-the-best-jetpack-plan-your-wordpress-site/"
+				href={ localizeUrl(
+					'https://jetpack.com/2017/02/01/a-simple-guide-to-choosing-the-best-jetpack-plan-your-wordpress-site/'
+				) }
 				onClick={ recordTracks( 'plan_guide' ) }
 				target="_blank"
 			>
 				{ translate( 'Plan Guide' ) }
 			</Button>
 			<Button
-				href="https://jetpack.com/features/comparison"
+				href={ localizeUrl( 'https://jetpack.com/features/comparison' ) }
 				onClick={ recordTracks( 'feature_comparison' ) }
 				target="_blank"
 			>

@@ -7,7 +7,7 @@
 import debugModule from 'debug';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +15,6 @@ import { find } from 'lodash';
 import config from 'config';
 import { loadjQueryDependentScript } from 'lib/load-script';
 import User from 'lib/user';
-import userSettings from 'lib/user-settings';
 import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
 import { canBeTranslated } from 'lib/i18n-utils';
@@ -47,7 +46,8 @@ const user = new User(),
 
 let injectUrl,
 	initialized,
-	previousEnabledSetting,
+	_isTranslatorEnabled,
+	_isUserSettingsReady = false,
 	_shouldWrapTranslations = false;
 
 /* "Enabled" means that the user has opted in on the settings page
@@ -73,11 +73,11 @@ const communityTranslatorJumpstart = {
 			return false;
 		}
 
-		if ( ! userSettings.getSettings() ) {
+		if ( ! _isUserSettingsReady ) {
 			return false;
 		}
 
-		if ( ! userSettings.getOriginalSetting( 'enable_translator' ) ) {
+		if ( ! _isTranslatorEnabled ) {
 			return false;
 		}
 
@@ -142,7 +142,7 @@ const communityTranslatorJumpstart = {
 		return dataElement;
 	},
 
-	init() {
+	init( isUserSettingsReady ) {
 		const languageJson = i18n.getLocale() || { '': {} };
 		const { localeSlug: localeCode, localeVariant } = languageJson[ '' ];
 
@@ -156,7 +156,10 @@ const communityTranslatorJumpstart = {
 			return;
 		}
 
-		if ( ! userSettings.getSettings() ) {
+		if ( ! isUndefined( isUserSettingsReady ) ) {
+			_isUserSettingsReady = isUserSettingsReady;
+		}
+		if ( ! _isUserSettingsReady ) {
 			debug( 'initialization failed because userSettings are not ready' );
 			return;
 		}
@@ -320,25 +323,23 @@ i18n.registerComponentUpdateHook( () => {
 	}
 } );
 
-function trackTranslatorStatus() {
-	const newSetting = userSettings.getOriginalSetting( 'enable_translator' ),
-		changed = previousEnabledSetting !== newSetting,
+export function trackTranslatorStatus( isTranslatorEnabled ) {
+	const newSetting = isTranslatorEnabled,
+		changed = _isTranslatorEnabled !== newSetting,
 		tracksEvent = newSetting
 			? 'calypso_community_translator_enabled'
 			: 'calypso_community_translator_disabled';
 
-	if ( changed && previousEnabledSetting !== undefined ) {
+	if ( changed && _isTranslatorEnabled !== undefined ) {
 		debug( tracksEvent );
 		analytics.tracks.recordEvent( tracksEvent, { locale: user.data.localeSlug } );
 	}
 
-	previousEnabledSetting = newSetting;
+	_isTranslatorEnabled = newSetting;
 }
 
 // re-initialize when new locale data is loaded
 i18n.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
 user.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
-userSettings.on( 'change', trackTranslatorStatus );
-userSettings.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
 
 export default communityTranslatorJumpstart;

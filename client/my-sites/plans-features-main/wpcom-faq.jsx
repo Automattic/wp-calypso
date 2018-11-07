@@ -16,7 +16,7 @@ import isHappychatAvailable from 'state/happychat/selectors/is-happychat-availab
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 import { purchasesRoot } from 'me/purchases/paths';
-import { getSupportSiteLocale } from 'lib/i18n-utils';
+import { localizeUrl } from 'lib/i18n-utils';
 
 const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 	const helpLink =
@@ -38,7 +38,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href="https://en.support.wordpress.com/all-about-domains/"
+									href={ localizeUrl( 'https://en.support.wordpress.com/all-about-domains/' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -58,7 +58,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href={ 'https://' + getSupportSiteLocale() + '.support.wordpress.com/plugins/' }
+									href={ localizeUrl( 'https://en.support.wordpress.com/plugins/' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -99,7 +99,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href="https://en.support.wordpress.com/add-email/"
+									href={ localizeUrl( 'https://en.support.wordpress.com/add-email/' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -120,7 +120,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href="https://en.support.wordpress.com/custom-design/"
+									href={ localizeUrl( 'https://en.support.wordpress.com/custom-design/' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>

@@ -16,10 +16,8 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
-import { Component } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
-import { PanelBody } from '@wordpress/components';
+import { PluginPrePublishPanel } from '@wordpress/edit-post';
 import { withDispatch, withSelect } from '@wordpress/data';
 
 /**
@@ -28,32 +26,27 @@ import { withDispatch, withSelect } from '@wordpress/data';
 import PublicizeConnectionVerify from './connection-verify';
 import PublicizeForm from './form';
 import PublicizeNoConnections from './no-connections';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
-class PublicizePanel extends Component {
-	render() {
-		const { connections, refreshConnections } = this.props;
-		const refreshText = ! connections ? __( 'Refreshing…' ) : __( 'Refresh connections' );
-		return (
-			<PanelBody
-				initialOpen={ true }
-				id="publicize-title"
-				title={
-					<span id="publicize-defaults" key="publicize-title-span">
-						{ __( 'Share this post' ) }
-					</span>
-				}
-			>
-				<div>{ __( 'Connect and select social media services to share this post.' ) }</div>
-				{ ( connections && connections.length > 0 ) && <PublicizeForm staticConnections={ connections } refreshCallback={ refreshConnections } /> }
-				{ ( connections && 0 === connections.length ) && <PublicizeNoConnections refreshCallback={ refreshConnections } /> }
-				<a tabIndex="0" onClick={ refreshConnections } disabled={ ! connections }>
-					{ refreshText }
-				</a>
-				{ ( connections && connections.length > 0 ) && <PublicizeConnectionVerify /> }
-			</PanelBody>
-		);
-	}
-}
+const PublicizePanel = ( { connections, refreshConnections } ) => (
+	<PluginPrePublishPanel
+		initialOpen={ true }
+		id="publicize-title"
+		title={
+			<span id="publicize-defaults" key="publicize-title-span">
+				{ __( 'Share this post' ) }
+			</span>
+		}
+	>
+		<div>{ __( 'Connect and select social media services to share this post.' ) }</div>
+		{ ( connections && connections.length > 0 ) && <PublicizeForm staticConnections={ connections } refreshCallback={ refreshConnections } /> }
+		{ ( connections && 0 === connections.length ) && <PublicizeNoConnections refreshCallback={ refreshConnections } /> }
+		<a tabIndex="0" onClick={ refreshConnections } disabled={ ! connections }>
+			{ ! connections ? __( 'Refreshing…' ) : __( 'Refresh connections' ) }
+		</a>
+		{ ( connections && connections.length > 0 ) && <PublicizeConnectionVerify /> }
+	</PluginPrePublishPanel>
+);
 
 export default compose( [
 	withSelect(

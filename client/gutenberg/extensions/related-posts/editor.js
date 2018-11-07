@@ -4,18 +4,18 @@
  * External dependencies
  */
 import includes from 'lodash/includes';
-import { __ } from '@wordpress/i18n';
-import { registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
 import './style.scss';
 import edit from './edit';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { ALIGNMENT_OPTIONS, MAX_POSTS_TO_SHOW } from './constants';
+import JetpackBlockType from 'gutenberg/extensions/presets/jetpack/utils/jetpack-block-type';
 
-registerBlockType( 'jetpack/related-posts', {
-	title: __( 'Related Posts', 'jetpack' ),
+const RelatedPostsBlock = new JetpackBlockType( 'related-posts', {
+	title: __( 'Related Posts' ),
 
 	icon: (
 		<svg xmlns="http://www.w3.org/2000/svg">
@@ -38,7 +38,7 @@ registerBlockType( 'jetpack/related-posts', {
 
 	category: 'jetpack',
 
-	keywords: [ __( 'similar', 'jetpack' ), __( 'linked', 'jetpack' ), __( 'connected', 'jetpack' ) ],
+	keywords: [ __( 'similar' ), __( 'linked' ), __( 'connected' ) ],
 
 	attributes: {
 		align: {
@@ -88,3 +88,5 @@ registerBlockType( 'jetpack/related-posts', {
 
 	save: () => null,
 } );
+
+RelatedPostsBlock.register();

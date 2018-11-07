@@ -19,31 +19,31 @@ describe( 'ProgressBar', () => {
 	test( 'should show the title', () => {
 		const progressBar = shallow( <ProgressBar value={ 20 } title="foo" /> );
 
-		expect( progressBar.find( '.progress-bar__progress' ).contains( 'foo' ) );
+		expect( progressBar.find( '.progress-bar__progress' ).contains( 'foo' ) ).to.be.true;
 	} );
 
 	test( 'should add is-pulsing class when isPulsing property is true', () => {
 		const progressBar = shallow( <ProgressBar value={ 20 } isPulsing={ true } /> );
 
-		expect( progressBar.hasClass( 'is-pulsing' ) );
+		expect( progressBar.hasClass( 'is-pulsing' ) ).to.be.true;
 	} );
 
 	test( 'should not add is-pulsing class when isPulsing property is false', () => {
 		const progressBar = shallow( <ProgressBar value={ 20 } isPulsing={ false } /> );
 
-		expect( ! progressBar.hasClass( 'is-pulsing' ) );
+		expect( ! progressBar.hasClass( 'is-pulsing' ) ).to.be.true;
 	} );
 
 	test( 'should add is-compact class when compact property is true', () => {
 		const progressBar = shallow( <ProgressBar value={ 20 } compact={ true } /> );
 
-		expect( progressBar.hasClass( 'is-compact' ) );
+		expect( progressBar.hasClass( 'is-compact' ) ).to.be.true;
 	} );
 
 	test( 'should not add is-compact class when compact property is false', () => {
 		const progressBar = shallow( <ProgressBar value={ 20 } compact={ false } /> );
 
-		expect( ! progressBar.hasClass( 'is-compact' ) );
+		expect( ! progressBar.hasClass( 'is-compact' ) ).to.be.true;
 	} );
 
 	test( 'should properly calculate the width percentage', () => {
@@ -89,6 +89,6 @@ describe( 'ProgressBar', () => {
 
 		// Other props should update the component
 		progressBar.setProps( { isPulsing: true } );
-		expect( progressBar.hasClass( 'is-pulsing' ) );
+		expect( progressBar.hasClass( 'is-pulsing' ) ).to.be.true;
 	} );
 } );

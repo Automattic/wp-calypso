@@ -6,6 +6,11 @@
 import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import { flow } from 'lodash';
 
+/**
+ * Internal Dependencies
+ */
+import { hasPendingPayment } from '../index';
+
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
 
@@ -148,5 +153,20 @@ describe( 'index', () => {
 				assert.equal( 0, cartValues.emptyCart( TEST_BLOG_ID ).products.length );
 			} );
 		} );
+	} );
+} );
+
+describe( 'hasPendingPayment()', () => {
+	test( 'return true if cart shows pending payment', () => {
+		expect( hasPendingPayment( { has_pending_payment: true } ) );
+	} );
+	test( 'return false if cart shows no pending payments', () => {
+		expect( hasPendingPayment( { has_pending_payment: false } ) ).toBe( false );
+	} );
+	test( 'return false if has_pending_payment is not set', () => {
+		expect( hasPendingPayment( { has_pending_payment: null } ) ).toBe( false );
+		expect( hasPendingPayment( {} ) ).toBe( false );
+		expect( hasPendingPayment( null ) ).toBe( false );
+		expect( hasPendingPayment( undefined ) ).toBe( false );
 	} );
 } );

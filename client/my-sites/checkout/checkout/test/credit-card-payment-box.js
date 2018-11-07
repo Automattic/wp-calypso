@@ -152,6 +152,9 @@ describe( 'Credit Card Payment Box - PaymentChatButton', () => {
 	const defaultProps = {
 		cart: {},
 		translate: identity,
+		transaction: {},
+		transactionStep: {},
+		countriesList: [],
 	};
 
 	const businessPlans = [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ];
