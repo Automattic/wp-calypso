@@ -40,12 +40,14 @@ class JetpackOption extends Component {
 					placeholder={ __( 'Write option…' ) }
 					onChange={ this.onChangeOption }
 				/>
-				<IconButton
-					className="jetpack-option__remove"
-					icon="no"
-					label={ __( 'Remove option' ) }
-					onClick={ this.onDeleteOption }
-				/>
+				{ this.props.isSelected && (
+					<IconButton
+						className="jetpack-option__remove"
+						icon="no"
+						label={ __( 'Remove option' ) }
+						onClick={ this.onDeleteOption }
+					/>
+				) }
 			</li>
 		);
 	}

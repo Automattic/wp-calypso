@@ -65,18 +65,21 @@ class JetpackFieldMultiple extends Component {
 								option={ option }
 								index={ index }
 								onChangeOption={ this.onChangeOption }
+								isSelected={ this.props.isSelected }
 							/>
 						) ) }
 					</ol>
-					<IconButton
-						className="jetpack-field-multiple__add-option"
-						icon="insert"
-						label={ __( 'Insert option' ) }
-						onClick={ this.onChangeOption }
-					>
-						{' '}
-						{ __( 'Add option' ) }
-					</IconButton>
+					{ this.props.isSelected && (
+						<IconButton
+							className="jetpack-field-multiple__add-option"
+							icon="insert"
+							label={ __( 'Insert option' ) }
+							onClick={ this.onChangeOption }
+						>
+							{' '}
+							{ __( 'Add option' ) }
+						</IconButton>
+					) }
 				</BaseControl>
 			</Fragment>
 		);
