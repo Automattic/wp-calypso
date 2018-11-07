@@ -3,10 +3,11 @@
 /**
  * External dependencies
  */
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
 import { InspectorControls } from '@wordpress/editor';
+import { sprintf } from '@wordpress/i18n';
 import { withSelect } from '@wordpress/data';
 import {
 	ExternalLink,
@@ -41,13 +42,7 @@ class SimplePaymentsEdit extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const {
-			attributes,
-			isLoadingInitial,
-			isSelected,
-			setAttributes,
-			simplePayment,
-		} = this.props;
+		const { attributes, isLoadingInitial, isSelected, setAttributes, simplePayment } = this.props;
 		const { content, currency, email, multiple, price, title } = attributes;
 
 		// @TODO check componentDidMount for the case where post was already loaded
@@ -241,8 +236,7 @@ class SimplePaymentsEdit extends Component {
 		if ( ! email ) {
 			this.setState( {
 				fieldEmailError: __(
-					'We want to make sure payments reach you, so please add an email address.',
-					'jetpack'
+					'We want to make sure payments reach you, so please add an email address.'
 				),
 			} );
 			return false;
@@ -274,8 +268,7 @@ class SimplePaymentsEdit extends Component {
 		if ( ! title ) {
 			this.setState( {
 				fieldTitleError: __(
-					"People need to know what they're paying for! Please add a brief title.",
-					'jetpack'
+					"People need to know what they're paying for! Please add a brief title."
 				),
 			} );
 			return false;
@@ -456,8 +449,7 @@ class SimplePaymentsEdit extends Component {
 					<p className="components-base-control__help" id={ `${ instanceId }-email-help` }>
 						{ __(
 							"This is where PayPal will send your money. To claim a payment, you'll " +
-								'need a PayPal account connected to a bank account.',
-							'jetpack'
+								'need a PayPal account connected to a bank account.'
 						) + ' ' }
 						<ExternalLink href="https://www.paypal.com/">
 							{ __( 'Create an account at PayPal' ) }
