@@ -95,26 +95,12 @@ class WordAds extends Component {
 
 		const { period } = this.props.period;
 
-		const todayObject = new Date();
-		const yesterdayObject = new Date();
-		yesterdayObject.setDate( yesterdayObject.getDate() - 1 );
+		const today = moment().format( 'YYYY-MM-DD' );
+		const yesterday = moment()
+			.subtract( 1, 'days' )
+			.format( 'YYYY-MM-DD' );
 
-		const today =
-			( '0' + todayObject.getFullYear() ).slice( -4 ) +
-			'-' +
-			( '0' + ( todayObject.getMonth() + 1 ) ).slice( -2 ) +
-			'-' +
-			( '0' + todayObject.getDate() ).slice( -2 );
-
-		const yesterday =
-			( '0' + yesterdayObject.getFullYear() ).slice( -4 ) +
-			'-' +
-			( '0' + ( yesterdayObject.getMonth() + 1 ) ).slice( -2 ) +
-			'-' +
-			( '0' + yesterdayObject.getDate() ).slice( -2 );
-
-		const queryDate =
-			today === date.format( 'YYYY-MM-DD' ) ? yesterday : date.format( 'YYYY-MM-DD' );
+		const queryDate = today === date.format( 'YYYY-MM-DD' ) ? yesterday : today;
 
 		const query = {
 			period: period,
