@@ -1165,6 +1165,8 @@ export function recordAliasInFloodlight() {
  * @returns {void}
  */
 function recordOrderInBing( cart /*, orderId */ ) {
+	// NOTE: `orderId` is not used at this time, but it could be useful in the near future.
+
 	if ( ! isAdTrackingAllowed() || ! isBingEnabled ) {
 		return;
 	}
