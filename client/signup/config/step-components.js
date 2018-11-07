@@ -28,6 +28,7 @@ import SiteOrDomainComponent from 'signup/steps/site-or-domain';
 import SitePicker from 'signup/steps/site-picker';
 import SiteTitleComponent from 'signup/steps/site-title';
 import SiteTopicComponent from 'signup/steps/site-topic';
+import SiteInformationComponent from 'signup/steps/site-information';
 import SurveyStepComponent from 'signup/steps/survey';
 import ThemeSelectionComponent from 'signup/steps/theme-selection';
 import UserSignupComponent from 'signup/steps/user';
@@ -67,6 +68,7 @@ export default {
 	'site-picker': SitePicker,
 	'site-title': SiteTitleComponent,
 	'site-topic': SiteTopicComponent,
+	'site-information': SiteInformationComponent,
 	survey: SurveyStepComponent,
 	'survey-user': UserSignupComponent,
 	test:
