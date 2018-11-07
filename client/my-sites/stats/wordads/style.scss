@@ -1,9 +1,5 @@
-.wordads {
-	.stats-tabs {
-		.stats-tab {
-			@include breakpoint( ">480px" ) {
-				width: 33.33%;
-			}
-		}
+@include breakpoint( ">480px" ) {
+	.wordads .stats-tabs .stats-tab {
+		width: 33.33%;
 	}
 }
