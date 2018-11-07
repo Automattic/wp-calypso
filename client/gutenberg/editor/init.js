@@ -22,6 +22,7 @@ const WPCOM_UNSUPPORTED_CORE_BLOCKS = [
 ];
 
 const loadA8CExtensions = () => {
+	// This will also load required TinyMCE plugins via Calypso's TinyMCE component
 	require( '../extensions/classic-block/editor' );
 
 	if ( isEnabled( 'gutenberg/block/jetpack-preset' ) ) {
@@ -53,10 +54,6 @@ export const initGutenberg = once( ( userId, siteSlug ) => {
 
 	debug( 'Removing core blocks that are not yet supported in Calypso' );
 	WPCOM_UNSUPPORTED_CORE_BLOCKS.forEach( blockName => unregisterBlockType( blockName ) );
-
-	// Needed for list block indent/outdent functionality
-	debug( 'Loading required TinyMCE plugins' );
-	require( 'tinymce/plugins/lists/plugin.js' );
 
 	// Prevent Guided tour from showing when editor loads.
 	dispatch( 'core/nux' ).disableTips();
