@@ -45,9 +45,7 @@ export default ( { title = '', content = '', formattedPrice = '', multiple = fal
 						<img
 							alt={ __( 'Pay with PayPal', 'jetpack' ) }
 							src={ getAssetPath( 'paypal-button.png' ) }
-							srcSet={ `${ getAssetPath( 'paypal-button.png' ) } ${ getAssetPath(
-								'paypal-button@2x.png'
-							) } 2x` }
+							srcSet={ `${ getAssetPath( 'paypal-button@2x.png' ) } 2x` }
 						/>
 					</div>
 				</div>
