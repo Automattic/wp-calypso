@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { PanelBody, TextControl } from '@wordpress/components';
-import { InspectorControls, InnerBlocks } from '@wordpress/editor';
+import { InspectorControls } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
 
 /**
@@ -56,7 +56,7 @@ class JetpackForm extends Component {
 					</PanelBody>
 				</InspectorControls>
 				<div className={ this.props.className + ' jetpack-form' }>
-					<InnerBlocks templateLock={ false } />
+					{ this.props.children }
 					<div className="button button-primary button-default jetpack-submit-button">
 						{ this.props.submit_button_text ? this.props.submit_button_text : __( 'Submit' ) }
 					</div>
