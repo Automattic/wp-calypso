@@ -23,7 +23,7 @@ export const allSiteTypes = [
 	},
 	{
 		type: i18n.translate( 'professional' ),
-		description: i18n.translate( 'Showcase your portfolio and services.' ),
+		description: i18n.translate( 'Showcase your portfolio and work.' ),
 	},
 	{
 		type: i18n.translate( 'educator' ),

@@ -101,6 +101,14 @@
 	z-index: z-index( '.is-section-signup', '.layout__primary::before' );
 }
 
+.is-section-signup .site-type__wrapper .card {
+	padding-top: 0px;
+}
+
+.is-section-signup .site-type__wrapper .site-type__option:first-child {
+	border-top: none;
+}
+
 @include breakpoint( '>1040px' ) {
  	.formatted-header__title {
 		font-size: 3.375em;
