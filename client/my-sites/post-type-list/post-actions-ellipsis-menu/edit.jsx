@@ -16,7 +16,7 @@ import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getPost } from 'state/posts/selectors';
 import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
-import { getEditorPath } from 'state/ui/editor/selectors';
+import getEditorUrl from 'state/selectors/get-editor-url';
 import { preload } from 'sections-helper';
 
 function preloadEditor() {
@@ -59,7 +59,7 @@ const mapStateToProps = ( state, { globalId } ) => {
 		canEdit: canCurrentUserEditPost( state, globalId ),
 		status: post.status,
 		type: post.type,
-		editUrl: getEditorPath( state, post.site_ID, post.ID ),
+		editUrl: getEditorUrl( state, post.site_ID, post.ID, post.type ),
 	};
 };
 

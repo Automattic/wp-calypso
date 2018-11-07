@@ -46,24 +46,24 @@ export const createPlaceholderComment = ( commentText, postId, parentCommentId )
  * We need placeholder id to be unique in the context of siteId and postId for that specific user,
  * date milliseconds will do for that purpose.
  *
- * @param {Function} dispatch redux dispatcher
  * @param {Object}   action   redux action
  * @param {String}   path     comments resource path
+ * @return {Array}	actions
  */
-export const dispatchNewCommentRequest = ( dispatch, action, path ) => {
+export const dispatchNewCommentRequest = ( action, path ) => {
 	const { siteId, postId, parentCommentId, commentText } = action;
 	const placeholder = createPlaceholderComment( commentText, postId, parentCommentId );
 
 	// Insert a placeholder
-	dispatch( {
-		type: COMMENTS_RECEIVE,
-		siteId,
-		postId,
-		comments: [ placeholder ],
-		skipSort: !! parentCommentId,
-	} );
+	return [
+		{
+			type: COMMENTS_RECEIVE,
+			siteId,
+			postId,
+			comments: [ placeholder ],
+			skipSort: !! parentCommentId,
+		},
 
-	dispatch(
 		http( {
 			method: 'POST',
 			apiVersion: '1.1',
@@ -76,60 +76,59 @@ export const dispatchNewCommentRequest = ( dispatch, action, path ) => {
 				placeholderId: placeholder.ID,
 			},
 			onFailure: { ...action, placeholderId: placeholder.ID },
-		} )
-	);
+		} ),
+	];
 };
 
 /**
  * updates the placeholder comments with server values
  *
  * @param {Function} dispatch redux dispatcher
- * @param {Object}   action   redux action
  * @param {Object}   comment  updated comment from the request response
+ * @return {Function} thunk
  */
 export const updatePlaceholderComment = (
-	{ dispatch },
 	{ siteId, postId, parentCommentId, placeholderId, refreshCommentListQuery },
 	comment
 ) => {
-	// remove placeholder from state
-	dispatch(
-		bypassDataLayer( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } )
-	);
-	// add new comment to state with updated values from server
-	dispatch( {
-		type: COMMENTS_RECEIVE,
-		siteId,
-		postId,
-		comments: [ comment ],
-		skipSort: !! parentCommentId,
-		meta: {
-			comment: {
-				context: 'add', //adds a hint for the counts reducer.
+	const actions = [
+		// remove placeholder from state
+		bypassDataLayer( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } ),
+		// add new comment to state with updated values from server
+		{
+			type: COMMENTS_RECEIVE,
+			siteId,
+			postId,
+			comments: [ comment ],
+			skipSort: !! parentCommentId,
+			meta: {
+				comment: {
+					context: 'add', //adds a hint for the counts reducer.
+				},
 			},
 		},
-	} );
-	// increment comments count
-	dispatch( { type: COMMENTS_COUNT_INCREMENT, siteId, postId } );
+		// increment comments count
+		{ type: COMMENTS_COUNT_INCREMENT, siteId, postId },
+	];
 
 	if ( !! refreshCommentListQuery ) {
-		dispatch( requestCommentsList( refreshCommentListQuery ) );
+		actions.push( requestCommentsList( refreshCommentListQuery ) );
 	}
+
+	return actions;
 };
 
 /**
  * dispatches a error notice if creating a new comment request failed
  *
- * @param {Function} dispatch redux dispatcher
- * @param {Function} getState access the redux state
- * @param {Number}   siteId   site identifier
- * @param {Number}   postId   post identifier
+ * @param {Object}   action   redux action
+ * @param {Object} rawError plain error object
+ * @return {Function} thunk
  */
 export const handleWriteCommentFailure = (
-	{ dispatch, getState },
 	{ siteId, postId, parentCommentId, placeholderId },
 	rawError
-) => {
+) => ( dispatch, getState ) => {
 	// Dispatch error notice
 	const post = getSitePost( getState(), siteId, postId );
 	const postTitle =

@@ -17,6 +17,7 @@ import { defer } from 'lodash';
 import { requestSiteStats } from 'state/stats/lists/actions';
 import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
+import { DEFAULT_HEARTBEAT } from './constants';
 
 class QuerySiteStats extends Component {
 	componentDidMount() {
@@ -82,7 +83,7 @@ QuerySiteStats.propTypes = {
 
 QuerySiteStats.defaultProps = {
 	query: {},
-	heartbeat: 30 * 60 * 1000, // 30 minutes
+	heartbeat: DEFAULT_HEARTBEAT,
 };
 
 export default connect(

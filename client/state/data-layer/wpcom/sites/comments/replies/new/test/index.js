@@ -22,14 +22,11 @@ describe( '#writeReplyComment()', () => {
 	};
 
 	test( 'should dispatch a http request action to the new comment replies endpoint', () => {
-		const dispatch = spy();
 		const dispatchNewCommentRequestSpy = spy( Utils, 'dispatchNewCommentRequest' );
-
-		writeReplyComment( { dispatch }, action );
+		writeReplyComment( action );
 
 		expect( dispatchNewCommentRequestSpy ).to.have.been.calledOnce;
 		expect( dispatchNewCommentRequestSpy ).to.have.been.calledWith(
-			dispatch,
 			action,
 			'/sites/2916284/comments/1/replies/new'
 		);

@@ -53,7 +53,11 @@ const config = {
 	env: {
 		test: {
 			presets: [ [ '@babel/env', { targets: { node: 'current' } } ] ],
-			plugins: [ 'add-module-exports', './server/bundler/babel/babel-lodash-es' ],
+			plugins: [
+				'add-module-exports',
+				'babel-plugin-dynamic-import-node',
+				'./server/bundler/babel/babel-lodash-es',
+			],
 		},
 	},
 };

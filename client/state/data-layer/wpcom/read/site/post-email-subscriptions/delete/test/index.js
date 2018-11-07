@@ -2,8 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -20,10 +18,9 @@ import { subscribeToNewPostEmail, unsubscribeToNewPostEmail } from 'state/reader
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestPostEmailUnsubscription', () => {
 		test( 'should dispatch an http request and call through next', () => {
-			const dispatch = spy();
 			const action = unsubscribeToNewPostEmail( 1234 );
-			requestPostEmailUnsubscription( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith(
+			const result = requestPostEmailUnsubscription( action );
+			expect( result ).toEqual(
 				http( {
 					method: 'POST',
 					path: '/read/site/1234/post_email_subscriptions/delete',
@@ -38,44 +35,32 @@ describe( 'comment-email-subscriptions', () => {
 
 	describe( 'receivePostEmailUnsubscription', () => {
 		test( 'should do nothing if successful', () => {
-			const dispatch = spy();
-			receivePostEmailUnsubscription( { dispatch }, null, { subscribed: false } );
-			expect( dispatch ).to.not.have.been.called;
+			const result = receivePostEmailUnsubscription( null, { subscribed: false } );
+			expect( result ).toBeUndefined();
 		} );
 
 		test( 'should dispatch a subscribe if it fails using next', () => {
-			const dispatch = spy();
-			receivePostEmailUnsubscription(
-				{ dispatch },
+			const result = receivePostEmailUnsubscription(
 				{ payload: { blogId: 1234 } },
 				{
 					subscribed: true,
 				}
 			);
 
-			expect( dispatch ).to.have.been.calledWithMatch( {
-				notice: {
-					text: 'Sorry, we had a problem unsubscribing. Please try again.',
-				},
-			} );
-			expect( dispatch ).to.have.been.calledWith(
-				bypassDataLayer( subscribeToNewPostEmail( 1234 ) )
+			expect( result[ 0 ].notice.text ).toBe(
+				'Sorry, we had a problem unsubscribing. Please try again.'
 			);
+			expect( result[ 1 ] ).toEqual( bypassDataLayer( subscribeToNewPostEmail( 1234 ) ) );
 		} );
 	} );
 
 	describe( 'receivePostEmailUnsubscriptionError', () => {
 		test( 'should dispatch an error notice and subscribe action using next', () => {
-			const dispatch = spy();
-			receivePostEmailUnsubscriptionError( { dispatch }, { payload: { blogId: 1234 } }, null );
-			expect( dispatch ).to.have.been.calledWithMatch( {
-				notice: {
-					text: 'Sorry, we had a problem unsubscribing. Please try again.',
-				},
-			} );
-			expect( dispatch ).to.have.been.calledWith(
-				bypassDataLayer( subscribeToNewPostEmail( 1234 ) )
+			const result = receivePostEmailUnsubscriptionError( { payload: { blogId: 1234 } }, null );
+			expect( result[ 0 ].notice.text ).toBe(
+				'Sorry, we had a problem unsubscribing. Please try again.'
 			);
+			expect( result[ 1 ] ).toEqual( bypassDataLayer( subscribeToNewPostEmail( 1234 ) ) );
 		} );
 	} );
 } );

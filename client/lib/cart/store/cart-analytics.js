@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { difference, each, omit } from 'lodash';
+import { differenceWith, isEqual, each, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,8 +17,8 @@ export function recordEvents( previousCart, nextCart ) {
 	const previousItems = cartItems.getAll( previousCart ),
 		nextItems = cartItems.getAll( nextCart );
 
-	each( difference( nextItems, previousItems ), recordAddEvent );
-	each( difference( previousItems, nextItems ), recordRemoveEvent );
+	each( differenceWith( nextItems, previousItems, isEqual ), recordAddEvent );
+	each( differenceWith( previousItems, nextItems, isEqual ), recordRemoveEvent );
 }
 
 export function removeNestedProperties( cartItem ) {
