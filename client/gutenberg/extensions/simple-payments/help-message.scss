@@ -1,0 +1,18 @@
+/** @format */
+
+.simple-payments__help-message {
+	display: flex;
+	font-size: 13px;
+	line-height: 1.4em;
+	svg {
+		margin-right: 5px;
+		margin-top: 2px;
+		min-width: 24px;
+	}
+	&.simple-payments__help-message-is-error {
+		color: $alert-red;
+		svg {
+			fill: $alert-red;
+		}
+	}
+}

@@ -30,6 +30,9 @@
 		.components-base-control__help {
 			color: $alert-red;
 		}
+		svg {
+			fill: $alert-red;
+		}
 	}
 
 	.simple-payments__field-title {
@@ -47,8 +50,12 @@
 
 	.simple-payments__price-container {
 		display: flex;
+		flex-wrap: wrap;
 		.simple-payments__field {
 			margin-right: 10px;
+		}
+		.simple-payments__help-message {
+			flex: 1 1 100%;
 		}
 	}
 

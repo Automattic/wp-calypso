@@ -32,6 +32,7 @@ import {
 	SUPPORTED_CURRENCY_LIST,
 } from 'lib/simple-payments/constants';
 import ProductPlaceholder from './product-placeholder';
+import HelpMessage from './help-message';
 
 class SimplePaymentsEdit extends Component {
 	state = {
@@ -283,6 +284,7 @@ class SimplePaymentsEdit extends Component {
 
 	handleEmailChange = email => {
 		this.props.setAttributes( { email } );
+		this.setState( { fieldEmailError: null } );
 	};
 
 	handleContentChange = content => {
@@ -296,6 +298,7 @@ class SimplePaymentsEdit extends Component {
 		} else {
 			this.props.setAttributes( { price: undefined } );
 		}
+		this.setState( { fieldPriceError: null } );
 	};
 
 	handleCurrencyChange = currency => {
@@ -308,6 +311,7 @@ class SimplePaymentsEdit extends Component {
 
 	handleTitleChange = title => {
 		this.props.setAttributes( { title } );
+		this.setState( { fieldTitleError: null } );
 	};
 
 	formatPrice = ( price, currency, withSymbol = true ) => {
@@ -375,11 +379,11 @@ class SimplePaymentsEdit extends Component {
 					</InspectorControls>
 
 					<TextControl
+						aria-describedby={ `${ instanceId }-title-error` }
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
 							'simple-payments__field-has-error': fieldTitleError,
 						} ) }
 						disabled={ isLoadingInitial }
-						help={ fieldTitleError }
 						label={ __( 'Item name' ) }
 						onChange={ this.handleTitleChange }
 						placeholder={ __( 'Item name' ) }
@@ -387,6 +391,11 @@ class SimplePaymentsEdit extends Component {
 						type="text"
 						value={ title }
 					/>
+					{ fieldTitleError && (
+						<HelpMessage id={ `${ instanceId }-title-error` } isError>
+							{ fieldTitleError }
+						</HelpMessage>
+					) }
 
 					<TextareaControl
 						className="simple-payments__field simple-payments__field-content"
@@ -407,11 +416,11 @@ class SimplePaymentsEdit extends Component {
 							value={ currency }
 						/>
 						<TextControl
+							aria-describedby={ `${ instanceId }-price-error` }
 							disabled={ isLoadingInitial }
 							className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
 								'simple-payments__field-has-error': fieldPriceError,
 							} ) }
-							help={ fieldPriceError }
 							label={ __( 'Price' ) }
 							onChange={ this.handlePriceChange }
 							placeholder={ this.formatPrice( 0, currency, false ) }
@@ -420,6 +429,11 @@ class SimplePaymentsEdit extends Component {
 							type="number"
 							value={ price || '' }
 						/>
+						{ fieldPriceError && (
+							<HelpMessage id={ `${ instanceId }-price-error` } isError>
+								{ fieldPriceError }
+							</HelpMessage>
+						) }
 					</div>
 
 					<div className="simple-payments__field-multiple">
@@ -432,12 +446,11 @@ class SimplePaymentsEdit extends Component {
 					</div>
 
 					<TextControl
-						aria-describedby={ `${ instanceId }-email-help` }
+						aria-describedby={ `${ instanceId }-email-${ fieldEmailError ? 'error' : 'help' }` }
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
 							'simple-payments__field-has-error': fieldEmailError,
 						} ) }
 						disabled={ isLoadingInitial }
-						help={ fieldEmailError ? fieldEmailError : '' }
 						label={ __( 'Email' ) }
 						onChange={ this.handleEmailChange }
 						placeholder={ __( 'Email' ) }
@@ -445,8 +458,12 @@ class SimplePaymentsEdit extends Component {
 						type="email"
 						value={ email }
 					/>
-
-					<p className="components-base-control__help" id={ `${ instanceId }-email-help` }>
+					{ fieldEmailError && (
+						<HelpMessage id={ `${ instanceId }-email-error` } isError>
+							{ fieldEmailError }
+						</HelpMessage>
+					) }
+					<HelpMessage id={ `${ instanceId }-email-help` }>
 						{ __(
 							"This is where PayPal will send your money. To claim a payment, you'll " +
 								'need a PayPal account connected to a bank account.'
@@ -454,7 +471,7 @@ class SimplePaymentsEdit extends Component {
 						<ExternalLink href="https://www.paypal.com/">
 							{ __( 'Create an account at PayPal' ) }
 						</ExternalLink>
-					</p>
+					</HelpMessage>
 				</Fragment>
 			</div>
 		);
