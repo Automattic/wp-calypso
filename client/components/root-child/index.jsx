@@ -9,6 +9,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
+/**
+ * Internal dependencies
+ */
+import { MomentProvider } from 'components/with-localized-moment/context';
+
 export default class RootChild extends React.Component {
 	static contextTypes = {
 		store: PropTypes.object,
@@ -46,7 +51,11 @@ export default class RootChild extends React.Component {
 		// Context is lost when creating a new render hierarchy, so ensure that
 		// we preserve the context that we care about
 		if ( this.context.store ) {
-			content = <ReduxProvider store={ this.context.store }>{ content }</ReduxProvider>;
+			content = (
+				<ReduxProvider store={ this.context.store }>
+					<MomentProvider>{ content }</MomentProvider>
+				</ReduxProvider>
+			);
 		}
 
 		ReactDom.render( content, this.container );

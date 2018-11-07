@@ -103,23 +103,25 @@ export class SubscriptionLengthOption extends React.Component {
 
 	renderUpgradeContent() {
 		const { price, priceBeforeDiscount, translate } = this.props;
+		const hasDiscount = priceBeforeDiscount && priceBeforeDiscount !== price;
+
 		return (
 			<React.Fragment>
 				<div className="subscription-length-picker__option-header">
 					<div className="subscription-length-picker__option-term">{ this.getTermText() }</div>
 				</div>
 				<div className="subscription-length-picker__option-description">
-					{ priceBeforeDiscount && priceBeforeDiscount !== price ? (
+					{ hasDiscount && (
 						<div className="subscription-length-picker__option-old-price">
 							{ priceBeforeDiscount }
 						</div>
-					) : (
-						false
 					) }
 					<div className="subscription-length-picker__option-price">{ price }</div>
-					<div className="subscription-length-picker__option-credit-info">
-						{ translate( 'Credit applied' ) }
-					</div>
+					{ hasDiscount && (
+						<div className="subscription-length-picker__option-credit-info">
+							{ translate( 'Credit applied' ) }
+						</div>
+					) }
 				</div>
 			</React.Fragment>
 		);

@@ -6,6 +6,7 @@
 /* eslint import/no-nodejs-modules: ["error", {"allow": ["path", "fs"]}] */
 const fs = require( 'fs' );
 const path = require( 'path' );
+const GenerateJsonFile = require( 'generate-json-file-webpack-plugin' );
 
 const DIRECTORY_DEPTH = '../../'; // Relative path of the extensions to preset directory
 
@@ -36,9 +37,12 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	let editorBetaScript;
 	let viewBlocksScripts;
 	let viewScriptEntry;
+	let presetBlocks;
+	let presetBetaBlocks;
+
 	if ( fs.existsSync( presetPath ) ) {
-		const presetBlocks = require( presetPath );
-		const presetBetaBlocks = fs.existsSync( presetBetaPath ) ? require( presetBetaPath ) : [];
+		presetBlocks = require( presetPath );
+		presetBetaBlocks = fs.existsSync( presetBetaPath ) ? require( presetBetaPath ) : [];
 		const allPresetBlocks = [ ...presetBlocks, ...presetBetaBlocks ];
 
 		// Find all the shared scripts
@@ -83,6 +87,17 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 
 	return {
 		...baseConfig,
+		plugins: [
+			...baseConfig.plugins,
+			fs.existsSync( presetPath ) &&
+				new GenerateJsonFile( {
+					filename: 'block-manifest.json',
+					value: {
+						blocks: presetBlocks,
+						betaBlocks: presetBetaBlocks,
+					},
+				} ),
+		],
 		entry: {
 			editor: editorScript,
 			'editor-beta': editorBetaScript,

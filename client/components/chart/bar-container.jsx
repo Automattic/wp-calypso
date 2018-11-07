@@ -25,7 +25,7 @@ export default class ChartBarContainer extends React.PureComponent {
 
 	render() {
 		return (
-			<div>
+			<>
 				<div className="chart__bars">
 					{ this.props.data.map( ( item, index ) => (
 						<Bar
@@ -44,7 +44,7 @@ export default class ChartBarContainer extends React.PureComponent {
 					) ) }
 				</div>
 				<XAxis data={ this.props.data } labelWidth={ 42 } isRtl={ this.props.isRtl } />
-			</div>
+			</>
 		);
 	}
 }

@@ -14,6 +14,7 @@ import page from 'page';
 import config from 'config';
 import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
+import { MomentProvider } from 'components/with-localized-moment/context';
 import { login } from 'lib/paths';
 import { makeLayoutMiddleware } from './shared.js';
 import { isUserLoggedIn } from 'state/current-user/selectors';
@@ -27,15 +28,18 @@ export { setSection, setUpLocale } from './shared.js';
 export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
-	let layout = <Layout primary={ primary } secondary={ secondary } />;
 
-	if ( ! userLoggedIn ) {
-		layout = (
-			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
-		);
-	}
+	const layout = userLoggedIn ? (
+		<Layout primary={ primary } secondary={ secondary } />
+	) : (
+		<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+	);
 
-	return <ReduxProvider store={ store }>{ layout }</ReduxProvider>;
+	return (
+		<ReduxProvider store={ store }>
+			<MomentProvider>{ layout }</MomentProvider>
+		</ReduxProvider>
+	);
 };
 
 export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { isEnabled } from 'config';
 
 /**
  * WordPress dependencies
@@ -15,14 +14,6 @@ import { EditorProvider, ErrorBoundary } from '@wordpress/editor';
  */
 import Layout from './components/layout';
 import './store';
-
-if ( isEnabled( 'gutenberg/block/jetpack-preset' ) ) {
-	require( 'gutenberg/extensions/presets/jetpack/editor.js' );
-}
-
-if ( isEnabled('gutenberg/block/simple-payments') ) {
-	require( 'gutenberg/extensions/simple-payments/editor.js' );
-}
 
 function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...props } ) {
 	if ( ! post ) {

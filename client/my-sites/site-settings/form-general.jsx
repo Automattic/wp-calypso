@@ -41,6 +41,7 @@ import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { launchSite } from 'state/sites/launch/actions';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -470,33 +471,30 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	handleLaunchSite() {
-		// TODO
-	}
-
 	renderLaunchSite() {
-		const {
-			translate,
-		} = this.props;
+		const { translate } = this.props;
 
 		return (
 			<>
-				<SectionHeader label={ translate( 'Launch site' ) }></SectionHeader>
+				<SectionHeader label={ translate( 'Launch site' ) } />
 				<Card className="site-settings__general-settings-launch-site">
-					<p>{ translate( "Your site hasn't been launched yet. Only you can see it until it is launched." ) }</p>
-					<Button onClick={ this.props.handleLaunchSite }>{ translate( 'Launch site' ) }</Button>
+					<div className="site-settings__general-settings-launch-site-text">
+						<p>
+							{ translate(
+								"Your site hasn't been launched yet. Only you can see it until it is launched."
+							) }
+						</p>
+					</div>
+					<div className="site-settings__general-settings-launch-site-button">
+						<Button onClick={ this.props.launchSite }>{ translate( 'Launch site' ) }</Button>
+					</div>
 				</Card>
 			</>
 		);
 	}
 
 	privacySettings() {
-		const {
-			isRequestingSettings,
-			translate,
-			handleSubmitForm,
-			isSavingSettings,
-		} = this.props;
+		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings } = this.props;
 
 		return (
 			<>
@@ -521,14 +519,10 @@ export class SiteSettingsFormGeneral extends Component {
 	privacySettingsWrapper() {
 		if ( this.props.isUnlaunchedSite ) {
 			if ( this.props.needsVerification ) {
-				return (
-					<EmailVerificationGate>
-						{ this.privacySettings() }
-					</EmailVerificationGate>
-				);
+				return <EmailVerificationGate>{ this.renderLaunchSite() }</EmailVerificationGate>;
 			}
 
-			// TODO return this.renderLaunchSite();
+			return this.renderLaunchSite();
 		}
 
 		return this.privacySettings();
@@ -641,6 +635,14 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 }
 
+const mapDispatchToProps = ( dispatch, ownProps ) => {
+	const { site } = ownProps;
+
+	return {
+		launchSite: () => dispatch( launchSite( site.ID ) ),
+	};
+};
+
 const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
@@ -657,7 +659,7 @@ const connectComponent = connect(
 			selectedSite,
 		};
 	},
-	null,
+	mapDispatchToProps,
 	null,
 	{ pure: false }
 );

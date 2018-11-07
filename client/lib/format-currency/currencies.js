@@ -967,3 +967,19 @@ export const CURRENCIES = {
 		precision: 2,
 	},
 };
+
+/**
+ * Returns currency defaults.
+ * @param   {String} code      currency code
+ * @returns {?Object}          currency defaults
+ */
+export function getCurrencyDefaults( code ) {
+	const defaultCurrency = {
+		symbol: '$',
+		grouping: ',',
+		decimal: '.',
+		precision: 2,
+	};
+
+	return CURRENCIES[ code ] || defaultCurrency;
+}

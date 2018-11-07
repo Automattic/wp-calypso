@@ -64,26 +64,23 @@ describe( 'utility functions', () => {
 		};
 
 		test( 'should dispatch a http request action to the specified path', () => {
-			const dispatch = spy();
+			const result = dispatchNewCommentRequest( action, '/sites/foo/comments' );
 
-			dispatchNewCommentRequest( dispatch, action, '/sites/foo/comments' );
-
-			expect( dispatch ).to.have.been.calledTwice;
-			expect( dispatch ).to.have.been.calledWith( {
+			expect( result[ 0 ] ).to.eql( {
 				type: COMMENTS_RECEIVE,
 				siteId: 2916284,
 				postId: 1010,
 				skipSort: false,
 				comments: [ placeholder ],
 			} );
-			expect( dispatch ).to.have.been.calledWithMatch(
+			expect( result[ 1 ] ).to.eql(
 				http( {
 					apiVersion: '1.1',
 					method: 'POST',
 					path: '/sites/foo/comments',
 					body: { content: 'comment text' },
 					onSuccess: { ...action, placeholderId: placeholder.ID },
-					onFailure: action,
+					onFailure: { ...action, placeholderId: placeholder.ID },
 				} )
 			);
 		} );
@@ -91,7 +88,6 @@ describe( 'utility functions', () => {
 
 	describe( '#updatePlaceholderComment()', () => {
 		test( 'should remove the placeholder comment', () => {
-			const dispatch = spy();
 			const action = {
 				siteId: 2916284,
 				postId: 1010,
@@ -100,19 +96,16 @@ describe( 'utility functions', () => {
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
-			updatePlaceholderComment( { dispatch }, action, comment );
+			const result = updatePlaceholderComment( action, comment );
 
-			expect( dispatch ).to.have.been.calledThrice;
-			expect( dispatch ).to.have.been.calledWithMatch( {
-				type: COMMENTS_DELETE,
-				siteId: 2916284,
-				postId: 1010,
-				commentId: 'placeholder-id',
-			} );
+			expect( result ).to.have.length( 3 );
+			expect( result[ 0 ].type ).to.eql( COMMENTS_DELETE );
+			expect( result[ 0 ].siteId ).to.eql( 2916284 );
+			expect( result[ 0 ].postId ).to.eql( 1010 );
+			expect( result[ 0 ].commentId ).to.eql( 'placeholder-id' );
 		} );
 
 		test( 'should dispatch a comments receive action', () => {
-			const dispatch = spy();
 			const action = {
 				siteId: 2916284,
 				postId: 1010,
@@ -121,10 +114,10 @@ describe( 'utility functions', () => {
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
-			updatePlaceholderComment( { dispatch }, action, comment );
+			const result = updatePlaceholderComment( action, comment );
 
-			expect( dispatch ).to.have.been.calledThrice;
-			expect( dispatch ).to.have.been.calledWith( {
+			expect( result ).to.have.length( 3 );
+			expect( result[ 1 ] ).to.eql( {
 				type: COMMENTS_RECEIVE,
 				siteId: 2916284,
 				postId: 1010,
@@ -135,7 +128,6 @@ describe( 'utility functions', () => {
 		} );
 
 		test( 'should dispatch a comments count increment action', () => {
-			const dispatch = spy();
 			const action = {
 				siteId: 2916284,
 				postId: 1010,
@@ -144,10 +136,10 @@ describe( 'utility functions', () => {
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
-			updatePlaceholderComment( { dispatch }, action, comment );
+			const result = updatePlaceholderComment( action, comment );
 
-			expect( dispatch ).to.have.been.calledThrice;
-			expect( dispatch ).to.have.been.calledWith( {
+			expect( result ).to.have.length( 3 );
+			expect( result[ 2 ] ).to.eql( {
 				type: COMMENTS_COUNT_INCREMENT,
 				siteId: 2916284,
 				postId: 1010,
@@ -155,9 +147,7 @@ describe( 'utility functions', () => {
 		} );
 
 		test( 'should request a fresh copy of a comments page when the query object is filled', () => {
-			const dispatch = spy();
-			updatePlaceholderComment(
-				{ dispatch },
+			const result = updatePlaceholderComment(
 				{
 					siteId: 12345678,
 					postId: 1234,
@@ -174,8 +164,8 @@ describe( 'utility functions', () => {
 				},
 				{ ID: 1, content: 'this is the content' }
 			);
-			expect( dispatch ).to.have.callCount( 4 );
-			expect( dispatch.lastCall ).to.have.been.calledWithExactly( {
+			expect( result ).to.have.length( 4 );
+			expect( result[ result.length - 1 ] ).to.eql( {
 				type: 'COMMENTS_LIST_REQUEST',
 				query: {
 					listType: 'site',
@@ -198,7 +188,7 @@ describe( 'utility functions', () => {
 				},
 			} );
 
-			handleWriteCommentFailure( { dispatch, getState }, { siteId: 2916284, postId: 1010 } );
+			handleWriteCommentFailure( { siteId: 2916284, postId: 1010 } )( dispatch, getState );
 
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				type: NOTICE_CREATE,

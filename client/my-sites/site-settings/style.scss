@@ -502,3 +502,12 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	display: flex;
 	justify-content: space-between;
 }
+
+.site-settings__general-settings-launch-site-text {
+	flex-grow: 2;
+}
+
+.site-settings__general-settings-launch-site-button {
+	margin-left: 20px;
+	white-space: nowrap;
+}
