@@ -184,11 +184,6 @@ $gutenberg-theme-toggle: #11a0d2;
 		}
 	}
 
-	// Fix link display in formatting tools
-	.editor-format-toolbar__link-container-content {
-		display: flex;
-	}
-
 	// UNSET CALYPSO DEFAULT STYLES
 	input[type='text'],
 	input[type='search'] {
