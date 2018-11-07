@@ -26,11 +26,9 @@ import {
 	withAnalytics,
 	bumpStat,
 } from 'state/analytics/actions';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
-import getEditorUrl from 'state/selectors/get-editor-url';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
+import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 
 class EditorGutenbergOptInDialog extends Component {
 	static propTypes = {
@@ -143,22 +141,12 @@ const mapDispatchToProps = dispatch => ( {
 
 export default connect(
 	state => {
-		const currentRoute = getCurrentRoute( state );
 		const isDialogVisible = isGutenbergOptInDialogShowing( state );
 		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const postType = getEditedPostValue( state, siteId, postId, 'type' );
 
-		let gutenbergUrl = `/gutenberg${ currentRoute }`;
-		if (
-			isCalypsoifyGutenbergEnabled( state, siteId, {
-				skipSelectedEditorCheck: true,
-			} )
-		) {
-			const postId = getEditorPostId( state );
-			const postType = getEditedPostValue( state, siteId, postId, 'type' );
-			gutenbergUrl = getEditorUrl( state, siteId, postId, postType, {
-				skipSelectedEditorCheck: true,
-			} );
-		}
+		const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 
 		return {
 			gutenbergUrl,
