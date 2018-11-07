@@ -111,7 +111,58 @@ describe( 'validation', () => {
 
 				expect( result ).toEqual( {
 					errors: {
-						'postal-code': [ 'Missing required Postal Code field' ],
+						'postal-code': expect.arrayContaining( [ 'Missing required Postal Code field' ] ),
+					},
+				} );
+			} );
+
+			test( 'should return error when US Postal Code is invalid', () => {
+				const invalidCardPostCode = {
+					...validCard,
+					country: 'US',
+					'postal-code': '1234',
+				};
+				const result = validatePaymentDetails( invalidCardPostCode );
+
+				expect( result ).toEqual( {
+					errors: {
+						'postal-code': expect.arrayContaining( [
+							'Postal Code is invalid. Must be a 5 digit number',
+						] ),
+					},
+				} );
+			} );
+
+			test( 'should not return error when US Postal Code is valid', () => {
+				const invalidCardPostCode = {
+					...validCard,
+					country: 'US',
+					'postal-code': '90001',
+				};
+				const result = validatePaymentDetails( invalidCardPostCode );
+
+				expect( result ).not.toEqual( {
+					errors: {
+						'postal-code': expect.arrayContaining( [
+							'Postal Code is invalid. Must be a 5 digit number',
+						] ),
+					},
+				} );
+			} );
+
+			test( 'should not return error when non-US Postal Code is invalid', () => {
+				const invalidCardPostCode = {
+					...validCard,
+					country: 'CA', // redundancy for explicitness
+					'postal-code': '1234',
+				};
+				const result = validatePaymentDetails( invalidCardPostCode );
+
+				expect( result ).not.toEqual( {
+					errors: {
+						'postal-code': expect.arrayContaining( [
+							'Postal Code is invalid. Must be a 5 digit number',
+						] ),
 					},
 				} );
 			} );
