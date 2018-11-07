@@ -49,6 +49,7 @@ const config = {
 			},
 		],
 		isCalypsoClient && './inline-imports.js',
+		isCalypsoClient && 'lodash',
 	] ),
 	env: {
 		test: {
