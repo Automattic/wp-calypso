@@ -48,6 +48,7 @@
     "@wordpress/edit-post": "2.0.3",
     "@wordpress/editor": "6.1.1",
     "@wordpress/element": "2.1.5",
+    "@wordpress/format-library": "1.0.3",
     "@wordpress/hooks": "2.0.3",
     "@wordpress/i18n": "3.0.1",
     "@wordpress/keycodes": "2.0.3",
