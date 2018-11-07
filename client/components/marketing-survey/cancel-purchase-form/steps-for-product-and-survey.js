@@ -10,13 +10,17 @@ import {
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
 } from 'lib/plans/constants';
 import { findPlansKeys } from 'lib/plans';
 import { includesProduct } from 'lib/products-values';
 import { abtest } from 'lib/abtest';
 import * as steps from './steps';
 
-const BUSINESS_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BUSINESS } );
+const BUSINESS_PLANS = []
+	.concat( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_ECOMMERCE } ) )
+	.concat( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BUSINESS } ) );
+
 const PERSONAL_PREMIUM_PLANS = []
 	.concat( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PERSONAL } ) )
 	.concat( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } ) );

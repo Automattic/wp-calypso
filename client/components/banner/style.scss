@@ -16,6 +16,7 @@
 	&.is-upgrade-premium {
 		@include banner-color( $alert-green );
 	}
+	&.is-upgrade-ecommerce,
 	&.is-upgrade-business {
 		@include banner-color( $alert-purple );
 	}

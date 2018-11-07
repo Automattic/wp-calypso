@@ -117,6 +117,34 @@ describe( 'stepsForProductAndSurvey', () => {
 				stepsForProductAndSurvey( survey, product, false, precancellationChatToggle )
 			).to.deep.equal( DEFAULT_STEPS );
 		} );
+
+		test( 'should include happychat step if product is ecommerce plan and happychat is available', () => {
+			const product = { product_slug: plans.PLAN_ECOMMERCE };
+			expect(
+				stepsForProductAndSurvey( survey, product, true, precancellationChatToggle )
+			).to.deep.equal( steps.DEFAULT_STEPS_WITH_HAPPYCHAT );
+		} );
+
+		test( 'should include happychat step if product is ecommerce plan and happychat is available (2y)', () => {
+			const product = { product_slug: plans.PLAN_ECOMMERCE_2_YEARS };
+			expect(
+				stepsForProductAndSurvey( survey, product, true, precancellationChatToggle )
+			).to.deep.equal( steps.DEFAULT_STEPS_WITH_HAPPYCHAT );
+		} );
+
+		test( 'should include happychat step if product is ecommerce plan but happychat is not available', () => {
+			const product = { product_slug: plans.PLAN_ECOMMERCE };
+			expect(
+				stepsForProductAndSurvey( survey, product, false, precancellationChatToggle )
+			).to.deep.equal( DEFAULT_STEPS );
+		} );
+
+		test( 'should include happychat step if product is ecommerce plan but happychat is not available (2y)', () => {
+			const product = { product_slug: plans.PLAN_ECOMMERCE_2_YEARS };
+			expect(
+				stepsForProductAndSurvey( survey, product, false, precancellationChatToggle )
+			).to.deep.equal( DEFAULT_STEPS );
+		} );
 	} );
 
 	describe( 'question one answer is not "could not install" and precancellation chat turned "Off"', () => {
@@ -160,6 +188,20 @@ describe( 'stepsForProductAndSurvey', () => {
 
 		test( 'should not include happychat step if product is business plan and happychat is available (2y)', () => {
 			const product = { product_slug: plans.PLAN_BUSINESS_2_YEARS };
+			expect(
+				stepsForProductAndSurvey( survey, product, true, precancellationChatToggle )
+			).to.deep.equal( DEFAULT_STEPS );
+		} );
+
+		test( 'should not include happychat step if product is ecommerce plan and happychat is available', () => {
+			const product = { product_slug: plans.PLAN_ECOMMERCE };
+			expect(
+				stepsForProductAndSurvey( survey, product, true, precancellationChatToggle )
+			).to.deep.equal( DEFAULT_STEPS );
+		} );
+
+		test( 'should not include happychat step if product is ecommerce plan and happychat is available (2y)', () => {
+			const product = { product_slug: plans.PLAN_ECOMMERCE_2_YEARS };
 			expect(
 				stepsForProductAndSurvey( survey, product, true, precancellationChatToggle )
 			).to.deep.equal( DEFAULT_STEPS );
@@ -249,6 +291,34 @@ describe( 'stepsForProductAndSurvey', () => {
 
 		test( 'should not include business AT step if product is business plan and abtest variant is hide (2y)', () => {
 			const product = { product_slug: plans.PLAN_BUSINESS_2_YEARS };
+			abtest.withArgs( 'ATPromptOnCancel' ).returns( 'hide' );
+			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( DEFAULT_STEPS );
+		} );
+
+		test( 'should include business AT step if product is ecommerce plan and abtest variant is show', () => {
+			const product = { product_slug: plans.PLAN_ECOMMERCE };
+			abtest.withArgs( 'ATPromptOnCancel' ).returns( 'show' );
+			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal(
+				DEFAULT_STEPS_WITH_BUSINESS_AT_STEP
+			);
+		} );
+
+		test( 'should include business AT step if product is ecommerce plan and abtest variant is show (2y)', () => {
+			const product = { product_slug: plans.PLAN_ECOMMERCE_2_YEARS };
+			abtest.withArgs( 'ATPromptOnCancel' ).returns( 'show' );
+			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal(
+				DEFAULT_STEPS_WITH_BUSINESS_AT_STEP
+			);
+		} );
+
+		test( 'should not include business AT step if product is ecommerce plan and abtest variant is hide', () => {
+			const product = { product_slug: plans.PLAN_ECOMMERCE };
+			abtest.withArgs( 'ATPromptOnCancel' ).returns( 'hide' );
+			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( DEFAULT_STEPS );
+		} );
+
+		test( 'should not include business AT step if product is ecommerce plan and abtest variant is hide (2y)', () => {
+			const product = { product_slug: plans.PLAN_ECOMMERCE_2_YEARS };
 			abtest.withArgs( 'ATPromptOnCancel' ).returns( 'hide' );
 			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( DEFAULT_STEPS );
 		} );

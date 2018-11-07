@@ -12,7 +12,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { PLANS_LIST, getPlanClass } from 'lib/plans/constants';
-import { isPersonalPlan, isPremiumPlan, isBusinessPlan } from 'lib/plans';
+import { isPersonalPlan, isPremiumPlan, isBusinessPlan, isEcommercePlan } from 'lib/plans';
 
 export default class PlanIcon extends Component {
 	getIcon( planName ) {
@@ -21,6 +21,7 @@ export default class PlanIcon extends Component {
 
 		return (
 			<img
+				alt=""
 				src={ `/calypso/images/plans/plan-${ planName }-circle.svg` }
 				className={ classNames( 'plan-icon', `plan-icon__${ planName }`, planClass, className ) }
 			/>
@@ -39,6 +40,10 @@ export default class PlanIcon extends Component {
 
 		if ( isBusinessPlan( plan ) ) {
 			return this.getIcon( 'business' );
+		}
+
+		if ( isEcommercePlan( plan ) ) {
+			return this.getIcon( 'ecommerce' );
 		}
 
 		return this.getIcon( 'free' );

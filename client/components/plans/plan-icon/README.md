@@ -1,11 +1,12 @@
 PlanIcon Component
 =============
 
-PlanIcon component is a React component to display plans icons in SVG format. We have four different plans icons:
+PlanIcon component is a React component to display plans icons in SVG format. We have several different plans icons:
 - Free
 - Personal
 - Premium
 - Business
+- Ecommerce
 
 Jetpack plans also use these plans icons.
 
@@ -35,6 +36,7 @@ Plan constant from `lib/plans/constants`. Can be one of:
 - PLAN_FREE,
 - PLAN_PREMIUM,
 - PLAN_BUSINESS,
+- PLAN_ECOMMERCE,
 - PLAN_JETPACK_FREE,
 - PLAN_JETPACK_BUSINESS,
 - PLAN_JETPACK_BUSINESS_MONTHLY,

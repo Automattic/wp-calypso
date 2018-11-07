@@ -26,6 +26,8 @@ import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
@@ -89,6 +91,13 @@ describe( 'PlanIcon should have a class name corresponding to appropriate plan',
 		test( 'Business', () => {
 			const comp = shallow( <PlanIcon { ...props } plan={ plan } /> );
 			assert.lengthOf( comp.find( '.plan-icon__business' ), 1 );
+		} );
+	} );
+
+	[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ].forEach( plan => {
+		test( 'eCommerce', () => {
+			const comp = shallow( <PlanIcon { ...props } plan={ plan } /> );
+			assert.lengthOf( comp.find( '.plan-icon__ecommerce' ), 1 );
 		} );
 	} );
 

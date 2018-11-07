@@ -51,6 +51,8 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 } from 'lib/plans/constants';
 
 /**
@@ -241,6 +243,13 @@ describe( 'Banner should have a class name corresponding to appropriate plan', (
 		test( 'Business', () => {
 			const comp = shallow( <Banner { ...props } plan={ plan } /> );
 			assert.lengthOf( comp.find( '.is-upgrade-business' ), 1 );
+		} );
+	} );
+
+	[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ].forEach( plan => {
+		test( 'eCommerce', () => {
+			const comp = shallow( <Banner { ...props } plan={ plan } /> );
+			assert.lengthOf( comp.find( '.is-upgrade-ecommerce' ), 1 );
 		} );
 	} );
 } );
