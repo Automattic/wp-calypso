@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 /**
  * Internal dependencies
@@ -40,15 +40,15 @@ export default ( { title = '', content = '', formattedPrice = '', multiple = fal
 							<div className="jetpack-simple-payments-items">
 								<input
 									className="jetpack-simple-payments-items-number"
+									readOnly
 									type="number"
 									value="1"
-									readOnly
 								/>
 							</div>
 						) }
 						<div className="jetpack-simple-payments-button">
 							<img
-								alt={ __( 'Pay with PayPal', 'jetpack' ) }
+								alt={ __( 'Pay with PayPal' ) }
 								src={ `${ assetUrl }paypal-button.png` }
 								srcSet={ `${ assetUrl }paypal-button@2x.png 2x` }
 							/>
