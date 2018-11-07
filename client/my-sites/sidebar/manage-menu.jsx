@@ -17,7 +17,6 @@ import Gridicon from 'gridicons';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarButton from 'layout/sidebar/button';
 import config from 'config';
-import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import analytics from 'lib/analytics';
@@ -50,12 +49,11 @@ class ManageMenu extends PureComponent {
 		isJetpack: PropTypes.bool,
 		isSingleUser: PropTypes.bool,
 		postTypes: PropTypes.object,
-		getNewPostPathFn: PropTypes.func,
+		getEditorUrlFn: PropTypes.func,
 		siteAdminUrl: PropTypes.string,
 		site: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string,
 		calypsoifyGutenberg: PropTypes.bool,
-		editorUrls: PropTypes.object,
 	};
 
 	// We default to `/my` posts when appropriate
@@ -77,7 +75,7 @@ class ManageMenu extends PureComponent {
 	}
 
 	getDefaultMenuItems() {
-		const { calypsoifyGutenberg, editorUrls, siteSlug, translate } = this.props;
+		const { calypsoifyGutenberg, getEditorUrlFn, siteSlug, translate } = this.props;
 
 		return [
 			{
@@ -87,7 +85,7 @@ class ManageMenu extends PureComponent {
 				queryable: true,
 				config: 'manage/pages',
 				link: '/pages',
-				buttonLink: editorUrls.page,
+				buttonLink: getEditorUrlFn( 'page' ),
 				forceButtonTargetInternal: calypsoifyGutenberg,
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
@@ -100,7 +98,7 @@ class ManageMenu extends PureComponent {
 				queryable: true,
 				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
-				buttonLink: editorUrls.post,
+				buttonLink: getEditorUrlFn( 'post' ),
 				forceButtonTargetInternal: calypsoifyGutenberg,
 				wpAdminLink: 'edit.php',
 				showOnAllMySites: true,
@@ -309,7 +307,7 @@ class ManageMenu extends PureComponent {
 
 				const buttonLink =
 					config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable
-						? this.props.editorUrls[ postTypeSlug ]
+						? this.props.getEditorUrlFn( postTypeSlug )
 						: undefined;
 
 				return memo.concat( {
@@ -367,18 +365,8 @@ const canCurrentUserFn = ( state, siteId ) => capability =>
  * A functional selector similar to `canCurrentUserFn`, this time for generating editor URL
  * from a post type.
  */
-const getNewPostPathFn = ( state, siteId ) => postTypeSlug =>
-	getEditorNewPostPath( state, siteId, postTypeSlug );
-
-const getEditorUrls = ( state, siteId, postTypes ) =>
-	reduce(
-		postTypes,
-		( urls, { name } ) => {
-			urls[ name ] = getEditorUrl( state, siteId, null, name );
-			return urls;
-		},
-		{ post: getEditorUrl( state, siteId ), page: getEditorUrl( state, siteId, null, 'page' ) }
-	);
+const getEditorUrlFn = ( state, siteId ) => postType =>
+	getEditorUrl( state, siteId, null, postType );
 
 const mapStateToProps = ( state, { siteId } ) => {
 	const postTypes = getPostTypes( state, siteId );
@@ -389,11 +377,10 @@ const mapStateToProps = ( state, { siteId } ) => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),
 		postTypes,
-		getNewPostPathFn: getNewPostPathFn( state, siteId ),
+		getEditorUrlFn: getEditorUrlFn( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		site: getSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
-		editorUrls: getEditorUrls( state, siteId, postTypes ),
 		calypsoifyGutenberg:
 			isCalypsoifyGutenbergEnabled( state, siteId ) &&
 			'gutenberg' === getSelectedEditor( state, siteId ),
@@ -404,5 +391,5 @@ export default connect(
 	mapStateToProps,
 	{ recordTracksEvent },
 	null,
-	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUserFn', 'getNewPostPathFn' ] } ) }
+	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUserFn', 'getEditorUrlFn' ] } ) }
 )( localize( ManageMenu ) );
