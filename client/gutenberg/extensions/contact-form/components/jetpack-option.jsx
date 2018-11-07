@@ -30,7 +30,9 @@ class JetpackOption extends Component {
 		return (
 			<li className="jetpack-option">
 				{ this.props.type &&
-					this.props.type !== 'select' && <input type={ this.props.type } disabled /> }
+					this.props.type !== 'select' && (
+						<input className="jetpack-option__type" type={ this.props.type } disabled />
+					) }
 				<input
 					type="text"
 					className="jetpack-option__input"

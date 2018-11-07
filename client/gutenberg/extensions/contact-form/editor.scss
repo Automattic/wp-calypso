@@ -71,12 +71,20 @@
 	}
 }
 
+.jetpack-option {
+	display: flex;
+	align-items: center;
+}
+
+.jetpack-option__type.jetpack-option__type {
+	margin-top: 0;
+}
+
 // Duplicated to elevate specificity in order to overwrite core styles
 .jetpack-option__input.jetpack-option__input.jetpack-option__input {
 	border-color: #fff;
 	border-radius: 0;
-	width: calc( 100% - 5em );
-	display: inline-block;
+	flex-grow: 1;
 
 	&:hover {
 		border-color: #357CB5;
@@ -89,7 +97,7 @@
 }
 
 .jetpack-option__remove {
-	display: inline-flex;
+	display: flex;
 	padding: 6px;
 	vertical-align: bottom;
 }
