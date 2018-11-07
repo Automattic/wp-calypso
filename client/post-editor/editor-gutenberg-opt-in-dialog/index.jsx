@@ -26,16 +26,17 @@ import {
 	withAnalytics,
 	bumpStat,
 } from 'state/analytics/actions';
-import isVipSite from 'state/selectors/is-vip-site';
-import { isJetpackSite } from 'state/sites/selectors';
 import getCurrentRoute from 'state/selectors/get-current-route';
-import { isEnabled } from 'config';
+import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
+import getEditorUrl from 'state/selectors/get-editor-url';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
 
 class EditorGutenbergOptInDialog extends Component {
 	static propTypes = {
 		// connected properties
 		translate: PropTypes.func,
-		gutenbergURL: PropTypes.string,
+		gutenbergUrl: PropTypes.string,
 		isDialogVisible: PropTypes.bool,
 		hideDialog: PropTypes.func,
 		optIn: PropTypes.func,
@@ -48,9 +49,9 @@ class EditorGutenbergOptInDialog extends Component {
 	};
 
 	optInToGutenberg = () => {
-		const { gutenbergURL, hideDialog, optIn, siteId } = this.props;
+		const { gutenbergUrl, hideDialog, optIn, siteId } = this.props;
 		hideDialog();
-		optIn( siteId, gutenbergURL );
+		optIn( siteId, gutenbergUrl );
 	};
 
 	render() {
@@ -99,7 +100,7 @@ class EditorGutenbergOptInDialog extends Component {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	optIn: ( siteId, gutenbergURL ) => {
+	optIn: ( siteId, gutenbergUrl ) => {
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
@@ -114,7 +115,7 @@ const mapDispatchToProps = dispatch => ( {
 					} ),
 					bumpStat( 'gutenberg-opt-in', 'Calypso Dialog Opt In' )
 				),
-				setSelectedEditor( siteId, 'gutenberg', gutenbergURL )
+				setSelectedEditor( siteId, 'gutenberg', gutenbergUrl )
 			)
 		);
 	},
@@ -145,16 +146,22 @@ export default connect(
 		const currentRoute = getCurrentRoute( state );
 		const isDialogVisible = isGutenbergOptInDialogShowing( state );
 		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
-		const isVip = isVipSite( state, siteId );
-		const isCalypsoifyEnabled = isEnabled( 'calypsoify/gutenberg' ) && ! isJetpack && ! isVip;
 
-		//TODO: build the calypsoified admin url! We can't quite use get-editor-url
+		let gutenbergUrl = `/gutenberg${ currentRoute }`;
+		if (
+			isCalypsoifyGutenbergEnabled( state, siteId, {
+				skipSelectedEditorCheck: true,
+			} )
+		) {
+			const postId = getEditorPostId( state );
+			const postType = getEditedPostValue( state, siteId, postId, 'type' );
+			gutenbergUrl = getEditorUrl( state, siteId, postId, postType, {
+				skipSelectedEditorCheck: true,
+			} );
+		}
 
 		return {
-			gutenbergURL: isCalypsoifyEnabled
-				? 'build a calypsoified url'
-				: `/gutenberg${ currentRoute }`,
+			gutenbergUrl,
 			isDialogVisible,
 			siteId,
 		};

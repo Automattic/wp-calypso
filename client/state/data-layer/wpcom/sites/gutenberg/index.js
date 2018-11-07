@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { noop } from 'lodash';
+import { has, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { bypassDataLayer } from 'state/data-layer/utils';
+import { replaceHistory } from 'state/ui/actions';
 
 export const fetchSelectedEditor = action =>
 	http(
@@ -51,10 +52,14 @@ export const setType = action => {
 	);
 };
 
-const redirectToEditor = action => {
-	if ( action.redirectUrl ) {
-		//TODO: redirect using window, or if navigating to /gutenberg, dispatch HISTORY_REPLACE
+const redirectToEditor = ( { redirectUrl } ) => dispatch => {
+	if ( ! redirectUrl ) {
+		return;
 	}
+	if ( has( window, 'location.replace' ) && -1 !== redirectUrl.indexOf( 'calypsoify=1' ) ) {
+		return window.location.replace( redirectUrl );
+	}
+	dispatch( replaceHistory( redirectUrl ) );
 };
 
 const dispatchEditorTypeSetRequest = dispatchRequestEx( {
