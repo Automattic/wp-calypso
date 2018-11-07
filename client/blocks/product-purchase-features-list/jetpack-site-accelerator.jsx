@@ -16,7 +16,7 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-search.svg" /> }
+				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-speed.svg" /> }
 				title={ translate( 'Site accelerator' ) }
 				description={ translate(
 					'Load pages faster, and serve your images and ' +
