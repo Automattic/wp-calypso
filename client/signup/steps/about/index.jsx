@@ -612,12 +612,13 @@ class AboutStep extends Component {
 							) }
 
 							{ this.renderExperienceOptions() }
+
+							<div className="about__submit-wrapper">
+								<Button primary={ true } type="submit">
+									{ translate( 'Continue' ) }
+								</Button>
+							</div>
 						</Card>
-						<div className="about__submit-wrapper">
-							<Button primary={ true } type="submit">
-								{ translate( 'Continue' ) }
-							</Button>
-						</div>
 					</form>
 				</div>
 			</div>
