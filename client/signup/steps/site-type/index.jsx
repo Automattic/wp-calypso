@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { startCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import SignupActions from 'lib/signup/actions';
 import { setSiteType } from 'state/signup/steps/site-type/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getThemeForSiteType } from 'signup/utils';
+import { allSiteTypes, dasherize, isValidLandingPageSiteType } from 'lib/signup/site-type';
 
 //Form components
 import Card from 'components/card';
@@ -25,8 +27,9 @@ import FormRadio from 'components/forms/form-radio';
 class SiteType extends Component {
 	constructor( props ) {
 		super( props );
+		const siteTypeVal = isValidLandingPageSiteType( props.siteType ) ? props.siteType : '';
 		this.state = {
-			siteType: props.siteType,
+			siteType: siteTypeVal,
 		};
 	}
 
@@ -43,73 +46,26 @@ class SiteType extends Component {
 
 	renderContent() {
 		const { translate } = this.props;
+		const radioOptions = allSiteTypes.map( elem => (
+			<FormLabel className="site-type__option" key={ elem.type }>
+				<FormRadio
+					value={ elem.type }
+					checked={ dasherize( elem.type ) === dasherize( this.state.siteType ) }
+					onChange={ this.handleRadioChange }
+				/>
+				<span>
+					<strong>{ startCase( elem.type ) }</strong>
+					<span>{ elem.description }</span>
+				</span>
+			</FormLabel>
+		) );
 
 		return (
 			<div className="site-type__wrapper">
 				<div className="site-type__form-wrapper">
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
-							<FormFieldset>
-								<FormLabel className="site-type__option">
-									<FormRadio
-										value="blogger"
-										checked={ 'blogger' === this.state.siteType }
-										onChange={ this.handleRadioChange }
-									/>
-									<span>
-										<strong>{ translate( 'Blogger' ) }</strong>
-										<span>{ translate( 'Share a collection of posts.' ) }</span>
-									</span>
-								</FormLabel>
-
-								<FormLabel className="site-type__option">
-									<FormRadio
-										value="business"
-										checked={ 'business' === this.state.siteType }
-										onChange={ this.handleRadioChange }
-									/>
-									<span>
-										<strong>{ translate( 'Business' ) }</strong>
-										<span>{ translate( 'Promote products and services.' ) }</span>
-									</span>
-								</FormLabel>
-
-								<FormLabel className="site-type__option">
-									<FormRadio
-										value="professional"
-										checked={ 'professional' === this.state.siteType }
-										onChange={ this.handleRadioChange }
-									/>
-									<span>
-										<strong>{ translate( 'Professional' ) }</strong>
-										<span>{ translate( 'Showcase your portfolio and services.' ) }</span>
-									</span>
-								</FormLabel>
-
-								<FormLabel className="site-type__option">
-									<FormRadio
-										value="educator"
-										checked={ 'educator' === this.state.siteType }
-										onChange={ this.handleRadioChange }
-									/>
-									<span>
-										<strong>{ translate( 'Educator' ) }</strong>
-										<span>{ translate( 'Share school projects and class info.' ) }</span>
-									</span>
-								</FormLabel>
-
-								<FormLabel className="site-type__option">
-									<FormRadio
-										value="non-profit"
-										checked={ 'non-profit' === this.state.siteType }
-										onChange={ this.handleRadioChange }
-									/>
-									<span>
-										<strong>{ translate( 'Non-profit Organization' ) }</strong>
-										<span>{ translate( 'Raise money and awareness for a cause.' ) }</span>
-									</span>
-								</FormLabel>
-							</FormFieldset>
+							<FormFieldset>{ radioOptions }</FormFieldset>
 
 							<div className="site-type__submit-wrapper">
 								<Button primary={ true } type="submit">

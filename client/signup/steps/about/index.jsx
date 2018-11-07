@@ -55,12 +55,16 @@ class AboutStep extends Component {
 	constructor( props ) {
 		super( props );
 		this._isMounted = false;
+		const hasPrepopulatedVertical =
+			isValidLandingPageVertical( props.siteTopic ) &&
+			props.queryObject.vertical === props.siteTopic;
 		this.state = {
 			query: '',
 			siteTopicValue: this.props.siteTopic,
 			userExperience: this.props.userExperience,
 			showStore: false,
 			pendingStoreClick: false,
+			hasPrepopulatedVertical,
 		};
 	}
 
@@ -250,7 +254,6 @@ class AboutStep extends Component {
 			goToNextStep,
 			stepName,
 			flowName,
-			hasPrepopulatedVertical,
 			shouldHideSiteGoals,
 			previousFlowName,
 			translate,
@@ -278,7 +281,7 @@ class AboutStep extends Component {
 		eventAttributes.site_title = siteTitleInput || 'N/A';
 
 		//Site Topic
-		const englishSiteTopicInput = hasPrepopulatedVertical
+		const englishSiteTopicInput = this.state.hasPrepopulatedVertical
 			? this.state.siteTopicValue
 			: findKey( hints, siteTopic => siteTopic === siteTopicInput ) || siteTopicInput;
 
@@ -295,7 +298,9 @@ class AboutStep extends Component {
 
 		//Site Goals
 		if ( shouldHideSiteGoals ) {
-			themeRepo = hasPrepopulatedVertical ? 'pub/radcliffe-2' : getThemeForSiteType( siteType );
+			themeRepo = this.state.hasPrepopulatedVertical
+				? 'pub/radcliffe-2'
+				: getThemeForSiteType( siteType );
 			designType = getDesignTypeForSiteType( siteType, flowName );
 			eventAttributes.site_type = siteType;
 		} else {
@@ -304,7 +309,7 @@ class AboutStep extends Component {
 			const siteGoalsGroup = siteGoalsArray.sort().join();
 
 			this.props.setSiteGoals( siteGoalsInput );
-			themeRepo = hasPrepopulatedVertical
+			themeRepo = this.state.hasPrepopulatedVertical
 				? 'pub/radcliffe-2'
 				: getThemeForSiteGoals( siteGoalsInput );
 			designType = getDesignTypeForSiteGoals( siteGoalsInput, flowName );
@@ -525,7 +530,7 @@ class AboutStep extends Component {
 	}
 
 	renderContent() {
-		const { hasPrepopulatedVertical, translate, siteTitle, shouldHideSiteGoals } = this.props;
+		const { translate, siteTitle, shouldHideSiteGoals } = this.props;
 
 		const pressableWrapperClassName = classNames( 'about__pressable-wrapper', {
 			'about__wrapper-is-hidden': ! this.state.showStore,
@@ -568,7 +573,7 @@ class AboutStep extends Component {
 								/>
 							</FormFieldset>
 
-							{ ! hasPrepopulatedVertical && (
+							{ ! this.state.hasPrepopulatedVertical && (
 								<FormFieldset>
 									<FormLabel htmlFor="siteTopic">
 										{ translate( 'What will your site be about?' ) }
@@ -652,9 +657,6 @@ export default connect(
 		isLoggedIn: isUserLoggedIn( state ),
 		shouldHideSiteGoals:
 			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
-		hasPrepopulatedVertical:
-			isValidLandingPageVertical( ownProps.siteTopic ) &&
-			ownProps.queryObject.vertical === ownProps.siteTopic,
 	} ),
 	{
 		setSiteTitle,
