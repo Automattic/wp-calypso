@@ -273,7 +273,11 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 		plugins: _.compact( [
 			! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
 			new webpack.DefinePlugin( {
-				'window.Jetpack_Static_Block_Assets_Base_Url': '/calypso/images/jetpack-block-assets',
+				...( isCalypsoClient && {
+					'window.Jetpack_Static_Block_Assets_Base_Url': JSON.stringify(
+						'/calypso/images/jetpack-block-assets'
+					),
+				} ),
 				'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 				BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
 				PROJECT_NAME: JSON.stringify( config( 'project' ) ),
