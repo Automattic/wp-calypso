@@ -36,8 +36,8 @@ const dispatchSelectedEditorRequest = dispatchRequestEx( {
 	onError: noop,
 } );
 
-export const setType = action => {
-	return http(
+export const setType = action =>
+	http(
 		{
 			path: `/sites/${ action.siteId }/gutenberg`,
 			method: 'POST',
@@ -50,7 +50,6 @@ export const setType = action => {
 		},
 		action
 	);
-};
 
 const redirectToEditor = ( { redirectUrl } ) => dispatch => {
 	if ( ! redirectUrl ) {
