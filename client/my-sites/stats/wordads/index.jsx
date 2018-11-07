@@ -100,6 +100,7 @@ class WordAds extends Component {
 			.subtract( 1, 'days' )
 			.format( 'YYYY-MM-DD' );
 
+		// Never show stats for the current day. Stats are fetched nightly for the previous day.
 		const queryDate = today === date.format( 'YYYY-MM-DD' ) ? yesterday : today;
 
 		const query = {
