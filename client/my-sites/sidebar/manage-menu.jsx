@@ -368,15 +368,13 @@ const canCurrentUserFn = ( state, siteId ) => capability =>
 const getEditorUrlFn = ( state, siteId ) => postType =>
 	getEditorUrl( state, siteId, null, postType );
 
-const mapStateToProps = ( state, { siteId } ) => {
-	const postTypes = getPostTypes( state, siteId );
-
-	return {
+export default connect(
+	( state, { siteId } ) => ( {
 		allSingleSites: areAllSitesSingleUser( state ),
 		canCurrentUserFn: canCurrentUserFn( state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),
-		postTypes,
+		postTypes: getPostTypes( state, siteId ),
 		getEditorUrlFn: getEditorUrlFn( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		site: getSite( state, siteId ),
@@ -384,11 +382,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 		calypsoifyGutenberg:
 			isCalypsoifyGutenbergEnabled( state, siteId ) &&
 			'gutenberg' === getSelectedEditor( state, siteId ),
-	};
-};
-
-export default connect(
-	mapStateToProps,
+	} ),
 	{ recordTracksEvent },
 	null,
 	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUserFn', 'getEditorUrlFn' ] } ) }
