@@ -221,6 +221,18 @@ export function generateSteps( {
 			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
 		},
 
+		'oauth2-email': {
+			stepName: 'oauth2-email',
+			apiRequestFunction: createAccount,
+			providesToken: true,
+			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+				oauth2Signup: true,
+				useFullName: true,
+			},
+		},
+
 		'get-dot-blog-plans': {
 			apiRequestFunction: createSiteWithCart,
 			stepName: 'get-dot-blog-plans',
