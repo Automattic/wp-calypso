@@ -258,6 +258,8 @@ const editMultiField = type => props => {
 registerBlockType(
 	'jetpack/field-text',
 	Object.assign(
+		{},
+		FieldDefaults,
 		{
 			title: __( 'Text' ),
 			description: __( 'When you need just a small amount of text, add a text input.' ),
@@ -268,14 +270,15 @@ registerBlockType(
 				</SVG>
 			),
 			edit: editField( 'text' ),
-		},
-		FieldDefaults
+		}
 	)
 );
 
 registerBlockType(
 	'jetpack/field-name',
 	Object.assign(
+		{},
+		FieldDefaults,
 		{
 			title: __( 'Name' ),
 			description: __( 'Introductions are important. Add an input for folks to add their name.' ),
@@ -286,14 +289,15 @@ registerBlockType(
 				</SVG>
 			),
 			edit: editField( 'text' ),
-		},
-		FieldDefaults
+		}
 	)
 );
 
 registerBlockType(
 	'jetpack/field-email',
 	Object.assign(
+		{},
+		FieldDefaults,
 		{
 			title: __( 'Email' ),
 			description: __( 'Want to reply to folks? Add an email address input.' ),
@@ -304,14 +308,15 @@ registerBlockType(
 				</SVG>
 			),
 			edit: editField( 'email' ),
-		},
-		FieldDefaults
+		}
 	)
 );
 
 registerBlockType(
 	'jetpack/field-url',
 	Object.assign(
+		{},
+		FieldDefaults,
 		{
 			title: __( 'URL' ),
 			description: __( 'Add an address input for a website.' ),
@@ -322,14 +327,15 @@ registerBlockType(
 				</SVG>
 			),
 			edit: editField( 'url' ),
-		},
-		FieldDefaults
+		}
 	)
 );
 
 registerBlockType(
 	'jetpack/field-date',
 	Object.assign(
+		{},
+		FieldDefaults,
 		{
 			title: __( 'Date' ),
 			description: __( 'The best way to set a date. Add a date picker.' ),
@@ -341,13 +347,14 @@ registerBlockType(
 			),
 			edit: editField( 'text' ),
 		},
-		FieldDefaults
 	)
 );
 
 registerBlockType(
 	'jetpack/field-telephone',
 	Object.assign(
+		{},
+		FieldDefaults,
 		{
 			title: __( 'Telephone' ),
 			description: __( 'Add a phone number input.' ),
@@ -358,14 +365,15 @@ registerBlockType(
 				</SVG>
 			),
 			edit: editField( 'tel' ),
-		},
-		FieldDefaults
+		}
 	)
 );
 
 registerBlockType(
 	'jetpack/field-textarea',
 	Object.assign(
+		{},
+		FieldDefaults,
 		{
 			title: __( 'Textarea' ),
 			description: __( 'Let folks speak their mind. A textarea is great for longer responses.' ),
@@ -385,14 +393,15 @@ registerBlockType(
 					/>
 				);
 			},
-		},
-		FieldDefaults
+		}
 	)
 );
 
 registerBlockType(
 	'jetpack/field-checkbox',
 	Object.assign(
+		{},
+		FieldDefaults,
 		{
 			title: __( 'Checkbox' ),
 			description: __( 'Add a single checkbox.' ),
@@ -412,14 +421,15 @@ registerBlockType(
 					/>
 				);
 			},
-		},
-		FieldDefaults
+		}
 	)
 );
 
 registerBlockType(
 	'jetpack/field-checkbox-multiple',
 	Object.assign(
+		{},
+		FieldDefaults,
 		{
 			title: __( 'Checkbox Multiple' ),
 			description: __( 'People love options. Add several checkbox items.' ),
@@ -430,14 +440,15 @@ registerBlockType(
 				</SVG>
 			),
 			edit: editMultiField( 'checkbox' ),
-		},
-		FieldDefaults
+		}
 	)
 );
 
 registerBlockType(
 	'jetpack/field-radio',
 	Object.assign(
+		{},
+		FieldDefaults,
 		{
 			title: __( 'Radio' ),
 			description: __(
@@ -451,14 +462,15 @@ registerBlockType(
 				</SVG>
 			),
 			edit: editMultiField( 'radio' ),
-		},
-		FieldDefaults
+		}
 	)
 );
 
 registerBlockType(
 	'jetpack/field-select',
 	Object.assign(
+		{},
+		FieldDefaults,
 		{
 			title: __( 'Select' ),
 			description: __( 'Compact, but powerful. Add a select box with several items.' ),
@@ -469,7 +481,6 @@ registerBlockType(
 				</SVG>
 			),
 			edit: editMultiField( 'select' ),
-		},
-		FieldDefaults
+		}
 	)
 );
