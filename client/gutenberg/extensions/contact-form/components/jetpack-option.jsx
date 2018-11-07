@@ -37,7 +37,7 @@ class JetpackOption extends Component {
 					type="text"
 					className="jetpack-option__input"
 					value={ this.props.option }
-					placeholder={ __( 'Enter your option value here…' ) }
+					placeholder={ __( 'Write option…' ) }
 					onChange={ this.onChangeOption }
 				/>
 				<IconButton

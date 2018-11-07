@@ -19,7 +19,7 @@ const JetpackFieldLabel = props => {
 				value={ props.label }
 				className="jetpack-field-label__input"
 				onChange={ label => setAttributes( { label } ) }
-				placeholder={ __( 'Type label…' ) }
+				placeholder={ __( 'Write label…' ) }
 			/>
 			{ props.isSelected && (
 				<ToggleControl
