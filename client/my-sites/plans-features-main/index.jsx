@@ -118,8 +118,11 @@ export class PlansFeaturesMain extends Component {
 			personalPlan,
 			findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 			findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
-			findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ],
 		];
+
+		if ( ! displayJetpackPlans ) {
+			plans.push( findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ] );
+		}
 
 		if ( hideFreePlan ) {
 			plans.shift();
