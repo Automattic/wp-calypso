@@ -74,6 +74,7 @@
 .jetpack-option {
 	display: flex;
 	align-items: center;
+	margin: 0;
 }
 
 .jetpack-option__type.jetpack-option__type {
@@ -97,7 +98,6 @@
 }
 
 .jetpack-option__remove {
-	display: flex;
 	padding: 6px;
 	vertical-align: bottom;
 }
@@ -109,5 +109,20 @@
 
 	svg {
 		margin-right: 12px;
+	}
+}
+
+.jetpack-field-checkbox .components-base-control__label{
+	display: flex;
+	align-items: center;
+
+	.jetpack-field-label {
+		flex-grow:1;
+	}
+
+	.jetpack-field-label__input {
+		font-size: 13px;
+		font-weight: 400;
+		padding-left: 10px;
 	}
 }

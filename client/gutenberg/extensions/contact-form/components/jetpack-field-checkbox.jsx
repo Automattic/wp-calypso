@@ -3,35 +3,32 @@
 /**
  * External dependencies
  */
-import { BaseControl, CheckboxControl } from '@wordpress/components';
-import { withInstanceId } from '@wordpress/compose';
+import { BaseControl } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
+import { withInstanceId } from '@wordpress/compose';
 
 /**
  * Internal dependencies
  */
-import JetpackFieldSettings from './jetpack-field-settings';
 import JetpackFieldLabel from './jetpack-field-label';
 
 const JetpackFieldCheckbox = props => {
 	return (
-		<Fragment>
-			<JetpackFieldSettings required={ props.required } setAttributes={ props.setAttributes } />
-			<BaseControl id={ `jetpack-field-checkbox-${ props.instanceId }` } className="jetpack-field">
-				<CheckboxControl
-					id={ `jetpack-field-checkbox-${ props.instanceId }` }
-					label={
-						<JetpackFieldLabel
-							required={ props.required }
-							label={ props.label }
-							setAttributes={ props.setAttributes }
-							isSelected={ props.isSelected }
-						/>
-					}
-					disabled
-				/>
-			</BaseControl>
-		</Fragment>
+		<BaseControl
+			id={ `jetpack-field-checkbox-${ props.instanceId }` }
+			className="jetpack-field jetpack-field-checkbox"
+			label={
+				<Fragment>
+					<input className="jetpack-field-checkbox__checkbox" type="checkbox" disabled />
+					<JetpackFieldLabel
+						required={ props.required }
+						label={ props.label }
+						setAttributes={ props.setAttributes }
+						isSelected={ props.isSelected }
+					/>
+				</Fragment>
+			}
+		/>
 	);
 };
 
