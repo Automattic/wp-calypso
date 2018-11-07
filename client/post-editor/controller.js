@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
 import { isWebUri as isValidUrl } from 'valid-url';
-import { has, startsWith } from 'lodash';
+import { get, has, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -302,6 +302,12 @@ export default {
 		if ( ! has( window, 'location.replace' ) ) {
 			next();
 		}
+
+		// Bypass the selected editor check if the URL contains a force=true param
+		if ( get( context.query, 'force', false ) ) {
+			return next();
+		}
+
 		maybeCalypsoifyGutenberg( context, next );
 	},
 };
