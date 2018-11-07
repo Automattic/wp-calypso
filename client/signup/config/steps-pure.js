@@ -132,11 +132,6 @@ export function generateSteps( {
 			},
 		},
 
-		'site-information': {
-			stepName: 'site-information',
-			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
-		},
-
 		'site-title': {
 			stepName: 'site-title',
 			providesDependencies: [ 'siteTitle' ],
@@ -365,6 +360,12 @@ export function generateSteps( {
 		'reader-landing': {
 			stepName: 'reader-landing',
 			providesDependencies: [],
+		},
+
+		/* Improved Onboarding */
+		'site-information': {
+			stepName: 'site-information',
+			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
 		},
 	};
 }
