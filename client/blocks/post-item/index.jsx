@@ -97,7 +97,6 @@ class PostItem extends React.Component {
 		const { multiSelectEnabled, isCurrentPostSelected } = this.props;
 		return (
 			multiSelectEnabled && (
-				//eslint-disable-next-line
 				<div className="post-item__select" onClick={ this.toggleCurrentPostSelection }>
 					<FormInputCheckbox
 						checked={ isCurrentPostSelected }
@@ -170,17 +169,13 @@ class PostItem extends React.Component {
 								</a>
 							) }
 						</div>
-						<h1 //eslint-disable-line
+						<h1
 							className="post-item__title"
 							onClick={ this.clickHandler( 'title' ) }
 							onMouseOver={ preloadEditor }
 						>
 							{ ! externalPostLink && (
-								<a
-									href={ enabledPostLink }
-									className="post-item__title-link"
-									data-e2e-title={ title }
-								>
+								<a href={ enabledPostLink } className="post-item__title-link">
 									{ title || translate( 'Untitled' ) }
 								</a>
 							) }
