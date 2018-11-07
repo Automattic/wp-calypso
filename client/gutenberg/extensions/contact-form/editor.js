@@ -238,6 +238,7 @@ const editField = type => props => {
 			label={ getFieldLabel( props ) }
 			required={ props.attributes.required }
 			setAttributes={ props.setAttributes }
+			isSelected={ props.isSelected }
 		/>
 	);
 };
@@ -250,6 +251,7 @@ const editMultiField = type => props => {
 			options={ props.attributes.options }
 			setAttributes={ props.setAttributes }
 			type={ type }
+			isSelected={ props.isSelected }
 		/>
 	);
 };
@@ -380,6 +382,7 @@ registerBlockType(
 						label={ getFieldLabel( props ) }
 						required={ props.attributes.required }
 						setAttributes={ props.setAttributes }
+						isSelected={ props.isSelected }
 					/>
 				);
 			},
@@ -406,6 +409,7 @@ registerBlockType(
 						label={ getFieldLabel( props ) }
 						required={ props.attributes.required }
 						setAttributes={ props.setAttributes }
+						isSelected={ props.isSelected }
 					/>
 				);
 			},

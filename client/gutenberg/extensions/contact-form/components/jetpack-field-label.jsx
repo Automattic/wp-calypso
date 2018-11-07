@@ -5,6 +5,7 @@
  */
 import { Fragment } from '@wordpress/element';
 import { PlainText } from '@wordpress/editor';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -21,7 +22,15 @@ const JetpackFieldLabel = props => {
 				onChange={ label => setAttributes( { label } ) }
 				placeholder={ __( 'Type label…' ) }
 			/>
-			{ props.required && <span className="required">{ __( '(required)' ) }</span> }
+			{ props.isSelected && (
+				<ToggleControl
+					label={ __( 'Required' ) }
+					checked={ props.required }
+					onChange={ required => setAttributes( { required } ) }
+				/>
+			) }
+			{ ! props.isSelected &&
+				props.required && <span className="required">{ __( '(required)' ) }</span> }
 		</Fragment>
 	);
 };

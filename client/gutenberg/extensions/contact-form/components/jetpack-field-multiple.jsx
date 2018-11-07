@@ -50,6 +50,7 @@ class JetpackFieldMultiple extends Component {
 							required={ this.props.required }
 							label={ this.props.label }
 							setAttributes={ this.props.setAttributes }
+							isSelected={ this.props.isSelected }
 						/>
 					}
 				>

@@ -23,6 +23,7 @@ function JetpackFieldTextarea( props ) {
 							required={ props.required }
 							label={ props.label }
 							setAttributes={ props.setAttributes }
+							isSelected={ props.isSelected }
 						/>
 					}
 					disabled
