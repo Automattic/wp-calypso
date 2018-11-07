@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey } from 'lodash';
+import { invoke, noop, findKey, includes } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -252,7 +252,14 @@ class AboutStep extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const { goToNextStep, stepName, flowName, previousFlowName, translate } = this.props;
+		const {
+			goToNextStep,
+			stepName,
+			flowName,
+			shouldHideSiteTitle,
+			previousFlowName,
+			translate,
+		} = this.props;
 
 		//Defaults
 		let themeRepo = 'pub/radcliffe-2',
@@ -261,7 +268,6 @@ class AboutStep extends Component {
 			nextFlowName = flowName;
 
 		//Inputs
-		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 		const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
 		const siteGoalsArray = siteGoalsInput.split( ',' );
 		const siteGoalsGroup = siteGoalsArray.sort().join();
@@ -270,13 +276,15 @@ class AboutStep extends Component {
 
 		const eventAttributes = {};
 
-		//Site Title
-		if ( siteTitleInput !== '' ) {
-			siteTitleValue = siteTitleInput;
-			this.props.setSiteTitle( siteTitleValue );
+		if ( ! shouldHideSiteTitle ) {
+			const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
+			//Site Title
+			if ( siteTitleInput !== '' ) {
+				siteTitleValue = siteTitleInput;
+				this.props.setSiteTitle( siteTitleValue );
+			}
+			eventAttributes.site_title = siteTitleInput || 'N/A';
 		}
-
-		eventAttributes.site_title = siteTitleInput || 'N/A';
 
 		//Site Topic
 		const englishSiteTopicInput = this.state.hasPrepopulatedVertical
@@ -516,7 +524,7 @@ class AboutStep extends Component {
 	}
 
 	renderContent() {
-		const { translate, siteTitle } = this.props;
+		const { translate, siteTitle, shouldHideSiteTitle } = this.props;
 
 		const pressableWrapperClassName = classNames( 'about__pressable-wrapper', {
 			'about__wrapper-is-hidden': ! this.state.showStore,
@@ -540,24 +548,26 @@ class AboutStep extends Component {
 				<div className={ aboutFormClassName }>
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
-							<FormFieldset>
-								<FormLabel htmlFor="siteTitle">
-									{ translate( 'What would you like to name your site?' ) }
-									<InfoPopover className="about__info-popover" position="top">
-										{ translate(
-											"We'll use this as your site title. " +
-												"Don't worry, you can change this later."
-										) }
-									</InfoPopover>
-								</FormLabel>
-								<FormTextInput
-									id="siteTitle"
-									name="siteTitle"
-									placeholder={ translate( "e.g. Mel's Diner, Stevie’s Blog, Vail Renovations" ) }
-									defaultValue={ siteTitle }
-									onChange={ this.handleChangeEvent }
-								/>
-							</FormFieldset>
+							{ ! shouldHideSiteTitle && (
+								<FormFieldset>
+									<FormLabel htmlFor="siteTitle">
+										{ translate( 'What would you like to name your site?' ) }
+										<InfoPopover className="about__info-popover" position="top">
+											{ translate(
+												"We'll use this as your site title. " +
+													"Don't worry, you can change this later."
+											) }
+										</InfoPopover>
+									</FormLabel>
+									<FormTextInput
+										id="siteTitle"
+										name="siteTitle"
+										placeholder={ translate( "e.g. Mel's Diner, Stevie’s Blog, Vail Renovations" ) }
+										defaultValue={ siteTitle }
+										onChange={ this.handleChangeEvent }
+									/>
+								</FormFieldset>
+							) }
 
 							{ ! this.state.hasPrepopulatedVertical && (
 								<FormFieldset>
@@ -633,12 +643,14 @@ class AboutStep extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state, ownProps ) => ( {
 		siteTitle: getSiteTitle( state ),
 		siteGoals: getSiteGoals( state ),
 		siteTopic: getSurveyVertical( state ),
 		userExperience: getUserExperience( state ),
 		isLoggedIn: isUserLoggedIn( state ),
+		shouldHideSiteTitle:
+			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-information' ),
 	} ),
 	{
 		setSiteTitle,
