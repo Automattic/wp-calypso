@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { registerBlockType, getBlockType, createBlock } from '@wordpress/blocks';
+import { registerBlockType, getBlockType } from '@wordpress/blocks';
 import { SVG, Path } from '@wordpress/components';
 import { InnerBlocks } from '@wordpress/editor';
 
@@ -29,38 +29,6 @@ registerBlockType( 'jetpack/form', {
 	supports: {
 		html: false,
 	},
-	/* // not yet ready for prime time.
-	transforms: {
-		from: [
-			{
-				type: 'shortcode',
-				tag: 'contact-form',
-				attributes: {
-					subject: {
-						type: 'string',
-						shortcode: function( named ) {
-							return named.subject;
-						},
-					},
-					to: {
-						type: 'string',
-						shortcode: function( named ) {
-							return named.to;
-						},
-					},
-					submit_button_text: {
-						type: 'string',
-						shortcode: function( named ) {
-							return named.submit_button_text;
-						},
-					},
-				}
-
-			}
-		]
-	},
-	*/
-
 	attributes: {
 		subject: {
 			type: 'string',
@@ -145,78 +113,6 @@ const FieldDefaults = {
 			type: 'array',
 			default: [],
 		},
-	},
-	transforms: {
-		to: [
-			{
-				type: 'block',
-				blocks: [ 'jetpack/field-text' ],
-				isMatch: ( { options } ) => ! options.length,
-				transform: attributes => createBlock( 'jetpack/field-text', attributes ),
-			},
-			{
-				type: 'block',
-				blocks: [ 'jetpack/field-name' ],
-				isMatch: ( { options } ) => ! options.length,
-				transform: attributes => createBlock( 'jetpack/field-name', attributes ),
-			},
-			{
-				type: 'block',
-				blocks: [ 'jetpack/field-email' ],
-				isMatch: ( { options } ) => ! options.length,
-				transform: attributes => createBlock( 'jetpack/field-email', attributes ),
-			},
-			{
-				type: 'block',
-				blocks: [ 'jetpack/field-url' ],
-				isMatch: ( { options } ) => ! options.length,
-				transform: attributes => createBlock( 'jetpack/field-url', attributes ),
-			},
-			{
-				type: 'block',
-				blocks: [ 'jetpack/field-date' ],
-				isMatch: ( { options } ) => ! options.length,
-				transform: attributes => createBlock( 'jetpack/field-date', attributes ),
-			},
-			{
-				type: 'block',
-				blocks: [ 'jetpack/field-telephone' ],
-				isMatch: ( { options } ) => ! options.length,
-				transform: attributes => createBlock( 'jetpack/field-telephone', attributes ),
-			},
-			{
-				type: 'block',
-				blocks: [ 'jetpack/field-textarea' ],
-				isMatch: ( { options } ) => ! options.length,
-				transform: attributes => createBlock( 'jetpack/field-textarea', attributes ),
-			},
-			/* // not yet ready for prime time.
-			{
-				type: 'block',
-				blocks: [ 'jetpack/field-checkbox' ],
-				isMatch: ( { options } ) => 1 === options.length,
-				transform: ( attributes )=>createBlock( 'jetpack/field-checkbox', attributes )
-			},
-			*/
-			{
-				type: 'block',
-				blocks: [ 'jetpack/field-checkbox-multiple' ],
-				isMatch: ( { options } ) => 1 <= options.length,
-				transform: attributes => createBlock( 'jetpack/field-checkbox-multiple', attributes ),
-			},
-			{
-				type: 'block',
-				blocks: [ 'jetpack/field-radio' ],
-				isMatch: ( { options } ) => 1 <= options.length,
-				transform: attributes => createBlock( 'jetpack/field-radio', attributes ),
-			},
-			{
-				type: 'block',
-				blocks: [ 'jetpack/field-select' ],
-				isMatch: ( { options } ) => 1 <= options.length,
-				transform: attributes => createBlock( 'jetpack/field-select', attributes ),
-			},
-		],
 	},
 	save: function() {
 		return null;
