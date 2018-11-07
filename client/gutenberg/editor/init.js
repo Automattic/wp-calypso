@@ -70,6 +70,9 @@ export const initGutenberg = once( ( userId, siteSlug ) => {
 	debug( 'Registering Calypso Classic Block handler' );
 	setFreeformContentHandlerName( 'a8c/classic' );
 
+	// Initialize formatting tools
+	require( '@wordpress/format-library' );
+
 	debug( 'Gutenberg editor initialization complete.' );
 
 	return require( 'gutenberg/editor/main' ).default;

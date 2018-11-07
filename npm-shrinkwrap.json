@@ -4001,7 +4001,7 @@
     },
     "camelcase-keys": {
       "version": "2.1.0",
-      "resolved": "https://registry.npmjs.org/camelcase-keys/-/camelcase-keys-2.1.0.tgz",
+      "resolved": "http://registry.npmjs.org/camelcase-keys/-/camelcase-keys-2.1.0.tgz",
       "integrity": "sha1-MIvur/3ygRkFHvodkyITyRuPkuc=",
       "requires": {
         "camelcase": "^2.0.0",
@@ -5546,7 +5546,7 @@
         },
         "regjsgen": {
           "version": "0.2.0",
-          "resolved": "http://registry.npmjs.org/regjsgen/-/regjsgen-0.2.0.tgz",
+          "resolved": "https://registry.npmjs.org/regjsgen/-/regjsgen-0.2.0.tgz",
           "integrity": "sha1-bAFq3qxVT3WCP+N6wFuS1aTtsfc="
         },
         "regjsparser": {

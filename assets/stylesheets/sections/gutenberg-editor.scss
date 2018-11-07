@@ -23,6 +23,9 @@
 // Edit-post component styles
 @import '../../../node_modules/@wordpress/edit-post/build-style/style';
 
+// Format library styles
+@import '../../../node_modules/@wordpress/format-library/build-style/style';
+
 // Calypso specific Gutenberg editor styles
 @import 'gutenberg/editor/style';
 
