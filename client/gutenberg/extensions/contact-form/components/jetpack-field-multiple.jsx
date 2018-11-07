@@ -65,9 +65,14 @@ class JetpackFieldMultiple extends Component {
 							/>
 						) ) }
 					</ol>
-					<IconButton icon="insert" label={ __( 'Insert option' ) } onClick={ this.onChangeOption }>
+					<IconButton
+						className="jetpack-form-multiple__add-option"
+						icon="insert"
+						label={ __( 'Insert option' ) }
+						onClick={ this.onChangeOption }
+					>
 						{' '}
-						{ __( 'Add' ) }
+						{ __( 'Add option' ) }
 					</IconButton>
 				</BaseControl>
 			</Fragment>
