@@ -18,6 +18,7 @@ import {
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -41,7 +42,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 
 export class PlansFeaturesMain extends Component {
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		/**
 		 * Happychat does not update with the selected site right now :(
 		 * This ensures that Happychat groups are correct in case we switch sites while on the plans
@@ -117,6 +118,7 @@ export class PlansFeaturesMain extends Component {
 			personalPlan,
 			findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 			findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
+			findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ],
 		];
 
 		if ( hideFreePlan ) {
