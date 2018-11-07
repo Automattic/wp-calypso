@@ -175,7 +175,7 @@ export default connect( state => {
 	const isJetpack = isJetpackSite( state, siteId );
 
 	return {
-		checklistAvailable: isEnabled( 'jetpack/checklist' ) || ! isJetpack,
+		checklistAvailable: isEnabled( 'jetpack/checklist' ) || ! isJetpack || isAtomic,
 		isAtomic,
 		isJetpack,
 		isNewlyCreatedSite: isNewSite( state, siteId ),
