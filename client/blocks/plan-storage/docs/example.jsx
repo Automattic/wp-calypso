@@ -13,7 +13,13 @@ import { get } from 'lodash';
  */
 import PlanStorage from '../index';
 import PlanStorageBar from '../bar';
-import { PLAN_BUSINESS, PLAN_PREMIUM, PLAN_PERSONAL, PLAN_FREE } from 'lib/plans/constants';
+import {
+	PLAN_ECOMMERCE,
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+	PLAN_PERSONAL,
+	PLAN_FREE,
+} from 'lib/plans/constants';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
@@ -73,6 +79,17 @@ const PlanStorageExample = ( { siteId, siteSlug } ) => {
 				<PlanStorageBar
 					siteSlug={ siteSlug }
 					sitePlanSlug={ PLAN_BUSINESS }
+					mediaStorage={ mediaStorage.red }
+				/>
+			</div>
+
+			<div style={ { marginBottom: 16 } }>
+				<span style={ { fontSize: 12, color: 'grey' } }>
+					Ecommerce plans have unlimited storage, so PlanStorage will not be rendered.
+				</span>
+				<PlanStorageBar
+					siteSlug={ siteSlug }
+					sitePlanSlug={ PLAN_ECOMMERCE }
 					mediaStorage={ mediaStorage.red }
 				/>
 			</div>

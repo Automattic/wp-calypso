@@ -24,6 +24,8 @@ import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
 import {
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -87,6 +89,12 @@ describe( 'PlanStorageBar basic tests', () => {
 		assert.lengthOf( bar.find( '.plan-storage__bar' ), 0 );
 
 		bar = shallow( <PlanStorageBar { ...props } sitePlanSlug={ PLAN_BUSINESS_2_YEARS } /> );
+		assert.lengthOf( bar.find( '.plan-storage__bar' ), 0 );
+
+		bar = shallow( <PlanStorageBar { ...props } sitePlanSlug={ PLAN_ECOMMERCE } /> );
+		assert.lengthOf( bar.find( '.plan-storage__bar' ), 0 );
+
+		bar = shallow( <PlanStorageBar { ...props } sitePlanSlug={ PLAN_ECOMMERCE_2_YEARS } /> );
 		assert.lengthOf( bar.find( '.plan-storage__bar' ), 0 );
 	} );
 

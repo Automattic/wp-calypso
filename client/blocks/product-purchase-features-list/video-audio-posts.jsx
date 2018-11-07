@@ -10,13 +10,19 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 import { newPost } from 'lib/paths';
-import { isWpComBusinessPlan, isWpComPremiumPlan } from 'lib/plans';
+import { isWpComBusinessPlan, isWpComEcommercePlan, isWpComPremiumPlan } from 'lib/plans';
 
 function getDescription( plan, translate ) {
 	if ( isWpComBusinessPlan( plan ) ) {
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload as much media as you want, ' +
 				'directly to your site — the Business Plan has unlimited storage.'
+		);
+	}
+	if ( isWpComEcommercePlan( plan ) ) {
+		return translate(
+			'Enrich your posts and pages with video or audio. Upload as much media as you want, ' +
+				'directly to your site — the Ecommerce Plan has unlimited storage.'
 		);
 	}
 
