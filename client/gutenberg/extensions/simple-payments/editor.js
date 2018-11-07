@@ -43,6 +43,10 @@ registerBlockType( 'jetpack/simple-payments', {
 			type: 'string',
 			default: '',
 		},
+		featuredMediaId: {
+			type: 'number',
+			default: 0,
+		},
 		email: {
 			type: 'string',
 			default: '',

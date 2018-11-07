@@ -4,13 +4,22 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { RawHTML } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import './product-placeholder.scss';
 
-export default ( { title = '', content = '', formattedPrice = '', multiple = false } ) => {
+export default ( {
+	content = '',
+	featuredMedia = false,
+	formattedPrice = '',
+	multiple = false,
+	title = '',
+} ) => {
+	//eslint-disable-next-line
+	console.log( featuredMedia );
 	const assetUrl =
 		typeof window !== undefined && window.Jetpack_Block_Assets_Base_Url
 			? window.Jetpack_Block_Assets_Base_Url
@@ -19,6 +28,15 @@ export default ( { title = '', content = '', formattedPrice = '', multiple = fal
 	return (
 		<div className="jetpack-simple-payments-wrapper">
 			<div className="jetpack-simple-payments-product">
+				{ featuredMedia && (
+					<div class="jetpack-simple-payments-product-image">
+						<div class="jetpack-simple-payments-image">
+							<RawHTML>
+								{ featuredMedia.description.rendered.replace( 'class="attachment"', '' ) }
+							</RawHTML>
+						</div>
+					</div>
+				) }
 				<div className="jetpack-simple-payments-details">
 					{ title && (
 						<div className="jetpack-simple-payments-title">

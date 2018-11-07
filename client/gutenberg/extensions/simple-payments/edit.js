@@ -47,6 +47,7 @@ class SimplePaymentsEdit extends Component {
 		// @TODO check componentDidMount for the case where post was already loaded
 		if ( ! prevProps.simplePayment && simplePayment ) {
 			setAttributes( {
+				featuredMediaId: simplePayment.featured_media,
 				content: get( simplePayment, [ 'content', 'raw' ], content ),
 				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency ),
 				email: get( simplePayment, [ 'meta', 'spay_email' ], email ),
@@ -63,13 +64,13 @@ class SimplePaymentsEdit extends Component {
 	}
 
 	attributesToPost = attributes => {
-		const { content, currency, email, multiple, price, title } = attributes;
+		const { content, currency, email, featuredMediaId, multiple, price, title } = attributes;
 
 		return {
 			title,
 			status: 'publish',
 			content,
-			featured_media: 0,
+			featured_media: featuredMediaId,
 			meta: {
 				spay_currency: currency,
 				spay_email: email,
@@ -328,17 +329,18 @@ class SimplePaymentsEdit extends Component {
 
 	render() {
 		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
-		const { attributes, isSelected, isLoadingInitial, instanceId } = this.props;
+		const { attributes, featuredMedia, isSelected, isLoadingInitial, instanceId } = this.props;
 		const { content, currency, email, multiple, price, title } = attributes;
 
 		if ( ! isSelected && isLoadingInitial ) {
 			return (
 				<div className="simple-payments__loading">
 					<ProductPlaceholder
+						ariaBusy="true"
 						content="█████"
+						featuredMedia={ featuredMedia }
 						formattedPrice="█████"
 						title="█████"
-						ariaBusy="true"
 					/>
 				</div>
 			);
@@ -355,11 +357,12 @@ class SimplePaymentsEdit extends Component {
 		) {
 			return (
 				<ProductPlaceholder
+					ariaBusy="false"
 					content={ content }
+					featuredMedia={ featuredMedia }
 					formattedPrice={ this.formatPrice( price, currency ) }
 					multiple={ multiple }
 					title={ title }
-					ariaBusy="false"
 				/>
 			);
 		}
@@ -465,13 +468,17 @@ class SimplePaymentsEdit extends Component {
 
 const applyWithSelect = withSelect( ( select, props ) => {
 	const { paymentId } = props.attributes;
-	const { getEntityRecord } = select( 'core' );
+	const { getEntityRecord, getMedia } = select( 'core' );
 
 	const simplePayment = paymentId
 		? getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId )
 		: undefined;
 
 	return {
+		featuredMedia:
+			simplePayment && simplePayment.featured_media
+				? getMedia( simplePayment.featured_media )
+				: null,
 		isLoadingInitial: paymentId && ! simplePayment,
 		simplePayment,
 	};
