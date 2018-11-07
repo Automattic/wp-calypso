@@ -66,13 +66,12 @@ class SiteInformation extends Component {
 
 	renderContent() {
 		const { translate, isBusinessSiteSelected, siteNameLabelText } = this.props;
+
 		return (
 			<div className="site-information__wrapper">
 				<div className="site-information__form-wrapper ">
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
-							<h3>{ translate( 'Enter your basic information' ) }</h3>
-
 							<FormFieldset>
 								<FormLabel htmlFor="name">
 									{ siteNameLabelText }
