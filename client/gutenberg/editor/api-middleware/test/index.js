@@ -40,7 +40,6 @@ describe( 'wpcomPathMappingMiddleware', () => {
 			[ '/wp/v2/', `wp/v2` ],
 			[ '/wp/v2/users/?who=authors&per_page=10', 'wp/v2' ],
 			[ '/wp/v2/types/post?context=edit', 'wp/v2' ],
-			[ '/gutenberg/v1/block-renderer/core/latest-comments', 'gutenberg/v1' ],
 			[ '/oembed/1.0/proxy?url=example.wordpress.com', 'oembed/1.0' ],
 			[ '/oembed/110/proxy?url=example.wordpress.com', undefined ],
 		].forEach( ( [ input, output ] ) =>
