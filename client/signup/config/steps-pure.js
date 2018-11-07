@@ -132,11 +132,6 @@ export function generateSteps( {
 			},
 		},
 
-		'site-information': {
-			stepName: 'site-information',
-			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
-		},
-
 		'site-title': {
 			stepName: 'site-title',
 			providesDependencies: [ 'siteTitle' ],
