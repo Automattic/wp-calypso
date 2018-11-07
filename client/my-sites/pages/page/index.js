@@ -36,6 +36,7 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
 import { withoutNotice } from 'state/notices/actions';
 import { isEnabled } from 'config';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import getEditorUrl from 'state/selectors/get-editor-url';
 
@@ -635,7 +636,9 @@ const mapState = ( state, props ) => {
 		siteSlugOrId,
 		editorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.ID' ), 'page' ),
 		parentEditorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.parent.ID' ), 'page' ),
-		calypsoifyGutenberg: isCalypsoifyGutenbergEnabled( state, pageSiteId ),
+		calypsoifyGutenberg:
+			isCalypsoifyGutenbergEnabled( state, pageSiteId ) &&
+			'gutenberg' === getSelectedEditor( state, pageSiteId ),
 	};
 };
 

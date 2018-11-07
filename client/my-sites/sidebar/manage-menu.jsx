@@ -35,7 +35,9 @@ import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
+import getEditorUrl from 'state/selectors/get-editor-url';
 
 class ManageMenu extends PureComponent {
 	static propTypes = {
@@ -53,6 +55,7 @@ class ManageMenu extends PureComponent {
 		site: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string,
 		calypsoifyGutenberg: PropTypes.bool,
+		editorUrls: PropTypes.object,
 	};
 
 	// We default to `/my` posts when appropriate
@@ -73,22 +76,8 @@ class ManageMenu extends PureComponent {
 		return allSingleSites ? '' : '/my';
 	}
 
-	getEditorUrl = postType => {
-		const { calypsoifyGutenberg, siteAdminUrl, siteSlug } = this.props;
-
-		if ( calypsoifyGutenberg ) {
-			return 'post' === postType
-				? `${ siteAdminUrl }post-new.php?calypsoify=1`
-				: `${ siteAdminUrl }post-new.php?post_type=${ postType }&calypsoify=1`;
-		}
-
-		return 'post' === postType || 'page' === postType
-			? `/${ postType }/${ siteSlug }`
-			: `/edit/${ postType }/${ siteSlug }`;
-	};
-
 	getDefaultMenuItems() {
-		const { calypsoifyGutenberg, siteSlug, translate } = this.props;
+		const { calypsoifyGutenberg, editorUrls, siteSlug, translate } = this.props;
 
 		return [
 			{
@@ -98,7 +87,7 @@ class ManageMenu extends PureComponent {
 				queryable: true,
 				config: 'manage/pages',
 				link: '/pages',
-				buttonLink: this.getEditorUrl( 'page' ),
+				buttonLink: editorUrls.page,
 				forceButtonTargetInternal: calypsoifyGutenberg,
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
@@ -111,7 +100,7 @@ class ManageMenu extends PureComponent {
 				queryable: true,
 				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
-				buttonLink: this.getEditorUrl( 'post' ),
+				buttonLink: editorUrls.post,
 				forceButtonTargetInternal: calypsoifyGutenberg,
 				wpAdminLink: 'edit.php',
 				showOnAllMySites: true,
@@ -320,7 +309,7 @@ class ManageMenu extends PureComponent {
 
 				const buttonLink =
 					config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable
-						? this.getEditorUrl( postTypeSlug )
+						? this.props.editorUrls[ postTypeSlug ]
 						: undefined;
 
 				return memo.concat( {
@@ -381,23 +370,39 @@ const canCurrentUserFn = ( state, siteId ) => capability =>
 const getNewPostPathFn = ( state, siteId ) => postTypeSlug =>
 	getEditorNewPostPath( state, siteId, postTypeSlug );
 
-export default connect(
-	( state, { siteId } ) => ( {
+const getEditorUrls = ( state, siteId, postTypes ) =>
+	reduce(
+		postTypes,
+		( urls, { name } ) => {
+			urls[ name ] = getEditorUrl( state, siteId, null, name );
+			return urls;
+		},
+		{ post: getEditorUrl( state, siteId ), page: getEditorUrl( state, siteId, null, 'page' ) }
+	);
+
+const mapStateToProps = ( state, { siteId } ) => {
+	const postTypes = getPostTypes( state, siteId );
+
+	return {
 		allSingleSites: areAllSitesSingleUser( state ),
 		canCurrentUserFn: canCurrentUserFn( state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),
-		postTypes: getPostTypes( state, siteId ),
+		postTypes,
 		getNewPostPathFn: getNewPostPathFn( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		site: getSite( state, siteId ),
-		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		calypsoifyGutenberg: isCalypsoifyGutenbergEnabled( state, siteId ),
-	} ),
-	{
-		recordTracksEvent,
-	},
+		editorUrls: getEditorUrls( state, siteId, postTypes ),
+		calypsoifyGutenberg:
+			isCalypsoifyGutenbergEnabled( state, siteId ) &&
+			'gutenberg' === getSelectedEditor( state, siteId ),
+	};
+};
+
+export default connect(
+	mapStateToProps,
+	{ recordTracksEvent },
 	null,
 	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUserFn', 'getNewPostPathFn' ] } ) }
 )( localize( ManageMenu ) );
