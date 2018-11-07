@@ -47,9 +47,8 @@ class SiteInformation extends Component {
 	}
 
 	handleInputChange = ( { target: { name, value } } ) => {
-		value = trim( value );
 		if ( 'email' === name ) {
-			const isEmailValid = EmailValidator.validate( value );
+			const isEmailValid = ! trim( value ) || EmailValidator.validate( value );
 			return this.setState( {
 				[ name ]: value,
 				isEmailValid,
@@ -67,7 +66,7 @@ class SiteInformation extends Component {
 			} );
 		}
 
-		this.props.submitStep( ...this.state );
+		this.props.submitStep( this.state );
 	};
 
 	renderContent() {
@@ -192,7 +191,7 @@ function getSiteNameLabelText( siteType ) {
 	switch ( siteType ) {
 		case 'business':
 			return i18n.translate( 'Business name' );
-		case 'blog':
+		case 'blogger':
 			return i18n.translate( 'Blog name' );
 	}
 	return i18n.translate( 'Site name' );
