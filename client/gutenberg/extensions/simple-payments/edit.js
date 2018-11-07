@@ -6,6 +6,8 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
+import { InspectorControls } from '@wordpress/editor';
+import { withSelect } from '@wordpress/data';
 import {
 	ExternalLink,
 	PanelBody,
@@ -14,8 +16,6 @@ import {
 	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
-import { InspectorControls } from '@wordpress/editor';
-import { withSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
@@ -41,7 +41,13 @@ class SimplePaymentsEdit extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const { simplePayment, attributes, setAttributes, isSelected, isLoadingInitial } = this.props;
+		const {
+			attributes,
+			isLoadingInitial,
+			isSelected,
+			setAttributes,
+			simplePayment,
+		} = this.props;
 		const { content, currency, email, multiple, price, title } = attributes;
 
 		// @TODO check componentDidMount for the case where post was already loaded
@@ -66,8 +72,6 @@ class SimplePaymentsEdit extends Component {
 		const { content, currency, email, multiple, price, title } = attributes;
 
 		return {
-			title,
-			status: 'publish',
 			content,
 			featured_media: 0,
 			meta: {
@@ -76,6 +80,8 @@ class SimplePaymentsEdit extends Component {
 				spay_multiple: multiple ? 1 : 0,
 				spay_price: price,
 			},
+			status: 'publish',
+			title,
 		};
 	};
 
@@ -335,10 +341,10 @@ class SimplePaymentsEdit extends Component {
 			return (
 				<div className="simple-payments__loading">
 					<ProductPlaceholder
+						ariaBusy="true"
 						content="█████"
 						formattedPrice="█████"
 						title="█████"
-						ariaBusy="true"
 					/>
 				</div>
 			);
@@ -355,11 +361,11 @@ class SimplePaymentsEdit extends Component {
 		) {
 			return (
 				<ProductPlaceholder
+					ariaBusy="false"
 					content={ content }
 					formattedPrice={ this.formatPrice( price, currency ) }
 					multiple={ multiple }
 					title={ title }
-					ariaBusy="false"
 				/>
 			);
 		}
@@ -390,8 +396,8 @@ class SimplePaymentsEdit extends Component {
 					/>
 
 					<TextareaControl
-						disabled={ isLoadingInitial }
 						className="simple-payments__field simple-payments__field-content"
+						disabled={ isLoadingInitial }
 						label={ __( 'Enter a description for your item' ) }
 						onChange={ this.handleContentChange }
 						placeholder={ __( 'Enter a description for your item' ) }
@@ -400,8 +406,8 @@ class SimplePaymentsEdit extends Component {
 
 					<div className="simple-payments__price-container">
 						<SelectControl
-							disabled={ isLoadingInitial }
 							className="simple-payments__field simple-payments__field-currency"
+							disabled={ isLoadingInitial }
 							label={ __( 'Currency' ) }
 							onChange={ this.handleCurrencyChange }
 							options={ this.getCurrencyList }
@@ -425,8 +431,8 @@ class SimplePaymentsEdit extends Component {
 
 					<div className="simple-payments__field-multiple">
 						<ToggleControl
-							disabled={ isLoadingInitial }
 							checked={ Boolean( multiple ) }
+							disabled={ isLoadingInitial }
 							label={ __( 'Allow people buy more than one item at a time' ) }
 							onChange={ this.handleMultipleChange }
 						/>

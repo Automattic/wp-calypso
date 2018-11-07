@@ -40,9 +40,9 @@ export default ( { title = '', content = '', formattedPrice = '', multiple = fal
 							<div className="jetpack-simple-payments-items">
 								<input
 									className="jetpack-simple-payments-items-number"
+									readOnly
 									type="number"
 									value="1"
-									readOnly
 								/>
 							</div>
 						) }
