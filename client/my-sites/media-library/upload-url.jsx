@@ -18,6 +18,11 @@ import analytics from 'lib/analytics';
 import FormTextInput from 'components/forms/form-text-input';
 import MediaActions from 'lib/media/actions';
 
+/**
+ * Style dependencies
+ */
+import './upload-url.scss';
+
 class MediaLibraryUploadUrl extends Component {
 	static propTypes = {
 		className: PropTypes.string,

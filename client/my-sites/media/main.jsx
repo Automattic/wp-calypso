@@ -31,6 +31,11 @@ import accept from 'lib/accept';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import searchUrl from 'lib/search-url';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Media extends Component {
 	static propTypes = {
 		selectedSite: PropTypes.object,

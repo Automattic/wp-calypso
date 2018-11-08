@@ -22,6 +22,11 @@ import { getMimePrefix } from 'lib/media/utils';
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
 import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
+/**
+ * Style dependencies
+ */
+import './list-item.scss';
+
 export default class extends React.Component {
 	static displayName = 'MediaLibraryListItem';
 
