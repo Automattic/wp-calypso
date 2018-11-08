@@ -17,9 +17,11 @@ export default ( { children = null, isError = false, ...props } ) => {
 	} );
 
 	return (
-		<p className={ classes } { ...props }>
-			{ isError && <GridiconNoticeOutline size="24" /> }
-			<span>{ children }</span>
-		</p>
+		children && (
+			<p className={ classes } { ...props }>
+				{ isError && <GridiconNoticeOutline size="24" /> }
+				<span>{ children }</span>
+			</p>
+		)
 	);
 };

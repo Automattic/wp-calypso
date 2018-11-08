@@ -391,11 +391,9 @@ class SimplePaymentsEdit extends Component {
 						type="text"
 						value={ title }
 					/>
-					{ fieldTitleError && (
-						<HelpMessage id={ `${ instanceId }-title-error` } isError>
-							{ fieldTitleError }
-						</HelpMessage>
-					) }
+					<HelpMessage id={ `${ instanceId }-title-error` } isError>
+						{ fieldTitleError }
+					</HelpMessage>
 
 					<TextareaControl
 						className="simple-payments__field simple-payments__field-content"
@@ -429,11 +427,9 @@ class SimplePaymentsEdit extends Component {
 							type="number"
 							value={ price || '' }
 						/>
-						{ fieldPriceError && (
-							<HelpMessage id={ `${ instanceId }-price-error` } isError>
-								{ fieldPriceError }
-							</HelpMessage>
-						) }
+						<HelpMessage id={ `${ instanceId }-price-error` } isError>
+							{ fieldPriceError }
+						</HelpMessage>
 					</div>
 
 					<div className="simple-payments__field-multiple">
@@ -458,11 +454,9 @@ class SimplePaymentsEdit extends Component {
 						type="email"
 						value={ email }
 					/>
-					{ fieldEmailError && (
-						<HelpMessage id={ `${ instanceId }-email-error` } isError>
-							{ fieldEmailError }
-						</HelpMessage>
-					) }
+					<HelpMessage id={ `${ instanceId }-email-error` } isError>
+						{ fieldEmailError }
+					</HelpMessage>
 					<HelpMessage id={ `${ instanceId }-email-help` }>
 						{ __(
 							"This is where PayPal will send your money. To claim a payment, you'll " +
