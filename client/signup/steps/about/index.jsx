@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey } from 'lodash';
+import { invoke, noop, findKey, includes } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -422,6 +422,13 @@ class AboutStep extends Component {
 		}
 	}
 
+	shouldShowSiteTopicField() {
+		const { steps } = this.props;
+		const { hasPrepopulatedVertical } = this.props;
+
+		return ! hasPrepopulatedVertical && ! includes( steps, 'site-topic' );
+	}
+
 	renderContent() {
 		const { translate, siteTitle } = this.props;
 
@@ -466,7 +473,7 @@ class AboutStep extends Component {
 								/>
 							</FormFieldset>
 
-							{ ! this.state.hasPrepopulatedVertical && (
+							{ this.shouldShowSiteTopicField() && (
 								<FormFieldset>
 									<FormLabel htmlFor="siteTopic">
 										{ translate( 'What will your site be about?' ) }
