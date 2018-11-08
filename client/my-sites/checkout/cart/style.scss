@@ -395,6 +395,8 @@ div.popover-cart__popover {
 	@include breakpoint( '<660px' ) {
 		left: 0;
 		margin-top: 10px;
+		// Create space for the inline help button
+		margin-bottom: 65px;
 		max-height: 100%;
 		position: relative;
 		top: 0;
