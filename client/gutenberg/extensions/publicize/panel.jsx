@@ -41,9 +41,6 @@ const PublicizePanel = ( { connections, refreshConnections } ) => (
 		<div>{ __( 'Connect and select social media services to share this post.' ) }</div>
 		{ ( connections && connections.length > 0 ) && <PublicizeForm staticConnections={ connections } refreshCallback={ refreshConnections } /> }
 		{ ( connections && 0 === connections.length ) && <PublicizeNoConnections refreshCallback={ refreshConnections } /> }
-		<a tabIndex="0" onClick={ refreshConnections } disabled={ ! connections }>
-			{ ! connections ? __( 'Refreshing…' ) : __( 'Refresh connections' ) }
-		</a>
 		{ ( connections && connections.length > 0 ) && <PublicizeConnectionVerify /> }
 	</PluginPrePublishPanel>
 );
