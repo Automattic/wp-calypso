@@ -41,6 +41,12 @@
 	}
 }
 
+@include breakpoint( '<660px' ) {
+	.focus-sidebar .editor-gutenberg-opt-in-notice {
+		z-index: z-index( 'root', '.editor-sidebar' );
+	}
+}
+
 @keyframes slide-in-bottom {
 	from {
 		opacity: 0;
