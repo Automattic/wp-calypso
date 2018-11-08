@@ -43,6 +43,7 @@
 }
 
 .site-information__submit-wrapper .button {
+	width: 180px;
 	@include breakpoint( '<480px' ) {
 		width: 100%;
 	}
