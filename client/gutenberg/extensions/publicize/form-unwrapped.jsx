@@ -91,7 +91,7 @@ class PublicizeFormUnwrapped extends Component {
 		} );
 
 		return (
-			<div className="misc-pub-section misc-pub-section-last">
+			<div className="misc-pub-section-last">
 				<div id="publicize-form">
 					<ul>
 						{ staticConnections.map( c => (
