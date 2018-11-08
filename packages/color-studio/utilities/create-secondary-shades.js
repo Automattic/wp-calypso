@@ -4,9 +4,9 @@ module.exports = baseColor => {
   const brightShades = createBrightShades(baseColor)
   const darkShades = createDarkShades(baseColor)
 
-  const palette = mergePaletteShades(brightShades, darkShades).map((color, arrayIndex) => {
+  const palette = mergePaletteShades(brightShades, darkShades).map((value, arrayIndex) => {
     return {
-      color,
+      value,
       index: (arrayIndex * 100) || 50
     }
   })

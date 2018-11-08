@@ -1,6 +1,6 @@
 const chroma = require('chroma-js')
 
-module.exports = (colorArray, customProperties = {}, outputIndent = 2) => {
+module.exports = (colorArray, customProperties = {}) => {
   const sketchPalette = Object.assign(customProperties, {
     compatibleVersion: '2',
     pluginVersion: '2.14',
@@ -13,7 +13,7 @@ module.exports = (colorArray, customProperties = {}, outputIndent = 2) => {
     sketchPalette.colors.push(rgba)
   })
 
-  return JSON.stringify(sketchPalette, null, outputIndent)
+  return sketchPalette
 }
 
 function formatColor(colorValue) {

@@ -26,12 +26,13 @@
     "xo": "^0.20.3"
   },
   "scripts": {
-    "build": "yarn build:json && yarn build:scss && yarn build:sketch",
-    "build:json": "node palette json > dist/colors.json",
-    "build:scss": "node palette scss > dist/_colors.scss",
-    "build:sketch": "node palette sketch > dist/Colors.sketchpalette",
+    "build": "yarn palette:build && yarn studio:build",
     "lint": "xo",
-    "precommit": "yarn lint && yarn build && yarn studio && git add --update",
+    "palette:build": "yarn palette:build:json && yarn palette:build:scss && yarn palette:build:sketch",
+    "palette:build:json": "node builders/json > dist/colors.json",
+    "palette:build:scss": "node builders/scss-from-json > dist/_colors.scss",
+    "palette:build:sketch": "node builders/sketchpalette-from-json > dist/colors.sketchpalette",
+    "precommit": "yarn lint && yarn build && git add --update",
     "studio": "yarn studio:build",
     "studio:build": "webpack --display=errors-only",
     "studio:development": "webpack --watch --mode=development"

@@ -14,7 +14,8 @@ const createPrimaryShades = require('../../utilities/create-primary-shades')
 const createSecondaryShades = require('../../utilities/create-secondary-shades')
 
 const archive = require('../../data/colors-v0.2.1.json')
-const foundations = require('../../foundations')
+
+const BASE_COLORS = require('../../data/base-colors.js')
 
 const COLOR_WHITE = '#ffffff'
 const COLOR_BLACK = '#000000'
@@ -76,15 +77,15 @@ function makeDownloadable(colors) {
 }
 
 function handleFoundationTiles() {
-  output.innerHTML = foundations.baseColors
-    .map(c => createColorTiles(c.value, c.name, c.semantic, true))
+  output.innerHTML = BASE_COLORS
+    .map(c => createColorTiles(c.value, c.name, c.formula, true))
     .join('')
 
   activateTiles(output)
 }
 
 function handleFoundationButton() {
-  const palettes = foundations.baseColors.map(color => {
+  const palettes = BASE_COLORS.map(color => {
     const palette = []
 
     createPrimaryShades(color.value).forEach(colorObject => {
@@ -172,7 +173,9 @@ function activateTiles(scope = document) {
 
 function createColorTile(colorObject, previous = false) {
   const baseIndex = previous ? 80 : 500
-  const { index, color, name, auxiliary } = colorObject
+
+  const { index, name, auxiliary } = colorObject
+  const color = colorObject.color || colorObject.value
 
   const className = `tile ${index === baseIndex ? ' tile--base' : ''} text-center`
   const title = (name && index === baseIndex ? `${name} ${index}` : index) + (auxiliary ? 'A' : '')
