@@ -290,7 +290,10 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					use: [
 						{
 							loader: 'file-loader',
-							options: { name: '[name].[ext]', outputPath: 'images/' },
+							options: {
+								name: '[name]-[hash].[ext]',
+								outputPath: 'images/',
+							},
 						},
 					],
 				},
