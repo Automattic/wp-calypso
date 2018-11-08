@@ -331,7 +331,7 @@ export default connect(
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
 			supportsJetpackSiteAccelerator:
-				isJetpackSite && isJetpackMinimumVersion( state, selectedSiteId, '4.7' ),
+				isJetpackSite && isJetpackMinimumVersion( state, selectedSiteId, '6.7' ),
 		};
 	},
 	{
