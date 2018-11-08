@@ -15,6 +15,7 @@ import Button from 'components/forms/form-button';
 import { resetImport } from 'lib/importer/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setImportOriginSiteDetails } from 'state/importer-nux/actions';
+import { SITE_IMPORTER } from 'state/imports/constants';
 
 export class DoneButton extends React.PureComponent {
 	static displayName = 'DoneButton';
@@ -38,7 +39,7 @@ export class DoneButton extends React.PureComponent {
 
 		resetImport( siteId, importerId );
 
-		if ( 'importer-type-site-importer' === type ) {
+		if ( SITE_IMPORTER === type ) {
 			// Clear out site details, so that importers list isn't filtered
 			this.props.setImportOriginSiteDetails();
 		}
