@@ -41,6 +41,8 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import {
 	PLAN_FREE,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_ECOMMERCE,
