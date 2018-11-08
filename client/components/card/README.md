@@ -50,6 +50,6 @@ Name | Type | Default | Description
 
 ## Related components
 
-* To expand/collapse a card, use the [FoldableCard](./foldable-card) component.
-* To add a text heading to a card, use the [CardHeading](./card-heading) component.
-* To add a call to action, use the [ActionCard](./action-card) component.
+* To expand/collapse a card, use the [FoldableCard](../foldable-card) component.
+* To add a text heading to a card, use the [CardHeading](../card-heading) component.
+* To add a call to action, use the [ActionCard](../action-card) component.
