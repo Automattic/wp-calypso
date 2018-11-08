@@ -47,8 +47,8 @@ class MobileDownloadCard extends React.Component {
 			countryNumericCode: PropTypes.string,
 			number: PropTypes.string,
 			numberFull: PropTypes.string,
+			isValid: PropTypes.bool,
 		} ),
-
 		hasLoadedStoredPhone: PropTypes.bool,
 		hasSendingError: PropTypes.bool,
 		didSend: PropTypes.bool,
