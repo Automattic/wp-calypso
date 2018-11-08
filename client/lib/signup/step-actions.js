@@ -121,7 +121,7 @@ export function createSiteWithCart(
 	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 	const siteGoals = getSiteGoals( reduxStore.getState() ).trim();
-	const siteInformation = getSiteInformation( reduxStore.getState() ).trim();
+	const siteInformation = getSiteInformation( reduxStore.getState() );
 	const importingFromUrl =
 		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( reduxStore.getState() ) ) : '';
 

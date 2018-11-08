@@ -64,7 +64,7 @@ class SiteInformation extends Component {
 	};
 
 	renderContent() {
-		const { translate, isBusinessSiteSelected, siteNameLabelText } = this.props;
+		const { translate, isBusinessSiteSelected, siteNameText } = this.props;
 
 		return (
 			<div className="site-information__wrapper">
@@ -73,7 +73,7 @@ class SiteInformation extends Component {
 						<Card>
 							<FormFieldset>
 								<FormLabel htmlFor="name">
-									{ siteNameLabelText }
+									{ siteNameText.label }
 									<InfoPopover className="site-information__info-popover" position="top">
 										{ translate( 'This will be used for the title of your site.' ) }
 									</InfoPopover>
@@ -81,7 +81,7 @@ class SiteInformation extends Component {
 								<FormTextInput
 									id="name"
 									name="name"
-									placeholder={ translate( 'eg. Google, Automattic, AirBnb' ) }
+									placeholder={ siteNameText.placeholder }
 									onChange={ this.handleInputChange }
 									value={ this.state.name }
 								/>
@@ -159,35 +159,49 @@ class SiteInformation extends Component {
 	render() {
 		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
 
+		const headerText = translate( 'Almost done, just a few more things.' );
+		const subHeaderText = translate( "We'll add this information to your new website." );
+
 		return (
 			<StepWrapper
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
-				headerText={ translate( 'Almost done, just a few more things.' ) }
-				subHeaderText={ translate( "We'll add this information to your new website." ) }
+				headerText={ headerText }
+				fallbackHeaderText={ headerText }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
-				backUrl={ '/start/main-onboarding/business-needs' }
 			/>
 		);
 	}
 }
 
 /**
- * Returns translated text for the name field depending on the site type
+ * Returns translated label and placeholder for the name field depending on the site type
  *
  * @param   {String} siteType E.g,'business', 'blog'
- * @returns {String|Object} TranslatableString
+ * @returns {Object} label and placeholder object
  */
-function getSiteNameLabelText( siteType ) {
+function getSiteNameText( siteType ) {
+	//TODO: After site-type component is merged, fetch segment names from lib/site-type.js
 	switch ( siteType ) {
 		case 'business':
-			return i18n.translate( 'Business name' );
+			return {
+				label: i18n.translate( 'Business name' ),
+				placeholder: i18n.translate( 'eg. Google, Automattic, AirBnb' ),
+			};
 		case 'blogger':
-			return i18n.translate( 'Blog name' );
+			return {
+				label: i18n.translate( 'Blog name' ),
+				placeholder: i18n.translate( 'eg. Google, Automattic, AirBnb' ),
+			};
 	}
-	return i18n.translate( 'Site name' );
+	return {
+		label: i18n.translate( 'Site name' ),
+		placeholder: i18n.translate( 'eg. Google, Automattic, AirBnb' ),
+	};
 }
 
 export default connect(
@@ -198,12 +212,15 @@ export default connect(
 			siteInformation: getSiteInformation( state ),
 			siteTitle: getSiteTitle( state ),
 			isBusinessSiteSelected: 'business' === siteType,
-			siteNameLabelText: getSiteNameLabelText( siteType ),
+			siteNameText: getSiteNameText( siteType ),
 		};
 	},
 	( dispatch, ownProps ) => ( {
 		submitStep: ( { name, address, email, phone } ) => {
-			dispatch( setSiteTitle( name ) );
+			address = trim( address );
+			email = trim( email );
+			phone = trim( phone );
+			dispatch( setSiteTitle( trim( name ) ) );
 			dispatch( setSiteInformation( { address, email, phone } ) );
 			// Create site
 			SignupActions.submitSignupStep(
