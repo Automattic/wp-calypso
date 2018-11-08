@@ -259,19 +259,17 @@ class MobileDownloadCard extends React.Component {
 }
 
 export default connect(
-	state => {
-		return {
-			countriesList: getCountries( state, 'sms' ),
-			accountRecoveryPhone: getAccountRecoveryPhone( state ),
-			hasLoadedAccountRecoveryPhone: isAccountRecoverySettingsReady( state ),
+	state => ( {
+		countriesList: getCountries( state, 'sms' ),
+		accountRecoveryPhone: getAccountRecoveryPhone( state ),
+		hasLoadedAccountRecoveryPhone: isAccountRecoverySettingsReady( state ),
 
-			userSettings: getUserSettings( state ),
-			hasUserSettings: hasUserSettings( state ),
+		userSettings: getUserSettings( state ),
+		hasUserSettings: hasUserSettings( state ),
 
-			isSending: isAppSMSRequestSending( state ),
-			didSend: didAppSMSRequestCompleteSuccessfully( state ),
-			hasSendingError: didAppSMSRequestCompleteWithError( state ),
-		};
-	},
+		isSending: isAppSMSRequestSending( state ),
+		didSend: didAppSMSRequestCompleteSuccessfully( state ),
+		hasSendingError: didAppSMSRequestCompleteWithError( state ),
+	} ),
 	{ successNotice, errorNotice, sendSMS }
 )( localize( MobileDownloadCard ) );
