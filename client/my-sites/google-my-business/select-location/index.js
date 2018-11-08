@@ -37,6 +37,11 @@ import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import { withEnhancers } from 'state/utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class GoogleMyBusinessSelectLocation extends Component {
 	static propTypes = {
 		locations: PropTypes.arrayOf( PropTypes.object ).isRequired,
