@@ -55,6 +55,13 @@ class JetpackFieldMultiple extends Component {
 
 	render() {
 		this.type = this.props.type;
+		let options = this.props.options;
+		let inFocus = this.state.inFocus;
+		if ( ! this.props.options.length ) {
+			options = [ '' ];
+			inFocus = 0;
+		}
+
 		return (
 			<Fragment>
 				<BaseControl
@@ -76,7 +83,7 @@ class JetpackFieldMultiple extends Component {
 						className="jetpack-field-multiple__list"
 						id={ `jetpack-field-multiple-${ this.props.instanceId }` }
 					>
-						{ this.props.options.map( ( option, index ) => (
+						{ options.map( ( option, index ) => (
 							<JetpackOption
 								type={ this.type }
 								key={ index }
@@ -85,7 +92,7 @@ class JetpackFieldMultiple extends Component {
 								onChangeOption={ this.onChangeOption }
 								isSelected={ this.props.isSelected }
 								onAddOption={ this.addNewOption }
-								isInFocus={ index === this.state.inFocus && this.props.isSelected }
+								isInFocus={ index === inFocus && this.props.isSelected }
 							/>
 						) ) }
 					</ol>
