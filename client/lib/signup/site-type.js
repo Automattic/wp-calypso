@@ -9,28 +9,29 @@ import i18n from 'i18n-calypso';
  */
 
 /**
- * Current list of verticals that have/will have landing pages.
+ * Current list of site types that are displayed in the signup site-type step
+ * Some (or all) of these site types will also have landing pages.
  * A user who comes in via a landing page will not see the Site Topic dropdown.
  */
 export const allSiteTypes = [
 	{
-		type: i18n.translate( 'blogger' ),
+		type: i18n.translate( 'Blogger' ),
 		description: i18n.translate( 'Share a collection of posts.' ),
 	},
 	{
-		type: i18n.translate( 'business' ),
+		type: i18n.translate( 'Business' ),
 		description: i18n.translate( 'Promote products and services.' ),
 	},
 	{
-		type: i18n.translate( 'professional' ),
+		type: i18n.translate( 'Professional' ),
 		description: i18n.translate( 'Showcase your portfolio and work.' ),
 	},
 	{
-		type: i18n.translate( 'educator' ),
+		type: i18n.translate( 'Educator' ),
 		description: i18n.translate( 'Share school projects and class info.' ),
 	},
 	{
-		type: i18n.translate( 'non-profit organization' ),
+		type: i18n.translate( 'Non-profit Organization' ),
 		description: i18n.translate( 'Raise money and awareness for a cause.' ),
 	},
 ];

@@ -275,7 +275,7 @@ class Signup extends React.Component {
 			}
 		}
 
-		//`segment` query parameter
+		//`site_type` query parameter
 		const siteType = queryObject.site_type;
 		if ( 'undefined' !== typeof siteType ) {
 			debug( 'From query string: site_type = %s', siteType );
