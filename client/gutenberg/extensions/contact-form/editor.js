@@ -54,6 +54,7 @@ registerBlockType( 'jetpack/form', {
 				to={ props.attributes.to }
 				submit_button_text={ props.attributes.submit_button_text }
 				setAttributes={ props.setAttributes }
+				isSelected={ props.isSelected }
 			>
 				<InnerBlocks
 					templateLock={ false }

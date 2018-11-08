@@ -38,16 +38,6 @@ class JetpackForm extends Component {
 				<InspectorControls>
 					<PanelBody title={ __( 'Submission Details' ) }>
 						<TextControl
-							label={ __( 'What would you like the subject of the email to be?' ) }
-							value={ this.props.subject }
-							onChange={ this.onChangeSubject }
-						/>
-						<TextControl
-							label={ __( 'Which email address should we send the submissions to?' ) }
-							value={ this.props.to }
-							onChange={ this.onChangeTo }
-						/>
-						<TextControl
 							label={ __( 'What should the label on the form’s submit button say?' ) }
 							value={ this.props.submit_button_text }
 							placeholder={ __( 'Submit', 'jetpack' ) }
@@ -56,6 +46,20 @@ class JetpackForm extends Component {
 					</PanelBody>
 				</InspectorControls>
 				<div className={ this.props.className + ' jetpack-form' }>
+					{ this.props.isSelected && (
+						<div class="components-placeholder">
+							<TextControl
+								label={ __( 'Which email address should we send the submissions to?' ) }
+								value={ this.props.to }
+								onChange={ this.onChangeTo }
+							/>
+							<TextControl
+								label={ __( 'What would you like the subject of the email to be?' ) }
+								value={ this.props.subject }
+								onChange={ this.onChangeSubject }
+							/>
+						</div>
+					) }
 					{ this.props.children }
 					<div className="button button-primary button-default jetpack-submit-button">
 						{ this.props.submit_button_text ? this.props.submit_button_text : __( 'Submit' ) }
