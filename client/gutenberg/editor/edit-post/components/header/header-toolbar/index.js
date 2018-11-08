@@ -89,7 +89,7 @@ function getCloseButtonPath( routeHistory, site ) {
 		return lastNonEditorPath.path;
 	}
 
-	const editorPostType = lastEditorPath.match( editorPathRegex )[ 1 ];
+	const editorPostType = lastEditorPath.match( editorPathRegex )[ 2 ];
 	let path;
 
 	// @see post-editor/post-editor.jsx
