@@ -105,10 +105,10 @@ module.exports = ( { types: t } ) => {
 				}
 
 				if ( isAsync ) {
-					// Generate a chunk name based on the require path
+					// Generate a chunk name based on the module path
 					const chunkName = 'async-load-' + kebabCase( argument.value );
 
-					// Transform to asynchronous require.ensure
+					// Transform to dynamic import
 					const argumentWithMagicComments = t.addComment(
 						argument,
 						'leading',
