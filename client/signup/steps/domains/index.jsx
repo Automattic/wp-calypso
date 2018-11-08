@@ -84,6 +84,12 @@ class DomainsStep extends React.Component {
 
 		const domain = get( props, 'queryObject.new', false );
 		const search = get( props, 'queryObject.search', false ) === 'yes';
+
+		// If we landed anew from `/domains` and it's the `new-flow` variation, always rerun the search
+		if ( search && props.path.indexOf( '?' ) !== -1 ) {
+			this.searchOnInitialRender = true;
+		}
+
 		if (
 			props.isDomainOnly &&
 			domain &&
@@ -321,9 +327,10 @@ class DomainsStep extends React.Component {
 			initialState = this.props.step.domainForm;
 		}
 
-		// If we have a different search query, refresh the domain search results
-		const initialQuery = get( this.props, 'queryObject.new', false );
-		if ( initialQuery && initialState.lastQuery && initialQuery !== initialState.lastQuery ) {
+		// If it's the first load, rerun the search with whatever we get from the query param
+		const initialQuery = get( this.props, 'queryObject.new', '' );
+		if ( initialQuery && this.searchOnInitialRender ) {
+			this.searchOnInitialRender = false;
 			initialState.searchResults = null;
 			initialState.subdomainSearchResults = null;
 			initialState.loadingResults = true;

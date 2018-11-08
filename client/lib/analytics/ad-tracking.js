@@ -763,6 +763,7 @@ export function recordOrder( cart, orderId ) {
 	recordOrderInFacebook( cart, orderId );
 	recordOrderInNanigans( cart, orderId );
 	recordOrderInDonutsGtag( cart, orderId );
+	recordOrderInBing( cart, orderId );
 
 	// This has to come before we add the items to the Google Analytics cart
 	recordOrderInGoogleAnalytics( cart, orderId );
@@ -922,14 +923,15 @@ function recordProduct( product, orderId ) {
 		if ( isSupportedCurrency( product.currency ) ) {
 			const costUSD = costToUSD( product.cost, product.currency );
 
-			// Bing
+			// Bing: only record purchases here.
+			// We track signups in `recordOrderInBing()`.
 			if ( isBingEnabled && ! product.is_signup ) {
 				const bingParams = {
 					ec: 'purchase',
 					gv: costUSD,
 				};
 				if ( isJetpackPlan ) {
-					// `el` must be included only for jetpack plans
+					// NOTE: `el` must be included only for jetpack plans.
 					bingParams.el = 'jetpack';
 				}
 				window.uetq.push( bingParams );
@@ -1153,6 +1155,57 @@ export function recordAliasInFloodlight() {
 	};
 
 	recordParamsInFloodlight( params );
+}
+
+/**
+ * Records a signup|purchase in Bing.
+ *
+ * @param {Object} cart - cart as `CartValue` object.
+ * @param {Number} orderId - the order ID.
+ * @returns {void}
+ */
+function recordOrderInBing( cart /*, orderId */ ) {
+	// NOTE: `orderId` is not used at this time, but it could be useful in the near future.
+
+	if ( ! isAdTrackingAllowed() || ! isBingEnabled ) {
+		return;
+	}
+
+	if ( ! cart.is_signup ) {
+		return; // We only track signups here for now.
+		// We already record each individual product purchase.
+	}
+
+	const containsJetpackPlan = some( cart.products, productsValues.isJetpackPlan );
+	const containsNonJetpackProduct = some( cart.products, p => {
+		return ! productsValues.isJetpackPlan( p );
+	} );
+
+	if ( containsJetpackPlan && containsNonJetpackProduct ) {
+		debug(
+			'recordOrderInBing: Record ' +
+				( cart.is_signup ? 'signup' : 'purchase' ) +
+				' containing Jetpack and non-Jetpack products'
+		);
+	} else if ( containsJetpackPlan ) {
+		debug(
+			'recordOrderInBing: Record ' +
+				( cart.is_signup ? 'signup' : 'purchase' ) +
+				' containing Jetpack'
+		);
+	} else {
+		debug( 'recordOrderInBing: Record ' + ( cart.is_signup ? 'signup' : 'purchase' ) );
+	}
+
+	const bingParams = {
+		ec: cart.is_signup ? 'signup' : 'purchase',
+		gv: cart.total_cost,
+	};
+	if ( containsJetpackPlan ) {
+		// NOTE: `el` must be included only for jetpack plans.
+		bingParams.el = 'jetpack';
+	}
+	window.uetq.push( bingParams );
 }
 
 function recordSignupStartInDonutsGtag() {
