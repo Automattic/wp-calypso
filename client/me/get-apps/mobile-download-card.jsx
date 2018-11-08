@@ -248,7 +248,7 @@ class MobileDownloadCard extends React.Component {
 
 	onKeyUp = event => {
 		if ( event.key === 'Enter' ) {
-			this.onSubmit();
+			this.onSubmit( event );
 		}
 	};
 
