@@ -73,7 +73,7 @@ class JetpackOption extends Component {
 				{ this.props.isSelected && (
 					<IconButton
 						className="jetpack-option__remove"
-						icon="no"
+						icon="trash"
 						label={ __( 'Remove option' ) }
 						onClick={ this.onDeleteOption }
 					/>
