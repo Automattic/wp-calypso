@@ -21,6 +21,11 @@ import FormTextInput from 'components/forms/form-text-input';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class FeedSettings extends Component {
 	render() {
 		const {

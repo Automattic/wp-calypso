@@ -18,6 +18,11 @@ import SectionHeader from 'components/section-header';
 import SupportInfo from 'components/support-info';
 import RelatedContentPreview from './related-content-preview';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const RelatedPosts = ( {
 	fields,
 	handleAutosavingToggle,

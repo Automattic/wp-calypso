@@ -33,6 +33,11 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import FormLabel from 'components/forms/form-label';
 import hasCancelableSitePurchases from 'state/selectors/has-cancelable-site-purchases';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class DeleteSite extends Component {
 	static propTypes = {
 		deleteSite: PropTypes.func.isRequired,
