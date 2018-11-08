@@ -41,6 +41,31 @@ const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 
+/*
+ * Create reporter for ProgressPlugin (used with EMIT_STATS)
+ */
+function createProgressHandler() {
+	const startTime = Date.now();
+
+	return ( percentage, msg, ...details ) => {
+		const timeString = ( ( Date.now() - startTime ) / 1000 ).toFixed( 1 ) + 's';
+		const percentageString = `${ Math.floor( percentage * 100 ) }%`;
+		const detailsString = details
+			.map( detail => {
+				if ( ! detail ) {
+					return '';
+				}
+				if ( detail.length > 40 ) {
+					return `…${ detail.substr( detail.length - 39 ) }`;
+				}
+				return detail;
+			} )
+			.join( ' ' );
+		// eslint-disable-next-line no-console
+		console.log( `${ timeString } ${ percentageString } ${ msg } ${ detailsString }` );
+	};
+}
+
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
  * {
@@ -312,6 +337,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						chunkOrigins: false,
 					},
 				} ),
+			shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
 		] ),
 		externals: _.compact( [
 			externalizeWordPressPackages && wordpressExternals,
