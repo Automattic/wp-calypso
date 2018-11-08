@@ -355,6 +355,7 @@ jobs:
     <<: *defaults
     steps:
       - prepare
+      - run: exit 1
       - restore_cache: *restore-babel-client-cache
       - restore_cache: *restore-terser-cache
       - run:
