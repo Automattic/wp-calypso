@@ -286,7 +286,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					loader: 'html-loader',
 				},
 				{
-					test: /\.(?:svg|png)$/i,
+					test: /\.(?:jpg|jpeg|png|svg)$/i,
 					use: [
 						{
 							loader: 'file-loader',
