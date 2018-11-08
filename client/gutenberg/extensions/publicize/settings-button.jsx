@@ -57,7 +57,7 @@ class PublicizeSettingsButton extends Component {
 					tabIndex="0"
 				>
 					<span className="jetpack-publicize-add-icon dashicons-plus-alt" />
-					{ __( 'Connect another service' ) }
+					{ __( 'Connect new service' ) }
 				</a>
 			</div>
 		);
