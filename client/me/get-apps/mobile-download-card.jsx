@@ -184,7 +184,7 @@ class MobileDownloadCard extends React.Component {
 					</div>
 				</div>
 
-				{ featureIsEnabled ? (
+				{ featureIsEnabled && (
 					<div className="get-apps__sms-subpanel">
 						<p>
 							<strong>{ translate( 'Ready to WordPress on the go?' ) }</strong>
@@ -227,8 +227,6 @@ class MobileDownloadCard extends React.Component {
 							</Button>
 						</div>
 					</div>
-				) : (
-					''
 				) }
 			</Card>
 		);
