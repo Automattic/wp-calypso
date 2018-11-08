@@ -17,6 +17,11 @@ import { generateUniqueRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class RebrandCitiesWelcomeStep extends Component {
 	handleSubmit = siteTitle => {
 		const { goToNextStep, stepName, stepSectionName, translate } = this.props;

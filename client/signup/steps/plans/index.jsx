@@ -28,6 +28,11 @@ import QueryPlans from 'components/data/query-plans';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
 import { planHasFeature } from '../../../lib/plans';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class PlansStep extends Component {
 	componentDidMount() {
 		SignupActions.saveSignupStep( {

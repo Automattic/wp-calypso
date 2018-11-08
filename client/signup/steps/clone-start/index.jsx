@@ -17,6 +17,11 @@ import Button from 'components/button';
 import { getSiteBySlug } from 'state/sites/selectors';
 import SignupActions from 'lib/signup/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CloneStartStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,

@@ -16,6 +16,11 @@ import SignupActions from 'lib/signup/actions';
 import TileGrid from 'components/tile-grid';
 import Tile from 'components/tile-grid/tile';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CloneJetpackStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,

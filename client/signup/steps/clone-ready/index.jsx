@@ -18,6 +18,11 @@ import SignupActions from 'lib/signup/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { rewindClone } from 'state/activity-log/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CloneReadyStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,

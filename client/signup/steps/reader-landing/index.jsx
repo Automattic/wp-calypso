@@ -13,6 +13,11 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import ReaderLandingStepContent from './content';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ReaderLandingStep extends Component {
 	handleButtonClick = () => {
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {} );

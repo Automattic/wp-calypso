@@ -190,7 +190,6 @@ const sections = [
 		secondary: false,
 		enableLoggedOut: true,
 		isomorphic: true,
-		css: 'signup',
 	},
 	{
 		name: 'stats',

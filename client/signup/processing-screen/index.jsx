@@ -19,6 +19,11 @@ import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import config from 'config';
 import { getCurrentUser } from 'state/current-user/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class SignupProcessingScreen extends Component {
 	static propTypes = {
 		hasCartItems: PropTypes.bool.isRequired,

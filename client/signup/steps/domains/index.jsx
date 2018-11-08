@@ -41,6 +41,11 @@ import { getDomainProductSlug } from 'lib/domains';
 import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class DomainsStep extends React.Component {
 	static propTypes = {
 		forceDesignType: PropTypes.string,

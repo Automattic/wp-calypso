@@ -29,6 +29,11 @@ import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 import HeroImage from './hero-image';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PressableStoreStep extends Component {
 	constructor( props ) {
 		super( props );

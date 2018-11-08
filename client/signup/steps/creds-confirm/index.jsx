@@ -20,6 +20,11 @@ import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CredsConfirmStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,
