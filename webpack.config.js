@@ -46,9 +46,12 @@ const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
  */
 function createProgressHandler() {
 	const startTime = Date.now();
+	let lastShownBuildingMessageTime = null;
+	let lastUnshownBuildingMessage = null;
 
 	return ( percentage, msg, ...details ) => {
-		const timeString = ( ( Date.now() - startTime ) / 1000 ).toFixed( 1 ) + 's';
+		const nowTime = Date.now();
+		const timeString = ( ( nowTime - startTime ) / 1000 ).toFixed( 1 ) + 's';
 		const percentageString = `${ Math.floor( percentage * 100 ) }%`;
 		const detailsString = details
 			.map( detail => {
@@ -61,8 +64,28 @@ function createProgressHandler() {
 				return detail;
 			} )
 			.join( ' ' );
-		// eslint-disable-next-line no-console
-		console.log( `${ timeString } ${ percentageString } ${ msg } ${ detailsString }` );
+		const message = `${ timeString } ${ percentageString } ${ msg } ${ detailsString }`;
+
+		// There are plenty of 'building' messages that make the log too long for CircleCI web UI.
+		// Let's throttle the 'building' messages to one per second, while always showing the last one.
+		if ( msg === 'building' ) {
+			if ( lastShownBuildingMessageTime && nowTime - lastShownBuildingMessageTime < 1000 ) {
+				// less than 1000ms since last message: ignore, but store for case it's the last one
+				lastUnshownBuildingMessage = message;
+				return;
+			}
+
+			// the message will be shown and its time recorded
+			lastShownBuildingMessageTime = nowTime;
+			lastUnshownBuildingMessage = null;
+		} else if ( lastUnshownBuildingMessage ) {
+			// The last 'building' message should always be shown, no matter the timing.
+			// We do that on the first non-'building' message.
+			console.log( lastUnshownBuildingMessage ); // eslint-disable-line no-console
+			lastUnshownBuildingMessage = null;
+		}
+
+		console.log( message ); // eslint-disable-line no-console
 	};
 }
 
