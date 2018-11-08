@@ -23,6 +23,7 @@ import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
+import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 import SupportInfo from 'components/support-info';
 
 class SpeedUpSiteSettings extends Component {
@@ -50,28 +51,19 @@ class SpeedUpSiteSettings extends Component {
 	};
 
 	handleCdnChange = () => {
-		const {
-			assetCdnModuleActive,
-			photonModuleActive,
-			selectedSiteId,
-			siteAcceleratorStatus,
-		} = this.props;
+		const { selectedSiteId, siteAcceleratorStatus } = this.props;
 
 		// If one of them is on, we turn everything off.
 		if ( siteAcceleratorStatus ) {
-			if ( true === photonModuleActive ) {
-				this.props.deactivateModule( selectedSiteId, 'photon', true );
-			}
-			if ( true === assetCdnModuleActive ) {
-				this.props.deactivateModule( selectedSiteId, 'photon-cdn', true );
-			}
+			this.props.saveJetpackSettings( selectedSiteId, {
+				photon: false,
+				'photon-cdn': false,
+			} );
 		} else {
-			if ( false === photonModuleActive ) {
-				this.props.activateModule( selectedSiteId, 'photon', true );
-			}
-			if ( false === assetCdnModuleActive ) {
-				this.props.activateModule( selectedSiteId, 'photon-cdn', true );
-			}
+			this.props.saveJetpackSettings( selectedSiteId, {
+				photon: true,
+				'photon-cdn': true,
+			} );
 		}
 	};
 
@@ -108,7 +100,7 @@ class SpeedUpSiteSettings extends Component {
 							) }
 						</p>
 						<CompactFormToggle
-							checked={ siteAcceleratorStatus }
+							checked={ siteAcceleratorStatus || false }
 							disabled={
 								isRequestingOrSaving ||
 								photonModuleUnavailable ||
@@ -238,5 +230,6 @@ export default connect(
 	{
 		activateModule,
 		deactivateModule,
+		saveJetpackSettings,
 	}
 )( localize( SpeedUpSiteSettings ) );
