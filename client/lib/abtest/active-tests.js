@@ -81,14 +81,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	includeDotBlogSubdomainV2: {
-		datestamp: '20180813',
-		variations: {
-			yes: 50,
-			no: 50,
-		},
-		defaultVariation: 'no',
-	},
 	krackenRebootM33: {
 		datestamp: '20181108',
 		variations: {
@@ -101,13 +93,5 @@ export default {
 		assignmentMethod: 'userId',
 		allowExistingUsers: true,
 		localeTargets: 'any',
-	},
-	skipDomainOrSiteStep: {
-		datestamp: '20181025',
-		variations: {
-			yes: 50,
-			no: 50,
-		},
-		defaultVariation: 'yes',
 	},
 };
