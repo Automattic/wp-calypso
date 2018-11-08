@@ -25,12 +25,9 @@ import {
 import QueryBillingContactDetails from 'components/data/query-billing-contact-details';
 import QueryTldValidationSchemas from 'components/data/query-tld-validation-schemas';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
-import FormButton from 'components/forms/form-button';
 import FormCheckbox from 'components/forms/form-checkbox';
 import InfoPopover from 'components/info-popover';
-import ExtraInfoForm, {
-	tldsWithAdditionalDetailsForms,
-} from 'components/domains/registrant-extra-info';
+import { tldsWithAdditionalDetailsForms } from 'components/domains/registrant-extra-info';
 import getBillingContactDetails from 'state/selectors/get-billing-contact-details';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import { updateBillingContactDetails } from 'state/billing-transactions/actions';
@@ -145,17 +142,6 @@ export class BillingDetailsForm extends PureComponent {
 		);
 	}
 
-	renderSubmitButton() {
-		return (
-			<FormButton
-				className="checkout__domain-details-form-submit-button"
-				onClick={ this.handleSubmitButtonClick }
-			>
-				{ this.getSubmitButtonText() }
-			</FormButton>
-		);
-	}
-
 	handleBillingDetailsChange = newContactDetailsValues => {
 		this.props.updateBillingContactDetails( newContactDetailsValues );
 		this.debounced.validateBillingDetails( newContactDetailsValues, noop );
@@ -205,14 +191,6 @@ export class BillingDetailsForm extends PureComponent {
 						/>
 					) }
 			</>
-		);
-	}
-
-	renderExtraDetailsForm( tld ) {
-		return (
-			<ExtraInfoForm tld={ tld } getDomainNames={ this.getDomainNames }>
-				{ this.renderSubmitButton() }
-			</ExtraInfoForm>
 		);
 	}
 
