@@ -8,6 +8,13 @@
 		.components-base-control__label {
 			display: none;
 		}
+		.components-base-control__field {
+			margin-bottom: 1em;
+		}
+		// Reset empty space under textarea on Chrome
+		textarea {
+			display: block;
+		}
 	}
 
 	.simple-payments__field-has-error {
@@ -41,12 +48,6 @@
 		}
 	}
 
-	.simple-payments__field-email,
-	.simple-payments__field-price,
-	.simple-payments__field-currency {
-		font-size: 14px;
-	}
-
 	.simple-payments__field-multiple {
 		.components-base-control__field {
 			align-items: center;
@@ -56,9 +57,5 @@
 			margin-left: 10px;
 			order: 1;
 		}
-	}
-
-	.simple-payments__support-reference {
-		margin-top: 20px;
 	}
 }
