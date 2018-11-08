@@ -33,6 +33,7 @@ import {
 } from 'lib/simple-payments/constants';
 import ProductPlaceholder from './product-placeholder';
 import HelpMessage from './help-message';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 
 class SimplePaymentsEdit extends Component {
 	state = {
@@ -108,7 +109,7 @@ class SimplePaymentsEdit extends Component {
 				} )
 				.catch( error => {
 					// @TODO: complete error handling
-					// eslint-disable-next-line
+					// eslint-disable-next-line no-console
 					console.error( error );
 
 					const {
@@ -477,9 +478,53 @@ const applyWithSelect = withSelect( ( select, props ) => {
 	const { paymentId } = props.attributes;
 	const { getEntityRecord } = select( 'core' );
 
-	const simplePayment = paymentId
-		? getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId )
-		: undefined;
+	if ( ! applyWithSelect.fromApi ) {
+		const simplePaymentApiSchema = {
+			type: 'object',
+			required: [ 'id', 'content', 'title' ],
+			properties: {
+				id: { type: 'integer' },
+				content: {
+					type: 'object',
+					properties: {
+						raw: { type: 'string' },
+						rendered: { type: 'string' },
+					},
+				},
+				meta: {
+					type: 'object',
+				},
+				title: {
+					type: 'object',
+					properties: {
+						raw: { type: 'string' },
+						rendered: { type: 'string' },
+					},
+				},
+			},
+		};
+
+		const fromApiTransform = data => {
+			return data;
+		};
+
+		applyWithSelect.fromApi = makeJsonSchemaParser( simplePaymentApiSchema, fromApiTransform );
+	}
+
+	let simplePayment = undefined;
+	if ( paymentId ) {
+		try {
+			const record = getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId );
+			// eslint-disable-next-line no-console
+			console.log( 'Record: %o', record );
+			simplePayment = applyWithSelect.fromApi( record );
+		} catch ( err ) {
+			if ( process.env.NODE_ENV !== 'production' ) {
+				// eslint-disable-next-line no-console
+				console.error( err );
+			}
+		}
+	}
 
 	return {
 		isLoadingInitial: paymentId && ! simplePayment,
