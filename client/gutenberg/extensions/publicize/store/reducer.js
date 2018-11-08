@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from '@wordpress/data';
-
-/**
  * Reducer managing Publicize extension connections.
  *
  * @param {Object} state  Current state.
@@ -11,7 +6,7 @@ import { combineReducers } from '@wordpress/data';
  *
  * @return {Object} Updated state.
  */
-export function connections( state = [], action ) {
+function reducer( state = [], action ) {
 	switch ( action.type ) {
 		case 'SET_CONNECTIONS':
 			return {
@@ -25,6 +20,4 @@ export function connections( state = [], action ) {
 	return state;
 }
 
-export default combineReducers( {
-	connections,
-} );
+export default reducer;

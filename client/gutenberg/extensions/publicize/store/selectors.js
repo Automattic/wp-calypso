@@ -7,5 +7,5 @@
  * @return {?Array} List of connections.
  */
 export function getConnections( state, postId ) {
-	return state.connections[ postId ] || null;
+	return state[ postId ] || null;
 };
