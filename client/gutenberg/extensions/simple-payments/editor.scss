@@ -27,12 +27,6 @@
 		.components-textarea-control__input {
 			border-color: $alert-red;
 		}
-		.components-base-control__help {
-			color: $alert-red;
-		}
-		svg {
-			fill: $alert-red;
-		}
 	}
 
 	.simple-payments__field-title {
@@ -56,6 +50,7 @@
 		}
 		.simple-payments__help-message {
 			flex: 1 1 100%;
+			margin-top: 0;
 		}
 	}
 
@@ -71,7 +66,6 @@
 		}
 	}
 
-	.components-base-control__help,
 	.simple-payments__field-email,
 	.simple-payments__field-price,
 	.simple-payments__field-currency {
