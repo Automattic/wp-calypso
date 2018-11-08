@@ -86,6 +86,7 @@
 
   .subscription-length-picker__option-description {
     font-size: 16px;
+    margin-top: 2px;
   }
 
   .subscription-length-picker__option-credit-info {
@@ -115,6 +116,7 @@
     color: $gray-text-min;
     vertical-align: super;
     font-size: 12px;
+    margin-left: 1px;
   }
 
   &:not( .is-active ) {
