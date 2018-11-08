@@ -42,9 +42,9 @@
 }
 
 @include breakpoint( '<660px' ) {
-	// We place the notice behind the sidebar on mobile devices
+	// We hide the notice on small viewports when the sidebar is open
 	.focus-sidebar .editor-gutenberg-opt-in-notice {
-		z-index: z-index( 'root', '.editor-sidebar' );
+		display: none;
 	}
 }
 
