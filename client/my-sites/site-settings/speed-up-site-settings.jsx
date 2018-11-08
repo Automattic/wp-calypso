@@ -29,6 +29,7 @@ import SupportInfo from 'components/support-info';
 class SpeedUpSiteSettings extends Component {
 	static defaultProps = {
 		togglingSiteAccelerator: false,
+		fields: {},
 	};
 
 	static propTypes = {
@@ -38,6 +39,7 @@ class SpeedUpSiteSettings extends Component {
 		isRequestingSettings: PropTypes.bool,
 		isSavingSettings: PropTypes.bool,
 		jetpackVersionSupportsLazyImages: PropTypes.bool,
+		setFieldValue: PropTypes.func,
 
 		// Connected props
 		assetCdnModuleActive: PropTypes.bool,
@@ -51,7 +53,7 @@ class SpeedUpSiteSettings extends Component {
 	};
 
 	handleCdnChange = () => {
-		const { selectedSiteId, siteAcceleratorStatus } = this.props;
+		const { selectedSiteId, setFieldValue, siteAcceleratorStatus } = this.props;
 
 		// If one of them is on, we turn everything off.
 		if ( siteAcceleratorStatus ) {
@@ -59,16 +61,19 @@ class SpeedUpSiteSettings extends Component {
 				photon: false,
 				'photon-cdn': false,
 			} );
+			setFieldValue( 'site_accelerator', false );
 		} else {
 			this.props.saveJetpackSettings( selectedSiteId, {
 				photon: true,
 				'photon-cdn': true,
 			} );
+			setFieldValue( 'site_accelerator', true );
 		}
 	};
 
 	render() {
 		const {
+			fields,
 			isRequestingSettings,
 			isSavingSettings,
 			jetpackVersionSupportsLazyImages,
@@ -100,7 +105,7 @@ class SpeedUpSiteSettings extends Component {
 							) }
 						</p>
 						<CompactFormToggle
-							checked={ siteAcceleratorStatus || false }
+							checked={ fields.site_accelerator ? fields.site_accelerator : siteAcceleratorStatus }
 							disabled={
 								isRequestingOrSaving ||
 								photonModuleUnavailable ||
@@ -214,7 +219,7 @@ export default connect(
 		}
 
 		// Status of the main site accelerator toggle.
-		const siteAcceleratorStatus = photonModuleActive || assetCdnModuleActive;
+		const siteAcceleratorStatus = photonModuleActive || assetCdnModuleActive ? true : false;
 
 		return {
 			assetCdnModuleActive,
