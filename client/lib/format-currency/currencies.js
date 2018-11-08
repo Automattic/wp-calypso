@@ -745,7 +745,7 @@ export const CURRENCIES = {
 		precision: 2,
 	},
 	SGD: {
-		symbol: '$',
+		symbol: 'S$',
 		grouping: ',',
 		decimal: '.',
 		precision: 2,
