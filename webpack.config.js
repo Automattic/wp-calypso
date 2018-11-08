@@ -159,7 +159,9 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 			minimize: shouldMinify,
 			minimizer: [
 				new TerserPlugin( {
-					cache: 'docker' !== process.env.CONTAINER,
+					cache: process.env.CIRCLECI
+						? `${ process.env.HOME }/terser-cache`
+						: 'docker' !== process.env.CONTAINER,
 					parallel: process.env.CIRCLECI ? 2 : true,
 					sourceMap: Boolean( process.env.SOURCEMAP ),
 					terserOptions: {
