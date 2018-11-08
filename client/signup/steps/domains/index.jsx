@@ -328,7 +328,7 @@ class DomainsStep extends React.Component {
 		}
 
 		// If it's the first load, rerun the search with whatever we get from the query param
-		const initialQuery = get( this.props, 'queryObject.new', false );
+		const initialQuery = get( this.props, 'queryObject.new', '' );
 		if ( initialQuery && this.searchOnInitialRender ) {
 			this.searchOnInitialRender = false;
 			initialState.searchResults = null;
