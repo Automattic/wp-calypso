@@ -188,8 +188,38 @@ export default connect(
 			'photon-cdn'
 		);
 
-		const togglingSiteAccelerator =
-			isAssetCdnActivating || isAssetCdnDeactivating || isPhotonActivating || isPhotonDeactivating;
+		let togglingSiteAccelerator;
+		// First Photon activating.
+		if ( isPhotonActivating ) {
+			if ( assetCdnModuleActive ) {
+				togglingSiteAccelerator = false;
+			} else {
+				togglingSiteAccelerator = true;
+			}
+			// Then Asset CDN activating.
+		} else if ( isAssetCdnActivating ) {
+			if ( photonModuleActive ) {
+				togglingSiteAccelerator = false;
+			} else {
+				togglingSiteAccelerator = true;
+			}
+			// Then Photon deactivating.
+		} else if ( isPhotonDeactivating ) {
+			if ( assetCdnModuleActive ) {
+				togglingSiteAccelerator = false;
+			} else {
+				togglingSiteAccelerator = true;
+			}
+			// Then Asset CDN deactivating.
+		} else if ( isAssetCdnDeactivating ) {
+			if ( photonModuleActive ) {
+				togglingSiteAccelerator = false;
+			} else {
+				togglingSiteAccelerator = true;
+			}
+		} else {
+			togglingSiteAccelerator = false;
+		}
 
 		// Status of the main site accelerator toggle.
 		const siteAcceleratorStatus = photonModuleActive || assetCdnModuleActive;
