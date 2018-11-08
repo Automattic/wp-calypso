@@ -58,7 +58,7 @@ references:
     name: Restore Terser cache
     keys:
       - v0-terser-{{ .Branch }}-{{ .Revision }}
-      - v0-terser-{{ .Branch }}-{{ .Revision }}
+      - v0-terser-{{ .Branch }}
       - v0-terser-master
       - v0-terser
   save-terser-cache: &save-terser-cache
