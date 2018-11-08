@@ -436,7 +436,7 @@ class SimplePaymentsEdit extends Component {
 						<ToggleControl
 							checked={ Boolean( multiple ) }
 							disabled={ isLoadingInitial }
-							label={ __( 'Allow people buy more than one item at a time' ) }
+							label={ __( 'Allow people to buy more than one item at a time' ) }
 							onChange={ this.handleMultipleChange }
 						/>
 					</div>

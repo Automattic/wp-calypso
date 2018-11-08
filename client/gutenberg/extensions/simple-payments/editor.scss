@@ -10,35 +10,10 @@
 		}
 	}
 
-	.simple-payments__field-title:not( .simple-payments__field-has-error ) {
-		.components-text-control__input {
-			border-width: 0;
-		}
-	}
-
-	.simple-payments__field-content:not( .simple-payments__field-has-error ) {
-		.components-textarea-control__input {
-			border-width: 0;
-		}
-	}
-
 	.simple-payments__field-has-error {
 		.components-text-control__input,
 		.components-textarea-control__input {
 			border-color: $alert-red;
-		}
-	}
-
-	.simple-payments__field-title {
-		.components-text-control__input {
-			font-weight: bold;
-			font-size: 16px;
-		}
-	}
-
-	.simple-payments__field-content {
-		.components-textarea-control__input {
-			font-size: 16px;
 		}
 	}
 
@@ -74,10 +49,12 @@
 
 	.simple-payments__field-multiple {
 		.components-base-control__field {
+			align-items: center;
 			justify-content: flex-start;
 		}
-		.components-base-control__label {
-			margin-right: 10px;
+		.components-form-toggle {
+			margin-left: 10px;
+			order: 1;
 		}
 	}
 
