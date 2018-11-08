@@ -2,8 +2,6 @@
 
 const chroma = require('chroma-js')
 const copyToClipboard = require('copy-text-to-clipboard')
-const chunk = require('lodash/chunk')
-const endsWith = require('lodash/endsWith')
 const flatten = require('lodash/flatten')
 const round = require('lodash/round')
 const { saveAs } = require('file-saver')
@@ -12,8 +10,6 @@ const toSketchPalette = require('../../utilities/to-sketch-palette')
 
 const createPrimaryShades = require('../../utilities/create-primary-shades')
 const createSecondaryShades = require('../../utilities/create-secondary-shades')
-
-const archive = require('../../data/colors-v0.2.1.json')
 
 const BASE_COLORS = require('../../data/base-colors.js')
 
@@ -36,8 +32,6 @@ function init() {
       handleColor(String(event.target.value).trim())
     })
     handleRandomColor()
-  } else if (output.dataset.archive) {
-    handleArchiveTiles()
   } else {
     handleFoundationTiles()
     handleFoundationButton()
@@ -103,27 +97,6 @@ function handleFoundationButton() {
   button.addEventListener('click', () => {
     makeDownloadable(colors)
   })
-}
-
-function handleArchiveTiles() {
-  const palette = archive.colors.filter(c => c.name !== 'White').map(color => {
-    const [name, index] = color.name.split(' ')
-    return {
-      name,
-      index: parseInt(index, 10),
-      color: color.values.hex,
-      auxiliary: endsWith(color.name, 'A')
-    }
-  })
-
-  output.innerHTML = chunk(palette, 15)
-    .map(colors => {
-      const html = colors.map(color => createColorTile(color, true)).join('')
-      return wrapColorTile(html, true)
-    })
-    .join('')
-
-  activateTiles(output)
 }
 
 function handleRandomColor() {
