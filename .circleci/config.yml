@@ -378,6 +378,29 @@ jobs:
       - save_cache: *save-babel-client-cache
       - store-artifacts-and-test-results
       - run:
+          name: Notify ICFY of failed build
+          when: on_fail
+          command: |
+            #
+            # This block should not cause a test failure and block PRs.
+            # The shell should never error and exit 0 to indicate success.
+            #
+            set +o errexit
+            ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
+            curl                                                                      \
+              -X POST                                                                 \
+              "http://api.iscalypsofastyet.com:5000/failed-build?secret=$ICFY_SECRET" \
+              -H 'Cache-Control: no-cache'                                            \
+              -H 'Content-Type: application/json'                                     \
+              -d '{
+                    "payload": {
+                      "branch": "'"$CIRCLE_BRANCH"'",
+                      "build_num": '"$CIRCLE_BUILD_NUM"',
+                      "sha": "'"$CIRCLE_SHA1"'",
+                      "ancestor": "'"$ANCESTOR_SHA1"'"
+                    }
+                  }'
+      - run:
           name: Notify ICFY
           command: |
             #
