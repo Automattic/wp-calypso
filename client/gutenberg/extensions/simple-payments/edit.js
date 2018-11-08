@@ -22,6 +22,7 @@ import classNames from 'classnames';
 import emailValidator from 'email-validator';
 import get from 'lodash/get';
 import trimEnd from 'lodash/trimEnd';
+import { memoize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -504,9 +505,9 @@ const applyWithSelect = withSelect( ( select, props ) => {
 			},
 		};
 
-		const fromApiTransform = data => {
+		const fromApiTransform = memoize( data => {
 			return data;
-		};
+		} );
 
 		applyWithSelect.fromApi = makeJsonSchemaParser( simplePaymentApiSchema, fromApiTransform );
 	}
