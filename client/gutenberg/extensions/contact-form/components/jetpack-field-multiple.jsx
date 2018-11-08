@@ -19,23 +19,43 @@ class JetpackFieldMultiple extends Component {
 	constructor( ...args ) {
 		super( ...args );
 		this.onChangeOption = this.onChangeOption.bind( this );
+		this.addNewOption = this.addNewOption.bind( this );
+		this.state = { inFocus: null };
 	}
 
 	onChangeOption( key = null, option = null ) {
 		const newOptions = this.props.options.slice( 0 );
+		if ( null === option ) {
+			// Remove a key
+			newOptions.splice( key, 1 );
+			if ( key > 0 ) {
+				this.setState( { inFocus: key - 1 } );
+			}
+		} else {
+			// update a key
+			newOptions.splice( key, 1, option );
+			this.setState( { inFocus: key } ); // set the focus.
+		}
+		this.props.setAttributes( { options: newOptions } );
+	}
+
+	addNewOption( key = null ) {
+		const newOptions = this.props.options.slice( 0 );
+		let inFocus = 0;
 		if ( 'object' === typeof key ) {
 			newOptions.push( '' );
-		} else if ( null === option ) {
-			newOptions.splice( key, 1 );
+			inFocus = newOptions.length - 1;
 		} else {
-			newOptions.splice( key, 1, option );
+			newOptions.splice( key + 1, 0, '' );
+			inFocus = key + 1;
 		}
+
+		this.setState( { inFocus: inFocus } );
 		this.props.setAttributes( { options: newOptions } );
 	}
 
 	render() {
 		this.type = this.props.type;
-
 		return (
 			<Fragment>
 				<JetpackFieldSettings
@@ -51,6 +71,9 @@ class JetpackFieldMultiple extends Component {
 							label={ this.props.label }
 							setAttributes={ this.props.setAttributes }
 							isSelected={ this.props.isSelected }
+							resetFocus={ () => {
+								this.setState( { inFocus: null } );
+							} }
 						/>
 					}
 				>
@@ -66,20 +89,22 @@ class JetpackFieldMultiple extends Component {
 								index={ index }
 								onChangeOption={ this.onChangeOption }
 								isSelected={ this.props.isSelected }
+								onAddOption={ this.addNewOption }
+								isInFocus={ index === this.state.inFocus && this.props.isSelected }
 							/>
 						) ) }
 					</ol>
-					{ this.props.isSelected && (
-						<IconButton
-							className="jetpack-field-multiple__add-option"
-							icon="insert"
-							label={ __( 'Insert option' ) }
-							onClick={ this.onChangeOption }
-						>
-							{' '}
-							{ __( 'Add option' ) }
-						</IconButton>
-					) }
+				{ this.props.isSelected && (
+					<IconButton
+						className="jetpack-field-multiple__add-option"
+						icon="insert"
+						label={ __( 'Insert option' ) }
+						onClick={ this.addNewOption }
+					>
+						{' '}
+						{ __( 'Add option' ) }
+					</IconButton>
+				) }
 				</BaseControl>
 			</Fragment>
 		);

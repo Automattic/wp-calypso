@@ -18,7 +18,12 @@ const JetpackFieldLabel = props => {
 			<PlainText
 				value={ props.label }
 				className="jetpack-field-label__input"
-				onChange={ label => setAttributes( { label } ) }
+				onChange={ label => {
+					{
+						props.resetFocus && props.resetFocus();
+					}
+					setAttributes( { label } );
+				} }
 				placeholder={ __( 'Write label…' ) }
 			/>
 			{ props.isSelected && (
