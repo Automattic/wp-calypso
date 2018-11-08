@@ -85,7 +85,7 @@ class DomainsStep extends React.Component {
 		const domain = get( props, 'queryObject.new', false );
 		const search = get( props, 'queryObject.search', false ) === 'yes';
 
-		// If we landed anew from `/domains`, always run the searcuh
+		// If we landed anew from `/domains` and it's the `new-flow` variation, always rerun the search
 		if ( search && props.path.indexOf( '?' ) !== -1 ) {
 			this.searchOnInitialRender = true;
 		}
