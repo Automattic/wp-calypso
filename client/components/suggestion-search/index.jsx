@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +15,17 @@ import Suggestions from 'components/suggestions';
 
 class SuggestionSearch extends Component {
 	static propTypes = {
-		translate: PropTypes.func.isRequired,
+		id: PropTypes.string,
+		placeholder: PropTypes.string,
+		onChange: PropTypes.func,
+		suggestions: PropTypes.array,
+	};
+
+	static defaultProps = {
+		id: '',
+		placeholder: '',
+		onChange: noop,
+		suggestions: [],
 	};
 
 	constructor( props ) {
@@ -112,13 +122,12 @@ class SuggestionSearch extends Component {
 	}
 
 	render() {
-		const { id, name, placeholder } = this.props;
+		const { id, placeholder } = this.props;
 
 		return (
 			<>
 				<FormTextInput
 					id={ id }
-					name={ name }
 					placeholder={ placeholder }
 					value={ this.state.inputValue }
 					onChange={ this.handleSuggestionChangeEvent }
@@ -137,4 +146,4 @@ class SuggestionSearch extends Component {
 	}
 }
 
-export default localize( SuggestionSearch );
+export default SuggestionSearch;
