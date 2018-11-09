@@ -176,7 +176,7 @@ class SimplePaymentsEdit extends Component {
 
 		if ( ! price || parseFloat( price ) === 0 ) {
 			this.setState( {
-				fieldPriceError: __( 'Everything comes with a price tag these days. Add yours here.' ),
+				fieldPriceError: __( 'If you’re selling something, you need a price tag. Add yours here.' ),
 			} );
 			return false;
 		}
@@ -190,7 +190,9 @@ class SimplePaymentsEdit extends Component {
 
 		if ( parseFloat( price ) < 0 ) {
 			this.setState( {
-				fieldPriceError: __( "Your price is negative — now that doesn't sound right, does it?" ),
+				fieldPriceError: __(
+					'Your price is negative — enter a positive number so people can pay the right amount.'
+				),
 			} );
 			return false;
 		}
@@ -199,7 +201,7 @@ class SimplePaymentsEdit extends Component {
 			if ( precision === 0 ) {
 				this.setState( {
 					fieldPriceError: __(
-						"We know every penny counts, but prices can't contain decimal values."
+						'We know every penny counts, but prices can’t contain decimal values.'
 					),
 				} );
 				return false;
@@ -208,8 +210,8 @@ class SimplePaymentsEdit extends Component {
 			this.setState( {
 				fieldPriceError: sprintf(
 					_n(
-						'Price cannot have more than %d decimal place.',
-						'Price cannot have more than %d decimal places.',
+						'The price cannot have more than %d decimal place.',
+						'The price cannot have more than %d decimal places.',
 						precision
 					),
 					precision
@@ -269,7 +271,7 @@ class SimplePaymentsEdit extends Component {
 		if ( ! title ) {
 			this.setState( {
 				fieldTitleError: __(
-					"People need to know what they're paying for! Please add a brief title."
+					'Please add a brief title so that people know what they’re paying for.'
 				),
 			} );
 			return false;
