@@ -19,6 +19,9 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
+import { isEnabled } from 'config';
+import { isJetpackSite } from 'state/sites/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
 
 class EditorGutenbergBlocksWarningDialog extends Component {
 	static propTypes = {
@@ -28,6 +31,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		gutenbergUrl: PropTypes.string,
 		switchToGutenberg: PropTypes.func,
 		openPostRevisionsDialog: PropTypes.func,
+		isGutenbergEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -37,6 +41,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		gutenbergUrl: null,
 		switchToGutenberg: noop,
 		openPostRevisionsDialog: noop,
+		isGutenbergEnabled: false,
 	};
 
 	state = {
@@ -79,7 +84,12 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, isGutenbergEnabled } = this.props;
+
+		if ( ! isGutenbergEnabled ) {
+			return null;
+		}
+
 		const { isDialogVisible } = this.state;
 		const buttons = [
 			{
@@ -127,11 +137,15 @@ export default connect(
 		const postId = getEditorPostId( state );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );
 		const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
+		const isVip = isVipSite( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isGutenbergEnabled = isEnabled( 'gutenberg/opt-in' ) && ! isJetpack && ! isVip;
 
 		return {
 			postContent,
 			siteId,
 			gutenbergUrl,
+			isGutenbergEnabled,
 		};
 	},
 	dispatch => ( {
