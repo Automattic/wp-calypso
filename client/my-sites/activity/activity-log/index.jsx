@@ -26,6 +26,7 @@ import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
+import IntroBanner from '../activity-log-banner/intro-banner';
 import { isFreePlan } from 'lib/plans';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
@@ -68,7 +69,6 @@ import { emptyFilter } from 'state/activity-log/reducer';
 import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
 import withLocalizedMoment from 'components/with-localized-moment';
-import { FEATURE_JETPACK_ESSENTIAL, PLAN_JETPACK_PERSONAL_MONTHLY } from 'lib/plans/constants';
 
 const PAGE_SIZE = 20;
 
@@ -455,17 +455,8 @@ class ActivityLog extends Component {
 							prevLabel={ translate( 'Newer' ) }
 							total={ logs.length }
 						/>
-						<Banner
-							description="With Activity, you can view a chronological list of all changes and updates to your site in an organized, readable way."
-							disableHref
-							dismissPreferenceName="activity-introduction"
-							event="calypso_activitylog_introduction_dismiss"
-							feature={ FEATURE_JETPACK_ESSENTIAL }
-							icon="star"
-							plan={ PLAN_JETPACK_PERSONAL_MONTHLY }
-							title="This is your site's activity"
-						/>
 						{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
+						{ siteIsOnFreePlan && <IntroBanner siteId={ siteId } /> }
 						<section className="activity-log__wrapper">
 							{ siteIsOnFreePlan && <div className="activity-log__fader" /> }
 							{ theseLogs.map( log =>
