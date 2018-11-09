@@ -100,11 +100,7 @@ class DomainsStep extends React.Component {
 		) {
 			this.skipRender = true;
 			const productSlug = getDomainProductSlug( domain );
-			const domainItem = cartItems.domainRegistration( {
-				productSlug,
-				domain,
-				extra: { skipSiteOrDomain: true },
-			} );
+			const domainItem = cartItems.domainRegistration( { productSlug, domain } );
 
 			SignupActions.submitSignupStep(
 				Object.assign( {
@@ -312,9 +308,7 @@ class DomainsStep extends React.Component {
 			// User picked only 'share' on the `about` step
 			( ! this.props.isDomainOnly &&
 				siteGoalsArray.length === 1 &&
-				siteGoalsArray.indexOf( 'share' ) !== -1 &&
-				// abtest() assignment should come last
-				abtest( 'includeDotBlogSubdomainV2' ) === 'yes' )
+				siteGoalsArray.indexOf( 'share' ) !== -1 )
 		);
 	}
 
@@ -331,9 +325,11 @@ class DomainsStep extends React.Component {
 		const initialQuery = get( this.props, 'queryObject.new', '' );
 		if ( initialQuery && this.searchOnInitialRender ) {
 			this.searchOnInitialRender = false;
-			initialState.searchResults = null;
-			initialState.subdomainSearchResults = null;
-			initialState.loadingResults = true;
+			if ( initialState ) {
+				initialState.searchResults = null;
+				initialState.subdomainSearchResults = null;
+				initialState.loadingResults = true;
+			}
 		}
 
 		return (
