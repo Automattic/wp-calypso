@@ -69,7 +69,7 @@ class JetpackForm extends Component {
 					{ ! this.props.has_form_settings_set && (
 						<Placeholder label={ __( 'Contact Form' ) } icon="feedback">
 							<form onSubmit={ this.onFormSettingsSet }>
-								<p className="jetpack-form__intro-message">
+								<p className="jetpack-contact-form__intro-message">
 									{ __(
 										'If left black, feedback will be sent to the author of the post and the subject will be the name of this post.'
 									) }
@@ -89,7 +89,7 @@ class JetpackForm extends Component {
 									placeholder={ __( "Example: Let's work together" ) }
 									onChange={ this.onChangeSubject }
 								/>
-								<div className="contact-form__create">
+								<div className="jetpack-contact-form__create">
 									<Button isPrimary type="submit">
 										{ __( 'Create' ) }
 									</Button>
