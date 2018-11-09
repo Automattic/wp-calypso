@@ -18,6 +18,7 @@ import { setSelectedEditor } from 'state/selected-editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 
 class EditorGutenbergBlocksWarningDialog extends Component {
 	static propTypes = {
@@ -25,7 +26,8 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		postContent: PropTypes.string,
 		siteId: PropTypes.number,
 		gutenbergUrl: PropTypes.string,
-		onSwitchToGutenberg: PropTypes.func,
+		switchToGutenberg: PropTypes.func,
+		openPostRevisionsDialog: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -33,7 +35,8 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		postContent: null,
 		siteId: null,
 		gutenbergUrl: null,
-		onSwitchToGutenberg: noop,
+		switchToGutenberg: noop,
+		openPostRevisionsDialog: noop,
 	};
 
 	state = {
@@ -58,15 +61,21 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		};
 	}
 
-	useClassic = () => {
+	onUseClassic = () => {
 		this.setState( {
 			forceClassic: true,
 		} );
 	};
 
-	switchToGutenberg = () => {
-		const { onSwitchToGutenberg, siteId, gutenbergUrl } = this.props;
-		onSwitchToGutenberg( siteId, gutenbergUrl );
+	onSwitchToGutenberg = () => {
+		const { switchToGutenberg, siteId, gutenbergUrl } = this.props;
+		switchToGutenberg( siteId, gutenbergUrl );
+	};
+
+	onShowDocumentHistory = e => {
+		e.preventDefault();
+		this.props.openPostRevisionsDialog();
+		this.onUseClassic();
 	};
 
 	render() {
@@ -76,17 +85,17 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 			{
 				action: 'gutenberg',
 				label: translate( 'Switch to the new editor' ),
-				onClick: this.switchToGutenberg,
+				onClick: this.onSwitchToGutenberg,
 				isPrimary: true,
 			},
 			{
 				action: 'cancel',
 				label: translate( 'Use the classic editor' ),
-				onClick: this.useClassic,
+				onClick: this.onUseClassic,
 			},
 		];
 		return (
-			<Dialog isVisible={ isDialogVisible } buttons={ buttons } onClose={ this.useClassic }>
+			<Dialog isVisible={ isDialogVisible } buttons={ buttons } onClose={ this.onUseClassic }>
 				<h1>{ translate( 'This post uses blocks from the new editor' ) }</h1>
 
 				<p>
@@ -97,7 +106,13 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 
 				<p>
 					{ translate(
-						'You can also check the document history and restore a version of the page from earlier.'
+						'You can also check the {{a}}document history{{/a}} and restore a version of the page from earlier.',
+						{
+							components: {
+								//eslint-disable-next-line jsx-a11y/anchor-is-valid
+								a: <a href="#" onClick={ e => this.onShowDocumentHistory( e ) } />,
+							},
+						}
 					) }
 				</p>
 			</Dialog>
@@ -120,8 +135,9 @@ export default connect(
 		};
 	},
 	dispatch => ( {
-		onSwitchToGutenberg: ( siteId, gutenbergUrl ) => {
+		switchToGutenberg: ( siteId, gutenbergUrl ) => {
 			return dispatch( setSelectedEditor( siteId, 'gutenberg', gutenbergUrl ) );
 		},
+		openPostRevisionsDialog: () => dispatch( openPostRevisionsDialog() ),
 	} )
 )( localize( EditorGutenbergBlocksWarningDialog ) );
