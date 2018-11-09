@@ -424,7 +424,7 @@ class AboutStep extends Component {
 
 	shouldShowSiteTopicField() {
 		const { steps } = this.props;
-		const { hasPrepopulatedVertical } = this.props;
+		const { hasPrepopulatedVertical } = this.state;
 
 		return ! hasPrepopulatedVertical && ! includes( steps, 'site-topic' );
 	}
