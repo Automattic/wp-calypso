@@ -16,7 +16,7 @@ import i18n from 'i18n-calypso';
 export const allSiteTypes = [
 	{
 		type: i18n.translate( 'Blog' ),
-		description: i18n.translate( 'Share a collection of posts.' ),
+		description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
 	},
 	{
 		type: i18n.translate( 'Business' ),
