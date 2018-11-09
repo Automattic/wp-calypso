@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import analytics from 'lib/analytics';
 import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import config from 'config';
@@ -151,26 +150,15 @@ export class SignupProcessingScreen extends Component {
 		);
 	}
 
-	renderWaitScreen() {
-		const { flowName, loginHandler, translate } = this.props;
+	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		const { loginHandler } = this.props;
 
-		if ( flowName === 'import' ) {
+		if ( !! loginHandler ) {
+			this.shouldShowChecklist() ? this.showChecklistAfterLogin() : loginHandler();
 			return null;
 		}
 
-		if ( ! loginHandler ) {
-			return (
-				<Button primary disabled className="processing-screen__continue-button">
-					{ translate( 'Please wait…' ) }
-				</Button>
-			);
-		}
-
-		this.shouldShowChecklist() ? this.showChecklistAfterLogin() : loginHandler();
-	}
-
-	render() {
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ this.renderFloaties() }
@@ -187,8 +175,6 @@ export class SignupProcessingScreen extends Component {
 					</svg>
 
 					<p className="signup-process-screen__title">{ this.getTitle() }</p>
-
-					{ this.renderWaitScreen() }
 				</div>
 				<div className="signup-processing-screen__loader">
 					{ this.props.translate( 'Loading…' ) }
