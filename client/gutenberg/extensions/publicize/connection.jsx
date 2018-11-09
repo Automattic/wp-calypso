@@ -33,8 +33,9 @@ class PublicizeConnection extends Component {
 	};
 
 	render() {
-		const { service_name: name, label, disabled, display_name } = this.props.connectionData;
+		const { service_name: name, disabled, display_name, unique_id } = this.props.connectionData;
 		const { connectionOn } = this.props;
+		const label = 'connection-' + name + '-' + unique_id;
 		// Genericon names are dash separated
 		const socialName = name.replace( '_', '-' );
 
