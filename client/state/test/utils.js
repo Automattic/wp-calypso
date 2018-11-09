@@ -979,3 +979,45 @@ describe( 'utils', () => {
 		} );
 	} );
 } );
+
+describe( 'addReducer', () => {
+	// creator of toy reducers that initialize to `initialValue` and don't react to other actions
+	const toyReducer = initialValue => ( state = initialValue ) => state;
+
+	describe( 'basic tests', () => {
+		test( 'can add a new top-level reducer', () => {
+			const origReducer = combineReducers( {
+				a: toyReducer( 'Hello from A' ),
+			} );
+
+			const newReducer = origReducer.addReducer( [ 'b' ], toyReducer( 'Hello from B' ) );
+
+			expect( newReducer( undefined, { type: 'INIT' } ) ).toEqual( {
+				a: 'Hello from A',
+				b: 'Hello from B',
+			} );
+		} );
+
+		test( 'can add a new nested reducer', () => {
+			const origReducer = combineReducers( {
+				a: combineReducers( {
+					a: toyReducer( 'Hello from A.A' ),
+				} ),
+			} );
+
+			const newReducer = origReducer
+				.addReducer( [ 'a', 'b' ], toyReducer( 'Hello from A.B' ) )
+				.addReducer( [ 'a', 'c', 'd' ], toyReducer( 'Hello from A.C.D' ) );
+
+			expect( newReducer( undefined, { type: 'INIT' } ) ).toEqual( {
+				a: {
+					a: 'Hello from A.A',
+					b: 'Hello from A.B',
+					c: {
+						d: 'Hello from A.C.D',
+					},
+				},
+			} );
+		} );
+	} );
+} );
