@@ -151,7 +151,7 @@
     "phone": "git+https://github.com/Automattic/node-phone.git#1.0.8",
     "photon": "2.0.1",
     "postcss-cli": "6.0.1",
-    "postcss-custom-properties": "8.0.8",
+    "postcss-custom-properties": "8.0.9",
     "postcss-loader": "3.0.0",
     "prismjs": "1.15.0",
     "prop-types": "15.6.2",
