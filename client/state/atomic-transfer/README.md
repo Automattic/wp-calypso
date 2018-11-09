@@ -20,4 +20,5 @@ However, inside of _is transferring_ there are many sub-states that are more gra
 | `ACTIVE` | A transfer is in progress |
 | `COMPLETED` | The transfer has completed and the Atomic site is ready |
 | `ERROR` | The transfer failed |
+| `REVERTED` | The transfer was reverted |
 | _falsey_ | No information about any transfers exists in Calypso |
