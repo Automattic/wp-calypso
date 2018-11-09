@@ -455,7 +455,6 @@ class ActivityLog extends Component {
 							prevLabel={ translate( 'Newer' ) }
 							total={ logs.length }
 						/>
-						{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 						{ siteIsOnFreePlan && <IntroBanner siteId={ siteId } /> }
 						<section className="activity-log__wrapper">
 							{ siteIsOnFreePlan && <div className="activity-log__fader" /> }
@@ -488,6 +487,7 @@ class ActivityLog extends Component {
 								)
 							) }
 						</section>
+						{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
 							compact={ isMobile() }
 							className="activity-log__pagination is-bottom-pagination"
