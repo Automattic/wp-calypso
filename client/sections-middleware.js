@@ -55,7 +55,7 @@ async function loadSection( context, sectionDefinition ) {
 const _loadedSections = {};
 
 function createPageDefinition( path, sectionDefinition ) {
-	// skip this section if it's not enabled in current enviroment
+	// skip this section if it's not enabled in current environment
 	const { envId } = sectionDefinition;
 	if ( envId && ! envId.includes( config( 'env_id' ) ) ) {
 		return;
