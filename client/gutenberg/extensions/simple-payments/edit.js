@@ -400,9 +400,9 @@ class SimplePaymentsEdit extends Component {
 					<TextareaControl
 						className="simple-payments__field simple-payments__field-content"
 						disabled={ isLoadingInitial }
-						label={ __( 'Enter a description for your item' ) }
+						label={ __( 'Describe your item in a few words' ) }
 						onChange={ this.handleContentChange }
-						placeholder={ __( 'Enter a description for your item' ) }
+						placeholder={ __( 'Describe your item in a few words' ) }
 						value={ content }
 					/>
 
