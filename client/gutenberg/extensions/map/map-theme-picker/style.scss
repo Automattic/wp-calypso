@@ -22,15 +22,15 @@
 		border-color: black;
 	}
 	&.is-theme-default {
-		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-default.jpg' );
+		background-image: url( './map-theme_default.jpg' );
 	}
 	&.is-theme-black_and_white {
-		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-black_and_white.jpg' );
+		background-image: url( './map-theme_black_and_white.jpg' );
 	}
 	&.is-theme-satellite {
-		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-satellite_with_features.jpg' );
+		background-image: url( './map-theme_satellite.jpg' );
 	}
 	&.is-theme-terrain {
-		background-image: url( 'https://s3.amazonaws.com/atavist-static/map-themes/map-theme-terrain_with_features.jpg' );
+		background-image: url( './map-theme_terrain.jpg' );
 	}
 }
