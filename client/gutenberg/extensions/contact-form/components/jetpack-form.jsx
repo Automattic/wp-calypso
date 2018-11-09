@@ -69,14 +69,24 @@ class JetpackForm extends Component {
 					{ ! this.props.has_form_settings_set && (
 						<Placeholder label={ __( 'Contact Form' ) } icon="feedback">
 							<form onSubmit={ this.onFormSettingsSet }>
+								<p className="jetpack-form__intro-message">
+									{ __(
+										'If left black, feedback will be sent to the author of the post and the subject will be the name of this post.'
+									) }
+								</p>
 								<TextControl
-									label={ __( 'Which email address should we send the submissions to?' ) }
+									label={ __( 'Email address' ) }
+									placeholder={ __( 'Example: muriel@design.blog' ) }
 									value={ this.props.to }
 									onChange={ this.onChangeTo }
+									help={ __(
+										'You can enter multiple email addresses separated by commas. A notification email will be sent to each address.'
+									) }
 								/>
 								<TextControl
-									label={ __( 'What would you like the subject of the email to be?' ) }
+									label={ __( 'Email subject line' ) }
 									value={ this.props.subject }
+									placeholder={ __( "Example: Let's work together" ) }
 									onChange={ this.onChangeSubject }
 								/>
 								<div className="contact-form__create">

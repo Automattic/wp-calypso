@@ -17,12 +17,16 @@
 	}
 
 	.components-base-control {
+		margin-bottom: 16px;
 		width: 100%;
 	}
 }
 
+.jetpack-form__intro-message {
+	margin: 0 0 16px;
+}
+
 .contact-form__create {
-	margin-top: 10px;
 	width: 100%;
 }
 
