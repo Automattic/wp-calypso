@@ -26,6 +26,7 @@ registerBlockType( 'jetpack/contact-form', {
 	title: __( 'Contact Form' ),
 	description: __( 'A simple way to get feedback from folks visiting your site.' ),
 	icon: 'feedback',
+	keywords: [ __( 'email' ) ],
 	category: 'jetpack',
 	supports: {
 		html: false,
