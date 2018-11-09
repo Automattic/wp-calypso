@@ -22,6 +22,18 @@ class JetpackContactForm extends Component {
 		this.onFormSettingsSet = this.onFormSettingsSet.bind( this );
 	}
 
+	getIntroMessage() {
+		return __(
+			'If left blank, feedback will be sent to the author of the post and the subject will be the name of this post.'
+		);
+	}
+
+	getEmailHelpMessage() {
+		return __(
+			'You can enter multiple email addresses separated by commas. A notification email will be sent to each address.'
+		);
+	}
+
 	onChangeSubject( subject ) {
 		this.props.setAttributes( { subject } );
 	}
@@ -55,18 +67,12 @@ class JetpackContactForm extends Component {
 			<Fragment>
 				<InspectorControls>
 					<PanelBody title={ __( 'Email feedback settings' ) }>
-						<p>
-							{ __(
-								'If left blank, feedback will be sent to the author of the post and the subject will be the name of this post.'
-							) }
-						</p>
+						<p>{ this.getIntroMessage() }</p>
 						<TextControl
 							label={ __( 'Email address' ) }
 							value={ to }
 							onChange={ this.onChangeTo }
-							help={ __(
-								'You can enter multiple email addresses separated by commas. A notification email will be sent to each address.'
-							) }
+							help={ this.getEmailHelpMessage() }
 						/>
 						<TextControl
 							label={ __( 'Email subject line' ) }
@@ -89,19 +95,13 @@ class JetpackContactForm extends Component {
 					{ ! has_form_settings_set && (
 						<Placeholder label={ __( 'Contact Form' ) } icon="feedback">
 							<form onSubmit={ this.onFormSettingsSet }>
-								<p className="jetpack-contact-form__intro-message">
-									{ __(
-										'If left blank, feedback will be sent to the author of the post and the subject will be the name of this post.'
-									) }
-								</p>
+								<p className="jetpack-contact-form__intro-message">{ this.getIntroMessage() }</p>
 								<TextControl
 									label={ __( 'Email address' ) }
 									placeholder={ __( 'Example: muriel@design.blog' ) }
 									value={ to }
 									onChange={ this.onChangeTo }
-									help={ __(
-										'You can enter multiple email addresses separated by commas. A notification email will be sent to each address.'
-									) }
+									help={ this.getEmailHelpMessage() }
 								/>
 								<TextControl
 									label={ __( 'Email subject line' ) }
