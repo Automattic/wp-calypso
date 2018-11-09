@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { startCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -54,7 +53,7 @@ class SiteType extends Component {
 					onChange={ this.handleRadioChange }
 				/>
 				<span>
-					<strong>{ startCase( elem.type ) }</strong>
+					<strong>{ elem.type }</strong>
 					<span>{ elem.description }</span>
 				</span>
 			</FormLabel>

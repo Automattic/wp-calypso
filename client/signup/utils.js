@@ -12,6 +12,7 @@ import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
 import formState from 'lib/form-state';
 import userFactory from 'lib/user';
+import { dasherize } from 'lib/signup/site-type';
 const user = userFactory();
 
 const { defaultFlowName } = flows;
@@ -145,19 +146,19 @@ export function getThemeForDesignType( designType ) {
 }
 
 export function getThemeForSiteType( siteType ) {
-	if ( 'business' === siteType ) {
+	if ( 'business' === dasherize( siteType ) ) {
 		return 'pub/radcliffe-2';
 	}
 
-	if ( 'professional' === siteType ) {
+	if ( 'professional' === dasherize( siteType ) ) {
 		return 'pub/altofocus';
 	}
 
-	if ( 'educator' === siteType ) {
+	if ( 'education' === dasherize( siteType ) ) {
 		return 'pub/twentyfifteen';
 	}
 
-	if ( 'non-profit' === siteType ) {
+	if ( 'non-profit-organization' === dasherize( siteType ) ) {
 		return 'pub/karuna';
 	}
 
