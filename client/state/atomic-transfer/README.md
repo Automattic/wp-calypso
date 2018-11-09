@@ -1,9 +1,9 @@
-# Automated Transfer State Information
+# Atomic Transfer State Information
 
-Automated transfers are ongoing stateful processes.
+Atomic transfers are ongoing stateful processes.
 The information in this state subtree tracks that process and provides the necessary information to represent it visually.
 
-All automated transfer information is stored as a single possible transfer per site.
+All Atomic transfer information is stored as a single possible transfer per site.
 That is to say, state information is keyed by site ID and if records for multiple actual transfer attempts exist on the server only one will exist in Calypso (this shall be the most recent data available).
 
 ## Data types and meaning
@@ -16,8 +16,8 @@ However, inside of _is transferring_ there are many sub-states that are more gra
 
 | status | meaning |
 |:-:|---|
-| `COMPLETE` | Records exist for a transfer but it has previously finished |
-| `CONFLICTS` | No transfer can be created because there are known conflicts preventing a success transfer |
-| `INQUIRING` | Calypso has requested information about starting a transfer but none has actually been created |
-| `START` | A transfer has been created and is currently in progress |
+| `PENDING` | A Transfer record was created but the transfer has not started |
+| `ACTIVE` | A transfer is in progress |
+| `COMPLETED` | The transfer has completed and the Atomic site is ready |
+| `ERROR` | The transfer failed |
 | _falsey_ | No information about any transfers exists in Calypso |

@@ -12,9 +12,9 @@ import { flowRight as compose, get } from 'lodash';
  * @param {number} siteId requested site for transfer info
  * @returns {Object} transfer object if avaialable or empty object
  */
-export const getAtomicTransfer = ( state, siteId ) =>
-	get( state, [ 'atomicTransfer', siteId ], {} );
-
+export const getAtomicTransfer = ( state, siteId ) => {
+	return get( state, [ 'atomicTransfer', siteId ], {} );
+}
 /**
  * Helper to get status state from local transfer state sub-tree
  *

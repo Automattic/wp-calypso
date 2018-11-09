@@ -19,7 +19,7 @@ describe( 'selectors', () => {
 				atomicTransfer: { [ siteId ]: {} },
 			} );
 
-			expect( getAtomicTransfer( state ) ).toEqual( {} );
+			expect( getAtomicTransfer( state, siteId ) ).to.eql( {} );
 		} );
 
 		test( 'should return a transfer object if available', () => {
@@ -30,7 +30,8 @@ describe( 'selectors', () => {
 					},
 				},
 			} );
-			expect( getAtomicTransfer( state ).toEqual( state.atomicTransfer[ siteId ] ) );
+
+			expect( getAtomicTransfer( state, siteId ) ).to.eql( state.atomicTransfer[ siteId ] );
 		} );
 	} );
 
@@ -40,7 +41,7 @@ describe( 'selectors', () => {
 				atomicTransfer: { [ siteId ]: {} },
 			} );
 
-			expect( getAtomicTransferStatus( state ) ).to.be.null;
+			expect( getAtomicTransferStatus( state, siteId ) ).to.be.null;
 		} );
 
 		test( 'should return the status for an existing transfer', () => {
@@ -51,7 +52,7 @@ describe( 'selectors', () => {
 					},
 				},
 			} );
-			expect( getAtomicTransferStatus( state ) ).to.eql( 'pending' );
+			expect( getAtomicTransferStatus( state, siteId ) ).to.eql( 'pending' );
 		} );
 	} );
 } );
