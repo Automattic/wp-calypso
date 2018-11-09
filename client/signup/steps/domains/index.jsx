@@ -325,9 +325,11 @@ class DomainsStep extends React.Component {
 		const initialQuery = get( this.props, 'queryObject.new', '' );
 		if ( initialQuery && this.searchOnInitialRender ) {
 			this.searchOnInitialRender = false;
-			initialState.searchResults = null;
-			initialState.subdomainSearchResults = null;
-			initialState.loadingResults = true;
+			if ( initialState ) {
+				initialState.searchResults = null;
+				initialState.subdomainSearchResults = null;
+				initialState.loadingResults = true;
+			}
 		}
 
 		return (
