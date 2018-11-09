@@ -6,7 +6,7 @@ references:
     CIRCLE_TEST_REPORTS: /tmp/test_results
 
   docker-image: &docker-image
-    - image: circleci/node:10.12.0-browsers
+    - image: circleci/node:10.13.0-browsers
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -19,7 +19,8 @@ references:
         "$CIRCLE_TEST_REPORTS/eslint"           \
         "$CIRCLE_TEST_REPORTS/integration"      \
         "$CIRCLE_TEST_REPORTS/server"           \
-        "$HOME/jest-cache"
+        "$HOME/jest-cache"                      \
+        "$HOME/terser-cache"
 
   # Jest cache caching
   #
@@ -49,6 +50,22 @@ references:
     key: v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/jest-cache
+
+  #
+  # Terser cache caching
+  #
+  restore-terser-cache: &restore-terser-cache
+    name: Restore Terser cache
+    keys:
+      - v0-terser-{{ .Branch }}-{{ .Revision }}
+      - v0-terser-{{ .Branch }}
+      - v0-terser-master
+      - v0-terser
+  save-terser-cache: &save-terser-cache
+    name: Save Terser cache
+    key: v0-terser-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - ~/terser-cache
 
   # Git cache
   #
@@ -339,6 +356,7 @@ jobs:
     steps:
       - prepare
       - restore_cache: *restore-babel-client-cache
+      - restore_cache: *restore-terser-cache
       - run:
           name: Build Stats
           environment:
@@ -356,6 +374,7 @@ jobs:
               && mv stats.json chart.json "$CIRCLE_ARTIFACTS/icfy" \
               || rm -fr build/.babel-client-cache # In case of failure do not save a potentially bad cache
             exit 0
+      - save_cache: *save-terser-cache
       - save_cache: *save-babel-client-cache
       - store-artifacts-and-test-results
       - run:

@@ -40,6 +40,7 @@ jest.mock( 'state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn( () => require( './fixtures' ).DUMMY_SITE_ID ),
 	getSelectedSite: () => {},
 } ) );
+jest.mock( 'state/selectors/get-current-locale-slug', () => () => 'en' );
 
 describe( 'ImageSelector', () => {
 	const testProps = {

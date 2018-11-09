@@ -17,7 +17,6 @@ import Gridicon from 'gridicons';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarButton from 'layout/sidebar/button';
 import config from 'config';
-import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import analytics from 'lib/analytics';
@@ -35,6 +34,9 @@ import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
+import getEditorUrl from 'state/selectors/get-editor-url';
 
 class ManageMenu extends PureComponent {
 	static propTypes = {
@@ -47,10 +49,11 @@ class ManageMenu extends PureComponent {
 		isJetpack: PropTypes.bool,
 		isSingleUser: PropTypes.bool,
 		postTypes: PropTypes.object,
-		getNewPostPathFn: PropTypes.func,
+		getEditorUrlFn: PropTypes.func,
 		siteAdminUrl: PropTypes.string,
 		site: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string,
+		calypsoifyGutenberg: PropTypes.bool,
 	};
 
 	// We default to `/my` posts when appropriate
@@ -72,7 +75,7 @@ class ManageMenu extends PureComponent {
 	}
 
 	getDefaultMenuItems() {
-		const { siteSlug, translate } = this.props;
+		const { calypsoifyGutenberg, getEditorUrlFn, siteSlug, translate } = this.props;
 
 		return [
 			{
@@ -82,7 +85,8 @@ class ManageMenu extends PureComponent {
 				queryable: true,
 				config: 'manage/pages',
 				link: '/pages',
-				buttonLink: siteSlug ? '/page/' + siteSlug : '/page',
+				buttonLink: getEditorUrlFn( 'page' ),
+				forceButtonTargetInternal: calypsoifyGutenberg,
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
 			},
@@ -94,7 +98,8 @@ class ManageMenu extends PureComponent {
 				queryable: true,
 				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
-				buttonLink: siteSlug ? '/post/' + siteSlug : '/post',
+				buttonLink: getEditorUrlFn( 'post' ),
+				forceButtonTargetInternal: calypsoifyGutenberg,
 				wpAdminLink: 'edit.php',
 				showOnAllMySites: true,
 			},
@@ -271,6 +276,7 @@ class ManageMenu extends PureComponent {
 						onClick={ this.trackSidebarButtonClick( menuItem.name ) }
 						href={ menuItem.buttonLink }
 						preloadSectionName="post-editor"
+						forceTargetInternal={ menuItem.forceButtonTargetInternal }
 					>
 						{ menuItem.buttonText || this.props.translate( 'Add' ) }
 					</SidebarButton>
@@ -299,10 +305,10 @@ class ManageMenu extends PureComponent {
 					return memo;
 				}
 
-				let buttonLink;
-				if ( config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable ) {
-					buttonLink = this.props.getNewPostPathFn( postTypeSlug );
-				}
+				const buttonLink =
+					config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable
+						? this.props.getEditorUrlFn( postTypeSlug )
+						: undefined;
 
 				return memo.concat( {
 					name: postType.name,
@@ -320,6 +326,7 @@ class ManageMenu extends PureComponent {
 					wpAdminLink: 'edit.php?post_type=' + postType.name,
 					showOnAllMySites: false,
 					buttonLink,
+					forceButtonTargetInternal: this.props.calypsoifyGutenberg,
 				} );
 			},
 			[]
@@ -358,8 +365,8 @@ const canCurrentUserFn = ( state, siteId ) => capability =>
  * A functional selector similar to `canCurrentUserFn`, this time for generating editor URL
  * from a post type.
  */
-const getNewPostPathFn = ( state, siteId ) => postTypeSlug =>
-	getEditorNewPostPath( state, siteId, postTypeSlug );
+const getEditorUrlFn = ( state, siteId ) => postType =>
+	getEditorUrl( state, siteId, null, postType );
 
 export default connect(
 	( state, { siteId } ) => ( {
@@ -368,15 +375,15 @@ export default connect(
 		isJetpack: isJetpackSite( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),
 		postTypes: getPostTypes( state, siteId ),
-		getNewPostPathFn: getNewPostPathFn( state, siteId ),
+		getEditorUrlFn: getEditorUrlFn( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		site: getSite( state, siteId ),
-		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		calypsoifyGutenberg:
+			isCalypsoifyGutenbergEnabled( state, siteId ) &&
+			'gutenberg' === getSelectedEditor( state, siteId ),
 	} ),
-	{
-		recordTracksEvent,
-	},
+	{ recordTracksEvent },
 	null,
-	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUserFn', 'getNewPostPathFn' ] } ) }
+	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUserFn', 'getEditorUrlFn' ] } ) }
 )( localize( ManageMenu ) );

@@ -64,6 +64,10 @@ export function isUnknownSuggestion( suggestion ) {
 	return suggestion.status === domainAvailability.UNKNOWN;
 }
 
+export function isMissingVendor( suggestion ) {
+	return ! ( 'vendor' in suggestion );
+}
+
 export function isFreeSuggestion( suggestion ) {
 	return suggestion.is_free === true;
 }

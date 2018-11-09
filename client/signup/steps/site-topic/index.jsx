@@ -15,50 +15,61 @@ import Button from 'components/button';
 import Card from 'components/card';
 import StepWrapper from 'signup/step-wrapper';
 import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
+import SuggestionSearch from 'components/suggestion-search';
+import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
+import getSignupStepsSiteTopic from 'state/selectors/get-signup-steps-site-topic';
+import SignupActions from 'lib/signup/actions';
+import { hints } from 'lib/signup/hint-data';
 
 class SiteTopicStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number.isRequired,
-		setSiteTopic: PropTypes.func.isRequired,
+		submitSiteTopic: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
+		siteTopic: PropTypes.string,
+		translate: PropTypes.func.isRequired,
 	};
 
-	state = {
-		siteTopic: '',
-	};
+	constructor( props ) {
+		super( props );
 
-	onChangeTopic = event => this.setState( { siteTopic: event.target.value } );
-
-	// TODO:
-	// Handle submission.
-	submitSiteTopic( event ) {
-		event.preventDefault();
+		this.state = {
+			siteTopicValue: props.siteTopic || '',
+		};
 	}
+
+	onSiteTopicChange = value => {
+		this.setState( { siteTopicValue: value } );
+	};
+
+	onSubmit = event => {
+		event.preventDefault();
+
+		this.props.submitSiteTopic( this.trimedSiteTopicValue() );
+	};
+
+	trimedSiteTopicValue = () => this.state.siteTopicValue.trim();
 
 	renderContent() {
 		const { translate } = this.props;
-		const { siteTopic } = this.state;
 
 		return (
 			<Card className="site-topic__content">
-				<form onSubmit={ this.submitSiteTopic }>
+				<form onSubmit={ this.onSubmit }>
 					<FormFieldset>
 						<FormLabel htmlFor="siteTopic">{ translate( 'Type of Business' ) }</FormLabel>
-						<FormTextInput
+						<SuggestionSearch
 							id="siteTopic"
-							name="siteTopic"
 							placeholder={ translate( 'e.g. Fashion, travel, design, plumber, electrician' ) }
-							value={ this.state.siteTopic }
-							onChange={ this.onChangeTopic }
-							autoComplete="off"
+							onChange={ this.onSiteTopicChange }
+							suggestions={ Object.values( hints ) }
 						/>
 					</FormFieldset>
-					<Button type="submit" disabled={ ! siteTopic } primary>
+					<Button type="submit" disabled={ ! this.trimedSiteTopicValue() } primary>
 						{ translate( 'Continue' ) }
 					</Button>
 					<span className="site-topic__form-description">
@@ -91,9 +102,32 @@ class SiteTopicStep extends Component {
 	}
 }
 
-// TODO:
-// Connect to the real action creators and selectors.
-export default connect(
-	null,
-	{ setSiteTopic: () => {} }
-)( localize( SiteTopicStep ) );
+const mapDispatchToProps = ( dispatch, ownProps ) => ( {
+	submitSiteTopic: siteTopicValue => {
+		const { translate, flowName, stepName, goToNextStep } = ownProps;
+
+		dispatch( setSiteTopic( siteTopicValue ) );
+
+		SignupActions.submitSignupStep(
+			{
+				processingMessage: translate( 'Collecting your information' ),
+				stepName,
+			},
+			[],
+			{
+				siteTopic: siteTopicValue,
+			}
+		);
+
+		goToNextStep( flowName );
+	},
+} );
+
+export default localize(
+	connect(
+		state => ( {
+			siteTopic: getSignupStepsSiteTopic( state ),
+		} ),
+		mapDispatchToProps
+	)( SiteTopicStep )
+);

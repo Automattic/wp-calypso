@@ -8,6 +8,11 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
+/**
+ * Internal dependencies
+ */
+import { MomentProvider } from 'components/with-localized-moment/context';
+
 export function concatTitle( ...parts ) {
 	return parts.join( ' › ' );
 }
@@ -17,7 +22,9 @@ export function renderWithReduxStore( reactElement, domContainer, reduxStore ) {
 		'string' === typeof domContainer ? document.getElementById( domContainer ) : domContainer;
 
 	return ReactDom.render(
-		React.createElement( ReduxProvider, { store: reduxStore }, reactElement ),
+		<ReduxProvider store={ reduxStore }>
+			<MomentProvider>{ reactElement }</MomentProvider>
+		</ReduxProvider>,
 		domContainerNode
 	);
 }

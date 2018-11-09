@@ -14,6 +14,10 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
+import { isEnabled } from 'config';
+import { isJetpackSite } from 'state/sites/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
+import { getSelectedSiteId } from 'state/ui/selectors/';
 
 class EditorGutenbergOptInSidebar extends PureComponent {
 	static propTypes = {
@@ -29,7 +33,12 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 	};
 
 	render() {
-		const { showDialog, translate } = this.props;
+		const { showDialog, translate, optInEnabled } = this.props;
+
+		if ( ! optInEnabled ) {
+			return null;
+		}
+
 		return (
 			<div
 				tabIndex="0"
@@ -50,10 +59,20 @@ EditorGutenbergOptInSidebar.propTypes = {
 	// connected properties
 	translate: PropTypes.func,
 	showDialog: PropTypes.func,
+	optInEnabled: PropTypes.bool,
+};
+
+const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
+	const isVip = isVipSite( state, siteId );
+	const isJetpack = isJetpackSite( state, siteId );
+	return {
+		optInEnabled: isEnabled( 'gutenberg/opt-in' ) && ! isJetpack && ! isVip,
+	};
 };
 
 export default connect(
-	null,
+	mapStateToProps,
 	{
 		showDialog: showGutenbergOptInDialog,
 	}

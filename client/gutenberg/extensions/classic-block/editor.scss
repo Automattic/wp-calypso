@@ -1,0 +1,28 @@
+// Icons needed for TinyMCE based Classic block
+@import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' );
+
+.is-section-gutenberg-editor {
+  // Overriding the existing styles of Calypso's classic editor
+  .mce-container.mce-tinymce.is-pinned .mce-container.mce-top-part > .mce-container-body > .mce-toolbar-grp {
+    position: static;
+    top: 0;
+  }
+
+  .mce-tinymce {
+    padding-top: 0 !important; // !important in order to override inline styles
+  }
+
+  // Make ellipsis menu button fit
+  .mce-toolbar .mce-btn-group .mce-btn {
+    margin: 4px 1px;
+  }
+
+  .mce-toolbar .mce-btn-group .mce-advanced.mce-btn.mce-last {
+    right: 0;
+  }
+
+  .mce-toolbar .mce-advanced .gridicon {
+    width: 24px;
+    height: 24px;
+  }
+}

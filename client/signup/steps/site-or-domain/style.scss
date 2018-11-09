@@ -38,12 +38,8 @@
 .site-or-domain__choice-button {
 	text-align: center;
 
-	.button {
-		text-transform: uppercase;
-
-		&.site-or-domain__is-placeholder {
-			width: 90%;
-		}
+	.site-or-domain__is-placeholder {
+		width: 90%;
 	}
 }
 

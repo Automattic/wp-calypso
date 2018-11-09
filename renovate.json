@@ -9,5 +9,9 @@
 	],
 	"statusCheckVerify": true,
 	"ignoreDeps": [ "jquery" ],
-	"labels": [ "Framework", "[Type] Task", "[Status] Needs Review" ]
+	"labels": [ "Framework", "[Type] Task", "[Status] Needs Review" ],
+	"lockFileMaintenance": {
+		"enabled": true,
+		"schedule": "every weekday"
+	}
 }

@@ -3,9 +3,8 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Children, Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, reduce } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -31,15 +30,10 @@ export class ChecklistNavigation extends Component {
 	};
 
 	handleClick = () => {
-		// The redux state for getSiteChecklist() is injected from an API response
-		// so the selector's results and the task list will not always match
-		// Therefore, we're accessing the child Tasks directly for accuracy
-
-		const childrenArray = Children.toArray( this.props.children );
-		const task = find( childrenArray, child => ! child.props.completed );
+		const task = this.props.taskList.getFirstIncompleteTask();
 
 		if ( task ) {
-			this.props.setStoredTask( task.key );
+			this.props.setStoredTask( task.id );
 		}
 		this.props.setNotification( false );
 		this.props.closePopover();
@@ -47,20 +41,14 @@ export class ChecklistNavigation extends Component {
 	};
 
 	render() {
-		const { siteSlug, translate, showNotification, children, canShowChecklist } = this.props;
+		const { siteSlug, translate, showNotification, canShowChecklist, taskList } = this.props;
 
 		const buttonClasses = {
 			'has-notification': showNotification,
 			'checklist-navigation__count': true,
 		};
-		const childrenArray = Children.toArray( children );
-		const total = childrenArray.length;
-		const completeCount = reduce(
-			childrenArray,
-			( sum, child ) => ( !! child.props.completed ? sum + 1 : sum ),
-			0
-		);
-		const isFinished = completeCount >= total;
+		const { total, completed } = taskList.getCompletionStatus();
+		const isFinished = ! taskList.getFirstIncompleteTask();
 		const checklistLink = '/checklist/' + siteSlug;
 
 		if ( ! canShowChecklist || isFinished ) {
@@ -83,14 +71,14 @@ export class ChecklistNavigation extends Component {
 						{ translate( '%(complete)d/%(total)d', {
 							comment: 'Numerical progress indicator, like 5/9',
 							args: {
-								complete: completeCount,
+								complete: completed,
 								total: total,
 							},
 						} ) }
 					</span>
 
 					<div className="checklist-navigation__progress-bar-margin">
-						<ProgressBar total={ total } value={ completeCount } compact />
+						<ProgressBar total={ total } value={ completed } compact />
 					</div>
 				</Button>
 			</div>

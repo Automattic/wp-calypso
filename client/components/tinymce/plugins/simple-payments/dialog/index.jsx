@@ -54,6 +54,7 @@ import {
 import EmptyContent from 'components/empty-content';
 import Banner from 'components/banner';
 import canCurrentUser from 'state/selectors/can-current-user';
+import { DEFAULT_CURRENCY } from 'lib/simple-payments/constants';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
@@ -152,7 +153,7 @@ class SimplePaymentsDialog extends Component {
 		title: '',
 		description: '',
 		price: '',
-		currency: 'USD',
+		currency: DEFAULT_CURRENCY,
 		multiple: false,
 		email: '',
 		featuredImageId: null,
@@ -219,7 +220,7 @@ class SimplePaymentsDialog extends Component {
 			}
 		}
 
-		const initialCurrency = currencyCode || 'USD';
+		const initialCurrency = currencyCode || DEFAULT_CURRENCY;
 		const initialEmail = get( paymentButtons, '0.email', currentUserEmail );
 
 		return { ...initialFields, currency: initialCurrency, email: initialEmail };

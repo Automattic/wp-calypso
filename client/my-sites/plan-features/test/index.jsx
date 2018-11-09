@@ -129,8 +129,25 @@ describe( 'PlanFeatures.renderUpgradeDisabledNotice', () => {
 	const baseProps = {
 		translate: identity,
 	};
+
+	const originalCreatePortal = ReactDOM.createPortal;
+	beforeAll( () => {
+		ReactDOM.createPortal = elem => elem;
+	} );
+
+	afterAll( () => {
+		ReactDOM.createPortal = originalCreatePortal;
+	} );
+
+	const createInstance = props => {
+		const instance = new PlanFeatures( props );
+		instance.getBannerContainer = () => <div />;
+
+		return instance;
+	};
+
 	test( 'Should display a notice when component is fully rendered and user is unable to buy a plan', () => {
-		const instance = new PlanFeatures( {
+		const instance = createInstance( {
 			...baseProps,
 			hasPlaceholders: false,
 			canPurchase: false,
@@ -139,7 +156,7 @@ describe( 'PlanFeatures.renderUpgradeDisabledNotice', () => {
 		expect( wrapper.find( '.plan-features__notice' ).length ).toBe( 1 );
 	} );
 	test( 'Should not display a notice when component is not fully rendered yet', () => {
-		const instance = new PlanFeatures( {
+		const instance = createInstance( {
 			...baseProps,
 			hasPlaceholders: true,
 			canPurchase: false,
@@ -147,7 +164,7 @@ describe( 'PlanFeatures.renderUpgradeDisabledNotice', () => {
 		expect( instance.renderUpgradeDisabledNotice() ).toBe( null );
 	} );
 	test( 'Should not display a notice when user is able to buy a plan', () => {
-		const instance = new PlanFeatures( {
+		const instance = createInstance( {
 			...baseProps,
 			hasPlaceholders: false,
 			canPurchase: true,

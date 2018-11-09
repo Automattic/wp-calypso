@@ -17,7 +17,7 @@
  * External dependencies
  */
 import { compose } from '@wordpress/compose';
-import { PanelBody } from '@wordpress/components';
+import { PluginPrePublishPanel } from '@wordpress/edit-post';
 import { withDispatch, withSelect } from '@wordpress/data';
 
 /**
@@ -29,7 +29,7 @@ import PublicizeNoConnections from './no-connections';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const PublicizePanel = ( { connections, refreshConnections } ) => (
-	<PanelBody
+	<PluginPrePublishPanel
 		initialOpen={ true }
 		id="publicize-title"
 		title={
@@ -45,7 +45,7 @@ const PublicizePanel = ( { connections, refreshConnections } ) => (
 			{ ! connections ? __( 'Refreshing…' ) : __( 'Refresh connections' ) }
 		</a>
 		{ ( connections && connections.length > 0 ) && <PublicizeConnectionVerify /> }
-	</PanelBody>
+	</PluginPrePublishPanel>
 );
 
 export default compose( [

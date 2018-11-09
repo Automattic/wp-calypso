@@ -16,8 +16,8 @@ import classnames from 'classnames';
  */
 import ReaderImportButton from 'blocks/reader-import-button';
 import ReaderExportButton from 'blocks/reader-export-button';
-import InfiniteStream from 'components/reader-infinite-stream';
-import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
+import InfiniteStream from 'reader/components/reader-infinite-stream';
+import { siteRowRenderer } from 'reader/components/reader-infinite-stream/row-renderers';
 import SyncReaderFollows from 'components/data/sync-reader-follows';
 import FollowingManageSearchFollowed from './search-followed';
 import FollowingManageSortControls from './sort-controls';

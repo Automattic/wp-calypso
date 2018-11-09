@@ -65,7 +65,7 @@ describe( 'guest-sandbox-ticket', () => {
 
 			injectGuestSandboxTicketHandler( wpcom );
 
-			expect( wpcom.request( { query: 'search=whatever' } ) );
+			wpcom.request( { query: 'search=whatever' } );
 		} );
 
 		test( 'should not add ticket param if it is not present', done => {
@@ -78,7 +78,7 @@ describe( 'guest-sandbox-ticket', () => {
 
 			injectGuestSandboxTicketHandler( wpcom );
 
-			expect( wpcom.request( { query: 'search=whatever' } ) );
+			wpcom.request( { query: 'search=whatever' } );
 		} );
 	} );
 } );

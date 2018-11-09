@@ -22,6 +22,11 @@ $gutenberg-breakpoint-sm: 782px;
 	background: none;
 }
 
+//history dialog
+@import 'post-editor/editor-revisions/style';
+@import 'post-editor/editor-diff-viewer/style';
+@import 'post-editor/editor-revisions-list/style';
+
 // OVERRIDES
 
 //======================================================
@@ -128,20 +133,12 @@ $gutenberg-theme-toggle: #11a0d2;
 		}
 	}
 
-	.edit-post-header-toolbar__back.is-borderless {
+	.edit-post-header-toolbar__back {
 		border-right: 1px solid lighten( $gray, 25% );
 		border-radius: 0;
-		color: $blue-wordpress;
-		height: 100%;
-		min-width: 80px;
-		padding: 6px 16px;
-		&:hover {
-			color: $blue-medium;
-		}
-		@include breakpoint( '>960px' ) {
-			padding: 6px 32px;
-		}
+		padding: 10px;
 	}
+
 	.edit-post-header-toolbar .site {
 		border-right: 1px solid lighten( $gray, 25% );
 		margin-right: 10px;
@@ -185,7 +182,7 @@ $gutenberg-theme-toggle: #11a0d2;
 		// This is overriding the width of the .components-text-control__input elements because
 		// .is-section-gutenberg-editor input[type='text'] is more specific, so we add this :not selector in order to
 		// don't change the width defined by @wordpress/components
-		&:not( .components-text-control__input ) {
+		&:not( .components-text-control__input ) &:not( .editor-format-toolbar__link-container-content ) {
 			width: auto;
 		}
 	}
