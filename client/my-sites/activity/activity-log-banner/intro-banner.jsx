@@ -19,7 +19,7 @@ class IntroBanner extends Component {
 		const { translate } = this.props;
 		return (
 			<DismissibleCard
-				preferenceName="activity-introduction"
+				preferenceName="activity-introduction-banner"
 				className="activity-log-banner__intro"
 			>
 				<img
