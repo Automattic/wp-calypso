@@ -85,6 +85,7 @@ export const FEATURE_PREMIUM_SUPPORT = 'priority-support';
 export const FEATURE_BASIC_DESIGN = 'basic-design';
 export const FEATURE_ADVANCED_DESIGN = 'advanced-design';
 export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
+export const FEATURE_GOOGLE_MY_BUSINESS = 'google-my-business';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
@@ -431,7 +432,7 @@ const getPlanBusinessDetails = () => ( {
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS ],
 } );
 
 const getPlanEcommerceDetails = () => ( {
@@ -484,7 +485,7 @@ const getPlanEcommerceDetails = () => ( {
 	getBlogSignupFeatures: () => [ FEATURE_UPLOAD_THEMES_PLUGINS ],
 	getPortfolioSignupFeatures: () => [ FEATURE_UPLOAD_THEMES_PLUGINS ],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS ],
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -1258,6 +1259,16 @@ export const FEATURES_LIST = {
 			i18n.translate(
 				'Track website statistics with Google Analytics for a ' +
 					'deeper understanding of your website visitors and customers.'
+			),
+	},
+
+	[ FEATURE_GOOGLE_MY_BUSINESS ]: {
+		getSlug: () => FEATURE_GOOGLE_MY_BUSINESS,
+		getTitle: () => i18n.translate( 'Google My Business' ),
+		getDescription: () =>
+			i18n.translate(
+				'See how customers find you on Google -- and whether they visited your site ' +
+					'and looked for more info on your business -- by connecting to a Google My Business location.'
 			),
 	},
 
