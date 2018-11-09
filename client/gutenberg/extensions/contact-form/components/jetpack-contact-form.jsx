@@ -46,19 +46,31 @@ class JetpackContactForm extends Component {
 		return (
 			<Fragment>
 				<InspectorControls>
-					<PanelBody title={ __( 'Submission Details' ) }>
+					<PanelBody title={ __( 'Email feedback settings' ) }>
+						<p>
+							{ __(
+								'If left black, feedback will be sent to the author of the post and the subject will be the name of this post.'
+							) }
+						</p>
 						<TextControl
-							label={ __( 'Which email address should we send the submissions to?' ) }
+							label={ __( 'Email address' ) }
 							value={ this.props.to }
 							onChange={ this.onChangeTo }
+							help={ __(
+								'You can enter multiple email addresses separated by commas. A notification email will be sent to each address.'
+							) }
 						/>
 						<TextControl
-							label={ __( 'What would you like the subject of the email to be?' ) }
+							label={ __( 'Email subject line' ) }
 							value={ this.props.subject }
 							onChange={ this.onChangeSubject }
 						/>
+					</PanelBody>
+				</InspectorControls>
+				<InspectorControls>
+					<PanelBody title={ __( 'Button settings' ) }>
 						<TextControl
-							label={ __( 'What should the label on the form’s submit button say?' ) }
+							label={ __( 'Submit button label' ) }
 							value={ this.props.submit_button_text }
 							placeholder={ __( 'Submit', 'jetpack' ) }
 							onChange={ this.onChangeSubmit }
