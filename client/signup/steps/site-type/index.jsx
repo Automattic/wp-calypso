@@ -38,7 +38,7 @@ class SiteType extends Component {
 	handleSubmit = event => {
 		event.preventDefault();
 		// Default siteType is 'blogger'
-		const siteTypeInputVal = this.state.siteType || 'blogger';
+		const siteTypeInputVal = this.state.siteType || allSiteTypes[ 0 ].type;
 		const themeRepo = getThemeForSiteType( siteTypeInputVal );
 
 		this.props.submitStep( siteTypeInputVal, themeRepo );

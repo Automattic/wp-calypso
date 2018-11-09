@@ -15,7 +15,7 @@ import i18n from 'i18n-calypso';
  */
 export const allSiteTypes = [
 	{
-		type: i18n.translate( 'Blogger' ),
+		type: i18n.translate( 'Blog' ),
 		description: i18n.translate( 'Share a collection of posts.' ),
 	},
 	{
@@ -27,7 +27,7 @@ export const allSiteTypes = [
 		description: i18n.translate( 'Showcase your portfolio and work.' ),
 	},
 	{
-		type: i18n.translate( 'Educator' ),
+		type: i18n.translate( 'Education' ),
 		description: i18n.translate( 'Share school projects and class info.' ),
 	},
 	{
