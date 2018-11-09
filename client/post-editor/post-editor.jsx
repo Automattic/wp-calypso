@@ -84,7 +84,6 @@ import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
 import EditorGutenbergBlocksWarningDialog from './editor-gutenberg-blocks-warning-dialog';
-import { showGutenbergBlocksWarningDialog } from 'state/ui/gutenberg-blocks-warning-dialog/actions';
 
 export class PostEditor extends React.Component {
 	static propTypes = {
@@ -165,11 +164,6 @@ export class PostEditor extends React.Component {
 		// record the initial value of the editor mode preference
 		if ( this.props.editorModePreference ) {
 			analytics.mc.bumpStat( 'calypso_default_editor_mode', this.props.editorModePreference );
-		}
-
-		if ( ! this.props.isNew ) {
-			// TODO: Check if content has blocks
-			// this.props.showGutenbergBlocksWarningDialog();
 		}
 	}
 
@@ -1176,7 +1170,6 @@ const enhance = flow(
 			editorEditRawContent,
 			editorResetRawContent,
 			pauseGuidedTour,
-			showGutenbergBlocksWarningDialog,
 		}
 	)
 );
