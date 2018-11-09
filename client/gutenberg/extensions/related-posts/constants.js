@@ -3,9 +3,9 @@
 /**
  * Internal dependencies
  */
-import imgCatBlog from './cat-blog.png';
-import imgDevices from './devices.jpg';
-import imgWedding from './mobile-wedding.jpg';
+import imgCatBlog from 'assets/images/related-posts/cat-blog.png';
+import imgDevices from 'assets/images/related-posts/devices.jpg';
+import imgWedding from 'assets/images/related-posts/mobile-wedding.jpg';
 
 export const ALIGNMENT_OPTIONS = [ 'center', 'wide', 'full' ];
 export const MAX_POSTS_TO_SHOW = 3;

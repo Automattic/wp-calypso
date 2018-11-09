@@ -11,9 +11,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormLabel from 'components/forms/form-label';
-import imgCatBlog from 'gutenberg/extensions/related-posts/cat-blog.png';
-import imgDevices from 'gutenberg/extensions/related-posts/devices.jpg';
-import imgWedding from 'gutenberg/extensions/related-posts/mobile-wedding.jpg';
+import imgCatBlog from 'assets/images/related-posts/cat-blog.png';
+import imgDevices from 'assets/images/related-posts/devices.jpg';
+import imgWedding from 'assets/images/related-posts/mobile-wedding.jpg';
 
 const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) => {
 	const posts = [
