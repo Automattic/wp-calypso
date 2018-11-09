@@ -338,7 +338,7 @@ registerBlockType(
 		edit: function( props ) {
 			return (
 				<JetpackFieldCheckbox
-					label={ getFieldLabel( props ) }
+					label="" // label intentinally left blank
 					required={ props.attributes.required }
 					setAttributes={ props.setAttributes }
 					isSelected={ props.isSelected }
