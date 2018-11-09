@@ -12,19 +12,19 @@ import { withInstanceId } from '@wordpress/compose';
  */
 import JetpackFieldLabel from './jetpack-field-label';
 
-const JetpackFieldCheckbox = props => {
+const JetpackFieldCheckbox = ( { instanceId, required, label, setAttributes, isSelected } ) => {
 	return (
 		<BaseControl
-			id={ `jetpack-field-checkbox-${ props.instanceId }` }
+			id={ `jetpack-field-checkbox-${ instanceId }` }
 			className="jetpack-field jetpack-field-checkbox"
 			label={
 				<Fragment>
 					<input className="jetpack-field-checkbox__checkbox" type="checkbox" disabled />
 					<JetpackFieldLabel
-						required={ props.required }
-						label={ props.label }
-						setAttributes={ props.setAttributes }
-						isSelected={ props.isSelected }
+						required={ required }
+						label={ label }
+						setAttributes={ setAttributes }
+						isSelected={ isSelected }
 					/>
 				</Fragment>
 			}
