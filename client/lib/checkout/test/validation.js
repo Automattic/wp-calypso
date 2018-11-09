@@ -16,7 +16,7 @@ import {
 	getCreditCardType,
 	paymentFieldRules,
 	creditCardFieldRules,
-	combineValidationRules,
+	mergeValidationRules,
 } from '../validation';
 import * as ebanxMethods from '../ebanx';
 
@@ -261,13 +261,13 @@ describe( 'validation', () => {
 
 		test( 'should return credit card field validation rules', () => {
 			const result = paymentFieldRules( {}, 'credit-card' );
-			expect( result ).toEqual( creditCardFieldRules() );
+			expect( result ).toEqual( creditCardFieldRules );
 		} );
 	} );
 
-	describe( 'combineValidationRules()', () => {
+	describe( 'mergeValidationRules()', () => {
 		test( 'should add additional fields', () => {
-			const result = combineValidationRules(
+			const result = mergeValidationRules(
 				{
 					bird: {
 						description: 'A Bird',
@@ -295,7 +295,7 @@ describe( 'validation', () => {
 		} );
 
 		test( 'should add additional tests to existing fields', () => {
-			const result = combineValidationRules(
+			const result = mergeValidationRules(
 				{
 					bird: {
 						description: 'A Bird',
@@ -314,6 +314,35 @@ describe( 'validation', () => {
 				bird: {
 					description: 'A Bird',
 					rules: [ 'can-peck', 'can-fly', 'black' ],
+				},
+			} );
+		} );
+
+		test( 'should ignore empty values', () => {
+			const result = mergeValidationRules(
+				{
+					bird: {
+						description: 'A Bird',
+						rules: [ 'can-dodge' ],
+					},
+				},
+				false,
+				null,
+				undefined,
+				[],
+				{},
+				{
+					bird: {
+						description: 'A Bird',
+						rules: [ 'can-dodge' ],
+					},
+				}
+			);
+
+			expect( result ).toEqual( {
+				bird: {
+					description: 'A Bird',
+					rules: [ 'can-dodge' ],
 				},
 			} );
 		} );

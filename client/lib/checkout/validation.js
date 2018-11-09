@@ -21,48 +21,43 @@ import {
  * @param {object} additionalFieldRules custom validation rules depending on jurisdiction or other variable
  * @returns {object} the ruleset
  */
-export function creditCardFieldRules( additionalFieldRules = {} ) {
-	return Object.assign(
-		{
-			name: {
-				description: i18n.translate( 'Name on Card', {
-					context: 'Upgrades: Card holder name label on credit card form',
-				} ),
-				rules: [ 'required' ],
-			},
+export const creditCardFieldRules = {
+	name: {
+		description: i18n.translate( 'Name on Card', {
+			context: 'Upgrades: Card holder name label on credit card form',
+		} ),
+		rules: [ 'required' ],
+	},
 
-			number: {
-				description: i18n.translate( 'Card Number', {
-					context: 'Upgrades: Card number label on credit card form',
-				} ),
-				rules: [ 'validCreditCardNumber' ],
-			},
+	number: {
+		description: i18n.translate( 'Card Number', {
+			context: 'Upgrades: Card number label on credit card form',
+		} ),
+		rules: [ 'validCreditCardNumber' ],
+	},
 
-			'expiration-date': {
-				description: i18n.translate( 'Credit Card Expiration Date' ),
-				rules: [ 'validExpirationDate' ],
-			},
+	'expiration-date': {
+		description: i18n.translate( 'Credit Card Expiration Date' ),
+		rules: [ 'validExpirationDate' ],
+	},
 
-			cvv: {
-				description: i18n.translate( 'Credit Card CVV Code' ),
-				rules: [ 'validCvvNumber' ],
-			},
+	cvv: {
+		description: i18n.translate( 'Credit Card CVV Code' ),
+		rules: [ 'validCvvNumber' ],
+	},
 
-			country: {
-				description: i18n.translate( 'Country' ),
-				rules: [ 'required' ],
-			},
+	country: {
+		description: i18n.translate( 'Country' ),
+		rules: [ 'required' ],
+	},
 
-			'postal-code': {
-				description: i18n.translate( 'Postal Code', {
-					context: 'Upgrades: Postal code on credit card form',
-				} ),
-				rules: [ 'required' ],
-			},
-		},
-		additionalFieldRules
-	);
-}
+	'postal-code': {
+		description: i18n.translate( 'Postal Code', {
+			context: 'Upgrades: Postal code on credit card form',
+		} ),
+		rules: [ 'required' ],
+	},
+};
 
 /**
  * Returns the tef payment validation rule set
@@ -117,7 +112,11 @@ export function tokenFieldRules() {
 export function paymentFieldRules( paymentDetails, paymentType ) {
 	switch ( paymentType ) {
 		case 'credit-card':
-			return creditCardFieldRules( getAdditionalFieldRules( paymentDetails ) );
+			return mergeValidationRules(
+				creditCardFieldRules,
+				getConditionalCreditCardRules( paymentDetails ),
+				getEbanxCreditCardRules( paymentDetails )
+			);
 		case 'brazil-tef':
 			return tefPaymentFieldRules();
 		case 'token':
@@ -133,8 +132,9 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
  * @param {object}* rulesets Objects describing the rulesets to be combined
  * @returns {object} The aggregated ruleset
  */
-export function combineValidationRules( ...rulesets ) {
+export function mergeValidationRules( ...rulesets ) {
 	return mergeWith(
+		{},
 		...rulesets,
 		( objValue, srcValue ) =>
 			isArray( objValue ) && isArray( srcValue ) ? union( objValue, srcValue ) : undefined
@@ -305,6 +305,12 @@ function getErrors( field, value, paymentDetails ) {
 	);
 }
 
+function getEbanxCreditCardRules( { country } ) {
+	return (
+		country && isEbanxCreditCardProcessingEnabledForCountry( country ) && ebanxFieldRules( country )
+	);
+}
+
 /**
  *
  * @param {object} cardDetails - a map of credit card field key value pairs
@@ -312,23 +318,20 @@ function getErrors( field, value, paymentDetails ) {
  * an object containing rule sets for specific credit card processing providers,
  * otherwise `null`
  */
-function getAdditionalFieldRules( { country } ) {
-	return {
-		// Ebanx rules
-		...( ( country &&
-			isEbanxCreditCardProcessingEnabledForCountry( country ) &&
-			ebanxFieldRules( country ) ) ||
-			{} ),
-		// Enforce valid postcode for tax purposes
-		...( country === 'US' && {
-			'postal-code': {
-				description: i18n.translate( 'Postal Code', {
-					context: 'Upgrades: Postal code on credit card form',
-				} ),
-				rules: [ 'required', 'validPostalCodeUS' ],
-			},
-		} ),
-	};
+function getConditionalCreditCardRules( { country } ) {
+	switch ( country ) {
+		case 'US':
+			return {
+				'postal-code': {
+					description: i18n.translate( 'Postal Code', {
+						context: 'Upgrades: Postal code on credit card form',
+					} ),
+					rules: [ 'required', 'validPostalCodeUS' ],
+				},
+			};
+	}
+
+	return null;
 }
 
 function getValidator( rule ) {
