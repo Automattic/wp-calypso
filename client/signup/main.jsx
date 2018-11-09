@@ -53,6 +53,7 @@ import { affiliateReferral } from 'state/refer/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
+import { setSiteType } from 'state/signup/steps/site-type/actions';
 import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
 import { isValidLandingPageVertical } from 'lib/signup/verticals';
 
@@ -266,6 +267,13 @@ class Signup extends React.Component {
 					flow: this.props.flowName,
 				} );
 			}
+		}
+
+		//`site_type` query parameter
+		const siteType = queryObject.site_type;
+		if ( 'undefined' !== typeof siteType ) {
+			debug( 'From query string: site_type = %s', siteType );
+			this.props.setSiteType( siteType );
 		}
 	};
 
@@ -592,6 +600,7 @@ export default connect(
 	} ),
 	{
 		setSurvey,
+		setSiteType,
 		setSiteTopic,
 		loadTrackingTool,
 		trackAffiliateReferral: affiliateReferral,
