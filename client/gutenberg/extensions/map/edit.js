@@ -52,7 +52,7 @@ class MapEdit extends Component {
 		this.debouncedUpdateAPIKey = debounce( this.updateAPIKey, 800 );
 	}
 	componentWillUnmount() {
-		this.debouncedAPIKey.cancel();
+		this.debouncedAPIKey && this.debouncedAPIKey.cancel();
 	}
 	addPoint = point => {
 		const { attributes, setAttributes } = this.props;

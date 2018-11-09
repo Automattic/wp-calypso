@@ -18,10 +18,7 @@ import debounce from 'lodash/debounce';
 import MapMarker from './map-marker/';
 import InfoWindow from './info-window/';
 import { mapboxMapFormatter } from './mapbox-map-formatter/';
-
-// @TODO: replace with import from lib/load-script after resolution of https://github.com/Automattic/wp-calypso/issues/27821
-import { loadScript } from './load-script';
-// import { loadScript } from 'lib/load-script';
+import asyncLoader from './asyncLoader';
 
 export class Map extends Component {
 	// Lifecycle
@@ -260,18 +257,16 @@ export class Map extends Component {
 	};
 	loadMapLibraries() {
 		const { api_key } = this.props;
-		const src = 'https://api.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.js';
-		if ( window.mapboxgl ) {
-			this.setState( { mapboxgl: window.mapboxgl }, this.scriptsLoaded );
-			return;
-		}
-		loadScript( src, error => {
-			if ( error ) {
-				return;
+		asyncLoader(
+			[
+				'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js',
+				'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css',
+			],
+			() => {
+				window.mapboxgl.accessToken = api_key;
+				this.setState( { mapboxgl: window.mapboxgl }, this.scriptsLoaded );
 			}
-			window.mapboxgl.accessToken = api_key;
-			this.setState( { mapboxgl: window.mapboxgl }, this.scriptsLoaded );
-		} );
+		);
 	}
 	initMap( map_center ) {
 		const { mapboxgl } = this.state;
