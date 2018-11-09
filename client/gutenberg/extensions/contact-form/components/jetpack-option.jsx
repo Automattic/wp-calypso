@@ -55,22 +55,21 @@ class JetpackOption extends Component {
 	}
 
 	render() {
+		const { isSelected, option, type } = this.props;
 		return (
 			<li className="jetpack-option">
-				{ this.props.type &&
-					this.props.type !== 'select' && (
-						<input className="jetpack-option__type" type={ this.props.type } disabled />
-					) }
+				{ type &&
+					type !== 'select' && <input className="jetpack-option__type" type={ type } disabled /> }
 				<input
 					type="text"
 					className="jetpack-option__input"
-					value={ this.props.option }
+					value={ option }
 					placeholder={ __( 'Write option…' ) }
 					onChange={ this.onChangeOption }
 					onKeyDown={ this.onKeyPress }
 					ref={ this.textInput }
 				/>
-				{ this.props.isSelected && (
+				{ isSelected && (
 					<IconButton
 						className="jetpack-option__remove"
 						icon="trash"
