@@ -4,10 +4,9 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import { PanelBody, TextControl, Button, Placeholder } from '@wordpress/components';
-import { InspectorControls } from '@wordpress/editor';
+import { Button, PanelBody, Placeholder, TextControl } from '@wordpress/components';
+import { InnerBlocks, InspectorControls } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
-
 /**
  * Internal dependencies
  */
@@ -52,14 +51,8 @@ class JetpackContactForm extends Component {
 	}
 
 	render() {
-		const {
-			children,
-			className,
-			has_form_settings_set,
-			subject,
-			submit_button_text,
-			to,
-		} = this.props;
+		const { className, attributes } = this.props;
+		const { has_form_settings_set, subject, submit_button_text, to } = attributes;
 		const formClassnames = classnames( className, 'jetpack-contact-form', {
 			'has-intro': ! has_form_settings_set,
 		} );
@@ -117,7 +110,39 @@ class JetpackContactForm extends Component {
 							</form>
 						</Placeholder>
 					) }
-					{ has_form_settings_set && children }
+					{ has_form_settings_set && (
+						<InnerBlocks
+							templateLock={ false }
+							template={ [
+								[
+									'jetpack/field-name',
+									{
+										label: __( 'Name' ),
+										required: true,
+									},
+								],
+								[
+									'jetpack/field-email',
+									{
+										label: __( 'Email' ),
+										required: true,
+									},
+								],
+								[
+									'jetpack/field-url',
+									{
+										label: __( 'Website' ),
+									},
+								],
+								[
+									'jetpack/field-textarea',
+									{
+										label: __( 'Message' ),
+									},
+								],
+							] }
+						/>
+					) }
 					{ has_form_settings_set && (
 						<div className="button button-primary button-default jetpack-submit-button">
 							{ submit_button_text ? submit_button_text : __( 'Submit' ) }
