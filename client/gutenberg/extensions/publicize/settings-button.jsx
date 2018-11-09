@@ -16,6 +16,7 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import { Component } from '@wordpress/element';
 
 /**
@@ -47,17 +48,16 @@ class PublicizeSettingsButton extends Component {
 	}
 
 	render() {
+		const className = classnames( 'jetpack-publicize-add-connection-container', this.props.className );
+
 		return (
-			<div className="jetpack-publicize-add-connection-container">
-				<span
-					className="jetpack-publicize-add-icon dashicons-plus-alt"
-				>
-				</span>
+			<div className={ className }>
 				<a
 					onClick={ this.settingsClick }
 					tabIndex="0"
 				>
-					{ __( 'Connect another service' ) }
+					<span className="jetpack-publicize-add-icon dashicons-plus-alt" />
+					{ __( 'Connect new service' ) }
 				</a>
 			</div>
 		);
