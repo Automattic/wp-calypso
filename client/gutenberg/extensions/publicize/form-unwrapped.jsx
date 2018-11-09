@@ -91,36 +91,34 @@ class PublicizeFormUnwrapped extends Component {
 		} );
 
 		return (
-			<div className="misc-pub-section-last">
-				<div id="publicize-form">
-					<ul>
-						{ staticConnections.map( c => (
-							<PublicizeConnection
-								connectionData={ c }
-								key={ c.unique_id }
-								connectionOn={ this.isConnectionOn( c.unique_id ) }
-								connectionChange={ connectionChange }
-							/>
-						) ) }
-					</ul>
-					<PublicizeSettingsButton refreshCallback={ refreshCallback } />
-					<label className="jetpack-publicize-message-note" htmlFor="wpas-title">
-						{ __( 'Customize your message' ) }
-					</label>
-					<div className="jetpack-publicize-message-box">
-						<textarea
-							value={ shareMessage }
-							onChange={ messageChange }
-							placeholder={ __( 'Publicize + Gutenberg :)' ) }
-							disabled={ this.isDisabled() }
-							maxLength={ MAXIMUM_MESSAGE_LENGTH }
+			<div id="publicize-form">
+				<ul>
+					{ staticConnections.map( c => (
+						<PublicizeConnection
+							connectionData={ c }
+							key={ c.unique_id }
+							connectionOn={ this.isConnectionOn( c.unique_id ) }
+							connectionChange={ connectionChange }
 						/>
-						<div className={ characterCountClass }>
-							{ sprintf(
-								_n( '%d character remaining', '%d characters remaining', charactersRemaining ),
-								charactersRemaining
-							) }
-						</div>
+					) ) }
+				</ul>
+				<PublicizeSettingsButton refreshCallback={ refreshCallback } />
+				<label className="jetpack-publicize-message-note" htmlFor="wpas-title">
+					{ __( 'Customize your message' ) }
+				</label>
+				<div className="jetpack-publicize-message-box">
+					<textarea
+						value={ shareMessage }
+						onChange={ messageChange }
+						placeholder={ __( 'Publicize + Gutenberg :)' ) }
+						disabled={ this.isDisabled() }
+						maxLength={ MAXIMUM_MESSAGE_LENGTH }
+					/>
+					<div className={ characterCountClass }>
+						{ sprintf(
+							_n( '%d character remaining', '%d characters remaining', charactersRemaining ),
+							charactersRemaining
+						) }
 					</div>
 				</div>
 			</div>
