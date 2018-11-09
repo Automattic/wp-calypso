@@ -61,21 +61,21 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		};
 	}
 
-	onUseClassic = () => {
+	useClassicEditor = () => {
 		this.setState( {
 			forceClassic: true,
 		} );
 	};
 
-	onSwitchToGutenberg = () => {
+	switchToGutenberg = () => {
 		const { switchToGutenberg, siteId, gutenbergUrl } = this.props;
 		switchToGutenberg( siteId, gutenbergUrl );
 	};
 
-	onShowDocumentHistory = e => {
+	showDocumentHistory = e => {
 		e.preventDefault();
 		this.props.openPostRevisionsDialog();
-		this.onUseClassic();
+		this.useClassicEditor();
 	};
 
 	render() {
@@ -85,17 +85,17 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 			{
 				action: 'gutenberg',
 				label: translate( 'Switch to the new editor' ),
-				onClick: this.onSwitchToGutenberg,
+				onClick: this.switchToGutenberg,
 				isPrimary: true,
 			},
 			{
 				action: 'cancel',
 				label: translate( 'Use the classic editor' ),
-				onClick: this.onUseClassic,
+				onClick: this.useClassicEditor,
 			},
 		];
 		return (
-			<Dialog isVisible={ isDialogVisible } buttons={ buttons } onClose={ this.onUseClassic }>
+			<Dialog isVisible={ isDialogVisible } buttons={ buttons } onClose={ this.useClassicEditor }>
 				<h1>{ translate( 'This post uses blocks from the new editor' ) }</h1>
 
 				<p>
@@ -110,7 +110,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 						{
 							components: {
 								//eslint-disable-next-line jsx-a11y/anchor-is-valid
-								a: <a href="#" onClick={ e => this.onShowDocumentHistory( e ) } />,
+								a: <a href="#" onClick={ this.showDocumentHistory } />,
 							},
 						}
 					) }
@@ -135,9 +135,8 @@ export default connect(
 		};
 	},
 	dispatch => ( {
-		switchToGutenberg: ( siteId, gutenbergUrl ) => {
-			return dispatch( setSelectedEditor( siteId, 'gutenberg', gutenbergUrl ) );
-		},
+		switchToGutenberg: ( siteId, gutenbergUrl ) =>
+			dispatch( setSelectedEditor( siteId, 'gutenberg', gutenbergUrl ) ),
 		openPostRevisionsDialog: () => dispatch( openPostRevisionsDialog() ),
 	} )
 )( localize( EditorGutenbergBlocksWarningDialog ) );
