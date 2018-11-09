@@ -34,6 +34,7 @@ export FeatureGate from 'components/feature-example/docs/example';
 export FilePickers from 'components/file-picker/docs/example';
 export FocusableExample from 'components/focusable/docs/example';
 export FoldableCard from 'components/foldable-card/docs/example';
+export FormattedDate from 'components/formatted-date/docs/example';
 export FormattedHeader from 'components/formatted-header/docs/example';
 export FormFields from 'components/forms/docs/example';
 export Gauge from 'components/gauge/docs/example';

@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getEditorPath } from 'state/ui/editor/selectors';
+import getEditorUrl from 'state/selectors/get-editor-url';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
@@ -97,6 +97,7 @@ class PostItem extends React.Component {
 		const { multiSelectEnabled, isCurrentPostSelected } = this.props;
 		return (
 			multiSelectEnabled && (
+				//eslint-disable-next-line
 				<div className="post-item__select" onClick={ this.toggleCurrentPostSelection }>
 					<FormInputCheckbox
 						checked={ isCurrentPostSelected }
@@ -169,13 +170,17 @@ class PostItem extends React.Component {
 								</a>
 							) }
 						</div>
-						<h1
+						<h1 //eslint-disable-line
 							className="post-item__title"
 							onClick={ this.clickHandler( 'title' ) }
 							onMouseOver={ preloadEditor }
 						>
 							{ ! externalPostLink && (
-								<a href={ enabledPostLink } className="post-item__title-link">
+								<a
+									href={ enabledPostLink }
+									className="post-item__title-link"
+									data-e2e-title={ title }
+								>
 									{ title || translate( 'Untitled' ) }
 								</a>
 							) }
@@ -240,7 +245,7 @@ export default connect(
 
 		// Avoid rendering an external link while loading.
 		const externalPostLink = false === canCurrentUserEditPost( state, globalId );
-		const postUrl = externalPostLink ? post.URL : getEditorPath( state, siteId, post.ID );
+		const postUrl = externalPostLink ? post.URL : getEditorUrl( state, siteId, post.ID, post.type );
 
 		const hasExpandedContent = isSharePanelOpen( state, globalId ) || false;
 

@@ -98,8 +98,8 @@ export default {
 		},
 		defaultVariation: 'no',
 	},
-	krackenRebootM327V2: {
-		datestamp: '20181018',
+	krackenRebootM33: {
+		datestamp: '20181108',
 		variations: {
 			domainsbot_front: 25,
 			variation1_front: 25,
@@ -109,6 +109,7 @@ export default {
 		defaultVariation: 'domainsbot_front',
 		assignmentMethod: 'userId',
 		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 	skipDomainOrSiteStep: {
 		datestamp: '20181025',

@@ -3,11 +3,11 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -69,16 +69,23 @@ class CustomContentTypes extends Component {
 		} = this.props;
 		const numberFieldIdentifier = name === 'post' ? 'posts_per_page' : name + '_posts_per_page';
 		const isDisabled = this.isFormPending() || ( ! fields[ name ] && name !== 'post' );
+		const hasToggle = name !== 'post';
+
 		return (
 			<div className="custom-content-types__module-settings">
-				{ name !== 'post' && (
+				{ hasToggle && (
 					<CompactFormToggle
 						checked={ !! fields[ name ] }
 						disabled={ this.isFormPending() || activatingCustomContentTypesModule }
 						onChange={ handleAutosavingToggle( name ) }
 					/>
 				) }
-				<div id={ numberFieldIdentifier } className="custom-content-types__label">
+				<div
+					id={ numberFieldIdentifier }
+					className={ classnames( 'custom-content-types__label', {
+						'indented-form-field': ! hasToggle,
+					} ) }
+				>
 					{ label }
 				</div>
 				<div className="custom-content-types__indented-form-field indented-form-field">
@@ -158,14 +165,7 @@ class CustomContentTypes extends Component {
 		const { translate } = this.props;
 		return (
 			<Card className="custom-content-types site-settings">
-				<FormFieldset>
-					<SupportInfo
-						text={ translate( 'Showcases your portfolio or displays testimonials on your site.' ) }
-						link="https://support.wordpress.com/custom-post-types/"
-						privacyLink={ false }
-					/>
-					{ this.renderBlogPostSettings() }
-				</FormFieldset>
+				<FormFieldset>{ this.renderBlogPostSettings() }</FormFieldset>
 
 				<FormFieldset>
 					<SupportInfo

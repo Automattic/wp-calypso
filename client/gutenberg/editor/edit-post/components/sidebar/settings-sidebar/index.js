@@ -18,7 +18,7 @@ import { __ } from '@wordpress/i18n';
 import Sidebar from '../';
 import SettingsHeader from '../settings-header';
 import PostStatus from '../post-status';
-import LastRevision from '../last-revision';
+import LastRevision from 'gutenberg/editor/components/sidebar/last-revision';
 import PostTaxonomies from '../post-taxonomies';
 import FeaturedImage from '../featured-image';
 import PostExcerpt from '../post-excerpt';

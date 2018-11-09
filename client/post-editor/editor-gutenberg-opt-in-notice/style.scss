@@ -41,6 +41,13 @@
 	}
 }
 
+@include breakpoint( '<660px' ) {
+	// We hide the notice on small viewports when the sidebar is open
+	.focus-sidebar .editor-gutenberg-opt-in-notice {
+		display: none;
+	}
+}
+
 @keyframes slide-in-bottom {
 	from {
 		opacity: 0;

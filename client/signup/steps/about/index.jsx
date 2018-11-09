@@ -49,7 +49,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
-import Suggestions from 'components/suggestions';
+import SuggestionSearch from 'components/suggestion-search';
 
 class AboutStep extends Component {
 	constructor( props ) {
@@ -59,7 +59,6 @@ class AboutStep extends Component {
 			isValidLandingPageVertical( props.siteTopic ) &&
 			props.queryObject.vertical === props.siteTopic;
 		this.state = {
-			query: '',
 			siteTopicValue: this.props.siteTopic,
 			userExperience: this.props.userExperience,
 			showStore: false,
@@ -98,102 +97,14 @@ class AboutStep extends Component {
 
 	setPressableStore = ref => ( this.pressableStore = ref );
 
-	setSuggestionsRef = ref => ( this.suggestionsRef = ref );
-
-	hideSuggestions = () => this.setState( { query: '' } );
-
-	handleSuggestionChangeEvent = ( { target: { name, value } } ) => {
-		this.setState( { query: value, siteTopicValue: value } );
+	onSiteTopicChange = value => {
+		this.setState( { siteTopicValue: value } );
 		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { value } );
-		this.formStateController.handleFieldChange( { name, value } );
-	};
-
-	handleSuggestionKeyDown = event => {
-		if ( this.suggestionsRef.props.suggestions.length > 0 ) {
-			const fieldName = event.target.name;
-			let suggestionPosition = this.suggestionsRef.state.suggestionPosition;
-
-			switch ( event.key ) {
-				case 'ArrowRight':
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition ),
-						fieldName
-					);
-
-					break;
-				case 'ArrowUp':
-					if ( suggestionPosition === 0 ) {
-						suggestionPosition = this.suggestionsRef.props.suggestions.length;
-					}
-
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition - 1 ),
-						fieldName
-					);
-
-					break;
-				case 'ArrowDown':
-					suggestionPosition++;
-
-					if ( suggestionPosition === this.suggestionsRef.props.suggestions.length ) {
-						suggestionPosition = 0;
-					}
-
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition ),
-						fieldName
-					);
-
-					break;
-				case 'Tab':
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition ),
-						fieldName
-					);
-
-					break;
-				case 'Enter':
-					event.preventDefault();
-					break;
-			}
-		}
-
-		this.suggestionsRef.handleKeyEvent( event );
-	};
-
-	handleSuggestionMouseDown = position => {
-		this.setState( { siteTopicValue: position.label } );
-		this.hideSuggestions();
-
 		this.formStateController.handleFieldChange( {
 			name: 'siteTopic',
-			value: position.label,
+			value,
 		} );
 	};
-
-	getSuggestions() {
-		if ( ! this.state.query ) {
-			return [];
-		}
-
-		const query = this.state.query.trim().toLocaleLowerCase();
-		return Object.values( hints )
-			.filter( hint => hint.toLocaleLowerCase().includes( query ) )
-			.map( hint => ( { label: hint } ) );
-	}
-
-	getSuggestionLabel( suggestionPosition ) {
-		return this.suggestionsRef.props.suggestions[ suggestionPosition ].label;
-	}
-
-	updateFieldFromSuggestion( term, field ) {
-		this.setState( { siteTopicValue: term } );
-
-		this.formStateController.handleFieldChange( {
-			name: field,
-			value: term,
-		} );
-	}
 
 	handleChangeEvent = event => {
 		this.formStateController.handleFieldChange( {
@@ -529,6 +440,13 @@ class AboutStep extends Component {
 		}
 	}
 
+	shouldShowSiteTopicField() {
+		const { steps } = this.props;
+		const { hasPrepopulatedVertical } = this.state;
+
+		return ! hasPrepopulatedVertical && ! includes( steps, 'site-topic' );
+	}
+
 	renderContent() {
 		const { translate, siteTitle, shouldHideSiteGoals } = this.props;
 
@@ -573,7 +491,7 @@ class AboutStep extends Component {
 								/>
 							</FormFieldset>
 
-							{ ! this.state.hasPrepopulatedVertical && (
+							{ this.shouldShowSiteTopicField() && (
 								<FormFieldset>
 									<FormLabel htmlFor="siteTopic">
 										{ translate( 'What will your site be about?' ) }
@@ -581,23 +499,13 @@ class AboutStep extends Component {
 											{ translate( "We'll use this to personalize your site and experience." ) }
 										</InfoPopover>
 									</FormLabel>
-									<FormTextInput
+									<SuggestionSearch
 										id="siteTopic"
-										name="siteTopic"
 										placeholder={ translate(
 											'e.g. Fashion, travel, design, plumber, electrician'
 										) }
-										value={ this.state.siteTopicValue }
-										onChange={ this.handleSuggestionChangeEvent }
-										onBlur={ this.hideSuggestions }
-										onKeyDown={ this.handleSuggestionKeyDown }
-										autoComplete="off"
-									/>
-									<Suggestions
-										ref={ this.setSuggestionsRef }
-										query={ this.state.query }
-										suggestions={ this.getSuggestions() }
-										suggest={ this.handleSuggestionMouseDown }
+										onChange={ this.onSiteTopicChange }
+										suggestions={ Object.values( hints ) }
 									/>
 								</FormFieldset>
 							) }

@@ -16,6 +16,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +32,7 @@ import getConciergeAvailableTimes from 'state/selectors/get-concierge-available-
 import getUserSettings from 'state/selectors/get-user-settings';
 import { WPCOM_CONCIERGE_SCHEDULE_ID } from './constants';
 import { getSite } from 'state/sites/selectors';
+import NoAvailableTimes from './shared/no-available-times';
 import Upsell from './shared/upsell';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
@@ -63,6 +65,10 @@ export class ConciergeMain extends Component {
 
 		if ( ! planMatches( site.plan.product_slug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } ) ) {
 			return <Upsell site={ site } />;
+		}
+
+		if ( isEmpty( availableTimes ) ) {
+			return <NoAvailableTimes />;
 		}
 
 		// We have shift data and this is a business site — show the signup steps

@@ -208,10 +208,7 @@ class AdsFormEarnings extends Component {
 		const { earnings, numberFormat, translate } = this.props;
 		const total = earnings && earnings.total_earnings ? Number( earnings.total_earnings ) : 0,
 			owed = earnings && earnings.total_amount_owed ? Number( earnings.total_amount_owed ) : 0,
-			paid =
-				earnings && earnings.total_earnings && earnings.total_amount_owed
-					? earnings.total_earnings - earnings.total_amount_owed
-					: 0;
+			paid = total - owed;
 
 		return (
 			<ul className="ads__earnings-breakdown-list">
@@ -270,6 +267,7 @@ class AdsFormEarnings extends Component {
 					<h1 className="ads__module-header-title module-header-title">{ header_text }</h1>
 					<ul className="ads__module-header-actions module-header-actions">
 						<li className="ads__module-header-action module-header-action toggle-info">
+							{ /* eslint-disable */ }
 							<a
 								href="#"
 								className="ads__module-header-action-link module-header-action-link"
@@ -277,6 +275,7 @@ class AdsFormEarnings extends Component {
 								title={ translate( 'Show or hide panel information' ) }
 								onClick={ this.handleInfoToggle( type ) }
 							>
+								{ /* eslint-enable */ }
 								<Gridicon icon={ infoIcon } />
 							</a>
 						</li>
@@ -318,6 +317,7 @@ class AdsFormEarnings extends Component {
 						</h1>
 						<ul className="ads__module-header-actions module-header-actions">
 							<li className="ads__module-header-action module-header-action toggle-info">
+								{ /* eslint-disable */ }
 								<a
 									href="#"
 									className="ads__module-header-action-link module-header-action-link"
@@ -325,6 +325,7 @@ class AdsFormEarnings extends Component {
 									title={ translate( 'Show or hide panel information' ) }
 									onClick={ this.handleEarningsNoticeToggle }
 								>
+									{ /* eslint-disable */ }
 									<Gridicon icon={ infoIcon } />
 								</a>
 							</li>

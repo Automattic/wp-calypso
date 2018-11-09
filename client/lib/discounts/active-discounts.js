@@ -89,4 +89,9 @@ export default [
 		),
 		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
 	},
+	{
+		name: 'new_plans',
+		startsAt: new Date( 2018, 9, 25, 0, 0, 1 ),
+		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),
+	},
 ];

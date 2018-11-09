@@ -4,7 +4,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import Blob from 'blob';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';

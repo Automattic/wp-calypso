@@ -101,6 +101,23 @@ class PeopleNotices extends React.Component {
 					context: 'Error message after A site has failed to perform actions on a user.',
 				} );
 			case 'RECEIVE_DELETE_SITE_USER_FAILURE':
+				if ( 'user_owns_domain_subscription' === log.error.error ) {
+					const numDomains = log.error.message.split( ',' ).length;
+					return i18n.translate(
+						'@%(user)s owns following domain used on this site: {{strong}}%(domains)s{{/strong}}. This domain will have to be transferred to a different site, transferred to a different registrar, or canceled before removing or deleting @%(user)s.',
+						'@%(user)s owns following domains used on this site: {{strong}}%(domains)s{{/strong}}. These domains will have to be transferred to a different site, transferred to a different registrar, or canceled before removing or deleting @%(user)s.',
+						{
+							count: numDomains,
+							args: {
+								domains: log.error.message,
+								...translateArg( log ),
+							},
+							components: {
+								strong: <strong />,
+							},
+						}
+					);
+				}
 				if ( isMultisite( this.props.site ) ) {
 					return i18n.translate( 'There was an error removing @%(user)s', {
 						args: translateArg( log ),

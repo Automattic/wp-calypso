@@ -6,6 +6,7 @@
 import url from 'url';
 import { stringify } from 'qs';
 import { toPairs, identity, includes } from 'lodash';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ import wpcom from 'lib/wp';
 
 const debug = debugFactory( 'calypso:gutenberg' );
 
-export const debugMiddleware = ( options, next ) => {
+const debugMiddleware = ( options, next ) => {
 	const { path, apiNamespace = 'wp/v2', apiVersion } = options;
 	if ( apiVersion ) {
 		debug( 'Sending API request to: ', `/rest/v${ apiVersion }${ path }` );
@@ -44,17 +45,6 @@ export const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
 		}
 
 		return next( { ...options, path, apiNamespace: 'wp/v2' } );
-	}
-
-	// gutenberg/v1 namespace mapping
-	//
-	// Path rewrite example:
-	//		/gutenberg/v1/block-renderer/core/latest-comments →
-	//		/gutenberg/v1/sites/example.wordpress.com/block-renderer/core/latest-comments
-	if ( /\/gutenberg\/v1\//.test( options.path ) ) {
-		const path = options.path.replace( '/gutenberg/v1/', `/sites/${ siteSlug }/` );
-
-		return next( { ...options, path, apiNamespace: 'gutenberg/v1' } );
 	}
 
 	/*
@@ -108,7 +98,7 @@ const wpcomRequest = method => {
 	return wpcom.req.post.bind( wpcom.req );
 };
 
-export const wpcomProxyMiddleware = parameters => {
+const wpcomProxyMiddleware = parameters => {
 	// Make authenticated calls using the WordPress.com REST Proxy
 	// bypassing the apiFetch call that uses window.fetch.
 	// This intentionally breaks the middleware chain.
@@ -154,4 +144,18 @@ export const wpcomProxyMiddleware = parameters => {
 			}
 		);
 	} );
+};
+
+// Utility function to apply all required API middleware in correct order.
+export const applyAPIMiddleware = siteSlug => {
+	// First middleware in, last out.
+
+	// This call intentionally breaks the middleware chain.
+	apiFetch.use( options => wpcomProxyMiddleware( options ) );
+
+	apiFetch.use( ( options, next ) => debugMiddleware( options, next ) );
+
+	apiFetch.use( ( options, next ) => wpcomPathMappingMiddleware( options, next, siteSlug ) );
+
+	apiFetch.use( apiFetch.createRootURLMiddleware( 'https://public-api.wordpress.com/' ) );
 };

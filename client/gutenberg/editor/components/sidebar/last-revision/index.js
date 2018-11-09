@@ -1,13 +1,19 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 
 /**
+ * Internal dependencies
+ */
+import PostLastRevision from 'gutenberg/editor/components/post-last-revision';
+
+/**
  * WordPress dependencies
  */
 import { PanelBody } from '@wordpress/components';
-import { PostLastRevision, PostLastRevisionCheck } from '@wordpress/editor';
+import { PostLastRevisionCheck } from '@wordpress/editor';
 
 function LastRevision() {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

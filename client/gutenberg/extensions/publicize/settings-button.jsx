@@ -49,14 +49,11 @@ class PublicizeSettingsButton extends Component {
 	render() {
 		return (
 			<div className="jetpack-publicize-add-connection-container">
-				<span
-					className="jetpack-publicize-add-icon dashicons-plus-alt"
-				>
-				</span>
 				<a
 					onClick={ this.settingsClick }
 					tabIndex="0"
 				>
+					<span className="jetpack-publicize-add-icon dashicons-plus-alt" />
 					{ __( 'Connect another service' ) }
 				</a>
 			</div>

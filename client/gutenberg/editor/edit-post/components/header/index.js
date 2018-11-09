@@ -13,7 +13,6 @@ import { IconButton } from '@wordpress/components';
 import { PostPreviewButton, PostSavedState } from '@wordpress/editor';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import { DotTip } from '@wordpress/nux';
 
 /**
  * Internal dependencies
@@ -32,6 +31,7 @@ function Header( {
 } ) {
 	const toggleGeneralSidebar = isEditorSidebarOpened ? closeGeneralSidebar : openGeneralSidebar;
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
 			role="region"
@@ -55,11 +55,6 @@ function Header( {
 							aria-expanded={ isEditorSidebarOpened }
 							shortcut={ shortcuts.toggleSidebar }
 						/>
-						<DotTip tipId="core/editor.settings">
-							{ __(
-								'You’ll find more settings for your page and blocks in the sidebar. Click “Settings” to open it.'
-							) }
-						</DotTip>
 					</div>
 					<PinnedPlugins.Slot />
 					<MoreMenu />
@@ -67,6 +62,7 @@ function Header( {
 			) }
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default compose(

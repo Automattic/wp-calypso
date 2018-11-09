@@ -21,7 +21,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import SiteIcon from 'blocks/site-icon';
-import { editLinkForPage, statsLinkForPage } from '../helpers';
+import { statsLinkForPage } from '../helpers';
 import * as utils from 'state/posts/utils';
 import classNames from 'classnames';
 import MenuSeparator from 'components/popover/menu-separator';
@@ -36,6 +36,9 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
 import { withoutNotice } from 'state/notices/actions';
 import { isEnabled } from 'config';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
+import getEditorUrl from 'state/selectors/get-editor-url';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -131,7 +134,7 @@ class Page extends Component {
 	}
 
 	childPageInfo() {
-		const { page, site, translate } = this.props;
+		const { parentEditorUrl, page, translate } = this.props;
 
 		// If we're in hierarchical view, we don't show child info in the context menu, as it's redudant.
 		if ( this.props.hierarchical || ! page.parent ) {
@@ -143,7 +146,7 @@ class Page extends Component {
 		// This is technically if you can edit the current page, not the parent.
 		// Capabilities are not exposed on the parent page.
 		const parentHref = utils.userCan( 'edit_post', this.props.page )
-			? editLinkForPage( page.parent, site )
+			? parentEditorUrl
 			: page.parent.URL;
 		const parentLink = <a href={ parentHref }>{ parentTitle }</a>;
 
@@ -194,6 +197,15 @@ class Page extends Component {
 
 		if ( ! utils.userCan( 'edit_post', this.props.page ) ) {
 			return null;
+		}
+
+		if ( this.props.calypsoifyGutenberg ) {
+			return (
+				<PopoverMenuItem onClick={ this.props.recordEditPage } href={ this.props.editorUrl }>
+					<Gridicon icon="pencil" size={ 18 } />
+					{ this.props.translate( 'Edit' ) }
+				</PopoverMenuItem>
+			);
 		}
 
 		return (
@@ -259,10 +271,11 @@ class Page extends Component {
 	}
 
 	getCopyItem() {
-		const { page: post, siteSlugOrId } = this.props;
+		const { calypsoifyGutenberg, page: post, siteSlugOrId } = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
-			! utils.userCan( 'edit_post', post )
+			! utils.userCan( 'edit_post', post ) ||
+			calypsoifyGutenberg
 		) {
 			return null;
 		}
@@ -310,7 +323,7 @@ class Page extends Component {
 
 	editPage = () => {
 		this.props.recordEditPage();
-		pageRouter( editLinkForPage( this.props.page, this.props.site ) );
+		pageRouter( this.props.editorUrl );
 	};
 
 	getPageStatusInfo() {
@@ -363,7 +376,7 @@ class Page extends Component {
 	undoPostStatus = () => this.updatePostStatus( this.props.shadowStatus.undo );
 
 	render() {
-		const { page, site = {}, shadowStatus, translate } = this.props;
+		const { editorUrl, page, shadowStatus, translate } = this.props;
 		const title = page.title || translate( 'Untitled' );
 		const canEdit = utils.userCan( 'edit_post', page );
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
@@ -436,7 +449,7 @@ class Page extends Component {
 				<div className="page__main">
 					<a
 						className="page__title"
-						href={ canEdit ? editLinkForPage( page, site ) : page.URL }
+						href={ canEdit ? editorUrl : page.URL }
 						title={
 							canEdit
 								? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
@@ -621,6 +634,11 @@ const mapState = ( state, props ) => {
 		previewURL: utils.getPreviewURL( site, props.page ),
 		site,
 		siteSlugOrId,
+		editorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.ID' ), 'page' ),
+		parentEditorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.parent.ID' ), 'page' ),
+		calypsoifyGutenberg:
+			isCalypsoifyGutenbergEnabled( state, pageSiteId ) &&
+			'gutenberg' === getSelectedEditor( state, pageSiteId ),
 	};
 };
 

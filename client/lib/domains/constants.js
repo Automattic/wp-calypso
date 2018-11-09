@@ -57,6 +57,7 @@ export const domainAvailability = {
 	TRANSFERRABLE: 'transferrable',
 	UNKNOWN: 'unknown',
 	UNKOWN_ACTIVE: 'unknown_active_domain_with_wpcom',
+	WPCOM_STAGING_DOMAIN: 'wpcom_staging_domain',
 };
 
 export const dnsTemplates = {

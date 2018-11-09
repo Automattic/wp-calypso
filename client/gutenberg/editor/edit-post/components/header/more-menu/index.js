@@ -15,7 +15,6 @@ import { IconButton, Dropdown, MenuGroup } from '@wordpress/components';
 import ModeSwitcher from '../mode-switcher';
 import FixedToolbarToggle from '../fixed-toolbar-toggle';
 import PluginMoreMenuGroup from '../plugins-more-menu-group';
-import TipsToggle from '../tips-toggle';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const MoreMenu = () => (
@@ -38,7 +37,6 @@ const MoreMenu = () => (
 					filterName="editPost.MoreMenu.settings"
 				>
 					<FixedToolbarToggle onToggle={ onClose } />
-					<TipsToggle onToggle={ onClose } />
 				</MenuGroup>
 				<PluginMoreMenuGroup.Slot fillProps={ { onClose } } />
 				<MenuGroup

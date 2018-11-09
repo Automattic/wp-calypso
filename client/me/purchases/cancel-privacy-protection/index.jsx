@@ -28,7 +28,7 @@ import Notice from 'components/notice';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
-import { CALYPSO_CONTACT } from 'lib/url/support';
+import { CALYPSO_CONTACT, PUBLIC_VS_PRIVATE } from 'lib/url/support';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -49,11 +49,11 @@ class CancelPrivacyProtection extends Component {
 
 	state = this.constructor.initialState;
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.redirectIfDataIsInvalid();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
 	}
 
@@ -116,9 +116,13 @@ class CancelPrivacyProtection extends Component {
 				{ this.props.translate(
 					'You are about to cancel the privacy protection upgrade for {{strong}}%(domain)s{{/strong}}. ' +
 						'{{br/}}' +
-						'This will make your personal details public.',
+						'This will make your {{link}}personal details public{{/link}}.',
 					{
-						components: { strong: <strong />, br: <br /> },
+						components: {
+							strong: <strong />,
+							br: <br />,
+							link: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
+						},
 						args: { domain: purchase.meta },
 					}
 				) }

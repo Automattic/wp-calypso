@@ -83,9 +83,17 @@ class DomainsStep extends React.Component {
 		}
 
 		const domain = get( props, 'queryObject.new', false );
+		const search = get( props, 'queryObject.search', false ) === 'yes';
+
+		// If we landed anew from `/domains` and it's the `new-flow` variation, always rerun the search
+		if ( search && props.path.indexOf( '?' ) !== -1 ) {
+			this.searchOnInitialRender = true;
+		}
+
 		if (
 			props.isDomainOnly &&
 			domain &&
+			! search && // Testing /domains sending to NUX for search
 			// If someone has a better idea on how to figure if the user landed anew
 			// Because we persist the signupDependencies, but still want the user to be able to go back to search screen
 			props.path.indexOf( '?' ) !== -1
@@ -319,6 +327,15 @@ class DomainsStep extends React.Component {
 			initialState = this.props.step.domainForm;
 		}
 
+		// If it's the first load, rerun the search with whatever we get from the query param
+		const initialQuery = get( this.props, 'queryObject.new', '' );
+		if ( initialQuery && this.searchOnInitialRender ) {
+			this.searchOnInitialRender = false;
+			initialState.searchResults = null;
+			initialState.subdomainSearchResults = null;
+			initialState.loadingResults = true;
+		}
+
 		return (
 			<RegisterDomainStep
 				key="domainForm"
@@ -341,9 +358,9 @@ class DomainsStep extends React.Component {
 				isSignupStep
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
-				suggestion={ get( this.props, 'queryObject.new', '' ) }
+				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
-				vendor={ abtest( 'krackenRebootM327V2' ) }
+				vendor={ abtest( 'krackenRebootM33' ) }
 			/>
 		);
 	};

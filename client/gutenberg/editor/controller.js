@@ -3,14 +3,16 @@
  * External dependencies
  */
 import React from 'react';
-import { plugins, use } from '@wordpress/data';
 import { has, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { setAllSitesSelected } from 'state/ui/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { EDITOR_START } from 'state/action-types';
+import { initGutenberg } from './init';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/gutenberg/post/' ) ) {
@@ -33,15 +35,23 @@ function getPostID( context ) {
 	return parseInt( context.params.post, 10 );
 }
 
-// Trying to follow the initialization steps from https://github.com/WordPress/gutenberg/blob/de2fab7b8d66eea6c1aeb4a51308d47225fc5df8/lib/client-assets.php#L260
-function registerDataPlugins( userId ) {
-	const storageKey = 'WP_DATA_USER_' + userId;
-
-	use( plugins.persistence, { storageKey: storageKey } );
-	use( plugins.controls );
+function waitForSelectedSiteId( context ) {
+	return new Promise( resolve => {
+		const unsubscribe = context.store.subscribe( () => {
+			const state = context.store.getState();
+			const siteId = getSelectedSiteId( state );
+			if ( ! siteId ) {
+				return;
+			}
+			unsubscribe();
+			resolve( siteId );
+		} );
+		// Trigger a `store.subscribe()` callback
+		context.store.dispatch( setAllSitesSelected() );
+	} );
 }
 
-export const post = ( context, next ) => {
+export const post = async ( context, next ) => {
 	//see post-editor/controller.js for reference
 
 	const uniqueDraftKey = uniqueId( 'gutenberg-draft-' );
@@ -49,26 +59,23 @@ export const post = ( context, next ) => {
 	const postType = determinePostType( context );
 	const isDemoContent = ! postId && has( context.query, 'gutenberg-demo' );
 
-	const unsubscribe = context.store.subscribe( () => {
-		const state = context.store.getState();
-		const siteId = getSelectedSiteId( state );
-		const userId = getCurrentUserId( state );
+	let state = context.store.getState();
+	let siteId = getSelectedSiteId( state );
+	if ( ! siteId ) {
+		siteId = await waitForSelectedSiteId( context );
+		state = context.store.getState();
+	}
+	const siteSlug = getSelectedSiteSlug( state );
+	const userId = getCurrentUserId( state );
 
-		if ( ! siteId ) {
-			return;
-		}
+	//set postId on state.ui.editor.postId, so components like editor revisions can read from it
+	context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
-		unsubscribe();
+	const GutenbergEditor = initGutenberg( userId, siteSlug );
 
-		registerDataPlugins( userId );
+	context.primary = (
+		<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />
+	);
 
-		// Avoids initializing core-data store before data package plugins are registered in registerDataPlugins.
-		const GutenbergEditor = require( 'gutenberg/editor/main' ).default;
-
-		context.primary = (
-			<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />
-		);
-
-		next();
-	} );
+	next();
 };

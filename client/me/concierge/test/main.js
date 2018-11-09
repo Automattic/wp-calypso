@@ -5,6 +5,7 @@ jest.mock( 'lib/abtest', () => ( {
 } ) );
 
 jest.mock( '../shared/upsell', () => 'Upsell' );
+jest.mock( '../shared/no-available-times', () => 'NoAvailableTimes' );
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: Comp => props => (
@@ -49,7 +50,15 @@ import { ConciergeMain } from '../main';
 
 const props = {
 	steps: [ 'Step1' ],
-	availableTimes: [],
+	availableTimes: [
+		1541506500000,
+		1541508300000,
+		1541510100000,
+		1541511900000,
+		1541513700000,
+		1541515500000,
+		1541516400000,
+	],
 	site: {
 		plan: {},
 	},
@@ -101,6 +110,16 @@ describe( 'ConciergeMain.render()', () => {
 			const comp = shallow( <ConciergeMain { ...props } site={ { plan: { product_slug } } } /> );
 			expect( comp.find( 'Upsell' ) ).toHaveLength( 1 );
 			expect( comp.find( 'Step1' ) ).toHaveLength( 0 );
+		} );
+	} );
+
+	[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( product_slug => {
+		test( `Should render NoAvailableTimes if no times are available (${ product_slug })`, () => {
+			const propsWithoutAvailableTimes = { ...props, availableTimes: [] };
+			const comp = shallow(
+				<ConciergeMain { ...propsWithoutAvailableTimes } site={ { plan: { product_slug } } } />
+			);
+			expect( comp.find( 'NoAvailableTimes' ) ).toHaveLength( 1 );
 		} );
 	} );
 
