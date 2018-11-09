@@ -3,8 +3,9 @@
 /**
  * External dependencies
  */
-import { BlockControls, PlainText } from '@wordpress/editor';
+import { BlockControls, InspectorControls, PlainText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
+import { ExternalLink, PanelBody } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -82,6 +83,14 @@ class MarkdownEdit extends Component {
 
 		return (
 			<div className={ className }>
+				<InspectorControls>
+					<PanelBody>
+						<ExternalLink href="https://en.support.wordpress.com/markdown-quick-reference/">
+							{ __( 'Support reference' ) }
+						</ExternalLink>
+					</PanelBody>
+				</InspectorControls>
+
 				<BlockControls>
 					<div className="components-toolbar">
 						{ this.renderToolbarButton( PANEL_EDITOR, __( 'Markdown' ) ) }

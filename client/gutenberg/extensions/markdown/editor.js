@@ -1,12 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { ExternalLink } from '@wordpress/components';
-import { Fragment } from '@wordpress/element';
-
-/**
  * Internal dependencies
  */
 import './editor.scss';
@@ -18,14 +12,7 @@ import JetpackBlockType from 'gutenberg/extensions/presets/jetpack/utils/jetpack
 const MarkdownBlock = new JetpackBlockType( 'markdown', {
 	title: __( 'Markdown' ),
 
-	description: (
-		<Fragment>
-			<p>{ __( 'Use regular characters and punctuation to style text, links, and lists.' ) }</p>
-			<ExternalLink href="https://en.support.wordpress.com/markdown-quick-reference/">
-				{ __( 'Support reference' ) }
-			</ExternalLink>
-		</Fragment>
-	),
+	description: __( 'Use regular characters and punctuation to style text, links, and lists.' ),
 
 	icon: (
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 208 128">
