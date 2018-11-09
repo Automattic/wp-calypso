@@ -122,7 +122,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		'onboarding-dev': {
-			steps: [ 'site-topic' ],
+			steps: [ 'site-topic', 'about' ],
 			destination: getSiteDestination,
 			description: 'A temporary flow for holding under-development steps',
 			lastModified: '2018-10-29',
