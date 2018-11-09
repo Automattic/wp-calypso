@@ -200,7 +200,7 @@ export class AppBanner extends Component {
 }
 
 export function getiOSDeepLink( currentRoute, currentSection ) {
-	const baseURI = 'https://apps.wordpress.com/get';
+	const baseURI = 'https://apps.wordpress.com/get?campaign=calypso-open-in-app';
 	const fragment = buildDeepLinkFragment( currentRoute, currentSection );
 
 	return fragment.length > 0 ? `${ baseURI }#${ fragment }` : baseURI;
