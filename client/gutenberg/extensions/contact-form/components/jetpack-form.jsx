@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import { PanelBody, TextControl, Button, Placeholder } from '@wordpress/components';
 import { InspectorControls } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
@@ -39,6 +40,9 @@ class JetpackForm extends Component {
 	}
 
 	render() {
+		const formClassnames = classnames( this.props.className, 'jetpack-contact-form', {
+			'has-intro': ! this.props.has_form_settings_set,
+		} );
 		return (
 			<Fragment>
 				<InspectorControls>
@@ -61,7 +65,7 @@ class JetpackForm extends Component {
 						/>
 					</PanelBody>
 				</InspectorControls>
-				<div className={ this.props.className + ' jetpack-form' }>
+				<div className={ formClassnames }>
 					{ ! this.props.has_form_settings_set && (
 						<Placeholder label={ __( 'Contact Form' ) } icon="feedback">
 							<form onSubmit={ this.onFormSettingsSet }>
