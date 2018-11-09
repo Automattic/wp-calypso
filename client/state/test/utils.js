@@ -1019,5 +1019,19 @@ describe( 'addReducer', () => {
 				},
 			} );
 		} );
+
+		test( 'fails when trying to add reducer to an occupied or unsupported spot', () => {
+			const origReducer = combineReducers( {
+				a: toyReducer( 'Hello from A' ),
+			} );
+
+			expect( () => {
+				origReducer.addReducer( [ 'a' ], toyReducer( 'Hello from wannabe A' ) );
+			} ).toThrow( "Reducer with key 'a' is already registered" );
+
+			expect( () => {
+				origReducer.addReducer( [ 'a', 'b' ], toyReducer( 'Hello from A.B' ) );
+			} ).toThrow( "New reducer can be added only into a reducer created with 'combineReducers'" );
+		} );
 	} );
 } );
