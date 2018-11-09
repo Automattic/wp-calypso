@@ -33,15 +33,19 @@ registerBlockType( 'jetpack/form', {
 	attributes: {
 		subject: {
 			type: 'string',
-			default: null,
+			default: '',
 		},
 		to: {
 			type: 'string',
-			default: null,
+			default: '',
 		},
 		submit_button_text: {
 			type: 'string',
 			default: __( 'Submit' ),
+		},
+		has_form_settings_set: {
+			type: 'string',
+			default: null,
 		},
 	},
 
@@ -55,6 +59,7 @@ registerBlockType( 'jetpack/form', {
 				submit_button_text={ props.attributes.submit_button_text }
 				setAttributes={ props.setAttributes }
 				isSelected={ props.isSelected }
+				has_form_settings_set={ props.attributes.has_form_settings_set }
 			>
 				<InnerBlocks
 					templateLock={ false }
