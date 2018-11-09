@@ -13,7 +13,6 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { getEditorRawContent } from 'state/ui/editor/selectors';
-import { hideGutenbergBlocksWarningDialog } from 'state/ui/gutenberg-blocks-warning-dialog/actions';
 import { localize } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import { identity } from 'lodash';
@@ -109,13 +108,9 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	hideDialog: () => dispatch( hideGutenbergBlocksWarningDialog() ),
-} );
-
 export default connect(
 	state => ( {
 		postContent: getEditorRawContent( state ),
 	} ),
-	mapDispatchToProps
+	{}
 )( localize( EditorGutenbergBlocksWarningDialog ) );
