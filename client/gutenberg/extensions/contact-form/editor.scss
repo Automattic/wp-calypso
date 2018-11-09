@@ -63,20 +63,11 @@
 	}
 }
 
-/* TODO see if possible to use classes for these */
 .jetpack-field {
-	input:disabled,
-	textarea:disabled {
+	.components-text-control__input:disabled,
+	.components-textarea-control__input:disabled {
 		border-color: #8d96a0;
 		padding: 10px 8px;
-	}
-
-	input:disabled {
-		margin-right: 4px;
-	}
-
-	span.required {
-		margin-left: auto;
 	}
 }
 

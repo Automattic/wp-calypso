@@ -49,7 +49,7 @@ class JetpackContactForm extends Component {
 					<PanelBody title={ __( 'Email feedback settings' ) }>
 						<p>
 							{ __(
-								'If left black, feedback will be sent to the author of the post and the subject will be the name of this post.'
+								'If left blank, feedback will be sent to the author of the post and the subject will be the name of this post.'
 							) }
 						</p>
 						<TextControl
@@ -83,7 +83,7 @@ class JetpackContactForm extends Component {
 							<form onSubmit={ this.onFormSettingsSet }>
 								<p className="jetpack-contact-form__intro-message">
 									{ __(
-										'If left black, feedback will be sent to the author of the post and the subject will be the name of this post.'
+										'If left blank, feedback will be sent to the author of the post and the subject will be the name of this post.'
 									) }
 								</p>
 								<TextControl
