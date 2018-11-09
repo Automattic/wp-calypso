@@ -11,31 +11,27 @@ import { ToggleControl } from '@wordpress/components';
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
-const JetpackFieldLabel = props => {
-	const { setAttributes } = props;
+const JetpackFieldLabel = ( { setAttributes, label, resetFocus, isSelected, required } ) => {
 	return (
 		<div className="jetpack-field-label">
 			<PlainText
-				value={ props.label }
+				value={ label }
 				className="jetpack-field-label__input"
-				onChange={ label => {
-					{
-						props.resetFocus && props.resetFocus();
-					}
-					setAttributes( { label } );
+				onChange={ value => {
+					resetFocus && resetFocus();
+					setAttributes( { label: value } );
 				} }
 				placeholder={ __( 'Write label…' ) }
 			/>
-			{ props.isSelected && (
+			{ isSelected && (
 				<ToggleControl
 					label={ __( 'Required' ) }
 					className="jetpack-field-label__required"
-					checked={ props.required }
-					onChange={ required => setAttributes( { required } ) }
+					checked={ required }
+					onChange={ value => setAttributes( { required: value } ) }
 				/>
 			) }
-			{ ! props.isSelected &&
-				props.required && <span className="required">{ __( '(required)' ) }</span> }
+			{ ! isSelected && required && <span className="required">{ __( '(required)' ) }</span> }
 		</div>
 	);
 };
