@@ -72,7 +72,7 @@ class JetpackContactForm extends Component {
 						<TextControl
 							label={ __( 'Submit button label' ) }
 							value={ this.props.submit_button_text }
-							placeholder={ __( 'Submit', 'jetpack' ) }
+							placeholder={ __( 'Submit' ) }
 							onChange={ this.onChangeSubmit }
 						/>
 					</PanelBody>
