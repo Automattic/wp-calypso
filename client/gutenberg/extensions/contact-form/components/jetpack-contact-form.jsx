@@ -13,7 +13,7 @@ import { Component, Fragment } from '@wordpress/element';
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
-class JetpackForm extends Component {
+class JetpackContactForm extends Component {
 	constructor( ...args ) {
 		super( ...args );
 		this.onChangeSubject = this.onChangeSubject.bind( this );
@@ -109,4 +109,4 @@ class JetpackForm extends Component {
 	}
 }
 
-export default JetpackForm;
+export default JetpackContactForm;

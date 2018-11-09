@@ -12,7 +12,7 @@ import { InnerBlocks } from '@wordpress/editor';
  * Internal dependencies
  */
 import './editor.scss';
-import JetpackForm from './components/jetpack-form';
+import JetpackContactForm from './components/jetpack-contact-form';
 import JetpackField from './components/jetpack-field';
 import JetpackFieldTextarea from './components/jetpack-field-textarea';
 import JetpackFieldCheckbox from './components/jetpack-field-checkbox';
@@ -52,7 +52,7 @@ registerBlockType( 'jetpack/contact-form', {
 
 	edit: function( props ) {
 		return (
-			<JetpackForm
+			<JetpackContactForm
 				key="jetpack/contact-form"
 				className={ props.className }
 				subject={ props.attributes.subject }
@@ -93,7 +93,7 @@ registerBlockType( 'jetpack/contact-form', {
 						],
 					] }
 				/>
-			</JetpackForm>
+			</JetpackContactForm>
 		);
 	},
 
