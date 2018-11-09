@@ -3,7 +3,7 @@
  * External dependencies
  */
 import creditcards from 'creditcards';
-import { capitalize, compact, isArray, isEmpty } from 'lodash';
+import { capitalize, compact, isArray, isEmpty, mergeWith, union } from 'lodash';
 import i18n from 'i18n-calypso';
 import { isValidPostalCode } from 'lib/postal-code';
 
@@ -125,6 +125,20 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 		default:
 			return null;
 	}
+}
+
+/**
+ * Returns arguments deep-merged into one object with any array values
+ * concatentated and deduped
+ * @param {object}* rulesets Objects describing the rulesets to be combined
+ * @returns {object} The aggregated ruleset
+ */
+export function combineValidationRules( ...rulesets ) {
+	return mergeWith(
+		...rulesets,
+		( objValue, srcValue ) =>
+			isArray( objValue ) && isArray( srcValue ) ? union( objValue, srcValue ) : undefined
+	);
 }
 
 function parseExpiration( value ) {
