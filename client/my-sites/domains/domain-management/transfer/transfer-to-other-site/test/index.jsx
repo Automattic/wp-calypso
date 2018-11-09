@@ -30,6 +30,8 @@ import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
@@ -92,6 +94,8 @@ describe( 'TransferToOtherSite.isSiteEligible()', () => {
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
 	].forEach( plan => {
 		test( `Should return true for plan ${ plan }`, () => {
 			const instance = new TransferToOtherSite( props );

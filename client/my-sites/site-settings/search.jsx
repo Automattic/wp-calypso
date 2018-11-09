@@ -27,9 +27,15 @@ import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack
 import Banner from 'components/banner';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { isJetpackSite, getCustomizerUrl } from 'state/sites/selectors';
-import { isBusiness, isEnterprise, isVipPlan, isJetpackBusiness } from 'lib/products-values';
+import {
+	isBusiness,
+	isEnterprise,
+	isVipPlan,
+	isJetpackBusiness,
+	isEcommerce,
+} from 'lib/products-values';
 import { FEATURE_SEARCH, PLAN_BUSINESS, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
-const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise );
+const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise, isEcommerce );
 
 class Search extends Component {
 	static defaultProps = {

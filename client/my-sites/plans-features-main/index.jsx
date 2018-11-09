@@ -19,6 +19,7 @@ import {
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -133,6 +134,7 @@ export class PlansFeaturesMain extends Component {
 				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
+				findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ],
 			];
 		}
 

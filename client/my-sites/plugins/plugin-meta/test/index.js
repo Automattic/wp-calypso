@@ -51,6 +51,7 @@ import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
@@ -118,6 +119,17 @@ describe( 'PluginMeta basic tests', () => {
 			<PluginMeta
 				{ ...props }
 				selectedSite={ { ...selectedSite, plan: { product_slug: PLAN_BUSINESS } } }
+			/>
+		);
+		expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ) ).toHaveLength(
+			0
+		);
+	} );
+	test( 'should not show upgrade nudge has ecommerce plan', () => {
+		const comp = shallow(
+			<PluginMeta
+				{ ...props }
+				selectedSite={ { ...selectedSite, plan: { product_slug: PLAN_ECOMMERCE } } }
 			/>
 		);
 		expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ) ).toHaveLength(

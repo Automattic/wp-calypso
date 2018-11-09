@@ -38,6 +38,8 @@ import { PlanFeaturesHeader } from '../header';
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_FREE,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -87,6 +89,8 @@ describe( 'PlanFeaturesHeader.getDiscountTooltipMessage()', () => {
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
 	].forEach( productSlug => {
 		test( `Should render different message for paid plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( { ...props, currentSitePlan: { productSlug } } );
