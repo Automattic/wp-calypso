@@ -5,6 +5,7 @@
 import { isEnabled } from 'config';
 import isVipSite from 'state/selectors/is-vip-site';
 import { isJetpackSite } from 'state/sites/selectors';
+import { abtest } from 'lib/abtest';
 
 export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 	if ( ! siteId ) {
@@ -15,7 +16,7 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isVip = isVipSite( state, siteId );
 
-	return calypsoifyGutenberg && ! isJetpack && ! isVip;
+	return calypsoifyGutenberg && ! isJetpack && ! isVip && abtest( 'calypsoifyGutenberg' ) === 'yes';
 };
 
 export default isCalypsoifyGutenbergEnabled;

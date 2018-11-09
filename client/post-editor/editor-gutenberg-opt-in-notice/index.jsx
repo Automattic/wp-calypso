@@ -19,6 +19,7 @@ import { isEnabled } from 'config';
 import { isJetpackSite } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { abtest } from 'lib/abtest';
 
 class EditorGutenbergOptInNotice extends Component {
 	static propTypes = {
@@ -65,7 +66,11 @@ const mapStateToProps = state => {
 	const isVip = isVipSite( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
 	return {
-		optInEnabled: isEnabled( 'gutenberg/opt-in' ) && ! isJetpack && ! isVip,
+		optInEnabled:
+			isEnabled( 'gutenberg/opt-in' ) &&
+			! isJetpack &&
+			! isVip &&
+			abtest( 'calypsoifyGutenberg' ) === 'yes',
 	};
 };
 
