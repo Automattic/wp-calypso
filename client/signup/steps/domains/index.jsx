@@ -100,11 +100,7 @@ class DomainsStep extends React.Component {
 		) {
 			this.skipRender = true;
 			const productSlug = getDomainProductSlug( domain );
-			const domainItem = cartItems.domainRegistration( {
-				productSlug,
-				domain,
-				extra: { skipSiteOrDomain: true },
-			} );
+			const domainItem = cartItems.domainRegistration( { productSlug, domain } );
 
 			SignupActions.submitSignupStep(
 				Object.assign( {
