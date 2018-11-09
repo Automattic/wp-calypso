@@ -429,11 +429,13 @@ class SignupForm extends Component {
 
 	getUserData() {
 		return {
-			first_name: formState.getFieldValue( this.state.form, 'firstName' ),
-			last_name: formState.getFieldValue( this.state.form, 'lastName' ),
 			username: formState.getFieldValue( this.state.form, 'username' ),
 			password: formState.getFieldValue( this.state.form, 'password' ),
 			email: formState.getFieldValue( this.state.form, 'email' ),
+			extra: {
+				first_name: formState.getFieldValue( this.state.form, 'firstName' ),
+				last_name: formState.getFieldValue( this.state.form, 'lastName' ),
+			},
 		};
 	}
 
