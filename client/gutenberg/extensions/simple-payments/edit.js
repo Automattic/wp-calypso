@@ -3,9 +3,12 @@
 /**
  * External dependencies
  */
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
+import { InspectorControls } from '@wordpress/editor';
+import { sprintf } from '@wordpress/i18n';
+import { withSelect } from '@wordpress/data';
 import {
 	ExternalLink,
 	PanelBody,
@@ -14,8 +17,6 @@ import {
 	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
-import { InspectorControls } from '@wordpress/editor';
-import { withSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
@@ -31,6 +32,7 @@ import {
 	SUPPORTED_CURRENCY_LIST,
 } from 'lib/simple-payments/constants';
 import ProductPlaceholder from './product-placeholder';
+import HelpMessage from './help-message';
 
 class SimplePaymentsEdit extends Component {
 	state = {
@@ -41,7 +43,7 @@ class SimplePaymentsEdit extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const { simplePayment, attributes, setAttributes, isSelected, isLoadingInitial } = this.props;
+		const { attributes, isLoadingInitial, isSelected, setAttributes, simplePayment } = this.props;
 		const { content, currency, email, multiple, price, title } = attributes;
 
 		// @TODO check componentDidMount for the case where post was already loaded
@@ -66,8 +68,6 @@ class SimplePaymentsEdit extends Component {
 		const { content, currency, email, multiple, price, title } = attributes;
 
 		return {
-			title,
-			status: 'publish',
 			content,
 			featured_media: 0,
 			meta: {
@@ -76,6 +76,8 @@ class SimplePaymentsEdit extends Component {
 				spay_multiple: multiple ? 1 : 0,
 				spay_price: price,
 			},
+			status: 'publish',
+			title,
 		};
 	};
 
@@ -174,7 +176,7 @@ class SimplePaymentsEdit extends Component {
 
 		if ( ! price || parseFloat( price ) === 0 ) {
 			this.setState( {
-				fieldPriceError: __( 'Everything comes with a price tag these days. Add yours here.' ),
+				fieldPriceError: __( 'If you’re selling something, you need a price tag. Add yours here.' ),
 			} );
 			return false;
 		}
@@ -188,7 +190,9 @@ class SimplePaymentsEdit extends Component {
 
 		if ( parseFloat( price ) < 0 ) {
 			this.setState( {
-				fieldPriceError: __( "Your price is negative — now that doesn't sound right, does it?" ),
+				fieldPriceError: __(
+					'Your price is negative — enter a positive number so people can pay the right amount.'
+				),
 			} );
 			return false;
 		}
@@ -197,7 +201,7 @@ class SimplePaymentsEdit extends Component {
 			if ( precision === 0 ) {
 				this.setState( {
 					fieldPriceError: __(
-						"We know every penny counts, but prices can't contain decimal values."
+						'We know every penny counts, but prices can’t contain decimal values.'
 					),
 				} );
 				return false;
@@ -206,8 +210,8 @@ class SimplePaymentsEdit extends Component {
 			this.setState( {
 				fieldPriceError: sprintf(
 					_n(
-						'Price cannot have more than %d decimal place.',
-						'Price cannot have more than %d decimal places.',
+						'The price cannot have more than %d decimal place.',
+						'The price cannot have more than %d decimal places.',
 						precision
 					),
 					precision
@@ -235,8 +239,7 @@ class SimplePaymentsEdit extends Component {
 		if ( ! email ) {
 			this.setState( {
 				fieldEmailError: __(
-					'We want to make sure payments reach you, so please add an email address.',
-					'jetpack'
+					'We want to make sure payments reach you, so please add an email address.'
 				),
 			} );
 			return false;
@@ -268,8 +271,7 @@ class SimplePaymentsEdit extends Component {
 		if ( ! title ) {
 			this.setState( {
 				fieldTitleError: __(
-					"People need to know what they're paying for! Please add a brief title.",
-					'jetpack'
+					'Please add a brief title so that people know what they’re paying for.'
 				),
 			} );
 			return false;
@@ -284,6 +286,7 @@ class SimplePaymentsEdit extends Component {
 
 	handleEmailChange = email => {
 		this.props.setAttributes( { email } );
+		this.setState( { fieldEmailError: null } );
 	};
 
 	handleContentChange = content => {
@@ -297,6 +300,7 @@ class SimplePaymentsEdit extends Component {
 		} else {
 			this.props.setAttributes( { price: undefined } );
 		}
+		this.setState( { fieldPriceError: null } );
 	};
 
 	handleCurrencyChange = currency => {
@@ -309,6 +313,7 @@ class SimplePaymentsEdit extends Component {
 
 	handleTitleChange = title => {
 		this.props.setAttributes( { title } );
+		this.setState( { fieldTitleError: null } );
 	};
 
 	formatPrice = ( price, currency, withSymbol = true ) => {
@@ -335,10 +340,10 @@ class SimplePaymentsEdit extends Component {
 			return (
 				<div className="simple-payments__loading">
 					<ProductPlaceholder
+						ariaBusy="true"
 						content="█████"
 						formattedPrice="█████"
 						title="█████"
-						ariaBusy="true"
 					/>
 				</div>
 			);
@@ -355,11 +360,11 @@ class SimplePaymentsEdit extends Component {
 		) {
 			return (
 				<ProductPlaceholder
+					ariaBusy="false"
 					content={ content }
 					formattedPrice={ this.formatPrice( price, currency ) }
 					multiple={ multiple }
 					title={ title }
-					ariaBusy="false"
 				/>
 			);
 		}
@@ -376,11 +381,11 @@ class SimplePaymentsEdit extends Component {
 					</InspectorControls>
 
 					<TextControl
+						aria-describedby={ `${ instanceId }-title-error` }
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
 							'simple-payments__field-has-error': fieldTitleError,
 						} ) }
 						disabled={ isLoadingInitial }
-						help={ fieldTitleError }
 						label={ __( 'Item name' ) }
 						onChange={ this.handleTitleChange }
 						placeholder={ __( 'Item name' ) }
@@ -388,10 +393,13 @@ class SimplePaymentsEdit extends Component {
 						type="text"
 						value={ title }
 					/>
+					<HelpMessage id={ `${ instanceId }-title-error` } isError>
+						{ fieldTitleError }
+					</HelpMessage>
 
 					<TextareaControl
-						disabled={ isLoadingInitial }
 						className="simple-payments__field simple-payments__field-content"
+						disabled={ isLoadingInitial }
 						label={ __( 'Enter a description for your item' ) }
 						onChange={ this.handleContentChange }
 						placeholder={ __( 'Enter a description for your item' ) }
@@ -400,19 +408,19 @@ class SimplePaymentsEdit extends Component {
 
 					<div className="simple-payments__price-container">
 						<SelectControl
-							disabled={ isLoadingInitial }
 							className="simple-payments__field simple-payments__field-currency"
+							disabled={ isLoadingInitial }
 							label={ __( 'Currency' ) }
 							onChange={ this.handleCurrencyChange }
 							options={ this.getCurrencyList }
 							value={ currency }
 						/>
 						<TextControl
+							aria-describedby={ `${ instanceId }-price-error` }
 							disabled={ isLoadingInitial }
 							className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
 								'simple-payments__field-has-error': fieldPriceError,
 							} ) }
-							help={ fieldPriceError }
 							label={ __( 'Price' ) }
 							onChange={ this.handlePriceChange }
 							placeholder={ this.formatPrice( 0, currency, false ) }
@@ -421,24 +429,26 @@ class SimplePaymentsEdit extends Component {
 							type="number"
 							value={ price || '' }
 						/>
+						<HelpMessage id={ `${ instanceId }-price-error` } isError>
+							{ fieldPriceError }
+						</HelpMessage>
 					</div>
 
 					<div className="simple-payments__field-multiple">
 						<ToggleControl
-							disabled={ isLoadingInitial }
 							checked={ Boolean( multiple ) }
-							label={ __( 'Allow people buy more than one item at a time' ) }
+							disabled={ isLoadingInitial }
+							label={ __( 'Allow people to buy more than one item at a time' ) }
 							onChange={ this.handleMultipleChange }
 						/>
 					</div>
 
 					<TextControl
-						aria-describedby={ `${ instanceId }-email-help` }
+						aria-describedby={ `${ instanceId }-email-${ fieldEmailError ? 'error' : 'help' }` }
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
 							'simple-payments__field-has-error': fieldEmailError,
 						} ) }
 						disabled={ isLoadingInitial }
-						help={ fieldEmailError ? fieldEmailError : '' }
 						label={ __( 'Email' ) }
 						onChange={ this.handleEmailChange }
 						placeholder={ __( 'Email' ) }
@@ -446,17 +456,18 @@ class SimplePaymentsEdit extends Component {
 						type="email"
 						value={ email }
 					/>
-
-					<p className="components-base-control__help" id={ `${ instanceId }-email-help` }>
+					<HelpMessage id={ `${ instanceId }-email-error` } isError>
+						{ fieldEmailError }
+					</HelpMessage>
+					<HelpMessage id={ `${ instanceId }-email-help` }>
 						{ __(
 							"This is where PayPal will send your money. To claim a payment, you'll " +
-								'need a PayPal account connected to a bank account.',
-							'jetpack'
+								'need a PayPal account connected to a bank account.'
 						) + ' ' }
 						<ExternalLink href="https://www.paypal.com/">
 							{ __( 'Create an account at PayPal' ) }
 						</ExternalLink>
-					</p>
+					</HelpMessage>
 				</Fragment>
 			</div>
 		);

@@ -41,6 +41,54 @@ const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 
+/*
+ * Create reporter for ProgressPlugin (used with EMIT_STATS)
+ */
+function createProgressHandler() {
+	const startTime = Date.now();
+	let lastShownBuildingMessageTime = null;
+	let lastUnshownBuildingMessage = null;
+
+	return ( percentage, msg, ...details ) => {
+		const nowTime = Date.now();
+		const timeString = ( ( nowTime - startTime ) / 1000 ).toFixed( 1 ) + 's';
+		const percentageString = `${ Math.floor( percentage * 100 ) }%`;
+		const detailsString = details
+			.map( detail => {
+				if ( ! detail ) {
+					return '';
+				}
+				if ( detail.length > 40 ) {
+					return `…${ detail.substr( detail.length - 39 ) }`;
+				}
+				return detail;
+			} )
+			.join( ' ' );
+		const message = `${ timeString } ${ percentageString } ${ msg } ${ detailsString }`;
+
+		// There are plenty of 'building' messages that make the log too long for CircleCI web UI.
+		// Let's throttle the 'building' messages to one per second, while always showing the last one.
+		if ( msg === 'building' ) {
+			if ( lastShownBuildingMessageTime && nowTime - lastShownBuildingMessageTime < 1000 ) {
+				// less than 1000ms since last message: ignore, but store for case it's the last one
+				lastUnshownBuildingMessage = message;
+				return;
+			}
+
+			// the message will be shown and its time recorded
+			lastShownBuildingMessageTime = nowTime;
+			lastUnshownBuildingMessage = null;
+		} else if ( lastUnshownBuildingMessage ) {
+			// The last 'building' message should always be shown, no matter the timing.
+			// We do that on the first non-'building' message.
+			console.log( lastUnshownBuildingMessage ); // eslint-disable-line no-console
+			lastUnshownBuildingMessage = null;
+		}
+
+		console.log( message ); // eslint-disable-line no-console
+	};
+}
+
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
  * {
@@ -134,8 +182,10 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 			minimize: shouldMinify,
 			minimizer: [
 				new TerserPlugin( {
-					cache: 'docker' !== process.env.CONTAINER,
-					parallel: true,
+					cache: process.env.CIRCLECI
+						? `${ process.env.HOME }/terser-cache`
+						: 'docker' !== process.env.CONTAINER,
+					parallel: process.env.CIRCLECI ? 2 : true,
 					sourceMap: Boolean( process.env.SOURCEMAP ),
 					terserOptions: {
 						ecma: 5,
@@ -236,11 +286,14 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					loader: 'html-loader',
 				},
 				{
-					test: /\.(svg)$/,
+					test: /\.(?:gif|jpg|jpeg|png|svg)$/i,
 					use: [
 						{
 							loader: 'file-loader',
-							options: { name: '[name].[ext]', outputPath: 'images/' },
+							options: {
+								name: '[name]-[hash].[ext]',
+								outputPath: 'images/',
+							},
 						},
 					],
 				},
@@ -312,6 +365,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						chunkOrigins: false,
 					},
 				} ),
+			shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
 		] ),
 		externals: _.compact( [
 			externalizeWordPressPackages && wordpressExternals,

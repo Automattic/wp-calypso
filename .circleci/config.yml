@@ -19,7 +19,8 @@ references:
         "$CIRCLE_TEST_REPORTS/eslint"           \
         "$CIRCLE_TEST_REPORTS/integration"      \
         "$CIRCLE_TEST_REPORTS/server"           \
-        "$HOME/jest-cache"
+        "$HOME/jest-cache"                      \
+        "$HOME/terser-cache"
 
   # Jest cache caching
   #
@@ -49,6 +50,22 @@ references:
     key: v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/jest-cache
+
+  #
+  # Terser cache caching
+  #
+  restore-terser-cache: &restore-terser-cache
+    name: Restore Terser cache
+    keys:
+      - v0-terser-{{ .Branch }}-{{ .Revision }}
+      - v0-terser-{{ .Branch }}
+      - v0-terser-master
+      - v0-terser
+  save-terser-cache: &save-terser-cache
+    name: Save Terser cache
+    key: v0-terser-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - ~/terser-cache
 
   # Git cache
   #
@@ -339,6 +356,7 @@ jobs:
     steps:
       - prepare
       - restore_cache: *restore-babel-client-cache
+      - restore_cache: *restore-terser-cache
       - run:
           name: Build Stats
           environment:
@@ -356,8 +374,29 @@ jobs:
               && mv stats.json chart.json "$CIRCLE_ARTIFACTS/icfy" \
               || rm -fr build/.babel-client-cache # In case of failure do not save a potentially bad cache
             exit 0
+      - save_cache: *save-terser-cache
       - save_cache: *save-babel-client-cache
       - store-artifacts-and-test-results
+      - run:
+          name: Notify ICFY of failed build
+          when: on_fail
+          command: |
+            #
+            # This block should not cause a test failure and block PRs.
+            # The shell should never error and exit 0 to indicate success.
+            #
+            set +o errexit
+            curl -X POST                                                                     \
+              "http://api.iscalypsofastyet.com:5000/submit-stats-failed?secret=$ICFY_SECRET" \
+              -H 'Cache-Control: no-cache'                                                   \
+              -H 'Content-Type: application/json'                                            \
+              -d '{
+                    "payload": {
+                      "branch": "'"$CIRCLE_BRANCH"'",
+                      "build_num": '"$CIRCLE_BUILD_NUM"',
+                      "sha": "'"$CIRCLE_SHA1"'"
+                    }
+                  }'
       - run:
           name: Notify ICFY
           command: |
@@ -368,8 +407,7 @@ jobs:
             set +o errexit
             if [ -e "$CIRCLE_ARTIFACTS/icfy/stats.json" ] && [ -e "$CIRCLE_ARTIFACTS/icfy/chart.json" ]; then
               ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
-              curl                                                                      \
-                -X POST                                                                 \
+              curl -X POST                                                              \
                 "http://api.iscalypsofastyet.com:5000/submit-stats?secret=$ICFY_SECRET" \
                 -H 'Cache-Control: no-cache'                                            \
                 -H 'Content-Type: application/json'                                     \

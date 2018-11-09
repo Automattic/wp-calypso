@@ -14,10 +14,7 @@ import { connect } from 'react-redux';
 import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { withViewportMatch } from '@wordpress/viewport';
-
-/**
- * WordPress dependencies
- */
+import { IconButton } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
 	Inserter,
@@ -31,7 +28,6 @@ import {
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Site from 'blocks/site';
 import { addSiteFragment } from 'lib/route';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
@@ -52,14 +48,13 @@ function HeaderToolbar( {
 
 	return (
 		<NavigableToolbar className="edit-post-header-toolbar" aria-label={ __( 'Editor Toolbar' ) }>
-			<Button
-				borderless
-				className="edit-post-header-toolbar__back"
-				onClick={ onCloseButtonClick }
-				aria-label={ translate( 'Close' ) }
-			>
-				{ translate( 'Close' ) }
-			</Button>
+			<div className="edit-post-header-toolbar__back">
+				<IconButton
+					icon="exit"
+					onClick={ onCloseButtonClick }
+					aria-label={ translate( 'Close' ) }
+				/>
+			</div>
 			<Site compact site={ site } indicator={ false } onSelect={ recordSiteButtonClick } />
 			<Inserter position="bottom right" />
 			<EditorHistoryUndo />
@@ -77,7 +72,7 @@ function HeaderToolbar( {
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
 function getCloseButtonPath( routeHistory, site ) {
-	const editorPathRegex = /^\/gutenberg\/(post|page|(edit\/[^\/]+))(\/|$)/i;
+	const editorPathRegex = /^(\/gutenberg)?\/(post|page|(edit\/[^\/]+))(\/|$)/i;
 	const lastEditorPath = routeHistory[ routeHistory.length - 1 ].path;
 
 	// @see post-editor/editor-ground-control/index.jsx
@@ -89,7 +84,7 @@ function getCloseButtonPath( routeHistory, site ) {
 		return lastNonEditorPath.path;
 	}
 
-	const editorPostType = lastEditorPath.match( editorPathRegex )[ 1 ];
+	const editorPostType = lastEditorPath.match( editorPathRegex )[ 2 ];
 	let path;
 
 	// @see post-editor/post-editor.jsx

@@ -32,21 +32,6 @@ export function refreshConnections( postId ) {
 
 /**
  * Returns an action object used in signalling that
- * we're setting the Publicize services available for connection.
- *
- * @param {Array} services List of available services.
- *
- * @return {Object} Action object.
- */
-export function setServices( services ) {
-	return {
-		type: 'SET_SERVICES',
-		services,
-	};
-};
-
-/**
- * Returns an action object used in signalling that
  * we're initiating a fetch request to the REST API.
  *
  * @param {String} path API endpoint path.

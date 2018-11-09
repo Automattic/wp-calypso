@@ -383,6 +383,11 @@ class WpcomChecklist extends PureComponent {
 	renderContactPageUpdatedTask = ( TaskComponent, baseProps, task ) => {
 		const { translate, taskUrls } = this.props;
 
+		// Hide this task when we can't find the exact URL of the page.
+		if ( ! taskUrls.contact_page_updated ) {
+			return null;
+		}
+
 		return (
 			<TaskComponent
 				{ ...baseProps }
@@ -493,10 +498,8 @@ export default connect(
 		const posts = getPostsForQuery( state, siteId, query );
 
 		const firstPost = find( posts, { type: 'post' } );
-		const contactPage = getContactPage( posts );
-		const contactPageUrl = contactPage
-			? [ '/page', siteSlug, get( contactPage, [ 'ID' ] ) ].join( '/' )
-			: `/pages/${ siteSlug }`;
+		const contactPageID = get( getContactPage( posts ), 'ID', null );
+		const contactPageUrl = contactPageID && `/page/${ siteSlug }/${ contactPageID }`;
 
 		const user = getCurrentUser( state );
 
