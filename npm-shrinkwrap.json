@@ -13861,9 +13861,9 @@
       }
     },
     "objectpath": {
-      "version": "1.2.1",
-      "resolved": "https://registry.npmjs.org/objectpath/-/objectpath-1.2.1.tgz",
-      "integrity": "sha1-yHQzvdNSrqAU5PnAtS1wpCZSBS4="
+      "version": "1.2.2",
+      "resolved": "https://registry.npmjs.org/objectpath/-/objectpath-1.2.2.tgz",
+      "integrity": "sha512-ie+GY5tJsKt7daHH6qGROf3JqxfD2XhfBPLY+HQrVuRY8MQE1ySKVSqQ/TQz/Dx7jDwuy3etQALDE1cRJAC0cg=="
     },
     "on-finished": {
       "version": "2.3.0",
