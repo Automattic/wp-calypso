@@ -1,6 +1,6 @@
 {
   "name": "@automattic/muriel-base-components",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "The Muriel Base Components",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

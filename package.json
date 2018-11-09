@@ -20,8 +20,7 @@
     "> 1%"
   ],
   "dependencies": {
-    "@automattic/muriel-base-components": "file:packages/muriel-base-components",
-    "@automattic/tree-select": "file:packages/tree-select",
+    "@automattic/tree-select": "^0.0.1",
     "@babel/cli": "7.1.2",
     "@babel/core": "7.1.2",
     "@babel/plugin-proposal-class-properties": "7.1.0",
@@ -248,7 +247,7 @@
     "eslint-branch": "node bin/eslint-branch.js",
     "install-if-deps-outdated": "node bin/install-if-deps-outdated.js",
     "install-if-no-packages": "node bin/install-if-no-packages.js",
-    "install": "lerna bootstrap",
+    "postinstall": "lerna bootstrap",
     "lint": "run-s -s lint:*",
     "lint:config-defaults": "node server/config/validate-config-keys.js",
     "lint:css": "stylelint \"client/**/*.scss\" --syntax scss",

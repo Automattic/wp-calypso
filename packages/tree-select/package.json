@@ -1,6 +1,6 @@
 {
   "name": "@automattic/tree-select",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A selector library for Redux",
   "keywords": [
     "redux",
@@ -23,6 +23,10 @@
   "bugs": {
     "url": "https://github.com/Automattic/wp-calypso/issues"
   },
+  "files": [
+	  "dist",
+	  "src"
+  ],
   "dependencies": {
     "lodash": "^4.17.0"
   }
