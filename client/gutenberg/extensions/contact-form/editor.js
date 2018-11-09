@@ -103,7 +103,7 @@ registerBlockType( 'jetpack/contact-form', {
 
 const FieldDefaults = {
 	category: 'jetpack',
-	parent: [ 'jetpack/form' ],
+	parent: [ 'jetpack/contact-form' ],
 	supports: {
 		html: false,
 	},
