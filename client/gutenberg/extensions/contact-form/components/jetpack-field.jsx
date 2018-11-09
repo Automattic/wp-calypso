@@ -12,18 +12,18 @@ import classNames from 'classnames';
  */
 import JetpackFieldLabel from './jetpack-field-label';
 
-function JetpackField( props ) {
+function JetpackField( { isSelected, type, required, label, setAttributes } ) {
 	return (
 		<Fragment>
-			<div className={ classNames( 'jetpack-field', { 'is-selected': props.isSelected } ) }>
+			<div className={ classNames( 'jetpack-field', { 'is-selected': isSelected } ) }>
 				<TextControl
-					type={ props.type }
+					type={ type }
 					label={
 						<JetpackFieldLabel
-							required={ props.required }
-							label={ props.label }
-							setAttributes={ props.setAttributes }
-							isSelected={ props.isSelected }
+							required={ required }
+							label={ label }
+							setAttributes={ setAttributes }
+							isSelected={ isSelected }
 						/>
 					}
 					disabled
