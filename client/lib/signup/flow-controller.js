@@ -278,10 +278,6 @@ assign( SignupFlowController.prototype, {
 		);
 	},
 
-	shouldAutoContinue: function() {
-		return !! this._flow.autoContinue;
-	},
-
 	reset() {
 		SignupProgressStore.reset();
 		SignupDependencyStore.reset();

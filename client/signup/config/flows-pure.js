@@ -264,7 +264,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			description: 'WordPress.com Connect signup flow',
 			lastModified: '2017-08-24',
 			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
-			autoContinue: true,
 		};
 	}
 
@@ -311,7 +310,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		description: 'A flow to kick off an import during signup',
 		disallowResume: true,
 		lastModified: '2018-09-12',
-		autoContinue: true,
 	};
 
 	flows.reader = {

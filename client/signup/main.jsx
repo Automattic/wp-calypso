@@ -13,7 +13,6 @@ import url from 'url';
 import {
 	assign,
 	defer,
-	delay,
 	find,
 	get,
 	indexOf,
@@ -76,7 +75,6 @@ import WpcomLoginForm from './wpcom-login-form';
  * Constants
  */
 const debug = debugModule( 'calypso:signup' );
-const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 3000;
 
 class Signup extends React.Component {
 	static displayName = 'Signup';
@@ -101,7 +99,7 @@ class Signup extends React.Component {
 			controllerHasReset: false,
 			login: false,
 			dependencies: props.signupDependencies,
-			loadingScreenStartTime: undefined,
+			shouldShowLoadingScreen: false,
 			resumingStep: undefined,
 			loginHandler: null,
 			hasCartItems: false,
@@ -134,7 +132,7 @@ class Signup extends React.Component {
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
 
-		this.updateLoadingScreenStartTime();
+		this.updateShouldShowLoadingScreen();
 
 		if ( canResumeFlow( this.props.flowName, this.props.progress ) ) {
 			// Resume progress if possible
@@ -175,7 +173,7 @@ class Signup extends React.Component {
 		}
 
 		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
-			this.updateLoadingScreenStartTime( progress );
+			this.updateShouldShowLoadingScreen( progress );
 		}
 
 		this.checkForCartItems( signupDependencies );
@@ -187,17 +185,8 @@ class Signup extends React.Component {
 	}
 
 	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
-		const timeSinceLoading = this.state.loadingScreenStartTime
-			? Date.now() - this.state.loadingScreenStartTime
-			: undefined;
 		const filteredDestination = getDestination( destination, dependencies, this.props.flowName );
 
-		if ( timeSinceLoading && timeSinceLoading < MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED ) {
-			return delay(
-				this.handleFlowComplete.bind( this, dependencies, filteredDestination ),
-				MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED - timeSinceLoading
-			);
-		}
 		return this.handleFlowComplete( dependencies, filteredDestination );
 	};
 
@@ -228,21 +217,21 @@ class Signup extends React.Component {
 		}
 	}
 
-	updateLoadingScreenStartTime = ( progress = this.props.progress ) => {
+	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
 		const hasInvalidSteps = !! getFirstInvalidStep( this.props.flowName, progress ),
 			waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress ),
-			startLoadingScreen = waitingForServer && ! this.state.loadingScreenStartTime;
+			startLoadingScreen = waitingForServer && ! this.state.shouldShowLoadingScreen;
 
-		if ( this.isEveryStepSubmitted( progress ) ) {
+		if ( ! this.isEveryStepSubmitted( progress ) ) {
 			this.goToFirstInvalidStep( progress );
 		}
 
 		if ( startLoadingScreen ) {
-			this.setState( { loadingScreenStartTime: Date.now() } );
+			this.setState( { shouldShowLoadingScreen: true } );
 		}
 
 		if ( hasInvalidSteps ) {
-			this.setState( { loadingScreenStartTime: undefined } );
+			this.setState( { shouldShowLoadingScreen: false } );
 		}
 	};
 
@@ -320,11 +309,7 @@ class Signup extends React.Component {
 		} );
 		recordSignupCompletion( { isNewUser, isNewSite, hasCartItems, isNewUserOnFreePlan } );
 
-		if (
-			dependencies.cartItem ||
-			dependencies.domainItem ||
-			this.signupFlowController.shouldAutoContinue()
-		) {
+		if ( dependencies.cartItem || dependencies.domainItem ) {
 			this.handleLogin( dependencies, destination );
 		} else {
 			this.setState( {
@@ -504,7 +489,7 @@ class Signup extends React.Component {
 		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
-			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
+			stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName,
 			flow = flows.getFlow( this.props.flowName ),
 			hideFreePlan = !! (
 				this.state.plans ||
@@ -521,7 +506,7 @@ class Signup extends React.Component {
 					{ shouldRenderLocaleSuggestions && (
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
-					{ this.state.loadingScreenStartTime ? (
+					{ this.state.shouldShowLoadingScreen ? (
 						<SignupProcessingScreen
 							hasCartItems={ this.state.hasCartItems }
 							steps={ this.props.progress }
@@ -573,7 +558,7 @@ class Signup extends React.Component {
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 				<DocumentHead title={ pageTitle } />
-				{ ! this.state.loadingScreenStartTime &&
+				{ ! this.state.shouldShowLoadingScreen &&
 					showProgressIndicator && (
 						<FlowProgressIndicator
 							positionInFlow={ this.getPositionInFlow() }
