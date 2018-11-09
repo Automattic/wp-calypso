@@ -70,6 +70,8 @@ import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
 import withLocalizedMoment from 'components/with-localized-moment';
 
+import { getPreference } from 'state/preferences/selectors';
+
 const PAGE_SIZE = 20;
 
 class ActivityLog extends Component {
@@ -361,6 +363,7 @@ class ActivityLog extends Component {
 			slug,
 			translate,
 			isJetpack,
+			isIntroDismissed,
 		} = this.props;
 
 		const disableRestore =
@@ -436,6 +439,8 @@ class ActivityLog extends Component {
 						) }
 					/>
 				) }
+				{ siteIsOnFreePlan && <IntroBanner siteId={ siteId } /> }
+				{ siteIsOnFreePlan && isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
 				{ this.renderErrorMessage() }
 				{ this.renderActionProgress() }
@@ -455,7 +460,6 @@ class ActivityLog extends Component {
 							prevLabel={ translate( 'Newer' ) }
 							total={ logs.length }
 						/>
-						{ siteIsOnFreePlan && <IntroBanner siteId={ siteId } /> }
 						<section className="activity-log__wrapper">
 							{ siteIsOnFreePlan && <div className="activity-log__fader" /> }
 							{ theseLogs.map( log =>
@@ -487,7 +491,7 @@ class ActivityLog extends Component {
 								)
 							) }
 						</section>
-						{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
+						{ siteIsOnFreePlan && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
 							compact={ isMobile() }
 							className="activity-log__pagination is-bottom-pagination"
@@ -600,6 +604,7 @@ export default connect(
 			slug: getSiteSlug( state, siteId ),
 			timezone,
 			siteIsOnFreePlan,
+			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
 		};
 	},
 	{
