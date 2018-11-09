@@ -56,7 +56,11 @@
 	margin-top: 8px;
 }
 
-a.app-banner__no-thanks-button {
+.button.app-banner__no-thanks-button {
+
+	background: none;
+	border: 0;
+
 	color: $blue-dark;
 	display: inline-block;
 	margin-top: 8px;

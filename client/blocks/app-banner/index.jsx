@@ -190,9 +190,9 @@ export class AppBanner extends Component {
 					>
 						{ translate( 'Open in app' ) }
 					</Button>
-					<a className="app-banner__no-thanks-button" onClick={ this.dismiss }>
+					<Button className="app-banner__no-thanks-button" onClick={ this.dismiss }>
 						{ translate( 'No thanks' ) }
-					</a>
+					</Button>
 				</div>
 			</Card>
 		);
