@@ -3,7 +3,6 @@ const PACKAGE = require('../package.json')
 
 const createPrimaryShades = require('../utilities/create-primary-shades')
 const createSecondaryShades = require('../utilities/create-secondary-shades')
-const print = require('../utilities/print-json')
 
 const paletteColors = BASE_COLORS.map(colorObject => {
   let shades = []
@@ -43,4 +42,8 @@ function formatShades(baseColorObject, shades) {
   })
 
   return result
+}
+
+function print(data) {
+  console.log(JSON.stringify(data, null, 2))
 }

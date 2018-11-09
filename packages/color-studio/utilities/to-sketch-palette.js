@@ -1,4 +1,5 @@
 const chroma = require('chroma-js')
+const flatten = require('lodash/flatten')
 
 module.exports = (colorArray, customProperties = {}) => {
   const sketchPalette = Object.assign(customProperties, {
@@ -9,11 +10,11 @@ module.exports = (colorArray, customProperties = {}) => {
     images: []
   })
 
-  colorArray.map(formatColor).forEach(rgba => {
+  flatten(colorArray).map(formatColor).forEach(rgba => {
     sketchPalette.colors.push(rgba)
   })
 
-  return sketchPalette
+  return JSON.stringify(sketchPalette, null, 2)
 }
 
 function formatColor(colorValue) {

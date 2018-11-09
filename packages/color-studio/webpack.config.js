@@ -1,13 +1,16 @@
 const path = require('path')
+
+const ExtraneousFileCleanupPlugin = require('webpack-extraneous-file-cleanup-plugin')
 const MiniExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
   mode: 'production',
   context: path.join(__dirname, '/docs-source'),
-  entry: [
-    './javascripts/main.js',
-    './stylesheets/main.scss'
-  ],
+  entry: {
+    custom: './javascripts/custom.js',
+    index: './javascripts/index.js',
+    main: './stylesheets/main.scss'
+  },
   module: {
     rules: [
       {
@@ -52,6 +55,10 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        test: /\.sketchpalette$/,
+        use: 'raw-loader'
       }
     ]
   },
@@ -63,6 +70,11 @@ module.exports = {
     new MiniExtractPlugin({
       filename: '[name].css',
       allChunks: true
+    }),
+    new ExtraneousFileCleanupPlugin({
+      extensions: [
+        '.js'
+      ]
     })
   ]
 }
