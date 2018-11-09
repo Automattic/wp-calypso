@@ -386,7 +386,6 @@ jobs:
             # The shell should never error and exit 0 to indicate success.
             #
             set +o errexit
-            ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
             curl                                                                      \
               -X POST                                                                 \
               "http://api.iscalypsofastyet.com:5000/failed-build?secret=$ICFY_SECRET" \
@@ -396,8 +395,7 @@ jobs:
                     "payload": {
                       "branch": "'"$CIRCLE_BRANCH"'",
                       "build_num": '"$CIRCLE_BUILD_NUM"',
-                      "sha": "'"$CIRCLE_SHA1"'",
-                      "ancestor": "'"$ANCESTOR_SHA1"'"
+                      "sha": "'"$CIRCLE_SHA1"'"
                     }
                   }'
       - run:
