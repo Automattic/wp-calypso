@@ -24,14 +24,14 @@ import { isEnabled } from 'config';
 import PlanFeatures from 'my-sites/plan-features';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 
-import { planMatches } from 'lib/plans';
+import { planHasFeature } from 'lib/plans';
 import {
-	GROUP_WPCOM,
-	TYPE_BUSINESS,
+	FEATURE_UPLOAD_PLUGINS,
 	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
 } from 'lib/plans/constants';
 
 export class PlansAtomicStoreStep extends Component {
@@ -72,12 +72,12 @@ export class PlansAtomicStoreStep extends Component {
 				from_section: stepSectionName ? stepSectionName : 'default',
 			} );
 
-			// If we're inside the store signup flow and the cart item is a Business Plan,
+			// If we're inside the store signup flow and the cart item is a Business or eCommerce Plan,
 			// set a flag on it. It will trigger Automated Transfer when the product is being
 			// activated at the end of the checkout process.
 			if (
 				designType === DESIGN_TYPE_STORE &&
-				planMatches( cartItem.product_slug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
+				planHasFeature( cartItem.product_slug, FEATURE_UPLOAD_PLUGINS )
 			) {
 				cartItem.extra = Object.assign( cartItem.extra || {}, {
 					is_store_signup: true,
@@ -124,12 +124,13 @@ export class PlansAtomicStoreStep extends Component {
 				isPersonalPlanEnabled ? PLAN_PERSONAL : null,
 				PLAN_PREMIUM,
 				PLAN_BUSINESS,
+				PLAN_ECOMMERCE,
 			],
 			value => !! value
 		);
 
 		if ( designType === DESIGN_TYPE_STORE ) {
-			plans = [ PLAN_BUSINESS ];
+			plans = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
 		}
 
 		return (
