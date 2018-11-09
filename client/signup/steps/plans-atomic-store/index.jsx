@@ -26,7 +26,7 @@ import { DESIGN_TYPE_STORE } from 'signup/constants';
 
 import { planHasFeature } from 'lib/plans';
 import {
-	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_UPLOAD_THEMES_PLUGINS,
 	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
@@ -77,7 +77,7 @@ export class PlansAtomicStoreStep extends Component {
 			// activated at the end of the checkout process.
 			if (
 				designType === DESIGN_TYPE_STORE &&
-				planHasFeature( cartItem.product_slug, FEATURE_UPLOAD_PLUGINS )
+				planHasFeature( cartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS )
 			) {
 				cartItem.extra = Object.assign( cartItem.extra || {}, {
 					is_store_signup: true,
