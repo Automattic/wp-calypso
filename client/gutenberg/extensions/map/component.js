@@ -9,6 +9,7 @@ import { Component, createRef, Fragment, Children } from '@wordpress/element';
 import { Button, Dashicon, TextareaControl, TextControl } from '@wordpress/components';
 import get from 'lodash/get';
 import assign from 'lodash/assign';
+import debounce from 'lodash/debounce';
 
 /**
  * Internal dependencies
@@ -36,6 +37,9 @@ export class Map extends Component {
 
 		// Refs
 		this.mapRef = createRef();
+
+		// Debouncers
+		this.debouncedSizeMap = debounce( this.sizeMap, 250 );
 	}
 	render() {
 		const { points, admin, children, marker_color } = this.props;
@@ -118,6 +122,9 @@ export class Map extends Component {
 		if ( api_key ) {
 			this.loadMapLibraries();
 		}
+	}
+	componentWillUnmount() {
+		this.debouncedSizeMap.cancel();
 	}
 	componentDidUpdate( prevProps ) {
 		const { api_key, children, points, map_style, map_details } = this.props;
@@ -292,17 +299,17 @@ export class Map extends Component {
 		/* Listen for clicks on the Map background, which hides the current popup. */
 		map.getCanvas().addEventListener( 'click', this.onMapClick );
 		this.setState( { map, zoomControl }, () => {
-			this.sizeMap();
+			this.debouncedSizeMap();
 			map.addControl( zoomControl );
 			if ( ! admin ) {
 				map.addControl( new mapboxgl.FullscreenControl() );
 			}
-			this.mapRef.current.addEventListener( 'alignmentChanged', this.sizeMap );
+			this.mapRef.current.addEventListener( 'alignmentChanged', this.debouncedSizeMap );
 			map.resize();
 			onMapLoaded();
 			this.setState( { loaded: true } );
 			map.setStyle( this.getMapStyle() );
-			window.addEventListener( 'resize', this.sizeMap );
+			window.addEventListener( 'resize', this.debouncedSizeMap );
 		} );
 	}
 	googlePoint2Mapbox( google_point ) {
