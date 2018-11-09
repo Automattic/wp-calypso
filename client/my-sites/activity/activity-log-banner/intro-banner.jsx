@@ -42,12 +42,14 @@ class IntroBanner extends Component {
 						) }
 						<a
 							href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/"
-							onClick={ analytics.tracks.recordEvent( 'calypso_activitylog_intro_banner_learn_more' ) }
+							onClick={ analytics.tracks.recordEvent(
+								'calypso_activitylog_intro_banner_learn_more'
+							) }
 						>
 							{ translate( 'Learn more' ) }
 						</a>
 					</p>
-					<Button className="activity-log-banner__intro-button" href="/help/contact">
+					<Button className="activity-log-banner__intro-button" href="/plans/">
 						{ translate( 'Upgrade now' ) }
 					</Button>
 				</div>
