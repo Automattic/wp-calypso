@@ -1,6 +1,29 @@
 
 .jetpack-contact-form {
 	padding: 10px 18px;
+
+	&.has-intro {
+		padding: 0;
+	}
+}
+
+.jetpack-contact-form {
+	.components-placeholder {
+		padding: 24px;
+	}
+
+	.components-placeholder__fieldset {
+		text-align: left;
+	}
+
+	.components-base-control {
+		width: 100%;
+	}
+}
+
+.contact-form__create {
+	margin-top: 10px;
+	width: 100%;
 }
 
 .jetpack-field-label {

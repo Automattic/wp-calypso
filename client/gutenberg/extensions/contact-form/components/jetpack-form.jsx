@@ -79,9 +79,11 @@ class JetpackForm extends Component {
 									value={ this.props.subject }
 									onChange={ this.onChangeSubject }
 								/>
-								<Button isPrimary type="submit">
-									{ __( 'Set Settings' ) }
-								</Button>
+								<div className="contact-form__create">
+									<Button isPrimary type="submit">
+										{ __( 'Create' ) }
+									</Button>
+								</div>
 							</form>
 						</Placeholder>
 					) }
