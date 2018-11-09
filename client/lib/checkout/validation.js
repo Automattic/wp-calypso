@@ -21,43 +21,45 @@ import {
  * @param {object} additionalFieldRules custom validation rules depending on jurisdiction or other variable
  * @returns {object} the ruleset
  */
-export const creditCardFieldRules = {
-	name: {
-		description: i18n.translate( 'Name on Card', {
-			context: 'Upgrades: Card holder name label on credit card form',
-		} ),
-		rules: [ 'required' ],
-	},
+export function getCreditCardFieldRules() {
+	return {
+		name: {
+			description: i18n.translate( 'Name on Card', {
+				context: 'Upgrades: Card holder name label on credit card form',
+			} ),
+			rules: [ 'required' ],
+		},
 
-	number: {
-		description: i18n.translate( 'Card Number', {
-			context: 'Upgrades: Card number label on credit card form',
-		} ),
-		rules: [ 'validCreditCardNumber' ],
-	},
+		number: {
+			description: i18n.translate( 'Card Number', {
+				context: 'Upgrades: Card number label on credit card form',
+			} ),
+			rules: [ 'validCreditCardNumber' ],
+		},
 
-	'expiration-date': {
-		description: i18n.translate( 'Credit Card Expiration Date' ),
-		rules: [ 'validExpirationDate' ],
-	},
+		'expiration-date': {
+			description: i18n.translate( 'Credit Card Expiration Date' ),
+			rules: [ 'validExpirationDate' ],
+		},
 
-	cvv: {
-		description: i18n.translate( 'Credit Card CVV Code' ),
-		rules: [ 'validCvvNumber' ],
-	},
+		cvv: {
+			description: i18n.translate( 'Credit Card CVV Code' ),
+			rules: [ 'validCvvNumber' ],
+		},
 
-	country: {
-		description: i18n.translate( 'Country' ),
-		rules: [ 'required' ],
-	},
+		country: {
+			description: i18n.translate( 'Country' ),
+			rules: [ 'required' ],
+		},
 
-	'postal-code': {
-		description: i18n.translate( 'Postal Code', {
-			context: 'Upgrades: Postal code on credit card form',
-		} ),
-		rules: [ 'required' ],
-	},
-};
+		'postal-code': {
+			description: i18n.translate( 'Postal Code', {
+				context: 'Upgrades: Postal code on credit card form',
+			} ),
+			rules: [ 'required' ],
+		},
+	};
+}
 
 /**
  * Returns the tef payment validation rule set
@@ -113,7 +115,7 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 	switch ( paymentType ) {
 		case 'credit-card':
 			return mergeValidationRules(
-				creditCardFieldRules,
+				getCreditCardFieldRules(),
 				getConditionalCreditCardRules( paymentDetails ),
 				getEbanxCreditCardRules( paymentDetails )
 			);

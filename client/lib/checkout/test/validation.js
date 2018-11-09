@@ -15,7 +15,7 @@ import {
 	validatePaymentDetails,
 	getCreditCardType,
 	paymentFieldRules,
-	creditCardFieldRules,
+	getCreditCardFieldRules,
 	mergeValidationRules,
 } from '../validation';
 import * as ebanxMethods from '../ebanx';
@@ -261,7 +261,7 @@ describe( 'validation', () => {
 
 		test( 'should return credit card field validation rules', () => {
 			const result = paymentFieldRules( {}, 'credit-card' );
-			expect( result ).toEqual( creditCardFieldRules );
+			expect( result ).toEqual( getCreditCardFieldRules() );
 		} );
 	} );
 
