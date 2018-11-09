@@ -11,17 +11,17 @@ import { Fragment } from '@wordpress/element';
  */
 import JetpackFieldLabel from './jetpack-field-label';
 
-function JetpackFieldTextarea( props ) {
+function JetpackFieldTextarea( { required, label, setAttributes, isSelected } ) {
 	return (
 		<Fragment>
 			<div className="jetpack-field">
 				<TextareaControl
 					label={
 						<JetpackFieldLabel
-							required={ props.required }
-							label={ props.label }
-							setAttributes={ props.setAttributes }
-							isSelected={ props.isSelected }
+							required={ required }
+							label={ label }
+							setAttributes={ setAttributes }
+							isSelected={ isSelected }
 						/>
 					}
 					disabled
