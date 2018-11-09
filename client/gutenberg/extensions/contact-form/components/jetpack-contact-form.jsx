@@ -40,8 +40,16 @@ class JetpackContactForm extends Component {
 	}
 
 	render() {
-		const formClassnames = classnames( this.props.className, 'jetpack-contact-form', {
-			'has-intro': ! this.props.has_form_settings_set,
+		const {
+			children,
+			className,
+			has_form_settings_set,
+			subject,
+			submit_button_text,
+			to,
+		} = this.props;
+		const formClassnames = classnames( className, 'jetpack-contact-form', {
+			'has-intro': ! has_form_settings_set,
 		} );
 		return (
 			<Fragment>
@@ -54,7 +62,7 @@ class JetpackContactForm extends Component {
 						</p>
 						<TextControl
 							label={ __( 'Email address' ) }
-							value={ this.props.to }
+							value={ to }
 							onChange={ this.onChangeTo }
 							help={ __(
 								'You can enter multiple email addresses separated by commas. A notification email will be sent to each address.'
@@ -62,7 +70,7 @@ class JetpackContactForm extends Component {
 						/>
 						<TextControl
 							label={ __( 'Email subject line' ) }
-							value={ this.props.subject }
+							value={ subject }
 							onChange={ this.onChangeSubject }
 						/>
 					</PanelBody>
@@ -71,14 +79,14 @@ class JetpackContactForm extends Component {
 					<PanelBody title={ __( 'Button settings' ) }>
 						<TextControl
 							label={ __( 'Submit button label' ) }
-							value={ this.props.submit_button_text }
+							value={ submit_button_text }
 							placeholder={ __( 'Submit' ) }
 							onChange={ this.onChangeSubmit }
 						/>
 					</PanelBody>
 				</InspectorControls>
 				<div className={ formClassnames }>
-					{ ! this.props.has_form_settings_set && (
+					{ ! has_form_settings_set && (
 						<Placeholder label={ __( 'Contact Form' ) } icon="feedback">
 							<form onSubmit={ this.onFormSettingsSet }>
 								<p className="jetpack-contact-form__intro-message">
@@ -89,7 +97,7 @@ class JetpackContactForm extends Component {
 								<TextControl
 									label={ __( 'Email address' ) }
 									placeholder={ __( 'Example: muriel@design.blog' ) }
-									value={ this.props.to }
+									value={ to }
 									onChange={ this.onChangeTo }
 									help={ __(
 										'You can enter multiple email addresses separated by commas. A notification email will be sent to each address.'
@@ -97,7 +105,7 @@ class JetpackContactForm extends Component {
 								/>
 								<TextControl
 									label={ __( 'Email subject line' ) }
-									value={ this.props.subject }
+									value={ subject }
 									placeholder={ __( "Example: Let's work together" ) }
 									onChange={ this.onChangeSubject }
 								/>
@@ -109,10 +117,10 @@ class JetpackContactForm extends Component {
 							</form>
 						</Placeholder>
 					) }
-					{ this.props.has_form_settings_set && this.props.children }
-					{ this.props.has_form_settings_set && (
+					{ has_form_settings_set && children }
+					{ has_form_settings_set && (
 						<div className="button button-primary button-default jetpack-submit-button">
-							{ this.props.submit_button_text ? this.props.submit_button_text : __( 'Submit' ) }
+							{ submit_button_text ? submit_button_text : __( 'Submit' ) }
 						</div>
 					) }
 				</div>
