@@ -110,3 +110,22 @@
 .activity-log-banner__upgrade {
 	margin-top: 1px;
 }
+
+// Introduction banner
+.activity-log-banner__intro {
+	display: flex;
+	align-items: flex-start;
+	margin-bottom: 44px;
+}
+
+.activity-log-banner__intro-image {
+	max-width: 220px;
+	margin: 8px 16px 0 -8px;
+}
+
+.activity-log-banner__intro-description {
+
+	p {
+		font-size: 14px;
+	}
+}
