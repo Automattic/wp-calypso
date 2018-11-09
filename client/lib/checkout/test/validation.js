@@ -16,6 +16,7 @@ import {
 	getCreditCardType,
 	paymentFieldRules,
 	creditCardFieldRules,
+	combineValidationRules,
 } from '../validation';
 import * as ebanxMethods from '../ebanx';
 
@@ -261,6 +262,60 @@ describe( 'validation', () => {
 		test( 'should return credit card field validation rules', () => {
 			const result = paymentFieldRules( {}, 'credit-card' );
 			expect( result ).toEqual( creditCardFieldRules() );
+		} );
+	} );
+
+	describe( 'combineValidationRules()', () => {
+		test( 'should add additional fields', () => {
+			const result = combineValidationRules(
+				{
+					bird: {
+						description: 'A Bird',
+						rules: [ 'can-fly' ],
+					},
+				},
+				{
+					plane: {
+						description: 'A Plane',
+						rules: [ 'can-fly' ],
+					},
+				}
+			);
+
+			expect( result ).toEqual( {
+				bird: {
+					description: 'A Bird',
+					rules: [ 'can-fly' ],
+				},
+				plane: {
+					description: 'A Plane',
+					rules: [ 'can-fly' ],
+				},
+			} );
+		} );
+
+		test( 'should add additional tests to existing fields', () => {
+			const result = combineValidationRules(
+				{
+					bird: {
+						description: 'A Bird',
+						rules: [ 'can-peck', 'can-fly' ],
+					},
+				},
+				{
+					bird: {
+						description: 'A Bird',
+						rules: [ 'can-fly', 'black' ],
+					},
+				}
+			);
+
+			expect( result ).toEqual( {
+				bird: {
+					description: 'A Bird',
+					rules: [ 'can-peck', 'can-fly', 'black' ],
+				},
+			} );
 		} );
 	} );
 
