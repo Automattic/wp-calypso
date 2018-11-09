@@ -43,7 +43,7 @@ import {
 	isThemeAvailableOnJetpackSite,
 	getWpcomParentThemeId,
 } from '../selectors';
-import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
+import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } from 'lib/plans/constants';
 import ThemeQueryManager from 'lib/query-manager/theme';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
@@ -2431,39 +2431,41 @@ describe( 'themes selectors', () => {
 		} );
 
 		test( 'given a site with the unlimited premium themes bundle, should return true', () => {
-			const isAvailable = isPremiumThemeAvailable(
-				{
-					sites: {
-						items: {
-							2916284: {},
-						},
-						plans: {
-							2916284: {
-								data: [
-									{
-										currentPlan: true,
-										productSlug: PLAN_BUSINESS,
-									},
-								],
+			[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( plan => {
+				const isAvailable = isPremiumThemeAvailable(
+					{
+						sites: {
+							items: {
+								2916284: {},
+							},
+							plans: {
+								2916284: {
+									data: [
+										{
+											currentPlan: true,
+											productSlug: plan,
+										},
+									],
+								},
 							},
 						},
-					},
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { mood },
-							} ),
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { mood },
+								} ),
+							},
+						},
+						purchases: {
+							data: [],
 						},
 					},
-					purchases: {
-						data: [],
-					},
-				},
-				'mood',
-				2916284
-			);
+					'mood',
+					2916284
+				);
 
-			expect( isAvailable ).to.be.true;
+				expect( isAvailable ).to.be.true;
+			} );
 		} );
 	} );
 
