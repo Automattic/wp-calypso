@@ -1,33 +1,36 @@
 {
-  "name": "@automattic/tree-select",
-  "version": "0.0.1",
-  "description": "A selector library for Redux",
-  "keywords": [
-    "redux",
-    "selector"
-  ],
-  "author": "Ben Lowery <ben.lowery@automattic.com>",
-  "homepage": "https://github.com/Automattic/wp-calypso",
-  "license": "GPL-2.0-only",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Automattic/wp-calypso.git"
-  },
-  "scripts": {
-	"prepare": "npm run build",
-	"build": "node ../../bin/build-package.js",
-    "clean": "node ../../bin/clean-package.js"
-  },
-  "bugs": {
-    "url": "https://github.com/Automattic/wp-calypso/issues"
-  },
-  "files": [
-	  "dist",
-	  "src"
-  ],
-  "dependencies": {
-    "lodash": "^4.17.0"
-  }
+	"name": "@automattic/tree-select",
+	"version": "0.0.1",
+	"description": "A selector library for Redux",
+	"keywords": [
+		"redux",
+		"selector"
+	],
+	"author": "Ben Lowery <ben.lowery@automattic.com>",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-only",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"prepare": "npm run build",
+		"build": "node ../../bin/build-package.js",
+		"clean": "node ../../bin/clean-package.js"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"dependencies": {
+		"lodash": "^4.17.0"
+	}
 }

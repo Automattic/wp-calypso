@@ -1,4 +1,4 @@
 {
-	"packages": [ "packages/*", "client/gutenberg/extensions/presets/jetpack" ],
+	"packages": [ "packages/*" ],
 	"version": "independent"
 }
