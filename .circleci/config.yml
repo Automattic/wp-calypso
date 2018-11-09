@@ -386,11 +386,10 @@ jobs:
             # The shell should never error and exit 0 to indicate success.
             #
             set +o errexit
-            curl                                                                      \
-              -X POST                                                                 \
-              "http://api.iscalypsofastyet.com:5000/failed-build?secret=$ICFY_SECRET" \
-              -H 'Cache-Control: no-cache'                                            \
-              -H 'Content-Type: application/json'                                     \
+            curl -X POST                                                                     \
+              "http://api.iscalypsofastyet.com:5000/stats-submit-failed?secret=$ICFY_SECRET" \
+              -H 'Cache-Control: no-cache'                                                   \
+              -H 'Content-Type: application/json'                                            \
               -d '{
                     "payload": {
                       "branch": "'"$CIRCLE_BRANCH"'",
@@ -408,8 +407,7 @@ jobs:
             set +o errexit
             if [ -e "$CIRCLE_ARTIFACTS/icfy/stats.json" ] && [ -e "$CIRCLE_ARTIFACTS/icfy/chart.json" ]; then
               ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
-              curl                                                                      \
-                -X POST                                                                 \
+              curl -X POST                                                              \
                 "http://api.iscalypsofastyet.com:5000/submit-stats?secret=$ICFY_SECRET" \
                 -H 'Cache-Control: no-cache'                                            \
                 -H 'Content-Type: application/json'                                     \
