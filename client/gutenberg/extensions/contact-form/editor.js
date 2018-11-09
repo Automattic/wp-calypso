@@ -22,8 +22,8 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 /**
  * Block Registrations:
  */
-registerBlockType( 'jetpack/form', {
-	title: __( 'Contact Form', 'jetpack' ),
+registerBlockType( 'jetpack/contact-form', {
+	title: __( 'Contact Form' ),
 	description: __( 'A simple way to get feedback from folks visiting your site.' ),
 	icon: 'feedback',
 	category: 'jetpack',
@@ -52,7 +52,7 @@ registerBlockType( 'jetpack/form', {
 	edit: function( props ) {
 		return (
 			<JetpackForm
-				key="jetpack/form"
+				key="jetpack/contact-form"
 				className={ props.className }
 				subject={ props.attributes.subject }
 				to={ props.attributes.to }
