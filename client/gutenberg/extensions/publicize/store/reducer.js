@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Reducer managing Publicize extension connections.
  *

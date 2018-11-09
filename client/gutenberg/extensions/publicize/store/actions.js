@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Returns an action object used in signalling that
  * we're setting the Publicize connections for a post.
@@ -13,7 +15,7 @@ export function setConnections( postId, connections ) {
 		connections,
 		postId,
 	};
-};
+}
 
 /**
  * Returns an action object used in signalling that
@@ -28,7 +30,7 @@ export function refreshConnections( postId ) {
 		type: 'REFRESH_CONNECTIONS',
 		postId,
 	};
-};
+}
 
 /**
  * Returns an action object used in signalling that
@@ -43,4 +45,4 @@ export function fetchFromAPI( path ) {
 		type: 'FETCH_FROM_API',
 		path,
 	};
-};
+}
