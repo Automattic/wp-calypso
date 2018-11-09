@@ -23,23 +23,21 @@ import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 import SupportInfo from 'components/support-info';
 
 class SpeedUpSiteSettings extends Component {
 	static defaultProps = {
 		togglingSiteAccelerator: false,
-		fields: {},
 	};
 
 	static propTypes = {
 		activateModule: PropTypes.func,
 		deactivateModule: PropTypes.func,
-		fields: PropTypes.object,
 		isRequestingSettings: PropTypes.bool,
 		isSavingSettings: PropTypes.bool,
 		jetpackVersionSupportsLazyImages: PropTypes.bool,
-		setFieldValue: PropTypes.func,
+		submitForm: PropTypes.func.isRequired,
+		updateFields: PropTypes.func.isRequired,
 
 		// Connected props
 		assetCdnModuleActive: PropTypes.bool,
@@ -53,27 +51,34 @@ class SpeedUpSiteSettings extends Component {
 	};
 
 	handleCdnChange = () => {
-		const { selectedSiteId, setFieldValue, siteAcceleratorStatus } = this.props;
+		const { siteAcceleratorStatus, submitForm, updateFields } = this.props;
 
 		// If one of them is on, we turn everything off.
 		if ( siteAcceleratorStatus ) {
-			this.props.saveJetpackSettings( selectedSiteId, {
-				photon: false,
-				'photon-cdn': false,
-			} );
-			setFieldValue( 'site_accelerator', false );
+			updateFields(
+				{
+					photon: false,
+					'photon-cdn': false,
+				},
+				() => {
+					submitForm();
+				}
+			);
 		} else {
-			this.props.saveJetpackSettings( selectedSiteId, {
-				photon: true,
-				'photon-cdn': true,
-			} );
-			setFieldValue( 'site_accelerator', true );
+			updateFields(
+				{
+					photon: true,
+					'photon-cdn': true,
+				},
+				() => {
+					submitForm();
+				}
+			);
 		}
 	};
 
 	render() {
 		const {
-			fields,
 			isRequestingSettings,
 			isSavingSettings,
 			jetpackVersionSupportsLazyImages,
@@ -105,7 +110,7 @@ class SpeedUpSiteSettings extends Component {
 							) }
 						</p>
 						<CompactFormToggle
-							checked={ fields.site_accelerator ? fields.site_accelerator : siteAcceleratorStatus }
+							checked={ siteAcceleratorStatus }
 							disabled={
 								isRequestingOrSaving ||
 								photonModuleUnavailable ||
@@ -235,6 +240,5 @@ export default connect(
 	{
 		activateModule,
 		deactivateModule,
-		saveJetpackSettings,
 	}
 )( localize( SpeedUpSiteSettings ) );
