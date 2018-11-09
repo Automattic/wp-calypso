@@ -29,15 +29,13 @@ class UpgradeBanner extends Component {
 						event="activity_log_upgrade_click_jetpack"
 						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
 						plan={ PLAN_JETPACK_PERSONAL_MONTHLY }
-						title={ translate( "Upgrade to a plan to access your site's complete activity" ) }
+						title={ translate( 'Unlock more activities now' ) }
 						description={ translate(
-							"With your free plan, your site's Activity will only display the last 20 events. Upgrade and get:"
+							'With your free plan, you only have access to the 20 most recent activity items on your site. Upgrade to a paid plan to unlock powerful features:'
 						) }
 						list={ [
 							translate( 'Full activity for the past 30 days' ),
-							translate( 'Daily automated backups and spam filtering' ),
-							translate( 'Site migration tools and daily automated restores' ),
-							translate( 'Priority email and live chat support' ),
+							translate( 'The ability to filter events by type and time range' ),
 						] }
 					/>
 				) : (
@@ -46,15 +44,13 @@ class UpgradeBanner extends Component {
 						event="activity_log_upgrade_click_wpcom"
 						feature={ FEATURE_JETPACK_ESSENTIAL }
 						plan={ PLAN_PERSONAL }
-						title={ translate( "Upgrade to a plan to access your site's complete activity" ) }
+						title={ translate( 'Unlock more activities now' ) }
 						description={ translate(
-							"With your free plan, your site's Activity will only display the last 20 events. Upgrade and get:"
+							'With your free plan, you only have access to the 20 most recent activity items on your site. Upgrade to a paid plan to unlock powerful features:'
 						) }
 						list={ [
 							translate( 'Full activity for the past 30 days' ),
-							translate( 'A custom domain name and removal of WordPress.com ads' ),
-							translate( 'Increased storage space' ),
-							translate( 'Priority email and live chat support' ),
+							translate( 'The ability to filter events by type and time range' ),
 						] }
 					/>
 				) }
