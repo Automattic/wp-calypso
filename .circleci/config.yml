@@ -388,7 +388,7 @@ jobs:
             #
             set +o errexit
             curl -X POST                                                                     \
-              "http://api.iscalypsofastyet.com:5000/stats-submit-failed?secret=$ICFY_SECRET" \
+              "http://api.iscalypsofastyet.com:5000/submit-stats-failed?secret=$ICFY_SECRET" \
               -H 'Cache-Control: no-cache'                                                   \
               -H 'Content-Type: application/json'                                            \
               -d '{
