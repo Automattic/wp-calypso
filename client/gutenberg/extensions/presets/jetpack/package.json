@@ -10,8 +10,9 @@
 		"access": "public"
 	},
 	"scripts": {
+		"clean": "rm -fr ./build",
 		"build": "../../../../../bin/sdk-cli.js gutenberg .",
-		"prepublishOnly": "NODE_ENV=production npm run build"
+		"prepublishOnly": "npm run clean; NODE_ENV=production npm run build"
 	},
 	"repository": {
 		"type": "git",
