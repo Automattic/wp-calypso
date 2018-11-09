@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import DismissibleCard from 'blocks/dismissible-card';
 import CardHeading from 'components/card-heading';
 import Button from 'components/button';
+import analytics from 'lib/analytics';
 
 class IntroBanner extends Component {
 	render() {
@@ -39,7 +40,10 @@ class IntroBanner extends Component {
 						{ translate(
 							'With your free plan, you only have access to the 20 most recent activity items on your site. With a paid plan, you can unlock more powerful features such as full activity for the past 30 days, and the ability to filter events so you can quickly find the information you’re looking for. '
 						) }
-						<a href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/">
+						<a
+							href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/"
+							onClick={ analytics.tracks.recordEvent( 'calypso_activitylog_intro_banner_learn_more' ) }
+						>
 							{ translate( 'Learn more' ) }
 						</a>
 					</p>
