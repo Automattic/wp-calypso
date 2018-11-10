@@ -33,7 +33,9 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 				answer={ translate(
 					'Yes! The Personal, Premium, and Business plans include a free custom domain for one year. That includes new' +
 						' domains purchased through WordPress.com or your own existing domain that you can map' +
-						' to your WordPress.com site. Does not apply to premium domains. {{a}}Find out more about domains.{{/a}}',
+						' to your WordPress.com site. Does not apply to premium domains. Domain name should be' +
+						' registered within one year of the purchase of the plan to use this promotion. Registered' +
+						' domain names will renew at regular prices. {{a}}Find out more about domains.{{/a}}',
 					{
 						components: {
 							a: (
