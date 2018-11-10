@@ -5,8 +5,6 @@
  */
 
 import './style.scss';
-/* TODO: Load Mapbox stylesheet dynamically, from CDN */
-import './mapbox.scss';
 import component from './component.js';
 import { settings } from './settings.js';
 import FrontendManagement from 'gutenberg/extensions/shared/frontend-management.js';

@@ -9,6 +9,7 @@ import { Component, createRef, Fragment, Children } from '@wordpress/element';
 import { Button, Dashicon, TextareaControl, TextControl } from '@wordpress/components';
 import get from 'lodash/get';
 import assign from 'lodash/assign';
+import debounce from 'lodash/debounce';
 
 /**
  * Internal dependencies
@@ -16,11 +17,8 @@ import assign from 'lodash/assign';
 
 import MapMarker from './map-marker/';
 import InfoWindow from './info-window/';
-import { mapboxMapFormatter, googleMapFormatter } from './map-formatter/';
-
-// @TODO: replace with import from lib/load-script after resolution of https://github.com/Automattic/wp-calypso/issues/27821
-import { loadScript } from './load-script';
-// import { loadScript } from 'lib/load-script';
+import { mapboxMapFormatter, googleMapFormatter } from './mapbox-map-formatter/';
+import asyncLoader from './asyncLoader';
 
 export class Map extends Component {
 	// Lifecycle
@@ -36,6 +34,9 @@ export class Map extends Component {
 
 		// Refs
 		this.mapRef = createRef();
+
+		// Debouncers
+		this.debouncedSizeMap = debounce( this.sizeMap, 250 );
 	}
 	render() {
 		const { points, admin, children, marker_color, map_service } = this.props;
@@ -120,6 +121,9 @@ export class Map extends Component {
 		if ( api_key ) {
 			this.loadMapLibraries();
 		}
+	}
+	componentWillUnmount() {
+		this.debouncedSizeMap.cancel();
 	}
 	componentDidUpdate( prevProps ) {
 		const { api_key, children, points, map_style, map_details, map_service } = this.props;
@@ -254,16 +258,8 @@ export class Map extends Component {
 	};
 	loadMapLibraries() {
 		const { api_key, map_service } = this.props;
-		const src = this.libraryURLForMapService( map_service );
-		const alreadyLoaded = this.serviceScriptAlreadyLoaded( map_service );
-		if ( alreadyLoaded ) {
-			this.setState( { service_script: alreadyLoaded }, this.scriptsLoaded );
-			return;
-		}
-		loadScript( src, error => {
-			if ( error ) {
-				return;
-			}
+		const urls = this.libraryURLsForMapService( map_service );
+		asyncLoader( urls, () => {
 			if ( 'googlemaps' === map_service ) {
 				this.setState( { service_script: window.google }, this.scriptsLoaded );
 			}
@@ -354,16 +350,16 @@ export class Map extends Component {
 		/* Listen for clicks on the Map background, which hides the current popup. */
 		map.getCanvas().addEventListener( 'click', this.onMapClick );
 		this.setState( { map, zoomControl }, () => {
-			this.sizeMap();
+			this.debouncedSizeMap();
 			if ( ! admin ) {
 				map.addControl( new service_script.FullscreenControl() );
 			}
-			this.mapRef.current.addEventListener( 'alignmentChanged', this.sizeMap );
+			this.mapRef.current.addEventListener( 'alignmentChanged', this.debouncedSizeMap );
 			map.resize();
 			onMapLoaded();
 			this.setState( { loaded: true } );
 			map.setStyle( this.getMapStyle() );
-			window.addEventListener( 'resize', this.sizeMap );
+			window.addEventListener( 'resize', this.debouncedSizeMap );
 		} );
 	};
 
@@ -393,7 +389,7 @@ export class Map extends Component {
 		}
 	};
 
-	libraryURLForMapService = map_service => {
+	libraryURLsForMapService = map_service => {
 		const { api_key } = this.props;
 		switch ( map_service ) {
 			case 'googlemaps':
@@ -403,7 +399,10 @@ export class Map extends Component {
 					'&libraries=places',
 				].join( '' );
 			case 'mapbox':
-				return 'https://api.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.js';
+				return [
+					'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js',
+					'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css',
+				];
 		}
 	};
 
