@@ -6723,9 +6723,9 @@
       }
     },
     "eslint": {
-      "version": "5.8.0",
-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-5.8.0.tgz",
-      "integrity": "sha512-Zok6Bru3y2JprqTNm14mgQ15YQu/SMDkWdnmHfFg770DIUlmMFd/gqqzCHekxzjHZJxXv3tmTpH0C1icaYJsRQ==",
+      "version": "5.9.0",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-5.9.0.tgz",
+      "integrity": "sha512-g4KWpPdqN0nth+goDNICNXGfJF7nNnepthp46CAlJoJtC5K/cLu3NgCM3AHu1CkJ5Hzt9V0Y0PBAO6Ay/gGb+w==",
       "dev": true,
       "requires": {
         "@babel/code-frame": "^7.0.0",
@@ -18355,7 +18355,7 @@
     },
     "require-uncached": {
       "version": "1.0.3",
-      "resolved": "https://registry.npmjs.org/require-uncached/-/require-uncached-1.0.3.tgz",
+      "resolved": "http://registry.npmjs.org/require-uncached/-/require-uncached-1.0.3.tgz",
       "integrity": "sha1-Tg1W1slmL9MeQwEcS5WqSZVUIdM=",
       "dev": true,
       "requires": {
