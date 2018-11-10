@@ -70,17 +70,14 @@ class FreeCartPaymentBox extends React.Component {
 	};
 
 	getProductName = () => {
-		let cart = this.props.cart,
-			product;
+		const cart = this.props.cart;
+		let product;
 
 		if ( cart.has_bundle_credit && this.props.selectedSite.plan ) {
 			product = this.props.products[ this.props.selectedSite.plan.product_slug ];
 		}
 
-		if ( product ) {
-			return product.product_name;
-		}
-		return '';
+		return product ? product.product_name : '';
 	};
 
 	getDomainCreditIllustration = () => {
