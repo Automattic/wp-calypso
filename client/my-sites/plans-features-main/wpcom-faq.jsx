@@ -31,7 +31,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 			<FAQItem
 				question={ translate( 'Do you sell domains?' ) }
 				answer={ translate(
-					'Yes! The Personal, Premium, and Business plans include a free custom domain. That includes new' +
+					'Yes! The Personal, Premium, and Business plans include a free custom domain for one year. That includes new' +
 						' domains purchased through WordPress.com or your own existing domain that you can map' +
 						' to your WordPress.com site. Does not apply to premium domains. {{a}}Find out more about domains.{{/a}}',
 					{

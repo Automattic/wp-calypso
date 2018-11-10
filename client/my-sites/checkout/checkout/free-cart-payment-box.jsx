@@ -42,7 +42,7 @@ class FreeCartPaymentBox extends React.Component {
 							<span>
 								{ cart.has_bundle_credit
 									? this.props.translate(
-											'You get one free domain with your subscription to %(productName)s. Time to celebrate!',
+											'You get a free domain for one year with your subscription to %(productName)s. Time to celebrate!',
 											{ args: { productName: this.getProductName() } }
 									  )
 									: this.props.translate(
