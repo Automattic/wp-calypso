@@ -45,7 +45,6 @@ const CustomDomainPurchaseDetail = ( {
 			/>
 		);
 	} else if ( ! hasDomainCredit && hasCustomDomain( selectedSite ) ) {
-		// TODO: Confirm whether this is still necessary
 		const actionButton = {};
 		actionButton.buttonText = translate( 'Manage my domains' );
 		actionButton.href = `/domains/manage/${ selectedSite.slug }`;
