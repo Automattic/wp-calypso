@@ -6,22 +6,24 @@
 import { combineReducers, keyedReducer, createReducer } from 'state/utils';
 import { atomicTransfer as schema } from './schema';
 import {
-	ATOMIC_TRANSFER_REQUEST as TRANSFER_REQUEST,
-	ATOMIC_TRANSFER_REQUEST_FAILURE as TRANSFER_REQUEST_FAILURE,
-	ATOMIC_TRANSFER_SET as SET_TRANSFER,
+	ATOMIC_TRANSFER_REQUEST,
+	ATOMIC_TRANSFER_REQUEST_FAILURE,
+	ATOMIC_TRANSFER_SET,
+	ATOMIC_TRANSFER_COMPLETE,
 } from 'state/action-types';
 
 export const atomicTransfer = createReducer(
 	{},
 	{
-		[ SET_TRANSFER ]: ( state, { transfer } ) => ( { ...state, ...transfer } ),
+		[ ATOMIC_TRANSFER_SET ]: ( state, { transfer } ) => ( { ...state, ...transfer } ),
 	},
 	schema
 );
 
 export const fetchingTransfer = createReducer( false, {
-	[ TRANSFER_REQUEST ]: () => true,
-	[ TRANSFER_REQUEST_FAILURE ]: () => false,
+	[ ATOMIC_TRANSFER_REQUEST ]: () => true,
+	[ ATOMIC_TRANSFER_REQUEST_FAILURE ]: () => false,
+	[ ATOMIC_TRANSFER_COMPLETE ]: () => false,
 } );
 
 export const atomicTransferReducers = combineReducers( {
@@ -29,4 +31,5 @@ export const atomicTransferReducers = combineReducers( {
 	fetchingTransfer,
 } );
 
+//export default atomicTransferReducers;
 export default keyedReducer( 'siteId', atomicTransferReducers );
