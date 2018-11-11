@@ -71,7 +71,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 								'from your computer with a drag-and-drop interface.'
 						) }
 						buttonText={ i18n.translate( 'Upload a plugin now' ) }
-						href={ '/plugins/upload/' + selectedSite.slug }
+						href={ '/plugins/manage/' + selectedSite.slug }
 					/>
 				) }
 
