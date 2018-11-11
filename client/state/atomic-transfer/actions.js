@@ -5,9 +5,10 @@
  */
 
 import {
-	ATOMIC_TRANSFER_REQUEST as TRANSFER_REQUEST,
-	ATOMIC_TRANSFER_REQUEST_FAILURE as TRANSFER_REQUEST_FAILURE,
-	ATOMIC_TRANSFER_SET as SET_TRANSFER,
+	ATOMIC_TRANSFER_REQUEST,
+	ATOMIC_TRANSFER_REQUEST_FAILURE,
+	ATOMIC_TRANSFER_COMPLETE,
+	ATOMIC_TRANSFER_SET,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/sites/atomic/transfer';
@@ -18,29 +19,12 @@ import 'state/data-layer/wpcom/sites/atomic/transfer';
  * @param {number} siteId The id of the site to query.
  * @returns {Object} An action object
  */
-export const fetchAtomicTransfer = siteId => ( {
-	type: TRANSFER_REQUEST,
-	siteId,
-} );
-
-/**
- * Sets the status of an automated transfer for a particular site.
- *
- * If the transfer has been initiated by uploading a plugin, the
- * ID of that plugin is returned in the API response alongside the
- * current status.
- *
- * @see state/automated-transfer/constants#transferStates
- *
- * @param {number} siteId The site id to which the status belongs
- * @param {Object} transfer atomic transfer object
- * @returns {Object} An action object
- */
-export const setAtomicTransfer = ( siteId, transfer ) => ( {
-	type: SET_TRANSFER,
-	siteId,
-	transfer,
-} );
+export const fetchAtomicTransfer = siteId => {
+	return {
+		type: ATOMIC_TRANSFER_REQUEST,
+		siteId,
+	};
+};
 
 /**
  * Report a failure of fetching Automated Transfer status (for example, the status
@@ -50,6 +34,25 @@ export const setAtomicTransfer = ( siteId, transfer ) => ( {
  * @returns {Object} An action object
  */
 export const atomicTransferFetchingFailure = siteId => ( {
-	type: TRANSFER_REQUEST_FAILURE,
+	type: ATOMIC_TRANSFER_REQUEST_FAILURE,
 	siteId,
+} );
+
+export const atomicTransferComplete = siteId => ( {
+	type: ATOMIC_TRANSFER_COMPLETE,
+	siteId,
+} );
+
+/**
+ *
+ * @see state/automated-transfer/constants#transferStates
+ *
+ * @param {number} siteId The site id to which the status belongs
+ * @param {Object} transfer atomic transfer object
+ * @returns {Object} An action object
+ */
+export const setAtomicTransfer = ( siteId, transfer ) => ( {
+	type: ATOMIC_TRANSFER_SET,
+	siteId,
+	transfer,
 } );
