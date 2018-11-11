@@ -1317,7 +1317,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_BLOG_DOMAIN ]: {
 		getSlug: () => FEATURE_BLOG_DOMAIN,
-		getTitle: () => i18n.translate( 'Custom .blog Domain for One Year' ),
+		getTitle: () => i18n.translate( 'Free .blog Domain for One Year' ),
 		getDescription: ( abtest, domainName ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
@@ -1333,7 +1333,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_CUSTOM_DOMAIN ]: {
 		getSlug: () => FEATURE_CUSTOM_DOMAIN,
-		getTitle: () => i18n.translate( 'Custom Domain Name for One Year' ),
+		getTitle: () => i18n.translate( 'Free Domain for One Year' ),
 		getDescription: ( abtest, domainName ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
