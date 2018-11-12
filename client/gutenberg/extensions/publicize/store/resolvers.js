@@ -14,7 +14,7 @@ import { getFetchConnectionsPath } from './utils';
 export function* getConnections( postId ) {
 	try {
 		const connections = yield fetchFromAPI( getFetchConnectionsPath( postId ) );
-		yield setConnections( postId, connections );
+		yield setConnections( postId, connections.jetpack_publicize_connections );
 	} catch ( error ) {
 		// Fetching connections failed
 	}

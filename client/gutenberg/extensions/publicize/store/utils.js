@@ -8,5 +8,5 @@
  * @return {String} API endpoint path.
  */
 export function getFetchConnectionsPath( postId ) {
-	return '/jetpack/v4/publicize/posts/' + postId.toString() + '/connections';
+	return '/wp/v2/posts/' + postId.toString() + '/?context=edit';
 }
