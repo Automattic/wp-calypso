@@ -147,6 +147,18 @@ class MapEdit extends Component {
 			map_service,
 		} = attributes;
 		const { addPointVisibility, api_key, apiKeyControl, apiState } = this.state;
+		const mapServices = [
+			{ label: 'Mapbox', value: 'mapbox' },
+			{ label: 'Google Maps', value: 'googlemaps' },
+		];
+		const mapServiceSelect = (
+			<SelectControl
+				label="Map Service"
+				value={ map_service }
+				options={ mapServices }
+				onChange={ this.changeMapService }
+			/>
+		);
 		const inspectorControls = (
 			<Fragment>
 				<BlockControls>
@@ -198,15 +210,7 @@ class MapEdit extends Component {
 						</PanelBody>
 					) : null }
 					<PanelBody title={ __( 'Map Service', 'jetpack' ) } initialOpen={ false }>
-						<SelectControl
-							label="Map Service"
-							value={ map_service }
-							options={ [
-								{ label: 'Mapbox', value: 'mapbox' },
-								{ label: 'Google Maps', value: 'googlemaps' },
-							] }
-							onChange={ this.changeMapService }
-						/>
+						{ mapServiceSelect }
 					</PanelBody>
 					{ 'mapbox' === map_service && (
 						<PanelBody title={ __( 'Mapbox Access Token', 'jetpack' ) } initialOpen={ false }>
@@ -254,6 +258,7 @@ class MapEdit extends Component {
 		const placeholderAPIStateFailure = (
 			<Placeholder icon={ settings.icon } label={ __( 'Map', 'jetpack' ) } notices={ notices }>
 				<Fragment>
+					<div>{ mapServiceSelect }</div>
 					<div className="components-placeholder__instructions">
 						<RawHTML>{ apiInstructions }</RawHTML>
 					</div>
