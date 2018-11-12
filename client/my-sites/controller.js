@@ -10,16 +10,13 @@ import { get, noop, some, startsWith, uniq } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { SITES_ONCE_CHANGED } from 'state/action-types';
 import { requestSite } from 'state/sites/actions';
 import {
 	getSite,
 	getSiteAdminUrl,
+	getSiteSlug,
 	isJetpackModuleActive,
 	isJetpackSite,
-	isRequestingSites,
-	isRequestingSite,
-	hasAllSitesList,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { setSelectedSiteId, setSection, setAllSitesSelected } from 'state/ui/actions';
@@ -32,9 +29,8 @@ import config from 'config';
 import analytics from 'lib/analytics';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
-import getPrimarySiteSlug from 'state/selectors/get-primary-site-slug';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import getSiteId from 'state/selectors/get-site-id';
-import getSites from 'state/selectors/get-sites';
 import { getCurrentUser } from 'state/current-user/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -315,6 +311,7 @@ export function siteSelection( context, next ) {
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
 	const allSitesPath = sectionify( context.path, siteFragment );
 
+	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 ) {
 		renderEmptySites( context );
 		return analytics.pageView.record( '/no-sites', sitesPageTitleForAnalytics + ' > No Sites', {
@@ -322,6 +319,7 @@ export function siteSelection( context, next ) {
 		} );
 	}
 
+	// The user has all sites set as hidden: render help message with how to make them visible
 	if ( currentUser && currentUser.visible_site_count === 0 ) {
 		renderNoVisibleSites( context );
 		return analytics.pageView.record(
@@ -336,38 +334,40 @@ export function siteSelection( context, next ) {
 		return next();
 	}
 
-	/**
-	 * If the user has only one site, redirect to the single site
-	 * context instead of rendering the all-site views.
+	/*
+	 * If the user has only one site, redirect to the single site context instead of
+	 * rendering the all-site views.
 	 *
-	 * If the /me/sites API endpoint hasn't returned yet, postpone the redirect until
-	 * after the sites data are available by scheduling a `SITES_ONCE_CHANGED` callback.
+	 * If the primary site is not yet available in Redux state, initiate a fetch and postpone the
+	 * redirect until the fetch is complete. (while the primary site ID is a property of the
+	 * current user object and therefore always available, we need to fetch the site info in order
+	 * to convert the site ID to the site slug that will be part of the redirect URL)
 	 */
 	if ( hasOneSite && ! siteFragment ) {
-		const redirectToPrimary = () => {
-			const primarySiteSlug = getPrimarySiteSlug( getState() );
+		const primarySiteId = getPrimarySiteId( getState() );
+
+		const redirectToPrimary = primarySiteSlug => {
 			let redirectPath = `${ context.pathname }/${ primarySiteSlug }`;
-
-			redirectPath = context.querystring
-				? `${ redirectPath }?${ context.querystring }`
-				: redirectPath;
-
+			if ( context.querystring ) {
+				redirectPath += `?${ context.querystring }`;
+			}
 			page.redirect( redirectPath );
 		};
 
-		const hasInitialized = getSites( getState() ).length;
-		if ( hasInitialized ) {
-			if ( getPrimarySiteSlug( getState() ) ) {
-				redirectToPrimary();
-			} else {
-				// If the primary site does not exist, skip redirect
-				// and display a useful error notification
-				showMissingPrimaryError( currentUser, dispatch );
-			}
+		const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
+		if ( primarySiteSlug ) {
+			redirectToPrimary( primarySiteSlug );
 		} else {
-			dispatch( {
-				type: SITES_ONCE_CHANGED,
-				listener: redirectToPrimary,
+			// Fetch the primary site by ID and then try to determine its slug again.
+			dispatch( requestSite( primarySiteId ) ).then( () => {
+				const freshPrimarySiteSlug = getSiteSlug( getState(), primarySiteId );
+				if ( freshPrimarySiteSlug ) {
+					redirectToPrimary( freshPrimarySiteSlug );
+				} else {
+					// If the primary site does not exist, skip redirect
+					// and display a useful error notification
+					showMissingPrimaryError( currentUser, dispatch );
+				}
 			} );
 		}
 
@@ -382,43 +382,30 @@ export function siteSelection( context, next ) {
 
 	const siteId = getSiteId( getState(), siteFragment );
 	if ( siteId ) {
+		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
+		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
-		const selectionComplete = onSelectedSiteAvailable( context, basePath );
-
-		// if there was a redirect, we should terminate processing of next routes
-		// and let the redirect proceed
-		if ( ! selectionComplete ) {
-			return;
+		if ( onSelectedSiteAvailable( context, basePath ) ) {
+			next();
 		}
 	} else {
-		const selectOnSitesChange = () => {
+		// Fetch the site by siteFragment and then try to select again
+		dispatch( requestSite( siteFragment ) ).then( () => {
 			const freshSiteId = getSiteId( getState(), siteFragment );
 
-			if ( getSite( getState(), freshSiteId ) ) {
+			if ( freshSiteId ) {
+				// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
+				// to wp-admin. In that case, don't continue handling the route.
 				dispatch( setSelectedSiteId( freshSiteId ) );
-				onSelectedSiteAvailable( context, basePath );
-			} else if ( hasAllSitesList( getState() ) ) {
-				// If all sites have loaded, but siteId is still invalid, redirect to allSitesPath.
+				if ( onSelectedSiteAvailable( context, basePath ) ) {
+					next();
+				}
+			} else {
+				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 				page.redirect( allSitesPath );
 			}
-		};
-
-		// Fetch the site from siteFragment.
-		dispatch( requestSite( siteFragment ) ).then( selectOnSitesChange );
-
-		// if sites has fresh data and siteId is invalid
-		// redirect to allSitesPath
-		if ( ! isRequestingSites( getState() ) && ! isRequestingSite( getState(), siteFragment ) ) {
-			return page.redirect( allSitesPath );
-		}
-
-		// Otherwise, check when sites has loaded
-		dispatch( {
-			type: SITES_ONCE_CHANGED,
-			listener: selectOnSitesChange,
 		} );
 	}
-	next();
 }
 
 export function jetpackModuleActive( moduleId, redirect ) {
