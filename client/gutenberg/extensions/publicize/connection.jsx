@@ -35,16 +35,15 @@ class PublicizeConnection extends Component {
 	render() {
 		const { service_name: name, disabled, display_name, unique_id } = this.props.connectionData;
 		const { connectionOn } = this.props;
-		const label = 'connection-' + name + '-' + unique_id;
+		const id = 'connection-' + name + '-' + unique_id;
 		// Genericon names are dash separated
 		const socialName = name.replace( '_', '-' );
 
 		return (
 			<li>
 				<div className="publicize-jetpack-connection-container">
-					<label htmlFor={ label } className="jetpack-publicize-connection-label">
+					<label htmlFor={ id } className="jetpack-publicize-connection-label">
 						<span
-							title={ label }
 							className={
 								'jetpack-publicize-gutenberg-social-icon social-logo social-logo__' + socialName
 							}
@@ -52,7 +51,7 @@ class PublicizeConnection extends Component {
 						<span>{ display_name }</span>
 					</label>
 					<FormToggle
-						id={ label }
+						id={ id }
 						className="jetpack-publicize-connection-toggle"
 						checked={ connectionOn }
 						onChange={ this.onConnectionChange }
