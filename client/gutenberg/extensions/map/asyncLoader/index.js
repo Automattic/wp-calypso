@@ -4,19 +4,18 @@
  * External dependencies
  */
 
-import isString from 'lodash/isString';
-
 /**
  * Internal dependencies
  */
 
 function _loadAsset( url ) {
-	switch ( _extensionFromURL( url ) ) {
+	switch ( url.type ) {
 		case 'js':
-			return _loadScript( url );
+			return _loadScript( url.url );
 		case 'css':
-			return _loadStylesheet( url );
+			return _loadStylesheet( url.url );
 	}
+	return null;
 }
 
 function _loadScript( url ) {
@@ -78,20 +77,9 @@ function _loadStylesheet( url ) {
 	} );
 }
 
-function _extensionFromURL( url ) {
-	return url
-		.split( '?' )
-		.shift()
-		.split( '.' )
-		.pop();
-}
-
 function asyncLoader( urls = [], success, failure ) {
 	const successfulLoades = [];
 	const failedLoads = [];
-	if ( isString( urls ) ) {
-		urls = [ urls ];
-	}
 	urls.forEach( url => {
 		_loadAsset( url ).then(
 			response => {

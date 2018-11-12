@@ -259,8 +259,14 @@ export class Map extends Component {
 		const { api_key } = this.props;
 		asyncLoader(
 			[
-				'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js',
-				'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css',
+				{
+					type: 'js',
+					url: 'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js',
+				},
+				{
+					type: 'css',
+					url: 'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css',
+				},
 			],
 			() => {
 				window.mapboxgl.accessToken = api_key;
