@@ -4,7 +4,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import { localize } from 'i18n-calypso';
 
@@ -48,11 +48,15 @@ class CartTotal extends React.Component {
 		const showTax = cart.tax.display_tax && config.isEnabled( 'show-tax' );
 		return (
 			<div className="cart__total">
-				{ showTax && <span className="cart__total-label">Subtotal:</span> }
-				{ showTax && <span className="cart__total-amount">{ cart.sub_total_display }</span> }
-				{ showTax && <span className="cart__total-label">Tax:</span> }
-				{ showTax && <span className="cart__total-amount">{ cart.total_tax_display }</span> }
-				{ showTax && <div className="cart__total-divider" /> }
+				{ showTax && (
+					<Fragment>
+						<span className="cart__total-label">Subtotal:</span>
+						<span className="cart__total-amount">{ cart.sub_total_display }</span>
+						<span className="cart__total-label">Tax:</span>
+						<span className="cart__total-amount">{ cart.total_tax_display }</span>
+						<div className="cart__total-divider" />
+					</Fragment>
+				) }
 				<span className="cart__total-label grand-total">{ this.totalLabel() }</span>
 				<span className="cart__total-amount grand-total">{ cart.total_cost_display }</span>
 			</div>
