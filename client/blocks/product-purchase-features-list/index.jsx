@@ -39,6 +39,7 @@ import JetpackPublicize from './jetpack-publicize';
 import JetpackVideo from './jetpack-video';
 import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackSearch from './jetpack-search';
+import JetpackSiteAccelerator from './jetpack-site-accelerator';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
 import JetpackWordPressCom from './jetpack-wordpress-com';
 import MobileApps from './mobile-apps';
@@ -49,6 +50,7 @@ import { isEnabled } from 'config';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 export class ProductPurchaseFeaturesList extends Component {
@@ -153,6 +155,7 @@ export class ProductPurchaseFeaturesList extends Component {
 			isPlaceholder,
 			recordReturnToDashboardClick,
 			selectedSite,
+			supportsJetpackSiteAccelerator,
 		} = this.props;
 		return (
 			<Fragment>
@@ -163,6 +166,9 @@ export class ProductPurchaseFeaturesList extends Component {
 				/>
 				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<SiteActivity />
+				{ supportsJetpackSiteAccelerator && (
+					<JetpackSiteAccelerator selectedSite={ selectedSite } />
+				) }
 				<MobileApps />
 				<JetpackReturnToDashboard
 					onClick={ recordReturnToDashboardClick }
@@ -178,6 +184,7 @@ export class ProductPurchaseFeaturesList extends Component {
 			isPlaceholder,
 			recordReturnToDashboardClick,
 			selectedSite,
+			supportsJetpackSiteAccelerator,
 		} = this.props;
 		return (
 			<Fragment>
@@ -192,6 +199,9 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackAntiSpam selectedSite={ selectedSite } />
 				<JetpackPublicize selectedSite={ selectedSite } />
 				<JetpackVideo selectedSite={ selectedSite } />
+				{ supportsJetpackSiteAccelerator && (
+					<JetpackSiteAccelerator selectedSite={ selectedSite } />
+				) }
 				<MobileApps />
 				<SellOnlinePaypal isJetpack />
 				<JetpackReturnToDashboard
@@ -208,6 +218,7 @@ export class ProductPurchaseFeaturesList extends Component {
 			isPlaceholder,
 			recordReturnToDashboardClick,
 			selectedSite,
+			supportsJetpackSiteAccelerator,
 		} = this.props;
 
 		return (
@@ -220,6 +231,9 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackBackupSecurity />
 				<SiteActivity />
 				<JetpackAntiSpam selectedSite={ selectedSite } />
+				{ supportsJetpackSiteAccelerator && (
+					<JetpackSiteAccelerator selectedSite={ selectedSite } />
+				) }
 				<MobileApps />
 				<JetpackReturnToDashboard
 					onClick={ recordReturnToDashboardClick }
@@ -235,6 +249,7 @@ export class ProductPurchaseFeaturesList extends Component {
 			isPlaceholder,
 			selectedSite,
 			recordReturnToDashboardClick,
+			supportsJetpackSiteAccelerator,
 		} = this.props;
 		return (
 			<Fragment>
@@ -259,6 +274,9 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackBackupSecurity />
 				<SiteActivity />
 				<JetpackAntiSpam selectedSite={ selectedSite } />
+				{ supportsJetpackSiteAccelerator && (
+					<JetpackSiteAccelerator selectedSite={ selectedSite } />
+				) }
 				<MobileApps />
 				<SellOnlinePaypal isJetpack />
 				<JetpackReturnToDashboard
@@ -312,6 +330,9 @@ export default connect(
 			isAutomatedTransfer,
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
+			supportsJetpackSiteAccelerator:
+				isJetpackSite( state, selectedSiteId ) &&
+				isJetpackMinimumVersion( state, selectedSiteId, '6.7' ),
 		};
 	},
 	{

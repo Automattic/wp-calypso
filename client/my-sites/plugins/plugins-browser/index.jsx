@@ -12,7 +12,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import DocumentHead from 'components/data/document-head';
 import Search from 'components/search';
@@ -42,7 +41,7 @@ import {
 import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 import HeaderButton from 'components/header-button';
-import { isBusiness, isEnterprise, isPremium } from 'lib/products-values';
+import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'lib/products-values';
 import { TYPE_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import Banner from 'components/banner';
@@ -73,7 +72,7 @@ export class PluginsBrowser extends Component {
 		this.WrappedSearch = props => <Search { ...props } />;
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.reinitializeSearch();
 	}
 
@@ -91,7 +90,7 @@ export class PluginsBrowser extends Component {
 		PluginsListStore.removeListener( 'change', this.refreshLists );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		this.refreshLists( newProps.search );
 	}
 
@@ -369,7 +368,7 @@ export class PluginsBrowser extends Component {
 		const { siteSlug } = this.props;
 		let href = `/plans/${ siteSlug }?feature=${ FEATURE_UPLOAD_PLUGINS }`;
 		if (
-			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			isEnabled( 'upsell/nudge-a-palooza' ) &&
 			abtest( 'pluginsUpsellLandingPage' ) === 'test'
 		) {
 			href = '/feature/plugins/' + siteSlug;
@@ -583,7 +582,9 @@ export default flow(
 			const selectedSiteId = getSelectedSiteId( state );
 			const sitePlan = getSitePlan( state, selectedSiteId );
 
-			const hasBusinessPlan = sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) );
+			const hasBusinessPlan =
+				sitePlan &&
+				( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
 			const hasPremiumPlan = sitePlan && ( hasBusinessPlan || isPremium( sitePlan ) );
 
 			return {

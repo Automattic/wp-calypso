@@ -24,6 +24,7 @@ import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
@@ -122,6 +123,7 @@ export function createSiteWithCart(
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 	const siteGoals = getSiteGoals( reduxStore.getState() ).trim();
 	const siteInformation = getSiteInformation( reduxStore.getState() );
+	const siteType = getSiteType( reduxStore.getState() ).trim();
 	const importingFromUrl =
 		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( reduxStore.getState() ) ) : '';
 
@@ -138,6 +140,7 @@ export function createSiteWithCart(
 				vertical: surveyVertical || undefined,
 				siteGoals: siteGoals || undefined,
 				siteInformation: siteInformation || undefined,
+				siteType: siteType || undefined,
 			},
 			validate: false,
 			find_available_url: !! ( isPurchasingItem || importingFromUrl ),

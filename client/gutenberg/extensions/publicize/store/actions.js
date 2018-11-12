@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Returns an action object used in signalling that
  * we're setting the Publicize connections for a post.
@@ -13,7 +15,7 @@ export function setConnections( postId, connections ) {
 		connections,
 		postId,
 	};
-};
+}
 
 /**
  * Returns an action object used in signalling that
@@ -28,22 +30,7 @@ export function refreshConnections( postId ) {
 		type: 'REFRESH_CONNECTIONS',
 		postId,
 	};
-};
-
-/**
- * Returns an action object used in signalling that
- * we're setting the Publicize services available for connection.
- *
- * @param {Array} services List of available services.
- *
- * @return {Object} Action object.
- */
-export function setServices( services ) {
-	return {
-		type: 'SET_SERVICES',
-		services,
-	};
-};
+}
 
 /**
  * Returns an action object used in signalling that
@@ -58,4 +45,4 @@ export function fetchFromAPI( path ) {
 		type: 'FETCH_FROM_API',
 		path,
 	};
-};
+}

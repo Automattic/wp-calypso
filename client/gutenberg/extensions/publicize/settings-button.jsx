@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Publicize settings button component.
  *
@@ -16,6 +18,7 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import { Component } from '@wordpress/element';
 
 /**
@@ -29,7 +32,7 @@ class PublicizeSettingsButton extends Component {
 	 *
 	 * @param {object} event Event instance for onClick.
 	 */
-	settingsClick = ( event ) => {
+	settingsClick = event => {
 		const href = 'options-general.php?page=sharing&publicize_popup=true';
 		const { refreshCallback } = this.props;
 		event.preventDefault();
@@ -44,20 +47,19 @@ class PublicizeSettingsButton extends Component {
 				refreshCallback();
 			}
 		}, 500 );
-	}
+	};
 
 	render() {
+		const className = classnames(
+			'jetpack-publicize-add-connection-container',
+			this.props.className
+		);
+
 		return (
-			<div className="jetpack-publicize-add-connection-container">
-				<span
-					className="jetpack-publicize-add-icon dashicons-plus-alt"
-				>
-				</span>
-				<a
-					onClick={ this.settingsClick }
-					tabIndex="0"
-				>
-					{ __( 'Connect another service' ) }
+			<div className={ className }>
+				<a onClick={ this.settingsClick } tabIndex="0">
+					<span className="jetpack-publicize-add-icon dashicons-plus-alt" />
+					{ __( 'Connect new service' ) }
 				</a>
 			</div>
 		);

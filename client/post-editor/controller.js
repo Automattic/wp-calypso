@@ -173,7 +173,10 @@ async function maybeCalypsoifyGutenberg( context, next ) {
 	const postType = determinePostType( context );
 	const postId = getPostID( context );
 
-	if ( isCalypsoifyGutenbergEnabled( state, siteId ) ) {
+	if (
+		isCalypsoifyGutenbergEnabled( state, siteId ) &&
+		'gutenberg' === getSelectedEditor( state, siteId )
+	) {
 		return window.location.replace( getEditorUrl( state, siteId, postId, postType ) );
 	}
 	next();

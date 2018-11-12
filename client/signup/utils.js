@@ -12,6 +12,7 @@ import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
 import formState from 'lib/form-state';
 import userFactory from 'lib/user';
+import { dasherize } from 'lib/signup/site-type';
 const user = userFactory();
 
 const { defaultFlowName } = flows;
@@ -144,11 +145,31 @@ export function getThemeForDesignType( designType ) {
 	}
 }
 
+export function getThemeForSiteType( siteType ) {
+	if ( 'business' === dasherize( siteType ) ) {
+		return 'pub/radcliffe-2';
+	}
+
+	if ( 'professional' === dasherize( siteType ) ) {
+		return 'pub/altofocus';
+	}
+
+	if ( 'education' === dasherize( siteType ) ) {
+		return 'pub/twentyfifteen';
+	}
+
+	if ( 'non-profit-organization' === dasherize( siteType ) ) {
+		return 'pub/karuna';
+	}
+
+	return 'pub/independent-publisher-2';
+}
+
 export function getThemeForSiteGoals( siteGoals ) {
 	const siteGoalsValue = siteGoals.split( ',' );
 
 	if ( siteGoalsValue.indexOf( 'sell' ) !== -1 ) {
-		return 'pub/dara';
+		return 'pub/radcliffe-2';
 	}
 
 	if ( siteGoalsValue.indexOf( 'promote' ) !== -1 ) {
@@ -166,7 +187,23 @@ export function getThemeForSiteGoals( siteGoals ) {
 	return 'pub/independent-publisher-2';
 }
 
-export function getSiteTypeForSiteGoals( siteGoals, flow ) {
+export function getDesignTypeForSiteType( siteType, flow ) {
+	if ( 'business' === siteType || flow === 'store-nux' ) {
+		return 'page';
+	}
+
+	if ( 'professional' === siteType ) {
+		return 'portfolio';
+	}
+
+	if ( 'non-profit' === siteType ) {
+		return 'page';
+	}
+
+	return 'blog';
+}
+
+export function getDesignTypeForSiteGoals( siteGoals, flow ) {
 	const siteGoalsValue = siteGoals.split( ',' );
 
 	//Identify stores for the store signup flow

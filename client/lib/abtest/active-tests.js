@@ -9,6 +9,15 @@ export default {
 		defaultVariation: 'main',
 		localeTargets: 'any',
 	},
+	signupSegmentationStep: {
+		datestamp: '20181029',
+		variations: {
+			include: 50,
+			exclude: 50,
+		},
+		defaultVariation: 'exclude',
+		localeTargets: 'any',
+	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
@@ -81,16 +90,8 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	includeDotBlogSubdomainV2: {
-		datestamp: '20180813',
-		variations: {
-			yes: 50,
-			no: 50,
-		},
-		defaultVariation: 'no',
-	},
-	krackenRebootM327V2: {
-		datestamp: '20181018',
+	krackenRebootM33: {
+		datestamp: '20181108',
 		variations: {
 			domainsbot_front: 25,
 			variation1_front: 25,
@@ -100,13 +101,6 @@ export default {
 		defaultVariation: 'domainsbot_front',
 		assignmentMethod: 'userId',
 		allowExistingUsers: true,
-	},
-	skipDomainOrSiteStep: {
-		datestamp: '20181025',
-		variations: {
-			yes: 50,
-			no: 50,
-		},
-		defaultVariation: 'yes',
+		localeTargets: 'any',
 	},
 };

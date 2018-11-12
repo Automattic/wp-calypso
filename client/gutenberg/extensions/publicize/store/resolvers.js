@@ -1,7 +1,9 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
-import { fetchFromAPI, setConnections, setServices } from './actions';
+import { fetchFromAPI, setConnections } from './actions';
 import { getFetchConnectionsPath } from './utils';
 
 /**
@@ -16,16 +18,4 @@ export function* getConnections( postId ) {
 	} catch ( error ) {
 		// Fetching connections failed
 	}
-};
-
-/**
- * Requests the Publicize services available for connection.
- */
-export function* getServices() {
-	try {
-		const services = yield fetchFromAPI( '/jetpack/v4/publicize/services' );
-		yield setServices( services );
-	} catch ( error ) {
-		// Fetching available services failed
-	}
-};
+}

@@ -7,9 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import getCurrentRoute from 'state/selectors/get-current-route';
 import Gridicon from 'gridicons';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -28,12 +26,15 @@ import {
 	withAnalytics,
 	bumpStat,
 } from 'state/analytics/actions';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 
 class EditorGutenbergOptInDialog extends Component {
 	static propTypes = {
 		// connected properties
 		translate: PropTypes.func,
-		gutenbergURL: PropTypes.string,
+		gutenbergUrl: PropTypes.string,
 		isDialogVisible: PropTypes.bool,
 		hideDialog: PropTypes.func,
 		optIn: PropTypes.func,
@@ -46,10 +47,9 @@ class EditorGutenbergOptInDialog extends Component {
 	};
 
 	optInToGutenberg = () => {
-		const { gutenbergURL, hideDialog, optIn, siteId } = this.props;
+		const { gutenbergUrl, hideDialog, optIn, siteId } = this.props;
 		hideDialog();
-		optIn( siteId );
-		page.redirect( gutenbergURL );
+		optIn( siteId, gutenbergUrl );
 	};
 
 	render() {
@@ -98,7 +98,7 @@ class EditorGutenbergOptInDialog extends Component {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	optIn: siteId => {
+	optIn: ( siteId, gutenbergUrl ) => {
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
@@ -113,7 +113,7 @@ const mapDispatchToProps = dispatch => ( {
 					} ),
 					bumpStat( 'gutenberg-opt-in', 'Calypso Dialog Opt In' )
 				),
-				setSelectedEditor( siteId, 'gutenberg' )
+				setSelectedEditor( siteId, 'gutenberg', gutenbergUrl )
 			)
 		);
 	},
@@ -141,11 +141,15 @@ const mapDispatchToProps = dispatch => ( {
 
 export default connect(
 	state => {
-		const currentRoute = getCurrentRoute( state );
 		const isDialogVisible = isGutenbergOptInDialogShowing( state );
 		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const postType = getEditedPostValue( state, siteId, postId, 'type' );
+
+		const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
+
 		return {
-			gutenbergURL: `/gutenberg${ currentRoute }`,
+			gutenbergUrl,
 			isDialogVisible,
 			siteId,
 		};

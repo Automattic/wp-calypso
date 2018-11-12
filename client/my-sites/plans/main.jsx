@@ -31,6 +31,7 @@ class Plans extends React.Component {
 		context: PropTypes.object.isRequired,
 		displayJetpackPlans: PropTypes.bool,
 		intervalType: PropTypes.string,
+		customerType: PropTypes.string,
 		selectedFeature: PropTypes.string,
 		selectedSite: PropTypes.object,
 	};
@@ -100,6 +101,7 @@ class Plans extends React.Component {
 						<PlansFeaturesMain
 							displayJetpackPlans={ displayJetpackPlans }
 							hideFreePlan={ true }
+							customerType={ this.props.customerType }
 							intervalType={ this.props.intervalType }
 							selectedFeature={ this.props.selectedFeature }
 							selectedPlan={ this.props.selectedPlan }
