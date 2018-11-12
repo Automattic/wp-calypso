@@ -16,6 +16,8 @@ import React from 'react';
 import { CreditCardPaymentBox } from '../credit-card-payment-box';
 import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
 import {
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -157,9 +159,14 @@ describe( 'Credit Card Payment Box - PaymentChatButton', () => {
 		countriesList: [],
 	};
 
-	const businessPlans = [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ];
+	const eligiblePlans = [
+		PLAN_BUSINESS,
+		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
+	];
 
-	businessPlans.forEach( product_slug => {
+	eligiblePlans.forEach( product_slug => {
 		test( 'should render PaymentChatButton if any WP.com business plan is in the cart', () => {
 			const props = {
 				...defaultProps,
@@ -173,7 +180,7 @@ describe( 'Credit Card Payment Box - PaymentChatButton', () => {
 		} );
 	} );
 
-	businessPlans.forEach( product_slug => {
+	eligiblePlans.forEach( product_slug => {
 		test( 'should not render PaymentChatButton if presaleChatAvailable is false', () => {
 			const props = {
 				...defaultProps,
