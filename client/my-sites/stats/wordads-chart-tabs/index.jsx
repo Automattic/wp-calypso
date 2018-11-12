@@ -6,9 +6,9 @@
 
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import { find, flowRight } from 'lodash';
+import { find, flowRight, memoize } from 'lodash';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -27,9 +27,8 @@ import {
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { rangeOfPeriod } from 'state/stats/lists/utils';
 
-const buildQuery = ( moment, period, queryDate ) => {
+const buildQuery = memoize( ( period, queryDate ) => {
 	let date = rangeOfPeriod( period, moment().add( -1, 'days' ) ).endOf;
-
 	let quantity = 30;
 	switch ( period ) {
 		case 'month':
@@ -52,7 +51,7 @@ const buildQuery = ( moment, period, queryDate ) => {
 		date,
 		quantity,
 	};
-};
+} );
 
 class WordAdsChartTabs extends Component {
 	constructor( props ) {
@@ -238,9 +237,9 @@ class WordAdsChartTabs extends Component {
 }
 
 const connectComponent = connect(
-	( state, { moment, period: periodObject, queryDate } ) => {
+	( state, { period: periodObject, queryDate } ) => {
 		const { period } = periodObject;
-		const query = buildQuery( moment, period, queryDate );
+		const query = buildQuery( period, queryDate );
 		const siteId = getSelectedSiteId( state );
 		return {
 			query: query,
