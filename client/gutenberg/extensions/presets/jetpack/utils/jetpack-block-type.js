@@ -9,12 +9,13 @@ import pickBy from 'lodash/pickBy';
 /**
  * Where Jetpack data can be found in WP Admin
  */
-const JETPACK_DATA_PATH = [ 'Jetpack_Initial_State' ];
+const JETPACK_DATA_PATH = [ 'Jetpack_Editor_Initial_State' ];
 
 export default class JetpackBlockType {
-	constructor( name, config ) {
+	constructor( { name, config, requiredBlock } ) {
 		this.name = name;
 		this.config = config;
+		this.requiredBlock = requiredBlock;
 		this.jetpackData = get(
 			'object' === typeof window ? window : null,
 			JETPACK_DATA_PATH,
@@ -22,13 +23,17 @@ export default class JetpackBlockType {
 		);
 	}
 
-	hasRequiredModule = () => {
-		const activeModules = pickBy( get( this.jetpackData, 'getModules' ), module => module.activated && module.override !== 'inactive' );
-		return has( activeModules, this.name )
+	isBlockAvailable = () => {
+		const availableBlocks = pickBy( get( this.jetpackData, 'available_blocks' ), block => block.available );
+		return has( availableBlocks, this.requiredBlock );
 	};
 
-	register() {
-		if ( this.jetpackData && ! this.hasRequiredModule() ) {
+	registerBlock() {
+		if (
+			this.jetpackData &&
+			this.requiredBlock &&
+			! this.isBlockAvailable()
+		) {
 			return;
 		}
 		registerBlockType( 'jetpack/' + this.name, this.config );
