@@ -27,6 +27,7 @@ import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import InfoPopover from 'components/info-popover';
+import { dasherize } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -48,7 +49,7 @@ class SiteInformation extends Component {
 
 	handleInputChange = ( { target: { name, value } } ) => {
 		if ( 'email' === name ) {
-			const isEmailValid = ! trim( value ) || EmailValidator.validate( value );
+			const isEmailValid = ! trim( value ) || EmailValidator.validate( trim( value ) );
 			return this.setState( {
 				[ name ]: value,
 				isEmailValid,
@@ -120,8 +121,7 @@ class SiteInformation extends Component {
 										<FormTextInput
 											id="email"
 											name="email"
-											isValid={ this.state.isEmailValid }
-											isError={ this.state.isEmailValid }
+											isError={ ! this.state.isEmailValid }
 											placeholder={ 'E.g. email@domain.com' }
 											onChange={ this.handleInputChange }
 											value={ this.state.email }
@@ -193,21 +193,21 @@ class SiteInformation extends Component {
  */
 function getSiteNameText( siteType ) {
 	//TODO: After site-type component is merged, fetch segment names from lib/site-type.js
-	switch ( siteType ) {
+	switch ( dasherize( siteType ) ) {
 		case 'business':
 			return {
 				label: i18n.translate( 'Business name' ),
-				placeholder: i18n.translate( 'eg. Google, Automattic, AirBnb' ),
+				placeholder: i18n.translate( "eg. Juliana's Pizza" ),
 			};
-		case 'blogger':
+		case 'blog':
 			return {
 				label: i18n.translate( 'Blog name' ),
-				placeholder: i18n.translate( 'eg. Google, Automattic, AirBnb' ),
+				placeholder: i18n.translate( 'eg. My travel blog ' ),
 			};
 	}
 	return {
 		label: i18n.translate( 'Site name' ),
-		placeholder: i18n.translate( 'eg. Google, Automattic, AirBnb' ),
+		placeholder: i18n.translate( 'eg. My portfolio' ),
 	};
 }
 
@@ -218,7 +218,7 @@ export default connect(
 			isLoggedIn: isUserLoggedIn( state ),
 			siteInformation: getSiteInformation( state ),
 			siteTitle: getSiteTitle( state ),
-			isBusinessSiteSelected: 'business' === siteType,
+			isBusinessSiteSelected: dasherize( 'business' ) === dasherize( siteType ),
 			siteNameText: getSiteNameText( siteType ),
 		};
 	},
