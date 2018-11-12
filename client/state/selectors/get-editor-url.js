@@ -9,7 +9,10 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 
 export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
 	if ( 'gutenberg' === getSelectedEditor( state, siteId ) ) {
-		return getGutenbergEditorUrl( state, siteId, postId, postType );
+		const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
+		if ( gutenbergUrl ) {
+			return gutenbergUrl;
+		}
 	}
 
 	if ( postId ) {

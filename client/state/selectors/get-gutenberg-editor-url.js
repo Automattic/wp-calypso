@@ -2,6 +2,7 @@
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
@@ -17,6 +18,10 @@ export const getGutenbergEditorUrl = ( state, siteId, postId = null, postType = 
 			return `${ siteAdminUrl }post-new.php?calypsoify=1`;
 		}
 		return `${ siteAdminUrl }post-new.php?post_type=${ postType }&calypsoify=1`;
+	}
+
+	if ( ! isEnabled( 'gutenberg' ) ) {
+		return false;
 	}
 
 	if ( postId ) {
