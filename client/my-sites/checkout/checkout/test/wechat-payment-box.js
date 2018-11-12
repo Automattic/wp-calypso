@@ -15,6 +15,8 @@ import { identity } from 'lodash';
  */
 import { WechatPaymentBox } from '../wechat-payment-box';
 import {
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -105,10 +107,15 @@ describe( 'WechatPaymentBox', () => {
 		expect( wrapper.contains( <TermsOfService /> ) );
 	} );
 
-	const businessPlans = [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ];
+	const eligiblePlans = [
+		PLAN_BUSINESS,
+		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
+	];
 
-	businessPlans.forEach( product_slug => {
-		test( 'should render PaymentChatButton if any WP.com business plan is in the cart', () => {
+	eligiblePlans.forEach( product_slug => {
+		test( 'should render PaymentChatButton if any WP.com business/ecommerce plan is in the cart', () => {
 			const props = {
 				...defaultProps,
 				presaleChatAvailable: true,
@@ -121,7 +128,7 @@ describe( 'WechatPaymentBox', () => {
 		} );
 	} );
 
-	businessPlans.forEach( product_slug => {
+	eligiblePlans.forEach( product_slug => {
 		test( 'should not render PaymentChatButton if presaleChatAvailable is false', () => {
 			const props = {
 				...defaultProps,
