@@ -5,8 +5,10 @@
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 
-exports.config = ( { argv: { entryPoint, outputName }, getBaseConfig } ) => {
-	const baseConfig = getBaseConfig();
+exports.config = ( { argv: { entryPoint, outputName, globalWp }, getBaseConfig } ) => {
+	const baseConfig = getBaseConfig( {
+		externalizeWordPressPackages: globalWp,
+	} );
 
 	return {
 		...baseConfig,

@@ -133,6 +133,12 @@ yargs
 				type: 'string',
 				required: true,
 				coerce: path.resolve,
+			} )
+			.options( {
+				'global-wp': {
+					description: 'Externalize the @wordpress packages as globals',
+					type: 'boolean',
+				},
 			} ),
 		handler: argv => build( generic, argv ),
 	} )
