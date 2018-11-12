@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import page from 'page';
 
 /**
  * Internal Dependencies
@@ -30,6 +29,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { setSelectedEditor } from 'state/selected-editor/actions';
+import { navigate } from 'state/ui/actions';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -46,6 +46,7 @@ class InlineHelpPopover extends Component {
 		classicUrl: PropTypes.string,
 		siteId: PropTypes.number,
 		optOut: PropTypes.func,
+		redirect: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -113,9 +114,9 @@ class InlineHelpPopover extends Component {
 	};
 
 	switchToClassicEditor = () => {
-		const { siteId, optOut, classicUrl } = this.props;
+		const { siteId, optOut, classicUrl, redirect } = this.props;
 		optOut( siteId );
-		page.redirect( classicUrl );
+		redirect( classicUrl );
 	};
 
 	render() {
@@ -200,10 +201,7 @@ class InlineHelpPopover extends Component {
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
-	const classicRoute = currentRoute
-		.split( '/' )
-		.slice( 2 )
-		.join( '/' );
+	const classicRoute = currentRoute.replace( '/gutenberg/', '' );
 
 	return {
 		searchQuery: getSearchQuery( state ),
@@ -239,6 +237,9 @@ function mapDispatchToProps( dispatch ) {
 		recordTracksEvent,
 		selectResult,
 		resetContactForm: resetInlineHelpContactForm,
+		redirect: classicUrl => {
+			dispatch( navigate( classicUrl ) );
+		},
 	};
 }
 
