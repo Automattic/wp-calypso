@@ -439,7 +439,7 @@ class ActivityLog extends Component {
 						) }
 					/>
 				) }
-				{ siteIsOnFreePlan && <IntroBanner siteId={ siteId } /> }
+				<IntroBanner siteId={ siteId } />
 				{ siteIsOnFreePlan && isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
 				{ this.renderErrorMessage() }
