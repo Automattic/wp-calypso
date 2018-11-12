@@ -4,7 +4,16 @@ Atomic transfers are ongoing stateful processes.
 The information in this state subtree tracks that process and provides the necessary information to represent it visually.
 
 All Atomic transfer information is stored as a single possible transfer per site.
-That is to say, state information is keyed by site ID and if records for multiple actual transfer attempts exist on the server only one will exist in Calypso (this shall be the most recent data available).
+
+### Actions
+
+| action | description |
+|:------:|-------------|
+| `fetchAtomicTransfer` | returns an `ATOMIC_TRANSFER_REQUEST` action type |
+| `atomicTransferFetchingFailure` | returns an `ATOMIC_TRANSFER_REQUEST_FAILURE` action type |
+| `atomicTransferComplete` | returns an `ATOMIC_TRANSFER_COMPLETE` action type |
+| `setAtomicTransfer` | returns an `ATOMIC_TRANSFER_SET` action type |
+
 
 ## Data types and meaning
 
