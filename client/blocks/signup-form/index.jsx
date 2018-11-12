@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { camelCase, find, forEach, head, includes, keys, map, mapKeys, pick, thru } from 'lodash';
+import { camelCase, find, filter, forEach, head, includes, keys, map, mapKeys, pick, snakeCase, thru } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -68,6 +68,8 @@ class SignupForm extends Component {
 		disableEmailExplanation: PropTypes.bool,
 		disableEmailInput: PropTypes.bool,
 		disabled: PropTypes.bool,
+		displayNameInput: PropTypes.bool,
+		displayUsernameInput: PropTypes.bool,
 		email: PropTypes.string,
 		footerLink: PropTypes.node,
 		formHeader: PropTypes.node,
@@ -84,7 +86,6 @@ class SignupForm extends Component {
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
-		useFullName: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -92,6 +93,8 @@ class SignupForm extends Component {
 	};
 
 	static defaultProps = {
+		displayNameInput: false,
+		displayUsernameInput: true,
 		isSocialSignupEnabled: false,
 	};
 
@@ -209,14 +212,15 @@ class SignupForm extends Component {
 	};
 
 	validate = ( fields, onComplete ) => {
-		const data = pick( fields, [ 'email', 'username', 'password' ] );
+		const fieldsForValidation = filter( [
+			'email',
+			'password',
+			this.props.displayUsernameInput && 'username',
+			this.props.displayNameInput && 'firstName',
+			this.props.displayNameInput && 'lastName',
+		] );
 
-		if ( this.props.useFullName ) {
-			data.first_name = fields.firstName;
-			data.last_name = fields.lastName;
-			delete data.username;
-		}
-
+		const data = mapKeys( pick( fields, fieldsForValidation ), ( value, key ) => snakeCase( key ) );
 		wpcom.undocumented().validateNewUser( data, ( error, response ) => {
 			if ( this.props.submitting ) {
 				// this is a stale callback, we have already signed up or are logging in
@@ -442,7 +446,7 @@ class SignupForm extends Component {
 
 		return (
 			<div>
-				{ this.props.useFullName && (
+				{ this.props.displayNameInput && (
 					<>
 						<FormLabel htmlFor="firstName">{ this.props.translate( 'Your first name' ) }</FormLabel>
 						<FormTextInput
@@ -505,7 +509,7 @@ class SignupForm extends Component {
 					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'email' ) } />
 				) }
 
-				{ ! this.props.useFullName && (
+				{ this.props.displayUsernameInput && (
 					<>
 						<FormLabel htmlFor="username">
 							{ this.props.translate( 'Choose a username' ) }

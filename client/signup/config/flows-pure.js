@@ -322,7 +322,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	};
 
 	flows[ 'crowdsignal' ] = {
-		steps: [ 'oauth2-email' ],
+		steps: [ 'oauth2-user-no-username' ],
 		destination: ( dependencies ) => dependencies.oauth2_redirect || '/',
 		description: 'Crowdsignal\'s custom WordPress.com Connect signup flow',
 		lastModified: '2018-11-02',
