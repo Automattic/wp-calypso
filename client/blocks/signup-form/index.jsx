@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { camelCase, find, forEach, head, includes, keys, map, pick, thru } from 'lodash';
+import { camelCase, find, forEach, head, includes, keys, map, mapKeys, pick, thru } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -227,34 +227,30 @@ class SignupForm extends Component {
 				return debug( error || 'User validation failed.' );
 			}
 
-			let { messages } = response;
+			const messages = response.success ? {} : mapKeys( response.messages, ( value, key ) => camelCase( key ) );
 
-			if ( response.success ) {
-				messages = {};
-			} else {
-				forEach( messages, ( fieldError, field ) => {
-					if ( ! formState.isFieldInvalid( this.state.form, camelCase( field ) ) ) {
-						return;
-					}
+			forEach( messages, ( fieldError, field ) => {
+				if ( ! formState.isFieldInvalid( this.state.form, field ) ) {
+					return;
+				}
 
-					if ( field === 'username' && ! includes( usernamesSearched, fields.username ) ) {
-						analytics.tracks.recordEvent( 'calypso_signup_username_validation_failed', {
-							error: head( keys( fieldError ) ),
-							username: fields.username,
-						} );
+				if ( field === 'username' && ! includes( usernamesSearched, fields.username ) ) {
+					analytics.tracks.recordEvent( 'calypso_signup_username_validation_failed', {
+						error: head( keys( fieldError ) ),
+						username: fields.username,
+					} );
 
-						timesUsernameValidationFailed++;
-					}
+					timesUsernameValidationFailed++;
+				}
 
-					if ( field === 'password' ) {
-						analytics.tracks.recordEvent( 'calypso_signup_password_validation_failed', {
-							error: head( keys( fieldError ) ),
-						} );
+				if ( field === 'password' ) {
+					analytics.tracks.recordEvent( 'calypso_signup_password_validation_failed', {
+						error: head( keys( fieldError ) ),
+					} );
 
-						timesPasswordValidationFailed++;
-					}
-				} );
-			}
+					timesPasswordValidationFailed++;
+				}
+			} );
 
 			if ( fields.email ) {
 				if ( this.props.signupDependencies && this.props.signupDependencies.domainItem ) {
@@ -271,16 +267,6 @@ class SignupForm extends Component {
 						} );
 					}
 				}
-			}
-
-			if ( messages.first_name ) {
-				messages.firstName = messages.first_name;
-				delete messages.first_name;
-			}
-
-			if ( messages.last_name ) {
-				messages.lastName = messages.last_name;
-				delete messages.last_name;
 			}
 
 			onComplete( error, messages );
