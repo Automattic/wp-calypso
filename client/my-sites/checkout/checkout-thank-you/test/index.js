@@ -7,6 +7,8 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import {
 	PLAN_FREE,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -230,6 +232,8 @@ describe( 'CheckoutThankYou', () => {
 			PLAN_JETPACK_PREMIUM_MONTHLY,
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
+			PLAN_ECOMMERCE,
+			PLAN_ECOMMERCE_2_YEARS,
 		].forEach( planSlug => {
 			test( `Should return false for all other plans (${ planSlug })`, () => {
 				const instance = new CheckoutThankYou( { planSlug } );
