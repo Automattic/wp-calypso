@@ -139,24 +139,29 @@ export class EmergentPaywallBox extends Component {
 		}
 	};
 
-	handlePaywallSuccess() {
-		this.state.pendingOrder
-			.then( result => {
-				if ( result.order_id ) {
-					log( 'Order created. Order ID is: ' + result.order_id );
-					this.props.onOrderCreated( {
-						orderId: result.order_id,
-						paymentMethod: this.state.paymentMethod,
-						siteSlug: this.state.siteSlug,
-					} );
-				}
-			} )
-			.catch( error => {
-				log( 'Error creating order: ', error, error.message || '' );
+	handleWpcomError( error ) {
+		log( 'Error creating order: ', error, error.message || '' );
+		recordTracksEvent( 'calypso_checkout_wpcom_error', {
+			error: JSON.stringify( error ),
+			payment_method: this.state.paymentMethod,
+		} );
+		notices.error( this.errorMessage() );
 
-				notices.error( this.errorMessage() );
-				this.fetchIframeConfiguration();
-			} );
+		//Reload
+		this.fetchIframeConfiguration();
+	}
+
+	handlePaywallSuccess() {
+		this.state.pendingOrder.then( result => {
+			if ( result.order_id ) {
+				log( 'Order created. Order ID is: ' + result.order_id );
+				this.props.onOrderCreated( {
+					orderId: result.order_id,
+					paymentMethod: this.state.paymentMethod,
+					siteSlug: this.state.siteSlug,
+				} );
+			}
+		} );
 	}
 
 	prepareOrder() {
@@ -172,7 +177,17 @@ export class EmergentPaywallBox extends Component {
 		log( 'Preparing Order' );
 
 		// get the order ID from rest endpoint
-		return wpcom.transactions( 'POST', dataForApi );
+		return new Promise( resolve => {
+			wpcom.transactions( 'POST', dataForApi, ( error, result ) => {
+				if ( error ) {
+					// trigger error early if we've failed to create an order.
+					this.handleWpcomError( error );
+					resolve();
+				} else {
+					resolve( result );
+				}
+			} );
+		} );
 	}
 
 	fetchIframeConfiguration = () => {
