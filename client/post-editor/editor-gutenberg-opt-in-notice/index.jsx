@@ -16,8 +16,9 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { isEnabled } from 'config';
+import { isJetpackSite } from 'state/sites/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 
 class EditorGutenbergOptInNotice extends Component {
 	static propTypes = {
@@ -59,12 +60,14 @@ class EditorGutenbergOptInNotice extends Component {
 
 const mapDispatchToProps = { showDialog: showGutenbergOptInDialog };
 
-const mapStateToProps = state => ( {
-	optInEnabled:
-		isEnabled( 'gutenberg/opt-in' ) &&
-		( isEnabled( 'gutenberg' ) ||
-			isCalypsoifyGutenbergEnabled( state, getSelectedSiteId( state ) ) ),
-} );
+const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
+	const isVip = isVipSite( state, siteId );
+	const isJetpack = isJetpackSite( state, siteId );
+	return {
+		optInEnabled: isEnabled( 'gutenberg/opt-in' ) && ! isJetpack && ! isVip,
+	};
+};
 
 export default connect(
 	mapStateToProps,

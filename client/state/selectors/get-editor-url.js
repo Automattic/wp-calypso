@@ -2,13 +2,14 @@
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
-	if ( 'gutenberg' === getSelectedEditor( state, siteId ) ) {
+	if ( isEnabled( 'gutenberg' ) && 'gutenberg' === getSelectedEditor( state, siteId ) ) {
 		return getGutenbergEditorUrl( state, siteId, postId, postType );
 	}
 
