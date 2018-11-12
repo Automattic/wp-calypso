@@ -1,0 +1,22 @@
+{
+  "name": "Color Studio",
+  "compatibleVersion": 52,
+  "bundleVersion": 1,
+  "commands": [
+    {
+      "name": "Generate Color Library",
+      "identifier": "generate-color-library",
+      "script": "generate-color-library.js"
+    }
+  ],
+  "menu": {
+    "title": "Color Studio",
+    "items": [
+      "generate-color-library"
+    ]
+  },
+  "version": "0.9.9",
+  "identifier": "color-studio",
+  "disableCocoaScriptPreprocessor": true,
+  "appcast": "https://raw.githubusercontent.com//master/.appcast.xml"
+}
