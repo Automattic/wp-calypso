@@ -4,7 +4,7 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, overSome } from 'lodash';
+import { find, get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -64,8 +64,8 @@ import FailedPurchaseDetails from './failed-purchase-details';
 import PurchaseDetail from 'components/purchase-detail';
 import {
 	getFeatureByKey,
+	isJetpackBusinessPlan,
 	isWpComBusinessPlan,
-	isWpComEcommercePlan,
 	shouldFetchSitePlans,
 } from 'lib/plans';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
@@ -253,7 +253,7 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	isEligibleForLiveChat = () => {
-		return overSome( isWpComBusinessPlan, isWpComEcommercePlan )( this.props.planSlug );
+		return isJetpackBusinessPlan( this.props.planSlug );
 	};
 
 	isNewUser = () => {
