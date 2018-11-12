@@ -108,21 +108,37 @@
 
 	.cart__total {
 		color: var( --color-text-subtle );
+		display: table;
 		font-size: 14px;
 
+		.cart__total-row.grand-total {
+			display: table-footer-group;
+		}
+
+		.cart__total-row {
+			display: table-row;
+		}
+
 		.cart__total-label {
-			display: inline-block;
-			width: 70%;
+			display: table-cell;
+			width: 100%;
 		}
 
 		.cart__total-amount {
-			display: inline-block;
+			display: table-cell;
 			text-align: right;
-			width: 30%;
+			width: auto;
 		}
 
-		.grand-total {
+		.cart__total-amount.last-cell {
+			padding-bottom: 5px;
+			border-bottom: 1px solid var( --color-neutral-0 );
+		}
+
+		.cart__total-amount.grand-total {
 			font-weight: 600;
+			padding-top: 5px;
+			margin-top: 5px;
 		}
 	}
 
