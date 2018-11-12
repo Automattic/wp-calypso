@@ -1147,7 +1147,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_FREE_BLOG_DOMAIN ]: {
 		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Free .blog domain for one year' ),
+		getTitle: () => i18n.translate( 'Free .blog Domain for One Year' ),
 		getDescription: () =>
 			i18n.translate(
 				'Get a free .blog domain for one year. Premium domains not included. Your domain will renew at its regular price.'
