@@ -3,6 +3,8 @@ const { getSelectedDocument } = require('sketch')
 const { Artboard, Rectangle, Shape, SharedStyle, Style, SymbolMaster } = require('sketch/dom')
 /* eslint-enable import/no-unresolved */
 
+const padStart = require('lodash/padStart')
+
 const PALETTE = require('../../dist/colors.json')
 
 const SWATCH_WIDTH = 48
@@ -11,9 +13,15 @@ const SWATCH_MARGIN = 12
 const SWATCH_INITIAL_X = 0
 const SWATCH_INITIAL_Y = 0
 
+const cachedArtboards = {}
+const cachedSharedStyles = {}
+
 export default () => {
   const document = getSelectedDocument()
   const page = document.selectedPage
+
+  cacheArtboards(page)
+  cacheSharedStyles(document)
 
   PALETTE.colors.forEach((colorObjects, rowIndex) => {
     colorObjects.forEach((colorObject, columnIndex) => {
@@ -23,8 +31,20 @@ export default () => {
   })
 }
 
+function cacheArtboards(parent) {
+  parent.layers.forEach(artboard => {
+    cachedArtboards[artboard.name] = artboard
+  })
+}
+
+function cacheSharedStyles(document) {
+  document.getSharedLayerStyles().forEach(style => {
+    cachedSharedStyles[style.name] = style
+  })
+}
+
 function createColorStyle(document, colorObject) {
-  const name = `Color Fill/${colorObject._meta.baseName}/${colorObject.name}`
+  const name = `Color Fill/${normalizeColorName(colorObject)}`
   const style = ensureSharedStyle(document, name)
   style.style = {
     type: Style,
@@ -39,9 +59,14 @@ function createColorStyle(document, colorObject) {
   return style
 }
 
+function normalizeColorName(colorObject) {
+  const base = colorObject._meta.baseName
+  const index = padStart(colorObject._meta.shadeIndex, 3, 0)
+  return `${base}/${base} ${index}`
+}
+
 function ensureSharedStyle(document, name) {
-  const style = getSharedStyleByName(document, name)
-  return style ? style : SharedStyle.fromStyle({
+  return cachedSharedStyles[name] || SharedStyle.fromStyle({
     document,
     name,
     style: {
@@ -50,21 +75,8 @@ function ensureSharedStyle(document, name) {
   })
 }
 
-function getSharedStyleByName(document, name) {
-  let match = null
-
-  document.getSharedLayerStyles().some(style => {
-    if (style.name === name) {
-      match = style
-      return true
-    }
-  })
-
-  return match
-}
-
 function createColorSymbol(parent, colorObject, colorStyle, rowIndex = 0, columnIndex = 0) {
-  const name = `${colorObject._meta.baseName}/${colorObject.name}`
+  const name = `${colorObject._meta.baseName}/${normalizeColorName(colorObject)}`
   const x = SWATCH_INITIAL_X + columnIndex * (SWATCH_WIDTH + SWATCH_MARGIN)
   const y = SWATCH_INITIAL_Y + rowIndex * (SWATCH_HEIGHT + SWATCH_MARGIN)
 
@@ -81,34 +93,10 @@ function createColorSymbol(parent, colorObject, colorStyle, rowIndex = 0, column
 }
 
 function ensureArtboardWith(parent, name, x, y, width, height) {
-  const artboard = getArtboardByName(parent, name)
-  if (!artboard) {
-    return createArtboard(parent, name, x, y, width, height)
-  }
-
+  const artboard = cachedArtboards[name] || new Artboard({ parent, name })
   artboard.frame = new Rectangle(x, y, width, height)
+
   return artboard
-}
-
-function getArtboardByName(parent, name) {
-  let match = null
-
-  parent.layers.some(artboard => {
-    if (artboard.name === name) {
-      match = artboard
-      return true
-    }
-  })
-
-  return match
-}
-
-function createArtboard(parent, name, x, y, width, height) {
-  return new Artboard({
-    parent,
-    name,
-    frame: new Rectangle(x, y, width, height)
-  })
 }
 
 function empty(parent) {
