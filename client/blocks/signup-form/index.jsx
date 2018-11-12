@@ -188,16 +188,6 @@ class SignupForm extends Component {
 		}
 	}
 
-	sanitizeName( name ) {
-		return (
-			name &&
-			thru(
-				name.replace( /[^a-zA-Z]/g, '' ),
-				str => `${ str.charAt( 0 ).toUpperCase() }${ str.slice( 1 ) }`
-			)
-		);
-	}
-
 	sanitizeEmail( email ) {
 		return email && email.replace( /\s+/g, '' ).toLowerCase();
 	}
@@ -208,22 +198,12 @@ class SignupForm extends Component {
 
 	sanitize = ( fields, onComplete ) => {
 		const sanitizedEmail = this.sanitizeEmail( fields.email );
-		const sanitizedFirstName = this.sanitizeName( fields.firstName );
-		const sanitizedLastName = this.sanitizeName( fields.lastName );
 		const sanitizedUsername = this.sanitizeUsername( fields.username );
 
-		if (
-			fields.email !== sanitizedEmail ||
-			fields.firstName !== sanitizedFirstName ||
-			fields.lastName !== sanitizedLastName ||
-			fields.username !== sanitizedUsername
-		) {
+		if ( fields.email !== sanitizedEmail || fields.username !== sanitizedUsername ) {
 			onComplete( {
 				email: sanitizedEmail,
-				firstName: sanitizedFirstName,
-				lastName: sanitizedLastName,
 				username: sanitizedUsername,
-				password: fields.password,
 			} );
 		}
 	};
