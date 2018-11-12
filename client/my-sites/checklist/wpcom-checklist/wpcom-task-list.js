@@ -36,7 +36,7 @@ export default class WpcomTaskList {
 		addTask( 'custom_domain_registered' );
 		addTask( 'mobile_app_installed' );
 
-		if ( taskStatuses && taskStatuses.email_verified && taskStatuses.email_verified.completed ) {
+		if ( get( taskStatuses,  'email_verified.completed' ) ) {
 			addTask( 'site_launched' );
 		}
 	}
