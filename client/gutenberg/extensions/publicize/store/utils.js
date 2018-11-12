@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Builds the API endpoint path for retrieving the Publicize connections for a post.
  *

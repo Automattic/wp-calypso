@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -16,4 +18,4 @@ export function* getConnections( postId ) {
 	} catch ( error ) {
 		// Fetching connections failed
 	}
-};
+}

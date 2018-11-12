@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * Publicize sharing form component.
  *
