@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, get, overSome } from 'lodash';
+import { isEmpty, get, overSome, some } from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -129,7 +129,9 @@ export class WechatPaymentBox extends Component {
 		// Only show if chat is available and we have a business/ecommerce plan in the cart.
 		const showPaymentChatButton =
 			presaleChatAvailable &&
-			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( cart.products );
+			some( cart.products, ( { product_slug } ) =>
+				overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
+			);
 
 		// Wechat qr codes get set on desktop instead of redirecting
 		if ( redirectUrl && ! isMobile ) {

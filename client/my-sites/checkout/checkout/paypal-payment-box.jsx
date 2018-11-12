@@ -5,7 +5,7 @@
  */
 
 import { localize } from 'i18n-calypso';
-import { assign, overSome } from 'lodash';
+import { assign, overSome, some } from 'lodash';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -129,8 +129,8 @@ export class PaypalPaymentBox extends React.Component {
 	};
 
 	render = () => {
-		const hasBusinessPlanInCart = overSome( isWpComBusinessPlan, isWpComEcommercePlan )(
-			this.props.cart.products.product_slug
+		const hasBusinessPlanInCart = some( this.props.cart.products, ( { product_slug } ) =>
+			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart,
 			paymentButtonClasses = 'payment-box__payment-buttons';

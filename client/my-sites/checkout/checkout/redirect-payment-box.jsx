@@ -5,7 +5,7 @@
  */
 import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { snakeCase, map, zipObject, isEmpty, mapValues, overSome } from 'lodash';
+import { snakeCase, map, zipObject, isEmpty, mapValues, overSome, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -275,8 +275,8 @@ export class RedirectPaymentBox extends PureComponent {
 	}
 
 	render() {
-		const hasBusinessPlanInCart = overSome( isWpComBusinessPlan, isWpComEcommercePlan )(
-			this.props.cart.products.product_slug
+		const hasBusinessPlanInCart = some( this.props.cart.products, ( { product_slug } ) =>
+			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
 

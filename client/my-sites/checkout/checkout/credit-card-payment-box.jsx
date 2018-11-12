@@ -5,7 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, overSome } from 'lodash';
+import { noop, overSome, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -130,8 +130,8 @@ export class CreditCardPaymentBox extends React.Component {
 
 	paymentButtons = () => {
 		const { cart, transactionStep, translate, presaleChatAvailable } = this.props,
-			hasBusinessPlanInCart = overSome( isWpComBusinessPlan, isWpComEcommercePlan )(
-				cart.products.product_slug
+			hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
+				overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 			),
 			showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart,
 			paymentButtonClasses = 'payment-box__payment-buttons';

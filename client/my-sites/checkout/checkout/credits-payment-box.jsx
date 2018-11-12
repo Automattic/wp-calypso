@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { overSome } from 'lodash';
+import { overSome, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,8 +23,8 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 export class CreditsPaymentBox extends React.Component {
 	content = () => {
 		const { cart, transactionStep, presaleChatAvailable } = this.props;
-		const hasBusinessPlanInCart = overSome( isWpComBusinessPlan, isWpComEcommercePlan )(
-			cart.products.product_slug
+		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
+			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
 
