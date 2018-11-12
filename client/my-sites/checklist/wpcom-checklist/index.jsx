@@ -131,7 +131,11 @@ class WpcomChecklist extends PureComponent {
 		} );
 	};
 
-	handleLaunchSite = () => {
+	handleLaunchSite = task => () => {
+		if ( task.isCompleted ) {
+			return;
+		}
+
 		const { siteId } = this.props;
 
 		this.props.launchSite( siteId );
@@ -494,7 +498,7 @@ class WpcomChecklist extends PureComponent {
 				description={ translate(
 					'Your site is private and only visible to you. Launch your site, when you are ready to make it public.'
 				) }
-				onClick={ this.handleLaunchSite }
+				onClick={ this.handleLaunchSite( task ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Launch your site' ) }
 			/>
