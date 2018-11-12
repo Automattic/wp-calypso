@@ -3,13 +3,14 @@
 /**
  * External dependencies
  */
-
 import { numberFormat } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { CURRENCIES } from './currencies';
+import { getCurrencyDefaults } from './currencies';
+
+export { getCurrencyDefaults };
 
 /**
  * Formats money with a given currency code
@@ -76,20 +77,4 @@ export function getCurrencyObject( number, code, options = {} ) {
 		integer,
 		fraction,
 	};
-}
-
-/**
- * Returns currency defaults.
- * @param   {String} code      currency code
- * @returns {?Object}          currency defaults
- */
-export function getCurrencyDefaults( code ) {
-	const defaultCurrency = {
-		symbol: '$',
-		grouping: ',',
-		decimal: '.',
-		precision: 2,
-	};
-
-	return CURRENCIES[ code ] || defaultCurrency;
 }

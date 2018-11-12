@@ -43,7 +43,6 @@
 		"google-analytics": true,
 		"gutenberg": true,
 		"gutenberg/opt-in": true,
-		"gutenberg/revisions": false,
 		"gutenberg/block/jetpack-preset": false,
 		"happychat": false,
 		"help": true,

@@ -2,21 +2,15 @@
 /**
  * Internal dependencies
  */
-import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
-import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
+import { isEnabled } from 'config';
+import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import { getSiteSlug } from 'state/sites/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
-	if ( isCalypsoifyGutenbergEnabled( state, siteId ) ) {
-		const siteAdminUrl = getSiteAdminUrl( state, siteId );
-
-		if ( postId ) {
-			return `${ siteAdminUrl }post.php?post=${ postId }&action=edit&calypsoify=1`;
-		}
-		if ( 'post' === postType ) {
-			return `${ siteAdminUrl }post-new.php?calypsoify=1`;
-		}
-		return `${ siteAdminUrl }post-new.php?post_type=${ postType }&calypsoify=1`;
+	if ( isEnabled( 'gutenberg' ) && 'gutenberg' === getSelectedEditor( state, siteId ) ) {
+		return getGutenbergEditorUrl( state, siteId, postId, postType );
 	}
 
 	if ( postId ) {

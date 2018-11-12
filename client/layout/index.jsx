@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
@@ -20,14 +21,10 @@ import config from 'config';
 import PulsingDot from 'components/pulsing-dot';
 import OfflineStatus from 'layout/offline-status';
 import QueryPreferences from 'components/data/query-preferences';
-
-/**
- * Internal dependencies
- */
-import PropTypes from 'prop-types';
 import QuerySites from 'components/data/query-sites';
+import QuerySiteSelectedEditor from 'components/data/query-site-selected-editor';
 import { isOffline } from 'state/application/selectors';
-import { hasSidebar, masterbarIsVisible } from 'state/ui/selectors';
+import { getSelectedSiteId, hasSidebar, masterbarIsVisible } from 'state/ui/selectors';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import SitePreview from 'blocks/site-preview';
 import SupportArticleDialog from 'blocks/support-article-dialog';
@@ -83,6 +80,7 @@ class Layout extends Component {
 				<QuerySites primaryAndRecent />
 				<QuerySites allSites />
 				<QueryPreferences />
+				<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
 				{ config.isEnabled( 'nps-survey/notice' ) && ! isE2ETest() && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
@@ -147,5 +145,6 @@ export default connect( state => {
 		chatIsOpen: isHappychatOpen( state ),
 		colorSchemePreference: getPreference( state, 'colorScheme' ),
 		currentRoute: getCurrentRoute( state ),
+		siteId: getSelectedSiteId( state ),
 	};
 } )( Layout );

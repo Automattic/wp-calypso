@@ -6,7 +6,7 @@
 /* eslint import/no-nodejs-modules: ["error", {"allow": ["path", "fs"]}] */
 const fs = require( 'fs' );
 const path = require( 'path' );
-
+const GenerateJsonFile = require( 'generate-json-file-webpack-plugin' );
 
 const DIRECTORY_DEPTH = '../../'; // Relative path of the extensions to preset directory
 
@@ -19,9 +19,9 @@ function sharedScripts( folderName, inputDir ) {
 }
 
 function blockScripts( type, inputDir, presetBlocks ) {
-		return presetBlocks
-	 		.map( block => path.join( inputDir, `${ DIRECTORY_DEPTH }${ block }/${type}.js` ) )
-	 		.filter( fs.existsSync );
+	return presetBlocks
+		.map( block => path.join( inputDir, `${ DIRECTORY_DEPTH }${ block }/${ type }.js` ) )
+		.filter( fs.existsSync );
 }
 
 exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
@@ -37,11 +37,13 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	let editorBetaScript;
 	let viewBlocksScripts;
 	let viewScriptEntry;
-	if ( fs.existsSync( presetPath ) ) {
+	let presetBlocks;
+	let presetBetaBlocks;
 
-		const presetBlocks = require( presetPath );
-		const presetBetaBlocks = fs.existsSync( presetBetaPath ) ? require( presetBetaPath ) : [];
-		const allPresetBlocks = [ ...presetBlocks, ...presetBetaBlocks ]
+	if ( fs.existsSync( presetPath ) ) {
+		presetBlocks = require( presetPath );
+		presetBetaBlocks = fs.existsSync( presetBetaPath ) ? require( presetBetaPath ) : [];
+		const allPresetBlocks = [ ...presetBlocks, ...presetBetaBlocks ];
 
 		// Find all the shared scripts
 		const sharedUtilsScripts = sharedScripts( 'shared', inputDir );
@@ -54,9 +56,9 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 			}
 			return viewBlocks;
 		}, {} );
-		
+
 		// Find all the editor shared scripts
-		const sharedEditorUtilsScripts = sharedScripts( 'editor-shared', inputDir )
+		const sharedEditorUtilsScripts = sharedScripts( 'editor-shared', inputDir );
 
 		// Combines all the different blocks into one editor.js script
 		editorScript = [
@@ -85,9 +87,20 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 
 	return {
 		...baseConfig,
+		plugins: [
+			...baseConfig.plugins,
+			fs.existsSync( presetPath ) &&
+				new GenerateJsonFile( {
+					filename: 'block-manifest.json',
+					value: {
+						blocks: presetBlocks,
+						betaBlocks: presetBetaBlocks,
+					},
+				} ),
+		],
 		entry: {
 			editor: editorScript,
-			"editor-beta": editorBetaScript,
+			'editor-beta': editorBetaScript,
 			...viewScriptEntry,
 			...viewBlocksScripts,
 		},

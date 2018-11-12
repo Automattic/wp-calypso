@@ -94,16 +94,13 @@
 
 .about__submit-wrapper {
 	text-align: center;
-	margin-bottom: 20px;
 	padding: 0 15px;
+	margin-top: 20px;
 }
 
 .about__submit-wrapper .button {
+	width: 180px;
 	@include breakpoint( '<480px' ) {
 		width: 100%;
 	}
-}
-
-.about__last-fieldset {
-	margin-bottom: 0;
 }

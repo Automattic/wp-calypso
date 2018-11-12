@@ -18,6 +18,7 @@ import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 
 function PostActionsEllipsisMenuDuplicate( {
@@ -64,7 +65,9 @@ const mapStateToProps = ( state, { globalId } ) => {
 		status: post.status,
 		type: post.type,
 		duplicateUrl: getEditorDuplicatePostPath( state, post.site_ID, post.ID ),
-		calypsoifyGutenberg: isCalypsoifyGutenbergEnabled( state, post.site_ID ),
+		calypsoifyGutenberg:
+			isCalypsoifyGutenbergEnabled( state, post.site_ID ) &&
+			'gutenberg' === getSelectedEditor( state, post.site_ID ),
 	};
 };
 

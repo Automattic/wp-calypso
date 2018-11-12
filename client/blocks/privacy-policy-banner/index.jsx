@@ -19,6 +19,7 @@ import getCurrentUserRegisterDate from 'state/selectors/get-current-user-registe
 import Banner from 'components/banner';
 import config from 'config';
 import PrivacyPolicyDialog from './privacy-policy-dialog';
+import withMoment from 'components/with-localized-moment';
 
 const AUTOMATTIC_ENTITY = 'automattic';
 const PRIVACY_POLICY_PREFERENCE = 'privacy_policy';
@@ -177,4 +178,4 @@ const mapDispatchToProps = {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( PrivacyPolicyBanner ) );
+)( withMoment( localize( PrivacyPolicyBanner ) ) );
