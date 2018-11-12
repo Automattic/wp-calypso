@@ -33,16 +33,10 @@ const WpcomDomain = createReactClass( {
 
 	getEditSiteAddressBlock() {
 		const { domain } = this.props;
-
-		/**
-		 * Hide Edit site address for .blog subdomains as this is unsupported for now.
-		 */
-		if ( get( domain, 'name', '' ).match( /\.\w+\.blog$/ ) ) {
-			return null;
-		}
-
 		if ( get( domain, 'type' ) === domainTypes.WPCOM ) {
-			return <SiteAddressChanger currentDomain={ domain } />;
+			const dotblogSubdomain = get( domain, 'name', '' ).match( /\.\w+\.blog$/ );
+			const domainSuffix = dotblogSubdomain ? dotblogSubdomain[ 0 ] : '.wordpress.com';
+			return <SiteAddressChanger currentDomain={ domain } currentDomainSuffix={ domainSuffix } />;
 		}
 
 		return (

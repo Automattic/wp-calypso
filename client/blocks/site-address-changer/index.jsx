@@ -52,6 +52,7 @@ export class SiteAddressChanger extends Component {
 	state = {
 		showDialog: false,
 		domainFieldValue: '',
+		newDomainSuffix: this.props.currentDomainSuffix,
 	};
 
 	componentDidMount() {
@@ -129,12 +130,10 @@ export class SiteAddressChanger extends Component {
 		} );
 	};
 
-	onFieldChange = event => {
+	handleDomainChange( domainFieldValue ) {
 		if ( this.props.isAvailabilityPending || this.props.isSiteAddressChangeRequesting ) {
 			return;
 		}
-
-		const domainFieldValue = get( event, 'target.value', '' ).toLowerCase();
 
 		this.debouncedValidationCheck.cancel();
 		this.debouncedShowValidationMessage.cancel();
@@ -146,6 +145,17 @@ export class SiteAddressChanger extends Component {
 			},
 			this.setValidationState
 		);
+	}
+
+	onFieldChange = event => {
+		const domainFieldValue = get( event, 'target.value', '' ).toLowerCase();
+		this.handleDomainChange( domainFieldValue );
+	};
+
+	onDomainSuffixChange = event => {
+		const newDomainSuffix = get( event, 'target.value', '' );
+		this.setState( { newDomainSuffix } );
+		this.handleDomainChange( this.state.domainFieldValue );
 	};
 
 	debouncedShowValidationMessage = debounce( () => {
@@ -191,10 +201,37 @@ export class SiteAddressChanger extends Component {
 			: validationMessage || serverValidationMessage;
 	}
 
+	renderDomainSuffix() {
+		const { currentDomainSuffix } = this.props;
+		if ( currentDomainSuffix === '.wordpress.com' ) {
+			return currentDomainSuffix;
+		}
+
+		const suffixesList = [ '.wordpress.com', currentDomainSuffix ];
+		const { newDomainSuffix } = this.state;
+
+		return (
+			<span className="form-currency-input__affix">
+				{ newDomainSuffix }
+				<Gridicon icon="chevron-down" size={ 18 } className="form-currency-input__select-icon" />
+				<select
+					className="form-currency-input__select"
+					value={ newDomainSuffix }
+					onChange={ this.onDomainSuffixChange }
+				>
+					{ suffixesList.map( suffix => (
+						<option key={ suffix } value={ suffix }>
+							{ suffix }
+						</option>
+					) ) }
+				</select>
+			</span>
+		);
+	}
+
 	render() {
 		const {
 			currentDomain,
-			currentDomainSuffix,
 			isAvailabilityPending,
 			isAvailable,
 			isSiteAddressChangeRequesting,
@@ -233,7 +270,9 @@ export class SiteAddressChanger extends Component {
 					isVisible={ this.state.showDialog }
 					onClose={ this.onDialogClose }
 					newDomainName={ domainFieldValue }
+					newDomainSuffix={ this.state.newDomainSuffix }
 					currentDomainName={ currentDomainPrefix }
+					currentDomainSuffix={ this.props.currentDomainSuffix }
 					onConfirm={ this.onConfirm }
 					siteId={ siteId }
 				/>
@@ -245,9 +284,10 @@ export class SiteAddressChanger extends Component {
 					<Card className="site-address-changer__content">
 						<FormSectionHeading>{ translate( 'Change Site Address' ) }</FormSectionHeading>
 						<FormTextInputWithAffixes
+							className="form-currency-input"
 							type="text"
 							value={ domainFieldValue }
-							suffix={ currentDomainSuffix }
+							suffix={ this.renderDomainSuffix() }
 							onChange={ this.onFieldChange }
 							placeholder={ currentDomainPrefix }
 							isError={ shouldShowValidationMessage && ! isAvailable }
