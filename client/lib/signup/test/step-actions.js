@@ -44,6 +44,29 @@ describe( 'createSiteWithCart()', () => {
 		);
 	} );
 
-	// test( 'should use the site topic state if it is not empty.', () => {
-	// } );
+	test( 'should use the site topic state if it is not empty.', done => {
+		const siteTopic = 'foo topic';
+		const fakeStore = {
+			getState: () => ( {
+				signup: {
+					steps: {
+						siteTopic,
+						survey: {
+							vertical: siteTopic,
+						},
+					},
+				},
+			} ),
+		};
+
+		createSiteWithCart(
+			() => {
+				expect( requestBody.options.vertical ).toEqual( siteTopic );
+				done();
+			},
+			[],
+			[],
+			fakeStore
+		);
+	} );
 } );
