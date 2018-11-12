@@ -17,7 +17,7 @@ import debounce from 'lodash/debounce';
 
 import MapMarker from './map-marker/';
 import InfoWindow from './info-window/';
-import { mapboxMapFormatter, googleMapFormatter } from './mapbox-map-formatter/';
+import { mapboxMapFormatter, googleMapFormatter } from './map-formatter/';
 import asyncLoader from './asyncLoader';
 
 export class Map extends Component {
@@ -393,15 +393,27 @@ export class Map extends Component {
 		const { api_key } = this.props;
 		switch ( map_service ) {
 			case 'googlemaps':
-				return [
+				const url = [
 					'https://maps.googleapis.com/maps/api/js?key=',
 					api_key,
 					'&libraries=places',
 				].join( '' );
+				return [
+					{
+						type: 'js',
+						url,
+					},
+				];
 			case 'mapbox':
 				return [
-					'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js',
-					'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css',
+					{
+						type: 'js',
+						url: 'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js',
+					},
+					{
+						type: 'css',
+						url: 'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css',
+					},
 				];
 		}
 	};
