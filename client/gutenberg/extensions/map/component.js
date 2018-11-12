@@ -15,7 +15,7 @@ import debounce from 'lodash/debounce';
  * Internal dependencies
  */
 
-import MapMarker from './map-marker/';
+import { GoogleMapMarker, MapboxMapMarker } from './map-marker/';
 import InfoWindow from './info-window/';
 import { mapboxMapFormatter, googleMapFormatter } from './map-formatter/';
 import asyncLoader from './asyncLoader';
@@ -38,6 +38,15 @@ export class Map extends Component {
 		// Debouncers
 		this.debouncedSizeMap = debounce( this.sizeMap, 250 );
 	}
+	isServiceScriptValid = ( map_service, service_script ) => {
+		if ( 'googlemaps' === map_service && window.google && window.google === service_script ) {
+			return service_script;
+		}
+		if ( 'mapbox' === map_service && window.mapboxgl && window.mapboxgl === service_script ) {
+			return service_script;
+		}
+		return false;
+	};
 	render() {
 		const { points, admin, children, marker_color, map_service } = this.props;
 		const { map, activeMarker, service_script } = this.state;
@@ -45,22 +54,37 @@ export class Map extends Component {
 		const currentPoint = get( activeMarker, 'props.point' ) || {};
 		const { title, caption } = currentPoint;
 		let addPoint = null;
+		const validServiceScript = this.isServiceScriptValid( map_service, service_script );
 		Children.map( children, element => {
 			if ( element && 'AddPoint' === element.type.name ) {
 				addPoint = element;
 			}
 		} );
 		const mapMarkers =
+			validServiceScript &&
 			map &&
-			service_script &&
 			points.map( ( point, index ) => {
+				if ( 'googlemaps' === map_service ) {
+					return (
+						<GoogleMapMarker
+							key={ index }
+							point={ point }
+							index={ index }
+							map={ map }
+							service_script={ validServiceScript }
+							map_service={ map_service }
+							marker_color={ marker_color }
+							onClick={ onMarkerClick }
+						/>
+					);
+				}
 				return (
-					<MapMarker
+					<MapboxMapMarker
 						key={ index }
 						point={ point }
 						index={ index }
 						map={ map }
-						service_script={ service_script }
+						service_script={ validServiceScript }
 						map_service={ map_service }
 						marker_color={ marker_color }
 						onClick={ onMarkerClick }
@@ -72,7 +96,7 @@ export class Map extends Component {
 				activeMarker={ activeMarker }
 				map={ map }
 				map_service={ map_service }
-				service_script={ service_script }
+				service_script={ validServiceScript }
 				unsetActiveMarker={ () => this.setState( { activeMarker: null } ) }
 			>
 				{ activeMarker &&
@@ -127,11 +151,13 @@ export class Map extends Component {
 	}
 	componentDidUpdate( prevProps ) {
 		const { api_key, children, points, map_style, map_details, map_service } = this.props;
-		if ( api_key && api_key.length > 0 && api_key !== prevProps.api_key ) {
-			this.resetLibraries();
+		const api_keyChanged = api_key !== prevProps.api_key;
+		const map_serviceChanged = map_service !== prevProps.map_service;
+		if ( map_serviceChanged ) {
+			this.map_serviceChanged();
 		}
-		if ( map_service !== prevProps.map_service ) {
-			this.resetLibraries();
+		if ( map_service && api_key && ( api_keyChanged || map_serviceChanged ) ) {
+			this.loadMapLibraries();
 		}
 		// If the user has just clicked to show the Add Point component, hide info window.
 		// AddPoint is the only possible child.
@@ -148,6 +174,9 @@ export class Map extends Component {
 			this.setStyleForMapService( map_service );
 		}
 	}
+	map_serviceChanged = () => {
+		this.setState( { service_script: null, map: null } );
+	};
 	setStyleForMapService = map_service => {
 		const { service_script, map } = this.state;
 		switch ( map_service ) {
@@ -161,11 +190,6 @@ export class Map extends Component {
 				map.setStyle( this.getMapStyle() );
 				break;
 		}
-	};
-	resetLibraries = () => {
-		window.mapboxgl = null;
-		window.google = null;
-		this.loadMapLibraries();
 	};
 	/* Event handling */
 	onMarkerClick = marker => {

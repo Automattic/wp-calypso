@@ -92,9 +92,10 @@ class MapEdit extends Component {
 	changeMapService = map_service => {
 		this.props.setAttributes( {
 			map_service,
-			api_key: null,
 		} );
-		this.apiCallForMapService( null, 'GET', map_service );
+		this.setState( { api_key: null }, () => {
+			this.apiCallForMapService( null, 'GET', map_service );
+		} );
 	};
 	apiCall( service_api_key = null, method = 'GET' ) {
 		const { attributes } = this.props;
