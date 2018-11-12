@@ -15,6 +15,8 @@ import { identity } from 'lodash';
  */
 import { PaypalPaymentBox } from '../paypal-payment-box';
 import {
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -71,9 +73,14 @@ describe( 'PaypalPaymentBox', () => {
 		expect( wrapper.find( 'TermsOfService' ) ).toHaveLength( 1 );
 	} );
 
-	const businessPlans = [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ];
+	const eligiblePlans = [
+		PLAN_BUSINESS,
+		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
+	];
 
-	businessPlans.forEach( product_slug => {
+	eligiblePlans.forEach( product_slug => {
 		test( 'should render PaymentChatButton if any WP.com business plan is in the cart', () => {
 			const props = {
 				...defaultProps,
@@ -87,7 +94,7 @@ describe( 'PaypalPaymentBox', () => {
 		} );
 	} );
 
-	businessPlans.forEach( product_slug => {
+	eligiblePlans.forEach( product_slug => {
 		test( 'should not render PaymentChatButton if presaleChatAvailable is false', () => {
 			const props = {
 				...defaultProps,
