@@ -479,6 +479,14 @@ workflows:
           filters:
             branches:
               ignore: master
+      # @TODO REMOVE ME
+      - test-integration:
+          requires:
+            - setup
+          filters:
+            branches:
+              only: add/get-ci-jetpackblocks
+
 
 
   calypso-nightly:
