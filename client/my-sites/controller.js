@@ -199,9 +199,33 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 	return domainManagementPaths.indexOf( path ) > -1;
 }
 
-function onSelectedSiteAvailable( context ) {
+function onSelectedSiteAvailable( context, basePath ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+
+	const isAtomicSite = isSiteAutomatedTransfer( state, selectedSite.ID );
+	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'manage_options' );
+	const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
+
+	if ( userCanManagePlugins && calypsoify && /^\/plugins/.test( basePath ) ) {
+		const plugin = get( context, 'params.plugin' );
+		let pluginString = '';
+		if ( plugin ) {
+			pluginString = [
+				'tab=search',
+				`s=${ plugin }`,
+				'type=term',
+				'modal-mode=true',
+				`plugin=${ plugin }`,
+			].join( '&' );
+		}
+
+		const pluginIstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
+		const pluginLink = getSiteAdminUrl( state, selectedSite.ID ) + pluginIstallURL;
+
+		window.location.replace( pluginLink );
+		return false;
+	}
 
 	const primaryDomain = getPrimaryDomainBySiteId( state, selectedSite.ID );
 	if (
@@ -358,39 +382,8 @@ export function siteSelection( context, next ) {
 
 	const siteId = getSiteId( getState(), siteFragment );
 	if ( siteId ) {
-		const state = getState();
-		const isAtomicSite = isSiteAutomatedTransfer( state, siteId );
-		const userCanManagePlugins = canCurrentUser( state, siteId, 'manage_options' );
-		const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
-
-		if (
-			window &&
-			window.location &&
-			window.location.replace &&
-			userCanManagePlugins &&
-			calypsoify &&
-			/^\/plugins/.test( basePath )
-		) {
-			const plugin = get( context, 'params.plugin' );
-			let pluginString = '';
-			if ( plugin ) {
-				pluginString = [
-					'tab=search',
-					`s=${ plugin }`,
-					'type=term',
-					'modal-mode=true',
-					`plugin=${ plugin }`,
-				].join( '&' );
-			}
-
-			const pluginIstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
-			const pluginLink = getSiteAdminUrl( state, siteId ) + pluginIstallURL;
-
-			return window.location.replace( pluginLink );
-		}
-
 		dispatch( setSelectedSiteId( siteId ) );
-		const selectionComplete = onSelectedSiteAvailable( context );
+		const selectionComplete = onSelectedSiteAvailable( context, basePath );
 
 		// if there was a redirect, we should terminate processing of next routes
 		// and let the redirect proceed
@@ -403,7 +396,7 @@ export function siteSelection( context, next ) {
 
 			if ( getSite( getState(), freshSiteId ) ) {
 				dispatch( setSelectedSiteId( freshSiteId ) );
-				onSelectedSiteAvailable( context );
+				onSelectedSiteAvailable( context, basePath );
 			} else if ( hasAllSitesList( getState() ) ) {
 				// If all sites have loaded, but siteId is still invalid, redirect to allSitesPath.
 				page.redirect( allSitesPath );
