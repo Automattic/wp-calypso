@@ -11,7 +11,7 @@ import { get, noop, some, startsWith, uniq } from 'lodash';
  * Internal Dependencies
  */
 import { SITES_ONCE_CHANGED } from 'state/action-types';
-import { receiveSite, requestSite } from 'state/sites/actions';
+import { requestSite } from 'state/sites/actions';
 import {
 	getSite,
 	getSiteAdminUrl,
@@ -200,22 +200,10 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 }
 
 function onSelectedSiteAvailable( context ) {
-	const { getState } = getStore( context );
-	const state = getState();
+	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
 
-	// Currently, sites are only made available in Redux state by the receive
-	// here (i.e. only selected sites). If a site is already known in state,
-	// avoid receiving since we risk overriding changes made more recently.
-	// Also, if we can't manage the site, don't add it to state.
-	if ( ! getSite( state, selectedSite.ID ) && selectedSite.capabilities ) {
-		context.store.dispatch( receiveSite( selectedSite ) );
-	}
-
-	context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
-
-	const primaryDomain = getPrimaryDomainBySiteId( getState(), selectedSite.ID );
-
+	const primaryDomain = getPrimaryDomainBySiteId( state, selectedSite.ID );
 	if (
 		isDomainOnlySite( state, selectedSite.ID ) &&
 		! isPathAllowedForDomainOnlySite( context.pathname, selectedSite.slug, primaryDomain )
