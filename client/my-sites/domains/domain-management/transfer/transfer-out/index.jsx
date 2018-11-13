@@ -7,7 +7,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { omit } from 'lodash';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -47,7 +47,7 @@ class Transfer extends React.Component {
 			section = NonOwnerCard;
 		} else if ( transferProhibited ) {
 			section = TransferProhibited;
-		} else if ( transferAwayEligibleAtMoment && transferAwayEligibleAtMoment.isAfter( moment() ) ) {
+		} else if ( transferAwayEligibleAtMoment && transferAwayEligibleAtMoment.isAfter() ) {
 			section = TransferLock;
 		} else if ( 'uk' === topLevelOfTld ) {
 			section = SelectIpsTag;
