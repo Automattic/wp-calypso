@@ -21,6 +21,7 @@ import createReduxStoreFromPersistedInitialState, {
 	MAX_AGE,
 	SERIALIZE_THROTTLE,
 } from 'state/initial-state';
+import { combineReducers } from 'state/utils';
 
 jest.mock( 'config', () => {
 	const config = () => 'development';
@@ -379,19 +380,29 @@ describe( 'initial-state', () => {
 	describe( '#persistOnChange()', () => {
 		let store, clock, setItemSpy;
 
-		const reducer = ( state, { data: newData, userId: userId } ) => {
-			if ( newData && newData !== state.data ) {
-				state = Object.assign( {}, state, { data: newData } );
-			}
-			if ( userId && userId !== state.currentUser.id ) {
-				state = Object.assign( {}, state, { currentUser: { id: userId } } );
+		const dataReducer = ( state = null, { data } ) => {
+			if ( data && data !== state ) {
+				return data;
 			}
 			return state;
 		};
+		dataReducer.hasCustomPersistence = true;
+
+		const currentUserReducer = ( state = null, { userId } ) => {
+			if ( userId && userId !== state.id ) {
+				return { ...state, id: userId };
+			}
+			return state;
+		};
+		currentUserReducer.hasCustomPersistence = true;
+
+		const reducer = combineReducers( { data: dataReducer, currentUser: currentUserReducer } );
 
 		// Create a valid initial state (with a stored user ID that matches the
 		// current mocked user ID).
 		const initialState = { currentUser: { id: 123456789 } };
+
+		const serializeState = state => reducer( state, { type: 'SERIALIZE' } );
 
 		beforeEach( () => {
 			// we use fake timers from Sinon (aka Lolex) because `lodash.throttle` also uses `Date.now()`
@@ -401,7 +412,7 @@ describe( 'initial-state', () => {
 				.spyOn( localforage, 'setItem' )
 				.mockImplementation( value => Promise.resolve( value ) );
 
-			store = persistOnChange( createStore( reducer, initialState ), state => state );
+			store = persistOnChange( createStore( reducer, initialState ), serializeState );
 		} );
 
 		afterEach( () => {
@@ -501,14 +512,14 @@ describe( 'initial-state', () => {
 			clock.tick( SERIALIZE_THROTTLE );
 
 			expect( setItemSpy ).toHaveBeenCalledTimes( 2 );
-			expect( setItemSpy ).toHaveBeenCalledWith( 'redux-state-123456789', {
-				...initialState,
-				data: 3,
-			} );
-			expect( setItemSpy ).toHaveBeenCalledWith( 'redux-state-123456789', {
-				...initialState,
-				data: 5,
-			} );
+			expect( setItemSpy ).toHaveBeenCalledWith(
+				'redux-state-123456789',
+				expect.objectContaining( { data: 3 } )
+			);
+			expect( setItemSpy ).toHaveBeenCalledWith(
+				'redux-state-123456789',
+				expect.objectContaining( { data: 5 } )
+			);
 		} );
 	} );
 } );
