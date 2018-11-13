@@ -2285,6 +2285,17 @@
         "@babel/runtime": "^7.0.0"
       }
     },
+    "@wordpress/babel-plugin-makepot": {
+      "version": "2.1.2",
+      "resolved": "https://registry.npmjs.org/@wordpress/babel-plugin-makepot/-/babel-plugin-makepot-2.1.2.tgz",
+      "integrity": "sha512-YpQKaiqyvBrRuIBo9oAIESTxRSLDmL0q4ls7s4kUmqGEVifGUkgePF3yze3rmUVRTLP/Y4UoRSPqu1edLT3+Yg==",
+      "dev": true,
+      "requires": {
+        "@babel/runtime": "^7.0.0",
+        "gettext-parser": "^1.3.1",
+        "lodash": "^4.17.10"
+      }
+    },
     "@wordpress/blob": {
       "version": "2.1.0",
       "resolved": "https://registry.npmjs.org/@wordpress/blob/-/blob-2.1.0.tgz",
