@@ -14,9 +14,7 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { ALIGNMENT_OPTIONS, MAX_POSTS_TO_SHOW } from './constants';
 import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
 
-export const name = 'jetpack/related-posts';
-
-export const required = 'related-posts';
+export const name = 'related-posts';
 
 export const settings = {
 	title: __( 'Related Posts' ),
@@ -93,4 +91,4 @@ export const settings = {
 	save: () => null,
 };
 
-registerJetpackBlock( name, settings, required );
+registerJetpackBlock( name, settings );

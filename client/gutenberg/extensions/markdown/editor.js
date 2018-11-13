@@ -15,9 +15,7 @@ import save from './save';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
 
-export const name = 'jetpack/markdown';
-
-export const required = 'markdown';
+export const name = 'markdown';
 
 export const settings = {
 	title: __( 'Markdown' ),
@@ -61,4 +59,4 @@ export const settings = {
 	save,
 };
 
-registerJetpackBlock( name, settings, required );
+registerJetpackBlock( name, settings );
