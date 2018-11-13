@@ -33,13 +33,13 @@ registerBlockType( 'jetpack/simple-payments', {
 	keywords: [ _x( 'shop', 'block search term' ), _x( 'sell', 'block search term' ), 'PayPal' ],
 
 	attributes: {
-		currency: {
-			type: 'string',
-			default: DEFAULT_CURRENCY,
-		},
 		content: {
 			type: 'string',
 			default: '',
+		},
+		currency: {
+			type: 'string',
+			default: DEFAULT_CURRENCY,
 		},
 		email: {
 			type: 'string',
