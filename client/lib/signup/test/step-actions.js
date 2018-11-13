@@ -10,16 +10,20 @@ describe( 'createSiteWithCart()', () => {
 	// createSiteWithCart() function is not designed to be easy for test at the moment.
 	// Thus we intentionally mock the failing case here so that the parts we want to test
 	// would be easier to write.
-	let requestBody;
 	useNock( nock => {
 		nock( 'https://public-api.wordpress.com:443' )
+			.persist()
 			.post( '/rest/v1.1/sites/new' )
-			.reply( 400, function( uri, body ) {
-				requestBody = body;
+			.reply( 400, function( uri, requestBody ) {
+				return {
+					error: 'error',
+					message: 'something goes wrong!',
+					requestBody,
+				};
 			} );
 	} );
 
-	test( 'should use the vertical field in the survery tree if the site topic one is empty.', done => {
+	test( 'should use the vertical field in the survery tree if the site topic one is empty.', () => {
 		const vertical = 'foo topic';
 		const fakeStore = {
 			getState: () => ( {
@@ -34,9 +38,8 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			() => {
-				expect( requestBody.options.vertical ).toEqual( vertical );
-				done();
+			response => {
+				expect( response.requestBody.options.vertical ).toEqual( vertical );
 			},
 			[],
 			[],
@@ -44,7 +47,7 @@ describe( 'createSiteWithCart()', () => {
 		);
 	} );
 
-	test( 'should use the site topic state if it is not empty.', done => {
+	test( 'should use the site topic state if it is not empty.', () => {
 		const siteTopic = 'foo topic';
 		const fakeStore = {
 			getState: () => ( {
@@ -52,7 +55,7 @@ describe( 'createSiteWithCart()', () => {
 					steps: {
 						siteTopic,
 						survey: {
-							vertical: siteTopic,
+							vertical: 'should not use this',
 						},
 					},
 				},
@@ -60,9 +63,8 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			() => {
-				expect( requestBody.options.vertical ).toEqual( siteTopic );
-				done();
+			response => {
+				expect( response.requestBody.options.vertical ).toEqual( siteTopic );
 			},
 			[],
 			[],
