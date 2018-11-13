@@ -184,7 +184,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			}
 
 			message = translate(
-				'Domains registration is unavailable at this time. Please select a free WordPress.com ' +
+				'Domain registration is unavailable at this time. Please select a free WordPress.com ' +
 					'domain or check back %(maintenanceEnd)s.',
 				{
 					args: { maintenanceEnd },
