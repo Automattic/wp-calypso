@@ -14,8 +14,8 @@ import { SITE_LAUNCH } from 'state/action-types';
 import { receiveSite } from 'state/sites/actions';
 import { updateSiteSettings } from 'state/site-settings/actions';
 import { errorNotice, infoNotice, successNotice } from 'state/notices/actions';
-
 import { registerHandlers } from 'state/data-layer/handler-registry';
+import { requestSiteChecklist } from 'state/checklist/actions';
 
 const handleLaunchSiteRequest = dispatchRequestEx( {
 	fetch: action => [
@@ -31,6 +31,7 @@ const handleLaunchSiteRequest = dispatchRequestEx( {
 	onSuccess: ( action, data ) => [
 		receiveSite( data ),
 		updateSiteSettings( data.ID, data.options ),
+		requestSiteChecklist( data.ID ),
 		successNotice(
 			translate( 'Your site has been launched; now you can share it with the world!' ),
 			{
