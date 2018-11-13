@@ -23,8 +23,7 @@ registerBlockType( 'jetpack/simple-payments', {
 	title: __( 'Simple Payments button' ),
 
 	description: __(
-		'Simple Payments lets you create and embed credit and ' +
-			'debit card payment buttons with minimal setup.'
+		'Lets you create and embed credit and ' + 'debit card payment buttons with minimal setup.'
 	),
 
 	icon: <GridiconMoney />,
