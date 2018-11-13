@@ -10,7 +10,6 @@ export const SUPPORTED_CURRENCY_LIST = [
 	DEFAULT_CURRENCY,
 	'EUR',
 	'AUD',
-	'BRL',
 	'CAD',
 	'CZK',
 	'DKK',
