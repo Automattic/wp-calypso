@@ -24,6 +24,7 @@ import LRU from 'lru';
  * Internal dependencies
  */
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { SerializationResult } from 'state/serialization-result';
 import warn from 'lib/warn';
 
 export function isValidStateWithSchema( state, schema, debugInfo ) {
@@ -139,11 +140,22 @@ export const keyedReducer = ( keyPath, reducer ) => {
 
 	return ( state = {}, action ) => {
 		if ( action.type === SERIALIZE ) {
-			const serialized = omitBy(
-				mapValues( state, item => reducer( item, action ) ),
-				a => a === undefined || isEqual( a, initialState )
+			const serialized = reduce(
+				state,
+				( result, itemValue, itemKey ) => {
+					const serializedValue = reducer( itemValue, action );
+					if ( serializedValue !== undefined && ! isEqual( serializedValue, initialState ) ) {
+						if ( ! result ) {
+							// instantiate the result object only when it's going to have at least one property
+							result = new SerializationResult();
+						}
+						result.addRootResult( itemKey, serializedValue );
+					}
+					return result;
+				},
+				undefined
 			);
-			return isEmpty( serialized ) ? undefined : serialized;
+			return serialized;
 		}
 
 		if ( action.type === DESERIALIZE ) {
@@ -438,14 +450,18 @@ function serializeState( reducers, state, action ) {
 
 	return reduce(
 		reducers,
-		( result, reducer, key ) => {
-			const serialized = reducer( state[ key ], action );
+		( result, reducer, reducerKey ) => {
+			const serialized = reducer( state[ reducerKey ], action );
 			if ( serialized !== undefined ) {
 				if ( ! result ) {
 					// instantiate the result object only when it's going to have at least one property
-					result = {};
+					result = new SerializationResult();
 				}
-				result[ key ] = serialized;
+				if ( reducer.storageKey ) {
+					result.addKeyResult( reducer.storageKey, serialized );
+				} else {
+					result.addRootResult( reducerKey, serialized );
+				}
 			}
 			return result;
 		},
