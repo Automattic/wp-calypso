@@ -52,6 +52,16 @@ const config = {
 		isCalypsoClient && './inline-imports.js',
 	] ),
 	env: {
+		production: {
+			plugins: [
+				[
+					'@wordpress/babel-plugin-makepot',
+					{
+						output: 'gutenberg-strings.pot',
+					},
+				],
+			],
+		},
 		test: {
 			presets: [ [ '@babel/env', { targets: { node: 'current' } } ] ],
 			plugins: [
