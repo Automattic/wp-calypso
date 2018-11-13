@@ -7,13 +7,17 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import HelpTeaserButton from '../help-teaser-button';
-import isBusinessPlanUser from 'state/selectors/is-business-plan-user';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getUserPurchases } from 'state/purchases/selectors';
+import { planHasFeature } from 'lib/plans';
+import { FEATURE_BUSINESS_ONBOARDING } from 'lib/plans/constants';
 
 class ChatBusinessConciergeNotice extends Component {
 	static propTypes = {
@@ -61,6 +65,16 @@ class ChatBusinessConciergeNotice extends Component {
 	}
 }
 
-export default connect( state => ( {
-	isBusinessPlanUser: isBusinessPlanUser( state ),
-} ) )( localize( ChatBusinessConciergeNotice ) );
+export function mapStateToProps( state ) {
+	const userId = getCurrentUserId( state );
+	const purchases = getUserPurchases( state, userId );
+	const isBusinessPlanUser =
+		purchases &&
+		!! find( purchases, ( { productSlug } ) =>
+			planHasFeature( productSlug, FEATURE_BUSINESS_ONBOARDING )
+		);
+
+	return { isBusinessPlanUser };
+}
+
+export default connect( mapStateToProps )( localize( ChatBusinessConciergeNotice ) );
