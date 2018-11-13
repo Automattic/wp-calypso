@@ -54,27 +54,15 @@ class SpeedUpSiteSettings extends Component {
 		const { siteAcceleratorStatus, submitForm, updateFields } = this.props;
 
 		// If one of them is on, we turn everything off.
-		if ( siteAcceleratorStatus ) {
-			updateFields(
-				{
-					photon: false,
-					'photon-cdn': false,
-				},
-				() => {
-					submitForm();
-				}
-			);
-		} else {
-			updateFields(
-				{
-					photon: true,
-					'photon-cdn': true,
-				},
-				() => {
-					submitForm();
-				}
-			);
-		}
+		updateFields(
+			{
+				photon: ! siteAcceleratorStatus,
+				'photon-cdn': ! siteAcceleratorStatus,
+			},
+			() => {
+				submitForm();
+			}
+		);
 	};
 
 	render() {
