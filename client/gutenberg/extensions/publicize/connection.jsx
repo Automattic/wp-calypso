@@ -21,25 +21,25 @@ class PublicizeConnection extends Component {
 	 * state change can be handled by parent.
 	 */
 	onConnectionChange = () => {
-		const { unique_id } = this.props.connectionData;
+		const { id } = this.props.connectionData;
 		const { connectionChange, connectionOn } = this.props;
 		connectionChange( {
-			connectionID: unique_id,
+			connectionID: id,
 			shouldShare: ! connectionOn,
 		} );
 	};
 
 	render() {
-		const { service_name: name, disabled, display_name, unique_id } = this.props.connectionData;
+		const { service_name: name, toggleable, display_name, id } = this.props.connectionData;
 		const { connectionOn } = this.props;
-		const id = 'connection-' + name + '-' + unique_id;
+		const fieldId = 'connection-' + name + '-' + id;
 		// Genericon names are dash separated
 		const socialName = name.replace( '_', '-' );
 
 		return (
 			<li>
 				<div className="publicize-jetpack-connection-container">
-					<label htmlFor={ id } className="jetpack-publicize-connection-label">
+					<label htmlFor={ fieldId } className="jetpack-publicize-connection-label">
 						<span
 							className={
 								'jetpack-publicize-gutenberg-social-icon social-logo social-logo__' + socialName
@@ -48,11 +48,11 @@ class PublicizeConnection extends Component {
 						<span>{ display_name }</span>
 					</label>
 					<FormToggle
-						id={ id }
+						id={ fieldId }
 						className="jetpack-publicize-connection-toggle"
 						checked={ connectionOn }
 						onChange={ this.onConnectionChange }
-						disabled={ disabled }
+						disabled={ ! toggleable }
 					/>
 				</div>
 			</li>
