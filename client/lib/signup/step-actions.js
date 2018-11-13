@@ -404,7 +404,8 @@ export function createAccount(
 					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
 				}
 
-				const providedDependencies = assign( {}, { username: userData.username }, bearerToken );
+				const username = response.signup_sandbox_username || userData.username;
+				const providedDependencies = assign( {}, { username }, bearerToken );
 
 				if ( oauth2Signup ) {
 					assign( providedDependencies, {
