@@ -11,7 +11,7 @@ import {
 	ATOMIC_TRANSFER_SET,
 } from 'state/action-types';
 
-import 'state/data-layer/wpcom/sites/atomic/transfer';
+import 'state/data-layer/wpcom/sites/transfers/latest';
 
 /**
  * Query the atomic transfer for a given site.
@@ -19,12 +19,10 @@ import 'state/data-layer/wpcom/sites/atomic/transfer';
  * @param {number} siteId The id of the site to query.
  * @returns {Object} An action object
  */
-export const fetchAtomicTransfer = siteId => {
-	return {
-		type: ATOMIC_TRANSFER_REQUEST,
-		siteId,
-	};
-};
+export const fetchAtomicTransfer = siteId => ( {
+	type: ATOMIC_TRANSFER_REQUEST,
+	siteId,
+} );
 
 /**
  * Report a failure of fetching Automated Transfer status (for example, the status
