@@ -106,8 +106,8 @@ export default {
 	calypsoifyGutenberg: {
 		datestamp: '20181113',
 		variations: {
-			yes: 50,
-			no: 50,
+			yes: 99,
+			no: 1,
 		},
 		defaultVariation: 'no',
 	},
