@@ -9,7 +9,7 @@ import { abtest } from 'lib/abtest';
 
 export const isCalypsoifyGutenbergEnabled = ( state, siteId ) =>
 	siteId
-		? isEnabled( 'calypsoify/gutenberg' ) &&
+		? isEnabled( 'gutenberg/opt-in' ) &&
 		  ! isJetpackSite( state, siteId ) &&
 		  ! isVipSite( state, siteId ) &&
 		  'yes' === abtest( 'calypsoifyGutenberg' )

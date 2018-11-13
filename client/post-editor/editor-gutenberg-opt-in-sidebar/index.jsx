@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
-import { isEnabled } from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors/';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 
@@ -62,10 +61,7 @@ EditorGutenbergOptInSidebar.propTypes = {
 };
 
 const mapStateToProps = state => ( {
-	optInEnabled:
-		isEnabled( 'gutenberg/opt-in' ) &&
-		( isEnabled( 'gutenberg' ) ||
-			isCalypsoifyGutenbergEnabled( state, getSelectedSiteId( state ) ) ),
+	optInEnabled: isCalypsoifyGutenbergEnabled( state, getSelectedSiteId( state ) ),
 } );
 
 export default connect(

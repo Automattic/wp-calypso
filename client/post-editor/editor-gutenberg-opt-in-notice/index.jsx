@@ -15,7 +15,6 @@ import { localize } from 'i18n-calypso';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
-import { isEnabled } from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 
@@ -60,10 +59,7 @@ class EditorGutenbergOptInNotice extends Component {
 const mapDispatchToProps = { showDialog: showGutenbergOptInDialog };
 
 const mapStateToProps = state => ( {
-	optInEnabled:
-		isEnabled( 'gutenberg/opt-in' ) &&
-		( isEnabled( 'gutenberg' ) ||
-			isCalypsoifyGutenbergEnabled( state, getSelectedSiteId( state ) ) ),
+	optInEnabled: isCalypsoifyGutenbergEnabled( state, getSelectedSiteId( state ) ),
 } );
 
 export default connect(
