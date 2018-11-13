@@ -477,11 +477,11 @@ class SimplePaymentsEdit extends Component {
 	}
 }
 
-const applyWithSelect = withSelect( ( select, props ) => {
+const mapSelectToProps = withSelect( ( select, props ) => {
 	const { paymentId } = props.attributes;
 	const { getEntityRecord } = select( 'core' );
 
-	if ( ! applyWithSelect.fromApi ) {
+	if ( ! mapSelectToProps.fromApi ) {
 		const simplePaymentApiSchema = {
 			type: 'object',
 			required: [ 'id', 'content', 'title' ],
@@ -511,16 +511,14 @@ const applyWithSelect = withSelect( ( select, props ) => {
 			return data;
 		} );
 
-		applyWithSelect.fromApi = makeJsonSchemaParser( simplePaymentApiSchema, fromApiTransform );
+		mapSelectToProps.fromApi = makeJsonSchemaParser( simplePaymentApiSchema, fromApiTransform );
 	}
 
 	let simplePayment = undefined;
 	if ( paymentId ) {
 		try {
 			const record = getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId );
-			// eslint-disable-next-line no-console
-			console.log( 'Record: %o', record );
-			simplePayment = applyWithSelect.fromApi( record );
+			simplePayment = mapSelectToProps.fromApi( record );
 		} catch ( err ) {
 			if ( process.env.NODE_ENV !== 'production' ) {
 				// eslint-disable-next-line no-console
@@ -535,4 +533,4 @@ const applyWithSelect = withSelect( ( select, props ) => {
 	};
 } );
 
-export default compose( [ applyWithSelect, withInstanceId ] )( SimplePaymentsEdit );
+export default compose( mapSelectToProps, withInstanceId )( SimplePaymentsEdit );
