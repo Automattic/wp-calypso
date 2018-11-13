@@ -9,11 +9,13 @@ import { InnerBlocks, InspectorControls } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import emailValidator from 'email-validator';
+import { compose, withInstanceId } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
+import HelpMessage from 'gutenberg/extensions/presets/jetpack/editor-shared/help-message';
 
 class JetpackContactForm extends Component {
 	constructor( ...args ) {
@@ -23,8 +25,17 @@ class JetpackContactForm extends Component {
 		this.onChangeSubmit = this.onChangeSubmit.bind( this );
 		this.onFormSettingsSet = this.onFormSettingsSet.bind( this );
 		this.getToValidationError = this.getToValidationError.bind( this );
+		this.renderToAndSubjectFields = this.renderToAndSubjectFields.bind( this );
+		this.preventEnterSubmittion = this.preventEnterSubmittion.bind( this );
+
+		const to = args[ 0 ].attributes.to ? args[ 0 ].attributes.to : '';
+		const error = to
+			.split( ',' )
+			.map( this.getToValidationError )
+			.filter( Boolean );
+
 		this.state = {
-			toError: null,
+			toError: error && error.length ? error : null,
 		};
 	}
 
@@ -43,20 +54,32 @@ class JetpackContactForm extends Component {
 	}
 
 	getToValidationError( email ) {
-		if ( ! email ) {
-			return __( 'Email is empty' );
+		email = email.trim();
+		if ( email.length === 0 ) {
+			return false; // ignore the empty emails
 		}
-
 		if ( ! emailValidator.validate( email ) ) {
-			return sprintf( __( '%s is not a valid email address.' ), email );
+			return { email };
 		}
 		return false;
 	}
 
 	onChangeTo( to ) {
-		error = this.getToValidationError( to );
-		if ( error ) {
+		const emails = to.trim();
+		if ( emails.length === 0 ) {
+			this.setState( { toError: null } );
+			this.props.setAttributes( { to } );
+			return;
+		}
+
+		const error = to
+			.split( ',' )
+			.map( this.getToValidationError )
+			.filter( Boolean );
+		if ( error && error.length ) {
 			this.setState( { toError: error } );
+			this.props.setAttributes( { to } );
+			return;
 		}
 		this.setState( { toError: null } );
 		this.props.setAttributes( { to } );
@@ -68,44 +91,88 @@ class JetpackContactForm extends Component {
 
 	onFormSettingsSet( event ) {
 		event.preventDefault();
+		if ( this.state.toError ) {
+			// don't submit the form if there are errors.
+			return;
+		}
 		this.props.setAttributes( { has_form_settings_set: 'yes' } );
+	}
+
+	getfieldEmailError( errors ) {
+		if ( errors ) {
+			if ( errors.length === 1 ) {
+				if ( errors[ 0 ] && errors[ 0 ].email ) {
+					return sprintf( __( '%s is not a valid email address.' ), errors[ 0 ].email );
+				}
+				return errors[ 0 ];
+			}
+
+			if ( errors.length === 2 ) {
+				return sprintf(
+					__( '%s and %s are not a valid email address.' ),
+					errors[ 0 ].email,
+					errors[ 1 ].email
+				);
+			}
+			const inValidEmails = errors.map( error => error.email );
+			return sprintf( __( '%s are not a valid email address.' ), inValidEmails.join( ', ' ) );
+		}
+		return null;
+	}
+
+	preventEnterSubmittion( event ) {
+		if ( event.key === 'Enter' ) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	}
+
+	renderToAndSubjectFields() {
+		const fieldEmailError = this.state.toError;
+		const { instanceId, attributes } = this.props;
+		const { subject, to } = attributes;
+		const hasEmailError = fieldEmailError && fieldEmailError.length > 0;
+		return (
+			<Fragment>
+				<TextControl
+					aria-describedby={ `contact-form-${ instanceId }-email-${
+						hasEmailError ? 'error' : 'help'
+					}` }
+					label={ __( 'Email address' ) }
+					placeholder={ __( 'name@example.com' ) }
+					onKeyDown={ this.preventEnterSubmittion }
+					value={ to }
+					onChange={ this.onChangeTo }
+				/>
+				<HelpMessage isError id={ `contact-form-${ instanceId }-email-error` }>
+					{ this.getfieldEmailError( fieldEmailError ) }
+				</HelpMessage>
+				<HelpMessage id={ `contact-form-${ instanceId }-email-help` }>
+					{ this.getEmailHelpMessage() }
+				</HelpMessage>
+
+				<TextControl
+					label={ __( 'Email subject line' ) }
+					value={ subject }
+					placeholder={ __( "Let's work together" ) }
+					onChange={ this.onChangeSubject }
+				/>
+			</Fragment>
+		);
 	}
 
 	render() {
 		const { className, attributes } = this.props;
-		const { has_form_settings_set, subject, submit_button_text, to } = attributes;
+		const { has_form_settings_set, submit_button_text } = attributes;
 		const formClassnames = classnames( className, 'jetpack-contact-form', {
 			'has-intro': ! has_form_settings_set,
 		} );
 
-		const fieldEmailError = this.stats.toError;
 		return (
 			<Fragment>
 				<InspectorControls>
 					<PanelBody title={ __( 'Email feedback settings' ) }>
-						<p>{ this.getIntroMessage() }</p>
-						<TextControl
-							label={ __( 'Email address' ) }
-							placeholder={ __( 'name@example.com' ) }
-<<<<<<< HEAD
-=======
-							aria-describedby={ `${ instanceId }-email-${ fieldEmailError ? 'error' : 'help' }` }
->>>>>>> e9bdc756bf... Contact Form Block: Update/contact form block text changes (#28616)
-							value={ to }
-							onChange={ this.onChangeTo }
-						/>
-						<HelpMessage id={ `${ instanceId }-email-error` } isError>
-							{ fieldEmailError }
-						</HelpMessage>
-						<HelpMessage id={ `${ instanceId }-email-info` }>
-							{ this.getEmailHelpMessage() }
-						</HelpMessage>
-						<TextControl
-							label={ __( 'Email subject line' ) }
-							value={ subject }
-							placeholder={ __( "Let's work together" ) }
-							onChange={ this.onChangeSubject }
-						/>
+						{ this.renderToAndSubjectFields() }
 					</PanelBody>
 				</InspectorControls>
 				<InspectorControls>
@@ -128,27 +195,7 @@ class JetpackContactForm extends Component {
 						>
 							<form onSubmit={ this.onFormSettingsSet }>
 								<p className="jetpack-contact-form__intro-message">{ this.getIntroMessage() }</p>
-								<TextControl
-									aria-describedby={ `${ instanceId }-email-${
-										fieldEmailError ? 'error' : 'help'
-									}` }
-									label={ __( 'Email address' ) }
-									placeholder={ __( 'name@example.com' ) }
-									value={ to }
-									onChange={ this.onChangeTo }
-								/>
-								<HelpMessage id={ `${ instanceId }-email-error` } isError>
-									{ fieldEmailError }
-								</HelpMessage>
-								<HelpMessage id={ `${ instanceId }-email-info` }>
-									{ this.getEmailHelpMessage() }
-								</HelpMessage>
-								<TextControl
-									label={ __( 'Email subject line' ) }
-									value={ subject }
-									placeholder={ __( "Let's work together" ) }
-									onChange={ this.onChangeSubject }
-								/>
+								{ this.renderToAndSubjectFields() }
 								<p className="jetpack-contact-form__intro-message">
 									{ __(
 										'(If you leave these blank, notifications will go to the author with the post or page title as the subject line.)'
@@ -206,4 +253,4 @@ class JetpackContactForm extends Component {
 	}
 }
 
-export default JetpackContactForm;
+export default compose( [ withInstanceId ] )( JetpackContactForm );

@@ -13,9 +13,15 @@
 	.components-placeholder__label svg {
 		margin-right: 6px;
 	}
-
+	
+	.help-message,
 	.components-placeholder__fieldset {
 		text-align: left;
+	}
+
+	.help-message {
+		width: 100%;
+		margin: -18px 0 28px;
 	}
 
 	.components-base-control {
