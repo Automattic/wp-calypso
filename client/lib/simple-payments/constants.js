@@ -17,7 +17,6 @@ export const SUPPORTED_CURRENCY_LIST = [
 	'HUF',
 	'ILS',
 	'JPY',
-	'MYR',
 	'MXN',
 	'TWD',
 	'NZD',
