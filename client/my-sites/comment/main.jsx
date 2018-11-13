@@ -26,6 +26,11 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import getSiteComment from 'state/selectors/get-site-comment';
 import getSiteId from 'state/selectors/get-site-id';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class CommentView extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
