@@ -11,6 +11,7 @@ const baseOptions = {
 };
 
 const basePath = '/api/v1.1/project/github/Automattic/wp-calypso';
+const maxBuilds = 30;
 
 async function getCircleArtifactUrl( pathMatchRegex ) {
 	if ( ! pathMatchRegex instanceof RegExp ) {
@@ -21,7 +22,7 @@ async function getCircleArtifactUrl( pathMatchRegex ) {
 		// Fetch recent successful master builds
 		const builds = await httpsGetJsonPromise( {
 			...baseOptions,
-			path: `${ basePath }/tree/master?filter=successful&limit=20`,
+			path: `${ basePath }/tree/master?filter=successful&limit=${ maxBuilds }`,
 		} );
 
 		const buildNumbersWithArtifacts = builds
