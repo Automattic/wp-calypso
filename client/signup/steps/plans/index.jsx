@@ -10,6 +10,7 @@ import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { parse as parseQs } from 'qs';
 
 /**
  * Internal dependencies
@@ -85,7 +86,7 @@ class PlansStep extends Component {
 	};
 
 	plansFeaturesList() {
-		const { hideFreePlan, isDomainOnly, selectedSite } = this.props;
+		const { hideFreePlan, isDomainOnly, selectedSite, customerType } = this.props;
 
 		return (
 			<div>
@@ -99,6 +100,7 @@ class PlansStep extends Component {
 					showFAQ={ false }
 					displayJetpackPlans={ false }
 					domainName={ this.getDomainName() }
+					customerType={ customerType }
 				/>
 				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
 				   * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
@@ -147,13 +149,15 @@ PlansStep.propTypes = {
 	selectedSite: PropTypes.object,
 	stepName: PropTypes.string.isRequired,
 	stepSectionName: PropTypes.string,
+	customerType: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( ( state, { signupDependencies: { siteSlug } } ) => ( {
+export default connect( ( state, { path, signupDependencies: { siteSlug } } ) => ( {
 	// This step could be used to set up an existing site, in which case
 	// some descendants of this component may display discounted prices if
 	// they apply to the given site.
 	isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
 	selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
+	customerType: parseQs( path.split( '?' ).pop() ).customerType,
 } ) )( localize( PlansStep ) );

@@ -21,6 +21,7 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
 	TYPE_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -219,6 +220,10 @@ export function planLevelsMatch( planSlugA, planSlugB ) {
 	return planA && planB && planA.type === planB.type && planA.group === planB.group;
 }
 
+export function isEcommercePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_ECOMMERCE } );
+}
+
 export function isBusinessPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_BUSINESS } );
 }
@@ -241,6 +246,10 @@ export function isFreePlan( planSlug ) {
 
 export function isWpComBusinessPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
+}
+
+export function isWpComEcommercePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_ECOMMERCE, group: GROUP_WPCOM } );
 }
 
 export function isWpComPremiumPlan( planSlug ) {

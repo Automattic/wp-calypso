@@ -9,13 +9,11 @@ import PropTypes from 'prop-types';
 import { find, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import analytics from 'lib/analytics';
 import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import config from 'config';
@@ -132,123 +130,6 @@ export class SignupProcessingScreen extends Component {
 			  );
 	}
 
-	handleClick( ctaName, redirectTo = '' ) {
-		if ( ! this.props.loginHandler ) {
-			return;
-		}
-
-		analytics.tracks.recordEvent( 'calypso_signup_landing_cta_click', {
-			cta_name: ctaName,
-		} );
-
-		redirectTo ? this.props.loginHandler( { redirectTo } ) : this.props.loginHandler();
-	}
-
-	handleClickViewSiteButton = () => {
-		this.handleClick( 'view_my_site' );
-	};
-
-	handleClickUpgradeButton = () => {
-		this.handleClick(
-			'upgrade_plan',
-			this.state.siteSlug ? `/plans/${ this.state.siteSlug }` : ''
-		);
-	};
-
-	handleClickOldContinueButton = () => {
-		this.handleClick( 'old_continue' );
-	};
-
-	renderUpgradeNudge() {
-		const { translate } = this.props;
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<div className="signup-processing__upgrade-nudge">
-				<p className="signup-processing__title-subdomain">{ translate( 'Your subdomain' ) }</p>
-				<div className="signup-processing__address-bar">
-					<Gridicon icon="refresh" size={ 24 } />
-					<Gridicon icon="house" size={ 24 } />
-					<p
-						className={ classnames( 'signup-processing__address-field', {
-							'is-placeholder': ! this.state.siteSlug,
-						} ) }
-					>
-						{ this.state.siteSlug }
-					</p>
-				</div>
-				<div className="signup-processing__bubble">
-					<svg
-						className="signup-processing__bubble-tail"
-						viewBox="0 0 47 31"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path d="M.261 30.428S14.931 6.646 46.066.528l-11.852 29.9H.26z" fillRule="evenodd" />
-					</svg>
-					<p>
-						{ translate(
-							'Search engines like Google or Bing prefer websites with their own web address and place them higher in search results.'
-						) }
-					</p>
-				</div>
-				<p className="signup-processing__nudge-message">
-					{ translate( "Looks like your new online home doesn't have its own domain name." ) }
-				</p>
-				<Button
-					primary
-					disabled={ ! this.props.loginHandler }
-					className="signup-processing__upgrade-button"
-					onClick={ this.handleClickUpgradeButton }
-				>
-					{ translate( 'Upgrade Plan & Get A Domain' ) }
-				</Button>
-			</div>
-		);
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-	}
-
-	renderUpgradeScreen() {
-		const { translate } = this.props;
-		const title = this.props.loginHandler
-			? translate( 'Congratulations! Your site is live.' )
-			: translate( 'Congratulations! Your website is almost ready.' );
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<div>
-				{ this.renderFloaties() }
-
-				<div className="signup-processing__content">
-					<img
-						alt=""
-						src="/calypso/images/signup/confetti.svg"
-						className="signup-process-screen__confetti"
-					/>
-					<p className="signup-process-screen__title signup-process-screen__title-test">
-						{ title }
-					</p>
-
-					{ this.props.loginHandler ? (
-						<Button
-							className="processing-screen__continue-button"
-							onClick={ this.props.loginHandler }
-						>
-							{ translate( 'View My Site' ) }
-						</Button>
-					) : (
-						<Button disabled className="processing-screen__continue-button">
-							{ translate( 'Please wait…' ) }
-						</Button>
-					) }
-
-					{ this.renderUpgradeNudge() }
-				</div>
-				<div className="signup-processing-screen__loader">{ translate( 'Loading…' ) }</div>
-			</div>
-		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
-	}
-
 	showChecklistAfterLogin = () => {
 		analytics.tracks.recordEvent( 'calypso_checklist_assign', {
 			site: this.state.siteSlug,
@@ -265,46 +146,19 @@ export class SignupProcessingScreen extends Component {
 		return (
 			config.isEnabled( 'onboarding-checklist' ) &&
 			'store' !== designType &&
-			[ 'main', 'desktop', 'subdomain' ].includes( this.props.flowName )
-		);
-	}
-
-	renderActionButton() {
-		const { flowName, loginHandler, translate } = this.props;
-
-		if ( flowName === 'import' ) {
-			return null;
-		}
-
-		if ( ! loginHandler ) {
-			return (
-				<Button primary disabled className="processing-screen__continue-button">
-					{ translate( 'Please wait…' ) }
-				</Button>
-			);
-		}
-
-		const clickHandler = this.shouldShowChecklist() ? this.showChecklistAfterLogin : loginHandler;
-
-		return (
-			<Button primary className="processing-screen__continue-button" onClick={ clickHandler }>
-				{ translate( 'Continue' ) }
-			</Button>
+			[ 'main', 'onboarding', 'desktop', 'subdomain' ].includes( this.props.flowName )
 		);
 	}
 
 	render() {
-		if (
-			! this.state.hasPaidSubscription &&
-			! this.props.useOAuth2Layout &&
-			this.props.flowSteps.indexOf( 'domains' ) !== -1 &&
-			this.props.flowSteps.indexOf( 'plans' ) !== -1 &&
-			! this.shouldShowChecklist()
-		) {
-			return this.renderUpgradeScreen();
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		const { loginHandler } = this.props;
+
+		if ( !! loginHandler ) {
+			this.shouldShowChecklist() ? this.showChecklistAfterLogin() : loginHandler();
+			return null;
 		}
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ this.renderFloaties() }
@@ -321,8 +175,6 @@ export class SignupProcessingScreen extends Component {
 					</svg>
 
 					<p className="signup-process-screen__title">{ this.getTitle() }</p>
-
-					{ this.renderActionButton() }
 				</div>
 				<div className="signup-processing-screen__loader">
 					{ this.props.translate( 'Loading…' ) }

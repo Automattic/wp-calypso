@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -25,7 +27,7 @@ export async function refreshConnections( { postId }, store ) {
 	try {
 		const connections = await apiFetch( { path: getFetchConnectionsPath( postId ) } );
 
-		return dispatch( setConnections( postId, connections ) );
+		return dispatch( setConnections( postId, connections.jetpack_publicize_connections ) );
 	} catch ( error ) {
 		// Refreshing connections failed
 	}

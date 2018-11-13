@@ -38,7 +38,7 @@ import { userCan } from 'lib/site/utils';
 import Banner from 'components/banner';
 import { TYPE_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
-import { isBusiness, isEnterprise } from 'lib/products-values';
+import { isBusiness, isEcommerce, isEnterprise } from 'lib/products-values';
 import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -96,7 +96,9 @@ export class PluginMeta extends Component {
 			return false;
 		}
 		return (
-			isBusiness( this.props.selectedSite.plan ) || isEnterprise( this.props.selectedSite.plan )
+			isBusiness( this.props.selectedSite.plan ) ||
+			isEnterprise( this.props.selectedSite.plan ) ||
+			isEcommerce( this.props.selectedSite.plan )
 		);
 	}
 

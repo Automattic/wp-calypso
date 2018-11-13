@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * Publicize connections verification component.
  *
@@ -36,10 +37,10 @@ class PublicizeConnectionVerify extends Component {
 	 * updates component state to display potentially
 	 * failed connections.
 	 *
-	 * @param {object} response Response from '/publicize/connections' endpoint
+	 * @param {object} response Response from '/publicize/connection-test-results' endpoint
 	 */
 	connectionTestComplete = response => {
-		const failureList = response.data.filter( connection => ! connection.connectionTestPassed );
+		const failureList = response.data.filter( connection => ! connection.test_success );
 		this.setState( {
 			failedConnections: failureList,
 			isLoading: false,
@@ -58,10 +59,10 @@ class PublicizeConnectionVerify extends Component {
 	/**
 	 * Starts request to check connections
 	 *
-	 * Checks connections with using the '/publicize/connections' endpoint
+	 * Checks connections with using the '/publicize/connection-test-results' endpoint
 	 */
 	connectionTestStart = () => {
-		apiFetch( { path: '/jetpack/v4/publicize/connections' } )
+		apiFetch( { path: '/wpcom/v2/publicize/connection-test-results' } )
 			.then( () => this.connectionTestComplete )
 			.catch( () => this.connectionTestRequestFailed );
 	};

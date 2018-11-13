@@ -14,6 +14,8 @@ import { connect } from 'react-redux';
 import Button from 'components/forms/form-button';
 import { resetImport } from 'lib/importer/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { setImportOriginSiteDetails } from 'state/importer-nux/actions';
+import { SITE_IMPORTER } from 'state/imports/constants';
 
 export class DoneButton extends React.PureComponent {
 	static displayName = 'DoneButton';
@@ -37,6 +39,11 @@ export class DoneButton extends React.PureComponent {
 
 		resetImport( siteId, importerId );
 
+		if ( SITE_IMPORTER === type ) {
+			// Clear out site details, so that importers list isn't filtered
+			this.props.setImportOriginSiteDetails();
+		}
+
 		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
 			blog_id: siteId,
 			importer_id: tracksType,
@@ -57,7 +64,7 @@ export class DoneButton extends React.PureComponent {
 export default flow(
 	connect(
 		null,
-		{ recordTracksEvent }
+		{ setImportOriginSiteDetails, recordTracksEvent }
 	),
 	localize
 )( DoneButton );

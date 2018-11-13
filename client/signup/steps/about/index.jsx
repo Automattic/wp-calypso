@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey } from 'lodash';
+import { invoke, noop, findKey, includes } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -21,8 +21,14 @@ import { setSiteGoals } from 'state/signup/steps/site-goals/actions';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { setUserExperience } from 'state/signup/steps/user-experience/actions';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getThemeForSiteGoals, getSiteTypeForSiteGoals } from 'signup/utils';
+import {
+	getThemeForSiteType,
+	getThemeForSiteGoals,
+	getDesignTypeForSiteType,
+	getDesignTypeForSiteGoals,
+} from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { hints } from 'lib/signup/hint-data';
@@ -43,7 +49,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
-import Suggestions from 'components/suggestions';
+import SuggestionSearch from 'components/suggestion-search';
 
 class AboutStep extends Component {
 	constructor( props ) {
@@ -53,7 +59,6 @@ class AboutStep extends Component {
 			isValidLandingPageVertical( props.siteTopic ) &&
 			props.queryObject.vertical === props.siteTopic;
 		this.state = {
-			query: '',
 			siteTopicValue: this.props.siteTopic,
 			userExperience: this.props.userExperience,
 			showStore: false,
@@ -88,114 +93,18 @@ class AboutStep extends Component {
 		this._isMounted = false;
 	}
 
-	setFormState = state => {
-		this._isMounted && this.setState( { form: state } );
-	};
+	setFormState = state => this._isMounted && this.setState( { form: state } );
 
-	setPressableStore = ref => {
-		this.pressableStore = ref;
-	};
+	setPressableStore = ref => ( this.pressableStore = ref );
 
-	setSuggestionsRef = ref => {
-		this.suggestionsRef = ref;
-	};
-
-	hideSuggestions = () => {
-		this.setState( { query: '' } );
-	};
-
-	handleSuggestionChangeEvent = ( { target: { name, value } } ) => {
-		this.setState( { query: value, siteTopicValue: value } );
+	onSiteTopicChange = value => {
+		this.setState( { siteTopicValue: value } );
 		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { value } );
-		this.formStateController.handleFieldChange( { name, value } );
-	};
-
-	handleSuggestionKeyDown = event => {
-		if ( this.suggestionsRef.props.suggestions.length > 0 ) {
-			const fieldName = event.target.name;
-			let suggestionPosition = this.suggestionsRef.state.suggestionPosition;
-
-			switch ( event.key ) {
-				case 'ArrowRight':
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition ),
-						fieldName
-					);
-
-					break;
-				case 'ArrowUp':
-					if ( suggestionPosition === 0 ) {
-						suggestionPosition = this.suggestionsRef.props.suggestions.length;
-					}
-
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition - 1 ),
-						fieldName
-					);
-
-					break;
-				case 'ArrowDown':
-					suggestionPosition++;
-
-					if ( suggestionPosition === this.suggestionsRef.props.suggestions.length ) {
-						suggestionPosition = 0;
-					}
-
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition ),
-						fieldName
-					);
-
-					break;
-				case 'Tab':
-					this.updateFieldFromSuggestion(
-						this.getSuggestionLabel( suggestionPosition ),
-						fieldName
-					);
-
-					break;
-				case 'Enter':
-					event.preventDefault();
-					break;
-			}
-		}
-
-		this.suggestionsRef.handleKeyEvent( event );
-	};
-
-	handleSuggestionMouseDown = position => {
-		this.setState( { siteTopicValue: position.label } );
-		this.hideSuggestions();
-
 		this.formStateController.handleFieldChange( {
 			name: 'siteTopic',
-			value: position.label,
+			value,
 		} );
 	};
-
-	getSuggestions() {
-		if ( ! this.state.query ) {
-			return [];
-		}
-
-		const query = this.state.query.trim().toLocaleLowerCase();
-		return Object.values( hints )
-			.filter( hint => hint.toLocaleLowerCase().includes( query ) )
-			.map( hint => ( { label: hint } ) );
-	}
-
-	getSuggestionLabel( suggestionPosition ) {
-		return this.suggestionsRef.props.suggestions[ suggestionPosition ].label;
-	}
-
-	updateFieldFromSuggestion( term, field ) {
-		this.setState( { siteTopicValue: term } );
-
-		this.formStateController.handleFieldChange( {
-			name: field,
-			value: term,
-		} );
-	}
 
 	handleChangeEvent = event => {
 		this.formStateController.handleFieldChange( {
@@ -252,7 +161,15 @@ class AboutStep extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const { goToNextStep, stepName, flowName, previousFlowName, translate } = this.props;
+		const {
+			goToNextStep,
+			stepName,
+			flowName,
+			shouldHideSiteGoals,
+			previousFlowName,
+			translate,
+			siteType,
+		} = this.props;
 
 		//Defaults
 		let themeRepo = 'pub/radcliffe-2',
@@ -262,12 +179,8 @@ class AboutStep extends Component {
 
 		//Inputs
 		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
-		const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
-		const siteGoalsArray = siteGoalsInput.split( ',' );
-		const siteGoalsGroup = siteGoalsArray.sort().join();
 		const userExperienceInput = this.state.userExperience;
 		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
-
 		const eventAttributes = {};
 
 		//Site Title
@@ -295,19 +208,39 @@ class AboutStep extends Component {
 		} );
 
 		//Site Goals
-		this.props.setSiteGoals( siteGoalsInput );
-		themeRepo = this.state.hasPrepopulatedVertical
-			? 'pub/radcliffe-2'
-			: getThemeForSiteGoals( siteGoalsInput );
-		designType = getSiteTypeForSiteGoals( siteGoalsInput, this.props.flowName );
+		if ( shouldHideSiteGoals ) {
+			themeRepo = this.state.hasPrepopulatedVertical
+				? 'pub/radcliffe-2'
+				: getThemeForSiteType( siteType );
+			designType = getDesignTypeForSiteType( siteType, flowName );
+			eventAttributes.site_type = siteType;
+		} else {
+			const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
+			const siteGoalsArray = siteGoalsInput.split( ',' );
+			const siteGoalsGroup = siteGoalsArray.sort().join();
 
-		for ( let i = 0; i < siteGoalsArray.length; i++ ) {
-			eventAttributes[ `site_goal_${ siteGoalsArray[ i ] }` ] = true;
+			this.props.setSiteGoals( siteGoalsInput );
+			themeRepo = this.state.hasPrepopulatedVertical
+				? 'pub/radcliffe-2'
+				: getThemeForSiteGoals( siteGoalsInput );
+			designType = getDesignTypeForSiteGoals( siteGoalsInput, flowName );
+
+			for ( let i = 0; i < siteGoalsArray.length; i++ ) {
+				eventAttributes[ `site_goal_${ siteGoalsArray[ i ] }` ] = true;
+			}
+
+			eventAttributes.site_goal_selections = siteGoalsGroup;
+
+			//Store
+			if ( designType === DESIGN_TYPE_STORE ) {
+				nextFlowName =
+					siteGoalsArray.indexOf( 'sell' ) === -1 && previousFlowName
+						? previousFlowName
+						: 'store-nux';
+			}
 		}
 
-		eventAttributes.site_goal_selections = siteGoalsGroup;
-
-		//SET SITETYPE
+		//SET DESIGN TYPE
 		this.props.setDesignType( designType );
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', {
 			category: designType,
@@ -320,14 +253,6 @@ class AboutStep extends Component {
 		}
 
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', eventAttributes );
-
-		//Store
-		if ( designType === DESIGN_TYPE_STORE ) {
-			nextFlowName =
-				siteGoalsArray.indexOf( 'sell' ) === -1 && previousFlowName
-					? previousFlowName
-					: 'store-nux';
-		}
 
 		//Pressable
 		if (
@@ -515,8 +440,15 @@ class AboutStep extends Component {
 		}
 	}
 
+	shouldShowSiteTopicField() {
+		const { steps } = this.props;
+		const { hasPrepopulatedVertical } = this.state;
+
+		return ! hasPrepopulatedVertical && ! includes( steps, 'site-topic' );
+	}
+
 	renderContent() {
-		const { translate, siteTitle } = this.props;
+		const { translate, siteTitle, shouldHideSiteGoals } = this.props;
 
 		const pressableWrapperClassName = classNames( 'about__pressable-wrapper', {
 			'about__wrapper-is-hidden': ! this.state.showStore,
@@ -559,7 +491,7 @@ class AboutStep extends Component {
 								/>
 							</FormFieldset>
 
-							{ ! this.state.hasPrepopulatedVertical && (
+							{ this.shouldShowSiteTopicField() && (
 								<FormFieldset>
 									<FormLabel htmlFor="siteTopic">
 										{ translate( 'What will your site be about?' ) }
@@ -567,41 +499,34 @@ class AboutStep extends Component {
 											{ translate( "We'll use this to personalize your site and experience." ) }
 										</InfoPopover>
 									</FormLabel>
-									<FormTextInput
+									<SuggestionSearch
 										id="siteTopic"
-										name="siteTopic"
 										placeholder={ translate(
 											'e.g. Fashion, travel, design, plumber, electrician'
 										) }
-										value={ this.state.siteTopicValue }
-										onChange={ this.handleSuggestionChangeEvent }
-										onBlur={ this.hideSuggestions }
-										onKeyDown={ this.handleSuggestionKeyDown }
-										autoComplete="off"
-									/>
-									<Suggestions
-										ref={ this.setSuggestionsRef }
-										query={ this.state.query }
-										suggestions={ this.getSuggestions() }
-										suggest={ this.handleSuggestionMouseDown }
+										onChange={ this.onSiteTopicChange }
+										suggestions={ Object.values( hints ) }
 									/>
 								</FormFieldset>
 							) }
 
-							<FormFieldset>
-								<FormLegend>
-									{ translate( 'What’s the primary goal you have for your site?' ) }
-								</FormLegend>
-								{ this.renderGoalCheckboxes() }
-							</FormFieldset>
+							{ ! shouldHideSiteGoals && (
+								<FormFieldset>
+									<FormLegend>
+										{ translate( 'What’s the primary goal you have for your site?' ) }
+									</FormLegend>
+									{ this.renderGoalCheckboxes() }
+								</FormFieldset>
+							) }
 
 							{ this.renderExperienceOptions() }
+
+							<div className="about__submit-wrapper">
+								<Button primary={ true } type="submit">
+									{ translate( 'Continue' ) }
+								</Button>
+							</div>
 						</Card>
-						<div className="about__submit-wrapper">
-							<Button primary={ true } type="submit">
-								{ translate( 'Continue' ) }
-							</Button>
-						</div>
 					</form>
 				</div>
 			</div>
@@ -610,7 +535,6 @@ class AboutStep extends Component {
 
 	render() {
 		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
-
 		const headerText = translate( 'Let’s create a site.' );
 		const subHeaderText = translate(
 			'Please answer these questions so we can help you make the site you need.'
@@ -633,12 +557,15 @@ class AboutStep extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state, ownProps ) => ( {
 		siteTitle: getSiteTitle( state ),
 		siteGoals: getSiteGoals( state ),
 		siteTopic: getSurveyVertical( state ),
 		userExperience: getUserExperience( state ),
+		siteType: getSiteType( state ),
 		isLoggedIn: isUserLoggedIn( state ),
+		shouldHideSiteGoals:
+			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
 	} ),
 	{
 		setSiteTitle,

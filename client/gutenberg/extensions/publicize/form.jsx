@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Higher Order Publicize sharing form composition.
  *
@@ -17,11 +19,13 @@ import { withSelect, withDispatch } from '@wordpress/data';
 import PublicizeFormUnwrapped from './form-unwrapped';
 
 const PublicizeForm = compose( [
-	withSelect( ( select ) => ( {
-		activeConnections: ( ! select( 'core/editor' ).getEditedPostAttribute( 'publicize' ) )
-			? [] : select( 'core/editor' ).getEditedPostAttribute( 'publicize' ).connections,
-		shareMessage: ( ! select( 'core/editor' ).getEditedPostAttribute( 'publicize' ) )
-			? '' : select( 'core/editor' ).getEditedPostAttribute( 'publicize' ).title,
+	withSelect( select => ( {
+		activeConnections: ! select( 'core/editor' ).getEditedPostAttribute( 'publicize' )
+			? []
+			: select( 'core/editor' ).getEditedPostAttribute( 'publicize' ).connections,
+		shareMessage: ! select( 'core/editor' ).getEditedPostAttribute( 'publicize' )
+			? ''
+			: select( 'core/editor' ).getEditedPostAttribute( 'publicize' ).title,
 	} ) ),
 	withDispatch( ( dispatch, ownProps ) => ( {
 		/**
@@ -36,17 +40,15 @@ const PublicizeForm = compose( [
 		 * @param {array}  initActiveConnections Array of connection data
 		 */
 		initializePublicize( initTitle, initActiveConnections ) {
-			const {
-				activeConnections,
-				shareMessage,
-			} = ownProps;
-			const newConnections = ( activeConnections.length > 0 ) ? activeConnections : initActiveConnections;
-			const newTitle = ( shareMessage.length > 0 ) ? shareMessage : initTitle;
+			const { activeConnections, shareMessage } = ownProps;
+			const newConnections =
+				activeConnections.length > 0 ? activeConnections : initActiveConnections;
+			const newTitle = shareMessage.length > 0 ? shareMessage : initTitle;
 			dispatch( 'core/editor' ).editPost( {
 				publicize: {
 					title: newTitle,
 					connections: newConnections,
-				}
+				},
 			} );
 		},
 
@@ -65,8 +67,8 @@ const PublicizeForm = compose( [
 			const { activeConnections, shareMessage } = ownProps;
 			// Copy array (simply mutating data would cause the component to not be updated).
 			const newConnections = activeConnections.slice( 0 );
-			newConnections.forEach( ( c ) => {
-				if ( c.unique_id === connectionID ) {
+			newConnections.forEach( c => {
+				if ( c.id === connectionID ) {
 					c.should_share = shouldShare;
 				}
 			} );
@@ -74,7 +76,7 @@ const PublicizeForm = compose( [
 				publicize: {
 					title: shareMessage,
 					connections: newConnections,
-				}
+				},
 			} );
 		},
 
@@ -94,9 +96,9 @@ const PublicizeForm = compose( [
 				publicize: {
 					title: shareMessage,
 					connections: activeConnections,
-				}
+				},
 			} );
-		}
+		},
 	} ) ),
 ] )( PublicizeFormUnwrapped );
 

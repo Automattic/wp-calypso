@@ -11,7 +11,6 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { cartItems } from 'lib/cart-values';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
@@ -26,20 +25,6 @@ import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getDomainProductSlug } from 'lib/domains';
 
 class SiteOrDomain extends Component {
-	constructor( props ) {
-		super( props );
-
-		if (
-			! props.isLoggedIn &&
-			get( props, 'signupDependencies.domainItem.extra.skipSiteOrDomain', false ) &&
-			'yes' === abtest( 'skipDomainOrSiteStep' )
-		) {
-			this.skipRender = true;
-			this.submitDomain( 'domain' );
-			this.submitDomainOnlyChoice();
-		}
-	}
-
 	getDomainName() {
 		const { signupDependencies } = this.props;
 		let isValidDomain = false;
@@ -48,9 +33,7 @@ class SiteOrDomain extends Component {
 		if ( domain ) {
 			if ( domain.split( '.' ).length > 1 ) {
 				const productSlug = getDomainProductSlug( domain );
-
-				const skip = get( signupDependencies, 'domainItem.extra.skipSiteOrDomain', false );
-				isValidDomain = skip || !! this.props.productsList[ productSlug ];
+				isValidDomain = !! this.props.productsList[ productSlug ];
 			}
 		}
 
@@ -170,10 +153,6 @@ class SiteOrDomain extends Component {
 	};
 
 	render() {
-		if ( this.skipRender ) {
-			return null;
-		}
-
 		const { translate, productsLoaded } = this.props;
 
 		if ( productsLoaded && ! this.getDomainName() ) {

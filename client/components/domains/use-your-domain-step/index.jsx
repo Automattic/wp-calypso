@@ -308,27 +308,6 @@ class UseYourDomainStep extends React.Component {
 		} );
 	};
 
-	useYourDomain = () => {
-		const { translate } = this.props;
-
-		return (
-			<div>
-				<QueryProducts />
-				<div className="use-your-domain-step__content">
-					{ this.renderSelectTransfer() }
-					{ this.renderSelectMapping() }
-				</div>
-				<p className="use-your-domain-step__footer">
-					{ translate( "Not sure what works best for you? {{a}}We're happy to help!{{/a}}", {
-						components: {
-							a: <a href={ CALYPSO_CONTACT } />,
-						},
-					} ) }
-				</p>
-			</div>
-		);
-	};
-
 	render() {
 		const { isSignupStep, translate } = this.props;
 
@@ -349,7 +328,7 @@ class UseYourDomainStep extends React.Component {
 				<p className="use-your-domain-step__footer">
 					{ translate( "Not sure what works best for you? {{a}}We're happy to help!{{/a}}", {
 						components: {
-							a: <a href={ CALYPSO_CONTACT } />,
+							a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
 						},
 					} ) }
 				</p>

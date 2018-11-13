@@ -23,6 +23,7 @@ import { isDomainTransfer } from 'lib/products-values';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
@@ -120,6 +121,7 @@ export function createSiteWithCart(
 	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 	const siteGoals = getSiteGoals( reduxStore.getState() ).trim();
+	const siteType = getSiteType( reduxStore.getState() ).trim();
 	const importingFromUrl =
 		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( reduxStore.getState() ) ) : '';
 
@@ -135,6 +137,7 @@ export function createSiteWithCart(
 				theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 				vertical: surveyVertical || undefined,
 				siteGoals: siteGoals || undefined,
+				siteType: siteType || undefined,
 			},
 			validate: false,
 			find_available_url: !! ( isPurchasingItem || importingFromUrl ),
@@ -401,7 +404,8 @@ export function createAccount(
 					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
 				}
 
-				const providedDependencies = assign( {}, { username: userData.username }, bearerToken );
+				const username = response.signup_sandbox_username || userData.username;
+				const providedDependencies = assign( {}, { username }, bearerToken );
 
 				if ( oauth2Signup ) {
 					assign( providedDependencies, {

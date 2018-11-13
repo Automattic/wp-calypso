@@ -18,6 +18,11 @@ import NoticeAction from 'components/notice/notice-action';
 import getSiteCommentParentDepth from 'state/selectors/get-site-comment-parent-depth';
 import getSiteCommentRepliesTree from 'state/selectors/get-site-comment-replies-tree';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class CommentRepliesList extends Component {
 	constructor( props ) {
 		super( props );

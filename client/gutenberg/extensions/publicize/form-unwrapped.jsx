@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * Publicize sharing form component.
  *
@@ -33,7 +34,7 @@ class PublicizeFormUnwrapped extends Component {
 		// Connection data format must match 'publicize' REST field.
 		const initialActiveConnections = staticConnections.map( c => {
 			return {
-				unique_id: c.unique_id,
+				id: c.id,
 				should_share: c.enabled,
 			};
 		} );
@@ -59,17 +60,17 @@ class PublicizeFormUnwrapped extends Component {
 	 * Checks if a connection is turned on/off.
 	 *
 	 * Looks up connection by ID in activeConnections prop which is
-	 * an array of objects with properties 'unique_id' and 'should_share';
-	 * looks for an array entry with a 'unique_id' property that matches
+	 * an array of objects with properties 'id' and 'should_share';
+	 * looks for an array entry with a 'id' property that matches
 	 * the parameter value. If found, the connection 'should_share' value
 	 * is returned.
 	 *
-	 * @param {string} uniqueId Connection ID.
+	 * @param {string} id Connection ID.
 	 * @return {boolean} True if the connection is currently switched on.
 	 */
-	isConnectionOn( uniqueId ) {
+	isConnectionOn( id ) {
 		const { activeConnections } = this.props;
-		const matchingConnection = activeConnections.find( c => uniqueId === c.unique_id );
+		const matchingConnection = activeConnections.find( c => id === c.id );
 		if ( ! matchingConnection ) {
 			return false;
 		}
@@ -91,36 +92,34 @@ class PublicizeFormUnwrapped extends Component {
 		} );
 
 		return (
-			<div className="misc-pub-section misc-pub-section-last">
-				<div id="publicize-form">
-					<ul>
-						{ staticConnections.map( c => (
-							<PublicizeConnection
-								connectionData={ c }
-								key={ c.unique_id }
-								connectionOn={ this.isConnectionOn( c.unique_id ) }
-								connectionChange={ connectionChange }
-							/>
-						) ) }
-					</ul>
-					<PublicizeSettingsButton refreshCallback={ refreshCallback } />
-					<label className="jetpack-publicize-message-note" htmlFor="wpas-title">
-						{ __( 'Customize your message' ) }
-					</label>
-					<div className="jetpack-publicize-message-box">
-						<textarea
-							value={ shareMessage }
-							onChange={ messageChange }
-							placeholder={ __( 'Publicize + Gutenberg :)' ) }
-							disabled={ this.isDisabled() }
-							maxLength={ MAXIMUM_MESSAGE_LENGTH }
+			<div id="publicize-form">
+				<ul>
+					{ staticConnections.map( c => (
+						<PublicizeConnection
+							connectionData={ c }
+							key={ c.id }
+							connectionOn={ this.isConnectionOn( c.id ) }
+							connectionChange={ connectionChange }
 						/>
-						<div className={ characterCountClass }>
-							{ sprintf(
-								_n( '%d character remaining', '%d characters remaining', charactersRemaining ),
-								charactersRemaining
-							) }
-						</div>
+					) ) }
+				</ul>
+				<PublicizeSettingsButton refreshCallback={ refreshCallback } />
+				<label className="jetpack-publicize-message-note" htmlFor="wpas-title">
+					{ __( 'Customize your message' ) }
+				</label>
+				<div className="jetpack-publicize-message-box">
+					<textarea
+						value={ shareMessage }
+						onChange={ messageChange }
+						placeholder={ __( 'Publicize + Gutenberg :)' ) }
+						disabled={ this.isDisabled() }
+						maxLength={ MAXIMUM_MESSAGE_LENGTH }
+					/>
+					<div className={ characterCountClass }>
+						{ sprintf(
+							_n( '%d character remaining', '%d characters remaining', charactersRemaining ),
+							charactersRemaining
+						) }
 					</div>
 				</div>
 			</div>

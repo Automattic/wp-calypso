@@ -1,21 +1,19 @@
+/** @format */
+
 .wp-block-jetpack-simple-payments {
-	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+		Helvetica Neue, sans-serif;
 
 	.simple-payments__field {
 		.components-base-control__label {
 			display: none;
 		}
-	}
-
-	.simple-payments__field-title:not( .simple-payments__field-has-error ) {
-		.components-text-control__input {
-			border-width: 0;
+		.components-base-control__field {
+			margin-bottom: 1em;
 		}
-	}
-
-	.simple-payments__field-content:not( .simple-payments__field-has-error ) {
-		.components-textarea-control__input {
-			border-width: 0;
+		// Reset empty space under textarea on Chrome
+		textarea {
+			display: block;
 		}
 	}
 
@@ -24,28 +22,17 @@
 		.components-textarea-control__input {
 			border-color: $alert-red;
 		}
-		.components-base-control__help {
-			color: $alert-red;
-		}
-	}
-
-	.simple-payments__field-title {
-		.components-text-control__input {
-			font-weight: bold;
-			font-size: 16px;
-		}
-	}
-
-	.simple-payments__field-content {
-		.components-textarea-control__input {
-			font-size: 16px;
-		}
 	}
 
 	.simple-payments__price-container {
 		display: flex;
+		flex-wrap: wrap;
 		.simple-payments__field {
 			margin-right: 10px;
+		}
+		.simple-payments__help-message {
+			flex: 1 1 100%;
+			margin-top: 0;
 		}
 	}
 
@@ -61,23 +48,14 @@
 		}
 	}
 
-	.components-base-control__help,
-	.simple-payments__field-email,
-	.simple-payments__field-price,
-	.simple-payments__field-currency {
-		font-size: 14px;
-	}
-
 	.simple-payments__field-multiple {
 		.components-base-control__field {
+			align-items: center;
 			justify-content: flex-start;
 		}
-		.components-base-control__label {
-			margin-right: 10px;
+		.components-form-toggle {
+			margin-left: 10px;
+			order: 1;
 		}
-	}
-
-	.simple-payments__support-reference {
-		margin-top: 20px;
 	}
 }
