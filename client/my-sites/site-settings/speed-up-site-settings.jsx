@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
 import Card from 'components/card';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -31,8 +30,6 @@ class SpeedUpSiteSettings extends Component {
 	};
 
 	static propTypes = {
-		activateModule: PropTypes.func,
-		deactivateModule: PropTypes.func,
 		isRequestingSettings: PropTypes.bool,
 		isSavingSettings: PropTypes.bool,
 		jetpackVersionSupportsLazyImages: PropTypes.bool,
@@ -157,76 +154,66 @@ class SpeedUpSiteSettings extends Component {
 	}
 }
 
-export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-		const siteAcceleratorSupported = isJetpackMinimumVersion( state, selectedSiteId, '6.6-alpha' );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
-			state,
-			selectedSiteId,
-			'photon'
-		);
-		const photonModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon' );
-		const assetCdnModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon-cdn' );
-		const isPhotonActivating = isActivatingJetpackModule( state, selectedSiteId, 'photon' );
-		const isAssetCdnActivating = isActivatingJetpackModule( state, selectedSiteId, 'photon-cdn' );
-		const isPhotonDeactivating = isDeactivatingJetpackModule( state, selectedSiteId, 'photon' );
-		const isAssetCdnDeactivating = isDeactivatingJetpackModule(
-			state,
-			selectedSiteId,
-			'photon-cdn'
-		);
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+	const siteAcceleratorSupported = isJetpackMinimumVersion( state, selectedSiteId, '6.6-alpha' );
+	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+		state,
+		selectedSiteId,
+		'photon'
+	);
+	const photonModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon' );
+	const assetCdnModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon-cdn' );
+	const isPhotonActivating = isActivatingJetpackModule( state, selectedSiteId, 'photon' );
+	const isAssetCdnActivating = isActivatingJetpackModule( state, selectedSiteId, 'photon-cdn' );
+	const isPhotonDeactivating = isDeactivatingJetpackModule( state, selectedSiteId, 'photon' );
+	const isAssetCdnDeactivating = isDeactivatingJetpackModule( state, selectedSiteId, 'photon-cdn' );
 
-		let togglingSiteAccelerator;
-		// First Photon activating.
-		if ( isPhotonActivating ) {
-			if ( assetCdnModuleActive ) {
-				togglingSiteAccelerator = false;
-			} else {
-				togglingSiteAccelerator = true;
-			}
-			// Then Asset CDN activating.
-		} else if ( isAssetCdnActivating ) {
-			if ( photonModuleActive ) {
-				togglingSiteAccelerator = false;
-			} else {
-				togglingSiteAccelerator = true;
-			}
-			// Then Photon deactivating.
-		} else if ( isPhotonDeactivating ) {
-			if ( assetCdnModuleActive ) {
-				togglingSiteAccelerator = false;
-			} else {
-				togglingSiteAccelerator = true;
-			}
-			// Then Asset CDN deactivating.
-		} else if ( isAssetCdnDeactivating ) {
-			if ( photonModuleActive ) {
-				togglingSiteAccelerator = false;
-			} else {
-				togglingSiteAccelerator = true;
-			}
-		} else {
+	let togglingSiteAccelerator;
+	// First Photon activating.
+	if ( isPhotonActivating ) {
+		if ( assetCdnModuleActive ) {
 			togglingSiteAccelerator = false;
+		} else {
+			togglingSiteAccelerator = true;
 		}
-
-		// Status of the main site accelerator toggle.
-		const siteAcceleratorStatus = photonModuleActive || assetCdnModuleActive ? true : false;
-
-		return {
-			assetCdnModuleActive,
-			photonModuleActive,
-			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-			selectedSiteId,
-			siteAcceleratorStatus,
-			siteAcceleratorSupported,
-			siteSlug: getSiteSlug( state, selectedSiteId ),
-			togglingSiteAccelerator,
-		};
-	},
-	{
-		activateModule,
-		deactivateModule,
+		// Then Asset CDN activating.
+	} else if ( isAssetCdnActivating ) {
+		if ( photonModuleActive ) {
+			togglingSiteAccelerator = false;
+		} else {
+			togglingSiteAccelerator = true;
+		}
+		// Then Photon deactivating.
+	} else if ( isPhotonDeactivating ) {
+		if ( assetCdnModuleActive ) {
+			togglingSiteAccelerator = false;
+		} else {
+			togglingSiteAccelerator = true;
+		}
+		// Then Asset CDN deactivating.
+	} else if ( isAssetCdnDeactivating ) {
+		if ( photonModuleActive ) {
+			togglingSiteAccelerator = false;
+		} else {
+			togglingSiteAccelerator = true;
+		}
+	} else {
+		togglingSiteAccelerator = false;
 	}
-)( localize( SpeedUpSiteSettings ) );
+
+	// Status of the main site accelerator toggle.
+	const siteAcceleratorStatus = photonModuleActive || assetCdnModuleActive ? true : false;
+
+	return {
+		assetCdnModuleActive,
+		photonModuleActive,
+		photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+		selectedSiteId,
+		siteAcceleratorStatus,
+		siteAcceleratorSupported,
+		siteSlug: getSiteSlug( state, selectedSiteId ),
+		togglingSiteAccelerator,
+	};
+} )( localize( SpeedUpSiteSettings ) );
