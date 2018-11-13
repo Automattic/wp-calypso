@@ -19,9 +19,9 @@ import {
 } from '@wordpress/components';
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
-import get from 'lodash/get';
 import trimEnd from 'lodash/trimEnd';
-import { memoize } from 'lodash';
+import { isNull, memoize } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -35,6 +35,8 @@ import ProductPlaceholder from './product-placeholder';
 import HelpMessage from './help-message';
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 
+const debug = debugFactory( 'jetpack-blocks:simple-payments:edit' );
+
 class SimplePaymentsEdit extends Component {
 	state = {
 		fieldEmailError: null,
@@ -43,29 +45,36 @@ class SimplePaymentsEdit extends Component {
 		isSavingProduct: false,
 	};
 
+	componentDidMount() {
+		this.injectPaymentAttributes();
+	}
+
 	componentDidUpdate( prevProps ) {
+		const { isSelected } = this.props;
+
 		if ( prevProps.simplePayment !== this.props.simplePayment ) {
-			console.log( '%o !== %o', prevProps.simplePayment, this.props.simplePayment );
-		}
-
-		const { attributes, isSelected, setAttributes, simplePayment } = this.props;
-		const { content, currency, email, multiple, price, title } = attributes;
-
-		// @TODO check componentDidMount for the case where post was already loaded
-		if ( ! prevProps.simplePayment && simplePayment ) {
-			setAttributes( {
-				content: get( simplePayment, [ 'content', 'raw' ], content ),
-				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency ),
-				email: get( simplePayment, [ 'meta', 'spay_email' ], email ),
-				multiple: Boolean( get( simplePayment, [ 'meta', 'spay_multiple' ], Boolean( multiple ) ) ),
-				price: get( simplePayment, [ 'meta', 'spay_price' ], price || undefined ),
-				title: get( simplePayment, [ 'title', 'raw' ], title ),
-			} );
+			debug( '%o !== %o', prevProps.simplePayment, this.props.simplePayment );
+			this.injectPaymentAttributes();
 		}
 
 		// Validate and save on block-deselect
 		if ( prevProps.isSelected && ! isSelected ) {
 			this.saveProduct();
+		}
+	}
+
+	injectPaymentAttributes() {
+		const { setAttributes, simplePayment } = this.props;
+
+		if ( simplePayment ) {
+			setAttributes( {
+				content: simplePayment.content,
+				currency: simplePayment.currency,
+				email: simplePayment.email,
+				multiple: simplePayment.multiple,
+				price: simplePayment.price,
+				title: simplePayment.title,
+			} );
 		}
 	}
 
@@ -107,13 +116,12 @@ class SimplePaymentsEdit extends Component {
 				this.attributesToPost( attributes )
 			)
 				.then( record => {
-					console.info( 'Saved: %o', record );
+					debug( 'Saved: %o', record );
 					setAttributes( { paymentId: record.id } );
 				} )
 				.catch( error => {
 					// @TODO: complete error handling
-					// eslint-disable-next-line no-console
-					console.error( error );
+					debug( error );
 
 					const {
 						data: { key: apiErrorKey },
@@ -484,31 +492,39 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 	if ( ! mapSelectToProps.fromApi ) {
 		const simplePaymentApiSchema = {
 			type: 'object',
-			required: [ 'id', 'content', 'title' ],
+			required: [ 'id', 'content', 'meta', 'title' ],
+			additionalProperties: true,
 			properties: {
-				id: { type: 'integer' },
-				content: {
-					type: 'object',
-					properties: {
-						raw: { type: 'string' },
-						rendered: { type: 'string' },
-					},
-				},
+				id: { type: 'integer', minimum: 0, exclusiveMinimum: true },
+				content: { type: 'object' },
 				meta: {
 					type: 'object',
-				},
-				title: {
-					type: 'object',
+					required: [ 'spay_currency', 'spay_email', 'spay_multiple', 'spay_price' ],
 					properties: {
-						raw: { type: 'string' },
-						rendered: { type: 'string' },
+						spay_currency: { type: 'string', enum: SUPPORTED_CURRENCY_LIST },
+						spay_email: { type: 'string' },
+						spay_multiple: { type: 'boolean' },
+						spay_price: {
+							type: 'number',
+							minimum: 0,
+							exclusiveMinimum: true,
+						},
 					},
 				},
+				title: { type: 'object' },
 			},
 		};
 
 		const fromApiTransform = memoize( data => {
-			return data;
+			return {
+				id: data.id,
+				content: data.content.raw,
+				currency: data.meta.spay_currency,
+				email: data.meta.spay_email,
+				multiple: data.meta.spay_multiple,
+				price: data.meta.spay_price,
+				title: data.title.raw,
+			};
 		} );
 
 		mapSelectToProps.fromApi = makeJsonSchemaParser( simplePaymentApiSchema, fromApiTransform );
@@ -516,13 +532,13 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 
 	let simplePayment = undefined;
 	if ( paymentId ) {
-		try {
-			const record = getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId );
-			simplePayment = mapSelectToProps.fromApi( record );
-		} catch ( err ) {
-			if ( process.env.NODE_ENV !== 'production' ) {
-				// eslint-disable-next-line no-console
-				console.error( err );
+		const record = getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId );
+		debug( 'Record: %o', record );
+		if ( ! isNull( record ) ) {
+			try {
+				simplePayment = mapSelectToProps.fromApi( record );
+			} catch ( err ) {
+				// 😱 Bad payment data! What to do?
 			}
 		}
 	}
@@ -533,4 +549,7 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 	};
 } );
 
-export default compose( mapSelectToProps, withInstanceId )( SimplePaymentsEdit );
+export default compose(
+	mapSelectToProps,
+	withInstanceId
+)( SimplePaymentsEdit );
