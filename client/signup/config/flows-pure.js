@@ -21,7 +21,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		business: {
-			steps: [ 'about', 'themes', 'domains', 'user' ],
+			steps: [ 'user', 'about', 'themes', 'domains' ],
 			destination: function( dependencies ) {
 				return '/plans/select/business/' + dependencies.siteSlug;
 			},
