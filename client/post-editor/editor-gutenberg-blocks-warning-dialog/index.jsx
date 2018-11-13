@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import { getEditorRawContent, getEditorPostId } from 'state/ui/editor/selectors';
 import Dialog from 'components/dialog';
 import { setSelectedEditor } from 'state/selected-editor/actions';
@@ -19,9 +20,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
-import { isEnabled } from 'config';
-import { isJetpackSite } from 'state/sites/selectors';
-import isVipSite from 'state/selectors/is-vip-site';
+import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 
 class EditorGutenbergBlocksWarningDialog extends Component {
 	static propTypes = {
@@ -84,9 +83,9 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 	};
 
 	render() {
-		const { translate, isGutenbergEnabled } = this.props;
+		const { translate } = this.props;
 
-		if ( ! isGutenbergEnabled ) {
+		if ( ! this.props.isGutenbergEnabled ) {
 			return null;
 		}
 
@@ -136,15 +135,12 @@ export default connect(
 		const postId = getEditorPostId( state );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );
 		const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
-		const isVip = isVipSite( state, siteId );
-		const isJetpack = isJetpackSite( state, siteId );
-		const isGutenbergEnabled = isEnabled( 'gutenberg/opt-in' ) && ! isJetpack && ! isVip;
 
 		return {
 			postContent,
 			siteId,
 			gutenbergUrl,
-			isGutenbergEnabled,
+			isGutenbergEnabled: isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, siteId ),
 		};
 	},
 	dispatch => ( {
