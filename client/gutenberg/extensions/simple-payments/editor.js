@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { registerBlockType } from '@wordpress/blocks';
-import GridiconMoney from 'gridicons/dist/money';
+import GridiconCreditCard from 'gridicons/dist/credit-card';
 
 /**
  * Internal dependencies
@@ -26,7 +26,7 @@ registerBlockType( 'jetpack/simple-payments', {
 		'Lets you create and embed credit and debit card payment buttons with minimal setup.'
 	),
 
-	icon: <GridiconMoney />,
+	icon: <GridiconCreditCard />,
 
 	category: 'jetpack',
 
