@@ -24,15 +24,21 @@ registerBlockType( 'jetpack/simple-payments', {
 
 	description: __(
 		'Simple Payments lets you create and embed credit and ' +
-			'debit card payment buttons on your WordPress.com and ' +
-			'Jetpack-enabled sites with minimal setup.'
+			'debit card payment buttons with minimal setup.'
 	),
 
 	icon: <GridiconMoney />,
 
 	category: 'jetpack',
 
-	keywords: [ __( 'Simple Payments' ), _x( 'shop', 'block search term' ), 'PayPal' ],
+	keywords: [
+		__( 'Simple Payments' ),
+		_x( 'shop', 'block search term' ),
+		_x( 'store', 'block search term' ),
+		_x( 'sell', 'block search term' ),
+		_x( 'product', 'block search term' ),
+		'PayPal',
+	],
 
 	attributes: {
 		currency: {
