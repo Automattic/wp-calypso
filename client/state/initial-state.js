@@ -5,7 +5,7 @@
  */
 
 import debugModule from 'debug';
-import { pick, throttle } from 'lodash';
+import { map, pick, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,8 +30,7 @@ export const SERIALIZE_THROTTLE = 5000;
 export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 
 function serialize( state, reducer ) {
-	const serializedState = reducer( state, { type: SERIALIZE } );
-	return Object.assign( serializedState, { _timestamp: Date.now() } );
+	return reducer( state, { type: SERIALIZE } );
 }
 
 function deserialize( state, reducer ) {
@@ -149,8 +148,16 @@ function isValidReduxKeyAndState( key, state ) {
 	return key === getReduxStateKeyForUserId( userId );
 }
 
+function localforageStoreState( reduxStateKey, storageKey, state, _timestamp ) {
+	if ( storageKey !== 'root' ) {
+		reduxStateKey += ':' + storageKey;
+	}
+
+	return localforage.setItem( reduxStateKey, Object.assign( {}, state, { _timestamp } ) );
+}
+
 export function persistOnChange( reduxStore, serializeState = serialize ) {
-	let state, reduxStateKey;
+	let state;
 
 	const throttledSaveState = throttle(
 		function() {
@@ -159,7 +166,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 				return;
 			}
 
-			reduxStateKey = getReduxStateKey();
+			const reduxStateKey = getReduxStateKey();
 			if ( ! isValidReduxKeyAndState( reduxStateKey, nextState ) ) {
 				return;
 			}
@@ -168,9 +175,16 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 			// TODO: serialize with the current reducer rather than initial one once we
 			// start updating the reducer dynamically.
-			localforage
-				.setItem( reduxStateKey, serializeState( state, initialReducer ) )
-				.catch( setError => debug( 'failed to set redux-store state', setError ) );
+			const serializedState = serializeState( state, initialReducer );
+			const _timestamp = new Date();
+
+			const storeTasks = map( serializedState.get(), ( data, storageKey ) =>
+				localforageStoreState( reduxStateKey, storageKey, data, _timestamp )
+			);
+
+			Promise.all( storeTasks ).catch( setError =>
+				debug( 'failed to set redux-store state', setError )
+			);
 		},
 		SERIALIZE_THROTTLE,
 		{ leading: false, trailing: true }
