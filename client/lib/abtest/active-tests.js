@@ -103,4 +103,12 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	calypsoifyGutenberg: {
+		datestamp: '20181113',
+		variations: {
+			yes: 50,
+			no: 50,
+		},
+		defaultVariation: 'no',
+	},
 };
