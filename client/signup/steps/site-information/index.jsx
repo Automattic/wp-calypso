@@ -100,7 +100,7 @@ class SiteInformation extends Component {
 										<FormTextarea
 											id="address"
 											name="address"
-											placeholder={ 'E.g. 21 Main street\nOttawa  ON\nK1V 2K5' }
+											placeholder={ 'E.g. 60 29th Street #343\nSan Francisco, CA\n94110' }
 											onChange={ this.handleInputChange }
 											value={ this.state.address }
 										/>
@@ -190,17 +190,17 @@ function getSiteNameText( siteType ) {
 		case 'business':
 			return {
 				label: i18n.translate( 'Business name' ),
-				placeholder: i18n.translate( "eg. Juliana's Pizza" ),
+				placeholder: i18n.translate( "E.g. Juliana's Pizza" ),
 			};
 		case 'blog':
 			return {
 				label: i18n.translate( 'Blog name' ),
-				placeholder: i18n.translate( 'eg. My travel blog ' ),
+				placeholder: i18n.translate( 'E.g. My travel blog ' ),
 			};
 	}
 	return {
 		label: i18n.translate( 'Site name' ),
-		placeholder: i18n.translate( 'eg. My portfolio' ),
+		placeholder: i18n.translate( 'E.g. My portfolio' ),
 	};
 }
 
