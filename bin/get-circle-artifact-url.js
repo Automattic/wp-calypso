@@ -42,14 +42,14 @@ async function getCircleArtifactUrl( pathMatchRegex ) {
 			}
 		}
 
-		console.error( 'failed to find pot in circle ci' );
+		console.error( 'failed to find artifacts matching %s', pathMatchRegex );
 		process.exit( 1 );
 	} catch ( e ) {
 		console.error( e );
 		process.exit( 1 );
 	}
 
-	console.error( 'failed to get recent translation artifact from CircleCI' );
+	console.error( 'failed to get recent artifact from CircleCI matching %s', pathMatchRegex );
 	process.exit( 1 );
 }
 
