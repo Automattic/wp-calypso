@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import { getEditorRawContent, getEditorPostId } from 'state/ui/editor/selectors';
 import Dialog from 'components/dialog';
 import { setSelectedEditor } from 'state/selected-editor/actions';
@@ -20,6 +19,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
+import { isEnabled } from 'config';
 import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 
 class EditorGutenbergBlocksWarningDialog extends Component {
@@ -30,7 +30,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		gutenbergUrl: PropTypes.string,
 		switchToGutenberg: PropTypes.func,
 		openPostRevisionsDialog: PropTypes.func,
-		isGutenbergEnabled: PropTypes.bool,
+		optInEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -40,7 +40,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		gutenbergUrl: null,
 		switchToGutenberg: noop,
 		openPostRevisionsDialog: noop,
-		isGutenbergEnabled: false,
+		optInEnabled: false,
 	};
 
 	state = {
@@ -83,9 +83,9 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, optInEnabled } = this.props;
 
-		if ( ! this.props.isGutenbergEnabled ) {
+		if ( ! optInEnabled ) {
 			return null;
 		}
 
@@ -135,12 +135,13 @@ export default connect(
 		const postId = getEditorPostId( state );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );
 		const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
+		const optInEnabled = isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, siteId );
 
 		return {
 			postContent,
 			siteId,
 			gutenbergUrl,
-			isGutenbergEnabled: isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, siteId ),
+			optInEnabled,
 		};
 	},
 	dispatch => ( {
