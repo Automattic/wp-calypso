@@ -236,7 +236,7 @@
 		text-align: center;
 
 		&.is-selected {
-			border-bottom-color: $gray-dark;
+			border-bottom-color: $hot-pink;
 		}
 	}
 }
@@ -257,7 +257,7 @@
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 18px;
-	color: $gray-dark;
+	color: $hot-pink;
 	cursor: pointer;
 
 	&:visited {
@@ -272,7 +272,7 @@
 
 	.is-selected & {
 		color: $white;
-		background-color: $blue-medium;
+		background-color: $hot-pink;
 
 		@include breakpoint( "<480px" ) {
 			.count {
@@ -313,15 +313,15 @@
 		display: block;
 		width: auto;
 		padding: 16px 16px 14px 16px;
-		color: $blue-wordpress;
+		color: $gray-text;
 		font-weight: 400;
 
 		&:visited {
-			color: $blue-wordpress;
+			color: $gray-text;
 		}
 
 		.is-selected & {
-			color: $gray-dark;
+			color: $hot-pink;
 			background-color: transparent;
 
 			&:after {
@@ -358,7 +358,7 @@
 	width: 100%;
 	font-size: 14px;
 	line-height: 18px;
-	color: $gray-dark;
+	color: $hot-pink;
 }
 
 // -------- Nav Tabs - dropdowns --------

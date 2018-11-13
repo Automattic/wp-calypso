@@ -54,6 +54,8 @@
 
 	li {
 		display: flex;
+		margin: 8px;
+		border-radius: 4px;
 
 		@include breakpoint( '<660px' ) {
 			background-color: $gray-light;
@@ -91,13 +93,14 @@
 		font-size: 15px;
 		line-height: 1;
 		position: relative;
-		padding: 11px 16px 11px 20px;
+		padding: 11px 16px 11px 16px;
 		color: var( --sidebar-color );
 		box-sizing: border-box;
 		white-space: nowrap;
 		overflow: hidden;
 		display: flex;
 		align-items: center;
+		border-radius: 4px;
 
 		.accessible-focus &:focus {
 			outline: none;
@@ -187,9 +190,11 @@ form.sidebar__button input {
 @include breakpoint( '>660px' ) {
 	.sidebar__menu .selected:not( .sidebar__plugins-item ) {
 		background-color: var( --sidebar-menu-selected-background-color );
+		// box-shadow: inset 3px 0px 0px $hot-pink;
 
 		a {
 			color: var( --sidebar-menu-selected-a-color );
+			// font-weight: bold;
 
 			.sidebar__menu-link-secondary-text {
 				color: inherit;
@@ -199,6 +204,7 @@ form.sidebar__button input {
 				background: overflow-gradient(
 					var( --sidebar-menu-selected-a-first-child-after-background )
 				);
+				display: none;
 			}
 		}
 
@@ -207,7 +213,7 @@ form.sidebar__button input {
 			border: 1px solid $gray-darken-30;
 
 			&:hover {
-				color: $blue-medium;
+				color: $gray-text;
 			}
 		}
 
@@ -273,7 +279,7 @@ form.sidebar__button input {
 	a,
 	form {
 		&.sidebar__button:hover {
-			color: $blue-medium;
+			color: $gray-text;
 		}
 	}
 
@@ -283,7 +289,7 @@ form.sidebar__button input {
 
 	a:hover,
 	form:hover {
-		color: $blue-medium;
+		color: $gray-text;
 
 		.sidebar__menu-link-secondary-text {
 			color: inherit;
@@ -291,7 +297,7 @@ form.sidebar__button input {
 
 		.gridicon,
 		.jetpack-logo {
-			fill: $blue-medium;
+			fill: currentColor;
 		}
 	}
 }

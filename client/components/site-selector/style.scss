@@ -50,7 +50,7 @@
 		.site__domain {
 			color: $white;
 			&::after {
-				@include long-content-fade( $color: $gray );
+				// @include long-content-fade( $color: $gray );
 			}
 		}
 
@@ -81,7 +81,7 @@
 	.site__domain {
 		color: white;
 		&::after {
-			@include long-content-fade( $color: $blue-medium );
+			// @include long-content-fade( $color: $blue-medium );
 		}
 	}
 

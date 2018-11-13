@@ -1,44 +1,98 @@
-// Primary Accent (Blues)
-$blue-wordpress:         #016087;
-$blue-light:             lighten($blue-wordpress, 10%);
-$blue-medium:            #d52c82;
-$blue-dark:              darken($blue-wordpress, 10%);
+// brand definitions from https://automattic.github.io/color-studio/
+
+$blue-700: #23354b;
+$blue-500: #016087;
+$blue-300: #6f93ad;
+
+$hot-pink:     #d52c82;
+$hot-pink-200: #ffa2d4;
+$hot-pink-300: #ff76b8;
+$hot-pink-500: #d52c82;
+$hot-pink-600: #b7266a;
+$hot-pink-700: #992053;
+
+$hot-pink-20:  rgba(213,44,130,0.15);
+
+$gray-50:  #e7e7e7;
+$gray-100: #ccced0;
+$gray-200: #b0b5b8;
+$gray-300: #969ca1;
+$gray-400: #7c848b;
+$gray-500: #636d75;
+$gray-600: #50575d;
+$gray-700: #3d4145;
+$gray-800: #2b2d2f;
+$gray-900: #1a1a1a;
+
+$hot-red-700:    #ac120b;
+$hot-green-700:  #0d5a10;
+$hot-yellow-700: #bd9219;
+$hot-red-500:    #eb0001;
+$hot-green-500:  #008a00;
+$hot-yellow-500: #f6c200;
+$hot-red-300:    #ff8248;
+$hot-green-300:  #73b961;
+$hot-yellow-300: #fbda70;
+
+// high-level application variables
+
+/* main colors */
+$color-primary: $blue-500;
+$color-primary-light: $blue-300 ;
+$color-primary-dark: $blue-700;
+// $color-primary-dark: ;
+// $color-primary-bg: ;
+
+$color-accent: $hot-pink-500 ;
+// $color-accent-light: ;
+// $color-accent-dark: ;
+// $color-accent-bg: ;
+
+$color-primary-action:       $hot-pink-500;
+$color-primary-action-light: $hot-pink-200;
+
+$color-text-subtle: $gray-500;
+$color-text: $gray-800;
+
+$color-warning:        $hot-yellow-500;
+$color-warning-light:  $hot-yellow-300;
+$color-warning-dark:   $hot-yellow-700;
+
+$color-error:          $hot-red-500;
+$color-error-light:    $hot-red-300;
+$color-error-dark:     $hot-red-700;
+
+$color-success:        $hot-green-500;
+$color-success-light:  $hot-green-300;
+$color-success-dark:   $hot-green-700;
+
+$color-surface-background: rgba($gray-50,0.25);
+
+$color-link: $color-primary;
+$color-link-hover: $color-accent;
+
 
 // Jetpack Green
 $green-jetpack:          #00be28;
 
-// Grays
-$gray:                   #87a6bc;
-$gray-light:             lighten( $gray, 33% ); //#f3f6f8
-$gray-dark:              darken( $gray, 38% ); //#2e4453
+$gray:                   $gray-300;
+$gray-light:             $gray-50;
+$gray-dark:              $gray-700;
 
 // $gray-text: ideal for standard, non placeholder text
 // $gray-text-min: minimum contrast needed for WCAG 2.0 AA on white background
-$gray-text:              $gray-dark;
-$gray-text-min:          darken( $gray, 18% ); //#537994
+$gray-text:              $gray-800;
+$gray-text-min:          $gray-500; //#537994
 
 // Shades of gray
-$gray-lighten-10: lighten( $gray, 10% ); // #a8bece
-$gray-lighten-20: lighten( $gray, 20% ); // #c8d7e1
-$gray-lighten-30: lighten( $gray, 30% ); // #e9eff3
-$gray-darken-10:  darken( $gray, 10% );  // #668eaa
-$gray-darken-20:  darken( $gray, 20% );  // #4f748e
-$gray-darken-30:  darken( $gray, 30% );  // #3d596d
+$gray-lighten-10: $gray-200; // #a8bece
+$gray-lighten-20: $gray-100; // #c8d7e1
+$gray-lighten-30: $gray-50; // #e9eff3
+$gray-darken-10:  $gray-400;  // #668eaa
+$gray-darken-20:  $gray-500;  // #4f748e
+$gray-darken-30:  $gray-600;  // #3d596d
 //
 // See wordpress.com/design-handbook/colors/ for more info.
-
-// Secondary Accent (Oranges)
-$orange-jazzy:           #d52c82;
-$orange-fire:            #d52c82;
-
-// Alerts
-$alert-yellow:           #f0b849;
-$alert-red:              #EB0834;
-$alert-green:            #0E821D;
-$alert-purple:           #855DA6;
-
-// Link hovers
-$link-highlight:         tint($blue-medium, 20%);
 
 // Essentials
 $white:                  rgba(255,255,255,1);
@@ -46,16 +100,7 @@ $transparent:            rgba(255,255,255,0);
 
 // Uncommon
 $border-ultra-light-gray: #e8f0f5;
-// $green-text-min: minimum contrast needed for WCAG 2.0 AA on white background
-$green-text-min:          darken( $alert-green, 14% ); // #358649
 $podcasting-purple:       #9b4dd5;
-
-// Layout
-$masterbar-color:          $blue-wordpress;
-$sidebar-bg-color:         $gray-lighten-30;
-$sidebar-text-color:       $gray-dark;
-$sidebar-selected-color:   $gray-text-min;
-
 
 //Social media colors
 $color-facebook: #39579a;
@@ -76,3 +121,32 @@ $color-skype: #00AFF0;
 $color-telegram: #0088cc;
 $color-whatsapp: #43d854;
 $color-wordpressOrg: #585c60;
+
+// aliases
+
+$blue-wordpress:         $blue-500;
+$blue-light:             $blue-300;
+$blue-medium:            $hot-pink-500;
+$blue-dark:              $blue-700;
+
+$link-highlight:         tint($blue-medium, 20%);
+
+// Layout
+// $content-background-color: rgba($gray-50, 0.25);
+$content-background-color: rgba($gray-50, 0.25);
+$masterbar-color:          $blue-wordpress;
+$sidebar-bg-color:         $gray-lighten-30;
+$sidebar-text-color:       $gray-dark;
+$sidebar-selected-color:   $gray-text-min;
+
+$alert-yellow:           $hot-yellow-500;
+$alert-red:              $hot-red-500;
+$alert-green:            $hot-green-500;
+$alert-purple:           #7c589f;
+
+// $green-text-min: minimum contrast needed for WCAG 2.0 AA on white background
+$green-text-min:          darken( $alert-green, 14% ); // #358649
+
+// Secondary Accent (Oranges)
+$orange-jazzy:           $hot-pink-500;
+$orange-fire:            $hot-pink-500;

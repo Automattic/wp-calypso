@@ -31,9 +31,9 @@
 	}
 
 	&:focus {
-		border-color: $blue-wordpress;
+		border-color: $color-primary-action;
 		outline: none;
-		box-shadow: 0 0 0 2px $blue-light;
+		box-shadow: 0 0 0 2px $color-primary-action-light;
 
 		&::-ms-clear {
 			display: none;
@@ -57,36 +57,36 @@
 	}
 
 	&.is-valid {
-		border-color: $alert-green;
+		border-color: $color-success;
 	}
 
 	&.is-valid:hover {
-		border-color: darken( $alert-green, 10 );
+		border-color: $color-success-dark;
 	}
 
 	&.is-error {
-		border-color: $alert-red;
+		border-color: $color-error;
 	}
 
 	&.is-error:hover {
-		border-color: darken( $alert-red, 10 );
+		border-color: $color-error-dark;
 	}
 
 	&:focus {
 		&.is-valid {
-			box-shadow: 0 0 0 2px lighten( $alert-green, 35 );
+			box-shadow: 0 0 0 2px $color-success-light;
 		}
 
 		&.is-valid:hover {
-			box-shadow: 0 0 0 2px lighten( $alert-green, 25 );
+			box-shadow: 0 0 0 2px $color-success-light;
 		}
 
 		&.is-error {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 35 );
+			box-shadow: 0 0 0 2px $color-error-light;
 		}
 
 		&.is-error:hover {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 25 );
+			box-shadow: 0 0 0 2px $color-error-light;
 		}
 	}
 }
