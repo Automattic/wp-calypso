@@ -32,7 +32,7 @@ describe( 'system reducer', () => {
 		const previousState = { system: { wpcomSubscription: wpcomSubscription } };
 		deepFreeze( previousState );
 		const action = { type: SERIALIZE };
-		const newState = reducer( previousState, action );
+		const newState = reducer( previousState, action ).root();
 
 		expect( newState.system ).to.eql( { wpcomSubscription } );
 	} );
@@ -49,7 +49,7 @@ describe( 'system reducer', () => {
 		};
 		deepFreeze( previousState );
 		const action = { type: SERIALIZE };
-		const newState = reducer( previousState, action );
+		const newState = reducer( previousState, action ).root();
 
 		expect( newState.system ).to.eql( { wpcomSubscription } );
 	} );
@@ -110,7 +110,7 @@ describe( 'settings reducer', () => {
 		};
 		deepFreeze( previousState );
 		const action = { type: SERIALIZE };
-		const newState = reducer( previousState, action );
+		const newState = reducer( previousState, action ).root();
 
 		expect( newState.settings ).to.eql( {
 			dismissedNotice: true,
@@ -128,7 +128,7 @@ describe( 'settings reducer', () => {
 		};
 		deepFreeze( previousState );
 		const action = { type: SERIALIZE };
-		const newState = reducer( previousState, action );
+		const newState = reducer( previousState, action ).root();
 
 		expect( newState.settings ).to.eql( {
 			enabled: true,

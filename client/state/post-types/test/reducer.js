@@ -102,7 +102,7 @@ describe( 'reducer', () => {
 				{ type: SERIALIZE }
 			);
 
-			expect( state ).to.eql( {
+			expect( state.root() ).to.eql( {
 				2916284: {
 					post: { name: 'post', label: 'Posts' },
 				},

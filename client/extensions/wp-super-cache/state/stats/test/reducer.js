@@ -18,8 +18,7 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 } from '../../action-types';
-import reducer from '../reducer';
-import { generating } from '../reducer';
+import reducer, { generating } from '../reducer';
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -275,7 +274,7 @@ describe( 'reducer', () => {
 					type: SERIALIZE,
 				} );
 
-				expect( state.items ).to.eql( {
+				expect( state.root().items ).to.eql( {
 					[ primarySiteId ]: primaryStats,
 				} );
 			} );

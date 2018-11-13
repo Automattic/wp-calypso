@@ -393,7 +393,7 @@ describe( 'utils', () => {
 				1: 'chicken',
 				2: 'chicken',
 			} );
-			expect( keyed( prev, { type: 'SERIALIZE' } ) ).toEqual( { 1: 'serialized chicken' } );
+			expect( keyed( prev, { type: 'SERIALIZE' } ).root() ).toEqual( { 1: 'serialized chicken' } );
 			expect( keyed( prev, { type: 'DESERIALIZE' } ) ).toEqual( { 1: 'deserialized chicken' } );
 		} );
 
@@ -410,9 +410,9 @@ describe( 'utils', () => {
 			};
 
 			const keyed = keyedReducer( 'id', itemReducer );
-
-			expect( keyed( { a: 13, b: 0, c: 1 }, { type: 'SERIALIZE' } ) ).toEqual( { c: 1 } );
-			expect( keyed( { a: 13, b: 0, c: 1 }, { type: 'DESERIALIZE' } ) ).toEqual( { c: 1 } );
+			const state = { a: 13, b: 0, c: 1 };
+			expect( keyed( state, { type: 'SERIALIZE' } ).root() ).toEqual( { c: 1 } );
+			expect( keyed( state, { type: 'DESERIALIZE' } ) ).toEqual( { c: 1 } );
 		} );
 
 		test( 'should not serialize empty state', () => {
@@ -425,7 +425,8 @@ describe( 'utils', () => {
 
 			// state with non-initial value
 			const state = { '1': 1 };
-			expect( keyed( state, { type: 'SERIALIZE' } ) ).toEqual( { '1': 1 } );
+			const serialized = keyed( state, { type: 'SERIALIZE' } );
+			expect( serialized.root() ).toEqual( { '1': 1 } );
 		} );
 
 		test( 'should not serialize nested empty state', () => {
@@ -443,7 +444,8 @@ describe( 'utils', () => {
 			// Another reason why empty state might not be persisted is that the tested reducer didn't
 			// opt in into persistence in the first place -- and we DON'T want to test that!
 			const stateWithData = { a: { '1': 1 } };
-			expect( nestedReducer( stateWithData, { type: 'SERIALIZE' } ) ).toEqual( { a: { '1': 1 } } );
+			const serializedWithData = nestedReducer( stateWithData, { type: 'SERIALIZE' } );
+			expect( serializedWithData.root() ).toEqual( { a: { '1': 1 } } );
 
 			// initial state should not serialize
 			const state = nestedReducer( undefined, { type: 'INIT' } );
@@ -584,7 +586,7 @@ describe( 'utils', () => {
 
 		test( 'should not persist height, because it is missing a schema', () => {
 			const state = reducers( appState, write );
-			expect( state ).toEqual( { age: 20 } );
+			expect( state.root() ).toEqual( { age: 20 } );
 		} );
 
 		test( 'should not load height, because it is missing a schema', () => {
@@ -612,7 +614,7 @@ describe( 'utils', () => {
 			} );
 
 			const missingPerson = nested( { date: new Date( 100 ) }, write );
-			expect( missingPerson ).toEqual( { date: 100 } );
+			expect( missingPerson.root() ).toEqual( { date: 100 } );
 		} );
 
 		test( 'nested reducers work on load', () => {
@@ -649,10 +651,10 @@ describe( 'utils', () => {
 				count,
 			} );
 			const valid = nested( { person: { age: 22, date: new Date( 224 ) } }, write );
-			expect( valid ).toEqual( { person: { age: 22, date: 224 } } );
+			expect( valid.root() ).toEqual( { person: { age: 22, date: 224 } } );
 
 			const invalid = nested( { person: { age: -5, height: 100, date: new Date( -500 ) } }, write );
-			expect( invalid ).toEqual( { person: { age: -5, date: -500 } } );
+			expect( invalid.root() ).toEqual( { person: { age: -5, date: -500 } } );
 		} );
 
 		test( 'nested reducers leave out a state slice where none of the children is persisted', () => {
@@ -675,7 +677,7 @@ describe( 'utils', () => {
 				},
 				write
 			);
-			expect( stored ).toEqual( { age: 40 } );
+			expect( stored.root() ).toEqual( { age: 40 } );
 		} );
 
 		test( 'deeply nested reducers work on load', () => {
@@ -724,13 +726,13 @@ describe( 'utils', () => {
 				{ bob: { person: { age: 22, date: new Date( 234 ) } }, count: 122 },
 				write
 			);
-			expect( valid ).toEqual( { bob: { person: { age: 22, date: 234 } } } );
+			expect( valid.root() ).toEqual( { bob: { person: { age: 22, date: 234 } } } );
 
 			const invalid = veryNested(
 				{ bob: { person: { age: -5, height: 22, date: new Date( -5 ) } }, count: 123 },
 				write
 			);
-			expect( invalid ).toEqual( { bob: { person: { age: -5, date: -5 } } } );
+			expect( invalid.root() ).toEqual( { bob: { person: { age: -5, date: -5 } } } );
 		} );
 
 		test( 'deeply nested reducers work with reducer with a custom handler', () => {
@@ -746,13 +748,13 @@ describe( 'utils', () => {
 				count,
 			} );
 			const valid = veryNested( { bob: { person: { date: new Date( 234 ) } }, count: 122 }, write );
-			expect( valid ).toEqual( { bob: { person: { date: 234 } } } );
+			expect( valid.root() ).toEqual( { bob: { person: { date: 234 } } } );
 
 			const invalid = veryNested(
 				{ bob: { person: { height: 22, date: new Date( -5 ) } }, count: 123 },
 				write
 			);
-			expect( invalid ).toEqual( { bob: { person: { date: -5 } } } );
+			expect( invalid.root() ).toEqual( { bob: { person: { date: -5 } } } );
 		} );
 
 		test( 'uses the provided validation from withSchemaValidation', () => {
@@ -762,7 +764,7 @@ describe( 'utils', () => {
 			} );
 
 			const valid = reducers( { height: 22, count: 44 }, write );
-			expect( valid ).toEqual( { height: 22 } );
+			expect( valid.root() ).toEqual( { height: 22 } );
 
 			const invalid = reducers( { height: -1, count: 44 }, load );
 			expect( invalid ).toEqual( { height: 160, count: 1 } );
@@ -775,7 +777,7 @@ describe( 'utils', () => {
 			} );
 
 			const valid = reducers( { height: 22, count: 44 }, write );
-			expect( valid ).toEqual( { height: 22 } );
+			expect( valid.root() ).toEqual( { height: 22 } );
 
 			const invalid = reducers( { height: -1, count: 44 }, load );
 			expect( invalid ).toEqual( { height: 160, count: 1 } );
