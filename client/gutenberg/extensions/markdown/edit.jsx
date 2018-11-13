@@ -84,7 +84,7 @@ class MarkdownEdit extends Component {
 		return (
 			<div className={ className }>
 				<InspectorControls>
-					<PanelBody>
+					<PanelBody className="jetpack-markdown__support">
 						<ExternalLink href="https://en.support.wordpress.com/markdown-quick-reference/">
 							{ __( 'Support reference' ) }
 						</ExternalLink>

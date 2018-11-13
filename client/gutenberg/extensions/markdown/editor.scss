@@ -145,3 +145,10 @@ $text-editor-font-size: inherit;
 		}
 	}
 }
+
+// Sidebar
+.components-panel .jetpack-markdown__support {
+	border-top: 0;
+	padding-left: 54px;
+	padding-top: 0;
+}
