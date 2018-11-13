@@ -40,20 +40,19 @@ class SubscriptionEdit extends Component {
 
 		let subscriberCount = null;
 		if ( show_subscribers_total ) {
-			if ( 1 === Jetpack_Initial_State.userData.subscriberCount ) {
+			if ( 1 === Jetpack_Initial_State.getModules.subscriptions.data.subscriber_count ) {
 				subscriberCount = sprintf(
 					__( 'Join %s other subscriber' ),
-					Jetpack_Initial_State.userData.subscriberCount
+					Jetpack_Initial_State.getModules.subscriptions.data.subscriber_count
 				);
 			} else {
 				subscriberCount = sprintf(
 					__( 'Join %s other subscribers' ),
-					Jetpack_Initial_State.userData.subscriberCount
+					Jetpack_Initial_State.getModules.subscriptions.data.subscriber_count
 				);
 			}
 		}
 
-		//const subscriberCount = show_subscribers_total ? 'Join ' + Jetpack_Initial_State.userData.subscriberCount + ' other subscribers' : '';
 		return (
 			<div className={ className }>
 				{ subscriberCount }
