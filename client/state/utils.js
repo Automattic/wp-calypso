@@ -338,6 +338,11 @@ export const withSchemaValidation = ( schema, reducer ) => {
 	return wrappedReducer;
 };
 
+export const withStorageKey = ( storageKey, reducer ) => {
+	reducer.storageKey = storageKey;
+	return reducer;
+};
+
 /**
  * Wraps a reducer such that it won't persist any state to the browser's local storage
  *
