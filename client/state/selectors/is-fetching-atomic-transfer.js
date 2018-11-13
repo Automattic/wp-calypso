@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { getAtomicTransfer } from 'state/selectors/get-atomic-transfer';
+import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
 
 /**
  * Returns whether we are already fetching the Atomic transfer for given siteId.

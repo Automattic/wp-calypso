@@ -5,6 +5,6 @@
  */
 import { get } from 'lodash';
 
-export const getAtomicTransfer = ( state, siteId ) => {
+export default ( state, siteId ) => {
 	return get( state, [ 'atomicTransfer', siteId ] , {} );
 };
