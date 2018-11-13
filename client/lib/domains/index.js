@@ -9,6 +9,7 @@ import { includes, find, get, replace, some } from 'lodash';
 /**
  * Internal dependencies
  */
+import CartStore from 'lib/cart/store';
 import wpcom from 'lib/wp';
 import { type as domainTypes, domainAvailability } from './constants';
 import { parseDomainAgainstTldList } from './utils';
@@ -31,7 +32,15 @@ function canAddGoogleApps( domainName ) {
 			return includes( domainName, phrase );
 		} );
 
-	return ! ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase );
+	return ! (
+		includes( GOOGLE_APPS_INVALID_TLDS, tld ) ||
+		includesBannedPhrase ||
+		isGsuiteRestricted()
+	);
+}
+
+function isGsuiteRestricted() {
+	return ! CartStore.get().is_gsuite_available;
 }
 
 function checkAuthCode( domainName, authCode, onComplete ) {
@@ -307,6 +316,7 @@ export {
 	hasGoogleAppsSupportedDomain,
 	hasMappedDomain,
 	hasPendingGoogleAppsUsers,
+	isGsuiteRestricted,
 	isMappedDomain,
 	isRegisteredDomain,
 	isSubdomain,
