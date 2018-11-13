@@ -158,7 +158,7 @@ class Signup extends React.Component {
 
 	UNSAFE_componentWillReceiveProps( { signupDependencies, stepName, flowName, progress } ) {
 		if ( this.props.stepName !== stepName ) {
-			this.recordStep( stepName );
+			this.recordStep( stepName, flowName );
 		}
 
 		if ( stepName === this.state.resumingStep ) {
@@ -290,9 +290,9 @@ class Signup extends React.Component {
 		}
 	};
 
-	recordStep = ( stepName = this.props.stepName ) => {
+	recordStep = ( stepName = this.props.stepName, flowName = this.props.flowName ) => {
 		analytics.tracks.recordEvent( 'calypso_signup_step_start', {
-			flow: this.props.flowName,
+			flow: flowName,
 			step: stepName,
 		} );
 	};
