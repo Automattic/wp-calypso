@@ -18,7 +18,7 @@ import debounce from 'lodash/debounce';
 import MapMarker from './map-marker/';
 import InfoWindow from './info-window/';
 import { mapboxMapFormatter } from './mapbox-map-formatter/';
-import asyncLoader from './asyncLoader';
+import asyncLoader from './async-loader';
 
 export class Map extends Component {
 	// Lifecycle
