@@ -11,6 +11,7 @@ import { Component, Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import GridiconMention from 'gridicons/dist/mention';
 
 class JetpackContactForm extends Component {
 	constructor( ...args ) {
@@ -86,7 +87,7 @@ class JetpackContactForm extends Component {
 				</InspectorControls>
 				<div className={ formClassnames }>
 					{ ! has_form_settings_set && (
-						<Placeholder label={ __( 'Contact Form' ) } icon="feedback">
+						<Placeholder label={ __( 'Contact Form' ) } icon={ <GridiconMention /> }>
 							<form onSubmit={ this.onFormSettingsSet }>
 								<p className="jetpack-contact-form__intro-message">{ this.getIntroMessage() }</p>
 								<TextControl

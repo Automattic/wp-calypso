@@ -18,6 +18,7 @@ import JetpackFieldTextarea from './components/jetpack-field-textarea';
 import JetpackFieldCheckbox from './components/jetpack-field-checkbox';
 import JetpackFieldMultiple from './components/jetpack-field-multiple';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import GridiconMention from 'gridicons/dist/mention';
 
 /**
  * Block Registrations:
@@ -25,8 +26,8 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 registerBlockType( 'jetpack/contact-form', {
 	title: __( 'Contact Form' ),
 	description: __( 'A simple way to get feedback from folks visiting your site.' ),
-	icon: 'feedback',
-	keywords: [ __( 'email' ) ],
+	icon: <GridiconMention />,
+	keywords: [ __( 'email' ), __( 'feedback' ), 'email' ],
 	category: 'jetpack',
 	supports: {
 		html: false,
