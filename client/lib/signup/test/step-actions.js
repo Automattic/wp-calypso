@@ -6,6 +6,10 @@
 import { createSiteWithCart } from '../step-actions';
 import { useNock } from 'test/helpers/use-nock';
 
+// This is necessary since localforage will throw "no local storage method found" promise rejection without this.
+// See how lib/user-settings/test apply the same trick.
+jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
+
 describe( 'createSiteWithCart()', () => {
 	// createSiteWithCart() function is not designed to be easy for test at the moment.
 	// Thus we intentionally mock the failing case here so that the parts we want to test
