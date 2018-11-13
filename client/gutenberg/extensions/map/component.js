@@ -7,6 +7,7 @@
 import { __ } from '@wordpress/i18n';
 import { Component, createRef, Fragment, Children } from '@wordpress/element';
 import { Button, Dashicon, TextareaControl, TextControl } from '@wordpress/components';
+import has from 'lodash/has';
 import get from 'lodash/get';
 import assign from 'lodash/assign';
 import debounce from 'lodash/debounce';
@@ -18,7 +19,6 @@ import debounce from 'lodash/debounce';
 import { GoogleMapMarker, MapboxMapMarker } from './map-marker/';
 import InfoWindow from './info-window/';
 import { mapboxMapFormatter, googleMapFormatter } from './map-formatter/';
-import asyncLoader from './asyncLoader';
 
 export class Map extends Component {
 	// Lifecycle
@@ -38,14 +38,17 @@ export class Map extends Component {
 		// Debouncers
 		this.debouncedSizeMap = debounce( this.sizeMap, 250 );
 	}
-	isServiceScriptValid = ( map_service, service_script ) => {
-		if ( 'googlemaps' === map_service && window.google && window.google === service_script ) {
+	validServiceScript = ( service_script, map_service ) => {
+		if ( 'googlemaps' === map_service && has( service_script, 'maps.geometry' ) ) {
 			return service_script;
 		}
-		if ( 'mapbox' === map_service && window.mapboxgl && window.mapboxgl === service_script ) {
+		if (
+			'mapbox' === map_service &&
+			get( service_script, 'config.API_URL' ) === 'https://api.mapbox.com'
+		) {
 			return service_script;
 		}
-		return false;
+		return null;
 	};
 	render() {
 		const { points, admin, children, marker_color, map_service } = this.props;
@@ -54,7 +57,7 @@ export class Map extends Component {
 		const currentPoint = get( activeMarker, 'props.point' ) || {};
 		const { title, caption } = currentPoint;
 		let addPoint = null;
-		const validServiceScript = this.isServiceScriptValid( map_service, service_script );
+		const validServiceScript = this.validServiceScript( service_script, map_service );
 		Children.map( children, element => {
 			if ( element && 'AddPoint' === element.type.name ) {
 				addPoint = element;
@@ -270,7 +273,9 @@ export class Map extends Component {
 	}
 	// Script loading, browser geolocation
 	scriptsLoaded = () => {
-		const { map_center, points } = this.props;
+		const { map_center, points, onSetServiceScript } = this.props;
+		const { service_script } = this.state;
+		onSetServiceScript( service_script );
 		this.setState( { loaded: true } );
 
 		// If the map has any points, skip geolocation and use what we have.
@@ -282,16 +287,21 @@ export class Map extends Component {
 	};
 	loadMapLibraries() {
 		const { api_key, map_service } = this.props;
-		const urls = this.libraryURLsForMapService( map_service );
-		asyncLoader( urls, () => {
-			if ( 'googlemaps' === map_service ) {
-				this.setState( { service_script: window.google }, this.scriptsLoaded );
-			}
-			if ( 'mapbox' === map_service ) {
-				window.mapboxgl.accessToken = api_key;
-				this.setState( { service_script: window.mapboxgl }, this.scriptsLoaded );
-			}
-		} );
+		if ( 'mapbox' === map_service ) {
+			Promise.all( [ import( 'mapbox-gl' ) ] ).then( ( [ { default: mapboxgl } ] ) => {
+				mapboxgl.accessToken = api_key;
+				this.setState( { service_script: mapboxgl }, this.scriptsLoaded );
+			} );
+		}
+		if ( 'googlemaps' === map_service ) {
+			Promise.all( [ import( 'google-maps' ) ] ).then( ( [ { default: GoogleMapsLoader } ] ) => {
+				GoogleMapsLoader.KEY = api_key;
+				GoogleMapsLoader.LIBRARIES = [ 'geometry', 'places' ];
+				GoogleMapsLoader.load( google => {
+					this.setState( { service_script: google }, this.scriptsLoaded );
+				} );
+			} );
+		}
 	}
 
 	googlePoint2Mapbox( google_point ) {
@@ -387,16 +397,6 @@ export class Map extends Component {
 		} );
 	};
 
-	serviceScriptAlreadyLoaded = map_service => {
-		switch ( map_service ) {
-			case 'googlemaps':
-				return window.google ? window.google : null;
-			case 'mapbox':
-				return window.mapboxgl ? window.mapboxgl : null;
-		}
-		return null;
-	};
-
 	setZoomControlForService = ( map_service, visibility ) => {
 		const { map, zoomControl } = this.state;
 		if ( 'mapbox' === map_service ) {
@@ -410,35 +410,6 @@ export class Map extends Component {
 		if ( 'googlemaps' === map_service ) {
 			map.setOptions( { zoomControl: visibility } );
 			return;
-		}
-	};
-
-	libraryURLsForMapService = map_service => {
-		const { api_key } = this.props;
-		switch ( map_service ) {
-			case 'googlemaps':
-				const url = [
-					'https://maps.googleapis.com/maps/api/js?key=',
-					api_key,
-					'&libraries=places',
-				].join( '' );
-				return [
-					{
-						type: 'js',
-						url,
-					},
-				];
-			case 'mapbox':
-				return [
-					{
-						type: 'js',
-						url: 'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js',
-					},
-					{
-						type: 'css',
-						url: 'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css',
-					},
-				];
 		}
 	};
 
@@ -519,6 +490,7 @@ Map.defaultProps = {
 	onMapLoaded: () => {},
 	onMarkerClick: () => {},
 	onError: () => {},
+	onSetServiceScript: () => {},
 	marker_color: 'red',
 	api_key: null,
 	map_center: {},

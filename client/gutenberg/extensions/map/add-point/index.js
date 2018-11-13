@@ -16,7 +16,7 @@ import LocationSearch from '../location-search';
 import './style.scss';
 export class AddPoint extends Component {
 	render() {
-		const { onClose, onAddPoint, onError, api_key, map_service } = this.props;
+		const { onClose, onAddPoint, onError, api_key, map_service, service_script } = this.props;
 		return (
 			<Button className="component__add-point">
 				{ __( 'Add marker', 'jetpack' ) }
@@ -29,6 +29,7 @@ export class AddPoint extends Component {
 						label={ __( 'Add a location', 'jetpack' ) }
 						api_key={ api_key }
 						map_service={ map_service }
+						service_script={ service_script }
 						onError={ onError }
 					/>
 				</Popover>
@@ -39,6 +40,7 @@ export class AddPoint extends Component {
 
 AddPoint.defaultProps = {
 	onAddPoint: () => {},
+	service_script: null,
 	onClose: () => {},
 	onError: () => {},
 };

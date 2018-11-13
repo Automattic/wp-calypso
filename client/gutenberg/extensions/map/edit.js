@@ -146,7 +146,7 @@ class MapEdit extends Component {
 			align,
 			map_service,
 		} = attributes;
-		const { addPointVisibility, api_key, apiKeyControl, apiState } = this.state;
+		const { addPointVisibility, api_key, apiKeyControl, apiState, service_script } = this.state;
 		const mapServices = [
 			{ label: 'Mapbox', value: 'mapbox' },
 			{ label: 'Google Maps', value: 'googlemaps' },
@@ -285,6 +285,9 @@ class MapEdit extends Component {
 						onSetZoom={ value => {
 							setAttributes( { zoom: value } );
 						} }
+						onSetServiceScript={ value => {
+							this.setState( { service_script: value } );
+						} }
 						admin={ true }
 						api_key={ api_key }
 						map_service={ map_service }
@@ -300,6 +303,7 @@ class MapEdit extends Component {
 								api_key={ api_key }
 								map_service={ map_service }
 								onError={ this.onError }
+								service_script={ service_script }
 							/>
 						) }
 					</Map>

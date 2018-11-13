@@ -99,8 +99,9 @@ export class LocationSearch extends Component {
 		} );
 	};
 	getOptionCompletionGoogle = option => {
+		const { service_script } = this.props;
 		const { value } = option;
-		const placesService = new window.google.maps.places.PlacesService( this.containerRef.current );
+		const placesService = new service_script.maps.places.PlacesService( this.containerRef.current );
 		placesService.getDetails(
 			{ placeId: value.place_id },
 			function( place ) {
@@ -122,14 +123,15 @@ export class LocationSearch extends Component {
 	};
 
 	searchGoogle = value => {
-		const placeSearch = new window.google.maps.places.AutocompleteService();
+		const { service_script } = this.props;
+		const placeSearch = new service_script.maps.places.AutocompleteService();
 		return new Promise( function( resolve, reject ) {
 			placeSearch.getPlacePredictions(
 				{
 					input: value,
 				},
 				function( place, status ) {
-					if ( status !== window.google.maps.places.PlacesServiceStatus.OK ) {
+					if ( status !== service_script.maps.places.PlacesServiceStatus.OK ) {
 						reject( new Error( status ) );
 					} else {
 						resolve( place );
@@ -167,6 +169,7 @@ export class LocationSearch extends Component {
 
 LocationSearch.defaultProps = {
 	onError: () => {},
+	service_script: null,
 };
 
 export default LocationSearch;
