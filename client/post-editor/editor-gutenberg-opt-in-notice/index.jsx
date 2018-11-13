@@ -7,23 +7,22 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
+import { isEnabled } from 'config';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
-import { isEnabled } from 'config';
-import { isJetpackSite } from 'state/sites/selectors';
-import isVipSite from 'state/selectors/is-vip-site';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 class EditorGutenbergOptInNotice extends Component {
 	static propTypes = {
-		// connected properties
 		translate: PropTypes.func,
+		// connected properties
 		showDialog: PropTypes.func,
 		optInEnabled: PropTypes.bool,
 	};
@@ -58,16 +57,12 @@ class EditorGutenbergOptInNotice extends Component {
 	}
 }
 
-const mapDispatchToProps = { showDialog: showGutenbergOptInDialog };
+const mapStateToProps = state => ( {
+	optInEnabled:
+		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) ),
+} );
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const isVip = isVipSite( state, siteId );
-	const isJetpack = isJetpackSite( state, siteId );
-	return {
-		optInEnabled: isEnabled( 'gutenberg/opt-in' ) && ! isJetpack && ! isVip,
-	};
-};
+const mapDispatchToProps = { showDialog: showGutenbergOptInDialog };
 
 export default connect(
 	mapStateToProps,
