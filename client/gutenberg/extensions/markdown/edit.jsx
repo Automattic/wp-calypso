@@ -61,6 +61,7 @@ class MarkdownEdit extends Component {
 		// Remove the block if source is empty and we're pressing the Backspace key
 		if ( e.keyCode === 8 && source === '' ) {
 			removeBlock();
+			e.preventDefault();
 		}
 	};
 
