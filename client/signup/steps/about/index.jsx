@@ -56,9 +56,6 @@ class AboutStep extends Component {
 	constructor( props ) {
 		super( props );
 		this._isMounted = false;
-		if ( props.shouldSkipAboutStep ) {
-			props.goToNextStep( props.flowName );
-		}
 		const hasPrepopulatedVertical =
 			isValidLandingPageVertical( props.siteTopic ) &&
 			props.queryObject.vertical === props.siteTopic;
