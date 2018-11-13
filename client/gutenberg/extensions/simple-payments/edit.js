@@ -52,6 +52,14 @@ class SimplePaymentsEdit extends Component {
 	componentDidUpdate( prevProps ) {
 		const { isSelected } = this.props;
 
+		if ( prevProps.isLoadingInitial !== this.props.isLoadingInitial ) {
+			debug(
+				'isLoadingInitial changed: %o; simplePayment: %o',
+				this.props.isLoadingInitial,
+				this.props.simplePayment
+			);
+		}
+
 		if ( prevProps.simplePayment !== this.props.simplePayment ) {
 			debug( '%o !== %o', prevProps.simplePayment, this.props.simplePayment );
 			this.injectPaymentAttributes();
@@ -488,6 +496,7 @@ class SimplePaymentsEdit extends Component {
 const mapSelectToProps = withSelect( ( select, props ) => {
 	const { paymentId } = props.attributes;
 	const { getEntityRecord } = select( 'core' );
+	const { isResolving } = select( 'core/data' );
 
 	if ( ! mapSelectToProps.fromApi ) {
 		const simplePaymentApiSchema = {
@@ -531,8 +540,11 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 	}
 
 	let simplePayment = undefined;
+	let isLoadingInitial = false;
 	if ( paymentId ) {
-		const record = getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId );
+		const args = [ 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId ];
+		const record = getEntityRecord( ...args );
+		isLoadingInitial = isResolving( 'core', 'getEntityRecord', args );
 		debug( 'Record: %o', record );
 		if ( ! isNull( record ) ) {
 			try {
@@ -544,7 +556,7 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 	}
 
 	return {
-		isLoadingInitial: paymentId && ! simplePayment,
+		isLoadingInitial,
 		simplePayment,
 	};
 } );
