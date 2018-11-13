@@ -92,7 +92,9 @@ class SiteTopicStep extends Component {
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
 					headerText={ headerText }
+					fallbackHeaderText={ headerText }
 					subHeaderText={ subHeaderText }
+					fallbackSubHeaderText={ subHeaderText }
 					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderContent() }
 					goToNextStep={ this.skipStep }
