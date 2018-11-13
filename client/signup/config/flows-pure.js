@@ -54,21 +54,21 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		free: {
-			steps: [ 'about', 'themes', 'domains', 'user' ],
+			steps: [ 'user', 'about', 'themes', 'domains' ],
 			destination: getSiteDestination,
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2018-01-24',
 		},
 
 		blog: {
-			steps: [ 'blog-themes', 'domains', 'plans', 'user' ],
+			steps: [ 'user', 'blog-themes', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'Signup flow starting with blog themes',
 			lastModified: '2017-09-01',
 		},
 
 		website: {
-			steps: [ 'website-themes', 'domains', 'plans', 'user' ],
+			steps: [ 'user', 'website-themes', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'Signup flow starting with website themes',
 			lastModified: '2017-09-01',
