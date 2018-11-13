@@ -165,7 +165,8 @@ const Flows = {
 
 		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
 
-		return Flows.getABTestFilteredFlow( flowName, flow );
+		flow = Flows.getABTestFilteredFlow( flowName, flow );
+		return Flows.removeAboutStepFromFlow( flow );
 	},
 
 	getFlows() {
@@ -230,6 +231,22 @@ const Flows = {
 		// Remove 'site-type' from the flow.
 		if ( 'onboarding' === flowName && 'exclude' === abtest( 'signupSegmentationStep' ) ) {
 			return Flows.removeStepFromFlow( 'site-type', flow );
+		}
+
+		return flow;
+	},
+
+	removeAboutStepFromFlow( flow ) {
+		if ( ! flow ) {
+			return flow;
+		}
+
+		if (
+			includes( flow.steps, 'site-type' ) &&
+			includes( flow.steps, 'site-information' ) &&
+			includes( flow.steps, 'site-topic' )
+		) {
+			return Flows.removeStepFromFlow( 'about', flow );
 		}
 
 		return flow;

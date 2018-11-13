@@ -55,9 +55,6 @@ class AboutStep extends Component {
 	constructor( props ) {
 		super( props );
 		this._isMounted = false;
-		if ( props.shouldSkipAboutStep ) {
-			props.goToNextStep( props.flowName );
-		}
 		const hasPrepopulatedVertical =
 			isValidLandingPageVertical( props.siteTopic ) &&
 			props.queryObject.vertical === props.siteTopic;
@@ -573,10 +570,6 @@ export default connect(
 		isLoggedIn: isUserLoggedIn( state ),
 		shouldHideSiteTitle:
 			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-information' ),
-		shouldSkipAboutStep:
-			includes( ownProps.steps, 'site-type' ) &&
-			includes( ownProps.steps, 'site-topic' ) &&
-			includes( ownProps.steps, 'site-information' ),
 		shouldHideSiteGoals:
 			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
 	} ),
