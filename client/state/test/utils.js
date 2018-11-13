@@ -372,26 +372,7 @@ describe( 'utils', () => {
 			expect( keyed( { 10: 10 }, remove( '10' ) ) ).toEqual( {} );
 		} );
 
-		test( 'should apply global actions to every item', () => {
-			const counter = ( state = 0, { type } ) => {
-				switch ( type ) {
-					case 'INC':
-					case 'INC_ALL':
-						return state + 1;
-					default:
-						return state;
-				}
-			};
-
-			const keyed = keyedReducer( 'id', counter, [ 'INC_ALL' ] );
-
-			const prev = { 14: 5, 23: 19 };
-
-			expect( keyed( prev, { type: 'INC', id: 14 } ) ).toEqual( { 14: 6, 23: 19 } );
-			expect( keyed( prev, { type: 'INC_ALL' } ) ).toEqual( { 14: 6, 23: 20 } );
-		} );
-
-		test( 'should have SERIALIZE and DESERIALIZE as default global actions', () => {
+		test( 'should handle SERIALIZE and DESERIALIZE as global actions', () => {
 			const chickenReducer = ( state = '', { type } ) => {
 				switch ( type ) {
 					case 'SET_CHICKEN':
@@ -416,46 +397,63 @@ describe( 'utils', () => {
 			expect( keyed( prev, { type: 'DESERIALIZE' } ) ).toEqual( { 1: 'deserialized chicken' } );
 		} );
 
-		test( 'should not apply global actions if not whitelisted', () => {
-			const counter = ( state = 0, { type } ) => {
+		test( 'should omit initial/undefined state from SERIALIZE/DESERIALIZE results', () => {
+			const itemReducer = ( state = 0, { type } ) => {
 				switch ( type ) {
-					case 'INC':
-						return state + 1;
-					case 'DESERIALIZE':
-						return parseInt( state, 16 );
 					case 'SERIALIZE':
-						return state.toString( 16 );
+					case 'DESERIALIZE':
+						// don't persist unlucky numbers
+						return state !== 13 ? state : undefined;
 					default:
 						return state;
 				}
 			};
 
-			const keyed = keyedReducer( 'id', counter, [] );
+			const keyed = keyedReducer( 'id', itemReducer );
 
-			const prev = { 14: 5, 23: 19 };
-
-			expect( keyed( prev, { type: 'INC', id: 14 } ) ).toEqual( { 14: 6, 23: 19 } );
-			expect( keyed( prev, { type: 'SERIALIZE' } ) ).toBe( prev );
-			expect( keyed( prev, { type: 'DESERIALIZE' } ) ).toBe( prev );
+			expect( keyed( { a: 13, b: 0, c: 1 }, { type: 'SERIALIZE' } ) ).toEqual( { c: 1 } );
+			expect( keyed( { a: 13, b: 0, c: 1 }, { type: 'DESERIALIZE' } ) ).toEqual( { c: 1 } );
 		} );
 
-		test( 'should prune items after global actions are applied', () => {
-			const counter = ( state = 0, { type } ) => {
-				switch ( type ) {
-					case 'INC':
-						return state + 1;
-					case 'PURGE':
-						return state <= 10 ? state : undefined;
-					default:
-						return state;
-				}
+		test( 'should not serialize empty state', () => {
+			const keyed = keyedReducer( 'id', age );
+			expect( keyed( {}, { type: 'SERIALIZE' } ) ).toBeUndefined();
+		} );
+
+		test( 'should serialize non-empty state', () => {
+			const keyed = keyedReducer( 'id', age );
+
+			// state with non-initial value
+			const state = { '1': 1 };
+			expect( keyed( state, { type: 'SERIALIZE' } ) ).toEqual( { '1': 1 } );
+		} );
+
+		test( 'should not serialize nested empty state', () => {
+			const schema = {
+				type: 'object',
+				additionalProperties: false,
+				patternProperties: { '^\\d+$': { type: 'number' } },
 			};
 
-			const keyed = keyedReducer( 'id', counter, [ 'PURGE' ] );
+			const keyedWithPersistence = withSchemaValidation( schema, keyedReducer( 'id', age ) );
+			const nestedReducer = combineReducers( { a: keyedWithPersistence } );
 
-			const prev = { 14: 5, 23: 19 };
+			// state with non-initial value should serialize: sanity check that we are testing the
+			// right thing.
+			// Another reason why empty state might not be persisted is that the tested reducer didn't
+			// opt in into persistence in the first place -- and we DON'T want to test that!
+			const stateWithData = { a: { '1': 1 } };
+			expect( nestedReducer( stateWithData, { type: 'SERIALIZE' } ) ).toEqual( { a: { '1': 1 } } );
 
-			expect( keyed( prev, { type: 'PURGE' } ) ).toEqual( { 14: 5 } );
+			// initial state should not serialize
+			const state = nestedReducer( undefined, { type: 'INIT' } );
+			expect( state ).toEqual( { a: {} } );
+			expect( nestedReducer( state, { type: 'SERIALIZE' } ) ).toBeUndefined();
+		} );
+
+		test( 'should deserialize no state into default empty state', () => {
+			const keyed = keyedReducer( 'id', age );
+			expect( keyed( undefined, { type: 'DESERIALIZE' } ) ).toEqual( {} );
 		} );
 	} );
 
