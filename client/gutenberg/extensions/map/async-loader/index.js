@@ -1,13 +1,5 @@
 /** @format */
 
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
-
 function _loadAsset( url ) {
 	switch ( url.type ) {
 		case 'js':
