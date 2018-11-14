@@ -151,14 +151,11 @@ export const mapStateToProps = ( state, { plans } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const paymentCountryCode = getPaymentCountryCode( state );
 	const paymentPostalCode = getPaymentPostalCode( state );
-	const taxRateRequest = requestTaxRate( paymentCountryCode, paymentPostalCode );
-	const taxRate = taxRateRequest.state === 'success' ? taxRateRequest.data : undefined;
-
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		productsWithPrices: computeProductsWithPrices( state, selectedSiteId, plans ),
 		shouldShowTax: getShouldShowTax( state ),
-		taxRate,
+		taxRate: requestTaxRate( paymentCountryCode, paymentPostalCode ).data,
 	};
 };
 
