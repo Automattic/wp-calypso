@@ -1,5 +1,6 @@
 /** @format */
 
+// #tax-on-checkout-placeholder
 export function dummyTaxRate( postalCode, countryCode ) {
 	if ( countryCode !== 'US' ) {
 		return null;

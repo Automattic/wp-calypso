@@ -21,7 +21,7 @@ import {
 	recordTracksEvent,
 } from 'state/analytics/actions';
 import { convertToSnakeCase } from 'state/data-layer/utils';
-import { dummyTaxRate } from 'lib/tax'; // #tax-on-checout-placeholder
+import { dummyTaxRate } from 'lib/tax'; // #tax-on-checkout-placeholder
 
 export const requestActivityActionTypeCounts = (
 	siteId,
@@ -222,7 +222,7 @@ export const requestTaxRate = ( countryCode, postalCode, httpOptions ) => {
 	}
 
 	const id = `tax-rate-${ countryCode }-${ postalCode }`;
-	const path = `/tax-rate/${ countryCode }/${ postalCode }` && '/sites/example.wordpress.com/hello'; // #tax-on-checout-placeholder
+	const path = `/tax-rate/${ countryCode }/${ postalCode }` && '/sites/example.wordpress.com/hello'; // #tax-on-checkout-placeholder
 
 	const fetchAction = withAnalytics(
 		composeAnalytics(
@@ -248,7 +248,7 @@ export const requestTaxRate = ( countryCode, postalCode, httpOptions ) => {
 	);
 
 	return requestHttpData( id, fetchAction, {
-		// #tax-on-checout-placeholder
+		// #tax-on-checkout-placeholder
 		// eslint-disable-next-line no-unused-vars
 		fromApi: () => tax_data => {
 			return [ [ id, dummyTaxRate( postalCode, countryCode ) ] ];
