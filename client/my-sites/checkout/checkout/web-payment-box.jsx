@@ -9,6 +9,7 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import config from 'config';
 import Gridicon from 'gridicons';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -30,6 +31,8 @@ import {
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
+
+const debug = debugFactory( 'calypso:checkout:payment:apple-pay' );
 
 /**
  * Web Payment method identifier.
@@ -248,8 +251,8 @@ export class WebPaymentBox extends React.Component {
 				.applePayMerchantValidation( event.validationURL, environment )
 				.then( json => event.complete( json ) )
 				.catch( error => {
-					console.error( 'onmerchantvalidation error' );
-					console.error( error );
+					debug( 'onmerchantvalidation error' );
+					debug( error );
 				} );
 		};
 
@@ -328,12 +331,12 @@ export class WebPaymentBox extends React.Component {
 								paymentResponse.complete( 'success' );
 							} )
 							.catch( error => {
-								console.error( 'show error' );
-								console.error( error );
+								debug( 'show error' );
+								debug( error );
 							} );
 					} catch ( e ) {
-						console.error( 'show catch' );
-						console.error( e );
+						debug( 'show catch' );
+						debug( e );
 					}
 				}
 				break;
@@ -369,16 +372,16 @@ export class WebPaymentBox extends React.Component {
 								this.props.onSubmit( event );
 							} )
 							.catch( error => {
-								console.error( error );
+								debug( error );
 							} );
 					} catch ( e ) {
-						console.error( e );
+						debug( e );
 					}
 				}
 				break;
 
 			default:
-				console.error( 'Unknown or unhandled payment method `' + paymentMethod + '`.' );
+				debug( 'Unknown or unhandled payment method `' + paymentMethod + '`.' );
 		}
 	};
 
