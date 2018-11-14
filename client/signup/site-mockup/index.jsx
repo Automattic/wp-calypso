@@ -51,16 +51,6 @@ class SiteMockup extends Component {
 		);
 	}
 
-	getMockupTitle() {
-		return <div className="site-mockup__title">Mexican Restaurant</div>;
-	}
-
-	getMockupTagline() {
-		return (
-			<div className="site-mockup__tagline">123 Merry Ln, New York, NY &bull; (321) 123-1234</div>
-		);
-	}
-
 	defaultVerticalData = {
 		vertical_name: 'Default',
 		vertical_id: 'a8c.0',
