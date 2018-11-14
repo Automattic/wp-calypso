@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { registerBlockType } from '@wordpress/blocks';
 import { Path, SVG } from '@wordpress/components';
 
 /**
@@ -13,13 +12,16 @@ import edit from './edit';
 import save from './save';
 import { DEFAULT_CURRENCY } from 'lib/simple-payments/constants';
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
 
 /**
  * Styles
  */
 import './editor.scss';
 
-registerBlockType( 'jetpack/simple-payments', {
+export const name = 'simple-payments';
+
+export const settings = {
 	title: __( 'Simple Payments button' ),
 
 	description: __(
@@ -98,4 +100,6 @@ registerBlockType( 'jetpack/simple-payments', {
 		customClassName: false,
 		html: false,
 	},
-} );
+};
+
+registerJetpackBlock( name, settings );
