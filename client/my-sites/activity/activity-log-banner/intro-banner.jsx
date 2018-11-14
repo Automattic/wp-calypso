@@ -28,18 +28,16 @@ class IntroBanner extends Component {
 			<Fragment>
 				<p>
 					{ translate(
-						'Monitoring your site should be as simple as possible. ' +
-							'Activity takes care of tracking all events that occur on ' +
-							'your site, so you can have peace of mind.'
+						'The Activity tracks the events that occur on your ' + 'site so that you don’t have to.'
 					) }
 				</p>
 				<p>
 					{ translate(
-						'With your free plan, you only have access to the 20 most ' +
-							'recent activity items on your site. With a paid plan, you can ' +
-							'unlock more powerful features such as full activity for the past ' +
-							'30 days, and the ability to filter events so you can quickly find ' +
-							'the information you’re looking for. '
+						'With your free plan, you can monitor the 20 most recent ' +
+							'events. A paid plan unlocks more powerful features. ' +
+							'You can access all site activity for the last 30 days ' +
+							'and filter events by type and time range to quickly find ' +
+							'the information you need. '
 					) }
 					<a
 						href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/"
@@ -59,15 +57,13 @@ class IntroBanner extends Component {
 			<Fragment>
 				<p>
 					{ translate(
-						'Monitoring your site should be as simple as possible. ' +
-							'Activity takes care of tracking all events that occur on ' +
-							'your site, so you can have peace of mind.'
+						'The Activity tracks the events that occur on your ' + 'site so that you don’t have to.'
 					) }
 				</p>
 				<p>
 					{ translate(
-						'Explore the list below or filter events so you can quickly ' +
-							'find the information you’re looking for. '
+						'Explore the list below or filter events by type and ' +
+							'time range to quickly find the information you need. '
 					) }
 					<a
 						href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/"

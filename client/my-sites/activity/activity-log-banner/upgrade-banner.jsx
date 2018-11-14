@@ -31,11 +31,13 @@ class UpgradeBanner extends Component {
 						plan={ PLAN_JETPACK_PERSONAL_MONTHLY }
 						title={ translate( 'Unlock more activities now' ) }
 						description={ translate(
-							'With your free plan, you only have access to the 20 most recent activity items on your site. Upgrade to a paid plan to unlock powerful features:'
+							'With your free plan, you can monitor the 20 most ' +
+								'recent events on your site. Upgrade to a paid plan to' +
+								'unlock powerful features:'
 						) }
 						list={ [
-							translate( 'Full activity for the past 30 days' ),
-							translate( 'The ability to filter events by type and time range' ),
+							translate( 'Access full activity for the past 30 days' ),
+							translate( 'Filter events by type and time range' ),
 						] }
 					/>
 				) : (
@@ -46,11 +48,13 @@ class UpgradeBanner extends Component {
 						plan={ PLAN_PERSONAL }
 						title={ translate( 'Unlock more activities now' ) }
 						description={ translate(
-							'With your free plan, you only have access to the 20 most recent activity items on your site. Upgrade to a paid plan to unlock powerful features:'
+							'With your free plan, you can monitor the 20 most ' +
+								'recent events on your site. Upgrade to a paid plan to' +
+								'unlock powerful features:'
 						) }
 						list={ [
-							translate( 'Full activity for the past 30 days' ),
-							translate( 'The ability to filter events by type and time range' ),
+							translate( 'Access full activity for the past 30 days' ),
+							translate( 'Filter events by type and time range' ),
 						] }
 					/>
 				) }
