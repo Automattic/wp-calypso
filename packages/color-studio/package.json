@@ -18,6 +18,7 @@
     "mini-css-extract-plugin": "^0.4.0",
     "node-sass": "^4.8.3",
     "postcss-loader": "^2.1.3",
+    "puppeteer": "^1.10.0",
     "raw-loader": "^0.5.1",
     "sass-loader": "^6.0.7",
     "webpack": "4.19.1",
@@ -29,8 +30,10 @@
     "xo": "^0.20.3"
   },
   "scripts": {
-    "build": "yarn palette:build && yarn studio:build && yarn sketch:build",
+    "build": "yarn palette:build && yarn studio:build && yarn sketch:build && yarn meta:build",
     "lint": "xo",
+    "meta:build": "yarn meta:build:preview",
+    "meta:build:preview": "node builders/preview-from-docs",
     "palette": "yarn palette:build",
     "palette:build": "yarn palette:build:json && yarn palette:build:scss && yarn palette:build:sketch",
     "palette:build:json": "node builders/json > dist/colors.json",

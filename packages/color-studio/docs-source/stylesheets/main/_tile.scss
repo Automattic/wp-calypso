@@ -31,6 +31,10 @@
   }
 }
 
+.tile--preview {
+  padding: 1em 0;
+}
+
 .tile--base {
   flex: 1.5;
 }
@@ -41,4 +45,8 @@
 
 .tile__meta--tiny {
   font-size: 0.65em;
+}
+
+.tile--preview .tile__meta {
+  display: none;
 }
