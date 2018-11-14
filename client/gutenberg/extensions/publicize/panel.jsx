@@ -59,7 +59,9 @@ export default compose( [
 		const postId = select( 'core/editor' ).getCurrentPostId();
 
 		return {
-			connections: select( 'jetpack/publicize' ).getConnections( postId ),
+			connections: select( 'core/editor' ).getEditedPostAttribute(
+				'jetpack_publicize_connections'
+			),
 			postId,
 		};
 	} ),
