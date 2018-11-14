@@ -5,7 +5,7 @@
  */
 import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { snakeCase, some, map, zipObject, isEmpty, mapValues } from 'lodash';
+import { snakeCase, map, zipObject, isEmpty, mapValues, overSome, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,8 +26,7 @@ import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
 import notices from 'notices';
 import EbanxPaymentFields from 'my-sites/checkout/checkout/ebanx-payment-fields';
-import { planMatches } from 'lib/plans';
-import { TYPE_BUSINESS, GROUP_WPCOM } from 'lib/plans/constants';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
 import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from 'lib/checkout/constants';
 
@@ -277,10 +276,7 @@ export class RedirectPaymentBox extends PureComponent {
 
 	render() {
 		const hasBusinessPlanInCart = some( this.props.cart.products, ( { product_slug } ) =>
-			planMatches( product_slug, {
-				type: TYPE_BUSINESS,
-				group: GROUP_WPCOM,
-			} )
+			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
 

@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { some, isEmpty, get } from 'lodash';
+import { isEmpty, get, overSome, some } from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -27,7 +27,7 @@ import { convertToSnakeCase } from 'state/data-layer/utils';
 import { getHttpData, requestHttpData, httpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { infoNotice, errorNotice } from 'state/notices/actions';
-import { isWpComBusinessPlan } from 'lib/plans';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 
@@ -128,10 +128,12 @@ export class WechatPaymentBox extends Component {
 			isMobile,
 		} = this.props;
 
-		// Only show if chat is available and we have a business plan in the cart.
+		// Only show if chat is available and we have a business/ecommerce plan in the cart.
 		const showPaymentChatButton =
 			presaleChatAvailable &&
-			some( cart.products, ( { product_slug } ) => isWpComBusinessPlan( product_slug ) );
+			some( cart.products, ( { product_slug } ) =>
+				overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
+			);
 
 		// Wechat qr codes get set on desktop instead of redirecting
 		if ( redirectUrl && ! isMobile ) {

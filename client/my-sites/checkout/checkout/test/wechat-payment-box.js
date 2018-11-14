@@ -14,6 +14,8 @@ import { shallow } from 'enzyme';
  */
 import { WechatPaymentBox } from '../wechat-payment-box';
 import {
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -124,10 +126,16 @@ describe( 'WechatPaymentBox', () => {
 			} );
 		} );
 
-		const businessPlans = [ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ];
+		const eligiblePlans = [
+			PLAN_BUSINESS_MONTHLY,
+			PLAN_BUSINESS,
+			PLAN_BUSINESS_2_YEARS,
+			PLAN_ECOMMERCE,
+			PLAN_ECOMMERCE_2_YEARS,
+		];
 
-		businessPlans.forEach( product_slug => {
-			test( 'renders if any WP.com business plan is in the cart', () => {
+		eligiblePlans.forEach( product_slug => {
+			test( 'renders if any eligible WP.com plan is in the cart', () => {
 				const props = {
 					...defaultProps,
 					presaleChatAvailable: true,
@@ -141,7 +149,7 @@ describe( 'WechatPaymentBox', () => {
 			} );
 		} );
 
-		businessPlans.forEach( product_slug => {
+		eligiblePlans.forEach( product_slug => {
 			test( 'does not render if presaleChatAvailable is false', () => {
 				const props = {
 					...defaultProps,

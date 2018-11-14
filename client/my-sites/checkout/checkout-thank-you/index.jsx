@@ -43,6 +43,7 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isDotComPlan,
+	isEcommerce,
 	isGoogleApps,
 	isGuidedTransfer,
 	isJetpackPlan,
@@ -58,9 +59,15 @@ import Main from 'components/main';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import BusinessPlanDetails from './business-plan-details';
+import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import PurchaseDetail from 'components/purchase-detail';
-import { planMatches, getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
+import {
+	getFeatureByKey,
+	isJetpackBusinessPlan,
+	isWpComBusinessPlan,
+	shouldFetchSitePlans,
+} from 'lib/plans';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
@@ -73,7 +80,6 @@ import {
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
-import { GROUP_WPCOM, GROUP_JETPACK, TYPE_BUSINESS } from 'lib/plans/constants';
 
 import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -143,7 +149,7 @@ export class CheckoutThankYou extends React.Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
 
 		if (
@@ -247,8 +253,7 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	isEligibleForLiveChat = () => {
-		const { planSlug } = this.props;
-		return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_JETPACK } );
+		return isJetpackBusinessPlan( this.props.planSlug );
 	};
 
 	isNewUser = () => {
@@ -332,10 +337,7 @@ export class CheckoutThankYou extends React.Component {
 		if (
 			this.props.selectedSite &&
 			isRebrandCitiesSiteUrl( this.props.selectedSite.slug ) &&
-			planMatches( this.props.selectedSite.plan.product_slug, {
-				type: TYPE_BUSINESS,
-				group: GROUP_WPCOM,
-			} )
+			isWpComBusinessPlan( this.props.selectedSite.plan.product_slug )
 		) {
 			return (
 				<RebrandCitiesThankYou
@@ -465,6 +467,8 @@ export class CheckoutThankYou extends React.Component {
 				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
 			} else if ( purchases.some( isBusiness ) ) {
 				return [ BusinessPlanDetails, find( purchases, isBusiness ) ];
+			} else if ( purchases.some( isEcommerce ) ) {
+				return [ EcommercePlanDetails, find( purchases, isEcommerce ) ];
 			} else if ( purchases.some( isDomainRegistration ) ) {
 				return [
 					DomainRegistrationDetails,

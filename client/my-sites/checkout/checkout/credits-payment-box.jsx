@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { some } from 'lodash';
+import { overSome, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,17 +18,13 @@ import TermsOfService from './terms-of-service';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import CartToggle from './cart-toggle';
-import { planMatches } from 'lib/plans';
-import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 
 export class CreditsPaymentBox extends React.Component {
 	content = () => {
 		const { cart, transactionStep, presaleChatAvailable } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
-			planMatches( product_slug, {
-				type: TYPE_BUSINESS,
-				group: GROUP_WPCOM,
-			} )
+			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
 

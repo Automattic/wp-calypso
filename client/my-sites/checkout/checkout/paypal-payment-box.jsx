@@ -5,7 +5,7 @@
  */
 
 import { localize } from 'i18n-calypso';
-import { assign, some } from 'lodash';
+import { assign, overSome, some } from 'lodash';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -21,8 +21,7 @@ import SubscriptionText from './subscription-text';
 import TermsOfService from './terms-of-service';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
-import { planMatches } from 'lib/plans';
-import { TYPE_BUSINESS, GROUP_WPCOM } from 'lib/plans/constants';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import CartToggle from './cart-toggle';
 import wp from 'lib/wp';
 
@@ -60,14 +59,9 @@ export class PaypalPaymentBox extends React.Component {
 	};
 
 	redirectToPayPal = event => {
-		let cart,
-			transaction,
-			dataForApi,
-			origin = getLocationOrigin( window.location );
+		const { cart, transaction } = this.props;
+		const origin = getLocationOrigin( window.location );
 		event.preventDefault();
-
-		cart = this.props.cart;
-		transaction = this.props.transaction;
 
 		this.setSubmitState( {
 			info: this.props.translate( 'Sending details to PayPal' ),
@@ -82,7 +76,7 @@ export class PaypalPaymentBox extends React.Component {
 			cancelUrl += 'no-site';
 		}
 
-		dataForApi = assign( {}, this.state, {
+		const dataForApi = assign( {}, this.state, {
 			successUrl: origin + this.props.redirectTo(),
 			cancelUrl,
 			cart,
@@ -136,10 +130,7 @@ export class PaypalPaymentBox extends React.Component {
 
 	render = () => {
 		const hasBusinessPlanInCart = some( this.props.cart.products, ( { product_slug } ) =>
-			planMatches( product_slug, {
-				type: TYPE_BUSINESS,
-				group: GROUP_WPCOM,
-			} )
+			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart,
 			paymentButtonClasses = 'payment-box__payment-buttons';
