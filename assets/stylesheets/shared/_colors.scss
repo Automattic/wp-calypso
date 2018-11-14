@@ -5,6 +5,8 @@ $blue-500: #016087;
 $blue-300: #6f93ad;
 
 $hot-pink:     #d52c82;
+$hot-pink-50:  #fff0fa;
+$hot-pink-100: #ffcaea;
 $hot-pink-200: #ffa2d4;
 $hot-pink-300: #ff76b8;
 $hot-pink-500: #d52c82;
@@ -66,7 +68,8 @@ $color-success:        $hot-green-500;
 $color-success-light:  $hot-green-300;
 $color-success-dark:   $hot-green-700;
 
-$color-surface-background: rgba($gray-50,0.25);
+$color-surface-background-light: #f8f8f8;
+$color-surface-background: $gray-50;
 
 $color-link: $color-primary;
 $color-link-hover: $color-accent;

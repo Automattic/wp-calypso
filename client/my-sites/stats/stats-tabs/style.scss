@@ -55,7 +55,7 @@
 
 			.gridicon {
 				float: left;
-				margin: 2px 20px 0 20px; 
+				margin: 2px 20px 0 20px;
 			}
 
 			.value {
@@ -256,7 +256,7 @@
 	}
 
 	&.is-enabled {
-		background: $gray-light;
+		background: $color-surface-background-light;
 
 		&,
 		li {
@@ -264,7 +264,7 @@
 		}
 
 		a {
-			background: $gray-light;
+			background: $color-surface-background-light;
 		}
 	}
 }

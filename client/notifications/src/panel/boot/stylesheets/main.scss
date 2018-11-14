@@ -329,7 +329,7 @@
 
   .wpnc__list-view {
     height: 100%;
-    background-color: $gray-light;
+    background-color: $color-surface-background-light;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
     border-left: 1px solid $gray-lighten-30;
@@ -373,7 +373,7 @@
     }
 
     .unread {
-      background: $gray-light;
+      background: $color-surface-background;
     }
 
     .wpnc__selected-note {
@@ -497,7 +497,7 @@
       border-left: 1px solid $gray-lighten-30;
     }
 
-    background-color: $gray-light;
+    background-color: $color-surface-background-light;
     ol {
       height: 100%;
       overflow-y: auto;
