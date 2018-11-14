@@ -305,7 +305,9 @@ class DomainsStep extends React.Component {
 		return (
 			// 'subdomain' flow coming from .blog landing pages
 			flowName === 'subdomain' ||
-			// User picked only 'share' on the `about` step
+			// 'blog' flow, starting with blog themes
+			flowName === 'blog' ||
+			// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
 			( ! this.props.isDomainOnly &&
 				siteGoalsArray.length === 1 &&
 				siteGoalsArray.indexOf( 'share' ) !== -1 )
