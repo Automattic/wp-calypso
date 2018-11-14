@@ -98,7 +98,7 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 		] ),
 		entry: {
 			editor: editorScript,
-			'editor-beta': editorBetaScript,
+			...( editorBetaScript && { 'editor-beta': editorBetaScript } ),
 			...viewScriptEntry,
 			...viewBlocksScripts,
 		},
