@@ -62,11 +62,12 @@ class MobileDownloadCard extends React.Component {
 	};
 
 	componentDidMount() {
-		twoStepAuthorization.on( 'change', this.onReauthStateChange );
+		twoStepAuthorization.on( 'change', this.maybeFetchAccountRecoverySettings );
+		this.maybeFetchAccountRecoverySettings();
 	}
 
 	componentWillUnmount() {
-		twoStepAuthorization.off( 'change', this.onReauthStateChange );
+		twoStepAuthorization.off( 'change', this.maybeFetchAccountRecoverySettings );
 	}
 
 	componentDidUpdate( previousProps ) {
@@ -81,7 +82,7 @@ class MobileDownloadCard extends React.Component {
 		}
 	}
 
-	onReauthStateChange = () => {
+	maybeFetchAccountRecoverySettings = () => {
 		const hasReauthData = twoStepAuthorization.data ? true : false;
 		const needsReauth = hasReauthData ? twoStepAuthorization.isReauthRequired() : true;
 
