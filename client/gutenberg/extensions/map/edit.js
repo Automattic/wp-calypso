@@ -3,11 +3,11 @@
 /**
  * External dependencies
  */
-
+import apiFetch from '@wordpress/api-fetch';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { sprintf } from '@wordpress/i18n';
 import { Component, createRef, Fragment, RawHTML } from '@wordpress/element';
 import { debounce } from 'lodash';
+import { sprintf } from '@wordpress/i18n';
 import {
 	Button,
 	ButtonGroup,
@@ -15,28 +15,26 @@ import {
 	PanelBody,
 	Placeholder,
 	Spinner,
+	TextControl,
 	ToggleControl,
 	Toolbar,
-	TextControl,
 	withNotices,
 } from '@wordpress/components';
 import {
-	InspectorControls,
-	BlockControls,
 	BlockAlignmentToolbar,
+	BlockControls,
+	InspectorControls,
 	PanelColorSettings,
 } from '@wordpress/editor';
-import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
  */
-
-import { settings } from './settings.js';
 import AddPoint from './add-point';
 import Locations from './locations';
 import Map from './component.js';
 import MapThemePicker from './map-theme-picker';
+import { settings } from './settings.js';
 
 const API_STATE_LOADING = 0;
 const API_STATE_FAILURE = 1;

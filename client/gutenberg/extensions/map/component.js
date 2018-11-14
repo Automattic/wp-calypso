@@ -3,16 +3,14 @@
 /**
  * External dependencies
  */
-
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { Component, createRef, Fragment, Children } from '@wordpress/element';
 import { assign, debounce, get } from 'lodash';
 import { Button, Dashicon, TextareaControl, TextControl } from '@wordpress/components';
+import { Children, Component, createRef, Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-
 import MapMarker from './map-marker/';
 import InfoWindow from './info-window/';
 import { mapboxMapFormatter } from './mapbox-map-formatter/';
