@@ -221,8 +221,8 @@ export function generateSteps( {
 			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
 		},
 
-		'oauth2-user-no-username': {
-			stepName: 'oauth2-user-no-username',
+		'oauth2-name': {
+			stepName: 'oauth2-name',
 			apiRequestFunction: createAccount,
 			providesToken: true,
 			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],

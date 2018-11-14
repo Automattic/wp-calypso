@@ -79,6 +79,6 @@ export default {
 	'themes-site-selected': ThemeSelectionComponent,
 	user: UserSignupComponent,
 	'oauth2-user': UserSignupComponent,
-	'oauth2-user-no-username': UserSignupComponent,
+	'oauth2-name': UserSignupComponent,
 	'reader-landing': ReaderLandingStepComponent,
 };
