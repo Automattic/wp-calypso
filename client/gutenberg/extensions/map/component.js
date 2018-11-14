@@ -126,7 +126,6 @@ export class Map extends Component {
 		const { api_key, children, points, map_style, map_details } = this.props;
 		const { map } = this.state;
 		if ( api_key && api_key.length > 0 && api_key !== prevProps.api_key ) {
-			window.mapboxgl = null;
 			this.loadMapLibraries();
 		}
 		// If the user has just clicked to show the Add Point component, hide info window.
