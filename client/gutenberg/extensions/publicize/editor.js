@@ -16,7 +16,6 @@ import { registerPlugin } from '@wordpress/plugins';
  * Internal dependencies
  */
 import './editor.scss';
-import './store/index';
 import PublicizePanel from './panel';
 
 registerPlugin( 'jetpack-publicize', {
