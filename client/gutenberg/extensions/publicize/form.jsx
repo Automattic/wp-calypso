@@ -23,7 +23,8 @@ const PublicizeForm = compose( [
 		activeConnections: select( 'core/editor' ).getEditedPostAttribute(
 			'jetpack_publicize_connections'
 		),
-		shareMessage: select( 'core/editor' ).getEditedPostAttribute( 'jetpack_publicize_message' ),
+		shareMessage:
+			select( 'core/editor' ).getEditedPostAttribute( 'jetpack_publicize_message' ) || '',
 	} ) ),
 	withDispatch( ( dispatch, ownProps ) => ( {
 		/**
