@@ -140,9 +140,9 @@ class ImportingPane extends React.PureComponent {
 
 		if ( pageCount && postCount ) {
 			return this.props.translate(
-				'All done! Check out {{a}}Posts{{/a}} and ' +
-					'{{b}}Pages{{/b}} to see your imported content,{{br/}}' +
-					' or explore ways to {{c}}improve your site{{/c}}.',
+				'All done! Vist the {{a}}Posts{{/a}} and ' +
+					'{{b}}Pages{{/b}} tabs to see your imported content,{{br/}} ' +
+					'or use our {{c}}handy checklist{{/c}} to explore your settings and customizing options.',
 				{
 					components: {
 						a: postLink,
@@ -156,9 +156,9 @@ class ImportingPane extends React.PureComponent {
 
 		if ( pageCount || postCount ) {
 			return this.props.translate(
-				'All done! Check out {{a}}%(articles)s{{/a}} ' +
-					'to see your imported content,{{br/}}' +
-					' or explore ways to {{b}}improve your site{{/b}}.',
+				'All done! Vist the {{a}}%(articles)s{{/a}} tab ' +
+					'to see your imported content,{{br/}} ' +
+					'or use our {{b}}handy checklist{{/b}} to explore your settings and customizing options.',
 				{
 					components: {
 						a: pageCount ? pageLink : postLink,
