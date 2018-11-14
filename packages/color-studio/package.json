@@ -1,6 +1,6 @@
 {
   "name": "color-studio",
-  "version": "0.9.9",
+  "version": "1.0.0-rc.1",
   "private": true,
   "dependencies": {
     "@skpm/builder": "^0.5.11",
