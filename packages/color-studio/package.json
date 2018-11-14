@@ -28,7 +28,6 @@
     "webpack-extraneous-file-cleanup-plugin": "^2.0.0",
     "xo": "^0.20.3"
   },
-
   "scripts": {
     "build": "yarn palette:build && yarn studio:build && yarn sketch:build && yarn meta:build",
     "lint": "xo",
