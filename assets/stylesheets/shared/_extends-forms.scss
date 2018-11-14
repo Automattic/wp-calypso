@@ -31,9 +31,9 @@
 	}
 
 	&:focus {
-		border-color: $color-primary-action;
+		border-color: $color-action;
 		outline: none;
-		box-shadow: 0 0 0 2px $color-primary-action-light;
+		box-shadow: 0 0 0 2px $color-action-light;
 
 		&::-ms-clear {
 			display: none;

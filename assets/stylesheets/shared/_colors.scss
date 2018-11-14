@@ -4,6 +4,20 @@ $blue-700: #23354b;
 $blue-500: #016087;
 $blue-300: #6f93ad;
 
+$hot-blue-900: #10144d;
+$hot-blue-800: #162566;
+$hot-blue-700: #183780;
+$hot-blue-500: #005fb7;
+$hot-blue-300: #6795fe;
+$hot-blue-50:  #f0f6ff;
+
+$celadon-500: #007565;
+$celadon-700: #20473f;
+
+$pink-100: #ebc6d5;
+$pink-900: #3f1f2a;
+$pink-800: #5d283d;
+
 $hot-pink:     #d52c82;
 $hot-pink-50:  #fff0fa;
 $hot-pink-100: #ffcaea;
@@ -12,6 +26,7 @@ $hot-pink-300: #ff76b8;
 $hot-pink-500: #d52c82;
 $hot-pink-600: #b7266a;
 $hot-pink-700: #992053;
+$hot-pink-900: #60162e;
 
 $hot-pink-20:  rgba(213,44,130,0.15);
 
@@ -39,19 +54,19 @@ $hot-yellow-300: #fbda70;
 // high-level application variables
 
 /* main colors */
-$color-primary: $blue-500;
+$color-primary:       $blue-500;
 $color-primary-light: $blue-300 ;
-$color-primary-dark: $blue-700;
-// $color-primary-dark: ;
+$color-primary-dark:  $blue-700;
+
 // $color-primary-bg: ;
 
-$color-accent: $hot-pink-500 ;
-// $color-accent-light: ;
-// $color-accent-dark: ;
-// $color-accent-bg: ;
+$color-accent:       $hot-pink-500 ;
+$color-accent-light: $hot-pink-300;
+$color-accent-dark:  $hot-pink-700;
 
-$color-primary-action:       $hot-pink-500;
-$color-primary-action-light: $hot-pink-200;
+$color-action:       $hot-pink-500;
+$color-action-light: $hot-pink-300;
+$color-action-dark:  $hot-pink-700;
 
 $color-text-subtle: $gray-500;
 $color-text: $gray-800;

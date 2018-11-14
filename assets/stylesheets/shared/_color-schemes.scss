@@ -1,26 +1,32 @@
 //default color scheme
 :root {
+	--color-primary: #{$celadon-500};
+	--color-primary-dark: #{$celadon-700};
+
+	--color-action:   #{$hot-blue-500};
+	--color-action-dark: #{$hot-blue-700};
+
 	--masterbar-color: #{$white};
-	--masterbar-background: #{$blue-wordpress};
-	--masterbar-border-color: #{darken( $blue-wordpress, 4% )};
-	--masterbar-item-hover-background: #{lighten( $blue-wordpress, 5% )};
-	--masterbar-item-active-background: #{darken( $blue-wordpress, 17% )};
-	--masterbar-item-new-color: #{$blue-wordpress};
+	--masterbar-background: var(--color-primary);
+	--masterbar-border-color: var(--color-primary-dark);
+	--masterbar-item-hover-background: var(--color-primary-dark);
+	--masterbar-item-active-background: var(--color-primary-dark);
+	--masterbar-item-new-color: var(--color-action);
 	--masterbar-item-new-editor-background: #{darken( $blue-wordpress, 17% )};
 	--masterbar-item-new-editor-hover-background: #{darken( $blue-wordpress, 13% )};
 	--masterbar-toggle-drafts-editor-background: #{darken( $blue-wordpress, 12% )};
 	--masterbar-toggle-drafts-editor-border-color: #{darken( $blue-wordpress, 5% )};
 	--masterbar-toggle-drafts-editor-hover-background: #{darken( $blue-wordpress, 17% )};
 
-	--sidebar-color: #{$gray-dark};
-	--sidebar-background: #{$white};
-	--sidebar-gridicon-fill: #{$gray-darken-30};
-	--sidebar-heading-color: #{$gray-darken-10};
+	--sidebar-color: #{$pink-900};
+	--sidebar-background: #{$pink-100};
+	--sidebar-gridicon-fill: #{$pink-800};
+	--sidebar-heading-color: #{$pink-800};
 	--sidebar-footer-button-color: #{$gray-darken-10};
 	--sidebar-menu-link-secondary-text-color: #{$gray-darken-20};
 	--sidebar-menu-a-first-child-after-background: #{hex-to-rgb( $gray-lighten-30 )};
-	--sidebar-menu-selected-background-color: #{$gray-text-min};
-	--sidebar-menu-selected-a-color: #{$white};
+	--sidebar-menu-selected-background-color: #{$hot-blue-50};
+	--sidebar-menu-selected-a-color: var(--color-action-dark);
 	--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $gray-text-min )};
 
 	--button-is-borderless-color: #{$gray-text-min};
@@ -33,7 +39,12 @@
 //additional color schemes
 .color-scheme {
 	&.is-light {
-		--masterbar-color: #{$white};
+		--color-primary: #{$color-primary};
+		--color-primary-dark: #{$color-primary-dark};
+
+		--color-action: #{$color-action};
+
+		--masterbar-color: var(--color-action);
 		--masterbar-background: #{$color-primary};
 		--masterbar-border-color: #{$color-primary-dark};
 		--masterbar-item-hover-background: #{$color-primary-dark};

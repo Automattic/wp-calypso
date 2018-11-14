@@ -4,9 +4,9 @@
 	padding: 0;
 
 	&.is-focused {
-		border-color: $color-primary-action;
+		border-color: $color-action;
 		outline: none;
-		box-shadow: 0 0 0 2px $color-primary-action-light;
+		box-shadow: 0 0 0 2px $color-action-light;
 
 		&.is-valid {
 			box-shadow: 0 0 0 2px lighten( $alert-green, 35 );
