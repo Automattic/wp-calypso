@@ -30,7 +30,7 @@ class PublicizeConnection extends Component {
 	};
 
 	render() {
-		const { service_name: name, toggleable, display_name, id } = this.props.connectionData;
+		const { display_name, id, service_name: name, toggleable } = this.props.connectionData;
 		const { connectionOn } = this.props;
 		const fieldId = 'connection-' + name + '-' + id;
 		// Genericon names are dash separated
