@@ -40,14 +40,13 @@ class WordAds extends Component {
 		tabSwitched: false,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		// @TODO update
-		if ( ! this.state.tabSwitched && this.state.chartTab !== nextProps.chartTab ) {
-			this.setState( {
+	getDerivedStateFromProps( props, state ) {
+		if ( ! this.state.tabSwitched && this.state.chartTab !== props.chartTab ) {
+			return {
 				tabSwitched: true,
-				chartTab: nextProps.chartTab,
-			} );
-		}
+				chartTab: props.chartTab,
+			};
+		} else return null;
 	}
 
 	barClick = bar => {
