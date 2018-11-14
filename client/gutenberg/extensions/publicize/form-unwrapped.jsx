@@ -56,27 +56,6 @@ class PublicizeFormUnwrapped extends Component {
 		return ! formEnabled;
 	}
 
-	/**
-	 * Checks if a connection is turned on/off.
-	 *
-	 * Looks up connection by ID in activeConnections prop which is
-	 * an array of objects with properties 'id' and 'should_share';
-	 * looks for an array entry with a 'id' property that matches
-	 * the parameter value. If found, the connection 'should_share' value
-	 * is returned.
-	 *
-	 * @param {string} id Connection ID.
-	 * @return {boolean} True if the connection is currently switched on.
-	 */
-	isConnectionOn( id ) {
-		const { activeConnections } = this.props;
-		const matchingConnection = activeConnections.find( c => id === c.id );
-		if ( ! matchingConnection ) {
-			return false;
-		}
-		return matchingConnection.should_share;
-	}
-
 	render() {
 		const {
 			staticConnections,
@@ -98,7 +77,6 @@ class PublicizeFormUnwrapped extends Component {
 						<PublicizeConnection
 							connectionData={ c }
 							key={ c.id }
-							connectionOn={ this.isConnectionOn( c.id ) }
 							connectionChange={ connectionChange }
 						/>
 					) ) }
