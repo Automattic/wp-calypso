@@ -50,19 +50,13 @@ const PublicizeForm = compose( [
 		 * Handler for when sharing message is edited.
 		 *
 		 * Saves edited message to state and to the editor
-		 * in field 'publicize'.
+		 * in field 'jetpack_publicize_message'.
 		 *
 		 * @param {object} event Change event data from textarea element.
 		 */
 		messageChange( event ) {
-			let { shareMessage } = ownProps;
-			const { activeConnections } = ownProps;
-			shareMessage = event.target.value;
 			dispatch( 'core/editor' ).editPost( {
-				publicize: {
-					title: shareMessage,
-					connections: activeConnections,
-				},
+				jetpack_publicize_message: event.target.value,
 			} );
 		},
 	} ) ),
