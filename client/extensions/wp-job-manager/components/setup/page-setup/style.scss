@@ -16,7 +16,7 @@
 }
 
 .wp-job-manager__setup .page-setup__skip {
-	color: $blue-medium;
+	color: var(--color-action);
 	display: block;
 	font-size: 13px;
 	text-align: center;

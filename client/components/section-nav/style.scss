@@ -236,7 +236,7 @@
 		text-align: center;
 
 		&.is-selected {
-			border-bottom-color: $hot-pink;
+			border-bottom-color: var(--color-action);
 		}
 	}
 }
@@ -257,7 +257,7 @@
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 18px;
-	color: $hot-pink;
+	color: var(--color-action);
 	cursor: pointer;
 
 	&:visited {
@@ -272,7 +272,7 @@
 
 	.is-selected & {
 		color: $white;
-		background-color: $hot-pink;
+		background-color: var(--color-action);
 
 		@include breakpoint( "<480px" ) {
 			.count {
@@ -299,7 +299,7 @@
 
 	.notouch & {
 		&:hover {
-			color: $blue-medium;
+			color: var(--color-action);
 		}
 	}
 
@@ -321,7 +321,7 @@
 		}
 
 		.is-selected & {
-			color: $hot-pink;
+			color: var(--color-action);
 			background-color: transparent;
 
 			&:after {
@@ -358,7 +358,7 @@
 	width: 100%;
 	font-size: 14px;
 	line-height: 18px;
-	color: $hot-pink;
+	color: var(--color-action);
 }
 
 // -------- Nav Tabs - dropdowns --------

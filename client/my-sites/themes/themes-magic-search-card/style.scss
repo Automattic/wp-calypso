@@ -100,7 +100,7 @@
 		display: inline-block;
 
 		/* These are styling */
-		border-bottom: 3px solid $blue-medium;
+		border-bottom: 3px solid var(--color-action);
 		opacity: 0.6;
 	}
 
@@ -110,7 +110,7 @@
 		display: inline-block;
 
 		/* These are styling */
-		border-bottom: 3px solid $blue-medium;
+		border-bottom: 3px solid var(--color-action);
 		opacity: 0.6;
 	}
 
@@ -120,7 +120,7 @@
 		display: inline-block;
 
 		/* These are styling */
-		border-bottom: 3px solid $blue-medium;
+		border-bottom: 3px solid var(--color-action);
 	}
 }
 
@@ -197,15 +197,15 @@
 
 	&.themes-magic-search-card__welcome-taxonomy-highlight,
 	&:hover {
-		color: $blue-medium;
+		color: var(--color-action);
 
 		.gridicon {
-			fill: $blue-medium;
+			fill: var(--color-action);
 		}
 
 		@include breakpoint( ">660px" ) {
 			background: lighten( $gray, 35% );
-			box-shadow: inset 0 -3px 0 0 $blue-medium;
+			box-shadow: inset 0 -3px 0 0 var(--color-action);
 		}
 	}
 }

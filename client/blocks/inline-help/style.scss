@@ -26,7 +26,7 @@
 		}
 
 		&.is-active {
-			background: $blue-medium;
+			background: var(--color-action);
 			border-color: var(--color-action-dark)
 		}
 	}
@@ -68,7 +68,7 @@
 	}
 
 	&.is-active {
-		background: $blue-medium;
+		background: var(--color-action);
 		border-color: var(--color-action-dark)
 	}
 
@@ -333,10 +333,10 @@
 		}
 
 		&:hover {
-			color: $blue-medium;
+			color: var(--color-action);
 
 			.gridicon {
-				fill: $blue-medium;
+				fill: var(--color-action);
 			}
 		}
 	}
@@ -392,13 +392,13 @@
 
 		&:hover {
 			cursor: pointer;
-			color: $blue-medium;
+			color: var(--color-action);
 			background: lighten( $gray, 35% );
 		}
 	}
 
 	&.is-selected {
-		background: $blue-medium;
+		background: var(--color-action);
 		cursor: pointer;
 		color: $white;
 

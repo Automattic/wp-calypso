@@ -10,7 +10,7 @@
 	&:focus,
 	&:active {
 		cursor: pointer;
-		color: $blue-medium;
+		color: var(--color-action);
 	}
 
 	.gridicon {

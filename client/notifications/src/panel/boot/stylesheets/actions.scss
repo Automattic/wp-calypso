@@ -40,7 +40,7 @@
     }
     button.active {
       display: block;
-      color: $blue-medium;
+      color: var(--color-action);
     }
     button.inactive {
       cursor: default;

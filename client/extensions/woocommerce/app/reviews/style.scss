@@ -29,7 +29,7 @@
 
 	&.is-unapproved.is-collapsed {
 		.reviews__header {
-			background: mix( $alert-yellow, $white, 8.5% );
+			background: $color-warning-light;
 			box-shadow: inset 4px 0 0 0 $alert-yellow;
 		}
 	}
@@ -89,12 +89,12 @@
 		}
 
 		.reviews__action-collapse:hover .gridicon {
-			fill: $blue-medium;
+			fill: var(--color-action);
 		}
 
 		&.is-preview {
 			&:hover .reviews__action-collapse .gridicon {
-				fill: $blue-medium;
+				fill: var(--color-action);
 			}
 			.reviews__action-collapse {
 				flex: none;
@@ -376,7 +376,7 @@
 		padding: 10px;
 
 		&.is-active {
-			color: $blue-medium;
+			color: var(--color-action);
 			cursor: pointer;
 		}
 
@@ -388,7 +388,7 @@
 		}
 
 		.accessible-focus &:focus {
-			border-color: $blue-medium;
+			border-color: var(--color-action);
 			box-shadow: 0 0 0 2px $blue-light;
 		}
 	}

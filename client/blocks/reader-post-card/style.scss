@@ -275,12 +275,12 @@
 	margin-top: 2px;
 	cursor: pointer;
 	&:hover {
-		color: $blue-medium;
+		color: var(--color-action);
 	}
 }
 
 .reader-post-card__byline-details {
-	color: $blue-medium;
+	color: var(--color-action);
 	width: 100%;
 }
 
@@ -390,7 +390,7 @@
 }
 
 .reader-post-card__link {
-	color: $blue-medium;
+	color: var(--color-action);
 	cursor: pointer;
 
 	&:hover {
@@ -398,7 +398,7 @@
 	}
 
 	&:visited {
-		color: $blue-medium;
+		color: var(--color-action);
 	}
 }
 
@@ -569,11 +569,11 @@
 		top: 16px;
 
 	.gridicon {
-		fill: $blue-medium;
+		fill: var(--color-action);
 	}
 
 	.follow-button__label {
-		color: $blue-medium;
+		color: var(--color-action);
 	}
 
 	&.is-following {

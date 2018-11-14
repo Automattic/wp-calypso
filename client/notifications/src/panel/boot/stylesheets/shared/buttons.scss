@@ -59,7 +59,7 @@
       }
     }
     &:focus {
-      border-color: $blue-medium;
+      border-color: var(--color-action);
       box-shadow: 0 0 0 2px $blue-light;
     }
     &.is-compact {
@@ -91,7 +91,7 @@
 
   // Primary buttons
   .wpnc__button.is-primary {
-    background: $blue-medium;
+    background: var(--color-action);
     border-color: $blue-wordpress;
     color: $white;
 

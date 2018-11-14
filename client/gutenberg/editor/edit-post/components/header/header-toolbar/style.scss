@@ -85,7 +85,7 @@
 	min-width: 80px;
 	padding: 6px 16px;
 	&:hover {
-		color: $blue-medium;
+		color: var(--color-action);
 	}
 	@include breakpoint( '>960px' ) {
 		padding: 6px 32px;

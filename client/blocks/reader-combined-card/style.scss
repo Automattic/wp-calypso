@@ -18,7 +18,7 @@
 }
 
 .reader-combined-card__site-link {
-	color: $blue-medium;
+	color: var(--color-action);
 	line-height: 1.2em;
 	margin-bottom: 0;
 	top: 0;
@@ -207,7 +207,7 @@
 
 	&:hover,
 	&:active {
-		color: $blue-medium;
+		color: var(--color-action);
 	}
 }
 
@@ -230,7 +230,7 @@
 	&:focus,
 	&:link,
 	&:visited {
-		color: $blue-medium;
+		color: var(--color-action);
 	}
 
 	&:hover,
@@ -274,11 +274,11 @@
 	top: 13px;
 
 	.gridicon {
-		fill: $blue-medium;
+		fill: var(--color-action);
 	}
 
 	.follow-button__label {
-		color: $blue-medium;
+		color: var(--color-action);
 	}
 
 	&.is-following {

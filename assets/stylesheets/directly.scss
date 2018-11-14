@@ -56,7 +56,7 @@ textarea {
 
 // Main button
 .btn {
-	background: $blue-medium;
+	background: var(--color-action);
 	border: 1px solid var(--color-action-dark);
 	color: $white;
 	border-width: 1px 1px 2px;
@@ -208,7 +208,7 @@ textarea {
 		margin-top: 2px;
 	}
 	.svg-icon {
-		color: $blue-medium;
+		color: var(--color-action);
 	}
 }
 
@@ -425,7 +425,7 @@ textarea {
 		width: 64px;
 	}
 	.notification {
-		background: $blue-medium;
+		background: var(--color-action);
 		font-size: 12px;
 		font-weight: 500;
 		min-width: 24px;

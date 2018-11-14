@@ -67,7 +67,7 @@
 		text-decoration: none;
 
 		&:hover {
-			color: $blue-medium;
+			color: var(--color-action);
 		}
 		&:last-of-type {
 			border-bottom: none;

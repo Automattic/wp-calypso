@@ -93,7 +93,7 @@
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {
-			color: $blue-medium;
+			color: var(--color-action);
 			cursor: pointer;
 		}
 
@@ -103,7 +103,7 @@
 	}
 
 	button:focus {
-		outline: dotted 1px $blue-medium;
+		outline: dotted 1px var(--color-action);
 		color: $blue-wordpress;
 	}
 
@@ -198,7 +198,7 @@
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {
-			color: $blue-medium;
+			color: var(--color-action);
 			cursor: pointer;
 		}
 
@@ -208,7 +208,7 @@
 	}
 
 	button:focus {
-		outline: dotted 1px $blue-medium;
+		outline: dotted 1px var(--color-action);
 		color: $blue-wordpress;
 	}
 
@@ -367,7 +367,7 @@
 }
 
 a.comments__comment-username {
-	color: $blue-medium;
+	color: var(--color-action);
 	height: 21px;
 
 	&:hover {
@@ -462,7 +462,7 @@ a.comments__comment-username {
 		}
 
 		&:hover {
-			color: $blue-medium;
+			color: var(--color-action);
 		}
 
 		&.comments__comment-actions-cancel-reply {
@@ -569,13 +569,13 @@ a.comments__comment-username {
 }
 
 .comments__comment-actions .comments__comment-actions-read-more {
-	color: $blue-medium;
+	color: var(--color-action);
 	margin: 0 10px 0 -3px;
 	padding-left: 0;
 }
 
 .comments__comment-actions-read-more-icon {
-	fill: $blue-medium;
+	fill: var(--color-action);
 }
 
 // Hide certain elements in excerpt comments

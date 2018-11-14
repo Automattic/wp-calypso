@@ -190,7 +190,7 @@ form.sidebar__button input {
 @include breakpoint( '>660px' ) {
 	.sidebar__menu .selected:not( .sidebar__plugins-item ) {
 		background-color: var( --sidebar-menu-selected-background-color );
-		// box-shadow: inset 3px 0px 0px $hot-pink;
+		// box-shadow: inset 3px 0px 0px var(--color-action);
 
 		a {
 			color: var( --sidebar-menu-selected-a-color );
@@ -257,7 +257,7 @@ form.sidebar__button input {
 
 		a,
 		form {
-			color: $blue-medium;
+			color: var(--color-action);
 
 			&:first-child:after {
 				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
@@ -270,7 +270,7 @@ form.sidebar__button input {
 		}
 
 		.gridicon {
-			fill: $blue-medium;
+			fill: var(--color-action);
 		}
 	}
 }
@@ -329,7 +329,7 @@ form.sidebar__button input {
 	margin-right: auto;
 
 	&.is-active {
-		background: $blue-medium;
+		background: var(--color-action);
 
 		.gridicon {
 			fill: $white;
@@ -433,6 +433,6 @@ form.sidebar__button input {
 	}
 
 	:hover + & .gridicon {
-		fill: $blue-medium;
+		fill: var(--color-action);
 	}
 }

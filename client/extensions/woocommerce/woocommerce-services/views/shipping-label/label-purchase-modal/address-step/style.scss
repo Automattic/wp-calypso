@@ -73,7 +73,7 @@
 	width: 100%;
 
 	&.is-selected {
-		border-color: $blue-medium;
+		border-color: var(--color-action);
 	}
 }
 

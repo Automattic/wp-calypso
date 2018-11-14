@@ -6,19 +6,19 @@ button.follow-button {
 	padding: 0;
 
 	.gridicons-reader-follow {
-		fill: $blue-medium;
+		fill: var(--color-action);
 		pointer-events: auto;
 	}
 
 	.follow-button__label {
-		color: $blue-medium;
+		color: var(--color-action);
 	}
 
 	&:hover {
-		color: $blue-medium;
+		color: var(--color-action);
 
 		.gridicons-reader-follow {
-			fill: $blue-medium;
+			fill: var(--color-action);
 		}
 	}
 

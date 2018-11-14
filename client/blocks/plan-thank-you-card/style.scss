@@ -51,9 +51,9 @@
 	margin-bottom: 8px;
 }
 
-.plan-thank-you-card.is-free-plan {
-	@include plan-thank-you-card-color( $blue-medium );
-}
+// .plan-thank-you-card.is-free-plan {
+// 	@include plan-thank-you-card-color( var(--color-action) );
+// }
 
 .plan-thank-you-card.is-personal-plan {
 	@include plan-thank-you-card-color( $alert-yellow );
@@ -89,7 +89,7 @@
 	}
 
 	.thank-you-card__header {
-		background: $blue-medium;
+		background: var(--color-action);
 		color: $white;
 	}
 

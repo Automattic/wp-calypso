@@ -10,17 +10,17 @@ $theme-info-height: 54px;
 	transition: all 100ms ease-in-out;
 
 	&.is-active {
-		background: $blue-medium;
+		background: var( --color-action );
 
 		.theme__info {
-			background: $blue-medium;
+			background: var( --color-action );
 		}
 
 		.theme__info-title {
 			color: $white;
 
 			&:before {
-				@include long-content-fade( $color: $blue-medium );
+				@include long-content-fade( $color: var( --color-action ) );
 			}
 		}
 
@@ -263,7 +263,7 @@ $theme-info-height: 54px;
 		background-color: transparentize( $gray-light, 0.7 );
 
 		.gridicon {
-			color: $blue-medium;
+			color: var( --color-action );
 		}
 
 		&.is-active .gridicon {

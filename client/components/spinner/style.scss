@@ -19,13 +19,13 @@
 }
 
 .spinner__outer {
-	border-top-color: $blue-medium;
+	border-top-color: var(--color-action);
 }
 
 .spinner__inner {
 	width: 100%;
   height: 100%;
-	border-top-color: $blue-medium;
-  border-right-color: $blue-medium;
+	border-top-color: var(--color-action);
+  border-right-color: var(--color-action);
   opacity: 0.4;
 }

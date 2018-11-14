@@ -18,7 +18,7 @@ $devdocs-max-width: 720px;
 			text-decoration: underline;
 
 			&:hover {
-				color: $blue-medium;
+				color: var(--color-action);
 			}
 		}
 	}
