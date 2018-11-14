@@ -7,22 +7,23 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
-import Button from 'components/button';
-import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { isEnabled } from 'config';
-import { isJetpackSite } from 'state/sites/selectors';
-import isVipSite from 'state/selectors/is-vip-site';
+import Button from 'components/button';
+import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
+import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { getSelectedSiteId } from 'state/ui/selectors/';
 
 class EditorGutenbergOptInSidebar extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
+		// connected properties
 		showDialog: PropTypes.func,
+		optInEnabled: PropTypes.bool,
 	};
 
 	handleKeyPress = event => {
@@ -55,25 +56,14 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 	}
 }
 
-EditorGutenbergOptInSidebar.propTypes = {
-	// connected properties
-	translate: PropTypes.func,
-	showDialog: PropTypes.func,
-	optInEnabled: PropTypes.bool,
-};
+const mapStateToProps = state => ( {
+	optInEnabled:
+		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) ),
+} );
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const isVip = isVipSite( state, siteId );
-	const isJetpack = isJetpackSite( state, siteId );
-	return {
-		optInEnabled: isEnabled( 'gutenberg/opt-in' ) && ! isJetpack && ! isVip,
-	};
-};
+const mapDispatchToProps = { showDialog: showGutenbergOptInDialog };
 
 export default connect(
 	mapStateToProps,
-	{
-		showDialog: showGutenbergOptInDialog,
-	}
+	mapDispatchToProps
 )( localize( EditorGutenbergOptInSidebar ) );

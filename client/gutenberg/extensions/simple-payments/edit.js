@@ -400,9 +400,9 @@ class SimplePaymentsEdit extends Component {
 					<TextareaControl
 						className="simple-payments__field simple-payments__field-content"
 						disabled={ isLoadingInitial }
-						label={ __( 'Enter a description for your item' ) }
+						label={ __( 'Describe your item in a few words' ) }
 						onChange={ this.handleContentChange }
-						placeholder={ __( 'Enter a description for your item' ) }
+						placeholder={ __( 'Describe your item in a few words' ) }
 						value={ content }
 					/>
 
@@ -461,11 +461,10 @@ class SimplePaymentsEdit extends Component {
 					</HelpMessage>
 					<HelpMessage id={ `${ instanceId }-email-help` }>
 						{ __(
-							"This is where PayPal will send your money. To claim a payment, you'll " +
-								'need a PayPal account connected to a bank account.'
+							'Enter the email address associated with your PayPal account. Don’t have an account?'
 						) + ' ' }
 						<ExternalLink href="https://www.paypal.com/">
-							{ __( 'Create an account at PayPal' ) }
+							{ __( 'Create one on PayPal' ) }
 						</ExternalLink>
 					</HelpMessage>
 				</Fragment>

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Publicize sharing panel component.
  *
@@ -39,29 +41,30 @@ const PublicizePanel = ( { connections, refreshConnections } ) => (
 		}
 	>
 		<div>{ __( 'Connect and select social media services to share this post.' ) }</div>
-		{ ( connections && connections.length > 0 ) && <PublicizeForm staticConnections={ connections } refreshCallback={ refreshConnections } /> }
-		{ ( connections && 0 === connections.length ) && (
+		{ connections &&
+			connections.length > 0 && (
+				<PublicizeForm staticConnections={ connections } refreshCallback={ refreshConnections } />
+			) }
+		{ connections &&
+			0 === connections.length && (
 				<PublicizeSettingsButton
 					className="jetpack-publicize-add-connection-wrapper"
 					refreshCallback={ refreshConnections }
 				/>
-			)
-		}
-		{ ( connections && connections.length > 0 ) && <PublicizeConnectionVerify /> }
+			) }
+		{ connections && connections.length > 0 && <PublicizeConnectionVerify /> }
 	</PluginPrePublishPanel>
 );
 
 export default compose( [
-	withSelect(
-		select => {
-			const postId = select( 'core/editor' ).getCurrentPostId();
+	withSelect( select => {
+		const postId = select( 'core/editor' ).getCurrentPostId();
 
-			return {
-				connections: select( 'jetpack/publicize' ).getConnections( postId ),
-				postId,
-			};
-		}
-	),
+		return {
+			connections: select( 'jetpack/publicize' ).getConnections( postId ),
+			postId,
+		};
+	} ),
 	withDispatch( ( dispatch, { postId } ) => ( {
 		refreshConnections: () => dispatch( 'jetpack/publicize' ).refreshConnections( postId ),
 	} ) ),

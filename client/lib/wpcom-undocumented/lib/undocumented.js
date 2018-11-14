@@ -1387,7 +1387,7 @@ Undocumented.prototype.saveABTestData = function( name, variation, callback ) {
  * Sign up for a new user account
  * Create a new user
  *
- * @param {object} query - an object with three values: email, username, password
+ * @param {object} query - an object with the following values: email, username, password, first_name (optional), last_name (optional)
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersNew = function( query, fn ) {

@@ -1,3 +1,10 @@
+/** @format */
+
+/**
+ * Internal dependencies
+ */
+import { getFetchConnectionsPath } from './utils';
+
 /**
  * Returns an action object used in signalling that
  * we're setting the Publicize connections for a post.
@@ -13,22 +20,23 @@ export function setConnections( postId, connections ) {
 		connections,
 		postId,
 	};
-};
+}
 
 /**
- * Returns an action object used in signalling that
- * we're refreshing the Publicize connections for a post.
+ * Requests the Publicize connections for a post by its ID.
  *
  * @param {Number} postId      ID of the post.
  *
  * @return {Object} Action object.
  */
-export function refreshConnections( postId ) {
-	return {
-		type: 'REFRESH_CONNECTIONS',
-		postId,
-	};
-};
+export function* refreshConnections( postId ) {
+	try {
+		const connections = yield fetchFromAPI( getFetchConnectionsPath( postId ) );
+		return setConnections( postId, connections.jetpack_publicize_connections );
+	} catch ( error ) {
+		// Refreshing connections failed
+	}
+}
 
 /**
  * Returns an action object used in signalling that
@@ -43,4 +51,4 @@ export function fetchFromAPI( path ) {
 		type: 'FETCH_FROM_API',
 		path,
 	};
-};
+}

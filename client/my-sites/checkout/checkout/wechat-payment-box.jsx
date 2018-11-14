@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -28,6 +29,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { infoNotice, errorNotice } from 'state/notices/actions';
 import { isWpComBusinessPlan } from 'lib/plans';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import Button from 'components/button';
 
 export class WechatPaymentBox extends Component {
 	static propTypes = {
@@ -128,7 +130,8 @@ export class WechatPaymentBox extends Component {
 
 		// Only show if chat is available and we have a business plan in the cart.
 		const showPaymentChatButton =
-			presaleChatAvailable && some( cart.products, isWpComBusinessPlan );
+			presaleChatAvailable &&
+			some( cart.products, ( { product_slug } ) => isWpComBusinessPlan( product_slug ) );
 
 		// Wechat qr codes get set on desktop instead of redirecting
 		if ( redirectUrl && ! isMobile ) {
@@ -170,22 +173,30 @@ export class WechatPaymentBox extends Component {
 					/>
 
 					<div className="checkout__payment-box-actions">
-						<div className="checkout__pay-button">
-							<button
-								type="submit"
-								className="checkout__button-pay button is-primary "
-								disabled={ this.props.pending }
-							>
-								{ translate( 'Pay %(price)s with WeChat Pay', {
-									args: { price: cart.total_cost_display },
-								} ) }
-							</button>
-							<SubscriptionText cart={ cart } />
+						<div className="checkout__payment-buttons  payment-box__payment-buttons">
+							<span className="checkout__payment-button pay-button">
+								<Button
+									type="submit"
+									className="checkout__payment-button-button button is-primary button-pay pay-button__button"
+									busy={ this.props.pending }
+									disabled={ this.props.pending || this.props.failure }
+								>
+									{ translate( 'Pay %(price)s with WeChat Pay', {
+										args: { price: cart.total_cost_display },
+									} ) }
+								</Button>
+								<SubscriptionText cart={ cart } />
+							</span>
+							<div className="checkout__secure-payment">
+								<div className="checkout__secure-payment-content">
+									<Gridicon icon="lock" />
+									{ translate( 'Secure Payment' ) }
+								</div>
+							</div>
+							{ showPaymentChatButton && (
+								<PaymentChatButton paymentType={ paymentType } cart={ cart } />
+							) }
 						</div>
-
-						{ showPaymentChatButton && (
-							<PaymentChatButton paymentType={ paymentType } cart={ cart } />
-						) }
 					</div>
 				</form>
 

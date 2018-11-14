@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity, isEmpty, omit, get } from 'lodash';
+import { identity, includes, isEmpty, omit, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -95,7 +95,7 @@ export class UserStep extends Component {
 
 		let subHeaderText = props.subHeaderText;
 
-		if ( flowName === 'wpcc' && oauth2Client ) {
+		if ( includes( [ 'wpcc', 'crowdsignal' ], flowName ) && oauth2Client ) {
 			if ( isWooOAuth2Client( oauth2Client ) ) {
 				subHeaderText = translate( '{{a}}Learn more about the benefits{{/a}}', {
 					components: {
@@ -211,7 +211,7 @@ export class UserStep extends Component {
 	getHeaderText() {
 		const { flowName, headerText, oauth2Client, translate } = this.props;
 
-		if ( flowName === 'wpcc' && oauth2Client ) {
+		if ( includes( [ 'wpcc', 'crowdsignal' ], flowName ) && oauth2Client ) {
 			return translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
 				args: { clientTitle: oauth2Client.title },
 				comment:

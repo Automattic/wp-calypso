@@ -33,6 +33,7 @@ import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
+import { launchSite } from 'state/sites/launch/actions';
 
 const userLib = userFactory();
 
@@ -130,6 +131,16 @@ class WpcomChecklist extends PureComponent {
 		} );
 	};
 
+	handleLaunchSite = task => () => {
+		if ( task.isCompleted ) {
+			return;
+		}
+
+		const { siteId } = this.props;
+
+		this.props.launchSite( siteId );
+	};
+
 	verificationTaskButtonText() {
 		const { translate } = this.props;
 		if ( this.state.pendingRequest ) {
@@ -215,6 +226,7 @@ class WpcomChecklist extends PureComponent {
 			post_published: this.renderPostPublishedTask,
 			custom_domain_registered: this.renderCustomDomainRegisteredTask,
 			mobile_app_installed: this.renderMobileAppInstalledTask,
+			site_launched: this.renderSiteLaunchedTask,
 		};
 
 		const baseProps = {
@@ -478,6 +490,25 @@ class WpcomChecklist extends PureComponent {
 			/>
 		);
 	};
+
+	renderSiteLaunchedTask = ( TaskComponent, baseProps, task ) => {
+		const { translate } = this.props;
+
+		return (
+			<TaskComponent
+				{ ...baseProps }
+				bannerImageSrc="/calypso/images/stats/tasks/launch.svg"
+				buttonText={ translate( 'Launch site' ) }
+				completedTitle={ translate( 'You launched your site' ) }
+				description={ translate(
+					'Your site is private and only visible to you. Launch your site, when you are ready to make it public.'
+				) }
+				onClick={ this.handleLaunchSite( task ) }
+				onDismiss={ this.handleTaskDismiss( task.id ) }
+				title={ translate( 'Launch your site' ) }
+			/>
+		);
+	};
 }
 
 function getContactPage( posts ) {
@@ -525,5 +556,6 @@ export default connect(
 		recordTracksEvent,
 		requestGuidedTour,
 		requestSiteChecklistTaskUpdate,
+		launchSite,
 	}
 )( localize( WpcomChecklist ) );

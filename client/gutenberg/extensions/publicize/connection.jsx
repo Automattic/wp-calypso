@@ -1,14 +1,11 @@
 /** @format */
+
 /**
  * Publicize connection form component.
  *
  * Component to display connection label and a
  * checkbox to enable/disable the connection for sharing.
  */
-
-// Since this is a Jetpack originated block in Calypso codebase,
-// we're relaxing some accessibility rules.
-/* eslint jsx-a11y/label-has-for: 0 */
 
 /**
  * External dependencies
@@ -24,26 +21,26 @@ class PublicizeConnection extends Component {
 	 * state change can be handled by parent.
 	 */
 	onConnectionChange = () => {
-		const { unique_id } = this.props.connectionData;
+		const { id } = this.props.connectionData;
 		const { connectionChange, connectionOn } = this.props;
 		connectionChange( {
-			connectionID: unique_id,
+			connectionID: id,
 			shouldShare: ! connectionOn,
 		} );
 	};
 
 	render() {
-		const { service_name: name, label, disabled, display_name } = this.props.connectionData;
+		const { service_name: name, toggleable, display_name, id } = this.props.connectionData;
 		const { connectionOn } = this.props;
+		const fieldId = 'connection-' + name + '-' + id;
 		// Genericon names are dash separated
 		const socialName = name.replace( '_', '-' );
 
 		return (
 			<li>
 				<div className="publicize-jetpack-connection-container">
-					<label htmlFor={ label } className="jetpack-publicize-connection-label">
+					<label htmlFor={ fieldId } className="jetpack-publicize-connection-label">
 						<span
-							title={ label }
 							className={
 								'jetpack-publicize-gutenberg-social-icon social-logo social-logo__' + socialName
 							}
@@ -51,11 +48,11 @@ class PublicizeConnection extends Component {
 						<span>{ display_name }</span>
 					</label>
 					<FormToggle
-						id={ label }
+						id={ fieldId }
 						className="jetpack-publicize-connection-toggle"
 						checked={ connectionOn }
 						onChange={ this.onConnectionChange }
-						disabled={ disabled }
+						disabled={ ! toggleable }
 					/>
 				</div>
 			</li>

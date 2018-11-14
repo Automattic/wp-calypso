@@ -5,6 +5,8 @@
  */
 import { BlockControls, PlainText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
+import { compose } from '@wordpress/compose';
+import { withDispatch, withSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -52,6 +54,17 @@ class MarkdownEdit extends Component {
 
 	updateSource = source => this.props.setAttributes( { source } );
 
+	handleKeyDown = e => {
+		const { attributes, removeBlock } = this.props;
+		const { source } = attributes;
+
+		// Remove the block if source is empty and we're pressing the Backspace key
+		if ( e.keyCode === 8 && source === '' ) {
+			removeBlock();
+			e.preventDefault();
+		}
+	};
+
 	toggleMode = mode => () => this.setState( { activePanel: mode } );
 
 	renderToolbarButton( mode, label ) {
@@ -95,6 +108,7 @@ class MarkdownEdit extends Component {
 					<PlainText
 						className={ `${ className }__editor` }
 						onChange={ this.updateSource }
+						onKeyDown={ this.handleKeyDown }
 						aria-label={ __( 'Markdown' ) }
 						innerRef={ this.bindInput }
 						value={ source }
@@ -105,4 +119,11 @@ class MarkdownEdit extends Component {
 	}
 }
 
-export default MarkdownEdit;
+export default compose( [
+	withSelect( select => ( {
+		currentBlockId: select( 'core/editor' ).getSelectedBlockClientId(),
+	} ) ),
+	withDispatch( ( dispatch, { currentBlockId } ) => ( {
+		removeBlock: () => dispatch( 'core/editor' ).removeBlocks( currentBlockId ),
+	} ) ),
+] )( MarkdownEdit );
