@@ -30,7 +30,6 @@ import getUserSettings from 'state/selectors/get-user-settings';
 import hasUserSettings from 'state/selectors/has-user-settings';
 import { sendSMS } from 'state/mobile-download-sms/actions';
 import phoneValidation from 'lib/phone-validation';
-import config from 'config';
 import userAgent from 'lib/user-agent';
 import twoStepAuthorization from 'lib/two-step-authorization';
 
@@ -63,11 +62,12 @@ class MobileDownloadCard extends React.Component {
 	};
 
 	componentDidMount() {
-		twoStepAuthorization.on( 'change', this.onReauthStateChange );
+		twoStepAuthorization.on( 'change', this.maybeFetchAccountRecoverySettings );
+		this.maybeFetchAccountRecoverySettings();
 	}
 
 	componentWillUnmount() {
-		twoStepAuthorization.off( 'change', this.onReauthStateChange );
+		twoStepAuthorization.off( 'change', this.maybeFetchAccountRecoverySettings );
 	}
 
 	componentDidUpdate( previousProps ) {
@@ -82,7 +82,7 @@ class MobileDownloadCard extends React.Component {
 		}
 	}
 
-	onReauthStateChange = () => {
+	maybeFetchAccountRecoverySettings = () => {
 		const hasReauthData = twoStepAuthorization.data ? true : false;
 		const needsReauth = hasReauthData ? twoStepAuthorization.isReauthRequired() : true;
 
@@ -177,7 +177,7 @@ class MobileDownloadCard extends React.Component {
 		const hasAllData = this.userSettingsHaveBeenLoadedWithAccountRecoveryPhone();
 		const { countryCode, number, isValid } = this.getPreferredNumber();
 		const { isMobile } = userAgent;
-		const featureIsEnabled = config.isEnabled( 'get-apps-sms' ) && ! isMobile;
+		const featureIsEnabled = ! isMobile;
 
 		return (
 			<Card className="get-apps__mobile">

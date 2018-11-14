@@ -40,7 +40,6 @@
 		"gdpr-banner": true,
 		"google-analytics": true,
 		"google-my-business": true,
-		"get-apps-sms": false,
 		"gutenberg": false,
 		"gutenberg/opt-in": true,
 		"gutenberg/block/jetpack-preset": false,
