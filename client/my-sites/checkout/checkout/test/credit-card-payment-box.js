@@ -18,6 +18,7 @@ import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
 import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -160,6 +161,7 @@ describe( 'Credit Card Payment Box - PaymentChatButton', () => {
 	};
 
 	const eligiblePlans = [
+		PLAN_BUSINESS_MONTHLY,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,

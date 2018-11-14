@@ -17,6 +17,7 @@ import { CreditsPaymentBox } from '../credits-payment-box';
 import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -74,6 +75,7 @@ describe( 'CreditsPaymentBox', () => {
 	} );
 
 	const eligiblePlans = [
+		PLAN_BUSINESS_MONTHLY,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,

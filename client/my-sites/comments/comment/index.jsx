@@ -27,6 +27,11 @@ import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import getSiteComment from 'state/selectors/get-site-comment';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class Comment extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,

@@ -384,10 +384,7 @@ export const submitAddressForNormalization = ( orderId, siteId, group ) => (
 	dispatch,
 	getState
 ) => {
-	const handleNormalizeResponse = success => {
-		if ( ! success ) {
-			return;
-		}
+	const handleNormalizeResponse = () => {
 		const { values, normalized, expanded } = getShippingLabel( getState(), orderId, siteId ).form[
 			group
 		];
@@ -411,21 +408,18 @@ export const submitAddressForNormalization = ( orderId, siteId, group ) => (
 		state = getShippingLabel( getState(), orderId, siteId ).form[ group ];
 	}
 	if ( state.isNormalized && isEqual( state.values, state.normalized ) ) {
-		handleNormalizeResponse( true );
+		handleNormalizeResponse();
 		return;
 	}
-	normalizeAddress(
+
+	// No `catch` is needed here: `normalizeAddress` already generates a notice.
+	return normalizeAddress(
 		orderId,
 		siteId,
 		dispatch,
 		getShippingLabel( getState(), orderId, siteId ).form[ group ].values,
 		group
-	)
-		.then( handleNormalizeResponse )
-		.catch( error => {
-			console.error( error );
-			dispatch( NoticeActions.errorNotice( error.toString() ) );
-		} );
+	).then( handleNormalizeResponse );
 };
 
 export const updatePackageWeight = ( orderId, siteId, packageId, value ) => {

@@ -14,6 +14,7 @@ import {
 	FEATURE_VIDEO_UPLOADS,
 	GROUP_JETPACK,
 	GROUP_WPCOM,
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_ECOMMERCE,
@@ -623,7 +624,7 @@ describe( 'findSimilarPlansKeys', () => {
 				type: TYPE_BUSINESS,
 				group: GROUP_WPCOM,
 			} )
-		).to.deep.equal( [] );
+		).to.deep.equal( [ PLAN_BUSINESS_MONTHLY ] );
 	} );
 } );
 
@@ -649,6 +650,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_BUSINESS,
 		] );
 		expect( findPlansKeys( { term: TERM_MONTHLY } ) ).to.deep.equal( [
+			PLAN_BUSINESS_MONTHLY,
 			PLAN_JETPACK_PREMIUM_MONTHLY,
 			PLAN_JETPACK_PERSONAL_MONTHLY,
 			PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -677,6 +679,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_PREMIUM_MONTHLY,
 		] );
 		expect( findPlansKeys( { type: TYPE_BUSINESS } ) ).to.deep.equal( [
+			PLAN_BUSINESS_MONTHLY,
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_JETPACK_BUSINESS,
@@ -693,6 +696,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_PERSONAL_2_YEARS,
 			PLAN_PREMIUM,
 			PLAN_PREMIUM_2_YEARS,
+			PLAN_BUSINESS_MONTHLY,
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_ECOMMERCE,
@@ -722,6 +726,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_PREMIUM_2_YEARS,
 		] );
 		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BUSINESS } ) ).to.deep.equal( [
+			PLAN_BUSINESS_MONTHLY,
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
 		] );

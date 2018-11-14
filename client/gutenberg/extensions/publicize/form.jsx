@@ -68,7 +68,7 @@ const PublicizeForm = compose( [
 			// Copy array (simply mutating data would cause the component to not be updated).
 			const newConnections = activeConnections.slice( 0 );
 			newConnections.forEach( c => {
-				if ( c.unique_id === connectionID ) {
+				if ( c.id === connectionID ) {
 					c.should_share = shouldShare;
 				}
 			} );

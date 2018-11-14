@@ -13,6 +13,7 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_JETPACK_FREE,
@@ -31,7 +32,7 @@ jest.mock( 'state/sites/selectors', () => ( {
 
 describe( 'siteHasBusinessPlan()', () => {
 	test( 'should return true if site has WP.com business plan', () => {
-		const plans = [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ];
+		const plans = [ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ];
 
 		plans.forEach( plan => {
 			selectors.getSitePlanSlug.mockImplementation( () => plan );

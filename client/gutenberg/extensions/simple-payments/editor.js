@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { registerBlockType } from '@wordpress/blocks';
-import GridiconMoney from 'gridicons/dist/money';
+import { Path, SVG } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -20,19 +20,22 @@ import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import './editor.scss';
 
 registerBlockType( 'jetpack/simple-payments', {
-	title: __( 'Payment button' ),
+	title: __( 'Simple Payments button' ),
 
 	description: __(
-		'Simple Payments lets you create and embed credit and ' +
-			'debit card payment buttons on your WordPress.com and ' +
-			'Jetpack-enabled sites with minimal setup.'
+		'Lets you create and embed credit and debit card payment buttons with minimal setup.'
 	),
 
-	icon: <GridiconMoney />,
+	icon: (
+		<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+			<Path fill="none" d="M0 0h24v24H0V0z" />
+			<Path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+		</SVG>
+	),
 
 	category: 'jetpack',
 
-	keywords: [ __( 'Simple Payments' ), _x( 'shop', 'block search term' ), 'PayPal' ],
+	keywords: [ _x( 'shop', 'block search term' ), _x( 'sell', 'block search term' ), 'PayPal' ],
 
 	attributes: {
 		currency: {

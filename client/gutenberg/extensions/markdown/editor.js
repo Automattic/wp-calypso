@@ -13,9 +13,11 @@ import './editor.scss';
 import edit from './edit';
 import save from './save';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import JetpackBlockType from 'gutenberg/extensions/presets/jetpack/utils/jetpack-block-type';
+import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
 
-const MarkdownBlock = new JetpackBlockType( 'markdown', {
+export const name = 'markdown';
+
+export const settings = {
 	title: __( 'Markdown' ),
 
 	description: (
@@ -55,6 +57,6 @@ const MarkdownBlock = new JetpackBlockType( 'markdown', {
 	edit,
 
 	save,
-} );
+};
 
-MarkdownBlock.register();
+registerJetpackBlock( name, settings );
