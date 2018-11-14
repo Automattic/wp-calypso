@@ -16,7 +16,7 @@ export const settings = {
 		</svg>
 	),
 	category: 'jetpack',
-	keywords: [ __( 'map' ), __( 'location' ), 'jetpack' ],
+	keywords: [ __( 'map' ), __( 'location' ) ],
 	attributes: {
 		align: {
 			type: 'string',
