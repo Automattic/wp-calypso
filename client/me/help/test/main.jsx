@@ -10,6 +10,8 @@ import React from 'react';
  */
 import {
 	PLAN_FREE,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -86,12 +88,20 @@ describe( 'mapStateToProps should return correct value for isBusinessPlanUser', 
 		} );
 	} );
 
-	[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( productSlug => {
-		test( `True for plan ${ JSON.stringify( productSlug ) }`, () => {
-			purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
-			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( true );
-		} );
-	} );
+	[
+		PLAN_BUSINESS_MONTHLY,
+		PLAN_BUSINESS,
+		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
+	].forEach(
+		productSlug => {
+			test( `True for plan ${ JSON.stringify( productSlug ) }`, () => {
+				purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
+				expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( true );
+			} );
+		}
+	);
 
 	test( 'Should be false for purchases not loaded', () => {
 		purchasesSelectors.getUserPurchases.mockImplementation( () => null );

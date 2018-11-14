@@ -18,8 +18,8 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getHelpCourses } from 'state/help/courses/selectors';
 import { helpCourses } from './constants';
-import { planMatches } from 'lib/plans';
-import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
+import { planHasFeature } from 'lib/plans';
+import { FEATURE_BUSINESS_ONBOARDING } from 'lib/plans/constants';
 import { receiveHelpCourses } from 'state/help/courses/actions';
 import {
 	getUserPurchases,
@@ -29,7 +29,7 @@ import {
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class Courses extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.fetchCoursesIfNeeded();
 	}
 
@@ -66,13 +66,14 @@ class Courses extends Component {
 	}
 }
 
-const isWPCOMBusinessPlan = purchase =>
-	planMatches( purchase.productSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
-
 export function mapStateToProps( state ) {
 	const userId = getCurrentUserId( state );
 	const purchases = getUserPurchases( state, userId );
-	const isBusinessPlanUser = purchases && !! find( purchases, isWPCOMBusinessPlan );
+	const isBusinessPlanUser =
+		purchases &&
+		!! find( purchases, ( { productSlug } ) =>
+			planHasFeature( productSlug, FEATURE_BUSINESS_ONBOARDING )
+		);
 	const courses = getHelpCourses( state );
 	const isLoading =
 		isFetchingUserPurchases( state ) || ! courses || ! hasLoadedUserPurchasesFromServer( state );
