@@ -131,27 +131,38 @@ export function createSiteWithCart(
 	const siteVertical = getSiteVertical( state );
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
+
+	const newSiteParams = {
+		blog_title: siteTitle,
+		options: {
+			designType: designType || undefined,
+			// the theme can be provided in this step's dependencies or the
+			// step object itself depending on if the theme is provided in a
+			// query. See `getThemeSlug` in `DomainsStep`.
+			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
+			vertical: siteVertical || undefined,
+			siteGoals: siteGoals || undefined,
+			siteType: siteType || undefined,
+		},
+		validate: false,
+	};
+
 	const importingFromUrl =
 		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( state ) ) : '';
 
+	if ( importingFromUrl ) {
+		newSiteParams.blog_name = importingFromUrl;
+		newSiteParams.find_available_url = true;
+		newSiteParams.public = -1;
+	} else {
+		newSiteParams.blog_name = siteUrl;
+		newSiteParams.find_available_url = !! isPurchasingItem;
+		newSiteParams.public = abtest( 'privateByDefault' ) === 'private' ? -1 : 1;
+	}
+
 	wpcom.undocumented().sitesNew(
-		{
-			blog_name: importingFromUrl || siteUrl,
-			blog_title: siteTitle,
-			options: {
-				designType: designType || undefined,
-				// the theme can be provided in this step's dependencies or the
-				// step object itself depending on if the theme is provided in a
-				// query. See `getThemeSlug` in `DomainsStep`.
-				theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
-				vertical: siteVertical || undefined,
-				siteGoals: siteGoals || undefined,
-				siteType: siteType || undefined,
-			},
-			public: abtest( 'privateByDefault' ) === 'private' ? -1 : 1,
-			validate: false,
-			find_available_url: !! ( isPurchasingItem || importingFromUrl ),
-		},
+		// don't reformat the below in this commit!
+		newSiteParams,
 		function( error, response ) {
 			if ( error ) {
 				callback( error );
