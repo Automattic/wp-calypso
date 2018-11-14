@@ -43,26 +43,31 @@ class SimplePaymentsEdit extends Component {
 		fieldPriceError: null,
 		fieldTitleError: null,
 		isSavingProduct: false,
+		isInitialized: this.props.attributes.paymentId && !! this.props.simplePayment,
 	};
 
 	componentDidMount() {
-		this.injectPaymentAttributes();
+		const { attributes } = this.props;
+		const { paymentId } = attributes;
+		if ( paymentId ) {
+			this.injectPaymentAttributes();
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
 		const { isSelected } = this.props;
 
-		if ( prevProps.isLoadingInitial !== this.props.isLoadingInitial ) {
-			debug(
-				'isLoadingInitial changed: %o; simplePayment: %o',
-				this.props.isLoadingInitial,
-				this.props.simplePayment
-			);
-		}
-
-		if ( prevProps.simplePayment !== this.props.simplePayment ) {
+		if ( ! this.state.isInitialized && prevProps.simplePayment !== this.props.simplePayment ) {
 			debug( '%o !== %o', prevProps.simplePayment, this.props.simplePayment );
 			this.injectPaymentAttributes();
+			this.setState( { isInitialized: true } );
+		}
+
+		// Handle bad payment
+		if ( ! this.state.isInitialized && ! this.props.isLoadingPayment ) {
+			// @TODO Unset paymentId attribute?
+			// this.props.setAttributes( { paymentId: undefined } );
+			this.setState( { isInitialized: true } );
 		}
 
 		// Validate and save on block-deselect
@@ -86,7 +91,8 @@ class SimplePaymentsEdit extends Component {
 		}
 	}
 
-	attributesToPost = attributes => {
+	toApi() {
+		const { attributes } = this.props;
 		const { content, currency, email, multiple, paymentId, price, title } = attributes;
 
 		return {
@@ -96,13 +102,13 @@ class SimplePaymentsEdit extends Component {
 			meta: {
 				spay_currency: currency,
 				spay_email: email,
-				spay_multiple: multiple ? 1 : 0,
+				spay_multiple: multiple,
 				spay_price: price,
 			},
 			status: 'publish',
 			title,
 		};
-	};
+	}
 
 	saveProduct() {
 		if ( this.state.isSavingProduct ) {
@@ -118,11 +124,7 @@ class SimplePaymentsEdit extends Component {
 		const { saveEntityRecord } = dispatch( 'core' );
 
 		this.setState( { isSavingProduct: true }, async () => {
-			saveEntityRecord(
-				'postType',
-				SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
-				this.attributesToPost( attributes )
-			)
+			saveEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, this.toApi() )
 				.then( record => {
 					debug( 'Saved: %o', record );
 					setAttributes( { paymentId: record.id } );
@@ -352,11 +354,11 @@ class SimplePaymentsEdit extends Component {
 	} );
 
 	render() {
-		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
-		const { attributes, isSelected, isLoadingInitial, instanceId } = this.props;
+		const { fieldEmailError, fieldPriceError, fieldTitleError, isInitialized } = this.state;
+		const { attributes, isSelected, instanceId } = this.props;
 		const { content, currency, email, multiple, price, title } = attributes;
 
-		if ( ! isSelected && isLoadingInitial ) {
+		if ( ! isSelected && ! isInitialized ) {
 			return (
 				<div className="simple-payments__loading">
 					<ProductPlaceholder
@@ -405,7 +407,7 @@ class SimplePaymentsEdit extends Component {
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
 							'simple-payments__field-has-error': fieldTitleError,
 						} ) }
-						disabled={ isLoadingInitial }
+						disabled={ ! isInitialized }
 						label={ __( 'Item name' ) }
 						onChange={ this.handleTitleChange }
 						placeholder={ __( 'Item name' ) }
@@ -419,7 +421,7 @@ class SimplePaymentsEdit extends Component {
 
 					<TextareaControl
 						className="simple-payments__field simple-payments__field-content"
-						disabled={ isLoadingInitial }
+						disabled={ ! isInitialized }
 						label={ __( 'Describe your item in a few words' ) }
 						onChange={ this.handleContentChange }
 						placeholder={ __( 'Describe your item in a few words' ) }
@@ -429,7 +431,7 @@ class SimplePaymentsEdit extends Component {
 					<div className="simple-payments__price-container">
 						<SelectControl
 							className="simple-payments__field simple-payments__field-currency"
-							disabled={ isLoadingInitial }
+							disabled={ ! isInitialized }
 							label={ __( 'Currency' ) }
 							onChange={ this.handleCurrencyChange }
 							options={ this.getCurrencyList }
@@ -437,7 +439,7 @@ class SimplePaymentsEdit extends Component {
 						/>
 						<TextControl
 							aria-describedby={ `${ instanceId }-price-error` }
-							disabled={ isLoadingInitial }
+							disabled={ ! isInitialized }
 							className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
 								'simple-payments__field-has-error': fieldPriceError,
 							} ) }
@@ -456,8 +458,8 @@ class SimplePaymentsEdit extends Component {
 
 					<div className="simple-payments__field-multiple">
 						<ToggleControl
-							checked={ Boolean( multiple ) }
-							disabled={ isLoadingInitial }
+							checked={ multiple }
+							disabled={ ! isInitialized }
 							label={ __( 'Allow people to buy more than one item at a time' ) }
 							onChange={ this.handleMultipleChange }
 						/>
@@ -468,7 +470,7 @@ class SimplePaymentsEdit extends Component {
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
 							'simple-payments__field-has-error': fieldEmailError,
 						} ) }
-						disabled={ isLoadingInitial }
+						disabled={ ! isInitialized }
 						label={ __( 'Email' ) }
 						onChange={ this.handleEmailChange }
 						placeholder={ __( 'Email' ) }
@@ -540,23 +542,22 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 	}
 
 	let simplePayment = undefined;
-	let isLoadingInitial = false;
+	let isLoadingPayment = false;
 	if ( paymentId ) {
 		const args = [ 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId ];
 		const record = getEntityRecord( ...args );
-		isLoadingInitial = isResolving( 'core', 'getEntityRecord', args );
-		debug( 'Record: %o', record );
+		isLoadingPayment = isResolving( 'core', 'getEntityRecord', args );
 		if ( ! isNull( record ) ) {
 			try {
 				simplePayment = mapSelectToProps.fromApi( record );
 			} catch ( err ) {
-				// 😱 Bad payment data! What to do?
+				// @TODO: 😱 Bad payment data! What to do?
 			}
 		}
 	}
 
 	return {
-		isLoadingInitial,
+		isLoadingPayment,
 		simplePayment,
 	};
 } );
