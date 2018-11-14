@@ -3,7 +3,7 @@
 /**
  * External Dependencies
  */
-import pick from 'lodash/pick';
+import { pick } from 'lodash';
 
 /**
  * WordPress dependencies

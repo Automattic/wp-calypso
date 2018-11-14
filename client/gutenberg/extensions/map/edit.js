@@ -7,6 +7,7 @@
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { sprintf } from '@wordpress/i18n';
 import { Component, createRef, Fragment, RawHTML } from '@wordpress/element';
+import { debounce } from 'lodash';
 import {
 	Button,
 	ButtonGroup,
@@ -26,7 +27,6 @@ import {
 	PanelColorSettings,
 } from '@wordpress/editor';
 import apiFetch from '@wordpress/api-fetch';
-import debounce from 'lodash/debounce';
 
 /**
  * Internal dependencies
