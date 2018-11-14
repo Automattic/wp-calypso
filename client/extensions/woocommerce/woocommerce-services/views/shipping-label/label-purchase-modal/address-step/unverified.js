@@ -45,7 +45,7 @@ const UnverifiedAddress = ( {
 
 		if ( verificationError ) {
 			return (
-				<Notice status="is-info" showDismiss={ false }>
+				<Notice status="is-error" showDismiss={ false }>
 					{ translate( 'We were unable to automatically verify the address — %(error)s.', {
 						args: {
 							error: verificationError,
@@ -56,7 +56,7 @@ const UnverifiedAddress = ( {
 		}
 
 		return (
-			<Notice status="is-info" showDismiss={ false }>
+			<Notice status="is-error" showDismiss={ false }>
 				{ translate( 'We were unable to automatically verify the address.' ) }
 			</Notice>
 		);
