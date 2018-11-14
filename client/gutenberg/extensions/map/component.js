@@ -190,17 +190,19 @@ export class Map extends Component {
 		const { zoom, points, onSetZoom } = this.props;
 		const { map, activeMarker, mapboxgl, zoomControl, fit_to_bounds } = this.state;
 
-		const bounds = new mapboxgl.LngLatBounds();
 		if ( ! map || ! points.length || activeMarker ) {
 			return;
 		}
+
+		const bounds = new mapboxgl.LngLatBounds();
+
 		points.forEach( point => {
 			bounds.extend( [ point.coordinates.longitude, point.coordinates.latitude ] );
 		} );
-		map.setCenter( bounds.getCenter() );
 
 		// If there are multiple points, zoom is determined by the area they cover,
 		// and zoom control is removed.
+
 		if ( points.length > 1 ) {
 			map.fitBounds( bounds, {
 				padding: {
@@ -214,6 +216,7 @@ export class Map extends Component {
 			map.removeControl( zoomControl );
 			return;
 		}
+		map.setCenter( bounds.getCenter() );
 		/* Case where points go from multiple to just one. Set zoom to an arbitrarily high level. */
 		if ( fit_to_bounds ) {
 			const newZoom = 12;
