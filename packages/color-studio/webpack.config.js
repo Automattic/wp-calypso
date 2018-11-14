@@ -7,9 +7,11 @@ module.exports = {
   mode: 'production',
   context: path.join(__dirname, '/docs-source'),
   entry: {
-    custom: './javascripts/custom.js',
-    index: './javascripts/index.js',
-    main: './stylesheets/main.scss'
+    /* eslint-disable quote-props */
+    'page': './stylesheets/page.scss',
+    'page-custom': './javascripts/page-custom.js',
+    'page-index': './javascripts/page-index.js'
+    /* eslint-enable quote-props */
   },
   module: {
     rules: [
@@ -63,7 +65,7 @@ module.exports = {
     ]
   },
   output: {
-    path: path.join(__dirname, '/docs/build'),
+    path: path.join(__dirname, '/docs/assets'),
     filename: '[name].js'
   },
   plugins: [

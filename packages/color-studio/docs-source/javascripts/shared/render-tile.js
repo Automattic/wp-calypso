@@ -7,7 +7,7 @@ const COLOR_WHITE = '#ffffff'
 const COLOR_BLACK = '#000000'
 
 module.exports = (base, name, value) => {
-  const className = `tile ${base ? ' tile--base' : ''} text-center`
+  const className = `tile${base ? ' tile--base' : ''} text-center`
   const textColor = determineTextColor(value)
 
   /* eslint-disable indent */

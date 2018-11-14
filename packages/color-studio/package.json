@@ -1,8 +1,9 @@
 {
   "name": "color-studio",
   "version": "1.0.0-rc.1",
-  "private": true,
-  "dependencies": {
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
     "@skpm/builder": "^0.5.11",
     "autoprefixer": "^8.2.0",
     "babel-core": "^6.26.0",
@@ -14,6 +15,7 @@
     "copy-text-to-clipboard": "^1.0.4",
     "css-loader": "^0.28.11",
     "file-saver": "^2.0.0-rc.4",
+    "husky": "^0.14.3",
     "lodash": "^4.17.5",
     "mini-css-extract-plugin": "^0.4.0",
     "node-sass": "^4.8.3",
@@ -22,13 +24,11 @@
     "raw-loader": "^0.5.1",
     "sass-loader": "^6.0.7",
     "webpack": "4.19.1",
-    "webpack-extraneous-file-cleanup-plugin": "^2.0.0"
-  },
-  "devDependencies": {
-    "husky": "^0.14.3",
     "webpack-cli": "2.1.4",
+    "webpack-extraneous-file-cleanup-plugin": "^2.0.0",
     "xo": "^0.20.3"
   },
+
   "scripts": {
     "build": "yarn palette:build && yarn studio:build && yarn sketch:build && yarn meta:build",
     "lint": "xo",
@@ -49,11 +49,11 @@
   },
   "skpm": {
     "manifest": "extensions/sketch/manifest.json",
-    "main": "dist/color-studio.sketchplugin"
+    "main": "dist/extensions/color-studio.sketchplugin"
   },
   "xo": {
     "ignores": [
-      "**/build/*.js"
+      "**/assets/*.js"
     ],
     "esnext": true,
     "space": true,
