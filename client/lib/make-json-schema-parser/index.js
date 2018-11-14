@@ -4,7 +4,6 @@
  * External dependencies
  */
 import schemaValidator from 'is-my-json-valid';
-import { get, identity } from 'lodash';
 
 export class SchemaError extends Error {
 	constructor( errors ) {
@@ -38,7 +37,13 @@ export class TransformerError extends Error {
  *
  * @return {Parser}                       Function to validate and transform data
  */
-export function makeJsonSchemaParser( schema, transformer = identity, schemaOptions = {} ) {
+export function makeJsonSchemaParser(
+	schema,
+	transformer = function identity( x ) {
+		return x;
+	},
+	schemaOptions = {}
+) {
 	let transform;
 	let validate;
 
@@ -71,7 +76,7 @@ export function makeJsonSchemaParser( schema, transformer = identity, schemaOpti
 							message: error.message,
 							value: error.value,
 							actualType: error.type,
-							expectedType: get( schema, error.schemaPath ),
+							expectedType: require( 'lodash' ).get( schema, error.schemaPath ),
 						} )
 					);
 
