@@ -133,7 +133,15 @@ var SWATCH_WIDTH = 48;
 var SWATCH_HEIGHT = 48;
 var SWATCH_MARGIN = 12;
 var SWATCH_INITIAL_X = 0;
-var SWATCH_INITIAL_Y = 0;
+var SWATCH_INITIAL_Y = 240;
+var PALETTE_WHITE = {
+  name: 'White',
+  value: '#ffffff',
+  _meta: {
+    special: true
+  }
+};
+var PALETTE_COLORS = [[PALETTE_WHITE]].concat(PALETTE.colors);
 var cachedArtboards = {};
 var cachedSharedStyles = {};
 /* harmony default export */ __webpack_exports__["default"] = (function () {
@@ -141,7 +149,7 @@ var cachedSharedStyles = {};
   var page = document.selectedPage;
   cacheArtboards(page);
   cacheSharedStyles(document);
-  PALETTE.colors.forEach(function (colorObjects, rowIndex) {
+  PALETTE_COLORS.forEach(function (colorObjects, rowIndex) {
     colorObjects.forEach(function (colorObject, columnIndex) {
       var colorStyle = createColorStyle(document, colorObject);
       createColorSymbol(page, colorObject, colorStyle, rowIndex, columnIndex);
@@ -175,6 +183,10 @@ function createColorStyle(document, colorObject) {
 }
 
 function normalizeColorName(colorObject) {
+  if (colorObject._meta.special) {
+    return colorObject.name;
+  }
+
   var base = colorObject._meta.baseName;
   var index = padStart(colorObject._meta.shadeIndex, 3, 0);
   return "".concat(base, "/").concat(base, " ").concat(index);
@@ -193,7 +205,7 @@ function ensureSharedStyle(document, name) {
 function createColorSymbol(parent, colorObject, colorStyle) {
   var rowIndex = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
   var columnIndex = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
-  var name = "".concat(colorObject._meta.baseName, "/").concat(normalizeColorName(colorObject));
+  var name = normalizeColorName(colorObject);
   var x = SWATCH_INITIAL_X + columnIndex * (SWATCH_WIDTH + SWATCH_MARGIN);
   var y = SWATCH_INITIAL_Y + rowIndex * (SWATCH_HEIGHT + SWATCH_MARGIN);
   var colorArtboard = ensureArtboardWith(parent, name, x, y, SWATCH_WIDTH, SWATCH_HEIGHT);

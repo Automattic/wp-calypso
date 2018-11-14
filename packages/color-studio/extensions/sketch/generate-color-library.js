@@ -11,7 +11,17 @@ const SWATCH_WIDTH = 48
 const SWATCH_HEIGHT = 48
 const SWATCH_MARGIN = 12
 const SWATCH_INITIAL_X = 0
-const SWATCH_INITIAL_Y = 0
+const SWATCH_INITIAL_Y = 240
+
+const PALETTE_WHITE = {
+  name: 'White',
+  value: '#ffffff',
+  _meta: {
+    special: true
+  }
+}
+
+const PALETTE_COLORS = [[PALETTE_WHITE]].concat(PALETTE.colors)
 
 const cachedArtboards = {}
 const cachedSharedStyles = {}
@@ -23,7 +33,7 @@ export default () => {
   cacheArtboards(page)
   cacheSharedStyles(document)
 
-  PALETTE.colors.forEach((colorObjects, rowIndex) => {
+  PALETTE_COLORS.forEach((colorObjects, rowIndex) => {
     colorObjects.forEach((colorObject, columnIndex) => {
       const colorStyle = createColorStyle(document, colorObject)
       createColorSymbol(page, colorObject, colorStyle, rowIndex, columnIndex)
@@ -60,6 +70,10 @@ function createColorStyle(document, colorObject) {
 }
 
 function normalizeColorName(colorObject) {
+  if (colorObject._meta.special) {
+    return colorObject.name
+  }
+
   const base = colorObject._meta.baseName
   const index = padStart(colorObject._meta.shadeIndex, 3, 0)
   return `${base}/${base} ${index}`
@@ -76,7 +90,7 @@ function ensureSharedStyle(document, name) {
 }
 
 function createColorSymbol(parent, colorObject, colorStyle, rowIndex = 0, columnIndex = 0) {
-  const name = `${colorObject._meta.baseName}/${normalizeColorName(colorObject)}`
+  const name = normalizeColorName(colorObject)
   const x = SWATCH_INITIAL_X + columnIndex * (SWATCH_WIDTH + SWATCH_MARGIN)
   const y = SWATCH_INITIAL_Y + rowIndex * (SWATCH_HEIGHT + SWATCH_MARGIN)
 

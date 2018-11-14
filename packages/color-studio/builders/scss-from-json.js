@@ -13,7 +13,7 @@ printStylesheet(colors)
 
 function formatVariableEntry(colorObject) {
   const { name, value } = colorObject
-  return `$wpc-${toKebabCase(name)}: ${formatHex(value)};`
+  return `$muriel-${toKebabCase(name)}: ${formatHex(value)};`
 }
 
 function includeWhiteColor(colorArrays) {

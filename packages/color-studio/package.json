@@ -46,7 +46,7 @@
   },
   "skpm": {
     "manifest": "extensions/sketch/manifest.json",
-    "main": "dist/colors.sketchplugin"
+    "main": "dist/color-studio.sketchplugin"
   },
   "xo": {
     "ignores": [
