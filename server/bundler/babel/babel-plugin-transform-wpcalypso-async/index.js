@@ -85,24 +85,10 @@ module.exports = ( { types: t } ) => {
 				// In both asynchronous and synchronous case, we'll finish by
 				// calling require on the loaded module. If the module is an
 				// ES2015 module, use its default export.
-				let requireCall = t.conditionalExpression(
-					t.memberExpression(
-						t.callExpression( t.identifier( 'require' ), [ argument ] ),
-						t.identifier( '__esModule' )
-					),
-					t.memberExpression(
-						t.callExpression( t.identifier( 'require' ), [ argument ] ),
-						t.identifier( 'default' )
-					),
-					t.callExpression( t.identifier( 'require' ), [ argument ] )
-				);
 
 				// If a callback was passed as an argument, wrap it as part of
 				// the transformation
 				const callback = path.node.arguments[ 1 ];
-				if ( callback ) {
-					requireCall = t.callExpression( callback, [ requireCall ] );
-				}
 
 				if ( isAsync ) {
 					// Generate a chunk name based on the module path
@@ -130,11 +116,7 @@ module.exports = ( { types: t } ) => {
 									t.blockStatement( [
 										t.expressionStatement(
 											t.callExpression( callback, [
-												t.conditionalExpression(
-													t.memberExpression( t.identifier( 'mod' ), t.identifier( '__esModule' ) ),
-													t.memberExpression( t.identifier( 'mod' ), t.identifier( 'default' ) ),
-													t.identifier( 'mod' )
-												),
+												t.memberExpression( t.identifier( 'mod' ), t.identifier( 'default' ) ),
 											] )
 										),
 									] )
@@ -148,6 +130,20 @@ module.exports = ( { types: t } ) => {
 					path.replaceWith( statement );
 				} else {
 					// Transform to synchronous require
+					let requireCall = t.conditionalExpression(
+						t.memberExpression(
+							t.callExpression( t.identifier( 'require' ), [ argument ] ),
+							t.identifier( '__esModule' )
+						),
+						t.memberExpression(
+							t.callExpression( t.identifier( 'require' ), [ argument ] ),
+							t.identifier( 'default' )
+						),
+						t.callExpression( t.identifier( 'require' ), [ argument ] )
+					);
+					if ( callback ) {
+						requireCall = t.callExpression( callback, [ requireCall ] );
+					}
 					path.replaceWith( requireCall );
 				}
 			},
