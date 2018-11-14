@@ -20,9 +20,7 @@ import PublicizeFormUnwrapped from './form-unwrapped';
 
 const PublicizeForm = compose( [
 	withSelect( select => ( {
-		activeConnections: select( 'core/editor' ).getEditedPostAttribute(
-			'jetpack_publicize_connections'
-		),
+		connections: select( 'core/editor' ).getEditedPostAttribute( 'jetpack_publicize_connections' ),
 		shareMessage:
 			select( 'core/editor' ).getEditedPostAttribute( 'jetpack_publicize_message' ) || '',
 	} ) ),
@@ -36,7 +34,7 @@ const PublicizeForm = compose( [
 		 * @param {number}  id ID of the connection being enabled/disabled
 		 */
 		toggleConnection( id ) {
-			const newConnections = ownProps.activeConnections.map( c => ( {
+			const newConnections = ownProps.connections.map( c => ( {
 				...c,
 				enabled: c.id === id ? ! c.enabled : c.enabled,
 			} ) );

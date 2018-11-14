@@ -36,15 +36,15 @@ class PublicizeFormUnwrapped extends Component {
 	 * @return {boolean} True if whole form should be disabled.
 	 */
 	isDisabled() {
-		const { staticConnections } = this.props;
+		const { connections } = this.props;
 		// Check to see if at least one connection is not disabled
-		const formEnabled = staticConnections.some( c => ! c.disabled );
+		const formEnabled = connections.some( c => ! c.disabled );
 		return ! formEnabled;
 	}
 
 	render() {
 		const {
-			staticConnections,
+			connections,
 			toggleConnection,
 			messageChange,
 			shareMessage,
@@ -59,7 +59,7 @@ class PublicizeFormUnwrapped extends Component {
 		return (
 			<div id="publicize-form">
 				<ul>
-					{ staticConnections.map( c => (
+					{ connections.map( c => (
 						<PublicizeConnection
 							connectionData={ c }
 							key={ c.id }
