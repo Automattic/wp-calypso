@@ -23,7 +23,7 @@ export default ( orderId, siteId, dispatch, address, group ) => {
 		siteId,
 	} );
 
-	const setSuccess = json => {
+	const setSuccess = resolve => json => {
 		dispatch( {
 			type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
 			siteId,
@@ -34,9 +34,11 @@ export default ( orderId, siteId, dispatch, address, group ) => {
 			normalized: json.normalized,
 			isTrivialNormalization: json.is_trivial_normalization,
 		} );
+
+		resolve( json );
 	};
 
-	const setError = error => {
+	const setError = reject => error => {
 		dispatch(
 			NoticeActions.errorNotice(
 				translate( 'Error validating %(group)s address: %(error)s', {
@@ -44,6 +46,7 @@ export default ( orderId, siteId, dispatch, address, group ) => {
 				} )
 			)
 		);
+
 		dispatch( {
 			type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
 			siteId,
@@ -51,10 +54,14 @@ export default ( orderId, siteId, dispatch, address, group ) => {
 			group,
 			requestSuccess: false,
 		} );
+
+		reject( error );
 	};
 
-	return api
-		.post( siteId, api.url.addressNormalization(), { address, type: group } )
-		.then( setSuccess )
-		.catch( setError );
+	const request = api.post( siteId, api.url.addressNormalization(), { address, type: group } );
+
+	// Generate a new promise in order to reject unsuccessful requests
+	return new Promise( ( resolve, reject ) => {
+		request.then( setSuccess( resolve ) ).catch( setError( reject ) );
+	} );
 };
