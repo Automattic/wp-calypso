@@ -116,6 +116,7 @@ class SiteInformation extends Component {
 										<FormTextInput
 											id="email"
 											name="email"
+											type="email"
 											isError={ ! this.state.isEmailValid }
 											placeholder={ 'E.g. email@domain.com' }
 											onChange={ this.handleInputChange }
