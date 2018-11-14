@@ -22,6 +22,7 @@ import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import Card from 'components/card';
 import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
+import FormTelInput from 'components/forms/form-tel-input';
 import FormTextarea from 'components/forms/form-textarea';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -134,7 +135,7 @@ class SiteInformation extends Component {
 												{ translate( 'How can people contact you?' ) }
 											</InfoPopover>
 										</FormLabel>
-										<FormTextInput
+										<FormTelInput
 											id="phone"
 											name="phone"
 											placeholder={ translate( 'E.g. (555) 555-5555' ) }
