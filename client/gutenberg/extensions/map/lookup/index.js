@@ -178,7 +178,7 @@ export class Lookup extends Component {
 				'assertive'
 			);
 		} else {
-			debouncedSpeak( __( 'No results.', 'jetpack' ), 'assertive' );
+			debouncedSpeak( __( 'No results.' ), 'assertive' );
 		}
 	}
 	render() {

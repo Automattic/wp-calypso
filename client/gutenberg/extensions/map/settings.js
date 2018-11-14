@@ -12,7 +12,7 @@ import { __ } from '@wordpress/i18n';
 
 export const settings = {
 	name: 'jetpack/map',
-	title: __( 'Map', 'jetpack' ),
+	title: __( 'Map' ),
 	icon: (
 		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 			<path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z" />
@@ -20,7 +20,7 @@ export const settings = {
 		</svg>
 	),
 	category: 'jetpack',
-	keywords: [ __( 'map', 'jetpack' ), __( 'location', 'jetpack' ), 'jetpack' ],
+	keywords: [ __( 'map' ), __( 'location' ), 'jetpack' ],
 	attributes: {
 		align: {
 			type: 'string',
@@ -62,19 +62,19 @@ export const settings = {
 	map_styleOptions: [
 		{
 			value: 'default',
-			label: __( 'Basic', 'jetpack' ),
+			label: __( 'Basic' ),
 		},
 		{
 			value: 'black_and_white',
-			label: __( 'Black and white', 'jetpack' ),
+			label: __( 'Black and white' ),
 		},
 		{
 			value: 'satellite',
-			label: __( 'Satellite', 'jetpack' ),
+			label: __( 'Satellite' ),
 		},
 		{
 			value: 'terrain',
-			label: __( 'Terrain', 'jetpack' ),
+			label: __( 'Terrain' ),
 		},
 	],
 	validAlignments: [ 'center', 'wide', 'full' ],

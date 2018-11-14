@@ -14,7 +14,7 @@ import { BaseControl, TextControl } from '@wordpress/components';
 
 import Lookup from '../lookup';
 
-const placeholderText = __( 'Add a marker...', 'jetpack' );
+const placeholderText = __( 'Add a marker...' );
 
 export class LocationSearch extends Component {
 	constructor() {

@@ -138,20 +138,20 @@ class MapEdit extends Component {
 					</Toolbar>
 				</BlockControls>
 				<InspectorControls>
-					<PanelBody title={ __( 'Map Theme', 'jetpack' ) }>
+					<PanelBody title={ __( 'Map Theme' ) }>
 						<MapThemePicker
 							value={ map_style }
 							onChange={ value => setAttributes( { map_style: value } ) }
 							options={ settings.map_styleOptions }
 						/>
 						<ToggleControl
-							label={ __( 'Show street names', 'jetpack' ) }
+							label={ __( 'Show street names' ) }
 							checked={ map_details }
 							onChange={ value => setAttributes( { map_details: value } ) }
 						/>
 					</PanelBody>
 					<PanelColorSettings
-						title={ __( 'Colors', 'jetpack' ) }
+						title={ __( 'Colors' ) }
 						initialOpen={ true }
 						colorSettings={ [
 							{
@@ -162,7 +162,7 @@ class MapEdit extends Component {
 						] }
 					/>
 					{ points.length ? (
-						<PanelBody title={ __( 'Markers', 'jetpack' ) } initialOpen={ false }>
+						<PanelBody title={ __( 'Markers' ) } initialOpen={ false }>
 							<Locations
 								points={ points }
 								onChange={ value => {
@@ -171,9 +171,9 @@ class MapEdit extends Component {
 							/>
 						</PanelBody>
 					) : null }
-					<PanelBody title={ __( 'Mapbox Access Token', 'jetpack' ) } initialOpen={ false }>
+					<PanelBody title={ __( 'Mapbox Access Token' ) } initialOpen={ false }>
 						<TextControl
-							label={ __( 'Mapbox Access Token', 'jetpack' ) }
+							label={ __( 'Mapbox Access Token' ) }
 							value={ apiKeyControl }
 							onChange={ value => this.setState( { apiKeyControl: value } ) }
 						/>
@@ -199,7 +199,7 @@ class MapEdit extends Component {
 			'https://www.mapbox.com'
 		);
 		const placeholderAPIStateFailure = (
-			<Placeholder icon={ settings.icon } label={ __( 'Map', 'jetpack' ) } notices={ notices }>
+			<Placeholder icon={ settings.icon } label={ __( 'Map' ) } notices={ notices }>
 				<Fragment>
 					<div className="components-placeholder__instructions">
 						<RawHTML>{ getAPIInstructions }</RawHTML>
