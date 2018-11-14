@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,12 +17,10 @@ import getJetpackData from './get-jetpack-data';
 export default function registerJetpackBlock( name, settings ) {
 	const data = getJetpackData();
 	const available = get( data, [ 'available_blocks', name, 'available' ], false );
-
 	if ( data && ! available ) {
 		// TODO: check 'unavailable_reason' and respond accordingly
 		return false;
 	}
 
-	return registerBlockType( `jetpack/${name}`, settings );
+	return registerBlockType( `jetpack/${ name }`, settings );
 }
-
