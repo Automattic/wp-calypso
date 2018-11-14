@@ -52,8 +52,10 @@ export class SubscriptionLengthPicker extends React.Component {
 
 		// taxRate unknown
 		if ( ! isNumber( taxRate ) ) {
-			// translators: This string is displayed immediately next to a localized price with a currency symbol, and is indicating that there may be an additional charge on top of the displayed price.
-			return translate( '+tax' );
+			return translate( '+tax', {
+				comment:
+					'This string is displayed immediately next to a localized price with a currency symbol, and is indicating that there may be an additional charge on top of the displayed price.',
+			} );
 		}
 
 		// a zero tax rate - don't display anything
@@ -61,11 +63,12 @@ export class SubscriptionLengthPicker extends React.Component {
 			return '';
 		}
 
-		// translators: taxAmount is a price with localised formatting but not currency symbol, like 1.234,56 or 1,234.56. The string is displayed immediately next to a price with a currency symbol, and is showing the amount of local sales tax added to that "sticker price".
 		return translate( '+%(taxAmount)s tax', {
 			args: {
 				taxAmount: myFormatCurrency( price * taxRate, currencyCode, { symbol: '' } ),
 			},
+			comment:
+				'taxAmount is a price with localised formatting but not currency symbol, like 1.234,56 or 1,234.56. The string is displayed immediately next to a price with a currency symbol, and is showing the amount of local sales tax added to that "sticker price".',
 		} );
 	}
 
