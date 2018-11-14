@@ -10,7 +10,7 @@ import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { BaseControl, ExternalLink, PanelBody, ToggleControl } from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
-import { ErrorMessage, Field, Form, withFormik } from 'formik';
+import { ErrorMessage, Field, withFormik } from 'formik';
 import { get, trimEnd } from 'lodash';
 import { InspectorControls } from '@wordpress/editor';
 import { sprintf } from '@wordpress/i18n';
@@ -230,142 +230,140 @@ class SimplePaymentsEdit extends Component {
 						</PanelBody>
 					</InspectorControls>
 
-					<Form>
-						<BaseControl
-							label={ __( 'Item name' ) }
+					<BaseControl
+						label={ __( 'Item name' ) }
+						id={ `${ instanceId }-title` }
+						className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
+							'simple-payments__field-has-error': errors.title && touched.title,
+						} ) }
+					>
+						<Field
+							disabled={ isLoadingInitial || isSubmitting }
 							id={ `${ instanceId }-title` }
-							className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
-								'simple-payments__field-has-error': errors.title && touched.title,
-							} ) }
-						>
-							<Field
-								disabled={ isLoadingInitial || isSubmitting }
-								id={ `${ instanceId }-title` }
-								name="title"
-								onBlur={ handleBlur }
-								onChange={ this.handleTitleChange }
-								placeholder={ __( 'Item name' ) }
-								required
-								type="text"
-								value={ values.title }
-							/>
-						</BaseControl>
+							name="title"
+							onBlur={ handleBlur }
+							onChange={ this.handleTitleChange }
+							placeholder={ __( 'Item name' ) }
+							required
+							type="text"
+							value={ values.title }
+						/>
+					</BaseControl>
 
-						<ErrorMessage name="title" component={ HelpMessage } />
+					<ErrorMessage name="title" component={ HelpMessage } />
 
-						<BaseControl
-							label={ __( 'Describe your item in a few words' ) }
+					<BaseControl
+						label={ __( 'Describe your item in a few words' ) }
+						id={ `${ instanceId }-content` }
+						className="simple-payments__field simple-payments__field-content"
+					>
+						<Field
+							component="textarea"
+							disabled={ isLoadingInitial || isSubmitting }
 							id={ `${ instanceId }-content` }
-							className="simple-payments__field simple-payments__field-content"
+							name="content"
+							onBlur={ handleBlur }
+							onChange={ this.handleContentChange }
+							placeholder={ __( 'Describe your item in a few words' ) }
+							required
+							value={ values.content }
+						/>
+					</BaseControl>
+
+					<div className="simple-payments__price-container">
+						<BaseControl
+							label={ __( 'Currency' ) }
+							id={ `${ instanceId }-currency` }
+							className="simple-payments__field simple-payments__field-currency"
 						>
 							<Field
-								component="textarea"
+								id={ `${ instanceId }-currency` }
+								component="select"
 								disabled={ isLoadingInitial || isSubmitting }
-								id={ `${ instanceId }-content` }
-								name="content"
+								name="currency"
 								onBlur={ handleBlur }
-								onChange={ this.handleContentChange }
-								placeholder={ __( 'Describe your item in a few words' ) }
+								onChange={ this.handleCurrencyChange }
 								required
-								value={ values.content }
-							/>
+								value={ values.currency }
+							>
+								{ SUPPORTED_CURRENCY_LIST.map( value => {
+									const { symbol } = getCurrencyDefaults( value );
+									// if symbol is equal to the code (e.g., 'CHF' === 'CHF'), don't duplicate it.
+									// trim the dot at the end, e.g., 'kr.' becomes 'kr'
+									const label = symbol === value ? value : `${ value } ${ trimEnd( symbol, '.' ) }`;
+									return (
+										<option value={ value } key={ value }>
+											{ label }
+										</option>
+									);
+								} ) }
+							</Field>
 						</BaseControl>
 
-						<div className="simple-payments__price-container">
-							<BaseControl
-								label={ __( 'Currency' ) }
-								id={ `${ instanceId }-currency` }
-								className="simple-payments__field simple-payments__field-currency"
-							>
-								<Field
-									id={ `${ instanceId }-currency` }
-									component="select"
-									disabled={ isLoadingInitial || isSubmitting }
-									name="currency"
-									onBlur={ handleBlur }
-									onChange={ this.handleCurrencyChange }
-									required
-									value={ values.currency }
-								>
-									{ SUPPORTED_CURRENCY_LIST.map( value => {
-										const { symbol } = getCurrencyDefaults( value );
-										// if symbol is equal to the code (e.g., 'CHF' === 'CHF'), don't duplicate it.
-										// trim the dot at the end, e.g., 'kr.' becomes 'kr'
-										const label =
-											symbol === value ? value : `${ value } ${ trimEnd( symbol, '.' ) }`;
-										return (
-											<option value={ value } key={ value }>
-												{ label }
-											</option>
-										);
-									} ) }
-								</Field>
-							</BaseControl>
-
-							<BaseControl
-								label={ __( 'Price' ) }
-								id={ `${ instanceId }-price` }
-								className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
-									'simple-payments__field-has-error': errors.price && touched.price,
-								} ) }
-							>
-								<Field
-									disabled={ isLoadingInitial || isSubmitting }
-									id={ `${ instanceId }-price` }
-									name="price"
-									onBlur={ handleBlur }
-									onChange={ this.handlePriceChange }
-									placeholder={ formatPrice( 0, values.currency, false ) }
-									required
-									step="1"
-									type="number"
-									value={ values.price }
-								/>
-							</BaseControl>
-
-							<ErrorMessage name="price" component={ HelpMessage } />
-						</div>
-
-						<div className="simple-payments__field-multiple">
-							<ToggleControl
-								checked={ Boolean( multiple ) }
-								disabled={ isLoadingInitial }
-								label={ __( 'Allow people to buy more than one item at a time' ) }
-								onChange={ this.handleMultipleChange }
-							/>
-						</div>
-
 						<BaseControl
-							label={ __( 'Email' ) }
-							id={ `${ instanceId }-email` }
-							className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
-								'simple-payments__field-has-error': errors.email && touched.email,
+							label={ __( 'Price' ) }
+							id={ `${ instanceId }-price` }
+							className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
+								'simple-payments__field-has-error': errors.price && touched.price,
 							} ) }
 						>
 							<Field
 								disabled={ isLoadingInitial || isSubmitting }
-								id={ `${ instanceId }-email` }
-								name="email"
+								id={ `${ instanceId }-price` }
+								name="price"
 								onBlur={ handleBlur }
-								onChange={ this.handleEmailChange }
-								placeholder={ __( 'Email' ) }
+								onChange={ this.handlePriceChange }
+								placeholder={ formatPrice( 0, values.currency, false ) }
 								required
-								type="email"
-								value={ values.email }
+								step="1"
+								type="number"
+								value={ values.price }
 							/>
 						</BaseControl>
 
-						<ErrorMessage name="email" component={ HelpMessage } />
+						<ErrorMessage name="price" component={ HelpMessage } />
+					</div>
 
-						<HelpMessage id={ `${ instanceId }-email-help` } isError={ false }>
-							{ __(
-								'Enter the email address associated with your PayPal account. Don’t have an account?'
-							) + ' ' }
-							<ExternalLink href="https://www.paypal.com/">
-								{ __( 'Create one on PayPal' ) }
-							</ExternalLink>
-						</HelpMessage>
-					</Form>
+					<div className="simple-payments__field-multiple">
+						<ToggleControl
+							checked={ Boolean( multiple ) }
+							disabled={ isLoadingInitial }
+							label={ __( 'Allow people to buy more than one item at a time' ) }
+							onChange={ this.handleMultipleChange }
+						/>
+					</div>
+
+					<BaseControl
+						label={ __( 'Email' ) }
+						id={ `${ instanceId }-email` }
+						className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
+							'simple-payments__field-has-error': errors.email && touched.email,
+						} ) }
+					>
+						<Field
+							aria-describedby={ ! errors.email ? `${ instanceId }-email-help` : null }
+							disabled={ isLoadingInitial || isSubmitting }
+							id={ `${ instanceId }-email` }
+							name="email"
+							onBlur={ handleBlur }
+							onChange={ this.handleEmailChange }
+							placeholder={ __( 'Email' ) }
+							required
+							type="email"
+							value={ values.email }
+						/>
+					</BaseControl>
+
+					<ErrorMessage name="email" component={ HelpMessage } />
+
+					<HelpMessage id={ `${ instanceId }-email-help` } isError={ false }>
+						{ __(
+							'Enter the email address associated with your PayPal account. Don’t have an account?'
+						) + ' ' }
+						<ExternalLink href="https://www.paypal.com/">
+							{ __( 'Create one on PayPal' ) }
+						</ExternalLink>
+					</HelpMessage>
 
 					{ DisplayFormikState( this.props ) }
 				</Fragment>
