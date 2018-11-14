@@ -51,6 +51,8 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 } from 'lib/plans/constants';
 
 const props = {
@@ -79,10 +81,12 @@ describe( 'UpgradeToPremiumNudgePure.render()', () => {
 		PLAN_PREMIUM,
 		PLAN_BUSINESS_MONTHLY,
 		PLAN_BUSINESS,
+		PLAN_ECOMMERCE,
 		PLAN_BLOGGER_2_YEARS,
 		PLAN_PERSONAL_2_YEARS,
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE_2_YEARS,
 	].forEach( plan => {
 		test( `Should pass 2-years wp.com premium plan for 2-years plans ${ plan }`, () => {
 			const comp = shallow(
