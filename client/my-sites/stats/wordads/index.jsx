@@ -95,15 +95,13 @@ class WordAds extends Component {
 
 		const { period } = this.props.period;
 
-		const today = moment().format( 'YYYY-MM-DD' );
-		const yesterday = moment()
+		const yesterday = moment
+			.utc()
 			.subtract( 1, 'days' )
 			.format( 'YYYY-MM-DD' );
 
 		// Never show stats for the current day. Stats are fetched nightly for the previous day.
-		const queryDate =
-			today === date.format( 'YYYY-MM-DD' ) ? yesterday : date.format( 'YYYY-MM-DD' );
-
+		const queryDate = date.isSameOrAfter( yesterday ) ? yesterday : date.format( 'YYYY-MM-DD' );
 		const query = {
 			period: period,
 			date: queryDate,
