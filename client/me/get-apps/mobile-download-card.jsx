@@ -254,7 +254,6 @@ class MobileDownloadCard extends React.Component {
 
 	onChange = phoneNumber => {
 		this.setState( {
-			...this.state,
 			phoneNumber: {
 				countryCode: phoneNumber.countryData.code,
 				countryNumericCode: phoneNumber.countryData.numeric_code,
