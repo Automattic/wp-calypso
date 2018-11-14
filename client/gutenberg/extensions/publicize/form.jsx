@@ -10,6 +10,7 @@
 /**
  * External dependencies
  */
+import get from 'lodash/get';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 
@@ -19,11 +20,17 @@ import { withSelect, withDispatch } from '@wordpress/data';
 import PublicizeFormUnwrapped from './form-unwrapped';
 
 const PublicizeForm = compose( [
-	withSelect( select => ( {
-		connections: select( 'core/editor' ).getEditedPostAttribute( 'jetpack_publicize_connections' ),
-		shareMessage:
-			select( 'core/editor' ).getEditedPostAttribute( 'jetpack_publicize_message' ) || '',
-	} ) ),
+	withSelect( select => {
+		const meta = select( 'core/editor' ).getEditedPostAttribute( 'meta' );
+
+		return {
+			connections: select( 'core/editor' ).getEditedPostAttribute(
+				'jetpack_publicize_connections'
+			),
+			meta,
+			shareMessage: get( meta, [ 'jetpack_publicize_message' ], '' ),
+		};
+	} ),
 	withDispatch( ( dispatch, ownProps ) => ( {
 		/**
 		 * Toggle connection enable/disable state based on checkbox.
@@ -54,7 +61,10 @@ const PublicizeForm = compose( [
 		 */
 		messageChange( event ) {
 			dispatch( 'core/editor' ).editPost( {
-				jetpack_publicize_message: event.target.value,
+				meta: {
+					...ownProps.meta,
+					jetpack_publicize_message: event.target.value,
+				},
 			} );
 		},
 	} ) ),
