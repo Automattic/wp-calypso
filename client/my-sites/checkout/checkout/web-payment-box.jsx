@@ -136,6 +136,9 @@ export class WebPaymentBox extends React.Component {
 		postalCode: null,
 	};
 
+	/**
+	 * @return {object} A dictionnary containing `default`, `disabled` and `text` keys.
+	 */
 	buttonState = () => {
 		const { transactionStep, translate } = this.props;
 
@@ -203,6 +206,9 @@ export class WebPaymentBox extends React.Component {
 		}
 	};
 
+	/**
+	 * @return {PaymentRequest} A configured payment request object.
+	 */
 	getPaymentRequestForApplePay = () => {
 		const { cart, translate } = this.props;
 
@@ -259,6 +265,9 @@ export class WebPaymentBox extends React.Component {
 		return paymentRequest;
 	};
 
+	/**
+	 * @return {PaymentRequest} A configured payment request object.
+	 */
 	getPaymentRequestForBasicCard = () => {
 		const { cart, translate } = this.props;
 
@@ -385,12 +394,19 @@ export class WebPaymentBox extends React.Component {
 		}
 	};
 
+	/**
+	 * @param {string} key    Should only be `country`.
+	 * @param {string} value  Should only be a country name.
+	 */
 	updateSelectedCountry = ( key, value ) => {
 		if ( 'country' === key ) {
 			this.setState( { country: value } );
 		}
 	};
 
+	/**
+	 * @param {object} event  Event object.
+	 */
 	updateSelectedPostalCode = event => {
 		const { name: key, value } = event.target;
 
