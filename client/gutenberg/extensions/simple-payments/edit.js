@@ -21,6 +21,8 @@ import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
 import get from 'lodash/get';
+import isNull from 'lodash/isNull';
+import memoize from 'lodash/memoize';
 import trimEnd from 'lodash/trimEnd';
 
 /**
@@ -33,6 +35,7 @@ import {
 } from 'lib/simple-payments/constants';
 import ProductPlaceholder from './product-placeholder';
 import HelpMessage from './help-message';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 
 class SimplePaymentsEdit extends Component {
 	state = {
@@ -473,13 +476,62 @@ class SimplePaymentsEdit extends Component {
 	}
 }
 
-const applyWithSelect = withSelect( ( select, props ) => {
+const mapSelectToProps = withSelect( ( select, props ) => {
 	const { paymentId } = props.attributes;
 	const { getEntityRecord } = select( 'core' );
 
-	const simplePayment = paymentId
-		? getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId )
-		: undefined;
+	if ( ! mapSelectToProps.fromApi ) {
+		const simplePaymentApiSchema = {
+			type: 'object',
+			required: [ 'id', 'content', 'meta', 'title' ],
+			additionalProperties: true,
+			properties: {
+				id: { type: 'integer', minimum: 0, exclusiveMinimum: true },
+				content: { type: 'object' },
+				meta: {
+					type: 'object',
+					required: [ 'spay_currency', 'spay_email', 'spay_multiple', 'spay_price' ],
+					properties: {
+						spay_currency: { type: 'string', enum: SUPPORTED_CURRENCY_LIST },
+						spay_email: { type: 'string' },
+						spay_multiple: { type: 'boolean' },
+						spay_price: {
+							type: 'number',
+							minimum: 0,
+							exclusiveMinimum: true,
+						},
+					},
+				},
+				title: { type: 'object' },
+			},
+		};
+
+		const fromApiTransform = memoize( data => {
+			return {
+				id: data.id,
+				content: data.content.raw,
+				currency: data.meta.spay_currency,
+				email: data.meta.spay_email,
+				multiple: data.meta.spay_multiple,
+				price: data.meta.spay_price,
+				title: data.title.raw,
+			};
+		} );
+
+		mapSelectToProps.fromApi = makeJsonSchemaParser( simplePaymentApiSchema, fromApiTransform );
+	}
+
+	let simplePayment = undefined;
+	if ( paymentId ) {
+		const record = getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId );
+		if ( ! isNull( record ) ) {
+			try {
+				simplePayment = mapSelectToProps.fromApi( record );
+			} catch ( err ) {
+				// @TODO: 😱 Bad payment data! What to do?
+			}
+		}
+	}
 
 	return {
 		isLoadingInitial: paymentId && ! simplePayment,
@@ -487,4 +539,7 @@ const applyWithSelect = withSelect( ( select, props ) => {
 	};
 } );
 
-export default compose( [ applyWithSelect, withInstanceId ] )( SimplePaymentsEdit );
+export default compose(
+	mapSelectToProps,
+	withInstanceId
+)( SimplePaymentsEdit );
