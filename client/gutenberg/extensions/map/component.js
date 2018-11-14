@@ -18,7 +18,6 @@ import debounce from 'lodash/debounce';
 import MapMarker from './map-marker/';
 import InfoWindow from './info-window/';
 import { mapboxMapFormatter } from './mapbox-map-formatter/';
-import asyncLoader from './async-loader';
 
 export class Map extends Component {
 	// Lifecycle
@@ -257,22 +256,10 @@ export class Map extends Component {
 	};
 	loadMapLibraries() {
 		const { api_key } = this.props;
-		asyncLoader(
-			[
-				{
-					type: 'js',
-					url: 'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js',
-				},
-				{
-					type: 'css',
-					url: 'https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css',
-				},
-			],
-			() => {
-				window.mapboxgl.accessToken = api_key;
-				this.setState( { mapboxgl: window.mapboxgl }, this.scriptsLoaded );
-			}
-		);
+		import( 'mapbox-gl' ).then( ( { default: mapboxgl } ) => {
+			mapboxgl.accessToken = api_key;
+			this.setState( { mapboxgl: mapboxgl }, this.scriptsLoaded );
+		} );
 	}
 	initMap( map_center ) {
 		const { mapboxgl } = this.state;
