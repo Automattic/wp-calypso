@@ -50,6 +50,8 @@ import React from 'react';
 import { PlansAtomicStoreStep } from '../index';
 import {
 	PLAN_FREE,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -198,7 +200,13 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 		} );
 	} );
 
-	[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( plan => {
+	[
+		PLAN_BUSINESS_MONTHLY,
+		PLAN_BUSINESS,
+		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
+	].forEach( plan => {
 		test( `Should add is_store_signup to cartItem.extra when processing wp.com business plans (${ plan })`, () => {
 			const myProps = {
 				...tplProps,
