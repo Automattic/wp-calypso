@@ -72,9 +72,6 @@ class SiteTopicStep extends Component {
 					<Button type="submit" disabled={ ! this.trimedSiteTopicValue() } primary>
 						{ translate( 'Continue' ) }
 					</Button>
-					<span className="site-topic__form-description">
-						{ translate( 'Search above to continue' ) }
-					</span>
 				</form>
 			</Card>
 		);
