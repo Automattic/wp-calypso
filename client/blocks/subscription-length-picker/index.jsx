@@ -115,9 +115,7 @@ export class SubscriptionLengthPicker extends React.Component {
 									value={ planSlug }
 									onCheck={ this.handleCheck }
 									shouldShowTax={ shouldShowTax }
-									taxDisplay={
-										shouldShowTax && this.formatTax( taxRate, priceFull, this.props.currencyCode )
-									}
+									taxDisplay={ this.formatTax( taxRate, priceFull, this.props.currencyCode ) }
 								/>
 							</div>
 						)
