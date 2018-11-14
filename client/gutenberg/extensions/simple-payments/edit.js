@@ -9,11 +9,13 @@ import emailValidator from 'email-validator';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
+import { ErrorMessage, Field, Form, withFormik } from 'formik';
 import { get, trimEnd } from 'lodash';
 import { InspectorControls } from '@wordpress/editor';
 import { sprintf } from '@wordpress/i18n';
 import { withSelect } from '@wordpress/data';
 import {
+	BaseControl,
 	ExternalLink,
 	PanelBody,
 	SelectControl,
@@ -34,9 +36,22 @@ import {
 import ProductPlaceholder from './product-placeholder';
 import HelpMessage from './help-message';
 
+const DisplayFormikState = props => (
+	<div style={ { margin: '1rem 0' } }>
+		<pre
+			style={ {
+				background: '#f6f8fa',
+				fontSize: '.65rem',
+				padding: '.5rem',
+			} }
+		>
+			<strong>props</strong> = { JSON.stringify( props, null, 2 ) }
+		</pre>
+	</div>
+);
+
 class SimplePaymentsEdit extends Component {
 	state = {
-		fieldEmailError: null,
 		fieldPriceError: null,
 		fieldTitleError: null,
 		isSavingProduct: false,
@@ -87,7 +102,7 @@ class SimplePaymentsEdit extends Component {
 	};
 
 	saveProduct() {
-		if ( this.state.isSavingProduct ) {
+		if ( this.state.isSavingProduct || ! this.props.isValid ) {
 			return;
 		}
 
@@ -96,7 +111,7 @@ class SimplePaymentsEdit extends Component {
 		}
 
 		const { attributes, setAttributes } = this.props;
-		const { email, paymentId } = attributes;
+		const { paymentId } = attributes;
 
 		this.setState( { isSavingProduct: true }, () => {
 			apiFetch( {
@@ -122,10 +137,13 @@ class SimplePaymentsEdit extends Component {
 
 					// @TODO errors in other fields
 					this.setState( {
+						// @TODO: set Formik email invalid
+						/*
 						fieldEmailError:
 							apiErrorKey === 'spay_email'
 								? sprintf( __( '%s is not a valid email address.' ), email )
 								: null,
+						*/
 						fieldPriceError: apiErrorKey === 'spay_price' ? __( 'Invalid price.' ) : null,
 					} );
 				} )
@@ -140,10 +158,9 @@ class SimplePaymentsEdit extends Component {
 	validateAttributes = () => {
 		const isPriceValid = this.validatePrice();
 		const isTitleValid = this.validateTitle();
-		const isEmailValid = this.validateEmail();
 		const isCurrencyValid = this.validateCurrency();
 
-		return isPriceValid && isTitleValid && isEmailValid && isCurrencyValid;
+		return isPriceValid && isTitleValid && isCurrencyValid;
 	};
 
 	/**
@@ -280,9 +297,9 @@ class SimplePaymentsEdit extends Component {
 		return true;
 	};
 
-	handleEmailChange = email => {
-		this.props.setAttributes( { email } );
-		this.setState( { fieldEmailError: null } );
+	handleEmailChange = event => {
+		this.props.setFieldValue( 'email', event.target.value );
+		this.props.setAttributes( { email: event.target.value } );
 	};
 
 	handleContentChange = content => {
@@ -321,9 +338,20 @@ class SimplePaymentsEdit extends Component {
 	} );
 
 	render() {
-		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
-		const { attributes, isSelected, isLoadingInitial, instanceId } = this.props;
-		const { content, currency, email, multiple, price, title } = attributes;
+		const { fieldPriceError, fieldTitleError } = this.state;
+		const {
+			attributes,
+			errors,
+			handleBlur,
+			instanceId,
+			isLoadingInitial,
+			isSelected,
+			isSubmitting,
+			isValid,
+			touched,
+			values,
+		} = this.props;
+		const { content, currency, multiple, price, title } = attributes;
 
 		if ( ! isSelected && isLoadingInitial ) {
 			return (
@@ -338,15 +366,7 @@ class SimplePaymentsEdit extends Component {
 			);
 		}
 
-		if (
-			! isSelected &&
-			email &&
-			price &&
-			title &&
-			! fieldEmailError &&
-			! fieldPriceError &&
-			! fieldTitleError
-		) {
+		if ( ! isSelected && ! fieldPriceError && ! fieldTitleError && isValid && price && title ) {
 			return (
 				<ProductPlaceholder
 					ariaBusy="false"
@@ -382,9 +402,7 @@ class SimplePaymentsEdit extends Component {
 						type="text"
 						value={ title }
 					/>
-					<HelpMessage id={ `${ instanceId }-title-error` } isError>
-						{ fieldTitleError }
-					</HelpMessage>
+					<HelpMessage id={ `${ instanceId }-title-error` }>{ fieldTitleError }</HelpMessage>
 
 					<TextareaControl
 						className="simple-payments__field simple-payments__field-content"
@@ -418,9 +436,7 @@ class SimplePaymentsEdit extends Component {
 							type="number"
 							value={ price || '' }
 						/>
-						<HelpMessage id={ `${ instanceId }-price-error` } isError>
-							{ fieldPriceError }
-						</HelpMessage>
+						<HelpMessage id={ `${ instanceId }-price-error` }>{ fieldPriceError }</HelpMessage>
 					</div>
 
 					<div className="simple-payments__field-multiple">
@@ -432,30 +448,40 @@ class SimplePaymentsEdit extends Component {
 						/>
 					</div>
 
-					<TextControl
-						aria-describedby={ `${ instanceId }-email-${ fieldEmailError ? 'error' : 'help' }` }
-						className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
-							'simple-payments__field-has-error': fieldEmailError,
-						} ) }
-						disabled={ isLoadingInitial }
-						label={ __( 'Email' ) }
-						onChange={ this.handleEmailChange }
-						placeholder={ __( 'Email' ) }
-						required
-						type="email"
-						value={ email }
-					/>
-					<HelpMessage id={ `${ instanceId }-email-error` } isError>
-						{ fieldEmailError }
-					</HelpMessage>
-					<HelpMessage id={ `${ instanceId }-email-help` }>
-						{ __(
-							'Enter the email address associated with your PayPal account. Don’t have an account?'
-						) + ' ' }
-						<ExternalLink href="https://www.paypal.com/">
-							{ __( 'Create one on PayPal' ) }
-						</ExternalLink>
-					</HelpMessage>
+					<Form>
+						<BaseControl
+							label={ __( 'Email' ) }
+							id={ `${ instanceId }-email` }
+							className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
+								'simple-payments__field-has-error': errors.email && touched.email,
+							} ) }
+						>
+							<Field
+								disabled={ isLoadingInitial || isSubmitting }
+								id={ `${ instanceId }-email` }
+								name="email"
+								onBlur={ handleBlur }
+								onChange={ this.handleEmailChange }
+								placeholder={ __( 'Email' ) }
+								required
+								type="email"
+								value={ values.email }
+							/>
+						</BaseControl>
+
+						<ErrorMessage name="email" component={ HelpMessage } />
+
+						<HelpMessage id={ `${ instanceId }-email-help` } isError={ false }>
+							{ __(
+								'Enter the email address associated with your PayPal account. Don’t have an account?'
+							) + ' ' }
+							<ExternalLink href="https://www.paypal.com/">
+								{ __( 'Create one on PayPal' ) }
+							</ExternalLink>
+						</HelpMessage>
+					</Form>
+
+					{ DisplayFormikState( this.props ) }
 				</Fragment>
 			</div>
 		);
@@ -479,4 +505,36 @@ const applyWithSelect = withSelect( ( select, props ) => {
 	};
 } );
 
-export default compose( [ applyWithSelect, withInstanceId ] )( SimplePaymentsEdit );
+const validate = values => {
+	const errors = {};
+
+	if ( ! values.email ) {
+		errors.email = __( 'We want to make sure payments reach you, so please add an email address.' );
+	} else if ( ! emailValidator.validate( values.email ) ) {
+		errors.email = sprintf( __( '%s is not a valid email address.' ), values.email );
+	}
+
+	return errors;
+};
+
+const handleSubmit = ( values, { setSubmitting } ) => {
+	setTimeout( () => {
+		// eslint-disable-next-line
+		console.log( 'Submit:', JSON.stringify( values, null, 2 ) );
+		setSubmitting( false );
+	}, 500 );
+};
+
+const mapPropsToValues = ( { attributes } ) => ( {
+	email: attributes.email,
+} );
+
+const formikEnhancer = withFormik( {
+	validate,
+	mapPropsToValues,
+	handleSubmit,
+	// Find the component in React DevTools by this name
+	displayName: 'SimplePaymentForm',
+} );
+
+export default compose( [ applyWithSelect, withInstanceId, formikEnhancer ] )( SimplePaymentsEdit );

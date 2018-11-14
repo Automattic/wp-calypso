@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import GridiconNoticeOutline from 'gridicons/dist/notice-outline';
 import './help-message.scss';
 
-export default ( { children = null, isError = false, ...props } ) => {
+export default ( { children = null, isError = true, ...props } ) => {
 	const classes = classNames( 'simple-payments__help-message', {
 		'simple-payments__help-message-is-error': isError,
 	} );
