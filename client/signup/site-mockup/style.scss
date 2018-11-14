@@ -1,0 +1,160 @@
+// Shaun's mess around preview stuff that prolly
+// doesn't make a ton of sense yet.
+.previews {
+	margin: 32px auto;
+	position: relative;
+	transition: bottom 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+	max-width: 1200px;
+	padding: 0 32px;
+	.preview-desktop {
+		max-width: 900px;
+	}
+	.preview-mobile {
+		position: absolute;
+		top: 60px;
+		right: 0;
+	}
+
+	@media (max-width: 780px) {
+		padding: 0;
+		.preview-mobile {
+			display: none;
+		}
+	}
+	@media (min-width: 1200px) {}
+	
+	&.pinned {
+		z-index: -1;
+		max-width: 100%;
+		margin: 0;
+		position: fixed;
+			bottom: -460px;
+			left: 32px;
+			right: 32px;
+			//bottom: -400px;
+			//left: 50%;
+		//margin: 0 0 0 (-860px/2);
+	}
+
+	&.introduce {
+		.preview {
+			transform: translateY( 0 );
+		}
+	}
+	
+	&.demo {
+		.preview {
+			//&.preview-desktop { height: auto; }
+			.modern-demo { display: block; }
+			.preview-placeholder { display: none; }
+		}
+	}
+}
+
+.preview {
+	box-shadow: 0 2px 8px 0 rgba(0,0,0,0.20);
+	border-radius: 4px;
+	background: white;
+	margin: auto;
+	position: relative;
+	transform: translateY( 120px );
+	transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	padding-top: 28px;
+	
+	&.preview-mobile {
+		width: 240px;
+		height: 400px;
+		padding-bottom: 28px;
+		transition-delay: 0.05s;
+	}
+	
+	.preview-chrome {
+		height: 28px;
+		border-radius: 4px 4px 0 0;
+		background: blue;
+		position: absolute;
+			top: 0;
+			right: 0;
+			left: 0;
+
+		&:before {
+			content: '';
+			position: absolute;
+			top: 4px;
+			bottom: 4px;
+			left: 20%;
+			right: 20%;
+			border-radius: 4px;
+			background: blue;
+		}
+	}
+	
+	.preview-content {
+		overflow: auto;
+		height: 100%;
+	}
+	
+	.preview-chin {
+		height: 28px;
+		border-radius: 0 0 4px 4px;
+		background: blue;
+		position: absolute;
+			right: 0;
+			bottom: 0;
+			left: 0;
+	}
+	
+	.preview-placeholder {
+		padding: 24px;
+		margin: 24px;
+		height: 150px;
+		border: 2px dotted #ddd;
+	}
+}
+
+// Demo
+.modern-demo {
+	background: white;
+	padding: 20px 0 0 0;
+	display: none;
+}
+.demo-title {
+	font-size: 30px;
+	font-weight: bold;
+	margin: 0 20px 10px 20px;
+	line-height: 0.8;
+}
+.demo-tagline {
+	font-size: 16px;
+	color: #444;
+	margin: 0 20px 20px 20px;
+}
+.demo-cover-image {
+	background-size: cover;
+	background-position: 50% 60%;
+	background-image: url('https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=cc14d05af9963bb8ee521c3c4ea6df55&auto=format&fit=crop&w=3134&q=80');
+	
+	span {
+		color: #fff;
+		font-weight: 300;
+		text-align: center;
+		font-size: 24px;
+		padding: 60px 0;
+		display: block;
+		background: rgba( black, 0.6 );
+	}
+}
+.demo-image-text {
+	display: flex;
+	padding: 24px;
+	max-width: 600px;
+	margin: 0 auto;
+	img {
+		max-width: 50%;
+	}
+	span {
+		padding: 24px;
+		margin: auto;
+		min-width: 50%;
+	}
+}
