@@ -7,6 +7,7 @@ import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { BaseControl, ExternalLink, PanelBody, ToggleControl } from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
 import { ErrorMessage, Field, Form, withFormik } from 'formik';
@@ -14,15 +15,6 @@ import { get, trimEnd } from 'lodash';
 import { InspectorControls } from '@wordpress/editor';
 import { sprintf } from '@wordpress/i18n';
 import { withSelect } from '@wordpress/data';
-import {
-	BaseControl,
-	ExternalLink,
-	PanelBody,
-	SelectControl,
-	TextareaControl,
-	TextControl,
-	ToggleControl,
-} from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -106,10 +98,6 @@ class SimplePaymentsEdit extends Component {
 			return;
 		}
 
-		if ( ! this.validateAttributes() ) {
-			return;
-		}
-
 		const { attributes, setAttributes } = this.props;
 		const { paymentId } = attributes;
 
@@ -131,21 +119,13 @@ class SimplePaymentsEdit extends Component {
 					// eslint-disable-next-line
 					console.error( error );
 
+					/*
 					const {
 						data: { key: apiErrorKey },
 					} = error;
-
-					// @TODO errors in other fields
-					this.setState( {
-						// @TODO: set Formik email invalid
-						/*
-						fieldEmailError:
-							apiErrorKey === 'spay_email'
-								? sprintf( __( '%s is not a valid email address.' ), email )
-								: null,
-						*/
-						fieldPriceError: apiErrorKey === 'spay_price' ? __( 'Invalid price.' ) : null,
-					} );
+					*/
+					// apiErrorKey === 'spay_email'
+					// apiErrorKey === 'spay_price'
 				} )
 				.finally( () => {
 					this.setState( {
@@ -154,14 +134,6 @@ class SimplePaymentsEdit extends Component {
 				} );
 		} );
 	}
-
-	validateAttributes = () => {
-		const isPriceValid = this.validatePrice();
-		const isTitleValid = this.validateTitle();
-		const isCurrencyValid = this.validateCurrency();
-
-		return isPriceValid && isTitleValid && isCurrencyValid;
-	};
 
 	/**
 	 * Validate currency
@@ -176,166 +148,35 @@ class SimplePaymentsEdit extends Component {
 		return SUPPORTED_CURRENCY_LIST.includes( currency );
 	};
 
-	/**
-	 * Validate price
-	 *
-	 * Stores error message in state.fieldPriceError
-	 *
-	 * @returns {Boolean} True when valid, false when invalid
-	 */
-	validatePrice = () => {
-		const { currency, price } = this.props.attributes;
-		const { precision } = getCurrencyDefaults( currency );
-
-		if ( ! price || parseFloat( price ) === 0 ) {
-			this.setState( {
-				fieldPriceError: __( 'If you’re selling something, you need a price tag. Add yours here.' ),
-			} );
-			return false;
-		}
-
-		if ( Number.isNaN( parseFloat( price ) ) ) {
-			this.setState( {
-				fieldPriceError: __( 'Invalid price' ),
-			} );
-			return false;
-		}
-
-		if ( parseFloat( price ) < 0 ) {
-			this.setState( {
-				fieldPriceError: __(
-					'Your price is negative — enter a positive number so people can pay the right amount.'
-				),
-			} );
-			return false;
-		}
-
-		if ( decimalPlaces( price ) > precision ) {
-			if ( precision === 0 ) {
-				this.setState( {
-					fieldPriceError: __(
-						'We know every penny counts, but prices in this currency can’t contain decimal values.'
-					),
-				} );
-				return false;
-			}
-
-			this.setState( {
-				fieldPriceError: sprintf(
-					_n(
-						'The price cannot have more than %d decimal place.',
-						'The price cannot have more than %d decimal places.',
-						precision
-					),
-					precision
-				),
-			} );
-			return false;
-		}
-
-		if ( this.state.fieldPriceError ) {
-			this.setState( { fieldPriceError: null } );
-		}
-
-		return true;
-	};
-
-	/**
-	 * Validate email
-	 *
-	 * Stores error message in state.fieldEmailError
-	 *
-	 * @returns {Boolean} True when valid, false when invalid
-	 */
-	validateEmail = () => {
-		const { email } = this.props.attributes;
-		if ( ! email ) {
-			this.setState( {
-				fieldEmailError: __(
-					'We want to make sure payments reach you, so please add an email address.'
-				),
-			} );
-			return false;
-		}
-
-		if ( ! emailValidator.validate( email ) ) {
-			this.setState( {
-				fieldEmailError: sprintf( __( '%s is not a valid email address.' ), email ),
-			} );
-			return false;
-		}
-
-		if ( this.state.fieldEmailError ) {
-			this.setState( { fieldEmailError: null } );
-		}
-
-		return true;
-	};
-
-	/**
-	 * Validate title
-	 *
-	 * Stores error message in state.fieldTitleError
-	 *
-	 * @returns {Boolean} True when valid, false when invalid
-	 */
-	validateTitle = () => {
-		const { title } = this.props.attributes;
-		if ( ! title ) {
-			this.setState( {
-				fieldTitleError: __(
-					'Please add a brief title so that people know what they’re paying for.'
-				),
-			} );
-			return false;
-		}
-
-		if ( this.state.fieldTitleError ) {
-			this.setState( { fieldTitleError: null } );
-		}
-
-		return true;
-	};
-
 	handleEmailChange = event => {
 		this.props.setFieldValue( 'email', event.target.value );
 		this.props.setAttributes( { email: event.target.value } );
 	};
 
-	handleContentChange = content => {
-		this.props.setAttributes( { content } );
+	handleContentChange = event => {
+		this.props.setFieldValue( 'content', event.target.value );
+		this.props.setAttributes( { content: event.target.value } );
 	};
 
-	handlePriceChange = price => {
-		price = parseFloat( price );
-		if ( ! isNaN( price ) ) {
-			this.props.setAttributes( { price } );
-		} else {
-			this.props.setAttributes( { price: undefined } );
-		}
-		this.setState( { fieldPriceError: null } );
+	handlePriceChange = event => {
+		this.props.setFieldValue( 'price', event.target.value );
+		this.props.setAttributes( { price: parseFloat( event.target.value ) } );
 	};
 
-	handleCurrencyChange = currency => {
-		this.props.setAttributes( { currency } );
+	handleCurrencyChange = event => {
+		this.props.setFieldValue( 'currency', event.target.value );
+		this.props.setAttributes( { currency: event.target.value } );
 	};
 
 	handleMultipleChange = multiple => {
+		this.props.setFieldValue( 'multiple', !! multiple );
 		this.props.setAttributes( { multiple: !! multiple } );
 	};
 
-	handleTitleChange = title => {
-		this.props.setAttributes( { title } );
-		this.setState( { fieldTitleError: null } );
+	handleTitleChange = event => {
+		this.props.setFieldValue( 'title', event.target.value );
+		this.props.setAttributes( { title: event.target.value } );
 	};
-
-	getCurrencyList = SUPPORTED_CURRENCY_LIST.map( value => {
-		const { symbol } = getCurrencyDefaults( value );
-		// if symbol is equal to the code (e.g., 'CHF' === 'CHF'), don't duplicate it.
-		// trim the dot at the end, e.g., 'kr.' becomes 'kr'
-		const label = symbol === value ? value : `${ value } ${ trimEnd( symbol, '.' ) }`;
-		return { value, label };
-	} );
 
 	render() {
 		const { fieldPriceError, fieldTitleError } = this.state;
@@ -389,66 +230,111 @@ class SimplePaymentsEdit extends Component {
 						</PanelBody>
 					</InspectorControls>
 
-					<TextControl
-						aria-describedby={ `${ instanceId }-title-error` }
-						className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
-							'simple-payments__field-has-error': fieldTitleError,
-						} ) }
-						disabled={ isLoadingInitial }
-						label={ __( 'Item name' ) }
-						onChange={ this.handleTitleChange }
-						placeholder={ __( 'Item name' ) }
-						required
-						type="text"
-						value={ title }
-					/>
-					<HelpMessage id={ `${ instanceId }-title-error` }>{ fieldTitleError }</HelpMessage>
-
-					<TextareaControl
-						className="simple-payments__field simple-payments__field-content"
-						disabled={ isLoadingInitial }
-						label={ __( 'Describe your item in a few words' ) }
-						onChange={ this.handleContentChange }
-						placeholder={ __( 'Describe your item in a few words' ) }
-						value={ content }
-					/>
-
-					<div className="simple-payments__price-container">
-						<SelectControl
-							className="simple-payments__field simple-payments__field-currency"
-							disabled={ isLoadingInitial }
-							label={ __( 'Currency' ) }
-							onChange={ this.handleCurrencyChange }
-							options={ this.getCurrencyList }
-							value={ currency }
-						/>
-						<TextControl
-							aria-describedby={ `${ instanceId }-price-error` }
-							disabled={ isLoadingInitial }
-							className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
-								'simple-payments__field-has-error': fieldPriceError,
-							} ) }
-							label={ __( 'Price' ) }
-							onChange={ this.handlePriceChange }
-							placeholder={ formatPrice( 0, currency, false ) }
-							required
-							step="1"
-							type="number"
-							value={ price || '' }
-						/>
-						<HelpMessage id={ `${ instanceId }-price-error` }>{ fieldPriceError }</HelpMessage>
-					</div>
-
-					<div className="simple-payments__field-multiple">
-						<ToggleControl
-							checked={ Boolean( multiple ) }
-							disabled={ isLoadingInitial }
-							label={ __( 'Allow people to buy more than one item at a time' ) }
-							onChange={ this.handleMultipleChange }
-						/>
-					</div>
-
 					<Form>
+						<BaseControl
+							label={ __( 'Item name' ) }
+							id={ `${ instanceId }-title` }
+							className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
+								'simple-payments__field-has-error': errors.title && touched.title,
+							} ) }
+						>
+							<Field
+								disabled={ isLoadingInitial || isSubmitting }
+								id={ `${ instanceId }-title` }
+								name="title"
+								onBlur={ handleBlur }
+								onChange={ this.handleTitleChange }
+								placeholder={ __( 'Item name' ) }
+								required
+								type="text"
+								value={ values.title }
+							/>
+						</BaseControl>
+
+						<ErrorMessage name="title" component={ HelpMessage } />
+
+						<BaseControl
+							label={ __( 'Describe your item in a few words' ) }
+							id={ `${ instanceId }-content` }
+							className="simple-payments__field simple-payments__field-content"
+						>
+							<Field
+								component="textarea"
+								disabled={ isLoadingInitial || isSubmitting }
+								id={ `${ instanceId }-content` }
+								name="content"
+								onBlur={ handleBlur }
+								onChange={ this.handleContentChange }
+								placeholder={ __( 'Describe your item in a few words' ) }
+								required
+								value={ values.content }
+							/>
+						</BaseControl>
+
+						<div className="simple-payments__price-container">
+							<BaseControl
+								label={ __( 'Currency' ) }
+								id={ `${ instanceId }-currency` }
+								className="simple-payments__field simple-payments__field-currency"
+							>
+								<Field
+									id={ `${ instanceId }-currency` }
+									component="select"
+									disabled={ isLoadingInitial || isSubmitting }
+									name="currency"
+									onBlur={ handleBlur }
+									onChange={ this.handleCurrencyChange }
+									required
+									value={ values.currency }
+								>
+									{ SUPPORTED_CURRENCY_LIST.map( value => {
+										const { symbol } = getCurrencyDefaults( value );
+										// if symbol is equal to the code (e.g., 'CHF' === 'CHF'), don't duplicate it.
+										// trim the dot at the end, e.g., 'kr.' becomes 'kr'
+										const label =
+											symbol === value ? value : `${ value } ${ trimEnd( symbol, '.' ) }`;
+										return (
+											<option value={ value } key={ value }>
+												{ label }
+											</option>
+										);
+									} ) }
+								</Field>
+							</BaseControl>
+
+							<BaseControl
+								label={ __( 'Price' ) }
+								id={ `${ instanceId }-price` }
+								className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
+									'simple-payments__field-has-error': errors.price && touched.price,
+								} ) }
+							>
+								<Field
+									disabled={ isLoadingInitial || isSubmitting }
+									id={ `${ instanceId }-price` }
+									name="price"
+									onBlur={ handleBlur }
+									onChange={ this.handlePriceChange }
+									placeholder={ formatPrice( 0, values.currency, false ) }
+									required
+									step="1"
+									type="number"
+									value={ values.price }
+								/>
+							</BaseControl>
+
+							<ErrorMessage name="price" component={ HelpMessage } />
+						</div>
+
+						<div className="simple-payments__field-multiple">
+							<ToggleControl
+								checked={ Boolean( multiple ) }
+								disabled={ isLoadingInitial }
+								label={ __( 'Allow people to buy more than one item at a time' ) }
+								onChange={ this.handleMultipleChange }
+							/>
+						</div>
+
 						<BaseControl
 							label={ __( 'Email' ) }
 							id={ `${ instanceId }-email` }
@@ -505,34 +391,60 @@ const applyWithSelect = withSelect( ( select, props ) => {
 	};
 } );
 
-const validate = values => {
+const validate = ( { currency, email, price, title } ) => {
 	const errors = {};
+	const { precision } = getCurrencyDefaults( currency );
 
-	if ( ! values.email ) {
+	// Validate title
+	if ( ! title ) {
+		errors.title = __( 'Please add a brief title so that people know what they’re paying for.' );
+	}
+
+	// Validate email
+	if ( ! email ) {
 		errors.email = __( 'We want to make sure payments reach you, so please add an email address.' );
-	} else if ( ! emailValidator.validate( values.email ) ) {
-		errors.email = sprintf( __( '%s is not a valid email address.' ), values.email );
+	} else if ( ! emailValidator.validate( email ) ) {
+		errors.email = sprintf( __( '%s is not a valid email address.' ), email );
+	}
+
+	// Validate price
+	if ( ! price || parseFloat( price ) === 0 ) {
+		errors.price = __( 'If you’re selling something, you need a price tag. Add yours here.' );
+	} else if ( Number.isNaN( parseFloat( price ) ) ) {
+		errors.price = __( 'Invalid price' );
+	} else if ( parseFloat( price ) < 0 ) {
+		errors.price = __(
+			'Your price is negative — enter a positive number so people can pay the right amount.'
+		);
+	} else if ( decimalPlaces( price ) > precision ) {
+		errors.price =
+			precision === 0
+				? __( 'We know every penny counts, but prices can’t contain decimal values.' )
+				: sprintf(
+						_n(
+							'The price cannot have more than %d decimal place.',
+							'The price cannot have more than %d decimal places.',
+							precision
+						),
+						precision
+				  );
 	}
 
 	return errors;
 };
 
-const handleSubmit = ( values, { setSubmitting } ) => {
-	setTimeout( () => {
-		// eslint-disable-next-line
-		console.log( 'Submit:', JSON.stringify( values, null, 2 ) );
-		setSubmitting( false );
-	}, 500 );
-};
-
 const mapPropsToValues = ( { attributes } ) => ( {
+	content: attributes.content,
+	currency: attributes.currency,
 	email: attributes.email,
+	multiple: attributes.multiple,
+	price: attributes.price,
+	title: attributes.title,
 } );
 
 const formikEnhancer = withFormik( {
 	validate,
 	mapPropsToValues,
-	handleSubmit,
 	// Find the component in React DevTools by this name
 	displayName: 'SimplePaymentForm',
 } );
