@@ -116,7 +116,14 @@ class ImportingPane extends React.PureComponent {
 	getHeadingText = () => {
 		return this.props.translate(
 			'Importing may take a while if your site has a lot of media, but ' +
-				"you can safely navigate away from this page if you need to: we'll send you a notification when it's done."
+				'you can safely navigate away from this page if you need to or ' +
+				'go to our {{a}}handy checklist{{/a}} to explore your settings and customizing options. ' +
+				"We'll send you a notification when it's done.",
+			{
+				components: {
+					a: <a href={ '/checklist/' + get( this.props, 'importerStatus.site.slug' ) } />,
+				},
+			}
 		);
 	};
 
