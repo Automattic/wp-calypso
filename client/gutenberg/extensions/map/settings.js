@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { __ } from '@wordpress/i18n';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 export const settings = {
 	name: 'jetpack/map',

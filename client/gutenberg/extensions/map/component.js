@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { __ } from '@wordpress/i18n';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, createRef, Fragment, Children } from '@wordpress/element';
 import { Button, Dashicon, TextareaControl, TextControl } from '@wordpress/components';
 import get from 'lodash/get';

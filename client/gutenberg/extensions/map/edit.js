@@ -4,7 +4,8 @@
  * External dependencies
  */
 
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { sprintf } from '@wordpress/i18n';
 import { Component, createRef, Fragment, RawHTML } from '@wordpress/element';
 import {
 	Button,
