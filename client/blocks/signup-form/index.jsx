@@ -42,7 +42,6 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analyt
 import { createSocialUserFailed } from 'state/login/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSectionName } from 'state/ui/selectors';
-import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -629,10 +628,6 @@ class SignupForm extends Component {
 		);
 	}
 
-	isJetpackSocialABTest() {
-		return this.isJetpack() && abtest( 'jetpackSignupGoogleTop' ) === 'top';
-	}
-
 	userCreationComplete() {
 		return this.props.step && 'completed' === this.props.step.status;
 	}
@@ -643,31 +638,10 @@ class SignupForm extends Component {
 		}
 
 		return (
-			<div
-				className={ classNames(
-					'signup-form',
-					this.props.className,
-					this.isJetpackSocialABTest() && 'signup-form__social-top'
-				) }
-			>
+			<div className={ classNames( 'signup-form', this.props.className ) }>
 				{ this.getNotice() }
 
-				{ this.isJetpackSocialABTest() &&
-					this.props.isSocialSignupEnabled &&
-					! this.userCreationComplete() && (
-						<SocialSignupForm
-							showFirst={ true }
-							handleResponse={ this.props.handleSocialResponse }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
-						/>
-					) }
-
 				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
-					{ this.isJetpackSocialABTest() &&
-						this.props.isSocialSignupEnabled && (
-							<p>{ this.props.translate( 'Or create a new account with your email address.' ) }</p>
-						) }
 					{ this.props.formHeader && (
 						<header className="signup-form__header">{ this.props.formHeader }</header>
 					) }
@@ -677,15 +651,11 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ ! this.isJetpackSocialABTest() &&
-					this.props.isSocialSignupEnabled &&
-					! this.userCreationComplete() && (
-						<SocialSignupForm
-							handleResponse={ this.props.handleSocialResponse }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
-						/>
-					) }
+				<SocialSignupForm
+					handleResponse={ this.props.handleSocialResponse }
+					socialService={ this.props.socialService }
+					socialServiceResponse={ this.props.socialServiceResponse }
+				/>
 
 				{ this.props.footerLink || this.footerLink() }
 			</div>
