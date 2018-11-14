@@ -28,30 +28,6 @@ const PublicizeForm = compose( [
 	} ) ),
 	withDispatch( ( dispatch, ownProps ) => ( {
 		/**
-		 * Directly sets post's publicize data.
-		 *
-		 * Sets initial values for publicize data this saved with post.
-		 * Input parameters are used as defaults.
-		 * They will be ignored if the 'publicize' field has already been set. This prevents
-		 * user changes from being erased every time pre-publish panel is opened and closed.
-		 *
-		 * @param {string} initTitle             String to share post with
-		 * @param {array}  initActiveConnections Array of connection data
-		 */
-		initializePublicize( initTitle, initActiveConnections ) {
-			const { activeConnections, shareMessage } = ownProps;
-			const newConnections =
-				activeConnections.length > 0 ? activeConnections : initActiveConnections;
-			const newTitle = shareMessage.length > 0 ? shareMessage : initTitle;
-			dispatch( 'core/editor' ).editPost( {
-				publicize: {
-					title: newTitle,
-					connections: newConnections,
-				},
-			} );
-		},
-
-		/**
 		 * Toggle connection enable/disable state based on checkbox.
 		 *
 		 * Saves enable/disable value to connections property in editor

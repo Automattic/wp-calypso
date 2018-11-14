@@ -27,20 +27,6 @@ import PublicizeSettingsButton from './settings-button';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class PublicizeFormUnwrapped extends Component {
-	constructor( props ) {
-		super( props );
-		const { initializePublicize, staticConnections } = this.props;
-		const initialTitle = '';
-		// Connection data format must match 'publicize' REST field.
-		const initialActiveConnections = staticConnections.map( c => {
-			return {
-				id: c.id,
-				should_share: c.enabled,
-			};
-		} );
-		initializePublicize( initialTitle, initialActiveConnections );
-	}
-
 	/**
 	 * Check to see if form should be disabled.
 	 *
