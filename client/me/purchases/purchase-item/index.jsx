@@ -59,7 +59,7 @@ class PurchaseItem extends Component {
 			);
 		}
 
-		if ( isRenewing( purchase ) ) {
+		if ( isRenewing( purchase ) && purchase.renewMoment ) {
 			return translate( 'Renews on %s', {
 				args: purchase.renewMoment.format( 'LL' ),
 			} );

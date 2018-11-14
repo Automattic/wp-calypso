@@ -28,6 +28,7 @@ jest.mock( 'i18n-calypso', () => ( {
 import React from 'react';
 import {
 	PLAN_FREE,
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_ECOMMERCE,
@@ -92,6 +93,7 @@ describe( 'TransferToOtherSite.isSiteEligible()', () => {
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
+		PLAN_BUSINESS_MONTHLY,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,

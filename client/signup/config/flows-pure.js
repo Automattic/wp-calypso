@@ -319,6 +319,15 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		lastModified: '2018-10-29',
 	};
 
+	flows[ 'crowdsignal' ] = {
+		steps: [ 'oauth2-name' ],
+		destination: ( dependencies ) => dependencies.oauth2_redirect || '/',
+		description: 'Crowdsignal\'s custom WordPress.com Connect signup flow',
+		lastModified: '2018-11-14',
+		disallowResume: true,
+		autoContinue: true,
+	};
+
 	return flows;
 }
 

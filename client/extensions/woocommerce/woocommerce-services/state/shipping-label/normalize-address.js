@@ -44,6 +44,7 @@ export default ( orderId, siteId, dispatch, address, group ) => {
 				} )
 			)
 		);
+
 		dispatch( {
 			type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
 			siteId,
@@ -51,6 +52,8 @@ export default ( orderId, siteId, dispatch, address, group ) => {
 			group,
 			requestSuccess: false,
 		} );
+
+		throw error;
 	};
 
 	return api

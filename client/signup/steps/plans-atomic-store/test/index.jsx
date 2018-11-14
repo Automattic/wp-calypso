@@ -43,8 +43,14 @@ const translate = x => x;
  */
 import { shallow } from 'enzyme';
 import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { PlansAtomicStoreStep } from '../index';
 import {
 	PLAN_FREE,
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -60,11 +66,6 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
-
-/**
- * Internal dependencies
- */
-import { PlansAtomicStoreStep } from '../index';
 
 const props = {
 	translate,
@@ -197,7 +198,7 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 		} );
 	} );
 
-	[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( plan => {
+	[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( plan => {
 		test( `Should add is_store_signup to cartItem.extra when processing wp.com business plans (${ plan })`, () => {
 			const myProps = {
 				...tplProps,

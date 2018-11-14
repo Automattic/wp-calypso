@@ -13,14 +13,15 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AppsBadge from 'me/get-apps/apps-badge';
+import ReauthRequired from 'me/reauth-required';
 import Card from 'components/card';
 import Button from 'components/button';
 import QuerySmsCountries from 'components/data/query-countries/sms';
-import QueryAccountRecoverySettings from 'components/data/query-account-recovery-settings';
-import QueryUserSettings from 'components/data/query-user-settings';
 import FormPhoneInput from 'components/forms/form-phone-input';
 import getCountries from 'state/selectors/get-countries';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { fetchUserSettings } from 'state/user-settings/actions';
+import { accountRecoverySettingsFetch } from 'state/account-recovery/settings/actions';
 import {
 	getAccountRecoveryPhone,
 	isAccountRecoverySettingsReady,
@@ -31,6 +32,7 @@ import { sendSMS } from 'state/mobile-download-sms/actions';
 import phoneValidation from 'lib/phone-validation';
 import config from 'config';
 import userAgent from 'lib/user-agent';
+import twoStepAuthorization from 'lib/two-step-authorization';
 
 import {
 	isAppSMSRequestSending,
@@ -60,6 +62,14 @@ class MobileDownloadCard extends React.Component {
 		phoneNumber: null,
 	};
 
+	componentDidMount() {
+		twoStepAuthorization.on( 'change', this.onReauthStateChange );
+	}
+
+	componentWillUnmount() {
+		twoStepAuthorization.off( 'change', this.onReauthStateChange );
+	}
+
 	componentDidUpdate( previousProps ) {
 		if ( previousProps.hasSendingError === false && this.props.hasSendingError === true ) {
 			this.props.errorNotice(
@@ -71,6 +81,16 @@ class MobileDownloadCard extends React.Component {
 			this.props.successNotice( this.props.translate( 'SMS Sent. Go check your messages!' ) );
 		}
 	}
+
+	onReauthStateChange = () => {
+		const hasReauthData = twoStepAuthorization.data ? true : false;
+		const needsReauth = hasReauthData ? twoStepAuthorization.isReauthRequired() : true;
+
+		if ( needsReauth === false ) {
+			this.props.fetchUserSettings();
+			this.props.accountRecoverySettingsFetch();
+		}
+	};
 
 	getPreferredNumber = () => {
 		const noPreferredNumber = {
@@ -161,6 +181,8 @@ class MobileDownloadCard extends React.Component {
 
 		return (
 			<Card className="get-apps__mobile">
+				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+
 				<div className="get-apps__store-subpanel">
 					<div className="get-apps__card-text">
 						<h3 className="get-apps__card-title">{ translate( 'Mobile Apps' ) }</h3>
@@ -196,8 +218,6 @@ class MobileDownloadCard extends React.Component {
 
 						<div className="get-apps__sms-field-wrapper">
 							<QuerySmsCountries />
-							<QueryAccountRecoverySettings />
-							<QueryUserSettings />
 
 							{ hasAllData ? (
 								<FormPhoneInput
@@ -269,5 +289,5 @@ export default connect(
 		didSend: didAppSMSRequestCompleteSuccessfully( state ),
 		hasSendingError: didAppSMSRequestCompleteWithError( state ),
 	} ),
-	{ successNotice, errorNotice, sendSMS }
+	{ successNotice, errorNotice, sendSMS, fetchUserSettings, accountRecoverySettingsFetch }
 )( localize( MobileDownloadCard ) );
