@@ -56,6 +56,7 @@ class SiteTopicStep extends Component {
 
 	renderContent() {
 		const { translate } = this.props;
+		const currentSiteTopic = this.trimedSiteTopicValue();
 
 		return (
 			<Card className="site-topic__content">
@@ -67,9 +68,10 @@ class SiteTopicStep extends Component {
 							placeholder={ translate( 'e.g. Fashion, travel, design, plumber, electrician' ) }
 							onChange={ this.onSiteTopicChange }
 							suggestions={ Object.values( hints ) }
+							value={ currentSiteTopic }
 						/>
 					</FormFieldset>
-					<Button type="submit" disabled={ ! this.trimedSiteTopicValue() } primary>
+					<Button type="submit" disabled={ ! currentSiteTopic } primary>
 						{ translate( 'Continue' ) }
 					</Button>
 				</form>
@@ -94,7 +96,6 @@ class SiteTopicStep extends Component {
 					fallbackSubHeaderText={ subHeaderText }
 					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderContent() }
-					goToNextStep={ this.skipStep }
 				/>
 			</div>
 		);
