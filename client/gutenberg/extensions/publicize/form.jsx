@@ -20,12 +20,10 @@ import PublicizeFormUnwrapped from './form-unwrapped';
 
 const PublicizeForm = compose( [
 	withSelect( select => ( {
-		activeConnections: ! select( 'core/editor' ).getEditedPostAttribute( 'publicize' )
-			? []
-			: select( 'core/editor' ).getEditedPostAttribute( 'publicize' ).connections,
-		shareMessage: ! select( 'core/editor' ).getEditedPostAttribute( 'publicize' )
-			? ''
-			: select( 'core/editor' ).getEditedPostAttribute( 'publicize' ).title,
+		activeConnections: select( 'core/editor' ).getEditedPostAttribute(
+			'jetpack_publicize_connections'
+		),
+		shareMessage: select( 'core/editor' ).getEditedPostAttribute( 'jetpack_publicize_message' ),
 	} ) ),
 	withDispatch( ( dispatch, ownProps ) => ( {
 		/**
@@ -53,30 +51,21 @@ const PublicizeForm = compose( [
 		},
 
 		/**
-		 * Update state connection enable/disable state based on checkbox.
+		 * Toggle connection enable/disable state based on checkbox.
 		 *
 		 * Saves enable/disable value to connections property in editor
-		 * in field 'publicize'.
+		 * in field 'jetpack_publicize_connections'.
 		 *
-		 * @param {Object}  options              Top-level options parameter
-		 * @param {string}  options.connectionID ID of the connection being enabled/disabled
-		 * @param {boolean} options.shouldShare  True of connection should be shared to, false otherwise
+		 * @param {number}  id ID of the connection being enabled/disabled
 		 */
-		connectionChange( options ) {
-			const { connectionID, shouldShare } = options;
-			const { activeConnections, shareMessage } = ownProps;
-			// Copy array (simply mutating data would cause the component to not be updated).
-			const newConnections = activeConnections.slice( 0 );
-			newConnections.forEach( c => {
-				if ( c.id === connectionID ) {
-					c.should_share = shouldShare;
-				}
-			} );
+		toggleConnection( id ) {
+			const newConnections = ownProps.activeConnections.map( c => ( {
+				...c,
+				enabled: c.id === id ? ! c.enabled : c.enabled,
+			} ) );
+
 			dispatch( 'core/editor' ).editPost( {
-				publicize: {
-					title: shareMessage,
-					connections: newConnections,
-				},
+				jetpack_publicize_connections: newConnections,
 			} );
 		},
 

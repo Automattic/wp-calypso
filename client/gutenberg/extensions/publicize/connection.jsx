@@ -14,18 +14,9 @@ import { Component } from '@wordpress/element';
 import { FormToggle } from '@wordpress/components';
 
 class PublicizeConnection extends Component {
-	/**
-	 * Handler for when connection is enabled/disabled.
-	 *
-	 * Calls parent's change handler in this.prop so
-	 * state change can be handled by parent.
-	 */
 	onConnectionChange = () => {
-		const { enabled, id } = this.props.connectionData;
-		this.props.connectionChange( {
-			connectionID: id,
-			shouldShare: ! enabled,
-		} );
+		const { id } = this.props.connectionData;
+		this.props.toggleConnection( id );
 	};
 
 	render() {

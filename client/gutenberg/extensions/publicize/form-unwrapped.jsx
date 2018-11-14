@@ -59,7 +59,7 @@ class PublicizeFormUnwrapped extends Component {
 	render() {
 		const {
 			staticConnections,
-			connectionChange,
+			toggleConnection,
 			messageChange,
 			shareMessage,
 			refreshCallback,
@@ -77,7 +77,7 @@ class PublicizeFormUnwrapped extends Component {
 						<PublicizeConnection
 							connectionData={ c }
 							key={ c.id }
-							connectionChange={ connectionChange }
+							toggleConnection={ toggleConnection }
 						/>
 					) ) }
 				</ul>
