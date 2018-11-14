@@ -2,7 +2,7 @@ The plugins directory is for Gutenberg blocks being developed in the `wp-calypso
 
 Example SDK usage:
 
-`npm run sdk -- gutenberg client/gutenberg/extensions/presets/my-preset -output-dir=client/gutenberg/extensions/plugins/my-plugin/build -w`
+`npm run sdk -- gutenberg client/gutenberg/extensions/presets/my-preset --output-dir=client/gutenberg/extensions/plugins/my-plugin/build -w`
 
 Example directory structure:
 
