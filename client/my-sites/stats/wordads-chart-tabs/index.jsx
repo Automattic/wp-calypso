@@ -64,18 +64,6 @@ class WordAdsChartTabs extends Component {
 		};
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		// @TODO update
-		const activeTab = this.getActiveTab( nextProps );
-		const activeCharts = activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
-		if ( activeTab !== this.state.activeTab ) {
-			this.setState( {
-				activeLegendCharts: activeCharts,
-				activeTab: activeTab,
-			} );
-		}
-	}
-
 	buildTooltipData( item ) {
 		const tooltipData = [];
 		const date = this.props.moment( item.data.period );
@@ -147,10 +135,18 @@ class WordAdsChartTabs extends Component {
 		} );
 	};
 
-	getActiveTab( nextProps ) {
-		const props = nextProps || this.props;
-		return find( props.charts, { attr: props.chartTab } ) || props.charts[ 0 ];
-	}
+	getActiveTab = memoize( chartTab => {
+		const activeTab =
+			find( this.props.charts, { attr: this.props.chartTab } ) || this.props.charts[ 0 ];
+		const activeCharts = activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
+		if ( this.state && activeTab !== this.state.activeTab ) {
+			this.setState( {
+				activeLegendCharts: activeCharts,
+				activeTab: activeTab,
+			} );
+		}
+		return activeTab;
+	} );
 
 	getLoadedData() {
 		const { fullQueryData } = this.props;
@@ -192,9 +188,8 @@ class WordAdsChartTabs extends Component {
 
 	render() {
 		const { query, fullQueryRequesting, siteId } = this.props;
-
 		const chartData = this.buildChartData();
-		const activeTab = this.getActiveTab();
+		const activeTab = this.getActiveTab( this.props.chartTab );
 		const data = this.getLoadedData();
 		const activeTabLoading = fullQueryRequesting && ! ( data && data.length );
 		const classes = [
