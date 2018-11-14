@@ -258,7 +258,7 @@ export class Map extends Component {
 	};
 	loadMapLibraries() {
 		const { api_key } = this.props;
-		import( 'mapbox-gl' ).then( ( { default: mapboxgl } ) => {
+		import( /* webpackChunkName: "mapbox-gl" */ 'mapbox-gl' ).then( ( { default: mapboxgl } ) => {
 			mapboxgl.accessToken = api_key;
 			this.setState( { mapboxgl: mapboxgl }, this.scriptsLoaded );
 		} );
