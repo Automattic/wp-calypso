@@ -114,7 +114,7 @@ $autobar-height: 20px;
 
 	&.is-active {
 		background: var( --masterbar-item-active-background );
-		box-shadow: inset 0 -3px 0 $hot-pink;
+		box-shadow: inset 0 -3px 0 var(--masterbar-item-active-border);
 	}
 
 	.is-support-user &.is-active {
