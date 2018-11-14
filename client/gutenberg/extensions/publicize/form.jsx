@@ -31,7 +31,7 @@ const PublicizeForm = compose( [
 			shareMessage: get( meta, [ 'jetpack_publicize_message' ], '' ),
 		};
 	} ),
-	withDispatch( ( dispatch, ownProps ) => ( {
+	withDispatch( ( dispatch, { connections, meta } ) => ( {
 		/**
 		 * Toggle connection enable/disable state based on checkbox.
 		 *
@@ -41,7 +41,7 @@ const PublicizeForm = compose( [
 		 * @param {number}  id ID of the connection being enabled/disabled
 		 */
 		toggleConnection( id ) {
-			const newConnections = ownProps.connections.map( c => ( {
+			const newConnections = connections.map( c => ( {
 				...c,
 				enabled: c.id === id ? ! c.enabled : c.enabled,
 			} ) );
@@ -62,7 +62,7 @@ const PublicizeForm = compose( [
 		messageChange( event ) {
 			dispatch( 'core/editor' ).editPost( {
 				meta: {
-					...ownProps.meta,
+					...meta,
 					jetpack_publicize_message: event.target.value,
 				},
 			} );
