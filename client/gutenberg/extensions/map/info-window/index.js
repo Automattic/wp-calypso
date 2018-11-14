@@ -6,10 +6,6 @@
 
 import { Component, createPortal } from '@wordpress/element';
 
-/**
- * Internal dependencies
- */
-
 export class InfoWindow extends Component {
 	componentDidMount() {
 		const { mapboxgl } = this.props;

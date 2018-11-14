@@ -6,10 +6,6 @@
 
 import { Component } from '@wordpress/element';
 
-/**
- * Internal dependencies
- */
-
 class MapSave extends Component {
 	render() {
 		const { className, attributes } = this.props;

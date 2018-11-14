@@ -6,10 +6,6 @@
 
 import { __ } from '@wordpress/i18n';
 
-/**
- * Internal dependencies
- */
-
 export const settings = {
 	name: 'jetpack/map',
 	title: __( 'Map' ),
