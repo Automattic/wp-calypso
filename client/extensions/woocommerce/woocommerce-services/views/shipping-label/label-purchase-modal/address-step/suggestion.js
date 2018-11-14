@@ -57,7 +57,7 @@ const AddressSuggestion = ( {
 				>
 					<span className="address-step__suggestion-title">{ translate( 'Address entered' ) }</span>
 					<AddressSummary values={ values } countryNames={ countryNames } />
-					<Button borderless className="address-step__suggestion-edit" onClick={ editAddress }>
+					<Button className="address-step__suggestion-edit" onClick={ editAddress }>
 						{ translate( 'Edit address' ) }
 					</Button>
 				</RadioButton>
