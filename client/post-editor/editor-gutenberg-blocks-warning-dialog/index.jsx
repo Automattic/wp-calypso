@@ -21,6 +21,13 @@ import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { isEnabled } from 'config';
 import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+	withAnalytics,
+	bumpStat,
+} from 'state/analytics/actions';
 
 class EditorGutenbergBlocksWarningDialog extends Component {
 	static propTypes = {
@@ -128,6 +135,29 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 	}
 }
 
+const mapDispatchToProps = dispatch => ( {
+	optIn: ( siteId, gutenbergUrl ) => {
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordGoogleEvent(
+						'Gutenberg Opt-In',
+						'Clicked "Switch to the new editor" in the blocks warning dialog.',
+						'Opt-In',
+						true
+					),
+					recordTracksEvent( 'calypso_gutenberg_opt_in', {
+						opt_in: true,
+					} ),
+					bumpStat( 'gutenberg-opt-in', 'Calypso Dialog Opt In' )
+				),
+				setSelectedEditor( siteId, 'gutenberg', gutenbergUrl )
+			)
+		);
+	},
+	openPostRevisionsDialog: () => dispatch( openPostRevisionsDialog() ),
+} );
+
 export default connect(
 	state => {
 		const postContent = getEditorRawContent( state );
@@ -144,9 +174,5 @@ export default connect(
 			optInEnabled,
 		};
 	},
-	dispatch => ( {
-		switchToGutenberg: ( siteId, gutenbergUrl ) =>
-			dispatch( setSelectedEditor( siteId, 'gutenberg', gutenbergUrl ) ),
-		openPostRevisionsDialog: () => dispatch( openPostRevisionsDialog() ),
-	} )
+	mapDispatchToProps
 )( localize( EditorGutenbergBlocksWarningDialog ) );
