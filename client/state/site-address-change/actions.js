@@ -45,7 +45,13 @@ const dispatchErrorNotice = ( dispatch, error ) =>
 		)
 	);
 
-export const requestSiteAddressAvailability = ( siteId, siteAddress, testBool ) => dispatch => {
+export const requestSiteAddressAvailability = (
+	siteId,
+	siteAddress,
+	domain,
+	siteType,
+	testBool
+) => dispatch => {
 	dispatch( {
 		type: SITE_ADDRESS_AVAILABILITY_REQUEST,
 		siteId,
@@ -54,7 +60,7 @@ export const requestSiteAddressAvailability = ( siteId, siteAddress, testBool ) 
 
 	return wpcom
 		.undocumented()
-		.checkSiteAddressValidation( siteId, siteAddress, testBool )
+		.checkSiteAddressValidation( siteId, siteAddress, domain, siteType, testBool )
 		.then( data => {
 			const errorType = get( data, 'error' );
 			const message = get( data, 'message' );
@@ -96,7 +102,14 @@ export const clearValidationError = siteId => dispatch => {
 	} );
 };
 
-export const requestSiteAddressChange = ( siteId, newBlogName, discard = true ) => dispatch => {
+export const requestSiteAddressChange = (
+	siteId,
+	newBlogName,
+	domain,
+	oldDomain,
+	siteType,
+	discard = true
+) => dispatch => {
 	dispatch( {
 		type: SITE_ADDRESS_CHANGE_REQUEST,
 		siteId,
@@ -105,6 +118,9 @@ export const requestSiteAddressChange = ( siteId, newBlogName, discard = true ) 
 	const eventProperties = {
 		blog_id: siteId,
 		new_domain: newBlogName,
+		domain,
+		old_domain: oldDomain,
+		site_type: siteType,
 		discard,
 	};
 
@@ -129,14 +145,14 @@ export const requestSiteAddressChange = ( siteId, newBlogName, discard = true ) 
 		.then( nonce => {
 			wpcom
 				.undocumented()
-				.updateSiteAddress( siteId, newBlogName, discard, nonce )
+				.updateSiteAddress( siteId, newBlogName, domain, oldDomain, siteType, discard, nonce )
 				.then( data => {
 					const newSlug = get( data, 'new_slug' );
 
 					if ( newSlug ) {
 						dispatch( recordTracksEvent( 'calypso_siteaddresschange_success', eventProperties ) );
 
-						const newAddress = newSlug + '.wordpress.com';
+						const newAddress = newSlug + '.' + domain;
 						dispatch( requestSite( siteId ) ).then( () => {
 							page( domainManagementEdit( newAddress, newAddress ) );
 
