@@ -4,8 +4,14 @@
  * External dependencies
  */
 import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { mapStateToProps } from '../index';
 import {
 	PLAN_FREE,
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -22,11 +28,6 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
-
-/**
- * Internal dependencies
- */
-import { mapStateToProps } from '../index';
 
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/user', () => ( {} ) );
@@ -88,7 +89,7 @@ describe( 'mapStateToProps should return correct value for isBusinessPlanUser', 
 		} );
 	} );
 
-	[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( productSlug => {
+	[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( productSlug => {
 		test( `True for plan ${ productSlug }`, () => {
 			purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
 			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( true );

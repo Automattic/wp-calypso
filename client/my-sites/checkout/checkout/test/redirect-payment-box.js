@@ -15,6 +15,7 @@ import { identity } from 'lodash';
  */
 import { RedirectPaymentBox } from '../redirect-payment-box';
 import {
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -85,7 +86,7 @@ describe( 'RedirectPaymentBox', () => {
 		expect( wrapper.find( 'TermsOfService' ) ).toHaveLength( 1 );
 	} );
 
-	const businessPlans = [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ];
+	const businessPlans = [ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ];
 
 	businessPlans.forEach( product_slug => {
 		test( 'should render PaymentChatButton if any WP.com business plan is in the cart', () => {
