@@ -86,7 +86,7 @@
 				color: $white;
 
 				&:focus {
-					background-color: lighten( $blue-medium, 2.5% );
+					background-color: var( --color-action-light );
 				}
 			}
 
@@ -106,6 +106,6 @@
 		background-color: lighten( $blue-light, 22.5% );
 	}
 	.segmented-control__item.is-selected .segmented-control__link:hover {
-		background-color: lighten( $blue-medium, 2.5% );
+		background-color: var( --color-action-light );
 	}
 }

@@ -27,7 +27,7 @@
 
 		&.is-active {
 			background: $blue-medium;
-			border-color: darken( $blue-medium, 5 )
+			border-color: var(--color-action-dark)
 		}
 	}
 
@@ -69,7 +69,7 @@
 
 	&.is-active {
 		background: $blue-medium;
-		border-color: darken( $blue-medium, 5 )
+		border-color: var(--color-action-dark)
 	}
 
 	&.has-notification::before {

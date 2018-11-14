@@ -368,7 +368,7 @@ textarea {
 
 			&.btn-primary {
 				background: $blue-medium;
-				border-color: darken( $blue-medium, 8% );
+				border-color: var(--color-action-dark);
 				color: $white;
 
 				&:hover {

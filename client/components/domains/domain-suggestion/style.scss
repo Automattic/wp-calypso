@@ -138,8 +138,8 @@
 		transition: all 0.1s linear;
 
 		&:hover {
-			background-color: lighten( $blue-medium, 4% );
-			border-color: darken( $blue-medium, 4% );
+			background-color: var( --color-action-light );
+			border-color: var( --color-action-dark );
 		}
 
 		@include breakpoint( '>480px' ) {
