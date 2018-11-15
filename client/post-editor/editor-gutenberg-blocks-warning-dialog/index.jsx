@@ -168,10 +168,10 @@ const mapDispatchToProps = dispatch => ( {
 			withAnalytics(
 				composeAnalytics(
 					recordGoogleEvent(
-						'Gutenberg Calypso Opt-In Dialog',
+						'Gutenberg Opt-Out',
 						'Clicked "Use the classic editor" in the blocks warning dialog.',
-						'Use-Classic',
-						true
+						'Opt-In',
+						false
 					),
 					recordTracksEvent( 'calypso_gutenberg_use_classic_editor' ),
 					bumpStat( 'selected-editor', 'calypso-gutenberg-use-classic-editor' )
