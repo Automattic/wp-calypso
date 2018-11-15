@@ -157,21 +157,21 @@ function localforageStoreState( reduxStateKey, storageKey, state, _timestamp ) {
 }
 
 export function persistOnChange( reduxStore, serializeState = serialize ) {
-	let state;
+	let prevState = null;
 
 	const throttledSaveState = throttle(
 		function() {
-			const nextState = reduxStore.getState();
-			if ( state && nextState === state ) {
+			const state = reduxStore.getState();
+			if ( state === prevState ) {
 				return;
 			}
 
 			const reduxStateKey = getReduxStateKey();
-			if ( ! isValidReduxKeyAndState( reduxStateKey, nextState ) ) {
+			if ( ! isValidReduxKeyAndState( reduxStateKey, state ) ) {
 				return;
 			}
 
-			state = nextState;
+			prevState = state;
 
 			// TODO: serialize with the current reducer rather than initial one once we
 			// start updating the reducer dynamically.
