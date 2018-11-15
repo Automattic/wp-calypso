@@ -145,9 +145,7 @@ const loadInitialState = initialState => {
 };
 
 function getReduxStateKey() {
-	const userData = user.get();
-	const userId = userData && userData.ID ? userData.ID : null;
-	return getReduxStateKeyForUserId( userId );
+	return getReduxStateKeyForUserId( get( user.get(), 'ID', null ) );
 }
 
 function getReduxStateKeyForUserId( userId ) {
@@ -166,7 +164,7 @@ function isValidReduxKeyAndState( key, state ) {
 	// able to force the state in memory to be rebuilt - possibly using
 	// https://stackoverflow.com/questions/35622588/how-to-reset-the-state-of-a-redux-store/35641992#35641992
 	// - without generating any errors. Until then, it must remain in place.)
-	const userId = state.currentUser && state.currentUser.id ? state.currentUser.id : null;
+	const userId = get( state, [ 'currentUser', 'id' ], null );
 	return key === getReduxStateKeyForUserId( userId );
 }
 
