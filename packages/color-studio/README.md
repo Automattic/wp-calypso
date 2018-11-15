@@ -75,3 +75,7 @@ yarn meta
 ```
 
 All those commands run automatically before every commit and so does the linter.
+
+## License
+
+Color Studio is licensed under [GNU General Public License v2.0 (or later)](LICENSE.md).

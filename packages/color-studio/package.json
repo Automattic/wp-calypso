@@ -1,6 +1,7 @@
 {
   "name": "color-studio",
   "version": "1.0.0-rc.1",
+  "license": "GPL-2.0+",
   "repository": {
     "type": "git",
     "url": "https://github.com/automattic/color-studio.git"
