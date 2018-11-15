@@ -33,7 +33,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		premium: {
-			steps: [ 'about', 'themes', 'domains', 'user' ],
+			steps: [ 'user', 'about', 'themes', 'domains' ],
 			destination: function( dependencies ) {
 				return '/plans/select/premium/' + dependencies.siteSlug;
 			},
