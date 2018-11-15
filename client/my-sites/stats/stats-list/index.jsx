@@ -14,6 +14,11 @@ const debug = debugFactory( 'calypso:stats:list' );
  */
 import StatsListItem from './stats-list-item';
 
+/**
+ * Style Dependencies
+ */
+import './style.scss';
+
 export default class extends React.Component {
 	static displayName = 'StatsList';
 
