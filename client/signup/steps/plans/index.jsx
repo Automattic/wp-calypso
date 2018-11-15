@@ -25,6 +25,8 @@ import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
+import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
+import { planHasFeature } from '../../../lib/plans';
 
 class PlansStep extends Component {
 	componentDidMount() {
@@ -38,6 +40,7 @@ class PlansStep extends Component {
 				additionalStepData,
 				stepSectionName,
 				stepName,
+				flowName,
 				goToNextStep,
 				translate,
 				signupDependencies: { domainItem },
@@ -51,6 +54,18 @@ class PlansStep extends Component {
 				free_trial: cartItem.free_trial,
 				from_section: stepSectionName ? stepSectionName : 'default',
 			} );
+
+			// If we're inside the store signup flow and the cart item is a Business or eCommerce Plan,
+			// set a flag on it. It will trigger Automated Transfer when the product is being
+			// activated at the end of the checkout process.
+			if (
+				flowName === 'ecommerce' &&
+				planHasFeature( cartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS )
+			) {
+				cartItem.extra = Object.assign( cartItem.extra || {}, {
+					is_store_signup: true,
+				} );
+			}
 		} else {
 			analytics.tracks.recordEvent( 'calypso_signup_free_plan_select', {
 				from_section: stepSectionName ? stepSectionName : 'default',
