@@ -408,10 +408,6 @@ export const submitAddressForNormalization = ( orderId, siteId, group ) => (
 		}
 		state = getShippingLabel( getState(), orderId, siteId ).form[ group ];
 	}
-	if ( state.isNormalized && isEqual( state.values, state.normalized ) ) {
-		handleNormalizeResponse();
-		return;
-	}
 
 	// No `catch` is needed here: `normalizeAddress` already generates a notice.
 	return normalizeAddress(
