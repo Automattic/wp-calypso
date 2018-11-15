@@ -1,3 +1,158 @@
+// Mockup wrap
+.site-mockup__wrap {
+	margin: auto;
+	padding: 16px;
+	position: relative;
+	transition: bottom 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+	max-width: 1200px;
+	background: rgba( yellow, 0.2 );
+	display: flex;
+	align-items: flex-start;
+
+	// When first introduced, the empty
+	// mockups are fixed to the viewport.
+	&.fixed {
+		z-index: -1;
+		max-width: 100%;
+		margin: 0;
+		position: fixed;
+			top: 80vh;
+			right: 32px;
+			left: 32px;
+		background: rgba( red, 0.2 );
+	}
+}
+
+// The mockups themselves, both mobile
+// and desktop variants.
+.site-mockup__viewport {
+	box-shadow: 0 2px 8px 0 rgba(0,0,0,0.20);
+	border-radius: 4px;
+	background: $white;
+	margin: 0 auto;
+	position: relative;
+	//transform: translateY( 120px );
+	//transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+	&.desktop {
+		flex-grow: 1;
+		margin-right: 16px;
+	}
+
+	&.mobile {
+		//height: 100%;
+		width: 300px;
+		height: 500px;
+	}
+}
+
+// Browser chrome to make mockups look
+// a little more like a website/phone.
+.site-mockup__chrome-desktop {
+	height: 28px;
+	border-radius: 4px 4px 0 0;
+	background: $gray-dark;
+	position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+
+	// Desktop chrome has some OS dots to
+	// help signify its a browser.
+	svg {
+		position: absolute;
+			top: 8px;
+			left: 8px;
+		fill: $gray;
+	}
+}
+
+.site-mockup__chrome-mobile {
+
+	// Mobile chrome is on top and bottom
+	.site-mockup__chrome-mobile-top,
+	.site-mockup__chrome-mobile-bottom {
+		height: 28px;
+		background: $gray-dark;
+		position: absolute;
+			right: 0;
+			left: 0;
+	}
+
+	.site-mockup__chrome-mobile-top {
+		border-radius: 4px 4px 0 0;
+		top: 0;
+
+		// The top chrome as a speaker line to help
+		// signify its a mobile phone.
+		svg {
+			position: absolute;
+				top: 9px;
+				left: 50%;
+			margin-left: -15px; // Half the width to center it -shaun
+			fill: $gray;
+		}
+	}
+
+	.site-mockup__chrome-mobile-bottom {
+		border-radius: 0 0 4px 4px;
+		bottom: 0;
+	}
+}
+
+
+// Mockup document body; Where all the
+// stuff goes.
+.site-mockup__body {
+	
+	// Desktop body needs to move for the chrome.
+	.site-mockup__viewport.desktop & {
+		margin-top: 28px;
+	}
+
+	// Mobile body is scrollable and needs to
+	// make room for the chrome.
+	.site-mockup__viewport.mobile & {
+		overflow-y: auto;
+		overflow-x: hidden;
+		position: absolute;
+			top: 28px;
+			right: 0;
+			bottom: 28px;
+			left: 0;
+	}
+}
+
+
+// When empty, the mockup shows a simple
+// illustrative representation of a website.
+.site-mockup__placeholders {
+	padding: 24px;
+}
+
+.site-mockup__placeholder {
+	margin-bottom: 24px;
+	height: 150px;
+	border: 2px dashed lighten( $gray, 10 );
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Shaun's mess around preview stuff that prolly
 // doesn't make a ton of sense yet.
 .previews {
@@ -68,27 +223,6 @@
 		transition-delay: 0.05s;
 	}
 	
-	.preview-chrome {
-		height: 28px;
-		border-radius: 4px 4px 0 0;
-		background: blue;
-		position: absolute;
-			top: 0;
-			right: 0;
-			left: 0;
-
-		&:before {
-			content: '';
-			position: absolute;
-			top: 4px;
-			bottom: 4px;
-			left: 20%;
-			right: 20%;
-			border-radius: 4px;
-			background: blue;
-		}
-	}
-	
 	.preview-content {
 		overflow: auto;
 		height: 100%;
@@ -104,12 +238,7 @@
 			left: 0;
 	}
 	
-	.preview-placeholder {
-		padding: 24px;
-		margin: 24px;
-		height: 150px;
-		border: 2px dotted #ddd;
-	}
+
 }
 
 // Demo
@@ -130,9 +259,9 @@
 	margin: 0 20px 20px 20px;
 }
 .demo-cover-image {
+	background-image: url('https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=cc14d05af9963bb8ee521c3c4ea6df55&auto=format&fit=crop&w=3134&q=80');
 	background-size: cover;
 	background-position: 50% 60%;
-	background-image: url('https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=cc14d05af9963bb8ee521c3c4ea6df55&auto=format&fit=crop&w=3134&q=80');
 	
 	span {
 		color: #fff;
