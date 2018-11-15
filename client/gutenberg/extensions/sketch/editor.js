@@ -67,6 +67,24 @@ class Doodleboard extends Component {
 	mouseMove = ( { clientX, clientY } ) =>
 		this.isDrawing && this.mouseDown( { clientX, clientY, isConnected: true } );
 
+	touchStart = ( { touches } ) =>
+		this.mouseDown( {
+			clientX: touches[ 0 ].clientX,
+			clientY: touches[ 0 ].clientY,
+		} );
+
+	touchMove = ( { touches } ) =>
+		this.mouseMove( {
+			clientX: touches[ 0 ].clientX,
+			clientY: touches[ 0 ].clientY,
+			isConnected: true,
+		} );
+
+	touchEnd = event => {
+		this.touchMove( event );
+		this.stopDrawing();
+	};
+
 	stopDrawing = () => {
 		this.isDrawing = false;
 		const data = this.canvas.current.toDataURL( 'image/png' );
@@ -116,6 +134,9 @@ class Doodleboard extends Component {
 					onMouseMove={ this.mouseMove }
 					onMouseUp={ this.stopDrawing }
 					onMouseLeave={ this.stopDrawing }
+					onTouchStart={ this.touchStart }
+					onTouchMove={ this.touchMove }
+					onTouchEnd={ this.touchEnd }
 				/>
 			</Fragment>
 		);
