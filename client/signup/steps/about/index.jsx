@@ -557,6 +557,13 @@ class AboutStep extends Component {
 	}
 }
 
+/**
+ * Returns translated label text for the About step depending on the site type
+ *
+ * @param   {String} siteType E.g,'business', 'blog'
+ * @returns {Object} labels for the site title and site topic fields
+ *
+ */
 function getLabelFromSiteType( siteType ) {
 	//TODO: Fetch segment names from lib/site-type.js
 	switch ( dasherize( siteType ) ) {
