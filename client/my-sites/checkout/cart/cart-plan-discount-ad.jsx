@@ -17,7 +17,7 @@ import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
-import { isBlogger, isPersonal, isPremium, isBusiness } from 'lib/products-values';
+import { isBlogger, isPersonal, isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import { shouldFetchSitePlans } from 'lib/plans';
 
 class CartPlanDiscountAd extends Component {
@@ -59,7 +59,11 @@ class CartPlanDiscountAd extends Component {
 			plan = find( sitePlans.data, isBusiness );
 		}
 
-		if ( ! plan || plan.rawDiscount === 0 || ! plan.isDomainUpgrade ) {
+		if ( cartItems.getAll( cart ).some( isEcommerce ) ) {
+			plan = find( sitePlans.data, isEcommerce );
+		}
+
+		if ( plan.rawDiscount === 0 || ! plan.isDomainUpgrade ) {
 			return null;
 		}
 
