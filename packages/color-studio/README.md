@@ -11,21 +11,23 @@
 
 > The computational color palette for Muriel, our design language system.
 
-[![Color palette preview][dist-preview]][docs-index]
-
-## What’s Included
+## What’s Inside
 
 Color Studio generates the following:
 
-* [Online documentation][docs-index] with click-to-copy hex values.
+* [Online documentation][docs-index] with contrast ratios and click-to-copy hex values.
 * [Stylesheet partial][dist-scss] with all colors defined as SCSS variables that can be [imported](#usage-in-projects) inside any project.
 * [Sketch palette file][dist-sketchpalette] that can be imported using the [Sketch Palettes](https://github.com/andrewfiorillo/sketch-palettes) plugin.
 * [Custom color tester][docs-custom] that runs Color Studio’s formula against any specified value.
 
-Also included:
+Also:
 
 * [JSON file][dist-json] with all the color values for [further use](#usage-in-projects).
-* The preview image and [extensions][dist-extensions].
+* The preview image below and [extensions][dist-extensions].
+
+## The Palette
+
+[![Color palette preview][dist-preview]][docs-index]
 
 ## Usage in Projects
 
@@ -72,4 +74,4 @@ yarn sketch:watch
 yarn meta
 ```
 
-All those commands run automatically before every commit. So does the linter.
+All those commands run automatically before every commit and so does the linter.
