@@ -242,7 +242,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 
 	if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
 		flows.ecommerce = {
-			steps: [ 'about', 'domains', 'plans-store-nux', 'user' ],
+			steps: [ 'about', 'domains', 'plans', 'user' ],
 			destination: getSiteDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2018-01-24',
@@ -319,10 +319,10 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		lastModified: '2018-10-29',
 	};
 
-	flows[ 'crowdsignal' ] = {
+	flows.crowdsignal = {
 		steps: [ 'oauth2-name' ],
-		destination: ( dependencies ) => dependencies.oauth2_redirect || '/',
-		description: 'Crowdsignal\'s custom WordPress.com Connect signup flow',
+		destination: dependencies => dependencies.oauth2_redirect || '/',
+		description: "Crowdsignal's custom WordPress.com Connect signup flow",
 		lastModified: '2018-11-14',
 		disallowResume: true,
 		autoContinue: true,
