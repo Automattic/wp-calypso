@@ -75,6 +75,18 @@ const FieldDefaults = {
 			type: 'array',
 			default: [],
 		},
+		defaultValue: {
+			type: 'string',
+			default: '',
+		},
+		placeholder: {
+			type: 'string',
+			default: '',
+		},
+		id: {
+			type: 'string',
+			default: '',
+		},
 	},
 	transforms: {
 		to: [
@@ -162,6 +174,9 @@ const editField = type => props => (
 		required={ props.attributes.required }
 		setAttributes={ props.setAttributes }
 		isSelected={ props.isSelected }
+		defaultValue={ props.attributes.defaultValue }
+		placeholder={ props.attributes.placeholder }
+		id={ props.attributes.id }
 	/>
 );
 
@@ -173,6 +188,7 @@ const editMultiField = type => props => (
 		setAttributes={ props.setAttributes }
 		type={ type }
 		isSelected={ props.isSelected }
+		id={ props.attributes.id }
 	/>
 );
 
@@ -245,6 +261,9 @@ registerBlockType( 'jetpack/field-textarea', {
 			required={ props.attributes.required }
 			setAttributes={ props.setAttributes }
 			isSelected={ props.isSelected }
+			defaultValue={ props.attributes.defaultValue }
+			placeholder={ props.attributes.placeholder }
+			id={ props.attributes.id }
 		/>
 	),
 } );
@@ -262,6 +281,8 @@ registerBlockType( 'jetpack/field-checkbox', {
 			required={ props.attributes.required }
 			setAttributes={ props.setAttributes }
 			isSelected={ props.isSelected }
+			defaultValue={ props.attributes.defaultValue }
+			id={ props.attributes.id }
 		/>
 	),
 	attributes: {

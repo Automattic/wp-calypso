@@ -3,15 +3,25 @@
 /**
  * External dependencies
  */
-import { TextareaControl } from '@wordpress/components';
+import { TextareaControl, TextControl, PanelBody } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
+import { InspectorControls } from '@wordpress/editor';
 
 /**
  * Internal dependencies
  */
 import JetpackFieldLabel from './jetpack-field-label';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
-function JetpackFieldTextarea( { required, label, setAttributes, isSelected } ) {
+function JetpackFieldTextarea( {
+	required,
+	label,
+	setAttributes,
+	isSelected,
+	defaultValue,
+	placeholder,
+	id,
+} ) {
 	return (
 		<Fragment>
 			<div className="jetpack-field">
@@ -24,9 +34,29 @@ function JetpackFieldTextarea( { required, label, setAttributes, isSelected } ) 
 							isSelected={ isSelected }
 						/>
 					}
+					placeholder={ placeholder }
 					disabled
 				/>
 			</div>
+			<InspectorControls>
+				<PanelBody title={ __( 'Field Settings' ) }>
+					<TextControl
+						label={ __( 'Default Value' ) }
+						value={ defaultValue }
+						onChange={ value => setAttributes( { defaultValue: value } ) }
+					/>
+					<TextareaControl
+						label={ __( 'Placeholder' ) }
+						value={ placeholder }
+						onChange={ value => setAttributes( { placeholder: value } ) }
+					/>
+					<TextControl
+						label={ __( 'ID' ) }
+						value={ id }
+						onChange={ value => setAttributes( { id: value } ) }
+					/>
+				</PanelBody>
+			</InspectorControls>
 		</Fragment>
 	);
 }
