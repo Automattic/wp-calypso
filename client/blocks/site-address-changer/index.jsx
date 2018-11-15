@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/no-onchange */
 /** @format */
 /**
  * External dependencies
@@ -239,8 +238,8 @@ export class SiteAddressChanger extends Component {
 				<Gridicon icon="chevron-down" size={ 18 } className="site-address-changer__select-icon" />
 				<select
 					className="site-address-changer__select"
-					value={ newDomainSuffix }
-					onChange={ this.onDomainSuffixChange }
+					defaultValue={ newDomainSuffix }
+					onBlur={ this.onDomainSuffixChange }
 				>
 					{ suffixesList.map( suffix => (
 						<option key={ suffix } value={ suffix }>
