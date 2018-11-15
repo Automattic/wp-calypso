@@ -547,6 +547,7 @@
 			-apple-pay-button-type: buy;
 			-apple-pay-button-style: black;
 			vertical-align: middle;
+			cursor: pointer;
 
 			&[disabled] {
 				opacity: 0.4;
