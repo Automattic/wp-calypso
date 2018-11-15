@@ -35,20 +35,6 @@ import {
 import ProductPlaceholder from './product-placeholder';
 import HelpMessage from './help-message';
 
-const DisplayFormikState = props => (
-	<div style={ { margin: '1rem 0' } }>
-		<pre
-			style={ {
-				background: '#f6f8fa',
-				fontSize: '.65rem',
-				padding: '.5rem',
-			} }
-		>
-			<strong>props</strong> = { JSON.stringify( props, null, 2 ) }
-		</pre>
-	</div>
-);
-
 class SimplePaymentsEdit extends Component {
 	state = {
 		fieldPriceError: null,
@@ -351,8 +337,6 @@ class SimplePaymentsEdit extends Component {
 							{ __( 'Create one on PayPal' ) }
 						</ExternalLink>
 					</HelpMessage>
-
-					{ DisplayFormikState( this.props ) }
 				</Fragment>
 			</div>
 		);
