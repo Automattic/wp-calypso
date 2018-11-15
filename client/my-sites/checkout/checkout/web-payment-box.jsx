@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { i18n, localize } from 'i18n-calypso';
 import config from 'config';
 import Gridicon from 'gridicons';
 import debugFactory from 'debug';
@@ -98,7 +98,7 @@ export function detectWebPaymentMethod() {
 export function getWebPaymentMethodName( webPaymentMethod ) {
 	switch ( webPaymentMethod ) {
 		case WEB_PAYMENT_BASIC_CARD_METHOD:
-			return 'Browser wallet';
+			return i18n.translate( 'Browser wallet' );
 
 		case WEB_PAYMENT_APPLE_PAY_METHOD:
 			return 'Apple Pay';
@@ -192,7 +192,7 @@ export class WebPaymentBox extends React.Component {
 				return completingState();
 
 			default:
-				throw new Error( 'Unknown transaction step: ' + transactionStep.name );
+				throw new Error( `Unknown transaction step: ${transactionStep.name}.` );
 		}
 	};
 
@@ -219,7 +219,7 @@ export class WebPaymentBox extends React.Component {
 				label: translate( 'Total' ),
 				amount: {
 					currency: cart.currency,
-					value: cart.total_cost + '',
+					value: cart.total_cost.toString(),
 				},
 			},
 			displayItems: cart.products.map( product => {
@@ -227,7 +227,7 @@ export class WebPaymentBox extends React.Component {
 					label: product.product_name,
 					amount: {
 						currency: product.currency,
-						value: product.cost + '',
+						value: product.cost.toString(),
 					},
 				};
 			} ),
@@ -247,8 +247,7 @@ export class WebPaymentBox extends React.Component {
 				.applePayMerchantValidation( event.validationURL, environment )
 				.then( json => event.complete( json ) )
 				.catch( error => {
-					debug( 'onmerchantvalidation error' );
-					debug( error );
+					debug( 'onmerchantvalidation error', error );
 				} );
 		};
 
@@ -330,12 +329,10 @@ export class WebPaymentBox extends React.Component {
 								paymentResponse.complete( 'success' );
 							} )
 							.catch( error => {
-								debug( 'show error' );
-								debug( error );
+								debug( 'Error while showing the payment request', error );
 							} );
-					} catch ( e ) {
-						debug( 'show catch' );
-						debug( e );
+					} catch ( error ) {
+						debug( 'Error while running the payment request', error );
 					}
 				}
 				break;
@@ -371,16 +368,16 @@ export class WebPaymentBox extends React.Component {
 								this.props.onSubmit( event );
 							} )
 							.catch( error => {
-								debug( error );
+								debug( 'Error while showing the payment request', error );
 							} );
 					} catch ( e ) {
-						debug( e );
+						debug( 'Error while running the payment request', error );
 					}
 				}
 				break;
 
 			default:
-				debug( 'Unknown or unhandled payment method `' + paymentMethod + '`.' );
+				debug( `Unknown or unhandled payment method ${paymentMethod}.` );
 		}
 	};
 
@@ -410,27 +407,20 @@ export class WebPaymentBox extends React.Component {
 		const { cart, translate, countriesList } = this.props;
 
 		if ( ! paymentMethod ) {
-			return <></>;
+			return null;
 		}
 
 		const buttonState = this.buttonState();
 		const buttonDisabled = buttonState.disabled || ! this.state.country || ! this.state.postalCode;
-		let introductionText;
 		let button;
 
 		switch ( paymentMethod ) {
 			case WEB_PAYMENT_APPLE_PAY_METHOD:
-				introductionText = translate(
-					'Use your secure and private Apple Wallet to pick up a card to pay with. ' +
-						'Once the button has been clicked, your browser will promt you a payment sheet. ' +
-						'Please, follow this secure interface.'
-				);
-
 				if ( buttonState.default ) {
 					button = (
 						<button
 							type="submit"
-							onClick={ this.submit.bind( this, paymentMethod ) }
+							onClick={ () => this.submit( paymentMethod ) }
 							disabled={ buttonDisabled }
 							className="web-payment-box__apple-pay-button"
 						/>
@@ -450,16 +440,11 @@ export class WebPaymentBox extends React.Component {
 				break;
 
 			case WEB_PAYMENT_BASIC_CARD_METHOD:
-				introductionText = translate(
-					'Use your private and safeguarded browser wallet to pick up a card to pay with. ' +
-						'Once the button has been clicked, your browser will prompt you a payment sheet. ' +
-						'Please, follow this secure interface.'
-				);
 				button = (
 					<Button
 						type="submit"
 						className="button is-primary button-pay pay-button__button"
-						onClick={ this.submit.bind( this, paymentMethod ) }
+						onClick={ () => this.submit( paymentMethod ) }
 						busy={ buttonState.disabled }
 						disabled={ buttonDisabled }
 					>
@@ -497,7 +482,6 @@ export class WebPaymentBox extends React.Component {
 				/>
 
 				<span className="payment-box__payment-buttons">
-					<span className="web-payment-box__button-explanation">{ introductionText }</span>
 					<span className="pay-button">
 						<span className="payment-request-button">{ button }</span>
 						<SubscriptionText cart={ this.props.cart } />
