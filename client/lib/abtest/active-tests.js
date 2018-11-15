@@ -104,7 +104,7 @@ export default {
 		localeTargets: 'any',
 	},
 	privateByDefault: {
-		datestamp: '20181113',
+		datestamp: '20181115',
 		variations: {
 			private: 10,
 			public: 90,
