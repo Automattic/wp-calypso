@@ -376,7 +376,7 @@ export class WebPaymentBox extends React.Component {
 							.catch( error => {
 								debug( 'Error while showing the payment request', error );
 							} );
-					} catch ( e ) {
+					} catch ( error ) {
 						debug( 'Error while running the payment request', error );
 					}
 				}
