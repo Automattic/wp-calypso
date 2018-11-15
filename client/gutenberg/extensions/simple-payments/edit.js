@@ -7,14 +7,21 @@ import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { BaseControl, ExternalLink, PanelBody, ToggleControl } from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
-import { ErrorMessage, Field, withFormik } from 'formik';
+import { Field, withFormik } from 'formik';
 import { get, trimEnd } from 'lodash';
 import { InspectorControls } from '@wordpress/editor';
 import { sprintf } from '@wordpress/i18n';
 import { withSelect } from '@wordpress/data';
+import {
+	ExternalLink,
+	PanelBody,
+	SelectControl,
+	TextareaControl,
+	TextControl,
+	ToggleControl,
+} from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -148,24 +155,25 @@ class SimplePaymentsEdit extends Component {
 		return SUPPORTED_CURRENCY_LIST.includes( currency );
 	};
 
-	handleEmailChange = event => {
-		this.props.setFieldValue( 'email', event.target.value );
-		this.props.setAttributes( { email: event.target.value } );
+	handleEmailChange = email => {
+		this.props.setFieldValue( 'email', email );
+		this.props.setAttributes( { email } );
 	};
 
-	handleContentChange = event => {
-		this.props.setFieldValue( 'content', event.target.value );
-		this.props.setAttributes( { content: event.target.value } );
+	handleContentChange = content => {
+		this.props.setFieldValue( 'content', content );
+		this.props.setAttributes( { content } );
 	};
 
-	handlePriceChange = event => {
-		this.props.setFieldValue( 'price', event.target.value );
-		this.props.setAttributes( { price: parseFloat( event.target.value ) } );
+	handlePriceChange = price => {
+		this.props.setFieldValue( 'price', price );
+		this.props.setAttributes( { price: parseFloat( price ) } );
 	};
 
-	handleCurrencyChange = event => {
-		this.props.setFieldValue( 'currency', event.target.value );
-		this.props.setAttributes( { currency: event.target.value } );
+	handleCurrencyChange = currency => {
+		this.props.setFieldValue( 'currency', currency );
+		this.props.setAttributes( { currency } );
+		this.props.setFieldTouched( 'price' );
 	};
 
 	handleMultipleChange = multiple => {
@@ -173,10 +181,21 @@ class SimplePaymentsEdit extends Component {
 		this.props.setAttributes( { multiple: !! multiple } );
 	};
 
-	handleTitleChange = event => {
-		this.props.setFieldValue( 'title', event.target.value );
-		this.props.setAttributes( { title: event.target.value } );
+	handleTitleChange = title => {
+		this.props.setFieldValue( 'title', title );
+		this.props.setAttributes( { title } );
 	};
+
+	getCurrencyList = SUPPORTED_CURRENCY_LIST.map( value => {
+		const { symbol } = getCurrencyDefaults( value );
+		// if symbol is equal to the code (e.g., 'CHF' === 'CHF'), don't duplicate it.
+		// trim the dot at the end, e.g., 'kr.' becomes 'kr'
+		const label = symbol === value ? value : `${ value } ${ trimEnd( symbol, '.' ) }`;
+		return { value, label };
+	} );
+
+	shouldShowError = ( instanceId, input ) =>
+		this.props.errors[ input ] && this.props.touched[ `${ instanceId }-${ input }` ];
 
 	render() {
 		const { fieldPriceError, fieldTitleError } = this.state;
@@ -230,131 +249,99 @@ class SimplePaymentsEdit extends Component {
 						</PanelBody>
 					</InspectorControls>
 
-					<BaseControl
-						label={ __( 'Item name' ) }
-						id={ `${ instanceId }-title` }
+					<Field
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
-							'simple-payments__field-has-error': errors.title && touched.title,
+							'simple-payments__field-has-error': this.shouldShowError( instanceId, 'title' ),
 						} ) }
-					>
-						<Field
-							disabled={ isLoadingInitial || isSubmitting }
-							id={ `${ instanceId }-title` }
-							name="title"
-							onBlur={ handleBlur }
-							onChange={ this.handleTitleChange }
-							placeholder={ __( 'Item name' ) }
-							required
-							type="text"
-							value={ values.title }
-						/>
-					</BaseControl>
+						component={ TextControl }
+						disabled={ isLoadingInitial || isSubmitting }
+						id={ `${ instanceId }-title` }
+						label={ __( 'Item name' ) }
+						onBlur={ handleBlur }
+						onChange={ this.handleTitleChange }
+						placeholder={ __( 'Item name' ) }
+						required
+						value={ values.title }
+					/>
+					{ this.shouldShowError( instanceId, 'title' ) && (
+						<HelpMessage>{ errors.title }</HelpMessage>
+					) }
 
-					<ErrorMessage name="title" component={ HelpMessage } />
-
-					<BaseControl
-						label={ __( 'Describe your item in a few words' ) }
-						id={ `${ instanceId }-content` }
+					<Field
 						className="simple-payments__field simple-payments__field-content"
-					>
-						<Field
-							component="textarea"
-							disabled={ isLoadingInitial || isSubmitting }
-							id={ `${ instanceId }-content` }
-							name="content"
-							onBlur={ handleBlur }
-							onChange={ this.handleContentChange }
-							placeholder={ __( 'Describe your item in a few words' ) }
-							required
-							value={ values.content }
-						/>
-					</BaseControl>
+						component={ TextareaControl }
+						disabled={ isLoadingInitial || isSubmitting }
+						label={ __( 'Describe your item in a few words' ) }
+						onBlur={ handleBlur }
+						onChange={ this.handleContentChange }
+						placeholder={ __( 'Describe your item in a few words' ) }
+						value={ values.content }
+					/>
 
 					<div className="simple-payments__price-container">
-						<BaseControl
-							label={ __( 'Currency' ) }
-							id={ `${ instanceId }-currency` }
+						<Field
 							className="simple-payments__field simple-payments__field-currency"
-						>
-							<Field
-								id={ `${ instanceId }-currency` }
-								component="select"
-								disabled={ isLoadingInitial || isSubmitting }
-								name="currency"
-								onBlur={ handleBlur }
-								onChange={ this.handleCurrencyChange }
-								required
-								value={ values.currency }
-							>
-								{ SUPPORTED_CURRENCY_LIST.map( value => {
-									const { symbol } = getCurrencyDefaults( value );
-									// if symbol is equal to the code (e.g., 'CHF' === 'CHF'), don't duplicate it.
-									// trim the dot at the end, e.g., 'kr.' becomes 'kr'
-									const label = symbol === value ? value : `${ value } ${ trimEnd( symbol, '.' ) }`;
-									return (
-										<option value={ value } key={ value }>
-											{ label }
-										</option>
-									);
-								} ) }
-							</Field>
-						</BaseControl>
-
-						<BaseControl
-							label={ __( 'Price' ) }
-							id={ `${ instanceId }-price` }
+							component={ SelectControl }
+							disabled={ isLoadingInitial || isSubmitting }
+							label={ __( 'Currency' ) }
+							onBlur={ handleBlur }
+							onChange={ this.handleCurrencyChange }
+							options={ this.getCurrencyList }
+							value={ values.currency }
+						/>
+						<Field
 							className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
 								'simple-payments__field-has-error': errors.price && touched.price,
 							} ) }
-						>
-							<Field
-								disabled={ isLoadingInitial || isSubmitting }
-								id={ `${ instanceId }-price` }
-								name="price"
-								onBlur={ handleBlur }
-								onChange={ this.handlePriceChange }
-								placeholder={ formatPrice( 0, values.currency, false ) }
-								required
-								step="1"
-								type="number"
-								value={ values.price }
-							/>
-						</BaseControl>
-
-						<ErrorMessage name="price" component={ HelpMessage } />
+							component={ TextControl }
+							disabled={ isLoadingInitial || isSubmitting }
+							id={ `${ instanceId }-price` }
+							label={ __( 'Price' ) }
+							onBlur={ handleBlur }
+							onChange={ this.handlePriceChange }
+							placeholder={ formatPrice( 0, values.currency, false ) }
+							required
+							step="1"
+							type="number"
+							value={ values.price }
+						/>
+						{ this.shouldShowError( instanceId, 'price' ) && (
+							<HelpMessage>{ errors.price }</HelpMessage>
+						) }
 					</div>
 
 					<div className="simple-payments__field-multiple">
-						<ToggleControl
-							checked={ Boolean( multiple ) }
-							disabled={ isLoadingInitial }
+						<Field
+							checked={ multiple }
+							component={ ToggleControl }
+							disabled={ isLoadingInitial || isSubmitting }
 							label={ __( 'Allow people to buy more than one item at a time' ) }
+							onBlur={ handleBlur }
 							onChange={ this.handleMultipleChange }
 						/>
 					</div>
 
-					<BaseControl
-						label={ __( 'Email' ) }
-						id={ `${ instanceId }-email` }
+					<Field
+						aria-describedby={
+							! this.shouldShowError( instanceId, 'email' ) ? `${ instanceId }-email-help` : null
+						}
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
-							'simple-payments__field-has-error': errors.email && touched.email,
+							'simple-payments__field-has-error': this.shouldShowError( instanceId, 'email' ),
 						} ) }
-					>
-						<Field
-							aria-describedby={ ! errors.email ? `${ instanceId }-email-help` : null }
-							disabled={ isLoadingInitial || isSubmitting }
-							id={ `${ instanceId }-email` }
-							name="email"
-							onBlur={ handleBlur }
-							onChange={ this.handleEmailChange }
-							placeholder={ __( 'Email' ) }
-							required
-							type="email"
-							value={ values.email }
-						/>
-					</BaseControl>
-
-					<ErrorMessage name="email" component={ HelpMessage } />
+						component={ TextControl }
+						disabled={ isLoadingInitial || isSubmitting }
+						id={ `${ instanceId }-email` }
+						label={ __( 'Email' ) }
+						onBlur={ handleBlur }
+						onChange={ this.handleEmailChange }
+						placeholder={ __( 'Email' ) }
+						required
+						type="email"
+						value={ values.email }
+					/>
+					{ this.shouldShowError( instanceId, 'email' ) && (
+						<HelpMessage>{ errors.email }</HelpMessage>
+					) }
 
 					<HelpMessage id={ `${ instanceId }-email-help` } isError={ false }>
 						{ __(
