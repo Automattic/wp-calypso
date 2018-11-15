@@ -1291,6 +1291,13 @@ reducers[ WOOCOMMERCE_ORDER_UPDATE_SUCCESS ] = () => {
 	return initializeLabelsState();
 };
 
+/**
+ * Ignores address verification and proceeds to the next step.
+ *
+ * @param   {Object} state         The local Redux sub-state.
+ * @param   {string} actions.group The group that should be marked as normalized.
+ * @returns {Object}               An updated sub-state.
+ */
 reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_USE_ADDRESS_AS_ENTERED ] = ( state, { group } ) => {
 	const oldState = state.form[ group ];
 
