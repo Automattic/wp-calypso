@@ -7,6 +7,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { registerBlockType } from '@wordpress/blocks';
 import { Component, Fragment } from '@wordpress/element';
 import { InspectorControls, mediaUpload, PanelColorSettings } from '@wordpress/editor';
+import { __ } from '@wordpress/i18n';
 
 function dataURItoBlob( dataURI ) {
 	const byteString = atob( dataURI.split( ',' )[ 1 ] );
@@ -113,13 +114,13 @@ class Doodleboard extends Component {
 			<Fragment>
 				<InspectorControls>
 					<PanelColorSettings
-						title={ 'Brush Settings' }
+						title={ __( 'Brush Settings' ) }
 						initialOpen={ false }
 						colorSettings={ [
 							{
 								value: this.props.attributes.color || '#0087be',
 								onChange: color => this.props.setAttributes( { color } ),
-								label: 'Color',
+								label: __( 'Color' ),
 							},
 						] }
 					/>
@@ -146,7 +147,7 @@ class Doodleboard extends Component {
 const edit = Doodleboard;
 
 registerBlockType( 'a8c/sketch', {
-	title: 'Sketch a doodle',
+	title: __( 'Sketch' ),
 	icon: 'admin-customizer',
 	category: 'common',
 	attributes: {
