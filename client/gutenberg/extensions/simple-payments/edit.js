@@ -42,7 +42,7 @@ class SimplePaymentsEdit extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const { attributes, isLoadingInitial, isSelected, setAttributes, simplePayment } = this.props;
+		const { attributes, isSelected, setAttributes, simplePayment } = this.props;
 		const { content, currency, email, multiple, price, title } = attributes;
 
 		// @TODO check componentDidMount for the case where post was already loaded
@@ -57,7 +57,7 @@ class SimplePaymentsEdit extends Component {
 			} );
 		}
 
-		if ( prevProps.isSelected && ! isSelected && ! isLoadingInitial ) {
+		if ( prevProps.isSelected && ! isSelected ) {
 			// Validate and save on block deselect
 
 			this.saveProduct();
@@ -317,10 +317,11 @@ class SimplePaymentsEdit extends Component {
 
 	render() {
 		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
-		const { attributes, isSelected, isLoadingInitial, instanceId } = this.props;
-		const { content, currency, email, multiple, price, title } = attributes;
+		const { attributes, instanceId, isSelected, simplePayment } = this.props;
+		const { content, currency, email, multiple, paymentId, price, title } = attributes;
 
-		if ( ! isSelected && isLoadingInitial ) {
+		const isLoading = paymentId && ! simplePayment;
+		if ( ! isSelected && isLoading ) {
 			return (
 				<div className="simple-payments__loading">
 					<ProductPlaceholder
@@ -369,7 +370,7 @@ class SimplePaymentsEdit extends Component {
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
 							'simple-payments__field-has-error': fieldTitleError,
 						} ) }
-						disabled={ isLoadingInitial }
+						disabled={ isLoading }
 						label={ __( 'Item name' ) }
 						onChange={ this.handleTitleChange }
 						placeholder={ __( 'Item name' ) }
@@ -383,7 +384,7 @@ class SimplePaymentsEdit extends Component {
 
 					<TextareaControl
 						className="simple-payments__field simple-payments__field-content"
-						disabled={ isLoadingInitial }
+						disabled={ isLoading }
 						label={ __( 'Describe your item in a few words' ) }
 						onChange={ this.handleContentChange }
 						placeholder={ __( 'Describe your item in a few words' ) }
@@ -393,7 +394,7 @@ class SimplePaymentsEdit extends Component {
 					<div className="simple-payments__price-container">
 						<SelectControl
 							className="simple-payments__field simple-payments__field-currency"
-							disabled={ isLoadingInitial }
+							disabled={ isLoading }
 							label={ __( 'Currency' ) }
 							onChange={ this.handleCurrencyChange }
 							options={ this.getCurrencyList }
@@ -401,7 +402,7 @@ class SimplePaymentsEdit extends Component {
 						/>
 						<TextControl
 							aria-describedby={ `${ instanceId }-price-error` }
-							disabled={ isLoadingInitial }
+							disabled={ isLoading }
 							className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
 								'simple-payments__field-has-error': fieldPriceError,
 							} ) }
@@ -421,7 +422,7 @@ class SimplePaymentsEdit extends Component {
 					<div className="simple-payments__field-multiple">
 						<ToggleControl
 							checked={ Boolean( multiple ) }
-							disabled={ isLoadingInitial }
+							disabled={ isLoading }
 							label={ __( 'Allow people to buy more than one item at a time' ) }
 							onChange={ this.handleMultipleChange }
 						/>
@@ -432,7 +433,7 @@ class SimplePaymentsEdit extends Component {
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
 							'simple-payments__field-has-error': fieldEmailError,
 						} ) }
-						disabled={ isLoadingInitial }
+						disabled={ isLoading }
 						label={ __( 'Email' ) }
 						onChange={ this.handleEmailChange }
 						placeholder={ __( 'Email' ) }
@@ -468,7 +469,6 @@ const applyWithSelect = withSelect( ( select, props ) => {
 		: undefined;
 
 	return {
-		isLoadingInitial: paymentId && ! simplePayment,
 		isSaving: !! isSavingPost(),
 		simplePayment,
 	};
