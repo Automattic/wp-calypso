@@ -16,6 +16,7 @@ import * as RelatedPostsBlock from 'gutenberg/extensions/related-posts';
 import * as SimplePaymentsBlock from 'gutenberg/extensions/simple-payments';
 import * as TiledGalleryBlock from 'gutenberg/extensions/tiled-gallery';
 import * as VRBlock from 'gutenberg/extensions/vr';
+import 'gutenberg/extensions/sketch/editor';
 import { isEnabled } from 'config';
 
 export default [
