@@ -32,8 +32,8 @@ import {
 	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 	SUPPORTED_CURRENCY_LIST,
 } from 'lib/simple-payments/constants';
-import ProductPlaceholder from './product-placeholder';
 import HelpMessage from './help-message';
+import ProductPlaceholder from './product-placeholder';
 
 class SimplePaymentsEdit extends Component {
 	state = {
