@@ -43,17 +43,7 @@ export const WEB_PAYMENT_APPLE_PAY_METHOD = 'https://apple.com/apple-pay';
 /**
  * Supported card types.
  */
-const SUPPORTED_NETWORKS = [
-	'visa',
-	'mastercard',
-	'diners',
-	'discover',
-	'amex',
-	'jcb',
-	'maestro',
-	'solo',
-	'unionplay',
-];
+const SUPPORTED_NETWORKS = [ 'visa', 'mastercard', 'discover', 'amex', 'jcb', 'maestro' ];
 const APPLE_PAY_MERCHANT_IDENTIFIER = config( 'apple_pay_merchant_id' );
 const PAYMENT_REQUEST_OPTIONS = {
 	requestPayerName: true,
