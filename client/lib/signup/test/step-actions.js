@@ -6,6 +6,10 @@
 import { createSiteWithCart } from '../step-actions';
 import { useNock } from 'test/helpers/use-nock';
 
+jest.mock( 'lib/analytics', () => ( {
+	tracks: { recordEvent() {} },
+} ) );
+
 // This is necessary since localforage will throw "no local storage method found" promise rejection without this.
 // See how lib/user-settings/test apply the same trick.
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
