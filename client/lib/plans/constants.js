@@ -540,7 +540,7 @@ export const PLANS_LIST = {
 	[ PLAN_BLOGGER ]: {
 		...getPlanBloggerDetails(),
 		term: TERM_ANNUALLY,
-		getBillingTimeFrame: () => WPComGetBillingTimeframe,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: plan => includes( [ PLAN_FREE ], plan ),
 		getProductId: () => 1010,
 		getStoreSlug: () => PLAN_BLOGGER,
