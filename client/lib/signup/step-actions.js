@@ -24,7 +24,7 @@ import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import getSignupStepsSiteTopic from 'state/selectors/get-signup-steps-site-topic';
+import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
 import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
