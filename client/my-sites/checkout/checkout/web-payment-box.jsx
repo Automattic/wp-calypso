@@ -328,18 +328,16 @@ export class WebPaymentBox extends React.Component {
 									return; // Not supported yet.
 								}
 
-								this.props.transaction.payment = newCardPayment( {
+								const cardRawDetails = {
 									tokenized_payment_data: token.paymentData,
 									name: payerName,
 									country: this.state.country,
 									'postal-code': this.state.postalCode,
 									card_brand: token.paymentMethod.network,
-								} );
+								};
 
-								setPayment( this.props.transaction.payment );
-
+								setPayment( newCardPayment( { cardRawDetails } ) );
 								this.props.onSubmit( event );
-
 								paymentResponse.complete( 'success' );
 							} )
 							.catch( error => {
@@ -371,15 +369,9 @@ export class WebPaymentBox extends React.Component {
 									'postal-code': billingAddress.postalCode,
 								};
 
-								this.props.transaction.payment = newCardPayment( cardRawDetails );
-
-								paymentResponse.complete();
-
-								return this.props.transaction.payment;
-							} )
-							.then( transactionPayment => {
-								setPayment( transactionPayment );
+								setPayment( newCardPayment( cardRawDetails ) );
 								this.props.onSubmit( event );
+								paymentResponse.complete();
 							} )
 							.catch( error => {
 								debug( 'Error while showing the payment request', error );
