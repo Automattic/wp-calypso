@@ -15,36 +15,10 @@ import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
+	const validPeriods = [ 'day', 'week', 'month', 'year' ];
 
 	page(
-		'/stats/wordads/day/:site',
-		siteSelection,
-		navigation,
-		statsController.wordAds,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/stats/wordads/week/:site',
-		siteSelection,
-		navigation,
-		statsController.wordAds,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/stats/wordads/month/:site',
-		siteSelection,
-		navigation,
-		statsController.wordAds,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/stats/wordads/year/:site',
+		`/stats/wordads/:period(${ validPeriods.join( '|' ) })/:site`,
 		siteSelection,
 		navigation,
 		statsController.wordAds,

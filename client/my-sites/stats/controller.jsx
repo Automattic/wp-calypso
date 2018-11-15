@@ -106,24 +106,20 @@ function getSiteFilters( siteId ) {
 		{
 			title: i18n.translate( 'WordAds - Days' ),
 			path: '/stats/wordads/day/' + siteId,
-			id: 'stats-wordads-day',
 			period: 'day',
 		},
 		{
 			title: i18n.translate( 'WordAds - Weeks' ),
-			path: '/stats/wordads/week/' + siteId,
 			id: 'stats-wordads-week',
 			period: 'week',
 		},
 		{
 			title: i18n.translate( 'WordAds - Months' ),
-			path: '/stats/wordads/month/' + siteId,
 			id: 'stats-wordads-month',
 			period: 'month',
 		},
 		{
 			title: i18n.translate( 'WordAds - Years' ),
-			path: '/stats/wordads/year/' + siteId,
 			id: 'stats-wordads-year',
 			period: 'year',
 		},
@@ -180,6 +176,7 @@ export default {
 
 		const activeFilter = find( filters(), filter => {
 			return (
+				context.params.period === filter.period ||
 				context.pathname === filter.path ||
 				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
 			);
@@ -216,7 +213,7 @@ export default {
 			);
 		}
 
-		const filters = getSiteFilters( givenSiteId );
+		const filters = getSiteFilters( givenSiteId, context );
 		const state = store.getState();
 		const currentSite = getSite( state, givenSiteId );
 		const siteId = currentSite ? currentSite.ID || 0 : 0;
@@ -414,17 +411,12 @@ export default {
 			store,
 		} = context;
 
-		const filters = getSiteFilters( givenSiteId );
+		const filters = getSiteFilters( givenSiteId, context );
 		const state = store.getState();
 		const currentSite = getSite( state, givenSiteId );
 		const siteId = currentSite ? currentSite.ID || 0 : 0;
 
-		const activeFilter = find(
-			filters,
-			filter =>
-				context.pathname === filter.path ||
-				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
-		);
+		const activeFilter = find( filters, filter => context.params.period === filter.period );
 
 		if ( ! activeFilter ) {
 			return next();
