@@ -61,11 +61,13 @@ import PremiumPlanDetails from './premium-plan-details';
 import BusinessPlanDetails from './business-plan-details';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
+import TransferPending from './transfer-pending';
 import PurchaseDetail from 'components/purchase-detail';
 import {
 	getFeatureByKey,
 	isJetpackBusinessPlan,
 	isWpComBusinessPlan,
+	isWpComEcommercePlan,
 	shouldFetchSitePlans,
 } from 'lib/plans';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
@@ -80,9 +82,9 @@ import {
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
-
-import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { fetchAtomicTransfer } from 'state/atomic-transfer/actions';
+import { transferStates } from 'state/atomic-transfer/constants';
+import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
@@ -124,6 +126,8 @@ export class CheckoutThankYou extends React.Component {
 			selectedSite,
 			sitePlans,
 		} = this.props;
+
+		this.props.fetchAtomicTransfer( selectedSite );
 
 		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
 			this.props.refreshSitePlans( selectedSite );
@@ -347,9 +351,13 @@ export class CheckoutThankYou extends React.Component {
 			);
 		}
 
-		const { hasPendingAT, isAtomicSite } = this.props;
+		if ( isWpComEcommercePlan( this.props.planSlug ) ) {
+			if ( ! this.props.transferComplete ) {
+				return (
+					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
+				);
+			}
 
-		if ( wasDotcomPlanPurchased && ( hasPendingAT || isAtomicSite ) ) {
 			return (
 				<Main className="checkout-thank-you">
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
@@ -573,8 +581,9 @@ export default connect(
 			sitePlans: getPlansBySite( state, props.selectedSite ),
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
-			hasPendingAT: hasSitePendingAutomatedTransfer( state, siteId ),
-			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			transferComplete:
+				transferStates.COMPLETED ===
+				get( getAtomicTransfer( state, siteId ), 'status', transferStates.PENDING ),
 		};
 	},
 	dispatch => {
@@ -593,6 +602,9 @@ export default connect(
 			},
 			recordStartTransferClickInThankYou( domain ) {
 				dispatch( recordStartTransferClickInThankYou( domain ) );
+			},
+			fetchAtomicTransfer( site ) {
+				dispatch( fetchAtomicTransfer( site.ID ) );
 			},
 		};
 	}

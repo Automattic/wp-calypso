@@ -59,7 +59,7 @@ class CartPlanDiscountAd extends Component {
 			plan = find( sitePlans.data, isBusiness );
 		}
 
-		if ( plan.rawDiscount === 0 || ! plan.isDomainUpgrade ) {
+		if ( ! plan || plan.rawDiscount === 0 || ! plan.isDomainUpgrade ) {
 			return null;
 		}
 
