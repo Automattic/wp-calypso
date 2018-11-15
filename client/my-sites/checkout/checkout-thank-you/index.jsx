@@ -4,7 +4,7 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { find, get, identity } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -85,6 +85,7 @@ import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import { fetchAtomicTransfer } from 'state/atomic-transfer/actions';
 import { transferStates } from 'state/atomic-transfer/constants';
 import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
+import isFetchingTransfer from 'state/selectors/is-fetching-atomic-transfer';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
@@ -109,10 +110,16 @@ export class CheckoutThankYou extends React.Component {
 	static propTypes = {
 		domainOnlySiteFlow: PropTypes.bool.isRequired,
 		failedPurchases: PropTypes.array,
+		isFetchingTransfer: PropTypes.bool,
 		receiptId: PropTypes.number,
 		gsuiteReceiptId: PropTypes.number,
 		selectedFeature: PropTypes.string,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		transferComplete: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		fetchAtomicTransfer: identity,
 	};
 
 	componentDidMount() {
@@ -127,7 +134,9 @@ export class CheckoutThankYou extends React.Component {
 			sitePlans,
 		} = this.props;
 
-		this.props.fetchAtomicTransfer( selectedSite );
+		if ( selectedSite && ! this.props.isFetchingTransfer ) {
+			this.props.fetchAtomicTransfer( selectedSite );
+		}
 
 		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
 			this.props.refreshSitePlans( selectedSite );
@@ -575,6 +584,7 @@ export default connect(
 		const planSlug = getSitePlanSlug( state, siteId );
 
 		return {
+			isFetchingTransfer: isFetchingTransfer( state, siteId ),
 			planSlug,
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
