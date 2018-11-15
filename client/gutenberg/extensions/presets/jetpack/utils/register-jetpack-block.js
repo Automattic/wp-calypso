@@ -11,9 +11,12 @@ import get from 'lodash/get';
 import getJetpackData from './get-jetpack-data';
 
 /**
- * Where Jetpack data can be found in WP Admin
+ * Registers a gutenberg block if the availability requirements are met.
+ *
+ * @param {string} name The block's name.
+ * @param {object} settings The block's settings.
+ * @returns {object|false} Either false if the block is not available, or the results of `registerBlockType`
  */
-
 export default function registerJetpackBlock( name, settings ) {
 	const data = getJetpackData();
 	const available = get( data, [ 'available_blocks', name, 'available' ], false );
