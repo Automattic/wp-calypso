@@ -22,6 +22,11 @@ import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { isEnabled } from 'config';
 import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 
+/**
+ * Style dependencies
+ */
+import "./style.scss";
+
 class EditorGutenbergBlocksWarningDialog extends Component {
 	static propTypes = {
 		translate: PropTypes.func,

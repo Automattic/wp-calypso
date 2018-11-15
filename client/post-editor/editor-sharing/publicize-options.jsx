@@ -32,6 +32,11 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import isPublicizeEnabled from 'state/selectors/is-publicize-enabled';
 import { updatePostMetadata } from 'state/posts/actions';
 
+/**
+ * Style dependencies
+ */
+import './publicize-options.scss';
+
 class EditorSharingPublicizeOptions extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,

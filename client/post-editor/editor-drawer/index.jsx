@@ -42,6 +42,11 @@ import EditorExcerpt from 'post-editor/editor-excerpt';
 import { getFirstConflictingPlugin } from 'lib/seo';
 
 /**
+ * Style dependencies
+ */
+import './style.scss'
+
+/**
  * Constants
  */
 const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium );

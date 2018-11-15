@@ -20,6 +20,11 @@ import preloadImage from '../preload-image';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
+/**
+ * Style dependencies
+ */
+import "./style.scss";
+
 class EditorMediaModalDetailBase extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,

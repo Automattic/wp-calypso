@@ -28,6 +28,11 @@ import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { getRouteHistory } from 'state/ui/action-log/selectors';
 import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class EditorGroundControl extends React.Component {
 	static propTypes = {
 		hasContent: PropTypes.bool,

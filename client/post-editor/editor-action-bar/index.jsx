@@ -24,6 +24,11 @@ import QuerySiteSettings from 'components/data/query-site-settings';
 import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
 import { isSingleUserSite } from 'state/sites/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorActionBar extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,

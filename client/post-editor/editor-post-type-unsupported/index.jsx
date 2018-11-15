@@ -22,6 +22,11 @@ import Button from 'components/button';
 import Dialog from 'components/dialog';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Constants
  */
 

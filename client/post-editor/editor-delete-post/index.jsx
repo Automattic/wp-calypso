@@ -24,6 +24,11 @@ import { trashPost } from 'state/posts/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorDeletePost extends React.Component {
 	static displayName = 'EditorDeletePost';
 

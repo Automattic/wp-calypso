@@ -43,6 +43,11 @@ import config from 'config';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module constant
  */
 const TOOLBAR_HEIGHT = 39;
