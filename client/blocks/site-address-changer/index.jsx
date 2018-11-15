@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-onchange */
 /** @format */
 /**
  * External dependencies
@@ -239,7 +240,7 @@ export class SiteAddressChanger extends Component {
 				<select
 					className="site-address-changer__select"
 					value={ newDomainSuffix }
-					onBlur={ this.onDomainSuffixChange }
+					onChange={ this.onDomainSuffixChange }
 				>
 					{ suffixesList.map( suffix => (
 						<option key={ suffix } value={ suffix }>
