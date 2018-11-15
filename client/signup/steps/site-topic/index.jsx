@@ -18,7 +18,7 @@ import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
 import SuggestionSearch from 'components/suggestion-search';
 import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
-import getSignupStepsSiteTopic from 'state/selectors/get-signup-steps-site-topic';
+import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
 import SignupActions from 'lib/signup/actions';
 import { hints } from 'lib/signup/hint-data';
 

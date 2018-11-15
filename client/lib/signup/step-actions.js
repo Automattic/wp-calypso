@@ -24,6 +24,7 @@ import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
 import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
@@ -102,6 +103,12 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	}
 }
 
+// We are experimenting making site topic a separate step from the survey.
+// Once we've decided to fully move away from the survey form, we can just keep the site topic here.
+function getSiteVertical( state ) {
+	return ( getSignupStepsSiteTopic( state ) || getSurveyVertical( state ) ).trim();
+}
+
 export function createSiteWithCart(
 	callback,
 	dependencies,
@@ -117,13 +124,15 @@ export function createSiteWithCart(
 	},
 	reduxStore
 ) {
-	const designType = getDesignType( reduxStore.getState() ).trim();
-	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
-	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
-	const siteGoals = getSiteGoals( reduxStore.getState() ).trim();
-	const siteType = getSiteType( reduxStore.getState() ).trim();
+	const state = reduxStore.getState();
+
+	const designType = getDesignType( state ).trim();
+	const siteTitle = getSiteTitle( state ).trim();
+	const siteVertical = getSiteVertical( state );
+	const siteGoals = getSiteGoals( state ).trim();
+	const siteType = getSiteType( state ).trim();
 	const importingFromUrl =
-		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( reduxStore.getState() ) ) : '';
+		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( state ) ) : '';
 
 	wpcom.undocumented().sitesNew(
 		{
@@ -135,7 +144,7 @@ export function createSiteWithCart(
 				// step object itself depending on if the theme is provided in a
 				// query. See `getThemeSlug` in `DomainsStep`.
 				theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
-				vertical: surveyVertical || undefined,
+				vertical: siteVertical || undefined,
 				siteGoals: siteGoals || undefined,
 				siteType: siteType || undefined,
 			},
@@ -166,7 +175,7 @@ export function createSiteWithCart(
 
 				if ( domainItem ) {
 					const { product_slug: productSlug } = domainItem;
-					const productsList = getProductsList( reduxStore.getState() );
+					const productsList = getProductsList( state );
 					if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
 						if ( isDomainTransfer( domainItem ) ) {
 							privacyItem = cartItems.domainTransferPrivacy( {
@@ -338,12 +347,13 @@ export function createAccount(
 	{ userData, flowName, queryArgs, service, access_token, id_token, oauth2Signup },
 	reduxStore
 ) {
-	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
-	const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
-	const userExperience = getUserExperience( reduxStore.getState() );
-	const importEngine =
-		'import' === flowName ? getSelectedImportEngine( reduxStore.getState() ) : '';
-	const importFromSite = 'import' === flowName ? getNuxUrlInputValue( reduxStore.getState() ) : '';
+	const state = reduxStore.getState();
+
+	const siteVertical = getSiteVertical( state );
+	const surveySiteType = getSurveySiteType( state ).trim();
+	const userExperience = getUserExperience( state );
+	const importEngine = 'import' === flowName ? getSelectedImportEngine( state ) : '';
+	const importFromSite = 'import' === flowName ? getNuxUrlInputValue( state ) : '';
 
 	if ( service ) {
 		// We're creating a new social account
@@ -378,7 +388,7 @@ export function createAccount(
 					validate: false,
 					signup_flow_name: flowName,
 					nux_q_site_type: surveySiteType,
-					nux_q_question_primary: surveyVertical,
+					nux_q_question_primary: siteVertical,
 					nux_q_question_experience: userExperience || undefined,
 					import_engine: importEngine,
 					import_from_site: importFromSite,
