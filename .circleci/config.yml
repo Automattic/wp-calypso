@@ -223,7 +223,7 @@ jobs:
           name: Build calypso-strings.pot
           when: always
           command: |
-            npm run translate
+            NODE_ENV=production npm run build-client
             mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
       - run:
           name: Build New Strings .pot
