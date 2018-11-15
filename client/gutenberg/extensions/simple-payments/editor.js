@@ -51,7 +51,7 @@ registerBlockType( 'jetpack/simple-payments', {
 			default: '',
 		},
 		multiple: {
-			type: 'number',
+			type: 'boolean',
 		},
 		paymentId: {
 			type: 'number',
