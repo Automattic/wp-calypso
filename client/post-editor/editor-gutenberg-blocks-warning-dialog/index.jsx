@@ -43,6 +43,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		switchToGutenberg: PropTypes.func,
 		openPostRevisionsDialog: PropTypes.func,
 		optInEnabled: PropTypes.bool,
+		useClassic: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -53,6 +54,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		switchToGutenberg: noop,
 		openPostRevisionsDialog: noop,
 		optInEnabled: false,
+		useClassic: noop,
 	};
 
 	state = {
@@ -78,6 +80,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 	}
 
 	useClassicEditor = () => {
+		this.props.useClassic();
 		this.setState( {
 			forceClassic: true,
 		} );
@@ -157,6 +160,22 @@ const mapDispatchToProps = dispatch => ( {
 					bumpStat( 'gutenberg-opt-in', 'Calypso Dialog Opt In' )
 				),
 				setSelectedEditor( siteId, 'gutenberg', gutenbergUrl )
+			)
+		);
+	},
+	useClassic: () => {
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordGoogleEvent(
+						'Gutenberg Calypso Opt-In Dialog',
+						'Clicked "Use the classic editor" in the editor opt-in sidebar.',
+						'Use-Classic',
+						true
+					),
+					recordTracksEvent( 'calypso_gutenberg_use_classic_editor' ),
+					bumpStat( 'selected-editor', 'calypso-gutenberg-use-classic-editor' )
+				)
 			)
 		);
 	},
