@@ -159,7 +159,7 @@ class InlineHelpPopover extends Component {
 						onClick={ this.switchToClassicEditor }
 						className="inline-help__classic-editor-toggle"
 					>
-						{ translate( 'Switch to the Classic Editor' ) }
+						{ translate( 'Switch to Classic Editor' ) }
 					</Button>
 				) }
 
