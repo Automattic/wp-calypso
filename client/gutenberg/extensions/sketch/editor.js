@@ -127,7 +127,7 @@ class Doodleboard extends Component {
 				<canvas
 					ref={ this.canvas }
 					className={ this.props.className }
-					style={ { border: '2px solid #0087be' } }
+					style={ { border: '2px solid #0087be', touchAction: 'none' } }
 					width="400"
 					height="400"
 					onMouseDown={ this.mouseDown }
