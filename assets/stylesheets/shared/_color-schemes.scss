@@ -3,7 +3,9 @@
 	--color-primary: #{$color-primary};
 	--color-primary-dark: #{$color-primary-dark};
 
-	--color-action: #{$color-action};
+	--color-accent:       #{$hot-pink-500};
+	--color-accent-dark:  #{$hot-pink-700};
+	--color-accent-light: #{$hot-pink-300};
 
 	--masterbar-color: #{$white};
 	--masterbar-background: #{$color-primary};
@@ -43,22 +45,22 @@
 		--color-primary: #{$celadon-500};
 		--color-primary-dark: #{$celadon-700};
 
-		--color-action:   #{$hot-blue-500};
-		--color-action-dark: #{$hot-blue-700};
-		--color-action-light: #{$hot-blue-300};
+		--color-accent:   #{$hot-blue-500};
+		--color-accent-dark: #{$hot-blue-700};
+		--color-accent-light: #{$hot-blue-300};
 
 		--masterbar-color: #{$white};
 		--masterbar-background: var(--color-primary);
 		--masterbar-border-color: var(--color-primary-dark);
 		--masterbar-item-hover-background: var(--color-primary-dark);
 		--masterbar-item-active-background: var(--color-primary-dark);
-		--masterbar-item-active-border: var(--color-action-light);
-		--masterbar-item-new-color: var(--color-action);
-		--masterbar-item-new-editor-background: #{darken( $blue-wordpress, 17% )};
-		--masterbar-item-new-editor-hover-background: #{darken( $blue-wordpress, 13% )};
-		--masterbar-toggle-drafts-editor-background: #{darken( $blue-wordpress, 12% )};
-		--masterbar-toggle-drafts-editor-border-color: #{darken( $blue-wordpress, 5% )};
-		--masterbar-toggle-drafts-editor-hover-background: #{darken( $blue-wordpress, 17% )};
+		--masterbar-item-active-border: var(--color-accent-light);
+		--masterbar-item-new-color: var(--color-accent);
+		--masterbar-item-new-editor-background: #{var(--color-primary-dark)};
+		--masterbar-item-new-editor-hover-background: #{var(--color-primary-dark)};
+		--masterbar-toggle-drafts-editor-background: #{var(--color-primary-dark)};
+		--masterbar-toggle-drafts-editor-border-color: #{var(--color-primary-dark)};
+		--masterbar-toggle-drafts-editor-hover-background: #{var(--color-primary-dark)};
 
 		--sidebar-color: #{$pink-900};
 		--sidebar-background: #{$pink-100};
@@ -68,13 +70,13 @@
 		--sidebar-menu-link-secondary-text-color: #{$gray-darken-20};
 		--sidebar-menu-a-first-child-after-background: #{hex-to-rgb( $gray-lighten-30 )};
 		--sidebar-menu-selected-background-color: #{$hot-blue-50};
-		--sidebar-menu-selected-a-color: var(--color-action-dark);
+		--sidebar-menu-selected-a-color: var(--color-accent-dark);
 		--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $gray-text-min )};
 
 		--button-is-borderless-color: #{$gray-text-min};
 		--count-border-color: #{$gray};
 		--count-color: #{$gray-text-min};
-		--current-site-switch-sites-background: #{$gray-lighten-30};
+		--current-site-switch-sites-background: #{$pink-100};
 		--profile-gravatar-user-secondary-info-color: #{$gray-darken-20};
 	}
 

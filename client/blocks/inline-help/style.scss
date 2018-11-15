@@ -15,7 +15,7 @@
 		border-radius: 100%;
 		background: $blue-wordpress;
 		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
-		border: 1px solid darken( $blue-wordpress, 5 );
+		border: 1px solid var(--color-primary-dark);
 
 		.gridicon {
 			fill: $white;
@@ -26,8 +26,8 @@
 		}
 
 		&.is-active {
-			background: var(--color-action);
-			border-color: var(--color-action-dark)
+			background: var(--color-accent);
+			border-color: var(--color-accent-dark)
 		}
 	}
 
@@ -46,7 +46,7 @@
 	border-radius: 100%;
 	background: $blue-wordpress;
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
-	border: 1px solid darken( $blue-wordpress, 5 );
+	border: 1px solid var(--color-primary-dark);
 	transition: all 0.2s ease-in-out;
 	overflow: visible;
 
@@ -68,8 +68,8 @@
 	}
 
 	&.is-active {
-		background: var(--color-action);
-		border-color: var(--color-action-dark)
+		background: var(--color-accent);
+		border-color: var(--color-accent-dark)
 	}
 
 	&.has-notification::before {
@@ -333,10 +333,10 @@
 		}
 
 		&:hover {
-			color: var(--color-action);
+			color: var(--color-accent);
 
 			.gridicon {
-				fill: var(--color-action);
+				fill: var(--color-accent);
 			}
 		}
 	}
@@ -392,13 +392,13 @@
 
 		&:hover {
 			cursor: pointer;
-			color: var(--color-action);
+			color: var(--color-accent);
 			background: lighten( $gray, 35% );
 		}
 	}
 
 	&.is-selected {
-		background: var(--color-action);
+		background: var(--color-accent);
 		cursor: pointer;
 		color: $white;
 

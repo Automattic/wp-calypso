@@ -62,7 +62,7 @@ button {
 		}
 	}
 	.accessible-focus &:focus {
-			border-color: var(--color-action);
+			border-color: var(--color-accent);
 			box-shadow: 0 0 0 2px $blue-light;
 	}
 	&.is-compact {
@@ -114,13 +114,13 @@ button {
 
 // Primary buttons
 .button.is-primary {
-	background: var(--color-action);
-	border-color: var(--color-action-dark);
+	background: var(--color-accent);
+	border-color: var(--color-accent-dark);
 	color: $white;
 
 	&:hover,
 	&:focus {
-		border-color: var(--color-action-dark);
+		border-color: var(--color-accent-dark);
 		color: $white;
 	}
 	&.is-compact {
@@ -135,8 +135,8 @@ button {
 	}
 	&.is-busy {
 		background-size: 120px 100%;
-		background-image: linear-gradient( -45deg, var(--color-action) 28%, var(--color-action-dark) 28%, var(--color-action-dark) 72%, var(--color-action) 72%);
-		border-color: var(--color-action-dark);
+		background-image: linear-gradient( -45deg, var(--color-accent) 28%, var(--color-accent-dark) 28%, var(--color-accent-dark) 72%, var(--color-accent) 72%);
+		border-color: var(--color-accent-dark);
 	}
 }
 
@@ -223,7 +223,7 @@ button {
 	}
 
 	&.is-primary {
-		color: $color-action;
+		color: $color-accent;
 
 		&:focus,
 		&:hover,
@@ -304,7 +304,7 @@ button {
 	border: none;
 	border-radius: 0;
 	padding: 0;
-	color: var(--color-action);
+	color: var(--color-accent);
 	font-weight: 400;
 	font-size: inherit;
 	line-height: 1.65;

@@ -18,7 +18,7 @@
 }
 
 .reader-combined-card__site-link {
-	color: var(--color-action);
+	color: var(--color-accent);
 	line-height: 1.2em;
 	margin-bottom: 0;
 	top: 0;
@@ -207,7 +207,7 @@
 
 	&:hover,
 	&:active {
-		color: var(--color-action);
+		color: var(--color-accent);
 	}
 }
 
@@ -230,7 +230,7 @@
 	&:focus,
 	&:link,
 	&:visited {
-		color: var(--color-action);
+		color: var(--color-accent);
 	}
 
 	&:hover,
@@ -274,11 +274,11 @@
 	top: 13px;
 
 	.gridicon {
-		fill: var(--color-action);
+		fill: var(--color-accent);
 	}
 
 	.follow-button__label {
-		color: var(--color-action);
+		color: var(--color-accent);
 	}
 
 	&.is-following {

@@ -31,11 +31,11 @@ $accordion-background-expanded: $white;
 		background-color: $accordion-background-hover;
 
 		.accordion__title {
-			color: var(--color-action);
+			color: var(--color-accent);
 		}
 
 		.accordion__arrow {
-			color: var(--color-action);
+			color: var(--color-accent);
 		}
 	}
 
@@ -200,7 +200,7 @@ $accordion-background-expanded: $white;
 		color: $blue-wordpress;
 
 		&:hover {
-			color: lighten( $blue-wordpress, 5% );
+			color: $blue-wordpress;
 		}
 	}
 }

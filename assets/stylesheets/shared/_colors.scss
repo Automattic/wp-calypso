@@ -60,13 +60,13 @@ $color-primary-dark:  $blue-700;
 
 // $color-primary-bg: ;
 
-$color-accent:       $hot-pink-500 ;
-$color-accent-light: $hot-pink-300;
-$color-accent-dark:  $hot-pink-700;
+$color-accent:       var(--color-accent);
+$color-accent-light: var(--color-accent-light);
+$color-accent-dark:  var(--color-accent-dark);
 
-$color-action:       $hot-pink-500;
-$color-action-light: $hot-pink-300;
-$color-action-dark:  $hot-pink-700;
+// $color-action:       $hot-pink-500;
+// $color-action-light: $hot-pink-300;
+// $color-action-dark:  $hot-pink-700;
 
 $color-text-subtle: $gray-500;
 $color-text: $gray-800;
@@ -142,12 +142,12 @@ $color-wordpressOrg: #585c60;
 
 // aliases
 
-$blue-wordpress:         $blue-500;
+$blue-wordpress:         var(--color-primary);
 $blue-light:             $blue-300;
 $blue-medium:            $hot-pink-500;
 $blue-dark:              $blue-700;
 
-$link-highlight:         tint($blue-medium, 20%);
+$link-highlight:         var(--color-primary-light);
 
 // Layout
 // $content-background-color: rgba($gray-50, 0.25);
@@ -166,5 +166,5 @@ $alert-purple:           #7c589f;
 $green-text-min:          darken( $alert-green, 14% ); // #358649
 
 // Secondary Accent (Oranges)
-$orange-jazzy:           $hot-pink-500;
-$orange-fire:            $hot-pink-500;
+$orange-jazzy:           $color-accent;
+$orange-fire:            $color-accent;

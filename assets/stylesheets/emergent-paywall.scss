@@ -334,7 +334,7 @@ textarea {
 			margin-top: 16px;
 
 			&:hover {
-				color: var(--color-action-light);
+				color: var(--color-accent-light);
 			}
 		}
 
@@ -367,8 +367,8 @@ textarea {
 			}
 
 			&.btn-primary {
-				background: var(--color-action);
-				border-color: var(--color-action-dark);
+				background: var(--color-accent);
+				border-color: var(--color-accent-dark);
 				color: $white;
 
 				&:hover {
@@ -476,7 +476,7 @@ div[ng-show='busyIndicator'] {
 }
 
 .busy-indicator, .less-busy-indicator {
-	border-top-color: var(--color-action);
+	border-top-color: var(--color-accent);
 	width: 35px;
 	height: 35px;
 }
@@ -485,8 +485,8 @@ div[ng-show='busyIndicator'] {
 	content: '';
 	width: 100%;
 	height: 100%;
-	border-top-color: var(--color-action);
-	border-right-color: var(--color-action);
+	border-top-color: var(--color-accent);
+	border-right-color: var(--color-accent);
 	opacity: 0.4;
 }
 

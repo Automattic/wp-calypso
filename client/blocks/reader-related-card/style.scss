@@ -19,7 +19,7 @@
 
 .reader-related-card__link,
 .reader-related-card__link:visited {
-	color: var(--color-action);
+	color: var(--color-accent);
 	font-family: $sans;
 
 	&:hover {
@@ -235,7 +235,7 @@
 
 .reader-related-card__byline-author,
 .reader-related-card__byline-site {
-	color: var(--color-action);
+	color: var(--color-accent);
 	display: flex;
 	font-weight: 500;
 	max-height: 14px * 1.75;
@@ -327,7 +327,7 @@
 	z-index: z-index( '.reader-related-card__meta', '.follow-button' );
 
 	.gridicons-reader-follow {
-		fill: var(--color-action);
+		fill: var(--color-accent);
 	}
 
 	@include breakpoint( "<960px" ) {
@@ -335,7 +335,7 @@
 	}
 
 	.follow-button__label {
-		color: var(--color-action);
+		color: var(--color-accent);
 
 		@include breakpoint( "<960px" ) {
 			display: none;

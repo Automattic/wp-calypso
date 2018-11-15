@@ -6,7 +6,7 @@
 
 		&:hover,
 		&:active {
-			color: var(--color-action);
+			color: var(--color-accent);
 		}
 
 		&:focus {
@@ -37,7 +37,7 @@
 
 	.popover__menu .follow-button,
 	.popover__menu .conversation-follow-button {
-		color: var(--color-action);
+		color: var(--color-accent);
 		padding: 9px 16px;
 
 		.gridicon {
@@ -52,7 +52,7 @@
 
 		&:hover,
 		&:focus {
-			background-color: var(--color-action);
+			background-color: var(--color-accent);
 			color: white;
 
 			.gridicon {

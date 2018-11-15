@@ -103,7 +103,7 @@
 
 .manage-purchase__header {
 	overflow: auto;
-	border-bottom: 2px solid var( --color-action );
+	border-bottom: 2px solid var( --color-accent );
 
 	.is-personal & {
 		border-bottom: 2px solid $alert-yellow;
@@ -128,7 +128,7 @@
 		box-sizing: border-box;
 		padding: 4px;
 		border-radius: 50%;
-		background: var( --color-action );
+		background: var( --color-accent );
 		fill: $white;
 	}
 

@@ -48,7 +48,7 @@
 	}
 
 	&.is-open.has-focus {
-		box-shadow: 0 0 0 1px $color-action, 0 0 0 4px $color-action-light;
+		box-shadow: 0 0 0 1px $color-accent, 0 0 0 4px $color-accent-light;
 	}
 
 	&.is-compact {

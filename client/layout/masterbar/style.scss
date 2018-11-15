@@ -20,7 +20,7 @@ $autobar-height: 20px;
 
 	.is-support-user & {
 		background: $orange-jazzy;
-		border-bottom: 1px solid darken( $orange-jazzy, 4% );
+		border-bottom: 1px solid $orange-jazzy;
 	}
 
 	.is-section-theme &,
@@ -54,7 +54,7 @@ $autobar-height: 20px;
 		}
 
 		&:hover {
-			background: lighten( $masterbar-color, 5% );
+			background: var(--color-primary-light);
 		}
 
 		&:focus {
@@ -118,7 +118,7 @@ $autobar-height: 20px;
 	}
 
 	.is-support-user &.is-active {
-		background: darken( $orange-jazzy, 10% );
+		background: $orange-jazzy;
 	}
 
 	@include breakpoint( '<480px' ) {
@@ -334,11 +334,11 @@ $autobar-height: 20px;
 	}
 
 	&:hover .masterbar__notifications-bubble {
-		border-color: lighten( $masterbar-color, 5% );
+		border-color: var(--color-primary-light);
 	}
 
 	&.is-active .masterbar__notifications-bubble {
-		border-color: darken( $masterbar-color, 10% );
+		border-color: var(--color-primary-dark);
 	}
 
 	&.has-unread .masterbar__notifications-bubble {

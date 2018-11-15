@@ -24,7 +24,7 @@
 	}
 
 	&.is-dragging-over-element {
-		background-color: rgba( var(--color-action), 0.8 );
+		background-color: rgba( var(--color-accent), 0.8 );
 	}
 
 	&.is-full-screen {
@@ -70,11 +70,11 @@
 }
 
 .drop-zone.editor-featured-image__dropzone {
-	background-color: rgba( $orange-jazzy, 0.7 );
+	background-color: $orange-jazzy;
 	border: 6px solid $orange-jazzy;
 
 	&.is-dragging-over-element {
-		background-color: rgba( lighten( $orange-jazzy, 20 ), 0.8 );
+		background-color: $orange-jazzy;
 	}
 
 	.drop-zone__content {

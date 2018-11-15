@@ -154,19 +154,19 @@
 	}
 
 	&.is-level-2 {
-		background-color: var(--color-action-light);
+		background-color: var(--color-accent-light);
 	}
 
 	&.is-level-3 {
-		background-color: var(--color-action-dark);
+		background-color: var(--color-accent-dark);
 	}
 
 	&.is-level-4 {
-		background-color: var(--color-action-dark);
+		background-color: var(--color-accent-dark);
 	}
 
 	&.is-hovered {
-		border-color: var(--color-action);
+		border-color: var(--color-accent);
 	}
 
 	.is-loading & {

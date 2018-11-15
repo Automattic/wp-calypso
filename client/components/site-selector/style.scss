@@ -70,7 +70,7 @@
 .site-selector .all-sites.is-highlighted,
 .notouch .site-selector.is-hover-enabled .site:hover,
 .notouch .site-selector.is-hover-enabled .all-sites:hover {
-	background: var(--color-action);
+	background: var(--color-accent);
 	cursor: pointer;
 
 	.site__badge {
@@ -81,7 +81,7 @@
 	.site__domain {
 		color: white;
 		&::after {
-			// @include long-content-fade( $color: var(--color-action) );
+			// @include long-content-fade( $color: var(--color-accent) );
 		}
 	}
 

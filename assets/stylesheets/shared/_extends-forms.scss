@@ -31,9 +31,9 @@
 	}
 
 	&:focus {
-		border-color: $color-action;
+		border-color: $color-accent;
 		outline: none;
-		box-shadow: 0 0 0 2px $color-action-light;
+		box-shadow: 0 0 0 2px $color-accent-light;
 
 		&::-ms-clear {
 			display: none;

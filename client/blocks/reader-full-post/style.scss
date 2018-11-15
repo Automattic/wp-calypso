@@ -83,10 +83,10 @@
 		}
 
 		&:hover {
-			color: var(--color-action);
+			color: var(--color-accent);
 
 			.gridicons-external {
-				fill: var(--color-action);
+				fill: var(--color-accent);
 			}
 		}
 	}
@@ -301,7 +301,7 @@
 
 	a.reader-author-link,
 	a.author-compact-profile__site-link {
-		color: var(--color-action);
+		color: var(--color-accent);
 
 		&:hover {
 			color: $blue-light;

@@ -7,7 +7,7 @@
 			// fixes focus styles in stacking context
 			position: relative;
 			z-index: z-index( 'button-group-parent', '.button-group .button:focus' );
-			box-shadow: inset 1px 0 0 var(--color-action), 0 0 0 2px $blue-light;
+			box-shadow: inset 1px 0 0 var(--color-accent), 0 0 0 2px $blue-light;
 		}
 
 		&.is-primary:focus {
@@ -55,7 +55,7 @@
 	&.is-primary {
 		&.is-busy {
 			background-size: 120px 100%;
-			background-image: linear-gradient( -45deg, var(--color-action) 28%, var(--color-action-dark) 28%, var(--color-action-dark) 72%, var(--color-action) 72%);
+			background-image: linear-gradient( -45deg, var(--color-accent) 28%, var(--color-accent-dark) 28%, var(--color-accent-dark) 72%, var(--color-accent) 72%);
 		}
 	}
 

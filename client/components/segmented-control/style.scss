@@ -81,17 +81,17 @@
 	.segmented-control__item {
 		&.is-selected {
 			.segmented-control__link {
-				border-color: var( --color-action );
-				background-color: var( --color-action );
+				border-color: var( --color-accent );
+				background-color: var( --color-accent );
 				color: $white;
 
 				&:focus {
-					background-color: var( --color-action-light );
+					background-color: var( --color-accent-light );
 				}
 			}
 
 			+ .segmented-control__item .segmented-control__link {
-				border-left-color: var( --color-action );
+				border-left-color: var( --color-accent );
 			}
 		}
 	}
@@ -106,6 +106,6 @@
 		background-color: lighten( $blue-light, 22.5% );
 	}
 	.segmented-control__item.is-selected .segmented-control__link:hover {
-		background-color: var( --color-action-light );
+		background-color: var( --color-accent-light );
 	}
 }

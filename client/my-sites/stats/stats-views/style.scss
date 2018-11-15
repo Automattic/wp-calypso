@@ -47,16 +47,16 @@
 	}
 
 	&.level-3 {
-		background-color: var(--color-action-light);
+		background-color: var(--color-accent-light);
 	}
 
 	&.level-4 {
-		background-color: var(--color-action-dark);
+		background-color: var(--color-accent-dark);
 		color: white;
 	}
 
 	&.level-5 {
-		background-color: var(--color-action-dark);
+		background-color: var(--color-accent-dark);
 		color: white;
 	}
 }

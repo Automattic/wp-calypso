@@ -28,10 +28,10 @@
 	}
 
 	&:not(.is-selected):hover {
-		color: var(--color-action);
+		color: var(--color-accent);
 
 		.social-logo {
-			fill: var(--color-action);
+			fill: var(--color-accent);
 		}
 	}
 }

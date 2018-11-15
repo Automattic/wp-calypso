@@ -42,18 +42,18 @@
 	transition: width 200ms;
 }
 
-.progress-bar.is-pulsing .progress-bar__progress {
-	animation: progress-bar-animation 3300ms infinite linear;
-
-	background-size: 50px 100%;
-	background-image: linear-gradient(
-		-45deg,
-		$blue-wordpress 28%,
-		lighten( $blue-wordpress, 5% ) 28%,
-		lighten( $blue-wordpress, 5% ) 72%,
-		$blue-wordpress 72%
-	);
-}
+// .progress-bar.is-pulsing .progress-bar__progress {
+// 	animation: progress-bar-animation 3300ms infinite linear;
+//
+// 	background-size: 50px 100%;
+// 	background-image: linear-gradient(
+// 		-45deg,
+// 		$blue-wordpress 28%,
+// 		$blue-wordpress 28%,
+// 		$blue-wordpress 72%,
+// 		$blue-wordpress 72%
+// 	);
+// }
 
 .plan-thank-you-card {
 	&.is-personal-plan {

@@ -19,11 +19,11 @@
 		padding: 0;
 
 		.gridicons-reader-follow {
-			fill: var(--color-action);
+			fill: var(--color-accent);
 		}
 
 		.follow-button__label {
-			color: var(--color-action);
+			color: var(--color-accent);
 
 
 			@include breakpoint( "<660px" ) {
@@ -62,7 +62,7 @@
 .author-compact-profile__site-link,
 .author-compact-profile__follow {
 	align-items: center;
-	color: var(--color-action);
+	color: var(--color-accent);
 	display: flex;
 	justify-content: center;
 

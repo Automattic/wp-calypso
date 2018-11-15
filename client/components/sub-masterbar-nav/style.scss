@@ -89,7 +89,7 @@
 
 	&:hover,
  	&:focus {
-		background: lighten( $masterbar-color, 5% );
+		background: var(--color-primary-light);
 		color: $white;
 		outline: 0;
 		transition: all 200ms ease-out;

@@ -101,7 +101,7 @@
     }
     &[disabled], &:disabled {
       background: tint($blue-light, 50%);
-      border-color: tint($blue-wordpress, 55%);
+      border-color: var(--color-primary-light);
       color: $white;
     }
     &.is-compact {

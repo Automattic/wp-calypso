@@ -40,7 +40,7 @@
 	cursor: pointer;
 
 	&.has-highlight {
-		background-color: var(--color-action);
+		background-color: var(--color-accent);
 		color: $white;
 
 		.keyed-suggestions__value-description {
@@ -82,7 +82,7 @@
 		@include long-content-fade( $color : $white );
 
 		.has-highlight & {
-			@include long-content-fade( $color : var(--color-action) );
+			@include long-content-fade( $color : var(--color-accent) );
 		}
 	}
 }

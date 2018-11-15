@@ -72,21 +72,21 @@
 		width: 0;
 
 		// Fade overlay for longer labels
-		&:after {
-			content: '';
-			text-align: right;
-			position: absolute;
-			top: 0;
-			right: 0;
-			bottom: 0;
-			width: 15%;
-
-			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ) );
-
-			@include breakpoint( '<660px' ) {
-				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
-			}
-		}
+		// &:after {
+		// 	content: '';
+		// 	text-align: right;
+		// 	position: absolute;
+		// 	top: 0;
+		// 	right: 0;
+		// 	bottom: 0;
+		// 	width: 15%;
+		//
+		// 	background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ) );
+		//
+		// 	@include breakpoint( '<660px' ) {
+		// 		background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
+		// 	}
+		// }
 	}
 
 	a {
@@ -190,7 +190,7 @@ form.sidebar__button input {
 @include breakpoint( '>660px' ) {
 	.sidebar__menu .selected:not( .sidebar__plugins-item ) {
 		background-color: var( --sidebar-menu-selected-background-color );
-		// box-shadow: inset 3px 0px 0px var(--color-action);
+		// box-shadow: inset 3px 0px 0px var(--color-accent);
 
 		a {
 			color: var( --sidebar-menu-selected-a-color );
@@ -257,7 +257,7 @@ form.sidebar__button input {
 
 		a,
 		form {
-			color: var(--color-action);
+			color: var(--color-accent);
 
 			&:first-child:after {
 				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
@@ -270,7 +270,7 @@ form.sidebar__button input {
 		}
 
 		.gridicon {
-			fill: var(--color-action);
+			fill: var(--color-accent);
 		}
 	}
 }
@@ -329,7 +329,7 @@ form.sidebar__button input {
 	margin-right: auto;
 
 	&.is-active {
-		background: var(--color-action);
+		background: var(--color-accent);
 
 		.gridicon {
 			fill: $white;
@@ -433,6 +433,6 @@ form.sidebar__button input {
 	}
 
 	:hover + & .gridicon {
-		fill: var(--color-action);
+		fill: var(--color-accent);
 	}
 }

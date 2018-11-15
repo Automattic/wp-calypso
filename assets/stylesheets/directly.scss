@@ -56,8 +56,8 @@ textarea {
 
 // Main button
 .btn {
-	background: var(--color-action);
-	border: 1px solid var(--color-action-dark);
+	background: var(--color-accent);
+	border: 1px solid var(--color-accent-dark);
 	color: $white;
 	border-width: 1px 1px 2px;
 	cursor: pointer;
@@ -208,7 +208,7 @@ textarea {
 		margin-top: 2px;
 	}
 	.svg-icon {
-		color: var(--color-action);
+		color: var(--color-accent);
 	}
 }
 
@@ -425,7 +425,7 @@ textarea {
 		width: 64px;
 	}
 	.notification {
-		background: var(--color-action);
+		background: var(--color-accent);
 		font-size: 12px;
 		font-weight: 500;
 		min-width: 24px;

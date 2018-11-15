@@ -363,7 +363,7 @@
 		}
 
 		.checkout__new-card-header {
-			color: var( --color-action );
+			color: var( --color-accent );
 			font-weight: 400;
 			margin-bottom: 15px;
 		}
@@ -462,7 +462,7 @@
 			padding: 20px 20px 20px 0;
 
 			.wordpress-logo {
-				fill: var( --color-action );
+				fill: var( --color-accent );
 				margin: 0 10px;
 				@include breakpoint( '>660px' ) {
 					margin: 0 20px;
@@ -471,7 +471,7 @@
 
 			.checkout__payment-box-section-content {
 				> h6 {
-					color: var( --color-action );
+					color: var( --color-accent );
 					font-size: 18px;
 				}
 
@@ -751,7 +751,7 @@
 }
 
 .checkout__payment-chat-button.is-borderless {
-	color: var( --color-action );
+	color: var( --color-accent );
 	text-align: left;
 
 	@include breakpoint( '<660px' ) {
