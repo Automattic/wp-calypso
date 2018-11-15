@@ -40,7 +40,20 @@ class SimplePaymentsEdit extends Component {
 		fieldPriceError: null,
 		fieldTitleError: null,
 		isSavingProduct: false,
+
+		// Component is initially loaded if:
+		//   - There is no payment to load
+		//   - OR
+		//   - There is simplePayment is present
+		isLoaded: ! this.props.attributes.paymentId || !! this.props.simplePayment,
 	};
+
+	static getDerivedStateFromProps( props, state ) {
+		if ( ! state.isLoaded && ! props.isLoadingPayment ) {
+			return { isLoaded: true };
+		}
+		return null;
+	}
 
 	componentDidUpdate( prevProps ) {
 		const { attributes, isLoadingInitial, isSelected, setAttributes, simplePayment } = this.props;
@@ -332,11 +345,11 @@ class SimplePaymentsEdit extends Component {
 	} );
 
 	render() {
-		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
-		const { attributes, isSelected, isLoadingInitial, instanceId } = this.props;
+		const { fieldEmailError, fieldPriceError, fieldTitleError, isLoaded } = this.state;
+		const { attributes, isSelected, instanceId } = this.props;
 		const { content, currency, email, multiple, price, title } = attributes;
 
-		if ( ! isSelected && isLoadingInitial ) {
+		if ( ! isSelected && ! isLoaded ) {
 			return (
 				<div className="simple-payments__loading">
 					<ProductPlaceholder
@@ -385,7 +398,7 @@ class SimplePaymentsEdit extends Component {
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
 							'simple-payments__field-has-error': fieldTitleError,
 						} ) }
-						disabled={ isLoadingInitial }
+						disabled={ ! isLoaded }
 						label={ __( 'Item name' ) }
 						onChange={ this.handleTitleChange }
 						placeholder={ __( 'Item name' ) }
@@ -399,7 +412,7 @@ class SimplePaymentsEdit extends Component {
 
 					<TextareaControl
 						className="simple-payments__field simple-payments__field-content"
-						disabled={ isLoadingInitial }
+						disabled={ ! isLoaded }
 						label={ __( 'Describe your item in a few words' ) }
 						onChange={ this.handleContentChange }
 						placeholder={ __( 'Describe your item in a few words' ) }
@@ -409,7 +422,7 @@ class SimplePaymentsEdit extends Component {
 					<div className="simple-payments__price-container">
 						<SelectControl
 							className="simple-payments__field simple-payments__field-currency"
-							disabled={ isLoadingInitial }
+							disabled={ ! isLoaded }
 							label={ __( 'Currency' ) }
 							onChange={ this.handleCurrencyChange }
 							options={ this.getCurrencyList }
@@ -417,7 +430,7 @@ class SimplePaymentsEdit extends Component {
 						/>
 						<TextControl
 							aria-describedby={ `${ instanceId }-price-error` }
-							disabled={ isLoadingInitial }
+							disabled={ ! isLoaded }
 							className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
 								'simple-payments__field-has-error': fieldPriceError,
 							} ) }
@@ -437,7 +450,7 @@ class SimplePaymentsEdit extends Component {
 					<div className="simple-payments__field-multiple">
 						<ToggleControl
 							checked={ Boolean( multiple ) }
-							disabled={ isLoadingInitial }
+							disabled={ ! isLoaded }
 							label={ __( 'Allow people to buy more than one item at a time' ) }
 							onChange={ this.handleMultipleChange }
 						/>
@@ -448,7 +461,7 @@ class SimplePaymentsEdit extends Component {
 						className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
 							'simple-payments__field-has-error': fieldEmailError,
 						} ) }
-						disabled={ isLoadingInitial }
+						disabled={ ! isLoaded }
 						label={ __( 'Email' ) }
 						onChange={ this.handleEmailChange }
 						placeholder={ __( 'Email' ) }
@@ -476,13 +489,18 @@ class SimplePaymentsEdit extends Component {
 const applyWithSelect = withSelect( ( select, props ) => {
 	const { paymentId } = props.attributes;
 	const { getEntityRecord } = select( 'core' );
+	const { isResolving } = select( 'core/data' );
 
-	const simplePayment = paymentId
-		? getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId )
-		: undefined;
+	let simplePayment = undefined;
+	let isLoadingPayment = false;
+	if ( paymentId ) {
+		const args = [ 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId ];
+		simplePayment = getEntityRecord( ...args );
+		isLoadingPayment = isResolving( 'core', 'getEntityRecord', args );
+	}
 
 	return {
-		isLoadingInitial: paymentId && ! simplePayment,
+		isLoadingPayment,
 		simplePayment,
 	};
 } );
