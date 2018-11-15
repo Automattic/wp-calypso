@@ -1043,6 +1043,40 @@ describe( 'addReducer', () => {
 			} ).toThrow( "New reducer can be added only into a reducer created with 'combineReducers'" );
 		} );
 	} );
+
+	describe( 'interaction with persistence', () => {
+		const persistedToyReducer = initialState =>
+			withSchemaValidation( { type: 'string' }, toyReducer( initialState ) );
+
+		test( 'storageKey survives adding a new reducer', () => {
+			const origReducer = withStorageKey(
+				'foo',
+				combineReducers( {
+					a: withStorageKey(
+						'keyA',
+						combineReducers( {
+							b: persistedToyReducer( 'Hello from keyA.b' ),
+						} )
+					),
+				} )
+			);
+
+			const newReducer = origReducer.addReducer(
+				[ 'a', 'c' ],
+				persistedToyReducer( 'Hello from keyA.c' )
+			);
+
+			const state = newReducer( undefined, { type: 'INIT' } );
+			const serializedState = newReducer( state, { type: 'SERIALIZE' } );
+
+			expect( serializedState.get() ).toEqual( {
+				keyA: {
+					b: 'Hello from keyA.b',
+					c: 'Hello from keyA.c',
+				},
+			} );
+		} );
+	} );
 } );
 
 describe( 'withStorageKey', () => {
