@@ -178,6 +178,7 @@ describe( 'CheckoutThankYou', () => {
 					purchases: [ [], [] ],
 				},
 			},
+			planSlug: PLAN_ECOMMERCE,
 		};
 
 		afterAll( () => {
@@ -185,22 +186,13 @@ describe( 'CheckoutThankYou', () => {
 		} );
 
 		test( 'Should be there for AT', () => {
-			productValues.isDotComPlan.mockImplementation( () => true );
-			let comp;
-			comp = shallow( <CheckoutThankYou { ...props } isAtomicSite={ true } /> );
-			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 1 );
-
-			comp = shallow( <CheckoutThankYou { ...props } hasPendingAT={ true } /> );
+			const comp = shallow( <CheckoutThankYou { ...props } transferComplete={ true } /> );
 			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'Should not be there for AT', () => {
-			productValues.isDotComPlan.mockImplementation( () => false );
 			let comp;
-			comp = shallow( <CheckoutThankYou { ...props } isAtomicSite={ true } /> );
-			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 0 );
-
-			comp = shallow( <CheckoutThankYou { ...props } hasPendingAT={ true } /> );
+			comp = shallow( <CheckoutThankYou { ...props } transferComplete={ false } /> );
 			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 0 );
 
 			productValues.isDotComPlan.mockImplementation( () => true );

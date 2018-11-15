@@ -48,7 +48,7 @@ const getTaskList = memoize(
 class WpcomChecklist extends PureComponent {
 	static propTypes = {
 		createNotice: PropTypes.func.isRequired,
-		designType: PropTypes.oneOf( [ 'blog', 'page', 'portfolio' ] ),
+		designType: PropTypes.oneOf( [ 'blog', 'page', 'portfolio', 'store' ] ),
 		recordTracksEvent: PropTypes.func.isRequired,
 		requestGuidedTour: PropTypes.func.isRequired,
 		requestSiteChecklistTaskUpdate: PropTypes.func.isRequired,

@@ -14,7 +14,9 @@ describe( 'getAtomicTransfer()', () => {
 	const testState = {
 		atomicTransfer: {
 			1234: {
-				status: 'pending',
+				atomicTransfer: {
+					status: 'pending',
+				},
 			},
 		},
 	};
