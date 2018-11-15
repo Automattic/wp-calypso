@@ -3,7 +3,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { invoke, noop, findKey, includes } from 'lodash';
 import classNames from 'classnames';
@@ -50,6 +50,7 @@ import FormInputCheckbox from 'components/forms/form-checkbox';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
 import SuggestionSearch from 'components/suggestion-search';
+import { dasherize } from 'lib/signup/site-type';
 
 class AboutStep extends Component {
 	constructor( props ) {
@@ -448,7 +449,7 @@ class AboutStep extends Component {
 	}
 
 	renderContent() {
-		const { translate, siteTitle, shouldHideSiteGoals } = this.props;
+		const { translate, siteTitle, shouldHideSiteGoals, aboutStepLabels } = this.props;
 
 		const pressableWrapperClassName = classNames( 'about__pressable-wrapper', {
 			'about__wrapper-is-hidden': ! this.state.showStore,
@@ -474,7 +475,7 @@ class AboutStep extends Component {
 						<Card>
 							<FormFieldset>
 								<FormLabel htmlFor="siteTitle">
-									{ translate( 'What would you like to name your site?' ) }
+									{ aboutStepLabels.siteTitleLabel }
 									<InfoPopover className="about__info-popover" position="top">
 										{ translate(
 											"We'll use this as your site title. " +
@@ -494,7 +495,7 @@ class AboutStep extends Component {
 							{ this.shouldShowSiteTopicField() && (
 								<FormFieldset>
 									<FormLabel htmlFor="siteTopic">
-										{ translate( 'What will your site be about?' ) }
+										{ aboutStepLabels.siteTopicLabel }
 										<InfoPopover className="about__info-popover" position="top">
 											{ translate( "We'll use this to personalize your site and experience." ) }
 										</InfoPopover>
@@ -556,17 +557,52 @@ class AboutStep extends Component {
 	}
 }
 
+function getLabelFromSiteType( siteType ) {
+	//TODO: Fetch segment names from lib/site-type.js
+	switch ( dasherize( siteType ) ) {
+		case 'blog':
+			return {
+				siteTitleLabel: i18n.translate( 'What would you like to call your blog?' ),
+				siteTopicLabel: i18n.translate( 'What will your blog be about?' ),
+			};
+		case 'business':
+			return {
+				siteTitleLabel: i18n.translate( 'What is the name of your business?' ),
+				siteTopicLabel: i18n.translate( 'What type of business do you have?' ),
+			};
+		case 'professional':
+			return {
+				siteTitleLabel: i18n.translate( 'What is your name?' ),
+				siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
+			};
+		case 'education':
+			return {
+				siteTitleLabel: i18n.translate( 'What is the name of your site?' ),
+				siteTopicLabel: i18n.translate( 'What will your site be about?' ),
+			};
+		default:
+			return {
+				siteTitleLabel: i18n.translate( 'What would you like to name your site?' ),
+				siteTopicLabel: i18n.translate( 'What will your site be about?' ),
+			};
+	}
+}
+
 export default connect(
-	( state, ownProps ) => ( {
-		siteTitle: getSiteTitle( state ),
-		siteGoals: getSiteGoals( state ),
-		siteTopic: getSurveyVertical( state ),
-		userExperience: getUserExperience( state ),
-		siteType: getSiteType( state ),
-		isLoggedIn: isUserLoggedIn( state ),
-		shouldHideSiteGoals:
-			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
-	} ),
+	( state, ownProps ) => {
+		const siteType = getSiteType( state );
+		return {
+			siteTitle: getSiteTitle( state ),
+			siteGoals: getSiteGoals( state ),
+			siteTopic: getSurveyVertical( state ),
+			userExperience: getUserExperience( state ),
+			siteType: siteType,
+			isLoggedIn: isUserLoggedIn( state ),
+			shouldHideSiteGoals:
+				'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
+			aboutStepLabels: getLabelFromSiteType( siteType ),
+		};
+	},
 	{
 		setSiteTitle,
 		setDesignType,
