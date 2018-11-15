@@ -40,8 +40,8 @@ class WordAds extends Component {
 		tabSwitched: false,
 	};
 
-	getDerivedStateFromProps( props, state ) {
-		if ( ! this.state.tabSwitched && this.state.chartTab !== props.chartTab ) {
+	static getDerivedStateFromProps( props, state ) {
+		if ( ! state.tabSwitched && state.chartTab !== props.chartTab ) {
 			return {
 				tabSwitched: true,
 				chartTab: props.chartTab,

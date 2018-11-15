@@ -28,7 +28,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import { rangeOfPeriod } from 'state/stats/lists/utils';
 
 const buildQuery = memoize( ( period, queryDate ) => {
-	let date = rangeOfPeriod( period, moment().add( -1, 'days' ) ).endOf;
+	let date = rangeOfPeriod( period, queryDate ).endOf;
 	let quantity = 30;
 	switch ( period ) {
 		case 'month':
