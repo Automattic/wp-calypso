@@ -182,25 +182,8 @@ export const isCustomsFormRequired = createSelector(
 	( state, orderId, siteId = getSelectedSiteId( state ) ) => [ getForm( state, orderId, siteId ) ]
 );
 
-const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = false ) => {
-	const {
-		values,
-		isNormalized,
-		isUnverifiable,
-		normalized: normalizedValues,
-		ignoreValidation,
-		fieldErrors,
-	} = addressData;
-	if ( ( isNormalized || isUnverifiable ) && ! normalizedValues && fieldErrors ) {
-		return fieldErrors;
-	} else if ( isNormalized && ! normalizedValues ) {
-		// If the address is normalized but the server didn't return a normalized address, then it's
-		// invalid and must register as an error
-		return {
-			address: translate( 'This address is not recognized. Please try another.' ),
-		};
-	}
-
+const getRawAddressErrors = ( appState, addressData, siteId, shouldValidatePhone ) => {
+	const { values } = addressData;
 	const { phone, postcode, state, country } = getAddressValues( addressData );
 	const requiredFields = [ 'name', 'address', 'city', 'postcode', 'country' ];
 	const errors = {};
@@ -242,6 +225,29 @@ const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = 
 			);
 		}
 	}
+
+	return errors;
+};
+
+const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = false ) => {
+	const {
+		isNormalized,
+		isUnverifiable,
+		normalized: normalizedValues,
+		ignoreValidation,
+		fieldErrors,
+	} = addressData;
+	if ( ( isNormalized || isUnverifiable ) && ! normalizedValues && fieldErrors ) {
+		return fieldErrors;
+	} else if ( isNormalized && ! normalizedValues ) {
+		// If the address is normalized but the server didn't return a normalized address, then it's
+		// invalid and must register as an error
+		return {
+			address: translate( 'This address is not recognized. Please try another.' ),
+		};
+	}
+
+	const errors = getRawAddressErrors( appState, addressData, siteId, shouldValidatePhone );
 
 	if ( ignoreValidation ) {
 		Object.keys( errors ).forEach( field => {
@@ -446,6 +452,23 @@ export const getFormErrors = createSelector(
 	},
 	( state, orderId, siteId = getSelectedSiteId( state ) ) => [
 		getShippingLabel( state, orderId, siteId ),
+	]
+);
+
+export const getFormEmptyFields = createSelector(
+	( appState, orderId, group, siteId = getSelectedSiteId( appState ) ) => {
+		const shippingLabel = getShippingLabel( appState, orderId, siteId );
+		const { form } = shippingLabel;
+
+		const shouldValidateOriginPhone =
+			'origin' === group && isCustomsFormRequired( appState, orderId, siteId );
+
+		return Object.keys(
+			getRawAddressErrors( appState, form[ group ], siteId, shouldValidateOriginPhone )
+		);
+	},
+	( state, orderId, group, siteId = getSelectedSiteId( state ) ) => [
+		getShippingLabel( state, orderId, siteId ).form[ group ],
 	]
 );
 
