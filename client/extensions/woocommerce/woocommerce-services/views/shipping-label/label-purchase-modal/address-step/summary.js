@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React from 'react';
+import { filter } from 'lodash';
 
 const AddressSummary = ( {
 	values,
@@ -37,8 +38,23 @@ const AddressSummary = ( {
 			case 'country':
 				value = countryStr;
 		}
-		return <span className={ highlight ? 'highlight' : '' }>{ value }</span>;
+		return (
+			<span key={ fieldName } className={ highlight ? 'highlight' : '' }>
+				{ value }
+			</span>
+		);
 	};
+
+	const displayState = getValue( 'state' );
+	const cityStateAndPostcode = filter( [
+		getValue( 'city' ),
+
+		displayState ? ', ' : '',
+		displayState,
+
+		' ',
+		getValue( 'postcode' ),
+	] );
 
 	return (
 		<div className="address-step__summary">
@@ -46,10 +62,7 @@ const AddressSummary = ( {
 			<p>
 				{ getValue( 'address' ) } { getValue( 'address_2' ) }
 			</p>
-			<p>
-				{ getValue( 'city' ) }, { getValue( 'state' ) }
-				&nbsp; { getValue( 'postcode' ) }
-			</p>
+			<p>{ cityStateAndPostcode }</p>
 			<p>{ getValue( 'country' ) }</p>
 		</div>
 	);
