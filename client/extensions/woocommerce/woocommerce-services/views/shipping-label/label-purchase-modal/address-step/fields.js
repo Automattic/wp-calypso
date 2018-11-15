@@ -111,8 +111,6 @@ const AddressFields = props => {
 	const submitAddressForNormalizationHandler = () =>
 		props.submitAddressForNormalization( orderId, siteId, group );
 	const useAddressAsEnteredHandler = () => props.useAddressAsEntered( orderId, siteId, group );
-	// const useAddressAsEnteredHandler = () =>
-	// props.confirmAddressSuggestion( orderId, siteId, group );
 
 	return (
 		<div>

@@ -411,10 +411,7 @@ export const submitAddressForNormalization = ( orderId, siteId, group ) => (
 		}
 		state = getShippingLabel( getState(), orderId, siteId ).form[ group ];
 	}
-	if ( state.isNormalized && isEqual( state.values, state.normalized ) ) {
-		handleNormalizeResponse( true );
-		return;
-	}
+
 	normalizeAddress(
 		orderId,
 		siteId,
