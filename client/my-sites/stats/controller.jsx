@@ -17,6 +17,7 @@ import { savePreference } from 'state/preferences/actions';
 import { getSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import FollowList from 'lib/follow-list';
 import StatsInsights from './stats-insights';
 import StatsOverview from './overview';
@@ -405,16 +406,11 @@ export default {
 	},
 
 	wordAds: function( context, next ) {
-		const {
-			params: { site: givenSiteId },
-			query: queryOptions,
-			store,
-		} = context;
+		const { query: queryOptions, store } = context;
 
-		const filters = getSiteFilters( givenSiteId, context );
 		const state = store.getState();
-		const currentSite = getSite( state, givenSiteId );
-		const siteId = currentSite ? currentSite.ID || 0 : 0;
+		const siteId = getSelectedSiteId( state );
+		const filters = getSiteFilters( siteId, context );
 
 		const activeFilter = find( filters, filter => context.params.period === filter.period );
 
