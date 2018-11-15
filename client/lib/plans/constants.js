@@ -1858,37 +1858,37 @@ export const FEATURES_LIST = {
 	[ FEATURE_ACCEPT_PAYMENTS ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS,
 		getTitle: () => i18n.translate( 'Accept payments in 60+ countries' ),
-		getDescription: () => i18n.translate( '' ),
+		getDescription: () => i18n.translate( 'Accept payments in 60+ countries' ),
 	},
 
 	[ FEATURE_SHIPPING_CARRIERS ]: {
 		getSlug: () => FEATURE_SHIPPING_CARRIERS,
 		getTitle: () => i18n.translate( 'Integrations with top shipping carriers' ),
-		getDescription: () => i18n.translate( '' ),
+		getDescription: () => i18n.translate( 'Integrations with top shipping carriers' ),
 	},
 
 	[ FEATURE_UNLIMITED_PRODUCTS_SERVICES ]: {
 		getSlug: () => FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 		getTitle: () => i18n.translate( 'Unlimited products or services' ),
-		getDescription: () => i18n.translate( '' ),
+		getDescription: () => i18n.translate( 'Unlimited products or services' ),
 	},
 
 	[ FEATURE_ECOMMERCE_MARKETING ]: {
 		getSlug: () => FEATURE_ECOMMERCE_MARKETING,
 		getTitle: () => i18n.translate( 'eCommerce marketing tools' ),
-		getDescription: () => i18n.translate( '' ),
+		getDescription: () => i18n.translate( 'eCommerce marketing tools' ),
 	},
 
 	[ FEATURE_PREMIUM_CUSTOMIZABE_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 		getTitle: () => i18n.translate( 'Premium customizable starter themes' ),
-		getDescription: () => i18n.translate( '' ),
+		getDescription: () => i18n.translate( 'Premium customizable starter themes' ),
 	},
 
 	[ FEATURE_BUSINESS_PLAN_FEATURES ]: {
 		getSlug: () => FEATURE_BUSINESS_PLAN_FEATURES,
 		getTitle: () => i18n.translate( 'All Business plan features' ),
-		getDescription: () => i18n.translate( '' ),
+		getDescription: () => i18n.translate( 'All Business plan features' ),
 	},
 };
 
