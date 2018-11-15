@@ -22,6 +22,7 @@ import {
 	removeIgnoreValidation,
 	updateAddressValue,
 	clearAvailableRates,
+	useAddressAsEntered,
 } from '../actions';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE,
@@ -41,6 +42,9 @@ const initialState = {
 				isNormalized: false,
 				normalized: null,
 				ignoreValidation: { address: true, postcode: true, state: true, country: true },
+			},
+			destination: {
+				isNormalized: false,
 			},
 			packages: {
 				selected: {
@@ -472,5 +476,36 @@ describe( 'Label purchase form reducer', () => {
 		expect( state[ orderId ].form.packages.saved ).to.be.false;
 		expect( state[ orderId ].form.rates.available ).to.be.an( 'object' ).that.is.empty;
 		expect( state[ orderId ].form.rates.values.weight_0_custom1 ).to.eql( '' );
+	} );
+
+	it( 'WOOCOMMERCE_SERVICES_SHIPPING_LABEL_USE_ADDRESS_AS_ENTERED saves the address and proceeds to the next step', () => {
+		const group = 'origin';
+		let state = initialState;
+
+		const getState = () => ( {
+			extensions: {
+				woocommerce: {
+					woocommerceServices: {
+						[ siteId ]: {
+							shippingLabel: state,
+						},
+					},
+				},
+			},
+		} );
+
+		const dispatch = action => {
+			state = reducer( state, action );
+		};
+
+		useAddressAsEntered( orderId, siteId, group )( dispatch, getState );
+
+		expect( state[ orderId ].form[ group ] ).to.eql( {
+			...initialState[ orderId ].form[ group ],
+			expanded: false,
+			isNormalized: true,
+			isUnverifiable: true,
+			normalized: initialState[ orderId ].form[ group ].values,
+		} );
 	} );
 } );

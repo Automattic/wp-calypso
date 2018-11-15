@@ -10,10 +10,11 @@ import nock from 'nock';
 /**
  * Internal dependencies
  */
-import { openPrintingFlow, convertToApiPackage } from '../actions';
+import { openPrintingFlow, convertToApiPackage, useAddressAsEntered } from '../actions';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_USE_ADDRESS_AS_ENTERED,
 } from '../../action-types';
 import * as selectors from '../selectors';
 
@@ -299,6 +300,24 @@ describe( 'Shipping label Actions', () => {
 					},
 				],
 			} );
+		} );
+	} );
+
+	describe( '#useAddressAsEntered', () => {
+		it( 'totals value correctly (by quantity)', () => {
+			const dispatchSpy = sinon.spy();
+			const group = 'destination';
+
+			useAddressAsEntered( orderId, siteId, group )( dispatchSpy, createGetStateFn() );
+
+			expect(
+				dispatchSpy.calledWith( {
+					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_USE_ADDRESS_AS_ENTERED,
+					orderId,
+					siteId,
+					group,
+				} )
+			).to.equal( true );
 		} );
 	} );
 } );
