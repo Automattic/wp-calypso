@@ -182,6 +182,15 @@ export const isCustomsFormRequired = createSelector(
 	( state, orderId, siteId = getSelectedSiteId( state ) ) => [ getForm( state, orderId, siteId ) ]
 );
 
+/**
+ * Generates an object with errors for all fields within an address.
+ *
+ * @param {Object}  appState            Local Redux state.
+ * @param {Object}  addressData         Address to check, including normalization state and values.
+ * @param {number}  siteId              The ID of the current site ID.
+ * @param {boolean} shouldValidatePhone An indiator whether phone validation is required.
+ * @return {Object}                     A hash of errors with field names as keys.
+ */
 const getRawAddressErrors = ( appState, addressData, siteId, shouldValidatePhone ) => {
 	const { values } = addressData;
 	const { phone, postcode, state, country } = getAddressValues( addressData );
@@ -455,17 +464,22 @@ export const getFormErrors = createSelector(
 	]
 );
 
-export const getFormEmptyFields = createSelector(
+/**
+ * Checks whether an address has enough data to be forcefully saved
+ * without normalization/verification.
+ *
+ * @param {Object} appState The local Redux state.
+ * @param {number} orderId  ID of the order that the label belongs to.
+ * @param {number} siteId   The ID of the site that is being currently modified.
+ * @return {boolean}
+ */
+export const isAddressUsable = createSelector(
 	( appState, orderId, group, siteId = getSelectedSiteId( appState ) ) => {
-		const shippingLabel = getShippingLabel( appState, orderId, siteId );
-		const { form } = shippingLabel;
+		const { form } = getShippingLabel( appState, orderId, siteId );
 
-		const shouldValidateOriginPhone =
-			'origin' === group && isCustomsFormRequired( appState, orderId, siteId );
+		const validatePhone = 'origin' === group && isCustomsFormRequired( appState, orderId, siteId );
 
-		return Object.keys(
-			getRawAddressErrors( appState, form[ group ], siteId, shouldValidateOriginPhone )
-		);
+		return Object.keys( getRawAddressErrors( appState, form[ group ], siteId, validatePhone ) );
 	},
 	( state, orderId, group, siteId = getSelectedSiteId( state ) ) => [
 		getShippingLabel( state, orderId, siteId ).form[ group ],

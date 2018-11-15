@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { isEqual, isObject, size, isEmpty } from 'lodash';
+import { isEqual, isObject, size } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,7 +34,7 @@ import {
 	getShippingLabel,
 	isLoaded,
 	getFormErrors,
-	getFormEmptyFields,
+	isAddressUsable,
 	getOriginCountryNames,
 	getDestinationCountryNames,
 	getStateNames,
@@ -55,7 +55,7 @@ const AddressFields = props => {
 		countryNames,
 		stateNames,
 		errors,
-		emptyFields,
+		isUsable,
 		translate,
 	} = props;
 
@@ -208,7 +208,7 @@ const AddressFields = props => {
 				error={ fieldErrors.country || generalErrorOnly }
 			/>
 
-			<div className="address-step__unverifiable-actions step-confirmation-button">
+			<div className="address-step__actions">
 				<FormButton
 					type="button"
 					disabled={ hasNonEmptyLeaves( errors ) || normalizationInProgress }
@@ -220,7 +220,7 @@ const AddressFields = props => {
 				<FormButton
 					type="button"
 					isPrimary={ false }
-					disabled={ ! isEmpty( emptyFields ) }
+					disabled={ ! isUsable }
 					onClick={ useAddressAsEnteredHandler }
 				>
 					{ translate( 'Use address as entered' ) }
@@ -264,7 +264,7 @@ const mapStateToProps = ( state, { group, orderId, siteId } ) => {
 	return {
 		...formData,
 		errors: loaded && getFormErrors( state, orderId, siteId )[ group ],
-		emptyFields: loaded && getFormEmptyFields( state, orderId, group, siteId ),
+		isUsable: loaded && isAddressUsable( state, orderId, group, siteId ),
 		countryNames,
 		stateNames: getStateNames( state, formData.values.country, siteId ),
 	};
