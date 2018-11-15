@@ -49,7 +49,7 @@ class EditorGutenbergOptInNotice extends Component {
 				className="editor-gutenberg-opt-in-notice"
 				status="is-info"
 				onDismissClick={ this.dismissNotice }
-				text={ translate( 'A new editor is coming to level-up your layout.' ) }
+				text={ translate( 'A new editor is coming to level up your layout.' ) }
 			>
 				<NoticeAction onClick={ showDialog }>{ translate( 'Learn More' ) }</NoticeAction>
 			</Notice>
