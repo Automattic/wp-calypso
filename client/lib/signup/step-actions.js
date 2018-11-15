@@ -160,80 +160,76 @@ export function createSiteWithCart(
 		newSiteParams.public = abtest( 'privateByDefault' ) === 'private' ? -1 : 1;
 	}
 
-	wpcom.undocumented().sitesNew(
-		// don't reformat the below in this commit!
-		newSiteParams,
-		function( error, response ) {
-			if ( error ) {
-				callback( error );
+	wpcom.undocumented().sitesNew( newSiteParams, function( error, response ) {
+		if ( error ) {
+			callback( error );
 
-				return;
-			}
+			return;
+		}
 
-			const parsedBlogURL = parseURL( response.blog_details.url );
+		const parsedBlogURL = parseURL( response.blog_details.url );
 
-			const siteSlug = parsedBlogURL.hostname;
-			const siteId = response.blog_details.blogid;
-			const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
-			const providedDependencies = {
-				siteId,
-				siteSlug,
-				domainItem,
-				themeItem,
-			};
-			const addToCartAndProceed = () => {
-				let privacyItem = null;
+		const siteSlug = parsedBlogURL.hostname;
+		const siteId = response.blog_details.blogid;
+		const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
+		const providedDependencies = {
+			siteId,
+			siteSlug,
+			domainItem,
+			themeItem,
+		};
+		const addToCartAndProceed = () => {
+			let privacyItem = null;
 
-				if ( domainItem ) {
-					const { product_slug: productSlug } = domainItem;
-					const productsList = getProductsList( state );
-					if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
-						if ( isDomainTransfer( domainItem ) ) {
-							privacyItem = cartItems.domainTransferPrivacy( {
-								domain: domainItem.meta,
-								source: 'signup',
-							} );
-						} else {
-							privacyItem = cartItems.domainPrivacyProtection( {
-								domain: domainItem.meta,
-								source: 'signup',
-							} );
-						}
+			if ( domainItem ) {
+				const { product_slug: productSlug } = domainItem;
+				const productsList = getProductsList( state );
+				if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
+					if ( isDomainTransfer( domainItem ) ) {
+						privacyItem = cartItems.domainTransferPrivacy( {
+							domain: domainItem.meta,
+							source: 'signup',
+						} );
+					} else {
+						privacyItem = cartItems.domainPrivacyProtection( {
+							domain: domainItem.meta,
+							source: 'signup',
+						} );
 					}
 				}
-
-				const newCartItems = [
-					cartItem,
-					domainItem,
-					googleAppsCartItem,
-					themeItem,
-					privacyItem,
-				].filter( item => item );
-
-				if ( newCartItems.length ) {
-					SignupCart.addToCart( siteId, newCartItems, function( cartError ) {
-						callback( cartError, providedDependencies );
-					} );
-				} else {
-					callback( undefined, providedDependencies );
-				}
-			};
-
-			if ( ! user.get() && isFreeThemePreselected ) {
-				setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
-			} else if ( user.get() && isFreeThemePreselected ) {
-				fetchSitesAndUser(
-					siteSlug,
-					setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
-					reduxStore
-				);
-			} else if ( user.get() ) {
-				fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
-			} else {
-				addToCartAndProceed();
 			}
+
+			const newCartItems = [
+				cartItem,
+				domainItem,
+				googleAppsCartItem,
+				themeItem,
+				privacyItem,
+			].filter( item => item );
+
+			if ( newCartItems.length ) {
+				SignupCart.addToCart( siteId, newCartItems, function( cartError ) {
+					callback( cartError, providedDependencies );
+				} );
+			} else {
+				callback( undefined, providedDependencies );
+			}
+		};
+
+		if ( ! user.get() && isFreeThemePreselected ) {
+			setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
+		} else if ( user.get() && isFreeThemePreselected ) {
+			fetchSitesAndUser(
+				siteSlug,
+				setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
+				reduxStore
+			);
+		} else if ( user.get() ) {
+			fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
+		} else {
+			addToCartAndProceed();
 		}
-	);
+	} );
 }
 
 function fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) {
