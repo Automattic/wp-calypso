@@ -52,7 +52,7 @@ const config = {
 		isCalypsoClient && './inline-imports.js',
 	] ),
 	env: {
-		production: {
+		build_pot: {
 			plugins: [
 				[
 					'@wordpress/babel-plugin-makepot',
