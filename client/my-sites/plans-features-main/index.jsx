@@ -172,7 +172,7 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		return plans.filter( plan =>
-			isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PREMIUM, TYPE_BUSINESS ] )
+			isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ] )
 		);
 	}
 
@@ -314,9 +314,11 @@ const guessCustomerType = ( state, props ) => {
 			const group = GROUP_WPCOM;
 			const businessPlanSlugs = [
 				findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PREMIUM } )[ 0 ],
+				findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
-				findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
+				findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+				findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 			]
 				.map( planKey => getPlan( planKey ) )
 				.map( plan => plan.getStoreSlug() );
@@ -337,7 +339,7 @@ export default connect(
 			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
 			// pretty versatile, we could rename it from discounts to flags/features/anything else and make it more
 			// universal.
-			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
+			withWPPlanTabs: true || isDiscountActive( getDiscountByName( 'new_plans' ), state ),
 			customerType: guessCustomerType( state, props ),
 			isChatAvailable: isHappychatAvailable( state ),
 			siteId: get( props.site, [ 'ID' ] ),
