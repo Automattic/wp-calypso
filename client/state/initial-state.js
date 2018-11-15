@@ -101,10 +101,13 @@ function verifyStateTimestamp( state ) {
 	return state._timestamp && state._timestamp + MAX_AGE > Date.now();
 }
 
-function getStateFromLocalStorage() {
+async function getStateFromLocalStorage() {
 	const reduxStateKey = getReduxStateKey();
-	return localforage.getItem( reduxStateKey ).then( function( storedState ) {
+
+	try {
+		const storedState = await localforage.getItem( reduxStateKey );
 		debug( 'fetched stored Redux state from localforage', storedState );
+
 		if ( storedState === null ) {
 			debug( 'stored Redux state not found in localforage' );
 			return null;
@@ -128,7 +131,10 @@ function getStateFromLocalStorage() {
 		}
 
 		return deserializedState;
-	} );
+	} catch ( error ) {
+		debug( 'error while loading stored Redux state:', error );
+		return null;
+	}
 }
 
 const loadInitialState = initialState => {
@@ -137,11 +143,6 @@ const loadInitialState = initialState => {
 	const mergedState = Object.assign( {}, initialState, serverState );
 	return createReduxStore( mergedState );
 };
-
-function loadInitialStateFailed( error ) {
-	debug( 'failed to load initial redux-store state', error );
-	return createReduxStore();
-}
 
 function getReduxStateKey() {
 	const userData = user.get();
@@ -244,7 +245,6 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 	if ( shouldPersist ) {
 		return getStateFromLocalStorage()
 			.then( loadInitialState )
-			.catch( loadInitialStateFailed )
 			.then( persistOnChange )
 			.then( reduxStoreReady );
 	}
