@@ -6,7 +6,7 @@ import React, { Component, Fragment } from 'react';
 import EmailValidator from 'email-validator';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
-import { trim } from 'lodash';
+import { trim, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,49 +29,63 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import InfoPopover from 'components/info-popover';
 import { dasherize } from 'lib/signup/site-type';
+import phoneValidation from 'lib/phone-validation';
+
+const CLEAN_REGEX = /^0|[\s.\-()]+/g;
 
 class SiteInformation extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
 			name: props.siteTitle,
-			address: props.siteInformation.address,
-			email: props.siteInformation.email,
-			showEmailError: props.siteInformation.email,
+			address: props.siteInformation.address || '',
+			email: props.siteInformation.email || '',
 			isEmailValid: true,
-			phone: props.siteInformation.phone,
+			isPhoneValid: true,
+			phone: props.siteInformation.phone || '',
 		};
 	}
 
 	handleInputChange = ( { target: { name, value } } ) => {
-		if ( 'email' === name ) {
-			const isEmailValid = ! trim( value ) || EmailValidator.validate( trim( value ) );
-			return this.setState( {
-				[ name ]: value,
-				isEmailValid,
-				showEmailError: false,
-			} );
-		}
 		this.setState( { [ name ]: value } );
 	};
 
 	handleSubmit = event => {
 		event.preventDefault();
-		if ( ! this.state.isEmailValid ) {
-			return this.setState( {
-				showEmailError: true,
-			} );
+
+		const isEmailValid = this.validateEmail( this.state.email );
+		//Verify if phone number is valid
+		const numberClean = this.cleanNumber( this.state.phone ),
+			isPhoneError = this.validatePhone( numberClean ),
+			isPhoneValid = ! isPhoneError.error;
+
+		this.setState( { isEmailValid, isPhoneValid } );
+
+		if ( ! isEmailValid || ! isPhoneValid ) {
+			return;
 		}
+
 		this.props.submitStep( this.state );
 	};
 
+	cleanNumber( number ) {
+		return number.replace( CLEAN_REGEX, '' );
+	}
+
+	validatePhone( number ) {
+		return isEmpty( number ) || phoneValidation( number );
+	}
+
+	validateEmail( email ) {
+		return isEmpty( email ) || EmailValidator.validate( trim( email ) );
+	}
 	renderContent() {
 		const { translate, isBusinessSiteSelected, siteNameText } = this.props;
 
 		return (
 			<div className="site-information__wrapper">
 				<div className="site-information__form-wrapper ">
-					<form onSubmit={ this.handleSubmit }>
+					<form>
 						<Card>
 							<FormFieldset>
 								<FormLabel htmlFor="name">
@@ -122,10 +136,10 @@ class SiteInformation extends Component {
 											onChange={ this.handleInputChange }
 											value={ this.state.email }
 										/>
-										{ this.state.shouldShowEmailError && (
+										{ ! this.state.isEmailValid && (
 											<FormInputValidation
-												isError={ this.state.shouldShowEmailError }
-												text={ translate( 'Please provide a valid email address.' ) }
+												isError={ ! this.state.isEmailValid }
+												text={ translate( 'Please enter a valid email address.' ) }
 											/>
 										) }
 									</FormFieldset>
@@ -143,11 +157,17 @@ class SiteInformation extends Component {
 											onChange={ this.handleInputChange }
 											value={ this.state.phone }
 										/>
+										{ ! this.state.isPhoneValid && (
+											<FormInputValidation
+												isError={ ! this.state.isPhoneValid }
+												text={ translate( 'Please enter a valid phone number.' ) }
+											/>
+										) }
 									</FormFieldset>
 								</Fragment>
 							) }
 							<div className="site-information__submit-wrapper">
-								<Button primary={ true } type="submit">
+								<Button primary={ true } type="submit" onClick={ this.handleSubmit }>
 									{ translate( 'Continue' ) }
 								</Button>
 							</div>
