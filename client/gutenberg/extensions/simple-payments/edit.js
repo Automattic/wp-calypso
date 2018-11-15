@@ -37,8 +37,6 @@ import ProductPlaceholder from './product-placeholder';
 
 class SimplePaymentsEdit extends Component {
 	state = {
-		fieldPriceError: null,
-		fieldTitleError: null,
 		isSavingProduct: false,
 	};
 
@@ -184,7 +182,6 @@ class SimplePaymentsEdit extends Component {
 		this.props.errors[ input ] && this.props.touched[ `${ instanceId }-${ input }` ];
 
 	render() {
-		const { fieldPriceError, fieldTitleError } = this.state;
 		const {
 			attributes,
 			errors,
@@ -212,7 +209,7 @@ class SimplePaymentsEdit extends Component {
 			);
 		}
 
-		if ( ! isSelected && ! fieldPriceError && ! fieldTitleError && isValid && price && title ) {
+		if ( ! isSelected && isValid && price && title ) {
 			return (
 				<ProductPlaceholder
 					ariaBusy="false"
