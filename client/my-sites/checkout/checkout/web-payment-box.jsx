@@ -113,9 +113,18 @@ export function getWebPaymentMethodName( webPaymentMethod ) {
  */
 export class WebPaymentBox extends React.Component {
 	static propTypes = {
-		cart: PropTypes.object.isRequired,
-		transaction: PropTypes.object.isRequired,
-		transactionStep: PropTypes.object.isRequired,
+		cart: PropTypes.shape({
+			currency: PropTypes.string.isRequired,
+			total_cost: PropTypes.number.isRequired,
+			products: PropTypes.array.isRequired,
+		}).isRequired,
+		transaction: PropTypes.shape({
+			payment: PropTypes.object,
+		}).isRequired,
+		transactionStep: PropTypes.shape({
+			name: PropTypes.string.isRequired,
+			error: PropTypes.object,
+		}).isRequired,
 		countriesList: PropTypes.array.isRequired,
 		onSubmit: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -125,6 +134,11 @@ export class WebPaymentBox extends React.Component {
 		country: null,
 		postalCode: null,
 	};
+
+	constructor() {
+		super();
+		this.detectedPaymentMethod = detectWebPaymentMethod();
+	}
 
 	/**
 	 * @return {object} A dictionnary containing `default`, `disabled` and `text` keys.
@@ -403,7 +417,7 @@ export class WebPaymentBox extends React.Component {
 	};
 
 	render() {
-		const paymentMethod = detectWebPaymentMethod();
+		const paymentMethod = this.detectedPaymentMethod;
 		const { cart, translate, countriesList } = this.props;
 
 		if ( ! paymentMethod ) {
@@ -420,7 +434,7 @@ export class WebPaymentBox extends React.Component {
 					button = (
 						<button
 							type="submit"
-							onClick={ () => this.submit( paymentMethod ) }
+							onClick={ ( event ) => this.submit( paymentMethod, event ) }
 							disabled={ buttonDisabled }
 							className="web-payment-box__apple-pay-button"
 						/>
@@ -444,7 +458,7 @@ export class WebPaymentBox extends React.Component {
 					<Button
 						type="submit"
 						className="button is-primary button-pay pay-button__button"
-						onClick={ () => this.submit( paymentMethod ) }
+						onClick={ ( event ) => this.submit( paymentMethod, event ) }
 						busy={ buttonState.disabled }
 						disabled={ buttonDisabled }
 					>
@@ -484,7 +498,7 @@ export class WebPaymentBox extends React.Component {
 				<span className="payment-box__payment-buttons">
 					<span className="pay-button">
 						<span className="payment-request-button">{ button }</span>
-						<SubscriptionText cart={ this.props.cart } />
+						<SubscriptionText cart={ cart } />
 					</span>
 					<div className="checkout__secure-payment">
 						<div className="checkout__secure-payment-content">
