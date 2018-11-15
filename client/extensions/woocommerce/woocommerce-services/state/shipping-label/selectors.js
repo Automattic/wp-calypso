@@ -478,8 +478,9 @@ export const isAddressUsable = createSelector(
 		const { form } = getShippingLabel( appState, orderId, siteId );
 
 		const validatePhone = 'origin' === group && isCustomsFormRequired( appState, orderId, siteId );
+		const errors = getRawAddressErrors( appState, form[ group ], siteId, validatePhone );
 
-		return Object.keys( getRawAddressErrors( appState, form[ group ], siteId, validatePhone ) );
+		return 0 === Object.keys( errors ).length;
 	},
 	( state, orderId, group, siteId = getSelectedSiteId( state ) ) => [
 		getShippingLabel( state, orderId, siteId ).form[ group ],
