@@ -93,14 +93,14 @@ export function tokenFieldRules() {
 	return {
 		name: {
 			description: i18n.translate( 'Name on Card', {
-				context: 'Upgrades: Card holder name label on credit card form',
+				comment: 'Upgrades: Card holder name label on credit card form',
 			} ),
 			rules: [ 'required' ],
 		},
 
 		tokenized_payment_data: {
 			description: i18n.translate( 'Tokenized Payment Data', {
-				context: 'Upgrades: Tokenized payment data from the token provider',
+				comment: 'Upgrades: Tokenized payment data from the token provider',
 			} ),
 			rules: [ 'required' ],
 		},
