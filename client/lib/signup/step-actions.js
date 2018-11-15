@@ -106,7 +106,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 // We are experimenting making site topic a separate step from the survey.
 // Once we've decided to fully move away from the survey form, we can just keep the site topic here.
 function getSiteVertical( state ) {
-	return getSignupStepsSiteTopic( state ) || getSurveyVertical( state ).trim();
+	return ( getSignupStepsSiteTopic( state ) || getSurveyVertical( state ) ).trim();
 }
 
 export function createSiteWithCart(
