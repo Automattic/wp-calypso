@@ -1,7 +1,8 @@
 {
   "name": "color-studio",
   "version": "1.0.0-rc.1",
-  "main": "index.js",
+  "main": "dist/colors.json",
+  "style": "dist/colors.scss",
   "dependencies": {},
   "devDependencies": {
     "@skpm/builder": "^0.5.11",
@@ -29,22 +30,23 @@
     "xo": "^0.20.3"
   },
   "scripts": {
-    "build": "yarn palette:build && yarn studio:build && yarn sketch:build && yarn meta:build",
+    "build": "yarn palette:build && yarn docs:build && yarn sketch:build && yarn meta:build",
+    "docs": "yarn docs:build",
+    "docs:build": "webpack --display=errors-only",
+    "docs:watch": "webpack --watch",
     "lint": "xo",
+    "meta": "yarn meta:build",
     "meta:build": "yarn meta:build:preview",
     "meta:build:preview": "node builders/preview-from-docs",
     "palette": "yarn palette:build",
     "palette:build": "yarn palette:build:json && yarn palette:build:scss && yarn palette:build:sketch",
     "palette:build:json": "node builders/json > dist/colors.json",
-    "palette:build:scss": "node builders/scss-from-json > dist/_colors.scss",
+    "palette:build:scss": "node builders/scss-from-json > dist/colors.scss",
     "palette:build:sketch": "node builders/sketchpalette-from-json > dist/colors.sketchpalette",
     "precommit": "yarn lint && yarn build && git add --update",
     "sketch": "yarn sketch:build && skpm-link",
     "sketch:build": "skpm-build",
-    "sketch:watch": "yarn sketch:build --watch",
-    "studio": "yarn studio:build",
-    "studio:build": "webpack --display=errors-only",
-    "studio:watch": "webpack --watch"
+    "sketch:watch": "yarn sketch:build --watch"
   },
   "skpm": {
     "manifest": "extensions/sketch/manifest.json",
