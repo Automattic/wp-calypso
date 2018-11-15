@@ -42,6 +42,12 @@ class SiteTopicStep extends Component {
 		};
 	}
 
+	componentDidMount() {
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+		} );
+	}
+
 	onSiteTopicChange = value => {
 		this.setState( { siteTopicValue: value } );
 	};
