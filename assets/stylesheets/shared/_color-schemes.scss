@@ -67,11 +67,13 @@
 		--sidebar-gridicon-fill: #{$pink-800};
 		--sidebar-heading-color: #{$pink-800};
 		--sidebar-footer-button-color: #{$gray-darken-10};
-		--sidebar-menu-link-secondary-text-color: #{$gray-darken-20};
+		--sidebar-menu-link-secondary-text-color: #{$pink-800};
 		--sidebar-menu-a-first-child-after-background: #{hex-to-rgb( $gray-lighten-30 )};
 		--sidebar-menu-selected-background-color: #{$hot-blue-50};
 		--sidebar-menu-selected-a-color: var(--color-accent-dark);
 		--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $gray-text-min )};
+		--sidebar-menu-selected-button-border: #{$hot-blue-300};
+		--sidebar-menu-button-border-color: #{$pink-500};
 
 		--button-is-borderless-color: #{$gray-text-min};
 		--count-border-color: #{$gray};
