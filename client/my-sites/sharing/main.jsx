@@ -28,6 +28,11 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 
+/**
+ * Style Dependencies
+ */
+import './style.scss';
+
 export const Sharing = ( {
 	contentComponent,
 	path,
