@@ -3,16 +3,15 @@
 /**
  * External dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
+import { dispatch, withSelect } from '@wordpress/data';
 import { get, trimEnd } from 'lodash';
 import { InspectorControls } from '@wordpress/editor';
 import { sprintf } from '@wordpress/i18n';
-import { withSelect } from '@wordpress/data';
 import {
 	ExternalLink,
 	PanelBody,
@@ -69,7 +68,8 @@ class SimplePaymentsEdit extends Component {
 		}
 	}
 
-	attributesToPost = attributes => {
+	toApi() {
+		const { attributes } = this.props;
 		const { content, currency, email, multiple, price, title } = attributes;
 
 		return {
@@ -78,13 +78,13 @@ class SimplePaymentsEdit extends Component {
 			meta: {
 				spay_currency: currency,
 				spay_email: email,
-				spay_multiple: multiple ? 1 : 0,
+				spay_multiple: multiple,
 				spay_price: price,
 			},
 			status: 'publish',
 			title,
 		};
-	};
+	}
 
 	saveProduct() {
 		if ( this.state.isSavingProduct ) {
@@ -96,25 +96,20 @@ class SimplePaymentsEdit extends Component {
 		}
 
 		const { attributes, setAttributes } = this.props;
-		const { email, paymentId } = attributes;
+		const { email } = attributes;
+		const { saveEntityRecord } = dispatch( 'core' );
 
-		this.setState( { isSavingProduct: true }, () => {
-			apiFetch( {
-				path: `/wp/v2/${ SIMPLE_PAYMENTS_PRODUCT_POST_TYPE }/${ paymentId ? paymentId : '' }`,
-				method: 'POST',
-				data: this.attributesToPost( attributes ),
-			} )
-				.then( response => {
-					const { id } = response;
-
-					if ( id ) {
-						setAttributes( { paymentId: id } );
-					}
+		this.setState( { isSavingProduct: true }, async () => {
+			saveEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, this.toApi() )
+				.then( record => {
+					/* eslint-disable-next-line no-console */
+					console.error( 'Saved: %o', record );
+					setAttributes( { paymentId: record.id } );
 				} )
 				.catch( error => {
 					// @TODO: complete error handling
-					// eslint-disable-next-line
-					console.error( error );
+					/* eslint-disable-next-line no-console */
+					console.log( error );
 
 					const {
 						data: { key: apiErrorKey },
