@@ -452,7 +452,16 @@ const getPlanEcommerceDetails = () => ( {
 	getStoreAudience: () => i18n.translate( 'The plan for stores and small businesses' ),
 	getDescription: () => {
 		return i18n.translate(
-			'Sell products or services with this powerful, all-in-one online store experience. This plan includes premium integrations and is extendable, so it’ll grow with you as your business grows.'
+			'{{strong}}Best for Online Stores:{{/strong}} Sell products or services with this powerful, ' +
+				'all-in-one online store experience. This plan includes premium integrations and is extendable, ' +
+				'so it’ll grow with you as your business grows.',
+			{
+				components: {
+					strong: (
+						<strong className="plans__features plan-features__targeted-description-heading" />
+					),
+				},
+			}
 		);
 	},
 	getTagline: () =>
@@ -467,8 +476,8 @@ const getPlanEcommerceDetails = () => ( {
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_ACCEPT_PAYMENTS,
 			FEATURE_SHIPPING_CARRIERS,
-			FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 			FEATURE_UNLIMITED_STORAGE,
+			FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 			FEATURE_ECOMMERCE_MARKETING,
 			FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 			FEATURE_UPLOAD_THEMES_PLUGINS,

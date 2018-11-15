@@ -161,7 +161,13 @@ export class PlansFeaturesMain extends Component {
 
 		if ( ! withWPPlanTabs ) {
 			return plans.filter( plan =>
-				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ] )
+				isPlanOneOfType( plan, [
+					TYPE_FREE,
+					TYPE_PERSONAL,
+					TYPE_PREMIUM,
+					TYPE_BUSINESS,
+					TYPE_ECOMMERCE,
+				] )
 			);
 		}
 
@@ -172,7 +178,7 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		return plans.filter( plan =>
-			isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PREMIUM, TYPE_BUSINESS ] )
+			isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ] )
 		);
 	}
 
