@@ -257,5 +257,19 @@ module.exports = function() {
 
 	app.use( '/devdocs/service/selectors', selectors.router );
 
+	app.use( '/devdocs/service/examples', ( request, response ) => {
+		response.json( [
+			{
+				slug: 'button/disabled',
+			},
+		] );
+	} );
+
+	app.use( '/devdocs/service/example/:slug', ( request, response ) => {
+		response.json( {
+			slug: request.param( 'slug' ),
+		} );
+	} );
+
 	return app;
 };
