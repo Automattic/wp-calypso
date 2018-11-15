@@ -34,6 +34,7 @@ import {
 	loginUser,
 	resetAuthAccountType,
 } from 'state/login/actions';
+import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
 import { login } from 'lib/paths';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -268,12 +269,13 @@ export class LoginForm extends Component {
 		let signupUrl = config( 'signup_url' );
 
 		if ( isOauthLogin && config.isEnabled( 'signup/wpcc' ) ) {
-			signupUrl =
-				'/start/wpcc?' +
-				stringify( {
-					oauth2_client_id: oauth2Client.id,
-					oauth2_redirect: redirectTo,
-				} );
+			const oauth2Flow = isCrowdsignalOAuth2Client( oauth2Client ) ? 'crowdsignal' : 'wpcc';
+			const oauth2Params = {
+				oauth2_client_id: oauth2Client.id,
+				oauth2_redirect: redirectTo,
+			};
+
+			signupUrl = `/start/${ oauth2Flow }?${ stringify( oauth2Params ) }`;
 		}
 
 		return (
