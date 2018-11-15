@@ -28,7 +28,7 @@ import QueryPlans from 'components/data/query-plans';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
 import { planHasFeature } from '../../../lib/plans';
 
-class PlansStep extends Component {
+export class PlansStep extends Component {
 	componentDidMount() {
 		SignupActions.saveSignupStep( {
 			stepName: this.props.stepName,
