@@ -108,6 +108,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_VALUE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_ORIGIN_COUNTRY,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_USE_ADDRESS_AS_ENTERED,
 } from '../action-types.js';
 
 export const fetchLabelsData = ( orderId, siteId ) => dispatch => {
@@ -1181,4 +1182,15 @@ export const openDetailsDialog = ( orderId, siteId, labelId ) => {
 
 export const closeDetailsDialog = ( orderId, siteId ) => {
 	return { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG, orderId, siteId };
+};
+
+export const useAddressAsEntered = ( orderId, siteId, group ) => ( dispatch, getState ) => {
+	dispatch( {
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_USE_ADDRESS_AS_ENTERED,
+		siteId,
+		orderId,
+		group,
+	} );
+
+	tryGetLabelRates( orderId, siteId, dispatch, getState );
 };

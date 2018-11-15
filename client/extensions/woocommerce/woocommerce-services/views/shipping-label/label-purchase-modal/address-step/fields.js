@@ -8,14 +8,14 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { isEqual, isObject, size } from 'lodash';
+import { isEqual, isObject, size, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import Notice from 'components/notice';
-import StepConfirmationButton from '../step-confirmation-button';
+import FormButton from 'components/forms/form-button';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import AddressSuggestion from './suggestion';
@@ -28,11 +28,13 @@ import {
 	editUnverifiableAddress,
 	updateAddressValue,
 	submitAddressForNormalization,
+	useAddressAsEntered,
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
 	getShippingLabel,
 	isLoaded,
 	getFormErrors,
+	getFormEmptyFields,
 	getOriginCountryNames,
 	getDestinationCountryNames,
 	getStateNames,
@@ -53,6 +55,7 @@ const AddressFields = props => {
 		countryNames,
 		stateNames,
 		errors,
+		emptyFields,
 		translate,
 	} = props;
 
@@ -107,6 +110,9 @@ const AddressFields = props => {
 		props.updateAddressValue( orderId, siteId, group, fieldName, newValue );
 	const submitAddressForNormalizationHandler = () =>
 		props.submitAddressForNormalization( orderId, siteId, group );
+	const useAddressAsEnteredHandler = () => props.useAddressAsEntered( orderId, siteId, group );
+	// const useAddressAsEnteredHandler = () =>
+	// props.confirmAddressSuggestion( orderId, siteId, group );
 
 	return (
 		<div>
@@ -203,12 +209,25 @@ const AddressFields = props => {
 				updateValue={ updateValue( 'country' ) }
 				error={ fieldErrors.country || generalErrorOnly }
 			/>
-			<StepConfirmationButton
-				disabled={ hasNonEmptyLeaves( errors ) || normalizationInProgress }
-				onClick={ submitAddressForNormalizationHandler }
-			>
-				{ translate( 'Verify address' ) }
-			</StepConfirmationButton>
+
+			<div className="address-step__unverifiable-actions step-confirmation-button">
+				<FormButton
+					type="button"
+					disabled={ hasNonEmptyLeaves( errors ) || normalizationInProgress }
+					onClick={ submitAddressForNormalizationHandler }
+				>
+					{ translate( 'Verify address' ) }
+				</FormButton>
+
+				<FormButton
+					type="button"
+					isPrimary={ false }
+					disabled={ ! isEmpty( emptyFields ) }
+					onClick={ useAddressAsEnteredHandler }
+				>
+					{ translate( 'Use address as entered' ) }
+				</FormButton>
+			</div>
 		</div>
 	);
 };
@@ -247,6 +266,7 @@ const mapStateToProps = ( state, { group, orderId, siteId } ) => {
 	return {
 		...formData,
 		errors: loaded && getFormErrors( state, orderId, siteId )[ group ],
+		emptyFields: loaded && getFormEmptyFields( state, orderId, group, siteId ),
 		countryNames,
 		stateNames: getStateNames( state, formData.values.country, siteId ),
 	};
@@ -261,6 +281,7 @@ const mapDispatchToProps = dispatch => {
 			editUnverifiableAddress,
 			updateAddressValue,
 			submitAddressForNormalization,
+			useAddressAsEntered,
 		},
 		dispatch
 	);
