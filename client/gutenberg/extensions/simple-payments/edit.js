@@ -388,7 +388,9 @@ const validate = ( { currency, email, price, title } ) => {
 	} else if ( decimalPlaces( price ) > precision ) {
 		errors.price =
 			precision === 0
-				? __( 'We know every penny counts, but prices can’t contain decimal values.' )
+				? __(
+						'We know every penny counts, but prices in this currency can’t contain decimal values.'
+				  )
 				: sprintf(
 						_n(
 							'The price cannot have more than %d decimal place.',
