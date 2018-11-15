@@ -16,20 +16,20 @@
 Color Studio generates the following:
 
 * [Online documentation][docs-index] with contrast ratios and click-to-copy hex values.
-* [Stylesheet partial][dist-scss] with all colors defined as SCSS variables that can be [imported](#usage-in-projects) inside any project.
+* [Stylesheet partial][dist-scss] with all colors defined as SCSS variables that can be [imported](#scss) inside any project.
 * [Sketch palette file][dist-sketchpalette] that can be imported using the [Sketch Palettes](https://github.com/andrewfiorillo/sketch-palettes) plugin.
 * [Custom color tester][docs-custom] that runs Color Studio’s formula against any specified value.
 
 Also:
 
-* [JSON file][dist-json] with all the color values for [further use](#usage-in-projects).
+* [JSON file][dist-json] with all the color values for [further use](#javascript).
 * The preview image below and [extensions][dist-extensions].
 
 ## The Palette
 
 [![Color palette preview][dist-preview]][docs-index]
 
-## Usage in Projects
+## Using Color Studio as a Dependency
 
 ```sh
 yarn add automattic/color-studio
