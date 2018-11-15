@@ -26,6 +26,7 @@ import trimEnd from 'lodash/trimEnd';
 /**
  * Internal dependencies
  */
+import { decimalPlaces, formatPrice } from 'lib/simple-payments/utils';
 import { getCurrencyDefaults } from 'lib/format-currency/currencies';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
@@ -132,15 +133,6 @@ class SimplePaymentsEdit extends Component {
 		} );
 	}
 
-	// based on https://stackoverflow.com/a/10454560/59752
-	decimalPlaces = number => {
-		const match = ( '' + number ).match( /(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/ );
-		if ( ! match ) {
-			return 0;
-		}
-		return Math.max( 0, ( match[ 1 ] ? match[ 1 ].length : 0 ) - ( match[ 2 ] ? +match[ 2 ] : 0 ) );
-	};
-
 	validateAttributes = () => {
 		const isPriceValid = this.validatePrice();
 		const isTitleValid = this.validateTitle();
@@ -197,7 +189,7 @@ class SimplePaymentsEdit extends Component {
 			return false;
 		}
 
-		if ( this.decimalPlaces( price ) > precision ) {
+		if ( decimalPlaces( price ) > precision ) {
 			if ( precision === 0 ) {
 				this.setState( {
 					fieldPriceError: __(
@@ -316,13 +308,6 @@ class SimplePaymentsEdit extends Component {
 		this.setState( { fieldTitleError: null } );
 	};
 
-	formatPrice = ( price, currency, withSymbol = true ) => {
-		const { precision, symbol } = getCurrencyDefaults( currency );
-		const value = price.toFixed( precision );
-		// Trim the dot at the end of symbol, e.g., 'kr.' becomes 'kr'
-		return withSymbol ? `${ value } ${ trimEnd( symbol, '.' ) }` : value;
-	};
-
 	getCurrencyList = SUPPORTED_CURRENCY_LIST.map( value => {
 		const { symbol } = getCurrencyDefaults( value );
 		// if symbol is equal to the code (e.g., 'CHF' === 'CHF'), don't duplicate it.
@@ -362,7 +347,7 @@ class SimplePaymentsEdit extends Component {
 				<ProductPlaceholder
 					ariaBusy="false"
 					content={ content }
-					formattedPrice={ this.formatPrice( price, currency ) }
+					formattedPrice={ formatPrice( price, currency ) }
 					multiple={ multiple }
 					title={ title }
 				/>
@@ -423,7 +408,7 @@ class SimplePaymentsEdit extends Component {
 							} ) }
 							label={ __( 'Price' ) }
 							onChange={ this.handlePriceChange }
-							placeholder={ this.formatPrice( 0, currency, false ) }
+							placeholder={ formatPrice( 0, currency, false ) }
 							required
 							step="1"
 							type="number"
