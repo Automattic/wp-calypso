@@ -99,7 +99,8 @@ function createColorSymbol(parent, colorObject, colorStyle, rowIndex = 0, column
     parent: empty(colorArtboard),
     name: 'bg',
     frame: new Rectangle(0, 0, SWATCH_WIDTH, SWATCH_HEIGHT),
-    sharedStyleId: colorStyle.id
+    sharedStyleId: colorStyle.id,
+    locked: true
   })
 
   colorFill.style.syncWithSharedStyle(colorStyle)

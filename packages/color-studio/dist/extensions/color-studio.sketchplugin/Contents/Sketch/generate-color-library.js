@@ -213,7 +213,8 @@ function createColorSymbol(parent, colorObject, colorStyle) {
     parent: empty(colorArtboard),
     name: 'bg',
     frame: new Rectangle(0, 0, SWATCH_WIDTH, SWATCH_HEIGHT),
-    sharedStyleId: colorStyle.id
+    sharedStyleId: colorStyle.id,
+    locked: true
   });
   colorFill.style.syncWithSharedStyle(colorStyle);
   return SymbolMaster.fromArtboard(colorArtboard);
