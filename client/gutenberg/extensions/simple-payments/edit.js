@@ -193,7 +193,7 @@ class SimplePaymentsEdit extends Component {
 			if ( precision === 0 ) {
 				this.setState( {
 					fieldPriceError: __(
-						'We know every penny counts, but prices can’t contain decimal values.'
+						'We know every penny counts, but prices in this currency can’t contain decimal values.'
 					),
 				} );
 				return false;
