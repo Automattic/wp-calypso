@@ -55,15 +55,10 @@ const PublicizePanel = ( { connections, refreshConnections } ) => (
 );
 
 export default compose( [
-	withSelect( select => {
-		const postId = select( 'core/editor' ).getCurrentPostId();
-
-		return {
-			connections: select( 'jetpack/publicize' ).getConnections( postId ),
-			postId,
-		};
-	} ),
-	withDispatch( ( dispatch, { postId } ) => ( {
-		refreshConnections: () => dispatch( 'jetpack/publicize' ).refreshConnections( postId ),
+	withSelect( select => ( {
+		connections: select( 'core/editor' ).getEditedPostAttribute( 'jetpack_publicize_connections' ),
+	} ) ),
+	withDispatch( dispatch => ( {
+		refreshConnections: dispatch( 'core/editor' ).refreshPost,
 	} ) ),
 ] )( PublicizePanel );
