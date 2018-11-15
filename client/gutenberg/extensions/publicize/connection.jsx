@@ -14,24 +14,13 @@ import { Component } from '@wordpress/element';
 import { FormToggle } from '@wordpress/components';
 
 class PublicizeConnection extends Component {
-	/**
-	 * Handler for when connection is enabled/disabled.
-	 *
-	 * Calls parent's change handler in this.prop so
-	 * state change can be handled by parent.
-	 */
 	onConnectionChange = () => {
 		const { id } = this.props.connectionData;
-		const { connectionChange, connectionOn } = this.props;
-		connectionChange( {
-			connectionID: id,
-			shouldShare: ! connectionOn,
-		} );
+		this.props.toggleConnection( id );
 	};
 
 	render() {
-		const { service_name: name, toggleable, display_name, id } = this.props.connectionData;
-		const { connectionOn } = this.props;
+		const { display_name, enabled, id, service_name: name, toggleable } = this.props.connectionData;
 		const fieldId = 'connection-' + name + '-' + id;
 		// Genericon names are dash separated
 		const socialName = name.replace( '_', '-' );
@@ -50,7 +39,7 @@ class PublicizeConnection extends Component {
 					<FormToggle
 						id={ fieldId }
 						className="jetpack-publicize-connection-toggle"
-						checked={ connectionOn }
+						checked={ enabled }
 						onChange={ this.onConnectionChange }
 						disabled={ ! toggleable }
 					/>
