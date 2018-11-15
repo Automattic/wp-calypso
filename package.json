@@ -275,6 +275,7 @@
   "devDependencies": {
     "@babel/plugin-transform-react-jsx": "7.1.6",
     "@wordpress/babel-plugin-makepot": "2.1.2",
+    "@automattic/babel-plugin-i18n-calypso": "file:packages/babel-plugin-i18n-calypso",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
     "babel-jest": "23.6.0",

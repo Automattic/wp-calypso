@@ -60,6 +60,7 @@ const config = {
 						output: 'gutenberg-strings.pot',
 					},
 				],
+				[ '@automattic/babel-plugin-i18n-calypso', {} ]
 			],
 		},
 		test: {
