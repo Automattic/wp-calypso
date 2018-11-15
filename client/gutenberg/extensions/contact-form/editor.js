@@ -31,6 +31,34 @@ registerBlockType( 'jetpack/contact-form', {
 	supports: {
 		html: false,
 	},
+	transforms: {
+		from: [
+			{
+				type: 'shortcode',
+				tag: 'contact-form',
+				attributes: {
+					subject: {
+						type: 'string',
+						shortcode: function( attr ) {
+							return attr.named.subject ? attr.named.subject : '';
+						},
+					},
+					to: {
+						type: 'string',
+						shortcode: function( attr ) {
+							return attr.named.to ? attr.named.to : '';
+						},
+					},
+					submit_button_text: {
+						type: 'string',
+						shortcode: function( attr ) {
+							return attr.named.submit_button_text ? attr.named.submit_button_text : '';
+						},
+					},
+				}
+			}
+		]
+	},
 	attributes: {
 		subject: {
 			type: 'string',
@@ -187,6 +215,12 @@ registerBlockType( 'jetpack/field-text', {
 	description: __( 'When you need just a small amount of text, add a text input.' ),
 	icon: renderSVG( <Path d="M4 9h16v2H4V9zm0 4h10v2H4v-2z" /> ),
 	edit: editField( 'text' ),
+	transforms: {
+		to: FieldDefaults.transforms.to,
+		form: {
+			// do your magic
+		}
+	}
 } );
 
 registerBlockType( 'jetpack/field-name', {
