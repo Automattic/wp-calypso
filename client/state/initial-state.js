@@ -5,7 +5,7 @@
  */
 
 import debugModule from 'debug';
-import { map, pick, throttle } from 'lodash';
+import { get, map, pick, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -79,33 +79,54 @@ function shouldAddSympathy() {
 	return false;
 }
 
+// This check is most important to do on save (to prevent bad data
+// from being written to local storage in the first place). But it
+// is worth doing also on load, to prevent using historical
+// bad state data (from before this check was added) or any other
+// scenario where state data may have been stored without this
+// check being performed.
+function verifyStoredState( state ) {
+	const currentUserId = get( user.get(), 'ID', null );
+	const storedUserId = get( state, [ 'currentUser', 'id' ], null );
+
+	if ( currentUserId !== storedUserId ) {
+		debug( `current user ID=${ currentUserId } and state user ID=${ storedUserId } don't match` );
+		return false;
+	}
+
+	return true;
+}
+
+function verifyStateTimestamp( state ) {
+	return state._timestamp && state._timestamp + MAX_AGE > Date.now();
+}
+
 function getStateFromLocalStorage() {
 	const reduxStateKey = getReduxStateKey();
-	return localforage.getItem( reduxStateKey ).then( function( initialState ) {
-		debug( 'fetched initial state', initialState );
-		if ( initialState === null ) {
-			debug( 'no initial state found in localforage' );
-			return {};
+	return localforage.getItem( reduxStateKey ).then( function( storedState ) {
+		debug( 'fetched stored Redux state from localforage', storedState );
+		if ( storedState === null ) {
+			debug( 'stored Redux state not found in localforage' );
+			return null;
 		}
-		if ( initialState._timestamp && initialState._timestamp + MAX_AGE < Date.now() ) {
-			debug( 'stored state is too old, building redux store from scratch' );
-			return {};
+
+		if ( ! verifyStateTimestamp( storedState ) ) {
+			debug( 'stored Redux state is too old, dropping' );
+			return null;
 		}
-		const deserializedState = deserialize( initialState, initialReducer );
-		// This check is most important to do on save (to prevent bad data
-		// from being written to local storage in the first place). But it
-		// is worth doing here also, on load, to prevent using historical
-		// bad state data (from before this check was added) or any other
-		// scenario where state data may have been stored without this
-		// check being performed.
-		if ( ! isValidReduxKeyAndState( reduxStateKey, deserializedState ) ) {
-			debug(
-				'stored state is invalid (storage key "' +
-					reduxStateKey +
-					'" does not match the state), building redux store from scratch'
-			);
-			return {};
+
+		const deserializedState = deserialize( storedState, initialReducer );
+
+		if ( ! deserializedState ) {
+			debug( 'stored Redux state failed to deserialize, dropping' );
+			return null;
 		}
+
+		if ( ! verifyStoredState( deserializedState ) ) {
+			debug( 'stored Redux state has invalid currentUser.id, dropping' );
+			return null;
+		}
+
 		return deserializedState;
 	} );
 }
