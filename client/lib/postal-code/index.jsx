@@ -101,3 +101,21 @@ export function tryToGuessPostalCodeFormat( postalCode, countryCode ) {
 
 	return postalCode;
 }
+
+export const postalCodePatterns = {
+	US: /^\d{5}$/,
+};
+
+export function isValidPostalCode( postalCode, countryCode = 'US' ) {
+	// TODO - every other country
+	if ( ! postalCode ) {
+		return false;
+	}
+
+	const pattern = postalCodePatterns[ countryCode ];
+	if ( ! pattern ) {
+		return true;
+	}
+
+	return pattern.test( postalCode );
+}
