@@ -144,7 +144,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	optIn: ( siteId, gutenbergUrl ) => {
+	switchToGutenberg: ( siteId, gutenbergUrl ) => {
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
