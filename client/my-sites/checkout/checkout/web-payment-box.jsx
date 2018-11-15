@@ -143,7 +143,7 @@ export class WebPaymentBox extends React.Component {
 	/**
 	 * @return {object} A dictionnary containing `default`, `disabled` and `text` keys.
 	 */
-	buttonState = () => {
+	getButtonState = () => {
 		const { transactionStep, translate } = this.props;
 
 		const defaultState = () => {
@@ -424,7 +424,7 @@ export class WebPaymentBox extends React.Component {
 			return null;
 		}
 
-		const buttonState = this.buttonState();
+		const buttonState = this.getButtonState();
 		const buttonDisabled = buttonState.disabled || ! this.state.country || ! this.state.postalCode;
 		let button;
 
