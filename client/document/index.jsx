@@ -89,6 +89,7 @@ class Document extends React.Component {
 					faviconURL={ faviconURL }
 					cdn={ '//s1.wp.com' }
 					branchName={ branchName }
+					inlineScriptNonce={ inlineScriptNonce }
 				>
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />
