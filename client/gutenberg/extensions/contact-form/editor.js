@@ -55,9 +55,9 @@ registerBlockType( 'jetpack/contact-form', {
 							return attr.named.submit_button_text ? attr.named.submit_button_text : '';
 						},
 					},
-				}
-			}
-		]
+				},
+			},
+		],
 	},
 	attributes: {
 		subject: {
@@ -217,10 +217,30 @@ registerBlockType( 'jetpack/field-text', {
 	edit: editField( 'text' ),
 	transforms: {
 		to: FieldDefaults.transforms.to,
-		form: {
-			// do your magic
-		}
-	}
+		from: [
+			// This is an array of objects, which should be possible to copy/paste to
+			// represent multiple blocks/fields. Better start with a simple one first.
+			// As of now, I have not run `npm run sdk gutenberg [...]` or tested
+			// anything, just followed the guide at
+			// https://wordpress.org/gutenberg/handbook/block-api/#transforms-optional
+			{
+				type: 'block',
+				blocks: [ 'jetpack/field-email' ],
+				attributes: {
+					label: {
+						type: 'string',
+						source: 'attribute',
+						attribute: 'label',
+					},
+					required: {
+						type: 'boolean',
+						source: 'attribute',
+						attribute: 'label',
+					},
+				},
+			},
+		],
+	},
 } );
 
 registerBlockType( 'jetpack/field-name', {
