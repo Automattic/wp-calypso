@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import { noop, every, flow, has, defer, get, trim, sortBy, reverse } from 'lodash';
 import url from 'url';
 import moment from 'moment';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -18,11 +19,7 @@ import moment from 'moment';
 import wpLib from 'lib/wp';
 import config from 'config';
 import { validateImportUrl } from 'lib/importers/url-validation';
-
-const wpcom = wpLib.undocumented();
-
 import { toApi, fromApi } from 'lib/importer/common';
-
 import {
 	mapAuthor,
 	startMappingAuthors,
@@ -30,18 +27,20 @@ import {
 	createFinishUploadAction,
 } from 'lib/importer/actions';
 import user from 'lib/user';
-
 import { appStates } from 'state/imports/constants';
 import Button from 'components/forms/form-button';
 import ErrorPane from '../error-pane';
 import TextInput from 'components/forms/form-text-input';
 import FormSelect from 'components/forms/form-select';
-
 import SiteImporterSitePreview from './site-importer-site-preview';
-
 import { prefetchmShotsPreview } from './site-preview-actions';
-
 import { recordTracksEvent } from 'state/analytics/actions';
+
+/**
+ * Module variables
+ */
+const debug = debugFactory( 'calypso:site-importer:input-pane' );
+const wpcom = wpLib.undocumented();
 
 const NO_ERROR_STATE = {
 	error: false,
@@ -375,6 +374,8 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	render() {
+		debug( { importStage: this.state.importStage } );
+
 		return (
 			<div className="site-importer__site-importer-pane">
 				{ this.state.importStage === 'idle' && (
