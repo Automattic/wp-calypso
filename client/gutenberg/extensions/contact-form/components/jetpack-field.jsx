@@ -38,8 +38,9 @@ function JetpackField( {
 						/>
 					}
 					placeholder={ placeholder }
-					value={ defaultValue }
-					disabled
+					value={ placeholder }
+					onChange={ value => setAttributes( { placeholder: value } ) }
+					title={ __( 'Set the placeholder text' ) }
 				/>
 			</div>
 			<InspectorControls>
@@ -49,12 +50,6 @@ function JetpackField( {
 						value={ defaultValue }
 						onChange={ value => setAttributes( { defaultValue: value } ) }
 					/>
-					<TextControl
-						label={ __( 'Placeholder' ) }
-						value={ placeholder }
-						onChange={ value => setAttributes( { placeholder: value } ) }
-					/>
-
 					<TextControl
 						label={ __( 'ID' ) }
 						value={ id }
