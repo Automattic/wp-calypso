@@ -198,6 +198,28 @@ class InlineHelpPopover extends Component {
 	}
 }
 
+const optOut = siteId => {
+	return withAnalytics(
+		composeAnalytics(
+			recordGoogleEvent(
+				'Gutenberg Opt-Out',
+				'Clicked "Switch to the classic editor" in the help popover.',
+				'Opt-In',
+				false
+			),
+			recordTracksEvent( 'calypso_gutenberg_opt_in', {
+				opt_in: false,
+			} ),
+			bumpStat( 'gutenberg-opt-in', 'Calypso Help Opt Out' )
+		),
+		setSelectedEditor( siteId, 'classic' )
+	);
+};
+
+const redirect = classicUrl => {
+	return navigate( classicUrl );
+};
+
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
@@ -213,35 +235,13 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
-	return {
-		optOut: siteId => {
-			dispatch(
-				withAnalytics(
-					composeAnalytics(
-						recordGoogleEvent(
-							'Gutenberg Opt-Out',
-							'Clicked "Switch to the classic editor" in the help popover.',
-							'Opt-In',
-							false
-						),
-						recordTracksEvent( 'calypso_gutenberg_opt_in', {
-							opt_in: false,
-						} ),
-						bumpStat( 'gutenberg-opt-in', 'Calypso Help Opt Out' )
-					),
-					setSelectedEditor( siteId, 'classic' )
-				)
-			);
-		},
-		recordTracksEvent,
-		selectResult,
-		resetContactForm: resetInlineHelpContactForm,
-		redirect: classicUrl => {
-			dispatch( navigate( classicUrl ) );
-		},
-	};
-}
+const mapDispatchToProps = {
+	optOut,
+	recordTracksEvent,
+	selectResult,
+	resetContactForm: resetInlineHelpContactForm,
+	redirect,
+};
 
 export default connect(
 	mapStateToProps,
