@@ -603,7 +603,7 @@ export default connect(
 			siteGoals: getSiteGoals( state ),
 			siteTopic: getSurveyVertical( state ),
 			userExperience: getUserExperience( state ),
-			siteType: siteType,
+			siteType,
 			isLoggedIn: isUserLoggedIn( state ),
 			shouldHideSiteGoals:
 				'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
