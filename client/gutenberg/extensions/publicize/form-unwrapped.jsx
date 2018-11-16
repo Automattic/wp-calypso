@@ -75,7 +75,6 @@ class PublicizeFormUnwrapped extends Component {
 					<textarea
 						value={ shareMessage }
 						onChange={ messageChange }
-						placeholder={ __( 'Publicize + Gutenberg :)' ) }
 						disabled={ this.isDisabled() }
 						maxLength={ MAXIMUM_MESSAGE_LENGTH }
 					/>
