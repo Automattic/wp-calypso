@@ -19,6 +19,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import SuggestionSearch from 'components/suggestion-search';
 import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
 import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import SignupActions from 'lib/signup/actions';
 import { hints } from 'lib/signup/hint-data';
 
@@ -31,6 +32,7 @@ class SiteTopicStep extends Component {
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		siteTopic: PropTypes.string,
+		siteType: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -60,35 +62,63 @@ class SiteTopicStep extends Component {
 
 	trimedSiteTopicValue = () => this.state.siteTopicValue.trim();
 
-	renderContent() {
-		const { translate } = this.props;
+	renderContent( topicLabel, placeholder ) {
 		const currentSiteTopic = this.trimedSiteTopicValue();
 
 		return (
 			<Card className="site-topic__content">
 				<form onSubmit={ this.onSubmit }>
 					<FormFieldset>
-						<FormLabel htmlFor="siteTopic">{ translate( 'Type of Business' ) }</FormLabel>
+						<FormLabel htmlFor="siteTopic">{ topicLabel }</FormLabel>
 						<SuggestionSearch
 							id="siteTopic"
-							placeholder={ translate( 'e.g. Fashion, travel, design, plumber, electrician' ) }
+							placeholder={ placeholder }
 							onChange={ this.onSiteTopicChange }
 							suggestions={ Object.values( hints ) }
 							value={ currentSiteTopic }
 						/>
 					</FormFieldset>
 					<Button type="submit" disabled={ ! currentSiteTopic } primary>
-						{ translate( 'Continue' ) }
+						{ this.props.translate( 'Continue' ) }
 					</Button>
 				</form>
 			</Card>
 		);
 	}
 
+	getTextFromSiteType() {
+		const packText = ( headerText, subHeaderText, topicLabel, placeholder ) => ( {
+			headerText,
+			subHeaderText,
+			topicLabel,
+			placeholder,
+		} );
+		const { siteType, translate } = this.props;
+
+		// once we have more granular copies per segments, these two should only be used for the default case.
+		const commonPlaceholder = translate( 'e.g. Fashion, travel, design, plumber, electrician' );
+		const commonSubHeaderText = translate( "Don't stress, you can change this later." );
+
+		switch ( siteType ) {
+			case 'Business':
+				return packText(
+					translate( 'Search for your type of business.' ),
+					commonSubHeaderText,
+					translate( 'Type of Business' ),
+					commonPlaceholder
+				);
+			default:
+				return packText(
+					translate( 'What will your site be about?' ),
+					commonSubHeaderText,
+					translate( 'Type of Site' ),
+					commonPlaceholder
+				);
+		}
+	}
+
 	render() {
-		const { translate } = this.props;
-		const headerText = translate( 'Search for your type of business.' );
-		const subHeaderText = translate( "Don't stress, you can change this later." );
+		const { headerText, subHeaderText, topicLabel, placeholder } = this.getTextFromSiteType();
 
 		return (
 			<div>
@@ -101,7 +131,7 @@ class SiteTopicStep extends Component {
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ subHeaderText }
 					signupProgress={ this.props.signupProgress }
-					stepContent={ this.renderContent() }
+					stepContent={ this.renderContent( topicLabel, placeholder ) }
 				/>
 			</div>
 		);
@@ -133,6 +163,7 @@ export default localize(
 	connect(
 		state => ( {
 			siteTopic: getSignupStepsSiteTopic( state ),
+			siteType: getSiteType( state ),
 		} ),
 		mapDispatchToProps
 	)( SiteTopicStep )
