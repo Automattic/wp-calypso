@@ -8,6 +8,7 @@ jest.mock( 'lib/analytics', () => ( {
 
 jest.mock( 'lib/signup/actions', () => ( {
 	submitSignupStep: jest.fn(),
+	saveSignupStep: jest.fn(),
 } ) );
 
 jest.mock( 'lib/cart-values', () => ( {
@@ -31,6 +32,7 @@ jest.mock( 'i18n-calypso', () => ( {
 		/>
 	),
 	numberFormat: x => x,
+	translate: x => x,
 } ) );
 
 import analytics from 'lib/analytics';
@@ -47,7 +49,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { PlansAtomicStoreStep } from '../index';
+import { PlansStep } from '../index';
 import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE,
@@ -79,19 +81,20 @@ const props = {
 	goToNextStep: function() {},
 };
 
-describe( 'PlansAtomicStoreStep basic tests', () => {
+describe( 'Plans basic tests', () => {
 	test( 'should not blow up and have proper CSS class', () => {
-		const comp = shallow( <PlansAtomicStoreStep { ...props } /> );
+		const comp = shallow( <PlansStep { ...props } /> );
 		expect( comp.find( '.plans-step' ).length ).toBe( 1 );
 	} );
 } );
 
-describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
+describe( 'Plans.onSelectPlan', () => {
 	const tplProps = {
 		...props,
 		signupDependencies: {
 			...props.signupDependencies,
 		},
+		flowName: 'ecommerce',
 		designType: 'store',
 	};
 
@@ -100,7 +103,7 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 			...tplProps,
 			goToNextStep: jest.fn(),
 		};
-		const comp = new PlansAtomicStoreStep( myProps );
+		const comp = new PlansStep( myProps );
 		comp.onSelectPlan( { product_slug: PLAN_FREE } );
 		expect( myProps.goToNextStep ).toBeCalled();
 	} );
@@ -108,7 +111,7 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 	test( 'Should call submitSignupStep with step details', () => {
 		SignupActions.submitSignupStep.mockReset();
 
-		const comp = new PlansAtomicStoreStep( tplProps );
+		const comp = new PlansStep( tplProps );
 		const cartItem = { product_slug: PLAN_FREE };
 		comp.onSelectPlan( cartItem );
 		expect( SignupActions.submitSignupStep ).toBeCalled();
@@ -132,7 +135,7 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 		};
 		SignupActions.submitSignupStep.mockReset();
 
-		const comp = new PlansAtomicStoreStep( myProps );
+		const comp = new PlansStep( myProps );
 		const cartItem = { product_slug: PLAN_FREE };
 		comp.onSelectPlan( cartItem );
 		expect( SignupActions.submitSignupStep ).toBeCalled();
@@ -145,7 +148,7 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 	test( 'Should call submitSignupStep with correct providedDependencies', () => {
 		SignupActions.submitSignupStep.mockReset();
 
-		const comp = new PlansAtomicStoreStep( tplProps );
+		const comp = new PlansStep( tplProps );
 		const cartItem = { product_slug: PLAN_FREE };
 		comp.onSelectPlan( cartItem );
 		expect( SignupActions.submitSignupStep ).toBeCalled();
@@ -169,7 +172,7 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 
 		SignupActions.submitSignupStep.mockReset();
 
-		const comp = new PlansAtomicStoreStep( myProps );
+		const comp = new PlansStep( myProps );
 		const cartItem = { product_slug: PLAN_FREE };
 		comp.onSelectPlan( cartItem );
 
@@ -184,7 +187,7 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 	test( 'Should call recordEvent when cartItem is specified', () => {
 		analytics.tracks.recordEvent.mockReset();
 
-		const comp = new PlansAtomicStoreStep( tplProps );
+		const comp = new PlansStep( tplProps );
 		const cartItem = { product_slug: PLAN_FREE, free_trial: false };
 		comp.onSelectPlan( cartItem );
 
@@ -213,12 +216,33 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 				goToNextStep: jest.fn(),
 			};
 			const cartItem = { product_slug: plan };
-			const comp = new PlansAtomicStoreStep( myProps );
+			const comp = new PlansStep( myProps );
 			comp.onSelectPlan( cartItem );
 			expect( myProps.goToNextStep ).toBeCalled();
 			expect( cartItem.extra ).toEqual( {
 				is_store_signup: true,
 			} );
+		} );
+	} );
+
+	[
+		PLAN_BUSINESS_MONTHLY,
+		PLAN_BUSINESS,
+		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
+	].forEach( plan => {
+		test( `Should not add is_store_signup to cartItem.extra when flowName is different than 'ecommerce' (${ plan })`, () => {
+			const myProps = {
+				...tplProps,
+				flowName: 'signup',
+				goToNextStep: jest.fn(),
+			};
+			const cartItem = { product_slug: plan };
+			const comp = new PlansStep( myProps );
+			comp.onSelectPlan( cartItem );
+			expect( myProps.goToNextStep ).toBeCalled();
+			expect( cartItem.extra ).toEqual( undefined );
 		} );
 	} );
 
@@ -231,7 +255,7 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 			},
 		};
 		const cartItem = { product_slug: PLAN_FREE };
-		const comp = new PlansAtomicStoreStep( myProps );
+		const comp = new PlansStep( myProps );
 		comp.onSelectPlan( cartItem );
 		expect( cartItem.extra ).toEqual( undefined );
 	} );
@@ -252,7 +276,7 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 	].forEach( plan => {
 		test( `Should not add is_store_signup to cartItem.extra when processing non-wp.com non-business plan (${ plan })`, () => {
 			const cartItem = { product_slug: plan };
-			const comp = new PlansAtomicStoreStep( tplProps );
+			const comp = new PlansStep( tplProps );
 			comp.onSelectPlan( cartItem );
 			expect( cartItem.extra ).toEqual( undefined );
 		} );

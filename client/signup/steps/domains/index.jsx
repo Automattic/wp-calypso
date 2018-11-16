@@ -353,6 +353,7 @@ class DomainsStep extends React.Component {
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ abtest( 'krackenRebootM33' ) }
+				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 			/>
 		);
 	};
