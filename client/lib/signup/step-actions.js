@@ -14,7 +14,7 @@ import wpcom from 'lib/wp';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
 const user = userFactory();
-import { abtest, getSavedVariations } from 'lib/abtest';
+import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
 import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
@@ -153,11 +153,11 @@ export function createSiteWithCart(
 	if ( importingFromUrl ) {
 		newSiteParams.blog_name = importingFromUrl;
 		newSiteParams.find_available_url = true;
-		newSiteParams.public = -1;
+		newSiteParams.public = 1;
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
-		newSiteParams.public = abtest( 'privateByDefault' ) === 'private' ? -1 : 1;
+		newSiteParams.public = 1;
 	}
 
 	wpcom.undocumented().sitesNew( newSiteParams, function( error, response ) {
