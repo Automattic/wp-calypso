@@ -1,25 +1,77 @@
 // Mockup wrap
 .site-mockup__wrap {
 	margin: auto;
-	padding: 16px;
-	position: relative;
-	transition: bottom 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-	max-width: 1200px;
+	padding: 0 16px;
+	position: fixed;
+		top: 400px;
+		right: 0;
+		bottom: 0;
+		left: 0;
 	background: rgba( yellow, 0.2 );
-	display: flex;
-	align-items: flex-start;
+	transition: max-width 0.2s ease-in-out;
+
+
+	// We render the mockups offscreen by default
+	// so that we can animate them in when needed.
+	&.is-offscreen {
+		.site-mockup__viewport {
+			transform: translateY( 15vh );
+		}
+	}
 
 	// When first introduced, the empty
 	// mockups are fixed to the viewport.
-	&.fixed {
-		z-index: -1;
-		max-width: 100%;
-		margin: 0;
+	/*
+	&.is-fixed {
+		//z-index: -1;
 		position: fixed;
-			top: 80vh;
-			right: 32px;
-			left: 32px;
+			top: 85vh;
+			right: 0;
+			left: 0;
 		background: rgba( red, 0.2 );
+	}
+	*/
+
+	// Side by side layout uses flexbox to show
+	// both mockups next to each other without
+	// any overlap.
+	&.is-side-by-side {
+		max-width: 1200px;
+		display: flex;
+		align-items: flex-start;
+
+		.site-mockup__viewport.desktop {
+			margin-right: 16px;
+
+			// Forces the desktop preview to take up
+			// all available horizontal space.
+			flex-grow: 1;
+		}
+	}
+
+	// Grouped layout shows a fixed-height mobile mockup
+	// overlaid on top of the desktop mockup.
+	&.is-grouped {
+		max-width: 800px;
+
+		.site-mockup__viewport.mobile {
+			height: 500px;
+			position: absolute;
+				top: 40px;
+				right: 0;
+
+			// The fixed height mobile mockup needs
+			// to scroll and make room for the chrome.
+			.site-mockup__body {
+				overflow-y: auto;
+				overflow-x: hidden;
+				position: absolute;
+					top: 28px;
+					right: 0;
+					bottom: 28px;
+					left: 0;
+			}
+		}
 	}
 }
 
@@ -31,18 +83,16 @@
 	background: $white;
 	margin: 0 auto;
 	position: relative;
-	//transform: translateY( 120px );
-	//transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-	&.desktop {
-		flex-grow: 1;
-		margin-right: 16px;
-	}
+	&.desktop {}
 
 	&.mobile {
-		//height: 100%;
 		width: 300px;
-		height: 500px;
+
+		// This delay produces the wave effect
+		// on the .offscreen transition.
+		transition-delay: 0.075s;
 	}
 }
 
@@ -107,12 +157,13 @@
 	
 	// Desktop body needs to move for the chrome.
 	.site-mockup__viewport.desktop & {
-		margin-top: 28px;
+		//margin-top: 28px;
 	}
 
 	// Mobile body is scrollable and needs to
 	// make room for the chrome.
-	.site-mockup__viewport.mobile & {
+	// Might not be needed **********
+	.-site-mockup__viewport.mobile & {
 		overflow-y: auto;
 		overflow-x: hidden;
 		position: absolute;
@@ -142,6 +193,23 @@
 
 
 
+
+
+// Temporary
+.site-mockup__demo-button {
+	position: absolute;
+		top: -50px;
+		left: 0;
+	z-index: 1;
+
+	button {
+		background: red;
+		padding: 8px;
+		color: white;
+		border-radius: 4px;
+		margin-right: 8px;
+	}
+}
 
 
 
