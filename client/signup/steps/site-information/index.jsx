@@ -3,10 +3,9 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
-import EmailValidator from 'email-validator';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
-import { trim, isEmpty } from 'lodash';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,12 +25,8 @@ import FormTelInput from 'components/forms/form-tel-input';
 import FormTextarea from 'components/forms/form-textarea';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
 import InfoPopover from 'components/info-popover';
 import { dasherize } from 'lib/signup/site-type';
-import phoneValidation from 'lib/phone-validation';
-
-const CLEAN_REGEX = /^0|[\s.\-()]+/g;
 
 /**
  * Style dependencies
@@ -45,8 +40,6 @@ class SiteInformation extends Component {
 			name: props.siteTitle,
 			address: props.siteInformation.address || '',
 			email: props.siteInformation.email || '',
-			isEmailValid: true,
-			isPhoneValid: true,
 			phone: props.siteInformation.phone || '',
 		};
 	}
@@ -58,32 +51,9 @@ class SiteInformation extends Component {
 	handleSubmit = event => {
 		event.preventDefault();
 
-		const isEmailValid = this.validateEmail( this.state.email );
-		//Verify if phone number is valid
-		const numberClean = this.cleanNumber( this.state.phone ),
-			isPhoneError = this.validatePhone( numberClean ),
-			isPhoneValid = ! isPhoneError.error;
-
-		this.setState( { isEmailValid, isPhoneValid } );
-
-		if ( ! isEmailValid || ! isPhoneValid ) {
-			return;
-		}
-
 		this.props.submitStep( this.state );
 	};
 
-	cleanNumber( number ) {
-		return number.replace( CLEAN_REGEX, '' );
-	}
-
-	validatePhone( number ) {
-		return isEmpty( number ) || phoneValidation( number );
-	}
-
-	validateEmail( email ) {
-		return isEmpty( email ) || EmailValidator.validate( trim( email ) );
-	}
 	renderContent() {
 		const { translate, isBusinessSiteSelected, siteNameText } = this.props;
 
@@ -136,17 +106,10 @@ class SiteInformation extends Component {
 											id="email"
 											name="email"
 											type="email"
-											isError={ ! this.state.isEmailValid }
 											placeholder={ 'E.g. email@domain.com' }
 											onChange={ this.handleInputChange }
 											value={ this.state.email }
 										/>
-										{ ! this.state.isEmailValid && (
-											<FormInputValidation
-												isError={ ! this.state.isEmailValid }
-												text={ translate( 'Please enter a valid email address.' ) }
-											/>
-										) }
 									</FormFieldset>
 									<FormFieldset>
 										<FormLabel htmlFor="phone">
@@ -162,12 +125,6 @@ class SiteInformation extends Component {
 											onChange={ this.handleInputChange }
 											value={ this.state.phone }
 										/>
-										{ ! this.state.isPhoneValid && (
-											<FormInputValidation
-												isError={ ! this.state.isPhoneValid }
-												text={ translate( 'Please enter a valid phone number.' ) }
-											/>
-										) }
 									</FormFieldset>
 								</Fragment>
 							) }
