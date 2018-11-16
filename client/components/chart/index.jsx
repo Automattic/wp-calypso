@@ -93,6 +93,9 @@ class Chart extends React.Component {
 	getYAxisMax = values => {
 		// Calculate max value in the dataset.
 		const max = Math.max.apply( null, values );
+		if ( 0 === max ) {
+			return 2;
+		}
 
 		const log10 = Math.log10( max );
 		const sign = Math.sign( log10 );
