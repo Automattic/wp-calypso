@@ -74,9 +74,9 @@
 }
 
 .jetpack-field {
-	.components-text-control__input:disabled,
-	.components-textarea-control__input:disabled {
-		border-color: #8d96a0;
+	.components-text-control__input,
+	.components-textarea-control__input {
+		color: #72777c; 
 		padding: 10px 8px;
 	}
 }
