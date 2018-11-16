@@ -30,6 +30,7 @@ registerBlockType( 'jetpack/contact-form', {
 	),
 	keywords: [ __( 'email' ), __( 'feedback' ), 'email' ],
 	category: 'jetpack',
+	reusable: false,
 	supports: {
 		html: false,
 	},
@@ -59,6 +60,7 @@ registerBlockType( 'jetpack/contact-form', {
 const FieldDefaults = {
 	category: 'jetpack',
 	parent: [ 'jetpack/contact-form' ],
+	reusable: false,
 	supports: {
 		html: false,
 	},
