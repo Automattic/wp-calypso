@@ -27,23 +27,18 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import { getSiteOption } from 'state/sites/selectors';
 import { formatDate, getQueryDate } from '../stats-chart-tabs/utility';
 
+const ChartTabShape = PropTypes.shape( {
+	attr: PropTypes.string,
+	gridicon: PropTypes.string,
+	label: PropTypes.string,
+	legendOptions: PropTypes.arrayOf( PropTypes.string ),
+} );
+
 class WordAdsChartTabs extends Component {
 	static propTypes = {
-		activeTab: PropTypes.shape( {
-			attr: PropTypes.string,
-			gridicon: PropTypes.string,
-			label: PropTypes.string,
-			legendOptions: PropTypes.arrayOf( PropTypes.string ),
-		} ),
+		activeTab: ChartTabShape,
 		availableLegend: PropTypes.arrayOf( PropTypes.string ),
-		charts: PropTypes.arrayOf(
-			PropTypes.shape( {
-				attr: PropTypes.string,
-				gridicon: PropTypes.string,
-				label: PropTypes.string,
-				legendOptions: PropTypes.arrayOf( PropTypes.string ),
-			} )
-		),
+		charts: PropTypes.arrayOf( ChartTabShape ),
 		data: PropTypes.arrayOf(
 			PropTypes.shape( {
 				classNames: PropTypes.arrayOf( PropTypes.string ),

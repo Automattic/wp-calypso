@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, translate, numberFormat } from 'i18n-calypso';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
-import { find, memoize } from 'lodash';
+import { find } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -68,23 +68,36 @@ const CHARTS = [
 	},
 ];
 
+const getActiveTab = chartTab => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
+
 class WordAds extends Component {
 	static defaultProps = {
 		chartTab: 'impressions',
 	};
 
-	constructor( props ) {
-		super( props );
-		const activeTab = this.getActiveTab( this.props.chartTab );
-		this.state = {
-			activeLegend: activeTab.legendOptions ? activeTab.legendOptions.slice() : [],
-		};
+	// getDerivedStateFromProps will set the state both on init and tab switch
+	state = {
+		activeTab: null,
+		activeLegend: null,
+	};
+
+	static getDerivedStateFromProps( props, state ) {
+		// when switching from one tab to another or when initializing the component,
+		// reset the active legend charts to the defaults for that tab. The legends
+		// can be then toggled on and off by the user in `onLegendClick`.
+		const activeTab = getActiveTab( props.chartTab );
+		if ( activeTab !== state.activeTab ) {
+			return {
+				activeTab,
+				activeLegend: activeTab.legendOptions || [],
+			};
+		}
+		return null;
 	}
-	getActiveTab = memoize( chartTab => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ] );
 
 	getAvailableLegend() {
-		const activeTab = this.getActiveTab( this.props.chartTab );
-		return activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
+		const activeTab = getActiveTab( this.props.chartTab );
+		return activeTab.legendOptions || [];
 	}
 
 	barClick = bar => {
@@ -98,12 +111,9 @@ class WordAds extends Component {
 	switchChart = tab => {
 		if ( ! tab.loading && tab.attr !== this.state.chartTab ) {
 			this.props.recordGoogleEvent( 'WordAds Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
-			const originalTab = find( CHARTS, { attr: tab.attr } );
-			const activeLegend = originalTab.legendOptions ? originalTab.legendOptions.slice() : [];
-			this.setState( { activeLegend }, () => {
-				const updatedQs = stringifyQs( updateQueryString( { tab: tab.attr } ) );
-				page.show( `${ window.location.pathname }?${ updatedQs }` );
-			} );
+			// switch the tab by navigating to route with updated query string
+			const updatedQs = stringifyQs( updateQueryString( { tab: tab.attr } ) );
+			page.show( `${ window.location.pathname }?${ updatedQs }` );
 		}
 	};
 
@@ -142,8 +152,8 @@ class WordAds extends Component {
 				/>
 				<div id="my-stats-content" className="wordads">
 					<WordAdsChartTabs
+						activeTab={ getActiveTab( this.props.chartTab ) }
 						activeLegend={ this.state.activeLegend }
-						activeTab={ this.getActiveTab( this.props.chartTab ) }
 						availableLegend={ this.getAvailableLegend() }
 						onChangeLegend={ this.onChangeLegend }
 						barClick={ this.barClick }
