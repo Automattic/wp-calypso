@@ -7,9 +7,11 @@ const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 const modules = isCalypsoClient ? false : 'commonjs'; // only calypso should keep es6 modules
 const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 
-const targets = isCalypsoClient
-	? { browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ] }
-	: { node: 'current' };
+const targets =
+	isCalypsoClient || 'true' === process.env.TARGET_BROWSER
+		? { browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ] }
+		: { node: 'current' };
+
 
 const config = {
 	presets: [
