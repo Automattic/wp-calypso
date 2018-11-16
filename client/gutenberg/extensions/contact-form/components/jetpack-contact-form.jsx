@@ -91,7 +91,7 @@ class JetpackContactForm extends Component {
 								<p className="jetpack-contact-form__intro-message">{ this.getIntroMessage() }</p>
 								<TextControl
 									label={ __( 'Email address' ) }
-									placeholder={ __( 'Example: muriel@design.blog' ) }
+									placeholder={ __( 'Example: name@example.com' ) }
 									value={ to }
 									onChange={ this.onChangeTo }
 									help={ this.getEmailHelpMessage() }
