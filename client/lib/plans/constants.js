@@ -167,7 +167,7 @@ export const FEATURE_SHIPPING_CARRIERS = 'shipping-carriers';
 export const FEATURE_UNLIMITED_PRODUCTS_SERVICES = 'unlimited-products-service';
 export const FEATURE_ECOMMERCE_MARKETING = 'ecommerce-marketing';
 export const FEATURE_PREMIUM_CUSTOMIZABE_THEMES = 'premium-customizable-themes';
-export const FEATURE_BUSINESS_PLAN_FEATURES = 'business-plan-features';
+export const FEATURE_ALL_BUSINESS_FEATURES = 'all-business-features';
 
 // Meta grouping constants
 export const GROUP_WPCOM = 'GROUP_WPCOM';
@@ -481,7 +481,7 @@ const getPlanEcommerceDetails = () => ( {
 			FEATURE_ECOMMERCE_MARKETING,
 			FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 			FEATURE_UPLOAD_THEMES_PLUGINS,
-			FEATURE_BUSINESS_PLAN_FEATURES,
+			FEATURE_ALL_BUSINESS_FEATURES,
 		] ),
 	getPromotedFeatures: () => [
 		FEATURE_UNLIMITED_STORAGE,
@@ -494,17 +494,17 @@ const getPlanEcommerceDetails = () => ( {
 	getSignupFeatures: () => [
 		FEATURE_ACCEPT_PAYMENTS,
 		FEATURE_SHIPPING_CARRIERS,
-		FEATURE_BUSINESS_PLAN_FEATURES,
+		FEATURE_ALL_BUSINESS_FEATURES,
 	],
 	getBlogSignupFeatures: () => [
 		FEATURE_ACCEPT_PAYMENTS,
 		FEATURE_SHIPPING_CARRIERS,
-		FEATURE_BUSINESS_PLAN_FEATURES,
+		FEATURE_ALL_BUSINESS_FEATURES,
 	],
 	getPortfolioSignupFeatures: () => [
 		FEATURE_ACCEPT_PAYMENTS,
 		FEATURE_SHIPPING_CARRIERS,
-		FEATURE_BUSINESS_PLAN_FEATURES,
+		FEATURE_ALL_BUSINESS_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS ],
@@ -1906,8 +1906,8 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate( 'Premium customizable starter themes' ),
 	},
 
-	[ FEATURE_BUSINESS_PLAN_FEATURES ]: {
-		getSlug: () => FEATURE_BUSINESS_PLAN_FEATURES,
+	[ FEATURE_ALL_BUSINESS_FEATURES ]: {
+		getSlug: () => FEATURE_ALL_BUSINESS_FEATURES,
 		getTitle: () => i18n.translate( 'All Business Features' ),
 		getDescription: () => i18n.translate( 'All Business plan features' ),
 	},
