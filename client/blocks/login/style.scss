@@ -33,15 +33,6 @@
 	}
 }
 
-.login__form-change-username {
-	color: $blue-wordpress;
-	cursor: pointer;
-
-	&:hover, &:focus, &:active {
-		color: $link-highlight;
-	}
-}
-
 .login__form-change-username .gridicon {
 	margin-right: 3px;
 	vertical-align: sub;
