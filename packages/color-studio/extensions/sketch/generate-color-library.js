@@ -54,7 +54,7 @@ function cacheSharedStyles(document) {
 }
 
 function createColorStyle(document, colorObject) {
-  const name = `Color Fill/${normalizeColorName(colorObject)}`
+  const name = normalizeColorName(colorObject)
   const style = ensureSharedStyle(document, name)
   style.style = {
     type: Style,

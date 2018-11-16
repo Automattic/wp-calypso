@@ -170,7 +170,7 @@ function cacheSharedStyles(document) {
 }
 
 function createColorStyle(document, colorObject) {
-  var name = "Color Fill/".concat(normalizeColorName(colorObject));
+  var name = normalizeColorName(colorObject);
   var style = ensureSharedStyle(document, name);
   style.style = {
     type: Style,
