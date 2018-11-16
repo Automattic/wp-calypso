@@ -1,3 +1,14 @@
+// My new experiments
+.is-section-signup {
+	.masterbar {
+		display: none;
+	}
+	.layout__content {
+		padding-top: 32px;
+	}
+}
+
+// Existing styles
 .step-wrapper {
 	max-width: 960px;
 	margin: 0 auto;
@@ -64,6 +75,7 @@
 
 /* New Signup Styles */
 
+/*
 .formatted-header__title {
 	font-family: $signup-sans;
 	font-size: 2.953em;
@@ -71,6 +83,7 @@
 	line-height: 1.2;
 	margin-top: 1em;
 }
+*/
 
 .is-section-signup .layout__content,
 .is-section-signup .layout__primary {
@@ -109,6 +122,7 @@
 	border-top: none;
 }
 
+/*
 @include breakpoint( '>1040px' ) {
  	.formatted-header__title {
 		font-size: 3.375em;
@@ -118,3 +132,4 @@
 		font-size: 1.313em;
 	}
 }
+*/
