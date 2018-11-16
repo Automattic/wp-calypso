@@ -12,24 +12,16 @@ export default class SiteMockup extends Component {
 
 		this.state = {
 			isOffscreen: true,
-			isFixed: true,
+			isPeeking: false,
 			isSideBySide: false,
 			isGrouped: true,
 		};
 	}
 
-	buttonClear = event => {
-		this.setState( {
-			isOffscreen: false,
-			isFixed: false,
-			isSideBySide: false,
-			isGrouped: false,
-		} );
-	};
-
 	buttonIntroduce = event => {
 		this.setState( {
 			isOffscreen: false,
+			isPeeking: true,
 			isGrouped: true,
 		} );
 	};
@@ -37,7 +29,7 @@ export default class SiteMockup extends Component {
 	buttonCenterStage = event => {
 		this.setState( {
 			isOffscreen: false,
-			isFixed: false,
+			isPeeking: false,
 			isGrouped: false,
 			isSideBySide: true,
 		} );
@@ -46,23 +38,10 @@ export default class SiteMockup extends Component {
 	buttonReset = event => {
 		this.setState( {
 			isOffscreen: true,
-			isFixed: true,
+			isPeeking: false,
 			isSideBySide: false,
 			isGrouped: true,
 		} );
-	};
-
-	buttonOffscreenToggle = event => {
-		this.setState( { isOffscreen: ! this.state.isOffscreen } );
-	};
-
-	buttonFixedToggle = event => {
-		this.setState( { isFixed: ! this.state.isFixed } );
-	};
-
-	buttonToggleGrouping = event => {
-		this.setState( { isSideBySide: ! this.state.isSideBySide } );
-		this.setState( { isGrouped: ! this.state.isGrouped } );
 	};
 
 	getMockupChromeDesktop() {
@@ -152,7 +131,7 @@ export default class SiteMockup extends Component {
 			'is-side-by-side': this.state.isSideBySide,
 			'is-grouped': this.state.isGrouped,
 			'is-offscreen': this.state.isOffscreen,
-			'is-fixed': this.state.isFixed,
+			'is-peeking': this.state.isPeeking,
 		} );
 
 		return (
@@ -161,11 +140,6 @@ export default class SiteMockup extends Component {
 					<button onClick={ this.buttonIntroduce }>Introduce</button>
 					<button onClick={ this.buttonCenterStage }>Center Stage</button>
 					<button onClick={ this.buttonReset }>Reset</button>
-					<button onClick={ this.buttonClear }>Clear</button>
-
-					<button onClick={ this.buttonOffscreenToggle }>offscreen</button>
-					<button onClick={ this.buttonFixedToggle }>fixed</button>
-					<button onClick={ this.buttonToggleGrouping }>grouping</button>
 				</div>
 				<div className="site-mockup__viewport desktop">
 					{ this.getMockupChromeDesktop() }
