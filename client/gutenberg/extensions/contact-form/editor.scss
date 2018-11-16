@@ -10,6 +10,10 @@
 .jetpack-contact-form .components-placeholder{
 	padding: 24px;
 
+	.components-placeholder__label svg {
+		margin-right: 6px;
+	}
+
 	.components-placeholder__fieldset {
 		text-align: left;
 	}
