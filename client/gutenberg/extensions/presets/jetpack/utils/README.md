@@ -15,3 +15,8 @@ or the site admin may have filtered out the use of a certain block.
 ## registerJetpackBlock()
 
 This util will only register a block if it meets the availability requirements described above.
+
+
+## registerJetpackPlugin()
+
+This util will only register a Gutenberg plugin if it meets the availability requirements described above.
