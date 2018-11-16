@@ -359,7 +359,7 @@ const getPlanBusinessDetails = () => ( {
 	getAudience: () => i18n.translate( 'Best for small businesses' ),
 	getBlogAudience: () => i18n.translate( 'Best for brands' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
-	getStoreAudience: () => i18n.translate( 'The plan for stores and small businesses' ),
+	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
 	getDescription: abtest => {
 		if ( abtest && abtest( 'businessPlanDescriptionAT' ) === 'pluginsAndThemes' ) {
 			return i18n.translate(
@@ -449,7 +449,7 @@ const getPlanEcommerceDetails = () => ( {
 	getAudience: () => i18n.translate( 'Best for eCommerce sites' ),
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
-	getStoreAudience: () => i18n.translate( 'The plan for stores and small businesses' ),
+	getStoreAudience: () => i18n.translate( 'The plan for online stores' ),
 	getDescription: () => {
 		return i18n.translate(
 			'{{strong}}Best for Online Stores:{{/strong}} Sell products or services with this powerful, ' +
@@ -491,9 +491,21 @@ const getPlanEcommerceDetails = () => ( {
 		FEATURE_ADVANCED_DESIGN,
 		FEATURE_BUSINESS_ONBOARDING,
 	],
-	getSignupFeatures: () => [ FEATURE_ACCEPT_PAYMENTS, FEATURE_SHIPPING_CARRIERS ],
-	getBlogSignupFeatures: () => [ FEATURE_ACCEPT_PAYMENTS, FEATURE_SHIPPING_CARRIERS ],
-	getPortfolioSignupFeatures: () => [ FEATURE_ACCEPT_PAYMENTS, FEATURE_SHIPPING_CARRIERS ],
+	getSignupFeatures: () => [
+		FEATURE_ACCEPT_PAYMENTS,
+		FEATURE_SHIPPING_CARRIERS,
+		FEATURE_BUSINESS_PLAN_FEATURES,
+	],
+	getBlogSignupFeatures: () => [
+		FEATURE_ACCEPT_PAYMENTS,
+		FEATURE_SHIPPING_CARRIERS,
+		FEATURE_BUSINESS_PLAN_FEATURES,
+	],
+	getPortfolioSignupFeatures: () => [
+		FEATURE_ACCEPT_PAYMENTS,
+		FEATURE_SHIPPING_CARRIERS,
+		FEATURE_BUSINESS_PLAN_FEATURES,
+	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS ],
 } );
@@ -1190,7 +1202,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_UPLOAD_THEMES_PLUGINS ]: {
 		getSlug: () => FEATURE_UPLOAD_THEMES_PLUGINS,
-		getTitle: () => i18n.translate( 'Upload themes and plugins' ),
+		getTitle: () => i18n.translate( 'Upload Themes and Plugins' ),
 		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
 	},
 
@@ -1866,37 +1878,37 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_ACCEPT_PAYMENTS ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS,
-		getTitle: () => i18n.translate( 'Accept payments in 60+ countries' ),
+		getTitle: () => i18n.translate( 'Accept Payments in 60+ Countries' ),
 		getDescription: () => i18n.translate( 'Accept payments in 60+ countries' ),
 	},
 
 	[ FEATURE_SHIPPING_CARRIERS ]: {
 		getSlug: () => FEATURE_SHIPPING_CARRIERS,
-		getTitle: () => i18n.translate( 'Integrations with top shipping carriers' ),
+		getTitle: () => i18n.translate( 'Integrations with Top Shipping Carriers' ),
 		getDescription: () => i18n.translate( 'Integrations with top shipping carriers' ),
 	},
 
 	[ FEATURE_UNLIMITED_PRODUCTS_SERVICES ]: {
 		getSlug: () => FEATURE_UNLIMITED_PRODUCTS_SERVICES,
-		getTitle: () => i18n.translate( 'Unlimited products or services' ),
+		getTitle: () => i18n.translate( 'Unlimited Products or Services' ),
 		getDescription: () => i18n.translate( 'Unlimited products or services' ),
 	},
 
 	[ FEATURE_ECOMMERCE_MARKETING ]: {
 		getSlug: () => FEATURE_ECOMMERCE_MARKETING,
-		getTitle: () => i18n.translate( 'eCommerce marketing tools' ),
+		getTitle: () => i18n.translate( 'eCommerce Marketing Tools' ),
 		getDescription: () => i18n.translate( 'eCommerce marketing tools' ),
 	},
 
 	[ FEATURE_PREMIUM_CUSTOMIZABE_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
-		getTitle: () => i18n.translate( 'Premium customizable starter themes' ),
+		getTitle: () => i18n.translate( 'Premium Customizable Starter Themes' ),
 		getDescription: () => i18n.translate( 'Premium customizable starter themes' ),
 	},
 
 	[ FEATURE_BUSINESS_PLAN_FEATURES ]: {
 		getSlug: () => FEATURE_BUSINESS_PLAN_FEATURES,
-		getTitle: () => i18n.translate( 'All Business plan features' ),
+		getTitle: () => i18n.translate( 'All Business Features' ),
 		getDescription: () => i18n.translate( 'All Business plan features' ),
 	},
 };
