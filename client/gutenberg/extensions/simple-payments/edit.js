@@ -59,8 +59,13 @@ class SimplePaymentsEdit extends Component {
 			} );
 		}
 
-		// Validate and save on block-deselect
 		if ( prevProps.isSelected && ! isSelected && ! isLoadingInitial ) {
+			// Validate and save on block deselect
+
+			this.saveProduct();
+		} else if ( ! prevProps.isSaving && this.props.isSaving ) {
+			// Save payment on post save
+
 			this.saveProduct();
 		}
 	}
@@ -459,8 +464,10 @@ class SimplePaymentsEdit extends Component {
 }
 
 const applyWithSelect = withSelect( ( select, props ) => {
-	const { paymentId } = props.attributes;
 	const { getEntityRecord } = select( 'core' );
+	const { isSavingPost } = select( 'core/editor' );
+
+	const { paymentId } = props.attributes;
 
 	const simplePayment = paymentId
 		? getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId )
@@ -468,6 +475,7 @@ const applyWithSelect = withSelect( ( select, props ) => {
 
 	return {
 		isLoadingInitial: paymentId && ! simplePayment,
+		isSaving: !! isSavingPost(),
 		simplePayment,
 	};
 } );
