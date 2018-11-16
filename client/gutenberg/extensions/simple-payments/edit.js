@@ -41,20 +41,7 @@ class SimplePaymentsEdit extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const { attributes, isLoadingInitial, isSelected, setAttributes, simplePayment } = this.props;
-		const { content, currency, email, multiple, price, title } = attributes;
-
-		// @TODO check componentDidMount for the case where post was already loaded
-		if ( ! prevProps.simplePayment && simplePayment ) {
-			setAttributes( {
-				content: get( simplePayment, [ 'content', 'raw' ], content ),
-				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency ),
-				email: get( simplePayment, [ 'meta', 'spay_email' ], email ),
-				multiple: Boolean( get( simplePayment, [ 'meta', 'spay_multiple' ], Boolean( multiple ) ) ),
-				price: get( simplePayment, [ 'meta', 'spay_price' ], price || undefined ),
-				title: get( simplePayment, [ 'title', 'raw' ], title ),
-			} );
-		}
+		const { isLoadingInitial, isSelected } = this.props;
 
 		if ( prevProps.isSelected && ! isSelected && ! isLoadingInitial ) {
 			// Validate and save on block deselect
@@ -67,8 +54,8 @@ class SimplePaymentsEdit extends Component {
 		}
 	}
 
-	attributesToPost = attributes => {
-		const { content, currency, email, multiple, price, title } = attributes;
+	valuesToPost() {
+		const { content, currency, email, multiple, price, title } = this.props.values;
 
 		return {
 			content,
@@ -82,33 +69,60 @@ class SimplePaymentsEdit extends Component {
 			status: 'publish',
 			title,
 		};
-	};
+	}
 
+	/**
+	 * Save the product
+	 *
+	 * Depending on the status of the product, saving may mean different things:
+	 *
+	 * - If the product is valid, save it (update the product and its meta)
+	 *   - If product save is successful, clear stateful attributes and use saved product as source
+	 *     of truth.
+	 *   - If product save fails, setAttributes to persist product changes.
+	 * - If the product is invalid, setAttributes to persist changes.
+	 *
+	 */
 	saveProduct() {
-		if ( this.state.isSavingProduct || ! this.props.isValid ) {
+		/**
+		 * Abort save if:
+		 *
+		 * - Already saving
+		 * - There are no changes to save
+		 */
+		if ( this.state.isSavingProduct || ! this.props.dirty ) {
 			return;
 		}
 
-		const { attributes, setAttributes } = this.props;
-		const { paymentId } = attributes;
+		const { setAttributes, values } = this.props;
+
+		// If we attempt a save but don't have a valid product, setAttributes to persist
+		if ( ! this.props.isValid ) {
+			this.props.setAttributes( { formValues: values } );
+			return;
+		}
+
+		const { paymentId } = this.props.attributes;
 
 		this.setState( { isSavingProduct: true }, () => {
 			apiFetch( {
 				path: `/wp/v2/${ SIMPLE_PAYMENTS_PRODUCT_POST_TYPE }/${ paymentId ? paymentId : '' }`,
 				method: 'POST',
-				data: this.attributesToPost( attributes ),
+				data: this.valuesToPost(),
 			} )
 				.then( response => {
 					const { id } = response;
 
 					if ( id ) {
-						setAttributes( { paymentId: id } );
+						setAttributes( { paymentId: id, formValues: undefined } );
+						this.props.resetForm();
 					}
 				} )
 				.catch( error => {
 					// @TODO: complete error handling
 					// eslint-disable-next-line
 					console.error( error );
+					this.props.setAttributes( { formValues: values } );
 
 					/*
 					const {
@@ -126,48 +140,29 @@ class SimplePaymentsEdit extends Component {
 		} );
 	}
 
-	/**
-	 * Validate currency
-	 *
-	 * This method does not include validation UI. Currency selection should not allow for invalid
-	 * values. It is primarily to ensure that the currency is valid to save.
-	 *
-	 * @return  {boolean} True if currency is valid
-	 */
-	validateCurrency = () => {
-		const { currency } = this.props.attributes;
-		return SUPPORTED_CURRENCY_LIST.includes( currency );
-	};
-
 	handleEmailChange = email => {
 		this.props.setFieldValue( 'email', email );
-		this.props.setAttributes( { email } );
 	};
 
 	handleContentChange = content => {
 		this.props.setFieldValue( 'content', content );
-		this.props.setAttributes( { content } );
 	};
 
 	handlePriceChange = price => {
 		this.props.setFieldValue( 'price', price );
-		this.props.setAttributes( { price: parseFloat( price ) } );
 	};
 
 	handleCurrencyChange = currency => {
 		this.props.setFieldValue( 'currency', currency );
-		this.props.setAttributes( { currency } );
 		this.props.setFieldTouched( 'price' );
 	};
 
 	handleMultipleChange = multiple => {
 		this.props.setFieldValue( 'multiple', !! multiple );
-		this.props.setAttributes( { multiple: !! multiple } );
 	};
 
 	handleTitleChange = title => {
 		this.props.setFieldValue( 'title', title );
-		this.props.setAttributes( { title } );
 	};
 
 	getCurrencyList = SUPPORTED_CURRENCY_LIST.map( value => {
@@ -183,18 +178,16 @@ class SimplePaymentsEdit extends Component {
 
 	render() {
 		const {
-			attributes,
 			errors,
 			handleBlur,
 			instanceId,
 			isLoadingInitial,
 			isSelected,
-			isSubmitting,
 			isValid,
 			touched,
 			values,
 		} = this.props;
-		const { content, currency, multiple, price, title } = attributes;
+		const { content, currency, email, multiple, price, title } = values;
 
 		if ( ! isSelected && isLoadingInitial ) {
 			return (
@@ -320,7 +313,7 @@ class SimplePaymentsEdit extends Component {
 						placeholder={ __( 'Email' ) }
 						required
 						type="email"
-						value={ values.email }
+						value={ email }
 					/>
 					{ this.shouldShowError( instanceId, 'email' ) && (
 						<HelpMessage>{ errors.email }</HelpMessage>
@@ -401,14 +394,18 @@ const validate = ( { currency, email, price, title } ) => {
 	return errors;
 };
 
-const mapPropsToValues = ( { attributes } ) => ( {
-	content: attributes.content,
-	currency: attributes.currency,
-	email: attributes.email,
-	multiple: attributes.multiple,
-	price: attributes.price,
-	title: attributes.title,
-} );
+const mapPropsToValues = ( { attributes, simplePayment } ) =>
+	Object.assign(
+		{
+			content: get( simplePayment, [ 'content', 'raw' ], '' ),
+			currency: get( simplePayment, [ 'meta', 'spay_currency' ], DEFAULT_CURRENCY ),
+			email: get( simplePayment, [ 'meta', 'spay_email' ], '' ),
+			multiple: !! get( simplePayment, [ 'meta', 'spay_multiple' ], false ),
+			price: get( simplePayment, [ 'meta', 'spay_price' ], '' ),
+			title: get( simplePayment, [ 'title', 'raw' ], '' ),
+		},
+		attributes.formValues
+	);
 
 const formikEnhancer = withFormik( {
 	validate,

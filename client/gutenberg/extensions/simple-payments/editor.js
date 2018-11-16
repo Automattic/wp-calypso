@@ -10,7 +10,6 @@ import { Path, SVG } from '@wordpress/components';
  */
 import edit from './edit';
 import save from './save';
-import { DEFAULT_CURRENCY } from 'lib/simple-payments/constants';
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
 
@@ -40,31 +39,11 @@ export const settings = {
 	keywords: [ _x( 'shop', 'block search term' ), _x( 'sell', 'block search term' ), 'PayPal' ],
 
 	attributes: {
-		currency: {
-			type: 'string',
-			default: DEFAULT_CURRENCY,
-		},
-		content: {
-			type: 'string',
-			default: '',
-		},
-		email: {
-			type: 'string',
-			default: '',
-		},
-		multiple: {
-			type: 'boolean',
-			default: false,
-		},
 		paymentId: {
 			type: 'number',
 		},
-		price: {
-			type: 'number',
-		},
-		title: {
-			type: 'string',
-			default: '',
+		formValues: {
+			type: 'object',
 		},
 	},
 
