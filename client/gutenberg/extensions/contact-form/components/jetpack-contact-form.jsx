@@ -7,6 +7,8 @@ import classnames from 'classnames';
 import { Button, PanelBody, Placeholder, TextControl } from '@wordpress/components';
 import { InnerBlocks, InspectorControls } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
+import emailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
@@ -20,6 +22,10 @@ class JetpackContactForm extends Component {
 		this.onChangeTo = this.onChangeTo.bind( this );
 		this.onChangeSubmit = this.onChangeSubmit.bind( this );
 		this.onFormSettingsSet = this.onFormSettingsSet.bind( this );
+		this.getToValidationError = this.getToValidationError.bind( this );
+		this.state = {
+			toError: null,
+		};
 	}
 
 	getIntroMessage() {
@@ -36,7 +42,23 @@ class JetpackContactForm extends Component {
 		this.props.setAttributes( { subject } );
 	}
 
+	getToValidationError( email ) {
+		if ( ! email ) {
+			return __( 'Email is empty' );
+		}
+
+		if ( ! emailValidator.validate( email ) ) {
+			return sprintf( __( '%s is not a valid email address.' ), email );
+		}
+		return false;
+	}
+
 	onChangeTo( to ) {
+		error = this.getToValidationError( to );
+		if ( error ) {
+			this.setState( { toError: error } );
+		}
+		this.setState( { toError: null } );
 		this.props.setAttributes( { to } );
 	}
 
@@ -55,6 +77,8 @@ class JetpackContactForm extends Component {
 		const formClassnames = classnames( className, 'jetpack-contact-form', {
 			'has-intro': ! has_form_settings_set,
 		} );
+
+		const fieldEmailError = this.stats.toError;
 		return (
 			<Fragment>
 				<InspectorControls>
@@ -63,10 +87,19 @@ class JetpackContactForm extends Component {
 						<TextControl
 							label={ __( 'Email address' ) }
 							placeholder={ __( 'name@example.com' ) }
+<<<<<<< HEAD
+=======
+							aria-describedby={ `${ instanceId }-email-${ fieldEmailError ? 'error' : 'help' }` }
+>>>>>>> e9bdc756bf... Contact Form Block: Update/contact form block text changes (#28616)
 							value={ to }
 							onChange={ this.onChangeTo }
-							help={ this.getEmailHelpMessage() }
 						/>
+						<HelpMessage id={ `${ instanceId }-email-error` } isError>
+							{ fieldEmailError }
+						</HelpMessage>
+						<HelpMessage id={ `${ instanceId }-email-info` }>
+							{ this.getEmailHelpMessage() }
+						</HelpMessage>
 						<TextControl
 							label={ __( 'Email subject line' ) }
 							value={ subject }
@@ -96,12 +129,20 @@ class JetpackContactForm extends Component {
 							<form onSubmit={ this.onFormSettingsSet }>
 								<p className="jetpack-contact-form__intro-message">{ this.getIntroMessage() }</p>
 								<TextControl
+									aria-describedby={ `${ instanceId }-email-${
+										fieldEmailError ? 'error' : 'help'
+									}` }
 									label={ __( 'Email address' ) }
 									placeholder={ __( 'name@example.com' ) }
 									value={ to }
 									onChange={ this.onChangeTo }
-									help={ this.getEmailHelpMessage() }
 								/>
+								<HelpMessage id={ `${ instanceId }-email-error` } isError>
+									{ fieldEmailError }
+								</HelpMessage>
+								<HelpMessage id={ `${ instanceId }-email-info` }>
+									{ this.getEmailHelpMessage() }
+								</HelpMessage>
 								<TextControl
 									label={ __( 'Email subject line' ) }
 									value={ subject }
