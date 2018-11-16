@@ -7,6 +7,64 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 export default class SiteMockup extends Component {
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			isOffscreen: true,
+			isFixed: true,
+			isSideBySide: false,
+			isGrouped: true,
+		};
+	}
+
+	buttonClear = event => {
+		this.setState( {
+			isOffscreen: false,
+			isFixed: false,
+			isSideBySide: false,
+			isGrouped: false,
+		} );
+	};
+
+	buttonIntroduce = event => {
+		this.setState( {
+			isOffscreen: false,
+			isGrouped: true,
+		} );
+	};
+
+	buttonCenterStage = event => {
+		this.setState( {
+			isOffscreen: false,
+			isFixed: false,
+			isGrouped: false,
+			isSideBySide: true,
+		} );
+	};
+
+	buttonReset = event => {
+		this.setState( {
+			isOffscreen: true,
+			isFixed: true,
+			isSideBySide: false,
+			isGrouped: true,
+		} );
+	};
+
+	buttonOffscreenToggle = event => {
+		this.setState( { isOffscreen: ! this.state.isOffscreen } );
+	};
+
+	buttonFixedToggle = event => {
+		this.setState( { isFixed: ! this.state.isFixed } );
+	};
+
+	buttonToggleGrouping = event => {
+		this.setState( { isSideBySide: ! this.state.isSideBySide } );
+		this.setState( { isGrouped: ! this.state.isGrouped } );
+	};
+
 	getMockupChromeDesktop() {
 		return (
 			<div className="site-mockup__chrome-desktop">
@@ -20,6 +78,7 @@ export default class SiteMockup extends Component {
 			</div>
 		);
 	}
+
 	getMockupChromeMobile() {
 		return (
 			<div className="site-mockup__chrome-mobile">
@@ -32,14 +91,17 @@ export default class SiteMockup extends Component {
 			</div>
 		);
 	}
+
 	getMockupTitle() {
 		return <div className="site-mockup__title">Mexican Restaurant</div>;
 	}
+
 	getMockupTagline() {
 		return (
 			<div className="site-mockup__tagline">123 Merry Ln, New York, NY &bull; (321) 123-1234</div>
 		);
 	}
+
 	getMockupContent() {
 		return (
 			<div className="site-mockup__content">
@@ -73,6 +135,7 @@ export default class SiteMockup extends Component {
 			</div>
 		);
 	}
+
 	getMockupPlaceholders() {
 		return (
 			<div className="site-mockup__placeholders">
@@ -84,14 +147,32 @@ export default class SiteMockup extends Component {
 	}
 
 	render() {
+		var siteMockupClasses = classNames( {
+			'site-mockup__wrap': true,
+			'is-side-by-side': this.state.isSideBySide,
+			'is-grouped': this.state.isGrouped,
+			'is-offscreen': this.state.isOffscreen,
+			'is-fixed': this.state.isFixed,
+		} );
+
 		return (
-			<div className="site-mockup__wrap -fixed">
+			<div className={ siteMockupClasses }>
+				<div className="site-mockup__demo-button">
+					<button onClick={ this.buttonIntroduce }>Introduce</button>
+					<button onClick={ this.buttonCenterStage }>Center Stage</button>
+					<button onClick={ this.buttonReset }>Reset</button>
+					<button onClick={ this.buttonClear }>Clear</button>
+
+					<button onClick={ this.buttonOffscreenToggle }>offscreen</button>
+					<button onClick={ this.buttonFixedToggle }>fixed</button>
+					<button onClick={ this.buttonToggleGrouping }>grouping</button>
+				</div>
 				<div className="site-mockup__viewport desktop">
 					{ this.getMockupChromeDesktop() }
 					<div className="site-mockup__body">{ this.getMockupPlaceholders() }</div>
 				</div>
 
-				<div class="site-mockup__viewport mobile">
+				<div className="site-mockup__viewport mobile">
 					{ this.getMockupChromeMobile() }
 					<div className="site-mockup__body">{ this.getMockupPlaceholders() }</div>
 				</div>
