@@ -49,7 +49,7 @@ body,
 }
 
 body {
-	background: $content-background-color;
+	background: $color-surface-background-light;
 	-ms-overflow-style: scrollbar;
 
 	// This fixes an issue with the `click-outside` package not working on mobile.
