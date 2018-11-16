@@ -225,7 +225,7 @@ class SimplePaymentsEdit extends Component {
 							'simple-payments__field-has-error': this.shouldShowError( instanceId, 'title' ),
 						} ) }
 						component={ TextControl }
-						disabled={ isLoadingInitial || isSubmitting }
+						disabled={ isLoadingInitial }
 						id={ `${ instanceId }-title` }
 						label={ __( 'Item name' ) }
 						onBlur={ handleBlur }
@@ -241,7 +241,7 @@ class SimplePaymentsEdit extends Component {
 					<Field
 						className="simple-payments__field simple-payments__field-content"
 						component={ TextareaControl }
-						disabled={ isLoadingInitial || isSubmitting }
+						disabled={ isLoadingInitial }
 						label={ __( 'Describe your item in a few words' ) }
 						onBlur={ handleBlur }
 						onChange={ this.handleContentChange }
@@ -253,7 +253,7 @@ class SimplePaymentsEdit extends Component {
 						<Field
 							className="simple-payments__field simple-payments__field-currency"
 							component={ SelectControl }
-							disabled={ isLoadingInitial || isSubmitting }
+							disabled={ isLoadingInitial }
 							label={ __( 'Currency' ) }
 							onBlur={ handleBlur }
 							onChange={ this.handleCurrencyChange }
@@ -265,7 +265,7 @@ class SimplePaymentsEdit extends Component {
 								'simple-payments__field-has-error': errors.price && touched.price,
 							} ) }
 							component={ TextControl }
-							disabled={ isLoadingInitial || isSubmitting }
+							disabled={ isLoadingInitial }
 							id={ `${ instanceId }-price` }
 							label={ __( 'Price' ) }
 							onBlur={ handleBlur }
@@ -285,7 +285,7 @@ class SimplePaymentsEdit extends Component {
 						<Field
 							checked={ multiple }
 							component={ ToggleControl }
-							disabled={ isLoadingInitial || isSubmitting }
+							disabled={ isLoadingInitial }
 							label={ __( 'Allow people to buy more than one item at a time' ) }
 							onBlur={ handleBlur }
 							onChange={ this.handleMultipleChange }
@@ -300,7 +300,7 @@ class SimplePaymentsEdit extends Component {
 							'simple-payments__field-has-error': this.shouldShowError( instanceId, 'email' ),
 						} ) }
 						component={ TextControl }
-						disabled={ isLoadingInitial || isSubmitting }
+						disabled={ isLoadingInitial }
 						id={ `${ instanceId }-email` }
 						label={ __( 'Email' ) }
 						onBlur={ handleBlur }
