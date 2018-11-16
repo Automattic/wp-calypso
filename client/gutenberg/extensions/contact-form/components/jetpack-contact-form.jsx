@@ -23,14 +23,12 @@ class JetpackContactForm extends Component {
 
 	getIntroMessage() {
 		return __(
-			'If left blank, feedback will be sent to the author of the post and the subject will be the name of this post.'
+			'You’ll receive an email notification each time someone fills out the form. Where should it go, and what should the subject line be?'
 		);
 	}
 
 	getEmailHelpMessage() {
-		return __(
-			'You can enter multiple email addresses separated by commas. A notification email will be sent to each address.'
-		);
+		return __( 'You can enter multiple email addresses separated by commas.' );
 	}
 
 	onChangeSubject( subject ) {
@@ -63,6 +61,7 @@ class JetpackContactForm extends Component {
 						<p>{ this.getIntroMessage() }</p>
 						<TextControl
 							label={ __( 'Email address' ) }
+							placeholder={ __( 'name@example.com' ) }
 							value={ to }
 							onChange={ this.onChangeTo }
 							help={ this.getEmailHelpMessage() }
@@ -70,6 +69,7 @@ class JetpackContactForm extends Component {
 						<TextControl
 							label={ __( 'Email subject line' ) }
 							value={ subject }
+							placeholder={ __( "Let's work together" ) }
 							onChange={ this.onChangeSubject }
 						/>
 					</PanelBody>
@@ -91,7 +91,7 @@ class JetpackContactForm extends Component {
 								<p className="jetpack-contact-form__intro-message">{ this.getIntroMessage() }</p>
 								<TextControl
 									label={ __( 'Email address' ) }
-									placeholder={ __( 'Example: muriel@design.blog' ) }
+									placeholder={ __( 'name@example.com' ) }
 									value={ to }
 									onChange={ this.onChangeTo }
 									help={ this.getEmailHelpMessage() }
@@ -99,12 +99,17 @@ class JetpackContactForm extends Component {
 								<TextControl
 									label={ __( 'Email subject line' ) }
 									value={ subject }
-									placeholder={ __( "Example: Let's work together" ) }
+									placeholder={ __( "Let's work together" ) }
 									onChange={ this.onChangeSubject }
 								/>
+								<p className="jetpack-contact-form__intro-message">
+									{ __(
+										'(If you leave these blank, notifications will go to the author with the post or page title as the subject line.)'
+									) }
+								</p>
 								<div className="jetpack-contact-form__create">
 									<Button isPrimary type="submit">
-										{ __( 'Create' ) }
+										{ __( 'Add Form' ) }
 									</Button>
 								</div>
 							</form>
