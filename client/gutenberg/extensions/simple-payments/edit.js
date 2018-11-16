@@ -3,17 +3,16 @@
 /**
  * External dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
 import { Field, withFormik } from 'formik';
+import { dispatch, withSelect } from '@wordpress/data';
 import { get, trimEnd } from 'lodash';
 import { InspectorControls } from '@wordpress/editor';
 import { sprintf } from '@wordpress/i18n';
-import { withSelect } from '@wordpress/data';
 import {
 	ExternalLink,
 	PanelBody,
@@ -55,10 +54,11 @@ class SimplePaymentsEdit extends Component {
 		}
 	}
 
-	valuesToPost() {
+	toApi() {
 		const { content, currency, email, multiple, price, title } = this.props.values;
 
 		return {
+			id: this.props.attributes.paymentId,
 			content,
 			featured_media: 0,
 			meta: {
@@ -103,17 +103,11 @@ class SimplePaymentsEdit extends Component {
 			return;
 		}
 
-		const { paymentId } = this.props.attributes;
+		const { saveEntityRecord } = dispatch( 'core' );
 
-		this.setState( { isSavingProduct: true }, () => {
-			apiFetch( {
-				path: `/wp/v2/${ SIMPLE_PAYMENTS_PRODUCT_POST_TYPE }/${ paymentId ? paymentId : '' }`,
-				method: 'POST',
-				data: this.valuesToPost(),
-			} )
-				.then( response => {
-					const { id } = response;
-
+		this.setState( { isSavingProduct: true }, async () => {
+			saveEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, this.toApi() )
+				.then( ( { id } ) => {
 					if ( id ) {
 						setAttributes( { paymentId: id, formValues: undefined } );
 						this.props.resetForm();
@@ -121,7 +115,7 @@ class SimplePaymentsEdit extends Component {
 				} )
 				.catch( error => {
 					// @TODO: complete error handling
-					// eslint-disable-next-line
+					/* eslint-disable-next-line no-console */
 					console.error( error );
 					this.props.setAttributes( { formValues: values } );
 
