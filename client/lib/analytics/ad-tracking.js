@@ -1063,17 +1063,13 @@ function recordOrderInDonutsGtag( cart, orderId ) {
 		return;
 	}
 
-	if ( cart.is_free_signup ) {
+	if ( cart.is_signup ) {
 		return;
 	}
 
 	const orderSummary = cartToDonutsOrderSummary( cart );
 	if ( orderSummary ) {
-		recordParamsInDonutsGtag(
-			'purchase',
-			'DC-8907854/purch0/wpress+transactions',
-			orderSummary,
-		);
+		recordParamsInDonutsGtag( 'purchase', 'DC-8907854/purch0/wpress+transactions', orderSummary );
 	}
 }
 
@@ -1484,17 +1480,13 @@ function recordViewCheckoutInDonutsGtag( cart ) {
 		return;
 	}
 
-	if ( cart.is_free_signup ) {
+	if ( cart.is_signup ) {
 		return;
 	}
 
 	const orderSummary = cartToDonutsOrderSummary( cart );
 	if ( orderSummary ) {
-		recordParamsInDonutsGtag(
-			'conversion',
-			'DC-8907854/cartd0/wpress+unique',
-			orderSummary,
-		);
+		recordParamsInDonutsGtag( 'conversion', 'DC-8907854/cartd0/wpress+unique', orderSummary );
 	}
 }
 
