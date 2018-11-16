@@ -2,7 +2,7 @@
 /**
  * External Dependencies
  */
-import get from 'lodash/get';
+import { get } from 'lodash';
 
 const JETPACK_DATA_PATH = [ 'Jetpack_Editor_Initial_State' ];
 

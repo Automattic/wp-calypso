@@ -3,9 +3,13 @@
 /**
  * External dependencies
  */
+import apiFetch from '@wordpress/api-fetch';
+import classNames from 'classnames';
+import emailValidator from 'email-validator';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
+import { get, trimEnd } from 'lodash';
 import { InspectorControls } from '@wordpress/editor';
 import { sprintf } from '@wordpress/i18n';
 import { withSelect } from '@wordpress/data';
@@ -17,11 +21,6 @@ import {
 	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
-import apiFetch from '@wordpress/api-fetch';
-import classNames from 'classnames';
-import emailValidator from 'email-validator';
-import get from 'lodash/get';
-import trimEnd from 'lodash/trimEnd';
 
 /**
  * Internal dependencies

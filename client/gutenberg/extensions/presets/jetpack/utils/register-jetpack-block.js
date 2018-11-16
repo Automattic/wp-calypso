@@ -2,8 +2,8 @@
 /**
  * External dependencies
  */
+import { get } from 'lodash';
 import { registerBlockType } from '@wordpress/blocks';
-import get from 'lodash/get';
 
 /**
  * Internal dependencies
