@@ -17,15 +17,6 @@ import { makeLayout, render as clientRender } from 'controller';
 export default function() {
 	const validPeriods = [ 'day', 'week', 'month', 'year' ];
 
-	page(
-		`/stats/wordads/:period(${ validPeriods.join( '|' ) })/:site`,
-		siteSelection,
-		navigation,
-		statsController.wordAds,
-		makeLayout,
-		clientRender
-	);
-
 	if ( config.isEnabled( 'manage/stats' ) ) {
 		// Redirect this to default /stats/day/ view in order to keep
 		// the paths and page view reporting consistent.
@@ -216,6 +207,18 @@ export default function() {
 		if ( config.isEnabled( 'ui/first-view/reset-route' ) ) {
 			page( '/stats/reset-first-view', statsController.resetFirstView, makeLayout, clientRender );
 		}
+
+		page(
+			`/stats/wordads/:period(${ validPeriods.join( '|' ) })/:site`,
+			siteSelection,
+			navigation,
+			statsController.wordAds,
+			makeLayout,
+			clientRender
+		);
+
+		// Anything else should redirect to default WordAds stats page
+		page( '/stats/wordads(.*)', statsController.redirectToDefaultWordAdsPeriod );
 
 		// Anything else should redirect to default stats page
 		page( '/stats/(.*)', statsController.redirectToDefaultSitePage );

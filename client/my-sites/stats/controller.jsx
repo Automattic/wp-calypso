@@ -140,7 +140,22 @@ export default {
 		// if we are redirecting we need to retain our intended layout-focus
 		const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
 		context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
+
 		page.redirect( getStatsDefaultSitePage( siteFragment ) );
+	},
+
+	redirectToDefaultWordAdsPeriod: function( context ) {
+		const siteFragment = getSiteFragment( context.path );
+
+		// if we are redirecting we need to retain our intended layout-focus
+		const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
+		context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
+
+		if ( siteFragment ) {
+			page.redirect( `/stats/wordads/day/${ siteFragment }` );
+		} else {
+			page.redirect( getStatsDefaultSitePage( siteFragment ) );
+		}
 	},
 
 	redirectToDefaultModulePage: function( context ) {
