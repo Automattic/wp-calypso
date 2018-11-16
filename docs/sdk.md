@@ -40,7 +40,7 @@ These extensions live under `client/gutenberg/extensions` directory. There are s
 
 By default, these extensions will be built under `build` folder in the same folder with entry script.
 
-Some dependencies will omitted from the bundle using webpack externals. They are expected to be
+Some dependencies will be omitted from the bundle using webpack externals. They are expected to be
 present in the environment where the produced scripts are run.
 
 - @wordpress/\* dependencies
