@@ -21,6 +21,7 @@ class JetpackContactForm extends Component {
 	constructor( ...args ) {
 		super( ...args );
 		this.onChangeSubject = this.onChangeSubject.bind( this );
+		this.onBlurTo = this.onBlurTo.bind( this );
 		this.onChangeTo = this.onChangeTo.bind( this );
 		this.onChangeSubmit = this.onChangeSubmit.bind( this );
 		this.onFormSettingsSet = this.onFormSettingsSet.bind( this );
@@ -64,6 +65,17 @@ class JetpackContactForm extends Component {
 		return false;
 	}
 
+	onBlurTo( event ) {
+		const error = event.target.value
+			.split( ',' )
+			.map( this.getToValidationError )
+			.filter( Boolean );
+		if ( error && error.length ) {
+			this.setState( { toError: error } );
+			return;
+		}
+	}
+
 	onChangeTo( to ) {
 		const emails = to.trim();
 		if ( emails.length === 0 ) {
@@ -72,15 +84,6 @@ class JetpackContactForm extends Component {
 			return;
 		}
 
-		const error = to
-			.split( ',' )
-			.map( this.getToValidationError )
-			.filter( Boolean );
-		if ( error && error.length ) {
-			this.setState( { toError: error } );
-			this.props.setAttributes( { to } );
-			return;
-		}
 		this.setState( { toError: null } );
 		this.props.setAttributes( { to } );
 	}
@@ -142,6 +145,7 @@ class JetpackContactForm extends Component {
 					placeholder={ __( 'name@example.com' ) }
 					onKeyDown={ this.preventEnterSubmittion }
 					value={ to }
+					onBlur={ this.onBlurTo }
 					onChange={ this.onChangeTo }
 				/>
 				<HelpMessage isError id={ `contact-form-${ instanceId }-email-error` }>
