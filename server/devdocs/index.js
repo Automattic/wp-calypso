@@ -13,6 +13,8 @@ import Prism from 'prismjs';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-scss';
+import '@wordpress/muriel-doc-examples';
+import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -258,17 +260,11 @@ module.exports = function() {
 	app.use( '/devdocs/service/selectors', selectors.router );
 
 	app.use( '/devdocs/service/examples', ( request, response ) => {
-		response.json( [
-			{
-				slug: 'button/disabled',
-			},
-		] );
+		response.json( select( 'muriel/examples' ).getExamples() );
 	} );
 
-	app.use( '/devdocs/service/example/:slug', ( request, response ) => {
-		response.json( {
-			slug: request.param( 'slug' ),
-		} );
+	app.use( '/devdocs/service/example/:slug([^/]+/[^/]+)', ( request, response ) => {
+		response.json( select( 'muriel/examples' ).getExample( request.param( 'slug' ) ) );
 	} );
 
 	return app;
