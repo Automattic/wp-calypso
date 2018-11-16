@@ -3,19 +3,28 @@
 	margin: auto;
 	padding: 0 16px;
 	position: fixed;
-		top: 400px;
+		top: 47px;
 		right: 0;
 		bottom: 0;
 		left: 0;
 	background: rgba( yellow, 0.2 );
 	transition: max-width 0.2s ease-in-out;
 
+	z-index: 1000000; // Yea yea, I know... -shaun
 
 	// We render the mockups offscreen by default
 	// so that we can animate them in when needed.
 	&.is-offscreen {
 		.site-mockup__viewport {
-			transform: translateY( 15vh );
+			//transform: translateY( 65vh );
+			transform: translateY( calc( 100vh - 47px ) );
+		}
+	}
+
+	&.is-peeking {
+		.site-mockup__viewport {
+			//transform: translateY( 65vh );
+			transform: translateY( calc( 100vh - 150px ) );
 		}
 	}
 
@@ -36,6 +45,7 @@
 	// both mockups next to each other without
 	// any overlap.
 	&.is-side-by-side {
+		padding: 16px;
 		max-width: 1200px;
 		display: flex;
 		align-items: flex-start;
@@ -85,7 +95,9 @@
 	position: relative;
 	transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-	&.desktop {}
+	&.desktop {
+		height: calc( 100% - 16px );
+	}
 
 	&.mobile {
 		width: 300px;
@@ -198,7 +210,7 @@
 // Temporary
 .site-mockup__demo-button {
 	position: absolute;
-		top: -50px;
+		top: 0;
 		left: 0;
 	z-index: 1;
 
