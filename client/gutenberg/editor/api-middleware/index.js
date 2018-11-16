@@ -5,7 +5,7 @@
  */
 import url from 'url';
 import { stringify } from 'qs';
-import { toPairs, identity, includes } from 'lodash';
+import { toPairs, identity, includes, get } from 'lodash';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
@@ -30,19 +30,28 @@ const debugMiddleware = ( options, next ) => {
 // Rewrite default API paths to match WP.com equivalents. Note that
 // passed apiNamespace will be prepended to the replaced path.
 export const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
+	//support for fetchAllMiddleware, that uses url instead of path
+	if ( ! options.path && options.url ) {
+		return next( {
+			...options,
+			path: options.url.replace( 'https://public-api.wordpress.com/wp/v2', '' ),
+			apiNamespace: 'wp/v2',
+		} );
+	}
+
 	// wp/v2 namespace mapping
 	//
 	// Path rewrite example:
 	// 		/wp/v2/types/post →
 	//		/wp/v2/sites/example.wordpress.com/types/post
 	if ( /\/wp\/v2\//.test( options.path ) ) {
-		let path = options.path.replace( '/wp/v2/', `/sites/${ siteSlug }/` );
+		const path = options.path.replace( '/wp/v2/', `/sites/${ siteSlug }/` );
 
 		//TODO: temporary fix, we need to add fetchAllMiddleware from Gutenberg core, a -1 value is rewritten to fetch _all_ values
 		// https://github.com/WordPress/gutenberg/blob/master/packages/api-fetch/src/middlewares/fetch-all-middleware.js
-		if ( /per_page=-1/.test( path ) ) {
-			path = path.replace( 'per_page=-1', 'per_page=100' );
-		}
+		// if ( /per_page=-1/.test( path ) ) {
+		// 	path = path.replace( 'per_page=-1', 'per_page=100' );
+		// }
 
 		return next( { ...options, path, apiNamespace: 'wp/v2' } );
 	}
@@ -98,7 +107,7 @@ const wpcomRequest = method => {
 	return wpcom.req.post.bind( wpcom.req );
 };
 
-const wpcomProxyMiddleware = parameters => {
+const wpcomProxyMiddleware = options => {
 	// Make authenticated calls using the WordPress.com REST Proxy
 	// bypassing the apiFetch call that uses window.fetch.
 	// This intentionally breaks the middleware chain.
@@ -111,7 +120,8 @@ const wpcomProxyMiddleware = parameters => {
 		apiNamespace = 'wp/v2',
 		onError = identity,
 		fromApi = identity,
-	} = parameters;
+		parse = true,
+	} = options;
 
 	const method = rawMethod ? rawMethod.toUpperCase() : 'GET';
 
@@ -136,9 +146,16 @@ const wpcomProxyMiddleware = parameters => {
 				...payload,
 			},
 			//error, data, headers
-			( error, dataResponse ) => {
+			( error, dataResponse, headers ) => {
 				if ( error || dataResponse.error ) {
 					return reject( onError( error || dataResponse.error ) );
+				}
+				if ( ! parse ) {
+					const { Link: link, ...moreHeaders } = headers;
+					return resolve( {
+						json: () => fromApi( dataResponse ),
+						headers: { get: header => get( { link, ...moreHeaders }, header ) },
+					} );
 				}
 				return resolve( fromApi( dataResponse ) );
 			}
@@ -151,11 +168,13 @@ export const applyAPIMiddleware = siteSlug => {
 	// First middleware in, last out.
 
 	// This call intentionally breaks the middleware chain.
-	apiFetch.use( options => wpcomProxyMiddleware( options ) );
+	apiFetch.use( wpcomProxyMiddleware );
 
 	apiFetch.use( ( options, next ) => debugMiddleware( options, next ) );
 
 	apiFetch.use( ( options, next ) => wpcomPathMappingMiddleware( options, next, siteSlug ) );
+
+	apiFetch.use( apiFetch.fetchAllMiddleware );
 
 	apiFetch.use( apiFetch.createRootURLMiddleware( 'https://public-api.wordpress.com/' ) );
 };
