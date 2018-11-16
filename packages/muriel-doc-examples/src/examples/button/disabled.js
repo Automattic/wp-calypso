@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import React from 'react';
+
+/**
  * WordPress dependencies
  */
 import { registerExample } from '@wordpress/muriel-doc-examples';
@@ -6,10 +11,10 @@ import { registerExample } from '@wordpress/muriel-doc-examples';
 registerExample( 
     'button/disabled',
     {
-        render: () => {
-            return import('@wordpress/components').then( ( { Button } ) => {
-                return <Button disabled />;
-            } );
+        render: function () {
+            return (
+                <div>This is a test without an import.</div>
+            );
         }
     }
 );
