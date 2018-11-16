@@ -9,7 +9,7 @@ import { includes, find, get, replace, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import CartStore from 'lib/cart/store';
+import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { type as domainTypes, domainAvailability } from './constants';
 import { parseDomainAgainstTldList } from './utils';
@@ -18,6 +18,7 @@ import formatCurrency from 'lib/format-currency';
 
 const GOOGLE_APPS_INVALID_TLDS = [ 'in' ];
 const GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
+const user = userFactory();
 
 function ValidationError( code ) {
 	this.code = code;
@@ -40,7 +41,7 @@ function canAddGoogleApps( domainName ) {
 }
 
 function isGsuiteRestricted() {
-	return ! CartStore.get().is_gsuite_available;
+	return ! user.get().is_valid_google_apps_country;
 }
 
 function checkAuthCode( domainName, authCode, onComplete ) {

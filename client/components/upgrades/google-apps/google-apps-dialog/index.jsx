@@ -70,7 +70,7 @@ class GoogleAppsDialog extends React.Component {
 
 	render() {
 		if ( isGsuiteRestricted() ) {
-			this.props.onAddGoogleApps();
+			this.props.handleClickSkip();
 		} else {
 			return this.renderView();
 		}
