@@ -94,4 +94,23 @@ export default [
 		startsAt: new Date( 2018, 9, 25, 0, 0, 1 ),
 		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),
 	},
+	{
+		name: 'blackfriday30',
+		startsAt: new Date( 2018, 10, 21, 0, 0, 0 ),
+		endsAt: new Date( 2018, 10, 24, 0, 0, 0 ),
+		nudgeText: 'Black Friday 30% Off Plans!',
+		ctaText: translate( 'Upgrade' ),
+		plansPageNoticeText: 'Black Friday 30% Off! Enter “BLACKFRIDAY30” At Checkout',
+		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
+	},
+	{
+		name: 'cyber30',
+		startsAt: new Date( 2018, 10, 26, 0, 0, 0 ),
+		endsAt: new Date( 2018, 10, 27, 0, 0, 0 ),
+		nudgeText: 'Last Chance – 30% Off Plans',
+		ctaText: translate( 'Upgrade' ),
+		plansPageNoticeText:
+			'Hurry! Cyber Monday 30% Off Sale Is Almost Over. Enter CYBER30 At Checkout',
+		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
+	},
 ];
