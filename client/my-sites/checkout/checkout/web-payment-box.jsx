@@ -457,6 +457,10 @@ export class WebPaymentBox extends React.Component {
 						{ buttonState.text }
 					</Button>
 				);
+				break;
+
+			default:
+				debug( `Unknown payment method ${paymentMethod}.` );
 		}
 
 		return (
