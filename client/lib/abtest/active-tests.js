@@ -111,4 +111,12 @@ export default {
 		},
 		defaultVariation: 'public',
 	},
+	crowdsignalNameBasedSignup: {
+		datestamp: '20181119',
+		variations: {
+			nameSignup: 1,
+			usernameSignup: 99,
+		},
+		defaultVariation: 'usernameSignup',
+	}
 };

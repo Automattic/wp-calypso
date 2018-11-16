@@ -11,10 +11,11 @@ import { identity, includes, isEmpty, omit, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'blocks/signup-form';
 import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
+import { abtest } from 'lib/abtest';
 import SignupActions from 'lib/signup/actions';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
@@ -272,9 +273,15 @@ export class UserStep extends Component {
 			}
 		}
 
+		let formProps = omit( this.props, [ 'translate' ] );
+		if ( this.props.flowName === 'crowdsignal' && this.props.oauth2Client && isCrowdsignalOAuth2Client( this.props.oauth2Client ) ) {
+			formProps.displayNameInput = abtest( 'crowdsignalNameBasedSignup' ) === 'nameSignup';
+			formProps.displayUsernameInput = abtest( 'crowdsignalNameBasedSignup' ) !== 'nameSignup';
+		}
+
 		return (
 			<SignupForm
-				{ ...omit( this.props, [ 'translate' ] ) }
+				{ ...formProps }
 				redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
 				disabled={ this.userCreationStarted() }
 				submitting={ this.userCreationStarted() }
