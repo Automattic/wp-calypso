@@ -104,11 +104,19 @@ export default {
 		localeTargets: 'any',
 	},
 	privateByDefault: {
-		datestamp: '20181113',
+		datestamp: '20181115',
 		variations: {
 			private: 10,
 			public: 90,
 		},
 		defaultVariation: 'public',
 	},
+	crowdsignalNameBasedSignup: {
+		datestamp: '20181119',
+		variations: {
+			nameSignup: 1,
+			usernameSignup: 99,
+		},
+		defaultVariation: 'usernameSignup',
+	}
 };

@@ -21,7 +21,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		business: {
-			steps: [ 'about', 'themes', 'domains', 'user' ],
+			steps: [ 'user', 'about', 'themes', 'domains' ],
 			destination: function( dependencies ) {
 				return '/plans/select/business/' + dependencies.siteSlug;
 			},
@@ -33,7 +33,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		premium: {
-			steps: [ 'about', 'themes', 'domains', 'user' ],
+			steps: [ 'user', 'about', 'themes', 'domains' ],
 			destination: function( dependencies ) {
 				return '/plans/select/premium/' + dependencies.siteSlug;
 			},
@@ -45,12 +45,12 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		personal: {
-			steps: [ 'about', 'themes', 'domains', 'user' ],
+			steps: [ 'user', 'about', 'themes', 'domains' ],
 			destination: function( dependencies ) {
 				return '/plans/select/personal/' + dependencies.siteSlug;
 			},
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
-			lastModified: '2018-01-24',
+			lastModified: '2018-11-09',
 		},
 
 		free: {
@@ -241,8 +241,8 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	}
 
 	if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
-		flows[ 'store-nux' ] = {
-			steps: [ 'about', 'themes', 'domains', 'plans-store-nux', 'user' ],
+		flows.ecommerce = {
+			steps: [ 'about', 'domains', 'plans', 'user' ],
 			destination: getSiteDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2018-01-24',
@@ -319,10 +319,10 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		lastModified: '2018-10-29',
 	};
 
-	flows[ 'crowdsignal' ] = {
+	flows.crowdsignal = {
 		steps: [ 'oauth2-name' ],
-		destination: ( dependencies ) => dependencies.oauth2_redirect || '/',
-		description: 'Crowdsignal\'s custom WordPress.com Connect signup flow',
+		destination: dependencies => dependencies.oauth2_redirect || '/',
+		description: "Crowdsignal's custom WordPress.com Connect signup flow",
 		lastModified: '2018-11-14',
 		disallowResume: true,
 		autoContinue: true,

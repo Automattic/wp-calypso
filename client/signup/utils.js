@@ -207,7 +207,7 @@ export function getDesignTypeForSiteGoals( siteGoals, flow ) {
 	const siteGoalsValue = siteGoals.split( ',' );
 
 	//Identify stores for the store signup flow
-	if ( siteGoals === 'sell' || flow === 'store-nux' ) {
+	if ( siteGoals === 'sell' || flow === 'ecommerce' ) {
 		return 'store';
 	}
 

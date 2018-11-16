@@ -10,11 +10,7 @@
 	clear: left;
 }
 
-.export-card .foldable-card__header {
-	padding: 24px;
-}
-
-.export-media-card .action-card__heading {
+.export-media-card__title {
 	font-size: 21px;
 	font-weight: 300;
 	color: $gray-dark;
@@ -22,12 +18,20 @@
 	clear: left;
 }
 
+.export-card .foldable-card__header {
+	padding: 24px;
+}
+
+.export-media-card .foldable-card__header {
+	padding: 24px;
+}
+
 .export-card__subtitle {
 	font-size: 14px;
 	color: $gray-dark;
 }
 
-.export-media-card .action-card__main p {
+.export-media-card__subtitle {
 	font-size: 14px;
 	color: $gray-dark;
 }

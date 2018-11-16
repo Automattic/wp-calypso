@@ -34,19 +34,21 @@ import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
 import { launchSite } from 'state/sites/launch/actions';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 const userLib = userFactory();
 
 const query = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 
 const getTaskList = memoize(
-	( taskStatuses, designType ) => new WpcomTaskList( taskStatuses, { designType } )
+	( taskStatuses, { designType, isSiteUnlaunched } ) =>
+		new WpcomTaskList( taskStatuses, { designType, isSiteUnlaunched } )
 );
 
 class WpcomChecklist extends PureComponent {
 	static propTypes = {
 		createNotice: PropTypes.func.isRequired,
-		designType: PropTypes.oneOf( [ 'blog', 'page', 'portfolio' ] ),
+		designType: PropTypes.oneOf( [ 'blog', 'page', 'portfolio', 'store' ] ),
 		recordTracksEvent: PropTypes.func.isRequired,
 		requestGuidedTour: PropTypes.func.isRequired,
 		requestSiteChecklistTaskUpdate: PropTypes.func.isRequired,
@@ -170,10 +172,11 @@ class WpcomChecklist extends PureComponent {
 			closePopover,
 			showNotification,
 			storedTask,
+			isSiteUnlaunched,
 		} = this.props;
 
 		const canShowChecklist = this.canShow();
-		const taskList = getTaskList( taskStatuses, designType );
+		const taskList = getTaskList( taskStatuses, { designType, isSiteUnlaunched } );
 
 		let ChecklistComponent = Checklist;
 
@@ -549,6 +552,7 @@ export default connect(
 			taskUrls,
 			userEmail: ( user && user.email ) || '',
 			needsVerification: ! isCurrentUserEmailVerified( state ),
+			isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		};
 	},
 	{

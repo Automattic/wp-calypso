@@ -66,11 +66,37 @@ describe( 'MySitesSidebar', () => {
 			const Sidebar = new MySitesSidebar( {
 				canUserUseStore: true,
 				...defaultProps,
+				site: {
+					plan: {
+						product_slug: 'business-bundle',
+					},
+				},
 			} );
 			const Store = () => Sidebar.store();
 
 			const wrapper = shallow( <Store /> );
 			expect( wrapper.props().link ).toEqual( '/store/mysite.com' );
+		} );
+
+		test( 'Should return Calypsoified store menu item if user can use store on this site and the site is an ecommerce plan', () => {
+			const Sidebar = new MySitesSidebar( {
+				canUserUseStore: true,
+				...defaultProps,
+				site: {
+					options: {
+						admin_url: 'http://test.com/wp-admin/',
+					},
+					plan: {
+						product_slug: 'ecommerce-bundle',
+					},
+				},
+			} );
+			const Store = () => Sidebar.store();
+
+			const wrapper = shallow( <Store /> );
+			expect( wrapper.props().link ).toEqual(
+				'http://test.com/wp-admin/edit.php?post_type=shop_order&calypsoify=1'
+			);
 		} );
 
 		test( 'Should return null item if user can not use store on this site (nudge-a-palooza disabled)', () => {

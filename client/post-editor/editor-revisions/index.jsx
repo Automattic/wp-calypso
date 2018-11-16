@@ -23,6 +23,11 @@ import EditorRevisionsList from 'post-editor/editor-revisions-list';
 import QueryPostRevisions from 'components/data/query-post-revisions';
 import QueryPostRevisionAuthors from 'components/data/query-post-revision-authors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorRevisions extends Component {
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_editor_post_revisions_open' );

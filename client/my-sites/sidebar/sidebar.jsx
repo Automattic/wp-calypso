@@ -27,7 +27,7 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import StatsSparkline from 'blocks/stats-sparkline';
 import JetpackLogo from 'components/jetpack-logo';
-import { isFreeTrial, isPersonal, isPremium, isBusiness } from 'lib/products-values';
+import { isFreeTrial, isPersonal, isPremium, isBusiness, isEcommerce } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -125,6 +125,7 @@ export class MySitesSidebar extends Component {
 		}
 
 		const statsLink = getStatsPathForTab( 'day', siteId );
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<SidebarItem
 				tipTarget="menus"
@@ -143,6 +144,7 @@ export class MySitesSidebar extends Component {
 				</a>
 			</SidebarItem>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	trackActivityClick = () => {
@@ -382,7 +384,12 @@ export class MySitesSidebar extends Component {
 		let planLink = '/plans' + this.props.siteSuffix;
 
 		// Show plan details for upgraded sites
-		if ( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) {
+		if (
+			isPersonal( site.plan ) ||
+			isPremium( site.plan ) ||
+			isBusiness( site.plan ) ||
+			isEcommerce( site.plan )
+		) {
 			planLink = '/plans/my-plan' + this.props.siteSuffix;
 		}
 
@@ -400,6 +407,7 @@ export class MySitesSidebar extends Component {
 			} );
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li className={ linkClass } data-tip-target={ tipTarget }>
 				<a onClick={ this.trackPlanClick } href={ planLink }>
@@ -411,6 +419,7 @@ export class MySitesSidebar extends Component {
 				</a>
 			</li>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	trackStoreClick = () => {
@@ -433,12 +442,19 @@ export class MySitesSidebar extends Component {
 		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
 			return null;
 		}
+
+		let storeLink = '/store' + siteSuffix;
+		if ( isEcommerce( site.plan ) ) {
+			storeLink = site.options.admin_url + 'edit.php?post_type=shop_order&calypsoify=1';
+		}
+
 		return (
 			<SidebarItem
 				label={ translate( 'Store' ) }
-				link={ '/store' + siteSuffix }
+				link={ storeLink }
 				onNavigate={ this.trackStoreClick }
 				icon="cart"
+				forceInternalLink
 			>
 				<div className="sidebar__chevron-right">
 					<Gridicon icon="chevron-right" />
@@ -572,6 +588,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace*/
 		return (
 			<li className="wp-admin">
 				<a
@@ -586,6 +603,7 @@ export class MySitesSidebar extends Component {
 				</a>
 			</li>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace*/
 	}
 
 	// Check for cases where WP Admin links should appear, where we need support for legacy reasons (VIP, older users, testing).
@@ -626,6 +644,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Button
 				borderless
@@ -636,6 +655,7 @@ export class MySitesSidebar extends Component {
 				<Gridicon icon="add-outline" /> { this.props.translate( 'Add New Site' ) }
 			</Button>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	trackDomainSettingsClick = () => {

@@ -22,6 +22,11 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostSlug } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PostEditorSlug extends Component {
 	static propTypes = {
 		path: PropTypes.string,

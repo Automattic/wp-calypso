@@ -172,7 +172,7 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		return plans.filter( plan =>
-			isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PREMIUM, TYPE_BUSINESS ] )
+			isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ] )
 		);
 	}
 
@@ -306,28 +306,37 @@ PlansFeaturesMain.defaultProps = {
 };
 
 const guessCustomerType = ( state, props ) => {
+	if ( props.customerType ) {
+		return props.customerType;
+	}
+
+	if ( props.flowName === 'ecommerce' ) {
+		return 'business';
+	}
+
+	if ( isDiscountActive( getDiscountByName( 'default_plans_tab_business' ), state ) ) {
+		return 'business';
+	}
+
 	const site = props.site;
-	let customerType = props.customerType;
-	if ( ! customerType ) {
-		const currentPlan = getSitePlan( state, get( site, [ 'ID' ] ) );
-		if ( currentPlan ) {
-			const group = GROUP_WPCOM;
-			const businessPlanSlugs = [
-				findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PREMIUM } )[ 0 ],
-				findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_BUSINESS } )[ 0 ],
-				findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
-				findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
-			]
-				.map( planKey => getPlan( planKey ) )
-				.map( plan => plan.getStoreSlug() );
-			const isPlanInBusinessGroup = businessPlanSlugs.indexOf( currentPlan.product_slug ) !== -1;
-			customerType = isPlanInBusinessGroup ? 'business' : 'personal';
-		}
+	const currentPlan = getSitePlan( state, get( site, [ 'ID' ] ) );
+	if ( currentPlan ) {
+		const group = GROUP_WPCOM;
+		const businessPlanSlugs = [
+			findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PREMIUM } )[ 0 ],
+			findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
+			findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_BUSINESS } )[ 0 ],
+			findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
+			findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+			findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+		]
+			.map( planKey => getPlan( planKey ) )
+			.map( plan => plan.getStoreSlug() );
+		const isPlanInBusinessGroup = businessPlanSlugs.indexOf( currentPlan.product_slug ) !== -1;
+		return isPlanInBusinessGroup ? 'business' : 'personal';
 	}
-	if ( ! customerType ) {
-		customerType = 'personal';
-	}
-	return customerType;
+
+	return 'personal';
 };
 
 export default connect(

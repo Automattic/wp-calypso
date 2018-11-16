@@ -14,6 +14,7 @@ const webpack = require( 'webpack' );
  */
 const gutenberg = require( './sdk/gutenberg.js' );
 const notifications = require( './sdk/notifications.js' );
+const generic = require( './sdk/generic.js' );
 
 // Script name is used in help instructions;
 // pick between `npm run calypso-sdk` and `npx calypso-sdk`.
@@ -116,6 +117,30 @@ yargs
 				},
 			} ),
 		handler: argv => build( notifications, argv ),
+	} )
+	.command( {
+		command: 'generic <entry-point> <output-name>',
+		desc: 'Build generic JavaScript code',
+		builder: yargs => yargs
+			.positional( 'entry-point', {
+				description: 'Entry-point for your code',
+				type: 'string',
+				required: true,
+				coerce: path.resolve,
+			} )
+			.positional( 'output-name', {
+				description: 'Output filename',
+				type: 'string',
+				required: true,
+				coerce: path.resolve,
+			} )
+			.options( {
+				'global-wp': {
+					description: 'Externalize the @wordpress packages as globals',
+					type: 'boolean',
+				},
+			} ),
+		handler: argv => build( generic, argv ),
 	} )
 	.demandCommand( 1, chalk.red( 'You must provide a valid command!' ) )
 	.alias( 'help', 'h' )

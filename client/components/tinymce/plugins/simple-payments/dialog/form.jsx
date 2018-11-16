@@ -13,6 +13,7 @@ import { flowRight as compose, omit, padEnd, trimEnd } from 'lodash';
 /**
  * Internal dependencies
  */
+import { decimalPlaces } from 'lib/simple-payments/utils';
 import ExternalLink from 'components/external-link';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
@@ -37,15 +38,6 @@ const VISUAL_CURRENCY_LIST = SUPPORTED_CURRENCY_LIST.map( code => {
 	const label = symbol === code ? code : `${ code } ${ trimEnd( symbol, '.' ) }`;
 	return { code, label };
 } );
-
-// based on https://stackoverflow.com/a/10454560/59752
-function decimalPlaces( number ) {
-	const match = ( '' + number ).match( /(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/ );
-	if ( ! match ) {
-		return 0;
-	}
-	return Math.max( 0, ( match[ 1 ] ? match[ 1 ].length : 0 ) - ( match[ 2 ] ? +match[ 2 ] : 0 ) );
-}
 
 // Validation function for the form
 const validate = ( values, props ) => {

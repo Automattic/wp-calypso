@@ -33,6 +33,11 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorFeaturedImage extends Component {
 	static propTypes = {
 		featuredImage: PropTypes.object,

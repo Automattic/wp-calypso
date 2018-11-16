@@ -19,6 +19,11 @@ import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorGutenbergOptInNotice extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
@@ -49,7 +54,7 @@ class EditorGutenbergOptInNotice extends Component {
 				className="editor-gutenberg-opt-in-notice"
 				status="is-info"
 				onDismissClick={ this.dismissNotice }
-				text={ translate( 'A new editor is coming to level-up your layout.' ) }
+				text={ translate( 'A new editor is coming to level up your layout.' ) }
 			>
 				<NoticeAction onClick={ showDialog }>{ translate( 'Learn More' ) }</NoticeAction>
 			</Notice>

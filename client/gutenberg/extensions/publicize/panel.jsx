@@ -42,9 +42,7 @@ const PublicizePanel = ( { connections, refreshConnections } ) => (
 	>
 		<div>{ __( 'Connect and select social media services to share this post.' ) }</div>
 		{ connections &&
-			connections.length > 0 && (
-				<PublicizeForm staticConnections={ connections } refreshCallback={ refreshConnections } />
-			) }
+			connections.length > 0 && <PublicizeForm refreshCallback={ refreshConnections } /> }
 		{ connections &&
 			0 === connections.length && (
 				<PublicizeSettingsButton
@@ -57,15 +55,10 @@ const PublicizePanel = ( { connections, refreshConnections } ) => (
 );
 
 export default compose( [
-	withSelect( select => {
-		const postId = select( 'core/editor' ).getCurrentPostId();
-
-		return {
-			connections: select( 'jetpack/publicize' ).getConnections( postId ),
-			postId,
-		};
-	} ),
-	withDispatch( ( dispatch, { postId } ) => ( {
-		refreshConnections: () => dispatch( 'jetpack/publicize' ).refreshConnections( postId ),
+	withSelect( select => ( {
+		connections: select( 'core/editor' ).getEditedPostAttribute( 'jetpack_publicize_connections' ),
+	} ) ),
+	withDispatch( dispatch => ( {
+		refreshConnections: dispatch( 'core/editor' ).refreshPost,
 	} ) ),
 ] )( PublicizePanel );

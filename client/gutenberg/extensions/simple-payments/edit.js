@@ -3,9 +3,13 @@
 /**
  * External dependencies
  */
+import apiFetch from '@wordpress/api-fetch';
+import classNames from 'classnames';
+import emailValidator from 'email-validator';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
+import { get, trimEnd } from 'lodash';
 import { InspectorControls } from '@wordpress/editor';
 import { sprintf } from '@wordpress/i18n';
 import { withSelect } from '@wordpress/data';
@@ -17,15 +21,11 @@ import {
 	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
-import apiFetch from '@wordpress/api-fetch';
-import classNames from 'classnames';
-import emailValidator from 'email-validator';
-import get from 'lodash/get';
-import trimEnd from 'lodash/trimEnd';
 
 /**
  * Internal dependencies
  */
+import { decimalPlaces, formatPrice } from 'lib/simple-payments/utils';
 import { getCurrencyDefaults } from 'lib/format-currency/currencies';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
@@ -58,8 +58,13 @@ class SimplePaymentsEdit extends Component {
 			} );
 		}
 
-		// Validate and save on block-deselect
 		if ( prevProps.isSelected && ! isSelected && ! isLoadingInitial ) {
+			// Validate and save on block deselect
+
+			this.saveProduct();
+		} else if ( ! prevProps.isSaving && this.props.isSaving ) {
+			// Save payment on post save
+
 			this.saveProduct();
 		}
 	}
@@ -132,15 +137,6 @@ class SimplePaymentsEdit extends Component {
 		} );
 	}
 
-	// based on https://stackoverflow.com/a/10454560/59752
-	decimalPlaces = number => {
-		const match = ( '' + number ).match( /(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/ );
-		if ( ! match ) {
-			return 0;
-		}
-		return Math.max( 0, ( match[ 1 ] ? match[ 1 ].length : 0 ) - ( match[ 2 ] ? +match[ 2 ] : 0 ) );
-	};
-
 	validateAttributes = () => {
 		const isPriceValid = this.validatePrice();
 		const isTitleValid = this.validateTitle();
@@ -197,11 +193,11 @@ class SimplePaymentsEdit extends Component {
 			return false;
 		}
 
-		if ( this.decimalPlaces( price ) > precision ) {
+		if ( decimalPlaces( price ) > precision ) {
 			if ( precision === 0 ) {
 				this.setState( {
 					fieldPriceError: __(
-						'We know every penny counts, but prices can’t contain decimal values.'
+						'We know every penny counts, but prices in this currency can’t contain decimal values.'
 					),
 				} );
 				return false;
@@ -316,13 +312,6 @@ class SimplePaymentsEdit extends Component {
 		this.setState( { fieldTitleError: null } );
 	};
 
-	formatPrice = ( price, currency, withSymbol = true ) => {
-		const { precision, symbol } = getCurrencyDefaults( currency );
-		const value = price.toFixed( precision );
-		// Trim the dot at the end of symbol, e.g., 'kr.' becomes 'kr'
-		return withSymbol ? `${ value } ${ trimEnd( symbol, '.' ) }` : value;
-	};
-
 	getCurrencyList = SUPPORTED_CURRENCY_LIST.map( value => {
 		const { symbol } = getCurrencyDefaults( value );
 		// if symbol is equal to the code (e.g., 'CHF' === 'CHF'), don't duplicate it.
@@ -362,7 +351,7 @@ class SimplePaymentsEdit extends Component {
 				<ProductPlaceholder
 					ariaBusy="false"
 					content={ content }
-					formattedPrice={ this.formatPrice( price, currency ) }
+					formattedPrice={ formatPrice( price, currency ) }
 					multiple={ multiple }
 					title={ title }
 				/>
@@ -423,7 +412,7 @@ class SimplePaymentsEdit extends Component {
 							} ) }
 							label={ __( 'Price' ) }
 							onChange={ this.handlePriceChange }
-							placeholder={ this.formatPrice( 0, currency, false ) }
+							placeholder={ formatPrice( 0, currency, false ) }
 							required
 							step="1"
 							type="number"
@@ -474,8 +463,10 @@ class SimplePaymentsEdit extends Component {
 }
 
 const applyWithSelect = withSelect( ( select, props ) => {
-	const { paymentId } = props.attributes;
 	const { getEntityRecord } = select( 'core' );
+	const { isSavingPost } = select( 'core/editor' );
+
+	const { paymentId } = props.attributes;
 
 	const simplePayment = paymentId
 		? getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId )
@@ -483,6 +474,7 @@ const applyWithSelect = withSelect( ( select, props ) => {
 
 	return {
 		isLoadingInitial: paymentId && ! simplePayment,
+		isSaving: !! isSavingPost(),
 		simplePayment,
 	};
 } );

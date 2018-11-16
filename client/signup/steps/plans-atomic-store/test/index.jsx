@@ -207,7 +207,7 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
 	].forEach( plan => {
-		test( `Should add is_store_signup to cartItem.extra when processing wp.com business plans (${ plan })`, () => {
+		test( `Should add is_store_signup to cartItem.extra when processing wp.com business and eCommerce plans (${ plan })`, () => {
 			const myProps = {
 				...tplProps,
 				goToNextStep: jest.fn(),

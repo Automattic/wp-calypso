@@ -48,6 +48,11 @@ import VideoEditor from 'blocks/video-editor';
 import MediaModalDetail from './detail';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './index.scss';
+
 function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 	return (
 		! isParentReady( mediaItems ) ||

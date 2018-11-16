@@ -10,6 +10,11 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class EditorDrawerWell extends Component {
 	static propTypes = {
 		disabled: PropTypes.bool,

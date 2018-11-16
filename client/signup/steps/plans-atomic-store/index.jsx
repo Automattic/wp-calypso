@@ -130,7 +130,7 @@ export class PlansAtomicStoreStep extends Component {
 		);
 
 		if ( designType === DESIGN_TYPE_STORE ) {
-			plans = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
+			plans = [ PLAN_BUSINESS ];
 		}
 
 		return (
@@ -163,7 +163,7 @@ export class PlansAtomicStoreStep extends Component {
 		let headerText = translate( "Pick a plan that's right for you." );
 
 		if ( designType === DESIGN_TYPE_STORE ) {
-			headerText = translate( "You'll need the Business plan." );
+			headerText = translate( "You'll need the eCommerce plan." );
 		}
 
 		return (

@@ -236,7 +236,7 @@ class AboutStep extends Component {
 				nextFlowName =
 					siteGoalsArray.indexOf( 'sell' ) === -1 && previousFlowName
 						? previousFlowName
-						: 'store-nux';
+						: 'ecommerce';
 			}
 		}
 

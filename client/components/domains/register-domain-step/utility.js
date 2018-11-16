@@ -20,7 +20,8 @@ export function markFeaturedSuggestions(
 	suggestions,
 	exactMatchDomain,
 	strippedDomainBase,
-	featuredSuggestionsAtTop = false
+	featuredSuggestionsAtTop = false,
+	avoidTlds = []
 ) {
 	function isExactMatchBeforeTld( suggestion ) {
 		return (
@@ -34,30 +35,35 @@ export function markFeaturedSuggestions(
 	}
 
 	const output = [ ...suggestions ];
+	let outputWithoutTlds = filterOutDomainsWithTlds( output, avoidTlds );
 
-	const recommendedSuggestion = featuredSuggestionsAtTop
-		? null
-		: find( output, isExactMatchBeforeTld );
+	const recommendedSuggestion =
+		( featuredSuggestionsAtTop ? null : find( outputWithoutTlds, isExactMatchBeforeTld ) ) ||
+		outputWithoutTlds[ 0 ];
 
 	if ( recommendedSuggestion ) {
 		recommendedSuggestion.isRecommended = true;
 		moveArrayElement( output, output.indexOf( recommendedSuggestion ), 0 );
-	} else if ( output.length > 0 ) {
-		output[ 0 ].isRecommended = true;
+		outputWithoutTlds = filterOutDomainsWithTlds( output, avoidTlds );
 	}
 
-	const bestAlternativeSuggestion = featuredSuggestionsAtTop
-		? null
-		: find( output, isBestAlternative );
+	const bestAlternativeSuggestion =
+		( featuredSuggestionsAtTop ? null : find( outputWithoutTlds, isBestAlternative ) ) ||
+		outputWithoutTlds[ 1 ];
 
 	if ( bestAlternativeSuggestion ) {
 		bestAlternativeSuggestion.isBestAlternative = true;
 		moveArrayElement( output, output.indexOf( bestAlternativeSuggestion ), 1 );
-	} else if ( output.length > 1 ) {
-		output[ 1 ].isBestAlternative = true;
 	}
 
 	return output;
+}
+
+export function filterOutDomainsWithTlds( suggestions, blacklistTlds ) {
+	return suggestions.filter( suggestion => {
+		const tld = suggestion.domain_name.split( '.' ).pop();
+		return blacklistTlds.indexOf( tld ) === -1;
+	} );
 }
 
 export function isUnknownSuggestion( suggestion ) {

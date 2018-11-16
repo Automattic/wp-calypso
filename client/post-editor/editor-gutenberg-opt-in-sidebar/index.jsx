@@ -18,6 +18,11 @@ import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { getSelectedSiteId } from 'state/ui/selectors/';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorGutenbergOptInSidebar extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
@@ -49,7 +54,7 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 				onKeyPress={ this.handleKeyPress }
 			>
 				<img src="/calypso/images/illustrations/gutenberg-mini.svg" alt="" />
-				<p>{ translate( 'Try our new editor and level-up your layout.' ) }</p>
+				<p>{ translate( 'Try our new editor and level up your layout.' ) }</p>
 				<Button tabIndex="-1">{ translate( 'Learn more' ) }</Button>
 			</div>
 		);

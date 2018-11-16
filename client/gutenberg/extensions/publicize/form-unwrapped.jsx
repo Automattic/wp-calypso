@@ -26,21 +26,9 @@ import PublicizeConnection from './connection';
 import PublicizeSettingsButton from './settings-button';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
-class PublicizeFormUnwrapped extends Component {
-	constructor( props ) {
-		super( props );
-		const { initializePublicize, staticConnections } = this.props;
-		const initialTitle = '';
-		// Connection data format must match 'publicize' REST field.
-		const initialActiveConnections = staticConnections.map( c => {
-			return {
-				id: c.id,
-				should_share: c.enabled,
-			};
-		} );
-		initializePublicize( initialTitle, initialActiveConnections );
-	}
+export const MAXIMUM_MESSAGE_LENGTH = 256;
 
+class PublicizeFormUnwrapped extends Component {
 	/**
 	 * Check to see if form should be disabled.
 	 *
@@ -50,42 +38,21 @@ class PublicizeFormUnwrapped extends Component {
 	 * @return {boolean} True if whole form should be disabled.
 	 */
 	isDisabled() {
-		const { staticConnections } = this.props;
+		const { connections } = this.props;
 		// Check to see if at least one connection is not disabled
-		const formEnabled = staticConnections.some( c => ! c.disabled );
+		const formEnabled = connections.some( c => ! c.disabled );
 		return ! formEnabled;
-	}
-
-	/**
-	 * Checks if a connection is turned on/off.
-	 *
-	 * Looks up connection by ID in activeConnections prop which is
-	 * an array of objects with properties 'id' and 'should_share';
-	 * looks for an array entry with a 'id' property that matches
-	 * the parameter value. If found, the connection 'should_share' value
-	 * is returned.
-	 *
-	 * @param {string} id Connection ID.
-	 * @return {boolean} True if the connection is currently switched on.
-	 */
-	isConnectionOn( id ) {
-		const { activeConnections } = this.props;
-		const matchingConnection = activeConnections.find( c => id === c.id );
-		if ( ! matchingConnection ) {
-			return false;
-		}
-		return matchingConnection.should_share;
 	}
 
 	render() {
 		const {
-			staticConnections,
-			connectionChange,
+			connections,
+			toggleConnection,
 			messageChange,
 			shareMessage,
 			refreshCallback,
 		} = this.props;
-		const MAXIMUM_MESSAGE_LENGTH = 256;
+
 		const charactersRemaining = MAXIMUM_MESSAGE_LENGTH - shareMessage.length;
 		const characterCountClass = classnames( 'jetpack-publicize-character-count', {
 			'wpas-twitter-length-limit': charactersRemaining <= 0,
@@ -94,12 +61,11 @@ class PublicizeFormUnwrapped extends Component {
 		return (
 			<div id="publicize-form">
 				<ul>
-					{ staticConnections.map( c => (
+					{ connections.map( c => (
 						<PublicizeConnection
 							connectionData={ c }
 							key={ c.id }
-							connectionOn={ this.isConnectionOn( c.id ) }
-							connectionChange={ connectionChange }
+							toggleConnection={ toggleConnection }
 						/>
 					) ) }
 				</ul>
@@ -111,7 +77,6 @@ class PublicizeFormUnwrapped extends Component {
 					<textarea
 						value={ shareMessage }
 						onChange={ messageChange }
-						placeholder={ __( 'Publicize + Gutenberg :)' ) }
 						disabled={ this.isDisabled() }
 						maxLength={ MAXIMUM_MESSAGE_LENGTH }
 					/>

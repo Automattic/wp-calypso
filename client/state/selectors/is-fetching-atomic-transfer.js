@@ -7,11 +7,6 @@
 import { get } from 'lodash';
 
 /**
- * Internal Dependencies
- */
-import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
-
-/**
  * Returns whether we are already fetching the Atomic transfer for given siteId.
  *
  * @param {Object} state global app state
@@ -19,6 +14,5 @@ import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
  * @returns {?Boolean} whether we are fetching transfer status for given siteId
  */
 export default ( state, siteId ) => {
-	const transfer = getAtomicTransfer( state, siteId );
-	return get( transfer, 'fetchingTransfer', false );
+	return get( state, [ 'atomicTransfer', siteId, 'fetchingTransfer' ], false );
 };

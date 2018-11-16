@@ -33,22 +33,6 @@
 	}
 }
 
-.editor-drawer__label {
-	@include clear-fix;
-}
-
-.editor-drawer__label-text {
-	color: $gray-text;
-	display: block;
-	font-size: 12px;
-	line-height: 18px;
-	margin-bottom: 4px;
-}
-
-.editor-drawer__label-text .info-popover {
-	float: right;
-}
-
 .editor-drawer__heading {
 	font-weight: 400;
 	font-size: 12px;

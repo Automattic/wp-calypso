@@ -263,12 +263,19 @@ registerBlockType( 'jetpack/field-checkbox', {
 	),
 	edit: props => (
 		<JetpackFieldCheckbox
-			label="" // label intentinally left blank
+			label={ props.attributes.label } // label intentinally left blank
 			required={ props.attributes.required }
 			setAttributes={ props.setAttributes }
 			isSelected={ props.isSelected }
 		/>
 	),
+	attributes: {
+		...FieldDefaults.attributes,
+		label: {
+			type: 'string',
+			default: '',
+		},
+	},
 } );
 
 registerBlockType( 'jetpack/field-checkbox-multiple', {

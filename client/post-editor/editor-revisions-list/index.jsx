@@ -20,6 +20,11 @@ import EditorRevisionsListItem from './item';
 import { selectPostRevision } from 'state/posts/revisions/actions';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorRevisionsList extends PureComponent {
 	static propTypes = {
 		comparisons: PropTypes.object,

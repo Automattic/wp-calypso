@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import getSignupStepsSiteTopic from 'state/selectors/get-signup-steps-site-topic';
+import { getSignupStepsSiteTopic } from '../selectors';
 
 describe( 'getSignupStepsSiteTopic()', () => {
 	test( 'should return the site topic field', () => {
