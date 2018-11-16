@@ -273,6 +273,7 @@
     "whybundled": "whybundled stats.json"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-object-rest-spread": "7.0.0",
     "@babel/plugin-transform-react-jsx": "7.1.6",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
