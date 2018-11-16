@@ -10,7 +10,7 @@ import { registerPlugin } from '@wordpress/plugins';
  */
 import getJetpackData from './get-jetpack-data';
 
-export default function registerJetpackPlugins( name, settings ) {
+export default function registerJetpackPlugin( name, settings ) {
 	const data = getJetpackData();
 	const available = get( data, [ 'available_blocks', name, 'available' ], false );
 	if ( data && ! available ) {
