@@ -51,6 +51,7 @@ import mentionsPlugin from './plugins/mentions/plugin';
 import membershipsPlugin from './plugins/simple-payments/memberships-plugin';
 import markdownPlugin from './plugins/markdown/plugin';
 import wpEmojiPlugin from './plugins/wpemoji/plugin';
+import wpcomGutenbergPlugin from './plugins/wpcom-gutenberg/plugin';
 
 [
 	wpcomPlugin,
@@ -78,6 +79,7 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
 	markdownPlugin,
 	wpEmojiPlugin,
 	simplePaymentsPlugin,
+	wpcomGutenbergPlugin,
 ].forEach( initializePlugin => initializePlugin() );
 
 /**
@@ -157,6 +159,7 @@ const PLUGINS = [
 	'wpcom/insertmenu',
 	'wpcom/markdown',
 	'wpcom/simplepayments',
+	'wpcom/gutenberg',
 ];
 
 if ( config.isEnabled( 'memberships' ) ) {

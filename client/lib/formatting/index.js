@@ -82,7 +82,7 @@ export function preventWidows( text, wordsToKeep = 2 ) {
  * @param   {string }   content - html string
  * @returns { boolean } true if we think we found a block
  */
-function hasGutenbergBlocks( content ) {
+export function hasGutenbergBlocks( content ) {
 	return !! content && content.indexOf( '<!-- wp:' ) !== -1;
 }
 
