@@ -5,83 +5,63 @@
  */
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { find, flowRight, memoize } from 'lodash';
+import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import ElementChart from 'components/chart';
+import compareProps from 'lib/compare-props';
+import Chart from 'components/chart';
 import Legend from 'components/chart/legend';
 import StatTabs from '../stats-tabs';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import Card from 'components/card';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
+import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { rangeOfPeriod } from 'state/stats/lists/utils';
-
-const buildQuery = memoize( ( period, queryDate ) => {
-	let date = rangeOfPeriod( period, queryDate ).endOf;
-	let quantity = 30;
-	switch ( period ) {
-		case 'month':
-			quantity = 12;
-			break;
-		case 'year':
-			quantity = 10;
-			break;
-	}
-	const periodDifference = moment( date ).diff( moment( queryDate ), period );
-
-	if ( periodDifference >= quantity ) {
-		date = moment( date )
-			.subtract( Math.floor( periodDifference / quantity ) * quantity, period )
-			.format( 'YYYY-MM-DD' );
-	}
-
-	return {
-		unit: period,
-		date,
-		quantity,
-	};
-} );
+import { getSiteOption } from 'state/sites/selectors';
+import { formatDate, getQueryDate } from '../stats-chart-tabs/utility';
 
 class WordAdsChartTabs extends Component {
-	constructor( props ) {
-		super( props );
-		const activeTab = this.getActiveTab();
-		const activeCharts = activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
-		this.state = {
-			activeLegendCharts: activeCharts,
-			activeTab: activeTab,
-		};
-	}
+	static propTypes = {
+		activeTab: PropTypes.shape( {
+			attr: PropTypes.string,
+			gridicon: PropTypes.string,
+			label: PropTypes.string,
+			legendOptions: PropTypes.arrayOf( PropTypes.string ),
+		} ),
+		availableLegend: PropTypes.arrayOf( PropTypes.string ),
+		charts: PropTypes.arrayOf(
+			PropTypes.shape( {
+				attr: PropTypes.string,
+				gridicon: PropTypes.string,
+				label: PropTypes.string,
+				legendOptions: PropTypes.arrayOf( PropTypes.string ),
+			} )
+		),
+		data: PropTypes.arrayOf(
+			PropTypes.shape( {
+				classNames: PropTypes.arrayOf( PropTypes.string ),
+				cpm: PropTypes.number,
+				impressions: PropTypes.number,
+				labelDay: PropTypes.string,
+				period: PropTypes.string,
+				revenue: PropTypes.number,
+			} )
+		),
+		isActiveTabLoading: PropTypes.bool,
+		onChangeLegend: PropTypes.func.isRequired,
+	};
 
 	buildTooltipData( item ) {
 		const tooltipData = [];
-		const date = this.props.moment( item.data.period );
-		let dateLabel;
-		switch ( this.props.period.period ) {
-			case 'day':
-				dateLabel = date.format( 'LL' );
-				break;
-			case 'week':
-				dateLabel = date.format( 'L' ) + ' - ' + date.add( 6, 'days' ).format( 'L' );
-				break;
-			case 'month':
-				dateLabel = date.format( 'MMMM YYYY' );
-				break;
-			case 'year':
-				dateLabel = date.format( 'YYYY' );
-				break;
-		}
+
+		const dateLabel = formatDate( item.data.period, this.props.period.period );
 
 		tooltipData.push( {
 			label: dateLabel,
@@ -115,51 +95,12 @@ class WordAdsChartTabs extends Component {
 		return tooltipData;
 	}
 
-	onLegendClick = chartItem => {
-		const activeLegendCharts = this.state.activeLegendCharts;
-		const chartIndex = activeLegendCharts.indexOf( chartItem );
-		let gaEventAction;
-		if ( -1 === chartIndex ) {
-			activeLegendCharts.push( chartItem );
-			gaEventAction = ' on';
-		} else {
-			activeLegendCharts.splice( chartIndex );
-			gaEventAction = ' off';
-		}
-		this.props.recordGoogleEvent(
-			'WordAds Stats',
-			`Toggled Nested Chart ${ chartItem } ${ gaEventAction }`
-		);
-		this.setState( {
-			activeLegendCharts,
-		} );
-	};
-
-	getActiveTab = memoize( chartTab => {
-		const activeTab =
-			find( this.props.charts, { attr: this.props.chartTab } ) || this.props.charts[ 0 ];
-		const activeCharts = activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
-		if ( this.state && activeTab !== this.state.activeTab ) {
-			this.setState( {
-				activeLegendCharts: activeCharts,
-				activeTab: activeTab,
-			} );
-		}
-		return activeTab;
-	} );
-
-	getLoadedData() {
-		const { fullQueryData } = this.props;
-		return fullQueryData;
-	}
-
 	buildChartData() {
-		const data = this.getLoadedData();
+		const { data } = this.props;
 		if ( ! data ) {
 			return [];
 		}
 
-		const activeTab = this.props.chartTab;
 		const labelKey =
 			'label' +
 			this.props.period.period.charAt( 0 ).toUpperCase() +
@@ -176,7 +117,7 @@ class WordAdsChartTabs extends Component {
 
 			const item = {
 				label: record[ labelKey ],
-				value: record[ activeTab ],
+				value: record[ this.props.chartTab ],
 				data: record,
 				className,
 			};
@@ -187,18 +128,8 @@ class WordAdsChartTabs extends Component {
 	}
 
 	render() {
-		const { query, fullQueryRequesting, siteId } = this.props;
-		const chartData = this.buildChartData();
-		const activeTab = this.getActiveTab( this.props.chartTab );
-		const data = this.getLoadedData();
-		const activeTabLoading = fullQueryRequesting && ! ( data && data.length );
-		const classes = [
-			'stats-module',
-			'is-chart-tabs',
-			{
-				'is-loading': activeTabLoading,
-			},
-		];
+		const { isActiveTabLoading, siteId, query } = this.props;
+		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isActiveTabLoading } ];
 
 		return (
 			<div>
@@ -206,19 +137,20 @@ class WordAdsChartTabs extends Component {
 
 				<Card className={ classNames( ...classes ) }>
 					<Legend
+						activeCharts={ this.props.activeLegend }
+						activeTab={ this.props.activeTab }
+						availableCharts={ this.props.availableLegend }
 						tabs={ this.props.charts }
-						activeTab={ activeTab }
-						activeCharts={ this.state.activeLegendCharts }
-						clickHandler={ this.onLegendClick }
 					/>
-					<StatsModulePlaceholder className="is-chart" isLoading={ activeTabLoading } />
-					<ElementChart
-						loading={ activeTabLoading }
-						data={ chartData }
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+					<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
+					<Chart
 						barClick={ this.props.barClick }
+						data={ this.buildChartData() }
+						loading={ isActiveTabLoading }
 					/>
 					<StatTabs
-						data={ data }
+						data={ this.props.data }
 						tabs={ this.props.charts }
 						switchTab={ this.props.switchTab }
 						selectedTab={ this.props.chartTab }
@@ -231,19 +163,38 @@ class WordAdsChartTabs extends Component {
 	}
 }
 
+const NO_SITE_STATE = {
+	siteId: null,
+	data: [],
+};
+
 const connectComponent = connect(
-	( state, { period: periodObject, queryDate } ) => {
-		const { period } = periodObject;
-		const query = buildQuery( period, queryDate );
+	( state, { period: { period }, queryDate } ) => {
 		const siteId = getSelectedSiteId( state );
+		if ( ! siteId ) {
+			return NO_SITE_STATE;
+		}
+
+		const quantity = 'year' === period ? 10 : 30;
+		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
+		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
+
+		const query = { unit: period, date, quantity };
+		const data = getSiteStatsNormalizedData( state, siteId, 'statsAds', query );
+
 		return {
-			query: query,
-			fullQueryRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsAds', query ),
-			fullQueryData: getSiteStatsNormalizedData( state, siteId, 'statsAds', query ),
+			query,
 			siteId,
+			data,
 		};
 	},
-	{ recordGoogleEvent }
+	{ recordGoogleEvent },
+	null,
+	{
+		areStatePropsEqual: compareProps( {
+			deep: [ 'activeTab', 'query' ],
+		} ),
+	}
 );
 
 export default flowRight(
