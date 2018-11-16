@@ -17,18 +17,20 @@ import { withSelect, withDispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import PublicizeFormUnwrapped from './form-unwrapped';
+import PublicizeFormUnwrapped, { MAXIMUM_MESSAGE_LENGTH } from './form-unwrapped';
 
 const PublicizeForm = compose( [
 	withSelect( select => {
 		const meta = select( 'core/editor' ).getEditedPostAttribute( 'meta' );
+		const postTitle = select( 'core/editor' ).getEditedPostAttribute( 'title' );
+		const message = get( meta, [ 'jetpack_publicize_message' ], '' ) || postTitle || '';
 
 		return {
 			connections: select( 'core/editor' ).getEditedPostAttribute(
 				'jetpack_publicize_connections'
 			),
 			meta,
-			shareMessage: get( meta, [ 'jetpack_publicize_message' ], '' ),
+			shareMessage: message.substr( 0, MAXIMUM_MESSAGE_LENGTH ),
 		};
 	} ),
 	withDispatch( ( dispatch, { connections, meta } ) => ( {
