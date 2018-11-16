@@ -44,6 +44,12 @@ class SiteInformation extends Component {
 		};
 	}
 
+	componentDidMount() {
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+		} );
+	}
+
 	handleInputChange = ( { target: { name, value } } ) => {
 		this.setState( { [ name ]: value } );
 	};
