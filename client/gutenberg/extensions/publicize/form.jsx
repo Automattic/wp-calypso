@@ -29,7 +29,7 @@ const PublicizeForm = compose( [
 				'jetpack_publicize_connections'
 			),
 			meta,
-			shareMessage: get( meta, [ 'jetpack_publicize_message' ], '' ) || postTitle,
+			shareMessage: get( meta, [ 'jetpack_publicize_message' ], '' ) || postTitle || '',
 		};
 	} ),
 	withDispatch( ( dispatch, { connections, meta } ) => ( {
