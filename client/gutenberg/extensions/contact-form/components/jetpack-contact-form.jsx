@@ -28,6 +28,7 @@ class JetpackContactForm extends Component {
 		this.getToValidationError = this.getToValidationError.bind( this );
 		this.renderToAndSubjectFields = this.renderToAndSubjectFields.bind( this );
 		this.preventEnterSubmittion = this.preventEnterSubmittion.bind( this );
+		this.hasEmailError = this.hasEmailError.bind( this );
 
 		const to = args[ 0 ].attributes.to ? args[ 0 ].attributes.to : '';
 		const error = to
@@ -134,12 +135,11 @@ class JetpackContactForm extends Component {
 		const fieldEmailError = this.state.toError;
 		const { instanceId, attributes } = this.props;
 		const { subject, to } = attributes;
-		const hasEmailError = fieldEmailError && fieldEmailError.length > 0;
 		return (
 			<Fragment>
 				<TextControl
 					aria-describedby={ `contact-form-${ instanceId }-email-${
-						hasEmailError ? 'error' : 'help'
+						this.hasEmailError() ? 'error' : 'help'
 					}` }
 					label={ __( 'Email address' ) }
 					placeholder={ __( 'name@example.com' ) }
@@ -163,6 +163,11 @@ class JetpackContactForm extends Component {
 				/>
 			</Fragment>
 		);
+	}
+
+	hasEmailError() {
+		const fieldEmailError = this.state.toError;
+		return fieldEmailError && fieldEmailError.length > 0;
 	}
 
 	render() {
@@ -206,7 +211,7 @@ class JetpackContactForm extends Component {
 									) }
 								</p>
 								<div className="jetpack-contact-form__create">
-									<Button isPrimary type="submit">
+									<Button isPrimary type="submit" disabled={ this.hasEmailError() }>
 										{ __( 'Add Form' ) }
 									</Button>
 								</div>
