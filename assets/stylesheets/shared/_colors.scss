@@ -84,7 +84,7 @@ $color-success:        $hot-green-500;
 $color-success-light:  $hot-green-300;
 $color-success-dark:   $hot-green-700;
 
-$color-surface-background-light: #f8f8f8;
+$color-surface-background-light: $gray-25;
 $color-surface-background: $gray-50;
 
 $color-link: $color-primary;
@@ -152,7 +152,7 @@ $link-highlight:         var(--color-primary-light);
 
 // Layout
 // $content-background-color: rgba($gray-50, 0.25);
-$content-background-color: rgba($gray-50, 0.25);
+
 $masterbar-color:          $blue-wordpress;
 $sidebar-bg-color:         $gray-lighten-30;
 $sidebar-text-color:       $gray-dark;
