@@ -5,7 +5,7 @@ const path = require( 'path' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 const isBrowser = isCalypsoClient || 'true' === process.env.TARGET_BROWSER;
 
-const modules = isBrowser ? false : 'commonjs'; // only calypso should keep es6 modules
+const modules = isBrowser ? false : 'commonjs'; // Use commonjs for Node
 const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 
 const targets = isBrowser
