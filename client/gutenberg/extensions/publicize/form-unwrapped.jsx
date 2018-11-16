@@ -26,6 +26,8 @@ import PublicizeConnection from './connection';
 import PublicizeSettingsButton from './settings-button';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
+export const MAXIMUM_MESSAGE_LENGTH = 256;
+
 class PublicizeFormUnwrapped extends Component {
 	/**
 	 * Check to see if form should be disabled.
@@ -50,7 +52,7 @@ class PublicizeFormUnwrapped extends Component {
 			shareMessage,
 			refreshCallback,
 		} = this.props;
-		const MAXIMUM_MESSAGE_LENGTH = 256;
+
 		const charactersRemaining = MAXIMUM_MESSAGE_LENGTH - shareMessage.length;
 		const characterCountClass = classnames( 'jetpack-publicize-character-count', {
 			'wpas-twitter-length-limit': charactersRemaining <= 0,
