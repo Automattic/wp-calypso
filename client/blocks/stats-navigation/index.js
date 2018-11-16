@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,10 +16,7 @@ import Intervals from './intervals';
 import FollowersCount from 'blocks/followers-count';
 import isGoogleMyBusinessLocationConnectedSelector from 'state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'state/selectors/is-site-store';
-import { getSiteOption } from 'state/sites/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
-import QueryBlogStickers from 'components/data/query-blog-stickers';
-import getBlogStickers from 'state/selectors/get-blog-stickers';
 import config from 'config';
 
 class StatsNavigation extends Component {
@@ -29,14 +25,9 @@ class StatsNavigation extends Component {
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
 		isWordAds: PropTypes.bool,
-		stickers: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
-	};
-
-	static defaultProps = {
-		stickers: false,
 	};
 
 	isValidItem = item => {
@@ -62,7 +53,7 @@ class StatsNavigation extends Component {
 	};
 
 	render() {
-		const { slug, selectedItem, interval, siteId, stickers } = this.props;
+		const { slug, selectedItem, interval } = this.props;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
@@ -95,7 +86,6 @@ class StatsNavigation extends Component {
 				{ showIntervals && (
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
-				{ ! stickers && siteId && <QueryBlogStickers blogId={ siteId } /> }
 			</div>
 		);
 	}
@@ -108,12 +98,7 @@ export default connect( ( state, { siteId } ) => {
 			siteId
 		),
 		isStore: isSiteStore( state, siteId ),
-		stickers: siteId ? getBlogStickers( state, siteId ) : false,
-		isWordAds:
-			getSiteOption( state, siteId, 'wordads' ) &&
-			stickers &&
-			includes( stickers, 'wordads-daily-stats' ) &&
-			config.isEnabled( 'wordads/daily-stats' ),
+		isWordAds: config.isEnabled( 'wordads/daily-stats' ),
 		siteId,
 	};
 } )( StatsNavigation );
