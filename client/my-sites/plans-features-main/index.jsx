@@ -310,10 +310,6 @@ const guessCustomerType = ( state, props ) => {
 		return props.customerType;
 	}
 
-	if ( props.flowName === 'ecommerce' ) {
-		return 'business';
-	}
-
 	if ( isDiscountActive( getDiscountByName( 'default_plans_tab_business' ), state ) ) {
 		return 'business';
 	}
