@@ -49,13 +49,8 @@
 	}
 
 	.simple-payments__field-multiple {
-		.components-base-control__field {
-			align-items: center;
-			justify-content: flex-start;
-		}
-		.components-form-toggle {
-			margin-left: 10px;
-			order: 1;
+		.components-toggle-control__label {
+			line-height: 1.4em;
 		}
 	}
 }
