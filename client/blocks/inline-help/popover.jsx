@@ -29,7 +29,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { setSelectedEditor } from 'state/selected-editor/actions';
-import { navigate } from 'state/ui/actions';
+import { navigate, replaceHistory } from 'state/ui/actions';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -114,8 +114,9 @@ class InlineHelpPopover extends Component {
 	};
 
 	switchToClassicEditor = () => {
-		const { siteId, optOut, classicUrl, redirect } = this.props;
+		const { siteId, optOut, classicUrl, redirect, swapHistory } = this.props;
 		optOut( siteId );
+		swapHistory( classicUrl );
 		redirect( classicUrl );
 	};
 
@@ -220,6 +221,10 @@ const redirect = classicUrl => {
 	return navigate( classicUrl );
 };
 
+const swapHistory = classicUrl => {
+	return replaceHistory( classicUrl );
+};
+
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
@@ -241,6 +246,7 @@ const mapDispatchToProps = {
 	selectResult,
 	resetContactForm: resetInlineHelpContactForm,
 	redirect,
+	swapHistory,
 };
 
 export default connect(
