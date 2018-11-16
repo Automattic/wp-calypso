@@ -32,7 +32,7 @@ import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
  * @property {Function} subscribe attaches an event listener to state changes
  */
 
-export function createReduxStore( initialState = {} ) {
+export function createReduxStore( initialState ) {
 	const isBrowser = typeof window === 'object';
 	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
 
