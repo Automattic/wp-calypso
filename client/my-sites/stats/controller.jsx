@@ -129,6 +129,11 @@ function getSiteFilters( siteId ) {
 	return filters;
 }
 
+function getMomentSiteZone( state, siteId ) {
+	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
+	return i18n.moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
+}
+
 export default {
 	resetFirstView( context ) {
 		context.store.dispatch( savePreference( 'firstViewHistory', [] ) );
@@ -244,8 +249,7 @@ export default {
 			return next();
 		}
 
-		const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
-		const momentSiteZone = i18n.moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
+		const momentSiteZone = getMomentSiteZone( state, siteId );
 		const isValidStartDate =
 			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
 
@@ -433,8 +437,7 @@ export default {
 			return next();
 		}
 
-		const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
-		const momentSiteZone = i18n.moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
+		const momentSiteZone = getMomentSiteZone( state, siteId );
 		const isValidStartDate =
 			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
 
