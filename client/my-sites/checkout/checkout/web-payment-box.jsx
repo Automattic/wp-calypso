@@ -336,7 +336,7 @@ export class WebPaymentBox extends React.Component {
 									card_brand: token.paymentMethod.network,
 								};
 
-								setPayment( newCardPayment( { cardRawDetails } ) );
+								setPayment( newCardPayment( cardRawDetails ) );
 								this.props.onSubmit( event );
 								paymentResponse.complete( 'success' );
 							} )
