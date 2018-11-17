@@ -87,16 +87,18 @@ class MapEdit extends Component {
 	removeAPIKey = () => {
 		this.apiCall( null, 'DELETE' );
 	};
-	apiCall( service_api_key = null, method = 'GET' ) {
+	apiCall( serviceApiKey = null, method = 'GET' ) {
 		const { noticeOperations } = this.props;
 		const url = '/wp-json/jetpack/v4/service-api-keys/mapbox';
-		const fetch = service_api_key ? { url, method, data: { service_api_key } } : { url, method };
+		const fetch = serviceApiKey
+			? { url, method, data: { service_api_key: serviceApiKey } }
+			: { url, method };
 		apiFetch( fetch ).then(
 			result => {
 				noticeOperations.removeAllNotices();
 				this.setState( {
 					apiState: result.service_api_key ? API_STATE_SUCCESS : API_STATE_FAILURE,
-					api_key: result.service_api_key,
+					apiKey: result.service_api_key,
 					apiKeyControl: result.service_api_key,
 				} );
 			},
@@ -118,8 +120,8 @@ class MapEdit extends Component {
 	};
 	render() {
 		const { className, setAttributes, attributes, noticeUI, notices } = this.props;
-		const { map_style, map_details, points, zoom, map_center, marker_color, align } = attributes;
-		const { addPointVisibility, api_key, apiKeyControl, apiState } = this.state;
+		const { mapStyle, mapDetails, points, zoom, mapCenter, markerColor, align } = attributes;
+		const { addPointVisibility, apiKey, apiKeyControl, apiState } = this.state;
 		const inspectorControls = (
 			<Fragment>
 				<BlockControls>
@@ -139,14 +141,14 @@ class MapEdit extends Component {
 				<InspectorControls>
 					<PanelBody title={ __( 'Map Theme' ) }>
 						<MapThemePicker
-							value={ map_style }
-							onChange={ value => setAttributes( { map_style: value } ) }
-							options={ settings.map_styleOptions }
+							value={ mapStyle }
+							onChange={ value => setAttributes( { mapStyle: value } ) }
+							options={ settings.mapStyleOptions }
 						/>
 						<ToggleControl
 							label={ __( 'Show street names' ) }
-							checked={ map_details }
-							onChange={ value => setAttributes( { map_details: value } ) }
+							checked={ mapDetails }
+							onChange={ value => setAttributes( { mapDetails: value } ) }
 						/>
 					</PanelBody>
 					<PanelColorSettings
@@ -154,8 +156,8 @@ class MapEdit extends Component {
 						initialOpen={ true }
 						colorSettings={ [
 							{
-								value: marker_color,
-								onChange: value => setAttributes( { marker_color: value } ),
+								value: markerColor,
+								onChange: value => setAttributes( { markerColor: value } ),
 								label: 'Marker Color',
 							},
 						] }
@@ -217,17 +219,17 @@ class MapEdit extends Component {
 				<div className={ className }>
 					<Map
 						ref={ this.mapRef }
-						map_style={ map_style }
-						map_details={ map_details }
+						mapStyle={ mapStyle }
+						mapDetails={ mapDetails }
 						points={ points }
 						zoom={ zoom }
-						map_center={ map_center }
-						marker_color={ marker_color }
+						mapCenter={ mapCenter }
+						markerColor={ markerColor }
 						onSetZoom={ value => {
 							setAttributes( { zoom: value } );
 						} }
 						admin={ true }
-						api_key={ api_key }
+						apiKey={ apiKey }
 						onSetPoints={ value => setAttributes( { points: value } ) }
 						onMapLoaded={ () => this.setState( { addPointVisibility: true } ) }
 						onMarkerClick={ () => this.setState( { addPointVisibility: false } ) }
@@ -237,7 +239,7 @@ class MapEdit extends Component {
 							<AddPoint
 								onAddPoint={ this.addPoint }
 								onClose={ () => this.setState( { addPointVisibility: false } ) }
-								api_key={ api_key }
+								apiKey={ apiKey }
 								onError={ this.onError }
 							/>
 						) }

@@ -42,7 +42,7 @@ export class LocationSearch extends Component {
 	getOptionCompletion = option => {
 		const { value } = option;
 		const point = {
-			place_title: value.text,
+			placeTitle: value.text,
 			title: value.text,
 			caption: value.place_name,
 			id: value.id,
@@ -56,12 +56,12 @@ export class LocationSearch extends Component {
 	};
 
 	search = value => {
-		const { api_key, onError } = this.props;
+		const { apiKey, onError } = this.props;
 		const url =
 			'https://api.mapbox.com/geocoding/v5/mapbox.places/' +
 			encodeURI( value ) +
 			'.json?access_token=' +
-			api_key;
+			apiKey;
 		return new Promise( function( resolve, reject ) {
 			const xhr = new XMLHttpRequest();
 			xhr.open( 'GET', url );
