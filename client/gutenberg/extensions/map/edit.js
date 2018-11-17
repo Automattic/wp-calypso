@@ -104,7 +104,6 @@ class MapEdit extends Component {
 			result => {
 				this.onError( null, result.message );
 				this.setState( {
-					apiState: API_STATE_FAILURE,
 					apiRequestOutstanding: false,
 				} );
 			}
@@ -213,6 +212,7 @@ class MapEdit extends Component {
 					</div>
 					<TextControl
 						className="components-text-control-api-key"
+						disabled={ apiRequestOutstanding }
 						placeholder="Paste Key Here"
 						value={ apiKeyControl }
 						onChange={ this.updateAPIKeyControl }
