@@ -267,7 +267,7 @@ export class Map extends Component {
 		const { zoom, onMapLoaded, onError, admin } = this.props;
 		const map = new mapboxgl.Map( {
 			container: this.mapRef.current,
-			style: 'mapbox://styles/mapbox/streets-v9',
+			style: this.getMapStyle(),
 			center: this.googlePoint2Mapbox( mapCenter ),
 			zoom: parseInt( zoom, 10 ),
 			pitchWithRotate: false,
@@ -297,7 +297,6 @@ export class Map extends Component {
 			map.resize();
 			onMapLoaded();
 			this.setState( { loaded: true } );
-			map.setStyle( this.getMapStyle() );
 			window.addEventListener( 'resize', this.debouncedSizeMap );
 		} );
 	}
