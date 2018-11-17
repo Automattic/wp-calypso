@@ -185,10 +185,10 @@ class MapEdit extends Component {
 						/>
 						<ButtonGroup>
 							<Button type="button" onClick={ this.updateAPIKey } isDefault>
-								{ __( 'Update Key' ) }
+								{ __( 'Update Token' ) }
 							</Button>
 							<Button type="button" onClick={ this.removeAPIKey } isDefault>
-								{ __( 'Remove Key' ) }
+								{ __( 'Remove Token' ) }
 							</Button>
 						</ButtonGroup>
 					</PanelBody>
@@ -201,7 +201,7 @@ class MapEdit extends Component {
 			</Placeholder>
 		);
 		const getAPIInstructions = sprintf(
-			"<p>Before you use a map block, you will need to get a key from <a href='%1$s'>Mapbox</a>. You will only have to do this once.</p><p>Go to <a href='%1$s'>Mapbox</a> and either create an account or sign in. Once you sign in, locate and copy the default access token. Finally, paste it into the token field below.</p>",
+			"<p>Before using the map block, you will need an Access Token.</p><p>Create an account or log in to <a href='%1$s'>Mapbox</a>. Locate and copy the default access token, and paste it in the field below.</p>",
 			'https://www.mapbox.com'
 		);
 		const placeholderAPIStateFailure = (
@@ -213,7 +213,7 @@ class MapEdit extends Component {
 					<TextControl
 						className="components-text-control-api-key"
 						disabled={ apiRequestOutstanding }
-						placeholder="Paste Key Here"
+						placeholder={ __( 'Paste Token Here' ) }
 						value={ apiKeyControl }
 						onChange={ this.updateAPIKeyControl }
 					/>
@@ -227,7 +227,7 @@ class MapEdit extends Component {
 						}
 						onClick={ this.updateAPIKey }
 					>
-						{ __( 'Set Key' ) }
+						{ __( 'Set Token' ) }
 					</Button>
 				</Fragment>
 			</Placeholder>
