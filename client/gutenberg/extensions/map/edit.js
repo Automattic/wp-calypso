@@ -6,7 +6,6 @@
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, createRef, Fragment, RawHTML } from '@wordpress/element';
-import { debounce } from 'lodash';
 import { sprintf } from '@wordpress/i18n';
 import {
 	Button,
@@ -48,10 +47,6 @@ class MapEdit extends Component {
 			apiState: API_STATE_LOADING,
 		};
 		this.mapRef = createRef();
-		this.debouncedUpdateAPIKey = debounce( this.updateAPIKey, 800 );
-	}
-	componentWillUnmount() {
-		this.debouncedAPIKey && this.debouncedAPIKey.cancel();
 	}
 	addPoint = point => {
 		const { attributes, setAttributes } = this.props;
@@ -76,7 +71,9 @@ class MapEdit extends Component {
 		setTimeout( this.mapRef.current.sizeMap, 0 );
 	};
 	updateAPIKeyControl = value => {
-		this.setState( { apiKeyControl: value }, this.debouncedUpdateAPIKey );
+		this.setState( {
+			apiKeyControl: value,
+		} );
 	};
 	updateAPIKey = () => {
 		const { noticeOperations } = this.props;
@@ -91,6 +88,7 @@ class MapEdit extends Component {
 		const { noticeOperations } = this.props;
 		const url = '/wp-json/jetpack/v4/service-api-keys/mapbox';
 		const fetch = service_api_key ? { url, method, data: { service_api_key } } : { url, method };
+		this.setState( { apiRequestOutstanding: true } );
 		apiFetch( fetch ).then(
 			result => {
 				noticeOperations.removeAllNotices();
@@ -98,12 +96,14 @@ class MapEdit extends Component {
 					apiState: result.service_api_key ? API_STATE_SUCCESS : API_STATE_FAILURE,
 					api_key: result.service_api_key,
 					apiKeyControl: result.service_api_key,
+					apiRequestOutstanding: false,
 				} );
 			},
 			result => {
 				this.onError( null, result.message );
 				this.setState( {
 					apiState: API_STATE_FAILURE,
+					apiRequestOutstanding: false,
 				} );
 			}
 		);
@@ -119,7 +119,13 @@ class MapEdit extends Component {
 	render() {
 		const { className, setAttributes, attributes, noticeUI, notices } = this.props;
 		const { map_style, map_details, points, zoom, map_center, marker_color, align } = attributes;
-		const { addPointVisibility, api_key, apiKeyControl, apiState } = this.state;
+		const {
+			addPointVisibility,
+			api_key,
+			apiKeyControl,
+			apiState,
+			apiRequestOutstanding,
+		} = this.state;
 		const inspectorControls = (
 			<Fragment>
 				<BlockControls>
@@ -204,10 +210,23 @@ class MapEdit extends Component {
 						<RawHTML>{ getAPIInstructions }</RawHTML>
 					</div>
 					<TextControl
+						className="components-text-control-api-key"
 						placeholder="Paste Key Here"
 						value={ apiKeyControl }
 						onChange={ this.updateAPIKeyControl }
 					/>
+					<Button
+						className="components-text-control-api-key-submit"
+						isLarge
+						disabled={
+							! apiRequestOutstanding && ( apiKeyControl && apiKeyControl.length > 1 )
+								? false
+								: 'disabled'
+						}
+						onClick={ this.updateAPIKey }
+					>
+						{ __( 'Set Key' ) }
+					</Button>
 				</Fragment>
 			</Placeholder>
 		);
