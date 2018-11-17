@@ -86,6 +86,7 @@ class MapEdit extends Component {
 	};
 	apiCall( serviceApiKey = null, method = 'GET' ) {
 		const { noticeOperations } = this.props;
+		const { apiKey } = this.state;
 		const url = '/?rest_route=/jetpack/v4/service-api-keys/mapbox';
 		const fetch = serviceApiKey
 			? { url, method, data: { service_api_key: serviceApiKey } }
@@ -105,6 +106,7 @@ class MapEdit extends Component {
 				this.onError( null, result.message );
 				this.setState( {
 					apiRequestOutstanding: false,
+					apiKeyControl: apiKey,
 				} );
 			}
 		);
