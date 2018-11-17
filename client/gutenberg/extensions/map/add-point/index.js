@@ -16,7 +16,7 @@ import LocationSearch from '../location-search';
 import './style.scss';
 export class AddPoint extends Component {
 	render() {
-		const { onClose, onAddPoint, onError, api_key } = this.props;
+		const { onClose, onAddPoint, onError, apiKey } = this.props;
 		return (
 			<Button className="component__add-point">
 				{ __( 'Add marker' ) }
@@ -27,7 +27,7 @@ export class AddPoint extends Component {
 					<LocationSearch
 						onAddPoint={ onAddPoint }
 						label={ __( 'Add a location' ) }
-						api_key={ api_key }
+						apiKey={ apiKey }
 						onError={ onError }
 					/>
 				</Popover>

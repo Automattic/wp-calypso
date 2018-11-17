@@ -23,7 +23,7 @@ window.addEventListener( 'load', function() {
 				component: component,
 				options: {
 					settings,
-					props: { api_key: result.service_api_key },
+					props: { apiKey: result.service_api_key },
 				},
 			},
 		] );

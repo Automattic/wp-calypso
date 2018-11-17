@@ -28,7 +28,7 @@ export class FrontendManagement {
 		const data = {};
 		for ( const name in attributes ) {
 			const attribute = attributes[ name ];
-			data[ name ] = dataset[ name ];
+			data[ name ] = dataset[ name.toLowerCase() ];
 			if ( attribute.type === 'boolean' ) {
 				data[ name ] = data[ name ] === 'false' ? false : !! data[ name ];
 			}
