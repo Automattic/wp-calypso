@@ -183,21 +183,24 @@ export class Map extends Component {
 	};
 	setBoundsByMarkers = () => {
 		const { zoom, points, onSetZoom } = this.props;
-		const { map, activeMarker, mapboxgl, zoomControl, fit_to_bounds } = this.state;
-
-		if ( ! map || ! points.length || activeMarker ) {
+		const { map, activeMarker, mapboxgl, zoomControl, boundsSetProgrammatically } = this.state;
+		if ( ! map ) {
 			return;
 		}
-
+		// If there are no points at all, there is no data to set bounds to. Abort the function.
+		if ( ! points.length ) {
+			return;
+		}
+		// If there is an open info window, resizing will probably move the info window which complicates interaction.
+		if ( activeMarker ) {
+			return;
+		}
 		const bounds = new mapboxgl.LngLatBounds();
-
 		points.forEach( point => {
 			bounds.extend( [ point.coordinates.longitude, point.coordinates.latitude ] );
 		} );
 
-		// If there are multiple points, zoom is determined by the area they cover,
-		// and zoom control is removed.
-
+		// If there are multiple points, zoom is determined by the area they cover, and zoom control is removed.
 		if ( points.length > 1 ) {
 			map.fitBounds( bounds, {
 				padding: {
@@ -207,22 +210,24 @@ export class Map extends Component {
 					right: 20,
 				},
 			} );
-			this.setState( { fit_to_bounds: true } );
+			this.setState( { boundsSetProgrammatically: true } );
 			map.removeControl( zoomControl );
 			return;
 		}
+		// If there is only one point, center map around it.
 		map.setCenter( bounds.getCenter() );
-		/* Case where points go from multiple to just one. Set zoom to an arbitrarily high level. */
-		if ( fit_to_bounds ) {
+
+		// If the number of markers has just changed from > 1 to 1, set an arbitrary tight zoom, which feels like the original default.
+		if ( boundsSetProgrammatically ) {
 			const newZoom = 12;
 			map.setZoom( newZoom );
 			onSetZoom( newZoom );
 		} else {
-			// If there are one (or zero) points, user can set zoom
+			// If there are one (or zero) points, and this is not a recent change, respect user's chosen zoom.
 			map.setZoom( parseInt( zoom, 10 ) );
 		}
-		this.setState( { fit_to_bounds: false } );
 		map.addControl( zoomControl );
+		this.setState( { boundsSetProgrammatically: false } );
 	};
 	getMapStyle() {
 		const { map_style, map_details } = this.props;
