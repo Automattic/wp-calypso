@@ -262,15 +262,21 @@ export class Map extends Component {
 	initMap( mapCenter ) {
 		const { mapboxgl } = this.state;
 		const { zoom, onMapLoaded, onError, admin } = this.props;
-		const map = new mapboxgl.Map( {
-			container: this.mapRef.current,
-			style: 'mapbox://styles/mapbox/streets-v9',
-			center: this.googlePoint2Mapbox( mapCenter ),
-			zoom: parseInt( zoom, 10 ),
-			pitchWithRotate: false,
-			attributionControl: false,
-			dragRotate: false,
-		} );
+		let map;
+		try {
+			map = new mapboxgl.Map( {
+				container: this.mapRef.current,
+				style: 'mapbox://styles/mapbox/streets-v9',
+				center: this.googlePoint2Mapbox( mapCenter ),
+				zoom: parseInt( zoom, 10 ),
+				pitchWithRotate: false,
+				attributionControl: false,
+				dragRotate: false,
+			} );
+		} catch ( e ) {
+			onError( 'mapbox_error', e.message );
+			return;
+		}
 		map.on( 'error', e => {
 			onError( 'mapbox_error', e.error.message );
 		} );
