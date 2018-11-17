@@ -86,6 +86,7 @@ class MapEdit extends Component {
 	};
 	apiCall( service_api_key = null, method = 'GET' ) {
 		const { noticeOperations } = this.props;
+		const { api_key } = this.state;
 		const url = '/wp-json/jetpack/v4/service-api-keys/mapbox';
 		const fetch = service_api_key ? { url, method, data: { service_api_key } } : { url, method };
 		this.setState( { apiRequestOutstanding: true } );
@@ -103,6 +104,7 @@ class MapEdit extends Component {
 				this.onError( null, result.message );
 				this.setState( {
 					apiRequestOutstanding: false,
+					apiKeyControl: api_key,
 				} );
 			}
 		);
