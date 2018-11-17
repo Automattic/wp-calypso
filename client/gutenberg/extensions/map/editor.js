@@ -22,9 +22,8 @@ registerBlockType( settings.name, {
 	category: settings.category,
 	keywords: settings.keywords,
 	attributes: settings.attributes,
-	getEditWrapperProps( attributes ) {
-		const { align } = attributes;
-		if ( -1 !== settings.validAlignments.indexOf( align ) ) {
+	getEditWrapperProps( { align } ) {
+		if ( settings.validAlignments.includes( align ) ) {
 			return { 'data-align': align };
 		}
 	},
