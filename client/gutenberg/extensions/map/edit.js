@@ -6,7 +6,6 @@
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, createRef, Fragment, RawHTML } from '@wordpress/element';
-import { debounce } from 'lodash';
 import { sprintf } from '@wordpress/i18n';
 import {
 	Button,
@@ -48,10 +47,6 @@ class MapEdit extends Component {
 			apiState: API_STATE_LOADING,
 		};
 		this.mapRef = createRef();
-		this.debouncedUpdateAPIKey = debounce( this.updateAPIKey, 800 );
-	}
-	componentWillUnmount() {
-		this.debouncedAPIKey && this.debouncedAPIKey.cancel();
 	}
 	addPoint = point => {
 		const { attributes, setAttributes } = this.props;
@@ -76,7 +71,9 @@ class MapEdit extends Component {
 		setTimeout( this.mapRef.current.sizeMap, 0 );
 	};
 	updateAPIKeyControl = value => {
-		this.setState( { apiKeyControl: value }, this.debouncedUpdateAPIKey );
+		this.setState( {
+			apiKeyControl: value,
+		} );
 	};
 	updateAPIKey = () => {
 		const { noticeOperations } = this.props;
@@ -89,10 +86,12 @@ class MapEdit extends Component {
 	};
 	apiCall( serviceApiKey = null, method = 'GET' ) {
 		const { noticeOperations } = this.props;
+		const { apiKey } = this.state;
 		const url = '/wp-json/jetpack/v4/service-api-keys/mapbox';
 		const fetch = serviceApiKey
 			? { url, method, data: { service_api_key: serviceApiKey } }
 			: { url, method };
+		this.setState( { apiRequestOutstanding: true } );
 		apiFetch( fetch ).then(
 			result => {
 				noticeOperations.removeAllNotices();
@@ -100,12 +99,14 @@ class MapEdit extends Component {
 					apiState: result.service_api_key ? API_STATE_SUCCESS : API_STATE_FAILURE,
 					apiKey: result.service_api_key,
 					apiKeyControl: result.service_api_key,
+					apiRequestOutstanding: false,
 				} );
 			},
 			result => {
 				this.onError( null, result.message );
 				this.setState( {
-					apiState: API_STATE_FAILURE,
+					apiRequestOutstanding: false,
+					apiKeyControl: apiKey,
 				} );
 			}
 		);
@@ -121,7 +122,13 @@ class MapEdit extends Component {
 	render() {
 		const { className, setAttributes, attributes, noticeUI, notices } = this.props;
 		const { mapStyle, mapDetails, points, zoom, mapCenter, markerColor, align } = attributes;
-		const { addPointVisibility, apiKey, apiKeyControl, apiState } = this.state;
+		const {
+			addPointVisibility,
+			apiKey,
+			apiKeyControl,
+			apiState,
+			apiRequestOutstanding,
+		} = this.state;
 		const inspectorControls = (
 			<Fragment>
 				<BlockControls>
@@ -180,10 +187,10 @@ class MapEdit extends Component {
 						/>
 						<ButtonGroup>
 							<Button type="button" onClick={ this.updateAPIKey } isDefault>
-								{ __( 'Update Key' ) }
+								{ __( 'Update Token' ) }
 							</Button>
 							<Button type="button" onClick={ this.removeAPIKey } isDefault>
-								{ __( 'Remove Key' ) }
+								{ __( 'Remove Token' ) }
 							</Button>
 						</ButtonGroup>
 					</PanelBody>
@@ -196,7 +203,7 @@ class MapEdit extends Component {
 			</Placeholder>
 		);
 		const getAPIInstructions = sprintf(
-			"<p>Before you use a map block, you will need to get a key from <a href='%1$s'>Mapbox</a>. You will only have to do this once.</p><p>Go to <a href='%1$s'>Mapbox</a> and either create an account or sign in. Once you sign in, locate and copy the default access token. Finally, paste it into the token field below.</p>",
+			"<p>Before using the map block, you will need an Access Token.</p><p>Create an account or log in to <a href='%1$s'>Mapbox</a>. Locate and copy the default access token, and paste it in the field below.</p>",
 			'https://www.mapbox.com'
 		);
 		const placeholderAPIStateFailure = (
@@ -206,10 +213,24 @@ class MapEdit extends Component {
 						<RawHTML>{ getAPIInstructions }</RawHTML>
 					</div>
 					<TextControl
-						placeholder="Paste Key Here"
+						className="components-text-control-api-key"
+						disabled={ apiRequestOutstanding }
+						placeholder={ __( 'Paste Token Here' ) }
 						value={ apiKeyControl }
 						onChange={ this.updateAPIKeyControl }
 					/>
+					<Button
+						className="components-text-control-api-key-submit"
+						isLarge
+						disabled={
+							! apiRequestOutstanding && ( apiKeyControl && apiKeyControl.length > 1 )
+								? false
+								: 'disabled'
+						}
+						onClick={ this.updateAPIKey }
+					>
+						{ __( 'Set Token' ) }
+					</Button>
 				</Fragment>
 			</Placeholder>
 		);
