@@ -871,7 +871,7 @@ export const CURRENCIES = {
 		precision: 2,
 	},
 	USD: {
-		symbol: '$',
+		symbol: 'US$',
 		grouping: ',',
 		decimal: '.',
 		precision: 2,
