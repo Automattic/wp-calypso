@@ -36,31 +36,47 @@ function toggleSetting( state, source ) {
 
 const NotificationSettingsStore = createReducerStore( ( state, payload ) => {
 	const { action, data, error, source, stream, setting } = payload.action;
-	const status = null;
-	let newState = null;
 
 	switch ( action ) {
 		case actionTypes.SAVE_SETTINGS:
-		case actionTypes.FETCH_SETTINGS:
-			return state.set( 'isFetching', true ).set( 'status', status );
+		case actionTypes.FETCH_SETTINGS: {
+			const prevState = state.toJS();
 
+			return Immutable.fromJS( {
+				...prevState,
+				isFetching: true,
+				status: null,
+			} );
+		}
 		case actionTypes.SAVE_SETTINGS_FAILED:
-		case actionTypes.FETCH_SETTINGS_FAILED:
-			return state.set( 'isFetching', false ).set( 'error', error );
+		case actionTypes.FETCH_SETTINGS_FAILED: {
+			const prevState = state.toJS();
 
+			return Immutable.fromJS( {
+				...prevState,
+				isFetching: false,
+				error,
+			} );
+		}
 		case actionTypes.SAVE_SETTINGS_COMPLETE:
-		case actionTypes.FETCH_SETTINGS_COMPLETE:
-			newState = Immutable.fromJS( data );
-			return state
-				.set( 'isFetching', false )
-				.set( 'status', action === actionTypes.SAVE_SETTINGS_COMPLETE ? 'success' : null )
-				.setIn( [ 'settings', 'clean' ], newState )
-				.setIn( [ 'settings', 'dirty' ], newState );
+		case actionTypes.FETCH_SETTINGS_COMPLETE: {
+			const prevState = state.toJS();
 
+			return Immutable.fromJS( {
+				...prevState,
+				isFetching: false,
+				status: action === actionTypes.SAVE_SETTINGS_COMPLETE ? 'success' : null,
+				settings: {
+					...prevState.settings,
+					clean: data,
+					dirty: data,
+				},
+			} );
+		}
 		case actionTypes.TOGGLE_SETTING: {
 			return Immutable.fromJS( {
 				...toggleSetting( state.toJS(), source, stream, setting ),
-				status,
+				status: null,
 			} );
 		}
 	}
