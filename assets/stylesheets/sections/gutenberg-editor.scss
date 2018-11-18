@@ -1,5 +1,4 @@
 @import '../shared/colors';
-@import '../shared/variables';
 @import '../shared/functions/z-index';
 @import '../shared/mixins/breakpoints';
 @import '../shared/mixins/clear-fix';
@@ -32,3 +31,4 @@
 
 // Media Modal styles
 @import './media';
+@import 'post-editor/media-modal/style';

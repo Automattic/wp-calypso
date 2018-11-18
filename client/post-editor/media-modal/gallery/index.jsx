@@ -23,11 +23,6 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { isModuleActive } from 'lib/site/utils';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class EditorMediaModalGallery extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,

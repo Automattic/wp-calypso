@@ -29,11 +29,6 @@ import {
 	getEditedPost,
 } from 'state/posts/selectors';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class EditorConfirmationSidebar extends Component {
 	static propTypes = {
 		handlePreferenceChange: PropTypes.func,

@@ -17,11 +17,6 @@ import { omitUrlParams } from 'lib/url';
 import { isEnabled } from 'config';
 import WebPreview from 'components/web-preview';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class EditorPreview extends React.Component {
 	static propTypes = {
 		showPreview: PropTypes.bool,
