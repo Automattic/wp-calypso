@@ -1,44 +1,137 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { fromJS } from 'immutable';
+
+/**
+ * Internal dependencies
+ */
+import { find, get, without } from 'lodash';
+
+const toggleWpcom = ( state, source, stream, setting ) => ( {
+	...state,
+	settings: {
+		...get( state, 'settings' ),
+		dirty: {
+			...get( state, 'settings.dirty' ),
+			wpcom: {
+				...get( state, 'settings.dirty.wpcom' ),
+				[ setting ]: ! get( state, [ 'settings', 'dirty', 'wpcom', setting ] ),
+			},
+		},
+	},
+} );
+
+const toggleOther = ( state, source, stream, setting ) => {
+	if ( isNaN( stream ) ) {
+		return {
+			...state,
+			settings: {
+				...get( state, 'settings' ),
+				dirty: {
+					...get( state, 'settings.dirty' ),
+					other: {
+						...get( state, 'settings.dirty.other' ),
+						[ stream ]: {
+							...get( state, [ 'settings', 'dirty', 'other', stream ] ),
+							[ setting ]: ! get( state, [ 'settings', 'dirty', 'other', stream, setting ] ),
+						},
+					},
+				},
+			},
+		};
+	}
+
+	const devices = get( state, 'settings.dirty.other.devices' );
+	const device = find( devices, ( { device_id } ) => device_id === parseInt( stream, 10 ) );
+	const deviceSetting = get( device, setting );
+
+	return {
+		...state,
+		settings: {
+			...get( state, 'settings' ),
+			dirty: {
+				...get( state, 'settings.dirty' ),
+				other: {
+					...get( state, 'settings.dirty.other' ),
+					devices: [
+						...without( devices, device ),
+						{
+							...device,
+							[ setting ]: ! deviceSetting,
+						},
+					],
+				},
+			},
+		},
+	};
+};
+
+const toggleBlog = ( state, source, stream, setting ) => {
+	const blogs = get( state, 'settings.dirty.blogs' );
+	const blog = find( blogs, ( { blog_id } ) => blog_id === parseInt( source, 10 ) );
+
+	if ( isNaN( stream ) ) {
+		return {
+			...state,
+			settings: {
+				...state.settings,
+				dirty: {
+					...get( state, 'settings.dirty' ),
+					blogs: [
+						...without( blogs, blog ),
+						{
+							...blog,
+							[ stream ]: {
+								...get( blog, stream ),
+								[ setting ]: ! get( blog, [ stream, setting ] ),
+							},
+						},
+					],
+				},
+			},
+		};
+	}
+
+	const devices = get( blog, 'devices', [] );
+	const device = find( devices, ( { device_id } ) => device_id === parseInt( stream, 10 ) );
+	const deviceSetting = get( device, setting );
+
+	return {
+		...state,
+		settings: {
+			...state.settings,
+			dirty: {
+				...state.settings.dirty,
+				blogs: [
+					...without( blogs, blog ),
+					{
+						...blog,
+						devices: [
+							...without( devices, device ),
+							{
+								...device,
+								[ setting ]: ! deviceSetting,
+							},
+						],
+					},
+				],
+			},
+		},
+	};
+};
+
 export default {
 	wpcom( state, source, stream, setting ) {
-		return state.updateIn( [ 'settings', 'dirty', 'wpcom', setting ], value => ! value );
+		return fromJS( toggleWpcom( state.toJS(), source, stream, setting ) );
 	},
 
 	other( state, source, stream, setting ) {
-		if ( isNaN( stream ) ) {
-			return state.updateIn( [ 'settings', 'dirty', 'other', stream, setting ], value => ! value );
-		}
-
-		return state.updateIn( [ 'settings', 'dirty', 'other', 'devices' ], devices => {
-			const deviceIndex = state
-				.getIn( [ 'settings', 'dirty', 'other', 'devices' ] )
-				.findIndex( device => device.get( 'device_id' ) === parseInt( stream, 10 ) );
-
-			return devices.update( deviceIndex, device => device.update( setting, value => ! value ) );
-		} );
+		return fromJS( toggleOther( state.toJS(), source, stream, setting ) );
 	},
 
 	blog( state, source, stream, setting ) {
-		const blogIndex = state
-			.getIn( [ 'settings', 'dirty', 'blogs' ] )
-			.findIndex( blog => blog.get( 'blog_id' ) === parseInt( source, 10 ) );
-
-		if ( isNaN( stream ) ) {
-			return state.updateIn( [ 'settings', 'dirty', 'blogs' ], blogs =>
-				blogs.update( blogIndex, blog => blog.updateIn( [ stream, setting ], value => ! value ) )
-			);
-		}
-
-		return state.updateIn( [ 'settings', 'dirty', 'blogs' ], blogs =>
-			blogs.update( blogIndex, blog => {
-				const deviceIndex = blog
-					.get( 'devices' )
-					.findIndex( device => device.get( 'device_id' ) === parseInt( stream, 10 ) );
-
-				return blog.update( 'devices', devices =>
-					devices.update( deviceIndex, device => device.update( setting, value => ! value ) )
-				);
-			} )
-		);
+		return fromJS( toggleBlog( state.toJS(), source, stream, setting ) );
 	},
 };
