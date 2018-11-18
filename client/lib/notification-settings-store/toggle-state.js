@@ -1,10 +1,5 @@
 /** @format */
 /**
- * External dependencies
- */
-import { fromJS } from 'immutable';
-
-/**
  * Internal dependencies
  */
 import { find, get, without } from 'lodash';
@@ -124,14 +119,14 @@ const toggleBlog = ( state, source, stream, setting ) => {
 
 export default {
 	wpcom( state, source, stream, setting ) {
-		return fromJS( toggleWpcom( state.toJS(), source, stream, setting ) );
+		return toggleWpcom( state, source, stream, setting );
 	},
 
 	other( state, source, stream, setting ) {
-		return fromJS( toggleOther( state.toJS(), source, stream, setting ) );
+		return toggleOther( state, source, stream, setting );
 	},
 
 	blog( state, source, stream, setting ) {
-		return fromJS( toggleBlog( state.toJS(), source, stream, setting ) );
+		return toggleBlog( state, source, stream, setting );
 	},
 };

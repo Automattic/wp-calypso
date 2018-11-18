@@ -1,10 +1,5 @@
 /** @format */
 /**
- * External dependencies
- */
-import { fromJS } from 'immutable';
-
-/**
  * Internal dependencies
  */
 import toggleState from '../toggle-state';
@@ -13,13 +8,11 @@ describe( 'toggleState.wpcom', () => {
 	describe( 'when setting does not yet have a value', () => {
 		test( 'should assign the value of `true` to that setting', () => {
 			const settingToToggle = 'exampleSetting';
-			const startingStateJS = {
+			const startingState = {
 				settings: {},
 			};
-			const startingState = fromJS( startingStateJS );
 
-			const result = toggleState.wpcom( startingState, null, null, settingToToggle );
-			const actual = result.toJS();
+			const actual = toggleState.wpcom( startingState, null, null, settingToToggle );
 			const expected = {
 				settings: {
 					dirty: {
@@ -37,7 +30,7 @@ describe( 'toggleState.wpcom', () => {
 	describe( 'when setting already has a value', () => {
 		test( 'should toggle the value of that setting', () => {
 			const settingToToggle = 'exampleSetting';
-			const startingStateJS = {
+			const startingState = {
 				settings: {
 					dirty: {
 						wpcom: {
@@ -46,10 +39,8 @@ describe( 'toggleState.wpcom', () => {
 					},
 				},
 			};
-			const startingState = fromJS( startingStateJS );
 
-			const result = toggleState.wpcom( startingState, null, null, settingToToggle );
-			const actual = result.toJS();
+			const actual = toggleState.wpcom( startingState, null, null, settingToToggle );
 			const expected = {
 				settings: {
 					dirty: {
@@ -71,13 +62,11 @@ describe( 'toggleState.other', () => {
 			test( 'should toggle the value of that setting under that stream', () => {
 				const stream = 'exampleStream';
 				const settingToToggle = 'exampleSetting';
-				const startingStateJS = {
+				const startingState = {
 					settings: {},
 				};
-				const startingState = fromJS( startingStateJS );
 
-				const result = toggleState.other( startingState, null, stream, settingToToggle );
-				const actual = result.toJS();
+				const actual = toggleState.other( startingState, null, stream, settingToToggle );
 				const expected = {
 					settings: {
 						dirty: {
@@ -98,7 +87,7 @@ describe( 'toggleState.other', () => {
 			test( 'should toggle the value of that setting', () => {
 				const stream = 'exampleStream';
 				const settingToToggle = 'exampleSetting';
-				const startingStateJS = {
+				const startingState = {
 					settings: {
 						dirty: {
 							other: {
@@ -109,10 +98,8 @@ describe( 'toggleState.other', () => {
 						},
 					},
 				};
-				const startingState = fromJS( startingStateJS );
 
-				const result = toggleState.other( startingState, null, stream, settingToToggle );
-				const actual = result.toJS();
+				const actual = toggleState.other( startingState, null, stream, settingToToggle );
 				const expected = {
 					settings: {
 						dirty: {
@@ -138,19 +125,17 @@ describe( 'toggleState.other', () => {
 				const device = {
 					device_id: deviceId,
 				};
-				const startingStateJS = {
+				const startingState = {
 					settings: {
 						dirty: {
 							other: {
-								devices: [ fromJS( device ) ],
+								devices: [ device ],
 							},
 						},
 					},
 				};
-				const startingState = fromJS( startingStateJS );
 
-				const result = toggleState.other( startingState, null, deviceId, settingToToggle );
-				const actual = result.toJS();
+				const actual = toggleState.other( startingState, null, deviceId, settingToToggle );
 				const expected = {
 					settings: {
 						dirty: {
@@ -178,19 +163,17 @@ describe( 'toggleState.other', () => {
 					device_id: deviceId,
 					[ settingToToggle ]: true,
 				};
-				const startingStateJS = {
+				const startingState = {
 					settings: {
 						dirty: {
 							other: {
-								devices: [ fromJS( device ) ],
+								devices: [ device ],
 							},
 						},
 					},
 				};
-				const startingState = fromJS( startingStateJS );
 
-				const result = toggleState.other( startingState, null, deviceId, settingToToggle );
-				const actual = result.toJS();
+				const actual = toggleState.other( startingState, null, deviceId, settingToToggle );
 				const expected = {
 					settings: {
 						dirty: {
@@ -222,17 +205,15 @@ describe( 'toggleState.blog', () => {
 				const blog = {
 					blog_id: blogId,
 				};
-				const startingStateJS = {
+				const startingState = {
 					settings: {
 						dirty: {
 							blogs: [ blog ],
 						},
 					},
 				};
-				const startingState = fromJS( startingStateJS );
 
-				const result = toggleState.blog( startingState, blogId, stream, settingToToggle );
-				const actual = result.toJS();
+				const actual = toggleState.blog( startingState, blogId, stream, settingToToggle );
 				const expected = {
 					settings: {
 						dirty: {
@@ -263,17 +244,15 @@ describe( 'toggleState.blog', () => {
 						[ settingToToggle ]: true,
 					},
 				};
-				const startingStateJS = {
+				const startingState = {
 					settings: {
 						dirty: {
 							blogs: [ blog ],
 						},
 					},
 				};
-				const startingState = fromJS( startingStateJS );
 
-				const result = toggleState.blog( startingState, blogId, stream, settingToToggle );
-				const actual = result.toJS();
+				const actual = toggleState.blog( startingState, blogId, stream, settingToToggle );
 				const expected = {
 					settings: {
 						dirty: {
@@ -307,17 +286,15 @@ describe( 'toggleState.blog', () => {
 					blog_id: blogId,
 					devices: [ device ],
 				};
-				const startingStateJS = {
+				const startingState = {
 					settings: {
 						dirty: {
 							blogs: [ blog ],
 						},
 					},
 				};
-				const startingState = fromJS( startingStateJS );
 
-				const result = toggleState.blog( startingState, blogId, deviceId, settingToToggle );
-				const actual = result.toJS();
+				const actual = toggleState.blog( startingState, blogId, deviceId, settingToToggle );
 				const expected = {
 					settings: {
 						dirty: {
@@ -353,17 +330,15 @@ describe( 'toggleState.blog', () => {
 					blog_id: blogId,
 					devices: [ device ],
 				};
-				const startingStateJS = {
+				const startingState = {
 					settings: {
 						dirty: {
 							blogs: [ blog ],
 						},
 					},
 				};
-				const startingState = fromJS( startingStateJS );
 
-				const result = toggleState.blog( startingState, blogId, deviceId, settingToToggle );
-				const actual = result.toJS();
+				const actual = toggleState.blog( startingState, blogId, deviceId, settingToToggle );
 				const expected = {
 					settings: {
 						dirty: {
