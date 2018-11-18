@@ -57,8 +57,12 @@ const NotificationSettingsStore = createReducerStore( ( state, payload ) => {
 				.setIn( [ 'settings', 'clean' ], newState )
 				.setIn( [ 'settings', 'dirty' ], newState );
 
-		case actionTypes.TOGGLE_SETTING:
-			return toggleSetting( state, source, stream, setting ).set( 'status', status );
+		case actionTypes.TOGGLE_SETTING: {
+			return Immutable.fromJS( {
+				...toggleSetting( state.toJS(), source, stream, setting ),
+				status,
+			} );
+		}
 	}
 
 	return state;
