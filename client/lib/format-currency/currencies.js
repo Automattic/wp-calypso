@@ -975,7 +975,7 @@ export const CURRENCIES = {
  */
 export function getCurrencyDefaults( code ) {
 	const defaultCurrency = {
-		symbol: '$',
+		symbol: 'US$',
 		grouping: ',',
 		decimal: '.',
 		precision: 2,
