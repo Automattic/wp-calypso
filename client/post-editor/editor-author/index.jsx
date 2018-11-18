@@ -24,11 +24,6 @@ import { getEditedPost } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 export class EditorAuthor extends Component {
 	static propTypes = {
 		site: PropTypes.object,

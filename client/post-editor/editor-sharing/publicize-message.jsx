@@ -20,11 +20,6 @@ import InfoPopover from 'components/info-popover';
 import TrackInputChanges from 'components/track-input-changes';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 
-/**
- * Style dependencies
- */
-import './publicize-message.scss';
-
 class PublicizeMessage extends Component {
 	static propTypes = {
 		disabled: PropTypes.bool,

@@ -26,11 +26,6 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import getSiteDefaultPostFormat from 'state/selectors/get-site-default-post-format';
 import { editPost } from 'state/posts/actions';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 const ICONS = {
 	aside: 'aside',
 	image: 'image',
