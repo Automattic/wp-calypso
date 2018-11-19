@@ -232,6 +232,10 @@ const Flows = {
 			return Flows.removeStepFromFlow( 'site-type', flow );
 		}
 
+		if ( 'ecommerce' === flowName && 'include' === abtest( 'signupSegmentationStep' ) ) {
+			return Flows.insertStepIntoFlow( 'site-type', flow );
+		}
+
 		return flow;
 	},
 

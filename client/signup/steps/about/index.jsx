@@ -87,6 +87,10 @@ class AboutStep extends Component {
 			},
 		} );
 		this.setFormState( this.formStateController.getInitialState() );
+
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+		} );
 	}
 
 	componentWillUnmount() {
@@ -565,7 +569,8 @@ export default connect(
 		siteType: getSiteType( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 		shouldHideSiteGoals:
-			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
+			includes( [ 'onboarding', 'ecommerce' ], ownProps.flowName ) &&
+			includes( ownProps.steps, 'site-type' ),
 	} ),
 	{
 		setSiteTitle,

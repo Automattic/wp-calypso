@@ -32,6 +32,12 @@ class SiteType extends Component {
 		};
 	}
 
+	componentDidMount() {
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+		} );
+	}
+
 	handleRadioChange = event => this.setState( { siteType: event.currentTarget.value } );
 
 	handleSubmit = event => {
@@ -113,10 +119,15 @@ export default connect(
 		submitStep: ( siteTypeValue, themeRepo ) => {
 			dispatch( setSiteType( siteTypeValue ) );
 
-			const nextFlowName =
-				get( allSiteTypes, 'store.value', null ) === siteTypeValue
-					? 'ecommerce'
-					: ownProps.flowName;
+			let nextFlowName = ownProps.flowName;
+			if ( siteTypeValue === get( allSiteTypes, 'store.value', '' ) ) {
+				nextFlowName = 'ecommerce';
+			} else {
+				nextFlowName =
+					'ecommerce' === ownProps.flowName && ownProps.previousFlowName
+						? ownProps.previousFlowName
+						: ownProps.flowName;
+			}
 
 			// Create site
 			SignupActions.submitSignupStep(
