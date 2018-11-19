@@ -218,24 +218,33 @@ registerBlockType( 'jetpack/field-text', {
 	transforms: {
 		to: FieldDefaults.transforms.to,
 		from: [
-			// This is an array of objects, which should be possible to copy/paste to
-			// represent multiple blocks/fields. Better start with a simple one first.
-			// As of now, I have not run `npm run sdk gutenberg [...]` or tested
-			// anything, just followed the guide at
-			// https://wordpress.org/gutenberg/handbook/block-api/#transforms-optional
 			{
-				type: 'block',
-				blocks: [ 'jetpack/field-email' ],
+				type: 'shortcode',
+				tag: 'contact-field',
 				attributes: {
 					label: {
 						type: 'string',
 						source: 'attribute',
-						attribute: 'label',
+						shortcode: function( attr ) {
+							return attr.named.label ? attr.named.label : '';
+						},
+					},
+					type: {
+						type: 'string',
+						source: 'attribute',
+						shortcode: function( attr ) {
+							return attr.named.type ? attr.named.type : '';
+						},
 					},
 					required: {
 						type: 'boolean',
 						source: 'attribute',
-						attribute: 'label',
+						shortcode: function( attr ) {
+							if ( attr.named.required === '1' ) {
+								return true;
+							}
+							return false;
+						},
 					},
 				},
 			},
