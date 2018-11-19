@@ -213,6 +213,7 @@ registerBlockType( 'jetpack/field-name', {
 registerBlockType( 'jetpack/field-email', {
 	...FieldDefaults,
 	title: __( 'Email' ),
+	keywords: [ __( 'e-mail' ) ],
 	description: __( 'Want to reply to folks? Add an email address input.' ),
 	icon: renderMaterialIcon(
 		<path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z" />
@@ -223,6 +224,7 @@ registerBlockType( 'jetpack/field-email', {
 registerBlockType( 'jetpack/field-url', {
 	...FieldDefaults,
 	title: __( 'URL' ),
+	keywords: [ __( 'Website' ), __( 'Online' ) ],
 	description: __( 'Add an address input for a website.' ),
 	icon: renderMaterialIcon(
 		<path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z" />
@@ -243,6 +245,7 @@ registerBlockType( 'jetpack/field-date', {
 registerBlockType( 'jetpack/field-telephone', {
 	...FieldDefaults,
 	title: __( 'Telephone' ),
+	keywords: [ __( 'Phone' ), __( 'Cellular phone' ), __( 'Mobile' ) ],
 	description: __( 'Add a phone number input.' ),
 	icon: renderMaterialIcon(
 		<path d="M6.54 5c.06.89.21 1.76.45 2.59l-1.2 1.2c-.41-1.2-.67-2.47-.76-3.79h1.51m9.86 12.02c.85.24 1.72.39 2.6.45v1.49c-1.32-.09-2.59-.35-3.8-.75l1.2-1.19M7.5 3H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.49c0-.55-.45-1-1-1-1.24 0-2.45-.2-3.57-.57-.1-.04-.21-.05-.31-.05-.26 0-.51.1-.71.29l-2.2 2.2c-2.83-1.45-5.15-3.76-6.59-6.59l2.2-2.2c.28-.28.36-.67.25-1.02C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1z" />
@@ -253,6 +256,7 @@ registerBlockType( 'jetpack/field-telephone', {
 registerBlockType( 'jetpack/field-textarea', {
 	...FieldDefaults,
 	title: __( 'Textarea' ),
+	keywords: [ __( 'Textarea' ), 'textarea', __( 'Message' ) ],
 	description: __( 'Let folks speak their mind. A textarea is great for longer responses.' ),
 	icon: renderMaterialIcon( <path d="M21 11.01L3 11v2h18zM3 16h12v2H3zM21 6H3v2.01L21 8z" /> ),
 	edit: props => (
@@ -271,6 +275,7 @@ registerBlockType( 'jetpack/field-textarea', {
 registerBlockType( 'jetpack/field-checkbox', {
 	...FieldDefaults,
 	title: __( 'Checkbox' ),
+	keywords: [ __( 'Confirm' ), __( 'Accept' ) ],
 	description: __( 'Add a single checkbox.' ),
 	icon: renderMaterialIcon(
 		<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM17.99 9l-1.41-1.42-6.59 6.59-2.58-2.57-1.42 1.41 4 3.99z" />
@@ -297,6 +302,7 @@ registerBlockType( 'jetpack/field-checkbox', {
 registerBlockType( 'jetpack/field-checkbox-multiple', {
 	...FieldDefaults,
 	title: __( 'Checkbox group' ),
+	keywords: [ __( 'Choose Multiple' ), __( 'Option' ) ],
 	description: __( 'People love options. Add several checkbox items.' ),
 	icon: renderMaterialIcon(
 		<path d="M13 7.5h5v2h-5zm0 7h5v2h-5zM19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM11 6H6v5h5V6zm-1 4H7V7h3v3zm1 3H6v5h5v-5zm-1 4H7v-3h3v3z" />
@@ -314,6 +320,7 @@ registerBlockType( 'jetpack/field-checkbox-multiple', {
 registerBlockType( 'jetpack/field-radio', {
 	...FieldDefaults,
 	title: __( 'Radio' ),
+	keywords: [ __( 'Choose' ), __( 'Select' ),  __( 'Option' )],
 	description: __(
 		'Inpsired by radios, only one radio item can be selected at a time. Add several radio button items.'
 	),
@@ -336,6 +343,7 @@ registerBlockType( 'jetpack/field-radio', {
 registerBlockType( 'jetpack/field-select', {
 	...FieldDefaults,
 	title: __( 'Select' ),
+	keywords: [ __( 'Choose' ), __( 'Dropdown' ),  __( 'Option' )],
 	description: __( 'Compact, but powerful. Add a select box with several items.' ),
 	icon: renderMaterialIcon( <path d="M3 17h18v2H3zm16-5v1H5v-1h14m2-2H3v5h18v-5zM3 6h18v2H3z" /> ),
 	edit: editMultiField( 'select' ),
