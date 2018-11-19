@@ -5,7 +5,6 @@
  */
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
-import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
 import { dispatch, withSelect } from '@wordpress/data';
@@ -25,14 +24,15 @@ import {
 /**
  * Internal dependencies
  */
+import HelpMessage from './help-message';
+import ProductPlaceholder from './product-placeholder';
+import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { decimalPlaces, formatPrice } from 'lib/simple-payments/utils';
 import { getCurrencyDefaults } from 'lib/format-currency/currencies';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 	SUPPORTED_CURRENCY_LIST,
 } from 'lib/simple-payments/constants';
-import ProductPlaceholder from './product-placeholder';
-import HelpMessage from './help-message';
 
 class SimplePaymentsEdit extends Component {
 	state = {
@@ -325,7 +325,7 @@ class SimplePaymentsEdit extends Component {
 			return (
 				<div className="simple-payments__loading">
 					<ProductPlaceholder
-						ariaBusy="true"
+						aria-busy="true"
 						content="█████"
 						formattedPrice="█████"
 						title="█████"
@@ -345,7 +345,7 @@ class SimplePaymentsEdit extends Component {
 		) {
 			return (
 				<ProductPlaceholder
-					ariaBusy="false"
+					aria-busy="false"
 					content={ content }
 					formattedPrice={ formatPrice( price, currency ) }
 					multiple={ multiple }
@@ -452,7 +452,7 @@ class SimplePaymentsEdit extends Component {
 	}
 }
 
-const applyWithSelect = withSelect( ( select, props ) => {
+const mapSelectToProps = withSelect( ( select, props ) => {
 	const { getEntityRecord } = select( 'core' );
 	const { isSavingPost } = select( 'core/editor' );
 
@@ -468,4 +468,7 @@ const applyWithSelect = withSelect( ( select, props ) => {
 	};
 } );
 
-export default compose( [ applyWithSelect, withInstanceId ] )( SimplePaymentsEdit );
+export default compose(
+	mapSelectToProps,
+	withInstanceId
+)( SimplePaymentsEdit );
