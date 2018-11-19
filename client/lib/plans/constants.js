@@ -187,10 +187,10 @@ const getPlanBloggerDetails = () => ( {
 	type: TYPE_BLOGGER,
 	getTitle: () => i18n.translate( 'Blogger' ),
 	// @TODO not updating copy for now, we need to update it after the first round of design {{{
-	getAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getBlogAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getStoreAudience: () => i18n.translate( 'Best for hobbyists' ),
+	getAudience: () => i18n.translate( 'Best for bloggers' ),
+	getBlogAudience: () => i18n.translate( 'Best for bloggers' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for bloggers' ),
+	getStoreAudience: () => i18n.translate( 'Best for bloggers' ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for Personal Use:{{/strong}} Boost your' +
