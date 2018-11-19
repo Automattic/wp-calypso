@@ -104,14 +104,12 @@ class SimplePaymentsEdit extends Component {
 		this.setState( { isSavingProduct: true }, async () => {
 			saveEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, this.toApi() )
 				.then( record => {
-					/* eslint-disable-next-line no-console */
-					console.error( 'Saved: %o', record );
 					setAttributes( { paymentId: record.id } );
 				} )
 				.catch( error => {
 					// @TODO: complete error handling
 					/* eslint-disable-next-line no-console */
-					console.log( error );
+					console.error( error );
 
 					const {
 						data: { key: apiErrorKey },
