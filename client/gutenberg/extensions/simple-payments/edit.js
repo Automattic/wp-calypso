@@ -42,20 +42,15 @@ class SimplePaymentsEdit extends Component {
 		isSavingProduct: false,
 	};
 
-	componentDidUpdate( prevProps ) {
-		const { attributes, isSelected, setAttributes, simplePayment } = this.props;
-		const { content, currency, email, multiple, price, title } = attributes;
+	componentDidMount() {
+		this.injectPaymentAttributes();
+	}
 
-		// @TODO check componentDidMount for the case where post was already loaded
-		if ( ! prevProps.simplePayment && simplePayment ) {
-			setAttributes( {
-				content: get( simplePayment, [ 'content', 'raw' ], content ),
-				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency ),
-				email: get( simplePayment, [ 'meta', 'spay_email' ], email ),
-				multiple: Boolean( get( simplePayment, [ 'meta', 'spay_multiple' ], Boolean( multiple ) ) ),
-				price: get( simplePayment, [ 'meta', 'spay_price' ], price || undefined ),
-				title: get( simplePayment, [ 'title', 'raw' ], title ),
-			} );
+	componentDidUpdate( prevProps ) {
+		const { isSelected } = this.props;
+
+		if ( prevProps.simplePayment !== this.props.simplePayment ) {
+			this.injectPaymentAttributes();
 		}
 
 		if ( prevProps.isSelected && ! isSelected ) {
@@ -66,6 +61,22 @@ class SimplePaymentsEdit extends Component {
 			// Save payment on post save
 
 			this.saveProduct();
+		}
+	}
+
+	injectPaymentAttributes() {
+		const { attributes, setAttributes, simplePayment } = this.props;
+		const { paymentId, content, currency, email, multiple, price, title } = attributes;
+
+		if ( paymentId && simplePayment ) {
+			setAttributes( {
+				content: get( simplePayment, [ 'content', 'raw' ], content ),
+				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency ),
+				email: get( simplePayment, [ 'meta', 'spay_email' ], email ),
+				multiple: Boolean( get( simplePayment, [ 'meta', 'spay_multiple' ], Boolean( multiple ) ) ),
+				price: get( simplePayment, [ 'meta', 'spay_price' ], price || undefined ),
+				title: get( simplePayment, [ 'title', 'raw' ], title ),
+			} );
 		}
 	}
 
