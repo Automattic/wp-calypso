@@ -31,33 +31,12 @@ class WpcomChecklist extends Component {
 	};
 
 	componentDidMount() {
-		this.shouldShowNotification();
+		this.setNotification( this.props.shouldShowNotification );
 	}
 
 	componentDidUpdate() {
-		this.shouldShowNotification();
+		this.setNotification( this.props.shouldShowNotification );
 	}
-
-	shouldShowNotification = () => {
-		const {
-			storedTask,
-			isEligibleForDotcomChecklist: isEligibleForChecklist,
-			isSiteSection: isSection,
-			taskList,
-		} = this.props;
-		const firstIncomplete = taskList && taskList.getFirstIncompleteTask();
-
-		if (
-			firstIncomplete &&
-			( storedTask !== firstIncomplete.id || storedTask === null ) &&
-			isEligibleForChecklist &&
-			isSection
-		) {
-			this.setNotification( true );
-		} else {
-			this.setNotification( false );
-		}
-	};
 
 	setNotification = value => {
 		if ( this.props.setNotification && this.props.viewMode === 'notification' ) {
@@ -66,41 +45,9 @@ class WpcomChecklist extends Component {
 	};
 
 	render() {
-		const {
-			designType,
-			isEligibleForDotcomChecklist: isEligibleForChecklist,
-			isSiteSection: isSection,
-			siteId,
-			taskStatuses,
-			...ownProps
-		} = this.props;
+		const { shouldRender, shouldShowNotification, ...ownProps } = this.props;
 
-		const { viewMode } = ownProps;
-
-		const taskList = getTaskList( taskStatuses, designType );
-
-		// Render nothing in notification mode.
-		if ( viewMode === 'notification' ) {
-			return null;
-		}
-
-		// Render nothing if not eligible for checklist. Exception: checklist mode.
-		if ( ! isEligibleForChecklist && viewMode !== 'checklist' ) {
-			return null;
-		}
-
-		// Render nothing if all tasks are completed. Exception: checklist mode.
-		if ( ! taskList.getFirstIncompleteTask && viewMode !== 'checklist' ) {
-			return null;
-		}
-
-		// Render nothing in navigation mode if the current section is not site-specific.
-		if ( ! isSection && viewMode === 'navigation' ) {
-			return null;
-		}
-
-		// Render nothing in banner mode if "never show banner" is set.
-		if ( getNeverShowBannerStatus( siteId ) && viewMode === 'banner' ) {
+		if ( ! shouldRender ) {
 			return null;
 		}
 
@@ -109,14 +56,78 @@ class WpcomChecklist extends Component {
 	}
 }
 
-export default connect( state => {
+function shouldChecklistRender( viewMode, isEligibleForChecklist, taskList, isSection, siteId ) {
+	// Render nothing in notification mode.
+	if ( viewMode === 'notification' ) {
+		return false;
+	}
+
+	// Render nothing if not eligible for checklist. Exception: checklist mode.
+	if ( ! isEligibleForChecklist && viewMode !== 'checklist' ) {
+		return false;
+	}
+
+	// Render nothing if all tasks are completed. Exception: checklist mode.
+	if ( ! taskList.getFirstIncompleteTask && viewMode !== 'checklist' ) {
+		return false;
+	}
+
+	// Render nothing in navigation mode if the current section is not site-specific.
+	if ( ! isSection && viewMode === 'navigation' ) {
+		return false;
+	}
+
+	// Render nothing in banner mode if "never show banner" is set.
+	if ( getNeverShowBannerStatus( siteId ) && viewMode === 'banner' ) {
+		return false;
+	}
+
+	return true;
+}
+
+function shouldChecklistShowNotification(
+	taskList,
+	storedTask,
+	isEligibleForChecklist,
+	isSection
+) {
+	const firstIncomplete = taskList && taskList.getFirstIncompleteTask();
+
+	if (
+		firstIncomplete &&
+		( storedTask !== firstIncomplete.id || storedTask === null ) &&
+		isEligibleForChecklist &&
+		isSection
+	) {
+		return true;
+	}
+
+	return false;
+}
+
+export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
+	const designType = getSiteOption( state, siteId, 'design_type' );
+	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
+	const isSection = isSiteSection( state );
+	const taskStatuses = get( getSiteChecklist( state, siteId ), [ 'tasks' ] );
+	const taskList = getTaskList( taskStatuses, designType );
+
+	const { viewMode, storedTask } = ownProps;
 
 	return {
-		designType: getSiteOption( state, siteId, 'design_type' ),
-		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
-		isSiteSection: isSiteSection( state ),
-		siteId,
-		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
+		shouldRender: shouldChecklistRender(
+			viewMode,
+			isEligibleForChecklist,
+			taskList,
+			isSection,
+			siteId
+		),
+		shouldShowNotification: shouldChecklistShowNotification(
+			taskList,
+			storedTask,
+			isEligibleForChecklist,
+			isSection
+		),
 	};
 } )( WpcomChecklist );
