@@ -14,7 +14,6 @@ import { sprintf } from '@wordpress/i18n';
 import {
 	Disabled,
 	ExternalLink,
-	Notice,
 	PanelBody,
 	SelectControl,
 	TextareaControl,
@@ -34,6 +33,7 @@ import {
 	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 	SUPPORTED_CURRENCY_LIST,
 } from 'lib/simple-payments/constants';
+import MissingPermissions from './missing-permissions';
 
 class SimplePaymentsEdit extends Component {
 	state = {
@@ -364,6 +364,10 @@ class SimplePaymentsEdit extends Component {
 			);
 		}
 
+		if ( ! hasPublishAction ) {
+			return <MissingPermissions />;
+		}
+
 		const Wrapper = isLoading || ! hasPublishAction ? Disabled : 'div';
 
 		return (
@@ -375,16 +379,6 @@ class SimplePaymentsEdit extends Component {
 						</ExternalLink>
 					</PanelBody>
 				</InspectorControls>
-
-				{ ! hasPublishAction && (
-					<Notice
-						className="simple-payments__permissions-notice"
-						status="warning"
-						isDismissible={ false }
-					>
-						{ __( 'You cannot modify Simple payment if you cannot publish posts.' ) }
-					</Notice>
-				) }
 
 				<TextControl
 					aria-describedby={ `${ instanceId }-title-error` }

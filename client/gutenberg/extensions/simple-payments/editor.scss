@@ -1,8 +1,9 @@
 /** @format */
+$simple-payments-form-font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans,
+	Ubuntu, Cantarell, Helvetica Neue, sans-serif;
 
 .wp-block-jetpack-simple-payments {
-	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell,
-		Helvetica Neue, sans-serif;
+	font-family: $simple-payments-form-font-family;
 
 	.simple-payments__field {
 		.components-base-control__label {
@@ -56,10 +57,5 @@
 
 	.simple-payments__field-content .components-textarea-control__input {
 		min-height: 32px;
-	}
-
-	.simple-payments__permissions-notice {
-		font-size: 14px;
-		margin: 0 0 1em;
 	}
 }
