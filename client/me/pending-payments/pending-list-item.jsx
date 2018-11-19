@@ -14,6 +14,7 @@ import Gridicon from 'gridicons';
 import Card from 'components/card';
 import Button from 'components/button';
 import { errorNotice, infoNotice } from 'state/notices/actions';
+import AbandonPaymentButton from './abandon-payment-button';
 
 export class PendingListItem extends Component {
 	onCompletePayment = () => {
@@ -29,7 +30,7 @@ export class PendingListItem extends Component {
 	};
 
 	render = () => {
-		const { productName, paymentType, totalCostDisplay, translate } = this.props;
+		const { productName, paymentType, totalCostDisplay, orderId, translate } = this.props;
 
 		return (
 			<Card className={ 'pending-payments__list-item' }>
@@ -43,10 +44,7 @@ export class PendingListItem extends Component {
 								<Gridicon icon="help" />
 								<span>{ translate( 'Contact Support' ) }</span>
 							</Button>
-							<Button primary={ false } onClick={ this.onAbandonPayment }>
-								<Gridicon icon="trash" />
-								{ translate( 'Abandon Payment' ) }
-							</Button>
+							<AbandonPaymentButton orderId={ orderId } />
 							<Button primary={ true } onClick={ this.onCompletePayment }>
 								{ translate( 'Complete Payment' ) }
 							</Button>
@@ -62,6 +60,7 @@ PendingListItem.propTypes = {
 	productName: PropTypes.string.isRequired,
 	paymentType: PropTypes.string.isRequired,
 	totalCostDisplay: PropTypes.string.isRequired,
+	orderId: PropTypes.number.isRequired,
 };
 
 export default connect(
