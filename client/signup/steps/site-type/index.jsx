@@ -115,7 +115,7 @@ export default connect(
 
 			const nextFlowName =
 				get( allSiteTypes, 'store.value', null ) === siteTypeValue
-					? 'store-nux'
+					? 'ecommerce'
 					: ownProps.flowName;
 
 			// Create site

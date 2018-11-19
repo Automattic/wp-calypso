@@ -189,7 +189,7 @@ export function getThemeForSiteGoals( siteGoals ) {
 
 export function getDesignTypeForSiteType( siteType, flow ) {
 	if (
-		flow === 'store-nux' ||
+		flow === 'ecommerce' ||
 		( siteType && siteType === get( allSiteTypes, 'business.value', '' ) )
 	) {
 		return 'page';
