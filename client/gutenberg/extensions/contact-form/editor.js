@@ -255,7 +255,7 @@ registerBlockType( 'jetpack/field-telephone', {
 
 registerBlockType( 'jetpack/field-textarea', {
 	...FieldDefaults,
-	title: __( 'Textarea' ),
+	title: __( 'Multi-line text' ),
 	keywords: [ __( 'Textarea' ), 'textarea', __( 'Message' ) ],
 	description: __( 'Let folks speak their mind. A textarea is great for longer responses.' ),
 	icon: renderMaterialIcon( <path d="M21 11.01L3 11v2h18zM3 16h12v2H3zM21 6H3v2.01L21 8z" /> ),
@@ -320,7 +320,7 @@ registerBlockType( 'jetpack/field-checkbox-multiple', {
 registerBlockType( 'jetpack/field-radio', {
 	...FieldDefaults,
 	title: __( 'Radio' ),
-	keywords: [ __( 'Choose' ), __( 'Select' ),  __( 'Option' )],
+	keywords: [ __( 'Choose' ), __( 'Select' ), __( 'Option' ) ],
 	description: __(
 		'Inpsired by radios, only one radio item can be selected at a time. Add several radio button items.'
 	),
@@ -343,7 +343,7 @@ registerBlockType( 'jetpack/field-radio', {
 registerBlockType( 'jetpack/field-select', {
 	...FieldDefaults,
 	title: __( 'Select' ),
-	keywords: [ __( 'Choose' ), __( 'Dropdown' ),  __( 'Option' )],
+	keywords: [ __( 'Choose' ), __( 'Dropdown' ), __( 'Option' ) ],
 	description: __( 'Compact, but powerful. Add a select box with several items.' ),
 	icon: renderMaterialIcon( <path d="M3 17h18v2H3zm16-5v1H5v-1h14m2-2H3v5h18v-5zM3 6h18v2H3z" /> ),
 	edit: editMultiField( 'select' ),
