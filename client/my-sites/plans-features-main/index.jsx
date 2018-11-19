@@ -331,7 +331,7 @@ const guessCustomerType = ( state, props ) => {
 			.map( planKey => getPlan( planKey ) )
 			.map( plan => plan.getStoreSlug() );
 		const isPlanInBusinessGroup = businessPlanSlugs.indexOf( currentPlan.product_slug ) !== -1;
-		return isPlanInBusinessGroup ? 'business' : 'personal';
+		return isPlanInBusinessGroup ? 'business' : 'premium';
 	}
 
 	return 'personal';
