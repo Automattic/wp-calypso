@@ -16,6 +16,27 @@ import { compose, withInstanceId } from '@wordpress/compose';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 import HelpMessage from 'gutenberg/extensions/presets/jetpack/editor-shared/help-message';
+const ALLOWED_BLOCKS = [
+	'jetpack/markdown',
+	'core/paragraph',
+	'core/image',
+	'core/heading',
+	'core/gallery',
+	'core/list',
+	'core/quote',
+	'core/shortcode',
+	'core/audio',
+	'core/code',
+	'core/cover',
+	'core/file',
+	'core/html',
+	'core/separator',
+	'core/spacer',
+	'core/subhead',
+	'core/table',
+	'core/verse',
+	'core/video',
+];
 
 class JetpackContactForm extends Component {
 	constructor( ...args ) {
@@ -220,6 +241,7 @@ class JetpackContactForm extends Component {
 					) }
 					{ has_form_settings_set && (
 						<InnerBlocks
+							allowedBlocks={ ALLOWED_BLOCKS }
 							templateLock={ false }
 							template={ [
 								[
