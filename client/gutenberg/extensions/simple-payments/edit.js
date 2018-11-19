@@ -325,7 +325,7 @@ class SimplePaymentsEdit extends Component {
 			return (
 				<div className="simple-payments__loading">
 					<ProductPlaceholder
-						ariaBusy="true"
+						aria-busy="true"
 						content="█████"
 						formattedPrice="█████"
 						title="█████"
@@ -345,7 +345,7 @@ class SimplePaymentsEdit extends Component {
 		) {
 			return (
 				<ProductPlaceholder
-					ariaBusy="false"
+					aria-busy="false"
 					content={ content }
 					formattedPrice={ formatPrice( price, currency ) }
 					multiple={ multiple }
