@@ -29,6 +29,12 @@ import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 export const MAXIMUM_MESSAGE_LENGTH = 256;
 
 class PublicizeFormUnwrapped extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			hasEditedShareMessage: false,
+		};
+	}
 	/**
 	 * Check to see if form should be disabled.
 	 *
@@ -44,14 +50,19 @@ class PublicizeFormUnwrapped extends Component {
 		return ! formEnabled;
 	}
 
+	getShareMessage() {
+		const { shareMessage, defaultShareMessage } = this.props;
+		return this.state.hasEditedShareMessage ? shareMessage : defaultShareMessage;
+	}
+
+	onMessageChange = event => {
+		const { messageChange } = this.props;
+		this.setState( { hasEditedShareMessage: true } );
+		messageChange( event );
+	};
+
 	render() {
-		const {
-			connections,
-			toggleConnection,
-			messageChange,
-			shareMessage,
-			refreshCallback,
-		} = this.props;
+		const { connections, toggleConnection, refreshCallback, shareMessage } = this.props;
 
 		const charactersRemaining = MAXIMUM_MESSAGE_LENGTH - shareMessage.length;
 		const characterCountClass = classnames( 'jetpack-publicize-character-count', {
@@ -75,10 +86,14 @@ class PublicizeFormUnwrapped extends Component {
 				</label>
 				<div className="jetpack-publicize-message-box">
 					<textarea
-						value={ shareMessage }
-						onChange={ messageChange }
+						value={ this.getShareMessage() }
+						onChange={ this.onMessageChange }
 						disabled={ this.isDisabled() }
 						maxLength={ MAXIMUM_MESSAGE_LENGTH }
+						placeholder={ __(
+							"Write a message for your audience here. If you leave it blank, the post's title will be used."
+						) }
+						rows={ 4 }
 					/>
 					<div className={ characterCountClass }>
 						{ sprintf(
