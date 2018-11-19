@@ -36,7 +36,7 @@ import createSelector from 'lib/create-selector';
 
 const userLib = userFactory();
 
-const query = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
+const FIRST_TEN_SITE_POSTS_QUERY = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 
 class WpcomChecklistComponent extends PureComponent {
 	state = {
@@ -162,7 +162,7 @@ class WpcomChecklistComponent extends PureComponent {
 		return (
 			<>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				{ siteId && <QueryPosts siteId={ siteId } query={ query } /> }
+				{ siteId && <QueryPosts siteId={ siteId } query={ FIRST_TEN_SITE_POSTS_QUERY } /> }
 				<ChecklistComponent
 					isPlaceholder={ ! taskStatuses }
 					updateCompletion={ updateCompletion }
@@ -492,7 +492,7 @@ function getContactPage( posts ) {
 
 const getTaskUrls = createSelector(
 	( state, siteId ) => {
-		const posts = getPostsForQuery( state, siteId, query );
+		const posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY );
 
 		const firstPost = find( posts, { type: 'post' } );
 		const siteSlug = getSiteSlug( state, siteId );
@@ -504,7 +504,9 @@ const getTaskUrls = createSelector(
 			contact_page_updated: contactPageUrl,
 		};
 	},
-	( state, siteId, posts = getPostsForQuery( state, siteId, query ) ) => [ posts ]
+	( state, siteId, posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY ) ) => [
+		posts,
+	]
 );
 
 export default connect(
