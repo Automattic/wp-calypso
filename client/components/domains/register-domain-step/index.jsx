@@ -131,6 +131,7 @@ class RegisterDomainStep extends React.Component {
 		onAddDomain: PropTypes.func,
 		onAddTransfer: PropTypes.func,
 		designType: PropTypes.string,
+		deemphasiseTlds: PropTypes.array,
 		recordFiltersSubmit: PropTypes.func.isRequired,
 		recordFiltersReset: PropTypes.func.isRequired,
 	};
@@ -143,6 +144,7 @@ class RegisterDomainStep extends React.Component {
 		onDomainsAvailabilityChange: noop,
 		onSave: noop,
 		vendor: 'domainsbot',
+		deemphasiseTlds: [],
 	};
 
 	constructor( props ) {
@@ -775,7 +777,8 @@ class RegisterDomainStep extends React.Component {
 			suggestions,
 			this.state.exactMatchDomain,
 			getStrippedDomainBase( domain ),
-			includes( FEATURED_SUGGESTIONS_AT_TOP, this.props.vendor )
+			includes( FEATURED_SUGGESTIONS_AT_TOP, this.props.vendor ),
+			this.props.deemphasiseTlds
 		);
 
 		this.setState(

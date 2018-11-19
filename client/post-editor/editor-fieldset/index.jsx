@@ -8,11 +8,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 export default class extends React.Component {
 	static displayName = 'EditorFieldset';
 

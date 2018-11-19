@@ -14,6 +14,11 @@ const debug = debugFactory( 'calypso:stats:list' );
  */
 import StatsListItem from './stats-list-item';
 
+/**
+ * Style Dependencies
+ */
+import './style.scss';
+
 export default class extends React.Component {
 	static displayName = 'StatsList';
 
@@ -33,26 +38,25 @@ export default class extends React.Component {
 	};
 
 	buildLists = ( groups, parentKey ) => {
-		let results,
-			listClass = classNames( 'module-content-list', {
-				'module-content-list-sublist': parentKey,
-				'is-expanded': this.isGroupActive( parentKey ),
-			} );
+		let results;
+		const listClass = classNames( 'module-content-list', {
+			'module-content-list-sublist': parentKey,
+			'is-expanded': this.isGroupActive( parentKey ),
+		} );
 
 		if ( groups ) {
 			results = groups.map( function( group, groupIndex ) {
-				let childResults,
-					active,
-					groupTree = parentKey ? [ parentKey ] : [],
-					groupKey,
-					clickHandler = this.props.clickHandler ? this.props.clickHandler : false;
+				let childResults;
+				const groupTree = parentKey ? [ parentKey ] : [];
+
+				const clickHandler = this.props.clickHandler ? this.props.clickHandler : false;
 
 				// Build a unique key for this group
 				groupTree.push( groupIndex );
-				groupKey = groupTree.join( ':' );
+				const groupKey = groupTree.join( ':' );
 
 				// Determine if child data exists and setup css classes accoridingly
-				active = this.isGroupActive( groupKey );
+				const active = this.isGroupActive( groupKey );
 
 				// If this group has results, build up the nested child ul/li elements
 				if ( group.children ) {

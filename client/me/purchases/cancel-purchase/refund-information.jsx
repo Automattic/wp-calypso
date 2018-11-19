@@ -109,6 +109,7 @@ const CancelPurchaseRefundInformation = ( {
 				const planCostText =
 					purchase.currencySymbol + ( purchase.refundAmount + includedDomainPurchase.amount );
 				if ( isRefundable( includedDomainPurchase ) ) {
+					// TODO: confirm this should not show up after cutoff date
 					text.push(
 						i18n.translate(
 							'Your plan included the custom domain %(domain)s. You can cancel your domain as well as the plan, but keep ' +

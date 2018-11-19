@@ -22,11 +22,6 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
 
-/**
- * Style dependencies
- */
-import './add-term.scss';
-
 class TermSelectorAddTerm extends Component {
 	static propTypes = {
 		labels: PropTypes.object,

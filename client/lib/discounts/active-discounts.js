@@ -53,7 +53,7 @@ export default [
 		name: 'free_domain',
 		plansPageNoticeTextTitle: 'Get a free domain name by upgrading to any plan listed below!',
 		plansPageNoticeText:
-			'Improve your SEO, branding, credibility, and even word-of-mouth marketing with a custom domain. All plan upgrades include a free domain name of your choice.',
+			'Improve your SEO, branding, credibility, and even word-of-mouth marketing with a custom domain. All plan upgrades include a free domain name of your choice for one year.',
 	},
 	{
 		name: 'october25',
@@ -91,6 +91,11 @@ export default [
 	},
 	{
 		name: 'new_plans',
+		startsAt: new Date( 2018, 9, 25, 0, 0, 1 ),
+		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),
+	},
+	{
+		name: 'default_plans_tab_business',
 		startsAt: new Date( 2018, 9, 25, 0, 0, 1 ),
 		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),
 	},

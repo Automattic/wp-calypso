@@ -23,11 +23,6 @@ import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 function booleanToStatus( bool ) {
 	return bool ? 'open' : 'closed';
 }

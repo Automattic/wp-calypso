@@ -3,17 +3,17 @@
 /**
  * External dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { Component, Fragment } from '@wordpress/element';
+import { Component } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
+import { dispatch, withSelect } from '@wordpress/data';
 import { get, trimEnd } from 'lodash';
 import { InspectorControls } from '@wordpress/editor';
 import { sprintf } from '@wordpress/i18n';
-import { withSelect } from '@wordpress/data';
 import {
+	Disabled,
 	ExternalLink,
 	PanelBody,
 	SelectControl,
@@ -43,7 +43,7 @@ class SimplePaymentsEdit extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const { attributes, isLoadingInitial, isSelected, setAttributes, simplePayment } = this.props;
+		const { attributes, isSelected, setAttributes, simplePayment } = this.props;
 		const { content, currency, email, multiple, price, title } = attributes;
 
 		// @TODO check componentDidMount for the case where post was already loaded
@@ -58,7 +58,7 @@ class SimplePaymentsEdit extends Component {
 			} );
 		}
 
-		if ( prevProps.isSelected && ! isSelected && ! isLoadingInitial ) {
+		if ( prevProps.isSelected && ! isSelected ) {
 			// Validate and save on block deselect
 
 			this.saveProduct();
@@ -69,22 +69,24 @@ class SimplePaymentsEdit extends Component {
 		}
 	}
 
-	attributesToPost = attributes => {
-		const { content, currency, email, multiple, price, title } = attributes;
+	toApi() {
+		const { attributes } = this.props;
+		const { content, currency, email, multiple, paymentId, price, title } = attributes;
 
 		return {
+			id: paymentId,
 			content,
 			featured_media: 0,
 			meta: {
 				spay_currency: currency,
 				spay_email: email,
-				spay_multiple: multiple ? 1 : 0,
+				spay_multiple: multiple,
 				spay_price: price,
 			},
 			status: 'publish',
 			title,
 		};
-	};
+	}
 
 	saveProduct() {
 		if ( this.state.isSavingProduct ) {
@@ -96,24 +98,17 @@ class SimplePaymentsEdit extends Component {
 		}
 
 		const { attributes, setAttributes } = this.props;
-		const { email, paymentId } = attributes;
+		const { email } = attributes;
+		const { saveEntityRecord } = dispatch( 'core' );
 
-		this.setState( { isSavingProduct: true }, () => {
-			apiFetch( {
-				path: `/wp/v2/${ SIMPLE_PAYMENTS_PRODUCT_POST_TYPE }/${ paymentId ? paymentId : '' }`,
-				method: 'POST',
-				data: this.attributesToPost( attributes ),
-			} )
-				.then( response => {
-					const { id } = response;
-
-					if ( id ) {
-						setAttributes( { paymentId: id } );
-					}
+		this.setState( { isSavingProduct: true }, async () => {
+			saveEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, this.toApi() )
+				.then( record => {
+					setAttributes( { paymentId: record.id } );
 				} )
 				.catch( error => {
 					// @TODO: complete error handling
-					// eslint-disable-next-line
+					/* eslint-disable-next-line no-console */
 					console.error( error );
 
 					const {
@@ -322,10 +317,11 @@ class SimplePaymentsEdit extends Component {
 
 	render() {
 		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
-		const { attributes, isSelected, isLoadingInitial, instanceId } = this.props;
-		const { content, currency, email, multiple, price, title } = attributes;
+		const { attributes, instanceId, isSelected, simplePayment } = this.props;
+		const { content, currency, email, multiple, paymentId, price, title } = attributes;
 
-		if ( ! isSelected && isLoadingInitial ) {
+		const isLoading = paymentId && ! simplePayment;
+		if ( ! isSelected && isLoading ) {
 			return (
 				<div className="simple-payments__loading">
 					<ProductPlaceholder
@@ -358,106 +354,100 @@ class SimplePaymentsEdit extends Component {
 			);
 		}
 
+		const Wrapper = isLoading ? Disabled : 'div';
+
 		return (
-			<div className="wp-block-jetpack-simple-payments">
-				<Fragment>
-					<InspectorControls key="inspector">
-						<PanelBody>
-							<ExternalLink href="https://support.wordpress.com/simple-payments/">
-								{ __( 'Support reference' ) }
-							</ExternalLink>
-						</PanelBody>
-					</InspectorControls>
-
-					<TextControl
-						aria-describedby={ `${ instanceId }-title-error` }
-						className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
-							'simple-payments__field-has-error': fieldTitleError,
-						} ) }
-						disabled={ isLoadingInitial }
-						label={ __( 'Item name' ) }
-						onChange={ this.handleTitleChange }
-						placeholder={ __( 'Item name' ) }
-						required
-						type="text"
-						value={ title }
-					/>
-					<HelpMessage id={ `${ instanceId }-title-error` } isError>
-						{ fieldTitleError }
-					</HelpMessage>
-
-					<TextareaControl
-						className="simple-payments__field simple-payments__field-content"
-						disabled={ isLoadingInitial }
-						label={ __( 'Describe your item in a few words' ) }
-						onChange={ this.handleContentChange }
-						placeholder={ __( 'Describe your item in a few words' ) }
-						value={ content }
-					/>
-
-					<div className="simple-payments__price-container">
-						<SelectControl
-							className="simple-payments__field simple-payments__field-currency"
-							disabled={ isLoadingInitial }
-							label={ __( 'Currency' ) }
-							onChange={ this.handleCurrencyChange }
-							options={ this.getCurrencyList }
-							value={ currency }
-						/>
-						<TextControl
-							aria-describedby={ `${ instanceId }-price-error` }
-							disabled={ isLoadingInitial }
-							className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
-								'simple-payments__field-has-error': fieldPriceError,
-							} ) }
-							label={ __( 'Price' ) }
-							onChange={ this.handlePriceChange }
-							placeholder={ formatPrice( 0, currency, false ) }
-							required
-							step="1"
-							type="number"
-							value={ price || '' }
-						/>
-						<HelpMessage id={ `${ instanceId }-price-error` } isError>
-							{ fieldPriceError }
-						</HelpMessage>
-					</div>
-
-					<div className="simple-payments__field-multiple">
-						<ToggleControl
-							checked={ Boolean( multiple ) }
-							disabled={ isLoadingInitial }
-							label={ __( 'Allow people to buy more than one item at a time' ) }
-							onChange={ this.handleMultipleChange }
-						/>
-					</div>
-
-					<TextControl
-						aria-describedby={ `${ instanceId }-email-${ fieldEmailError ? 'error' : 'help' }` }
-						className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
-							'simple-payments__field-has-error': fieldEmailError,
-						} ) }
-						disabled={ isLoadingInitial }
-						label={ __( 'Email' ) }
-						onChange={ this.handleEmailChange }
-						placeholder={ __( 'Email' ) }
-						required
-						type="email"
-						value={ email }
-					/>
-					<HelpMessage id={ `${ instanceId }-email-error` } isError>
-						{ fieldEmailError }
-					</HelpMessage>
-					<HelpMessage id={ `${ instanceId }-email-help` }>
-						{ __(
-							'Enter the email address associated with your PayPal account. Don’t have an account?'
-						) + ' ' }
-						<ExternalLink href="https://www.paypal.com/">
-							{ __( 'Create one on PayPal' ) }
+			<Wrapper className="wp-block-jetpack-simple-payments">
+				<InspectorControls key="inspector">
+					<PanelBody>
+						<ExternalLink href="https://support.wordpress.com/simple-payments/">
+							{ __( 'Support reference' ) }
 						</ExternalLink>
+					</PanelBody>
+				</InspectorControls>
+
+				<TextControl
+					aria-describedby={ `${ instanceId }-title-error` }
+					className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
+						'simple-payments__field-has-error': fieldTitleError,
+					} ) }
+					label={ __( 'Item name' ) }
+					onChange={ this.handleTitleChange }
+					placeholder={ __( 'Item name' ) }
+					required
+					type="text"
+					value={ title }
+				/>
+				<HelpMessage id={ `${ instanceId }-title-error` } isError>
+					{ fieldTitleError }
+				</HelpMessage>
+
+				<TextareaControl
+					className="simple-payments__field simple-payments__field-content"
+					label={ __( 'Describe your item in a few words' ) }
+					onChange={ this.handleContentChange }
+					placeholder={ __( 'Describe your item in a few words' ) }
+					value={ content }
+				/>
+
+				<div className="simple-payments__price-container">
+					<SelectControl
+						className="simple-payments__field simple-payments__field-currency"
+						label={ __( 'Currency' ) }
+						onChange={ this.handleCurrencyChange }
+						options={ this.getCurrencyList }
+						value={ currency }
+					/>
+					<TextControl
+						aria-describedby={ `${ instanceId }-price-error` }
+						className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
+							'simple-payments__field-has-error': fieldPriceError,
+						} ) }
+						label={ __( 'Price' ) }
+						onChange={ this.handlePriceChange }
+						placeholder={ formatPrice( 0, currency, false ) }
+						required
+						step="1"
+						type="number"
+						value={ price || '' }
+					/>
+					<HelpMessage id={ `${ instanceId }-price-error` } isError>
+						{ fieldPriceError }
 					</HelpMessage>
-				</Fragment>
-			</div>
+				</div>
+
+				<div className="simple-payments__field-multiple">
+					<ToggleControl
+						checked={ Boolean( multiple ) }
+						label={ __( 'Allow people to buy more than one item at a time' ) }
+						onChange={ this.handleMultipleChange }
+					/>
+				</div>
+
+				<TextControl
+					aria-describedby={ `${ instanceId }-email-${ fieldEmailError ? 'error' : 'help' }` }
+					className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
+						'simple-payments__field-has-error': fieldEmailError,
+					} ) }
+					label={ __( 'Email' ) }
+					onChange={ this.handleEmailChange }
+					placeholder={ __( 'Email' ) }
+					required
+					type="email"
+					value={ email }
+				/>
+				<HelpMessage id={ `${ instanceId }-email-error` } isError>
+					{ fieldEmailError }
+				</HelpMessage>
+				<HelpMessage id={ `${ instanceId }-email-help` }>
+					{ __(
+						'Enter the email address associated with your PayPal account. Don’t have an account?'
+					) + ' ' }
+					<ExternalLink href="https://www.paypal.com/">
+						{ __( 'Create one on PayPal' ) }
+					</ExternalLink>
+				</HelpMessage>
+			</Wrapper>
 		);
 	}
 }
@@ -473,7 +463,6 @@ const applyWithSelect = withSelect( ( select, props ) => {
 		: undefined;
 
 	return {
-		isLoadingInitial: paymentId && ! simplePayment,
 		isSaving: !! isSavingPost(),
 		simplePayment,
 	};

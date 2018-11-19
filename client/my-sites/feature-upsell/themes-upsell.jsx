@@ -186,7 +186,7 @@ class ThemesUpsellComponent extends Component {
 							<li className="feature-upsell__checklist-item">
 								<Gridicon icon="checkmark-circle" className="feature-upsell__checklist-item-icon" />
 								<span className="feature-upsell__checklist-item-text">
-									A free custom domain name.
+									A free custom domain name for one year.
 								</span>
 							</li>
 							<li className="feature-upsell__checklist-item">
