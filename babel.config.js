@@ -3,11 +3,12 @@ const _ = require( 'lodash' );
 const path = require( 'path' );
 
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
+const isBrowser = isCalypsoClient || 'true' === process.env.TARGET_BROWSER;
 
-const modules = isCalypsoClient ? false : 'commonjs'; // only calypso should keep es6 modules
+const modules = isBrowser ? false : 'commonjs'; // Use commonjs for Node
 const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 
-const targets = isCalypsoClient
+const targets = isBrowser
 	? { browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ] }
 	: { node: 'current' };
 
