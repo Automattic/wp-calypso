@@ -504,9 +504,7 @@ const getTaskUrls = createSelector(
 			contact_page_updated: contactPageUrl,
 		};
 	},
-	( state, siteId, posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY ) ) => [
-		posts,
-	]
+	( state, siteId ) => [ getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY ) ]
 );
 
 export default connect(
