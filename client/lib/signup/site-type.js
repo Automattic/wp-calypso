@@ -43,7 +43,7 @@ export const allSiteTypes = {
 		label: i18n.translate( 'Online store' ),
 		value: 'Online store',
 		queryParam: 'online-store',
-		description: i18n.translate( 'Sell your collection of products online.' ),
+		description: i18n.translate( 'Sell your collection of products online. ' ),
 	},
 };
 
