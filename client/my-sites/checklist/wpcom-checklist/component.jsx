@@ -5,7 +5,7 @@
 import page from 'page';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { compact, find, get, some } from 'lodash';
+import { find, get, some } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
@@ -500,7 +500,7 @@ const getTaskUrls = createSelector(
 		const contactPageUrl = contactPageID && `/page/${ siteSlug }/${ contactPageID }`;
 
 		return {
-			post_published: compact( [ '/post', siteSlug, get( firstPost, [ 'ID' ] ) ] ).join( '/' ),
+			post_published: siteSlug && firstPost ? `/post/${ siteSlug }/${ firstPost.ID }` : null,
 			contact_page_updated: contactPageUrl,
 		};
 	},
