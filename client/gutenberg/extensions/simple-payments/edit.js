@@ -33,7 +33,6 @@ import {
 	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 	SUPPORTED_CURRENCY_LIST,
 } from 'lib/simple-payments/constants';
-import MissingPermissions from './missing-permissions';
 
 class SimplePaymentsEdit extends Component {
 	state = {
@@ -327,7 +326,7 @@ class SimplePaymentsEdit extends Component {
 
 	render() {
 		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
-		const { attributes, hasPublishAction, instanceId, isSelected, simplePayment } = this.props;
+		const { attributes, instanceId, isSelected, simplePayment } = this.props;
 		const { content, currency, email, multiple, paymentId, price, title } = attributes;
 
 		const isLoading = paymentId && ! simplePayment;
@@ -364,11 +363,7 @@ class SimplePaymentsEdit extends Component {
 			);
 		}
 
-		if ( ! hasPublishAction ) {
-			return <MissingPermissions />;
-		}
-
-		const Wrapper = isLoading || ! hasPublishAction ? Disabled : 'div';
+		const Wrapper = isLoading ? Disabled : 'div';
 
 		return (
 			<Wrapper className="wp-block-jetpack-simple-payments">
