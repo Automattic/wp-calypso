@@ -29,11 +29,10 @@ const PublicizeForm = compose( [
 			connections: select( 'core/editor' ).getEditedPostAttribute(
 				'jetpack_publicize_connections'
 			),
-			meta,
 			shareMessage: message.substr( 0, MAXIMUM_MESSAGE_LENGTH ),
 		};
 	} ),
-	withDispatch( ( dispatch, { connections, meta } ) => ( {
+	withDispatch( ( dispatch, { connections } ) => ( {
 		/**
 		 * Toggle connection enable/disable state based on checkbox.
 		 *
@@ -64,7 +63,6 @@ const PublicizeForm = compose( [
 		messageChange( event ) {
 			dispatch( 'core/editor' ).editPost( {
 				meta: {
-					...meta,
 					jetpack_publicize_message: event.target.value,
 				},
 			} );
