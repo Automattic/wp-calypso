@@ -1,37 +1,6 @@
-// brand definitions from https://automattic.github.io/color-studio/
+$white: #fff;
 
-$blue-700: #23354b;
-$blue-500: #016087;
-$blue-300: #6f93ad;
-
-$hot-blue-900: #10144d;
-$hot-blue-800: #162566;
-$hot-blue-700: #183780;
-$hot-blue-500: #005fb7;
-$hot-blue-300: #6795fe;
-$hot-blue-50:  #f0f6ff;
-
-$celadon-500: #007565;
-$celadon-700: #20473f;
-
-$pink-100: #ebc6d5;
-$pink-900: #3f1f2a;
-$pink-500: #bc4681;
-$pink-800: #5d283d;
-
-$hot-pink:     #d52c82;
-$hot-pink-50:  #fff0fa;
-$hot-pink-100: #ffcaea;
-$hot-pink-200: #ffa2d4;
-$hot-pink-300: #ff76b8;
-$hot-pink-500: #d52c82;
-$hot-pink-600: #b7266a;
-$hot-pink-700: #992053;
-$hot-pink-900: #60162e;
-
-$hot-pink-20:  rgba(213,44,130,0.15);
-
-$gray-50:  #e7e7e7;
+$gray-50: #e7e7e7;
 $gray-100: #ccced0;
 $gray-200: #b0b5b8;
 $gray-300: #969ca1;
@@ -42,15 +11,161 @@ $gray-700: #3d4145;
 $gray-800: #2b2d2f;
 $gray-900: #1a1a1a;
 
-$hot-red-700:    #ac120b;
-$hot-green-700:  #0d5a10;
-$hot-yellow-700: #bd9219;
-$hot-red-500:    #eb0001;
-$hot-green-500:  #008a00;
-$hot-yellow-500: #f6c200;
-$hot-red-300:    #ff8248;
-$hot-green-300:  #73b961;
+$blue-50: #e0e5e9;
+$blue-100: #bbc9d5;
+$blue-200: #95adc1;
+$blue-300: #6f93ad;
+$blue-400: #46799a;
+$blue-500: #016087;
+$blue-600: #204a69;
+$blue-700: #23354b;
+$blue-800: #1d232f;
+$blue-900: #111215;
+
+$purple-50: #eae5ee;
+$purple-100: #d4c8de;
+$purple-200: #beabce;
+$purple-300: #a88ebe;
+$purple-400: #9273af;
+$purple-500: #7c589f;
+$purple-600: #634581;
+$purple-700: #4b3264;
+$purple-800: #342148;
+$purple-900: #1f112e;
+
+$pink-50: #f4e5eb;
+$pink-100: #ebc6d5;
+$pink-200: #e1a7bf;
+$pink-300: #d688aa;
+$pink-400: #c96895;
+$pink-500: #bc4681;
+$pink-600: #9b3c69;
+$pink-700: #7b3252;
+$pink-800: #5d283d;
+$pink-900: #3f1f2a;
+
+$red-50: #fbe2dd;
+$red-100: #f8bfb4;
+$red-200: #f19d8d;
+$red-300: #e77a68;
+$red-400: #da5544;
+$red-500: #ca2622;
+$red-600: #a82620;
+$red-700: #87241d;
+$red-800: #68211a;
+$red-900: #491d17;
+
+$orange-50: #fceade;
+$orange-100: #fad2b6;
+$orange-200: #f5ba8f;
+$orange-300: #eda268;
+$orange-400: #e38a40;
+$orange-500: #d7730f;
+$orange-600: #b95e1b;
+$orange-700: #994b1f;
+$orange-800: #79391f;
+$orange-900: #592a1b;
+
+$yellow-50: #fbf3e4;
+$yellow-100: #f7e5c0;
+$yellow-200: #f1d79d;
+$yellow-300: #e9ca7a;
+$yellow-400: #e0bd56;
+$yellow-500: #d6b02c;
+$yellow-600: #ba9830;
+$yellow-700: #9e8132;
+$yellow-800: #826b32;
+$yellow-900: #675631;
+
+$green-50: #e0eadd;
+$green-100: #bcd3b5;
+$green-200: #97bc8d;
+$green-300: #73a567;
+$green-400: #4d8e41;
+$green-500: #1d7819;
+$green-600: #1e611e;
+$green-700: #1e4a1e;
+$green-800: #1d341d;
+$green-900: #192019;
+
+$celadon-50: #e1e9e6;
+$celadon-100: #bad1cb;
+$celadon-200: #93bab0;
+$celadon-300: #6da296;
+$celadon-400: #438c7d;
+$celadon-500: #007565;
+$celadon-600: #195d52;
+$celadon-700: #20473f;
+$celadon-800: #20312d;
+$celadon-900: #1d1d1d;
+
+$hot-blue-50: #f0f6ff;
+$hot-blue-100: #c1d7ff;
+$hot-blue-200: #93b6ff;
+$hot-blue-300: #6795fe;
+$hot-blue-400: #3574f8;
+$hot-blue-500: #005fb7;
+$hot-blue-600: #144b9b;
+$hot-blue-700: #183780;
+$hot-blue-800: #162566;
+$hot-blue-900: #10144d;
+
+$hot-pink-50: #fff0fa;
+$hot-pink-100: #ffcaea;
+$hot-pink-200: #ffa2d4;
+$hot-pink-300: #ff76b8;
+$hot-pink-400: #ff3997;
+$hot-pink-500: #d52c82;
+$hot-pink-600: #b7266a;
+$hot-pink-700: #992053;
+$hot-pink-800: #7c1b40;
+$hot-pink-900: #60162e;
+
+$hot-red-50: #fff0e6;
+$hot-red-100: #ffcfac;
+$hot-red-200: #ffab78;
+$hot-red-300: #ff8248;
+$hot-red-400: #ff4b1c;
+$hot-red-500: #eb0001;
+$hot-red-600: #cb0c07;
+$hot-red-700: #ac120b;
+$hot-red-800: #8e140c;
+$hot-red-900: #70150c;
+
+$hot-orange-50: #fff6e3;
+$hot-orange-100: #fce1b5;
+$hot-orange-200: #fbca8a;
+$hot-orange-300: #fcb161;
+$hot-orange-400: #fd953b;
+$hot-orange-500: #f67c00;
+$hot-orange-600: #d9650c;
+$hot-orange-700: #bb4f10;
+$hot-orange-800: #9d3a10;
+$hot-orange-900: #7e280e;
+
+$hot-yellow-50: #fffbe3;
+$hot-yellow-100: #fcf1bd;
+$hot-yellow-200: #fbe697;
 $hot-yellow-300: #fbda70;
+$hot-yellow-400: #fbcd45;
+$hot-yellow-500: #f6c200;
+$hot-yellow-600: #daaa12;
+$hot-yellow-700: #bd9219;
+$hot-yellow-800: #a17b1c;
+$hot-yellow-900: #86661e;
+
+$hot-green-50: #ecfde6;
+$hot-green-100: #c5e6b9;
+$hot-green-200: #9dcf8d;
+$hot-green-300: #73b961;
+$hot-green-400: #44a234;
+$hot-green-500: #008a00;
+$hot-green-600: #08720b;
+$hot-green-700: #0d5a10;
+$hot-green-800: #0f4410;
+$hot-green-900: #0f2e0e;
+
+$hot-pink-20:  rgba(213,44,130,0.15);
 
 // high-level application variables
 

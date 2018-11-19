@@ -1,6 +1,7 @@
 //default color scheme
 :root {
 	--color-primary: #{$color-primary};
+	--color-primary-light: #{$color-primary-light};
 	--color-primary-dark: #{$color-primary-dark};
 
 	--color-accent:       #{$hot-pink-500};
@@ -12,7 +13,7 @@
 	--masterbar-border-color: #{$color-primary-dark};
 	--masterbar-item-hover-background: #{$color-primary-dark};
 	--masterbar-item-active-background: #{$color-primary-dark};
-	--masterbar-item-active-border: #{$color-accent};
+	--masterbar-item-active-border: #{$white};
 	--masterbar-item-new-color: #{$color-text};
 	--masterbar-item-new-editor-background: #{$gray-darken-20};
 	--masterbar-item-new-editor-hover-background: #{$gray-darken-10};
@@ -27,8 +28,8 @@
 	--sidebar-footer-button-color: #{$gray-dark};
 	--sidebar-menu-link-secondary-text-color: #{$color-text};
 	--sidebar-menu-a-first-child-after-background: #{$white};
-	--sidebar-menu-selected-background-color: #{$hot-pink-50};
-	--sidebar-menu-selected-a-color: #{$hot-pink-700};
+	--sidebar-menu-selected-background-color: #{$blue-50};
+	--sidebar-menu-selected-a-color: #{$blue-500};
 	--sidebar-menu-selected-a-first-child-after-background: #{$white};
 
 	--button-is-borderless-color: #{$gray-dark};
