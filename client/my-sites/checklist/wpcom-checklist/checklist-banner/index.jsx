@@ -5,9 +5,7 @@
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Children, Component } from 'react';
-import store from 'store';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,12 +16,10 @@ import Card from 'components/card';
 import ChecklistBannerTask from './task';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import Gauge from 'components/gauge';
-import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import ProgressBar from 'components/progress-bar';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-
-const storeKeyForNeverShow = 'sitesNeverShowChecklistBanner';
+import { setNeverShowBannerStatus } from './never-show';
 
 export class ChecklistBanner extends Component {
 	static propTypes = {
@@ -36,36 +32,19 @@ export class ChecklistBanner extends Component {
 
 	handleClose = () => {
 		const { siteId } = this.props;
-		const sitesNeverShowBanner = store.get( storeKeyForNeverShow ) || {};
-		sitesNeverShowBanner[ `${ siteId }` ] = true;
-		store.set( storeKeyForNeverShow, sitesNeverShowBanner );
+		setNeverShowBannerStatus( siteId, true );
 
 		this.setState( { closed: true } );
 
-		this.props.track( 'calypso_checklist_banner_close', {
-			site_id: siteId,
-		} );
+		if ( this.props.track ) {
+			this.props.track( 'calypso_checklist_banner_close', {
+				site_id: siteId,
+			} );
+		}
 	};
 
-	canShow() {
-		if ( ! this.props.isEligibleForDotcomChecklist ) {
-			return false;
-		}
-
-		if ( this.state.closed ) {
-			return false;
-		}
-
-		const sitesNeverShowBanner = store.get( storeKeyForNeverShow );
-		if ( get( sitesNeverShowBanner, String( this.props.siteId ) ) === true ) {
-			return false;
-		}
-
-		return true;
-	}
-
 	render() {
-		if ( ! this.canShow() ) {
+		if ( this.state.closed ) {
 			return null;
 		}
 
@@ -143,7 +122,6 @@ export class ChecklistBanner extends Component {
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	return {
-		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	};
