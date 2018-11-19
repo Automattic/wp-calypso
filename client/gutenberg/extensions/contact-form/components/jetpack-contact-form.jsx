@@ -225,29 +225,17 @@ class JetpackContactForm extends Component {
 								[
 									'jetpack/field-name',
 									{
-										label: __( 'Name' ),
 										required: true,
 									},
 								],
 								[
 									'jetpack/field-email',
 									{
-										label: __( 'Email' ),
 										required: true,
 									},
 								],
-								[
-									'jetpack/field-url',
-									{
-										label: __( 'Website' ),
-									},
-								],
-								[
-									'jetpack/field-textarea',
-									{
-										label: __( 'Message' ),
-									},
-								],
+								[ 'jetpack/field-url', {} ],
+								[ 'jetpack/field-textarea', {} ],
 							] }
 						/>
 					) }
