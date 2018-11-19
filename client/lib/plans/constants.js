@@ -46,7 +46,6 @@ export const PLAN_HOST_BUNDLE = 'host-bundle';
 export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
 export const PLAN_CHARGEBACK = 'chargeback';
 
-export const POPULAR_PLANS = [ PLAN_PREMIUM ];
 export const NEW_PLANS = [];
 export const BEST_VALUE_PLANS = [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
 export const JETPACK_PLANS = [
@@ -1883,10 +1882,6 @@ export const getPlanFeaturesObject = planFeaturesList => {
 
 export function isMonthly( plan ) {
 	return includes( JETPACK_MONTHLY_PLANS, plan );
-}
-
-export function isPopular( plan ) {
-	return includes( POPULAR_PLANS, plan );
 }
 
 export function isNew( plan ) {

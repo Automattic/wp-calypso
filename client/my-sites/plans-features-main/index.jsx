@@ -63,6 +63,7 @@ export class PlansFeaturesMain extends Component {
 	getPlanFeatures() {
 		const {
 			basePlansPath,
+			customerType,
 			displayJetpackPlans,
 			domainName,
 			isInSignup,
@@ -93,6 +94,7 @@ export class PlansFeaturesMain extends Component {
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
 					withDiscount={ withDiscount }
+					popularPlanType={ customerType === 'personal' ? TYPE_PERSONAL : TYPE_BUSINESS }
 					siteId={ siteId }
 				/>
 			</div>
