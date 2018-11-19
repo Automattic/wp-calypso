@@ -7,14 +7,12 @@
 import React from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { some } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import { isBusinessPlan, isPremiumPlan, isPersonalPlan } from 'lib/plans';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getUserPurchases } from 'state/purchases/selectors';
 
@@ -50,23 +48,9 @@ const BusinessPlanMessage = ( { translate } ) => {
 	return message;
 };
 
-const HelpContactClosed = ( { compact, translate, purchases } ) => {
-	const hasBusinessPlan = some( purchases, ( { productSlug } ) => isBusinessPlan( productSlug ) );
-	const hasPremiumOrPersonalPlan = some(
-		purchases,
-		( { productSlug } ) => isPremiumPlan( productSlug ) || isPersonalPlan( productSlug )
-	);
-
-	let closureHeading;
-	let closureMessage;
-
-	if ( hasBusinessPlan ) {
-		closureHeading = translate( 'Limited Support November 22' );
-		closureMessage = <BusinessPlanMessage compact={ compact } translate={ translate } />;
-	} else if ( hasPremiumOrPersonalPlan ) {
-		closureHeading = translate( 'Limited Support November 22' );
-		closureMessage = <BusinessPlanMessage compact={ compact } translate={ translate } />;
-	}
+const HelpContactClosed = ( { compact, translate } ) => {
+	const closureHeading = translate( 'Limited Support November 22' );
+	const closureMessage = <BusinessPlanMessage compact={ compact } translate={ translate } />;
 
 	if ( compact ) {
 		return (
