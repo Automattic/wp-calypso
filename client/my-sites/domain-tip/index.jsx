@@ -92,7 +92,9 @@ class DomainTip extends React.Component {
 					href={ `/domains/add/${ this.props.siteSlug }` }
 					message={
 						this.props.hasDomainCredit
-							? this.props.translate( 'Your plan includes a free custom domain. Grab this one!' )
+							? this.props.translate(
+									'Your plan includes a free custom domain for one year. Grab this one!'
+							  )
 							: this.props.translate( 'Purchase a custom domain for your site.' )
 					}
 					shouldDisplay
