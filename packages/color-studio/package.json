@@ -50,8 +50,8 @@
     "palette:build:sketch": "node builders/sketchpalette-from-json > dist/colors.sketchpalette",
     "precommit": "yarn lint && yarn build && git add --update",
     "sketch": "yarn sketch:build && skpm-link",
-    "sketch:build": "skpm-build",
-    "sketch:watch": "yarn sketch:build --watch"
+    "sketch:build": "skpm-build --quiet",
+    "sketch:watch": "skpm-build --watch"
   },
   "skpm": {
     "manifest": "extensions/sketch/manifest.json",

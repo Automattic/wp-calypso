@@ -2,7 +2,8 @@
 
 $muriel-white: #fff;
 
-$muriel-gray-50: #e7e7e7;
+$muriel-gray-0: #f6f6f6;
+$muriel-gray-50: #e1e2e2;
 $muriel-gray-100: #ccced0;
 $muriel-gray-200: #b0b5b8;
 $muriel-gray-300: #969ca1;
@@ -13,7 +14,8 @@ $muriel-gray-700: #3d4145;
 $muriel-gray-800: #2b2d2f;
 $muriel-gray-900: #1a1a1a;
 
-$muriel-blue-50: #e0e5e9;
+$muriel-blue-0: #f3f5f6;
+$muriel-blue-50: #d8dee4;
 $muriel-blue-100: #bbc9d5;
 $muriel-blue-200: #95adc1;
 $muriel-blue-300: #6f93ad;
@@ -24,7 +26,8 @@ $muriel-blue-700: #23354b;
 $muriel-blue-800: #1d232f;
 $muriel-blue-900: #111215;
 
-$muriel-purple-50: #eae5ee;
+$muriel-purple-0: #f7f5f8;
+$muriel-purple-50: #e5deea;
 $muriel-purple-100: #d4c8de;
 $muriel-purple-200: #beabce;
 $muriel-purple-300: #a88ebe;
@@ -35,7 +38,8 @@ $muriel-purple-700: #4b3264;
 $muriel-purple-800: #342148;
 $muriel-purple-900: #1f112e;
 
-$muriel-pink-50: #f4e5eb;
+$muriel-pink-0: #fbf4f7;
+$muriel-pink-50: #f2dee6;
 $muriel-pink-100: #ebc6d5;
 $muriel-pink-200: #e1a7bf;
 $muriel-pink-300: #d688aa;
@@ -46,7 +50,8 @@ $muriel-pink-700: #7b3252;
 $muriel-pink-800: #5d283d;
 $muriel-pink-900: #3f1f2a;
 
-$muriel-red-50: #fbe2dd;
+$muriel-red-0: #fdf3f1;
+$muriel-red-50: #fadad3;
 $muriel-red-100: #f8bfb4;
 $muriel-red-200: #f19d8d;
 $muriel-red-300: #e77a68;
@@ -57,7 +62,8 @@ $muriel-red-700: #87241d;
 $muriel-red-800: #68211a;
 $muriel-red-900: #491d17;
 
-$muriel-orange-50: #fceade;
+$muriel-orange-0: #fef7f2;
+$muriel-orange-50: #fce4d5;
 $muriel-orange-100: #fad2b6;
 $muriel-orange-200: #f5ba8f;
 $muriel-orange-300: #eda268;
@@ -68,7 +74,8 @@ $muriel-orange-700: #994b1f;
 $muriel-orange-800: #79391f;
 $muriel-orange-900: #592a1b;
 
-$muriel-yellow-50: #fbf3e4;
+$muriel-yellow-0: #fdfaf4;
+$muriel-yellow-50: #faf0db;
 $muriel-yellow-100: #f7e5c0;
 $muriel-yellow-200: #f1d79d;
 $muriel-yellow-300: #e9ca7a;
@@ -79,7 +86,8 @@ $muriel-yellow-700: #9e8132;
 $muriel-yellow-800: #826b32;
 $muriel-yellow-900: #675631;
 
-$muriel-green-50: #e0eadd;
+$muriel-green-0: #f3f6f1;
+$muriel-green-50: #d8e4d4;
 $muriel-green-100: #bcd3b5;
 $muriel-green-200: #97bc8d;
 $muriel-green-300: #73a567;
@@ -90,7 +98,8 @@ $muriel-green-700: #1e4a1e;
 $muriel-green-800: #1d341d;
 $muriel-green-900: #192019;
 
-$muriel-celadon-50: #e1e9e6;
+$muriel-celadon-0: #f3f6f5;
+$muriel-celadon-50: #d8e3e0;
 $muriel-celadon-100: #bad1cb;
 $muriel-celadon-200: #93bab0;
 $muriel-celadon-300: #6da296;
@@ -101,7 +110,8 @@ $muriel-celadon-700: #20473f;
 $muriel-celadon-800: #20312d;
 $muriel-celadon-900: #1d1d1d;
 
-$muriel-hot-blue-50: #f0f6ff;
+$muriel-hot-blue-0: #f5f9ff;
+$muriel-hot-blue-50: #dbe8ff;
 $muriel-hot-blue-100: #c1d7ff;
 $muriel-hot-blue-200: #93b6ff;
 $muriel-hot-blue-300: #6795fe;
@@ -112,7 +122,8 @@ $muriel-hot-blue-700: #183780;
 $muriel-hot-blue-800: #162566;
 $muriel-hot-blue-900: #10144d;
 
-$muriel-hot-pink-50: #fff0fa;
+$muriel-hot-pink-0: #fff4fc;
+$muriel-hot-pink-50: #ffdff3;
 $muriel-hot-pink-100: #ffcaea;
 $muriel-hot-pink-200: #ffa2d4;
 $muriel-hot-pink-300: #ff76b8;
@@ -123,7 +134,8 @@ $muriel-hot-pink-700: #992053;
 $muriel-hot-pink-800: #7c1b40;
 $muriel-hot-pink-900: #60162e;
 
-$muriel-hot-red-50: #fff0e6;
+$muriel-hot-red-0: #fff5ed;
+$muriel-hot-red-50: #ffe2cd;
 $muriel-hot-red-100: #ffcfac;
 $muriel-hot-red-200: #ffab78;
 $muriel-hot-red-300: #ff8248;
@@ -134,7 +146,8 @@ $muriel-hot-red-700: #ac120b;
 $muriel-hot-red-800: #8e140c;
 $muriel-hot-red-900: #70150c;
 
-$muriel-hot-orange-50: #fff6e3;
+$muriel-hot-orange-0: #fff9eb;
+$muriel-hot-orange-50: #feedcf;
 $muriel-hot-orange-100: #fce1b5;
 $muriel-hot-orange-200: #fbca8a;
 $muriel-hot-orange-300: #fcb161;
@@ -145,7 +158,8 @@ $muriel-hot-orange-700: #bb4f10;
 $muriel-hot-orange-800: #9d3a10;
 $muriel-hot-orange-900: #7e280e;
 
-$muriel-hot-yellow-50: #fffbe3;
+$muriel-hot-yellow-0: #fffdeb;
+$muriel-hot-yellow-50: #fef7d2;
 $muriel-hot-yellow-100: #fcf1bd;
 $muriel-hot-yellow-200: #fbe697;
 $muriel-hot-yellow-300: #fbda70;
@@ -156,7 +170,8 @@ $muriel-hot-yellow-700: #bd9219;
 $muriel-hot-yellow-800: #a17b1c;
 $muriel-hot-yellow-900: #86661e;
 
-$muriel-hot-green-50: #ecfde6;
+$muriel-hot-green-0: #f2fdee;
+$muriel-hot-green-50: #daf2d1;
 $muriel-hot-green-100: #c5e6b9;
 $muriel-hot-green-200: #9dcf8d;
 $muriel-hot-green-300: #73b961;

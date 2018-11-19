@@ -3,8 +3,18 @@
   "colors": [
     [
       {
+        "name": "Gray 0",
+        "value": "#f6f6f6",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Gray",
+          "colorFormula": "primary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Gray 50",
-        "value": "#e7e7e7",
+        "value": "#e1e2e2",
         "_meta": {
           "baseColor": false,
           "baseName": "Gray",
@@ -105,8 +115,18 @@
     ],
     [
       {
+        "name": "Blue 0",
+        "value": "#f3f5f6",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Blue",
+          "colorFormula": "primary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Blue 50",
-        "value": "#e0e5e9",
+        "value": "#d8dee4",
         "_meta": {
           "baseColor": false,
           "baseName": "Blue",
@@ -207,8 +227,18 @@
     ],
     [
       {
+        "name": "Purple 0",
+        "value": "#f7f5f8",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Purple",
+          "colorFormula": "primary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Purple 50",
-        "value": "#eae5ee",
+        "value": "#e5deea",
         "_meta": {
           "baseColor": false,
           "baseName": "Purple",
@@ -309,8 +339,18 @@
     ],
     [
       {
+        "name": "Pink 0",
+        "value": "#fbf4f7",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Pink",
+          "colorFormula": "primary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Pink 50",
-        "value": "#f4e5eb",
+        "value": "#f2dee6",
         "_meta": {
           "baseColor": false,
           "baseName": "Pink",
@@ -411,8 +451,18 @@
     ],
     [
       {
+        "name": "Red 0",
+        "value": "#fdf3f1",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Red",
+          "colorFormula": "primary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Red 50",
-        "value": "#fbe2dd",
+        "value": "#fadad3",
         "_meta": {
           "baseColor": false,
           "baseName": "Red",
@@ -513,8 +563,18 @@
     ],
     [
       {
+        "name": "Orange 0",
+        "value": "#fef7f2",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Orange",
+          "colorFormula": "primary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Orange 50",
-        "value": "#fceade",
+        "value": "#fce4d5",
         "_meta": {
           "baseColor": false,
           "baseName": "Orange",
@@ -615,8 +675,18 @@
     ],
     [
       {
+        "name": "Yellow 0",
+        "value": "#fdfaf4",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Yellow",
+          "colorFormula": "primary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Yellow 50",
-        "value": "#fbf3e4",
+        "value": "#faf0db",
         "_meta": {
           "baseColor": false,
           "baseName": "Yellow",
@@ -717,8 +787,18 @@
     ],
     [
       {
+        "name": "Green 0",
+        "value": "#f3f6f1",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Green",
+          "colorFormula": "primary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Green 50",
-        "value": "#e0eadd",
+        "value": "#d8e4d4",
         "_meta": {
           "baseColor": false,
           "baseName": "Green",
@@ -819,8 +899,18 @@
     ],
     [
       {
+        "name": "Celadon 0",
+        "value": "#f3f6f5",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Celadon",
+          "colorFormula": "primary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Celadon 50",
-        "value": "#e1e9e6",
+        "value": "#d8e3e0",
         "_meta": {
           "baseColor": false,
           "baseName": "Celadon",
@@ -921,8 +1011,18 @@
     ],
     [
       {
+        "name": "Hot Blue 0",
+        "value": "#f5f9ff",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Blue",
+          "colorFormula": "secondary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Hot Blue 50",
-        "value": "#f0f6ff",
+        "value": "#dbe8ff",
         "_meta": {
           "baseColor": false,
           "baseName": "Hot Blue",
@@ -1023,8 +1123,18 @@
     ],
     [
       {
+        "name": "Hot Pink 0",
+        "value": "#fff4fc",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Pink",
+          "colorFormula": "secondary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Hot Pink 50",
-        "value": "#fff0fa",
+        "value": "#ffdff3",
         "_meta": {
           "baseColor": false,
           "baseName": "Hot Pink",
@@ -1125,8 +1235,18 @@
     ],
     [
       {
+        "name": "Hot Red 0",
+        "value": "#fff5ed",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Red",
+          "colorFormula": "secondary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Hot Red 50",
-        "value": "#fff0e6",
+        "value": "#ffe2cd",
         "_meta": {
           "baseColor": false,
           "baseName": "Hot Red",
@@ -1227,8 +1347,18 @@
     ],
     [
       {
+        "name": "Hot Orange 0",
+        "value": "#fff9eb",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Orange",
+          "colorFormula": "secondary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Hot Orange 50",
-        "value": "#fff6e3",
+        "value": "#feedcf",
         "_meta": {
           "baseColor": false,
           "baseName": "Hot Orange",
@@ -1329,8 +1459,18 @@
     ],
     [
       {
+        "name": "Hot Yellow 0",
+        "value": "#fffdeb",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Yellow",
+          "colorFormula": "secondary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Hot Yellow 50",
-        "value": "#fffbe3",
+        "value": "#fef7d2",
         "_meta": {
           "baseColor": false,
           "baseName": "Hot Yellow",
@@ -1431,8 +1571,18 @@
     ],
     [
       {
+        "name": "Hot Green 0",
+        "value": "#f2fdee",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Green",
+          "colorFormula": "secondary",
+          "shadeIndex": 0
+        }
+      },
+      {
         "name": "Hot Green 50",
-        "value": "#ecfde6",
+        "value": "#daf2d1",
         "_meta": {
           "baseColor": false,
           "baseName": "Hot Green",
