@@ -20,7 +20,7 @@ import { getNeverShowBannerStatus } from 'my-sites/checklist/wpcom-checklist/che
 
 class WpcomChecklist extends Component {
 	static propTypes = {
-		designType: PropTypes.oneOf( [ 'blog', 'page', 'portfolio' ] ),
+		designType: PropTypes.oneOf( [ 'blog', 'page', 'portfolio', 'store' ] ),
 		siteId: PropTypes.number,
 		taskStatuses: PropTypes.object,
 		viewMode: PropTypes.oneOf( [ 'checklist', 'banner', 'navigation', 'notification' ] ),
