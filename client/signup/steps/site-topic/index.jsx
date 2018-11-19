@@ -15,6 +15,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import StepWrapper from 'signup/step-wrapper';
 import FormLabel from 'components/forms/form-label';
+import InfoPopover from 'components/info-popover';
 import FormFieldset from 'components/forms/form-fieldset';
 import SuggestionSearch from 'components/suggestion-search';
 import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
@@ -63,13 +64,19 @@ class SiteTopicStep extends Component {
 	trimedSiteTopicValue = () => this.state.siteTopicValue.trim();
 
 	renderContent( topicLabel, placeholder ) {
+		const { translate } = this.props;
 		const currentSiteTopic = this.trimedSiteTopicValue();
 
 		return (
 			<Card className="site-topic__content">
 				<form onSubmit={ this.onSubmit }>
 					<FormFieldset>
-						<FormLabel htmlFor="siteTopic">{ topicLabel }</FormLabel>
+						<FormLabel htmlFor="siteTopic">
+							{ topicLabel }
+							<InfoPopover className="site-topic__info-popover" position="top">
+								{ translate( "We'll use this to personalize your site and experience." ) }
+							</InfoPopover>
+						</FormLabel>
 						<SuggestionSearch
 							id="siteTopic"
 							placeholder={ placeholder }
@@ -78,9 +85,11 @@ class SiteTopicStep extends Component {
 							value={ currentSiteTopic }
 						/>
 					</FormFieldset>
-					<Button type="submit" disabled={ ! currentSiteTopic } primary>
-						{ this.props.translate( 'Continue' ) }
-					</Button>
+					<div className="site-topic__submit-wrapper">
+						<Button type="submit" disabled={ ! currentSiteTopic } primary>
+							{ translate( 'Continue' ) }
+						</Button>
+					</div>
 				</form>
 			</Card>
 		);
