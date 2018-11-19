@@ -193,9 +193,7 @@ const getPlanBloggerDetails = () => ( {
 	getStoreAudience: () => i18n.translate( 'Best for bloggers' ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for Personal Use:{{/strong}} Boost your' +
-				' website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Get access to high-quality email and live chat support.',
+			'{{strong}}Best for Bloggers:{{/strong}} Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and email support.',
 			{
 				components: {
 					strong: (
@@ -1146,11 +1144,11 @@ export const FEATURES_LIST = {
 	},
 
 	[ FEATURE_FREE_BLOG_DOMAIN ]: {
-		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
+		getSlug: () => FEATURE_FREE_BLOG_DOMAIN,
 		getTitle: () => i18n.translate( 'Free .blog Domain for One Year' ),
 		getDescription: () =>
 			i18n.translate(
-				'Get a free .blog domain for one year. Premium domains not included. Your domain will renew at its regular price.'
+				'Get a free custom .blog domain name for one year (example.blog) with this plan to use with your blog. Does not apply to premium domains. Your domain will renew at its regular price.'
 			),
 	},
 
@@ -1329,7 +1327,7 @@ export const FEATURES_LIST = {
 			}
 
 			return i18n.translate(
-				'Get a free .blog domain for one year. Premium domains not included. Your domain will renew at its regular price.'
+				'Get a free custom .blog domain for one year. Premium domains not included. Your domain will renew at its regular price.'
 			);
 		},
 	},
