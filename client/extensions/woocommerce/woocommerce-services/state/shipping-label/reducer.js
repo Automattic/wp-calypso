@@ -87,7 +87,6 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_VALUE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_ORIGIN_COUNTRY,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
-	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_USE_ADDRESS_AS_ENTERED,
 } from '../action-types';
 import { WOOCOMMERCE_ORDER_UPDATE_SUCCESS } from 'woocommerce/state/action-types';
 import getBoxDimensions from 'woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
@@ -305,7 +304,12 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_ADDRESS_SUGGESTION ] = (
 	const groupState = {
 		...state.form[ group ],
 		expanded: false,
+
+		// No matter whether the suggestion is being used or not,
+		// after this action the address must be marked as normalized.
+		isNormalized: true,
 	};
+
 	if ( groupState.selectNormalized ) {
 		groupState.values = groupState.normalized;
 	} else {
@@ -1289,33 +1293,6 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG ] = state => 
 // Reset the state when the order changes
 reducers[ WOOCOMMERCE_ORDER_UPDATE_SUCCESS ] = () => {
 	return initializeLabelsState();
-};
-
-/**
- * Ignores address verification and proceeds to the next step.
- *
- * @param   {Object} state         The local Redux sub-state.
- * @param   {string} actions.group The group that should be marked as normalized.
- * @returns {Object}               An updated sub-state.
- */
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_USE_ADDRESS_AS_ENTERED ] = ( state, { group } ) => {
-	const oldState = state.form[ group ];
-
-	const groupState = {
-		...oldState,
-		expanded: false,
-		isNormalized: true,
-		isUnverifiable: true,
-		normalized: oldState.values,
-	};
-
-	return {
-		...state,
-		form: {
-			...state.form,
-			[ group ]: groupState,
-		},
-	};
 };
 
 export default keyedReducer( 'orderId', ( state = initializeLabelsState(), action ) => {

@@ -28,7 +28,6 @@ import {
 	editUnverifiableAddress,
 	updateAddressValue,
 	submitAddressForNormalization,
-	useAddressAsEntered,
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
 	getShippingLabel,
@@ -61,13 +60,13 @@ const AddressFields = props => {
 
 	const fieldErrors = isObject( errors ) ? errors : {};
 
+	const confirmAddressSuggestionHandler = () =>
+		props.confirmAddressSuggestion( orderId, siteId, group );
+
 	if ( isNormalized && ! fieldErrors.phone ) {
 		//                 ^^ Special case: The "phone" field can be made invalid by other step
 		// (changing the Destination address to a foreign country, since that makes the origin phone required),
 		// so even if the origin address was correctly normalized, the form needs to be displayed again
-		const confirmAddressSuggestionHandler = () =>
-			props.confirmAddressSuggestion( orderId, siteId, group );
-
 		if ( normalized && ! isEqual( normalized, values ) ) {
 			const editAddressHandler = () => props.editAddress( orderId, siteId, group );
 			const selectNormalizedAddressHandler = select =>
@@ -110,7 +109,6 @@ const AddressFields = props => {
 		props.updateAddressValue( orderId, siteId, group, fieldName, newValue );
 	const submitAddressForNormalizationHandler = () =>
 		props.submitAddressForNormalization( orderId, siteId, group );
-	const useAddressAsEnteredHandler = () => props.useAddressAsEntered( orderId, siteId, group );
 
 	return (
 		<div>
@@ -221,7 +219,7 @@ const AddressFields = props => {
 					type="button"
 					isPrimary={ false }
 					disabled={ ! isUsable }
-					onClick={ useAddressAsEnteredHandler }
+					onClick={ confirmAddressSuggestionHandler }
 				>
 					{ translate( 'Use address as entered' ) }
 				</FormButton>
@@ -279,7 +277,6 @@ const mapDispatchToProps = dispatch => {
 			editUnverifiableAddress,
 			updateAddressValue,
 			submitAddressForNormalization,
-			useAddressAsEntered,
 		},
 		dispatch
 	);

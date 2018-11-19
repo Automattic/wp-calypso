@@ -22,7 +22,7 @@ import {
 	removeIgnoreValidation,
 	updateAddressValue,
 	clearAvailableRates,
-	useAddressAsEntered,
+	confirmAddressSuggestion,
 } from '../actions';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE,
@@ -478,7 +478,7 @@ describe( 'Label purchase form reducer', () => {
 		expect( state[ orderId ].form.rates.values.weight_0_custom1 ).to.eql( '' );
 	} );
 
-	it( 'WOOCOMMERCE_SERVICES_SHIPPING_LABEL_USE_ADDRESS_AS_ENTERED saves the address and proceeds to the next step', () => {
+	it( 'WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_ADDRESS_SUGGESTION saves the address and proceeds to the next step', () => {
 		const group = 'origin';
 		let state = initialState;
 
@@ -498,13 +498,12 @@ describe( 'Label purchase form reducer', () => {
 			state = reducer( state, action );
 		};
 
-		useAddressAsEntered( orderId, siteId, group )( dispatch, getState );
+		confirmAddressSuggestion( orderId, siteId, group )( dispatch, getState );
 
 		expect( state[ orderId ].form[ group ] ).to.eql( {
 			...initialState[ orderId ].form[ group ],
 			expanded: false,
 			isNormalized: true,
-			isUnverifiable: true,
 			normalized: initialState[ orderId ].form[ group ].values,
 		} );
 	} );
