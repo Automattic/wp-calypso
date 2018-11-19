@@ -186,7 +186,7 @@ class PluginsUpsellComponent extends Component {
 							<li className="feature-upsell__checklist-item">
 								<Gridicon icon="checkmark-circle" className="feature-upsell__checklist-item-icon" />
 								<span className="feature-upsell__checklist-item-text">
-									A free custom domain name.
+									A free custom domain name for one year.
 								</span>
 							</li>
 							<li className="feature-upsell__checklist-item">
@@ -253,7 +253,7 @@ class PluginsUpsellComponent extends Component {
 
 						<p>
 							If you accept our offer for a free domain, and you later decide that the Business plan
-							isn’t for you, the domain is yours to keep. All we ask is that you to cover the domain
+							isn’t for you, the domain is yours to keep. All we ask is that you cover the domain
 							registration fees.
 						</p>
 					</div>

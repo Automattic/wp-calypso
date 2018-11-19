@@ -93,6 +93,7 @@ export const EligibilityWarnings = ( {
 			{ hasBusinessPlan &&
 				! isJetpack &&
 				includes( bannerHolds, 'NOT_USING_CUSTOM_DOMAIN' ) && (
+					// TODO: confirm the user has domain credit
 					<Banner
 						className="eligibility-warnings__banner"
 						description={

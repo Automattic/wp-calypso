@@ -21,11 +21,6 @@ import PostScheduler from './post-scheduler';
 import * as utils from 'state/posts/utils';
 import { getSelectedSite } from 'state/ui/selectors';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 export class EditorPublishDate extends React.Component {
 	static propTypes = {
 		post: PropTypes.object,

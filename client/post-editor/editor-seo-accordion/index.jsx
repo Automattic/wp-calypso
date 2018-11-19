@@ -26,11 +26,6 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import PostMetadata from 'lib/post-metadata';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class EditorSeoAccordion extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
