@@ -569,8 +569,7 @@ export default connect(
 		siteType: getSiteType( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 		shouldHideSiteGoals:
-			includes( [ 'onboarding', 'ecommerce' ], ownProps.flowName ) &&
-			includes( ownProps.steps, 'site-type' ),
+			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
 	} ),
 	{
 		setSiteTitle,
