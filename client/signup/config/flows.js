@@ -230,8 +230,7 @@ const Flows = {
 		// ABTest: `signupSegmentationStep` for users in the `onboarding` flow.
 		// Remove 'site-type' from the flow.
 		if ( 'onboarding' === flowName && 'exclude' === abtest( 'signupSegmentationStep' ) ) {
-			flow = Flows.removeStepFromFlow( 'site-type', flow );
-			return Flows.removeStepFromFlow( 'site-information', flow );
+			return Flows.removeStepFromFlow( 'site-type', flow );
 		}
 
 		return flow;
