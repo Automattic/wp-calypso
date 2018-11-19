@@ -20,6 +20,7 @@ import ProgressBar from 'components/progress-bar';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { setNeverShowBannerStatus } from './never-show';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export class ChecklistBanner extends Component {
 	static propTypes = {
@@ -36,11 +37,9 @@ export class ChecklistBanner extends Component {
 
 		this.setState( { closed: true } );
 
-		if ( this.props.track ) {
-			this.props.track( 'calypso_checklist_banner_close', {
-				site_id: siteId,
-			} );
-		}
+		this.props.track( 'calypso_checklist_banner_close', {
+			site_id: siteId,
+		} );
 	};
 
 	render() {
@@ -119,10 +118,19 @@ export class ChecklistBanner extends Component {
 	}
 }
 
-export default connect( state => {
+const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	};
-} )( localize( ChecklistBanner ) );
+};
+
+const mapDispatchToProps = {
+	track: recordTracksEvent,
+};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ChecklistBanner ) );
