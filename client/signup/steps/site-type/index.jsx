@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +15,7 @@ import SignupActions from 'lib/signup/actions';
 import { setSiteType } from 'state/signup/steps/site-type/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getThemeForSiteType } from 'signup/utils';
-import { allSiteTypes, dasherize, isValidLandingPageSiteType } from 'lib/signup/site-type';
+import { allSiteTypes } from 'lib/signup/site-type';
 
 //Form components
 import Card from 'components/card';
@@ -26,9 +27,8 @@ import FormRadio from 'components/forms/form-radio';
 class SiteType extends Component {
 	constructor( props ) {
 		super( props );
-		const siteTypeVal = isValidLandingPageSiteType( props.siteType ) ? props.siteType : '';
 		this.state = {
-			siteType: siteTypeVal,
+			siteType: props.siteType,
 		};
 	}
 
@@ -36,35 +36,38 @@ class SiteType extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		// Default siteType is 'blogger'
-		const siteTypeInputVal = this.state.siteType || allSiteTypes[ 0 ].type;
+		// Default siteType is 'blog'
+		const siteTypeInputVal = this.state.siteType || get( allSiteTypes, 'blog.value', '' );
 		const themeRepo = getThemeForSiteType( siteTypeInputVal );
 
 		this.props.submitStep( siteTypeInputVal, themeRepo );
 	};
 
-	renderContent() {
-		const { translate } = this.props;
-		const radioOptions = allSiteTypes.map( elem => (
-			<FormLabel className="site-type__option" key={ elem.type }>
+	renderRadioOptions() {
+		return Object.values( allSiteTypes ).map( elem => (
+			<FormLabel className="site-type__option" key={ elem.queryParam }>
 				<FormRadio
-					value={ elem.type }
-					checked={ dasherize( elem.type ) === dasherize( this.state.siteType ) }
+					value={ elem.value }
+					checked={ elem.value === this.state.siteType }
 					onChange={ this.handleRadioChange }
 				/>
 				<span>
-					<strong>{ elem.type }</strong>
+					<strong>{ elem.label }</strong>
 					<span>{ elem.description }</span>
 				</span>
 			</FormLabel>
 		) );
+	}
+
+	renderContent() {
+		const { translate } = this.props;
 
 		return (
 			<div className="site-type__wrapper">
 				<div className="site-type__form-wrapper">
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
-							<FormFieldset>{ radioOptions }</FormFieldset>
+							<FormFieldset>{ this.renderRadioOptions() }</FormFieldset>
 
 							<div className="site-type__submit-wrapper">
 								<Button primary={ true } type="submit">
@@ -109,6 +112,12 @@ export default connect(
 	( dispatch, ownProps ) => ( {
 		submitStep: ( siteTypeValue, themeRepo ) => {
 			dispatch( setSiteType( siteTypeValue ) );
+
+			const nextFlowName =
+				get( allSiteTypes, 'store.value', null ) === siteTypeValue
+					? 'store-nux'
+					: ownProps.flowName;
+
 			// Create site
 			SignupActions.submitSignupStep(
 				{
@@ -121,7 +130,7 @@ export default connect(
 					themeSlugWithRepo: themeRepo,
 				}
 			);
-			ownProps.goToNextStep( ownProps.flowName );
+			ownProps.goToNextStep( nextFlowName );
 		},
 	} )
 )( localize( SiteType ) );

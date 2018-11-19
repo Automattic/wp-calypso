@@ -2,7 +2,7 @@
 /**
  * Exernal dependencies
  */
-import { filter, find, includes, indexOf, isEmpty, merge, pick } from 'lodash';
+import { filter, find, includes, indexOf, isEmpty, merge, pick, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,7 +12,7 @@ import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
 import formState from 'lib/form-state';
 import userFactory from 'lib/user';
-import { dasherize } from 'lib/signup/site-type';
+import { allSiteTypes } from 'lib/signup/site-type';
 const user = userFactory();
 
 const { defaultFlowName } = flows;
@@ -146,19 +146,19 @@ export function getThemeForDesignType( designType ) {
 }
 
 export function getThemeForSiteType( siteType ) {
-	if ( 'business' === dasherize( siteType ) ) {
+	if ( siteType && siteType === get( allSiteTypes, 'business.value', '' ) ) {
 		return 'pub/radcliffe-2';
 	}
 
-	if ( 'professional' === dasherize( siteType ) ) {
+	if ( siteType && siteType === get( allSiteTypes, 'professional.value', '' ) ) {
 		return 'pub/altofocus';
 	}
 
-	if ( 'education' === dasherize( siteType ) ) {
+	if ( siteType && siteType === get( allSiteTypes, 'education.value', '' ) ) {
 		return 'pub/twentyfifteen';
 	}
 
-	if ( 'non-profit-organization' === dasherize( siteType ) ) {
+	if ( siteType && siteType === get( allSiteTypes, 'store.value', '' ) ) {
 		return 'pub/karuna';
 	}
 
@@ -188,15 +188,18 @@ export function getThemeForSiteGoals( siteGoals ) {
 }
 
 export function getDesignTypeForSiteType( siteType, flow ) {
-	if ( 'business' === siteType || flow === 'store-nux' ) {
+	if (
+		flow === 'store-nux' ||
+		( siteType && siteType === get( allSiteTypes, 'business.value', '' ) )
+	) {
 		return 'page';
 	}
 
-	if ( 'professional' === siteType ) {
+	if ( siteType && siteType === get( allSiteTypes, 'professional.value', '' ) ) {
 		return 'portfolio';
 	}
 
-	if ( 'non-profit' === siteType ) {
+	if ( siteType && siteType === get( allSiteTypes, 'store.value', '' ) ) {
 		return 'page';
 	}
 

@@ -3,6 +3,7 @@
  * Exernal dependencies
  */
 import i18n from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,48 +14,42 @@ import i18n from 'i18n-calypso';
  * Some (or all) of these site types will also have landing pages.
  * A user who comes in via a landing page will not see the Site Topic dropdown.
  */
-export const allSiteTypes = [
-	{
-		type: i18n.translate( 'Blog' ),
+export const allSiteTypes = {
+	blog: {
+		label: i18n.translate( 'Blog' ),
+		value: 'Blog',
+		queryParam: 'blog',
 		description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
 	},
-	{
-		type: i18n.translate( 'Business' ),
+	business: {
+		label: i18n.translate( 'Business' ),
+		value: 'Business',
+		queryParam: 'business',
 		description: i18n.translate( 'Promote products and services.' ),
 	},
-	{
-		type: i18n.translate( 'Professional' ),
+	professional: {
+		label: i18n.translate( 'Professional' ),
+		value: 'Professional',
+		queryParam: 'professional',
 		description: i18n.translate( 'Showcase your portfolio and work.' ),
 	},
-	{
-		type: i18n.translate( 'Education' ),
+	education: {
+		label: i18n.translate( 'Education' ),
+		value: 'Education',
+		queryParam: 'education',
 		description: i18n.translate( 'Share school projects and class info.' ),
 	},
-	{
-		type: i18n.translate( 'Non-profit Organization' ),
-		description: i18n.translate( 'Raise money and awareness for a cause.' ),
+	store: {
+		label: i18n.translate( 'Online store' ),
+		value: 'Online store',
+		queryParam: 'online-store',
+		description: i18n.translate( 'Sell your collection of products online.' ),
 	},
-];
+};
 
-function isSiteTypeInList( siteType ) {
-	const allSiteTypesFiltered = allSiteTypes.map( elem => {
-		return elem.type;
+export function getLabelForSiteType( queryParam ) {
+	const siteTypeProperties = find( allSiteTypes, object => {
+		return queryParam === object.queryParam;
 	} );
-	const sanitizedSiteTypes = allSiteTypesFiltered.map( dasherize );
-	siteType = dasherize( siteType );
-	return allSiteTypesFiltered.includes( siteType ) || sanitizedSiteTypes.includes( siteType );
-}
-
-export function dasherize( string ) {
-	return string
-		.toLowerCase()
-		.replace( / /g, '-' )
-		.replace( /-+/, '-' );
-}
-
-export function isValidLandingPageSiteType( siteType ) {
-	if ( ! siteType || siteType === '' ) {
-		return false;
-	}
-	return isSiteTypeInList( siteType );
+	return siteTypeProperties && siteTypeProperties.value;
 }
