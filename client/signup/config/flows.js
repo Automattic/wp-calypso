@@ -226,7 +226,7 @@ const Flows = {
 		// Only do this on the default flow
 		// if ( Flow.defaultFlowName === flowName ) {
 		// }
-
+		
 		// Remove About step in the ecommerce flow if we're in the onboarding AB test
 		if ( 'ecommerce' === flowName && 'onboarding' === abtest( 'improvedOnboarding' ) ) {
 			const afterStep = user && user.get() ? '' : 'user';
