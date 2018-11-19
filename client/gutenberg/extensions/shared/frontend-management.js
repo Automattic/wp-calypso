@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign } from 'lodash';
+import { assign, snakeCase } from 'lodash';
 import { createElement, render } from '@wordpress/element';
 
 export class FrontendManagement {
@@ -28,7 +28,7 @@ export class FrontendManagement {
 		const data = {};
 		for ( const name in attributes ) {
 			const attribute = attributes[ name ];
-			data[ name ] = dataset[ name.toLowerCase() ];
+			data[ name ] = dataset[ snakeCase( name ) ];
 			if ( attribute.type === 'boolean' ) {
 				data[ name ] = data[ name ] === 'false' ? false : !! data[ name ];
 			}

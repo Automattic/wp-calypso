@@ -19,15 +19,16 @@ class MapSave extends Component {
 				</li>
 			);
 		} );
+		// All camelCase attribute names converted to snake_case data attributes
 		return (
 			<div
 				className={ className }
-				data-mapStyle={ mapStyle }
-				data-mapDetails={ mapDetails }
+				data-map_style={ mapStyle }
+				data-map_details={ mapDetails }
 				data-points={ JSON.stringify( points ) }
 				data-zoom={ zoom }
-				data-mapCenter={ JSON.stringify( mapCenter ) }
-				data-markerColor={ markerColor }
+				data-map_center={ JSON.stringify( mapCenter ) }
+				data-marker_color={ markerColor }
 			>
 				{ points.length > 0 && <ul>{ pointsList }</ul> }
 			</div>
