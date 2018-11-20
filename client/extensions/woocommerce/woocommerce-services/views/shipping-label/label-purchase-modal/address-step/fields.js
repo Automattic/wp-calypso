@@ -217,9 +217,9 @@ const AddressFields = props => {
 
 				<FormButton
 					type="button"
-					isPrimary={ false }
 					disabled={ ! isUsable }
 					onClick={ confirmAddressSuggestionHandler }
+					borderless
 				>
 					{ translate( 'Use address as entered' ) }
 				</FormButton>

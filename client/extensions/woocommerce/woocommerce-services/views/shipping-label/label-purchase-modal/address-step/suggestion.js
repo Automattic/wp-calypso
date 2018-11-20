@@ -76,7 +76,7 @@ const AddressSuggestion = ( {
 				<FormButton type="button" onClick={ confirmAddressSuggestion }>
 					{ translate( 'Use selected address' ) }
 				</FormButton>
-				<FormButton type="button" onClick={ editAddress } isPrimary={ false }>
+				<FormButton type="button" onClick={ editAddress } borderless>
 					{ translate( 'Edit address' ) }
 				</FormButton>
 			</div>
