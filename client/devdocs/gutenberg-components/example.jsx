@@ -6,7 +6,7 @@
 import React from 'react';
 import * as components from '@wordpress/components';
 import { withState } from '@wordpress/compose';
-import { getSettings } from '@wordpress/date';
+import { __experimentalGetSettings } from '@wordpress/date';
 import { addFilter } from '@wordpress/hooks';
 import { LiveError, LivePreview, LiveProvider } from 'react-live';
 import request from 'superagent';
@@ -56,7 +56,7 @@ class Example extends React.Component {
 		const scope = {
 			...components,
 			withState,
-			getSettings,
+			__experimentalGetSettings,
 			PropTypes,
 			addFilter,
 		};
