@@ -37,7 +37,7 @@
  const { po } = require( 'gettext-parser' );
  const { merge, isEmpty } = require( 'lodash' );
  const { relative, sep } = require( 'path' );
- const { writeFileSync } = require( 'fs' );
+ const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
 
 /**
  * Default output headers if none specified in plugin options.
@@ -187,7 +187,10 @@ module.exports = function () {
 					const data = merge( {}, baseData, { translations: strings } );
 
 					const compiled = po.compile( data );
-					writeFileSync( this.file.opts.filename + '.i18n-calypso.pot', compiled );
+
+					const dir = 'build/.i18n-calypso/';
+					! existsSync( dir ) && mkdirSync( dir, { recursive: true } );
+					writeFileSync( dir + this.file.opts.filename.replace( /\//g, '-' ) + '.pot', compiled );
 				},
 			},
 		}
