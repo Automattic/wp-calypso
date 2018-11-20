@@ -95,10 +95,10 @@ export default {
 		defaultVariation: 'public',
 	},
 	crowdsignalNameBasedSignup: {
-		datestamp: '20181119',
+		datestamp: '20181120',
 		variations: {
-			nameSignup: 1,
-			usernameSignup: 99,
+			nameSignup: 50,
+			usernameSignup: 50,
 		},
 		defaultVariation: 'usernameSignup',
 	},
