@@ -190,7 +190,10 @@ module.exports = function () {
 
 					const dir = 'build/.i18n-calypso/';
 					! existsSync( dir ) && mkdirSync( dir, { recursive: true } );
-					writeFileSync( dir + this.file.opts.filename.replace( /\//g, '-' ) + '.pot', compiled );
+
+					const { filename } = this.file.opts;
+					const pathname = relative( '.', filename ).split( sep ).join( '-' );
+					writeFileSync( dir + pathname + '.pot', compiled );
 				},
 			},
 		}
