@@ -15,12 +15,12 @@ import {
 	flatten,
 	includes,
 	isBoolean,
+	isEqual,
 	map,
 	noop,
 	pick,
 	sumBy,
 	uniqBy,
-	isEqual,
 } from 'lodash';
 
 /**
