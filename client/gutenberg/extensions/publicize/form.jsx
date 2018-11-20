@@ -23,7 +23,7 @@ const PublicizeForm = compose( [
 	withSelect( select => {
 		const meta = select( 'core/editor' ).getEditedPostAttribute( 'meta' );
 		const postTitle = select( 'core/editor' ).getEditedPostAttribute( 'title' );
-		const message = get( meta, [ 'jetpack_publicize_message' ], '' ) || '';
+		const message = get( meta, [ 'jetpack_publicize_message' ], '' );
 
 		return {
 			connections: select( 'core/editor' ).getEditedPostAttribute(

@@ -52,7 +52,9 @@ class PublicizeFormUnwrapped extends Component {
 
 	getShareMessage() {
 		const { shareMessage, defaultShareMessage } = this.props;
-		return this.state.hasEditedShareMessage ? shareMessage : defaultShareMessage;
+		return ! this.state.hasEditedShareMessage && shareMessage === ''
+			? defaultShareMessage
+			: shareMessage;
 	}
 
 	onMessageChange = event => {
@@ -91,7 +93,7 @@ class PublicizeFormUnwrapped extends Component {
 						disabled={ this.isDisabled() }
 						maxLength={ MAXIMUM_MESSAGE_LENGTH }
 						placeholder={ __(
-							"Write a message for your audience here. If you leave it blank, the post's title will be used."
+							"Write a message for your audience here. If you leave this blank, we'll use the post title as the message."
 						) }
 						rows={ 4 }
 					/>
