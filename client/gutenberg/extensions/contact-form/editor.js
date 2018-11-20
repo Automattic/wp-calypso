@@ -213,7 +213,7 @@ registerBlockType( 'jetpack/field-name', {
 registerBlockType( 'jetpack/field-email', {
 	...FieldDefaults,
 	title: __( 'Email' ),
-	keywords: [ __( 'e-mail' ) ],
+	keywords: [ __( 'e-mail' ), __( 'mail' ), 'email' ],
 	description: __( 'Want to reply to folks? Add an email address input.' ),
 	icon: renderMaterialIcon(
 		<path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z" />
@@ -223,8 +223,8 @@ registerBlockType( 'jetpack/field-email', {
 
 registerBlockType( 'jetpack/field-url', {
 	...FieldDefaults,
-	title: __( 'URL' ),
-	keywords: [ __( 'Website' ), __( 'Online' ) ],
+	title: __( 'Website' ),
+	keywords: [ 'url', __( 'internet page' ), 'link' ],
 	description: __( 'Add an address input for a website.' ),
 	icon: renderMaterialIcon(
 		<path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z" />
@@ -234,7 +234,8 @@ registerBlockType( 'jetpack/field-url', {
 
 registerBlockType( 'jetpack/field-date', {
 	...FieldDefaults,
-	title: __( 'Date' ),
+	title: __( 'Date Picker' ),
+	keywords: [ __( 'Calendar' ), __( 'day month year' ) ],
 	description: __( 'The best way to set a date. Add a date picker.' ),
 	icon: renderMaterialIcon(
 		<path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zm0-12H5V5h14v2zM7 11h5v5H7z" />
