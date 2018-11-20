@@ -44,6 +44,7 @@ class SimplePaymentsEdit extends Component {
 
 	componentDidMount() {
 		this.injectPaymentAttributes();
+		this.validateAttributes();
 	}
 
 	componentDidUpdate( prevProps ) {
