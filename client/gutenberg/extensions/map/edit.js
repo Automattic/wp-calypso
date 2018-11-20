@@ -91,25 +91,26 @@ class MapEdit extends Component {
 		const fetch = serviceApiKey
 			? { url, method, data: { service_api_key: serviceApiKey } }
 			: { url, method };
-		this.setState( { apiRequestOutstanding: true } );
-		apiFetch( fetch ).then(
-			result => {
-				noticeOperations.removeAllNotices();
-				this.setState( {
-					apiState: result.service_api_key ? API_STATE_SUCCESS : API_STATE_FAILURE,
-					apiKey: result.service_api_key,
-					apiKeyControl: result.service_api_key,
-					apiRequestOutstanding: false,
-				} );
-			},
-			result => {
-				this.onError( null, result.message );
-				this.setState( {
-					apiRequestOutstanding: false,
-					apiKeyControl: apiKey,
-				} );
-			}
-		);
+		this.setState( { apiRequestOutstanding: true }, () => {
+			apiFetch( fetch ).then(
+				result => {
+					noticeOperations.removeAllNotices();
+					this.setState( {
+						apiState: result.service_api_key ? API_STATE_SUCCESS : API_STATE_FAILURE,
+						apiKey: result.service_api_key,
+						apiKeyControl: result.service_api_key,
+						apiRequestOutstanding: false,
+					} );
+				},
+				result => {
+					this.onError( null, result.message );
+					this.setState( {
+						apiRequestOutstanding: false,
+						apiKeyControl: apiKey,
+					} );
+				}
+			);
+		} );
 	}
 	componentDidMount() {
 		this.apiCall();
