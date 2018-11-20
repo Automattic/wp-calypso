@@ -90,16 +90,6 @@ export default [
 		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
 	},
 	{
-		name: 'new_plans',
-		startsAt: new Date( 2018, 9, 25, 0, 0, 1 ),
-		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),
-	},
-	{
-		name: 'default_plans_tab_business',
-		startsAt: new Date( 2018, 9, 25, 0, 0, 1 ),
-		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),
-	},
-	{
 		name: 'blackfriday30',
 		startsAt: new Date( 2018, 10, 21, 0, 0, 0 ),
 		endsAt: new Date( 2018, 10, 24, 0, 0, 0 ),
@@ -117,5 +107,17 @@ export default [
 		plansPageNoticeText:
 			'Hurry! Cyber Monday 30% Off Sale Is Almost Over. Enter CYBER30 At Checkout',
 		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
+	},
+	// NOTE: These two (new_plans and default_plans_tab_business) should remain at the bottom.
+	// It's a temporary hack and will be removed shortly.
+	{
+		name: 'new_plans',
+		startsAt: new Date( 2018, 9, 25, 0, 0, 1 ),
+		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),
+	},
+	{
+		name: 'default_plans_tab_business',
+		startsAt: new Date( 2018, 9, 25, 0, 0, 1 ),
+		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),
 	},
 ];
