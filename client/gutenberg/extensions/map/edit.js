@@ -5,11 +5,11 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { Component, createRef, Fragment, RawHTML } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
+import { Component, createRef, Fragment } from '@wordpress/element';
 import {
 	Button,
 	ButtonGroup,
+	ExternalLink,
 	IconButton,
 	PanelBody,
 	Placeholder,
@@ -203,15 +203,21 @@ class MapEdit extends Component {
 				<Spinner />
 			</Placeholder>
 		);
-		const getAPIInstructions = sprintf(
-			"<p>Before using the map block, you will need an Access Token.</p><p>Create an account or log in to <a href='%1$s'>Mapbox</a>. Locate and copy the default access token, and paste it in the field below.</p>",
-			'https://www.mapbox.com'
-		);
 		const placeholderAPIStateFailure = (
 			<Placeholder icon={ settings.icon } label={ __( 'Map' ) } notices={ notices }>
 				<Fragment>
 					<div className="components-placeholder__instructions">
-						<RawHTML>{ getAPIInstructions }</RawHTML>
+						<p>{ __( 'Before using the map block, you will need an Access Token.' ) }</p>
+						<p>
+							<ExternalLink href="https://www.mapbox.com">
+								{ __( 'Create an account or log in to Mapbox.' ) }
+							</ExternalLink>
+						</p>
+						<p>
+							{ __(
+								'Locate and copy the default access token. Then, paste it into the field below.'
+							) }
+						</p>
 					</div>
 					<TextControl
 						className="components-text-control-api-key"
