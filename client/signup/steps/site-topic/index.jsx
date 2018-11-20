@@ -21,6 +21,7 @@ import SuggestionSearch from 'components/suggestion-search';
 import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
 import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
 import { hints } from 'lib/signup/hint-data';
 
@@ -148,10 +149,15 @@ class SiteTopicStep extends Component {
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteTopic: siteTopicValue => {
+	submitSiteTopic: siteTopic => {
 		const { translate, flowName, stepName, goToNextStep } = ownProps;
 
-		dispatch( setSiteTopic( siteTopicValue ) );
+		dispatch( setSiteTopic( siteTopic ) );
+		dispatch(
+			recordTracksEvent( 'calypso_signup_site_topic_chosen', {
+				value: siteTopic,
+			} )
+		);
 
 		SignupActions.submitSignupStep(
 			{
@@ -160,7 +166,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 			},
 			[],
 			{
-				siteTopic: siteTopicValue,
+				siteTopic,
 			}
 		);
 
