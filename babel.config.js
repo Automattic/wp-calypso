@@ -58,9 +58,21 @@ const config = {
 					'@wordpress/babel-plugin-makepot',
 					{
 						output: 'gutenberg-strings.pot',
+						headers: {
+							'content-type': 'text/plain; charset=UTF-8',
+							'x-generator': 'calypso',
+						},
 					},
 				],
-				[ '@automattic/babel-plugin-i18n-calypso', {} ]
+				[
+					'@automattic/babel-plugin-i18n-calypso',
+					{
+						headers: {
+							'content-type': 'text/plain; charset=UTF-8',
+							'x-generator': 'calypso',
+						},
+					},
+				],
 			],
 		},
 		test: {
