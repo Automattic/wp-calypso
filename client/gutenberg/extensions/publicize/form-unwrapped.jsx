@@ -72,10 +72,14 @@ class PublicizeFormUnwrapped extends Component {
 		return (
 			<div id="publicize-form">
 				<ul>
-					{ connections.map( connection => (
+					{ connections.map( ( { display_name, enabled, id, service_name, toggleable } ) => (
 						<PublicizeConnection
-							connectionData={ connection }
-							key={ connection.id }
+							disabled={ ! toggleable }
+							enabled={ enabled }
+							key={ id }
+							id={ id }
+							label={ display_name }
+							name={ service_name }
 							toggleConnection={ toggleConnection }
 						/>
 					) ) }
