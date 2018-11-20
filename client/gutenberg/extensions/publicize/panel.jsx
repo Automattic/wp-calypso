@@ -20,6 +20,7 @@
  */
 import { compose } from '@wordpress/compose';
 import { PluginPrePublishPanel } from '@wordpress/edit-post';
+import { PostTypeSupportCheck } from '@wordpress/editor';
 import { withDispatch, withSelect } from '@wordpress/data';
 
 /**
@@ -31,27 +32,29 @@ import PublicizeSettingsButton from './settings-button';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const PublicizePanel = ( { connections, refreshConnections } ) => (
-	<PluginPrePublishPanel
-		initialOpen={ true }
-		id="publicize-title"
-		title={
-			<span id="publicize-defaults" key="publicize-title-span">
-				{ __( 'Share this post' ) }
-			</span>
-		}
-	>
-		<div>{ __( 'Connect and select social media services to share this post.' ) }</div>
-		{ connections &&
-			connections.length > 0 && <PublicizeForm refreshCallback={ refreshConnections } /> }
-		{ connections &&
-			0 === connections.length && (
-				<PublicizeSettingsButton
-					className="jetpack-publicize-add-connection-wrapper"
-					refreshCallback={ refreshConnections }
-				/>
-			) }
-		{ connections && connections.length > 0 && <PublicizeConnectionVerify /> }
-	</PluginPrePublishPanel>
+	<PostTypeSupportCheck supportKeys="publicize">
+		<PluginPrePublishPanel
+			initialOpen={ true }
+			id="publicize-title"
+			title={
+				<span id="publicize-defaults" key="publicize-title-span">
+					{ __( 'Share this post' ) }
+				</span>
+			}
+		>
+			<div>{ __( 'Connect and select social media services to share this post.' ) }</div>
+			{ connections &&
+				connections.length > 0 && <PublicizeForm refreshCallback={ refreshConnections } /> }
+			{ connections &&
+				0 === connections.length && (
+					<PublicizeSettingsButton
+						className="jetpack-publicize-add-connection-wrapper"
+						refreshCallback={ refreshConnections }
+					/>
+				) }
+			{ connections && connections.length > 0 && <PublicizeConnectionVerify /> }
+		</PluginPrePublishPanel>
+	</PostTypeSupportCheck>
 );
 
 export default compose( [

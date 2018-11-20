@@ -5,7 +5,6 @@
  */
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
-import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
 import { dispatch, withSelect } from '@wordpress/data';
@@ -25,14 +24,15 @@ import {
 /**
  * Internal dependencies
  */
+import HelpMessage from './help-message';
+import ProductPlaceholder from './product-placeholder';
+import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { decimalPlaces, formatPrice } from 'lib/simple-payments/utils';
 import { getCurrencyDefaults } from 'lib/format-currency/currencies';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 	SUPPORTED_CURRENCY_LIST,
 } from 'lib/simple-payments/constants';
-import ProductPlaceholder from './product-placeholder';
-import HelpMessage from './help-message';
 
 class SimplePaymentsEdit extends Component {
 	state = {
@@ -42,12 +42,31 @@ class SimplePaymentsEdit extends Component {
 		isSavingProduct: false,
 	};
 
-	componentDidUpdate( prevProps ) {
-		const { attributes, isSelected, setAttributes, simplePayment } = this.props;
-		const { content, currency, email, multiple, price, title } = attributes;
+	componentDidMount() {
+		this.injectPaymentAttributes();
+	}
 
-		// @TODO check componentDidMount for the case where post was already loaded
-		if ( ! prevProps.simplePayment && simplePayment ) {
+	componentDidUpdate( prevProps ) {
+		const { isSelected } = this.props;
+
+		if ( prevProps.simplePayment !== this.props.simplePayment ) {
+			this.injectPaymentAttributes();
+		}
+
+		if ( ! prevProps.isSaving && this.props.isSaving ) {
+			// Validate and save product on post save
+			this.saveProduct();
+		} else if ( prevProps.isSelected && ! isSelected ) {
+			// Validate on block deselect
+			this.validateAttributes();
+		}
+	}
+
+	injectPaymentAttributes() {
+		const { attributes, setAttributes, simplePayment } = this.props;
+		const { paymentId, content, currency, email, multiple, price, title } = attributes;
+
+		if ( paymentId && simplePayment ) {
 			setAttributes( {
 				content: get( simplePayment, [ 'content', 'raw' ], content ),
 				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency ),
@@ -56,16 +75,6 @@ class SimplePaymentsEdit extends Component {
 				price: get( simplePayment, [ 'meta', 'spay_price' ], price || undefined ),
 				title: get( simplePayment, [ 'title', 'raw' ], title ),
 			} );
-		}
-
-		if ( prevProps.isSelected && ! isSelected ) {
-			// Validate and save on block deselect
-
-			this.saveProduct();
-		} else if ( ! prevProps.isSaving && this.props.isSaving ) {
-			// Save payment on post save
-
-			this.saveProduct();
 		}
 	}
 
@@ -325,7 +334,7 @@ class SimplePaymentsEdit extends Component {
 			return (
 				<div className="simple-payments__loading">
 					<ProductPlaceholder
-						ariaBusy="true"
+						aria-busy="true"
 						content="█████"
 						formattedPrice="█████"
 						title="█████"
@@ -345,7 +354,7 @@ class SimplePaymentsEdit extends Component {
 		) {
 			return (
 				<ProductPlaceholder
-					ariaBusy="false"
+					aria-busy="false"
 					content={ content }
 					formattedPrice={ formatPrice( price, currency ) }
 					multiple={ multiple }
@@ -452,7 +461,7 @@ class SimplePaymentsEdit extends Component {
 	}
 }
 
-const applyWithSelect = withSelect( ( select, props ) => {
+const mapSelectToProps = withSelect( ( select, props ) => {
 	const { getEntityRecord } = select( 'core' );
 	const { isSavingPost } = select( 'core/editor' );
 
@@ -468,4 +477,7 @@ const applyWithSelect = withSelect( ( select, props ) => {
 	};
 } );
 
-export default compose( [ applyWithSelect, withInstanceId ] )( SimplePaymentsEdit );
+export default compose(
+	mapSelectToProps,
+	withInstanceId
+)( SimplePaymentsEdit );

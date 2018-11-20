@@ -5,7 +5,7 @@
 import page from 'page';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { compact, find, get, some } from 'lodash';
+import { find, get, some } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
@@ -36,7 +36,7 @@ import createSelector from 'lib/create-selector';
 
 const userLib = userFactory();
 
-const query = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
+const FIRST_TEN_SITE_POSTS_QUERY = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 
 class WpcomChecklistComponent extends PureComponent {
 	state = {
@@ -162,7 +162,7 @@ class WpcomChecklistComponent extends PureComponent {
 		return (
 			<>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				{ siteId && <QueryPosts siteId={ siteId } query={ query } /> }
+				{ siteId && <QueryPosts siteId={ siteId } query={ FIRST_TEN_SITE_POSTS_QUERY } /> }
 				<ChecklistComponent
 					isPlaceholder={ ! taskStatuses }
 					updateCompletion={ updateCompletion }
@@ -492,7 +492,7 @@ function getContactPage( posts ) {
 
 const getTaskUrls = createSelector(
 	( state, siteId ) => {
-		const posts = getPostsForQuery( state, siteId, query );
+		const posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY );
 
 		const firstPost = find( posts, { type: 'post' } );
 		const siteSlug = getSiteSlug( state, siteId );
@@ -500,11 +500,11 @@ const getTaskUrls = createSelector(
 		const contactPageUrl = contactPageID && `/page/${ siteSlug }/${ contactPageID }`;
 
 		return {
-			post_published: compact( [ '/post', siteSlug, get( firstPost, [ 'ID' ] ) ] ).join( '/' ),
+			post_published: siteSlug && firstPost ? `/post/${ siteSlug }/${ firstPost.ID }` : null,
 			contact_page_updated: contactPageUrl,
 		};
 	},
-	( state, siteId, posts = getPostsForQuery( state, siteId, query ) ) => [ posts ]
+	( state, siteId ) => [ getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY ) ]
 );
 
 export default connect(

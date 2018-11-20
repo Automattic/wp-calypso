@@ -87,6 +87,10 @@ class AboutStep extends Component {
 			},
 		} );
 		this.setFormState( this.formStateController.getInitialState() );
+
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+		} );
 	}
 
 	componentWillUnmount() {

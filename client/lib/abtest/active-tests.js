@@ -9,15 +9,6 @@ export default {
 		defaultVariation: 'main',
 		localeTargets: 'any',
 	},
-	signupSegmentationStep: {
-		datestamp: '20181029',
-		variations: {
-			include: 50,
-			exclude: 50,
-		},
-		defaultVariation: 'exclude',
-		localeTargets: 'any',
-	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
@@ -82,14 +73,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	jetpackSignupGoogleTop: {
-		datestamp: '20180427',
-		variations: {
-			original: 50,
-			top: 50,
-		},
-		defaultVariation: 'original',
-	},
 	krackenRebootM33: {
 		datestamp: '20181108',
 		variations: {
@@ -112,11 +95,11 @@ export default {
 		defaultVariation: 'public',
 	},
 	crowdsignalNameBasedSignup: {
-		datestamp: '20181119',
+		datestamp: '20181120',
 		variations: {
-			nameSignup: 1,
-			usernameSignup: 99,
+			nameSignup: 50,
+			usernameSignup: 50,
 		},
 		defaultVariation: 'usernameSignup',
-	}
+	},
 };
