@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { numberFormat, translate, localize } from 'i18n-calypso';
+import { numberFormat, localize } from 'i18n-calypso';
 import { get, has, omit } from 'lodash';
 
 /**
@@ -107,21 +107,21 @@ class ImportingPane extends React.PureComponent {
 
 	getErrorMessage = ( { description } ) => {
 		if ( ! description ) {
-			return translate( 'An unspecified error occured during the import.' );
+			return this.props.translate( 'An unspecified error occured during the import.' );
 		}
 
 		return description;
 	};
 
 	getHeadingText = () => {
-		return translate(
+		return this.props.translate(
 			'Importing may take a while if your site has a lot of media, but ' +
 				"you can safely navigate away from this page if you need to: we'll send you a notification when it's done."
 		);
 	};
 
 	getHeadingTextProcessing = () => {
-		return translate( 'Processing your file. Please wait a few moments.' );
+		return this.props.translate( 'Processing your file. Please wait a few moments.' );
 	};
 
 	getSuccessText = () => {
@@ -130,9 +130,9 @@ class ImportingPane extends React.PureComponent {
 				progress: { page, post },
 			} = this.props.importerStatus,
 			pageLink = <a href={ '/pages/' + slug } />,
-			pageText = translate( 'Pages', { context: 'noun' } ),
+			pageText = this.props.translate( 'Pages', { context: 'noun' } ),
 			postLink = <a href={ '/posts/' + slug } />,
-			postText = translate( 'Posts', { context: 'noun' } );
+			postText = this.props.translate( 'Posts', { context: 'noun' } );
 
 		const pageCount = page.total;
 		const postCount = post.total;
@@ -160,15 +160,15 @@ class ImportingPane extends React.PureComponent {
 			);
 		}
 
-		return translate( 'Import complete!' );
+		return this.props.translate( 'Import complete!' );
 	};
 
 	getImportMessage = numResources => {
 		if ( 0 === numResources ) {
-			return translate( 'Finishing up the import' );
+			return this.props.translate( 'Finishing up the import' );
 		}
 
-		return translate(
+		return this.props.translate(
 			'Waiting on %(numResources)s resource to import',
 			'Waiting on %(numResources)s resources to import',
 			{
@@ -234,7 +234,8 @@ class ImportingPane extends React.PureComponent {
 			'is-complete': this.isFinished(),
 		} );
 
-		let { percentComplete, progress, statusMessage } = this.props.importerStatus;
+		let { percentComplete, statusMessage } = this.props.importerStatus;
+		const { progress } = this.props.importerStatus;
 		let blockingMessage;
 
 		if ( this.isError() ) {
@@ -268,7 +269,7 @@ class ImportingPane extends React.PureComponent {
 						siteId={ siteId }
 						sourceType={ sourceType }
 						sourceAuthors={ customData.sourceAuthors }
-						sourceTitle={ customData.siteTitle || translate( 'Original Site' ) }
+						sourceTitle={ customData.siteTitle || this.props.translate( 'Original Site' ) }
 						targetTitle={ siteName }
 					/>
 				) }

@@ -1,7 +1,7 @@
 /** @format */
 
 /* TODO: Replace with styles created in A8C-owned account */
-export function mapboxMapFormatter( map_style, map_details ) {
+export function mapboxMapFormatter( mapStyle, mapDetails ) {
 	const style_urls = {
 		default: {
 			details: 'mapbox://styles/automattic/cjolkhmez0qdd2ro82dwog1in',
@@ -20,6 +20,6 @@ export function mapboxMapFormatter( map_style, map_details ) {
 			no_details: 'mapbox://styles/automattic/cjolke6fz12ys2rpbpvgl12ha',
 		},
 	};
-	const style_url = style_urls[ map_style ][ map_details ? 'details' : 'no_details' ];
+	const style_url = style_urls[ mapStyle ][ mapDetails ? 'details' : 'no_details' ];
 	return style_url;
 }

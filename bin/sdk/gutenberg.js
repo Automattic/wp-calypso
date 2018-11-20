@@ -64,7 +64,6 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 			...sharedUtilsScripts,
 			...sharedEditorUtilsScripts,
 			...blockScripts( 'editor', inputDir, presetBlocks ),
-			...blockScripts( 'view', inputDir, presetBlocks ),
 		];
 
 		// Combines all the different blocks into one editor-beta.js script
@@ -72,11 +71,10 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 			...sharedUtilsScripts,
 			...sharedEditorUtilsScripts,
 			...blockScripts( 'editor', inputDir, allPresetBlocks ),
-			...blockScripts( 'view', inputDir, allPresetBlocks ),
 		];
 
 		// We explicitly don't create a view.js bundle since all the views are
-		// bundled into the editor and also available via the individual folders.
+		// available via the individual folders.
 		viewScriptEntry = null;
 	} else {
 		editorScript = path.join( inputDir, 'editor.js' );

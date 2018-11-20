@@ -32,6 +32,12 @@ class SiteType extends Component {
 		};
 	}
 
+	componentDidMount() {
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+		} );
+	}
+
 	handleRadioChange = event => this.setState( { siteType: event.currentTarget.value } );
 
 	handleSubmit = event => {

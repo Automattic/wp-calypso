@@ -298,6 +298,8 @@ function getPaygateParameters( cardDetails ) {
 		return {
 			token: {
 				name: cardDetails.name,
+				zip: cardDetails[ 'postal-code' ],
+				country: cardDetails.country,
 				...cardDetails.tokenized_payment_data,
 			},
 		};

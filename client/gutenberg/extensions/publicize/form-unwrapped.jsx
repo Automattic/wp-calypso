@@ -29,6 +29,10 @@ import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 export const MAXIMUM_MESSAGE_LENGTH = 256;
 
 class PublicizeFormUnwrapped extends Component {
+	state = {
+		hasEditedShareMessage: false,
+	};
+
 	/**
 	 * Check to see if form should be disabled.
 	 *
@@ -40,18 +44,25 @@ class PublicizeFormUnwrapped extends Component {
 	isDisabled() {
 		const { connections } = this.props;
 		// Check to see if at least one connection is not disabled
-		const formEnabled = connections.some( c => ! c.disabled );
+		const formEnabled = connections.some( connection => ! connection.disabled );
 		return ! formEnabled;
 	}
 
+	getShareMessage() {
+		const { shareMessage, defaultShareMessage } = this.props;
+		return ! this.state.hasEditedShareMessage && shareMessage === ''
+			? defaultShareMessage
+			: shareMessage;
+	}
+
+	onMessageChange = event => {
+		const { messageChange } = this.props;
+		this.setState( { hasEditedShareMessage: true } );
+		messageChange( event );
+	};
+
 	render() {
-		const {
-			connections,
-			toggleConnection,
-			messageChange,
-			shareMessage,
-			refreshCallback,
-		} = this.props;
+		const { connections, toggleConnection, refreshCallback, shareMessage } = this.props;
 
 		const charactersRemaining = MAXIMUM_MESSAGE_LENGTH - shareMessage.length;
 		const characterCountClass = classnames( 'jetpack-publicize-character-count', {
@@ -61,10 +72,14 @@ class PublicizeFormUnwrapped extends Component {
 		return (
 			<div id="publicize-form">
 				<ul>
-					{ connections.map( c => (
+					{ connections.map( ( { display_name, enabled, id, service_name, toggleable } ) => (
 						<PublicizeConnection
-							connectionData={ c }
-							key={ c.id }
+							disabled={ ! toggleable }
+							enabled={ enabled }
+							key={ id }
+							id={ id }
+							label={ display_name }
+							name={ service_name }
 							toggleConnection={ toggleConnection }
 						/>
 					) ) }
@@ -75,10 +90,14 @@ class PublicizeFormUnwrapped extends Component {
 				</label>
 				<div className="jetpack-publicize-message-box">
 					<textarea
-						value={ shareMessage }
-						onChange={ messageChange }
+						value={ this.getShareMessage() }
+						onChange={ this.onMessageChange }
 						disabled={ this.isDisabled() }
 						maxLength={ MAXIMUM_MESSAGE_LENGTH }
+						placeholder={ __(
+							"Write a message for your audience here. If you leave this blank, we'll use the post title as the message."
+						) }
+						rows={ 4 }
 					/>
 					<div className={ characterCountClass }>
 						{ sprintf(

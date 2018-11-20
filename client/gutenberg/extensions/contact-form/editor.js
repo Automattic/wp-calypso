@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { registerBlockType, getBlockType, createBlock } from '@wordpress/blocks';
+import { getBlockType, createBlock } from '@wordpress/blocks';
 import { Fragment } from '@wordpress/element';
 import { InnerBlocks } from '@wordpress/editor';
 
@@ -18,11 +18,12 @@ import JetpackFieldCheckbox from './components/jetpack-field-checkbox';
 import JetpackFieldMultiple from './components/jetpack-field-multiple';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
+import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
 
 /**
  * Block Registrations:
  */
-registerBlockType( 'jetpack/contact-form', {
+registerJetpackBlock( 'contact-form', {
 	title: __( 'Contact Form' ),
 	description: __( 'A simple way to get feedback from folks visiting your site.' ),
 	icon: renderMaterialIcon(
@@ -31,6 +32,7 @@ registerBlockType( 'jetpack/contact-form', {
 	keywords: [ __( 'email' ), __( 'feedback' ), 'email' ],
 	category: 'jetpack',
 	supports: {
+		reusable: false,
 		html: false,
 	},
 	attributes: {
@@ -60,6 +62,7 @@ const FieldDefaults = {
 	category: 'jetpack',
 	parent: [ 'jetpack/contact-form' ],
 	supports: {
+		reusable: false,
 		html: false,
 	},
 	attributes: {
@@ -192,7 +195,7 @@ const editMultiField = type => props => (
 	/>
 );
 
-registerBlockType( 'jetpack/field-text', {
+registerJetpackBlock( 'field-text', {
 	...FieldDefaults,
 	title: __( 'Text' ),
 	description: __( 'When you need just a small amount of text, add a text input.' ),
@@ -200,7 +203,7 @@ registerBlockType( 'jetpack/field-text', {
 	edit: editField( 'text' ),
 } );
 
-registerBlockType( 'jetpack/field-name', {
+registerJetpackBlock( 'field-name', {
 	...FieldDefaults,
 	title: __( 'Name' ),
 	description: __( 'Introductions are important. Add an input for folks to add their name.' ),
@@ -210,7 +213,7 @@ registerBlockType( 'jetpack/field-name', {
 	edit: editField( 'text' ),
 } );
 
-registerBlockType( 'jetpack/field-email', {
+registerJetpackBlock( 'field-email', {
 	...FieldDefaults,
 	title: __( 'Email' ),
 	description: __( 'Want to reply to folks? Add an email address input.' ),
@@ -220,7 +223,7 @@ registerBlockType( 'jetpack/field-email', {
 	edit: editField( 'email' ),
 } );
 
-registerBlockType( 'jetpack/field-url', {
+registerJetpackBlock( 'field-url', {
 	...FieldDefaults,
 	title: __( 'URL' ),
 	description: __( 'Add an address input for a website.' ),
@@ -230,7 +233,7 @@ registerBlockType( 'jetpack/field-url', {
 	edit: editField( 'url' ),
 } );
 
-registerBlockType( 'jetpack/field-date', {
+registerJetpackBlock( 'field-date', {
 	...FieldDefaults,
 	title: __( 'Date' ),
 	description: __( 'The best way to set a date. Add a date picker.' ),
@@ -240,7 +243,7 @@ registerBlockType( 'jetpack/field-date', {
 	edit: editField( 'text' ),
 } );
 
-registerBlockType( 'jetpack/field-telephone', {
+registerJetpackBlock( 'field-telephone', {
 	...FieldDefaults,
 	title: __( 'Telephone' ),
 	description: __( 'Add a phone number input.' ),
@@ -250,7 +253,7 @@ registerBlockType( 'jetpack/field-telephone', {
 	edit: editField( 'tel' ),
 } );
 
-registerBlockType( 'jetpack/field-textarea', {
+registerJetpackBlock( 'field-textarea', {
 	...FieldDefaults,
 	title: __( 'Textarea' ),
 	description: __( 'Let folks speak their mind. A textarea is great for longer responses.' ),
@@ -268,7 +271,7 @@ registerBlockType( 'jetpack/field-textarea', {
 	),
 } );
 
-registerBlockType( 'jetpack/field-checkbox', {
+registerJetpackBlock( 'field-checkbox', {
 	...FieldDefaults,
 	title: __( 'Checkbox' ),
 	description: __( 'Add a single checkbox.' ),
@@ -294,7 +297,7 @@ registerBlockType( 'jetpack/field-checkbox', {
 	},
 } );
 
-registerBlockType( 'jetpack/field-checkbox-multiple', {
+registerJetpackBlock( 'field-checkbox-multiple', {
 	...FieldDefaults,
 	title: __( 'Checkbox group' ),
 	description: __( 'People love options. Add several checkbox items.' ),
@@ -311,7 +314,7 @@ registerBlockType( 'jetpack/field-checkbox-multiple', {
 	},
 } );
 
-registerBlockType( 'jetpack/field-radio', {
+registerJetpackBlock( 'field-radio', {
 	...FieldDefaults,
 	title: __( 'Radio' ),
 	description: __(
@@ -333,7 +336,7 @@ registerBlockType( 'jetpack/field-radio', {
 	},
 } );
 
-registerBlockType( 'jetpack/field-select', {
+registerJetpackBlock( 'field-select', {
 	...FieldDefaults,
 	title: __( 'Select' ),
 	description: __( 'Compact, but powerful. Add a select box with several items.' ),

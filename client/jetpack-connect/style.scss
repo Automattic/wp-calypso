@@ -12,15 +12,6 @@
 		}
 	}
 
-	.signup-form__social-top {
-		.logged-out-form__links {
-			margin-top: 0px;
-			@include breakpoint( '>480px' ) {
-				margin-top: 0px;
-			}
-		}
-	}
-
 	.formatted-header {
 		margin-bottom: 16px;
 	}
