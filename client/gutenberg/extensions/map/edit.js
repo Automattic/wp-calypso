@@ -89,7 +89,7 @@ class MapEdit extends Component {
 	};
 	apiCall( serviceApiKey = null, method = 'GET' ) {
 		const { noticeOperations } = this.props;
-		const url = '/wp-json/jetpack/v4/service-api-keys/mapbox';
+		const url = '/?rest_route=/jetpack/v4/service-api-keys/mapbox';
 		const fetch = serviceApiKey
 			? { url, method, data: { service_api_key: serviceApiKey } }
 			: { url, method };
