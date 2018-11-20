@@ -41,7 +41,7 @@ function canAddGoogleApps( domainName ) {
 }
 
 function isGsuiteRestricted() {
-	return ! user.get().is_valid_google_apps_country;
+	return ! get( user.get(), 'is_valid_google_apps_country', false );
 }
 
 function checkAuthCode( domainName, authCode, onComplete ) {
