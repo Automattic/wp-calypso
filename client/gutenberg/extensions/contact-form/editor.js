@@ -209,6 +209,31 @@ const editMultiField = type => props => (
 	/>
 );
 
+const textFieldTransformsFrom = {
+	type: 'shortcode',
+	tag: 'contact-field',
+	attributes: {
+		label: {
+			type: 'string',
+			shortcode: function( attr ) {
+				return attr.named.label ? attr.named.label : '';
+			},
+		},
+		type: {
+			type: 'string',
+			shortcode: function( attr ) {
+				return attr.named.type ? attr.named.type : '';
+			},
+		},
+		required: {
+			type: 'boolean',
+			shortcode: function( attr ) {
+				return attr.named.required === '1' ? true : false;
+			},
+		},
+	},
+};
+
 registerBlockType( 'jetpack/field-text', {
 	...FieldDefaults,
 	title: __( 'Text' ),
@@ -217,38 +242,7 @@ registerBlockType( 'jetpack/field-text', {
 	edit: editField( 'text' ),
 	transforms: {
 		to: FieldDefaults.transforms.to,
-		from: [
-			{
-				type: 'shortcode',
-				tag: 'contact-field',
-				attributes: {
-					label: {
-						type: 'string',
-						source: 'attribute',
-						shortcode: function( attr ) {
-							return attr.named.label ? attr.named.label : '';
-						},
-					},
-					type: {
-						type: 'string',
-						source: 'attribute',
-						shortcode: function( attr ) {
-							return attr.named.type ? attr.named.type : '';
-						},
-					},
-					required: {
-						type: 'boolean',
-						source: 'attribute',
-						shortcode: function( attr ) {
-							if ( attr.named.required === '1' ) {
-								return true;
-							}
-							return false;
-						},
-					},
-				},
-			},
-		],
+		from: [ textFieldTransformsFrom ],
 	},
 } );
 
