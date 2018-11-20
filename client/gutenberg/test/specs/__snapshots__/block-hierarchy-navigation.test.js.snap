@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Navigating the block hierarchy should appear and function even without nested blocks 1`] = `
+"<!-- wp:paragraph -->
+<p>and I say hello</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image -->
+<figure class=\\"wp-block-image\\"><img alt=\\"\\"/></figure>
+<!-- /wp:image -->"
+`;
+
+exports[`Navigating the block hierarchy should navigate block hierarchy using only the keyboard 1`] = `
+"<!-- wp:columns {\\"columns\\":3} -->
+<div class=\\"wp-block-columns has-3-columns\\"><!-- wp:column -->
+<div class=\\"wp-block-column\\"><!-- wp:paragraph -->
+<p>First column</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column -->
+
+<!-- wp:column -->
+<div class=\\"wp-block-column\\"></div>
+<!-- /wp:column -->
+
+<!-- wp:column -->
+<div class=\\"wp-block-column\\"><!-- wp:paragraph -->
+<p>Third column</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->"
+`;
+
+exports[`Navigating the block hierarchy should navigate using the block hierarchy dropdown menu 1`] = `
+"<!-- wp:columns {\\"columns\\":3} -->
+<div class=\\"wp-block-columns has-3-columns\\"><!-- wp:column -->
+<div class=\\"wp-block-column\\"><!-- wp:paragraph -->
+<p>First column</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column -->
+
+<!-- wp:column -->
+<div class=\\"wp-block-column\\"></div>
+<!-- /wp:column -->
+
+<!-- wp:column -->
+<div class=\\"wp-block-column\\"><!-- wp:paragraph -->
+<p>Third column</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->"
+`;

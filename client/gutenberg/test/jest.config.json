@@ -1,0 +1,10 @@
+{
+	"rootDir": "../../../",
+	"preset": "jest-puppeteer",
+	"testMatch": [
+		"<rootDir>/test/gutenberg/e2e/specs/**/(*.)test.js"
+	],
+	"transform": {
+		"^.+\\.jsx?$": "<rootDir>/node_modules/babel-jest"
+	}
+}

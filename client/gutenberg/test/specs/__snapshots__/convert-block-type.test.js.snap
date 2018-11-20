@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Code block should convert to a preformatted block 1`] = `
+"<!-- wp:code -->
+<pre class=\\"wp-block-code\\"><code>print \\"Hello Dolly!\\"</code></pre>
+<!-- /wp:code -->"
+`;
+
+exports[`Code block should convert to a preformatted block 2`] = `
+"<!-- wp:preformatted -->
+<pre class=\\"wp-block-preformatted\\">print \\"Hello Dolly!\\"</pre>
+<!-- /wp:preformatted -->"
+`;

@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`block deletion - deleting the third block using backspace in an empty block results in two remaining blocks and positions the caret at the end of the second block 1`] = `
+"<!-- wp:paragraph -->
+<p>First paragraph</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Second paragraph</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`block deletion - deleting the third block using backspace in an empty block results in two remaining blocks and positions the caret at the end of the second block 2`] = `
+"<!-- wp:paragraph -->
+<p>First paragraph</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Second paragraph - caret was here</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`block deletion - deleting the third block using backspace with block wrapper selection results in three remaining blocks and positions the caret at the end of the third block 1`] = `
+"<!-- wp:paragraph -->
+<p>First paragraph</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Second paragraph</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`block deletion - deleting the third block using backspace with block wrapper selection results in three remaining blocks and positions the caret at the end of the third block 2`] = `
+"<!-- wp:paragraph -->
+<p>First paragraph</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Second paragraph - caret was here</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`block deletion - deleting the third block using the Remove Block menu item results in two remaining blocks and positions the caret at the end of the second block 1`] = `
+"<!-- wp:paragraph -->
+<p>First paragraph</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Second paragraph</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`block deletion - deleting the third block using the Remove Block menu item results in two remaining blocks and positions the caret at the end of the second block 2`] = `
+"<!-- wp:paragraph -->
+<p>First paragraph</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Second paragraph - caret was here</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`block deletion - deleting the third block using the Remove Block shortcut results in two remaining blocks and positions the caret at the end of the second block 1`] = `
+"<!-- wp:paragraph -->
+<p>First paragraph</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Second paragraph</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`block deletion - deleting the third block using the Remove Block shortcut results in two remaining blocks and positions the caret at the end of the second block 2`] = `
+"<!-- wp:paragraph -->
+<p>First paragraph</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Second paragraph - caret was here</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`block deletion - deleting third third and fourth blocks using backspace with multi-block selection results in two remaining blocks and positions the caret at the end of the second block 1`] = `
+"<!-- wp:paragraph -->
+<p>First paragraph</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Second paragraph</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`block deletion - deleting third third and fourth blocks using backspace with multi-block selection results in two remaining blocks and positions the caret at the end of the second block 2`] = `
+"<!-- wp:paragraph -->
+<p>First paragraph</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Second paragraph - caret was here</p>
+<!-- /wp:paragraph -->"
+`;

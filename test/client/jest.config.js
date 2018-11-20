@@ -1,6 +1,7 @@
 /** @format */
 
 module.exports = {
+	preset: 'jest-puppeteer',
 	moduleNameMapper: {
 		'^config$': '<rootDir>/server/config/index.js',
 	},
@@ -13,7 +14,7 @@ module.exports = {
 	roots: [ '<rootDir>/client/' ],
 	testEnvironment: 'node',
 	transformIgnorePatterns: [ 'node_modules[\\/\\\\](?!flag-icon-css|redux-form)' ],
-	testMatch: [ '<rootDir>/client/**/test/*.js?(x)' ],
+	testMatch: [ '<rootDir>/client/**/test/(specs/)?*.js?(x)' ],
 	testURL: 'https://example.com',
 	setupTestFrameworkScriptFile: '<rootDir>/test/client/setup-test-framework.js',
 	verbose: false,

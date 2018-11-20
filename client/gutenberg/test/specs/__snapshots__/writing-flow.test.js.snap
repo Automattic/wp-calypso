@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`adding blocks Should navigate inner blocks with arrow keys 1`] = `
+"<!-- wp:paragraph -->
+<p>First paragraph</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:columns -->
+<div class=\\"wp-block-columns has-2-columns\\"><!-- wp:column -->
+<div class=\\"wp-block-column\\"><!-- wp:paragraph -->
+<p>First column paragraph</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column -->
+
+<!-- wp:column -->
+<div class=\\"wp-block-column\\"><!-- wp:paragraph -->
+<p>Second column paragraph</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->
+
+<!-- wp:paragraph -->
+<p>Second paragraph</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`adding blocks should clean TinyMCE content 1`] = `""`;
+
+exports[`adding blocks should clean TinyMCE content 2`] = `
+"<!-- wp:paragraph -->
+<p><strong>Inside</strong></p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`adding blocks should insert line break at end 1`] = `
+"<!-- wp:paragraph -->
+<p>a<br><br></p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`adding blocks should insert line break at end and continue writing 1`] = `
+"<!-- wp:paragraph -->
+<p>a<br>b</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`adding blocks should insert line break at start 1`] = `
+"<!-- wp:paragraph -->
+<p><br>a</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`adding blocks should insert line break in empty container 1`] = `
+"<!-- wp:paragraph -->
+<p><br><br></p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`adding blocks should insert line break mid text 1`] = `
+"<!-- wp:paragraph -->
+<p>a<br>b</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`adding blocks should navigate around inline boundaries 1`] = `
+"<!-- wp:paragraph -->
+<p>FirstAfter</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Before<strong>InsideSecondInside</strong>After</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>BeforeThird</p>
+<!-- /wp:paragraph -->"
+`;

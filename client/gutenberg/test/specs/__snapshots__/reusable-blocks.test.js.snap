@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Reusable Blocks multi-selection reusable block can be converted back to regular blocks 1`] = `
+"<!-- wp:paragraph -->
+<p>Hello there!</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Second paragraph</p>
+<!-- /wp:paragraph -->"
+`;

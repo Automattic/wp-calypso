@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`undo Should undo to expected level intervals 1`] = `
+"<!-- wp:paragraph -->
+<p>This</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>is</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>test</p>
+<!-- /wp:paragraph -->"
+`;

@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Deprecated Node Matcher should insert block with children source 1`] = `
+"<!-- wp:deprecated-children-matcher -->
+<p class=\\"wp-block-deprecated-children-matcher\\">test<br/><strong>a</strong></p>
+<!-- /wp:deprecated-children-matcher -->"
+`;
+
+exports[`Deprecated Node Matcher should insert block with node source 1`] = `
+"<!-- wp:deprecated-node-matcher -->
+<blockquote class=\\"wp-block-deprecated-node-matcher\\"><p>test</p><p></p></blockquote>
+<!-- /wp:deprecated-node-matcher -->"
+`;

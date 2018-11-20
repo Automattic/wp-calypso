@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Font Size Picker should apply a custom font size using the font size input 1`] = `
+"<!-- wp:paragraph {\\"customFontSize\\":23} -->
+<p style=\\"font-size:23px\\">Paragraph to be made \\"small\\"</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Font Size Picker should apply a named font size using the font size buttons 1`] = `
+"<!-- wp:paragraph {\\"fontSize\\":\\"large\\"} -->
+<p class=\\"has-large-font-size\\">Paragraph to be made \\"large\\"</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Font Size Picker should apply a named font size using the font size input 1`] = `
+"<!-- wp:paragraph {\\"fontSize\\":\\"small\\"} -->
+<p class=\\"has-small-font-size\\">Paragraph to be made \\"small\\"</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Font Size Picker should reset a custom font size using input field 1`] = `
+"<!-- wp:paragraph -->
+<p>Paragraph to be made \\"small\\"</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Font Size Picker should reset a named font size using input field 1`] = `
+"<!-- wp:paragraph -->
+<p>Paragraph with font size reset using input field</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Font Size Picker should reset a named font size using the reset button 1`] = `
+"<!-- wp:paragraph -->
+<p>Paragraph with font size reset using button</p>
+<!-- /wp:paragraph -->"
+`;

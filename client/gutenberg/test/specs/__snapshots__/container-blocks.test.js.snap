@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Container block without paragraph support ensures we can use the alternative block appender properly 1`] = `
+"<!-- wp:test/container-without-paragraph -->
+<!-- wp:image -->
+<figure class=\\"wp-block-image\\"><img alt=\\"\\"/></figure>
+<!-- /wp:image -->
+<!-- /wp:test/container-without-paragraph -->"
+`;
+
+exports[`InnerBlocks Template Sync Ensures blocks without locking are kept intact even if they do not match the template  1`] = `
+"<!-- wp:test/test-inner-blocks-no-locking -->
+<!-- wp:paragraph {\\"fontSize\\":\\"large\\"} -->
+<p class=\\"has-large-font-size\\">Content…</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>added paragraph</p>
+<!-- /wp:paragraph -->
+<!-- /wp:test/test-inner-blocks-no-locking -->"
+`;
+
+exports[`InnerBlocks Template Sync Removes blocks that are not expected by the template if a lock all exists  1`] = `
+"<!-- wp:test/test-inner-blocks-locking-all -->
+<!-- wp:paragraph {\\"fontSize\\":\\"large\\"} -->
+<p class=\\"has-large-font-size\\">Content…</p>
+<!-- /wp:paragraph -->
+<!-- /wp:test/test-inner-blocks-locking-all -->"
+`;

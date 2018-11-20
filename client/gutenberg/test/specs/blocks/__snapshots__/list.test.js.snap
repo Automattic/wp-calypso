@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`List can be converted to a quote 1`] = `
+"<!-- wp:quote -->
+<blockquote class=\\"wp-block-quote\\"><p>one</p><p>two</p></blockquote>
+<!-- /wp:quote -->"
+`;
+
+exports[`List can be converted to paragraphs 1`] = `
+"<!-- wp:paragraph -->
+<p>one</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>two</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`List can be converted when nested to paragraphs 1`] = `
+"<!-- wp:paragraph -->
+<p>one</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>two</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`List can be created by converting a paragraph 1`] = `
+"<!-- wp:list -->
+<ul><li>test</li></ul>
+<!-- /wp:list -->"
+`;
+
+exports[`List can be created by converting a paragraph with line breaks 1`] = `
+"<!-- wp:list -->
+<ul><li>one</li><li>two</li></ul>
+<!-- /wp:list -->"
+`;
+
+exports[`List can be created by converting a quote 1`] = `
+"<!-- wp:list -->
+<ul><li>one</li><li>two</li></ul>
+<!-- /wp:list -->"
+`;
+
+exports[`List can be created by converting multiple paragraphs 1`] = `
+"<!-- wp:list -->
+<ul><li>one</li><li>two</li></ul>
+<!-- /wp:list -->"
+`;
+
+exports[`List can be created by typing "/list" 1`] = `
+"<!-- wp:list -->
+<ul><li>I’m a list</li></ul>
+<!-- /wp:list -->"
+`;
+
+exports[`List can be created by typing an asterisk in front of text of a paragraph block 1`] = `
+"<!-- wp:list -->
+<ul><li>test</li></ul>
+<!-- /wp:list -->"
+`;
+
+exports[`List can be created by using a number at the start of a paragraph block 1`] = `
+"<!-- wp:list {\\"ordered\\":true} -->
+<ol><li>A list item</li></ol>
+<!-- /wp:list -->"
+`;
+
+exports[`List can be created by using an asterisk at the start of a paragraph block 1`] = `
+"<!-- wp:list -->
+<ul><li>A list item</li><li>Another list item</li></ul>
+<!-- /wp:list -->"
+`;
+
+exports[`List should create paragraph on split at end and merge back with content 1`] = `
+"<!-- wp:list -->
+<ul><li>one</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p></p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`List should create paragraph on split at end and merge back with content 2`] = `
+"<!-- wp:list -->
+<ul><li>one</li><li>two</li></ul>
+<!-- /wp:list -->"
+`;
+
+exports[`List should split indented list item 1`] = `
+"<!-- wp:list -->
+<ul><li>one<ul><li>two</li><li>three</li></ul></li></ul>
+<!-- /wp:list -->"
+`;
+
+exports[`List should split into two with paragraph and merge lists 1`] = `
+"<!-- wp:list -->
+<ul><li>one</li><li></li><li>two</li></ul>
+<!-- /wp:list -->"
+`;
+
+exports[`List should split into two with paragraph and merge lists 2`] = `
+"<!-- wp:list -->
+<ul><li>one</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li>two</li></ul>
+<!-- /wp:list -->"
+`;
+
+exports[`List should split into two with paragraph and merge lists 3`] = `
+"<!-- wp:list -->
+<ul><li>one</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:list -->
+<ul><li>two</li></ul>
+<!-- /wp:list -->"
+`;

@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Links can be created by selecting text and clicking Link 1`] = `
+"<!-- wp:paragraph -->
+<p>This is <a href=\\"https://wordpress.org/gutenberg\\">Gutenberg</a></p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Links can be created by selecting text and using keyboard shortcuts 1`] = `
+"<!-- wp:paragraph -->
+<p>This is <a href=\\"https://wordpress.org/gutenberg\\">Gutenberg</a></p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Links can be created instantly when a URL is selected 1`] = `
+"<!-- wp:paragraph -->
+<p>This is Gutenberg: <a href=\\"https://wordpress.org/gutenberg\\">https://wordpress.org/gutenberg</a></p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Links can be created without any text selected 1`] = `
+"<!-- wp:paragraph -->
+<p>This is Gutenberg: <a href=\\"https://wordpress.org/gutenberg\\">https://wordpress.org/gutenberg</a></p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Links can be edited 1`] = `
+"<!-- wp:paragraph -->
+<p>This is <a href=\\"https://wordpress.org/gutenberg/handbook\\">Gutenberg</a></p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Links can be edited with collapsed selection 1`] = `
+"<!-- wp:paragraph -->
+<p>This is <a href=\\"https://wordpress.org/gutenberg/handbook\\">Gutenberg</a></p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Links can be removed 1`] = `
+"<!-- wp:paragraph -->
+<p>This is Gutenberg</p>
+<!-- /wp:paragraph -->"
+`;

@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Align Hook Works As Expected Block with align array Correctly applies the selected alignment and correctly removes the alignment 1`] = `
+"<!-- wp:test/test-align-array {\\"align\\":\\"center\\"} -->
+<div style=\\"outline:1px solid gray;padding:5px\\" class=\\"wp-block-test-test-align-array aligncenter\\">Test Align Hook</div>
+<!-- /wp:test/test-align-array -->"
+`;
+
+exports[`Align Hook Works As Expected Block with align array Correctly applies the selected alignment and correctly removes the alignment 2`] = `
+"<!-- wp:test/test-align-array -->
+<div style=\\"outline:1px solid gray;padding:5px\\" class=\\"wp-block-test-test-align-array\\">Test Align Hook</div>
+<!-- /wp:test/test-align-array -->"
+`;
+
+exports[`Align Hook Works As Expected Block with align true Correctly applies the selected alignment and correctly removes the alignment 1`] = `
+"<!-- wp:test/test-align-true {\\"align\\":\\"right\\"} -->
+<div style=\\"outline:1px solid gray;padding:5px\\" class=\\"wp-block-test-test-align-true alignright\\">Test Align Hook</div>
+<!-- /wp:test/test-align-true -->"
+`;
+
+exports[`Align Hook Works As Expected Block with align true Correctly applies the selected alignment and correctly removes the alignment 2`] = `
+"<!-- wp:test/test-align-true -->
+<div style=\\"outline:1px solid gray;padding:5px\\" class=\\"wp-block-test-test-align-true\\">Test Align Hook</div>
+<!-- /wp:test/test-align-true -->"
+`;
+
+exports[`Align Hook Works As Expected Block with default align Correctly applies the selected alignment and correctly removes the alignment 1`] = `
+"<!-- wp:test/test-default-align {\\"align\\":\\"center\\"} -->
+<div style=\\"outline:1px solid gray;padding:5px\\" class=\\"wp-block-test-test-default-align aligncenter\\">Test Align Hook</div>
+<!-- /wp:test/test-default-align -->"
+`;
+
+exports[`Align Hook Works As Expected Block with default align Correctly applies the selected alignment and correctly removes the alignment 2`] = `
+"<!-- wp:test/test-default-align {\\"align\\":\\"\\"} -->
+<div style=\\"outline:1px solid gray;padding:5px\\" class=\\"wp-block-test-test-default-align\\">Test Align Hook</div>
+<!-- /wp:test/test-default-align -->"
+`;
+
+exports[`Align Hook Works As Expected Block with no alignment set Does not save any alignment related attribute or class 1`] = `
+"<!-- wp:test/test-no-alignment-set -->
+<div style=\\"outline:1px solid gray;padding:5px\\" class=\\"wp-block-test-test-no-alignment-set\\">Test Align Hook</div>
+<!-- /wp:test/test-no-alignment-set -->"
+`;

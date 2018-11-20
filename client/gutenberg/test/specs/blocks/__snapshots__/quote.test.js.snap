@@ -1,0 +1,123 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Quote can be converted to a pullquote 1`] = `
+"<!-- wp:pullquote -->
+<figure class=\\"wp-block-pullquote\\"><blockquote><p>one</p><p>two</p><cite>cite</cite></blockquote></figure>
+<!-- /wp:pullquote -->"
+`;
+
+exports[`Quote can be converted to headings 1`] = `
+"<!-- wp:heading -->
+<h2>one</h2>
+<!-- /wp:heading -->
+
+<!-- wp:quote -->
+<blockquote class=\\"wp-block-quote\\"><p>two</p><cite>cite</cite></blockquote>
+<!-- /wp:quote -->"
+`;
+
+exports[`Quote can be converted to headings 2`] = `
+"<!-- wp:heading -->
+<h2>one</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading -->
+<h2>two</h2>
+<!-- /wp:heading -->
+
+<!-- wp:quote -->
+<blockquote class=\\"wp-block-quote\\"><p></p><cite>cite</cite></blockquote>
+<!-- /wp:quote -->"
+`;
+
+exports[`Quote can be converted to headings 3`] = `
+"<!-- wp:heading -->
+<h2>one</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading -->
+<h2>two</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading -->
+<h2>cite</h2>
+<!-- /wp:heading -->"
+`;
+
+exports[`Quote can be converted to paragraphs and renders a paragraph for the cite, if it exists 1`] = `
+"<!-- wp:paragraph -->
+<p>one</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>two</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>cite</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Quote can be converted to paragraphs and renders a void paragraph if both the cite and quote are void 1`] = `
+"<!-- wp:paragraph -->
+<p></p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Quote can be converted to paragraphs and renders one paragraph block per <p> within quote 1`] = `
+"<!-- wp:paragraph -->
+<p>one</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>two</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Quote can be converted to paragraphs and renders only one paragraph for the cite, if the quote is void 1`] = `
+"<!-- wp:paragraph -->
+<p>cite</p>
+<!-- /wp:paragraph -->"
+`;
+
+exports[`Quote can be created by converting a heading 1`] = `
+"<!-- wp:quote -->
+<blockquote class=\\"wp-block-quote\\"><p>test</p></blockquote>
+<!-- /wp:quote -->"
+`;
+
+exports[`Quote can be created by converting a paragraph 1`] = `
+"<!-- wp:quote -->
+<blockquote class=\\"wp-block-quote\\"><p>test</p></blockquote>
+<!-- /wp:quote -->"
+`;
+
+exports[`Quote can be created by converting multiple paragraphs 1`] = `
+"<!-- wp:quote -->
+<blockquote class=\\"wp-block-quote\\"><p>one</p><p>two</p></blockquote>
+<!-- /wp:quote -->"
+`;
+
+exports[`Quote can be created by typing "/quote" 1`] = `
+"<!-- wp:quote -->
+<blockquote class=\\"wp-block-quote\\"><p>I’m a quote</p></blockquote>
+<!-- /wp:quote -->"
+`;
+
+exports[`Quote can be created by typing > in front of text of a paragraph block 1`] = `
+"<!-- wp:quote -->
+<blockquote class=\\"wp-block-quote\\"><p>test</p></blockquote>
+<!-- /wp:quote -->"
+`;
+
+exports[`Quote can be created by using > at the start of a paragraph block 1`] = `
+"<!-- wp:quote -->
+<blockquote class=\\"wp-block-quote\\"><p>A quote</p><p>Another paragraph</p></blockquote>
+<!-- /wp:quote -->"
+`;
+
+exports[`Quote can be merged into from a paragraph 1`] = `
+"<!-- wp:quote -->
+<blockquote class=\\"wp-block-quote\\"><p>test</p></blockquote>
+<!-- /wp:quote -->"
+`;

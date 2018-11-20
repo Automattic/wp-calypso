@@ -1,0 +1,5 @@
+{
+  "__file": "wp_block",
+  "title": "Greeting",
+  "content": "<!-- wp:paragraph -->\n<p>Hello there</p>\n<!-- /wp:paragraph -->"
+}
