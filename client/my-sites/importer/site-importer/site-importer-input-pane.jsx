@@ -307,7 +307,7 @@ class SiteImporterInputPane extends React.Component {
 		} );
 
 		const endpointParam =
-			this.state.selectedEndpoint && `?force_endpoint=${ this.state.selectedEndpoint }`;
+			this.state.selectedEndpoint && `force_endpoint=${ this.state.selectedEndpoint }`;
 
 		const engineParam = this.props.importerData.engine
 			? `&engine=${ this.props.importerData.engine }`
@@ -317,7 +317,7 @@ class SiteImporterInputPane extends React.Component {
 			.post( {
 				path: `/sites/${
 					this.props.site.ID
-				}/site-importer/import-site${ endpointParam }${ engineParam }`,
+				}/site-importer/import-site?${ endpointParam }${ engineParam }`,
 				apiNamespace: 'wpcom/v2',
 				formData: [
 					[ 'import_status', JSON.stringify( toApi( this.props.importerStatus ) ) ],
