@@ -20,6 +20,7 @@ import {
 	pick,
 	sumBy,
 	uniqBy,
+	isEqual,
 } from 'lodash';
 
 /**
@@ -28,7 +29,6 @@ import {
 import * as api from 'woocommerce/woocommerce-services/api';
 import printDocument from 'woocommerce/woocommerce-services/lib/utils/print-document';
 import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
-import isEqualCaseInsensitive from 'woocommerce/woocommerce-services/lib/utils/is-equal-case-insensitive';
 import * as NoticeActions from 'state/notices/actions';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import normalizeAddress from './normalize-address';
@@ -389,7 +389,7 @@ export const submitAddressForNormalization = ( orderId, siteId, group ) => (
 			group
 		];
 
-		if ( isEqualCaseInsensitive( values, normalized ) ) {
+		if ( isEqual( values, normalized ) ) {
 			if ( expanded ) {
 				dispatch( toggleStep( orderId, siteId, group ) );
 			}
