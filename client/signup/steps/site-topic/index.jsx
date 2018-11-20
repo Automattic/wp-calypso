@@ -154,7 +154,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 
 		dispatch( setSiteTopic( siteTopic ) );
 		dispatch(
-			recordTracksEvent( 'calypso_signup_site_topic_chosen', {
+			recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
 				value: siteTopic,
 			} )
 		);
