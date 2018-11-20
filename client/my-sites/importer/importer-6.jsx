@@ -13,17 +13,15 @@ import React from 'react';
  */
 import SiteImporter from './site-importer';
 
-class ImporterSiteImporter extends React.PureComponent {
-	static displayName = 'ImporterSiteImporter';
+class Importer6 extends React.PureComponent {
+	static displayName = 'Importer6';
 
 	importerData = {
-		title: 'Wix',
-		icon: 'site-importer',
-		description: this.props.translate( 'Import posts, pages, and media from your Wix.com site.' ),
-		// TODO: we could move this to the component itself. Here were trying to stick to a generalisation
-		// that doesn't really apply for this importer - we don't upload anything as such.
+		title: 'Importer 6',
+		icon: '',
+		description: 'https://wp.me/p3Ex-3oP', // this.props.translate( 'Import posts, pages, and media from your site.' ),
 		uploadDescription: this.props.translate( 'Type your existing site URL to start the import.' ),
-		engine: 'wix',
+		engine: 'engine6',
 	};
 
 	static propTypes = {
@@ -43,4 +41,4 @@ class ImporterSiteImporter extends React.PureComponent {
 	}
 }
 
-export default localize( ImporterSiteImporter );
+export default localize( Importer6 );

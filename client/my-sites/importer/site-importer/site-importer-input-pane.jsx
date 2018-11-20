@@ -232,11 +232,15 @@ class SiteImporterInputPane extends React.Component {
 		const endpointParam =
 			this.state.selectedEndpoint && `&force_endpoint=${ this.state.selectedEndpoint }`;
 
+		const engineParam = this.props.importerData.engine
+			? `&engine=${ this.props.importerData.engine }`
+			: '';
+
 		wpcom.wpcom.req
 			.get( {
 				path: `/sites/${
 					this.props.site.ID
-				}/site-importer/is-site-importable?site_url=${ urlForImport }${ endpointParam }`,
+				}/site-importer/is-site-importable?site_url=${ urlForImport }${ endpointParam }${ engineParam }`,
 				apiNamespace: 'wpcom/v2',
 			} )
 			.then( resp => {
@@ -305,9 +309,15 @@ class SiteImporterInputPane extends React.Component {
 		const endpointParam =
 			this.state.selectedEndpoint && `?force_endpoint=${ this.state.selectedEndpoint }`;
 
+		const engineParam = this.props.importerData.engine
+			? `&engine=${ this.props.importerData.engine }`
+			: '';
+
 		wpcom.wpcom.req
 			.post( {
-				path: `/sites/${ this.props.site.ID }/site-importer/import-site${ endpointParam }`,
+				path: `/sites/${
+					this.props.site.ID
+				}/site-importer/import-site${ endpointParam }${ engineParam }`,
 				apiNamespace: 'wpcom/v2',
 				formData: [
 					[ 'import_status', JSON.stringify( toApi( this.props.importerStatus ) ) ],
@@ -374,6 +384,38 @@ class SiteImporterInputPane extends React.Component {
 		} );
 	};
 
+	renderUrlHint = () => {
+		switch ( this.props.importerData.engine ) {
+			case 'wix':
+				return (
+					<div>
+						<p>
+							{ this.props.translate( 'Please use one of following formats for the site URL:' ) }
+						</p>
+						<ul>
+							<li>
+								<span className="site-importer__site-importer-example-domain">example.com</span> -{' '}
+								{ this.props.translate( 'a paid custom domain' ) }
+							</li>
+							<li>
+								<span className="site-importer__site-importer-example-domain">
+									example-account.wixsite.com/my-site
+								</span>{' '}
+								- { this.props.translate( 'a free domain that comes with every site' ) }
+							</li>
+						</ul>
+					</div>
+				);
+			case 'engine6':
+				return (
+					<div>
+						<p>URL Hints here</p>
+					</div>
+				);
+		}
+		return null;
+	};
+
 	render() {
 		return (
 			<div className="site-importer__site-importer-pane">
@@ -433,25 +475,7 @@ class SiteImporterInputPane extends React.Component {
 						retryImport={ this.validateSite }
 					/>
 				) }
-				{ this.state.importStage === 'idle' && (
-					<div>
-						<p>
-							{ this.props.translate( 'Please use one of following formats for the site URL:' ) }
-						</p>
-						<ul>
-							<li>
-								<span className="site-importer__site-importer-example-domain">example.com</span> -{' '}
-								{ this.props.translate( 'a paid custom domain' ) }
-							</li>
-							<li>
-								<span className="site-importer__site-importer-example-domain">
-									example-account.wixsite.com/my-site
-								</span>{' '}
-								- { this.props.translate( 'a free domain that comes with every site' ) }
-							</li>
-						</ul>
-					</div>
-				) }
+				{ this.state.importStage === 'idle' && this.renderUrlHint() }
 			</div>
 		);
 	}
