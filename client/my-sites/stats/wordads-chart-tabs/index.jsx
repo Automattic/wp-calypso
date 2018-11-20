@@ -134,7 +134,6 @@ class WordAdsChartTabs extends Component {
 					<Legend
 						activeCharts={ this.props.activeLegend }
 						activeTab={ this.props.activeTab }
-						availableCharts={ this.props.availableLegend }
 						tabs={ this.props.charts }
 					/>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
