@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { ExternalLink, Path, SVG } from '@wordpress/components';
+import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -25,7 +26,7 @@ export const settings = {
 	title: __( 'Simple Payments button' ),
 
 	description: (
-		<>
+		<Fragment>
 			<p>
 				{ __(
 					'Lets you create and embed credit and debit card payment buttons with minimal setup.'
@@ -34,7 +35,7 @@ export const settings = {
 			<ExternalLink href="https://support.wordpress.com/simple-payments/">
 				{ __( 'Support reference' ) }
 			</ExternalLink>
-		</>
+		</Fragment>
 	),
 
 	icon: (
