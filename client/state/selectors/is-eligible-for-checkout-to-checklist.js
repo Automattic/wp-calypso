@@ -5,6 +5,7 @@
  */
 import { isNewSite } from 'state/sites/selectors';
 import { cartItems } from 'lib/cart-values';
+import { isEcommerce } from 'lib/products-values';
 import isEligibleForDotcomChecklist from './is-eligible-for-dotcom-checklist';
 
 /**
@@ -14,11 +15,17 @@ import isEligibleForDotcomChecklist from './is-eligible-for-dotcom-checklist';
  * @return {Boolean} True if current user is able to see the checklist after checkout
  */
 export default function isEligibleForCheckoutToChecklist( state, siteId, cart ) {
+	const hasEcommercePlanInCart =
+		cartItems
+			.getAll( cart )
+			.map( isEcommerce )
+			.filter( x => x ).length > 0;
 	if (
 		cartItems.hasDomainMapping( cart ) ||
 		cartItems.hasDomainRegistration( cart ) ||
 		cartItems.hasTransferProduct( cart ) ||
-		! cartItems.hasPlan( cart )
+		! cartItems.hasPlan( cart ) ||
+		hasEcommercePlanInCart
 	) {
 		return false;
 	}
