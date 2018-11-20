@@ -53,14 +53,12 @@ class SimplePaymentsEdit extends Component {
 			this.injectPaymentAttributes();
 		}
 
-		if ( prevProps.isSelected && ! isSelected ) {
-			// Validate and save on block deselect
-
+		if ( ! prevProps.isSaving && this.props.isSaving ) {
+			// Validate and save product on post save
 			this.saveProduct();
-		} else if ( ! prevProps.isSaving && this.props.isSaving ) {
-			// Save payment on post save
-
-			this.saveProduct();
+		} else if ( prevProps.isSelected && ! isSelected ) {
+			// Validate on block deselect
+			this.validateAttributes();
 		}
 	}
 
