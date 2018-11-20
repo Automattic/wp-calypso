@@ -323,7 +323,8 @@ class DomainsStep extends React.Component {
 		const initialQuery = get( this.props, 'queryObject.new', '' );
 		if (
 			// If we landed here from /domains Search
-			( initialQuery && this.searchOnInitialRender ) || // If the subdomain type has changed, rerun the search
+			( initialQuery && this.searchOnInitialRender ) ||
+			// If the subdomain type has changed, rerun the search
 			( initialState &&
 				initialState.subdomainSearchResults &&
 				endsWith(
