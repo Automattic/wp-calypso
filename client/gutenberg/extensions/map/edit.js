@@ -220,14 +220,14 @@ class MapEdit extends Component {
 						</p>
 					</div>
 					<TextControl
-						className="components-text-control-api-key"
+						className="wp-block-jetpack-map-components-text-control-api-key"
 						disabled={ apiRequestOutstanding }
 						placeholder={ __( 'Paste Token Here' ) }
 						value={ apiKeyControl }
 						onChange={ this.updateAPIKeyControl }
 					/>
 					<Button
-						className="components-text-control-api-key-submit"
+						className="wp-block-jetpack-map-components-text-control-api-key-submit"
 						isLarge
 						disabled={ apiRequestOutstanding || ! apiKeyControl || apiKeyControl.length < 1 }
 						onClick={ this.updateAPIKey }
