@@ -207,7 +207,7 @@ class MapEdit extends Component {
 			<Placeholder icon={ settings.icon } label={ __( 'Map' ) } notices={ notices }>
 				<Fragment>
 					<div className="components-placeholder__instructions">
-						<p>{ __( 'Before using the map block, you will need an Access Token.' ) }</p>
+						<p>{ __( 'To use the map block, you need an Access Token.' ) }</p>
 						<p>
 							<ExternalLink href="https://www.mapbox.com">
 								{ __( 'Create an account or log in to Mapbox.' ) }
