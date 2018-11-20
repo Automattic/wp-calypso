@@ -73,14 +73,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	jetpackSignupGoogleTop: {
-		datestamp: '20180427',
-		variations: {
-			original: 50,
-			top: 50,
-		},
-		defaultVariation: 'original',
-	},
 	krackenRebootM33: {
 		datestamp: '20181108',
 		variations: {
