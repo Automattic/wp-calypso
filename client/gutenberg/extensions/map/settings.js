@@ -25,11 +25,11 @@ export const settings = {
 			type: 'array',
 			default: [],
 		},
-		map_style: {
+		mapStyle: {
 			type: 'string',
 			default: 'default',
 		},
-		map_details: {
+		mapDetails: {
 			type: 'boolean',
 			default: true,
 		},
@@ -37,25 +37,19 @@ export const settings = {
 			type: 'integer',
 			default: 13,
 		},
-		map_center: {
+		mapCenter: {
 			type: 'object',
 			default: {
 				longitude: -122.41941550000001,
 				latitude: 37.7749295,
 			},
 		},
-		marker_color: {
+		markerColor: {
 			type: 'string',
 			default: 'red',
 		},
-		api_key: {
-			type: 'string',
-		},
-		mapbox_key: {
-			type: 'string',
-		},
 	},
-	map_styleOptions: [
+	mapStyleOptions: [
 		{
 			value: 'default',
 			label: __( 'Basic' ),

@@ -16,14 +16,14 @@ window.addEventListener( 'load', function() {
 		return;
 	}
 	const frontendManagement = new FrontendManagement();
-	const url = '/wp-json/jetpack/v4/service-api-keys/mapbox';
+	const url = '/?rest_route=/jetpack/v4/service-api-keys/mapbox';
 	apiFetch( { url, method: 'GET' } ).then( result => {
 		frontendManagement.blockIterator( document, [
 			{
 				component: component,
 				options: {
 					settings,
-					props: { api_key: result.service_api_key },
+					props: { apiKey: result.service_api_key },
 				},
 			},
 		] );
