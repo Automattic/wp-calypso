@@ -29,7 +29,6 @@ const PublicizeForm = compose( [
 			connections: select( 'core/editor' ).getEditedPostAttribute(
 				'jetpack_publicize_connections'
 			),
-			meta,
 			defaultShareMessage: postTitle.substr( 0, MAXIMUM_MESSAGE_LENGTH ),
 			shareMessage: message.substr( 0, MAXIMUM_MESSAGE_LENGTH ),
 		};
