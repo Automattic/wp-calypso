@@ -232,6 +232,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 												'@babel/transform-react-jsx',
 												{
 													pragma: 'createElement',
+													pragmaFrag: 'Fragment',
 												},
 											],
 										],
