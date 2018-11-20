@@ -29,12 +29,10 @@ import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 export const MAXIMUM_MESSAGE_LENGTH = 256;
 
 class PublicizeFormUnwrapped extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			hasEditedShareMessage: false,
-		};
-	}
+	state = {
+		hasEditedShareMessage: false,
+	};
+
 	/**
 	 * Check to see if form should be disabled.
 	 *
