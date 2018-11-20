@@ -16,7 +16,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
+import { some, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ import QueryUserSettings from 'components/data/query-user-settings';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { planMatches } from 'lib/plans';
-import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
+import { GROUP_WPCOM, TYPE_BUSINESS, TYPE_ECOMMERCE } from 'lib/plans/constants';
 import getConciergeAvailableTimes from 'state/selectors/get-concierge-available-times';
 import getUserSettings from 'state/selectors/get-user-settings';
 import { WPCOM_CONCIERGE_SCHEDULE_ID } from './constants';
@@ -63,7 +63,13 @@ export class ConciergeMain extends Component {
 			return <Skeleton />;
 		}
 
-		if ( ! planMatches( site.plan.product_slug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } ) ) {
+		const shouldDisplayUpsell = ! some(
+			[ TYPE_BUSINESS, TYPE_ECOMMERCE ].map( type =>
+				planMatches( site.plan.product_slug, { type, group: GROUP_WPCOM } )
+			)
+		);
+
+		if ( shouldDisplayUpsell ) {
 			return <Upsell site={ site } />;
 		}
 
