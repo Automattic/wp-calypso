@@ -224,7 +224,8 @@ jobs:
           when: always
           command: |
             CALYPSO_ENV=production NODE_ENV=build_pot npm run build
-            find client server -name \*.pot | msgcat -f- -o calypso-strings.pot
+            sudo apt install gettext
+            find client server node_modules -name \*.i18n-calypso.pot | msgcat -f- -o calypso-strings.pot
             mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
       - run:
           name: Build New Strings .pot

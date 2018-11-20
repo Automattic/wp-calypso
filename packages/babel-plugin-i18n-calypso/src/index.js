@@ -377,7 +377,7 @@ module.exports = function () {
 					const data = merge( {}, baseData, { translations: strings } );
 
 					const compiled = po.compile( data );
-					writeFileSync( this.file.opts.filename + '.pot', compiled );
+					writeFileSync( this.file.opts.filename + '.i18n-calypso.pot', compiled );
 				},
 			},
 		}
