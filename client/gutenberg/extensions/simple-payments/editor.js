@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { Path, SVG } from '@wordpress/components';
+import { ExternalLink, Path, SVG } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -24,8 +24,17 @@ export const name = 'simple-payments';
 export const settings = {
 	title: __( 'Simple Payments button' ),
 
-	description: __(
-		'Lets you create and embed credit and debit card payment buttons with minimal setup.'
+	description: (
+		<>
+			<p>
+				{ __(
+					'Lets you create and embed credit and debit card payment buttons with minimal setup.'
+				) }
+			</p>
+			<ExternalLink href="https://support.wordpress.com/simple-payments/">
+				{ __( 'Support reference' ) }
+			</ExternalLink>
+		</>
 	),
 
 	icon: (
