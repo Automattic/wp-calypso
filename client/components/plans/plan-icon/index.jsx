@@ -12,7 +12,13 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { PLANS_LIST, getPlanClass } from 'lib/plans/constants';
-import { isBloggerPlan, isPersonalPlan, isPremiumPlan, isBusinessPlan } from 'lib/plans';
+import {
+	isBloggerPlan,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
+	isEcommercePlan,
+} from 'lib/plans';
 
 export default class PlanIcon extends Component {
 	getIcon( planName ) {
@@ -45,6 +51,10 @@ export default class PlanIcon extends Component {
 
 		if ( isBusinessPlan( plan ) ) {
 			return this.getIcon( 'business' );
+		}
+
+		if ( isEcommercePlan( plan ) ) {
+			return this.getIcon( 'ecommerce' );
 		}
 
 		return this.getIcon( 'free' );
