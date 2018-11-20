@@ -121,7 +121,7 @@ const UnverifiedAddress = ( {
 					</ExternalLink>
 				</div>
 			</div>
-			<div className="address-step__unverifiable-actions step-confirmation-button">
+			<div className="address-step__actions">
 				<FormButton type="button" isPrimary={ false } onClick={ confirmAddressSuggestion }>
 					{ translate( 'Use address as entered' ) }
 				</FormButton>

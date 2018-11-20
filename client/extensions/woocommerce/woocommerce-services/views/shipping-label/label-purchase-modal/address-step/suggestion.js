@@ -72,7 +72,7 @@ const AddressSuggestion = ( {
 				</RadioButton>
 			</div>
 
-			<div className="address-step__unverifiable-actions step-confirmation-button">
+			<div className="address-step__actions">
 				<FormButton type="button" onClick={ confirmAddressSuggestion }>
 					{ translate( 'Use selected address' ) }
 				</FormButton>
