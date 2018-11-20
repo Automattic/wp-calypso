@@ -177,9 +177,14 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 
 	// UNSET CALYPSO DEFAULT STYLES
-	input[type='text'],
-	input[type='search'] {
-		width: auto;
+		input[type='text'],
+		input[type='search'] {
+					// This is overriding the width of the .components-text-control__input elements because
+			 		// .is-section-gutenberg-editor input[type='text'] is more specific, so we add this :not selector in order to
+			 		// don't change the width defined by @wordpress/components
+			 		&:not( .components-text-control__input ) &:not( .editor-format-toolbar__link-container-content ) {
+						 			width: auto;
+			}
 	}
 
 	input[type='number'].components-range-control__number {
@@ -199,7 +204,14 @@ $gutenberg-theme-toggle: #11a0d2;
 		background-image: none;
 		appearance: menulist-button;
 	}
-	// END Unset Calypso default styles
+	// END Unset Calypso default style
+.components-popover input[type="search"].editor-inserter__search {
+	        width: auto;
+	}
+	
+	    .is-section-gutenberg-editor input[type='text'], .is-section-gutenberg-editor input[type='search'] {
+			        width: 100%;
+	}
 
 	// MISSING CORE STYLES (TODO: Remove them once Gutenberg include the Core styles)
 	font-size: 13px;
