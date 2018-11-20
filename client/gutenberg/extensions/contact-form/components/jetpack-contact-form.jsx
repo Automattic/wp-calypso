@@ -5,17 +5,19 @@
  */
 import classnames from 'classnames';
 import { Button, PanelBody, Placeholder, TextControl } from '@wordpress/components';
-import { InnerBlocks, InspectorControls } from '@wordpress/editor';
+import { InnerBlocks, InspectorControls, PlainText } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import emailValidator from 'email-validator';
 import { compose, withInstanceId } from '@wordpress/compose';
+
 /**
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 import HelpMessage from 'gutenberg/extensions/presets/jetpack/editor-shared/help-message';
+
 const ALLOWED_BLOCKS = [
 	'jetpack/markdown',
 	'core/paragraph',
@@ -192,7 +194,7 @@ class JetpackContactForm extends Component {
 	}
 
 	render() {
-		const { className, attributes } = this.props;
+		const { className, attributes, setAttributes } = this.props;
 		const { has_form_settings_set, submit_button_text } = attributes;
 		const formClassnames = classnames( className, 'jetpack-contact-form', {
 			'has-intro': ! has_form_settings_set,
@@ -262,9 +264,15 @@ class JetpackContactForm extends Component {
 						/>
 					) }
 					{ has_form_settings_set && (
-						<div className="button button-primary button-default jetpack-submit-button">
-							{ submit_button_text ? submit_button_text : __( 'Submit' ) }
-						</div>
+						<PlainText
+							value={ submit_button_text }
+							className="button button-primary button-default jetpack-submit-button"
+							onChange={ value => {
+								this.setState( { inFocus: null } );
+								setAttributes( { submit_button_text: value } );
+							} }
+							placeholder={ __( 'Submit' ) }
+						/>
 					) }
 				</div>
 			</Fragment>
