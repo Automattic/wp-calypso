@@ -11,7 +11,7 @@
  * External dependencies
  */
 import { Component } from '@wordpress/element';
-import { FormToggle } from '@wordpress/components';
+import { Disabled, FormToggle } from '@wordpress/components';
 
 class PublicizeConnection extends Component {
 	onConnectionChange = () => {
@@ -25,6 +25,19 @@ class PublicizeConnection extends Component {
 		// Genericon names are dash separated
 		const socialName = name.replace( '_', '-' );
 
+		let toggle = (
+			<FormToggle
+				id={ fieldId }
+				className="jetpack-publicize-connection-toggle"
+				checked={ enabled }
+				onChange={ this.onConnectionChange }
+			/>
+		);
+
+		if ( ! toggleable ) {
+			toggle = <Disabled>{ toggle }</Disabled>;
+		}
+
 		return (
 			<li>
 				<div className="publicize-jetpack-connection-container">
@@ -36,13 +49,7 @@ class PublicizeConnection extends Component {
 						/>
 						<span>{ display_name }</span>
 					</label>
-					<FormToggle
-						id={ fieldId }
-						className="jetpack-publicize-connection-toggle"
-						checked={ enabled }
-						onChange={ this.onConnectionChange }
-						disabled={ ! toggleable }
-					/>
+					{ toggle }
 				</div>
 			</li>
 		);
