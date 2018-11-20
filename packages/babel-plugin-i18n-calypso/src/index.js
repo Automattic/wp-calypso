@@ -272,7 +272,7 @@ module.exports = function () {
 		// If exists, also assign translator comment
 		const translator = getTranslatorComment( path );
 		if ( translator ) {
-			translation.comments.translator = translator;
+			translation.comments.extracted = translator;
 		}
 
 		// Create context grouping for translation if not yet exists
@@ -281,7 +281,11 @@ module.exports = function () {
 			strings[ filename ][ msgctxt ] = {};
 		}
 
-		strings[ filename ][ msgctxt ][ msgid ] = translation;
+		if ( ! strings[ filename ][ msgctxt ].hasOwnProperty( msgid ) ) {
+			strings[ filename ][ msgctxt ][ msgid ] = translation;
+		} else {
+			strings[ filename ][ msgctxt ][ msgid ].comments.reference += '\n' + translation.comments.reference;
+		}
 	};
 
 	function i18n_calypso_CallExpression( path, state ) {
@@ -337,8 +341,8 @@ module.exports = function () {
 		}
 
 		if ( path.node.arguments.length > i ) {
-			const msgid_plural = getNodeAsString( path.node.arguments[i] ).length;
-			if ( msgid_plural ) {
+			const msgid_plural = getNodeAsString( path.node.arguments[i] );
+			if ( msgid_plural.length ) {
 				translation.msgid_plural = msgid_plural;
 				i++;
 				// For plurals, create an empty mgstr array
@@ -371,7 +375,11 @@ module.exports = function () {
 			strings[ filename ][ msgctxt ] = {};
 		}
 
-		strings[ filename ][ msgctxt ][ msgid ] = translation;
+		if ( ! strings[ filename ][ msgctxt ].hasOwnProperty( msgid ) ) {
+			strings[ filename ][ msgctxt ][ msgid ] = translation;
+		} else {
+			strings[ filename ][ msgctxt ][ msgid ].comments.reference += '\n' + translation.comments.reference;
+		}
 	};
 
 	return {
@@ -411,11 +419,10 @@ module.exports = function () {
 
 								// Merge references if translation already exists
 								if ( isSameTranslation( translation, memo[ msgctxt ][ msgid ] ) ) {
-									translation.comments.reference = uniq( [
-										memo[ msgctxt ][ msgid ].comments.reference,
-										translation.comments.reference,
-									].join( '\n' ).split( '\n' ) ).join( '\n' );
+									translation.comments.reference += '\n' + memo[ msgctxt ][ msgid ].comments.reference;
 								}
+
+								translation.comments.reference = uniq( translation.comments.reference.split( '\n' ) ).join( '\n' );
 
 								memo[ msgctxt ][ msgid ] = translation;
 							} );
@@ -432,11 +439,11 @@ module.exports = function () {
 					// Babel loader doesn't expose these entry points and async
 					// write may hit file lock (need queue).
 					const compiled = po.compile( data );
-					writeFileSync( state.opts.output || DEFAULT_OUTPUT, compiled );
+					writeFileSync( 'calypso-strings-new2' + filename.replace(/\//g, '-' ) + (new Date).getTime() + '.pot', compiled );
+					// writeFileSync( state.opts.output || DEFAULT_OUTPUT, compiled );
 					this.hasPendingWrite = false;
 				},
 			},
-
 		}
 	};
 };
