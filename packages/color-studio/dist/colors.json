@@ -1123,6 +1123,118 @@
     ],
     [
       {
+        "name": "Hot Purple 0",
+        "value": "#fff6ff",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Purple",
+          "colorFormula": "secondary",
+          "shadeIndex": 0
+        }
+      },
+      {
+        "name": "Hot Purple 50",
+        "value": "#f8e1fb",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Purple",
+          "colorFormula": "secondary",
+          "shadeIndex": 50
+        }
+      },
+      {
+        "name": "Hot Purple 100",
+        "value": "#f0ccf6",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Purple",
+          "colorFormula": "secondary",
+          "shadeIndex": 100
+        }
+      },
+      {
+        "name": "Hot Purple 200",
+        "value": "#dea7ef",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Purple",
+          "colorFormula": "secondary",
+          "shadeIndex": 200
+        }
+      },
+      {
+        "name": "Hot Purple 300",
+        "value": "#c683ea",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Purple",
+          "colorFormula": "secondary",
+          "shadeIndex": 300
+        }
+      },
+      {
+        "name": "Hot Purple 400",
+        "value": "#aa5fe6",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Purple",
+          "colorFormula": "secondary",
+          "shadeIndex": 400
+        }
+      },
+      {
+        "name": "Hot Purple 500",
+        "value": "#8051b4",
+        "_meta": {
+          "baseColor": true,
+          "baseName": "Hot Purple",
+          "colorFormula": "secondary",
+          "shadeIndex": 500
+        }
+      },
+      {
+        "name": "Hot Purple 600",
+        "value": "#673d99",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Purple",
+          "colorFormula": "secondary",
+          "shadeIndex": 600
+        }
+      },
+      {
+        "name": "Hot Purple 700",
+        "value": "#4f2a7e",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Purple",
+          "colorFormula": "secondary",
+          "shadeIndex": 700
+        }
+      },
+      {
+        "name": "Hot Purple 800",
+        "value": "#381865",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Purple",
+          "colorFormula": "secondary",
+          "shadeIndex": 800
+        }
+      },
+      {
+        "name": "Hot Purple 900",
+        "value": "#21064c",
+        "_meta": {
+          "baseColor": false,
+          "baseName": "Hot Purple",
+          "colorFormula": "secondary",
+          "shadeIndex": 900
+        }
+      }
+    ],
+    [
+      {
         "name": "Hot Pink 0",
         "value": "#fff4fc",
         "_meta": {

@@ -17,6 +17,7 @@ values.green = colden(values.hotGreen)
 
 values.gray = mix(values.gray, values.blue, 0.2)
 values.purple = mix(values.blue, values.pink, 0.6)
+values.hotPurple = mix(values.hotBlue, values.hotPink, 0.4)
 values.orange = mix(values.red, values.yellow)
 values.hotOrange = mix(values.hotRed, values.hotYellow)
 values.celadon = mix(values.blue, values.green, 0.6)
@@ -70,6 +71,11 @@ module.exports = [
   {
     name: 'Hot Blue',
     value: values.hotBlue,
+    formula: 'secondary'
+  },
+  {
+    name: 'Hot Purple',
+    value: values.hotPurple,
     formula: 'secondary'
   },
   {
