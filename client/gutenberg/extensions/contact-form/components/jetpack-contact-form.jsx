@@ -265,13 +265,12 @@ class JetpackContactForm extends Component {
 					) }
 					{ has_form_settings_set && (
 						<PlainText
-							value={ submit_button_text }
 							className="button button-primary button-default jetpack-submit-button"
 							onChange={ value => {
-								this.setState( { inFocus: null } );
 								setAttributes( { submit_button_text: value } );
 							} }
 							placeholder={ __( 'Submit' ) }
+							value={ submit_button_text }
 						/>
 					) }
 				</div>
