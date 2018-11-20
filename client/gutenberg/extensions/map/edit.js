@@ -222,11 +222,7 @@ class MapEdit extends Component {
 					<Button
 						className="components-text-control-api-key-submit"
 						isLarge
-						disabled={
-							! apiRequestOutstanding && ( apiKeyControl && apiKeyControl.length > 1 )
-								? false
-								: 'disabled'
-						}
+						disabled={ ! apiRequestOutstanding && ( apiKeyControl && apiKeyControl.length > 1 ) }
 						onClick={ this.updateAPIKey }
 					>
 						{ __( 'Set Token' ) }
