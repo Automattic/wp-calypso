@@ -1,6 +1,5 @@
 /** @format */
 
-/* TODO: Replace with styles created in A8C-owned account */
 export function mapboxMapFormatter( mapStyle, mapDetails ) {
 	const style_urls = {
 		default: {
