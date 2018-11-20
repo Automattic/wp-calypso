@@ -1,5 +1,5 @@
 /**
- * extract both i18n-calypso and @wordpress/i18n function calls into a POT file
+ * extract both i18n-calypso `translate` and @wordpress/i18n function calls into a POT file
  *
  * Credits:
  *
@@ -35,7 +35,7 @@
  */
 
 const { po } = require( 'gettext-parser' );
-const { pick, reduce, uniq, forEach, sortBy, isEqual, merge, isEmpty } = require( 'lodash' );
+const { forEach, merge, isEmpty } = require( 'lodash' );
 const { relative, sep } = require( 'path' );
 const { writeFileSync } = require( 'fs' );
 
@@ -46,7 +46,7 @@ const { writeFileSync } = require( 'fs' );
  */
 const DEFAULT_HEADERS = {
 	'content-type': 'text/plain; charset=UTF-8',
-	'x-generator': 'babel-plugin-makepot',
+	'x-generator': 'babel-plugin-i18n-calypso',
 };
 
 /**
@@ -62,13 +62,6 @@ const DEFAULT_FUNCTIONS = {
 	_x: [ 'msgid', 'msgctxt' ],
 	_nx: [ 'msgid', 'msgid_plural', null, 'msgctxt' ],
 };
-
-/**
- * Default file output if none specified.
- *
- * @type {string}
- */
-const DEFAULT_OUTPUT = 'gettext.pot';
 
 /**
  * Set of keys which are valid to be assigned into a translation object.
@@ -174,24 +167,8 @@ function isValidTranslationKey( key ) {
 	return -1 !== VALID_TRANSLATION_KEYS.indexOf( key );
 }
 
-/**
- * Given two translation objects, returns true if valid translation keys match,
- * or false otherwise.
- *
- * @param {Object} a First translation object.
- * @param {Object} b Second translation object.
- *
- * @return {boolean} Whether valid translation keys match.
- */
-function isSameTranslation( a, b ) {
-	return isEqual(
-		pick( a, VALID_TRANSLATION_KEYS ),
-		pick( b, VALID_TRANSLATION_KEYS )
-	);
-}
-
 module.exports = function () {
-	const strings = {};
+	let strings = {};
 	let nplurals = 2,
 		baseData;
 
@@ -277,14 +254,14 @@ module.exports = function () {
 
 		// Create context grouping for translation if not yet exists
 		const { msgctxt = '', msgid } = translation;
-		if ( ! strings[ filename ].hasOwnProperty( msgctxt ) ) {
-			strings[ filename ][ msgctxt ] = {};
+		if ( ! strings.hasOwnProperty( msgctxt ) ) {
+			strings[ msgctxt ] = {};
 		}
 
-		if ( ! strings[ filename ][ msgctxt ].hasOwnProperty( msgid ) ) {
-			strings[ filename ][ msgctxt ][ msgid ] = translation;
+		if ( ! strings[ msgctxt ].hasOwnProperty( msgid ) ) {
+			strings[ msgctxt ][ msgid ] = translation;
 		} else {
-			strings[ filename ][ msgctxt ][ msgid ].comments.reference += '\n' + translation.comments.reference;
+			strings[ msgctxt ][ msgid ].comments.reference += '\n' + translation.comments.reference;
 		}
 	};
 
@@ -371,14 +348,14 @@ module.exports = function () {
 
 		// Create context grouping for translation if not yet exists
 		const { msgctxt = '', msgid } = translation;
-		if ( ! strings[ filename ].hasOwnProperty( msgctxt ) ) {
-			strings[ filename ][ msgctxt ] = {};
+		if ( ! strings.hasOwnProperty( msgctxt ) ) {
+			strings[ msgctxt ] = {};
 		}
 
-		if ( ! strings[ filename ][ msgctxt ].hasOwnProperty( msgid ) ) {
-			strings[ filename ][ msgctxt ][ msgid ] = translation;
+		if ( ! strings[ msgctxt ].hasOwnProperty( msgid ) ) {
+			strings[ msgctxt ][ msgid ] = translation;
 		} else {
-			strings[ filename ][ msgctxt ][ msgid ].comments.reference += '\n' + translation.comments.reference;
+			strings[ msgctxt ][ msgid ].comments.reference = '\n' + translation.comments.reference;
 		}
 	};
 
@@ -390,58 +367,17 @@ module.exports = function () {
 			},
 			Program: {
 				enter() {
-					strings[ this.file.opts.filename ] = {};
+					strings = {};
 				},
-				exit( path, state ) {
-					const { filename } = this.file.opts;
-					if ( isEmpty( strings[ filename ] ) ) {
-						delete strings[ filename ];
+				exit() {
+					if ( isEmpty( strings ) ) {
 						return;
 					}
 
-					// Sort translations by filename for deterministic output
-					const files = Object.keys( strings ).sort();
+					const data = merge( {}, baseData, { translations: strings } );
 
-					// Combine translations from each file grouped by context
-					const translations = reduce( files, ( memo, file ) => {
-						for ( const context in strings[ file ] ) {
-							// Within the same file, sort translations by line
-							const sortedTranslations = sortBy(
-								strings[ file ][ context ],
-								'comments.reference'
-							);
-
-							forEach( sortedTranslations, ( translation ) => {
-								const { msgctxt = '', msgid } = translation;
-								if ( ! memo.hasOwnProperty( msgctxt ) ) {
-									memo[ msgctxt ] = {};
-								}
-
-								// Merge references if translation already exists
-								if ( isSameTranslation( translation, memo[ msgctxt ][ msgid ] ) ) {
-									translation.comments.reference += '\n' + memo[ msgctxt ][ msgid ].comments.reference;
-								}
-
-								translation.comments.reference = uniq( translation.comments.reference.split( '\n' ) ).join( '\n' );
-
-								memo[ msgctxt ][ msgid ] = translation;
-							} );
-						}
-
-						return memo;
-					}, {} );
-
-					// Merge translations from individual files into headers
-					const data = merge( {}, baseData, { translations } );
-
-					// Ideally we could wait until Babel has finished parsing
-					// all files or at least asynchronously write, but the
-					// Babel loader doesn't expose these entry points and async
-					// write may hit file lock (need queue).
 					const compiled = po.compile( data );
-					writeFileSync( 'calypso-strings-new2' + filename.replace(/\//g, '-' ) + (new Date).getTime() + '.pot', compiled );
-					// writeFileSync( state.opts.output || DEFAULT_OUTPUT, compiled );
-					this.hasPendingWrite = false;
+					writeFileSync( this.file.opts.filename + '.pot', compiled );
 				},
 			},
 		}
