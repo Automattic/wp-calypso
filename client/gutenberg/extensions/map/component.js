@@ -262,7 +262,7 @@ export class Map extends Component {
 	initMap( mapCenter ) {
 		const { mapboxgl } = this.state;
 		const { zoom, onMapLoaded, onError, admin } = this.props;
-		let map;
+		let map = null;
 		try {
 			map = new mapboxgl.Map( {
 				container: this.mapRef.current,
