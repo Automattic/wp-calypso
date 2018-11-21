@@ -24,6 +24,7 @@ import {
 import { createReducer } from 'state/utils';
 import { schema } from './schema';
 import { abtest } from 'lib/abtest';
+import userFactory from 'lib/user';
 
 const debug = debugFactory( 'calypso:state:signup:progress:reducer' );
 
@@ -57,7 +58,13 @@ function removeUnneededSteps( state, { flowName } ) {
 			? flowName + '-onboarding'
 			: flowName;
 
-	const flowSteps = get( flows, `${ flowName }.steps`, [] );
+	let flowSteps = get( flows, `${ flowName }.steps`, [] );
+	const user = userFactory();
+
+	if ( user.get() ) {
+		flowSteps = flowSteps.filter( item => item !== 'user' );
+	}
+
 	return state.filter(
 		( step, index ) =>
 			flowSteps.includes( step.stepName ) && index === flowSteps.indexOf( step.stepName )
