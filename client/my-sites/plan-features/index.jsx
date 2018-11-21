@@ -55,7 +55,6 @@ import {
 	isBestValue,
 	isMonthly,
 	isNew,
-	isPopular,
 	getPlanFeaturesObject,
 	getPlanClass,
 	TYPE_BLOGGER,
@@ -77,7 +76,8 @@ export class PlanFeatures extends Component {
 			'plan-features--signup': isInSignup,
 		} );
 		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
-		let mobileView, planDescriptions;
+		const mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
+		let planDescriptions;
 		let bottomButtons = null;
 
 		if ( ! isInSignup ) {
@@ -85,8 +85,6 @@ export class PlanFeatures extends Component {
 
 			bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
 		}
-
-		mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
 
 		return (
 			<div className={ planWrapperClasses }>
@@ -122,6 +120,9 @@ export class PlanFeatures extends Component {
 		}
 
 		const bannerContainer = this.getBannerContainer();
+		if ( ! bannerContainer ) {
+			return false;
+		}
 		const activeDiscount = getDiscountByName( this.props.withDiscount );
 		return ReactDOM.createPortal(
 			<Notice
@@ -212,10 +213,15 @@ export class PlanFeatures extends Component {
 			return null;
 		}
 
-		return (
+		const bannerContainer = this.getBannerContainer();
+		if ( ! bannerContainer ) {
+			return false;
+		}
+		return ReactDOM.createPortal(
 			<Notice className="plan-features__notice" showDismiss={ false } status="is-info">
 				{ translate( 'You need to be the plan owner to manage this site.' ) }
-			</Notice>
+			</Notice>,
+			bannerContainer
 		);
 	}
 
@@ -587,7 +593,7 @@ export class PlanFeatures extends Component {
 		} );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
 	}
@@ -602,6 +608,8 @@ PlanFeatures.propTypes = {
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plans prop or isPlaceholder prop
 	plans: PropTypes.array,
+	popularPlan: PropTypes.object,
+	visiblePlans: PropTypes.array,
 	planProperties: PropTypes.array,
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
@@ -650,6 +658,7 @@ export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 const hasPlaceholders = planProperties =>
 	planProperties.filter( planProps => planProps.isPlaceholder ).length > 0;
 
+/* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
 		const {
@@ -660,6 +669,8 @@ export default connect(
 			isLandingPage,
 			siteId,
 			displayJetpackPlans,
+			visiblePlans,
+			popularPlanType,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -672,7 +683,7 @@ export default connect(
 		const siteType = signupDependencies.designType;
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 
-		const planProperties = compact(
+		let planProperties = compact(
 			map( plans, plan => {
 				let isPlaceholder = false;
 				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
@@ -686,7 +697,7 @@ export default connect(
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
-				const popular = isPopular( plan ) && ! isPaid;
+				const popular = planConstantObj.type === popularPlanType;
 				const newPlan = isNew( plan ) && ! isPaid;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
@@ -772,6 +783,10 @@ export default connect(
 
 		const planCredits = calculatePlanCredits( state, siteId, planProperties );
 
+		if ( Array.isArray( visiblePlans ) ) {
+			planProperties = planProperties.filter( p => visiblePlans.indexOf( p.planName ) !== -1 );
+		}
+
 		return {
 			canPurchase,
 			isJetpack,
@@ -792,3 +807,5 @@ export default connect(
 		recordTracksEvent,
 	}
 )( localize( PlanFeatures ) );
+
+/* eslint-enable wpcalypso/redux-no-bound-selectors */

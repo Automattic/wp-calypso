@@ -6,7 +6,7 @@
 
 import debug from 'debug';
 import { localize } from 'i18n-calypso';
-import { assign } from 'lodash';
+import { assign, noop } from 'lodash';
 import React from 'react';
 import url from 'url';
 import { stringify } from 'qs';
@@ -16,6 +16,8 @@ import { stringify } from 'qs';
  */
 import analytics from 'lib/analytics';
 import EmptyContent from 'components/empty-content';
+import { makeLayout, render as clientRender } from 'controller';
+import { SECTION_SET } from 'state/action-types';
 
 /**
  * Module variables
@@ -48,5 +50,12 @@ export function retry( chunkName ) {
 export function show( context, chunkName ) {
 	log( 'Chunk %s could not be loaded', chunkName );
 	analytics.mc.bumpStat( 'calypso_chunk_error', chunkName );
+	context.store.dispatch( {
+		type: SECTION_SET,
+		section: false,
+		hasSidebar: false,
+	} );
 	context.primary = <LoadingErrorMessage />;
+	makeLayout( context, noop );
+	clientRender( context );
 }

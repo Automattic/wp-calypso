@@ -9,7 +9,7 @@
 	cursor: pointer;
 	padding: 4px;
 	font-size: 13px;
-	z-index: z-index('root', '.community-translator');
+	z-index: z-index( 'root', '.community-translator' );
 
 	&.is-active {
 		background: $orange-jazzy;
@@ -49,7 +49,7 @@ body {
 		padding: 0;
 		text-align: inherit;
 		border-color: $gray-lighten-20;
-		z-index: z-index('root', 'body .webui-popover'); // Appear above dialog
+		z-index: z-index( 'root', 'body .webui-popover' ); // Appear above dialog
 
 		.webui-popover-title {
 			background-color: $gray-lighten-20;

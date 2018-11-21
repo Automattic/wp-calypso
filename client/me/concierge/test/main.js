@@ -24,8 +24,16 @@ jest.mock( 'i18n-calypso', () => ( {
  */
 import { shallow } from 'enzyme';
 import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { ConciergeMain } from '../main';
 import {
 	PLAN_FREE,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -42,11 +50,6 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
-
-/**
- * Internal dependencies
- */
-import { ConciergeMain } from '../main';
 
 const props = {
 	steps: [ 'Step1' ],
@@ -97,6 +100,8 @@ describe( 'ConciergeMain.render()', () => {
 		PLAN_BLOGGER_2_YEARS,
 		PLAN_PERSONAL,
 		PLAN_PERSONAL_2_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
 		PLAN_JETPACK_PERSONAL,
 		PLAN_JETPACK_PERSONAL_MONTHLY,
 		PLAN_PREMIUM,
@@ -123,7 +128,7 @@ describe( 'ConciergeMain.render()', () => {
 		} );
 	} );
 
-	[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( product_slug => {
+	[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( product_slug => {
 		test( `Should render CurrentStep for business plans (${ product_slug })`, () => {
 			const comp = shallow( <ConciergeMain { ...props } site={ { plan: { product_slug } } } /> );
 			expect( comp.find( 'Upsell' ) ).toHaveLength( 0 );

@@ -10,6 +10,7 @@ import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { parse as parseQs } from 'qs';
 
 /**
  * Internal dependencies
@@ -24,8 +25,10 @@ import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
+import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
+import { planHasFeature } from '../../../lib/plans';
 
-class PlansStep extends Component {
+export class PlansStep extends Component {
 	componentDidMount() {
 		SignupActions.saveSignupStep( {
 			stepName: this.props.stepName,
@@ -37,6 +40,7 @@ class PlansStep extends Component {
 				additionalStepData,
 				stepSectionName,
 				stepName,
+				flowName,
 				goToNextStep,
 				translate,
 				signupDependencies: { domainItem },
@@ -50,6 +54,18 @@ class PlansStep extends Component {
 				free_trial: cartItem.free_trial,
 				from_section: stepSectionName ? stepSectionName : 'default',
 			} );
+
+			// If we're inside the store signup flow and the cart item is a Business or eCommerce Plan,
+			// set a flag on it. It will trigger Automated Transfer when the product is being
+			// activated at the end of the checkout process.
+			if (
+				flowName === 'ecommerce' &&
+				planHasFeature( cartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS )
+			) {
+				cartItem.extra = Object.assign( cartItem.extra || {}, {
+					is_store_signup: true,
+				} );
+			}
 		} else {
 			analytics.tracks.recordEvent( 'calypso_signup_free_plan_select', {
 				from_section: stepSectionName ? stepSectionName : 'default',
@@ -85,7 +101,7 @@ class PlansStep extends Component {
 	};
 
 	plansFeaturesList() {
-		const { hideFreePlan, isDomainOnly, selectedSite } = this.props;
+		const { hideFreePlan, isDomainOnly, selectedSite, customerType, flowName } = this.props;
 
 		return (
 			<div>
@@ -99,6 +115,7 @@ class PlansStep extends Component {
 					showFAQ={ false }
 					displayJetpackPlans={ false }
 					domainName={ this.getDomainName() }
+					customerType={ customerType || ( flowName === 'ecommerce' ? 'business' : undefined ) }
 				/>
 				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
 				   * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
@@ -147,13 +164,15 @@ PlansStep.propTypes = {
 	selectedSite: PropTypes.object,
 	stepName: PropTypes.string.isRequired,
 	stepSectionName: PropTypes.string,
+	customerType: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( ( state, { signupDependencies: { siteSlug } } ) => ( {
+export default connect( ( state, { path, signupDependencies: { siteSlug } } ) => ( {
 	// This step could be used to set up an existing site, in which case
 	// some descendants of this component may display discounted prices if
 	// they apply to the given site.
 	isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
 	selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
+	customerType: parseQs( path.split( '?' ).pop() ).customerType,
 } ) )( localize( PlansStep ) );

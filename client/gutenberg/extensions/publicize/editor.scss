@@ -1,5 +1,8 @@
+/** @format */
+
 .jetpack-publicize-message-box {
-	background-color: #ECECEC;
+	background-color: #edeff0;
+	border-radius: 4px;
 }
 
 .jetpack-publicize-message-box textarea {
@@ -7,8 +10,8 @@
 }
 
 .jetpack-publicize-character-count {
-	padding-left: 5px;
 	padding-bottom: 5px;
+	padding-left: 5px;
 }
 
 .publicize-jetpack-connection-container {
@@ -22,23 +25,41 @@
 
 .jetpack-publicize-connection-label {
 	flex: 1;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
 	margin-right: 0.25em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.jetpack-publicize-connection-toggle {
+	margin-top: 3px;
 }
 
 .jetpack-publicize-add-icon {
 	font-family: Dashicons;
 	font-size: 2em;
 	margin-right: 0.2em;
+	color: #555d66;
 }
 
 .jetpack-publicize-message-note {
-	margin-top: 15px;
 	display: inline-block;
+	margin-bottom: 4px;
+	margin-top: 1em;
+}
+
+.jetpack-publicize-add-connection-wrapper {
+	margin: 15px 0;
 }
 
 .jetpack-publicize-add-connection-container {
 	display: flex;
+
+	a {
+		cursor: pointer;
+	}
+
+	span {
+		vertical-align: middle;
+	}
 }

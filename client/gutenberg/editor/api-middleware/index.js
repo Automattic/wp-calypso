@@ -47,17 +47,6 @@ export const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
 		return next( { ...options, path, apiNamespace: 'wp/v2' } );
 	}
 
-	// gutenberg/v1 namespace mapping
-	//
-	// Path rewrite example:
-	//		/gutenberg/v1/block-renderer/core/latest-comments →
-	//		/gutenberg/v1/sites/example.wordpress.com/block-renderer/core/latest-comments
-	if ( /\/gutenberg\/v1\//.test( options.path ) ) {
-		const path = options.path.replace( '/gutenberg/v1/', `/sites/${ siteSlug }/` );
-
-		return next( { ...options, path, apiNamespace: 'gutenberg/v1' } );
-	}
-
 	/*
 	 * oembed/1.0 namespace mapping
 	 *

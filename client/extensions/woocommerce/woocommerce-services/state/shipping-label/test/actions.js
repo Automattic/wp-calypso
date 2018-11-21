@@ -10,15 +10,28 @@ import nock from 'nock';
 /**
  * Internal dependencies
  */
-import { openPrintingFlow, convertToApiPackage } from '../actions';
+import {
+	openPrintingFlow,
+	convertToApiPackage,
+	submitAddressForNormalization,
+	confirmAddressSuggestion,
+} from '../actions';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_ADDRESS_SUGGESTION,
 } from '../../action-types';
 import * as selectors from '../selectors';
 
 const orderId = 1;
 const siteId = 123456;
+const defaultAddress = {
+	address: 'Some street',
+	postcode: '',
+	state: 'CA',
+	country: 'US',
+	phone: '123',
+};
 
 function createGetStateFn( newProps = { origin: {}, destination: {} } ) {
 	const defaultProps = {
@@ -27,13 +40,7 @@ function createGetStateFn( newProps = { origin: {}, destination: {} } ) {
 		isNormalized: false, // hack to prevent getLabelRates() in openPrintingFlow
 		normalized: '',
 		expanded: true, // hack to prevent getLabelRates() in openPrintingFlow
-		values: {
-			address: 'Some street',
-			postcode: '',
-			state: 'CA',
-			country: 'US',
-			phone: '123',
-		},
+		values: defaultAddress,
 	};
 
 	const origin = Object.assign( {}, defaultProps, newProps.origin );
@@ -67,20 +74,29 @@ function createGetStateFn( newProps = { origin: {}, destination: {} } ) {
 	};
 }
 
+const mockNormalizationRequest = ( valid = true, persist = false ) => {
+	const status = valid ? 200 : 500;
+
+	let request = nock( 'https://public-api.wordpress.com:443' );
+
+	if ( persist ) {
+		request = request.persist();
+	}
+
+	return request.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` ).reply( status, {
+		data: {
+			status,
+			body: {
+				normalized: valid,
+				is_trivial_normalization: valid,
+			},
+		},
+	} );
+};
+
 describe( 'Shipping label Actions', () => {
 	describe( '#openPrintingFlow', () => {
-		nock( 'https://public-api.wordpress.com:443' )
-			.persist()
-			.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
-			.reply( 200, {
-				data: {
-					status: 200,
-					body: {
-						normalized: true,
-						is_trivial_normalization: true,
-					},
-				},
-			} );
+		mockNormalizationRequest( true, true );
 
 		describe( 'origin validation ignored', () => {
 			const dispatchSpy = sinon.spy();
@@ -299,6 +315,73 @@ describe( 'Shipping label Actions', () => {
 					},
 				],
 			} );
+		} );
+	} );
+
+	describe( '#submitAddressForNormalization', () => {
+		/**
+		 * `values` and `normalized` contain the same address.
+		 *
+		 * During the initial `submitAddressForNormalization` call,
+		 * the function will still make a request because `isNormalized`
+		 * is set to false, and blindly call the success callback afterwards,
+		 * assuming that `normalizeAddress` has already changed the flag.
+		 */
+		const getState = createGetStateFn( {
+			destination: {
+				values: defaultAddress,
+				normalized: defaultAddress,
+			},
+		} );
+
+		it( 'Verifying a valid address proceeds to the next step', () => {
+			const dispatchSpy = sinon.spy();
+
+			// Mock a successful response
+			mockNormalizationRequest( true );
+
+			return submitAddressForNormalization( orderId, siteId, 'destination' )(
+				dispatchSpy,
+				getState
+			).then( () => {
+				expect(
+					dispatchSpy.calledWith( {
+						type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
+						stepName: 'destination',
+						orderId,
+						siteId,
+					} )
+				).to.equal( true );
+			} );
+		} );
+
+		it( 'Validation request failure returns a false promise', () => {
+			// Mock an unsuccessful response
+			mockNormalizationRequest( false );
+
+			return new Promise( resolve => {
+				submitAddressForNormalization( orderId, siteId, 'destination' )( () => {}, getState ).catch(
+					resolve
+				);
+			} );
+		} );
+	} );
+
+	describe( '#confirmAddressSuggestion', () => {
+		it( 'dispatches the correct action', () => {
+			const dispatchSpy = sinon.spy();
+			const group = 'destination';
+
+			confirmAddressSuggestion( orderId, siteId, group )( dispatchSpy, createGetStateFn() );
+
+			expect(
+				dispatchSpy.calledWith( {
+					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_ADDRESS_SUGGESTION,
+					orderId,
+					siteId,
+					group,
+				} )
+			).to.equal( true );
 		} );
 	} );
 } );

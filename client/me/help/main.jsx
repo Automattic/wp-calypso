@@ -28,7 +28,8 @@ import SectionHeader from 'components/section-header';
 import { getCurrentUserId, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { localizeUrl } from 'lib/i18n-utils';
 import { getUserPurchases, isFetchingUserPurchases } from 'state/purchases/selectors';
-import { isWpComBusinessPlan } from 'lib/plans';
+import { planHasFeature } from 'lib/plans';
+import { FEATURE_BUSINESS_ONBOARDING } from 'lib/plans/constants';
 
 /**
  * Module variables
@@ -249,8 +250,8 @@ class Help extends React.PureComponent {
 	}
 }
 
-function purchaseIsWpComBusinessPlan( { productSlug } ) {
-	return isWpComBusinessPlan( productSlug );
+function planHasOnboarding( { productSlug } ) {
+	return planHasFeature( productSlug, FEATURE_BUSINESS_ONBOARDING );
 }
 
 export const mapStateToProps = ( state, ownProps ) => {
@@ -258,7 +259,7 @@ export const mapStateToProps = ( state, ownProps ) => {
 	const userId = getCurrentUserId( state );
 	const purchases = getUserPurchases( state, userId );
 	const isLoading = isFetchingUserPurchases( state );
-	const isBusinessPlanUser = some( purchases, purchaseIsWpComBusinessPlan );
+	const isBusinessPlanUser = some( purchases, planHasOnboarding );
 	const showCoursesTeaser = ownProps.isCoursesEnabled && isBusinessPlanUser;
 
 	return {

@@ -1,0 +1,53 @@
+/** @format */
+
+.component__add-point {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	z-index: 1;
+	width: 32px;
+	height: 38px;
+	margin-top: -19px;
+	margin-left: -16px;
+	background-image: url( ./oval.svg );
+	background-repeat: no-repeat;
+	text-indent: -9999px;
+	box-shadow: none;
+	background-color: transparent;
+	&.components-button:not( :disabled ):not( [aria-disabled='true'] ):focus {
+		background-color: transparent;
+		box-shadow: none;
+	}
+	&:focus,
+	&:active {
+		background-color: transparent;
+		box-shadow: none;
+	}
+}
+.component__add-point__popover {
+	// Default z-index for components-popover places it above Edit Post Header and Notices
+	&.components-popover,
+	&.components-popover:not( .is-mobile ).is-bottom {
+		z-index: 20;
+	}
+	.components-button:not( :disabled ):not( [aria-disabled='true'] ):focus {
+		background-color: transparent;
+		box-shadow: none;
+	}
+	.components-popover__content {
+		padding: 0.1rem;
+	}
+	.components-location-search {
+		margin: 0.5rem;
+	}
+}
+.component__add-point__close {
+	margin: 0;
+	padding: 0;
+	border: none;
+	box-shadow: none;
+	float: right;
+	path {
+		color: #aaa;
+	}
+}

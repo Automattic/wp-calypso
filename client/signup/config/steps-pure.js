@@ -221,6 +221,19 @@ export function generateSteps( {
 			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
 		},
 
+		'oauth2-name': {
+			stepName: 'oauth2-name',
+			apiRequestFunction: createAccount,
+			providesToken: true,
+			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+				oauth2Signup: true,
+				displayNameInput: true,
+				displayUsernameInput: false,
+			},
+		},
+
 		'get-dot-blog-plans': {
 			apiRequestFunction: createSiteWithCart,
 			stepName: 'get-dot-blog-plans',
@@ -360,6 +373,12 @@ export function generateSteps( {
 		'reader-landing': {
 			stepName: 'reader-landing',
 			providesDependencies: [],
+		},
+
+		/* Improved Onboarding */
+		'site-type': {
+			stepName: 'site-type',
+			providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
 		},
 	};
 }

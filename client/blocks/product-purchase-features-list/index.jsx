@@ -16,6 +16,7 @@ import {
 	PLANS_LIST,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
+	TYPE_ECOMMERCE,
 	TYPE_BUSINESS,
 	TYPE_PREMIUM,
 	TYPE_PERSONAL,
@@ -39,6 +40,7 @@ import JetpackPublicize from './jetpack-publicize';
 import JetpackVideo from './jetpack-video';
 import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackSearch from './jetpack-search';
+import JetpackSiteAccelerator from './jetpack-site-accelerator';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
 import JetpackWordPressCom from './jetpack-wordpress-com';
 import MobileApps from './mobile-apps';
@@ -49,6 +51,7 @@ import { isEnabled } from 'config';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 export class ProductPurchaseFeaturesList extends Component {
@@ -60,6 +63,32 @@ export class ProductPurchaseFeaturesList extends Component {
 	static defaultProps = {
 		isPlaceholder: false,
 	};
+
+	// TODO: Define feature list.
+	getEcommerceFeatures() {
+		const { isPlaceholder, plan, planHasDomainCredit, selectedSite } = this.props;
+		return (
+			<Fragment>
+				<HappinessSupportCard
+					isPlaceholder={ isPlaceholder }
+					showLiveChatButton
+					liveChatButtonEventName={ 'calypso_livechat_my_plan_ecommerce' }
+				/>
+				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<JetpackSearch selectedSite={ selectedSite } />
+				<GoogleVouchers selectedSite={ selectedSite } />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<GoogleMyBusiness selectedSite={ selectedSite } />
+				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
+				<CustomizeTheme selectedSite={ selectedSite } />
+				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				<FindNewTheme selectedSite={ selectedSite } />
+				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
+				<SiteActivity />
+				<MobileApps />
+			</Fragment>
+		);
+	}
 
 	getBusinessFeatures() {
 		const { isPlaceholder, plan, planHasDomainCredit, selectedSite } = this.props;
@@ -153,6 +182,7 @@ export class ProductPurchaseFeaturesList extends Component {
 			isPlaceholder,
 			recordReturnToDashboardClick,
 			selectedSite,
+			supportsJetpackSiteAccelerator,
 		} = this.props;
 		return (
 			<Fragment>
@@ -163,6 +193,9 @@ export class ProductPurchaseFeaturesList extends Component {
 				/>
 				<JetpackWordPressCom selectedSite={ selectedSite } />
 				<SiteActivity />
+				{ supportsJetpackSiteAccelerator && (
+					<JetpackSiteAccelerator selectedSite={ selectedSite } />
+				) }
 				<MobileApps />
 				<JetpackReturnToDashboard
 					onClick={ recordReturnToDashboardClick }
@@ -178,6 +211,7 @@ export class ProductPurchaseFeaturesList extends Component {
 			isPlaceholder,
 			recordReturnToDashboardClick,
 			selectedSite,
+			supportsJetpackSiteAccelerator,
 		} = this.props;
 		return (
 			<Fragment>
@@ -192,6 +226,9 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackAntiSpam selectedSite={ selectedSite } />
 				<JetpackPublicize selectedSite={ selectedSite } />
 				<JetpackVideo selectedSite={ selectedSite } />
+				{ supportsJetpackSiteAccelerator && (
+					<JetpackSiteAccelerator selectedSite={ selectedSite } />
+				) }
 				<MobileApps />
 				<SellOnlinePaypal isJetpack />
 				<JetpackReturnToDashboard
@@ -208,6 +245,7 @@ export class ProductPurchaseFeaturesList extends Component {
 			isPlaceholder,
 			recordReturnToDashboardClick,
 			selectedSite,
+			supportsJetpackSiteAccelerator,
 		} = this.props;
 
 		return (
@@ -220,6 +258,9 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackBackupSecurity />
 				<SiteActivity />
 				<JetpackAntiSpam selectedSite={ selectedSite } />
+				{ supportsJetpackSiteAccelerator && (
+					<JetpackSiteAccelerator selectedSite={ selectedSite } />
+				) }
 				<MobileApps />
 				<JetpackReturnToDashboard
 					onClick={ recordReturnToDashboardClick }
@@ -235,6 +276,7 @@ export class ProductPurchaseFeaturesList extends Component {
 			isPlaceholder,
 			selectedSite,
 			recordReturnToDashboardClick,
+			supportsJetpackSiteAccelerator,
 		} = this.props;
 		return (
 			<Fragment>
@@ -259,6 +301,9 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackBackupSecurity />
 				<SiteActivity />
 				<JetpackAntiSpam selectedSite={ selectedSite } />
+				{ supportsJetpackSiteAccelerator && (
+					<JetpackSiteAccelerator selectedSite={ selectedSite } />
+				) }
 				<MobileApps />
 				<SellOnlinePaypal isJetpack />
 				<JetpackReturnToDashboard
@@ -279,6 +324,7 @@ export class ProductPurchaseFeaturesList extends Component {
 		const { group, type } = getPlan( plan );
 		const lookup = {
 			[ GROUP_WPCOM ]: {
+				[ TYPE_ECOMMERCE ]: () => this.getEcommerceFeatures(),
 				[ TYPE_BUSINESS ]: () => this.getBusinessFeatures(),
 				[ TYPE_PREMIUM ]: () => this.getPremiumFeatures(),
 				[ TYPE_PERSONAL ]: () => this.getPersonalFeatures(),
@@ -312,6 +358,9 @@ export default connect(
 			isAutomatedTransfer,
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
+			supportsJetpackSiteAccelerator:
+				isJetpackSite( state, selectedSiteId ) &&
+				isJetpackMinimumVersion( state, selectedSiteId, '6.7' ),
 		};
 	},
 	{

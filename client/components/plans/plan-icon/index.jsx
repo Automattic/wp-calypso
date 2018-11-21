@@ -12,13 +12,14 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { PLANS_LIST, getPlanClass } from 'lib/plans/constants';
-import { isPersonalPlan, isPremiumPlan, isBusinessPlan, isEcommercePlan } from 'lib/plans';
+import { isBloggerPlan, isPersonalPlan, isPremiumPlan, isBusinessPlan, isEcommercePlan } from 'lib/plans';
 
 export default class PlanIcon extends Component {
 	getIcon( planName ) {
 		const { plan, className } = this.props;
 		const planClass = getPlanClass( plan );
 
+		/* eslint-disable jsx-a11y/alt-text */
 		return (
 			<img
 				alt=""
@@ -26,10 +27,15 @@ export default class PlanIcon extends Component {
 				className={ classNames( 'plan-icon', `plan-icon__${ planName }`, planClass, className ) }
 			/>
 		);
+		/* eslint-enable jsx-a11y/alt-text */
 	}
 
 	render() {
 		const { plan } = this.props;
+		if ( isBloggerPlan( plan ) ) {
+			return this.getIcon( 'blogger' );
+		}
+
 		if ( isPersonalPlan( plan ) ) {
 			return this.getIcon( 'personal' );
 		}

@@ -24,6 +24,7 @@ import analyticsTracking from './analytics/reducer';
 import application from './application/reducer';
 import applicationPasswords from './application-passwords/reducer';
 import automatedTransfer from './automated-transfer/reducer';
+import atomicTransfer from './atomic-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import checklist from './checklist/reducer';
 import comments from './comments/reducer';
@@ -57,6 +58,7 @@ import login from './login/reducer';
 import media from './media/reducer';
 import memberships from './memberships/reducer';
 import mailchimp from './mailchimp/reducer';
+import mobileDownloadSMS from './mobile-download-sms/reducer';
 import notices from './notices/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
 import npsSurvey from './nps-survey/reducer';
@@ -119,6 +121,7 @@ const reducers = {
 	application,
 	applicationPasswords,
 	automatedTransfer,
+	atomicTransfer,
 	billingTransactions,
 	checklist,
 	comments,
@@ -153,6 +156,7 @@ const reducers = {
 	jitm,
 	login,
 	media,
+	mobileDownloadSMS,
 	notices,
 	notificationsUnseenCount,
 	npsSurvey,

@@ -15,7 +15,7 @@ import { isEqual, isObject, size } from 'lodash';
  */
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import Notice from 'components/notice';
-import StepConfirmationButton from '../step-confirmation-button';
+import FormButton from 'components/forms/form-button';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import AddressSuggestion from './suggestion';
@@ -33,6 +33,7 @@ import {
 	getShippingLabel,
 	isLoaded,
 	getFormErrors,
+	isAddressUsable,
 	getOriginCountryNames,
 	getDestinationCountryNames,
 	getStateNames,
@@ -53,18 +54,19 @@ const AddressFields = props => {
 		countryNames,
 		stateNames,
 		errors,
+		isUsable,
 		translate,
 	} = props;
 
 	const fieldErrors = isObject( errors ) ? errors : {};
 
+	const confirmAddressSuggestionHandler = () =>
+		props.confirmAddressSuggestion( orderId, siteId, group );
+
 	if ( isNormalized && ! fieldErrors.phone ) {
 		//                 ^^ Special case: The "phone" field can be made invalid by other step
 		// (changing the Destination address to a foreign country, since that makes the origin phone required),
 		// so even if the origin address was correctly normalized, the form needs to be displayed again
-		const confirmAddressSuggestionHandler = () =>
-			props.confirmAddressSuggestion( orderId, siteId, group );
-
 		if ( normalized && ! isEqual( normalized, values ) ) {
 			const editAddressHandler = () => props.editAddress( orderId, siteId, group );
 			const selectNormalizedAddressHandler = select =>
@@ -203,12 +205,25 @@ const AddressFields = props => {
 				updateValue={ updateValue( 'country' ) }
 				error={ fieldErrors.country || generalErrorOnly }
 			/>
-			<StepConfirmationButton
-				disabled={ hasNonEmptyLeaves( errors ) || normalizationInProgress }
-				onClick={ submitAddressForNormalizationHandler }
-			>
-				{ translate( 'Verify address' ) }
-			</StepConfirmationButton>
+
+			<div className="address-step__actions">
+				<FormButton
+					type="button"
+					disabled={ hasNonEmptyLeaves( errors ) || normalizationInProgress }
+					onClick={ submitAddressForNormalizationHandler }
+				>
+					{ translate( 'Verify address' ) }
+				</FormButton>
+
+				<FormButton
+					type="button"
+					disabled={ ! isUsable }
+					onClick={ confirmAddressSuggestionHandler }
+					borderless
+				>
+					{ translate( 'Use address as entered' ) }
+				</FormButton>
+			</div>
 		</div>
 	);
 };
@@ -247,6 +262,7 @@ const mapStateToProps = ( state, { group, orderId, siteId } ) => {
 	return {
 		...formData,
 		errors: loaded && getFormErrors( state, orderId, siteId )[ group ],
+		isUsable: loaded && isAddressUsable( state, orderId, group, siteId ),
 		countryNames,
 		stateNames: getStateNames( state, formData.values.country, siteId ),
 	};

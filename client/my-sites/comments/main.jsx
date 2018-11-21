@@ -29,6 +29,11 @@ import { infoNotice } from 'state/notices/actions';
 import { isEnabled } from 'config';
 import { NEWEST_FIRST } from './constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class CommentsManagement extends Component {
 	static propTypes = {
 		analyticsPath: PropTypes.string,

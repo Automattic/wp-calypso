@@ -28,8 +28,14 @@ jest.mock( 'i18n-calypso', () => ( {
  */
 import { shallow } from 'enzyme';
 import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { UpgradeToPremiumNudgePure } from '../nudges';
 import {
 	PLAN_FREE,
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -45,12 +51,9 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 } from 'lib/plans/constants';
-
-/**
- * Internal dependencies
- */
-import { UpgradeToPremiumNudgePure } from '../nudges';
 
 const props = {
 	translate: x => x,
@@ -76,11 +79,14 @@ describe( 'UpgradeToPremiumNudgePure.render()', () => {
 		PLAN_BLOGGER,
 		PLAN_PERSONAL,
 		PLAN_PREMIUM,
+		PLAN_BUSINESS_MONTHLY,
 		PLAN_BUSINESS,
+		PLAN_ECOMMERCE,
 		PLAN_BLOGGER_2_YEARS,
 		PLAN_PERSONAL_2_YEARS,
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE_2_YEARS,
 	].forEach( plan => {
 		test( `Should pass 2-years wp.com premium plan for 2-years plans ${ plan }`, () => {
 			const comp = shallow(

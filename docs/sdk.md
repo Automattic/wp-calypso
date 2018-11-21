@@ -18,7 +18,7 @@ NODE_ENV=production npm run sdk -- ...
 
 Note: It's also possible to run the SDK command "globally" by linking within the Calypso repository with [`npm link`](https://docs.npmjs.com/cli/link). After running this command you can replace all invocations of `npm run sdk --` in the examples below with `calypso-sdk` and may do so from any other directory in the filesystem:
 
-```
+```bash
 calypso-sdk --help
 ```
 
@@ -32,13 +32,22 @@ SDK module to build [Gutenberg](https://wordpress.org/gutenberg/handbook/) exten
 
 See usage instructions:
 
-```
+```bash
 npm run sdk -- gutenberg --help
 ```
 
 These extensions live under `client/gutenberg/extensions` directory. There are some presets to bundle multiple extensions into one in `client/gutenberg/extensions/presets` directory.
 
 By default, these extensions will be built under `build` folder in the same folder with entry script.
+
+Some dependencies will be omitted from the bundle using webpack externals. They are expected to be
+present in the environment where the produced scripts are run.
+
+- @wordpress/\* dependencies
+- lodash
+
+The produced bundles expect these scripts to be available in the global scope when run, i.e.
+`window.lodash`.
 
 Read more from [Gutenberg extension docs](../client/gutenberg/extensions/README.md).
 
@@ -50,7 +59,7 @@ They can be found in `client/gutenberg/extensions/presets` directory.
 To create a new preset, create a new folder in that directory and add an `index.json` file.
 The file should be an array of the extensions folder names that you want to bundle together.
 
-```
+```js
 ["markdown", "tiled-gallery"]
 ```
 
@@ -82,11 +91,31 @@ SDK module to build standalone notifications client.
 
 See usage instructions:
 
-```
+```bash
 npm run sdk -- notifications --help
 ```
 
 Read more from [Notifications docs](../client/notifications/README.md).
+
+### Generic JavaScript builds
+
+SDK module to build independent no-config JavaScript projects.
+Use for quick prototyping or one-off builds.
+Each built bundle is limited to a single bundle with no code-splitting.
+If you find yourself needing more advanced functionality it's probably worth checking if a new module is warranted.
+
+See usage instructions:
+```bash
+npm run sdk -- generic /path/to/entry-point.js /path/to/built-bundle.js
+```
+
+Many projects will be injected into a WordPress environment where the `wp` global variable holds WordPress-specific functionality.
+These WordPress dependencies (the `@wordpress/…` packages) are loaded through PHP.
+When building in these environments tell the SDK to rely on the global values so that it won't add them into the built bundle.
+
+```bash
+npm run sdk -- generic --global-wp /path/to/entry-point.js /path/to/built-bundle.js
+```
 
 ## Extending the SDK
 

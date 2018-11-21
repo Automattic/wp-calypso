@@ -67,7 +67,7 @@ export const CURRENCIES = {
 		precision: 2,
 	},
 	BBD: {
-		symbol: '$',
+		symbol: 'Bds$',
 		grouping: ',',
 		decimal: '.',
 		precision: 2,
@@ -271,7 +271,7 @@ export const CURRENCIES = {
 		precision: 2,
 	},
 	FJD: {
-		symbol: '$',
+		symbol: 'FJ$',
 		grouping: ',',
 		decimal: '.',
 		precision: 2,
@@ -325,7 +325,7 @@ export const CURRENCIES = {
 		precision: 2,
 	},
 	GYD: {
-		symbol: '$',
+		symbol: 'G$',
 		grouping: ',',
 		decimal: '.',
 		precision: 2,
@@ -487,7 +487,7 @@ export const CURRENCIES = {
 		precision: 0,
 	},
 	LRD: {
-		symbol: '$',
+		symbol: 'L$',
 		grouping: ',',
 		decimal: '.',
 		precision: 2,
@@ -595,7 +595,7 @@ export const CURRENCIES = {
 		precision: 0,
 	},
 	NAD: {
-		symbol: '$',
+		symbol: 'N$',
 		grouping: ',',
 		decimal: '.',
 		precision: 2,
@@ -715,7 +715,7 @@ export const CURRENCIES = {
 		precision: 2,
 	},
 	SBD: {
-		symbol: '$',
+		symbol: 'S$',
 		grouping: ',',
 		decimal: '.',
 		precision: 2,
@@ -745,7 +745,7 @@ export const CURRENCIES = {
 		precision: 2,
 	},
 	SGD: {
-		symbol: '$',
+		symbol: 'S$',
 		grouping: ',',
 		decimal: '.',
 		precision: 2,
@@ -841,7 +841,7 @@ export const CURRENCIES = {
 		precision: 2,
 	},
 	TVD: {
-		symbol: '$',
+		symbol: '$T',
 		grouping: ',',
 		decimal: '.',
 		precision: 2,

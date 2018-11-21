@@ -56,6 +56,7 @@ export default class extends React.Component {
 					selected: selectedTab === tab.attr,
 					tabClick: switchTab,
 					value: hasData ? activeData[ tab.attr ] : null,
+					format: tab.format,
 				};
 
 				return <StatTab key={ tabOptions.attr } { ...tabOptions } />;

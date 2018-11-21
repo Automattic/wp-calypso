@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Top-level Publicize plugin for Gutenberg editor.
  *
@@ -6,17 +8,16 @@
  */
 
 /**
- * External dependencies
- */
-import { registerPlugin } from '@wordpress/plugins';
-
-/**
  * Internal dependencies
  */
 import './editor.scss';
-import './store/index';
 import PublicizePanel from './panel';
+import registerJetpackPlugin from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-plugin';
 
-registerPlugin( 'jetpack-publicize', {
+export const name = 'publicize';
+
+export const settings = {
 	render: () => <PublicizePanel />,
-} );
+};
+
+registerJetpackPlugin( name, settings );

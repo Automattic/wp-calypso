@@ -21,7 +21,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		business: {
-			steps: [ 'about', 'themes', 'domains', 'user' ],
+			steps: [ 'user', 'about', 'themes', 'domains' ],
 			destination: function( dependencies ) {
 				return '/plans/select/business/' + dependencies.siteSlug;
 			},
@@ -33,7 +33,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		premium: {
-			steps: [ 'about', 'themes', 'domains', 'user' ],
+			steps: [ 'user', 'about', 'themes', 'domains' ],
 			destination: function( dependencies ) {
 				return '/plans/select/premium/' + dependencies.siteSlug;
 			},
@@ -45,30 +45,30 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		personal: {
-			steps: [ 'about', 'themes', 'domains', 'user' ],
+			steps: [ 'user', 'about', 'themes', 'domains' ],
 			destination: function( dependencies ) {
 				return '/plans/select/personal/' + dependencies.siteSlug;
 			},
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
-			lastModified: '2018-01-24',
+			lastModified: '2018-11-09',
 		},
 
 		free: {
-			steps: [ 'about', 'themes', 'domains', 'user' ],
+			steps: [ 'user', 'about', 'themes', 'domains' ],
 			destination: getSiteDestination,
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2018-01-24',
 		},
 
 		blog: {
-			steps: [ 'blog-themes', 'domains', 'plans', 'user' ],
+			steps: [ 'user', 'blog-themes', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'Signup flow starting with blog themes',
 			lastModified: '2017-09-01',
 		},
 
 		website: {
-			steps: [ 'website-themes', 'domains', 'plans', 'user' ],
+			steps: [ 'user', 'website-themes', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'Signup flow starting with website themes',
 			lastModified: '2017-09-01',
@@ -115,14 +115,14 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		onboarding: {
-			steps: [ 'user', 'about', 'domains', 'plans' ],
+			steps: [ 'user', 'site-type', 'site-topic', 'about', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2018-10-22',
 		},
 
 		'onboarding-dev': {
-			steps: [ 'site-topic' ],
+			steps: [ 'site-topic', 'about' ],
 			destination: getSiteDestination,
 			description: 'A temporary flow for holding under-development steps',
 			lastModified: '2018-10-29',
@@ -241,8 +241,8 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	}
 
 	if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
-		flows[ 'store-nux' ] = {
-			steps: [ 'about', 'themes', 'domains', 'plans-store-nux', 'user' ],
+		flows.ecommerce = {
+			steps: [ 'about', 'domains', 'plans', 'user' ],
 			destination: getSiteDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2018-01-24',
@@ -264,7 +264,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			description: 'WordPress.com Connect signup flow',
 			lastModified: '2017-08-24',
 			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
-			autoContinue: true,
 		};
 	}
 
@@ -311,7 +310,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		description: 'A flow to kick off an import during signup',
 		disallowResume: true,
 		lastModified: '2018-09-12',
-		autoContinue: true,
 	};
 
 	flows.reader = {
@@ -319,6 +317,15 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		destination: '/',
 		description: 'Signup for an account and migrate email subs to the Reader.',
 		lastModified: '2018-10-29',
+	};
+
+	flows.crowdsignal = {
+		steps: [ 'oauth2-name' ],
+		destination: dependencies => dependencies.oauth2_redirect || '/',
+		description: "Crowdsignal's custom WordPress.com Connect signup flow",
+		lastModified: '2018-11-14',
+		disallowResume: true,
+		autoContinue: true,
 	};
 
 	return flows;

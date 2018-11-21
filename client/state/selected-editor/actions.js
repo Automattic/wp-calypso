@@ -15,8 +15,9 @@ export const requestSelectedEditor = siteId => ( {
 	siteId,
 } );
 
-export const setSelectedEditor = ( siteId, editor ) => ( {
+export const setSelectedEditor = ( siteId, editor, redirectUrl ) => ( {
 	type: EDITOR_TYPE_SET,
 	siteId,
 	editor,
+	redirectUrl,
 } );

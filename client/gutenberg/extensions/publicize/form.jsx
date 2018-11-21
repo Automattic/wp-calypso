@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Higher Order Publicize sharing form composition.
  *
@@ -8,73 +10,46 @@
 /**
  * External dependencies
  */
+import get from 'lodash/get';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import PublicizeFormUnwrapped from './form-unwrapped';
+import PublicizeFormUnwrapped, { MAXIMUM_MESSAGE_LENGTH } from './form-unwrapped';
 
 const PublicizeForm = compose( [
-	withSelect( ( select ) => ( {
-		activeConnections: ( ! select( 'core/editor' ).getEditedPostAttribute( 'publicize' ) )
-			? [] : select( 'core/editor' ).getEditedPostAttribute( 'publicize' ).connections,
-		shareMessage: ( ! select( 'core/editor' ).getEditedPostAttribute( 'publicize' ) )
-			? '' : select( 'core/editor' ).getEditedPostAttribute( 'publicize' ).title,
-	} ) ),
-	withDispatch( ( dispatch, ownProps ) => ( {
-		/**
-		 * Directly sets post's publicize data.
-		 *
-		 * Sets initial values for publicize data this saved with post.
-		 * Input parameters are used as defaults.
-		 * They will be ignored if the 'publicize' field has already been set. This prevents
-		 * user changes from being erased every time pre-publish panel is opened and closed.
-		 *
-		 * @param {string} initTitle             String to share post with
-		 * @param {array}  initActiveConnections Array of connection data
-		 */
-		initializePublicize( initTitle, initActiveConnections ) {
-			const {
-				activeConnections,
-				shareMessage,
-			} = ownProps;
-			const newConnections = ( activeConnections.length > 0 ) ? activeConnections : initActiveConnections;
-			const newTitle = ( shareMessage.length > 0 ) ? shareMessage : initTitle;
-			dispatch( 'core/editor' ).editPost( {
-				publicize: {
-					title: newTitle,
-					connections: newConnections,
-				}
-			} );
-		},
+	withSelect( select => {
+		const meta = select( 'core/editor' ).getEditedPostAttribute( 'meta' );
+		const postTitle = select( 'core/editor' ).getEditedPostAttribute( 'title' );
+		const message = get( meta, [ 'jetpack_publicize_message' ], '' );
 
+		return {
+			connections: select( 'core/editor' ).getEditedPostAttribute(
+				'jetpack_publicize_connections'
+			),
+			defaultShareMessage: postTitle.substr( 0, MAXIMUM_MESSAGE_LENGTH ),
+			shareMessage: message.substr( 0, MAXIMUM_MESSAGE_LENGTH ),
+		};
+	} ),
+	withDispatch( ( dispatch, { connections } ) => ( {
 		/**
-		 * Update state connection enable/disable state based on checkbox.
+		 * Toggle connection enable/disable state based on checkbox.
 		 *
 		 * Saves enable/disable value to connections property in editor
-		 * in field 'publicize'.
+		 * in field 'jetpack_publicize_connections'.
 		 *
-		 * @param {Object}  options              Top-level options parameter
-		 * @param {string}  options.connectionID ID of the connection being enabled/disabled
-		 * @param {boolean} options.shouldShare  True of connection should be shared to, false otherwise
+		 * @param {number}  id ID of the connection being enabled/disabled
 		 */
-		connectionChange( options ) {
-			const { connectionID, shouldShare } = options;
-			const { activeConnections, shareMessage } = ownProps;
-			// Copy array (simply mutating data would cause the component to not be updated).
-			const newConnections = activeConnections.slice( 0 );
-			newConnections.forEach( ( c ) => {
-				if ( c.unique_id === connectionID ) {
-					c.should_share = shouldShare;
-				}
-			} );
+		toggleConnection( id ) {
+			const newConnections = connections.map( connection => ( {
+				...connection,
+				enabled: connection.id === id ? ! connection.enabled : connection.enabled,
+			} ) );
+
 			dispatch( 'core/editor' ).editPost( {
-				publicize: {
-					title: shareMessage,
-					connections: newConnections,
-				}
+				jetpack_publicize_connections: newConnections,
 			} );
 		},
 
@@ -82,21 +57,17 @@ const PublicizeForm = compose( [
 		 * Handler for when sharing message is edited.
 		 *
 		 * Saves edited message to state and to the editor
-		 * in field 'publicize'.
+		 * in field 'jetpack_publicize_message'.
 		 *
 		 * @param {object} event Change event data from textarea element.
 		 */
 		messageChange( event ) {
-			let { shareMessage } = ownProps;
-			const { activeConnections } = ownProps;
-			shareMessage = event.target.value;
 			dispatch( 'core/editor' ).editPost( {
-				publicize: {
-					title: shareMessage,
-					connections: activeConnections,
-				}
+				meta: {
+					jetpack_publicize_message: event.target.value,
+				},
 			} );
-		}
+		},
 	} ) ),
 ] )( PublicizeFormUnwrapped );
 

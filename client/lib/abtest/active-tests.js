@@ -73,24 +73,8 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	jetpackSignupGoogleTop: {
-		datestamp: '20180427',
-		variations: {
-			original: 50,
-			top: 50,
-		},
-		defaultVariation: 'original',
-	},
-	includeDotBlogSubdomainV2: {
-		datestamp: '20180813',
-		variations: {
-			yes: 50,
-			no: 50,
-		},
-		defaultVariation: 'no',
-	},
-	krackenRebootM327V2: {
-		datestamp: '20181018',
+	krackenRebootM33: {
+		datestamp: '20181108',
 		variations: {
 			domainsbot_front: 25,
 			variation1_front: 25,
@@ -100,13 +84,22 @@ export default {
 		defaultVariation: 'domainsbot_front',
 		assignmentMethod: 'userId',
 		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
-	skipDomainOrSiteStep: {
-		datestamp: '20181025',
+	privateByDefault: {
+		datestamp: '20181115',
 		variations: {
-			yes: 50,
-			no: 50,
+			private: 10,
+			public: 90,
 		},
-		defaultVariation: 'yes',
+		defaultVariation: 'public',
+	},
+	crowdsignalNameBasedSignup: {
+		datestamp: '20181120',
+		variations: {
+			nameSignup: 50,
+			usernameSignup: 50,
+		},
+		defaultVariation: 'usernameSignup',
 	},
 };

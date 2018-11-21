@@ -85,46 +85,65 @@ module.exports = ( { types: t } ) => {
 				// In both asynchronous and synchronous case, we'll finish by
 				// calling require on the loaded module. If the module is an
 				// ES2015 module, use its default export.
-				let requireCall = t.conditionalExpression(
-					t.memberExpression(
-						t.callExpression( t.identifier( 'require' ), [ argument ] ),
-						t.identifier( '__esModule' )
-					),
-					t.memberExpression(
-						t.callExpression( t.identifier( 'require' ), [ argument ] ),
-						t.identifier( 'default' )
-					),
-					t.callExpression( t.identifier( 'require' ), [ argument ] )
-				);
 
 				// If a callback was passed as an argument, wrap it as part of
 				// the transformation
 				const callback = path.node.arguments[ 1 ];
-				if ( callback ) {
-					requireCall = t.callExpression( callback, [ requireCall ] );
-				}
 
 				if ( isAsync ) {
-					// Generate a chunk name based on the require path
+					// Generate a chunk name based on the module path
 					const chunkName = 'async-load-' + kebabCase( argument.value );
 
-					// Transform to asynchronous require.ensure
-					path.replaceWith(
-						t.callExpression(
-							t.memberExpression( t.identifier( 'require' ), t.identifier( 'ensure' ) ),
-							[
-								argument,
-								t.functionExpression(
-									null,
-									[ t.identifier( 'require' ) ],
-									t.blockStatement( [ t.expressionStatement( requireCall ) ] )
-								),
-								t.stringLiteral( chunkName ),
-							]
-						)
+					// Transform to dynamic import
+					const argumentWithMagicComments = t.addComment(
+						argument,
+						'leading',
+						`webpackChunkName: "${ chunkName }"`,
+						false
 					);
+					const importCall = t.callExpression( t.identifier( 'import' ), [
+						argumentWithMagicComments,
+					] );
+
+					let statement;
+					if ( callback ) {
+						statement = t.callExpression(
+							t.memberExpression( importCall, t.identifier( 'then' ) ),
+							[
+								t.functionExpression(
+									t.identifier( 'load' ),
+									[ t.identifier( 'mod' ) ],
+									t.blockStatement( [
+										t.expressionStatement(
+											t.callExpression( callback, [
+												t.memberExpression( t.identifier( 'mod' ), t.identifier( 'default' ) ),
+											] )
+										),
+									] )
+								),
+							]
+						);
+					} else {
+						statement = importCall;
+					}
+
+					path.replaceWith( statement );
 				} else {
 					// Transform to synchronous require
+					let requireCall = t.conditionalExpression(
+						t.memberExpression(
+							t.callExpression( t.identifier( 'require' ), [ argument ] ),
+							t.identifier( '__esModule' )
+						),
+						t.memberExpression(
+							t.callExpression( t.identifier( 'require' ), [ argument ] ),
+							t.identifier( 'default' )
+						),
+						t.callExpression( t.identifier( 'require' ), [ argument ] )
+					);
+					if ( callback ) {
+						requireCall = t.callExpression( callback, [ requireCall ] );
+					}
 					path.replaceWith( requireCall );
 				}
 			},

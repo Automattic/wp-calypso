@@ -20,10 +20,12 @@ const CustomDomainPurchaseDetail = ( {
 	onlyBlogDomain,
 	translate,
 } ) => {
+	const customDomainIcon =
+		'/calypso/images/illustrations/custom-domain' + ( onlyBlogDomain ? '-blogger' : '' ) + '.svg';
 	if ( hasDomainCredit && selectedSite.plan.user_is_owner ) {
 		return (
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/custom-domain.svg" /> }
+				icon={ <img alt="" src={ customDomainIcon } /> }
 				title={
 					onlyBlogDomain
 						? translate( 'Select your .blog domain' )
@@ -32,10 +34,10 @@ const CustomDomainPurchaseDetail = ( {
 				description={
 					onlyBlogDomain
 						? translate(
-								'Your plan includes a free .blog domain, which gives your site a more professional, branded feel.'
+								'Your plan includes a free .blog domain for one year, which gives your site a more professional, branded feel.'
 						  )
 						: translate(
-								'Your plan includes a free custom domain, which gives your site a more professional, branded feel.'
+								'Your plan includes a free custom domain for one year, which gives your site a more professional, branded feel.'
 						  )
 				}
 				buttonText={ translate( 'Claim your free domain' ) }
@@ -48,10 +50,10 @@ const CustomDomainPurchaseDetail = ( {
 		actionButton.href = `/domains/manage/${ selectedSite.slug }`;
 		return (
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/custom-domain.svg" /> }
+				icon={ <img alt="" src={ customDomainIcon } /> }
 				title={ translate( 'Custom Domain' ) }
 				description={ translate(
-					'Your plan includes the custom domain {{em}}%(siteDomain)s{{/em}}, your own personal corner of the web.',
+					'Your plan includes one year of your custom domain {{em}}%(siteDomain)s{{/em}}, your own personal corner of the web.',
 					{
 						args: { siteDomain: selectedSite.domain },
 						components: { em: <em /> },

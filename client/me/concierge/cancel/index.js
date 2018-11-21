@@ -58,7 +58,9 @@ class ConciergeCancel extends Component {
 							href={ `/me/concierge/${ siteSlug }/book` }
 							primary={ true }
 						>
-							{ translate( 'Schedule' ) }
+							{ translate( 'Schedule', {
+								context: 'Concierge session',
+							} ) }
 						</Button>
 					</Confirmation>
 				);
