@@ -10,11 +10,11 @@ class MapSave extends Component {
 	render() {
 		const { className, attributes } = this.props;
 		const { mapStyle, mapDetails, points, zoom, mapCenter, markerColor } = attributes;
-		const pointsList = points.map( point => {
+		const pointsList = points.map( ( point, index ) => {
 			const { longitude, latitude } = point.coordinates;
-			const url = 'https://www.google.com/maps/search/?api=1&&query=' + latitude + ',' + longitude;
+			const url = 'https://www.google.com/maps/search/?api=1&query=' + latitude + ',' + longitude;
 			return (
-				<li>
+				<li key={ index }>
 					<a href={ url }>{ point.title }</a>
 				</li>
 			);
