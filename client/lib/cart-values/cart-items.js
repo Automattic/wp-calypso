@@ -491,7 +491,7 @@ export function businessPlan( slug, properties ) {
 
 /**
  * Determines whether a domain Item supports purchasing a privacy subscription
- * @param {string} slug - e.g. domain_reg, dotblog_domain
+ * @param {string} productSlug - e.g. domain_reg, dotblog_domain
  * @param {array} productsList - The list of products retrieved using getProductsList from state/products-list/selectors
  * @return {boolean} true if the domainItem supports privacy protection purchase
  */
@@ -676,6 +676,12 @@ export function unlimitedThemesItem() {
 export function spaceUpgradeItem( slug ) {
 	return {
 		product_slug: slug,
+	};
+}
+
+export function conciergeSessionItem() {
+	return {
+		product_slug: 'concierge-session',
 	};
 }
 
@@ -1138,4 +1144,5 @@ export default {
 	videoPressItem,
 	hasStaleItem,
 	hasTransferProduct,
+	conciergeSessionItem,
 };
