@@ -197,11 +197,11 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	&.is-blogger-plan {
-		border-bottom: solid 2px #438c7d; // Custom color to match icon color
+		border-bottom: solid 2px $alert-green;
 	}
 
 	&.is-personal-plan {
-		border-bottom: solid 2px #6795fe;
+		border-bottom: solid 2px $blue-wordpress;
 	}
 
 	&.is-premium-plan {
@@ -213,7 +213,7 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	&.is-ecommerce-plan {
-		border-bottom: solid 2px #aa5fe6;
+		border-bottom: solid 2px $alert-purple;
 	}
 }
 
