@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import PrimaryHeader from './primary-header';
 import Site from 'blocks/site';
@@ -34,9 +33,11 @@ class Upsell extends Component {
 							'Only sites on a Business or higher plan are eligible for a Concierge session.'
 						) }
 					</p>
+					{ /* @TODO Restore this when we can handle upgrading simple sites to Atomic v2 sites
 					<Button href={ `/plans/${ this.props.site.slug }` } primary>
 						{ translate( 'Upgrade to Business' ) }
 					</Button>
+					*/ }
 				</CompactCard>
 			</div>
 		);
