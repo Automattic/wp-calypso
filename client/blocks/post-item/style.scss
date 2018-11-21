@@ -44,10 +44,6 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 	align-items: start;
 	cursor: pointer;
 
-	&:hover .form-checkbox {
-		border-color: $gray-lighten-10;
-	}
-
 	padding: 16px 16px 0;
 	margin-left: -16px;
 
