@@ -15,7 +15,7 @@
       "generate-color-library"
     ]
   },
-  "version": "1.0.0-rc.4",
+  "version": "1.0.0",
   "identifier": "color-studio",
   "disableCocoaScriptPreprocessor": true,
   "appcast": "https://raw.githubusercontent.com/automattic/color-studio/master/.appcast.xml"
