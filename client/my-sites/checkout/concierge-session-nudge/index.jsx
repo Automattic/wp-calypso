@@ -6,7 +6,6 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import page from 'page';
 
 /**
@@ -121,4 +120,4 @@ export default connect(
 	{
 		trackUpsellButtonClick,
 	}
-)( localize( ConciergeSessionNudge ) );
+)( ConciergeSessionNudge );
