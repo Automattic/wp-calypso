@@ -5,7 +5,7 @@
  */
 import url from 'url';
 import { stringify } from 'qs';
-import { toPairs, identity, includes, get } from 'lodash';
+import { toPairs, identity, includes, get, mapKeys, partial, flowRight } from 'lodash';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
@@ -107,6 +107,29 @@ const wpcomRequest = method => {
 	return wpcom.req.post.bind( wpcom.req );
 };
 
+/**
+ * Creates an object that conforms with the Fetch API, where
+ * the response body is accessed using a json() function and
+ * headers are retrieved using case-insensitive search.
+ *
+ * @param {Object} body wpcom.req response body
+ * @param {Object} headers wpcom.req response headers
+ * @returns {Object} response object that conforms with the Fetch API
+ */
+const createFetchResponse = ( body, headers ) => {
+	const normalizedHeaders = mapKeys( headers, ( value, key ) => key.toLowerCase() );
+
+	const getHeader = flowRight(
+		partial( get, normalizedHeaders ),
+		header => header.toLowerCase()
+	);
+
+	return {
+		json: () => body,
+		headers: { get: getHeader },
+	};
+};
+
 const wpcomProxyMiddleware = options => {
 	// Make authenticated calls using the WordPress.com REST Proxy
 	// bypassing the apiFetch call that uses window.fetch.
@@ -150,13 +173,15 @@ const wpcomProxyMiddleware = options => {
 				if ( error || dataResponse.error ) {
 					return reject( onError( error || dataResponse.error ) );
 				}
+
+				/**
+				 * If parse === false, the originator of the apiFetch call expects the response
+				 * to conform with the Fetch API
+				 */
 				if ( ! parse ) {
-					const { Link: link, ...moreHeaders } = headers;
-					return resolve( {
-						json: () => fromApi( dataResponse ),
-						headers: { get: header => get( { link, ...moreHeaders }, header ) },
-					} );
+					return resolve( createFetchResponse( fromApi( dataResponse ), headers ) );
 				}
+
 				return resolve( fromApi( dataResponse ) );
 			}
 		);
