@@ -5,7 +5,16 @@
  */
 import url from 'url';
 import { stringify } from 'qs';
-import { toPairs, identity, includes, get, mapKeys, partial, flowRight } from 'lodash';
+import {
+	toPairs,
+	identity,
+	includes,
+	get,
+	mapKeys,
+	partial,
+	partialRight,
+	flowRight,
+} from 'lodash';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
@@ -189,10 +198,11 @@ export const applyAPIMiddleware = siteSlug => {
 	// This call intentionally breaks the middleware chain.
 	apiFetch.use( wpcomProxyMiddleware );
 
-	apiFetch.use( ( options, next ) => debugMiddleware( options, next ) );
+	apiFetch.use( debugMiddleware );
 
-	apiFetch.use( ( options, next ) => wpcomPathMappingMiddleware( options, next, siteSlug ) );
+	apiFetch.use( partialRight( wpcomPathMappingMiddleware, siteSlug ) );
 
+	//depends on wpcomPathMappingMiddleware
 	apiFetch.use( apiFetch.fetchAllMiddleware );
 
 	apiFetch.use( apiFetch.createRootURLMiddleware( 'https://public-api.wordpress.com/' ) );
