@@ -11,8 +11,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { PLANS_LIST, getPlanClass } from 'lib/plans/constants';
+import { GROUP_JETPACK, PLANS_LIST, getPlanClass } from 'lib/plans/constants';
 import {
+	planMatches,
 	isBloggerPlan,
 	isPersonalPlan,
 	isPremiumPlan,
@@ -24,11 +25,14 @@ export default class PlanIcon extends Component {
 	getIcon( planName ) {
 		const { plan, className } = this.props;
 		const planClass = getPlanClass( plan );
+		const isJetpack = planMatches( plan, { group: GROUP_JETPACK } );
 
 		/* eslint-disable jsx-a11y/alt-text */
 		return (
 			<img
-				src={ `/calypso/images/plans/plan-${ planName }-circle.svg` }
+				src={ `/calypso/images/plans/${
+					isJetpack ? 'jetpack' : 'wpcom'
+				}/plan-${ planName }-circle.svg` }
 				className={ classNames( 'plan-icon', `plan-icon__${ planName }`, planClass, className ) }
 			/>
 		);

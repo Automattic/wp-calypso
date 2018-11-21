@@ -25,8 +25,9 @@
 
 .plans-features-main__group.is-customer-personal {
 	.plan-features__header.is-premium-plan {
+		& + .plan-features__graphic,
 		.plan-features__header-figure {
-			background-image: url( '/calypso/images/plans/plan-premium-purple-circle.svg' );
+			background-image: url( '/calypso/images/plans/wpcom/plan-premium-purple-circle.svg' );
 			background-size: 100%;
 			background-repeat: no-repeat;
 			img {
