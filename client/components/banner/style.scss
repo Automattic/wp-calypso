@@ -10,15 +10,17 @@
 
 	@include banner-color( $blue-wordpress );
 
-	&.is-upgrade-personal {
-		@include banner-color( $alert-yellow );
-	}
-	&.is-upgrade-premium {
-		@include banner-color( $alert-green );
-	}
-	&.is-upgrade-business {
-		@include banner-color( $alert-purple );
-	}
+		&.is-upgrade-personal {
+			@include banner-color( $blue-wordpress );
+		}
+
+		&.is-upgrade-premium {
+			@include banner-color( $alert-yellow );
+		}
+
+		&.is-upgrade-business {
+			@include banner-color( $orange-jazzy );
+		}
 
 	.card__link-indicator {
 		align-items: center;
@@ -28,9 +30,10 @@
 
 	&:hover {
 		transition: all 100ms ease-in-out;
-		&.is-card-link {
-			box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
-		}
+
+			&.is-card-link {
+				box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
+			}
 		.card__link-indicator {
 			color: $blue-dark;
 		}
@@ -38,6 +41,7 @@
 
 	@include breakpoint( '>480px' ) {
 		padding: 12px 16px;
+
 		&.is-dismissible {
 			padding-right: 16px;
 		}
