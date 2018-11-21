@@ -12,6 +12,7 @@ import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
 import formState from 'lib/form-state';
 import userFactory from 'lib/user';
+import { allSiteTypes } from 'lib/signup/site-type';
 
 const user = userFactory();
 
@@ -165,6 +166,16 @@ export function getThemeForSiteGoals( siteGoals ) {
 	}
 
 	return 'pub/independent-publisher-2';
+}
+
+export function getDesignTypeForSiteType( siteType, flow ) {
+	if ( flow === 'ecommerce' ) {
+		return 'store';
+	}
+
+	const theSiteType = find( allSiteTypes, { type: siteType } ) || allSiteTypes[ 0 ];
+
+	return theSiteType.designType;
 }
 
 export function getDesignTypeForSiteGoals( siteGoals, flow ) {
