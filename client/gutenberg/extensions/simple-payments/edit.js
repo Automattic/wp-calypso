@@ -45,13 +45,13 @@ class SimplePaymentsEdit extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { isSelected } = this.props;
+		const { hasPublishAction, isSelected } = this.props;
 
 		if ( prevProps.simplePayment !== this.props.simplePayment ) {
 			this.injectPaymentAttributes();
 		}
 
-		if ( ! prevProps.isSaving && this.props.isSaving ) {
+		if ( ! prevProps.isSaving && this.props.isSaving && hasPublishAction ) {
 			// Validate and save product on post save
 			this.saveProduct();
 		} else if ( prevProps.isSelected && ! isSelected ) {
@@ -111,7 +111,7 @@ class SimplePaymentsEdit extends Component {
 		this.setState( { isSavingProduct: true }, async () => {
 			saveEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, this.toApi() )
 				.then( record => {
-					setAttributes( { paymentId: record.id } );
+					record && setAttributes( { paymentId: record.id } );
 				} )
 				.catch( error => {
 					// @TODO: complete error handling
@@ -453,7 +453,7 @@ class SimplePaymentsEdit extends Component {
 
 const mapSelectToProps = withSelect( ( select, props ) => {
 	const { getEntityRecord } = select( 'core' );
-	const { isSavingPost } = select( 'core/editor' );
+	const { isSavingPost, getCurrentPost } = select( 'core/editor' );
 
 	const { paymentId } = props.attributes;
 
@@ -462,6 +462,7 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 		: undefined;
 
 	return {
+		hasPublishAction: get( getCurrentPost(), [ '_links', 'wp:action-publish' ], false ),
 		isSaving: !! isSavingPost(),
 		simplePayment,
 	};
