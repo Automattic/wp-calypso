@@ -36,6 +36,7 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isBundled,
+	isEcommerce,
 	isFreeTrial,
 	isFreeWordPressComDomain,
 	isGoogleApps,
@@ -266,6 +267,16 @@ export function hasPlan( cart ) {
 }
 
 /**
+ * Determines whether there is an ecommerce plan in the shopping cart.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one plan, false otherwise
+ */
+export function hasEcommercePlan( cart ) {
+	return cart && some( getAll( cart ), isEcommerce );
+}
+
+/**
  * Does the cart contain only bundled domains and transfers
  *
  * @param {Object} cart - cart as `CartValue` object
@@ -491,7 +502,7 @@ export function businessPlan( slug, properties ) {
 
 /**
  * Determines whether a domain Item supports purchasing a privacy subscription
- * @param {string} slug - e.g. domain_reg, dotblog_domain
+ * @param {string} productSlug - e.g. domain_reg, dotblog_domain
  * @param {array} productsList - The list of products retrieved using getProductsList from state/products-list/selectors
  * @return {boolean} true if the domainItem supports privacy protection purchase
  */
@@ -1108,6 +1119,7 @@ export default {
 	hasDomainInCart,
 	hasDomainMapping,
 	hasDomainRegistration,
+	hasEcommercePlan,
 	hasOnlyDomainProductsWithPrivacySupport,
 	hasFreeTrial,
 	hasGoogleApps,
