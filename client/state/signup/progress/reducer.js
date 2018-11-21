@@ -23,6 +23,7 @@ import {
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 import { schema } from './schema';
+import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:state:signup:progress:reducer' );
 
@@ -51,8 +52,16 @@ function processStep( state, { step } ) {
 }
 
 function removeUnneededSteps( state, { flowName } ) {
+	flowName =
+		'onboarding' === abtest( 'improvedOnboarding' ) && 'ecommerce' === flowName
+			? flowName + '-onboarding'
+			: flowName;
+
 	const flowSteps = get( flows, `${ flowName }.steps`, [] );
-	return state.filter( step => flowSteps.includes( step.stepName ) );
+	return state.filter(
+		( step, index ) =>
+			flowSteps.includes( step.stepName ) && index === flowSteps.indexOf( step.stepName )
+	);
 }
 
 function saveStep( state, { step } ) {

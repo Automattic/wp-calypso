@@ -24,6 +24,7 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
 import { hints } from 'lib/signup/hint-data';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 class SiteTopicStep extends Component {
 	static propTypes = {
@@ -108,9 +109,10 @@ class SiteTopicStep extends Component {
 		// once we have more granular copies per segments, these two should only be used for the default case.
 		const commonPlaceholder = translate( 'e.g. Fashion, travel, design, plumber, electrician' );
 		const commonSubHeaderText = translate( "Don't stress, you can change this later." );
+		const businessSiteTypeValue = getSiteTypePropertyValue( 'id', 'business', 'slug' );
 
 		switch ( siteType ) {
-			case 'Business':
+			case businessSiteTypeValue:
 				return packText(
 					translate( 'Search for your type of business.' ),
 					commonSubHeaderText,
