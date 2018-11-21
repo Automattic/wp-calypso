@@ -3,10 +3,10 @@
 /**
  * External dependencies
  */
-const { compact } = require( 'lodash' );
 const fs = require( 'fs' );
-const path = require( 'path' );
 const GenerateJsonFile = require( 'generate-json-file-webpack-plugin' );
+const path = require( 'path' );
+const { compact } = require( 'lodash' );
 
 const DIRECTORY_DEPTH = '../../'; // Relative path of the extensions to preset directory
 
