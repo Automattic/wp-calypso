@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,8 +13,7 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import { setSiteType } from 'state/signup/steps/site-type/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getThemeForSiteType } from 'signup/utils';
-import { allSiteTypes } from 'lib/signup/site-type';
+import { allSiteTypes, getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 //Form components
 import Card from 'components/card';
@@ -43,23 +41,26 @@ class SiteType extends Component {
 	handleSubmit = event => {
 		event.preventDefault();
 		// Default siteType is 'blog'
-		const siteTypeInputVal = this.state.siteType || get( allSiteTypes, 'blog.value', '' );
-		const themeRepo = getThemeForSiteType( siteTypeInputVal );
+		const siteTypeInputVal =
+			this.state.siteType || getSiteTypePropertyValue( 'id', 'blog', 'slug' );
+		const themeRepo =
+			getSiteTypePropertyValue( 'slug', siteTypeInputVal, 'theme' ) ||
+			'pub/independent-publisher-2';
 
 		this.props.submitStep( siteTypeInputVal, themeRepo );
 	};
 
 	renderRadioOptions() {
-		return Object.values( allSiteTypes ).map( elem => (
-			<FormLabel className="site-type__option" key={ elem.queryParam }>
+		return allSiteTypes.map( siteTypeProperties => (
+			<FormLabel className="site-type__option" key={ siteTypeProperties.id }>
 				<FormRadio
-					value={ elem.value }
-					checked={ elem.value === this.state.siteType }
+					value={ siteTypeProperties.slug }
+					checked={ siteTypeProperties.slug === this.state.siteType }
 					onChange={ this.handleRadioChange }
 				/>
 				<span>
-					<strong>{ elem.label }</strong>
-					<span>{ elem.description }</span>
+					<strong>{ siteTypeProperties.label }</strong>
+					<span>{ siteTypeProperties.description }</span>
 				</span>
 			</FormLabel>
 		) );
@@ -120,7 +121,7 @@ export default connect(
 			dispatch( setSiteType( siteTypeValue ) );
 
 			let nextFlowName = ownProps.flowName;
-			if ( siteTypeValue === get( allSiteTypes, 'store.value', '' ) ) {
+			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 'store', 'slug' ) ) {
 				nextFlowName = 'ecommerce';
 			} else {
 				nextFlowName =

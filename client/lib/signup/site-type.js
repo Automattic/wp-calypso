@@ -14,42 +14,57 @@ import { find } from 'lodash';
  * Some (or all) of these site types will also have landing pages.
  * A user who comes in via a landing page will not see the Site Topic dropdown.
  */
-export const allSiteTypes = {
-	blog: {
+export const allSiteTypes = [
+	{
+		id: 'blog',
+		slug: 'blog',
 		label: i18n.translate( 'Blog' ),
-		value: 'Blog',
-		queryParam: 'blog',
 		description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
+		theme: 'pub/independent-publisher-2',
+		designType: 'blog',
 	},
-	business: {
+	{
+		id: 'business',
+		slug: 'business',
 		label: i18n.translate( 'Business' ),
-		value: 'Business',
-		queryParam: 'business',
 		description: i18n.translate( 'Promote products and services.' ),
+		theme: 'pub/radcliffe-2',
+		designType: 'page',
 	},
-	professional: {
+	{
+		id: 'professional',
+		slug: 'professional',
 		label: i18n.translate( 'Professional' ),
-		value: 'Professional',
-		queryParam: 'professional',
 		description: i18n.translate( 'Showcase your portfolio and work.' ),
+		theme: 'pub/altofocus',
+		designType: 'portfolio',
 	},
-	education: {
+	{
+		id: 'education',
+		slug: 'education',
 		label: i18n.translate( 'Education' ),
-		value: 'Education',
-		queryParam: 'education',
 		description: i18n.translate( 'Share school projects and class info.' ),
+		theme: 'pub/twentyfifteen',
+		designType: 'blog',
 	},
-	store: {
+	{
+		id: 'store',
+		slug: 'online-store',
 		label: i18n.translate( 'Online store' ),
-		value: 'Online store',
-		queryParam: 'online-store',
 		description: i18n.translate( 'Sell your collection of products online. ' ),
+		theme: 'pub/karuna',
+		designType: 'page',
 	},
-};
+];
 
-export function getLabelForSiteType( queryParam ) {
+export function getSiteTypePropertyValue( key, value, property ) {
+	if ( ! value ) {
+		return;
+	}
+
 	const siteTypeProperties = find( allSiteTypes, object => {
-		return queryParam === object.queryParam;
+		return value === object[ key ];
 	} );
-	return siteTypeProperties && siteTypeProperties.value;
+
+	return siteTypeProperties && siteTypeProperties[ property ];
 }

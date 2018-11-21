@@ -45,7 +45,7 @@ import SignupActions from 'lib/signup/actions';
 import SignupFlowController from 'lib/signup/flow-controller';
 import { disableCart } from 'lib/upgrades/actions';
 import { isValidLandingPageVertical } from 'lib/signup/verticals';
-import { getLabelForSiteType } from 'lib/signup/site-type';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -272,11 +272,11 @@ class Signup extends React.Component {
 
 		//`site_type` query parameter
 		const siteTypeQueryParam = queryObject.site_type;
-		const labelForSiteTypeParam = getLabelForSiteType( siteTypeQueryParam );
-		if ( 'undefined' !== typeof labelForSiteTypeParam ) {
+		const siteTypeValue = getSiteTypePropertyValue( 'slug', siteTypeQueryParam, 'slug' );
+		if ( 'undefined' !== typeof siteTypeValue ) {
 			debug( 'From query string: site_type = %s', siteTypeQueryParam );
-			debug( 'Label for site_type = %s', labelForSiteTypeParam );
-			this.props.setSiteType( labelForSiteTypeParam );
+			debug( 'Site type value = %s', siteTypeValue );
+			this.props.setSiteType( siteTypeValue );
 		}
 	};
 
