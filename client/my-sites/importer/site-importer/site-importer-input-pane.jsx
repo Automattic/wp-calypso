@@ -394,14 +394,16 @@ class SiteImporterInputPane extends React.Component {
 						</p>
 						<ul>
 							<li>
-								<span className="site-importer__site-importer-example-domain">example.com</span> -{' '}
+								<span className="site-importer__site-importer-example-domain">example.com</span>
+								{ ' - ' }
 								{ this.props.translate( 'a paid custom domain' ) }
 							</li>
 							<li>
 								<span className="site-importer__site-importer-example-domain">
 									example-account.wixsite.com/my-site
-								</span>{' '}
-								- { this.props.translate( 'a free domain that comes with every site' ) }
+								</span>
+								{ ' - ' }
+								{ this.props.translate( 'a free domain that comes with every site' ) }
 							</li>
 						</ul>
 					</div>
@@ -409,7 +411,17 @@ class SiteImporterInputPane extends React.Component {
 			case 'engine6':
 				return (
 					<div>
-						<p>URL Hints here</p>
+						<p>
+							{ this.props.translate( 'Please use one of following formats for the site URL:' ) }
+						</p>
+						<ul>
+							{ /* TODO(marekhrabe): add free URL format before public launch */ }
+							<li>
+								<span className="site-importer__site-importer-example-domain">example.com</span>
+								{ ' - ' }
+								{ this.props.translate( 'a paid custom domain' ) }
+							</li>
+						</ul>
 					</div>
 				);
 		}
