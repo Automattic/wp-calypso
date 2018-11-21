@@ -24,15 +24,19 @@ class StatsNavigation extends Component {
 		interval: PropTypes.oneOf( intervalConstants.map( i => i.value ) ),
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
+		isWordAds: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
 	};
 
 	isValidItem = item => {
-		const { isGoogleMyBusinessLocationConnected, isStore, siteId } = this.props;
+		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
 
 		switch ( item ) {
+			case 'wordads':
+				return isWordAds;
+
 			case 'store':
 				return isStore;
 
@@ -94,6 +98,7 @@ export default connect( ( state, { siteId } ) => {
 			siteId
 		),
 		isStore: isSiteStore( state, siteId ),
+		isWordAds: config.isEnabled( 'wordads/daily-stats' ),
 		siteId,
 	};
 } )( StatsNavigation );
