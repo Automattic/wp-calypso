@@ -111,7 +111,11 @@ class SimplePaymentsEdit extends Component {
 		this.setState( { isSavingProduct: true }, async () => {
 			saveEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, this.toApi() )
 				.then( record => {
-					record && setAttributes( { paymentId: record.id } );
+					if ( record ) {
+						setAttributes( { paymentId: record.id } );
+					}
+
+					return record;
 				} )
 				.catch( error => {
 					// @TODO: complete error handling
@@ -462,7 +466,7 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 		: undefined;
 
 	return {
-		hasPublishAction: get( getCurrentPost(), [ '_links', 'wp:action-publish' ], false ),
+		hasPublishAction: !! get( getCurrentPost(), [ '_links', 'wp:action-publish' ], false ),
 		isSaving: !! isSavingPost(),
 		simplePayment,
 	};
