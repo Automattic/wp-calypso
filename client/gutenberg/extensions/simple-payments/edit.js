@@ -466,7 +466,7 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 		: undefined;
 
 	return {
-		hasPublishAction: !! get( getCurrentPost(), [ '_links', 'wp:action-publish' ], false ),
+		hasPublishAction: !! get( getCurrentPost(), [ '_links', 'wp:action-publish' ] ),
 		isSaving: !! isSavingPost(),
 		simplePayment,
 	};
