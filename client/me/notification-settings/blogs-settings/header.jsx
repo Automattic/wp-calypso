@@ -7,8 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
-import Immutable from 'immutable';
-import { includes, zip } from 'lodash';
+import { isEmpty, get, map, omit, values, flatten, partition } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -20,7 +19,7 @@ import SiteInfo from 'blocks/site';
 class BlogSettingsHeader extends PureComponent {
 	static propTypes = {
 		site: PropTypes.object.isRequired,
-		settings: PropTypes.instanceOf( Immutable.Map ).isRequired,
+		settings: PropTypes.object.isRequired,
 		disableToggle: PropTypes.bool,
 		onToggle: PropTypes.func.isRequired,
 	};
@@ -45,29 +44,31 @@ class BlogSettingsHeader extends PureComponent {
 	};
 
 	getLegend = () => {
-		const tally = o => o.reduce( ( total, value ) => total + value );
-		const sizeAndSum = settings => [ settings.size, tally( settings ) ];
+		const settings = this.props.settings.toJS();
 
-		let counts = this.props.settings
-			.deleteIn( [ 'email', 'achievement' ] )
-			.filterNot( ( _, key ) => includes( [ 'blog_id', 'devices' ], key ) )
-			.map( sizeAndSum )
-			.toArray();
+		// Ignore blog_id, email.achievement and devices (we'll handle devices separately).
+		const filteredSettings = {
+			...omit( settings, [ 'blog_id', 'devices' ] ),
+			email: omit( get( settings, 'email', {} ), 'achievement' ),
+		};
+		// Ignore the device_id of each device found.
+		const devicesSettings = map( settings.devices, device => omit( device, 'device_id' ) );
 
-		counts = this.props.settings
-			.get( 'devices' )
-			.map( device => device.filter( ( _, key ) => key !== 'device_id' ) )
-			.map( sizeAndSum )
-			.toArray()
-			.concat( counts );
+		const [ onSettings, offSettings ] = partition(
+			flatten( [ ...map( filteredSettings, values ), ...map( devicesSettings, values ) ] )
+		);
 
-		const [ size, count ] = zip.apply( null, counts ).map( tally );
-
-		if ( count === 0 ) {
+		if ( isEmpty( onSettings ) ) {
+			// TODO: currently it's not possible to reach 0, even with all checkboxes unchecked.
+			// 		 the two settings that don't have corresponding checkboxes are:
+			// 		 - timeline.store_order
+			// 		 - email.store_order
+			// 		 - email.scheduled_publicize
+			//		 Should we filter these also?
 			return this.props.translate( 'no notifications' );
 		}
 
-		if ( size === count ) {
+		if ( isEmpty( offSettings ) ) {
 			return this.props.translate( 'all notifications' );
 		}
 
