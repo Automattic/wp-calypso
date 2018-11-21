@@ -24,5 +24,5 @@ export default function isEligibleForCheckoutToChecklist( state, siteId, cart ) 
 		return false;
 	}
 
-	return isNewSite( state, siteId ) && isEligibleForDotcomChecklist( state, siteId, cart );
+	return isNewSite( state, siteId ) && isEligibleForDotcomChecklist( state, siteId );
 }
