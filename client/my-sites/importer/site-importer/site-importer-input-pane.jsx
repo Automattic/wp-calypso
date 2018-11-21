@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import { noop, every, flow, has, defer, get, trim, sortBy, reverse } from 'lodash';
 import url from 'url';
 import moment from 'moment';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -187,6 +188,17 @@ class SiteImporterInputPane extends React.Component {
 		event.key === 'Enter' && this.validateSite();
 	};
 
+	getApiParams = () => {
+		const params = {};
+		if ( this.state.selectedEndpoint ) {
+			params.force_endpoint = this.state.selectedEndpoint;
+		}
+		if ( this.props.importerData.engine ) {
+			params.engine = this.props.importerData.engine;
+		}
+		return params;
+	};
+
 	validateSite = () => {
 		const siteURL = trim( this.state.siteURLInput );
 
@@ -229,18 +241,14 @@ class SiteImporterInputPane extends React.Component {
 
 		prefetchmShotsPreview( urlForImport );
 
-		const endpointParam =
-			this.state.selectedEndpoint && `&force_endpoint=${ this.state.selectedEndpoint }`;
-
-		const engineParam = this.props.importerData.engine
-			? `&engine=${ this.props.importerData.engine }`
-			: '';
+		const params = this.getApiParams();
+		params.site_url = urlForImport;
 
 		wpcom.wpcom.req
 			.get( {
-				path: `/sites/${
-					this.props.site.ID
-				}/site-importer/is-site-importable?site_url=${ urlForImport }${ endpointParam }${ engineParam }`,
+				path: `/sites/${ this.props.site.ID }/site-importer/is-site-importable?${ stringify(
+					params
+				) }`,
 				apiNamespace: 'wpcom/v2',
 			} )
 			.then( resp => {
@@ -306,18 +314,11 @@ class SiteImporterInputPane extends React.Component {
 			site_engine: this.state.importData.engine,
 		} );
 
-		const endpointParam =
-			this.state.selectedEndpoint && `force_endpoint=${ this.state.selectedEndpoint }`;
-
-		const engineParam = this.props.importerData.engine
-			? `&engine=${ this.props.importerData.engine }`
-			: '';
-
 		wpcom.wpcom.req
 			.post( {
-				path: `/sites/${
-					this.props.site.ID
-				}/site-importer/import-site?${ endpointParam }${ engineParam }`,
+				path: `/sites/${ this.props.site.ID }/site-importer/import-site?${ stringify(
+					this.getApiParams()
+				) }`,
 				apiNamespace: 'wpcom/v2',
 				formData: [
 					[ 'import_status', JSON.stringify( toApi( this.props.importerStatus ) ) ],
