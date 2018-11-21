@@ -14,6 +14,7 @@ import SignupActions from 'lib/signup/actions';
 import { setSiteType } from 'state/signup/steps/site-type/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { allSiteTypes, getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 //Form components
 import Card from 'components/card';
@@ -119,6 +120,11 @@ export default connect(
 	( dispatch, ownProps ) => ( {
 		submitStep: ( siteTypeValue, themeRepo ) => {
 			dispatch( setSiteType( siteTypeValue ) );
+			dispatch(
+				recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
+					value: siteTypeValue,
+				} )
+			);
 
 			let nextFlowName = ownProps.flowName;
 			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 'store', 'slug' ) ) {
