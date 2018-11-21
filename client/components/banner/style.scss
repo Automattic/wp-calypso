@@ -22,6 +22,10 @@
 			@include banner-color( $orange-jazzy );
 		}
 
+		&.is-upgrade-ecommerce {
+			@include banner-color( $alert-purple );
+		}
+
 	.card__link-indicator {
 		align-items: center;
 		color: $blue-wordpress;
