@@ -45,7 +45,7 @@ class RelatedPostsEdit extends Component {
 		} );
 
 		apiFetch( {
-			path: '/jetpack/v4/site/posts/related?http_envelope=1&post_id=' + postId,
+			url: '/?rest_route=/jetpack/v4/site/posts/related&http_envelope=1&post_id=' + postId,
 		} )
 			.then( response => {
 				this.setState( {
