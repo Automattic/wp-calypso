@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getRatesErrors, getTotalPriceBreakdown } from '../selectors';
+import { getRatesErrors, getTotalPriceBreakdown, isAddressUsable } from '../selectors';
 
 describe( '#getRatesErrors', () => {
 	// when there are selected rates
@@ -261,19 +261,47 @@ describe( '#getRatesErrors', () => {
 describe( 'Shipping label selectors', () => {
 	const siteId = 1;
 	const orderId = 1;
-	const getFullState = labelsState => ( {
-		extensions: {
-			woocommerce: {
-				woocommerceServices: {
-					[ siteId ]: {
-						shippingLabel: {
-							[ orderId ]: labelsState,
+	const getFullState = labelsState => {
+		const countries = [
+			{
+				code: 'US',
+				name: 'United States',
+				states: [
+					{
+						code: 'CA',
+						name: 'California',
+					},
+				],
+			},
+		];
+
+		return {
+			extensions: {
+				woocommerce: {
+					woocommerceServices: {
+						[ siteId ]: {
+							shippingLabel: {
+								[ orderId ]: labelsState,
+							},
+						},
+					},
+					sites: {
+						[ siteId ]: {
+							data: {
+								locations: [
+									{
+										code: 'NA',
+										name: 'North America',
+										countries,
+									},
+								],
+							},
 						},
 					},
 				},
 			},
-		},
-	} );
+		};
+	};
 
 	it( 'getTotalPriceBreakdown - returns null if the form is not loaded', () => {
 		const state = getFullState( { loaded: false } );
@@ -460,5 +488,68 @@ describe( 'Shipping label selectors', () => {
 		] );
 		expect( result.discount ).to.eql( 3.86 );
 		expect( result.total ).to.eql( 27.79 );
+	} );
+
+	const getAddressState = ( group, values = {} ) => {
+		return getFullState( {
+			form: {
+				[ group ]: {
+					values: {
+						company: 'Automaggic',
+						address_2: '',
+						city: 'Cupertino',
+						state: 'CA',
+						postcode: '95014-0642',
+						country: 'US',
+						phone: '',
+						name: 'Peter Anderson',
+						address: 'Apple Park Way1',
+						...values,
+					},
+				},
+			},
+		} );
+	};
+
+	it( 'isAddressUsable - returns no errors with correct data', () => {
+		const group = 'destination';
+		const state = getAddressState( group );
+
+		const result = isAddressUsable( state, orderId, group, siteId );
+		expect( result ).to.equal( true );
+	} );
+
+	const incorrectAddressValues = [
+		// name        value         shouldFail
+		[ 'company', '', false ],
+		[ 'address', '', true ],
+		[ 'address_2', '', false ],
+		[ 'city', '', true ],
+		[ 'postcode', '95014-064', true ],
+		[ 'postcode', '', true ],
+		[ 'country', '', true ],
+		[ 'country', 'Wonderland', false ],
+		[ 'phone', '', false ],
+		[ 'name', '', true ],
+		[ 'state', '', true ],
+
+		// States are selected in a dropdown and individual values are not validated
+		[ 'state', 'QQ', false ],
+	];
+
+	incorrectAddressValues.forEach( row => {
+		const [ name, value, shouldFail ] = row;
+
+		const verb = shouldFail ? 'triggers' : 'does not trigger';
+		const description = `isAddressUsable - ${ verb } an error with incorrect ${ name }`;
+		it( description, () => {
+			const group = 'destination';
+			const state = getAddressState( group, {
+				[ name ]: value,
+			} );
+
+			const result = isAddressUsable( state, orderId, group, siteId );
+			expect( result ).to.equal( ! shouldFail );
+		} );
 	} );
 } );
