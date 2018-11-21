@@ -2,14 +2,13 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { createReduxStore } from '../';
 import currentUser from 'state/current-user/reducer';
-import { useSandbox } from 'test/helpers/use-sinon';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
@@ -19,8 +18,8 @@ describe( 'index', () => {
 		test( 'can be called without specifying initialState', () => {
 			const reduxStoreNoArgs = createReduxStore().getState();
 			const reduxStoreWithEmptyState = createReduxStore( {} ).getState();
-			expect( reduxStoreNoArgs ).to.be.an( 'object' );
-			expect( reduxStoreWithEmptyState ).to.eql( reduxStoreNoArgs );
+			expect( reduxStoreNoArgs ).toBeInstanceOf( Object );
+			expect( reduxStoreWithEmptyState ).toEqual( reduxStoreNoArgs );
 		} );
 
 		test( 'should return same state on unhandled action', () => {
@@ -32,7 +31,7 @@ describe( 'index', () => {
 
 			store.dispatch( { type: '__GARBAGE' } );
 
-			expect( store.getState() ).to.equal( originalState );
+			expect( store.getState() ).toBe( originalState );
 		} );
 
 		test( 'is instantiated with initialState', () => {
@@ -42,22 +41,20 @@ describe( 'index', () => {
 				users: { items: { 1234: user } },
 			};
 			const reduxStoreWithCurrentUser = createReduxStore( initialState ).getState();
-			expect( reduxStoreWithCurrentUser.currentUser ).to.eql( currentUser( { id: 1234 }, {} ) );
-			expect( Object.keys( reduxStoreWithCurrentUser.users.items ).length ).to.eql( 1 );
-			expect( reduxStoreWithCurrentUser.users.items[ 1234 ] ).to.eql( user );
+			expect( reduxStoreWithCurrentUser.currentUser ).toEqual( currentUser( { id: 1234 }, {} ) );
+			expect( Object.keys( reduxStoreWithCurrentUser.users.items ) ).toHaveLength( 1 );
+			expect( reduxStoreWithCurrentUser.users.items[ 1234 ] ).toEqual( user );
 		} );
 
 		describe( 'invalid data', () => {
-			useSandbox( sandbox => {
-				sandbox.stub( console, 'error' );
-			} );
-
 			test( 'ignores non-existent keys', () => {
-				expect( console.error.calledOnce ).to.eql( false );
+				const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( noop );
+				expect( consoleErrorSpy ).not.toHaveBeenCalled();
 				const reduxStoreNoArgs = createReduxStore().getState();
 				const reduxStoreBadData = createReduxStore( { some: { bad: { stuff: true } } } ).getState();
-				expect( reduxStoreBadData ).to.eql( reduxStoreNoArgs );
-				expect( console.error.calledOnce ).to.eql( true );
+				expect( reduxStoreBadData ).toEqual( reduxStoreNoArgs );
+				expect( consoleErrorSpy ).toHaveBeenCalledTimes( 1 );
+				consoleErrorSpy.mockRestore();
 			} );
 		} );
 	} );
