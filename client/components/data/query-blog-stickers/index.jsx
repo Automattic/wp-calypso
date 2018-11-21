@@ -11,19 +11,25 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import getBlogStickers from 'state/selectors/get-blog-stickers';
 import { listBlogStickers } from 'state/sites/blog-stickers/actions';
 
 class QueryBlogStickers extends Component {
 	static propTypes = {
 		blogId: PropTypes.number.isRequired,
+		stickersLoaded: PropTypes.bool.isRequired,
 	};
 
-	componentWillMount() {
-		this.props.listBlogStickers( this.props.blogId );
+	componentDidMount() {
+		if ( ! this.props.stickersLoaded ) {
+			this.props.listBlogStickers( this.props.blogId );
+		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		this.props.listBlogStickers( nextProps.blogId );
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.blogId !== this.props.blogId && ! this.props.stickersLoaded ) {
+			this.props.listBlogStickers( this.props.blogId );
+		}
 	}
 
 	render() {
@@ -32,6 +38,8 @@ class QueryBlogStickers extends Component {
 }
 
 export default connect(
-	null,
+	( state, { blogId } ) => ( {
+		stickersLoaded: !! getBlogStickers( state, blogId ),
+	} ),
 	{ listBlogStickers }
 )( QueryBlogStickers );

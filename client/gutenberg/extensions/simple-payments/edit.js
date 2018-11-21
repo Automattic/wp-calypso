@@ -5,17 +5,14 @@
  */
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
-import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
 import { dispatch, withSelect } from '@wordpress/data';
 import { get, trimEnd } from 'lodash';
-import { InspectorControls } from '@wordpress/editor';
 import { sprintf } from '@wordpress/i18n';
 import {
 	Disabled,
 	ExternalLink,
-	PanelBody,
 	SelectControl,
 	TextareaControl,
 	TextControl,
@@ -25,14 +22,15 @@ import {
 /**
  * Internal dependencies
  */
+import HelpMessage from './help-message';
+import ProductPlaceholder from './product-placeholder';
+import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { decimalPlaces, formatPrice } from 'lib/simple-payments/utils';
 import { getCurrencyDefaults } from 'lib/format-currency/currencies';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 	SUPPORTED_CURRENCY_LIST,
 } from 'lib/simple-payments/constants';
-import ProductPlaceholder from './product-placeholder';
-import HelpMessage from './help-message';
 
 class SimplePaymentsEdit extends Component {
 	state = {
@@ -42,12 +40,31 @@ class SimplePaymentsEdit extends Component {
 		isSavingProduct: false,
 	};
 
-	componentDidUpdate( prevProps ) {
-		const { attributes, isSelected, setAttributes, simplePayment } = this.props;
-		const { content, currency, email, multiple, price, title } = attributes;
+	componentDidMount() {
+		this.injectPaymentAttributes();
+	}
 
-		// @TODO check componentDidMount for the case where post was already loaded
-		if ( ! prevProps.simplePayment && simplePayment ) {
+	componentDidUpdate( prevProps ) {
+		const { hasPublishAction, isSelected } = this.props;
+
+		if ( prevProps.simplePayment !== this.props.simplePayment ) {
+			this.injectPaymentAttributes();
+		}
+
+		if ( ! prevProps.isSaving && this.props.isSaving && hasPublishAction ) {
+			// Validate and save product on post save
+			this.saveProduct();
+		} else if ( prevProps.isSelected && ! isSelected ) {
+			// Validate on block deselect
+			this.validateAttributes();
+		}
+	}
+
+	injectPaymentAttributes() {
+		const { attributes, setAttributes, simplePayment } = this.props;
+		const { paymentId, content, currency, email, multiple, price, title } = attributes;
+
+		if ( paymentId && simplePayment ) {
 			setAttributes( {
 				content: get( simplePayment, [ 'content', 'raw' ], content ),
 				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency ),
@@ -56,16 +73,6 @@ class SimplePaymentsEdit extends Component {
 				price: get( simplePayment, [ 'meta', 'spay_price' ], price || undefined ),
 				title: get( simplePayment, [ 'title', 'raw' ], title ),
 			} );
-		}
-
-		if ( prevProps.isSelected && ! isSelected ) {
-			// Validate and save on block deselect
-
-			this.saveProduct();
-		} else if ( ! prevProps.isSaving && this.props.isSaving ) {
-			// Save payment on post save
-
-			this.saveProduct();
 		}
 	}
 
@@ -104,7 +111,7 @@ class SimplePaymentsEdit extends Component {
 		this.setState( { isSavingProduct: true }, async () => {
 			saveEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, this.toApi() )
 				.then( record => {
-					setAttributes( { paymentId: record.id } );
+					record && setAttributes( { paymentId: record.id } );
 				} )
 				.catch( error => {
 					// @TODO: complete error handling
@@ -325,7 +332,7 @@ class SimplePaymentsEdit extends Component {
 			return (
 				<div className="simple-payments__loading">
 					<ProductPlaceholder
-						ariaBusy="true"
+						aria-busy="true"
 						content="█████"
 						formattedPrice="█████"
 						title="█████"
@@ -345,7 +352,7 @@ class SimplePaymentsEdit extends Component {
 		) {
 			return (
 				<ProductPlaceholder
-					ariaBusy="false"
+					aria-busy="false"
 					content={ content }
 					formattedPrice={ formatPrice( price, currency ) }
 					multiple={ multiple }
@@ -358,14 +365,6 @@ class SimplePaymentsEdit extends Component {
 
 		return (
 			<Wrapper className="wp-block-jetpack-simple-payments">
-				<InspectorControls key="inspector">
-					<PanelBody>
-						<ExternalLink href="https://support.wordpress.com/simple-payments/">
-							{ __( 'Support reference' ) }
-						</ExternalLink>
-					</PanelBody>
-				</InspectorControls>
-
 				<TextControl
 					aria-describedby={ `${ instanceId }-title-error` }
 					className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
@@ -452,9 +451,9 @@ class SimplePaymentsEdit extends Component {
 	}
 }
 
-const applyWithSelect = withSelect( ( select, props ) => {
+const mapSelectToProps = withSelect( ( select, props ) => {
 	const { getEntityRecord } = select( 'core' );
-	const { isSavingPost } = select( 'core/editor' );
+	const { isSavingPost, getCurrentPost } = select( 'core/editor' );
 
 	const { paymentId } = props.attributes;
 
@@ -463,9 +462,13 @@ const applyWithSelect = withSelect( ( select, props ) => {
 		: undefined;
 
 	return {
+		hasPublishAction: get( getCurrentPost(), [ '_links', 'wp:action-publish' ], false ),
 		isSaving: !! isSavingPost(),
 		simplePayment,
 	};
 } );
 
-export default compose( [ applyWithSelect, withInstanceId ] )( SimplePaymentsEdit );
+export default compose(
+	mapSelectToProps,
+	withInstanceId
+)( SimplePaymentsEdit );

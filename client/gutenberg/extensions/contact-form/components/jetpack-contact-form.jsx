@@ -16,6 +16,27 @@ import { compose, withInstanceId } from '@wordpress/compose';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 import HelpMessage from 'gutenberg/extensions/presets/jetpack/editor-shared/help-message';
+const ALLOWED_BLOCKS = [
+	'jetpack/markdown',
+	'core/paragraph',
+	'core/image',
+	'core/heading',
+	'core/gallery',
+	'core/list',
+	'core/quote',
+	'core/shortcode',
+	'core/audio',
+	'core/code',
+	'core/cover',
+	'core/file',
+	'core/html',
+	'core/separator',
+	'core/spacer',
+	'core/subhead',
+	'core/table',
+	'core/verse',
+	'core/video',
+];
 
 class JetpackContactForm extends Component {
 	constructor( ...args ) {
@@ -197,7 +218,7 @@ class JetpackContactForm extends Component {
 				<div className={ formClassnames }>
 					{ ! has_form_settings_set && (
 						<Placeholder
-							label={ __( 'Contact Form' ) }
+							label={ __( 'Form' ) }
 							icon={ renderMaterialIcon(
 								<path d="M13 7.5h5v2h-5zm0 7h5v2h-5zM19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM11 6H6v5h5V6zm-1 4H7V7h3v3zm1 3H6v5h5v-5zm-1 4H7v-3h3v3z" />
 							) }
@@ -220,34 +241,23 @@ class JetpackContactForm extends Component {
 					) }
 					{ has_form_settings_set && (
 						<InnerBlocks
+							allowedBlocks={ ALLOWED_BLOCKS }
 							templateLock={ false }
 							template={ [
 								[
 									'jetpack/field-name',
 									{
-										label: __( 'Name' ),
 										required: true,
 									},
 								],
 								[
 									'jetpack/field-email',
 									{
-										label: __( 'Email' ),
 										required: true,
 									},
 								],
-								[
-									'jetpack/field-url',
-									{
-										label: __( 'Website' ),
-									},
-								],
-								[
-									'jetpack/field-textarea',
-									{
-										label: __( 'Message' ),
-									},
-								],
+								[ 'jetpack/field-url', {} ],
+								[ 'jetpack/field-textarea', {} ],
 							] }
 						/>
 					) }

@@ -28,24 +28,19 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { buildChartData, getQueryDate } from './utility';
 import StatTabs from '../stats-tabs';
 
+const ChartTabShape = PropTypes.shape( {
+	attr: PropTypes.string,
+	gridicon: PropTypes.string,
+	label: PropTypes.string,
+	legendOptions: PropTypes.arrayOf( PropTypes.string ),
+} );
+
 class StatModuleChartTabs extends Component {
 	static propTypes = {
 		activeLegend: PropTypes.arrayOf( PropTypes.string ),
-		activeTab: PropTypes.shape( {
-			attr: PropTypes.string,
-			gridicon: PropTypes.string,
-			label: PropTypes.string,
-			legendOptions: PropTypes.arrayOf( PropTypes.string ),
-		} ),
+		activeTab: ChartTabShape,
 		availableLegend: PropTypes.arrayOf( PropTypes.string ),
-		charts: PropTypes.arrayOf(
-			PropTypes.shape( {
-				attr: PropTypes.string,
-				gridicon: PropTypes.string,
-				label: PropTypes.string,
-				legendOptions: PropTypes.arrayOf( PropTypes.string ),
-			} )
-		),
+		charts: PropTypes.arrayOf( ChartTabShape ),
 		counts: PropTypes.arrayOf(
 			PropTypes.shape( {
 				comments: PropTypes.number,

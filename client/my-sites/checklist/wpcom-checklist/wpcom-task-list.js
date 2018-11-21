@@ -2,10 +2,10 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, memoize } from 'lodash';
 
 export default class WpcomTaskList {
-	constructor( taskStatuses, conditionalParams = {} ) {
+	constructor( taskStatuses, designType, isSiteUnlaunched ) {
 		this.tasks = [];
 
 		const isCompleted = taskId => get( taskStatuses, [ taskId, 'completed' ], false );
@@ -23,20 +23,20 @@ export default class WpcomTaskList {
 		addTask( 'site_icon_set' );
 		addTask( 'blogdescription_set' );
 
-		if ( conditionalParams.designType === 'blog' ) {
+		if ( designType === 'blog' ) {
 			addTask( 'avatar_uploaded' );
 		}
 
 		addTask( 'contact_page_updated' );
 
-		if ( conditionalParams.designType === 'blog' ) {
+		if ( designType === 'blog' ) {
 			addTask( 'post_published' );
 		}
 
 		addTask( 'custom_domain_registered' );
 		addTask( 'mobile_app_installed' );
 
-		if ( get( taskStatuses, 'email_verified.completed' ) && conditionalParams.isSiteUnlaunched ) {
+		if ( get( taskStatuses, 'email_verified.completed' ) && isSiteUnlaunched ) {
 			addTask( 'site_launched' );
 		}
 	}
@@ -68,3 +68,8 @@ export default class WpcomTaskList {
 		};
 	}
 }
+
+export const getTaskList = memoize(
+	( taskStatuses, designType, isSiteUnlaunched ) =>
+		new WpcomTaskList( taskStatuses, designType, isSiteUnlaunched )
+);

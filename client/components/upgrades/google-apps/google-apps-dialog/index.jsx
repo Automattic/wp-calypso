@@ -20,6 +20,7 @@ import { cartItems } from 'lib/cart-values';
 import CompactCard from 'components/card/compact';
 import GoogleAppsUsers from './users';
 import GoogleAppsProductDetails from './product-details';
+import { isGsuiteRestricted } from 'lib/domains';
 import {
 	validate as validateGappsUsers,
 	filter as filterUsers,
@@ -68,10 +69,18 @@ class GoogleAppsDialog extends React.Component {
 	}
 
 	render() {
+		if ( isGsuiteRestricted() ) {
+			this.props.handleClickSkip();
+		} else {
+			return this.renderView();
+		}
+	}
+
+	renderView() {
 		const prices = this.getPrices();
 
 		return (
-			<form className="google-apps-dialog" onSubmit={ this.handleFormSubmit }>
+			<form className="google-apps-dialog__form" onSubmit={ this.handleFormSubmit }>
 				<QueryProducts />
 				<CompactCard>{ this.header() }</CompactCard>
 				<CompactCard>

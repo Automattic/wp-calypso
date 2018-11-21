@@ -5,12 +5,11 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { Component, createRef, Fragment, RawHTML } from '@wordpress/element';
-import { debounce } from 'lodash';
-import { sprintf } from '@wordpress/i18n';
+import { Component, createRef, Fragment } from '@wordpress/element';
 import {
 	Button,
 	ButtonGroup,
+	ExternalLink,
 	IconButton,
 	PanelBody,
 	Placeholder,
@@ -48,10 +47,6 @@ class MapEdit extends Component {
 			apiState: API_STATE_LOADING,
 		};
 		this.mapRef = createRef();
-		this.debouncedUpdateAPIKey = debounce( this.updateAPIKey, 800 );
-	}
-	componentWillUnmount() {
-		this.debouncedAPIKey && this.debouncedAPIKey.cancel();
 	}
 	addPoint = point => {
 		const { attributes, setAttributes } = this.props;
@@ -76,7 +71,9 @@ class MapEdit extends Component {
 		setTimeout( this.mapRef.current.sizeMap, 0 );
 	};
 	updateAPIKeyControl = value => {
-		this.setState( { apiKeyControl: value }, this.debouncedUpdateAPIKey );
+		this.setState( {
+			apiKeyControl: value,
+		} );
 	};
 	updateAPIKey = () => {
 		const { noticeOperations } = this.props;
@@ -87,26 +84,33 @@ class MapEdit extends Component {
 	removeAPIKey = () => {
 		this.apiCall( null, 'DELETE' );
 	};
-	apiCall( service_api_key = null, method = 'GET' ) {
+	apiCall( serviceApiKey = null, method = 'GET' ) {
 		const { noticeOperations } = this.props;
-		const url = '/wp-json/jetpack/v4/service-api-keys/mapbox';
-		const fetch = service_api_key ? { url, method, data: { service_api_key } } : { url, method };
-		apiFetch( fetch ).then(
-			result => {
-				noticeOperations.removeAllNotices();
-				this.setState( {
-					apiState: result.service_api_key ? API_STATE_SUCCESS : API_STATE_FAILURE,
-					api_key: result.service_api_key,
-					apiKeyControl: result.service_api_key,
-				} );
-			},
-			result => {
-				this.onError( null, result.message );
-				this.setState( {
-					apiState: API_STATE_FAILURE,
-				} );
-			}
-		);
+		const { apiKey } = this.state;
+		const url = '/?rest_route=/jetpack/v4/service-api-keys/mapbox';
+		const fetch = serviceApiKey
+			? { url, method, data: { service_api_key: serviceApiKey } }
+			: { url, method };
+		this.setState( { apiRequestOutstanding: true }, () => {
+			apiFetch( fetch ).then(
+				result => {
+					noticeOperations.removeAllNotices();
+					this.setState( {
+						apiState: result.service_api_key ? API_STATE_SUCCESS : API_STATE_FAILURE,
+						apiKey: result.service_api_key,
+						apiKeyControl: result.service_api_key,
+						apiRequestOutstanding: false,
+					} );
+				},
+				result => {
+					this.onError( null, result.message );
+					this.setState( {
+						apiRequestOutstanding: false,
+						apiKeyControl: apiKey,
+					} );
+				}
+			);
+		} );
 	}
 	componentDidMount() {
 		this.apiCall();
@@ -118,8 +122,14 @@ class MapEdit extends Component {
 	};
 	render() {
 		const { className, setAttributes, attributes, noticeUI, notices } = this.props;
-		const { map_style, map_details, points, zoom, map_center, marker_color, align } = attributes;
-		const { addPointVisibility, api_key, apiKeyControl, apiState } = this.state;
+		const { mapStyle, mapDetails, points, zoom, mapCenter, markerColor, align } = attributes;
+		const {
+			addPointVisibility,
+			apiKey,
+			apiKeyControl,
+			apiState,
+			apiRequestOutstanding,
+		} = this.state;
 		const inspectorControls = (
 			<Fragment>
 				<BlockControls>
@@ -139,14 +149,14 @@ class MapEdit extends Component {
 				<InspectorControls>
 					<PanelBody title={ __( 'Map Theme' ) }>
 						<MapThemePicker
-							value={ map_style }
-							onChange={ value => setAttributes( { map_style: value } ) }
-							options={ settings.map_styleOptions }
+							value={ mapStyle }
+							onChange={ value => setAttributes( { mapStyle: value } ) }
+							options={ settings.mapStyleOptions }
 						/>
 						<ToggleControl
 							label={ __( 'Show street names' ) }
-							checked={ map_details }
-							onChange={ value => setAttributes( { map_details: value } ) }
+							checked={ mapDetails }
+							onChange={ value => setAttributes( { mapDetails: value } ) }
 						/>
 					</PanelBody>
 					<PanelColorSettings
@@ -154,8 +164,8 @@ class MapEdit extends Component {
 						initialOpen={ true }
 						colorSettings={ [
 							{
-								value: marker_color,
-								onChange: value => setAttributes( { marker_color: value } ),
+								value: markerColor,
+								onChange: value => setAttributes( { markerColor: value } ),
 								label: 'Marker Color',
 							},
 						] }
@@ -178,10 +188,10 @@ class MapEdit extends Component {
 						/>
 						<ButtonGroup>
 							<Button type="button" onClick={ this.updateAPIKey } isDefault>
-								{ __( 'Update Key' ) }
+								{ __( 'Update Token' ) }
 							</Button>
 							<Button type="button" onClick={ this.removeAPIKey } isDefault>
-								{ __( 'Remove Key' ) }
+								{ __( 'Remove Token' ) }
 							</Button>
 						</ButtonGroup>
 					</PanelBody>
@@ -193,21 +203,37 @@ class MapEdit extends Component {
 				<Spinner />
 			</Placeholder>
 		);
-		const getAPIInstructions = sprintf(
-			"<p>Before you use a map block, you will need to get a key from <a href='%1$s'>Mapbox</a>. You will only have to do this once.</p><p>Go to <a href='%1$s'>Mapbox</a> and either create an account or sign in. Once you sign in, locate and copy the default access token. Finally, paste it into the token field below.</p>",
-			'https://www.mapbox.com'
-		);
 		const placeholderAPIStateFailure = (
 			<Placeholder icon={ settings.icon } label={ __( 'Map' ) } notices={ notices }>
 				<Fragment>
 					<div className="components-placeholder__instructions">
-						<RawHTML>{ getAPIInstructions }</RawHTML>
+						<p>{ __( 'To use the map block, you need an Access Token.' ) }</p>
+						<p>
+							<ExternalLink href="https://www.mapbox.com">
+								{ __( 'Create an account or log in to Mapbox.' ) }
+							</ExternalLink>
+						</p>
+						<p>
+							{ __(
+								'Locate and copy the default access token. Then, paste it into the field below.'
+							) }
+						</p>
 					</div>
 					<TextControl
-						placeholder="Paste Key Here"
+						className="wp-block-jetpack-map-components-text-control-api-key"
+						disabled={ apiRequestOutstanding }
+						placeholder={ __( 'Paste Token Here' ) }
 						value={ apiKeyControl }
 						onChange={ this.updateAPIKeyControl }
 					/>
+					<Button
+						className="wp-block-jetpack-map-components-text-control-api-key-submit"
+						isLarge
+						disabled={ apiRequestOutstanding || ! apiKeyControl || apiKeyControl.length < 1 }
+						onClick={ this.updateAPIKey }
+					>
+						{ __( 'Set Token' ) }
+					</Button>
 				</Fragment>
 			</Placeholder>
 		);
@@ -217,17 +243,17 @@ class MapEdit extends Component {
 				<div className={ className }>
 					<Map
 						ref={ this.mapRef }
-						map_style={ map_style }
-						map_details={ map_details }
+						mapStyle={ mapStyle }
+						mapDetails={ mapDetails }
 						points={ points }
 						zoom={ zoom }
-						map_center={ map_center }
-						marker_color={ marker_color }
+						mapCenter={ mapCenter }
+						markerColor={ markerColor }
 						onSetZoom={ value => {
 							setAttributes( { zoom: value } );
 						} }
 						admin={ true }
-						api_key={ api_key }
+						apiKey={ apiKey }
 						onSetPoints={ value => setAttributes( { points: value } ) }
 						onMapLoaded={ () => this.setState( { addPointVisibility: true } ) }
 						onMarkerClick={ () => this.setState( { addPointVisibility: false } ) }
@@ -237,7 +263,7 @@ class MapEdit extends Component {
 							<AddPoint
 								onAddPoint={ this.addPoint }
 								onClose={ () => this.setState( { addPointVisibility: false } ) }
-								api_key={ api_key }
+								apiKey={ apiKey }
 								onError={ this.onError }
 							/>
 						) }

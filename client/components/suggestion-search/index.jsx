@@ -19,6 +19,7 @@ class SuggestionSearch extends Component {
 		placeholder: PropTypes.string,
 		onChange: PropTypes.func,
 		suggestions: PropTypes.array,
+		value: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -26,6 +27,7 @@ class SuggestionSearch extends Component {
 		placeholder: '',
 		onChange: noop,
 		suggestions: [],
+		value: '',
 	};
 
 	constructor( props ) {
@@ -33,7 +35,7 @@ class SuggestionSearch extends Component {
 
 		this.state = {
 			query: '',
-			inputValue: '',
+			inputValue: props.value,
 		};
 	}
 

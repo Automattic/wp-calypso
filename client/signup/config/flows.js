@@ -226,12 +226,7 @@ const Flows = {
 		// if ( Flow.defaultFlowName === flowName ) {
 		// }
 
-		// ABTest: `signupSegmentationStep` for users in the `onboarding` flow.
-		// Remove 'site-type' from the flow.
-		if ( 'onboarding' === flowName && 'exclude' === abtest( 'signupSegmentationStep' ) ) {
-			return Flows.removeStepFromFlow( 'site-type', flow );
-		}
-
+		// Remove About step in the ecommerce flow if we're in the onboarding flow
 		if ( 'ecommerce' === flowName && 'onboarding' === abtest( 'improvedOnboarding' ) ) {
 			flow = Flows.removeStepFromFlow( 'about', flow );
 			return Flows.insertStepIntoFlow( 'site-type', flow );

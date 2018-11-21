@@ -23,17 +23,17 @@ const PublicizeForm = compose( [
 	withSelect( select => {
 		const meta = select( 'core/editor' ).getEditedPostAttribute( 'meta' );
 		const postTitle = select( 'core/editor' ).getEditedPostAttribute( 'title' );
-		const message = get( meta, [ 'jetpack_publicize_message' ], '' ) || postTitle || '';
+		const message = get( meta, [ 'jetpack_publicize_message' ], '' );
 
 		return {
 			connections: select( 'core/editor' ).getEditedPostAttribute(
 				'jetpack_publicize_connections'
 			),
-			meta,
+			defaultShareMessage: postTitle.substr( 0, MAXIMUM_MESSAGE_LENGTH ),
 			shareMessage: message.substr( 0, MAXIMUM_MESSAGE_LENGTH ),
 		};
 	} ),
-	withDispatch( ( dispatch, { connections, meta } ) => ( {
+	withDispatch( ( dispatch, { connections } ) => ( {
 		/**
 		 * Toggle connection enable/disable state based on checkbox.
 		 *
@@ -43,9 +43,9 @@ const PublicizeForm = compose( [
 		 * @param {number}  id ID of the connection being enabled/disabled
 		 */
 		toggleConnection( id ) {
-			const newConnections = connections.map( c => ( {
-				...c,
-				enabled: c.id === id ? ! c.enabled : c.enabled,
+			const newConnections = connections.map( connection => ( {
+				...connection,
+				enabled: connection.id === id ? ! connection.enabled : connection.enabled,
 			} ) );
 
 			dispatch( 'core/editor' ).editPost( {
@@ -64,7 +64,6 @@ const PublicizeForm = compose( [
 		messageChange( event ) {
 			dispatch( 'core/editor' ).editPost( {
 				meta: {
-					...meta,
 					jetpack_publicize_message: event.target.value,
 				},
 			} );

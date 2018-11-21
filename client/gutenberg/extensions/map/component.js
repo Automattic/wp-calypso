@@ -34,7 +34,7 @@ export class Map extends Component {
 		this.debouncedSizeMap = debounce( this.sizeMap, 250 );
 	}
 	render() {
-		const { points, admin, children, marker_color } = this.props;
+		const { points, admin, children, markerColor } = this.props;
 		const { map, activeMarker, mapboxgl } = this.state;
 		const { onMarkerClick, deleteActiveMarker, updateActiveMarker } = this;
 		const currentPoint = get( activeMarker, 'props.point' ) || {};
@@ -56,7 +56,7 @@ export class Map extends Component {
 						index={ index }
 						map={ map }
 						mapboxgl={ mapboxgl }
-						marker_color={ marker_color }
+						markerColor={ markerColor }
 						onClick={ onMarkerClick }
 					/>
 				);
@@ -110,8 +110,8 @@ export class Map extends Component {
 		);
 	}
 	componentDidMount() {
-		const { api_key } = this.props;
-		if ( api_key ) {
+		const { apiKey } = this.props;
+		if ( apiKey ) {
 			this.loadMapLibraries();
 		}
 	}
@@ -119,9 +119,9 @@ export class Map extends Component {
 		this.debouncedSizeMap.cancel();
 	}
 	componentDidUpdate( prevProps ) {
-		const { api_key, children, points, map_style, map_details } = this.props;
+		const { apiKey, children, points, mapStyle, mapDetails } = this.props;
 		const { map } = this.state;
-		if ( api_key && api_key.length > 0 && api_key !== prevProps.api_key ) {
+		if ( apiKey && apiKey.length > 0 && apiKey !== prevProps.apiKey ) {
 			this.loadMapLibraries();
 		}
 		// If the user has just clicked to show the Add Point component, hide info window.
@@ -135,7 +135,7 @@ export class Map extends Component {
 		if ( points.length !== prevProps.points.length ) {
 			this.clearCurrentMarker();
 		}
-		if ( map_style !== prevProps.map_style || map_details !== prevProps.map_details ) {
+		if ( mapStyle !== prevProps.mapStyle || mapDetails !== prevProps.mapDetails ) {
 			map.setStyle( this.getMapStyle() );
 		}
 	}
@@ -183,21 +183,24 @@ export class Map extends Component {
 	};
 	setBoundsByMarkers = () => {
 		const { zoom, points, onSetZoom } = this.props;
-		const { map, activeMarker, mapboxgl, zoomControl, fit_to_bounds } = this.state;
-
-		if ( ! map || ! points.length || activeMarker ) {
+		const { map, activeMarker, mapboxgl, zoomControl, boundsSetProgrammatically } = this.state;
+		if ( ! map ) {
 			return;
 		}
-
+		// If there are no points at all, there is no data to set bounds to. Abort the function.
+		if ( ! points.length ) {
+			return;
+		}
+		// If there is an open info window, resizing will probably move the info window which complicates interaction.
+		if ( activeMarker ) {
+			return;
+		}
 		const bounds = new mapboxgl.LngLatBounds();
-
 		points.forEach( point => {
 			bounds.extend( [ point.coordinates.longitude, point.coordinates.latitude ] );
 		} );
 
-		// If there are multiple points, zoom is determined by the area they cover,
-		// and zoom control is removed.
-
+		// If there are multiple points, zoom is determined by the area they cover, and zoom control is removed.
 		if ( points.length > 1 ) {
 			map.fitBounds( bounds, {
 				padding: {
@@ -207,30 +210,32 @@ export class Map extends Component {
 					right: 20,
 				},
 			} );
-			this.setState( { fit_to_bounds: true } );
+			this.setState( { boundsSetProgrammatically: true } );
 			map.removeControl( zoomControl );
 			return;
 		}
+		// If there is only one point, center map around it.
 		map.setCenter( bounds.getCenter() );
-		/* Case where points go from multiple to just one. Set zoom to an arbitrarily high level. */
-		if ( fit_to_bounds ) {
+
+		// If the number of markers has just changed from > 1 to 1, set an arbitrary tight zoom, which feels like the original default.
+		if ( boundsSetProgrammatically ) {
 			const newZoom = 12;
 			map.setZoom( newZoom );
 			onSetZoom( newZoom );
 		} else {
-			// If there are one (or zero) points, user can set zoom
+			// If there are one (or zero) points, and this is not a recent change, respect user's chosen zoom.
 			map.setZoom( parseInt( zoom, 10 ) );
 		}
-		this.setState( { fit_to_bounds: false } );
 		map.addControl( zoomControl );
+		this.setState( { boundsSetProgrammatically: false } );
 	};
 	getMapStyle() {
-		const { map_style, map_details } = this.props;
-		return mapboxMapFormatter( map_style, map_details );
+		const { mapStyle, mapDetails } = this.props;
+		return mapboxMapFormatter( mapStyle, mapDetails );
 	}
 	getMapType() {
-		const { map_style } = this.props;
-		switch ( map_style ) {
+		const { mapStyle } = this.props;
+		switch ( mapStyle ) {
 			case 'satellite':
 				return 'HYBRID';
 			case 'terrain':
@@ -242,35 +247,44 @@ export class Map extends Component {
 	}
 	// Script loading, browser geolocation
 	scriptsLoaded = () => {
-		const { map_center, points } = this.props;
+		const { mapCenter, points } = this.props;
 		this.setState( { loaded: true } );
 
 		// If the map has any points, skip geolocation and use what we have.
 		if ( points.length > 0 ) {
-			this.initMap( map_center );
+			this.initMap( mapCenter );
 			return;
 		}
-		this.initMap( map_center );
+		this.initMap( mapCenter );
 	};
 	loadMapLibraries() {
-		const { api_key } = this.props;
-		import( /* webpackChunkName: "mapbox-gl" */ 'mapbox-gl' ).then( ( { default: mapboxgl } ) => {
-			mapboxgl.accessToken = api_key;
+		const { apiKey } = this.props;
+		Promise.all( [
+			import( /* webpackChunkName: "map/mapbox-gl" */ 'mapbox-gl' ),
+			import( /* webpackChunkName: "map/mapbox-gl" */ 'mapbox-gl/dist/mapbox-gl.css' ),
+		] ).then( ( [ { default: mapboxgl } ] ) => {
+			mapboxgl.accessToken = apiKey;
 			this.setState( { mapboxgl: mapboxgl }, this.scriptsLoaded );
 		} );
 	}
-	initMap( map_center ) {
+	initMap( mapCenter ) {
 		const { mapboxgl } = this.state;
 		const { zoom, onMapLoaded, onError, admin } = this.props;
-		const map = new mapboxgl.Map( {
-			container: this.mapRef.current,
-			style: 'mapbox://styles/mapbox/streets-v9',
-			center: this.googlePoint2Mapbox( map_center ),
-			zoom: parseInt( zoom, 10 ),
-			pitchWithRotate: false,
-			attributionControl: false,
-			dragRotate: false,
-		} );
+		let map = null;
+		try {
+			map = new mapboxgl.Map( {
+				container: this.mapRef.current,
+				style: this.getMapStyle(),
+				center: this.googlePoint2Mapbox( mapCenter ),
+				zoom: parseInt( zoom, 10 ),
+				pitchWithRotate: false,
+				attributionControl: false,
+				dragRotate: false,
+			} );
+		} catch ( e ) {
+			onError( 'mapbox_error', e.message );
+			return;
+		}
 		map.on( 'error', e => {
 			onError( 'mapbox_error', e.error.message );
 		} );
@@ -294,30 +308,29 @@ export class Map extends Component {
 			map.resize();
 			onMapLoaded();
 			this.setState( { loaded: true } );
-			map.setStyle( this.getMapStyle() );
 			window.addEventListener( 'resize', this.debouncedSizeMap );
 		} );
 	}
 	googlePoint2Mapbox( google_point ) {
-		const map_center = [
+		const mapCenter = [
 			google_point.longitude ? google_point.longitude : 0,
 			google_point.latitude ? google_point.latitude : 0,
 		];
-		return map_center;
+		return mapCenter;
 	}
 }
 
 Map.defaultProps = {
 	points: [],
-	map_style: 'default',
+	mapStyle: 'default',
 	zoom: 13,
 	onSetZoom: () => {},
 	onMapLoaded: () => {},
 	onMarkerClick: () => {},
 	onError: () => {},
-	marker_color: 'red',
-	api_key: null,
-	map_center: {},
+	markerColor: 'red',
+	apiKey: null,
+	mapCenter: {},
 };
 
 export default Map;
