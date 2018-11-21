@@ -10,16 +10,18 @@ import { settings } from './settings.js';
 import FrontendManagement from 'gutenberg/extensions/shared/frontend-management.js';
 import apiFetch from '@wordpress/api-fetch';
 
-window.addEventListener( 'load', function() {
-	const frontendManagement = new FrontendManagement();
-	const url = '/?rest_route=/jetpack/v4/service-api-keys/mapbox';
-	apiFetch( { url, method: 'GET' } ).then( result => {
-		frontendManagement.blockIterator( document, [
-			{
-				component: component,
-				options: {
-					settings,
-					props: { apiKey: result.service_api_key },
+window &&
+	window.addEventListener( 'load', function() {
+		const frontendManagement = new FrontendManagement();
+		const url = '/?rest_route=/jetpack/v4/service-api-keys/mapbox';
+		apiFetch( { url, method: 'GET' } ).then( result => {
+			frontendManagement.blockIterator( document, [
+				{
+					component: component,
+					options: {
+						settings,
+						props: { apiKey: result.service_api_key },
+					},
 				},
 			] );
 		} );
