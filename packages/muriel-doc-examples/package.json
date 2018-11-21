@@ -1,0 +1,17 @@
+{
+  "name": "@wordpress/muriel-doc-examples",
+  "version": "1.0.0",
+  "description": "Muriel documentation component usage examples.",
+  "module": "dist/esm/index.js",
+  "main": "src/index.js",
+  "dependencies": {
+    "react": "16.6.3",
+    "react-dom": "16.6.3",
+    "@wordpress/data": "3.1.0",
+    "@wordpress/element": "2.1.5"
+  },
+  "keywords": [],
+  "author": "Brad Griffith <brad.griffith@automattic.com> (https://automattic.com)",
+  "license": "GPL-2.0+"
+}
+

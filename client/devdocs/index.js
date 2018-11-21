@@ -71,6 +71,7 @@ export default function() {
 		);
 		page( '/devdocs/start', controller.pleaseLogIn, makeLayout, clientRender );
 		page( '/devdocs/welcome', controller.sidebar, controller.welcome, makeLayout, clientRender );
+		page( '/devdocs/examples/:slug*', controller.example, makeLayout, clientRender );
 
 		if ( config.isEnabled( 'devdocs/gutenberg-blocks' ) ) {
 			page(

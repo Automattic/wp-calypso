@@ -52,6 +52,7 @@
     "@wordpress/hooks": "2.0.3",
     "@wordpress/i18n": "3.0.1",
     "@wordpress/keycodes": "2.0.3",
+    "@wordpress/muriel-doc-examples": "file:packages/muriel-doc-examples",
     "@wordpress/plugins": "2.0.6",
     "@wordpress/rich-text": "2.0.2",
     "@wordpress/url": "2.2.0",

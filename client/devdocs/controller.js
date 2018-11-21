@@ -11,6 +11,12 @@ import page from 'page';
 import url from 'url';
 
 /**
+ * WordPress dependencies
+ */
+import '@wordpress/muriel-doc-examples';
+import { select } from '@wordpress/data';
+
+/**
  * Internal dependencies
  */
 import config from 'config';
@@ -165,6 +171,13 @@ const devdocs = {
 	// Welcome screen
 	welcome: function( context, next ) {
 		context.primary = React.createElement( DevWelcome, {} );
+		next();
+	},
+
+	// Component example
+	example: function( context, next ) {
+		const example = select( 'muriel/examples' ).getExample( context.params.slug );
+		context.primary = example.render();
 		next();
 	},
 
