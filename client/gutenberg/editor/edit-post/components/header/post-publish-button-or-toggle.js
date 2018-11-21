@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -13,18 +14,18 @@ import { PostPublishButton } from '@wordpress/editor';
 import { withViewportMatch } from '@wordpress/viewport';
 
 export function PostPublishButtonOrToggle( {
-											   forceIsDirty,
-											   forceIsSaving,
-											   hasPublishAction,
-											   isBeingScheduled,
-											   isLessThanMediumViewport,
-											   isPending,
-											   isPublished,
-											   isPublishSidebarEnabled,
-											   isPublishSidebarOpened,
-											   isScheduled,
-											   togglePublishSidebar,
-										   } ) {
+	forceIsDirty,
+	forceIsSaving,
+	hasPublishAction,
+	isBeingScheduled,
+	isLessThanMediumViewport,
+	isPending,
+	isPublished,
+	isPublishSidebarEnabled,
+	isPublishSidebarOpened,
+	isScheduled,
+	togglePublishSidebar,
+} ) {
 	const IS_TOGGLE = 'toggle';
 	const IS_BUTTON = 'button';
 	let component;
@@ -77,7 +78,7 @@ export function PostPublishButtonOrToggle( {
 }
 
 export default compose(
-	withSelect( ( select ) => ( {
+	withSelect( select => ( {
 		hasPublishAction: get(
 			select( 'core/editor' ).getCurrentPost(),
 			[ '_links', 'wp:action-publish' ],
@@ -90,11 +91,11 @@ export default compose(
 		isPublishSidebarOpened: select( 'core/edit-post' ).isPublishSidebarOpened(),
 		isScheduled: select( 'core/editor' ).isCurrentPostScheduled(),
 	} ) ),
-	withDispatch( ( dispatch ) => {
+	withDispatch( dispatch => {
 		const { togglePublishSidebar } = dispatch( 'core/edit-post' );
 		return {
 			togglePublishSidebar,
 		};
 	} ),
-	withViewportMatch( { isLessThanMediumViewport: '< medium' } ),
+	withViewportMatch( { isLessThanMediumViewport: '< medium' } )
 )( PostPublishButtonOrToggle );
