@@ -16,6 +16,7 @@ import Intervals from './intervals';
 import FollowersCount from 'blocks/followers-count';
 import isGoogleMyBusinessLocationConnectedSelector from 'state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'state/selectors/is-site-store';
+import { getSiteOption } from 'state/sites/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
 import config from 'config';
 
@@ -98,7 +99,8 @@ export default connect( ( state, { siteId } ) => {
 			siteId
 		),
 		isStore: isSiteStore( state, siteId ),
-		isWordAds: config.isEnabled( 'wordads/daily-stats' ),
+		isWordAds:
+			getSiteOption( state, siteId, 'wordads' ) && config.isEnabled( 'wordads/daily-stats' ),
 		siteId,
 	};
 } )( StatsNavigation );
