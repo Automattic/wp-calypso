@@ -425,7 +425,7 @@ const getPlanBusinessDetails = () => ( {
 	],
 	getSignupFeatures: () => [
 		FEATURE_UPLOAD_THEMES_PLUGINS,
-		FEATURE_GOOGLE_ANALYTICS_SIGNUP,
+		FEATURE_ADVANCED_SEO_TOOLS,
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
 	getBlogSignupFeatures: () => [
