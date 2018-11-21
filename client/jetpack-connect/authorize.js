@@ -106,7 +106,7 @@ export class JetpackAuthorize extends Component {
 	redirecting = false;
 	retryingAuth = false;
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { recordTracksEvent, isMobileAppFlow } = this.props;
 
 		const { from, clientId } = this.props.authQuery;
@@ -125,7 +125,7 @@ export class JetpackAuthorize extends Component {
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { retryAuth } = nextProps;
 		const { authorizeError, authorizeSuccess, siteReceived } = nextProps.authorizationData;
 		const { alreadyAuthorized, redirectAfterAuth, site } = nextProps.authQuery;
