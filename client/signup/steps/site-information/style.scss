@@ -10,32 +10,6 @@
 	transition: 500ms ease-in-out opacity, 500ms ease-in-out filter, 500ms ease-in-out transform;
 }
 
-.site-information__segmented-control-wrapper {
-	display: flex;
-	justify-content: space-evenly;
-	align-items: center;
-}
-
-.site-information__segmented-control {
-	flex-grow: 1;
-}
-
-.site-information__segment-label {
-	color: $gray-darken-20;
-
-	&:hover {
-		cursor: pointer;
-	}
-}
-
-.site-information__min-label {
-	padding-right: 15px;
-}
-
-.site-information__max-label {
-	padding-left: 15px;
-}
-
 .site-information__submit-wrapper {
 	text-align: center;
 	margin-bottom: 0;
@@ -49,12 +23,10 @@
 	}
 }
 
-.site-information__last-fieldset {
-	margin-bottom: 0;
-}
-
 .site-information__info-popover {
 	margin-left: 5px;
-	transform: translateY( 3px );
-	display: inline-block;
+	.gridicon {
+		color: $gray;
+		margin-bottom: -3px;
+	}
 }
