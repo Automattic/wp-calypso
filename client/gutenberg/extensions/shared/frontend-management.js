@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, snakeCase } from 'lodash';
+import { assign, kebabCase } from 'lodash';
 import { createElement, render } from '@wordpress/element';
 
 export class FrontendManagement {
@@ -17,18 +17,19 @@ export class FrontendManagement {
 		const { selector } = options;
 		const blockClass = [ '.wp-block', name.replace( '/', '-' ) ].join( '-' );
 		rootNode.querySelectorAll( blockClass ).forEach( node => {
-			const data = this.extractAttributesFromContainer( node.dataset, attributes );
+			const data = this.extractAttributesFromContainer( node, attributes );
 			assign( data, options.props );
 			const children = this.extractChildrenFromContainer( node );
 			const el = createElement( component, data, children );
 			render( el, selector ? node.querySelector( selector ) : node );
 		} );
 	}
-	extractAttributesFromContainer( dataset, attributes ) {
+	extractAttributesFromContainer( node, attributes ) {
 		const data = {};
 		for ( const name in attributes ) {
 			const attribute = attributes[ name ];
-			data[ name ] = dataset[ snakeCase( name ) ];
+			const dataAttributeName = 'data-' + kebabCase( name );
+			data[ name ] = node.getAttribute( dataAttributeName );
 			if ( attribute.type === 'boolean' ) {
 				data[ name ] = data[ name ] === 'false' ? false : !! data[ name ];
 			}
