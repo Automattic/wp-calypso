@@ -204,7 +204,7 @@ export default connect( state => {
 	}
 
 	// Status of the main site accelerator toggle.
-	const siteAcceleratorStatus = photonModuleActive || assetCdnModuleActive ? true : false;
+	const siteAcceleratorStatus = !! ( photonModuleActive || assetCdnModuleActive );
 
 	return {
 		assetCdnModuleActive,
