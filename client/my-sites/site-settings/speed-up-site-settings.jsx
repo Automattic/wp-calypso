@@ -16,8 +16,6 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackMinimumVersion } from 'state/sites/selectors';
-import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
-import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
@@ -25,10 +23,6 @@ import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SupportInfo from 'components/support-info';
 
 class SpeedUpSiteSettings extends Component {
-	static defaultProps = {
-		togglingSiteAccelerator: false,
-	};
-
 	static propTypes = {
 		isRequestingSettings: PropTypes.bool,
 		isSavingSettings: PropTypes.bool,
@@ -44,7 +38,6 @@ class SpeedUpSiteSettings extends Component {
 		siteAcceleratorStatus: PropTypes.bool,
 		siteAcceleratorSupported: PropTypes.bool,
 		siteSlug: PropTypes.string,
-		togglingSiteAccelerator: PropTypes.bool,
 	};
 
 	handleCdnChange = () => {
@@ -72,7 +65,6 @@ class SpeedUpSiteSettings extends Component {
 			siteAcceleratorSupported,
 			siteAcceleratorStatus,
 			translate,
-			togglingSiteAccelerator,
 		} = this.props;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
 
@@ -97,13 +89,9 @@ class SpeedUpSiteSettings extends Component {
 						<CompactFormToggle
 							checked={ siteAcceleratorStatus }
 							disabled={
-								isRequestingOrSaving ||
-								photonModuleUnavailable ||
-								! siteAcceleratorSupported ||
-								togglingSiteAccelerator
+								isRequestingOrSaving || photonModuleUnavailable || ! siteAcceleratorSupported
 							}
 							onChange={ this.handleCdnChange }
-							toggling={ togglingSiteAccelerator }
 						>
 							{ translate( 'Enable site accelerator' ) }
 						</CompactFormToggle>
@@ -112,17 +100,13 @@ class SpeedUpSiteSettings extends Component {
 								siteId={ selectedSiteId }
 								moduleSlug="photon"
 								label={ translate( 'Speed up image load times' ) }
-								disabled={
-									isRequestingOrSaving || photonModuleUnavailable || togglingSiteAccelerator
-								}
+								disabled={ isRequestingOrSaving || photonModuleUnavailable }
 							/>
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }
 								moduleSlug="photon-cdn"
 								label={ translate( 'Speed up static file load times' ) }
-								disabled={
-									isRequestingOrSaving || ! siteAcceleratorSupported || togglingSiteAccelerator
-								}
+								disabled={ isRequestingOrSaving || ! siteAcceleratorSupported }
 							/>
 						</div>
 					</FormFieldset>
@@ -165,43 +149,6 @@ export default connect( state => {
 	);
 	const photonModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon' );
 	const assetCdnModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon-cdn' );
-	const isPhotonActivating = isActivatingJetpackModule( state, selectedSiteId, 'photon' );
-	const isAssetCdnActivating = isActivatingJetpackModule( state, selectedSiteId, 'photon-cdn' );
-	const isPhotonDeactivating = isDeactivatingJetpackModule( state, selectedSiteId, 'photon' );
-	const isAssetCdnDeactivating = isDeactivatingJetpackModule( state, selectedSiteId, 'photon-cdn' );
-
-	let togglingSiteAccelerator;
-	// First Photon activating.
-	if ( isPhotonActivating ) {
-		if ( assetCdnModuleActive ) {
-			togglingSiteAccelerator = false;
-		} else {
-			togglingSiteAccelerator = true;
-		}
-		// Then Asset CDN activating.
-	} else if ( isAssetCdnActivating ) {
-		if ( photonModuleActive ) {
-			togglingSiteAccelerator = false;
-		} else {
-			togglingSiteAccelerator = true;
-		}
-		// Then Photon deactivating.
-	} else if ( isPhotonDeactivating ) {
-		if ( assetCdnModuleActive ) {
-			togglingSiteAccelerator = false;
-		} else {
-			togglingSiteAccelerator = true;
-		}
-		// Then Asset CDN deactivating.
-	} else if ( isAssetCdnDeactivating ) {
-		if ( photonModuleActive ) {
-			togglingSiteAccelerator = false;
-		} else {
-			togglingSiteAccelerator = true;
-		}
-	} else {
-		togglingSiteAccelerator = false;
-	}
 
 	// Status of the main site accelerator toggle.
 	const siteAcceleratorStatus = !! ( photonModuleActive || assetCdnModuleActive );
@@ -214,6 +161,5 @@ export default connect( state => {
 		siteAcceleratorStatus,
 		siteAcceleratorSupported,
 		siteSlug: getSiteSlug( state, selectedSiteId ),
-		togglingSiteAccelerator,
 	};
 } )( localize( SpeedUpSiteSettings ) );
