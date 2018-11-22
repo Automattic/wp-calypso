@@ -33,21 +33,27 @@
 /**
  * External dependencies
  */
-
- const { po } = require( 'gettext-parser' );
- const { merge, isEmpty } = require( 'lodash' );
- const { relative, sep } = require( 'path' );
- const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
+const { po } = require( 'gettext-parser' );
+const { merge, isEmpty } = require( 'lodash' );
+const { relative, sep } = require( 'path' );
+const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
 
 /**
  * Default output headers if none specified in plugin options.
  *
  * @type {Object}
  */
- const DEFAULT_HEADERS = {
+const DEFAULT_HEADERS = {
 	'content-type': 'text/plain; charset=UTF-8',
 	'x-generator': 'babel-plugin-i18n-calypso',
- };
+};
+
+/**
+ * Default directory to output the POT files.
+ *
+ * @type {string}
+ */
+const DEFAULT_DIR = 'build/';
 
 /**
  * Given an argument node (or recursed node), attempts to return a string
@@ -172,14 +178,14 @@ module.exports = function () {
 				if ( ! strings[ msgctxt ].hasOwnProperty( msgid ) ) {
 					strings[ msgctxt ][ msgid ] = translation;
 				} else {
-					strings[ msgctxt ][ msgid ].comments.reference = '\n' + translation.comments.reference;
+					strings[ msgctxt ][ msgid ].comments.reference += '\n' + translation.comments.reference;
 				}
 			},
 			Program: {
 				enter() {
 					strings = {};
 				},
-				exit() {
+				exit( path, state ) {
 					if ( isEmpty( strings ) ) {
 						return;
 					}
@@ -188,7 +194,7 @@ module.exports = function () {
 
 					const compiled = po.compile( data );
 
-					const dir = 'build/.i18n-calypso/';
+					const dir = state.opts.dir || DEFAULT_DIR;
 					! existsSync( dir ) && mkdirSync( dir, { recursive: true } );
 
 					const { filename } = this.file.opts;
