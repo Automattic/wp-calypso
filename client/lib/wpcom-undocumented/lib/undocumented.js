@@ -2429,7 +2429,7 @@ Undocumented.prototype.checkSiteAddressValidation = function( siteId, siteAddres
 };
 
 /**
- * Request a new .wordpress.com address for a site with the option to discard the current.
+ * Request a new .wordpress.com or .*.blog address for a site with the option to discard the current.
  *
  * @param {int} [siteId] The siteId for which to change the address
  * @param {object} [blogname]	The desired new site address
