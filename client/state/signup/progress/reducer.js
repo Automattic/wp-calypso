@@ -53,15 +53,16 @@ function processStep( state, { step } ) {
 }
 
 function removeUnneededSteps( state, { flowName } ) {
+	let flowSteps = [];
+	const user = userFactory();
+
 	flowName =
 		'onboarding' === abtest( 'improvedOnboarding' ) && 'ecommerce' === flowName
 			? flowName + '-onboarding'
 			: flowName;
+	flowSteps = get( flows, `${ flowName }.steps`, [] );
 
-	let flowSteps = get( flows, `${ flowName }.steps`, [] );
-	const user = userFactory();
-
-	if ( user.get() ) {
+	if ( user && user.get() ) {
 		flowSteps = flowSteps.filter( item => item !== 'user' );
 	}
 

@@ -156,7 +156,7 @@ const Flows = {
 			return flow;
 		}
 
-		if ( user.get() ) {
+		if ( user && user.get() ) {
 			flow = removeUserStepFromFlow( flow );
 		}
 
@@ -228,7 +228,7 @@ const Flows = {
 
 		// Remove About step in the ecommerce flow if we're in the onboarding AB test
 		if ( 'ecommerce' === flowName && 'onboarding' === abtest( 'improvedOnboarding' ) ) {
-			const afterStep = user.get() ? '' : 'user';
+			const afterStep = user && user.get() ? '' : 'user';
 
 			flow = Flows.removeStepFromFlow( 'about', flow );
 			return Flows.insertStepIntoFlow( 'site-type', flow, afterStep );
