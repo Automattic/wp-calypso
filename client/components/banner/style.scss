@@ -1,3 +1,5 @@
+/** @format */
+
 .banner.card {
 	border-left: 3px solid;
 	display: flex;
@@ -8,21 +10,21 @@
 		padding-right: 48px;
 	}
 
-	@include banner-color( $blue-wordpress );
+	@include banner-color( var( --banner-color-default ) );
 
 	&.is-upgrade-personal {
-		@include banner-color( $alert-yellow );
+		@include banner-color( var( --banner-color-personal ) );
 	}
 	&.is-upgrade-premium {
-		@include banner-color( $alert-green );
+		@include banner-color( var( --banner-color-premium ) );
 	}
 	&.is-upgrade-business {
-		@include banner-color( $alert-purple );
+		@include banner-color( var( --banner-color-business ) );
 	}
 
 	.card__link-indicator {
 		align-items: center;
-		color: $blue-wordpress;
+		color: var( --banner-color-indicator );
 		display: flex;
 	}
 
@@ -32,7 +34,7 @@
 			box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
 		}
 		.card__link-indicator {
-			color: $blue-dark;
+			color: var( --banner-color-indicator-hover );
 		}
 	}
 
@@ -60,7 +62,7 @@
 
 	.banner__icon {
 		align-self: center;
-		color: $white;
+		color: var( --banner-icon-color );
 		display: flex;
 	}
 
@@ -115,7 +117,7 @@
 	.banner__title,
 	.banner__description,
 	.banner__list {
-		color: $gray-dark;
+		color: var( --banner-list-color );
 	}
 
 	.banner__title {
@@ -135,7 +137,7 @@
 		li {
 			margin: 6px 0;
 			.gridicon {
-				color: $gray;
+				color: var( --banner-list-icon-color );
 				display: none;
 			}
 		}
@@ -169,7 +171,7 @@
 
 		.plan-price.is-discounted,
 		.plan-price.is-discounted .plan-price__currency-symbol {
-			color: $gray-dark;
+			color: var( --banner-price-discounted );
 		}
 
 		.has-call-to-action & .plan-price {

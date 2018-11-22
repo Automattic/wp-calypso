@@ -1,3 +1,5 @@
+/** @format */
+
 //default color scheme
 :root {
 	--masterbar-color: #{$white};
@@ -28,6 +30,17 @@
 	--count-color: #{$gray-text-min};
 	--current-site-switch-sites-background: #{$gray-lighten-30};
 	--profile-gravatar-user-secondary-info-color: #{$gray-darken-20};
+
+	--banner-color-default: #{$blue-wordpress};
+	--banner-color-personal: #{$alert-yellow};
+	--banner-color-premium: #{$alert-green};
+	--banner-color-business: #{$alert-purple};
+	--banner-color-indicator: #{$blue-wordpress};
+	--banner-color-indicator-hover: #{$blue-dark};
+	--banner-list-color: #{$gray-dark};
+	--banner-list-icon-color: #{$gray};
+	--banner-price-discounted: #{$gray-dark};
+	--banner-icon-color: #{$white};
 }
 
 //additional color schemes
