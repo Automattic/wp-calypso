@@ -1589,8 +1589,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_EMAIL_SUPPORT ]: {
 		getSlug: () => FEATURE_EMAIL_SUPPORT,
 		getTitle: () => i18n.translate( 'Email Support' ),
-		getDescription: () =>
-			i18n.translate( 'Email support is available in case you need help with your site.' ),
+		getDescription: () => i18n.translate( 'Email support to help you get started with your site.' ),
 	},
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
