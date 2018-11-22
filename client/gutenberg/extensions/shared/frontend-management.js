@@ -15,8 +15,9 @@ export class FrontendManagement {
 	initializeFrontendReactBlocks( component, options = {}, rootNode ) {
 		const { name, attributes } = options.settings;
 		const { selector } = options;
-		const blockClass = [ '.wp-block', name.replace( '/', '-' ) ].join( '-' );
-		rootNode.querySelectorAll( blockClass ).forEach( node => {
+		const blockClass = `.wp-block-${ name.replace( '/', '-' ) }`;
+		const blockNodes = Array.prototype.slice.apply( rootNode.querySelectorAll( blockClass ) );
+		blockNodes.forEach( node => {
 			const data = this.extractAttributesFromContainer( node, attributes );
 			assign( data, options.props );
 			const children = this.extractChildrenFromContainer( node );
