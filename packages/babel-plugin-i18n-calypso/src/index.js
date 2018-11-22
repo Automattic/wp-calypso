@@ -28,6 +28,8 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ * @format
  */
 
 /**
@@ -70,21 +72,20 @@ function getNodeAsString( node ) {
 
 	switch ( node.type ) {
 		case 'BinaryExpression':
-		return (
-			getNodeAsString( node.left ) +
-			getNodeAsString( node.right )
-			);
+			return getNodeAsString( node.left ) + getNodeAsString( node.right );
 
 		case 'StringLiteral':
-		return node.value;
+			return node.value;
 
 		default:
-		return '';
+			return '';
 	}
 }
 
-module.exports = function () {
-	let strings = {}, nplurals = 2, baseData;
+module.exports = function() {
+	let strings = {},
+		nplurals = 2,
+		baseData;
 
 	return {
 		visitor: {
@@ -104,10 +105,10 @@ module.exports = function () {
 				let i = 0;
 
 				const translation = {
-					msgid: getNodeAsString( path.node.arguments[i++] ),
+					msgid: getNodeAsString( path.node.arguments[ i++ ] ),
 					msgstr: '',
 					comments: {},
-				}
+				};
 
 				if ( ! translation.msgid.length ) {
 					return;
@@ -130,18 +131,22 @@ module.exports = function () {
 					};
 
 					for ( const key in baseData.headers ) {
-						baseData.translations[ '' ][ '' ].msgstr.push( `${ key }: ${ baseData.headers[ key ] };\n` );
+						baseData.translations[ '' ][ '' ].msgstr.push(
+							`${ key }: ${ baseData.headers[ key ] };\n`
+						);
 					}
 
 					// Attempt to exract nplurals from header
-					const pluralsMatch = ( baseData.headers[ 'plural-forms' ] || '' ).match( /nplurals\s*=\s*(\d+);/ );
+					const pluralsMatch = ( baseData.headers[ 'plural-forms' ] || '' ).match(
+						/nplurals\s*=\s*(\d+);/
+					);
 					if ( pluralsMatch ) {
 						nplurals = pluralsMatch[ 1 ];
 					}
 				}
 
 				if ( path.node.arguments.length > i ) {
-					const msgid_plural = getNodeAsString( path.node.arguments[i] );
+					const msgid_plural = getNodeAsString( path.node.arguments[ i ] );
 					if ( msgid_plural.length ) {
 						translation.msgid_plural = msgid_plural;
 						i++;
@@ -151,18 +156,24 @@ module.exports = function () {
 				}
 
 				const { filename } = this.file.opts;
-				const pathname = relative( '.', filename ).split( sep ).join( '/' );
+				const pathname = relative( '.', filename )
+					.split( sep )
+					.join( '/' );
 				translation.comments.reference = pathname + ':' + path.node.loc.start.line;
 
-				if ( path.node.arguments.length > i && 'ObjectExpression' === path.node.arguments[i].type ) {
-					for ( const j in path.node.arguments[i].properties ) {
-						if ( 'ObjectProperty' === path.node.arguments[i].properties[j].type ) {
-							switch ( path.node.arguments[i].properties[j].key.name ) {
+				if (
+					path.node.arguments.length > i &&
+					'ObjectExpression' === path.node.arguments[ i ].type
+				) {
+					for ( const j in path.node.arguments[ i ].properties ) {
+						if ( 'ObjectProperty' === path.node.arguments[ i ].properties[ j ].type ) {
+							switch ( path.node.arguments[ i ].properties[ j ].key.name ) {
 								case 'context':
-									translation.msgctxt = path.node.arguments[i].properties[j].value.value;
+									translation.msgctxt = path.node.arguments[ i ].properties[ j ].value.value;
 									break;
 								case 'comment':
-									translation.comments.extracted = path.node.arguments[i].properties[j].value.value;
+									translation.comments.extracted =
+										path.node.arguments[ i ].properties[ j ].value.value;
 									break;
 							}
 						}
@@ -198,11 +209,12 @@ module.exports = function () {
 					! existsSync( dir ) && mkdirSync( dir, { recursive: true } );
 
 					const { filename } = this.file.opts;
-					const pathname = relative( '.', filename ).split( sep ).join( '-' );
+					const pathname = relative( '.', filename )
+						.split( sep )
+						.join( '-' );
 					writeFileSync( dir + pathname + '.pot', compiled );
 				},
 			},
-		}
+		},
 	};
 };
-
