@@ -16,14 +16,15 @@ export class FrontendManagement {
 		const { name, attributes } = options.settings;
 		const { selector } = options;
 		const blockClass = `.wp-block-${ name.replace( '/', '-' ) }`;
-		const blockNodes = Array.prototype.slice.apply( rootNode.querySelectorAll( blockClass ) );
-		blockNodes.forEach( node => {
+
+		const blockNodeList = rootNode.querySelectorAll( blockClass );
+		for ( const node of blockNodeList ) {
 			const data = this.extractAttributesFromContainer( node, attributes );
 			assign( data, options.props );
 			const children = this.extractChildrenFromContainer( node );
 			const el = createElement( component, data, children );
 			render( el, selector ? node.querySelector( selector ) : node );
-		} );
+		}
 	}
 	extractAttributesFromContainer( node, attributes ) {
 		const data = {};
