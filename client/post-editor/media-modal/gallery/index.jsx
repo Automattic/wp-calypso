@@ -15,6 +15,7 @@ import { noop, assign, omitBy, some, isEqual, partial } from 'lodash';
  */
 import HeaderCake from 'components/header-cake';
 import MediaStore from 'lib/media/store';
+import EditorMediaModalContent from '../content';
 import EditorMediaModalGalleryDropZone from './drop-zone';
 import EditorMediaModalGalleryFields from './fields';
 import EditorMediaModalGalleryPreview from './preview';
@@ -139,7 +140,7 @@ class EditorMediaModalGallery extends React.Component {
 					onClick={ this.props.onReturnToList }
 					backText={ this.props.translate( 'Media Library' ) }
 				/>
-				<div className="editor-media-modal-gallery__content editor-media-modal__content">
+				<EditorMediaModalContent className="editor-media-modal-gallery__content">
 					<EditorMediaModalGalleryPreview
 						site={ site }
 						items={ items }
@@ -156,7 +157,7 @@ class EditorMediaModalGallery extends React.Component {
 							numberOfItems={ items.length }
 						/>
 					</div>
-				</div>
+				</EditorMediaModalContent>
 			</div>
 		);
 	}

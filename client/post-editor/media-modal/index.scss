@@ -89,41 +89,17 @@
 	padding: 0 24px 24px;
 }
 
-.editor-media-modal__content {
-	display: flex;
-	flex-direction: column;
-	position: absolute;
-		top: 52px;
-		right: 0;
-		bottom: 74px;
-		left: 0;
-	overflow-y: auto;
-
-	&.editor-media-modal-gallery__content {
-		margin-top: 16px;
-
-		@include breakpoint( ">660px" ) {
-			margin-top: 0;
-		}
-	}
-
-	@include breakpoint( ">660px" ) {
-		flex-direction: row;
-		top: 74px;
-		overflow-y: visible;
-	}
-}
-
 .editor-media-modal .media-library__list {
-	@extend .editor-media-modal__content;
 	display: block;
-	top: 105px;
-	right: 0;
-	left: 0;
+	position: absolute;
+		top: 105px;
+		right: 0;
+		bottom: 120px;
+		left: 0;
 	padding: 4px 16px;
 	transform: translateZ( 0 );
 	pointer-events: all;
-	bottom: 120px;
+
 	@include breakpoint( ">480px" ) {
 		bottom: 74px;
 		top: 131px;
