@@ -16,7 +16,7 @@ import { localize } from 'i18n-calypso';
 import MediaLibrary from 'my-sites/media-library';
 import QueryMedia from 'components/data/query-media';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Dialog from 'components/dialog';
+import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
 import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import getMediaItem from 'state/selectors/get-media-item';
@@ -355,9 +355,9 @@ class Media extends Component {
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				<SidebarNavigation />
 				{ this.showDialog() && (
-					<Dialog
-						isVisible={ true }
-						additionalClassNames="editor-media-modal media__item-dialog"
+					<EditorMediaModalDialog
+						isVisible
+						additionalClassNames="media__item-dialog"
 						buttons={ this.getModalButtons() }
 						onClose={ this.closeDetailsModal }
 					>
@@ -391,7 +391,7 @@ class Media extends Component {
 								onUpdatePoster={ this.onVideoEditorUpdatePoster }
 							/>
 						) }
-					</Dialog>
+					</EditorMediaModalDialog>
 				) }
 				{ site &&
 					site.ID && (

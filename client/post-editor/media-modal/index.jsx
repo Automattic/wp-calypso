@@ -33,7 +33,6 @@ import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
 import * as MediaUtils from 'lib/media/utils';
-import Dialog from 'components/dialog';
 import CloseOnEscape from 'components/close-on-escape';
 import accept from 'lib/accept';
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
@@ -45,6 +44,7 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { deleteMedia } from 'state/media/actions';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
+import MediaModalDialog from './dialog';
 import MediaModalDetail from './detail';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 
@@ -641,18 +641,17 @@ export class EditorMediaModal extends Component {
 
 	render() {
 		return (
-			<Dialog
+			<MediaModalDialog
 				isVisible={ this.props.visible }
 				buttons={ this.getModalButtons() }
 				onClose={ this.onClose }
-				additionalClassNames="editor-media-modal"
 				isBackdropVisible={ this.props.isBackdropVisible }
 				shouldCloseOnOverlayClick={ this.shouldClose() }
 				shouldCloseOnEsc={ false }
 			>
 				<CloseOnEscape onEscape={ this.onClose } />
 				{ this.renderContent() }
-			</Dialog>
+			</MediaModalDialog>
 		);
 	}
 }

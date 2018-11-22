@@ -1,0 +1,157 @@
+.editor-media-modal.dialog.card {
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	max-width: none;
+
+	@include breakpoint( ">660px" ) {
+		top: 5%;
+		bottom: 5%;
+		left: 5%;
+		right: 5%;
+		width: 90%;
+	}
+
+	@include breakpoint( ">960px" ) {
+		left: 12.5%;
+		right: 12.5%;
+		width: 75%;
+	}
+}
+
+.editor-media-modal .dialog__content {
+	position: static;
+	color: $gray-dark;
+	height: 100%;
+	padding: 0;
+}
+
+.editor-media-modal .section-nav {
+	z-index: z-index( '.dialog__backdrop', '.editor-media-modal .section-nav' );
+	@include breakpoint( ">480px" ) {
+		margin-bottom: 16px;
+	}
+}
+
+.editor-media-modal .header-cake.card {
+	@include breakpoint( "<660px" ) {
+		margin-top: 0;
+		justify-content: left;
+	}
+}
+
+.editor-media-modal .header-cake__corner {
+	@include breakpoint( "<660px" ) {
+		flex: none;
+	}
+}
+
+.editor-media-modal .media-library__content {
+	position: static;
+}
+
+.editor-media-modal .media-library__list {
+	padding: 0 16px;
+
+	@include breakpoint( ">660px" ) {
+		padding: 0 24px;
+	}
+}
+
+.editor-media-modal .media-library__header {
+	padding: 0 16px;
+
+	@include breakpoint( ">660px" ) {
+		padding: 0 24px;
+	}
+}
+
+.editor-media-modal .media-library__header:not(.media-library__upload-url) {
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+.editor-media-modal .media-library__scale-toggle,
+.editor-media-modal .media-library__scale-range.range {
+	right: 16px;
+
+	@include breakpoint( ">660px" ) {
+		right: 24px;
+	}
+}
+
+.editor-media-modal .media-library__content .no-results {
+	padding: 0 24px 24px;
+}
+
+.editor-media-modal .media-library__list {
+	display: block;
+	position: absolute;
+		top: 105px;
+		right: 0;
+		bottom: 120px;
+		left: 0;
+	padding: 4px 16px;
+	transform: translateZ( 0 );
+	pointer-events: all;
+
+	@include breakpoint( ">480px" ) {
+		bottom: 74px;
+		top: 131px;
+	}
+
+	@include breakpoint( ">660px" ) {
+		padding-left: 24px;
+		padding-right: 24px;
+		overflow-y: auto;
+		top: 122px;
+	}
+}
+
+.editor-media-modal .notice {
+	z-index: z-index( '.dialog__backdrop', '.editor-media-modal .notice' );
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 16px;
+	}
+}
+
+.editor-media-modal .media-library__upload-url-cancel {
+	padding-right: 0;
+	padding-left: 12px;
+}
+
+.editor-media-modal .empty-content {
+	position: absolute;
+		top: 50%;
+		left: 50%;
+	transform: translate( -50%, -50% );
+	padding-top: 0;
+	margin: 0;
+	width: 100%;
+}
+
+.editor-media-modal .media-library__content .empty-content__illustration {
+	@media ( max-height: 470px ) {
+		display: none;
+	}
+
+	@include breakpoint( ">660px" ) {
+		@media ( max-height: 600px ) {
+			display: none;
+		}
+	}
+}
+
+.editor-media-modal .media-library__list-item-figure {
+	background-color: $gray-light;
+	box-shadow: inset 0 0 0 1px lighten( $gray, 25% );
+}
+
+.editor-media-modal .media-library__list-item-file-name {
+	&::after {
+		@include long-content-fade( $color: $gray-light );
+	}
+}
