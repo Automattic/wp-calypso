@@ -19,6 +19,11 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import DocumentHead from 'components/data/document-head';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const Taxonomies = ( { translate, labels, postType, site, taxonomy } ) => {
 	const goBack = () => {
 		page( '/settings/writing/' + site.slug );

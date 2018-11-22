@@ -20,6 +20,11 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './wpcom.scss';
+
 class AmpWpcom extends Component {
 	static propTypes = {
 		submitForm: PropTypes.func.isRequired,

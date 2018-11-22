@@ -19,6 +19,11 @@ import Main from 'components/main';
 import SiteOwnership from './site-ownership';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ManageConnection extends Component {
 	render() {
 		const { redirect, translate } = this.props;

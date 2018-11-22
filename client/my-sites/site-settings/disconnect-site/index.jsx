@@ -23,6 +23,11 @@ import Main from 'components/main';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export const reasonComponents = {
 	'missing-feature': MissingFeature,
 	'too-difficult': TooDifficult,

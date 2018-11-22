@@ -23,6 +23,11 @@ import { getActiveTheme, getTheme } from 'state/themes/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { toggleDialog } from 'state/ui/theme-setup/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ThemeSetup extends Component {
 	componentDidUpdate( prevProps ) {
 		const { siteIsJetpack, siteId } = this.props;
