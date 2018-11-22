@@ -57,7 +57,7 @@ export const getSavedVariations = () => store.get( ABTEST_LOCALSTORAGE_KEY ) || 
 
 export const getAllTests = () => keys( activeTests ).map( ABTest );
 
-const isUserSignedIn = () => !! user && user.get() !== false;
+const isUserSignedIn = () => user && user.get() !== false;
 
 const parseDateStamp = datestamp => {
 	const date = i18n.moment( datestamp, 'YYYYMMDD' );
