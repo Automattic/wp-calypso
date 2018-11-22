@@ -207,11 +207,12 @@ export default connect(
 		};
 	},
 	( dispatch, ownProps ) => ( {
-		submitStep: ( { name, address, email, phone } ) => {
+		submitStep: ( { siteTitle, address, email, phone } ) => {
+			siteTitle = trim( siteTitle );
 			address = trim( address );
 			email = trim( email );
 			phone = trim( phone );
-			dispatch( setSiteTitle( trim( name ) ) );
+			dispatch( setSiteTitle( siteTitle ) );
 			dispatch( setSiteInformation( { address, email, phone } ) );
 
 			// Submit step
@@ -222,6 +223,7 @@ export default connect(
 				},
 				[],
 				{
+					siteTitle,
 					address,
 					email,
 					phone,

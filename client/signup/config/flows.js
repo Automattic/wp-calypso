@@ -165,8 +165,7 @@ const Flows = {
 
 		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
 
-		flow = Flows.getABTestFilteredFlow( flowName, flow );
-		return Flows.removeAboutStepFromFlow( flow );
+		return Flows.getABTestFilteredFlow( flowName, flow );
 	},
 
 	getFlows() {
@@ -233,22 +232,6 @@ const Flows = {
 
 			flow = Flows.removeStepFromFlow( 'about', flow );
 			return Flows.insertStepIntoFlow( 'site-type', flow, afterStep );
-		}
-
-		return flow;
-	},
-
-	removeAboutStepFromFlow( flow ) {
-		if ( ! flow ) {
-			return flow;
-		}
-
-		if (
-			includes( flow.steps, 'site-type' ) &&
-			includes( flow.steps, 'site-information' ) &&
-			includes( flow.steps, 'site-topic' )
-		) {
-			return Flows.removeStepFromFlow( 'about', flow );
 		}
 
 		return flow;
