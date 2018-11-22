@@ -253,6 +253,7 @@ class MapEdit extends Component {
 						admin={ true }
 						apiKey={ apiKey }
 						onSetPoints={ value => setAttributes( { points: value } ) }
+						onSetMapCenter={ value => setAttributes( { mapCenter: value } ) }
 						onMapLoaded={ () => this.setState( { addPointVisibility: true } ) }
 						onMarkerClick={ () => this.setState( { addPointVisibility: false } ) }
 						onError={ this.onError }
