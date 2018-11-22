@@ -209,8 +209,8 @@ $gutenberg-theme-toggle: #11a0d2;
 	        width: auto;
 	}
 	
-	    .is-section-gutenberg-editor input[type='text'], .is-section-gutenberg-editor input[type='search'] {
-			        width: 100%;
+.is-section-gutenberg-editor input[type='text'], .is-section-gutenberg-editor input[type='search'] {
+			width: 100%;
 	}
 
 	// MISSING CORE STYLES (TODO: Remove them once Gutenberg include the Core styles)
