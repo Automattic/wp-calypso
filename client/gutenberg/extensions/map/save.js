@@ -8,8 +8,8 @@ import { Component } from '@wordpress/element';
 
 class MapSave extends Component {
 	render() {
-		const { className, attributes } = this.props;
-		const { mapStyle, mapDetails, points, zoom, mapCenter, markerColor } = attributes;
+		const { attributes } = this.props;
+		const { align, mapStyle, mapDetails, points, zoom, mapCenter, markerColor } = attributes;
 		const pointsList = points.map( ( point, index ) => {
 			const { longitude, latitude } = point.coordinates;
 			const url = 'https://www.google.com/maps/search/?api=1&query=' + latitude + ',' + longitude;
@@ -19,10 +19,11 @@ class MapSave extends Component {
 				</li>
 			);
 		} );
+		const alignClassName = align ? `align${ align }` : null;
 		// All camelCase attribute names converted to snake_case data attributes
 		return (
 			<div
-				className={ className }
+				className={ alignClassName }
 				data-map_style={ mapStyle }
 				data-map_details={ mapDetails }
 				data-points={ JSON.stringify( points ) }
