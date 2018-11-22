@@ -18,7 +18,8 @@ export default function isEligibleForCheckoutToChecklist( state, siteId, cart ) 
 		cartItems.hasDomainMapping( cart ) ||
 		cartItems.hasDomainRegistration( cart ) ||
 		cartItems.hasTransferProduct( cart ) ||
-		! cartItems.hasPlan( cart )
+		! cartItems.hasPlan( cart ) ||
+		cartItems.hasEcommercePlan( cart )
 	) {
 		return false;
 	}

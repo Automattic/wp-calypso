@@ -36,6 +36,7 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isBundled,
+	isEcommerce,
 	isFreeTrial,
 	isFreeWordPressComDomain,
 	isGoogleApps,
@@ -263,6 +264,16 @@ export function hasFreeTrial( cart ) {
  */
 export function hasPlan( cart ) {
 	return cart && some( getAll( cart ), isPlan );
+}
+
+/**
+ * Determines whether there is an ecommerce plan in the shopping cart.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one plan, false otherwise
+ */
+export function hasEcommercePlan( cart ) {
+	return cart && some( getAll( cart ), isEcommerce );
 }
 
 /**
@@ -1114,6 +1125,7 @@ export default {
 	hasDomainInCart,
 	hasDomainMapping,
 	hasDomainRegistration,
+	hasEcommercePlan,
 	hasOnlyDomainProductsWithPrivacySupport,
 	hasFreeTrial,
 	hasGoogleApps,
