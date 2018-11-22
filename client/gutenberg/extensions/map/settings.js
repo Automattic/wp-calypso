@@ -17,6 +17,7 @@ export const settings = {
 	),
 	category: 'jetpack',
 	keywords: [ __( 'map' ), __( 'location' ) ],
+	description: __( 'Add an interactive map showing one or more locations.' ),
 	attributes: {
 		align: {
 			type: 'string',

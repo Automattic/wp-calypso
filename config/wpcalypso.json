@@ -76,7 +76,6 @@
 		"manage/export/guided-transfer": true,
 		"manage/import-in-sidebar": true,
 		"manage/import/medium": true,
-		"manage/import/site-importer": true,
 		"manage/option_sync_non_public_post_stati": true,
 		"manage/pages": true,
 		"manage/payment-methods": true,
@@ -181,6 +180,7 @@
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/store-on-non-atomic-sites": true,
+		"wordads/daily-stats": true,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",

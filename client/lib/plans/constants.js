@@ -46,7 +46,6 @@ export const PLAN_HOST_BUNDLE = 'host-bundle';
 export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
 export const PLAN_CHARGEBACK = 'chargeback';
 
-export const POPULAR_PLANS = [ PLAN_PREMIUM ];
 export const NEW_PLANS = [];
 export const BEST_VALUE_PLANS = [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
 export const JETPACK_PLANS = [
@@ -187,15 +186,13 @@ const getPlanBloggerDetails = () => ( {
 	type: TYPE_BLOGGER,
 	getTitle: () => i18n.translate( 'Blogger' ),
 	// @TODO not updating copy for now, we need to update it after the first round of design {{{
-	getAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getBlogAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getStoreAudience: () => i18n.translate( 'Best for hobbyists' ),
+	getAudience: () => i18n.translate( 'Best for bloggers' ),
+	getBlogAudience: () => i18n.translate( 'Best for bloggers' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for bloggers' ),
+	getStoreAudience: () => i18n.translate( 'Best for bloggers' ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for Personal Use:{{/strong}} Boost your' +
-				' website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Get access to high-quality email and live chat support.',
+			'{{strong}}Best for Bloggers:{{/strong}} Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and email support.',
 			{
 				components: {
 					strong: (
@@ -686,7 +683,7 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: () => [],
+		availableFor: plan => includes( [ PLAN_FREE ], plan ),
 		getProductId: () => 1011,
 		getStoreSlug: () => PLAN_ECOMMERCE,
 		getPathSlug: () => 'ecommerce',
@@ -696,9 +693,7 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		term: TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
-		availableFor: plan => {
-			return PLAN_ECOMMERCE === plan;
-		},
+		availableFor: plan => includes( [ PLAN_FREE, PLAN_ECOMMERCE ], plan ),
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
 		getPathSlug: () => 'ecommerce-2-years',
@@ -1146,11 +1141,11 @@ export const FEATURES_LIST = {
 	},
 
 	[ FEATURE_FREE_BLOG_DOMAIN ]: {
-		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
+		getSlug: () => FEATURE_FREE_BLOG_DOMAIN,
 		getTitle: () => i18n.translate( 'Free .blog Domain for One Year' ),
 		getDescription: () =>
 			i18n.translate(
-				'Get a free .blog domain for one year. Premium domains not included. Your domain will renew at its regular price.'
+				'Get a free custom .blog domain name for one year (example.blog) with this plan to use with your blog. Does not apply to premium domains. Your domain will renew at its regular price.'
 			),
 	},
 
@@ -1329,7 +1324,7 @@ export const FEATURES_LIST = {
 			}
 
 			return i18n.translate(
-				'Get a free .blog domain for one year. Premium domains not included. Your domain will renew at its regular price.'
+				'Get a free custom .blog domain for one year. Premium domains not included. Your domain will renew at its regular price.'
 			);
 		},
 	},
@@ -1883,10 +1878,6 @@ export const getPlanFeaturesObject = planFeaturesList => {
 
 export function isMonthly( plan ) {
 	return includes( JETPACK_MONTHLY_PLANS, plan );
-}
-
-export function isPopular( plan ) {
-	return includes( POPULAR_PLANS, plan );
 }
 
 export function isNew( plan ) {

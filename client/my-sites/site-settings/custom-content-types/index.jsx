@@ -24,6 +24,11 @@ import { isJetpackSite } from 'state/sites/selectors';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SupportInfo from 'components/support-info';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CustomContentTypes extends Component {
 	componentDidUpdate() {
 		const {

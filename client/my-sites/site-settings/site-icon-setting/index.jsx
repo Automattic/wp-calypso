@@ -46,6 +46,11 @@ import isPrivateSite from 'state/selectors/is-private-site';
 import isSiteSupportingImageEditor from 'state/selectors/is-site-supporting-image-editor';
 import { errorNotice } from 'state/notices/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SiteIconSetting extends Component {
 	static propTypes = {
 		translate: PropTypes.func,

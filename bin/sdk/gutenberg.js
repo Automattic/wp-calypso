@@ -4,8 +4,9 @@
  * External dependencies
  */
 const fs = require( 'fs' );
-const path = require( 'path' );
 const GenerateJsonFile = require( 'generate-json-file-webpack-plugin' );
+const path = require( 'path' );
+const { compact } = require( 'lodash' );
 
 const DIRECTORY_DEPTH = '../../'; // Relative path of the extensions to preset directory
 
@@ -84,7 +85,7 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 
 	return {
 		...baseConfig,
-		plugins: [
+		plugins: compact( [
 			...baseConfig.plugins,
 			fs.existsSync( presetPath ) &&
 				new GenerateJsonFile( {
@@ -94,10 +95,10 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 						betaBlocks: presetBetaBlocks,
 					},
 				} ),
-		],
+		] ),
 		entry: {
 			editor: editorScript,
-			'editor-beta': editorBetaScript,
+			...( editorBetaScript && { 'editor-beta': editorBetaScript } ),
 			...viewScriptEntry,
 			...viewBlocksScripts,
 		},

@@ -122,11 +122,11 @@ const UnverifiedAddress = ( {
 				</div>
 			</div>
 			<div className="address-step__actions">
-				<FormButton type="button" isPrimary={ false } onClick={ confirmAddressSuggestion }>
-					{ translate( 'Use address as entered' ) }
-				</FormButton>
 				<FormButton type="button" onClick={ editUnverifiableAddress }>
 					{ translate( 'Edit address' ) }
+				</FormButton>
+				<FormButton type="button" onClick={ confirmAddressSuggestion } borderless>
+					{ translate( 'Use address as entered' ) }
 				</FormButton>
 			</div>
 		</div>

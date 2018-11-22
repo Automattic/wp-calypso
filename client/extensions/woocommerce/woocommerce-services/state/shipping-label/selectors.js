@@ -182,25 +182,17 @@ export const isCustomsFormRequired = createSelector(
 	( state, orderId, siteId = getSelectedSiteId( state ) ) => [ getForm( state, orderId, siteId ) ]
 );
 
-const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = false ) => {
-	const {
-		values,
-		isNormalized,
-		isUnverifiable,
-		normalized: normalizedValues,
-		ignoreValidation,
-		fieldErrors,
-	} = addressData;
-	if ( ( isNormalized || isUnverifiable ) && ! normalizedValues && fieldErrors ) {
-		return fieldErrors;
-	} else if ( isNormalized && ! normalizedValues ) {
-		// If the address is normalized but the server didn't return a normalized address, then it's
-		// invalid and must register as an error
-		return {
-			address: translate( 'This address is not recognized. Please try another.' ),
-		};
-	}
-
+/**
+ * Generates an object with errors for all fields within an address.
+ *
+ * @param {Object}  appState            Local Redux state.
+ * @param {Object}  addressData         Address to check, including normalization state and values.
+ * @param {number}  siteId              The ID of the current site ID.
+ * @param {boolean} shouldValidatePhone An indiator whether phone validation is required.
+ * @return {Object}                     A hash of errors with field names as keys.
+ */
+const getRawAddressErrors = ( appState, addressData, siteId, shouldValidatePhone ) => {
+	const { values } = addressData;
 	const { phone, postcode, state, country } = getAddressValues( addressData );
 	const requiredFields = [ 'name', 'address', 'city', 'postcode', 'country' ];
 	const errors = {};
@@ -242,6 +234,29 @@ const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = 
 			);
 		}
 	}
+
+	return errors;
+};
+
+const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = false ) => {
+	const {
+		isNormalized,
+		isUnverifiable,
+		normalized: normalizedValues,
+		ignoreValidation,
+		fieldErrors,
+	} = addressData;
+	if ( ( isNormalized || isUnverifiable ) && ! normalizedValues && fieldErrors ) {
+		return fieldErrors;
+	} else if ( isNormalized && ! normalizedValues ) {
+		// If the address is normalized but the server didn't return a normalized address, then it's
+		// invalid and must register as an error
+		return {
+			address: translate( 'This address is not recognized. Please try another.' ),
+		};
+	}
+
+	const errors = getRawAddressErrors( appState, addressData, siteId, shouldValidatePhone );
 
 	if ( ignoreValidation ) {
 		Object.keys( errors ).forEach( field => {
@@ -446,6 +461,29 @@ export const getFormErrors = createSelector(
 	},
 	( state, orderId, siteId = getSelectedSiteId( state ) ) => [
 		getShippingLabel( state, orderId, siteId ),
+	]
+);
+
+/**
+ * Checks whether an address has enough data to be forcefully saved
+ * without normalization/verification.
+ *
+ * @param {Object} appState The local Redux state.
+ * @param {number} orderId  ID of the order that the label belongs to.
+ * @param {number} siteId   The ID of the site that is being currently modified.
+ * @return {boolean}
+ */
+export const isAddressUsable = createSelector(
+	( appState, orderId, group, siteId = getSelectedSiteId( appState ) ) => {
+		const { form } = getShippingLabel( appState, orderId, siteId );
+
+		const validatePhone = 'origin' === group && isCustomsFormRequired( appState, orderId, siteId );
+		const errors = getRawAddressErrors( appState, form[ group ], siteId, validatePhone );
+
+		return 0 === Object.keys( errors ).length;
+	},
+	( state, orderId, group, siteId = getSelectedSiteId( state ) ) => [
+		getShippingLabel( state, orderId, siteId ).form[ group ],
 	]
 );
 
