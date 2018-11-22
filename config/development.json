@@ -99,7 +99,6 @@
 		"manage/edit-user": true,
 		"manage/export/guided-transfer": true,
 		"manage/import/medium": true,
-		"manage/import/site-importer": true,
 		"manage/import-in-sidebar": true,
 		"manage/option_sync_non_public_post_stati": true,
 		"manage/pages": true,
