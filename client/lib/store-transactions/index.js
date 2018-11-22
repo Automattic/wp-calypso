@@ -94,7 +94,8 @@ TransactionFlow.prototype._paymentHandlers = {
 	WPCOM_Billing_MoneyPress_Paygate: function() {
 		const { newCardDetails } = this._initialData.payment,
 			{ successUrl, cancelUrl } = this._initialData,
-			validation = validatePaymentDetails( newCardDetails );
+			paymentType = newCardDetails.tokenized_payment_data ? 'token' : undefined,
+			validation = validatePaymentDetails( newCardDetails, paymentType );
 
 		if ( ! isEmpty( validation.errors ) ) {
 			this._pushStep( {
@@ -293,6 +294,17 @@ function createEbanxToken( requestType, cardDetails, callback ) {
 }
 
 function getPaygateParameters( cardDetails ) {
+	if ( cardDetails.tokenized_payment_data ) {
+		return {
+			token: {
+				name: cardDetails.name,
+				zip: cardDetails[ 'postal-code' ],
+				country: cardDetails.country,
+				...cardDetails.tokenized_payment_data,
+			},
+		};
+	}
+
 	return {
 		name: cardDetails.name,
 		number: cardDetails.number,

@@ -26,20 +26,12 @@ import PublicizeConnection from './connection';
 import PublicizeSettingsButton from './settings-button';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
+export const MAXIMUM_MESSAGE_LENGTH = 256;
+
 class PublicizeFormUnwrapped extends Component {
-	constructor( props ) {
-		super( props );
-		const { initializePublicize, staticConnections } = this.props;
-		const initialTitle = '';
-		// Connection data format must match 'publicize' REST field.
-		const initialActiveConnections = staticConnections.map( c => {
-			return {
-				unique_id: c.unique_id,
-				should_share: c.enabled,
-			};
-		} );
-		initializePublicize( initialTitle, initialActiveConnections );
-	}
+	state = {
+		hasEditedShareMessage: false,
+	};
 
 	/**
 	 * Check to see if form should be disabled.
@@ -50,42 +42,28 @@ class PublicizeFormUnwrapped extends Component {
 	 * @return {boolean} True if whole form should be disabled.
 	 */
 	isDisabled() {
-		const { staticConnections } = this.props;
+		const { connections } = this.props;
 		// Check to see if at least one connection is not disabled
-		const formEnabled = staticConnections.some( c => ! c.disabled );
+		const formEnabled = connections.some( connection => ! connection.disabled );
 		return ! formEnabled;
 	}
 
-	/**
-	 * Checks if a connection is turned on/off.
-	 *
-	 * Looks up connection by ID in activeConnections prop which is
-	 * an array of objects with properties 'unique_id' and 'should_share';
-	 * looks for an array entry with a 'unique_id' property that matches
-	 * the parameter value. If found, the connection 'should_share' value
-	 * is returned.
-	 *
-	 * @param {string} uniqueId Connection ID.
-	 * @return {boolean} True if the connection is currently switched on.
-	 */
-	isConnectionOn( uniqueId ) {
-		const { activeConnections } = this.props;
-		const matchingConnection = activeConnections.find( c => uniqueId === c.unique_id );
-		if ( ! matchingConnection ) {
-			return false;
-		}
-		return matchingConnection.should_share;
+	getShareMessage() {
+		const { shareMessage, defaultShareMessage } = this.props;
+		return ! this.state.hasEditedShareMessage && shareMessage === ''
+			? defaultShareMessage
+			: shareMessage;
 	}
 
+	onMessageChange = event => {
+		const { messageChange } = this.props;
+		this.setState( { hasEditedShareMessage: true } );
+		messageChange( event );
+	};
+
 	render() {
-		const {
-			staticConnections,
-			connectionChange,
-			messageChange,
-			shareMessage,
-			refreshCallback,
-		} = this.props;
-		const MAXIMUM_MESSAGE_LENGTH = 256;
+		const { connections, toggleConnection, refreshCallback, shareMessage } = this.props;
+
 		const charactersRemaining = MAXIMUM_MESSAGE_LENGTH - shareMessage.length;
 		const characterCountClass = classnames( 'jetpack-publicize-character-count', {
 			'wpas-twitter-length-limit': charactersRemaining <= 0,
@@ -94,12 +72,15 @@ class PublicizeFormUnwrapped extends Component {
 		return (
 			<div id="publicize-form">
 				<ul>
-					{ staticConnections.map( c => (
+					{ connections.map( ( { display_name, enabled, id, service_name, toggleable } ) => (
 						<PublicizeConnection
-							connectionData={ c }
-							key={ c.unique_id }
-							connectionOn={ this.isConnectionOn( c.unique_id ) }
-							connectionChange={ connectionChange }
+							disabled={ ! toggleable }
+							enabled={ enabled }
+							key={ id }
+							id={ id }
+							label={ display_name }
+							name={ service_name }
+							toggleConnection={ toggleConnection }
 						/>
 					) ) }
 				</ul>
@@ -109,11 +90,14 @@ class PublicizeFormUnwrapped extends Component {
 				</label>
 				<div className="jetpack-publicize-message-box">
 					<textarea
-						value={ shareMessage }
-						onChange={ messageChange }
-						placeholder={ __( 'Publicize + Gutenberg :)' ) }
+						value={ this.getShareMessage() }
+						onChange={ this.onMessageChange }
 						disabled={ this.isDisabled() }
 						maxLength={ MAXIMUM_MESSAGE_LENGTH }
+						placeholder={ __(
+							"Write a message for your audience here. If you leave this blank, we'll use the post title as the message."
+						) }
+						rows={ 4 }
 					/>
 					<div className={ characterCountClass }>
 						{ sprintf(

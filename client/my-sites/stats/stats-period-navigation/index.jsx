@@ -23,14 +23,20 @@ class StatsPeriodNavigation extends PureComponent {
 	static propTypes = {
 		onPeriodChange: PropTypes.func,
 		hidePreviousArrow: PropTypes.bool,
+		hideNextArrow: PropTypes.bool,
 		isRtl: PropTypes.bool,
 		queryParams: PropTypes.object,
+		startDate: PropTypes.bool,
+		endDate: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		hidePreviousArrow: false,
+		hideNextArrow: false,
 		isRtl: false,
 		queryParams: {},
+		startDate: false,
+		endDate: false,
 	};
 
 	handleClickNext = () => {
@@ -62,6 +68,7 @@ class StatsPeriodNavigation extends PureComponent {
 			period,
 			url,
 			hidePreviousArrow,
+			hideNextArrow,
 			isRtl,
 			queryParams,
 		} = this.props;
@@ -95,20 +102,17 @@ class StatsPeriodNavigation extends PureComponent {
 					</a>
 				}
 				<div className="stats-period-navigation__children">{ children }</div>
-				{ ! isToday && (
+				{
 					<a
-						className="stats-period-navigation__next"
+						className={ classNames( 'stats-period-navigation__next', {
+							'is-disabled': hideNextArrow || isToday,
+						} ) }
 						href={ `${ url }${ nextDayQuery }` }
 						onClick={ this.handleClickNext }
 					>
 						<Gridicon icon={ isRtl ? 'arrow-left' : 'arrow-right' } size={ 18 } />
 					</a>
-				) }
-				{ isToday && (
-					<span className="stats-period-navigation__next is-disabled">
-						<Gridicon icon="arrow-right" size={ 18 } />
-					</span>
-				) }
+				}
 			</div>
 		);
 	}

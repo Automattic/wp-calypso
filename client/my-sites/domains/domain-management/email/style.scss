@@ -154,7 +154,7 @@
 	text-align: center;
 }
 
-.domain-management-email {
+.email {
 	.is-placeholder {
 		.section-header__label {
 			@include placeholder();
@@ -229,7 +229,7 @@
 	}
 }
 
-.domain-management-email {
+.email {
 	.empty-content__illustration {
 		width: 250px;
 		height: auto;

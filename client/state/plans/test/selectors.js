@@ -12,6 +12,7 @@ jest.mock( 'lib/plans/constants', () => ( {
 	TYPE_PERSONAL: 'TYPE_PERSONAL',
 	TYPE_PREMIUM: 'TYPE_PREMIUM',
 	TYPE_BUSINESS: 'TYPE_BUSINESS',
+	TYPE_ECOMMERCE: 'TYPE_ECOMMERCE',
 
 	PLANS_LIST: {
 		jetpack_premium_monthly: {

@@ -4,7 +4,7 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { find, get, identity } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -43,6 +43,7 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isDotComPlan,
+	isEcommerce,
 	isGoogleApps,
 	isGuidedTransfer,
 	isJetpackPlan,
@@ -58,9 +59,17 @@ import Main from 'components/main';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import BusinessPlanDetails from './business-plan-details';
+import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
+import TransferPending from './transfer-pending';
 import PurchaseDetail from 'components/purchase-detail';
-import { planMatches, getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
+import {
+	getFeatureByKey,
+	isJetpackBusinessPlan,
+	isWpComBusinessPlan,
+	isWpComEcommercePlan,
+	shouldFetchSitePlans,
+} from 'lib/plans';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
@@ -73,10 +82,10 @@ import {
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
-import { GROUP_WPCOM, GROUP_JETPACK, TYPE_BUSINESS } from 'lib/plans/constants';
-
-import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { fetchAtomicTransfer } from 'state/atomic-transfer/actions';
+import { transferStates } from 'state/atomic-transfer/constants';
+import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
+import isFetchingTransfer from 'state/selectors/is-fetching-atomic-transfer';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
@@ -101,10 +110,16 @@ export class CheckoutThankYou extends React.Component {
 	static propTypes = {
 		domainOnlySiteFlow: PropTypes.bool.isRequired,
 		failedPurchases: PropTypes.array,
+		isFetchingTransfer: PropTypes.bool,
 		receiptId: PropTypes.number,
 		gsuiteReceiptId: PropTypes.number,
 		selectedFeature: PropTypes.string,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		transferComplete: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		fetchAtomicTransfer: identity,
 	};
 
 	componentDidMount() {
@@ -118,6 +133,10 @@ export class CheckoutThankYou extends React.Component {
 			selectedSite,
 			sitePlans,
 		} = this.props;
+
+		if ( selectedSite && ! this.props.isFetchingTransfer ) {
+			this.props.fetchAtomicTransfer( selectedSite );
+		}
 
 		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
 			this.props.refreshSitePlans( selectedSite );
@@ -143,7 +162,7 @@ export class CheckoutThankYou extends React.Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
 
 		if (
@@ -247,8 +266,7 @@ export class CheckoutThankYou extends React.Component {
 	};
 
 	isEligibleForLiveChat = () => {
-		const { planSlug } = this.props;
-		return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_JETPACK } );
+		return isJetpackBusinessPlan( this.props.planSlug );
 	};
 
 	isNewUser = () => {
@@ -332,10 +350,7 @@ export class CheckoutThankYou extends React.Component {
 		if (
 			this.props.selectedSite &&
 			isRebrandCitiesSiteUrl( this.props.selectedSite.slug ) &&
-			planMatches( this.props.selectedSite.plan.product_slug, {
-				type: TYPE_BUSINESS,
-				group: GROUP_WPCOM,
-			} )
+			isWpComBusinessPlan( this.props.selectedSite.plan.product_slug )
 		) {
 			return (
 				<RebrandCitiesThankYou
@@ -345,9 +360,13 @@ export class CheckoutThankYou extends React.Component {
 			);
 		}
 
-		const { hasPendingAT, isAtomicSite } = this.props;
+		if ( isWpComEcommercePlan( this.props.planSlug ) ) {
+			if ( ! this.props.transferComplete ) {
+				return (
+					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
+				);
+			}
 
-		if ( wasDotcomPlanPurchased && ( hasPendingAT || isAtomicSite ) ) {
 			return (
 				<Main className="checkout-thank-you">
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
@@ -465,6 +484,8 @@ export class CheckoutThankYou extends React.Component {
 				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
 			} else if ( purchases.some( isBusiness ) ) {
 				return [ BusinessPlanDetails, find( purchases, isBusiness ) ];
+			} else if ( purchases.some( isEcommerce ) ) {
+				return [ EcommercePlanDetails, find( purchases, isEcommerce ) ];
 			} else if ( purchases.some( isDomainRegistration ) ) {
 				return [
 					DomainRegistrationDetails,
@@ -563,14 +584,16 @@ export default connect(
 		const planSlug = getSitePlanSlug( state, siteId );
 
 		return {
+			isFetchingTransfer: isFetchingTransfer( state, siteId ),
 			planSlug,
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
-			hasPendingAT: hasSitePendingAutomatedTransfer( state, siteId ),
-			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			transferComplete:
+				transferStates.COMPLETED ===
+				get( getAtomicTransfer( state, siteId ), 'status', transferStates.PENDING ),
 		};
 	},
 	dispatch => {
@@ -589,6 +612,9 @@ export default connect(
 			},
 			recordStartTransferClickInThankYou( domain ) {
 				dispatch( recordStartTransferClickInThankYou( domain ) );
+			},
+			fetchAtomicTransfer( site ) {
+				dispatch( fetchAtomicTransfer( site.ID ) );
 			},
 		};
 	}

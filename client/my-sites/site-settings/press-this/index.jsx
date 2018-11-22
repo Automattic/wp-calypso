@@ -18,6 +18,11 @@ import PressThisLink from './link';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PressThis extends Component {
 	static propTypes = {
 		translate: PropTypes.func,

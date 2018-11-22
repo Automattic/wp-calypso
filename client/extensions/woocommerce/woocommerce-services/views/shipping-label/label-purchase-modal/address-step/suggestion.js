@@ -12,12 +12,11 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
+import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
 import AddressSummary from './summary';
-import StepConfirmationButton from '../step-confirmation-button';
 
 const RadioButton = props => {
 	return (
@@ -57,9 +56,6 @@ const AddressSuggestion = ( {
 				>
 					<span className="address-step__suggestion-title">{ translate( 'Address entered' ) }</span>
 					<AddressSummary values={ values } countryNames={ countryNames } />
-					<Button borderless className="address-step__suggestion-edit" onClick={ editAddress }>
-						{ translate( 'Edit address' ) }
-					</Button>
 				</RadioButton>
 				<RadioButton
 					checked={ selectNormalized }
@@ -75,9 +71,15 @@ const AddressSuggestion = ( {
 					/>
 				</RadioButton>
 			</div>
-			<StepConfirmationButton onClick={ confirmAddressSuggestion }>
-				{ translate( 'Use selected address' ) }
-			</StepConfirmationButton>
+
+			<div className="address-step__actions">
+				<FormButton type="button" onClick={ confirmAddressSuggestion }>
+					{ translate( 'Use selected address' ) }
+				</FormButton>
+				<FormButton type="button" onClick={ editAddress } borderless>
+					{ translate( 'Edit address' ) }
+				</FormButton>
+			</div>
 		</div>
 	);
 };

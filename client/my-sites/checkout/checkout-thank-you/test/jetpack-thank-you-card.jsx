@@ -30,6 +30,8 @@ import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
@@ -74,6 +76,8 @@ describe( 'JetpackThankYouCard.isEligibleForLiveChat()', () => {
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
 	].forEach( plan => {
 		test( 'Should return false for all non-jetpack or non-paid plans', () => {
 			const instance = new JetpackThankYouCard( {

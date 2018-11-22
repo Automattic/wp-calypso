@@ -41,6 +41,12 @@ import Spinner from 'components/spinner';
  * Debug
  */
 import debugModule from 'debug';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const debug = debugModule( 'calypso:podcast-image' );
 
 class PodcastCoverImageSetting extends PureComponent {

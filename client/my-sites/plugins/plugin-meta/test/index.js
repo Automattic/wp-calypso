@@ -47,8 +47,14 @@ jest.mock( 'i18n-calypso', () => ( {
  */
 import { shallow } from 'enzyme';
 import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { PluginMeta } from '../';
 import {
 	PLAN_FREE,
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_ECOMMERCE,
@@ -59,11 +65,6 @@ import {
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
 } from 'lib/plans/constants';
-
-/**
- * Internal dependencies
- */
-import { PluginMeta } from '../';
 
 const selectedSite = {
 	plan: {
@@ -119,6 +120,17 @@ describe( 'PluginMeta basic tests', () => {
 			<PluginMeta
 				{ ...props }
 				selectedSite={ { ...selectedSite, plan: { product_slug: PLAN_BUSINESS } } }
+			/>
+		);
+		expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ) ).toHaveLength(
+			0
+		);
+	} );
+	test( 'should not show upgrade nudge has monthly business plan', () => {
+		const comp = shallow(
+			<PluginMeta
+				{ ...props }
+				selectedSite={ { ...selectedSite, plan: { product_slug: PLAN_BUSINESS_MONTHLY } } }
 			/>
 		);
 		expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ) ).toHaveLength(

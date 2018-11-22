@@ -31,6 +31,11 @@ import ClipboardButtonInput from 'components/clipboard-button-input';
 import PressThis from '../press-this';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PublishingTools extends Component {
 	componentDidUpdate() {
 		const {

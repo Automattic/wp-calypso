@@ -9,6 +9,7 @@ import { expect } from 'chai';
  */
 import { planLevelsMatch } from '..';
 import {
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_FREE,
@@ -36,6 +37,7 @@ describe( 'planLevelsMatch', () => {
 
 	test( 'should return true for identical plans', () => {
 		const identicalPlans = [
+			[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS_MONTHLY ],
 			[ PLAN_BUSINESS, PLAN_BUSINESS ],
 			[ PLAN_BUSINESS_2_YEARS, PLAN_BUSINESS_2_YEARS ],
 			[ PLAN_FREE, PLAN_FREE ],
@@ -58,6 +60,7 @@ describe( 'planLevelsMatch', () => {
 
 	test( 'should return true for matching plans', () => {
 		const matchingPlans = [
+			[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS ],
 			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ],
 			[ PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ],
 			[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ],
@@ -70,6 +73,7 @@ describe( 'planLevelsMatch', () => {
 			[ PLAN_JETPACK_BUSINESS, PLAN_BUSINESS ],
 			[ PLAN_JETPACK_BUSINESS, PLAN_BUSINESS_2_YEARS ],
 			[ PLAN_JETPACK_BUSINESS, PLAN_FREE ],
+			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_BUSINESS_MONTHLY ],
 			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PERSONAL_MONTHLY ],
 			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PREMIUM_MONTHLY ],
 			[ PLAN_JETPACK_BUSINESS, PLAN_PERSONAL ],

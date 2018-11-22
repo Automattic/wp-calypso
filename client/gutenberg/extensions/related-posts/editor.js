@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import includes from 'lodash/includes';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,9 +12,11 @@ import './style.scss';
 import edit from './edit';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { ALIGNMENT_OPTIONS, MAX_POSTS_TO_SHOW } from './constants';
-import JetpackBlockType from 'gutenberg/extensions/presets/jetpack/utils/jetpack-block-type';
+import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
 
-const RelatedPostsBlock = new JetpackBlockType( 'related-posts', {
+export const name = 'related-posts';
+
+export const settings = {
 	title: __( 'Related Posts' ),
 
 	icon: (
@@ -87,6 +89,6 @@ const RelatedPostsBlock = new JetpackBlockType( 'related-posts', {
 	edit,
 
 	save: () => null,
-} );
+};
 
-RelatedPostsBlock.register();
+registerJetpackBlock( name, settings );

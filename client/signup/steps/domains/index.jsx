@@ -282,10 +282,6 @@ class DomainsStep extends React.Component {
 		} );
 	};
 
-	isDomainForAtomicSite = () => {
-		return 'store' === this.getDesignType();
-	};
-
 	getDesignType = () => {
 		if ( this.props.forceDesignType ) {
 			return this.props.forceDesignType;
@@ -305,7 +301,9 @@ class DomainsStep extends React.Component {
 		return (
 			// 'subdomain' flow coming from .blog landing pages
 			flowName === 'subdomain' ||
-			// User picked only 'share' on the `about` step
+			// 'blog' flow, starting with blog themes
+			flowName === 'blog' ||
+			// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
 			( ! this.props.isDomainOnly &&
 				siteGoalsArray.length === 1 &&
 				siteGoalsArray.indexOf( 'share' ) !== -1 )
@@ -349,7 +347,7 @@ class DomainsStep extends React.Component {
 				isDomainOnly={ this.props.isDomainOnly }
 				analyticsSection={ this.getAnalyticsSection() }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom={ ! this.props.isDomainOnly && ! this.isDomainForAtomicSite() }
+				includeWordPressDotCom={ ! this.props.isDomainOnly }
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions
@@ -357,6 +355,7 @@ class DomainsStep extends React.Component {
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ abtest( 'krackenRebootM33' ) }
+				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 			/>
 		);
 	};

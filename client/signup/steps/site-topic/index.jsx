@@ -15,10 +15,13 @@ import Button from 'components/button';
 import Card from 'components/card';
 import StepWrapper from 'signup/step-wrapper';
 import FormLabel from 'components/forms/form-label';
+import InfoPopover from 'components/info-popover';
 import FormFieldset from 'components/forms/form-fieldset';
 import SuggestionSearch from 'components/suggestion-search';
 import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
-import getSignupStepsSiteTopic from 'state/selectors/get-signup-steps-site-topic';
+import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
 import { hints } from 'lib/signup/hint-data';
 
@@ -31,6 +34,7 @@ class SiteTopicStep extends Component {
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		siteTopic: PropTypes.string,
+		siteType: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -40,6 +44,12 @@ class SiteTopicStep extends Component {
 		this.state = {
 			siteTopicValue: props.siteTopic || '',
 		};
+	}
+
+	componentDidMount() {
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+		} );
 	}
 
 	onSiteTopicChange = value => {
@@ -54,36 +64,71 @@ class SiteTopicStep extends Component {
 
 	trimedSiteTopicValue = () => this.state.siteTopicValue.trim();
 
-	renderContent() {
+	renderContent( topicLabel, placeholder ) {
 		const { translate } = this.props;
+		const currentSiteTopic = this.trimedSiteTopicValue();
 
 		return (
 			<Card className="site-topic__content">
 				<form onSubmit={ this.onSubmit }>
 					<FormFieldset>
-						<FormLabel htmlFor="siteTopic">{ translate( 'Type of Business' ) }</FormLabel>
+						<FormLabel htmlFor="siteTopic">
+							{ topicLabel }
+							<InfoPopover className="site-topic__info-popover" position="top">
+								{ translate( "We'll use this to personalize your site and experience." ) }
+							</InfoPopover>
+						</FormLabel>
 						<SuggestionSearch
 							id="siteTopic"
-							placeholder={ translate( 'e.g. Fashion, travel, design, plumber, electrician' ) }
+							placeholder={ placeholder }
 							onChange={ this.onSiteTopicChange }
 							suggestions={ Object.values( hints ) }
+							value={ currentSiteTopic }
 						/>
 					</FormFieldset>
-					<Button type="submit" disabled={ ! this.trimedSiteTopicValue() } primary>
-						{ translate( 'Continue' ) }
-					</Button>
-					<span className="site-topic__form-description">
-						{ translate( 'Search above to continue' ) }
-					</span>
+					<div className="site-topic__submit-wrapper">
+						<Button type="submit" disabled={ ! currentSiteTopic } primary>
+							{ translate( 'Continue' ) }
+						</Button>
+					</div>
 				</form>
 			</Card>
 		);
 	}
 
+	getTextFromSiteType() {
+		const packText = ( headerText, subHeaderText, topicLabel, placeholder ) => ( {
+			headerText,
+			subHeaderText,
+			topicLabel,
+			placeholder,
+		} );
+		const { siteType, translate } = this.props;
+
+		// once we have more granular copies per segments, these two should only be used for the default case.
+		const commonPlaceholder = translate( 'e.g. Fashion, travel, design, plumber, electrician' );
+		const commonSubHeaderText = translate( "Don't stress, you can change this later." );
+
+		switch ( siteType ) {
+			case 'Business':
+				return packText(
+					translate( 'Search for your type of business.' ),
+					commonSubHeaderText,
+					translate( 'Type of Business' ),
+					commonPlaceholder
+				);
+			default:
+				return packText(
+					translate( 'What will your site be about?' ),
+					commonSubHeaderText,
+					translate( 'Type of Site' ),
+					commonPlaceholder
+				);
+		}
+	}
+
 	render() {
-		const { translate } = this.props;
-		const headerText = translate( 'Search for your type of business.' );
-		const subHeaderText = translate( "Don't stress, you can change this later." );
+		const { headerText, subHeaderText, topicLabel, placeholder } = this.getTextFromSiteType();
 
 		return (
 			<div>
@@ -92,10 +137,11 @@ class SiteTopicStep extends Component {
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
 					headerText={ headerText }
+					fallbackHeaderText={ headerText }
 					subHeaderText={ subHeaderText }
+					fallbackSubHeaderText={ subHeaderText }
 					signupProgress={ this.props.signupProgress }
-					stepContent={ this.renderContent() }
-					goToNextStep={ this.skipStep }
+					stepContent={ this.renderContent( topicLabel, placeholder ) }
 				/>
 			</div>
 		);
@@ -103,10 +149,15 @@ class SiteTopicStep extends Component {
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteTopic: siteTopicValue => {
+	submitSiteTopic: siteTopic => {
 		const { translate, flowName, stepName, goToNextStep } = ownProps;
 
-		dispatch( setSiteTopic( siteTopicValue ) );
+		dispatch( setSiteTopic( siteTopic ) );
+		dispatch(
+			recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
+				value: siteTopic,
+			} )
+		);
 
 		SignupActions.submitSignupStep(
 			{
@@ -115,7 +166,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 			},
 			[],
 			{
-				siteTopic: siteTopicValue,
+				siteTopic,
 			}
 		);
 
@@ -127,6 +178,7 @@ export default localize(
 	connect(
 		state => ( {
 			siteTopic: getSignupStepsSiteTopic( state ),
+			siteType: getSiteType( state ),
 		} ),
 		mapDispatchToProps
 	)( SiteTopicStep )

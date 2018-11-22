@@ -7,6 +7,8 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import {
 	PLAN_FREE,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -176,6 +178,7 @@ describe( 'CheckoutThankYou', () => {
 					purchases: [ [], [] ],
 				},
 			},
+			planSlug: PLAN_ECOMMERCE,
 		};
 
 		afterAll( () => {
@@ -183,22 +186,13 @@ describe( 'CheckoutThankYou', () => {
 		} );
 
 		test( 'Should be there for AT', () => {
-			productValues.isDotComPlan.mockImplementation( () => true );
-			let comp;
-			comp = shallow( <CheckoutThankYou { ...props } isAtomicSite={ true } /> );
-			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 1 );
-
-			comp = shallow( <CheckoutThankYou { ...props } hasPendingAT={ true } /> );
+			const comp = shallow( <CheckoutThankYou { ...props } transferComplete={ true } /> );
 			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'Should not be there for AT', () => {
-			productValues.isDotComPlan.mockImplementation( () => false );
 			let comp;
-			comp = shallow( <CheckoutThankYou { ...props } isAtomicSite={ true } /> );
-			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 0 );
-
-			comp = shallow( <CheckoutThankYou { ...props } hasPendingAT={ true } /> );
+			comp = shallow( <CheckoutThankYou { ...props } transferComplete={ false } /> );
 			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 0 );
 
 			productValues.isDotComPlan.mockImplementation( () => true );
@@ -230,6 +224,8 @@ describe( 'CheckoutThankYou', () => {
 			PLAN_JETPACK_PREMIUM_MONTHLY,
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
+			PLAN_ECOMMERCE,
+			PLAN_ECOMMERCE_2_YEARS,
 		].forEach( planSlug => {
 			test( `Should return false for all other plans (${ planSlug })`, () => {
 				const instance = new CheckoutThankYou( { planSlug } );

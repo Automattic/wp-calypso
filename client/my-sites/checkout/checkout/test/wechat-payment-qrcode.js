@@ -13,24 +13,11 @@ import QRCode from 'qrcode.react';
 /**
  * Internal dependencies
  */
+import page from 'page';
 import { WechatPaymentQRCode } from '../wechat-payment-qrcode';
 import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Component => props => <Component { ...props } translate={ x => x } />,
-	translate: x => x,
-} ) );
-
 jest.mock( 'page', () => jest.fn() );
-
-import page from 'page';
-
-jest.mock( 'components/data/query-order-transaction', () => {
-	const react = require( 'react' );
-	return class QueryOrderTransaction extends react.Component {};
-} );
-
-import QueryOrderTransaction from 'components/data/query-order-transaction';
 
 const defaultProps = {
 	orderId: 1,
@@ -42,6 +29,7 @@ const defaultProps = {
 	transactionStatus: null,
 	transactionError: null,
 	reset: jest.fn(),
+	translate: x => x,
 };
 
 describe( 'WechatPaymentQRCode', () => {
@@ -51,8 +39,10 @@ describe( 'WechatPaymentQRCode', () => {
 		expect( wrapper.find( '.checkout__wechat-qrcode-spinner' ) ).toHaveLength( 1 );
 		expect( wrapper.find( '.checkout__wechat-qrcode-redirect' ) ).toHaveLength( 1 );
 		expect( wrapper.find( '.checkout__wechat-qrcode' ) ).toHaveLength( 1 );
-		expect( wrapper.contains( <QRCode value={ defaultProps.redirect_url } /> ) );
-		expect( wrapper.contains( <QueryOrderTransaction /> ) );
+		expect( wrapper.find( 'Connect(QueryOrderTransaction)' ) ).toHaveLength( 1 );
+		expect(
+			wrapper.containsMatchingElement( <QRCode value={ defaultProps.redirect_url } /> )
+		).toBe( true );
 	} );
 
 	test( 'transaction success triggers page change', () => {

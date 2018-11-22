@@ -49,13 +49,12 @@
 	}
 
 	.simple-payments__field-multiple {
-		.components-base-control__field {
-			align-items: center;
-			justify-content: flex-start;
+		.components-toggle-control__label {
+			line-height: 1.4em;
 		}
-		.components-form-toggle {
-			margin-left: 10px;
-			order: 1;
-		}
+	}
+
+	.simple-payments__field-content .components-textarea-control__input {
+		min-height: 32px;
 	}
 }

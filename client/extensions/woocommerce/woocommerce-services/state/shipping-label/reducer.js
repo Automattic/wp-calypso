@@ -304,7 +304,12 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_ADDRESS_SUGGESTION ] = (
 	const groupState = {
 		...state.form[ group ],
 		expanded: false,
+
+		// No matter whether the suggestion is being used or not,
+		// after this action the address must be marked as normalized.
+		isNormalized: true,
 	};
+
 	if ( groupState.selectNormalized ) {
 		groupState.values = groupState.normalized;
 	} else {

@@ -51,6 +51,11 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { isRequestingTermsForQueryIgnoringPage } from 'state/terms/selectors';
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PodcastingDetails extends Component {
 	constructor() {
 		super();

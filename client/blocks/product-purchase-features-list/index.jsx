@@ -16,6 +16,7 @@ import {
 	PLANS_LIST,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
+	TYPE_ECOMMERCE,
 	TYPE_BUSINESS,
 	TYPE_PREMIUM,
 	TYPE_PERSONAL,
@@ -62,6 +63,32 @@ export class ProductPurchaseFeaturesList extends Component {
 	static defaultProps = {
 		isPlaceholder: false,
 	};
+
+	// TODO: Define feature list.
+	getEcommerceFeatures() {
+		const { isPlaceholder, plan, planHasDomainCredit, selectedSite } = this.props;
+		return (
+			<Fragment>
+				<HappinessSupportCard
+					isPlaceholder={ isPlaceholder }
+					showLiveChatButton
+					liveChatButtonEventName={ 'calypso_livechat_my_plan_ecommerce' }
+				/>
+				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<JetpackSearch selectedSite={ selectedSite } />
+				<GoogleVouchers selectedSite={ selectedSite } />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<GoogleMyBusiness selectedSite={ selectedSite } />
+				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
+				<CustomizeTheme selectedSite={ selectedSite } />
+				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				<FindNewTheme selectedSite={ selectedSite } />
+				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
+				<SiteActivity />
+				<MobileApps />
+			</Fragment>
+		);
+	}
 
 	getBusinessFeatures() {
 		const { isPlaceholder, plan, planHasDomainCredit, selectedSite } = this.props;
@@ -297,6 +324,7 @@ export class ProductPurchaseFeaturesList extends Component {
 		const { group, type } = getPlan( plan );
 		const lookup = {
 			[ GROUP_WPCOM ]: {
+				[ TYPE_ECOMMERCE ]: () => this.getEcommerceFeatures(),
 				[ TYPE_BUSINESS ]: () => this.getBusinessFeatures(),
 				[ TYPE_PREMIUM ]: () => this.getPremiumFeatures(),
 				[ TYPE_PERSONAL ]: () => this.getPersonalFeatures(),

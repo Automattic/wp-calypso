@@ -8,7 +8,7 @@ $light-gray-500: #e2e4e7;
 $text-editor-font-size: inherit;
 
 .wp-block-jetpack-markdown__placeholder {
-	opacity: 0.5;
+	opacity: 0.62; // See https://github.com/WordPress/gutenberg/blob/c0f87a212b0ad25c18ac5bf8c2e9b1cb780f1a14/packages/editor/src/components/rich-text/style.scss#L110
 	pointer-events: none;
 }
 

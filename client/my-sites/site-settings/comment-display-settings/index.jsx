@@ -21,6 +21,11 @@ import SupportInfo from 'components/support-info';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CommentDisplaySettings extends Component {
 	shouldEnableSettings() {
 		const { isCommentsModuleActive, submittingForm } = this.props;

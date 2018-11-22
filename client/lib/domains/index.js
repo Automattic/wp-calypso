@@ -9,6 +9,7 @@ import { includes, find, get, replace, some } from 'lodash';
 /**
  * Internal dependencies
  */
+import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { type as domainTypes, domainAvailability } from './constants';
 import { parseDomainAgainstTldList } from './utils';
@@ -17,6 +18,7 @@ import formatCurrency from 'lib/format-currency';
 
 const GOOGLE_APPS_INVALID_TLDS = [ 'in' ];
 const GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
+const user = userFactory();
 
 function ValidationError( code ) {
 	this.code = code;
@@ -31,7 +33,15 @@ function canAddGoogleApps( domainName ) {
 			return includes( domainName, phrase );
 		} );
 
-	return ! ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase );
+	return ! (
+		includes( GOOGLE_APPS_INVALID_TLDS, tld ) ||
+		includesBannedPhrase ||
+		isGsuiteRestricted()
+	);
+}
+
+function isGsuiteRestricted() {
+	return ! get( user.get(), 'is_valid_google_apps_country', false );
 }
 
 function checkAuthCode( domainName, authCode, onComplete ) {
@@ -307,6 +317,7 @@ export {
 	hasGoogleAppsSupportedDomain,
 	hasMappedDomain,
 	hasPendingGoogleAppsUsers,
+	isGsuiteRestricted,
 	isMappedDomain,
 	isRegisteredDomain,
 	isSubdomain,

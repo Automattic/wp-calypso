@@ -27,7 +27,12 @@ import {
 	domainManagementList,
 	domainManagementEmailForwarding,
 } from 'my-sites/domains/paths';
-import { hasGoogleApps, hasGoogleAppsSupportedDomain, getSelectedDomain } from 'lib/domains';
+import {
+	getSelectedDomain,
+	hasGoogleApps,
+	hasGoogleAppsSupportedDomain,
+	isGsuiteRestricted,
+} from 'lib/domains';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import DocumentHead from 'components/data/document-head';
@@ -46,7 +51,7 @@ class Email extends React.Component {
 
 	render() {
 		return (
-			<Main className="domain-management-email" wideLayout={ isPlanFeaturesEnabled() }>
+			<Main className="email" wideLayout={ isPlanFeaturesEnabled() }>
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
 				{ this.headerOrPlansNavigation() }
@@ -88,6 +93,8 @@ class Email extends React.Component {
 			return this.googleAppsUsersCard();
 		} else if ( hasGoogleAppsSupportedDomain( domainList ) ) {
 			return this.addGoogleAppsCard();
+		} else if ( isGsuiteRestricted() && this.props.selectedDomainName ) {
+			return this.addEmailForwardingCard();
 		}
 		return this.emptyContent();
 	}
@@ -96,7 +103,16 @@ class Email extends React.Component {
 		const { selectedSite, selectedDomainName, translate } = this.props;
 		let emptyContentProps;
 
-		if ( selectedDomainName ) {
+		if ( isGsuiteRestricted() && ! selectedDomainName ) {
+			emptyContentProps = {
+				title: translate( 'Enable powerful email features.' ),
+				line: translate(
+					'To set up email forwarding, and other email ' +
+						'services for your site, upgrade your site’s web address ' +
+						'to a professional custom domain.'
+				),
+			};
+		} else if ( selectedDomainName ) {
 			emptyContentProps = {
 				title: translate( 'G Suite is not supported on this domain' ),
 				line: translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
@@ -138,6 +154,14 @@ class Email extends React.Component {
 				>
 					<AddGoogleAppsCard { ...this.props } />
 				</EmailVerificationGate>
+				{ this.addEmailForwardingCard() }
+			</div>
+		);
+	}
+
+	addEmailForwardingCard() {
+		return (
+			<div>
 				{ this.props.selectedDomainName && (
 					<VerticalNav>
 						<VerticalNavItem

@@ -5,7 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, some } from 'lodash';
+import { noop, overSome, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -27,8 +27,7 @@ import {
 } from 'lib/store-transactions/step-types';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
-import { planMatches } from 'lib/plans';
-import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
 
@@ -58,7 +57,7 @@ export class CreditCardPaymentBox extends React.Component {
 		this.timer = null;
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			! this.submitting( this.props.transactionStep ) &&
 			this.submitting( nextProps.transactionStep )
@@ -132,10 +131,7 @@ export class CreditCardPaymentBox extends React.Component {
 	paymentButtons = () => {
 		const { cart, transactionStep, translate, presaleChatAvailable } = this.props,
 			hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
-				planMatches( product_slug, {
-					type: TYPE_BUSINESS,
-					group: GROUP_WPCOM,
-				} )
+				overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 			),
 			showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart,
 			paymentButtonClasses = 'payment-box__payment-buttons';

@@ -33,6 +33,8 @@ export class SubscriptionLengthOption extends React.Component {
 		value: PropTypes.any.isRequired,
 		onCheck: PropTypes.func,
 		translate: PropTypes.func.isRequired,
+		shouldShowTax: PropTypes.bool,
+		taxDisplay: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	};
 
 	static defaultProps = {
@@ -40,6 +42,8 @@ export class SubscriptionLengthOption extends React.Component {
 		checked: false,
 		savePercent: 0,
 		onCheck: () => null,
+		shouldShowTax: false,
+		taxDisplay: '',
 	};
 
 	constructor( props ) {
@@ -72,7 +76,7 @@ export class SubscriptionLengthOption extends React.Component {
 	}
 
 	renderNewSaleContent() {
-		const { checked, price, savePercent, term, translate } = this.props;
+		const { checked, price, savePercent, shouldShowTax, term, translate, taxDisplay } = this.props;
 		return (
 			<React.Fragment>
 				<div className="subscription-length-picker__option-header">
@@ -93,6 +97,9 @@ export class SubscriptionLengthOption extends React.Component {
 				</div>
 				<div className="subscription-length-picker__option-description">
 					<div className="subscription-length-picker__option-price">{ price }</div>
+					{ shouldShowTax && (
+						<sup className="subscription-length-picker__option-tax">{ taxDisplay }</sup>
+					) }
 					<div className="subscription-length-picker__option-side-note">
 						{ term !== TERM_MONTHLY ? this.renderPricePerMonth() : false }
 					</div>
@@ -102,9 +109,8 @@ export class SubscriptionLengthOption extends React.Component {
 	}
 
 	renderUpgradeContent() {
-		const { price, priceBeforeDiscount, translate } = this.props;
+		const { price, priceBeforeDiscount, shouldShowTax, taxDisplay, translate } = this.props;
 		const hasDiscount = priceBeforeDiscount && priceBeforeDiscount !== price;
-
 		return (
 			<React.Fragment>
 				<div className="subscription-length-picker__option-header">
@@ -117,6 +123,9 @@ export class SubscriptionLengthOption extends React.Component {
 						</div>
 					) }
 					<div className="subscription-length-picker__option-price">{ price }</div>
+					{ shouldShowTax && (
+						<sup className="subscription-length-picker__option-tax">{ taxDisplay }</sup>
+					) }
 					{ hasDiscount && (
 						<div className="subscription-length-picker__option-credit-info">
 							{ translate( 'Credit applied' ) }

@@ -87,6 +87,10 @@ class AboutStep extends Component {
 			},
 		} );
 		this.setFormState( this.formStateController.getInitialState() );
+
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+		} );
 	}
 
 	componentWillUnmount() {
@@ -238,7 +242,7 @@ class AboutStep extends Component {
 				nextFlowName =
 					siteGoalsArray.indexOf( 'sell' ) === -1 && previousFlowName
 						? previousFlowName
-						: 'store-nux';
+						: 'ecommerce';
 			}
 		}
 

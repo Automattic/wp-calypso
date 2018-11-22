@@ -6,7 +6,20 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, forEach, head, includes, keys, map } from 'lodash';
+import {
+	camelCase,
+	find,
+	filter,
+	forEach,
+	head,
+	includes,
+	keys,
+	map,
+	mapKeys,
+	pick,
+	snakeCase,
+	thru,
+} from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -42,7 +55,6 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analyt
 import { createSocialUserFailed } from 'state/login/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSectionName } from 'state/ui/selectors';
-import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -68,6 +80,8 @@ class SignupForm extends Component {
 		disableEmailExplanation: PropTypes.bool,
 		disableEmailInput: PropTypes.bool,
 		disabled: PropTypes.bool,
+		displayNameInput: PropTypes.bool,
+		displayUsernameInput: PropTypes.bool,
 		email: PropTypes.string,
 		footerLink: PropTypes.node,
 		formHeader: PropTypes.node,
@@ -91,6 +105,8 @@ class SignupForm extends Component {
 	};
 
 	static defaultProps = {
+		displayNameInput: false,
+		displayUsernameInput: true,
 		isSocialSignupEnabled: false,
 	};
 
@@ -104,6 +120,8 @@ class SignupForm extends Component {
 
 	getInitialFields() {
 		return {
+			firstName: '',
+			lastName: '',
 			email: this.props.email || '',
 			username: '',
 			password: '',
@@ -194,8 +212,8 @@ class SignupForm extends Component {
 	}
 
 	sanitize = ( fields, onComplete ) => {
-		const sanitizedEmail = this.sanitizeEmail( fields.email ),
-			sanitizedUsername = this.sanitizeUsername( fields.username );
+		const sanitizedEmail = this.sanitizeEmail( fields.email );
+		const sanitizedUsername = this.sanitizeUsername( fields.username );
 
 		if ( fields.email !== sanitizedEmail || fields.username !== sanitizedUsername ) {
 			onComplete( {
@@ -206,7 +224,16 @@ class SignupForm extends Component {
 	};
 
 	validate = ( fields, onComplete ) => {
-		wpcom.undocumented().validateNewUser( fields, ( error, response ) => {
+		const fieldsForValidation = filter( [
+			'email',
+			'password',
+			this.props.displayUsernameInput && 'username',
+			this.props.displayNameInput && 'firstName',
+			this.props.displayNameInput && 'lastName',
+		] );
+
+		const data = mapKeys( pick( fields, fieldsForValidation ), ( value, key ) => snakeCase( key ) );
+		wpcom.undocumented().validateNewUser( data, ( error, response ) => {
 			if ( this.props.submitting ) {
 				// this is a stale callback, we have already signed up or are logging in
 				return;
@@ -216,34 +243,32 @@ class SignupForm extends Component {
 				return debug( error || 'User validation failed.' );
 			}
 
-			let { messages } = response;
+			const messages = response.success
+				? {}
+				: mapKeys( response.messages, ( value, key ) => camelCase( key ) );
 
-			if ( response.success ) {
-				messages = {};
-			} else {
-				forEach( messages, ( fieldError, field ) => {
-					if ( ! formState.isFieldInvalid( this.state.form, field ) ) {
-						return;
-					}
+			forEach( messages, ( fieldError, field ) => {
+				if ( ! formState.isFieldInvalid( this.state.form, field ) ) {
+					return;
+				}
 
-					if ( field === 'username' && ! includes( usernamesSearched, fields.username ) ) {
-						analytics.tracks.recordEvent( 'calypso_signup_username_validation_failed', {
-							error: head( keys( fieldError ) ),
-							username: fields.username,
-						} );
+				if ( field === 'username' && ! includes( usernamesSearched, fields.username ) ) {
+					analytics.tracks.recordEvent( 'calypso_signup_username_validation_failed', {
+						error: head( keys( fieldError ) ),
+						username: fields.username,
+					} );
 
-						timesUsernameValidationFailed++;
-					}
+					timesUsernameValidationFailed++;
+				}
 
-					if ( field === 'password' ) {
-						analytics.tracks.recordEvent( 'calypso_signup_password_validation_failed', {
-							error: head( keys( fieldError ) ),
-						} );
+				if ( field === 'password' ) {
+					analytics.tracks.recordEvent( 'calypso_signup_password_validation_failed', {
+						error: head( keys( fieldError ) ),
+					} );
 
-						timesPasswordValidationFailed++;
-					}
-				} );
-			}
+					timesPasswordValidationFailed++;
+				}
+			} );
 
 			if ( fields.email ) {
 				if ( this.props.signupDependencies && this.props.signupDependencies.domainItem ) {
@@ -391,6 +416,10 @@ class SignupForm extends Component {
 			username: formState.getFieldValue( this.state.form, 'username' ),
 			password: formState.getFieldValue( this.state.form, 'password' ),
 			email: formState.getFieldValue( this.state.form, 'email' ),
+			extra: {
+				first_name: formState.getFieldValue( this.state.form, 'firstName' ),
+				last_name: formState.getFieldValue( this.state.form, 'lastName' ),
+			},
 		};
 	}
 
@@ -408,7 +437,7 @@ class SignupForm extends Component {
 					'&email_address=' +
 					encodeURIComponent( formState.getFieldValue( this.state.form, fieldName ) );
 				return (
-					<span>
+					<span key={ error_code }>
 						<p>
 							{ message }
 							&nbsp;
@@ -431,6 +460,46 @@ class SignupForm extends Component {
 
 		return (
 			<div>
+				{ this.props.displayNameInput && (
+					<>
+						<FormLabel htmlFor="firstName">{ this.props.translate( 'Your first name' ) }</FormLabel>
+						<FormTextInput
+							autoCorrect="off"
+							className="signup-form__input"
+							disabled={ this.state.submitting || !! this.props.disabled }
+							id="firstName"
+							name="firstName"
+							value={ formState.getFieldValue( this.state.form, 'firstName' ) }
+							isError={ formState.isFieldInvalid( this.state.form, 'firstName' ) }
+							isValid={ formState.isFieldValid( this.state.form, 'firstName' ) }
+							onBlur={ this.handleBlur }
+							onChange={ this.handleChangeEvent }
+						/>
+
+						{ formState.isFieldInvalid( this.state.form, 'firstName' ) && (
+							<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'firstName' ) } />
+						) }
+
+						<FormLabel htmlFor="lastName">{ this.props.translate( 'Your last name' ) }</FormLabel>
+						<FormTextInput
+							autoCorrect="off"
+							className="signup-form__input"
+							disabled={ this.state.submitting || !! this.props.disabled }
+							id="lastName"
+							name="lastName"
+							value={ formState.getFieldValue( this.state.form, 'lastName' ) }
+							isError={ formState.isFieldInvalid( this.state.form, 'lastName' ) }
+							isValid={ formState.isFieldValid( this.state.form, 'lastName' ) }
+							onBlur={ this.handleBlur }
+							onChange={ this.handleChangeEvent }
+						/>
+
+						{ formState.isFieldInvalid( this.state.form, 'lastName' ) && (
+							<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'lastName' ) } />
+						) }
+					</>
+				) }
+
 				<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
 				<FormTextInput
 					autoCapitalize="off"
@@ -454,23 +523,29 @@ class SignupForm extends Component {
 					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'email' ) } />
 				) }
 
-				<FormLabel htmlFor="username">{ this.props.translate( 'Choose a username' ) }</FormLabel>
-				<FormTextInput
-					autoCapitalize="off"
-					autoCorrect="off"
-					className="signup-form__input"
-					disabled={ this.state.submitting || this.props.disabled }
-					id="username"
-					name="username"
-					value={ formState.getFieldValue( this.state.form, 'username' ) }
-					isError={ formState.isFieldInvalid( this.state.form, 'username' ) }
-					isValid={ formState.isFieldValid( this.state.form, 'username' ) }
-					onBlur={ this.handleBlur }
-					onChange={ this.handleChangeEvent }
-				/>
+				{ this.props.displayUsernameInput && (
+					<>
+						<FormLabel htmlFor="username">
+							{ this.props.translate( 'Choose a username' ) }
+						</FormLabel>
+						<FormTextInput
+							autoCapitalize="off"
+							autoCorrect="off"
+							className="signup-form__input"
+							disabled={ this.state.submitting || this.props.disabled }
+							id="username"
+							name="username"
+							value={ formState.getFieldValue( this.state.form, 'username' ) }
+							isError={ formState.isFieldInvalid( this.state.form, 'username' ) }
+							isValid={ formState.isFieldValid( this.state.form, 'username' ) }
+							onBlur={ this.handleBlur }
+							onChange={ this.handleChangeEvent }
+						/>
 
-				{ formState.isFieldInvalid( this.state.form, 'username' ) && (
-					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'username' ) } />
+						{ formState.isFieldInvalid( this.state.form, 'username' ) && (
+							<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'username' ) } />
+						) }
+					</>
 				) }
 
 				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
@@ -629,10 +704,6 @@ class SignupForm extends Component {
 		);
 	}
 
-	isJetpackSocialABTest() {
-		return this.isJetpack() && abtest( 'jetpackSignupGoogleTop' ) === 'top';
-	}
-
 	userCreationComplete() {
 		return this.props.step && 'completed' === this.props.step.status;
 	}
@@ -643,31 +714,10 @@ class SignupForm extends Component {
 		}
 
 		return (
-			<div
-				className={ classNames(
-					'signup-form',
-					this.props.className,
-					this.isJetpackSocialABTest() && 'signup-form__social-top'
-				) }
-			>
+			<div className={ classNames( 'signup-form', this.props.className ) }>
 				{ this.getNotice() }
 
-				{ this.isJetpackSocialABTest() &&
-					this.props.isSocialSignupEnabled &&
-					! this.userCreationComplete() && (
-						<SocialSignupForm
-							showFirst={ true }
-							handleResponse={ this.props.handleSocialResponse }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
-						/>
-					) }
-
 				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
-					{ this.isJetpackSocialABTest() &&
-						this.props.isSocialSignupEnabled && (
-							<p>{ this.props.translate( 'Or create a new account with your email address.' ) }</p>
-						) }
 					{ this.props.formHeader && (
 						<header className="signup-form__header">{ this.props.formHeader }</header>
 					) }
@@ -677,8 +727,7 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ ! this.isJetpackSocialABTest() &&
-					this.props.isSocialSignupEnabled &&
+				{ this.props.isSocialSignupEnabled &&
 					! this.userCreationComplete() && (
 						<SocialSignupForm
 							handleResponse={ this.props.handleSocialResponse }

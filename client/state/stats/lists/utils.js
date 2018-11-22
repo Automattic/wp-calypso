@@ -912,6 +912,14 @@ export const normalizers = {
 		return payload.data;
 	},
 
+	statsAds( payload ) {
+		if ( ! payload || ! payload.data ) {
+			return [];
+		}
+
+		return parseChartData( payload, [ 'impressions', 'revenue', 'cpm' ] );
+	},
+
 	/*
 	 * Returns a normalized statsSearchTerms array, ready for use in stats-module
 	 *

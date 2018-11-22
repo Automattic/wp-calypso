@@ -30,8 +30,16 @@ jest.mock( 'i18n-calypso', () => ( {
  */
 import { shallow } from 'enzyme';
 import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { siteHasPaidPlan, SitePickerSubmit } from '../site-picker-submit';
 import {
 	PLAN_FREE,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -48,11 +56,6 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
-
-/**
- * Internal dependencies
- */
-import { siteHasPaidPlan, SitePickerSubmit } from '../site-picker-submit';
 
 const props = {
 	goToStep: jest.fn(),
@@ -71,8 +74,11 @@ describe( 'siteHasPaidPlan', () => {
 		PLAN_JETPACK_PERSONAL_MONTHLY,
 		PLAN_PREMIUM,
 		PLAN_PREMIUM_2_YEARS,
+		PLAN_BUSINESS_MONTHLY,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
 		PLAN_JETPACK_PREMIUM,
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
@@ -111,8 +117,11 @@ describe( 'SitePickerSubmit', () => {
 		PLAN_JETPACK_PERSONAL_MONTHLY,
 		PLAN_PREMIUM,
 		PLAN_PREMIUM_2_YEARS,
+		PLAN_BUSINESS_MONTHLY,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
 		PLAN_JETPACK_PREMIUM,
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,

@@ -23,6 +23,7 @@ import {
 } from './index';
 
 // plans constants
+export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_BUSINESS = 'business-bundle';
 export const PLAN_BUSINESS_2_YEARS = 'business-bundle-2y';
 export const PLAN_PREMIUM = 'value_bundle';
@@ -45,7 +46,6 @@ export const PLAN_HOST_BUNDLE = 'host-bundle';
 export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
 export const PLAN_CHARGEBACK = 'chargeback';
 
-export const POPULAR_PLANS = [ PLAN_PREMIUM ];
 export const NEW_PLANS = [];
 export const BEST_VALUE_PLANS = [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
 export const JETPACK_PLANS = [
@@ -85,6 +85,7 @@ export const FEATURE_PREMIUM_SUPPORT = 'priority-support';
 export const FEATURE_BASIC_DESIGN = 'basic-design';
 export const FEATURE_ADVANCED_DESIGN = 'advanced-design';
 export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
+export const FEATURE_GOOGLE_MY_BUSINESS = 'google-my-business';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
@@ -185,15 +186,13 @@ const getPlanBloggerDetails = () => ( {
 	type: TYPE_BLOGGER,
 	getTitle: () => i18n.translate( 'Blogger' ),
 	// @TODO not updating copy for now, we need to update it after the first round of design {{{
-	getAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getBlogAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getStoreAudience: () => i18n.translate( 'Best for hobbyists' ),
+	getAudience: () => i18n.translate( 'Best for bloggers' ),
+	getBlogAudience: () => i18n.translate( 'Best for bloggers' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for bloggers' ),
+	getStoreAudience: () => i18n.translate( 'Best for bloggers' ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for Personal Use:{{/strong}} Boost your' +
-				' website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Get access to high-quality email and live chat support.',
+			'{{strong}}Best for Bloggers:{{/strong}} Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and email support.',
 			{
 				components: {
 					strong: (
@@ -431,7 +430,7 @@ const getPlanBusinessDetails = () => ( {
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS ],
 } );
 
 const getPlanEcommerceDetails = () => ( {
@@ -470,6 +469,7 @@ const getPlanEcommerceDetails = () => ( {
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_NO_ADS,
+			FEATURE_BUSINESS_ONBOARDING,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
 		] ),
@@ -479,12 +479,13 @@ const getPlanEcommerceDetails = () => ( {
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
 		FEATURE_ADVANCED_DESIGN,
+		FEATURE_BUSINESS_ONBOARDING,
 	],
 	getSignupFeatures: () => [ FEATURE_UNLIMITED_STORAGE, FEATURE_NO_ADS ],
 	getBlogSignupFeatures: () => [ FEATURE_UPLOAD_THEMES_PLUGINS ],
 	getPortfolioSignupFeatures: () => [ FEATURE_UPLOAD_THEMES_PLUGINS ],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS ],
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -609,6 +610,28 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium-2-years',
 	},
 
+	[ PLAN_BUSINESS_MONTHLY ]: {
+		...getPlanBusinessDetails(),
+		term: TERM_MONTHLY,
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
+		availableFor: plan =>
+			includes(
+				[
+					PLAN_FREE,
+					PLAN_BLOGGER,
+					PLAN_BLOGGER_2_YEARS,
+					PLAN_PERSONAL,
+					PLAN_PERSONAL_2_YEARS,
+					PLAN_PREMIUM,
+					PLAN_PREMIUM_2_YEARS,
+				],
+				plan
+			),
+		getProductId: () => 1018,
+		getStoreSlug: () => PLAN_BUSINESS_MONTHLY,
+		getPathSlug: () => 'business-monthly',
+	},
+
 	[ PLAN_BUSINESS ]: {
 		...getPlanBusinessDetails(),
 		term: TERM_ANNUALLY,
@@ -623,6 +646,7 @@ export const PLANS_LIST = {
 					PLAN_PERSONAL_2_YEARS,
 					PLAN_PREMIUM,
 					PLAN_PREMIUM_2_YEARS,
+					PLAN_BUSINESS_MONTHLY,
 				],
 				plan
 			),
@@ -646,6 +670,7 @@ export const PLANS_LIST = {
 					PLAN_PREMIUM,
 					PLAN_PREMIUM_2_YEARS,
 					PLAN_BUSINESS,
+					PLAN_BUSINESS_MONTHLY,
 				],
 				plan
 			),
@@ -658,7 +683,7 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: () => [],
+		availableFor: plan => includes( [ PLAN_FREE ], plan ),
 		getProductId: () => 1011,
 		getStoreSlug: () => PLAN_ECOMMERCE,
 		getPathSlug: () => 'ecommerce',
@@ -668,9 +693,7 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		term: TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
-		availableFor: plan => {
-			return PLAN_ECOMMERCE === plan;
-		},
+		availableFor: plan => includes( [ PLAN_FREE, PLAN_ECOMMERCE ], plan ),
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
 		getPathSlug: () => 'ecommerce-2-years',
@@ -1118,20 +1141,20 @@ export const FEATURES_LIST = {
 	},
 
 	[ FEATURE_FREE_BLOG_DOMAIN ]: {
-		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Free .blog domain' ),
+		getSlug: () => FEATURE_FREE_BLOG_DOMAIN,
+		getTitle: () => i18n.translate( 'Free .blog Domain for One Year' ),
 		getDescription: () =>
 			i18n.translate(
-				'Get a free custom domain name (example.blog) with this plan to use for your website.'
+				'Get a free custom .blog domain name for one year (example.blog) with this plan to use with your blog. Does not apply to premium domains. Your domain will renew at its regular price.'
 			),
 	},
 
 	[ FEATURE_FREE_DOMAIN ]: {
 		getSlug: () => FEATURE_FREE_DOMAIN,
-		getTitle: () => i18n.translate( 'Free custom domain' ),
+		getTitle: () => i18n.translate( 'Free domain for one year' ),
 		getDescription: () =>
 			i18n.translate(
-				'Get a free custom domain name (example.com) with this plan to use for your website.'
+				'Get a free domain for one year. Premium domains not included. Your domain will renew at its regular price.'
 			),
 	},
 
@@ -1261,6 +1284,16 @@ export const FEATURES_LIST = {
 			),
 	},
 
+	[ FEATURE_GOOGLE_MY_BUSINESS ]: {
+		getSlug: () => FEATURE_GOOGLE_MY_BUSINESS,
+		getTitle: () => i18n.translate( 'Google My Business' ),
+		getDescription: () =>
+			i18n.translate(
+				'See how customers find you on Google -- and whether they visited your site ' +
+					'and looked for more info on your business -- by connecting to a Google My Business location.'
+			),
+	},
+
 	[ FEATURE_UNLIMITED_STORAGE ]: {
 		getSlug: () => FEATURE_UNLIMITED_STORAGE,
 		getTitle: () =>
@@ -1279,7 +1312,10 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_BLOG_DOMAIN ]: {
 		getSlug: () => FEATURE_BLOG_DOMAIN,
-		getTitle: () => i18n.translate( 'Custom .blog Domain' ),
+		getTitle: () =>
+			i18n.translate( 'Free .blog Domain for One Year', {
+				context: 'title',
+			} ),
 		getDescription: ( abtest, domainName ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
@@ -1288,15 +1324,17 @@ export const FEATURES_LIST = {
 			}
 
 			return i18n.translate(
-				'Get a free custom domain name (example.blog) with this plan ' +
-					'to use for your website. Does not apply to premium domains.'
+				'Get a free custom .blog domain for one year. Premium domains not included. Your domain will renew at its regular price.'
 			);
 		},
 	},
 
 	[ FEATURE_CUSTOM_DOMAIN ]: {
 		getSlug: () => FEATURE_CUSTOM_DOMAIN,
-		getTitle: () => i18n.translate( 'Custom Domain Name' ),
+		getTitle: () =>
+			i18n.translate( 'Free Domain for One Year', {
+				context: 'title',
+			} ),
 		getDescription: ( abtest, domainName ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
@@ -1305,8 +1343,7 @@ export const FEATURES_LIST = {
 			}
 
 			return i18n.translate(
-				'Get a free custom domain name (example.com) with this plan ' +
-					'to use for your website. Does not apply to premium domains.'
+				'Get a free domain for one year. Premium domains not included. Your domain will renew at its regular price.'
 			);
 		},
 	},
@@ -1841,10 +1878,6 @@ export const getPlanFeaturesObject = planFeaturesList => {
 
 export function isMonthly( plan ) {
 	return includes( JETPACK_MONTHLY_PLANS, plan );
-}
-
-export function isPopular( plan ) {
-	return includes( POPULAR_PLANS, plan );
 }
 
 export function isNew( plan ) {
