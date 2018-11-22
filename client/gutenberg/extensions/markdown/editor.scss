@@ -116,9 +116,8 @@ $text-editor-font-size: inherit;
 
 		table {
 			overflow-x: auto;
-    		display: block;
-    		border-collapse: collapse;
-    		width: 100%;
+			border-collapse: collapse;
+			width: 100%;
 		}
 
 		thead,
@@ -126,7 +125,6 @@ $text-editor-font-size: inherit;
 		tfoot {
 			width: 100%;
 			min-width: 240px;
-			display: table;
 		}
 
 		td,
