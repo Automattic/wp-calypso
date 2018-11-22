@@ -21,8 +21,9 @@ import {
 } from 'state/action-types';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { domainManagementEdit } from 'my-sites/domains/paths';
+import { domainManagementList } from 'my-sites/domains/paths';
 import { requestSite } from 'state/sites/actions';
+import { fetchSiteDomains } from 'state/sites/domains/actions';
 
 // @TODO proper redux data layer stuff for the nonce
 function fetchNonce( siteId ) {
@@ -154,7 +155,10 @@ export const requestSiteAddressChange = (
 
 						const newAddress = newSlug + '.' + domain;
 						dispatch( requestSite( siteId ) ).then( () => {
-							page( domainManagementEdit( newAddress, newAddress ) );
+							// Re-fetch domains, as we changed the primary domain name
+							dispatch( fetchSiteDomains( siteId ) );
+
+							page( domainManagementList( newAddress ) );
 
 							dispatch(
 								successNotice( translate( 'Your new site address is ready to go!' ), {
@@ -169,7 +173,6 @@ export const requestSiteAddressChange = (
 
 					dispatch( {
 						type: SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
-						newSlug,
 						siteId,
 					} );
 				} )
