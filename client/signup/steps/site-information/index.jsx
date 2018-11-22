@@ -201,13 +201,14 @@ export default connect(
 		};
 	},
 	( dispatch, ownProps ) => ( {
-		submitStep: ( { siteTitle, address, email, phone } ) => {
-			siteTitle = trim( siteTitle );
+		submitStep: ( { name, address, email, phone } ) => {
+			const siteTitle = trim( name );
 			address = trim( address );
 			email = trim( email );
 			phone = trim( phone );
 			dispatch( setSiteTitle( siteTitle ) );
 			dispatch( setSiteInformation( { address, email, phone } ) );
+
 			// Create site
 			SignupActions.submitSignupStep(
 				{
