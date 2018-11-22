@@ -57,7 +57,7 @@ export const getSavedVariations = () => store.get( ABTEST_LOCALSTORAGE_KEY ) || 
 
 export const getAllTests = () => keys( activeTests ).map( ABTest );
 
-const isUserSignedIn = () => user.get() !== false;
+const isUserSignedIn = () => user && user.get() !== false;
 
 const parseDateStamp = datestamp => {
 	const date = i18n.moment( datestamp, 'YYYYMMDD' );
@@ -262,7 +262,7 @@ ABTest.prototype.hasBeenInPreviousSeriesTest = function() {
 };
 
 ABTest.prototype.hasRegisteredBeforeTestBegan = function() {
-	return user.get() && i18n.moment( user.get().date ).isBefore( this.startDate );
+	return user && user.get() && i18n.moment( user.get().date ).isBefore( this.startDate );
 };
 
 ABTest.prototype.getSavedVariation = function() {
