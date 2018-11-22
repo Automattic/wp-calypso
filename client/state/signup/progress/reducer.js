@@ -56,10 +56,10 @@ function removeUnneededSteps( state, { flowName } ) {
 	let flowSteps = [];
 	const user = userFactory();
 
-	flowName =
-		'onboarding' === abtest( 'improvedOnboarding' ) && 'ecommerce' === flowName
-			? flowName + '-onboarding'
-			: flowName;
+	if ( 'onboarding' === abtest( 'improvedOnboarding' ) && 'ecommerce' === flowName ) {
+		flowName = 'ecommerce-onboarding';
+	}
+
 	flowSteps = get( flows, `${ flowName }.steps`, [] );
 
 	if ( user && user.get() ) {

@@ -129,11 +129,8 @@ export default connect(
 			let nextFlowName = ownProps.flowName;
 			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 'store', 'slug' ) ) {
 				nextFlowName = 'ecommerce';
-			} else {
-				nextFlowName =
-					'ecommerce' === ownProps.flowName && ownProps.previousFlowName
-						? ownProps.previousFlowName
-						: ownProps.flowName;
+			} else if ( 'ecommerce' === ownProps.flowName && ownProps.previousFlowName ) {
+				nextFlowName = ownProps.previousFlowName;
 			}
 
 			// Create site

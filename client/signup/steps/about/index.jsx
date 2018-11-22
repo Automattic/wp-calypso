@@ -211,10 +211,13 @@ class AboutStep extends Component {
 		if ( shouldHideSiteGoals ) {
 			themeRepo =
 				getSiteTypePropertyValue( 'slug', siteType, 'theme' ) || 'pub/independent-publisher-2';
-			designType =
-				'ecommerce' === flowName
-					? 'page'
-					: getSiteTypePropertyValue( 'slug', siteType, 'designType' ) || 'blog';
+
+			if ( 'ecommerce' === flowName ) {
+				designType = 'page';
+			} else {
+				designType = getSiteTypePropertyValue( 'slug', siteType, 'designType' ) || 'blog';
+			}
+
 			eventAttributes.site_type = siteType;
 		} else {
 			const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
