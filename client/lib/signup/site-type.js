@@ -62,9 +62,7 @@ export function getSiteTypePropertyValue( key, value, property ) {
 		return;
 	}
 
-	const siteTypeProperties = find( allSiteTypes, object => {
-		return value === object[ key ];
-	} );
+	const siteTypeProperties = find( allSiteTypes, { [ key ]: value } );
 
 	return siteTypeProperties && siteTypeProperties[ property ];
 }
