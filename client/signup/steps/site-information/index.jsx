@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
 import { trim } from 'lodash';
@@ -93,7 +93,7 @@ class SiteInformation extends Component {
 							</FormFieldset>
 
 							{ isBusinessSiteSelected && (
-								<Fragment>
+								<>
 									<FormFieldset>
 										<FormLabel htmlFor="address">
 											{ translate( 'Address' ) }
@@ -140,7 +140,7 @@ class SiteInformation extends Component {
 											value={ this.state.phone }
 										/>
 									</FormFieldset>
-								</Fragment>
+								</>
 							) }
 
 							<div className="site-information__submit-wrapper">
