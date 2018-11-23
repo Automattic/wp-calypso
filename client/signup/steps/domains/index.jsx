@@ -321,7 +321,18 @@ class DomainsStep extends React.Component {
 
 		// If it's the first load, rerun the search with whatever we get from the query param
 		const initialQuery = get( this.props, 'queryObject.new', '' );
-		if ( initialQuery && this.searchOnInitialRender ) {
+		if (
+			// If we landed here from /domains Search
+			( initialQuery && this.searchOnInitialRender ) ||
+			// If the subdomain type has changed, rerun the search
+			( initialState &&
+				initialState.subdomainSearchResults &&
+				endsWith(
+					get( initialState, 'subdomainSearchResults[0].domain_name', '' ),
+					// Inverted the ending, so we know it's the wrong subdomain in the saved results
+					this.shouldIncludeDotBlogSubdomain() ? '.wordpress.com' : '.blog'
+				) )
+		) {
 			this.searchOnInitialRender = false;
 			if ( initialState ) {
 				initialState.searchResults = null;
