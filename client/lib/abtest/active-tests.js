@@ -73,19 +73,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	krackenRebootM33: {
-		datestamp: '20181108',
-		variations: {
-			domainsbot_front: 25,
-			variation1_front: 25,
-			variation2_front: 25,
-			variation3_front: 25,
-		},
-		defaultVariation: 'domainsbot_front',
-		assignmentMethod: 'userId',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	privateByDefault: {
 		datestamp: '20181115',
 		variations: {
