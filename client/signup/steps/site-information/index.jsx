@@ -27,6 +27,7 @@ import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
 import InfoPopover from 'components/info-popover';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class SiteInformation extends Component {
 	constructor( props ) {
@@ -72,7 +73,9 @@ class SiteInformation extends Component {
 								<FormLabel htmlFor="name">
 									{ siteTitleLabel }
 									<InfoPopover className="site-information__info-popover" position="top">
-										{ translate( 'This will be used as the title of your site.' ) }
+										{ translate(
+											"We'll use this as your site title. Don't worry, you can change this later."
+										) }
 									</InfoPopover>
 								</FormLabel>
 								<FormTextInput
@@ -186,6 +189,14 @@ export default connect(
 			phone = trim( phone );
 			dispatch( setSiteTitle( siteTitle ) );
 			dispatch( setSiteInformation( { address, email, phone } ) );
+			dispatch(
+				recordTracksEvent( 'calypso_signup_actions_submit_site_information', {
+					siteTitle,
+					address,
+					email,
+					phone,
+				} )
+			);
 
 			// Create site
 			SignupActions.submitSignupStep(
