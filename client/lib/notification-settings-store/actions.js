@@ -12,15 +12,15 @@ function buildSavePayload( source, settings ) {
 	switch ( source ) {
 		case 'wpcom':
 			return {
-				wpcom: settings.toObject(),
+				wpcom: settings,
 			};
 		case 'other':
 			return {
-				other: settings.toJS(),
+				other: settings,
 			};
 		default:
 			return {
-				blogs: [].concat( settings.toJS() ),
+				blogs: [].concat( settings ),
 			};
 	}
 }

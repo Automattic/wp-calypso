@@ -44,7 +44,7 @@ class BlogSettingsHeader extends PureComponent {
 	};
 
 	getLegend = () => {
-		const settings = this.props.settings.toJS();
+		const { settings } = this.props;
 
 		// Ignore blog_id, email.achievement and devices (we'll handle devices separately).
 		const filteredSettings = {
