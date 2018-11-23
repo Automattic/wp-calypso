@@ -67,7 +67,7 @@ describe( '#signupStep User', () => {
 		beforeEach( () => {
 			node = document.createElement( 'div' );
 
-			spyComponentProps = sinon.spy( User.prototype, 'componentWillReceiveProps' );
+			spyComponentProps = sinon.spy( User.prototype, 'UNSAFE_componentWillReceiveProps' );
 
 			const element = React.createElement( User, {
 				subHeaderText: 'test subheader message',
@@ -77,7 +77,7 @@ describe( '#signupStep User', () => {
 		} );
 
 		afterEach( () => {
-			User.prototype.componentWillReceiveProps.restore();
+			User.prototype.UNSAFE_componentWillReceiveProps.restore();
 		} );
 
 		test( 'should show community subheader text when new flow has user as first step', () => {
