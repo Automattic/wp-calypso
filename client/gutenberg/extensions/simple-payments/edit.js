@@ -76,10 +76,14 @@ class SimplePaymentsEdit extends Component {
 	}
 
 	injectPaymentAttributes() {
+		if ( this.hasInjectedPaymentAttributes ) {
+			return;
+		}
+
 		const { attributes, setAttributes, simplePayment } = this.props;
 		const { paymentId, content, currency, email, multiple, price, title } = attributes;
 
-		if ( ! this.hasInjectedPaymentAttributes && paymentId && simplePayment ) {
+		if ( paymentId && simplePayment ) {
 			setAttributes( {
 				content: get( simplePayment, [ 'content', 'raw' ], content ),
 				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency ),
