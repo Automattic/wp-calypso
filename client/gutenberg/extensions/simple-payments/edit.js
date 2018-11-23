@@ -362,30 +362,14 @@ class SimplePaymentsEdit extends Component {
 
 	render() {
 		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
-		const { attributes, instanceId, isSelected, simplePayment, hasPublishAction } = this.props;
+		const { attributes, instanceId, isSelected, simplePayment } = this.props;
 		const { content, currency, email, multiple, paymentId, price, title } = attributes;
 
 		/**
-		 * The form state should be disabled because it is volatile and cannot safely be modified
-		 * under the following conditions:
-		 *
-		 * ## The user can publish posts, but the simplePayment is not available in local state.
-		 *
-		 * `hasPublishAction && ! simplePayment`
-		 *
-		 * In order to reliable save the Simple Payment product and its contents into the post, we
-		 * attempt to create a draft product as early as possible. This ensures that we have a
-		 * product ID and we can attempt to save it concurrently with the post that contains it.
-		 *
-		 * ## There is already a paymentId but the simple payment has not yet loaded
-		 *
-		 * `paymentId && ! simplePayment`
-		 *
-		 * If there is already a paymentId but the simplePayment is not yet loaded, we need to wait
-		 * for its attributes to load. This ensures that the user does not modify a stale
-		 * Simple Payment.
+		 * The only disabled state that concerns us is when we expect a product but don't have it in
+		 * local state.
 		 */
-		const isDisabled = ( hasPublishAction && ! simplePayment ) || ( paymentId && ! simplePayment );
+		const isDisabled = paymentId && ! simplePayment;
 
 		if ( ! isSelected && isDisabled ) {
 			return (
