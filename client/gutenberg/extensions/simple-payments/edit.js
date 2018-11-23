@@ -45,13 +45,19 @@ class SimplePaymentsEdit extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { hasPublishAction, isSelected } = this.props;
+		const { attributes, hasPublishAction, isSelected } = this.props;
+		const { paymentId } = attributes;
 
 		if ( prevProps.simplePayment !== this.props.simplePayment ) {
 			this.injectPaymentAttributes();
 		}
 
-		if ( ! prevProps.isSaving && this.props.isSaving && hasPublishAction ) {
+		// Initialize product object early on by creating a draft
+		if ( ! paymentId ) {
+			this.saveProduct();
+		}
+
+		if ( ! prevProps.isSaving && this.props.isSaving && hasPublishAction && this.validateAttributes() ) {
 			// Validate and save product on post save
 			this.saveProduct();
 		} else if ( prevProps.isSelected && ! isSelected ) {
@@ -90,17 +96,13 @@ class SimplePaymentsEdit extends Component {
 				spay_multiple: multiple,
 				spay_price: price,
 			},
-			status: 'publish',
+			status: paymentId ? 'publish' : 'draft',
 			title,
 		};
 	}
 
 	saveProduct() {
 		if ( this.state.isSavingProduct ) {
-			return;
-		}
-
-		if ( ! this.validateAttributes() ) {
 			return;
 		}
 
