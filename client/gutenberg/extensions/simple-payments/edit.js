@@ -52,14 +52,16 @@ class SimplePaymentsEdit extends Component {
 	shouldInjectPaymentAttributes = !! this.props.attributes.paymentId;
 
 	componentDidMount() {
+		// Try to get the simplePayment loaded into attributes if possible.
+		this.injectPaymentAttributes();
+
 		const { attributes, hasPublishAction } = this.props;
 		const { paymentId } = attributes;
 
-		// Initialize product object early on by creating a draft
+		// If the user can publish save an empty product so that we have an ID and can save
+		// concurrently with the post that contains the Simple Payment.
 		if ( ! paymentId && hasPublishAction ) {
 			this.saveProduct();
-		} else {
-			this.injectPaymentAttributes();
 		}
 	}
 
@@ -86,7 +88,7 @@ class SimplePaymentsEdit extends Component {
 
 	injectPaymentAttributes() {
 		/**
-		 * Prevent injecting the product attributes multiple times.
+		 * Prevent injecting the product attributes when not desired.
 		 *
 		 * When we first load a product, we should inject its attributes as our initial form state.
 		 * When subsequent saves occur, we should avoid injecting attributes so that we do not
