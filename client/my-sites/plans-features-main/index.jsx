@@ -79,9 +79,13 @@ export class PlansFeaturesMain extends Component {
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 		return (
 			<div
-				className={ classNames( 'plans-features-main__group', {
-					[ `is-customer-${ customerType }` ]: ! displayJetpackPlans,
-				} ) }
+				className={ classNames(
+					'plans-features-main__group',
+					'is-' + ( displayJetpackPlans ? 'jetpack' : 'wpcom' ),
+					{
+						[ `is-customer-${ customerType }` ]: ! displayJetpackPlans,
+					}
+				) }
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
 				<PlanFeatures

@@ -10,25 +10,41 @@
 
 	@include banner-color( $blue-wordpress );
 
+	&.is-wpcom-plan {
 		&.is-upgrade-blogger {
-			@include banner-color( darken( $alert-green, 20% ) );
+			@include banner-color(darken($alert-green, 20%));
 		}
 
 		&.is-upgrade-personal {
-			@include banner-color( $blue-wordpress );
+			@include banner-color($blue-wordpress);
 		}
 
 		&.is-upgrade-premium {
-			@include banner-color( $alert-yellow );
+			@include banner-color($alert-yellow);
 		}
 
 		&.is-upgrade-business {
-			@include banner-color( $orange-jazzy );
+			@include banner-color($orange-jazzy);
 		}
 
 		&.is-upgrade-ecommerce {
+			@include banner-color($alert-purple);
+		}
+	}
+
+	&.is-jetpack-plan {
+		&.is-upgrade-personal {
+			@include banner-color( $alert-yellow );
+		}
+
+		&.is-upgrade-premium {
+			@include banner-color( $alert-green );
+		}
+
+		&.is-upgrade-business {
 			@include banner-color( $alert-purple );
 		}
+	}
 
 	.card__link-indicator {
 		align-items: center;

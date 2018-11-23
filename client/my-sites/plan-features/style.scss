@@ -196,24 +196,38 @@ $plan-features-sidebar-width: 272px;
 		padding: 12px 12px 0 12px;
 	}
 
-	&.is-blogger-plan {
-		border-bottom: solid 2px $alert-green;
+	.plans-features-main__group.is-wpcom & {
+		&.is-blogger-plan {
+			border-bottom: solid 2px $alert-green;
+		}
+
+		&.is-personal-plan {
+			border-bottom: solid 2px $blue-wordpress;
+		}
+
+		&.is-premium-plan {
+			border-bottom: solid 2px $alert-yellow;
+		}
+
+		&.is-business-plan {
+			border-bottom: solid 2px $orange-jazzy;
+		}
+
+		&.is-ecommerce-plan {
+			border-bottom: solid 2px $alert-purple;
+		}
 	}
 
-	&.is-personal-plan {
-		border-bottom: solid 2px $blue-wordpress;
-	}
-
-	&.is-premium-plan {
-		border-bottom: solid 2px $alert-yellow;
-	}
-
-	&.is-business-plan {
-		border-bottom: solid 2px $orange-jazzy;
-	}
-
-	&.is-ecommerce-plan {
-		border-bottom: solid 2px $alert-purple;
+	.plans-features-main__group.is-jetpack & {
+		&.is-personal-plan {
+			border-bottom: solid 2px $alert-yellow;
+		}
+		&.is-premium-plan {
+			border-bottom: solid 2px $alert-green;
+		}
+		&.is-business-plan {
+			border-bottom: solid 2px $alert-purple;
+		}
 	}
 }
 

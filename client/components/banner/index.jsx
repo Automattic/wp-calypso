@@ -16,12 +16,14 @@ import Gridicon from 'gridicons';
  */
 import {
 	getValidFeatureKeys,
+	planMatches,
 	isBloggerPlan,
 	isPersonalPlan,
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
 } from 'lib/plans';
+import { GROUP_JETPACK, GROUP_WPCOM } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -224,6 +226,8 @@ export class Banner extends Component {
 			{ 'is-upgrade-premium': plan && isPremiumPlan( plan ) },
 			{ 'is-upgrade-business': plan && isBusinessPlan( plan ) },
 			{ 'is-upgrade-ecommerce': plan && isEcommercePlan( plan ) },
+			{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
+			{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) },
 			{ 'is-dismissible': dismissPreferenceName }
 		);
 
