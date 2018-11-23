@@ -42,8 +42,8 @@ export const settings = {
 		mapCenter: {
 			type: 'object',
 			default: {
-				longitude: -122.41941550000001,
-				latitude: 37.7749295,
+				lon: -122.41941550000001,
+				lat: 37.7749295,
 			},
 		},
 		markerColor: {
