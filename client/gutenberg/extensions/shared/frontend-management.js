@@ -47,8 +47,7 @@ export class FrontendManagement {
 		return data;
 	}
 	extractChildrenFromContainer( node ) {
-		const children = [];
-		node.childNodes.forEach( childNode => children.push( childNode ) );
+		const children = [ ...node.childNodes ];
 		return children.map( child => {
 			const attr = {};
 			for ( let i = 0; i < child.attributes.length; i++ ) {
