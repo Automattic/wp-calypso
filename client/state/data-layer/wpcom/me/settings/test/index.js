@@ -2,34 +2,27 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import * as settingsModule from '../';
+import {
+	requestUserSettings,
+	storeFetchedUserSettings,
+	fromApi,
+	saveUserSettings,
+	finishUserSettingsSave,
+} from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { updateUserSettings, clearUnsavedUserSettings } from 'state/user-settings/actions';
-import { useSandbox } from 'test/helpers/use-sinon';
-jest.mock( 'lib/user', () => () => ( {
-	fetch() {},
-} ) );
 
 describe( 'wpcom-api', () => {
-	let dispatch;
-	useSandbox( sandbox => {
-		dispatch = sandbox.spy();
-	} );
-
 	describe( 'user settings request', () => {
 		describe( '#requestUserSettings', () => {
 			test( 'should dispatch HTTP GET request to me/settings endpoint', () => {
 				const action = { type: 'DUMMY' };
 
-				settingsModule.requestUserSettings( { dispatch }, action );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( requestUserSettings( action ) ).toEqual(
 					http(
 						{
 							apiVersion: '1.1',
@@ -46,12 +39,11 @@ describe( 'wpcom-api', () => {
 			test( 'should dispatch user settings update', () => {
 				const action = { type: 'DUMMY' };
 
-				settingsModule.storeFetchedUserSettings( { dispatch }, action, {
+				const result = storeFetchedUserSettings( action, {
 					language: 'qix',
 				} );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( result ).toEqual(
 					updateUserSettings( {
 						language: 'qix',
 					} )
@@ -61,13 +53,16 @@ describe( 'wpcom-api', () => {
 			test( 'should decode HTML entities returned in some fields of HTTP response', () => {
 				const action = { type: 'DUMMY' };
 
-				settingsModule.storeFetchedUserSettings( { dispatch }, action, {
-					display_name: 'baz &amp; qix',
-					description: 'foo &amp; bar',
-					user_URL: 'http://example.com?a=b&amp;c=d',
-				} );
+				const result = storeFetchedUserSettings(
+					action,
+					fromApi( {
+						display_name: 'baz &amp; qix',
+						description: 'foo &amp; bar',
+						user_URL: 'http://example.com?a=b&amp;c=d',
+					} )
+				);
 
-				expect( dispatch ).to.have.been.calledWith(
+				expect( result ).toEqual(
 					updateUserSettings( {
 						display_name: 'baz & qix',
 						description: 'foo & bar',
@@ -81,6 +76,7 @@ describe( 'wpcom-api', () => {
 	describe( 'user settings save', () => {
 		describe( '#saveUserSettings', () => {
 			test( 'should dispatch POST request to me/settings using unsavedSettings from state', () => {
+				const dispatch = jest.fn();
 				const getState = () => ( {
 					userSettings: {
 						settings: { foo: 'bar' },
@@ -89,10 +85,10 @@ describe( 'wpcom-api', () => {
 				} );
 				const action = { type: 'DUMMY' };
 
-				settingsModule.saveUserSettings( { dispatch, getState }, action, null );
+				saveUserSettings( action, null )( dispatch, getState );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith(
 					http(
 						{
 							apiVersion: '1.1',
@@ -106,16 +102,17 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should dispatch POST request to me/settings using explicit settingsOverride', () => {
+				const dispatch = jest.fn();
 				const getState = () => ( {} );
 				const action = {
 					type: 'DUMMY',
 					settingsOverride: { foo: 'baz' },
 				};
 
-				settingsModule.saveUserSettings( { dispatch, getState }, action, null );
+				saveUserSettings( action, null )( dispatch, getState );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith(
 					http(
 						{
 							apiVersion: '1.1',
@@ -129,6 +126,7 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should not dispatch any HTTP request when there are no unsaved settings', () => {
+				const dispatch = jest.fn();
 				const getState = () => ( {
 					userSettings: {
 						settings: {},
@@ -137,56 +135,59 @@ describe( 'wpcom-api', () => {
 				} );
 				const action = { type: 'DUMMY' };
 
-				settingsModule.saveUserSettings( { dispatch, getState }, action, null );
+				saveUserSettings( action, null )( dispatch, getState );
 
-				expect( dispatch ).to.not.have.been.called;
+				expect( dispatch ).not.toHaveBeenCalled();
 			} );
 		} );
 
 		describe( '#finishUserSettingsSave', () => {
 			test( 'should dispatch user settings update and clear all unsaved settings on full save', () => {
+				const dispatch = jest.fn();
 				const action = { type: 'DUMMY' };
 
-				settingsModule.finishUserSettingsSave( { dispatch }, action, {
+				finishUserSettingsSave( action, {
 					language: 'qix',
-				} );
+				} )( dispatch );
 
-				expect( dispatch ).to.have.been.calledTwice;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( dispatch ).toHaveBeenCalledTimes( 2 );
+				expect( dispatch ).toHaveBeenCalledWith(
 					updateUserSettings( {
 						language: 'qix',
 					} )
 				);
-				expect( dispatch ).to.have.been.calledWith( clearUnsavedUserSettings() );
+				expect( dispatch ).toHaveBeenCalledWith( clearUnsavedUserSettings() );
 			} );
 
 			test( 'should dispatch user settings update and clear only one unsaved setting on partial save', () => {
+				const dispatch = jest.fn();
 				const data = {
 					language: 'qix',
 				};
 				const action = { type: 'DUMMY', settingsOverride: data };
 
-				settingsModule.finishUserSettingsSave( { dispatch }, action, data );
+				finishUserSettingsSave( action, data )( dispatch );
 
-				expect( dispatch ).to.have.been.calledTwice;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( dispatch ).toHaveBeenCalledTimes( 2 );
+				expect( dispatch ).toHaveBeenCalledWith(
 					updateUserSettings( {
 						language: 'qix',
 					} )
 				);
-				expect( dispatch ).to.have.been.calledWith( clearUnsavedUserSettings( [ 'language' ] ) );
+				expect( dispatch ).toHaveBeenCalledWith( clearUnsavedUserSettings( [ 'language' ] ) );
 			} );
 
 			test( 'should decode HTML entities returned in some fields of HTTP response', () => {
+				const dispatch = jest.fn();
 				const action = { type: 'DUMMY' };
 
-				settingsModule.finishUserSettingsSave( { dispatch }, action, {
+				finishUserSettingsSave( action, {
 					display_name: 'baz &amp; qix',
 					description: 'foo &amp; bar',
 					user_URL: 'http://example.com?a=b&amp;c=d',
-				} );
+				} )( dispatch );
 
-				expect( dispatch ).to.have.been.calledWith(
+				expect( dispatch ).toHaveBeenCalledWith(
 					updateUserSettings( {
 						display_name: 'baz & qix',
 						description: 'foo & bar',
