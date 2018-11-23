@@ -40,7 +40,16 @@ class SimplePaymentsEdit extends Component {
 		isSavingProduct: false,
 	};
 
-	hasInjectedPaymentAttributes = false;
+	/**
+	 * We'll use this flag to inject attributes one time when the product entity is loaded.
+	 *
+	 * It is based on the presence of a `paymentId` attribute.
+	 *
+	 * If present, initially we are waiting for attributes to be injected.
+	 * If absent, we may save the product in the future but do not need to inject attributes based
+	 * on the response as they will have come from our product submission.
+	 */
+	shouldInjectPaymentAttributes = !! this.props.attributes.paymentId;
 
 	componentDidMount() {
 		const { attributes, hasPublishAction } = this.props;
@@ -83,7 +92,7 @@ class SimplePaymentsEdit extends Component {
 		 * When subsequent saves occur, we should avoid injecting attributes so that we do not
 		 * overwrite changes that the user has made with stale state from the previous save.
 		 */
-		if ( this.hasInjectedPaymentAttributes ) {
+		if ( ! this.shouldInjectPaymentAttributes ) {
 			return;
 		}
 
@@ -99,7 +108,7 @@ class SimplePaymentsEdit extends Component {
 				price: get( simplePayment, [ 'meta', 'spay_price' ], price || undefined ),
 				title: get( simplePayment, [ 'title', 'raw' ], title ),
 			} );
-			this.hasInjectedPaymentAttributes = true;
+			this.shouldInjectPaymentAttributes = ! this.shouldInjectPaymentAttributes;
 		}
 	}
 
