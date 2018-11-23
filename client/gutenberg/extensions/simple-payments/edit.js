@@ -44,11 +44,11 @@ class SimplePaymentsEdit extends Component {
 		const { attributes, hasPublishAction } = this.props;
 		const { paymentId } = attributes;
 
-		this.injectPaymentAttributes();
-
 		// Initialize product object early on by creating a draft
 		if ( ! paymentId && hasPublishAction ) {
 			this.saveProduct();
+		} else {
+			this.injectPaymentAttributes();
 		}
 	}
 
