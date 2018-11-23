@@ -62,8 +62,9 @@ class NotificationSettings extends Component {
 	};
 
 	render() {
+		// TODO: We should avoid creating functions in the render method
 		const findSettingsForBlog = blogId =>
-			this.state.settings.find( blog => blog.get( 'blog_id' ) === parseInt( blogId, 10 ) );
+			this.state.settings.find( ( { blog_id } ) => blog_id === parseInt( blogId, 10 ) );
 		const onSave = blogId => saveSettings( 'blogs', findSettingsForBlog( blogId ) );
 		const onSaveToAll = blogId => saveSettings( 'blogs', findSettingsForBlog( blogId ), true );
 

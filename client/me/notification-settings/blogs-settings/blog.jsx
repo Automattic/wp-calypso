@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Immutable from 'immutable';
 import classNames from 'classnames';
 
 /**
@@ -23,7 +22,7 @@ class BlogSettings extends Component {
 		site: PropTypes.object.isRequired,
 		devices: PropTypes.object,
 		disableToggle: PropTypes.bool,
-		settings: PropTypes.instanceOf( Immutable.Map ).isRequired,
+		settings: PropTypes.object.isRequired,
 		hasUnsavedChanges: PropTypes.bool.isRequired,
 		onToggle: PropTypes.func.isRequired,
 		onSave: PropTypes.func.isRequired,

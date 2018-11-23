@@ -3,11 +3,10 @@
  *
  * @format
  */
-
 /**
  * External Dependencies
  */
-import Immutable from 'immutable';
+import { get, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,60 +39,57 @@ const NotificationSettingsStore = createReducerStore( ( state, payload ) => {
 	switch ( action ) {
 		case actionTypes.SAVE_SETTINGS:
 		case actionTypes.FETCH_SETTINGS: {
-			const prevState = state.toJS();
-
-			return Immutable.fromJS( {
-				...prevState,
+			return {
+				...state,
 				isFetching: true,
 				status: null,
-			} );
+			};
 		}
 		case actionTypes.SAVE_SETTINGS_FAILED:
 		case actionTypes.FETCH_SETTINGS_FAILED: {
-			const prevState = state.toJS();
-
-			return Immutable.fromJS( {
-				...prevState,
+			return {
+				...state,
 				isFetching: false,
 				error,
-			} );
+			};
 		}
 		case actionTypes.SAVE_SETTINGS_COMPLETE:
 		case actionTypes.FETCH_SETTINGS_COMPLETE: {
-			const prevState = state.toJS();
-
-			return Immutable.fromJS( {
-				...prevState,
+			return {
+				...state,
 				isFetching: false,
 				status: action === actionTypes.SAVE_SETTINGS_COMPLETE ? 'success' : null,
 				settings: {
-					...prevState.settings,
+					...state.settings,
 					clean: data,
 					dirty: data,
 				},
-			} );
+			};
 		}
 		case actionTypes.TOGGLE_SETTING: {
-			return Immutable.fromJS( {
-				...toggleSetting( state.toJS(), source, stream, setting ),
+			return {
+				...toggleSetting( state, source, stream, setting ),
 				status: null,
-			} );
+			};
 		}
 	}
 
 	return state;
-}, Immutable.fromJS( initialState ) );
+}, initialState );
 
 NotificationSettingsStore.getStateFor = function( source ) {
 	const state = NotificationSettingsStore.get();
-	const clean = state.getIn( [ 'settings', 'clean' ] );
-	const dirty = state.getIn( [ 'settings', 'dirty' ] );
+	const { status, error } = state;
+	const clean = get( state, 'settings.clean' );
+	const dirty = get( state, 'settings.dirty' );
+	const settings = get( dirty, source );
+	const hasUnsavedChanges = ! isEqual( clean, dirty );
 
 	return {
-		status: state.get( 'status' ),
-		error: state.get( 'error' ),
-		settings: dirty && dirty.get( source ),
-		hasUnsavedChanges: ! Immutable.is( clean, dirty ),
+		status,
+		error,
+		settings,
+		hasUnsavedChanges,
 	};
 };
 

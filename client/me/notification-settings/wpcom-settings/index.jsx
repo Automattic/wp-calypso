@@ -8,6 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,6 +45,8 @@ const options = {
 
 class WPCOMNotifications extends React.Component {
 	static displayName = 'WPCOMNotifications';
+
+	// TODO: Add propTypes
 
 	state = {
 		settings: null,
@@ -94,14 +97,14 @@ class WPCOMNotifications extends React.Component {
 
 				<EmailCategory
 					name={ options.marketing }
-					isEnabled={ this.state.settings.get( options.marketing ) }
+					isEnabled={ get( this.state.settings, options.marketing ) }
 					title={ this.props.translate( 'Suggestions' ) }
 					description={ this.props.translate( 'Tips for getting the most out of WordPress.com.' ) }
 				/>
 
 				<EmailCategory
 					name={ options.research }
-					isEnabled={ this.state.settings.get( options.research ) }
+					isEnabled={ get( this.state.settings, options.research ) }
 					title={ this.props.translate( 'Research' ) }
 					description={ this.props.translate(
 						'Opportunities to participate in WordPress.com research and surveys.'
@@ -110,7 +113,7 @@ class WPCOMNotifications extends React.Component {
 
 				<EmailCategory
 					name={ options.community }
-					isEnabled={ this.state.settings.get( options.community ) }
+					isEnabled={ get( this.state.settings, options.community ) }
 					title={ this.props.translate( 'Community' ) }
 					description={ this.props.translate(
 						'Information on WordPress.com courses and events (online and in-person).'
@@ -119,21 +122,21 @@ class WPCOMNotifications extends React.Component {
 
 				<EmailCategory
 					name={ options.promotion }
-					isEnabled={ this.state.settings.get( options.promotion ) }
+					isEnabled={ get( this.state.settings, options.promotion ) }
 					title={ this.props.translate( 'Promotions' ) }
 					description={ this.props.translate( 'Promotions and deals on upgrades.' ) }
 				/>
 
 				<EmailCategory
 					name={ options.news }
-					isEnabled={ this.state.settings.get( options.news ) }
+					isEnabled={ get( this.state.settings, options.news ) }
 					title={ this.props.translate( 'News' ) }
 					description={ this.props.translate( 'WordPress.com news and announcements.' ) }
 				/>
 
 				<EmailCategory
 					name={ options.digest }
-					isEnabled={ this.state.settings.get( options.digest ) }
+					isEnabled={ get( this.state.settings, options.digest ) }
 					title={ this.props.translate( 'Digests' ) }
 					description={ this.props.translate(
 						'Popular content from the blogs you follow, and reports on ' +

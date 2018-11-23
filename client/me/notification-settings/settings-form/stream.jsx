@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Immutable from 'immutable';
 import classNames from 'classnames';
 import { size, first } from 'lodash';
 
@@ -23,10 +22,7 @@ class NotificationSettingsFormStream extends PureComponent {
 		blogId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
 		stream: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
-		settings: PropTypes.oneOfType( [
-			PropTypes.instanceOf( Immutable.List ),
-			PropTypes.instanceOf( Immutable.Map ),
-		] ).isRequired,
+		settings: PropTypes.object.isRequired,
 		onToggle: PropTypes.func.isRequired,
 	};
 
@@ -37,7 +33,7 @@ class NotificationSettingsFormStream extends PureComponent {
 
 		if ( this.props.devices && size( this.props.devices ) > 0 ) {
 			stream = parseInt( this.state.selectedDeviceId || first( this.props.devices ).id, 10 );
-			settings = this.props.settings.find( device => device.get( 'device_id' ) === stream );
+			settings = this.props.settings.find( ( { device_id } ) => device_id === stream );
 		}
 
 		return { stream, settings };
