@@ -41,21 +41,25 @@ class SimplePaymentsEdit extends Component {
 	};
 
 	componentDidMount() {
+		const { attributes, hasPublishAction } = this.props;
+		const { paymentId } = attributes;
+
 		this.injectPaymentAttributes();
+
+		// Initialize product object early on by creating a draft
+		if ( ! paymentId && hasPublishAction ) {
+			this.saveProduct();
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { attributes, hasPublishAction, isSelected } = this.props;
-		const { paymentId } = attributes;
+		const { hasPublishAction, isSelected } = this.props;
 
 		if ( prevProps.simplePayment !== this.props.simplePayment ) {
 			this.injectPaymentAttributes();
 		}
 
-		if ( ! paymentId && hasPublishAction ) {
-			// Initialize product object early on by creating a draft
-			this.saveProduct();
-		} else if ( ! prevProps.isSaving && this.props.isSaving && hasPublishAction && this.validateAttributes() ) {
+		if ( ! prevProps.isSaving && this.props.isSaving && hasPublishAction && this.validateAttributes() ) {
 			// Validate and save product on post save
 			this.saveProduct();
 		} else if ( prevProps.isSelected && ! isSelected ) {
