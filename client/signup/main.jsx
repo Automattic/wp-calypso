@@ -44,6 +44,8 @@ import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/pro
 import SignupActions from 'lib/signup/actions';
 import SignupFlowController from 'lib/signup/flow-controller';
 import { disableCart } from 'lib/upgrades/actions';
+import { isValidLandingPageVertical } from 'lib/signup/verticals';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -55,7 +57,6 @@ import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { setSiteType } from 'state/signup/steps/site-type/actions';
 import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
-import { isValidLandingPageVertical } from 'lib/signup/verticals';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -270,10 +271,12 @@ class Signup extends React.Component {
 		}
 
 		//`site_type` query parameter
-		const siteType = queryObject.site_type;
-		if ( 'undefined' !== typeof siteType ) {
-			debug( 'From query string: site_type = %s', siteType );
-			this.props.setSiteType( siteType );
+		const siteTypeQueryParam = queryObject.site_type;
+		const siteTypeValue = getSiteTypePropertyValue( 'slug', siteTypeQueryParam, 'slug' );
+		if ( 'undefined' !== typeof siteTypeValue ) {
+			debug( 'From query string: site_type = %s', siteTypeQueryParam );
+			debug( 'Site type value = %s', siteTypeValue );
+			this.props.setSiteType( siteTypeValue );
 		}
 	};
 
