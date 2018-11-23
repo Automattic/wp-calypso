@@ -22,11 +22,6 @@ import { getSiteSlug } from 'state/sites/selectors';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 function EditorForbidden( { translate, userCanEdit, siteSlug } ) {
 	if ( false !== userCanEdit ) {
 		return null;

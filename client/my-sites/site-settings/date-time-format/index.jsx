@@ -19,6 +19,11 @@ import TimeFormatOption from './time-format-option';
 import { defaultDateFormats, defaultTimeFormats } from './default-formats';
 import { getLocalizedDate, phpToMomentDatetimeFormat } from './utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class DateTimeFormat extends Component {
 	static propTypes = {
 		handleSelect: PropTypes.func.isRequired,

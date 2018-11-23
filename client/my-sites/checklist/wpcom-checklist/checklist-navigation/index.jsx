@@ -24,7 +24,6 @@ export class ChecklistNavigation extends Component {
 		setStoredTask: PropTypes.func.isRequired,
 		setNotification: PropTypes.func.isRequired,
 		showNotification: PropTypes.bool,
-		canShowChecklist: PropTypes.bool,
 		closePopover: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 	};
@@ -41,19 +40,14 @@ export class ChecklistNavigation extends Component {
 	};
 
 	render() {
-		const { siteSlug, translate, showNotification, canShowChecklist, taskList } = this.props;
+		const { siteSlug, translate, showNotification, taskList } = this.props;
 
 		const buttonClasses = {
 			'has-notification': showNotification,
 			'checklist-navigation__count': true,
 		};
 		const { total, completed } = taskList.getCompletionStatus();
-		const isFinished = ! taskList.getFirstIncompleteTask();
 		const checklistLink = '/checklist/' + siteSlug;
-
-		if ( ! canShowChecklist || isFinished ) {
-			return null;
-		}
 
 		return (
 			<div className="checklist-navigation">

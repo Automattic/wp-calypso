@@ -282,10 +282,6 @@ class DomainsStep extends React.Component {
 		} );
 	};
 
-	isDomainForAtomicSite = () => {
-		return 'store' === this.getDesignType();
-	};
-
 	getDesignType = () => {
 		if ( this.props.forceDesignType ) {
 			return this.props.forceDesignType;
@@ -305,7 +301,9 @@ class DomainsStep extends React.Component {
 		return (
 			// 'subdomain' flow coming from .blog landing pages
 			flowName === 'subdomain' ||
-			// User picked only 'share' on the `about` step
+			// 'blog' flow, starting with blog themes
+			flowName === 'blog' ||
+			// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
 			( ! this.props.isDomainOnly &&
 				siteGoalsArray.length === 1 &&
 				siteGoalsArray.indexOf( 'share' ) !== -1 )
@@ -323,7 +321,18 @@ class DomainsStep extends React.Component {
 
 		// If it's the first load, rerun the search with whatever we get from the query param
 		const initialQuery = get( this.props, 'queryObject.new', '' );
-		if ( initialQuery && this.searchOnInitialRender ) {
+		if (
+			// If we landed here from /domains Search
+			( initialQuery && this.searchOnInitialRender ) ||
+			// If the subdomain type has changed, rerun the search
+			( initialState &&
+				initialState.subdomainSearchResults &&
+				endsWith(
+					get( initialState, 'subdomainSearchResults[0].domain_name', '' ),
+					// Inverted the ending, so we know it's the wrong subdomain in the saved results
+					this.shouldIncludeDotBlogSubdomain() ? '.wordpress.com' : '.blog'
+				) )
+		) {
 			this.searchOnInitialRender = false;
 			if ( initialState ) {
 				initialState.searchResults = null;
@@ -349,7 +358,7 @@ class DomainsStep extends React.Component {
 				isDomainOnly={ this.props.isDomainOnly }
 				analyticsSection={ this.getAnalyticsSection() }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom={ ! this.props.isDomainOnly && ! this.isDomainForAtomicSite() }
+				includeWordPressDotCom={ ! this.props.isDomainOnly }
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions
@@ -357,6 +366,7 @@ class DomainsStep extends React.Component {
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ abtest( 'krackenRebootM33' ) }
+				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 			/>
 		);
 	};

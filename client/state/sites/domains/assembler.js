@@ -55,6 +55,9 @@ export const createSiteDomainObject = domain => {
 		subscriptionId: domain.subscription_id,
 		supportsDomainConnect: Boolean( domain.supports_domain_connect ),
 		tldMaintenanceEndTime: domain.tld_maintenance_end_time,
+		transferAwayEligibleAt: ! domain.transfer_away_eligible_at
+			? null
+			: String( domain.transfer_away_eligible_at ),
 		transferLockOnWhoisUpdateOptional: Boolean( domain.transfer_lock_on_whois_update_optional ),
 		type: getDomainType( domain ),
 		transferStatus: getTransferStatus( domain ),

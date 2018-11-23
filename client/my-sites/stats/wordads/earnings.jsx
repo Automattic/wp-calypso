@@ -20,7 +20,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getWordAdsEarnings } from 'state/wordads/earnings/selectors';
 import QueryWordadsEarnings from 'components/data/query-wordads-earnings';
 
-class AdsFormEarnings extends Component {
+class WordAdsEarnings extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		earnings: PropTypes.object,
@@ -365,4 +365,4 @@ export default connect( state => {
 		siteId,
 		earnings: getWordAdsEarnings( state, siteId ),
 	};
-} )( localize( AdsFormEarnings ) );
+} )( localize( WordAdsEarnings ) );

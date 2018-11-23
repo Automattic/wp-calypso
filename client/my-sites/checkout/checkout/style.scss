@@ -409,7 +409,8 @@
 	// -----------------------------------
 
 	.paypal-payment-box,
-	.credits-payment-box {
+	.credits-payment-box,
+	.web-payment-box {
 		.payment-box-section,
 		.checkout__payment-box-section {
 			background-color: $white;
@@ -422,7 +423,8 @@
 		}
 	}
 
-	.paypal-payment-box {
+	.paypal-payment-box,
+	.web-payment-box {
 		.payment-box-section,
 		.checkout__payment-box-section {
 			display: flex;
@@ -530,6 +532,23 @@
 		form.loading {
 			opacity: 0.5;
 			pointer-events: none;
+		}
+	}
+
+	// Web Payment Box
+	// -----------------------------------
+	.web-payment-box {
+		.web-payment-box__apple-pay-button {
+			-webkit-appearance: -apple-pay-button;
+			-apple-pay-button-type: buy;
+			-apple-pay-button-style: black;
+			vertical-align: middle;
+			cursor: pointer;
+
+			&[disabled] {
+				opacity: 0.4;
+				cursor: not-allowed;
+			}
 		}
 	}
 
@@ -968,6 +987,11 @@
 	.checkout__wechat {
 		height: 24px;
 		margin-right: 5px;
+	}
+
+	.checkout__apple-pay {
+		height: 22px;
+		margin-right: 6px;
 	}
 
 	.select-dropdown__item-text {

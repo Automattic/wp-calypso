@@ -66,7 +66,7 @@ const importers = [
 	},
 	{
 		type: SITE_IMPORTER,
-		isImporterEnabled: isEnabled( 'manage/import/site-importer' ),
+		isImporterEnabled: true,
 		component: SiteImporter,
 	},
 	{

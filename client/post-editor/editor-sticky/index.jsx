@@ -22,11 +22,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class EditorSticky extends React.Component {
 	static displayName = 'EditorSticky';
 

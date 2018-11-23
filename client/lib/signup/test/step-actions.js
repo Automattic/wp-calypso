@@ -13,6 +13,9 @@ jest.mock( 'lib/analytics', () => ( {
 // This is necessary since localforage will throw "no local storage method found" promise rejection without this.
 // See how lib/user-settings/test apply the same trick.
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
+jest.mock( 'lib/abtest', () => ( {
+	abtest: () => '',
+} ) );
 
 describe( 'createSiteWithCart()', () => {
 	// createSiteWithCart() function is not designed to be easy for test at the moment.

@@ -4,8 +4,9 @@
  * External dependencies
  */
 const fs = require( 'fs' );
-const path = require( 'path' );
 const GenerateJsonFile = require( 'generate-json-file-webpack-plugin' );
+const path = require( 'path' );
+const { compact } = require( 'lodash' );
 
 const DIRECTORY_DEPTH = '../../'; // Relative path of the extensions to preset directory
 
@@ -64,7 +65,6 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 			...sharedUtilsScripts,
 			...sharedEditorUtilsScripts,
 			...blockScripts( 'editor', inputDir, presetBlocks ),
-			...blockScripts( 'view', inputDir, presetBlocks ),
 		];
 
 		// Combines all the different blocks into one editor-beta.js script
@@ -72,11 +72,10 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 			...sharedUtilsScripts,
 			...sharedEditorUtilsScripts,
 			...blockScripts( 'editor', inputDir, allPresetBlocks ),
-			...blockScripts( 'view', inputDir, allPresetBlocks ),
 		];
 
 		// We explicitly don't create a view.js bundle since all the views are
-		// bundled into the editor and also available via the individual folders.
+		// available via the individual folders.
 		viewScriptEntry = null;
 	} else {
 		editorScript = path.join( inputDir, 'editor.js' );
@@ -86,7 +85,7 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 
 	return {
 		...baseConfig,
-		plugins: [
+		plugins: compact( [
 			...baseConfig.plugins,
 			fs.existsSync( presetPath ) &&
 				new GenerateJsonFile( {
@@ -96,10 +95,10 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 						betaBlocks: presetBetaBlocks,
 					},
 				} ),
-		],
+		] ),
 		entry: {
 			editor: editorScript,
-			'editor-beta': editorBetaScript,
+			...( editorBetaScript && { 'editor-beta': editorBetaScript } ),
 			...viewScriptEntry,
 			...viewBlocksScripts,
 		},
@@ -108,5 +107,6 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 			filename: '[name].js',
 			libraryTarget: 'window',
 		},
+		externals: [ ...baseConfig.externals, 'lodash' ],
 	};
 };

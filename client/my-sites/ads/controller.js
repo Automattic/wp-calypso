@@ -14,7 +14,7 @@ import Ads from 'my-sites/ads/main';
 
 export default {
 	redirect: function( context ) {
-		page.redirect( '/ads/earnings/' + context.params.site_id );
+		page.redirect( '/ads/settings/' + context.params.site_id );
 		return;
 	},
 

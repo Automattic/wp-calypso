@@ -5,7 +5,6 @@
  */
 
 import { connect } from 'react-redux';
-import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -17,7 +16,7 @@ import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
-import { isBlogger, isPersonal, isPremium, isBusiness } from 'lib/products-values';
+import { isPlan } from 'lib/products-values';
 import { shouldFetchSitePlans } from 'lib/plans';
 
 class CartPlanDiscountAd extends Component {
@@ -33,8 +32,6 @@ class CartPlanDiscountAd extends Component {
 
 	render() {
 		const { cart, translate, sitePlans } = this.props;
-		let plan;
-
 		if (
 			! sitePlans.hasLoadedFromServer ||
 			! cart.hasLoadedFromServer ||
@@ -43,21 +40,10 @@ class CartPlanDiscountAd extends Component {
 			return null;
 		}
 
-		if ( cartItems.getAll( cart ).some( isBlogger ) ) {
-			plan = find( sitePlans.data, isBlogger );
-		}
-
-		if ( cartItems.getAll( cart ).some( isPersonal ) ) {
-			plan = find( sitePlans.data, isPersonal );
-		}
-
-		if ( cartItems.getAll( cart ).some( isPremium ) ) {
-			plan = find( sitePlans.data, isPremium );
-		}
-
-		if ( cartItems.getAll( cart ).some( isBusiness ) ) {
-			plan = find( sitePlans.data, isBusiness );
-		}
+		const cartPlan = cartItems.getAll( cart ).find( isPlan );
+		const plan = sitePlans.data.filter( function( sitePlan ) {
+			return sitePlan.productSlug === this.product_slug;
+		}, cartPlan )[ 0 ];
 
 		if ( plan.rawDiscount === 0 || ! plan.isDomainUpgrade ) {
 			return null;

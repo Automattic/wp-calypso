@@ -86,9 +86,31 @@ export function tefPaymentFieldRules() {
 }
 
 /**
+ * Returns the token validation rule set
+ * @returns {object} the ruleset
+ */
+export function tokenFieldRules() {
+	return {
+		name: {
+			description: i18n.translate( 'Name on Card', {
+				comment: 'Upgrades: Card holder name label on credit card form',
+			} ),
+			rules: [ 'required' ],
+		},
+
+		tokenized_payment_data: {
+			description: i18n.translate( 'Tokenized Payment Data', {
+				comment: 'Upgrades: Tokenized payment data from the token provider',
+			} ),
+			rules: [ 'required' ],
+		},
+	};
+}
+
+/**
  * Returns a validation ruleset to use for the given payment type
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef
+ * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef|token
  * @returns {object|null} the ruleset
  */
 export function paymentFieldRules( paymentDetails, paymentType ) {
@@ -97,6 +119,8 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 			return creditCardFieldRules( getAdditionalFieldRules( paymentDetails ) );
 		case 'brazil-tef':
 			return tefPaymentFieldRules();
+		case 'token':
+			return tokenFieldRules();
 		default:
 			return null;
 	}
@@ -184,7 +208,7 @@ validators.validCPF = {
  * Runs payment fields through the relevant validation rules
  * use these validation rules, for example, in <CreditCardForm />, <PayPalPaymentBox /> and <RedirectPaymentBox />
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef
+ * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef|token
  * @returns {object} validation errors, if any
  */
 export function validatePaymentDetails( paymentDetails, paymentType = 'credit-card' ) {

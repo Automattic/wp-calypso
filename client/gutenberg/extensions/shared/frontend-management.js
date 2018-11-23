@@ -1,16 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
+import { assign, snakeCase } from 'lodash';
 import { createElement, render } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
-
-import assign from 'lodash/assign';
 
 export class FrontendManagement {
 	blockIterator( rootNode, blocks ) {
@@ -34,7 +28,7 @@ export class FrontendManagement {
 		const data = {};
 		for ( const name in attributes ) {
 			const attribute = attributes[ name ];
-			data[ name ] = dataset[ name ];
+			data[ name ] = dataset[ snakeCase( name ) ];
 			if ( attribute.type === 'boolean' ) {
 				data[ name ] = data[ name ] === 'false' ? false : !! data[ name ];
 			}

@@ -40,6 +40,15 @@ These extensions live under `client/gutenberg/extensions` directory. There are s
 
 By default, these extensions will be built under `build` folder in the same folder with entry script.
 
+Some dependencies will be omitted from the bundle using webpack externals. They are expected to be
+present in the environment where the produced scripts are run.
+
+- @wordpress/\* dependencies
+- lodash
+
+The produced bundles expect these scripts to be available in the global scope when run, i.e.
+`window.lodash`.
+
 Read more from [Gutenberg extension docs](../client/gutenberg/extensions/README.md).
 
 #### Gutenberg extensions presets

@@ -44,6 +44,8 @@ import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/pro
 import SignupActions from 'lib/signup/actions';
 import SignupFlowController from 'lib/signup/flow-controller';
 import { disableCart } from 'lib/upgrades/actions';
+import { isValidLandingPageVertical } from 'lib/signup/verticals';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -55,7 +57,6 @@ import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { setSiteType } from 'state/signup/steps/site-type/actions';
 import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
-import { isValidLandingPageVertical } from 'lib/signup/verticals';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -158,7 +159,7 @@ class Signup extends React.Component {
 
 	UNSAFE_componentWillReceiveProps( { signupDependencies, stepName, flowName, progress } ) {
 		if ( this.props.stepName !== stepName ) {
-			this.recordStep( stepName );
+			this.recordStep( stepName, flowName );
 		}
 
 		if ( stepName === this.state.resumingStep ) {
@@ -270,10 +271,12 @@ class Signup extends React.Component {
 		}
 
 		//`site_type` query parameter
-		const siteType = queryObject.site_type;
-		if ( 'undefined' !== typeof siteType ) {
-			debug( 'From query string: site_type = %s', siteType );
-			this.props.setSiteType( siteType );
+		const siteTypeQueryParam = queryObject.site_type;
+		const siteTypeValue = getSiteTypePropertyValue( 'slug', siteTypeQueryParam, 'slug' );
+		if ( 'undefined' !== typeof siteTypeValue ) {
+			debug( 'From query string: site_type = %s', siteTypeQueryParam );
+			debug( 'Site type value = %s', siteTypeValue );
+			this.props.setSiteType( siteTypeValue );
 		}
 	};
 
@@ -290,9 +293,9 @@ class Signup extends React.Component {
 		}
 	};
 
-	recordStep = ( stepName = this.props.stepName ) => {
+	recordStep = ( stepName = this.props.stepName, flowName = this.props.flowName ) => {
 		analytics.tracks.recordEvent( 'calypso_signup_step_start', {
-			flow: this.props.flowName,
+			flow: flowName,
 			step: stepName,
 		} );
 	};
@@ -410,7 +413,7 @@ class Signup extends React.Component {
 	};
 
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
-	// to `store-nux`. If not specified, the current flow (`this.props.flowName`) continues.
+	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToStep = ( stepName, stepSectionName, flowName = this.props.flowName ) => {
 		if ( this.state.scrolling ) {
 			return;
@@ -441,7 +444,7 @@ class Signup extends React.Component {
 	};
 
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
-	// to `store-nux`. If not specified, the current flow (`this.props.flowName`) continues.
+	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
 		const flowSteps = flows.getFlow( nextFlowName, this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),

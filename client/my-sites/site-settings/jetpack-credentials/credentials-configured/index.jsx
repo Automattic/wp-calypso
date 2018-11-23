@@ -18,6 +18,11 @@ import Button from 'components/button';
 import { deleteCredentials } from 'state/jetpack/credentials/actions';
 import getRewindState from 'state/selectors/get-rewind-state';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CredentialsConfigured extends Component {
 	state = {
 		isRevoking: false,

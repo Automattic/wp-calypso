@@ -55,7 +55,6 @@ import {
 	isBestValue,
 	isMonthly,
 	isNew,
-	isPopular,
 	getPlanFeaturesObject,
 	getPlanClass,
 	TYPE_BLOGGER,
@@ -609,6 +608,7 @@ PlanFeatures.propTypes = {
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plans prop or isPlaceholder prop
 	plans: PropTypes.array,
+	popularPlan: PropTypes.object,
 	visiblePlans: PropTypes.array,
 	planProperties: PropTypes.array,
 	selectedFeature: PropTypes.string,
@@ -670,6 +670,7 @@ export default connect(
 			siteId,
 			displayJetpackPlans,
 			visiblePlans,
+			popularPlanType,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -696,7 +697,7 @@ export default connect(
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
-				const popular = isPopular( plan ) && ! isPaid;
+				const popular = planConstantObj.type === popularPlanType;
 				const newPlan = isNew( plan ) && ! isPaid;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;

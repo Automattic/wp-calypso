@@ -54,21 +54,21 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		free: {
-			steps: [ 'about', 'themes', 'domains', 'user' ],
+			steps: [ 'user', 'about', 'themes', 'domains' ],
 			destination: getSiteDestination,
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2018-01-24',
 		},
 
 		blog: {
-			steps: [ 'blog-themes', 'domains', 'plans', 'user' ],
+			steps: [ 'user', 'blog-themes', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'Signup flow starting with blog themes',
 			lastModified: '2017-09-01',
 		},
 
 		website: {
-			steps: [ 'website-themes', 'domains', 'plans', 'user' ],
+			steps: [ 'user', 'website-themes', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'Signup flow starting with website themes',
 			lastModified: '2017-09-01',
@@ -115,7 +115,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		onboarding: {
-			steps: [ 'user', 'site-type', 'about', 'domains', 'plans' ],
+			steps: [ 'user', 'site-type', 'site-topic', 'about', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2018-10-22',
@@ -241,12 +241,22 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	}
 
 	if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
-		flows[ 'store-nux' ] = {
-			steps: [ 'about', 'themes', 'domains', 'plans-store-nux', 'user' ],
+		// Important: For any changes done to the ecommerce flow,
+		// please copy the same changes to ecommerce-onboarding flow too
+		flows.ecommerce = {
+			steps: [ 'user', 'about', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2018-01-24',
 		};
+
+		flows[ 'ecommerce-onboarding' ] = {
+			steps: [ 'user', 'site-type', 'domains', 'plans' ],
+			destination: getSiteDestination,
+			description: 'Signup flow for creating an online store with an Atomic site',
+			lastModified: '2018-11-21',
+		};
+
 		flows[ 'store-woo' ] = {
 			steps: [ 'domains-store', 'plans-store-nux', 'user' ],
 			destination: getSiteDestination,
@@ -319,10 +329,10 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		lastModified: '2018-10-29',
 	};
 
-	flows[ 'crowdsignal' ] = {
+	flows.crowdsignal = {
 		steps: [ 'oauth2-name' ],
-		destination: ( dependencies ) => dependencies.oauth2_redirect || '/',
-		description: 'Crowdsignal\'s custom WordPress.com Connect signup flow',
+		destination: dependencies => dependencies.oauth2_redirect || '/',
+		description: "Crowdsignal's custom WordPress.com Connect signup flow",
 		lastModified: '2018-11-14',
 		disallowResume: true,
 		autoContinue: true,

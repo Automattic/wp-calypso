@@ -3,8 +3,8 @@
 /**
  * External dependencies
  */
-import { registerBlockType } from '@wordpress/blocks';
-import { Path, SVG } from '@wordpress/components';
+import { ExternalLink, Path, SVG } from '@wordpress/components';
+import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -13,17 +13,29 @@ import edit from './edit';
 import save from './save';
 import { DEFAULT_CURRENCY } from 'lib/simple-payments/constants';
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
 
 /**
  * Styles
  */
 import './editor.scss';
 
-registerBlockType( 'jetpack/simple-payments', {
+export const name = 'simple-payments';
+
+export const settings = {
 	title: __( 'Simple Payments button' ),
 
-	description: __(
-		'Lets you create and embed credit and debit card payment buttons with minimal setup.'
+	description: (
+		<Fragment>
+			<p>
+				{ __(
+					'Lets you create and embed credit and debit card payment buttons with minimal setup.'
+				) }
+			</p>
+			<ExternalLink href="https://support.wordpress.com/simple-payments/">
+				{ __( 'Support reference' ) }
+			</ExternalLink>
+		</Fragment>
 	),
 
 	icon: (
@@ -99,4 +111,6 @@ registerBlockType( 'jetpack/simple-payments', {
 		customClassName: false,
 		html: false,
 	},
-} );
+};
+
+registerJetpackBlock( name, settings );

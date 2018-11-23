@@ -5,7 +5,18 @@
  */
 
 import validator from 'is-my-json-valid';
-import { forEach, get, isEmpty, isEqual, mapValues, merge, omit, omitBy, reduce } from 'lodash';
+import {
+	forEach,
+	get,
+	isEmpty,
+	isEqual,
+	mapValues,
+	merge,
+	omit,
+	omitBy,
+	reduce,
+	reduceRight,
+} from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 import LRU from 'lru';
 
@@ -443,6 +454,61 @@ function serializeState( reducers, state, action ) {
 }
 
 /**
+ * Create a new reducer from original `reducers` by adding a new `reducer` at `keyPath`
+ * @param {Object} reducers Object with reducer names as keys and reducer functions as values that
+ *   is used as parameter to `combineReducers` (the original Redux one and our extension, too).
+ * @return {Function} The function to be attached as `addReducer` method to the
+ *   result of `combineReducers`.
+ */
+export function addReducer( reducers ) {
+	return ( keyPath, reducer ) => {
+		// extract the first key from keyPath and dive recursively into the reducer tree
+		const [ key, ...restKeys ] = keyPath;
+
+		const existingReducer = reducers[ key ];
+		let newReducer;
+
+		// if there is an existing reducer at this path, we'll recursively call `addReducer`
+		// until we reach the final destination in the tree.
+		if ( existingReducer ) {
+			// we reached the final destination in the tree and another reducer already lives there!
+			if ( restKeys.length === 0 ) {
+				throw new Error( `Reducer with key '${ key }' is already registered` );
+			}
+
+			if ( ! existingReducer.addReducer ) {
+				throw new Error(
+					"New reducer can be added only into a reducer created with 'combineReducers'"
+				);
+			}
+
+			newReducer = existingReducer.addReducer( restKeys, reducer );
+		} else {
+			// for the remaining keys in the keyPath, create a nested reducer:
+			// if `restKeys` is `[ 'a', 'b', 'c']`, then the result of this `reduceRight` is:
+			// ```js
+			// combineReducers( {
+			//   a: combineReducers ( {
+			//     b: combineReducers( {
+			//       c: reducer
+			//     } )
+			//   })
+			// })
+			// ```
+			newReducer = reduceRight(
+				restKeys,
+				( subreducer, subkey ) => createCombinedReducer( { [ subkey ]: subreducer } ),
+				setupReducerPersistence( reducer )
+			);
+		}
+
+		const newCombinedReducer = createCombinedReducer( { ...reducers, [ key ]: newReducer } );
+
+		return newCombinedReducer;
+	};
+}
+
+/**
  * Returns a single reducing function that ensures that persistence is opt-in.
  * If you don't need state to be stored, simply use this method instead of
  * combineReducers from redux. This function uses the same interface.
@@ -527,6 +593,7 @@ function createCombinedReducer( reducers ) {
 	};
 
 	combinedReducer.hasCustomPersistence = true;
+	combinedReducer.addReducer = addReducer( reducers );
 
 	return combinedReducer;
 }

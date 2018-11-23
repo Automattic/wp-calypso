@@ -111,9 +111,9 @@ class DesignTypeWithAtomicStoreStep extends Component {
 			themeSlugWithRepo,
 		} );
 
-		// If the user chooses `store` as design type, redirect to the `store-nux` flow.
+		// If the user chooses `store` as design type, redirect to the `ecommerce` flow.
 		// For other choices, continue with the current flow.
-		const nextFlowName = designType === DESIGN_TYPE_STORE ? 'store-nux' : this.props.flowName;
+		const nextFlowName = designType === DESIGN_TYPE_STORE ? 'ecommerce' : this.props.flowName;
 		this.props.goToNextStep( nextFlowName );
 	};
 

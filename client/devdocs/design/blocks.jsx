@@ -110,9 +110,14 @@ export default class AppComponents extends React.Component {
 				<DocumentHead title="Blocks" />
 
 				{ this.props.component ? (
-					<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
-						{ slugToCamelCase( this.props.component ) }
-					</HeaderCake>
+					<React.Fragment>
+						<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
+							{ slugToCamelCase( this.props.component ) }
+						</HeaderCake>
+						{ isEnabled( 'devdocs/color-scheme-picker' ) && (
+							<ColorSchemePicker readmeFilePath="color-scheme-picker" />
+						) }
+					</React.Fragment>
 				) : (
 					<div>
 						<ReadmeViewer readmeFilePath="/client/devdocs/blocks/README.md" />
@@ -129,6 +134,9 @@ export default class AppComponents extends React.Component {
 					filter={ this.state.filter }
 					section="blocks"
 				>
+					{ isEnabled( 'devdocs/color-scheme-picker' ) && (
+						<ColorSchemePicker readmeFilePath="color-scheme-picker" />
+					) }
 					<AllSites readmeFilePath="all-sites" />
 					<AuthorSelector readmeFilePath="author-selector" />
 					<CalendarButton readmeFilePath="calendar-button" />
@@ -189,7 +197,6 @@ export default class AppComponents extends React.Component {
 					<PostComment />
 					<ConversationCaterpillar readmeFilePath="conversation-caterpillar" />
 					<ConversationFollowButton />
-					<ColorSchemePicker readmeFilePath="color-scheme-picker" />
 					{ isEnabled( 'reader/user-mention-suggestions' ) && (
 						<UserMentions readmeFilePath="user-mentions" />
 					) }

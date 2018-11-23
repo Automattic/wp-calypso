@@ -57,6 +57,7 @@ export function requestSiteStats( siteId, statType, query ) {
 		const isUndocumented = includes(
 			[
 				'statsPodcastDownloads',
+				'statsAds',
 				'statsOrders',
 				'statsTopSellers',
 				'statsTopCategories',

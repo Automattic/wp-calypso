@@ -26,6 +26,11 @@ import { hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purch
 import notices from 'notices';
 import hasCancelableSitePurchases from 'state/selectors/has-cancelable-site-purchases';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const trackDeleteSiteOption = option => {
 	tracks.recordEvent( 'calypso_settings_delete_site_options', {
 		option: option,

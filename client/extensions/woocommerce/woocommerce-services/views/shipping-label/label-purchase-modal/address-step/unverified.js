@@ -45,7 +45,7 @@ const UnverifiedAddress = ( {
 
 		if ( verificationError ) {
 			return (
-				<Notice status="is-info" showDismiss={ false }>
+				<Notice status="is-error" showDismiss={ false }>
 					{ translate( 'We were unable to automatically verify the address — %(error)s.', {
 						args: {
 							error: verificationError,
@@ -56,7 +56,7 @@ const UnverifiedAddress = ( {
 		}
 
 		return (
-			<Notice status="is-info" showDismiss={ false }>
+			<Notice status="is-error" showDismiss={ false }>
 				{ translate( 'We were unable to automatically verify the address.' ) }
 			</Notice>
 		);
@@ -121,12 +121,12 @@ const UnverifiedAddress = ( {
 					</ExternalLink>
 				</div>
 			</div>
-			<div className="address-step__unverifiable-actions step-confirmation-button">
-				<FormButton type="button" isPrimary={ false } onClick={ confirmAddressSuggestion }>
-					{ translate( 'Use address as entered' ) }
-				</FormButton>
+			<div className="address-step__actions">
 				<FormButton type="button" onClick={ editUnverifiableAddress }>
 					{ translate( 'Edit address' ) }
+				</FormButton>
+				<FormButton type="button" onClick={ confirmAddressSuggestion } borderless>
+					{ translate( 'Use address as entered' ) }
 				</FormButton>
 			</div>
 		</div>

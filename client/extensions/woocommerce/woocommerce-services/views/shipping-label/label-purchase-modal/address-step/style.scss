@@ -107,7 +107,9 @@
 	}
 }
 
-.address-step__unverifiable-actions {
+.address-step__actions {
+	@extend .step-confirmation-button;
+
 	.form-button {
 		margin-left: 10px;
 

@@ -30,6 +30,7 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"happychat_url": "https://happychat-io-staging.go-vip.co/customer",
 	"rebrand_cities_prefix": "rebrandcitiesdevelopmentsite",
+	"apple_pay_merchant_id": "merchant.com.wordpress.test",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"support_site_locales": [ "en", "es", "de", "ja", "pt-br" ],
 	"features": {
@@ -50,6 +51,7 @@
 		"devdocs/redirect-loggedout-homepage": true,
 		"devdocs/components-usage-stats": false,
 		"devdocs/gutenberg-blocks": true,
+		"devdocs/color-scheme-picker": true,
 		"dev/test-helper": true,
 		"dev/preferences-helper": true,
 		"domains/cctlds": true,
@@ -98,7 +100,6 @@
 		"manage/edit-user": true,
 		"manage/export/guided-transfer": true,
 		"manage/import/medium": true,
-		"manage/import/site-importer": true,
 		"manage/import-in-sidebar": true,
 		"manage/option_sync_non_public_post_stati": true,
 		"manage/pages": true,
@@ -128,6 +129,9 @@
 		"me/my-profile": true,
 		"me/notifications": true,
 		"me/trophies": false,
+		"my-sites/checkout/web-payment": true,
+		"my-sites/checkout/web-payment/apple-pay": true,
+		"my-sites/checkout/web-payment/basic-card": false,
 		"nps-survey/devdocs": true,
 		"nps-survey/dev-trigger": true,
 		"nps-survey/notice": true,
@@ -213,6 +217,7 @@
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/store-on-non-atomic-sites": true,
+		"wordads/daily-stats": true,
 		"wpcom-user-bootstrap": false
 	}
 }

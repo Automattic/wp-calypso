@@ -21,11 +21,13 @@ import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { isEnabled } from 'config';
 import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
-
-/**
- * Style dependencies
- */
-import "./style.scss";
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+	withAnalytics,
+	bumpStat,
+} from 'state/analytics/actions';
 
 class EditorGutenbergBlocksWarningDialog extends Component {
 	static propTypes = {
@@ -36,6 +38,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		switchToGutenberg: PropTypes.func,
 		openPostRevisionsDialog: PropTypes.func,
 		optInEnabled: PropTypes.bool,
+		useClassic: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -46,6 +49,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 		switchToGutenberg: noop,
 		openPostRevisionsDialog: noop,
 		optInEnabled: false,
+		useClassic: noop,
 	};
 
 	state = {
@@ -71,6 +75,7 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 	}
 
 	useClassicEditor = () => {
+		this.props.useClassic();
 		this.setState( {
 			forceClassic: true,
 		} );
@@ -133,6 +138,45 @@ class EditorGutenbergBlocksWarningDialog extends Component {
 	}
 }
 
+const mapDispatchToProps = dispatch => ( {
+	switchToGutenberg: ( siteId, gutenbergUrl ) => {
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordGoogleEvent(
+						'Gutenberg Opt-In',
+						'Clicked "Switch to the new editor" in the blocks warning dialog.',
+						'Opt-In',
+						true
+					),
+					recordTracksEvent( 'calypso_gutenberg_opt_in', {
+						opt_in: true,
+					} ),
+					bumpStat( 'gutenberg-opt-in', 'Calypso Dialog Opt In' )
+				),
+				setSelectedEditor( siteId, 'gutenberg', gutenbergUrl )
+			)
+		);
+	},
+	useClassic: () => {
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordGoogleEvent(
+						'Gutenberg Opt-Out',
+						'Clicked "Use the classic editor" in the blocks warning dialog.',
+						'Opt-In',
+						false
+					),
+					recordTracksEvent( 'calypso_gutenberg_use_classic_editor' ),
+					bumpStat( 'selected-editor', 'calypso-gutenberg-use-classic-editor' )
+				)
+			)
+		);
+	},
+	openPostRevisionsDialog: () => dispatch( openPostRevisionsDialog() ),
+} );
+
 export default connect(
 	state => {
 		const postContent = getEditorRawContent( state );
@@ -149,9 +193,5 @@ export default connect(
 			optInEnabled,
 		};
 	},
-	dispatch => ( {
-		switchToGutenberg: ( siteId, gutenbergUrl ) =>
-			dispatch( setSelectedEditor( siteId, 'gutenberg', gutenbergUrl ) ),
-		openPostRevisionsDialog: () => dispatch( openPostRevisionsDialog() ),
-	} )
+	mapDispatchToProps
 )( localize( EditorGutenbergBlocksWarningDialog ) );

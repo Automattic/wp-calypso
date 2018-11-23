@@ -41,10 +41,10 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import {
 	PLAN_FREE,
-	PLAN_BUSINESS,
-	PLAN_BUSINESS_2_YEARS,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
@@ -159,7 +159,13 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 	test( 'Should render <PlanFeatures /> with WP.com plans without free one when requested', () => {
 		const instance = new PlansFeaturesMain( { ...props, hideFreePlan: true } );
 		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [ PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+		expect( plans ).toEqual( [
+			PLAN_BLOGGER,
+			PLAN_PERSONAL,
+			PLAN_PREMIUM,
+			PLAN_BUSINESS,
+			PLAN_ECOMMERCE,
+		] );
 	} );
 
 	test( 'Should render <PlanFeatures /> with WP.com 2-year plans when requested ( by plan )', () => {

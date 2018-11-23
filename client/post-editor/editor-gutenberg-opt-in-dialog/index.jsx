@@ -30,11 +30,6 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class EditorGutenbergOptInDialog extends Component {
 	static propTypes = {
 		// connected properties
@@ -43,7 +38,7 @@ class EditorGutenbergOptInDialog extends Component {
 		isDialogVisible: PropTypes.bool,
 		hideDialog: PropTypes.func,
 		optIn: PropTypes.func,
-		optOut: PropTypes.func,
+		useClassic: PropTypes.func,
 		siteId: PropTypes.number,
 	};
 
@@ -58,7 +53,7 @@ class EditorGutenbergOptInDialog extends Component {
 	};
 
 	render() {
-		const { translate, isDialogVisible, optOut } = this.props;
+		const { translate, isDialogVisible, useClassic } = this.props;
 		const buttons = [
 			<Button key="gutenberg" onClick={ this.optInToGutenberg } primary>
 				{ translate( 'Try the new editor' ) }
@@ -66,7 +61,7 @@ class EditorGutenbergOptInDialog extends Component {
 			{
 				action: 'cancel',
 				label: translate( 'Use the classic editor' ),
-				onClick: optOut,
+				onClick: useClassic,
 			},
 		];
 		return (
@@ -122,7 +117,7 @@ const mapDispatchToProps = dispatch => ( {
 			)
 		);
 	},
-	optOut: () => {
+	useClassic: () => {
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
@@ -132,10 +127,8 @@ const mapDispatchToProps = dispatch => ( {
 						'Opt-In',
 						false
 					),
-					recordTracksEvent( 'calypso_gutenberg_opt_in', {
-						opt_in: false,
-					} ),
-					bumpStat( 'gutenberg-opt-in', 'Calypso Dialog Opt Out' )
+					recordTracksEvent( 'calypso_gutenberg_use_classic_editor' ),
+					bumpStat( 'selected-editor', 'calypso-gutenberg-use-classic-editor' )
 				),
 				hideGutenbergOptInDialog()
 			)
