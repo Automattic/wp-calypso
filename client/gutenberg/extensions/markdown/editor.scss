@@ -139,7 +139,7 @@ $text-editor-font-size: inherit;
 
 .wp-block-jetpack-markdown {
 	.wp-block-jetpack-markdown__editor {
-		font-family: Menlo, Consolas, monaco, monospace;
+		font-family: $editor-html-font;
 		font-size: 14px;
 
 		&:focus {
