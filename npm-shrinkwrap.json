@@ -4734,6 +4734,10 @@
         "color-name": "^1.0.0"
       }
     },
+    "color-studio": {
+      "version": "github:automattic/color-studio#302bab1a6279ce539cd47cf369bf307a0d300d71",
+      "from": "github:automattic/color-studio"
+    },
     "colormin": {
       "version": "1.1.2",
       "resolved": "https://registry.npmjs.org/colormin/-/colormin-1.1.2.tgz",
