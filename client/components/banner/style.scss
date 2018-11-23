@@ -10,6 +10,10 @@
 
 	@include banner-color( $blue-wordpress );
 
+		&.is-upgrade-blogger {
+			@include banner-color( darken( $alert-green, 20% ) );
+		}
+
 		&.is-upgrade-personal {
 			@include banner-color( $blue-wordpress );
 		}
