@@ -233,7 +233,7 @@ class JetpackContactForm extends Component {
 								</p>
 								<div className="jetpack-contact-form__create">
 									<Button isPrimary type="submit" disabled={ this.hasEmailError() }>
-										{ __( 'Add Form' ) }
+										{ __( 'Add form' ) }
 									</Button>
 								</div>
 							</form>

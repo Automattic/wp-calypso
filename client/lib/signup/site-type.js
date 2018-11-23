@@ -3,6 +3,7 @@
  * Exernal dependencies
  */
 import i18n from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,46 +16,53 @@ import i18n from 'i18n-calypso';
  */
 export const allSiteTypes = [
 	{
-		type: i18n.translate( 'Blog' ),
+		id: 'blog',
+		slug: 'blog',
+		label: i18n.translate( 'Blog' ),
 		description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
+		theme: 'pub/independent-publisher-2',
+		designType: 'blog',
 	},
 	{
-		type: i18n.translate( 'Business' ),
+		id: 'business',
+		slug: 'business',
+		label: i18n.translate( 'Business' ),
 		description: i18n.translate( 'Promote products and services.' ),
+		theme: 'pub/radcliffe-2',
+		designType: 'page',
 	},
 	{
-		type: i18n.translate( 'Professional' ),
+		id: 'professional',
+		slug: 'professional',
+		label: i18n.translate( 'Professional' ),
 		description: i18n.translate( 'Showcase your portfolio and work.' ),
+		theme: 'pub/altofocus',
+		designType: 'portfolio',
 	},
 	{
-		type: i18n.translate( 'Education' ),
+		id: 'education',
+		slug: 'education',
+		label: i18n.translate( 'Education' ),
 		description: i18n.translate( 'Share school projects and class info.' ),
+		theme: 'pub/twentyfifteen',
+		designType: 'blog',
 	},
 	{
-		type: i18n.translate( 'Non-profit Organization' ),
-		description: i18n.translate( 'Raise money and awareness for a cause.' ),
+		id: 'store',
+		slug: 'online-store',
+		label: i18n.translate( 'Online store' ),
+		description: i18n.translate( 'Sell your collection of products online. ' ),
+		theme: 'pub/dara',
+		designType: 'page',
 	},
 ];
 
-function isSiteTypeInList( siteType ) {
-	const allSiteTypesFiltered = allSiteTypes.map( elem => {
-		return elem.type;
-	} );
-	const sanitizedSiteTypes = allSiteTypesFiltered.map( dasherize );
-	siteType = dasherize( siteType );
-	return allSiteTypesFiltered.includes( siteType ) || sanitizedSiteTypes.includes( siteType );
-}
-
-export function dasherize( string ) {
-	return string
-		.toLowerCase()
-		.replace( / /g, '-' )
-		.replace( /-+/, '-' );
-}
-
-export function isValidLandingPageSiteType( siteType ) {
-	if ( ! siteType || siteType === '' ) {
-		return false;
+export function getSiteTypePropertyValue( key, value, property ) {
+	if ( ! value ) {
+		return;
 	}
-	return isSiteTypeInList( siteType );
+
+	const siteTypeProperties = find( allSiteTypes, { [ key ]: value } );
+
+	return siteTypeProperties && siteTypeProperties[ property ];
 }

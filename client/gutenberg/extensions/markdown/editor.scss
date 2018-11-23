@@ -116,9 +116,8 @@ $text-editor-font-size: inherit;
 
 		table {
 			overflow-x: auto;
-    		display: block;
-    		border-collapse: collapse;
-    		width: 100%;
+			border-collapse: collapse;
+			width: 100%;
 		}
 
 		thead,
@@ -126,7 +125,6 @@ $text-editor-font-size: inherit;
 		tfoot {
 			width: 100%;
 			min-width: 240px;
-			display: table;
 		}
 
 		td,
@@ -139,6 +137,9 @@ $text-editor-font-size: inherit;
 
 .wp-block-jetpack-markdown {
 	.wp-block-jetpack-markdown__editor {
+		font-family: $editor-html-font;
+		font-size: 14px;
+
 		&:focus {
 			border-color: transparent;
 			box-shadow: 0 0 0 transparent;

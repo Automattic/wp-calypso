@@ -241,12 +241,22 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	}
 
 	if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
+		// Important: For any changes done to the ecommerce flow,
+		// please copy the same changes to ecommerce-onboarding flow too
 		flows.ecommerce = {
-			steps: [ 'about', 'domains', 'plans', 'user' ],
+			steps: [ 'user', 'about', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2018-01-24',
 		};
+
+		flows[ 'ecommerce-onboarding' ] = {
+			steps: [ 'user', 'site-type', 'domains', 'plans' ],
+			destination: getSiteDestination,
+			description: 'Signup flow for creating an online store with an Atomic site',
+			lastModified: '2018-11-21',
+		};
+
 		flows[ 'store-woo' ] = {
 			steps: [ 'domains-store', 'plans-store-nux', 'user' ],
 			destination: getSiteDestination,

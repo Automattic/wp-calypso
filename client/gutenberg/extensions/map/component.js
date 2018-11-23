@@ -39,10 +39,10 @@ export class Map extends Component {
 		const { onMarkerClick, deleteActiveMarker, updateActiveMarker } = this;
 		const currentPoint = get( activeMarker, 'props.point' ) || {};
 		const { title, caption } = currentPoint;
-		let addPoint = null;
-		Children.map( children, element => {
-			if ( element && 'AddPoint' === element.type.name ) {
-				addPoint = element;
+		const addPoint = Children.map( children, child => {
+			const tagName = get( child, 'props.tagName' );
+			if ( 'AddPoint' === tagName ) {
+				return child;
 			}
 		} );
 		const mapMarkers =

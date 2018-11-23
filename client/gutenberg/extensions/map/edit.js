@@ -265,6 +265,7 @@ class MapEdit extends Component {
 								onClose={ () => this.setState( { addPointVisibility: false } ) }
 								apiKey={ apiKey }
 								onError={ this.onError }
+								tagName="AddPoint"
 							/>
 						) }
 					</Map>

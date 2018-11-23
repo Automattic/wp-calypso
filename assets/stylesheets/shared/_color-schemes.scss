@@ -1,3 +1,5 @@
+/** @format */
+
 //default color scheme
 :root {
 	--masterbar-color: #{$white};
@@ -32,7 +34,7 @@
 
 //additional color schemes
 .color-scheme {
-	&.is-light {
+	&.is-classic-bright {
 		--masterbar-color: #{$gray-text};
 		--masterbar-background: #{$gray-lighten-20};
 		--masterbar-border-color: #{$gray-lighten-10};
@@ -63,7 +65,7 @@
 		--profile-gravatar-user-secondary-info-color: #{$gray-dark};
 	}
 
-	&.is-dark {
+	&.is-laser-black {
 		--masterbar-color: #{$white};
 		--masterbar-background: #{$gray-dark};
 		--masterbar-border-color: #{$white};
