@@ -53,7 +53,7 @@ class SimplePaymentsEdit extends Component {
 		}
 
 		// Initialize product object early on by creating a draft
-		if ( ! paymentId ) {
+		if ( ! paymentId && hasPublishAction ) {
 			this.saveProduct();
 		}
 
