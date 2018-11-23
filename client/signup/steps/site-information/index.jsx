@@ -26,7 +26,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
 import InfoPopover from 'components/info-popover';
-import { dasherize } from 'lib/signup/site-type';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -61,7 +61,12 @@ class SiteInformation extends Component {
 	};
 
 	renderContent() {
-		const { translate, isBusinessSiteSelected, siteNameText } = this.props;
+		const { translate, siteType } = this.props;
+		const siteTitleLabel = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' ) || '';
+		const siteTitlePlaceholder =
+			getSiteTypePropertyValue( 'slug', siteType, 'siteTitlePlaceholder' ) || '';
+		const isBusinessSiteSelected =
+			siteType === getSiteTypePropertyValue( 'slug', 'business', 'slug' );
 
 		return (
 			<div className="site-information__wrapper">
@@ -70,15 +75,15 @@ class SiteInformation extends Component {
 						<Card>
 							<FormFieldset>
 								<FormLabel htmlFor="name">
-									{ siteNameText.label }
+									{ siteTitleLabel }
 									<InfoPopover className="site-information__info-popover" position="top">
-										{ translate( 'This will be used for the title of your site.' ) }
+										{ translate( 'This will be used as the title of your site.' ) }
 									</InfoPopover>
 								</FormLabel>
 								<FormTextInput
 									id="name"
 									name="name"
-									placeholder={ siteNameText.placeholder }
+									placeholder={ siteTitlePlaceholder }
 									onChange={ this.handleInputChange }
 									value={ this.state.name }
 								/>
@@ -169,32 +174,6 @@ class SiteInformation extends Component {
 	}
 }
 
-/**
- * Returns translated label and placeholder for the name field depending on the site type
- *
- * @param   {String} siteType E.g,'business', 'blog'
- * @returns {Object} label and placeholder object
- */
-function getSiteNameText( siteType ) {
-	//TODO: After site-type component is merged, fetch segment names from lib/site-type.js
-	switch ( dasherize( siteType ) ) {
-		case 'business':
-			return {
-				label: i18n.translate( 'Business name' ),
-				placeholder: i18n.translate( "E.g. Juliana's Pizza" ),
-			};
-		case 'blog':
-			return {
-				label: i18n.translate( 'Blog name' ),
-				placeholder: i18n.translate( 'E.g. My travel blog ' ),
-			};
-	}
-	return {
-		label: i18n.translate( 'Site name' ),
-		placeholder: i18n.translate( 'E.g. My portfolio' ),
-	};
-}
-
 export default connect(
 	state => {
 		const siteType = getSiteType( state );
@@ -202,8 +181,7 @@ export default connect(
 			isLoggedIn: isUserLoggedIn( state ),
 			siteInformation: getSiteInformation( state ),
 			siteTitle: getSiteTitle( state ),
-			isBusinessSiteSelected: dasherize( 'business' ) === dasherize( siteType ),
-			siteNameText: getSiteNameText( siteType ),
+			siteType,
 		};
 	},
 	( dispatch, ownProps ) => ( {
