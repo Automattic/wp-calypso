@@ -8,7 +8,7 @@ import emailValidator from 'email-validator';
 import { Component } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
 import { dispatch, withSelect } from '@wordpress/data';
-import { get, trimEnd } from 'lodash';
+import { get, isEqual, pick, trimEnd } from 'lodash';
 import { sprintf } from '@wordpress/i18n';
 import {
 	Disabled,
@@ -40,6 +40,8 @@ class SimplePaymentsEdit extends Component {
 		isSavingProduct: false,
 	};
 
+	hasInjectPaymentAttributes = false;
+
 	componentDidMount() {
 		const { attributes, hasPublishAction } = this.props;
 		const { paymentId } = attributes;
@@ -55,11 +57,16 @@ class SimplePaymentsEdit extends Component {
 	componentDidUpdate( prevProps ) {
 		const { hasPublishAction, isSelected } = this.props;
 
-		if ( prevProps.simplePayment !== this.props.simplePayment ) {
+		if ( ! isEqual( prevProps.simplePayment, this.props.simplePayment ) ) {
 			this.injectPaymentAttributes();
 		}
 
-		if ( ! prevProps.isSaving && this.props.isSaving && hasPublishAction && this.validateAttributes() ) {
+		if (
+			! prevProps.isSaving &&
+			this.props.isSaving &&
+			hasPublishAction &&
+			this.validateAttributes()
+		) {
 			// Validate and save product on post save
 			this.saveProduct();
 		} else if ( prevProps.isSelected && ! isSelected ) {
@@ -72,7 +79,7 @@ class SimplePaymentsEdit extends Component {
 		const { attributes, setAttributes, simplePayment } = this.props;
 		const { paymentId, content, currency, email, multiple, price, title } = attributes;
 
-		if ( paymentId && simplePayment ) {
+		if ( ! this.hasInjectPaymentAttributes && paymentId && simplePayment ) {
 			setAttributes( {
 				content: get( simplePayment, [ 'content', 'raw' ], content ),
 				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency ),
@@ -81,6 +88,7 @@ class SimplePaymentsEdit extends Component {
 				price: get( simplePayment, [ 'meta', 'spay_price' ], price || undefined ),
 				title: get( simplePayment, [ 'title', 'raw' ], title ),
 			} );
+			this.hasInjectPaymentAttributes = true;
 		}
 	}
 
@@ -331,11 +339,10 @@ class SimplePaymentsEdit extends Component {
 	} );
 
 	render() {
-		const { fieldEmailError, fieldPriceError, fieldTitleError, isSavingProduct } = this.state;
-		const { attributes, instanceId, isSelected, simplePayment } = this.props;
-		const { content, currency, email, multiple, paymentId, price, title } = attributes;
-		const isLoading = paymentId && ! simplePayment;
-		const isInitializingProduct = ! paymentId && isSavingProduct;
+		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
+		const { attributes, instanceId, isSelected, simplePayment, hasPublishAction } = this.props;
+		const { content, currency, email, multiple, price, title } = attributes;
+		const isLoading = hasPublishAction && ! simplePayment;
 
 		if ( ! isSelected && isLoading ) {
 			return (
@@ -370,7 +377,7 @@ class SimplePaymentsEdit extends Component {
 			);
 		}
 
-		const Wrapper = isLoading || isInitializingProduct ? Disabled : 'div';
+		const Wrapper = isLoading ? Disabled : 'div';
 
 		return (
 			<Wrapper className="wp-block-jetpack-simple-payments">
@@ -466,8 +473,17 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 
 	const { paymentId } = props.attributes;
 
+	const fields = [
+		'content',
+		'meta.spay_currency',
+		'meta.spay_email',
+		'meta.spay_multiple',
+		'meta.spay_price',
+		'title.raw',
+	];
+
 	const simplePayment = paymentId
-		? getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId )
+		? pick( getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId ), fields )
 		: undefined;
 
 	return {
