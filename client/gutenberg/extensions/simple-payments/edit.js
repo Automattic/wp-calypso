@@ -52,12 +52,10 @@ class SimplePaymentsEdit extends Component {
 			this.injectPaymentAttributes();
 		}
 
-		// Initialize product object early on by creating a draft
 		if ( ! paymentId && hasPublishAction ) {
+			// Initialize product object early on by creating a draft
 			this.saveProduct();
-		}
-
-		if ( ! prevProps.isSaving && this.props.isSaving && hasPublishAction && this.validateAttributes() ) {
+		} else if ( ! prevProps.isSaving && this.props.isSaving && hasPublishAction && this.validateAttributes() ) {
 			// Validate and save product on post save
 			this.saveProduct();
 		} else if ( prevProps.isSelected && ! isSelected ) {
