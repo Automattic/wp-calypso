@@ -52,7 +52,7 @@ export const allSiteTypes = [
 		slug: 'online-store',
 		label: i18n.translate( 'Online store' ),
 		description: i18n.translate( 'Sell your collection of products online. ' ),
-		theme: 'pub/dara',
+		theme: 'pub/radcliffe-2',
 		designType: 'page',
 	},
 ];
