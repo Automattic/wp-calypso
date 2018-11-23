@@ -4,129 +4,65 @@
  */
 import { find, get, without } from 'lodash';
 
-const toggleWpcom = ( state, source, stream, setting ) => ( {
-	...state,
-	settings: {
-		...get( state, 'settings' ),
-		dirty: {
-			...get( state, 'settings.dirty' ),
-			wpcom: {
-				...get( state, 'settings.dirty.wpcom' ),
-				[ setting ]: ! get( state, [ 'settings', 'dirty', 'wpcom', setting ] ),
-			},
-		},
+const toggleInStream = ( streamName, stream, setting ) => ( {
+	[ streamName ]: {
+		...stream,
+		[ setting ]: ! get( stream, setting ),
 	},
 } );
 
-const toggleOther = ( state, source, stream, setting ) => {
-	if ( isNaN( stream ) ) {
-		return {
-			...state,
-			settings: {
-				...get( state, 'settings' ),
-				dirty: {
-					...get( state, 'settings.dirty' ),
-					other: {
-						...get( state, 'settings.dirty.other' ),
-						[ stream ]: {
-							...get( state, [ 'settings', 'dirty', 'other', stream ] ),
-							[ setting ]: ! get( state, [ 'settings', 'dirty', 'other', stream, setting ] ),
-						},
-					},
-				},
-			},
-		};
-	}
-
-	const devices = get( state, 'settings.dirty.other.devices' );
-	const device = find( devices, ( { device_id } ) => device_id === parseInt( stream, 10 ) );
+const toggleInDevice = ( devices, deviceId, setting ) => {
+	const device = find( devices, ( { device_id } ) => device_id === parseInt( deviceId, 10 ) );
 	const deviceSetting = get( device, setting );
 
 	return {
-		...state,
-		settings: {
-			...get( state, 'settings' ),
-			dirty: {
-				...get( state, 'settings.dirty' ),
-				other: {
-					...get( state, 'settings.dirty.other' ),
-					devices: [
-						...without( devices, device ),
-						{
-							...device,
-							[ setting ]: ! deviceSetting,
-						},
-					],
-				},
+		devices: [
+			...without( devices, device ),
+			{
+				...device,
+				[ setting ]: ! deviceSetting,
 			},
-		},
-	};
-};
-
-const toggleBlog = ( state, source, stream, setting ) => {
-	const blogs = get( state, 'settings.dirty.blogs' );
-	const blog = find( blogs, ( { blog_id } ) => blog_id === parseInt( source, 10 ) );
-
-	if ( isNaN( stream ) ) {
-		return {
-			...state,
-			settings: {
-				...state.settings,
-				dirty: {
-					...get( state, 'settings.dirty' ),
-					blogs: [
-						...without( blogs, blog ),
-						{
-							...blog,
-							[ stream ]: {
-								...get( blog, stream ),
-								[ setting ]: ! get( blog, [ stream, setting ] ),
-							},
-						},
-					],
-				},
-			},
-		};
-	}
-
-	const devices = get( blog, 'devices', [] );
-	const device = find( devices, ( { device_id } ) => device_id === parseInt( stream, 10 ) );
-	const deviceSetting = get( device, setting );
-
-	return {
-		...state,
-		settings: {
-			...state.settings,
-			dirty: {
-				...state.settings.dirty,
-				blogs: [
-					...without( blogs, blog ),
-					{
-						...blog,
-						devices: [
-							...without( devices, device ),
-							{
-								...device,
-								[ setting ]: ! deviceSetting,
-							},
-						],
-					},
-				],
-			},
-		},
+		],
 	};
 };
 
 export default {
 	wpcom( state, source, stream, setting ) {
-		return toggleWpcom( state, source, stream, setting );
+		return toggleInStream( 'wpcom', get( state, 'settings.dirty.wpcom' ), setting );
 	},
 
 	other( state, source, stream, setting ) {
-		return toggleOther( state, source, stream, setting );
+		const devices = get( state, 'settings.dirty.other.devices' );
+
+		return {
+			other: {
+				...get( state, 'settings.dirty.other' ),
+				...( isNaN( stream )
+					? toggleInStream(
+							stream,
+							get( state, [ 'settings', 'dirty', 'other', stream ] ),
+							setting
+					  )
+					: toggleInDevice( devices, stream, setting ) ),
+			},
+		};
 	},
 
 	blog( state, source, stream, setting ) {
-		return toggleBlog( state, source, stream, setting );
+		const blogs = get( state, 'settings.dirty.blogs' );
+		const blog = find( blogs, ( { blog_id } ) => blog_id === parseInt( source, 10 ) );
+		const devices = get( blog, 'devices', [] );
+
+		return {
+			blogs: [
+				...without( blogs, blog ),
+				{
+					...blog,
+					...( isNaN( stream )
+						? toggleInStream( stream, get( blog, stream ), setting )
+						: toggleInDevice( devices, stream, setting ) ),
+				},
+			],
+		};
 	},
 };

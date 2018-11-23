@@ -68,7 +68,14 @@ const NotificationSettingsStore = createReducerStore( ( state, payload ) => {
 		}
 		case actionTypes.TOGGLE_SETTING: {
 			return {
-				...toggleSetting( state, source, stream, setting ),
+				...state,
+				settings: {
+					...state.settings,
+					dirty: {
+						...state.settings.dirty,
+						...toggleSetting( state, source, stream, setting ),
+					},
+				},
 				status: null,
 			};
 		}
