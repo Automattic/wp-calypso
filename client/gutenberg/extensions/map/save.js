@@ -24,12 +24,12 @@ class MapSave extends Component {
 		return (
 			<div
 				className={ alignClassName }
-				data-map_style={ mapStyle }
-				data-map_details={ mapDetails }
+				data-map-style={ mapStyle }
+				data-map-details={ mapDetails }
 				data-points={ JSON.stringify( points ) }
 				data-zoom={ zoom }
-				data-map_center={ JSON.stringify( mapCenter ) }
-				data-marker_color={ markerColor }
+				data-map-center={ JSON.stringify( mapCenter ) }
+				data-marker-color={ markerColor }
 			>
 				{ points.length > 0 && <ul>{ pointsList }</ul> }
 			</div>
