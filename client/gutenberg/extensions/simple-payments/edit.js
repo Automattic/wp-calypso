@@ -76,6 +76,13 @@ class SimplePaymentsEdit extends Component {
 	}
 
 	injectPaymentAttributes() {
+		/**
+		 * Prevent injecting the product attributes multiple times.
+		 *
+		 * When we first load a product, we should inject its attributes as our initial form state.
+		 * When subsequent saves occur, we should avoid injecting attributes so that we do not
+		 * overwrite changes that the user has made with stale state from the previous save.
+		 */
 		if ( this.hasInjectedPaymentAttributes ) {
 			return;
 		}
