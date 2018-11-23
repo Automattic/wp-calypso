@@ -194,6 +194,13 @@ export class Map extends Component {
 			map.dragPan.enable();
 		}
 
+		// If there are multiple points, zoom is determined by the area they cover, and zoom control is removed.
+		if ( points.length > 1 && admin ) {
+			map.removeControl( zoomControl );
+		} else {
+			map.addControl( zoomControl );
+		}
+
 		// If there are no points at all, there is no data to set bounds to. Abort the function.
 		if ( ! points.length ) {
 			return;
@@ -209,7 +216,6 @@ export class Map extends Component {
 		} );
 		onSetMapCenter( bounds.getCenter() );
 
-		// If there are multiple points, zoom is determined by the area they cover, and zoom control is removed.
 		if ( points.length > 1 ) {
 			map.fitBounds( bounds, {
 				padding: {
@@ -220,7 +226,6 @@ export class Map extends Component {
 				},
 			} );
 			this.setState( { boundsSetProgrammatically: true } );
-			map.removeControl( zoomControl );
 			return;
 		}
 		// If there is only one point, center map around it.
@@ -235,7 +240,6 @@ export class Map extends Component {
 			// If there are one (or zero) points, and this is not a recent change, respect user's chosen zoom.
 			map.setZoom( parseInt( zoom, 10 ) );
 		}
-		map.addControl( zoomControl );
 		this.setState( { boundsSetProgrammatically: false } );
 	};
 	getMapStyle() {
