@@ -66,10 +66,10 @@ export const settings = {
 			type: 'boolean',
 			default: false,
 		},
-		paymentId: {
+		price: {
 			type: 'number',
 		},
-		price: {
+		productId: {
 			type: 'number',
 		},
 		title: {
@@ -84,7 +84,7 @@ export const settings = {
 				type: 'shortcode',
 				tag: 'simple-payment',
 				attributes: {
-					paymentId: {
+					productId: {
 						type: 'number',
 						shortcode: ( { named: { id } } ) => {
 							if ( ! id ) {
