@@ -40,7 +40,7 @@ class SimplePaymentsEdit extends Component {
 		isSavingProduct: false,
 	};
 
-	hasInjectPaymentAttributes = false;
+	hasInjectedPaymentAttributes = false;
 
 	componentDidMount() {
 		const { attributes, hasPublishAction } = this.props;
@@ -79,7 +79,7 @@ class SimplePaymentsEdit extends Component {
 		const { attributes, setAttributes, simplePayment } = this.props;
 		const { paymentId, content, currency, email, multiple, price, title } = attributes;
 
-		if ( ! this.hasInjectPaymentAttributes && paymentId && simplePayment ) {
+		if ( ! this.hasInjectedPaymentAttributes && paymentId && simplePayment ) {
 			setAttributes( {
 				content: get( simplePayment, [ 'content', 'raw' ], content ),
 				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency ),
@@ -88,7 +88,7 @@ class SimplePaymentsEdit extends Component {
 				price: get( simplePayment, [ 'meta', 'spay_price' ], price || undefined ),
 				title: get( simplePayment, [ 'title', 'raw' ], title ),
 			} );
-			this.hasInjectPaymentAttributes = true;
+			this.hasInjectedPaymentAttributes = true;
 		}
 	}
 
