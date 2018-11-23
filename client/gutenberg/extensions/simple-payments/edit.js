@@ -9,12 +9,10 @@ import { Component } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
 import { dispatch, withSelect } from '@wordpress/data';
 import { get, trimEnd } from 'lodash';
-import { InspectorControls } from '@wordpress/editor';
 import { sprintf } from '@wordpress/i18n';
 import {
 	Disabled,
 	ExternalLink,
-	PanelBody,
 	SelectControl,
 	TextareaControl,
 	TextControl,
@@ -47,13 +45,13 @@ class SimplePaymentsEdit extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { isSelected } = this.props;
+		const { hasPublishAction, isSelected } = this.props;
 
 		if ( prevProps.simplePayment !== this.props.simplePayment ) {
 			this.injectPaymentAttributes();
 		}
 
-		if ( ! prevProps.isSaving && this.props.isSaving ) {
+		if ( ! prevProps.isSaving && this.props.isSaving && hasPublishAction ) {
 			// Validate and save product on post save
 			this.saveProduct();
 		} else if ( prevProps.isSelected && ! isSelected ) {
@@ -113,7 +111,11 @@ class SimplePaymentsEdit extends Component {
 		this.setState( { isSavingProduct: true }, async () => {
 			saveEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, this.toApi() )
 				.then( record => {
-					setAttributes( { paymentId: record.id } );
+					if ( record ) {
+						setAttributes( { paymentId: record.id } );
+					}
+
+					return record;
 				} )
 				.catch( error => {
 					// @TODO: complete error handling
@@ -367,14 +369,6 @@ class SimplePaymentsEdit extends Component {
 
 		return (
 			<Wrapper className="wp-block-jetpack-simple-payments">
-				<InspectorControls key="inspector">
-					<PanelBody>
-						<ExternalLink href="https://support.wordpress.com/simple-payments/">
-							{ __( 'Support reference' ) }
-						</ExternalLink>
-					</PanelBody>
-				</InspectorControls>
-
 				<TextControl
 					aria-describedby={ `${ instanceId }-title-error` }
 					className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
@@ -463,7 +457,7 @@ class SimplePaymentsEdit extends Component {
 
 const mapSelectToProps = withSelect( ( select, props ) => {
 	const { getEntityRecord } = select( 'core' );
-	const { isSavingPost } = select( 'core/editor' );
+	const { isSavingPost, getCurrentPost } = select( 'core/editor' );
 
 	const { paymentId } = props.attributes;
 
@@ -472,6 +466,7 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 		: undefined;
 
 	return {
+		hasPublishAction: !! get( getCurrentPost(), [ '_links', 'wp:action-publish' ] ),
 		isSaving: !! isSavingPost(),
 		simplePayment,
 	};

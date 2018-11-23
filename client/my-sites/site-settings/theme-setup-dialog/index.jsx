@@ -17,6 +17,11 @@ import PulsingDot from 'components/pulsing-dot';
 import { getSelectedSite } from 'state/ui/selectors';
 import { toggleDialog, runThemeSetup } from 'state/ui/theme-setup/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ThemeSetupDialog extends React.Component {
 	renderButtons( { runThemeSetup, site, isActive, result, translate } ) {
 		const keepContent = {

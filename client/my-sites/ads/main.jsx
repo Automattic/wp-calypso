@@ -19,7 +19,7 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import AdsEarnings from 'my-sites/ads/form-earnings';
+import WordAdsEarnings from 'my-sites/stats/wordads/earnings';
 import AdsSettings from 'my-sites/ads/form-settings';
 import { canAccessWordads, isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { isBusiness } from 'lib/products-values';
@@ -112,7 +112,7 @@ class AdsMain extends Component {
 	getComponent( section ) {
 		switch ( section ) {
 			case 'earnings':
-				return <AdsEarnings site={ this.props.site } />;
+				return <WordAdsEarnings site={ this.props.site } />;
 			case 'settings':
 				return <AdsSettings />;
 			default:

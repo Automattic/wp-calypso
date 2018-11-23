@@ -20,6 +20,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import getRewindState from 'state/selectors/get-rewind-state';
 import { getSiteSlug } from 'state/sites/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class JetpackCredentials extends Component {
 	render() {
 		const { credentials, rewindState, siteId, translate, siteSlug } = this.props;

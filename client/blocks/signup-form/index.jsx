@@ -6,7 +6,20 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { camelCase, find, filter, forEach, head, includes, keys, map, mapKeys, pick, snakeCase, thru } from 'lodash';
+import {
+	camelCase,
+	find,
+	filter,
+	forEach,
+	head,
+	includes,
+	keys,
+	map,
+	mapKeys,
+	pick,
+	snakeCase,
+	thru,
+} from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -230,7 +243,9 @@ class SignupForm extends Component {
 				return debug( error || 'User validation failed.' );
 			}
 
-			const messages = response.success ? {} : mapKeys( response.messages, ( value, key ) => camelCase( key ) );
+			const messages = response.success
+				? {}
+				: mapKeys( response.messages, ( value, key ) => camelCase( key ) );
 
 			forEach( messages, ( fieldError, field ) => {
 				if ( ! formState.isFieldInvalid( this.state.form, field ) ) {

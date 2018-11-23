@@ -21,6 +21,7 @@ registerBlockType( settings.name, {
 	icon: settings.icon,
 	category: settings.category,
 	keywords: settings.keywords,
+	description: settings.description,
 	attributes: settings.attributes,
 	getEditWrapperProps( attributes ) {
 		const { align } = attributes;

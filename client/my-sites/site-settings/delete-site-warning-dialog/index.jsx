@@ -12,6 +12,11 @@ import i18n from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import { purchasesRoot } from 'me/purchases/paths';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const DeleteSiteWarningDialog = ( { isVisible, onClose } ) => (
 	<Dialog
 		isVisible={ isVisible }

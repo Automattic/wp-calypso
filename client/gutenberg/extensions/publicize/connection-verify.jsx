@@ -102,16 +102,16 @@ class PublicizeConnectionVerify extends Component {
 							'Before you hit Publish, please refresh the following connection(s) to make sure we can Publicize your post:'
 						) }
 					</p>
-					{ failedConnections.filter( c => c.userCanRefresh ).map( c => (
+					{ failedConnections.filter( connection => connection.userCanRefresh ).map( connection => (
 						<a
 							className="pub-refresh-button button"
-							title={ c.refreshText }
-							href={ c.refreshURL }
-							target={ '_refresh_' + c.serviceName }
+							title={ connection.refreshText }
+							href={ connection.refreshURL }
+							target={ '_refresh_' + connection.serviceName }
 							onClick={ this.refreshConnectionClick }
-							key={ c.connectionID }
+							key={ connection.connectionID }
 						>
-							{ c.refreshText }
+							{ connection.refreshText }
 						</a>
 					) ) }
 				</div>

@@ -24,6 +24,11 @@ import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
 import NoticeAction from 'components/notice/notice-action';
 import analytics from 'lib/analytics';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 /*
  * Module variables
  */

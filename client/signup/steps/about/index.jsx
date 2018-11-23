@@ -23,12 +23,7 @@ import { setUserExperience } from 'state/signup/steps/user-experience/actions';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	getThemeForSiteType,
-	getThemeForSiteGoals,
-	getDesignTypeForSiteType,
-	getDesignTypeForSiteGoals,
-} from 'signup/utils';
+import { getThemeForSiteGoals, getDesignTypeForSiteGoals } from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { hints } from 'lib/signup/hint-data';
@@ -37,6 +32,7 @@ import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { abtest } from 'lib/abtest';
 import { isUserLoggedIn } from 'state/current-user/selectors';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 //Form components
 import Card from 'components/card';
@@ -213,10 +209,15 @@ class AboutStep extends Component {
 
 		//Site Goals
 		if ( shouldHideSiteGoals ) {
-			themeRepo = this.state.hasPrepopulatedVertical
-				? 'pub/radcliffe-2'
-				: getThemeForSiteType( siteType );
-			designType = getDesignTypeForSiteType( siteType, flowName );
+			themeRepo =
+				getSiteTypePropertyValue( 'slug', siteType, 'theme' ) || 'pub/independent-publisher-2';
+
+			if ( 'ecommerce' === flowName ) {
+				designType = 'page';
+			} else {
+				designType = getSiteTypePropertyValue( 'slug', siteType, 'designType' ) || 'blog';
+			}
+
 			eventAttributes.site_type = siteType;
 		} else {
 			const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );

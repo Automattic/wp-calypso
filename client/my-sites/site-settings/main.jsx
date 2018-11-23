@@ -23,6 +23,11 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
 import Placeholder from 'my-sites/site-settings/placeholder';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const SiteSettingsComponent = ( { siteId, translate } ) => {
 	if ( ! siteId ) {
 		return <Placeholder />;

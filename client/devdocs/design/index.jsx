@@ -43,6 +43,7 @@ import Checklist from 'components/checklist/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
 import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
 import Collection from 'devdocs/design/search-collection';
+import ColorSchemePicker from 'blocks/color-scheme-picker/docs/example';
 import Count from 'components/count/docs/example';
 import CountedTextareas from 'components/forms/counted-textarea/docs/example';
 import CreditCard from 'components/credit-card/docs/example';
@@ -153,9 +154,14 @@ class DesignAssets extends React.Component {
 				<DocumentHead title="UI Components" />
 
 				{ component ? (
-					<HeaderCake onClick={ this.backToComponents } backText="All Components">
-						{ slugToCamelCase( component ) }
-					</HeaderCake>
+					<React.Fragment>
+						<HeaderCake onClick={ this.backToComponents } backText="All Components">
+							{ slugToCamelCase( component ) }
+						</HeaderCake>
+						{ config.isEnabled( 'devdocs/color-scheme-picker' ) && (
+							<ColorSchemePicker readmeFilePath="color-scheme-picker" />
+						) }
+					</React.Fragment>
 				) : (
 					<div>
 						<ReadmeViewer readmeFilePath="/client/devdocs/design/README.md" />
@@ -170,6 +176,9 @@ class DesignAssets extends React.Component {
 				) }
 
 				<Collection component={ component } filter={ filter }>
+					{ config.isEnabled( 'devdocs/color-scheme-picker' ) && (
+						<ColorSchemePicker readmeFilePath="color-scheme-picker" />
+					) }
 					<ActionCard readmeFilePath="action-card" />
 					<ActionPanel readmeFilePath="action-panel" />
 					<Accordions
