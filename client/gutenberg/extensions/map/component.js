@@ -182,15 +182,23 @@ export class Map extends Component {
 		this.setBoundsByMarkers();
 	};
 	setBoundsByMarkers = () => {
-		const { zoom, points, onSetZoom, onSetMapCenter } = this.props;
+		const { zoom, points, onSetZoom, onSetMapCenter, admin } = this.props;
 		const { map, activeMarker, mapboxgl, zoomControl, boundsSetProgrammatically } = this.state;
 		if ( ! map ) {
 			return;
 		}
+		// Do not allow map dragging in the editor if there are markers, because the positioning will be programmatically overridden.
+		if ( points.length && admin ) {
+			map.dragPan.disable();
+		} else {
+			map.dragPan.enable();
+		}
+
 		// If there are no points at all, there is no data to set bounds to. Abort the function.
 		if ( ! points.length ) {
 			return;
 		}
+
 		// If there is an open info window, resizing will probably move the info window which complicates interaction.
 		if ( activeMarker ) {
 			return;
@@ -281,6 +289,7 @@ export class Map extends Component {
 				pitchWithRotate: false,
 				attributionControl: false,
 				dragRotate: false,
+				scrollZoom: false,
 			} );
 		} catch ( e ) {
 			onError( 'mapbox_error', e.message );
