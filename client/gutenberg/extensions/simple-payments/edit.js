@@ -331,11 +331,12 @@ class SimplePaymentsEdit extends Component {
 	} );
 
 	render() {
-		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
+		const { fieldEmailError, fieldPriceError, fieldTitleError, isSavingProduct } = this.state;
 		const { attributes, instanceId, isSelected, simplePayment } = this.props;
 		const { content, currency, email, multiple, paymentId, price, title } = attributes;
-
 		const isLoading = paymentId && ! simplePayment;
+		const isInitializingProduct = ! paymentId && isSavingProduct;
+
 		if ( ! isSelected && isLoading ) {
 			return (
 				<div className="simple-payments__loading">
@@ -369,7 +370,7 @@ class SimplePaymentsEdit extends Component {
 			);
 		}
 
-		const Wrapper = isLoading ? Disabled : 'div';
+		const Wrapper = isLoading || isInitializingProduct ? Disabled : 'div';
 
 		return (
 			<Wrapper className="wp-block-jetpack-simple-payments">
