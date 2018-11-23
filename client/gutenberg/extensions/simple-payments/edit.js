@@ -478,12 +478,12 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 	const { paymentId } = props.attributes;
 
 	const fields = [
-		'content',
-		'meta.spay_currency',
-		'meta.spay_email',
-		'meta.spay_multiple',
-		'meta.spay_price',
-		'title.raw',
+		[ 'content' ],
+		[ 'meta', 'spay_currency' ],
+		[ 'meta', 'spay_email' ],
+		[ 'meta', 'spay_multiple' ],
+		[ 'meta', 'spay_price' ],
+		[ 'title', 'raw' ],
 	];
 
 	const simplePayment = paymentId
