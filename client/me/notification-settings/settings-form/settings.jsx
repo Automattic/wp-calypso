@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,12 +42,9 @@ class NotificationSettingsForm extends PureComponent {
 			return get( this.props.settings, this.state.selectedStream );
 		}
 
-		const devices = get( this.props.settings, 'devices' );
-
-		return find(
-			devices,
-			( { device_id } ) => device_id === parseInt( this.state.selectedStream, 10 )
-		);
+		return find( get( this.props.settings, 'devices' ), {
+			device_id: parseInt( this.state.selectedStream, 10 ),
+		} );
 	};
 
 	render() {

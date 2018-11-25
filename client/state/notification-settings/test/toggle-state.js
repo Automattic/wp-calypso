@@ -9,17 +9,13 @@ describe( 'toggleState.wpcom', () => {
 		test( 'should assign the value of `true` to that setting', () => {
 			const settingToToggle = 'exampleSetting';
 			const startingState = {
-				settings: {},
+				dirty: {},
 			};
 
 			const actual = toggleState.wpcom( startingState, null, null, settingToToggle );
 			const expected = {
-				settings: {
-					dirty: {
-						wpcom: {
-							[ settingToToggle ]: true,
-						},
-					},
+				wpcom: {
+					[ settingToToggle ]: true,
 				},
 			};
 
@@ -31,23 +27,17 @@ describe( 'toggleState.wpcom', () => {
 		test( 'should toggle the value of that setting', () => {
 			const settingToToggle = 'exampleSetting';
 			const startingState = {
-				settings: {
-					dirty: {
-						wpcom: {
-							[ settingToToggle ]: true,
-						},
+				dirty: {
+					wpcom: {
+						[ settingToToggle ]: true,
 					},
 				},
 			};
 
 			const actual = toggleState.wpcom( startingState, null, null, settingToToggle );
 			const expected = {
-				settings: {
-					dirty: {
-						wpcom: {
-							[ settingToToggle ]: false,
-						},
-					},
+				wpcom: {
+					[ settingToToggle ]: false,
 				},
 			};
 
@@ -63,18 +53,14 @@ describe( 'toggleState.other', () => {
 				const stream = 'exampleStream';
 				const settingToToggle = 'exampleSetting';
 				const startingState = {
-					settings: {},
+					dirty: {},
 				};
 
 				const actual = toggleState.other( startingState, null, stream, settingToToggle );
 				const expected = {
-					settings: {
-						dirty: {
-							other: {
-								[ stream ]: {
-									[ settingToToggle ]: true,
-								},
-							},
+					other: {
+						[ stream ]: {
+							[ settingToToggle ]: true,
 						},
 					},
 				};
@@ -88,12 +74,10 @@ describe( 'toggleState.other', () => {
 				const stream = 'exampleStream';
 				const settingToToggle = 'exampleSetting';
 				const startingState = {
-					settings: {
-						dirty: {
-							other: {
-								[ stream ]: {
-									[ settingToToggle ]: true,
-								},
+					dirty: {
+						other: {
+							[ stream ]: {
+								[ settingToToggle ]: true,
 							},
 						},
 					},
@@ -101,13 +85,9 @@ describe( 'toggleState.other', () => {
 
 				const actual = toggleState.other( startingState, null, stream, settingToToggle );
 				const expected = {
-					settings: {
-						dirty: {
-							other: {
-								[ stream ]: {
-									[ settingToToggle ]: false,
-								},
-							},
+					other: {
+						[ stream ]: {
+							[ settingToToggle ]: false,
 						},
 					},
 				};
@@ -126,28 +106,22 @@ describe( 'toggleState.other', () => {
 					device_id: deviceId,
 				};
 				const startingState = {
-					settings: {
-						dirty: {
-							other: {
-								devices: [ device ],
-							},
+					dirty: {
+						other: {
+							devices: [ device ],
 						},
 					},
 				};
 
 				const actual = toggleState.other( startingState, null, deviceId, settingToToggle );
 				const expected = {
-					settings: {
-						dirty: {
-							other: {
-								devices: [
-									{
-										device_id: deviceId,
-										[ settingToToggle ]: true,
-									},
-								],
+					other: {
+						devices: [
+							{
+								device_id: deviceId,
+								[ settingToToggle ]: true,
 							},
-						},
+						],
 					},
 				};
 
@@ -164,28 +138,22 @@ describe( 'toggleState.other', () => {
 					[ settingToToggle ]: true,
 				};
 				const startingState = {
-					settings: {
-						dirty: {
-							other: {
-								devices: [ device ],
-							},
+					dirty: {
+						other: {
+							devices: [ device ],
 						},
 					},
 				};
 
 				const actual = toggleState.other( startingState, null, deviceId, settingToToggle );
 				const expected = {
-					settings: {
-						dirty: {
-							other: {
-								devices: [
-									{
-										device_id: deviceId,
-										[ settingToToggle ]: false,
-									},
-								],
+					other: {
+						devices: [
+							{
+								device_id: deviceId,
+								[ settingToToggle ]: false,
 							},
-						},
+						],
 					},
 				};
 
@@ -206,27 +174,21 @@ describe( 'toggleState.blog', () => {
 					blog_id: blogId,
 				};
 				const startingState = {
-					settings: {
-						dirty: {
-							blogs: [ blog ],
-						},
+					dirty: {
+						blogs: [ blog ],
 					},
 				};
 
 				const actual = toggleState.blog( startingState, blogId, stream, settingToToggle );
 				const expected = {
-					settings: {
-						dirty: {
-							blogs: [
-								{
-									blog_id: blogId,
-									[ stream ]: {
-										[ settingToToggle ]: true,
-									},
-								},
-							],
+					blogs: [
+						{
+							blog_id: blogId,
+							[ stream ]: {
+								[ settingToToggle ]: true,
+							},
 						},
-					},
+					],
 				};
 
 				expect( actual ).toEqual( expected );
@@ -245,27 +207,21 @@ describe( 'toggleState.blog', () => {
 					},
 				};
 				const startingState = {
-					settings: {
-						dirty: {
-							blogs: [ blog ],
-						},
+					dirty: {
+						blogs: [ blog ],
 					},
 				};
 
 				const actual = toggleState.blog( startingState, blogId, stream, settingToToggle );
 				const expected = {
-					settings: {
-						dirty: {
-							blogs: [
-								{
-									blog_id: blogId,
-									[ stream ]: {
-										[ settingToToggle ]: false,
-									},
-								},
-							],
+					blogs: [
+						{
+							blog_id: blogId,
+							[ stream ]: {
+								[ settingToToggle ]: false,
+							},
 						},
-					},
+					],
 				};
 
 				expect( actual ).toEqual( expected );
@@ -287,30 +243,24 @@ describe( 'toggleState.blog', () => {
 					devices: [ device ],
 				};
 				const startingState = {
-					settings: {
-						dirty: {
-							blogs: [ blog ],
-						},
+					dirty: {
+						blogs: [ blog ],
 					},
 				};
 
 				const actual = toggleState.blog( startingState, blogId, deviceId, settingToToggle );
 				const expected = {
-					settings: {
-						dirty: {
-							blogs: [
+					blogs: [
+						{
+							blog_id: blogId,
+							devices: [
 								{
-									blog_id: blogId,
-									devices: [
-										{
-											device_id: deviceId,
-											[ settingToToggle ]: true,
-										},
-									],
+									device_id: deviceId,
+									[ settingToToggle ]: true,
 								},
 							],
 						},
-					},
+					],
 				};
 
 				expect( actual ).toEqual( expected );
@@ -331,30 +281,24 @@ describe( 'toggleState.blog', () => {
 					devices: [ device ],
 				};
 				const startingState = {
-					settings: {
-						dirty: {
-							blogs: [ blog ],
-						},
+					dirty: {
+						blogs: [ blog ],
 					},
 				};
 
 				const actual = toggleState.blog( startingState, blogId, deviceId, settingToToggle );
 				const expected = {
-					settings: {
-						dirty: {
-							blogs: [
+					blogs: [
+						{
+							blog_id: blogId,
+							devices: [
 								{
-									blog_id: blogId,
-									devices: [
-										{
-											device_id: deviceId,
-											[ settingToToggle ]: false,
-										},
-									],
+									device_id: deviceId,
+									[ settingToToggle ]: false,
 								},
 							],
 						},
-					},
+					],
 				};
 
 				expect( actual ).toEqual( expected );

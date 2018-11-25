@@ -57,8 +57,7 @@ class BlogsSettings extends Component {
 		const renderBlog = ( site, index, disableToggle = false ) => {
 			const onSave = () => this.props.onSave( site.ID );
 			const onSaveToAll = () => this.props.onSaveToAll( site.ID );
-			const blogSettings =
-				find( this.props.settings, ( { blog_id } ) => blog_id === site.ID ) || {};
+			const blogSettings = find( this.props.settings, { blog_id: site.ID } ) || {};
 
 			return (
 				<Blog
