@@ -12,7 +12,7 @@ const toggleInStream = ( streamName, stream, setting ) => ( {
 } );
 
 const toggleInDevice = ( devices, deviceId, setting ) => {
-	const device = find( devices, ( { device_id } ) => device_id === parseInt( deviceId, 10 ) );
+	const device = find( devices, { device_id: parseInt( deviceId, 10 ) } );
 	const deviceSetting = get( device, setting );
 
 	return {
@@ -28,29 +28,25 @@ const toggleInDevice = ( devices, deviceId, setting ) => {
 
 export default {
 	wpcom( state, source, stream, setting ) {
-		return toggleInStream( 'wpcom', get( state, 'settings.dirty.wpcom' ), setting );
+		return toggleInStream( 'wpcom', get( state, 'dirty.wpcom' ), setting );
 	},
 
 	other( state, source, stream, setting ) {
-		const devices = get( state, 'settings.dirty.other.devices' );
+		const devices = get( state, 'dirty.other.devices' );
 
 		return {
 			other: {
-				...get( state, 'settings.dirty.other' ),
+				...get( state, 'dirty.other' ),
 				...( isNaN( stream )
-					? toggleInStream(
-							stream,
-							get( state, [ 'settings', 'dirty', 'other', stream ] ),
-							setting
-					  )
+					? toggleInStream( stream, get( state, [ 'dirty', 'other', stream ] ), setting )
 					: toggleInDevice( devices, stream, setting ) ),
 			},
 		};
 	},
 
 	blog( state, source, stream, setting ) {
-		const blogs = get( state, 'settings.dirty.blogs' );
-		const blog = find( blogs, ( { blog_id } ) => blog_id === parseInt( source, 10 ) );
+		const blogs = get( state, 'dirty.blogs' );
+		const blog = find( blogs, { blog_id: parseInt( source, 10 ) } );
 		const devices = get( blog, 'devices', [] );
 
 		return {

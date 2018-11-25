@@ -3,9 +3,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,7 +14,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
-import { toggleWPcomEmailSetting } from 'lib/notification-settings-store/actions';
+import { toggleWPcomEmailSetting } from 'state/notification-settings/actions';
 
 class EmailCategory extends React.Component {
 	static propTypes() {
@@ -27,7 +27,7 @@ class EmailCategory extends React.Component {
 	}
 
 	toggleSetting = () => {
-		toggleWPcomEmailSetting( this.props.name );
+		this.props.toggleWPcomEmailSetting( this.props.name );
 	};
 
 	render() {
@@ -43,4 +43,7 @@ class EmailCategory extends React.Component {
 	}
 }
 
-export default EmailCategory;
+export default connect(
+	null,
+	{ toggleWPcomEmailSetting }
+)( EmailCategory );
