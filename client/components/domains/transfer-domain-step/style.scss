@@ -222,7 +222,7 @@
 	}
 
 	&.transfer-domain-step__refresh {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		cursor: pointer;
 	}
 }
@@ -283,7 +283,7 @@ input {
 		small {
 			font-size: 14px;
 			padding-left: 10px;
-			color: $blue-wordpress;
+			color: var( --color-primary );
 		}
 
 		color: $gray-dark;

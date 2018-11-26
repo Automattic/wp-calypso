@@ -1914,7 +1914,7 @@ div.wp-link-preview {
 }
 
 div.wp-link-preview a {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	text-decoration: underline;
 	transition-property: border, background, color;
 	transition-duration: 0.05s;

@@ -8,7 +8,7 @@
 	.plan-icon__free-0 { fill: $blue-light; }
 	.plan-icon__free-1 { fill: $white; }
 	.plan-icon__free-2 { fill: darken( $blue-wordpress, 8% ); }
-	.plan-icon__free-3 { fill: $blue-wordpress; }
+	.plan-icon__free-3 { fill: var( --color-primary ); }
 	.plan-icon__free-4 { fill: lighten( $blue-wordpress, 8% ); }
 }
 
@@ -35,6 +35,6 @@
 	.plan-icon__business-0 { fill: $alert-purple; }
 	.plan-icon__business-1 { fill: $white; }
 	.plan-icon__business-2 { fill: $gray-lighten-30; }
-	.plan-icon__business-3 { fill: $blue-wordpress; }
+	.plan-icon__business-3 { fill: var( --color-primary ); }
 	.plan-icon__business-4 { fill: $blue-dark; }
 }

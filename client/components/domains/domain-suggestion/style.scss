@@ -55,7 +55,7 @@
 		}
 
 		&.is-info {
-			background: $blue-wordpress;
+			background: var( --color-primary );
 		}
 
 		&.is-warning {

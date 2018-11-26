@@ -313,11 +313,11 @@
 		display: block;
 		width: auto;
 		padding: 16px 16px 14px 16px;
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		font-weight: 400;
 
 		&:visited {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 		}
 
 		.is-selected & {

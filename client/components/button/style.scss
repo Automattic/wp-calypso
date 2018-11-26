@@ -223,7 +223,7 @@ button {
 	}
 
 	&.is-primary {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 
 		&:focus,
 		&:hover,

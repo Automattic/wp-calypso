@@ -32,7 +32,7 @@ $compact-header-height: 35;
 	.accessible-focus .select-dropdown.is-open & {
 		z-index: z-index( 'root', '.accessible-focus .select-dropdown.is-open .select-dropdown__container' );
 		.select-dropdown__header {
-			border-color: $blue-wordpress;
+			border-color: var( --color-primary );
 		}
 	}
 
@@ -141,14 +141,14 @@ $compact-header-height: 35;
 	background-color: $white;
 	border: 1px solid $gray-lighten-20;
 	border-top: 0;
-	// $blue-wordpress for outer (with focus shadow), $gray for border with header
+	// var( --color-primary ) for outer (with focus shadow), $gray for border with header
 	border-radius: 0 0 4px 4px;
 	height: 0;
 	overflow: hidden;
 	opacity: 0;
 
 	.accessible-focus & {
-		border: solid 1px $blue-wordpress;
+		border: solid 1px var( --color-primary );
 		border-top-color: $gray-lighten-20;
 	}
 

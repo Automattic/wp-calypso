@@ -196,7 +196,7 @@ $accordion-background-expanded: $white;
 	}
 
 	&.is-info {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 
 		&:hover {
 			color: lighten( $blue-wordpress, 5% );

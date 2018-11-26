@@ -171,7 +171,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 .chart__bar-section {
 	display: inline-block;
-	background-color: $blue-wordpress;
+	background-color: var( --color-primary );
 	position: absolute;
 		top: 0; // 2
 		right: 16%; // 1
@@ -288,7 +288,7 @@ $y-axis-padding: 0 20px 0 10px;
 .chart__legend-option .chart__legend-color {
 	width: 10px;
 	height: 10px;
-	background: $blue-wordpress;
+	background: var( --color-primary );
 	display: inline-block;
 	border-radius: 1px;
 	vertical-align: top;

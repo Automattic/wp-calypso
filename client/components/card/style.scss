@@ -27,7 +27,7 @@
 	&.is-card-link {
 		padding-right: 48px;
 		&:not( a ) {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 			font-size: 100%;
 			line-height: 1.5;
 			text-align: left;
@@ -54,7 +54,7 @@
 	}
 
 	&.is-info {
-		border-left: 3px solid $blue-wordpress;
+		border-left: 3px solid var( --color-primary );
 	}
 
 	&.is-success {

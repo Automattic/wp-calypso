@@ -11,7 +11,7 @@
 	}
 
 	button.is-borderless {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		font-size: inherit;
 		font-style: inherit;
 		font-weight: inherit;

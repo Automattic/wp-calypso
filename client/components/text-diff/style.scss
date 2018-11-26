@@ -1,6 +1,6 @@
 .text-diff__additions {
 	background: lighten($blue-wordpress, 58%);
-	border-bottom: 2px solid $blue-wordpress;
+	border-bottom: 2px solid var( --color-primary );
 }
 
 .text-diff__deletions {

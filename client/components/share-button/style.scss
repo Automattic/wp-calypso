@@ -2,7 +2,7 @@
 
 .share-button.has-color {
 	.wordpress {
-		fill: $blue-wordpress;
+		fill: var( --color-primary );
 	}
 
 	.facebook {

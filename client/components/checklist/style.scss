@@ -183,7 +183,7 @@
 
 	&-title-link.button {
 		padding: 0;
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		font-weight: 400;
 		font-size: 16px;
 	}

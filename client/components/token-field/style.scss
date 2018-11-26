@@ -21,7 +21,7 @@
 	}
 
 	&.is-active {
-		border-color: $blue-wordpress;
+		border-color: var( --color-primary );
 		box-shadow: 0 0 0 2px $blue-light;
 	}
 }
@@ -88,7 +88,7 @@ input[type="text"].token-field__input {
 
 		.token-field__token-text {
 			background: transparent;
-			color: $blue-wordpress;
+			color: var( --color-primary );
 		}
 
 		.token-field__remove-token {
