@@ -12,6 +12,8 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import FormattedHeader from 'components/formatted-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
+import PlansSkipButton from 'components/plans/plans-skip-button';
+
 /**
  * Constants
  */
@@ -47,6 +49,7 @@ class JetpackPlansGrid extends Component {
 			<Main wideLayout className="jetpack-connect__hide-plan-icons">
 				<div className="jetpack-connect__plans">
 					{ this.renderConnectHeader() }
+					<PlansSkipButton onClick={ this.handleSkipButtonClick } />
 					<div id="plans">
 						<PlansFeaturesMain
 							site={ this.props.selectedSite || defaultJetpackSite }

@@ -572,6 +572,10 @@
 	.jetpack-connect__happychat-button {
 		text-align: center;
 	}
+
+	.plans-skip-button {
+		margin-bottom: 32px;
+	}
 }
 
 .jetpack-connect__plans.placeholder {
@@ -599,10 +603,6 @@
 }
 
 .jetpack-connect__hide-plan-icons {
-	.plans-skip-button {
-		margin-bottom: 0;
-	}
-
 	.jetpack-connect__plans {
 		.plans-wrapper {
 			padding-bottom: 0;
