@@ -23,6 +23,11 @@ import { adjustMoment } from 'my-sites/activity/activity-log/utils';
 import { requestActivityLogs } from 'state/data-getters';
 import withLocalizedMoment from 'components/with-localized-moment';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const PAGE_SIZE = 20;
 
 class ClonePointStep extends Component {

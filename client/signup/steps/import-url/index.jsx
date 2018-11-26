@@ -42,6 +42,11 @@ import {
 } from 'lib/importers/constants';
 import { prefetchmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const CHECKING_SITE_IMPORTABLE_NOTICE = 'checking-site-importable';
 const IMPORT_HELP_LINK = 'https://en.support.wordpress.com/import/';
 const EXAMPLE_WIX_URL = 'https://username.wixsite.com/my-site';

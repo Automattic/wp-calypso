@@ -16,6 +16,11 @@ const debug = debugFactory( 'calypso:validate-fieldset' );
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class ValidationFieldset extends Component {
 	renderValidationNotice() {
 		const validationElement = this.props.errorMessages && (

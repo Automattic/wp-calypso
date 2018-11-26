@@ -24,6 +24,11 @@ import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getDomainProductSlug } from 'lib/domains';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SiteOrDomain extends Component {
 	getDomainName() {
 		const { signupDependencies } = this.props;

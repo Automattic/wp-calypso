@@ -18,6 +18,11 @@ import SignupActions from 'lib/signup/actions';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CredsPermissionStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,

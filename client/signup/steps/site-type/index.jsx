@@ -23,6 +23,11 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SiteType extends Component {
 	constructor( props ) {
 		super( props );

@@ -19,6 +19,11 @@ import RewindCredentialsForm from 'components/rewind-credentials-form';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CloneCredentialsStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,

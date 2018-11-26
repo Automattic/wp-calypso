@@ -26,6 +26,11 @@ import StepWrapper from 'signup/step-wrapper';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const debug = debugFactory( 'calypso:steps:site' );
 
 /**
