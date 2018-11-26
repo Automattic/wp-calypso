@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { find, findIndex, get } from 'lodash';
 import Gridicon from 'gridicons';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -130,11 +131,12 @@ export class NavigationLink extends Component {
 			text = labelText ? labelText : translate( 'Skip for now' );
 		}
 
+		const buttonClasses = classnames( 'navigation-link', this.props.direction );
+
 		return (
 			<Button
-				compact
 				borderless
-				className="navigation-link"
+				className={ buttonClasses }
 				href={ this.getBackUrl() }
 				onClick={ this.handleClick }
 			>
