@@ -22,6 +22,45 @@ export const settings = {
 		align: {
 			type: 'string',
 		},
+		images: {
+			type: 'array',
+			default: [],
+			source: 'query',
+			selector: '.wp-block-slideshow_image_container',
+			query: {
+				url: {
+					source: 'attribute',
+					selector: 'img',
+					attribute: 'src',
+				},
+				alt: {
+					source: 'attribute',
+					selector: 'img',
+					attribute: 'alt',
+					default: '',
+				},
+				id: {
+					source: 'attribute',
+					selector: 'img',
+					attribute: 'data-id',
+				},
+				caption: {
+					type: 'string',
+					source: 'html',
+					selector: 'figcaption',
+				},
+			},
+		},
+		effect: {
+			type: 'string',
+			default: 'slide',
+		},
 	},
+	effectOptions: [
+		{ label: 'Slide', value: 'slide' },
+		{ label: 'Fade', value: 'fade' },
+		{ label: 'Cover Flow', value: 'coverflow' },
+		{ label: 'Flip', value: 'flip' },
+	],
 	validAlignments: [ 'center', 'wide', 'full' ],
 };
