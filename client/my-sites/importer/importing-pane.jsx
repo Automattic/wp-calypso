@@ -117,7 +117,7 @@ class ImportingPane extends React.PureComponent {
 		return this.props.translate(
 			'Importing may take a while if your site has a lot of media, but ' +
 				'you can safely navigate away from this page if you need to or ' +
-				'go to our {{a}}handy checklist{{/a}} to explore your settings and customizing options. ' +
+				'go to our {{a}}handy checklist{{/a}} to explore your settings and customization options. ' +
 				"We'll send you a notification when it's done.",
 			{
 				components: {
@@ -148,7 +148,7 @@ class ImportingPane extends React.PureComponent {
 		if ( pageCount && postCount ) {
 			return this.props.translate(
 				'All done! Vist the {{a}}Posts{{/a}} and ' +
-					'{{b}}Pages{{/b}} tabs to see your imported content,{{br/}} ' +
+					'{{b}}Pages{{/b}} sections to see your imported content,{{br/}} ' +
 					'or use our {{c}}handy checklist{{/c}} to explore your settings and customizing options.',
 				{
 					components: {
@@ -163,7 +163,7 @@ class ImportingPane extends React.PureComponent {
 
 		if ( pageCount || postCount ) {
 			return this.props.translate(
-				'All done! Vist the {{a}}%(articles)s{{/a}} tab ' +
+				'All done! Vist the {{a}}%(articles)s{{/a}} section ' +
 					'to see your imported content,{{br/}} ' +
 					'or use our {{b}}handy checklist{{/b}} to explore your settings and customizing options.',
 				{
