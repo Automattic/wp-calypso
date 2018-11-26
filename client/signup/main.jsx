@@ -40,6 +40,7 @@ import './style.scss';
 import DocumentHead from 'components/data/document-head';
 import LocaleSuggestions from 'components/locale-suggestions';
 import SignupProcessingScreen from 'signup/processing-screen';
+import WordPressLogo from 'components/wordpress-logo';
 
 // Libraries
 import analytics from 'lib/analytics';
@@ -574,14 +575,28 @@ class Signup extends React.Component {
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 				<DocumentHead title={ pageTitle } />
-				{ ! this.state.shouldShowLoadingScreen &&
-					showProgressIndicator && (
-						<FlowProgressIndicator
-							positionInFlow={ this.getPositionInFlow() }
-							flowLength={ this.getFlowLength() }
-							flowName={ this.props.flowName }
-						/>
-					) }
+
+				{ /* This should prolly be its own component. */ }
+				<div className="signup__header">
+					<WordPressLogo />
+
+					{ /* Ideally, this is where the back button
+					   would live. But thats hard to move, it seems. */ }
+					<div className="signup__header-left" />
+
+					{ /* This should show a sign in link instead of
+					   the progressIndicator on the account step. */ }
+					<div className="signup__header-right">
+						{ ! this.state.shouldShowLoadingScreen &&
+							showProgressIndicator && (
+								<FlowProgressIndicator
+									positionInFlow={ this.getPositionInFlow() }
+									flowLength={ this.getFlowLength() }
+									flowName={ this.props.flowName }
+								/>
+							) }
+					</div>
+				</div>
 				<TransitionGroup component="div" className="signup__steps">
 					{ this.renderCurrentStep() }
 				</TransitionGroup>
