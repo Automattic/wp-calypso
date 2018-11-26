@@ -124,7 +124,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		'vertical-onboarding': {
 			steps: [ 'user', 'site-information', 'domains', 'plans' ],
 			destination: getSiteDestination,
-			providesDependenciesInQuery: [ 'site-type', 'site-topic' ],
+			providesDependenciesInQuery: [ 'site-type', 'site-topic', 'themeSlugWithRepo' ],
 			description: 'The improved onboarding flow for vertical landing pages.',
 			lastModified: '2018-11-26',
 		},

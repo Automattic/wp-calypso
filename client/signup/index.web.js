@@ -19,6 +19,7 @@ export default function() {
 		controller.submitQueryDependencies,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,
+		controller.redirectToVerticalOnboardingFlow,
 		controller.start,
 		makeLayout,
 		clientRender

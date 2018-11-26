@@ -81,11 +81,13 @@ export default {
 	},
 
 	submitQueryDependencies( context, next ) {
-		if ( ! context.query ) {
+		const { query } = initialContext;
+
+		if ( ! query ) {
 			return next();
 		}
 
-		const { site_type: siteType, vertical } = context.query;
+		const { site_type: siteType, vertical } = query;
 
 		const reduxStore = context.store;
 
@@ -165,6 +167,23 @@ export default {
 		}
 
 		store.set( 'signup-locale', localeFromParams );
+
+		next();
+	},
+
+	redirectToVerticalOnboardingFlow( context, next ) {
+		const { query } = initialContext;
+
+		if ( ! query ) {
+			return next();
+		}
+
+		if ( query.vertical ) {
+			const stepName = getStepName( context.params ),
+				stepSectionName = getStepSectionName( context.params );
+
+			return page.redirect( getStepUrl( 'vertical-onboarding', stepName, stepSectionName ) );
+		}
 
 		next();
 	},
