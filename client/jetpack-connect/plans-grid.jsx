@@ -49,9 +49,7 @@ class JetpackPlansGrid extends Component {
 			<Main wideLayout className="jetpack-connect__hide-plan-icons">
 				<div className="jetpack-connect__plans">
 					{ this.renderConnectHeader() }
-
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } />
-
 					<div id="plans">
 						<PlansFeaturesMain
 							site={ this.props.selectedSite || defaultJetpackSite }
