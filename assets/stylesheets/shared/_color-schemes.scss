@@ -30,6 +30,23 @@
 	--count-color: #{$gray-text-min};
 	--current-site-switch-sites-background: #{$gray-lighten-30};
 	--profile-gravatar-user-secondary-info-color: #{$gray-darken-20};
+
+	--color-primary: #{$blue-wordpress};
+	--color-primary-light: #{$blue-light};
+	--color-primary-medium: #{$blue-medium};
+	--color-primary-dark: #{$blue-dark};
+
+	--color-success: #{$alert-green};
+	// --color-success-light: #{};
+	// --color-success-dark: #{};
+
+	--color-warning: #{$alert-yellow};
+	// --color-warning-light: #{};
+	// --color-warning-dark: #{};
+
+	--color-error: #{$alert-red};
+	// --color-error-light: #{};
+	// --color-error-dark: #{};
 }
 
 //additional color schemes
