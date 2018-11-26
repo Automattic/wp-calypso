@@ -11,6 +11,24 @@ module.exports = {
 		'prettier',
 		'prettier/react',
 	],
+	overrides: [
+		{
+			files: [ 'bin/**/*' ],
+			rules: {
+				'import/no-nodejs-modules': 0,
+				'no-console': 0,
+				'no-process-exit': 0,
+				'valid-jsdoc': 0,
+			},
+		},
+		{
+			files: [ 'client/gutenberg/extensions/**/*' ],
+			rules: {
+				'react/react-in-jsx-scope': 0,
+				'wpcalypso/jsx-classname-namespace': 0,
+			},
+		},
+	],
 	parser: 'babel-eslint',
 	env: {
 		browser: true,
