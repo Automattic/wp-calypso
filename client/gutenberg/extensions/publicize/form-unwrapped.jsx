@@ -44,7 +44,7 @@ class PublicizeFormUnwrapped extends Component {
 	isDisabled() {
 		const { connections } = this.props;
 		// Check to see if at least one connection is not disabled
-		const formEnabled = connections.some( connection => ! connection.disabled );
+		const formEnabled = connections.some( connection => connection.toggleable );
 		return ! formEnabled;
 	}
 
