@@ -33,8 +33,11 @@
 
 	--color-primary: #{$blue-wordpress};
 	--color-primary-light: #{$blue-light};
-	--color-primary-medium: #{$blue-medium};
 	--color-primary-dark: #{$blue-dark};
+
+	--color-accent: #{$blue-medium};
+	// --color-accent-light: #{};
+	// --color-accent-dark: #{};
 
 	--color-success: #{$alert-green};
 	// --color-success-light: #{};

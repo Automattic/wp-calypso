@@ -194,7 +194,7 @@ $compact-header-height: 35;
 	}
 
 	&.is-selected {
-		background-color: var( --color-primary-medium );
+		background-color: var( --color-accent );
 		color: $white;
 
 		.count {
@@ -213,7 +213,7 @@ $compact-header-height: 35;
 	.notouch & {
 		// Make sure :visited links stay blue
 		&:hover {
-			color: var( --color-primary-medium );
+			color: var( --color-accent );
 		}
 
 		&.is-selected:hover {

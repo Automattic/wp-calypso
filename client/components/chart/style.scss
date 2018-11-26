@@ -180,7 +180,7 @@ $y-axis-padding: 0 20px 0 10px;
 	z-index: z-index( 'root', '.chart__bar-section' );
 
 	.chart__bar:hover &.is-bar {
-		background-color: var( --color-primary-medium );
+		background-color: var( --color-accent );
 	}
 
 	.chart__bar.is-selected &.is-bar {

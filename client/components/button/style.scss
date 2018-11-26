@@ -62,7 +62,7 @@ button {
 		}
 	}
 	.accessible-focus &:focus {
-			border-color: var( --color-primary-medium );
+			border-color: var( --color-accent );
 			box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 	&.is-compact {
@@ -114,7 +114,7 @@ button {
 
 // Primary buttons
 .button.is-primary {
-	background: var( --color-primary-medium );
+	background: var( --color-accent );
 	border-color: darken( $blue-medium, 8% );
 	color: $white;
 
@@ -304,7 +304,7 @@ button {
 	border: none;
 	border-radius: 0;
 	padding: 0;
-	color: var( --color-primary-medium );
+	color: var( --color-accent );
 	font-weight: 400;
 	font-size: inherit;
 	line-height: 1.65;

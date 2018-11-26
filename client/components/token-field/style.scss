@@ -179,7 +179,7 @@ input[type="text"].token-field__input {
 	cursor: pointer;
 
 	&.is-selected {
-		background: var( --color-primary-medium );
+		background: var( --color-accent );
 		color: $white;
 	}
 }

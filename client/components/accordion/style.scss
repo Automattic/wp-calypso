@@ -30,11 +30,11 @@ $accordion-background-expanded: $white;
 		background-color: $accordion-background-hover;
 
 		.accordion__title {
-			color: var( --color-primary-medium );
+			color: var( --color-accent );
 		}
 
 		.accordion__arrow {
-			color: var( --color-primary-medium );
+			color: var( --color-accent );
 		}
 	}
 

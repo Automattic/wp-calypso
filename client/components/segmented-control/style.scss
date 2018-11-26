@@ -81,8 +81,8 @@
 	.segmented-control__item {
 		&.is-selected {
 			.segmented-control__link {
-				border-color: var( --color-primary-medium );
-				background-color: var( --color-primary-medium );
+				border-color: var( --color-accent );
+				background-color: var( --color-accent );
 				color: $white;
 
 				&:focus {
@@ -91,7 +91,7 @@
 			}
 
 			+ .segmented-control__item .segmented-control__link {
-				border-left-color: var( --color-primary-medium );
+				border-left-color: var( --color-accent );
 			}
 		}
 	}

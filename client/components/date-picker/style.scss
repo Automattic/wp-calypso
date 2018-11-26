@@ -74,7 +74,7 @@ $date-picker_nav_button_size: 20px;
 	order-width: 1px;
 
 	&:hover {
-		color: var( --color-primary-medium );
+		color: var( --color-accent );
 	}
 }
 
@@ -236,14 +236,14 @@ $date-picker_nav_button_size: 20px;
 .DayPicker-Day.DayPicker-Day--is-selected:not(.DayPicker-Day--today):not(.DayPicker-Day--events) .date-picker__day {
 	color: $white;
 	animation: isSelectedDay 125ms ease-out;
-	background-color: var( --color-primary-medium );
+	background-color: var( --color-accent );
 }
 
 // `is-selected` day (today -> no animation)
 .DayPicker-Day.DayPicker-Day--is-selected.DayPicker-Day--today .date-picker__day,
 .DayPicker-Day.DayPicker-Day--is-selected.DayPicker-Day--events .date-picker__day {
 	color: $white;
-	background-color: var( --color-primary-medium );
+	background-color: var( --color-accent );
 }
 
 // `Sunday` day

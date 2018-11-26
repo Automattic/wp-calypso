@@ -52,7 +52,7 @@
 	}
 
 	&:focus {
-		border-color: var( --color-primary-medium );
+		border-color: var( --color-accent );
 		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 }
@@ -182,7 +182,7 @@
 	cursor: pointer;
 
 	&.is-selected {
-		background: var( --color-primary-medium );
+		background: var( --color-accent );
 		color: $white;
 	}
 }
