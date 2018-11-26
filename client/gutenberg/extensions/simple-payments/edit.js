@@ -25,6 +25,7 @@ import {
 import HelpMessage from './help-message';
 import ProductPlaceholder from './product-placeholder';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { formatCurrency } from 'lib/format-currency';
 import { decimalPlaces, formatPrice } from 'lib/simple-payments/utils';
 import { getCurrencyDefaults } from 'lib/format-currency/currencies';
 import {
@@ -397,7 +398,7 @@ class SimplePaymentsEdit extends Component {
 				<ProductPlaceholder
 					aria-busy="false"
 					content={ content }
-					formattedPrice={ formatPrice( price, currency ) }
+					formattedPrice={ formatCurrency( price, currency ) }
 					multiple={ multiple }
 					title={ title }
 				/>
