@@ -10,7 +10,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import page from 'page';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -55,6 +54,7 @@ import { transferStates } from 'state/automated-transfer/constants';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
+import { hasPendingPayment } from 'lib/cart-values';
 
 /**
  * Module variables
@@ -372,7 +372,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	plan() {
-		const { path, site, translate, canUserManageOptions } = this.props;
+		const { path, site, translate, canUserManageOptions, cart } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -408,13 +408,12 @@ export class MySitesSidebar extends Component {
 			} );
 		}
 
-		// hasPendingPayment( getCart() ) ) {
-		if ( config.isEnabled( 'async-payments' ) ) {
+		if ( isEnabled( 'async-payments' ) && hasPendingPayment( cart ) ) {
 			return (
 				<li className={ linkClass } data-tip-target={ tipTarget }>
 					<a onClick={ this.trackPlanClick } href={ planLink }>
 						<JetpackLogo size={ 24 } />
-						<span className="sidebar__menu-link-text menu-link-text">
+						<span className="sidebar__menu-link-text menu-link-text" data-e2e-sidebar={ 'Plan' }>
 							{ translate( 'Plan', { context: 'noun' } ) }
 						</span>
 					</a>
@@ -422,7 +421,9 @@ export class MySitesSidebar extends Component {
 						onClick={ this.trackSidebarButtonClick( 'pending_payment' ) }
 						href={ '/me/purchases/pending' }
 					>
-						{ translate( 'Confirm', { comment: 'Link to page where you can confirm a payment' } ) }
+						{ translate( 'Confirm Payment', {
+							comment: 'Link to a page where you can view a pending payment',
+						} ) }
 					</SidebarButton>
 				</li>
 			);
