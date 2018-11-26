@@ -42,10 +42,7 @@ class PublicizeFormUnwrapped extends Component {
 	 * @return {boolean} True if whole form should be disabled.
 	 */
 	isDisabled() {
-		const { connections } = this.props;
-		// Check to see if at least one connection is not disabled
-		const formEnabled = connections.some( connection => connection.toggleable );
-		return ! formEnabled;
+		return this.props.connections.every( connection => ! connection.toggleable );
 	}
 
 	getShareMessage() {
