@@ -153,7 +153,7 @@ class SimplePaymentsEdit extends Component {
 				} )
 				.catch( error => {
 					// Nothing we can do about errors without details at the moment
-					if ( ! error || ! error.data ){
+					if ( ! error || ! error.data ) {
 						return;
 					}
 
