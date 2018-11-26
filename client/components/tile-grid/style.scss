@@ -39,12 +39,12 @@
 
 	&:active {
 		.tile-grid__cta {
-			color: $blue-dark;
+			color: var( --color-primary-dark );
 		}
 
 		.tile-grid__item-link:after {
-			border-top-color: $blue-dark;
-			border-right-color: $blue-dark;
+			border-top-color: var( --color-primary-dark );
+			border-right-color: var( --color-primary-dark );
 		}
 	}
 

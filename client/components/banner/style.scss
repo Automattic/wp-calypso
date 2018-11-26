@@ -32,7 +32,7 @@
 			box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
 		}
 		.card__link-indicator {
-			color: $blue-dark;
+			color: var( --color-primary-dark );
 		}
 	}
 

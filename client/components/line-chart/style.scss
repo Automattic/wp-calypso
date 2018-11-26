@@ -4,7 +4,7 @@
 
 .line-chart__line-color-0 {
 	fill: none;
-	stroke: $blue-dark;
+	stroke: var( --color-primary-dark );
 	stroke-width: 3px;
 }
 
@@ -29,7 +29,7 @@
 }
 
 .line-chart__area-color-0 {
-	fill: $blue-dark;
+	fill: var( --color-primary-dark );
 	opacity: 0.6;
 }
 
@@ -50,7 +50,7 @@
 }
 
 .line-chart__line-point-color-0 {
-	stroke: $blue-dark;
+	stroke: var( --color-primary-dark );
 }
 
 .line-chart__line-point-color-1 {
@@ -76,8 +76,8 @@
 }
 
 .line-chart__line-end-point-color-0 {
-	fill: $blue-dark;
-	stroke: $blue-dark;
+	fill: var( --color-primary-dark );
+	stroke: var( --color-primary-dark );
 }
 
 .line-chart__line-end-point-color-1 {
@@ -130,7 +130,7 @@
 }
 
 .line-chart__legend-sample-0 {
-	fill: $blue-dark;
+	fill: var( --color-primary-dark );
 }
 
 .line-chart__legend-sample-1 {
@@ -142,7 +142,7 @@
 }
 
 .line-chart__legend-sample-0-fill {
-	fill: $blue-dark;
+	fill: var( --color-primary-dark );
 }
 
  .line-chart__legend-sample-1-fill {

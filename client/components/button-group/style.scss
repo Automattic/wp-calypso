@@ -11,7 +11,7 @@
 		}
 
 		&.is-primary:focus {
-			box-shadow: inset 1px 0 0 $blue-dark, 0 0 0 2px var( --color-primary-light );
+			box-shadow: inset 1px 0 0 var( --color-primary-dark ), 0 0 0 2px var( --color-primary-light );
 		}
 
 		&.is-scary:focus {
