@@ -116,7 +116,7 @@ class Signup extends React.Component {
 		// here.
 		disableCart();
 
-		this.submitQueryDependencies();
+		// this.submitQueryDependencies();
 
 		const flow = flows.getFlow( this.props.flowName );
 		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};

@@ -52,6 +52,9 @@ const SignupProgressStore = {
 	setReduxStore( reduxStore ) {
 		this.reduxStore = reduxStore;
 	},
+	getReduxStore() {
+		return this.reduxStore;
+	},
 
 	// Subscriptions and change handling
 	off( eventName, callback ) {

@@ -15,6 +15,8 @@ export default function() {
 	page(
 		'/start/:flowName?/:stepName?/:stepSectionName?/:lang?',
 		controller.saveInitialContext,
+		controller.initSignupDataStore,
+		controller.submitQueryDependencies,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,
 		controller.start,

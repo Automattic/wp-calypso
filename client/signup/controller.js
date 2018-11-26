@@ -26,6 +26,12 @@ import userModule from 'lib/user';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import store from 'store';
 import SignupProgressStore from 'lib/signup/progress-store';
+import SignupActions from 'lib/signup/actions';
+import { isValidLandingPageVertical } from 'lib/signup/verticals';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { setSurvey } from 'state/signup/steps/survey/actions';
+import { setSiteType } from 'state/signup/steps/site-type/actions';
+import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
 
 const user = userModule();
 
@@ -40,6 +46,14 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
 let initialContext;
 
 export default {
+	initSignupDataStore( context, next ) {
+		if ( ! SignupProgressStore.getReduxStore() ) {
+			SignupProgressStore.setReduxStore( context.store );
+		}
+
+		next();
+	},
+
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		if ( user.get() && getLocale( context.params ) ) {
 			const flowName = getFlowName( context.params ),
@@ -66,6 +80,52 @@ export default {
 		next();
 	},
 
+	submitQueryDependencies( context, next ) {
+		if ( ! context.query ) {
+			return next();
+		}
+
+		const { site_type: siteType, vertical } = context.query;
+
+		const reduxStore = context.store;
+
+		// `vertical` query parameter
+		if ( vertical ) {
+			reduxStore.dispatch(
+				setSurvey( {
+					vertical,
+					otherText: '',
+				} )
+			);
+
+			SignupActions.submitSignupStep( { stepName: 'survey' }, [], {
+				surveySiteType: 'blog',
+				surveyQuestion: vertical,
+			} );
+			reduxStore.dispatch( setSiteTopic( vertical ) );
+
+			SignupActions.submitSignupStep( { stepName: 'site-topic' }, [], {
+				siteTopic: vertical,
+			} );
+
+			// Track our landing page verticals
+			if ( isValidLandingPageVertical( vertical ) ) {
+				analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
+					vertical,
+					flow: this.props.flowName,
+				} );
+			}
+		}
+
+		// `site_type` query parameter
+		const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
+		if ( siteTypeValue ) {
+			reduxStore.dispatch( setSiteType( siteTypeValue ) );
+		}
+
+		next();
+	},
+
 	saveInitialContext( context, next ) {
 		if ( ! initialContext ) {
 			initialContext = Object.assign( {}, context );
@@ -78,7 +138,6 @@ export default {
 		const flowName = getFlowName( context.params );
 		const localeFromParams = getLocale( context.params );
 		const localeFromStore = store.get( 'signup-locale' );
-		SignupProgressStore.setReduxStore( context.store );
 
 		// if flow can be resumed, use saved locale
 		if (
