@@ -13,7 +13,7 @@
 }
 
 .plan-icon__personal {
-	.plan-icon__personal-0 { fill: $alert-yellow; }
+	.plan-icon__personal-0 { fill: var( --color-warning ); }
 	.plan-icon__personal-1 { fill: $gray; }
 	.plan-icon__personal-2 { fill: $gray-lighten-20; }
 	.plan-icon__personal-3 { fill: $white; }

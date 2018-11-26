@@ -59,7 +59,7 @@
 		}
 
 		&.is-warning {
-			background: $alert-yellow;
+			background: var( --color-warning );
 		}
 
 		.notice__content {

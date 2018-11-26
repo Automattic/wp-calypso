@@ -15,7 +15,7 @@
 	line-height: 11px;
 
 	&.is-warning {
-		background: $alert-yellow;
+		background: var( --color-warning );
 	}
 
 	&.is-error {

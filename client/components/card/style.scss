@@ -62,7 +62,7 @@
 	}
 
 	&.is-warning {
-		border-left: 3px solid $alert-yellow;
+		border-left: 3px solid var( --color-warning );
 	}
 }
 

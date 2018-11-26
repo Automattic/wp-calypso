@@ -24,7 +24,7 @@
 
 		&.is-warning {
 			.popover__arrow {
-				border-bottom-color: $alert-yellow;
+				border-bottom-color: var( --color-warning );
 			}
 		}
 
@@ -56,7 +56,7 @@
 
 		&.is-warning {
 			.popover__arrow {
-				border-top-color: $alert-yellow;
+				border-top-color: var( --color-warning );
 			}
 		}
 
@@ -93,7 +93,7 @@
 
 		&.is-warning {
 			.popover__arrow {
-				border-right-color: $alert-yellow;
+				border-right-color: var( --color-warning );
 			}
 		}
 
@@ -137,7 +137,7 @@
 
 	&.is-warning {
 		.popover__inner {
-			background: $alert-yellow;
+			background: var( --color-warning );
 		}
 	}
 

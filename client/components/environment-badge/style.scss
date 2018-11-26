@@ -55,7 +55,7 @@
 			}
 		}
 		&.is-staging {
-			background-color: $alert-yellow;
+			background-color: var( --color-warning );
 		}
 		&.is-wpcalypso {
 			background-color: #b1eed0;

@@ -180,7 +180,7 @@ $accordion-background-expanded: $white;
 	}
 
 	&.is-warning {
-		color: $alert-yellow;
+		color: var( --color-warning );
 
 		&:hover {
 			color: lighten( $alert-yellow, 5% );
