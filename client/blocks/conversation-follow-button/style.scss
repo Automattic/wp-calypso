@@ -4,19 +4,19 @@ button.conversation-follow-button {
 	padding: 0;
 
 	.gridicons-reader-follow-conversation {
-		fill: $blue-medium;
+		fill: var( --color-accent );
 		pointer-events: auto;
 	}
 
 	.conversation-follow-button__label {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 
 	&:hover {
-		color: $blue-medium;
+		color: var( --color-accent );
 
 		.gridicons-reader-follow-conversation {
-			fill: $blue-medium;
+			fill: var( --color-accent );
 		}
 	}
 
@@ -34,12 +34,12 @@ button.conversation-follow-button {
 
 		.gridicons-reader-following-conversation {
 			display: inline-block;
-			fill: $alert-green;
+			fill: var( --color-success );
 			pointer-events: auto;
 		}
 
 		.conversation-follow-button__label {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 
 		// Hides Follow icon if already following
@@ -49,10 +49,10 @@ button.conversation-follow-button {
 		}
 
 		&:hover {
-			color: $alert-green;
+			color: var( --color-success );
 
 			.gridicons-reader-following-conversation {
-				fill: $alert-green;
+				fill: var( --color-success );
 			}
 		}
 	}

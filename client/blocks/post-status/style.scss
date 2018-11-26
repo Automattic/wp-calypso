@@ -10,5 +10,5 @@
 }
 
 .post-status.is-pending {
-	color: $alert-yellow;
+	color: var( --color-warning );
 }

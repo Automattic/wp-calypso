@@ -28,7 +28,7 @@
 
 	&:hover {
 		cursor: pointer;
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 
 	&.is-liked {

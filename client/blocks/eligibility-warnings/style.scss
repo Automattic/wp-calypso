@@ -57,7 +57,7 @@
 
 .eligibility-warnings__hold .gridicon,
 .eligibility-warnings__warning > .gridicon {
-	color: $alert-red;
+	color: var( --color-error );
 	flex-shrink: 0;
 }
 
@@ -80,7 +80,7 @@
 		color: $gray;
 	}
 	&:hover .gridicons-help-outline {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 }
 

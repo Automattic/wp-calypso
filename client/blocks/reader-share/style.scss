@@ -10,7 +10,7 @@
 	&:focus,
 	&:active {
 		cursor: pointer;
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 
 	.gridicon {
@@ -18,10 +18,10 @@
 	}
 
 	&.is-active {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 
 		.gridicon {
-			fill: $blue-wordpress;
+			fill: var( --color-primary );
 		}
 	}
 }
@@ -70,7 +70,7 @@
 	}
 
 	.gridicons-my-sites {
-		fill: $blue-wordpress;
+		fill: var( --color-primary );
 	}
 
 	.social-logo.twitter {

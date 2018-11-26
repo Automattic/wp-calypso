@@ -125,9 +125,9 @@
   }
 
   &.is-active {
-    border: 3px solid $alert-green;
+    border: 3px solid var( --color-success );
     .subscription-length-picker__option-credit-info {
-      color: $alert-green;
+      color: var( --color-success );
     }
   }
 }

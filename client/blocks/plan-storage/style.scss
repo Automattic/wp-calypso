@@ -29,13 +29,13 @@
 }
 
 .plan-storage__bar .progress-bar__progress {
-	background-color: $alert-green;
+	background-color: var( --color-success );
 }
 
 .plan-storage__bar.is-warn .progress-bar__progress {
-	background-color: $alert-yellow;
+	background-color: var( --color-warning );
 }
 
 .plan-storage__bar.is-alert .progress-bar__progress {
-	background-color: $alert-red;
+	background-color: var( --color-error );
 }

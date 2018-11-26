@@ -9,7 +9,7 @@
 
 .conversation-caterpillar__count {
 	cursor: pointer;
-	color: $blue-medium;
+	color: var( --color-accent );
 	display: flex;
 	margin-left: 8px;
 	flex: 1 1 auto;
@@ -20,7 +20,7 @@
 	white-space: nowrap;
 
 	&:hover {
-		color: $blue-light;
+		color: var( --color-primary-light );
 	}
 
 	&::after {

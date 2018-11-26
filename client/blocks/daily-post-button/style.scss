@@ -1,14 +1,14 @@
 .daily-post-button .daily-post-button__button.button.is-primary {
 	background: none;
 	border: 0;
-	color: $blue-medium;
+	color: var( --color-accent );
 	font-size: 14px;
 	line-height: normal;
 	margin: 9px 0 6px;
 	padding: 0;
 
 	.gridicon {
-		fill: $blue-medium;
+		fill: var( --color-accent );
 		height: 20px;
 		margin-top: 0;
 		margin-right: 5px;

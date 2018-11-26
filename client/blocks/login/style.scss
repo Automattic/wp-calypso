@@ -58,7 +58,7 @@
 	text-align: center;
 
 	.gridicon {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 }
 
@@ -116,7 +116,7 @@
 }
 
 .login-buttons__service-error {
-	color: $alert-red;
+	color: var( --color-error );
 	font-size: 11px;
 	margin: 0 10px 10px;
 }
@@ -126,7 +126,7 @@
 		font-size: 14px;
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 	.gridicon {
@@ -161,7 +161,7 @@
 		cursor: pointer;
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 }
@@ -206,7 +206,7 @@
 }
 
 .login__social-connect-prompt-logo.wordpress {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 }
 
 .login__social-connect-prompt-message {
