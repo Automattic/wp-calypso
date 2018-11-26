@@ -11,7 +11,7 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { requesting, counts } from '../reducer';
 import {
-	CURRENT_USER_ID_SET,
+	CURRENT_USER_RECEIVE,
 	POST_COUNTS_RECEIVE,
 	POST_COUNTS_REQUEST,
 	POST_COUNTS_REQUEST_SUCCESS,
@@ -265,8 +265,10 @@ describe( 'reducer', () => {
 			} );
 
 			state = counts( state, {
-				type: CURRENT_USER_ID_SET,
-				userId: 73705554,
+				type: CURRENT_USER_RECEIVE,
+				user: {
+					ID: 73705554,
+				},
 			} );
 
 			state = counts( state, {

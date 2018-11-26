@@ -11,7 +11,7 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { id, capabilities as unwrappedCapabilities, currencyCode } from '../reducer';
 import {
-	CURRENT_USER_ID_SET,
+	CURRENT_USER_RECEIVE,
 	DESERIALIZE,
 	PLANS_RECEIVE,
 	SERIALIZE,
@@ -48,8 +48,8 @@ describe( 'reducer', () => {
 
 		test( 'should set the current user ID', () => {
 			const state = id( null, {
-				type: CURRENT_USER_ID_SET,
-				userId: 73705554,
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: 73705554 },
 			} );
 
 			expect( state ).to.equal( 73705554 );

@@ -10,7 +10,7 @@ import { get, merge, omit, pick } from 'lodash';
  * Internal dependencies
  */
 import {
-	CURRENT_USER_ID_SET,
+	CURRENT_USER_RECEIVE,
 	POST_COUNTS_RECEIVE,
 	POST_COUNTS_REQUEST,
 	POST_COUNTS_REQUEST_SUCCESS,
@@ -145,8 +145,8 @@ export const counts = ( () => {
 
 				return state;
 			},
-			[ CURRENT_USER_ID_SET ]: ( state, action ) => {
-				currentUserId = action.userId;
+			[ CURRENT_USER_RECEIVE ]: ( state, action ) => {
+				currentUserId = action.user.ID;
 
 				return state;
 			},
