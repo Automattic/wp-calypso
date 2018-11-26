@@ -115,13 +115,11 @@ class StepWrapper extends Component {
 					</FormattedHeader>
 				) }
 
-				<div className="step-wrapper__content is-animated-content">
-					{ stepContent }
+				<div className="step-wrapper__content">{ stepContent }</div>
 
-					<div className="step-wrapper__buttons">
-						{ ! hideBack && this.renderBack() }
-						{ ! hideSkip && this.renderSkip() }
-					</div>
+				<div className="step-wrapper__buttons">
+					{ ! hideBack && this.renderBack() }
+					{ ! hideSkip && this.renderSkip() }
 				</div>
 			</div>
 		);
