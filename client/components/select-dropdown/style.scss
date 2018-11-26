@@ -46,7 +46,7 @@ $compact-header-height: 35;
 	}
 
 	.accessible-focus .select-dropdown.is-open & {
-		box-shadow: 0 0 0 2px $blue-light;
+		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 }
 
@@ -102,7 +102,7 @@ $compact-header-height: 35;
 	}
 
 	.accessible-focus .select-dropdown:not(.is-open) .select-dropdown__container:focus & {
-		box-shadow: 0 0 0 2px $blue-light;
+		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 
 	.count {

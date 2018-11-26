@@ -28,7 +28,7 @@
 
 .pie-chart__chart-section-2,
 .pie-chart__legend-sample-2 {
-	fill: $blue-light;
+	fill: var( --color-primary-light );
 }
 
 .pie-chart__chart-drawing-empty {

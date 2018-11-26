@@ -5,7 +5,7 @@
 }
 
 .plan-icon__free {
-	.plan-icon__free-0 { fill: $blue-light; }
+	.plan-icon__free-0 { fill: var( --color-primary-light ); }
 	.plan-icon__free-1 { fill: $white; }
 	.plan-icon__free-2 { fill: darken( $blue-wordpress, 8% ); }
 	.plan-icon__free-3 { fill: var( --color-primary ); }

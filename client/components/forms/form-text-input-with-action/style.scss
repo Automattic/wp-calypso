@@ -6,7 +6,7 @@
 	&.is-focused {
 		border-color: var( --color-primary );
 		outline: none;
-		box-shadow: 0 0 0 2px $blue-light;
+		box-shadow: 0 0 0 2px var( --color-primary-light );
 
 		&.is-valid {
 			box-shadow: 0 0 0 2px lighten( $alert-green, 35 );

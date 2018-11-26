@@ -63,7 +63,7 @@ button {
 	}
 	.accessible-focus &:focus {
 			border-color: var( --color-primary-medium );
-			box-shadow: 0 0 0 2px $blue-light;
+			box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 	&.is-compact {
 		padding: 7px;

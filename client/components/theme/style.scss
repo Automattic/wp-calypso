@@ -247,7 +247,7 @@ $theme-info-height: 54px;
 
 		.accessible-focus &:focus {
 			z-index: z-index( 'root', '.accessible-focus .theme__more-button button:focus' );
-			outline: solid 3px $blue-light;
+			outline: solid 3px var( --color-primary-light );
 		}
 	}
 

@@ -65,7 +65,7 @@
 		}
 		&.is-horizon,
 		&.is-feedback {
-			background-color: $blue-light;
+			background-color: var( --color-primary-light );
 		}
 		&.branch-name {
 			text-transform: inherit;

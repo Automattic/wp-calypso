@@ -78,7 +78,7 @@
 	}
 
 	&.is-highlighted {
-		box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 3px $blue-light;
+		box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 3px var( --color-primary-light );
 	}
 
 	a, svg {
