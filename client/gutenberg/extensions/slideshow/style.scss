@@ -1,4 +1,58 @@
 /** @format */
 
 .wp-block-jetpack-slideshow {
+	position: relative;
+	height: 400px;
+	.swiper-container {
+		width: 100%;
+		height: 100%;
+	}
+	img {
+		height: 100%;
+		height: calc( 100% - 22px );
+		background-color: rgb( 240, 240, 240 );
+		background-size: contain;
+		background-repeat: no-repeat;
+	}
+	img,
+	figcaption {
+		position: relative;
+		z-index: 1;
+	}
+	figcaption {
+		cursor: text;
+	}
+	.swiper-button-prev,
+	.swiper-button-next {
+		width: 24px;
+		height: 40px;
+		background-size: 24px 40px;
+		box-sizing: content-box;
+		-moz-box-sizing: content-box;
+		padding: 12px 10px;
+		border-radius: 2px;
+		margin-top: -32px; /* half of total height, including padding */
+		border-radius: 2px;
+		-webkit-transition: background-color 200ms;
+		-moz-transition: background-color 200ms;
+		-ms-transition: background-color 200ms;
+		-o-transition: background-color 200ms;
+		transition: background-color 200ms;
+	}
+	.slide-background {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+	}
+	.atavist-cover-background-color {
+		background-color: lightgray;
+	}
+	.wp-block-slideshow-image-container {
+		height: 100%;
+		width: 100%;
+		background-position: 50% 50%;
+		background-repeat: no-repeat;
+		background-size: contain;
+		position: absolute;
+	}
 }
