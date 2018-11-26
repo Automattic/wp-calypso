@@ -18,7 +18,7 @@
 	-webkit-transform: rotate( 45deg );
 	width: 100px;
 	display: block;
-	background: $blue-medium;
+	background: var( --color-primary-medium );
 	position: absolute;
 	top: 19px;
 	right: -21px;

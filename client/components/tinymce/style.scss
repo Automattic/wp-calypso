@@ -813,7 +813,7 @@ div.mce-path {
 }
 
 .mce-menu .mce-menu-item-normal.mce-active {
-	background-color: $blue-medium;
+	background-color: var( --color-primary-medium );
 	color: $white;
 	filter: none;
 }
@@ -824,7 +824,7 @@ div.mce-path {
 .mce-container.mce-menu .mce-menu-item:hover,
 .mce-container.mce-menu .mce-menu-item.mce-selected,
 .mce-container.mce-menu .mce-menu-item:focus {
-	color: $blue-medium;
+	color: var( --color-primary-medium );
 	background-color: $white;
 	background-image: none;
 	filter: none;
@@ -836,11 +836,11 @@ div.mce-path {
 .mce-container.mce-menu .mce-menu-item:hover .mce-text,
 .mce-container.mce-menu .mce-menu-item.mce-active:hover .mce-text,
 .mce-container.mce-menu .mce-menu-item.mce-selected .mce-text {
-	color: $blue-medium;
+	color: var( --color-primary-medium );
 }
 
 .mce-container.mce-menu .mce-menu-item.mce-active:hover {
-	background: $blue-medium;
+	background: var( --color-primary-medium );
 }
 
 .mce-container.mce-menu .mce-menu-item.mce-active:hover .mce-text {

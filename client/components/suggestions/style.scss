@@ -16,7 +16,7 @@
   cursor: pointer;
 
   &.has-highlight {
-    background-color: $blue-medium;
+    background-color: var( --color-primary-medium );
     color: $white;
   }
 }

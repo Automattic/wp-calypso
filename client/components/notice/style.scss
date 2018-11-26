@@ -40,7 +40,7 @@
 	// General notice
 	&.is-info {
 		.notice__icon-wrapper {
-			background: $blue-medium;
+			background: var( --color-primary-medium );
 		}
 	}
 

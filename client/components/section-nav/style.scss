@@ -272,7 +272,7 @@
 
 	.is-selected & {
 		color: $white;
-		background-color: $blue-medium;
+		background-color: var( --color-primary-medium );
 
 		@include breakpoint( "<480px" ) {
 			.count {
@@ -299,7 +299,7 @@
 
 	.notouch & {
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-primary-medium );
 		}
 	}
 

@@ -158,8 +158,8 @@
 		}
 
 		&:active {
-			background: $blue-medium;
-			border-color: $blue-medium;
+			background: var( --color-primary-medium );
+			border-color: var( --color-primary-medium );
 		}
 	}
 

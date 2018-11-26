@@ -128,7 +128,7 @@
 .button.domain-suggestion__action {
 	min-width: 66px;
 	text-align: center;
-	color: $blue-medium;
+	color: var( --color-primary-medium );
 	margin-top: 0.5em;
 	padding: 0.25em 3em;
 	float: right;

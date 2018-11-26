@@ -10,7 +10,7 @@
 
 .line-chart__line-color-1 {
 	fill: none;
-	stroke: $blue-medium;
+	stroke: var( --color-primary-medium );
 	stroke-width: 3px;
 }
 
@@ -34,7 +34,7 @@
 }
 
 .line-chart__area-color-1 {
-	fill: $blue-medium;
+	fill: var( --color-primary-medium );
 	opacity: 0.3;
 }
 
@@ -54,7 +54,7 @@
 }
 
 .line-chart__line-point-color-1 {
-	stroke: $blue-medium;
+	stroke: var( --color-primary-medium );
 }
 
 .line-chart__line-point-color-2 {
@@ -81,8 +81,8 @@
 }
 
 .line-chart__line-end-point-color-1 {
-	fill: $blue-medium;
-	stroke: $blue-medium;
+	fill: var( --color-primary-medium );
+	stroke: var( --color-primary-medium );
 }
 
 .line-chart__line-end-point-color-2 {
@@ -134,7 +134,7 @@
 }
 
 .line-chart__legend-sample-1 {
-	fill: $blue-medium;
+	fill: var( --color-primary-medium );
 }
 
 .line-chart__legend-sample-2 {
@@ -146,7 +146,7 @@
 }
 
  .line-chart__legend-sample-1-fill {
-	fill: $blue-medium;
+	fill: var( --color-primary-medium );
 }
 
 .line-chart__legend-sample-2-fill {
@@ -154,7 +154,7 @@
 }
 
 .line-chart__date-range-selected {
-	fill: $blue-medium;
+	fill: var( --color-primary-medium );
 	opacity: 0.1;
 }
 

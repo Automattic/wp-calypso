@@ -70,7 +70,7 @@
 .site-selector .all-sites.is-highlighted,
 .notouch .site-selector.is-hover-enabled .site:hover,
 .notouch .site-selector.is-hover-enabled .all-sites:hover {
-	background: $blue-medium;
+	background: var( --color-primary-medium );
 	cursor: pointer;
 
 	.site__badge {

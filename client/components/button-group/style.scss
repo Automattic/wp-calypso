@@ -7,7 +7,7 @@
 			// fixes focus styles in stacking context
 			position: relative;
 			z-index: z-index( 'button-group-parent', '.button-group .button:focus' );
-			box-shadow: inset 1px 0 0 $blue-medium, 0 0 0 2px $blue-light;
+			box-shadow: inset 1px 0 0 var( --color-primary-medium ) 0 0 0 2px $blue-light;
 		}
 
 		&.is-primary:focus {

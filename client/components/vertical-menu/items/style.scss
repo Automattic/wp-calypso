@@ -28,10 +28,10 @@
 	}
 
 	&:not(.is-selected):hover {
-		color: $blue-medium;
+		color: var( --color-primary-medium );
 
 		.social-logo {
-			fill: $blue-medium;
+			fill: var( --color-primary-medium );
 		}
 	}
 }

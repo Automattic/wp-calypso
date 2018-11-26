@@ -110,8 +110,8 @@
 
 // Selected state
 .pagination__list-item.is-selected .button {
-	border-color: $blue-medium;
-	background-color: $blue-medium;
+	border-color: var( --color-primary-medium );
+	background-color: var( --color-primary-medium );
 	color: $white;
 }
 
