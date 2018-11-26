@@ -153,6 +153,7 @@ export function iframeIsWhitelisted( iframe ) {
 		'youtube.com',
 		'youtube-nocookie.com',
 		'videopress.com',
+		'video.wordpress.com',
 		'vimeo.com',
 		'cloudup.com',
 		'soundcloud.com',
