@@ -50,7 +50,7 @@
 	}
 
 	&.is-error {
-		border-color: $alert-red;
+		border-color: var( --color-error );
 	}
 
 	&.is-error:hover {

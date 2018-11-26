@@ -61,7 +61,7 @@
 			background-color: #b1eed0;
 		}
 		&.is-dev {
-			background-color: $alert-red;
+			background-color: var( --color-error );
 		}
 		&.is-horizon,
 		&.is-feedback {

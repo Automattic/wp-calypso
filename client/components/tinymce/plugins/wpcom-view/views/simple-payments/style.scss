@@ -153,7 +153,7 @@
 	.wpview-type-simple-payments__unsupported-icon {
 		flex-shrink: 1;
 		flex-grow: 0;
-		fill: $alert-red;
+		fill: var( --color-error );
 		line-height: 0;
 		margin-right: 1em;
 	}

@@ -18,7 +18,7 @@
 
 		&.is-error {
 			.popover__arrow {
-				border-bottom-color: $alert-red;
+				border-bottom-color: var( --color-error );
 			}
 		}
 
@@ -50,7 +50,7 @@
 
 		&.is-error {
 			.popover__arrow {
-				border-top-color: $alert-red;
+				border-top-color: var( --color-error );
 			}
 		}
 
@@ -87,7 +87,7 @@
 
 		&.is-error {
 			.popover__arrow {
-				border-right-color: $alert-red;
+				border-right-color: var( --color-error );
 			}
 		}
 
@@ -131,7 +131,7 @@
 
 	&.is-error {
 		.popover__inner {
-			background: $alert-red;
+			background: var( --color-error );
 		}
 	}
 

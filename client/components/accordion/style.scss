@@ -188,7 +188,7 @@ $accordion-background-expanded: $white;
 	}
 
 	&.is-error {
-		color: $alert-red;
+		color: var( --color-error );
 
 		&:hover {
 			color: lighten( $alert-red, 5% );

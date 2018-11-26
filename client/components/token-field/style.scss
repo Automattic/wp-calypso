@@ -71,7 +71,7 @@ input[type="text"].token-field__input {
 	&.is-error {
 		.token-field__token-text,
 		.token-field__remove-token {
-			background: $alert-red;
+			background: var( --color-error );
 		}
 	}
 
@@ -107,7 +107,7 @@ input[type="text"].token-field__input {
 
 		&.is-error {
 			.token-field__token-text {
-				color: $alert-red;
+				color: var( --color-error );
 				border-radius: 4px 0 0 4px;
 				padding: 0 4px 0 6px;
 			}

@@ -33,7 +33,7 @@
 	// Error! OHNO!
 	&.is-error {
 		.notice__icon-wrapper {
-			background: $alert-red;
+			background: var( --color-error );
 		}
 	}
 

@@ -214,7 +214,7 @@
 	}
 
 	&.transfer-domain-step__locked {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	&.transfer-domain-step__unknown {

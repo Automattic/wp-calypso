@@ -50,7 +50,7 @@
 	}
 
 	&.is-error {
-		border-left: 3px solid $alert-red;
+		border-left: 3px solid var( --color-error );
 	}
 
 	&.is-info {

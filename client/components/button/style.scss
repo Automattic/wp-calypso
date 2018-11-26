@@ -142,11 +142,11 @@ button {
 
 // Scary buttons
 .button.is-scary {
-	color: $alert-red;
+	color: var( --color-error );
 
 	&:hover,
 	&:focus {
-		border-color: $alert-red;
+		border-color: var( --color-error );
 	}
 
 	.accessible-focus &:focus {
@@ -161,7 +161,7 @@ button {
 }
 
 .button.is-primary.is-scary {
-	background: $alert-red;
+	background: var( --color-error );
 	border-color: darken( $alert-red, 20% );
 	color: $white;
 
@@ -210,7 +210,7 @@ button {
 		}
 	}
 	&.is-scary {
-		color: $alert-red;
+		color: var( --color-error );
 
 		&:hover,
 		&:focus {

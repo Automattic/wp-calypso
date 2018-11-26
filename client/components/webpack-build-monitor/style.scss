@@ -19,7 +19,7 @@
 	}
 
 	&.is-error {
-		background: $alert-red;
+		background: var( --color-error );
 	}
 }
 

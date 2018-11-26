@@ -5,6 +5,6 @@
 
 .text-diff__deletions {
 	background: lighten($alert-red, 38%);
-	border-bottom: 2px solid $alert-red;
+	border-bottom: 2px solid var( --color-error );
 	text-decoration: line-through;
 }

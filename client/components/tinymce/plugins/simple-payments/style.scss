@@ -251,7 +251,7 @@
 	font-weight: bold;
 
 	&.is-error {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 }
 
