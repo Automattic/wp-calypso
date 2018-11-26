@@ -146,7 +146,7 @@ export const counts = ( () => {
 				return state;
 			},
 			[ CURRENT_USER_RECEIVE ]: ( state, action ) => {
-				currentUserId = action.user.id;
+				currentUserId = action.user.ID;
 
 				return state;
 			},

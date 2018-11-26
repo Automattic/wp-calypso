@@ -267,7 +267,7 @@ describe( 'reducer', () => {
 			state = counts( state, {
 				type: CURRENT_USER_RECEIVE,
 				user: {
-					id: 73705554,
+					ID: 73705554,
 				},
 			} );
 
