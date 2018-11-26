@@ -23,6 +23,11 @@ import {
 import { convertToSnakeCase } from 'state/data-layer/utils';
 import { dummyTaxRate } from 'lib/tax'; // #tax-on-checkout-placeholder
 
+export const getAtURL = url =>
+	requestHttpData( `get-at-url-${ url }`, rawHttp( { method: 'GET', url } ), {
+		fromApi: () => data => [ `get-at-url-${ url }`, data ],
+	} );
+
 export const requestActivityActionTypeCounts = (
 	siteId,
 	filter,
