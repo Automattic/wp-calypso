@@ -47,9 +47,7 @@ class SpeedUpSiteSettings extends Component {
 				photon: ! siteAcceleratorStatus,
 				'photon-cdn': ! siteAcceleratorStatus,
 			},
-			() => {
-				submitForm();
-			}
+			submitForm
 		);
 	};
 
