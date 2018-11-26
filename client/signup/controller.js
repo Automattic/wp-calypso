@@ -122,6 +122,8 @@ export default {
 		// `site_type` query parameter
 		const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
 		if ( siteTypeValue ) {
+			// this seems very wrong. Shouldn't it be as comprehensive as
+			// https://github.com/Automattic/wp-calypso/blob/master/client/signup/steps/site-type/index.jsx#L126 ?
 			reduxStore.dispatch( setSiteType( siteTypeValue ) );
 		}
 
