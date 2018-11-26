@@ -64,7 +64,7 @@ input[type="text"].token-field__input {
 	&.is-success {
 		.token-field__token-text,
 		.token-field__remove-token {
-			background: $alert-green;
+			background: var( --color-success );
 		}
 	}
 
@@ -101,7 +101,7 @@ input[type="text"].token-field__input {
 
 		&.is-success {
 			.token-field__token-text {
-				color: $alert-green;
+				color: var( --color-success );
 			}
 		}
 

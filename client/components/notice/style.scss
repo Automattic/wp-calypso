@@ -19,7 +19,7 @@
 	// Success!
 	&.is-success {
 		.notice__icon-wrapper {
-			background: $alert-green;
+			background: var( --color-success );
 		}
 	}
 

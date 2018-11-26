@@ -51,7 +51,7 @@
 		color: $white;
 
 		&.is-success {
-			background: $alert-green;
+			background: var( --color-success );
 		}
 
 		&.is-info {

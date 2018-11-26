@@ -22,7 +22,7 @@
 }
 
 .plan-icon__premium {
- 	.plan-icon__premium-0 { fill: $alert-green; }
+ 	.plan-icon__premium-0 { fill: var( --color-success ); }
 	.plan-icon__premium-1 { fill: $gray; }
 	.plan-icon__premium-2 { fill: $gray-darken-20; }
 	.plan-icon__premium-3 { fill: $white; }

@@ -86,7 +86,7 @@
 		align-items: center;
 
 		.gridicon {
-			color: $alert-green;
+			color: var( --color-success );
 			margin-right: 0.25em;
 		}
 	}

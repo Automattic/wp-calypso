@@ -30,7 +30,7 @@
 
 		&.is-success {
 			.popover__arrow {
-				border-bottom-color: $alert-green;
+				border-bottom-color: var( --color-success );
 			}
 		}
 	}
@@ -62,7 +62,7 @@
 
 		&.is-success {
 			.popover__arrow {
-				border-top-color: $alert-green;
+				border-top-color: var( --color-success );
 			}
 		}
 	}
@@ -99,7 +99,7 @@
 
 		&.is-success {
 			.popover__arrow {
-				border-right-color: $alert-green;
+				border-right-color: var( --color-success );
 			}
 		}
 	}
@@ -143,7 +143,7 @@
 
 	&.is-success {
 		.popover__inner {
-			background: $alert-green;
+			background: var( --color-success );
 		}
 	}
 

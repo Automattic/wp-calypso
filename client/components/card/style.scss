@@ -58,7 +58,7 @@
 	}
 
 	&.is-success {
-		border-left: 3px solid $alert-green;
+		border-left: 3px solid var( --color-success );
 	}
 
 	&.is-warning {

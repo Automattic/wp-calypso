@@ -49,7 +49,7 @@
 
 .ribbon.is-green {
 	.ribbon__title {
-		background-color: $alert-green
+		background-color: var( --color-success )
 	}
 	.ribbon__title::before {
 		border-left-color: darken( $alert-green, 20% );

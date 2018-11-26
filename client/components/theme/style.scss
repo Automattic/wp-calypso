@@ -83,7 +83,7 @@ $theme-info-height: 54px;
 .theme__badge-price {
 	flex: 0 0 auto;
 	padding: 18px 10px 0;
-	color: $alert-green;
+	color: var( --color-success );
 	font-size: 13px;
 	font-weight: 600;
 }

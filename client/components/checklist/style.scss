@@ -82,7 +82,7 @@
 	}
 
 	.progress-bar__progress {
-		background-color: $alert-green;
+		background-color: var( --color-success );
 	}
 }
 
@@ -149,8 +149,8 @@
 
 		&:hover,
 		&:focus {
-			background: $alert-green;
-			border-color: $alert-green;
+			background: var( --color-success );
+			border-color: var( --color-success );
 
 			.gridicons-checkmark {
 				display: block;
@@ -228,8 +228,8 @@
 
 		.checklist__task-icon {
 			top: 13px;
-			background: $alert-green;
-			border-color: $alert-green;
+			background: var( --color-success );
+			border-color: var( --color-success );
 
 			&:hover {
 				cursor: default;

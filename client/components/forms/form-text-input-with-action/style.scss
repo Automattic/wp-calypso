@@ -42,7 +42,7 @@
 	}
 
 	&.is-valid {
-		border-color: $alert-green;
+		border-color: var( --color-success );
 	}
 
 	&.is-valid:hover {

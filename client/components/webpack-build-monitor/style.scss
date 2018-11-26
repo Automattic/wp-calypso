@@ -5,7 +5,7 @@
 	z-index: z-index( 'root', '.webpack-build-monitor' );
 	font-size: 9px;
 	padding: 4px 6px;
-	background: $alert-green;
+	background: var( --color-success );
 	color: $white;
 	text-transform: uppercase;
 	letter-spacing: 1px;
