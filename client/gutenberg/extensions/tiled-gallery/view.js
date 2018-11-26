@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
 
 /**
@@ -85,10 +85,10 @@ const throttleOnResize = throttle( entries => {
 /**
  * Get different galleries on the page
  *
- * @returns {NodeList} List of gallery nodes on the page
+ * @returns {Array} List of gallery nodes on the page
  */
 const getGalleries = () => {
-	return document ? document.querySelectorAll( '.wp-block-jetpack-tiled-gallery' ) : [];
+	return document ? [ ...document.querySelectorAll( '.wp-block-jetpack-tiled-gallery' ) ] : [];
 };
 
 /**

@@ -8,13 +8,17 @@
 /**
  * External Dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { BACKSPACE, DELETE } from '@wordpress/keycodes';
 import { Component } from '@wordpress/element';
 import { IconButton, Spinner } from '@wordpress/components';
 import { RichText } from '@wordpress/editor';
 import { withSelect } from '@wordpress/data';
 import classnames from 'classnames';
+
+/**
+ * Internal Dependencies
+ */
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class GalleryImage extends Component {
 	constructor() {
@@ -132,7 +136,7 @@ class GalleryImage extends Component {
 							icon="no-alt"
 							onClick={ onRemove }
 							className="blocks-gallery-item__remove"
-							label={ __( 'Remove Image', 'jetpack' ) }
+							label={ __( 'Remove Image' ) }
 						/>
 					</div>
 				) }
@@ -140,7 +144,7 @@ class GalleryImage extends Component {
 				{ ! RichText.isEmpty( caption ) || isSelected ? (
 					<RichText
 						tagName="figcaption"
-						placeholder={ __( 'Write caption…', 'jetpack' ) }
+						placeholder={ __( 'Write caption…' ) }
 						value={ caption }
 						isSelected={ this.state.captionSelected }
 						onChange={ newCaption => setAttributes( { caption: newCaption } ) }

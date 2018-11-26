@@ -23,8 +23,6 @@ import {
 	mediaUpload,
 	MediaUpload,
 } from '@wordpress/editor';
-// @TODO: add to Calypso deps
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { create } from '@wordpress/rich-text';
 
 /**
@@ -119,9 +117,7 @@ class TiledGalleryEdit extends Component {
 	}
 
 	getImageCropHelp( checked ) {
-		return checked
-			? __( 'Thumbnails are cropped to align.', 'jetpack' )
-			: __( 'Thumbnails are not cropped.', 'jetpack' );
+		return checked ? __( 'Thumbnails are cropped to align.' ) : __( 'Thumbnails are not cropped.' );
 	}
 
 	setImageAttributes( index, attributes ) {
@@ -232,8 +228,8 @@ class TiledGalleryEdit extends Component {
 						icon="format-gallery"
 						className={ className }
 						labels={ {
-							title: __( 'Tiled gallery', 'jetpack' ),
-							name: __( 'images', 'jetpack' ),
+							title: __( 'Tiled gallery' ),
+							name: __( 'images' ),
 						} }
 						onSelect={ this.onSelectImages }
 						accept="image/*"
@@ -271,10 +267,10 @@ class TiledGalleryEdit extends Component {
 			<Fragment>
 				{ controls }
 				<InspectorControls>
-					<PanelBody title={ __( 'Tiled gallery settings', 'jetpack' ) }>
+					<PanelBody title={ __( 'Tiled gallery settings' ) }>
 						{ images.length > 1 && (
 							<RangeControl
-								label={ __( 'Columns', 'jetpack' ) }
+								label={ __( 'Columns' ) }
 								value={ columns }
 								onChange={ this.setColumnsNumber }
 								min={ 1 }
@@ -283,19 +279,19 @@ class TiledGalleryEdit extends Component {
 							/>
 						) }
 						<ToggleControl
-							label={ __( 'Crop images', 'jetpack' ) }
+							label={ __( 'Crop images' ) }
 							checked={ !! imageCrop }
 							onChange={ this.toggleImageCrop }
 							help={ this.getImageCropHelp }
 						/>
 						<SelectControl
-							label={ __( 'Link to', 'jetpack' ) }
+							label={ __( 'Link to' ) }
 							value={ linkTo }
 							onChange={ this.setLinkTo }
 							options={ [
-								{ value: 'attachment', label: __( 'Attachment page', 'jetpack' ) },
-								{ value: 'media', label: __( 'Media file', 'jetpack' ) },
-								{ value: 'none', label: __( 'None', 'jetpack' ) },
+								{ value: 'attachment', label: __( 'Attachment page' ) },
+								{ value: 'media', label: __( 'Media file' ) },
+								{ value: 'none', label: __( 'None' ) },
 							] }
 						/>
 					</PanelBody>
@@ -320,7 +316,7 @@ class TiledGalleryEdit extends Component {
 							accept="image/*"
 							icon="insert"
 						>
-							{ __( 'Upload an image', 'jetpack' ) }
+							{ __( 'Upload an image' ) }
 						</FormFileUpload>
 					) }
 				</GalleryGrid>

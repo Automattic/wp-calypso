@@ -3,17 +3,21 @@
 /**
  * External dependencies
  */
-import filter from 'lodash/filter';
-import { __ } from '@wordpress/i18n';
+import { filter } from 'lodash';
 import { createBlock, registerBlockStyle, registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
-import './editor.scss';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { DEFAULT_COLUMNS, DEFAULT_LAYOUT, LAYOUT_STYLES, LAYOUTS } from './constants';
 import { default as edit } from './edit';
 import { default as save } from './save';
+
+/**
+ * Style dependencies
+ */
+import './editor.scss';
 
 const blockAttributes = {
 	images: {
@@ -66,8 +70,8 @@ const blockAttributes = {
 export const blockName = 'jetpack/tiled-gallery';
 
 const blockSettings = {
-	title: __( 'Tiled gallery', 'jetpack' ),
-	description: __( 'Display multiple images in an elegantly organized tiled layout.', 'jetpack' ),
+	title: __( 'Tiled gallery' ),
+	description: __( 'Display multiple images in an elegantly organized tiled layout.' ),
 	icon: (
 		<svg viewBox="0 0 20 20">
 			<rect x="8" y="11" width="9" height="6" />
@@ -78,7 +82,7 @@ const blockSettings = {
 		</svg>
 	),
 	category: 'jetpack',
-	keywords: [ __( 'images', 'jetpack' ), __( 'photos', 'jetpack' ), __( 'masonry', 'jetpack' ) ],
+	keywords: [ __( 'images' ), __( 'photos' ), __( 'masonry' ) ],
 	attributes: blockAttributes,
 	supports: {
 		align: true,

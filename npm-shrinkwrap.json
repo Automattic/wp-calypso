@@ -2772,9 +2772,9 @@
       }
     },
     "@wordpress/token-list": {
-      "version": "1.0.2",
-      "resolved": "https://registry.npmjs.org/@wordpress/token-list/-/token-list-1.0.2.tgz",
-      "integrity": "sha512-hyk3xsLB1OlS52kFlR9PcSzvD6fkB2uOG4Uchs1pd304M/G3WTdD6iPiRVZeMmpWbwMq9KFtu9f8hwUzQTrTow==",
+      "version": "1.1.0",
+      "resolved": "https://registry.npmjs.org/@wordpress/token-list/-/token-list-1.1.0.tgz",
+      "integrity": "sha512-1InK0ic0syqUEyY3XkiDiZW9rJB/C/KZEzaOZjyzl/mwDR0npMiAouY3fTQ6qZSsMHjszhSl90yXz1I9M/DapA==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "lodash": "^4.17.10"

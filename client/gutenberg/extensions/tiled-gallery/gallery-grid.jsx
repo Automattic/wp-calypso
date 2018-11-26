@@ -5,9 +5,8 @@
  */
 import { Component, Fragment, createRef } from '@wordpress/element';
 import classnames from 'classnames';
-import defer from 'lodash/defer';
+import { defer, throttle } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
-import throttle from 'lodash/throttle';
 
 /**
  * Internal dependencies
