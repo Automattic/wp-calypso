@@ -152,9 +152,10 @@ class SimplePaymentsEdit extends Component {
 					return record;
 				} )
 				.catch( error => {
-					// @TODO: complete error handling
-					/* eslint-disable-next-line no-console */
-					console.error( error );
+					// Nothing we can do about errors without details at the moment
+					if ( ! error || ! error.data ) {
+						return;
+					}
 
 					const {
 						data: { key: apiErrorKey },
