@@ -31,8 +31,6 @@ class SpeedUpSiteSettings extends Component {
 		updateFields: PropTypes.func.isRequired,
 
 		// Connected props
-		assetCdnModuleActive: PropTypes.bool,
-		photonModuleActive: PropTypes.bool,
 		photonModuleUnavailable: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		siteAcceleratorStatus: PropTypes.bool,
@@ -154,8 +152,6 @@ export default connect( state => {
 	const siteAcceleratorStatus = !! ( photonModuleActive || assetCdnModuleActive );
 
 	return {
-		assetCdnModuleActive,
-		photonModuleActive,
 		photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 		selectedSiteId,
 		siteAcceleratorStatus,
