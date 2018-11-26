@@ -5,6 +5,7 @@
  */
 import { assign, kebabCase } from 'lodash';
 import { createElement, render } from '@wordpress/element';
+import HtmlToReactParser from 'html-to-react';
 
 export class FrontendManagement {
 	blockIterator( rootNode, blocks ) {
@@ -19,10 +20,11 @@ export class FrontendManagement {
 		const blockClass = `.wp-block-${ fullName.replace( '/', '-' ) }`;
 
 		const blockNodeList = rootNode.querySelectorAll( blockClass );
+		const htmlToReactParser = new HtmlToReactParser.Parser();
 		for ( const node of blockNodeList ) {
 			const data = this.extractAttributesFromContainer( node, attributes );
 			assign( data, options.props );
-			const children = this.extractChildrenFromContainer( node );
+			const children = htmlToReactParser.parse( node.innerHTML );
 			const el = createElement( component, data, children );
 			render( el, selector ? node.querySelector( selector ) : node );
 		}
@@ -46,20 +48,6 @@ export class FrontendManagement {
 			}
 		}
 		return data;
-	}
-	extractChildrenFromContainer( node ) {
-		const children = [ ...node.childNodes ];
-		return children.map( child => {
-			const attr = {};
-			for ( let i = 0; i < child.attributes.length; i++ ) {
-				const attribute = child.attributes[ i ];
-				attr[ attribute.nodeName ] = attribute.nodeValue;
-			}
-			attr.dangerouslySetInnerHTML = {
-				__html: child.innerHTML,
-			};
-			return createElement( child.tagName.toLowerCase(), attr );
-		} );
 	}
 }
 
