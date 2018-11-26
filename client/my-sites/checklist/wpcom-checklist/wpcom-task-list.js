@@ -3,6 +3,9 @@
  * External dependencies
  */
 import { get, memoize } from 'lodash';
+import debugModule from 'debug';
+
+const debug = debugModule( 'calypso:wpcom-task-list' );
 
 export default class WpcomTaskList {
 	constructor( taskStatuses, designType, isSiteUnlaunched ) {
@@ -39,6 +42,9 @@ export default class WpcomTaskList {
 		if ( get( taskStatuses, 'email_verified.completed' ) && isSiteUnlaunched ) {
 			addTask( 'site_launched' );
 		}
+
+		debug( 'designType: ', designType );
+		debug( 'Task list: ', this.tasks );
 	}
 
 	getAll() {
