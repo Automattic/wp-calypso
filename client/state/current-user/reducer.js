@@ -27,7 +27,7 @@ import emailVerification from './email-verification/reducer';
  *
  * In development, if you are receiving Redux errors like this:
  *
- *     Error: Given action "CURRENT_USER_ID_SET", reducer "id" returned undefined.
+ *     Error: Given action "CURRENT_USER_RECEIVE", reducer "id" returned undefined.
  *
  * This is likely caused by a server-side error or stored state corruption/auth token expiry.
  *
