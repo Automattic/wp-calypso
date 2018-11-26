@@ -10,8 +10,8 @@
 	text-align: center;
 
 	&.is-primary {
-		color: $white;
-		border-color: $blue-medium;
-		background-color: $blue-medium;
+		color: var( --count-color-primary );
+		border-color: var( --count-border-color-primary );
+		background-color: var( --count-background-color-primary );
 	}
 }

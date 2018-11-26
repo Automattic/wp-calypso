@@ -26,10 +26,14 @@
 	--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $gray-text-min )};
 
 	--button-is-borderless-color: #{$gray-text-min};
-	--count-border-color: #{$gray};
-	--count-color: #{$gray-text-min};
 	--current-site-switch-sites-background: #{$gray-lighten-30};
 	--profile-gravatar-user-secondary-info-color: #{$gray-darken-20};
+
+	--count-border-color: #{$gray};
+	--count-color: #{$gray-text-min};
+	--count-color-primary: #{$white};
+	--count-border-color-primary: #{$blue-medium};
+	--count-background-color-primary: #{$blue-medium};
 }
 
 //additional color schemes
