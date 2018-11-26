@@ -1,84 +1,149 @@
+.is-section-signup {
+	// Don't show the masterbar.
+	.masterbar {
+		display: none;
+	}
+
+	// Adjust the layout for the missing masterbar.
+	.layout__content {
+		padding: 0;
+		overflow: visible;
+	}
+}
+
+
+// A masterbar-like header just for
+// the signup flow.
+.signup__header {
+	position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+	padding-top: 16px;
+
+	.wordpress-logo {
+		height: 24px;
+		width: 24px;
+		fill: $blue-wordpress;
+		margin: 0 auto;
+		display: block;
+	}
+
+	.signup__header-left {
+		position: absolute;
+			top: 12px;
+			left: 16px;
+	}
+
+	.signup__header-right {
+		position: absolute;
+			top: 12px;
+			right: 16px;
+	}
+}
+
+
+// Each step is positioned absolutely to allow
+// for transitions between them.
+.signup__step {
+	padding-top: 48px; // Make room for .signup__header
+	position: absolute;
+		right: 0;
+		left: 0;
+	//overflow: hidden; // I don't know why this is here... -shaun
+}
+
+
+// Most steps have a narrow width.
 .step-wrapper {
 	max-width: 960px;
 	margin: 0 auto;
 
-
+	// Some steps (like plans) need a larger
+	// width column.
 	&.is-wide-layout {
 		max-width: 1040px;
 	}
 }
 
-.signup__step {
-	position: absolute;
-	left: 0;
-	right: 0;
-	overflow: hidden;
+
+// Signup headings
+.is-section-signup .formatted-header {
+	margin: 16px 0 24px 0;
+
+	.formatted-header__title {
+		margin: 0;
+		font-weight: 700;
+	}
+
+	.formatted-header__subtitle {
+		margin: 0;
+		font-size: 15px;
+		color: $gray-darken-20;
+	}
 }
 
-.signup__step-enter {
-	opacity: 0.01;
 
-	.is-animated-content {
+// Back button
+.navigation-link.button.back {
+	position: absolute;
+	top: 12px;
+	left: 16px;
+}
+
+
+// Signup Transitions
+.signup__step-enter {
+	opacity: 0;
+
+	.step-wrapper__content {
+		//transform: translateX( 32px );
+		transition: 0.2s ease-in-out;
+		transition-delay: 0.2s;
 		transform: translate3d( 0, 32px, 0 );
 	}
 }
 
-.signup__step-enter.signup__step-enter-active,
-.signup__step-exit.signup__step-exit-active {
-	pointer-events: none;
-}
-
 .signup__step-enter.signup__step-enter-active {
 	opacity: 1;
-	transition: 200ms ease-in-out;
-	transition-delay: 200ms;
+	transition: 0.2s ease-in-out;
+	transition-delay: 0.2s;
 
-	.is-animated-content {
+	.step-wrapper__content {
+		//transform: translateX( 0 );
+		transition: 0.2s ease-in-out;
+		transition-delay: 0.2s;
 		transform: translate3d( 0, 0, 0 );
-		transition: 200ms ease-in-out;
-		transition-delay: 200ms;
+		//transition: 200ms ease-in-out;
+		//transition-delay: 1.5s;
 	}
 }
 
 .signup__step-exit {
 	opacity: 1;
 
-	.is-animated-content {
+	.step-wrapper__content {
+		//transform: translateX( 0 );
+		transition: 0.2s ease-in-out;
 		transform: translate3d( 0, 0, 0 );
 	}
 }
 
 .signup__step-exit.signup__step-exit-active {
-	opacity: 0.01;
-	transition: 200ms ease-in-out;
+	opacity: 0;
+	transition: 0.15s ease-in-out;
 
-	.is-animated-content {
+	.step-wrapper__content {
+		//transform: translateX( 32px );
+		transition: 0.2s ease-in-out;
 		transform: translate3d( 0, 32px, 0 ) scale( 0.9 );
-		transition: 200ms ease-in-out;
+		//transition: 200ms ease-in-out;
 	}
 }
 
-.is-section-signup .layout__content {
-	overflow: visible;
-}
 
-/* New Signup Styles */
-
-.formatted-header__title {
-	font-family: $signup-sans;
-	font-size: 2.953em;
-	font-weight: 700;
-	line-height: 1.2;
-	margin-top: 1em;
-}
-
-.is-section-signup .layout__content,
-.is-section-signup .layout__primary {
-	padding-left: 0;
-	padding-right: 0;
-	overflow: visible;
-}
-
+// The Floating Squares
+// (Is that a band name?)
 .is-section-signup::before,
 .is-section-signup .layout__primary::before {
 	content: '';
@@ -101,6 +166,8 @@
 	z-index: z-index( '.is-section-signup', '.layout__primary::before' );
 }
 
+
+// Segment (site-type) Step
 .is-section-signup .site-type__wrapper .card {
 	padding-top: 0px;
 }
@@ -109,12 +176,3 @@
 	border-top: none;
 }
 
-@include breakpoint( '>1040px' ) {
- 	.formatted-header__title {
-		font-size: 3.375em;
-	}
-
- 	.formatted-header__subtitle {
-		font-size: 1.313em;
-	}
-}
