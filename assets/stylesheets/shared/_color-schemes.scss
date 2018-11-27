@@ -2,6 +2,26 @@
 
 //default color scheme
 :root {
+	--color-primary: #{$blue-wordpress};
+	--color-primary-light: #{$blue-light};
+	--color-primary-dark: #{$blue-dark};
+
+	--color-accent: #{$blue-medium};
+	// --color-accent-light: #{};
+	// --color-accent-dark: #{};
+
+	--color-success: #{$alert-green};
+	// --color-success-light: #{};
+	// --color-success-dark: #{};
+
+	--color-warning: #{$alert-yellow};
+	// --color-warning-light: #{};
+	// --color-warning-dark: #{};
+
+	--color-error: #{$alert-red};
+	// --color-error-light: #{};
+	// --color-error-dark: #{};
+
 	--masterbar-color: #{$white};
 	--masterbar-background: #{$blue-wordpress};
 	--masterbar-border-color: #{darken( $blue-wordpress, 4% )};
@@ -30,31 +50,31 @@
 	--count-color: #{$gray-text-min};
 	--current-site-switch-sites-background: #{$gray-lighten-30};
 	--profile-gravatar-user-secondary-info-color: #{$gray-darken-20};
-
-	--color-primary: #{$blue-wordpress};
-	--color-primary-light: #{$blue-light};
-	--color-primary-dark: #{$blue-dark};
-
-	--color-accent: #{$blue-medium};
-	// --color-accent-light: #{};
-	// --color-accent-dark: #{};
-
-	--color-success: #{$alert-green};
-	// --color-success-light: #{};
-	// --color-success-dark: #{};
-
-	--color-warning: #{$alert-yellow};
-	// --color-warning-light: #{};
-	// --color-warning-dark: #{};
-
-	--color-error: #{$alert-red};
-	// --color-error-light: #{};
-	// --color-error-dark: #{};
 }
 
 //additional color schemes
 .color-scheme {
 	&.is-classic-bright {
+		--color-primary: #{$blue-wordpress};
+		--color-primary-light: #{$blue-light};
+		--color-primary-dark: #{$blue-dark};
+
+		--color-accent: #{$hot-pink-500};
+		--color-accent-dark: #{$hot-pink-700};
+		--color-accent-light: #{$hot-pink-300};
+
+		--color-success: #{$alert-green};
+		// --color-success-light: #{};
+		// --color-success-dark: #{};
+
+		--color-warning: #{$alert-yellow};
+		// --color-warning-light: #{};
+		// --color-warning-dark: #{};
+
+		--color-error: #{$alert-red};
+		// --color-error-light: #{};
+		// --color-error-dark: #{};
+
 		--masterbar-color: #{$gray-text};
 		--masterbar-background: #{$gray-lighten-20};
 		--masterbar-border-color: #{$gray-lighten-10};
@@ -86,6 +106,26 @@
 	}
 
 	&.is-laser-black {
+		--color-primary: #{$blue-wordpress};
+		--color-primary-light: #{$blue-light};
+		--color-primary-dark: #{$blue-dark};
+
+		--color-accent: #{$blue-medium};
+		// --color-accent-light: #{};
+		// --color-accent-dark: #{};
+
+		--color-success: #{$alert-green};
+		// --color-success-light: #{};
+		// --color-success-dark: #{};
+
+		--color-warning: #{$alert-yellow};
+		// --color-warning-light: #{};
+		// --color-warning-dark: #{};
+
+		--color-error: #{$alert-red};
+		// --color-error-light: #{};
+		// --color-error-dark: #{};
+
 		--masterbar-color: #{$white};
 		--masterbar-background: #{$gray-dark};
 		--masterbar-border-color: #{$white};
@@ -114,5 +154,25 @@
 		--count-color: #{$white};
 		--current-site-switch-sites-background: #{$gray-darken-30};
 		--profile-gravatar-user-secondary-info-color: #{$white};
+
+		--color-primary: #{$blue-wordpress};
+		--color-primary-light: #{$blue-light};
+		--color-primary-dark: #{$blue-dark};
+
+		--color-accent: #{$blue-medium};
+		// --color-accent-light: #{};
+		// --color-accent-dark: #{};
+
+		--color-success: #{$alert-green};
+		// --color-success-light: #{};
+		// --color-success-dark: #{};
+
+		--color-warning: #{$alert-yellow};
+		// --color-warning-light: #{};
+		// --color-warning-dark: #{};
+
+		--color-error: #{$alert-red};
+		// --color-error-light: #{};
+		// --color-error-dark: #{};
 	}
 }
