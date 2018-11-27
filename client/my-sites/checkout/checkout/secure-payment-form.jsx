@@ -4,8 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-import createReactClass from 'create-react-class';
+import React, { Component } from 'react';
 import { get, find, defer, pick, isEqual } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
@@ -50,22 +49,16 @@ import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 const { hasFreeTrial } = cartItems;
 const debug = debugFactory( 'calypso:checkout:payment' );
 
-const SecurePaymentForm = createReactClass( {
-	displayName: 'SecurePaymentForm',
-
-	propTypes: {
+export class SecurePaymentForm extends Component {
+	static propTypes = {
 		countriesList: PropTypes.array.isRequired,
 		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
 		handleCheckoutExternalRedirect: PropTypes.func.isRequired,
 		products: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
-	},
+	};
 
-	getInitialState() {
-		return {
-			userSelectedPaymentBox: null,
-		};
-	},
+	state = { userSelectedPaymentBox: null };
 
 	getVisiblePaymentBox( { cart, paymentMethods } ) {
 		let i;
@@ -87,23 +80,23 @@ const SecurePaymentForm = createReactClass( {
 		}
 
 		return null;
-	},
+	}
 
-	handlePaymentBoxSubmit( event ) {
+	handlePaymentBoxSubmit = event => {
 		analytics.ga.recordEvent( 'Upgrades', 'Submitted Checkout Form' );
 
 		this.submitTransaction( event );
-	},
+	};
 
 	getInitialCard() {
 		return this.props.cards[ 0 ];
-	},
+	}
 
 	componentDidMount() {
 		this.setInitialPaymentDetails();
-	},
+	}
 
-	componentDidUpdate( prevProps, prevState ) {
+	componentDidUpdate( prevProps ) {
 		if ( this.getVisiblePaymentBox( prevProps ) !== this.getVisiblePaymentBox( this.props ) ) {
 			this.setInitialPaymentDetails();
 		}
@@ -115,7 +108,7 @@ const SecurePaymentForm = createReactClass( {
 		if ( ! isEqual( prevStep, nextStep ) ) {
 			this._handleTransactionStep( this.props );
 		}
-	},
+	}
 
 	setInitialPaymentDetails() {
 		let newPayment;
@@ -161,13 +154,13 @@ const SecurePaymentForm = createReactClass( {
 				setPayment( newPayment );
 			} );
 		}
-	},
+	}
 
-	selectPaymentBox( paymentBox ) {
+	selectPaymentBox = paymentBox => {
 		this.setState( {
 			userSelectedPaymentBox: paymentBox,
 		} );
-	},
+	};
 
 	renderCreditsPaymentBox() {
 		return (
@@ -180,7 +173,7 @@ const SecurePaymentForm = createReactClass( {
 				{ this.props.children }
 			</CreditsPaymentBox>
 		);
-	},
+	}
 
 	renderFreeTrialConfirmationBox() {
 		return (
@@ -190,7 +183,7 @@ const SecurePaymentForm = createReactClass( {
 				transactionStep={ this.props.transaction.step }
 			/>
 		);
-	},
+	}
 
 	renderFreeCartPaymentBox() {
 		return (
@@ -202,7 +195,7 @@ const SecurePaymentForm = createReactClass( {
 				transactionStep={ this.props.transaction.step }
 			/>
 		);
-	},
+	}
 
 	renderEmergentPaywallBox() {
 		return (
@@ -222,7 +215,7 @@ const SecurePaymentForm = createReactClass( {
 				</EmergentPaywallBox>
 			</PaymentBox>
 		);
-	},
+	}
 
 	renderCreditCardPaymentBox() {
 		return (
@@ -249,7 +242,7 @@ const SecurePaymentForm = createReactClass( {
 				</CreditCardPaymentBox>
 			</PaymentBox>
 		);
-	},
+	}
 
 	renderPayPalPaymentBox() {
 		return (
@@ -273,7 +266,7 @@ const SecurePaymentForm = createReactClass( {
 				</PayPalPaymentBox>
 			</PaymentBox>
 		);
-	},
+	}
 
 	renderRedirectPaymentBox( paymentType ) {
 		return (
@@ -298,7 +291,7 @@ const SecurePaymentForm = createReactClass( {
 				</RedirectPaymentBox>
 			</PaymentBox>
 		);
-	},
+	}
 
 	renderWechatPaymentBox() {
 		return (
@@ -321,7 +314,7 @@ const SecurePaymentForm = createReactClass( {
 				</WechatPaymentBox>
 			</PaymentBox>
 		);
-	},
+	}
 
 	renderWebPaymentBox() {
 		return (
@@ -344,7 +337,7 @@ const SecurePaymentForm = createReactClass( {
 				</WebPaymentBox>
 			</PaymentBox>
 		);
-	},
+	}
 
 	renderGetDotBlogNotice() {
 		const hasProductFromGetDotBlogSignup = find(
@@ -370,9 +363,9 @@ const SecurePaymentForm = createReactClass( {
 				) }
 			</Notice>
 		);
-	},
+	}
 
-	renderPaymentBox( visiblePaymentBox ) {
+	renderPaymentBox = visiblePaymentBox => {
 		debug( 'getting %o payment box ...', visiblePaymentBox );
 
 		switch ( visiblePaymentBox ) {
@@ -438,7 +431,7 @@ const SecurePaymentForm = createReactClass( {
 				debug( 'WARN: %o payment unknown', visiblePaymentBox );
 				return null;
 		}
-	},
+	};
 
 	renderGreatChoiceHeader() {
 		const formatHeaderClass = 'formatted-header',
@@ -451,10 +444,10 @@ const SecurePaymentForm = createReactClass( {
 				</h1>
 			</header>
 		);
-	},
+	}
 
 	// START transaction-steps-mixin
-	submitTransaction: function( event ) {
+	submitTransaction( event ) {
 		event.preventDefault();
 
 		const params = pick( this.props, [ 'cart', 'transaction' ] );
@@ -470,9 +463,9 @@ const SecurePaymentForm = createReactClass( {
 		}
 
 		submitTransaction( params );
-	},
+	}
 
-	_handleTransactionStep: function( { cart, selectedSite, transaction } ) {
+	_handleTransactionStep( { cart, selectedSite, transaction } ) {
 		const step = transaction.step;
 
 		debug( 'transaction step: ' + step.name );
@@ -481,9 +474,9 @@ const SecurePaymentForm = createReactClass( {
 		this._recordAnalytics( step );
 
 		this._finishIfLastStep( cart, selectedSite, step );
-	},
+	}
 
-	_displayNotices: function( cart, step ) {
+	_displayNotices( cart, step ) {
 		if ( step.error ) {
 			step.name !== INPUT_VALIDATION && displayError( step.error );
 			return;
@@ -494,9 +487,9 @@ const SecurePaymentForm = createReactClass( {
 				clear();
 				break;
 		}
-	},
+	}
 
-	_recordAnalytics: function( step ) {
+	_recordAnalytics( step ) {
 		const cartValue = this.props.cart;
 
 		switch ( step.name ) {
@@ -533,7 +526,7 @@ const SecurePaymentForm = createReactClass( {
 				} else if ( step.data ) {
 					// Makes sure free trials are not recorded as purchases in ad trackers since they are products with
 					// zero-value cost and would thus lead to a wrong computation of conversions
-					if ( ! cartItems.hasFreeTrial( cartValue ) ) {
+					if ( ! hasFreeTrial( cartValue ) ) {
 						recordOrder( cartValue, step.data.receipt_id );
 					}
 
@@ -566,9 +559,9 @@ const SecurePaymentForm = createReactClass( {
 					} );
 				}
 		}
-	},
+	}
 
-	_recordDomainRegistrationAnalytics: function( parameters ) {
+	_recordDomainRegistrationAnalytics( parameters ) {
 		const cart = parameters.cart,
 			success = parameters.success;
 
@@ -579,9 +572,9 @@ const SecurePaymentForm = createReactClass( {
 				success: success,
 			} );
 		} );
-	},
+	}
 
-	_finishIfLastStep: function( cart, selectedSite, step ) {
+	_finishIfLastStep( cart, selectedSite, step ) {
 		if ( ! step.last || step.error ) {
 			return;
 		}
@@ -594,9 +587,9 @@ const SecurePaymentForm = createReactClass( {
 				this.props.handleCheckoutCompleteRedirect();
 			} );
 		}
-	},
+	}
 
-	_formatError: function( error ) {
+	_formatError( error ) {
 		let formatedMessage = '';
 
 		if ( typeof error.message === 'object' ) {
@@ -610,7 +603,7 @@ const SecurePaymentForm = createReactClass( {
 		}
 
 		return formatedMessage;
-	},
+	}
 
 	// END transaction-steps-mixin
 
@@ -637,8 +630,8 @@ const SecurePaymentForm = createReactClass( {
 				{ this.renderPaymentBox( visiblePaymentBox ) }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => {
