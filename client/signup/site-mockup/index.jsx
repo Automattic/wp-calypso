@@ -14,6 +14,11 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
 import { getVerticalData } from './mock-data';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SiteMockup extends Component {
 	static propTypes = {
 		title: PropTypes.string,
