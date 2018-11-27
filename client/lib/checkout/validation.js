@@ -3,9 +3,8 @@
  * External dependencies
  */
 import creditcards from 'creditcards';
-import { capitalize, compact, isArray, isEmpty, mergeWith, union } from 'lodash';
+import { capitalize, compact, isArray, isEmpty } from 'lodash';
 import i18n from 'i18n-calypso';
-import { isValidPostalCode } from 'lib/postal-code';
 
 /**
  * Internal dependencies
@@ -21,44 +20,47 @@ import {
  * @param {object} additionalFieldRules custom validation rules depending on jurisdiction or other variable
  * @returns {object} the ruleset
  */
-export function getCreditCardFieldRules() {
-	return {
-		name: {
-			description: i18n.translate( 'Name on Card', {
-				context: 'Upgrades: Card holder name label on credit card form',
-			} ),
-			rules: [ 'required' ],
-		},
+export function creditCardFieldRules( additionalFieldRules = {} ) {
+	return Object.assign(
+		{
+			name: {
+				description: i18n.translate( 'Name on Card', {
+					context: 'Upgrades: Card holder name label on credit card form',
+				} ),
+				rules: [ 'required' ],
+			},
 
-		number: {
-			description: i18n.translate( 'Card Number', {
-				context: 'Upgrades: Card number label on credit card form',
-			} ),
-			rules: [ 'validCreditCardNumber' ],
-		},
+			number: {
+				description: i18n.translate( 'Card Number', {
+					context: 'Upgrades: Card number label on credit card form',
+				} ),
+				rules: [ 'validCreditCardNumber' ],
+			},
 
-		'expiration-date': {
-			description: i18n.translate( 'Credit Card Expiration Date' ),
-			rules: [ 'validExpirationDate' ],
-		},
+			'expiration-date': {
+				description: i18n.translate( 'Credit Card Expiration Date' ),
+				rules: [ 'validExpirationDate' ],
+			},
 
-		cvv: {
-			description: i18n.translate( 'Credit Card CVV Code' ),
-			rules: [ 'validCvvNumber' ],
-		},
+			cvv: {
+				description: i18n.translate( 'Credit Card CVV Code' ),
+				rules: [ 'validCvvNumber' ],
+			},
 
-		country: {
-			description: i18n.translate( 'Country' ),
-			rules: [ 'required' ],
-		},
+			country: {
+				description: i18n.translate( 'Country' ),
+				rules: [ 'required' ],
+			},
 
-		'postal-code': {
-			description: i18n.translate( 'Postal Code', {
-				context: 'Upgrades: Postal code on credit card form',
-			} ),
-			rules: [ 'required' ],
+			'postal-code': {
+				description: i18n.translate( 'Postal Code', {
+					context: 'Upgrades: Postal code on credit card form',
+				} ),
+				rules: [ 'required' ],
+			},
 		},
-	};
+		additionalFieldRules
+	);
 }
 
 /**
@@ -114,11 +116,7 @@ export function tokenFieldRules() {
 export function paymentFieldRules( paymentDetails, paymentType ) {
 	switch ( paymentType ) {
 		case 'credit-card':
-			return mergeValidationRules(
-				getCreditCardFieldRules(),
-				getConditionalCreditCardRules( paymentDetails ),
-				getEbanxCreditCardRules( paymentDetails )
-			);
+			return creditCardFieldRules( getAdditionalFieldRules( paymentDetails ) );
 		case 'brazil-tef':
 			return tefPaymentFieldRules();
 		case 'token':
@@ -126,21 +124,6 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 		default:
 			return null;
 	}
-}
-
-/**
- * Returns arguments deep-merged into one object with any array values
- * concatentated and deduped
- * @param {object}* rulesets Objects describing the rulesets to be combined
- * @returns {object} The aggregated ruleset
- */
-export function mergeValidationRules( ...rulesets ) {
-	return mergeWith(
-		{},
-		...rulesets,
-		( objValue, srcValue ) =>
-			isArray( objValue ) && isArray( srcValue ) ? union( objValue, srcValue ) : undefined
-	);
 }
 
 function parseExpiration( value ) {
@@ -216,15 +199,6 @@ validators.validCPF = {
 	},
 	error: function( description ) {
 		return i18n.translate( '%(description)s is invalid. Must be in format: 111.444.777-XX', {
-			args: { description: description },
-		} );
-	},
-};
-
-validators.validPostalCodeUS = {
-	isValid: value => isValidPostalCode( value, 'US' ),
-	error: function( description ) {
-		return i18n.translate( '%(description)s is invalid. Must be a 5 digit number', {
 			args: { description: description },
 		} );
 	},
@@ -307,12 +281,6 @@ function getErrors( field, value, paymentDetails ) {
 	);
 }
 
-function getEbanxCreditCardRules( { country } ) {
-	return (
-		country && isEbanxCreditCardProcessingEnabledForCountry( country ) && ebanxFieldRules( country )
-	);
-}
-
 /**
  *
  * @param {object} cardDetails - a map of credit card field key value pairs
@@ -320,19 +288,10 @@ function getEbanxCreditCardRules( { country } ) {
  * an object containing rule sets for specific credit card processing providers,
  * otherwise `null`
  */
-function getConditionalCreditCardRules( { country } ) {
-	switch ( country ) {
-		case 'US':
-			return {
-				'postal-code': {
-					description: i18n.translate( 'Postal Code', {
-						context: 'Upgrades: Postal code on credit card form',
-					} ),
-					rules: [ 'required', 'validPostalCodeUS' ],
-				},
-			};
+function getAdditionalFieldRules( { country } ) {
+	if ( country && isEbanxCreditCardProcessingEnabledForCountry( country ) ) {
+		return ebanxFieldRules( country );
 	}
-
 	return null;
 }
 
