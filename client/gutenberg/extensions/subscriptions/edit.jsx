@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { Component } from '@wordpress/element';
-import { TextControl, FormToggle } from '@wordpress/components';
+import { TextControl, FormToggle, Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -33,7 +33,9 @@ class SubscriptionEdit extends Component {
 						} }
 					/>
 					<TextControl placeholder={ subscribe_placeholder } required onChange={ () => {} } />
-					<input type="button" disabled value={ __( 'Subscribe' ) } />
+					<Button type="button" isDefault>
+						{ __( 'Subscribe' ) }
+					</Button>
 				</div>
 			);
 		}
@@ -63,7 +65,9 @@ class SubscriptionEdit extends Component {
 					aria-describedby={ `${ instanceId }-email-help` }
 					placeholder={ subscribe_placeholder }
 				/>
-				<input type="button" value={ __( 'Subscribe' ) } />
+				<Button type="button" isDefault>
+					{ __( 'Subscribe' ) }
+				</Button>
 			</div>
 		);
 	}
