@@ -11,7 +11,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
-import getSiteTopic from 'state/selectors/get-signup-steps-site-topic';
+import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
 import { getVerticalData } from './mock-data';
 
 class SiteMockup extends Component {
@@ -104,7 +104,7 @@ class SiteMockup extends Component {
 }
 
 export default connect( state => {
-	const vertical = getSiteTopic( state );
+	const vertical = getSignupStepsSiteTopic( state );
 	const verticalData = getVerticalData( vertical );
 	return {
 		title: getSiteTitle( state ),
