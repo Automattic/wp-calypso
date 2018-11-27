@@ -11,7 +11,7 @@ import { noop, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import ReaderMain from 'components/reader-main';
+import ReaderMain from 'reader/components/reader-main';
 import DocumentHead from 'components/data/document-head';
 import BackButton from 'components/back-button';
 
