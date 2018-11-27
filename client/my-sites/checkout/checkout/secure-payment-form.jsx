@@ -6,8 +6,9 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import createReactClass from 'create-react-class';
-import { get, find, defer } from 'lodash';
+import { get, find, defer, pick, isEqual } from 'lodash';
 import { connect } from 'react-redux';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -24,16 +25,24 @@ import RedirectPaymentBox from './redirect-payment-box';
 import WebPaymentBox from './web-payment-box';
 import { fullCreditsPayment, newCardPayment, storedCardPayment } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
-import TransactionStepsMixin from './transaction-steps-mixin';
-import { setPayment } from 'lib/upgrades/actions';
-import debugFactory from 'debug';
-import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart-values';
+import { setPayment, submitTransaction } from 'lib/upgrades/actions';
+import cartValues, {
+	isPaidForFullyInCredits,
+	isFree,
+	cartItems,
+	getLocationOrigin,
+} from 'lib/cart-values';
 import Notice from 'components/notice';
 import { preventWidows } from 'lib/formatting';
 import PaymentBox from './payment-box';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import getCountries from 'state/selectors/get-countries';
 import QueryPaymentCountries from 'components/data/query-countries/payments';
+import { INPUT_VALIDATION, REDIRECTING_FOR_AUTHORIZATION } from 'lib/store-transactions/step-types';
+import { recordOrder } from 'lib/analytics/ad-tracking';
+import { getTld } from 'lib/domains';
+import { displayError, clear } from 'lib/upgrades/notices';
+import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 
 /**
  * Module variables
@@ -43,7 +52,6 @@ const debug = debugFactory( 'calypso:checkout:payment' );
 
 const SecurePaymentForm = createReactClass( {
 	displayName: 'SecurePaymentForm',
-	mixins: [ TransactionStepsMixin ],
 
 	propTypes: {
 		countriesList: PropTypes.array.isRequired,
@@ -56,12 +64,10 @@ const SecurePaymentForm = createReactClass( {
 	getInitialState() {
 		return {
 			userSelectedPaymentBox: null,
-			visiblePaymentBox: this.getVisiblePaymentBox( this.props.cart, this.props.paymentMethods ),
-			previousCart: null,
 		};
 	},
 
-	getVisiblePaymentBox( cart, paymentMethods ) {
+	getVisiblePaymentBox( { cart, paymentMethods } ) {
 		let i;
 
 		if ( isPaidForFullyInCredits( cart ) ) {
@@ -83,20 +89,9 @@ const SecurePaymentForm = createReactClass( {
 		return null;
 	},
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.transaction.step.name !== 'before-submit' ) {
-			return;
-		}
-
-		this.setState( {
-			visiblePaymentBox: this.getVisiblePaymentBox( nextProps.cart, nextProps.paymentMethods ),
-		} );
-	},
-
 	handlePaymentBoxSubmit( event ) {
 		analytics.ga.recordEvent( 'Upgrades', 'Submitted Checkout Form' );
 
-		// `submitTransaction` comes from the `TransactionStepsMixin`
 		this.submitTransaction( event );
 	},
 
@@ -104,20 +99,30 @@ const SecurePaymentForm = createReactClass( {
 		return this.props.cards[ 0 ];
 	},
 
-	componentWillMount() {
+	componentDidMount() {
 		this.setInitialPaymentDetails();
 	},
 
 	componentDidUpdate( prevProps, prevState ) {
-		if ( this.state.visiblePaymentBox !== prevState.visiblePaymentBox ) {
+		if ( this.getVisiblePaymentBox( prevProps ) !== this.getVisiblePaymentBox( this.props ) ) {
 			this.setInitialPaymentDetails();
+		}
+
+		// From transaction-steps-mixin
+		const prevStep = prevProps.transaction.step,
+			nextStep = this.props.transaction.step;
+
+		if ( ! isEqual( prevStep, nextStep ) ) {
+			this._handleTransactionStep( this.props );
 		}
 	},
 
 	setInitialPaymentDetails() {
 		let newPayment;
 
-		switch ( this.state.visiblePaymentBox ) {
+		const visiblePaymentBox = this.getVisiblePaymentBox( this.props );
+
+		switch ( visiblePaymentBox ) {
 			case 'credits':
 			case 'free-trial':
 			case 'free-cart':
@@ -161,7 +166,6 @@ const SecurePaymentForm = createReactClass( {
 	selectPaymentBox( paymentBox ) {
 		this.setState( {
 			userSelectedPaymentBox: paymentBox,
-			visiblePaymentBox: paymentBox,
 		} );
 	},
 
@@ -348,7 +352,10 @@ const SecurePaymentForm = createReactClass( {
 			product => product.extra && product.extra.source === 'get-dot-blog-signup'
 		);
 
-		if ( this.state.visiblePaymentBox !== 'credit-card' || ! hasProductFromGetDotBlogSignup ) {
+		if (
+			this.getVisiblePaymentBox( this.props ) !== 'credit-card' ||
+			! hasProductFromGetDotBlogSignup
+		) {
 			return;
 		}
 
@@ -365,8 +372,7 @@ const SecurePaymentForm = createReactClass( {
 		);
 	},
 
-	renderPaymentBox() {
-		const { visiblePaymentBox } = this.state;
+	renderPaymentBox( visiblePaymentBox ) {
 		debug( 'getting %o payment box ...', visiblePaymentBox );
 
 		switch ( visiblePaymentBox ) {
@@ -447,8 +453,171 @@ const SecurePaymentForm = createReactClass( {
 		);
 	},
 
+	// START transaction-steps-mixin
+	submitTransaction: function( event ) {
+		event.preventDefault();
+
+		const params = pick( this.props, [ 'cart', 'transaction' ] );
+		const origin = getLocationOrigin( window.location );
+
+		params.successUrl = origin + this.props.redirectTo();
+		params.cancelUrl = origin + '/checkout/';
+
+		if ( this.props.selectedSite ) {
+			params.cancelUrl += this.props.selectedSite.slug;
+		} else {
+			params.cancelUrl += 'no-site';
+		}
+
+		submitTransaction( params );
+	},
+
+	_handleTransactionStep: function( { cart, selectedSite, transaction } ) {
+		const step = transaction.step;
+
+		debug( 'transaction step: ' + step.name );
+
+		this._displayNotices( cart, step );
+		this._recordAnalytics( step );
+
+		this._finishIfLastStep( cart, selectedSite, step );
+	},
+
+	_displayNotices: function( cart, step ) {
+		if ( step.error ) {
+			step.name !== INPUT_VALIDATION && displayError( step.error );
+			return;
+		}
+
+		switch ( step.name ) {
+			case 'received-wpcom-response':
+				clear();
+				break;
+		}
+	},
+
+	_recordAnalytics: function( step ) {
+		const cartValue = this.props.cart;
+
+		switch ( step.name ) {
+			case 'input-validation':
+				if ( step.error ) {
+					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+						error_code: step.error.error,
+						reason: step.error.code,
+					} );
+				} else {
+					analytics.tracks.recordEvent( 'calypso_checkout_form_submit', {
+						credits: cartValue.credits,
+						payment_method: this.props.transaction.payment.paymentMethod,
+					} );
+				}
+				break;
+
+			case REDIRECTING_FOR_AUTHORIZATION:
+				// TODO: wire in payment method
+				analytics.tracks.recordEvent( 'calypso_checkout_form_redirect' );
+				break;
+
+			case 'received-wpcom-response':
+				if ( step.error ) {
+					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+						error_code: step.error.error,
+						reason: this._formatError( step.error ),
+					} );
+
+					this._recordDomainRegistrationAnalytics( {
+						cart: cartValue,
+						success: false,
+					} );
+				} else if ( step.data ) {
+					// Makes sure free trials are not recorded as purchases in ad trackers since they are products with
+					// zero-value cost and would thus lead to a wrong computation of conversions
+					if ( ! cartItems.hasFreeTrial( cartValue ) ) {
+						recordOrder( cartValue, step.data.receipt_id );
+					}
+
+					analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {
+						coupon_code: cartValue.coupon,
+						currency: cartValue.currency,
+						payment_method: this.props.transaction.payment.paymentMethod,
+						total_cost: cartValue.total_cost,
+					} );
+
+					cartValue.products.forEach( function( cartItem ) {
+						analytics.tracks.recordEvent(
+							'calypso_checkout_product_purchase',
+							removeNestedProperties( cartItem )
+						);
+					} );
+
+					this._recordDomainRegistrationAnalytics( {
+						cart: cartValue,
+						success: true,
+					} );
+				}
+				break;
+
+			default:
+				if ( step.error ) {
+					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+						error_code: step.error.error,
+						reason: this._formatError( step.error ),
+					} );
+				}
+		}
+	},
+
+	_recordDomainRegistrationAnalytics: function( parameters ) {
+		const cart = parameters.cart,
+			success = parameters.success;
+
+		cartItems.getDomainRegistrations( cart ).forEach( function( cartItem ) {
+			analytics.tracks.recordEvent( 'calypso_domain_registration', {
+				domain_name: cartItem.meta,
+				domain_tld: getTld( cartItem.meta ),
+				success: success,
+			} );
+		} );
+	},
+
+	_finishIfLastStep: function( cart, selectedSite, step ) {
+		if ( ! step.last || step.error ) {
+			return;
+		}
+
+		if ( step.data.redirect_url ) {
+			this.props.handleCheckoutExternalRedirect( step.data.redirect_url );
+		} else {
+			defer( () => {
+				// The Thank You page throws a rendering error if this is not in a defer.
+				this.props.handleCheckoutCompleteRedirect();
+			} );
+		}
+	},
+
+	_formatError: function( error ) {
+		let formatedMessage = '';
+
+		if ( typeof error.message === 'object' ) {
+			formatedMessage += Object.keys( error.message ).join( ', ' );
+		} else if ( typeof error.message === 'string' ) {
+			formatedMessage += error.message;
+		}
+
+		if ( error.error ) {
+			formatedMessage = error.error + ': ' + formatedMessage;
+		}
+
+		return formatedMessage;
+	},
+
+	// END transaction-steps-mixin
+
 	render() {
-		if ( this.state.visiblePaymentBox === null ) {
+		const visiblePaymentBox = this.getVisiblePaymentBox( this.props );
+		if ( visiblePaymentBox === null ) {
+			debug( 'empty content' );
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
@@ -465,7 +634,7 @@ const SecurePaymentForm = createReactClass( {
 		return (
 			<div className="checkout__secure-payment-form">
 				{ this.renderGetDotBlogNotice() }
-				{ this.renderPaymentBox() }
+				{ this.renderPaymentBox( visiblePaymentBox ) }
 			</div>
 		);
 	},
