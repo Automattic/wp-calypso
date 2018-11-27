@@ -114,10 +114,10 @@ class InlineHelpPopover extends Component {
 	};
 
 	switchToClassicEditor = () => {
-		const { siteId, optOut, classicUrl, redirect, swapHistory } = this.props;
+		const { siteId, optOut, classicUrl } = this.props;
 		optOut( siteId );
-		swapHistory( classicUrl );
-		redirect( classicUrl );
+		this.props.replaceHistory( classicUrl );
+		this.props.navigate( classicUrl );
 	};
 
 	render() {
@@ -217,14 +217,6 @@ const optOut = siteId => {
 	);
 };
 
-const redirect = classicUrl => {
-	return navigate( classicUrl );
-};
-
-const swapHistory = classicUrl => {
-	return replaceHistory( classicUrl );
-};
-
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
@@ -245,8 +237,8 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	selectResult,
 	resetContactForm: resetInlineHelpContactForm,
-	redirect,
-	swapHistory,
+	replaceHistory,
+	navigate,
 };
 
 export default connect(
