@@ -60,38 +60,6 @@ export class SecurePaymentForm extends Component {
 
 	state = { userSelectedPaymentBox: null };
 
-	getVisiblePaymentBox( { cart, paymentMethods } ) {
-		let i;
-
-		if ( isPaidForFullyInCredits( cart ) ) {
-			return 'credits';
-		} else if ( isFree( cart ) ) {
-			return 'free-cart';
-		} else if ( hasFreeTrial( cart ) ) {
-			return 'free-trial';
-		} else if ( this.state && this.state.userSelectedPaymentBox ) {
-			return this.state.userSelectedPaymentBox;
-		}
-
-		for ( i = 0; i < paymentMethods.length; i++ ) {
-			if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
-				return paymentMethods[ i ];
-			}
-		}
-
-		return null;
-	}
-
-	handlePaymentBoxSubmit = event => {
-		analytics.ga.recordEvent( 'Upgrades', 'Submitted Checkout Form' );
-
-		this.submitTransaction( event );
-	};
-
-	getInitialCard() {
-		return this.props.cards[ 0 ];
-	}
-
 	componentDidMount() {
 		this.setInitialPaymentDetails();
 	}
@@ -106,7 +74,7 @@ export class SecurePaymentForm extends Component {
 			nextStep = this.props.transaction.step;
 
 		if ( ! isEqual( prevStep, nextStep ) ) {
-			this._handleTransactionStep( this.props );
+			this.handleTransactionStep( this.props );
 		}
 	}
 
@@ -156,11 +124,201 @@ export class SecurePaymentForm extends Component {
 		}
 	}
 
+	getVisiblePaymentBox( { cart, paymentMethods } ) {
+		let i;
+
+		if ( isPaidForFullyInCredits( cart ) ) {
+			return 'credits';
+		} else if ( isFree( cart ) ) {
+			return 'free-cart';
+		} else if ( hasFreeTrial( cart ) ) {
+			return 'free-trial';
+		} else if ( this.state && this.state.userSelectedPaymentBox ) {
+			return this.state.userSelectedPaymentBox;
+		}
+
+		for ( i = 0; i < paymentMethods.length; i++ ) {
+			if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
+				return paymentMethods[ i ];
+			}
+		}
+
+		return null;
+	}
+
+	handlePaymentBoxSubmit = event => {
+		analytics.ga.recordEvent( 'Upgrades', 'Submitted Checkout Form' );
+
+		this.submitTransaction( event );
+	};
+
+	getInitialCard() {
+		return this.props.cards[ 0 ];
+	}
+
 	selectPaymentBox = paymentBox => {
 		this.setState( {
 			userSelectedPaymentBox: paymentBox,
 		} );
 	};
+
+	submitTransaction( event ) {
+		event.preventDefault();
+
+		const params = pick( this.props, [ 'cart', 'transaction' ] );
+		const origin = getLocationOrigin( window.location );
+
+		params.successUrl = origin + this.props.redirectTo();
+		params.cancelUrl = origin + '/checkout/';
+
+		if ( this.props.selectedSite ) {
+			params.cancelUrl += this.props.selectedSite.slug;
+		} else {
+			params.cancelUrl += 'no-site';
+		}
+
+		submitTransaction( params );
+	}
+
+	handleTransactionStep( { cart, selectedSite, transaction } ) {
+		const step = transaction.step;
+
+		debug( 'transaction step: ' + step.name );
+
+		this.displayNotices( cart, step );
+		this.recordAnalytics( step );
+
+		this.finishIfLastStep( cart, selectedSite, step );
+	}
+
+	displayNotices( cart, step ) {
+		if ( step.error ) {
+			step.name !== INPUT_VALIDATION && displayError( step.error );
+			return;
+		}
+
+		switch ( step.name ) {
+			case 'received-wpcom-response':
+				clear();
+				break;
+		}
+	}
+
+	recordAnalytics( step ) {
+		const cartValue = this.props.cart;
+
+		switch ( step.name ) {
+			case 'input-validation':
+				if ( step.error ) {
+					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+						error_code: step.error.error,
+						reason: step.error.code,
+					} );
+				} else {
+					analytics.tracks.recordEvent( 'calypso_checkout_form_submit', {
+						credits: cartValue.credits,
+						payment_method: this.props.transaction.payment.paymentMethod,
+					} );
+				}
+				break;
+
+			case REDIRECTING_FOR_AUTHORIZATION:
+				// TODO: wire in payment method
+				analytics.tracks.recordEvent( 'calypso_checkout_form_redirect' );
+				break;
+
+			case 'received-wpcom-response':
+				if ( step.error ) {
+					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+						error_code: step.error.error,
+						reason: this.formatError( step.error ),
+					} );
+
+					this.recordDomainRegistrationAnalytics( {
+						cart: cartValue,
+						success: false,
+					} );
+				} else if ( step.data ) {
+					// Makes sure free trials are not recorded as purchases in ad trackers since they are products with
+					// zero-value cost and would thus lead to a wrong computation of conversions
+					if ( ! hasFreeTrial( cartValue ) ) {
+						recordOrder( cartValue, step.data.receipt_id );
+					}
+
+					analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {
+						coupon_code: cartValue.coupon,
+						currency: cartValue.currency,
+						payment_method: this.props.transaction.payment.paymentMethod,
+						total_cost: cartValue.total_cost,
+					} );
+
+					cartValue.products.forEach( function( cartItem ) {
+						analytics.tracks.recordEvent(
+							'calypso_checkout_product_purchase',
+							removeNestedProperties( cartItem )
+						);
+					} );
+
+					this.recordDomainRegistrationAnalytics( {
+						cart: cartValue,
+						success: true,
+					} );
+				}
+				break;
+
+			default:
+				if ( step.error ) {
+					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+						error_code: step.error.error,
+						reason: this.formatError( step.error ),
+					} );
+				}
+		}
+	}
+
+	recordDomainRegistrationAnalytics( parameters ) {
+		const cart = parameters.cart,
+			success = parameters.success;
+
+		cartItems.getDomainRegistrations( cart ).forEach( function( cartItem ) {
+			analytics.tracks.recordEvent( 'calypso_domain_registration', {
+				domain_name: cartItem.meta,
+				domain_tld: getTld( cartItem.meta ),
+				success: success,
+			} );
+		} );
+	}
+
+	finishIfLastStep( cart, selectedSite, step ) {
+		if ( ! step.last || step.error ) {
+			return;
+		}
+
+		if ( step.data.redirect_url ) {
+			this.props.handleCheckoutExternalRedirect( step.data.redirect_url );
+		} else {
+			defer( () => {
+				// The Thank You page throws a rendering error if this is not in a defer.
+				this.props.handleCheckoutCompleteRedirect();
+			} );
+		}
+	}
+
+	formatError( error ) {
+		let formatedMessage = '';
+
+		if ( typeof error.message === 'object' ) {
+			formatedMessage += Object.keys( error.message ).join( ', ' );
+		} else if ( typeof error.message === 'string' ) {
+			formatedMessage += error.message;
+		}
+
+		if ( error.error ) {
+			formatedMessage = error.error + ': ' + formatedMessage;
+		}
+
+		return formatedMessage;
+	}
 
 	renderCreditsPaymentBox() {
 		return (
@@ -445,167 +603,6 @@ export class SecurePaymentForm extends Component {
 			</header>
 		);
 	}
-
-	// START transaction-steps-mixin
-	submitTransaction( event ) {
-		event.preventDefault();
-
-		const params = pick( this.props, [ 'cart', 'transaction' ] );
-		const origin = getLocationOrigin( window.location );
-
-		params.successUrl = origin + this.props.redirectTo();
-		params.cancelUrl = origin + '/checkout/';
-
-		if ( this.props.selectedSite ) {
-			params.cancelUrl += this.props.selectedSite.slug;
-		} else {
-			params.cancelUrl += 'no-site';
-		}
-
-		submitTransaction( params );
-	}
-
-	_handleTransactionStep( { cart, selectedSite, transaction } ) {
-		const step = transaction.step;
-
-		debug( 'transaction step: ' + step.name );
-
-		this._displayNotices( cart, step );
-		this._recordAnalytics( step );
-
-		this._finishIfLastStep( cart, selectedSite, step );
-	}
-
-	_displayNotices( cart, step ) {
-		if ( step.error ) {
-			step.name !== INPUT_VALIDATION && displayError( step.error );
-			return;
-		}
-
-		switch ( step.name ) {
-			case 'received-wpcom-response':
-				clear();
-				break;
-		}
-	}
-
-	_recordAnalytics( step ) {
-		const cartValue = this.props.cart;
-
-		switch ( step.name ) {
-			case 'input-validation':
-				if ( step.error ) {
-					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
-						error_code: step.error.error,
-						reason: step.error.code,
-					} );
-				} else {
-					analytics.tracks.recordEvent( 'calypso_checkout_form_submit', {
-						credits: cartValue.credits,
-						payment_method: this.props.transaction.payment.paymentMethod,
-					} );
-				}
-				break;
-
-			case REDIRECTING_FOR_AUTHORIZATION:
-				// TODO: wire in payment method
-				analytics.tracks.recordEvent( 'calypso_checkout_form_redirect' );
-				break;
-
-			case 'received-wpcom-response':
-				if ( step.error ) {
-					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
-						error_code: step.error.error,
-						reason: this._formatError( step.error ),
-					} );
-
-					this._recordDomainRegistrationAnalytics( {
-						cart: cartValue,
-						success: false,
-					} );
-				} else if ( step.data ) {
-					// Makes sure free trials are not recorded as purchases in ad trackers since they are products with
-					// zero-value cost and would thus lead to a wrong computation of conversions
-					if ( ! hasFreeTrial( cartValue ) ) {
-						recordOrder( cartValue, step.data.receipt_id );
-					}
-
-					analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {
-						coupon_code: cartValue.coupon,
-						currency: cartValue.currency,
-						payment_method: this.props.transaction.payment.paymentMethod,
-						total_cost: cartValue.total_cost,
-					} );
-
-					cartValue.products.forEach( function( cartItem ) {
-						analytics.tracks.recordEvent(
-							'calypso_checkout_product_purchase',
-							removeNestedProperties( cartItem )
-						);
-					} );
-
-					this._recordDomainRegistrationAnalytics( {
-						cart: cartValue,
-						success: true,
-					} );
-				}
-				break;
-
-			default:
-				if ( step.error ) {
-					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
-						error_code: step.error.error,
-						reason: this._formatError( step.error ),
-					} );
-				}
-		}
-	}
-
-	_recordDomainRegistrationAnalytics( parameters ) {
-		const cart = parameters.cart,
-			success = parameters.success;
-
-		cartItems.getDomainRegistrations( cart ).forEach( function( cartItem ) {
-			analytics.tracks.recordEvent( 'calypso_domain_registration', {
-				domain_name: cartItem.meta,
-				domain_tld: getTld( cartItem.meta ),
-				success: success,
-			} );
-		} );
-	}
-
-	_finishIfLastStep( cart, selectedSite, step ) {
-		if ( ! step.last || step.error ) {
-			return;
-		}
-
-		if ( step.data.redirect_url ) {
-			this.props.handleCheckoutExternalRedirect( step.data.redirect_url );
-		} else {
-			defer( () => {
-				// The Thank You page throws a rendering error if this is not in a defer.
-				this.props.handleCheckoutCompleteRedirect();
-			} );
-		}
-	}
-
-	_formatError( error ) {
-		let formatedMessage = '';
-
-		if ( typeof error.message === 'object' ) {
-			formatedMessage += Object.keys( error.message ).join( ', ' );
-		} else if ( typeof error.message === 'string' ) {
-			formatedMessage += error.message;
-		}
-
-		if ( error.error ) {
-			formatedMessage = error.error + ': ' + formatedMessage;
-		}
-
-		return formatedMessage;
-	}
-
-	// END transaction-steps-mixin
 
 	render() {
 		const visiblePaymentBox = this.getVisiblePaymentBox( this.props );
