@@ -1,10 +1,14 @@
 /** @format */
-
 /**
  * External dependencies
  */
-import { use, plugins, dispatch } from '@wordpress/data';
 import { once } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
+import { use, plugins, dispatch } from '@wordpress/data';
+import { unregisterPlugin } from '@wordpress/plugins';
 
 /**
  * Internal dependencies
@@ -69,6 +73,9 @@ export const initGutenberg = once( ( userId, siteSlug ) => {
 
 	// Initialize formatting tools
 	require( '@wordpress/format-library' );
+
+	// Unregister unnecessary wp-admin plugins
+	unregisterPlugin( 'edit-post' );
 
 	debug( 'Gutenberg editor initialization complete.' );
 

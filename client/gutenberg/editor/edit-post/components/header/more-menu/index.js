@@ -1,52 +1,63 @@
+/** @format */
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
+import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { IconButton, Dropdown, MenuGroup } from '@wordpress/components';
+import { IconButton, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
+import CopyContentMenuItem from '../copy-content-menu-item';
+import KeyboardShortcutsHelpMenuItem from '../keyboard-shortcuts-help-menu-item';
 import ModeSwitcher from '../mode-switcher';
-import FixedToolbarToggle from '../fixed-toolbar-toggle';
+import OptionsMenuItem from '../options-menu-item';
 import PluginMoreMenuGroup from '../plugins-more-menu-group';
+import ToolsMoreMenuGroup from '../tools-more-menu-group';
+import WritingMenu from '../writing-menu';
+
+const ariaClosed = __( 'Show more tools & options' );
+const ariaOpen = __( 'Hide more tools & options' );
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-const MoreMenu = () => (
+const MoreMenu = ( { translate } ) => (
 	<Dropdown
 		className="edit-post-more-menu"
+		contentClassName="edit-post-more-menu__content"
 		position="bottom left"
 		renderToggle={ ( { isOpen, onToggle } ) => (
 			<IconButton
 				icon="ellipsis"
-				label={ __( 'More' ) }
+				label={ isOpen ? ariaOpen : ariaClosed }
 				onClick={ onToggle }
 				aria-expanded={ isOpen }
 			/>
 		) }
 		renderContent={ ( { onClose } ) => (
-			<div className="edit-post-more-menu__content">
+			<Fragment>
+				<WritingMenu onClose={ onClose } />
 				<ModeSwitcher onSelect={ onClose } />
-				<MenuGroup
-					label={ __( 'Settings' ) }
-					filterName="editPost.MoreMenu.settings"
-				>
-					<FixedToolbarToggle onToggle={ onClose } />
-				</MenuGroup>
 				<PluginMoreMenuGroup.Slot fillProps={ { onClose } } />
-				<MenuGroup
-					label={ __( 'Tools' ) }
-					filterName="editPost.MoreMenu.tools"
-				/>
-			</div>
+				<MenuGroup label={ __( 'Tools' ) }>
+					<KeyboardShortcutsHelpMenuItem onSelect={ onClose } />
+					<CopyContentMenuItem />
+					<ToolsMoreMenuGroup.Slot fillProps={ { onClose } } />
+				</MenuGroup>
+				<MenuGroup>
+					<OptionsMenuItem onSelect={ onClose } />
+					<MenuItem onClick={ noop }>{ translate( 'Switch to Classic Editor' ) }</MenuItem>
+				</MenuGroup>
+			</Fragment>
 		) }
 	/>
 );
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-export default MoreMenu;
+export default localize( MoreMenu );
