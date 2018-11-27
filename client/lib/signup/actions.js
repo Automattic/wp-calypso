@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { defer } from 'lodash';
+import { defer, keys, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +25,19 @@ const SignupActions = {
 	},
 
 	submitSignupStep( step, errors, providedDependencies ) {
-		analytics.tracks.recordEvent( 'calypso_signup_actions_submit_step', { step: step.stepName } );
+		// Transform the keys since tracks events only accept snaked prop names.
+		const inputs = keys( providedDependencies ).reduce( ( props, name ) => {
+			const propName = snakeCase( name );
+			return {
+				...props,
+				[ propName ]: providedDependencies[ name ],
+			};
+		}, {} );
+
+		analytics.tracks.recordEvent( 'calypso_signup_actions_submit_step', {
+			step: step.stepName,
+			...inputs,
+		} );
 
 		Dispatcher.handleViewAction( {
 			type: 'SUBMIT_SIGNUP_STEP',
