@@ -28,43 +28,6 @@ class SiteMockup extends Component {
 		vertical: 'Mexican Food',
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			isOffscreen: true,
-			isPeeking: false,
-			isSideBySide: false,
-			isGrouped: true,
-		};
-	}
-
-	buttonIntroduce = () => {
-		this.setState( {
-			isOffscreen: false,
-			isPeeking: true,
-			isGrouped: true,
-		} );
-	};
-
-	buttonCenterStage = () => {
-		this.setState( {
-			isOffscreen: false,
-			isPeeking: false,
-			isGrouped: false,
-			isSideBySide: true,
-		} );
-	};
-
-	buttonReset = () => {
-		this.setState( {
-			isOffscreen: true,
-			isPeeking: false,
-			isSideBySide: false,
-			isGrouped: true,
-		} );
-	};
-
 	getMockupChromeDesktop() {
 		return (
 			<div className="site-mockup__chrome-desktop">
@@ -164,6 +127,8 @@ class SiteMockup extends Component {
 				{ size === 'mobile' ? this.getMockupChromeMobile() : this.getMockupChromeDesktop() }
 				<div className="site-mockup__body">
 					<div className="site-mockup__content">
+						<div className="site-mockup__title">Site Title</div>
+						<div className="site-mockup__tagline">Tagline</div>
 						<div
 							className="site-mockup__cover-image"
 							style={ { backgroundImage: `url("${ data.cover_image }")` } }
@@ -178,12 +143,6 @@ class SiteMockup extends Component {
 							<span>{ data.text }</span>
 							<img src={ data.feature_image } alt="" />
 						</div>
-
-						<div className="site-mockup__placeholders">
-							<div className="site-mockup__placeholder" />
-							<div className="site-mockup__placeholder" />
-							<div className="site-mockup__placeholder" />
-						</div>
 					</div>
 				</div>
 			</div>
@@ -193,19 +152,10 @@ class SiteMockup extends Component {
 	render() {
 		const siteMockupClasses = classNames( {
 			'site-mockup__wrap': true,
-			'is-side-by-side': this.state.isSideBySide,
-			'is-grouped': this.state.isGrouped,
-			'is-offscreen': this.state.isOffscreen,
-			'is-peeking': this.state.isPeeking,
 		} );
 
 		return (
 			<div className={ siteMockupClasses }>
-				<div className="site-mockup__demo-button">
-					<button onClick={ this.buttonIntroduce }>Introduce</button>
-					<button onClick={ this.buttonCenterStage }>Center Stage</button>
-					<button onClick={ this.buttonReset }>Reset</button>
-				</div>
 				{ this.renderMockup( 'desktop' ) }
 				{ this.renderMockup( 'mobile' ) }
 			</div>
