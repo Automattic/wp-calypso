@@ -2,7 +2,10 @@
 	position: relative;
 
 	.form-text-input {
+		/*rtl:ignore*/
 	    padding-right: 32px;
+		/*rtl:ignore*/
+		direction: ltr;
 	}
 
 	.form-password-input__toggle {
@@ -13,7 +16,8 @@
 		display: block;
 		cursor: pointer;
 		position: absolute;
-		right: 8px #{"/*rtl:ignore*/"};
+		/*rtl:ignore*/
+		right: 8px;
 		top: 8px;
 		user-select: none;
 
