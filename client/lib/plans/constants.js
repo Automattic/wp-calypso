@@ -161,6 +161,12 @@ export const FEATURE_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
 export const FEATURE_CONCIERGE_SETUP = 'concierge-setup-jetpack';
 export const FEATURE_MARKETING_AUTOMATION = 'marketing-automation';
 export const FEATURE_SEARCH = 'search';
+export const FEATURE_ACCEPT_PAYMENTS = 'accept-payments';
+export const FEATURE_SHIPPING_CARRIERS = 'shipping-carriers';
+export const FEATURE_UNLIMITED_PRODUCTS_SERVICES = 'unlimited-products-service';
+export const FEATURE_ECOMMERCE_MARKETING = 'ecommerce-marketing';
+export const FEATURE_PREMIUM_CUSTOMIZABE_THEMES = 'premium-customizable-themes';
+export const FEATURE_ALL_BUSINESS_FEATURES = 'all-business-features';
 
 // Meta grouping constants
 export const GROUP_WPCOM = 'GROUP_WPCOM';
@@ -350,7 +356,7 @@ const getPlanBusinessDetails = () => ( {
 	getAudience: () => i18n.translate( 'Best for small businesses' ),
 	getBlogAudience: () => i18n.translate( 'Best for brands' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
-	getStoreAudience: () => i18n.translate( 'The plan for stores and small businesses' ),
+	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
 	getDescription: abtest => {
 		if ( abtest && abtest( 'businessPlanDescriptionAT' ) === 'pluginsAndThemes' ) {
 			return i18n.translate(
@@ -416,7 +422,7 @@ const getPlanBusinessDetails = () => ( {
 	],
 	getSignupFeatures: () => [
 		FEATURE_UPLOAD_THEMES_PLUGINS,
-		FEATURE_GOOGLE_ANALYTICS_SIGNUP,
+		FEATURE_ADVANCED_SEO_TOOLS,
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
 	getBlogSignupFeatures: () => [
@@ -440,12 +446,12 @@ const getPlanEcommerceDetails = () => ( {
 	getAudience: () => i18n.translate( 'Best for eCommerce sites' ),
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
-	getStoreAudience: () => i18n.translate( 'The plan for stores and small businesses' ),
+	getStoreAudience: () => i18n.translate( 'The plan for online stores' ),
 	getDescription: () => {
 		return i18n.translate(
-			'{{strong}}Best for eCommerce:{{/strong}} Start your' +
-				' online store with a specifically designed WooCommerce software bundle, unlimited' +
-				' storage, premium themes, and the ability to remove WordPress.com branding.',
+			'{{strong}}Best for Online Stores:{{/strong}} Sell products or services with this powerful, ' +
+				'all-in-one online store experience. This plan includes premium integrations and is extendable, ' +
+				'so it’ll grow with you as your business grows.',
 			{
 				components: {
 					strong: (
@@ -465,13 +471,14 @@ const getPlanEcommerceDetails = () => ( {
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
-			FEATURE_ADVANCED_DESIGN,
+			FEATURE_ACCEPT_PAYMENTS,
+			FEATURE_SHIPPING_CARRIERS,
 			FEATURE_UNLIMITED_STORAGE,
-			FEATURE_NO_ADS,
-			FEATURE_BUSINESS_ONBOARDING,
-			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
-			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
+			FEATURE_UNLIMITED_PRODUCTS_SERVICES,
+			FEATURE_ECOMMERCE_MARKETING,
+			FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
+			FEATURE_UPLOAD_THEMES_PLUGINS,
+			FEATURE_ALL_BUSINESS_FEATURES,
 		] ),
 	getPromotedFeatures: () => [
 		FEATURE_UNLIMITED_STORAGE,
@@ -481,9 +488,21 @@ const getPlanEcommerceDetails = () => ( {
 		FEATURE_ADVANCED_DESIGN,
 		FEATURE_BUSINESS_ONBOARDING,
 	],
-	getSignupFeatures: () => [ FEATURE_UNLIMITED_STORAGE, FEATURE_NO_ADS ],
-	getBlogSignupFeatures: () => [ FEATURE_UPLOAD_THEMES_PLUGINS ],
-	getPortfolioSignupFeatures: () => [ FEATURE_UPLOAD_THEMES_PLUGINS ],
+	getSignupFeatures: () => [
+		FEATURE_ACCEPT_PAYMENTS,
+		FEATURE_SHIPPING_CARRIERS,
+		FEATURE_ALL_BUSINESS_FEATURES,
+	],
+	getBlogSignupFeatures: () => [
+		FEATURE_ACCEPT_PAYMENTS,
+		FEATURE_SHIPPING_CARRIERS,
+		FEATURE_ALL_BUSINESS_FEATURES,
+	],
+	getPortfolioSignupFeatures: () => [
+		FEATURE_ACCEPT_PAYMENTS,
+		FEATURE_SHIPPING_CARRIERS,
+		FEATURE_ALL_BUSINESS_FEATURES,
+	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS ],
 } );
@@ -1178,7 +1197,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_UPLOAD_THEMES_PLUGINS ]: {
 		getSlug: () => FEATURE_UPLOAD_THEMES_PLUGINS,
-		getTitle: () => i18n.translate( 'Upload themes and plugins' ),
+		getTitle: () => i18n.translate( 'Upload Themes and Plugins' ),
 		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
 	},
 
@@ -1854,6 +1873,42 @@ export const FEATURES_LIST = {
 			i18n.translate(
 				'Fast, relevant search results with custom filtering, powered by Elasticsearch.'
 			),
+	},
+
+	[ FEATURE_ACCEPT_PAYMENTS ]: {
+		getSlug: () => FEATURE_ACCEPT_PAYMENTS,
+		getTitle: () => i18n.translate( 'Accept Payments in 60+ Countries' ),
+		getDescription: () => i18n.translate( 'Accept payments in 60+ countries' ),
+	},
+
+	[ FEATURE_SHIPPING_CARRIERS ]: {
+		getSlug: () => FEATURE_SHIPPING_CARRIERS,
+		getTitle: () => i18n.translate( 'Integrations with Top Shipping Carriers' ),
+		getDescription: () => i18n.translate( 'Integrations with top shipping carriers' ),
+	},
+
+	[ FEATURE_UNLIMITED_PRODUCTS_SERVICES ]: {
+		getSlug: () => FEATURE_UNLIMITED_PRODUCTS_SERVICES,
+		getTitle: () => i18n.translate( 'Unlimited Products or Services' ),
+		getDescription: () => i18n.translate( 'Unlimited products or services' ),
+	},
+
+	[ FEATURE_ECOMMERCE_MARKETING ]: {
+		getSlug: () => FEATURE_ECOMMERCE_MARKETING,
+		getTitle: () => i18n.translate( 'eCommerce Marketing Tools' ),
+		getDescription: () => i18n.translate( 'eCommerce marketing tools' ),
+	},
+
+	[ FEATURE_PREMIUM_CUSTOMIZABE_THEMES ]: {
+		getSlug: () => FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
+		getTitle: () => i18n.translate( 'Premium Customizable Starter Themes' ),
+		getDescription: () => i18n.translate( 'Premium customizable starter themes' ),
+	},
+
+	[ FEATURE_ALL_BUSINESS_FEATURES ]: {
+		getSlug: () => FEATURE_ALL_BUSINESS_FEATURES,
+		getTitle: () => i18n.translate( 'All Business Features' ),
+		getDescription: () => i18n.translate( 'All Business plan features' ),
 	},
 };
 
