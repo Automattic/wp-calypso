@@ -1,3 +1,22 @@
+// Block library
+@import '~@wordpress/block-library/build-style/style';
+
+// Components
+@import '~@wordpress/components/build-style/style';
+
+// Editor package styles
+@import '~@wordpress/editor/build-style/style';
+
+// Block library theme & editor
+@import '~@wordpress/block-library/build-style/theme';
+@import '~@wordpress/block-library/build-style/editor';
+
+// Edit-post component styles
+@import '~@wordpress/edit-post/build-style/style';
+
+// Format library styles
+@import '~@wordpress/format-library/build-style/style';
+
 $gutenberg-breakpoint-sm: 782px;
 
 @mixin gutenberg-sm() {

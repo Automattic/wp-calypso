@@ -20,6 +20,11 @@ import { translate } from 'i18n-calypso';
 import './hooks'; // Needed for integrating Calypso's media library (and other hooks)
 import isRtlSelector from 'state/selectors/is-rtl';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class GutenbergEditor extends Component {
 	componentDidMount() {
 		const { siteId, postId, uniqueDraftKey, postType } = this.props;

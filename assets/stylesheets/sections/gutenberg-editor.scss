@@ -1,34 +1,3 @@
-@import '../shared/colors';
-@import '../shared/functions/z-index';
-@import '../shared/mixins/breakpoints';
-@import '../shared/mixins/clear-fix';
-@import '../shared/mixins/clear-text';
-@import '../shared/mixins/long-content-fade';
-@import '../shared/mixins/placeholder';
-@import '../shared/typography';
-
-// Block library
-@import '../../../node_modules/@wordpress/block-library/build-style/style';
-
-// Components
-@import '../../../node_modules/@wordpress/components/build-style/style';
-
-// Editor package styles
-@import '../../../node_modules/@wordpress/editor/build-style/style';
-
-// Block library theme & editor
-@import '../../../node_modules/@wordpress/block-library/build-style/theme';
-@import '../../../node_modules/@wordpress/block-library/build-style/editor';
-
-// Edit-post component styles
-@import '../../../node_modules/@wordpress/edit-post/build-style/style';
-
-// Format library styles
-@import '../../../node_modules/@wordpress/format-library/build-style/style';
-
-// Calypso specific Gutenberg editor styles
-@import 'gutenberg/editor/style';
-
 // Media Modal styles
 @import './media';
 @import 'post-editor/media-modal/style';
