@@ -39,7 +39,7 @@ export const settings = {
 				{ __( 'Jetpack' ) }
 			</PluginSidebarMoreMenuItem>
 			<PluginSidebar name="jetpack" title={ __( 'Jetpack' ) } icon={ <JetpackLogo size={ 24 } /> }>
-				<PanelBody>
+				<PanelBody title={ __( 'Share this post' ) }>
 					<PublicizePanel />
 				</PanelBody>
 			</PluginSidebar>
