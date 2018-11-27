@@ -44,7 +44,7 @@
 				top: 40px;
 				right: 8px;
 			box-shadow: 0 0 0 1px $gray,
-				0 4px 6px 0 rgba( 0, 0, 0, 0.30 );
+				0 4px 12px 0 rgba( 0, 0, 0, 0.30 );
 		}
 	}
 
@@ -79,7 +79,7 @@
 
 	&.mobile {
 		border-radius: 12px;
-		width: 300px;
+		width: 280px;
 	}
 }
 
@@ -149,20 +149,153 @@
 
 // Demo content - WIP
 .site-mockup__content {
-	//background: #fff;
+	.site-mockup__viewport.desktop & {
+		padding: 0 24px;
+	}
+	.site-mockup__viewport.mobile & {
+		padding: 0 16px;
+	}
+	font-family: Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 }
+
+
+// Everything but the cover image has a max-width
+// and is centered inside the viewport.
+.site-mockup__title,
+.site-mockup__tagline,
+.site-mockup__h2,
+.site-mockup__image-text,
+.site-mockup__contact-form {
+	max-width: 700px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+
+.site-mockup__title {
+	margin-top: 20px;
+	font-weight: 800;
+	font-size: 26px;
+	line-height: 1.2;
+}
+
+.site-mockup__tagline {
+	font-size: 15px;
+	margin-bottom: 20px;
+}
+
+.site-mockup__h2 {
+	font-size: 32px;
+	font-weight: 800;
+	line-height: 1.4;
+	margin-bottom: 24px;
+}
+
 .site-mockup__cover-image {
+	margin: 24px -24px 16px -24px;
 	background-size: cover;
 	background-position: 50% 60%;
 
 	span {
 		color: #fff;
-		font-weight: 300;
+		font-weight: 600;
 		text-align: center;
 		font-size: 24px;
-		padding: 60px 0;
 		display: block;
 		background: rgba( black, 0.6 );
+
+		.site-mockup__viewport.desktop & {
+			padding: 160px 0;
+		}
+		.site-mockup__viewport.mobile & {
+			padding: 80px 0;
+		}
 	}
+}
+
+.site-mockup__image-text {
+	margin-bottom: 16px;
+
+	span {
+		font-size: 18px;
+		color: rgb(110, 115, 129);
+	}
+
+	.site-mockup__viewport.desktop & {
+		display: flex;
+		align-items: center;
+
+		img {
+			flex-grow: 1;
+		}
+
+		span {
+			flex-grow: 2;
+			padding: 0 16px;
+		}
+	}
+	.site-mockup__viewport.mobile & {
+		img,
+		span {
+			display: block;
+			width: 100%;
+			margin-bottom: 16px;
+		}
+	}
+
+	&.right {
+		img {
+			order: 2;
+		}
+		span {
+			order: 1;
+		}
+	}
+
+	&.left {
+		img {
+			order: 1;
+		}
+		span {
+			order: 2;
+		}
+	}
+}
+
+.site-mockup__label {
+	font-size: 18px;
+	font-weight: 600;
+	color: #555;
+	margin-bottom: 8px;
+}
+
+.site-mockup__input,
+.site-mockup__textarea {
+	padding: 4px;
+	font-size: 18px;
+	color: #555;
+	margin-bottom: 16px;
+	border: 1px solid rgba( 0, 0, 0, 0.1 );
+}
+
+.site-mockup__input {
+	height: 28px;
+	.site-mockup__viewport.desktop & {
+		width: 40%;
+	}
+}
+
+.site-mockup__textarea {
+	height: 100px;
+}
+
+.site-mockup__button {
+	color: #fff;
+	font-weight: 800;
+	display: inline-block;
+	padding: 8px 16px;
+	background: purple;
+	border-radius: 3px;
+	margin-bottom: 32px;
 }
 
