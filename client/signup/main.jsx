@@ -584,7 +584,7 @@ class Signup extends React.Component {
 						/>
 					) }
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
-				<SiteMockup />
+				{ this.props.flowName === 'onboarding' && <SiteMockup /> }
 				{ this.state.bearerToken && (
 					<WpcomLoginForm
 						authorization={ 'Bearer ' + this.state.bearerToken }
