@@ -463,7 +463,7 @@ const SecurePaymentForm = createReactClass( {
 		}
 
 		return (
-			<div className="secure-payment-form">
+			<div className="checkout__secure-payment-form">
 				{ this.renderGetDotBlogNotice() }
 				{ this.renderPaymentBox() }
 			</div>
