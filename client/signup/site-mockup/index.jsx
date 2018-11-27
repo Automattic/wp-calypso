@@ -135,13 +135,24 @@ class SiteMockup extends Component {
 						>
 							<span>{ data.cover_image_text }</span>
 						</div>
-						<div className="site-mockup__image-text">
+						<div className="site-mockup__h2">Heading 2</div>
+						<div className="site-mockup__image-text left">
 							<img src={ data.feature_image } alt="" />
 							<span>{ data.text }</span>
 						</div>
-						<div className="site-mockup__image-text">
-							<span>{ data.text }</span>
+						<div className="site-mockup__image-text right">
 							<img src={ data.feature_image } alt="" />
+							<span>{ data.text }</span>
+						</div>
+						<div className="site-mockup__h2">Send Us a Message</div>
+						<div className="site-mockup__contact-form">
+							<div className="site-mockup__label">Name</div>
+							<div className="site-mockup__input" />
+							<div className="site-mockup__label">Email</div>
+							<div className="site-mockup__input" />
+							<div className="site-mockup__label">Your Message</div>
+							<div className="site-mockup__textarea" />
+							<div className="site-mockup__button">Send</div>
 						</div>
 					</div>
 				</div>
