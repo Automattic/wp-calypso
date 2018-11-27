@@ -2,49 +2,18 @@
 .site-mockup__wrap {
 	margin: auto;
 	padding: 0 16px;
-	position: fixed;
-		top: 230px;
-		right: 0;
-		bottom: 0;
-		left: 0;
-	//background: rgba( yellow, 0.2 );
 	transition: max-width 0.2s ease-in-out;
 
-	z-index: 1000000; // Yea yea, I know... -shaun
 
-	// We render the mockups offscreen by default
-	// so that we can animate them in when needed.
-	&.is-offscreen {
-		.site-mockup__viewport {
-			//transform: translateY( 65vh );
-			transform: translateY( calc( 100vh - 230px ) );
-		}
-	}
+	// This is temporary until we reduce the vertical
+	// and info steps down to a single row.
+	// position: relative;
+	// z-index: 1000000; // Yea yea, I know... -shaun
 
-	&.is-peeking {
-		.site-mockup__viewport {
-			//transform: translateY( 65vh );
-			transform: translateY( calc( 100vh - 330px ) );
-		}
-	}
-
-	// When first introduced, the empty
-	// mockups are fixed to the viewport.
-	/*
-	&.is-fixed {
-		//z-index: -1;
-		position: fixed;
-			top: 85vh;
-			right: 0;
-			left: 0;
-		background: rgba( red, 0.2 );
-	}
-	*/
 
 	// Side by side layout uses flexbox to show
-	// both mockups next to each other without
-	// any overlap.
-	&.is-side-by-side {
+	// both mockups next to each other.
+	@include breakpoint( '>960px' ) {
 		padding: 16px;
 		max-width: 1200px;
 		display: flex;
@@ -65,26 +34,31 @@
 
 	// Grouped layout shows a fixed-height mobile mockup
 	// overlaid on top of the desktop mockup.
-	&.is-grouped {
-		max-width: 800px;
+	// ==Currently not used
+	@include breakpoint( '660px-960px' ) {
+		position: relative;
 
 		.site-mockup__viewport.mobile {
 			height: 500px;
 			position: absolute;
 				top: 40px;
-				right: 0;
+				right: 8px;
+			box-shadow: 0 0 0 1px $gray,
+				0 4px 6px 0 rgba( 0, 0, 0, 0.30 );
+		}
+	}
 
-			// The fixed height mobile mockup needs
-			// to scroll and make room for the chrome.
-			.site-mockup__body {
-				overflow-y: auto;
-				overflow-x: hidden;
-				position: absolute;
-					top: 28px;
-					right: 0;
-					bottom: 28px;
-					left: 0;
-			}
+	// Only show the mobile view at small
+	// breakpoints.
+	@include breakpoint( '<660px' ) {
+		padding: 0 4px;
+
+		.site-mockup__viewport.desktop {
+			display: none;
+		}
+
+		.site-mockup__viewport.mobile {
+			width: 100%;
 		}
 	}
 }
@@ -92,24 +66,20 @@
 // The mockups themselves, both mobile
 // and desktop variants.
 .site-mockup__viewport {
-	box-shadow: 0 2px 8px 0 rgba(0,0,0,0.20);
-	border-radius: 4px;
-	background: $white;
 	margin: 0 auto;
+	background: $white;
 	position: relative;
-	transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	box-shadow: 0 0 0 1px $gray;
+	transition: transform 0.2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 	&.desktop {
+		border-radius: 4px;
 		height: 100%;
 	}
 
 	&.mobile {
+		border-radius: 12px;
 		width: 300px;
-		height: 100%;
-
-		// This delay produces the wave effect
-		// on the .offscreen transition.
-		transition-delay: 0.075s;
 	}
 }
 
@@ -117,12 +87,7 @@
 // a little more like a website/phone.
 .site-mockup__chrome-desktop {
 	height: 28px;
-	border-radius: 4px 4px 0 0;
-	background: $gray-dark;
-	position: absolute;
-		top: 0;
-		right: 0;
-		left: 0;
+	border-bottom: 1px solid $gray-lighten-20;
 
 	// Desktop chrome has some OS dots to
 	// help signify its a browser.
@@ -135,23 +100,12 @@
 }
 
 .site-mockup__chrome-mobile {
-
-	// Mobile chrome is on top and bottom
-	.site-mockup__chrome-mobile-top,
-	.site-mockup__chrome-mobile-bottom {
-		height: 28px;
-		background: $gray-dark;
-		position: absolute;
-			right: 0;
-			left: 0;
-	}
-
 	.site-mockup__chrome-mobile-top {
-		border-radius: 4px 4px 0 0;
-		top: 0;
+		height: 28px;
+		border-bottom: 1px solid $gray-lighten-20;
 
-		// The top chrome as a speaker line to help
-		// signify its a mobile phone.
+		// The top chrome has a speaker line to
+		// help signify its a mobile phone.
 		svg {
 			position: absolute;
 				top: 9px;
@@ -162,8 +116,12 @@
 	}
 
 	.site-mockup__chrome-mobile-bottom {
-		border-radius: 0 0 4px 4px;
-		bottom: 0;
+		height: 26px;
+		border-top: 1px solid $gray-lighten-20;
+		position: absolute;
+			right: 0;
+			bottom: 0;
+			left: 0;
 	}
 }
 
@@ -171,44 +129,28 @@
 // Mockup document body; Where all the
 // stuff goes.
 .site-mockup__body {
-	overflow-y: auto;
 	overflow-x: hidden;
-	height: 100%;
 
 	// Desktop body needs to move for the chrome.
 	.site-mockup__viewport.desktop & {
 		//margin-top: 28px;
+		height: 100%;
 	}
 
 	// Mobile body is scrollable and needs to
 	// make room for the chrome.
-	// Might not be needed **********
-	.-site-mockup__viewport.mobile & {
-		position: absolute;
-			top: 28px;
-			right: 0;
-			bottom: 28px;
-			left: 0;
+	.site-mockup__viewport.mobile & {
+		margin-bottom: 28px;
+		height: calc( 100% - 56px);
+		overflow-y: auto;
 	}
 }
 
 
-// When empty, the mockup shows a simple
-// illustrative representation of a website.
-.site-mockup__placeholders {
-	padding: 24px;
+// Demo content - WIP
+.site-mockup__content {
+	//background: #fff;
 }
-
-.site-mockup__placeholder {
-	margin-bottom: 24px;
-	height: 150px;
-	border: 2px dashed lighten( $gray, 10 );
-
-	&:last-child {
-		margin-bottom: 0;
-	}
-}
-
 .site-mockup__cover-image {
 	background-size: cover;
 	background-position: 50% 60%;
@@ -221,26 +163,6 @@
 		padding: 60px 0;
 		display: block;
 		background: rgba( black, 0.6 );
-	}
-}
-
-
-
-
-
-// Temporary
-.site-mockup__demo-button {
-	position: fixed;
-		top: 60px;
-		left: 10px;
-	z-index: 1;
-
-	button {
-		background: red;
-		padding: 8px;
-		color: white;
-		border-radius: 4px;
-		margin-right: 8px;
 	}
 }
 
