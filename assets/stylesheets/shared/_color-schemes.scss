@@ -55,25 +55,25 @@
 //additional color schemes
 .color-scheme {
 	&.is-classic-bright {
-		--color-primary: #{$blue-wordpress};
-		--color-primary-light: #{$blue-light};
-		--color-primary-dark: #{$blue-dark};
+		--color-primary: #{$muriel-blue-500};
+		--color-primary-light: #{$muriel-blue-300};
+		--color-primary-dark: #{$muriel-blue-700};
 
-		--color-accent: #{$hot-pink-500};
-		--color-accent-dark: #{$hot-pink-700};
-		--color-accent-light: #{$hot-pink-300};
+		--color-accent: #{$muriel-hot-pink-500};
+		--color-accent-dark: #{$muriel-hot-pink-700};
+		--color-accent-light: #{$muriel-hot-pink-300};
 
-		--color-success: #{$alert-green};
-		// --color-success-light: #{};
-		// --color-success-dark: #{};
+		--color-success: #{$muriel-hot-green-500};
+		--color-success-light: #{$muriel-hot-green-700};
+		--color-success-dark: #{$muriel-hot-green-300};
 
-		--color-warning: #{$alert-yellow};
-		// --color-warning-light: #{};
-		// --color-warning-dark: #{};
+		--color-warning: #{$muriel-hot-yellow-500};
+		--color-warning-light: #{$muriel-hot-yellow-700};
+		--color-warning-dark: #{$muriel-hot-yellow-300};
 
-		--color-error: #{$alert-red};
-		// --color-error-light: #{};
-		// --color-error-dark: #{};
+		--color-error: #{$muriel-hot-red-500};
+		--color-error-light: #{$muriel-hot-red-700};
+		--color-error-dark: #{$muriel-hot-red-300};
 
 		--masterbar-color: #{$gray-text};
 		--masterbar-background: #{$gray-lighten-20};
