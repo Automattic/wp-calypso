@@ -38,6 +38,7 @@ class SubscriptionEdit extends Component {
 			);
 		}
 
+		/*
 		let subscriberCount = null;
 		if ( show_subscribers_total ) {
 			if ( 1 === Jetpack_Initial_State.getModules.subscriptions.data.subscriber_count ) {
@@ -52,7 +53,8 @@ class SubscriptionEdit extends Component {
 				);
 			}
 		}
-
+		*/
+		const subscriberCount = 'Hi';
 		return (
 			<div className={ className }>
 				{ subscriberCount }

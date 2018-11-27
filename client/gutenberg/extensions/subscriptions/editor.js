@@ -11,9 +11,10 @@ import { Fragment } from '@wordpress/element';
 //import './editor.scss';
 import edit from './edit';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import JetpackBlockType from 'gutenberg/extensions/presets/jetpack/utils/jetpack-block-type';
+import registerJetpackBlock from '../presets/jetpack/utils/register-jetpack-block';
 
-const SubscriptionBlock = new JetpackBlockType( 'subscriptions', {
+export const name = 'subscriptions';
+export const settings = {
 	title: __( 'Subscriptions' ),
 
 	description: (
@@ -55,6 +56,6 @@ const SubscriptionBlock = new JetpackBlockType( 'subscriptions', {
 	},
 	edit,
 	save: () => null,
-} );
+};
 
-SubscriptionBlock.register();
+registerJetpackBlock( name, settings );
