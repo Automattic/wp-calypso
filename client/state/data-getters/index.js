@@ -23,7 +23,27 @@ import {
 import { convertToSnakeCase } from 'state/data-layer/utils';
 import { dummyTaxRate } from 'lib/tax'; // #tax-on-checkout-placeholder
 
-export const getAtURL = url =>
+/**
+ * Fetches content from a URL with a GET request
+ *
+ * The ID here is obscured and so **this should not
+ * be used inside a React component** but rather it
+ * should only be used in something like `waitForData()`
+ * where the wrapper defines the shape of the output
+ *
+ * @example
+ * waitForData( {
+ *     planets: getAtURL( 'https://swapi.co/api/planets/' ),
+ * } ).then( ( { planets } ) => {
+ *     console.log( planets.data );
+ * } );
+ *
+ * @see waitForData
+ *
+ * @param {string} url location from which to GET data
+ * @return {object} HTTP data wrapped value
+ */
+export const getAtUrl = url =>
 	requestHttpData( `get-at-url-${ url }`, rawHttp( { method: 'GET', url } ), {
 		fromApi: () => data => [ `get-at-url-${ url }`, data ],
 	} );
