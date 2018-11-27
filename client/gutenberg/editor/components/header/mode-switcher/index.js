@@ -15,7 +15,7 @@ import { withSelect, withDispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import shortcuts from '../../../keyboard-shortcuts';
+import shortcuts from 'gutenberg/editor/edit-post/keyboard-shortcuts';
 /**
  * Set of available mode options.
  *

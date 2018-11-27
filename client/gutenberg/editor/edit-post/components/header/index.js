@@ -17,7 +17,7 @@ import { compose } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import MoreMenu from './more-menu';
+import MoreMenu from 'gutenberg/editor/components/header/more-menu';
 import HeaderToolbar from './header-toolbar';
 import PinnedPlugins from './pinned-plugins';
 import shortcuts from '../../keyboard-shortcuts';

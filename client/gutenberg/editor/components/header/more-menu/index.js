@@ -19,7 +19,7 @@ import CopyContentMenuItem from '../copy-content-menu-item';
 import KeyboardShortcutsHelpMenuItem from '../keyboard-shortcuts-help-menu-item';
 import ModeSwitcher from '../mode-switcher';
 import OptionsMenuItem from '../options-menu-item';
-import PluginMoreMenuGroup from '../plugins-more-menu-group';
+import PluginsMoreMenuGroup from '../plugins-more-menu-group';
 import ToolsMoreMenuGroup from '../tools-more-menu-group';
 import WritingMenu from '../writing-menu';
 
@@ -44,7 +44,7 @@ const MoreMenu = ( { translate } ) => (
 			<Fragment>
 				<WritingMenu onClose={ onClose } />
 				<ModeSwitcher onSelect={ onClose } />
-				<PluginMoreMenuGroup.Slot fillProps={ { onClose } } />
+				<PluginsMoreMenuGroup.Slot fillProps={ { onClose } } />
 				<MenuGroup label={ __( 'Tools' ) }>
 					<KeyboardShortcutsHelpMenuItem onSelect={ onClose } />
 					<CopyContentMenuItem />
