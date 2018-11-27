@@ -28,11 +28,6 @@ class SiteMockup extends Component {
 		vertical: PropTypes.string,
 	};
 
-	static defaultProps = {
-		title: 'Default Title',
-		vertical: 'Mexican Food',
-	};
-
 	getMockupChromeDesktop() {
 		return (
 			<div className="site-mockup__chrome-desktop">
