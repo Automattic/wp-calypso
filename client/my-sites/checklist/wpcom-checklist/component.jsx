@@ -196,6 +196,7 @@ class WpcomChecklistComponent extends PureComponent {
 			custom_domain_registered: this.renderCustomDomainRegisteredTask,
 			mobile_app_installed: this.renderMobileAppInstalledTask,
 			site_launched: this.renderSiteLaunchedTask,
+			email_setup: null,
 		};
 
 		const baseProps = {
