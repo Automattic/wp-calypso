@@ -518,7 +518,7 @@ class Signup extends React.Component {
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (
-			<CSSTransition classNames="signup__step" timeout={ 400 } key={ stepKey }>
+			<div classNames="signup__step" key={ stepKey }>
 				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
 					{ shouldRenderLocaleSuggestions && (
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
@@ -553,7 +553,7 @@ class Signup extends React.Component {
 						/>
 					) }
 				</div>
-			</CSSTransition>
+			</div>
 		);
 	}
 
@@ -583,9 +583,7 @@ class Signup extends React.Component {
 							flowName={ this.props.flowName }
 						/>
 					) }
-				<TransitionGroup component="div" className="signup__steps">
-					{ this.renderCurrentStep() }
-				</TransitionGroup>
+				<div className="signup__steps">{ this.renderCurrentStep() }</div>
 				<SiteMockup />
 				{ this.state.bearerToken && (
 					<WpcomLoginForm
