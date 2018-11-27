@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { localizeUrl } from 'lib/i18n-utils';
-import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 
 const OauthClientMasterbar = ( { oauth2Client } ) => (
 	<header className="masterbar masterbar__oauth-client">
@@ -26,13 +26,23 @@ const OauthClientMasterbar = ( { oauth2Client } ) => (
 					) }
 				</li>
 
-				{ isWooOAuth2Client( oauth2Client ) ? (
+				{ isWooOAuth2Client( oauth2Client ) && (
 					<li className="masterbar__oauth-client-close">
 						<a href="https://woocommerce.com">
 							Cancel <span>X</span>
 						</a>
 					</li>
-				) : (
+				) }
+
+				{ isCrowdsignalOAuth2Client( oauth2Client ) && (
+					<li className="masterbar__oauth-client-close">
+						<a href="https://crowdsignal.com">
+							Cancel <span>X</span>
+						</a>
+					</li>
+				) }
+
+				{ ! isWooOAuth2Client( oauth2Client) && ! isCrowdsignalOAuth2Client( oauth2Client ) && (
 					<li className="masterbar__oauth-client-wpcc-sign-in">
 						<a
 							href={ localizeUrl( 'https://wordpress.com/' ) }

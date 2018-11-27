@@ -24,7 +24,7 @@ export const initialClientsData = {
 		id: 978,
 		name: 'crowdsignal',
 		title: 'Crowdsignal',
-		icon: 'https://app.crowdsignal.com/images/crowdsignal-wpcc-logo.png',
+		icon: 'https://app.crowdsignal.com/images/logo-white.png',
 	},
 	1854: {
 		id: 1854,

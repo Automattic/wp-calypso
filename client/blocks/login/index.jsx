@@ -29,7 +29,7 @@ import {
 import { wasManualRenewalImmediateLoginAttempted } from 'state/immediate-login/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
-import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import JetpackHeader from 'components/jetpack-header';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
@@ -198,6 +198,10 @@ class Login extends Component {
 						) }
 					</p>
 				);
+			}
+
+			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
+				preHeader = <Gridicon icon="my-sites" size={ 72 } />;
 			}
 		} else if ( isJetpack ) {
 			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
