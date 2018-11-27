@@ -17,6 +17,11 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 
+/**
+ * Style dependencies
+ */
+import './publicize-services.scss';
+
 export const EditorSharingPublicizeServices = ( { connections, newConnectionPopup } ) => (
 	<ul className="editor-sharing__publicize-services">
 		{ map( groupBy( connections, 'label' ), ( groupedConnections, label ) => (

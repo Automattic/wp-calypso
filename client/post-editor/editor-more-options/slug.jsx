@@ -19,6 +19,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 
+/**
+ * Style dependencies
+ */
+import './slug.scss';
+
 class EditorMoreOptionsSlug extends PureComponent {
 	static propTypes = {
 		postType: PropTypes.string,

@@ -24,6 +24,11 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
 import { getPostType } from 'state/post-types/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorPageParent extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,

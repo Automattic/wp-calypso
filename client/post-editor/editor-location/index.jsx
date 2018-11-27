@@ -28,6 +28,11 @@ import { getSitePost, getEditedPost } from 'state/posts/selectors';
 import config from 'config';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';

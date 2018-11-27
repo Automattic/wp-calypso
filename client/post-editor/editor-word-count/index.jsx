@@ -16,6 +16,11 @@ import { countWords } from 'lib/text-utils';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { getEditorRawContent } from 'state/ui/editor/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class EditorWordCount extends Component {
 	static propTypes = {
 		selectedText: PropTypes.string,

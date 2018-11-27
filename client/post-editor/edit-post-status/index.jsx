@@ -26,6 +26,11 @@ import EditorPublishDate from 'post-editor/editor-publish-date';
 import EditorVisibility from 'post-editor/editor-visibility';
 import canCurrentUser from 'state/selectors/can-current-user';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class EditPostStatus extends Component {
 	static propTypes = {
 		moment: PropTypes.func,

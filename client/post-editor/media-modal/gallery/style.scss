@@ -1,3 +1,5 @@
+@import 'components/screen-reader-text/style';
+
 .editor-media-modal-gallery__preview {
 	position: relative;
 	display: flex;
@@ -295,4 +297,12 @@ input[type].editor-media-modal-gallery__input-width-auto {
 	font-size: 14px;
 	line-height: 1.7;
 	padding: 16px;
+}
+
+.editor-media-modal-gallery__content {
+	margin-top: 16px;
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 0;
+	}
 }

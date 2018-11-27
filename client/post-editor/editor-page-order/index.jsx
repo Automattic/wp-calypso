@@ -20,6 +20,11 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorPageOrder extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
