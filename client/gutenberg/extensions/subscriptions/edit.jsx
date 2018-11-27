@@ -55,6 +55,7 @@ class SubscriptionEdit extends Component {
 		}
 		*/
 		const subscriberCount = 'Hi';
+
 		return (
 			<div className={ className }>
 				{ subscriberCount }
