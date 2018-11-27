@@ -5,7 +5,6 @@
  */
 import React from 'react';
 import debug from 'debug';
-import request from 'superagent';
 import { isEnabled } from 'config';
 import { has, uniqueId } from 'lodash';
 import { setLocaleData } from '@wordpress/i18n';
@@ -19,6 +18,8 @@ import { setAllSitesSelected } from 'state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { EDITOR_START } from 'state/action-types';
 import { initGutenberg } from './init';
+import { requestFromUrl } from 'state/data-getters';
+import { waitForData } from 'state/data-layer/http-data';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/gutenberg/post/' ) ) {
@@ -54,18 +55,20 @@ export const jetpackBlocki18n = ( context, next ) => {
 		return next();
 	}
 
-	const languageFileUrl =
-		'https://widgets.wp.com/languages/jetpack-gutenberg-blocks/' + localeSlug + '.json';
+	const languageFileUrl = `https://widgets.wp.com/languages/jetpack-gutenberg-blocks/${ localeSlug }.json`;
 
-	request.get( languageFileUrl ).end( ( error, response ) => {
-		if ( error ) {
+	waitForData( {
+		translations: () => requestFromUrl( languageFileUrl ),
+	} ).then( ( { translations: { state: requestState, data } } ) => {
+		if ( requestState === 'failure' ) {
 			debug(
-				'Encountered an error loading locale file for ' + localeSlug + '. Falling back to English.'
+				`Encountered an error loading locale file for ${ localeSlug }. Falling back to English.`
 			);
-			return next();
 		}
 
-		setLocaleData( response.body, 'jetpack' );
+		if ( data ) {
+			setLocaleData( data.body, 'jetpack' );
+		}
 
 		next();
 	} );
