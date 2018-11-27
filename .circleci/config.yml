@@ -223,7 +223,6 @@ jobs:
           name: Build calypso-strings.pot
           when: always
           command: |
-            sudo apt install gettext
             npm run translate
             mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
       - run:
