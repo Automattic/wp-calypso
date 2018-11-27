@@ -273,6 +273,8 @@ class Signup extends React.Component {
 					flow: this.props.flowName,
 				} );
 			}
+
+			flows.addExcludedStep( 'site-topic' );
 		}
 
 		//`site_type` query parameter

@@ -134,6 +134,7 @@ const Flows = {
 		? abtest( 'improvedOnboarding' )
 		: 'main',
 	resumingFlow: false,
+	excludedSteps: [],
 
 	/**
 	 * Get certain flow from the flows configuration.
@@ -165,7 +166,21 @@ const Flows = {
 
 		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
 
-		return Flows.getABTestFilteredFlow( flowName, flow );
+		return Flows.filterExcludedSteps( Flows.getABTestFilteredFlow( flowName, flow ) );
+	},
+
+	addExcludedStep( step ) {
+		Flows.excludedSteps = [ ...Flows.excludedSteps, step ];
+	},
+
+	filterExcludedSteps( flow ) {
+		if ( ! flow ) {
+			return;
+		}
+
+		return assign( {}, flow, {
+			steps: reject( flow.steps, stepName => includes( Flows.excludedSteps, stepName ) ),
+		} );
 	},
 
 	getFlows() {
