@@ -16,6 +16,11 @@ import SignupActions from 'lib/signup/actions';
 import Card from 'components/card';
 import Button from 'components/button';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class RewindAddCreds extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,

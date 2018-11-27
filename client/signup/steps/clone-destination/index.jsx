@@ -19,6 +19,11 @@ import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 import ExternalLink from 'components/external-link';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CloneDestinationStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,

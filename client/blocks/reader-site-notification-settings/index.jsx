@@ -12,7 +12,7 @@ import { find, get } from 'lodash';
  */
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import ReaderPopover from 'components/reader-popover';
+import ReaderPopover from 'reader/components/reader-popover';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
 import FormToggle from 'components/forms/form-toggle';
@@ -41,7 +41,7 @@ class ReaderSiteNotificationSettings extends Component {
 		selected: this.props.emailDeliveryFrequency,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.emailDeliveryFrequency !== this.props.emailDeliveryFrequency ) {
 			this.setState( { selected: nextProps.emailDeliveryFrequency } );
 		}

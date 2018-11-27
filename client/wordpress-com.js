@@ -190,7 +190,6 @@ const sections = [
 		secondary: false,
 		enableLoggedOut: true,
 		isomorphic: true,
-		css: 'signup',
 	},
 	{
 		name: 'stats',
@@ -295,7 +294,6 @@ sections.push( {
 	module: 'post-editor',
 	group: 'editor',
 	secondary: true,
-	css: 'post-editor',
 } );
 
 sections.push( {

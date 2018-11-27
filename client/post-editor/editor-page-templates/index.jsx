@@ -26,6 +26,11 @@ import { getSiteOption } from 'state/sites/selectors';
 import { editPost } from 'state/posts/actions';
 import EditorThemeHelp from 'post-editor/editor-theme-help';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorPageTemplates extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,

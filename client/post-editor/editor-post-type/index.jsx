@@ -21,6 +21,11 @@ import QueryPostTypes from 'components/data/query-post-types';
 import { decodeEntities } from 'lib/formatting';
 import PostStatus from 'blocks/post-status';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function EditorPostType( { translate, siteId, typeSlug, type, globalId, isSettings } ) {
 	let label;
 	if ( 'page' === typeSlug ) {

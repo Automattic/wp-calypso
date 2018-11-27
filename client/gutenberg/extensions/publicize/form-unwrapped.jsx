@@ -42,10 +42,7 @@ class PublicizeFormUnwrapped extends Component {
 	 * @return {boolean} True if whole form should be disabled.
 	 */
 	isDisabled() {
-		const { connections } = this.props;
-		// Check to see if at least one connection is not disabled
-		const formEnabled = connections.some( connection => ! connection.disabled );
-		return ! formEnabled;
+		return this.props.connections.every( connection => ! connection.toggleable );
 	}
 
 	getShareMessage() {
@@ -62,8 +59,8 @@ class PublicizeFormUnwrapped extends Component {
 	};
 
 	render() {
-		const { connections, toggleConnection, refreshCallback, shareMessage } = this.props;
-
+		const { connections, toggleConnection, refreshCallback } = this.props;
+		const shareMessage = this.getShareMessage();
 		const charactersRemaining = MAXIMUM_MESSAGE_LENGTH - shareMessage.length;
 		const characterCountClass = classnames( 'jetpack-publicize-character-count', {
 			'wpas-twitter-length-limit': charactersRemaining <= 0,
@@ -90,7 +87,7 @@ class PublicizeFormUnwrapped extends Component {
 				</label>
 				<div className="jetpack-publicize-message-box">
 					<textarea
-						value={ this.getShareMessage() }
+						value={ shareMessage }
 						onChange={ this.onMessageChange }
 						disabled={ this.isDisabled() }
 						maxLength={ MAXIMUM_MESSAGE_LENGTH }

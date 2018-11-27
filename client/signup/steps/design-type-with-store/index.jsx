@@ -21,6 +21,11 @@ import { setDesignType } from 'state/signup/steps/design-type/actions';
 
 import { getThemeForDesignType } from 'signup/utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class DesignTypeWithStoreStep extends Component {
 	constructor( props ) {
 		super( props );

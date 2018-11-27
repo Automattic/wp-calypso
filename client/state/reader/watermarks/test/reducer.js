@@ -54,6 +54,6 @@ describe( '#watermarks', () => {
 
 	test( 'will serialize', () => {
 		const validState = { [ streamKey ]: 42 };
-		expect( watermarks( validState, { type: SERIALIZE } ) ).toEqual( validState );
+		expect( watermarks( validState, { type: SERIALIZE } ).root() ).toEqual( validState );
 	} );
 } );

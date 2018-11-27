@@ -18,6 +18,12 @@ import { createAutoDraft, requestSitePost, requestGutenbergDemoContent } from 's
 import { getHttpData } from 'state/data-layer/http-data';
 import { translate } from 'i18n-calypso';
 import './hooks'; // Needed for integrating Calypso's media library (and other hooks)
+import isRtlSelector from 'state/selectors/is-rtl';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class GutenbergEditor extends Component {
 	componentDidMount() {
@@ -28,7 +34,7 @@ class GutenbergEditor extends Component {
 	}
 
 	render() {
-		const { postType, siteId, post, overridePost } = this.props;
+		const { postType, siteId, post, overridePost, isRTL } = this.props;
 
 		//see also https://github.com/WordPress/gutenberg/blob/45bc8e4991d408bca8e87cba868e0872f742230b/lib/client-assets.php#L1451
 		const editorSettings = {
@@ -36,6 +42,7 @@ class GutenbergEditor extends Component {
 			titlePlaceholder: translate( 'Add title' ),
 			bodyPlaceholder: translate( 'Write your story' ),
 			postLock: {},
+			isRTL,
 		};
 
 		return (
@@ -69,6 +76,7 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 	const post = getPost( siteId, postId || draftPostId, postType );
 	const demoContent = isDemoContent ? get( requestGutenbergDemoContent(), 'data' ) : null;
 	const isAutoDraft = 'auto-draft' === get( post, 'status', null );
+	const isRTL = isRtlSelector( state );
 
 	let overridePost = null;
 	if ( !! demoContent ) {
@@ -83,6 +91,7 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 	return {
 		post,
 		overridePost,
+		isRTL,
 	};
 };
 

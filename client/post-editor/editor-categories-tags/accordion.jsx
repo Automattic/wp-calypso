@@ -28,6 +28,11 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import { getSiteOption, isJetpackMinimumVersion, getSiteSlug } from 'state/sites/selectors';
 import { getTerm } from 'state/terms/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss'
+
 export class EditorCategoriesTagsAccordion extends Component {
 	static propTypes = {
 		translate: PropTypes.func,

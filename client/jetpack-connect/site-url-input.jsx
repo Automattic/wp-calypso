@@ -130,7 +130,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 						onChange={ onChange }
 						disabled={ isFetching }
-						placeholder={ 'http://yourjetpack.blog' }
+						placeholder={ 'https://yourjetpack.blog' }
 						onKeyUp={ this.handleKeyPress }
 						value={ url }
 					/>

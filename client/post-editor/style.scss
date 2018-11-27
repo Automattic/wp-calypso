@@ -1,10 +1,14 @@
+/** @format */
+
+@import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' );
+
 .is-group-editor::before {
 	content: '';
 	position: fixed;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	background-color: $white;
 	pointer-events: none;
 	z-index: z-index( 'root', '.is-group-editor::before' );
@@ -15,7 +19,7 @@
 	right: -273px;
 }
 
-@include breakpoint( "<660px" ) {
+@include breakpoint( '<660px' ) {
 	.is-group-editor.focus-sidebar::before,
 	.is-group-editor.focus-editor-confirmation-sidebar::before {
 		background-color: $gray-lighten-30;
@@ -24,7 +28,6 @@
 	.is-group-editor .sidebar {
 		right: auto;
 	}
-
 }
 
 .is-group-editor .layout__content {
@@ -48,7 +51,7 @@
 		display: block;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: block;
 		backface-visibility: visible;
 		perspective: none;
@@ -62,16 +65,16 @@
 	.focus-sidebar &,
 	.focus-editor-confirmation-sidebar & {
 		left: ( $sidebar-width-max / -2 );
-		width: calc( 100% - ( #{ $sidebar-width-max } ) ); // subtract sidebar width
+		width: calc( 100% - ( #{$sidebar-width-max} ) ); // subtract sidebar width
 	}
 }
 
 .post-editor__site {
-	display:  flex;
+	display: flex;
 	margin-bottom: 16px;
 	background: $gray-lighten-30;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: none;
 	}
 
@@ -103,7 +106,7 @@
 }
 
 .focus-content .post-editor__header {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: 700px;
 	}
 }
@@ -113,7 +116,7 @@
 	box-sizing: border-box;
 	padding: 0 16px;
 
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( '>1040px' ) {
 		padding: 0;
 	}
 }
@@ -128,7 +131,7 @@
 }
 
 .post-editor__content-editor .editor-notice .notice {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin: 0;
 	}
 }
@@ -163,7 +166,7 @@
 	font-size: 14px;
 	margin-bottom: 64px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		padding: 24px 27px; /* 27px = 16px + the 11px padding on Visual mode */
 		margin-bottom: 0;
 	}
@@ -181,15 +184,15 @@
 
 .post-editor__switch-mode {
 	position: absolute;
-		right: 16px;
+	right: 16px;
 	width: 160px;
 	z-index: z-index( 'root', '.post-editor__switch-mode' );
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		right: 32px;
 	}
 
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( '>1040px' ) {
 		right: 0;
 	}
 }
@@ -257,7 +260,7 @@
 		display: block;
 		padding: 12px 0 18px; /* Make room for the RemoveButton */
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			margin: -24px 0 24px;
 		}
 	}

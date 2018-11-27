@@ -8,7 +8,7 @@ import emailValidator from 'email-validator';
 import { Component } from '@wordpress/element';
 import { compose, withInstanceId } from '@wordpress/compose';
 import { dispatch, withSelect } from '@wordpress/data';
-import { get, trimEnd } from 'lodash';
+import { get, isEqual, pick, trimEnd } from 'lodash';
 import { sprintf } from '@wordpress/i18n';
 import {
 	Disabled,
@@ -40,18 +40,44 @@ class SimplePaymentsEdit extends Component {
 		isSavingProduct: false,
 	};
 
+	/**
+	 * We'll use this flag to inject attributes one time when the product entity is loaded.
+	 *
+	 * It is based on the presence of a `productId` attribute.
+	 *
+	 * If present, initially we are waiting for attributes to be injected.
+	 * If absent, we may save the product in the future but do not need to inject attributes based
+	 * on the response as they will have come from our product submission.
+	 */
+	shouldInjectPaymentAttributes = !! this.props.attributes.productId;
+
 	componentDidMount() {
+		// Try to get the simplePayment loaded into attributes if possible.
 		this.injectPaymentAttributes();
+
+		const { attributes, hasPublishAction } = this.props;
+		const { productId } = attributes;
+
+		// If the user can publish save an empty product so that we have an ID and can save
+		// concurrently with the post that contains the Simple Payment.
+		if ( ! productId && hasPublishAction ) {
+			this.saveProduct();
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
 		const { hasPublishAction, isSelected } = this.props;
 
-		if ( prevProps.simplePayment !== this.props.simplePayment ) {
+		if ( ! isEqual( prevProps.simplePayment, this.props.simplePayment ) ) {
 			this.injectPaymentAttributes();
 		}
 
-		if ( ! prevProps.isSaving && this.props.isSaving && hasPublishAction ) {
+		if (
+			! prevProps.isSaving &&
+			this.props.isSaving &&
+			hasPublishAction &&
+			this.validateAttributes()
+		) {
 			// Validate and save product on post save
 			this.saveProduct();
 		} else if ( prevProps.isSelected && ! isSelected ) {
@@ -61,10 +87,21 @@ class SimplePaymentsEdit extends Component {
 	}
 
 	injectPaymentAttributes() {
-		const { attributes, setAttributes, simplePayment } = this.props;
-		const { paymentId, content, currency, email, multiple, price, title } = attributes;
+		/**
+		 * Prevent injecting the product attributes when not desired.
+		 *
+		 * When we first load a product, we should inject its attributes as our initial form state.
+		 * When subsequent saves occur, we should avoid injecting attributes so that we do not
+		 * overwrite changes that the user has made with stale state from the previous save.
+		 */
+		if ( ! this.shouldInjectPaymentAttributes ) {
+			return;
+		}
 
-		if ( paymentId && simplePayment ) {
+		const { attributes, setAttributes, simplePayment } = this.props;
+		const { content, currency, email, multiple, price, productId, title } = attributes;
+
+		if ( productId && simplePayment ) {
 			setAttributes( {
 				content: get( simplePayment, [ 'content', 'raw' ], content ),
 				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency ),
@@ -73,15 +110,16 @@ class SimplePaymentsEdit extends Component {
 				price: get( simplePayment, [ 'meta', 'spay_price' ], price || undefined ),
 				title: get( simplePayment, [ 'title', 'raw' ], title ),
 			} );
+			this.shouldInjectPaymentAttributes = ! this.shouldInjectPaymentAttributes;
 		}
 	}
 
 	toApi() {
 		const { attributes } = this.props;
-		const { content, currency, email, multiple, paymentId, price, title } = attributes;
+		const { content, currency, email, multiple, price, productId, title } = attributes;
 
 		return {
-			id: paymentId,
+			id: productId,
 			content,
 			featured_media: 0,
 			meta: {
@@ -90,17 +128,13 @@ class SimplePaymentsEdit extends Component {
 				spay_multiple: multiple,
 				spay_price: price,
 			},
-			status: 'publish',
+			status: productId ? 'publish' : 'draft',
 			title,
 		};
 	}
 
 	saveProduct() {
 		if ( this.state.isSavingProduct ) {
-			return;
-		}
-
-		if ( ! this.validateAttributes() ) {
 			return;
 		}
 
@@ -112,15 +146,16 @@ class SimplePaymentsEdit extends Component {
 			saveEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, this.toApi() )
 				.then( record => {
 					if ( record ) {
-						setAttributes( { paymentId: record.id } );
+						setAttributes( { productId: record.id } );
 					}
 
 					return record;
 				} )
 				.catch( error => {
-					// @TODO: complete error handling
-					/* eslint-disable-next-line no-console */
-					console.error( error );
+					// Nothing we can do about errors without details at the moment
+					if ( ! error || ! error.data ) {
+						return;
+					}
 
 					const {
 						data: { key: apiErrorKey },
@@ -329,10 +364,15 @@ class SimplePaymentsEdit extends Component {
 	render() {
 		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
 		const { attributes, instanceId, isSelected, simplePayment } = this.props;
-		const { content, currency, email, multiple, paymentId, price, title } = attributes;
+		const { content, currency, email, multiple, price, productId, title } = attributes;
 
-		const isLoading = paymentId && ! simplePayment;
-		if ( ! isSelected && isLoading ) {
+		/**
+		 * The only disabled state that concerns us is when we expect a product but don't have it in
+		 * local state.
+		 */
+		const isDisabled = productId && ! simplePayment;
+
+		if ( ! isSelected && isDisabled ) {
 			return (
 				<div className="simple-payments__loading">
 					<ProductPlaceholder
@@ -365,7 +405,7 @@ class SimplePaymentsEdit extends Component {
 			);
 		}
 
-		const Wrapper = isLoading ? Disabled : 'div';
+		const Wrapper = isDisabled ? Disabled : 'div';
 
 		return (
 			<Wrapper className="wp-block-jetpack-simple-payments">
@@ -459,10 +499,19 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 	const { getEntityRecord } = select( 'core' );
 	const { isSavingPost, getCurrentPost } = select( 'core/editor' );
 
-	const { paymentId } = props.attributes;
+	const { productId } = props.attributes;
 
-	const simplePayment = paymentId
-		? getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, paymentId )
+	const fields = [
+		[ 'content' ],
+		[ 'meta', 'spay_currency' ],
+		[ 'meta', 'spay_email' ],
+		[ 'meta', 'spay_multiple' ],
+		[ 'meta', 'spay_price' ],
+		[ 'title', 'raw' ],
+	];
+
+	const simplePayment = productId
+		? pick( getEntityRecord( 'postType', SIMPLE_PAYMENTS_PRODUCT_POST_TYPE, productId ), fields )
 		: undefined;
 
 	return {

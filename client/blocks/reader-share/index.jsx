@@ -17,7 +17,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ReaderPopoverMenu from 'components/reader-popover/menu';
+import ReaderPopoverMenu from 'reader/components/reader-popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'gridicons';
 import * as stats from 'reader/stats';
@@ -104,7 +104,7 @@ class ReaderShare extends React.Component {
 		this.shareButton = React.createRef();
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.mounted = true;
 	}
 

@@ -85,6 +85,11 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
 import EditorGutenbergBlocksWarningDialog from './editor-gutenberg-blocks-warning-dialog';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class PostEditor extends React.Component {
 	static propTypes = {
 		siteId: PropTypes.number,

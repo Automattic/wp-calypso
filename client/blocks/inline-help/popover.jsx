@@ -14,7 +14,6 @@ import Gridicon from 'gridicons';
  * Internal Dependencies
  */
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
-import { recordTracksEvent } from 'state/analytics/actions';
 import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
 import Button from 'components/button';
 import Popover from 'components/popover';
@@ -26,11 +25,28 @@ import { getHelpSelectedSite } from 'state/help/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import getCurrentRoute from 'state/selectors/get-current-route';
+import { setSelectedEditor } from 'state/selected-editor/actions';
+import { navigate, replaceHistory } from 'state/ui/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+	withAnalytics,
+	bumpStat,
+} from 'state/analytics/actions';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
 		onClose: PropTypes.func.isRequired,
 		setDialogState: PropTypes.func.isRequired,
+		selectedEditor: PropTypes.string,
+		classicUrl: PropTypes.string,
+		siteId: PropTypes.number,
+		optOut: PropTypes.func,
+		redirect: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -97,6 +113,13 @@ class InlineHelpPopover extends Component {
 		);
 	};
 
+	switchToClassicEditor = () => {
+		const { siteId, optOut, classicUrl } = this.props;
+		optOut( siteId );
+		this.props.replaceHistory( classicUrl );
+		this.props.navigate( classicUrl );
+	};
+
 	render() {
 		const { translate, showNotification, setNotification, setStoredTask } = this.props;
 		const { showSecondaryView } = this.state;
@@ -131,6 +154,15 @@ class InlineHelpPopover extends Component {
 					setNotification={ setNotification }
 					setStoredTask={ setStoredTask }
 				/>
+
+				{ 'gutenberg' === this.props.selectedEditor && (
+					<Button
+						onClick={ this.switchToClassicEditor }
+						className="inline-help__classic-editor-toggle"
+					>
+						{ translate( 'Switch to Classic Editor' ) }
+					</Button>
+				) }
 
 				<div className="inline-help__footer">
 					<Button
@@ -167,19 +199,49 @@ class InlineHelpPopover extends Component {
 	}
 }
 
+const optOut = siteId => {
+	return withAnalytics(
+		composeAnalytics(
+			recordGoogleEvent(
+				'Gutenberg Opt-Out',
+				'Clicked "Switch to the classic editor" in the help popover.',
+				'Opt-In',
+				false
+			),
+			recordTracksEvent( 'calypso_gutenberg_opt_in', {
+				opt_in: false,
+			} ),
+			bumpStat( 'gutenberg-opt-in', 'Calypso Help Opt Out' )
+		),
+		setSelectedEditor( siteId, 'classic' )
+	);
+};
+
 function mapStateToProps( state ) {
+	const siteId = getSelectedSiteId( state );
+	const currentRoute = getCurrentRoute( state );
+	const classicRoute = currentRoute.replace( '/gutenberg/', '' );
+
 	return {
 		searchQuery: getSearchQuery( state ),
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
+		selectedEditor: getSelectedEditor( state, siteId ),
+		classicUrl: `/${ classicRoute }`,
+		siteId,
 	};
 }
 
+const mapDispatchToProps = {
+	optOut,
+	recordTracksEvent,
+	selectResult,
+	resetContactForm: resetInlineHelpContactForm,
+	replaceHistory,
+	navigate,
+};
+
 export default connect(
 	mapStateToProps,
-	{
-		recordTracksEvent,
-		selectResult,
-		resetContactForm: resetInlineHelpContactForm,
-	}
+	mapDispatchToProps
 )( localize( InlineHelpPopover ) );

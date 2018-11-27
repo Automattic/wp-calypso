@@ -88,6 +88,279 @@
 	}
 }
 
+.crowdsignal {
+	background: #f2f2f2;
+
+	.layout__content {
+		padding-top: 200px;
+	}
+
+	.masterbar__oauth-client {
+		background-color: #fff;
+		border: 0;
+		height: 120px;
+
+		nav {
+			box-sizing: border-box;
+			max-width: 1120px;
+			margin: 0 auto;
+			padding: 0 40px;
+		}
+	}
+
+	.masterbar__oauth-client-logo {
+		padding: 20px 0;
+
+		img {
+			max-height: 80px;
+		}
+	}
+
+	.masterbar__oauth-client-close {
+		display: block;
+		float: right;
+		padding: 49px 0;
+
+		a {
+			color: #999;
+			font-size: 0.9em;
+			font-weight: bold;
+			text-decoration: none;
+			text-transform: uppercase;
+		}
+	}
+
+	.button.is-primary {
+		background-color: #fb5457;
+		color: #fff;
+	}
+
+	.logged-out-form,
+	.login__form,
+	.magic-login__request-link {
+		border: 0;
+		box-shadow: none;
+		max-width: 100%;
+		padding: 15px 0 0;
+
+		.button {
+			border: 0;
+			border-radius: 0;
+			font-size: 16px;
+			font-weight: 400;
+			margin: 0 auto;
+			padding: 12px 30px;
+			text-transform: uppercase;
+			width: auto;
+		}
+	}
+
+	.magic-login__request-link {
+		background-color: #fff;
+
+		.card.logged-out-form {
+			padding: 0;
+		}
+	}
+
+	.login__form-action button,
+	.magic-login__request-link button {
+		float: none;
+		display: block;
+	}
+
+	input[type='text'],
+	input[type='email'],
+	input[type='password'] {
+		background-color: #fff;
+		border: 1px solid #e6e6e6;
+		border-radius: 0;
+		box-sizing: border-box;
+		color: #384869;
+		font-size: 1rem;
+		line-height: 1.5;
+		padding: 10px 20px;
+		width: 100%;
+	}
+
+	.card {
+		background: none;
+		margin: 0;
+	}
+
+	.signup-form__social {
+		border: 1px solid #e6e6e6;
+		border-left: 0;
+		border-right: 0;
+		box-shadow: none;
+		max-width: 100%;
+	}
+
+	.social-buttons__button {
+		background-color: #384869;
+		border: 0;
+		border-radius: 0;
+		box-shadow: none;
+		color: #fff;
+		font-size: 16px;
+		font-weight: 400;
+		margin: 0 auto;
+		padding: 12px 30px;
+		text-transform: uppercase;
+		width: auto;
+
+		.social-buttons__service-name {
+			margin-left: 0;
+		}
+
+		svg {
+			display: none;
+		}
+	}
+
+	.social-buttons__button-container {
+		text-align: center;
+	}
+
+	.logged-out-form__footer {
+		background: none;
+		border: 0;
+		text-align: center;
+	}
+
+	.logged-out-form__links {
+		padding: 20px 0 0;
+		text-align: center;
+	}
+
+	.logged-out-form__link-item {
+		border-bottom: 0;
+		padding: 10px 16px;
+	}
+
+	.wp-login__links {
+		padding: 20px 0;
+	}
+
+	.wp-login__links a,
+	.wp-login__links button,
+	.magic-login__footer a {
+		border: 0;
+		padding: 10px 16px;
+		line-height: 21px;
+		font-weight: 400;
+		text-align: center;
+	}
+
+	.translator-invite__content {
+		margin: 0;
+		padding: 20px 15px 0;
+		border-top: 1px solid #e6e6e6;
+		text-align: center;
+	}
+
+	.step-wrapper,
+	.wp-login__main.main {
+		background: #fff;
+		border: 0;
+		box-sizing: border-box;
+		margin: 0 auto 50px;
+		max-width: none;
+		padding: 20px 0;
+		width: 100%;
+
+		@include breakpoint( '>660px' ) {
+			width: 600px;
+		}
+	}
+
+	.signup__step {
+		background: linear-gradient( to bottom, #f2f2f2, transparent );
+	}
+
+	&.is-section-signup::before,
+	&.is-section-signup .layout__primary::before {
+		display: none;
+	}
+
+	.step-header,
+	.logged-out-form,
+	.logged-out-form__links,
+	.login__form,
+	.wp-login__links,
+	.magic-login__request-link {
+		padding: 15px 20px 0;
+
+		@include breakpoint( '>480px' ) {
+			padding: 15px 80px 0;
+		}
+
+		@include breakpoint( '>660px' ) {
+			max-width: 480px;
+			margin: 0 auto;
+			padding: 15px 0 0;
+		}
+	}
+
+	.wp-login__links,
+	.magic-login__request-link {
+		padding-bottom: 15px;
+	}
+
+	.formatted-header__title,
+	.login__form-header {
+		font-size: 1.5em;
+		margin-top: 1.2em;
+		margin-bottom: .3em;
+		padding: 0 20px;
+
+		@include breakpoint( '>480px' ) {
+			font-size: 2em;
+			margin-top: 1.5em;
+			margin-bottom: .4em;
+			padding: 0 80px;
+		}
+
+		@include breakpoint( '>660px' ) {
+			margin-left: auto;
+			margin-right: auto;
+			max-width: 480px;
+		}
+	}
+
+	.login__form-header {
+		margin-top: .2em;
+	}
+
+	.login__form-header-wrapper {
+		padding-top: 1.5em;
+	}
+
+	.formatted-header__subtitle {
+		padding: 0 20px;
+		font-size: 1.1em;
+
+		a {
+			display: inline-block;
+		}
+
+		@include breakpoint( '>480px' ) {
+			padding: 0 80px;
+		}
+	}
+
+	.login__form-social {
+		padding-top: 24px;
+
+		.card {
+			box-shadow: none;
+			border: 1px solid #e6e6e6;
+			border-left: 0;
+			border-right: 0;
+		}
+	}
+}
+
 .woo {
 	background: #e6e6e6;
 
@@ -313,8 +586,8 @@
 	&.is-section-signup::before,
 	&.is-section-signup .layout__primary::before {
 		display: none;
-  }
-  
+	}
+
 	.formatted-header__title {
 		font-size: 2em;
 		font-family: $sans;

@@ -79,6 +79,7 @@ class SiteSettingsFormWriting extends Component {
 			setFieldValue,
 			siteId,
 			siteIsJetpack,
+			submitForm,
 			translate,
 			updateFields,
 			jetpackVersionSupportsLazyImages,
@@ -141,12 +142,13 @@ class SiteSettingsFormWriting extends Component {
 				{ jetpackSettingsUI &&
 					jetpackVersionSupportsLazyImages && (
 						<div>
-							{ this.renderSectionHeader( translate( 'Speed up your site' ), false ) }
+							{ this.renderSectionHeader( translate( 'Performance & speed' ), false ) }
 							<SpeedUpYourSite
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
-								fields={ fields }
 								jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
+								submitForm={ submitForm }
+								updateFields={ updateFields }
 							/>
 						</div>
 					) }
@@ -282,6 +284,7 @@ const getFormSettings = settings => {
 		'timezone_string',
 		'lazy-images',
 		'podcasting_category_id',
+		'photon-cdn',
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values

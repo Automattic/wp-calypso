@@ -238,7 +238,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).toEqual( {
+			expect( state.root() ).toEqual( {
 				12345678: {
 					50: {
 						likes,

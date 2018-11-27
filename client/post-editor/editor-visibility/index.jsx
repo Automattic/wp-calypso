@@ -30,6 +30,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import isPrivateSiteSelector from 'state/selectors/is-private-site';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorVisibility extends React.Component {
 	static propTypes = {
 		context: PropTypes.string,

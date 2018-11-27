@@ -16,9 +16,37 @@
 
 .card.site-address-changer__content {
 	margin-bottom: 0;
-	span.form-text-input-with-affixes__suffix {
-		position: static;
+}
+
+.site-address-changer__affix {
+	display: flex;
+	align-items: center;
+}
+
+.site-address-changer__select-icon {
+	color: $gray;
+	margin-left: 6px;
+	align-self: center;
+}
+
+.form-text-input-with-affixes__prefix,
+.form-text-input-with-affixes__suffix {
+	&:hover .site-address-changer__select-icon {
+		color: $gray-darken-20;
 	}
+}
+
+.site-address-changer__select {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	padding: 0;
+	border: 0;
+	background-image: none;
+	opacity: 0;
 }
 
 .site-address-changer__info {

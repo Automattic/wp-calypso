@@ -8,6 +8,11 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const FlowProgressIndicator = ( { flowLength, positionInFlow, translate, flowName } ) => {
 	if ( flowLength > 1 ) {
 		const flowClassName = classNames(

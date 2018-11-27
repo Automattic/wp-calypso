@@ -22,6 +22,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostSlug } from 'state/posts/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorPermalink extends Component {
 	static propTypes = {
 		path: PropTypes.string,

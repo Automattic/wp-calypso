@@ -18,6 +18,11 @@ import RewindCredentialsForm from 'components/rewind-credentials-form';
 import getRewindState from 'state/selectors/get-rewind-state';
 import SetupFooter from 'my-sites/site-settings/jetpack-credentials/credentials-setup-flow/setup-footer';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class RewindFormCreds extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,

@@ -53,7 +53,7 @@ export const allSiteTypes = [
 		label: i18n.translate( 'Online store' ),
 		description: i18n.translate( 'Sell your collection of products online. ' ),
 		theme: 'pub/dara',
-		designType: 'page',
+		designType: 'store',
 	},
 ];
 

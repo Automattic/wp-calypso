@@ -137,6 +137,9 @@ $text-editor-font-size: inherit;
 
 .wp-block-jetpack-markdown {
 	.wp-block-jetpack-markdown__editor {
+		font-family: $editor-html-font;
+		font-size: 14px;
+
 		&:focus {
 			border-color: transparent;
 			box-shadow: 0 0 0 transparent;

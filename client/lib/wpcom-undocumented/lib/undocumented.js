@@ -1,3 +1,4 @@
+/* eslint-disable valid-jsdoc */
 /** @format */
 
 /**
@@ -2412,36 +2413,49 @@ Undocumented.prototype.getRequestSiteAddressChangeNonce = function( siteId ) {
  *
  * @param {int} [siteId] The siteId for which to validate
  * @param {object} [siteAddress]	The site address to validate
+ * @param {string} [domain] The domain name of the new site address (ex. news.blog, wordpress.com, etc.)
+ * @param {string} [type] blog/dotblog - blog for wordpress.com, dotblog for .blog domains
  * @returns {Promise}  A promise
  */
-Undocumented.prototype.checkSiteAddressValidation = function( siteId, siteAddress ) {
+Undocumented.prototype.checkSiteAddressValidation = function( siteId, siteAddress, domain, type ) {
 	return this.wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/site-address-change/validate`,
 			apiNamespace: 'wpcom/v2',
 		},
 		{},
-		{ blogname: siteAddress }
+		{ blogname: siteAddress, domain, type }
 	);
 };
 
 /**
- * Request a new .wordpress.com address for a site with the option to discard the current.
+ * Request a new .wordpress.com or .*.blog address for a site with the option to discard the current.
  *
  * @param {int} [siteId] The siteId for which to change the address
  * @param {object} [blogname]	The desired new site address
+ * @param {string} [domain] The domain name of the new site address (ex. news.blog, wordpress.com, etc.)
+ * @param {string} [oldDomain] The full domain name of the original site (ex. mysite.news.blog, mysite.wordpress.com, etc.)
+ * @param {string} [type] blog/dotblog - blog for wordpress.com->wordpress.com, dotblog if the old and/or new domain is .blog
  * @param {bool} [discard]			Should the old site address name be discarded?
  * @param {string} [nonce]		A nonce provided by the API
  * @returns {Promise}  A promise
  */
-Undocumented.prototype.updateSiteAddress = function( siteId, blogname, discard, nonce ) {
+Undocumented.prototype.updateSiteAddress = function(
+	siteId,
+	blogname,
+	domain,
+	oldDomain,
+	type,
+	discard,
+	nonce
+) {
 	return this.wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/site-address-change`,
 			apiNamespace: 'wpcom/v2',
 		},
 		{},
-		{ blogname, discard, nonce }
+		{ blogname, domain, old_domain: oldDomain, type, discard, nonce }
 	);
 };
 

@@ -16,6 +16,11 @@ import Button from 'components/button';
 import SignupActions from 'lib/signup/actions';
 import { getStepUrl } from 'signup/utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const { submitSignupStep } = SignupActions;
 
 export class NavigationLink extends Component {
