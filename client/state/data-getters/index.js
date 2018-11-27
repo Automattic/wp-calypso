@@ -33,7 +33,7 @@ import { dummyTaxRate } from 'lib/tax'; // #tax-on-checkout-placeholder
  *
  * @example
  * waitForData( {
- *     planets: getAtURL( 'https://swapi.co/api/planets/' ),
+ *     planets: getAtUrl( 'https://swapi.co/api/planets/' ),
  * } ).then( ( { planets } ) => {
  *     console.log( planets.data );
  * } );
