@@ -28,6 +28,10 @@ class PaymentMethods extends Component {
 				);
 			}
 
+			if ( method === 'web-payment' ) {
+				return null;
+			}
+
 			return <PaymentLogo type={ method } key={ method } altText={ method } />;
 		} );
 
