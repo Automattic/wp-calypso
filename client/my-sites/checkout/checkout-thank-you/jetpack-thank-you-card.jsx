@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { difference, filter, get, map, range, reduce, some } from 'lodash';
+import { difference, filter, map, reduce, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -15,11 +15,8 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import PlanThankYouCard from 'blocks/plan-thank-you-card';
-import FeatureExample from 'components/feature-example';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import Spinner from 'components/spinner';
-import Gridicon from 'gridicons';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
 import analytics from 'lib/analytics';
 import { SETTING_UP_PREMIUM_SERVICES } from 'lib/url/support';
@@ -63,7 +60,6 @@ import {
 	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 	FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 	FEATURE_SPAM_AKISMET_PLUS,
-	FEATURES_LIST,
 	GROUP_JETPACK,
 	TYPE_FREE,
 	getPlanClass,
@@ -236,49 +232,6 @@ export class JetpackThankYouCard extends Component {
 		);
 	}
 
-	renderFeature( feature, key = 0 ) {
-		const description = feature
-			? get( FEATURES_LIST, [ feature.slug, 'getTitle' ], () => false )()
-			: 'Activating your Jetpack plan';
-
-		if ( false === description ) {
-			return null;
-		}
-
-		let icon = 'x';
-		if ( feature ) {
-			switch ( feature.status ) {
-				case 'wait':
-					icon = <Spinner size={ 18 } />;
-					break;
-				case 'done':
-					icon = <Gridicon icon="checkmark" size={ 18 } />;
-					break;
-				case 'error':
-					icon = null;
-					break;
-			}
-		}
-
-		const classes = classNames( 'checkout-thank-you__jetpack-feature', {
-			'is-placeholder': ! feature,
-			'with-error': feature && feature.status === 'error',
-		} );
-		return (
-			<li key={ key } className={ classes }>
-				<span className="checkout-thank-you__jetpack-feature-status-icon">{ icon }</span>
-				<span className="checkout-thank-you__jetpack-feature-status-text">{ description }</span>
-			</li>
-		);
-	}
-
-	renderFeaturePlaceholders() {
-		const placeholderCount = !! this.props.whitelist ? 1 : 2;
-		return range( placeholderCount ).map( i => {
-			return this.renderFeature( null, i );
-		} );
-	}
-
 	shouldRenderPlaceholders() {
 		return ! this.props.planFeatures || ! this.props.hasRequested || this.props.isRequesting;
 	}
@@ -292,22 +245,6 @@ export class JetpackThankYouCard extends Component {
 				plugin => plugin.hasOwnProperty( 'error' ) && plugin.error && plugin.status !== 'done'
 			)
 		);
-	}
-
-	renderFeatures() {
-		const { selectedSite } = this.props;
-
-		const mappedFeatures =
-			selectedSite && selectedSite.canUpdateFiles && this.shouldRenderPlaceholders()
-				? this.renderFeaturePlaceholders()
-				: this.getFeaturesWithStatus().map( this.renderFeature );
-		const features = <ul className="checkout-thank-you__jetpack-features">{ mappedFeatures }</ul>;
-
-		if ( selectedSite && ! selectedSite.canManage ) {
-			return <FeatureExample>{ features }</FeatureExample>;
-		}
-
-		return features;
 	}
 
 	onHappyChatButtonClick = () => {
@@ -627,7 +564,6 @@ export class JetpackThankYouCard extends Component {
 					}
 					description={ this.renderDescription( progress ) }
 				/>
-				{ this.renderFeatures() }
 			</div>
 		);
 	}
