@@ -38,6 +38,7 @@ class SiteMockup extends Component {
 						<rect x="28" width="10" height="10" rx="5" />
 					</g>
 				</svg>
+				<span className="site-mockup__chrome-label">Website Preview</span>
 			</div>
 		);
 	}
@@ -45,12 +46,7 @@ class SiteMockup extends Component {
 	getMockupChromeMobile() {
 		return (
 			<div className="site-mockup__chrome-mobile">
-				<div className="site-mockup__chrome-mobile-top">
-					<svg width="30" height="8">
-						<rect width="30" height="8" rx="4" />
-					</svg>
-				</div>
-				<div className="site-mockup__chrome-mobile-bottom" />
+				<span className="site-mockup__chrome-label">Phone</span>
 			</div>
 		);
 	}
@@ -127,8 +123,10 @@ class SiteMockup extends Component {
 				{ size === 'mobile' ? this.getMockupChromeMobile() : this.getMockupChromeDesktop() }
 				<div className="site-mockup__body">
 					<div className="site-mockup__content">
-						<div className="site-mockup__title">Site Title</div>
-						<div className="site-mockup__tagline">Tagline</div>
+						<div className="site-mockup__title">Your New Website</div>
+						<div className="site-mockup__tagline">
+							You'll be able to customize this to your needs.
+						</div>
 						<div
 							className="site-mockup__cover-image"
 							style={ { backgroundImage: `url("${ data.cover_image }")` } }
@@ -144,6 +142,7 @@ class SiteMockup extends Component {
 							<img src={ data.feature_image } alt="" />
 							<span>{ data.text }</span>
 						</div>
+						<div className="site-mockup__hr" />
 						<div className="site-mockup__h2">Send Us a Message</div>
 						<div className="site-mockup__contact-form">
 							<div className="site-mockup__label">Name</div>
