@@ -19,6 +19,10 @@ export class Facebook extends SharingService {
 		...SharingService.defaultProps,
 	};
 
+	recordLinkClickEvent = () => {
+		this.props.recordTracksEvent( 'calypso_publicize_facebook_pages_link_click' );
+	};
+
 	didKeyringConnectionSucceed( availableExternalAccounts ) {
 		if ( availableExternalAccounts.length === 0 ) {
 			this.props.failCreateConnection( {
@@ -41,6 +45,7 @@ export class Facebook extends SharingService {
 										href="https://en.support.wordpress.com/publicize/#facebook-pages"
 										target="_blank"
 										rel="noopener noreferrer"
+										onClick={ this.recordLinkClickEvent }
 									/>
 								),
 							},
@@ -49,6 +54,7 @@ export class Facebook extends SharingService {
 				],
 			} );
 			this.setState( { isConnecting: false } );
+			this.props.recordTracksEvent( 'calypso_publicize_facebook_profile_connection_failure' );
 			return false;
 		}
 

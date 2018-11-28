@@ -36,7 +36,7 @@ import {
 	isFetchingConnections,
 } from 'state/sharing/publicize/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
@@ -59,6 +59,7 @@ export class SharingService extends Component {
 		isFetching: PropTypes.bool,
 		keyringConnections: PropTypes.arrayOf( PropTypes.object ),
 		recordGoogleEvent: PropTypes.func,
+		recordTracksEvent: PropTypes.func,
 		removableConnections: PropTypes.arrayOf( PropTypes.object ),
 		service: PropTypes.object.isRequired, // The single service object
 		siteId: PropTypes.number, // The site ID for which connections are created
@@ -545,6 +546,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 			failCreateConnection,
 			fetchConnection,
 			recordGoogleEvent,
+			recordTracksEvent,
 			requestKeyringConnections,
 			updateSiteConnection,
 			warningNotice,
