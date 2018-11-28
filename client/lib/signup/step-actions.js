@@ -10,6 +10,7 @@ import { parse as parseURL } from 'url';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import wpcom from 'lib/wp';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
@@ -153,7 +154,7 @@ export function createSiteWithCart(
 	if ( importingFromUrl ) {
 		newSiteParams.blog_name = importingFromUrl;
 		newSiteParams.find_available_url = true;
-		newSiteParams.public = -1;
+		newSiteParams.public = config.isEnabled( 'signup/import-private' ) ? -1 : 1;
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
