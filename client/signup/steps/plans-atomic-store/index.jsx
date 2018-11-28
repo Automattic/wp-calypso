@@ -135,7 +135,7 @@ export class PlansAtomicStoreStep extends Component {
 		);
 
 		if ( designType === DESIGN_TYPE_STORE ) {
-			plans = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
+			plans = [ PLAN_BUSINESS ];
 		}
 
 		return (
