@@ -3,8 +3,8 @@
 /**
  * External dependencies
  */
+import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { filter } from 'lodash';
-import { createBlock, registerBlockStyle, registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -85,6 +85,7 @@ const blockSettings = {
 	category: 'jetpack',
 	keywords: [ __( 'images' ), __( 'photos' ), __( 'masonry' ) ],
 	attributes: blockAttributes,
+	styles: LAYOUT_STYLES,
 	supports: {
 		align: true,
 	},
@@ -171,10 +172,5 @@ const blockSettings = {
 	edit,
 	save,
 };
-
-// @TODO Move to `blockSettings.styles`
-LAYOUT_STYLES.forEach( style => {
-	registerBlockStyle( blockName, style );
-} );
 
 registerBlockType( blockName, blockSettings );
