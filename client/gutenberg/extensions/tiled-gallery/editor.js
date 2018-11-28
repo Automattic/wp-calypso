@@ -18,6 +18,7 @@ import { default as save } from './save';
  * Style dependencies
  */
 import './editor.scss';
+import './view.scss';
 
 const blockAttributes = {
 	images: {
@@ -171,6 +172,7 @@ const blockSettings = {
 	save,
 };
 
+// @TODO Move to `blockSettings.styles`
 LAYOUT_STYLES.forEach( style => {
 	registerBlockStyle( blockName, style );
 } );
