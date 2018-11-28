@@ -60,11 +60,12 @@ class SubscriptionEdit extends Component {
 
 		return (
 			<div className={ className }>
-				{ subscriberCount }
-				<TextControl
-					aria-describedby={ `${ instanceId }-email-help` }
-					placeholder={ subscribe_placeholder }
-				/>
+				{ show_subscribers_total === true && (
+					<p>
+						{ subscriberCount } { 'subscribers' }
+					</p>
+				) }
+				<TextControl placeholder={ subscribe_placeholder } />
 				<Button type="button" isDefault>
 					{ __( 'Subscribe' ) }
 				</Button>
