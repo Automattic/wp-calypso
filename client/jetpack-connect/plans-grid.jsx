@@ -9,9 +9,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import MainWrapper from './main-wrapper';
 import FormattedHeader from 'components/formatted-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
+
 /**
  * Constants
  */
@@ -44,9 +45,10 @@ class JetpackPlansGrid extends Component {
 
 	render() {
 		return (
-			<Main wideLayout className="jetpack-connect__hide-plan-icons">
+			<MainWrapper isWide className="jetpack-connect__hide-plan-icons">
 				<div className="jetpack-connect__plans">
 					{ this.renderConnectHeader() }
+
 					<div id="plans">
 						<PlansFeaturesMain
 							site={ this.props.selectedSite || defaultJetpackSite }
@@ -61,7 +63,7 @@ class JetpackPlansGrid extends Component {
 						{ this.props.children }
 					</div>
 				</div>
-			</Main>
+			</MainWrapper>
 		);
 	}
 }
