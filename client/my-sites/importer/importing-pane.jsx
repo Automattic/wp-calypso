@@ -121,7 +121,7 @@ class ImportingPane extends React.PureComponent {
 				"We'll send you a notification when it's done.",
 			{
 				components: {
-					a: <a href={ '/checklist/' + get( this.props, 'importerStatus.site.slug' ) } />,
+					a: <a href={ '/checklist/' + get( this.props, 'importerStatus.site.slug', '' ) } />,
 				},
 			}
 		);
@@ -133,7 +133,7 @@ class ImportingPane extends React.PureComponent {
 
 	getSuccessText = () => {
 		const {
-			site: { slug },
+			site: { slug = '' },
 			progress: { page, post },
 		} = this.props.importerStatus;
 		const pageLink = <a href={ '/pages/' + slug } />;

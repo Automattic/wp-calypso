@@ -198,7 +198,15 @@ class SiteSettingsImport extends Component {
 		const siteTitle = title.length ? title : slug;
 
 		if ( engine === 'wix' ) {
-			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
+			const importsForSite = filterImportsForSite( site.ID, imports )
+				// Add in the 'site' and 'siteTitle' properties to the import objects.
+				.map( item => ( {
+					...item,
+					site,
+					siteTitle,
+				} ) );
+
+			return this.renderActiveImporters( importsForSite );
 		}
 
 		if ( ! isHydrated ) {
@@ -207,7 +215,11 @@ class SiteSettingsImport extends Component {
 
 		const importsForSite = filterImportsForSite( site.ID, imports )
 			// Add in the 'site' and 'siteTitle' properties to the import objects.
-			.map( item => Object.assign( {}, item, { site, siteTitle } ) );
+			.map( item => ( {
+				...item,
+				site,
+				siteTitle,
+			} ) );
 
 		if ( 0 === importsForSite.length ) {
 			return this.renderIdleImporters( site, siteTitle, appStates.INACTIVE );
