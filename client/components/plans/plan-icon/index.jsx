@@ -11,18 +11,28 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { PLANS_LIST, getPlanClass } from 'lib/plans/constants';
-import { isBloggerPlan, isPersonalPlan, isPremiumPlan, isBusinessPlan } from 'lib/plans';
+import { GROUP_JETPACK, PLANS_LIST, getPlanClass } from 'lib/plans/constants';
+import {
+	planMatches,
+	isBloggerPlan,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
+	isEcommercePlan,
+} from 'lib/plans';
 
 export default class PlanIcon extends Component {
 	getIcon( planName ) {
 		const { plan, className } = this.props;
 		const planClass = getPlanClass( plan );
+		const isJetpack = planMatches( plan, { group: GROUP_JETPACK } );
 
 		/* eslint-disable jsx-a11y/alt-text */
 		return (
 			<img
-				src={ `/calypso/images/plans/plan-${ planName }-circle.svg` }
+				src={ `/calypso/images/plans/${
+					isJetpack ? 'jetpack' : 'wpcom'
+				}/plan-${ planName }-circle.svg` }
 				className={ classNames( 'plan-icon', `plan-icon__${ planName }`, planClass, className ) }
 			/>
 		);
@@ -45,6 +55,10 @@ export default class PlanIcon extends Component {
 
 		if ( isBusinessPlan( plan ) ) {
 			return this.getIcon( 'business' );
+		}
+
+		if ( isEcommercePlan( plan ) ) {
+			return this.getIcon( 'ecommerce' );
 		}
 
 		return this.getIcon( 'free' );

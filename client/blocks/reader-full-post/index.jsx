@@ -14,7 +14,7 @@ import config from 'config';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
-import ReaderMain from 'components/reader-main';
+import ReaderMain from 'reader/components/reader-main';
 import EmbedContainer from 'components/embed-container';
 import PostExcerpt from 'components/post-excerpt';
 import { markPostSeen } from 'state/reader/posts/actions';
@@ -113,18 +113,15 @@ export class FullPostView extends React.Component {
 			this.attemptToSendPageView();
 		}
 
+		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
+			this.hasScrolledToCommentAnchor = false;
+		}
+
 		this.checkForCommentAnchor();
 
 		// If we have a comment anchor, scroll to comments
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
-		}
-	}
-
-	componentWillReceiveProps( newProps ) {
-		if ( newProps.shouldShowComments ) {
-			this.hasScrolledToCommentAnchor = false;
-			this.checkForCommentAnchor();
 		}
 	}
 
@@ -189,7 +186,7 @@ export class FullPostView extends React.Component {
 		recordTrackForPost( 'calypso_reader_related_post_from_other_site_clicked', this.props.post );
 	};
 
-	// Does the URL contain the anchor #comments? If so, scroll to comments if we're not already there.
+	// Does the URL contain the anchor #comments?
 	checkForCommentAnchor = () => {
 		const hash = window.location.hash.substr( 1 );
 		if ( hash.indexOf( 'comments' ) > -1 ) {

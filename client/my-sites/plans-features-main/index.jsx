@@ -79,7 +79,13 @@ export class PlansFeaturesMain extends Component {
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 		return (
 			<div
-				className="plans-features-main__group"
+				className={ classNames(
+					'plans-features-main__group',
+					'is-' + ( displayJetpackPlans ? 'jetpack' : 'wpcom' ),
+					{
+						[ `is-customer-${ customerType }` ]: ! displayJetpackPlans,
+					}
+				) }
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
 				<PlanFeatures
@@ -163,7 +169,13 @@ export class PlansFeaturesMain extends Component {
 
 		if ( ! withWPPlanTabs ) {
 			return plans.filter( plan =>
-				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ] )
+				isPlanOneOfType( plan, [
+					TYPE_FREE,
+					TYPE_PERSONAL,
+					TYPE_PREMIUM,
+					TYPE_BUSINESS,
+					TYPE_ECOMMERCE,
+				] )
 			);
 		}
 

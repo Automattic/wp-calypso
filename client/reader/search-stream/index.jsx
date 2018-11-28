@@ -21,7 +21,7 @@ import SearchInput from 'components/search';
 import { recordAction, recordTrack } from 'reader/stats';
 import SiteResults from './site-results';
 import PostResults from './post-results';
-import ReaderMain from 'components/reader-main';
+import ReaderMain from 'reader/components/reader-main';
 import { addQueryArgs, resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
 import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';

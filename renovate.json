@@ -5,6 +5,11 @@
 			"paths": [ "packages/**" ],
 			"groupName": "calypso-packages",
 			"rangeStrategy": "replace"
+		},
+		{
+			"packagePatterns": ["^@wordpress"],
+			"groupName": "wordpress-monorepo",
+			"separateMajorMinor": false
 		}
 	],
 	"statusCheckVerify": true,

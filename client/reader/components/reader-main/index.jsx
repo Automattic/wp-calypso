@@ -3,14 +3,18 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Main from 'components/main';
 import SyncReaderFollows from 'components/data/sync-reader-follows';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /*
  * We ref-count number of ReaderMains on screen in order to avoid a race condition
@@ -36,11 +40,11 @@ const setIsReaderPage = add => {
 /**
  * A specialization of `Main` that adds a class to the body of the document
  *
- * This class is used by pieces of the Reader Refresh (circa Sept 2016) to indicate they want "editorial" styles.
+ * This class is used by pieces of the Reader to indicate they want "editorial" styles.
  * Notably, this overrides the background color of the document and is used as a hook by other parts to override styles.
  */
 export default class ReaderMain extends React.Component {
-	componentWillMount() {
+	componentDidMount() {
 		activeReaderMainRefCount++;
 		setIsReaderPage( true );
 	}
