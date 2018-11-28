@@ -3,7 +3,7 @@
 	background-color: $gray-light;
 
 	&.is-exceeding-acceptable-length {
-		background: $alert-red;
+		background: var( --color-error );
 
 		.counted-textarea__count-panel,
 		.gridicons-info-outline {

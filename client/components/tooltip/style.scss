@@ -18,19 +18,19 @@
 
 		&.is-error {
 			.popover__arrow {
-				border-bottom-color: $alert-red;
+				border-bottom-color: var( --color-error );
 			}
 		}
 
 		&.is-warning {
 			.popover__arrow {
-				border-bottom-color: $alert-yellow;
+				border-bottom-color: var( --color-warning );
 			}
 		}
 
 		&.is-success {
 			.popover__arrow {
-				border-bottom-color: $alert-green;
+				border-bottom-color: var( --color-success );
 			}
 		}
 	}
@@ -50,19 +50,19 @@
 
 		&.is-error {
 			.popover__arrow {
-				border-top-color: $alert-red;
+				border-top-color: var( --color-error );
 			}
 		}
 
 		&.is-warning {
 			.popover__arrow {
-				border-top-color: $alert-yellow;
+				border-top-color: var( --color-warning );
 			}
 		}
 
 		&.is-success {
 			.popover__arrow {
-				border-top-color: $alert-green;
+				border-top-color: var( --color-success );
 			}
 		}
 	}
@@ -87,19 +87,19 @@
 
 		&.is-error {
 			.popover__arrow {
-				border-right-color: $alert-red;
+				border-right-color: var( --color-error );
 			}
 		}
 
 		&.is-warning {
 			.popover__arrow {
-				border-right-color: $alert-yellow;
+				border-right-color: var( --color-warning );
 			}
 		}
 
 		&.is-success {
 			.popover__arrow {
-				border-right-color: $alert-green;
+				border-right-color: var( --color-success );
 			}
 		}
 	}
@@ -131,19 +131,19 @@
 
 	&.is-error {
 		.popover__inner {
-			background: $alert-red;
+			background: var( --color-error );
 		}
 	}
 
 	&.is-warning {
 		.popover__inner {
-			background: $alert-yellow;
+			background: var( --color-warning );
 		}
 	}
 
 	&.is-success {
 		.popover__inner {
-			background: $alert-green;
+			background: var( --color-success );
 		}
 	}
 

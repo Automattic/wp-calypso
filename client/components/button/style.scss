@@ -62,8 +62,8 @@ button {
 		}
 	}
 	.accessible-focus &:focus {
-			border-color: $blue-medium;
-			box-shadow: 0 0 0 2px $blue-light;
+			border-color: var( --color-accent );
+			box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 	&.is-compact {
 		padding: 7px;
@@ -114,13 +114,13 @@ button {
 
 // Primary buttons
 .button.is-primary {
-	background: $blue-medium;
+	background: var( --color-accent );
 	border-color: darken( $blue-medium, 8% );
 	color: $white;
 
 	&:hover,
 	&:focus {
-		border-color: $blue-dark;
+		border-color: var( --color-primary-dark );
 		color: $white;
 	}
 	&.is-compact {
@@ -142,11 +142,11 @@ button {
 
 // Scary buttons
 .button.is-scary {
-	color: $alert-red;
+	color: var( --color-error );
 
 	&:hover,
 	&:focus {
-		border-color: $alert-red;
+		border-color: var( --color-error );
 	}
 
 	.accessible-focus &:focus {
@@ -161,7 +161,7 @@ button {
 }
 
 .button.is-primary.is-scary {
-	background: $alert-red;
+	background: var( --color-error );
 	border-color: darken( $alert-red, 20% );
 	color: $white;
 
@@ -210,7 +210,7 @@ button {
 		}
 	}
 	&.is-scary {
-		color: $alert-red;
+		color: var( --color-error );
 
 		&:hover,
 		&:focus {
@@ -223,7 +223,7 @@ button {
 	}
 
 	&.is-primary {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 
 		&:focus,
 		&:hover,
@@ -304,7 +304,7 @@ button {
 	border: none;
 	border-radius: 0;
 	padding: 0;
-	color: $blue-medium;
+	color: var( --color-accent );
 	font-weight: 400;
 	font-size: inherit;
 	line-height: 1.65;

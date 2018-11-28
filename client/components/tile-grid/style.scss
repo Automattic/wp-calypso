@@ -39,12 +39,12 @@
 
 	&:active {
 		.tile-grid__cta {
-			color: $blue-dark;
+			color: var( --color-primary-dark );
 		}
 
 		.tile-grid__item-link:after {
-			border-top-color: $blue-dark;
-			border-right-color: $blue-dark;
+			border-top-color: var( --color-primary-dark );
+			border-right-color: var( --color-primary-dark );
 		}
 	}
 
@@ -78,7 +78,7 @@
 	}
 
 	&.is-highlighted {
-		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 3px $blue-light;
+		box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 3px var( --color-primary-light );
 	}
 
 	a, svg {
@@ -127,7 +127,7 @@
 }
 
 .tile-grid__item-label {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	padding: 0;
 	position: relative;
 }
@@ -148,7 +148,7 @@
 }
 
 .button.tile-grid__cta {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 
 	@include breakpoint( "<480px" ) {
 		background: none;

@@ -19,7 +19,7 @@ div.credit-card {
 
 	&.is-selected {
 		cursor: default;
-		border-left: 3px solid $alert-green;
+		border-left: 3px solid var( --color-success );
 		background-color: #fafdf6;
 		padding-left: 0;
 	}

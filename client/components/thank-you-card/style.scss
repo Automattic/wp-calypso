@@ -16,7 +16,7 @@
 }
 
 .thank-you-card__header {
-	background-color: $alert-green;
+	background-color: var( --color-success );
 	padding: 12px 0;
 	position: relative;
 	line-height: 1.2;

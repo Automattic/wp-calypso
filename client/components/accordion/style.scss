@@ -30,11 +30,11 @@ $accordion-background-expanded: $white;
 		background-color: $accordion-background-hover;
 
 		.accordion__title {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 
 		.accordion__arrow {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 
@@ -180,7 +180,7 @@ $accordion-background-expanded: $white;
 	}
 
 	&.is-warning {
-		color: $alert-yellow;
+		color: var( --color-warning );
 
 		&:hover {
 			color: lighten( $alert-yellow, 5% );
@@ -188,7 +188,7 @@ $accordion-background-expanded: $white;
 	}
 
 	&.is-error {
-		color: $alert-red;
+		color: var( --color-error );
 
 		&:hover {
 			color: lighten( $alert-red, 5% );
@@ -196,7 +196,7 @@ $accordion-background-expanded: $white;
 	}
 
 	&.is-info {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 
 		&:hover {
 			color: lighten( $blue-wordpress, 5% );

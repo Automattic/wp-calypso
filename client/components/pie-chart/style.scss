@@ -18,17 +18,17 @@
 
 .pie-chart__chart-section-0,
 .pie-chart__legend-sample-0 {
-	fill: $blue-dark;
+	fill: var( --color-primary-dark );
 }
 
 .pie-chart__chart-section-1,
 .pie-chart__legend-sample-1 {
-	fill: $blue-medium;
+	fill: var( --color-accent );
 }
 
 .pie-chart__chart-section-2,
 .pie-chart__legend-sample-2 {
-	fill: $blue-light;
+	fill: var( --color-primary-light );
 }
 
 .pie-chart__chart-drawing-empty {

@@ -36,7 +36,7 @@
 }
 
 .rewind-credentials-form__delete-button.button.is-borderless {
-	color: $alert-red;
+	color: var( --color-error );
 	float: left;
 }
 

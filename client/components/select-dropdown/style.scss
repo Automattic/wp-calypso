@@ -32,7 +32,7 @@ $compact-header-height: 35;
 	.accessible-focus .select-dropdown.is-open & {
 		z-index: z-index( 'root', '.accessible-focus .select-dropdown.is-open .select-dropdown__container' );
 		.select-dropdown__header {
-			border-color: $blue-wordpress;
+			border-color: var( --color-primary );
 		}
 	}
 
@@ -46,7 +46,7 @@ $compact-header-height: 35;
 	}
 
 	.accessible-focus .select-dropdown.is-open & {
-		box-shadow: 0 0 0 2px $blue-light;
+		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 }
 
@@ -102,7 +102,7 @@ $compact-header-height: 35;
 	}
 
 	.accessible-focus .select-dropdown:not(.is-open) .select-dropdown__container:focus & {
-		box-shadow: 0 0 0 2px $blue-light;
+		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 
 	.count {
@@ -141,14 +141,14 @@ $compact-header-height: 35;
 	background-color: $white;
 	border: 1px solid $gray-lighten-20;
 	border-top: 0;
-	// $blue-wordpress for outer (with focus shadow), $gray for border with header
+	// var( --color-primary ) for outer (with focus shadow), $gray for border with header
 	border-radius: 0 0 4px 4px;
 	height: 0;
 	overflow: hidden;
 	opacity: 0;
 
 	.accessible-focus & {
-		border: solid 1px $blue-wordpress;
+		border: solid 1px var( --color-primary );
 		border-top-color: $gray-lighten-20;
 	}
 
@@ -194,7 +194,7 @@ $compact-header-height: 35;
 	}
 
 	&.is-selected {
-		background-color: $blue-medium;
+		background-color: var( --color-accent );
 		color: $white;
 
 		.count {
@@ -213,7 +213,7 @@ $compact-header-height: 35;
 	.notouch & {
 		// Make sure :visited links stay blue
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 
 		&.is-selected:hover {

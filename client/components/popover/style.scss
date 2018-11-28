@@ -170,7 +170,7 @@
 	&.is-selected,
 	&:hover,
 	&:focus {
-		background-color: $blue-medium;
+		background-color: var( --color-accent );
 		border: 0;
 		box-shadow: none;
 		color: white;

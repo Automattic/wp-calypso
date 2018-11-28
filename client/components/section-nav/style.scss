@@ -272,7 +272,7 @@
 
 	.is-selected & {
 		color: $white;
-		background-color: $blue-medium;
+		background-color: var( --color-accent );
 
 		@include breakpoint( "<480px" ) {
 			.count {
@@ -286,7 +286,7 @@
 		outline: none;
 
 		.accessible-focus & {
-			box-shadow: inset 0 0 0 2px $blue-light;
+			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 		}
 	}
 
@@ -299,7 +299,7 @@
 
 	.notouch & {
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 
@@ -313,11 +313,11 @@
 		display: block;
 		width: auto;
 		padding: 16px 16px 14px 16px;
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		font-weight: 400;
 
 		&:visited {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 		}
 
 		.is-selected & {

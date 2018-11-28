@@ -1,5 +1,5 @@
 .form-input-validation {
-	color: $alert-green;
+	color: var( --color-success );
 	position: relative;
 	padding: 6px 24px 11px 34px;
 	border-radius: 1px;
@@ -8,11 +8,11 @@
 	animation: appear .3s ease-in-out;
 
 	&.is-error {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	&.is-warning{
-		color: $alert-yellow;
+		color: var( --color-warning );
 	}
 
 	&.is-hidden{

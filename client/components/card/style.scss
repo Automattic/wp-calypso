@@ -27,7 +27,7 @@
 	&.is-card-link {
 		padding-right: 48px;
 		&:not( a ) {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 			font-size: 100%;
 			line-height: 1.5;
 			text-align: left;
@@ -50,19 +50,19 @@
 	}
 
 	&.is-error {
-		border-left: 3px solid $alert-red;
+		border-left: 3px solid var( --color-error );
 	}
 
 	&.is-info {
-		border-left: 3px solid $blue-wordpress;
+		border-left: 3px solid var( --color-primary );
 	}
 
 	&.is-success {
-		border-left: 3px solid $alert-green;
+		border-left: 3px solid var( --color-success );
 	}
 
 	&.is-warning {
-		border-left: 3px solid $alert-yellow;
+		border-left: 3px solid var( --color-warning );
 	}
 }
 

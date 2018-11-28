@@ -71,7 +71,7 @@
 		}
 
 		.accessible-focus &:focus {
-			box-shadow: inset 0 0 0 2px $blue-light;
+			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 		}
 	}
 
@@ -82,7 +82,7 @@
 	}
 
 	.progress-bar__progress {
-		background-color: $alert-green;
+		background-color: var( --color-success );
 	}
 }
 
@@ -149,8 +149,8 @@
 
 		&:hover,
 		&:focus {
-			background: $alert-green;
-			border-color: $alert-green;
+			background: var( --color-success );
+			border-color: var( --color-success );
 
 			.gridicons-checkmark {
 				display: block;
@@ -158,8 +158,8 @@
 		}
 
 		&:active {
-			background: $blue-medium;
-			border-color: $blue-medium;
+			background: var( --color-accent );
+			border-color: var( --color-accent );
 		}
 	}
 
@@ -183,7 +183,7 @@
 
 	&-title-link.button {
 		padding: 0;
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		font-weight: 400;
 		font-size: 16px;
 	}
@@ -228,8 +228,8 @@
 
 		.checklist__task-icon {
 			top: 13px;
-			background: $alert-green;
-			border-color: $alert-green;
+			background: var( --color-success );
+			border-color: var( --color-success );
 
 			&:hover {
 				cursor: default;

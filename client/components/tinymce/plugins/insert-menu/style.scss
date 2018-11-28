@@ -61,11 +61,11 @@
 	&:focus {
 
 		.wpcom-insert-menu__menu-label {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 
 		.wpcom-insert-menu__menu-icon {
-			fill: $blue-medium;
+			fill: var( --color-accent );
 		}
 	}
 }
