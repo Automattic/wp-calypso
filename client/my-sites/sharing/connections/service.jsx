@@ -58,8 +58,8 @@ export class SharingService extends Component {
 		fetchConnection: PropTypes.func,
 		isFetching: PropTypes.bool,
 		keyringConnections: PropTypes.arrayOf( PropTypes.object ),
-		recordGoogleEvent: PropTypes.func,
-		recordTracksEvent: PropTypes.func,
+		recordGoogleEvent: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 		removableConnections: PropTypes.arrayOf( PropTypes.object ),
 		service: PropTypes.object.isRequired, // The single service object
 		siteId: PropTypes.number, // The site ID for which connections are created
