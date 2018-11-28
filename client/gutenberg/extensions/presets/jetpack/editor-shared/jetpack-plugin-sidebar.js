@@ -9,6 +9,7 @@ import { registerPlugin } from '@wordpress/plugins';
 /**
  * Internal dependencies
  */
+import './jetpack-plugin-sidebar.scss';
 import JetpackLogo from 'components/jetpack-logo';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 

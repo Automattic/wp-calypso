@@ -1,0 +1,40 @@
+.edit-post-pinned-plugins,
+.edit-post-more-menu__content {
+	.components-icon-button {
+		.jetpack-logo {
+			width: 20px;
+			height: 20px;
+		}
+	}
+}
+
+.edit-post-more-menu__content {
+	.components-icon-button {
+		.jetpack-logo {
+			margin-right: 4px;
+		}
+	}
+}
+
+.edit-post-pinned-plugins {
+	.components-icon-button {
+		&:not( .is-toggled ),
+		&:hover,
+		&.is-toggled,
+		&.is-toggled:hover {
+			.jetpack-logo,
+			.jetpack-logo * {
+				fill: none !important;
+				stroke: none !important;
+			}
+
+			.jetpack-logo__icon-circle {
+				fill: #00be28 !important;
+			}
+
+			.jetpack-logo__icon-triangle {
+				fill: #fff !important;
+			}
+		}
+	}
+}
