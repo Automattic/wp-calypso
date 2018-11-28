@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { Component } from '@wordpress/element';
-import { TextControl, FormToggle, Button } from '@wordpress/components';
+import { TextControl, Button, ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -25,8 +25,8 @@ class SubscriptionEdit extends Component {
 		if ( isSelected ) {
 			return (
 				<div className={ className }>
-					{ __( 'Show total subscribers' ) }
-					<FormToggle
+					<ToggleControl
+						label={ 'Show total subscribers' }
 						checked={ show_subscribers_total }
 						onChange={ () => {
 							setAttributes( { show_subscribers_total: ! show_subscribers_total } );
