@@ -129,8 +129,15 @@ const blockSettings = {
 					},
 					columns: {
 						type: 'number',
-						shortcode: ( { named: { columns = '3' } } ) => {
-							return parseInt( columns, 10 );
+						shortcode: ( { named: { columns = 3 } } ) => {
+							if ( ! columns ) {
+								return;
+							}
+
+							const result = parseInt( columns, 10 );
+							if ( result ) {
+								return result;
+							}
 						},
 					},
 					linkTo: {
