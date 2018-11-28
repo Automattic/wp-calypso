@@ -6,7 +6,7 @@
  * Hooks into Gutenberg's PluginPrePublishPanel
  * to display Jetpack's Publicize UI in the pre-publish flow.
  *
- * It also creates a dedicated PluginSidebar for Jetpack and
+ * It also hooks into our dedicated Jetpack plugin sidebar and
  * displays the Publicize UI there.
  */
 
@@ -14,18 +14,14 @@
  * External dependencies
  */
 import { Fragment } from '@wordpress/element';
-import {
-	PluginPrePublishPanel,
-	PluginSidebar,
-	PluginSidebarMoreMenuItem,
-} from '@wordpress/edit-post';
+import { PluginPrePublishPanel } from '@wordpress/edit-post';
 import { PanelBody } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import './editor.scss';
-import JetpackLogo from 'components/jetpack-logo';
+import JetpackPluginSidebar from 'gutenberg/extensions/presets/jetpack/editor-shared/jetpack-plugin-sidebar';
 import PublicizePanel from './panel';
 import registerJetpackPlugin from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-plugin';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
@@ -35,14 +31,11 @@ export const name = 'publicize';
 export const settings = {
 	render: () => (
 		<Fragment>
-			<PluginSidebarMoreMenuItem target="jetpack" icon={ <JetpackLogo size={ 24 } /> }>
-				{ __( 'Jetpack' ) }
-			</PluginSidebarMoreMenuItem>
-			<PluginSidebar name="jetpack" title={ __( 'Jetpack' ) } icon={ <JetpackLogo size={ 24 } /> }>
+			<JetpackPluginSidebar>
 				<PanelBody title={ __( 'Share this post' ) }>
 					<PublicizePanel />
 				</PanelBody>
-			</PluginSidebar>
+			</JetpackPluginSidebar>
 			<PluginPrePublishPanel
 				initialOpen={ true }
 				id="publicize-title"
