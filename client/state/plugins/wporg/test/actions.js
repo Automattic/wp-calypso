@@ -12,9 +12,9 @@ import { fetchPluginData } from '../actions';
 import wporgReducer from '../reducer';
 import { combineReducers } from 'state/utils';
 import wporg from 'lib/wporg';
-jest.mock( 'lib/wporg', () => require( './mocks/lib/wporg' ) );
-jest.mock( 'lib/impure-lodash', () => ( {
-	debounce: cb => cb,
+
+jest.mock( 'lib/wporg', () => ( {
+	fetchPluginInformation: jest.fn( slug => Promise.resolve( { slug } ) ),
 } ) );
 
 const reducer = combineReducers( {
@@ -30,7 +30,7 @@ describe( 'WPorg Data Actions', () => {
 	let store;
 
 	beforeEach( () => {
-		wporg.reset();
+		jest.clearAllMocks();
 		store = createStore( reducer, applyMiddleware( dispatchSpy, thunk ) );
 	} );
 
@@ -41,7 +41,7 @@ describe( 'WPorg Data Actions', () => {
 	test( 'FetchPluginData action should make a request', async () => {
 		await store.dispatch( fetchPluginData( 'test' ) );
 		expect( store.dispatch ).toHaveBeenCalledTimes( 3 );
-		expect( wporg.getActivity().fetchPluginInformationCalls ).toBe( 1 );
+		expect( wporg.fetchPluginInformation ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( "FetchPluginData action shouldn't return an error", async () => {
@@ -67,6 +67,6 @@ describe( 'WPorg Data Actions', () => {
 	test( "FetchPluginData action should not make another request if there's already one in progress", () => {
 		store.dispatch( fetchPluginData( 'test' ) );
 		store.dispatch( fetchPluginData( 'test' ) );
-		expect( wporg.getActivity().fetchPluginInformationCalls ).toBe( 1 );
+		expect( wporg.fetchPluginInformation ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
