@@ -153,7 +153,7 @@ export function createSiteWithCart(
 	if ( importingFromUrl ) {
 		newSiteParams.blog_name = importingFromUrl;
 		newSiteParams.find_available_url = true;
-		newSiteParams.public = 1;
+		newSiteParams.public = -1;
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
