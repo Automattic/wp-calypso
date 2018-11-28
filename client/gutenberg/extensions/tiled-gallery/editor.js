@@ -10,16 +10,15 @@ import { Rect, SVG } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { DEFAULT_COLUMNS, DEFAULT_LAYOUT, LAYOUT_STYLES, LAYOUTS } from './constants';
+import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { default as edit } from './edit';
 import { default as save } from './save';
+import { DEFAULT_COLUMNS, DEFAULT_LAYOUT, LAYOUT_STYLES, LAYOUTS } from './constants';
 
 /**
  * Style dependencies
  */
 import './editor.scss';
-import './view.scss';
 
 const blockAttributes = {
 	images: {
@@ -69,10 +68,11 @@ const blockAttributes = {
 	},
 };
 
-export const blockName = 'jetpack/tiled-gallery';
+export const name = 'jetpack/tiled-gallery';
 
-const blockSettings = {
-	title: __( 'Tiled gallery' ),
+export const settings = {
+	attributes: blockAttributes,
+	category: 'jetpack',
 	description: __( 'Display multiple images in an elegantly organized tiled layout.' ),
 	icon: (
 		<SVG viewBox="0 0 20 20">
@@ -83,13 +83,16 @@ const blockSettings = {
 			<Rect x="3" y="3" width="9" height="7" />
 		</SVG>
 	),
-	category: 'jetpack',
-	keywords: [ __( 'images' ), __( 'photos' ), __( 'masonry' ) ],
-	attributes: blockAttributes,
+	keywords: [
+		_x( 'images', 'block search term' ),
+		_x( 'photos', 'block search term' ),
+		_x( 'masonry', 'block search term' ),
+	],
 	styles: LAYOUT_STYLES,
 	supports: {
 		align: true,
 	},
+	title: __( 'Tiled gallery' ),
 	transforms: {
 		from: [
 			{
@@ -98,7 +101,7 @@ const blockSettings = {
 				transform: attributes => {
 					const validImages = filter( attributes.images, ( { id, url } ) => id && url );
 					if ( validImages.length > 0 ) {
-						return createBlock( blockName, {
+						return createBlock( name, {
 							images: validImages.map( ( { id, url, alt, caption } ) => ( {
 								id,
 								url,
@@ -107,7 +110,7 @@ const blockSettings = {
 							} ) ),
 						} );
 					}
-					return createBlock( blockName );
+					return createBlock( name );
 				},
 			},
 			{
@@ -181,4 +184,4 @@ const blockSettings = {
 	save,
 };
 
-registerBlockType( blockName, blockSettings );
+registerBlockType( name, settings );
