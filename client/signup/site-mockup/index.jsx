@@ -10,6 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { translate } from 'i18n-calypso';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
 import { getVerticalData } from './mock-data';
@@ -38,7 +39,7 @@ class SiteMockup extends Component {
 						<rect x="28" width="10" height="10" rx="5" />
 					</g>
 				</svg>
-				<span className="site-mockup__chrome-label">Website Preview</span>
+				<span className="site-mockup__chrome-label">{ translate( 'Website Preview' ) }</span>
 			</div>
 		);
 	}
@@ -46,7 +47,11 @@ class SiteMockup extends Component {
 	getMockupChromeMobile() {
 		return (
 			<div className="site-mockup__chrome-mobile">
-				<span className="site-mockup__chrome-label">Phone</span>
+				<span className="site-mockup__chrome-label">
+					{ translate( 'Phone', {
+						context: 'Label for a phone-sized preview of a website',
+					} ) }
+				</span>
 			</div>
 		);
 	}
@@ -54,13 +59,14 @@ class SiteMockup extends Component {
 	renderMockup( size = 'desktop' ) {
 		const classes = classNames( 'site-mockup__viewport', size );
 		const data = this.props.verticalData;
+		const { title } = this.props;
 		/* eslint-disable react/no-danger */
 		return (
 			<div className={ classes }>
 				{ size === 'mobile' ? this.getMockupChromeMobile() : this.getMockupChromeDesktop() }
 				<div className="site-mockup__body">
 					<div className="site-mockup__content">
-						<div className="site-mockup__title">Your New Website</div>
+						<div className="site-mockup__title">{ title }</div>
 						<div className="site-mockup__tagline">
 							You'll be able to customize this to your needs.
 						</div>
@@ -70,7 +76,10 @@ class SiteMockup extends Component {
 						>
 							<span>{ data.cover_image_text }</span>
 						</div>
-                        <div dangerouslySetInnerHTML={ { __html: data.content } } />
+						<div
+							className="site-mockup__entry-content"
+							dangerouslySetInnerHTML={ { __html: data.content } }
+						/>
 						<div className="site-mockup__hr" />
 						<div className="site-mockup__h2">Send Us a Message</div>
 						<div className="site-mockup__contact-form">
@@ -107,7 +116,7 @@ export default connect( state => {
 	const vertical = getSignupStepsSiteTopic( state );
 	const verticalData = getVerticalData( vertical );
 	return {
-		title: getSiteTitle( state ),
+		title: getSiteTitle( state ) || translate( 'Your New Website' ),
 		vertical,
 		verticalData,
 	};

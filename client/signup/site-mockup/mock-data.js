@@ -24,7 +24,7 @@ const defaultVerticalData = {
 			'https://images.unsplash.com/photo-1542325823-53124d9c5cbe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=5441d8034187fec24a8d9ea0d5e634e6&auto=format&fit=crop&w=3134&q=80',
 		cover_image_text: 'Imagine the Synergy',
 		content:
-			'<img class="featured-image" src="https://images.unsplash.com/photo-1543270915-a8381a52e201?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=ac686dc4d32458c9afcf6ae578501b6e&auto=format&fit=crop&w=200&q=60" /><h2>The Journey Begins</h2>Here is some content that will make you change your life.',
+			'<img class="featured-image" src="https://images.unsplash.com/photo-1543270915-a8381a52e201?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=ac686dc4d32458c9afcf6ae578501b6e&auto=format&fit=crop&w=200&h=115&q=60" /><h2>The Journey Begins</h2>Here is some content that will make you change your life.',
 	},
 };
 

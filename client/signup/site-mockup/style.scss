@@ -176,12 +176,27 @@
 .site-mockup__tagline,
 .site-mockup__h2,
 .site-mockup__image-text,
-.site-mockup__contact-form {
+.site-mockup__contact-form,
+.site-mockup__entry-content {
 	max-width: 700px;
 	margin-right: auto;
 	margin-left: auto;
 }
 
+.site-mockup__entry-content {
+	.featured-image {
+		float: left;
+		margin: 0 1em 1em 0;
+	}
+	.site-mockup__viewport.mobile & .featured-image {
+		float: none;
+		display: block;
+	}
+
+	h1, h2, h3, h4 {
+		clear: none;
+	}
+}
 .site-mockup__title {
 	margin-top: 20px;
 	font-weight: 800;
@@ -277,6 +292,7 @@
 	height: 3px;
 	background: rgba( 0, 0, 0, 0.075 );
 	margin: 32px auto;
+	clear: both;
 }
 
 .site-mockup__label {
