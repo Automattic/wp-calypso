@@ -217,7 +217,6 @@
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/store-on-non-atomic-sites": true,
-		"wordads/daily-stats": true,
 		"wpcom-user-bootstrap": false
 	}
 }
