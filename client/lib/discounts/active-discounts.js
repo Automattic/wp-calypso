@@ -9,6 +9,7 @@ import {
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
+	TYPE_BUSINESS,
 } from 'lib/plans/constants';
 import { translate } from 'i18n-calypso';
 
@@ -56,57 +57,19 @@ export default [
 			'Improve your SEO, branding, credibility, and even word-of-mouth marketing with a custom domain. All plan upgrades include a free domain name of your choice for one year.',
 	},
 	{
-		name: 'october25',
-		startsAt: new Date( 2018, 9, 18, 0, 0, 0 ),
-		endsAt: new Date( 2018, 9, 25, 0, 0, 0 ),
-		nudgeText: '20% Off All Plans',
-		ctaText: translate( 'Upgrade' ),
+		name: 'early_renewal_offer',
+		startsAt: new Date( 2018, 11, 5, 0, 0, 0 ),
+		endsAt: new Date( 2018, 11, 18, 23, 59, 59 ),
+		nudgeText: translate( 'Renew now to save on domain prices' ),
+		ctaText: translate( 'Renew' ),
 		plansPageNoticeText: translate(
-			'Enter coupon code “%(coupon)s” during checkout to claim your %(discount)d%% discount.',
-			{
-				args: {
-					coupon: 'OCTOBER20',
-					discount: 20,
-				},
-			}
+			'Renew now to lock in your existing prices for your domain and plan.'
 		),
-		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
-	},
-	{
-		name: 'october25',
-		startsAt: new Date( 2018, 9, 25, 0, 0, 1 ),
-		endsAt: new Date( 2018, 9, 26, 0, 0, 0 ),
-		nudgeText: 'Last chance: 20% Off',
-		ctaText: translate( 'Upgrade' ),
-		plansPageNoticeText: translate(
-			'Sale ends today! Enter coupon code “%(coupon)s” during checkout to claim your %(discount)d%% discount.',
-			{
-				args: {
-					coupon: 'OCTOBER20',
-					discount: 20,
-				},
-			}
-		),
-		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
-	},
-	{
-		name: 'blackfriday30',
-		startsAt: new Date( 2018, 10, 21, 0, 0, 0 ),
-		endsAt: new Date( 2018, 10, 24, 0, 0, 0 ),
-		nudgeText: 'Black Friday 30% Off Plans!',
-		ctaText: translate( 'Upgrade' ),
-		plansPageNoticeText: 'Black Friday 30% Off! Enter “BLACKFRIDAY30” At Checkout',
-		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
-	},
-	{
-		name: 'cyber30',
-		startsAt: new Date( 2018, 10, 26, 0, 0, 0 ),
-		endsAt: new Date( 2018, 10, 27, 0, 0, 0 ),
-		nudgeText: 'Last Chance – 30% Off Plans',
-		ctaText: translate( 'Upgrade' ),
-		plansPageNoticeText:
-			'Hurry! Cyber Monday 30% Off Sale Is Almost Over. Enter CYBER30 At Checkout',
-		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
+		targetPlans: [
+			{ type: TYPE_PERSONAL, group: GROUP_WPCOM },
+			{ type: TYPE_PREMIUM, group: GROUP_WPCOM },
+			{ type: TYPE_BUSINESS, group: GROUP_WPCOM },
+		],
 	},
 	// NOTE: These two (new_plans and default_plans_tab_business) should remain at the bottom.
 	// It's a temporary hack and will be removed shortly.
