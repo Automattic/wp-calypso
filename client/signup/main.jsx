@@ -7,8 +7,6 @@ import debugModule from 'debug';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import TransitionGroup from 'react-transition-group/TransitionGroup';
-import CSSTransition from 'react-transition-group/CSSTransition';
 import url from 'url';
 import {
 	assign,
@@ -518,7 +516,7 @@ class Signup extends React.Component {
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (
-			<div classNames="signup__step" key={ stepKey }>
+			<div className="signup__step" key={ stepKey }>
 				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
 					{ shouldRenderLocaleSuggestions && (
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
@@ -584,7 +582,7 @@ class Signup extends React.Component {
 						/>
 					) }
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
-				{ this.props.flowName === 'onboarding' && <SiteMockup /> }
+				{ this.shouldShowSiteMockup() && <SiteMockup /> }
 				{ this.state.bearerToken && (
 					<WpcomLoginForm
 						authorization={ 'Bearer ' + this.state.bearerToken }
@@ -594,6 +592,14 @@ class Signup extends React.Component {
 				) }
 			</div>
 		);
+	}
+
+	shouldShowSiteMockup() {
+		if ( this.props.flowName !== 'onboarding' ) {
+			return false;
+		}
+		const stepsToShowOn = [ 'site-type', 'site-topic', 'about' ];
+		return stepsToShowOn.indexOf( this.props.stepName ) >= 0;
 	}
 }
 
