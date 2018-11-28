@@ -20,18 +20,16 @@ const debug = debugFactory( 'wporg' );
 /**
  * Constants
  */
-let _WPORG_PLUGINS_LIST = 'https://api.wordpress.org/plugins/info/1.1/?action=query_plugins',
-	_DEFAULT_PAGE_SIZE = 24,
-	_DEFAULT_CATEGORY = 'all',
-	_DEFAULT_FIRST_PAGE = 1;
+const _WPORG_PLUGINS_LIST = 'https://api.wordpress.org/plugins/info/1.1/?action=query_plugins';
+const _DEFAULT_PAGE_SIZE = 24;
+const _DEFAULT_CATEGORY = 'all';
+const _DEFAULT_FIRST_PAGE = 1;
 
 const _WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.1/';
 
 function getWporgLocaleCode() {
-	let currentLocaleCode, wpOrgLocaleCode;
-
-	currentLocaleCode = i18n.getLocaleSlug();
-	wpOrgLocaleCode = find( config( 'languages' ), { langSlug: currentLocaleCode } ).wpLocale;
+	const currentLocaleCode = i18n.getLocaleSlug();
+	let wpOrgLocaleCode = find( config( 'languages' ), { langSlug: currentLocaleCode } ).wpLocale;
 
 	if ( wpOrgLocaleCode === '' ) {
 		wpOrgLocaleCode = currentLocaleCode;
@@ -42,34 +40,36 @@ function getWporgLocaleCode() {
 
 export default {
 	/**
-	 * If successful, will call the provided callback with an object with plugin details.
+	 * Fetches details for a particular plugin.
 	 * @param {string} pluginSlug The plugin identifier.
-	 * @param {function} callback Callback that gets executed after the XHR returns the results.
+	 * @returns {Promise} Promise with the plugins details.
 	 */
-	fetchPluginInformation: function( pluginSlug, callback ) {
-		let baseUrl,
-			query = {
-				fields: 'icons,banners,compatibility,ratings,-contributors',
-				locale: getWporgLocaleCode(),
-			};
+	fetchPluginInformation: function( pluginSlug ) {
+		const query = {
+			fields: 'icons,banners,compatibility,ratings,-contributors',
+			locale: getWporgLocaleCode(),
+		};
 
 		pluginSlug = pluginSlug.replace( new RegExp( '.php$' ), '' );
 
-		baseUrl = 'https://api.wordpress.org/plugins/info/1.0/' + pluginSlug + '.jsonp';
-		jsonp( baseUrl, query, function( error, data ) {
-			if ( error ) {
-				debug( 'error downloading plugin details from .org: %s', error );
-				callback( error, null );
-				return;
-			}
+		const baseUrl = 'https://api.wordpress.org/plugins/info/1.0/' + pluginSlug + '.jsonp';
 
-			if ( ! data || ! data.slug ) {
-				debug( 'unrecognized format fetching plugin details from .org: %s', data );
-				callback( new Error( 'Unrecognized response format' ), null );
-				return;
-			}
+		return new Promise( ( resolve, reject ) => {
+			jsonp( baseUrl, query, function( error, data ) {
+				if ( error ) {
+					debug( 'error downloading plugin details from .org: %s', error );
+					reject( error );
+					return;
+				}
 
-			callback( null, data );
+				if ( ! data || ! data.slug ) {
+					debug( 'unrecognized format fetching plugin details from .org: %s', data );
+					reject( new Error( 'Unrecognized response format' ) );
+					return;
+				}
+
+				resolve( data );
+			} );
 		} );
 	},
 	fetchPluginsList: function( options, callback ) {
