@@ -1,8 +1,4 @@
 /** @format */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -76,13 +72,13 @@ describe( 'actions', () => {
 			const spy = jest.fn();
 			addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy );
 
-			global.expect( spy ).toHaveBeenCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: TERMS_RECEIVE,
 				siteId: siteId,
 				taxonomy: taxonomyName,
 				terms: [
 					{
-						ID: global.expect.stringMatching( /^temporary/ ),
+						ID: expect.stringMatching( /^temporary/ ),
 						name: 'ribs',
 					},
 				],
@@ -94,7 +90,7 @@ describe( 'actions', () => {
 		test( 'should dispatch a TERMS_RECEIVE event on success', () => {
 			const spy = jest.fn();
 			return addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy ).then( () => {
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
 					taxonomy: taxonomyName,
@@ -114,11 +110,11 @@ describe( 'actions', () => {
 		test( 'should dispatch a TERM_REMOVE event on success', () => {
 			const spy = jest.fn();
 			return addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy ).then( () => {
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: TERM_REMOVE,
 					siteId: siteId,
 					taxonomy: taxonomyName,
-					termId: global.expect.stringMatching( /^temporary/ ),
+					termId: expect.stringMatching( /^temporary/ ),
 				} );
 			} );
 		} );
@@ -126,11 +122,11 @@ describe( 'actions', () => {
 		test( 'should dispatch a TERM_REMOVE event on failure', () => {
 			const spy = jest.fn();
 			return addTerm( siteId, 'chicken-and-ribs', { name: 'new term' } )( spy ).then( () => {
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: TERM_REMOVE,
 					siteId: siteId,
 					taxonomy: 'chicken-and-ribs',
-					termId: global.expect.stringMatching( /^temporary/ ),
+					termId: expect.stringMatching( /^temporary/ ),
 				} );
 			} );
 		} );
@@ -140,7 +136,7 @@ describe( 'actions', () => {
 		test( 'should return an action object', () => {
 			const action = receiveTerm( siteId, taxonomyName, testTerms[ 0 ] );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: TERMS_RECEIVE,
 				siteId: siteId,
 				taxonomy: taxonomyName,
@@ -155,7 +151,7 @@ describe( 'actions', () => {
 		test( 'should return an action object', () => {
 			const action = receiveTerms( siteId, taxonomyName, testTerms, {}, 2 );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: TERMS_RECEIVE,
 				siteId: siteId,
 				taxonomy: taxonomyName,
@@ -168,7 +164,7 @@ describe( 'actions', () => {
 		test( 'should return an action object with query if passed', () => {
 			const action = receiveTerms( siteId, taxonomyName, testTerms, { search: 'foo' }, 2 );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: TERMS_RECEIVE,
 				siteId: siteId,
 				taxonomy: taxonomyName,
@@ -183,7 +179,7 @@ describe( 'actions', () => {
 		test( 'should return an action object', () => {
 			const action = removeTerm( siteId, taxonomyName, 777 );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: TERM_REMOVE,
 				siteId: siteId,
 				taxonomy: taxonomyName,
@@ -212,7 +208,7 @@ describe( 'actions', () => {
 			const spy = jest.fn();
 			requestSiteTerms( siteId, taxonomyName )( spy );
 
-			global.expect( spy ).toHaveBeenCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: TERMS_REQUEST,
 				siteId: siteId,
 				taxonomy: taxonomyName,
@@ -223,7 +219,7 @@ describe( 'actions', () => {
 		test( 'should dispatch a TERMS_RECEIVE event on success', () => {
 			const spy = jest.fn();
 			return requestSiteTerms( siteId, taxonomyName )( spy ).then( () => {
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
 					taxonomy: taxonomyName,
@@ -237,7 +233,7 @@ describe( 'actions', () => {
 		test( 'should dispatch TERMS_REQUEST_SUCCESS action when request succeeds', () => {
 			const spy = jest.fn();
 			return requestSiteTerms( siteId, taxonomyName )( spy ).then( () => {
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_REQUEST_SUCCESS,
 					siteId: siteId,
 					taxonomy: taxonomyName,
@@ -249,12 +245,12 @@ describe( 'actions', () => {
 		test( 'should dispatch TERMS_REQUEST_FAILURE action when request fails', () => {
 			const spy = jest.fn();
 			return requestSiteTerms( 12345, 'chicken-and-ribs' )( spy ).then( () => {
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_REQUEST_FAILURE,
 					siteId: 12345,
 					taxonomy: 'chicken-and-ribs',
 					query: {},
-					error: global.expect.objectContaining( { error: 'invalid_taxonomy' } ),
+					error: expect.objectContaining( { error: 'invalid_taxonomy' } ),
 				} );
 			} );
 		} );
@@ -332,13 +328,13 @@ describe( 'actions', () => {
 				spy,
 				getState
 			).then( () => {
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: TERM_REMOVE,
 					siteId: siteId,
 					taxonomy: categoryTaxonomyName,
 					termId: 10,
 				} );
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
 					taxonomy: categoryTaxonomyName,
@@ -349,7 +345,7 @@ describe( 'actions', () => {
 					query: undefined,
 					found: undefined,
 				} );
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: POST_EDIT,
 					siteId: siteId,
 					postId: 120,
@@ -359,7 +355,7 @@ describe( 'actions', () => {
 						},
 					},
 				} );
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: SITE_SETTINGS_UPDATE,
 					siteId: siteId,
 					settings: {
@@ -397,7 +393,7 @@ describe( 'actions', () => {
 			const spy = jest.fn();
 			return updateTerm( siteId, taxonomyName, 10, 'rib', { name: 'ribs' } )( spy, getState ).then(
 				() => {
-					global.expect( spy ).not.toHaveBeenCalledWith( {
+					expect( spy ).not.toHaveBeenCalledWith( {
 						type: SITE_SETTINGS_UPDATE,
 						siteId: siteId,
 						settings: {
@@ -462,7 +458,7 @@ describe( 'actions', () => {
 
 			const spy = jest.fn();
 			return deleteTerm( siteId, taxonomyName, 10, 'ribs' )( spy, getState ).then( () => {
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
 					taxonomy: taxonomyName,
@@ -470,7 +466,7 @@ describe( 'actions', () => {
 					query: undefined,
 					found: undefined,
 				} );
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: POST_EDIT,
 					siteId: siteId,
 					postId: 120,
@@ -480,13 +476,13 @@ describe( 'actions', () => {
 						},
 					},
 				} );
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: TERM_REMOVE,
 					siteId: siteId,
 					taxonomy: taxonomyName,
 					termId: 10,
 				} );
-				global.expect( spy ).not.toHaveBeenCalledWith( {
+				expect( spy ).not.toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
 					taxonomy: taxonomyName,
@@ -527,7 +523,7 @@ describe( 'actions', () => {
 
 			const spy = jest.fn();
 			return deleteTerm( siteId, categoryTaxonomyName, 10, 'ribs' )( spy, getState ).then( () => {
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
 					taxonomy: categoryTaxonomyName,
@@ -535,7 +531,7 @@ describe( 'actions', () => {
 					query: undefined,
 					found: undefined,
 				} );
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: TERM_REMOVE,
 					siteId: siteId,
 					taxonomy: categoryTaxonomyName,
@@ -576,7 +572,7 @@ describe( 'actions', () => {
 
 			const spy = jest.fn();
 			return deleteTerm( siteId, categoryTaxonomyName, 10, 'ribs' )( spy, getState ).then( () => {
-				global.expect( spy ).not.toHaveBeenCalledWith( {
+				expect( spy ).not.toHaveBeenCalledWith( {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
 					taxonomy: categoryTaxonomyName,
@@ -584,7 +580,7 @@ describe( 'actions', () => {
 					query: undefined,
 					found: undefined,
 				} );
-				global.expect( spy ).toHaveBeenCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: TERM_REMOVE,
 					siteId: siteId,
 					taxonomy: categoryTaxonomyName,
@@ -596,7 +592,7 @@ describe( 'actions', () => {
 		test( 'should not dispatch any action on Failure', () => {
 			const spy = jest.fn();
 			return updateTerm( siteId, taxonomyName, 10, 'toto', { name: 'ribs' } )( spy ).catch( () => {
-				global.expect( spy ).not.toHaveBeenCalled();
+				expect( spy ).not.toHaveBeenCalled();
 			} );
 		} );
 	} );
