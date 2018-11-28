@@ -40,22 +40,6 @@ class SubscriptionEdit extends Component {
 			);
 		}
 
-		/*
-        let subscriberCount = null;
-        if ( show_subscribers_total ) {
-            if ( 1 === Jetpack_Initial_State.getModules.subscriptions.data.subscriber_count ) {
-                subscriberCount = sprintf(
-                    __( 'Join %s other subscriber' ),
-                    Jetpack_Initial_State.getModules.subscriptions.data.subscriber_count
-                );
-            } else {
-                subscriberCount = sprintf(
-                    __( 'Join %s other subscribers' ),
-                    Jetpack_Initial_State.getModules.subscriptions.data.subscriber_count
-                );
-            }
-        }
-        */
 		const subscriberCount = '42';
 
 		return (
