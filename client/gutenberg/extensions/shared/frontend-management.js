@@ -13,9 +13,10 @@ export class FrontendManagement {
 		} );
 	}
 	initializeFrontendReactBlocks( component, options = {}, rootNode ) {
-		const { name, attributes } = options.settings;
+		const { attributes, name, prefix } = options.settings;
 		const { selector } = options;
-		const blockClass = `.wp-block-${ name.replace( '/', '-' ) }`;
+		const fullName = prefix && prefix.length ? `${ prefix }/${ name }` : name;
+		const blockClass = `.wp-block-${ fullName.replace( '/', '-' ) }`;
 
 		const blockNodeList = rootNode.querySelectorAll( blockClass );
 		for ( const node of blockNodeList ) {
