@@ -23,67 +23,44 @@ const reducer = combineReducers( {
 	} ),
 } );
 
-const testDispatch = ( reduxStore, done, testCallNumber ) => {
-	let calls = 0;
-	return action => {
-		reduxStore.dispatch( action );
-		calls++;
-		if ( ! testCallNumber || testCallNumber === calls ) {
-			done( action );
-		}
-	};
-};
+// Redux middleware that wraps the `store.dispatch` method with a Jest spy
+const dispatchSpy = () => jest.fn;
 
 describe( 'WPorg Data Actions', () => {
 	let store;
 
 	beforeEach( () => {
 		wporg.reset();
-		store = createStore( reducer, applyMiddleware( thunk ) );
+		store = createStore( reducer, applyMiddleware( dispatchSpy, thunk ) );
 	} );
 
 	test( 'Actions should have method fetchPluginData', () => {
 		expect( fetchPluginData ).toBeInstanceOf( Function );
 	} );
 
-	test( 'FetchPluginData action should make a request', done => {
-		fetchPluginData( 'test' )(
-			testDispatch(
-				store,
-				function() {
-					expect( wporg.getActivity().fetchPluginInformationCalls ).toBe( 1 );
-					done();
-				},
-				2
-			),
-			store.getState
+	test( 'FetchPluginData action should make a request', async () => {
+		await store.dispatch( fetchPluginData( 'test' ) );
+		expect( store.dispatch ).toHaveBeenCalledTimes( 3 );
+		expect( wporg.getActivity().fetchPluginInformationCalls ).toBe( 1 );
+	} );
+
+	test( "FetchPluginData action shouldn't return an error", async () => {
+		await store.dispatch( fetchPluginData( 'test' ) );
+		expect( store.dispatch ).toHaveBeenCalledTimes( 3 );
+		expect( store.dispatch ).toHaveBeenLastCalledWith(
+			expect.not.objectContaining( { error: expect.anything() } )
 		);
 	} );
 
-	test( "FetchPluginData action shouldn't return an error", done => {
-		fetchPluginData( 'test' )(
-			testDispatch(
-				store,
-				function( action ) {
-					done( action.error );
-				},
-				2
-			),
-			store.getState
-		);
-	} );
-
-	test( 'FetchPluginData action should return a plugin', done => {
-		fetchPluginData( 'test' )(
-			testDispatch(
-				store,
-				function( action ) {
-					expect( action.data.slug ).toBe( 'test' );
-					done();
-				},
-				2
-			),
-			store.getState
+	test( 'FetchPluginData action should return a plugin', async () => {
+		await store.dispatch( fetchPluginData( 'test' ) );
+		expect( store.dispatch ).toHaveBeenCalledTimes( 3 );
+		expect( store.dispatch ).toHaveBeenLastCalledWith(
+			expect.objectContaining( {
+				data: expect.objectContaining( {
+					slug: 'test',
+				} ),
+			} )
 		);
 	} );
 
