@@ -39,12 +39,15 @@
 		position: relative;
 
 		.site-mockup__viewport.mobile {
-			height: 500px;
 			position: absolute;
 				top: 40px;
 				right: 8px;
 			box-shadow: 0 0 0 1px $gray,
 				0 4px 12px 0 rgba( 0, 0, 0, 0.30 );
+
+			.site-mockup__body {
+				height: 500px;
+			}
 		}
 	}
 
@@ -97,31 +100,42 @@
 			left: 8px;
 		fill: $gray;
 	}
+
+	.site-mockup__chrome-label {
+		position: absolute;
+			top: 7px;
+			right: 0;
+			left: 0;
+
+		margin: 0 auto;
+		font-size: 11px;
+		text-align: center;
+		text-transform: uppercase;
+		font-weight: 600;
+		color: $gray-darken-20;
+		display: block;
+		width: 70%;
+		background: $gray-light;
+		border-radius: 3px;
+	}
 }
 
 .site-mockup__chrome-mobile {
-	.site-mockup__chrome-mobile-top {
-		height: 28px;
-		border-bottom: 1px solid $gray-lighten-20;
+	height: 28px;
 
-		// The top chrome has a speaker line to
-		// help signify its a mobile phone.
-		svg {
-			position: absolute;
-				top: 9px;
-				left: 50%;
-			margin-left: -15px; // Half the width to center it -shaun
-			fill: $gray;
-		}
-	}
-
-	.site-mockup__chrome-mobile-bottom {
-		height: 26px;
-		border-top: 1px solid $gray-lighten-20;
-		position: absolute;
-			right: 0;
-			bottom: 0;
-			left: 0;
+	.site-mockup__chrome-label {
+		position: relative;
+			top: 6px;
+		margin: 0 auto;
+		font-size: 11px;
+		text-align: center;
+		text-transform: uppercase;
+		font-weight: 600;
+		color: $gray-darken-20;
+		display: block;
+		width: 60px;
+		background: $gray-light;
+		border-radius: 16px;
 	}
 }
 
@@ -129,25 +143,22 @@
 // Mockup document body; Where all the
 // stuff goes.
 .site-mockup__body {
+	height: 100%;
 	overflow-x: hidden;
-
-	// Desktop body needs to move for the chrome.
-	.site-mockup__viewport.desktop & {
-		//margin-top: 28px;
-		height: 100%;
-	}
 
 	// Mobile body is scrollable and needs to
 	// make room for the chrome.
 	.site-mockup__viewport.mobile & {
-		margin-bottom: 28px;
-		height: calc( 100% - 56px);
 		overflow-y: auto;
+		margin: 0 6px 6px 6px;
+		border: 1px solid $gray-lighten-20;
+		border-radius: 3px;
 	}
 }
 
 
 // Demo content - WIP
+//
 .site-mockup__content {
 	.site-mockup__viewport.desktop & {
 		padding: 0 24px;
@@ -170,7 +181,6 @@
 	margin-right: auto;
 	margin-left: auto;
 }
-
 
 .site-mockup__title {
 	margin-top: 20px;
@@ -260,6 +270,13 @@
 			order: 2;
 		}
 	}
+}
+
+.site-mockup__hr {
+	width: 150px;
+	height: 3px;
+	background: rgba( 0, 0, 0, 0.075 );
+	margin: 32px auto;
 }
 
 .site-mockup__label {
