@@ -2,6 +2,9 @@
 .wp-block-jetpack-simple-payments {
 	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell,
 		Helvetica Neue, sans-serif;
+	display: grid;
+	grid-template-columns: 200px auto;
+	grid-column-gap: 10px;
 
 	.simple-payments__field {
 		.components-base-control__label {
