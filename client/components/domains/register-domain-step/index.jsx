@@ -254,7 +254,7 @@ class RegisterDomainStep extends React.Component {
 		if ( error && error.statusCode === 503 ) {
 			return nextProps.onDomainsAvailabilityChange(
 				false,
-				get( nextProps, 'defaultSuggestionsError.data.maintenance_end_time', 0 )
+				get( nextProps, 'defaultSuggestionsError.data.maintenance_end_time', null )
 			);
 		}
 
@@ -729,7 +729,7 @@ class RegisterDomainStep extends React.Component {
 			.catch( error => {
 				const timeDiff = Date.now() - timestamp;
 				if ( error && error.statusCode === 503 && ! this.props.isSignupStep ) {
-					const maintenanceEndTime = get( error, 'data.maintenance_end_time', 0 );
+					const maintenanceEndTime = get( error, 'data.maintenance_end_time', null );
 					this.props.onDomainsAvailabilityChange( false, maintenanceEndTime );
 				} else if ( error && error.error ) {
 					this.showSuggestionErrorMessage( domain, error.error, {
