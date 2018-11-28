@@ -476,12 +476,13 @@ function serializeState( reducers, state, action ) {
 
 /**
  * Create a new reducer from original `reducers` by adding a new `reducer` at `keyPath`
+ * @param {Function} origReducer Original reducer to copy `storageKey` and other flags from
  * @param {Object} reducers Object with reducer names as keys and reducer functions as values that
  *   is used as parameter to `combineReducers` (the original Redux one and our extension, too).
  * @return {Function} The function to be attached as `addReducer` method to the
  *   result of `combineReducers`.
  */
-export function addReducer( reducers ) {
+export function addReducer( origReducer, reducers ) {
 	return ( keyPath, reducer ) => {
 		// extract the first key from keyPath and dive recursively into the reducer tree
 		const [ key, ...restKeys ] = keyPath;
@@ -524,6 +525,9 @@ export function addReducer( reducers ) {
 		}
 
 		const newCombinedReducer = createCombinedReducer( { ...reducers, [ key ]: newReducer } );
+
+		// Preserve the storageKey of the updated reducer
+		newCombinedReducer.storageKey = origReducer.storageKey;
 
 		return newCombinedReducer;
 	};
@@ -614,7 +618,7 @@ function createCombinedReducer( reducers ) {
 	};
 
 	combinedReducer.hasCustomPersistence = true;
-	combinedReducer.addReducer = addReducer( reducers );
+	combinedReducer.addReducer = addReducer( combinedReducer, reducers );
 
 	return combinedReducer;
 }
