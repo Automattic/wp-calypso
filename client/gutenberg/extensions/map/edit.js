@@ -87,7 +87,7 @@ class MapEdit extends Component {
 	apiCall( serviceApiKey = null, method = 'GET' ) {
 		const { noticeOperations } = this.props;
 		const { apiKey } = this.state;
-		const path = '/jetpack/v4/service-api-keys/mapbox';
+		const path = '/wpcom/v2/service-api-keys/mapbox';
 		const fetch = serviceApiKey
 			? { path, method, data: { service_api_key: serviceApiKey } }
 			: { path, method };
