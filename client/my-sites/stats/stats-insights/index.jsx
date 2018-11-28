@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import DocumentHead from 'components/data/document-head';
 import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -65,7 +66,11 @@ const StatsInsights = props => {
 				<SectionHeader label={ translate( 'All Time Views' ) } />
 				<StatsViews />
 				{ siteId && (
-					<DomainTip siteId={ siteId } event="stats_insights_domain" vendor="domainsbot" />
+					<DomainTip
+						siteId={ siteId }
+						event="stats_insights_domain"
+						vendor={ abtest( 'krackenM5DomainSuggestions' ) }
+					/>
 				) }
 				<div className="stats-insights__nonperiodic has-recent">
 					<div className="stats__module-list">
