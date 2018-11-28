@@ -5,6 +5,7 @@
  */
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { filter } from 'lodash';
+import { Rect, SVG } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -74,13 +75,13 @@ const blockSettings = {
 	title: __( 'Tiled gallery' ),
 	description: __( 'Display multiple images in an elegantly organized tiled layout.' ),
 	icon: (
-		<svg viewBox="0 0 20 20">
-			<rect x="8" y="11" width="9" height="6" />
-			<rect x="3" y="11" width="4" height="6" />
-			<rect x="13" y="7" width="4" height="3" />
-			<rect x="13" y="3" width="4" height="3" />
-			<rect x="3" y="3" width="9" height="7" />
-		</svg>
+		<SVG viewBox="0 0 20 20">
+			<Rect x="8" y="11" width="9" height="6" />
+			<Rect x="3" y="11" width="4" height="6" />
+			<Rect x="13" y="7" width="4" height="3" />
+			<Rect x="13" y="3" width="4" height="3" />
+			<Rect x="3" y="3" width="9" height="7" />
+		</SVG>
 	),
 	category: 'jetpack',
 	keywords: [ __( 'images' ), __( 'photos' ), __( 'masonry' ) ],
