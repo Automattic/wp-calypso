@@ -77,7 +77,7 @@ export default class extends React.PureComponent {
 					{ ...{ icon, title, description, isEnabled, site } }
 				/>
 				{ includes( importingStates, state.importerState ) && (
-					<ImportingPane importerStatus={ state } site={ this.props.site } />
+					<ImportingPane importerStatus={ state } sourceType={ title } site={ this.props.site } />
 				) }
 				{ includes( uploadingStates, state.importerState ) && (
 					<SiteImporterInputPane
