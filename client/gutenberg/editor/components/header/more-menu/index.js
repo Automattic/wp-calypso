@@ -3,14 +3,12 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { IconButton, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
+import { IconButton, Dropdown, MenuGroup } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -18,6 +16,7 @@ import { IconButton, Dropdown, MenuGroup, MenuItem } from '@wordpress/components
 import CopyContentMenuItem from '../copy-content-menu-item';
 import KeyboardShortcutsHelpMenuItem from '../keyboard-shortcuts-help-menu-item';
 import ModeSwitcher from '../mode-switcher';
+import OptOutMenuItem from '../opt-out-menu-item';
 import OptionsMenuItem from '../options-menu-item';
 import PluginsMoreMenuGroup from '../plugins-more-menu-group';
 import ToolsMoreMenuGroup from '../tools-more-menu-group';
@@ -27,7 +26,7 @@ const ariaClosed = __( 'Show more tools & options' );
 const ariaOpen = __( 'Hide more tools & options' );
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-const MoreMenu = ( { translate } ) => (
+const MoreMenu = () => (
 	<Dropdown
 		className="edit-post-more-menu"
 		contentClassName="edit-post-more-menu__content"
@@ -52,7 +51,7 @@ const MoreMenu = ( { translate } ) => (
 				</MenuGroup>
 				<MenuGroup>
 					<OptionsMenuItem onSelect={ onClose } />
-					<MenuItem onClick={ noop }>{ translate( 'Switch to Classic Editor' ) }</MenuItem>
+					<OptOutMenuItem />
 				</MenuGroup>
 			</Fragment>
 		) }
@@ -60,4 +59,4 @@ const MoreMenu = ( { translate } ) => (
 );
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-export default localize( MoreMenu );
+export default MoreMenu;
