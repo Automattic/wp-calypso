@@ -386,6 +386,10 @@ div.popover-cart__popover {
 		position: relative;
 		top: 0;
 	}
+
+	.jetpack-header {
+		margin-top: 32px;
+	}
 }
 
 @include breakpoint( '<660px' ) {
