@@ -31,6 +31,7 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getLanguage } from 'lib/i18n-utils';
+import PhoneInput from 'components/phone-input';
 
 class InfoStep extends Component {
 	static propTypes = {
@@ -90,7 +91,7 @@ class InfoStep extends Component {
 		const {
 			currentUserLocale,
 			onComplete,
-			signupForm: { firstname, lastname, message, timezone },
+			signupForm: { firstname, lastname, message, timezone, phoneNumber },
 			site,
 			translate,
 		} = this.props;
@@ -138,6 +139,19 @@ class InfoStep extends Component {
 						/>
 						<FormSettingExplanation>
 							{ translate( 'Choose a city in your timezone.' ) }
+						</FormSettingExplanation>
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel>{ translate( "What's your phone number?" ) }</FormLabel>
+						<FormTextInput
+							name="phoneNumber"
+							placeholder={ translate( 'Enter your phone number including the country code' ) }
+							onChange={ this.setFieldValue }
+							value={ phoneNumber }
+						/>
+						<FormSettingExplanation>
+							{ translate( 'So that we can send you a reminder.' ) }
 						</FormSettingExplanation>
 					</FormFieldset>
 
