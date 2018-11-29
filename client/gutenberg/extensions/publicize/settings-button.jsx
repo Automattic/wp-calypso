@@ -20,6 +20,7 @@
  */
 import classnames from 'classnames';
 import { Component } from '@wordpress/element';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,7 +36,7 @@ class PublicizeSettingsButton extends Component {
 		// and for Calypso we'll detect the site fragment from the current route.
 		//
 		// If running in WP.com wp-admin or in Calypso, we redirect to Calypso sharing settings.
-		if ( window._currentSiteId || siteFragment !== 'post.php' ) {
+		if ( window._currentSiteId || ! includes( [ 'post.php', 'post-new.php' ], siteFragment ) ) {
 			const siteId = window._currentSiteId || siteFragment;
 			return `https://wordpress.com/sharing/${ siteId }`;
 		}
