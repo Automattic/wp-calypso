@@ -263,24 +263,8 @@
 	padding-bottom: 30px;
 }
 
-/* WP.com Logo */
-.signup-process-screen__wpcom-logo {
-	height: 120px;
-	width: 120px;
-	display: block;
-	margin: 10px auto 40px auto;
-	border-radius: 100%;
-	box-shadow: 0 0 10px 10px $gray-light;
-	fill: lighten( $gray, 20 );
-	background: rgba( $gray-light, 0.8 );
-
-	@include breakpoint( "<660px" ) {
-		margin-top: 48px;
-	}
-}
-
 .signup-process-screen__title {
-	margin: 0;
+	margin: 3em 0 0;
 	padding: 0 16px;
 	text-align: center;
 }
