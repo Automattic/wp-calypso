@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +14,7 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
+import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import { getVerticalData } from './mock-data';
 
 /**
@@ -56,6 +58,36 @@ class SiteMockup extends Component {
 		);
 	}
 
+	getTagline() {
+		const { siteInformation } = this.props;
+		if ( isEmpty( siteInformation ) ) {
+			return translate( 'You’ll be able to customize this to your needs.' );
+		}
+		return (
+			<>
+				{ siteInformation.address && (
+					<span className="site-mockup__address">
+						{ this.formatAddress( siteInformation.address ) }
+					</span>
+				) }
+				{ siteInformation.phone && (
+					<span className="site-mockup__phone">{ siteInformation.phone }</span>
+				) }
+			</>
+		);
+	}
+
+	/**
+	 *
+	 * @param {string} address An address formatted onto separate lines
+	 * @return {string} Get rid of the last line of the address.
+	 */
+	formatAddress( address ) {
+		const parts = address.split( '\n' );
+		parts.pop();
+		return parts.join( ', ' );
+	}
+
 	renderMockup( size = 'desktop' ) {
 		const classes = classNames( 'site-mockup__viewport', size );
 		const data = this.props.verticalData;
@@ -67,9 +99,7 @@ class SiteMockup extends Component {
 				<div className="site-mockup__body">
 					<div className="site-mockup__content">
 						<div className="site-mockup__title">{ title }</div>
-						<div className="site-mockup__tagline">
-							You'll be able to customize this to your needs.
-						</div>
+						<div className="site-mockup__tagline">{ this.getTagline() }</div>
 						<div
 							className="site-mockup__cover-image"
 							style={ { backgroundImage: `url("${ data.cover_image }")` } }
@@ -117,6 +147,7 @@ export default connect( state => {
 	const verticalData = getVerticalData( vertical );
 	return {
 		title: getSiteTitle( state ) || translate( 'Your New Website' ),
+		siteInformation: getSiteInformation( state ),
 		vertical,
 		verticalData,
 	};
