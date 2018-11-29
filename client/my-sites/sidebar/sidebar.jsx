@@ -199,28 +199,24 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	trackAdsClick = () => {
-		this.trackMenuItemClick( 'ads' );
+	trackEarnClick = () => {
+		this.trackMenuItemClick( 'earn' );
 		this.onNavigate();
 	};
 
-	ads() {
-		const { path, canUserUseAds } = this.props;
+	earn() {
+		const { path, translate } = this.props;
 
-		if ( canUserUseAds ) {
-			return (
-				<SidebarItem
-					label={ this.props.isJetpack ? 'Ads' : 'WordAds' }
-					selected={ itemLinkMatches( '/ads', path ) }
-					link={ '/ads/earnings' + this.props.siteSuffix }
-					onNavigate={ this.trackAdsClick }
-					icon="speaker"
-					tipTarget="wordads"
-				/>
-			);
-		}
-
-		return null;
+		return (
+			<SidebarItem
+				label={ translate( 'Earnings' ) }
+				selected={ itemLinkMatches( '/ads', path ) }
+				link={ '/earn' + this.props.siteSuffix }
+				onNavigate={ this.trackEarnClick }
+				icon="money"
+				tipTarget="earn"
+			/>
+		);
 	}
 
 	trackCustomizeClick = () => {
@@ -715,7 +711,7 @@ export class MySitesSidebar extends Component {
 					<SidebarMenu>
 						<SidebarHeading>{ this.props.translate( 'Configure' ) }</SidebarHeading>
 						<ul>
-							{ this.ads() }
+							{ this.earn() }
 							{ this.sharing() }
 							{ this.users() }
 							{ this.plugins() }
