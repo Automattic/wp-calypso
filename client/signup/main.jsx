@@ -121,8 +121,6 @@ class Signup extends React.Component {
 		// here.
 		disableCart();
 
-		this.submitQueryDependencies();
-
 		const flow = flows.getFlow( this.props.flowName );
 		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
@@ -132,12 +130,16 @@ class Signup extends React.Component {
 			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
 		}
 
+		// Caution: any signup Flux actions should happen after this initialization.
+		// Otherwise, the redux adpatation layer won't work and the state can go off.
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
 			providedDependencies,
 			reduxStore: this.context.store,
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
+
+		this.submitQueryDependencies();
 
 		this.updateShouldShowLoadingScreen();
 
