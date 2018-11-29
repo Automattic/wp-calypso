@@ -17,11 +17,6 @@ import { getActiveStyleName, getLayout } from './layouts';
  */
 import './view.scss';
 
-const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
-
-// @TODO this isn't working; need a reliable canonical way to determine editor vs view?
-const isEditor = isBrowser && window.hasOwnProperty( 'wp' ) && window.wp.hasOwnProperty( 'editor' );
-
 const applyNodeSize = ( node, { width, height } ) => {
 	node.style.width = `${ width }px`;
 	node.style.height = `${ height }px`;
@@ -88,11 +83,6 @@ const getGalleries = () => {
  * Setup ResizeObserver to follow each gallery on the page
  */
 const observeGalleries = () => {
-	// Do nothing if page loads an editor
-	if ( isEditor ) {
-		return;
-	}
-
 	const galleries = getGalleries();
 
 	if ( galleries.length === 0 ) {
@@ -117,7 +107,7 @@ const observeGalleries = () => {
 	} );
 };
 
-if ( isBrowser ) {
+if ( typeof window !== 'undefined' && typeof document !== 'undefined' ) {
 	// `DOMContentLoaded` may fire before the script has a chance to run
 	if ( document.readyState === 'loading' ) {
 		document.addEventListener( 'DOMContentLoaded', observeGalleries );
