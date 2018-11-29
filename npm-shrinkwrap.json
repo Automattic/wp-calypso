@@ -1689,9 +1689,9 @@
       }
     },
     "@lerna/publish": {
-      "version": "3.5.0",
-      "resolved": "https://registry.npmjs.org/@lerna/publish/-/publish-3.5.0.tgz",
-      "integrity": "sha512-CoK+wzPP/0xG54Iwf9WEbB3VgwayoiVYsubhYpC072Ue7V6mGXQh97KZMm8NzCoMDg35ZGqa85Kxpeqd5hqQlw==",
+      "version": "3.5.1",
+      "resolved": "https://registry.npmjs.org/@lerna/publish/-/publish-3.5.1.tgz",
+      "integrity": "sha512-ltw2YdWWzev9cZRAzons5ywZh9NJARPX67meeA95oMDVMrhD4Y9VHQNJ3T8ueec/W78/4sKlMSr3ecWyPNp5bg==",
       "dev": true,
       "requires": {
         "@lerna/batch-packages": "^3.1.2",
@@ -4819,7 +4819,7 @@
         },
         "strip-ansi": {
           "version": "3.0.1",
-          "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-3.0.1.tgz",
+          "resolved": "http://registry.npmjs.org/strip-ansi/-/strip-ansi-3.0.1.tgz",
           "integrity": "sha1-ajhfuIU9lS1f8F0Oiq+UJ43GPc8=",
           "dev": true,
           "requires": {
@@ -6956,7 +6956,7 @@
     },
     "es6-promisify": {
       "version": "5.0.0",
-      "resolved": "https://registry.npmjs.org/es6-promisify/-/es6-promisify-5.0.0.tgz",
+      "resolved": "http://registry.npmjs.org/es6-promisify/-/es6-promisify-5.0.0.tgz",
       "integrity": "sha1-UQnWLz5W6pZ8S2NQWu8IKRyKUgM=",
       "dev": true,
       "requires": {
@@ -9082,7 +9082,7 @@
       "dependencies": {
         "pify": {
           "version": "2.3.0",
-          "resolved": "https://registry.npmjs.org/pify/-/pify-2.3.0.tgz",
+          "resolved": "http://registry.npmjs.org/pify/-/pify-2.3.0.tgz",
           "integrity": "sha1-7RQaasBDqEnqWISY59yosVMw6Qw=",
           "dev": true
         }
@@ -12307,9 +12307,9 @@
       "dev": true
     },
     "lerna": {
-      "version": "3.5.0",
-      "resolved": "https://registry.npmjs.org/lerna/-/lerna-3.5.0.tgz",
-      "integrity": "sha512-12kZb2yCJtx3rhLycepzHTbR6suqLaqky2hSldGQh9+B7FXFgvbQJXwzoi+Y7+1cstmKHHyockdRYFLiLmiEYA==",
+      "version": "3.5.1",
+      "resolved": "https://registry.npmjs.org/lerna/-/lerna-3.5.1.tgz",
+      "integrity": "sha512-0AyxMr2UpR3RAJsyrfNtYvfcI01YVSSnbRdzum7frZAtb7S+8NSY2ip7aDbN6/YsQK2K/zOCQ4shu/nwgub8aw==",
       "dev": true,
       "requires": {
         "@lerna/add": "^3.5.0",
@@ -12324,7 +12324,7 @@
         "@lerna/init": "^3.5.0",
         "@lerna/link": "^3.5.0",
         "@lerna/list": "^3.5.0",
-        "@lerna/publish": "^3.5.0",
+        "@lerna/publish": "^3.5.1",
         "@lerna/run": "^3.5.0",
         "@lerna/version": "^3.5.0",
         "import-local": "^1.0.0",
