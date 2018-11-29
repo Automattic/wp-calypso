@@ -23,7 +23,8 @@
 		&.is-toggled,
 		&.is-toggled:hover {
 			.jetpack-logo,
-			.jetpack-logo * {
+			.jetpack-logo__icon-circle,
+			.jetpack-logo__icon-triangle {
 				stroke: none !important;
 			}
 
