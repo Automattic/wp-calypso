@@ -19,7 +19,9 @@ export const settings = {
 
 	description: (
 		<Fragment>
-			<p>{ __( 'Invite visitors to subscribe to your site.' ) }</p>
+			<p>
+				{ __( 'A form enabling readers to get notifications when new posts are published from this site.' ) }
+			</p>
 		</Fragment>
 	),
 
