@@ -20,12 +20,12 @@ const debug = debugFactory( 'wporg' );
 /**
  * Constants
  */
-const _WPORG_PLUGINS_LIST = 'https://api.wordpress.org/plugins/info/1.1/?action=query_plugins';
-const _DEFAULT_PAGE_SIZE = 24;
-const _DEFAULT_CATEGORY = 'all';
-const _DEFAULT_FIRST_PAGE = 1;
+const WPORG_PLUGINS_LIST = 'https://api.wordpress.org/plugins/info/1.1/?action=query_plugins';
+const DEFAULT_PAGE_SIZE = 24;
+const DEFAULT_CATEGORY = 'all';
+const DEFAULT_FIRST_PAGE = 1;
 
-const _WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.1/';
+const WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.1/';
 
 function getWporgLocaleCode() {
 	const currentLocaleCode = i18n.getLocaleSlug();
@@ -75,27 +75,27 @@ export default {
 	fetchPluginsList: function( options, callback ) {
 		let payload;
 		// default variables;
-		options.page = options.page || _DEFAULT_FIRST_PAGE;
-		options.pageSize = options.pageSize || _DEFAULT_PAGE_SIZE;
-		options.category = options.category || _DEFAULT_CATEGORY;
-		options.search = options.search;
+		const page = options.page || DEFAULT_FIRST_PAGE;
+		const pageSize = options.pageSize || DEFAULT_PAGE_SIZE;
+		const category = options.category || DEFAULT_CATEGORY;
+		const search = options.search;
 
 		payload =
 			'request[page]=' +
-			options.page +
+			page +
 			'&request[per_page]=' +
-			options.pageSize +
+			pageSize +
 			'&request[fields][icons]=1&request[fields][banners]=1' +
 			'&request[fields][compatibility]=1&request[fields][tested]=0' +
 			'&request[fields][requires]=0&request[fields][sections]=0';
 
-		if ( options.search ) {
-			payload += '&request[search]=' + options.search;
+		if ( search ) {
+			payload += '&request[search]=' + search;
 		} else {
-			payload += '&request[browse]=' + options.category;
+			payload += '&request[browse]=' + category;
 		}
 		superagent
-			.post( _WPORG_PLUGINS_LIST )
+			.post( WPORG_PLUGINS_LIST )
 			.set( 'Accept', 'application/json' )
 			.send( encodeURI( payload ) )
 			.end( function( err, data ) {
@@ -119,7 +119,7 @@ export default {
 			'request[slug]': themeId,
 		};
 		return superagent
-			.get( _WPORG_THEMES_ENDPOINT )
+			.get( WPORG_THEMES_ENDPOINT )
 			.set( 'Accept', 'application/json' )
 			.query( query )
 			.then( ( { body } ) => body );
@@ -146,7 +146,7 @@ export default {
 		};
 
 		return superagent
-			.get( _WPORG_THEMES_ENDPOINT )
+			.get( WPORG_THEMES_ENDPOINT )
 			.set( 'Accept', 'application/json' )
 			.query( query )
 			.then( ( { body } ) => body );
