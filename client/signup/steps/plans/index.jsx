@@ -108,7 +108,7 @@ export class PlansStep extends Component {
 
 	plansFeaturesList() {
 		const {
-			hasDotBlogDomain,
+			disableBloggerPlanWithNonBlogDomain,
 			hideFreePlan,
 			isDomainOnly,
 			selectedSite,
@@ -129,7 +129,7 @@ export class PlansStep extends Component {
 					displayJetpackPlans={ false }
 					domainName={ this.getDomainName() }
 					customerType={ customerType || ( flowName === 'ecommerce' ? 'business' : undefined ) }
-					disableBloggerPlanWithNonBlogDomain={ ! hasDotBlogDomain }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 				/>
 				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
 				   * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
@@ -173,8 +173,8 @@ export class PlansStep extends Component {
 
 PlansStep.propTypes = {
 	additionalStepData: PropTypes.object,
+	disableBloggerPlanWithNonBlogDomain: PropTypes.bool,
 	goToNextStep: PropTypes.func.isRequired,
-	hasDotBlogDomain: PropTypes.bool,
 	hideFreePlan: PropTypes.bool,
 	selectedSite: PropTypes.object,
 	stepName: PropTypes.string.isRequired,
@@ -196,12 +196,12 @@ export const isDotBlogDomainRegistration = domainItem => {
 	}
 	const { is_domain_registration, meta } = domainItem;
 
-	const tld = getTld( meta );
-	return tld === 'blog' && ! isSubdomain( meta ) && is_domain_registration;
+	return is_domain_registration && getTld( meta ) === 'blog';
 };
 
 export default connect( ( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
-	hasDotBlogDomain: isDotBlogDomainRegistration( domainItem ),
+	disableBloggerPlanWithNonBlogDomain:
+		domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
 	// This step could be used to set up an existing site, in which case
 	// some descendants of this component may display discounted prices if
 	// they apply to the given site.

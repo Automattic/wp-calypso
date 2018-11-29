@@ -311,22 +311,4 @@ describe( 'isDotBlogDomainRegistration()', () => {
 			} )
 		).toBe( false );
 	} );
-
-	test( 'should return false for dot blog subdomain registrations', () => {
-		expect(
-			isDotBlogDomainRegistration( {
-				meta: 'domain.home.blog',
-				is_domain_registration: true,
-			} )
-		).toBe( false );
-	} );
-
-	test( 'should return false for dot com subdomain registrations', () => {
-		expect(
-			isDotBlogDomainRegistration( {
-				meta: 'domain.home.com',
-				is_domain_registration: true,
-			} )
-		).toBe( false );
-	} );
 } );
