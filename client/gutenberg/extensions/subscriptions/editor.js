@@ -42,11 +42,6 @@ export const settings = {
 		//The Markdown source is saved in the block content comments delimiter
 		subscribe_placeholder: { type: 'string', default: 'Email Address' },
 		subscribe_button: { type: 'string', default: 'Subscribe' },
-		success_message: {
-			type: 'string',
-			default:
-				"Success! An email was just sent to confirm your subscription. Please find the email now and click 'Confirm Follow' to start subscribing.",
-		},
 		show_subscribers_total: { type: 'boolean', default: false },
 	},
 	edit,
