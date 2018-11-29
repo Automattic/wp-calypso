@@ -13,6 +13,7 @@ import { get, noop } from 'lodash';
 import Editor from './edit-post/editor.js';
 import EditorDocumentHead from './editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryPostTypes from 'components/data/query-post-types';
 import { createAutoDraft, requestSitePost, requestGutenbergDemoContent } from 'state/data-getters';
 import { getHttpData } from 'state/data-layer/http-data';
@@ -33,6 +34,35 @@ class GutenbergEditor extends Component {
 		}
 	}
 
+	getAnalyticsPathAndTitle = () => {
+		const { postId, postType } = this.props;
+		const isPost = 'post' === postType;
+		const isPage = 'page' === postType;
+		const isNew = ! postId;
+		const isEdit = !! postId;
+		if ( isPost && isNew ) {
+			return { path: '/gutenberg/post/:site', title: 'Post > New' };
+		}
+		if ( isPost && isEdit ) {
+			return { path: '/gutenberg/post/:site/:post_id', title: 'Post > Edit' };
+		}
+		if ( isPage && isNew ) {
+			return { path: '/gutenberg/page/:site', title: 'Page > New' };
+		}
+		if ( isPage && isEdit ) {
+			return { path: '/gutenberg/page/:site/:post_id', title: 'Page > Edit' };
+		}
+		if ( isNew ) {
+			return { path: `/gutenberg/edit/${ postType }/:site`, title: 'Custom Post Type > New' };
+		}
+		if ( isEdit ) {
+			return {
+				path: `/gutenberg/edit/${ postType }/:site/:post_id`,
+				title: 'Custom Post Type > Edit',
+			};
+		}
+	};
+
 	render() {
 		const { postType, siteId, post, overridePost, isRTL } = this.props;
 
@@ -48,6 +78,7 @@ class GutenbergEditor extends Component {
 		return (
 			<Fragment>
 				<QueryPostTypes siteId={ siteId } />
+				<PageViewTracker { ...this.getAnalyticsPathAndTitle() } />
 				<EditorPostTypeUnsupported type={ postType } />
 				<EditorDocumentHead postType={ postType } />
 				<Editor
