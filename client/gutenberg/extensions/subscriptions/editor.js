@@ -15,7 +15,7 @@ import registerJetpackBlock from '../presets/jetpack/utils/register-jetpack-bloc
 
 export const name = 'subscriptions';
 export const settings = {
-	title: __( 'Subscriptions' ),
+	title: __( 'Subscription form' ),
 
 	description: (
 		<Fragment>
