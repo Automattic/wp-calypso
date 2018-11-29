@@ -59,6 +59,17 @@ export const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
 		return next( { ...options, path, apiNamespace: 'wp/v2' } );
 	}
 
+	// wpcom/v2 namespace mapping
+	//
+	// Path rewrite example:
+	// 		/wpcom/v2/publicize/connection-test-results →
+	//		/wpcom/v2/sites/example.wordpress.com/publicize/connection-test-results
+	if ( /\/wpcom\/v2\//.test( options.path ) ) {
+		const path = options.path.replace( '/wpcom/v2/', `/sites/${ siteSlug }/` );
+
+		return next( { ...options, path, apiNamespace: 'wpcom/v2' } );
+	}
+
 	/*
 	 * oembed/1.0 namespace mapping
 	 *
