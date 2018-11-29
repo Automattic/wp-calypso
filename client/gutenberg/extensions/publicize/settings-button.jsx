@@ -25,15 +25,32 @@ import { Component } from '@wordpress/element';
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { getSiteFragment } from 'lib/route/path';
 
 class PublicizeSettingsButton extends Component {
+	getButtonLink() {
+		const siteFragment = getSiteFragment( window.location.pathname );
+
+		// WP.com wp-admin will expose a window._currentSiteId with the current site ID
+		// and for Calypso we'll detect the site fragment from the current route.
+		//
+		// If running in WP.com wp-admin or in Calypso, we redirect to Calypso sharing settings.
+		if ( window._currentSiteId || siteFragment !== 'post.php' ) {
+			const siteId = window._currentSiteId || siteFragment;
+			return `https://wordpress.com/sharing/${ siteId }`;
+		}
+
+		// Running in WordPress.org wp-admin will currently lead to Sharing settings in wp-admin.
+		return 'options-general.php?page=sharing&publicize_popup=true';
+	}
+
 	/**
 	 * Opens up popup so user can view/modify connections
 	 *
 	 * @param {object} event Event instance for onClick.
 	 */
 	settingsClick = event => {
-		const href = 'options-general.php?page=sharing&publicize_popup=true';
+		const href = this.getButtonLink();
 		const { refreshCallback } = this.props;
 		event.preventDefault();
 		/**
