@@ -1044,6 +1044,10 @@ export function hasToUpgradeToPayForADomain( selectedSite, cart ) {
 	return false;
 }
 
+export function isDomainMappingFree( selectedSite ) {
+	return selectedSite && isPlan( selectedSite.plan );
+}
+
 export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion, isDomainOnly ) {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
@@ -1053,7 +1057,7 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		return 'FREE_WITH_PLAN';
 	}
 
-	if ( isDomainMapping( suggestion ) && ( selectedSite && isPlan( selectedSite.plan ) ) ) {
+	if ( isDomainMapping( suggestion ) && isDomainMappingFree( selectedSite ) ) {
 		return 'FREE_WITH_PLAN';
 	}
 

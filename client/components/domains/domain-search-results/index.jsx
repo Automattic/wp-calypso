@@ -19,7 +19,7 @@ import DomainRegistrationSuggestion from 'components/domains/domain-registration
 import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import FeaturedDomainSuggestions from 'components/domains/featured-domain-suggestions';
-import { isNextDomainFree } from 'lib/cart-values/cart-items';
+import { isDomainMappingFree, isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
 import Card from 'components/card';
 import ScreenReaderText from 'components/screen-reader-text';
@@ -62,6 +62,7 @@ class DomainSearchResults extends React.Component {
 			lastDomainIsTransferrable,
 			lastDomainStatus,
 			lastDomainSearched,
+			selectedSite,
 			translate,
 		} = this.props;
 		const availabilityElementClasses = classNames( {
@@ -100,7 +101,7 @@ class DomainSearchResults extends React.Component {
 		) {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
-			if ( isNextDomainFree( this.props.cart ) ) {
+			if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
 				offer = translate(
 					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
 					{ args: { domain }, components }
