@@ -17,6 +17,7 @@ import { parse as parseQs } from 'qs';
  */
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
+import { getTld, isSubdomain } from 'lib/domains';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -165,6 +166,7 @@ export class PlansStep extends Component {
 PlansStep.propTypes = {
 	additionalStepData: PropTypes.object,
 	goToNextStep: PropTypes.func.isRequired,
+	hasDotBlogDomain: PropTypes.bool,
 	hideFreePlan: PropTypes.bool,
 	selectedSite: PropTypes.object,
 	stepName: PropTypes.string.isRequired,
@@ -173,7 +175,25 @@ PlansStep.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( ( state, { path, signupDependencies: { siteSlug } } ) => ( {
+/**
+ * Checks if the domainItem picked in the domain step is a top level .blog domain -
+ * we only want to make Blogger plan available if it is.
+ *
+ * @param {Object} domainItem domainItem object stored in the "choose domain" step
+ * @return {bool} is .blog domain registration
+ */
+export const isDotBlogDomainRegistration = domainItem => {
+	if ( ! domainItem ) {
+		return false;
+	}
+	const { is_domain_registration, meta } = domainItem;
+
+	const tld = getTld( meta );
+	return tld === 'blog' && ! isSubdomain( meta ) && is_domain_registration;
+};
+
+export default connect( ( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
+	hasDotBlogDomain: isDotBlogDomainRegistration( domainItem ),
 	// This step could be used to set up an existing site, in which case
 	// some descendants of this component may display discounted prices if
 	// they apply to the given site.
