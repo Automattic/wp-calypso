@@ -54,14 +54,16 @@
 	// Only show the mobile view at small
 	// breakpoints.
 	@include breakpoint( '<660px' ) {
-		padding: 0 4px;
+		padding: 0 10px;
 
 		.site-mockup__viewport.desktop {
 			display: none;
 		}
 
 		.site-mockup__viewport.mobile {
-			width: 100%;
+			width: auto;
+			margin: 15px auto;
+			max-width: 380px;
 		}
 	}
 }
@@ -145,14 +147,20 @@
 .site-mockup__body {
 	height: 100%;
 	overflow-x: hidden;
+	overflow-y: auto;
 
 	// Mobile body is scrollable and needs to
 	// make room for the chrome.
 	.site-mockup__viewport.mobile & {
-		overflow-y: auto;
+		overflow-y: hidden;
 		margin: 0 6px 6px 6px;
 		border: 1px solid $gray-lighten-20;
 		border-radius: 3px;
+		max-height: 400px;
+
+		@include breakpoint( '<660px' ) {
+			max-height: 600px;
+		}
 	}
 }
 
@@ -208,6 +216,27 @@
 	font-size: 15px;
 	margin-bottom: 20px;
 }
+
+.site-mockup__address {
+	display: inline-block;
+
+	&::after {
+		content: "•";
+		padding: 0 .5em;
+		.site-mockup__viewport.mobile & {
+			display: none;
+		}
+	}
+}
+
+.site-mockup__phone {
+	display: inline-block;
+	.site-mockup__viewport.mobile & {
+		display: block;
+	}
+
+}
+
 
 .site-mockup__h2 {
 	font-size: 32px;
