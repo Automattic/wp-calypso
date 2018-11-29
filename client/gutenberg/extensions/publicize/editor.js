@@ -13,9 +13,9 @@
 /**
  * External dependencies
  */
-import { Fragment } from '@wordpress/element';
-import { PluginPrePublishPanel } from '@wordpress/edit-post';
 import { PanelBody } from '@wordpress/components';
+import { PluginPrePublishPanel } from '@wordpress/edit-post';
+import { PostTypeSupportCheck } from '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -30,7 +30,7 @@ export const name = 'publicize';
 
 export const settings = {
 	render: () => (
-		<Fragment>
+		<PostTypeSupportCheck supportKeys="publicize">
 			<JetpackPluginSidebar>
 				<PanelBody title={ __( 'Share this post' ) }>
 					<PublicizePanel />
@@ -47,7 +47,7 @@ export const settings = {
 			>
 				<PublicizePanel />
 			</PluginPrePublishPanel>
-		</Fragment>
+		</PostTypeSupportCheck>
 	),
 };
 

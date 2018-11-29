@@ -19,7 +19,7 @@
  * External dependencies
  */
 import { compose } from '@wordpress/compose';
-import { PostTypeSupportCheck } from '@wordpress/editor';
+import { Fragment } from '@wordpress/element';
 import { withDispatch, withSelect } from '@wordpress/data';
 
 /**
@@ -31,7 +31,7 @@ import PublicizeSettingsButton from './settings-button';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const PublicizePanel = ( { connections, refreshConnections } ) => (
-	<PostTypeSupportCheck supportKeys="publicize">
+	<Fragment>
 		<div>{ __( 'Connect and select social media services to share this post.' ) }</div>
 		{ connections &&
 			connections.length > 0 && <PublicizeForm refreshCallback={ refreshConnections } /> }
@@ -43,7 +43,7 @@ const PublicizePanel = ( { connections, refreshConnections } ) => (
 				/>
 			) }
 		{ connections && connections.length > 0 && <PublicizeConnectionVerify /> }
-	</PostTypeSupportCheck>
+	</Fragment>
 );
 
 export default compose( [
