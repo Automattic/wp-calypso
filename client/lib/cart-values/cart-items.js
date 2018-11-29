@@ -58,9 +58,10 @@ import { domainProductSlugs } from 'lib/domains/constants';
 import {
 	getTermDuration,
 	getPlan,
+	isBloggerPlan,
+	isBusinessPlan,
 	isPersonalPlan,
 	isPremiumPlan,
-	isBusinessPlan,
 	isWpComFreePlan,
 	isWpComBloggerPlan,
 } from 'lib/plans';
@@ -1045,7 +1046,7 @@ export function hasToUpgradeToPayForADomain( selectedSite, cart ) {
 }
 
 export function isDomainMappingFree( selectedSite ) {
-	return selectedSite && isPlan( selectedSite.plan );
+	return selectedSite && isPlan( selectedSite.plan ) && ! isBloggerPlan( selectedSite.plan );
 }
 
 export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion, isDomainOnly ) {

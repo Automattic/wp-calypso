@@ -26,7 +26,11 @@ import Button from 'components/button';
 import { errorNotice } from 'state/notices/actions';
 import QueryProducts from 'components/data/query-products-list';
 import { getDomainPrice, getDomainProductSlug } from 'lib/domains';
-import { isDomainBundledWithPlan, isNextDomainFree } from 'lib/cart-values/cart-items';
+import {
+	isDomainBundledWithPlan,
+	isDomainMappingFree,
+	isNextDomainFree,
+} from 'lib/cart-values/cart-items';
 import formatCurrency from 'lib/format-currency';
 import { isPlan } from 'lib/products-values';
 
@@ -174,7 +178,7 @@ class UseYourDomainStep extends React.Component {
 		}
 
 		if (
-			( selectedSite && isPlan( selectedSite.plan ) ) ||
+			isDomainMappingFree( selectedSite ) ||
 			isNextDomainFree( cart ) ||
 			isDomainBundledWithPlan( cart, searchQuery )
 		) {
