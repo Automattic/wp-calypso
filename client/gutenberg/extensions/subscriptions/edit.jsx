@@ -14,7 +14,7 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 class SubscriptionEdit extends Component {
 	render() {
 		const { attributes, className, isSelected, setAttributes } = this.props;
-		const { subscribe_placeholder, show_subscribers_total } = attributes;
+		const { subscribe_placeholder, show_subscribers_total, subscriber_count } = attributes;
 
 		if ( isSelected ) {
 			return (
@@ -33,8 +33,6 @@ class SubscriptionEdit extends Component {
 				</div>
 			);
 		}
-
-		const subscriberCount = '42';
 
 		return (
 			<div className={ className }>
