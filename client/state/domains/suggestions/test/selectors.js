@@ -21,7 +21,7 @@ describe( 'selectors', () => {
 				domains: {
 					suggestions: {
 						items: {
-							'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
+							'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false,"only_wordpressdotcom":false}': [
 								{
 									domain_name: 'example.me',
 									cost: '$25.00',
@@ -35,7 +35,7 @@ describe( 'selectors', () => {
 									product_slug: 'domain_reg',
 								},
 							],
-							'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
+							'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false,"only_wordpressdotcom":false}': [
 								{
 									domain_name: 'foobar.me',
 									cost: '$25.00',
@@ -75,8 +75,8 @@ describe( 'selectors', () => {
 				domains: {
 					suggestions: {
 						requesting: {
-							'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
-							'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': false,
+							'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false,"only_wordpressdotcom":false}': true,
+							'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false,"only_wordpressdotcom":false}': false,
 						},
 					},
 				},
@@ -114,8 +114,8 @@ describe( 'selectors', () => {
 					domains: {
 						suggestions: {
 							errors: {
-								'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
-								'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': null,
+								'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false,"only_wordpressdotcom":false}': error,
+								'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false,"only_wordpressdotcom":false}': null,
 							},
 						},
 					},

@@ -16,6 +16,7 @@ import { requestDomainsSuggestions } from 'state/domains/suggestions/actions';
 
 function getQueryObject( props ) {
 	return {
+		only_wordpressdotcom: props.onlyWpcom,
 		include_wordpressdotcom: props.includeSubdomain,
 		quantity: props.quantity,
 		query: props.query,
@@ -27,6 +28,7 @@ function getQueryObject( props ) {
 
 class QueryDomainsSuggestions extends PureComponent {
 	static propTypes = {
+		onlyWpcom: PropTypes.bool,
 		includeSubdomain: PropTypes.bool,
 		quantity: PropTypes.number,
 		query: PropTypes.string.isRequired,
@@ -37,6 +39,7 @@ class QueryDomainsSuggestions extends PureComponent {
 	};
 
 	static defaultProps = {
+		onlyWpcom: false,
 		includeSubdomain: false,
 		quantity: 5,
 		requestDomainsSuggestions: () => {},

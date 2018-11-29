@@ -20,7 +20,7 @@ describe( 'utils', () => {
 				includeSubdomain: true,
 			};
 			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":true}'
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":true,"only_wordpressdotcom":false}'
 			);
 		} );
 		test( 'also supports include_wordpressdotcom vs includeSubdomain', () => {
@@ -31,7 +31,7 @@ describe( 'utils', () => {
 				include_wordpressdotcom: true,
 			};
 			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":true}'
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":true,"only_wordpressdotcom":false}'
 			);
 		} );
 		test( 'should lowercase a query', () => {
@@ -42,7 +42,7 @@ describe( 'utils', () => {
 				includeSubdomain: false,
 			};
 			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}'
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false,"only_wordpressdotcom":false}'
 			);
 		} );
 		test( 'defaults to false, when includeSubdomain is missing', () => {
@@ -52,7 +52,7 @@ describe( 'utils', () => {
 				vendor: 'domainsbot',
 			};
 			expect( getSerializedDomainsSuggestionsQuery( query ) ).to.eql(
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}'
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false,"only_wordpressdotcom":false}'
 			);
 		} );
 		test( 'returns null if query is missing', () => {
