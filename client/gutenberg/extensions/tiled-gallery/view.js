@@ -40,22 +40,15 @@ const resizeGallery = ( { galleryNode, width, columns, layout } ) => {
 		width,
 	} );
 
-	// eslint-disable-next-line
-	// console.log('|', galleryLayout, options);
-
 	// Resize rows within the gallery
 	galleryNode.childNodes.forEach( ( rowNode, rowIndex ) => {
 		const rowLayout = galleryLayout[ rowIndex ];
-		// eslint-disable-next-line
-		// console.log('| - row:', rowLayout, rowIndex );
 		applyNodeSize( rowNode, rowLayout );
 
 		// Resize tiles within the row
 		const tileNodes = rowNode.querySelectorAll( '.tiled-gallery__item' );
 		tileNodes.forEach( ( tileNode, tileIndex ) => {
 			const tileLayout = rowLayout.tiles[ tileIndex ];
-			// eslint-disable-next-line
-			// console.log('|  ﹂ tile:', tileLayout, tileIndex );
 			applyNodeSize( tileNode, tileLayout );
 		} );
 	} );
