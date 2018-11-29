@@ -289,7 +289,7 @@ class Signup extends React.Component {
 			// exlude the site type step if it is fulfilled here.
 		}
 
-		flows.excludedSteps( fulfilledSteps );
+		flows.excludeSteps( fulfilledSteps );
 	};
 
 	checkForCartItems = signupDependencies => {
