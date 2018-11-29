@@ -1108,7 +1108,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_ALL_FREE_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_FREE_FEATURES,
 		getTitle: () => i18n.translate( 'All free features' ),
-		getDescription: () => i18n.translate( 'Also includes all features offered in the Free plan.' ),
+		getDescription: () => i18n.translate( 'Also includes all features offered in the free plan.' ),
 	},
 
 	[ FEATURE_ALL_PERSONAL_FEATURES_JETPACK ]: {
@@ -1133,7 +1133,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_ALL_PERSONAL_FEATURES,
 		getTitle: () => i18n.translate( 'All Personal features' ),
 		getDescription: () =>
-			i18n.translate( 'Also includes all features offered in the Personal plan.' ),
+			i18n.translate( 'Including email and live chat support, an ad-free experience for your visitors, increased storage space, and a custom domain name for one year.' ),
 	},
 
 	[ FEATURE_ALL_PREMIUM_FEATURES_JETPACK ]: {
@@ -1158,7 +1158,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_ALL_PREMIUM_FEATURES,
 		getTitle: () => i18n.translate( 'All Premium features' ),
 		getDescription: () =>
-			i18n.translate( 'Also includes all features offered in the Premium plan.' ),
+			i18n.translate( 'Including unlimited premium themes, advanced design and monetization options, simple payment buttons, and a custom domain name for one year.' ),
 	},
 
 	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
@@ -1172,7 +1172,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_FREE_BLOG_DOMAIN ]: {
 		getSlug: () => FEATURE_FREE_BLOG_DOMAIN,
-		getTitle: () => i18n.translate( 'Free .blog Domain for One Year' ),
+		getTitle: () => i18n.translate( 'Free .blog domain for one year' ),
 		getDescription: () =>
 			i18n.translate(
 				'Get a free custom .blog domain for one year. Premium domains not included. Your domain will renew at its regular price.'
@@ -1919,7 +1919,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_ALL_BUSINESS_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_BUSINESS_FEATURES,
 		getTitle: () => i18n.translate( 'All Business Features' ),
-		getDescription: () => i18n.translate( 'All Business plan features' ),
+		getDescription: () => i18n.translate( 'Including the ability to upload plugins and themes, priority support, advanced monetization options, and unlimited premium themes.' ),
 	},
 };
 
