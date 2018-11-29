@@ -1053,6 +1053,10 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		return 'FREE_WITH_PLAN';
 	}
 
+	if ( isDomainMapping( suggestion ) && ( selectedSite && isPlan( selectedSite.plan ) ) ) {
+		return 'FREE_WITH_PLAN';
+	}
+
 	if ( isDomainOnly ) {
 		return 'PRICE';
 	}

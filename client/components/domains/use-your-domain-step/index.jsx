@@ -162,7 +162,7 @@ class UseYourDomainStep extends React.Component {
 	};
 
 	getMappingPriceText = () => {
-		const { cart, currencyCode, productsList, translate } = this.props;
+		const { cart, currencyCode, productsList, selectedSite, translate } = this.props;
 		const { searchQuery } = this.state;
 
 		let mappingProductPrice;
@@ -173,7 +173,11 @@ class UseYourDomainStep extends React.Component {
 			mappingProductPrice += ' per year plus registration costs at your current provider';
 		}
 
-		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
+		if (
+			( selectedSite && isPlan( selectedSite.plan ) ) ||
+			isNextDomainFree( cart ) ||
+			isDomainBundledWithPlan( cart, searchQuery )
+		) {
 			mappingProductPrice = translate(
 				'Free with your plan, but registration costs at your current provider still apply'
 			);
