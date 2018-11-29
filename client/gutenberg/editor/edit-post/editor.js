@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ import { EditorProvider, ErrorBoundary } from '@wordpress/editor';
 import Layout from './components/layout';
 import './store';
 
-function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...props } ) {
+function Editor( { settings, hasFixedToolbar, focusMode, post, overridePost, onError, ...props } ) {
 	if ( ! post ) {
 		return null;
 	}
@@ -23,6 +24,7 @@ function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...pr
 	const editorSettings = {
 		...settings,
 		hasFixedToolbar,
+		focusMode,
 	};
 
 	return (
@@ -34,7 +36,7 @@ function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...pr
 	);
 }
 
-
-export default withSelect( ( select ) => ( {
+export default withSelect( select => ( {
 	hasFixedToolbar: select( 'core/edit-post' ).isFeatureActive( 'fixedToolbar' ),
+	focusMode: select( 'core/edit-post' ).isFeatureActive( 'focusMode' ),
 } ) )( Editor );
