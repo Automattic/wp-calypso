@@ -5,6 +5,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { replace } from 'lodash';
 
 /**
  * WordPress Dependencies
@@ -60,7 +61,7 @@ const optOut = siteId => {
 
 export default connect(
 	state => ( {
-		classicEditorRoute: `/${ getCurrentRoute( state ).replace( '/gutenberg/', '' ) }`,
+		classicEditorRoute: `/${ replace( getCurrentRoute( state ), '/gutenberg/', '' ) }`,
 		siteId: getSelectedSiteId( state ),
 	} ),
 	{ navigate, optOut }
