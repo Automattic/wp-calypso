@@ -31,7 +31,6 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getLanguage } from 'lib/i18n-utils';
-import PhoneInput from 'components/phone-input';
 
 class InfoStep extends Component {
 	static propTypes = {
