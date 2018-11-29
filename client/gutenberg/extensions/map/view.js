@@ -13,7 +13,7 @@ import apiFetch from '@wordpress/api-fetch';
 window &&
 	window.addEventListener( 'load', function() {
 		const frontendManagement = new FrontendManagement();
-		apiFetch( { path: '/jetpack/v4/service-api-keys/mapbox' } ).then( result => {
+		apiFetch( { path: '/wpcom/v2/service-api-keys/mapbox' } ).then( result => {
 			frontendManagement.blockIterator( document, [
 				{
 					component: component,
