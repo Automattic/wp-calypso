@@ -32,7 +32,12 @@ export default class SignupHeader extends Component {
 	render() {
 		return (
 			<div className="header">
-				<WordPressLogo />
+				<WordPressLogo
+					size={ 120 }
+					className={
+						this.props.shouldShowLoadingScreen ? 'wordpress-logo-animated' : 'wordpress-logo'
+					}
+				/>
 
 				{ /* Ideally, this is where the back button
 			   would live. But thats hard to move, it seems. */ }

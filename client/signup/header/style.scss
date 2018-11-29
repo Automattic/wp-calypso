@@ -27,3 +27,22 @@
 			right: 16px;
 	}
 }
+
+/* WP.com Logo */
+@keyframes upsize {
+	0% {
+		transform: scale(0.2) translateY(0);
+	}
+	100% {
+		transform: scale(1) translateY(20px);
+	}
+}
+
+.header .wordpress-logo-animated {
+	animation: upsize 1s 1 ease-in-out;
+	animation-fill-mode: forwards;
+	transform-origin: 50% 0;
+	fill: $blue-wordpress;
+	margin: 0 auto;
+	display: block;
+}
