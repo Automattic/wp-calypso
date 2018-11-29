@@ -137,11 +137,6 @@ export function generateSteps( {
 			providesDependencies: [ 'siteTitle' ],
 		},
 
-		'site-topic': {
-			stepName: 'site-topic',
-			providesDependencies: [ 'siteTopic' ],
-		},
-
 		test: {
 			stepName: 'test',
 		},
@@ -379,6 +374,16 @@ export function generateSteps( {
 		'site-type': {
 			stepName: 'site-type',
 			providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
+		},
+
+		'site-topic': {
+			stepName: 'site-topic',
+			providesDependencies: [ 'siteTopic' ],
+		},
+
+		'site-information': {
+			stepName: 'site-information',
+			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
 		},
 	};
 }

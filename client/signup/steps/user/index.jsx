@@ -20,6 +20,7 @@ import SignupActions from 'lib/signup/actions';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
+import { setSiteInformation } from 'state/signup/steps/site-information/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { WPCC } from 'lib/url/support';
 import config from 'config';
@@ -61,7 +62,7 @@ export class UserStep extends Component {
 		subHeaderText: '',
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.step && 'invalid' === nextProps.step.status ) {
 			this.setState( { submitting: false } );
 		}
@@ -74,7 +75,7 @@ export class UserStep extends Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { oauth2Signup, initialContext } = this.props;
 		const clientId = get( initialContext, 'query.oauth2_client_id', null );
 
@@ -141,6 +142,11 @@ export class UserStep extends Component {
 	submit = data => {
 		const { flowName, stepName, oauth2Signup, translate } = this.props;
 		const dependencies = {};
+		const siteInformationPreFill = { address: '', email: data.userData.email, phone: '' };
+
+		// If the site-information step is enabled, then the email field in that step
+		// will be pre-populated with the value given in the user step
+		this.props.setSiteInformation( siteInformationPreFill );
 
 		if ( oauth2Signup ) {
 			dependencies.oauth2_client_id = data.queryArgs.oauth2_client_id;
@@ -319,6 +325,7 @@ export default connect(
 		suggestedUsername: getSuggestedUsername( state ),
 	} ),
 	{
+		setSiteInformation,
 		recordTracksEvent,
 		fetchOAuth2ClientData,
 	}

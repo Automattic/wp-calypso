@@ -22,6 +22,8 @@ export const allSiteTypes = [
 		description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
 		theme: 'pub/independent-publisher-2',
 		designType: 'blog',
+		siteTitleLabel: i18n.translate( 'What would you like to call your blog?' ),
+		siteTitlePlaceholder: i18n.translate( "E.g. Stevie's blog " ),
 	},
 	{
 		id: 'business',
@@ -30,6 +32,8 @@ export const allSiteTypes = [
 		description: i18n.translate( 'Promote products and services.' ),
 		theme: 'pub/radcliffe-2',
 		designType: 'page',
+		siteTitleLabel: i18n.translate( 'What is the name of your business?' ),
+		siteTitlePlaceholder: i18n.translate( 'E.g. Vail Renovations ' ),
 	},
 	{
 		id: 'professional',
@@ -38,6 +42,8 @@ export const allSiteTypes = [
 		description: i18n.translate( 'Showcase your portfolio and work.' ),
 		theme: 'pub/altofocus',
 		designType: 'portfolio',
+		siteTitleLabel: i18n.translate( 'What is your name?' ),
+		siteTitlePlaceholder: i18n.translate( 'E.g. John Appleseed' ),
 	},
 	{
 		id: 'education',
@@ -46,6 +52,8 @@ export const allSiteTypes = [
 		description: i18n.translate( 'Share school projects and class info.' ),
 		theme: 'pub/twentyfifteen',
 		designType: 'blog',
+		siteTitleLabel: i18n.translate( 'What is the name of your site?' ),
+		siteTitlePlaceholder: i18n.translate( 'E.g. My class' ),
 	},
 	{
 		id: 'store',
@@ -54,6 +62,8 @@ export const allSiteTypes = [
 		description: i18n.translate( 'Sell your collection of products online. ' ),
 		theme: 'pub/dara',
 		designType: 'store',
+		siteTitleLabel: i18n.translate( 'What is the name of your store?' ),
+		siteTitlePlaceholder: i18n.translate( "E.g. Mel's Diner" ),
 	},
 ];
 
