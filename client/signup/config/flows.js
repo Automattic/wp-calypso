@@ -169,8 +169,15 @@ const Flows = {
 		return Flows.filterExcludedSteps( Flows.getABTestFilteredFlow( flowName, flow ) );
 	},
 
-	addExcludedStep( step ) {
-		Flows.excludedSteps = [ ...Flows.excludedSteps, step ];
+	/**
+	 * Make `getFlow()` call to exclude the given steps.
+	 * The main usage at the moment is to serve as a quick solution to remove steps that have been pre-fulfilled
+	 * without explicit user inputs, e.g. query arguments.
+	 *
+	 * @param {Array} steps An array of names of steps to be excluded.
+	 */
+	excludeSteps( steps ) {
+		Flows.excludedSteps = steps;
 	},
 
 	filterExcludedSteps( flow ) {

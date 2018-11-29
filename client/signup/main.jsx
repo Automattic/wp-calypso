@@ -249,6 +249,7 @@ class Signup extends React.Component {
 
 		const queryObject = this.props.initialContext.query;
 		const flowSteps = flows.getFlow( this.props.flowName ).steps;
+		const fulfilledSteps = [];
 
 		// `vertical` query parameter
 		const vertical = queryObject.vertical;
@@ -274,7 +275,7 @@ class Signup extends React.Component {
 				} );
 			}
 
-			flows.addExcludedStep( 'site-topic' );
+			fulfilledSteps.push( 'site-topic' );
 		}
 
 		//`site_type` query parameter
@@ -284,7 +285,11 @@ class Signup extends React.Component {
 			debug( 'From query string: site_type = %s', siteTypeQueryParam );
 			debug( 'Site type value = %s', siteTypeValue );
 			this.props.setSiteType( siteTypeValue );
+			// TODO:
+			// exlude the site type step if it is fulfilled here.
 		}
+
+		flows.excludedSteps( fulfilledSteps );
 	};
 
 	checkForCartItems = signupDependencies => {
