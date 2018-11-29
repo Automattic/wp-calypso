@@ -61,7 +61,7 @@ const optOut = siteId => {
 
 export default connect(
 	state => ( {
-		classicEditorRoute: `/${ replace( getCurrentRoute( state ), '/gutenberg/', '' ) }`,
+		classicEditorRoute: `/${ replace( getCurrentRoute( state ), '/gutenberg/', '' ) }?force=true`,
 		siteId: getSelectedSiteId( state ),
 	} ),
 	{ navigate, optOut }
