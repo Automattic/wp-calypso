@@ -33,9 +33,9 @@ export class Sites extends Component {
 			return ! site.jetpack || site.isSiteUpgradeable;
 		}
 
-		// No support for VIP Gutenberg sites yet
+		// No support for Gutenberg on VIP or Jetpack sites yet.
 		if ( /^\/gutenberg/.test( path ) ) {
-			return ! site.is_vip;
+			return ! site.is_vip && ! site.jetpack;
 		}
 
 		return site;
