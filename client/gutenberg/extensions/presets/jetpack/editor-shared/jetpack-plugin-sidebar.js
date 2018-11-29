@@ -15,8 +15,6 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const { Fill, Slot } = createSlotFill( 'JetpackPluginSidebar' );
 
-const JetpackIcon = () => <JetpackLogo />;
-
 const JetpackPluginSidebar = ( { children } ) => (
 	<Fill>
 		{ children }
@@ -25,10 +23,10 @@ const JetpackPluginSidebar = ( { children } ) => (
 
 JetpackPluginSidebar.Slot = () => (
 	<Fragment>
-		<PluginSidebarMoreMenuItem target="jetpack" icon={ <JetpackIcon /> }>
+		<PluginSidebarMoreMenuItem target="jetpack" icon={ <JetpackLogo /> }>
 			{ __( 'Jetpack' ) }
 		</PluginSidebarMoreMenuItem>
-		<PluginSidebar name="jetpack" title={ __( 'Jetpack' ) } icon={ <JetpackIcon /> }>
+		<PluginSidebar name="jetpack" title={ __( 'Jetpack' ) } icon={ <JetpackLogo /> }>
 			<Slot />
 		</PluginSidebar>
 	</Fragment>
