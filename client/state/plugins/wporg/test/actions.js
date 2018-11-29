@@ -65,8 +65,12 @@ describe( 'WPorg Data Actions', () => {
 	} );
 
 	test( "FetchPluginData action should not make another request if there's already one in progress", () => {
-		store.dispatch( fetchPluginData( 'test' ) );
-		store.dispatch( fetchPluginData( 'test' ) );
+		// issue a second request immediately after the first one (while it's still in progress)
+		const request1 = store.dispatch( fetchPluginData( 'test' ) );
+		const request2 = store.dispatch( fetchPluginData( 'test' ) );
+		// just one fetch should have been issued
 		expect( wporg.fetchPluginInformation ).toHaveBeenCalledTimes( 1 );
+		// wait for all requests to finish before finishing the test
+		return Promise.all( [ request1, request2 ] );
 	} );
 } );
