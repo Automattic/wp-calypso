@@ -1,22 +1,17 @@
 /** @format */
 
 /**
- * External dependencies
- */
-
-import { registerBlockType } from '@wordpress/blocks';
-
-/**
  * Internal dependencies
  */
 
 import { settings } from './settings.js';
+import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
 import edit from './edit';
 import save from './save';
 import './style.scss';
 import './editor.scss';
 
-registerBlockType( settings.name, {
+registerJetpackBlock( settings.name, {
 	title: settings.title,
 	icon: settings.icon,
 	category: settings.category,
