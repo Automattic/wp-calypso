@@ -64,6 +64,7 @@ export class PlansFeaturesMain extends Component {
 		const {
 			basePlansPath,
 			customerType,
+			disableBloggerPlanWithNonBlogDomain,
 			displayJetpackPlans,
 			domainName,
 			isInSignup,
@@ -90,6 +91,7 @@ export class PlansFeaturesMain extends Component {
 			>
 				<PlanFeatures
 					basePlansPath={ basePlansPath }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					displayJetpackPlans={ displayJetpackPlans }
 					domainName={ domainName }
 					isInSignup={ isInSignup }

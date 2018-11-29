@@ -107,7 +107,14 @@ export class PlansStep extends Component {
 	};
 
 	plansFeaturesList() {
-		const { hideFreePlan, isDomainOnly, selectedSite, customerType, flowName } = this.props;
+		const {
+			hasDotBlogDomain,
+			hideFreePlan,
+			isDomainOnly,
+			selectedSite,
+			customerType,
+			flowName,
+		} = this.props;
 
 		return (
 			<div>
@@ -122,6 +129,7 @@ export class PlansStep extends Component {
 					displayJetpackPlans={ false }
 					domainName={ this.getDomainName() }
 					customerType={ customerType || ( flowName === 'ecommerce' ? 'business' : undefined ) }
+					disableBloggerPlanWithNonBlogDomain={ ! hasDotBlogDomain }
 				/>
 				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
 				   * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
