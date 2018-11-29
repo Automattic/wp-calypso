@@ -291,13 +291,13 @@ const getPlanPremiumDetails = () => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PREMIUM,
 	getTitle: () => i18n.translate( 'Premium' ),
-	getAudience: () => i18n.translate( 'Best for entrepreneurs & freelancers' ),
-	getBlogAudience: () => i18n.translate( 'Best for entrepreneurs & freelancers' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for entrepreneurs & freelancers' ),
-	getStoreAudience: () => i18n.translate( 'Best for entrepreneurs & freelancers' ),
+	getAudience: () => i18n.translate( 'Best for freelancers' ),
+	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
+	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for Entrepreneurs & Freelancers:{{/strong}}' +
+			'{{strong}}Best for Freelancers:{{/strong}}' +
 				' Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
 				' and the ability to monetize your site with ads.',
 			{
