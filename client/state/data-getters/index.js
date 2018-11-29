@@ -28,7 +28,7 @@ import { dummyTaxRate } from 'lib/tax'; // #tax-on-checkout-placeholder
  *
  * @example
  * waitForData( {
- *     planets: requestAtUrl( 'https://swapi.co/api/planets/' ),
+ *     planets: requestFromUrl( 'https://swapi.co/api/planets/' ),
  * } ).then( ( { planets } ) => {
  *     console.log( planets.data );
  * } );
@@ -36,7 +36,7 @@ import { dummyTaxRate } from 'lib/tax'; // #tax-on-checkout-placeholder
  * @param {string} url location from which to GET data
  * @return {object} HTTP data wrapped value
  */
-export const requestAtUrl = url =>
+export const requestFromUrl = url =>
 	requestHttpData( `get-at-url-${ url }`, rawHttp( { method: 'GET', url } ), {
 		fromApi: () => data => [ `get-at-url-${ url }`, data ],
 	} );
