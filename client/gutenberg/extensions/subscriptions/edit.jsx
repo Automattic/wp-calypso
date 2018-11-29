@@ -10,17 +10,11 @@ import { TextControl, Button, ToggleControl } from '@wordpress/components';
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { sprintf } from '@wordpress/i18n/build/index';
 
 class SubscriptionEdit extends Component {
 	render() {
-		const { attributes, className, isSelected, instanceId, setAttributes } = this.props;
-		const {
-			subscribe_placeholder,
-			subscribe_button,
-			success_message,
-			show_subscribers_total,
-		} = attributes;
+		const { attributes, className, isSelected, setAttributes } = this.props;
+		const { subscribe_placeholder, show_subscribers_total } = attributes;
 
 		if ( isSelected ) {
 			return (
