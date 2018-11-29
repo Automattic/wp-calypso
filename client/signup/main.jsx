@@ -40,7 +40,7 @@ import './style.scss';
 import DocumentHead from 'components/data/document-head';
 import LocaleSuggestions from 'components/locale-suggestions';
 import SignupProcessingScreen from 'signup/processing-screen';
-import WordPressLogo from 'components/wordpress-logo';
+import SignupHeader from 'signup/header';
 
 // Libraries
 import analytics from 'lib/analytics';
@@ -68,7 +68,6 @@ import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
 import steps from './config/steps';
 import flows from './config/flows';
 import stepComponents from './config/step-components';
-import FlowProgressIndicator from './flow-progress-indicator';
 import {
 	canResumeFlow,
 	getCompletedSteps,
@@ -575,28 +574,13 @@ class Signup extends React.Component {
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 				<DocumentHead title={ pageTitle } />
-
-				{ /* This should prolly be its own component. */ }
-				<div className="signup__header">
-					<WordPressLogo />
-
-					{ /* Ideally, this is where the back button
-					   would live. But thats hard to move, it seems. */ }
-					<div className="signup__header-left" />
-
-					{ /* This should show a sign in link instead of
-					   the progressIndicator on the account step. */ }
-					<div className="signup__header-right">
-						{ ! this.state.shouldShowLoadingScreen &&
-							showProgressIndicator && (
-								<FlowProgressIndicator
-									positionInFlow={ this.getPositionInFlow() }
-									flowLength={ this.getFlowLength() }
-									flowName={ this.props.flowName }
-								/>
-							) }
-					</div>
-				</div>
+				<SignupHeader
+					positionInFlow={ this.getPositionInFlow() }
+					flowLength={ this.getFlowLength() }
+					flowName={ this.props.flowName }
+					showProgressIndicator={ showProgressIndicator }
+					shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
+				/>
 				<TransitionGroup component="div" className="signup__steps">
 					{ this.renderCurrentStep() }
 				</TransitionGroup>

@@ -11,38 +11,6 @@
 	}
 }
 
-
-// A masterbar-like header just for
-// the signup flow.
-.signup__header {
-	position: absolute;
-		top: 0;
-		right: 0;
-		left: 0;
-	padding-top: 16px;
-
-	.wordpress-logo {
-		height: 24px;
-		width: 24px;
-		fill: $blue-wordpress;
-		margin: 0 auto;
-		display: block;
-	}
-
-	.signup__header-left {
-		position: absolute;
-			top: 12px;
-			left: 16px;
-	}
-
-	.signup__header-right {
-		position: absolute;
-			top: 12px;
-			right: 16px;
-	}
-}
-
-
 // Each step is positioned absolutely to allow
 // for transitions between them.
 .signup__step {
