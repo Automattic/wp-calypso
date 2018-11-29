@@ -433,6 +433,7 @@ export class PlanFeatures extends Component {
 			planProperties,
 			selectedPlan,
 			selectedSiteSlug,
+			translate,
 		} = this.props;
 
 		return map( planProperties, properties => {
@@ -460,7 +461,7 @@ export class PlanFeatures extends Component {
 				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
 					availableForPurchase = false;
 					forceDisplayButton = true;
-					buttonText = 'Only with .blog domains';
+					buttonText = translate( 'Only with .blog domains' );
 				}
 			}
 
