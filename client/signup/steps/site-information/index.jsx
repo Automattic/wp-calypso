@@ -144,7 +144,7 @@ class SiteInformation extends Component {
 							) }
 
 							<div className="site-information__submit-wrapper">
-								<Button primary={ true } type="submit" onClick={ this.handleSubmit }>
+								<Button primary type="submit" onClick={ this.handleSubmit }>
 									{ translate( 'Continue' ) }
 								</Button>
 							</div>
