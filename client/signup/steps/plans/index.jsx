@@ -200,6 +200,7 @@ export const isDotBlogDomainRegistration = domainItem => {
 };
 
 export default connect( ( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
+	// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 	disableBloggerPlanWithNonBlogDomain:
 		domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
 	// This step could be used to set up an existing site, in which case
