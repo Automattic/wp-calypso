@@ -36,6 +36,13 @@ label {
 	box-sizing: border-box;
 }
 
+input[type="password"],
+input[type="email"],
+input[type="url"] {
+	/*rtl:ignore*/
+	direction: ltr;
+}
+
 /*Checkbooms*/
 
 input[type=checkbox],
