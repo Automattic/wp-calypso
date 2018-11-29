@@ -38,7 +38,7 @@ class SubscriptionEdit extends Component {
 			<div className={ className }>
 				{ show_subscribers_total === true && (
 					<p>
-						{ subscriberCount } { 'subscribers' }
+						{ subscriber_count } { 'subscribers' }
 					</p>
 				) }
 				<TextControl placeholder={ subscribe_placeholder } />
