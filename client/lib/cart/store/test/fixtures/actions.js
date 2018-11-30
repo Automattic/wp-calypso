@@ -2,9 +2,13 @@
  * @format
  */
 
-export const transactionPaymentSetStored = {
-	type: 'TRANSACTION_PAYMENT_SET',
-	payment: {
+/**
+ * External dependencies
+ */
+import { mapValues } from 'lodash';
+
+export const payments = {
+	stored: {
 		paymentMethod: 'WPCOM_Billing_MoneyPress_Stored',
 		storedCard: {
 			user_id: '12345678',
@@ -59,14 +63,10 @@ export const transactionPaymentSetStored = {
 			last_service: 'wordpress-com',
 		},
 	},
-};
-
-export const transactionPaymentSetPaygate = {
-	type: 'TRANSACTION_PAYMENT_SET',
-	payment: {
+	creditCard: {
 		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
 		newCardDetails: {
-			country: 'US',
+			country: 'US1',
 			name: 'Albert A. User',
 			'postal-code': '90014',
 			cvv: '987',
@@ -75,11 +75,31 @@ export const transactionPaymentSetPaygate = {
 			brand: null,
 		},
 	},
-};
-
-export const transactionPaymentSetWPCOM = {
-	type: 'TRANSACTION_PAYMENT_SET',
-	payment: {
+	credits: {
 		paymentMethod: 'WPCOM_Billing_WPCOM',
 	},
+	unrecognized: {
+		paymentMethod: 'Not_A_Real_Payment_Method',
+		newCardDetails: {
+			country: 'US',
+			name: 'Albert A. Unknown',
+			'postal-code': '98765',
+			cvv: '777',
+			'expiration-date': '11/77',
+			number: '5678901234521234',
+			brand: null,
+		},
+	},
 };
+
+export const transactionPaymentSetActions = mapValues( payments, payment => ( {
+	type: 'TRANSACTION_PAYMENT_SET',
+	payment,
+} ) );
+
+export const paymentActionLocations = [
+	[ 'stored', { postalCode: '90001', countryCode: 'US' } ],
+	[ 'creditCard', { postalCode: '90014', countryCode: 'US1' } ],
+	[ 'credits', { postalCode: null, countryCode: null } ],
+	[ 'unrecognized', { postalCode: null, countryCode: null } ],
+];
