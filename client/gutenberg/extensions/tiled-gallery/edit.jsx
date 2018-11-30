@@ -140,8 +140,6 @@ class TiledGalleryEdit extends Component {
 		return null;
 	}
 
-	componentDidUpdate( prevProps ) {}
-
 	render() {
 		const { selectedImage } = this.state;
 
