@@ -168,7 +168,7 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 
 		case TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
 			{
-				// typically set one or zero
+				// typically set one or the other (or neither)
 				const countryCode = get( action, 'rawDetails.country' );
 				const postalCode = get( action, 'rawDetails.postal-code' );
 				postalCode && update( setTaxPostalCode( postalCode ) );
@@ -178,7 +178,6 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 
 		case TRANSACTION_PAYMENT_SET:
 			{
-				// set both
 				let postalCode, countryCode;
 
 				const paymentMethod = get( action, [ 'payment', 'paymentMethod' ] );
@@ -191,6 +190,10 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 						const paymentDetails = get( action, 'payment.newCardDetails', {} );
 						postalCode = paymentDetails[ 'postal-code' ];
 						countryCode = paymentDetails.country;
+						break;
+					case 'WPCOM_Billing_WPCOM':
+						postalCode = null;
+						countryCode = null;
 						break;
 					default:
 						recordUnrecognizedPaymentMethod( action );
