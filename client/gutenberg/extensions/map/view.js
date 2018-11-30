@@ -8,7 +8,6 @@ import './style.scss';
 import component from './component.js';
 import { settings } from './settings.js';
 import FrontendManagement from 'gutenberg/extensions/shared/frontend-management.js';
-import apiFetch from '@wordpress/api-fetch';
 
 window &&
 	window.addEventListener( 'load', function() {
