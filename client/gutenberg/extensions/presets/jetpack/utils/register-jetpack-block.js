@@ -17,8 +17,8 @@ import getJetpackData from './get-jetpack-data';
  * @param {object} settings The block's settings.
  * @returns {object|false} Either false if the block is not available, or the results of `registerBlockType`
  */
-export default function registerJetpackBlock( name, settings ) {
-	const data = getJetpackData();
+export default async function registerJetpackBlock( name, settings ) {
+	const data = await getJetpackData();
 	const available = get( data, [ 'available_blocks', name, 'available' ], false );
 	if ( data && ! available ) {
 		// TODO: check 'unavailable_reason' and respond accordingly
