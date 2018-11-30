@@ -18,6 +18,9 @@ class SubscriptionEdit extends Component {
 		const { attributes, className, isSelected, setAttributes } = this.props;
 		const { subscribe_placeholder, show_subscribers_total, subscriber_count_string } = attributes;
 
+		// Get the subscriber count so it is available right away if the user toggles the setting
+		this.get_subscriber_count();
+
 		if ( isSelected ) {
 			return (
 				<div className={ className }>
@@ -26,23 +29,6 @@ class SubscriptionEdit extends Component {
 						checked={ show_subscribers_total }
 						onChange={ () => {
 							setAttributes( { show_subscribers_total: ! show_subscribers_total } );
-							apiFetch( { path: '/wpcom/v2/subscribers/count' } ).then( count => {
-								if ( 1 === count ) {
-									setAttributes( {
-										subscriber_count_string: sprintf(
-											__( 'Join %s other subscriber' ),
-											count.count
-										),
-									} );
-								} else {
-									setAttributes( {
-										subscriber_count_string: sprintf(
-											__( 'Join %s other subscribers' ),
-											count.count
-										),
-									} );
-								}
-							} );
 						} }
 					/>
 					<TextControl placeholder={ subscribe_placeholder } required onChange={ () => {} } />
@@ -62,6 +48,22 @@ class SubscriptionEdit extends Component {
 				</Button>
 			</div>
 		);
+	}
+
+	get_subscriber_count() {
+		const { setAttributes } = this.props;
+
+		apiFetch( { path: '/wpcom/v2/subscribers/count' } ).then( count => {
+			if ( 1 === count ) {
+				setAttributes( {
+					subscriber_count_string: sprintf( __( 'Join %s other subscriber' ), count.count ),
+				} );
+			} else {
+				setAttributes( {
+					subscriber_count_string: sprintf( __( 'Join %s other subscribers' ), count.count ),
+				} );
+			}
+		} );
 	}
 }
 
