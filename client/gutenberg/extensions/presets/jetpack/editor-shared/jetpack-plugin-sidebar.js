@@ -23,9 +23,9 @@ const JetpackPluginSidebar = ( { children } ) => (
 JetpackPluginSidebar.Slot = () => (
 	<Fragment>
 		<PluginSidebarMoreMenuItem target="jetpack" icon={ <JetpackLogo /> }>
-			{ 'Jetpack' }
+			Jetpack
 		</PluginSidebarMoreMenuItem>
-		<PluginSidebar name="jetpack" title={ 'Jetpack' } icon={ <JetpackLogo /> }>
+		<PluginSidebar name="jetpack" title="Jetpack" icon={ <JetpackLogo /> }>
 			<Slot />
 		</PluginSidebar>
 	</Fragment>
