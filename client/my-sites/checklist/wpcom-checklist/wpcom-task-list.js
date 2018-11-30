@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, memoize } from 'lodash';
+import { get, memoize, omit } from 'lodash';
 import debugModule from 'debug';
 
 const debug = debugModule( 'calypso:wpcom-task-list' );
@@ -11,13 +11,21 @@ export default class WpcomTaskList {
 	constructor( taskStatuses, designType, isSiteUnlaunched ) {
 		this.tasks = [];
 
-		const isCompleted = taskId => get( taskStatuses, [ taskId, 'completed' ], false );
+		const getTask = taskId => get( taskStatuses, taskId );
+		const isCompleted = taskId => get( getTask( taskId ), 'completed', false );
 
-		const addTask = ( taskId, completedStatus = undefined ) =>
-			this.tasks.push( {
-				id: taskId,
-				isCompleted: completedStatus !== undefined ? completedStatus : isCompleted( taskId ),
-			} );
+		const addTask = ( taskId, completedStatus = undefined ) => {
+			const task = Object.assign(
+				{},
+				{
+					id: taskId,
+					isCompleted: completedStatus !== undefined ? completedStatus : isCompleted( taskId ),
+				},
+				omit( getTask( taskId ), 'completed' )
+			);
+
+			this.tasks.push( task );
+		};
 
 		addTask( 'email_verified' );
 		addTask( 'site_created', true );
@@ -42,6 +50,8 @@ export default class WpcomTaskList {
 		if ( get( taskStatuses, 'email_verified.completed' ) && isSiteUnlaunched ) {
 			addTask( 'site_launched' );
 		}
+
+		addTask( 'email_setup' );
 
 		debug( 'designType: ', designType );
 		debug( 'Task list: ', this.tasks );
