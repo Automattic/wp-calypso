@@ -33,3 +33,7 @@ function recordAddEvent( cartItem ) {
 function recordRemoveEvent( cartItem ) {
 	analytics.tracks.recordEvent( 'calypso_cart_product_remove', removeNestedProperties( cartItem ) );
 }
+
+export function recordUnrecognizedPaymentMethod( action ) {
+	analytics.tracks.recordEvent( 'calypso_cart_unrecognized_payment_method', action );
+}

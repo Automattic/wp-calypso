@@ -25,7 +25,7 @@ import {
 import emitter from 'lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
 import PollerPool from 'lib/data-poller';
-import { recordEvents } from './cart-analytics';
+import { recordEvents, recordUnrecognizedPaymentMethod } from './cart-analytics';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
 import Dispatcher from 'dispatcher';
@@ -193,7 +193,9 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 						countryCode = paymentDetails.country;
 						break;
 					default:
-						throw new Error( 'Unrecognized payment method', action );
+						recordUnrecognizedPaymentMethod( action );
+						postalCode = null;
+						countryCode = null;
 				}
 				update( setTaxLocation( { postalCode, countryCode } ) );
 			}
