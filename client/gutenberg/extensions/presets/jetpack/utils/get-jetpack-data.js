@@ -13,7 +13,7 @@ export default async function getJetpackData() {
 	//we may be on Gutenlypso
 	if ( ! jetpackData ) {
 		const gutenlypsoData = await apiFetch( {
-			path: '/gutenberg/available-extensions',
+			path: '/wpcom/v2/gutenberg/available-extensions',
 			method: 'GET',
 			apiNamespace: 'wpcom/v2',
 		} );
