@@ -51,7 +51,7 @@ export class BrowserURL extends Component {
 			prevProps.postStatus === 'auto-draft' &&
 			! endsWith( currentRoute, `/${ postId }` )
 		) {
-			this.props.replaceHistory( `${ currentRoute }/${ postId }` );
+			this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
 		}
 
 		if ( postStatus === 'trash' && endsWith( currentRoute, `/${ postId }` ) ) {

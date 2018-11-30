@@ -97,9 +97,14 @@ export const navigate = path => ( { type: NAVIGATE, path } );
 /**
  * Replaces the current url and modifies the browser history entry. Equivalent to window.replaceHistory
  * @param  {String} path Navigation path
+ * @param  {Boolean} saveContext true if we should save the current page.js context
  * @return {Object}      Action object
  */
-export const replaceHistory = path => ( { type: HISTORY_REPLACE, path } );
+export const replaceHistory = ( path, saveContext ) => ( {
+	type: HISTORY_REPLACE,
+	path,
+	saveContext,
+} );
 
 /**
  * Hide the masterbar.
