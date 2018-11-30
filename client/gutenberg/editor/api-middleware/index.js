@@ -70,6 +70,12 @@ export const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
 		return next( { ...options, path, apiNamespace: 'wpcom/v2' } );
 	}
 
+	if ( 'wpcom/v2' === options.apiNamespace ) {
+		const path = `/sites/${ siteSlug }${ options.path }`;
+
+		return next( { ...options, path } );
+	}
+
 	/*
 	 * oembed/1.0 namespace mapping
 	 *
