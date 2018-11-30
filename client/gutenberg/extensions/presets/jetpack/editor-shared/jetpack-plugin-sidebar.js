@@ -11,7 +11,6 @@ import { registerPlugin } from '@wordpress/plugins';
  */
 import './jetpack-plugin-sidebar.scss';
 import JetpackLogo from 'components/jetpack-logo';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const { Fill, Slot } = createSlotFill( 'JetpackPluginSidebar' );
 
@@ -24,9 +23,9 @@ const JetpackPluginSidebar = ( { children } ) => (
 JetpackPluginSidebar.Slot = () => (
 	<Fragment>
 		<PluginSidebarMoreMenuItem target="jetpack" icon={ <JetpackLogo /> }>
-			{ __( 'Jetpack' ) }
+			{ 'Jetpack' }
 		</PluginSidebarMoreMenuItem>
-		<PluginSidebar name="jetpack" title={ __( 'Jetpack' ) } icon={ <JetpackLogo /> }>
+		<PluginSidebar name="jetpack" title={ 'Jetpack' } icon={ <JetpackLogo /> }>
 			<Slot />
 		</PluginSidebar>
 	</Fragment>
