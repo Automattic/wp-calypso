@@ -106,7 +106,7 @@ class Signup extends React.Component {
 			controllerHasReset: false,
 			login: false,
 			dependencies: props.signupDependencies,
-			shouldShowLoadingScreen: false,
+			shouldShowLoadingScreen: true,
 			resumingStep: undefined,
 			loginHandler: null,
 			hasCartItems: false,
