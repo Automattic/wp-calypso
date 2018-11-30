@@ -13,15 +13,19 @@ import apiFetch from '@wordpress/api-fetch';
 window &&
 	window.addEventListener( 'load', function() {
 		const frontendManagement = new FrontendManagement();
-		apiFetch( { path: '/wpcom/v2/service-api-keys/mapbox' } ).then( result => {
-			frontendManagement.blockIterator( document, [
-				{
-					component: component,
-					options: {
-						settings,
-						props: { apiKey: result.service_api_key },
-					},
+		// add api-key to arributes so FrontendManagement knows about it.
+		//  it is dynamically being added on the php side
+		const apiKey = {
+			type: 'string',
+			default: '',
+		};
+		settings.attributes = { ...settings.attributes, apiKey };
+		frontendManagement.blockIterator( document, [
+			{
+				component: component,
+				options: {
+					settings,
 				},
-			] );
-		} );
+			},
+		] );
 	} );
