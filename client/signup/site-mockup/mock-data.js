@@ -24,7 +24,7 @@ const defaultVerticalData = {
 			'https://images.unsplash.com/photo-1542325823-53124d9c5cbe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=5441d8034187fec24a8d9ea0d5e634e6&auto=format&fit=crop&w=3134&q=80',
 		cover_image_text: 'Imagine the Synergy',
 		content:
-			'<img class="featured-image" src="https://images.unsplash.com/photo-1543270915-a8381a52e201?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=ac686dc4d32458c9afcf6ae578501b6e&auto=format&fit=crop&w=200&h=115&q=60" /><h2>The Journey Begins</h2>Here is some content that will make you change your life.',
+			'<h2>The Journey Begins</h2><div class="site-mockup__columns"><div class="site-mockup__column"><img class="site-mockup__block-image" src="https://images.unsplash.com/photo-1543270915-a8381a52e201?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=ac686dc4d32458c9afcf6ae578501b6e&auto=format&fit=crop&w=660&h=440&q=60" /></div><div class="site-mockup__column"><p>Here is some content that will make you change your life.</p></div></div>',
 	},
 };
 
@@ -39,7 +39,7 @@ const verticalList = [
 				'https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=cc14d05af9963bb8ee521c3c4ea6df55&auto=format&fit=crop&w=3134&q=80',
 			cover_image_text: 'Fresh and authentic Mexican food.',
 			content:
-				'<img class="featured-image" src="https://images.unsplash.com/photo-1526350593220-3a1d7d3c8677?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=4300b572345adea9ed6c828d041a6a28&auto=format&fit=crop&w=200&q=60" /><h2>Dedicated to quality</h2><div class="entry-content">Enjoy a unique mix of classic Mexican dishes and innovative house specialties.</div>',
+				'<h2>Dedicated to Quality</h2><div class="site-mockup__columns"><div class="site-mockup__column"><img class="site-mockup__block-image" src="https://images.unsplash.com/photo-1526350593220-3a1d7d3c8677?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=4300b572345adea9ed6c828d041a6a28&auto=format&fit=crop&w=660&q=60" /></div><div class="site-mockup__column"><p>Enjoy a unique mix of classic Mexican dishes and innovative house specialties.</p></div></div><div class="site-mockup__columns"><div class="site-mockup__column"><p>Enjoy a unique mix of classic Mexican dishes and innovative house specialties.</p></div><div class="site-mockup__column"><img class="site-mockup__block-image" src="https://images.unsplash.com/photo-1526350593220-3a1d7d3c8677?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=4300b572345adea9ed6c828d041a6a28&auto=format&fit=crop&w=660&q=60" /></div></div>',
 		},
 	},
 ];
