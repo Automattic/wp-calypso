@@ -33,7 +33,7 @@ export default class SignupHeader extends Component {
 	render() {
 		const logoClasses = classnames( {
 			'wordpress-logo': true,
-			'is-large': ! this.props.shouldShowLoadingScreen,
+			'is-large': this.props.shouldShowLoadingScreen,
 		} );
 
 		return (
