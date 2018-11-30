@@ -56,6 +56,14 @@ class TiledGalleryEdit extends Component {
 		selectedImage: null,
 	};
 
+	static getDerivedStateFromProps( props, state ) {
+		// Deselect images when deselecting the block
+		if ( ! props.isSelected && null !== state.selectedImage ) {
+			return { selectedImage: null };
+		}
+		return null;
+	}
+
 	handleAddFiles = files => {
 		const currentImages = this.props.attributes.images || [];
 		const { noticeOperations, setAttributes } = this.props;
@@ -126,18 +134,6 @@ class TiledGalleryEdit extends Component {
 
 	getImageCropHelp( checked ) {
 		return checked ? __( 'Thumbnails are cropped to align.' ) : __( 'Thumbnails are not cropped.' );
-	}
-
-	/**
-	 * Lifecycle methods
-	 */
-
-	static getDerivedStateFromProps( props, state ) {
-		// Deselect images when deselecting the block
-		if ( ! props.isSelected && null !== state.selectedImage ) {
-			return { selectedImage: null };
-		}
-		return null;
 	}
 
 	render() {
