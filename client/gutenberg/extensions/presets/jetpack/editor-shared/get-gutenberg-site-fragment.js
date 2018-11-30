@@ -17,7 +17,7 @@ import { getSiteFragment } from 'lib/route/path';
  */
 export default function getGutenbergSiteFragment() {
 	// WP.com wp-admin exposes the site ID in window._currentSiteId
-	if ( window._currentSiteId ) {
+	if ( window && window._currentSiteId ) {
 		return window._currentSiteId;
 	}
 

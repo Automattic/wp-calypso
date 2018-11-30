@@ -24,12 +24,12 @@ describe( 'getGutenbergSiteFragment()', () => {
 		expect( getGutenbergSiteFragment() ).toBeNull();
 	} );
 
-	test( 'should return null when starting a new post in wp-admin', () => {
+	test( 'should return null when editing a post in wp-admin', () => {
 		window.location.pathname = '/wp-admin/post.php';
 		expect( getGutenbergSiteFragment() ).toBeNull();
 	} );
 
-	test( 'should return null when editing post in wp-admin', () => {
+	test( 'should return null when starting a new post in wp-admin', () => {
 		window.location.pathname = '/wp-admin/post-new.php';
 		expect( getGutenbergSiteFragment() ).toBeNull();
 	} );
