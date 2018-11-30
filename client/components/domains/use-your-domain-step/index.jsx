@@ -26,7 +26,11 @@ import Button from 'components/button';
 import { errorNotice } from 'state/notices/actions';
 import QueryProducts from 'components/data/query-products-list';
 import { getDomainPrice, getDomainProductSlug } from 'lib/domains';
-import { isDomainBundledWithPlan, isNextDomainFree } from 'lib/cart-values/cart-items';
+import {
+	isDomainBundledWithPlan,
+	isDomainMappingFree,
+	isNextDomainFree,
+} from 'lib/cart-values/cart-items';
 import formatCurrency from 'lib/format-currency';
 import { isPlan } from 'lib/products-values';
 
@@ -162,7 +166,7 @@ class UseYourDomainStep extends React.Component {
 	};
 
 	getMappingPriceText = () => {
-		const { cart, currencyCode, productsList, translate } = this.props;
+		const { cart, currencyCode, productsList, selectedSite, translate } = this.props;
 		const { searchQuery } = this.state;
 
 		let mappingProductPrice;
@@ -173,7 +177,11 @@ class UseYourDomainStep extends React.Component {
 			mappingProductPrice += ' per year plus registration costs at your current provider';
 		}
 
-		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
+		if (
+			isDomainMappingFree( selectedSite ) ||
+			isNextDomainFree( cart ) ||
+			isDomainBundledWithPlan( cart, searchQuery )
+		) {
 			mappingProductPrice = translate(
 				'Free with your plan, but registration costs at your current provider still apply'
 			);
