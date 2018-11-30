@@ -41,7 +41,7 @@ class SubscriptionEdit extends Component {
 
 		return (
 			<div className={ className } role="form">
-				<p role="heading">{ subscriberCountString }</p>
+				<p role="heading">{ subscriber_count_string }</p>
 				<TextControl placeholder={ subscribe_placeholder } />
 				<Button type="button" isDefault>
 					{ __( 'Subscribe' ) }
