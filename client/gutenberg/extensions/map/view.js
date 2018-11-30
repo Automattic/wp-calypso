@@ -12,8 +12,9 @@ import FrontendManagement from 'gutenberg/extensions/shared/frontend-management.
 window &&
 	window.addEventListener( 'load', function() {
 		const frontendManagement = new FrontendManagement();
-		// add api-key to arributes so FrontendManagement knows about it.
-		//  it is dynamically being added on the php side
+		// Add apiKey to attibutes so FrontendManagement knows about it.
+		// It is dynamically being added on the php side.
+		// So that it can be updated accross all the map blocks at the same time.
 		const apiKey = {
 			type: 'string',
 			default: '',
