@@ -16,7 +16,7 @@ import apiFetch from '@wordpress/api-fetch';
 class SubscriptionEdit extends Component {
 	render() {
 		const { attributes, className, isSelected, setAttributes } = this.props;
-		const { subscribe_placeholder, show_subscribers_total } = attributes;
+		const { subscribe_placeholder, show_subscribers_total, subscriber_count_string } = attributes;
 
 		if ( isSelected ) {
 			return (
@@ -26,6 +26,23 @@ class SubscriptionEdit extends Component {
 						checked={ show_subscribers_total }
 						onChange={ () => {
 							setAttributes( { show_subscribers_total: ! show_subscribers_total } );
+							apiFetch( { path: '/wpcom/v2/subscribers/count' } ).then( count => {
+								if ( 1 === count ) {
+									setAttributes( {
+										subscriber_count_string: sprintf(
+											__( 'Join %s other subscriber' ),
+											count.count
+										),
+									} );
+								} else {
+									setAttributes( {
+										subscriber_count_string: sprintf(
+											__( 'Join %s other subscribers' ),
+											count.count
+										),
+									} );
+								}
+							} );
 						} }
 					/>
 					<TextControl placeholder={ subscribe_placeholder } required onChange={ () => {} } />
@@ -36,23 +53,9 @@ class SubscriptionEdit extends Component {
 			);
 		}
 
-		let subscriberCount = null;
-		let subscriberCountString = null;
-
-		if ( show_subscribers_total ) {
-			apiFetch( { path: '/wpcom/v2/subscribers/count' } ).then( count => {
-				subscriberCount = count;
-			} );
-
-			if ( 1 === subscriberCount ) {
-				subscriberCountString = sprintf( __( 'Join %s other subscriber' ), subscriberCount );
-			} else {
-				subscriberCountString = sprintf( __( 'Join %s other subscribers' ), subscriberCount );
-			}
-		}
 		return (
 			<div className={ className }>
-				<p>{ subscriberCountString }</p>
+				{ show_subscribers_total && <p> { subscriber_count_string } </p> }
 				<TextControl placeholder={ subscribe_placeholder } />
 				<Button type="button" isDefault>
 					{ __( 'Subscribe' ) }
