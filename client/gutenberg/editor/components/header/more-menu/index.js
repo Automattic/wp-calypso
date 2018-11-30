@@ -19,7 +19,6 @@ import ModeSwitcher from '../mode-switcher';
 import OptOutMenuItem from '../opt-out-menu-item';
 import OptionsMenuItem from '../options-menu-item';
 import PluginsMoreMenuGroup from '../plugins-more-menu-group';
-import ToolsMoreMenuGroup from '../tools-more-menu-group';
 import WritingMenu from '../writing-menu';
 
 const ariaClosed = __( 'Show more tools & options' );
@@ -47,7 +46,6 @@ const MoreMenu = () => (
 				<MenuGroup label={ __( 'Tools' ) }>
 					<KeyboardShortcutsHelpMenuItem onSelect={ onClose } />
 					<CopyContentMenuItem />
-					<ToolsMoreMenuGroup.Slot fillProps={ { onClose } } />
 				</MenuGroup>
 				<MenuGroup>
 					<OptionsMenuItem onSelect={ onClose } />
