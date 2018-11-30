@@ -55,20 +55,6 @@
 	);
 }
 
-.plan-thank-you-card {
-	&.is-personal-plan {
-		@include plan-progress-bar-color( $alert-yellow );
-	}
-
-	&.is-premium-plan {
-		@include plan-progress-bar-color( $alert-green );
-	}
-
-	&.is-business-plan {
-		@include plan-progress-bar-color( $alert-purple );
-	}
-}
-
 @keyframes progress-bar-animation {
 	0%   { background-position: 100px 0; }
 	100% {  }

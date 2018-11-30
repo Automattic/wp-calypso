@@ -223,6 +223,11 @@
 	word-break: break-word;
 }
 
+.checkout-thank-you .checkout-thank-you__gsuite-support-link {
+	color: inherit;
+	text-decoration: underline;
+}
+
 // Jetpack thank you styles
 .checkout-thank-you__jetpack {
 	max-width: 500px;
@@ -327,11 +332,37 @@
 	display:flex;
 }
 
-.checkout-thank-you__jetpack .thank-you-card__action .button {
-	max-width: 45%;
-}
+.checkout-thank-you__jetpack {
 
-.checkout-thank-you .checkout-thank-you__gsuite-support-link {
-	color: inherit;
-	text-decoration: underline;
+	.thank-you-card__action .button {
+		max-width: 45%;
+	}
+
+	.plan-thank-you-card {
+
+		&.is-personal-plan,
+		&.is-premium-plan,
+		&.is-business-plan {
+
+			.thank-you-card {
+				color: $gray-dark;
+				background-color: $white;
+				box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+			}
+		}
+	}
+
+	.thank-you-card__header {
+		color: $gray-dark;
+		background-color: $white;
+		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 );
+	}
+
+	.thank-you-card__price {
+		color: $gray-darken-30;
+	}
+
+	.thank-you-card__description {
+		width: 340px;
+	}
 }
