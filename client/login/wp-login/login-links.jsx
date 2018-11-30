@@ -244,7 +244,7 @@ export class LoginLinks extends React.Component {
 				onClick={ this.recordSignUpLinkClick }
 				rel="external"
 			>
-				{ translate( 'Sign up' ) }
+				{ translate( 'Create a new account' ) }
 			</a>
 		);
 	}
