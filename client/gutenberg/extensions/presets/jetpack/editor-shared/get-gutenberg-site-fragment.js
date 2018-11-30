@@ -11,24 +11,22 @@ import { includes } from 'lodash';
 import { getSiteFragment } from 'lib/route/path';
 
 /***
- * Returns the current environment we're running Gutenberg in.
- * @returns {string} Current environment, one of:
- * - `wpcom` - running in WP.com wp-admin
- * - `wporg` - running in WP.org wp-admin
- * - `calypso` - running in Calypso
+ * Returns the site fragment in the environment we're running Gutenberg in.
+ *
+ * @returns {?Number|String} Site fragment (ID or slug); null for WP.org wp-admin.
  */
-export default function getEnvironment() {
+export default function getGutenbergSiteFragment() {
 	// WP.com wp-admin exposes the site ID in window._currentSiteId
 	if ( window._currentSiteId ) {
-		return 'wpcom';
+		return window._currentSiteId;
 	}
 
 	// Calypso will contain a site slug or ID in the site fragment.
 	// WP.org will contain either `post` or `post-new.php`.
 	const siteFragment = getSiteFragment( window.location.pathname );
-	if ( includes( [ 'post.php', 'post-new.php' ], siteFragment ) ) {
-		return 'wporg';
+	if ( ! includes( [ 'post.php', 'post-new.php' ], siteFragment ) ) {
+		return siteFragment || null;
 	}
 
-	return 'calypso';
+	return null;
 }
