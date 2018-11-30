@@ -7,20 +7,12 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
-import { capitalize, find } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import WordAdsEarnings from 'my-sites/stats/wordads/earnings';
-import AdsSettings from 'my-sites/ads/form-settings';
 import { canAccessWordads, isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { isBusiness } from 'lib/products-values';
 import FeatureExample from 'components/feature-example';
@@ -40,11 +32,9 @@ import { getSiteFragment } from 'lib/route';
 import { isSiteWordadsUnsafe } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
 import { isJetpackSite } from 'state/sites/selectors';
 
-class AdsMain extends Component {
+class AdsWrapper extends Component {
 	static propTypes = {
 		adsProgramName: PropTypes.string,
 		isUnsafe: PropTypes.oneOf( wordadsUnsafeValues ),
@@ -57,11 +47,11 @@ class AdsMain extends Component {
 	};
 
 	componentDidMount() {
-		this.redirectToStats();
+		this.redirectToEarn();
 	}
 
 	componentDidUpdate() {
-		this.redirectToStats();
+		this.redirectToEarn();
 	}
 
 	canAccess() {
@@ -69,54 +59,14 @@ class AdsMain extends Component {
 		return site && canManageOptions && canAccessWordads( site );
 	}
 
-	redirectToStats() {
+	redirectToEarn() {
 		const { siteSlug } = this.props;
 		const siteFragment = getSiteFragment( page.current );
 
 		if ( ! this.canAccess() && siteSlug ) {
-			page( '/stats/' + siteSlug );
+			page( '/earn/' + siteSlug );
 		} else if ( ! siteFragment ) {
-			page( '/stats/' );
-		}
-	}
-
-	getSelectedText() {
-		const selected = find( this.getFilters(), { path: this.props.path } );
-		if ( selected ) {
-			return selected.title;
-		}
-
-		return '';
-	}
-
-	getFilters() {
-		const { site, siteSlug, translate } = this.props;
-		const pathSuffix = siteSlug ? '/' + siteSlug : '';
-
-		return canAccessWordads( site )
-			? [
-					{
-						title: translate( 'Earnings' ),
-						path: '/ads/earnings' + pathSuffix,
-						id: 'ads-earnings',
-					},
-					{
-						title: translate( 'Settings' ),
-						path: '/ads/settings' + pathSuffix,
-						id: 'ads-settings',
-					},
-			  ]
-			: [];
-	}
-
-	getComponent( section ) {
-		switch ( section ) {
-			case 'earnings':
-				return <WordAdsEarnings site={ this.props.site } />;
-			case 'settings':
-				return <AdsSettings />;
-			default:
-				return null;
+			page( '/earn/' );
 		}
 	}
 
@@ -226,13 +176,13 @@ class AdsMain extends Component {
 	}
 
 	render() {
-		const { adsProgramName, section, site, translate } = this.props;
+		const { site, translate } = this.props;
 
 		if ( ! this.canAccess() ) {
 			return null;
 		}
 
-		let component = this.getComponent( this.props.section );
+		let component = this.props.children;
 		let notice = null;
 
 		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
@@ -249,37 +199,11 @@ class AdsMain extends Component {
 			component = this.renderInstantActivationToggle( component );
 		}
 
-		const layoutTitles = {
-			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
-			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
-		};
-
 		return (
-			<Main className="ads">
-				<PageViewTracker
-					path={ `/ads/${ section }/:site` }
-					title={ `${ adsProgramName } ${ capitalize( section ) }` }
-				/>
-				<DocumentHead title={ layoutTitles[ section ] } />
-				<SidebarNavigation />
-				<SectionNav selectedText={ this.getSelectedText() }>
-					<NavTabs>
-						{ this.getFilters().map( filterItem => {
-							return (
-								<NavItem
-									key={ filterItem.id }
-									path={ filterItem.path }
-									selected={ filterItem.path === this.props.path }
-								>
-									{ filterItem.title }
-								</NavItem>
-							);
-						} ) }
-					</NavTabs>
-				</SectionNav>
+			<div>
 				{ notice }
 				{ component }
-			</Main>
+			</div>
 		);
 	}
 }
@@ -319,4 +243,4 @@ export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( localize( AdsMain ) );
+)( localize( AdsWrapper ) );
