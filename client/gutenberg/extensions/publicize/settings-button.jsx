@@ -25,11 +25,11 @@ import { Component } from '@wordpress/element';
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import getGutenbergSiteFragment from 'gutenberg/extensions/presets/jetpack/editor-shared/get-gutenberg-site-fragment';
+import getSiteFragment from 'gutenberg/extensions/presets/jetpack/editor-shared/get-site-fragment';
 
 class PublicizeSettingsButton extends Component {
 	getButtonLink() {
-		const siteFragment = getGutenbergSiteFragment();
+		const siteFragment = getSiteFragment();
 
 		// If running in WP.com wp-admin or in Calypso, we redirect to Calypso sharing settings.
 		if ( siteFragment ) {
