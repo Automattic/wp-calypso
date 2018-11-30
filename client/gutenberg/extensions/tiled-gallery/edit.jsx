@@ -52,14 +52,10 @@ const pickRelevantMediaFiles = image => {
 };
 
 class TiledGalleryEdit extends Component {
-	constructor() {
-		super( ...arguments );
-
-		this.state = {
-			selectedImage: null,
-			layout: getActiveStyleName( arguments[ 0 ].className ),
-		};
-	}
+	state = {
+		selectedImage: null,
+		layout: getActiveStyleName( this.props.className ),
+	};
 
 	handleAddFiles = files => {
 		const currentImages = this.props.attributes.images || [];
