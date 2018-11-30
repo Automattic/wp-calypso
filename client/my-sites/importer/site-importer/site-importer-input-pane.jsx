@@ -193,7 +193,7 @@ class SiteImporterInputPane extends React.Component {
 		if ( this.state.selectedEndpoint ) {
 			params.force_endpoint = this.state.selectedEndpoint;
 		}
-		if ( this.props.importerData.engine ) {
+		if ( has( this.props, 'importerData.engine' ) ) {
 			params.engine = this.props.importerData.engine;
 		}
 		return params;
