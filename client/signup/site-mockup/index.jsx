@@ -51,7 +51,7 @@ class SiteMockup extends Component {
 			<div className="site-mockup__chrome-mobile">
 				<span className="site-mockup__chrome-label">
 					{ translate( 'Phone', {
-						context: 'Label for a phone-sized preview of a website',
+						comment: 'Label for a phone-sized preview of a website',
 					} ) }
 				</span>
 			</div>
