@@ -18,12 +18,17 @@ window &&
 			type: 'string',
 			default: '',
 		};
-		settings.attributes = { ...settings.attributes, apiKey };
 		frontendManagement.blockIterator( document, [
 			{
 				component: component,
 				options: {
-					settings,
+					settings: {
+						...settings,
+						attributes: {
+							...settings.attributes,
+							apiKey,
+						},
+					},
 				},
 			},
 		] );
