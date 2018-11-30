@@ -240,7 +240,7 @@ class TiledGalleryEdit extends Component {
 								value={ columns }
 								onChange={ this.handleColumnCountChange }
 								min={ 1 }
-								disabled={ layoutsSupportingColumns.includes( layout ) }
+								disabled={ ! layoutsSupportingColumns.includes( layout ) }
 								max={ Math.min( MAX_COLUMNS, images.length ) }
 							/>
 						) }
