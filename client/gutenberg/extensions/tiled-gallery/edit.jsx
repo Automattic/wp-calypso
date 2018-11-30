@@ -54,7 +54,6 @@ const pickRelevantMediaFiles = image => {
 class TiledGalleryEdit extends Component {
 	state = {
 		selectedImage: null,
-		layout: getActiveStyleName( this.props.className ),
 	};
 
 	handleAddFiles = files => {
@@ -125,10 +124,6 @@ class TiledGalleryEdit extends Component {
 		} );
 	};
 
-	setLayout( layout ) {
-		this.setState( { layout } );
-	}
-
 	getImageCropHelp( checked ) {
 		return checked ? __( 'Thumbnails are cropped to align.' ) : __( 'Thumbnails are not cropped.' );
 	}
@@ -145,14 +140,6 @@ class TiledGalleryEdit extends Component {
 				selectedImage: null,
 				captionSelected: false,
 			} );
-		}
-
-		if ( this.props.className !== prevProps.className ) {
-			const activeStyleName = getActiveStyleName( this.props.className );
-
-			if ( activeStyleName !== this.state.layout ) {
-				this.setLayout( activeStyleName );
-			}
 		}
 	}
 
@@ -240,6 +227,8 @@ class TiledGalleryEdit extends Component {
 			);
 		};
 
+		const layout = getActiveStyleName( this.props.className );
+
 		return (
 			<Fragment>
 				{ controls }
@@ -251,7 +240,7 @@ class TiledGalleryEdit extends Component {
 								value={ columns }
 								onChange={ this.handleColumnCountChange }
 								min={ 1 }
-								disabled={ layoutsSupportingColumns.indexOf( this.state.layout ) === -1 }
+								disabled={ layoutsSupportingColumns.includes( layout ) }
 								max={ Math.min( MAX_COLUMNS, images.length ) }
 							/>
 						) }
@@ -281,7 +270,7 @@ class TiledGalleryEdit extends Component {
 					columns={ columns }
 					imageCrop={ imageCrop }
 					images={ images }
-					layout={ this.state.layout }
+					layout={ layout }
 					renderGalleryImage={ renderGalleryImage }
 				>
 					{ isSelected && (
