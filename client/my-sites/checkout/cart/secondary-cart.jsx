@@ -27,7 +27,7 @@ import scrollIntoViewport from 'lib/scroll-into-viewport';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import JetpackHeader from 'components/jetpack-header';
+import JetpackLogo from 'components/jetpack-logo';
 
 class SecondaryCart extends Component {
 	static propTypes = {
@@ -95,7 +95,7 @@ class SecondaryCart extends Component {
 				/>
 				<CartPlanDiscountAd cart={ cart } selectedSite={ selectedSite } />
 
-				{ isJetpackNotAtomic && <JetpackHeader /> }
+				{ isJetpackNotAtomic && <JetpackLogo full /> }
 			</Sidebar>
 		);
 	}
