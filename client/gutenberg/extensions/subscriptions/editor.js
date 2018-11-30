@@ -38,7 +38,7 @@ export const settings = {
 
 	category: 'jetpack',
 
-	keywords: [ __( 'subscribe' ), __( 'subscription' ), __( 'follow' ) ],
+	keywords: [ __( 'subscribe' ), __( 'join' ), __( 'follow' ) ],
 
 	attributes: {
 		subscriber_count_string: { type: 'string', default: '' },

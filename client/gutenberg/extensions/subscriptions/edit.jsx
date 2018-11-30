@@ -22,7 +22,7 @@ class SubscriptionEdit extends Component {
 			return (
 				<div className={ className }>
 					<ToggleControl
-						label={ 'Show total subscribers' }
+						label={ __( 'Show total subscribers' ) }
 						checked={ show_subscribers_total }
 						onChange={ () => {
 							setAttributes( { show_subscribers_total: ! show_subscribers_total } );
