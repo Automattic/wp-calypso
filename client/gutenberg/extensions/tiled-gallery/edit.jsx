@@ -45,10 +45,7 @@ const pickRelevantMediaFiles = image => {
 		caption = create( { html: caption } );
 	}
 
-	return {
-		...pick( image, [ 'alt', 'id', 'link', 'url' ] ),
-		caption,
-	};
+	return Object.assign( pick( image, [ [ 'alt' ], [ 'id' ], [ 'link' ], [ 'url' ] ] ), caption );
 };
 
 class TiledGalleryEdit extends Component {
