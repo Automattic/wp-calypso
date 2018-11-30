@@ -52,10 +52,6 @@ const pickRelevantMediaFiles = image => {
 };
 
 class TiledGalleryEdit extends Component {
-	constructor() {
-		super( ...arguments );
-	}
-
 	state = {
 		selectedImage: null,
 		layout: getActiveStyleName( this.props.className ),
