@@ -132,16 +132,15 @@ class TiledGalleryEdit extends Component {
 	 * Lifecycle methods
 	 */
 
-	componentDidUpdate( prevProps ) {
+	static getDerivedStateFromProps( props, state ) {
 		// Deselect images when deselecting the block
-		if ( ! this.props.isSelected && prevProps.isSelected ) {
-			//eslint-disable-next-line
-			this.setState( {
-				selectedImage: null,
-				captionSelected: false,
-			} );
+		if ( ! props.isSelected && null !== state.selectedImage ) {
+			return { selectedImage: null };
 		}
+		return null;
 	}
+
+	componentDidUpdate( prevProps ) {}
 
 	render() {
 		const { selectedImage } = this.state;
