@@ -23,7 +23,7 @@ class SubscriptionEdit extends Component {
 
 		if ( isSelected ) {
 			return (
-				<div className={ className }>
+				<div className={ className } role="form">
 					<ToggleControl
 						label={ __( 'Show total subscribers' ) }
 						checked={ show_subscribers_total }
@@ -40,8 +40,8 @@ class SubscriptionEdit extends Component {
 		}
 
 		return (
-			<div className={ className }>
-				{ show_subscribers_total && <p> { subscriber_count_string } </p> }
+			<div className={ className } role="form">
+				<p role="heading">{ subscriberCountString }</p>
 				<TextControl placeholder={ subscribe_placeholder } />
 				<Button type="button" isDefault>
 					{ __( 'Subscribe' ) }
