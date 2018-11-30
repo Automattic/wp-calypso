@@ -4515,7 +4515,8 @@
             },
             "ansi-regex": {
               "version": "2.1.1",
-              "bundled": true
+              "bundled": true,
+              "optional": true
             },
             "aproba": {
               "version": "1.2.0",
@@ -4697,7 +4698,8 @@
             },
             "minimist": {
               "version": "0.0.8",
-              "bundled": true
+              "bundled": true,
+              "optional": true
             },
             "minipass": {
               "version": "2.2.4",
@@ -4719,6 +4721,7 @@
             "mkdirp": {
               "version": "0.5.1",
               "bundled": true,
+              "optional": true,
               "requires": {
                 "minimist": "0.0.8"
               }
@@ -4878,7 +4881,8 @@
             },
             "safe-buffer": {
               "version": "5.1.1",
-              "bundled": true
+              "bundled": true,
+              "optional": true
             },
             "safer-buffer": {
               "version": "2.1.2",
@@ -4926,6 +4930,7 @@
             "strip-ansi": {
               "version": "3.0.1",
               "bundled": true,
+              "optional": true,
               "requires": {
                 "ansi-regex": "^2.0.0"
               }
@@ -4964,11 +4969,13 @@
             },
             "wrappy": {
               "version": "1.0.2",
-              "bundled": true
+              "bundled": true,
+              "optional": true
             },
             "yallist": {
               "version": "3.0.2",
-              "bundled": true
+              "bundled": true,
+              "optional": true
             }
           }
         }
@@ -9564,9 +9571,9 @@
       }
     },
     "hash.js": {
-      "version": "1.1.5",
-      "resolved": "https://registry.npmjs.org/hash.js/-/hash.js-1.1.5.tgz",
-      "integrity": "sha512-eWI5HG9Np+eHV1KQhisXWwM+4EPPYe5dFX1UZZH7k/E3JzDEazVH+VGlZi6R94ZqImq+A3D1mCEtrFIfg/E7sA==",
+      "version": "1.1.7",
+      "resolved": "https://registry.npmjs.org/hash.js/-/hash.js-1.1.7.tgz",
+      "integrity": "sha512-taOaskGt4z4SOANNseOviYDvjEJinIkRgmp7LbKP2YTTmVxWBl87s/uzK9r+44BclBSp2X7K1hqeNfz9JbBeXA==",
       "requires": {
         "inherits": "^2.0.3",
         "minimalistic-assert": "^1.0.1"
@@ -19095,7 +19102,8 @@
             "balanced-match": {
               "version": "1.0.0",
               "bundled": true,
-              "dev": true
+              "dev": true,
+              "optional": true
             },
             "brace-expansion": {
               "version": "1.1.11",
@@ -19120,7 +19128,8 @@
             "concat-map": {
               "version": "0.0.1",
               "bundled": true,
-              "dev": true
+              "dev": true,
+              "optional": true
             },
             "console-control-strings": {
               "version": "1.1.0",
