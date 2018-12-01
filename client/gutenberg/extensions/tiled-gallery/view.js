@@ -3,13 +3,12 @@
 /**
  * External dependencies
  */
-import { throttle } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
 
 /**
  * Internal dependencies
  */
-import { RESIZE_RATE_IN_MS, DEFAULT_GALLERY_WIDTH } from './constants';
+import { DEFAULT_GALLERY_WIDTH } from './constants';
 import { getActiveStyleName, getLayout } from './layouts';
 
 /**
@@ -50,25 +49,31 @@ const resizeGallery = ( { galleryNode, width, columns, layout } ) => {
 };
 
 /**
- * Throttled resize event
  * Compares gallery width to its previous width to decide if to resize it.
+ * @param {Array<ResizeObserverEntry>} entries Resized entries
  */
-const throttleOnResize = throttle( entries => {
-	for ( const entry of entries ) {
-		const { width } = entry.contentRect;
-		// Don't resize if width didn't chance
-		if ( width !== entry.target.getAttribute( 'data-width' ) ) {
-			// Store width for later comparison
-			entry.target.setAttribute( 'data-width', width );
-			resizeGallery( {
-				columns: parseInt( entry.target.getAttribute( 'data-columns' ), 10 ),
-				galleryNode: entry.target,
-				layout: getActiveStyleName( entry.target.className ),
-				width,
-			} );
-		}
+function handleResize( entries ) {
+	if ( handleResize.pendingRaf ) {
+		cancelAnimationFrame( handleResize.pendingRaf );
 	}
-}, RESIZE_RATE_IN_MS );
+	handleResize.pendingRaf = requestAnimationFrame( () => {
+		handleResize.pendingRaf = null;
+		for ( const entry of entries ) {
+			const { width } = entry.contentRect;
+			// Don't resize if width didn't chance
+			if ( width !== entry.target.getAttribute( 'data-width' ) ) {
+				// Store width for later comparison
+				entry.target.setAttribute( 'data-width', width );
+				resizeGallery( {
+					columns: parseInt( entry.target.getAttribute( 'data-columns' ), 10 ),
+					galleryNode: entry.target,
+					layout: getActiveStyleName( entry.target.className ),
+					width,
+				} );
+			}
+		}
+	} );
+}
 
 /**
  * Get different galleries on the page
@@ -89,7 +94,7 @@ const observeGalleries = () => {
 		return;
 	}
 
-	const observer = new ResizeObserver( throttleOnResize );
+	const observer = new ResizeObserver( handleResize );
 
 	galleries.forEach( gallery => {
 		// Observe only if gallery has child nodes
