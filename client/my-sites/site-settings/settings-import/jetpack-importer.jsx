@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import { getSelectedSite } from 'state/ui/selectors';
 import CompactCard from 'components/card/compact';
 import EmptyContent from 'components/empty-content';
+import JetpackFileImporter from 'my-sites/site-settings/settings-import/jetpack-file-importer';
 
 class JetpackImporter extends PureComponent {
 	renderUnsupportedCard = () => {
@@ -49,11 +50,7 @@ class JetpackImporter extends PureComponent {
 					tooling in the meantime
 				</h2>
 				<hr />
-				{ '<JetpackFileImporter /> would go here' }
-				<hr />
-				<div>@TODO URL Importer here</div>
-				<hr />
-				<div>@TODO Info / Icons for supported services here</div>
+				<JetpackFileImporter />
 			</CompactCard>
 		);
 	}
