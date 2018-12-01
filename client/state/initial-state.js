@@ -10,9 +10,8 @@ import { get, map, pick, throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReduxStore } from 'state';
-import initialReducer from 'state/reducer';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import initialReducer from 'state/reducer';
 import localforage from 'lib/localforage';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
 import config from 'config';
@@ -38,13 +37,18 @@ function deserialize( state, reducer ) {
 	return reducer( state, { type: DESERIALIZE } );
 }
 
+// get bootstrapped state from a server-side render
 function getInitialServerState() {
-	// Bootstrapped state from a server-render
-	if ( typeof window === 'object' && window.initialReduxState && ! isSupportUserSession() ) {
-		const serverState = deserialize( window.initialReduxState, initialReducer );
-		return pick( serverState, Object.keys( window.initialReduxState ) );
+	if ( typeof window !== 'object' || ! window.initialReduxState || isSupportUserSession() ) {
+		return null;
 	}
-	return {};
+
+	const serverState = deserialize( window.initialReduxState, initialReducer );
+	return pick( serverState, Object.keys( window.initialReduxState ) );
+}
+
+function shouldPersist() {
+	return config.isEnabled( 'persist-redux' ) && ! isSupportUserSession();
 }
 
 /**
@@ -137,13 +141,6 @@ async function getStateFromLocalStorage() {
 	}
 }
 
-const loadInitialState = initialState => {
-	debug( 'loading initial state', initialState );
-	const serverState = getInitialServerState();
-	const mergedState = Object.assign( {}, initialState, serverState );
-	return createReduxStore( mergedState );
-};
-
 function getReduxStateKey() {
 	return getReduxStateKeyForUserId( get( user.get(), 'ID', null ) );
 }
@@ -177,6 +174,10 @@ function localforageStoreState( reduxStateKey, storageKey, state, _timestamp ) {
 }
 
 export function persistOnChange( reduxStore, serializeState = serialize ) {
+	if ( ! shouldPersist() ) {
+		return;
+	}
+
 	let prevState = null;
 
 	const throttledSaveState = throttle(
@@ -215,12 +216,12 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 	}
 
 	reduxStore.subscribe( throttledSaveState );
-
-	return reduxStore;
 }
 
-export default function createReduxStoreFromPersistedInitialState( reduxStoreReady ) {
-	const shouldPersist = config.isEnabled( 'persist-redux' ) && ! isSupportUserSession();
+async function getInitialStoredState() {
+	if ( ! shouldPersist() ) {
+		return null;
+	}
 
 	if ( 'development' === process.env.NODE_ENV ) {
 		window.resetState = () => localforage.clear( () => location.reload( true ) );
@@ -233,20 +234,20 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 			);
 
 			localforage.clear();
-
-			return shouldPersist
-				? reduxStoreReady( persistOnChange( createReduxStore( getInitialServerState() ) ) )
-				: reduxStoreReady( createReduxStore( getInitialServerState() ) );
+			return null;
 		}
 	}
 
-	if ( shouldPersist ) {
-		return getStateFromLocalStorage()
-			.then( loadInitialState )
-			.then( persistOnChange )
-			.then( reduxStoreReady );
+	const initialStoredState = await getStateFromLocalStorage();
+	if ( ! initialStoredState ) {
+		return null;
 	}
 
-	debug( 'persist-redux is not enabled, building state from scratch' );
-	reduxStoreReady( loadInitialState( {} ) );
+	return initialStoredState;
+}
+
+export async function getInitialState() {
+	const storedState = await getInitialStoredState();
+	const serverState = getInitialServerState();
+	return { ...storedState, ...serverState };
 }
