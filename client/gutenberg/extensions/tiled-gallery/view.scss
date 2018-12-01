@@ -7,9 +7,6 @@
 	flex-wrap: wrap;
 	padding: 0;
 
-	// Allow gallery items to go edge to edge.
-	margin: 0 -$tiled-gallery-margin 0 -$tiled-gallery-margin;
-
 	.tiled-gallery__row {
 		// flex-grow: 1;
 		display: flex;
@@ -18,10 +15,17 @@
 		justify-content: center;
 		margin: 0;
 
+		& + & {
+			margin-top: $tiled-gallery-gutter;
+		}
+
 		.tiled-gallery__item {
 			justify-content: center;
-			margin: $tiled-gallery-margin;
 			position: relative;
+
+			& + & {
+				margin-left: $tiled-gallery-gutter;
+			}
 		}
 
 		figure {
