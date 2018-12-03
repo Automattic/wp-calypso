@@ -14,7 +14,7 @@ import Main from './main';
 
 export default {
 	redirect: function( context ) {
-		page.redirect( '/earn/splash/' + context.params.site_id );
+		page.redirect( '/earn/ads-earnings/' + context.params.site_id );
 		return;
 	},
 

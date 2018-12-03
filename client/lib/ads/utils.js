@@ -39,3 +39,11 @@ export function isWordadsInstantActivationEligible( site ) {
 
 	return false;
 }
+
+export function canUpgradeToUseWordAds( site ) {
+	if ( ! isBusiness( site.plan ) && ! isPremium( site.plan ) ) {
+		return true;
+	}
+
+	return false;
+}

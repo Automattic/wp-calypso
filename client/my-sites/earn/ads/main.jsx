@@ -13,7 +13,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { canAccessWordads, isWordadsInstantActivationEligible } from 'lib/ads/utils';
+import {
+	canAccessWordads,
+	isWordadsInstantActivationEligible,
+	canUpgradeToUseWordAds,
+} from 'lib/ads/utils';
 import { isBusiness } from 'lib/products-values';
 import FeatureExample from 'components/feature-example';
 import FormButton from 'components/forms/form-button';
@@ -27,6 +31,8 @@ import {
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
+import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded';
+import { PLAN_PREMIUM, FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteFragment } from 'lib/route';
 import { isSiteWordadsUnsafe } from 'state/wordads/status/selectors';
@@ -175,6 +181,24 @@ class AdsWrapper extends Component {
 		);
 	}
 
+	renderUpsell() {
+		const { translate } = this.props;
+		return (
+			<UpgradeNudgeExpanded
+				plan={ PLAN_PREMIUM }
+				title={ translate( 'Upgrade to a Premium Plan and start earning' ) }
+				subtitle={ translate(
+					"By upgrading to a Premium Plan you'll be able to monetize your site using WordAds programme."
+				) }
+				highlightedFeature={ FEATURE_WORDADS_INSTANT }
+				benefits={ [
+					translate( 'Instantly enroll into WordAds network.' ),
+					translate( 'Earn from your content and traffic.' ),
+				] }
+			/>
+		);
+	}
+
 	render() {
 		const { site, translate } = this.props;
 
@@ -197,6 +221,11 @@ class AdsWrapper extends Component {
 			! ( isBusiness( site.plan ) && site.jetpack )
 		) {
 			component = this.renderInstantActivationToggle( component );
+		} else if (
+			// ! site.options.wordads &&
+			canUpgradeToUseWordAds( site )
+		) {
+			component = this.renderUpsell();
 		}
 
 		return (

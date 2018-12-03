@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { capitalize, find } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -17,11 +17,9 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Main from 'components/main';
-import Card from 'components/card';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import WordAdsEarnings from 'my-sites/stats/wordads/earnings';
 import AdsSettings from 'my-sites/earn/ads/form-settings';
-import { canAccessWordads } from 'lib/ads/utils';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
@@ -43,32 +41,21 @@ class EarningsMain extends Component {
 	}
 
 	getFilters() {
-		const { site, siteSlug, translate } = this.props;
+		const { siteSlug, translate } = this.props;
 		const pathSuffix = siteSlug ? '/' + siteSlug : '';
-		const tabs = [
-			{
-				title: translate( 'Earn' ),
-				path: '/earn/splash' + pathSuffix,
-				id: 'splach',
-			},
-			{
-				title: translate( 'Memberships' ),
-				path: '/earn/memberships' + pathSuffix,
-				id: 'memberships',
-			},
-		];
-		if ( canAccessWordads( site ) ) {
-			tabs.push( {
-				title: translate( 'Ads Earnings' ),
-				path: '/earn/ads-earnings' + pathSuffix,
-				id: 'ads-earnings',
-			} );
-			tabs.push( {
-				title: translate( 'Ads Settings' ),
-				path: '/earn/ads-settings' + pathSuffix,
-				id: 'ads-settings',
-			} );
-		}
+		const tabs = [];
+
+		tabs.push( {
+			title: translate( 'Ads Earnings' ),
+			path: '/earn/ads-earnings' + pathSuffix,
+			id: 'ads-earnings',
+		} );
+		tabs.push( {
+			title: translate( 'Ads Settings' ),
+			path: '/earn/ads-settings' + pathSuffix,
+			id: 'ads-settings',
+		} );
+
 		return tabs;
 	}
 
@@ -85,12 +72,6 @@ class EarningsMain extends Component {
 					<AdsWrapper section={ this.props.section }>
 						<AdsSettings />
 					</AdsWrapper>
-				);
-			case 'splash':
-				return (
-					<Fragment>
-						<Card>{ 'Hi to the earn section!' }</Card>
-					</Fragment>
 				);
 			default:
 				return null;
