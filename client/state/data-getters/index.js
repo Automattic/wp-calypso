@@ -23,6 +23,24 @@ import {
 import { convertToSnakeCase } from 'state/data-layer/utils';
 import { dummyTaxRate } from 'lib/tax'; // #tax-on-checkout-placeholder
 
+/**
+ * Fetches content from a URL with a GET request
+ *
+ * @example
+ * waitForData( {
+ *     planets: requestFromUrl( 'https://swapi.co/api/planets/' ),
+ * } ).then( ( { planets } ) => {
+ *     console.log( planets.data );
+ * } );
+ *
+ * @param {string} url location from which to GET data
+ * @return {object} HTTP data wrapped value
+ */
+export const requestFromUrl = url =>
+	requestHttpData( `get-at-url-${ url }`, rawHttp( { method: 'GET', url } ), {
+		fromApi: () => data => [ `get-at-url-${ url }`, data ],
+	} );
+
 export const requestActivityActionTypeCounts = (
 	siteId,
 	filter,
