@@ -9,5 +9,4 @@ import 'gutenberg/extensions/contact-form/editor';
 import 'gutenberg/extensions/markdown/editor';
 import 'gutenberg/extensions/map/editor';
 import 'gutenberg/extensions/publicize/editor';
-import 'gutenberg/extensions/related-posts/editor';
 import 'gutenberg/extensions/simple-payments/editor';
