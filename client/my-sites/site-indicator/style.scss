@@ -47,12 +47,12 @@
 	}
 
 	.is-update & {
-		background: $alert-yellow;
+		background: var( --color-warning );
 		color: $white;
 	}
 
 	.is-warning & {
-		background: $alert-yellow;
+		background: var( --color-warning );
 		color: $white;
 	}
 
@@ -98,7 +98,7 @@
 
 	.is-warning &,
 	.is-update & {
-		background: $alert-yellow;
+		background: var( --color-warning );
 	}
 	.is-error & {
 		background: $alert-red;

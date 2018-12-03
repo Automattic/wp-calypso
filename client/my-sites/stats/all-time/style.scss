@@ -6,7 +6,7 @@
 
 		&.all-time__is-best .gridicon,
 		&.all-time__is-best .label {
-			color: $alert-yellow;
+			color: var( --color-warning );
 		}
 
 		.all-time__best-day {

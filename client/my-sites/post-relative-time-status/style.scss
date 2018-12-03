@@ -12,7 +12,7 @@
 			color: $orange-jazzy;
 		}
 		.is-pending {
-			color: $alert-yellow;
+			color: var( --color-warning );
 		}
 		.is-scheduled {
 			color: var( --color-accent );

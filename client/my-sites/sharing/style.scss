@@ -460,7 +460,7 @@
 
 .sharing-connection__account-action.reconnect,
 .sharing-connection__account-action.must-disconnect {
-	color: $alert-yellow;
+	color: var( --color-warning );
 
 	.gridicon {
 		margin-right: 4px;

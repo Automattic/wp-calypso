@@ -16,7 +16,7 @@
 	// Warning
 	&.is-warning {
 		.activity-log-banner__icon {
-			background-color: $alert-yellow;
+			background-color: var( --color-warning );
 		}
 	}
 

@@ -325,7 +325,7 @@ ul.module-header-actions {
 	}
 
 	.legend.achievement {
-		color: $alert-yellow;
+		color: var( --color-warning );
 	}
 
 	// Hide legends if there is no data
@@ -470,7 +470,7 @@ ul.module-header-actions {
 	}
 
 	.stats-module & td.highest-count {
-		color: $alert-yellow;
+		color: var( --color-warning );
 		position: relative;
 	}
 

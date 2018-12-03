@@ -42,7 +42,7 @@
 
 .plugin-information__last-updated .gridicons-sync {
 	float: left;
-	color: $alert-yellow;
+	color: var( --color-warning );
 	margin-right: 4px;
 }
 

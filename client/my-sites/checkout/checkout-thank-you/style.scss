@@ -279,7 +279,7 @@
 .checkout-thank-you__jetpack {
 	&.is-personal-plan {
 		.checkout-thank-you__jetpack-feature-status-icon .gridicons-checkmark {
-			color: $alert-yellow;
+			color: var( --color-warning );
 		}
 	}
 

@@ -206,7 +206,7 @@ $plan-features-sidebar-width: 272px;
 		}
 
 		&.is-premium-plan {
-			border-bottom: solid 2px $alert-yellow;
+			border-bottom: solid 2px var( --color-warning );
 		}
 
 		&.is-business-plan {
@@ -220,7 +220,7 @@ $plan-features-sidebar-width: 272px;
 
 	.plans-features-main__group.is-jetpack & {
 		&.is-personal-plan {
-			border-bottom: solid 2px $alert-yellow;
+			border-bottom: solid 2px var( --color-warning );
 		}
 		&.is-premium-plan {
 			border-bottom: solid 2px var( --color-success );

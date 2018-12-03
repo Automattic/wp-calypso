@@ -125,7 +125,7 @@
 
 	// Warning
 	&.is-warning {
-		background: $alert-yellow;
+		background: var( --color-warning );
 	}
 
 	// Error! OHNO!
