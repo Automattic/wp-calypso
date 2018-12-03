@@ -515,7 +515,7 @@ const getPlanEcommerceDetails = () => ( {
 		FEATURE_ALL_BUSINESS_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS ],
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS, FEATURE_UPLOAD_THEMES_PLUGINS ],
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
