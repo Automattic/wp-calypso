@@ -42,9 +42,13 @@ function getPostID( context ) {
 	return parseInt( context.params.post, 10 );
 }
 
-export const jetpackBlocki18n = ( context, next ) => {
-	if ( ! isEnabled( 'gutenberg/block/jetpack-preset' ) ) {
-		return next();
+export const loadTranslations = ( context, next ) => {
+	const domains = [ 'gutenberg' ];
+	if ( isEnabled( 'gutenberg/block/jetpack-preset' ) ) {
+		/*domains.push( {
+			name: 'jetpack',
+			url: 'jetpack-gutenberg-blocks',
+		} );*/
 	}
 
 	const state = context.store.getState();
@@ -55,20 +59,33 @@ export const jetpackBlocki18n = ( context, next ) => {
 		return next();
 	}
 
-	const languageFileUrl = `https://widgets.wp.com/languages/jetpack-gutenberg-blocks/${ localeSlug }.json`;
+	const query = domains.reduce( ( currentQuery, domain ) => {
+		const domainName = typeof domain === 'string' ? domain : domain.name;
+		const domainUrl = typeof domain === 'string' ? domain : domain.url;
+		const languageFileUrl = `https://widgets.wp.com/languages/${ domainUrl }/${ localeSlug }.json?t=2`;
+		return {
+			...currentQuery,
+			[ domainName ]: () => requestFromUrl( languageFileUrl ),
+		};
+	}, {} );
 
-	waitForData( {
-		translations: () => requestFromUrl( languageFileUrl ),
-	} ).then( ( { translations: { state: requestState, data } } ) => {
-		if ( requestState === 'failure' ) {
-			debug(
-				`Encountered an error loading locale file for ${ localeSlug }. Falling back to English.`
-			);
-		}
-
-		if ( data ) {
-			setLocaleData( data.body, 'jetpack' );
-		}
+	waitForData( query ).then( responses => {
+		Object.entries( responses ).forEach( ( [ domain, { state: requestState, data } ] ) => {
+			if ( requestState === 'failure' ) {
+				debug(
+					`Encountered an error loading locale file for domain ${ domain } and locale ${ localeSlug }. Falling back to English.`
+				);
+			} else if ( data ) {
+				const localeData = {
+					'': {
+						domain,
+						lang: localeSlug,
+					},
+					...data.body,
+				};
+				setLocaleData( localeData, domain );
+			}
+		} );
 
 		next();
 	} );
