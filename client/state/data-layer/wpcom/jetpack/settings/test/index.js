@@ -19,7 +19,6 @@ import { normalizeSettings } from 'state/jetpack/settings/utils';
 import { saveJetpackSettingsSuccess, updateJetpackSettings } from 'state/jetpack/settings/actions';
 
 describe( 'requestJetpackSettings()', () => {
-	const dispatch = jest.fn();
 	const token = 'abcd1234';
 	const userEmail = 'example@yourgroovydomain.com';
 	const siteId = 12345678;
@@ -30,9 +29,9 @@ describe( 'requestJetpackSettings()', () => {
 	};
 
 	test( 'should dispatch an action for a GET HTTP request to fetch Jetpack settings', () => {
-		requestJetpackSettings( { dispatch }, action );
+		const result = requestJetpackSettings( action );
 
-		expect( dispatch ).toHaveBeenCalledWith(
+		expect( result ).toEqual(
 			http(
 				{
 					apiVersion: '1.1',
@@ -58,9 +57,9 @@ describe( 'requestJetpackSettings()', () => {
 		};
 		const actionWithAuth = { ...action, query };
 
-		requestJetpackSettings( { dispatch }, actionWithAuth );
+		const result = requestJetpackSettings( actionWithAuth );
 
-		expect( dispatch ).toHaveBeenCalledWith(
+		expect( result ).toEqual(
 			http(
 				{
 					apiVersion: '1.1',
@@ -101,7 +100,7 @@ describe( 'announceRequestFailure()', () => {
 			},
 		} );
 
-		announceRequestFailure( { dispatch, getState }, { siteId } );
+		announceRequestFailure( { siteId } )( dispatch, getState );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -133,7 +132,7 @@ describe( 'announceRequestFailure()', () => {
 			},
 		} );
 
-		announceRequestFailure( { dispatch, getState }, { siteId } );
+		announceRequestFailure( { siteId } )( dispatch, getState );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -165,7 +164,7 @@ describe( 'announceRequestFailure()', () => {
 			},
 		} );
 
-		announceRequestFailure( { dispatch, getState }, { siteId } );
+		announceRequestFailure( { siteId } )( dispatch, getState );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -214,7 +213,7 @@ describe( 'saveJetpackSettings()', () => {
 	};
 
 	test( 'should dispatch an action for POST HTTP request to save Jetpack settings, omitting JPO credentials', () => {
-		saveJetpackSettings( { dispatch, getState }, action );
+		saveJetpackSettings( action )( dispatch, getState );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			http(
@@ -238,7 +237,6 @@ describe( 'saveJetpackSettings()', () => {
 } );
 
 describe( 'handleSaveSuccess()', () => {
-	const dispatch = jest.fn();
 	const siteId = 12345678;
 	const settings = {
 		siteTitle: 'My Awesome Site',
@@ -246,16 +244,15 @@ describe( 'handleSaveSuccess()', () => {
 	};
 
 	test( 'should dispatch a save success action upon successful save request', () => {
-		handleSaveSuccess( { dispatch }, { siteId }, { data: settings } );
+		const result = handleSaveSuccess( { siteId }, { data: settings } );
 
-		expect( dispatch ).toHaveBeenCalledWith(
+		expect( result ).toEqual(
 			expect.objectContaining( saveJetpackSettingsSuccess( siteId, settings ) )
 		);
 	} );
 } );
 
 describe( 'handleSaveFailure()', () => {
-	const dispatch = jest.fn();
 	const siteId = 12345678;
 	const action = {
 		type: JETPACK_SETTINGS_SAVE,
@@ -273,23 +270,20 @@ describe( 'handleSaveFailure()', () => {
 	};
 
 	test( 'should trigger an error notice upon unsuccessful save request', () => {
-		handleSaveFailure( { dispatch }, { siteId }, action );
+		const result = handleSaveFailure( { siteId }, action );
 
-		expect( dispatch ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				notice: expect.objectContaining( {
-					status: 'is-error',
-					text: 'An unexpected error occurred. Please try again later.',
-					noticeId: `jpo-notice-error-${ siteId }`,
-					duration: 5000,
-				} ),
-			} )
-		);
+		expect( result[ 1 ] ).toMatchObject( {
+			notice: {
+				status: 'is-error',
+				text: 'An unexpected error occurred. Please try again later.',
+				noticeId: `jpo-notice-error-${ siteId }`,
+				duration: 5000,
+			},
+		} );
 	} );
 } );
 
 describe( 'retryOrAnnounceSaveFailure()', () => {
-	const dispatch = jest.fn();
 	const siteId = 12345678;
 	const settings = {
 		onboarding: {
@@ -312,9 +306,9 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 	};
 
 	test( 'should trigger saveJetpackSettings upon first WooCommerce install timeout', () => {
-		retryOrAnnounceSaveFailure( { dispatch }, action, error );
+		const result = retryOrAnnounceSaveFailure( action, error );
 
-		expect( dispatch ).toHaveBeenCalledWith(
+		expect( result ).toEqual(
 			expect.objectContaining( {
 				settings,
 				siteId,
@@ -341,18 +335,16 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 			},
 		};
 
-		retryOrAnnounceSaveFailure( { dispatch }, thirdAttemptAction, error );
+		const result = retryOrAnnounceSaveFailure( thirdAttemptAction, error );
 
-		expect( dispatch ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				notice: expect.objectContaining( {
-					status: 'is-error',
-					text: 'An unexpected error occurred. Please try again later.',
-					noticeId: `jpo-notice-error-${ siteId }`,
-					duration: 5000,
-				} ),
-			} )
-		);
+		expect( result[ 1 ] ).toMatchObject( {
+			notice: {
+				status: 'is-error',
+				text: 'An unexpected error occurred. Please try again later.',
+				noticeId: `jpo-notice-error-${ siteId }`,
+				duration: 5000,
+			},
+		} );
 	} );
 } );
 
