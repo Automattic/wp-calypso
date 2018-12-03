@@ -405,6 +405,7 @@ export class CheckoutThankYou extends React.Component {
 			if ( delayedTransferPurchase ) {
 				planProps = {
 					action: (
+						// eslint-disable-next-line
 						<a className="thank-you-card__button" onClick={ this.startTransfer }>
 							{ translate( 'Start Domain Transfer' ) }
 						</a>
