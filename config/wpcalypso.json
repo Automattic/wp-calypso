@@ -111,6 +111,7 @@
 		"nps-survey/dev-trigger": true,
 		"nps-survey/notice": true,
 		"onboarding-checklist": true,
+		"onboarding-checklist/email-setup": false,
 		"perfmon": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,

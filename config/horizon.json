@@ -13,11 +13,7 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
-	"livechat_support_locales": [
-		"en",
-		"es",
-		"pt-br"
-	],
+	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": false,
 		"apple-pay": false,
@@ -86,6 +82,7 @@
 		"me/trophies": false,
 		"network-connection": true,
 		"onboarding-checklist": false,
+		"onboarding-checklist/email-setup": false,
 		"perfmon": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,

@@ -5,6 +5,8 @@
 import { get, memoize, omit } from 'lodash';
 import debugModule from 'debug';
 
+import config from 'config';
+
 const debug = debugModule( 'calypso:wpcom-task-list' );
 
 export default class WpcomTaskList {
@@ -51,7 +53,9 @@ export default class WpcomTaskList {
 			addTask( 'site_launched' );
 		}
 
-		addTask( 'email_setup' );
+		if ( config.isEnabled( 'onboarding-checklist/email-setup' ) ) {
+			addTask( 'email_setup' );
+		}
 
 		debug( 'designType: ', designType );
 		debug( 'Task list: ', this.tasks );
