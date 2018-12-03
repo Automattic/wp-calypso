@@ -32,6 +32,7 @@ import Header from '../header';
 import TextEditor from '../text-editor';
 import VisualEditor from '../visual-editor';
 import EditorModeKeyboardShortcuts from '../keyboard-shortcuts';
+import KeyboardShortcutHelpModal from 'gutenberg/editor/components/keyboard-shortcut-help-modal';
 import SettingsSidebar from '../sidebar/settings-sidebar';
 import Sidebar from '../sidebar';
 import { PluginPostPublishPanel, PluginPrePublishPanel } from '@wordpress/edit-post';
@@ -90,6 +91,7 @@ function Layout( {
 				<EditorNotices />
 				<PreserveScrollInReorder />
 				<EditorModeKeyboardShortcuts />
+				<KeyboardShortcutHelpModal />
 				{ mode === 'text' && <TextEditor /> }
 				{ mode === 'visual' && <VisualEditor /> }
 			</div>
