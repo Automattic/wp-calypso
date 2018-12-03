@@ -440,7 +440,7 @@ export class Checkout extends React.Component {
 				site: selectedSiteSlug,
 				plan: 'paid',
 			} );
-			return `/checklist/${ selectedSiteSlug }`;
+			return `/view/${ selectedSiteSlug }`;
 		}
 
 		/**

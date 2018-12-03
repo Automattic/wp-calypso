@@ -140,7 +140,7 @@ export class SignupProcessingScreen extends Component {
 			site: this.state.siteSlug,
 			plan: 'free',
 		} );
-		this.props.loginHandler( { redirectTo: `/checklist/${ this.state.siteSlug }` } );
+		this.props.loginHandler( { redirectTo: `/view/${ this.state.siteSlug }` } );
 	};
 
 	shouldShowChecklist() {
