@@ -8,20 +8,6 @@
 	margin: 0;
 }
 
-.gutenberg {
-	// Allow gallery items to go edge to edge.
-	.wp-block-jetpack-tiled-gallery:not( .components-placeholder ) {
-		margin-left: -$tiled-gallery-margin;
-		margin-right: -$tiled-gallery-margin;
-	}
-
-	// Don't use negative margins when full-wide.
-	[data-align='full'] .wp-block-jetpack-tiled-gallery:not( .components-placeholder ) {
-		margin-left: auto;
-		margin-right: auto;
-	}
-}
-
 .wp-block-jetpack-tiled-gallery {
 	.tiled-gallery__row {
 		.tiled-gallery__item {
