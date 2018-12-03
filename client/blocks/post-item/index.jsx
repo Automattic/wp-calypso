@@ -97,7 +97,7 @@ class PostItem extends React.Component {
 		const { multiSelectEnabled, isCurrentPostSelected } = this.props;
 		return (
 			multiSelectEnabled && (
-				//eslint-disable-next-line
+				//eslint-disable-next-linex
 				<div className="post-item__select" onClick={ this.toggleCurrentPostSelection }>
 					<FormInputCheckbox
 						checked={ isCurrentPostSelected }
