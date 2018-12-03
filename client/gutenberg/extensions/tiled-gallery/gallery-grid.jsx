@@ -5,13 +5,13 @@
  */
 import { Component, Fragment, createRef } from '@wordpress/element';
 import classnames from 'classnames';
-import { defer, throttle } from 'lodash';
+import { defer } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
 
 /**
  * Internal dependencies
  */
-import { DEFAULT_GALLERY_WIDTH, RESIZE_RATE_IN_MS } from './constants';
+import { DEFAULT_GALLERY_WIDTH } from './constants';
 import { getLayout } from './layouts';
 
 class TiledGalleryGrid extends Component {
@@ -22,14 +22,22 @@ class TiledGalleryGrid extends Component {
 	// Create a ref to store the wrapper DOM element for ResizeObserver
 	wrapper = createRef();
 
-	throttleOnResize = throttle( entries => {
-		for ( const entry of entries ) {
-			const { width } = entry.contentRect;
-			if ( width && width !== this.state.width ) {
-				this.setWidth( width );
-			}
+	pendingRaf = null;
+
+	handleResize = entries => {
+		if ( this.pendingRaf ) {
+			cancelAnimationFrame( this.pendingRaf );
 		}
-	}, RESIZE_RATE_IN_MS );
+		this.pendingRaf = requestAnimationFrame( () => {
+			this.pendingRaf = null;
+			for ( const entry of entries ) {
+				const { width } = entry.contentRect;
+				if ( width && width !== this.state.width ) {
+					this.setWidth( width );
+				}
+			}
+		} );
+	};
 
 	setWidth( width ) {
 		this.setState( { width } );
@@ -39,7 +47,7 @@ class TiledGalleryGrid extends Component {
 		this.deferredMount = defer( () => {
 			// ResizeObserver has checks for `window` & `document`:
 			// it does nothing if those are not available.
-			this.observer = new ResizeObserver( this.throttleOnResize );
+			this.observer = new ResizeObserver( this.handleResize );
 			this.observer.observe( this.wrapper.current.parentNode );
 		} );
 	}
