@@ -209,13 +209,16 @@
 	}
 }
 
-.checkout-thank-you__verification-notice {
+.checkout-thank-you__verification-notice,
+.checkout-thank-you__verified-required {
 	width: 100%;
 	max-width: 500px;
 	text-align: left;
 	margin: 0 auto;
 }
-
+.checkout-thank-you__verified-required {
+	margin-top: 30px;
+}
 .checkout-thank-you__verification-notice-email {
 	word-break: break-word;
 }
