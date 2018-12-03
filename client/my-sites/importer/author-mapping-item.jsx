@@ -33,6 +33,8 @@ class ImporterAuthorMapping extends React.Component {
 		sourceAuthor: PropTypes.shape( {
 			id: PropTypes.string.isRequired,
 			name: PropTypes.string.isRequired,
+			// `currentUser` has `.display_name` and is used to map author on single author sites
+			// `users` endpoint returns `.name` and is used for multiple author sites
 			mappedTo: PropTypes.oneOfType( [ userShape( 'name' ), userShape( 'display_name' ) ] ),
 		} ).isRequired,
 		currentUser: PropTypes.object,
