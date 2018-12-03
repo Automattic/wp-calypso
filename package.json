@@ -261,6 +261,7 @@
     "pretest": "npm run -s install-if-deps-outdated",
     "test": "run-s -s test-client test-server",
     "pretest-client": "npm run -s pretest",
+    "test-packages": "jest -c=test/packages/jest.config.js",
     "test-client": "jest -c=test/client/jest.config.js",
     "test-client:watch": "npm run -s test-client -- --watch",
     "pretest-integration": "npm run -s pretest",
