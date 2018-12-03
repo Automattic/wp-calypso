@@ -128,7 +128,7 @@ $current-theme-border: 1px solid transparentize( $gray-lighten-20, 0.25 );
 
 	.accessible-focus &:focus {
 		z-index: z-index( 'root', '.accessible-focus .current-theme__button:focus' );
-		outline: solid 3px $blue-light;
+		outline: solid 3px var( --color-primary-light );
 	}
 }
 

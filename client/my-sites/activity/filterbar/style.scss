@@ -172,14 +172,14 @@
 	}
 
 	.DayPicker-Day--start {
-		background-color: $blue-light;
+		background-color: var( --color-primary-light );
 		border-radius: 0;
 		border-top-left-radius: 50%;
 		border-bottom-left-radius: 50%;
 	}
 
 	.DayPicker-Day--end {
-		background-color: $blue-light;
+		background-color: var( --color-primary-light );
 		border-radius: 0;
 		border-top-right-radius: 50%;
 		border-bottom-right-radius: 50%;
@@ -208,7 +208,7 @@
 	}
 
 	.DayPicker-Day--selected .date-picker__day {
-		background-color: $blue-light;
+		background-color: var( --color-primary-light );
 		border-radius: 0;
 	}
 
@@ -234,7 +234,7 @@
 		right: 12px;
 		width: 20px;
 		height: 26px;
-		background-color: $blue-light;
+		background-color: var( --color-primary-light );
 	}
 
 	.DayPicker-Day--start .date-picker__day:after {
