@@ -387,6 +387,11 @@ export function generateSteps( {
 			stepName: 'site-information',
 			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
 		},
+
+		'site-style': {
+			stepName: 'site-style',
+			providesDependencies: [ 'themeSlugWithRepo' ],
+		},
 	};
 }
 

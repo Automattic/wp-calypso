@@ -1,0 +1,55 @@
+.site-style__form,
+.site-style__form-wrapper {
+	justify-content: center;
+	display: flex;
+}
+
+.site-style__form {
+	padding: 20px;
+	align-items: stretch;
+	height: 100%;
+	background-color: $gray-light;
+	border-color: $gray-lighten-30;
+	border-radius: 5px;
+}
+
+.site-style__fieldset,
+.site-style__submit-wrapper {
+	align-self: center;
+	margin-bottom: 0;
+}
+
+.site-style__option-label {
+	cursor: pointer;
+	display: inline-block;
+	margin: 0 10px 0 0;
+	height: 100%;
+	min-width: 60px;
+	text-align: center;
+	background: white;
+	border-radius: 5px;
+
+	&.is-checked,
+	&.is-checked:hover {
+		background-color: $gray-lighten-20;
+	}
+
+	&:hover {
+		background-color: $gray-lighten-30;
+	}
+
+	input[type='radio'] {
+		position: absolute;
+		left: -1000px;
+	}
+
+	input[type='radio'] + span {
+		margin: 0;
+		padding: 10px;
+		display: block;
+	}
+}
+
+.accessible-focus .site-style__option-label input[type='radio']:focus + span {
+	outline: 1px solid $link-highlight;
+}
