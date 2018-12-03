@@ -154,7 +154,7 @@
 }
 
 .guided-transfer-card__feature-list {
-	color: $alert-green;
+	color: var( --color-success );
 	flex-basis: 40%;
 
 	.guided-transfer-card__feature-list-item {

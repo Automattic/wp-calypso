@@ -285,7 +285,7 @@
 
 	&.is-premium-plan {
 		.checkout-thank-you__jetpack-feature-status-icon .gridicons-checkmark {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 	}
 

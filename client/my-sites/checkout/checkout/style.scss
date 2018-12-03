@@ -322,7 +322,7 @@
 
 		.payment-box-section.selected:not( .no-stored-cards ) {
 			.payment-box-section-inner {
-				border-left: 3px solid $alert-green;
+				border-left: 3px solid var( --color-success );
 			}
 			.checkout__new-card-fields {
 				background-color: #fafdf6;
@@ -820,7 +820,7 @@
 }
 
 .checkout__privacy-protection-free-text {
-	color: $alert-green;
+	color: var( --color-success );
 	padding-left: 8px;
 }
 

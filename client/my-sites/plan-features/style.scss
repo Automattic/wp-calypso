@@ -198,7 +198,7 @@ $plan-features-sidebar-width: 272px;
 
 	.plans-features-main__group.is-wpcom & {
 		&.is-blogger-plan {
-			border-bottom: solid 2px $alert-green;
+			border-bottom: solid 2px var( --color-success );
 		}
 
 		&.is-personal-plan {
@@ -223,7 +223,7 @@ $plan-features-sidebar-width: 272px;
 			border-bottom: solid 2px $alert-yellow;
 		}
 		&.is-premium-plan {
-			border-bottom: solid 2px $alert-green;
+			border-bottom: solid 2px var( --color-success );
 		}
 		&.is-business-plan {
 			border-bottom: solid 2px $alert-purple;
@@ -303,7 +303,7 @@ $plan-features-sidebar-width: 272px;
 	height: 20px;
 	border-radius: 10px;
 	color: $white;
-	background: $alert-green;
+	background: var( --color-success );
 	font-weight: normal;
 	vertical-align: middle;
 	padding: 0 8px;
@@ -665,7 +665,7 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-price.is-original:before {
-		border-color: $alert-green;
+		border-color: var( --color-success );
 	}
 
 	.plan-price,

@@ -120,7 +120,7 @@
 
 	// Success
 	&.is-success {
-		background: $alert-green;
+		background: var( --color-success );
 	}
 
 	// Warning
@@ -369,7 +369,7 @@
 }
 
 .activity-log-item__quick-action-success {
-	color: $alert-green;
+	color: var( --color-success );
 	animation-name: fade-out-success;
 	animation-fill-mode: forwards;
 	animation-delay: 2s;

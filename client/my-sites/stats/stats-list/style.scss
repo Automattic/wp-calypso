@@ -525,7 +525,7 @@ ul.module-content-list-item-action-submenu {
 
 	// Color follow action when already following
 	.module-content-list-item-action-wrapper.following .module-content-list-item-action-label {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 
 	// Display hidden label and change icon for Unfollow action

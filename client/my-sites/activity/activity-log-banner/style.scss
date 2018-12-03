@@ -9,7 +9,7 @@
 	// Success!
 	&.is-success {
 		.activity-log-banner__icon {
-			background-color: $alert-green;
+			background-color: var( --color-success );
 		}
 	}
 

@@ -85,7 +85,7 @@
 	.gridicons-checkmark {
 		float: right;
 		margin-left: 4px;
-		color: $alert-green;
+		color: var( --color-success );
 	}
 }
 

@@ -488,7 +488,7 @@ ul.module-header-actions {
 		font-size: 12px;
 
 		&.is-rising {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 
 		&.is-falling {

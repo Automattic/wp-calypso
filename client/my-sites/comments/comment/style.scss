@@ -330,7 +330,7 @@
 	}
 
 	&.comment__action-approve:hover {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 	&.comment__action-like:hover {
 		color: $orange-jazzy;
@@ -342,7 +342,7 @@
 	}
 
 	&.is-approved {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 	&.is-liked {
 		color: $orange-jazzy;

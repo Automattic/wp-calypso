@@ -2,7 +2,7 @@
 	font-size: 12px;
 
 	.sidebar-banner__link {
-		background-color: $alert-green;
+		background-color: var( --color-success );
 		color: $white;
 		display: flex;
 

@@ -62,7 +62,7 @@
 	}
 
 	&.sent .gridicon {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 }
 
