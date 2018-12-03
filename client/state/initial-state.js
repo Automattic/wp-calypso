@@ -197,7 +197,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 			// TODO: serialize with the current reducer rather than initial one once we
 			// start updating the reducer dynamically.
 			const serializedState = serializeState( state, initialReducer );
-			const _timestamp = new Date();
+			const _timestamp = Date.now();
 
 			const storeTasks = map( serializedState.get(), ( data, storageKey ) =>
 				localforageStoreState( reduxStateKey, storageKey, data, _timestamp )
