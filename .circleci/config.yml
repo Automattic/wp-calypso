@@ -148,7 +148,6 @@ commands:
     steps:
       # folders to collect results
       - run: *setup-results-and-artifacts
-      - run: npm run build-artifacts
       - attach_workspace:
           at: '~'
   store-artifacts-and-test-results:
@@ -174,6 +173,7 @@ jobs:
       - restore_cache: *restore-node-modules-cache
       - run: *npm-install
       - save_cache: *save-node-modules-cache
+      - run: npm run build-artifacts
       - persist_to_workspace:
           root: '~'
           paths:
