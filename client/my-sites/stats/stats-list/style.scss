@@ -556,7 +556,7 @@ ul.module-content-list-item-action-submenu {
 
 	// Color spam action red
 	.module-content-list-item-action-wrapper.spam {
-		color: $alert-red;
+		color: var( --color-error );
 
 		// Hover state
 		@include breakpoint( ">480px" ) {

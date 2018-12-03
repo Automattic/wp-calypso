@@ -130,7 +130,7 @@
 
 	// Error! OHNO!
 	&.is-error {
-		background: $alert-red;
+		background: var( --color-error );
 	}
 
 	.is-loading & {
@@ -377,7 +377,7 @@
 }
 
 .activity-log-item__quick-action-error {
-	color: $alert-red;
+	color: var( --color-error );
 }
 
 .activity-log-item__activity-media {

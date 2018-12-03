@@ -23,7 +23,7 @@
 	// Error! OHNO!
 	&.is-error {
 		.activity-log-banner__icon {
-			background-color: $alert-red;
+			background-color: var( --color-error );
 		}
 	}
 

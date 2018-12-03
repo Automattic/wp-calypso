@@ -101,7 +101,7 @@
 
 	p.settings-alert {
 		font-weight: 400;
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	ul li,
@@ -157,7 +157,7 @@
 	}
 
 	.verification-code-error {
-		color: $alert-red;
+		color: var( --color-error );
 		font-weight: bold;
 	}
 
@@ -401,7 +401,7 @@
 		}
 
 		.gridicons-notice-outline {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 	}
 

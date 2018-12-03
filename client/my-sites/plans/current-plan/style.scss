@@ -100,7 +100,7 @@
 
 	&.is-expiring {
 		.current-plan__expires-in {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 	}
 

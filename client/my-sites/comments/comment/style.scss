@@ -80,7 +80,7 @@
 
 .comment__author-has-link {
 	margin: 0 4px -4px 0;
-	color: $alert-red;
+	color: var( --color-error );
 }
 
 .comment__author-info-element {
@@ -338,7 +338,7 @@
 	&.comment__action-delete:hover,
 	&.comment__action-spam:hover,
 	&.comment__action-trash:hover {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	&.is-approved {
@@ -470,7 +470,7 @@
 	}
 
 	.comment__edit-jetpack-update-notice {
-		color: $alert-red;
+		color: var( --color-error );
 		margin-left: 8px;
 		margin-right: 8px;
 
@@ -481,7 +481,7 @@
 	}
 
 	.comment__edit-jetpack-update-notice-link {
-		color: $alert-red;
+		color: var( --color-error );
 		margin-left: 4px;
 		text-decoration: underline;
 	}

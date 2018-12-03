@@ -63,7 +63,7 @@
 }
 
 .plugin-list-header__actions-remove-item {
-	color: $alert-red;
+	color: var( --color-error );
 
 	&.is-disabled {
 		color: lighten( $alert-red, 30% );

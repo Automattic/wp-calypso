@@ -36,7 +36,7 @@
 }
 
 .credentials-configured__revoke-icon {
-	color: $alert-red;
+	color: var( --color-error );
 	margin-right: rem( 5px );
 }
 

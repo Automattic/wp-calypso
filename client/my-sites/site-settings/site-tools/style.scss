@@ -9,7 +9,7 @@
 	color: $gray-dark;
 
 	&.is-warning {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 }
 

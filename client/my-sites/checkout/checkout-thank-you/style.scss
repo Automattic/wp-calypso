@@ -273,7 +273,7 @@
 }
 
 .checkout-thank-you__jetpack-feature-status-icon .gridicons-notice-outline {
-	color: $alert-red;
+	color: var( --color-error );
 }
 
 .checkout-thank-you__jetpack {

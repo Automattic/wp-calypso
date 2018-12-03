@@ -492,7 +492,7 @@ ul.module-header-actions {
 		}
 
 		&.is-falling {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 
 		&.is-same {

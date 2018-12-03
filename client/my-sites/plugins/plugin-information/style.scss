@@ -79,7 +79,7 @@
 	.gridicons-cross-small {
 		float: right;
 		margin-left: 4px;
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	.gridicons-checkmark {
