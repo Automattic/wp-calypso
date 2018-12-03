@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import debug from 'debug';
-import { isEnabled } from 'config';
+import config, { isEnabled } from 'config';
 import { has, uniqueId } from 'lodash';
 import { setLocaleData } from '@wordpress/i18n';
 
@@ -51,7 +51,7 @@ export const jetpackBlocki18n = ( context, next ) => {
 	const localeSlug = getCurrentLocaleSlug( state );
 
 	// We don't need to localize English
-	if ( localeSlug === 'en' ) {
+	if ( localeSlug === config( 'i18n_default_locale_slug' ) ) {
 		return next();
 	}
 
