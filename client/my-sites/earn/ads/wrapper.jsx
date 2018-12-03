@@ -222,7 +222,7 @@ class AdsWrapper extends Component {
 		) {
 			component = this.renderInstantActivationToggle( component );
 		} else if (
-			// ! site.options.wordads &&
+			! site.options.wordads &&
 			canUpgradeToUseWordAds( site )
 		) {
 			component = this.renderUpsell();

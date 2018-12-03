@@ -23,7 +23,7 @@ import AdsSettings from 'my-sites/earn/ads/form-settings';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
-import AdsWrapper from './ads/main';
+import AdsWrapper from './ads/wrapper';
 
 class EarningsMain extends Component {
 	static propTypes = {
