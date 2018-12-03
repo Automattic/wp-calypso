@@ -23,8 +23,10 @@ import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
-import { hints } from 'lib/signup/hint-data';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { getSiteTopicSuggestions } from 'signup/utils';
+
+const siteTopicSuggestions = getSiteTopicSuggestions();
 
 /**
  * Style dependencies
@@ -88,7 +90,7 @@ class SiteTopicStep extends Component {
 							id="siteTopic"
 							placeholder={ placeholder }
 							onChange={ this.onSiteTopicChange }
-							suggestions={ Object.values( hints ) }
+							suggestions={ siteTopicSuggestions }
 							value={ currentSiteTopic }
 						/>
 					</FormFieldset>

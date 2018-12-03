@@ -2,7 +2,7 @@
 /**
  * Exernal dependencies
  */
-import { filter, find, includes, indexOf, isEmpty, merge, pick } from 'lodash';
+import { filter, find, findKey, includes, indexOf, isEmpty, merge, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +13,7 @@ import flows from 'signup/config/flows';
 import formState from 'lib/form-state';
 import userFactory from 'lib/user';
 import { allSiteTypes } from 'lib/signup/site-type';
+import { hints } from 'lib/signup/hint-data';
 
 const user = userFactory();
 
@@ -218,4 +219,14 @@ export function canResumeFlow( flowName, progress ) {
 	const flow = flows.getFlow( flowName );
 	const flowStepsInProgressStore = getCompletedSteps( flowName, progress );
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
+}
+
+export function getSiteTopicSuggestions() {
+	return Object.values( hints );
+}
+
+export function toSiteTopicSlug( siteTopicInput ) {
+	const trimmedInput = siteTopicInput.trim();
+
+	return findKey( hints, siteTopic => siteTopic === trimmedInput ) || siteTopicInput;
 }

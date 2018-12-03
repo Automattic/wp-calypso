@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey, includes } from 'lodash';
+import { invoke, noop, includes } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -23,10 +23,14 @@ import { setUserExperience } from 'state/signup/steps/user-experience/actions';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getThemeForSiteGoals, getDesignTypeForSiteGoals } from 'signup/utils';
+import {
+	getThemeForSiteGoals,
+	getDesignTypeForSiteGoals,
+	getSiteTopicSuggestions,
+	toSiteTopicSlug,
+} from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
-import { hints } from 'lib/signup/hint-data';
 import { isValidLandingPageVertical } from 'lib/signup/verticals';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
@@ -51,6 +55,8 @@ import SuggestionSearch from 'components/suggestion-search';
  * Style dependencies
  */
 import './style.scss';
+
+const siteTopicSuggestions = getSiteTopicSuggestions();
 
 class AboutStep extends Component {
 	constructor( props ) {
@@ -184,7 +190,6 @@ class AboutStep extends Component {
 			nextFlowName = flowName;
 
 		//Inputs
-		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 		const userExperienceInput = this.state.userExperience;
 		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
 		const eventAttributes = {};
@@ -202,7 +207,7 @@ class AboutStep extends Component {
 		//Site Topic
 		const englishSiteTopicInput = this.state.hasPrepopulatedVertical
 			? this.state.siteTopicValue
-			: findKey( hints, siteTopic => siteTopic === siteTopicInput ) || siteTopicInput;
+			: toSiteTopicSlug( this.state.siteTopicValue );
 
 		eventAttributes.site_topic = englishSiteTopicInput || 'N/A';
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
@@ -520,7 +525,7 @@ class AboutStep extends Component {
 											'e.g. Fashion, travel, design, plumber, electrician'
 										) }
 										onChange={ this.onSiteTopicChange }
-										suggestions={ Object.values( hints ) }
+										suggestions={ siteTopicSuggestions }
 									/>
 								</FormFieldset>
 							) }
