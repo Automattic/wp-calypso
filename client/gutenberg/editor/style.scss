@@ -58,6 +58,11 @@ $gutenberg-theme-toggle: #11a0d2;
 //end static post css values
 //========================================================
 
+//Remove this if https://github.com/Automattic/wp-calypso/issues/28776 is resolved
+.editor-post-permalink__change {
+	display: none;
+}
+
 .is-section-gutenberg-editor {
 	box-sizing: border-box !important;
 
