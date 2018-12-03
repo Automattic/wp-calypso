@@ -148,6 +148,7 @@ commands:
     steps:
       # folders to collect results
       - run: *setup-results-and-artifacts
+      - run: npm run build-artifacts
       - attach_workspace:
           at: '~'
   store-artifacts-and-test-results:
