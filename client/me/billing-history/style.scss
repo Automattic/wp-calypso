@@ -79,6 +79,12 @@
 	}
 }
 
+.billing-history__transaction-tax-amount {
+	color: $gray-text-min;
+	font-size: 12px;
+	white-space: nowrap;
+}
+
 .billing-history__header-row {
 	height: 59px;
 }
