@@ -43,7 +43,12 @@ function getPostID( context ) {
 }
 
 export const loadTranslations = ( context, next ) => {
-	const domains = [ 'gutenberg' ];
+	const domains = [
+		{
+			name: 'default',
+			url: 'gutenberg',
+		},
+	];
 	if ( isEnabled( 'gutenberg/block/jetpack-preset' ) ) {
 		/*domains.push( {
 			name: 'jetpack',
@@ -60,12 +65,11 @@ export const loadTranslations = ( context, next ) => {
 	}
 
 	const query = domains.reduce( ( currentQuery, domain ) => {
-		const domainName = typeof domain === 'string' ? domain : domain.name;
-		const domainUrl = typeof domain === 'string' ? domain : domain.url;
-		const languageFileUrl = `https://widgets.wp.com/languages/${ domainUrl }/${ localeSlug }.json?t=2`;
+		const { name, url } = domain;
+		const languageFileUrl = `https://widgets.wp.com/languages/${ url }/${ localeSlug }.json?t=2`;
 		return {
 			...currentQuery,
-			[ domainName ]: () => requestFromUrl( languageFileUrl ),
+			[ name ]: () => requestFromUrl( languageFileUrl ),
 		};
 	}, {} );
 
