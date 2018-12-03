@@ -180,8 +180,10 @@ class WpcomChecklistComponent extends PureComponent {
 	}
 
 	renderTask( task ) {
-		const { siteSlug, viewMode } = this.props;
+		const { siteSlug, viewMode, taskStatuses, designType, isSiteUnlaunched } = this.props;
 		const TaskComponent = 'banner' === viewMode ? ChecklistBannerTask : Task;
+		const taskList = getTaskList( taskStatuses, designType, isSiteUnlaunched );
+		const firstIncomplete = taskList.getFirstIncompleteTask();
 
 		const taskFunctions = {
 			email_verified: this.renderEmailVerifiedTask,
@@ -204,6 +206,7 @@ class WpcomChecklistComponent extends PureComponent {
 			key: task.id,
 			completed: task.isCompleted,
 			siteSlug,
+			firstIncomplete,
 		};
 
 		if ( taskFunctions[ task.id ] ) {

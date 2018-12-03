@@ -288,6 +288,14 @@
 		}
 	}
 
+	&.is-collapsed {
+		.checklist__task-description,
+		.checklist__task-duration,
+		.checklist__task-secondary {
+			display: none;
+		}
+	}
+
 	&.is-placeholder {
 		.checklist__task-title,
 		.checklist__task-description,
