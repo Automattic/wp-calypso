@@ -53,7 +53,7 @@
 		align-items: center;
 
 	&:focus {
-		border-color: $blue-medium;
+		border-color: var( --color-accent );
 		box-shadow: 0 0 0 2px $blue-light;
 	}
 }

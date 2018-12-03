@@ -258,7 +258,7 @@
 }
 
 .sharing-service__overview:hover .sharing-service__content-toggle {
-	color: $blue-medium;
+	color: var( --color-accent );
 }
 
 .sharing-service__icon {
@@ -645,7 +645,7 @@
 .sharing-buttons-preview__like .gridicon {
 	vertical-align: top;
 	margin: 3px 4px 0 0;
-	fill: $blue-medium;
+	fill: var( --color-accent );
 }
 
 .sharing-buttons-preview__fake-user {
@@ -685,7 +685,7 @@
 	}
 
 	&:hover {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 
 	&.is-active {

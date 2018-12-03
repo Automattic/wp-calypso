@@ -46,8 +46,8 @@
 .plan-compare-card__button.is-current {
 	width: 100%;
 	border-width: 1px;
-	border-color: $blue-medium;
-	color: $blue-medium;
+	border-color: var( --color-accent );
+	color: var( --color-accent );
 	font-weight: 400;
 }
 

@@ -164,7 +164,7 @@
 	transition: all ease-in-out 100ms;
 
 	&:hover {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 
 	.theme__sheet-preview-link-text {

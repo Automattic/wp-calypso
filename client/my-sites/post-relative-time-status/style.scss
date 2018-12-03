@@ -15,7 +15,7 @@
 			color: $alert-yellow;
 		}
 		.is-scheduled {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 		.is-trash {
 			color: $alert-red;

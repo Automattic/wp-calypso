@@ -119,7 +119,7 @@
 	width: 80%;
 
 	.progress-bar__progress {
-		background-color: $blue-medium;
+		background-color: var( --color-accent );
 	}
 
 	&.is-complete .progress-bar__progress {
@@ -242,7 +242,7 @@
 
 .site-importer__site-importer-example-domain {
 	font-family: monospace;
-	color: $blue-medium;
+	color: var( --color-accent );
 }
 
 .site-importer__site-importer-confirm-site-pane-container {

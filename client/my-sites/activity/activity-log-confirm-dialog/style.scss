@@ -11,7 +11,7 @@
 		0 2px 5px $gray-lighten-20;
 	}
 	.activity-log-item__activity-icon {
-		background: $blue-medium;
+		background: var( --color-accent );
 	}
 }
 
