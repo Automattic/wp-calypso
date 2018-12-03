@@ -8,7 +8,7 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import treeSelect from 'lib/tree-select';
+import treeSelect from '@automattic/tree-select';
 
 // static empty array to ensure that empty return values from selectors are
 // identical to each other ( rv1 === rv2 )
