@@ -13,7 +13,8 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { cartItems, getEnabledPaymentMethods } from 'lib/cart-values';
+import { cartItems, getEnabledPaymentMethods, hasPendingPayment } from 'lib/cart-values';
+import PendingPaymentBlocker from './pending-payment-blocker';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
@@ -572,7 +573,15 @@ export class Checkout extends React.Component {
 	content() {
 		const { selectedSite } = this.props;
 
-		if ( ! this.isLoading() && this.needsDomainDetails() ) {
+		if ( this.isLoading() ) {
+			return <SecurePaymentFormPlaceholder />;
+		}
+
+		if ( config.isEnabled( 'async-payments' ) && hasPendingPayment( this.props.cart ) ) {
+			return <PendingPaymentBlocker />;
+		}
+
+		if ( this.needsDomainDetails() ) {
 			return (
 				<DomainDetailsForm
 					cart={ this.props.cart }
@@ -580,8 +589,6 @@ export class Checkout extends React.Component {
 					userCountryCode={ this.props.userCountryCode }
 				/>
 			);
-		} else if ( this.isLoading() ) {
-			return <SecurePaymentFormPlaceholder />;
 		}
 
 		return (
