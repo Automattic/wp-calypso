@@ -177,7 +177,9 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 
 	// UNSET CALYPSO DEFAULT STYLES
-		
+	input[type='text'] {
+		width: auto;
+	}
 	input[type='number'].components-range-control__number {
 		width: 50px;
 	}
