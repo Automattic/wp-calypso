@@ -93,7 +93,7 @@
 	}
 	a:focus,
 	a:hover {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 
 	.comment__post-link {
@@ -232,7 +232,7 @@
 		}
 		a:focus,
 		a:hover {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 		}
 	}
 
@@ -293,7 +293,7 @@
 	}
 	a:focus,
 	a:hover {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 }
 
@@ -429,7 +429,7 @@
 	text-transform: uppercase;
 
 	&.is-active {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		cursor: pointer;
 	}
 }
@@ -566,7 +566,7 @@
 	font-style: italic;
 }
 .comment-html-editor__toolbar-button-a.button {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	text-decoration: underline;
 }
 .comment-html-editor__toolbar-button-del {

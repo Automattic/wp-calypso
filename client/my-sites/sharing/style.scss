@@ -678,7 +678,7 @@
 	border-radius: 4px;
 	box-shadow: 0 0 8px rgba( $gray-dark, 0.04 );
 	background-color: $white;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 
 	@include breakpoint( '<480px' ) {
 		padding-right: 0;

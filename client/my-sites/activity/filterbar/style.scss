@@ -248,7 +248,7 @@
 		left: -1px;
 		right: auto;
 		z-index: -1;
-		background-color: $blue-wordpress;
+		background-color: var( --color-primary );
 		border-radius: 50%;
 	}
 

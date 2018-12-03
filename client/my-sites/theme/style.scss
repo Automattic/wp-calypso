@@ -3,7 +3,7 @@
 }
 
 .theme__sheet-bar {
-	background-color: $blue-wordpress;
+	background-color: var( --color-primary );
 	color: white;
 	height: 180px;
 	padding: 0;
@@ -158,7 +158,7 @@
 	position: absolute;
 	margin: 0 auto;
 	padding: 10px;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	font-size: 14px;
 	cursor: pointer;
 	transition: all ease-in-out 100ms;

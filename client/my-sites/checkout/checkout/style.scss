@@ -356,7 +356,7 @@
 		}
 
 		.checkout__new-card-toggle {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 			padding: 15px 15px 15px 12px;
 			border: 0;
 			background: transparent;
@@ -788,7 +788,7 @@
 	}
 
 	&:focus {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 
 	.gridicon {
@@ -867,7 +867,7 @@
 }
 
 .checkout__privacy-protection-radio-price-text {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	margin: 4px 0 0 10px;
 	font-size: 15px;
 }
@@ -895,15 +895,15 @@
 
 		.section-nav-tab__link {
 			background: transparent;
-			color: $blue-wordpress;
+			color: var( --color-primary );
 			font-weight: bold;
 		}
 
 		.section-nav-tab.is-selected {
-			border-bottom-color: $blue-wordpress;
+			border-bottom-color: var( --color-primary );
 
 			.section-nav-tab__link {
-				color: $blue-wordpress;
+				color: var( --color-primary );
 				background-color: $gray-light;
 
 				@include breakpoint( '>480px' ) {

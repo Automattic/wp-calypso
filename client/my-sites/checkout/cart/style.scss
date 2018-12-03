@@ -158,7 +158,7 @@
 }
 
 .cart-items__expander {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	text-decoration: none;
 	font-size: 12px;
 }

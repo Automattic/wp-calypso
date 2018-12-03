@@ -36,7 +36,7 @@
 	border-radius: 4px;
 
 	&.wordpress {
-		background-color: $blue-wordpress;
+		background-color: var( --color-primary );
 	}
 
 	&.medium {

@@ -120,7 +120,7 @@
 
 	&.role-author,
 	&.role-contributor {
-		background: $blue-wordpress;
+		background: var( --color-primary );
 		border: none;
 		color: $white;
 	}

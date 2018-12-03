@@ -122,13 +122,13 @@ $plan-features-sidebar-width: 272px;
 	position: relative;
 
 	&.is-highlighted {
-		border: 1px solid $blue-wordpress;
+		border: 1px solid var( --color-primary );
 		background-color: rgba( $blue-wordpress, 0.1 );
 		position: relative;
 		top: -1px;
 
 		.plan-features__item-checkmark {
-			fill: $blue-wordpress;
+			fill: var( --color-primary );
 		}
 
 		&.has-partial-border::after {
@@ -202,7 +202,7 @@ $plan-features-sidebar-width: 272px;
 		}
 
 		&.is-personal-plan {
-			border-bottom: solid 2px $blue-wordpress;
+			border-bottom: solid 2px var( --color-primary );
 		}
 
 		&.is-premium-plan {
@@ -262,7 +262,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__header-title {
 	font-size: 22px;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	line-height: 0.7;
 
 	@include breakpoint( '<960px' ) {
@@ -469,7 +469,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__item-checkmark {
 	flex: 0 1 auto;
-	fill: $blue-wordpress;
+	fill: var( --color-primary );
 	margin-right: 10px;
 }
 

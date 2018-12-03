@@ -30,7 +30,7 @@
 	// General notice
 	&.is-info {
 		.activity-log-banner__icon {
-			background-color: $blue-wordpress;
+			background-color: var( --color-primary );
 		}
 	}
 

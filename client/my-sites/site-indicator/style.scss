@@ -35,7 +35,7 @@
 	}
 	.accessible-focus &:focus {
 		outline: 0;
-		border: 1px dotted $blue-wordpress;
+		border: 1px dotted var( --color-primary );
 		&::before {
 			top: 4px;
 			left: 4px;
