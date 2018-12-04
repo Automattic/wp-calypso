@@ -1,4 +1,5 @@
 /** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -12,7 +13,6 @@ import { withSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { withState, compose } from '@wordpress/compose';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 function CopyContentMenuItem( { editedPostContent, hasCopied, setState } ) {
 	return (
 		<ClipboardButton
@@ -25,7 +25,6 @@ function CopyContentMenuItem( { editedPostContent, hasCopied, setState } ) {
 		</ClipboardButton>
 	);
 }
-/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default compose(
 	withSelect( select => ( {

@@ -1,3 +1,5 @@
+/** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -11,6 +13,7 @@ import { PanelBody } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
+import { PluginPostStatusInfo } from '@wordpress/edit-post'; // GUTENLYPSO
 
 /**
  * Internal Dependencies
@@ -22,7 +25,6 @@ import PostSticky from '../post-sticky';
 import PostAuthor from '../post-author';
 import PostFormat from '../post-format';
 import PostPendingStatus from '../post-pending-status';
-import { PluginPostStatusInfo } from '@wordpress/edit-post';
 
 /**
  * Module Constants
@@ -30,11 +32,15 @@ import { PluginPostStatusInfo } from '@wordpress/edit-post';
 const PANEL_NAME = 'post-status';
 
 function PostStatus( { isOpened, onTogglePanel } ) {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<PanelBody className="edit-post-post-status" title={ __( 'Status & Visibility' ) } opened={ isOpened } onToggle={ onTogglePanel }>
+		<PanelBody
+			className="edit-post-post-status"
+			title={ __( 'Status & Visibility' ) }
+			opened={ isOpened }
+			onToggle={ onTogglePanel }
+		>
 			<PluginPostStatusInfo.Slot>
-				{ ( fills ) => (
+				{ fills => (
 					<Fragment>
 						<PostVisibility />
 						<PostSchedule />
@@ -49,17 +55,15 @@ function PostStatus( { isOpened, onTogglePanel } ) {
 			</PluginPostStatusInfo.Slot>
 		</PanelBody>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default compose( [
-	withSelect( ( select ) => ( {
+	withSelect( select => ( {
 		isOpened: select( 'core/edit-post' ).isEditorPanelOpened( PANEL_NAME ),
 	} ) ),
-	withDispatch( ( dispatch ) => ( {
+	withDispatch( dispatch => ( {
 		onTogglePanel() {
 			return dispatch( 'core/edit-post' ).toggleEditorPanelOpened( PANEL_NAME );
 		},
 	} ) ),
 ] )( PostStatus );
-

@@ -1,3 +1,5 @@
+/** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -16,17 +18,18 @@ import {
 	BlockSelectionClearer,
 	MultiSelectScrollIntoView,
 	_BlockSettingsMenuFirstItem,
+	_BlockSettingsMenuPluginsExtension,
 } from '@wordpress/editor';
 
 /**
  * Internal dependencies
  */
 import BlockInspectorButton from './block-inspector-button';
+import PluginBlockSettingsMenuGroup from '../block-settings-menu/plugin-block-settings-menu-group';
 
 function VisualEditor() {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<BlockSelectionClearer className="edit-post-visual-editor">
+		<BlockSelectionClearer className="edit-post-visual-editor editor-styles-wrapper">
 			<EditorGlobalKeyboardShortcuts />
 			<CopyHandler />
 			<MultiSelectScrollIntoView />
@@ -37,11 +40,15 @@ function VisualEditor() {
 				</ObserveTyping>
 			</WritingFlow>
 			<_BlockSettingsMenuFirstItem>
-				{ ( { onClose } ) => <BlockInspectorButton onClick={ onClose } role="menuitem" /> }
+				{ ( { onClose } ) => <BlockInspectorButton onClick={ onClose } /> }
 			</_BlockSettingsMenuFirstItem>
+			<_BlockSettingsMenuPluginsExtension>
+				{ ( { clientIds, onClose } ) => (
+					<PluginBlockSettingsMenuGroup.Slot fillProps={ { clientIds, onClose } } />
+				) }
+			</_BlockSettingsMenuPluginsExtension>
 		</BlockSelectionClearer>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default VisualEditor;

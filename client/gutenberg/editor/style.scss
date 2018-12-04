@@ -200,6 +200,19 @@ $gutenberg-theme-toggle: #11a0d2;
 		}
 	}
 
+	.edit-post-sidebar-header ul {
+		list-style: none;
+		margin: 0;
+	}
+
+	.editor-block-navigation__list {
+		list-style: none;
+	}
+}
+
+.is-section-gutenberg-editor,
+.edit-post-options-modal {
+
 	// UNSET CALYPSO DEFAULT STYLES
 	input[type='text'],
 	input[type='search'] {
