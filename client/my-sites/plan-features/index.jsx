@@ -686,7 +686,7 @@ export default connect(
 			siteId,
 			displayJetpackPlans,
 			visiblePlans,
-			popularPlanType,
+			popularPlanSpec,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -713,7 +713,7 @@ export default connect(
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
-				const popular = planConstantObj.type === popularPlanType;
+				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
 				const newPlan = isNew( plan ) && ! isPaid;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
