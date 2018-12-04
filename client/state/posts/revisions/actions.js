@@ -10,8 +10,6 @@ import {
 	POST_REVISIONS_DIFF_UNIFY_VIEW,
 	POST_REVISIONS_RECEIVE,
 	POST_REVISIONS_REQUEST,
-	POST_REVISIONS_REQUEST_FAILURE,
-	POST_REVISIONS_REQUEST_SUCCESS,
 	POST_REVISIONS_SELECT,
 } from 'state/action-types';
 
@@ -37,34 +35,6 @@ export const requestPostRevisions = ( siteId, postId, postType = 'posts', compar
 	postId,
 	postType,
 	siteId,
-} );
-
-/**
- * Action creator function: POST_REVISIONS_REQUEST_SUCCESS
- *
- * @param {String} siteId of the revisions
- * @param {String} postId of the revisions
- * @return {Object} action object
- */
-export const receivePostRevisionsSuccess = ( siteId, postId ) => ( {
-	type: POST_REVISIONS_REQUEST_SUCCESS,
-	siteId,
-	postId,
-} );
-
-/**
- * Action creator function: POST_REVISIONS_REQUEST_FAILURE
- *
- * @param {String} siteId of the revisions
- * @param {String} postId of the revisions
- * @param {Object} error raw error
- * @return {Object} action object
- */
-export const receivePostRevisionsFailure = ( siteId, postId, error ) => ( {
-	type: POST_REVISIONS_REQUEST_FAILURE,
-	siteId,
-	postId,
-	error,
 } );
 
 /**
