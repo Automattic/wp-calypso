@@ -29,13 +29,8 @@ export const navItems = {
 		showIntervals: true,
 	},
 	wordads: {
-		label: 'WordAds',
-		path: '/stats/wordads',
-		showIntervals: true,
-	},
-	ads: {
 		label: 'Ads',
-		path: '/stats/ads',
+		path: '/ads/stats',
 		showIntervals: true,
 	},
 	googleMyBusiness: {
