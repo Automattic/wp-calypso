@@ -74,16 +74,16 @@ export const receiveError = ( { siteId }, error ) => {
 	];
 };
 
-export const receiveResponse = ( { siteId }, { success } ) => {
+export const receiveResponse = ( action, { success } ) => {
 	if ( success === false ) {
-		return receiveError( { siteId }, { error: 'api_success_false' } );
+		return receiveError( action, { error: 'api_success_false' } );
 	}
 
 	return [
 		recordTracksEvent( 'calypso_automated_transfer_inititate_success', {
 			context: 'plugin_upload',
 		} ),
-		fetchAutomatedTransferStatus( siteId ),
+		fetchAutomatedTransferStatus( action.siteId ),
 	];
 };
 
