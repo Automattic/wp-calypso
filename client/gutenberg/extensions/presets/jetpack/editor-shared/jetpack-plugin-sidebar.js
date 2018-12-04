@@ -1,6 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
+
 import { createSlotFill } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
@@ -14,25 +16,27 @@ import JetpackLogo from 'components/jetpack-logo';
 
 const { Fill, Slot } = createSlotFill( 'JetpackPluginSidebar' );
 
-const JetpackPluginSidebar = ( { children } ) => (
-	<Fill>
-		{ children }
-	</Fill>
-);
+const JetpackPluginSidebar = ( { children } ) => <Fill>{ children }</Fill>;
 
 JetpackPluginSidebar.Slot = () => (
 	<Fragment>
 		<PluginSidebarMoreMenuItem target="jetpack" icon={ <JetpackLogo /> }>
 			Jetpack
 		</PluginSidebarMoreMenuItem>
-		<PluginSidebar name="jetpack" title="Jetpack" icon={ <JetpackLogo /> }>
-			<Slot />
-		</PluginSidebar>
+		<Slot>
+			{ fills =>
+				fills.length ? (
+					<PluginSidebar name="jetpack" title="Jetpack" icon={ <JetpackLogo /> }>
+						{ fills }
+					</PluginSidebar>
+				) : null
+			}
+		</Slot>
 	</Fragment>
 );
 
 registerPlugin( 'jetpack-sidebar', {
-	render: () => <JetpackPluginSidebar.Slot />
+	render: () => <JetpackPluginSidebar.Slot />,
 } );
 
 export default JetpackPluginSidebar;
