@@ -39,7 +39,6 @@
 		"google-analytics": true,
 		"gutenberg": true,
 		"gutenberg/opt-in": true,
-		"gutenberg/block/jetpack-preset": false,
 		"happychat": false,
 		"help": true,
 		"help/courses": true,

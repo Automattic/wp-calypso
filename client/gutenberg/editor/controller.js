@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import debug from 'debug';
-import config, { isEnabled } from 'config';
+import config from 'config';
 import { has, set, uniqueId } from 'lodash';
 import { setLocaleData } from '@wordpress/i18n';
 
@@ -45,11 +45,11 @@ function getPostID( context ) {
 
 export const loadTranslations = store => {
 	const domainDefault = { name: 'default', url: 'gutenberg' };
-	const domainJetpack = isEnabled( 'gutenberg/block/jetpack-preset' ) && {
+	const domainJetpack = {
 		name: 'jetpack',
 		url: 'jetpack-gutenberg-blocks',
 	};
-	const domains = domainJetpack ? [ domainDefault, domainJetpack ] : [ domainDefault ];
+	const domains = [ domainDefault, domainJetpack ];
 
 	const state = store.getState();
 	const localeSlug = getCurrentLocaleSlug( state );

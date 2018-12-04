@@ -37,7 +37,6 @@
 		"google-my-business": false,
 		"gutenberg": false,
 		"gutenberg/opt-in": false,
-		"gutenberg/block/jetpack-preset": false,
 		"help": true,
 		"help/courses": true,
 		"jetpack/connect/remote-install": true,
