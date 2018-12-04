@@ -34,6 +34,7 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { navigate } from 'state/ui/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getRouteHistory } from 'state/ui/action-log/selectors';
+import { editorPathRegex } from './utils';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 function HeaderToolbar( {
@@ -72,13 +73,12 @@ function HeaderToolbar( {
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
 function getCloseButtonPath( routeHistory, site ) {
-	const editorPathRegex = /^(\/block-editor)?\/(post|page|(edit\/[^\/]+))(\/|$)/i;
 	const lastEditorPath = routeHistory[ routeHistory.length - 1 ].path;
 
 	// @see post-editor/editor-ground-control/index.jsx
 	const lastNonEditorPath = findLast(
 		routeHistory,
-		( { path } ) => '/block-editor' !== path && ! path.match( editorPathRegex )
+		( { path } ) => ! path.match( editorPathRegex )
 	);
 	if ( lastNonEditorPath ) {
 		return lastNonEditorPath.path;
