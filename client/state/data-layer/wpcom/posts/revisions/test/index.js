@@ -2,13 +2,9 @@
 /**
  * Internal dependencies
  */
-import { fetchPostRevisionsDiffs, receiveSuccess, receiveError } from '../';
+import { fetchPostRevisionsDiffs, receiveSuccess } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	receivePostRevisions,
-	receivePostRevisionsFailure,
-	requestPostRevisions,
-} from 'state/posts/revisions/actions';
+import { receivePostRevisions, requestPostRevisions } from 'state/posts/revisions/actions';
 
 const successfulPostRevisionsDiffsResponse = {
 	diffs: [
@@ -124,23 +120,12 @@ describe( '#receiveSuccess', () => {
 	test( 'should dispatch `receivePostRevisions` and `receivePostRevisionsSuccess`', () => {
 		const action = requestPostRevisions( 12345678, 10, 'post' );
 
-		expect( receiveSuccess( action, successfulPostRevisionsDiffsResponse ) ).toContainEqual(
+		expect( receiveSuccess( action, successfulPostRevisionsDiffsResponse ) ).toEqual(
 			receivePostRevisions( {
 				siteId: 12345678,
 				postId: 10,
 				...successfulPostRevisionsDiffsResponse,
 			} )
-		);
-	} );
-} );
-
-describe( '#receiveError', () => {
-	test( 'should dispatch `receivePostRevisionsFailure`', () => {
-		const action = requestPostRevisions( 12345678, 10 );
-		const rawError = new Error( 'Foo Bar' );
-
-		expect( receiveError( action, rawError ) ).toMatchObject(
-			receivePostRevisionsFailure( 12345678, 10, rawError )
 		);
 	} );
 } );
