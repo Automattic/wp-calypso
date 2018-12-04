@@ -51,7 +51,7 @@
 	}
 
 	.gridicons-lock {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	.gridicon.is_active {

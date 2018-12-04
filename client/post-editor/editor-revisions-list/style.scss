@@ -316,7 +316,7 @@
 
 .editor-revisions-list__deletions {
 	b {
-		background: $alert-red;
+		background: var( --color-error );
 	}
 }
 
