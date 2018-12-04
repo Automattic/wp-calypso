@@ -22,6 +22,8 @@ describe( 'index', () => {
 			getSitePosts = treeSelect( getDependents, selector );
 		} );
 
+		test( 'should fail in ci', () => Promise.reject( 'nope' ) );
+
 		test( 'should create a function which returns the expected value when called', () => {
 			const state = {
 				posts: {
