@@ -35,7 +35,7 @@ function createPurchaseObject( purchase ) {
 		isRenewable: Boolean( purchase.is_renewable ),
 		isRenewal: Boolean( purchase.is_renewal ),
 		meta: purchase.meta,
-		priceText: `${ purchase.currency_symbol }${ purchase.amount }`,
+		priceText: purchase.price_text,
 		payment: {
 			name: purchase.payment_name,
 			type: purchase.payment_type,
@@ -47,7 +47,7 @@ function createPurchaseObject( purchase ) {
 		productName: purchase.product_name,
 		productSlug: purchase.product_slug,
 		refundAmount: Number( purchase.refund_amount ),
-		refundText: `${ purchase.refund_currency_symbol }${ purchase.refund_amount }`,
+		refundText: purchase.refund_text,
 		refundPeriodInDays: purchase.refund_period_in_days,
 		renewDate: purchase.renew_date,
 		// only generate a moment if `renewDate` is present and positive
