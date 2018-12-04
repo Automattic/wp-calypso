@@ -1,3 +1,60 @@
+.concierge-session-nudge {
+	b {
+		font-weight: 700;
+	}
+}
+.concierge-session-nudge__header {
+	text-align: center;
+	font-weight: bold;
+}
+
+.concierge-session-nudge__sub-header {
+	font-size: 21px;
+	font-weight: normal;
+	line-height: 1.4;
+	margin-top: 5px;
+	margin-bottom: 0.75em;
+
+	@include breakpoint( '<1280px' ) {
+		font-size: 21px;
+	}
+
+	@include breakpoint( '<660px' ) {
+		font-size: 18px;
+	}
+}
+
+.concierge-session-nudge__checklist {
+	display: block;
+	width: 100%;
+	text-align: left;
+	margin: 0 0 0.75em;
+	padding: 0;
+	list-style-type: none;
+
+	&-item {
+		display: flex;
+		width: 100%;
+		list-style-type: none;
+		align-items: center;
+		margin-bottom: 4px;
+
+		@include breakpoint( '<660px' ) {
+			align-items: flex-start;
+		}
+	}
+
+	&-item-icon {
+		width: 18px;
+		fill: $green-jetpack;
+		margin-right: 5px;
+	}
+
+	&-item-text {
+		flex: 1;
+	}
+}
+
 .concierge-session-nudge__footer {
 	.concierge-session-nudge__decline-offer-button {
 		color: var( --color-accent );
