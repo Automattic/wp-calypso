@@ -106,7 +106,7 @@
 	border-bottom: 2px solid var( --color-accent );
 
 	.is-personal & {
-		border-bottom: 2px solid $alert-yellow;
+		border-bottom: 2px solid var( --color-warning );
 	}
 
 	.is-premium & {
