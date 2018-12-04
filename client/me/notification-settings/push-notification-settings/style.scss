@@ -123,7 +123,7 @@
 	}
 
 	&.is-enable {
-		background: $blue-medium;
+		background: var( --color-accent );
 		border-color: var( --color-primary );
 		color: $white;
 
