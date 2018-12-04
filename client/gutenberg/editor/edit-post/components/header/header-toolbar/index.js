@@ -78,7 +78,7 @@ function getCloseButtonPath( routeHistory, site ) {
 	// @see post-editor/editor-ground-control/index.jsx
 	const lastNonEditorPath = findLast(
 		routeHistory,
-		action => ! action.path.match( editorPathRegex )
+		( { path } ) => '/gutenberg' !== path && ! path.match( editorPathRegex )
 	);
 	if ( lastNonEditorPath ) {
 		return lastNonEditorPath.path;
