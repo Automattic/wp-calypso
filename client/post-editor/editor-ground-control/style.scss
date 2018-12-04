@@ -239,7 +239,7 @@
 	}
 
 	&:focus:not(:active) {
-		box-shadow: 0 0 0 2px $blue-light;
+		box-shadow: 0 0 0 2px var( --color-primary-light );
 		z-index: 1;
 		border-top-color: $gray;
 		border-bottom: 1px solid $gray;

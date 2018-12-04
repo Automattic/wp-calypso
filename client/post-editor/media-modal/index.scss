@@ -71,7 +71,7 @@
 	fill: $gray-dark;
 
 	&:hover {
-		fill: $blue-light;
+		fill: var( --color-primary-light );
 	}
 }
 
