@@ -100,7 +100,7 @@
 	color: lighten( $gray, 10 );
 
 	&.is-enabled {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 }
 
