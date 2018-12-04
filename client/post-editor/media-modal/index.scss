@@ -117,7 +117,7 @@
 
 	.gridicon,
 	.gridicon:hover {
-		fill: $blue-medium;
+		fill: var( --color-accent );
 	}
 }
 

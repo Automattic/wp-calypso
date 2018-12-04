@@ -57,7 +57,7 @@
 	padding-left: 10px;
 
 	.button.is-active {
-		background: $blue-medium;
+		background: var( --color-accent );
 
 		.gridicon {
 			fill: $white;
@@ -111,7 +111,7 @@
 		color: $gray-dark;
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 }

@@ -200,7 +200,7 @@
 
 		&:hover {
 			.gridicon, span {
-				color: $blue-medium;
+				color: var( --color-accent );
 			}
 		}
 	}

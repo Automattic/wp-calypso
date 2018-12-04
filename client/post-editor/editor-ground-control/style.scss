@@ -246,8 +246,8 @@
 	}
 
 	&:hover {
-		color: $blue-medium;
-		fill: $blue-medium;
+		color: var( --color-accent );
+		fill: var( --color-accent );
 	}
 }
 
@@ -274,7 +274,7 @@
 	}
 
 	&:hover {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 
 	.gridicon {

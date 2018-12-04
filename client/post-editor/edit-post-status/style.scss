@@ -56,7 +56,7 @@
 }
 
 .edit-post-status__future-label {
-	background: $blue-medium;
+	background: var( --color-accent );
 	border-radius: 2px;
 	color: $white;
 	display: inline-block;

@@ -310,7 +310,7 @@
 .editor-revisions-list__additions {
 	margin-right: 12px;
 	b {
-		background: $blue-medium;
+		background: var( --color-accent );
 	}
 }
 
