@@ -41,6 +41,7 @@ import DocumentHead from 'components/data/document-head';
 import LocaleSuggestions from 'components/locale-suggestions';
 import SignupProcessingScreen from 'signup/processing-screen';
 import SignupHeader from 'signup/header';
+import WordPressLogo from 'components/wordpress-logo';
 
 // Libraries
 import analytics from 'lib/analytics';
