@@ -487,7 +487,7 @@ class WpcomChecklistComponent extends PureComponent {
 			title: translate( 'Get email for your site' ),
 			bannerImageSrc: '/calypso/images/stats/tasks/email.svg', // TODO: get an actual svg for this
 			description: translate(
-				'Subscribe to G Suite to get a decidated inbox, docs, and cloud storage.'
+				'Subscribe to G Suite to get a dedicated inbox, docs, and cloud storage.'
 			),
 			duration: translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ),
 			onClick: () => {
