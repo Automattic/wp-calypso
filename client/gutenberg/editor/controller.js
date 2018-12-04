@@ -60,7 +60,7 @@ export const loadTranslations = ( context, next ) => {
 	const localeSlug = getCurrentLocaleSlug( state );
 
 	// We don't need to localize English
-	if ( localeSlug === config( 'i18n_default_locale_slug' ) ) {
+	if ( ! localeSlug || localeSlug === config( 'i18n_default_locale_slug' ) ) {
 		return next();
 	}
 
