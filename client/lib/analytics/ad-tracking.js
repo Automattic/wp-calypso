@@ -1224,7 +1224,7 @@ function recordParamsInDonutsGtag( event_type, send_to, order_summary = false ) 
 		u1: document.referrer,
 		u2: document.location.href,
 		send_to: send_to,
-		...( order_summary && { u90: order_summary } ),
+		...( order_summary && { u90: JSON.stringify( order_summary ) } ),
 	};
 	debug( 'Recording Donuts Gtag "' + event_type + '" event with parameters:', params );
 	window.gtag( 'event', event_type, params );
