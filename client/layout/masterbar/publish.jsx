@@ -22,6 +22,7 @@ import isRtlSelector from 'state/selectors/is-rtl';
 import TranslatableString from 'components/translatable/proptype';
 import { getEditorUrl } from 'state/selectors/get-editor-url';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import { reduxGetState } from 'lib/redux-bridge';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {
@@ -74,9 +75,17 @@ class MasterbarItemNew extends React.Component {
 		return 'bottom left';
 	}
 
-	onSiteSelect = () => {
+	onSiteSelect = siteId => {
 		this.props.recordTracksEvent( 'calypso_masterbar_write_button_clicked' );
-		return false; // handledByHost = false, continue handling by navigating to /post/:site
+		//To avoid binding in connect, please remove me later.
+		const redirectURL = getEditorUrl( reduxGetState(), siteId, null, 'post' );
+		if ( typeof window !== 'undefined' ) {
+			setTimeout( () => {
+				window.location = redirectURL;
+			}, 0 );
+			return true; // handledByHost = true, don't let the component nav
+		}
+		return false; //otherwise fallback to normal handling
 	};
 
 	renderPopover() {
@@ -93,6 +102,7 @@ class MasterbarItemNew extends React.Component {
 				onClose={ this.closeSitesPopover }
 				onSiteSelect={ this.onSiteSelect }
 				position={ this.getPopoverPosition() }
+				isGutenbergOverride
 			/>
 		);
 	}
