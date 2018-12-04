@@ -113,7 +113,8 @@ export class ConciergeSessionNudge extends React.Component {
 				</p>
 
 				<h4 className="concierge-session-nudge__sub-header">
-					Reserve a 45-minute "Quick Start" appointment, and save $50 if you sign up today.
+					Reserve a 45-minute &ldquo;Quick Start&rdquo; appointment, and save $50 if you sign up
+					today.
 				</h4>
 
 				<p>
