@@ -23,15 +23,11 @@ import { setUserExperience } from 'state/signup/steps/user-experience/actions';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	getThemeForSiteGoals,
-	getDesignTypeForSiteGoals,
-	getSiteTopicSuggestions,
-	toSiteTopicSlug,
-} from 'signup/utils';
+import { getThemeForSiteGoals, getDesignTypeForSiteGoals } from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { isValidLandingPageVertical } from 'lib/signup/verticals';
+import { getSiteTopicSuggestions, toSiteTopicSlug } from 'lib/signup/site-topic';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { abtest } from 'lib/abtest';
@@ -190,6 +186,7 @@ class AboutStep extends Component {
 			nextFlowName = flowName;
 
 		//Inputs
+		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 		const userExperienceInput = this.state.userExperience;
 		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
 		const eventAttributes = {};

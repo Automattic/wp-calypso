@@ -24,9 +24,7 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import { getSiteTopicSuggestions, toSiteTopicSlug } from 'signup/utils';
-
-const siteTopicSuggestions = getSiteTopicSuggestions();
+import { getSiteTopicSuggestions, toSiteTopicSlug } from 'lib/signup/site-topic';
 
 /**
  * Style dependencies
@@ -75,6 +73,7 @@ class SiteTopicStep extends Component {
 	renderContent( topicLabel, placeholder ) {
 		const { translate } = this.props;
 		const currentSiteTopic = this.trimedSiteTopicValue();
+		const siteTopicSuggestions = getSiteTopicSuggestions();
 
 		return (
 			<Card className="site-topic__content">
