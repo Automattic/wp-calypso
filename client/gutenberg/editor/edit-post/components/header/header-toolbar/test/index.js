@@ -16,10 +16,12 @@ describe( 'editorPathRegex', () => {
 		expect( '/block-editor/page/' ).toMatch( editorPathRegex );
 		expect( '/block-editor/post' ).toMatch( editorPathRegex );
 		expect( '/block-editor/post/' ).toMatch( editorPathRegex );
+		expect( '/block-editor/post/pasta' ).toMatch( editorPathRegex );
 		expect( '/block-editor/edit/1' ).toMatch( editorPathRegex );
 		expect( '/block-editor/edit/12' ).toMatch( editorPathRegex );
 		expect( '/block-editor/edit/1/' ).toMatch( editorPathRegex );
 		expect( '/block-editor/edit/12/' ).toMatch( editorPathRegex );
+		expect( '/block-editor/edit/12/34' ).toMatch( editorPathRegex );
 		expect( '/post' ).toMatch( editorPathRegex );
 		expect( '/post/' ).toMatch( editorPathRegex );
 		expect( '/edit/1' ).toMatch( editorPathRegex );
