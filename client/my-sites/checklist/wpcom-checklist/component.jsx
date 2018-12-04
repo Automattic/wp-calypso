@@ -516,9 +516,7 @@ class WpcomChecklistComponent extends PureComponent {
 			? emailForwardingUsed
 			: emailForwardingNotUsed;
 
-		const props = Object.assign( {}, baseProps, emailSetupProps, emailForwardingProps );
-
-		return <TaskComponent { ...props } />;
+		return <TaskComponent { ...baseProps } { ...emailSetupProps } { ...emailForwardingProps } />;
 	};
 }
 
