@@ -269,7 +269,7 @@
 
 	.section-nav-tab__link {
 		background-color: transparent;
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		padding: 16px;
 
 		&:hover {
