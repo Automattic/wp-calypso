@@ -14,6 +14,7 @@ export default class WpcomTaskList {
 		this.tasks = [];
 
 		const getTask = taskId => get( taskStatuses, taskId );
+		const hasTask = taskId => getTask( taskId ) !== undefined;
 		const isCompleted = taskId => get( getTask( taskId ), 'completed', false );
 
 		const addTask = ( taskId, completedStatus = undefined ) => {
@@ -53,7 +54,7 @@ export default class WpcomTaskList {
 			addTask( 'site_launched' );
 		}
 
-		if ( config.isEnabled( 'onboarding-checklist/email-setup' ) ) {
+		if ( config.isEnabled( 'onboarding-checklist/email-setup' ) && hasTask( 'email_setup' ) ) {
 			addTask( 'email_setup' );
 		}
 
