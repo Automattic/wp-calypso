@@ -51,6 +51,7 @@ import SignupFlowController from 'lib/signup/flow-controller';
 import { disableCart } from 'lib/upgrades/actions';
 import { isValidLandingPageVertical } from 'lib/signup/verticals';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { toSiteTopicSlug } from 'lib/signup/site-topic';
 
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -75,7 +76,6 @@ import {
 	getFilteredSteps,
 	getFirstInvalidStep,
 	getStepUrl,
-	toSiteTopicSlug,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 
