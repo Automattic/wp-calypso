@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,7 +12,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import DocumentHead from 'components/data/document-head';
 import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -36,6 +34,7 @@ import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import AnnualSiteStats from 'my-sites/stats/annual-site-stats';
+import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
 const StatsInsights = props => {
 	const { followList, isJetpack, siteId, siteSlug, translate } = props;
@@ -69,7 +68,7 @@ const StatsInsights = props => {
 					<DomainTip
 						siteId={ siteId }
 						event="stats_insights_domain"
-						vendor={ abtest( 'krackenM5DomainSuggestions' ) }
+						vendor={ getSuggestionsVendor() }
 					/>
 				) }
 				<div className="stats-insights__nonperiodic has-recent">
