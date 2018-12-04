@@ -217,8 +217,18 @@ export default function() {
 			clientRender
 		);
 
+		page(
+			`/stats/ads/:period(${ validPeriods.join( '|' ) })/:site`,
+			siteSelection,
+			navigation,
+			statsController.wordAds,
+			makeLayout,
+			clientRender
+		);
+
 		// Anything else should redirect to default WordAds stats page
-		page( '/stats/wordads(.*)', statsController.redirectToDefaultWordAdsPeriod );
+		page( '/stats/wordads/(.*)', statsController.redirectToDefaultWordAdsPeriod );
+		page( '/stats/ads/(.*)', statsController.redirectToDefaultWordAdsPeriod );
 
 		// Anything else should redirect to default stats page
 		page( '/stats/(.*)', statsController.redirectToDefaultSitePage );

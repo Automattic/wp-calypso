@@ -33,6 +33,11 @@ export const navItems = {
 		path: '/stats/wordads',
 		showIntervals: true,
 	},
+	ads: {
+		label: 'Ads',
+		path: '/stats/ads',
+		showIntervals: true,
+	},
 	googleMyBusiness: {
 		label: translate( 'Google My Business' ),
 		path: '/google-my-business/stats',

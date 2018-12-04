@@ -16,7 +16,7 @@ import Intervals from './intervals';
 import FollowersCount from 'blocks/followers-count';
 import isGoogleMyBusinessLocationConnectedSelector from 'state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'state/selectors/is-site-store';
-import { getSiteOption } from 'state/sites/selectors';
+import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
 import config from 'config';
 
@@ -26,17 +26,27 @@ class StatsNavigation extends Component {
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
 		isWordAds: PropTypes.bool,
+		isJetpack: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
 	};
 
 	isValidItem = item => {
-		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
+		const {
+			isGoogleMyBusinessLocationConnected,
+			isStore,
+			isWordAds,
+			isJetpack,
+			siteId,
+		} = this.props;
 
 		switch ( item ) {
 			case 'wordads':
-				return isWordAds;
+				return isWordAds && ! isJetpack;
+
+			case 'ads':
+				return isWordAds && isJetpack;
 
 			case 'store':
 				return isStore;
@@ -100,6 +110,7 @@ export default connect( ( state, { siteId } ) => {
 		),
 		isStore: isSiteStore( state, siteId ),
 		isWordAds: getSiteOption( state, siteId, 'wordads' ),
+		isJetpack: isJetpackSite( state, siteId ),
 		siteId,
 	};
 } )( StatsNavigation );
