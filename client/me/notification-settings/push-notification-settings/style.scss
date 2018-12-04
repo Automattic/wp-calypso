@@ -124,7 +124,7 @@
 
 	&.is-enable {
 		background: $blue-medium;
-		border-color: $blue-wordpress;
+		border-color: var( --color-primary );
 		color: $white;
 
 		&:hover,

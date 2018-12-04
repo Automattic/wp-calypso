@@ -18,7 +18,7 @@
 }
 
 .pending-payments__list-item-title {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	display: block;
 	font-size: 14px;
 	line-height: 1.2em;

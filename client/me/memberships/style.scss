@@ -129,7 +129,7 @@
 }
 
 .memberships__subscription-title {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	display: block;
 	font-size: 18px;
 	line-height: 1.2em;

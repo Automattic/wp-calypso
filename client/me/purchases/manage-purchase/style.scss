@@ -138,7 +138,7 @@
 }
 
 .manage-purchase__title {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	display: block;
 	font-size: 18px;
 	font-weight: 400;
