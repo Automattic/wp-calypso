@@ -35,7 +35,7 @@
 		text-transform: none;
 
 		&:hover {
-			color: $blue-light;
+			color: var( --color-primary-light );
 		}
 	}
 

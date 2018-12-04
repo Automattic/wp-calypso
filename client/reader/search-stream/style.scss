@@ -67,7 +67,7 @@
 	}
 
 	a:hover {
-		color: $blue-light;
+		color: var( --color-primary-light );
 	}
 
 	@include breakpoint( "<660px" ) {
