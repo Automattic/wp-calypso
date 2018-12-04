@@ -59,14 +59,14 @@ class CancelPurchase extends React.Component {
 		confirmCancelBundledDomain: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.isDataValid() ) {
 			this.redirect( this.props );
 			return;
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
 			this.redirect( nextProps );
 			return;
