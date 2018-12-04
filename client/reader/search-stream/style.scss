@@ -63,7 +63,7 @@
 
 	a,
 	a:visited {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 
 	a:hover {
@@ -273,7 +273,7 @@
 		padding: 16px;
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 
@@ -405,11 +405,11 @@
 	.follow-button {
 
 		.gridicon {
-			fill: $blue-medium;
+			fill: var( --color-accent );
 		}
 
 		.follow-button__label {
-			color: $blue-medium;
+			color: var( --color-accent );
 
 			@include breakpoint ( "<660px" ) {
 				display: inline;

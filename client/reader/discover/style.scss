@@ -30,7 +30,7 @@
 
 	.discover-attribution__author,
 	.discover-attribution__blog {
-		color: $blue-medium;
+		color: var( --color-accent );
 		text-decoration: none;
 		text-transform: none;
 

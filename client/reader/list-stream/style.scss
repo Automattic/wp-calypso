@@ -81,11 +81,11 @@
 		z-index: z-index( '.list-stream__header-follow', '.follow-button' );
 
 		.gridicon {
-			fill: $blue-medium;
+			fill: var( --color-accent );
 		}
 
 		.follow-button__label {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 
 		&.is-following {
