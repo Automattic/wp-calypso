@@ -53,7 +53,11 @@ const optOut = ( siteId, classicEditorRoute ) => {
 
 export default connect(
 	state => ( {
-		classicEditorRoute: `/${ replace( getCurrentRoute( state ), '/gutenberg/', '' ) }?force=true`,
+		classicEditorRoute: `/${ replace(
+			getCurrentRoute( state ),
+			'/block-editor/',
+			''
+		) }?force=true`,
 		siteId: getSelectedSiteId( state ),
 	} ),
 	{ optOut }

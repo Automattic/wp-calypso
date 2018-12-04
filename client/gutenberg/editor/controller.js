@@ -22,10 +22,10 @@ import { requestFromUrl } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 
 function determinePostType( context ) {
-	if ( context.path.startsWith( '/gutenberg/post/' ) ) {
+	if ( context.path.startsWith( '/block-editor/post/' ) ) {
 		return 'post';
 	}
-	if ( context.path.startsWith( '/gutenberg/page/' ) ) {
+	if ( context.path.startsWith( '/block-editor/page/' ) ) {
 		return 'page';
 	}
 
