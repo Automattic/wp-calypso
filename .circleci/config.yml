@@ -368,14 +368,6 @@ jobs:
       - save_cache: *save-jest-cache
       - store-artifacts-and-test-results
 
-  danger:
-    <<: *defaults
-    steps:
-      - prepare
-      - run:
-          name: Danger.js
-          command: npx danger ci
-
   icfy-stats:
     <<: *defaults
     steps:
@@ -473,12 +465,6 @@ workflows:
   calypso:
     jobs:
       - setup
-      - danger:
-          requires:
-            - setup
-          filters:
-            branches:
-              ignore: master
       - build-jetpack-blocks:
           requires:
             - setup
