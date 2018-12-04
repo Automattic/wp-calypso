@@ -249,14 +249,22 @@ class Signup extends React.Component {
 			return;
 		}
 
-		const queryObject = this.props.initialContext.query;
-		const flowSteps = flows.getFlow( this.props.flowName ).steps;
+		const {
+			initialContext: {
+				query: { vertical, site_type: siteType },
+			},
+			flowName,
+		} = this.props;
+
+		const flowSteps = flows.getFlow( flowName ).steps;
 		const fulfilledSteps = [];
 
 		// `vertical` query parameter
-		const vertical = queryObject.vertical;
 		if ( 'undefined' !== typeof vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
 			debug( 'From query string: vertical = %s', vertical );
+
+			const siteTopicStepName = 'site-topic';
+
 			this.props.setSurvey( {
 				vertical,
 				otherText: '',
@@ -266,25 +274,29 @@ class Signup extends React.Component {
 				surveyQuestion: vertical,
 			} );
 			this.props.setSiteTopic( vertical );
-			SignupActions.submitSignupStep( { stepName: 'site-topic' }, [], {
+			SignupActions.submitSignupStep( { stepName: siteTopicStepName }, [], {
 				siteTopic: vertical,
 			} );
 			// Track our landing page verticals
 			if ( isValidLandingPageVertical( vertical ) ) {
 				analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
 					vertical,
-					flow: this.props.flowName,
+					flow: flowName,
 				} );
 			}
 
-			fulfilledSteps.push( 'site-topic' );
+			fulfilledSteps.push( siteTopicStepName );
+
+			analytics.tracks.recordEvent( 'calypso_signup_actions_exclude_step', {
+				step: siteTopicStepName,
+				value: vertical,
+			} );
 		}
 
 		//`site_type` query parameter
-		const siteTypeQueryParam = queryObject.site_type;
-		const siteTypeValue = getSiteTypePropertyValue( 'slug', siteTypeQueryParam, 'slug' );
+		const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
 		if ( 'undefined' !== typeof siteTypeValue ) {
-			debug( 'From query string: site_type = %s', siteTypeQueryParam );
+			debug( 'From query string: site_type = %s', siteType );
 			debug( 'Site type value = %s', siteTypeValue );
 			this.props.setSiteType( siteTypeValue );
 			// TODO:
