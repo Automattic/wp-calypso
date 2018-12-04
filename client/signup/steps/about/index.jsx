@@ -52,8 +52,6 @@ import SuggestionSearch from 'components/suggestion-search';
  */
 import './style.scss';
 
-const siteTopicSuggestions = getSiteTopicSuggestions();
-
 class AboutStep extends Component {
 	constructor( props ) {
 		super( props );
@@ -94,6 +92,8 @@ class AboutStep extends Component {
 		SignupActions.saveSignupStep( {
 			stepName: this.props.stepName,
 		} );
+
+		this.siteTopicSuggestions = getSiteTopicSuggestions();
 	}
 
 	componentWillUnmount() {
@@ -522,7 +522,7 @@ class AboutStep extends Component {
 											'e.g. Fashion, travel, design, plumber, electrician'
 										) }
 										onChange={ this.onSiteTopicChange }
-										suggestions={ siteTopicSuggestions }
+										suggestions={ this.siteTopicSuggestions }
 									/>
 								</FormFieldset>
 							) }

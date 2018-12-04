@@ -56,6 +56,8 @@ class SiteTopicStep extends Component {
 		SignupActions.saveSignupStep( {
 			stepName: this.props.stepName,
 		} );
+
+		this.siteTopicSuggestions = getSiteTopicSuggestions();
 	}
 
 	onSiteTopicChange = value => {
@@ -73,7 +75,6 @@ class SiteTopicStep extends Component {
 	renderContent( topicLabel, placeholder ) {
 		const { translate } = this.props;
 		const currentSiteTopic = this.trimedSiteTopicValue();
-		const siteTopicSuggestions = getSiteTopicSuggestions();
 
 		return (
 			<Card className="site-topic__content">
@@ -89,7 +90,7 @@ class SiteTopicStep extends Component {
 							id="siteTopic"
 							placeholder={ placeholder }
 							onChange={ this.onSiteTopicChange }
-							suggestions={ siteTopicSuggestions }
+							suggestions={ this.siteTopicSuggestions }
 							value={ currentSiteTopic }
 						/>
 					</FormFieldset>
