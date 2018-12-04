@@ -172,7 +172,7 @@ ABTest.prototype.getVariation = function() {
 	return this.getSavedVariation( this.experimentId );
 };
 
-export const isUsingGivenLocales = localeTargets => {
+export const isUsingGivenLocales = ( localeTargets, experimentId = null ) => {
 	const client = typeof navigator !== 'undefined' ? navigator : {};
 	const clientLanguage = client.language || client.userLanguage || 'en';
 	const clientLanguagesPrimary =
@@ -182,30 +182,26 @@ export const isUsingGivenLocales = localeTargets => {
 	const userLocale = user.get().localeSlug || 'en';
 
 	if ( isUserSignedIn() && ! userLocale.match( localeMatcher ) ) {
-		debug( '%s: User has a %s locale', this.experimentId, userLocale );
+		debug( '%s: User has a %s locale', experimentId, userLocale );
 		return false;
 	}
 
 	if ( ! isUserSignedIn() && ! clientLanguage.match( localeMatcher ) ) {
-		debug(
-			'%s: Logged-out user has a %s navigator.language preference',
-			this.experimentId,
-			userLocale
-		);
+		debug( '%s: Logged-out user has a %s navigator.language preference', experimentId, userLocale );
 		return false;
 	}
 
 	if ( ! isUserSignedIn() && ! clientLanguagesPrimary.match( localeMatcher ) ) {
 		debug(
 			'%s: Logged-out user has a %s navigator.languages primary preference',
-			this.experimentId,
+			experimentId,
 			userLocale
 		);
 		return false;
 	}
 
 	if ( ! isUserSignedIn() && ! localeFromSession.match( localeMatcher ) ) {
-		debug( '%s: Logged-out user has the %s locale in session', this.experimentId, userLocale );
+		debug( '%s: Logged-out user has the %s locale in session', experimentId, userLocale );
 		return false;
 	}
 
@@ -218,7 +214,7 @@ ABTest.prototype.isEligibleForAbTest = function() {
 		return false;
 	}
 
-	if ( this.localeTargets && ! isUsingGivenLocales( this.localeTargets ) ) {
+	if ( this.localeTargets && ! isUsingGivenLocales( this.localeTargets, this.experimentId ) ) {
 		return false;
 	}
 
