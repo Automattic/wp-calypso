@@ -8,7 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { siteSelection, sites } from 'my-sites/controller';
-import { jetpackBlocki18n, post } from './controller';
+import { loadTranslations, post } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -20,7 +20,7 @@ export default function() {
 		page(
 			'/gutenberg/post/:site/:post?',
 			siteSelection,
-			jetpackBlocki18n,
+			loadTranslations,
 			post,
 			makeLayout,
 			clientRender
@@ -31,7 +31,7 @@ export default function() {
 		page(
 			'/gutenberg/page/:site/:post?',
 			siteSelection,
-			jetpackBlocki18n,
+			loadTranslations,
 			post,
 			makeLayout,
 			clientRender
@@ -43,7 +43,7 @@ export default function() {
 			page(
 				'/gutenberg/edit/:customPostType/:site/:post?',
 				siteSelection,
-				jetpackBlocki18n,
+				loadTranslations,
 				post,
 				makeLayout,
 				clientRender
