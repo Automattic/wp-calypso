@@ -61,7 +61,7 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { setSiteType } from 'state/signup/steps/site-type/actions';
-import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
+import { submitSiteTopic } from 'state/signup/steps/site-topic/actions';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -273,10 +273,9 @@ class Signup extends React.Component {
 				surveySiteType: 'blog',
 				surveyQuestion: vertical,
 			} );
-			this.props.setSiteTopic( vertical );
-			SignupActions.submitSignupStep( { stepName: siteTopicStepName }, [], {
-				siteTopic: vertical,
-			} );
+
+			this.props.submitSiteTopic( vertical );
+
 			// Track our landing page verticals
 			if ( isValidLandingPageVertical( vertical ) ) {
 				analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
@@ -630,7 +629,7 @@ export default connect(
 	{
 		setSurvey,
 		setSiteType,
-		setSiteTopic,
+		submitSiteTopic,
 		loadTrackingTool,
 		trackAffiliateReferral: affiliateReferral,
 	},
