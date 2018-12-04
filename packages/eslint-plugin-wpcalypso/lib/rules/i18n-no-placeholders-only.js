@@ -1,31 +1,31 @@
+/** @format */
 /**
  * @fileoverview Disallow strings which include only placeholders
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
  */
-'use strict';
 
 //------------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------------
 
 // Regular expression adapted from sprintf.js. See CREDITS.md for license information.
-var RX_PLACEHOLDERS = /(?:\x25\x25)|(\x25(?:(?:[1-9]\d*)\$|\((?:[^\)]+)\))?(?:\+)?(?:0|'[^$])?(?:-)?(?:\d+)?(?:\.(?:\d+))?(?:[b-fiosuxX]))/g; // eslint-disable-line max-len
-var RX_INTERPOLATED_COMPONENTS = /(\{\{\/?\s*\w+\s*\/?\}\})/g;
+const RX_PLACEHOLDERS = /(?:\x25\x25)|(\x25(?:(?:[1-9]\d*)\$|\((?:[^\)]+)\))?(?:\+)?(?:0|'[^$])?(?:-)?(?:\d+)?(?:\.(?:\d+))?(?:[b-fiosuxX]))/g; // eslint-disable-line max-len
+const RX_INTERPOLATED_COMPONENTS = /(\{\{\/?\s*\w+\s*\/?\}\})/g;
 
 //------------------------------------------------------------------------------
 // Helper Functions
 //------------------------------------------------------------------------------
 
-var getCallee = require( '../util/get-callee' ),
+const getCallee = require( '../util/get-callee' ),
 	getTextContentFromNode = require( '../util/get-text-content-from-node' );
 
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
 
-var rule = module.exports = function( context ) {
+const rule = ( module.exports = function( context ) {
 	return {
 		CallExpression: function( node ) {
 			if ( 'translate' !== getCallee( node ).name ) {
@@ -33,7 +33,7 @@ var rule = module.exports = function( context ) {
 			}
 
 			node.arguments.forEach( function( arg ) {
-				var value = getTextContentFromNode( arg );
+				let value = getTextContentFromNode( arg );
 				if ( 'string' !== typeof value ) {
 					return;
 				}
@@ -51,8 +51,8 @@ var rule = module.exports = function( context ) {
 			} );
 		},
 	};
-};
+} );
 
-rule.ERROR_MESSAGE = 'We shouldn\'t translate strings that are entirely placeholder';
+rule.ERROR_MESSAGE = "We shouldn't translate strings that are entirely placeholder";
 
 rule.schema = [];

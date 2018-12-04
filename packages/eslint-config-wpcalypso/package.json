@@ -17,10 +17,10 @@
     "index.js",
     "react/index.js"
   ],
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Automattic/eslint-config-wpcalypso.git"
+    "url": "https://github.com/Automattic/wp-calypso.git"
   },
   "peerDependencies": {
     "eslint": "^3.3.1 || ^4.6.1 || ^5.0.0",

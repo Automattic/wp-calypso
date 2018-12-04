@@ -1,10 +1,10 @@
+/** @format */
 /**
  * @fileoverview Enforce external, internal dependencies docblocks
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
  */
-'use strict';
 
 //------------------------------------------------------------------------------
 // Rule Definition

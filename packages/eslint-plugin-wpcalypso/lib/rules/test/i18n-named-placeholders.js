@@ -1,16 +1,16 @@
+/** @format */
 /**
  * @fileoverview Disallow multiple unnamed placeholders
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
  */
-'use strict';
 
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var rule = require( '../../../lib/rules/i18n-named-placeholders' ),
+const rule = require( '../../../lib/rules/i18n-named-placeholders' ),
 	config = { env: { es6: true } }, // support for string templates
 	RuleTester = require( 'eslint' ).RuleTester;
 
@@ -18,52 +18,60 @@ var rule = require( '../../../lib/rules/i18n-named-placeholders' ),
 // Tests
 //------------------------------------------------------------------------------
 
-( new RuleTester( config ) ).run( 'i18n-named-placeholders', rule, {
+new RuleTester( config ).run( 'i18n-named-placeholders', rule, {
 	valid: [
 		{
 			code: 'translate( /* zero args */ );',
 		},
 		{
-			code: 'translate( \'Hello %s\' );',
+			code: "translate( 'Hello %s' );",
 		},
 		{
-			code: 'translate( \'%1s %2s\' );',
+			code: "translate( '%1s %2s' );",
 		},
 		{
 			code: 'translate( `%1s %2s` );',
 		},
 		{
-			code: 'translate( \'%(greeting)s %(toWhom)s\' );',
+			code: "translate( '%(greeting)s %(toWhom)s' );",
 		},
 		{
-			code: 'this.translate( \'%(percent)d%% of views\', { args: { percent: 40 } } );',
+			code: "this.translate( '%(percent)d%% of views', { args: { percent: 40 } } );",
 		},
 	],
 
 	invalid: [
 		{
-			code: 'translate( \'%s %s\' );',
-			errors: [ {
-				message: rule.ERROR_MESSAGE,
-			} ],
+			code: "translate( '%s %s' );",
+			errors: [
+				{
+					message: rule.ERROR_MESSAGE,
+				},
+			],
 		},
 		{
 			code: 'translate( `%s %s` );',
-			errors: [ {
-				message: rule.ERROR_MESSAGE,
-			} ],
+			errors: [
+				{
+					message: rule.ERROR_MESSAGE,
+				},
+			],
 		},
 		{
-			code: 'translate( \'%(greeting)s %s\' );',
-			errors: [ {
-				message: rule.ERROR_MESSAGE,
-			} ],
+			code: "translate( '%(greeting)s %s' );",
+			errors: [
+				{
+					message: rule.ERROR_MESSAGE,
+				},
+			],
 		},
 		{
-			code: 'translate( \'Hello %s\', \'%s %s\', { count: 2 } );',
-			errors: [ {
-				message: rule.ERROR_MESSAGE,
-			} ],
+			code: "translate( 'Hello %s', '%s %s', { count: 2 } );",
+			errors: [
+				{
+					message: rule.ERROR_MESSAGE,
+				},
+			],
 		},
 	],
 } );

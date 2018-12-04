@@ -1,10 +1,10 @@
+/** @format */
 /**
  * @fileoverview Disallow creation of selectors bound to Redux state
  * @author Automattic
  * @copyright 2017 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
  */
-'use strict';
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -25,7 +25,8 @@ function contains( xs, y ) {
 module.exports = {
 	meta: {
 		docs: {
-			description: 'Disallow binding or instantiation of functions ' +
+			description:
+				'Disallow binding or instantiation of functions ' +
 				'within a function passed as the first argument to `connect`.',
 			recommended: true,
 		},
@@ -120,9 +121,8 @@ module.exports = {
 				const mapStateName = mapStateNode.name;
 				const variable = context.getScope().set.get( mapStateName );
 				const definition = variable && variable.defs && variable.defs[ 0 ];
-				mapStateBody = definition && definition.node &&
-					definition.node.init &&
-					definition.node.init.body;
+				mapStateBody =
+					definition && definition.node && definition.node.init && definition.node.init.body;
 			} else {
 				/*
 				 * Inlined function? Easy peasy.
@@ -157,10 +157,8 @@ module.exports = {
 		return {
 			'Program:exit': function() {
 				reports
-					.filter( ( { outer } ) =>
-						contains( nodesToReportOn, outer ) )
-					.forEach( ( { inner, message } ) =>
-						context.report( inner, message ) );
+					.filter( ( { outer } ) => contains( nodesToReportOn, outer ) )
+					.forEach( ( { inner, message } ) => context.report( inner, message ) );
 			},
 
 			CallExpression: function( node ) {

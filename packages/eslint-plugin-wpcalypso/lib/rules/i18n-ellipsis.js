@@ -1,16 +1,16 @@
+/** @format */
 /**
  * @fileoverview Disallow using three dots in translate strings
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
  */
-'use strict';
 
 //------------------------------------------------------------------------------
 // Helper Functions
 //------------------------------------------------------------------------------
 
-var getCallee = require( '../util/get-callee' ),
+const getCallee = require( '../util/get-callee' ),
 	getTextContentFromNode = require( '../util/get-text-content-from-node' );
 
 //------------------------------------------------------------------------------
@@ -30,10 +30,7 @@ function makeFixerFunction( arg ) {
 		switch ( arg.type ) {
 			case 'TemplateLiteral':
 				return arg.quasis.reduce( ( fixes, quasi ) => {
-					if (
-						'TemplateElement' === quasi.type &&
-						containsThreeDots( quasi.value.raw )
-					) {
+					if ( 'TemplateElement' === quasi.type && containsThreeDots( quasi.value.raw ) ) {
 						fixes.push(
 							fixer.replaceTextRange(
 								[ quasi.start, quasi.end ],
@@ -48,12 +45,15 @@ function makeFixerFunction( arg ) {
 				return [ fixer.replaceText( arg, replaceThreeDotsWithEllipsis( arg.raw ) ) ];
 
 			case 'BinaryExpression':
-				return [ ...makeFixerFunction( arg.left )( fixer ), ...makeFixerFunction( arg.right )( fixer ) ];
+				return [
+					...makeFixerFunction( arg.left )( fixer ),
+					...makeFixerFunction( arg.right )( fixer ),
+				];
 		}
 	};
 }
 
-var rule = module.exports = function( context ) {
+const rule = ( module.exports = function( context ) {
 	return {
 		CallExpression: function( node ) {
 			if ( 'translate' !== getCallee( node ).name ) {
@@ -61,7 +61,7 @@ var rule = module.exports = function( context ) {
 			}
 
 			node.arguments.forEach( function( arg ) {
-				var argumentString = getTextContentFromNode( arg );
+				const argumentString = getTextContentFromNode( arg );
 				if ( argumentString && containsThreeDots( argumentString ) ) {
 					context.report( {
 						node: arg,
@@ -72,7 +72,7 @@ var rule = module.exports = function( context ) {
 			} );
 		},
 	};
-};
+} );
 
 rule.ERROR_MESSAGE = 'Use ellipsis character (…) in place of three dots';
 

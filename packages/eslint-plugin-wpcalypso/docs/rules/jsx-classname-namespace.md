@@ -8,7 +8,7 @@ If JSX element includes `className`, it must include the containing directory na
 
 The following patterns are considered warnings:
 
-```js
+```jsx
 // client/sample-component/index.js
 export default function() {
 	return <div className="sample" />;
@@ -26,7 +26,7 @@ export default function() {
 
 The following patterns are not warnings:
 
-```js
+```jsx
 // client/sample-component/index.js
 export default function() {
 	return <div className="sample-component" />;
@@ -62,7 +62,7 @@ For example, you can allow `index.jsx` and `main.jsx`:
 
 Examples of **correct** code for this rule with `rootFiles` set to `[ 'foo.js' ]`: (watch the filename)
 
-```js
+```jsx
 /*eslint jsx-classname-namespace: [ "error", { rootFiles: [ 'foo.js' ] } ]*/
 // client/sample-component/foo.js
 export default function() {
@@ -72,7 +72,7 @@ export default function() {
 
 Examples of **incorrect** code for this rule with `rootFiles` set to `[ 'foo.js' ]`: (watch the filename)
 
-```js
+```jsx
 /*eslint jsx-classname-namespace: [ "error", { rootFiles: [ 'foo.js' ] } ]*/
 // client/sample-component/index.js
 export default function() {

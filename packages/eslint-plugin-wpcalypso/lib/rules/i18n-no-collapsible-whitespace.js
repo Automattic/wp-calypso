@@ -1,23 +1,23 @@
+/** @format */
 /**
  * @fileoverview Disallow collapsible whitespace in translatable strings.
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
  */
-'use strict';
 
 //------------------------------------------------------------------------------
 // Helper Functions
 //------------------------------------------------------------------------------
 
-var getCallee = require( '../util/get-callee' ),
+const getCallee = require( '../util/get-callee' ),
 	getTextContentFromNode = require( '../util/get-text-content-from-node' );
 
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
 
-var rule = module.exports = function( context ) {
+const rule = ( module.exports = function( context ) {
 	return {
 		CallExpression: function( node ) {
 			if ( 'translate' !== getCallee( node ).name ) {
@@ -25,14 +25,14 @@ var rule = module.exports = function( context ) {
 			}
 
 			node.arguments.forEach( function( arg ) {
-				var string = getTextContentFromNode( arg ),
-					collapsibleWhitespace, problem, problemString, problemsByCharCode;
+				const string = getTextContentFromNode( arg );
+				let problem, problemString, problemsByCharCode;
 
 				if ( ! string ) {
 					return;
 				}
 
-				collapsibleWhitespace = string.match( /(\n|\t|\r|(?:  ))/ );
+				const collapsibleWhitespace = string.match( /(\n|\t|\r|(?:  ))/ );
 
 				if ( collapsibleWhitespace ) {
 					problemsByCharCode = {
@@ -54,7 +54,7 @@ var rule = module.exports = function( context ) {
 			} );
 		},
 	};
-};
+} );
 
 rule.ERROR_MESSAGE = 'Translations should not contain collapsible whitespace{{problem}}';
 

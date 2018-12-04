@@ -1,33 +1,35 @@
+/** @format */
 /**
  * @fileoverview Disallow variables as translate strings
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
  */
-'use strict';
 
 //------------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------------
 
-var VERIFY_OPTION_LITERALS = [ 'context', 'comment', 'original', 'single', 'plural' ];
+const VERIFY_OPTION_LITERALS = [ 'context', 'comment', 'original', 'single', 'plural' ];
 
 //------------------------------------------------------------------------------
 // Helper Functions
 //------------------------------------------------------------------------------
 
-var getCallee = require( '../util/get-callee' );
+const getCallee = require( '../util/get-callee' );
 
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
 
-var rule = module.exports = function( context ) {
+const rule = ( module.exports = function( context ) {
 	function isAcceptableLiteralNode( node ) {
 		if ( 'BinaryExpression' === node.type ) {
-			return '+' === node.operator &&
+			return (
+				'+' === node.operator &&
 				isAcceptableLiteralNode( node.left ) &&
-				isAcceptableLiteralNode( node.right );
+				isAcceptableLiteralNode( node.right )
+			);
 		}
 
 		if ( 'TemplateLiteral' === node.type ) {
@@ -41,7 +43,7 @@ var rule = module.exports = function( context ) {
 
 	function validateOptions( options ) {
 		return options.properties.every( function( property ) {
-			var key = property.key.name;
+			const key = property.key.name;
 
 			// `options.original` can be a string value to be validated in this
 			// block, or as an object should validate its nested single and
@@ -64,13 +66,12 @@ var rule = module.exports = function( context ) {
 
 	return {
 		CallExpression: function( node ) {
-			var options;
 			if ( 'translate' !== getCallee( node ).name ) {
 				return;
 			}
 
 			node.arguments.forEach( function( arg, i ) {
-				var isLastArgument = i === node.arguments.length - 1;
+				const isLastArgument = i === node.arguments.length - 1;
 
 				// Ignore last argument in multi-argument translate call, which
 				// should be the object argument
@@ -90,13 +91,13 @@ var rule = module.exports = function( context ) {
 			} );
 
 			// Verify that option literals are not variables
-			options = node.arguments[ node.arguments.length - 1 ];
+			const options = node.arguments[ node.arguments.length - 1 ];
 			if ( options && options.type === 'ObjectExpression' ) {
 				validateOptions( options );
 			}
 		},
 	};
-};
+} );
 
 rule.ERROR_MESSAGE = 'Variables cannot be used in translatable strings';
 

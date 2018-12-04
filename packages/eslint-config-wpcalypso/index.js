@@ -1,14 +1,14 @@
+/** @format */
+
 module.exports = {
 	env: {
-		es6: true
+		es6: true,
 	},
 	parserOptions: {
 		ecmaVersion: 7,
-		sourceType: 'module'
+		sourceType: 'module',
 	},
-	plugins: [
-		'wpcalypso'
-	],
+	plugins: [ 'wpcalypso' ],
 	rules: {
 		'array-bracket-spacing': [ 2, 'always' ],
 		'brace-style': [ 2, '1tbs' ],
@@ -66,10 +66,16 @@ module.exports = {
 		'no-var': 2,
 		'object-curly-spacing': [ 2, 'always' ],
 		'one-var': 0,
-		'operator-linebreak': [ 2, 'after', { overrides: {
-			'?': 'before',
-			':': 'before'
-		} } ],
+		'operator-linebreak': [
+			2,
+			'after',
+			{
+				overrides: {
+					'?': 'before',
+					':': 'before',
+				},
+			},
+		],
 		'padded-blocks': [ 2, 'never' ],
 		'prefer-const': 2,
 		'quote-props': [ 2, 'as-needed' ],
@@ -77,18 +83,24 @@ module.exports = {
 		semi: 2,
 		'semi-spacing': 2,
 		'space-before-blocks': [ 2, 'always' ],
-		'space-before-function-paren': [ 'error', {
-			anonymous: 'never',
-			asyncArrow: 'always',
-			named: 'never',
-		} ],
+		'space-before-function-paren': [
+			'error',
+			{
+				anonymous: 'never',
+				asyncArrow: 'always',
+				named: 'never',
+			},
+		],
 		'space-in-parens': [ 2, 'always' ],
 		'space-infix-ops': [ 2, { int32Hint: false } ],
-		'space-unary-ops': [ 2, {
-			overrides: {
-				'!': true
-			}
-		} ],
+		'space-unary-ops': [
+			2,
+			{
+				overrides: {
+					'!': true,
+				},
+			},
+		],
 		// Assumed by default with Babel
 		strict: [ 2, 'never' ],
 		'template-curly-spacing': [ 2, 'always' ],
@@ -104,6 +116,6 @@ module.exports = {
 		'wpcalypso/jsx-gridicon-size': 2,
 		'wpcalypso/jsx-classname-namespace': 2,
 		'wpcalypso/redux-no-bound-selectors': 2,
-		yoda: 0
-	}
+		yoda: 0,
+	},
 };

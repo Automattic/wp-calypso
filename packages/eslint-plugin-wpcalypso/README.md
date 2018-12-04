@@ -58,4 +58,4 @@ Then configure the rules you want to use under the rules section.
 
 ## License
 
-Calypso is licensed under [GNU General Public License v2 (or later)](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/LICENSE.md).
+[GNU General Public License v2.0 or later](https://spdx.org/licenses/GPL-2.0-or-later.html).

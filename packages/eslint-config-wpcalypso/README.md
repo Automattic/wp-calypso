@@ -39,4 +39,4 @@ Want to revise the ESLint rules used here? [Edit the `index.js` file](https://gi
 
 ## License
 
-Calypso is licensed under [GNU General Public License v2 (or later)](./LICENSE.md).
+[GNU General Public License v2.0 or later](https://spdx.org/licenses/GPL-2.0-or-later.html).

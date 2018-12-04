@@ -4,7 +4,7 @@
   "description": "Custom ESLint rules for the WordPress.com Calypso project",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Automattic/eslint-plugin-wpcalypso.git"
+    "url": "https://github.com/Automattic/wp-calypso.git"
   },
   "keywords": [
     "eslint",
@@ -16,23 +16,8 @@
   "files": [
     "lib/"
   ],
-  "scripts": {
-    "tests": "mocha tests --recursive",
-    "lint": "eslint lib/ tests/",
-    "test": "npm run tests && npm run lint"
-  },
-  "dependencies": {
-    "requireindex": "^1.1.0"
-  },
-  "devDependencies": {
-    "babel-eslint": "^7.2.3",
-    "eslint": "^4.6.1",
-    "eslint-config-wpcalypso": "^1.0.0",
-    "eslint-plugin-wpcalypso": "file:.",
-    "mocha": "^5.2.0"
-  },
   "engines": {
-    "node": ">=4"
+    "node": ">=10"
   },
-  "license": "GPL-2.0+"
+  "license": "GPL-2.0-or-later"
 }

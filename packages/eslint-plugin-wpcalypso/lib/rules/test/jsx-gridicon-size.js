@@ -1,35 +1,42 @@
+/** @format */
 /**
- * @fileoverview Disallow the use of this.translate
+ * @fileoverview Enforce recommended Gridicon size attributes
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
  */
-'use strict';
 
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var rule = require( '../../../lib/rules/i18n-no-this-translate' ),
+const rule = require( '../../../lib/rules/jsx-gridicon-size' ),
 	RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-( new RuleTester() ).run( 'i18n-no-this-translate', rule, {
+new RuleTester( {
+	parser: 'babel-eslint',
+	parserOptions: {
+		ecmaFeatures: { jsx: true },
+	},
+} ).run( 'jsx-gridicon-size', rule, {
 	valid: [
-		'i18n.translate(\'hello\')',
-		'translate(\'hello\')',
-		'this.props.translate(\'hello\')',
+		{
+			code: '<Gridicon size={ 18 } />',
+		},
 	],
 
 	invalid: [
 		{
-			code: 'this.translate(\'hello\')',
-			errors: [ {
-				message: 'Use localize( ReactComponent ) instead of this.translate. See https://git.io/vSwRi',
-			} ],
+			code: '<Gridicon size={ 20 } />',
+			errors: [
+				{
+					message: rule.ERROR_MESSAGE,
+				},
+			],
 		},
 	],
 } );

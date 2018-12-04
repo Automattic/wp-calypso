@@ -1,10 +1,10 @@
+/** @format */
 /**
  * @fileoverview Enforce external, internal dependencies docblocks
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
  */
-'use strict';
 
 //------------------------------------------------------------------------------
 // Requirements
@@ -17,30 +17,27 @@ const rule = require( '../../../lib/rules/import-docblock' ),
 // Tests
 //------------------------------------------------------------------------------
 
-( new RuleTester( {
+new RuleTester( {
 	parserOptions: {
 		ecmaVersion: 6,
 		sourceType: 'module',
 	},
-} ) ).run( 'import-docblock', rule, {
+} ).run( 'import-docblock', rule, {
 	valid: [
 		{
-			code:
-`/**
+			code: `/**
  * External dependencies
  */
 import eslint from \'eslint\';`,
 		},
 		{
-			code:
-`/**
+			code: `/**
  * External dependencies
  */
 import eslint from \'eslint\';`,
 		},
 		{
-			code:
-`/**
+			code: `/**
  * External dependencies${ ' ' }
  */
 import eslint from \'eslint\';`,
@@ -49,10 +46,12 @@ import eslint from \'eslint\';`,
 
 	invalid: [
 		{
-			code: 'import eslint from \'eslint\';',
-			errors: [ {
-				message: 'Missing external, internal dependencies docblocks',
-			} ],
+			code: "import eslint from 'eslint';",
+			errors: [
+				{
+					message: 'Missing external, internal dependencies docblocks',
+				},
+			],
 		},
 	],
 } );

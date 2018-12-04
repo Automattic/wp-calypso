@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @fileoverview Utility for retrieving callee identifier node from a CallExpression
  * @author Automattic
@@ -5,47 +6,47 @@
  * See LICENSE.md file in root directory for full license.
  */
 
-var assert = require( 'assert' );
-var getCallee = require( '../../../lib/util/get-callee' );
+const assert = require( 'assert' );
+const getCallee = require( '../get-callee' );
 
 describe( '#getCallee', function() {
 	it( 'should return non-sequence callee', function() {
-		var node, callee;
-		node = {
+		const node = {
 			type: 'CallExpression',
 			callee: {
 				type: 'Identifier',
 				name: 'translate',
 			},
 		};
-		callee = getCallee( node );
+		const callee = getCallee( node );
 
 		assert.equal( callee, node.callee );
 	} );
 
 	it( 'should return first non-sequence callee expression', function() {
-		var node, callee;
-		node = {
+		const node = {
 			type: 'CallExpression',
 			callee: {
 				type: 'SequenceExpression',
-				expressions: [ {
-					type: 'Literal',
-					value: 0,
-				}, {
-					type: 'Identifier',
-					name: 'translate',
-				} ],
+				expressions: [
+					{
+						type: 'Literal',
+						value: 0,
+					},
+					{
+						type: 'Identifier',
+						name: 'translate',
+					},
+				],
 			},
 		};
-		callee = getCallee( node );
+		const callee = getCallee( node );
 
 		assert.equal( callee, node.callee.expressions[ 1 ] );
 	} );
 
 	it( 'should return first non-sequence member property', function() {
-		var node, callee;
-		node = {
+		const node = {
 			type: 'CallExpression',
 			callee: {
 				type: 'MemberExpression',
@@ -58,7 +59,7 @@ describe( '#getCallee', function() {
 				},
 			},
 		};
-		callee = getCallee( node );
+		const callee = getCallee( node );
 
 		assert.equal( callee, node.callee.property );
 	} );
