@@ -24,7 +24,7 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import { getSiteTopicSuggestions } from 'signup/utils';
+import { getSiteTopicSuggestions, toSiteTopicSlug } from 'signup/utils';
 
 const siteTopicSuggestions = getSiteTopicSuggestions();
 
@@ -150,14 +150,15 @@ class SiteTopicStep extends Component {
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	submitSiteTopic: siteTopic => {
 		const { flowName, goToNextStep } = ownProps;
+		const siteTopicSlug = toSiteTopicSlug( siteTopic );
 
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
-				value: siteTopic,
+				value: siteTopicSlug,
 			} )
 		);
 
-		dispatch( submitSiteTopic( siteTopic ) );
+		dispatch( submitSiteTopic( siteTopicSlug ) );
 
 		goToNextStep( flowName );
 	},

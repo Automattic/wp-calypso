@@ -75,6 +75,7 @@ import {
 	getFilteredSteps,
 	getFirstInvalidStep,
 	getStepUrl,
+	toSiteTopicSlug,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 
@@ -264,22 +265,23 @@ class Signup extends React.Component {
 			debug( 'From query string: vertical = %s', vertical );
 
 			const siteTopicStepName = 'site-topic';
+			const siteTopicSlug = toSiteTopicSlug( vertical );
 
 			this.props.setSurvey( {
-				vertical,
+				vertical: siteTopicSlug,
 				otherText: '',
 			} );
 			SignupActions.submitSignupStep( { stepName: 'survey' }, [], {
 				surveySiteType: 'blog',
-				surveyQuestion: vertical,
+				surveyQuestion: siteTopicSlug,
 			} );
 
-			this.props.submitSiteTopic( vertical );
+			this.props.submitSiteTopic( siteTopicSlug );
 
 			// Track our landing page verticals
-			if ( isValidLandingPageVertical( vertical ) ) {
+			if ( isValidLandingPageVertical( siteTopicSlug ) ) {
 				analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
-					vertical,
+					vertical: siteTopicSlug,
 					flow: flowName,
 				} );
 			}
