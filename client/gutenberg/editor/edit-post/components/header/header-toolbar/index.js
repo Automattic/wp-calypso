@@ -78,7 +78,7 @@ function getCloseButtonPath( routeHistory, site ) {
 	// @see post-editor/editor-ground-control/index.jsx
 	const lastNonEditorPath = findLast(
 		routeHistory,
-		( { path } ) => ! path.match( editorPathRegex )
+		( { path } ) => ! editorPathRegex.test( path )
 	);
 	if ( lastNonEditorPath ) {
 		return lastNonEditorPath.path;
