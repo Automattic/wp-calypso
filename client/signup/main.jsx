@@ -59,7 +59,7 @@ import { affiliateReferral } from 'state/refer/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
-import { setSiteType } from 'state/signup/steps/site-type/actions';
+import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteTopic } from 'state/signup/steps/site-topic/actions';
 
 // Current directory dependencies
@@ -296,9 +296,12 @@ class Signup extends React.Component {
 		if ( 'undefined' !== typeof siteTypeValue ) {
 			debug( 'From query string: site_type = %s', siteType );
 			debug( 'Site type value = %s', siteTypeValue );
-			this.props.setSiteType( siteTypeValue );
-			// TODO:
-			// exlude the site type step if it is fulfilled here.
+
+			const siteTypeStepName = 'site-type';
+
+			this.props.submitSiteType( siteTypeValue );
+
+			fulfilledSteps.push( siteTypeStepName );
 		}
 
 		flows.excludeSteps( fulfilledSteps );
@@ -634,7 +637,7 @@ export default connect(
 	} ),
 	{
 		setSurvey,
-		setSiteType,
+		submitSiteType,
 		submitSiteTopic,
 		loadTrackingTool,
 		trackAffiliateReferral: affiliateReferral,

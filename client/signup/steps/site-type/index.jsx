@@ -3,7 +3,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import { setSiteType } from 'state/signup/steps/site-type/actions';
+import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { allSiteTypes, getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -49,11 +49,8 @@ class SiteType extends Component {
 		// Default siteType is 'blog'
 		const siteTypeInputVal =
 			this.state.siteType || getSiteTypePropertyValue( 'id', 'blog', 'slug' );
-		const themeRepo =
-			getSiteTypePropertyValue( 'slug', siteTypeInputVal, 'theme' ) ||
-			'pub/independent-publisher-2';
 
-		this.props.submitStep( siteTypeInputVal, themeRepo );
+		this.props.submitStep( siteTypeInputVal );
 	};
 
 	renderRadioOptions() {
@@ -123,8 +120,9 @@ export default connect(
 		siteType: getSiteType( state ),
 	} ),
 	( dispatch, ownProps ) => ( {
-		submitStep: ( siteTypeValue, themeRepo ) => {
-			dispatch( setSiteType( siteTypeValue ) );
+		submitStep: siteTypeValue => {
+			dispatch( submitSiteType( siteTypeValue ) );
+
 			dispatch(
 				recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
 					value: siteTypeValue,
@@ -138,18 +136,6 @@ export default connect(
 				nextFlowName = ownProps.previousFlowName;
 			}
 
-			// Create site
-			SignupActions.submitSignupStep(
-				{
-					processingMessage: i18n.translate( 'Collecting your information' ),
-					stepName: ownProps.stepName,
-				},
-				[],
-				{
-					siteType: siteTypeValue,
-					themeSlugWithRepo: themeRepo,
-				}
-			);
 			ownProps.goToNextStep( nextFlowName );
 		},
 	} )
