@@ -211,10 +211,10 @@
 	font-size: 13px;
 	padding: 8px 8px 8px 40px;
 	background: white;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	border: 1px solid $gray-lighten-20;
 	cursor: pointer;
-	fill: $blue-wordpress;
+	fill: var( --color-primary );
 	position: absolute;
 	z-index: 1;
 	right: 16px;
@@ -267,7 +267,7 @@
 	min-width: 80px;
 	height: 46px;
 	border-radius: 0;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 
 	@include breakpoint( ">960px" ) {
 		padding: 6px 32px;

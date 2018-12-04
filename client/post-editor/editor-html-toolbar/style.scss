@@ -213,7 +213,7 @@
 	font-style: italic;
 }
 .editor-html-toolbar__button-a.button {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	text-decoration: underline;
 }
 .editor-html-toolbar__button-del {
