@@ -2,9 +2,9 @@
  * External dependencies
  */
 import { createSlotFill } from '@wordpress/components';
-import { Fragment } from '@wordpress/element';
 import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 import { registerPlugin } from '@wordpress/plugins';
+import { PostTypeSupportCheck } from '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -21,14 +21,14 @@ const JetpackPluginSidebar = ( { children } ) => (
 );
 
 JetpackPluginSidebar.Slot = () => (
-	<Fragment>
-		<PluginSidebarMoreMenuItem target="jetpack" icon={ <JetpackLogo /> }>
-			Jetpack
-		</PluginSidebarMoreMenuItem>
-		<PluginSidebar name="jetpack" title="Jetpack" icon={ <JetpackLogo /> }>
-			<Slot />
-		</PluginSidebar>
-	</Fragment>
+		<PostTypeSupportCheck supportKeys="publicize">
+			<PluginSidebarMoreMenuItem target="jetpack" icon={ <JetpackLogo /> }>
+				Jetpack
+			</PluginSidebarMoreMenuItem>
+			<PluginSidebar name="jetpack" title="Jetpack" icon={ <JetpackLogo /> }>
+				<Slot />
+			</PluginSidebar>
+		</PostTypeSupportCheck>
 );
 
 registerPlugin( 'jetpack-sidebar', {
