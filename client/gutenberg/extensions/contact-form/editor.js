@@ -16,7 +16,7 @@ import JetpackField from './components/jetpack-field';
 import JetpackFieldTextarea from './components/jetpack-field-textarea';
 import JetpackFieldCheckbox from './components/jetpack-field-checkbox';
 import JetpackFieldMultiple from './components/jetpack-field-multiple';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
 
