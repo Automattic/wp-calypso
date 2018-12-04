@@ -667,7 +667,7 @@ const contextLinksForSection = {
 		{
 			link: 'http://en.support.wordpress.com/wordpress-editor/',
 			post_id: 147594,
-			title: 'The WordPress Editor',
+			title: 'What are "Blocks"?',
 			description:
 				'The WordPress Editor uses blocks to transform the way you create content: it turns a single document into a collection of discrete elements with explicit, easy-to-tweak structure.',
 		},

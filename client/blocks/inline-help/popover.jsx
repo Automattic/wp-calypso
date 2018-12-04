@@ -162,14 +162,6 @@ class InlineHelpPopover extends Component {
 
 				{ this.renderSecondaryView() }
 
-				<WpcomChecklist
-					viewMode="navigation"
-					closePopover={ this.props.onClose }
-					showNotification={ showNotification }
-					setNotification={ setNotification }
-					setStoredTask={ setStoredTask }
-				/>
-
 				{ showOptOut && (
 					<Button
 						onClick={ this.switchToClassicEditor }
@@ -187,6 +179,14 @@ class InlineHelpPopover extends Component {
 						{ translate( 'Switch to Block Editor' ) }
 					</Button>
 				) }
+
+				<WpcomChecklist
+					viewMode="navigation"
+					closePopover={ this.props.onClose }
+					showNotification={ showNotification }
+					setNotification={ setNotification }
+					setStoredTask={ setStoredTask }
+				/>
 
 				<div className="inline-help__footer">
 					<Button
