@@ -4,7 +4,7 @@
 
 .security-2fa-status__off {
 	text-transform: uppercase;
-	color: $alert-red;
+	color: var( --color-error );
 	font-weight: bold;
 }
 

@@ -139,7 +139,7 @@
 }
 
 .memberships__subscription-remove {
-	color: $alert-red;
+	color: var( --color-error );
 	text-align: left;
 	width: 100%;
 	cursor: hand;
