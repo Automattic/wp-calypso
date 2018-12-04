@@ -19,20 +19,24 @@ const { Fill, Slot } = createSlotFill( 'JetpackPluginSidebar' );
 const JetpackPluginSidebar = ( { children } ) => <Fill>{ children }</Fill>;
 
 JetpackPluginSidebar.Slot = () => (
-	<Fragment>
-		<PluginSidebarMoreMenuItem target="jetpack" icon={ <JetpackLogo /> }>
-			Jetpack
-		</PluginSidebarMoreMenuItem>
-		<Slot>
-			{ fills =>
-				fills.length ? (
+	<Slot>
+		{ fills => {
+			if ( ! fills.length ) {
+				return null;
+			}
+
+			return (
+				<Fragment>
+					<PluginSidebarMoreMenuItem target="jetpack" icon={ <JetpackLogo /> }>
+						Jetpack
+					</PluginSidebarMoreMenuItem>
 					<PluginSidebar name="jetpack" title="Jetpack" icon={ <JetpackLogo /> }>
 						{ fills }
 					</PluginSidebar>
-				) : null
-			}
-		</Slot>
-	</Fragment>
+				</Fragment>
+			);
+		} }
+	</Slot>
 );
 
 registerPlugin( 'jetpack-sidebar', {
