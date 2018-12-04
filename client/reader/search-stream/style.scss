@@ -418,11 +418,11 @@
 
 		&.is-following {
 			.gridicon {
-				fill: $alert-green;
+				fill: var( --color-success );
 			}
 
 			.follow-button__label {
-				color: $alert-green;
+				color: var( --color-success );
 			}
 		}
 	}

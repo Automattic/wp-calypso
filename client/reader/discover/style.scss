@@ -67,7 +67,7 @@
 			top: -1px;
 
 		&.is-following {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 
 		&:focus {
