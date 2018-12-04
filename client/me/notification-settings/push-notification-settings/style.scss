@@ -129,7 +129,7 @@
 
 		&:hover,
 		&:focus {
-			border-color: $blue-dark;
+			border-color: var( --color-primary-dark );
 			color: $white;
 		}
 		&[disabled],
