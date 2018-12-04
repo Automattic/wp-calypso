@@ -73,8 +73,8 @@ class SimplePaymentsEdit extends Component {
 		}
 
 		if (
-			! prevProps.isSaving &&
-			this.props.isSaving &&
+			! prevProps.isSavingPost &&
+			this.props.isSavingPost &&
 			hasPublishAction &&
 			this.validateAttributes()
 		) {
@@ -93,8 +93,12 @@ class SimplePaymentsEdit extends Component {
 		 * When we first load a product, we should inject its attributes as our initial form state.
 		 * When subsequent saves occur, we should avoid injecting attributes so that we do not
 		 * overwrite changes that the user has made with stale state from the previous save.
+		 *
+		 * Avoid also injecting attributes when block lives inside a reusable block wrapper;
+		 * In that wrapper the block is continuosly re-mounted and we cannot
+		 * rely on `shouldInjectPaymentAttributes` flag anymore.
 		 */
-		if ( ! this.shouldInjectPaymentAttributes ) {
+		if ( ! this.shouldInjectPaymentAttributes || this.props.reusableBlock ) {
 			return;
 		}
 
@@ -497,7 +501,7 @@ class SimplePaymentsEdit extends Component {
 
 const mapSelectToProps = withSelect( ( select, props ) => {
 	const { getEntityRecord } = select( 'core' );
-	const { isSavingPost, getCurrentPost } = select( 'core/editor' );
+	const { getCurrentPost, isSavingPost } = select( 'core/editor' );
 
 	const { productId } = props.attributes;
 
@@ -516,7 +520,7 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 
 	return {
 		hasPublishAction: !! get( getCurrentPost(), [ '_links', 'wp:action-publish' ] ),
-		isSaving: !! isSavingPost(),
+		isSavingPost: !! isSavingPost(),
 		simplePayment,
 	};
 } );
