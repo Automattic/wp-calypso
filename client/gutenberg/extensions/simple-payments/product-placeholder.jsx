@@ -10,7 +10,7 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
  */
 import './product-placeholder.scss';
 import paypalImage from './paypal-button.png';
-import paypalImage2x from './paypal-button@2x.png';
+import paypalImage2x from './paypal-button-2x.png';
 
 export default ( { title = '', content = '', formattedPrice = '', multiple = false } ) => (
 	<div className="jetpack-simple-payments-wrapper">
