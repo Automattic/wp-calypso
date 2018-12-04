@@ -110,7 +110,6 @@ export const settings = {
 		className: false,
 		customClassName: false,
 		html: false,
-		reusable: false,
 	},
 };
 
