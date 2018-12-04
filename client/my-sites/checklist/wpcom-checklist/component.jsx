@@ -493,7 +493,7 @@ class WpcomChecklistComponent extends PureComponent {
 			onClick: () => {
 				page( `/domains/manage/email/${ siteSlug }` );
 			},
-			onDismiss: () => this.handleTaskDismiss( task.id ),
+			onDismiss: this.handleTaskDismiss( task.id ),
 		};
 
 		const emailForwardingUsed = {
