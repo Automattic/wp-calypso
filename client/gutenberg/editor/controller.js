@@ -20,6 +20,7 @@ import { EDITOR_START } from 'state/action-types';
 import { initGutenberg } from './init';
 import { requestFromUrl } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
+import { asyncLoader } from './async-loader';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -132,10 +133,18 @@ export const post = async ( context, next ) => {
 	context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
 	const GutenbergEditor = initGutenberg( userId, siteSlug );
+	const EditorWrapper = asyncLoader( {
+		promises: {
+			artificialDelay: new Promise( resolve => setTimeout( resolve, 5000 ) ),
+		},
+		loading: () => <div>Loading…</div>,
+		success: () => (
+			<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />
+		),
+		failure: () => <div>Couldn't load everything - try hitting reload in your browser…</div>,
+	} );
 
-	context.primary = (
-		<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />
-	);
+	context.primary = <EditorWrapper />;
 
 	next();
 };
