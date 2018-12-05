@@ -81,10 +81,7 @@
 			bottom: 0;
 			width: 15%;
 
-			background: overflow-gradient(
-				$color: var( --sidebar-menu-a-first-child-after-background ),
-				$stop: 50%
-			);
+			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ), 50% );
 
 			@include breakpoint( '<660px' ) {
 				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
@@ -202,7 +199,8 @@ form.sidebar__button input {
 
 			&:first-child:after {
 				background: overflow-gradient(
-					var( --sidebar-menu-selected-a-first-child-after-background )
+					var( --sidebar-menu-selected-a-first-child-after-background ),
+					50%
 				);
 			}
 		}
