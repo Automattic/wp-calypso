@@ -18,7 +18,7 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { billingHistory } from 'me/purchases/paths';
 import QueryBillingTransaction from 'components/data/query-billing-transaction';
-import { groupDomainProducts } from './utils';
+import { groupDomainProducts, renderTransactionAmount } from './utils';
 import getPastBillingTransaction from 'state/selectors/get-past-billing-transaction';
 import isPastBillingTransactionError from 'state/selectors/is-past-billing-transaction-error';
 import {
@@ -192,7 +192,7 @@ class BillingReceipt extends React.Component {
 									transaction.credit
 								}
 							>
-								{ transaction.amount }
+								{ renderTransactionAmount( transaction, { includes: true } ) }
 							</td>
 						</tr>
 					</tfoot>

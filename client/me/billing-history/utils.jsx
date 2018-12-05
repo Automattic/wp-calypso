@@ -3,11 +3,14 @@
  * External dependencies
  */
 import { find, map, partition, reduce } from 'lodash';
+import React, { Fragment }  from 'react';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import formatCurrency from 'lib/format-currency';
+import config from 'config';
 
 export const groupDomainProducts = ( originalItems, translate ) => {
 	const transactionItems = Object.keys( originalItems ).map( key => {
@@ -50,3 +53,27 @@ export const groupDomainProducts = ( originalItems, translate ) => {
 		} ),
 	];
 };
+
+export function renderTransactionAmount( transaction, { includes = false }) {
+	if ( ! config.isEnabled( 'show-tax' ) || ! transaction.tax_amount ) {
+		return transaction.amount;
+	}
+
+	const taxAmount = includes
+		? translate( '(includes %(taxAmount)s tax)', {
+				args: { taxAmount: transaction.tax_amount },
+				comment: 'taxAmount is a localized price, like $12.34',
+		} )
+		: translate( '(+%(taxAmount)s tax)', {
+					args: { taxAmount: transaction.tax_amount },
+					comment: 'taxAmount is a localized price, like $12.34' } );
+
+
+	return (
+		<Fragment>
+			<div>{ transaction.amount }</div>
+			<div className="billing-history__transaction-tax-amount">
+				{ taxAmount }
+			</div>
+		</Fragment> );
+}
