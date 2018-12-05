@@ -32,6 +32,20 @@ class GutenbergEditor extends Component {
 		if ( ! postId ) {
 			createAutoDraft( siteId, uniqueDraftKey, postType );
 		}
+		if ( siteId && postId && postType ) {
+			requestSitePost( siteId, postId, postType, 0 );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { siteId, postId, postType } = this.props;
+		if (
+			prevProps.siteId !== siteId ||
+			prevProps.postId !== postId ||
+			prevProps.postType !== postType
+		) {
+			requestSitePost( siteId, postId, postType, 0 );
+		}
 	}
 
 	getAnalyticsPathAndTitle = () => {

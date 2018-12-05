@@ -203,7 +203,7 @@ export const requestGutenbergDemoContent = () =>
 		{ fromApi: () => data => [ [ 'gutenberg-demo-content', data ] ] }
 	);
 
-export const requestSitePost = ( siteId, postId, postType ) => {
+export const requestSitePost = ( siteId, postId, postType, freshness = Infinity ) => {
 	//post and page types are plural except for custom post types
 	//eg /sites/<siteId>/posts/1234 vs /sites/<siteId>/jetpack-testimonial/4
 	const path =
@@ -222,7 +222,7 @@ export const requestSitePost = ( siteId, postId, postType ) => {
 		),
 		{
 			fromApi: () => post => [ [ `gutenberg-site-${ siteId }-post-${ postId }`, post ] ],
-			freshness: 5000,
+			freshness,
 		}
 	);
 };
