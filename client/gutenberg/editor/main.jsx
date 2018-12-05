@@ -6,6 +6,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get, noop } from 'lodash';
+import { select, dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -32,6 +33,10 @@ class GutenbergEditor extends Component {
 		if ( ! postId ) {
 			createAutoDraft( siteId, uniqueDraftKey, postType );
 		}
+
+		// Remove previous notices when editor remounts
+		const notices = select( 'core/notices' ).getNotices();
+		notices.forEach( notice => dispatch( 'core/notices' ).removeNotice( notice.id ) );
 	}
 
 	getAnalyticsPathAndTitle = () => {
