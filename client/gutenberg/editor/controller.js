@@ -89,8 +89,13 @@ export const loadTranslations = store => {
 	} );
 };
 
-function waitForSelectedSiteId( context ) {
-	return new Promise( resolve => {
+const waitForSiteId = store =>
+	new Promise( resolve => {
+		const existingSiteId = getSelectedSiteId( store.getState() );
+		if ( existingSiteId ) {
+			resolve( existingSiteId );
+		}
+
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );
@@ -100,10 +105,10 @@ function waitForSelectedSiteId( context ) {
 			unsubscribe();
 			resolve( siteId );
 		} );
+
 		// Trigger a `store.subscribe()` callback
 		context.store.dispatch( setAllSitesSelected() );
 	} );
-}
 
 export const post = async ( context, next ) => {
 	//see post-editor/controller.js for reference
@@ -113,35 +118,33 @@ export const post = async ( context, next ) => {
 	const postType = determinePostType( context );
 	const isDemoContent = ! postId && has( context.query, 'gutenberg-demo' );
 
-	let state = context.store.getState();
-	let siteId = getSelectedSiteId( state );
-	if ( ! siteId ) {
-		siteId = await waitForSelectedSiteId( context );
-		state = context.store.getState();
-	}
-	const siteSlug = getSelectedSiteSlug( state );
-	const userId = getCurrentUserId( state );
-
-	//set postId on state.ui.editor.postId, so components like editor revisions can read from it
-	context.store.dispatch( { type: EDITOR_START, siteId, postId } );
-
-	const GutenbergEditor = initGutenberg( userId, siteSlug );
-	const EditorWrapper = asyncLoader( {
+	const EditorLoader = asyncLoader( {
 		promises: {
+			siteId: waitForSiteId( context.store ),
 			translations: loadTranslations( context.store ),
 		},
-		loading: ( { translations } ) => (
+		loading: ( { siteId, translations } ) => (
 			<ul>
+				<li>{ siteId ? '✅' : '⏳' } Loading current site…</li>
 				<li>{ translations ? '✅' : '⏳' } Loading translations…</li>
 			</ul>
 		),
-		success: () => (
-			<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />
-		),
+		success: ( { siteId } ) => {
+			const state = context.store.getState();
+			const siteSlug = getSelectedSiteSlug( state );
+			const userId = getCurrentUserId( state );
+
+			//set postId on state.ui.editor.postId, so components like editor revisions can read from it
+			context.store.dispatch( { type: EDITOR_START, siteId, postId } );
+
+			const GutenbergEditor = initGutenberg( userId, siteSlug );
+
+			return <GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />;
+		},
 		failure: () => <div>Couldn't load everything - try hitting reload in your browser…</div>,
 	} );
 
-	context.primary = <EditorWrapper />;
+	context.primary = <EditorLoader />;
 
 	next();
 };

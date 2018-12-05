@@ -21,7 +21,13 @@ export const asyncLoader = ( { promises, loading, success, failure } ) =>
 			// resolve. this is for our own accounting and ensures that
 			// we wait for all promises to fulfill
 			const runners = Object.keys( promises ).map( key =>
-				promises[ key ].then( a => [ true, a ], a => [ false, a ] )
+				promises[ key ]
+					.then( a => {
+						this.setState( state => ( { results: { ...( state || {} ).results, [ key ]: a } } ) );
+
+						return a;
+					} )
+					.then( a => [ true, a ], a => [ false, a ] )
 			);
 
 			Promise.all( runners ).then( resolutions => {
