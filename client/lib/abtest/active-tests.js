@@ -89,13 +89,4 @@ export default {
 		},
 		defaultVariation: 'usernameSignup',
 	},
-	krackenM5DomainSuggestions: {
-		datestamp: '20181129',
-		variations: {
-			domainsbot_front: 25,
-			variation_front: 75,
-		},
-		allowExistingUsers: true,
-		defaultVariation: 'domainsbot_front',
-	},
 };
