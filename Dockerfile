@@ -26,6 +26,7 @@ RUN        bash /tmp/env-config.sh
 # Calypso development.
 COPY       . /calypso/
 RUN        npm ci --only=production --unsafe-perm
+RUN        npx lerna bootstrap --ci
 
 # Build the final layer
 #

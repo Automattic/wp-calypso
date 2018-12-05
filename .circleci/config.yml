@@ -115,7 +115,7 @@ references:
     name: Install npm dependencies
     command: |
       if [ ! -d node_modules ]; then
-        npm ci
+        npx lerna bootstrap
       fi
   save-node-modules-cache: &save-node-modules-cache
     name: "Save node_modules cache"
