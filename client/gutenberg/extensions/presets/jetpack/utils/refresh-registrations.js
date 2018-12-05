@@ -21,14 +21,15 @@ import extensions from '../editor';
  * @returns {void}
  */
 export default function refreshRegistrations() {
-	const extensionAvailability = getJetpackData();
+	const extensionAvailability = get( getJetpackData(), [ 'available_blocks' ] );
 
-	if ( ! extensions ) {
+	if ( ! extensionAvailability ) {
 		return;
 	}
 
 	forEach( extensionAvailability, ( { available }, name ) => {
 		const settings = get( extensions, [ name ] );
+
 		if ( has( settings, [ 'render' ] ) ) {
 			// If the extension has a `render` method, it's not a block but a plugin
 			if ( available ) {
