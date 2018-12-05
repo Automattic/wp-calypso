@@ -294,6 +294,10 @@
 		.checklist__task-secondary {
 			display: none;
 		}
+
+		.checklist__task-title-link {
+			color: $gray-text-min;
+		}
 	}
 
 	&.is-placeholder {
