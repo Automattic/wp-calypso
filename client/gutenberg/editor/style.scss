@@ -205,6 +205,9 @@ $gutenberg-theme-toggle: #11a0d2;
 	input[type='search'] {
 		width: auto;
 	}
+	.components-text-control__input input[type='text'] {
+		width: 100%;
+	}
 
 	input[type='number'].components-range-control__number {
 		width: 50px;
@@ -270,4 +273,16 @@ $gutenberg-theme-toggle: #11a0d2;
 		cursor: pointer;
 	}
 	// END Missing Core styles
+	.components-placeholder__fieldset {
+		color: #191e23; // $dark-gray-900;
+		p {
+			font-family: $sans;
+			font-size: 13px;
+
+		}
+	}
+
+	.components-placeholder__label svg {
+		margin-right: 1ch;
+	}
 }
