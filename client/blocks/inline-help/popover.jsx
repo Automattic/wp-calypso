@@ -40,6 +40,7 @@ import { isEnabled } from 'config';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
+import isGutenbergEnabled from '../../state/selectors/is-gutenberg-enabled';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -266,7 +267,8 @@ function mapStateToProps( state ) {
 
 	const isCalypsoClassic = section.group && section.group === 'editor';
 	const isGutenbergEditor = section.group && section.group === 'gutenberg';
-	const optInEnabled = isEnabled( 'gutenberg/opt-in' );
+	const optInEnabled =
+		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) );
 
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
