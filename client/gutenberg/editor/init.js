@@ -26,7 +26,7 @@ const WPCOM_UNSUPPORTED_CORE_BLOCKS = [
 ];
 
 /* eslint-disable prefer-const */
-// this is indeed reasigned when unregistering blocks on applyJetpackBlockAvailability
+// this is indeed reasigned when unregistering blocks on applyGutenbergBlockAvailability
 let blockCache = {};
 
 const partitionBlocks = flow(
@@ -44,7 +44,7 @@ const partitionBlocks = flow(
  *
  * @param {Object} blockAvailability object defining each block availability
  */
-export const applyJetpackBlockAvailability = blockAvailability => {
+export const applyGutenbergBlockAvailability = blockAvailability => {
 	if ( ! isEnabled( 'gutenberg/block/jetpack-preset' ) || ! blockAvailability ) {
 		return;
 	}

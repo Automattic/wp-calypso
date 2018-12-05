@@ -17,7 +17,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { EDITOR_START } from 'state/action-types';
-import { initGutenberg, applyJetpackBlockAvailability } from './init';
+import { initGutenberg, applyGutenbergBlockAvailability } from './init';
 import { requestFromUrl, requestGutenbergBlockAvailability } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 import { getSiteFragment } from 'lib/route';
@@ -149,7 +149,7 @@ export const post = async ( context, next ) => {
 
 	const GutenbergEditor = initGutenberg( userId, siteSlug );
 
-	applyJetpackBlockAvailability( context.blockAvailability );
+	applyGutenbergBlockAvailability( context.blockAvailability );
 
 	context.primary = (
 		<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />
