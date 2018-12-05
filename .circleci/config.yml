@@ -174,7 +174,6 @@ jobs:
       - restore_cache: *restore-node-modules-cache
       - run: *npm-install
       - save_cache: *save-node-modules-cache
-      - run: npm run build-packages
       - persist_to_workspace:
           root: '~'
           paths:

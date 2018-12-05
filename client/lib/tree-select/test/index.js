@@ -4,7 +4,7 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import treeSelect from '../src';
+import treeSelect from '../';
 
 describe( 'index', () => {
 	describe( '#treeSelect', () => {
