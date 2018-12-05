@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { forEach } from 'lodash';
-import { registerBlockType } from '@wordpress/blocks';
+import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -29,9 +29,9 @@ export default function refreshRegistrations() {
 		if ( available ) {
 			// TODO: Need settings. Probably export from individual block files
 			registerBlockType( name, settings );
-		} else {
-			// Check if block is registered
-			// if it is, unregister
+		} else if ( getBlockType( name ) ) {
+			// The block is currently registered but becoming unavailable
+			unregisterBlockType( name );
 		}
 	} );
 }
