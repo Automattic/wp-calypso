@@ -17,7 +17,6 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { EDITOR_START } from 'state/action-types';
-import { initGutenberg } from './init';
 import { requestFromUrl } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 import { asyncLoader } from './async-loader';
@@ -123,12 +122,14 @@ export const post = async ( context, next ) => {
 		const siteSlug = getSelectedSiteSlug( state );
 		const userId = getCurrentUserId( state );
 
-		//set postId on state.ui.editor.postId, so components like editor revisions can read from it
-		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
+		return import( './init' ).then( ( { initGutenberg } ) => {
+			//set postId on state.ui.editor.postId, so components like editor revisions can read from it
+			context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
-		const Editor = initGutenberg( userId, siteSlug );
+			const Editor = initGutenberg( userId, siteSlug );
 
-		return () => <Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />;
+			return () => <Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />;
+		} );
 	};
 
 	const EditorLoader = asyncLoader( {
