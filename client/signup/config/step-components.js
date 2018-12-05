@@ -81,6 +81,7 @@ export default {
 	'website-themes': ThemeSelectionComponent,
 	'blog-themes': ThemeSelectionComponent,
 	'themes-site-selected': ThemeSelectionComponent,
+	'portfolio-themes': ThemeSelectionComponent,
 	user: UserSignupComponent,
 	'oauth2-user': UserSignupComponent,
 	'oauth2-name': UserSignupComponent,
