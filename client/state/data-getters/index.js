@@ -38,7 +38,7 @@ import { dummyTaxRate } from 'lib/tax'; // #tax-on-checkout-placeholder
  */
 export const requestFromUrl = url =>
 	requestHttpData( `get-at-url-${ url }`, rawHttp( { method: 'GET', url } ), {
-		fromApi: () => data => [ `get-at-url-${ url }`, data ],
+		fromApi: () => data => [ [ `get-at-url-${ url }`, data ] ],
 	} );
 
 export const requestActivityActionTypeCounts = (

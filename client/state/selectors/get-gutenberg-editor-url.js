@@ -20,15 +20,15 @@ export const getGutenbergEditorUrl = ( state, siteId, postId = null, postType = 
 	}
 
 	if ( postId ) {
-		return `/gutenberg${ getEditorPath( state, siteId, postId, postType ) }`;
+		return `/block-editor${ getEditorPath( state, siteId, postId, postType ) }`;
 	}
 
 	const siteSlug = getSiteSlug( state, siteId );
 
 	if ( 'post' === postType || 'page' === postType ) {
-		return `/gutenberg/${ postType }/${ siteSlug }`;
+		return `/block-editor/${ postType }/${ siteSlug }`;
 	}
-	return `/gutenberg/edit/${ postType }/${ siteSlug }`;
+	return `/block-editor/edit/${ postType }/${ siteSlug }`;
 };
 
 export default getGutenbergEditorUrl;

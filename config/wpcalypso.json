@@ -22,7 +22,7 @@
 		"apple-pay": true,
 		"blogger-plan": false,
 		"comments/management/threaded-view": false,
-		"calypsoify/gutenberg": true,
+		"calypsoify/gutenberg": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"code-splitting": true,

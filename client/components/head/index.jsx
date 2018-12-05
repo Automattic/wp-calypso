@@ -33,6 +33,12 @@ const Head = ( {
 			<meta name="referrer" content="origin" />
 
 			<link
+				rel="prefetch"
+				as="document"
+				href="https://public-api.wordpress.com/wp-admin/rest-proxy/?v=2.0"
+			/>
+
+			<link
 				rel="shortcut icon"
 				type="image/vnd.microsoft.icon"
 				href={ faviconURL }

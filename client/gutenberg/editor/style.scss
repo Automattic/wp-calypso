@@ -200,10 +200,26 @@ $gutenberg-theme-toggle: #11a0d2;
 		}
 	}
 
+	.edit-post-sidebar-header ul {
+		list-style: none;
+		margin: 0;
+	}
+
+	.editor-block-navigation__list {
+		list-style: none;
+	}
+}
+
+.is-section-gutenberg-editor,
+.edit-post-options-modal {
+
 	// UNSET CALYPSO DEFAULT STYLES
 	input[type='text'],
 	input[type='search'] {
 		width: auto;
+	}
+	.components-text-control__input input[type='text'] {
+		width: 100%;
 	}
 
 	input[type='number'].components-range-control__number {
@@ -270,4 +286,16 @@ $gutenberg-theme-toggle: #11a0d2;
 		cursor: pointer;
 	}
 	// END Missing Core styles
+	.components-placeholder__fieldset {
+		color: #191e23; // $dark-gray-900;
+		p {
+			font-family: $sans;
+			font-size: 13px;
+
+		}
+	}
+
+	.components-placeholder__label svg {
+		margin-right: 1ch;
+	}
 }

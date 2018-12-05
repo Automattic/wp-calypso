@@ -3,11 +3,14 @@
 /**
  * External dependencies
  */
-import { unescape } from 'lodash';
+import { keyBy, map, unescape } from 'lodash';
 
-export const fromApi = ( { description, name, slug, term_id } ) => ( {
-	description: unescape( description ),
-	id: term_id,
-	name: unescape( name ),
-	slug,
+const convertZone = zone => ( {
+	description: unescape( zone.description ),
+	id: zone.term_id,
+	name: unescape( zone.name ),
+	slug: zone.slug,
 } );
+
+export const zoneFromApi = response => convertZone( response.data );
+export const zonesListFromApi = response => keyBy( map( response.data, convertZone ), 'id' );

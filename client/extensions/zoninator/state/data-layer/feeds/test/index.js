@@ -3,11 +3,9 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { translate } from 'i18n-calypso';
 import { initialize, startSubmit, stopSubmit } from 'redux-form';
 import { omit } from 'lodash';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -56,12 +54,8 @@ const getState = () => ( {
 } );
 
 describe( '#requestZoneFeed()', () => {
-	test( 'should dispatch a HTTP request to the feed endpoint', () => {
-		const dispatch = sinon.spy();
-
-		requestZoneFeed( { dispatch }, dummyAction );
-
-		expect( dispatch ).to.have.been.calledWith(
+	test( 'should return a HTTP request to the feed endpoint', () => {
+		expect( requestZoneFeed( dummyAction ) ).toContainEqual(
 			http(
 				{
 					method: 'GET',
@@ -75,23 +69,21 @@ describe( '#requestZoneFeed()', () => {
 		);
 	} );
 
-	test( 'should dispatch `removeNotice`', () => {
-		const dispatch = sinon.spy();
-
-		requestZoneFeed( { dispatch }, dummyAction );
-
-		expect( dispatch ).to.have.been.calledWith( removeNotice( 'zoninator-request-feed' ) );
+	test( 'should return `removeNotice`', () => {
+		expect( requestZoneFeed( dummyAction ) ).toContainEqual(
+			removeNotice( 'zoninator-request-feed' )
+		);
 	} );
 } );
 
 describe( '#requestZoneFeedError()', () => {
 	test( 'should dispatch `errorNotice`', () => {
-		const dispatch = sinon.spy();
+		const dispatch = jest.fn();
 
-		requestZoneFeedError( { dispatch, getState }, dummyAction );
+		requestZoneFeedError( dummyAction )( dispatch, getState );
 
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( dispatch ).toHaveBeenCalledTimes( 1 );
+		expect( dispatch ).toHaveBeenCalledWith(
 			errorNotice(
 				translate( 'Could not fetch the posts feed for %(name)s. Please try again.', {
 					args: { name: 'Test zone' },
@@ -103,25 +95,16 @@ describe( '#requestZoneFeedError()', () => {
 } );
 
 describe( '#updateZoneFeed()', () => {
-	test( 'should dispatch `updateFeed`', () => {
-		const dispatch = sinon.spy();
-
-		updateZoneFeed( { dispatch }, dummyAction, { data: apiResponse } );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+	test( 'should return `updateFeed`', () => {
+		expect( updateZoneFeed( dummyAction, { data: apiResponse } ) ).toEqual(
 			updateFeed( 123, 456, fromApi( apiResponse, dummyAction.siteId ) )
 		);
 	} );
 } );
 
 describe( '#saveZoneFeed()', () => {
-	test( 'should dispatch a HTTP request to the feed endpoint', () => {
-		const dispatch = sinon.spy();
-
-		saveZoneFeed( { dispatch }, dummyAction );
-
-		expect( dispatch ).to.have.been.calledWith(
+	test( 'should return a HTTP request to the feed endpoint', () => {
+		expect( saveZoneFeed( dummyAction ) ).toContainEqual(
 			http(
 				{
 					method: 'POST',
@@ -137,84 +120,52 @@ describe( '#saveZoneFeed()', () => {
 		);
 	} );
 
-	test( 'should dispatch `removeNotice`', () => {
-		const dispatch = sinon.spy();
-
-		saveZoneFeed( { dispatch }, dummyAction );
-
-		expect( dispatch ).to.have.been.calledWith( removeNotice( 'zoninator-save-feed' ) );
+	test( 'should return `removeNotice`', () => {
+		expect( saveZoneFeed( dummyAction ) ).toContainEqual( removeNotice( 'zoninator-save-feed' ) );
 	} );
 
-	test( 'should dispatch `startSubmit`', () => {
-		const dispatch = sinon.spy();
-
-		saveZoneFeed( { dispatch }, dummyAction );
-
-		expect( dispatch ).to.have.been.calledWith( startSubmit( dummyAction.form ) );
+	test( 'should return `startSubmit`', () => {
+		expect( saveZoneFeed( dummyAction ) ).toContainEqual( startSubmit( dummyAction.form ) );
 	} );
 
-	test( 'should dispatch `resetLock`', () => {
-		const dispatch = sinon.spy();
-
-		saveZoneFeed( { dispatch }, dummyAction );
-
-		expect( dispatch ).to.have.been.calledWithMatch( omit( resetLock( 123, 456 ), [ 'time' ] ) );
+	test( 'should return `resetLock`', () => {
+		expect( saveZoneFeed( dummyAction ) ).toContainEqual(
+			expect.objectContaining( omit( resetLock( 123, 456 ), [ 'time' ] ) )
+		);
 	} );
 } );
 
 describe( '#announceSuccess()', () => {
-	test( 'should dispatch `stopSubmit`', () => {
-		const dispatch = sinon.spy();
-
-		announceSuccess( { dispatch }, dummyAction );
-
-		expect( dispatch ).to.have.been.calledWith( stopSubmit( dummyAction.form ) );
+	test( 'should return `stopSubmit`', () => {
+		expect( announceSuccess( dummyAction ) ).toContainEqual( stopSubmit( dummyAction.form ) );
 	} );
 
-	test( 'should dispatch `initialize`', () => {
-		const dispatch = sinon.spy();
-
-		announceSuccess( { dispatch }, dummyAction );
-
-		expect( dispatch ).to.have.been.calledWith(
+	test( 'should return `initialize`', () => {
+		expect( announceSuccess( dummyAction ) ).toContainEqual(
 			initialize( dummyAction.form, { posts: dummyAction.posts } )
 		);
 	} );
 
-	test( 'should dispatch `successNotice`', () => {
-		const dispatch = sinon.spy();
-
-		announceSuccess( { dispatch }, dummyAction );
-
-		expect( dispatch ).to.have.been.calledWith(
+	test( 'should return `successNotice`', () => {
+		expect( announceSuccess( dummyAction ) ).toContainEqual(
 			successNotice( translate( 'Zone feed saved!' ), { id: 'zoninator-save-feed' } )
 		);
 	} );
 
-	test( 'should dispatch `updateFeed`', () => {
-		const dispatch = sinon.spy();
-
-		announceSuccess( { dispatch }, dummyAction );
-
-		expect( dispatch ).to.have.been.calledWith( updateFeed( 123, 456, dummyAction.posts ) );
+	test( 'should return `updateFeed`', () => {
+		expect( announceSuccess( dummyAction ) ).toContainEqual(
+			updateFeed( 123, 456, dummyAction.posts )
+		);
 	} );
 } );
 
 describe( '#announceFailure()', () => {
-	test( 'should dispatch `stopSubmit`', () => {
-		const dispatch = sinon.spy();
-
-		announceFailure( { dispatch }, dummyAction );
-
-		expect( dispatch ).to.have.been.calledWith( stopSubmit( dummyAction.form ) );
+	test( 'should return `stopSubmit`', () => {
+		expect( announceFailure( dummyAction ) ).toContainEqual( stopSubmit( dummyAction.form ) );
 	} );
 
 	test( 'should dispatch `errorNotice`', () => {
-		const dispatch = sinon.spy();
-
-		announceFailure( { dispatch }, dummyAction );
-
-		expect( dispatch ).to.have.been.calledWith(
+		expect( announceFailure( dummyAction ) ).toContainEqual(
 			errorNotice( translate( 'There was a problem saving your changes. Please try again' ), {
 				id: 'zoninator-save-feed',
 			} )

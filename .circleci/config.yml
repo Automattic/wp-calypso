@@ -18,6 +18,7 @@ references:
         "$CIRCLE_TEST_REPORTS/client"           \
         "$CIRCLE_TEST_REPORTS/eslint"           \
         "$CIRCLE_TEST_REPORTS/integration"      \
+        "$CIRCLE_TEST_REPORTS/packages"         \
         "$CIRCLE_TEST_REPORTS/server"           \
         "$HOME/jest-cache"                      \
         "$HOME/terser-cache"
@@ -322,6 +323,29 @@ jobs:
       - save_cache: *save-jest-cache
       - store-artifacts-and-test-results
 
+  test-packages:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - restore_cache: *restore-jest-cache
+      - run:
+          name: Run Package Tests
+          no_output_timeout: 2m
+          command: |
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/packages/results.xml" \
+              ./node_modules/.bin/jest                                    \
+                --cacheDirectory="$HOME/jest-cache"                       \
+                --ci                                                      \
+                --maxWorkers=2                                            \
+                --reporters=default                                       \
+                --reporters=jest-junit                                    \
+                --silent                                                  \
+                --config=test/packages/jest.config.js
+      - save_cache: *save-jest-cache
+      - store-artifacts-and-test-results
+
+
   test-server:
     <<: *defaults
     parallelism: 1
@@ -343,14 +367,6 @@ jobs:
                 --config=test/server/jest.config.js
       - save_cache: *save-jest-cache
       - store-artifacts-and-test-results
-
-  danger:
-    <<: *defaults
-    steps:
-      - prepare
-      - run:
-          name: Danger.js
-          command: npx danger ci
 
   icfy-stats:
     <<: *defaults
@@ -449,12 +465,6 @@ workflows:
   calypso:
     jobs:
       - setup
-      - danger:
-          requires:
-            - setup
-          filters:
-            branches:
-              ignore: master
       - build-jetpack-blocks:
           requires:
             - setup
@@ -468,6 +478,9 @@ workflows:
           requires:
             - setup
       - test-client:
+          requires:
+            - setup
+      - test-packages:
           requires:
             - setup
       - test-server:
@@ -489,6 +502,9 @@ workflows:
           requires:
             - setup
       - test-integration:
+          requires:
+            - setup
+      - test-packages:
           requires:
             - setup
       - test-server:

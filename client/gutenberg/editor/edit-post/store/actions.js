@@ -1,8 +1,4 @@
-/**
- * External dependencies
- */
-import deprecated from '@wordpress/deprecated';
-
+/** @format */
 /**
  * Returns an action object used in signalling that the user opened an editor sidebar.
  *
@@ -29,7 +25,7 @@ export function closeGeneralSidebar() {
 }
 
 /**
- * Returns an action object used in signalling that the user opened an editor sidebar.
+ * Returns an action object used in signalling that the user opened a modal.
  *
  * @param {string} name A string that uniquely identifies the modal.
  *
@@ -43,7 +39,7 @@ export function openModal( name ) {
 }
 
 /**
- * Returns an action object signalling that the user closed the sidebar.
+ * Returns an action object signalling that the user closed a modal.
  *
  * @return {Object} Action object.
  */
@@ -108,7 +104,7 @@ export function toggleEditorPanelEnabled( panelName ) {
  * @param {string} panelName A string that identifies the panel to open or close.
  *
  * @return {Object} Action object.
-*/
+ */
 export function toggleEditorPanelOpened( panelName ) {
 	return {
 		type: 'TOGGLE_PANEL_OPENED',
@@ -117,19 +113,17 @@ export function toggleEditorPanelOpened( panelName ) {
 }
 
 /**
- * Returns an action object used to open or close a panel in the editor.
+ * Returns an action object used to remove a panel from the editor.
  *
- * @param {string} panelName A string that identifies the panel to open or close.
+ * @param {string} panelName A string that identifies the panel to remove.
  *
  * @return {Object} Action object.
-*/
-export function toggleGeneralSidebarEditorPanel( panelName ) {
-	deprecated( 'toggleGeneralSidebarEditorPanel', {
-		alternative: 'toggleEditorPanelOpened',
-		plugin: 'Gutenberg',
-		version: '4.3.0',
-	} );
-	return toggleEditorPanelOpened( panelName );
+ */
+export function removeEditorPanel( panelName ) {
+	return {
+		type: 'REMOVE_PANEL',
+		panelName,
+	};
 }
 
 /**
@@ -164,5 +158,42 @@ export function togglePinnedPluginItem( pluginName ) {
 	return {
 		type: 'TOGGLE_PINNED_PLUGIN_ITEM',
 		pluginName,
+	};
+}
+
+/**
+ * Returns an action object used in signaling
+ * what Meta boxes are available in which location.
+ *
+ * @param {Object} metaBoxesPerLocation Meta boxes per location.
+ *
+ * @return {Object} Action object.
+ */
+export function setAvailableMetaBoxesPerLocation( metaBoxesPerLocation ) {
+	return {
+		type: 'SET_META_BOXES_PER_LOCATIONS',
+		metaBoxesPerLocation,
+	};
+}
+
+/**
+ * Returns an action object used to request meta box update.
+ *
+ * @return {Object} Action object.
+ */
+export function requestMetaBoxUpdates() {
+	return {
+		type: 'REQUEST_META_BOX_UPDATES',
+	};
+}
+
+/**
+ * Returns an action object used signal a successful meta box update.
+ *
+ * @return {Object} Action object.
+ */
+export function metaBoxUpdatesSuccess() {
+	return {
+		type: 'META_BOX_UPDATES_SUCCESS',
 	};
 }

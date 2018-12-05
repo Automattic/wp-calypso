@@ -1,4 +1,5 @@
 /** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -13,18 +14,19 @@ import { IconButton, Dropdown, MenuGroup } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import CopyContentMenuItem from '../copy-content-menu-item';
-import KeyboardShortcutsHelpMenuItem from '../keyboard-shortcuts-help-menu-item';
 import ModeSwitcher from '../mode-switcher';
-import OptOutMenuItem from '../opt-out-menu-item';
+import PluginMoreMenuGroup from '../plugins-more-menu-group';
 import OptionsMenuItem from '../options-menu-item';
-import PluginsMoreMenuGroup from '../plugins-more-menu-group';
 import WritingMenu from '../writing-menu';
+// GUTENLYPSO START
+import CopyContentMenuItem from '../../../plugins/copy-content-menu-item';
+import KeyboardShortcutsHelpMenuItem from '../../../plugins/keyboard-shortcuts-help-menu-item';
+import OptOutMenuItem from 'gutenberg/editor/components/header/opt-out-menu-item';
+// GUTENLYPSO END
 
 const ariaClosed = __( 'Show more tools & options' );
 const ariaOpen = __( 'Hide more tools & options' );
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 const MoreMenu = () => (
 	<Dropdown
 		className="edit-post-more-menu"
@@ -42,19 +44,20 @@ const MoreMenu = () => (
 			<Fragment>
 				<WritingMenu onClose={ onClose } />
 				<ModeSwitcher onSelect={ onClose } />
-				<PluginsMoreMenuGroup.Slot fillProps={ { onClose } } />
+				<PluginMoreMenuGroup.Slot fillProps={ { onClose } } />
+				{ /* GUTENLYPSO START */ }
 				<MenuGroup label={ __( 'Tools' ) }>
 					<KeyboardShortcutsHelpMenuItem onSelect={ onClose } />
 					<CopyContentMenuItem />
 				</MenuGroup>
+				{ /* GUTENLYPSO END */ }
 				<MenuGroup>
 					<OptionsMenuItem onSelect={ onClose } />
-					<OptOutMenuItem />
+					<OptOutMenuItem /> { /* GUTENLYPSO */ }
 				</MenuGroup>
 			</Fragment>
 		) }
 	/>
 );
-/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default MoreMenu;
