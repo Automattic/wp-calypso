@@ -3,30 +3,30 @@
 /**
  * Internal dependencies
  */
-import { settings } from './settings.js';
+import { settings as mapSettings } from './settings.js';
 import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
 import edit from './edit';
 import save from './save';
 import './style.scss';
 import './editor.scss';
 
-export const { name } = settings;
+export const { name } = mapSettings;
 
-export { settings };
-
-registerJetpackBlock( settings.name, {
-	title: settings.title,
-	icon: settings.icon,
-	category: settings.category,
-	keywords: settings.keywords,
-	description: settings.description,
-	attributes: settings.attributes,
+export const settings = {
+	title: mapSettings.title,
+	icon: mapSettings.icon,
+	category: mapSettings.category,
+	keywords: mapSettings.keywords,
+	description: mapSettings.description,
+	attributes: mapSettings.attributes,
 	getEditWrapperProps( attributes ) {
 		const { align } = attributes;
-		if ( -1 !== settings.validAlignments.indexOf( align ) ) {
+		if ( -1 !== mapSettings.validAlignments.indexOf( align ) ) {
 			return { 'data-align': align };
 		}
 	},
 	edit,
 	save,
-} );
+};
+
+registerJetpackBlock( name, settings );
