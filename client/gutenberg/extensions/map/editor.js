@@ -3,13 +3,16 @@
 /**
  * Internal dependencies
  */
-
 import { settings } from './settings.js';
 import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
 import edit from './edit';
 import save from './save';
 import './style.scss';
 import './editor.scss';
+
+export const { name } = settings;
+
+export { settings };
 
 registerJetpackBlock( settings.name, {
 	title: settings.title,
