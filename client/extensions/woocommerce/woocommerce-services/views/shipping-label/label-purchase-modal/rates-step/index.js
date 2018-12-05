@@ -98,6 +98,11 @@ const getRatesStatus = ( { retrievalInProgress, errors, available, form } ) => {
 const showCheckoutShippingInfo = props => {
 	const { shippingMethod, shippingCost, translate } = props;
 
+	// Use a temporary HTML element in order to let the DOM API convert HTML entities into text
+	const shippingMethodDiv = document.createElement( 'div' );
+	shippingMethodDiv.innerHTML = shippingMethod;
+	const decodedShippingMethod = shippingMethodDiv.textContent;
+
 	if ( shippingMethod ) {
 		let shippingInfo;
 
@@ -107,7 +112,7 @@ const showCheckoutShippingInfo = props => {
 				{
 					components: {
 						shippingMethod: (
-							<span className="rates-step__shipping-info-method">{ shippingMethod }</span>
+							<span className="rates-step__shipping-info-method">{ decodedShippingMethod }</span>
 						),
 						shippingCost: (
 							<span className="rates-step__shipping-info-cost">
@@ -121,7 +126,7 @@ const showCheckoutShippingInfo = props => {
 			shippingInfo = translate( 'Your customer selected {{shippingMethod/}}', {
 				components: {
 					shippingMethod: (
-						<span className="rates-step__shipping-info-method">{ shippingMethod }</span>
+						<span className="rates-step__shipping-info-method">{ decodedShippingMethod }</span>
 					),
 				},
 			} );
