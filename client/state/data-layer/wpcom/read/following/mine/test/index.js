@@ -2,10 +2,8 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import freeze from 'deep-freeze';
 import { noop } from 'lodash';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -53,21 +51,20 @@ describe( 'get follow subscriptions', () => {
 	describe( '#syncReaderFollows', () => {
 		test( 'should request first page + set syncing to true', () => {
 			const action = { type: READER_FOLLOWS_SYNC_START };
-			const dispatch = sinon.spy();
+			const dispatch = jest.fn();
 
 			syncReaderFollows( { dispatch }, action );
 
-			expect( isSyncingFollows() ).ok;
-			expect( dispatch ).calledWith( syncReaderFollowsPage() );
+			expect( isSyncingFollows() ).toBe( true );
+			expect( dispatch ).toHaveBeenCalledWith( syncReaderFollowsPage() );
 		} );
 	} );
 
 	describe( '#requestPage', () => {
 		test( 'should dispatch HTTP request to following/mine endpoint', () => {
 			const action = syncReaderFollowsPage();
-			const result = requestPage( action );
 
-			expect( result ).to.eql(
+			expect( requestPage( action ) ).toEqual(
 				http(
 					{
 						method: 'GET',
@@ -85,15 +82,15 @@ describe( 'get follow subscriptions', () => {
 		test( 'if non-empty subs then should dispatch subs-receive and request next page', () => {
 			const startSyncAction = { type: READER_FOLLOWS_SYNC_START };
 			const action = syncReaderFollowsPage(); // no feeds
-			const dispatch = sinon.spy();
+			const dispatch = jest.fn();
 
 			syncReaderFollows( { dispatch }, startSyncAction );
 			receivePage( action, successfulApiResponse )( dispatch );
 
-			expect( dispatch ).to.have.been.calledThrice;
-			expect( dispatch ).to.have.been.calledWith( syncReaderFollowsPage( 1 ) );
-			expect( dispatch ).to.have.been.calledWith( syncReaderFollowsPage( 2 ) );
-			expect( dispatch ).to.have.been.calledWith(
+			expect( dispatch ).toHaveBeenCalledTimes( 3 );
+			expect( dispatch ).toHaveBeenCalledWith( syncReaderFollowsPage( 1 ) );
+			expect( dispatch ).toHaveBeenCalledWith( syncReaderFollowsPage( 2 ) );
+			expect( dispatch ).toHaveBeenCalledWith(
 				receiveFollows( {
 					follows: subscriptionsFromApi( successfulApiResponse ),
 					totalCount: successfulApiResponse.total_subscriptions,
@@ -105,7 +102,7 @@ describe( 'get follow subscriptions', () => {
 			const startSyncAction = { type: READER_FOLLOWS_SYNC_START };
 			const action = syncReaderFollowsPage(); // no feeds
 			const ignoredDispatch = noop;
-			const dispatch = sinon.spy();
+			const dispatch = jest.fn();
 
 			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction );
 			receivePage( action, successfulApiResponse )( ignoredDispatch );
@@ -116,14 +113,14 @@ describe( 'get follow subscriptions', () => {
 				subscriptions: [],
 			} )( dispatch );
 
-			expect( dispatch ).to.have.been.calledTwice;
-			expect( dispatch ).to.have.been.calledWith(
+			expect( dispatch ).toHaveBeenCalledTimes( 2 );
+			expect( dispatch ).toHaveBeenCalledWith(
 				receiveFollows( {
 					follows: [],
 					totalCount: null,
 				} )
 			);
-			expect( dispatch ).to.have.been.calledWith(
+			expect( dispatch ).toHaveBeenCalledWith(
 				syncComplete( [ 'http://readerpostcards.wordpress.com', 'https://fivethirtyeight.com/' ] )
 			);
 		} );
@@ -132,7 +129,7 @@ describe( 'get follow subscriptions', () => {
 			const startSyncAction = { type: READER_FOLLOWS_SYNC_START };
 			const action = syncReaderFollowsPage(); // no feeds
 			const ignoredDispatch = noop;
-			const dispatch = sinon.spy();
+			const dispatch = jest.fn();
 
 			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction );
 			receivePage( action, successfulApiResponse )( ignoredDispatch );
@@ -146,15 +143,15 @@ describe( 'get follow subscriptions', () => {
 				subscriptions: [],
 			} )( dispatch );
 
-			expect( dispatch ).to.have.been.calledTwice;
-			expect( dispatch ).to.have.been.calledWith(
+			expect( dispatch ).toHaveBeenCalledTimes( 2 );
+			expect( dispatch ).toHaveBeenCalledWith(
 				receiveFollows( {
 					follows: [],
 					totalCount: null,
 				} )
 			);
 
-			expect( dispatch ).to.have.been.calledWith(
+			expect( dispatch ).toHaveBeenCalledWith(
 				syncComplete( [
 					'http://readerpostcards.wordpress.com',
 					'https://fivethirtyeight.com/',
@@ -169,9 +166,9 @@ describe( 'get follow subscriptions', () => {
 			const action = syncReaderFollowsPage();
 			const result = receiveError( action );
 
-			expect( result.type ).to.eql( NOTICE_CREATE );
-			expect( result.notice.status ).to.eql( 'is-error' );
-			expect( isSyncingFollows() ).not.ok;
+			expect( result.type ).toBe( NOTICE_CREATE );
+			expect( result.notice.status ).toBe( 'is-error' );
+			expect( isSyncingFollows() ).toBe( false );
 		} );
 	} );
 } );
