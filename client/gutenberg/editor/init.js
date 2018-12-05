@@ -30,9 +30,7 @@ const WPCOM_UNSUPPORTED_CORE_BLOCKS = [
 let blockCache = {};
 
 const partitionBlocks = flow(
-	partialRight( map, ( value, key ) => {
-		return { name: key, ...value };
-	} ),
+	partialRight( map, ( value, key ) => ( { name: key, ...value } ) ),
 	partialRight( partition, 'available' ),
 	partialRight( map, blocks => map( blocks, ( { name } ) => name ) )
 );
