@@ -43,26 +43,20 @@ function getPostID( context ) {
 	return parseInt( context.params.post, 10 );
 }
 
-export const loadTranslations = ( context, next ) => {
-	const domains = [
-		{
-			name: 'default',
-			url: 'gutenberg',
-		},
-	];
-	if ( isEnabled( 'gutenberg/block/jetpack-preset' ) ) {
-		domains.push( {
-			name: 'jetpack',
-			url: 'jetpack-gutenberg-blocks',
-		} );
-	}
+export const loadTranslations = store => {
+	const domainDefault = { name: 'default', url: 'gutenberg' };
+	const domainJetpack = isEnabled( 'gutenberg/block/jetpack-preset' ) && {
+		name: 'jetpack',
+		url: 'jetpack-gutenberg-blocks',
+	};
+	const domains = domainJetpack ? [ domainDefault, domainJetpack ] : [ domainDefault ];
 
-	const state = context.store.getState();
+	const state = store.getState();
 	const localeSlug = getCurrentLocaleSlug( state );
 
 	// We don't need to localize English
 	if ( ! localeSlug || localeSlug === config( 'i18n_default_locale_slug' ) ) {
-		return next();
+		return Promise.resolve();
 	}
 
 	const query = domains.reduce( ( currentQuery, domain ) => {
@@ -74,12 +68,13 @@ export const loadTranslations = ( context, next ) => {
 		};
 	}, {} );
 
-	waitForData( query ).then( responses => {
+	return waitForData( query ).then( responses => {
 		Object.entries( responses ).forEach( ( [ domain, { state: requestState, data } ] ) => {
 			if ( requestState === 'failure' ) {
 				debug(
 					`Encountered an error loading locale file for domain ${ domain } and locale ${ localeSlug }. Falling back to English.`
 				);
+				return Promise.reject();
 			} else if ( data ) {
 				const localeData = {
 					'': {
@@ -91,8 +86,6 @@ export const loadTranslations = ( context, next ) => {
 				setLocaleData( localeData, domain );
 			}
 		} );
-
-		next();
 	} );
 };
 
@@ -135,7 +128,7 @@ export const post = async ( context, next ) => {
 	const GutenbergEditor = initGutenberg( userId, siteSlug );
 	const EditorWrapper = asyncLoader( {
 		promises: {
-			artificialDelay: new Promise( resolve => setTimeout( resolve, 5000 ) ),
+			translations: loadTranslations( context.store ),
 		},
 		loading: () => <div>Loading…</div>,
 		success: () => (

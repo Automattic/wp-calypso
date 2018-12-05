@@ -8,7 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { siteSelection, sites } from 'my-sites/controller';
-import { loadTranslations, post } from './controller';
+import { post } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -17,25 +17,11 @@ export default function() {
 		page( '/block-editor', '/block-editor/post' );
 
 		page( '/block-editor/post', siteSelection, sites, makeLayout, clientRender );
-		page(
-			'/block-editor/post/:site/:post?',
-			siteSelection,
-			loadTranslations,
-			post,
-			makeLayout,
-			clientRender
-		);
+		page( '/block-editor/post/:site/:post?', siteSelection, post, makeLayout, clientRender );
 		page( '/block-editor/post/:site?', siteSelection, makeLayout, clientRender );
 
 		page( '/block-editor/page', siteSelection, sites, makeLayout, clientRender );
-		page(
-			'/block-editor/page/:site/:post?',
-			siteSelection,
-			loadTranslations,
-			post,
-			makeLayout,
-			clientRender
-		);
+		page( '/block-editor/page/:site/:post?', siteSelection, post, makeLayout, clientRender );
 		page( '/block-editor/page/:site?', siteSelection, makeLayout, clientRender );
 
 		if ( config.isEnabled( 'manage/custom-post-types' ) ) {
@@ -43,7 +29,6 @@ export default function() {
 			page(
 				'/block-editor/edit/:customPostType/:site/:post?',
 				siteSelection,
-				loadTranslations,
 				post,
 				makeLayout,
 				clientRender
