@@ -110,8 +110,8 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
 } from '../action-types.js';
 
-const FAILED_NOTICE_ID = 'label-image-download-failed';
-const PRINTING_NOTICE_ID = 'label-image-download-printing';
+const PRINTING_FAILED_NOTICE_ID = 'label-image-download-failed';
+const PRINTING_IN_PROGRESS_NOTICE_ID = 'label-image-download-printing';
 
 export const fetchLabelsData = ( orderId, siteId ) => dispatch => {
 	dispatch( {
@@ -843,7 +843,7 @@ const createPrintFailureNotice = ( count, onClick ) => {
 	);
 
 	return NoticeActions.errorNotice( errorMessage, {
-		id: FAILED_NOTICE_ID,
+		id: PRINTING_FAILED_NOTICE_ID,
 		button: translate( 'Reprint' ),
 		onClick,
 	} );
@@ -884,10 +884,10 @@ function downloadAndPrint( orderId, siteId, dispatch, getState, labels ) {
 	};
 
 	const retry = () => {
-		dispatch( NoticeActions.removeNotice( FAILED_NOTICE_ID ) );
+		dispatch( NoticeActions.removeNotice( PRINTING_FAILED_NOTICE_ID ) );
 		dispatch(
 			NoticeActions.infoNotice( translate( 'Printing…' ), {
-				id: PRINTING_NOTICE_ID,
+				id: PRINTING_IN_PROGRESS_NOTICE_ID,
 			} )
 		);
 		downloadAndPrint( ...downloadArgs );
@@ -897,7 +897,7 @@ function downloadAndPrint( orderId, siteId, dispatch, getState, labels ) {
 		// Manualy close the modal and remove old notices
 		dispatch( exitPrintingFlow( orderId, siteId, true ) );
 		dispatch( clearAvailableRates( orderId, siteId ) );
-		dispatch( NoticeActions.removeNotice( PRINTING_NOTICE_ID ) );
+		dispatch( NoticeActions.removeNotice( PRINTING_IN_PROGRESS_NOTICE_ID ) );
 		dispatch( createPrintFailureNotice( labels.length, retry ) );
 	};
 
@@ -906,7 +906,7 @@ function downloadAndPrint( orderId, siteId, dispatch, getState, labels ) {
 	api
 		.get( siteId, printUrl )
 		.then( fileData => {
-			dispatch( NoticeActions.removeNotice( PRINTING_NOTICE_ID ) );
+			dispatch( NoticeActions.removeNotice( PRINTING_IN_PROGRESS_NOTICE_ID ) );
 
 			if ( 'addon' === getPDFSupport() ) {
 				showSuccessNotice();
