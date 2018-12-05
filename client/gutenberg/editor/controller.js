@@ -21,6 +21,7 @@ import { Placeholder } from './placeholder';
 import { JETPACK_DATA_PATH } from 'gutenberg/extensions/presets/jetpack/utils/get-jetpack-data';
 import { requestFromUrl, requestGutenbergBlockAvailability } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
+import { getRouteHistory } from 'state/ui/action-log/selectors';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -112,6 +113,13 @@ export const post = async ( context, next ) => {
 
 	const makeEditor = import( './init' ).then( ( { initGutenberg } ) => {
 		const state = context.store.getState();
+
+		const routeHistory = getRouteHistory( state );
+		if ( routeHistory.length > 1 ) {
+			window.location.reload();
+			return;
+		}
+
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
 		const userId = getCurrentUserId( state );
