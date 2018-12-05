@@ -2,8 +2,9 @@
 /**
  * External dependencies
  */
-import { forEach, has } from 'lodash';
+import { forEach, get, has } from 'lodash';
 import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
+import { getPlugin, registerPlugin, unregisterPlugin } from '@wordpress/plugins';
 
 /**
  * Internal dependencies
@@ -27,12 +28,19 @@ export default function refreshRegistrations() {
 	}
 
 	forEach( extensionAvailability, ( { available }, name ) => {
-		// TODO: Discern between blocks and plugins, use [un]registerPlugin for the latter
-		if ( available && has( extensions, [ name ] ) ) {
-			const settings = extensions[ name ];
+		const settings = get( extensions, [ name ] );
+		if ( has( settings, [ 'render' ] ) ) {
+			// If the extension has a `render` method, it's not a block but a plugin
+			if ( available ) {
+				registerPlugin( name );
+			} else if ( getPlugin( name ) ) {
+				// Registered, but no longer available
+				unregisterPlugin( name );
+			}
+		} else if ( available ) {
 			registerBlockType( name, settings );
 		} else if ( getBlockType( name ) ) {
-			// The block is currently registered but becoming unavailable
+			// Registered, but no longer available
 			unregisterBlockType( name );
 		}
 	} );
