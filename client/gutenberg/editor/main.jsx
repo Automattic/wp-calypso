@@ -41,23 +41,23 @@ class GutenbergEditor extends Component {
 		const isNew = ! postId;
 		const isEdit = !! postId;
 		if ( isPost && isNew ) {
-			return { path: '/gutenberg/post/:site', title: 'Post > New' };
+			return { path: '/block-editor/post/:site', title: 'Post > New' };
 		}
 		if ( isPost && isEdit ) {
-			return { path: '/gutenberg/post/:site/:post_id', title: 'Post > Edit' };
+			return { path: '/block-editor/post/:site/:post_id', title: 'Post > Edit' };
 		}
 		if ( isPage && isNew ) {
-			return { path: '/gutenberg/page/:site', title: 'Page > New' };
+			return { path: '/block-editor/page/:site', title: 'Page > New' };
 		}
 		if ( isPage && isEdit ) {
-			return { path: '/gutenberg/page/:site/:post_id', title: 'Page > Edit' };
+			return { path: '/block-editor/page/:site/:post_id', title: 'Page > Edit' };
 		}
 		if ( isNew ) {
-			return { path: `/gutenberg/edit/${ postType }/:site`, title: 'Custom Post Type > New' };
+			return { path: `/block-editor/edit/${ postType }/:site`, title: 'Custom Post Type > New' };
 		}
 		if ( isEdit ) {
 			return {
-				path: `/gutenberg/edit/${ postType }/:site/:post_id`,
+				path: `/block-editor/edit/${ postType }/:site/:post_id`,
 				title: 'Custom Post Type > Edit',
 			};
 		}

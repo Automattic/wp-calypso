@@ -29,7 +29,6 @@ import { getSelectedSiteId, getSection } from 'state/ui/selectors';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { setSelectedEditor } from 'state/selected-editor/actions';
-import { navigate, replaceHistory } from 'state/ui/actions';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -262,7 +261,7 @@ const optIn = ( siteId, gutenbergUrl ) => {
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
-	const classicRoute = currentRoute.replace( '/gutenberg/', '' );
+	const classicRoute = currentRoute.replace( '/block-editor/', '' );
 	const section = getSection( state );
 
 	const isCalypsoClassic = section.group && section.group === 'editor';
@@ -293,8 +292,6 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	selectResult,
 	resetContactForm: resetInlineHelpContactForm,
-	replaceHistory,
-	navigate,
 };
 
 export default connect(
