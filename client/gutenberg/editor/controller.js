@@ -96,7 +96,7 @@ export const loadTranslations = ( context, next ) => {
 	} );
 };
 
-export const loadGutenbergBlocksAvailability = async ( context, next ) => {
+export const loadGutenbergBlockAvailability = async ( context, next ) => {
 	const { path } = context;
 	const siteFragment = getSiteFragment( path );
 

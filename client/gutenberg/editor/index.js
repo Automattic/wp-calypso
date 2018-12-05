@@ -8,7 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { siteSelection, sites } from 'my-sites/controller';
-import { loadTranslations, loadGutenbergBlocksAvailability, post } from './controller';
+import { loadTranslations, loadGutenbergBlockAvailability, post } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -21,7 +21,7 @@ export default function() {
 			'/block-editor/post/:site/:post?',
 			siteSelection,
 			loadTranslations,
-			loadGutenbergBlocksAvailability,
+			loadGutenbergBlockAvailability,
 			post,
 			makeLayout,
 			clientRender
@@ -33,7 +33,7 @@ export default function() {
 			'/block-editor/page/:site/:post?',
 			siteSelection,
 			loadTranslations,
-			loadGutenbergBlocksAvailability,
+			loadGutenbergBlockAvailability,
 			post,
 			makeLayout,
 			clientRender
@@ -46,7 +46,7 @@ export default function() {
 				'/block-editor/edit/:customPostType/:site/:post?',
 				siteSelection,
 				loadTranslations,
-				loadGutenbergBlocksAvailability,
+				loadGutenbergBlockAvailability,
 				post,
 				makeLayout,
 				clientRender
