@@ -8,6 +8,7 @@ import { flow, has, map, once, partialRight, partition } from 'lodash';
  * WordPress dependencies
  */
 import { use, plugins, dispatch } from '@wordpress/data';
+import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -36,12 +37,17 @@ const partitionBlocks = flow(
 	partialRight( map, blocks => map( blocks, ( { name } ) => name ) )
 );
 
+/**
+ * This function applies the block availability settings returned by the
+ * /gutenberg/available-extensions endpoint for the selected site, keeping a
+ * cache of block types in case there is a need to restore a unavailable block.
+ *
+ * @param {Object} blockAvailability object defining each block availability
+ */
 export const applyJetpackBlockAvailability = blockAvailability => {
 	if ( ! isEnabled( 'gutenberg/block/jetpack-preset' ) || ! blockAvailability ) {
 		return;
 	}
-
-	const { getBlockType, registerBlockType, unregisterBlockType } = require( '@wordpress/blocks' );
 
 	const [ availableBlocksNames, unavailableBlocksNames ] = partitionBlocks( blockAvailability );
 
@@ -86,7 +92,7 @@ export const initGutenberg = once( ( userId, siteSlug ) => {
 	// Avoid using top level imports for this since they will statically
 	// initialize core-data before required plugins are loaded.
 	const { registerCoreBlocks } = require( '@wordpress/block-library' );
-	const { unregisterBlockType, setFreeformContentHandlerName } = require( '@wordpress/blocks' );
+	const { setFreeformContentHandlerName } = require( '@wordpress/blocks' );
 
 	debug( 'Registering core blocks' );
 	registerCoreBlocks();
