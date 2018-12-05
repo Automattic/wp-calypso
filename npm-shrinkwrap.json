@@ -4,6 +4,23 @@
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
+    "@automattic/babel-plugin-i18n-calypso": {
+      "version": "file:packages/babel-plugin-i18n-calypso",
+      "dev": true,
+      "requires": {
+        "@babel/runtime": "^7.0.0",
+        "gettext-parser": "^1.3.1",
+        "lodash": "^4.17.10"
+      }
+    },
+    "@automattic/tree-select": {
+      "version": "1.0.2",
+      "resolved": "https://registry.npmjs.org/@automattic/tree-select/-/tree-select-1.0.2.tgz",
+      "integrity": "sha512-UCmGnCUNpdPnLM6wTp+us6H5qCgUOO4K9C1+Me1lxEnfvxFVO2AAMGOktzvrsXrOvQ43vHDyNFeXLH550LE7qQ==",
+      "requires": {
+        "lodash": "^4.17.0"
+      }
+    },
     "@babel/cli": {
       "version": "7.2.0",
       "resolved": "https://registry.npmjs.org/@babel/cli/-/cli-7.2.0.tgz",
@@ -17528,27 +17545,27 @@
       "dev": true
     },
     "regexpu-core": {
-      "version": "4.4.0",
-      "resolved": "https://registry.npmjs.org/regexpu-core/-/regexpu-core-4.4.0.tgz",
-      "integrity": "sha512-eDDWElbwwI3K0Lo6CqbQbA6FwgtCz4kYTarrri1okfkRLZAqstU+B3voZBCjg8Fl6iq0gXrJG6MvRgLthfvgOA==",
+      "version": "4.2.0",
+      "resolved": "https://registry.npmjs.org/regexpu-core/-/regexpu-core-4.2.0.tgz",
+      "integrity": "sha512-Z835VSnJJ46CNBttalHD/dB+Sj2ezmY6Xp38npwU87peK6mqOzOpV8eYktdkLTEkzzD+JsTcxd84ozd8I14+rw==",
       "requires": {
         "regenerate": "^1.4.0",
         "regenerate-unicode-properties": "^7.0.0",
-        "regjsgen": "^0.5.0",
-        "regjsparser": "^0.6.0",
+        "regjsgen": "^0.4.0",
+        "regjsparser": "^0.3.0",
         "unicode-match-property-ecmascript": "^1.0.4",
         "unicode-match-property-value-ecmascript": "^1.0.2"
       }
     },
     "regjsgen": {
-      "version": "0.5.0",
-      "resolved": "https://registry.npmjs.org/regjsgen/-/regjsgen-0.5.0.tgz",
-      "integrity": "sha512-RnIrLhrXCX5ow/E5/Mh2O4e/oa1/jW0eaBKTSy3LaCj+M3Bqvm97GWDp2yUtzIs4LEn65zR2yiYGFqb2ApnzDA=="
+      "version": "0.4.0",
+      "resolved": "https://registry.npmjs.org/regjsgen/-/regjsgen-0.4.0.tgz",
+      "integrity": "sha512-X51Lte1gCYUdlwhF28+2YMO0U6WeN0GLpgpA7LK7mbdDnkQYiwvEpmpe0F/cv5L14EbxgrdayAG3JETBv0dbXA=="
     },
     "regjsparser": {
-      "version": "0.6.0",
-      "resolved": "https://registry.npmjs.org/regjsparser/-/regjsparser-0.6.0.tgz",
-      "integrity": "sha512-RQ7YyokLiQBomUJuUG8iGVvkgOLxwyZM8k6d3q5SAXpg4r5TZJZigKFvC6PpD+qQ98bCDC5YelPeA3EucDoNeQ==",
+      "version": "0.3.0",
+      "resolved": "https://registry.npmjs.org/regjsparser/-/regjsparser-0.3.0.tgz",
+      "integrity": "sha512-zza72oZBBHzt64G7DxdqrOo/30bhHkwMUoT0WqfGu98XLd7N+1tsy5MJ96Bk4MD0y74n629RhmrGW6XlnLLwCA==",
       "requires": {
         "jsesc": "~0.5.0"
       },
