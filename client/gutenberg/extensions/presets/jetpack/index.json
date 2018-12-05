@@ -4,7 +4,18 @@
     "map",
     "markdown",
     "publicize",
-    "simple-payments"
+    "simple-payments",
+    "field-text",
+    "field-name",
+    "field-email",
+    "field-url",
+    "field-date",
+    "field-telephone",
+    "field-textarea",
+    "field-checkbox",
+    "field-checkbox-multiple",
+    "field-radio",
+    "field-select"
   ],
   "beta": [
     "related-posts",
