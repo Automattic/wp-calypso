@@ -243,7 +243,8 @@
     "clean:devdocs": "npm run -s rm -- server/devdocs/search-index.js && npm run -s rm -- server/devdocs/proptypes-index.json && npm run -s rm -- server/devdocs/components-usage-stats.json",
     "clean:packages": "node bin/clean-packages.js",
     "clean:public": "npm run -s rm -- public .css .css.map .js .js.map && npm run -s rm -- public/images .svg && npm run -s rm -- public/sections .css .css.map && npm run -s rm -- public/sections-rtl .css .css.map",
-    "distclean": "npm run -s clean && npm run -s rm -- node_modules",
+    "distclean": "npm run -s clean && npm run distclean:packages && npm run -s rm -- node_modules",
+    "distclean:packages": "npx rimraf packages/*/{node_modules,package-lock.json,npm-shrinkwrap.json}",
     "docker": "docker run -it --name wp-calypso --rm -p 80:3000 wp-calypso",
     "eslint-branch": "node bin/eslint-branch.js",
     "install-if-deps-outdated": "node bin/install-if-deps-outdated.js",
@@ -273,7 +274,7 @@
     "test-server:coverage": "npm run -s test-server -- --coverage",
     "test-server:watch": "npm run -s test-server -- --watch",
     "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -k translate,__,_x,_n,_nx -e date \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
-    "update-deps": "npx rimraf node_modules npm-shrinkwrap.json packages/*/{node_modules,package-lock.json,npm-shrinkwrap.json} && npm install && npm shrinkwrap",
+    "update-deps": "npm run distclean && npm rimraf npm-shrinkwrap.json && npm install && npm shrinkwrap",
     "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
     "prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons npm run -s build-client",
     "whybundled": "whybundled stats.json"
