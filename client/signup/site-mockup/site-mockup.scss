@@ -56,13 +56,11 @@
 // stuff goes.
 .site-mockup__body {
 	height: 100%;
-	overflow-x: hidden;
-	overflow-y: auto;
+	overflow: hidden;
 
 	// Mobile body is scrollable and needs to
 	// make room for the chrome.
 	.site-mockup__viewport.is-mobile & {
-		//overflow-y: hidden;
 		margin: 0 6px 6px 6px;
 		border: 1px solid $gray-lighten-20;
 		border-radius: 3px;
@@ -135,7 +133,7 @@
 
 .site-mockup__phone {
 	display: inline-block;
-	&::before {
+	.site-mockup__address + &::before {
 		content: "•";
 		padding: 0 .5em;
 		.site-mockup__viewport.is-mobile & {
