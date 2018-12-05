@@ -93,13 +93,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			lastModified: '2016-01-27',
 		},
 
-		'creative-mornings': {
-			steps: [ 'portfolio-themes', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description: 'Signup flow for creative mornings partnership',
-			lastModified: '2017-08-01',
-		},
-
 		subdomain: {
 			steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 			destination: getSiteDestination,
