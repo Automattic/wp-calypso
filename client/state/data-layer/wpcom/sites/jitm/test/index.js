@@ -3,8 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import { spy } from 'sinon';
 import noop from 'lodash';
 
 /**
@@ -13,65 +11,68 @@ import noop from 'lodash';
 import { fetchJITM, handleSiteSelection, handleRouteChange } from '..';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
+// Dispatch action that's optionally a thunk. Mock that simulates the thunk middleware
+const createDispatcher = ( dispatch, getState ) => action => {
+	if ( ! action ) {
+		return;
+	}
+	if ( typeof action === 'function' ) {
+		return action( dispatch, getState );
+	}
+	return dispatch( action );
+};
+
 describe( 'jitms', () => {
 	describe( 'fetchJITM', () => {
 		test( 'should not dispatch', () => {
-			const dispatch = spy();
-			const state = {};
+			const dispatch = jest.fn();
+			const getState = () => ( {} );
 			const action = noop;
 
-			fetchJITM( state, dispatch, action );
-			expect( dispatch ).to.not.have.been.called;
+			fetchJITM( action )( dispatch, getState );
+			expect( dispatch ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should dispatch', () => {
-			const dispatch = spy(),
-				state = {
-					sites: {
-						items: {
-							100: {
-								jetpack: true,
-							},
-						},
-					},
-					currentUser: {
-						id: 1000,
-					},
-					ui: {
-						section: {
-							name: 'test',
+			const dispatch = jest.fn();
+			const state = {
+				sites: {
+					items: {
+						100: {
+							jetpack: true,
 						},
 					},
 				},
-				action_site_selected = {
-					siteId: 100,
+				currentUser: {
+					id: 1000,
 				},
-				getState = () => state,
-				action_loading = {
-					isLoading: true,
-				},
-				action_loaded = {
-					isLoading: false,
-				},
-				action_transition = {
+				ui: {
 					section: {
 						name: 'test',
 					},
-				};
+				},
+			};
+			const getState = () => state;
+			const action_site_selected = { siteId: 100 };
+			const action_loading = { isLoading: true };
+			const action_loaded = { isLoading: false };
+			const action_transition = { section: { name: 'test' } };
+
+			// dispatch action that's optionally a thunk. Mock that simulates the thunk middleware
+			const dispatcher = createDispatcher( dispatch, getState );
 
 			// walk through the happy case of the process
+			dispatcher( handleSiteSelection( action_site_selected ) );
+			expect( dispatch ).not.toHaveBeenCalled();
 
-			handleSiteSelection( { getState, dispatch }, action_site_selected );
-			expect( dispatch ).to.not.have.been.called;
+			dispatcher( handleRouteChange( action_loading ) );
+			expect( dispatch ).not.toHaveBeenCalled();
 
-			handleRouteChange( { getState, dispatch }, action_loading );
-			expect( dispatch ).to.not.have.been.called;
+			dispatcher( handleRouteChange( action_loaded ) );
+			expect( dispatch ).not.toHaveBeenCalled();
 
-			handleRouteChange( { getState, dispatch }, action_loaded );
-			expect( dispatch ).to.not.have.been.called;
-
-			handleRouteChange( { getState, dispatch }, action_transition );
-			expect( dispatch ).to.have.been.calledWithMatch(
+			dispatcher( handleRouteChange( action_transition ) );
+			expect( dispatch ).toHaveBeenCalledWith(
 				http(
 					{
 						apiNamespace: 'rest',
@@ -83,34 +84,35 @@ describe( 'jitms', () => {
 							http_envelope: 1,
 						},
 					},
-					action_transition
+					{ ...action_transition, messagePath: 'test' }
 				)
 			);
 		} );
 
 		test( 'should be not set a jitm if not a jetpack site', () => {
-			const dispatch = spy(),
-				state = {
-					sites: {
-						items: {
-							100: {
-								jetpack: false,
-							},
+			const dispatch = jest.fn();
+			const state = {
+				sites: {
+					items: {
+						100: {
+							jetpack: false,
 						},
 					},
-					currentUser: {
-						id: 1000,
-					},
 				},
-				getState = () => state,
-				action_transition = {
-					section: {
-						name: 'test',
-					},
-				};
+				currentUser: {
+					id: 1000,
+				},
+			};
+			const getState = () => state;
+			const action_transition = {
+				section: {
+					name: 'test',
+				},
+			};
 
-			handleRouteChange( { getState, dispatch }, action_transition );
-			expect( dispatch ).to.have.not.been.called;
+			const dispatcher = createDispatcher( dispatch, getState );
+			dispatcher( handleRouteChange( action_transition ) );
+			expect( dispatch ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
