@@ -1,3 +1,5 @@
+/** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -8,34 +10,53 @@ import React from 'react';
  */
 import { __ } from '@wordpress/i18n';
 import { PanelRow, Dropdown, Button } from '@wordpress/components';
-import { PostSchedule as PostScheduleForm, PostScheduleLabel, PostScheduleCheck } from '@wordpress/editor';
+import { withInstanceId } from '@wordpress/compose';
+import {
+	PostSchedule as PostScheduleForm,
+	PostScheduleLabel,
+	PostScheduleCheck,
+} from '@wordpress/editor';
+import { Fragment } from '@wordpress/element';
 
-export function PostSchedule() {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
+export function PostSchedule( { instanceId } ) {
 	return (
 		<PostScheduleCheck>
 			<PanelRow className="edit-post-post-schedule">
-				<span>{ __( 'Publish' ) }</span>
+				<label
+					htmlFor={ `edit-post-post-schedule__toggle-${ instanceId }` }
+					id={ `edit-post-post-schedule__heading-${ instanceId }` }
+				>
+					{ __( 'Publish' ) }
+				</label>
 				<Dropdown
 					position="bottom left"
 					contentClassName="edit-post-post-schedule__dialog"
 					renderToggle={ ( { onToggle, isOpen } ) => (
-						<Button
-							type="button"
-							className="edit-post-post-schedule__toggle"
-							onClick={ onToggle }
-							aria-expanded={ isOpen }
-							isLink
-						>
-							<PostScheduleLabel />
-						</Button>
+						<Fragment>
+							<label
+								className="edit-post-post-schedule__label"
+								htmlFor={ `edit-post-post-schedule__toggle-${ instanceId }` }
+							>
+								<PostScheduleLabel /> { __( 'Click to change' ) }
+							</label>
+							<Button
+								id={ `edit-post-post-schedule__toggle-${ instanceId }` }
+								type="button"
+								className="edit-post-post-schedule__toggle"
+								onClick={ onToggle }
+								aria-expanded={ isOpen }
+								aria-live="polite"
+								isLink
+							>
+								<PostScheduleLabel />
+							</Button>
+						</Fragment>
 					) }
 					renderContent={ () => <PostScheduleForm /> }
 				/>
 			</PanelRow>
 		</PostScheduleCheck>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-export default PostSchedule;
+export default withInstanceId( PostSchedule );

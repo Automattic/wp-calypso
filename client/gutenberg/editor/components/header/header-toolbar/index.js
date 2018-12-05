@@ -1,12 +1,12 @@
+/** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
- *
- * @format
  */
 import React from 'react';
-import { findLast } from 'lodash';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { findLast } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -23,6 +23,7 @@ import {
 	EditorHistoryRedo,
 	EditorHistoryUndo,
 	NavigableToolbar,
+	BlockNavigationDropdown,
 } from '@wordpress/editor';
 
 /**
@@ -35,19 +36,28 @@ import { navigate } from 'state/ui/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getRouteHistory } from 'state/ui/action-log/selectors';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 function HeaderToolbar( {
-	closeEditor,
 	hasFixedToolbar,
 	isLargeViewport,
+	showInserter,
+	// GUTENLYPSO START
+	closeEditor,
 	recordSiteButtonClick,
 	site,
 	translate,
+	// GUTENLYPSO END
 } ) {
 	const onCloseButtonClick = () => closeEditor();
 
+	const toolbarAriaLabel = hasFixedToolbar
+		? /* translators: accessibility text for the editor toolbar when Top Toolbar is on */
+		  __( 'Document and block tools' )
+		: /* translators: accessibility text for the editor toolbar when Top Toolbar is off */
+		  __( 'Document tools' );
+
 	return (
-		<NavigableToolbar className="edit-post-header-toolbar" aria-label={ __( 'Editor Toolbar' ) }>
+		<NavigableToolbar className="edit-post-header-toolbar" aria-label={ toolbarAriaLabel }>
+			{ /* GUTENLYPSO START */ }
 			<div className="edit-post-header-toolbar__back">
 				<IconButton
 					icon="exit"
@@ -56,10 +66,14 @@ function HeaderToolbar( {
 				/>
 			</div>
 			<Site compact site={ site } indicator={ false } onSelect={ recordSiteButtonClick } />
-			<Inserter position="bottom right" />
+			{ /* GUTENLYPSO END */ }
+			<div>
+				<Inserter disabled={ ! showInserter } position="bottom right" />
+			</div>
 			<EditorHistoryUndo />
 			<EditorHistoryRedo />
 			<TableOfContents />
+			<BlockNavigationDropdown />
 			{ hasFixedToolbar &&
 				isLargeViewport && (
 					<div className="edit-post-header-toolbar__block-toolbar">
@@ -69,8 +83,8 @@ function HeaderToolbar( {
 		</NavigableToolbar>
 	);
 }
-/* eslint-enable wpcalypso/jsx-classname-namespace */
 
+// GUTENLYPSO START
 function getCloseButtonPath( routeHistory, site ) {
 	const editorPathRegex = /^(\/block-editor)?\/(post|page|(edit\/[^\/]+))(\/|$)/i;
 	const lastEditorPath = routeHistory[ routeHistory.length - 1 ].path;
@@ -131,16 +145,22 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		closeEditor: () => dispatchProps.closeEditor( stateProps ),
 	};
 };
+// GUTENLYPSO END
 
 export default compose( [
 	withSelect( select => ( {
 		hasFixedToolbar: select( 'core/edit-post' ).isFeatureActive( 'fixedToolbar' ),
+		showInserter:
+			select( 'core/edit-post' ).getEditorMode() === 'visual' &&
+			select( 'core/editor' ).getEditorSettings().richEditingEnabled,
 	} ) ),
 	withViewportMatch( { isLargeViewport: 'medium' } ),
 ] )(
+	// GUTENLYPSO START
 	connect(
 		mapStateToProps,
 		mapDispatchToProps,
 		mergeProps
 	)( localize( HeaderToolbar ) )
+	// GUTENLYPSO END
 );

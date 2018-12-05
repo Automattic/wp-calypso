@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,11 +27,7 @@ function FeaturedImage( { isEnabled, isOpened, postType, onTogglePanel } ) {
 	return (
 		<PostFeaturedImageCheck>
 			<PanelBody
-				title={ get(
-					postType,
-					[ 'labels', 'featured_image' ],
-					__( 'Featured Image' )
-				) }
+				title={ get( postType, [ 'labels', 'featured_image' ], __( 'Featured Image' ) ) }
 				opened={ isOpened }
 				onToggle={ onTogglePanel }
 			>
@@ -40,7 +37,7 @@ function FeaturedImage( { isEnabled, isOpened, postType, onTogglePanel } ) {
 	);
 }
 
-const applyWithSelect = withSelect( ( select ) => {
+const applyWithSelect = withSelect( select => {
 	const { getEditedPostAttribute } = select( 'core/editor' );
 	const { getPostType } = select( 'core' );
 	const { isEditorPanelEnabled, isEditorPanelOpened } = select( 'core/edit-post' );
@@ -52,7 +49,7 @@ const applyWithSelect = withSelect( ( select ) => {
 	};
 } );
 
-const applyWithDispatch = withDispatch( ( dispatch ) => {
+const applyWithDispatch = withDispatch( dispatch => {
 	const { toggleEditorPanelOpened } = dispatch( 'core/edit-post' );
 
 	return {
@@ -62,5 +59,5 @@ const applyWithDispatch = withDispatch( ( dispatch ) => {
 
 export default compose(
 	applyWithSelect,
-	applyWithDispatch,
+	applyWithDispatch
 )( FeaturedImage );

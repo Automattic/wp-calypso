@@ -1,7 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -106,6 +107,25 @@ export const preferences = combineReducers( {
 } );
 
 /**
+ * Reducer storing the list of all programmatically removed panels.
+ *
+ * @param {Array}  state  Current state.
+ * @param {Object} action Action object.
+ *
+ * @return {Array} Updated state.
+ */
+export function removedPanels( state = [], action ) {
+	switch ( action.type ) {
+		case 'REMOVE_PANEL':
+			if ( ! includes( state, action.panelName ) ) {
+				return [ ...state, action.panelName ];
+			}
+	}
+
+	return state;
+}
+
+/**
  * Reducer returning the next active general sidebar state. The active general
  * sidebar is a unique name to identify either an editor or plugin sidebar.
  *
@@ -118,15 +138,6 @@ export function activeGeneralSidebar( state = DEFAULT_ACTIVE_GENERAL_SIDEBAR, ac
 	switch ( action.type ) {
 		case 'OPEN_GENERAL_SIDEBAR':
 			return action.name;
-	}
-
-	return state;
-}
-
-export function panel( state = 'document', action ) {
-	switch ( action.type ) {
-		case 'SET_ACTIVE_PANEL':
-			return action.panel;
 	}
 
 	return state;
@@ -163,10 +174,54 @@ export function publishSidebarActive( state = false, action ) {
 	return state;
 }
 
+/**
+ * Reducer keeping track of the meta boxes isSaving state.
+ * A "true" value means the meta boxes saving request is in-flight.
+ *
+ *
+ * @param {boolean}  state   Previous state.
+ * @param {Object}   action  Action Object.
+ *
+ * @return {Object} Updated state.
+ */
+export function isSavingMetaBoxes( state = false, action ) {
+	switch ( action.type ) {
+		case 'REQUEST_META_BOX_UPDATES':
+			return true;
+		case 'META_BOX_UPDATES_SUCCESS':
+			return false;
+		default:
+			return state;
+	}
+}
+
+/**
+ * Reducer keeping track of the meta boxes per location.
+ *
+ * @param {boolean}  state   Previous state.
+ * @param {Object}   action  Action Object.
+ *
+ * @return {Object} Updated state.
+ */
+export function metaBoxLocations( state = {}, action ) {
+	switch ( action.type ) {
+		case 'SET_META_BOXES_PER_LOCATIONS':
+			return action.metaBoxesPerLocation;
+	}
+
+	return state;
+}
+
+const metaBoxes = combineReducers( {
+	isSaving: isSavingMetaBoxes,
+	locations: metaBoxLocations,
+} );
+
 export default combineReducers( {
-	preferences,
 	activeGeneralSidebar,
-	panel,
 	activeModal,
+	metaBoxes,
+	preferences,
 	publishSidebarActive,
+	removedPanels,
 } );

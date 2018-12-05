@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,7 +35,6 @@ const enhance = compose(
 	 * @return {Component} Enhanced component with merged state data props.
 	 */
 	withSelect( ( select, block ) => {
-		const blocks = select( 'core/editor' ).getBlocks();
 		const multiple = hasBlockSupport( block.name, 'multiple', true );
 
 		// For block types with `multiple` support, there is no "original
@@ -45,6 +45,7 @@ const enhance = compose(
 
 		// Otherwise, only pass `originalBlockClientId` if it refers to a different
 		// block from the current one.
+		const blocks = select( 'core/editor' ).getBlocks();
 		const firstOfSameType = find( blocks, ( { name } ) => block.name === name );
 		const isInvalid = firstOfSameType && firstOfSameType.clientId !== block.clientId;
 		return {
@@ -53,15 +54,11 @@ const enhance = compose(
 	} ),
 	withDispatch( ( dispatch, { originalBlockClientId } ) => ( {
 		selectFirst: () => dispatch( 'core/editor' ).selectBlock( originalBlockClientId ),
-	} ) ),
+	} ) )
 );
 
-const withMultipleValidation = createHigherOrderComponent( ( BlockEdit ) => {
-	return enhance( ( {
-		originalBlockClientId,
-		selectFirst,
-		...props
-	} ) => {
+const withMultipleValidation = createHigherOrderComponent( BlockEdit => {
+	return enhance( ( { originalBlockClientId, selectFirst, ...props } ) => {
 		if ( ! originalBlockClientId ) {
 			return <BlockEdit { ...props } />;
 		}
@@ -86,18 +83,17 @@ const withMultipleValidation = createHigherOrderComponent( ( BlockEdit ) => {
 						<Button
 							key="transform"
 							isLarge
-							onClick={ () => props.onReplace(
-								createBlock( outboundType.name, props.attributes )
-							) }
+							onClick={ () =>
+								props.onReplace( createBlock( outboundType.name, props.attributes ) )
+							}
 						>
-							{ __( 'Transform into:' ) }{ ' ' }
-							{ outboundType.title }
+							{ __( 'Transform into:' ) } { outboundType.title }
 						</Button>
 					),
 				] }
 			>
 				<strong>{ blockType.title }: </strong>
-				{ __( 'This block may not be used more than once.' ) }
+				{ __( 'This block can only be used once.' ) }
 			</Warning>,
 		];
 	} );

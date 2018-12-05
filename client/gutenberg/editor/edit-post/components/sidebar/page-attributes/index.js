@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +11,12 @@ import { get, partial } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { PanelBody, PanelRow } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
-import { PageAttributesCheck, PageAttributesOrder, PageAttributesParent, PageTemplate } from '@wordpress/editor';
+import {
+	PageAttributesCheck,
+	PageAttributesOrder,
+	PageAttributesParent,
+	PageTemplate,
+} from '@wordpress/editor';
 import { withSelect, withDispatch } from '@wordpress/data';
 
 /**
@@ -39,7 +45,7 @@ export function PageAttributes( { isEnabled, isOpened, onTogglePanel, postType }
 	);
 }
 
-const applyWithSelect = withSelect( ( select ) => {
+const applyWithSelect = withSelect( select => {
 	const { getEditedPostAttribute } = select( 'core/editor' );
 	const { isEditorPanelEnabled, isEditorPanelOpened } = select( 'core/edit-post' );
 	const { getPostType } = select( 'core' );
@@ -50,7 +56,7 @@ const applyWithSelect = withSelect( ( select ) => {
 	};
 } );
 
-const applyWithDispatch = withDispatch( ( dispatch ) => {
+const applyWithDispatch = withDispatch( dispatch => {
 	const { toggleEditorPanelOpened } = dispatch( 'core/edit-post' );
 
 	return {
@@ -60,5 +66,5 @@ const applyWithDispatch = withDispatch( ( dispatch ) => {
 
 export default compose(
 	applyWithSelect,
-	applyWithDispatch,
+	applyWithDispatch
 )( PageAttributes );
