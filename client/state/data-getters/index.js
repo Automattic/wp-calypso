@@ -220,7 +220,10 @@ export const requestSitePost = ( siteId, postId, postType ) => {
 			},
 			{}
 		),
-		{ fromApi: () => post => [ [ `gutenberg-site-${ siteId }-post-${ postId }`, post ] ] }
+		{
+			fromApi: () => post => [ [ `gutenberg-site-${ siteId }-post-${ postId }`, post ] ],
+			freshness: 5000,
+		}
 	);
 };
 
