@@ -3,9 +3,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { translate } from 'i18n-calypso';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -14,11 +12,11 @@ import {
 	announceFailure,
 	createPages,
 	fetchSetupStatus,
-	fetchSetupStatusError,
-	handleSuccess,
-	handleFailure,
+	handleCreateFailure,
+	handleCreateSuccess,
+	handleSetupFailure,
+	handleSetupSuccess,
 	saveSetupStatus,
-	updateSetupStatus,
 } from '../';
 import {
 	WP_JOB_MANAGER_CREATE_PAGES,
@@ -27,9 +25,9 @@ import {
 } from '../../../action-types';
 import {
 	createPagesError,
-	fetchSetupStatusError as fetchStatusError,
+	fetchSetupStatusError,
 	nextStep,
-	updateSetupStatus as updateStatus,
+	updateSetupStatus,
 } from '../../../setup/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, removeNotice } from 'state/notices/actions';
@@ -38,12 +36,6 @@ const createPagesNotice = 'wpjm-create-pages';
 const siteId = 101010;
 
 describe( 'data layer', () => {
-	let dispatch;
-
-	beforeEach( () => {
-		dispatch = sinon.spy();
-	} );
-
 	describe( 'pages', () => {
 		const titles = [ 'Page 1', 'Page 2' ];
 		const action = {
@@ -52,57 +44,34 @@ describe( 'data layer', () => {
 			titles,
 		};
 
-		beforeEach( () => {
-			createPages( { dispatch }, action );
-		} );
-
 		describe( '#createPages()', () => {
 			test( 'should dispatch `removeNotice`', () => {
-				expect( dispatch ).to.have.been.calledWith( removeNotice( 'wpjm-create-pages' ) );
+				expect( createPages( action ) ).toContainEqual( removeNotice( 'wpjm-create-pages' ) );
 			} );
 
 			test( 'should dispatch one HTTP request for each title', () => {
-				expect( dispatch ).to.have.been.calledWith(
-					http(
-						{
-							method: 'POST',
-							path: `/sites/${ siteId }/posts/new`,
-							body: {
-								title: titles[ 0 ],
-								type: 'page',
+				for ( const title of titles ) {
+					expect( createPages( action ) ).toContainEqual(
+						http(
+							{
+								method: 'POST',
+								path: `/sites/${ siteId }/posts/new`,
+								body: { type: 'page', title },
 							},
-						},
-						action
-					)
-				);
-
-				expect( dispatch ).to.have.been.calledWith(
-					http(
-						{
-							method: 'POST',
-							path: `/sites/${ siteId }/posts/new`,
-							body: {
-								title: titles[ 1 ],
-								type: 'page',
-							},
-						},
-						action
-					)
-				);
+							action
+						)
+					);
+				}
 			} );
 		} );
 
 		describe( '#announceFailure()', () => {
 			test( 'should dispatch `createPagesError`', () => {
-				announceFailure( dispatch, siteId );
-
-				expect( dispatch ).to.have.been.calledWith( createPagesError( siteId ) );
+				expect( announceFailure( siteId ) ).toContainEqual( createPagesError( siteId ) );
 			} );
 
 			test( 'should dispatch `errorNotice`', () => {
-				announceFailure( dispatch, siteId );
-
-				expect( dispatch ).to.have.been.calledWith(
+				expect( announceFailure( siteId ) ).toContainEqual(
 					errorNotice( translate( 'There was a problem creating the page(s). Please try again.' ), {
 						id: createPagesNotice,
 					} )
@@ -110,41 +79,35 @@ describe( 'data layer', () => {
 			} );
 		} );
 
-		describe( '#handleSuccess()', () => {
+		describe( '#handleCreateSuccess()', () => {
 			test( 'should not dispatch `createPagesError` or `nextStep` if not all requests have completed', () => {
-				handleSuccess( { dispatch }, action );
-
-				expect( dispatch ).to.not.have.been.calledWith( createPagesError( siteId ) );
-				expect( dispatch ).to.not.have.been.calledWith( nextStep( siteId ) );
+				createPages( action );
+				expect( handleCreateSuccess( action ) ).toBeUndefined();
 			} );
 
 			test( 'should dispatch `createPagesError` if an error occurred with one of the requests', () => {
-				handleFailure( { dispatch }, action );
-				handleSuccess( { dispatch }, action );
-
-				expect( dispatch ).to.have.been.calledWith( createPagesError( siteId ) );
+				createPages( action );
+				expect( handleCreateFailure( action ) ).toBeUndefined();
+				expect( handleCreateSuccess( action ) ).toContainEqual( createPagesError( siteId ) );
 			} );
 
 			test( 'should dispatch `nextStep` if all requests completed successfully', () => {
-				handleSuccess( { dispatch }, action );
-				handleSuccess( { dispatch }, action );
-
-				expect( dispatch ).to.have.been.calledWith( nextStep( siteId ) );
+				createPages( action );
+				expect( handleCreateSuccess( action ) ).toBeUndefined();
+				expect( handleCreateSuccess( action ) ).toEqual( nextStep( siteId ) );
 			} );
 		} );
 
-		describe( '#handleFailure()', () => {
+		describe( '#handleCreateFailure()', () => {
 			test( 'should not dispatch `createPagesError` if not all requests have completed', () => {
-				handleFailure( { dispatch }, action );
-
-				expect( dispatch ).to.not.have.been.calledWith( createPagesError( siteId ) );
+				createPages( action );
+				expect( handleCreateFailure( action ) ).toBeUndefined();
 			} );
 
 			test( 'should dispatch `createPagesError` if an error occurred with one of the requests', () => {
-				handleSuccess( { dispatch }, action );
-				handleFailure( { dispatch }, action );
-
-				expect( dispatch ).to.have.been.calledWith( createPagesError( siteId ) );
+				createPages( action );
+				expect( handleCreateSuccess( action ) ).toBeUndefined();
+				expect( handleCreateFailure( action ) ).toContainEqual( createPagesError( siteId ) );
 			} );
 		} );
 	} );
@@ -158,16 +121,12 @@ describe( 'data layer', () => {
 
 			describe( '#fetchSetupStatus()', () => {
 				test( 'should dispatch an HTTP request to the status endpoint', () => {
-					fetchSetupStatus( { dispatch }, action );
-
-					expect( dispatch ).to.have.been.calledWith(
+					expect( fetchSetupStatus( action ) ).toEqual(
 						http(
 							{
 								method: 'GET',
 								path: `/jetpack-blogs/${ siteId }/rest-api/`,
-								query: {
-									path: '/wpjm/v1/status/run_page_setup',
-								},
+								query: { path: '/wpjm/v1/status/run_page_setup' },
 							},
 							action
 						)
@@ -175,19 +134,17 @@ describe( 'data layer', () => {
 				} );
 			} );
 
-			describe( '#updateSetupStatus', () => {
-				test( 'should dispatch `updateStatus`', () => {
-					updateSetupStatus( { dispatch }, action, { data: false } );
-
-					expect( dispatch ).to.have.been.calledWith( updateStatus( siteId, false ) );
+			describe( '#handleSetupSuccess', () => {
+				test( 'should dispatch `updateSetupStatus`', () => {
+					expect( handleSetupSuccess( action, { data: false } ) ).toEqual(
+						updateSetupStatus( siteId, false )
+					);
 				} );
 			} );
 
-			describe( '#fetchSetupStatusError', () => {
-				test( 'should dispatch `fetchError`', () => {
-					fetchSetupStatusError( { dispatch }, action );
-
-					expect( dispatch ).to.have.been.calledWith( fetchStatusError( siteId ) );
+			describe( '#handleSetupFailure', () => {
+				test( 'should dispatch `fetchSetupStatusError`', () => {
+					expect( handleSetupFailure( action ) ).toEqual( fetchSetupStatusError( siteId ) );
 				} );
 			} );
 		} );
@@ -200,9 +157,7 @@ describe( 'data layer', () => {
 					siteId,
 				};
 
-				saveSetupStatus( { dispatch }, saveAction );
-
-				expect( dispatch ).to.have.been.calledWith(
+				expect( saveSetupStatus( saveAction ) ).toEqual(
 					http(
 						{
 							method: 'POST',

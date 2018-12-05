@@ -3,10 +3,8 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { translate } from 'i18n-calypso';
-import { initialize, startSubmit as startSave, stopSubmit as stopSave } from 'redux-form';
-import sinon from 'sinon';
+import { initialize, startSubmit, stopSubmit } from 'redux-form';
 
 /**
  * Internal dependencies
@@ -19,6 +17,7 @@ import {
 	saveSettings,
 	updateExtensionSettings,
 } from '../';
+import { fromApi } from '../utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { fetchError, fetchSettings, updateSettings } from 'wp-job-manager/state/settings/actions';
@@ -29,6 +28,7 @@ const apiResponse = {
 		job_manager_per_page: 25,
 	},
 };
+
 const saveAction = {
 	type: 'DUMMY_ACTION',
 	data: {
@@ -38,6 +38,7 @@ const saveAction = {
 	form: 'my-form',
 	siteId: 101010,
 };
+
 const transformedData = {
 	account: {
 		enableRegistration: undefined,
@@ -76,18 +77,20 @@ const transformedData = {
 	},
 };
 
+describe( '#fromApi', () => {
+	test( 'correctly transforms response data', () => {
+		expect( fromApi( apiResponse ) ).toEqual( transformedData );
+	} );
+} );
+
 describe( '#fetchExtensionSettings()', () => {
 	test( 'should dispatch an HTTP request to the settings endpoint', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
 			siteId: 101010,
 		};
-		const dispatch = sinon.spy();
 
-		fetchExtensionSettings( { dispatch }, action );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( fetchExtensionSettings( action ) ).toEqual(
 			http(
 				{
 					method: 'GET',
@@ -105,42 +108,28 @@ describe( '#fetchExtensionSettings()', () => {
 describe( '#updateExtensionSettings', () => {
 	test( 'should dispatch `updateSettings`', () => {
 		const action = fetchSettings( 12345678 );
-		const dispatch = sinon.spy();
 
-		updateExtensionSettings( { dispatch }, action, apiResponse );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( updateSettings( 12345678, transformedData ) );
+		expect( updateExtensionSettings( action, transformedData ) ).toEqual(
+			updateSettings( 12345678, transformedData )
+		);
 	} );
 } );
 
 describe( '#fetchExtensionError', () => {
 	test( 'should dispatch `fetchError`', () => {
 		const action = fetchSettings( 12345678 );
-		const dispatch = sinon.spy();
 
-		fetchExtensionError( { dispatch }, action );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( fetchError( 12345678 ) );
+		expect( fetchExtensionError( action ) ).toEqual( fetchError( 12345678 ) );
 	} );
 } );
 
 describe( '#saveSettings()', () => {
-	test( 'should dispatch `startSave`', () => {
-		const dispatch = sinon.spy();
-
-		saveSettings( { dispatch }, saveAction );
-
-		expect( dispatch ).to.have.been.calledWith( startSave( 'my-form' ) );
+	test( 'should dispatch `startSubmit`', () => {
+		expect( saveSettings( saveAction ) ).toContainEqual( startSubmit( 'my-form' ) );
 	} );
 
 	test( 'should dispatch an HTTP POST request to the settings endpoint', () => {
-		const dispatch = sinon.spy();
-
-		saveSettings( { dispatch }, saveAction );
-
-		expect( dispatch ).to.have.been.calledWith(
+		expect( saveSettings( saveAction ) ).toContainEqual(
 			http(
 				{
 					method: 'POST',
@@ -157,65 +146,43 @@ describe( '#saveSettings()', () => {
 	} );
 
 	test( 'should dispatch `removeNotice`', () => {
-		const dispatch = sinon.spy();
-
-		saveSettings( { dispatch }, saveAction );
-
-		expect( dispatch ).to.have.been.calledWith( removeNotice( 'wpjm-settings-save' ) );
+		expect( saveSettings( saveAction ) ).toContainEqual( removeNotice( 'wpjm-settings-save' ) );
 	} );
 } );
 
 describe( '#announceSuccess()', () => {
-	test( 'should dispatch `stopSave`', () => {
-		const dispatch = sinon.spy();
-
-		announceSuccess( { dispatch }, saveAction, apiResponse );
-
-		expect( dispatch ).to.have.been.calledWith( stopSave( 'my-form' ) );
+	test( 'should dispatch `stopSubmit`', () => {
+		expect( announceSuccess( saveAction, transformedData ) ).toContainEqual(
+			stopSubmit( 'my-form' )
+		);
 	} );
 
 	test( 'should dispatch `initialize`', () => {
-		const dispatch = sinon.spy();
-
-		announceSuccess( { dispatch }, saveAction, apiResponse );
-
-		expect( dispatch ).to.have.been.calledWith( initialize( 'my-form', transformedData ) );
+		expect( announceSuccess( saveAction, transformedData ) ).toContainEqual(
+			initialize( 'my-form', transformedData )
+		);
 	} );
 
 	test( 'should dispatch `updateSettings`', () => {
-		const dispatch = sinon.spy();
-
-		announceSuccess( { dispatch }, saveAction, apiResponse );
-
-		expect( dispatch ).to.have.been.calledWith( updateSettings( 101010, transformedData ) );
+		expect( announceSuccess( saveAction, transformedData ) ).toContainEqual(
+			updateSettings( 101010, transformedData )
+		);
 	} );
 
 	test( 'should dispatch `successNotice`', () => {
-		const dispatch = sinon.spy();
-
-		announceSuccess( { dispatch }, saveAction, apiResponse );
-
-		expect( dispatch ).to.have.been.calledWith(
+		expect( announceSuccess( saveAction, transformedData ) ).toContainEqual(
 			successNotice( translate( 'Settings saved!' ), { id: 'wpjm-settings-save' } )
 		);
 	} );
 } );
 
 describe( '#announceFailure()', () => {
-	test( 'should dispatch `stopSave`', () => {
-		const dispatch = sinon.spy();
-
-		announceFailure( { dispatch }, saveAction );
-
-		expect( dispatch ).to.have.been.calledWith( stopSave( 'my-form' ) );
+	test( 'should dispatch `stopSubmit`', () => {
+		expect( announceFailure( saveAction ) ).toContainEqual( stopSubmit( 'my-form' ) );
 	} );
 
 	test( 'should dispatch `errorNotice`', () => {
-		const dispatch = sinon.spy();
-
-		announceFailure( { dispatch }, saveAction );
-
-		expect( dispatch ).to.have.been.calledWith(
+		expect( announceFailure( saveAction ) ).toContainEqual(
 			errorNotice( translate( 'There was a problem saving your changes. Please try again.' ), {
 				id: 'wpjm-settings-save',
 			} )

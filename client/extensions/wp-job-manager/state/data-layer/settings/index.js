@@ -11,7 +11,7 @@ import { initialize, startSubmit as startSave, stopSubmit as stopSave } from 're
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { fetchError, updateSettings } from '../../settings/actions';
 import {
@@ -20,77 +20,66 @@ import {
 } from 'wp-job-manager/state/action-types';
 import { fromApi, toApi } from './utils';
 
-export const fetchExtensionSettings = ( { dispatch }, action ) => {
-	const { siteId } = action;
-
-	dispatch(
-		http(
-			{
-				method: 'GET',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
-				query: {
-					path: '/wpjm/v1/settings',
-				},
+export const fetchExtensionSettings = action =>
+	http(
+		{
+			method: 'GET',
+			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
+			query: {
+				path: '/wpjm/v1/settings',
 			},
-			action
-		)
+		},
+		action
 	);
-};
 
-export const updateExtensionSettings = ( { dispatch }, { siteId }, { data } ) =>
-	dispatch( updateSettings( siteId, fromApi( data ) ) );
+export const updateExtensionSettings = ( action, data ) => updateSettings( action.siteId, data );
 
-export const fetchExtensionError = ( { dispatch }, { siteId } ) => dispatch( fetchError( siteId ) );
+export const fetchExtensionError = action => fetchError( action.siteId );
 
-export const saveSettings = ( { dispatch }, action ) => {
-	const { data, form, siteId } = action;
-
-	dispatch( startSave( form ) );
-	dispatch( removeNotice( 'wpjm-settings-save' ) );
-	dispatch(
-		http(
-			{
-				method: 'POST',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
-				query: {
-					body: JSON.stringify( toApi( data ) ),
-					json: true,
-					path: '/wpjm/v1/settings',
-				},
+export const saveSettings = action => [
+	startSave( action.form ),
+	removeNotice( 'wpjm-settings-save' ),
+	http(
+		{
+			method: 'POST',
+			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
+			query: {
+				body: JSON.stringify( toApi( action.data ) ),
+				json: true,
+				path: '/wpjm/v1/settings',
 			},
-			action
-		)
-	);
-};
+		},
+		action
+	),
+];
 
-export const announceSuccess = ( { dispatch }, { form, siteId }, { data } ) => {
-	const updatedData = fromApi( data );
+export const announceSuccess = ( action, updatedData ) => [
+	stopSave( action.form ),
+	initialize( action.form, updatedData ),
+	updateSettings( action.siteId, updatedData ),
+	successNotice( translate( 'Settings saved!' ), { id: 'wpjm-settings-save' } ),
+];
 
-	dispatch( stopSave( form ) );
-	dispatch( initialize( form, updatedData ) );
-	dispatch( updateSettings( siteId, updatedData ) );
-	dispatch( successNotice( translate( 'Settings saved!' ), { id: 'wpjm-settings-save' } ) );
-};
+export const announceFailure = action => [
+	stopSave( action.form ),
+	errorNotice( translate( 'There was a problem saving your changes. Please try again.' ), {
+		id: 'wpjm-settings-save',
+	} ),
+];
 
-export const announceFailure = ( { dispatch }, { form } ) => {
-	dispatch( stopSave( form ) );
-	dispatch(
-		errorNotice( translate( 'There was a problem saving your changes. Please try again.' ), {
-			id: 'wpjm-settings-save',
-		} )
-	);
-};
+const dispatchFetchSettingsRequest = dispatchRequestEx( {
+	fetch: fetchExtensionSettings,
+	onSuccess: updateExtensionSettings,
+	onError: fetchExtensionError,
+	fromApi,
+} );
 
-const dispatchFetchSettingsRequest = dispatchRequest(
-	fetchExtensionSettings,
-	updateExtensionSettings,
-	fetchExtensionError
-);
-const dispatchSaveSettingsRequest = dispatchRequest(
-	saveSettings,
-	announceSuccess,
-	announceFailure
-);
+const dispatchSaveSettingsRequest = dispatchRequestEx( {
+	fetch: saveSettings,
+	onSuccess: announceSuccess,
+	onError: announceFailure,
+	fromApi,
+} );
 
 export default {
 	[ WP_JOB_MANAGER_FETCH_SETTINGS ]: [ dispatchFetchSettingsRequest ],
