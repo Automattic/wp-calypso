@@ -96,7 +96,7 @@
 }
 
 .site__title {
-	color: $gray-dark;
+	color: var( --sidebar-color );
 	display: block;
 	font-size: 13px;
 	font-weight: 400;
@@ -104,7 +104,7 @@
 }
 
 .site__domain {
-	color: $gray-text-min;
+	color: var( --sidebar-secondary-color );
 	display: block;
 	max-width: 95%;
 	font-size: 11px;

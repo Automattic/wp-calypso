@@ -22,7 +22,10 @@
 	// --color-error-light: #{};
 	// --color-error-dark: #{};
 
-	--masterbar-color: #{$white};
+	--color-surface: #{$muriel-white};
+	--color-surface-backdrop: #{$gray-light};
+
+	--masterbar-color: #{$muriel-white};
 	--masterbar-background: #{$blue-wordpress};
 	--masterbar-border-color: #{darken( $blue-wordpress, 4% )};
 	--masterbar-item-hover-background: #{lighten( $blue-wordpress, 5% )};
@@ -35,6 +38,7 @@
 	--masterbar-toggle-drafts-editor-hover-background: #{darken( $blue-wordpress, 17% )};
 
 	--sidebar-color: #{$gray-dark};
+	--sidebar-secondary-color: #{$gray-text-min};
 	--sidebar-background: #{$gray-lighten-30};
 	--sidebar-secondary-background: #{$muriel-white};
 	--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
@@ -46,6 +50,9 @@
 	--sidebar-menu-selected-background-color: #{$gray-text-min};
 	--sidebar-menu-selected-a-color: #{$white};
 	--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $gray-text-min )};
+	--sidebar-menu-hover-background: lighten( $sidebar-bg-color, 3% );
+	--sidebar-menu-hover-background-gradient: #{hex-to-rgb( lighten( $sidebar-bg-color, 3% ) )};
+	--sidebar-menu-hover-color: #{$blue-medium};
 
 	--button-is-borderless-color: #{$gray-text-min};
 	--count-border-color: #{$gray};
@@ -76,6 +83,9 @@
 		--color-error-light: #{$muriel-hot-red-700};
 		--color-error-dark: #{$muriel-hot-red-300};
 
+		--color-surface: #{$muriel-white};
+		--color-surface-backdrop: #{$muriel-gray-0};
+
 		--masterbar-color: #{$muriel-white};
 		--masterbar-background: var( --color-primary );
 		--masterbar-border-color: #{$gray-lighten-10};
@@ -89,6 +99,7 @@
 		--masterbar-toggle-drafts-editor-hover-background: #{$gray-darken-10};
 
 		--sidebar-color: #{$muriel-gray-800};
+		--sidebar-secondary-color: #{$muriel-gray-500};
 		--sidebar-background: #{$muriel-white};
 		--sidebar-secondary-background: #{$muriel-white};
 		--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
@@ -100,6 +111,9 @@
 		--sidebar-menu-selected-background-color: #{$muriel-blue-50};
 		--sidebar-menu-selected-a-color: var( --color-primary );
 		--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $muriel-blue-50 )};
+		--sidebar-menu-hover-background: #{$muriel-gray-50};
+		--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-gray-50 )};
+		--sidebar-menu-hover-color: #{$muriel-gray-800};
 
 		--button-is-borderless-color: #{$gray-dark};
 		--count-border-color: #{$gray-dark};
@@ -128,6 +142,9 @@
 		--color-error-light: #{$muriel-hot-red-200};
 		--color-error-dark: #{$muriel-hot-red-600};
 
+		--color-surface: #000;
+		--color-surface-backdrop: #111;
+
 		--masterbar-color: #{$muriel-white};
 		--masterbar-background: var( --color-primary );
 		--masterbar-border-color: #{$gray-lighten-10};
@@ -141,6 +158,7 @@
 		--masterbar-toggle-drafts-editor-hover-background: #{$gray-darken-10};
 
 		--sidebar-color: #{$muriel-gray-100};
+		--sidebar-secondary-color: #{$muriel-gray-400};
 		--sidebar-background: #{$muriel-gray-900};
 		--sidebar-secondary-background: #{$muriel-gray-900};
 		--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-gray-900 )};
@@ -152,6 +170,9 @@
 		--sidebar-menu-selected-background-color: #{$muriel-hot-blue-700};
 		--sidebar-menu-selected-a-color: #{$muriel-hot-blue-200};
 		--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $muriel-hot-blue-700 )};
+		--sidebar-menu-hover-background: #{$muriel-gray-700};
+		--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-gray-700 )};
+		--sidebar-menu-hover-color: #{$muriel-gray-100};
 
 		--button-is-borderless-color: #{$gray-dark};
 		--count-border-color: #{$gray-dark};
