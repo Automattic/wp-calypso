@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -22,6 +22,7 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import { setSiteStyle } from 'state/signup/steps/site-style/actions';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 
 /**
  * Style dependencies
@@ -29,48 +30,75 @@ import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import './style.scss';
 
 // TODO: for testing only. Getting from backend or hardcoded in source?
-const siteStyleOptions = [
-	{
-		label: 'Modern',
-		name: 'modern',
-		value: 'pub/business',
-	},
-	{
-		label: 'Pro',
-		name: 'pro',
-		value: 'pub/business-professional',
-	},
-	{
-		label: 'Minimal',
-		name: 'minimal',
-		value: 'pub/business-minimal',
-	},
-	{
-		label: 'Elegant',
-		name: 'elegant',
-		value: 'pub/business-elegant',
-	},
-];
+// siteStyleOptions[ {siteType} ]
+const siteStyleOptions = {
+	business: [
+		{
+			label: 'Modern',
+			name: 'modern',
+			value: 'pub/business',
+		},
+		{
+			label: 'Pro',
+			name: 'pro',
+			value: 'pub/business-professional',
+		},
+		{
+			label: 'Minimal',
+			name: 'minimal',
+			value: 'pub/business-minimal',
+		},
+		{
+			label: 'Elegant',
+			name: 'elegant',
+			value: 'pub/business-elegant',
+		},
+	],
+};
+
+// TODO: check if we need to skip this step conditionally if siteType !== 'business'
 
 export class SiteStyleStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		submitStep: PropTypes.func.isRequired,
+		submitSiteStyle: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
+		styleOptions: PropTypes.array.isRequired,
 		stepName: PropTypes.string,
+		siteStyle: PropTypes.string,
+		siteType: PropTypes.string,
+		translate: PropTypes.func.isRequired,
 	};
 
-	state = {
-		siteStyle: 'pub/business',
+	static defaultProps = {
+		siteStyle: 'modern',
 	};
 
-	handleStyleOptionChange = event => this.setState( { siteStyle: event.currentTarget.value } );
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			siteStyle: props.siteStyle || 'modern',
+			themeSlugWithRepo: null,
+		};
+	}
+
+	handleStyleOptionChange = event =>
+		this.setState( {
+			siteStyle: event.currentTarget.name,
+			themeSlugWithRepo: event.currentTarget.value,
+		} );
+
+	handleSubmit = event => {
+		event.preventDefault();
+		this.props.submitSiteStyle( this.state );
+	};
 
 	renderStyleOptions() {
-		return siteStyleOptions.map( siteStyleProperties => {
-			const isChecked = siteStyleProperties.value === this.state.siteStyle;
+		return this.props.styleOptions.map( siteStyleProperties => {
+			const isChecked = siteStyleProperties.value === this.state.themeSlugWithRepo;
 			const optionLabelClasses = classNames( 'site-style__option-label', {
 				'is-checked': isChecked,
 			} );
@@ -100,7 +128,7 @@ export class SiteStyleStep extends Component {
 			<div className="site-style__wrapper">
 				<Card>
 					<div className="site-style__form-wrapper">
-						<form className="site-style__form" onSubmit={ this.props.submitStep }>
+						<form className="site-style__form" onSubmit={ this.handleSubmit }>
 							<FormFieldset className="site-style__fieldset">
 								{ this.renderStyleOptions() }
 							</FormFieldset>
@@ -112,9 +140,11 @@ export class SiteStyleStep extends Component {
 						</form>
 					</div>
 					{
-						// TODO: Site preview component
-						this.state.siteStyle
-					}
+						// TODO: Plug in site mock component
+						// this.state.siteStyle
+						// site title
+						// site information
+					 }
 				</Card>
 			</div>
 		);
@@ -145,11 +175,36 @@ export class SiteStyleStep extends Component {
 	}
 }
 
+const mapDispatchToProps = ( dispatch, ownProps ) => ( {
+	submitSiteStyle: ( { siteStyle, themeSlugWithRepo } ) => {
+		const { flowName, stepName, goToNextStep } = ownProps;
+
+		dispatch( setSiteStyle( siteStyle ) );
+		SignupActions.submitSignupStep(
+			{
+				processingMessage: i18n.ranslate( 'Collecting your information' ),
+				stepName,
+			},
+			[],
+			{
+				themeSlugWithRepo,
+			}
+		);
+
+		goToNextStep( flowName );
+	},
+} );
+
 export default connect(
-	state => ( {
-		siteStyle: getSiteStyle( state ),
-	} ),
-	( dispatch, ownProps ) => ( {
-		submitStep: () => {},
-	} )
+	state => {
+		const siteType = getSiteType( state );
+		const siteStyle = getSiteStyle( state );
+		const styleOptions = siteStyleOptions[ siteType ] || siteStyleOptions.business;
+		return {
+			siteStyle,
+			siteType,
+			styleOptions,
+		};
+	},
+	mapDispatchToProps
 )( localize( SiteStyleStep ) );
