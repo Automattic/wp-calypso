@@ -37,6 +37,7 @@
 	--sidebar-color: #{$gray-dark};
 	--sidebar-background: #{$gray-lighten-30};
 	--sidebar-secondary-background: #{$muriel-white};
+	--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
 	--sidebar-gridicon-fill: #{$gray-darken-30};
 	--sidebar-heading-color: #{$gray-darken-10};
 	--sidebar-footer-button-color: #{$gray-darken-10};
@@ -90,6 +91,7 @@
 		--sidebar-color: #{$muriel-gray-800};
 		--sidebar-background: #{$muriel-white};
 		--sidebar-secondary-background: #{$muriel-white};
+		--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
 		--sidebar-gridicon-fill: #{$muriel-gray-500};
 		--sidebar-heading-color: #{$muriel-gray-500};
 		--sidebar-footer-button-color: #{$gray-dark};
@@ -141,6 +143,7 @@
 		--sidebar-color: #{$muriel-gray-100};
 		--sidebar-background: #{$muriel-gray-900};
 		--sidebar-secondary-background: #{$muriel-gray-900};
+		--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-gray-900 )};
 		--sidebar-gridicon-fill: #{$muriel-gray-400};
 		--sidebar-heading-color: #{$muriel-gray-400};
 		--sidebar-footer-button-color: #{$gray-dark};
