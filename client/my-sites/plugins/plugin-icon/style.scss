@@ -1,3 +1,5 @@
+/** @format */
+
 // ==========================================================================
 // Plugin icon
 // ==========================================================================
@@ -8,7 +10,7 @@
 	width: 56px;
 	height: 56px;
 	position: relative;
-	transition: opacity .15s ease-in-out;
+	transition: opacity 0.15s ease-in-out;
 
 	@include breakpoint( '<480px' ) {
 		width: 40px;

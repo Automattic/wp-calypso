@@ -1,3 +1,5 @@
+/** @format */
+
 .dashboard-widget {
 	overflow: hidden;
 
@@ -53,7 +55,7 @@
 	&.is-full-width {
 		text-align: left;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			text-align: center;
 		}
 	}
@@ -86,13 +88,13 @@
 		.dashboard-widget__content {
 			align-items: center;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				flex-direction: row;
 				justify-content: space-between;
 			}
 
 			.dashboard-widget__image {
-				@include breakpoint( ">660px" ) {
+				@include breakpoint( '>660px' ) {
 					width: calc( 50% - 8px );
 				}
 			}
@@ -101,7 +103,7 @@
 		&.is-flush-image {
 			.dashboard-widget__content {
 				.dashboard-widget__image {
-					@include breakpoint( ">660px" ) {
+					@include breakpoint( '>660px' ) {
 						width: calc( 50% + 16px );
 					}
 				}
@@ -109,7 +111,7 @@
 		}
 
 		.dashboard-widget__children {
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				width: calc( 50% - 34px );
 			}
 		}
@@ -119,7 +121,7 @@
 		.dashboard-widget__image {
 			margin-top: 16px;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				margin-top: 0;
 				margin-left: 16px;
 			}
@@ -128,7 +130,7 @@
 
 	&.is-left {
 		.dashboard-widget__image {
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				margin-right: 16px;
 			}
 		}
@@ -139,7 +141,7 @@
 			.dashboard-widget__image {
 				margin-top: -16px;
 
-				@include breakpoint( ">480px" ) {
+				@include breakpoint( '>480px' ) {
 					margin-top: -24px;
 				}
 			}
@@ -149,7 +151,7 @@
 			.dashboard-widget__image {
 				margin-bottom: -16px;
 
-				@include breakpoint( ">480px" ) {
+				@include breakpoint( '>480px' ) {
 					margin-bottom: -24px;
 				}
 			}
@@ -159,7 +161,7 @@
 			.dashboard-widget__image {
 				margin-top: 16px;
 
-				@include breakpoint( ">660px" ) {
+				@include breakpoint( '>660px' ) {
 					margin-top: 0;
 					margin-right: -24px;
 				}
@@ -170,7 +172,7 @@
 			.dashboard-widget__image {
 				margin-bottom: 16px;
 
-				@include breakpoint( ">660px" ) {
+				@include breakpoint( '>660px' ) {
 					margin-left: -24px;
 					margin-bottom: 0;
 				}
@@ -184,14 +186,14 @@
 	align-items: stretch;
 	flex-direction: column;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		flex-direction: row;
 	}
 
 	.dashboard-widget {
 		margin-right: 16px;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			width: 100%;
 		}
 
@@ -199,7 +201,7 @@
 			margin-right: 0;
 		}
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			flex: 1;
 
 			&.is-two-thirds-width {

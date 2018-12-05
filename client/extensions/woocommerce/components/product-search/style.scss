@@ -1,3 +1,5 @@
+/** @format */
+
 .product-search {
 	.search {
 		margin-bottom: 0;
@@ -117,8 +119,8 @@
 		}
 
 		.product-search__variation-field {
-			flex: 0 1 calc(50% - 10px);
-			max-width: calc(50% - 10px);
+			flex: 0 1 calc( 50% - 10px );
+			max-width: calc( 50% - 10px );
 			margin-bottom: 16px;
 
 			&:last-child {

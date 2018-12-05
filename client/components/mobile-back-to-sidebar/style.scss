@@ -1,3 +1,5 @@
+/** @format */
+
 // Mobile Back to Sidebar
 .mobile-back-to-sidebar {
 	margin: 0 0 8px 0;
@@ -7,15 +9,15 @@
 	border-bottom: 1px solid $gray-lighten-20;
 	cursor: pointer;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: none;
 	}
 }
 
 .mobile-back-to-sidebar__icon {
 	position: absolute;
-		top: 16px;
-		left: 10px;
+	top: 16px;
+	left: 10px;
 	fill: $gray;
 	height: 20px;
 	width: 20px;

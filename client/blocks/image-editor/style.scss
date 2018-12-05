@@ -1,3 +1,5 @@
+/** @format */
+
 .image-editor {
 	position: relative;
 	width: 100%;
@@ -12,11 +14,11 @@
 	display: flex;
 	flex-direction: column;
 	position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-	background: darken($gray, 52%);
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: darken( $gray, 52% );
 }
 
 .image-editor__toolbar {
@@ -76,7 +78,7 @@
 
 .image-editor__crop-background {
 	position: absolute;
-	background: darken($gray, 52%);
+	background: darken( $gray, 52% );
 	opacity: 0.5;
 }
 
@@ -88,7 +90,7 @@
 	margin-left: -4px;
 	border-radius: 50%;
 	border: 2px solid $white;
-	background: darken($gray, 52%);
+	background: darken( $gray, 52% );
 
 	&:before {
 		border-radius: 100%;

@@ -1,3 +1,5 @@
+/** @format */
+
 .wp-super-cache__main .form-toggle__label {
 	display: flex;
 	align-items: center;
@@ -158,14 +160,14 @@
 	max-width: 140px;
 	overflow-wrap: break-word;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		max-width: none;
 		overflow-wrap: normal;
 	}
 }
 
 .wp-super-cache__stat-age {
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		width: 100%;
 	}
 }
@@ -220,17 +222,17 @@
 	overflow: hidden;
 }
 
-.wp-super-cache__main  .wp-super-cache__lock-down-code-block-snippet {
+.wp-super-cache__main .wp-super-cache__lock-down-code-block-snippet {
 	font-family: monospace, serif;
 	display: block;
 }
 
-.wp-super-cache__main  .wp-super-cache__lock-down-code-block-button {
+.wp-super-cache__main .wp-super-cache__lock-down-code-block-button {
 	margin-right: 0;
 	float: right;
 }
 
-.wp-super-cache__main  .wp-super-cache__debug-cache-comment-snippet {
+.wp-super-cache__main .wp-super-cache__debug-cache-comment-snippet {
 	font-family: monospace, serif;
 	font-style: normal;
 	display: block;

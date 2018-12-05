@@ -1,3 +1,5 @@
+/** @format */
+
 .media-library__list-item-video {
 	position: absolute;
 	top: 0;
@@ -14,7 +16,7 @@
 	bottom: 0;
 	left: 0;
 	right: 0;
-	content: "";
+	content: '';
 	background: rgba( 135, 166, 188, 0.25 ); // $gray at 25% opacity
 }
 

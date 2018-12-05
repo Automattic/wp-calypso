@@ -1,8 +1,10 @@
+/** @format */
+
 .credit-cards__no-results {
 	display: block;
 	color: $gray;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		padding: 8px;
 	}
 }

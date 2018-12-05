@@ -1,8 +1,10 @@
+/** @format */
+
 .domain-main-placeholder {
 	.domain-management-header__children {
-		@include placeholder(23%);
+		@include placeholder( 23% );
 
-		@include breakpoint('>480px') {
+		@include breakpoint( '>480px' ) {
 			max-width: 60%;
 			margin: 0 auto;
 		}
@@ -11,7 +13,7 @@
 
 .domain-main-placeholder__card {
 	p {
-		@include placeholder(23%);
+		@include placeholder( 23% );
 		margin-bottom: 0.5em;
 
 		&:first-child {
@@ -27,7 +29,7 @@
 	padding: 16px;
 	display: flex;
 
-	@include breakpoint('>480px') {
+	@include breakpoint( '>480px' ) {
 		padding: 24px;
 		margin: 24px -24px -24px -24px;
 	}
@@ -42,7 +44,7 @@
 		&.is-primary {
 			margin: 0 0 15px 0;
 
-			@include breakpoint('>480px') {
+			@include breakpoint( '>480px' ) {
 				margin: 0;
 			}
 
@@ -109,7 +111,7 @@
 	max-width: 70%;
 	font-family: $serif;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 18px;
 		font-weight: 700;
 		max-width: none;
@@ -124,7 +126,7 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		text-transform: uppercase;
 	}
 
@@ -143,18 +145,18 @@
 	}
 
 	.domain-management-list-item__title {
-		@include placeholder(23%);
+		@include placeholder( 23% );
 		width: 60%;
 	}
 
 	.domain-management-list-item__type {
-		@include placeholder(23%);
+		@include placeholder( 23% );
 		display: inline-block;
 		width: 40%;
 	}
 }
 
-input[type=radio].domain-management-list-item__radio {
+input[type='radio'].domain-management-list-item__radio {
 	margin-left: -8px;
 	margin-right: 12px;
 	margin-top: 19px;
@@ -174,8 +176,7 @@ input[type=radio].domain-management-list-item__radio {
 	overflow: hidden;
 	margin-top: 5px;
 
-
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		float: right;
 		margin-top: -11px;
 		margin-right: 15px;
@@ -183,7 +184,6 @@ input[type=radio].domain-management-list-item__radio {
 }
 
 .domain-management-primary-domain {
-
 	.primary-domain-explanation {
 		color: $gray-text-min;
 		display: block;
@@ -254,7 +254,8 @@ input[type=radio].domain-management-list-item__radio {
 	}
 }
 
-.domain-details-card, .edit__domain-details-card {
+.domain-details-card,
+.edit__domain-details-card {
 	.flag {
 		font-size: 11px;
 		padding: 3px 10px 3px 5px;
@@ -366,11 +367,11 @@ input[type=radio].domain-management-list-item__radio {
 
 .email-forwarding-card,
 .site-redirect-card {
-	form label + input[type=text] {
+	form label + input[type='text'] {
 		margin-bottom: 10px;
 	}
 
-	&.fetching input[type=text] {
+	&.fetching input[type='text'] {
 		animation: pulse-light 0.8s ease-in-out infinite;
 		background: $gray-lighten-20;
 	}
@@ -510,7 +511,6 @@ ul.email-forwarding__list {
 }
 
 .privacy-protection-card {
-
 	&.card {
 		padding: 0;
 	}
@@ -523,7 +523,7 @@ ul.email-forwarding__list {
 	padding: 16px 16px 20px;
 	position: relative;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding: 24px;
 	}
 
@@ -531,7 +531,7 @@ ul.email-forwarding__list {
 		font-size: 20px;
 		font-weight: 600;
 
-		@include breakpoint(">660px") {
+		@include breakpoint( '>660px' ) {
 			font-size: 28px;
 			font-weight: 700;
 			font-family: $serif;
@@ -541,10 +541,10 @@ ul.email-forwarding__list {
 	.button {
 		display: none;
 		position: absolute;
-			right: 24px;
-			top: 30px;
+		right: 24px;
+		top: 30px;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			display: block;
 		}
 	}
@@ -574,7 +574,7 @@ ul.email-forwarding__list {
 	overflow: auto;
 	padding: 16px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding: 24px;
 	}
 
@@ -585,7 +585,7 @@ ul.email-forwarding__list {
 		text-align: center;
 		width: 100%;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			display: none;
 		}
 	}
@@ -595,7 +595,7 @@ ul.email-forwarding__list {
 	box-sizing: border-box;
 	margin-top: 20px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		float: left;
 		margin-top: 0;
 		width: 35%;
@@ -619,7 +619,7 @@ ul.email-forwarding__list {
 			fill: $alert-green;
 			margin-right: 5px;
 			position: relative;
-				top: 4px;
+			top: 4px;
 		}
 	}
 }
@@ -627,7 +627,7 @@ ul.email-forwarding__list {
 .privacy-protection-card__description {
 	box-sizing: border-box;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		float: left;
 		margin-right: 5%;
 		width: 60%;
@@ -648,7 +648,7 @@ ul.email-forwarding__list {
 		margin: 0;
 
 		a {
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				display: block;
 			}
 		}
@@ -671,7 +671,7 @@ ul.email-forwarding__list {
 		flex-direction: column;
 		margin-bottom: 10px;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			flex-direction: row;
 		}
 
@@ -684,12 +684,12 @@ ul.email-forwarding__list {
 		border-bottom-width: 1px;
 		border-top-left-radius: 0;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			border-top-right-radius: 0;
 			margin-top: -1px;
 		}
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			border-bottom-left-radius: 0;
 			margin-left: -1px;
 		}
@@ -719,7 +719,7 @@ ul.email-forwarding__list {
 		margin-top: 10px;
 		position: relative;
 
-		input[type=text] {
+		input[type='text'] {
 			padding-right: 38px;
 
 			@include breakpoint( '<480px' ) {
@@ -750,12 +750,14 @@ ul.email-forwarding__list {
 }
 
 .is-placeholder {
-	.name-servers__dns, .name-servers__dns-templates {
+	.name-servers__dns,
+	.name-servers__dns-templates {
 		.name-servers__title {
 			@include placeholder();
 		}
 
-		.name-servers__toggle, .name-servers__dns-templates-buttons {
+		.name-servers__toggle,
+		.name-servers__dns-templates-buttons {
 			display: none;
 		}
 
@@ -846,7 +848,6 @@ ul.domain-connect__dns-list,
 
 	.dns__domain-connect-record-wrap {
 		border-top: none;
-
 	}
 
 	.dns__domain-connect-toggle {

@@ -1,4 +1,5 @@
-/*
+/**
+ * /*
  * CSS values in this file are specific and
  * designed to match the CSS on external sites,
  * such as Google and Facebook. Therefore there
@@ -6,8 +7,9 @@
  * but please do not "update" this file to
  * conform.
  *
+ * @format
  * @blame: dmsnell
-*/
+ */
 
 .seo-search-preview__header {
 	margin: 0;
@@ -62,7 +64,7 @@
 	line-height: 16px;
 	padding: 4px 2px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 14px;
 		line-height: 18px;
 		padding: 8px 12px;
@@ -71,7 +73,7 @@
 
 .facebook-preview {
 	border: none;
-	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15) inset, 0 1px 4px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.15 ) inset, 0 1px 4px rgba( 0, 0, 0, 0.1 );
 	display: flex;
 	overflow-x: auto;
 	max-width: 527px;
@@ -170,8 +172,8 @@
 
 		&:after {
 			border: 1px solid;
-			border-color: rgba(0, 0, 0, .098) rgba(0, 0, 0, .149) rgba(0, 0, 0, .231);
-			content: "";
+			border-color: rgba( 0, 0, 0, 0.098 ) rgba( 0, 0, 0, 0.149 ) rgba( 0, 0, 0, 0.231 );
+			content: '';
 			display: block;
 			height: 100%;
 			width: 100%;
@@ -205,7 +207,7 @@
 	height: 125px;
 	margin: 0 auto;
 	overflow: hidden;
-	border: 1px solid #E1E8ED;
+	border: 1px solid #e1e8ed;
 	border-radius: 0.42857em;
 }
 
@@ -214,7 +216,7 @@
 	height: auto;
 	margin: 0 auto;
 	overflow: hidden;
-	border: 1px solid #E1E8ED;
+	border: 1px solid #e1e8ed;
 	border-radius: 0.42857em;
 }
 
@@ -223,24 +225,22 @@
 	background-position: center;
 }
 
-.twitter-card-preview__summary
-.twitter-card-preview__image {
+.twitter-card-preview__summary .twitter-card-preview__image {
 	float: left;
 	width: 125px;
 	height: 125px;
 }
 
-.twitter-card-preview__large_image_summary
-.twitter-card-preview__image {
+.twitter-card-preview__large_image_summary .twitter-card-preview__image {
 	width: 506px;
 	height: 254px;
-	border-bottom: 1px solid #E1E8ED;
+	border-bottom: 1px solid #e1e8ed;
 }
 
 .twitter-card-preview__body {
-	padding: .75em;
+	padding: 0.75em;
 	text-decoration: none;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-size: 14px;
 	color: black;
 	text-align: left;
@@ -248,15 +248,13 @@
 	overflow: hidden;
 }
 
-.twitter-card-preview__summary
-.twitter-card-preview__body {
+.twitter-card-preview__summary .twitter-card-preview__body {
 	margin-left: 125px;
-	border-left: 1px solid #E1E8ED;
+	border-left: 1px solid #e1e8ed;
 	height: 100%;
 }
 
-.twitter-card-preview__large_image_summary
-.twitter-card-preview__body {
+.twitter-card-preview__large_image_summary .twitter-card-preview__body {
 	padding-left: 1em;
 	padding-right: 1em;
 }
@@ -266,7 +264,7 @@
 	white-space: nowrap;
 	font-weight: bold;
 	font-size: 1em;
-	margin: 0 0 .15em;
+	margin: 0 0 0.15em;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
@@ -280,7 +278,7 @@
 
 .twitter-card-preview__url {
 	text-transform: lowercase;
-	color: #8899A6;
+	color: #8899a6;
 	max-height: 1.3em;
 	white-space: nowrap;
 	overflow: hidden;

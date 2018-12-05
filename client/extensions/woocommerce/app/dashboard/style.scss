@@ -1,3 +1,5 @@
+/** @format */
+
 .dashboard__placeholder .card {
 	@include placeholder();
 }
@@ -46,25 +48,25 @@
 		width: calc( 35% - 8px ) !important;
 		margin-bottom: 16px;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			margin-bottom: 0;
 		}
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			margin-right: auto;
 			margin-left: auto;
 			width: 80% !important;
 		}
 
 		& + .dashboard-widget__children {
-			@include breakpoint( ">660px" ) {
-				width: calc( 65% - 34px) !important;
+			@include breakpoint( '>660px' ) {
+				width: calc( 65% - 34px ) !important;
 			}
 		}
 	}
 
 	.dashboard-widget__row {
-		@include breakpoint( "<960px" ) {
+		@include breakpoint( '<960px' ) {
 			flex-direction: column;
 		}
 	}
@@ -73,15 +75,14 @@
 		margin-bottom: 10px;
 		min-width: 100%;
 		background: $white;
-		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-			0 1px 2px $gray-lighten-30;
+		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 		flex-direction: row;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			flex-direction: column;
 		}
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			margin-bottom: 16px;
 		}
 
@@ -124,7 +125,7 @@
 		width: 100%;
 		text-align: center;
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			margin-left: 16px;
 		}
 
@@ -137,7 +138,7 @@
 		}
 
 		.dashboard-widget__children {
-			@include breakpoint( "<960px" ) {
+			@include breakpoint( '<960px' ) {
 				display: flex;
 				align-items: stretch;
 

@@ -1,6 +1,7 @@
+/** @format */
 
 .memberships__list-subscription {
-	display:flex;
+	display: flex;
 	flex-direction: row;
 }
 
@@ -37,7 +38,7 @@
 
 .memberships__subscription-meta {
 	padding: 0;
-	font-size:13px;
+	font-size: 13px;
 }
 
 .memberships__subscription-inner-meta {
@@ -135,7 +136,7 @@
 	line-height: 1.2em;
 	margin: 20px;
 	white-space: nowrap;
-	text-align:center;
+	text-align: center;
 }
 
 .memberships__subscription-remove {

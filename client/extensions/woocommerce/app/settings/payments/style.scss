@@ -1,6 +1,8 @@
+/** @format */
+
 &.payments__dialog {
 	min-width: 90%;
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		min-width: 660px;
 	}
 
@@ -44,7 +46,7 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		flex-direction: column;
 	}
 
@@ -62,7 +64,7 @@
 	max-width: 255px;
 	padding-top: 24px;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		padding-top: 0;
 	}
 }
@@ -87,7 +89,6 @@
 
 // PAYMENT-METHOD-ROW
 .payments__type-container {
-
 	p.payments__method-suggested {
 		font-size: 11px;
 		text-transform: uppercase;
@@ -102,8 +103,7 @@
 		padding: 0;
 	}
 
-	p.payments__method-information
-	p.payments__method-name {
+	p.payments__method-information p.payments__method-name {
 		font-size: 14px;
 	}
 
@@ -141,7 +141,7 @@
 	}
 
 	.payments__method-method-suggested-container {
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			width: 50%;
 		}
 	}
@@ -152,13 +152,13 @@
 	}
 
 	.list-item-field.payments__methods-column-fees {
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			display: none;
 		}
 	}
 
 	.payments__method-method-information-container {
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			width: 60%;
 			order: 4;
 			padding-top: 0px;
@@ -172,7 +172,7 @@
 			margin-left: 0;
 		}
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			width: 30%;
 			padding-left: 0;
 			padding-right: 0;
@@ -199,7 +199,7 @@
 	.payments__method-action-container {
 		width: 15%;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			width: 20%;
 			padding-left: 0;
 		}
@@ -222,7 +222,7 @@
 	border-top: 1px solid $border-ultra-light-gray;
 	width: 100%;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 24px;
 	}
 
@@ -246,7 +246,7 @@
 	margin-bottom: 5px;
 	width: 100%;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 60%;
 	}
 }
@@ -255,7 +255,7 @@
 	height: 12px;
 	width: 90%;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 50%;
 	}
 }
@@ -265,7 +265,7 @@
 	margin-bottom: 5px;
 	width: 100%;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 60%;
 	}
 }
@@ -274,7 +274,7 @@
 	height: 12px;
 	width: 90%;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 50%;
 	}
 }

@@ -1,3 +1,5 @@
+/** @format */
+
 // ==========================================================================
 // .header-cake
 //
@@ -17,7 +19,7 @@
 		display: none;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 10px;
 	}
 }
@@ -42,7 +44,7 @@
 		}
 	}
 
-	html[dir="rtl"] & {
+	html[dir='rtl'] & {
 		.gridicons-arrow-left {
 			transform: scaleX( -1 );
 		}

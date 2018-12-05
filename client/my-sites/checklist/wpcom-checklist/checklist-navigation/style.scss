@@ -1,3 +1,5 @@
+/** @format */
+
 .checklist-navigation {
 	border-top: 1px solid $gray-lighten-20;
 }
@@ -26,7 +28,7 @@
 	&.has-notification::before {
 		display: inline-block;
 		background-color: $orange-jazzy;
-		content: "";
+		content: '';
 		border-radius: 50%;
 		margin-right: 6px;
 		width: 8px;

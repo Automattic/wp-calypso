@@ -1,14 +1,16 @@
+/** @format */
+
 .help-happiness-engineers {
 	margin: 12px 0px 64px 0px;
 	padding: 0 24px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin: 24px 0px 64px 0px;
 	}
 }
 
 .help-happiness-engineers .form-section-heading {
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		font: 300 16px/21px $sans;
 	}
 }
@@ -17,7 +19,7 @@
 	margin: -16px 0px 12px 0px;
 	font: 14px/21px $sans;
 	color: $gray-darken-10;
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin: -16px 0px 20px 0px;
 	}
 }
@@ -26,7 +28,7 @@
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: wrap;
-	width: calc(100% + 10px);
+	width: calc( 100% + 10px );
 	height: 42px;
 	overflow: hidden;
 }

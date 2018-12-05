@@ -1,3 +1,5 @@
+/** @format */
+
 .upload-drop-zone__dropzone {
 	position: relative;
 	background-color: $gray-light;
@@ -37,7 +39,6 @@
 	font-style: italic;
 	font-size: 12px;
 }
-
 
 .upload-drop-zone {
 	&.is-disabled {

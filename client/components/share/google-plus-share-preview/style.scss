@@ -1,8 +1,10 @@
+/** @format */
+
 .google-plus-share-preview {
 	background-color: #fefefe;
 	border-radius: 2px;
-	box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
-	color: rgba(0, 0, 0, 0.87);
+	box-shadow: 0 1px 4px 0 rgba( 0, 0, 0, 0.14 );
+	color: rgba( 0, 0, 0, 0.87 );
 	font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
 	margin: 0 auto;
 	max-width: 530px;
@@ -10,18 +12,18 @@
 
 	// Nesting to win main.scss
 	.google-plus-share-preview__profile-name {
-		color: rgba(0, 0, 0, 0.87);
+		color: rgba( 0, 0, 0, 0.87 );
 
 		&:hover {
-			color: rgba(0, 0, 0, 0.87);
+			color: rgba( 0, 0, 0, 0.87 );
 		}
 	}
 
 	.google-plus-share-preview__article-url {
-		color: rgba(0, 0, 0, 0.87);
+		color: rgba( 0, 0, 0, 0.87 );
 
 		&:hover {
-			color: rgba(0, 0, 0, 0.87);
+			color: rgba( 0, 0, 0, 0.87 );
 		}
 	}
 }

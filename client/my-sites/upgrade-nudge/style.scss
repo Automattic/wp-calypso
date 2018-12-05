@@ -1,3 +1,5 @@
+/** @format */
+
 .card.upgrade-nudge {
 	border-left: 3px solid $alert-yellow;
 	display: flex;
@@ -41,8 +43,8 @@
 	}
 
 	&.is-full-width {
-		width:100%;
-		@include breakpoint( ">660px" ) {
+		width: 100%;
+		@include breakpoint( '>660px' ) {
 			max-width: 420px;
 		}
 	}

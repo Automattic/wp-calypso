@@ -1,3 +1,5 @@
+/** @format */
+
 .banner.card {
 	border-left: 3px solid;
 	display: flex;
@@ -12,23 +14,23 @@
 
 	&.is-wpcom-plan {
 		&.is-upgrade-blogger {
-			@include banner-color(darken($alert-green, 20%));
+			@include banner-color( darken( $alert-green, 20% ) );
 		}
 
 		&.is-upgrade-personal {
-			@include banner-color($blue-wordpress);
+			@include banner-color( $blue-wordpress );
 		}
 
 		&.is-upgrade-premium {
-			@include banner-color($alert-yellow);
+			@include banner-color( $alert-yellow );
 		}
 
 		&.is-upgrade-business {
-			@include banner-color($orange-jazzy);
+			@include banner-color( $orange-jazzy );
 		}
 
 		&.is-upgrade-ecommerce {
-			@include banner-color($alert-purple);
+			@include banner-color( $alert-purple );
 		}
 	}
 
@@ -55,9 +57,9 @@
 	&:hover {
 		transition: all 100ms ease-in-out;
 
-			&.is-card-link {
-				box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
-			}
+		&.is-card-link {
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
+		}
 		.card__link-indicator {
 			color: var( --color-primary-dark );
 		}

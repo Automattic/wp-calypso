@@ -1,6 +1,10 @@
-/*
+/**
+ * /*
  * Suggestions list
+ *
+ * @format
  */
+
 .keyed-suggestions__suggestions {
 	display: flex;
 	flex-direction: column;
@@ -79,10 +83,10 @@
 	overflow: hidden;
 
 	&:before {
-		@include long-content-fade( $color : $white );
+		@include long-content-fade( $color: $white );
 
 		.has-highlight & {
-			@include long-content-fade( $color : $blue-medium );
+			@include long-content-fade( $color: $blue-medium );
 		}
 	}
 }

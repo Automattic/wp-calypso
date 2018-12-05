@@ -1,3 +1,5 @@
+/** @format */
+
 .rebrand-cities-welcome {
 	text-align: center;
 	padding-top: 2em;
@@ -13,7 +15,7 @@
 		margin-bottom: 0.2em;
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		.formatted-header__subtitle {
 			margin: 0 10%;
 		}
@@ -40,6 +42,10 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }

@@ -1,3 +1,5 @@
+/** @format */
+
 // The main comment list wrapper
 .comments__comment-list {
 	border-top: 1px solid $gray-lighten-20;
@@ -30,8 +32,8 @@
 
 	.gravatar {
 		position: absolute;
-			top: 0;
-			left: 0;
+		top: 0;
+		left: 0;
 		border-radius: 48px;
 	}
 
@@ -62,8 +64,8 @@
 
 		textarea {
 			position: absolute;
-				top: 0;
-				left: 0;
+			top: 0;
+			left: 0;
 			height: 100%;
 			resize: none;
 		}
@@ -83,8 +85,8 @@
 	button {
 		opacity: 0;
 		position: absolute;
-		  top: 4px;
-		  right: 16px;
+		top: 4px;
+		right: 16px;
 		padding: 4px;
 		font-size: 12px;
 		font-weight: 600;
@@ -123,7 +125,6 @@
 	padding-top: 22px;
 	font-size: 14px;
 }
-
 
 // A list of comments
 .comments__list {
@@ -167,8 +168,8 @@
 
 		textarea {
 			position: absolute;
-				top: 0;
-				left: 0;
+			top: 0;
+			left: 0;
 			height: 100%;
 			resize: none;
 		}
@@ -188,8 +189,8 @@
 	button {
 		opacity: 0;
 		position: absolute;
-		  top: 4px;
-		  right: 16px;
+		top: 4px;
+		right: 16px;
 		padding: 4px;
 		font-size: 12px;
 		font-weight: 600;
@@ -268,8 +269,8 @@
 	.gridicon {
 		fill: $gray;
 		position: relative;
-			left: -5px;
-			top: 3px;
+		left: -5px;
+		top: 3px;
 	}
 }
 
@@ -293,8 +294,8 @@
 	.gravatar {
 		border-radius: 48px;
 		position: absolute;
-			top: 8px;
-			left: -41px;
+		top: 8px;
+		left: -41px;
 	}
 }
 
@@ -304,8 +305,8 @@
 	height: 32px;
 	margin-right: 9px;
 	position: absolute;
-		left: 1px;
-		top: -5px;
+	left: 1px;
+	top: -5px;
 	width: 32px;
 
 	.gridicon {
@@ -315,7 +316,7 @@
 		margin-top: 4px;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		top: -4px;
 	}
 }
@@ -486,7 +487,7 @@ a.comments__comment-username {
 		display: none;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		.comments__comment-actions-approve,
 		.comments__comment-actions-trash,
 		.comments__comment-actions-spam,
@@ -499,7 +500,7 @@ a.comments__comment-username {
 		}
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		.like-button .like-button__label-status {
 			display: inline;
 		}
@@ -522,7 +523,7 @@ a.comments__comment-username {
 	overflow: auto;
 
 	&.is-no-comments {
-	  display: none;
+		display: none;
 	}
 }
 
@@ -550,7 +551,7 @@ a.comments__comment-username {
 
 	.gridicon {
 		position: relative;
-			top: 4px;
+		top: 4px;
 		margin-right: 4px;
 		transform: rotate( 180deg );
 	}

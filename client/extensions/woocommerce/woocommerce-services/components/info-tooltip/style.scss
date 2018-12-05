@@ -1,3 +1,5 @@
+/** @format */
+
 .info-tooltip {
 	cursor: help;
 	color: $gray-dark;
@@ -18,7 +20,9 @@
 		padding: 4px;
 		color: $white;
 
-		h1, h2, h3 {
+		h1,
+		h2,
+		h3 {
 			margin: 0 0 8px 0;
 			color: $white;
 			font-weight: 600;

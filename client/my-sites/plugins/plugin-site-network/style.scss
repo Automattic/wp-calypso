@@ -1,3 +1,5 @@
+/** @format */
+
 .plugin-site-network {
 	padding: 8px;
 	margin: 0;
@@ -26,8 +28,8 @@
 
 	.plugin-site__activate-manage {
 		position: absolute;
-			right: 0;
-			top: 0;
+		right: 0;
+		top: 0;
 		margin: 8px;
 		height: 32px;
 		display: flex;
@@ -69,8 +71,8 @@
 
 .plugin-site-network__secondary-site-actions {
 	position: absolute;
-		right: 0;
-		top: 0;
+	right: 0;
+	top: 0;
 	height: 56px;
 	width: 100%;
 	display: flex;
@@ -87,8 +89,8 @@
 	height: 32px;
 	display: flex;
 	position: relative;
-		top: 16px;
-		right: 8px;
+	top: 16px;
+	right: 8px;
 
 	.plugin-site-disabled-manage {
 		right: 8px;
@@ -106,7 +108,7 @@
 }
 
 .plugin-site-network__header_info {
-		display: inline-block;
+	display: inline-block;
 }
 
 .foldable-card__action .plugin-site-network__network_disabled .plugin-site-disabled-manage {

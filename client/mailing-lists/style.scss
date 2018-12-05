@@ -1,3 +1,5 @@
+/** @format */
+
 .mailing-lists {
 	max-width: 680px;
 	margin: 0 auto;
@@ -19,8 +21,8 @@
 
 	.gridicon {
 		position: absolute;
-			top: 0;
-			left: 0;
+		top: 0;
+		left: 0;
 
 		&.gridicons-cross {
 			top: 32px;
@@ -95,8 +97,8 @@
 		}
 		@include breakpoint( '>480px' ) {
 			position: absolute;
-				top: 24px;
-				right: 24px;
+			top: 24px;
+			right: 24px;
 		}
 	}
 }

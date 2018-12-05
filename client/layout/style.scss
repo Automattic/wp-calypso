@@ -1,12 +1,15 @@
-/*
-	Layout Elements
-	.layout__loading - Displays when loading Claypso
-	.layout__content - Contains primary and secondary elements
-		.layout__primary - Where the main content lives
-		.layout__secondary - Contains the site selector and sidebar elements
-			.sidebar
-			.site-selector
-*/
+/**
+ * /*
+ * 	Layout Elements
+ * 	.layout__loading - Displays when loading Claypso
+ * 	.layout__content - Contains primary and secondary elements
+ * 		.layout__primary - Where the main content lives
+ * 		.layout__secondary - Contains the site selector and sidebar elements
+ * 			.sidebar
+ * 			.site-selector
+ *
+ * @format
+ */
 
 // Set transitons for layout elements
 .layout__primary .main,
@@ -239,7 +242,7 @@
 
 // Display sidebar as a panel under a main payment component in mobile checkout
 .layout.is-section-checkout {
-	@media (max-width: 660px) {
+	@media ( max-width: 660px ) {
 		.layout__content {
 			display: flex;
 			flex-flow: column;

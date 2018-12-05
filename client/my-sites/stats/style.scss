@@ -1,9 +1,10 @@
+/** @format */
 
 // Module container
-@include breakpoint( ">960px" ) {
+@include breakpoint( '>960px' ) {
 	.stats__module-column {
 		float: right;
-		width: calc(50% - 4px);
+		width: calc( 50% - 4px );
 
 		&:first-child {
 			float: left;
@@ -15,9 +16,9 @@
 	}
 }
 
-@include breakpoint( ">1280px" ) {
+@include breakpoint( '>1280px' ) {
 	.stats__module-column {
-		width: calc(33% - 3px);
+		width: calc( 33% - 3px );
 
 		&:last-child {
 			clear: none;
@@ -33,7 +34,7 @@
 }
 
 .is-section-stats .followers-count .button {
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }
@@ -41,7 +42,7 @@
 .stats-navigation__control {
 	margin-right: 16px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		margin-right: 0;
 	}
 }
@@ -50,20 +51,17 @@
 // -- extends .welcome-message /assets/stylesheets/shared/welcome.scss
 
 .stats-message {
-
 	// Container for 'Visit the old stats layout' link
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		&.switch-stats {
 			text-align: center;
 		}
 	}
 }
 
-
 .stats__sticky-navigation.is-sticky .sticky-panel__content {
 	background: white;
-	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ),
-		0 0 56px rgba( 0, 0, 0, 0.075 );
+	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 
 	.stats-period-navigation {
 		margin: 9px 0;

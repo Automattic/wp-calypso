@@ -1,5 +1,7 @@
 /**
  * Oauth login page, used in WordPress Desktop App
+ *
+ * @format
  */
 
 .is-section-auth {
@@ -65,13 +67,13 @@
 	width: 320px;
 	margin: 0 auto;
 
-		.form-fieldset input {
+	.form-fieldset input {
 		position: relative;
 		z-index: z-index( 'root', '.auth__form .form-fieldset input' );
 	}
 
-	.form-fieldset input[type="text"],
-	.form-fieldset input[type="password"] {
+	.form-fieldset input[type='text'],
+	.form-fieldset input[type='password'] {
 		padding-left: 36px;
 	}
 
@@ -96,16 +98,16 @@
 	}
 
 	.form-buttons-bar .button.is-primary[disabled],
-	.form-fieldset input[type="password"]:disabled,
-	.form-fieldset input[type="text"]:disabled {
-		opacity: .5;
+	.form-fieldset input[type='password']:disabled,
+	.form-fieldset input[type='text']:disabled {
+		opacity: 0.5;
 	}
 
-	.form-fieldset input[type="text"]:disabled {
+	.form-fieldset input[type='text']:disabled {
 		margin-bottom: 1px;
 	}
 
-	.form-fieldset input[type="tel"] {
+	.form-fieldset input[type='tel'] {
 		text-align: center;
 	}
 
@@ -116,7 +118,7 @@
 		}
 	}
 
-	input[type="tel"]::-webkit-inner-spin-button {
+	input[type='tel']::-webkit-inner-spin-button {
 		-webkit-appearance: none;
 		margin: 0;
 	}
@@ -193,7 +195,7 @@
 	text-align: left;
 	counter-reset: item;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		left: 0;
 		top: -8px;
 		right: 0;
@@ -219,7 +221,7 @@
 
 	ol li:before {
 		margin-right: 2em;
-		content: counter(item);
+		content: counter( item );
 		background: $white;
 		border-radius: 100%;
 		color: $blue-dark;
@@ -256,7 +258,6 @@
 	.auth__self-hosted-instructions-close:hover {
 		color: $blue-light;
 	}
-
 }
 
 .auth__welcome {

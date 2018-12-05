@@ -1,3 +1,5 @@
+/** @format */
+
 .is-reader-page .discover-attribution {
 	align-items: flex-start;
 	display: flex;
@@ -52,7 +54,7 @@
 		}
 	}
 
-	.site-icon:not(.is-blank) {
+	.site-icon:not( .is-blank ) {
 		background: inherit;
 	}
 
@@ -64,7 +66,7 @@
 		font-size: 13px;
 		padding: 0;
 		position: relative;
-			top: -1px;
+		top: -1px;
 
 		&.is-following {
 			color: $alert-green;
@@ -75,7 +77,7 @@
 		}
 
 		.follow-button__label {
-			@include breakpoint( "<660px" ) {
+			@include breakpoint( '<660px' ) {
 				display: inline-block;
 			}
 		}

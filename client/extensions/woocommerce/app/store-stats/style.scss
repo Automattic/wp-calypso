@@ -1,3 +1,5 @@
+/** @format */
+
 .store-stats__widgets {
 	display: flex;
 	flex-direction: column;
@@ -8,14 +10,14 @@
 	width: 100%;
 }
 
-@include breakpoint( ">960px" ) {
+@include breakpoint( '>960px' ) {
 	.store-stats__widgets {
 		flex-direction: row;
 		flex-wrap: wrap;
 	}
 }
 
-@include breakpoint( ">1280px" ) {
+@include breakpoint( '>1280px' ) {
 	.store-stats__widgets-column {
 		width: calc( 33% - 3px );
 
@@ -25,7 +27,7 @@
 	}
 }
 
-@include breakpoint( "<660px" ) {
+@include breakpoint( '<660px' ) {
 	&.store-stats {
 		.store-stats__sidebar-nav {
 			.site-icon,

@@ -1,3 +1,5 @@
+/** @format */
+
 .stats-views {
 	overflow-x: auto;
 }
@@ -6,7 +8,8 @@
 	.is-loading & {
 		display: none;
 	}
-	td, th {
+	td,
+	th {
 		padding: 6px;
 		text-align: center;
 		cursor: pointer;
@@ -14,12 +17,12 @@
 		font-weight: normal;
 		font-size: 12px;
 		text-transform: uppercase;
-		letter-spacing: .1em;
+		letter-spacing: 0.1em;
 	}
 
 	th {
 		font-size: 11px;
-		color: darken( $gray,10 );
+		color: darken( $gray, 10 );
 	}
 }
 
@@ -31,7 +34,7 @@
 		background: none;
 		text-align: left;
 		font-size: 11px;
-		color: darken( $gray,10 );
+		color: darken( $gray, 10 );
 	}
 
 	&.level-0 {
@@ -71,7 +74,7 @@
 	padding-top: 10px;
 	float: right;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		float: none;
 		margin: 0 auto;
 		margin-bottom: 25px;
@@ -87,7 +90,7 @@
 .stats-views__key-label {
 	font-size: 11px;
 	color: $gray;
-	letter-spacing: .1em;
+	letter-spacing: 0.1em;
 	text-transform: uppercase;
 }
 

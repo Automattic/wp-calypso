@@ -1,3 +1,5 @@
+/** @format */
+
 .card.nps-survey {
 	margin: 0;
 	padding: 0;
@@ -11,7 +13,7 @@
 	padding: 16px;
 	padding-right: 36px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 24px;
 		padding-right: 48px;
 	}
@@ -19,8 +21,8 @@
 
 .nps-survey__buttons {
 	padding: 16px 16px 7px;
-	transform: translateY(-25px);
-	transition: transform .1s ease-in;
+	transform: translateY( -25px );
+	transition: transform 0.1s ease-in;
 }
 
 .button.nps-survey__finish-button,
@@ -34,13 +36,13 @@
 .button.nps-survey__finish-button {
 	opacity: 0;
 	visibility: hidden;
-	transition: opacity .2s ease-in;
+	transition: opacity 0.2s ease-in;
 }
 
 .nps-survey.is-recommendation-selected {
 	.nps-survey__buttons {
 		//height: 75px;
-		transform: translateY(0);
+		transform: translateY( 0 );
 	}
 
 	.button.nps-survey__finish-button {
@@ -57,7 +59,7 @@
 	padding: 16px 0;
 	text-align: center;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 16px;
 	}
 }
@@ -72,7 +74,7 @@
 	padding: 0 3px;
 	margin-bottom: 8px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 0 6px;
 	}
 }
@@ -95,11 +97,11 @@
 	font-weight: bold;
 }
 
-.nps-survey__recommendation-option input[type=radio] {
+.nps-survey__recommendation-option input[type='radio'] {
 	margin: 0 2px;
 }
 
-.nps-survey__recommendation-option input[type=radio] + span {
+.nps-survey__recommendation-option input[type='radio'] + span {
 	clear: both;
 	margin-left: 0;
 	text-align: center;

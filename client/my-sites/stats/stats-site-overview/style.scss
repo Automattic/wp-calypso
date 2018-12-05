@@ -1,13 +1,15 @@
+/** @format */
+
 // Stats Overview
 // (for the site list and the post detail view)
-.stats__overview, .stats__latest-post-summary {
+.stats__overview,
+.stats__latest-post-summary {
 	.module-header__link {
 		display: block;
 		white-space: nowrap;
 		overflow: hidden;
 
-		@include breakpoint( "<480px" ) {
-
+		@include breakpoint( '<480px' ) {
 			&:focus {
 				color: $link-highlight;
 			}
@@ -35,16 +37,14 @@
 		}
 	}
 
-	.value{
+	.value {
 		font-size: 24px;
 		padding: 16px 0;
 	}
-
 }
 
-.stats__latest-post-summary{
-
-		.value{
-			font-size: 32px;
-		}
+.stats__latest-post-summary {
+	.value {
+		font-size: 32px;
+	}
 }

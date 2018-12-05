@@ -1,3 +1,5 @@
+/** @format */
+
 .related-posts__preview-title {
 	font-weight: 600;
 	margin-top: 16px;
@@ -15,13 +17,13 @@
 }
 
 .related-posts__preview-headline {
-		margin: 0 0 1em 8px;
-		font-size: 11px;
-		font-weight: 600;
-	}
+	margin: 0 0 1em 8px;
+	font-size: 11px;
+	font-weight: 600;
+}
 
 .related-posts__preview-items {
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		display: flex;
 		flex-wrap: wrap;
 		.related-posts__preview-post {
@@ -29,7 +31,7 @@
 		}
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex-wrap: nowrap;
 	}
 }
@@ -54,7 +56,7 @@
 }
 
 .related-posts__preview-post .related-posts__preview-post-context {
-	opacity: .6;
+	opacity: 0.6;
 }
 
 .related-posts__preview-post-a {

@@ -1,4 +1,6 @@
-@include breakpoint( ">480px" ) {
+/** @format */
+
+@include breakpoint( '>480px' ) {
 	.wordads .stats-tabs .stats-tab {
 		width: 33.33%;
 	}

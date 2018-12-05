@@ -1,3 +1,5 @@
+/** @format */
+
 .plugin-automated-transfer__notice {
 	.gridicons-sync g {
 		animation: spinning-sync-icon linear 2s infinite;
@@ -10,6 +12,10 @@
 }
 
 @keyframes spinning-sync-icon {
-	from { transform: rotate( 0deg ); }
-	to { transform: rotate( 360deg ); }
+	from {
+		transform: rotate( 0deg );
+	}
+	to {
+		transform: rotate( 360deg );
+	}
 }

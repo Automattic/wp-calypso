@@ -1,3 +1,5 @@
+/** @format */
+
 .badge {
 	display: inline-block;
 	border-radius: 1000px; // A number large enough to exceed height of any badge to make it look like a pill
@@ -13,5 +15,5 @@
 
 .badge--success {
 	color: $gray-dark;
-	background-color: lighten( $alert-green, 15%);
+	background-color: lighten( $alert-green, 15% );
 }

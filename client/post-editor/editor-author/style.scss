@@ -1,3 +1,5 @@
+/** @format */
+
 .editor-author.is-placeholder .editor-author__name {
 	animation: pulse-light 0.8s ease-in-out infinite;
 	background: $gray-lighten-20;
@@ -5,7 +7,7 @@
 	height: 14px;
 	width: 100px;
 	position: relative;
-		top: 3px;
+	top: 3px;
 }
 
 .editor-author .gravatar {
@@ -17,9 +19,7 @@
 	font-size: 13px;
 	margin: 0 8px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }
-
-

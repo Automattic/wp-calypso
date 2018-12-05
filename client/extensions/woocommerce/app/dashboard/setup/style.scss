@@ -1,3 +1,5 @@
+/** @format */
+
 .setup__header {
 	text-align: center;
 	padding-top: 16px;
@@ -31,7 +33,7 @@
 .setup__location {
 	padding: 16px;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		padding: 32px 32px 16px 32px;
 	}
 }
@@ -49,7 +51,7 @@
 	margin-left: -24px;
 	margin-right: -24px;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		margin-left: -32px;
 		margin-right: -32px;
 		padding: 32px 32px 0 32px;

@@ -1,7 +1,11 @@
+/** @format */
+
 .editor-sticky.button {
 	transition: opacity 200ms;
 
-	&, &:hover, &:focus {
+	&,
+	&:hover,
+	&:focus {
 		color: $gray-lighten-20;
 	}
 

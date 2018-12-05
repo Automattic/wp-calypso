@@ -1,3 +1,5 @@
+/** @format */
+
 .plugin-item.card {
 	padding: 0;
 	margin: 0;
@@ -48,12 +50,13 @@
 }
 
 // Checkbox for multiselect purposes
-.plugin-item__checkbox[type=checkbox] {
+.plugin-item__checkbox[type='checkbox'] {
 	position: absolute;
 	top: 50%;
 	margin-top: -8px;
 
-	&:after { // Making tap area larger
+	&:after {
+		// Making tap area larger
 		content: '';
 		position: absolute;
 		top: -20px;

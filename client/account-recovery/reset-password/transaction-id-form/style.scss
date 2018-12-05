@@ -1,3 +1,5 @@
+/** @format */
+
 .transaction-id-form__title {
 	font-size: 20px;
 	font-weight: 600;
@@ -12,7 +14,7 @@
 
 .transaction-id-form__continue-button.button {
 	margin-top: 16px;
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin-right: 8px;
 	}
 }
@@ -25,7 +27,7 @@
 .transaction-id-form__skip-button.button {
 	width: 100%;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		width: calc( 50% - 4px );
 	}
 }

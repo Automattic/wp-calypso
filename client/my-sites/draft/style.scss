@@ -1,3 +1,5 @@
+/** @format */
+
 .draft.card {
 	padding: 12px 16px;
 	margin: 0;
@@ -62,9 +64,9 @@
 	font-family: $serif;
 	font-size: 14px;
 	position: absolute;
-		top: 8px;
-		right: 16px;
-		left: 16px;
+	top: 8px;
+	right: 16px;
+	left: 16px;
 	user-select: none;
 	opacity: 0;
 	transform: translateY( 60px );
@@ -86,9 +88,9 @@
 .draft__featured-image {
 	display: block;
 	position: absolute;
-		top: 8px;
-		right: 8px;
-		bottom: 8px;
+	top: 8px;
+	right: 8px;
+	bottom: 8px;
 	overflow: hidden;
 	transition: height 0.15s ease-in-out;
 	width: 72px;

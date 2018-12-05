@@ -1,3 +1,5 @@
+/** @format */
+
 .edit-post-status__sticky,
 .edit-post-status__pending-review {
 	align-content: center;
@@ -17,7 +19,7 @@
 	font-size: 13px;
 	line-height: 1.7;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		.info-popover {
 			display: none;
 		}

@@ -1,16 +1,18 @@
+/** @format */
+
 .dashboard {
 	.mailchimp__getting-started-title {
 		display: none;
 	}
 
 	.mailchimp__getting-started-content {
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			padding-top: 48px;
 			padding-bottom: 48px;
 		}
 
 		img {
-			@include breakpoint( ">960px" ) {
+			@include breakpoint( '>960px' ) {
 				width: 390px;
 			}
 		}
@@ -47,7 +49,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 
@@ -55,7 +57,7 @@
 		width: 200px;
 		margin-bottom: 16px;
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			margin-bottom: 0;
 			width: 230px;
 		}
@@ -106,13 +108,13 @@
 		display: flex;
 		align-items: center;
 		background: lighten( $gray-light, 1% );
-		
+
 		.progress-bar,
 		.progress-bar__progress {
 			border-radius: 0;
 		}
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			margin: 0 -24px 16px;
 			padding: 16px 24px;
 		}
@@ -184,7 +186,7 @@
 .mailchimp__getting-started-list-header,
 .mailchimp__getting-started-list,
 .mailchimp__getting-started-button {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-left: 24px;
 	}
 }
@@ -192,10 +194,16 @@
 &.is-busy {
 	animation: button__busy-animation 3000ms infinite linear;
 	background-size: 120px 100%;
-	background-image: linear-gradient( -45deg, $gray-lighten-30 28%, $white 28%, $white 72%, $gray-lighten-30 72%);
+	background-image: linear-gradient(
+		-45deg,
+		$gray-lighten-30 28%,
+		$white 28%,
+		$white 72%,
+		$gray-lighten-30 72%
+	);
 }
 
-.mailchimp__dashboard{
+.mailchimp__dashboard {
 	margin: 0px;
 	padding: 0px;
 }
@@ -204,7 +212,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 		align-items: stretch;
 	}
@@ -217,39 +225,37 @@
 }
 
 .mailchimp__dashboard-title-and-slogan {
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 	flex-grow: 1;
 	padding: 16px;
 	display: flex;
 	align-items: center;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding-left: 24px;
 		padding-right: 24px;
 	}
 }
 
 .mailchimp__dashboard-sync-status {
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 	flex-grow: 0;
 	width: 255px;
 	font-size: 12px;
 	background: $white;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		width: auto;
 	}
 
 	.notice {
 		margin: 2px 8px 4px 16px;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			margin-left: 24px;
 		}
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			margin-left: 12px;
 		}
 	}
@@ -259,7 +265,7 @@
 	display: flex;
 	max-width: 140px;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		width: auto;
 	}
 }
@@ -282,7 +288,13 @@
 .mailchimp__sync-notice-syncing {
 	animation: button__busy-animation 3000ms infinite linear;
 	background-size: 120px 100%;
-	background-image: linear-gradient( -45deg, $blue-medium 28%, darken( $blue-medium, 5% ) 28%, darken( $blue-medium, 5% ) 72%, $blue-medium 72%);
+	background-image: linear-gradient(
+		-45deg,
+		$blue-medium 28%,
+		darken( $blue-medium, 5% ) 28%,
+		darken( $blue-medium, 5% ) 72%,
+		$blue-medium 72%
+	);
 	border-color: darken( $blue-medium, 8% );
 }
 
@@ -298,12 +310,12 @@
 	background: $gray-light;
 	border-top: 1px solid $gray-lighten-30;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding-left: 24px;
 		padding-right: 24px;
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		padding-left: 12px;
 		padding-right: 12px;
 	}
@@ -324,12 +336,12 @@
 	margin: 8px 16px 0 16px;
 	font-weight: 600;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin-left: 24px;
 		margin-right: 24px;
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		margin-left: 12px;
 		margin-right: 12px;
 	}
@@ -350,11 +362,11 @@
 	padding: 16px;
 	flex-direction: column;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 24px;
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -366,7 +378,7 @@
 		margin-bottom: 0;
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		padding-right: 24px;
 	}
 }
@@ -376,7 +388,7 @@
 	width: 250px;
 	flex-grow: 0;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		width: 100%;
 	}
 }
@@ -393,7 +405,7 @@
 		display: flex;
 		align-items: center;
 
-		input[type=checkbox] + span {
+		input[type='checkbox'] + span {
 			margin: 0;
 			margin-left: 6px;
 		}

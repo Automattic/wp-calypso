@@ -1,7 +1,10 @@
 /**
  * Site Selector
+ *
+ * @format
  * @component `selector`
  */
+
 .site-selector {
 	overflow: visible;
 	position: static;
@@ -14,7 +17,7 @@
 		opacity: 1;
 	}
 
-	&:not(.is-large) .search {
+	&:not( .is-large ) .search {
 		pointer-events: none;
 	}
 
@@ -28,9 +31,7 @@
 		.site__domain {
 			background-color: lighten( $gray, 35% );
 		}
-
 	}
-
 }
 
 // Styles for Site elements within the Selector
@@ -104,7 +105,7 @@
 	opacity: 0;
 	position: absolute;
 
-	.search__input[type="search"] {
+	.search__input[type='search'] {
 		font-size: 13px;
 	}
 
@@ -114,7 +115,6 @@
 		width: 32px;
 		height: 18px;
 	}
-
 }
 
 // The actual list of sites
@@ -122,7 +122,7 @@
 	max-height: calc( 100% - 93px );
 	overflow-y: auto;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		max-height: calc( 100% - 109px );
 	}
 }
@@ -156,7 +156,7 @@
 		color: $gray-dark;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		padding: 16px;
 	}
 

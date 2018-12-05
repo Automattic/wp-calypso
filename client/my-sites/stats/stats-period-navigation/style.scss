@@ -1,3 +1,5 @@
+/** @format */
+
 .stats-period-navigation {
 	display: flex;
 	justify-content: space-between;
@@ -14,7 +16,8 @@
 		margin: 0;
 	}
 
-	.stats-period-navigation__previous, .stats-period-navigation__next {
+	.stats-period-navigation__previous,
+	.stats-period-navigation__next {
 		cursor: pointer;
 		color: $gray-darken-20;
 

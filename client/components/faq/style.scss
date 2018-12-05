@@ -1,13 +1,15 @@
+/** @format */
+
 $faq-gutter-width: 24px;
 
 .faq {
 	padding: 0 16px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 0 24px;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding: 0;
 	}
 }
@@ -22,7 +24,7 @@ $faq-gutter-width: 24px;
 .faq__list {
 	display: flex;
 	flex-wrap: wrap;
-	margin: 0 ($faq-gutter-width / -2);
+	margin: 0 ( $faq-gutter-width / -2 );
 	list-style: none;
 }
 
@@ -32,17 +34,16 @@ $faq-gutter-width: 24px;
 	font-size: 14px;
 	line-height: 21px;
 	box-sizing: border-box;
-	padding-left: ($faq-gutter-width / 2);
-	padding-right: ($faq-gutter-width / 2);
+	padding-left: ( $faq-gutter-width / 2 );
+	padding-right: ( $faq-gutter-width / 2 );
 
-	@media
-		(min-width: 480px) and (max-width: 660px),
-		(min-width: 800px) and (max-width: 1040px) {
-			width: 50%;
+	@media ( min-width: 480px ) and ( max-width: 660px ),
+		( min-width: 800px ) and ( max-width: 1040px ) {
+		width: 50%;
 	}
 
-	@include breakpoint( ">1040px" ) {
-		width: (100% / 3);
+	@include breakpoint( '>1040px' ) {
+		width: ( 100% / 3 );
 	}
 }
 

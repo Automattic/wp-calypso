@@ -1,3 +1,5 @@
+/** @format */
+
 .people-invites__invite-users-action {
 	.people-invites__invite-users-message {
 		margin-bottom: 16px;
@@ -16,10 +18,10 @@
 	.people-invites__pending & {
 		text-align: center;
 		margin: 50px 0;
-		@include breakpoint( "<960px" ) {
+		@include breakpoint( '<960px' ) {
 			margin: 40px 0;
 		}
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			margin: 30px 0;
 		}
 	}

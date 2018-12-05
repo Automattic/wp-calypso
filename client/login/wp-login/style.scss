@@ -1,3 +1,5 @@
+/** @format */
+
 $image-height: 47px;
 
 .is-section-login {
@@ -23,14 +25,16 @@ $image-height: 47px;
 
 .wp-login__links,
 .wp-login__footer {
-	a, button {
+	a,
+	button {
 		color: $gray-darken-20;
 		text-decoration: none;
 	}
 }
 
 .wp-login__links {
-	a, button {
+	a,
+	button {
 		border-bottom: 1px solid $gray-lighten-20;
 		box-sizing: border-box;
 		cursor: pointer;

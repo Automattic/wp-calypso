@@ -1,3 +1,5 @@
+/** @format */
+
 .credit-card-form-fields__extras {
 	display: flex;
 	flex-wrap: wrap;
@@ -55,7 +57,7 @@
 	&.number input {
 		text-align: left;
 		/*rtl:ignore*/
-		direction:ltr;
+		direction: ltr;
 	}
 }
 

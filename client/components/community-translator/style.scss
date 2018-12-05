@@ -1,3 +1,5 @@
+/** @format */
+
 .community-translator__element {
 	display: inline-block;
 	cursor: pointer;
@@ -42,7 +44,7 @@
 	border-top: 1px solid $gray-lighten-30;
 	padding-top: 10px;
 	&:first-child {
-		border-top : 0;
+		border-top: 0;
 	}
 	> span {
 		font-weight: bold;
@@ -78,4 +80,3 @@
 	display: inline-block;
 	margin-left: 7px;
 }
-

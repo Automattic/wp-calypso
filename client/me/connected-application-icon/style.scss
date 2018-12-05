@@ -1,12 +1,14 @@
+/** @format */
+
 .connected-application-icon.plugin-icon.is-placeholder:before,
 .connected-application-icon.plugin-icon[style*='undefined']:before {
-	content: ''
+	content: '';
 }
 
 .connected-application-icon.plugin-icon {
 	// !important necessary here since plugin-icon uses !important as well
 	height: 40px !important;
-	width:  40px !important;
+	width: 40px !important;
 	margin-left: 0px;
 	margin-right: 12px;
 

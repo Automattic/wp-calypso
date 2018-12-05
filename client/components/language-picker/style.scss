@@ -1,3 +1,5 @@
+/** @format */
+
 .language-picker {
 	background: $white;
 	border: 1px solid $gray-lighten-20;
@@ -203,7 +205,7 @@
 		left: 16px;
 		right: 16px;
 		height: 24px;
-		background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, white 100%);
+		background: linear-gradient( to bottom, rgba( 255, 255, 255, 0 ) 0%, white 100% );
 		margin-bottom: 1px;
 	}
 

@@ -1,4 +1,7 @@
-.wp-block-a8c-trials-list, .wp-block-a8c-trials-list-item {
+/** @format */
+
+.wp-block-a8c-trials-list,
+.wp-block-a8c-trials-list-item {
 	width: 100%;
 	display: grid;
 	grid-template-columns: 121px auto 110px;
@@ -14,7 +17,9 @@
 .wp-block-a8c-trials-list {
 	border-top: 1px solid #ddd;
 	padding: 11px 0;
-	> header, > div, > footer {
+	> header,
+	> div,
+	> footer {
 		text-align: center;
 		font-weight: bold;
 	}
@@ -29,15 +34,15 @@
 		margin: 0;
 	}
 
-	address:not(:empty):before {
-		content: "Team:";
+	address:not( :empty ):before {
+		content: 'Team:';
 		font-style: italic;
 		float: left;
 		margin-right: 6px;
 	}
 
-	aside:not(:empty):before {
-		content: "Links:";
+	aside:not( :empty ):before {
+		content: 'Links:';
 		font-style: italic;
 		float: left;
 		margin-right: 6px;
@@ -47,7 +52,8 @@
 	}
 }
 
-.wp-block-a8c-trials-list-item-status-popover, .wp-block-a8c-trials-list-item {
+.wp-block-a8c-trials-list-item-status-popover,
+.wp-block-a8c-trials-list-item {
 	.status-badge {
 		font-size: 12px;
 		font-family: Helvetica, Arial, sans-serif;
@@ -68,7 +74,8 @@
 	.status-in-progress {
 		background-color: #fb8b1e;
 	}
-	.status-needs-completion, .status-needs-merging {
+	.status-needs-completion,
+	.status-needs-merging {
 		background-color: #b17bca;
 	}
 	.status-done {

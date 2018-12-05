@@ -1,3 +1,5 @@
+/** @format */
+
 .security-2fa-sms-settings .notice {
 	margin: 5px 0 0 0;
 }
@@ -6,7 +8,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		flex-direction: row;
 	}
 }
@@ -15,7 +17,7 @@
 	flex: 1;
 	padding-right: 0;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding-right: 20px;
 		margin-bottom: 5px;
 	}

@@ -1,9 +1,11 @@
+/** @format */
+
 .post-trends {
 	display: inline-block;
 	user-select: none;
 	position: relative;
 	width: 100%;
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }
@@ -27,8 +29,8 @@
 
 .post-trends__year {
 	position: relative;
-		top: 0;
-		left: 0;
+	top: 0;
+	left: 0;
 	display: block;
 	white-space: nowrap;
 	transition: left, 1s, ease-in-out;
@@ -37,7 +39,7 @@
 .post-trends__wrapper {
 	position: relative;
 	height: 130px;
-	max-width: 660px;	// necessary for fluid width mode
+	max-width: 660px; // necessary for fluid width mode
 	margin: 0 auto;
 	overflow: hidden;
 }
@@ -45,14 +47,14 @@
 .post-trends__scroll-left,
 .post-trends__scroll-right {
 	position: absolute;
-		top: 0px;
+	top: 0px;
 	width: 30px;
 	height: 130px;
-	background: linear-gradient(to right, $white , rgba( $white, .92 ), $transparent );
+	background: linear-gradient( to right, $white, rgba( $white, 0.92 ), $transparent );
 	text-align: left;
 	z-index: z-index( 'root', '.post-trends__scroll' );
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		.focus-sidebar & {
 			z-index: 0;
 		}
@@ -63,20 +65,20 @@
 		width: 30px;
 		height: 100px;
 		display: block;
-		background: url( '/calypso/images/stats/left-arrow.svg') no-repeat 4px 48px;
+		background: url( '/calypso/images/stats/left-arrow.svg' ) no-repeat 4px 48px;
 		background-size: 18px 18px;
-		opacity: .15;
+		opacity: 0.15;
 	}
 
 	.right-arrow {
-		background: url( '/calypso/images/stats/right-arrow.svg') no-repeat 4px 48px;
+		background: url( '/calypso/images/stats/right-arrow.svg' ) no-repeat 4px 48px;
 		background-size: 18px 18px;
 	}
 
 	&.is-active {
 		.right-arrow,
 		.left-arrow {
-			opacity: .8;
+			opacity: 0.8;
 		}
 	}
 
@@ -86,7 +88,7 @@
 }
 
 .post-trends__scroll-right {
-	background: linear-gradient(to left, $white , rgba( $white, .92 ), $transparent );
+	background: linear-gradient( to left, $white, rgba( $white, 0.92 ), $transparent );
 	text-align: right;
 }
 
@@ -115,10 +117,10 @@
 .post-trends__label {
 	text-align: center;
 	font-size: 11px;
-	color: darken( $gray,10 );
+	color: darken( $gray, 10 );
 	margin-top: 10px;
 	text-transform: uppercase;
-	letter-spacing: .1em;
+	letter-spacing: 0.1em;
 
 	.is-loading & {
 		display: none;
@@ -174,8 +176,7 @@
 	}
 }
 
-@include breakpoint( ">1040px" ) {
-
+@include breakpoint( '>1040px' ) {
 	.post-trends__scroll-left,
 	.post-trends__scroll-right {
 		display: none;
@@ -187,7 +188,7 @@
 	padding-top: 10px;
 	float: right;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		float: none;
 		margin: 0 auto;
 		margin-bottom: 25px;
@@ -203,7 +204,7 @@
 .post-trends__key-label {
 	font-size: 11px;
 	color: $gray;
-	letter-spacing: .1em;
+	letter-spacing: 0.1em;
 	text-transform: uppercase;
 }
 

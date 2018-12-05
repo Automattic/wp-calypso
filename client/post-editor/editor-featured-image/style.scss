@@ -1,3 +1,5 @@
+/** @format */
+
 .editor-featured-image {
 	width: 100%;
 	padding: 0 0 7px 0;
@@ -29,9 +31,9 @@
 
 	&.button.is-borderless .editor-featured-image__edit-icon {
 		position: absolute;
-			top: auto;
-			bottom: 8px;
-			right: 8px;
+		top: auto;
+		bottom: 8px;
+		right: 8px;
 		padding: 0;
 		color: $white;
 		opacity: 0.9;
@@ -50,10 +52,10 @@
 .editor-featured-image__preview.is-transient::after {
 	content: '';
 	position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	background-color: rgba( $white, 0.75 );
 	z-index: z-index( 'root', '.editor-featured-image__preview.is-transient::after' );
 }
@@ -72,8 +74,8 @@
 
 .editor-featured-image__preview .spinner {
 	position: absolute;
-		top: 50%;
-		left: 50%;
+	top: 50%;
+	left: 50%;
 	transform: translate( -50%, -50% );
 }
 
@@ -92,8 +94,8 @@
 
 .editor-featured-image__preview.has-assigned-height .spinner-line {
 	position: absolute;
-		top: 50%;
-		left: 50%;
+	top: 50%;
+	left: 50%;
 	transform: translate( -50%, -50% );
 }
 
@@ -115,7 +117,7 @@
 	line-height: 0;
 	padding: 4px;
 	border: none;
-	background: rgba(0, 0, 0, 0.2);
+	background: rgba( 0, 0, 0, 0.2 );
 	border-radius: 50%;
 
 	&:hover {

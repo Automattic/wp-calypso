@@ -1,3 +1,5 @@
+/** @format */
+
 .empty-content {
 	max-width: 960px;
 	overflow: hidden;
@@ -5,7 +7,7 @@
 	padding-top: 20px;
 	text-align: center;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		padding-top: 10px;
 		margin-left: 15px;
 		margin-right: 15px;
@@ -23,7 +25,7 @@
 	font-size: 34px;
 	font-weight: 300;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		font-size: 24px;
 	}
 }
@@ -34,7 +36,7 @@
 	font-weight: 300;
 	margin-bottom: 40px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		font-size: 16px;
 	}
 }
@@ -51,7 +53,7 @@
 	.empty-content__illustration {
 		margin-top: -130px;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			margin-top: -80px;
 		}
 	}
@@ -59,7 +61,7 @@
 	.empty-content__title {
 		font-size: 30px;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			font-size: 24px;
 		}
 	}

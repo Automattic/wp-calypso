@@ -1,3 +1,5 @@
+/** @format */
+
 .reviews__placeholder {
 	display: inline-block;
 	width: 100%;
@@ -73,7 +75,7 @@
 		align-items: center;
 		flex-flow: row wrap;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			flex-flow: initial;
 		}
 	}
@@ -85,7 +87,7 @@
 		.reviews__action-collapse .gridicon {
 			fill: $gray;
 			transform: rotate( 180deg );
-			transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
+			transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;
 		}
 
 		.reviews__action-collapse:hover .gridicon {
@@ -126,7 +128,7 @@
 		font-weight: 600;
 
 		.gridicon {
-			transform: translateX(4px) translateY(4px);
+			transform: translateX( 4px ) translateY( 4px );
 		}
 	}
 
@@ -160,7 +162,7 @@
 			display: block;
 		}
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			display: block;
 		}
 	}
@@ -170,7 +172,7 @@
 		margin-left: 16px;
 		width: calc( 100% - 157px );
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 150px;
 			margin-left: 8px;
 		}
@@ -187,7 +189,7 @@
 		margin-right: 16px;
 		margin-top: 0;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			order: 0;
 			width: calc( 100% - 304px );
 			margin-left: 8px;
@@ -204,7 +206,7 @@
 		flex-shrink: 0;
 		margin-right: 0;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			height: 32px;
 			width: 32px;
 			margin-right: 8px;
@@ -263,7 +265,7 @@
 			font-weight: normal;
 			margin-left: 4px;
 
-			@include breakpoint( ">960px" ) {
+			@include breakpoint( '>960px' ) {
 				display: inline;
 			}
 		}
@@ -295,7 +297,6 @@
 		}
 	}
 }
-
 
 .reviews__expanded-card-details-wrap {
 	border-left: 4px solid $gray-lighten-30;

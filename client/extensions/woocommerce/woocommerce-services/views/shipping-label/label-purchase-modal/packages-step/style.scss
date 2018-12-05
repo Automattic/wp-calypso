@@ -1,3 +1,5 @@
+/** @format */
+
 .packages-step__dialog-package-option {
 	font-weight: normal;
 	margin-bottom: 10px;
@@ -12,7 +14,7 @@
 	padding-bottom: 24px;
 	flex-direction: column;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -22,7 +24,7 @@
 	padding: 0 0 24px 0;
 	flex-shrink: 0;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 		width: 35%;
 		padding: 0 24px 0 0;
@@ -133,7 +135,8 @@
 	margin-right: 15px;
 }
 
-@-moz-document url-prefix() { /* fix the width in Firefox */
+@-moz-document url-prefix() {
+	/* fix the width in Firefox */
 	.packages-step__package-weight {
 		width: 135px;
 		margin-right: 65px;

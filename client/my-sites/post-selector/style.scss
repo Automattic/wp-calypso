@@ -1,3 +1,5 @@
+/** @format */
+
 .post-selector {
 	position: relative;
 	background-color: $white;
@@ -19,7 +21,7 @@
 	padding: 8px;
 }
 
-.post-selector__search input[type="search"] {
+.post-selector__search input[type='search'] {
 	right: 0;
 	width: 100%;
 	height: 35px;
@@ -31,8 +33,8 @@
 	-webkit-appearance: none;
 }
 
-input[type=radio].post-selector__input,
-input[type=checkbox].post-selector__input {
+input[type='radio'].post-selector__input,
+input[type='checkbox'].post-selector__input {
 	margin-top: 4px;
 
 	& + label {
@@ -47,7 +49,7 @@ input[type=checkbox].post-selector__input {
 	}
 }
 
-input[type=checkbox].post-selector__input {
+input[type='checkbox'].post-selector__input {
 	margin-right: 8px;
 }
 

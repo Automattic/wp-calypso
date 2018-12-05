@@ -1,3 +1,5 @@
+/** @format */
+
 .woocommerce-colophon {
 	margin-top: 40px;
 	text-align: center;
@@ -16,8 +18,7 @@
 		margin-left: 4px;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-bottom: 24px;
 	}
 }
-

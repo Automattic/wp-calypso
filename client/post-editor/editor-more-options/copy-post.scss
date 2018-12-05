@@ -1,3 +1,5 @@
+/** @format */
+
 // Copy Post Dialog
 .editor-more-options__copy-post-select-dialog .dialog__content {
 	min-width: 40vw;
@@ -7,7 +9,7 @@
 	margin-bottom: 16px;
 }
 
-@include breakpoint( "<660px" ) {
+@include breakpoint( '<660px' ) {
 	.editor-more-options__copy-post-select-dialog {
 		width: 90%;
 	}

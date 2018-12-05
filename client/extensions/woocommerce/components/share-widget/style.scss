@@ -1,5 +1,7 @@
+/** @format */
+
 .share-widget__container {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding-top: 48px;
 	}
 
@@ -15,7 +17,7 @@
 			margin: 0 4px;
 
 			a {
-				transition: transform ease-in-out .15s;
+				transition: transform ease-in-out 0.15s;
 				display: block;
 
 				&:hover {

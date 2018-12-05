@@ -1,5 +1,7 @@
+/** @format */
+
 // Core CSS Dependencies
-@import 'assets/stylesheets/shared/utils';      // utilities that are used by all CSS but don't produce any code
+@import 'assets/stylesheets/shared/utils'; // utilities that are used by all CSS but don't produce any code
 
 .woocommerce {
 	@import 'app/dashboard/style';
@@ -69,7 +71,7 @@
 	.main {
 		padding-top: 35px;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			padding-top: 72px;
 		}
 	}
@@ -77,7 +79,7 @@
 	.woocommerce__placeholder {
 		padding-top: 32px;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			padding-top: 16px;
 		}
 	}
@@ -87,7 +89,7 @@
 		height: 70vh;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		&.store-stats {
 			.stats-navigation .section-nav {
 				margin-top: 0;
@@ -101,7 +103,7 @@
 	.global-notices {
 		z-index: z-index( 'root', '.is-section-woocommerce .global-notices' );
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			top: 115px;
 		}
 	}
@@ -110,7 +112,7 @@
 		margin: 35px 200px 0 0;
 		max-width: initial;
 
-		@media( max-width: 660px ) {
+		@media ( max-width: 660px ) {
 			margin: 0px;
 		}
 	}
@@ -142,7 +144,7 @@
 		}
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-top: 47px;
 		padding-top: 4px;
 
@@ -163,7 +165,7 @@
 		}
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		.site__title {
 			margin-top: 8px;
 		}
@@ -175,11 +177,11 @@
 	.sidebar__menu {
 		margin-top: 0;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			border-top: 1px solid darken( $sidebar-bg-color, 10% );
 		}
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			margin-top: -4px;
 		}
 
@@ -216,7 +218,7 @@
 }
 
 .is-section-woocommerce.focus-sidebar {
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		.products__form {
 			display: none;
 		}
