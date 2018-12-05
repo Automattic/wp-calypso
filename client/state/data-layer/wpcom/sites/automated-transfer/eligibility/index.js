@@ -128,16 +128,12 @@ export const requestAutomatedTransferEligibility = action =>
 export const updateAutomatedTransferEligibility = ( { siteId }, data ) =>
 	withAnalytics( trackEligibility( data ), updateEligibility( siteId, fromApi( data ) ) );
 
-export const throwRequestError = ( action, error ) => {
-	throw new Error( error );
-};
-
 registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/eligibility/index.js', {
 	[ AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestAutomatedTransferEligibility,
 			onSuccess: updateAutomatedTransferEligibility,
-			onError: throwRequestError,
+			onError: () => {}, // noop
 		} ),
 	],
 } );

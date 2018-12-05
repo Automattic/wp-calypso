@@ -9,7 +9,6 @@
 import {
 	requestAutomatedTransferEligibility,
 	updateAutomatedTransferEligibility,
-	throwRequestError,
 } from 'state/data-layer/wpcom/sites/automated-transfer/eligibility';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
@@ -38,15 +37,5 @@ describe( 'updateAutomatedTransferEligibility', () => {
 			type: 'AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE',
 			siteId: 2916284,
 		} );
-	} );
-} );
-
-// TODO: Find out why we're throwing
-describe( 'throwRequestError', () => {
-	test( 'should throw an error', () => {
-		const testError = () => {
-			throwRequestError( {}, {}, {} );
-		};
-		expect( testError ).toThrowError();
 	} );
 } );
