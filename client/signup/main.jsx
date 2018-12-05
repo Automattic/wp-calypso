@@ -595,7 +595,7 @@ class Signup extends React.Component {
 	}
 
 	shouldShowSiteMockups() {
-		if ( this.props.flowName !== 'onboarding' ) {
+		if ( this.props.flowName !== 'onboarding-dev' ) {
 			return false;
 		}
 		const stepsToShowOn = [ 'site-type', 'site-topic', 'about', 'site-information', 'domains' ];
