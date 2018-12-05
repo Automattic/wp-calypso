@@ -29,20 +29,25 @@ export default function refreshRegistrations() {
 
 	forEach( extensions, ( settings, name ) => {
 		const available = get( extensionAvailability, [ name, 'available' ] );
-
 		if ( has( settings, [ 'render' ] ) ) {
 			// If the extension has a `render` method, it's not a block but a plugin
+			const pluginName = `jetpack-${ name }`;
+
 			if ( available ) {
-				registerPlugin( name );
-			} else if ( getPlugin( name ) ) {
+				registerPlugin( pluginName );
+			} else if ( getPlugin( pluginName ) ) {
 				// Registered, but no longer available
-				unregisterPlugin( name );
+				unregisterPlugin( pluginName );
 			}
-		} else if ( available ) {
-			registerBlockType( name, settings );
-		} else if ( getBlockType( name ) ) {
-			// Registered, but no longer available
-			unregisterBlockType( name );
+		} else {
+			const blockName = `jetpack-/${ name }`;
+
+			if ( available ) {
+				registerBlockType( blockName, settings );
+			} else if ( getBlockType( blockName ) ) {
+				// Registered, but no longer available
+				unregisterBlockType( blockName );
+			}
 		}
 	} );
 }
