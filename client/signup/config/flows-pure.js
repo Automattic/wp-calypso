@@ -94,14 +94,14 @@ export function generateFlows( {
 
 		main: {
 			steps: [ 'user', 'about', 'domains', 'plans' ],
-			destination: getSiteDestination,
+			destination: getChecklistDestination,
 			description: 'The current best performing flow in AB tests',
 			lastModified: '2018-10-16',
 		},
 
 		onboarding: {
 			steps: [ 'user', 'site-type', 'site-topic', 'site-title', 'domains', 'plans' ],
-			destination: getSiteDestination,
+			destination: getChecklistDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2019-01-24',
 		},
@@ -131,7 +131,7 @@ export function generateFlows( {
 				'domains-with-preview',
 				'plans',
 			],
-			destination: getSiteDestination,
+			destination: getChecklistDestination,
 			description: 'A temporary flow for holding under-development steps',
 			lastModified: '2019-01-10',
 		},
@@ -165,7 +165,7 @@ export function generateFlows( {
 
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
-			destination: getPostsDestination,
+			destination: getChecklistDestination,
 			description: 'Signup flow for desktop app',
 			lastModified: '2018-01-24',
 		},
