@@ -17,9 +17,10 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { EDITOR_START } from 'state/action-types';
-import { initGutenberg } from './init';
-import { requestFromUrl } from 'state/data-getters';
+import { initGutenberg, applyJetpackBlockAvailability } from './init';
+import { requestFromUrl, requestGutenbergBlockAvailability } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
+import { getSiteFragment } from 'lib/route';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -95,6 +96,21 @@ export const loadTranslations = ( context, next ) => {
 	} );
 };
 
+export const loadGutenbergBlocksAvailability = async ( context, next ) => {
+	const { path } = context;
+	const siteFragment = getSiteFragment( path );
+
+	waitForData( {
+		blockAvailability: () => requestGutenbergBlockAvailability( siteFragment ),
+	} ).then( ( { blockAvailability } ) => {
+		if ( 'success' === blockAvailability.state && blockAvailability.data ) {
+			context.blockAvailability = blockAvailability.data;
+		}
+
+		next();
+	} );
+};
+
 function waitForSelectedSiteId( context ) {
 	return new Promise( resolve => {
 		const unsubscribe = context.store.subscribe( () => {
@@ -132,6 +148,8 @@ export const post = async ( context, next ) => {
 	context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
 	const GutenbergEditor = initGutenberg( userId, siteSlug );
+
+	applyJetpackBlockAvailability( context.blockAvailability );
 
 	context.primary = (
 		<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />

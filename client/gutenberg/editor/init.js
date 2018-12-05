@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { once } from 'lodash';
+import { flow, has, map, once, partialRight, partition } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -23,6 +23,42 @@ const debug = debugFactory( 'calypso:gutenberg' );
 const WPCOM_UNSUPPORTED_CORE_BLOCKS = [
 	'core/file', // see D19851 for more details.
 ];
+
+/* eslint-disable prefer-const */
+// this is indeed reasigned when unregistering blocks on applyJetpackBlockAvailability
+let blockCache = {};
+
+const partitionBlocks = flow(
+	partialRight( map, ( value, key ) => {
+		return { name: key, ...value };
+	} ),
+	partialRight( partition, 'available' ),
+	partialRight( map, blocks => map( blocks, ( { name } ) => name ) )
+);
+
+export const applyJetpackBlockAvailability = blockAvailability => {
+	if ( ! isEnabled( 'gutenberg/block/jetpack-preset' ) || ! blockAvailability ) {
+		return;
+	}
+
+	const { getBlockType, registerBlockType, unregisterBlockType } = require( '@wordpress/blocks' );
+
+	const [ availableBlocksNames, unavailableBlocksNames ] = partitionBlocks( blockAvailability );
+
+	availableBlocksNames.forEach( name => {
+		const blockFullName = `jetpack/${ name }`;
+		if ( has( blockCache, blockFullName ) ) {
+			registerBlockType( blockFullName, blockCache[ blockFullName ] );
+			delete blockCache[ blockFullName ];
+		}
+	} );
+
+	unavailableBlocksNames.forEach( name => {
+		const blockFullName = `jetpack/${ name }`;
+		blockCache[ blockFullName ] = getBlockType( blockFullName );
+		unregisterBlockType( blockFullName );
+	} );
+};
 
 const loadA8CExtensions = () => {
 	// This will also load required TinyMCE plugins via Calypso's TinyMCE component
