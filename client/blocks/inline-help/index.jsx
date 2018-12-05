@@ -97,14 +97,12 @@ class InlineHelp extends Component {
 		debug( 'showing inline help.' );
 		this.props.recordTracksEvent( 'calypso_inlinehelp_show' );
 		this.props.showInlineHelpPopover();
-		// this.setState( { showInlineHelp: true } );
 	};
 
 	closeInlineHelp = () => {
 		debug( 'hiding inline help.' );
 		this.props.recordTracksEvent( 'calypso_inlinehelp_close' );
 		this.props.hideInlineHelpPopover();
-		// this.setState( { showInlineHelp: false } );
 	};
 
 	handleHelpButtonClicked = () => {
