@@ -7,6 +7,13 @@ import { Component } from 'react';
 
 export const asyncLoader = ( { promises, loading, success, failure } ) =>
 	class AsyncLoader extends Component {
+		state = {
+			results: Object.keys( promises ).reduce(
+				( output, key ) => ( { ...output, [ key ]: null } ),
+				{}
+			),
+		};
+
 		componentDidMount() {
 			// here we want to make sure all promises "resolve" even when
 			// they reject because Promise.all will return a single value
@@ -32,7 +39,7 @@ export const asyncLoader = ( { promises, loading, success, failure } ) =>
 		}
 
 		render() {
-			const { results, successful } = this.state || {};
+			const { results, successful } = this.state;
 
 			if ( true === successful ) {
 				return success( results );
@@ -42,6 +49,6 @@ export const asyncLoader = ( { promises, loading, success, failure } ) =>
 				return failure( results );
 			}
 
-			return loading();
+			return loading( results );
 		}
 	};

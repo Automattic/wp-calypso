@@ -130,7 +130,11 @@ export const post = async ( context, next ) => {
 		promises: {
 			translations: loadTranslations( context.store ),
 		},
-		loading: () => <div>Loading…</div>,
+		loading: ( { translations } ) => (
+			<ul>
+				<li>{ translations ? '✅' : '⏳' } Loading translations…</li>
+			</ul>
+		),
 		success: () => (
 			<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />
 		),
