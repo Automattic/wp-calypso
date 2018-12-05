@@ -49,8 +49,7 @@ class SiteMockups extends Component {
 	 */
 	formatAddress( address ) {
 		const parts = address.split( '\n' );
-		parts.pop();
-		return parts.join( ', ' );
+		return parts.slice( 0, 2 ).join( ', ' );
 	}
 
 	render() {

@@ -60,6 +60,9 @@ class SiteTopicStep extends Component {
 
 	onSiteTopicChange = value => {
 		this.setState( { siteTopicValue: value } );
+		if ( this.props.flowName === 'onboarding-dev' ) {
+			this.props.setSiteTopic( value );
+		}
 	};
 
 	onSubmit = event => {
@@ -168,6 +171,10 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 		);
 
 		goToNextStep( flowName );
+	},
+
+	setSiteTopic: siteTopic => {
+		dispatch( setSiteTopic( siteTopic ) );
 	},
 } );
 

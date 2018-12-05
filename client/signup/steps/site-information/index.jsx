@@ -53,6 +53,11 @@ class SiteInformation extends Component {
 
 	handleInputChange = ( { target: { name, value } } ) => {
 		this.setState( { [ name ]: value } );
+		if ( this.props.flowName === 'onboarding-dev' ) {
+			setTimeout( () => {
+				this.props.updateStep( this.state );
+			}, 50 );
+		}
 	};
 
 	handleSubmit = event => {
@@ -187,39 +192,48 @@ export default connect(
 			siteType,
 		};
 	},
-	( dispatch, ownProps ) => ( {
-		submitStep: ( { name, address, email, phone } ) => {
-			const siteTitle = trim( name );
-			const siteTitleTracksAttribute = siteTitle || 'N/A';
-			address = trim( address );
-			email = trim( email );
-			phone = trim( phone );
-			dispatch( setSiteTitle( siteTitle ) );
+	( dispatch, ownProps ) => {
+		function updateStep( { name, address, email, phone } ) {
+			dispatch( setSiteTitle( name ) );
 			dispatch( setSiteInformation( { address, email, phone } ) );
-			dispatch(
-				recordTracksEvent( 'calypso_signup_actions_submit_site_information', {
-					site_title: siteTitleTracksAttribute,
-					address,
-					email,
-					phone,
-				} )
-			);
+		}
 
-			// Create site
-			SignupActions.submitSignupStep(
-				{
-					processingMessage: i18n.translate( 'Populating your contact information.' ),
-					stepName: ownProps.stepName,
-				},
-				[],
-				{
-					siteTitle,
-					address,
-					email,
-					phone,
-				}
-			);
-			ownProps.goToNextStep( ownProps.flowName );
-		},
-	} )
+		return {
+			submitStep: ( { name, address, email, phone } ) => {
+				const siteTitle = trim( name );
+				const siteTitleTracksAttribute = siteTitle || 'N/A';
+				address = trim( address );
+				email = trim( email );
+				phone = trim( phone );
+
+				updateStep( { name: siteTitle, address, email, phone } );
+
+				dispatch(
+					recordTracksEvent( 'calypso_signup_actions_submit_site_information', {
+						site_title: siteTitleTracksAttribute,
+						address,
+						email,
+						phone,
+					} )
+				);
+
+				// Create site
+				SignupActions.submitSignupStep(
+					{
+						processingMessage: i18n.translate( 'Populating your contact information.' ),
+						stepName: ownProps.stepName,
+					},
+					[],
+					{
+						siteTitle,
+						address,
+						email,
+						phone,
+					}
+				);
+				ownProps.goToNextStep( ownProps.flowName );
+			},
+			updateStep,
+		};
+	}
 )( localize( SiteInformation ) );
