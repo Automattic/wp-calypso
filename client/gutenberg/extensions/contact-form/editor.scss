@@ -93,8 +93,8 @@ input.components-text-control__input {
 }
 
 .jetpack-field {
-
-	input[type="text"].components-text-control__input {
+	// done to increase elevate specificity in order to overwrite calypso styles
+	.components-text-control__input.components-text-control__input {
 			width: 100%;
 	}
 	.components-text-control__input,
@@ -150,8 +150,8 @@ input.components-text-control__input {
 		box-shadow: none;
 	}
 }
-
-.jetpack-option__remove.components-icon-button {
+// Duplicated to elevate specificity in order to overwrite calypso styles
+.jetpack-option__remove.jetpack-option__remove {
 	padding: 6px;
 	vertical-align: bottom;
 }
