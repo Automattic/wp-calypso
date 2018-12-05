@@ -53,4 +53,6 @@ cached-requests.json
 /client/gutenberg/extensions/**/build
 
 # package output
-/packages/**/dist/**
+/packages/*/package-lock.json
+/packages/*/npm-shrinkwrap.json
+/packages/*/dist/

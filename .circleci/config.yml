@@ -211,7 +211,7 @@ jobs:
             # Ensure this does not cause job failure (see `|| exit 0`)
             FILES_TO_LINT=$(
               git diff --name-only --diff-filter=d origin/master... \
-                | grep -E '^(client|server)'                        \
+                | grep -E '^(client/|server/|packages/)'            \
                 | grep -E '\.jsx?$'
             ) || exit 0
 
