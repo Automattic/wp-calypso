@@ -98,6 +98,12 @@ $gutenberg-theme-toggle: #11a0d2;
 		.editor-post-publish-panel {
 			top: 0;
 		}
+
+		.components-notice-list {
+			@media (max-width: 600px) {
+				top: auto;
+			}
+		}
 	}
 
 	.edit-post-visual-editor .editor-post-title__block > div {
