@@ -15,19 +15,6 @@ function normalizeVerticalName( name ) {
 		.replace( /\s/g, '-' );
 }
 
-const defaultVerticalData = {
-	vertical_name: 'Default',
-	vertical_id: 'a8c.0',
-	preview: {
-		title: 'My awesome WordPress site',
-		cover_image:
-			'https://images.unsplash.com/photo-1542325823-53124d9c5cbe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=5441d8034187fec24a8d9ea0d5e634e6&auto=format&fit=crop&w=3134&q=80',
-		cover_image_text: 'Imagine the Synergy',
-		content:
-			'<h2>The Journey Begins</h2><div class="site-mockup__columns"><div class="site-mockup__column"><img class="site-mockup__block-image" src="https://images.unsplash.com/photo-1543270915-a8381a52e201?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=ac686dc4d32458c9afcf6ae578501b6e&auto=format&fit=crop&w=660&h=440&q=60" /></div><div class="site-mockup__column"><p>Here is some content that will make you change your life.</p></div></div>',
-	},
-};
-
 const verticalList = [
 	{
 		vertical_name: 'Mexican Restaurant',
@@ -46,7 +33,7 @@ const verticalList = [
 
 export function getVerticalData( vertical ) {
 	if ( ! vertical ) {
-		return defaultVerticalData.preview;
+		return {};
 	}
 	vertical = normalizeVerticalName( vertical );
 	// this probably needs to be memoized
@@ -54,5 +41,5 @@ export function getVerticalData( vertical ) {
 		return normalizeVerticalName( v.vertical_name ) === vertical;
 	} );
 	// todo deal with children that have no preview, use the parent preview
-	return verticalData ? verticalData.preview : defaultVerticalData.preview;
+	return verticalData ? verticalData.preview : {};
 }

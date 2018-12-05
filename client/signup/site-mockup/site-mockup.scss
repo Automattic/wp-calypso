@@ -303,3 +303,15 @@
 	display: block;
 	width: 100%;
 }
+
+.site-mockup__outline {
+	margin-bottom: 24px;
+	height: 150px;
+	border: 2px dashed lighten( $gray, 20 );
+
+	&.is-title {
+		max-width: 480px;
+		margin: 24px auto;
+		height: 40px;
+	}
+}
