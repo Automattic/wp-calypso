@@ -6,7 +6,7 @@
 import React from 'react';
 import debug from 'debug';
 import config, { isEnabled } from 'config';
-import { has, uniqueId } from 'lodash';
+import { has, set, uniqueId } from 'lodash';
 import { setLocaleData } from '@wordpress/i18n';
 
 /**
@@ -98,7 +98,7 @@ export const loadGutenbergBlockAvailability = async ( context, next ) => {
 		blockAvailability: () => requestGutenbergBlockAvailability( siteFragment ),
 	} ).then( ( { blockAvailability } ) => {
 		if ( 'success' === blockAvailability.state && blockAvailability.data ) {
-			window.Jetpack_Editor_Initial_State.available_blocks = blockAvailability.data;
+			set( window, [ 'Jetpack_Editor_Initial_State', 'available_blocks' ], blockAvailability.data );
 		}
 
 		next();
