@@ -37,6 +37,11 @@ exports[`Head should render custom title 1`] = `
     name="referrer"
   />
   <link
+    as="document"
+    href="https://public-api.wordpress.com/wp-admin/rest-proxy/?v=2.0"
+    rel="prefetch"
+  />
+  <link
     href="https://arbitrary-favicon-url"
     rel="shortcut icon"
     sizes="16x16 32x32"
@@ -198,6 +203,11 @@ exports[`Head should render default title 1`] = `
   <meta
     content="origin"
     name="referrer"
+  />
+  <link
+    as="document"
+    href="https://public-api.wordpress.com/wp-admin/rest-proxy/?v=2.0"
+    rel="prefetch"
   />
   <link
     href="https://arbitrary-favicon-url"
