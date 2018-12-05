@@ -13,7 +13,7 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 	}
 
 	//We do want calypsoify flows for Atomic sites
-	if ( isSiteAutomatedTransfer( siteId ) ) {
+	if ( isSiteAutomatedTransfer( state, siteId ) ) {
 		return true;
 	}
 
