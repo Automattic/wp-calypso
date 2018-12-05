@@ -21,6 +21,7 @@ import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { FEATURE_CUSTOM_DOMAIN } from 'lib/plans/constants';
 import { isFreePlan } from 'lib/products-values';
+import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
 function getQueryObject( site, siteSlug, vendor ) {
 	if ( ! site || ! siteSlug ) {
@@ -126,7 +127,7 @@ const ConnectedDomainTip = connect( ( state, ownProps ) => {
 } )( localize( DomainTip ) );
 
 ConnectedDomainTip.defaultProps = {
-	vendor: 'domainsbot',
+	vendor: getSuggestionsVendor(),
 };
 
 export default ConnectedDomainTip;
