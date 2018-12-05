@@ -349,6 +349,7 @@ export class Checkout extends React.Component {
 		let renewalItem, displayModeParam;
 		const {
 			cart,
+			redirectTo,
 			selectedSite,
 			selectedSiteSlug,
 			transaction: {
@@ -455,8 +456,12 @@ export class Checkout extends React.Component {
 			displayModeParam = 'd=concierge';
 		}
 
-		const queryParam = displayModeParam ? `?${ displayModeParam }` : '';
 
+		if ( redirectTo ) {
+			return redirectTo;
+		}
+
+		const queryParam = displayModeParam ? `?${ displayModeParam }` : '';
 		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
 			if ( this.props.redirectToPageBuilder ) {
 				return getEditHomeUrl( selectedSiteSlug );
