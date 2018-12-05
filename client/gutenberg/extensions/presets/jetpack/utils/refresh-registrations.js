@@ -27,8 +27,8 @@ export default function refreshRegistrations() {
 		return;
 	}
 
-	forEach( extensionAvailability, ( { available }, name ) => {
-		const settings = get( extensions, [ name ] );
+	forEach( extensions, ( settings, name ) => {
+		const available = get( extensionAvailability, [ name, 'available' ] );
 
 		if ( has( settings, [ 'render' ] ) ) {
 			// If the extension has a `render` method, it's not a block but a plugin
