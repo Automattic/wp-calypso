@@ -8,7 +8,6 @@ import { flow, has, map, once, partialRight, partition } from 'lodash';
  * WordPress dependencies
  */
 import { use, plugins, dispatch } from '@wordpress/data';
-import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -46,6 +45,8 @@ export const applyGutenbergBlockAvailability = blockAvailability => {
 	if ( ! isEnabled( 'gutenberg/block/jetpack-preset' ) || ! blockAvailability ) {
 		return;
 	}
+
+	const { getBlockType, registerBlockType, unregisterBlockType } = require( '@wordpress/blocks' );
 
 	const [ availableBlocksNames, unavailableBlocksNames ] = partitionBlocks( blockAvailability );
 
@@ -90,7 +91,7 @@ export const initGutenberg = once( ( userId, siteSlug ) => {
 	// Avoid using top level imports for this since they will statically
 	// initialize core-data before required plugins are loaded.
 	const { registerCoreBlocks } = require( '@wordpress/block-library' );
-	const { setFreeformContentHandlerName } = require( '@wordpress/blocks' );
+	const { setFreeformContentHandlerName, unregisterBlockType } = require( '@wordpress/blocks' );
 
 	debug( 'Registering core blocks' );
 	registerCoreBlocks();

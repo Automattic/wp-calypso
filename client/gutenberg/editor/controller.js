@@ -17,12 +17,10 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { EDITOR_START } from 'state/action-types';
-import { initGutenberg /*applyGutenbergBlockAvailability*/ } from './init';
+import { initGutenberg, applyGutenbergBlockAvailability } from './init';
 import { requestFromUrl, requestGutenbergBlockAvailability } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 import { getSiteFragment } from 'lib/route';
-import refreshRegistrations from 'gutenberg/extensions/presets/jetpack/utils/refresh-registrations';
-import { JETPACK_DATA_PATH } from 'gutenberg/extensions/presets/jetpack/utils/get-jetpack-data';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -106,10 +104,7 @@ export const loadGutenbergBlockAvailability = async ( context, next ) => {
 		blockAvailability: () => requestGutenbergBlockAvailability( siteFragment ),
 	} ).then( ( { blockAvailability } ) => {
 		if ( 'success' === blockAvailability.state && blockAvailability.data ) {
-			// context.blockAvailability = blockAvailability.data;
-			window[ JETPACK_DATA_PATH ] = {
-				available_blocks: blockAvailability.data,
-			};
+			context.blockAvailability = blockAvailability.data;
 		}
 
 		next();
@@ -154,8 +149,7 @@ export const post = async ( context, next ) => {
 
 	const GutenbergEditor = initGutenberg( userId, siteSlug );
 
-	// applyGutenbergBlockAvailability( context.blockAvailability );
-	refreshRegistrations();
+	applyGutenbergBlockAvailability( context.blockAvailability );
 
 	context.primary = (
 		<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />
