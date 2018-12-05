@@ -1,3 +1,5 @@
+/** @format */
+
 .sidebar {
 	display: flex;
 	flex-direction: column;
@@ -157,8 +159,8 @@ form.sidebar__button {
 	height: 24px;
 	margin-right: 8px;
 	line-height: 18px;
-	background-color: $white;
-	color: $gray-darken-20;
+	background-color: var( --sidebar-background );
+	color: var( --sidebar-color );
 	font-size: 12px;
 	font-weight: 600;
 	border-radius: 3px;
