@@ -98,7 +98,7 @@ const getRatesStatus = ( { retrievalInProgress, errors, available, form } ) => {
 const showCheckoutShippingInfo = props => {
 	const { shippingMethod, shippingCost, translate } = props;
 
-	// Use the DOM in order to convert HTML entities into text
+	// Use a temporary HTML element in order to let the DOM API convert HTML entities into text
 	const shippingMethodDiv = document.createElement( 'div' );
 	shippingMethodDiv.innerHTML = shippingMethod;
 	const decodedShippingMethod = shippingMethodDiv.textContent;
