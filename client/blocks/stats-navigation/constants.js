@@ -30,7 +30,7 @@ export const navItems = {
 	},
 	wordads: {
 		label: 'Ads',
-		path: '/ads/stats',
+		path: '/stats/ads',
 		showIntervals: true,
 	},
 	googleMyBusiness: {

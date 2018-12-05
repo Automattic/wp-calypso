@@ -106,7 +106,7 @@ function getSiteFilters( siteId ) {
 		},
 		{
 			title: i18n.translate( 'WordAds - Days' ),
-			path: '/ads/stats/day/' + siteId,
+			path: '/stats/ads/day/' + siteId,
 			period: 'day',
 		},
 		{
@@ -157,7 +157,7 @@ export default {
 		context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
 
 		if ( siteFragment ) {
-			page.redirect( `/ads/stats/day/${ siteFragment }` );
+			page.redirect( `/stats/ads/day/${ siteFragment }` );
 		} else {
 			page.redirect( getStatsDefaultSitePage( siteFragment ) );
 		}
