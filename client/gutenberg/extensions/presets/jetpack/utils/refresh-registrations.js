@@ -26,6 +26,7 @@ export default function refreshRegistrations() {
 	}
 
 	forEach( extensions, ( { available }, name ) => {
+		// TODO: Discern between blocks and plugins, use [un]registerPlugin for the latter
 		if ( available ) {
 			// TODO: Need settings. Probably export from individual block files
 			registerBlockType( name, settings );
