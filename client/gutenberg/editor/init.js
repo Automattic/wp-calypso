@@ -25,8 +25,8 @@ const WPCOM_UNSUPPORTED_CORE_BLOCKS = [
 	'core/file', // see D19851 for more details.
 ];
 
-/* eslint-disable prefer-const */
 // this is indeed reasigned when unregistering blocks on applyGutenbergBlockAvailability
+/* eslint-disable-next-line prefer-const */
 let blockCache = {};
 
 const partitionBlocks = flow(
