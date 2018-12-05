@@ -118,29 +118,31 @@ export const post = async ( context, next ) => {
 	const postType = determinePostType( context );
 	const isDemoContent = ! postId && has( context.query, 'gutenberg-demo' );
 
+	const makeEditor = siteId => {
+		const state = context.store.getState();
+		const siteSlug = getSelectedSiteSlug( state );
+		const userId = getCurrentUserId( state );
+
+		//set postId on state.ui.editor.postId, so components like editor revisions can read from it
+		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
+
+		const Editor = initGutenberg( userId, siteSlug );
+
+		return () => <Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />;
+	};
+
 	const EditorLoader = asyncLoader( {
 		promises: {
-			siteId: waitForSiteId( context.store ),
+			Editor: waitForSiteId( context.store ).then( makeEditor ),
 			translations: loadTranslations( context.store ),
 		},
-		loading: ( { siteId, translations } ) => (
+		loading: ( { Editor, translations } ) => (
 			<ul>
-				<li>{ siteId ? '✅' : '⏳' } Loading current site…</li>
+				<li>{ Editor ? '✅' : '⏳' } Loading current site…</li>
 				<li>{ translations ? '✅' : '⏳' } Loading translations…</li>
 			</ul>
 		),
-		success: ( { siteId } ) => {
-			const state = context.store.getState();
-			const siteSlug = getSelectedSiteSlug( state );
-			const userId = getCurrentUserId( state );
-
-			//set postId on state.ui.editor.postId, so components like editor revisions can read from it
-			context.store.dispatch( { type: EDITOR_START, siteId, postId } );
-
-			const GutenbergEditor = initGutenberg( userId, siteSlug );
-
-			return <GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />;
-		},
+		success: ( { Editor } ) => <Editor />,
 		failure: () => <div>Couldn't load everything - try hitting reload in your browser…</div>,
 	} );
 
