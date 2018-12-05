@@ -13,6 +13,7 @@ import { setLocaleData } from '@wordpress/i18n';
  * Internal dependencies
  */
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import refreshRegistrations from '../extensions/presets/jetpack/utils/refresh-registrations';
 import { asyncLoader } from './async-loader';
 import { EDITOR_START } from 'state/action-types';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -137,6 +138,8 @@ export const post = async ( context, next ) => {
 		success: ( { Editor } ) => <Editor />,
 		failure: () => <div>Couldn't load everything - try hitting reload in your browser…</div>,
 	} );
+
+	refreshRegistrations();
 
 	context.primary = <EditorLoader />;
 
