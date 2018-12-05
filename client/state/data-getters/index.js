@@ -281,3 +281,17 @@ export const requestTaxRate = ( countryCode, postalCode, httpOptions ) => {
 		...optionsWithDefaults,
 	} );
 };
+
+export const requestGutenbergBlockAvailability = siteSlug =>
+	requestHttpData(
+		`gutenberg-block-availability-${ siteSlug }`,
+		http(
+			{
+				path: `/sites/${ siteSlug }/gutenberg/available-extensions`,
+				method: 'GET',
+				apiNamespace: 'wpcom/v2',
+			},
+			{}
+		),
+		{ fromApi: () => data => [ [ `gutenberg-block-availability-${ siteSlug }`, data ] ] }
+	);

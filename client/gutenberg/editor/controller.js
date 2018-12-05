@@ -13,13 +13,14 @@ import { setLocaleData } from '@wordpress/i18n';
  * Internal dependencies
  */
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { asyncLoader } from './async-loader';
+import { EDITOR_START } from 'state/action-types';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { EDITOR_START } from 'state/action-types';
-import { requestFromUrl } from 'state/data-getters';
-import { waitForData } from 'state/data-layer/http-data';
-import { asyncLoader } from './async-loader';
 import { Placeholder } from './placeholder';
+import { requestFromUrl, requestGutenbergBlockAvailability } from 'state/data-getters';
+import { waitForData } from 'state/data-layer/http-data';
+import { getSiteFragment } from 'lib/route';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -85,6 +86,21 @@ export const loadTranslations = store => {
 				setLocaleData( localeData, domain );
 			}
 		} );
+	} );
+};
+
+export const loadGutenbergBlockAvailability = async ( context, next ) => {
+	const { path } = context;
+	const siteFragment = getSiteFragment( path );
+
+	waitForData( {
+		blockAvailability: () => requestGutenbergBlockAvailability( siteFragment ),
+	} ).then( ( { blockAvailability } ) => {
+		if ( 'success' === blockAvailability.state && blockAvailability.data ) {
+			window.Jetpack_Editor_Initial_State.available_blocks = blockAvailability.data;
+		}
+
+		next();
 	} );
 };
 
