@@ -81,7 +81,10 @@
 			bottom: 0;
 			width: 15%;
 
-			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ) );
+			background: overflow-gradient(
+				$color: var( --sidebar-menu-a-first-child-after-background ),
+				$stop: 50%
+			);
 
 			@include breakpoint( '<660px' ) {
 				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
