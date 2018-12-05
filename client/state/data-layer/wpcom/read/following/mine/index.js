@@ -13,7 +13,7 @@ import {
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_PAGE,
 } from 'state/action-types';
-import { receiveFollows as receiveFollowsAction, syncComplete } from 'state/reader/follows/actions';
+import { receiveFollows, syncComplete } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
@@ -24,13 +24,14 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;
 
-export const requestPageAction = ( page = 1, number = ITEMS_PER_PAGE, meta = '' ) => ( {
+export const syncReaderFollowsPage = ( page = 1, number = ITEMS_PER_PAGE, meta = '' ) => ( {
 	type: READER_FOLLOWS_SYNC_PAGE,
 	payload: { page, meta, number },
 } );
 
 let syncingFollows = false;
 let seenSubscriptions = null;
+
 export const isSyncingFollows = () => syncingFollows;
 export const resetSyncingFollows = () => ( syncingFollows = false );
 
@@ -42,29 +43,28 @@ export function syncReaderFollows( store ) {
 	syncingFollows = true;
 	seenSubscriptions = new Set();
 
-	store.dispatch( requestPageAction( 1 ) );
+	store.dispatch( syncReaderFollowsPage( 1 ) );
 }
 
 export function requestPage( action ) {
-	return http( {
-		method: 'GET',
-		path: '/read/following/mine',
-		apiVersion: '1.2',
-		query: {
-			page: action.payload.page,
-			number: action.payload.number,
-			meta: action.payload.meta,
+	const { page, number, meta } = action.payload;
+
+	return http(
+		{
+			method: 'GET',
+			path: '/read/following/mine',
+			apiVersion: '1.2',
+			query: { page, number, meta },
 		},
-		onSuccess: action,
-		onError: action,
-	} );
+		action
+	);
 }
 
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
 
 export const receivePage = ( action, apiResponse ) => dispatch => {
 	if ( ! isValidApiResponse( apiResponse ) ) {
-		receiveError();
+		dispatch( receiveError() );
 		return;
 	}
 
@@ -78,20 +78,13 @@ export const receivePage = ( action, apiResponse ) => dispatch => {
 		totalCount = apiResponse.total_subscriptions;
 	}
 
-	dispatch(
-		receiveFollowsAction( {
-			follows,
-			totalCount,
-		} )
-	);
+	dispatch( receiveFollows( { follows, totalCount } ) );
 
-	forEach( follows, follow => {
-		seenSubscriptions.add( follow.feed_URL );
-	} );
+	forEach( follows, follow => seenSubscriptions.add( follow.feed_URL ) );
 
 	// Fetch the next page of subscriptions where applicable
 	if ( number > 0 && page <= MAX_PAGES_TO_FETCH && isSyncingFollows() ) {
-		dispatch( requestPageAction( page + 1 ) );
+		dispatch( syncReaderFollowsPage( page + 1 ) );
 		return;
 	}
 
@@ -102,21 +95,25 @@ export const receivePage = ( action, apiResponse ) => dispatch => {
 	syncingFollows = false;
 };
 
+export function receiveError() {
+	syncingFollows = false;
+	return errorNotice( translate( 'Sorry, we had a problem fetching your Reader subscriptions.' ) );
+}
+
+const syncPage = dispatchRequestEx( {
+	fetch: requestPage,
+	onSuccess: receivePage,
+	onError: receiveError,
+} );
+
 export function updateSeenOnFollow( store, action ) {
 	if ( seenSubscriptions ) {
 		seenSubscriptions.add( action.payload.feedUrl );
 	}
 }
 
-export function receiveError() {
-	syncingFollows = false;
-	return errorNotice( translate( 'Sorry, we had a problem fetching your Reader subscriptions.' ) );
-}
-
 registerHandlers( 'state/data-layer/wpcom/read/following/mine/index.js', {
 	[ READER_FOLLOWS_SYNC_START ]: [ syncReaderFollows ],
-	[ READER_FOLLOWS_SYNC_PAGE ]: [
-		dispatchRequestEx( { fetch: requestPage, onSuccess: receivePage, onError: receiveError } ),
-	],
+	[ READER_FOLLOWS_SYNC_PAGE ]: [ syncPage ],
 	[ READER_FOLLOW ]: [ updateSeenOnFollow ],
 } );
