@@ -2,13 +2,14 @@
 /**
  * External dependencies
  */
-import { forEach } from 'lodash';
+import { forEach, has } from 'lodash';
 import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
 import getJetpackData from './get-jetpack-data';
+import extensions from '../editor';
 
 /**
  * Refreshes registration of Gutenberg extensions (blocks and plugins)
@@ -19,16 +20,16 @@ import getJetpackData from './get-jetpack-data';
  * @returns {void}
  */
 export default function refreshRegistrations() {
-	const extensions = getJetpackData();
+	const extensionAvailability = getJetpackData();
 
 	if ( ! extensions ) {
 		return;
 	}
 
-	forEach( extensions, ( { available }, name ) => {
+	forEach( extensionAvailability, ( { available }, name ) => {
 		// TODO: Discern between blocks and plugins, use [un]registerPlugin for the latter
-		if ( available ) {
-			// TODO: Need settings. Probably export from individual block files
+		if ( available && has( extensions, [ name ] ) ) {
+			const settings = extensions[ name ];
 			registerBlockType( name, settings );
 		} else if ( getBlockType( name ) ) {
 			// The block is currently registered but becoming unavailable
