@@ -29,6 +29,7 @@ export default function refreshRegistrations() {
 
 	forEach( extensions, ( settings, name ) => {
 		const available = get( extensionAvailability, [ name, 'available' ] );
+
 		if ( has( settings, [ 'render' ] ) ) {
 			// If the extension has a `render` method, it's not a block but a plugin
 			const pluginName = `jetpack-${ name }`;
@@ -40,7 +41,7 @@ export default function refreshRegistrations() {
 				unregisterPlugin( pluginName );
 			}
 		} else {
-			const blockName = `jetpack-/${ name }`;
+			const blockName = `jetpack/${ name }`;
 			const registered = getBlockType( blockName );
 
 			if ( available && ! registered ) {
