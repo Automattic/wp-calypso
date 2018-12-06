@@ -49,9 +49,12 @@ class PreviewMain extends React.Component {
 	debouncedUpdateLayout = debounce( this.updateLayout, 50 );
 
 	componentDidMount() {
-		this.props.showInlineHelpPopover();
 		if ( typeof window !== 'undefined' ) {
 			window.addEventListener( 'resize', this.debouncedUpdateLayout );
+		}
+
+		if ( this.props.open === 'help' ) {
+			this.props.showInlineHelpPopover();
 		}
 	}
 
