@@ -93,35 +93,33 @@ references:
     paths:
       - ".git"
 
-  # node_modules cache
+  # npm cache
   #
-  # We'll cache node_modules to save ourselves npm installation during build. Any cache hit
-  # for identical `.nvmrc` and `npm-shrinkwrap.json` should produce identical node_modules,
-  # so the checksum for these files builds our cache.
+  # npm caches the modules it installs in ~/.npm.
+  # We cache that cache to save time pulling modules from the network.
   #
-  # We only match this cache identically with no fallbacks. This allows us to skip any npm
-  # installation if a cache hits and we find node_modules. Otherwise, cache misses and we'll
-  # need to do an npm install.
   #
   # Some prior art:
   #   - https://github.com/Automattic/wp-calypso/pull/25431
   #   - https://github.com/Automattic/wp-calypso/pull/25487
+  #   - https://github.com/Automattic/wp-calypso/pull/27180
   #
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
-  restore-node-modules-cache: &restore-node-modules-cache
-    name: "Restore node_modules cache"
-    key: v1-node-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+  restore-npm-cache: &restore-npm-cache
+    name: "Restore npm cache"
+    keys:
+      - v1-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+      - v1-npm-modules-{{ checksum ".nvmrc" }}
+
   npm-install: &npm-install
     name: Install npm dependencies
-    command: |
-      if [ ! -d node_modules ]; then
-        npm ci
-      fi
-  save-node-modules-cache: &save-node-modules-cache
+    command: npx lerna bootstrap
+
+  save-npm-cache: &save-npm-cache
     name: "Save node_modules cache"
-    key: v1-node-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+    key: v1-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
     paths:
-      - node_modules
+      - ~/.npm
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
@@ -171,9 +169,9 @@ jobs:
       - run: *update-git-master
       - save_cache: *save-git-cache
       # npm dependencies
-      - restore_cache: *restore-node-modules-cache
+      - restore_cache: *restore-npm-cache
       - run: *npm-install
-      - save_cache: *save-node-modules-cache
+      - save_cache: *save-npm-cache
       - run: npm run build-packages
       - persist_to_workspace:
           root: '~'

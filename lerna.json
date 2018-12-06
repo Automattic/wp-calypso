@@ -1,4 +1,9 @@
 {
-	"packages": [ "packages/*" ],
-	"version": "independent"
+	"packages": [ "packages/*", "." ],
+	"version": "independent",
+	"ignoreChanges": [
+		"**/.eslintrc.js",
+		"**/*.md",
+		"**/package-lock.json"
+	]
 }
