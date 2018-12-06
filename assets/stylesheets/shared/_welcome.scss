@@ -1,16 +1,17 @@
 /**
-* Welcome Messages (currently on stats and post pages)
-*/
+ * Welcome Messages (currently on stats and post pages)
+ *
+ * @format
+ */
 
 .welcome-message {
 	@include clear-fix;
 
-	box-shadow: 0 1px 2px rgba(0,0,0,0.075);
+	box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 	position: relative;
 	background: $gray-light;
 	margin-bottom: 6%;
 	padding: 16px;
-
 
 	ul,
 	ol {
@@ -18,9 +19,9 @@
 		margin-bottom: 4px;
 	}
 
-	@include breakpoint( "<480px" ) {
-		margin-left: .25em;
-		margin-right: .25em;
+	@include breakpoint( '<480px' ) {
+		margin-left: 0.25em;
+		margin-right: 0.25em;
 	}
 
 	.close-button {
@@ -59,13 +60,13 @@
 		float: right;
 		margin: 0 0 1em 1em;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			width: 120px;
 			height: 120px;
 		}
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding: 24px;
 		.close-button {
 			padding: 8px;
