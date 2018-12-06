@@ -142,14 +142,14 @@ const AddEmailAddressesCard = createReactClass( {
 						{ this.emailAddressFieldset( index ) }
 					</div>
 					<div className="add-email-addresses-card__name-fieldsets">
-						{ this.nameFieldset( index ) }
+						{ this.rednerNameFieldset( index ) }
 					</div>
 				</Fragment>
 			);
 		} );
 	},
 
-	nameFieldset( index ) {
+	renderNameFieldset( index ) {
 		const field = this.state.fieldsets[ index ];
 		const { translate } = this.props;
 
