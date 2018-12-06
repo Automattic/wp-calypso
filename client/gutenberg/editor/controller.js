@@ -6,6 +6,7 @@
 import React from 'react';
 import debug from 'debug';
 import config from 'config';
+import page from 'page';
 import { has, set, uniqueId } from 'lodash';
 import { setLocaleData } from '@wordpress/i18n';
 
@@ -13,6 +14,7 @@ import { setLocaleData } from '@wordpress/i18n';
  * Internal dependencies
  */
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 import { asyncLoader } from './async-loader';
 import { EDITOR_START } from 'state/action-types';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -100,6 +102,18 @@ export const loadGutenbergBlockAvailability = store => {
 			set( window, [ JETPACK_DATA_PATH, 'available_blocks' ], blockAvailability.data );
 		}
 	} );
+}
+
+export const redirect = ( { store: { getState } }, next ) => {
+	const state = getState();
+	const siteId = getSelectedSiteId( state );
+	const hasGutenberg = isGutenbergEnabled( state, siteId );
+
+	if ( hasGutenberg ) {
+		return next();
+	}
+
+	return page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
 };
 
 export const post = async ( context, next ) => {
