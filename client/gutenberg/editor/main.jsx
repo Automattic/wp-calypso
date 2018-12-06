@@ -32,9 +32,6 @@ class GutenbergEditor extends Component {
 		if ( ! postId ) {
 			createAutoDraft( siteId, uniqueDraftKey, postType );
 		}
-		if ( siteId && postId && postType ) {
-			requestSitePost( siteId, postId, postType, 0 );
-		}
 	}
 
 	componentDidUpdate( prevProp ) {
