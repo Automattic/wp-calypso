@@ -13,6 +13,7 @@ import { isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
 import SiteMockup from './site-mockup';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import { getVerticalData } from './mock-data';
@@ -52,7 +53,15 @@ class SiteMockups extends Component {
 		return parts.slice( 0, 2 ).join( ', ' );
 	}
 
+	shouldRender() {
+		// currently only showing on business site types
+		return this.props.siteType === 'business';
+	}
+
 	render() {
+		if ( ! this.shouldRender() ) {
+			return null;
+		}
 		const siteMockupClasses = classNames( {
 			'site-mockup__wrap': true,
 		} );
@@ -76,6 +85,7 @@ export default connect( state => {
 	return {
 		title: getSiteTitle( state ) || translate( 'Your New Website' ),
 		siteInformation: getSiteInformation( state ),
+		siteType: getSiteType( state ),
 		vertical,
 		verticalData: getVerticalData( vertical ),
 	};
