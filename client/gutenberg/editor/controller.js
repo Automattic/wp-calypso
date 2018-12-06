@@ -134,11 +134,14 @@ export const post = async ( context, next ) => {
 
 	const GutenbergEditor = initGutenberg( userId, siteSlug );
 
-	cleanUpGutenberg();
-
 	context.primary = (
 		<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />
 	);
 
+	next();
+};
+
+export const cleanUp = ( context, next ) => {
+	cleanUpGutenberg();
 	next();
 };

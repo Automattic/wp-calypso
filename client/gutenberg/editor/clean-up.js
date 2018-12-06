@@ -7,17 +7,14 @@ import { dispatch, select } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { requestSitePost } from 'state/data-getters';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:gutenberg' );
 
-export default function cleanUpGutenberg( siteId, postId, postType ) {
+export default function cleanUpGutenberg() {
 	debug( 'Starting Gutenberg editor clean-up...' );
 
-	if ( siteId && postId && postType ) {
-		requestSitePost( siteId, postId, postType, 0 );
-	}
+	dispatch( 'core/editor' ).resetPost( {} );
 
 	dispatch( 'core/edit-post' ).closePublishSidebar();
 	dispatch( 'core/edit-post' ).closeModal();

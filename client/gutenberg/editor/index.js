@@ -8,7 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { siteSelection, sites } from 'my-sites/controller';
-import { loadTranslations, post } from './controller';
+import { loadTranslations, post, cleanUp } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -50,6 +50,8 @@ export default function() {
 			);
 			page( '/block-editor/edit/:customPostType/:site?', siteSelection, makeLayout, clientRender );
 		}
+
+		page.exit( '/block-editor/*', cleanUp );
 	} else {
 		page( '/block-editor', '/post' );
 		page( '/block-editor/*', '/post' );
