@@ -10,11 +10,12 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
+import { TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } from 'state/action-types';
 import {
-	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
-} from 'state/action-types';
+	stopPollAppPushAuth,
+	receivedTwoFactorPushNotificationApproved,
+	updateNonce,
+} from 'state/login/actions';
 import {
 	getTwoFactorAuthNonce,
 	getTwoFactorPushPollInProgress,
@@ -25,7 +26,6 @@ import { http } from 'state/http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { localizeUrl } from 'lib/i18n-utils';
-import { receivedTwoFactorPushNotificationApproved } from 'state/login/actions.js';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
@@ -76,15 +76,10 @@ const receivedTwoFactorPushNotificationError = ( store, action, error ) => {
 	const twoStepNonce = get( error, 'response.body.data.two_step_nonce' );
 
 	if ( twoStepNonce ) {
-		store.dispatch( {
-			type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
-			nonceType: 'push',
-			twoStepNonce,
-		} );
+		store.dispatch( updateNonce( 'push', twoStepNonce ) );
 	} else if ( ! isNetworkFailure ) {
-		store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } );
-
-		throw new Error( 'Unable to continue polling because of error' );
+		store.dispatch( stopPollAppPushAuth() );
+		return;
 	}
 
 	if ( getTwoFactorPushPollInProgress( store.getState() ) ) {
