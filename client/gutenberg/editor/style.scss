@@ -309,3 +309,26 @@ $gutenberg-theme-toggle: #11a0d2;
 		margin-right: 1ch;
 	}
 }
+
+.editor__placeholder {
+	.placeholder {
+		@include placeholder;
+		height: 16px;
+		border-radius: 8px;
+	}
+
+	.placeholder-site {
+		margin-left: 18px;
+	}
+
+	.placeholder-button {
+		width: 40px;
+		margin: 0 8px;
+	}
+
+	.placeholder-title {
+			height: 40px;
+			border-radius: 20px;
+			margin: 0 8px;
+	}
+}

@@ -42,6 +42,34 @@ function getPostID( context ) {
 	return parseInt( context.params.post, 10 );
 }
 
+const Placeholder = () => (
+	<div className="editor__placeholder">
+		<div className="edit-post-layout">
+			<div className="edit-post-header">
+				<div className="edit-post-header-toolbar">
+					<div class="placeholder placeholder-site">Placeholder</div>
+				</div>
+				<div className="edit-post-header__settings">
+					<div class="placeholder placeholder-button">Placeholder</div>
+					<div class="placeholder placeholder-button">Placeholder</div>
+					<div class="placeholder placeholder-button">Placeholder</div>
+				</div>
+			</div>
+			<div className="edit-post-layout__content">
+				<div className="edit-post-visual-editor editor-styles-wrapper">
+					<div className="editor-writing-flow">
+						<div className="editor-post-title">
+							<div className="placeholder placeholder-title wp-block editor-post-title__block">
+								Placeholder
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+);
+
 export const loadTranslations = store => {
 	const domainDefault = { name: 'default', url: 'gutenberg' };
 	const domainJetpack = isEnabled( 'gutenberg/block/jetpack-preset' ) && {
@@ -137,12 +165,7 @@ export const post = async ( context, next ) => {
 			Editor: waitForSiteId( context.store ).then( makeEditor ),
 			translations: loadTranslations( context.store ),
 		},
-		loading: ( { Editor, translations } ) => (
-			<ul>
-				<li>{ Editor ? '✅' : '⏳' } Loading current site…</li>
-				<li>{ translations ? '✅' : '⏳' } Loading translations…</li>
-			</ul>
-		),
+		loading: () => <Placeholder />,
 		success: ( { Editor } ) => <Editor />,
 		failure: () => <div>Couldn't load everything - try hitting reload in your browser…</div>,
 	} );
