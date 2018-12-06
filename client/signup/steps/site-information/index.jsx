@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
-import { debounce, get, random, trim } from 'lodash';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,24 +28,11 @@ import FormFieldset from 'components/forms/form-fieldset';
 import InfoPopover from 'components/info-popover';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
-import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
-import {
-	getDomainsSuggestions,
-	getDomainsSuggestionsError,
-	isRequestingDomainsSuggestions,
-} from 'state/domains/suggestions/selectors';
-import userFactory from 'lib/user';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-const user = userFactory();
-
-function filterAlphaNumericChars( str ) {
-	return str.replace( /[^\w\u0080-\u017f]+/g, '' );
-}
 
 class SiteInformation extends Component {
 	constructor( props ) {
@@ -55,9 +42,7 @@ class SiteInformation extends Component {
 			address: props.siteInformation.address || '',
 			email: props.siteInformation.email || '',
 			phone: props.siteInformation.phone || '',
-			needToQueryDomains: ! props.domainsSuggestions,
 		};
-		this.debouncedSetSiteTitle = debounce( this.setSiteTitle, 500 );
 	}
 
 	componentDidMount() {
@@ -65,22 +50,6 @@ class SiteInformation extends Component {
 			stepName: this.props.stepName,
 		} );
 	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { domainsSuggestions } = this.props;
-
-		if ( nextProps.domainsSuggestions !== domainsSuggestions ) {
-			this.setState( { needToQueryDomains: false } );
-		}
-
-		if ( ! nextProps.domainsSuggestions && nextProps.domainsSuggestionsError ) {
-			if ( nextProps.domainsSuggestionsError.error === 'empty_results' ) {
-				this.setSiteTitle( this.state.name + this.props.siteType + random( 10, 99 ) );
-			}
-		}
-	}
-
-	setSiteTitle = title => this.props.setSiteTitle( title );
 
 	handleInputChange = ( { target: { name, value } } ) => {
 		this.setState( { [ name ]: value } );
@@ -92,27 +61,13 @@ class SiteInformation extends Component {
 	};
 
 	handleSubmit = event => {
-		const suggestion = get( this.props, [ 'domainsSuggestions', 0 ] );
-
 		event.preventDefault();
 
-		this.props.submitStep( {
-			...this.state,
-			siteUrl: get( suggestion, 'domain_name', '' ).replace( '.wordpress.com', '' ),
-			suggestion,
-		} );
+		this.props.submitStep( this.state );
 	};
 
-	canSubmit() {
-		if ( this.state.needToQueryDomains || this.props.isRequestingDomainsSuggestions ) {
-			return false;
-		}
-
-		return get( this.props, 'domainsSuggestions.length', 0 ) > 0;
-	}
-
 	renderContent() {
-		const { translate, siteType, queryObject } = this.props;
+		const { translate, siteType } = this.props;
 		const siteTitleLabel = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' ) || '';
 		const siteTitlePlaceholder =
 			getSiteTypePropertyValue( 'slug', siteType, 'siteTitlePlaceholder' ) || '';
@@ -121,7 +76,6 @@ class SiteInformation extends Component {
 
 		return (
 			<div className="site-information__wrapper">
-				{ queryObject.query && <QueryDomainsSuggestions { ...queryObject } /> }
 				<div className="site-information__form-wrapper ">
 					<form>
 						<Card>
@@ -195,12 +149,7 @@ class SiteInformation extends Component {
 							) }
 
 							<div className="site-information__submit-wrapper">
-								<Button
-									primary
-									type="submit"
-									onClick={ this.handleSubmit }
-									disabled={ ! this.canSubmit() }
-								>
+								<Button primary type="submit" onClick={ this.handleSubmit }>
 									{ translate( 'Continue' ) }
 								</Button>
 							</div>
@@ -236,23 +185,11 @@ class SiteInformation extends Component {
 export default connect(
 	state => {
 		const siteType = getSiteType( state );
-		const siteTitle = getSiteTitle( state );
-		const queryObject = {
-			query: filterAlphaNumericChars( siteTitle ) || get( user.get(), 'username' ),
-			vendor: 'domainsbot',
-			onlyWpcom: true,
-			quantity: 1,
-		};
-
 		return {
 			isLoggedIn: isUserLoggedIn( state ),
 			siteInformation: getSiteInformation( state ),
-			siteTitle,
+			siteTitle: getSiteTitle( state ),
 			siteType,
-			queryObject,
-			domainsSuggestions: getDomainsSuggestions( state, queryObject ),
-			domainsSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
-			isRequestingDomainsSuggestions: isRequestingDomainsSuggestions( state, queryObject ),
 		};
 	},
 	( dispatch, ownProps ) => {

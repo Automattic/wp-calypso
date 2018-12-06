@@ -157,6 +157,10 @@ export function createSiteWithCart(
 		newSiteParams.blog_name = importingFromUrl;
 		newSiteParams.find_available_url = true;
 		newSiteParams.public = 1;
+	} else if ( flowName === 'onboarding' ) {
+		newSiteParams.blog_name = get( user.get(), 'username', '' ) + siteType;
+		newSiteParams.find_available_url = true;
+		newSiteParams.public = 1;
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;

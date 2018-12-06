@@ -119,9 +119,6 @@ export function generateSteps( {
 		about: {
 			stepName: 'about',
 			providesDependencies: [ 'designType', 'themeSlugWithRepo', 'siteTitle', 'surveyQuestion' ],
-			props: {
-				shouldProvideDomain: false,
-			},
 		},
 
 		user: {

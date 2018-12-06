@@ -190,6 +190,7 @@ class AboutStep extends Component {
 		const eventAttributes = {};
 
 		if ( ! shouldHideSiteTitle ) {
+			const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 			//Site Title
 			if ( siteTitleInput !== '' ) {
 				siteTitleValue = siteTitleInput;
