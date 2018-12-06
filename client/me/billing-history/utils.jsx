@@ -3,8 +3,7 @@
  * External dependencies
  */
 import { find, map, partition, reduce } from 'lodash';
-import React, { Fragment }  from 'react';
-import { translate } from 'i18n-calypso';
+import React, { Fragment } from 'react';
 
 /**
  * Internal dependencies
@@ -54,26 +53,25 @@ export const groupDomainProducts = ( originalItems, translate ) => {
 	];
 };
 
-export function renderTransactionAmount( transaction, { includes = false }) {
+export function renderTransactionAmount( transaction, { translate, addingTax = false } ) {
 	if ( ! config.isEnabled( 'show-tax' ) || ! transaction.tax_amount ) {
 		return transaction.amount;
 	}
 
-	const taxAmount = includes
-		? translate( '(includes %(taxAmount)s tax)', {
+	const taxAmount = addingTax
+		? translate( '(+%(taxAmount)s tax)', {
 				args: { taxAmount: transaction.tax_amount },
 				comment: 'taxAmount is a localized price, like $12.34',
-		} )
-		: translate( '(+%(taxAmount)s tax)', {
-					args: { taxAmount: transaction.tax_amount },
-					comment: 'taxAmount is a localized price, like $12.34' } );
-
+		  } )
+		: translate( '(includes %(taxAmount)s tax)', {
+				args: { taxAmount: transaction.tax_amount },
+				comment: 'taxAmount is a localized price, like $12.34',
+		  } );
 
 	return (
 		<Fragment>
 			<div>{ transaction.amount }</div>
-			<div className="billing-history__transaction-tax-amount">
-				{ taxAmount }
-			</div>
-		</Fragment> );
+			<div className="billing-history__transaction-tax-amount">{ taxAmount }</div>
+		</Fragment>
+	);
 }

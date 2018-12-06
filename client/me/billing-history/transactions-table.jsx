@@ -6,7 +6,7 @@
 
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
@@ -15,11 +15,10 @@ import { capitalPDangit } from 'lib/formatting';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import CompactCard from 'components/card/compact';
 import Pagination from 'components/pagination';
 import TransactionsHeader from './transactions-header';
-import { groupDomainProducts } from './utils';
+import { groupDomainProducts, renderTransactionAmount } from './utils';
 import SearchCard from 'components/search-card';
 import { setPage, setQuery } from 'state/ui/billing-transactions/actions';
 import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
@@ -31,21 +30,6 @@ class TransactionsTable extends React.Component {
 	static defaultProps = {
 		header: false,
 	};
-
-	renderTransactionAmount = transaction =>
-		config.isEnabled( 'show-tax' ) && transaction.tax_amount ? (
-			<Fragment>
-				<div>{ transaction.amount }</div>
-				<div className="billing-history__transaction-tax-amount">
-					{ this.props.translate( '(+%(taxAmount)s tax)', {
-						args: { taxAmount: transaction.tax_amount },
-						comment: 'taxAmount is a localized price, like $12.34',
-					} ) }
-				</div>
-			</Fragment>
-		) : (
-			transaction.amount
-		);
 
 	onPageClick = page => {
 		this.props.setPage( this.props.transactionType, page );
@@ -155,7 +139,7 @@ class TransactionsTable extends React.Component {
 	};
 
 	renderRows = () => {
-		const { transactions, date, app, query } = this.props;
+		const { transactions, date, app, query, transactionType, translate } = this.props;
 		if ( ! transactions ) {
 			return this.renderPlaceholder();
 		}
@@ -193,7 +177,10 @@ class TransactionsTable extends React.Component {
 						</div>
 					</td>
 					<td className="billing-history__amount">
-						{ this.renderTransactionAmount( transaction ) }
+						{ renderTransactionAmount( transaction, {
+							addingTax: transactionType === 'upcoming',
+							translate,
+						} ) }
 					</td>
 				</tr>
 			);

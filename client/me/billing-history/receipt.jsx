@@ -192,7 +192,7 @@ class BillingReceipt extends React.Component {
 									transaction.credit
 								}
 							>
-								{ renderTransactionAmount( transaction, { includes: true } ) }
+								{ renderTransactionAmount( transaction, { translate } ) }
 							</td>
 						</tr>
 					</tfoot>
