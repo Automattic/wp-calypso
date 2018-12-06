@@ -14,7 +14,7 @@
             <rect id="sidebar-item" fill="#7C848B" x="7" y="123" width="45" height="6"></rect>
             <circle id="avatar" fill="#3D4145" cx="35.5" cy="45.5" r="16.5"></circle>
             <rect id="card" fill="#000000" x="90" y="36" width="130" height="107"></rect>
-            <rect id="button" fill="#D52C82" x="160" y="48" width="48" height="16" rx="3"></rect>
+            <rect id="button" fill="#FF3997" x="160" y="48" width="48" height="16" rx="3"></rect>
             <rect id="masterbar" fill="#005FB7" x="0" y="0" width="240" height="20"></rect>
         </g>
     </g>
