@@ -20,6 +20,7 @@ import { EDITOR_START } from 'state/action-types';
 import { requestFromUrl } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 import { asyncLoader } from './async-loader';
+import { Placeholder } from './placeholder';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -41,34 +42,6 @@ function getPostID( context ) {
 	// both post and site are in the path
 	return parseInt( context.params.post, 10 );
 }
-
-const Placeholder = () => (
-	<div className="editor__placeholder">
-		<div className="edit-post-layout">
-			<div className="edit-post-header">
-				<div className="edit-post-header-toolbar">
-					<div class="placeholder placeholder-site">Placeholder</div>
-				</div>
-				<div className="edit-post-header__settings">
-					<div class="placeholder placeholder-button">Placeholder</div>
-					<div class="placeholder placeholder-button">Placeholder</div>
-					<div class="placeholder placeholder-button">Placeholder</div>
-				</div>
-			</div>
-			<div className="edit-post-layout__content">
-				<div className="edit-post-visual-editor editor-styles-wrapper">
-					<div className="editor-writing-flow">
-						<div className="editor-post-title">
-							<div className="placeholder placeholder-title wp-block editor-post-title__block">
-								Placeholder
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-);
 
 export const loadTranslations = store => {
 	const domainDefault = { name: 'default', url: 'gutenberg' };
