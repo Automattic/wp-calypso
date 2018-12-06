@@ -82,7 +82,7 @@ export default {
 		defaultVariation: 'public',
 	},
 	krackenM5NonEnDomainSuggestions: {
-		datestamp: '20181210',
+		datestamp: '20181207',
 		variations: {
 			domainsbot_front: 50,
 			variation2_front: 50,
