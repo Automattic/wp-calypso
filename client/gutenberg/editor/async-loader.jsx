@@ -25,14 +25,13 @@ export const asyncLoader = ( { promises, loading, success, failure } ) =>
 
 						return a;
 					} )
-					.then( a => [ true, a ], a => [ false, a ] )
+					.then( a => [ true, a, key ], a => [ false, a, key ] )
 			);
 
 			Promise.all( runners ).then( resolutions => {
-				const keys = Object.keys( promises );
 				const [ results, successful ] = resolutions.reduce(
-					( [ output, allSuccess ], [ wasSuccess, data ], index ) => [
-						{ ...output, [ keys[ index ] ]: data },
+					( [ output, allSuccess ], [ wasSuccess, data, key ] ) => [
+						{ ...output, [ key ]: data },
 						allSuccess && wasSuccess,
 					],
 					[ {}, true ]
