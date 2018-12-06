@@ -13,5 +13,5 @@ import { get } from 'lodash';
  * @return {Array?} the list of countries
  */
 export default function getCountries( state, type ) {
-	return get( state, [ 'countries', type, 'items' ], null );
+	return get( state, [ 'countries', type ], null );
 }
