@@ -18,6 +18,7 @@ import { setAllSitesSelected } from 'state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { EDITOR_START } from 'state/action-types';
 import { initGutenberg } from './init';
+import cleanUpGutenberg from './clean-up';
 import { requestFromUrl } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 
@@ -132,6 +133,8 @@ export const post = async ( context, next ) => {
 	context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
 	const GutenbergEditor = initGutenberg( userId, siteSlug );
+
+	cleanUpGutenberg();
 
 	context.primary = (
 		<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />

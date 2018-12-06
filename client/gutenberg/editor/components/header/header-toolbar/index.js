@@ -12,7 +12,7 @@ import { findLast } from 'lodash';
  * WordPress dependencies
  */
 import { compose } from '@wordpress/compose';
-import { withSelect, withDispatch } from '@wordpress/data';
+import { withSelect } from '@wordpress/data';
 import { withViewportMatch } from '@wordpress/viewport';
 import { IconButton } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -42,17 +42,12 @@ function HeaderToolbar( {
 	showInserter,
 	// GUTENLYPSO START
 	closeEditor,
-	notices,
 	recordSiteButtonClick,
-	removeNotice,
 	site,
 	translate,
 	// GUTENLYPSO END
 } ) {
-	const onCloseButtonClick = () => {
-		notices.forEach( ( { id } ) => removeNotice( id ) );
-		closeEditor();
-	};
+	const onCloseButtonClick = () => closeEditor();
 
 	const toolbarAriaLabel = hasFixedToolbar
 		? /* translators: accessibility text for the editor toolbar when Top Toolbar is on */
@@ -155,16 +150,10 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 export default compose( [
 	withSelect( select => ( {
 		hasFixedToolbar: select( 'core/edit-post' ).isFeatureActive( 'fixedToolbar' ),
-		notices: select( 'core/notices' ).getNotices(), // GUTENLYPSO
 		showInserter:
 			select( 'core/edit-post' ).getEditorMode() === 'visual' &&
 			select( 'core/editor' ).getEditorSettings().richEditingEnabled,
 	} ) ),
-	// GUTENLYPSO START
-	withDispatch( dispatch => ( {
-		removeNotice: dispatch( 'core/notices' ).removeNotice,
-	} ) ),
-	// GUTENLYPSO END
 	withViewportMatch( { isLargeViewport: 'medium' } ),
 ] )(
 	// GUTENLYPSO START
