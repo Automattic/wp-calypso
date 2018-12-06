@@ -26,7 +26,12 @@ import './style.scss';
 class SiteMockups extends Component {
 	getTagline() {
 		const { siteInformation } = this.props;
-		if ( isEmpty( siteInformation ) ) {
+		// we could have a completely empty object or an initialized object with
+		// empty address and phone (after title is entered)
+		if (
+			isEmpty( siteInformation ) ||
+			isEmpty( siteInformation.address && isEmpty( siteInformation.phone ) )
+		) {
 			return translate( 'You’ll be able to customize this to your needs.' );
 		}
 		return (
