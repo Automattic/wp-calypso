@@ -13,6 +13,8 @@ export const asyncLoader = ( { promises, loading, success, failure } ) =>
 		};
 
 		componentDidMount() {
+			this._isMounted = true;
+
 			// here we want to make sure all promises "resolve" even when
 			// they reject because Promise.all will return a single value
 			// on the first rejection instead of an array as when they all
@@ -21,7 +23,9 @@ export const asyncLoader = ( { promises, loading, success, failure } ) =>
 			const runners = map( promises, ( promise, key ) =>
 				promise
 					.then( a => {
-						this.setState( state => ( { results: { ...state.results, [ key ]: a } } ) );
+						if ( this._isMounted ) {
+							this.setState( state => ( { results: { ...state.results, [ key ]: a } } ) );
+						}
 
 						return a;
 					} )
@@ -37,8 +41,14 @@ export const asyncLoader = ( { promises, loading, success, failure } ) =>
 					[ {}, true ]
 				);
 
-				this.setState( { results, successful } );
+				if ( this._isMounted ) {
+					this.setState( { results, successful } );
+				}
 			} );
+		}
+
+		componentWillUnmount() {
+			this._isMounted = false;
 		}
 
 		render() {
