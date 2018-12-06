@@ -19,7 +19,7 @@ import { getContextResults } from 'blocks/inline-help/contextual-help';
  * @return {String}        The current search query
  */
 export function getSearchQuery( state ) {
-	return get( state, 'inlineHelpSearchResults.search.searchQuery', '' );
+	return get( state, 'inlineHelp.searchResults.search.searchQuery', '' );
 }
 
 /**
@@ -29,7 +29,7 @@ export function getSearchQuery( state ) {
  * @return {Integer}        The index of the currently selected search result
  */
 export function getSelectedResultIndex( state ) {
-	return get( state, 'inlineHelpSearchResults.search.selectedResult', -1 );
+	return get( state, 'inlineHelp.searchResults.search.selectedResult', -1 );
 }
 
 /**
@@ -41,7 +41,7 @@ export function getSelectedResultIndex( state ) {
  * @return {Boolean}        Whether search results are being requested
  */
 export function isRequestingInlineHelpSearchResultsForQuery( state, searchQuery ) {
-	const allRequesting = get( state, 'inlineHelpSearchResults.requesting' );
+	const allRequesting = get( state, 'inlineHelp.searchResults.requesting' );
 	return !! get( allRequesting, [ searchQuery ] );
 }
 
@@ -54,7 +54,7 @@ export function isRequestingInlineHelpSearchResultsForQuery( state, searchQuery 
  * @return {?Array}         List of results for a given search query
  */
 export function getInlineHelpSearchResultsForQuery( state, searchQuery ) {
-	const allResults = get( state, 'inlineHelpSearchResults.search.items' );
+	const allResults = get( state, 'inlineHelp.searchResults.search.items' );
 	return get( allResults, [ searchQuery ], null );
 }
 
@@ -101,5 +101,15 @@ export function getInlineHelpCurrentlySelectedLink( state ) {
  * @return {Boolean}        Is the contact form UI showing the questions
  */
 export function isShowingQandAInlineHelpContactForm( state ) {
-	return get( state, 'inlineHelpSearchResults.contactForm.isShowingQandASuggestions', false );
+	return get( state, 'inlineHelp.contactForm.isShowingQandASuggestions', false );
+}
+
+/**
+ * Returns a bool indicating if the inline help popover is currently showing.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Boolean}        Is the inline help popover is showing.
+ */
+export function isInlineHelpPopoverVisible( state ) {
+	return get( state, 'inlineHelp.popover.isVisible', false );
 }
