@@ -20,6 +20,7 @@ class SuggestionSearch extends Component {
 		onChange: PropTypes.func,
 		suggestions: PropTypes.array,
 		value: PropTypes.string,
+		limit: PropTypes.oneOfType( PropTypes.bool, PropTypes.number ),
 	};
 
 	static defaultProps = {
@@ -28,6 +29,7 @@ class SuggestionSearch extends Component {
 		onChange: noop,
 		suggestions: [],
 		value: '',
+		limit: false,
 	};
 
 	constructor( props ) {
@@ -108,9 +110,14 @@ class SuggestionSearch extends Component {
 		const { suggestions } = this.props;
 
 		const query = this.state.query.trim().toLocaleLowerCase();
-		return suggestions
+		let filtered = suggestions
 			.filter( hint => hint.toLocaleLowerCase().includes( query ) )
 			.map( hint => ( { label: hint } ) );
+
+		if ( this.props.limit ) {
+			filtered = filtered.slice( 0, this.props.limit );
+		}
+		return filtered;
 	}
 
 	getSuggestionLabel( suggestionPosition ) {

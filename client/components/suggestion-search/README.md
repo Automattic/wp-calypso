@@ -38,3 +38,6 @@ The callback function for receiving updated value, whether it's by typing, autoc
 
 ### `suggestions`
 A list of candidate strings that a user can pick from upon typing.
+
+### `limit`
+A limit of how many suggestions to show. Defaults to `false` to show all matches.

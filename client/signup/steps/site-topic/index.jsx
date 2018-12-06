@@ -90,6 +90,7 @@ class SiteTopicStep extends Component {
 							onChange={ this.onSiteTopicChange }
 							suggestions={ Object.values( hints ) }
 							value={ currentSiteTopic }
+							limit={ 5 }
 						/>
 					</FormFieldset>
 					<div className="site-topic__submit-wrapper">
