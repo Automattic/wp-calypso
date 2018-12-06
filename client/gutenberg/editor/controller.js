@@ -107,7 +107,9 @@ export const post = async ( context, next ) => {
 
 		const Editor = initGutenberg( userId, siteSlug );
 
-		return () => <Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />;
+		return props => (
+			<Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent, ...props } } />
+		);
 	} );
 
 	const EditorLoader = asyncLoader( {
