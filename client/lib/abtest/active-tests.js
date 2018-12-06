@@ -81,14 +81,6 @@ export default {
 		},
 		defaultVariation: 'public',
 	},
-	crowdsignalNameBasedSignup: {
-		datestamp: '20181120',
-		variations: {
-			nameSignup: 50,
-			usernameSignup: 50,
-		},
-		defaultVariation: 'usernameSignup',
-	},
 	krackenM5DomainSuggestions: {
 		datestamp: '20181129',
 		variations: {
