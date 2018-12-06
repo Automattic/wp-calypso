@@ -21,7 +21,7 @@ export const asyncLoader = ( { promises, loading, success, failure } ) =>
 			const runners = Object.keys( promises ).map( key =>
 				promises[ key ]
 					.then( a => {
-						this.setState( state => ( { results: { ...( state || {} ).results, [ key ]: a } } ) );
+						this.setState( state => ( { results: { ...state.results, [ key ]: a } } ) );
 
 						return a;
 					} )
