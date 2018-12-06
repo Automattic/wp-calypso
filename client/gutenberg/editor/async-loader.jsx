@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { Component } from 'react';
-import { mapValues } from 'lodash';
+import { map, mapValues } from 'lodash';
 
 export const asyncLoader = ( { promises, loading, success, failure } ) =>
 	class AsyncLoader extends Component {
@@ -18,8 +18,8 @@ export const asyncLoader = ( { promises, loading, success, failure } ) =>
 			// on the first rejection instead of an array as when they all
 			// resolve. this is for our own accounting and ensures that
 			// we wait for all promises to fulfill
-			const runners = Object.keys( promises ).map( key =>
-				promises[ key ]
+			const runners = map( promises, ( promise, key ) =>
+				promise
 					.then( a => {
 						this.setState( state => ( { results: { ...state.results, [ key ]: a } } ) );
 
