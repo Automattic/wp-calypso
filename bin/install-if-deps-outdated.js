@@ -15,8 +15,6 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 const spawnSync = require( 'child_process' ).spawnSync;
-const glob = require( 'glob' );
-const debug = require( 'debug' )( 'calypso:install' );
 
 const needsInstall = pack => {
 	try {
@@ -29,25 +27,25 @@ const needsInstall = pack => {
 		}
 
 		if ( ! lockfileTime ) {
-			debug( '%s: true (no lockfile!)', packageDir );
+			//debug( '%s: true (no lockfile!)', packageDir );
 			return true;
 		}
 
 		const nodeModulesTime = fs.statSync( path.join( packageDir, 'node_modules' ) ).mtime;
 		const shouldInstall = lockfileTime - nodeModulesTime > 1000; // In Windows, directory mtime has less precision than file mtime
-		debug( 'checking %s => %s', packageDir, shouldInstall );
+		//debug( 'checking %s => %s', packageDir, shouldInstall );
 		return shouldInstall;
 	} catch ( e ) {
-		console.error( e );
+		//debug( e );
 		return true;
 	}
 };
 
 if ( needsInstall( '.' ) ) {
-	debug( 'installing because of node_modules' );
+	//debug( 'installing because of node_modules' );
 	install();
 } else {
-	glob( 'packages/*/package.json', ( err, matches ) => {
+	require( 'glob' )( 'packages/*/package.json', ( err, matches ) => {
 		if ( err ) {
 			console.error( err );
 			process.exit( 2 );
@@ -69,7 +67,7 @@ function install() {
 	const touchDate = new Date();
 
 	fs.utimesSync( 'node_modules', touchDate, touchDate );
-	glob( 'packages/*/node_modules', ( err, matches ) => {
+	require( 'glob' )( 'packages/*/node_modules', ( err, matches ) => {
 		matches.forEach( m => fs.utimesSync( m, touchDate, touchDate ) );
 	} );
 }
