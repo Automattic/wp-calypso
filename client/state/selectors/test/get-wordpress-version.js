@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import getSelectedSiteWordPressVersion from '../get-selected-site-wordpress-version';
+import getWordPressVersion from '../get-wordpress-version';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'getSelectedSiteWordPressVersion()', () => {
@@ -34,7 +34,7 @@ describe( 'getSelectedSiteWordPressVersion()', () => {
 			},
 		} );
 
-		expect( getSelectedSiteWordPressVersion( state ) ).toEqual( wpVersion );
+		expect( getWordPressVersion( state, 2916284 ) ).toEqual( wpVersion );
 	} );
 	test( 'should return undefined when no version is set.', () => {
 		const state = deepFreeze( {
@@ -53,6 +53,6 @@ describe( 'getSelectedSiteWordPressVersion()', () => {
 			},
 		} );
 
-		expect( getSelectedSiteWordPressVersion( state ) ).toBe( undefined );
+		expect( getWordPressVersion( state, 2916284 ) ).toBe( undefined );
 	} );
 } );
