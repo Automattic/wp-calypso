@@ -52,6 +52,7 @@ class WpcomChecklistComponent extends PureComponent {
 
 		const location = 'banner' === this.props.viewMode ? 'checklist_banner' : 'checklist_show';
 
+		// TODO
 		this.props.recordTracksEvent( 'calypso_checklist_task_start', {
 			checklist_name: 'new_blog',
 			location,
