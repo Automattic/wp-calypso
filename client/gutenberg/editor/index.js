@@ -14,44 +14,44 @@ import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	if ( config.isEnabled( 'gutenberg' ) ) {
-		page( '/gutenberg', '/gutenberg/post' );
+		page( '/block-editor', '/block-editor/post' );
 
-		page( '/gutenberg/post', siteSelection, sites, makeLayout, clientRender );
+		page( '/block-editor/post', siteSelection, sites, makeLayout, clientRender );
 		page(
-			'/gutenberg/post/:site/:post?',
+			'/block-editor/post/:site/:post?',
 			siteSelection,
 			loadTranslations,
 			post,
 			makeLayout,
 			clientRender
 		);
-		page( '/gutenberg/post/:site?', siteSelection, makeLayout, clientRender );
+		page( '/block-editor/post/:site?', siteSelection, makeLayout, clientRender );
 
-		page( '/gutenberg/page', siteSelection, sites, makeLayout, clientRender );
+		page( '/block-editor/page', siteSelection, sites, makeLayout, clientRender );
 		page(
-			'/gutenberg/page/:site/:post?',
+			'/block-editor/page/:site/:post?',
 			siteSelection,
 			loadTranslations,
 			post,
 			makeLayout,
 			clientRender
 		);
-		page( '/gutenberg/page/:site?', siteSelection, makeLayout, clientRender );
+		page( '/block-editor/page/:site?', siteSelection, makeLayout, clientRender );
 
 		if ( config.isEnabled( 'manage/custom-post-types' ) ) {
-			page( '/gutenberg/edit/:customPostType', siteSelection, sites, makeLayout, clientRender );
+			page( '/block-editor/edit/:customPostType', siteSelection, sites, makeLayout, clientRender );
 			page(
-				'/gutenberg/edit/:customPostType/:site/:post?',
+				'/block-editor/edit/:customPostType/:site/:post?',
 				siteSelection,
 				loadTranslations,
 				post,
 				makeLayout,
 				clientRender
 			);
-			page( '/gutenberg/edit/:customPostType/:site?', siteSelection, makeLayout, clientRender );
+			page( '/block-editor/edit/:customPostType/:site?', siteSelection, makeLayout, clientRender );
 		}
 	} else {
-		page( '/gutenberg', '/post' );
-		page( '/gutenberg/*', '/post' );
+		page( '/block-editor', '/post' );
+		page( '/block-editor/*', '/post' );
 	}
 }

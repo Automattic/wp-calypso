@@ -9,7 +9,7 @@ import { omit, sortBy } from 'lodash';
  */
 import { http as rawHttp } from 'state/http/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestHttpData } from 'state/data-layer/http-data';
+import { requestHttpData, httpData, empty } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
 import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
@@ -203,13 +203,17 @@ export const requestGutenbergDemoContent = () =>
 		{ fromApi: () => data => [ [ 'gutenberg-demo-content', data ] ] }
 	);
 
-export const requestSitePost = ( siteId, postId, postType ) => {
+export const requestSitePost = ( siteId, postId, postType, freshness ) => {
 	//post and page types are plural except for custom post types
 	//eg /sites/<siteId>/posts/1234 vs /sites/<siteId>/jetpack-testimonial/4
 	const path =
 		postType === 'page' || postType === 'post'
 			? `/sites/${ siteId }/${ postType }s/${ postId }?context=edit`
 			: `/sites/${ siteId }/${ postType }/${ postId }?context=edit`;
+	if ( freshness === 0 ) {
+		//clear cache. TODO: add a helper for this, or fix this case
+		httpData.set( `gutenberg-site-${ siteId }-post-${ postId }`, empty );
+	}
 	return requestHttpData(
 		`gutenberg-site-${ siteId }-post-${ postId }`,
 		http(
@@ -220,7 +224,10 @@ export const requestSitePost = ( siteId, postId, postType ) => {
 			},
 			{}
 		),
-		{ fromApi: () => post => [ [ `gutenberg-site-${ siteId }-post-${ postId }`, post ] ] }
+		{
+			freshness,
+			fromApi: () => post => [ [ `gutenberg-site-${ siteId }-post-${ postId }`, post ] ],
+		}
 	);
 };
 

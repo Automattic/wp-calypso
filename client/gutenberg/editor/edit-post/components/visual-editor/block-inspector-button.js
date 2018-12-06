@@ -1,20 +1,23 @@
+/** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
 import React from 'react';
-
-/**
- * External dependencies
- */
 import { flow, noop } from 'lodash';
 
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { IconButton, withSpokenMessages } from '@wordpress/components';
+import { MenuItem, withSpokenMessages } from '@wordpress/components';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
+
+/**
+ * Internal dependencies
+ */
+import shortcuts from '../../keyboard-shortcuts';
 
 export function BlockInspectorButton( {
 	areAdvancedSettingsOpened,
@@ -23,7 +26,6 @@ export function BlockInspectorButton( {
 	onClick = noop,
 	small = false,
 	speak,
-	role,
 } ) {
 	const speakMessage = () => {
 		if ( areAdvancedSettingsOpened ) {
@@ -33,30 +35,35 @@ export function BlockInspectorButton( {
 		}
 	};
 
-	const label = areAdvancedSettingsOpened ? __( 'Hide Block Settings' ) : __( 'Show Block Settings' );
+	const label = areAdvancedSettingsOpened
+		? __( 'Hide Block Settings' )
+		: __( 'Show Block Settings' );
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<IconButton
+		<MenuItem
 			className="editor-block-settings-menu__control"
-			onClick={ flow( areAdvancedSettingsOpened ? closeSidebar : openEditorSidebar, speakMessage, onClick ) }
+			onClick={ flow(
+				areAdvancedSettingsOpened ? closeSidebar : openEditorSidebar,
+				speakMessage,
+				onClick
+			) }
 			icon="admin-generic"
 			label={ small ? label : undefined }
-			role={ role }
+			shortcut={ shortcuts.toggleSidebar }
 		>
 			{ ! small && label }
-		</IconButton>
+		</MenuItem>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default compose(
-	withSelect( ( select ) => ( {
-		areAdvancedSettingsOpened: select( 'core/edit-post' ).getActiveGeneralSidebarName() === 'edit-post/block',
+	withSelect( select => ( {
+		areAdvancedSettingsOpened:
+			select( 'core/edit-post' ).getActiveGeneralSidebarName() === 'edit-post/block',
 	} ) ),
-	withDispatch( ( dispatch ) => ( {
+	withDispatch( dispatch => ( {
 		openEditorSidebar: () => dispatch( 'core/edit-post' ).openGeneralSidebar( 'edit-post/block' ),
 		closeSidebar: dispatch( 'core/edit-post' ).closeGeneralSidebar,
 	} ) ),
-	withSpokenMessages,
+	withSpokenMessages
 )( BlockInspectorButton );

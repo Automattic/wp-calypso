@@ -72,7 +72,7 @@ class PublicizeSettingsButton extends Component {
 			<div className={ className }>
 				<a onClick={ this.settingsClick } tabIndex="0">
 					<span className="jetpack-publicize-add-icon dashicons-plus-alt" />
-					{ __( 'Connect new service' ) }
+					{ __( 'Connect an account' ) }
 				</a>
 			</div>
 		);

@@ -1,9 +1,11 @@
+/** @format */
+/* eslint-disable wpcalypso/import-docblock */
 /**
- * External dependencies
+ * WordPress dependencies
  */
 import { addFilter } from '@wordpress/hooks';
 
-const replaceMediaUpload = () => null;
+const replaceMediaUpload = () => null; // GUTENLYPSO
 
 addFilter(
 	'editor.MediaUpload',

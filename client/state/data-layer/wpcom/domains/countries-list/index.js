@@ -33,7 +33,6 @@ export const fetchCountriesDomains = action =>
 /**
  * Dispatches a countries updated action then the request for countries succeeded.
  *
- * @param   {Function} dispatch Redux dispatcher
  * @param   {Object}   action   Redux action
  * @param   {Array}    countries  array of raw device data returned from the endpoint
  * @returns {Object}            disparched user devices add action

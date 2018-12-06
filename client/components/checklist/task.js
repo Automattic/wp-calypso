@@ -22,6 +22,7 @@ class Task extends PureComponent {
 		buttonText: PropTypes.node,
 		completed: PropTypes.bool,
 		completedButtonText: PropTypes.node,
+		completedDescription: PropTypes.node,
 		completedTitle: PropTypes.node,
 		description: PropTypes.node,
 		duration: PropTypes.string,
@@ -36,6 +37,7 @@ class Task extends PureComponent {
 			buttonPrimary,
 			completed,
 			completedButtonText,
+			completedDescription,
 			completedTitle,
 			description,
 			duration,
@@ -61,6 +63,9 @@ class Task extends PureComponent {
 						</Button>
 					</h3>
 					<p className="checklist__task-description">{ description }</p>
+					{ completedDescription && (
+						<p className="checklist__task-completed-description">{ completedDescription }</p>
+					) }
 					{ duration && (
 						<small className="checklist__task-duration">
 							{ translate( 'Estimated time:' ) } { duration }

@@ -7,11 +7,18 @@
 	}
 }
 
-.jetpack-contact-form .components-placeholder{
+.jetpack-contact-form .components-placeholder {
 	padding: 24px;
 
+	input[type="text"] {
+		width: 100%;
+		outline-width: 0;
+		outline-style: none;
+		line-height: 16px;
+	}
+
 	.components-placeholder__label svg {
-		margin-right: 6px;
+		margin-right: 1ch;
 	}
 
 	.help-message,
@@ -43,11 +50,16 @@
 	flex-direction: row;
 
 	.components-base-control {
+		margin-top:-1px;
 		margin-bottom: -3px;
 
 		.components-form-toggle {
 			margin: 2px 8px 0 0;
 		}
+	}
+
+	.required {
+		color: #dc3232;
 	}
 
 	.components-toggle-control .components-base-control__field {
@@ -57,6 +69,8 @@
 
 .jetpack-field-label__input {
 	flex-grow: 1;
+	min-height: unset;
+	padding: 0;
 }
 
 // Duplicated to elevate specificity in order to overwrite core styles
@@ -66,6 +80,7 @@
 	font-weight: 600;
 	margin: 0;
 	margin-bottom: 2px;
+	padding: 0;
 
 	&:focus {
 		border-color: #FFF;
@@ -73,7 +88,15 @@
 	}
 }
 
+input.components-text-control__input {
+	line-height: 16px;
+}
+
 .jetpack-field {
+	// done to increase elevate specificity in order to overwrite calypso styles
+	.components-text-control__input.components-text-control__input {
+			width: 100%;
+	}
 	.components-text-control__input,
 	.components-textarea-control__input {
 		color: #72777c;
@@ -81,9 +104,14 @@
 	}
 }
 
+.jetpack-field-checkbox__checkbox.jetpack-field-checkbox__checkbox.jetpack-field-checkbox__checkbox {
+	float: left;
+}
+
 // Duplicated to elevate specificity in order to overwrite core styles
 .jetpack-field-multiple__list.jetpack-field-multiple__list {
 	list-style-type: none;
+	margin: 0;
 
 	&:empty {
 		display: none;
@@ -122,8 +150,8 @@
 		box-shadow: none;
 	}
 }
-
-.jetpack-option__remove {
+// Duplicated to elevate specificity in order to overwrite calypso styles
+.jetpack-option__remove.jetpack-option__remove {
 	padding: 6px;
 	vertical-align: bottom;
 }

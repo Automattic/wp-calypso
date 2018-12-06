@@ -64,7 +64,7 @@ const redirectToEditor = ( { redirectUrl } ) => dispatch => {
 const dispatchEditorTypeSetRequest = dispatchRequestEx( {
 	fetch: setType,
 	onSuccess: redirectToEditor,
-	onError: noop,
+	onError: redirectToEditor,
 } );
 
 registerHandlers( 'state/data-layer/wpcom/sites/gutenberg/index.js', {

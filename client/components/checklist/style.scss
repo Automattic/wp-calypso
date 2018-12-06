@@ -193,6 +193,12 @@
 		font-size: 14px;
 	}
 
+	&-completed-description {
+		word-break: break-word;
+		font-size: 14px;
+		display: none;
+	}
+
 	&-duration {
 		font-size: 12px;
 		color: $gray-text-min;
@@ -251,6 +257,10 @@
 		.checklist__task-duration,
 		.checklist__task-secondary {
 			display: none;
+		}
+
+		.checklist__task-completed-description {
+			display: block;
 		}
 	}
 

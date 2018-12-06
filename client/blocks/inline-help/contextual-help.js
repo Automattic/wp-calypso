@@ -663,6 +663,28 @@ const contextLinksForSection = {
 				'Invite contributors, followers, and viewers to collaborate with others and grow your audience!',
 		},
 	],
+	'gutenberg-editor': [
+		{
+			link: 'http://en.support.wordpress.com/wordpress-editor/',
+			post_id: 147594,
+			title: 'What are "Blocks"?',
+			description:
+				'The WordPress Editor uses blocks to transform the way you create content: it turns a single document into a collection of discrete elements with explicit, easy-to-tweak structure.',
+		},
+		{
+			link: 'http://en.support.wordpress.com/xml-rpc/',
+			post_id: 3595,
+			title: 'Offline Editing',
+			description:
+				'Learn how to create and edit content for your WordPress.com site even without being connected to the internet!',
+		},
+		{
+			link: 'http://en.support.wordpress.com/adding-users/',
+			title: 'Inviting Contributors, Followers, and Viewers',
+			description:
+				'Invite contributors, followers, and viewers to collaborate with others and grow your audience!',
+		},
+	],
 	reader: [
 		{
 			link: 'http://en.support.wordpress.com/reader/',

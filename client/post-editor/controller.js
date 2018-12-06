@@ -27,6 +27,7 @@ import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
+import isGutenlypsoEnabled from 'state/selectors/is-gutenlypso-enabled';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { requestSelectedEditor } from 'state/selected-editor/actions';
 
@@ -174,7 +175,7 @@ async function maybeCalypsoifyGutenberg( context, next ) {
 	const postId = getPostID( context );
 
 	if (
-		isCalypsoifyGutenbergEnabled( state, siteId ) &&
+		( isCalypsoifyGutenbergEnabled( state, siteId ) || isGutenlypsoEnabled( state, siteId ) ) &&
 		'gutenberg' === getSelectedEditor( state, siteId )
 	) {
 		return window.location.replace( getEditorUrl( state, siteId, postId, postType ) );

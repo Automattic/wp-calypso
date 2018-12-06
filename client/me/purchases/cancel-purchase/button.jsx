@@ -41,6 +41,7 @@ import { refreshSitePlans } from 'state/sites/plans/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
 import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
+import { getCurrencyDefaults } from 'lib/format-currency';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
@@ -322,8 +323,10 @@ class CancelPurchaseButton extends Component {
 			includedDomainPurchase &&
 			isDomainRegistration( includedDomainPurchase )
 		) {
+			const { precision } = getCurrencyDefaults( purchase.currencyCode );
 			overrides.refundText =
-				purchase.currencySymbol + ( purchase.refundAmount + includedDomainPurchase.amount );
+				purchase.currencySymbol +
+				parseFloat( purchase.refundAmount + includedDomainPurchase.amount ).toFixed( precision );
 		}
 
 		return (

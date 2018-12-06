@@ -143,11 +143,11 @@ export class EditorGroundControl extends React.Component {
 	}
 
 	getCloseButtonPath() {
-		const editorPathRegex = /^(\/gutenberg)?\/(post|page|(edit\/[^\/]+))(\/|$)/i;
+		const editorPathRegex = /^(\/block-editor)?\/(post|page|(edit\/[^\/]+))(\/|$)/i;
 		// find the last non-editor path in routeHistory, default to "all posts"
 		const lastNonEditorPath = findLast(
 			this.props.routeHistory,
-			action => ! action.path.match( editorPathRegex )
+			( { path } ) => '/block-editor' !== path && ! path.match( editorPathRegex )
 		);
 		return lastNonEditorPath ? lastNonEditorPath.path : this.props.allPostsUrl;
 	}
