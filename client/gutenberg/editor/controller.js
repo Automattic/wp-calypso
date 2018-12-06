@@ -21,7 +21,6 @@ import { Placeholder } from './placeholder';
 import { JETPACK_DATA_PATH } from 'gutenberg/extensions/presets/jetpack/utils/get-jetpack-data';
 import { requestFromUrl, requestGutenbergBlockAvailability } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
-import { getSiteFragment } from 'lib/route';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -90,18 +89,16 @@ export const loadTranslations = store => {
 	} );
 };
 
-export const loadGutenbergBlockAvailability = async ( context, next ) => {
-	const { path } = context;
-	const siteFragment = getSiteFragment( path );
+export const loadGutenbergBlockAvailability = store => {
+	const state = store.getState();
+	const siteSlug = getSelectedSiteSlug( state );
 
-	waitForData( {
-		blockAvailability: () => requestGutenbergBlockAvailability( siteFragment ),
+	return waitForData( {
+		blockAvailability: () => requestGutenbergBlockAvailability( siteSlug ),
 	} ).then( ( { blockAvailability } ) => {
 		if ( 'success' === blockAvailability.state && blockAvailability.data ) {
 			set( window, [ JETPACK_DATA_PATH, 'available_blocks' ], blockAvailability.data );
 		}
-
-		next();
 	} );
 };
 
@@ -133,6 +130,7 @@ export const post = async ( context, next ) => {
 		promises: {
 			Editor: makeEditor,
 			translations: loadTranslations( context.store ),
+			blockAvailability: loadGutenbergBlockAvailability( context.store ),
 		},
 		loading: () => <Placeholder />,
 		success: ( { Editor } ) => <Editor />,
