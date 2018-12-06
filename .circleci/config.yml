@@ -110,7 +110,6 @@ references:
     keys:
       - v1-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
       - v1-npm-modules-{{ checksum ".nvmrc" }}
-      - v1-npm-modules
 
   npm-install: &npm-install
     name: Install npm dependencies
