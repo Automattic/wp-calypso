@@ -144,12 +144,12 @@ const AddEmailAddressesCard = createReactClass( {
 			} );
 		let suffix, select;
 
-		if ( ! this.props.selectedDomainName ) {
+		if ( this.props.selectedDomainName ) {
 			suffix = '@' + field.domain.value;
 		} else {
 			select = (
 				<DomainsSelect
-					domains={ this.props.domains }
+					domains={ getGoogleAppsSupportedDomains( this.props.domains ) }
 					isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
 					value={ this.state.fieldsets[ index ].domain.value }
 					onChange={ this.handleFieldChange.bind( this, 'domain', index ) }

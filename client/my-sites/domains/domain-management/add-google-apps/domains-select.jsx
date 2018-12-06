@@ -7,14 +7,9 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 
-/**
- * Internal dependencies
- */
-import { getGoogleAppsSupportedDomains } from 'lib/domains';
-
 class DomainsSelect extends React.Component {
 	renderDomainSelect() {
-		return getGoogleAppsSupportedDomains( this.props.domains ).map( domain => {
+		return this.props.domains.map( domain => {
 			return (
 				<option value={ domain.name } key={ domain.name }>
 					@{ domain.name }
@@ -33,7 +28,6 @@ class DomainsSelect extends React.Component {
 	}
 
 	render() {
-		console.log( this.props );
 		const { isRequestingSiteDomains, onChange, onFocus, value } = this.props;
 		return (
 			<select
