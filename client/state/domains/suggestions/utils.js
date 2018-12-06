@@ -24,12 +24,10 @@ export function getSerializedDomainsSuggestionsQuery( queryObject ) {
 	const include_wordpressdotcom = !! (
 		queryObject.include_wordpressdotcom || queryObject.includeSubdomain
 	);
-	const only_wordpressdotcom = !! ( queryObject.only_wordpressdotcom || queryObject.onlyWpcom );
 	return JSON.stringify( {
 		query,
 		quantity,
 		vendor,
 		include_wordpressdotcom,
-		only_wordpressdotcom,
 	} ).toLocaleLowerCase();
 }
