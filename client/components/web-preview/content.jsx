@@ -40,7 +40,7 @@ export class WebPreviewContent extends Component {
 		this.iframe = ref;
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// Cache touch and mobile detection for the entire lifecycle of the component
 		this._hasTouch = hasTouch();
 	}
@@ -111,7 +111,7 @@ export class WebPreviewContent extends Component {
 			case 'focus':
 				this.removeSelection();
 				// we will fake a click here to close the dropdown
-				this.wrapperElementRef && this.wrapperElementRef.click();
+				//this.wrapperElementRef && this.wrapperElementRef.click();
 				return;
 			case 'loading':
 				this.setState( { isLoadingSubpage: true } );
