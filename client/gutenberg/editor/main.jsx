@@ -20,6 +20,7 @@ import { getHttpData } from 'state/data-layer/http-data';
 import { translate } from 'i18n-calypso';
 import './hooks'; // Needed for integrating Calypso's media library (and other hooks)
 import isRtlSelector from 'state/selectors/is-rtl';
+import refreshRegistrations from '../extensions/presets/jetpack/utils/refresh-registrations';
 
 /**
  * Style dependencies
@@ -35,6 +36,8 @@ class GutenbergEditor extends Component {
 		if ( siteId && postId && postType ) {
 			requestSitePost( siteId, postId, postType, 0 );
 		}
+
+		refreshRegistrations();
 	}
 
 	componentDidUpdate( prevProp ) {
