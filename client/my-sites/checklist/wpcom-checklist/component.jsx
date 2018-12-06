@@ -50,14 +50,7 @@ class WpcomChecklistComponent extends PureComponent {
 			return;
 		}
 
-		const location = 'banner' === this.props.viewMode ? 'checklist_banner' : 'checklist_show';
-
-		// TODO
-		this.props.recordTracksEvent( 'calypso_checklist_task_start', {
-			checklist_name: 'new_blog',
-			location,
-			step_name: task.id,
-		} );
+		this.trackTaskStart( task.id );
 
 		if ( tourId && ! task.isCompleted && isDesktop() ) {
 			this.props.requestGuidedTour( tourId );
@@ -68,12 +61,35 @@ class WpcomChecklistComponent extends PureComponent {
 		}
 	};
 
+	trackTaskStart = taskId => () => {
+		const location = 'banner' === this.props.viewMode ? 'checklist_banner' : 'checklist_show';
+
+		this.props.recordTracksEvent( 'calypso_checklist_task_start', {
+			checklist_name: 'new_blog',
+			location,
+			step_name: taskId,
+		} );
+	};
+
 	handleTaskDismiss = taskId => () => {
 		const { siteId } = this.props;
 
 		if ( taskId ) {
 			this.props.createNotice( 'is-success', 'You completed a task!' );
 			this.props.requestSiteChecklistTaskUpdate( siteId, taskId );
+			this.props.trackTaskDismiss( taskId );
+		}
+	};
+
+	trackTaskDismiss = taskId => () => {
+		if ( taskId ) {
+			// TODO: do we want to include the location?
+			// const location = 'banner' === this.props.viewMode ? 'checklist_banner' : 'checklist_show';
+
+			this.props.recordTracksEvent( 'calypso_checklist_task_dismiss', {
+				checklist_name: 'new_blog',
+				step_name: taskId,
+			} );
 		}
 	};
 
