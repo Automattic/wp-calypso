@@ -20,7 +20,7 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 
 		// But only once they have been updated to WordPress version 5.0 or greater
 		// Since it will provide Gutenberg editor by default
-		if ( versionCompare( wpVersion, '5.0', '>=' ) ) {
+		if ( versionCompare( wpVersion, '5.0-RC', '>=' ) ) {
 			return true;
 		}
 	}
