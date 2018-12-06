@@ -133,13 +133,15 @@ export const post = async ( context, next ) => {
 			blockAvailability: loadGutenbergBlockAvailability( context.store ),
 		},
 		loading: () => <Placeholder />,
-		success: ( { Editor } ) => <Editor />,
+		success: ( { Editor } ) => {
+			const refreshRegistrations = require( '../extensions/presets/jetpack/utils/refresh-registrations' )
+				.default;
+			refreshRegistrations();
+
+			return <Editor />;
+		},
 		failure: () => <div>Couldn't load everything - try hitting reload in your browser…</div>,
 	} );
-
-	const refreshRegistrations = require( '../extensions/presets/jetpack/utils/refresh-registrations' )
-		.default;
-	refreshRegistrations();
 
 	context.primary = <EditorLoader />;
 
