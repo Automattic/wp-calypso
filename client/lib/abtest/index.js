@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import { every, get, includes, isArray, keys, reduce, some } from 'lodash';
 import store from 'store';
@@ -173,46 +172,50 @@ ABTest.prototype.getVariation = function() {
 	return this.getSavedVariation( this.experimentId );
 };
 
-ABTest.prototype.isEligibleForAbTest = function() {
+export const isUsingGivenLocales = ( localeTargets, experimentId = null ) => {
 	const client = typeof navigator !== 'undefined' ? navigator : {};
 	const clientLanguage = client.language || client.userLanguage || 'en';
 	const clientLanguagesPrimary =
 		client.languages && client.languages.length ? client.languages[ 0 ] : 'en';
 	const localeFromSession = i18n.getLocaleSlug() || 'en';
+	const localeMatcher = new RegExp( '^(' + localeTargets.join( '|' ) + ')', 'i' );
+	const userLocale = user.get().localeSlug || 'en';
 
+	if ( isUserSignedIn() && ! userLocale.match( localeMatcher ) ) {
+		debug( '%s: User has a %s locale', experimentId, userLocale );
+		return false;
+	}
+
+	if ( ! isUserSignedIn() && ! clientLanguage.match( localeMatcher ) ) {
+		debug( '%s: Logged-out user has a %s navigator.language preference', experimentId, userLocale );
+		return false;
+	}
+
+	if ( ! isUserSignedIn() && ! clientLanguagesPrimary.match( localeMatcher ) ) {
+		debug(
+			'%s: Logged-out user has a %s navigator.languages primary preference',
+			experimentId,
+			userLocale
+		);
+		return false;
+	}
+
+	if ( ! isUserSignedIn() && ! localeFromSession.match( localeMatcher ) ) {
+		debug( '%s: Logged-out user has the %s locale in session', experimentId, userLocale );
+		return false;
+	}
+
+	return true;
+};
+
+ABTest.prototype.isEligibleForAbTest = function() {
 	if ( ! store.enabled ) {
 		debug( '%s: Local storage is not enabled', this.experimentId );
 		return false;
 	}
 
-	if ( this.localeTargets ) {
-		const localeMatcher = new RegExp( '^(' + this.localeTargets.join( '|' ) + ')', 'i' );
-		const userLocale = user.get().localeSlug || 'en';
-
-		if ( isUserSignedIn() && ! userLocale.match( localeMatcher ) ) {
-			debug( '%s: User has a %s locale', this.experimentId, userLocale );
-			return false;
-		}
-		if ( ! isUserSignedIn() && ! clientLanguage.match( localeMatcher ) ) {
-			debug(
-				'%s: Logged-out user has a %s navigator.language preference',
-				this.experimentId,
-				userLocale
-			);
-			return false;
-		}
-		if ( ! isUserSignedIn() && ! clientLanguagesPrimary.match( localeMatcher ) ) {
-			debug(
-				'%s: Logged-out user has a %s navigator.languages primary preference',
-				this.experimentId,
-				userLocale
-			);
-			return false;
-		}
-		if ( ! isUserSignedIn() && ! localeFromSession.match( localeMatcher ) ) {
-			debug( '%s: Logged-out user has the %s locale in session', this.experimentId, userLocale );
-			return false;
-		}
+	if ( this.localeTargets && ! isUsingGivenLocales( this.localeTargets, this.experimentId ) ) {
+		return false;
 	}
 
 	if ( this.countryCodeTargets ) {

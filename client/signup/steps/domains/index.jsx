@@ -14,7 +14,6 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import MapDomainStep from 'components/domains/map-domain-step';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
@@ -41,6 +40,7 @@ import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getDomainProductSlug } from 'lib/domains';
 import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
+import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
 /**
  * Style dependencies
@@ -370,7 +370,7 @@ class DomainsStep extends React.Component {
 				surveyVertical={ this.props.surveyVertical }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
-				vendor={ abtest( 'krackenM5DomainSuggestions' ) }
+				vendor={ getSuggestionsVendor() }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 			/>
 		);

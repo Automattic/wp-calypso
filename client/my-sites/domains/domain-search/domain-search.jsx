@@ -13,7 +13,6 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import EmptyContent from 'components/empty-content';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -29,6 +28,7 @@ import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';
 import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
 class DomainSearch extends Component {
 	static propTypes = {
@@ -168,7 +168,7 @@ class DomainSearch extends Component {
 								offerUnavailableOption
 								basePath={ this.props.basePath }
 								products={ this.props.productsList }
-								vendor={ abtest( 'krackenM5DomainSuggestions' ) }
+								vendor={ getSuggestionsVendor() }
 							/>
 						</EmailVerificationGate>
 					</div>

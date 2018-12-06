@@ -80,6 +80,7 @@ import {
 	enqueueSearchStatReport,
 } from 'components/domains/register-domain-step/analytics';
 import Spinner from 'components/spinner';
+import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
@@ -143,7 +144,7 @@ class RegisterDomainStep extends React.Component {
 		onAddMapping: noop,
 		onDomainsAvailabilityChange: noop,
 		onSave: noop,
-		vendor: 'domainsbot',
+		vendor: getSuggestionsVendor(),
 		deemphasiseTlds: [],
 	};
 
