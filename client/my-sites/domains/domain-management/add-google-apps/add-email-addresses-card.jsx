@@ -144,7 +144,7 @@ const AddEmailAddressesCard = createReactClass( {
 			} );
 		let suffix, select;
 
-		if ( this.props.selectedDomainName ) {
+		if ( ! this.props.selectedDomainName ) {
 			suffix = '@' + field.domain.value;
 		} else {
 			select = (

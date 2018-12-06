@@ -13,44 +13,49 @@ import React from 'react';
 import { getGoogleAppsSupportedDomains } from 'lib/domains';
 
 class DomainsSelect extends React.Component {
-	static propTypes = {
-		domains: PropTypes.object.isRequired,
-	};
-
-	render() {
-		let domainRegistrations, disabled, options;
-
-		if ( ! this.props.isRequestingSiteDomains ) {
-			domainRegistrations = getGoogleAppsSupportedDomains( this.props.domains );
-			disabled = false;
-			options = domainRegistrations.map( domain => {
-				return (
-					<option value={ domain.name } key={ domain.name }>
-						@{ domain.name }
-					</option>
-				);
-			} );
-		} else {
-			disabled = true;
-			options = (
-				<option>
-					{ this.props.translate( 'Loading' ) }
-					...
+	renderDomainSelect() {
+		return getGoogleAppsSupportedDomains( this.props.domains ).map( domain => {
+			return (
+				<option value={ domain.name } key={ domain.name }>
+					@{ domain.name }
 				</option>
 			);
-		}
+		} );
+	}
 
+	renderLoadingState() {
+		return (
+			<option>
+				{ this.props.translate( 'Loading' ) }
+				...
+			</option>
+		);
+	}
+
+	render() {
+		console.log( this.props );
+		const { isRequestingSiteDomains, onChange, onFocus, value } = this.props;
 		return (
 			<select
-				value={ this.props.value }
-				onChange={ this.props.onChange }
-				onFocus={ this.props.onFocus }
-				disabled={ disabled }
+				value={ value }
+				onChange={ onChange }
+				onFocus={ onFocus }
+				disabled={ isRequestingSiteDomains }
 			>
-				{ options }
+				{ isRequestingSiteDomains && this.renderLoadingState() }
+				{ ! isRequestingSiteDomains && this.renderDomainSelect() }
 			</select>
 		);
 	}
 }
+
+DomainsSelect.propTypes = {
+	domains: PropTypes.array.isRequired,
+	isRequestingSiteDomains: PropTypes.bool.isRequired,
+	onChange: PropTypes.func.isRequired,
+	onFocus: PropTypes.func.isRequired,
+	translate: PropTypes.func.isRequired,
+	value: PropTypes.string.isRequired,
+};
 
 export default localize( DomainsSelect );
