@@ -4,14 +4,12 @@
  * External dependencies
  */
 import { Component } from 'react';
+import { mapValues } from 'lodash';
 
 export const asyncLoader = ( { promises, loading, success, failure } ) =>
 	class AsyncLoader extends Component {
 		state = {
-			results: Object.keys( promises ).reduce(
-				( output, key ) => ( { ...output, [ key ]: null } ),
-				{}
-			),
+			results: mapValues( promises, () => null ),
 		};
 
 		componentDidMount() {
