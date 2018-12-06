@@ -14,7 +14,6 @@ import { setLocaleData } from '@wordpress/i18n';
  */
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { setAllSitesSelected } from 'state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { EDITOR_START } from 'state/action-types';
 import { requestFromUrl } from 'state/data-getters';
@@ -89,27 +88,6 @@ export const loadTranslations = store => {
 	} );
 };
 
-const waitForSiteId = store =>
-	new Promise( resolve => {
-		const existingSiteId = getSelectedSiteId( store.getState() );
-		if ( existingSiteId ) {
-			resolve( existingSiteId );
-		}
-
-		const unsubscribe = context.store.subscribe( () => {
-			const state = context.store.getState();
-			const siteId = getSelectedSiteId( state );
-			if ( ! siteId ) {
-				return;
-			}
-			unsubscribe();
-			resolve( siteId );
-		} );
-
-		// Trigger a `store.subscribe()` callback
-		context.store.dispatch( setAllSitesSelected() );
-	} );
-
 export const post = async ( context, next ) => {
 	//see post-editor/controller.js for reference
 
@@ -118,24 +96,23 @@ export const post = async ( context, next ) => {
 	const postType = determinePostType( context );
 	const isDemoContent = ! postId && has( context.query, 'gutenberg-demo' );
 
-	const makeEditor = siteId => {
+	const makeEditor = import( './init' ).then( ( { initGutenberg } ) => {
 		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
 		const userId = getCurrentUserId( state );
 
-		return import( './init' ).then( ( { initGutenberg } ) => {
-			//set postId on state.ui.editor.postId, so components like editor revisions can read from it
-			context.store.dispatch( { type: EDITOR_START, siteId, postId } );
+		//set postId on state.ui.editor.postId, so components like editor revisions can read from it
+		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
-			const Editor = initGutenberg( userId, siteSlug );
+		const Editor = initGutenberg( userId, siteSlug );
 
-			return () => <Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />;
-		} );
-	};
+		return () => <Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />;
+	} );
 
 	const EditorLoader = asyncLoader( {
 		promises: {
-			Editor: waitForSiteId( context.store ).then( makeEditor ),
+			Editor: makeEditor,
 			translations: loadTranslations( context.store ),
 		},
 		loading: () => <Placeholder />,
