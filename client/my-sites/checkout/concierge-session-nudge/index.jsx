@@ -23,11 +23,8 @@ import { cartItems } from 'lib/cart-values';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { localize } from 'i18n-calypso';
 
-/*
- * There are no translate() calls in this file because it's launching only to
- * EN audience
- */
 export class ConciergeSessionNudge extends React.Component {
 	static propTypes = {
 		receiptId: PropTypes.number.isRequired,
@@ -52,32 +49,37 @@ export class ConciergeSessionNudge extends React.Component {
 	}
 
 	header() {
+		const { translate } = this.props;
 		return (
 			<header className="concierge-session-nudge__header">
 				<h2 className="concierge-session-nudge__title">
-					Congratulations, Your site is being upgraded.
+					{ translate( 'Congratulations, Your site is being upgraded.' ) }
 				</h2>
 			</header>
 		);
 	}
 
 	body() {
+		const { translate } = this.props;
 		return (
 			<Fragment>
 				<div className="concierge-session-nudge__column-pane">
 					<div className="concierge-session-nudge__column-content">
 						<h4 className="concierge-session-nudge__sub-header">
-							Want to create a site that looks great, gets traffic, and makes money?
+							{ translate(
+								'Want to create a site that looks great, gets traffic, and makes money?'
+							) }
 						</h4>
 
 						<p>
 							<b>
-								Reserve a 45-minute one-on-one call with a website expert to help you get started on
-								the right foot.
+								{ translate(
+									'Reserve a 45-minute one-on-one call with a website expert to help you get started on the right foot.'
+								) }
 							</b>
 						</p>
 
-						<p>What our team of experts can help you with:</p>
+						<p>{ translate( 'What our team of experts can help you with:' ) }</p>
 
 						<p>
 							<ul className="concierge-session-nudge__checklist">
@@ -87,7 +89,10 @@ export class ConciergeSessionNudge extends React.Component {
 										className="concierge-session-nudge__checklist-item-icon"
 									/>
 									<span className="concierge-session-nudge__checklist-item-text">
-										<b>Design:</b> Which template to choose.
+										{ translate( '{{b}}Design:{{/b}} Which template to choose.', {
+											components: { b: <b /> },
+											comment: "This a benefit on a 'Purchase a call with us' page",
+										} ) }
 									</span>
 								</li>
 								<li className="concierge-session-nudge__checklist-item">
@@ -96,7 +101,13 @@ export class ConciergeSessionNudge extends React.Component {
 										className="concierge-session-nudge__checklist-item-icon"
 									/>
 									<span className="concierge-session-nudge__checklist-item-text">
-										<b>Traffic:</b> How to get free search engine traffic with SEO tools.
+										{ translate(
+											'{{b}}Traffic:{{/b}} How to get free search engine traffic with SEO tools.',
+											{
+												components: { b: <b /> },
+												comment: "This a benefit on a 'Purchase a call with us' page",
+											}
+										) }
 									</span>
 								</li>
 								<li className="concierge-session-nudge__checklist-item">
@@ -105,7 +116,13 @@ export class ConciergeSessionNudge extends React.Component {
 										className="concierge-session-nudge__checklist-item-icon"
 									/>
 									<span className="concierge-session-nudge__checklist-item-text">
-										<b>Site building tools:</b> Learn how to create a site you're proud to share.
+										{ translate(
+											"{{b}}Site building tools:{{/b}} Learn how to create a site you're proud to share.",
+											{
+												components: { b: <b /> },
+												comment: "This a benefit on a 'Purchase a call with us' page",
+											}
+										) }
 									</span>
 								</li>
 								<li className="concierge-session-nudge__checklist-item">
@@ -114,7 +131,13 @@ export class ConciergeSessionNudge extends React.Component {
 										className="concierge-session-nudge__checklist-item-icon"
 									/>
 									<span className="concierge-session-nudge__checklist-item-text">
-										<b>Content:</b> What information to include and where it should go.
+										{ translate(
+											'{{b}}Content:{{/b}} What information to include and where it should go.',
+											{
+												components: { b: <b /> },
+												comment: "This a benefit on a 'Purchase a call with us' page",
+											}
+										) }
 									</span>
 								</li>
 								<li className="concierge-session-nudge__checklist-item">
@@ -123,22 +146,43 @@ export class ConciergeSessionNudge extends React.Component {
 										className="concierge-session-nudge__checklist-item-icon"
 									/>
 									<span className="concierge-session-nudge__checklist-item-text">
-										<b>And more:</b> Tell our experts what you'd like to cover.
+										{ translate(
+											"{{b}}And more:{{/b}} Tell our experts what you'd like to cover.",
+											{
+												components: { b: <b /> },
+												comment: "This a benefit on a 'Purchase a call with us' page",
+											}
+										) }
 									</span>
 								</li>
 							</ul>
 						</p>
 
 						<h4 className="concierge-session-nudge__sub-header">
-							Reserve a 45-minute &ldquo;Quick Start&rdquo; appointment, and save $50 if you sign up
-							today.
+							{ translate(
+								'Reserve a 45-minute "Quick Start" appointment, and save %(saveAmount)s if you sign up today.',
+								{
+									args: {
+										saveAmount: '$50',
+									},
+								}
+							) }
 						</h4>
 
 						<p>
 							<b>
-								Book your call today for just <del>$149</del> $99.
+								{ translate(
+									'Book your call today for just {{del}}%(oldPrice)s{{/del}} %(price)s.',
+									{
+										components: { del: <del /> },
+										args: {
+											oldPrice: '$150',
+											price: '$99',
+										},
+									}
+								) }
 							</b>{' '}
-							Click the button below to confirm your purchase.
+							{ translate( 'Click the button below to confirm your purchase.' ) }
 						</p>
 					</div>
 					<div className="concierge-session-nudge__column-doodle">
@@ -154,20 +198,21 @@ export class ConciergeSessionNudge extends React.Component {
 	}
 
 	footer() {
+		const { translate } = this.props;
 		return (
 			<footer className="concierge-session-nudge__footer">
 				<Button
 					className="concierge-session-nudge__decline-offer-button"
 					onClick={ this.handleClickDecline }
 				>
-					Skip
+					{ translate( 'Skip' ) }
 				</Button>
 				<Button
 					primary
 					className="concierge-session-nudge__accept-offer-button"
 					onClick={ this.handleClickAccept }
 				>
-					Reserve a call for $99
+					{ translate( 'Reserve a call for $99' ) }
 				</Button>
 			</footer>
 		);
@@ -215,4 +260,4 @@ export default connect(
 	{
 		trackUpsellButtonClick,
 	}
-)( ConciergeSessionNudge );
+)( localize( ConciergeSessionNudge ) );
