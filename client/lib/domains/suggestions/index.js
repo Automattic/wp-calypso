@@ -2,12 +2,12 @@
 /**
  * Internal dependencies
  */
-import { isUsingGivenLocales } from 'lib/abtest';
+import { abtest, isUsingGivenLocales } from 'lib/abtest';
 
 export const getSuggestionsVendor = () => {
 	if ( isUsingGivenLocales( [ 'en' ] ) ) {
 		return 'variation_front';
 	}
 
-	return 'domainsbot_front';
+	return abtest( 'krackenM5NonEnDomainSuggestions' );
 };
