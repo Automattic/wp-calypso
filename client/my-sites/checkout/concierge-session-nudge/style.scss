@@ -3,6 +3,31 @@
 		font-weight: 700;
 	}
 }
+.concierge-session-nudge__column-pane {
+	display: flex;
+	flex-flow: row;
+}
+
+.concierge-session-nudge__column-content {
+	padding-right: 10px;
+	@include breakpoint( '<960px' ) {
+		padding-right: 0;
+	}
+}
+
+.concierge-session-nudge__column-doodle {
+	width: 150px;
+	padding-left: 10px;
+	@include breakpoint( '<960px' ) {
+		display: none;
+	}
+}
+
+.concierge-session-nudge__doodle {
+	width: auto;
+	margin-top: 85px;
+}
+
 .concierge-session-nudge__header {
 	text-align: center;
 	font-weight: bold;
