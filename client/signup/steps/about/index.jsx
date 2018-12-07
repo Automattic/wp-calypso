@@ -186,7 +186,6 @@ class AboutStep extends Component {
 			nextFlowName = flowName;
 
 		//Inputs
-		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 		const userExperienceInput = this.state.userExperience;
 		const eventAttributes = {};
 
@@ -201,15 +200,16 @@ class AboutStep extends Component {
 		}
 
 		//Site Topic
-		const siteTopicSlug = toSiteTopicSlug( this.state.siteTopicValue );
+		const { siteTopicValue } = this.state;
+		const siteTopicSlug = toSiteTopicSlug( siteTopicValue );
 
 		eventAttributes.site_topic = siteTopicSlug || 'N/A';
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
-			value: eventAttributes.site_topic,
+			value: siteTopicSlug,
 		} );
 
 		this.props.setSurvey( {
-			vertical: siteTopicSlug,
+			vertical: siteTopicValue,
 			otherText: '',
 			siteType: designType,
 		} );
@@ -293,7 +293,7 @@ class AboutStep extends Component {
 				themeSlugWithRepo: themeRepo,
 				siteTitle: siteTitleValue,
 				designType: designType,
-				surveyQuestion: siteTopicSlug,
+				surveyQuestion: siteTopicValue,
 			}
 		);
 
@@ -520,6 +520,7 @@ class AboutStep extends Component {
 										) }
 										onChange={ this.onSiteTopicChange }
 										suggestions={ this.siteTopicSuggestions }
+										value={ this.state.siteTopicValue }
 									/>
 								</FormFieldset>
 							) }
