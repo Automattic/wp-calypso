@@ -85,7 +85,7 @@ class Task extends PureComponent {
 		if ( abtest( 'simplifiedChecklistView' ) === 'showAll' ) {
 			isCollapsed = false;
 		} else {
-			isCollapsed = firstIncomplete.id !== this.props.id;
+			isCollapsed = firstIncomplete && firstIncomplete.id !== this.props.id;
 		}
 
 		return (
