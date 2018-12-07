@@ -266,7 +266,7 @@ class AddEmailAddressesCard extends React.Component {
 		);
 	}
 
-	handleAddAnotherEmailAddress( event ) {
+	handleAddAnotherEmailAddress = event => {
 		event.preventDefault();
 
 		this.setState( {
@@ -274,7 +274,7 @@ class AddEmailAddressesCard extends React.Component {
 		} );
 
 		this.props.addAnotherEmailAddressClick( this.props.selectedDomainName );
-	}
+	};
 
 	formButtons() {
 		return (
