@@ -23,6 +23,11 @@ import * as Components from './services';
 import ServicePlaceholder from './service-placeholder';
 
 /**
+ * Style dependencies
+ */
+import './services-group.scss';
+
+/**
  * Module constants
  */
 const NUMBER_OF_PLACEHOLDERS = 4;

@@ -19,6 +19,11 @@ import AccountDialogAccount from './account-dialog-account';
 import Dialog from 'components/dialog';
 import { warningNotice } from 'state/notices/actions';
 
+/**
+ * Style dependencies
+ */
+import './account-dialog.scss';
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 class AccountDialog extends Component {
 	static propTypes = {
