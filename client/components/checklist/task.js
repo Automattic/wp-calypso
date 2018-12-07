@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Focusable from 'components/focusable';
@@ -32,6 +33,37 @@ class Task extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
+	renderCheckmarkIcon( completed ) {
+		const { translate } = this.props;
+		const onDismiss = ! completed ? this.props.onDismiss : undefined;
+
+		if ( onDismiss ) {
+			return (
+				<Focusable
+					className="checklist__task-icon"
+					onClick={ onDismiss }
+					aria-pressed={ completed ? 'true' : 'false' }
+				>
+					<ScreenReaderText>
+						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
+					</ScreenReaderText>
+					<Gridicon icon="checkmark" size={ 18 } />
+				</Focusable>
+			);
+		}
+
+		if ( completed ) {
+			return (
+				<div className="checklist__task-icon">
+					<ScreenReaderText>{ translate( 'Complete' ) }</ScreenReaderText>
+					<Gridicon icon="checkmark" size={ 18 } />
+				</div>
+			);
+		}
+
+		return null;
+	}
+
 	render() {
 		const {
 			buttonPrimary,
@@ -44,16 +76,24 @@ class Task extends PureComponent {
 			onClick,
 			title,
 			translate,
+			firstIncomplete,
 		} = this.props;
 		const { buttonText = translate( 'Do it!' ) } = this.props;
-		const onDismiss = ! completed ? this.props.onDismiss : undefined;
 		const hasActionlink = completed && completedButtonText;
+
+		let isCollapsed;
+		if ( abtest( 'simplifiedChecklistView' ) === 'showAll' ) {
+			isCollapsed = false;
+		} else {
+			isCollapsed = firstIncomplete.id !== this.props.id;
+		}
 
 		return (
 			<CompactCard
 				className={ classNames( 'checklist__task', {
 					'is-completed': completed,
 					'has-actionlink': hasActionlink,
+					'is-collapsed': isCollapsed,
 				} ) }
 			>
 				<div className="checklist__task-primary">
@@ -82,23 +122,8 @@ class Task extends PureComponent {
 						</small>
 					) }
 				</div>
-				{ onDismiss ? (
-					<Focusable
-						className="checklist__task-icon"
-						onClick={ onDismiss }
-						aria-pressed={ completed ? 'true' : 'false' }
-					>
-						<ScreenReaderText>
-							{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
-						</ScreenReaderText>
-						<Gridicon icon="checkmark" size={ 18 } />
-					</Focusable>
-				) : completed ? (
-					<div className="checklist__task-icon">
-						<ScreenReaderText>{ translate( 'Complete' ) }</ScreenReaderText>
-						<Gridicon icon="checkmark" size={ 18 } />
-					</div>
-				) : null }
+
+				{ this.renderCheckmarkIcon( completed ) }
 			</CompactCard>
 		);
 	}
