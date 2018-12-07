@@ -81,13 +81,14 @@ class WpcomChecklistComponent extends PureComponent {
 		}
 	};
 
-	trackTaskStart = taskId => {
+	trackTaskStart = ( taskId, props ) => {
 		const location = 'banner' === this.props.viewMode ? 'checklist_banner' : 'checklist_show';
 
 		this.props.recordTracksEvent( 'calypso_checklist_task_start', {
 			checklist_name: 'new_blog',
 			location,
 			step_name: taskId,
+			...props,
 		} );
 	};
 
@@ -111,7 +112,7 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	trackedTaskDisplays = {};
-	trackTaskDisplayOnce = taskId => {
+	trackTaskDisplayOnce = ( taskId, props ) => {
 		if ( this.trackedTaskDisplays[ taskId ] ) {
 			return;
 		}
@@ -120,6 +121,7 @@ class WpcomChecklistComponent extends PureComponent {
 		this.props.recordTracksEvent( 'calypso_checklist_task_display', {
 			checklist_name: 'new_blog',
 			step_name: taskId,
+			...props,
 		} );
 	};
 
@@ -231,7 +233,7 @@ class WpcomChecklistComponent extends PureComponent {
 		const taskList = getTaskList( taskStatuses, designType, isSiteUnlaunched );
 		taskList.getAll().forEach( task => {
 			if ( this.shouldRenderTask( task.id ) ) {
-				this.trackTaskDisplayOnce( task.id );
+				this.trackTaskDisplayOnce( task.id, { completed: task.isCompleted } );
 			}
 		} );
 	}
@@ -528,6 +530,14 @@ class WpcomChecklistComponent extends PureComponent {
 	renderEmailSetupTask = ( TaskComponent, baseProps, task ) => {
 		const { translate, siteSlug } = this.props;
 
+		const getStartProps = ( startingTask, element ) => {
+			return {
+				completed: startingTask.isCompleted,
+				email_forwarding: startingTask.email_forwarding,
+				element,
+			};
+		};
+
 		const emailSetupProps = {
 			title: translate( 'Get email for your site' ),
 			bannerImageSrc: '/calypso/images/stats/tasks/email.svg', // TODO: get an actual svg for this
@@ -536,7 +546,7 @@ class WpcomChecklistComponent extends PureComponent {
 			),
 			duration: translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ),
 			onClick: () => {
-				this.trackTaskStart( task.id );
+				this.trackTaskStart( task.id, getStartProps( task, 'button' ) );
 				page( `/domains/manage/email/${ siteSlug }` );
 			},
 			onDismiss: this.handleTaskDismiss( task.id ),
@@ -550,7 +560,7 @@ class WpcomChecklistComponent extends PureComponent {
 					components: {
 						link: (
 							<a
-								onClick={ () => this.trackTaskStart( task.id ) }
+								onClick={ () => this.trackTaskStart( task.id, getStartProps( task, 'hyperlink' ) ) }
 								href={ `/domains/manage/email/${ siteSlug }` }
 							/>
 						),
