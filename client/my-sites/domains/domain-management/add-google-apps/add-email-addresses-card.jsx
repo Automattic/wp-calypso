@@ -43,6 +43,8 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 		return map( group, function( fieldset ) {
 			return {
 				email: `${ fieldset.username.value }@${ fieldset.domain.value }`.toLowerCase(),
+				firstname: fieldset.firstName.value,
+				lastname: fieldset.lastName.value,
 			};
 		} );
 	} );
@@ -50,7 +52,6 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 	return map( groups, function( users, domain ) {
 		const domainInfo = find( domains, { name: domain } );
 		let item;
-
 		if ( hasGoogleApps( domainInfo ) ) {
 			item = cartItems.googleAppsExtraLicenses( { domain, users } );
 		} else {
