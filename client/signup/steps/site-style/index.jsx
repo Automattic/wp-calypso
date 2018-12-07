@@ -9,6 +9,7 @@ import classNames from 'classnames';
 import React, { Component } from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -72,16 +73,13 @@ export class SiteStyleStep extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	static defaultProps = {
-		siteStyle: 'modern',
-	};
-
 	constructor( props ) {
 		super( props );
-
+		const siteStyle = props.siteStyle || 'modern';
+		const selectedStyle = find( props.styleOptions, [ 'name', siteStyle ] );
 		this.state = {
-			siteStyle: props.siteStyle || 'modern',
-			themeSlugWithRepo: null,
+			siteStyle: selectedStyle.name,
+			themeSlugWithRepo: selectedStyle.value,
 		};
 	}
 
@@ -182,7 +180,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 		dispatch( setSiteStyle( siteStyle ) );
 		SignupActions.submitSignupStep(
 			{
-				processingMessage: i18n.ranslate( 'Collecting your information' ),
+				processingMessage: i18n.translate( 'Collecting your information' ),
 				stepName,
 			},
 			[],
