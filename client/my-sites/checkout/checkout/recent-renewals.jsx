@@ -44,14 +44,15 @@ export function RecentRenewals( { purchases, siteId, translate } ) {
 	const recentRenewals = purchases
 		.filter( ( { mostRecentRenewMoment } ) => {
 			const oldestMoment = i18n.moment().subtract( 30, 'days' );
-			return mostRecentRenewMoment.isAfter( oldestMoment );
+			return mostRecentRenewMoment && mostRecentRenewMoment.isAfter( oldestMoment );
 		} )
-		.map( ( { domain, productName, expiryMoment } ) => {
+		.filter( product => product.productName && product.expiryMoment )
+		.map( product => {
 			return {
-				link: domain,
-				domain,
-				productName,
-				expiryMoment,
+				link: product.includedDomain || product.meta || product.domain,
+				domain: product.domain,
+				productName: product.productName,
+				expiryMoment: product.expiryMoment,
 			};
 		} );
 	const productListItems = recentRenewals.map( ( { link, domain, productName, expiryMoment } ) => (
