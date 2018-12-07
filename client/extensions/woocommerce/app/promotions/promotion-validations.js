@@ -193,7 +193,7 @@ export function validateUsageLimit( fieldName, promotion, currency, showEmpty ) 
 		// Field is not enabled.
 		return;
 	}
-	if ( showEmpty && isEmpty( usageLimit ) ) {
+	if ( showEmpty && isEmpty( String( usageLimit ) ) ) {
 		return translate( 'Number cannot be blank.' );
 	}
 	if ( null !== usageLimit ) {
@@ -222,7 +222,7 @@ export function validateUsageLimitPerUser( fieldName, promotion, currency, showE
 		// Field is not enabled.
 		return;
 	}
-	if ( showEmpty && isEmpty( usageLimitPerUser ) ) {
+	if ( showEmpty && isEmpty( String( usageLimitPerUser ) ) ) {
 		return translate( 'Number cannot be blank.' );
 	}
 	if ( null !== usageLimitPerUser ) {
