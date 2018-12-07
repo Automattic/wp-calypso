@@ -18,7 +18,7 @@ registerBlockType( 'jetpack/vr', {
 	icon: 'embed-photo',
 	category: 'jetpack',
 	keywords: [ __( 'vr' ), __( 'panorama' ), __( '360' ) ],
-	support: {
+	supports: {
 		html: false,
 	},
 	attributes: {
