@@ -665,6 +665,21 @@ ul.email-forwarding__list {
 	margin-top: 5px;
 }
 
+.add-google-apps__name-fieldsets {
+	margin-top: 20px;
+
+	@include breakpoint( '>660px' ) {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.form-fieldset {
+		@include breakpoint( '>660px' ) {
+			width: calc( 50% - 10px );
+		}
+	}
+}
+
 .add-google-apps__email-address-fieldsets {
 	.add-google-apps__email-address-fieldset {
 		display: flex;
