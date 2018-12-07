@@ -149,7 +149,7 @@ const AddEmailAddressesCard = createReactClass( {
 		} else {
 			select = (
 				<DomainsSelect
-					domains={ this.props.domains }
+					domains={ getGoogleAppsSupportedDomains( this.props.domains ) }
 					isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
 					value={ this.state.fieldsets[ index ].domain.value }
 					onChange={ this.handleFieldChange.bind( this, 'domain', index ) }
