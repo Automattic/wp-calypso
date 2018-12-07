@@ -1,8 +1,12 @@
 /** @format */
-// External dependencies
+/**
+ * External dependencies
+ */
 import i18n from 'i18n-calypso';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import {
 	PRIVACY_PROTECTION_CANCEL,
 	PRIVACY_PROTECTION_CANCEL_COMPLETED,
