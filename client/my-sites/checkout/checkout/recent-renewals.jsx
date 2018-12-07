@@ -57,6 +57,7 @@ export function RecentRenewals( { purchases, siteId, translate } ) {
 		} );
 	const productListItems = recentRenewals.map( ( { link, domain, productName, expiryMoment } ) => (
 		<RecentRenewalListItem
+			key={ domain + productName }
 			link={ link }
 			domain={ domain }
 			productName={ productName }
