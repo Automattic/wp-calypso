@@ -13,6 +13,7 @@
 	.mce-container.mce-tinymce.is-pinned .mce-container.mce-top-part > .mce-container-body {
 		> div.mce-toolbar-grp {
 			background: $white;
+			overflow: hidden;
 			position: static;
 			top: 0;
 
