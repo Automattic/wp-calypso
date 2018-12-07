@@ -52,7 +52,6 @@
 		"guided-tours/theme-sheet-welcome": true,
 		"gutenberg": true,
 		"gutenberg/opt-in": true,
-		"gutenberg/block/jetpack-preset": true,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,

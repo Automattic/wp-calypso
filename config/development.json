@@ -73,7 +73,6 @@
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
 		"gutenberg": true,
-		"gutenberg/block/jetpack-preset": true,
 		"gutenberg/opt-in": true,
 		"help": true,
 		"help/courses": true,
