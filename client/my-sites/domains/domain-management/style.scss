@@ -670,7 +670,6 @@ ul.email-forwarding__list {
 
 	@include breakpoint( '>660px' ) {
 		display: flex;
-		flex-direction: row;
 		justify-content: space-between;
 	}
 

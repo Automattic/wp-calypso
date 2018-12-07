@@ -160,13 +160,15 @@ class AddEmailAddressesCard extends React.Component {
 					<div className="add-google-apps__email-address-fieldsets">
 						{ this.emailAddressFieldset( index ) }
 					</div>
-					<div className="add-google-apps__name-fieldsets">{ this.nameFieldset( index ) }</div>
+					<div className="add-google-apps__name-fieldsets">
+						{ this.renderNameFieldset( index ) }
+					</div>
 				</Fragment>
 			);
 		} );
 	}
 
-	nameFieldset( index ) {
+	renderNameFieldset( index ) {
 		const field = this.state.fieldsets[ index ];
 		const { translate } = this.props;
 
