@@ -27,9 +27,8 @@ jest.mock( 'config', () => {
 	return configApi;
 } );
 
-jest.mock( 'lib/analytics/ad-tracking', () => ( {
-	mayWeTrackCurrentUserGdpr: () => true,
-	retarget: () => {},
+jest.mock( 'lib/analytics/utils', () => ( {
+	isGoogleAnalyticsAllowed: () => true,
 } ) );
 jest.mock( 'lib/load-script', () => require( './mocks/lib/load-script' ) );
 
