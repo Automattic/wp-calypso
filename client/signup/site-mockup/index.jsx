@@ -25,25 +25,18 @@ import './style.scss';
 
 class SiteMockups extends Component {
 	getTagline() {
-		const { siteInformation } = this.props;
-		// we could have a completely empty object or an initialized object with
-		// empty address and phone (after title is entered)
-		if (
-			isEmpty( siteInformation ) ||
-			isEmpty( siteInformation.address && isEmpty( siteInformation.phone ) )
-		) {
+		const { siteInformation = {} } = this.props;
+		const { address, phone } = siteInformation;
+
+		if ( isEmpty( address ) && isEmpty( phone ) ) {
 			return translate( 'You’ll be able to customize this to your needs.' );
 		}
 		return (
 			<>
-				{ siteInformation.address && (
-					<span className="site-mockup__address">
-						{ this.formatAddress( siteInformation.address ) }
-					</span>
+				{ ! isEmpty( address ) && (
+					<span className="site-mockup__address">{ this.formatAddress( address ) }</span>
 				) }
-				{ siteInformation.phone && (
-					<span className="site-mockup__phone">{ siteInformation.phone }</span>
-				) }
+				{ ! isEmpty( phone ) && <span className="site-mockup__phone">{ phone }</span> }
 			</>
 		);
 	}
