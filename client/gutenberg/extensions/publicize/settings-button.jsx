@@ -20,6 +20,7 @@
  */
 import classnames from 'classnames';
 import { Component } from '@wordpress/element';
+import { ExternalLink } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -70,10 +71,7 @@ class PublicizeSettingsButton extends Component {
 
 		return (
 			<div className={ className }>
-				<a onClick={ this.settingsClick } tabIndex="0">
-					<span className="jetpack-publicize-add-icon dashicons-plus-alt" />
-					{ __( 'Connect an account' ) }
-				</a>
+				<ExternalLink onClick={ this.settingsClick }>{ __( 'Connect an account' ) }</ExternalLink>
 			</div>
 		);
 	}
