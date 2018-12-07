@@ -44,6 +44,7 @@ class WpcomChecklistComponent extends PureComponent {
 		emailSent: false,
 		error: null,
 	};
+	trackedTaskDisplays = {};
 
 	constructor() {
 		super();
@@ -114,7 +115,6 @@ class WpcomChecklistComponent extends PureComponent {
 		}
 	};
 
-	trackedTaskDisplays = {};
 	trackTaskDisplayOnce = task => {
 		if ( this.trackedTaskDisplays[ task.id ] ) {
 			return;
