@@ -158,7 +158,7 @@ export function createSiteWithCart(
 		newSiteParams.find_available_url = true;
 		newSiteParams.public = 1;
 	} else if ( flowName === 'onboarding' ) {
-		newSiteParams.blog_name = get( user.get(), 'username', '' ) + siteType;
+		newSiteParams.blog_name = get( user.get(), 'username', '' );
 		newSiteParams.find_available_url = true;
 		newSiteParams.public = 1;
 	} else {
