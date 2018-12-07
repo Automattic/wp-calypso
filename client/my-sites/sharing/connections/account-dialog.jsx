@@ -19,6 +19,7 @@ import AccountDialogAccount from './account-dialog-account';
 import Dialog from 'components/dialog';
 import { warningNotice } from 'state/notices/actions';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 class AccountDialog extends Component {
 	static propTypes = {
 		accounts: PropTypes.arrayOf( PropTypes.object ),
@@ -39,6 +40,20 @@ class AccountDialog extends Component {
 		warningNotice: () => {},
 	};
 
+	state = {
+		selectedAccount: null,
+	};
+
+	static getDerivedStateFromProps( props, state ) {
+		// When the account dialog is closed, reset the selected account so
+		// that the state doesn't leak into a future dialog
+		if ( ! props.isVisible && state.selectedAccount ) {
+			return { selectedAccount: null };
+		}
+
+		return null;
+	}
+
 	onClose = action => {
 		const accountToConnect = this.getAccountToConnect();
 		const externalUserId =
@@ -58,22 +73,6 @@ class AccountDialog extends Component {
 	};
 
 	onSelectedAccountChanged = account => this.setState( { selectedAccount: account } );
-
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			selectedAccount: null,
-		};
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		// When the account dialog is closed, reset the selected account so
-		// that the state doesn't leak into a future dialog
-		if ( ! nextProps.visible ) {
-			this.setState( { selectedAccount: null } );
-		}
-	}
 
 	getSelectedAccount() {
 		if ( this.state.selectedAccount ) {
@@ -225,6 +224,7 @@ class AccountDialog extends Component {
 		);
 	}
 }
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default connect(
 	null,
