@@ -78,7 +78,7 @@ export function RecentRenewals( { purchases, siteId, translate } ) {
 
 RecentRenewals.propTypes = {
 	purchases: PropTypes.array.isRequired,
-	siteId: PropTypes.string.isRequired,
+	siteId: PropTypes.number.isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
