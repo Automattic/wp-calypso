@@ -3,9 +3,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { noop } from 'lodash';
-import { spy, match } from 'sinon';
 
 /**
  * Internal dependencies
@@ -50,12 +48,12 @@ describe( 'handlers', () => {
 					},
 				},
 			} );
-			const dispatch = spy();
+			const dispatch = jest.fn();
 			const action = fetchSettingsGeneral( siteId );
 
 			handleSettingsGeneral( action, noop )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith(
-				match( {
+			expect( dispatch ).toHaveBeenCalledWith(
+				expect.objectContaining( {
 					type: WPCOM_HTTP_REQUEST,
 					method: 'GET',
 					path: `/jetpack-blogs/${ siteId }/rest-api/`,
@@ -82,11 +80,11 @@ describe( 'handlers', () => {
 					},
 				},
 			} );
-			const dispatch = spy();
+			const dispatch = jest.fn();
 			const action = fetchSettingsGeneral( siteId );
 
 			handleSettingsGeneral( action )( dispatch, getState );
-			expect( dispatch ).to.not.have.been.called;
+			expect( dispatch ).not.toHaveBeenCalled();
 		} );
 	} );
 	describe( '#handleSettingsGeneralSuccess()', () => {
@@ -97,7 +95,7 @@ describe( 'handlers', () => {
 			const action = fetchSettingsGeneral( siteId );
 			const result = handleSettingsGeneralSuccess( action, response );
 
-			expect( result ).to.eql( {
+			expect( result ).toEqual( {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 				siteId,
 				data: settingsData,
@@ -110,7 +108,7 @@ describe( 'handlers', () => {
 			const action = fetchSettingsGeneral( siteId );
 			const result = handleSettingsGeneralError( action, 'rest_no_route' );
 
-			expect( result ).to.eql( {
+			expect( result ).toEqual( {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 				siteId,
 				error: 'rest_no_route',
