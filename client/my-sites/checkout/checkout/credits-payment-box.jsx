@@ -19,7 +19,6 @@ import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import CartToggle from './cart-toggle';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
-import RecentRenewals from './recent-renewals';
 
 export class CreditsPaymentBox extends React.Component {
 	content = () => {
@@ -57,7 +56,6 @@ export class CreditsPaymentBox extends React.Component {
 
 					{ this.props.children }
 
-					<RecentRenewals />
 					<TermsOfService />
 
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }

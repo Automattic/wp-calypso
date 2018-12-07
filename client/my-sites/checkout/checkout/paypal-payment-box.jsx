@@ -24,7 +24,6 @@ import PaymentChatButton from './payment-chat-button';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import CartToggle from './cart-toggle';
 import wp from 'lib/wp';
-import RecentRenewals from './recent-renewals';
 
 const wpcom = wp.undocumented();
 
@@ -163,7 +162,6 @@ export class PaypalPaymentBox extends React.Component {
 
 					{ this.props.children }
 
-					<RecentRenewals />
 					<TermsOfService
 						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription(
 							this.props.cart
