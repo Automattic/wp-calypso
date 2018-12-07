@@ -19,6 +19,7 @@ export const settings = {
 	keywords: mapSettings.keywords,
 	description: mapSettings.description,
 	attributes: mapSettings.attributes,
+	supports: mapSettings.supports,
 	getEditWrapperProps( attributes ) {
 		const { align } = attributes;
 		if ( -1 !== mapSettings.validAlignments.indexOf( align ) ) {
