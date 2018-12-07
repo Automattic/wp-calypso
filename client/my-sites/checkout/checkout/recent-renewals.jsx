@@ -48,9 +48,10 @@ export function RecentRenewals( { purchases, siteId, translate } ) {
 		} )
 		.filter( product => product.productName && product.expiryMoment )
 		.map( product => {
+			const domain = product.includedDomain || product.meta || product.domain;
 			return {
-				link: product.includedDomain || product.meta || product.domain,
-				domain: product.domain,
+				link: domain,
+				domain,
 				productName: product.productName,
 				expiryMoment: product.expiryMoment,
 			};
