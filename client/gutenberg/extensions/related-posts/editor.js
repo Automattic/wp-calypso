@@ -77,6 +77,10 @@ export const settings = {
 		}
 	},
 
+	supports: {
+		html: false,
+	},
+
 	transforms: {
 		from: [
 			{
