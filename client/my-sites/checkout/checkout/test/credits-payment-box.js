@@ -47,7 +47,6 @@ jest.mock( 'lib/cart-values', () => ( {
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
-	translate: x => x,
 } ) );
 
 jest.mock( '../terms-of-service', () => {
