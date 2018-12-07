@@ -53,7 +53,7 @@ describe( 'handlers', () => {
 			const dispatch = spy();
 			const action = fetchSettingsGeneral( siteId );
 
-			handleSettingsGeneral( { dispatch, getState }, action, noop );
+			handleSettingsGeneral( action, noop )( dispatch, getState );
 			expect( dispatch ).to.have.been.calledWith(
 				match( {
 					type: WPCOM_HTTP_REQUEST,
@@ -85,22 +85,19 @@ describe( 'handlers', () => {
 			const dispatch = spy();
 			const action = fetchSettingsGeneral( siteId );
 
-			handleSettingsGeneral( { dispatch, getState }, action );
+			handleSettingsGeneral( action )( dispatch, getState );
 			expect( dispatch ).to.not.have.been.called;
 		} );
 	} );
 	describe( '#handleSettingsGeneralSuccess()', () => {
 		test( 'should dispatch success with settings data', () => {
 			const siteId = '123';
-			const store = {
-				dispatch: spy(),
-			};
 			const response = { data: settingsData };
 
 			const action = fetchSettingsGeneral( siteId );
-			handleSettingsGeneralSuccess( store, action, response );
+			const result = handleSettingsGeneralSuccess( action, response );
 
-			expect( store.dispatch ).calledWith( {
+			expect( result ).to.eql( {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 				siteId,
 				data: settingsData,
@@ -110,14 +107,10 @@ describe( 'handlers', () => {
 	describe( '#handleSettingsGeneralError()', () => {
 		test( 'should dispatch error', () => {
 			const siteId = '123';
-			const store = {
-				dispatch: spy(),
-			};
-
 			const action = fetchSettingsGeneral( siteId );
-			handleSettingsGeneralError( store, action, 'rest_no_route' );
+			const result = handleSettingsGeneralError( action, 'rest_no_route' );
 
-			expect( store.dispatch ).to.have.been.calledWithMatch( {
+			expect( result ).to.eql( {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 				siteId,
 				error: 'rest_no_route',
