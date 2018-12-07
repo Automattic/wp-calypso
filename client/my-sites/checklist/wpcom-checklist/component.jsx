@@ -45,6 +45,26 @@ class WpcomChecklistComponent extends PureComponent {
 		error: null,
 	};
 
+	constructor() {
+		super();
+
+		this.taskFunctions = {
+			email_verified: this.renderEmailVerifiedTask,
+			site_created: this.renderSiteCreatedTask,
+			address_picked: this.renderAddressPickedTask,
+			blogname_set: this.renderBlogNameSetTask,
+			site_icon_set: this.renderSiteIconSetTask,
+			blogdescription_set: this.renderBlogDescriptionSetTask,
+			avatar_uploaded: this.renderAvatarUploadedTask,
+			contact_page_updated: this.renderContactPageUpdatedTask,
+			post_published: this.renderPostPublishedTask,
+			custom_domain_registered: this.renderCustomDomainRegisteredTask,
+			mobile_app_installed: this.renderMobileAppInstalledTask,
+			site_launched: this.renderSiteLaunchedTask,
+			email_setup: this.renderEmailSetupTask,
+		};
+	}
+
 	handleTaskStart = ( { task, tourId, url } ) => () => {
 		if ( ! tourId && ! url ) {
 			return;
@@ -61,7 +81,7 @@ class WpcomChecklistComponent extends PureComponent {
 		}
 	};
 
-	trackTaskStart = taskId => () => {
+	trackTaskStart = taskId => {
 		const location = 'banner' === this.props.viewMode ? 'checklist_banner' : 'checklist_show';
 
 		this.props.recordTracksEvent( 'calypso_checklist_task_start', {
@@ -77,20 +97,30 @@ class WpcomChecklistComponent extends PureComponent {
 		if ( taskId ) {
 			this.props.createNotice( 'is-success', 'You completed a task!' );
 			this.props.requestSiteChecklistTaskUpdate( siteId, taskId );
-			this.props.trackTaskDismiss( taskId );
+			this.trackTaskDismiss( taskId );
 		}
 	};
 
-	trackTaskDismiss = taskId => () => {
+	trackTaskDismiss = taskId => {
 		if ( taskId ) {
-			// TODO: do we want to include the location?
-			// const location = 'banner' === this.props.viewMode ? 'checklist_banner' : 'checklist_show';
-
 			this.props.recordTracksEvent( 'calypso_checklist_task_dismiss', {
 				checklist_name: 'new_blog',
 				step_name: taskId,
 			} );
 		}
+	};
+
+	trackedTaskDisplays = {};
+	trackTaskDisplayOnce = taskId => {
+		if ( this.trackedTaskDisplays[ taskId ] ) {
+			return;
+		}
+		this.trackedTaskDisplays[ taskId ] = true;
+
+		this.props.recordTracksEvent( 'calypso_checklist_task_display', {
+			checklist_name: 'new_blog',
+			step_name: taskId,
+		} );
 	};
 
 	handleTaskStartThenDismiss = args => () => {
@@ -196,25 +226,19 @@ class WpcomChecklistComponent extends PureComponent {
 		);
 	}
 
+	componentDidUpdate() {
+		const { taskStatuses, designType, isSiteUnlaunched } = this.props;
+		const taskList = getTaskList( taskStatuses, designType, isSiteUnlaunched );
+		taskList.getAll().forEach( task => {
+			if ( this.shouldRenderTask( task.id ) ) {
+				this.trackTaskDisplayOnce( task.id );
+			}
+		} );
+	}
+
 	renderTask( task ) {
 		const { siteSlug, viewMode } = this.props;
 		const TaskComponent = 'banner' === viewMode ? ChecklistBannerTask : Task;
-
-		const taskFunctions = {
-			email_verified: this.renderEmailVerifiedTask,
-			site_created: this.renderSiteCreatedTask,
-			address_picked: this.renderAddressPickedTask,
-			blogname_set: this.renderBlogNameSetTask,
-			site_icon_set: this.renderSiteIconSetTask,
-			blogdescription_set: this.renderBlogDescriptionSetTask,
-			avatar_uploaded: this.renderAvatarUploadedTask,
-			contact_page_updated: this.renderContactPageUpdatedTask,
-			post_published: this.renderPostPublishedTask,
-			custom_domain_registered: this.renderCustomDomainRegisteredTask,
-			mobile_app_installed: this.renderMobileAppInstalledTask,
-			site_launched: this.renderSiteLaunchedTask,
-			email_setup: this.renderEmailSetupTask,
-		};
 
 		const baseProps = {
 			id: task.id,
@@ -223,11 +247,15 @@ class WpcomChecklistComponent extends PureComponent {
 			siteSlug,
 		};
 
-		if ( taskFunctions[ task.id ] ) {
-			return taskFunctions[ task.id ]( TaskComponent, baseProps, task );
+		if ( this.shouldRenderTask( task.id ) ) {
+			return this.taskFunctions[ task.id ]( TaskComponent, baseProps, task );
 		}
 
 		return null;
+	}
+
+	shouldRenderTask( taskId ) {
+		return typeof this.taskFunctions[ taskId ] !== 'undefined';
 	}
 
 	renderEmailVerifiedTask = ( TaskComponent, baseProps ) => {
@@ -508,6 +536,7 @@ class WpcomChecklistComponent extends PureComponent {
 			),
 			duration: translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ),
 			onClick: () => {
+				this.trackTaskStart( task.id );
 				page( `/domains/manage/email/${ siteSlug }` );
 			},
 			onDismiss: this.handleTaskDismiss( task.id ),
@@ -519,7 +548,12 @@ class WpcomChecklistComponent extends PureComponent {
 				'Want a dedicated inbox, docs, and cloud storage? {{link}}Upgrade to G Suite!{{/link}}',
 				{
 					components: {
-						link: <a href={ `/domains/manage/email/${ siteSlug }` } />,
+						link: (
+							<a
+								onClick={ () => this.trackTaskStart( task.id ) }
+								href={ `/domains/manage/email/${ siteSlug }` }
+							/>
+						),
 					},
 				}
 			),
