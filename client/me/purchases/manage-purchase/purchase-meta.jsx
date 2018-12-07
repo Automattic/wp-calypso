@@ -56,17 +56,22 @@ class PurchaseMeta extends Component {
 
 	renderPrice() {
 		const { purchase, translate } = this.props;
-		const { priceText, currencyCode, productSlug } = purchase;
+		// TODO: We need separate tax here, I think, for the price
+		const { priceText, currencyCode, productSlug, taxAmount } = purchase;
 		const period =
 			productSlug && isMonthly( productSlug ) ? translate( 'month' ) : translate( 'year' );
 
 		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
-			return translate( '%(priceText)s %(currencyCode)s {{period}}(one-time){{/period}}', {
-				args: { priceText, currencyCode },
-				components: {
-					period: <span className="manage-purchase__time-period" />,
-				},
-			} );
+			return translate(
+				'%(priceText)s{{taxAmount}} %(currencyCode)s {{period}}(one-time){{/period}}',
+				{
+					args: { priceText, currencyCode },
+					components: {
+						period: <span className="manage-purchase__time-period" />,
+						taxAmount,
+					},
+				}
+			);
 		}
 
 		if ( isIncludedWithPlan( purchase ) ) {
