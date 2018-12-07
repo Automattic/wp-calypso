@@ -207,7 +207,7 @@ class WpcomChecklistComponent extends PureComponent {
 			completed: task.isCompleted,
 			siteSlug,
 			firstIncomplete,
-			buttonPrimary: firstIncomplete.id === task.id,
+			buttonPrimary: firstIncomplete && firstIncomplete.id === task.id,
 		};
 
 		if ( taskFunctions[ task.id ] ) {
