@@ -388,7 +388,12 @@ class ManagePurchase extends Component {
 						<h2 className="manage-purchase__title">{ getName( purchase ) }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
-							<PlanPrice rawPrice={ purchase.amount } currencyCode={ purchase.currencyCode } />
+							<PlanPrice
+								rawPrice={ purchase.amount }
+								currencyCode={ purchase.currencyCode }
+								taxAmount={ purchase.taxAmount }
+							/>
+							{ purchase.taxAmount }
 						</div>
 					</header>
 					{ this.renderPlanDescription() }
