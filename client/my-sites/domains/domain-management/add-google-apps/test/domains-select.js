@@ -12,7 +12,7 @@ import DomainsSelect from '../domains-select';
 
 const noop = () => {};
 
-const domainFoo = describe( 'DomainSelect', () => {
+describe( 'DomainSelect', () => {
 	test( 'it renders DomainsSelect with one domain correctly', () => {
 		const tree = renderer
 			.create(
@@ -75,7 +75,7 @@ const domainFoo = describe( 'DomainSelect', () => {
 				value="foo"
 			/>
 		);
-		const select = instance.root.find( el => el.type == 'select' );
+		const select = instance.root.find( el => el.type === 'select' );
 		// trigger the onChange event for the select box
 		select.props.onChange( 'buzz' );
 		expect( callback ).toHaveBeenCalledWith( 'buzz' );
@@ -95,7 +95,7 @@ const domainFoo = describe( 'DomainSelect', () => {
 				value="foo"
 			/>
 		);
-		const select = instance.root.find( el => el.type == 'select' );
+		const select = instance.root.find( el => el.type === 'select' );
 		// trigger the onFocus event for the select box
 		select.props.onFocus( 'buzz' );
 		expect( callback ).toHaveBeenCalledWith( 'buzz' );
