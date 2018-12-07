@@ -394,7 +394,6 @@ export function generateSteps( {
 				'domainItem',
 				'themeItem',
 			],
-			delayApiRequestUntilComplete: true,
 		},
 	};
 }
