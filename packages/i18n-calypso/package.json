@@ -2,10 +2,11 @@
   "name": "not-i18n-calypso-itreallyis",
   "version": "3.0.0",
   "description": "i18n JavaScript library on top of Jed originally used in Calypso",
-  "main": "index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Automattic/i18n-calypso.git"
+    "url": "git+https://github.com/Automattic/wp-calypso.git"
   },
   "author": "@automattic",
   "license": "GPL-2.0",
@@ -13,36 +14,25 @@
     "i18n-calypso": "bin/index.js"
   },
   "bugs": {
-    "url": "https://github.com/Automattic/i18n-calypso/issues"
+    "url": "https://github.com/Automattic/wp-calypso/issues"
   },
-  "scripts": {
-    "test": "mocha --recursive"
-  },
-  "homepage": "https://github.com/Automattic/i18n-calypso#readme",
+  "homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/i18n-calypso#readme",
   "dependencies": {
     "commander": "^2.9.0",
     "create-react-class": "^15.6.2",
-    "debug": "^3.1.0",
-    "globby": "^6.1.0",
+    "debug": "^3.2.6",
+    "globby": "^8.0.1",
     "hash.js": "^1.1.5",
     "interpolate-components": "1.1.1",
     "jed": "1.1.1",
     "jstimezonedetect": "1.0.5",
-    "lodash.assign": "^4.0.8",
-    "lodash.flatten": "^4.4.0",
     "lru": "^3.1.0",
     "moment-timezone": "^0.5.16",
     "react": "0.14.8 || ^15.5.0 || ^16.0.0",
     "xgettext-js": "^2.0.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "enzyme": "^3.2.0",
-    "enzyme-adapter-react-16": "^1.1.1",
-    "enzyme-adapter-react-helper": "^1.2.3",
-    "mocha": "^5.2.0",
-    "react-dom": "^16.0.0",
-    "react-test-renderer": "^16.0.0",
-    "rewire": "^2.5.1"
+    "react-dom": "^16.6.3",
+    "react-test-renderer": "^16.6.3"
   }
 }

@@ -1,3 +1,6 @@
+/** @TODO prettier, eslint fix, test, refactor+update */
+/* eslint-disable prefer-const, no-shadow */
+
 /**
  * Exposes number format capability
  *
@@ -5,16 +8,17 @@
  * @license See CREDITS.md
  * @see https://github.com/kvz/phpjs/blob/ffe1356af23a6f2512c84c954dd4e828e92579fa/functions/strings/number_format.js
  */
-function number_format( number, decimals, dec_point, thousands_sep ) {
+
+export default function number_format( number, decimals, dec_point, thousands_sep ) {
   number = ( number + '' )
     .replace( /[^0-9+\-Ee.]/g, '' );
-  var n = ! isFinite( +number ) ? 0 : +number,
+  let n = ! isFinite( +number ) ? 0 : +number,
     prec = ! isFinite( +decimals ) ? 0 : Math.abs( decimals ),
     sep = ( typeof thousands_sep === 'undefined' ) ? ',' : thousands_sep,
     dec = ( typeof dec_point === 'undefined' ) ? '.' : dec_point,
     s = '',
     toFixedFix = function( n, prec ) {
-      var k = Math.pow( 10, prec );
+      const k = Math.pow( 10, prec );
       return '' + ( Math.round( n * k ) / k )
           .toFixed( prec );
     };
@@ -32,5 +36,3 @@ function number_format( number, decimals, dec_point, thousands_sep ) {
   }
   return s.join( dec );
 }
-
-module.exports = number_format;

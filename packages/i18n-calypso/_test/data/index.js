@@ -1,5 +1,5 @@
-/*eslint-disable quote-props */
-var locale = {
+/* eslint-disable quote-props */
+const locale = {
 	'': {
 		localeSlug: 'de',
 		'Plural-Forms': 'nplurals=2; plural=n != 1;',

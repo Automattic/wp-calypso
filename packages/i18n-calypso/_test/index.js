@@ -1,18 +1,19 @@
+/** @format */
 /**
  * External dependencies
  */
-var assert = require( 'assert' ),
-	React = require( 'react' ),
-	ReactDomServer = require( 'react-dom/server');
+import React from 'react';
+import ReactDomServer from 'react-dom/server';
 
 /**
  * Internal dependencies
  */
-var data = require( './data' ),
-	i18n = require( '..' ),
-	moment = i18n.moment,
-	numberFormat = i18n.numberFormat,
-	translate = i18n.translate;
+import data from './data';
+import i18n from '../src';
+
+const moment = i18n.moment;
+const numberFormat = i18n.numberFormat;
+const translate = i18n.translate;
 
 /**
  * Pass in a react-generated html string to remove react-specific attributes
@@ -34,62 +35,50 @@ describe( 'I18n', function() {
 	} );
 
 	describe( 'setLocale()', function() {
-		describe( 'adding a new locale source from the same language', function () {
+		describe( 'adding a new locale source from the same language', function() {
 			beforeEach( function() {
 				i18n.setLocale( {
-					'': data.locale[''],
-					'test1': [
-						'translation1-1'
-					],
-					'test2': [
-						'translation2'
-					],
-					'new translation': [
-						'Neue Übersetzung'
-					]
+					'': data.locale[ '' ],
+					test1: [ 'translation1-1' ],
+					test2: [ 'translation2' ],
+					'new translation': [ 'Neue Übersetzung' ],
 				} );
 			} );
 
-			it( 'should make the new translations available', function () {
-				assert.equal( 'Neue Übersetzung', translate( 'new translation' ) );
+			it( 'should make the new translations available', function() {
+				expect( translate( 'new translation' ) ).toBe( 'Neue Übersetzung' );
 			} );
-			it( 'should keep the original translations available as well', function () {
-				assert.equal( 'Aktivieren', translate( 'Activate' ) );
+			it( 'should keep the original translations available as well', function() {
+				expect( translate( 'Activate' ) ).toBe( 'Aktivieren' );
 			} );
-			it( 'should replace existing translations with the new version', function () {
-				assert.equal( 'translation1-1', translate( 'test1' ) );
-				assert.equal( 'translation2', translate( 'test2' ) );
+			it( 'should replace existing translations with the new version', function() {
+				expect( translate( 'test1' ) ).toBe( 'translation1-1' );
+				expect( translate( 'test2' ) ).toBe( 'translation2' );
 			} );
 		} );
 
-		describe( 'adding a new locale source from a different language', function () {
+		describe( 'adding a new locale source from a different language', function() {
 			beforeEach( function() {
 				i18n.setLocale( {
-					'': Object.assign( {}, data.locale[''], {
+					'': Object.assign( {}, data.locale[ '' ], {
 						localeSlug: 'fr',
-						'Plural-Forms': 'nplurals=2; plural=n > 1;'
+						'Plural-Forms': 'nplurals=2; plural=n > 1;',
 					} ),
-					'test1': [
-						'traduction1'
-					],
-					'test2': [
-						'traduction2'
-					],
-					'new translation': [
-						'nouvelle traduction'
-					]
+					test1: [ 'traduction1' ],
+					test2: [ 'traduction2' ],
+					'new translation': [ 'nouvelle traduction' ],
 				} );
 			} );
 
-			it( 'should make replace previous locale translations', function () {
-				assert.notEqual( 'translation1', translate( 'test1' ) );
-				assert.equal( 'traduction1', translate( 'test1' ) );
+			it( 'should make replace previous locale translations', function() {
+				expect( translate( 'test1' ) ).not.toBe( 'translation1' );
+				expect( translate( 'test1' ) ).toBe( 'traduction1' );
 			} );
-			it( 'should make old translations unavailable', function () {
-				assert.equal( 'Activate', translate( 'Activate' ) );
+			it( 'should make old translations unavailable', function() {
+				expect( translate( 'Activate' ) ).toBe( 'Activate' );
 			} );
-			it( 'should make new translations available', function () {
-				assert.equal( 'nouvelle traduction', translate( 'new translation' ) );
+			it( 'should make new translations available', function() {
+				expect( translate( 'new translation' ) ).toBe( 'nouvelle traduction' );
 			} );
 		} );
 	} );
@@ -97,165 +86,128 @@ describe( 'I18n', function() {
 	describe( 'translate()', function() {
 		describe( 'passing a string', function() {
 			it( 'should find a simple translation', function() {
-				assert.equal( 'translation1', translate( 'test1' ) );
+				expect( translate( 'test1' ) ).toBe( 'translation1' );
 			} );
 			it( 'should fall back to original string if translation is missing', function() {
-				assert.equal( 'test2', translate( 'test2' ) );
+				expect( translate( 'test2' ) ).toBe( 'test2' );
 			} );
-			it( 'should fall back to original if translation isn\'t even null in locale file', function() {
-				assert.equal( 'nonexisting-string', translate( 'nonexisting-string' ) );
+			it( "should fall back to original if translation isn't even null in locale file", function() {
+				expect( translate( 'nonexisting-string' ) ).toBe( 'nonexisting-string' );
 			} );
 		} );
 
 		describe( 'translate with context', function() {
 			it( 'should find a string with context', function() {
-				assert.equal( 'translation3', translate( {
-					original: 'test3',
-					context: 'thecontext'
-				} ) );
+				expect( translate( { original: 'test3', context: 'thecontext' } ) ).toBe( 'translation3' );
 			} );
 			it( 'should allow original text as options attribute or initial argument', function() {
-				assert.equal( 'translation3', translate( 'test3', {
-					context: 'thecontext'
-				} ) );
+				expect( translate( 'test3', { context: 'thecontext' } ) ).toBe( 'translation3' );
 			} );
 		} );
 
 		describe( 'translate with comments', function() {
 			it( 'should find a string with comment', function() {
-				assert.equal( 'translation4', translate( {
-					original: 'test4',
-					comment: 'thecomment'
-				} ) );
+				expect( translate( { original: 'test4', comment: 'thecomment' } ) ).toBe( 'translation4' );
 			} );
 			it( 'should allow original text as options attribute or initial argument', function() {
-				assert.equal( 'translation4', translate( 'test4', {
-					comment: 'thecomment'
-				} ) );
+				expect( translate( 'test4', { comment: 'thecomment' } ) ).toBe( 'translation4' );
 			} );
 		} );
 
 		describe( 'plural translation', function() {
 			it( 'should use the singular form for one item', function() {
-				assert.equal( 'plural-test singular translation', translate( {
-					original: {
-						single: 'plural-test',
-						plural: 'plural-test pl key',
-						count: 1
-					}
-				} ) );
+				expect(
+					translate( {
+						original: { single: 'plural-test', plural: 'plural-test pl key', count: 1 },
+					} )
+				).toBe( 'plural-test singular translation' );
 			} );
 			it( 'should use the plural form for > one items', function() {
-				assert.equal( 'plural-test multiple translation', translate( {
-					original: {
-						single: 'plural-test',
-						plural: 'plural-test pl key',
-						count: 2
-					}
-				} ) );
+				expect(
+					translate( {
+						original: { single: 'plural-test', plural: 'plural-test pl key', count: 2 },
+					} )
+				).toBe( 'plural-test multiple translation' );
 			} );
 			it( 'should honor the new plural translation syntax (singular test)', function() {
-				assert.equal( 'plural-test new syntax translated, single', translate( 'plural-test new syntax', 'plural-test new syntaxes', {
-					count: 1
-				} ) );
+				expect(
+					translate( 'plural-test new syntax', 'plural-test new syntaxes', { count: 1 } )
+				).toBe( 'plural-test new syntax translated, single' );
 			} );
 			it( 'should honor the new plural translation syntax (plural test)', function() {
-				assert.equal( 'plural-test new syntax translated, plural', translate( 'plural-test new syntax', 'plural-test new syntaxes', {
-					count: 2
-				} ) );
+				expect(
+					translate( 'plural-test new syntax', 'plural-test new syntaxes', {
+						count: 2,
+					} )
+				).toBe( 'plural-test new syntax translated, plural' );
 			} );
 		} );
 
 		describe( 'sprintf-style value interpolation', function() {
 			it( 'should substitute a string', function() {
-				assert.equal( 'foo bar', translate( 'foo %(test)s',
-					{
-						args: {
-							test: 'bar'
-						}
-					}
-				) );
+				expect( translate( 'foo %(test)s', { args: { test: 'bar' } } ) ).toBe( 'foo bar' );
 			} );
 			it( 'should substitute a number', function() {
-				assert.equal( 'foo 1', translate( 'foo %(test)d',
-					{
-						args: {
-							test: 1
-						}
-					}
-				) );
+				expect( translate( 'foo %(test)d', { args: { test: 1 } } ) ).toBe( 'foo 1' );
 			} );
 			it( 'should substitute floats', function() {
-				assert.equal( 'foo 1.005', translate( 'foo %(test)f',
-					{
-						args: {
-							test: 1.005
-						}
-					}
-				) );
+				expect( translate( 'foo %(test)f', { args: { test: 1.005 } } ) ).toBe( 'foo 1.005' );
 			} );
 			it( 'should allow passing an array of arguments', function() {
-				assert.equal( 'test1 test2 test3 test4', translate( 'test1 %1$s test3 %2$s',
-					{
-						args: [ 'test2', 'test4' ]
-					}
-				) );
+				expect( translate( 'test1 %1$s test3 %2$s', { args: [ 'test2', 'test4' ] } ) ).toBe(
+					'test1 test2 test3 test4'
+				);
 			} );
 			it( 'should allow passing a single argument', function() {
-				assert.equal( 'test1 test2 test3', translate( 'test1 %s test3',
-					{
-						args: 'test2'
-					}
-				) );
+				expect( translate( 'test1 %s test3', { args: 'test2' } ) ).toBe( 'test1 test2 test3' );
 			} );
 			it( 'should not throw when passed a circular object', function() {
-				var obj = { foo: 'bar', toString: function() { return 'baz'; } };
+				const obj = {
+					foo: 'bar',
+					toString: function() {
+						return 'baz';
+					},
+				};
 				obj.obj = obj;
-				assert.equal( 'test1 baz', translate( 'test1 %s',
-					{
-						args: obj
-					}
-				) );
+				expect( translate( 'test1 %s', { args: obj } ) ).toBe( 'test1 baz' );
 			} );
 		} );
 
 		describe( 'with mixed components', function() {
 			it( 'should handle sprintf and component interpolation together', function() {
-				var input = React.createElement( 'input' ),
+				const input = React.createElement( 'input' ),
 					expectedResultString = '<span>foo <input/> bar</span>',
 					placeholder = 'bar',
 					translatedComponent = translate( 'foo {{ input /}} %(placeholder)s', {
 						components: {
-							input: input
+							input: input,
 						},
 						args: {
-							placeholder: placeholder
-						}
+							placeholder: placeholder,
+						},
 					} ),
-					instance = React.createElement('span', null, translatedComponent);
+					instance = React.createElement( 'span', null, translatedComponent );
 
-				assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToStaticMarkup( instance ) ) );
+				expect( stripReactAttributes( ReactDomServer.renderToStaticMarkup( instance ) ) ).toBe(
+					expectedResultString
+				);
 			} );
 		} );
 
 		describe( 'adding new translations', function() {
 			it( 'should find a new translation after it has been added', function() {
 				i18n.addTranslations( {
-					'test-does-not-exist': [
-						'translation3'
-					]
+					'test-does-not-exist': [ 'translation3' ],
 				} );
 
-				assert.equal( 'translation3', translate( 'test-does-not-exist' ) );
+				expect( translate( 'test-does-not-exist' ) ).toBe( 'translation3' );
 			} );
 			it( 'should return the new translation if it has been overwritten', function() {
 				i18n.addTranslations( {
-					'test-will-overwrite': [
-						'not-translation1'
-					]
+					'test-will-overwrite': [ 'not-translation1' ],
 				} );
 
-				assert.equal( 'not-translation1', translate( 'test-will-overwrite' ) );
+				expect( translate( 'test-will-overwrite' ) ).toBe( 'not-translation1' );
 			} );
 		} );
 	} );
@@ -263,22 +215,50 @@ describe( 'I18n', function() {
 	describe( 'moment()', function() {
 		describe( 'generating date strings', function() {
 			it( 'should know the short weekdays', function() {
-				assert.equal( 'Fr', moment( '2014-07-18' ).format( 'dd' ) );
+				expect( moment( '2014-07-18' ).format( 'dd' ) ).toBe( 'Fr' );
 			} );
 			it( 'should use available translations for date format', function() {
-				assert.equal( 'Freitag, 18. Juli 2014 21:59', moment( '2014-07-18T14:59:09-07:00' ).utcOffset( '+00:00' ).format( 'LLLL' ) );
+				expect(
+					moment( '2014-07-18T14:59:09-07:00' )
+						.utcOffset( '+00:00' )
+						.format( 'LLLL' )
+				).toBe( 'Freitag, 18. Juli 2014 21:59' );
 			} );
 			it( 'should use available translations for relative time in the past', function() {
-				assert.equal( 'vor 3 Stunden', moment().subtract( 3, 'hours' ).fromNow() );
+				expect(
+					moment()
+						.subtract( 3, 'hours' )
+						.fromNow()
+				).toBe( 'vor 3 Stunden' );
 			} );
 			it( 'should use available translations for relative time in the future', function() {
-				assert.equal( 'in ein paar Sekunden', moment().add( 10, 'seconds' ).fromNow() );
+				expect(
+					moment()
+						.add( 10, 'seconds' )
+						.fromNow()
+				).toBe( 'in ein paar Sekunden' );
 			} );
 			it( 'should be able to convert dates to any timezone', function() {
-				assert.equal( 'Freitag, 18. Juli 2014 14:59', moment( '2014-07-18T14:59:09-07:00' ).tz( 'America/Los_Angeles' ).format( 'LLLL' ) );
-				assert.equal( 'Samstag, 19. Juli 2014 06:59', moment( '2014-07-18T14:59:09-07:00' ).tz( 'Asia/Tokyo' ).format( 'LLLL' ) );
-				assert.equal( 'Freitag, 18. Juli 2014 23:59', moment( '2014-07-18T14:59:09-07:00' ).tz( 'Europe/Paris' ).format( 'LLLL' ) );
-				assert.equal( 'Freitag, 18. Juli 2014 22:59', moment( '2014-07-18T14:59:09-07:00' ).tz( 'Europe/London' ).format( 'LLLL' ) );
+				expect(
+					moment( '2014-07-18T14:59:09-07:00' )
+						.tz( 'America/Los_Angeles' )
+						.format( 'LLLL' )
+				).toBe( 'Freitag, 18. Juli 2014 14:59' );
+				expect(
+					moment( '2014-07-18T14:59:09-07:00' )
+						.tz( 'Asia/Tokyo' )
+						.format( 'LLLL' )
+				).toBe( 'Samstag, 19. Juli 2014 06:59' );
+				expect(
+					moment( '2014-07-18T14:59:09-07:00' )
+						.tz( 'Europe/Paris' )
+						.format( 'LLLL' )
+				).toBe( 'Freitag, 18. Juli 2014 23:59' );
+				expect(
+					moment( '2014-07-18T14:59:09-07:00' )
+						.tz( 'Europe/London' )
+						.format( 'LLLL' )
+				).toBe( 'Freitag, 18. Juli 2014 22:59' );
 			} );
 		} );
 	} );
@@ -286,37 +266,41 @@ describe( 'I18n', function() {
 	describe( 'numberFormat()', function() {
 		describe( 'default numberFormat', function() {
 			it( 'should truncate decimals', function() {
-				assert.equal( '150', numberFormat( 150.15 ) );
+				expect( numberFormat( 150.15 ) ).toBe( '150' );
 			} );
 			it( 'should round up', function() {
-				assert.equal( '151', numberFormat( 150.5 ) );
+				expect( numberFormat( 150.5 ) ).toBe( '151' );
 			} );
 			it( 'should default to locale thousands separator (. for German in test)', function() {
-				assert.equal( '1.500', numberFormat( 1500 ) );
+				expect( numberFormat( 1500 ) ).toBe( '1.500' );
 			} );
 		} );
 
 		describe( 'with decimal', function() {
 			it( 'should default to locale decimal separator (, for German in test)', function() {
-				assert.equal( '150,00', numberFormat( 150, 2 ) );
+				expect( numberFormat( 150, 2 ) ).toBe( '150,00' );
 			} );
 			it( 'should truncate to specified decimal', function() {
-				assert.equal( '150,31', numberFormat( 150.312, 2 ) );
+				expect( numberFormat( 150.312, 2 ) ).toBe( '150,31' );
 			} );
 			it( 'should accept decimal as argument or object attribute', function() {
-				assert.equal( '150,00', numberFormat( 150, {
-					decimals: 2
-				} ) );
+				expect(
+					numberFormat( 150, {
+						decimals: 2,
+					} )
+				).toBe( '150,00' );
 			} );
 		} );
 
 		describe( 'overriding defaults', function() {
 			it( 'should allow overriding of locale decimal and thousands separators', function() {
-				assert.equal( '2*500@330', numberFormat( 2500.33, {
-					decimals: 3,
-					thousandsSep: '*',
-					decPoint: '@'
-				} ) );
+				expect(
+					numberFormat( 2500.33, {
+						decimals: 3,
+						thousandsSep: '*',
+						decPoint: '@',
+					} )
+				).toBe( '2*500@330' );
 			} );
 		} );
 	} );
@@ -326,41 +310,37 @@ describe( 'I18n', function() {
 			i18n.setLocale( {
 				'': {
 					localeSlug: 'xx-pig-latin',
-					'key-hash': 'sha1'
+					'key-hash': 'sha1',
 				},
-				'0f7d0d088b6ea936fb25b477722d734706fe8b40': [
-					'implesa'
-				]
-			});
-			assert.equal( i18n.translate( 'simple' ), 'implesa' );
+				'0f7d0d088b6ea936fb25b477722d734706fe8b40': [ 'implesa' ],
+			} );
+			expect( i18n.translate( 'simple' ) ).toBe( 'implesa' );
 		} );
 
 		it( 'should find keys when looked up by single length hash', function() {
 			i18n.setLocale( {
 				'': {
 					localeSlug: 'xx-pig-latin',
-					'key-hash': 'sha1-1'
+					'key-hash': 'sha1-1',
 				},
-				'0': [
-					'implesa'
-				]
-			});
-			assert.equal( i18n.translate( 'simple' ), 'implesa' );
+				'0': [ 'implesa' ],
+			} );
+			expect( i18n.translate( 'simple' ) ).toBe( 'implesa' );
 		} );
 
 		it( 'should find keys when looked up by multi length hash', function() {
 			i18n.setLocale( {
 				'': {
 					localeSlug: 'xx-pig-latin',
-					'key-hash': 'sha1-1-2'
+					'key-hash': 'sha1-1-2',
 				},
 				'0': [ 'implesa' ],
-				'78': [ 'edra' ],  // red has a sha1 of 78988010b890ce6f4d2136481f392787ec6d6106
-				'7d': [ 'reyga' ] // grey has a sha1 of 7d1f8f911da92c0ea535cad461fd773281a79638
-			});
-			assert.equal( i18n.translate( 'simple' ), 'implesa' );
-			assert.equal( i18n.translate( 'red' ), 'edra' );
-			assert.equal( i18n.translate( 'grey' ), 'reyga' );
+				'78': [ 'edra' ], // red has a sha1 of 78988010b890ce6f4d2136481f392787ec6d6106
+				'7d': [ 'reyga' ], // grey has a sha1 of 7d1f8f911da92c0ea535cad461fd773281a79638
+			} );
+			expect( i18n.translate( 'simple' ) ).toBe( 'implesa' );
+			expect( i18n.translate( 'red' ) ).toBe( 'edra' );
+			expect( i18n.translate( 'grey' ) ).toBe( 'reyga' );
 		} );
 	} );
 } );
