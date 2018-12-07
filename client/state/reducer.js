@@ -46,7 +46,7 @@ import i18n from './i18n/reducer';
 import immediateLogin from './immediate-login/reducer';
 import importerNux from './importer-nux/reducer';
 import imports from './imports/reducer';
-import inlineHelpSearchResults from './inline-help/reducer';
+import inlineHelp from './inline-help/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
 import invites from './invites/reducer';
 import jetpack from './jetpack/reducer';
@@ -146,7 +146,7 @@ const reducers = {
 	immediateLogin,
 	importerNux,
 	imports,
-	inlineHelpSearchResults,
+	inlineHelp,
 	inlineSupportArticle,
 	invites,
 	jetpack,

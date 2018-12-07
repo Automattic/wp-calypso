@@ -20,10 +20,9 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
 
-/**
- * Block Registrations:
- */
-registerJetpackBlock( 'contact-form', {
+export const name = 'contact-form';
+
+export const settings = {
 	title: __( 'Form' ),
 	description: __( 'A simple way to get feedback from folks visiting your site.' ),
 	icon: renderMaterialIcon(
@@ -56,7 +55,12 @@ registerJetpackBlock( 'contact-form', {
 
 	edit: JetpackContactForm,
 	save: InnerBlocks.Content,
-} );
+};
+
+/**
+ * Block Registrations:
+ */
+registerJetpackBlock( name, settings );
 
 const FieldDefaults = {
 	category: 'jetpack',
@@ -166,8 +170,8 @@ const FieldDefaults = {
 	save: () => null,
 };
 
-const getFieldLabel = ( { attributes, name } ) => {
-	return null === attributes.label ? getBlockType( name ).title : attributes.label;
+const getFieldLabel = ( { attributes, name: blockName } ) => {
+	return null === attributes.label ? getBlockType( blockName ).title : attributes.label;
 };
 
 const editField = type => props => (

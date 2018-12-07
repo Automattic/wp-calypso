@@ -1,3 +1,5 @@
+/** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -18,30 +20,30 @@ import { __ } from '@wordpress/i18n';
 import Sidebar from '../';
 import SettingsHeader from '../settings-header';
 import PostStatus from '../post-status';
-import LastRevision from 'gutenberg/editor/components/sidebar/last-revision';
+import LastRevision from 'gutenberg/editor/components/sidebar/last-revision'; // GUTENLYPSO
 import PostTaxonomies from '../post-taxonomies';
 import FeaturedImage from '../featured-image';
 import PostExcerpt from '../post-excerpt';
+import PostLink from '../post-link';
 import DiscussionPanel from '../discussion-panel';
 import PageAttributes from '../page-attributes';
+import MetaBoxes from '../../meta-boxes';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 const SettingsSidebar = ( { sidebarName } ) => (
-	<Sidebar
-		name={ sidebarName }
-		label={ __( 'Editor settings' ) }
-	>
+	<Sidebar name={ sidebarName } label={ __( 'Editor settings' ) }>
 		<SettingsHeader sidebarName={ sidebarName } />
 		<Panel>
 			{ sidebarName === 'edit-post/document' && (
 				<Fragment>
 					<PostStatus />
 					<LastRevision />
+					<PostLink />
 					<PostTaxonomies />
 					<FeaturedImage />
 					<PostExcerpt />
 					<DiscussionPanel />
 					<PageAttributes />
+					<MetaBoxes location="side" />
 				</Fragment>
 			) }
 			{ sidebarName === 'edit-post/block' && (
@@ -52,19 +54,15 @@ const SettingsSidebar = ( { sidebarName } ) => (
 		</Panel>
 	</Sidebar>
 );
-/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default compose(
-	withSelect( ( select ) => {
-		const {
-			getActiveGeneralSidebarName,
-			isEditorSidebarOpened,
-		} = select( 'core/edit-post' );
+	withSelect( select => {
+		const { getActiveGeneralSidebarName, isEditorSidebarOpened } = select( 'core/edit-post' );
 
 		return {
 			isEditorSidebarOpened: isEditorSidebarOpened(),
 			sidebarName: getActiveGeneralSidebarName(),
 		};
 	} ),
-	ifCondition( ( { isEditorSidebarOpened } ) => isEditorSidebarOpened ),
+	ifCondition( ( { isEditorSidebarOpened } ) => isEditorSidebarOpened )
 )( SettingsSidebar );

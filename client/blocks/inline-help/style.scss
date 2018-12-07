@@ -39,8 +39,10 @@
 	}
 }
 
-.button.inline-help__classic-editor-toggle {
+.button.inline-help__classic-editor-toggle,
+.button.inline-help__gutenberg-editor-toggle {
 	margin-bottom: 16px;
+	width: calc( 100% - 32px );
 }
 
 .button.is-borderless.inline-help__button {
@@ -90,6 +92,12 @@
 		top: -2px;
 		left: -3px;
 	}
+}
+
+//border-box in the gutenberg section makes the dot too small, update width/height to compensate
+.is-section-gutenberg-editor .button.is-borderless.inline-help__button.has-notification::before {
+	width: 14px;
+	height: 14px;
 }
 
 @keyframes wiggle {

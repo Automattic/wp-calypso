@@ -655,17 +655,17 @@ ul.email-forwarding__list {
 	}
 }
 
-.add-email-addresses-card__inner {
+.add-google-apps__inner {
 	@include clear-fix;
 }
 
-.add-email-addresses-card__add-another-email-address-link {
+.add-google-apps__add-another-email-address-link {
 	display: inline-block;
 	font-size: 12px;
 	margin-top: 5px;
 }
 
-.add-email-addresses-card__name-fieldsets {
+.add-google-apps__name-fieldsets {
 	margin-top: 20px;
 
 	@include breakpoint( '>660px' ) {
@@ -681,8 +681,8 @@ ul.email-forwarding__list {
 	}
 }
 
-.add-email-addresses-card__email-address-fieldsets {
-	.add-email-addresses-card__email-address-fieldset {
+.add-google-apps__email-address-fieldsets {
+	.add-google-apps__email-address-fieldset {
 		display: flex;
 		flex-direction: column;
 		margin-bottom: 10px;

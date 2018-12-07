@@ -10,11 +10,7 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "/",
 	"rebrand_cities_prefix": "rebrandcitiessite",
-	"livechat_support_locales": [
-		"en",
-		"es",
-		"pt-br"
-	],
+	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": true,
 		"always_use_logout_url": true,
@@ -41,7 +37,6 @@
 		"google-my-business": false,
 		"gutenberg": false,
 		"gutenberg/opt-in": false,
-		"gutenberg/block/jetpack-preset": false,
 		"help": true,
 		"help/courses": true,
 		"jetpack/connect/remote-install": true,
@@ -83,6 +78,7 @@
 		"me/trophies": false,
 		"oauth": true,
 		"onboarding-checklist": false,
+		"onboarding-checklist/email-setup": false,
 		"persist-redux": true,
 		"plans/personal-plan": true,
 		"post-editor/author-selector": true,

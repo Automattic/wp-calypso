@@ -25,6 +25,7 @@ import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'lib/url/support';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
+import { getCurrencyDefaults } from 'lib/format-currency';
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,
@@ -106,8 +107,10 @@ const CancelPurchaseRefundInformation = ( {
 
 				showSupportLink = false;
 			} else if ( includedDomainPurchase && isDomainRegistration( includedDomainPurchase ) ) {
+				const { precision } = getCurrencyDefaults( purchase.currencyCode );
 				const planCostText =
-					purchase.currencySymbol + ( purchase.refundAmount + includedDomainPurchase.amount );
+					purchase.currencySymbol +
+					parseFloat( purchase.refundAmount + includedDomainPurchase.amount ).toFixed( precision );
 				if ( isRefundable( includedDomainPurchase ) ) {
 					// TODO: confirm this should not show up after cutoff date
 					text.push(

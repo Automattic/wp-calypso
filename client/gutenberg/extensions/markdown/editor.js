@@ -54,6 +54,10 @@ export const settings = {
 		source: { type: 'string' },
 	},
 
+	supports: {
+		html: false,
+	},
+
 	edit,
 
 	save,

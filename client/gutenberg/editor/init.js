@@ -13,7 +13,6 @@ import { use, plugins, dispatch } from '@wordpress/data';
  * Internal dependencies
  */
 import { applyAPIMiddleware } from './api-middleware';
-import { isEnabled } from 'config';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:gutenberg' );
@@ -27,10 +26,7 @@ const WPCOM_UNSUPPORTED_CORE_BLOCKS = [
 const loadA8CExtensions = () => {
 	// This will also load required TinyMCE plugins via Calypso's TinyMCE component
 	require( '../extensions/classic-block/editor' );
-
-	if ( isEnabled( 'gutenberg/block/jetpack-preset' ) ) {
-		require( 'gutenberg/extensions/presets/jetpack/editor.js' );
-	}
+	require( 'gutenberg/extensions/presets/jetpack/editor.js' );
 };
 
 // We need to ensure that his function is executed only once to avoid duplicate

@@ -20,19 +20,11 @@ import {
 } from 'state/analytics/actions';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
-import { navigate } from 'state/ui/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-export const OptOutMenuItem = ( {
-	classicEditorRoute,
-	navigate: redirect,
-	optOut,
-	siteId,
-	translate,
-} ) => {
+export const OptOutMenuItem = ( { classicEditorRoute, optOut, siteId, translate } ) => {
 	const switchToClassicEditor = () => {
-		optOut( siteId );
-		redirect( classicEditorRoute );
+		optOut( siteId, classicEditorRoute );
 	};
 	return (
 		<MenuItem onClick={ switchToClassicEditor }>
@@ -41,7 +33,7 @@ export const OptOutMenuItem = ( {
 	);
 };
 
-const optOut = siteId => {
+const optOut = ( siteId, classicEditorRoute ) => {
 	return withAnalytics(
 		composeAnalytics(
 			recordGoogleEvent(
@@ -55,14 +47,18 @@ const optOut = siteId => {
 			} ),
 			bumpStat( 'gutenberg-opt-in', 'Calypso More Menu Opt Out' )
 		),
-		setSelectedEditor( siteId, 'classic' )
+		setSelectedEditor( siteId, 'classic', classicEditorRoute )
 	);
 };
 
 export default connect(
 	state => ( {
-		classicEditorRoute: `/${ replace( getCurrentRoute( state ), '/gutenberg/', '' ) }?force=true`,
+		classicEditorRoute: `/${ replace(
+			getCurrentRoute( state ),
+			'/block-editor/',
+			''
+		) }?force=true`,
 		siteId: getSelectedSiteId( state ),
 	} ),
-	{ navigate, optOut }
+	{ optOut }
 )( localize( OptOutMenuItem ) );

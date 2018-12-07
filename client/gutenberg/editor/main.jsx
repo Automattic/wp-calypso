@@ -20,6 +20,7 @@ import { getHttpData } from 'state/data-layer/http-data';
 import { translate } from 'i18n-calypso';
 import './hooks'; // Needed for integrating Calypso's media library (and other hooks)
 import isRtlSelector from 'state/selectors/is-rtl';
+import refreshRegistrations from '../extensions/presets/jetpack/utils/refresh-registrations';
 
 /**
  * Style dependencies
@@ -32,6 +33,22 @@ class GutenbergEditor extends Component {
 		if ( ! postId ) {
 			createAutoDraft( siteId, uniqueDraftKey, postType );
 		}
+		if ( siteId && postId && postType ) {
+			requestSitePost( siteId, postId, postType, 0 );
+		}
+
+		refreshRegistrations();
+	}
+
+	componentDidUpdate( prevProp ) {
+		const { siteId, postId, postType } = this.props;
+		if (
+			prevProp.siteId !== siteId ||
+			prevProp.postId !== postId ||
+			prevProp.postType !== postType
+		) {
+			requestSitePost( siteId, postId, postType, 0 );
+		}
 	}
 
 	getAnalyticsPathAndTitle = () => {
@@ -41,23 +58,23 @@ class GutenbergEditor extends Component {
 		const isNew = ! postId;
 		const isEdit = !! postId;
 		if ( isPost && isNew ) {
-			return { path: '/gutenberg/post/:site', title: 'Post > New' };
+			return { path: '/block-editor/post/:site', title: 'Post > New' };
 		}
 		if ( isPost && isEdit ) {
-			return { path: '/gutenberg/post/:site/:post_id', title: 'Post > Edit' };
+			return { path: '/block-editor/post/:site/:post_id', title: 'Post > Edit' };
 		}
 		if ( isPage && isNew ) {
-			return { path: '/gutenberg/page/:site', title: 'Page > New' };
+			return { path: '/block-editor/page/:site', title: 'Page > New' };
 		}
 		if ( isPage && isEdit ) {
-			return { path: '/gutenberg/page/:site/:post_id', title: 'Page > Edit' };
+			return { path: '/block-editor/page/:site/:post_id', title: 'Page > Edit' };
 		}
 		if ( isNew ) {
-			return { path: `/gutenberg/edit/${ postType }/:site`, title: 'Custom Post Type > New' };
+			return { path: `/block-editor/edit/${ postType }/:site`, title: 'Custom Post Type > New' };
 		}
 		if ( isEdit ) {
 			return {
-				path: `/gutenberg/edit/${ postType }/:site/:post_id`,
+				path: `/block-editor/edit/${ postType }/:site/:post_id`,
 				title: 'Custom Post Type > Edit',
 			};
 		}
@@ -68,7 +85,7 @@ class GutenbergEditor extends Component {
 
 		//see also https://github.com/WordPress/gutenberg/blob/45bc8e4991d408bca8e87cba868e0872f742230b/lib/client-assets.php#L1451
 		const editorSettings = {
-			autosaveInterval: 3, //interval to debounce autosaving events, in seconds.
+			autosaveInterval: 10, //interval to debounce autosaving events, in seconds.
 			titlePlaceholder: translate( 'Add title' ),
 			bodyPlaceholder: translate( 'Write your story' ),
 			postLock: {},

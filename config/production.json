@@ -12,11 +12,7 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"facebook_app_id": "2373049596",
 	"rebrand_cities_prefix": "rebrandcitiessite",
-	"livechat_support_locales": [
-		"en",
-		"es",
-		"pt-br"
-	],
+	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": true,
 		"apple-pay": true,
@@ -42,7 +38,6 @@
 		"google-my-business": true,
 		"gutenberg": false,
 		"gutenberg/opt-in": true,
-		"gutenberg/block/jetpack-preset": false,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
@@ -97,6 +92,7 @@
 		"nps-survey/dev-trigger": false,
 		"nps-survey/notice": true,
 		"onboarding-checklist": true,
+		"onboarding-checklist/email-setup": false,
 		"perfmon": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,

@@ -1,12 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
-import { get, includes } from 'lodash';
-
-/**
- * WordPress dependencies
- */
-import deprecated from '@wordpress/deprecated';
+import createSelector from 'rememo';
+import { get, includes, some, flatten, values } from 'lodash';
 
 /**
  * Returns the current editing mode.
@@ -104,6 +101,19 @@ export function isPublishSidebarOpened( state ) {
 }
 
 /**
+ * Returns true if the given panel was programmatically removed, or false otherwise.
+ * All panels are not removed by default.
+ *
+ * @param {Object} state     Global application state.
+ * @param {string} panelName A string that identifies the panel.
+ *
+ * @return {boolean} Whether or not the panel is removed.
+ */
+export function isEditorPanelRemoved( state, panelName ) {
+	return includes( state.removedPanels, panelName );
+}
+
+/**
  * Returns true if the given panel is enabled, or false otherwise. Panels are
  * enabled by default.
  *
@@ -114,25 +124,10 @@ export function isPublishSidebarOpened( state ) {
  */
 export function isEditorPanelEnabled( state, panelName ) {
 	const panels = getPreference( state, 'panels' );
-	return get( panels, [ panelName, 'enabled' ], true );
-}
 
-/**
- * Returns true if the given panel is enabled, or false otherwise. Panels are
- * enabled by default.
- *
- * @param {Object} state Global application state.
- * @param {string} panel A string that identifies the panel.
- *
- * @return {boolean} Whether or not the panel is enabled.
- */
-export function isEditorSidebarPanelOpened( state, panel ) {
-	deprecated( 'isEditorSidebarPanelOpened', {
-		alternative: 'isEditorPanelEnabled',
-		plugin: 'Gutenberg',
-		version: '4.3',
-	} );
-	return isEditorPanelEnabled( state, panel );
+	return (
+		! isEditorPanelRemoved( state, panelName ) && get( panels, [ panelName, 'enabled' ], true )
+	);
 }
 
 /**
@@ -186,4 +181,99 @@ export function isPluginItemPinned( state, pluginName ) {
 	const pinnedPluginItems = getPreference( state, 'pinnedPluginItems', {} );
 
 	return get( pinnedPluginItems, [ pluginName ], true );
+}
+
+/**
+ * Returns an array of active meta box locations.
+ *
+ * @param {Object} state Post editor state.
+ *
+ * @return {string[]} Active meta box locations.
+ */
+export const getActiveMetaBoxLocations = createSelector(
+	state => {
+		return Object.keys( state.metaBoxes.locations ).filter( location =>
+			isMetaBoxLocationActive( state, location )
+		);
+	},
+	state => [ state.metaBoxes.locations ]
+);
+
+/**
+ * Returns true if a metabox location is active and visible
+ *
+ * @param {Object} state    Post editor state.
+ * @param {string} location Meta box location to test.
+ *
+ * @return {boolean} Whether the meta box location is active and visible.
+ */
+export function isMetaBoxLocationVisible( state, location ) {
+	return (
+		isMetaBoxLocationActive( state, location ) &&
+		some( getMetaBoxesPerLocation( state, location ), ( { id } ) => {
+			return isEditorPanelEnabled( state, `meta-box-${ id }` );
+		} )
+	);
+}
+
+/**
+ * Returns true if there is an active meta box in the given location, or false
+ * otherwise.
+ *
+ * @param {Object} state    Post editor state.
+ * @param {string} location Meta box location to test.
+ *
+ * @return {boolean} Whether the meta box location is active.
+ */
+export function isMetaBoxLocationActive( state, location ) {
+	const metaBoxes = getMetaBoxesPerLocation( state, location );
+	return !! metaBoxes && metaBoxes.length !== 0;
+}
+
+/**
+ * Returns the list of all the available meta boxes for a given location.
+ *
+ * @param {Object} state    Global application state.
+ * @param {string} location Meta box location to test.
+ *
+ * @return {?Array} List of meta boxes.
+ */
+export function getMetaBoxesPerLocation( state, location ) {
+	return state.metaBoxes.locations[ location ];
+}
+
+/**
+ * Returns the list of all the available meta boxes.
+ *
+ * @param {Object} state Global application state.
+ *
+ * @return {Array} List of meta boxes.
+ */
+export const getAllMetaBoxes = createSelector(
+	state => {
+		return flatten( values( state.metaBoxes.locations ) );
+	},
+	state => [ state.metaBoxes.locations ]
+);
+
+/**
+ * Returns true if the post is using Meta Boxes
+ *
+ * @param  {Object} state Global application state
+ *
+ * @return {boolean} Whether there are metaboxes or not.
+ */
+export function hasMetaBoxes( state ) {
+	return getActiveMetaBoxLocations( state ).length > 0;
+}
+
+/**
+ * Returns true if the Meta Boxes are being saved.
+ *
+ * @param   {Object}  state Global application state.
+ *
+ * @return {boolean} Whether the metaboxes are being saved.
+ */
+export function isSavingMetaBoxes( state ) {
+	return state.metaBoxes.isSaving;
 }

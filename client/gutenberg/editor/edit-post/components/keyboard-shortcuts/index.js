@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,11 +22,28 @@ class EditorModeKeyboardShortcuts extends Component {
 		super( ...arguments );
 
 		this.toggleMode = this.toggleMode.bind( this );
+		this.toggleSidebar = this.toggleSidebar.bind( this );
 	}
 
 	toggleMode() {
-		const { mode, switchMode } = this.props;
+		const { mode, switchMode, isRichEditingEnabled } = this.props;
+		if ( ! isRichEditingEnabled ) {
+			return;
+		}
 		switchMode( mode === 'visual' ? 'text' : 'visual' );
+	}
+
+	toggleSidebar( event ) {
+		// This shortcut has no known clashes, but use preventDefault to prevent any
+		// obscure shortcuts from triggering.
+		event.preventDefault();
+		const { isEditorSidebarOpen, closeSidebar, openSidebar } = this.props;
+
+		if ( isEditorSidebarOpen ) {
+			closeSidebar();
+		} else {
+			openSidebar();
+		}
 	}
 
 	render() {
@@ -33,7 +51,8 @@ class EditorModeKeyboardShortcuts extends Component {
 			<KeyboardShortcuts
 				bindGlobal
 				shortcuts={ {
-					[ shortcuts.toggleEditorMode.value ]: this.toggleMode,
+					[ shortcuts.toggleEditorMode.raw ]: this.toggleMode,
+					[ shortcuts.toggleSidebar.raw ]: this.toggleSidebar,
 				} }
 			/>
 		);
@@ -41,16 +60,20 @@ class EditorModeKeyboardShortcuts extends Component {
 }
 
 export default compose( [
-	withSelect( ( select ) => {
-		return {
-			mode: select( 'core/edit-post' ).getEditorMode(),
-		};
-	} ),
-	withDispatch( ( dispatch ) => {
-		return {
-			switchMode: ( mode ) => {
-				dispatch( 'core/edit-post' ).switchEditorMode( mode );
-			},
-		};
-	} ),
+	withSelect( select => ( {
+		isRichEditingEnabled: select( 'core/editor' ).getEditorSettings().richEditingEnabled,
+		mode: select( 'core/edit-post' ).getEditorMode(),
+		isEditorSidebarOpen: select( 'core/edit-post' ).isEditorSidebarOpened(),
+		hasBlockSelection: !! select( 'core/editor' ).getBlockSelectionStart(),
+	} ) ),
+	withDispatch( ( dispatch, { hasBlockSelection } ) => ( {
+		switchMode( mode ) {
+			dispatch( 'core/edit-post' ).switchEditorMode( mode );
+		},
+		openSidebar() {
+			const sidebarToOpen = hasBlockSelection ? 'edit-post/block' : 'edit-post/document';
+			dispatch( 'core/edit-post' ).openGeneralSidebar( sidebarToOpen );
+		},
+		closeSidebar: dispatch( 'core/edit-post' ).closeGeneralSidebar,
+	} ) ),
 ] )( EditorModeKeyboardShortcuts );

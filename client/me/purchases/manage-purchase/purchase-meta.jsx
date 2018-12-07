@@ -56,40 +56,33 @@ class PurchaseMeta extends Component {
 
 	renderPrice() {
 		const { purchase, translate } = this.props;
-		const { amount, currencyCode, currencySymbol, productSlug } = purchase;
+		const { priceText, currencyCode, productSlug } = purchase;
 		const period =
 			productSlug && isMonthly( productSlug ) ? translate( 'month' ) : translate( 'year' );
 
 		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
-			return translate(
-				'%(currencySymbol)s%(amount)f %(currencyCode)s {{period}}(one-time){{/period}}',
-				{
-					args: { amount, currencyCode, currencySymbol },
-					components: {
-						period: <span className="manage-purchase__time-period" />,
-					},
-				}
-			);
+			return translate( '%(priceText)s %(currencyCode)s {{period}}(one-time){{/period}}', {
+				args: { priceText, currencyCode },
+				components: {
+					period: <span className="manage-purchase__time-period" />,
+				},
+			} );
 		}
 
 		if ( isIncludedWithPlan( purchase ) ) {
 			return translate( 'Free with Plan' );
 		}
 
-		return translate(
-			'%(currencySymbol)s%(amount)f %(currencyCode)s {{period}}/ %(period)s{{/period}}',
-			{
-				args: {
-					amount,
-					currencyCode,
-					currencySymbol,
-					period,
-				},
-				components: {
-					period: <span className="manage-purchase__time-period" />,
-				},
-			}
-		);
+		return translate( '%(priceText)s %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
+			args: {
+				priceText,
+				currencyCode,
+				period,
+			},
+			components: {
+				period: <span className="manage-purchase__time-period" />,
+			},
+		} );
 	}
 
 	renderRenewsOrExpiresOnLabel() {

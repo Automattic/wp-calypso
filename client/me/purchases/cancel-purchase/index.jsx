@@ -40,6 +40,7 @@ import ProductLink from 'me/purchases/product-link';
 import titles from 'me/purchases/titles';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { getCurrencyDefaults } from 'lib/format-currency';
 
 class CancelPurchase extends React.Component {
 	static propTypes = {
@@ -58,14 +59,14 @@ class CancelPurchase extends React.Component {
 		confirmCancelBundledDomain: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.isDataValid() ) {
 			this.redirect( this.props );
 			return;
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
 			this.redirect( nextProps );
 			return;
@@ -107,12 +108,16 @@ class CancelPurchase extends React.Component {
 
 	renderFooterText = () => {
 		const { purchase } = this.props;
-		const { refundText, renewDate, refundAmount, currencySymbol } = purchase;
+		const { refundText, renewDate, refundAmount, currencySymbol, currency } = purchase;
 
 		if ( isRefundable( purchase ) ) {
 			if ( this.state.cancelBundledDomain && this.props.includedDomainPurchase ) {
+				const { precision } = getCurrencyDefaults( currency );
 				const fullRefundText =
-					currencySymbol + ( refundAmount + this.props.includedDomainPurchase.amount );
+					currencySymbol +
+					parseFloat( refundAmount + this.props.includedDomainPurchase.amount ).toFixed(
+						precision
+					);
 				return this.props.translate( '%(refundText)s to be refunded', {
 					args: { refundText: fullRefundText },
 					context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
