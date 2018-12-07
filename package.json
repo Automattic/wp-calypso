@@ -280,7 +280,7 @@
   "devDependencies": {
     "@babel/plugin-transform-react-jsx": "7.2.0",
     "@wordpress/babel-plugin-makepot": "2.1.2",
-    "@automattic/babel-plugin-i18n-calypso": "file:packages/babel-plugin-i18n-calypso",
+    "@automattic/babel-plugin-i18n-calypso": "1.0.3",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
     "babel-jest": "23.6.0",
