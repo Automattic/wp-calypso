@@ -6,20 +6,21 @@
 import React from 'react';
 import debug from 'debug';
 import config, { isEnabled } from 'config';
-import { has, uniqueId } from 'lodash';
+import { has, set, uniqueId } from 'lodash';
 import { setLocaleData } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { asyncLoader } from './async-loader';
+import { EDITOR_START } from 'state/action-types';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { EDITOR_START } from 'state/action-types';
-import { requestFromUrl } from 'state/data-getters';
-import { waitForData } from 'state/data-layer/http-data';
-import { asyncLoader } from './async-loader';
 import { Placeholder } from './placeholder';
+import { JETPACK_DATA_PATH } from 'gutenberg/extensions/presets/jetpack/utils/get-jetpack-data';
+import { requestFromUrl, requestGutenbergBlockAvailability } from 'state/data-getters';
+import { waitForData } from 'state/data-layer/http-data';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -88,6 +89,19 @@ export const loadTranslations = store => {
 	} );
 };
 
+export const loadGutenbergBlockAvailability = store => {
+	const state = store.getState();
+	const siteSlug = getSelectedSiteSlug( state );
+
+	return waitForData( {
+		blockAvailability: () => requestGutenbergBlockAvailability( siteSlug ),
+	} ).then( ( { blockAvailability } ) => {
+		if ( 'success' === blockAvailability.state && blockAvailability.data ) {
+			set( window, [ JETPACK_DATA_PATH, 'available_blocks' ], blockAvailability.data );
+		}
+	} );
+};
+
 export const post = async ( context, next ) => {
 	//see post-editor/controller.js for reference
 
@@ -116,6 +130,7 @@ export const post = async ( context, next ) => {
 		promises: {
 			Editor: makeEditor,
 			translations: loadTranslations( context.store ),
+			blockAvailability: loadGutenbergBlockAvailability( context.store ),
 		},
 		loading: () => <Placeholder />,
 		success: ( { Editor } ) => <Editor />,
