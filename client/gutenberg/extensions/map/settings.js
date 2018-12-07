@@ -51,6 +51,9 @@ export const settings = {
 			default: 'red',
 		},
 	},
+	supports: {
+		html: false,
+	},
 	mapStyleOptions: [
 		{
 			value: 'default',
