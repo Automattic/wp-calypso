@@ -40,6 +40,7 @@ export class CreditCardPaymentBox extends React.Component {
 		countriesList: PropTypes.array.isRequired,
 		initialCard: PropTypes.object,
 		onSubmit: PropTypes.func,
+		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
