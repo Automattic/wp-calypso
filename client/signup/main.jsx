@@ -51,7 +51,6 @@ import SignupFlowController from 'lib/signup/flow-controller';
 import { disableCart } from 'lib/upgrades/actions';
 import { isValidLandingPageVertical } from 'lib/signup/verticals';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import { toSiteTopicSlug } from 'lib/signup/site-topic';
 
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -265,23 +264,22 @@ class Signup extends React.Component {
 			debug( 'From query string: vertical = %s', vertical );
 
 			const siteTopicStepName = 'site-topic';
-			const siteTopicSlug = toSiteTopicSlug( vertical );
 
 			this.props.setSurvey( {
-				vertical: siteTopicSlug,
+				vertical,
 				otherText: '',
 			} );
 			SignupActions.submitSignupStep( { stepName: 'survey' }, [], {
 				surveySiteType: 'blog',
-				surveyQuestion: siteTopicSlug,
+				surveyQuestion: vertical,
 			} );
 
-			this.props.submitSiteTopic( siteTopicSlug );
+			this.props.submitSiteTopic( vertical );
 
 			// Track our landing page verticals
-			if ( isValidLandingPageVertical( siteTopicSlug ) ) {
+			if ( isValidLandingPageVertical( vertical ) ) {
 				analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
-					vertical: siteTopicSlug,
+					vertical,
 					flow: flowName,
 				} );
 			}

@@ -150,15 +150,14 @@ class SiteTopicStep extends Component {
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	submitSiteTopic: siteTopic => {
 		const { flowName, goToNextStep } = ownProps;
-		const siteTopicSlug = toSiteTopicSlug( siteTopic );
 
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
-				value: siteTopicSlug,
+				value: toSiteTopicSlug( siteTopic ),
 			} )
 		);
 
-		dispatch( submitSiteTopic( siteTopicSlug ) );
+		dispatch( submitSiteTopic( siteTopic ) );
 
 		goToNextStep( flowName );
 	},
