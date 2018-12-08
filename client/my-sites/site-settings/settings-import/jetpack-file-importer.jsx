@@ -13,15 +13,40 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { startImport } from 'lib/importer/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import wp from 'lib/wp';
 import Button from 'components/button';
 
 const debug = debugFactory( 'calypso:jetpack-importer' );
 
-const importFileToJetpackSite = ( siteId, args ) =>
-	wp.undocumented().jetpackFileImport( siteId, { ...args } );
+const getPluginStatus = async ( siteSlug, pluginName ) => {
+	try {
+		const wpImporterPluginStatus = await wp
+			.undocumented()
+			.jetpackPluginStatus( siteSlug, pluginName );
+
+		return wpImporterPluginStatus.active ? 'active' : 'inactive';
+	} catch ( errorImporting ) {
+		return 'not_installed';
+	}
+};
+
+const ensurePluginIsInstalled = async ( siteSlug, pluginName, pluginPath ) => {
+	const pluginStatus = await getPluginStatus( siteSlug, pluginName );
+	switch ( pluginStatus ) {
+		case 'active':
+			return 'already_active';
+		case 'inactive':
+			await wp.undocumented().jetpackActivatePlugin( siteSlug, pluginPath );
+			return 'activated';
+		case 'not_installed':
+			await wp.undocumented().jetpackInstallPlugin( siteSlug, pluginName );
+			await wp.undocumented().jetpackActivatePlugin( siteSlug, pluginPath );
+			return 'installed_and_activated';
+		default:
+			throw 'Unexpected plugin status: ' + pluginStatus;
+	}
+};
 
 class JetpackFileImporter extends PureComponent {
 	fileInput = {};
@@ -37,15 +62,18 @@ class JetpackFileImporter extends PureComponent {
 			return;
 		}
 
-		const { siteId } = this.props;
+		const { siteId, siteSlug } = this.props;
 
 		try {
-			const result = await importFileToJetpackSite( siteId, {
-				file,
-				headers: {},
-				options: {},
-			} );
-			debug( { wut: 'jpfileimport', result } );
+			const pluginAction = await ensurePluginIsInstalled(
+				siteSlug,
+				'wordpress-importer',
+				'wordpress-importer%2Fwordpress-importer'
+			);
+
+			debug( { pluginAction } );
+			const result = await wp.undocumented().jetpackFileImport( siteId, { file } );
+			debug( { importSuccess: result } );
 		} catch ( errorImporting ) {
 			debug( { errorImporting } );
 		}
@@ -64,9 +92,7 @@ class JetpackFileImporter extends PureComponent {
 	}
 }
 
-export default connect(
-	state => ( {
-		siteId: getSelectedSiteId( state ),
-	} ),
-	{ startImport }
-)( localize( JetpackFileImporter ) );
+export default connect( state => ( {
+	siteId: getSelectedSiteId( state ),
+	siteSlug: getSelectedSiteSlug( state ),
+} ) )( localize( JetpackFileImporter ) );

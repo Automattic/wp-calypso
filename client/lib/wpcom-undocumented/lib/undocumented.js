@@ -1,11 +1,10 @@
-/* eslint-disable valid-jsdoc */
 /** @format */
-
+/* eslint-disable valid-jsdoc */
 /**
  * External dependencies
  */
 import debugFactory from 'debug';
-import { camelCase, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
+import { camelCase, get, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies.
@@ -91,6 +90,102 @@ Undocumented.prototype.jetpackModuleActivate = function( siteId, moduleSlug, fn 
 		},
 		fn
 	);
+};
+
+// @TODO put these in a lib
+const promisingFileReader = fileOrFileSlice =>
+	new Promise( ( resolve, rejectPromise ) => {
+		if ( typeof FileReader !== 'function' ) {
+			return rejectPromise( 'Unsupported browser or client - FileReader' );
+		}
+		const reader = new FileReader();
+		reader.onerror = rejectPromise;
+		reader.onload = () => resolve( reader.result );
+		reader.readAsArrayBuffer( fileOrFileSlice );
+	} );
+
+const encodeBlobToBase64 = blob =>
+	new Promise( resolve => {
+		const reader = new FileReader();
+		reader.onload = () => {
+			const base64 = reader.result.split( ',' )[ 1 ];
+			resolve( base64 );
+		};
+		reader.readAsDataURL( blob );
+	} );
+
+Undocumented.prototype.jetpackPluginStatus = function( siteSlug, pluginName ) {
+	return this.wpcom.req.get(
+		{ path: `/sites/${ siteSlug }/plugins/${ pluginName }` },
+		{ apiVersion: '1.2' }
+	);
+};
+
+Undocumented.prototype.jetpackInstallPlugin = function( siteSlug, pluginName ) {
+	return this.wpcom.req.post(
+		{ path: `/sites/${ siteSlug }/plugins/${ pluginName }/install` },
+		{ apiVersion: '1.2' }
+	);
+};
+
+Undocumented.prototype.jetpackActivatePlugin = function( siteSlug, pluginPath ) {
+	return this.wpcom.req.post(
+		{ path: `/sites/${ siteSlug }/plugins/${ pluginPath }` },
+		{ apiVersion: '1.2' },
+		{ active: true }
+	);
+};
+
+// @TODO move everything except the network call to a lib
+Undocumented.prototype.jetpackFileImport = async function( siteId, { file, chunkSizeKb = 500 } ) {
+	try {
+		const chunkSizeBytes = Math.floor( Math.max( 1, chunkSizeKb * 1000 ) );
+		const totalChunks = Math.ceil( file.size / chunkSizeBytes );
+		if ( ! totalChunks ) {
+			// TODO show an error..?
+			return;
+		}
+
+		const cptResults = await this.wpcom.req.post(
+			{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+			{ path: `/wp/v2/jetpack-file-imports` }
+		);
+
+		const cptId = get( cptResults, 'data.id' );
+		if ( ! cptId ) {
+			throw 'Could not create the attachment';
+		}
+
+		console.log( { cptId } );
+		const pieceResults = [];
+
+		for ( let i = 0; i < totalChunks; i++ ) {
+			const length = this.totalChunks === 1 ? file.size : chunkSizeBytes;
+			const offset = length * i;
+
+			const chunk = await promisingFileReader( file.slice( offset, offset + length ) );
+			const chunkBlob = new Blob( [ chunk ], { type: 'application/octet-stream' } );
+			const encodedChunk = await encodeBlobToBase64( chunkBlob );
+
+			const result = await this.wpcom.req.post(
+				{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+				{
+					path: `/wp/v2/jetpack-file-imports/${ cptId }/pieces/${ i }`,
+					body: JSON.stringify( { piece: encodedChunk } ),
+				}
+			);
+			pieceResults.push( result );
+		}
+
+		const importResult = await this.wpcom.req.post(
+			{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+			{ path: `/wp/v2/jetpack-file-imports/${ cptId }/import-from-file` }
+		);
+
+		console.log( { pieceResults, importResult } );
+	} catch ( jetpackFileImportError ) {
+		console.error( { jetpackFileImportError } );
+	}
 };
 
 /*
