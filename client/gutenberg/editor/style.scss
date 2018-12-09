@@ -193,7 +193,7 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 
 	.editor-post-publish-panel__header-publish-button .components-button.is-large {
-		animation: none; // Remove Publish button animation
+		animation: -a; // Remove Publish button size animation
 	}
 	
 	// Remove resize styling from post title
