@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { differenceWith, isEqual, each, omit } from 'lodash';
+import { differenceWith, get, isEqual, each, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,5 +35,7 @@ function recordRemoveEvent( cartItem ) {
 }
 
 export function recordUnrecognizedPaymentMethod( action ) {
-	analytics.tracks.recordEvent( 'calypso_cart_unrecognized_payment_method', action );
+	analytics.tracks.recordEvent( 'calypso_cart_unrecognized_payment_method', {
+		payment: JSON.stringify( get( action, 'payment', action ) ),
+	} );
 }
