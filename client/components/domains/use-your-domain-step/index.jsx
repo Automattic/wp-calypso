@@ -298,7 +298,7 @@ class UseYourDomainStep extends React.Component {
 			translate( "Requires changes to the domain's DNS" ),
 			this.getMappingPriceText(),
 		];
-		const buttonText = translate( 'Buy Domain Mapping' );
+		const buttonText = translate( 'Map Your Domain' );
 		const learnMore = translate( '{{a}}Learn more about domain mapping{{/a}}', {
 			components: {
 				a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
