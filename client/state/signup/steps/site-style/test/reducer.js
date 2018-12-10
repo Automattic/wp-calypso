@@ -3,13 +3,13 @@
 /**
  * Internal dependencies
  */
-import signupDependencyStore from '../reducer';
+import reducer from '../reducer';
 import { SIGNUP_STEPS_SITE_STYLE_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should update the site style', () => {
 		expect(
-			signupDependencyStore(
+			reducer(
 				{},
 				{
 					type: SIGNUP_STEPS_SITE_STYLE_SET,
