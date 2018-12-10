@@ -18,6 +18,10 @@ function createPurchaseObject( purchase ) {
 		active: Boolean( purchase.active ),
 		amount: Number( purchase.amount ),
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
+		mostRecentRenewDate: purchase.most_recent_renew_date,
+		mostRecentRenewMoment: purchase.most_recent_renew_date
+			? i18n.moment( purchase.most_recent_renew_date )
+			: null,
 		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
 		canExplicitRenew: Boolean( purchase.can_explicit_renew ),
 		currencyCode: purchase.currency_code,

@@ -94,6 +94,8 @@ describe( 'selectors', () => {
 				isRenewable: false,
 				isRenewal: false,
 				meta: undefined,
+				mostRecentRenewDate: undefined,
+				mostRecentRenewMoment: null,
 				payment: {
 					countryCode: undefined,
 					countryName: undefined,
