@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
+import { noop, uniq, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +20,7 @@ class SuggestionSearch extends Component {
 		onChange: PropTypes.func,
 		suggestions: PropTypes.array,
 		value: PropTypes.string,
-		limit: PropTypes.oneOfType( PropTypes.bool, PropTypes.number ),
+		limit: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -29,7 +29,7 @@ class SuggestionSearch extends Component {
 		onChange: noop,
 		suggestions: [],
 		value: '',
-		limit: false,
+		limit: 0,
 	};
 
 	constructor( props ) {
@@ -107,17 +107,29 @@ class SuggestionSearch extends Component {
 			return [];
 		}
 
-		const { suggestions } = this.props;
+		return this.doSearchWithInitialMatchPreferred(
+			this.props.suggestions,
+			this.state.query,
+			this.props.limit
+		).map( hint => ( { label: hint } ) );
+	}
 
-		const query = this.state.query.trim().toLocaleLowerCase();
-		let filtered = suggestions
-			.filter( hint => hint.toLocaleLowerCase().includes( query ) )
-			.map( hint => ( { label: hint } ) );
-
-		if ( this.props.limit ) {
-			filtered = filtered.slice( 0, this.props.limit );
+	doSearchWithInitialMatchPreferred( haystack, needle, limit = 0 ) {
+		// first do the search
+		needle = needle.trim().toLocaleLowerCase();
+		const lazyResults = haystack.filter( val => val.toLocaleLowerCase().includes( needle ) );
+		// second find the words that start with the search
+		const startsWithResults = lazyResults.filter( val =>
+			startsWith( val.toLocaleLowerCase(), needle )
+		);
+		// merge and dedupe
+		let results = uniq( startsWithResults.concat( lazyResults ) );
+		// maybe limit
+		if ( limit > 0 ) {
+			results = results.slice( 0, limit );
 		}
-		return filtered;
+		// fin
+		return results;
 	}
 
 	getSuggestionLabel( suggestionPosition ) {
