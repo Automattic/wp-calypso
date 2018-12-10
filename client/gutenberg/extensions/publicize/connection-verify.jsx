@@ -15,7 +15,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { Component } from '@wordpress/element';
-import { Notice } from '@wordpress/components';
+import { Button, Notice } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -104,16 +104,15 @@ class PublicizeConnectionVerify extends Component {
 						) }
 					</p>
 					{ failedConnections.filter( connection => connection.can_refresh ).map( connection => (
-						<a
-							className="pub-refresh-button button"
-							title={ connection.refresh_text }
+						<Button
 							href={ connection.refresh_url }
-							target={ '_refresh_' + connection.service_name }
-							onClick={ this.refreshConnectionClick }
+							isSmall
 							key={ connection.id }
+							onClick={ this.refreshConnectionClick }
+							title={ connection.refresh_text }
 						>
 							{ connection.refresh_text }
-						</a>
+						</Button>
 					) ) }
 				</Notice>
 			);
