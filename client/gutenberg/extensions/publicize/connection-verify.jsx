@@ -14,8 +14,8 @@
  * External dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { Component } from '@wordpress/element';
 import { Button, Notice } from '@wordpress/components';
+import { Component } from '@wordpress/element';
 
 /**
  * Internal dependencies
