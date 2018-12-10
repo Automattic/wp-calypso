@@ -8,7 +8,6 @@
 		margin: 0 -14px;
 	}
 
-	// Overriding the existing styles of Calypso's classic editor
 	.mce-container.mce-tinymce .mce-container.mce-top-part > .mce-container-body,
 	.mce-container.mce-tinymce.is-pinned .mce-container.mce-top-part > .mce-container-body {
 		> div.mce-toolbar-grp {
@@ -29,11 +28,10 @@
 	}
 
 	.mce-tinymce {
-		padding-top: 0 !important; // !important in order to override inline styles
+		padding-top: 0 !important;
 		top: -14px;
 	}
 
-	// Make ellipsis menu button fit
 	.mce-toolbar .mce-btn-group .mce-btn {
 		margin: 4px 2px;
 
