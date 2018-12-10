@@ -12,6 +12,7 @@
 	.mce-container.mce-tinymce.is-pinned .mce-container.mce-top-part > .mce-container-body {
 		> div.mce-toolbar-grp {
 			background: $white;
+			border: 1px solid $gray-lighten-30;
 			overflow: hidden;
 			position: static;
 			top: 0;
@@ -24,6 +25,10 @@
 		&:after {
 			position: absolute;
 			top: 0;
+		}
+
+		@at-root .editor-block-list__block.is-hovered {
+			border-width: 0 0 1px 0;
 		}
 	}
 
@@ -59,6 +64,10 @@
 
 	.mce-toolbar .mce-btn-group .mce-advanced.mce-btn.mce-last {
 		right: 0px;
+		button {
+			height: auto;
+			padding: 4px;
+		}
 	}
 
 	.mce-toolbar .mce-advanced .gridicon {
