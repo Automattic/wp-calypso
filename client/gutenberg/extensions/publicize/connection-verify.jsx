@@ -15,6 +15,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { Component } from '@wordpress/element';
+import { Notice } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -96,7 +97,7 @@ class PublicizeConnectionVerify extends Component {
 		const { failedConnections } = this.state;
 		if ( failedConnections.length > 0 ) {
 			return (
-				<div className="below-h2 error publicize-token-refresh-message">
+				<Notice className="jetpack-publicize-notice" isDismissible={ false } status="error">
 					<p key="error-title">
 						{ __(
 							'Before you hit Publish, please refresh the following connection(s) to make sure we can Publicize your post:'
@@ -114,7 +115,7 @@ class PublicizeConnectionVerify extends Component {
 							{ connection.refresh_text }
 						</a>
 					) ) }
-				</div>
+				</Notice>
 			);
 		}
 		return null;

@@ -35,6 +35,13 @@
 	margin-top: 3px;
 }
 
+.jetpack-publicize-notice {
+	&.components-notice {
+		margin-left: 0;
+		margin-right: 0;
+	}
+}
+
 .jetpack-publicize-message-note {
 	display: inline-block;
 	margin-bottom: 4px;
