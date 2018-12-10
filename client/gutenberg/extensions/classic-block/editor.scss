@@ -26,9 +26,18 @@
 			position: absolute;
 			top: 0;
 		}
-
-		@at-root .editor-block-list__block.is-hovered {
-			border-width: 0 0 1px 0;
+	}
+	.editor-block-list__block {
+		&.is-hovered,
+		&.is-selected {
+			.mce-container.mce-tinymce .mce-container.mce-top-part > .mce-container-body,
+			.mce-container.mce-tinymce.is-pinned .mce-container.mce-top-part > .mce-container-body {
+				> div.mce-toolbar-grp {
+					border-left-color: $white;
+					border-right-color: $white;
+					border-top-color: $white;
+				}
+			}
 		}
 	}
 
