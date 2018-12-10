@@ -23,6 +23,7 @@ const embedsToLookFor = {
 	'[class^=tumblr-]': embedTumblr,
 	'.jetpack-slideshow': embedSlideshow,
 	'.embed-reddit': embedReddit,
+	'.glossary-item-container': embedSmallipop,
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
@@ -146,6 +147,40 @@ function embedTumblr( domNode ) {
 	setTimeout( function() {
 		loadScript( 'https://secure.assets.tumblr.com/post.js', removeScript );
 	}, 30 );
+}
+
+let smallipopLoader;
+function embedSmallipop( domNode ) {
+	debug( 'processing smallipop for', domNode );
+	if ( smallipopLoader ) {
+		return;
+	}
+
+	// TODO - put the CSS/JS files in a better location
+	loadjQueryDependentScript( 'TODO/jquery.smallipop.js', function() {
+		smallipopLoader = true;
+		loadCSS( 'TODO/jquery.smallipop.custom.css' );
+		loadCSS( 'TODO/glossary-hovercards.css' );
+
+		const options = {
+			popupYOffset: -14,
+			preferredPosition: 'bottom',
+			hideDelay: 250,
+			theme: 'glossary',
+		};
+
+		window.jQuery( '.glossary-item-container' ).smallipop( options );
+
+		window.jQuery( 'body' ).on( 'mouseenter', '.glossary-item-container', function() {
+			// Setup hovercard (if doesn't exist already - for example, new posts)
+			if ( ! window.jQuery( this ).hasClass( 'sipInitialized' ) ) {
+				window.jQuery( this ).smallipop( options );
+
+				// Trigger smallipop manually because event already fired
+				window.jQuery( this ).smallipop( 'show' );
+			}
+		} );
+	} );
 }
 
 function triggerJQueryLoadEvent() {
