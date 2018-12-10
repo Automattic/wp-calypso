@@ -54,7 +54,7 @@ function HeaderToolbar( {
 		// GUTENLYPSO START
 		const proceed =
 			isDirty && typeof window !== 'undefined'
-				? window.confirm( __( 'Changes that you made may not be saved.' ) )
+				? window.confirm( __( 'You have unsaved changes. If you proceed, they will be lost.' ) )
 				: true;
 
 		if ( proceed ) {
