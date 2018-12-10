@@ -7,8 +7,6 @@ import debugModule from 'debug';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import TransitionGroup from 'react-transition-group/TransitionGroup';
-import CSSTransition from 'react-transition-group/CSSTransition';
 import url from 'url';
 import {
 	assign,
@@ -40,6 +38,7 @@ import './style.scss';
 import DocumentHead from 'components/data/document-head';
 import LocaleSuggestions from 'components/locale-suggestions';
 import SignupProcessingScreen from 'signup/processing-screen';
+import SiteMockups from 'signup/site-mockup';
 
 // Libraries
 import analytics from 'lib/analytics';
@@ -517,7 +516,7 @@ class Signup extends React.Component {
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (
-			<CSSTransition classNames="signup__step" timeout={ 400 } key={ stepKey }>
+			<div className="signup__step" key={ stepKey }>
 				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
 					{ shouldRenderLocaleSuggestions && (
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
@@ -552,7 +551,7 @@ class Signup extends React.Component {
 						/>
 					) }
 				</div>
-			</CSSTransition>
+			</div>
 		);
 	}
 
@@ -582,9 +581,8 @@ class Signup extends React.Component {
 							flowName={ this.props.flowName }
 						/>
 					) }
-				<TransitionGroup component="div" className="signup__steps">
-					{ this.renderCurrentStep() }
-				</TransitionGroup>
+				<div className="signup__steps">{ this.renderCurrentStep() }</div>
+				{ this.shouldShowSiteMockups() && <SiteMockups /> }
 				{ this.state.bearerToken && (
 					<WpcomLoginForm
 						authorization={ 'Bearer ' + this.state.bearerToken }
@@ -594,6 +592,14 @@ class Signup extends React.Component {
 				) }
 			</div>
 		);
+	}
+
+	shouldShowSiteMockups() {
+		if ( this.props.flowName !== 'onboarding-dev' ) {
+			return false;
+		}
+		const stepsToShowOn = [ 'site-topic', 'about', 'site-information', 'domains' ];
+		return stepsToShowOn.indexOf( this.props.stepName ) >= 0;
 	}
 }
 

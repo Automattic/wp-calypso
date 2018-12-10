@@ -1,0 +1,315 @@
+// Browser chrome to make mockups look
+// a little more like a website/phone.
+.site-mockup__chrome-desktop {
+	height: 28px;
+	border-bottom: 1px solid $gray-lighten-20;
+
+	// Desktop chrome has some OS dots to
+	// help signify its a browser.
+	svg {
+		position: absolute;
+			top: 8px;
+			left: 8px;
+		fill: $gray;
+	}
+
+	.site-mockup__chrome-label {
+		position: absolute;
+			top: 7px;
+			right: 0;
+			left: 0;
+
+		margin: 0 auto;
+		font-size: 11px;
+		text-align: center;
+		text-transform: uppercase;
+		font-weight: 600;
+		color: $gray-darken-20;
+		display: block;
+		width: 70%;
+		background: $gray-light;
+		border-radius: 3px;
+	}
+}
+
+.site-mockup__chrome-mobile {
+	height: 28px;
+
+	.site-mockup__chrome-label {
+		position: relative;
+			top: 6px;
+		margin: 0 auto;
+		font-size: 11px;
+		text-align: center;
+		text-transform: uppercase;
+		font-weight: 600;
+		color: $gray-darken-20;
+		display: block;
+		width: 60px;
+		background: $gray-light;
+		border-radius: 16px;
+	}
+}
+
+
+// Mockup document body; Where all the
+// stuff goes.
+.site-mockup__body {
+	height: 100%;
+	overflow: hidden;
+
+	// Mobile body is scrollable and needs to
+	// make room for the chrome.
+	.site-mockup__viewport.is-mobile & {
+		margin: 0 6px 6px 6px;
+		border: 1px solid $gray-lighten-20;
+		border-radius: 3px;
+		max-height: 400px;
+
+		@include breakpoint( '<660px' ) {
+			max-height: 600px;
+		}
+	}
+}
+
+
+// Demo content - WIP
+//
+.site-mockup__content {
+	.site-mockup__viewport.is-desktop & {
+		padding: 0 24px;
+	}
+	.site-mockup__viewport.is-mobile & {
+		padding: 0 16px;
+	}
+	font-family: Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+
+// Everything but the cover image has a max-width
+// and is centered inside the viewport.
+.site-mockup__title,
+.site-mockup__tagline,
+.site-mockup__h2,
+.site-mockup__image-text,
+.site-mockup__contact-form,
+.site-mockup__entry-content {
+	max-width: 700px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.site-mockup__entry-content {
+	.site-mockup__viewport.is-mobile & .featured-image {
+		float: none;
+		display: block;
+	}
+
+	h1, h2, h3, h4 {
+		clear: none;
+	}
+
+	h2 {
+		font-weight: bold;
+		font-size: 18px;
+	}
+}
+
+.site-mockup__title {
+	margin-top: 20px;
+	font-weight: 800;
+	font-size: 26px;
+	line-height: 1.2;
+}
+
+.site-mockup__tagline {
+	font-size: 15px;
+	margin-bottom: 20px;
+}
+
+.site-mockup__address {
+	display: inline-block;
+}
+
+.site-mockup__phone {
+	display: inline-block;
+	.site-mockup__address + &::before {
+		content: "•";
+		padding: 0 .5em;
+		.site-mockup__viewport.is-mobile & {
+			display: none;
+		}
+	}
+	.site-mockup__viewport.is-mobile & {
+		display: block;
+	}
+
+}
+
+
+.site-mockup__h2,
+.site-mockup__entry-content h2 {
+	font-size: 27px;
+	font-weight: 800;
+	line-height: 1.4;
+	margin-bottom: 24px;
+}
+
+.site-mockup__cover-image {
+	margin: 24px -24px 16px -24px;
+	background-size: cover;
+	background-position: 50% 60%;
+
+	span {
+		color: #fff;
+		font-weight: 600;
+		text-align: center;
+		font-size: 24px;
+		display: block;
+		background: rgba( black, 0.5 );
+
+		.site-mockup__viewport.is-desktop & {
+			padding: 160px 0;
+		}
+		.site-mockup__viewport.is-mobile & {
+			padding: 80px 0;
+		}
+	}
+}
+
+.site-mockup__image-text {
+	margin-bottom: 16px;
+
+	span {
+		font-size: 18px;
+		color: rgb(110, 115, 129);
+	}
+
+	.site-mockup__viewport.is-desktop & {
+		display: flex;
+		align-items: center;
+
+		img {
+			flex-grow: 1;
+		}
+
+		span {
+			flex-grow: 2;
+			padding: 0 16px;
+		}
+	}
+	.site-mockup__viewport.is-mobile & {
+		img,
+		span {
+			display: block;
+			width: 100%;
+			margin-bottom: 16px;
+		}
+	}
+
+	&.right {
+		img {
+			order: 2;
+		}
+		span {
+			order: 1;
+		}
+	}
+
+	&.left {
+		img {
+			order: 1;
+		}
+		span {
+			order: 2;
+		}
+	}
+}
+
+.site-mockup__hr {
+	width: 150px;
+	height: 3px;
+	background: rgba( 0, 0, 0, 0.075 );
+	margin: 32px auto;
+	clear: both;
+}
+
+.site-mockup__label {
+	font-size: 18px;
+	font-weight: 600;
+	color: #555;
+	margin-bottom: 8px;
+}
+
+.site-mockup__input,
+.site-mockup__textarea {
+	padding: 4px;
+	font-size: 18px;
+	color: #555;
+	margin-bottom: 16px;
+	border: 1px solid rgba( 0, 0, 0, 0.1 );
+}
+
+.site-mockup__input {
+	height: 28px;
+	.site-mockup__viewport.is-desktop & {
+		width: 40%;
+	}
+}
+
+.site-mockup__textarea {
+	height: 100px;
+}
+
+.site-mockup__button {
+	color: #fff;
+	font-weight: 800;
+	display: inline-block;
+	padding: 8px 16px;
+	background: purple;
+	border-radius: 3px;
+	margin-bottom: 32px;
+}
+
+.site-mockup__columns {
+	display: flex;
+	margin-top: 12px;
+	margin-bottom: 12px;
+	.site-mockup__viewport.is-mobile & {
+		display: block;
+	}
+}
+.site-mockup__column {
+	flex: 1;
+	flex-basis: 50%;
+	flex-grow: 0;
+
+	.site-mockup__viewport.is-mobile & {
+		margin: 0 0 12px;
+		width: auto;
+	}
+
+	&:not(:last-child) {
+		margin-right: 20px;
+		width: calc( 50% - 20px );
+	}
+	&:not(:first-child) {
+		margin-left: 20px;
+	}
+}
+.site-mockup__block-image {
+	display: block;
+	width: 100%;
+}
+
+.site-mockup__outline {
+	margin-bottom: 24px;
+	height: 150px;
+	border: 2px dashed lighten( $gray, 20 );
+
+	&.is-title {
+		max-width: 480px;
+		margin: 24px auto;
+		height: 40px;
+	}
+}

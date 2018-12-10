@@ -9,9 +9,6 @@
 }
 
 .signup__step {
-	position: absolute;
-	left: 0;
-	right: 0;
 	overflow: hidden;
 }
 
@@ -64,6 +61,7 @@
 
 /* New Signup Styles */
 
+
 .formatted-header__title {
 	font-family: $signup-sans;
 	font-size: 2.953em;
@@ -71,6 +69,7 @@
 	line-height: 1.2;
 	margin-top: 1em;
 }
+
 
 .is-section-signup .layout__content,
 .is-section-signup .layout__primary {
@@ -109,6 +108,7 @@
 	border-top: none;
 }
 
+
 @include breakpoint( '>1040px' ) {
  	.formatted-header__title {
 		font-size: 3.375em;
@@ -118,3 +118,4 @@
 		font-size: 1.313em;
 	}
 }
+
