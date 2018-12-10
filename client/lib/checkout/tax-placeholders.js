@@ -17,7 +17,8 @@ export function maybeInjectTaxPlaceholdersIntoPurchase( purchase ) {
 	if (
 		config.isEnabled( 'show-tax' ) &&
 		! has( purchase, 'taxAmount' ) &&
-		isString( purchasePriceText )
+		isString( purchasePriceText ) &&
+		! purchasePriceText.match( /include/i ) // "Included with plan"
 	) {
 		debug( 'injecting taxAmount into purchase', purchase );
 		return Object.assign( purchase, {
