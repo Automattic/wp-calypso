@@ -40,7 +40,7 @@ class PublicizeConnectionVerify extends Component {
 	 * @param {object} response Response from '/publicize/connection-test-results' endpoint
 	 */
 	connectionTestComplete = response => {
-		const failureList = response.data.filter( connection => ! connection.test_success );
+		const failureList = response.filter( connection => ! connection.test_success );
 		this.setState( {
 			failedConnections: failureList,
 			isLoading: false,
@@ -63,8 +63,8 @@ class PublicizeConnectionVerify extends Component {
 	 */
 	connectionTestStart = () => {
 		apiFetch( { path: '/wpcom/v2/publicize/connection-test-results' } )
-			.then( () => this.connectionTestComplete )
-			.catch( () => this.connectionTestRequestFailed );
+			.then( this.connectionTestComplete )
+			.catch( this.connectionTestRequestFailed );
 	};
 
 	/**
@@ -102,14 +102,14 @@ class PublicizeConnectionVerify extends Component {
 							'Before you hit Publish, please refresh the following connection(s) to make sure we can Publicize your post:'
 						) }
 					</p>
-					{ failedConnections.filter( connection => connection.userCanRefresh ).map( connection => (
+					{ failedConnections.filter( connection => connection.can_refresh ).map( connection => (
 						<a
 							className="pub-refresh-button button"
-							title={ connection.refreshText }
-							href={ connection.refreshURL }
-							target={ '_refresh_' + connection.serviceName }
+							title={ connection.refresh_text }
+							href={ connection.refresh_url }
+							target={ '_refresh_' + connection.service_name }
 							onClick={ this.refreshConnectionClick }
-							key={ connection.connectionID }
+							key={ connection.id }
 						>
 							{ connection.refreshText }
 						</a>
