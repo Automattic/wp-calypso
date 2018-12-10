@@ -56,14 +56,13 @@ export const handleCurrencyUpdate = ( { dispatch }, action ) => {
 
 	/**
 	 * A callback issued after a successful request
-	 * @param {Function} dispatch - dispatch function
+	 * @param {Function} localDispatch - dispatch function
 	 * @param {Function} getState - getState function
 	 * @param {Object} data - data returned by the server
 	 */
-	// eslint-disable-next-line
-	const updatedAction = ( dispatch, getState, { data } ) => {
-		dispatch( saveCurrencySuccess( siteId, data, action ) );
-		dispatch( successAction );
+	const updatedAction = ( localDispatch, getState, { data } ) => {
+		localDispatch( saveCurrencySuccess( siteId, data, action ) );
+		localDispatch( successAction );
 	};
 
 	dispatch(
