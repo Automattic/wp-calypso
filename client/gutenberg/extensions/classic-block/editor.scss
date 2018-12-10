@@ -24,6 +24,7 @@
 
 		&:after {
 			position: absolute;
+			right: 1px;
 			top: 0;
 		}
 	}
@@ -54,20 +55,50 @@
 		}
 
 		&.mce-insert-menu {
-			height: 36px;
-			margin: 0;
+			height: 32px;
+			&.mce-active:hover,
+			&:active {
+				border-color: transparent;
+			}
+			button {
+				padding: 4px;
+			}
+			@include breakpoint( '<660px' ) {
+				height: 34px;
+				button {
+					padding: 6px;
+				}
+			}
 		}
 
 		&.mce-listbox {
-			height: 36px;
+			border-left: 1px solid $gray-lighten-30;
+			border-right: 1px solid $gray-lighten-30;
+			height: auto;
 			margin: 0 2px 0 0;
-			padding: 2px 0;
+			padding: 0 8px;
 			vertical-align: top;
-			@include breakpoint( '<660px' ) {
-				border-left: 1px solid $gray-lighten-30;
-				border-right: 1px solid $gray-lighten-30;
-				padding: 0 8px;
+			&:active {
+				border-top-color: transparent;
+				border-bottom-color: transparent;
 			}
+			button {
+				height: 38px;
+			}
+			@include breakpoint( '<660px' ) {
+				border-color: transparent;
+				height: auto;
+				padding: 0;
+
+				button {
+					height: 42px;
+					margin-top: 2px;
+				}
+			}
+		}
+
+		.mce-ico {
+			color: $gray-darken-20;
 		}
 	}
 
