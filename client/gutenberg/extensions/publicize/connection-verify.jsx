@@ -42,9 +42,10 @@ class PublicizeConnectionVerify extends Component {
 	 * @param {object} response Response from '/publicize/connection-test-results' endpoint
 	 */
 	connectionTestComplete = response => {
-		const failureList = response.filter( connection => ! connection.test_success );
+		const failedConnections = response.filter( connection => ! connection.test_success );
+
 		this.setState( {
-			failedConnections: failureList,
+			failedConnections,
 			isLoading: false,
 		} );
 	};
