@@ -16,15 +16,14 @@
 }
 
 .concierge-session-nudge__column-doodle {
-	width: 150px;
-	padding-left: 10px;
+	width: 120px;
+	flex-shrink: 0;
 	@include breakpoint( '<960px' ) {
 		display: none;
 	}
 }
 
 .concierge-session-nudge__doodle {
-	width: auto;
 	margin-top: 85px;
 }
 
@@ -40,27 +39,17 @@
 	margin-top: 5px;
 	margin-bottom: 0.75em;
 
-	@include breakpoint( '<1280px' ) {
-		font-size: 21px;
-	}
-
 	@include breakpoint( '<660px' ) {
 		font-size: 18px;
 	}
 }
 
 .concierge-session-nudge__checklist {
-	display: block;
-	width: 100%;
-	text-align: left;
 	margin: 0 0 0.75em;
-	padding: 0;
-	list-style-type: none;
 
 	&-item {
 		display: flex;
 		width: 100%;
-		list-style-type: none;
 		align-items: center;
 		margin-bottom: 4px;
 
