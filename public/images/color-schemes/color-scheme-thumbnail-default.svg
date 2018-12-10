@@ -1,20 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="240px" height="160px" viewBox="0 0 240 160" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="background: #F3F6F8;">
-    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
-    <title>theme-color-scheme-thumbnail-default</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="theme-color-scheme-thumbnail-default">
-            <rect id="sidebar-background" fill="#E9EFF3" x="0" y="20" width="70" height="140"></rect>
-            <rect id="sidebar-item-selected-background" fill="#537994" x="0" y="86" width="70" height="16"></rect>
-            <rect id="sidebar-item-selected" fill="#FFFFFF" x="7" y="91" width="55" height="6"></rect>
-            <rect id="sidebar-item" fill="#2E4453" x="7" y="75" width="37" height="6"></rect>
-            <rect id="sidebar-item" fill="#2E4453" x="7" y="107" width="29" height="6"></rect>
-            <rect id="sidebar-item" fill="#2E4453" x="7" y="123" width="45" height="6"></rect>
-            <circle id="avatar" fill="#C8D7E1" cx="35.5" cy="45.5" r="16.5"></circle>
-            <rect id="card" fill="#FFFFFF" x="90" y="36" width="130" height="107"></rect>
-            <rect id="masterbar" fill="#0087BE" x="0" y="0" width="240" height="20"></rect>
-        </g>
-    </g>
+<svg width="240" height="160" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#F6F6F6" d="M70 20h170v140H70z"/>
+    <path fill="#E1E2E2" d="M0 20h70v140H0z"/>
+    <path fill="#636D75" d="M0 86h70v16H0z"/>
+    <path fill="#FFF" d="M7 91h55v6H7z"/>
+    <path fill="#636D75" d="M7 75h37v6H7zM7 107h29v6H7zM7 123h45v6H7z"/>
+    <circle fill="#B0B5B8" cx="35.5" cy="45.5" r="16.5"/>
+    <path fill="#FFF" d="M90 36h130v107H90z"/>
+    <path fill="#016087" d="M0 0h240v20H0z"/>
+    <rect fill="#016087" x="160" y="48" width="48" height="16" rx="3"/>
+  </g>
 </svg>
