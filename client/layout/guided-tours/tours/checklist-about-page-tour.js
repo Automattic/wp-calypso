@@ -5,7 +5,6 @@
  */
 
 import React, { Fragment } from 'react';
-import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -20,9 +19,20 @@ import {
 	Tour,
 } from 'layout/guided-tours/config-elements';
 import { SetFeaturedImageButton, UpdateButton } from '../button-labels';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
+
+function canStartTour( state ) {
+	return ! isGutenbergEnabled( state, getSelectedSiteId( state ) );
+}
 
 export const ChecklistAboutPageTour = makeTour(
-	<Tour name="checklistAboutPage" version="20171205" path="/non-existent-route" when={ noop }>
+	<Tour
+		name="checklistAboutPage"
+		version="20171205"
+		path="/non-existent-route"
+		when={ canStartTour }
+	>
 		<Step name="init" target="page-about" arrow="top-left" placement="below">
 			{ ( { translate } ) => (
 				<Fragment>

@@ -5,12 +5,14 @@
  */
 
 import React, { Fragment } from 'react';
-import { delay, noop, negate as not } from 'lodash';
+import { delay, negate as not } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import { getSelectedSiteId } from 'state/ui/selectors';
+import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { inSection } from 'state/ui/guided-tours/contexts';
@@ -58,8 +60,17 @@ function openFeatureImageUploadDialog() {
 	return true;
 }
 
+function canStartTour( state ) {
+	return ! isGutenbergEnabled( state, getSelectedSiteId( state ) );
+}
+
 export const ChecklistPublishPostTour = makeTour(
-	<Tour name="checklistPublishPost" version="20171205" path="/non-existent-route" when={ noop }>
+	<Tour
+		name="checklistPublishPost"
+		version="20171205"
+		path="/non-existent-route"
+		when={ canStartTour }
+	>
 		<Step
 			name="init"
 			placement="right"

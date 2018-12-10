@@ -5,13 +5,13 @@
  */
 
 import React, { Fragment } from 'react';
-import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { getSectionName } from 'state/ui/selectors';
+import { getSectionName, getSelectedSiteId } from 'state/ui/selectors';
+import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 import {
 	Continue,
 	ButtonRow,
@@ -27,8 +27,17 @@ function isPostEditorSection( state ) {
 	return getSectionName( state ) === 'post-editor';
 }
 
+function canStartTour( state ) {
+	return ! isGutenbergEnabled( state, getSelectedSiteId( state ) );
+}
+
 export const ChecklistContactPageTour = makeTour(
-	<Tour name="checklistContactPage" version="20171205" path="/non-existent-route" when={ noop }>
+	<Tour
+		name="checklistContactPage"
+		version="20171205"
+		path="/non-existent-route"
+		when={ canStartTour }
+	>
 		<Step
 			name="init"
 			placement="right"
