@@ -23,13 +23,10 @@ import { Button, Notice } from '@wordpress/components';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class PublicizeConnectionVerify extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			failedConnections: {},
-			isLoading: false,
-		};
-	}
+	state = {
+		failedConnections: {},
+		isLoading: false,
+	};
 
 	/**
 	 * Callback for connection test request
