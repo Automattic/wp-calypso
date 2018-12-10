@@ -96,7 +96,7 @@ class PublicizeConnectionVerify extends Component {
 		if ( failedConnections.length > 0 ) {
 			return (
 				<Notice className="jetpack-publicize-notice" isDismissible={ false } status="error">
-					<p key="error-title">
+					<p>
 						{ __(
 							'Before you hit Publish, please refresh the following connection(s) to make sure we can Publicize your post:'
 						) }
