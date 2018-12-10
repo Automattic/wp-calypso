@@ -1,12 +1,12 @@
 SuggestionSearch
 ================
 
-SuggesionSearch is a bundled component of FormTextInput and Suggestions which encapsulates the common boilerplate code for pairing them.
+SuggestionSearch is a bundled component of FormTextInput and Suggestions which encapsulates the common boilerplate code for pairing them.
 
 ## Usage
 
 ```es6
-import SuggesionSearch from 'components/suggestion-search';
+import SuggestionSearch from 'components/suggestion-search';
 
 onChange( newValue ) {
 	console.log( 'New value: ', newValue );
@@ -14,7 +14,7 @@ onChange( newValue ) {
 
 render() {
 	return (
-		<SuggesionSearch
+		<SuggestionSearch
 			placeholder={ 'Type here to search' }
 			onChange={ onChange }
 			suggestions={ [ 'foo', 'bar' ] }

@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, get, trim } from 'lodash';
+import { debounce, get, noop, trim } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,15 +18,21 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 export class SiteVerticalsSuggestionSearch extends Component {
 	static propTypes = {
-		placeholder: PropTypes.string,
+		initialValue: PropTypes.string,
 		onChange: PropTypes.func,
-		value: PropTypes.string,
+		placeholder: PropTypes.string,
+	};
+
+	static defaultProps = {
+		initialValue: '',
+		onChange: noop,
+		placeholder: '',
 	};
 
 	constructor( props ) {
 		super( props );
 		this.state = {
-			searchValue: props.value || '',
+			searchValue: props.initialValue,
 			lastSearchValue: '',
 			charsToTriggerSearch: 3,
 		};
@@ -48,12 +54,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 
 		/*
 			TODO: do we want to do anything with the vertical data? E.g., pass it up?
-			{
-				"vertical_name": "Lifestyle / Inspiration",
-				"vertical_id": "a8c.0.2",
-				"preview": [],
-				"is_valid": true
-			}
+			// Check if the selected suggestion features in the API results collection
 			const verticalData = find( this.props.verticals, [ 'vertical_name', value ] ) || value;
 		 */
 		this.props.onChange( value );
@@ -65,17 +66,15 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		const { translate, placeholder } = this.props;
 
 		return (
-			<div>
-				<SuggestionSearch
-					id="siteTopic"
-					placeholder={
-						placeholder || translate( 'e.g. Fashion, travel, design, plumber, electrician' )
-					}
-					onChange={ this.onSiteTopicChange }
-					suggestions={ this.getSuggestions() }
-					value={ this.state.searchValue }
-				/>
-			</div>
+			<SuggestionSearch
+				id="siteTopic"
+				placeholder={
+					placeholder || translate( 'e.g. Fashion, travel, design, plumber, electrician' )
+				}
+				onChange={ this.onSiteTopicChange }
+				suggestions={ this.getSuggestions() }
+				value={ this.state.searchValue }
+			/>
 		);
 	}
 }

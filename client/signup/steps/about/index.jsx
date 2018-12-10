@@ -45,7 +45,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
-import SuggestionSearch from 'components/suggestion-search';
+import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
 
 /**
  * Style dependencies
@@ -190,7 +190,6 @@ class AboutStep extends Component {
 		const eventAttributes = {};
 
 		if ( ! shouldHideSiteTitle ) {
-			const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 			//Site Title
 			if ( siteTitleInput !== '' ) {
 				siteTitleValue = siteTitleInput;
@@ -461,7 +460,13 @@ class AboutStep extends Component {
 	}
 
 	renderContent() {
-		const { translate, siteTitle, shouldHideSiteTitle, shouldHideSiteGoals } = this.props;
+		const {
+			translate,
+			siteTitle,
+			shouldHideSiteTitle,
+			shouldHideSiteGoals,
+			siteTopic,
+		} = this.props;
 
 		const pressableWrapperClassName = classNames( 'about__pressable-wrapper', {
 			'about__wrapper-is-hidden': ! this.state.showStore,
@@ -514,13 +519,9 @@ class AboutStep extends Component {
 											{ translate( "We'll use this to personalize your site and experience." ) }
 										</InfoPopover>
 									</FormLabel>
-									<SuggestionSearch
-										id="siteTopic"
-										placeholder={ translate(
-											'e.g. Fashion, travel, design, plumber, electrician'
-										) }
+									<SiteVerticalsSuggestionSearch
 										onChange={ this.onSiteTopicChange }
-										suggestions={ Object.values( hints ) }
+										initialValue={ siteTopic }
 									/>
 								</FormFieldset>
 							) }
