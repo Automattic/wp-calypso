@@ -111,7 +111,7 @@ class PublicizeConnectionVerify extends Component {
 							onClick={ this.refreshConnectionClick }
 							key={ connection.id }
 						>
-							{ connection.refreshText }
+							{ connection.refresh_text }
 						</a>
 					) ) }
 				</div>
