@@ -30,12 +30,12 @@
 
 	.discover-attribution__author,
 	.discover-attribution__blog {
-		color: $blue-medium;
+		color: var( --color-accent );
 		text-decoration: none;
 		text-transform: none;
 
 		&:hover {
-			color: $blue-light;
+			color: var( --color-primary-light );
 		}
 	}
 
@@ -67,7 +67,7 @@
 			top: -1px;
 
 		&.is-following {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 
 		&:focus {

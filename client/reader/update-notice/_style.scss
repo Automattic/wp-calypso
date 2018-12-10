@@ -18,7 +18,7 @@
 	font-size: 15px;
 
 	&:hover {
-		background: $blue-medium;
+		background: var( --color-accent );
 	}
 
 	&.is-active {

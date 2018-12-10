@@ -21,8 +21,8 @@
 			border-bottom: 1px #1785be solid;
 
 			&:hover {
-				color: $blue-medium;
-				border-bottom: 1px solid $blue-medium;
+				color: var( --color-accent );
+				border-bottom: 1px solid var( --color-accent );
 			}
 		}
 	}

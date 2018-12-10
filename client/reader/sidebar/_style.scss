@@ -24,7 +24,7 @@
 			.gridicon {
 
 				@include breakpoint( "<660px" ) {
-					fill: $blue-medium;
+					fill: var( --color-accent );
 				}
 			}
 
@@ -33,7 +33,7 @@
 			:not( .sidebar__button ) {
 
 				@include breakpoint( "<660px" ) {
-					color: $blue-medium;
+					color: var( --color-accent );
 				}
 			}
 		}
@@ -88,11 +88,11 @@
 			}
 
 			&:hover {
-				color: $blue-medium;
+				color: var( --color-accent );
 				background-color: $gray-light;
 
 				.gridicon {
-					fill: $blue-medium;
+					fill: var( --color-accent );
 				}
 			}
 		}
@@ -183,7 +183,7 @@
 		.selected .sidebar__menu-item-label {
 
 			@include breakpoint( "<660px" ) {
-				color: $blue-medium;
+				color: var( --color-accent );
 			}
 		}
 	}
