@@ -38,6 +38,7 @@ import { getRouteHistory } from 'state/ui/action-log/selectors';
 
 function HeaderToolbar( {
 	hasFixedToolbar,
+	isDirty,
 	isLargeViewport,
 	showInserter,
 	// GUTENLYPSO START
@@ -50,8 +51,17 @@ function HeaderToolbar( {
 	// GUTENLYPSO END
 } ) {
 	const onCloseButtonClick = () => {
-		notices.forEach( ( { id } ) => removeNotice( id ) );
-		closeEditor();
+		// GUTENLYPSO START
+		const proceed =
+			isDirty && typeof window !== 'undefined'
+				? window.confirm( __( 'You have unsaved changes. If you proceed, they will be lost.' ) )
+				: true;
+
+		if ( proceed ) {
+			notices.forEach( ( { id } ) => removeNotice( id ) );
+			closeEditor();
+		}
+		// GUTENLYPSO END
 	};
 
 	const toolbarAriaLabel = hasFixedToolbar
@@ -156,6 +166,7 @@ export default compose( [
 	withSelect( select => ( {
 		hasFixedToolbar: select( 'core/edit-post' ).isFeatureActive( 'fixedToolbar' ),
 		notices: select( 'core/notices' ).getNotices(), // GUTENLYPSO
+		isDirty: select( 'core/editor' ).isEditedPostDirty(), // GUTENLYPSO
 		showInserter:
 			select( 'core/edit-post' ).getEditorMode() === 'visual' &&
 			select( 'core/editor' ).getEditorSettings().richEditingEnabled,
