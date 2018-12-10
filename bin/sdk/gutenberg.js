@@ -31,7 +31,6 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	} );
 
 	const presetPath = path.join( inputDir, 'index.json' );
-	const presetBetaPath = path.join( inputDir, 'index-beta.json' ); // beta blocks live here
 
 	let editorScript;
 	let editorBetaScript;
@@ -41,8 +40,9 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	let presetBetaBlocks;
 
 	if ( fs.existsSync( presetPath ) ) {
-		presetBlocks = require( presetPath );
-		presetBetaBlocks = fs.existsSync( presetBetaPath ) ? require( presetBetaPath ) : [];
+		const presetIndex = require( presetPath );
+		presetBlocks = presetIndex.production ? presetIndex.production : [];
+		presetBetaBlocks = presetIndex.beta ? presetIndex.beta : [];
 		const allPresetBlocks = [ ...presetBlocks, ...presetBetaBlocks ];
 
 		// Find all the shared scripts
