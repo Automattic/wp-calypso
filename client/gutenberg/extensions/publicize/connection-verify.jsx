@@ -28,6 +28,10 @@ class PublicizeConnectionVerify extends Component {
 		isLoading: false,
 	};
 
+	componentDidMount() {
+		this.connectionTestStart();
+	}
+
 	/**
 	 * Callback for connection test request
 	 *
@@ -86,10 +90,6 @@ class PublicizeConnectionVerify extends Component {
 			}
 		}, 500 );
 	};
-
-	componentDidMount() {
-		this.connectionTestStart();
-	}
 
 	render() {
 		const { failedConnections } = this.state;
