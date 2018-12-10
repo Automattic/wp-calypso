@@ -82,8 +82,9 @@ class PublicizeConnectionVerify extends Component {
 		// open a popup window
 		// when it is closed, kick off the tests again
 		const popupWin = window.open( href, title, '' );
-		window.setInterval( () => {
+		const popupTimer = window.setInterval( () => {
 			if ( false !== popupWin.closed ) {
+				window.clearInterval( popupTimer );
 				this.connectionTestStart();
 			}
 		}, 500 );
