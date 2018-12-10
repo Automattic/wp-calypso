@@ -342,7 +342,11 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				minify: isDevelopment
 					? false
 					: {
-							reduceIdents: false, // disable cssnano optimization that renames animation names
+							// Disable unsafe cssnano optimization that minifies CSS animation names.
+							// We minify each CSS chunk individually which leads to name conflicts when
+							// multiple independently minified stylesheets are loaded into one document.
+							// https://cssnano.co/optimisations/reduceidents/
+							reduceIdents: false,
 					  },
 			} ),
 			new AssetsWriter( {
