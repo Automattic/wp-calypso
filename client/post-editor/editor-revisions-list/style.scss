@@ -157,7 +157,7 @@
 	.editor-revisions-list__prev-button:first-child,
 	.editor-revisions-list__next-button {
 		&:focus {
-			outline: solid 2px $blue-light;
+			outline: solid 2px var( --color-primary-light );
 			outline-offset: -2px;
 		}
 	}
@@ -310,13 +310,13 @@
 .editor-revisions-list__additions {
 	margin-right: 12px;
 	b {
-		background: $blue-medium;
+		background: var( --color-accent );
 	}
 }
 
 .editor-revisions-list__deletions {
 	b {
-		background: $alert-red;
+		background: var( --color-error );
 	}
 }
 

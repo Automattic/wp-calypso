@@ -94,7 +94,7 @@
 }
 
 .editor-confirmation-sidebar__action .button {
-	background: $alert-green;
+	background: var( --color-success );
 	border-color: darken( $alert-green, 20% );
 	color: $white;
 

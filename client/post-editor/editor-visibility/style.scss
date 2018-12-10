@@ -43,15 +43,15 @@
 	}
 
 	.gridicons-globe {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 
 	.gridicons-user {
-		color: $alert-yellow;
+		color: var( --color-warning );
 	}
 
 	.gridicons-lock {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	.gridicon.is_active {

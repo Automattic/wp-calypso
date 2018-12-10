@@ -33,7 +33,7 @@
 	font-size: 13px;
 
 	&:hover {
-		background-color: $blue-medium;
+		background-color: var( --color-accent );
 		color: $white;
 	}
 }
