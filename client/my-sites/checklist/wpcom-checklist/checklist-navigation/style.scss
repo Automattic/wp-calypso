@@ -12,7 +12,7 @@
 
 	&:hover,
 	&:focus {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 }
 
@@ -39,7 +39,7 @@
 }
 
 .checklist-navigation .progress-bar__progress {
-	background-color: $alert-green;
+	background-color: var( --color-success );
 }
 
 .checklist-navigation .checklist-navigation__progress-bar-margin {

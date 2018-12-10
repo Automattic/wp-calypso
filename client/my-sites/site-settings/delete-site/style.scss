@@ -57,5 +57,5 @@ h1.delete-site__confirm-header {
 }
 
 .delete-site__target-domain {
-	color: $alert-red;
+	color: var( --color-error );
 }

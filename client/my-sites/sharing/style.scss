@@ -258,7 +258,7 @@
 }
 
 .sharing-service__overview:hover .sharing-service__content-toggle {
-	color: $blue-medium;
+	color: var( --color-accent );
 }
 
 .sharing-service__icon {
@@ -460,7 +460,7 @@
 
 .sharing-connection__account-action.reconnect,
 .sharing-connection__account-action.must-disconnect {
-	color: $alert-yellow;
+	color: var( --color-warning );
 
 	.gridicon {
 		margin-right: 4px;
@@ -645,7 +645,7 @@
 .sharing-buttons-preview__like .gridicon {
 	vertical-align: top;
 	margin: 3px 4px 0 0;
-	fill: $blue-medium;
+	fill: var( --color-accent );
 }
 
 .sharing-buttons-preview__fake-user {
@@ -678,14 +678,14 @@
 	border-radius: 4px;
 	box-shadow: 0 0 8px rgba( $gray-dark, 0.04 );
 	background-color: $white;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 
 	@include breakpoint( '<480px' ) {
 		padding-right: 0;
 	}
 
 	&:hover {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 
 	&.is-active {

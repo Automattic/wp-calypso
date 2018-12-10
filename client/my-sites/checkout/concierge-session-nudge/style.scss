@@ -1,6 +1,6 @@
 .concierge-session-nudge__footer {
 	.concierge-session-nudge__decline-offer-button {
-		color: $blue-medium;
+		color: var( --color-accent );
 
 		@include breakpoint( '<480px' ) {
 			width: 100%;

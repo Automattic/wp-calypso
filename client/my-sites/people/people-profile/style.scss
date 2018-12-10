@@ -113,14 +113,14 @@
 
 
 	&.role-editor {
-		background: $blue-dark;
+		background: var( --color-primary-dark );
 		border: none;
 		color: $white;
 	}
 
 	&.role-author,
 	&.role-contributor {
-		background: $blue-wordpress;
+		background: var( --color-primary );
 		border: none;
 		color: $white;
 	}

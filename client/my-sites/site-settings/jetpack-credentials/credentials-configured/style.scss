@@ -18,7 +18,7 @@
 }
 
 .credentials-configured__info-gridicon {
-	color: $alert-green;
+	color: var( --color-success );
 }
 
 .credentials-configured__info-protocol {
@@ -36,7 +36,7 @@
 }
 
 .credentials-configured__revoke-icon {
-	color: $alert-red;
+	color: var( --color-error );
 	margin-right: rem( 5px );
 }
 

@@ -59,7 +59,7 @@
 			}
 
 			.value {
-				color: $blue-wordpress;
+				color: var( --color-primary );
 				display: block;
 				line-height: 24px;
 				text-align: center;
@@ -126,7 +126,7 @@
 
 		.value {
 			clear: both;
-			color: $blue-wordpress;
+			color: var( --color-primary );
 			display: block;
 			float: none;
 			line-height: 24px;

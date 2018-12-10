@@ -99,7 +99,7 @@
 	position: absolute;
 		bottom: 16px;
 		right: 16px;
-	color: $alert-green;
+	color: var( --color-success );
 	font-size: 12px;
 	font-weight: 500;
 	animation: appear .15s ease-in;

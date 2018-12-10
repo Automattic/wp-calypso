@@ -56,7 +56,7 @@
 }
 
 .gmb-location__verified-icon {
-	color: $alert-green;
+	color: var( --color-success );
 	margin-left: -2px;
 	vertical-align: text-bottom;
 }

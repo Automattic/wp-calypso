@@ -103,7 +103,7 @@
 .activity-log__threats-heading {
 	margin-bottom: 16px;
 	font-weight: 600;
-	color: $alert-red;
+	color: var( --color-error );
 
 	@include breakpoint( '>480px' ) {
 		margin-bottom: 24px;

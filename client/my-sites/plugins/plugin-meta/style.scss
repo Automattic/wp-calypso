@@ -164,7 +164,7 @@
 }
 
 .plugin-meta__actions .plugin-meta__active {
-	color: $alert-green;
+	color: var( --color-success );
 }
 
 .card.plugin-meta__settings-link {

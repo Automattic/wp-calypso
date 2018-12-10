@@ -19,7 +19,7 @@
 		color: $gray-darken-20;
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 
 		&.is-disabled {

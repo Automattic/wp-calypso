@@ -224,7 +224,7 @@ ul.module-header-actions {
 	// Hover state
 	@include breakpoint( ">480px" ) {
 		.stats-module:hover & .module-header-action-link {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 		}
 
 		.module-header & .module-header-action-link:hover {
@@ -325,7 +325,7 @@ ul.module-header-actions {
 	}
 
 	.legend.achievement {
-		color: $alert-yellow;
+		color: var( --color-warning );
 	}
 
 	// Hide legends if there is no data
@@ -470,7 +470,7 @@ ul.module-header-actions {
 	}
 
 	.stats-module & td.highest-count {
-		color: $alert-yellow;
+		color: var( --color-warning );
 		position: relative;
 	}
 
@@ -488,11 +488,11 @@ ul.module-header-actions {
 		font-size: 12px;
 
 		&.is-rising {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 
 		&.is-falling {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 
 		&.is-same {

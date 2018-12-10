@@ -79,10 +79,10 @@
 
 		.button.is-borderless:hover,
 		.button.is-borderless:focus {
-			color: $blue-medium;
+			color: var( --color-accent );
 
 			.gridicon {
-				fill: $blue-medium;
+				fill: var( --color-accent );
 			}
 		}
 	}

@@ -8,7 +8,7 @@
 		color: $gray-text-min;
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 }

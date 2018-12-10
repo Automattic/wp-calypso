@@ -411,7 +411,7 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	&-item-icon {
-		fill: $blue-wordpress;
+		fill: var( --color-primary );
 		margin-right: 11px;
 	}
 

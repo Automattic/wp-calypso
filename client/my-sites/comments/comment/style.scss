@@ -8,14 +8,14 @@
 	padding: 0;
 
 	.accessible-focus &:focus {
-		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
+		box-shadow: 0 0 0 1px var( --color-accent ), 0 0 0 3px var( --color-primary-light );
 		z-index: z-index( 'root', '.card.comment.accessible-focus:focus' );
 	}
 
 	&.is-pending {
 		background: mix( $alert-yellow, $white, 8.5% );
-		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
-			0 1px 2px $gray-lighten-30;
+		box-shadow: inset 4px 0 0 0 var( --color-warning ),
+			0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 	}
 
 	@include breakpoint( '>660px' ) {
@@ -80,7 +80,7 @@
 
 .comment__author-has-link {
 	margin: 0 4px -4px 0;
-	color: $alert-red;
+	color: var( --color-error );
 }
 
 .comment__author-info-element {
@@ -93,7 +93,7 @@
 	}
 	a:focus,
 	a:hover {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 
 	.comment__post-link {
@@ -232,7 +232,7 @@
 		}
 		a:focus,
 		a:hover {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 		}
 	}
 
@@ -293,7 +293,7 @@
 	}
 	a:focus,
 	a:hover {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 }
 
@@ -330,7 +330,7 @@
 	}
 
 	&.comment__action-approve:hover {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 	&.comment__action-like:hover {
 		color: $orange-jazzy;
@@ -338,11 +338,11 @@
 	&.comment__action-delete:hover,
 	&.comment__action-spam:hover,
 	&.comment__action-trash:hover {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	&.is-approved {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 	&.is-liked {
 		color: $orange-jazzy;
@@ -429,7 +429,7 @@
 	text-transform: uppercase;
 
 	&.is-active {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		cursor: pointer;
 	}
 }
@@ -470,7 +470,7 @@
 	}
 
 	.comment__edit-jetpack-update-notice {
-		color: $alert-red;
+		color: var( --color-error );
 		margin-left: 8px;
 		margin-right: 8px;
 
@@ -481,7 +481,7 @@
 	}
 
 	.comment__edit-jetpack-update-notice-link {
-		color: $alert-red;
+		color: var( --color-error );
 		margin-left: 4px;
 		text-decoration: underline;
 	}
@@ -566,7 +566,7 @@
 	font-style: italic;
 }
 .comment-html-editor__toolbar-button-a.button {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	text-decoration: underline;
 }
 .comment-html-editor__toolbar-button-del {
@@ -616,7 +616,7 @@
 		z-index: z-index( 'root', '.card.comment.is-bulk-mode:hover' );
 	}
 	&.is-pending:hover {
-		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
+		box-shadow: inset 4px 0 0 0 var( --color-warning ), 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
 	}
 
 	a {
