@@ -15,15 +15,26 @@ import page from 'page';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import QuerySites from 'components/data/query-sites';
+import QueryProductsList from 'components/data/query-products-list';
+import QuerySitePlans from 'components/data/query-site-plans';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
+import formatCurrency from 'lib/format-currency';
 import { addItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import {
+	getProductsList,
+	getProductDisplayCost,
+	getProductCost,
+	isProductsListFetching,
+} from 'state/products-list/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
+import { isRequestingSitePlans, getPlansBySiteId } from 'state/sites/plans/selectors';
 
 export class ConciergeSessionNudge extends React.Component {
 	static propTypes = {
@@ -32,7 +43,7 @@ export class ConciergeSessionNudge extends React.Component {
 	};
 
 	render() {
-		const { selectedSiteId } = this.props;
+		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans } = this.props;
 		const title = 'Checkout ‹ Expert Session';
 
 		return (
@@ -40,11 +51,53 @@ export class ConciergeSessionNudge extends React.Component {
 				<PageViewTracker path="/checkout/:site/add-expert-session/:receipt_id" title={ title } />
 				<DocumentHead title={ title } />
 				<QuerySites siteId={ selectedSiteId } />
+				{ ! hasProductsList && <QueryProductsList /> }
+				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
 
-				<CompactCard>{ this.header() }</CompactCard>
-				<CompactCard>{ this.body() }</CompactCard>
-				<CompactCard>{ this.footer() }</CompactCard>
+				{ isLoading ? (
+					this.renderPlaceholders()
+				) : (
+					<>
+						<CompactCard>{ this.header() }</CompactCard>
+						<CompactCard>{ this.body() }</CompactCard>
+						<CompactCard>{ this.footer() }</CompactCard>
+					</>
+				) }
 			</Main>
+		);
+	}
+
+	renderPlaceholders() {
+		return (
+			<>
+				<CompactCard>
+					<div className="concierge-session-nudge__header">
+						<div className="concierge-session-nudge__placeholders">
+							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+						</div>
+					</div>
+				</CompactCard>
+				<CompactCard>
+					<div className="concierge-session-nudge__placeholders">
+						<>
+							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+							<div className="concierge-session-nudge__placeholder-row is-placeholder" />
+						</>
+					</div>
+				</CompactCard>
+				<CompactCard>
+					<div className="concierge-session-nudge__footer">
+						<div className="concierge-session-nudge__placeholders">
+							<div className="concierge-session-nudge__placeholder-button-container">
+								<div className="concierge-session-nudge__placeholder-button is-placeholder" />
+								<div className="concierge-session-nudge__placeholder-button is-placeholder" />
+							</div>
+						</div>
+					</div>
+				</CompactCard>
+			</>
 		);
 	}
 
@@ -60,7 +113,10 @@ export class ConciergeSessionNudge extends React.Component {
 	}
 
 	body() {
-		const { translate } = this.props;
+		const { translate, productCost, productDisplayCost, currencyCode } = this.props;
+		// Full cost should be 150% of base cost, rounded to nearest 50
+		const fullCost = Math.round( ( productCost * 1.5 ) / 50 ) * 50;
+		const savings = fullCost - productCost;
 		return (
 			<Fragment>
 				<div className="concierge-session-nudge__column-pane">
@@ -163,7 +219,7 @@ export class ConciergeSessionNudge extends React.Component {
 								'Reserve a 45-minute "Quick Start" appointment, and save %(saveAmount)s if you sign up today.',
 								{
 									args: {
-										saveAmount: '$50',
+										saveAmount: formatCurrency( savings, currencyCode ),
 									},
 								}
 							) }
@@ -176,8 +232,8 @@ export class ConciergeSessionNudge extends React.Component {
 									{
 										components: { del: <del /> },
 										args: {
-											oldPrice: '$150',
-											price: '$99',
+											oldPrice: formatCurrency( fullCost, currencyCode ),
+											price: productDisplayCost,
 										},
 									}
 								) }
@@ -198,7 +254,7 @@ export class ConciergeSessionNudge extends React.Component {
 	}
 
 	footer() {
-		const { translate } = this.props;
+		const { translate, productDisplayCost } = this.props;
 		return (
 			<footer className="concierge-session-nudge__footer">
 				<Button
@@ -212,7 +268,11 @@ export class ConciergeSessionNudge extends React.Component {
 					className="concierge-session-nudge__accept-offer-button"
 					onClick={ this.handleClickAccept }
 				>
-					{ translate( 'Reserve a call for $99' ) }
+					{ translate( 'Reserve a call for %(amount)s', {
+						args: {
+							amount: productDisplayCost,
+						},
+					} ) }
 				</Button>
 			</footer>
 		);
@@ -251,10 +311,17 @@ const trackUpsellButtonClick = buttonAction => {
 export default connect(
 	( state, props ) => {
 		const { selectedSiteId } = props;
-
+		const productsList = getProductsList( state );
+		const sitePlans = getPlansBySiteId( state ).data;
 		return {
+			currencyCode: getCurrentUserCurrencyCode( state ),
+			isLoading: isProductsListFetching( state ) || isRequestingSitePlans( state, selectedSiteId ),
+			hasProductsList: Object.keys( productsList ).length > 0,
+			hasSitePlans: sitePlans && sitePlans.length > 0,
 			siteSlug: getSiteSlug( state, selectedSiteId ),
 			isEligibleForChecklist: isEligibleForDotcomChecklist( state, selectedSiteId ),
+			productCost: getProductCost( state, 'concierge-session' ),
+			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
 		};
 	},
 	{

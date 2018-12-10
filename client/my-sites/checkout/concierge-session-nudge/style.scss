@@ -2,7 +2,39 @@
 	b {
 		font-weight: 700;
 	}
+
+	&__placeholders {
+		display: flex;
+		flex-direction: column;
+
+		.is-placeholder {
+			animation: pulse-light 800ms ease-in-out infinite;
+			background: $gray-lighten-20;
+		}
+	}
+
+	&__placeholder-row {
+		height: 40px;
+		flex: 0 0 100%;
+		margin-bottom: 15px;
+	}
+
+	&__placeholder-button {
+		height: 50px;
+		width: 100%;
+
+		@include breakpoint('>480px') {
+			width: 80px;
+			height: 40px;
+		}
+	}
+
+	&__placeholder-button-container {
+		display: flex;
+		justify-content: space-between;
+	}
 }
+
 .concierge-session-nudge__column-pane {
 	display: flex;
 	flex-flow: row;
