@@ -138,12 +138,24 @@ export default {
 		} ),
 	],
 	[ WOOCOMMERCE_COUPON_CREATE ]: [
-		dispatchRequestEx( { fetch: couponCreate, onSuccess: couponCreateSuccess, onError: apiError } ),
+		dispatchRequestEx( {
+			fetch: couponCreate,
+			onSuccess: couponCreateSuccess,
+			onError: apiError,
+		} ),
 	],
 	[ WOOCOMMERCE_COUPON_UPDATE ]: [
-		dispatchRequestEx( { fetch: couponUpdate, onSuccess: couponUpdateSuccess, onError: apiError } ),
+		dispatchRequestEx( {
+			fetch: couponUpdate,
+			onSuccess: couponUpdateSuccess,
+			onError: apiError,
+		} ),
 	],
 	[ WOOCOMMERCE_COUPON_DELETE ]: [
-		dispatchRequestEx( { fetch: couponDelete, onSuccess: couponDeleteSuccess, onError: apiError } ),
+		dispatchRequestEx( {
+			fetch: couponDelete,
+			onSuccess: couponDeleteSuccess,
+			onError: apiError,
+		} ),
 	],
 };
