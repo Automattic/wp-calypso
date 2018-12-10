@@ -50,7 +50,7 @@
 	--sidebar-menu-selected-background-color: #{$gray-text-min};
 	--sidebar-menu-selected-a-color: #{$white};
 	--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $gray-text-min )};
-	--sidebar-menu-hover-background: lighten( $sidebar-bg-color, 3% );
+	--sidebar-menu-hover-background: #{lighten( $sidebar-bg-color, 3% )};
 	--sidebar-menu-hover-background-gradient: #{hex-to-rgb( lighten( $sidebar-bg-color, 3% ) )};
 	--sidebar-menu-hover-color: #{$blue-medium};
 
