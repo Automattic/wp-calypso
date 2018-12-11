@@ -190,12 +190,18 @@ class UseYourDomainStep extends React.Component {
 		}
 
 		if (
-			isDomainMappingFree( selectedSite, domainsWithPlansOnly ) ||
+			isDomainMappingFree( selectedSite ) ||
 			isNextDomainFree( cart ) ||
 			isDomainBundledWithPlan( cart, searchQuery )
 		) {
 			mappingProductPrice = translate(
 				'Free with your plan, but registration costs at your current provider still apply'
+			);
+		}
+
+		if ( domainsWithPlansOnly ) {
+			mappingProductPrice = translate(
+				'Included in paid plans, but registration costs at your current provider still apply'
 			);
 		}
 
