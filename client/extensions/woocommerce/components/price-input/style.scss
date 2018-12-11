@@ -6,7 +6,7 @@
 		z-index: 9;
 
 		&:focus {
-			border-right-color: $blue-wordpress;
+			border-right-color: var( --color-primary );
 			border-right-width: 1px;
 		}
 	}

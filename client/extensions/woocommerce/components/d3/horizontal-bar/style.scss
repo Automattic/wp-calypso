@@ -2,7 +2,7 @@
 
 .horizontal-bar {
 	rect {
-		fill: $blue-wordpress;
+		fill: var( --color-primary );
 	}
 	text {
 		fill: $white;

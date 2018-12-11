@@ -19,7 +19,7 @@
 }
 
 .accessible-focus & .product-categories__list-item-card:focus {
-	border-left: 3px solid $blue-wordpress;
+	border-left: 3px solid var( --color-primary );
 }
 
 .product-categories__list-item-wrapper {

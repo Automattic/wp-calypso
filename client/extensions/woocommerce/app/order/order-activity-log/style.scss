@@ -116,7 +116,7 @@
 		}
 
 		&:focus {
-			border-color: $blue-wordpress;
+			border-color: var( --color-primary );
 		}
 
 		@include breakpoint( ">480px" ) {

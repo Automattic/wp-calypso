@@ -345,7 +345,7 @@
 
 		&:focus,
 		&.has-focus {
-			border-color: $blue-wordpress;
+			border-color: var( --color-primary );
 		}
 
 		&.has-scrollbar {

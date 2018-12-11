@@ -91,7 +91,7 @@
 	}
 
 	.promotions__list-name {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 
 	.search, .search .search__open-icon {

@@ -195,7 +195,7 @@
 			margin: 13px 8px;
 			line-height: 18px;
 			border: 0;
-			background-color: $blue-wordpress;
+			background-color: var( --color-primary );
 			color: $white;
 			min-width: 20px;
 		}
@@ -209,7 +209,7 @@
 		}
 
 		&:hover .count {
-			background-color: $blue-wordpress;
+			background-color: var( --color-primary );
 			color: $white;
 		}
 	}
