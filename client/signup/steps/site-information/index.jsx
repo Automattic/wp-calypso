@@ -222,6 +222,7 @@ export default connect(
 					{
 						processingMessage: i18n.translate( 'Populating your contact information.' ),
 						stepName: ownProps.stepName,
+						flowName: ownProps.flowName,
 					},
 					[],
 					{
