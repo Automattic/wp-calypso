@@ -39,7 +39,7 @@
 		color: darken( $alert-yellow, 40% );
 
 		span + span {
-			border-color: $alert-yellow;
+			border-color: var( --color-warning );
 		}
 	}
 
