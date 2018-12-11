@@ -11,6 +11,7 @@
 .signup__step {
 	padding-top: 48px; // Make room for .signup__header
 	position: absolute;
+		top: 0;
 		right: 0;
 		left: 0;
 	//overflow: hidden; // I don't know why this is here... -shaun
@@ -60,7 +61,7 @@
 }
 
 
-// Skip button 
+// Skip button
 .step-wrapper__buttons {
 	text-align: center;	
 }
@@ -69,12 +70,12 @@
 // Back button
 .navigation-link.button.back {
 	position: absolute;
-	top: 12px;
+	top: 6px;
 	left: 16px;
 }
 
 .signup__step {
-	overflow: hidden;
+	overflow: visible;
 }
 
 
