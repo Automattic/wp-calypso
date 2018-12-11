@@ -598,7 +598,7 @@
 .products__variation-settings-link {
 	text-decoration: underline;
 	cursor: pointer;
-	color: $blue-medium;
+	color: var( --color-accent );
 	&:hover {
 		color: $blue-light;
 	}
@@ -634,7 +634,7 @@
 		min-height: 45px;
 
 		&:focus {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 

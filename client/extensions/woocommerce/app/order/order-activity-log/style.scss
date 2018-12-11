@@ -57,7 +57,7 @@
 		.gridicon {
 			display: inline-block;
 			padding: 4px;
-			background: $blue-medium;
+			background: var( --color-accent );
 			fill: $white;
 			border-radius: 50%;
 			border: 4px solid white;
