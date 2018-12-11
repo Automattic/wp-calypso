@@ -2,8 +2,9 @@
 	"packages": [ "packages/*", "." ],
 	"version": "independent",
 	"ignoreChanges": [
-		"**/.eslintrc.js",
 		"**/*.md",
-		"**/package-lock.json"
+		"**/.eslintrc.{js,json,yaml,yml}",
+		"**/package-lock.json",
+		"packages/i18n-calypso"
 	]
 }
