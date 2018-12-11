@@ -143,6 +143,7 @@ class SiteInformation extends Component {
 											placeholder={ translate( 'E.g. (555) 555-5555' ) }
 											onChange={ this.handleInputChange }
 											value={ this.state.phone }
+											pattern="*"
 										/>
 									</FormFieldset>
 								</>
