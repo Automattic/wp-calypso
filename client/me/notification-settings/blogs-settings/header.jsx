@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
-import { isEmpty, get, map, omit, values, flatten, partition } from 'lodash';
+import { countBy, get, map, omit, values, flatten } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -49,26 +49,29 @@ class BlogSettingsHeader extends PureComponent {
 		// Ignore blog_id, email.achievement and devices (we'll handle devices separately).
 		const filteredSettings = {
 			...omit( settings, [ 'blog_id', 'devices' ] ),
-			email: omit( get( settings, 'email', {} ), 'achievement' ),
+			email: omit( get( settings, 'email', {} ), [
+				'achievement',
+				'store_order',
+				'scheduled_publicize',
+			] ),
+			timeline: omit( get( settings, 'timeline', {} ), 'store_order' ),
 		};
 		// Ignore the device_id of each device found.
 		const devicesSettings = map( settings.devices, device => omit( device, 'device_id' ) );
-
-		const [ onSettings, offSettings ] = partition(
-			flatten( [ ...map( filteredSettings, values ), ...map( devicesSettings, values ) ] )
+		const { true: onCount, false: offCount } = countBy(
+			// Here we're flattening the values of both sets of settings
+			// as both sets have two 'streams' of settings: 'email' and 'timeline'
+			[
+				...flatten( map( filteredSettings, values ) ),
+				...flatten( map( devicesSettings, values ) ),
+			]
 		);
 
-		if ( isEmpty( onSettings ) ) {
-			// TODO: currently it's not possible to reach 0, even with all checkboxes unchecked.
-			// 		 the two settings that don't have corresponding checkboxes are:
-			// 		 - timeline.store_order
-			// 		 - email.store_order
-			// 		 - email.scheduled_publicize
-			//		 Should we filter these also?
+		if ( ! onCount ) {
 			return this.props.translate( 'no notifications' );
 		}
 
-		if ( isEmpty( offSettings ) ) {
+		if ( ! offCount ) {
 			return this.props.translate( 'all notifications' );
 		}
 
