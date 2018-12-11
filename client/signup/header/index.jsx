@@ -6,6 +6,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -30,9 +31,14 @@ export default class SignupHeader extends Component {
 	};
 
 	render() {
+		const logoClasses = classnames( {
+			'wordpress-logo': true,
+			'is-large': this.props.shouldShowLoadingScreen,
+		} );
+
 		return (
 			<div className="header">
-				<WordPressLogo />
+				<WordPressLogo size={ 120 } className={ logoClasses } />
 
 				{ /* Ideally, this is where the back button
 			   would live. But thats hard to move, it seems. */ }
