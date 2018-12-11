@@ -83,11 +83,16 @@ export class SiteStyleStep extends Component {
 		};
 	}
 
-	handleStyleOptionChange = event =>
-		this.setState( {
-			siteStyle: event.currentTarget.name,
-			themeSlugWithRepo: event.currentTarget.value,
-		} );
+	handleStyleOptionChange = event => {
+		const selectedStyle = find( this.props.styleOptions, [ 'value', event.currentTarget.value ] );
+		this.setState(
+			{
+				siteStyle: selectedStyle.name,
+				themeSlugWithRepo: selectedStyle.value,
+			},
+			() => this.props.setSiteStyle( selectedStyle.name )
+		);
+	};
 
 	handleSubmit = event => {
 		event.preventDefault();
@@ -174,10 +179,8 @@ export class SiteStyleStep extends Component {
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteStyle: ( { siteStyle, themeSlugWithRepo } ) => {
+	submitSiteStyle: ( { themeSlugWithRepo } ) => {
 		const { flowName, stepName, goToNextStep } = ownProps;
-
-		dispatch( setSiteStyle( siteStyle ) );
 		SignupActions.submitSignupStep(
 			{
 				processingMessage: i18n.translate( 'Collecting your information' ),
@@ -191,6 +194,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 
 		goToNextStep( flowName );
 	},
+	setSiteStyle: siteStyle => dispatch( setSiteStyle( siteStyle ) ),
 } );
 
 export default connect(
