@@ -219,16 +219,15 @@ AddGoogleAppsCard.propTypes = {
 
 const learnMoreClick = domainName =>
 	composeAnalytics(
+		recordTracksEvent( 'calypso_domain_management_email_learn_more_click', {
+			domain_name: domainName,
+		} ),
 		recordGoogleEvent(
 			'Domain Management',
 			'Clicked "Learn more" Google Apps link in Email',
 			'Domain Name',
 			domainName
-		),
-
-		recordTracksEvent( 'calypso_domain_management_email_learn_more_click', {
-			domain_name: domainName,
-		} )
+		)
 	);
 
 export default connect( state => ( {
