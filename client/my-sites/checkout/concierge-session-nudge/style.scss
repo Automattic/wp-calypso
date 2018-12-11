@@ -1,4 +1,9 @@
 .concierge-session-nudge {
+	max-height: calc( 100vh - 120px ); // 120 px is for masterbar and all the paddings around this nudge
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+
 	b {
 		font-weight: 700;
 	}
@@ -32,6 +37,16 @@
 	&__placeholder-button-container {
 		display: flex;
 		justify-content: space-between;
+	}
+
+	&__card-header,
+	&__card-footer {
+		width: 100%;
+	}
+
+	&__card-body {
+		overflow: auto;
+		flex: 1;
 	}
 }
 

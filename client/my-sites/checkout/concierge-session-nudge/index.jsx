@@ -58,9 +58,15 @@ export class ConciergeSessionNudge extends React.Component {
 					this.renderPlaceholders()
 				) : (
 					<>
-						<CompactCard>{ this.header() }</CompactCard>
-						<CompactCard>{ this.body() }</CompactCard>
-						<CompactCard>{ this.footer() }</CompactCard>
+						<CompactCard className="concierge-session-nudge__card-header">
+							{ this.header() }
+						</CompactCard>
+						<CompactCard className="concierge-session-nudge__card-body">
+							{ this.body() }
+						</CompactCard>
+						<CompactCard className="concierge-session-nudge__card-footer">
+							{ this.footer() }
+						</CompactCard>
 					</>
 				) }
 			</Main>
