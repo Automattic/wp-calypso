@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddGoogleApps it renders AddGoogleApps correctly 1`] = `
+<select
+  disabled={false}
+>
+  <option
+    value="foo"
+  >
+    @
+    foo
+  </option>
+</select>
+`;
