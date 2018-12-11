@@ -24,7 +24,7 @@
 }
 
 .jetpack-publicize-gutenberg-social-icon {
-	font-size: 2em;
+	fill: #555d66;
 	margin-right: 0.2em;
 
 	.layout__primary & {
@@ -38,6 +38,12 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+
+	.jetpack-publicize-gutenberg-social-icon,
+	.jetpack-publicize-connection-label-copy {
+		display: inline-block;
+		vertical-align: middle;
+	}
 }
 
 .jetpack-publicize-connection-toggle {
