@@ -319,7 +319,6 @@
     "stacktrace-gps": "3.0.2",
     "stylelint": "9.9.0",
     "supertest": "3.3.0",
-    "weak": "1.0.1",
     "webpack-hot-middleware": "2.24.3",
     "whybundled": "1.4.2"
   },
