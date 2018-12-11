@@ -4,7 +4,7 @@
  * External dependencies
  */
 const fs = require( 'fs' );
-const GenerateJsonFile = require( 'generate-json-file-webpack-plugin' );
+const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const path = require( 'path' );
 const { compact, get } = require( 'lodash' );
 
@@ -88,13 +88,12 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 		plugins: compact( [
 			...baseConfig.plugins,
 			fs.existsSync( presetPath ) &&
-				new GenerateJsonFile( {
-					filename: 'block-manifest.json',
-					value: {
-						blocks: presetBlocks,
-						betaBlocks: presetBetaBlocks,
+				new CopyWebpackPlugin( [
+					{
+						from: presetPath,
+						to: 'index.json',
 					},
-				} ),
+				] ),
 		] ),
 		entry: {
 			editor: editorScript,
