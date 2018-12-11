@@ -28,6 +28,31 @@ const loadA8CExtensions = () => {
 	require( '../extensions/classic-block/editor' );
 };
 
+const addResetToRegistry = registry => {
+	const resettableStores = [ 'core/editor', 'core/notices' ];
+
+	const stores = [];
+	return {
+		registerStore( namespace, options ) {
+			let store;
+			if ( -1 === resettableStores.indexOf( namespace ) ) {
+				store = registry.registerStore( namespace, options );
+			} else {
+				store = registry.registerStore( namespace, {
+					...options,
+					reducer: ( state, action ) =>
+						options.reducer( '__RESET_PLUGIN_RESET' === action.type ? undefined : state, action ),
+				} );
+			}
+			stores.push( store );
+			return store;
+		},
+		reset() {
+			stores.forEach( store => store.dispatch( { type: '__RESET_PLUGIN_RESET' } ) );
+		},
+	};
+};
+
 // We need to ensure that his function is executed only once to avoid duplicate
 // block registration, API middleware application etc.
 export const initGutenberg = once( ( userId, siteSlug ) => {
@@ -37,6 +62,8 @@ export const initGutenberg = once( ( userId, siteSlug ) => {
 	const storageKey = 'WP_DATA_USER_' + userId;
 	use( plugins.persistence, { storageKey: storageKey } );
 	use( plugins.controls );
+
+	use( addResetToRegistry );
 
 	// We need to ensure that core-data is loaded after the data plugins have been registered.
 	debug( 'Initializing core-data store' );

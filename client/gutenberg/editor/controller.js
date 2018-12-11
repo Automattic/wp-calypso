@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +7,12 @@ import debug from 'debug';
 import config from 'config';
 import page from 'page';
 import { has, set, uniqueId } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
 import { setLocaleData } from '@wordpress/i18n';
+import { use } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -116,6 +120,11 @@ export const redirect = ( { store: { getState } }, next ) => {
 	return page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
 };
 
+export const resetGutenbergState = registry => {
+	registry.reset();
+	return {};
+};
+
 export const post = async ( context, next ) => {
 	//see post-editor/controller.js for reference
 
@@ -134,6 +143,7 @@ export const post = async ( context, next ) => {
 		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
 		const Editor = initGutenberg( userId, siteSlug );
+		use( resetGutenbergState );
 
 		return props => (
 			<Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent, ...props } } />
