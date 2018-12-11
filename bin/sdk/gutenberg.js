@@ -26,12 +26,19 @@ function blockScripts( type, inputDir, presetBlocks ) {
 		.filter( fs.existsSync );
 }
 
-exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
+exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig, calypsoRoot } ) => {
 	const baseConfig = getBaseConfig( {
 		cssFilename: '[name].css',
 		externalizeWordPressPackages: true,
 		preserveCssCustomProperties: false,
 	} );
+
+	const inputDirIsInCalypso = inputDir.startsWith( calypsoRoot );
+
+	const commit =
+		inputDirIsInCalypso &&
+		fs.existsSync( path.join( calypsoRoot, '.git' ) ) &&
+		String( execSync( `git -C ${ calypsoRoot } rev-parse HEAD` ) ).trim();
 
 	const presetPath = path.join( inputDir, 'index.json' );
 
@@ -98,13 +105,13 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 					},
 				] ),
 			new webpack.BannerPlugin( {
-				banner: [
+				banner: compact( [
 					new Date().toUTCString(),
-					`Commit: ${ String(
-						execSync( `git -C ${ path.join( inputDir, DIRECTORY_DEPTH ) } rev-parse HEAD` )
-					).trim() }`,
-					'Repository: https://github.com/Automattic/wp-calypso/',
-				].join( '\n' ),
+					// Commit and Calypso repository URL are added only when
+					// inputDir is within Calypso directory
+					commit && `Commit: ${ commit }`,
+					inputDirIsInCalypso && 'Repository: https://github.com/Automattic/wp-calypso/',
+				] ).join( '\n' ),
 			} ),
 		] ),
 		entry: {
