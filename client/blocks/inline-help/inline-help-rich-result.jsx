@@ -103,8 +103,9 @@ class InlineHelpRichResult extends Component {
 
 	render() {
 		const { result, type } = this.props;
-		const title = get( result, RESULT_TITLE );
-		const description = get( result, RESULT_DESCRIPTION );
+		/* eslint-disable wpcalypso/i18n-no-variables */
+		const title = this.props.translate( get( result, RESULT_TITLE ) );
+		const description = this.props.translate( get( result, RESULT_DESCRIPTION ) );
 		const link = localizeUrl( amendYouTubeLink( get( result, RESULT_LINK ) ) );
 		const buttonLabel = get( this.buttonLabels, type, '' );
 		const buttonIcon = get( this.buttonIcons, type );
