@@ -166,7 +166,14 @@ class UseYourDomainStep extends React.Component {
 	};
 
 	getMappingPriceText = () => {
-		const { cart, currencyCode, productsList, selectedSite, translate } = this.props;
+		const {
+			cart,
+			currencyCode,
+			domainsWithPlansOnly,
+			productsList,
+			selectedSite,
+			translate,
+		} = this.props;
 		const { searchQuery } = this.state;
 
 		let mappingProductPrice;
@@ -178,7 +185,7 @@ class UseYourDomainStep extends React.Component {
 		}
 
 		if (
-			isDomainMappingFree( selectedSite ) ||
+			isDomainMappingFree( selectedSite, domainsWithPlansOnly ) ||
 			isNextDomainFree( cart ) ||
 			isDomainBundledWithPlan( cart, searchQuery )
 		) {

@@ -59,6 +59,7 @@ class DomainSearchResults extends React.Component {
 	renderDomainAvailability() {
 		const {
 			availableDomain,
+			domainsWithPlansOnly,
 			lastDomainIsTransferrable,
 			lastDomainStatus,
 			lastDomainSearched,
@@ -101,12 +102,15 @@ class DomainSearchResults extends React.Component {
 		) {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
-			if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
+			if (
+				isDomainMappingFree( selectedSite, domainsWithPlansOnly ) ||
+				isNextDomainFree( this.props.cart )
+			) {
 				offer = translate(
 					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
 					{ args: { domain }, components }
 				);
-			} else if ( ! this.props.domainsWithPlansOnly || this.props.isSiteOnPaidPlan ) {
+			} else if ( ! domainsWithPlansOnly || this.props.isSiteOnPaidPlan ) {
 				offer = translate(
 					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
 					{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
