@@ -16,7 +16,11 @@ import { stringify } from 'qs';
  * Internal dependencies
  */
 import { getProductsList } from 'state/products-list/selectors';
-import { getCurrentUser, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import {
+	currentUserHasFlag,
+	getCurrentUser,
+	getCurrentUserCurrencyCode,
+} from 'state/current-user/selectors';
 import Card from 'components/card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -33,6 +37,7 @@ import {
 } from 'lib/cart-values/cart-items';
 import formatCurrency from 'lib/format-currency';
 import { isPlan } from 'lib/products-values';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 
 class UseYourDomainStep extends React.Component {
 	static propTypes = {
@@ -362,6 +367,7 @@ export default connect(
 	state => ( {
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
+		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 		selectedSite: getSelectedSite( state ),
 		productsList: getProductsList( state ),
 	} ),
