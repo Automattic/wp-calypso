@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { once } from 'lodash';
+import { mapValues, once } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -29,6 +29,10 @@ const loadA8CExtensions = () => {
 };
 
 const addResetToRegistry = registry => {
+	if ( typeof window === 'object' && window.app && window.app.isDebug ) {
+		window.gutenbergState = () => mapValues( registry.stores, ( { store } ) => store.getState() );
+	}
+
 	const resettableStores = [ 'core/editor', 'core/notices' ];
 
 	const stores = [];
