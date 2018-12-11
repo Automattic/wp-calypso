@@ -24,6 +24,7 @@ import {
 } from './utils';
 import userModule from 'lib/user';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { hideMasterbar } from 'state/ui/actions';
 import store from 'store';
 import SignupProgressStore from 'lib/signup/progress-store';
 
@@ -110,6 +111,12 @@ export default {
 		next();
 	},
 
+	setMasterbar( context, next ) {
+		// Hide the Masterbar; signup uses its own
+		context.store.dispatch( hideMasterbar() );
+		next();
+	},
+
 	start( context, next ) {
 		const basePath = sectionify( context.path ),
 			flowName = getFlowName( context.params ),
@@ -134,6 +141,7 @@ export default {
 			refParameter: query && query.ref,
 			stepName: stepName,
 			stepSectionName: stepSectionName,
+			masterbarIsVisible: false,
 		} );
 		next();
 	},
