@@ -61,7 +61,6 @@
 
 
 // Skip button 
-
 .step-wrapper__buttons {
 	text-align: center;	
 }
@@ -72,6 +71,10 @@
 	position: absolute;
 	top: 12px;
 	left: 16px;
+}
+
+.signup__step {
+	overflow: hidden;
 }
 
 
