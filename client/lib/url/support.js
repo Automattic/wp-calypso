@@ -1,5 +1,11 @@
 /** @format */
-const root = 'https://support.wordpress.com';
+
+/**
+ * Internal dependencies
+ */
+import { localizeUrl } from 'lib/i18n-utils';
+
+const root = localizeUrl( 'https://en.support.wordpress.com/' ).replace( /\/$/, '' );
 
 export const ACCOUNT_RECOVERY = `${ root }/account-recovery`;
 export const ADDING_GOOGLE_APPS_TO_YOUR_SITE = `${ root }/adding-g-suite-to-your-site`;
