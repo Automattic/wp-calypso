@@ -1058,7 +1058,7 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		return 'FREE_WITH_PLAN';
 	}
 
-	if ( isDomainMapping( suggestion ) && isDomainMappingFree( selectedSite ) ) {
+	if ( isDomainMapping( suggestion ) && ( withPlansOnly || isDomainMappingFree( selectedSite ) ) ) {
 		return 'FREE_WITH_PLAN';
 	}
 
