@@ -3,8 +3,8 @@
 /**
  * Internal dependencies
  */
-import * as form from './index';
 import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
+import { fields, name, settings } from './index';
 
-registerJetpackBlock( form.name, form.settings );
-form.fields.forEach( field => registerJetpackBlock( field.name, field.settings ) );
+registerJetpackBlock( name, settings );
+fields.forEach( field => registerJetpackBlock( field.name, field.settings ) );

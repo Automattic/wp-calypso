@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
+import { name, settings } from './index.js';
 import registerJetpackPlugin from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-plugin';
-import * as plugin from './index';
 
-registerJetpackPlugin( plugin.name, plugin.settings );
+registerJetpackPlugin( name, settings );
