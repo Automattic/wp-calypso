@@ -7,11 +7,11 @@
 }
 
 .site-address-changer__copy-addition {
-	color: $alert-green;
+	color: var( --color-success );
 }
 
 .site-address-changer__copy-deletion {
-	color: $alert-red;
+	color: var( --color-error );
 }
 
 .card.site-address-changer__content {

@@ -105,7 +105,7 @@
 	}
 
 	.reader-subscription-list-item__site-title {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 
 	.reader-subscription-list-item__by-text,

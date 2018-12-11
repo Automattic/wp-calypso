@@ -15,7 +15,7 @@
 		line-height: 0;
 		padding: 1px;
 		border-radius: 100%;
-		background: $blue-wordpress;
+		background: var( --color-primary );
 		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
 		border: 1px solid darken( $blue-wordpress, 5 );
 
@@ -28,7 +28,7 @@
 		}
 
 		&.is-active {
-			background: $blue-medium;
+			background: var( --color-accent );
 			border-color: darken( $blue-medium, 5 );
 		}
 	}
@@ -52,7 +52,7 @@
 	line-height: 0;
 	padding: 1px;
 	border-radius: 100%;
-	background: $blue-wordpress;
+	background: var( --color-primary );
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
 	border: 1px solid darken( $blue-wordpress, 5 );
 	transition: all 0.2s ease-in-out;
@@ -76,7 +76,7 @@
 	}
 
 	&.is-active {
-		background: $blue-medium;
+		background: var( --color-accent );
 		border-color: darken( $blue-medium, 5 );
 	}
 
@@ -183,10 +183,10 @@
 			height: auto;
 
 			&.is-open.has-focus {
-				box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 6px $blue-light;
+				box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 6px var( --color-primary-light );
 
 				@include breakpoint( '>660px' ) {
-					box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
+					box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-light );
 				}
 			}
 
@@ -203,7 +203,7 @@
 
 			.search__icon-navigation:focus {
 				border-radius: 3px;
-				box-shadow: 0 0 0 3px $blue-light;
+				box-shadow: 0 0 0 3px var( --color-primary-light );
 			}
 		}
 	}
@@ -345,10 +345,10 @@
 		}
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 
 			.gridicon {
-				fill: $blue-medium;
+				fill: var( --color-accent );
 			}
 		}
 	}
@@ -395,7 +395,7 @@
 	}
 
 	a {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		text-decoration: underline;
 		font-weight: normal;
 		line-height: 1.4;
@@ -404,13 +404,13 @@
 
 		&:hover {
 			cursor: pointer;
-			color: $blue-medium;
+			color: var( --color-accent );
 			background: lighten( $gray, 35% );
 		}
 	}
 
 	&.is-selected {
-		background: $blue-medium;
+		background: var( --color-accent );
 		cursor: pointer;
 		color: $white;
 

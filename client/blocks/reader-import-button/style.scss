@@ -3,11 +3,11 @@
 
 	&:hover {
 		.reader-import-button__icon {
-			fill: $blue-medium;
+			fill: var( --color-accent );
 		}
 
 		.reader-import-button__label {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 }

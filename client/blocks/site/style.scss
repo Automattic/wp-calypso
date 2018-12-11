@@ -121,7 +121,7 @@
 }
 
 .site__home {
-	background: $blue-medium;
+	background: var( --color-accent );
 	color: $white;
 	display: block;
 	width: 32px;

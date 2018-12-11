@@ -4,7 +4,7 @@
 
 .reader-author-link:hover,
 .reader-author-link:active {
-	color: $blue-medium;
+	color: var( --color-accent );
 }
 
 .reader-author-link:focus {
