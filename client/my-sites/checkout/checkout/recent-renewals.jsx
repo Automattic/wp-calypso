@@ -39,11 +39,11 @@ RecentRenewalListItem.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export function RecentRenewals( { purchases, siteId, translate } ) {
+function getRecentRenewalProductsMatchingIds( products, ids ) {
 	const oldestMoment = i18n.moment().subtract( 30, 'days' );
-	const recentRenewals = purchases.filter( product => {
+	return products.filter( product => {
 		return (
-			product.siteId === siteId &&
+			ids.includes( product.productId ) &&
 			product.subscriptionStatus === 'active' &&
 			product.productName &&
 			product.expiryMoment &&
@@ -52,6 +52,11 @@ export function RecentRenewals( { purchases, siteId, translate } ) {
 			product.mostRecentRenewMoment.isAfter( oldestMoment )
 		);
 	} );
+}
+
+export function RecentRenewals( { purchases, siteId, cart, translate } ) {
+	const idsInCart = cart.products ? cart.products.map( product => product.product_id ) : [];
+	const recentRenewals = getRecentRenewalProductsMatchingIds( purchases, idsInCart );
 	const productListItems = recentRenewals.map( product => {
 		const domain = product.isDomainRegistration
 			? product.meta || product.domain
@@ -79,6 +84,7 @@ export function RecentRenewals( { purchases, siteId, translate } ) {
 
 RecentRenewals.propTypes = {
 	purchases: PropTypes.array.isRequired,
+	cart: PropTypes.object,
 	siteId: PropTypes.number.isRequired,
 	translate: PropTypes.func.isRequired,
 };
