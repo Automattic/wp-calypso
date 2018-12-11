@@ -4,6 +4,7 @@
  * External dependencies
  */
 const { compact, get } = require( 'lodash' );
+const { execSync } = require( 'child_process' );
 const fs = require( 'fs' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const path = require( 'path' );
@@ -97,7 +98,11 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 					},
 				] ),
 			new webpack.BannerPlugin( {
-				banner: new Date().toUTCString(),
+				banner: [
+					new Date().toUTCString(),
+					`Commit: ${ String( execSync( 'git rev-parse HEAD' ) ).trim() }`,
+					'Repository: https://github.com/Automattic/wp-calypso/',
+				].join( '\n' ),
 			} ),
 		] ),
 		entry: {
