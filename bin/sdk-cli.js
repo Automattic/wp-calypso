@@ -73,6 +73,13 @@ const build = ( target, argv ) => {
 	} );
 };
 
+// Generic "watch" option you can add to any command
+const watch = {
+	alias: 'w',
+	description: 'Whether to watch for changes and automatically rebuild.',
+	type: 'boolean',
+};
+
 yargs
 	.scriptName( scriptName )
 	.usage( `Usage: $0 <command> ${ delimit }[options]` )
@@ -80,7 +87,7 @@ yargs
 	.command( {
 		command: 'gutenberg <input-dir>',
 		desc: 'Build a Gutenberg extension',
-		builder: yargs =>
+		builder: () =>
 			yargs.positional('input-dir', {
 				description: 'Directory containing entry point files editor.js and (optionally) view.js ' +
 					'(for editor and frontend view modes, respectively)',
@@ -97,18 +104,14 @@ yargs
 					coerce: path.resolve,
 					requiresArg: true,
 				},
-				watch: {
-					alias: 'w',
-					description: 'Whether to watch for changes and automatically rebuild.',
-					type: 'boolean',
-				},
+				watch,
 			} ),
 		handler: argv => build( gutenberg, argv ),
 	} )
 	.command( {
 		command: 'notifications',
 		desc: 'Build the standalone notifications client',
-		builder: yargs =>
+		builder: () =>
 			yargs.options( {
 				'output-dir': {
 					alias: 'o',
@@ -125,7 +128,7 @@ yargs
 	.command( {
 		command: 'generic <entry-point> <output-name>',
 		desc: 'Build generic JavaScript code',
-		builder: yargs => yargs
+		builder: () => yargs
 			.positional( 'entry-point', {
 				description: 'Entry-point for your code',
 				type: 'string',
@@ -143,6 +146,7 @@ yargs
 					description: 'Externalize the @wordpress packages as globals',
 					type: 'boolean',
 				},
+				watch,
 			} ),
 		handler: argv => build( generic, argv ),
 	} )
