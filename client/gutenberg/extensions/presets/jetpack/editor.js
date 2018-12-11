@@ -11,7 +11,7 @@ import './editor-shared/block-category'; // Register the Jetpack category
 import * as ContactFormBlock from 'gutenberg/extensions/contact-form/editor';
 import * as MarkdownBlock from 'gutenberg/extensions/markdown';
 import * as MapBlock from 'gutenberg/extensions/map';
-import * as PublicizeBlock from 'gutenberg/extensions/publicize/editor';
+import * as PublicizeBlock from 'gutenberg/extensions/publicize';
 import * as SimplePaymentsBlock from 'gutenberg/extensions/simple-payments/editor';
 
 export default {

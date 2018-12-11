@@ -36,7 +36,7 @@ export default function refreshRegistrations() {
 			const registered = getPlugin( pluginName );
 
 			if ( available && ! registered ) {
-				registerPlugin( pluginName );
+				registerPlugin( pluginName, settings );
 			} else if ( ! available && registered ) {
 				unregisterPlugin( pluginName );
 			}
