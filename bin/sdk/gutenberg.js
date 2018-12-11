@@ -6,7 +6,7 @@
 const fs = require( 'fs' );
 const GenerateJsonFile = require( 'generate-json-file-webpack-plugin' );
 const path = require( 'path' );
-const { compact } = require( 'lodash' );
+const { compact, get } = require( 'lodash' );
 
 const DIRECTORY_DEPTH = '../../'; // Relative path of the extensions to preset directory
 
@@ -41,8 +41,8 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 
 	if ( fs.existsSync( presetPath ) ) {
 		const presetIndex = require( presetPath );
-		presetBlocks = presetIndex.production ? presetIndex.production : [];
-		presetBetaBlocks = presetIndex.beta ? presetIndex.beta : [];
+		presetBlocks = get( presetIndex, [ 'production' ], [] );
+		presetBetaBlocks = get( presetIndex, [ 'beta' ], [] );
 		const allPresetBlocks = [ ...presetBlocks, ...presetBetaBlocks ];
 
 		// Find all the shared scripts
