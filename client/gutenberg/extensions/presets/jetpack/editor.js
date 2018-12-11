@@ -12,7 +12,7 @@ import * as ContactFormBlock from 'gutenberg/extensions/contact-form/editor';
 import * as MarkdownBlock from 'gutenberg/extensions/markdown';
 import * as MapBlock from 'gutenberg/extensions/map';
 import * as PublicizeBlock from 'gutenberg/extensions/publicize';
-import * as SimplePaymentsBlock from 'gutenberg/extensions/simple-payments/editor';
+import * as SimplePaymentsBlock from 'gutenberg/extensions/simple-payments';
 
 export default {
 	[ ContactFormBlock.name ]: ContactFormBlock.settings,
