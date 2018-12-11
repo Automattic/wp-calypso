@@ -3,10 +3,11 @@
 /**
  * External dependencies
  */
+const { compact, get } = require( 'lodash' );
 const fs = require( 'fs' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const path = require( 'path' );
-const { compact, get } = require( 'lodash' );
+const webpack = require( 'webpack' );
 
 const DIRECTORY_DEPTH = '../../'; // Relative path of the extensions to preset directory
 
@@ -95,6 +96,9 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 						to: 'index.json',
 					},
 				] ),
+			new webpack.BannerPlugin( {
+				banner: new Date().toUTCString(),
+			} ),
 		] ),
 		entry: {
 			editor: editorScript,
