@@ -18,7 +18,7 @@ import FormLabel from 'components/forms/form-label';
 import InfoPopover from 'components/info-popover';
 import FormFieldset from 'components/forms/form-fieldset';
 import SuggestionSearch from 'components/suggestion-search';
-import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
+import { submitSiteTopic } from 'state/signup/steps/site-topic/actions';
 import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -150,25 +150,15 @@ class SiteTopicStep extends Component {
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	submitSiteTopic: siteTopic => {
-		const { translate, flowName, stepName, goToNextStep } = ownProps;
+		const { flowName, goToNextStep } = ownProps;
 
-		dispatch( setSiteTopic( siteTopic ) );
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
 				value: siteTopic,
 			} )
 		);
 
-		SignupActions.submitSignupStep(
-			{
-				processingMessage: translate( 'Collecting your information' ),
-				stepName,
-			},
-			[],
-			{
-				siteTopic,
-			}
-		);
+		dispatch( submitSiteTopic( siteTopic ) );
 
 		goToNextStep( flowName );
 	},
