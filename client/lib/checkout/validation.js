@@ -25,7 +25,7 @@ import {
 export function getCreditCardFieldRules() {
 	return {
 		name: {
-			description: i18n.translate( 'Name on Card', {
+			description: i18n.translate( 'Cardholder Name', {
 				context: 'Upgrades: Card holder name label on credit card form',
 			} ),
 			rules: [ 'required' ],
@@ -91,7 +91,7 @@ export function tefPaymentFieldRules() {
 export function tokenFieldRules() {
 	return {
 		name: {
-			description: i18n.translate( 'Name on Card', {
+			description: i18n.translate( 'Cardholder Name', {
 				comment: 'Upgrades: Card holder name label on credit card form',
 			} ),
 			rules: [ 'required' ],

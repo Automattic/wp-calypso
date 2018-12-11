@@ -145,7 +145,7 @@ export class CreditCardFormFields extends React.Component {
 			<div className="credit-card-form-fields">
 				{ this.createField( 'name', Input, {
 					autoFocus,
-					label: translate( 'Name on Card', {
+					label: translate( 'Cardholder Name', {
 						context: 'Card holder name label on credit card form',
 					} ),
 				} ) }
