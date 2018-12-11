@@ -30,6 +30,7 @@ import { infoNotice, errorNotice } from 'state/notices/actions';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
+import RecentRenewals from './recent-renewals';
 
 export class WechatPaymentBox extends Component {
 	static propTypes = {
@@ -170,6 +171,7 @@ export class WechatPaymentBox extends Component {
 
 					{ children }
 
+					<RecentRenewals cart={ cart } />
 					<TermsOfService
 						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
 					/>
