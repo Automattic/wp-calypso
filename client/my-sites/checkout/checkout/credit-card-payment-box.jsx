@@ -192,7 +192,7 @@ export class CreditCardPaymentBox extends React.Component {
 
 					{ this.props.children }
 
-					<RecentRenewals />
+					<RecentRenewals cart={ cart } />
 					<TermsOfService
 						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
 					/>
