@@ -23,6 +23,10 @@ import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 
 class AddGoogleAppsCard extends React.Component {
+	constructor( props ) {
+		super( props );
+	}
+
 	renderAddGoogleAppsButton() {
 		const { translate } = this.props;
 
@@ -37,19 +41,15 @@ class AddGoogleAppsCard extends React.Component {
 		);
 	}
 
-	handleLearnMoreClick() {
-		this.props.learnMoreClick( this.props.selectedDomainName || null );
-	}
+	handleLearnMoreClick = () => {
+		this.props.learnMoreClick( this.props.selectedSite.domain || null );
+	};
 
-	handleAndMoreClick() {
-		this.props.andMoreClick( this.props.selectedDomainName || null );
-	}
-
-	goToAddGoogleApps() {
+	goToAddGoogleApps = () => {
 		page(
-			domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.selectedDomainName )
+			domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.selectedSite.domain )
 		);
-	}
+	};
 
 	render() {
 		const { currencyCode, translate } = this.props,
@@ -214,23 +214,8 @@ class AddGoogleAppsCard extends React.Component {
 
 AddGoogleAppsCard.propTypes = {
 	products: PropTypes.object.isRequired,
-	selectedDomainName: PropTypes.string,
 	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 };
-
-const andMoreClick = domainName =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Clicked "and More!" Google Apps link in Email',
-			'Domain Name',
-			domainName
-		),
-
-		recordTracksEvent( 'calypso_domain_management_email_and_more_click', {
-			domain_name: domainName,
-		} )
-	);
 
 const learnMoreClick = domainName =>
 	composeAnalytics(
@@ -248,6 +233,5 @@ const learnMoreClick = domainName =>
 
 export default connect( state => ( {
 	currencyCode: getCurrentUserCurrencyCode( state ),
-	andMoreClick,
 	learnMoreClick,
 } ) )( localize( AddGoogleAppsCard ) );
