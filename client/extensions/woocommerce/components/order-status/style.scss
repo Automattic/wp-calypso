@@ -10,7 +10,7 @@
 		color: darken( $alert-green, 30% );
 
 		span + span {
-			border-color: $alert-green;
+			border-color: var( --color-success );
 		}
 	}
 

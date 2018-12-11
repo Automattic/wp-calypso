@@ -52,7 +52,7 @@
 	flex-grow: 1;
 
 	.gridicon.is-success {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 
 	.gridicon.is-warning {
