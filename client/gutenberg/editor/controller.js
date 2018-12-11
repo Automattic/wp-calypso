@@ -12,7 +12,7 @@ import { has, set, uniqueId } from 'lodash';
  * WordPress dependencies
  */
 import { setLocaleData } from '@wordpress/i18n';
-import { use } from '@wordpress/data';
+import { dispatch, use } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -143,7 +143,11 @@ export const post = async ( context, next ) => {
 		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
 		const Editor = initGutenberg( userId, siteSlug );
+
+		// Reset the Gutenberg state
 		use( resetGutenbergState );
+		dispatch( 'core/edit-post' ).closePublishSidebar();
+		dispatch( 'core/edit-post' ).closeModal();
 
 		return props => (
 			<Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent, ...props } } />
