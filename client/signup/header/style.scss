@@ -1,0 +1,35 @@
+// A masterbar-like header just for
+// the signup flow.
+.header {
+	position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+	padding-top: 16px;
+
+	.wordpress-logo {
+		height: 24px;
+		width: 24px;
+		fill: $blue-wordpress;
+		margin: 0 auto;
+		display: block;
+		transition: transform 0.4s ease-in;
+
+		&.is-large {
+			transform: scale( 10 ) translateY( 20px );
+		}
+	}
+
+	.header__left {
+		position: absolute;
+			top: 12px;
+			left: 16px;
+	}
+
+	.header__right {
+		position: absolute;
+			top: 12px;
+			right: 16px;
+	}
+}
+
