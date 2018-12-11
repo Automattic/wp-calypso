@@ -197,9 +197,7 @@ class UseYourDomainStep extends React.Component {
 			mappingProductPrice = translate(
 				'Free with your plan, but registration costs at your current provider still apply'
 			);
-		}
-
-		if ( domainsWithPlansOnly ) {
+		} else if ( domainsWithPlansOnly ) {
 			mappingProductPrice = translate(
 				'Included in paid plans, but registration costs at your current provider still apply'
 			);
