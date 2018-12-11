@@ -100,7 +100,9 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 			new webpack.BannerPlugin( {
 				banner: [
 					new Date().toUTCString(),
-					`Commit: ${ String( execSync( 'git rev-parse HEAD' ) ).trim() }`,
+					`Commit: ${ String(
+						execSync( `git -C ${ path.join( inputDir, DIRECTORY_DEPTH ) } rev-parse HEAD` )
+					).trim() }`,
 					'Repository: https://github.com/Automattic/wp-calypso/',
 				].join( '\n' ),
 			} ),
