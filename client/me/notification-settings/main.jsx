@@ -3,10 +3,10 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -54,7 +54,7 @@ class NotificationSettings extends Component {
 	render() {
 		// TODO: We should avoid creating functions in the render method
 		const findSettingsForBlog = blogId =>
-			this.props.settings.find( ( { blog_id } ) => blog_id === parseInt( blogId, 10 ) );
+			find( this.props.settings, { blog_id: parseInt( blogId, 10 ) } );
 		const onSave = blogId => this.props.saveSettings( 'blogs', findSettingsForBlog( blogId ) );
 		const onSaveToAll = blogId =>
 			this.props.saveSettings( 'blogs', findSettingsForBlog( blogId ), true );
