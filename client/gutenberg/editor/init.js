@@ -45,14 +45,14 @@ const addResetToRegistry = registry => {
 				store = registry.registerStore( namespace, {
 					...options,
 					reducer: ( state, action ) =>
-						options.reducer( '__RESET_PLUGIN_RESET' === action.type ? undefined : state, action ),
+						options.reducer( 'GUTENLYPSO_RESET' === action.type ? undefined : state, action ),
 				} );
 			}
 			stores.push( store );
 			return store;
 		},
 		reset() {
-			stores.forEach( store => store.dispatch( { type: '__RESET_PLUGIN_RESET' } ) );
+			stores.forEach( store => store.dispatch( { type: 'GUTENLYPSO_RESET' } ) );
 		},
 	};
 };
