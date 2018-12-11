@@ -56,7 +56,9 @@ class Suggestions extends Component {
 
 	moveSelectionDown = () => {
 		const position = ( this.state.suggestionPosition + 1 ) % this.getSuggestionsCount();
-		ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] ).scrollIntoView();
+		ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] ).scrollIntoView( {
+			block: 'nearest',
+		} );
 
 		this.changePosition( position );
 	};
@@ -65,7 +67,9 @@ class Suggestions extends Component {
 		const position =
 			( this.state.suggestionPosition - 1 + this.getSuggestionsCount() ) %
 			this.getSuggestionsCount();
-		ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] ).scrollIntoView();
+		ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] ).scrollIntoView( {
+			block: 'nearest',
+		} );
 
 		this.changePosition( position );
 	};
