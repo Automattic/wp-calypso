@@ -29,6 +29,7 @@ import QueryPlans from 'components/data/query-plans';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
 import { planHasFeature } from '../../../lib/plans';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -104,10 +105,9 @@ export class PlansStep extends Component {
 	}
 
 	getCustomerType() {
-		const { customerType, flowName, siteType } = this.props;
 		return (
-			customerType ||
-			( flowName === 'ecommerce' || siteType === 'business' ? 'business' : undefined )
+			this.props.customerType ||
+			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' )
 		);
 	}
 

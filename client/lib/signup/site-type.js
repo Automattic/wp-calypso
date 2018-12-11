@@ -8,6 +8,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
+import { TYPE_BUSINESS } from 'lib/plans/constants';
 
 /**
  * Current list of site types that are displayed in the signup site-type step
@@ -38,6 +39,7 @@ export const allSiteTypes = [
 		siteTitlePlaceholder: i18n.translate( 'E.g. Vail Renovations' ),
 		siteTopicHeader: i18n.translate( 'Search for your type of business.' ),
 		siteTopicLabel: i18n.translate( 'What type of business do you have?' ),
+		customerType: TYPE_BUSINESS,
 	},
 	{
 		id: 'professional',
@@ -74,6 +76,7 @@ export const allSiteTypes = [
 		siteTitlePlaceholder: i18n.translate( "E.g. Mel's Diner" ),
 		siteTopicHeader: i18n.translate( 'Search for your type of website.' ),
 		siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
+		customerType: TYPE_BUSINESS,
 	},
 ];
 
