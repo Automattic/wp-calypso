@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { forEach, get, has } from 'lodash';
+import { get, has } from 'lodash';
 import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
 import { getPlugin, registerPlugin, unregisterPlugin } from '@wordpress/plugins';
 
@@ -26,8 +26,8 @@ export default function refreshRegistrations() {
 	if ( ! extensionAvailability ) {
 		return;
 	}
-
-	forEach( extensions, ( settings, name ) => {
+	extensions.forEach( extension => {
+		const { name, settings } = extension;
 		const available = get( extensionAvailability, [ name, 'available' ] );
 
 		if ( has( settings, [ 'render' ] ) ) {
@@ -36,7 +36,7 @@ export default function refreshRegistrations() {
 			const registered = getPlugin( pluginName );
 
 			if ( available && ! registered ) {
-				registerPlugin( pluginName );
+				registerPlugin( pluginName, settings );
 			} else if ( ! available && registered ) {
 				unregisterPlugin( pluginName );
 			}

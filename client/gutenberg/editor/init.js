@@ -26,7 +26,6 @@ const WPCOM_UNSUPPORTED_CORE_BLOCKS = [
 const loadA8CExtensions = () => {
 	// This will also load required TinyMCE plugins via Calypso's TinyMCE component
 	require( '../extensions/classic-block/editor' );
-	require( 'gutenberg/extensions/presets/jetpack/editor.js' );
 };
 
 // We need to ensure that his function is executed only once to avoid duplicate
