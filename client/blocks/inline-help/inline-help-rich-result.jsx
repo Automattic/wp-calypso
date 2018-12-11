@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { localizeUrl } from 'lib/i18n-utils';
 import classNames from 'classnames';
 import { get, isUndefined, omitBy } from 'lodash';
 import Gridicon from 'gridicons';
@@ -104,7 +105,7 @@ class InlineHelpRichResult extends Component {
 		const { result, type } = this.props;
 		const title = get( result, RESULT_TITLE );
 		const description = get( result, RESULT_DESCRIPTION );
-		const link = amendYouTubeLink( get( result, RESULT_LINK ) );
+		const link = localizeUrl( amendYouTubeLink( get( result, RESULT_LINK ) ) );
 		const buttonLabel = get( this.buttonLabels, type, '' );
 		const buttonIcon = get( this.buttonIcons, type );
 		const classes = classNames( 'inline-help__richresult__title' );
