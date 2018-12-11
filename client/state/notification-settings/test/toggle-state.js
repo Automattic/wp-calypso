@@ -160,6 +160,39 @@ describe( 'toggleState.other', () => {
 				expect( actual ).toEqual( expected );
 			} );
 		} );
+
+		test( 'should maintain device order when multiple devices are present', () => {
+			const deviceId = 123456;
+			const settingToToggle = 'exampleSetting';
+			const device = {
+				device_id: deviceId,
+			};
+			const secondDevice = {
+				device_id: 23456,
+			};
+			const startingState = {
+				dirty: {
+					other: {
+						devices: [ device, secondDevice ],
+					},
+				},
+			};
+
+			const actual = toggleState.other( startingState, null, deviceId, settingToToggle );
+			const expected = {
+				other: {
+					devices: [
+						{
+							device_id: deviceId,
+							[ settingToToggle ]: true,
+						},
+						secondDevice,
+					],
+				},
+			};
+
+			expect( actual ).toEqual( expected );
+		} );
 	} );
 } );
 
@@ -226,6 +259,39 @@ describe( 'toggleState.blog', () => {
 
 				expect( actual ).toEqual( expected );
 			} );
+		} );
+
+		test( 'should maintain device and blog order when multiple devices & blogs are present', () => {
+			const blogId = 54321;
+			const stream = 'exampleStream';
+			const settingToToggle = 'exampleSetting';
+			const blog = {
+				blog_id: blogId,
+			};
+			const secondBlog = {
+				blog_id: 23456,
+				devices: [],
+			};
+			const startingState = {
+				dirty: {
+					blogs: [ blog, secondBlog ],
+				},
+			};
+
+			const actual = toggleState.blog( startingState, blogId, stream, settingToToggle );
+			const expected = {
+				blogs: [
+					{
+						blog_id: blogId,
+						[ stream ]: {
+							[ settingToToggle ]: true,
+						},
+					},
+					secondBlog,
+				],
+			};
+
+			expect( actual ).toEqual( expected );
 		} );
 	} );
 
@@ -303,6 +369,50 @@ describe( 'toggleState.blog', () => {
 
 				expect( actual ).toEqual( expected );
 			} );
+		} );
+
+		test( 'should maintain device and blog order when multiple devices & blogs are present', () => {
+			const deviceId = 123456;
+			const blogId = 54321;
+			const settingToToggle = 'exampleSetting';
+			const device = {
+				device_id: deviceId,
+			};
+			const secondDevice = {
+				device_id: 234567,
+			};
+			const blog = {
+				blog_id: blogId,
+				devices: [ device, secondDevice ],
+			};
+			const secondBlog = {
+				blog_id: 23456,
+				devices: [],
+			};
+			const startingState = {
+				dirty: {
+					blogs: [ blog, secondBlog ],
+				},
+			};
+
+			const actual = toggleState.blog( startingState, blogId, deviceId, settingToToggle );
+			const expected = {
+				blogs: [
+					{
+						blog_id: blogId,
+						devices: [
+							{
+								device_id: deviceId,
+								[ settingToToggle ]: true,
+							},
+							secondDevice,
+						],
+					},
+					secondBlog,
+				],
+			};
+
+			expect( actual ).toEqual( expected );
 		} );
 	} );
 } );
