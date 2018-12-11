@@ -93,34 +93,6 @@ const EVENTS = {
 			},
 		},
 
-		email: {
-			andMoreClick( domainName ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "and More!" Google Apps link in Email',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_email_and_more_click', {
-					domain_name: domainName,
-				} );
-			},
-
-			learnMoreClick( domainName ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Learn more" Google Apps link in Email',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_email_learn_more_click', {
-					domain_name: domainName,
-				} );
-			},
-		},
-
 		emailForwarding: {
 			addNewEmailForwardClick( domainName, mailbox, destination, success ) {
 				analytics.ga.recordEvent(
