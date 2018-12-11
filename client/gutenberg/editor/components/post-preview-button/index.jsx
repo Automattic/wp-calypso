@@ -19,14 +19,28 @@ import { __, _x } from '@wordpress/i18n';
  * Internal dependencies
  */
 import WebPreview from 'components/web-preview';
-import { isEnabled } from 'config';
 
 export class PostPreviewButton extends Component {
 	state = {
+		iframeUrl: 'about:blank',
 		isPreviewVisible: false,
 	};
 
-	openPreviewModal = () => this.setState( { isPreviewVisible: true } );
+	componentDidUpdate( prevProps ) {
+		this.setIframePreviewUrl( prevProps );
+	}
+
+	openPreviewModal = () => {
+		const { autosave, isDraft, savePost } = this.props;
+
+		if ( isDraft ) {
+			savePost( { isPreview: true } );
+		} else {
+			autosave( { isPreview: true } );
+		}
+
+		this.setState( { isPreviewVisible: true } );
+	};
 
 	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
 
@@ -36,26 +50,35 @@ export class PostPreviewButton extends Component {
 		parsed.query.preview = 'true';
 		parsed.query.iframe = 'true';
 		parsed.query.revision = String( this.props.revision );
-		// Scroll to the main post content.
-		if ( this.props.postId && isEnabled( 'post-editor/preview-scroll-to-content' ) ) {
-			// Vary the URL hash based on whether the preview is shown.  When
-			// the preview is hidden then re-shown, we want to be sure to
-			// scroll to the content section again even if the preview has not
-			// reloaded in the meantime, which is most easily accomplished by
-			// changing the URL hash.  This does not cause a page reload.
-			if ( this.props.showPreview ) {
-				parsed.hash = 'post-' + this.props.postId;
-			} else {
-				parsed.hash = '__preview-hidden';
-			}
-		}
 		delete parsed.search;
 		return url.format( parsed );
 	};
 
+	setIframePreviewUrl = prevProps => {
+		if ( ! prevProps || ! this.props ) {
+			return;
+		}
+
+		const { isSaving, previewLink } = this.props;
+
+		if ( isSaving && ! prevProps.isSaving ) {
+			// Started saving
+			return this.setState( { iframeUrl: 'about:blank' } );
+		}
+
+		if ( ! previewLink ) {
+			return;
+		}
+
+		if ( ! isSaving && prevProps.isSaving ) {
+			// Finished saving
+			return this.setState( { iframeUrl: this.getIframePreviewUrl() } );
+		}
+	};
+
 	render() {
 		const { currentPostLink } = this.props;
-		const { isPreviewVisible } = this.state;
+		const { iframeUrl, isPreviewVisible } = this.state;
 
 		return (
 			<Fragment>
@@ -74,7 +97,7 @@ export class PostPreviewButton extends Component {
 				<WebPreview
 					externalUrl={ currentPostLink }
 					onClose={ this.closePreviewModal }
-					previewUrl={ this.getIframePreviewUrl() }
+					previewUrl={ iframeUrl }
 					showPreview={ isPreviewVisible }
 				/>
 			</Fragment>
@@ -87,9 +110,10 @@ export default compose( [
 		const {
 			getCurrentPostAttribute,
 			getEditedPostAttribute,
-			isEditedPostSaveable,
-			isEditedPostAutosaveable,
 			getEditedPostPreviewLink,
+			isEditedPostAutosaveable,
+			isEditedPostSaveable,
+			isSavingPost,
 		} = select( 'core/editor' );
 		const { getPostType } = select( 'core' );
 
@@ -98,11 +122,12 @@ export default compose( [
 		const previewLink = getEditedPostPreviewLink();
 		return {
 			currentPostLink,
-			previewLink: previewLink || currentPostLink,
-			isSaveable: isEditedPostSaveable(),
 			isAutosaveable: isEditedPostAutosaveable(),
-			isViewable: get( postType, [ 'viewable' ], false ),
 			isDraft: [ 'draft', 'auto-draft' ].indexOf( getEditedPostAttribute( 'status' ) ) !== -1,
+			isSaveable: isEditedPostSaveable(),
+			isSaving: isSavingPost(),
+			isViewable: get( postType, [ 'viewable' ], false ),
+			previewLink: previewLink || currentPostLink,
 		};
 	} ),
 	withDispatch( dispatch => ( {
