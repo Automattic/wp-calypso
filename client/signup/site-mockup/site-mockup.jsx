@@ -93,8 +93,11 @@ function SiteMockupOutlines() {
 	);
 }
 
-export default function SiteMockup( { size, data, title, tagline } ) {
-	const classes = classNames( 'site-mockup__viewport', `is-${ size }` );
+export default function SiteMockup( { size, data, siteType, siteStyle, title, tagline } ) {
+	const classes = classNames( 'site-mockup__viewport', `is-${ size }`, {
+		[ `is-${ siteType }` ]: !! siteType,
+		[ `is-${ siteStyle }` ]: !! siteStyle,
+	} );
 	return (
 		<div className={ classes }>
 			{ size === 'mobile' ? <MockupChromeMobile /> : <MockupChromeDesktop /> }

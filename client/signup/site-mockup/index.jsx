@@ -16,6 +16,7 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
+import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getVerticalData } from './mock-data';
 
 /**
@@ -68,6 +69,8 @@ class SiteMockups extends Component {
 			title: this.props.title,
 			tagline: this.getTagline(),
 			data: this.props.verticalData,
+			siteType: this.props.siteType,
+			siteStyle: this.props.siteStyle,
 		};
 
 		return (
@@ -84,6 +87,7 @@ export default connect( state => {
 	return {
 		title: getSiteTitle( state ) || translate( 'Your New Website' ),
 		siteInformation: getSiteInformation( state ),
+		siteStyle: getSiteStyle( state ),
 		siteType: getSiteType( state ),
 		vertical,
 		verticalData: getVerticalData( vertical ),
