@@ -33,10 +33,10 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig, calypsoRoot }
 		preserveCssCustomProperties: false,
 	} );
 
-	const inputDirIsInCalypso = inputDir.startsWith( calypsoRoot );
+	const inputDirInCalypso = inputDir.startsWith( calypsoRoot );
 
-	const commit =
-		inputDirIsInCalypso &&
+	const commitSha =
+		inputDirInCalypso &&
 		fs.existsSync( path.join( calypsoRoot, '.git' ) ) &&
 		String( execSync( `git -C ${ calypsoRoot } rev-parse HEAD` ) ).trim();
 
@@ -107,10 +107,10 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig, calypsoRoot }
 			new webpack.BannerPlugin( {
 				banner: compact( [
 					new Date().toUTCString(),
-					// Commit and Calypso repository URL are added only when
+					// Commit SHA and Calypso repository URL are added only when
 					// inputDir is within Calypso directory
-					commit && `Commit: ${ commit }`,
-					inputDirIsInCalypso && 'Repository: https://github.com/Automattic/wp-calypso/',
+					commitSha && `Commit: ${ commitSha }`,
+					inputDirInCalypso && 'Repository: https://github.com/Automattic/wp-calypso/',
 				] ).join( '\n' ),
 			} ),
 		] ),
