@@ -54,7 +54,7 @@
 		width: 1.5em;
 
 		.gridicons-trash {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 	}
 }
@@ -138,7 +138,7 @@
 	}
 
 	.order-details__total-refund {
-		color: $alert-red;
+		color: var( --color-error );
 
 		.table-item {
 			border-bottom: 1px solid $gray-lighten-30;

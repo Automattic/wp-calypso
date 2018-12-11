@@ -47,7 +47,7 @@
 	}
 
 	&.has-no-stock {
-		border-left: 3px solid $alert-red;
+		border-left: 3px solid var( --color-error );
 	}
 
 	.inventory-widget__message-ok {
@@ -95,7 +95,7 @@
 
 	.is-out-of-stock {
 		.table-item {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 	}
 }

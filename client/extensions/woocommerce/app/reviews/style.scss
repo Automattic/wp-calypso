@@ -280,7 +280,7 @@
 		&.reviews__action-delete {
 			&:focus,
 			&:hover {
-				color: $alert-red;
+				color: var( --color-error );
 			}
 		}
 
@@ -288,7 +288,7 @@
 			color: var( --color-success );
 		}
 		&.is-spam {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 		&.is-trash {
 			color: $gray-dark;

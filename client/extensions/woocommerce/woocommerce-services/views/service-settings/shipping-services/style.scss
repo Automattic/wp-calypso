@@ -16,15 +16,15 @@
 		border-top: 1px;
 		border-right: 1px;
 		border-left: 1px;
-		border-color: $alert-red;
+		border-color: var( --color-error );
 		border-style: solid;
 
 		&:last-child {
-			border-bottom: 1px solid $alert-red;
+			border-bottom: 1px solid var( --color-error );
 		}
 
 		&.is-expanded {
-			border: 1px solid $alert-red;
+			border: 1px solid var( --color-error );
 		}
 	}
 }
