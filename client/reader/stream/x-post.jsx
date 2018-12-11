@@ -142,10 +142,7 @@ class CrossPost extends PureComponent {
 			} );
 		}
 
-		// Make sure we have unique site names
-		const xPostedToListUniqueSites = uniqBy( xPostedToList, 'siteName' );
-
-		return xPostedToListUniqueSites.map( ( xPostedTo, index, array ) => {
+		return uniqBy( xPostedToList, 'siteName' ).map( ( xPostedTo, index, array ) => {
 			return (
 				<span className="reader__x-post-site" key={ xPostedTo.siteURL + '-' + index }>
 					{ xPostedTo.siteName }
