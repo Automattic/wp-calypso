@@ -57,10 +57,24 @@ Presets are bundles of multiple extensions or blocks that live in a particular p
 They can be found in `client/gutenberg/extensions/presets` directory.
 
 To create a new preset, create a new folder in that directory and add an `index.json` file.
-The file should be an array of the extensions folder names that you want to bundle together.
+The file should be an object of arrays of the extensions folder names that you want to bundle together
+for different environments.
 
 ```js
-["markdown", "tiled-gallery"]
+{
+  "production": [
+    "contact-form",
+    "map",
+    "markdown",
+    "publicize",
+    "simple-payments"
+  ],
+  "beta": [
+    "related-posts",
+    "tiled-gallery",
+    "vr"
+  ]
+}
 ```
 
 When you run the sdk command `npm run sdk -- gutenberg client/gutenberg/extensions/presets/your-new-preset`
@@ -105,6 +119,7 @@ Each built bundle is limited to a single bundle with no code-splitting.
 If you find yourself needing more advanced functionality it's probably worth checking if a new module is warranted.
 
 See usage instructions:
+
 ```bash
 npm run sdk -- generic /path/to/entry-point.js /path/to/built-bundle.js
 ```
