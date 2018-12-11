@@ -57,7 +57,7 @@ export class CreditsPaymentBox extends React.Component {
 
 					{ this.props.children }
 
-					<RecentRenewals />
+					<RecentRenewals cart={ cart } />
 					<TermsOfService />
 
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
