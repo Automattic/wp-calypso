@@ -23,7 +23,7 @@ const embedsToLookFor = {
 	'[class^=tumblr-]': embedTumblr,
 	'.jetpack-slideshow': embedSlideshow,
 	'.embed-reddit': embedReddit,
-	'.glossary-item-container': embedSmallipop,
+	'.reader-hovercard-container': embedSmallipop,
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
@@ -34,6 +34,8 @@ const SLIDESHOW_URLS = {
 	JS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/slideshow-shortcode.js${ cacheBustQuery }`,
 	SPINNER: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/img/slideshow-loader.gif${ cacheBustQuery }`,
 };
+
+const hovercard_URL_Prefix = 'https://s0.wp.com/wp-content/plugins/reader-smallipop/';
 
 function processEmbeds( domNode ) {
 	forOwn( embedsToLookFor, ( fn, embedSelector ) => {
@@ -157,21 +159,21 @@ function embedSmallipop( domNode ) {
 	}
 
 	// TODO - put the CSS/JS files in a better location
-	loadjQueryDependentScript( 'TODO/jquery.smallipop.js', function() {
+	loadjQueryDependentScript( hovercard_URL_Prefix + 'jquery.smallipop.js', function() {
 		smallipopLoader = true;
-		loadCSS( 'TODO/jquery.smallipop.custom.css' );
-		loadCSS( 'TODO/glossary-hovercards.css' );
+		loadCSS( hovercard_URL_Prefix + 'jquery.smallipop.custom.css' );
+		loadCSS( hovercard_URL_Prefix + 'reader-hovercards.css' );
 
 		const options = {
 			popupYOffset: -14,
 			preferredPosition: 'bottom',
 			hideDelay: 250,
-			theme: 'glossary',
+			theme: 'reader-hovercard',
 		};
 
-		window.jQuery( '.glossary-item-container' ).smallipop( options );
+		window.jQuery( '.reader-hovercard-container' ).smallipop( options );
 
-		window.jQuery( 'body' ).on( 'mouseenter', '.glossary-item-container', function() {
+		window.jQuery( 'body' ).on( 'mouseenter', '.reader-hovercard-container', function() {
 			// Setup hovercard (if doesn't exist already - for example, new posts)
 			if ( ! window.jQuery( this ).hasClass( 'sipInitialized' ) ) {
 				window.jQuery( this ).smallipop( options );
