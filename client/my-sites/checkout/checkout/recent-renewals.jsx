@@ -47,7 +47,6 @@ function getRecentRenewalProductsMatchingIds( products, ids ) {
 			product.subscriptionStatus === 'active' &&
 			product.productName &&
 			product.expiryMoment &&
-			product.renewMoment &&
 			product.mostRecentRenewMoment &&
 			product.mostRecentRenewMoment.isAfter( oldestMoment )
 		);
