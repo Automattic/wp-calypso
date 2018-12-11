@@ -171,7 +171,7 @@ export class WechatPaymentBox extends Component {
 
 					{ children }
 
-					<RecentRenewals />
+					<RecentRenewals cart={ cart } />
 					<TermsOfService
 						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
 					/>

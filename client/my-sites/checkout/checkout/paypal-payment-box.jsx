@@ -163,7 +163,7 @@ export class PaypalPaymentBox extends React.Component {
 
 					{ this.props.children }
 
-					<RecentRenewals />
+					<RecentRenewals cart={ this.props.cart } />
 					<TermsOfService
 						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription(
 							this.props.cart
