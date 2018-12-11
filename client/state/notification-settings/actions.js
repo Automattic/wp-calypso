@@ -57,17 +57,19 @@ export const fetchSettings = () => dispatch => {
 	wpcom
 		.undocumented()
 		.me()
-		.getNotificationSettings( ( error, data ) => {
-			const type = error
-				? NOTIFICATION_SETTINGS_FETCH_FAILED
-				: NOTIFICATION_SETTINGS_FETCH_COMPLETE;
-
+		.getNotificationSettings()
+		.then( data =>
 			dispatch( {
-				type,
-				error,
+				type: NOTIFICATION_SETTINGS_FETCH_COMPLETE,
 				data,
-			} );
-		} );
+			} )
+		)
+		.catch( error =>
+			dispatch( {
+				type: NOTIFICATION_SETTINGS_FETCH_FAILED,
+				error,
+			} )
+		);
 };
 
 function buildSavePayload( source, settings ) {
