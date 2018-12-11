@@ -89,6 +89,22 @@ function createProgressHandler() {
 	};
 }
 
+// Disable unsafe cssnano optimizations like renaming animations or rebasing z-indexes. These
+// optimizations don't work across independently minified stylesheets. As we minify each webpack
+// CSS chunk individually and then load multiple chunks into one document, the optimized names
+// conflict with each other, e.g., multiple animations named `a` or z-indexes starting from 1.
+// TODO: upgrade cssnano from v3 to v4. In v3, all optimizations, including unsafe ones, run by
+// default and need to be disabled explicitly as we do here. In v4, there is a new concept of
+// 'presets' and unsafe optimizations are opt-in rather than opt-out. The `default` preset enables
+// only the safe ones. https://cssnano.co/guides/optimisations
+const cssnanoOptions = {
+	autoprefixer: false,
+	discardUnused: false,
+	mergeIdents: false,
+	reduceIdents: false,
+	zindex: false,
+};
+
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
  * {
@@ -339,15 +355,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				rtlEnabled: true,
 			} ),
 			new WebpackRTLPlugin( {
-				minify: isDevelopment
-					? false
-					: {
-							// Disable unsafe cssnano optimization that minifies CSS animation names.
-							// We minify each CSS chunk individually which leads to name conflicts when
-							// multiple independently minified stylesheets are loaded into one document.
-							// https://cssnano.co/optimisations/reduceidents/
-							reduceIdents: false,
-					  },
+				minify: isDevelopment ? false : cssnanoOptions,
 			} ),
 			new AssetsWriter( {
 				filename: 'assets.json',
