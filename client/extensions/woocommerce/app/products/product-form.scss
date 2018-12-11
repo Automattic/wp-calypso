@@ -600,7 +600,7 @@
 	cursor: pointer;
 	color: var( --color-accent );
 	&:hover {
-		color: $blue-light;
+		color: var( --color-primary-light );
 	}
 }
 
