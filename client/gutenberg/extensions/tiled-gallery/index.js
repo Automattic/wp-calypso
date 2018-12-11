@@ -11,8 +11,8 @@ import { Rect, SVG } from '@wordpress/components';
  * Internal dependencies
  */
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { default as edit } from './edit';
-import { default as save } from './save';
+import edit from './edit';
+import save from './save';
 import { DEFAULT_COLUMNS, DEFAULT_LAYOUT, LAYOUT_STYLES, LAYOUTS } from './constants';
 
 /**
