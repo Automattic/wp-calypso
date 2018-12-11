@@ -237,6 +237,7 @@ class Login extends Component {
 
 	renderContent() {
 		const {
+			domain,
 			privateSite,
 			twoFactorAuthType,
 			twoFactorEnabled,
@@ -284,6 +285,7 @@ class Login extends Component {
 				privateSite={ privateSite }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
+				domain={ domain }
 			/>
 		);
 	}
