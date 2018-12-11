@@ -10,16 +10,11 @@ import { PanelBody, Placeholder } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import JetpackPluginSidebar from 'gutenberg/extensions/presets/jetpack/editor-shared/jetpack-plugin-sidebar';
 import VRImageForm from './form';
 import VRImageSave from './save';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 export default class VRImageEdit extends Component {
-	renderSettingsPanel() {
-		return <PanelBody title={ __( 'VR Image Settings' ) }>{ this.renderForm() }</PanelBody>;
-	}
-
 	renderForm() {
 		const { attributes, setAttributes } = this.props;
 
@@ -45,10 +40,9 @@ export default class VRImageEdit extends Component {
 				) }
 
 				{ isSelected && (
-					<Fragment>
-						<JetpackPluginSidebar>{ this.renderSettingsPanel() }</JetpackPluginSidebar>
-						<InspectorControls>{ this.renderSettingsPanel() }</InspectorControls>
-					</Fragment>
+					<InspectorControls>
+						<PanelBody title={ __( 'VR Image Settings' ) }>{ this.renderForm() }</PanelBody>
+					</InspectorControls>
 				) }
 			</Fragment>
 		);
