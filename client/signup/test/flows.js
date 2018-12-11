@@ -52,6 +52,22 @@ describe( 'Signup Flows Configuration', () => {
 		} );
 	} );
 
+	describe( 'excludeSteps', () => {
+		beforeAll( () => {
+			sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
+		} );
+
+		afterAll( () => {
+			flows.getFlows.restore();
+			flows.excludeSteps( [] );
+		} );
+
+		test( 'should exclude site step from getFlow', () => {
+			flows.excludeSteps( [ 'site' ] );
+			assert.deepEqual( flows.getFlow( 'main' ).steps, [ 'user' ] );
+		} );
+	} );
+
 	describe( 'getABTestFilteredFlow', () => {
 		const getABTestVariationSpy = sinon.stub( abtest, 'getABTestVariation' );
 
