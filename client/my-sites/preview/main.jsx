@@ -53,7 +53,7 @@ class PreviewMain extends React.Component {
 			window.addEventListener( 'resize', this.debouncedUpdateLayout );
 		}
 
-		if ( this.props.open === 'help' ) {
+		if ( this.props.help ) {
 			this.props.showInlineHelpPopover();
 		}
 	}
