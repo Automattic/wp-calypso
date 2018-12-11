@@ -68,7 +68,7 @@ class PublicizeFormUnwrapped extends Component {
 
 		return (
 			<div id="publicize-form">
-				<ul>
+				<ul className="jetpack-publicize__connections-list">
 					{ connections.map( ( { display_name, enabled, id, service_name, toggleable } ) => (
 						<PublicizeConnection
 							disabled={ ! toggleable }
