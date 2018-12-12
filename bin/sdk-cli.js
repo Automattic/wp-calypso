@@ -10,7 +10,7 @@ process.env.TARGET_BROWSER = 'true';
  */
 const chalk = require( 'chalk' );
 const path = require( 'path' );
-const yargs = require( 'yargs' );
+const yargsModule = require( 'yargs' );
 const webpack = require( 'webpack' );
 
 /**
@@ -80,14 +80,14 @@ const watch = {
 	type: 'boolean',
 };
 
-yargs
+yargsModule
 	.scriptName( scriptName )
 	.usage( `Usage: $0 <command> ${ delimit }[options]` )
 	.example( `$0 gutenberg ${ delimit }client/gutenberg/extensions/hello-dolly` )
 	.command( {
 		command: 'gutenberg <input-dir>',
 		desc: 'Build a Gutenberg extension',
-		builder: () =>
+		builder: yargs =>
 			yargs.positional('input-dir', {
 				description: 'Directory containing entry point files editor.js and (optionally) view.js ' +
 					'(for editor and frontend view modes, respectively)',
@@ -111,7 +111,7 @@ yargs
 	.command( {
 		command: 'notifications',
 		desc: 'Build the standalone notifications client',
-		builder: () =>
+		builder: yargs =>
 			yargs.options( {
 				'output-dir': {
 					alias: 'o',
@@ -128,7 +128,7 @@ yargs
 	.command( {
 		command: 'generic <entry-point> <output-name>',
 		desc: 'Build generic JavaScript code',
-		builder: () => yargs
+		builder: yargs => yargs
 			.positional( 'entry-point', {
 				description: 'Entry-point for your code',
 				type: 'string',
