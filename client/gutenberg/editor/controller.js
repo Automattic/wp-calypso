@@ -131,13 +131,12 @@ export const post = async ( context, next ) => {
 	const makeEditor = import( './init' ).then( ( { initGutenberg } ) => {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
-		const siteSlug = getSelectedSiteSlug( state );
 		const userId = getCurrentUserId( state );
 
 		//set postId on state.ui.editor.postId, so components like editor revisions can read from it
 		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
-		const { Editor, registry } = initGutenberg( userId, siteSlug );
+		const { Editor, registry } = initGutenberg( userId, context.store );
 
 		// Reset the Gutenberg state
 		registry.reset();
