@@ -1,5 +1,7 @@
 /** @format */
 
+console.log( 'FOO!' );
+
 /**
  * External dependencies
  */
