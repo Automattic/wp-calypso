@@ -18,7 +18,7 @@ import {
 	setAtomicTransfer,
 	atomicTransferComplete,
 } from 'state/atomic-transfer/actions';
-import { COMPLETED, ERROR } from 'state/atomic-transfer/constants';
+import transferStates from 'state/atomic-transfer/constants';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { pluginUploadError, updatePluginUploadProgress } from 'state/plugins/upload/actions';
 import { errorNotice } from 'state/notices/actions';
@@ -30,18 +30,14 @@ import { errorNotice } from 'state/notices/actions';
  * @returns {Object} action object
  */
 export const initiateTransfer = action => {
-	const { siteId, module } = action;
+	const { siteId, module: body } = action;
 
 	return http(
 		{
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
 			path: `/sites/${ siteId }/atomic/transfers`,
-			query: {
-				plugin_zip: module.pluginZip,
-				plugin_slug: module.pluginSlug,
-				theme_zip: module.themeZip,
-			},
+			body,
 		},
 		action
 	);
@@ -97,7 +93,7 @@ export const receiveTransfer = ( action, transfer ) => {
 	const { atomic_transfer_id, status } = transfer;
 	const { siteId } = action;
 
-	if ( status === COMPLETED ) {
+	if ( status === transferStates.COMPLETED ) {
 		return [
 			setAtomicTransfer( siteId, transfer ),
 			recordTracksEvent( 'calypso_atomic_transfer_complete', {
@@ -109,7 +105,7 @@ export const receiveTransfer = ( action, transfer ) => {
 		];
 	}
 
-	if ( status === ERROR ) {
+	if ( status === transferStates.ERROR ) {
 		return [
 			setAtomicTransfer( siteId, transfer ),
 			receiveError( action, { error: 'api_success_false' } ),
@@ -130,13 +126,21 @@ export const updateUploadProgress = ( { siteId }, { loaded, total } ) => {
 	return updatePluginUploadProgress( siteId, progress );
 };
 
-const options = {
-	onSuccess: receiveTransfers,
-	onError: receiveError,
-	onProgress: updateUploadProgress,
-};
-
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfer/index.js', {
-	[ ATOMIC_TRANSFER_REQUEST ]: [ dispatchRequestEx( { ...options, fetch: getTransfer } ) ],
-	[ ATOMIC_TRANSFER_INITIATE ]: [ dispatchRequestEx( { ...options, fetch: initiateTransfer } ) ],
+	[ ATOMIC_TRANSFER_REQUEST ]: [
+		dispatchRequestEx( {
+			fetch: getTransfer,
+			onSuccess: receiveTransfers,
+			onError: receiveError,
+			onProgress: updateUploadProgress,
+		} )
+	],
+	[ ATOMIC_TRANSFER_INITIATE ]: [
+		dispatchRequestEx( {
+			fetch: initiateTransfer,
+			onSuccess: receiveTransfers,
+			onError: receiveError,
+			onProgress: updateUploadProgress,
+		} )
+	],
 } );
