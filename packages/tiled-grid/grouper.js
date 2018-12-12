@@ -3,8 +3,7 @@
 import { Jetpack_Tiled_Gallery_Row } from './row.js';
 import { Jetpack_Tiled_Gallery_Group } from './group.js';
 import { get_rounded_constrained_array } from './constrained-array-rounding.js';
-
-const CONTENT_WIDTH = 640; // same as example.png
+import { CONTENT_WIDTH } from './constants.js';
 
 export class Jetpack_Tiled_Gallery_Grouper {
 	margin = 4;
@@ -97,7 +96,7 @@ export class Jetpack_Tiled_Gallery_Grouper {
 
 	get_grouped_images = () => {
 		let grouped_images = [];
-		// @todo change to while() if we're reducing `images` somewhere
+		// @TODO change back to while() if we're reducing `images` somewhere?
 		this.images.forEach( () => {
 		// while ( ! empty( $this->images ) ) {
 			grouped_images.push(
