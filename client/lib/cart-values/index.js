@@ -16,6 +16,11 @@ import cartItems from './cart-items';
 import productsValues from 'lib/products-values';
 import { requestGeoLocation } from 'state/data-getters';
 
+// #tax-on-checout-placeholder
+import { reduxGetState } from 'lib/redux-bridge';
+import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
+import getPaymentPostalCode from 'state/selectors/get-payment-postal-code';
+
 const PAYMENT_METHODS = {
 	alipay: 'WPCOM_Billing_Stripe_Source_Alipay',
 	bancontact: 'WPCOM_Billing_Stripe_Source_Bancontact',
@@ -46,6 +51,7 @@ function preprocessCartForServer( {
 	temporary,
 	extra,
 	products,
+	tax,
 } ) {
 	const needsUrlCoupon = ! (
 		coupon ||
@@ -55,12 +61,31 @@ function preprocessCartForServer( {
 	);
 	const urlCoupon = needsUrlCoupon ? url.parse( document.URL, true ).query.coupon : '';
 
+	// #tax-on-checout-placeholder
+	const reduxState = reduxGetState();
+	const placeholderTax =
+		tax ||
+		( reduxState
+			? {
+					location: {
+						country_code: getPaymentCountryCode( reduxState ),
+						postal_code: getPaymentPostalCode( reduxState ),
+					},
+			  }
+			: {
+					location: {
+						country_code: 'US',
+						postal_code: '90210',
+					},
+			  } );
+
 	return Object.assign(
 		{
 			coupon,
 			is_coupon_applied,
 			is_coupon_removed,
 			currency,
+			tax: placeholderTax,
 			temporary,
 			extra,
 			products: products.map(
@@ -117,6 +142,30 @@ function removeCoupon() {
 	};
 }
 
+function setTaxCountryCode( countryCode ) {
+	return function( cart ) {
+		return update( cart, {
+			tax: { location: { country_code: { $set: countryCode } } },
+		} );
+	};
+}
+
+function setTaxPostalCode( postalCode ) {
+	return function( cart ) {
+		return update( cart, {
+			tax: { location: { postal_code: { $set: postalCode } } },
+		} );
+	};
+}
+
+function setTaxLocation( { postalCode, countryCode } ) {
+	return function( cart ) {
+		return update( cart, {
+			tax: { location: { $set: { postal_code: postalCode, country_code: countryCode } } },
+		} );
+	};
+}
+
 function canRemoveFromCart( cart, cartItem ) {
 	if ( productsValues.isCredits( cartItem ) ) {
 		return false;
@@ -144,10 +193,9 @@ function canRemoveFromCart( cart, cartItem ) {
  * @returns {array} [nextCartMessages] - an array of messages about the state of the cart
  */
 function getNewMessages( previousCartValue, nextCartValue ) {
-	let previousDate, nextDate, hasNewServerData, nextCartMessages;
 	previousCartValue = previousCartValue || {};
 	nextCartValue = nextCartValue || {};
-	nextCartMessages = nextCartValue.messages || [];
+	const nextCartMessages = nextCartValue.messages || [];
 
 	// If there is no previous cart then just return the messages for the new cart
 	if (
@@ -158,9 +206,9 @@ function getNewMessages( previousCartValue, nextCartValue ) {
 		return nextCartMessages;
 	}
 
-	previousDate = previousCartValue.client_metadata.last_server_response_date;
-	nextDate = nextCartValue.client_metadata.last_server_response_date;
-	hasNewServerData = i18n.moment( nextDate ).isAfter( previousDate );
+	const previousDate = previousCartValue.client_metadata.last_server_response_date;
+	const nextDate = nextCartValue.client_metadata.last_server_response_date;
+	const hasNewServerData = i18n.moment( nextDate ).isAfter( previousDate );
 
 	return hasNewServerData ? nextCartMessages : [];
 }
@@ -191,8 +239,8 @@ function fillInAllCartItemAttributes( cart, products ) {
 }
 
 function fillInSingleCartItemAttributes( cartItem, products ) {
-	let product = products[ cartItem.product_slug ],
-		attributes = productsValues.whitelistAttributes( product );
+	const product = products[ cartItem.product_slug ];
+	const attributes = productsValues.whitelistAttributes( product );
 
 	return extend( {}, cartItem, attributes );
 }
@@ -345,6 +393,9 @@ export {
 	paymentMethodClassName,
 	paymentMethodName,
 	getLocationOrigin,
+	setTaxCountryCode,
+	setTaxPostalCode,
+	setTaxLocation,
 };
 
 export default {
