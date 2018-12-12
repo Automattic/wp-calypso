@@ -34,7 +34,7 @@ export class Slideshow extends Component {
 						const img = child.props.children[ 0 ];
 						const figcaption = child.props.children[ 1 ];
 						const { src, alt } = img.props;
-						const { caption } = figcaption.props.children;
+						const { caption } = figcaption.props.children || {};
 						const style = {
 							backgroundImage: `url(${ src })`,
 						};
