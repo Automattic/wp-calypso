@@ -1,7 +1,5 @@
 /** @format */
 
-console.log( 'BAR!' );
-
 /**
  * External dependencies
  */

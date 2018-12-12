@@ -1,12 +1,16 @@
 /** @format */
 
-console.log( 'FOO!' );
-
 /**
  * External dependencies
  */
 import { Component, Fragment } from '@wordpress/element';
-import { TextControl, Button, ToggleControl, Disabled } from '@wordpress/components';
+import {
+	TextControl,
+	Button,
+	ToggleControl,
+	Disabled,
+	withFallbackStyles,
+} from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -14,18 +18,47 @@ import { TextControl, Button, ToggleControl, Disabled } from '@wordpress/compone
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { sprintf } from '@wordpress/i18n/build/index';
 import apiFetch from '@wordpress/api-fetch';
+import { compose } from '@wordpress/compose';
 import {
-	URLInput,
-	RichText,
 	ContrastChecker,
 	InspectorControls,
 	withColors,
 	PanelColorSettings,
 } from '@wordpress/editor';
 
+const { getComputedStyle } = window;
+
+const applyFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
+	const { textColor, backgroundColor } = ownProps;
+	const backgroundColorValue = backgroundColor && backgroundColor.color;
+	console.log( backgroundColorValue );
+	const textColorValue = textColor && textColor.color;
+	console.log( textColorValue );
+	// //avoid the use of querySelector if textColor color is known and verify if node is available.
+	const textNode =
+		! textColorValue && node ? node.querySelector( '[contenteditable="true"]' ) : null;
+	// return {
+	// 	fallbackBackgroundColor: backgroundColorValue || ! node ? undefined : getComputedStyle( node ).backgroundColor,
+	// 	fallbackTextColor: textColorValue || ! textNode ? undefined : getComputedStyle( textNode ).color,
+	// };
+} );
+
+console.log( applyFallbackStyles.textColor );
+
 class SubscriptionEdit extends Component {
 	render() {
-		const { attributes, className, isSelected, setAttributes } = this.props;
+		const {
+			attributes,
+			className,
+			isSelected,
+			setAttributes,
+			backgroundColor,
+			textColor,
+			setBackgroundColor,
+			setTextColor,
+			fallbackBackgroundColor,
+			fallbackTextColor,
+		} = this.props;
 		const {
 			subscribe_placeholder,
 			show_subscribers_total,
@@ -74,16 +107,25 @@ class SubscriptionEdit extends Component {
 							title={ __( 'Button Color Settings' ) }
 							colorSettings={ [
 								{
-									value: button_background_color,
+									value: backgroundColor.color,
 									label: __( 'Background Color' ),
-									onChange: console.log( 'foo' ), // How does this work?
+									onChange: setBackgroundColor,
 								},
 								{
-									value: button_text_color,
+									value: textColor.color,
 									label: __( 'Text Color' ),
-									onChange: console.log( 'bar' ), // How does this work?
+									onChange: setTextColor,
 								},
 							] }
+						/>
+						<ContrastChecker
+							{ ...{
+								isLargeText: false,
+								textColor: textColor.color,
+								backgroundColor: backgroundColor.color,
+								fallbackBackgroundColor,
+								fallbackTextColor,
+							} }
 						/>
 					</InspectorControls>
 				</Fragment>
@@ -118,4 +160,7 @@ class SubscriptionEdit extends Component {
 	}
 }
 
-export default SubscriptionEdit;
+export default compose( [
+	withColors( 'backgroundColor', { textColor: 'color' } ),
+	applyFallbackStyles,
+] )( SubscriptionEdit );
