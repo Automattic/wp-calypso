@@ -21,7 +21,7 @@ const defaultProps = {
 	requestVerticals: jest.fn(),
 	translate: str => str,
 	initialValue: 'scooby',
-	verticals: [ { vertical_name: 'doo' } ],
+	verticals: [ { vertical_name: 'doo', vertical_slug: 'doo' } ],
 };
 
 describe( '<SiteVerticalsSuggestionSearch />', () => {
@@ -41,14 +41,18 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		expect( defaultProps.requestVerticals ).not.toHaveBeenCalled();
 		wrapper.instance().onSiteTopicChange( 'boo' );
 		expect( defaultProps.requestVerticals ).toHaveBeenLastCalledWith( 'boo' );
-		expect( defaultProps.onChange ).toHaveBeenLastCalledWith( 'boo' );
+		expect( defaultProps.onChange ).toHaveBeenLastCalledWith( {
+			vertical_name: 'boo',
+			vertical_slug: 'boo',
+		} );
 	} );
 
 	test( 'should not trigger search if the next search query value is the same as the last', () => {
 		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
-		wrapper.instance().onSiteTopicChange( 'boo' );
+		wrapper.instance().onSiteTopicChange( 'doo' );
 		expect( defaultProps.requestVerticals ).toHaveBeenCalledTimes( 1 );
-		wrapper.instance().onSiteTopicChange( 'boo' );
+		expect( defaultProps.onChange ).toHaveBeenLastCalledWith( defaultProps.verticals[ 0 ] );
+		wrapper.instance().onSiteTopicChange( 'doo' );
 		expect( defaultProps.requestVerticals ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

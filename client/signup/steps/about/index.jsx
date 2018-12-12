@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey, includes } from 'lodash';
+import { invoke, noop, includes } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -26,7 +26,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getThemeForSiteGoals, getDesignTypeForSiteGoals } from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
-import { hints } from 'lib/signup/hint-data';
 import { isValidLandingPageVertical } from 'lib/signup/verticals';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
@@ -102,12 +101,16 @@ class AboutStep extends Component {
 
 	setPressableStore = ref => ( this.pressableStore = ref );
 
-	onSiteTopicChange = value => {
-		this.setState( { siteTopicValue: value } );
-		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { value } );
+	onSiteTopicChange = ( { vertical_name, vertical_slug } ) => {
+		this.setState( {
+			siteTopicValue: vertical_name,
+			siteTopicSlug: vertical_slug,
+		} );
+
+		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { vertical_name } );
 		this.formStateController.handleFieldChange( {
 			name: 'siteTopic',
-			value,
+			vertical_name,
 		} );
 	};
 
@@ -159,10 +162,7 @@ class AboutStep extends Component {
 		}.bind( this );
 	}
 
-	handleStoreBackClick = () => {
-		this.setState( { showStore: false }, this.scrollUp );
-		return;
-	};
+	handleStoreBackClick = () => this.setState( { showStore: false }, this.scrollUp );
 
 	handleSubmit = event => {
 		event.preventDefault();
@@ -198,18 +198,17 @@ class AboutStep extends Component {
 			eventAttributes.site_title = siteTitleInput || 'N/A';
 		}
 
-		//Site Topic
-		const englishSiteTopicInput = this.state.hasPrepopulatedVertical
+		// Set Site Topic value for tracking/marketing
+		eventAttributes.site_topic = this.state.hasPrepopulatedVertical
 			? this.state.siteTopicValue
-			: findKey( hints, siteTopic => siteTopic === siteTopicInput ) || siteTopicInput;
+			: this.state.siteTopicSlug || siteTopicInput || 'N/A';
 
-		eventAttributes.site_topic = englishSiteTopicInput || 'N/A';
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
 			value: eventAttributes.site_topic,
 		} );
 
 		this.props.setSurvey( {
-			vertical: englishSiteTopicInput,
+			vertical: eventAttributes.site_topic,
 			otherText: '',
 			siteType: designType,
 		} );

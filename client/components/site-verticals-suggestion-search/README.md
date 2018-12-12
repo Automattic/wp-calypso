@@ -8,8 +8,8 @@ As a wrapper for `<SuggestionSearch />`, SiteVerticalsSuggestionSearch fetches s
 ```es6
 import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
 
-onChange( newValue ) {
-	console.log( 'New value: ', newValue );
+onChange( { vertical_name, vertical_slug, vertical_id } ) {
+	console.log( 'New vertical values: ', vertical_name, vertical_slug, vertical_id );
 }
 
 render() {
@@ -33,3 +33,22 @@ _Optional_ placeholder text for the search input field.
 
 ### _(Function)_ `onChange` 
 The callback function for receiving updated value. 
+
+Returns _{Object}_:
+
+```json
+{
+  "vertical_name": "Restaurant",
+  "vertical_slug": "Restaurant",
+  "vertical_id": "p1",
+  "preview": {
+    "cover_image": "https://…",
+    "cover_image_text": "Yum yum foods here.",
+    "headline": "About us",
+    "text": "Nothing but yum yum foods here."
+  }
+}
+
+```
+
+

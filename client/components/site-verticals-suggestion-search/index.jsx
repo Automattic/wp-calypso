@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, get, noop, trim } from 'lodash';
+import { debounce, find, get, noop, trim } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -51,13 +51,11 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			} );
 		}
 		this.setState( { siteTopicValue: value } );
-
-		/*
-			TODO: do we want to do anything with the vertical data? E.g., pass it up?
-			// Check if the selected suggestion features in the API results collection
-			const verticalData = find( this.props.verticals, [ 'vertical_name', value ] ) || value;
-		 */
-		this.props.onChange( value );
+		const verticalData = find( this.props.verticals, [ 'vertical_name', value ] ) || {
+			vertical_name: value,
+			vertical_slug: value,
+		};
+		this.props.onChange( verticalData );
 	};
 
 	getSuggestions = () => this.props.verticals.map( vertical => vertical.vertical_name );
