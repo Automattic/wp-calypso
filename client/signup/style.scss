@@ -3,6 +3,15 @@
 	.layout__content {
 		padding: 32px 0 0 0;
 	}
+
+	//Masterbar is hidden but still has height
+	//which is how sticky panel offset is calculated.
+	//Setting height to zero removes the offset
+	//so the sticky panel sticks to the top.
+
+	&.has-no-masterbar .masterbar {
+		height: 0;
+	}
 }
 
 
