@@ -5,6 +5,7 @@
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import EmailSubscribeEdit from './edit';
+import './editor.scss';
 
 export const name = 'email-subscribe';
 
