@@ -1,5 +1,4 @@
 /** @format */
-/* eslint-disable */
 
 export const attachments = [
 	{

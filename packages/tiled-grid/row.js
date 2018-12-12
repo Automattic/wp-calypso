@@ -1,5 +1,4 @@
 /** @format */
-/* eslint-disable */
 
 export class Jetpack_Tiled_Gallery_Row {
 	constructor( groups ) {

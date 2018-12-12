@@ -1,6 +1,8 @@
 /** @format */
-/* eslint-disable */
 
+/**
+ * Internal dependencies
+ */
 import { Jetpack_Tiled_Gallery_Rectangular_Item } from './rectangular-item.js';
 
 export class Jetpack_Tiled_Gallery_Group {
@@ -25,7 +27,7 @@ export class Jetpack_Tiled_Gallery_Group {
 	};
 
 	items = ( needs_attachment_link, grayscale ) => {
-		let items = [];
+		const items = [];
 
 		for ( const image of this.images ) {
 			items.push(
