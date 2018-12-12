@@ -184,13 +184,13 @@ class AboutStep extends Component {
 			nextFlowName = flowName;
 
 		//Inputs
-		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
+		let siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 		const userExperienceInput = this.state.userExperience;
 		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
 		const eventAttributes = {};
 
 		if ( ! shouldHideSiteTitle ) {
-			const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
+			siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 			//Site Title
 			if ( siteTitleInput !== '' ) {
 				siteTitleValue = siteTitleInput;
@@ -472,7 +472,7 @@ class AboutStep extends Component {
 		} );
 
 		return (
-			<div className="about__wrapper">
+			<div className="about__wrapperz">
 				<div className={ pressableWrapperClassName }>
 					<PressableStoreStep
 						{ ...this.props }
