@@ -9,8 +9,8 @@ function uniqueMatchId( match ) {
 // Reference for the PO format: http://www.gnu.org/software/gettext/manual/gettext.html#PO-Files
 // More details: http://pology.nedohodnik.net/doc/user/en_US/ch-poformat.html
 module.exports = function pot( matches, options ) {
-	let uniqueMatchesMap = {},
-		output;
+	const uniqueMatchesMap = {};
+	let output;
 
 	// default match for the header
 	uniqueMatchesMap[ uniqueMatchId( { single: '' } ) ] = true;
