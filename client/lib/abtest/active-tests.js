@@ -98,4 +98,13 @@ export default {
 		allowExistingUsers: true,
 		defaultVariation: 'domainsbot_front',
 	},
+	jetpackFreePlanButtonPosition: {
+		datestamp: '20181212',
+		variations: {
+			locationTop: 50,
+			locationBottom: 50,
+		},
+		defaultVariation: 'locationBottom',
+		allowExistingUsers: true,
+	},
 };
