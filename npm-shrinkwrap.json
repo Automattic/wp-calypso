@@ -12777,9 +12777,9 @@
 			}
 		},
 		"node-sass": {
-			"version": "4.10.0",
-			"resolved": "https://registry.npmjs.org/node-sass/-/node-sass-4.10.0.tgz",
-			"integrity": "sha512-fDQJfXszw6vek63Fe/ldkYXmRYK/QS6NbvM3i5oEo9ntPDy4XX7BcKZyTKv+/kSSxRtXXc7l+MSwEmYc0CSy6Q==",
+			"version": "4.11.0",
+			"resolved": "https://registry.npmjs.org/node-sass/-/node-sass-4.11.0.tgz",
+			"integrity": "sha512-bHUdHTphgQJZaF1LASx0kAviPH7sGlcyNhWade4eVIpFp6tsn7SV8xNMTbsQFpEV9VXpnwTTnNYlfsZXgGgmkA==",
 			"requires": {
 				"async-foreach": "^0.1.3",
 				"chalk": "^1.1.1",
