@@ -30,14 +30,15 @@ import { errorNotice } from 'state/notices/actions';
  * @returns {Object} action object
  */
 export const initiateTransfer = action => {
-	const { siteId, module: body } = action;
+	const { siteId, module } = action;
 
 	return http(
 		{
 			apiNamespace: 'wpcom/v2',
+			body: {},
+			formData: [ module ],
 			method: 'POST',
 			path: `/sites/${ siteId }/atomic/transfers`,
-			body,
 		},
 		action
 	);
@@ -133,7 +134,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfer/index.js', {
 			onSuccess: receiveTransfers,
 			onError: receiveError,
 			onProgress: updateUploadProgress,
-		} )
+		} ),
 	],
 	[ ATOMIC_TRANSFER_INITIATE ]: [
 		dispatchRequestEx( {
@@ -141,6 +142,6 @@ registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfer/index.js', {
 			onSuccess: receiveTransfers,
 			onError: receiveError,
 			onProgress: updateUploadProgress,
-		} )
+		} ),
 	],
 } );

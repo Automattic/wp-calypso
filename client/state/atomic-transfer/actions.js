@@ -44,7 +44,7 @@ export const initiateAtomicTransfer = ( siteId, module ) => ( {
  * @returns {Object} An action object
  */
 export const initiateAtomicTransferPluginZip = ( siteId, pluginZip ) =>
-	initiateAtomicTransfer( siteId, { plugin_zip: pluginZip } );
+	initiateAtomicTransfer( siteId, [ 'plugin_file', pluginZip ] );
 
 /**
  * Initiate an atomic transfer with plugin slug.
@@ -54,7 +54,7 @@ export const initiateAtomicTransferPluginZip = ( siteId, pluginZip ) =>
  * @returns {Object} An action object
  */
 export const initiateAtomicTransferPluginSlug = ( siteId, pluginSlug ) =>
-	initiateAtomicTransfer( siteId, { plugin_slug: pluginSlug } );
+	initiateAtomicTransfer( siteId, [ 'plugin_slug', pluginSlug ] );
 
 /**
  * Initiate an atomic transfer with theme zip.
@@ -64,7 +64,7 @@ export const initiateAtomicTransferPluginSlug = ( siteId, pluginSlug ) =>
  * @returns {Object} An action object
  */
 export const initiateAtomicTransferThemeZip = ( siteId, themeZip ) =>
-	initiateAtomicTransfer( siteId, { theme_zip: themeZip } );
+	initiateAtomicTransfer( siteId, [ 'theme_file', themeZip ] );
 
 /**
  * Report a failure of fetching Automated Transfer status (for example, the status
