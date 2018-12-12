@@ -17,7 +17,7 @@ module.exports = {
 		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': '<rootDir>/test/test/helpers/assets/transform.js',
 	},
 	transformIgnorePatterns: [ 'node_modules[\\/\\\\](?!redux-form|draft-js)' ],
-	testMatch: [ '<rootDir>/server/**/test/*.js?(x)' ],
+	testMatch: [ '<rootDir>/server/**/test/*.js?(x)', '!**/.eslintrc.*' ],
 	timers: 'fake',
 	setupFiles: [ 'regenerator-runtime/runtime' ], // some NPM-published packages depend on the global
 	setupFilesAfterEnv: [ '<rootDir>/test/server/setup-test-framework.js' ],
