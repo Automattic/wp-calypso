@@ -5,23 +5,48 @@
  */
 
 import {
+	ATOMIC_TRANSFER_COMPLETE,
+	ATOMIC_TRANSFER_INITIATE,
 	ATOMIC_TRANSFER_REQUEST,
 	ATOMIC_TRANSFER_REQUEST_FAILURE,
-	ATOMIC_TRANSFER_COMPLETE,
 	ATOMIC_TRANSFER_SET,
 } from 'state/action-types';
 
-import 'state/data-layer/wpcom/sites/transfers/latest';
+/**
+ * Query for a specific atomic transfer for a given site.
+ *
+ * @param {number} siteId     The id of the site to query.
+ * @param {number} transferId The id of the transfer record to query.
+ * @returns {Object} An action object
+ */
+export const fetchAtomicTransfer = ( siteId, transferId ) => ( {
+	type: ATOMIC_TRANSFER_REQUEST,
+	siteId,
+	transferId,
+} );
 
 /**
- * Query the atomic transfer for a given site.
+ * Query the atomic transfers for a given site.
  *
  * @param {number} siteId The id of the site to query.
  * @returns {Object} An action object
  */
-export const fetchAtomicTransfer = siteId => ( {
+export const fetchAtomicTransfers = siteId => ( {
 	type: ATOMIC_TRANSFER_REQUEST,
 	siteId,
+} );
+
+/**
+ * Initiate an atomic transfer for a given site.
+ *
+ * @param {number} siteId The id of the site to query.
+ * @param {Object} module The type of transfer trigger. `pluginZip`, `pluginSlug`, or `themeZip` as key.
+ * @returns {Object} An action object
+ */
+export const inititateAtomicTransfer = ( siteId, module ) => ( {
+	type: ATOMIC_TRANSFER_INITIATE,
+	siteId,
+	module,
 } );
 
 /**

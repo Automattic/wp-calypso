@@ -6,3 +6,5 @@ export const transferStates = {
 	ERROR: 'error',
 	REVERTED: 'reverted',
 };
+
+export default transferStates;
