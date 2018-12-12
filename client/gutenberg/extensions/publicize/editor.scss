@@ -1,5 +1,8 @@
 /** @format */
 
+// @TODO: Replace with Gutenberg variables
+$dark-gray-500: #555d66;
+
 .jetpack-publicize-message-box {
 	background-color: #edeff0;
 	border-radius: 4px;
@@ -24,12 +27,8 @@
 }
 
 .jetpack-publicize-gutenberg-social-icon {
-	font-size: 2em;
+	fill: $dark-gray-500;
 	margin-right: 0.2em;
-
-	.layout__primary & {
-		margin-right: 0;
-	}
 }
 
 .jetpack-publicize-connection-label {
@@ -38,6 +37,12 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+
+	.jetpack-publicize-gutenberg-social-icon,
+	.jetpack-publicize-connection-label-copy {
+		display: inline-block;
+		vertical-align: middle;
+	}
 }
 
 .jetpack-publicize-connection-toggle {
