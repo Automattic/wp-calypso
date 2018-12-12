@@ -32,7 +32,7 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const PublicizePanel = ( { connections, refreshConnections } ) => (
 	<Fragment>
-		{ connections && connections.length > 0 && <PublicizeConnectionVerify /> }
+		{ connections.some( connection => connection.enabled ) && <PublicizeConnectionVerify /> }
 		<div>{ __( "Connect and select the accounts where you'd like to share your post." ) }</div>
 		{ connections &&
 			connections.length > 0 && <PublicizeForm refreshCallback={ refreshConnections } /> }
