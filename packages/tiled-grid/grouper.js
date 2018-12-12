@@ -9,7 +9,7 @@ import { find, repeat } from 'lodash';
  * Internal dependencies
  */
 import { CONTENT_WIDTH } from './constants.js';
-import { get_rounded_constrained_array } from './constrained-array-rounding.js';
+import { getRoundedConstrainedArray } from './constrained-array-rounding';
 import { Jetpack_Tiled_Gallery_Group } from './group.js';
 import { Jetpack_Tiled_Gallery_Row } from './row.js';
 import {
@@ -143,13 +143,11 @@ export class Jetpack_Tiled_Gallery_Grouper {
 				( row.raw_height - this.margin * group.images.length ) * group.ratio + this.margin;
 			group_widths_array.push( group.raw_width );
 		}
-		const rounded_group_widths_array = get_rounded_constrained_array(
-			group_widths_array,
-			row.width
-		);
+
+		const rounded_group_widths_array = getRoundedConstrainedArray( group_widths_array, row.width );
 
 		for ( const group of row.groups ) {
-			// @TODO check what happens to `rounded_image_heights_array`
+			// @TODO check what happens to `rounded_group_widths_array`
 			// in PHP `array_shift([])` vs JS `[].shift()` and if it has affects here
 			group.width = rounded_group_widths_array.shift();
 			this.calculate_image_sizes( group );
@@ -168,7 +166,7 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		}
 
 		const image_height_sum = group.height - image_heights_array.length * this.margin;
-		const rounded_image_heights_array = get_rounded_constrained_array(
+		const rounded_image_heights_array = getRoundedConstrainedArray(
 			image_heights_array,
 			image_height_sum
 		);
