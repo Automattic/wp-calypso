@@ -4,7 +4,7 @@ $border-color: lighten($gray, 20%);
 $light-border-color: lighten($gray, 30%);
 $text-color: $gray-dark;
 $name-color: $gray;
-$selected-color: $blue-medium;
+$selected-color: var( --color-accent );
 $img-size: 24px;
 $img-border-radius: 50%;
 $border-radius: 3px;

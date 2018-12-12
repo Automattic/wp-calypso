@@ -217,17 +217,17 @@
       border-bottom-right-radius: 4px;
 
       &.selected {
-        border-right-color: $blue-medium;
+        border-right-color: var( --color-accent );
       }
     }
 
     &.selected {
-      background: $blue-medium;
-      border-color: $blue-medium;
+      background: var( --color-accent );
+      border-color: var( --color-accent );
       color: $white;
 
       + .segmented-control-item {
-        border-left-color: $blue-medium; // Color left border on adjacent item to match active filter
+        border-left-color: var( --color-accent ); // Color left border on adjacent item to match active filter
       }
     }
   }
@@ -363,7 +363,7 @@
     }
 
     .unread .wpnc__note-icon .wpnc__gridicon {
-      background: $blue-medium;
+      background: var( --color-accent );
       border-color: $gray-light;
     }
 
@@ -377,7 +377,7 @@
     }
 
     .wpnc__selected-note {
-      box-shadow: inset 4px 0 0 $blue-medium;
+      box-shadow: inset 4px 0 0 var( --color-accent );
     }
 
     .wpnc__text-summary {
@@ -556,7 +556,7 @@
     }
 
     .wpnc__comment .wpnc__user p.wpnc__excerpt {
-      color: $blue-medium;
+      color: var( --color-accent );
       font-style: italic;
       max-height: 1.5em;
     }
