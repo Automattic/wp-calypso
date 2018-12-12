@@ -10,7 +10,7 @@ process.env.TARGET_BROWSER = 'true';
  */
 const chalk = require( 'chalk' );
 const path = require( 'path' );
-const yargs = require( 'yargs' );
+const yargsModule = require( 'yargs' );
 const webpack = require( 'webpack' );
 
 /**
@@ -73,7 +73,14 @@ const build = ( target, argv ) => {
 	} );
 };
 
-yargs
+// Generic "watch" option you can add to any command
+const watch = {
+	alias: 'w',
+	description: 'Whether to watch for changes and automatically rebuild.',
+	type: 'boolean',
+};
+
+yargsModule
 	.scriptName( scriptName )
 	.usage( `Usage: $0 <command> ${ delimit }[options]` )
 	.example( `$0 gutenberg ${ delimit }client/gutenberg/extensions/hello-dolly` )
@@ -97,11 +104,7 @@ yargs
 					coerce: path.resolve,
 					requiresArg: true,
 				},
-				watch: {
-					alias: 'w',
-					description: 'Whether to watch for changes and automatically rebuild.',
-					type: 'boolean',
-				},
+				watch,
 			} ),
 		handler: argv => build( gutenberg, argv ),
 	} )
@@ -143,6 +146,7 @@ yargs
 					description: 'Externalize the @wordpress packages as globals',
 					type: 'boolean',
 				},
+				watch,
 			} ),
 		handler: argv => build( generic, argv ),
 	} )
