@@ -9,7 +9,7 @@ export class Jetpack_Tiled_Gallery_Row {
 
 	get_ratio = () => {
 		let ratio = 0;
-		for ( group of this.groups ) {
+		for ( const group of this.groups ) {
 			ratio += group.ratio;
 		}
 		return ratio > 0 ? ratio : 1;
@@ -17,7 +17,7 @@ export class Jetpack_Tiled_Gallery_Row {
 
 	get_weighted_ratio = () => {
 		let weighted_ratio = 0;
-		for ( group of this.groups ) {
+		for ( const group of this.groups ) {
 			weighted_ratio += group.ratio * group.images.length;
 		}
 		return weighted_ratio > 0 ? weighted_ratio : 1;

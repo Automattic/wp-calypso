@@ -11,7 +11,7 @@ export class Jetpack_Tiled_Gallery_Group {
 
 	get_ratio = () => {
 		let ratio = 0;
-		for ( image of this.images ) {
+		for ( const image of this.images ) {
 			if ( image.ratio ) {
 				ratio += 1 / image.ratio;
 			}
@@ -27,7 +27,7 @@ export class Jetpack_Tiled_Gallery_Group {
 	items = ( needs_attachment_link, grayscale ) => {
 		let items = [];
 
-		for ( image of this.images ) {
+		for ( const image of this.images ) {
 			items.push(
 				new Jetpack_Tiled_Gallery_Rectangular_Item(
 					image,
