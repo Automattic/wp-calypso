@@ -410,8 +410,13 @@ export class SharingService extends Component {
 		if ( ! config.isEnabled( 'mailchimp' ) ) {
 			return false;
 		}
-		return get( this, 'props.service.ID' ) === 'mailchimp';
+		return this.isService( 'mailchimp' );
 	};
+
+	isService = serviceSlug => {
+		return get( this, 'props.service.ID' ) === serviceSlug;
+	};
+
 	render() {
 		const connections = this.getConnections();
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
@@ -422,8 +427,8 @@ export class SharingService extends Component {
 
 		const header = (
 			<div>
-				{ ! this.isMailchimpService( connectionStatus ) && this.renderLogo() }
-				{ this.isMailchimpService( connectionStatus ) && renderMailchimpLogo() }
+				{ ! this.isMailchimpService() && this.renderLogo() }
+				{ this.isMailchimpService() && renderMailchimpLogo() }
 
 				<div className="sharing-service__name">
 					<h2>{ this.props.service.label }</h2>
@@ -436,16 +441,31 @@ export class SharingService extends Component {
 			</div>
 		);
 
-		const action = (
-			<ServiceAction
-				status={ connectionStatus }
-				service={ this.props.service }
-				onAction={ this.performAction }
-				isConnecting={ this.state.isConnecting }
-				isRefreshing={ this.state.isRefreshing }
-				isDisconnecting={ this.state.isDisconnecting }
-			/>
+		const renderGooglePlusAction = (
+			<div>
+				Google Plus support is being removed.{' '}
+				<a href="https://jetpack.com/tbd" target="_blank" rel="noreferrer noopener">
+					Why?
+					<span className="dashicons dashicons-external" />
+				</a>
+			</div>
 		);
+
+		const action = () => {
+			if ( this.isService( 'google_plus' ) ) {
+				return renderGooglePlusAction;
+			}
+			return (
+				<ServiceAction
+					status={ connectionStatus }
+					service={ this.props.service }
+					onAction={ this.performAction }
+					isConnecting={ this.state.isConnecting }
+					isRefreshing={ this.state.isRefreshing }
+					isDisconnecting={ this.state.isDisconnecting }
+				/>
+			);
+		};
 
 		return (
 			<li>
@@ -463,8 +483,8 @@ export class SharingService extends Component {
 					//For Mailchimp we want to open settings, because in other services we have the popup.
 					expanded={ this.isMailchimpService() && this.state.justConnected }
 					compact
-					summary={ action }
-					expandedSummary={ action }
+					summary={ action() }
+					expandedSummary={ action() }
 				>
 					<div
 						className={ classnames( 'sharing-service__content', {
@@ -472,7 +492,7 @@ export class SharingService extends Component {
 						} ) }
 					>
 						<ServiceExamples service={ this.props.service } />
-						{ ! this.isMailchimpService( connectionStatus ) && (
+						{ ! this.isMailchimpService() && (
 							<ServiceConnectedAccounts
 								connect={ this.connectAnother }
 								service={ this.props.service }
@@ -493,7 +513,7 @@ export class SharingService extends Component {
 							</ServiceConnectedAccounts>
 						) }
 						<ServiceTip service={ this.props.service } />
-						{ this.isMailchimpService( connectionStatus ) &&
+						{ this.isMailchimpService() &&
 							connectionStatus === 'connected' && (
 								<MailchimpSettings keyringConnections={ this.props.keyringConnections } />
 							) }
