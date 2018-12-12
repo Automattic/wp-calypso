@@ -286,11 +286,9 @@ describe( 'PHP', () => {
 } );
 
 describe( 'PHP with an additional textdomain parameter', () => {
-	let output;
-
 	describe( 'that has no special symbols', () => {
-		beforeAll( () => {
-			output = i18n( {
+		test( 'should create a simple __() translation', () => {
+			const output = i18n( {
 				projectName: 'i18nTest',
 				inputPaths: sourceFiles,
 				phpArrayName: 'arrayName',
@@ -298,9 +296,6 @@ describe( 'PHP with an additional textdomain parameter', () => {
 				extras: [ 'date' ],
 				textdomain: 'some_domain',
 			} );
-		} );
-
-		test( 'should create a simple __() translation', () => {
 			expect( output ).toEqual(
 				expect.stringContaining( '__( "My hat has three corners.", "some_domain" ),' )
 			);
@@ -308,8 +303,8 @@ describe( 'PHP with an additional textdomain parameter', () => {
 	} );
 
 	describe( 'that has double quotes', () => {
-		beforeAll( () => {
-			output = i18n( {
+		test( 'should escape double quotes', () => {
+			const output = i18n( {
 				projectName: 'i18nTest',
 				inputPaths: sourceFiles,
 				phpArrayName: 'arrayName',
@@ -317,9 +312,6 @@ describe( 'PHP with an additional textdomain parameter', () => {
 				extras: [ 'date' ],
 				textdomain: '"some"weird-!=domain"',
 			} );
-		} );
-
-		test( 'should escape double quotes', () => {
 			expect( output ).toEqual( expect.stringContaining( '"\\"some\\"weird-!=domain\\""' ) );
 		} );
 	} );
