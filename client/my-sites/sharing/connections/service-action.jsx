@@ -22,6 +22,7 @@ const SharingServiceAction = ( {
 	isRefreshing,
 	onAction,
 	removableConnections,
+	service,
 	status,
 	translate,
 } ) => {
@@ -66,6 +67,8 @@ const SharingServiceAction = ( {
 			context: 'Sharing: Publicize reconnect pending button label',
 		} );
 		warning = true;
+	} else if ( 'google_plus' === service.ID ) {
+		return null;
 	} else {
 		label = translate( 'Connect', { context: 'Sharing: Publicize connect pending button label' } );
 		primary = true;
