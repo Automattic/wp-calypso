@@ -7,7 +7,8 @@
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 export const settings = {
-	name: 'jetpack/slideshow',
+	name: 'slideshow',
+	prefix: 'jetpack',
 	title: __( 'Slideshow' ),
 	icon: (
 		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
