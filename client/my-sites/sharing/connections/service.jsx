@@ -410,7 +410,7 @@ export class SharingService extends Component {
 		if ( ! config.isEnabled( 'mailchimp' ) ) {
 			return false;
 		}
-		return this.isService( 'mailchimp' );
+		return get( this, 'props.service.ID' ) === 'mailchimp';
 	};
 
 	isService = serviceSlug => {
@@ -427,8 +427,8 @@ export class SharingService extends Component {
 
 		const header = (
 			<div>
-				{ ! this.isMailchimpService() && this.renderLogo() }
-				{ this.isMailchimpService() && renderMailchimpLogo() }
+				{ ! this.isMailchimpService( connectionStatus ) && this.renderLogo() }
+				{ this.isMailchimpService( connectionStatus ) && renderMailchimpLogo() }
 
 				<div className="sharing-service__name">
 					<h2>{ this.props.service.label }</h2>
@@ -492,7 +492,7 @@ export class SharingService extends Component {
 						} ) }
 					>
 						<ServiceExamples service={ this.props.service } />
-						{ ! this.isMailchimpService() && (
+						{ ! this.isMailchimpService( connectionStatus ) && (
 							<ServiceConnectedAccounts
 								connect={ this.connectAnother }
 								service={ this.props.service }
@@ -513,7 +513,7 @@ export class SharingService extends Component {
 							</ServiceConnectedAccounts>
 						) }
 						<ServiceTip service={ this.props.service } />
-						{ this.isMailchimpService() &&
+						{ this.isMailchimpService( connectionStatus ) &&
 							connectionStatus === 'connected' && (
 								<MailchimpSettings keyringConnections={ this.props.keyringConnections } />
 							) }
