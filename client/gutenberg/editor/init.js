@@ -12,6 +12,7 @@ import { use, plugins, dispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { applyAPIMiddleware } from './api-middleware';
 import debugFactory from 'debug';
 
@@ -59,7 +60,7 @@ const addResetToRegistry = registry => {
 
 // We need to ensure that his function is executed only once to avoid duplicate
 // block registration, API middleware application etc.
-export const initGutenberg = once( ( userId, siteSlug ) => {
+export const initGutenberg = once( ( userId, store ) => {
 	debug( 'Starting Gutenberg editor initialization...' );
 
 	debug( 'Registering data plugins' );
@@ -88,7 +89,9 @@ export const initGutenberg = once( ( userId, siteSlug ) => {
 	dispatch( 'core/nux' ).disableTips();
 
 	debug( 'Applying API middleware' );
-	applyAPIMiddleware( siteSlug );
+	// Passing callback here in order to change site slug during site switches.
+	// We still want to apply middleware only once though, so that's why this call has been kept in init.
+	applyAPIMiddleware( () => getSelectedSiteSlug( store.getState() ) );
 
 	debug( 'Loading A8C editor extensions' );
 	loadA8CExtensions();
