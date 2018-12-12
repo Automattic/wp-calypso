@@ -5,8 +5,10 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { find, findIndex, get } from 'lodash';
+import { find, findIndex, get, reduce } from 'lodash';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
+
 
 /**
  * Internal dependencies
@@ -15,11 +17,13 @@ import analytics from 'lib/analytics';
 import Button from 'components/button';
 import SignupActions from 'lib/signup/actions';
 import { getStepUrl } from 'signup/utils';
+import flows from 'signup/config/flows';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
 
 const { submitSignupStep } = SignupActions;
 
@@ -32,6 +36,7 @@ export class NavigationLink extends Component {
 		positionInFlow: PropTypes.number,
 		previousPath: PropTypes.string,
 		signupProgress: PropTypes.array,
+		siteProgressOrdered: PropTypes.array,
 		stepName: PropTypes.string.isRequired,
 		// Allows to force a back button in the first step for example.
 		allowBackFirstStep: PropTypes.bool,
@@ -49,12 +54,15 @@ export class NavigationLink extends Component {
 	 * @return {string|null} The previous step name
 	 */
 	getPreviousStepName() {
-		const { stepName, signupProgress } = this.props;
+		const { stepName, signupProgress, siteProgressOrdered } = this.props;
 
-		const currentStepIndex = findIndex( signupProgress, { stepName } );
+		const currentStepIndex = findIndex( siteProgressOrdered, { stepName } );
+
+		// eslint-disable-next-line
+		console.log( 'signupProgress, siteProgressOrdered', signupProgress, siteProgressOrdered );
 
 		const previousStep = find(
-			signupProgress.slice( 0, currentStepIndex ).reverse(),
+			siteProgressOrdered.slice( 0, currentStepIndex ).reverse(),
 			step => ! step.wasSkipped
 		);
 
@@ -73,7 +81,7 @@ export class NavigationLink extends Component {
 		const previousStepName = this.getPreviousStepName();
 
 		const stepSectionName = get(
-			find( this.props.signupProgress, { stepName: previousStepName } ),
+			find( this.props.siteProgressOrdered, { stepName: previousStepName } ),
 			'stepSectionName',
 			''
 		);
@@ -146,4 +154,20 @@ export class NavigationLink extends Component {
 	}
 }
 
-export default localize( NavigationLink );
+export default connect(
+	( state, { flowName, signupProgress } ) => {
+		// TODO: Hack to ensure the progress order is the same as the flow steps order
+		const siteProgressOrdered = reduce( flows.getFlow( flowName ).steps, function ( result, value ) {
+			const siteStep = find( signupProgress, [ 'stepName', value ] );
+			if ( siteStep ) {
+				result.push( siteStep );
+			}
+			return result;
+		}, [] );
+
+		return {
+			siteProgressOrdered,
+		};
+	},
+	null
+)( localize( NavigationLink ) );

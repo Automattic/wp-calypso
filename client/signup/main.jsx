@@ -61,6 +61,8 @@ import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteTopic } from 'state/signup/steps/site-topic/actions';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
+
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -76,6 +78,7 @@ import {
 	getStepUrl,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
+import {abtest} from "../lib/abtest";
 
 /**
  * Constants
@@ -611,7 +614,7 @@ class Signup extends React.Component {
 						/>
 					) }
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
-				{ this.shouldShowSiteMockups() && <SiteMockups /> }
+				{ this.props.shouldShowSiteMockups && <SiteMockups /> }
 				{ this.state.bearerToken && (
 					<WpcomLoginForm
 						authorization={ 'Bearer ' + this.state.bearerToken }
@@ -622,24 +625,21 @@ class Signup extends React.Component {
 			</div>
 		);
 	}
-
-	shouldShowSiteMockups() {
-		if ( this.props.flowName !== 'onboarding-dev' ) {
-			return false;
-		}
-		const stepsToShowOn = [ 'site-style', 'site-topic', 'about', 'site-information', 'domains' ];
-		return stepsToShowOn.indexOf( this.props.stepName ) >= 0;
-	}
 }
 
 export default connect(
-	state => ( {
+	( state, ownProps ) => ( {
 		domainsWithPlansOnly: getCurrentUser( state )
 			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 			: true,
 		progress: getSignupProgress( state ),
 		signupDependencies: getSignupDependencyStore( state ),
 		isLoggedIn: isUserLoggedIn( state ),
+		// TODO turn on for onboarding-dev only for now
+		shouldShowSiteMockups:
+			( /*'onboarding' === abtest( 'improvedOnboarding' ) || */'onboarding-dev' === flowName ) &&
+			'business' === getSiteType( state ) &&
+			-1 < indexOf( [ 'site-style', 'site-topic', 'site-information', 'domains' ], ownProps.stepName )
 	} ),
 	{
 		setSurvey,

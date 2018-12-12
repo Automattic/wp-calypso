@@ -14,6 +14,8 @@ import stepConfig from './steps';
 import userFactory from 'lib/user';
 import { abtest } from 'lib/abtest';
 import { generateFlows } from './flows-pure';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { reduxGetState } from 'lib/redux-bridge';
 
 const user = userFactory();
 
@@ -166,7 +168,7 @@ const Flows = {
 
 		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
 
-		return Flows.filterExcludedSteps( Flows.getABTestFilteredFlow( flowName, flow ) );
+		return Flows.filterExcludedSteps( Flows.getABTestFilteredFlow( flowName, flow, currentStepName ) );
 	},
 
 	/**
@@ -254,6 +256,17 @@ const Flows = {
 
 			flow = Flows.removeStepFromFlow( 'about', flow );
 			return Flows.insertStepIntoFlow( 'site-type', flow, afterStep );
+		}
+
+		// TODO: Hack to ensure we insert a step on a certain condition
+		// I've added this block here for convenience
+		// We should really replace getABTestFilteredFlow with a generic middleware method
+		// that processes the flow according to a set of rules.
+		// Turn on for onboarding-dev only for now
+		if ( /*'onboarding' === abtest( 'improvedOnboarding' ) || */'onboarding-dev' === flowName ) {
+			if ( 'business' === getSiteType( reduxGetState() ) ) {
+				return Flows.insertStepIntoFlow( 'site-style', flow, 'site-type'  );
+			}
 		}
 
 		return flow;
