@@ -84,5 +84,6 @@ export default {
 	user: UserSignupComponent,
 	'oauth2-user': UserSignupComponent,
 	'oauth2-name': UserSignupComponent,
+	displayname: UserSignupComponent,
 	'reader-landing': ReaderLandingStepComponent,
 };
