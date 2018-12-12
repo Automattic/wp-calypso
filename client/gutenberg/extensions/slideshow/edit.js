@@ -156,10 +156,11 @@ class SlideshowEdit extends Component {
 				{ noticeUI }
 				<Slideshow className={ className } effect={ effect } align={ align }>
 					{ images.map( ( image, index ) => {
+						const { alt, caption, id, url } = image;
 						return (
 							<div className="wp-block-slideshow_image_container" key={ index }>
-								<img src={ image.url } alt={ image.alt } data-id={ image.id } />
-								<figcaption>{ image.caption }</figcaption>
+								<img src={ url } alt={ alt } data-id={ id } />
+								<figcaption>{ caption }</figcaption>
 							</div>
 						);
 					} ) }
