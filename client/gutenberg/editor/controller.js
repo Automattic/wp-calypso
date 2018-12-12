@@ -146,7 +146,9 @@ export const post = async ( context, next ) => {
 		dispatch( 'core/edit-post' ).closeModal();
 
 		return props => (
-			<Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent, ...props } } />
+			<Editor
+				{ ...{ siteId, siteSlug, postId, postType, uniqueDraftKey, isDemoContent, ...props } }
+			/>
 		);
 	} );
 
