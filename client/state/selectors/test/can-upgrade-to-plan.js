@@ -326,10 +326,12 @@ describe( 'canUpgradeToPlan', () => {
 			},
 		};
 
-		test( 'should return true for atomic site without a plan to business', () => {
-			[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( planToPurchase => {
-				expect( canUpgradeToPlan( atomicFreeState, siteId, planToPurchase ) ).toBe( true );
-			} );
+		test( 'should return true for atomic site without a plan to business/e-commerce', () => {
+			[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS, PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ].forEach(
+				planToPurchase => {
+					expect( canUpgradeToPlan( atomicFreeState, siteId, planToPurchase ) ).toBe( true );
+				}
+			);
 		} );
 
 		test( 'should return false for atomic site without a plan to other plans', () => {
