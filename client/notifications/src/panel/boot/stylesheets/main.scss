@@ -451,7 +451,7 @@
   }
 
   .wpnc__undo-item {
-    background: $alert-red;
+    background: var( --color-error );
     color: $white;
 
     p {

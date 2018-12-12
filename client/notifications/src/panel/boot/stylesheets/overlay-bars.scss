@@ -6,7 +6,7 @@
   top: $wpnc__title-bar-height;
   width: 100%;
   z-index: 101;
-  background-color: $alert-red;
+  background-color: var( --color-error );
   color: $white;
 
   a, a:visited {
