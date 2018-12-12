@@ -12,7 +12,7 @@ import { has, set, uniqueId } from 'lodash';
  * WordPress dependencies
  */
 import { setLocaleData } from '@wordpress/i18n';
-import { dispatch, use } from '@wordpress/data';
+import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -106,7 +106,7 @@ export const loadGutenbergBlockAvailability = store => {
 			set( window, [ JETPACK_DATA_PATH, 'available_blocks' ], blockAvailability.data );
 		}
 	} );
-}
+};
 
 export const redirect = ( { store: { getState } }, next ) => {
 	const state = getState();
@@ -118,11 +118,6 @@ export const redirect = ( { store: { getState } }, next ) => {
 	}
 
 	return page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
-};
-
-export const resetGutenbergState = registry => {
-	registry.reset();
-	return {};
 };
 
 export const post = async ( context, next ) => {
@@ -142,10 +137,10 @@ export const post = async ( context, next ) => {
 		//set postId on state.ui.editor.postId, so components like editor revisions can read from it
 		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
-		const Editor = initGutenberg( userId, siteSlug );
+		const { Editor, registry } = initGutenberg( userId, siteSlug );
 
 		// Reset the Gutenberg state
-		use( resetGutenbergState );
+		registry.reset();
 		dispatch( 'core/edit-post' ).closePublishSidebar();
 		dispatch( 'core/edit-post' ).closeModal();
 

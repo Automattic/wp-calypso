@@ -67,7 +67,7 @@ export const initGutenberg = once( ( userId, siteSlug ) => {
 	use( plugins.persistence, { storageKey: storageKey } );
 	use( plugins.controls );
 
-	use( addResetToRegistry );
+	const registry = use( addResetToRegistry );
 
 	// We need to ensure that core-data is loaded after the data plugins have been registered.
 	debug( 'Initializing core-data store' );
@@ -101,5 +101,8 @@ export const initGutenberg = once( ( userId, siteSlug ) => {
 
 	debug( 'Gutenberg editor initialization complete.' );
 
-	return require( 'gutenberg/editor/main' ).default;
+	return {
+		Editor: require( 'gutenberg/editor/main' ).default,
+		registry,
+	};
 } );
