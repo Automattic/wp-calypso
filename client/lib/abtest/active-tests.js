@@ -81,16 +81,6 @@ export default {
 		},
 		defaultVariation: 'public',
 	},
-	krackenM5NonEnDomainSuggestions: {
-		datestamp: '20181207',
-		variations: {
-			domainsbot_front: 25,
-			variation2_front: 75,
-		},
-		allowExistingUsers: true,
-		defaultVariation: 'domainsbot_front',
-		localeTargets: 'any',
-	},
 	simplifiedChecklistView: {
 		datestamp: '20181204',
 		variations: {
