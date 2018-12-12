@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +7,12 @@ import debug from 'debug';
 import config from 'config';
 import page from 'page';
 import { has, set, uniqueId } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
 import { setLocaleData } from '@wordpress/i18n';
+import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -102,7 +106,7 @@ export const loadGutenbergBlockAvailability = store => {
 			set( window, [ JETPACK_DATA_PATH, 'available_blocks' ], blockAvailability.data );
 		}
 	} );
-}
+};
 
 export const redirect = ( { store: { getState } }, next ) => {
 	const state = getState();
@@ -133,7 +137,12 @@ export const post = async ( context, next ) => {
 		//set postId on state.ui.editor.postId, so components like editor revisions can read from it
 		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
-		const Editor = initGutenberg( userId, siteSlug );
+		const { Editor, registry } = initGutenberg( userId, siteSlug );
+
+		// Reset the Gutenberg state
+		registry.reset();
+		dispatch( 'core/edit-post' ).closePublishSidebar();
+		dispatch( 'core/edit-post' ).closeModal();
 
 		return props => (
 			<Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent, ...props } } />
