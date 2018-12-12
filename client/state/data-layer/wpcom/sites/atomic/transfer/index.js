@@ -8,12 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	ATOMIC_LATEST_TRANSFER_REQUEST,
-	ATOMIC_TRANSFER_INITIATE,
-	ATOMIC_TRANSFER_REQUEST,
-	ATOMIC_TRANSFERS_REQUEST,
-} from 'state/action-types';
+import { ATOMIC_TRANSFER_INITIATE, ATOMIC_TRANSFER_REQUEST } from 'state/action-types';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { requestSite } from 'state/sites/actions';
@@ -53,44 +48,12 @@ export const initiateTransfer = action => {
 };
 
 /**
- * Retreives a list of Atomic transfer records.
- *
- * @param {?Object} action default action to call on HTTP events
- * @returns {Object} action object
- */
-export const getTransfers = action =>
-	http(
-		{
-			apiNamespace: 'wpcom/v2',
-			method: 'GET',
-			path: `/sites/${ action.siteId }/atomic/transfers`,
-		},
-		action
-	);
-
-/**
- * Retreives a specific Atomic transfer record.
+ * Retreives the latest Atomic transfer record.
  *
  * @param {?Object} action default action to call on HTTP events
  * @returns {Object} action object
  */
 export const getTransfer = action =>
-	http(
-		{
-			apiNamespace: 'wpcom/v2',
-			method: 'GET',
-			path: `/sites/${ action.siteId }/atomic/transfers/${ action.transferId }`,
-		},
-		action
-	);
-
-/**
- * Retreives the latest Atomic transfer record for a site.
- *
- * @param {?Object} action default action to call on HTTP events
- * @returns {Object} action object
- */
-export const getLatestTransfer = action =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',
@@ -174,10 +137,6 @@ const options = {
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfer/index.js', {
-	[ ATOMIC_LATEST_TRANSFER_REQUEST ]: [
-		dispatchRequestEx( { ...options, fetch: getLatestTransfer } ),
-	],
-	[ ATOMIC_TRANSFERS_REQUEST ]: [ dispatchRequestEx( { ...options, fetch: getTransfers } ) ],
 	[ ATOMIC_TRANSFER_REQUEST ]: [ dispatchRequestEx( { ...options, fetch: getTransfer } ) ],
 	[ ATOMIC_TRANSFER_INITIATE ]: [ dispatchRequestEx( { ...options, fetch: initiateTransfer } ) ],
 } );

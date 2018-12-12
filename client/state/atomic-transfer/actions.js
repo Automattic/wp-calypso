@@ -5,7 +5,6 @@
  */
 
 import {
-	ATOMIC_LATEST_TRANSFER_REQUEST,
 	ATOMIC_TRANSFER_COMPLETE,
 	ATOMIC_TRANSFER_INITIATE,
 	ATOMIC_TRANSFER_REQUEST,
@@ -14,36 +13,12 @@ import {
 } from 'state/action-types';
 
 /**
- * Query for a specific atomic transfer for a given site.
- *
- * @param {number} siteId     The id of the site to query.
- * @param {number} transferId The id of the transfer record to query.
- * @returns {Object} An action object
- */
-export const fetchAtomicTransfer = ( siteId, transferId ) => ( {
-	type: ATOMIC_TRANSFER_REQUEST,
-	siteId,
-	transferId,
-} );
-
-/**
  * Query for the latest atomic transfer for a given site.
- *
- * @param {number} siteId     The id of the site to query.
- * @returns {Object} An action object
- */
-export const fetchLatestAtomicTransfer = siteId => ( {
-	type: ATOMIC_LATEST_TRANSFER_REQUEST,
-	siteId,
-} );
-
-/**
- * Query the atomic transfers for a given site.
  *
  * @param {number} siteId The id of the site to query.
  * @returns {Object} An action object
  */
-export const fetchAtomicTransfers = siteId => ( {
+export const fetchAtomicTransfer = siteId => ( {
 	type: ATOMIC_TRANSFER_REQUEST,
 	siteId,
 } );
