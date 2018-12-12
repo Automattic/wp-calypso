@@ -18,7 +18,7 @@ import FormLabel from 'components/forms/form-label';
 import InfoPopover from 'components/info-popover';
 import FormFieldset from 'components/forms/form-fieldset';
 import SuggestionSearch from 'components/suggestion-search';
-import { submitSiteTopic } from 'state/signup/steps/site-topic/actions';
+import { submitSiteTopic, setSiteTopic } from 'state/signup/steps/site-topic/actions';
 import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
