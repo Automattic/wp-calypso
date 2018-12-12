@@ -7,7 +7,7 @@ import path from 'path';
 /**
  * Internal dependencies
  */
-import i18n from '../i18n';
+import i18nCalypsoCLI from '../i18n';
 
 // generate whitelist file
 const sourceFiles = [
@@ -25,7 +25,7 @@ describe( 'POT', () => {
 	let output;
 
 	beforeAll( () => {
-		output = i18n( {
+		output = i18nCalypsoCLI( {
 			projectName: 'i18nTest',
 			inputPaths: sourceFiles,
 			format: 'POT',
@@ -182,7 +182,7 @@ describe( 'PHP', () => {
 	let output;
 
 	beforeAll( () => {
-		output = i18n( {
+		output = i18nCalypsoCLI( {
 			projectName: 'i18nTest',
 			inputPaths: sourceFiles,
 			phpArrayName: 'arrayName',
@@ -290,7 +290,7 @@ describe( 'PHP with an additional textdomain parameter', () => {
 
 	describe( 'that has no special symbols', () => {
 		beforeAll( () => {
-			output = i18n( {
+			output = i18nCalypsoCLI( {
 				projectName: 'i18nTest',
 				inputPaths: sourceFiles,
 				phpArrayName: 'arrayName',
@@ -309,7 +309,7 @@ describe( 'PHP with an additional textdomain parameter', () => {
 
 	describe( 'that has double quotes', () => {
 		beforeAll( () => {
-			output = i18n( {
+			output = i18nCalypsoCLI( {
 				projectName: 'i18nTest',
 				inputPaths: sourceFiles,
 				phpArrayName: 'arrayName',

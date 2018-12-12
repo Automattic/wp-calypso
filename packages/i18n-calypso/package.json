@@ -11,7 +11,7 @@
   "author": "@automattic",
   "license": "GPL-2.0-or-later",
   "bin": {
-    "i18n-calypso": "bin/index.js"
+    "i18n-calypso": "cli/index.js"
   },
   "bugs": {
     "url": "https://github.com/Automattic/wp-calypso/issues"
