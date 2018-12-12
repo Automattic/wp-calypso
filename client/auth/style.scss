@@ -27,7 +27,7 @@
 }
 
 .auth.main {
-	background: $blue-wordpress;
+	background: var( --color-primary );
 	float: none;
 	height: 100%;
 	display: flex;
