@@ -230,7 +230,9 @@ const learnMoreClick = domainName =>
 		)
 	);
 
-export default connect( state => ( {
-	currencyCode: getCurrentUserCurrencyCode( state ),
-	learnMoreClick,
-} ) )( localize( AddGoogleAppsCard ) );
+export default connect(
+	state => ( {
+		currencyCode: getCurrentUserCurrencyCode( state ),
+	} ),
+	{ learnMoreClick }
+)( localize( AddGoogleAppsCard ) );
