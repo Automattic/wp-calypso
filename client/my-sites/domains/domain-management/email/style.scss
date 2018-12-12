@@ -1,5 +1,7 @@
+/** @format */
+
 .email__add-google-apps-card-product-details {
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		display: flex;
 	}
 }
@@ -8,34 +10,34 @@
 	box-sizing: border-box;
 	font-size: 14px;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex-basis: 100%;
 		max-width: 400px;
 	}
 
 	.button {
 		float: none;
-		margin: 1em 0 .5em;
+		margin: 1em 0 0.5em;
 		padding-left: 2em;
 		padding-right: 2em;
 
-		@include breakpoint( "<960px" ) {
+		@include breakpoint( '<960px' ) {
 			width: 100%;
 		}
 	}
 }
 
 .email__add-google-apps-card-product-logo {
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 236px;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		float: left;
 	}
 
 	strong {
-		background: url('/calypso/images/upgrades/g-suite-logo.png') no-repeat left;
+		background: url( '/calypso/images/upgrades/g-suite-logo.png' ) no-repeat left;
 		background-size: 73px;
 		display: inline-block;
 		height: 19px;
@@ -68,7 +70,7 @@
 		font-size: 13px;
 		font-style: italic;
 
-		@include breakpoint( "<960px" ) {
+		@include breakpoint( '<960px' ) {
 			text-align: center;
 		}
 	}
@@ -88,7 +90,7 @@
 .email__add-google-apps-card-logos {
 	display: none;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		align-items: flex-start;
 		display: flex;
 		flex-grow: 1;
@@ -96,7 +98,7 @@
 		justify-content: center;
 	}
 
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( '>1040px' ) {
 		align-items: center;
 	}
 }
@@ -106,7 +108,7 @@
 	justify-content: justify-content;
 	margin: 1em 0;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		display: flex;
 		flex-flow: row wrap;
 	}
@@ -124,7 +126,7 @@
 	padding: 0 1em 0 0;
 
 	p {
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			max-width: 200px;
 		}
 	}
@@ -141,7 +143,7 @@
 		margin: 1em 0;
 		width: 100%;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			display: none;
 		}
 	}
@@ -171,18 +173,18 @@
 	}
 }
 
-.google-apps-users-card {
+.email__google-apps-users-card {
 	margin-bottom: 10px;
 }
 
-.google-apps-users-card__user-list {
+.email__google-apps-users-card-user-list {
 	&.card {
 		padding: 0;
 		@include clear-fix;
 	}
 }
 
-.google-apps-users-card__user-list-inner {
+.email__google-apps-users-card-user-list-inner {
 	list-style: none;
 	margin: 0;
 
