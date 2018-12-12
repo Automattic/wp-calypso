@@ -2759,11 +2759,6 @@
 				"commander": "^2.11.0"
 			}
 		},
-		"arity-n": {
-			"version": "1.0.4",
-			"resolved": "https://registry.npmjs.org/arity-n/-/arity-n-1.0.4.tgz",
-			"integrity": "sha1-2edrEXM+CFacCEeuezmyhgswt0U="
-		},
 		"arr-diff": {
 			"version": "4.0.0",
 			"resolved": "https://registry.npmjs.org/arr-diff/-/arr-diff-4.0.0.tgz",
@@ -4174,11 +4169,6 @@
 				"parse5": "^3.0.1"
 			}
 		},
-		"chickencurry": {
-			"version": "1.1.1",
-			"resolved": "https://registry.npmjs.org/chickencurry/-/chickencurry-1.1.1.tgz",
-			"integrity": "sha1-AmVfKyazvC7hrh5TFoht4463lzg="
-		},
 		"chokidar": {
 			"version": "2.0.4",
 			"resolved": "https://registry.npmjs.org/chokidar/-/chokidar-2.0.4.tgz",
@@ -5131,14 +5121,6 @@
 			"version": "0.0.4",
 			"resolved": "https://registry.npmjs.org/component-xor/-/component-xor-0.0.4.tgz",
 			"integrity": "sha1-xV2DzMG5TNUImk6T+niRxyY+Wao="
-		},
-		"compose-function": {
-			"version": "2.0.0",
-			"resolved": "https://registry.npmjs.org/compose-function/-/compose-function-2.0.0.tgz",
-			"integrity": "sha1-5kL6fh2iFSlyADFHZ3b8JGkawLA=",
-			"requires": {
-				"arity-n": "^1.0.4"
-			}
 		},
 		"computed-style": {
 			"version": "0.1.4",
@@ -8928,15 +8910,15 @@
 			"dev": true
 		},
 		"html-to-react": {
-			"version": "1.3.3",
-			"resolved": "https://registry.npmjs.org/html-to-react/-/html-to-react-1.3.3.tgz",
-			"integrity": "sha512-4Qi5/t8oBr6c1t1kBJKyxEeJu0lb7ctvq29oFZioiUHH0Wz88VWGwoXuH26HDt9v64bDHA4NMPNTH8bVrcaJWA==",
+			"version": "1.3.4",
+			"resolved": "https://registry.npmjs.org/html-to-react/-/html-to-react-1.3.4.tgz",
+			"integrity": "sha512-/tWDdb/8Koi/QEP5YUY1653PcDpBnnMblXRhotnTuhFDjI1Fc6Wzox5d4sw73Xk5rM2OdM5np4AYjT/US/Wj7Q==",
 			"requires": {
-				"domhandler": "^2.3.0",
+				"domhandler": "^2.4.2",
 				"escape-string-regexp": "^1.0.5",
-				"htmlparser2": "^3.8.3",
-				"ramda": "^0.25.0",
-				"underscore.string.fp": "^1.0.4"
+				"htmlparser2": "^3.10.0",
+				"lodash.camelcase": "^4.3.0",
+				"ramda": "^0.26"
 			}
 		},
 		"html-webpack-plugin": {
@@ -11811,6 +11793,11 @@
 			"version": "4.2.0",
 			"resolved": "https://registry.npmjs.org/lodash.assign/-/lodash.assign-4.2.0.tgz",
 			"integrity": "sha1-DZnzzNem0mHRm9rrkkUAXShYCOc="
+		},
+		"lodash.camelcase": {
+			"version": "4.3.0",
+			"resolved": "https://registry.npmjs.org/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz",
+			"integrity": "sha1-soqmKIorn8ZRA1x3EfZathkDMaY="
 		},
 		"lodash.clonedeep": {
 			"version": "4.5.0",
@@ -17223,9 +17210,9 @@
 			"dev": true
 		},
 		"ramda": {
-			"version": "0.25.0",
-			"resolved": "https://registry.npmjs.org/ramda/-/ramda-0.25.0.tgz",
-			"integrity": "sha512-GXpfrYVPwx3K7RQ6aYT8KPS8XViSXUVJT1ONhoKPE9VAleW42YE+U+8VEyGWt41EnEQW7gwecYJriTI0pKoecQ=="
+			"version": "0.26.1",
+			"resolved": "https://registry.npmjs.org/ramda/-/ramda-0.26.1.tgz",
+			"integrity": "sha512-hLWjpy7EnsDBb0p+Z3B7rPi3GDeRG5ZtiI33kJhTt+ORCd38AbAIjB/9zRIUoeTbE/AVX5ZkU7m6bznsvrf8eQ=="
 		},
 		"randexp": {
 			"version": "0.4.6",
@@ -18271,11 +18258,6 @@
 			"version": "0.10.1",
 			"resolved": "https://registry.npmjs.org/retry/-/retry-0.10.1.tgz",
 			"integrity": "sha1-52OI0heZLCUnUCQdPTlW/tmNj/Q="
-		},
-		"reverse-arguments": {
-			"version": "1.0.0",
-			"resolved": "https://registry.npmjs.org/reverse-arguments/-/reverse-arguments-1.0.0.tgz",
-			"integrity": "sha1-woCVo6khrHFdYYNN3s6QJ5kmZ80="
 		},
 		"rimraf": {
 			"version": "2.6.2",
@@ -21240,22 +21222,6 @@
 			"resolved": "http://registry.npmjs.org/underscore/-/underscore-1.4.4.tgz",
 			"integrity": "sha1-YaajIBBiKvoHljvzJSA88SI51gQ=",
 			"dev": true
-		},
-		"underscore.string": {
-			"version": "3.0.3",
-			"resolved": "http://registry.npmjs.org/underscore.string/-/underscore.string-3.0.3.tgz",
-			"integrity": "sha1-Rhe4waJQz25QZPu7Nj0PqWzxRVI="
-		},
-		"underscore.string.fp": {
-			"version": "1.0.4",
-			"resolved": "https://registry.npmjs.org/underscore.string.fp/-/underscore.string.fp-1.0.4.tgz",
-			"integrity": "sha1-BUs/GEO8rlYShsh95eiHm0/Jg2Q=",
-			"requires": {
-				"chickencurry": "1.1.1",
-				"compose-function": "^2.0.0",
-				"reverse-arguments": "1.0.0",
-				"underscore.string": "3.0.3"
-			}
 		},
 		"unescape": {
 			"version": "0.2.0",
