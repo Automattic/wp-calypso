@@ -123,8 +123,16 @@ class SelectDropdownExample extends React.PureComponent {
 							label: 'Scheduled',
 							icon: <Gridicon icon="calendar" size={ 18 } />,
 						},
-						{ value: 'drafts', label: 'Drafts', icon: <Gridicon icon="create" size={ 18 } /> },
-						{ value: 'trashed', label: 'Trashed', icon: <Gridicon icon="trash" size={ 18 } /> },
+						{
+							value: 'drafts',
+							label: 'Drafts',
+							icon: <Gridicon icon="create" size={ 18 } />,
+						},
+						{
+							value: 'trashed',
+							label: 'Trashed',
+							icon: <Gridicon icon="trash" size={ 18 } />,
+						},
 					] }
 				/>
 
@@ -210,6 +218,14 @@ class SelectDropdownExample extends React.PureComponent {
 					<DropdownSeparator />
 					<DropdownItem count={ 3 }>Trashed</DropdownItem>
 				</SelectDropdown>
+
+				<h3 style={ { marginTop: 20 } }>Disabled State</h3>
+				<SelectDropdown
+					compact={ this.state.compactButtons }
+					options={ this.props.options }
+					onSelect={ this.onDropdownSelect }
+					disabled={ true }
+				/>
 			</div>
 		);
 	}
