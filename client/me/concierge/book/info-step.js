@@ -150,7 +150,9 @@ class InfoStep extends Component {
 							value={ phoneNumber }
 						/>
 						<FormSettingExplanation>
-							{ translate( 'So that we can send you a reminder.' ) }
+							{ translate(
+								'We will not call you — this is so that we can send you a reminder. Check your email for the link to join our screenshare.'
+							) }
 						</FormSettingExplanation>
 					</FormFieldset>
 
