@@ -80,7 +80,7 @@ export class Jetpack_Tiled_Gallery_Grouper {
 	};
 
 	get_images_with_sizes = attachments => {
-		let images_with_sizes = [];
+		const images_with_sizes = [];
 
 		for ( const image of attachments ) {
 			// Attachments now already include all the meta we need
@@ -98,7 +98,7 @@ export class Jetpack_Tiled_Gallery_Grouper {
 	read_row = () => {
 		const vector = this.get_current_row_size();
 
-		let row = [];
+		const row = [];
 		for ( const group_size of vector ) {
 			row.push( new Jetpack_Tiled_Gallery_Group( this.images.slice( 0, group_size ) ) );
 		}
@@ -107,7 +107,7 @@ export class Jetpack_Tiled_Gallery_Grouper {
 	};
 
 	get_grouped_images = () => {
-		let grouped_images = [];
+		const grouped_images = [];
 		// @TODO change back to while() if we're reducing `images` somewhere?
 		this.images.forEach( () => {
 			// while ( ! empty( $this->images ) ) {
@@ -130,7 +130,7 @@ export class Jetpack_Tiled_Gallery_Grouper {
 	calculate_group_sizes = row => {
 		// Storing the calculated group heights in an array for rounding them later while preserving their sum
 		// This fixes the rounding error that can lead to a few ugly pixels sticking out in the gallery
-		let group_widths_array = [];
+		const group_widths_array = [];
 		for ( const group of row.groups ) {
 			group.height = row.height;
 			// Storing the raw calculations in a separate property to prevent
@@ -139,7 +139,10 @@ export class Jetpack_Tiled_Gallery_Grouper {
 				( row.raw_height - this.margin * group.images.length ) * group.ratio + this.margin;
 			group_widths_array.push( group.raw_width );
 		}
-		let rounded_group_widths_array = get_rounded_constrained_array( group_widths_array, row.width );
+		const rounded_group_widths_array = get_rounded_constrained_array(
+			group_widths_array,
+			row.width
+		);
 
 		for ( const group of row.groups ) {
 			// @TODO check what happens to `rounded_image_heights_array`
@@ -152,7 +155,7 @@ export class Jetpack_Tiled_Gallery_Grouper {
 	calculate_image_sizes = group => {
 		// Storing the calculated image heights in an array for rounding them later while preserving their sum
 		// This fixes the rounding error that can lead to a few ugly pixels sticking out in the gallery
-		let image_heights_array = [];
+		const image_heights_array = [];
 		for ( const image of group.images ) {
 			image.width = group.width - this.margin;
 			// Storing the raw calculations in a separate property for diagnostics
@@ -161,7 +164,7 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		}
 
 		const image_height_sum = group.height - image_heights_array.length * this.margin;
-		let rounded_image_heights_array = get_rounded_constrained_array(
+		const rounded_image_heights_array = get_rounded_constrained_array(
 			image_heights_array,
 			image_height_sum
 		);
