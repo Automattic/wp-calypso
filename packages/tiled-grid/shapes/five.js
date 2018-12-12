@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { Jetpack_Tiled_Gallery_Shape } from './super';
+import { Jetpack_Tiled_Gallery_Shape } from './jetpack-tiled-gallery-shape';
 
 export class Five extends Jetpack_Tiled_Gallery_Shape {
 	static shape = [ 1, 1, 1, 1, 1 ];

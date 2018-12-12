@@ -18,10 +18,11 @@ import { inspect } from 'util';
  */
 import { attachments } from './attachments';
 import { Jetpack_Tiled_Gallery_Grouper } from './grouper';
+import { Jetpack_Tiled_Gallery_Shape } from './shapes/jetpack-tiled-gallery-shape';
 
 const grouper = new Jetpack_Tiled_Gallery_Grouper( attachments );
 
-//Jetpack_Tiled_Gallery_Shape::reset_last_shape();
+Jetpack_Tiled_Gallery_Shape.reset_last_shape();
 
 const output = inspect( grouper.grouped_images, { showHidden: false, depth: null } );
 
