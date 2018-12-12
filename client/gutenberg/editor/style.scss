@@ -25,6 +25,10 @@ $gutenberg-breakpoint-sm: 782px;
 	}
 }
 
+.is-group-gutenberg.layout {
+	background-color: var( --color-surface );
+}
+
 .is-group-gutenberg::before {
 	content: '';
 	position: fixed;
