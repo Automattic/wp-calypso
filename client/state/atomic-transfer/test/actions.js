@@ -62,12 +62,12 @@ describe( 'action', () => {
 
 	describe( 'initiateAtomicTransfer', () => {
 		test( 'should return an initiate transfer request action', () => {
-			const requestAction = initiateAtomicTransfer( 1, { plugin_slug: 'akismet' } );
+			const requestAction = initiateAtomicTransfer( 1, [ 'plugin_slug', 'akismet' ] );
 
 			expect( requestAction ).to.eql( {
 				type: ATOMIC_TRANSFER_INITIATE,
 				siteId: 1,
-				module: { plugin_slug: 'akismet' },
+				module: [ 'plugin_slug', 'akismet' ],
 			} );
 		} );
 	} );
@@ -79,7 +79,7 @@ describe( 'action', () => {
 			expect( requestAction ).to.eql( {
 				type: ATOMIC_TRANSFER_INITIATE,
 				siteId: 1,
-				module: { plugin_slug: 'akismet' },
+				module: [ 'plugin_slug', 'akismet' ],
 			} );
 		} );
 	} );
@@ -91,12 +91,13 @@ describe( 'action', () => {
 			expect( requestAction ).to.eql( {
 				type: ATOMIC_TRANSFER_INITIATE,
 				siteId: 1,
-				module: {
-					plugin_zip: {
+				module: [
+					'plugin_file',
+					{
 						file: '',
 						size: 0,
 					},
-				},
+				],
 			} );
 		} );
 	} );
@@ -108,12 +109,13 @@ describe( 'action', () => {
 			expect( requestAction ).to.eql( {
 				type: ATOMIC_TRANSFER_INITIATE,
 				siteId: 1,
-				module: {
-					theme_zip: {
+				module: [
+					'theme_file',
+					{
 						file: '',
 						size: 0,
 					},
-				},
+				],
 			} );
 		} );
 	} );
