@@ -83,6 +83,12 @@ export class SiteStyleStep extends Component {
 		};
 	}
 
+	componentDidMount() {
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+		} );
+	}
+
 	handleStyleOptionChange = event => {
 		const selectedStyle = find( this.props.styleOptions, [ 'value', event.currentTarget.value ] );
 		this.setState(
@@ -142,12 +148,6 @@ export class SiteStyleStep extends Component {
 							</div>
 						</form>
 					</div>
-					{
-						// TODO: Plug in site mock component
-						// this.state.siteStyle
-						// site title
-						// site information
-					 }
 				</Card>
 			</div>
 		);
