@@ -8,7 +8,10 @@ import { Icon } from '@wordpress/components';
 /**
  * Module variables
  */
-// @TODO: Import those from https://github.com/Automattic/social-logos when that's possible
+// @TODO: Import those from https://github.com/Automattic/social-logos when that's possible.
+// Currently we can't directly import icons from there, because all icons are bundled in a single file.
+// This means that to import an icon from there, we'll need to add the entire bundle with all icons to our build.
+// In the future we'd want to export each icon in that repo separately, and then import them separately here.
 const FacebookIcon = (
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 		<rect x="0" fill="none" width="24" height="24" />
