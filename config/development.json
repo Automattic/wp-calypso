@@ -221,4 +221,5 @@
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false
 	}
+
 }
