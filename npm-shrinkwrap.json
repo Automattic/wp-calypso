@@ -4837,9 +4837,9 @@
 			}
 		},
 		"clipboard": {
-			"version": "2.0.1",
-			"resolved": "https://registry.npmjs.org/clipboard/-/clipboard-2.0.1.tgz",
-			"integrity": "sha512-7yhQBmtN+uYZmfRjjVjKa0dZdWuabzpSKGtyQZN+9C8xlC788SSJjOHWh7tzurfwTqTD5UDYAhIv5fRJg3sHjQ==",
+			"version": "2.0.4",
+			"resolved": "https://registry.npmjs.org/clipboard/-/clipboard-2.0.4.tgz",
+			"integrity": "sha512-Vw26VSLRpJfBofiVaFb/I8PVfdI1OxKcYShe6fm0sP/DtmiWQNCjhM/okTvdCo0G+lMMm1rMYbk4IK4x1X+kgQ==",
 			"requires": {
 				"good-listener": "^1.2.2",
 				"select": "^1.1.2",
