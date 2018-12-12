@@ -43,7 +43,7 @@ export const fetchAtomicTransfers = siteId => ( {
  * @param {Object} module The type of transfer trigger. `pluginZip`, `pluginSlug`, or `themeZip` as key.
  * @returns {Object} An action object
  */
-export const inititateAtomicTransfer = ( siteId, module ) => ( {
+export const initiateAtomicTransfer = ( siteId, module ) => ( {
 	type: ATOMIC_TRANSFER_INITIATE,
 	siteId,
 	module,
