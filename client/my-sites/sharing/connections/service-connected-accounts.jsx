@@ -17,13 +17,14 @@ import Button from 'components/button';
 const SharingServiceConnectedAccounts = ( { children, connect, service, translate } ) => (
 	<div className="sharing-service-accounts-detail">
 		<ul className="sharing-service-connected-accounts">{ children }</ul>
-		{ 'publicize' === service.type && (
-			<Button onClick={ connect }>
-				{ translate( 'Connect a different account', {
-					comment: 'Sharing: Publicize connections',
-				} ) }
-			</Button>
-		) }
+		{ 'publicize' === service.type &&
+			'google_plus' !== service.ID && (
+				<Button onClick={ connect }>
+					{ translate( 'Connect a different account', {
+						comment: 'Sharing: Publicize connections',
+					} ) }
+				</Button>
+			) }
 	</div>
 );
 
