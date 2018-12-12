@@ -32,8 +32,11 @@ test-results*.xml
 /public/*.js.map
 /public/*.css
 /public/*.css.map
+/public/map/*
 /public/sections/*
 /public/sections-rtl/*
+/public/images/*.jpg
+/public/images/*.png
 /public/images/*.svg
 /server/devdocs/search-index.js
 /server/devdocs/components-usage-stats.json
