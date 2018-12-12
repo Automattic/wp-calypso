@@ -31,9 +31,9 @@ export class Jetpack_Tiled_Gallery_Shape {
 		this.shapes_used.push( last_shape );
 	}
 
-	static reset_last_shape = () => {
+	static reset_last_shape() {
 		this.shapes_used = [];
-	};
+	}
 
 	sum_ratios( number_of_images = 3 ) {
 		return sum( map( take( this.images, number_of_images ), property( 'ratio' ) ) );
