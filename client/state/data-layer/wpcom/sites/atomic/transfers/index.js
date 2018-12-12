@@ -14,9 +14,10 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { requestSite } from 'state/sites/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
+	atomicTransferComplete,
+	atomicTransferFetchingFailure,
 	fetchAtomicTransfer,
 	setAtomicTransfer,
-	atomicTransferComplete,
 } from 'state/atomic-transfer/actions';
 import transferStates from 'state/atomic-transfer/constants';
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -99,7 +100,7 @@ export const receiveTransfer = ( action, transfer ) => {
 	const { atomic_transfer_id, status } = transfer;
 	const { siteId } = action;
 
-	if ( status === transferStates.COMPLETED ) {
+	if ( status === transferStates.ACTIVE ) {
 		return [
 			setAtomicTransfer( siteId, transfer ),
 			recordTracksEvent( 'calypso_atomic_transfer_complete', {
@@ -136,9 +137,8 @@ registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfer/index.js', {
 	[ ATOMIC_TRANSFER_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: getTransfer,
-			onSuccess: receiveTransfers,
-			onError: receiveError,
-			onProgress: updateUploadProgress,
+			onSuccess: ( { siteId }, transfer ) => setAtomicTransfer( siteId, transfer ),
+			onError: ( { siteId } ) => atomicTransferFetchingFailure( siteId ),
 		} ),
 	],
 	[ ATOMIC_TRANSFER_INITIATE ]: [

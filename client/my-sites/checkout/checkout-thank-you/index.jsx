@@ -619,7 +619,7 @@ export default connect(
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
 			transferComplete:
-				transferStates.COMPLETED ===
+				transferStates.ACTIVE ===
 				get( getAtomicTransfer( state, siteId ), 'status', transferStates.PENDING ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 		};
