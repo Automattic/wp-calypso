@@ -83,6 +83,12 @@ export class SiteStyleStep extends Component {
 		};
 	}
 
+	componentDidMount() {
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+		} );
+	}
+
 	handleStyleOptionChange = event => {
 		const selectedStyle = find( this.props.styleOptions, [ 'value', event.currentTarget.value ] );
 		this.setState(
