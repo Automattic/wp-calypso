@@ -32,16 +32,21 @@ import { errorNotice } from 'state/notices/actions';
 export const initiateTransfer = action => {
 	const { siteId, module } = action;
 
-	return http(
-		{
-			apiNamespace: 'wpcom/v2',
-			body: {},
-			formData: [ module ],
-			method: 'POST',
-			path: `/sites/${ siteId }/atomic/transfers`,
-		},
-		action
-	);
+	return [
+		recordTracksEvent( 'calypso_atomic_transfer_inititate_transfer', {
+			context: module[ 0 ],
+		} ),
+		http(
+			{
+				apiNamespace: 'wpcom/v2',
+				body: {},
+				formData: [ module ],
+				method: 'POST',
+				path: `/sites/${ siteId }/atomic/transfers`,
+			},
+			action
+		),
+	];
 };
 
 /**
@@ -79,10 +84,10 @@ const showErrorNotice = error => {
 	return errorNotice( translate( 'Problem uploading the plugin or theme.' ) );
 };
 
-export const receiveError = ( { siteId }, error ) => {
+export const receiveError = ( { siteId, module }, error ) => {
 	return [
-		recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
-			context: 'plugin_upload',
+		recordTracksEvent( 'calypso_atomic_transfer_inititate_failure', {
+			context: module[ 0 ],
 			error: error.error,
 		} ),
 		showErrorNotice( error ),
