@@ -9,7 +9,7 @@
     "url": "git+https://github.com/Automattic/wp-calypso.git"
   },
   "author": "@automattic",
-  "license": "GPL-2.0",
+  "license": "GPL-2.0-or-later",
   "bin": {
     "i18n-calypso": "bin/index.js"
   },
