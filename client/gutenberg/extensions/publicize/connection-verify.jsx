@@ -15,7 +15,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { Button, Notice } from '@wordpress/components';
-import { Component } from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -24,7 +24,7 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class PublicizeConnectionVerify extends Component {
 	state = {
-		failedConnections: {},
+		failedConnections: [],
 		isLoading: false,
 	};
 
@@ -92,9 +92,11 @@ class PublicizeConnectionVerify extends Component {
 		}, 500 );
 	};
 
-	render() {
+	renderRefreshableConnections() {
 		const { failedConnections } = this.state;
-		if ( failedConnections.length > 0 ) {
+		const refreshableConnections = failedConnections.filter( connection => connection.can_refresh );
+
+		if ( refreshableConnections.length ) {
 			return (
 				<Notice className="jetpack-publicize-notice" isDismissible={ false } status="error">
 					<p>
@@ -102,7 +104,7 @@ class PublicizeConnectionVerify extends Component {
 							'Before you hit Publish, please refresh the following connection(s) to make sure we can Publicize your post:'
 						) }
 					</p>
-					{ failedConnections.filter( connection => connection.can_refresh ).map( connection => (
+					{ refreshableConnections.map( connection => (
 						<Button
 							href={ connection.refresh_url }
 							isSmall
@@ -116,7 +118,34 @@ class PublicizeConnectionVerify extends Component {
 				</Notice>
 			);
 		}
+
 		return null;
+	}
+
+	renderNonRefreshableConnections() {
+		const { failedConnections } = this.state;
+		const nonRefreshableConnections = failedConnections.filter(
+			connection => ! connection.can_refresh
+		);
+
+		if ( nonRefreshableConnections.length ) {
+			return nonRefreshableConnections.map( connection => (
+				<Notice className="jetpack-publicize-notice" isDismissible={ false } status="error">
+					<p>{ connection.test_message }</p>
+				</Notice>
+			) );
+		}
+
+		return null;
+	}
+
+	render() {
+		return (
+			<Fragment>
+				{ this.renderRefreshableConnections() }
+				{ this.renderNonRefreshableConnections() }
+			</Fragment>
+		);
 	}
 }
 
