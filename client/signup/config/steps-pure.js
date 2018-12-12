@@ -164,8 +164,8 @@ export function generateSteps( {
 		'plans-store-nux': {
 			stepName: 'plans-store-nux',
 			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],
-			providesDependencies: [ 'cartItem', 'privacyItem' ],
+			dependencies: [ 'siteSlug', 'siteId', 'domainItem' ], // same here
+			providesDependencies: [ 'cartItem', 'privacyItem' ], // same here
 		},
 
 		domains: {
