@@ -19,10 +19,6 @@
 		display: flex;
 		align-items: flex-start;
 
-		.site-mockup__viewport {
-			transition: transform 0.2s ease-in-out;
-		}
-
 		.site-mockup__viewport.is-desktop {
 			margin-right: 16px;
 
@@ -75,7 +71,14 @@
 	background: $white;
 	position: relative;
 	box-shadow: 0 0 0 1px $gray;
-	transition: transform 0.2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+	transition: all 0.2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+
+	// Hide the mockups until we have vertical
+	// data to show.
+	.is-empty & {
+		opacity: 0;
+		transform: translateY( 200px );
+	}
 
 	&.is-desktop {
 		border-radius: 4px;
@@ -85,5 +88,6 @@
 	&.is-mobile {
 		border-radius: 12px;
 		width: 280px;
+		transition-delay: 0.2s;
 	}
 }
