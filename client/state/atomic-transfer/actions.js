@@ -5,6 +5,7 @@
  */
 
 import {
+	ATOMIC_LATEST_TRANSFER_REQUEST,
 	ATOMIC_TRANSFER_COMPLETE,
 	ATOMIC_TRANSFER_INITIATE,
 	ATOMIC_TRANSFER_REQUEST,
@@ -23,6 +24,17 @@ export const fetchAtomicTransfer = ( siteId, transferId ) => ( {
 	type: ATOMIC_TRANSFER_REQUEST,
 	siteId,
 	transferId,
+} );
+
+/**
+ * Query for the latest atomic transfer for a given site.
+ *
+ * @param {number} siteId     The id of the site to query.
+ * @returns {Object} An action object
+ */
+export const fetchLatestAtomicTransfer = siteId => ( {
+	type: ATOMIC_LATEST_TRANSFER_REQUEST,
+	siteId,
 } );
 
 /**

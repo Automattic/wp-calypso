@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import {
+	ATOMIC_LATEST_TRANSFER_REQUEST,
 	ATOMIC_TRANSFER_INITIATE,
 	ATOMIC_TRANSFER_REQUEST,
 	ATOMIC_TRANSFERS_REQUEST,
@@ -79,6 +80,22 @@ export const getTransfer = action =>
 			apiNamespace: 'wpcom/v2',
 			method: 'GET',
 			path: `/sites/${ action.siteId }/atomic/transfers/${ action.transferId }`,
+		},
+		action
+	);
+
+/**
+ * Retreives the latest Atomic transfer record for a site.
+ *
+ * @param {?Object} action default action to call on HTTP events
+ * @returns {Object} action object
+ */
+export const getLatestTransfer = action =>
+	http(
+		{
+			apiNamespace: 'wpcom/v2',
+			method: 'GET',
+			path: `/sites/${ action.siteId }/atomic/transfers/latest`,
 		},
 		action
 	);
@@ -157,6 +174,9 @@ const options = {
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfer/index.js', {
+	[ ATOMIC_LATEST_TRANSFER_REQUEST ]: [
+		dispatchRequestEx( { ...options, fetch: getLatestTransfer } ),
+	],
 	[ ATOMIC_TRANSFERS_REQUEST ]: [ dispatchRequestEx( { ...options, fetch: getTransfers } ) ],
 	[ ATOMIC_TRANSFER_REQUEST ]: [ dispatchRequestEx( { ...options, fetch: getTransfer } ) ],
 	[ ATOMIC_TRANSFER_INITIATE ]: [ dispatchRequestEx( { ...options, fetch: initiateTransfer } ) ],
