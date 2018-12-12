@@ -92,7 +92,7 @@
   // Primary buttons
   .wpnc__button.is-primary {
     background: $blue-medium;
-    border-color: $blue-wordpress;
+    border-color: var( --color-primary );
     color: $white;
 
     &:hover, &:focus {

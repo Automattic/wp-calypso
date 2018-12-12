@@ -28,18 +28,18 @@
 
   // Links
   a, a:visited {
-    color: $blue-wordpress;
+    color: var( --color-primary );
     text-decoration: none;
   }
 
   a:hover, a:focus, a:active {
-    color: $blue-wordpress;
+    color: var( --color-primary );
   }
 
   button {
     background-color: transparent;
     border: none;
-    color: $blue-wordpress;
+    color: var( --color-primary );
     cursor: pointer;
     font-size: inherit;
     outline: none;
@@ -138,7 +138,7 @@
     color: $gray-text-min;
 
     &:hover {
-      color: $blue-wordpress;
+      color: var( --color-primary );
     }
   }
 
