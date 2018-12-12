@@ -238,7 +238,7 @@
 	}
 
 	a {
-		color: $blue-light;
+		color: var( --color-primary-light );
 		text-decoration: underline;
 	}
 
@@ -254,7 +254,7 @@
 	}
 
 	.auth__self-hosted-instructions-close:hover {
-		color: $blue-light;
+		color: var( --color-primary-light );
 	}
 
 }
