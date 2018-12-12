@@ -5,22 +5,37 @@ import { Jetpack_Tiled_Gallery_Group } from './group.js';
 import { get_rounded_constrained_array } from './constrained-array-rounding.js';
 import { CONTENT_WIDTH } from './constants.js';
 
+import {
+		Reverse_Symmetric_Row,
+		Long_Symmetric_Row,
+		Symmetric_Row,
+		One_Three,
+		Three_One,
+		One_Two,
+		Five,
+		Four,
+		Three,
+		Two_One,
+		Panoramic,
+} from './shapes';
+
 export class Jetpack_Tiled_Gallery_Grouper {
 	margin = 4;
 
-	shapes = [
-		'Reverse_Symmetric_Row',
-		'Long_Symmetric_Row',
-		'Symmetric_Row',
-		'One_Three',
-		'Three_One',
-		'One_Two',
-		'Five',
-		'Four',
-		'Three',
-		'Two_One',
-		'Panoramic',
-	];
+		// This list is ordered. If you put a shape that's likely to occur on top, it will happen all the time.
+	shapes = Object.freeze([
+		Reverse_Symmetric_Row,
+		Long_Symmetric_Row,
+		Symmetric_Row,
+		One_Three,
+		Three_One,
+		One_Two,
+		Five,
+		Four,
+		Three,
+		Two_One,
+		Panoramic,
+	]);
 
 	images = [];
 

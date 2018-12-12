@@ -1,7 +1,9 @@
 {
   "name": "@automattic/tiled-grid",
   "private": "true",
-  "dependencies": {},
+  "dependencies": {
+	  "lodash": "^4.17.11"
+  },
   "devDependencies": {
     "@babel/runtime": "^7.2.0",
     "concurrently": "^4.1.0",

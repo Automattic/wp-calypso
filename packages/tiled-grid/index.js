@@ -11,7 +11,7 @@
 
 import { attachments } from './attachments';
 import { Jetpack_Tiled_Gallery_Grouper } from './grouper';
-import { Jetpack_Tiled_Gallery_Shape } from './shape';
+import { Jetpack_Tiled_Gallery_Shape } from './shapes/super';
 
 const grouper = new Jetpack_Tiled_Gallery_Grouper( attachments );
 
