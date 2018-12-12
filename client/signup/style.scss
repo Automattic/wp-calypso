@@ -1,20 +1,8 @@
+// Adjust the layout for the signup header.
 .is-section-signup {
-	// Adjust the layout for the missing masterbar.
 	.layout__content {
-		padding: 0;
-		overflow: visible;
+		padding: 32px 0 0 0;
 	}
-}
-
-// Each step is positioned absolutely to allow
-// for transitions between them.
-.signup__step {
-	padding-top: 48px; // Make room for .signup__header
-	position: absolute;
-		top: 0;
-		right: 0;
-		left: 0;
-	//overflow: hidden; // I don't know why this is here... -shaun
 }
 
 
@@ -22,6 +10,16 @@
 .step-wrapper {
 	max-width: 960px;
 	margin: 0 auto;
+
+	// This fixes a bug with .about__pressable-wrapper
+	// that causes a horizontal scrollbar. -shaun
+	overflow: hidden;
+
+	// The "fix" above causes its own issue with card
+	// border (which are really box-shadows) being
+	// cut off on the bottom. 4px to account for
+	// input:focus states. -shaun
+	padding: 1px 4px;
 
 	// Some steps (like plans) need a larger
 	// width column.
@@ -74,75 +72,6 @@
 	left: 16px;
 }
 
-.signup__step {
-	overflow: visible;
-}
-
-
-// Signup Transitions
-.signup__step-enter {
-	opacity: 0;
-
-	.step-wrapper__content {
-		//transform: translateX( 32px );
-		transition: 0.2s ease-in-out;
-		transition-delay: 0.2s;
-		transform: translate3d( 0, 32px, 0 );
-	}
-}
-
-.signup__step-enter.signup__step-enter-active {
-	opacity: 1;
-	transition: 0.2s ease-in-out;
-	transition-delay: 0.2s;
-
-	.step-wrapper__content {
-		//transform: translateX( 0 );
-		transition: 0.2s ease-in-out;
-		transition-delay: 0.2s;
-		transform: translate3d( 0, 0, 0 );
-		//transition: 200ms ease-in-out;
-		//transition-delay: 1.5s;
-	}
-}
-
-.signup__step-exit {
-	opacity: 1;
-
-	.step-wrapper__content {
-		//transform: translateX( 0 );
-		transition: 0.2s ease-in-out;
-		transform: translate3d( 0, 0, 0 );
-	}
-}
-
-.signup__step-exit.signup__step-exit-active {
-	opacity: 0;
-	transition: 0.15s ease-in-out;
-
-	.step-wrapper__content {
-		//transform: translateX( 32px );
-		transition: 0.2s ease-in-out;
-		transform: translate3d( 0, 32px, 0 ) scale( 0.9 );
-		//transition: 200ms ease-in-out;
-	}
-}
-
-.is-section-signup .layout__content {
-	overflow: visible;
-}
-
-/* New Signup Styles */
-
-
-.formatted-header__title {
-	font-family: $signup-sans;
-	font-size: 2.953em;
-	font-weight: 700;
-	line-height: 1.2;
-	margin-top: 1em;
-}
-
 
 .is-section-signup .layout__content,
 .is-section-signup .layout__primary {
@@ -184,14 +113,4 @@
 
 .is-section-signup .site-type__wrapper .site-type__option:first-child {
 	border-top: none;
-}
-
-@include breakpoint( '>1040px' ) {
- 	.formatted-header__title {
-		font-size: 3.375em;
-	}
-
- 	.formatted-header__subtitle {
-		font-size: 1.313em;
-	}
 }
