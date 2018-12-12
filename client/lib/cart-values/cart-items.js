@@ -1058,8 +1058,14 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		return 'FREE_WITH_PLAN';
 	}
 
-	if ( isDomainMapping( suggestion ) && isDomainMappingFree( selectedSite ) ) {
-		return 'FREE_WITH_PLAN';
+	if ( isDomainMapping( suggestion ) ) {
+		if ( isDomainMappingFree( selectedSite ) ) {
+			return 'FREE_WITH_PLAN';
+		}
+
+		if ( withPlansOnly ) {
+			return 'INCLUDED_IN_HIGHER_PLAN';
+		}
 	}
 
 	if ( isDomainOnly ) {
