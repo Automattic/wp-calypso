@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { Jetpack_Tiled_Gallery_Shape } from '../super';
+import { Jetpack_Tiled_Gallery_Shape } from '../jetpack-tiled-gallery-shape';
 
 describe( 'Jetpack_Tiled_Gallery_Shape', () => {
 	test( 'constructor', () => {

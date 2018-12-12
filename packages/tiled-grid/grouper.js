@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { find, repeat } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { CONTENT_WIDTH } from './constants.js';
@@ -10,6 +15,7 @@ import { Jetpack_Tiled_Gallery_Row } from './row.js';
 import {
 	Five,
 	Four,
+	Jetpack_Tiled_Gallery_Shape,
 	Long_Symmetric_Row,
 	One_Three,
 	One_Two,
@@ -18,6 +24,7 @@ import {
 	Symmetric_Row,
 	Three,
 	Three_One,
+	Two,
 	Two_One,
 } from './shapes';
 
@@ -37,6 +44,7 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		Three,
 		Two_One,
 		Panoramic,
+		Two,
 	] );
 
 	images = [];
@@ -57,27 +65,23 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		}
 	};
 
-	get_current_row_size = () => {
-		/*
-		$images_left = count( $this->images );
-		if ( $images_left < 3 ) {
-			return array_fill( 0, $images_left, 1 );
+	get_current_row_size() {
+		if ( this.images.length < 3 ) {
+			return repeat( 1, this.images.length );
 		}
 
-		foreach ( $this->shapes as $shape_name ) {
-			$class_name = "Jetpack_Tiled_Gallery_$shape_name";
-			$shape      = new $class_name( $this->images );
-			if ( $shape->is_possible() ) {
-				Jetpack_Tiled_Gallery_Shape::set_last_shape( $class_name );
-				return $shape->shape;
-			}
+		const Shape = find( this.shapes, Klass => {
+			return new Klass( this.images ).is_possible();
+		} );
+
+		if ( Shape ) {
+			Jetpack_Tiled_Gallery_Shape.set_last_shape( Shape );
+			return Shape.shape;
 		}
 
-		Jetpack_Tiled_Gallery_Shape::set_last_shape( 'Two' );
-		return array( 1, 1 );
-		*/
-		return [ 1, 1 ];
-	};
+		Jetpack_Tiled_Gallery_Shape.set_last_shape( Two );
+		return Two.shape;
+	}
 
 	get_images_with_sizes = attachments => {
 		const images_with_sizes = [];

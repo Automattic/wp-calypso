@@ -20,40 +20,36 @@ import { CONTENT_WIDTH } from '../constants';
 // etc...
 
 export class Jetpack_Tiled_Gallery_Shape {
-	static shapes_used = [];
-
 	constructor( images ) {
 		this.images = images;
 		this.images_left = images.length;
 	}
 
-	sum_ratios = ( number_of_images = 3 ) => {
+	static shapes_used = [];
+
+	static set_last_shape( last_shape ) {
+		this.shapes_used.push( last_shape );
+	}
+
+	static reset_last_shape = () => {
+		this.shapes_used = [];
+	};
+
+	sum_ratios( number_of_images = 3 ) {
 		return sum( map( take( this.images, number_of_images ), property( 'ratio' ) ) );
 		// PHP was:
 		// return array_sum( array_slice( wp_list_pluck( $this->images, 'ratio' ), 0, $number_of_images ) );
-	};
+	}
 
 	next_images_are_symmetric = () => {
 		return this.images_left > 2 && this.images[ 0 ].ratio === this.images[ 2 ].ratio;
 	};
 
-	// @TODO
-	is_not_as_previous = ( n = 1 ) => {
-		return ! take( this.shapes_used, n ).includes( this.constructor );
-
-		/*
-		const shapes = this.shapes_used.slice( -Math.abs( n ) ); // was array_slice()
-
-		// @TODO turn into JS, get_class() is PHP
-		const classReference = get_class( this ); // was get_class();
-
-		// @TODO
-		return ! shapes.contains( classReference ); // was in_array();
-		*/
-
+	is_not_as_previous( n = 1 ) {
+		return ! take( Jetpack_Tiled_Gallery_Shape.shapes_used, n ).includes( this.constructor );
 		// PHP was:
 		//return ! in_array( get_class( $this ), array_slice( self::$shapes_used, -$n ) );
-	};
+	}
 
 	//
 	// Find and replace usage with:
@@ -76,13 +72,5 @@ export class Jetpack_Tiled_Gallery_Shape {
 
 	image_is_panoramic = image => {
 		return image.ratio >= 2;
-	};
-
-	set_last_shape = last_shape => {
-		this.shapes_used.push( last_shape );
-	};
-
-	reset_last_shape = () => {
-		this.shapes_used = [];
 	};
 }
