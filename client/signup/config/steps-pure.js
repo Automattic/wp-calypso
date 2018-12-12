@@ -157,8 +157,8 @@ export function generateSteps( {
 		plans: {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],
-			providesDependencies: [ 'cartItem', 'privacyItem' ],
+			dependencies: [ 'siteSlug', 'siteId', 'domainItem' ], // we should remove domainItem from here. I don't see why we need siteSlug and siteId either - one should be sufficient
+			providesDependencies: [ 'cartItem', 'privacyItem' ], // we should remove privacyItem here too - the plans step doesn't provide it.
 		},
 
 		'plans-store-nux': {
