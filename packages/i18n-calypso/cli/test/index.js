@@ -31,8 +31,6 @@ describe( 'POT', () => {
 			format: 'POT',
 			extras: [ 'date' ],
 		} );
-
-		// fs.writeFileSync( path.join( __dirname, 'pot.pot' ), output, 'utf8' );
 	} );
 
 	test( 'should have all the default headers', () => {
