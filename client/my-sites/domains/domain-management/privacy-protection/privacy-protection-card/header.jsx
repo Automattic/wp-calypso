@@ -18,7 +18,7 @@ const PrivacyProtectionCardHeader = ( { selectedDomainName, selectedSite, transl
 
 		<div className="privacy-protection-card__price">
 			<h4 className="privacy-protection-card__price-per-user">
-				{ translate( 'Free for all domains registered with us.' ) }
+				{ translate( 'Free for all domains registered at WordPress.com.' ) }
 			</h4>
 		</div>
 
