@@ -14,6 +14,7 @@ import * as LoadingError from 'layout/error';
 import * as controller from './controller/index.web';
 import { pathToRegExp } from './utils';
 import { receiveSections, load } from './sections-helper';
+import { addReducerToStore } from 'state/add-reducer';
 
 import sections from './sections';
 receiveSections( sections );
@@ -35,7 +36,7 @@ async function loadSection( context, sectionDefinition ) {
 		// load the section module, i.e., its webpack chunk
 		const requiredModule = await load( sectionDefinition.name, sectionDefinition.module );
 		// call the module initialization function (possibly async, registers page.js handlers etc.)
-		await requiredModule.default( controller.clientRouter );
+		await requiredModule.default( controller.clientRouter, addReducerToStore( context.store ) );
 	} finally {
 		context.store.dispatch( { type: 'SECTION_SET', isLoading: false } );
 

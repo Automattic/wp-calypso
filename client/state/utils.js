@@ -23,7 +23,7 @@ import LRU from 'lru';
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { SerializationResult } from 'state/serialization-result';
 import warn from 'lib/warn';
 
@@ -474,6 +474,40 @@ function serializeState( reducers, state, action ) {
 	);
 }
 
+function applyStoredState( reducers, state, action ) {
+	let hasChanged = false;
+	const nextState = mapValues( reducers, ( reducer, key ) => {
+		// Replace the value for the key we want to init with action.storedState.
+		if ( reducer.storageKey === action.storageKey ) {
+			hasChanged = true;
+			return action.storedState;
+		}
+
+		// Descend into nested state levels, possibly the storageKey will be found there?
+		const prevStateForKey = state[ key ];
+		const nextStateForKey = reducer( prevStateForKey, action );
+		hasChanged = hasChanged || nextStateForKey !== prevStateForKey;
+		return nextStateForKey;
+	} );
+
+	// return identical state if the stored state didn't get applied in this reducer
+	return hasChanged ? nextState : state;
+}
+
+function getStorageKeys( reducers ) {
+	return function*() {
+		for ( const reducer of Object.values( reducers ) ) {
+			if ( reducer.storageKey ) {
+				yield { storageKey: reducer.storageKey, reducer };
+			}
+
+			if ( reducer.getStorageKeys ) {
+				yield* reducer.getStorageKeys();
+			}
+		}
+	};
+}
+
 /**
  * Create a new reducer from original `reducers` by adding a new `reducer` at `keyPath`
  * @param {Function} origReducer Original reducer to copy `storageKey` and other flags from
@@ -612,6 +646,10 @@ function createCombinedReducer( reducers ) {
 		switch ( action.type ) {
 			case SERIALIZE:
 				return serializeState( reducers, state, action );
+
+			case APPLY_STORED_STATE:
+				return applyStoredState( reducers, state, action );
+
 			default:
 				return combined( state, action );
 		}
@@ -619,6 +657,7 @@ function createCombinedReducer( reducers ) {
 
 	combinedReducer.hasCustomPersistence = true;
 	combinedReducer.addReducer = addReducer( combinedReducer, reducers );
+	combinedReducer.getStorageKeys = getStorageKeys( reducers );
 
 	return combinedReducer;
 }

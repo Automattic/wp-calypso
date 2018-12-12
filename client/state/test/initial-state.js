@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { createStore } from 'redux';
 import { useFakeTimers } from 'sinon';
 
 /**
@@ -381,8 +380,6 @@ describe( 'initial-state', () => {
 		// current mocked user ID).
 		const initialState = { currentUser: { id: 123456789 } };
 
-		const serializeState = state => reducer( state, { type: 'SERIALIZE' } );
-
 		beforeEach( () => {
 			isEnabled.mockReturnValue( true );
 			// we use fake timers from Sinon (aka Lolex) because `lodash.throttle` also uses `Date.now()`
@@ -392,8 +389,8 @@ describe( 'initial-state', () => {
 				.spyOn( localforage, 'setItem' )
 				.mockImplementation( value => Promise.resolve( value ) );
 
-			store = createStore( reducer, initialState );
-			persistOnChange( store, serializeState );
+			store = createReduxStore( initialState, reducer );
+			persistOnChange( store );
 		} );
 
 		afterEach( () => {

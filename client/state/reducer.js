@@ -3,13 +3,11 @@
  * External dependencies
  */
 import { reducer as form } from 'redux-form';
-import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import extensionsModule from 'extensions';
 import { combineReducers } from 'state/utils';
 import { reducer as httpData } from 'state/data-layer/http-data';
 
@@ -100,18 +98,6 @@ import userSettings from './user-settings/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
 
-/**
- * Module variables
- */
-
-// Consolidate the extension reducers under 'extensions' for namespacing.
-const extensions = combineReducers(
-	mapValues(
-		extensionsModule.reducers(),
-		reducer => ( reducer.default ? reducer.default : reducer )
-	)
-);
-
 const reducers = {
 	account,
 	accountRecovery,
@@ -134,7 +120,6 @@ const reducers = {
 	dataRequests,
 	documentHead,
 	domains,
-	extensions,
 	form,
 	googleAppsUsers,
 	googleMyBusiness,
