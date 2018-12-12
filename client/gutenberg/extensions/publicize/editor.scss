@@ -1,5 +1,8 @@
 /** @format */
 
+// @TODO: Replace with Gutenberg variables
+$dark-gray-500: #555d66;
+
 .jetpack-publicize-message-box {
 	background-color: #edeff0;
 	border-radius: 4px;
@@ -24,7 +27,7 @@
 }
 
 .jetpack-publicize-gutenberg-social-icon {
-	fill: #555d66;
+	fill: $dark-gray-500;
 	margin-right: 0.2em;
 }
 
