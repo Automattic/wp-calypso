@@ -1,3 +1,4 @@
+/** @format */
 /* eslint-disable */
 
 /**
@@ -15,10 +16,9 @@
  */
 
 export const get_rounded_constrained_array = ( bound_array, sum = false ) => {
-
 	return [];
 };
-	/*
+/*
 	public static function get_rounded_constrained_array( $bound_array, $sum = false ) {
 		// Convert associative arrays before working with them and convert them back before returning the values
 		$keys        = array_keys( $bound_array );
@@ -40,11 +40,10 @@ export const get_rounded_constrained_array = ( bound_array, sum = false ) => {
 	}
 	*/
 
-const get_int_floor_array = ( bound_array ) => {
-
+const get_int_floor_array = bound_array => {
 	return [];
 };
-	/*
+/*
 	private static function get_int_floor_array( $bound_array ) {
 		$bound_array_int_floor = array();
 		foreach ( $bound_array as $i => $value ) {
@@ -60,10 +59,9 @@ const get_int_floor_array = ( bound_array ) => {
 	*/
 
 const adjust_constrained_array = ( bound_array_int, adjustment ) => {
-
 	return [];
-}
-	/*
+};
+/*
 	private static function adjust_constrained_array( &$bound_array_int, $adjustment ) {
 		usort( $bound_array_int, array( 'self', 'cmp_desc_fraction' ) );
 
@@ -80,10 +78,9 @@ const adjust_constrained_array = ( bound_array_int, adjustment ) => {
 	*/
 
 const cmp_desc_fraction = ( a, b ) => {
-
 	return 1;
-}
-	/*
+};
+/*
 	private static function cmp_desc_fraction( $a, $b ) {
 		if ( $a['fraction'] == $b['fraction'] ) {
 			return 0;
@@ -93,10 +90,9 @@ const cmp_desc_fraction = ( a, b ) => {
 	*/
 
 const cmp_asc_index = ( a, b ) => {
-
 	return 1;
-}
-	/*
+};
+/*
 	private static function cmp_asc_index( $a, $b ) {
 		if ( $a['index'] == $b['index'] ) {
 			return 0;

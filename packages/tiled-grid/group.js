@@ -1,13 +1,13 @@
+/** @format */
 /* eslint-disable */
 
-import { Jetpack_Tiled_Gallery_Rectangular_Item } from './rectangular-item.js'
+import { Jetpack_Tiled_Gallery_Rectangular_Item } from './rectangular-item.js';
 
 export class Jetpack_Tiled_Gallery_Group {
 	constructor( images ) {
 		this.images = images;
 		this.ratio = this.get_ratio();
 	}
-
 
 	get_ratio = () => {
 		let ratio = 0;
@@ -22,21 +22,17 @@ export class Jetpack_Tiled_Gallery_Group {
 		}
 
 		return 1 / ratio;
-	}
+	};
 
 	items = ( needs_attachment_link, grayscale ) => {
 		let items = [];
 
 		for ( const image of this.images ) {
 			items.push(
-				new Jetpack_Tiled_Gallery_Rectangular_Item(
-					image,
-					needs_attachment_link,
-					grayscale
-				)
+				new Jetpack_Tiled_Gallery_Rectangular_Item( image, needs_attachment_link, grayscale )
 			);
 		}
 
 		return items;
-	}
+	};
 }

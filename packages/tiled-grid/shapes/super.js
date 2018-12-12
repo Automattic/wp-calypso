@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * External dependencies
  */
@@ -19,7 +20,7 @@ import { CONTENT_WIDTH } from '../constants';
 // etc...
 
 export class Jetpack_Tiled_Gallery_Shape {
-	shapes_used = [];
+	static shapes_used = [];
 
 	constructor( images ) {
 		this.images = images;
