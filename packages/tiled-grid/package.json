@@ -1,0 +1,15 @@
+{
+  "name": "@automattic/tiled-grid",
+  "private": "true",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/runtime": "~7.2.0",
+    "concurrently": "~4.1.0",
+    "nodemon": "~1.18.8"
+  },
+  "scripts": {
+    "build": "calypso-sdk generic index.js build/build.js --watch",
+    "output": "nodemon build/build.js",
+    "start": "concurrently -n build,output \"npm:build\" \"npm:output\""
+  }
+}
