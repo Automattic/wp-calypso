@@ -82,6 +82,7 @@ export default {
 	'blog-themes': ThemeSelectionComponent,
 	'themes-site-selected': ThemeSelectionComponent,
 	user: UserSignupComponent,
+	'user-and-account': UserSignupComponent, // we can reuse the same component
 	'oauth2-user': UserSignupComponent,
 	'oauth2-name': UserSignupComponent,
 	'reader-landing': ReaderLandingStepComponent,

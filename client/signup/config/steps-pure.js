@@ -132,6 +132,19 @@ export function generateSteps( {
 			},
 		},
 
+		// We could add a new step to create the site and the account at the same timeΩ
+		// Something like this
+		'user-and-site': {
+			stepName: 'user-and-site',
+			apiRequestFunction: createAccountAndSite, // This will need to call createAccount and createSite with blog_name and find_available_url set.
+			providesToken: true,
+			providesDependencies: [ 'bearer_token', 'username' ],
+			unstorableDependencies: [ 'bearer_token' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+			},
+		},
+
 		'site-title': {
 			stepName: 'site-title',
 			providesDependencies: [ 'siteTitle' ],
