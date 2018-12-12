@@ -11,10 +11,6 @@ export const isGutenlypsoEnabled = ( state, siteId ) => {
 		return false;
 	}
 
-	if ( isEnabled( 'calypsoify/gutenberg' ) ) {
-		return false;
-	}
-
 	if ( isJetpackSite( state, siteId ) ) {
 		return false;
 	}
@@ -26,6 +22,7 @@ export const isGutenlypsoEnabled = ( state, siteId ) => {
 	if ( isEnabled( 'gutenberg' ) && isEnabled( 'gutenberg/opt-in' ) ) {
 		return true;
 	}
+
 	return false;
 };
 
