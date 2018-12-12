@@ -1,3 +1,5 @@
+/** @format */
+
 $current-theme-height: 56px;
 $current-theme-border: 1px solid transparentize( $gray-lighten-20, 0.25 );
 
@@ -142,7 +144,7 @@ $current-theme-border: 1px solid transparentize( $gray-lighten-20, 0.25 );
 	}
 
 	.current-theme__button:not( .disabled ):hover &:after {
-		@include long-content-fade( $size: 10%, $color: $gray-light );
+		@include long-content-fade( $size: 10% );
 	}
 }
 

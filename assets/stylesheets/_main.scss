@@ -70,6 +70,10 @@ body {
 	}
 }
 
+.layout {
+	background: var( --color-surface-backdrop );
+}
+
 ::selection {
 	background: rgba( $blue-light, 0.7 );
 	color: $gray-dark;
