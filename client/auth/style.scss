@@ -178,7 +178,7 @@
 
 .auth__self-hosted-instructions {
 	color: #fff;
-	background: $blue-dark;
+	background: var( --color-primary-dark );
 	border-radius: 8px;
 	padding: 40px;
 	position: absolute;
@@ -222,7 +222,7 @@
 		content: counter(item);
 		background: $white;
 		border-radius: 100%;
-		color: $blue-dark;
+		color: var( --color-primary-dark );
 		width: 24px;
 		height: 24px;
 		text-align: center;
