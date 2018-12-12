@@ -27,6 +27,7 @@ import { Placeholder } from './placeholder';
 import { JETPACK_DATA_PATH } from 'gutenberg/extensions/presets/jetpack/utils/get-jetpack-data';
 import { requestFromUrl, requestGutenbergBlockAvailability } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
+import { applyAPIMiddleware } from './api-middleware';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -143,6 +144,8 @@ export const post = async ( context, next ) => {
 		registry.reset();
 		dispatch( 'core/edit-post' ).closePublishSidebar();
 		dispatch( 'core/edit-post' ).closeModal();
+
+		applyAPIMiddleware( siteSlug );
 
 		return props => (
 			<Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent, ...props } } />

@@ -12,7 +12,6 @@ import { use, plugins, dispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { applyAPIMiddleware } from './api-middleware';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:gutenberg' );
@@ -59,7 +58,7 @@ const addResetToRegistry = registry => {
 
 // We need to ensure that his function is executed only once to avoid duplicate
 // block registration, API middleware application etc.
-export const initGutenberg = once( ( userId, siteSlug ) => {
+export const initGutenberg = once( userId => {
 	debug( 'Starting Gutenberg editor initialization...' );
 
 	debug( 'Registering data plugins' );
@@ -86,9 +85,6 @@ export const initGutenberg = once( ( userId, siteSlug ) => {
 
 	// Prevent Guided tour from showing when editor loads.
 	dispatch( 'core/nux' ).disableTips();
-
-	debug( 'Applying API middleware' );
-	applyAPIMiddleware( siteSlug );
 
 	debug( 'Loading A8C editor extensions' );
 	loadA8CExtensions();
