@@ -368,7 +368,7 @@
     }
 
     .wpnc__comment-unapproved .wpnc__note-icon .wpnc__gridicon {
-      background: $alert-yellow;
+      background: var( --color-warning );
       border-color: $wpnc__yellow-lighter;
     }
 
@@ -777,8 +777,8 @@
 
   .wpnc__comment-unapproved .wpnc__body {
     .wpnc__body-content {
-      box-shadow: inset 4px 0 0 $alert-yellow;
-      border-bottom: 1px solid $alert-yellow;
+      box-shadow: inset 4px 0 0 var( --color-warning );
+      border-bottom: 1px solid var( --color-warning );
       background: $wpnc__yellow-lighter;
       color: $wpnc__red-darker;
     }
