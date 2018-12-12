@@ -55,7 +55,7 @@ const GooglePlusIcon = (
 
 export default ( { serviceName } ) => {
 	const defaultProps = {
-		className: 'jetpack-publicize-gutenberg-social-icon',
+		className: `jetpack-publicize-gutenberg-social-icon is-${ serviceName }`,
 		size: 24,
 	};
 

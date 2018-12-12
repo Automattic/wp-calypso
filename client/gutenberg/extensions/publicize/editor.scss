@@ -29,6 +29,22 @@ $dark-gray-500: #555d66;
 .jetpack-publicize-gutenberg-social-icon {
 	fill: $dark-gray-500;
 	margin-right: 0.2em;
+
+	&.is-facebook {
+		fill: #3957a2;
+	}
+	&.is-twitter {
+		fill: #55acee;
+	}
+	&.is-linkedin {
+		fill: #0976b4;
+	}
+	&.is-tumblr {
+		fill: #35465c;
+	}
+	&.is-google-plus {
+		fill: #df4a33;
+	}
 }
 
 .jetpack-publicize-connection-label {
