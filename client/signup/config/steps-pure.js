@@ -383,7 +383,17 @@ export function generateSteps( {
 
 		'site-information': {
 			stepName: 'site-information',
-			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [
+				'siteTitle',
+				'address',
+				'email',
+				'phone',
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+			],
 		},
 	};
 }
