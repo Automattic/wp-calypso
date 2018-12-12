@@ -11,7 +11,7 @@ import { initialize, startSubmit, stopSubmit } from 'redux-form';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { navigate } from 'state/ui/actions';
 import { resetLock } from '../../locks/actions';
@@ -124,27 +124,27 @@ export const announceDeleteFailure = () =>
 		id: deleteZoneNotice,
 	} );
 
-const dispatchFetchZonesRequest = dispatchRequestEx( {
+const dispatchFetchZonesRequest = dispatchRequest( {
 	fetch: requestZonesList,
 	onSuccess: updateZonesList,
 	onError: requestZonesError,
 	fromApi: zonesListFromApi,
 } );
 
-const dispatchAddZoneRequest = dispatchRequestEx( {
+const dispatchAddZoneRequest = dispatchRequest( {
 	fetch: createZone,
 	onSuccess: handleZoneCreated,
 	onError: announceSaveFailure,
 	fromApi: zoneFromApi,
 } );
 
-const dispatchSaveZoneRequest = dispatchRequestEx( {
+const dispatchSaveZoneRequest = dispatchRequest( {
 	fetch: saveZone,
 	onSuccess: handleZoneSaved,
 	onError: announceSaveFailure,
 } );
 
-const dispatchDeleteZoneRequest = dispatchRequestEx( {
+const dispatchDeleteZoneRequest = dispatchRequest( {
 	fetch: deleteZone,
 	onSuccess: announceZoneDeleted,
 	onError: announceDeleteFailure,

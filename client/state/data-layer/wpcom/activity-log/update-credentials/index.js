@@ -16,7 +16,7 @@ import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-hap
 import { initConnection, sendEvent } from 'state/happychat/connection/actions';
 import { openChat } from 'state/happychat/ui/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
@@ -223,7 +223,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 registerHandlers( 'state/data-layer/wpcom/activity-log/update-credentials/index.js', {
 	[ JETPACK_CREDENTIALS_UPDATE ]: [
 		primeHappychat,
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: request,
 			onSuccess: success,
 			onError: failure,

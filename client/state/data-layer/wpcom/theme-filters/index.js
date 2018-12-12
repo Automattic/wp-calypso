@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import { THEME_FILTERS_REQUEST, THEME_FILTERS_ADD } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 
@@ -32,7 +32,7 @@ const reportError = () => errorNotice( i18n.translate( 'Problem fetching theme f
 
 registerHandlers( 'state/data-layer/wpcom/theme-filters/index.js', {
 	[ THEME_FILTERS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchFilters,
 			onSuccess: storeFilters,
 			onError: reportError,

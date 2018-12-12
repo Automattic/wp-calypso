@@ -7,7 +7,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	jetpackRemoteInstallComplete,
@@ -83,7 +83,7 @@ export const handleError = ( action, error ) => {
 
 registerHandlers( 'state/data-layer/wpcom/jetpack-install/index.js', {
 	[ JETPACK_REMOTE_INSTALL ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: installJetpackPlugin,
 			onSuccess: handleSuccess,
 			onError: handleError,

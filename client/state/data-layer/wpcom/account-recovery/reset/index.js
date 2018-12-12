@@ -8,7 +8,7 @@ import {
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
 } from 'state/action-types';
 
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -39,9 +39,7 @@ export const onSuccess = () => ( {
 } );
 
 registerHandlers( 'state/data-layer/wpcom/account-recovery/reset/index.js', {
-	[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST ]: [
-		dispatchRequestEx( { fetch, onSuccess, onError } ),
-	],
+	[ ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST ]: [ dispatchRequest( { fetch, onSuccess, onError } ) ],
 } );
 
 export default {};

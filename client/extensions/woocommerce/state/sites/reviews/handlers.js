@@ -13,7 +13,7 @@ import { translate } from 'i18n-calypso';
  */
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { DEFAULT_QUERY } from './utils';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { fetchCounts } from 'woocommerce/state/sites/data/counts/actions';
 import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
@@ -175,21 +175,21 @@ export function announceDeleteFailure() {
 
 export default {
 	[ WOOCOMMERCE_REVIEWS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: handleReviewsRequest,
 			onSuccess: handleReviewsRequestSuccess,
 			onError: handleReviewsRequestError,
 		} ),
 	],
 	[ WOOCOMMERCE_REVIEW_STATUS_CHANGE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: handleChangeReviewStatus,
 			onSuccess: handleChangeReviewStatusSuccess,
 			onError: announceStatusChangeFailure,
 		} ),
 	],
 	[ WOOCOMMERCE_REVIEW_DELETE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: handleDeleteReview,
 			onSuccess: announceDeleteSuccess,
 			onError: announceDeleteFailure,

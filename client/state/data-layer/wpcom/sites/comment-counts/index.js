@@ -10,7 +10,7 @@ import { mapValues } from 'lodash';
  */
 import { COMMENT_COUNTS_REQUEST, COMMENT_COUNTS_UPDATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
@@ -58,7 +58,7 @@ export const updateCommentCounts = ( action, response ) => {
 
 registerHandlers( 'state/data-layer/wpcom/sites/comment-counts/index.js', {
 	[ COMMENT_COUNTS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchCommentCounts,
 			onSuccess: updateCommentCounts,
 			onError: () => {},

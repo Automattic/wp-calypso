@@ -10,7 +10,7 @@ import { map, truncate } from 'lodash';
 import { READER_FEED_SEARCH_REQUEST, READER_FEED_REQUEST } from 'state/action-types';
 import { receiveFeedSearch } from 'state/reader/feed-searches/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 import queryKey from 'state/reader/feed-searches/query-key';
@@ -93,7 +93,7 @@ export function receiveReadFeedError( action, response ) {
 
 registerHandlers( 'state/data-layer/wpcom/read/feed/index.js', {
 	[ READER_FEED_SEARCH_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestReadFeedSearch,
 			onSuccess: receiveReadFeedSearchSuccess,
 			onError: receiveReadFeedSearchError,
@@ -102,7 +102,7 @@ registerHandlers( 'state/data-layer/wpcom/read/feed/index.js', {
 	],
 
 	[ READER_FEED_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestReadFeed,
 			onSuccess: receiveReadFeedSuccess,
 			onError: receiveReadFeedError,

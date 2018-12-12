@@ -11,7 +11,7 @@ import { noop, get } from 'lodash';
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import schema from './schema.json';
 import { clearJITM, insertJITM } from 'state/jitm/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -188,7 +188,7 @@ export const failedJITM = action => ( dispatch, getState ) => {
 
 registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 	[ SECTION_SET ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: handleRouteChange,
 			onSuccess: receiveJITM,
 			onError: failedJITM,
@@ -197,7 +197,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 	],
 
 	[ SELECTED_SITE_SET ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: handleSiteSelection,
 			onSuccess: receiveJITM,
 			onError: failedJITM,
@@ -206,7 +206,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 	],
 
 	[ JITM_DISMISS ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: doDismissJITM,
 			onSuccess: noop,
 			onError: noop,

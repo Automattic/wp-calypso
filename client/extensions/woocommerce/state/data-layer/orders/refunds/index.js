@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
 	fetchRefundsFailure,
 	fetchRefundsSuccess,
@@ -59,8 +59,8 @@ const onSuccess = ( action, { data } ) => dispatch => {
 
 export default {
 	[ WOOCOMMERCE_ORDER_REFUND_CREATE ]: [
-		dispatchRequestEx( {
-			// fetch used in dispatchRequestEx to create the http request
+		dispatchRequest( {
+			// fetch used in dispatchRequest to create the http request
 			fetch: create,
 			onSuccess: onCreateSuccess,
 			onError: onCreateError,
@@ -68,8 +68,8 @@ export default {
 		} ),
 	],
 	[ WOOCOMMERCE_ORDER_REFUNDS_REQUEST ]: [
-		dispatchRequestEx( {
-			// fetch used in dispatchRequestEx to create the http request
+		dispatchRequest( {
+			// fetch used in dispatchRequest to create the http request
 			fetch,
 			onSuccess,
 			onError,

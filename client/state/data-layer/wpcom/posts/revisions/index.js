@@ -9,7 +9,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { POST_REVISIONS_REQUEST } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receivePostRevisions } from 'state/posts/revisions/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -47,7 +47,7 @@ export const fetchPostRevisionsDiffs = action => {
 	);
 };
 
-const dispatchPostRevisionsDiffsRequest = dispatchRequestEx( {
+const dispatchPostRevisionsDiffsRequest = dispatchRequest( {
 	fetch: fetchPostRevisionsDiffs,
 	onSuccess: receiveSuccess,
 	onError: noop,

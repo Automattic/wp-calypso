@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { errorNotice } from 'state/notices/actions';
 import { setMediaExportData } from 'state/site-settings/exporter/actions';
@@ -41,7 +41,7 @@ export const fromApi = response => ( {
 
 registerHandlers( 'state/data-layer/wpcom/sites/exports/media/index.js', {
 	[ EXPORT_MEDIA_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch,
 			onSuccess,
 			onError,

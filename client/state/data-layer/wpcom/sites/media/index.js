@@ -5,7 +5,7 @@
  */
 
 import debug from 'debug';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST } from 'state/action-types';
 import {
@@ -77,7 +77,7 @@ export const receiveMediaItemError = ( { mediaId, siteId } ) =>
 
 registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 	[ MEDIA_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestMedia,
 			onSuccess: requestMediaSuccess,
 			onError: requestMediaError,
@@ -85,7 +85,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 	],
 
 	[ MEDIA_ITEM_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: handleMediaItemRequest,
 			onSuccess: receiveMediaItem,
 			onError: receiveMediaItemError,

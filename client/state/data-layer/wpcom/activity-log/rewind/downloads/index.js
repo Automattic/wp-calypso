@@ -11,7 +11,7 @@ import { pick } from 'lodash';
  */
 import { REWIND_BACKUP } from 'state/action-types';
 import { rewindBackupUpdateError, getRewindBackupProgress } from 'state/activity-log/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -44,7 +44,7 @@ export const receiveBackupError = ( { siteId }, error ) =>
 
 registerHandlers( 'state/data-layer/wpcom/activity-log/rewind/downloads/index.js', {
 	[ REWIND_BACKUP ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: createBackup,
 			onSuccess: receiveBackupSuccess,
 			onError: receiveBackupError,

@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'state/action-types';
@@ -167,7 +167,7 @@ export const retryOrAnnounceSaveFailure = ( action, { message: errorMessage } ) 
 
 registerHandlers( 'state/data-layer/wpcom/jetpack/settings/index.js', {
 	[ JETPACK_SETTINGS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestJetpackSettings,
 			onSuccess: receiveJetpackOnboardingSettings,
 			onError: announceRequestFailure,
@@ -176,7 +176,7 @@ registerHandlers( 'state/data-layer/wpcom/jetpack/settings/index.js', {
 	],
 
 	[ JETPACK_SETTINGS_SAVE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: saveJetpackSettings,
 			onSuccess: handleSaveSuccess,
 			onError: retryOrAnnounceSaveFailure,

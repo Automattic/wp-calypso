@@ -8,7 +8,7 @@
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { setOrderTransaction, setOrderTransactionError } from 'state/order-transactions/actions';
 import { ORDER_TRANSACTION_FETCH } from 'state/action-types';
 import fromApi from './from-api';
@@ -36,7 +36,7 @@ export const onError = ( { orderId }, error ) => setOrderTransactionError( order
 
 registerHandlers( 'state/data-layer/wpcom/me/transactions/order/index.js', {
 	[ ORDER_TRANSACTION_FETCH ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchOrderTransaction,
 			onSuccess,
 			onError,

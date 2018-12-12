@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { errorNotice } from 'state/notices/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { REWIND_RESTORE_PROGRESS_REQUEST } from 'state/action-types';
 import { updateRewindRestoreProgress } from 'state/activity-log/actions';
@@ -88,7 +88,7 @@ export const announceFailure = () =>
 
 registerHandlers( 'state/data-layer/wpcom/activity-log/rewind/restore-status/index.js', {
 	[ REWIND_RESTORE_PROGRESS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchProgress,
 			onSuccess: updateProgress,
 			onError: announceFailure,

@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { convertToCamelCase } from 'state/data-layer/utils';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { GOOGLE_MY_BUSINESS_STATS_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
@@ -58,7 +58,7 @@ export const receiveStatsError = ( action, error ) => {
 
 registerHandlers( 'state/data-layer/wpcom/sites/stats/google-my-business/index.js', {
 	[ GOOGLE_MY_BUSINESS_STATS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchStats,
 			onSuccess: receiveStats,
 			onError: receiveStatsError,

@@ -8,14 +8,14 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { POST_TYPES_REQUEST } from 'state/action-types';
 import { receivePostTypes } from 'state/post-types/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const handlePostTypesRequest = dispatchRequestEx( {
+const handlePostTypesRequest = dispatchRequest( {
 	fetch: action =>
 		http(
 			{

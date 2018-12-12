@@ -15,11 +15,11 @@ import {
 } from 'state/action-types';
 
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const handleSubscribedMembershipsList = dispatchRequestEx( {
+export const handleSubscribedMembershipsList = dispatchRequest( {
 	fetch: action =>
 		http(
 			{

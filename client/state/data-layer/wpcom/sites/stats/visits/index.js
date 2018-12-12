@@ -8,7 +8,7 @@ import { difference } from 'lodash';
  * Internal Dependencies
  */
 import { STATS_CHART_COUNTS_REQUEST } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveChartCounts } from 'state/stats/chart-tabs/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -55,7 +55,7 @@ export const onSuccess = ( { siteId, period }, data ) => receiveChartCounts( sit
 
 registerHandlers( 'state/data-layer/wpcom/sites/stats/visits/index.js', {
 	[ STATS_CHART_COUNTS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch,
 			onSuccess,
 			onError: () => {},

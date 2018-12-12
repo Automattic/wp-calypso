@@ -11,7 +11,7 @@ import { initialize, startSubmit, stopSubmit } from 'redux-form';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { fromApi, toApi } from './util';
 import { updateFeed } from '../../feeds/actions';
@@ -82,13 +82,13 @@ export const announceFailure = action => [
 	} ),
 ];
 
-const dispatchZoneFeedRequest = dispatchRequestEx( {
+const dispatchZoneFeedRequest = dispatchRequest( {
 	fetch: requestZoneFeed,
 	onSuccess: updateZoneFeed,
 	onError: requestZoneFeedError,
 } );
 
-const dispatchSaveZoneFeedRequest = dispatchRequestEx( {
+const dispatchSaveZoneFeedRequest = dispatchRequest( {
 	fetch: saveZoneFeed,
 	onSuccess: announceSuccess,
 	onError: announceFailure,

@@ -3,7 +3,7 @@
  * Internal dependencies
  */
 import { HTTP_DATA_REQUEST, HTTP_DATA_TICK } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 export const httpData = new Map();
 export const listeners = new Set();
@@ -135,7 +135,7 @@ const onSuccess = ( action, apiData ) => {
 
 export default {
 	[ HTTP_DATA_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch,
 			onSuccess,
 			onError,

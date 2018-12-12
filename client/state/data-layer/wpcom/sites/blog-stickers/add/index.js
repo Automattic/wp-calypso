@@ -12,7 +12,7 @@ import { translate } from 'i18n-calypso';
  */
 import { SITES_BLOG_STICKER_ADD } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { removeBlogSticker } from 'state/sites/blog-stickers/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
@@ -58,7 +58,7 @@ export function fromApi( response ) {
 
 registerHandlers( 'state/data-layer/wpcom/sites/blog-stickers/add/index.js', {
 	[ SITES_BLOG_STICKER_ADD ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestBlogStickerAdd,
 			onSuccess: receiveBlogStickerAdd,
 			onError: receiveBlogStickerAddError,
