@@ -9,5 +9,17 @@
 
 	.components-placeholder__fieldset {
 		justify-content: space-around;
+
+		.components-base-control {
+			margin-top: auto;
+		}
+
+		.components-select-control__input {
+			margin: 2px;
+		}
+
+		.components-button {
+			margin-bottom: 1px;
+		}
 	}
 }
