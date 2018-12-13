@@ -118,6 +118,7 @@ class SiteTopicStep extends Component {
 					fallbackSubHeaderText={ commonSubHeaderText }
 					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderContent() }
+					showSiteMockups={ this.props.showSiteMockups }
 				/>
 			</div>
 		);

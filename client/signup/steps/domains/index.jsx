@@ -533,6 +533,7 @@ class DomainsStep extends React.Component {
 						{ this.renderContent() }
 					</TransitionGroup>
 				}
+				showSiteMockups={ this.props.showSiteMockups }
 			/>
 		);
 	}
