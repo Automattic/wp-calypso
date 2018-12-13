@@ -170,23 +170,25 @@ class InlineHelpPopover extends Component {
 
 				{ this.renderSecondaryView() }
 
-				{ showOptOut && (
-					<Button
-						onClick={ this.switchToClassicEditor }
-						className="inline-help__classic-editor-toggle"
-					>
-						{ translate( 'Switch to Classic Editor' ) }
-					</Button>
-				) }
+				{ ! showSecondaryView &&
+					showOptOut && (
+						<Button
+							onClick={ this.switchToClassicEditor }
+							className="inline-help__classic-editor-toggle"
+						>
+							{ translate( 'Switch to Classic Editor' ) }
+						</Button>
+					) }
 
-				{ showOptIn && (
-					<Button
-						onClick={ this.switchToBlockEditor }
-						className="inline-help__gutenberg-editor-toggle"
-					>
-						{ translate( 'Switch to Block Editor' ) }
-					</Button>
-				) }
+				{ ! showSecondaryView &&
+					showOptIn && (
+						<Button
+							onClick={ this.switchToBlockEditor }
+							className="inline-help__gutenberg-editor-toggle"
+						>
+							{ translate( 'Switch to Block Editor' ) }
+						</Button>
+					) }
 
 				{ ! showSecondaryView && (
 					<WpcomChecklist
