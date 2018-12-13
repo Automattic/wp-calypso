@@ -22,7 +22,7 @@ input.input-chrono {
 	border: 1px solid $gray-lighten-30;
 	box-sizing: border-box;
 	background-color: $transparent;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 12px;
 	text-align: left;
 	position: relative;

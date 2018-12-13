@@ -33,7 +33,7 @@
 }
 
 .podcast-cover-image-setting__placeholder {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	display: block;
 	font-size: 13px;
 	font-style: italic;

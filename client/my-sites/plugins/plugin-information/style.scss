@@ -48,7 +48,7 @@
 
 .plugin-information__version-info {
 	font-size: 11px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	text-transform: uppercase;
 	width: 100%;
 

@@ -72,7 +72,7 @@
     color: $orange-jazzy;
 
     &:hover {
-      color: $gray-text-min;
+      color: var( --color-text-subtle );
 
       .gridicon {
         fill: $gray;
@@ -85,7 +85,7 @@
   }
 
   &.inactive-action {
-    color: $gray-text-min;
+    color: var( --color-text-subtle );
 
     &:hover {
       color: $orange-jazzy;

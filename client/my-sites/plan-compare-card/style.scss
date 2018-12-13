@@ -13,7 +13,7 @@
 .plan-compare-card__features {
 	padding: 16px 24px;
 	font-size: 14px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .plan-compare-card__header {
@@ -34,7 +34,7 @@
 .plan-compare-card__line {
 	font-size: 12px;
 	font-weight: normal;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-style: italic;
 }
 

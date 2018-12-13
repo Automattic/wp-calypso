@@ -15,7 +15,7 @@
 }
 
 .clone-cloning__description {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 14px;
 }
 .clone-cloning__button {

@@ -70,7 +70,7 @@
 
 // Clickable Card
 .card__link-indicator {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	display: block;
 	height: 100%;
 	position: absolute;

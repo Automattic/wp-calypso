@@ -54,7 +54,7 @@
 }
 
 .upgrade-nudge__message {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 12px;
 	display: block;
 }

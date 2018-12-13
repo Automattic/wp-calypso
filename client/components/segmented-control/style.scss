@@ -39,7 +39,7 @@
 	border-right: none;
 	font-size: 14px;
 	line-height: 18px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	text-align: center;
 	transition: color 0.1s linear, background-color 0.1s linear;
 

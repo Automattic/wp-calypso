@@ -532,7 +532,7 @@
 				margin-bottom: 12px;
 			}
 			.checkout__wechat-qrcode-redirect {
-				color: $gray-text-min;
+				color: var( --color-text-subtle );
 				font-size: 12px;
 			}
 		}

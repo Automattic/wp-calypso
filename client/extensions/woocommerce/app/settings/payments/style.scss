@@ -91,7 +91,7 @@
 	p.payments__method-suggested {
 		font-size: 11px;
 		text-transform: uppercase;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		display: none;
 	}
 

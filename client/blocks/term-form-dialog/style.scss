@@ -23,7 +23,7 @@
 }
 
 .term-form-dialog__top-level-description {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	display: block;
 	font-weight: normal;
 	margin-left: 52px;

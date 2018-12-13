@@ -54,7 +54,7 @@
 
 .draft__time {
 	font-size: 13px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .draft__excerpt {

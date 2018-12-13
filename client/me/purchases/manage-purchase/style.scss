@@ -155,7 +155,7 @@
 }
 
 .manage-purchase__description {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	display: block;
 }
 
@@ -226,7 +226,7 @@
 	}
 
 	@include breakpoint( '>660px' ) {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		display: block;
 		font-family: $sans;
 		font-size: 12px;
@@ -279,7 +279,7 @@
 }
 
 .manage-purchase__contact-support {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	border-top: solid 1px $gray-lighten-30;
 	margin: 0 auto;
 	padding: 16px;
