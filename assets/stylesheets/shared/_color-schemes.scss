@@ -8,7 +8,7 @@
 
 	--color-accent: #{$blue-medium};
 	--color-accent-light: #{$orange-jazzy};
-	// --color-accent-dark: #{};
+	--color-accent-dark: #{darken( $blue-medium, 8% )};
 
 	--color-success: #{$alert-green};
 	// --color-success-light: #{};
