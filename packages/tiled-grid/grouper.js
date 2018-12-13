@@ -8,7 +8,6 @@ import { find, repeat } from 'lodash';
 /**
  * Internal dependencies
  */
-import { CONTENT_WIDTH } from './constants.js';
 import { getRoundedConstrainedArray } from './constrained-array-rounding';
 import { Jetpack_Tiled_Gallery_Group } from './group.js';
 import { Jetpack_Tiled_Gallery_Row } from './row.js';
@@ -49,8 +48,13 @@ export class Jetpack_Tiled_Gallery_Grouper {
 
 	images = [];
 
-	constructor( attachments /* @TODO probably external API, irrelevant in JS: */ /*shapes */ ) {
-		const content_width = CONTENT_WIDTH;
+	constructor( {
+		attachments,
+		contentWidth,
+		margin,
+		/* @TODO probably external API, irrelevant in JS: shapes */
+	} ) {
+		this.margin = margin;
 
 		// @TODO Let's remove this
 		// if ( shapes ) {
@@ -66,7 +70,7 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		// If we redesign with that flow in mind, this may get much simpler and more testable
 		this.images = this.get_images_with_sizes( attachments );
 		this.grouped_images = this.get_grouped_images();
-		this.apply_content_width( content_width );
+		this.apply_content_width( contentWidth );
 	}
 
 	/* @TODO probably external API, irrelevant in JS: */
