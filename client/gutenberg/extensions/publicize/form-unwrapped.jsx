@@ -18,6 +18,7 @@
 import classnames from 'classnames';
 import { sprintf } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
+import { uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,6 +33,8 @@ class PublicizeFormUnwrapped extends Component {
 	state = {
 		hasEditedShareMessage: false,
 	};
+
+	fieldId = uniqueId( 'jetpack-publicize-message-field-' );
 
 	/**
 	 * Check to see if form should be disabled.
@@ -84,11 +87,12 @@ class PublicizeFormUnwrapped extends Component {
 				<PublicizeSettingsButton refreshCallback={ refreshCallback } />
 				{ connections.some( connection => connection.enabled ) && (
 					<Fragment>
-						<label className="jetpack-publicize-message-note" htmlFor="wpas-title">
+						<label className="jetpack-publicize-message-note" htmlFor={ this.fieldId }>
 							{ __( 'Customize your message' ) }
 						</label>
 						<div className="jetpack-publicize-message-box">
 							<textarea
+								id={ this.fieldId }
 								value={ shareMessage }
 								onChange={ this.onMessageChange }
 								disabled={ this.isDisabled() }
