@@ -110,7 +110,7 @@
 }
 
 .current-plan__header-expires-in {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .current-plan__compare-plans {

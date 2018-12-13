@@ -9,7 +9,7 @@ import { random, map, includes, get, noop } from 'lodash';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import warn from 'lib/warn';
 import { READER_STREAMS_PAGE_REQUEST } from 'state/action-types';
 import { receivePage, receiveUpdates } from 'state/reader/streams/actions';
@@ -250,7 +250,7 @@ export function handlePage( action, data ) {
 
 registerHandlers( 'state/data-layer/wpcom/read/streams/index.js', {
 	[ READER_STREAMS_PAGE_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestPage,
 			onSuccess: handlePage,
 			onError: noop,

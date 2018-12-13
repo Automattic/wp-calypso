@@ -4,7 +4,7 @@
  */
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import { registerHandlers } from 'state/data-layer/handler-registry';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { requestRewindState } from 'state/rewind/actions';
@@ -93,7 +93,7 @@ const setUnknownState = ( { siteId }, error ) => {
 
 registerHandlers( 'state/data-layer/wpcom/sites/rewind', {
 	[ REWIND_STATE_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchRewindState,
 			onSuccess: updateRewindState,
 			onError: setUnknownState,

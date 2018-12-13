@@ -26,7 +26,7 @@
 .theme-setup .active-theme-screenshot__name {
 	font-size: 0.85em;
 	font-weight: 600;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	text-transform: uppercase;
 }
 

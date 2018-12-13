@@ -17,11 +17,11 @@ import {
 } from 'state/action-types';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const handleMailchimpListsList = dispatchRequestEx( {
+export const handleMailchimpListsList = dispatchRequest( {
 	fetch: action =>
 		http(
 			{
@@ -41,7 +41,7 @@ export const handleMailchimpListsList = dispatchRequestEx( {
 	onError: noop,
 } );
 
-export const handleMailchimpSettingsList = dispatchRequestEx( {
+export const handleMailchimpSettingsList = dispatchRequest( {
 	fetch: action =>
 		http(
 			{

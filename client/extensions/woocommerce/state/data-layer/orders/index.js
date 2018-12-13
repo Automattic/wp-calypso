@@ -10,7 +10,7 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
 	deleteOrderError,
 	deleteOrderSuccess,
@@ -123,7 +123,7 @@ export function onOrderSaveFailure( action, error ) {
 
 export default {
 	[ WOOCOMMERCE_ORDER_DELETE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: del,
 			onSuccess: onDeleteSuccess,
 			onError: onDeleteError,
@@ -131,16 +131,16 @@ export default {
 		} ),
 	],
 	[ WOOCOMMERCE_ORDER_REQUEST ]: [
-		dispatchRequestEx( { fetch: requestOrder, onSuccess: receivedOrder, onError: apiError } ),
+		dispatchRequest( { fetch: requestOrder, onSuccess: receivedOrder, onError: apiError } ),
 	],
 	[ WOOCOMMERCE_ORDER_UPDATE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: sendOrder,
 			onSuccess: onOrderSaveSuccess,
 			onError: onOrderSaveFailure,
 		} ),
 	],
 	[ WOOCOMMERCE_ORDERS_REQUEST ]: [
-		dispatchRequestEx( { fetch: requestOrders, onSuccess: receivedOrders, onError: apiError } ),
+		dispatchRequest( { fetch: requestOrders, onSuccess: receivedOrders, onError: apiError } ),
 	],
 };

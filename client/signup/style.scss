@@ -6,10 +6,20 @@
 	&.is-wide-layout {
 		max-width: 1040px;
 	}
-}
 
-.signup__step {
-	overflow: hidden;
+	.form-fieldset {
+		position: relative;
+	}
+
+	.suggestions__wrapper {
+		position: absolute;
+			top: 66px;
+			left: 0;
+			right: 0;
+		max-height: 300px;
+		overflow: auto;
+		box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.2 );
+	}
 }
 
 .signup__step-enter {

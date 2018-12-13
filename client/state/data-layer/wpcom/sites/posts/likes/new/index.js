@@ -8,7 +8,7 @@
  * Internal Dependencies
  */
 import { unlike, addLiker } from 'state/posts/likes/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { POST_LIKE } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
@@ -50,7 +50,7 @@ export function fromApi( response ) {
 
 registerHandlers( 'state/data-layer/wpcom/sites/posts/likes/new/index.js', {
 	[ POST_LIKE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch,
 			onSuccess,
 			onError,

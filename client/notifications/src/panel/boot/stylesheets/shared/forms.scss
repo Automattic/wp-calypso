@@ -19,9 +19,9 @@
   }
 
   &:focus {
-    border-color: $blue-wordpress;
+    border-color: var( --color-primary );
     outline: none;
-    box-shadow: 0 0 0 2px $blue-light;
+    box-shadow: 0 0 0 2px var( --color-primary-light );
 
     &::-ms-clear {
       display: none;

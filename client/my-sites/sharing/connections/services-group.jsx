@@ -23,6 +23,11 @@ import * as Components from './services';
 import ServicePlaceholder from './service-placeholder';
 
 /**
+ * Style dependencies
+ */
+import './services-group.scss';
+
+/**
  * Module constants
  */
 const NUMBER_OF_PLACEHOLDERS = 4;
@@ -32,6 +37,7 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 		return null;
 	}
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="sharing-services-group">
 			<SectionHeader label={ title } />
@@ -50,6 +56,7 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 			</ul>
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 SharingServicesGroup.propTypes = {

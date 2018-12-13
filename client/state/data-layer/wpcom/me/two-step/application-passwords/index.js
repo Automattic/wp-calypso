@@ -11,7 +11,7 @@ import { noop } from 'lodash';
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import schema from './schema';
 import { APPLICATION_PASSWORDS_REQUEST } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveApplicationPasswords } from 'state/application-passwords/actions';
 
@@ -47,7 +47,7 @@ export const handleRequestSuccess = ( action, appPasswords ) =>
 
 registerHandlers( 'state/data-layer/wpcom/me/two-step/application-passwords/index.js', {
 	[ APPLICATION_PASSWORDS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestApplicationPasswords,
 			onSuccess: handleRequestSuccess,
 			onError: noop,

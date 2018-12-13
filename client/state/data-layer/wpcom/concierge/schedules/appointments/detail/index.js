@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { updateConciergeAppointmentDetails } from 'state/concierge/actions';
 import { CONCIERGE_APPOINTMENT_DETAILS_REQUEST } from 'state/action-types';
@@ -40,7 +40,7 @@ export const onError = () =>
 
 registerHandlers( 'state/data-layer/wpcom/concierge/schedules/appointments/detail/index.js', {
 	[ CONCIERGE_APPOINTMENT_DETAILS_REQUEST ]: [
-		dispatchRequestEx( { fetch: fetchAppointmentDetails, onSuccess, onError, fromApi } ),
+		dispatchRequest( { fetch: fetchAppointmentDetails, onSuccess, onError, fromApi } ),
 	],
 } );
 

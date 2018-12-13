@@ -41,7 +41,7 @@
 	padding: 0 16px;
 	height: 48px;
 	box-sizing: border-box;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	background: $white;
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 
@@ -102,7 +102,7 @@
 	flex-direction: row-reverse;
 	height: 40px;
 	box-sizing: border-box;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 	.button:first-child,
 	.button:last-child {
@@ -278,7 +278,7 @@
 	font-size: 13px;
 	display: block;
 	margin-bottom: 4px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .editor-revisions-list__changes {
@@ -322,5 +322,5 @@
 
 .editor-revisions-list__minor-changes {
 	top: 8px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }

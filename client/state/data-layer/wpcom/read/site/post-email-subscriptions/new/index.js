@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
  */
 import { READER_SUBSCRIBE_TO_NEW_POST_EMAIL } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
 	unsubscribeToNewPostEmail,
 	updateNewPostEmailSubscription,
@@ -57,7 +57,7 @@ export function receivePostEmailSubscriptionError( action ) {
 
 registerHandlers( 'state/data-layer/wpcom/read/site/post-email-subscriptions/new/index.js', {
 	[ READER_SUBSCRIBE_TO_NEW_POST_EMAIL ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestPostEmailSubscription,
 			onSuccess: receivePostEmailSubscription,
 			onError: receivePostEmailSubscriptionError,

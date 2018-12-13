@@ -12,7 +12,7 @@ import { isArray } from 'lodash';
  */
 import { SITES_BLOG_STICKER_LIST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { receiveBlogStickers } from 'state/sites/blog-stickers/actions';
 
@@ -39,7 +39,7 @@ export const receiveBlogStickerList = ( action, response ) =>
 
 registerHandlers( 'state/data-layer/wpcom/sites/blog-stickers/index.js', {
 	[ SITES_BLOG_STICKER_LIST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestBlogStickerList,
 			onSuccess: receiveBlogStickerList,
 			onError: receiveBlogStickerListError,

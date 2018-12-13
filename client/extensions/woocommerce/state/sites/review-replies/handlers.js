@@ -11,7 +11,7 @@ import { translate } from 'i18n-calypso';
  */
 import { changeReviewStatus } from 'woocommerce/state/sites/reviews/actions';
 import { clearReviewReplyEdits } from 'woocommerce/state/ui/review-replies/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { fetchReviewReplies } from 'woocommerce/state/sites/review-replies/actions';
 import { getReview } from 'woocommerce/state/sites/reviews/selectors';
@@ -144,28 +144,28 @@ export function announceReviewReplyUpdateFailure() {
 
 export default {
 	[ WOOCOMMERCE_REVIEW_REPLIES_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: handleReviewRepliesRequest,
 			onSuccess: handleReviewRepliesRequestSuccess,
 			onError: handleReviewRepliesRequestError,
 		} ),
 	],
 	[ WOOCOMMERCE_REVIEW_REPLY_CREATE_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: handleReviewReplyCreate,
 			onSuccess: handleReviewReplyCreateSuccess,
 			onError: announceCreateFailure,
 		} ),
 	],
 	[ WOOCOMMERCE_REVIEW_REPLY_DELETE_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: handleDeleteReviewReply,
 			onSuccess: announceDeleteSuccess,
 			onError: announceDeleteFailure,
 		} ),
 	],
 	[ WOOCOMMERCE_REVIEW_REPLY_UPDATE_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: handleReviewReplyUpdate,
 			onSuccess: handleReviewReplyUpdateSuccess,
 			onError: announceReviewReplyUpdateFailure,

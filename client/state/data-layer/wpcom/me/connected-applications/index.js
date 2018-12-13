@@ -11,7 +11,7 @@ import { noop } from 'lodash';
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import schema from './schema';
 import { CONNECTED_APPLICATIONS_REQUEST } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveConnectedApplications } from 'state/connected-applications/actions';
 
@@ -46,7 +46,7 @@ export const handleRequestSuccess = ( action, apps ) => receiveConnectedApplicat
 
 registerHandlers( 'state/data-layer/wpcom/me/connected-applications/index.js', {
 	[ CONNECTED_APPLICATIONS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestConnectedApplications,
 			onSuccess: handleRequestSuccess,
 			onError: noop,

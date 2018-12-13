@@ -80,7 +80,7 @@
 
 .activity-log__empty-day-events {
 	font-size: 12px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .activity-log__pagination {

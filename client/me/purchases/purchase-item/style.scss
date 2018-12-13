@@ -57,7 +57,7 @@
 
 	.gridicon {
 		padding: 4px;
-		background: $blue-medium;
+		background: var( --color-accent );
 		fill: $white;
 	}
 
@@ -77,7 +77,7 @@
 }
 
 .purchase-item__title {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	display: block;
 	font-size: 14px;
 	line-height: 1.2em;
@@ -97,7 +97,7 @@
 }
 
 .purchase-item__purchase-type {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 12px;
 	margin: 0 0 4px;
 	overflow: hidden;

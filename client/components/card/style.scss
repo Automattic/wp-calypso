@@ -1,10 +1,12 @@
+/** @format */
+
 .card {
 	display: block;
 	position: relative;
 	margin: 0 auto 10px auto;
 	padding: 16px;
 	box-sizing: border-box;
-	background: $white;
+	background: var( --color-surface );
 	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 
 	@include clear-fix;
@@ -68,7 +70,7 @@
 
 // Clickable Card
 .card__link-indicator {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	display: block;
 	height: 100%;
 	position: absolute;

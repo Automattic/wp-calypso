@@ -8,7 +8,7 @@ import { get, join, flatMap } from 'lodash';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST } from 'state/action-types';
 import { addValidationSchemas } from 'state/domains/management/validation-schemas/actions';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
@@ -62,7 +62,7 @@ export const onError = ( { tlds }, error ) =>
 
 registerHandlers( 'state/data-layer/wpcom/domains/validation-schemas/index.js', {
 	[ DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch,
 			onSuccess,
 			onError,

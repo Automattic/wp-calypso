@@ -331,6 +331,13 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		autoContinue: true,
 	};
 
+	flows.name = {
+		steps: [ 'displayname', 'about', 'domains', 'plans' ],
+		destination: getSiteDestination,
+		description: 'Ask for a display name not a user name',
+		lastModified: '2018-12-12',
+	};
+
 	return flows;
 }
 

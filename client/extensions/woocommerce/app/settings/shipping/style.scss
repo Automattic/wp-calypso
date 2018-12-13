@@ -9,7 +9,7 @@
 
 .shipping__credit-card-description {
 	margin-bottom: 4px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	padding-bottom: 8px;
 	font-size: 14px;
 	line-height: 18px;
@@ -156,7 +156,7 @@
 .shipping__zones-row-method-description,
 .shipping__card-name {
 	margin-bottom: 0;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 13px;
 	line-height: 22px;
 }

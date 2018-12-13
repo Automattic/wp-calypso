@@ -10,7 +10,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import request from 'woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_COUPON_CREATE,
@@ -131,28 +131,28 @@ function isValidCoupon( coupon ) {
 
 export default {
 	[ WOOCOMMERCE_COUPONS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestCoupons,
 			onSuccess: requestCouponsSuccess,
 			onError: apiError,
 		} ),
 	],
 	[ WOOCOMMERCE_COUPON_CREATE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: couponCreate,
 			onSuccess: couponCreateSuccess,
 			onError: apiError,
 		} ),
 	],
 	[ WOOCOMMERCE_COUPON_UPDATE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: couponUpdate,
 			onSuccess: couponUpdateSuccess,
 			onError: apiError,
 		} ),
 	],
 	[ WOOCOMMERCE_COUPON_DELETE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: couponDelete,
 			onSuccess: couponDeleteSuccess,
 			onError: apiError,

@@ -12,7 +12,7 @@
 	}
 
 	.extended-header__header-description {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		font-size: 12px;
 		line-height: 18px;
 		padding-bottom: 8px;

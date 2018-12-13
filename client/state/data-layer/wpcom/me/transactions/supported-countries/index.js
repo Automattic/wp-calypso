@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { COUNTRIES_PAYMENTS_FETCH, COUNTRIES_PAYMENTS_UPDATED } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
 
@@ -50,7 +50,7 @@ export const updateCountriesTransactions = ( action, countries ) => ( {
 export const showCountriesTransactionsLoadingError = () =>
 	errorNotice( translate( "We couldn't load the countries list." ) );
 
-export const dispatchCountriesTransactions = dispatchRequestEx( {
+export const dispatchCountriesTransactions = dispatchRequest( {
 	fetch: fetchCountriesTransactions,
 	onSuccess: updateCountriesTransactions,
 	onError: showCountriesTransactionsLoadingError,

@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { fromApi } from './utils';
 import { requestLockError, updateLock } from '../../locks/actions';
 import { ZONINATOR_REQUEST_LOCK } from 'zoninator/state/action-types';
@@ -27,5 +27,5 @@ export const onSuccess = ( { siteId, zoneId }, lock ) =>
 export const onError = ( { siteId, zoneId } ) => requestLockError( siteId, zoneId );
 
 export default {
-	[ ZONINATOR_REQUEST_LOCK ]: [ dispatchRequestEx( { fetch, fromApi, onSuccess, onError } ) ],
+	[ ZONINATOR_REQUEST_LOCK ]: [ dispatchRequest( { fetch, fromApi, onSuccess, onError } ) ],
 };

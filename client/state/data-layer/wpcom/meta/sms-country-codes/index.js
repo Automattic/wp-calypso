@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { COUNTRIES_SMS_FETCH, COUNTRIES_SMS_UPDATED } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
 
@@ -52,7 +52,7 @@ export const showCountriesSmsLoadingError = () =>
 
 registerHandlers( 'state/data-layer/wpcom/meta/sms-country-codes/index.js', {
 	[ COUNTRIES_SMS_FETCH ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchCountriesSms,
 			onSuccess: updateCountriesSms,
 			onError: showCountriesSmsLoadingError,

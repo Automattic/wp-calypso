@@ -119,7 +119,7 @@
 	color: $green-text-min;
 
 	&.is-pending {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 	}
 
 	.gridicon {

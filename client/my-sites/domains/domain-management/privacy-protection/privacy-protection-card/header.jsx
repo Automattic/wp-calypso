@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -13,25 +12,13 @@ import { localize } from 'i18n-calypso';
  */
 import AddButton from './../card/add-button';
 
-const PrivacyProtectionCardHeader = ( {
-	displayCost,
-	selectedDomainName,
-	selectedSite,
-	translate,
-} ) => (
+const PrivacyProtectionCardHeader = ( { selectedDomainName, selectedSite, translate } ) => (
 	<header className="privacy-protection-card__header">
 		<h3>{ translate( 'Privacy Protection' ) }</h3>
 
 		<div className="privacy-protection-card__price">
 			<h4 className="privacy-protection-card__price-per-user">
-				{ translate( '{{strong}}%(cost)s{{/strong}} per domain / year', {
-					args: {
-						cost: displayCost,
-					},
-					components: {
-						strong: <strong />,
-					},
-				} ) }
+				{ translate( 'Free for all domains registered at WordPress.com.' ) }
 			</h4>
 		</div>
 

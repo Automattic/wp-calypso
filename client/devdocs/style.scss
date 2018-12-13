@@ -26,7 +26,7 @@ $devdocs-max-width: 720px;
 	.devdocs__result-path {
 		font-size: 14px;
 		font-family: $code;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 	}
 
 	.devdocs__result-snippet {
@@ -82,7 +82,7 @@ $devdocs-max-width: 720px;
 	font-size: 13px;
 	font-weight: 600;
 	margin: 8px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .design__instance-link {

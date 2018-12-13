@@ -12,7 +12,7 @@ import { translate } from 'i18n-calypso';
  */
 import { READER_SITE_BLOCK } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { unblockSite } from 'state/reader/site-blocks/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
@@ -51,7 +51,7 @@ export const receiveSiteBlockError = ( { payload: { siteId } } ) => dispatch => 
 
 registerHandlers( 'state/data-layer/wpcom/me/block/sites/new/index.js', {
 	[ READER_SITE_BLOCK ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestSiteBlock,
 			onSuccess: receiveSiteBlock,
 			onError: receiveSiteBlockError,

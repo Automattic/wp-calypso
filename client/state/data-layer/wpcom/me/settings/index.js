@@ -10,7 +10,7 @@ import { isEmpty, keys, mapValues, noop } from 'lodash';
  * Internal dependencies
  */
 import { decodeEntities } from 'lib/formatting';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import getUnsavedUserSettings from 'state/selectors/get-unsaved-user-settings';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { updateUserSettings, clearUnsavedUserSettings } from 'state/user-settings/actions';
@@ -86,7 +86,7 @@ export const finishUserSettingsSave = ( { settingsOverride }, data ) => dispatch
 
 registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
 	[ USER_SETTINGS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestUserSettings,
 			onSuccess: storeFetchedUserSettings,
 			onError: noop,
@@ -94,7 +94,7 @@ registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
 		} ),
 	],
 	[ USER_SETTINGS_SAVE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: saveUserSettings,
 			onSuccess: finishUserSettingsSave,
 			onError: noop,

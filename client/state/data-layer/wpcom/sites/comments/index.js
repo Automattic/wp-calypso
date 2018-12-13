@@ -18,7 +18,7 @@ import {
 } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import replies from './replies';
 import likes from './likes';
 import { errorNotice, removeNotice } from 'state/notices/actions';
@@ -250,28 +250,28 @@ export const announceEditFailure = action => [
 
 export const fetchHandler = {
 	[ COMMENTS_CHANGE_STATUS ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestChangeCommentStatus,
 			onSuccess: handleChangeCommentStatusSuccess,
 			onError: announceStatusChangeFailure,
 		} ),
 	],
 	[ COMMENTS_LIST_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchCommentsList,
 			onSuccess: addComments,
 			onError: announceFailure,
 		} ),
 	],
 	[ COMMENT_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestComment,
 			onSuccess: receiveCommentSuccess,
 			onError: receiveCommentError,
 		} ),
 	],
 	[ COMMENTS_EDIT ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: editComment,
 			onSuccess: updateComment,
 			onError: announceEditFailure,

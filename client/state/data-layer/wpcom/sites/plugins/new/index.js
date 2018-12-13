@@ -16,7 +16,7 @@ import {
 	pluginUploadError,
 	updatePluginUploadProgress,
 } from 'state/plugins/upload/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -110,7 +110,7 @@ export const updateUploadProgress = ( { siteId }, { loaded, total } ) => {
 
 registerHandlers( 'state/data-layer/wpcom/sites/plugins/new/index.js', {
 	[ PLUGIN_UPLOAD ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: uploadPlugin,
 			onSuccess: uploadComplete,
 			onError: receiveError,

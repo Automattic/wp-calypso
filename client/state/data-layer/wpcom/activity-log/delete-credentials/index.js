@@ -9,7 +9,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
 	JETPACK_CREDENTIALS_DELETE,
 	JETPACK_CREDENTIALS_STORE,
@@ -58,7 +58,7 @@ export const success = ( { siteId }, { rewind_state } ) => {
 
 registerHandlers( 'state/data-layer/wpcom/activity-log/delete-credentials/index.js', {
 	[ JETPACK_CREDENTIALS_DELETE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: request,
 			onSuccess: success,
 			onError: noop,

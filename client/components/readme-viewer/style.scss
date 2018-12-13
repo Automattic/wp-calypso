@@ -65,5 +65,5 @@
 .readme-viewer__not-available {
 	font-family: $sans;
 	text-align: center;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }

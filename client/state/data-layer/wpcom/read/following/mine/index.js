@@ -15,7 +15,7 @@ import {
 } from 'state/action-types';
 import { receiveFollows, syncComplete } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { isValidApiResponse, subscriptionsFromApi } from './utils';
 
@@ -100,7 +100,7 @@ export function receiveError() {
 	return errorNotice( translate( 'Sorry, we had a problem fetching your Reader subscriptions.' ) );
 }
 
-const syncPage = dispatchRequestEx( {
+const syncPage = dispatchRequest( {
 	fetch: requestPage,
 	onSuccess: receivePage,
 	onError: receiveError,

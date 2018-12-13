@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -32,7 +32,7 @@ export const teamRequestFailure = error => ( {
 
 registerHandlers( 'state/data-layer/wpcom/read/teams/index.js', {
 	[ READER_TEAMS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: handleTeamsRequest,
 			onSuccess: teamRequestReceived,
 			onError: teamRequestFailure,

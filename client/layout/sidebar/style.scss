@@ -94,7 +94,7 @@
 		line-height: 1;
 		position: relative;
 		padding: 11px 16px 11px 20px;
-		color: var( --sidebar-color );
+		color: var( --color-text );
 		box-sizing: border-box;
 		white-space: nowrap;
 		overflow: hidden;
@@ -103,7 +103,7 @@
 
 		.accessible-focus &:focus {
 			outline: none;
-			box-shadow: inset 0 0 0 2px $blue-light;
+			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 
 			&:after {
 				top: 2px;
@@ -160,7 +160,7 @@ form.sidebar__button {
 	margin-right: 8px;
 	line-height: 18px;
 	background-color: var( --color-surface );
-	color: var( --sidebar-secondary-color );
+	color: var( --color-text-subtle );
 	font-size: 12px;
 	font-weight: 600;
 	border-radius: 3px;
@@ -210,7 +210,7 @@ form.sidebar__button input {
 			border: 1px solid $gray-darken-30;
 
 			&:hover {
-				color: $blue-medium;
+				color: var( --color-accent );
 			}
 		}
 
@@ -240,7 +240,7 @@ form.sidebar__button input {
 
 			&.sidebar__button {
 				background-color: lighten( $sidebar-bg-color, 10% );
-				color: var( --sidebar-color );
+				color: var( --color-text );
 			}
 		}
 	}
@@ -250,7 +250,7 @@ form.sidebar__button input {
 
 		a,
 		form {
-			color: $blue-medium;
+			color: var( --color-accent );
 
 			&:first-child:after {
 				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
@@ -263,7 +263,7 @@ form.sidebar__button input {
 		}
 
 		.gridicon {
-			fill: $blue-medium;
+			fill: var( --color-accent );
 		}
 	}
 }
@@ -322,7 +322,7 @@ form.sidebar__button input {
 	margin-right: auto;
 
 	&.is-active {
-		background: $blue-medium;
+		background: var( --color-accent );
 
 		.gridicon {
 			fill: $white;
@@ -371,10 +371,10 @@ form.sidebar__button input {
 		height: auto;
 		padding: 11px 16px 11px 18px;
 		outline: none;
-		box-shadow: inset 0 0 0 2px $blue-light;
+		box-shadow: inset 0 0 0 2px var( --color-primary-light );
 		font-size: 14px;
 		line-height: 1;
-		color: var( --sidebar-color );
+		color: var( --color-text );
 		box-sizing: border-box;
 		white-space: nowrap;
 		overflow: hidden;
@@ -426,6 +426,6 @@ form.sidebar__button input {
 	}
 
 	:hover + & .gridicon {
-		fill: $blue-medium;
+		fill: var( --color-accent );
 	}
 }

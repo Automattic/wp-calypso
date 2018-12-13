@@ -5,7 +5,7 @@
  */
 
 import { COMMENTS_REPLY_WRITE } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
 	dispatchNewCommentRequest,
 	updatePlaceholderComment,
@@ -22,7 +22,7 @@ export const writeReplyComment = action =>
 
 registerHandlers( 'state/data-layer/wpcom/sites/comments/replies/new/index.js', {
 	[ COMMENTS_REPLY_WRITE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: writeReplyComment,
 			onSuccess: updatePlaceholderComment,
 			onError: handleWriteCommentFailure,

@@ -24,7 +24,7 @@ import {
 	getTwoFactorUserId,
 } from 'state/login/selectors';
 import { http } from 'state/http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { localizeUrl } from 'lib/i18n-utils';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -91,7 +91,7 @@ const receivedTwoFactorPushNotificationError = ( action, error ) => ( dispatch, 
 	}, POLL_APP_PUSH_INTERVAL_SECONDS * 1000 );
 };
 
-const makePushNotificationRequest = dispatchRequestEx( {
+const makePushNotificationRequest = dispatchRequest( {
 	fetch: requestTwoFactorPushNotificationStatus,
 	onSuccess: receivedTwoFactorPushNotificationApprovedResponse,
 	onError: receivedTwoFactorPushNotificationError,

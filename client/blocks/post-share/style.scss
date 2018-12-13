@@ -404,7 +404,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 }
 
 .post-share__message {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	display: none;
 	flex: 0 1 auto;
 	font-style: italic;

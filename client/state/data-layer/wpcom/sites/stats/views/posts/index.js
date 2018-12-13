@@ -8,7 +8,7 @@
  * Internal Dependencies
  */
 import { STATS_RECENT_POST_VIEWS_REQUEST } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveRecentPostViews } from 'state/stats/recent-post-views/actions';
 
@@ -37,7 +37,7 @@ export const onSuccess = ( { siteId }, data ) => receiveRecentPostViews( siteId,
 
 registerHandlers( 'state/data-layer/wpcom/sites/stats/views/posts/index.js', {
 	[ STATS_RECENT_POST_VIEWS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch,
 			onSuccess,
 			onError: () => {},

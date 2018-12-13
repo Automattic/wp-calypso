@@ -12,7 +12,7 @@ import { translate } from 'i18n-calypso';
  */
 import { READER_CONVERSATION_MUTE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, plainNotice } from 'state/notices/actions';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 
@@ -60,7 +60,7 @@ export function receiveConversationMuteError( {
 
 registerHandlers( 'state/data-layer/wpcom/read/sites/posts/mute/index.js', {
 	[ READER_CONVERSATION_MUTE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestConversationMute,
 			onSuccess: receiveConversationMute,
 			onError: receiveConversationMuteError,
