@@ -22,9 +22,9 @@ class PrimaryHeader extends Component {
 		return (
 			<Fragment>
 				<ClosureNotice
-					displayDate="2018-12-01"
-					closureStartDate="2018-12-20"
-					closureEndDate="2018-12-29"
+					displayDate="2018-12-17"
+					closureStartDate="2018-12-24"
+					closureEndDate="2018-12-25"
 					holidayName="Christmas"
 				/>
 				<Card>
