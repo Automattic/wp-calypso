@@ -34,7 +34,7 @@ export class NavigationLink extends Component {
 		positionInFlow: PropTypes.number,
 		previousPath: PropTypes.string,
 		signupProgress: PropTypes.array,
-		siteProgressOrdered: PropTypes.array,
+		signupProgressOrdered: PropTypes.array,
 		stepName: PropTypes.string.isRequired,
 		// Allows to force a back button in the first step for example.
 		allowBackFirstStep: PropTypes.bool,
@@ -52,10 +52,10 @@ export class NavigationLink extends Component {
 	 * @return {string|null} The previous step name
 	 */
 	getPreviousStepName() {
-		const { stepName, siteProgressOrdered } = this.props;
-		const currentStepIndex = findIndex( siteProgressOrdered, { stepName } );
+		const { stepName, signupProgressOrdered } = this.props;
+		const currentStepIndex = findIndex( signupProgressOrdered, { stepName } );
 		const previousStep = find(
-			siteProgressOrdered.slice( 0, currentStepIndex ).reverse(),
+			signupProgressOrdered.slice( 0, currentStepIndex ).reverse(),
 			step => ! step.wasSkipped
 		);
 
@@ -74,7 +74,7 @@ export class NavigationLink extends Component {
 		const previousStepName = this.getPreviousStepName();
 
 		const stepSectionName = get(
-			find( this.props.siteProgressOrdered, { stepName: previousStepName } ),
+			find( this.props.signupProgressOrdered, { stepName: previousStepName } ),
 			'stepSectionName',
 			''
 		);
@@ -163,7 +163,7 @@ const reorderSiteProgressCollection = ( flowName, signupProgress ) =>
 
 export default connect(
 	( state, { flowName, signupProgress } ) => ( {
-		siteProgressOrdered: reorderSiteProgressCollection( flowName, signupProgress ),
+		signupProgressOrdered: reorderSiteProgressCollection( flowName, signupProgress ),
 	} ),
 	null
 )( localize( NavigationLink ) );

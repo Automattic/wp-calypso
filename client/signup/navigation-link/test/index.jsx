@@ -39,6 +39,11 @@ describe( 'NavigationLink', () => {
 			{ stepName: 'test:step2', stepSectionName: 'test:section2', wasSkipped: false },
 			{ stepName: 'test:step3', stepSectionName: 'test:section3', wasSkipped: false },
 		],
+		signupProgressOrdered: [
+			{ stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
+			{ stepName: 'test:step2', stepSectionName: 'test:section2', wasSkipped: false },
+			{ stepName: 'test:step3', stepSectionName: 'test:section3', wasSkipped: false },
+		],
 		goToNextStep: jest.fn(),
 		translate: str => `translated:${ str }`,
 	};
