@@ -4,11 +4,11 @@
 	width: 100%;
 
 	.gridicon.gridicons-checkmark-circle {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 
 	.gridicon.gridicons-notice {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	.form-section-heading {

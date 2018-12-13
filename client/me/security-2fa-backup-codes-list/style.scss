@@ -120,7 +120,7 @@ button.security-2fa-backups-codes-list__generate-button {
 	font-size: 75%;
 
 	.gridicon {
-		fill: $alert-red;
+		fill: var( --color-error );
 		margin-right: 8px;
 		vertical-align: middle;
 

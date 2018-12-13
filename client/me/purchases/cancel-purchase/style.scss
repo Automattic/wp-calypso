@@ -79,7 +79,7 @@
 }
 
 .cancel-purchase__refund-amount {
-	color: $alert-green;
+	color: var( --color-success );
 	font-size: 14px;
 	margin: 0;
 	padding: 0 10px 5px 0;

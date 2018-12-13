@@ -34,7 +34,7 @@ h1.account-close__confirm-dialog-header {
 }
 
 .account-close__confirm-dialog-target-username {
-	color: $alert-red;
+	color: var( --color-error );
 }
 
 // Placeholders
