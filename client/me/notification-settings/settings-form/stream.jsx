@@ -22,7 +22,7 @@ class NotificationSettingsFormStream extends PureComponent {
 		blogId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
 		stream: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
-		settings: PropTypes.object.isRequired,
+		settings: PropTypes.oneOfType( [ PropTypes.array, PropTypes.object ] ).isRequired,
 		onToggle: PropTypes.func.isRequired,
 	};
 
