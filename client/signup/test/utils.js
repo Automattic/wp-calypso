@@ -41,7 +41,7 @@ describe( 'utils', () => {
 	beforeAll( () => {
 		sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
 		sinon.stub( flows, 'preloadABTestVariationsForStep' ).callsFake( () => {} );
-		sinon.stub( flows, 'getABTestFilteredFlow' ).callsFake( ( flowName, flow ) => {
+		sinon.stub( flows, 'getFilteredFlow' ).callsFake( ( flowName, flow ) => {
 			return flow;
 		} );
 	} );

@@ -31,14 +31,14 @@ describe( 'Signup Flows Configuration', () => {
 			user = userFactory();
 
 			sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
-			sinon.stub( flows, 'getABTestFilteredFlow' ).callsFake( ( flowName, flow ) => {
+			sinon.stub( flows, 'getFilteredFlow' ).callsFake( ( flowName, flow ) => {
 				return flow;
 			} );
 		} );
 
 		afterAll( () => {
 			flows.getFlows.restore();
-			flows.getABTestFilteredFlow.restore();
+			flows.getFilteredFlow.restore();
 		} );
 
 		test( 'should return the full flow when the user is not logged in', () => {
@@ -68,7 +68,7 @@ describe( 'Signup Flows Configuration', () => {
 		} );
 	} );
 
-	describe( 'getABTestFilteredFlow', () => {
+	describe( 'getFilteredFlow', () => {
 		const getABTestVariationSpy = sinon.stub( abtest, 'getABTestVariation' );
 
 		getABTestVariationSpy.onCall( 0 ).returns( 'notSiteTitle' );
@@ -93,13 +93,13 @@ describe( 'Signup Flows Configuration', () => {
 		} );
 
 		test( 'should return flow unmodified if not in main flow', () => {
-			assert.equal( flows.getABTestFilteredFlow( 'test', 'testflow' ), 'testflow' );
+			assert.equal( flows.getFilteredFlow( 'test', 'testflow' ), 'testflow' );
 			assert.equal( flows.insertStepIntoFlow.callCount, 0 );
 			assert.equal( flows.removeStepFromFlow.callCount, 0 );
 		} );
 
 		test( 'should check AB variation in main flow', () => {
-			assert.equal( flows.getABTestFilteredFlow( 'main', 'testflow' ), 'testflow' );
+			assert.equal( flows.getFilteredFlow( 'main', 'testflow' ), 'testflow' );
 			assert.equal( getABTestVariationSpy.callCount, 0 );
 			assert.equal( flows.insertStepIntoFlow.callCount, 0 );
 		} );
@@ -110,7 +110,7 @@ describe( 'Signup Flows Configuration', () => {
 				steps: [ 1, 2, 3 ],
 			};
 
-			assert.equal( flows.getABTestFilteredFlow( 'main', myFlow ), myFlow );
+			assert.equal( flows.getFilteredFlow( 'main', myFlow ), myFlow );
 			assert.equal( getABTestVariationSpy.callCount, 0 );
 			assert.equal( flows.insertStepIntoFlow.callCount, 0 );
 		} );
