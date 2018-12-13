@@ -49,7 +49,7 @@ class TransferPending extends PureComponent {
 		};
 
 		if ( transfer ) {
-			if ( transferStates.COMPLETED === transfer.status ) {
+			if ( transferStates.ACTIVE === transfer.status ) {
 				page( `/checkout/thank-you/${ siteSlug }/${ orderId }` );
 
 				return;
