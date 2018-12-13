@@ -22,6 +22,7 @@ import {
 } from 'state/analytics/actions';
 import { convertToSnakeCase } from 'state/data-layer/utils';
 import { dummyTaxRate } from 'lib/tax'; // #tax-on-checkout-placeholder
+import { isEnabled } from 'config';
 
 /**
  * Fetches content from a URL with a GET request
@@ -282,12 +283,13 @@ export const requestTaxRate = ( countryCode, postalCode, httpOptions ) => {
 	} );
 };
 
-export const requestGutenbergBlockAvailability = siteSlug =>
-	requestHttpData(
+export const requestGutenbergBlockAvailability = siteSlug => {
+	const isBeta = isEnabled( 'jetpack/blocks/beta' ) ? '?beta=true' : '';
+	return requestHttpData(
 		`gutenberg-block-availability-${ siteSlug }`,
 		http(
 			{
-				path: `/sites/${ siteSlug }/gutenberg/available-extensions`,
+				path: `/sites/${ siteSlug }/gutenberg/available-extensions${ isBeta }`,
 				method: 'GET',
 				apiNamespace: 'wpcom/v2',
 			},
@@ -295,3 +297,4 @@ export const requestGutenbergBlockAvailability = siteSlug =>
 		),
 		{ fromApi: () => data => [ [ `gutenberg-block-availability-${ siteSlug }`, data ] ] }
 	);
+};
