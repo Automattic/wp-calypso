@@ -2,14 +2,15 @@
 /**
  * Internal dependencies
  */
-import { find, get, findIndex } from 'lodash';
+import { find, findIndex, get, includes } from 'lodash';
 
-const replaceAtIndex = ( array, index, item ) => {
-	const newArray = array.slice();
-	newArray.splice( index, 1, item );
+const replaceAtIndex = ( array, index, newItem ) =>
+	array.map( ( item, idx ) => ( idx === index ? newItem : item ) );
 
-	return newArray;
-};
+const replaceOrAppend = ( array, originalItem, newItem ) =>
+	includes( array, originalItem )
+		? replaceAtIndex( array, findIndex( array, originalItem ), newItem )
+		: [ ...array, newItem ];
 
 const toggleInStream = ( streamName, stream, setting ) => ( {
 	[ streamName ]: {
@@ -20,11 +21,10 @@ const toggleInStream = ( streamName, stream, setting ) => ( {
 
 const toggleInDevice = ( devices, deviceId, setting ) => {
 	const device = find( devices, { device_id: parseInt( deviceId, 10 ) } );
-	const deviceIndex = findIndex( devices, device );
 	const deviceSetting = get( device, setting );
 
 	return {
-		devices: replaceAtIndex( devices, deviceIndex, {
+		devices: replaceOrAppend( devices, device, {
 			...device,
 			[ setting ]: ! deviceSetting,
 		} ),
@@ -52,11 +52,10 @@ export default {
 	blog( state, source, stream, setting ) {
 		const blogs = get( state, 'dirty.blogs' );
 		const blog = find( blogs, { blog_id: parseInt( source, 10 ) } );
-		const blogIndex = findIndex( blogs, blog );
 		const devices = get( blog, 'devices', [] );
 
 		return {
-			blogs: replaceAtIndex( blogs, blogIndex, {
+			blogs: replaceOrAppend( blogs, blog, {
 				...blog,
 				...( isNaN( stream )
 					? toggleInStream( stream, get( blog, stream ), setting )
