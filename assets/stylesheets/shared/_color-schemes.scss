@@ -55,6 +55,7 @@
 	--sidebar-menu-hover-color: #{$blue-medium};
 
 	// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
+	--site-selector-gridicon-fill: #{$gray};
 	--site-selector-selected-color: #{$muriel-white};
 	--site-selector-selected-background: #{$gray};
 	--site-selector-selected-background-gradient: #{hex-to-rgb( $gray )};
@@ -124,6 +125,7 @@
 		--sidebar-menu-hover-color: #{$muriel-gray-800};
 
 		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
+		--site-selector-gridicon-fill: var( --sidebar-gridicon-fill );
 		--site-selector-selected-color: var( --sidebar-menu-selected-a-color );
 		--site-selector-selected-background: var( --sidebar-menu-selected-background-color );
 		--site-selector-selected-background-gradient: var(
@@ -193,6 +195,7 @@
 		--sidebar-menu-hover-color: #{$muriel-gray-100};
 
 		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
+		--site-selector-gridicon-fill: var( --sidebar-gridicon-fill );
 		--site-selector-selected-color: var( --sidebar-menu-selected-a-color );
 		--site-selector-selected-background: var( --sidebar-menu-selected-background-color );
 		--site-selector-selected-background-gradient: var(

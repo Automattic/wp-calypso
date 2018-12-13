@@ -160,7 +160,7 @@
 }
 
 .site__badge {
-	color: $gray;
+	color: var( --site-selector-gridicon-fill );
 	padding-right: 4px;
 	line-height: 0;
 	position: relative;
