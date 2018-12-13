@@ -23,6 +23,7 @@ import {
 import { convertToSnakeCase } from 'state/data-layer/utils';
 import { dummyTaxRate } from 'lib/tax'; // #tax-on-checkout-placeholder
 import { isEnabled } from 'config';
+import { addQueryArgs } from 'lib/route';
 
 /**
  * Fetches content from a URL with a GET request
@@ -284,12 +285,12 @@ export const requestTaxRate = ( countryCode, postalCode, httpOptions ) => {
 };
 
 export const requestGutenbergBlockAvailability = siteSlug => {
-	const isBeta = isEnabled( 'jetpack/blocks/beta' ) ? '?beta=true' : '';
+	const betaQueryArgument = addQueryArgs( { beta: isEnabled( 'jetpack/blocks/beta' ) }, '' );
 	return requestHttpData(
 		`gutenberg-block-availability-${ siteSlug }`,
 		http(
 			{
-				path: `/sites/${ siteSlug }/gutenberg/available-extensions${ isBeta }`,
+				path: `/sites/${ siteSlug }/gutenberg/available-extensions${ betaQueryArgument }`,
 				method: 'GET',
 				apiNamespace: 'wpcom/v2',
 			},
