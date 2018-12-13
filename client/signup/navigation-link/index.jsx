@@ -9,7 +9,6 @@ import { find, findIndex, get, reduce } from 'lodash';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 
-
 /**
  * Internal dependencies
  */
@@ -23,7 +22,6 @@ import flows from 'signup/config/flows';
  * Style dependencies
  */
 import './style.scss';
-
 
 const { submitSignupStep } = SignupActions;
 
@@ -54,13 +52,8 @@ export class NavigationLink extends Component {
 	 * @return {string|null} The previous step name
 	 */
 	getPreviousStepName() {
-		const { stepName, signupProgress, siteProgressOrdered } = this.props;
-
+		const { stepName, siteProgressOrdered } = this.props;
 		const currentStepIndex = findIndex( siteProgressOrdered, { stepName } );
-
-		// eslint-disable-next-line
-		console.log( 'signupProgress, siteProgressOrdered', signupProgress, siteProgressOrdered );
-
 		const previousStep = find(
 			siteProgressOrdered.slice( 0, currentStepIndex ).reverse(),
 			step => ! step.wasSkipped
@@ -154,20 +147,23 @@ export class NavigationLink extends Component {
 	}
 }
 
-export default connect(
-	( state, { flowName, signupProgress } ) => {
-		// TODO: Hack to ensure the progress order is the same as the flow steps order
-		const siteProgressOrdered = reduce( flows.getFlow( flowName ).steps, function ( result, value ) {
+// Ensure the progress order is the same as the most current flow steps order
+const reorderSiteProgressCollection = ( flowName, signupProgress ) =>
+	reduce(
+		flows.getFlow( flowName ).steps,
+		( result, value ) => {
 			const siteStep = find( signupProgress, [ 'stepName', value ] );
 			if ( siteStep ) {
 				result.push( siteStep );
 			}
 			return result;
-		}, [] );
+		},
+		[]
+	);
 
-		return {
-			siteProgressOrdered,
-		};
-	},
+export default connect(
+	( state, { flowName, signupProgress } ) => ( {
+		siteProgressOrdered: reorderSiteProgressCollection( flowName, signupProgress ),
+	} ),
 	null
 )( localize( NavigationLink ) );

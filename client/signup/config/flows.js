@@ -168,7 +168,7 @@ const Flows = {
 
 		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
 
-		return Flows.filterExcludedSteps( Flows.getABTestFilteredFlow( flowName, flow, currentStepName ) );
+		return Flows.filterExcludedSteps( Flows.getFilteredFlow( flowName, flow ) );
 	},
 
 	/**
@@ -234,38 +234,28 @@ const Flows = {
 	},
 
 	/**
-	 * Return a flow that is modified according to the ABTest rules.
+	 * Return a flow that is modified according to a set of rules.
 	 *
 	 * Useful when testing new steps in the signup flows.
-	 *
-	 * Example usage: Inject or remove a step in the flow if a user is part of an ABTest.
-	 *
+	 **
 	 * @param {String} flowName The current flow name
 	 * @param {Object} flow The flow object
 	 *
 	 * @return {Object} A filtered flow object
 	 */
-	getABTestFilteredFlow( flowName, flow ) {
-		// Only do this on the default flow
-		// if ( Flow.defaultFlowName === flowName ) {
-		// }
-
+	getFilteredFlow( flowName, flow ) {
 		// Remove About step in the ecommerce flow if we're in the onboarding AB test
 		if ( 'ecommerce' === flowName && 'onboarding' === abtest( 'improvedOnboarding' ) ) {
 			const afterStep = user && user.get() ? '' : 'user';
-
 			flow = Flows.removeStepFromFlow( 'about', flow );
 			return Flows.insertStepIntoFlow( 'site-type', flow, afterStep );
 		}
 
-		// TODO: Hack to ensure we insert a step on a certain condition
-		// I've added this block here for convenience
-		// We should really replace getABTestFilteredFlow with a generic middleware method
-		// that processes the flow according to a set of rules.
+		// Insert site style step for business sites in the onboarding flow
 		// Turn on for onboarding-dev only for now
-		if ( /*'onboarding' === abtest( 'improvedOnboarding' ) || */'onboarding-dev' === flowName ) {
-			if ( 'business' === getSiteType( reduxGetState() ) ) {
-				return Flows.insertStepIntoFlow( 'site-style', flow, 'site-type'  );
+		if ( /*'onboarding' === abtest( 'improvedOnboarding' ) || */ 'onboarding-dev' === flowName ) {
+			if ( 'business' === getSiteType( reduxGetState() ) && includes( flow.steps, 'site-type' ) ) {
+				return Flows.insertStepIntoFlow( 'site-style', flow, 'site-type' );
 			}
 		}
 
