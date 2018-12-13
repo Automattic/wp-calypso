@@ -5,7 +5,8 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { get, noop, set } from 'lodash';
+import { setSettings as setDateSettings, __experimentalGetSettings } from '@wordpress/date';
 
 /**
  * Internal dependencies
@@ -21,15 +22,19 @@ import { translate } from 'i18n-calypso';
 import './hooks'; // Needed for integrating Calypso's media library (and other hooks)
 import isRtlSelector from 'state/selectors/is-rtl';
 import refreshRegistrations from '../extensions/presets/jetpack/utils/refresh-registrations';
+import { getSiteOption } from 'state/sites/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+const setDateGMTOffset = offset =>
+	setDateSettings( set( __experimentalGetSettings(), [ 'timezone', 'offset' ], offset ) );
+
 class GutenbergEditor extends Component {
 	componentDidMount() {
-		const { siteId, postId, uniqueDraftKey, postType } = this.props;
+		const { siteId, postId, uniqueDraftKey, postType, gmtOffset } = this.props;
 		if ( ! postId ) {
 			createAutoDraft( siteId, uniqueDraftKey, postType );
 		}
@@ -38,6 +43,8 @@ class GutenbergEditor extends Component {
 		}
 
 		refreshRegistrations();
+
+		setDateGMTOffset( gmtOffset );
 	}
 
 	componentDidUpdate( prevProp ) {
@@ -125,6 +132,7 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 	const demoContent = isDemoContent ? get( requestGutenbergDemoContent(), 'data' ) : null;
 	const isAutoDraft = 'auto-draft' === get( post, 'status', null );
 	const isRTL = isRtlSelector( state );
+	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
 
 	let overridePost = null;
 	if ( !! demoContent ) {
@@ -140,6 +148,7 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 		post,
 		overridePost,
 		isRTL,
+		gmtOffset,
 	};
 };
 
