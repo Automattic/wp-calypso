@@ -5,6 +5,7 @@
 	  "lodash": "^4.17.11"
   },
   "devDependencies": {
+    "deep-freeze": "^0.0.1",
     "@babel/runtime": "^7.2.0",
     "concurrently": "^4.1.0",
     "nodemon": "^1.18.8"

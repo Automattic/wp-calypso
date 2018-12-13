@@ -12,15 +12,16 @@
  */
 // eslint-disable-next-line import/no-nodejs-modules
 import { inspect } from 'util';
+import { cloneDeep } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { attachments } from './attachments';
+import { attachments } from './test/fixtures/attachments';
 import { Jetpack_Tiled_Gallery_Grouper } from './grouper';
 import { Jetpack_Tiled_Gallery_Shape } from './shapes/jetpack-tiled-gallery-shape';
 
-const grouper = new Jetpack_Tiled_Gallery_Grouper( attachments );
+const grouper = new Jetpack_Tiled_Gallery_Grouper( cloneDeep( attachments ) );
 
 Jetpack_Tiled_Gallery_Shape.reset_last_shape();
 

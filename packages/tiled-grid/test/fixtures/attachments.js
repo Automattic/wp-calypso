@@ -1,6 +1,11 @@
 /** @format */
 
-export const attachments = [
+/**
+ * External dependencies
+ */
+import deepFreeze from 'deep-freeze';
+
+export const attachments = deepFreeze( [
 	{
 		width: 5472,
 		height: 3648,
@@ -294,4 +299,4 @@ export const attachments = [
 			keywords: [],
 		},
 	},
-];
+] );
