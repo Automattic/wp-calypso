@@ -10,7 +10,7 @@ import { get, isUndefined, map, noop, omit, omitBy } from 'lodash';
  * Internal dependencies
  */
 import { POST_REVISIONS_AUTHORS_REQUEST } from 'state/action-types';
-import { dispatchRequestEx, getHeaders } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest, getHeaders } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receivePostRevisionAuthors } from 'state/posts/revisions/authors/actions';
 
@@ -83,7 +83,7 @@ export const receivePostRevisionAuthorsSuccess = ( action, users ) => dispatch =
 	}
 };
 
-const dispatchPostRevisionAuthorsRequest = dispatchRequestEx( {
+const dispatchPostRevisionAuthorsRequest = dispatchRequest( {
 	fetch: fetchPostRevisionAuthors,
 	onSuccess: receivePostRevisionAuthorsSuccess,
 	onError: noop,

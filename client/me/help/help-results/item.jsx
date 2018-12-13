@@ -12,6 +12,7 @@ import { decodeEntities } from 'lib/formatting';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export default class extends React.PureComponent {
 	static displayName = 'HelpResult';
@@ -49,7 +50,7 @@ export default class extends React.PureComponent {
 		return (
 			<a
 				className="help-result"
-				href={ this.props.helpLink.link }
+				href={ localizeUrl( this.props.helpLink.link ) }
 				target="__blank"
 				onClick={ this.onClick }
 			>

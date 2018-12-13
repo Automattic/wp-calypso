@@ -122,81 +122,6 @@ export const trackRequests = next => ( store, action ) => {
 };
 
 /**
- * @type Object default dispatchRequest options
- * @property {Function} fromApi validates and transforms API response data
- * @property {Function} middleware chain of functions to process before dispatch
- * @property {Function} onProgress called on progress events
- */
-const defaultOptions = {
-	fromApi: identity,
-	onProgress: noop,
-};
-
-/**
- * Dispatches to appropriate function based on HTTP request meta
- *
- * @see state/data-layer/wpcom-http/actions#fetch creates HTTP requests
- *
- * When the WPCOM HTTP data layer handles requests it will add
- * response data and errors to a meta property on the given success
- * error, and progress handling actions.
- *
- * This function accepts three functions as the initiator, success,
- * and error handlers for actions and it will call the appropriate
- * one based on the stored meta. It accepts an optional fourth
- * function which will be called for progress events on upload.
- *
- * If both error and response data is available this will call the
- * error handler in preference over the success handler, but the
- * response data will also still be available through the action meta.
- *
- * The functions should conform to the following type signatures:
- *   initiator  :: ReduxStore -> Action -> Dispatcher (middleware signature)
- *   onSuccess  :: ReduxStore -> Action -> Dispatcher -> ResponseData
- *   onError    :: ReduxStore -> Action -> Dispatcher -> ErrorData
- *   onProgress :: ReduxStore -> Action -> Dispatcher -> ProgressData
- *   fromApi    :: ResponseData -> [ Boolean, Data ]
- *
- * @param {Function} middleware intercepts requests moving through the system
- * @param {Function} initiator called if action lacks response meta; should create HTTP request
- * @param {Function} onSuccess called if the action meta includes response data
- * @param {Function} onError called if the action meta includes error data
- * @param {Object} options configures additional dispatching behaviors
- + @param {Function} [options.fromApi] maps between API data and Calypso data
- + @param {Function} [options.onProgress] called on progress events when uploading
- * @param {Function} [options.middleware] runs before the dispatch itself
- * @returns {?*} please ignore return values, they are undefined
- */
-export const requestDispatcher = middleware => ( initiator, onSuccess, onError, options = {} ) => {
-	const { fromApi, onProgress } = { ...defaultOptions, ...options };
-
-	return middleware( ( store, action ) => {
-		const error = getError( action );
-		if ( undefined !== error ) {
-			return onError( store, action, error );
-		}
-
-		const data = getData( action );
-		if ( undefined !== data ) {
-			try {
-				return onSuccess( store, action, fromApi( data ) );
-			} catch ( err ) {
-				return onError( store, action, err );
-			}
-		}
-
-		const progress = getProgress( action );
-		if ( undefined !== progress ) {
-			return onProgress( store, action, progress );
-		}
-
-		return initiator( store, action );
-	} );
-};
-
-export const dispatchRequest = requestDispatcher( trackRequests );
-
-/**
  * Dispatches to appropriate function based on HTTP request meta
  *
  * @see state/data-layer/wpcom-http/actions#fetch creates HTTP requests
@@ -233,7 +158,7 @@ export const dispatchRequest = requestDispatcher( trackRequests );
  * @param {Function} options.fromApi maps between API data and Calypso data
  * @returns {Action} action or action thunk to be executed in response to HTTP event
  */
-export const exRequestDispatcher = middleware => options => {
+export const requestDispatcher = middleware => options => {
 	if ( ! options.fetch ) {
 		warn( 'fetch handler is not defined: no request will ever be issued' );
 	}
@@ -262,7 +187,7 @@ export const exRequestDispatcher = middleware => options => {
 		return store.dispatch( requestAction );
 	} );
 };
-export const dispatchRequestEx = exRequestDispatcher( trackRequests );
+export const dispatchRequest = requestDispatcher( trackRequests );
 
 /*
  * Converts an application-level Calypso action that's handled by the data-layer middleware

@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -35,6 +34,7 @@ import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import AnnualSiteStats from 'my-sites/stats/annual-site-stats';
+import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
 const StatsInsights = props => {
 	const { followList, isJetpack, siteId, siteSlug, translate } = props;
@@ -65,7 +65,11 @@ const StatsInsights = props => {
 				<SectionHeader label={ translate( 'All Time Views' ) } />
 				<StatsViews />
 				{ siteId && (
-					<DomainTip siteId={ siteId } event="stats_insights_domain" vendor="domainsbot" />
+					<DomainTip
+						siteId={ siteId }
+						event="stats_insights_domain"
+						vendor={ getSuggestionsVendor() }
+					/>
 				) }
 				<div className="stats-insights__nonperiodic has-recent">
 					<div className="stats__module-list">

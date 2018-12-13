@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import GoogleLoginButton from 'components/social-buttons/google';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,6 +16,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import config from 'config';
 import { preventWidows } from 'lib/formatting';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -34,6 +36,12 @@ class SocialSignupForm extends Component {
 		}
 
 		this.props.handleResponse( 'google', response.Zi.access_token, response.Zi.id_token );
+	};
+
+	trackGoogleLogin = () => {
+		this.props.recordTracksEvent( 'calypso_login_social_button_click', {
+			social_account_type: 'google',
+		} );
 	};
 
 	shouldUseRedirectFlow() {
@@ -61,6 +69,7 @@ class SocialSignupForm extends Component {
 						responseHandler={ this.handleGoogleResponse }
 						redirectUri={ redirectUri }
 						uxMode={ uxMode }
+						onClick={ this.trackGoogleLogin }
 					/>
 				</div>
 			</Card>
@@ -68,4 +77,7 @@ class SocialSignupForm extends Component {
 	}
 }
 
-export default localize( SocialSignupForm );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( SocialSignupForm ) );

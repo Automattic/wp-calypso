@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { USER_PROFILE_LINKS_ADD } from 'state/action-types';
 import {
@@ -71,7 +71,7 @@ export const handleAddError = ( { profileLinks }, error ) =>
 
 registerHandlers( 'state/data-layer/wpcom/me/settings/profile-links/new/index.js', {
 	[ USER_PROFILE_LINKS_ADD ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: addUserProfileLinks,
 			onSuccess: handleAddSuccess,
 			onError: handleAddError,

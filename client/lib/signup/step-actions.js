@@ -25,6 +25,7 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
+import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
@@ -131,6 +132,7 @@ export function createSiteWithCart(
 	const siteVertical = getSiteVertical( state );
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
+	const siteInformation = getSiteInformation( state );
 
 	const newSiteParams = {
 		blog_title: siteTitle,
@@ -142,6 +144,7 @@ export function createSiteWithCart(
 			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 			vertical: siteVertical || undefined,
 			siteGoals: siteGoals || undefined,
+			site_information: siteInformation || undefined,
 			siteType: siteType || undefined,
 		},
 		validate: false,
@@ -422,7 +425,10 @@ export function createAccount(
 					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
 				}
 
-				const username = response.signup_sandbox_username || userData.username;
+				const username =
+					( response && response.signup_sandbox_username ) ||
+					( response && response.username ) ||
+					userData.username;
 				const providedDependencies = assign( {}, { username }, bearerToken );
 
 				if ( oauth2Signup ) {

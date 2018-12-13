@@ -11,7 +11,7 @@
 	&:hover,
 	&:focus,
 	&:active {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 
 	.comment-button__label-count {

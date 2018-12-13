@@ -7,8 +7,6 @@ import debugModule from 'debug';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import TransitionGroup from 'react-transition-group/TransitionGroup';
-import CSSTransition from 'react-transition-group/CSSTransition';
 import url from 'url';
 import {
 	assign,
@@ -31,10 +29,16 @@ import { connect } from 'react-redux';
  */
 import config from 'config';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 // Components
 import DocumentHead from 'components/data/document-head';
 import LocaleSuggestions from 'components/locale-suggestions';
 import SignupProcessingScreen from 'signup/processing-screen';
+import SiteMockups from 'signup/site-mockup';
 
 // Libraries
 import analytics from 'lib/analytics';
@@ -44,6 +48,8 @@ import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/pro
 import SignupActions from 'lib/signup/actions';
 import SignupFlowController from 'lib/signup/flow-controller';
 import { disableCart } from 'lib/upgrades/actions';
+import { isValidLandingPageVertical } from 'lib/signup/verticals';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -53,9 +59,8 @@ import { affiliateReferral } from 'state/refer/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
-import { setSiteType } from 'state/signup/steps/site-type/actions';
-import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
-import { isValidLandingPageVertical } from 'lib/signup/verticals';
+import { submitSiteType } from 'state/signup/steps/site-type/actions';
+import { submitSiteTopic } from 'state/signup/steps/site-topic/actions';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -115,8 +120,6 @@ class Signup extends React.Component {
 		// here.
 		disableCart();
 
-		this.submitQueryDependencies();
-
 		const flow = flows.getFlow( this.props.flowName );
 		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
@@ -126,12 +129,16 @@ class Signup extends React.Component {
 			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
 		}
 
+		// Caution: any signup Flux actions should happen after this initialization.
+		// Otherwise, the redux adpatation layer won't work and the state can go off.
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
 			providedDependencies,
 			reduxStore: this.context.store,
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
+
+		this.submitQueryDependencies();
 
 		this.updateShouldShowLoadingScreen();
 
@@ -236,18 +243,34 @@ class Signup extends React.Component {
 		}
 	};
 
+	recordExcludeStepEvent = ( step, value ) => {
+		analytics.tracks.recordEvent( 'calypso_signup_actions_exclude_step', {
+			step,
+			value,
+		} );
+	};
+
 	submitQueryDependencies = () => {
 		if ( isEmpty( this.props.initialContext && this.props.initialContext.query ) ) {
 			return;
 		}
 
-		const queryObject = this.props.initialContext.query;
-		const flowSteps = flows.getFlow( this.props.flowName ).steps;
+		const {
+			initialContext: {
+				query: { vertical, site_type: siteType },
+			},
+			flowName,
+		} = this.props;
+
+		const flowSteps = flows.getFlow( flowName ).steps;
+		const fulfilledSteps = [];
 
 		// `vertical` query parameter
-		const vertical = queryObject.vertical;
 		if ( 'undefined' !== typeof vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
 			debug( 'From query string: vertical = %s', vertical );
+
+			const siteTopicStepName = 'site-topic';
+
 			this.props.setSurvey( {
 				vertical,
 				otherText: '',
@@ -256,25 +279,38 @@ class Signup extends React.Component {
 				surveySiteType: 'blog',
 				surveyQuestion: vertical,
 			} );
-			this.props.setSiteTopic( vertical );
-			SignupActions.submitSignupStep( { stepName: 'site-topic' }, [], {
-				siteTopic: vertical,
-			} );
+
+			this.props.submitSiteTopic( vertical );
+
 			// Track our landing page verticals
 			if ( isValidLandingPageVertical( vertical ) ) {
 				analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
 					vertical,
-					flow: this.props.flowName,
+					flow: flowName,
 				} );
 			}
+
+			fulfilledSteps.push( siteTopicStepName );
+
+			this.recordExcludeStepEvent( siteTopicStepName, vertical );
 		}
 
 		//`site_type` query parameter
-		const siteType = queryObject.site_type;
-		if ( 'undefined' !== typeof siteType ) {
+		const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
+		if ( 'undefined' !== typeof siteTypeValue ) {
 			debug( 'From query string: site_type = %s', siteType );
-			this.props.setSiteType( siteType );
+			debug( 'Site type value = %s', siteTypeValue );
+
+			const siteTypeStepName = 'site-type';
+
+			this.props.submitSiteType( siteTypeValue );
+
+			fulfilledSteps.push( siteTypeStepName );
+
+			this.recordExcludeStepEvent( siteTypeStepName, siteTypeValue );
 		}
+
+		flows.excludeSteps( fulfilledSteps );
 	};
 
 	checkForCartItems = signupDependencies => {
@@ -509,7 +545,7 @@ class Signup extends React.Component {
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (
-			<CSSTransition classNames="signup__step" timeout={ 400 } key={ stepKey }>
+			<div className="signup__step" key={ stepKey }>
 				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
 					{ shouldRenderLocaleSuggestions && (
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
@@ -544,7 +580,7 @@ class Signup extends React.Component {
 						/>
 					) }
 				</div>
-			</CSSTransition>
+			</div>
 		);
 	}
 
@@ -574,9 +610,8 @@ class Signup extends React.Component {
 							flowName={ this.props.flowName }
 						/>
 					) }
-				<TransitionGroup component="div" className="signup__steps">
-					{ this.renderCurrentStep() }
-				</TransitionGroup>
+				<div className="signup__steps">{ this.renderCurrentStep() }</div>
+				{ this.shouldShowSiteMockups() && <SiteMockups /> }
 				{ this.state.bearerToken && (
 					<WpcomLoginForm
 						authorization={ 'Bearer ' + this.state.bearerToken }
@@ -586,6 +621,14 @@ class Signup extends React.Component {
 				) }
 			</div>
 		);
+	}
+
+	shouldShowSiteMockups() {
+		if ( this.props.flowName !== 'onboarding-dev' ) {
+			return false;
+		}
+		const stepsToShowOn = [ 'site-topic', 'about', 'site-information', 'domains' ];
+		return stepsToShowOn.indexOf( this.props.stepName ) >= 0;
 	}
 }
 
@@ -600,8 +643,8 @@ export default connect(
 	} ),
 	{
 		setSurvey,
-		setSiteType,
-		setSiteTopic,
+		submitSiteType,
+		submitSiteTopic,
 		loadTrackingTool,
 		trackAffiliateReferral: affiliateReferral,
 	},

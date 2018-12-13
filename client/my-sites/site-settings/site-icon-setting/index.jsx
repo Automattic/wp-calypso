@@ -17,7 +17,7 @@ import SiteIcon from 'blocks/site-icon';
 import Button from 'components/button';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import AsyncLoad from 'components/async-load';
-import Dialog from 'components/dialog';
+import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
 import accept from 'lib/accept';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { saveSiteSettings, updateSiteSettings } from 'state/site-settings/actions';
@@ -45,6 +45,11 @@ import getSiteIconUrl from 'state/selectors/get-site-icon-url';
 import isPrivateSite from 'state/selectors/is-private-site';
 import isSiteSupportingImageEditor from 'state/selectors/is-site-supporting-image-editor';
 import { errorNotice } from 'state/notices/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class SiteIconSetting extends Component {
 	static propTypes = {
@@ -311,9 +316,7 @@ class SiteIconSetting extends Component {
 					<MediaLibrarySelectedData siteId={ siteId }>
 						<AsyncLoad
 							require="post-editor/media-modal"
-							placeholder={
-								<Dialog additionalClassNames="editor-media-modal" isVisible={ isModalVisible } />
-							}
+							placeholder={ <EditorMediaModalDialog isVisible /> }
 							siteId={ siteId }
 							onClose={ this.editSelectedMedia }
 							isParentReady={ this.isParentReady }

@@ -9,7 +9,7 @@ import { fromPairs, map, mapValues, noop } from 'lodash';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { TIMEZONES_REQUEST } from 'state/action-types';
 import { timezonesReceive } from 'state/timezones/actions';
 
@@ -58,7 +58,7 @@ export const addTimezones = ( action, data ) => timezonesReceive( data );
 
 registerHandlers( 'state/data-layer/wpcom/timezones/index.js', {
 	[ TIMEZONES_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchTimezones,
 			onSuccess: addTimezones,
 			onError: noop,

@@ -5,7 +5,7 @@
  */
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { PLANS_REQUEST } from 'state/action-types';
 import {
 	plansReceiveAction,
@@ -55,7 +55,7 @@ export const receivePlans = ( action, plans ) => [
 export const receiveError = ( action, rawError ) =>
 	plansRequestFailureAction( rawError instanceof Error ? rawError.message : rawError );
 
-export const dispatchPlansRequest = dispatchRequestEx( {
+export const dispatchPlansRequest = dispatchRequest( {
 	fetch: requestPlans,
 	onSuccess: receivePlans,
 	onError: receiveError,

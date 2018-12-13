@@ -4,7 +4,6 @@
 	position: absolute;
 	left: 50%;
 	top: 50%;
-	z-index: 1;
 	width: 32px;
 	height: 38px;
 	margin-top: -19px;
@@ -25,11 +24,6 @@
 	}
 }
 .component__add-point__popover {
-	// Default z-index for components-popover places it above Edit Post Header and Notices
-	&.components-popover,
-	&.components-popover:not( .is-mobile ).is-bottom {
-		z-index: 20;
-	}
 	.components-button:not( :disabled ):not( [aria-disabled='true'] ):focus {
 		background-color: transparent;
 		box-shadow: none;

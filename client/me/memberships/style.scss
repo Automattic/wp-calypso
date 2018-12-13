@@ -102,7 +102,7 @@
 	}
 
 	@include breakpoint( '>660px' ) {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		display: block;
 		font-family: $sans;
 		font-size: 12px;
@@ -129,7 +129,7 @@
 }
 
 .memberships__subscription-title {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	display: block;
 	font-size: 18px;
 	line-height: 1.2em;
@@ -139,7 +139,7 @@
 }
 
 .memberships__subscription-remove {
-	color: $alert-red;
+	color: var( --color-error );
 	text-align: left;
 	width: 100%;
 	cursor: hand;

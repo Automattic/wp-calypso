@@ -46,7 +46,7 @@
 	.happychat__title {
 		cursor: default;
 		padding: 0;
-		background: $blue-medium;
+		background: var( --color-accent );
 		border-bottom: 1px solid darken( $blue-medium, 5% );
 		color: $white;
 		flex: 0 0 auto;
@@ -245,7 +245,7 @@
 	align-self: flex-start;
 	flex: 0 0 auto;
 	border-radius: 8px;
-	background: $blue-medium;
+	background: var( --color-accent );
 	color: $white;
 	padding: 4px 8px;
 	margin: 8px 12px 0 0;
@@ -303,7 +303,7 @@
 
 	.is-user-message & {
 		color: $white;
-		background: $blue-medium;
+		background: var( --color-accent );
 		border-radius: 8px 8px 0 8px;
 
 		&:after {
@@ -313,7 +313,7 @@
 			// draw a triangle
 			width: 0;
 			height: 0;
-			border-bottom: 8px solid $blue-medium;
+			border-bottom: 8px solid var( --color-accent );
 			border-left: none;
 			border-right: 8px solid transparent;
 		}
@@ -331,7 +331,7 @@
 	margin-left: 0;
 
 	a {
-		color: $blue-medium;
+		color: var( --color-accent );
 		text-decoration: underline;
 	}
 

@@ -1,11 +1,34 @@
 /** @format */
 
+// Block library
+@import '~@wordpress/block-library/build-style/style';
+
+// Components
+@import '~@wordpress/components/build-style/style';
+
+// Editor package styles
+@import '~@wordpress/editor/build-style/style';
+
+// Block library theme & editor
+@import '~@wordpress/block-library/build-style/theme';
+@import '~@wordpress/block-library/build-style/editor';
+
+// Edit-post component styles
+@import '~@wordpress/edit-post/build-style/style';
+
+// Format library styles
+@import '~@wordpress/format-library/build-style/style';
+
 $gutenberg-breakpoint-sm: 782px;
 
 @mixin gutenberg-sm() {
 	@media ( max-width: $gutenberg-breakpoint-sm ) {
 		@content;
 	}
+}
+
+.is-group-gutenberg.layout {
+	background-color: var( --color-surface );
 }
 
 .is-group-gutenberg::before {
@@ -41,6 +64,11 @@ $gutenberg-theme-toggle: #11a0d2;
 //end static post css values
 //========================================================
 
+//Remove this if https://github.com/Automattic/wp-calypso/issues/28776 is resolved
+.editor-post-permalink__change {
+	display: none;
+}
+
 .is-section-gutenberg-editor {
 	box-sizing: border-box !important;
 
@@ -75,6 +103,14 @@ $gutenberg-theme-toggle: #11a0d2;
 
 		.editor-post-publish-panel {
 			top: 0;
+		}
+
+		.components-notice-list {
+			@media (max-width: 600px) {
+				top: auto;
+			}
+
+			left: 0;
 		}
 	}
 
@@ -178,6 +214,19 @@ $gutenberg-theme-toggle: #11a0d2;
 		}
 	}
 
+	.edit-post-sidebar-header ul {
+		list-style: none;
+		margin: 0;
+	}
+
+	.editor-block-navigation__list {
+		list-style: none;
+	}
+}
+
+.is-section-gutenberg-editor,
+.edit-post-options-modal {
+
 	// UNSET CALYPSO DEFAULT STYLES
 
 	input[type='number'].components-range-control__number {
@@ -244,6 +293,41 @@ $gutenberg-theme-toggle: #11a0d2;
 		cursor: pointer;
 	}
 	// END Missing Core styles
+	.components-placeholder__fieldset {
+		color: #191e23; // $dark-gray-900;
+		p {
+			font-family: $sans;
+			font-size: 13px;
+
+		}
+	}
+
+	.components-placeholder__label svg {
+		margin-right: 1ch;
+	}
+}
+
+.editor__placeholder {
+	.placeholder {
+		@include placeholder;
+		height: 16px;
+		border-radius: 8px;
+	}
+
+	.placeholder-site {
+		margin-left: 18px;
+	}
+
+	.placeholder-button {
+		width: 40px;
+		margin: 0 8px;
+	}
+
+	.placeholder-title {
+			height: 40px;
+			border-radius: 20px;
+			margin: 0 8px;
+	}
 }
 
 	// Box Widths  

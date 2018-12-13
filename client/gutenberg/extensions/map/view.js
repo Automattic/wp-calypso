@@ -8,24 +8,29 @@ import './style.scss';
 import component from './component.js';
 import { settings } from './settings.js';
 import FrontendManagement from 'gutenberg/extensions/shared/frontend-management.js';
-import apiFetch from '@wordpress/api-fetch';
 
-window.addEventListener( 'load', function() {
-	// Do not initialize in editor.
-	if ( window.wp.editor ) {
-		return;
-	}
-	const frontendManagement = new FrontendManagement();
-	const url = '/wp-json/jetpack/v4/service-api-keys/mapbox';
-	apiFetch( { url, method: 'GET' } ).then( result => {
+window &&
+	window.addEventListener( 'load', function() {
+		const frontendManagement = new FrontendManagement();
+		// Add apiKey to attibutes so FrontendManagement knows about it.
+		// It is dynamically being added on the php side.
+		// So that it can be updated accross all the map blocks at the same time.
+		const apiKey = {
+			type: 'string',
+			default: '',
+		};
 		frontendManagement.blockIterator( document, [
 			{
 				component: component,
 				options: {
-					settings,
-					props: { api_key: result.service_api_key },
+					settings: {
+						...settings,
+						attributes: {
+							...settings.attributes,
+							apiKey,
+						},
+					},
 				},
 			},
 		] );
 	} );
-} );

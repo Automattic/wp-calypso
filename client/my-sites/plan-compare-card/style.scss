@@ -13,7 +13,7 @@
 .plan-compare-card__features {
 	padding: 16px 24px;
 	font-size: 14px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .plan-compare-card__header {
@@ -34,7 +34,7 @@
 .plan-compare-card__line {
 	font-size: 12px;
 	font-weight: normal;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-style: italic;
 }
 
@@ -46,8 +46,8 @@
 .plan-compare-card__button.is-current {
 	width: 100%;
 	border-width: 1px;
-	border-color: $blue-medium;
-	color: $blue-medium;
+	border-color: var( --color-accent );
+	color: var( --color-accent );
 	font-weight: 400;
 }
 
@@ -65,7 +65,7 @@
 }
 
 .plan-compare-card-item.is-highlight {
-	color: $alert-green;
+	color: var( --color-success );
 	margin-left: 0px;
 }
 

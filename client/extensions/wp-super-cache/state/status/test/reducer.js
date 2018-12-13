@@ -190,7 +190,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state.items ).to.eql( {
+			expect( state.root().items ).to.eql( {
 				[ primarySiteId ]: primaryNotices,
 			} );
 		} );

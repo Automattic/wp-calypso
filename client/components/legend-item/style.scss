@@ -35,7 +35,7 @@
 }
 
 .legend-item__detail-description {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .legend-item__placeholder-title-name,

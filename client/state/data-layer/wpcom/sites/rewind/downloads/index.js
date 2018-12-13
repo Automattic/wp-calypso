@@ -10,7 +10,7 @@ import { isEmpty, get } from 'lodash';
  */
 import { errorNotice } from 'state/notices/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { REWIND_BACKUP_PROGRESS_REQUEST, REWIND_BACKUP_DISMISS_PROGRESS } from 'state/action-types';
 import { updateRewindBackupProgress, rewindBackupUpdateError } from 'state/activity-log/actions';
@@ -154,14 +154,14 @@ const fromBackupDismiss = data => ( {
 
 registerHandlers( 'state/data-layer/wpcom/sites/rewind/downloads', {
 	[ REWIND_BACKUP_PROGRESS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchProgress,
 			onSuccess: updateProgress,
 			onError: announceError,
 		} ),
 	],
 	[ REWIND_BACKUP_DISMISS_PROGRESS ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: dismissBackup,
 			onSuccess: backupSilentlyDismissed,
 			onError: backupDismissFailed,

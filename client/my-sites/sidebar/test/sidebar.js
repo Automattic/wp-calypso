@@ -13,7 +13,7 @@ import config from 'config';
 import { abtest } from 'lib/abtest';
 
 jest.mock( 'lib/user', () => null );
-jest.mock( 'lib/user/index', () => null );
+jest.mock( 'lib/user/index', () => () => {} );
 jest.mock( 'lib/analytics/index', () => null );
 jest.mock( 'lib/abtest', () => ( {
 	abtest: jest.fn( () => {
@@ -95,7 +95,7 @@ describe( 'MySitesSidebar', () => {
 
 			const wrapper = shallow( <Store /> );
 			expect( wrapper.props().link ).toEqual(
-				'http://test.com/wp-admin/edit.php?post_type=shop_order&calypsoify=1'
+				'http://test.com/wp-admin/admin.php?page=wc-setup-checklist'
 			);
 		} );
 

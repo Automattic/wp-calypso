@@ -134,6 +134,7 @@ const Flows = {
 		? abtest( 'improvedOnboarding' )
 		: 'main',
 	resumingFlow: false,
+	excludedSteps: [],
 
 	/**
 	 * Get certain flow from the flows configuration.
@@ -156,7 +157,7 @@ const Flows = {
 			return flow;
 		}
 
-		if ( user.get() ) {
+		if ( user && user.get() ) {
 			flow = removeUserStepFromFlow( flow );
 		}
 
@@ -165,7 +166,28 @@ const Flows = {
 
 		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
 
-		return Flows.getABTestFilteredFlow( flowName, flow );
+		return Flows.filterExcludedSteps( Flows.getABTestFilteredFlow( flowName, flow ) );
+	},
+
+	/**
+	 * Make `getFlow()` call to exclude the given steps.
+	 * The main usage at the moment is to serve as a quick solution to remove steps that have been pre-fulfilled
+	 * without explicit user inputs, e.g. query arguments.
+	 *
+	 * @param {Array} steps An array of names of steps to be excluded.
+	 */
+	excludeSteps( steps ) {
+		Flows.excludedSteps = steps;
+	},
+
+	filterExcludedSteps( flow ) {
+		if ( ! flow ) {
+			return;
+		}
+
+		return assign( {}, flow, {
+			steps: reject( flow.steps, stepName => includes( Flows.excludedSteps, stepName ) ),
+		} );
 	},
 
 	getFlows() {
@@ -226,6 +248,14 @@ const Flows = {
 		// if ( Flow.defaultFlowName === flowName ) {
 		// }
 
+		// Remove About step in the ecommerce flow if we're in the onboarding AB test
+		if ( 'ecommerce' === flowName && 'onboarding' === abtest( 'improvedOnboarding' ) ) {
+			const afterStep = user && user.get() ? '' : 'user';
+
+			flow = Flows.removeStepFromFlow( 'about', flow );
+			return Flows.insertStepIntoFlow( 'site-type', flow, afterStep );
+		}
+
 		return flow;
 	},
 
@@ -251,7 +281,6 @@ const Flows = {
 			 */
 			if ( afterStepIndex > -1 || '' === afterStep ) {
 				steps.splice( afterStepIndex + 1, 0, stepName );
-
 				return {
 					...flow,
 					steps,

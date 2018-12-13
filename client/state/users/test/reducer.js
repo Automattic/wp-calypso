@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { items } from '../reducer';
-import { USER_RECEIVE } from 'state/action-types';
+import { CURRENT_USER_RECEIVE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
@@ -16,7 +16,7 @@ describe( 'reducer', () => {
 
 		test( 'should index users by ID', () => {
 			const state = items( null, {
-				type: USER_RECEIVE,
+				type: CURRENT_USER_RECEIVE,
 				user: { ID: 73705554, login: 'testonesite2014' },
 			} );
 
@@ -31,7 +31,7 @@ describe( 'reducer', () => {
 			} );
 
 			const state = items( original, {
-				type: USER_RECEIVE,
+				type: CURRENT_USER_RECEIVE,
 				user: { ID: 73705672, login: 'testtwosites2014' },
 			} );
 
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 			} );
 
 			const state = items( original, {
-				type: USER_RECEIVE,
+				type: CURRENT_USER_RECEIVE,
 				user: { ID: 73705554, login: 'testtwosites2014' },
 			} );
 

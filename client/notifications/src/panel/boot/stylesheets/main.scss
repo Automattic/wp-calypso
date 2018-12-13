@@ -28,18 +28,18 @@
 
   // Links
   a, a:visited {
-    color: $blue-wordpress;
+    color: var( --color-primary );
     text-decoration: none;
   }
 
   a:hover, a:focus, a:active {
-    color: $blue-wordpress;
+    color: var( --color-primary );
   }
 
   button {
     background-color: transparent;
     border: none;
-    color: $blue-wordpress;
+    color: var( --color-primary );
     cursor: pointer;
     font-size: inherit;
     outline: none;
@@ -135,10 +135,10 @@
   }
 
   .wpnc__header a.wpnc__post {
-    color: $gray-text-min;
+    color: var( --color-text-subtle );
 
     &:hover {
-      color: $blue-wordpress;
+      color: var( --color-primary );
     }
   }
 
@@ -160,7 +160,7 @@
   .wpnc__filter {
     width: 100%;
     background-color: $white;
-    color: $gray-text-min;
+    color: var( --color-text-subtle );
     border-bottom: 1px solid $gray-lighten-30;
     border-left: 1px solid $white;
     text-align: center; // Center filter in IE 9
@@ -180,7 +180,7 @@
     padding: 6px 8px;
 
     &:focus {
-      box-shadow: 0 0 0 2px $blue-light;
+      box-shadow: 0 0 0 2px var( --color-primary-light );
     }
   }
 
@@ -217,17 +217,17 @@
       border-bottom-right-radius: 4px;
 
       &.selected {
-        border-right-color: $blue-medium;
+        border-right-color: var( --color-accent );
       }
     }
 
     &.selected {
-      background: $blue-medium;
-      border-color: $blue-medium;
+      background: var( --color-accent );
+      border-color: var( --color-accent );
       color: $white;
 
       + .segmented-control-item {
-        border-left-color: $blue-medium; // Color left border on adjacent item to match active filter
+        border-left-color: var( --color-accent ); // Color left border on adjacent item to match active filter
       }
     }
   }
@@ -280,7 +280,7 @@
 
   .wpnc__done-message {
     background: $gray-light;
-    color: $gray-text-min;
+    color: var( --color-text-subtle );
     text-align: center;
     line-height: 50px;
     font-style: italic;
@@ -363,12 +363,12 @@
     }
 
     .unread .wpnc__note-icon .wpnc__gridicon {
-      background: $blue-medium;
+      background: var( --color-accent );
       border-color: $gray-light;
     }
 
     .wpnc__comment-unapproved .wpnc__note-icon .wpnc__gridicon {
-      background: $alert-yellow;
+      background: var( --color-warning );
       border-color: $wpnc__yellow-lighter;
     }
 
@@ -377,7 +377,7 @@
     }
 
     .wpnc__selected-note {
-      box-shadow: inset 4px 0 0 $blue-medium;
+      box-shadow: inset 4px 0 0 var( --color-accent );
     }
 
     .wpnc__text-summary {
@@ -410,7 +410,7 @@
         max-height: 3em;
         -webkit-line-clamp: 2;
         @extend %ellipsy-box;
-        color: $gray-text-min;
+        color: var( --color-text-subtle );
       }
     }
 
@@ -451,7 +451,7 @@
   }
 
   .wpnc__undo-item {
-    background: $alert-red;
+    background: var( --color-error );
     color: $white;
 
     p {
@@ -556,13 +556,13 @@
     }
 
     .wpnc__comment .wpnc__user p.wpnc__excerpt {
-      color: $blue-medium;
+      color: var( --color-accent );
       font-style: italic;
       max-height: 1.5em;
     }
 
     .wpnc__reply {
-      color: $gray-text-min;
+      color: var( --color-text-subtle );
       padding: $wpnc__padding-medium 0;
       border-bottom: 1px solid $gray-lighten-30;
 
@@ -576,7 +576,7 @@
 
       a {
         font-weight: 600;
-        color: $gray-text-min;
+        color: var( --color-text-subtle );
         text-decoration: underline;
       }
     }
@@ -777,8 +777,8 @@
 
   .wpnc__comment-unapproved .wpnc__body {
     .wpnc__body-content {
-      box-shadow: inset 4px 0 0 $alert-yellow;
-      border-bottom: 1px solid $alert-yellow;
+      box-shadow: inset 4px 0 0 var( --color-warning );
+      border-bottom: 1px solid var( --color-warning );
       background: $wpnc__yellow-lighter;
       color: $wpnc__red-darker;
     }

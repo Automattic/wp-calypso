@@ -6,9 +6,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { keyBy } from 'lodash';
-import { spy, match } from 'sinon';
 
 /**
  * Internal dependencies
@@ -49,36 +47,31 @@ describe( 'handlers', () => {
 		test( 'should dispatch a get action', () => {
 			const siteId = '123';
 			const reviewId = '555';
-			const dispatch = spy();
 			const action = fetchReviewReplies( siteId, reviewId );
-			handleReviewRepliesRequest( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith(
-				match( {
-					type: WPCOM_HTTP_REQUEST,
-					method: 'GET',
-					path: `/jetpack-blogs/${ siteId }/rest-api/`,
-					query: {
-						path: `/wp/v2/comments&parent=${ reviewId }&order=asc&per_page=15&_method=GET`,
-						json: true,
-						apiVersion: '1.1',
-					},
-				} )
-			);
+			const result = handleReviewRepliesRequest( action );
+
+			expect( result ).toMatchObject( {
+				type: WPCOM_HTTP_REQUEST,
+				method: 'GET',
+				path: `/jetpack-blogs/${ siteId }/rest-api/`,
+				query: {
+					path: `/wp/v2/comments&parent=${ reviewId }&order=asc&per_page=15&_method=GET`,
+					json: true,
+					apiVersion: '1.1',
+				},
+			} );
 		} );
 	} );
 	describe( '#handleReviewsRequestSuccess()', () => {
 		test( 'should dispatch review replies receive with list of replies', () => {
 			const siteId = '123';
 			const reviewId = '555';
-			const store = {
-				dispatch: spy(),
-			};
 			const response = { data: reviewReplies };
 
 			const action = fetchReviewReplies( siteId, reviewId );
-			handleReviewRepliesRequestSuccess( store, action, response );
+			const result = handleReviewRepliesRequestSuccess( action, response );
 
-			expect( store.dispatch ).calledWith( {
+			expect( result ).toMatchObject( {
 				type: WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
 				siteId,
 				reviewId,
@@ -90,14 +83,10 @@ describe( 'handlers', () => {
 		test( 'should dispatch error', () => {
 			const siteId = '123';
 			const reviewId = '555';
-			const store = {
-				dispatch: spy(),
-			};
-
 			const action = fetchReviewReplies( siteId, reviewId );
-			handleReviewRepliesRequestError( store, action, 'rest_no_route' );
+			const result = handleReviewRepliesRequestError( action, 'rest_no_route' );
 
-			expect( store.dispatch ).to.have.been.calledWithMatch( {
+			expect( result ).toMatchObject( {
 				type: WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
 				siteId,
 				reviewId,
@@ -110,54 +99,46 @@ describe( 'handlers', () => {
 		const reviewId = '105';
 		const replyId = '106';
 		test( 'should dispatch a request', () => {
-			const dispatch = spy();
 			const action = deleteReviewReply( siteId, reviewId, replyId );
-			handleDeleteReviewReply( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith(
-				match( {
-					type: WPCOM_HTTP_REQUEST,
-					method: 'POST',
-					path: `/jetpack-blogs/${ siteId }/rest-api/`,
-					query: {
-						json: true,
-						apiVersion: '1.1',
-					},
-					body: {
-						path: `/wp/v2/comments/${ replyId }&force=true&_method=DELETE`,
-					},
-				} )
-			);
+			const result = handleDeleteReviewReply( action );
+			expect( result ).toMatchObject( {
+				type: WPCOM_HTTP_REQUEST,
+				method: 'POST',
+				path: `/jetpack-blogs/${ siteId }/rest-api/`,
+				query: {
+					json: true,
+					apiVersion: '1.1',
+				},
+				body: {
+					path: `/wp/v2/comments/${ replyId }&force=true&_method=DELETE`,
+				},
+			} );
 		} );
 	} );
 	describe( '#announceDeleteSuccess', () => {
 		const siteId = '123';
 		test( 'should dispatch an action and success notice', () => {
-			const dispatch = spy();
 			const action = deleteReviewReply( siteId, 544, 105 );
-			announceDeleteSuccess( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith(
-				match( {
-					type: WOOCOMMERCE_REVIEW_REPLY_DELETED,
-				} )
-			);
-			expect( dispatch ).to.have.been.calledWith(
-				match( {
-					type: NOTICE_CREATE,
-				} )
-			);
+			const result = announceDeleteSuccess( action );
+
+			expect( result[ 0 ] ).toMatchObject( {
+				type: WOOCOMMERCE_REVIEW_REPLY_DELETED,
+			} );
+			expect( result[ 1 ] ).toMatchObject( {
+				type: NOTICE_CREATE,
+			} );
 		} );
 	} );
 	describe( '#announceDeleteFailure', () => {
 		const siteId = '123';
-		const dispatch = spy();
+
 		test( 'should dispatch an error', () => {
 			const action = deleteReviewReply( siteId, 544, 105 );
-			announceDeleteFailure( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith(
-				match( {
-					type: NOTICE_CREATE,
-				} )
-			);
+			const result = announceDeleteFailure( action );
+
+			expect( result ).toMatchObject( {
+				type: NOTICE_CREATE,
+			} );
 		} );
 	} );
 	describe( '#handleReviewReplyUpdate', () => {
@@ -165,79 +146,75 @@ describe( 'handlers', () => {
 		const reviewId = '105';
 		const replyId = '106';
 		const changes = { content: 'test' };
+
 		test( 'should dispatch a request', () => {
-			const dispatch = spy();
 			const action = updateReviewReply( siteId, reviewId, replyId, changes );
-			handleReviewReplyUpdate( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith(
-				match( {
-					type: WPCOM_HTTP_REQUEST,
-					method: 'POST',
-					path: `/jetpack-blogs/${ siteId }/rest-api/`,
-					query: {
-						json: true,
-						apiVersion: '1.1',
-					},
-					body: {
-						path: `/wp/v2/comments/${ replyId }&_method=POST`,
-						body: JSON.stringify( changes ),
-					},
-				} )
-			);
+			const result = handleReviewReplyUpdate( action );
+
+			expect( result ).toMatchObject( {
+				type: WPCOM_HTTP_REQUEST,
+				method: 'POST',
+				path: `/jetpack-blogs/${ siteId }/rest-api/`,
+				query: {
+					json: true,
+					apiVersion: '1.1',
+				},
+				body: {
+					path: `/wp/v2/comments/${ replyId }&_method=POST`,
+					body: JSON.stringify( changes ),
+				},
+			} );
 		} );
 	} );
 	describe( '#handleReviewReplyUpdateSuccess', () => {
 		const siteId = '123';
+
 		test( 'should dispatch an action and success notice', () => {
-			const dispatch = spy();
 			const action = updateReviewReply( siteId, 544, 105, { content: 'test' } );
-			handleReviewReplyUpdateSuccess( { dispatch }, action, { content: 'test' } );
-			expect( dispatch ).to.have.been.calledWith(
-				match( {
-					type: WOOCOMMERCE_REVIEW_REPLY_UPDATED,
-				} )
-			);
-			expect( dispatch ).to.have.been.calledWith(
-				match( {
-					type: NOTICE_CREATE,
-				} )
-			);
+			const result = handleReviewReplyUpdateSuccess( action, { content: 'test' } );
+
+			expect( result[ 0 ] ).toMatchObject( {
+				type: WOOCOMMERCE_REVIEW_REPLY_UPDATED,
+			} );
+			expect( result[ 2 ] ).toMatchObject( {
+				type: NOTICE_CREATE,
+			} );
 		} );
 	} );
+
 	describe( '#announceReviewReplyUpdateFailure', () => {
 		const siteId = '123';
-		const dispatch = spy();
+
 		test( 'should dispatch an error', () => {
 			const action = updateReviewReply( siteId, 544, 105, { content: 'test' } );
-			announceReviewReplyUpdateFailure( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith(
-				match( {
-					type: NOTICE_CREATE,
-				} )
-			);
+			const result = announceReviewReplyUpdateFailure( action );
+
+			expect( result ).toMatchObject( {
+				type: NOTICE_CREATE,
+			} );
 		} );
 	} );
+
 	describe( '#handleReviewReplyCreate', () => {
 		const siteId = '123';
 		const productId = '201';
 		const reviewId = '105';
+
 		test( 'should dispatch a request', () => {
-			const dispatch = spy();
 			const action = createReviewReply( siteId, productId, reviewId, 'Hello world', false );
-			handleReviewReplyCreate( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith(
-				match( {
-					type: WPCOM_HTTP_REQUEST,
-					method: 'POST',
-					path: `/sites/${ siteId }/comments/${ reviewId }/replies/new`,
-					query: {
-						apiVersion: '1.1',
-					},
-					body: {
-						content: 'Hello world',
-					},
-				} )
-			);
+			const result = handleReviewReplyCreate( action );
+
+			expect( result ).toMatchObject( {
+				type: WPCOM_HTTP_REQUEST,
+				method: 'POST',
+				path: `/sites/${ siteId }/comments/${ reviewId }/replies/new`,
+				query: {
+					apiVersion: '1.1',
+				},
+				body: {
+					content: 'Hello world',
+				},
+			} );
 		} );
 	} );
 	describe( '#handleReviewReplyCreateSuccess', () => {
@@ -262,48 +239,45 @@ describe( 'handlers', () => {
 		};
 
 		test( 'should dispatch an action', () => {
-			const store = {
-				dispatch: spy(),
-				getState,
-			};
+			const dispatch = jest.fn();
 			const action = createReviewReply( siteId, productId, reviewId, 'Hello world', false );
-			handleReviewReplyCreateSuccess( store, action, create );
-			expect( store.dispatch ).to.have.been.calledWith(
-				match( {
+			handleReviewReplyCreateSuccess( action, create )( dispatch, getState );
+
+			expect( dispatch ).toHaveBeenCalledWith(
+				expect.objectContaining( {
 					type: WOOCOMMERCE_REVIEW_REPLIES_REQUEST,
 				} )
 			);
-			expect( store.dispatch ).to.not.have.been.calledWith(
-				match( {
+			expect( dispatch ).not.toHaveBeenCalledWith(
+				expect.objectContaining( {
 					type: WOOCOMMERCE_REVIEW_STATUS_CHANGE,
 				} )
 			);
 		} );
+
 		test( 'should approve a review when requested', () => {
-			const store = {
-				dispatch: spy(),
-				getState,
-			};
+			const dispatch = jest.fn();
 			const action = createReviewReply( siteId, productId, reviewId, 'Hello world', true );
-			handleReviewReplyCreateSuccess( store, action, create );
-			expect( store.dispatch ).to.have.been.calledWith(
-				match( {
+			handleReviewReplyCreateSuccess( action, create )( dispatch, getState );
+
+			expect( dispatch ).toHaveBeenCalledWith(
+				expect.objectContaining( {
 					type: WOOCOMMERCE_REVIEW_STATUS_CHANGE,
 				} )
 			);
 		} );
 	} );
+
 	describe( '#announceCreateFailure', () => {
 		const siteId = '123';
-		const dispatch = spy();
+
 		test( 'should dispatch an error', () => {
 			const action = createReviewReply( siteId, 544, 105, 'Hello world', false );
-			announceCreateFailure( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith(
-				match( {
-					type: NOTICE_CREATE,
-				} )
-			);
+			const result = announceCreateFailure( action );
+
+			expect( result ).toMatchObject( {
+				type: NOTICE_CREATE,
+			} );
 		} );
 	} );
 } );

@@ -63,7 +63,7 @@ describe( 'state', () => {
 					},
 				};
 
-				const serialized = reducer( AT_STATE, { type: SERIALIZE } );
+				const serialized = reducer( AT_STATE, { type: SERIALIZE } ).root();
 				expect( serialized[ SITE_ID ] ).to.have.property( 'status' );
 				expect( serialized[ SITE_ID ] ).to.have.property( 'eligibility' );
 				expect( serialized[ SITE_ID ] ).to.not.have.property( 'fetchingStatus' );

@@ -119,7 +119,7 @@ button.foldable-card__action {
 	}
 
 	&:hover .gridicon {
-		fill: $blue-medium;
+		fill: var( --color-accent );
 	}
 }
 
@@ -144,7 +144,7 @@ button.foldable-card__action {
 .foldable-card__summary,
 .foldable-card__summary-expanded {
 	margin-right: 40px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 12px;
 	transition: opacity 0.2s linear;
 	display: inline-block;

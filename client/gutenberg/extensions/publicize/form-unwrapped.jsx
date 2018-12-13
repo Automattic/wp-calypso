@@ -17,7 +17,8 @@
  */
 import classnames from 'classnames';
 import { sprintf } from '@wordpress/i18n';
-import { Component } from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
+import { uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,6 +34,8 @@ class PublicizeFormUnwrapped extends Component {
 		hasEditedShareMessage: false,
 	};
 
+	fieldId = uniqueId( 'jetpack-publicize-message-field-' );
+
 	/**
 	 * Check to see if form should be disabled.
 	 *
@@ -42,10 +45,7 @@ class PublicizeFormUnwrapped extends Component {
 	 * @return {boolean} True if whole form should be disabled.
 	 */
 	isDisabled() {
-		const { connections } = this.props;
-		// Check to see if at least one connection is not disabled
-		const formEnabled = connections.some( c => ! c.disabled );
-		return ! formEnabled;
+		return this.props.connections.every( connection => ! connection.toggleable );
 	}
 
 	getShareMessage() {
@@ -62,8 +62,8 @@ class PublicizeFormUnwrapped extends Component {
 	};
 
 	render() {
-		const { connections, toggleConnection, refreshCallback, shareMessage } = this.props;
-
+		const { connections, toggleConnection, refreshCallback } = this.props;
+		const shareMessage = this.getShareMessage();
 		const charactersRemaining = MAXIMUM_MESSAGE_LENGTH - shareMessage.length;
 		const characterCountClass = classnames( 'jetpack-publicize-character-count', {
 			'wpas-twitter-length-limit': charactersRemaining <= 0,
@@ -71,37 +71,46 @@ class PublicizeFormUnwrapped extends Component {
 
 		return (
 			<div id="publicize-form">
-				<ul>
-					{ connections.map( c => (
+				<ul className="jetpack-publicize__connections-list">
+					{ connections.map( ( { display_name, enabled, id, service_name, toggleable } ) => (
 						<PublicizeConnection
-							connectionData={ c }
-							key={ c.id }
+							disabled={ ! toggleable }
+							enabled={ enabled }
+							key={ id }
+							id={ id }
+							label={ display_name }
+							name={ service_name }
 							toggleConnection={ toggleConnection }
 						/>
 					) ) }
 				</ul>
 				<PublicizeSettingsButton refreshCallback={ refreshCallback } />
-				<label className="jetpack-publicize-message-note" htmlFor="wpas-title">
-					{ __( 'Customize your message' ) }
-				</label>
-				<div className="jetpack-publicize-message-box">
-					<textarea
-						value={ this.getShareMessage() }
-						onChange={ this.onMessageChange }
-						disabled={ this.isDisabled() }
-						maxLength={ MAXIMUM_MESSAGE_LENGTH }
-						placeholder={ __(
-							"Write a message for your audience here. If you leave this blank, we'll use the post title as the message."
-						) }
-						rows={ 4 }
-					/>
-					<div className={ characterCountClass }>
-						{ sprintf(
-							_n( '%d character remaining', '%d characters remaining', charactersRemaining ),
-							charactersRemaining
-						) }
-					</div>
-				</div>
+				{ connections.some( connection => connection.enabled ) && (
+					<Fragment>
+						<label className="jetpack-publicize-message-note" htmlFor={ this.fieldId }>
+							{ __( 'Customize your message' ) }
+						</label>
+						<div className="jetpack-publicize-message-box">
+							<textarea
+								id={ this.fieldId }
+								value={ shareMessage }
+								onChange={ this.onMessageChange }
+								disabled={ this.isDisabled() }
+								maxLength={ MAXIMUM_MESSAGE_LENGTH }
+								placeholder={ __(
+									"Write a message for your audience here. If you leave this blank, we'll use the post title as the message."
+								) }
+								rows={ 4 }
+							/>
+							<div className={ characterCountClass }>
+								{ sprintf(
+									_n( '%d character remaining', '%d characters remaining', charactersRemaining ),
+									charactersRemaining
+								) }
+							</div>
+						</div>
+					</Fragment>
+				) }
 			</div>
 		);
 	}

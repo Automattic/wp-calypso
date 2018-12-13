@@ -52,8 +52,8 @@
 	}
 
 	&:focus {
-		border-color: $blue-medium;
-		box-shadow: 0 0 0 2px $blue-light;
+		border-color: var( --color-accent );
+		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 }
 
@@ -92,7 +92,7 @@
 
 .language-picker__name-change {
 	text-transform: uppercase;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .language-picker__modal {
@@ -182,7 +182,7 @@
 	cursor: pointer;
 
 	&.is-selected {
-		background: $blue-medium;
+		background: var( --color-accent );
 		color: $white;
 	}
 }

@@ -21,7 +21,7 @@
 }
 
 .plan-price.is-discounted {
-	color: $alert-green;
+	color: var( --color-success );
 }
 
 .plan-price.is-discounted,
@@ -49,7 +49,7 @@
 }
 
 .plan-price.is-discounted .plan-price__currency-symbol {
-	color: $alert-green;
+	color: var( --color-success );
 }
 
 .plan-price__currency-symbol {

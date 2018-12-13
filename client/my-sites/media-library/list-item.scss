@@ -16,7 +16,7 @@
 		padding: 0;
 		transition: color 90ms ease;
 		box-shadow: 0 0 8px rgba( $gray-dark, .4 );
-		background: $blue-medium;
+		background: var( --color-accent );
 		border-radius: 50%;
 		font-size: 14px;
 		line-height: 28px;
@@ -59,7 +59,7 @@
 }
 
 .media-library__list-item.is-selected .media-library__list-item-figure {
-	box-shadow: 0 0 0 2px $blue-medium,
+	box-shadow: 0 0 0 2px var( --color-accent ),
 				0 4px 6px $gray-lighten-20;
 }
 

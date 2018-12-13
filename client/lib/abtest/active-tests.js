@@ -73,19 +73,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	krackenRebootM33: {
-		datestamp: '20181108',
-		variations: {
-			domainsbot_front: 25,
-			variation1_front: 25,
-			variation2_front: 25,
-			variation3_front: 25,
-		},
-		defaultVariation: 'domainsbot_front',
-		assignmentMethod: 'userId',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	privateByDefault: {
 		datestamp: '20181115',
 		variations: {
@@ -94,12 +81,20 @@ export default {
 		},
 		defaultVariation: 'public',
 	},
-	crowdsignalNameBasedSignup: {
-		datestamp: '20181120',
+	simplifiedChecklistView: {
+		datestamp: '20181204',
 		variations: {
-			nameSignup: 50,
-			usernameSignup: 50,
+			showAll: 50,
+			showFirstOnly: 50,
 		},
-		defaultVariation: 'usernameSignup',
+		defaultVariation: 'showAll',
+	},
+	removeUsername: {
+		datestamp: '20181213',
+		variations: {
+			showUsername: 50,
+			hideUsername: 50,
+		},
+		defaultVariation: 'showUsername',
 	},
 };

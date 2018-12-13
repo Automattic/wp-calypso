@@ -12,13 +12,13 @@
 			color: $orange-jazzy;
 		}
 		.is-pending {
-			color: $alert-yellow;
+			color: var( --color-warning );
 		}
 		.is-scheduled {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 		.is-trash {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 	}
 }

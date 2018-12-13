@@ -74,7 +74,7 @@
 	border-right: 1px solid lighten( $gray, 25% );
 	padding: 6px 16px;
 	min-width: 80px;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	border-radius: 0;
 
 	@include breakpoint( ">960px" ) {
@@ -82,7 +82,7 @@
 	}
 
 	&:hover {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 }
 
@@ -122,7 +122,7 @@ a.web-preview__external.button {
 	width: auto;
 
 	.form-text-input {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		font-size: 14px;
 		height: 35px;
 		border-color: transparent;
@@ -274,13 +274,13 @@ a.web-preview__external.button {
 }
 
 .web-preview__loading-message {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-weight: 300;
 	font-size: 16px;
 }
 
 .web-preview__loading-message strong {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	display: block;
 	font-size: 24px;
 	margin-bottom: 5px;

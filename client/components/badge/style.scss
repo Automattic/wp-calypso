@@ -8,7 +8,7 @@
 
 .badge--warning {
 	color: $gray-dark;
-	background-color: $alert-yellow;
+	background-color: var( --color-warning );
 }
 
 .badge--success {

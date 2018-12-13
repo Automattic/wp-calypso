@@ -58,7 +58,7 @@
 		}
 	}
 	&.is-default .taxonomy-manager__icon {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 
 	.taxonomy-manager__label {
@@ -80,7 +80,7 @@
 
 		.taxonomy-manager__default-label {
 			text-transform: uppercase;
-			color: $blue-medium;
+			color: var( --color-accent );
 			font-size: 12px;
 			margin-left: 10px;
 		}
@@ -112,7 +112,7 @@
 		}
 
 		&.is-menu-visible .ellipsis-menu__toggle.button.is-borderless {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 }

@@ -1,7 +1,7 @@
 // Conversations intro
 .conversations__intro {
 	border: 1px solid $gray-lighten-30;
-	color: $blue-dark;
+	color: var( --color-primary-dark );
 	display: flex;
 	min-height: 140px;
 

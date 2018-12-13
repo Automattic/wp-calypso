@@ -21,6 +21,7 @@ import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import Gridicon from 'gridicons';
 import Main from 'components/main';
+import { showInlineHelpPopover } from 'state/inline-help/actions';
 import WebPreview from 'components/web-preview';
 
 const debug = debugFactory( 'calypso:my-sites:preview' );
@@ -34,7 +35,7 @@ class PreviewMain extends React.Component {
 		showingClose: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.updateUrl();
 		this.updateLayout();
 	}
@@ -50,6 +51,10 @@ class PreviewMain extends React.Component {
 	componentDidMount() {
 		if ( typeof window !== 'undefined' ) {
 			window.addEventListener( 'resize', this.debouncedUpdateLayout );
+		}
+
+		if ( this.props.help ) {
+			this.props.showInlineHelpPopover();
 		}
 	}
 
@@ -170,5 +175,8 @@ const mapState = state => {
 
 export default connect(
 	mapState,
-	{ setLayoutFocus }
+	{
+		setLayoutFocus,
+		showInlineHelpPopover,
+	}
 )( localize( PreviewMain ) );

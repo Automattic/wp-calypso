@@ -47,7 +47,7 @@
 	}
 
 	.preview-upgrade-nudge__features-list-item-checkmark {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		flex: 0 0 auto;
 		margin-right: 5px;
 	}

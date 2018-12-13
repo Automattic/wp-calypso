@@ -57,7 +57,7 @@ $faq-gutter-width: 24px;
 	color: $gray-darken-20;
 
 	a {
-		color: $blue-medium;
+		color: var( --color-accent );
 		text-decoration: underline;
 	}
 }

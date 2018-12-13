@@ -3,7 +3,7 @@
 
 	display: none;
 	position: relative;
-	background: no-repeat $blue-medium;
+	background: no-repeat var( --color-accent );
 	color: white !important;
 	padding: 0.8em;
 	overflow: hidden;

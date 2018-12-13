@@ -34,6 +34,11 @@ import {
 	PLAN_ECOMMERCE,
 } from 'lib/plans/constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class PlansAtomicStoreStep extends Component {
 	static propTypes = {
 		additionalStepData: PropTypes.object,

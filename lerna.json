@@ -1,4 +1,10 @@
 {
-	"packages": [ "packages/*", "client/gutenberg/extensions/presets/jetpack" ],
-	"version": "independent"
+	"packages": [ "packages/*", "." ],
+	"version": "independent",
+	"ignoreChanges": [
+		"**/*.md",
+		"**/.eslintrc.{js,json,yaml,yml}",
+		"**/package-lock.json",
+		"packages/i18n-calypso"
+	]
 }

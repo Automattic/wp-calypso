@@ -30,6 +30,7 @@ import PaymentChatButton from './payment-chat-button';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
+import RecentRenewals from './recent-renewals';
 
 export class CreditCardPaymentBox extends React.Component {
 	static propTypes = {
@@ -40,6 +41,7 @@ export class CreditCardPaymentBox extends React.Component {
 		countriesList: PropTypes.array.isRequired,
 		initialCard: PropTypes.object,
 		onSubmit: PropTypes.func,
+		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -190,6 +192,7 @@ export class CreditCardPaymentBox extends React.Component {
 
 					{ this.props.children }
 
+					<RecentRenewals cart={ cart } />
 					<TermsOfService
 						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
 					/>

@@ -15,6 +15,11 @@ import { get } from 'lodash';
  */
 import Card from 'components/card';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function GoogleMyBusinessLocationPlaceholder( { isCompact } ) {
 	const classes = classNames( 'gmb-location', 'is-loading', { 'is-compact': isCompact } );
 

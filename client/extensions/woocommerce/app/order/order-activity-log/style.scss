@@ -81,7 +81,7 @@
 
 	.order-activity-log__note-type {
 		font-size: 12px;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		text-transform: uppercase;
 	}
 
@@ -112,7 +112,7 @@
 		font-size: 14px;
 
 		&::placeholder {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 		}
 
 		&:focus {

@@ -75,12 +75,12 @@ describe( 'parseAuthorizationQuery', () => {
 			_wp_nonce: 'foobar',
 			blogname: 'Just Another WordPress.com Site',
 			client_id: '12345',
-			home_url: 'http://yourjetpack.blog',
-			redirect_uri: 'http://yourjetpack.blog/wp-admin/admin.php',
+			home_url: 'https://yourjetpack.blog',
+			redirect_uri: 'https://yourjetpack.blog/wp-admin/admin.php',
 			scope: 'administrator:34579bf2a3185a47d1b31aab30125d',
 			secret: '640fdbd69f96a8ca9e61',
-			site: 'http://yourjetpack.blog',
-			site_url: 'http://yourjetpack.blog',
+			site: 'https://yourjetpack.blog',
+			site_url: 'https://yourjetpack.blog',
 			state: '1',
 		};
 		const result = parseAuthorizationQuery( data );

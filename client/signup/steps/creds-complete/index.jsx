@@ -15,6 +15,11 @@ import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import Button from 'components/button';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CredsCompleteStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,

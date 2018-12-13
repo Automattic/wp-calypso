@@ -3,13 +3,11 @@
  * External dependencies
  */
 import { reducer as form } from 'redux-form';
-import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import extensionsModule from 'extensions';
 import { combineReducers } from 'state/utils';
 import { reducer as httpData } from 'state/data-layer/http-data';
 
@@ -46,7 +44,7 @@ import i18n from './i18n/reducer';
 import immediateLogin from './immediate-login/reducer';
 import importerNux from './importer-nux/reducer';
 import imports from './imports/reducer';
-import inlineHelpSearchResults from './inline-help/reducer';
+import inlineHelp from './inline-help/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
 import invites from './invites/reducer';
 import jetpack from './jetpack/reducer';
@@ -100,18 +98,6 @@ import userSettings from './user-settings/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
 
-/**
- * Module variables
- */
-
-// Consolidate the extension reducers under 'extensions' for namespacing.
-const extensions = combineReducers(
-	mapValues(
-		extensionsModule.reducers(),
-		reducer => ( reducer.default ? reducer.default : reducer )
-	)
-);
-
 const reducers = {
 	account,
 	accountRecovery,
@@ -134,7 +120,6 @@ const reducers = {
 	dataRequests,
 	documentHead,
 	domains,
-	extensions,
 	form,
 	googleAppsUsers,
 	googleMyBusiness,
@@ -146,7 +131,7 @@ const reducers = {
 	immediateLogin,
 	importerNux,
 	imports,
-	inlineHelpSearchResults,
+	inlineHelp,
 	inlineSupportArticle,
 	invites,
 	jetpack,

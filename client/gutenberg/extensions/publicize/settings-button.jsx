@@ -20,20 +20,34 @@
  */
 import classnames from 'classnames';
 import { Component } from '@wordpress/element';
+import { ExternalLink } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import getSiteFragment from 'gutenberg/extensions/presets/jetpack/editor-shared/get-site-fragment';
 
 class PublicizeSettingsButton extends Component {
+	getButtonLink() {
+		const siteFragment = getSiteFragment();
+
+		// If running in WP.com wp-admin or in Calypso, we redirect to Calypso sharing settings.
+		if ( siteFragment ) {
+			return `https://wordpress.com/sharing/${ siteFragment }`;
+		}
+
+		// If running in WordPress.org wp-admin we redirect to Sharing settings in wp-admin.
+		return 'options-general.php?page=sharing&publicize_popup=true';
+	}
+
 	/**
 	 * Opens up popup so user can view/modify connections
 	 *
 	 * @param {object} event Event instance for onClick.
 	 */
 	settingsClick = event => {
-		const href = 'options-general.php?page=sharing&publicize_popup=true';
+		const href = this.getButtonLink();
 		const { refreshCallback } = this.props;
 		event.preventDefault();
 		/**
@@ -57,10 +71,7 @@ class PublicizeSettingsButton extends Component {
 
 		return (
 			<div className={ className }>
-				<a onClick={ this.settingsClick } tabIndex="0">
-					<span className="jetpack-publicize-add-icon dashicons-plus-alt" />
-					{ __( 'Connect new service' ) }
-				</a>
+				<ExternalLink onClick={ this.settingsClick }>{ __( 'Connect an account' ) }</ExternalLink>
 			</div>
 		);
 	}

@@ -11,38 +11,46 @@
  * External dependencies
  */
 import { Component } from '@wordpress/element';
-import { FormToggle } from '@wordpress/components';
+import { Disabled, FormToggle } from '@wordpress/components';
+
+/**
+ * Internal dependencies
+ */
+import PublicizeServiceIcon from './service-icon';
 
 class PublicizeConnection extends Component {
 	onConnectionChange = () => {
-		const { id } = this.props.connectionData;
+		const { id } = this.props;
 		this.props.toggleConnection( id );
 	};
 
 	render() {
-		const { display_name, enabled, id, service_name: name, toggleable } = this.props.connectionData;
+		const { disabled, enabled, id, label, name } = this.props;
 		const fieldId = 'connection-' + name + '-' + id;
 		// Genericon names are dash separated
-		const socialName = name.replace( '_', '-' );
+		const serviceName = name.replace( '_', '-' );
+
+		let toggle = (
+			<FormToggle
+				id={ fieldId }
+				className="jetpack-publicize-connection-toggle"
+				checked={ enabled }
+				onChange={ this.onConnectionChange }
+			/>
+		);
+
+		if ( disabled ) {
+			toggle = <Disabled>{ toggle }</Disabled>;
+		}
 
 		return (
 			<li>
 				<div className="publicize-jetpack-connection-container">
 					<label htmlFor={ fieldId } className="jetpack-publicize-connection-label">
-						<span
-							className={
-								'jetpack-publicize-gutenberg-social-icon social-logo social-logo__' + socialName
-							}
-						/>
-						<span>{ display_name }</span>
+						<PublicizeServiceIcon serviceName={ serviceName } />
+						<span className="jetpack-publicize-connection-label-copy">{ label }</span>
 					</label>
-					<FormToggle
-						id={ fieldId }
-						className="jetpack-publicize-connection-toggle"
-						checked={ enabled }
-						onChange={ this.onConnectionChange }
-						disabled={ ! toggleable }
-					/>
+					{ toggle }
 				</div>
 			</li>
 		);

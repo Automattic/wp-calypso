@@ -53,4 +53,4 @@ cached-requests.json
 /client/gutenberg/extensions/**/build
 
 # package output
-/packages/**/dist/**
+/packages/*/dist/

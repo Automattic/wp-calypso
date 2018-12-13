@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import ReaderMain from 'components/reader-main';
+import ReaderMain from 'reader/components/reader-main';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import EmptyContent from 'components/empty-content';
 import { recordTrack as recordReaderTrack } from 'reader/stats';

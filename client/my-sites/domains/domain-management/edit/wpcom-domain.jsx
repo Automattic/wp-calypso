@@ -4,10 +4,8 @@
  */
 import React from 'react';
 import createReactClass from 'create-react-class';
-import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import { flow, get } from 'lodash';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -18,8 +16,6 @@ import Header from './card/header';
 import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestSiteAddressChange } from 'state/site-address-change/actions';
 import SiteAddressChanger from 'blocks/site-address-changer';
 import { type as domainTypes } from 'lib/domains/constants';
 
@@ -33,16 +29,10 @@ const WpcomDomain = createReactClass( {
 
 	getEditSiteAddressBlock() {
 		const { domain } = this.props;
-
-		/**
-		 * Hide Edit site address for .blog subdomains as this is unsupported for now.
-		 */
-		if ( get( domain, 'name', '' ).match( /\.\w+\.blog$/ ) ) {
-			return null;
-		}
-
 		if ( get( domain, 'type' ) === domainTypes.WPCOM ) {
-			return <SiteAddressChanger currentDomain={ domain } />;
+			const dotblogSubdomain = get( domain, 'name', '' ).match( /\.\w+\.blog$/ );
+			const domainSuffix = dotblogSubdomain ? dotblogSubdomain[ 0 ] : '.wordpress.com';
+			return <SiteAddressChanger currentDomain={ domain } currentDomainSuffix={ domainSuffix } />;
 		}
 
 		return (
@@ -88,11 +78,5 @@ const WpcomDomain = createReactClass( {
 } );
 
 export default flow(
-	localize,
-	connect(
-		state => ( {
-			siteId: getSelectedSiteId( state ),
-		} ),
-		dispatch => bindActionCreators( { requestSiteAddressChange }, dispatch )
-	)
+	localize
 )( WpcomDomain );

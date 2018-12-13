@@ -3,7 +3,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import { setSiteType } from 'state/signup/steps/site-type/actions';
+import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getThemeForSiteType } from 'signup/utils';
-import { allSiteTypes, dasherize, isValidLandingPageSiteType } from 'lib/signup/site-type';
+import { allSiteTypes, getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 //Form components
 import Card from 'components/card';
@@ -23,12 +23,16 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SiteType extends Component {
 	constructor( props ) {
 		super( props );
-		const siteTypeVal = isValidLandingPageSiteType( props.siteType ) ? props.siteType : '';
 		this.state = {
-			siteType: siteTypeVal,
+			siteType: props.siteType,
 		};
 	}
 
@@ -42,35 +46,38 @@ class SiteType extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		// Default siteType is 'blogger'
-		const siteTypeInputVal = this.state.siteType || allSiteTypes[ 0 ].type;
-		const themeRepo = getThemeForSiteType( siteTypeInputVal );
+		// Default siteType is 'blog'
+		const siteTypeInputVal =
+			this.state.siteType || getSiteTypePropertyValue( 'id', 'blog', 'slug' );
 
-		this.props.submitStep( siteTypeInputVal, themeRepo );
+		this.props.submitStep( siteTypeInputVal );
 	};
 
-	renderContent() {
-		const { translate } = this.props;
-		const radioOptions = allSiteTypes.map( elem => (
-			<FormLabel className="site-type__option" key={ elem.type }>
+	renderRadioOptions() {
+		return allSiteTypes.map( siteTypeProperties => (
+			<FormLabel className="site-type__option" key={ siteTypeProperties.id }>
 				<FormRadio
-					value={ elem.type }
-					checked={ dasherize( elem.type ) === dasherize( this.state.siteType ) }
+					value={ siteTypeProperties.slug }
+					checked={ siteTypeProperties.slug === this.state.siteType }
 					onChange={ this.handleRadioChange }
 				/>
 				<span>
-					<strong>{ elem.type }</strong>
-					<span>{ elem.description }</span>
+					<strong>{ siteTypeProperties.label }</strong>
+					<span>{ siteTypeProperties.description }</span>
 				</span>
 			</FormLabel>
 		) );
+	}
+
+	renderContent() {
+		const { translate } = this.props;
 
 		return (
 			<div className="site-type__wrapper">
 				<div className="site-type__form-wrapper">
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
-							<FormFieldset>{ radioOptions }</FormFieldset>
+							<FormFieldset>{ this.renderRadioOptions() }</FormFieldset>
 
 							<div className="site-type__submit-wrapper">
 								<Button primary={ true } type="submit">
@@ -113,21 +120,23 @@ export default connect(
 		siteType: getSiteType( state ),
 	} ),
 	( dispatch, ownProps ) => ( {
-		submitStep: ( siteTypeValue, themeRepo ) => {
-			dispatch( setSiteType( siteTypeValue ) );
-			// Create site
-			SignupActions.submitSignupStep(
-				{
-					processingMessage: i18n.translate( 'Collecting your information' ),
-					stepName: ownProps.stepName,
-				},
-				[],
-				{
-					siteType: siteTypeValue,
-					themeSlugWithRepo: themeRepo,
-				}
+		submitStep: siteTypeValue => {
+			dispatch( submitSiteType( siteTypeValue ) );
+
+			dispatch(
+				recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
+					value: siteTypeValue,
+				} )
 			);
-			ownProps.goToNextStep( ownProps.flowName );
+
+			let nextFlowName = ownProps.flowName;
+			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 'store', 'slug' ) ) {
+				nextFlowName = 'ecommerce';
+			} else if ( 'ecommerce' === ownProps.flowName && ownProps.previousFlowName ) {
+				nextFlowName = ownProps.previousFlowName;
+			}
+
+			ownProps.goToNextStep( nextFlowName );
 		},
 	} )
 )( localize( SiteType ) );

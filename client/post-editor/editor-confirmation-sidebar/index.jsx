@@ -29,6 +29,11 @@ import {
 	getEditedPost,
 } from 'state/posts/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorConfirmationSidebar extends Component {
 	static propTypes = {
 		handlePreferenceChange: PropTypes.func,
@@ -40,6 +45,20 @@ class EditorConfirmationSidebar extends Component {
 		setStatus: PropTypes.func,
 		status: PropTypes.string,
 	};
+
+	state = {
+		doFullRender: false,
+	};
+
+	static getDerivedStateFromProps( props, state ) {
+		// In order to improve performance, `doFullRender` determines whether the
+		// sidebar should be rendered or not. The content has to be rendered
+		// the first time the sidebar is not in a 'closed' status.
+		if ( ! state.doFullRender && props.status !== 'closed' ) {
+			return { doFullRender: true };
+		}
+		return null;
+	}
 
 	getCloseOverlayHandler = context => () => this.props.setStatus( { status: 'closed', context } );
 
@@ -144,18 +163,25 @@ class EditorConfirmationSidebar extends Component {
 		const isSidebarActive = this.props.status === 'open';
 		const isOverlayActive = this.props.status !== 'closed';
 
+		if ( ! this.state.doFullRender ) {
+			return (
+				<div className="editor-confirmation-sidebar">
+					<div key="sidebar" className="editor-confirmation-sidebar__sidebar" />
+				</div>
+			);
+		}
+
 		return (
 			<div
-				className={ classnames( {
-					'editor-confirmation-sidebar': true,
+				className={ classnames( 'editor-confirmation-sidebar', {
 					'is-active': isOverlayActive,
 				} ) }
 			>
 				{ this.renderPublishingBusyButton() }
 
 				<div
-					className={ classnames( {
-						'editor-confirmation-sidebar__sidebar': true,
+					key="sidebar"
+					className={ classnames( 'editor-confirmation-sidebar__sidebar', {
 						'is-active': isSidebarActive,
 					} ) }
 				>

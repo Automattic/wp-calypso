@@ -7,8 +7,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import classNames from 'classnames';
 import { get, includes, times, first } from 'lodash';
 
@@ -19,7 +17,7 @@ import DomainRegistrationSuggestion from 'components/domains/domain-registration
 import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import FeaturedDomainSuggestions from 'components/domains/featured-domain-suggestions';
-import { isNextDomainFree } from 'lib/cart-values/cart-items';
+import { isDomainMappingFree, isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
 import Card from 'components/card';
 import ScreenReaderText from 'components/screen-reader-text';
@@ -59,9 +57,11 @@ class DomainSearchResults extends React.Component {
 	renderDomainAvailability() {
 		const {
 			availableDomain,
+			domainsWithPlansOnly,
 			lastDomainIsTransferrable,
 			lastDomainStatus,
 			lastDomainSearched,
+			selectedSite,
 			translate,
 		} = this.props;
 		const availabilityElementClasses = classNames( {
@@ -100,12 +100,12 @@ class DomainSearchResults extends React.Component {
 		) {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
-			if ( isNextDomainFree( this.props.cart ) ) {
+			if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
 				offer = translate(
 					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
 					{ args: { domain }, components }
 				);
-			} else if ( ! this.props.domainsWithPlansOnly || this.props.isSiteOnPaidPlan ) {
+			} else if ( ! domainsWithPlansOnly ) {
 				offer = translate(
 					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
 					{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
@@ -295,9 +295,7 @@ class DomainSearchResults extends React.Component {
 }
 
 const mapStateToProps = state => {
-	const selectedSiteId = getSelectedSiteId( state );
 	return {
-		isSiteOnPaidPlan: isSiteOnPaidPlan( state, selectedSiteId ),
 		siteDesignType: getDesignType( state ),
 	};
 };

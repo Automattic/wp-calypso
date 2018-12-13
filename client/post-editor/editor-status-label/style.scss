@@ -24,7 +24,7 @@
 	}
 
 	&.is-pending strong {
-		color: $alert-yellow;
+		color: var( --color-warning );
 	}
 
 	&.is-trash strong {

@@ -133,7 +133,6 @@ const sections = [
 		module: 'my-sites/site-settings/settings-writing',
 		secondary: true,
 		group: 'sites',
-		css: 'site-settings',
 	},
 	{
 		name: 'settings-discussion',
@@ -141,7 +140,6 @@ const sections = [
 		module: 'my-sites/site-settings/settings-discussion',
 		secondary: true,
 		group: 'sites',
-		css: 'site-settings',
 	},
 	{
 		name: 'settings-traffic',
@@ -149,7 +147,6 @@ const sections = [
 		module: 'my-sites/site-settings/settings-traffic',
 		secondary: true,
 		group: 'sites',
-		css: 'site-settings',
 	},
 	{
 		name: 'settings-security',
@@ -157,7 +154,6 @@ const sections = [
 		module: 'my-sites/site-settings/settings-security',
 		secondary: true,
 		group: 'sites',
-		css: 'site-settings',
 	},
 	{
 		name: 'settings',
@@ -165,7 +161,6 @@ const sections = [
 		module: 'my-sites/site-settings',
 		secondary: true,
 		group: 'sites',
-		css: 'site-settings',
 	},
 	{
 		name: 'sharing',
@@ -195,7 +190,6 @@ const sections = [
 		secondary: false,
 		enableLoggedOut: true,
 		isomorphic: true,
-		css: 'signup',
 	},
 	{
 		name: 'stats',
@@ -219,7 +213,6 @@ const sections = [
 		enableLoggedOut: true,
 		secondary: true,
 		group: 'sites',
-		css: 'google-my-business',
 	},
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
@@ -300,7 +293,6 @@ sections.push( {
 	module: 'post-editor',
 	group: 'editor',
 	secondary: true,
-	css: 'post-editor',
 } );
 
 sections.push( {
@@ -470,7 +462,7 @@ sections.push( {
 
 sections.push( {
 	name: 'gutenberg-editor',
-	paths: [ '/gutenberg' ],
+	paths: [ '/block-editor' ],
 	module: 'gutenberg/editor',
 	group: 'gutenberg',
 	css: 'gutenberg-editor',

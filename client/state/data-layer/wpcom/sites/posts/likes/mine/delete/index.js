@@ -8,7 +8,7 @@
  * Internal Dependencies
  */
 import { like, removeLiker } from 'state/posts/likes/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { POST_UNLIKE } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
@@ -50,7 +50,7 @@ export const onError = ( { siteId, postId } ) => bypassDataLayer( like( siteId, 
 
 registerHandlers( 'state/data-layer/wpcom/sites/posts/likes/mine/delete/index.js', {
 	[ POST_UNLIKE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch,
 			onSuccess,
 			onError,

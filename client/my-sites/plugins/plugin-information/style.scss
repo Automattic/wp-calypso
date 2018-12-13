@@ -42,13 +42,13 @@
 
 .plugin-information__last-updated .gridicons-sync {
 	float: left;
-	color: $alert-yellow;
+	color: var( --color-warning );
 	margin-right: 4px;
 }
 
 .plugin-information__version-info {
 	font-size: 11px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	text-transform: uppercase;
 	width: 100%;
 
@@ -79,13 +79,13 @@
 	.gridicons-cross-small {
 		float: right;
 		margin-left: 4px;
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	.gridicons-checkmark {
 		float: right;
 		margin-left: 4px;
-		color: $alert-green;
+		color: var( --color-success );
 	}
 }
 

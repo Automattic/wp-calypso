@@ -12,7 +12,7 @@
 }
 
 .taxonomies__card-content {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 13px;
 	white-space: nowrap;
 	overflow: hidden;

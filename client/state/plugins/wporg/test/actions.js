@@ -2,67 +2,75 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 
 /**
  * Internal dependencies
  */
 import { fetchPluginData } from '../actions';
+import wporgReducer from '../reducer';
+import { combineReducers } from 'state/utils';
 import wporg from 'lib/wporg';
-jest.mock( 'lib/wporg', () => require( './mocks/lib/wporg' ) );
-jest.mock( 'lib/impure-lodash', () => ( {
-	debounce: cb => cb,
+
+jest.mock( 'lib/wporg', () => ( {
+	fetchPluginInformation: jest.fn( slug => Promise.resolve( { slug } ) ),
 } ) );
 
-const testDispatch = ( test, testCallNumber ) => {
-	let calls = 0;
-	return action => {
-		calls++;
-		if ( ! testCallNumber || testCallNumber === calls ) {
-			test( action );
-		}
-	};
-};
+const reducer = combineReducers( {
+	plugins: combineReducers( {
+		wporg: wporgReducer,
+	} ),
+} );
+
+// Redux middleware that wraps the `store.dispatch` method with a Jest spy
+const dispatchSpy = () => jest.fn;
 
 describe( 'WPorg Data Actions', () => {
+	let store;
+
 	beforeEach( () => {
-		wporg.reset();
+		jest.clearAllMocks();
+		store = createStore( reducer, applyMiddleware( dispatchSpy, thunk ) );
 	} );
 
 	test( 'Actions should have method fetchPluginData', () => {
-		assert.isFunction( fetchPluginData );
+		expect( fetchPluginData ).toBeInstanceOf( Function );
 	} );
 
-	test( 'FetchPluginData action should make a request', done => {
-		fetchPluginData( 'test' )(
-			testDispatch( function() {
-				assert.equal( wporg.getActivity().fetchPluginInformation, 1 );
-				done();
-			}, 2 )
+	test( 'FetchPluginData action should make a request', async () => {
+		await store.dispatch( fetchPluginData( 'test' ) );
+		expect( store.dispatch ).toHaveBeenCalledTimes( 3 );
+		expect( wporg.fetchPluginInformation ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( "FetchPluginData action shouldn't return an error", async () => {
+		await store.dispatch( fetchPluginData( 'test' ) );
+		expect( store.dispatch ).toHaveBeenCalledTimes( 3 );
+		expect( store.dispatch ).toHaveBeenLastCalledWith(
+			expect.not.objectContaining( { error: expect.anything() } )
 		);
 	} );
 
-	test( "FetchPluginData action shouldn't return an error", done => {
-		fetchPluginData( 'test' )(
-			testDispatch( function( action ) {
-				done( action.error );
-			}, 2 )
-		);
-	} );
-
-	test( 'FetchPluginData action should return a plugin ', done => {
-		fetchPluginData( 'test' )(
-			testDispatch( function( action ) {
-				assert.equal( action.data.slug, 'test' );
-				done();
-			}, 2 )
+	test( 'FetchPluginData action should return a plugin', async () => {
+		await store.dispatch( fetchPluginData( 'test' ) );
+		expect( store.dispatch ).toHaveBeenCalledTimes( 3 );
+		expect( store.dispatch ).toHaveBeenLastCalledWith(
+			expect.objectContaining( {
+				data: expect.objectContaining( {
+					slug: 'test',
+				} ),
+			} )
 		);
 	} );
 
 	test( "FetchPluginData action should not make another request if there's already one in progress", () => {
-		wporg.deactivatedCallbacks = true;
-		fetchPluginData( 'test' )( function() {} );
-		fetchPluginData( 'test' )( function() {} );
-		assert.equal( wporg.getActivity().fetchPluginInformation, 1 );
+		// issue a second request immediately after the first one (while it's still in progress)
+		const request1 = store.dispatch( fetchPluginData( 'test' ) );
+		const request2 = store.dispatch( fetchPluginData( 'test' ) );
+		// just one fetch should have been issued
+		expect( wporg.fetchPluginInformation ).toHaveBeenCalledTimes( 1 );
+		// wait for all requests to finish before finishing the test
+		return Promise.all( [ request1, request2 ] );
 	} );
 } );

@@ -25,6 +25,11 @@ import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import PostSelector from 'my-sites/post-selector';
 
+/**
+ * Style dependencies
+ */
+import './copy-post.scss';
+
 class EditorMoreOptionsCopyPost extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,

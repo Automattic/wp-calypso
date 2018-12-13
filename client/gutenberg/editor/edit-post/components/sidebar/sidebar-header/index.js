@@ -1,3 +1,5 @@
+/** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -13,38 +15,38 @@ import { __ } from '@wordpress/i18n';
 import { IconButton } from '@wordpress/components';
 import { withDispatch, withSelect } from '@wordpress/data';
 
+/**
+ * Internal dependencies
+ */
+import shortcuts from '../../../keyboard-shortcuts';
+
 const SidebarHeader = ( { children, className, closeLabel, closeSidebar, title } ) => {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Fragment>
 			<div className="components-panel__header edit-post-sidebar-header__small">
-				<span className="edit-post-sidebar-header__title">
-					{ title || __( '(no title)' ) }
-				</span>
-				<IconButton
-					onClick={ closeSidebar }
-					icon="no-alt"
-					label={ closeLabel }
-				/>
+				<span className="edit-post-sidebar-header__title">{ title || __( '(no title)' ) }</span>
+				<IconButton onClick={ closeSidebar } icon="no-alt" label={ closeLabel } />
 			</div>
-			<div className={ classnames( 'components-panel__header edit-post-sidebar-header', className ) }>
+			<div
+				className={ classnames( 'components-panel__header edit-post-sidebar-header', className ) }
+			>
 				{ children }
 				<IconButton
 					onClick={ closeSidebar }
 					icon="no-alt"
 					label={ closeLabel }
+					shortcut={ shortcuts.toggleSidebar }
 				/>
 			</div>
 		</Fragment>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default compose(
-	withSelect( ( select ) => ( {
+	withSelect( select => ( {
 		title: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
 	} ) ),
-	withDispatch( ( dispatch ) => ( {
+	withDispatch( dispatch => ( {
 		closeSidebar: dispatch( 'core/edit-post' ).closeGeneralSidebar,
-	} ) ),
+	} ) )
 )( SidebarHeader );

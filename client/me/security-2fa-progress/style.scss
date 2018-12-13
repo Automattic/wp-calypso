@@ -27,7 +27,7 @@
 			&.is-highlighted {
 
 				&:before {
-					background-color: $blue-wordpress;
+					background-color: var( --color-primary );
 					content: " ";
 					display: block;
 					height: 2px;
@@ -37,13 +37,13 @@
 				}
 
 				.gridicon {
-					background: $blue-wordpress;
+					background: var( --color-primary );
 					color: $white;
-					border-color: $blue-wordpress;
+					border-color: var( --color-primary );
 				}
 
 				label {
-					color: $blue-wordpress;
+					color: var( --color-primary );
 					font-weight: 600;
 				}
 			}
@@ -51,7 +51,7 @@
 			&.is-completed {
 
 				&:before {
-					background-color: $blue-wordpress;
+					background-color: var( --color-primary );
 					content: " ";
 					display: block;
 					height: 2px;

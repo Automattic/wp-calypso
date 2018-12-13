@@ -33,13 +33,13 @@ export function getAppBannerData( translate, sectionName ) {
 			};
 		case READER:
 			return {
-				title: translate( 'Read online or off.' ),
-				copy: translate( 'Catch up with new posts when you have time, even if you are offline.' ),
+				title: translate( 'Read posts, even offline.' ),
+				copy: translate( 'Catch up with new posts on the go or save them to read offline.' ),
 			};
 		case STATS:
 			return {
 				title: translate( 'Stats at your fingertips.' ),
-				copy: translate( "Add real-time stats to your device's notifications or widgets." ),
+				copy: translate( 'See your real-time stats anytime, anywhere.' ),
 			};
 		default:
 			return {

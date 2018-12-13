@@ -12,7 +12,7 @@ import { translate } from 'i18n-calypso';
 import { COMMENTS_LIKE, COMMENTS_UNLIKE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -45,7 +45,7 @@ export const handleLikeFailure = ( { siteId, postId, commentId } ) => [
 
 registerHandlers( 'state/data-layer/wpcom/sites/comments/likes/new/index.js', {
 	[ COMMENTS_LIKE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: likeComment,
 			onSuccess: updateCommentLikes,
 			onError: handleLikeFailure,

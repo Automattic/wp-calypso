@@ -35,7 +35,7 @@
 	}
 	.accessible-focus &:focus {
 		outline: 0;
-		border: 1px dotted $blue-wordpress;
+		border: 1px dotted var( --color-primary );
 		&::before {
 			top: 4px;
 			left: 4px;
@@ -47,17 +47,17 @@
 	}
 
 	.is-update & {
-		background: $alert-yellow;
+		background: var( --color-warning );
 		color: $white;
 	}
 
 	.is-warning & {
-		background: $alert-yellow;
+		background: var( --color-warning );
 		color: $white;
 	}
 
 	.is-error & {
-		background: $alert-red;
+		background: var( --color-error );
 		color: $white;
 	}
 
@@ -98,10 +98,10 @@
 
 	.is-warning &,
 	.is-update & {
-		background: $alert-yellow;
+		background: var( --color-warning );
 	}
 	.is-error & {
-		background: $alert-red;
+		background: var( --color-error );
 	}
 }
 .site-indicator__action {

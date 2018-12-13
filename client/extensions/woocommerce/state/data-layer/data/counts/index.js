@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import request from 'woocommerce/state/sites/http-request';
 import {
 	fetchCountsFailure,
@@ -28,7 +28,7 @@ const onSuccess = ( action, { data } ) => dispatch => {
 
 export default {
 	[ WOOCOMMERCE_COUNT_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch,
 			onSuccess,
 			onError,

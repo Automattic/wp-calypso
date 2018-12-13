@@ -93,7 +93,7 @@
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {
-			color: $blue-medium;
+			color: var( --color-accent );
 			cursor: pointer;
 		}
 
@@ -103,8 +103,8 @@
 	}
 
 	button:focus {
-		outline: dotted 1px $blue-medium;
-		color: $blue-wordpress;
+		outline: dotted 1px var( --color-accent );
+		color: var( --color-primary );
 	}
 
 	.comments__cancel-reply {
@@ -198,7 +198,7 @@
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {
-			color: $blue-medium;
+			color: var( --color-accent );
 			cursor: pointer;
 		}
 
@@ -208,8 +208,8 @@
 	}
 
 	button:focus {
-		outline: dotted 1px $blue-medium;
-		color: $blue-wordpress;
+		outline: dotted 1px var( --color-accent );
+		color: var( --color-primary );
 	}
 
 	.comments__cancel-reply {
@@ -252,7 +252,7 @@
 		}
 
 		.comments__form-textarea {
-			border-color: $alert-red;
+			border-color: var( --color-error );
 		}
 	}
 
@@ -279,7 +279,7 @@
 	margin-left: -2px;
 
 	&:hover {
-		color: $blue-light;
+		color: var( --color-primary-light );
 	}
 }
 
@@ -367,11 +367,11 @@
 }
 
 a.comments__comment-username {
-	color: $blue-medium;
+	color: var( --color-accent );
 	height: 21px;
 
 	&:hover {
-		color: $blue-light;
+		color: var( --color-primary-light );
 	}
 }
 
@@ -462,7 +462,7 @@ a.comments__comment-username {
 		}
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 
 		&.comments__comment-actions-cancel-reply {
@@ -535,7 +535,7 @@ a.comments__comment-username {
 	margin-bottom: 15px !important; // to overwrite 10px value
 
 	&:hover {
-		color: $blue-light;
+		color: var( --color-primary-light );
 	}
 }
 
@@ -569,13 +569,13 @@ a.comments__comment-username {
 }
 
 .comments__comment-actions .comments__comment-actions-read-more {
-	color: $blue-medium;
+	color: var( --color-accent );
 	margin: 0 10px 0 -3px;
 	padding-left: 0;
 }
 
 .comments__comment-actions-read-more-icon {
-	fill: $blue-medium;
+	fill: var( --color-accent );
 }
 
 // Hide certain elements in excerpt comments

@@ -6,13 +6,20 @@
 	&.is-wide-layout {
 		max-width: 1040px;
 	}
-}
 
-.signup__step {
-	position: absolute;
-	left: 0;
-	right: 0;
-	overflow: hidden;
+	.form-fieldset {
+		position: relative;
+	}
+
+	.suggestions__wrapper {
+		position: absolute;
+			top: 66px;
+			left: 0;
+			right: 0;
+		max-height: 300px;
+		overflow: auto;
+		box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.2 );
+	}
 }
 
 .signup__step-enter {
@@ -64,6 +71,7 @@
 
 /* New Signup Styles */
 
+
 .formatted-header__title {
 	font-family: $signup-sans;
 	font-size: 2.953em;
@@ -71,6 +79,7 @@
 	line-height: 1.2;
 	margin-top: 1em;
 }
+
 
 .is-section-signup .layout__content,
 .is-section-signup .layout__primary {
@@ -109,6 +118,7 @@
 	border-top: none;
 }
 
+
 @include breakpoint( '>1040px' ) {
  	.formatted-header__title {
 		font-size: 3.375em;
@@ -118,3 +128,4 @@
 		font-size: 1.313em;
 	}
 }
+

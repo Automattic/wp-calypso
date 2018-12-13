@@ -11,7 +11,7 @@
 		0 2px 5px $gray-lighten-20;
 	}
 	.activity-log-item__activity-icon {
-		background: $blue-medium;
+		background: var( --color-accent );
 	}
 }
 
@@ -53,7 +53,7 @@
 	}
 
 	.gridicons-notice {
-		fill: $alert-red;
+		fill: var( --color-error );
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -72,7 +72,7 @@
 }
 
 .activity-log-confirm-dialog__notice-content {
-	color: $alert-red;
+	color: var( --color-error );
 	display: flex;
 	-webkit-box-flex: 1;
 	-ms-flex-positive: 1;

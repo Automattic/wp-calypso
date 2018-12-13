@@ -12,7 +12,8 @@ import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
 import formState from 'lib/form-state';
 import userFactory from 'lib/user';
-import { dasherize } from 'lib/signup/site-type';
+import { allSiteTypes } from 'lib/signup/site-type';
+
 const user = userFactory();
 
 const { defaultFlowName } = flows;
@@ -145,26 +146,6 @@ export function getThemeForDesignType( designType ) {
 	}
 }
 
-export function getThemeForSiteType( siteType ) {
-	if ( 'business' === dasherize( siteType ) ) {
-		return 'pub/radcliffe-2';
-	}
-
-	if ( 'professional' === dasherize( siteType ) ) {
-		return 'pub/altofocus';
-	}
-
-	if ( 'education' === dasherize( siteType ) ) {
-		return 'pub/twentyfifteen';
-	}
-
-	if ( 'non-profit-organization' === dasherize( siteType ) ) {
-		return 'pub/karuna';
-	}
-
-	return 'pub/independent-publisher-2';
-}
-
 export function getThemeForSiteGoals( siteGoals ) {
 	const siteGoalsValue = siteGoals.split( ',' );
 
@@ -188,19 +169,13 @@ export function getThemeForSiteGoals( siteGoals ) {
 }
 
 export function getDesignTypeForSiteType( siteType, flow ) {
-	if ( 'business' === siteType || flow === 'store-nux' ) {
-		return 'page';
+	if ( flow === 'ecommerce' ) {
+		return 'store';
 	}
 
-	if ( 'professional' === siteType ) {
-		return 'portfolio';
-	}
+	const theSiteType = find( allSiteTypes, { type: siteType } ) || allSiteTypes[ 0 ];
 
-	if ( 'non-profit' === siteType ) {
-		return 'page';
-	}
-
-	return 'blog';
+	return theSiteType.designType;
 }
 
 export function getDesignTypeForSiteGoals( siteGoals, flow ) {

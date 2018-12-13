@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { ACTIVE_PROMOTIONS_REQUEST } from 'state/action-types';
 import {
 	activePromotionsReceiveAction,
@@ -56,7 +56,7 @@ export const receiveActivePromotions = ( action, { active_promotions } ) => [
 export const receiveError = ( action, rawError ) =>
 	activePromotionsRequestFailureAction( rawError instanceof Error ? rawError.message : rawError );
 
-export const dispatchActivePromotionsRequest = dispatchRequestEx( {
+export const dispatchActivePromotionsRequest = dispatchRequest( {
 	fetch: requestActivePromotions,
 	onSuccess: receiveActivePromotions,
 	onError: receiveError,

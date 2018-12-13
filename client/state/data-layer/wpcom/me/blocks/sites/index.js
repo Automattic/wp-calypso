@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { READER_SITE_BLOCKS_RECEIVE, READER_SITE_BLOCKS_REQUEST } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
@@ -35,7 +35,7 @@ export const siteBlocksRequestFailure = error => ( {
 
 registerHandlers( 'state/data-layer/wpcom/me/blocks/sites/index.js', {
 	[ READER_SITE_BLOCKS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: handleSiteBlocksRequest,
 			onSuccess: siteBlocksRequestReceived,
 			onError: siteBlocksRequestFailure,

@@ -3,6 +3,7 @@
  * Exernal dependencies
  */
 import i18n from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,46 +16,73 @@ import i18n from 'i18n-calypso';
  */
 export const allSiteTypes = [
 	{
-		type: i18n.translate( 'Blog' ),
+		id: 'blog',
+		slug: 'blog',
+		label: i18n.translate( 'Blog' ),
 		description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
+		theme: 'pub/independent-publisher-2',
+		designType: 'blog',
+		siteTitleLabel: i18n.translate( 'What would you like to call your blog?' ),
+		siteTitlePlaceholder: i18n.translate( "E.g. Stevie's blog " ),
+		siteTopicHeader: i18n.translate( 'Search for your type of blog.' ),
+		siteTopicLabel: i18n.translate( 'What will your blog be about?' ),
 	},
 	{
-		type: i18n.translate( 'Business' ),
+		id: 'business',
+		slug: 'business',
+		label: i18n.translate( 'Business' ),
 		description: i18n.translate( 'Promote products and services.' ),
+		theme: 'pub/radcliffe-2',
+		designType: 'page',
+		siteTitleLabel: i18n.translate( 'What is the name of your business?' ),
+		siteTitlePlaceholder: i18n.translate( 'E.g. Vail Renovations' ),
+		siteTopicHeader: i18n.translate( 'Search for your type of business.' ),
+		siteTopicLabel: i18n.translate( 'What type of business do you have?' ),
 	},
 	{
-		type: i18n.translate( 'Professional' ),
+		id: 'professional',
+		slug: 'professional',
+		label: i18n.translate( 'Professional' ),
 		description: i18n.translate( 'Showcase your portfolio and work.' ),
+		theme: 'pub/altofocus',
+		designType: 'portfolio',
+		siteTitleLabel: i18n.translate( 'What is your name?' ),
+		siteTitlePlaceholder: i18n.translate( 'E.g. John Appleseed' ),
+		siteTopicHeader: i18n.translate( 'Search for your type of website.' ),
+		siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
 	},
 	{
-		type: i18n.translate( 'Education' ),
+		id: 'education',
+		slug: 'education',
+		label: i18n.translate( 'Education' ),
 		description: i18n.translate( 'Share school projects and class info.' ),
+		theme: 'pub/twentyfifteen',
+		designType: 'blog',
+		siteTitleLabel: i18n.translate( 'What is the name of your site?' ),
+		siteTitlePlaceholder: i18n.translate( 'E.g. My class' ),
+		siteTopicHeader: i18n.translate( 'Search for your type of website.' ),
+		siteTopicLabel: i18n.translate( 'What will your site be about?' ),
 	},
 	{
-		type: i18n.translate( 'Non-profit Organization' ),
-		description: i18n.translate( 'Raise money and awareness for a cause.' ),
+		id: 'store',
+		slug: 'online-store',
+		label: i18n.translate( 'Online store' ),
+		description: i18n.translate( 'Sell your collection of products online.' ),
+		theme: 'pub/dara',
+		designType: 'store',
+		siteTitleLabel: i18n.translate( 'What is the name of your store?' ),
+		siteTitlePlaceholder: i18n.translate( "E.g. Mel's Diner" ),
+		siteTopicHeader: i18n.translate( 'Search for your type of website.' ),
+		siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
 	},
 ];
 
-function isSiteTypeInList( siteType ) {
-	const allSiteTypesFiltered = allSiteTypes.map( elem => {
-		return elem.type;
-	} );
-	const sanitizedSiteTypes = allSiteTypesFiltered.map( dasherize );
-	siteType = dasherize( siteType );
-	return allSiteTypesFiltered.includes( siteType ) || sanitizedSiteTypes.includes( siteType );
-}
-
-export function dasherize( string ) {
-	return string
-		.toLowerCase()
-		.replace( / /g, '-' )
-		.replace( /-+/, '-' );
-}
-
-export function isValidLandingPageSiteType( siteType ) {
-	if ( ! siteType || siteType === '' ) {
-		return false;
+export function getSiteTypePropertyValue( key, value, property ) {
+	if ( ! value ) {
+		return;
 	}
-	return isSiteTypeInList( siteType );
+
+	const siteTypeProperties = find( allSiteTypes, { [ key ]: value } );
+
+	return siteTypeProperties && siteTypeProperties[ property ];
 }

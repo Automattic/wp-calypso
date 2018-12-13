@@ -63,6 +63,8 @@ export class PlansFeaturesMain extends Component {
 	getPlanFeatures() {
 		const {
 			basePlansPath,
+			customerType,
+			disableBloggerPlanWithNonBlogDomain,
 			displayJetpackPlans,
 			domainName,
 			isInSignup,
@@ -78,11 +80,18 @@ export class PlansFeaturesMain extends Component {
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 		return (
 			<div
-				className="plans-features-main__group"
+				className={ classNames(
+					'plans-features-main__group',
+					'is-' + ( displayJetpackPlans ? 'jetpack' : 'wpcom' ),
+					{
+						[ `is-customer-${ customerType }` ]: ! displayJetpackPlans,
+					}
+				) }
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
 				<PlanFeatures
 					basePlansPath={ basePlansPath }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					displayJetpackPlans={ displayJetpackPlans }
 					domainName={ domainName }
 					isInSignup={ isInSignup }
@@ -93,6 +102,10 @@ export class PlansFeaturesMain extends Component {
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
 					withDiscount={ withDiscount }
+					popularPlanSpec={ {
+						type: customerType === 'personal' ? TYPE_PERSONAL : TYPE_BUSINESS,
+						group: GROUP_WPCOM,
+					} }
 					siteId={ siteId }
 				/>
 			</div>

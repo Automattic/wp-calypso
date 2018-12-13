@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { COUNTRIES_DOMAINS_FETCH, COUNTRIES_DOMAINS_UPDATED } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
 
@@ -33,7 +33,6 @@ export const fetchCountriesDomains = action =>
 /**
  * Dispatches a countries updated action then the request for countries succeeded.
  *
- * @param   {Function} dispatch Redux dispatcher
  * @param   {Object}   action   Redux action
  * @param   {Array}    countries  array of raw device data returned from the endpoint
  * @returns {Object}            disparched user devices add action
@@ -54,7 +53,7 @@ export const showCountriesDomainsLoadingError = () =>
 
 registerHandlers( 'state/data-layer/wpcom/domains/countries-list/index.js', {
 	[ COUNTRIES_DOMAINS_FETCH ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchCountriesDomains,
 			onSuccess: updateCountriesDomains,
 			onError: showCountriesDomainsLoadingError,

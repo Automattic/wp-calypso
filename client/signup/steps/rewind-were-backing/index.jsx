@@ -16,6 +16,11 @@ import Card from 'components/card';
 import Button from 'components/button';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class RewindWereBacking extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,

@@ -8,6 +8,7 @@ import url from 'url';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -28,10 +29,12 @@ import {
 	isStarted as isJetpackPluginsStarted,
 	isFinished as isJetpackPluginsFinished,
 } from 'state/plugins/premium/selectors';
+import CartData from 'components/data/cart';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
+import PendingPaymentNotice from './pending-payment-notice';
 
-class SiteNotice extends React.Component {
+export class SiteNotice extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,
 	};
@@ -170,17 +173,31 @@ class SiteNotice extends React.Component {
 		);
 	}
 
+	pendingPaymentNotice() {
+		if ( ! config.isEnabled( 'async-payments' ) ) {
+			return null;
+		}
+
+		return (
+			<CartData>
+				<PendingPaymentNotice />
+			</CartData>
+		);
+	}
+
 	render() {
 		const { site } = this.props;
 		if ( ! site ) {
 			return <div className="site__notices" />;
 		}
+
 		return (
 			<div className="site__notices">
 				<QueryActivePromotions />
 				{ this.activeDiscountNotice() || this.freeToPaidPlanNotice() || <DomainToPaidPlanNotice /> }
 				{ this.getSiteRedirectNotice( site ) }
 				<QuerySitePlans siteId={ site.ID } />
+				{ this.pendingPaymentNotice() }
 				{ this.domainCreditNotice() }
 				{ this.jetpackPluginsSetupNotice() }
 			</div>

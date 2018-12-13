@@ -37,10 +37,10 @@
 
 .reader-subscription-list-item__link,
 .reader-subscription-list-item__link:visited {
-	color: $blue-medium;
+	color: var( --color-accent );
 
 	&:hover {
-		color: $blue-light;
+		color: var( --color-primary-light );
 	}
 }
 

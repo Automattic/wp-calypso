@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
+import { noop, uniq, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -105,12 +105,21 @@ class SuggestionSearch extends Component {
 			return [];
 		}
 
-		const { suggestions } = this.props;
+		return this.doSearchWithInitialMatchPreferred( this.props.suggestions, this.state.query ).map(
+			hint => ( { label: hint } )
+		);
+	}
 
-		const query = this.state.query.trim().toLocaleLowerCase();
-		return suggestions
-			.filter( hint => hint.toLocaleLowerCase().includes( query ) )
-			.map( hint => ( { label: hint } ) );
+	doSearchWithInitialMatchPreferred( haystack, needle ) {
+		// first do the search
+		needle = needle.trim().toLocaleLowerCase();
+		const lazyResults = haystack.filter( val => val.toLocaleLowerCase().includes( needle ) );
+		// second find the words that start with the search
+		const startsWithResults = lazyResults.filter( val =>
+			startsWith( val.toLocaleLowerCase(), needle )
+		);
+		// merge, dedupe, bye
+		return uniq( startsWithResults.concat( lazyResults ) );
 	}
 
 	getSuggestionLabel( suggestionPosition ) {

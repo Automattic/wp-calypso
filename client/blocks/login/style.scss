@@ -1,5 +1,6 @@
-.login {
+/** @format */
 
+.login {
 	&.is-jetpack {
 		.button.is-primary {
 			background-color: $green-jetpack;
@@ -26,6 +27,9 @@
 	input {
 		margin-bottom: 20px;
 		transition: none;
+
+		/*rtl:ignore*/
+		direction: ltr;
 
 		&.is-error {
 			margin-bottom: 0;
@@ -55,7 +59,7 @@
 	text-align: center;
 
 	.gridicon {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 }
 
@@ -81,7 +85,8 @@
 	margin-top: 20px;
 
 	&.disabled {
-		a, a:hover {
+		a,
+		a:hover {
 			pointer-events: none;
 			color: $gray;
 		}
@@ -113,17 +118,18 @@
 }
 
 .login-buttons__service-error {
-	color: $alert-red;
+	color: var( --color-error );
 	font-size: 11px;
 	margin: 0 10px 10px;
 }
 
 .wp-login__links {
-	a, button {
+	a,
+	button {
 		font-size: 14px;
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 	.gridicon {
@@ -136,7 +142,7 @@
 	position: relative;
 	white-space: nowrap;
 	&::after {
-		@include long-content-fade($color: $gray-light);
+		@include long-content-fade( $color: hex-to-rgb( $gray-light ) );
 	}
 }
 
@@ -158,7 +164,7 @@
 		cursor: pointer;
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 }
@@ -203,7 +209,7 @@
 }
 
 .login__social-connect-prompt-logo.wordpress {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 }
 
 .login__social-connect-prompt-message {

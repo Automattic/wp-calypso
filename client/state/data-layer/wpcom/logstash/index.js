@@ -7,7 +7,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { LOGSTASH } from 'state/action-types';
 
@@ -22,5 +22,5 @@ const logToLogstash = action =>
 	} );
 
 registerHandlers( 'state/data-layer/wpcom/logstash/index.js', {
-	[ LOGSTASH ]: [ dispatchRequestEx( { fetch: logToLogstash, onSuccess: noop, onError: noop } ) ],
+	[ LOGSTASH ]: [ dispatchRequest( { fetch: logToLogstash, onSuccess: noop, onError: noop } ) ],
 } );

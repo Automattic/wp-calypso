@@ -19,11 +19,11 @@
 
 .reader-related-card__link,
 .reader-related-card__link:visited {
-	color: $blue-medium;
+	color: var( --color-accent );
 	font-family: $sans;
 
 	&:hover {
-		color: $blue-light;
+		color: var( --color-primary-light );
 	}
 }
 
@@ -235,7 +235,7 @@
 
 .reader-related-card__byline-author,
 .reader-related-card__byline-site {
-	color: $blue-medium;
+	color: var( --color-accent );
 	display: flex;
 	font-weight: 500;
 	max-height: 14px * 1.75;
@@ -327,7 +327,7 @@
 	z-index: z-index( '.reader-related-card__meta', '.follow-button' );
 
 	.gridicons-reader-follow {
-		fill: $blue-medium;
+		fill: var( --color-accent );
 	}
 
 	@include breakpoint( "<960px" ) {
@@ -335,7 +335,7 @@
 	}
 
 	.follow-button__label {
-		color: $blue-medium;
+		color: var( --color-accent );
 
 		@include breakpoint( "<960px" ) {
 			display: none;
@@ -349,7 +349,7 @@
 	}
 
 	&.is-following .follow-button__label {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 }
 

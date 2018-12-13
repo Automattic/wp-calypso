@@ -48,7 +48,7 @@
 	}
 
 	&:hover {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 
 	.gridicon {

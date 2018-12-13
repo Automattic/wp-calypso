@@ -10,7 +10,7 @@ import { has, noop } from 'lodash';
  * Internal dependencies
  */
 import { EDITOR_TYPE_REQUEST, EDITOR_TYPE_SET } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { bypassDataLayer } from 'state/data-layer/utils';
@@ -30,7 +30,7 @@ export const setSelectedEditor = ( { siteId }, { editor_web: editor } ) => dispa
 	dispatch( bypassDataLayer( { type: EDITOR_TYPE_SET, siteId, editor } ) );
 };
 
-const dispatchSelectedEditorRequest = dispatchRequestEx( {
+const dispatchSelectedEditorRequest = dispatchRequest( {
 	fetch: fetchSelectedEditor,
 	onSuccess: setSelectedEditor,
 	onError: noop,
@@ -61,10 +61,10 @@ const redirectToEditor = ( { redirectUrl } ) => dispatch => {
 	dispatch( replaceHistory( redirectUrl ) );
 };
 
-const dispatchEditorTypeSetRequest = dispatchRequestEx( {
+const dispatchEditorTypeSetRequest = dispatchRequest( {
 	fetch: setType,
 	onSuccess: redirectToEditor,
-	onError: noop,
+	onError: redirectToEditor,
 } );
 
 registerHandlers( 'state/data-layer/wpcom/sites/gutenberg/index.js', {

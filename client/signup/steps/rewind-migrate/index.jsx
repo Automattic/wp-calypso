@@ -17,6 +17,11 @@ import SignupActions from 'lib/signup/actions';
 import ActivityLogRewindToggle from 'my-sites/activity/activity-log/activity-log-rewind-toggle';
 import getRewindState from 'state/selectors/get-rewind-state';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class RewindMigrate extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,

@@ -1,0 +1,16 @@
+.editor-media-modal__content {
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+		top: 52px;
+		right: 0;
+		bottom: 74px;
+		left: 0;
+	overflow-y: auto;
+
+	@include breakpoint( ">660px" ) {
+		flex-direction: row;
+		top: 74px;
+		overflow-y: visible;
+	}
+}

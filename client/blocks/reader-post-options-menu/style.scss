@@ -6,7 +6,7 @@
 
 		&:hover,
 		&:active {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 
 		&:focus {
@@ -20,7 +20,7 @@
 	}
 
 	&.is-menu-visible .button.is-borderless {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 }
 
@@ -37,7 +37,7 @@
 
 	.popover__menu .follow-button,
 	.popover__menu .conversation-follow-button {
-		color: $blue-medium;
+		color: var( --color-accent );
 		padding: 9px 16px;
 
 		.gridicon {
@@ -52,7 +52,7 @@
 
 		&:hover,
 		&:focus {
-			background-color: $blue-medium;
+			background-color: var( --color-accent );
 			color: white;
 
 			.gridicon {
@@ -84,16 +84,16 @@
 	}
 
 	&.has-sticker {
-		color: $alert-red;
+		color: var( --color-error );
 
 		.gridicon {
-			fill: $alert-red;
+			fill: var( --color-error );
 		}
 
 		&:hover,
 		&:focus {
 			color: $white;
-			background: $alert-red;
+			background: var( --color-error );
 
 			.gridicon {
 				fill: $white;

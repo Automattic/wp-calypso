@@ -93,13 +93,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			lastModified: '2016-01-27',
 		},
 
-		'creative-mornings': {
-			steps: [ 'portfolio-themes', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description: 'Signup flow for creative mornings partnership',
-			lastModified: '2017-08-01',
-		},
-
 		subdomain: {
 			steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 			destination: getSiteDestination,
@@ -115,14 +108,14 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		onboarding: {
-			steps: [ 'user', 'site-type', 'site-topic', 'about', 'domains', 'plans' ],
+			steps: [ 'user', 'site-type', 'site-topic', 'site-information', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2018-10-22',
 		},
 
 		'onboarding-dev': {
-			steps: [ 'site-topic', 'about' ],
+			steps: [ 'user', 'site-type', 'site-topic', 'site-information', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'A temporary flow for holding under-development steps',
 			lastModified: '2018-10-29',
@@ -241,12 +234,22 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	}
 
 	if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
+		// Important: For any changes done to the ecommerce flow,
+		// please copy the same changes to ecommerce-onboarding flow too
 		flows.ecommerce = {
-			steps: [ 'about', 'domains', 'plans', 'user' ],
+			steps: [ 'user', 'about', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2018-01-24',
 		};
+
+		flows[ 'ecommerce-onboarding' ] = {
+			steps: [ 'user', 'site-type', 'domains', 'plans' ],
+			destination: getSiteDestination,
+			description: 'Signup flow for creating an online store with an Atomic site',
+			lastModified: '2018-11-21',
+		};
+
 		flows[ 'store-woo' ] = {
 			steps: [ 'domains-store', 'plans-store-nux', 'user' ],
 			destination: getSiteDestination,
@@ -326,6 +329,13 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		lastModified: '2018-11-14',
 		disallowResume: true,
 		autoContinue: true,
+	};
+
+	flows.name = {
+		steps: [ 'displayname', 'about', 'domains', 'plans' ],
+		destination: getSiteDestination,
+		description: 'Ask for a display name not a user name',
+		lastModified: '2018-12-12',
 	};
 
 	return flows;

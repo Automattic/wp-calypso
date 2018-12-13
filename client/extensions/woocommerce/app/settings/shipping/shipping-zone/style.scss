@@ -337,7 +337,7 @@
 	}
 
 	&.is-disabled {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 
 		img {
 			filter: grayscale(1);

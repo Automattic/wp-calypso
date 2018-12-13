@@ -43,9 +43,9 @@ const PublicizeForm = compose( [
 		 * @param {number}  id ID of the connection being enabled/disabled
 		 */
 		toggleConnection( id ) {
-			const newConnections = connections.map( c => ( {
-				...c,
-				enabled: c.id === id ? ! c.enabled : c.enabled,
+			const newConnections = connections.map( connection => ( {
+				...connection,
+				enabled: connection.id === id ? ! connection.enabled : connection.enabled,
 			} ) );
 
 			dispatch( 'core/editor' ).editPost( {

@@ -11,11 +11,11 @@ import { getCategories, setCategories } from '@wordpress/blocks';
 import JetpackLogo from 'components/jetpack-logo';
 
 setCategories( [
+	...getCategories().filter( ( { slug } ) => slug !== 'jetpack' ),
 	// Add a Jetpack block category
 	{
 		slug: 'jetpack',
 		title: 'Jetpack',
 		icon: <JetpackLogo />,
 	},
-	...getCategories().filter( ( { slug } ) => slug !== 'jetpack' ),
 ] );

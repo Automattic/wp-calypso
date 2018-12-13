@@ -14,7 +14,7 @@ export default function FormTelInput( { className, isError, isValid, ...props } 
 		'is-valid': isValid,
 	} );
 
-	return <input { ...props } type="tel" pattern="[0-9]*" className={ classes } />;
+	return <input pattern="[0-9\-() +]*" { ...props } type="tel" className={ classes } />;
 }
 
 FormTelInput.propTypes = {

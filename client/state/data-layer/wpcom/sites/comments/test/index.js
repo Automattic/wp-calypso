@@ -216,7 +216,7 @@ describe( '#editComment', () => {
 			},
 		} );
 
-		editComment( { dispatch, getState }, action );
+		editComment( action )( dispatch, getState );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			http(
@@ -236,17 +236,12 @@ describe( '#editComment', () => {
 } );
 
 describe( '#announceEditFailure', () => {
-	let dispatch;
 	const originalComment = { ID: 123, text: 'lorem ipsum' };
 	const newComment = { ID: 123, text: 'lorem ipsum dolor' };
 	const action = editCommentAction( 1, 1, 123, newComment );
 
-	beforeEach( () => ( dispatch = jest.fn() ) );
-
 	test( 'should dispatch a local comment edit action', () => {
-		announceEditFailure( { dispatch }, { ...action, originalComment } );
-
-		expect( dispatch ).toHaveBeenCalledWith(
+		expect( announceEditFailure( { ...action, originalComment } ) ).toContainEqual(
 			bypassDataLayer( {
 				type: COMMENTS_EDIT,
 				siteId: 1,
@@ -258,15 +253,13 @@ describe( '#announceEditFailure', () => {
 	} );
 
 	test( 'should dispatch a remove notice action', () => {
-		announceEditFailure( { dispatch }, { ...action, originalComment } );
-
-		expect( dispatch ).toHaveBeenCalledWith( removeNotice( 'comment-notice-123' ) );
+		expect( announceEditFailure( { ...action, originalComment } ) ).toContainEqual(
+			removeNotice( 'comment-notice-123' )
+		);
 	} );
 
 	test( 'should dispatch an error notice', () => {
-		announceEditFailure( { dispatch }, { ...action, originalComment } );
-
-		expect( dispatch ).toHaveBeenCalledWith(
+		expect( announceEditFailure( { ...action, originalComment } ) ).toContainEqual(
 			errorNotice( "We couldn't update this comment.", {
 				id: `comment-notice-error-${ action.commentId }`,
 			} )

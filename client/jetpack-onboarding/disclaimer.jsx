@@ -7,6 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { localizeUrl } from 'lib/i18n-utils';
 
 class JetpackOnboardingDisclaimer extends React.PureComponent {
 	static propTypes = {
@@ -28,7 +29,7 @@ class JetpackOnboardingDisclaimer extends React.PureComponent {
 					components: {
 						link: (
 							<a
-								href="//wordpress.com/tos/"
+								href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 								target="_blank"
 								rel="noopener noreferrer"
 								onClick={ this.handleTosClick }

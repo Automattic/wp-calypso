@@ -279,7 +279,7 @@ describe( 'reducer', () => {
 			} );
 			const state = settingsReducer( original, { type: SERIALIZE } );
 
-			expect( state ).toEqual( original );
+			expect( state.root() ).toEqual( original );
 		} );
 
 		test( 'should load valid persisted state', () => {

@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
+import { localizeUrl } from 'lib/i18n-utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
 // TODO: update supportUrls and maybe create similar mapping for warnings
@@ -25,7 +26,7 @@ function getHoldMessages( siteSlug, translate ) {
 			description: translate(
 				'Please wait for the other installation to complete, then try again.'
 			),
-			supportUrl: 'https://wordpress.com/help',
+			supportUrl: localizeUrl( 'https://wordpress.com/help' ),
 		},
 		NO_JETPACK_SITES: {
 			title: translate( 'Jetpack site not supported' ),
@@ -38,24 +39,24 @@ function getHoldMessages( siteSlug, translate ) {
 		SITE_PRIVATE: {
 			title: translate( 'Private site not supported' ),
 			description: translate( 'Make your site public or hidden to resolve.' ),
-			supportUrl: `/settings/general/${ siteSlug }`,
+			supportUrl: localizeUrl( `/settings/general/${ siteSlug }` ),
 		},
 		SITE_GRAYLISTED: {
 			title: translate( 'Flagged site not supported' ),
 			description: translate( "Contact us to review your site's standing to resolve." ),
-			supportUrl: 'https://support.wordpress.com/suspended-blogs/',
+			supportUrl: localizeUrl( 'https://en.support.wordpress.com/suspended-blogs/' ),
 		},
 		NON_ADMIN_USER: {
 			title: translate( 'Site owner access required' ),
 			description: translate( 'Only site owners are allowed to use this feature.' ),
-			supportUrl: 'https://support.wordpress.com/user-roles/',
+			supportUrl: localizeUrl( 'https://en.support.wordpress.com/user-roles/' ),
 		},
 		NOT_DOMAIN_OWNER: {
 			title: translate( 'Not a custom domain owner' ),
 			description: translate(
 				'You must be the owner of the primary domain subscription to use this feature.'
 			),
-			supportUrl: 'https://support.wordpress.com/domains/',
+			supportUrl: localizeUrl( 'https://en.support.wordpress.com/domains/' ),
 		},
 		NO_WPCOM_NAMESERVERS: {
 			title: translate( 'Domain not using WordPress.com name servers' ),
@@ -73,7 +74,9 @@ function getHoldMessages( siteSlug, translate ) {
 				'We cannot manage your site because your domain does not point to WordPress.com servers. ' +
 					"Follow the instructions to reset your domain's A records to resolve this."
 			),
-			supportUrl: 'https://support.wordpress.com/move-domain/setting-custom-a-records/',
+			supportUrl: localizeUrl(
+				'https://en.support.wordpress.com/move-domain/setting-custom-a-records/'
+			),
 		},
 		NO_SSL_CERTIFICATE: {
 			title: translate( 'Security certificate required' ),
@@ -93,7 +96,7 @@ function getHoldMessages( siteSlug, translate ) {
 			description: translate(
 				'This site is not currently eligible for installing themes and plugins. Please contact support to straighten things out.'
 			),
-			supportUrl: 'https://support.wordpress.com/help-support-options/',
+			supportUrl: localizeUrl( 'https://en.support.wordpress.com/help-support-options/' ),
 		},
 	};
 }

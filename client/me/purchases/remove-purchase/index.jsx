@@ -35,13 +35,7 @@ import {
 	maybeWithinRefundPeriod,
 } from 'lib/purchases';
 import { isDataLoading } from '../utils';
-import {
-	isBusiness,
-	isDomainRegistration,
-	isGoogleApps,
-	isJetpackPlan,
-	isPlan,
-} from 'lib/products-values';
+import { isDomainRegistration, isGoogleApps, isJetpackPlan, isPlan } from 'lib/products-values';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
@@ -98,7 +92,7 @@ class RemovePurchase extends Component {
 	recordEvent = ( name, properties = {} ) => {
 		const product_slug = get( this.props, [ 'purchase', 'productSlug' ] );
 		const cancellation_flow = 'remove';
-		const is_atomic = this.props.isAutomatedTransferSite;
+		const is_atomic = this.props.isAtomicSite;
 		this.props.recordTracksEvent(
 			name,
 			Object.assign( { cancellation_flow, product_slug, is_atomic }, properties )
@@ -470,10 +464,7 @@ class RemovePurchase extends Component {
 	}
 
 	renderDialog( purchase ) {
-		if (
-			this.props.isAutomatedTransferSite &&
-			( isDomainRegistration( purchase ) || isBusiness( purchase ) )
-		) {
+		if ( this.props.isAtomicSite ) {
 			return this.renderAtomicDialog( purchase );
 		}
 
@@ -519,7 +510,7 @@ export default connect(
 		const isJetpack = purchase && isJetpackPlan( purchase );
 		return {
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
-			isAutomatedTransferSite: isSiteAutomatedTransfer( state, purchase.siteId ),
+			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isChatActive: hasActiveHappychatSession( state ),
 			isJetpack,

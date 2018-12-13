@@ -34,7 +34,7 @@
 		color: $gray;
 		cursor: pointer;
 		&:hover {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 	}
 }

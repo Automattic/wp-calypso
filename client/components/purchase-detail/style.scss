@@ -2,7 +2,7 @@
 	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
 		0 1px 2px $gray-lighten-30;
 	box-sizing: border-box;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	height: 100%;
 
 	&:last-child {
@@ -95,7 +95,7 @@
 	}
 
 	.purchase-detail__notice-icon.gridicon {
-		fill: $alert-yellow;
+		fill: var( --color-warning );
 		height: 24px;
 		right: -26px;
 		top: -3px;
@@ -141,7 +141,7 @@
 }
 
 .purchase-detail__description {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	margin: 8px 0 16px 0;
 }
 
@@ -178,7 +178,7 @@
 }
 
 .purchase-detail__required-notice {
-	background-color: $alert-yellow;
+	background-color: var( --color-warning );
 	color: $white;
 	font-size: 14px;
 	padding: 8px;

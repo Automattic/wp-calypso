@@ -8,7 +8,7 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import treeSelect from 'lib/tree-select';
+import treeSelect from '@automattic/tree-select';
 
 // static empty array to ensure that empty return values from selectors are
 // identical to each other ( rv1 === rv2 )
@@ -76,6 +76,9 @@ export const getDecoratedSiteDomains = treeSelect(
 			autoRenewalMoment: domain.autoRenewalDate ? moment( domain.autoRenewalDate ) : null,
 			registrationMoment: domain.registrationDate ? moment( domain.registrationDate ) : null,
 			expirationMoment: domain.expiry ? moment( domain.expiry ) : null,
+			transferAwayEligibleAtMoment: domain.transferAwayEligibleAt
+				? moment( domain.transferAwayEligibleAt )
+				: null,
 			transferEndDateMoment: domain.transferStartDate
 				? moment( domain.transferStartDate ).add( 7, 'days' )
 				: null,

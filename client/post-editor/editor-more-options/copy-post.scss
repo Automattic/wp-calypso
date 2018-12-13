@@ -1,0 +1,18 @@
+// Copy Post Dialog
+.editor-more-options__copy-post-select-dialog .dialog__content {
+	min-width: 40vw;
+}
+
+.editor-more-options__copy-post-select-dialog .post-selector {
+	margin-bottom: 16px;
+}
+
+@include breakpoint( "<660px" ) {
+	.editor-more-options__copy-post-select-dialog {
+		width: 90%;
+	}
+
+	.editor-more-options__copy-post-select-dialog .dialog__content {
+		min-width: none;
+	}
+}

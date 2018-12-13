@@ -20,7 +20,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__mobile {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	margin: 0 16px;
 	display: block;
 
@@ -94,7 +94,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__table {
 	font-size: 14px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	border-spacing: 16px 0;
 	margin-top: -16px;
 	display: none;
@@ -122,13 +122,13 @@ $plan-features-sidebar-width: 272px;
 	position: relative;
 
 	&.is-highlighted {
-		border: 1px solid $blue-wordpress;
+		border: 1px solid var( --color-primary );
 		background-color: rgba( $blue-wordpress, 0.1 );
 		position: relative;
 		top: -1px;
 
 		.plan-features__item-checkmark {
-			fill: $blue-wordpress;
+			fill: var( --color-primary );
 		}
 
 		&.has-partial-border::after {
@@ -196,16 +196,38 @@ $plan-features-sidebar-width: 272px;
 		padding: 12px 12px 0 12px;
 	}
 
-	&.is-personal-plan {
-		border-bottom: solid 2px $alert-yellow;
+	.plans-features-main__group.is-wpcom & {
+		&.is-blogger-plan {
+			border-bottom: solid 2px var( --color-success );
+		}
+
+		&.is-personal-plan {
+			border-bottom: solid 2px var( --color-primary );
+		}
+
+		&.is-premium-plan {
+			border-bottom: solid 2px var( --color-warning );
+		}
+
+		&.is-business-plan {
+			border-bottom: solid 2px $orange-jazzy;
+		}
+
+		&.is-ecommerce-plan {
+			border-bottom: solid 2px $alert-purple;
+		}
 	}
 
-	&.is-premium-plan {
-		border-bottom: solid 2px $alert-green;
-	}
-
-	&.is-business-plan {
-		border-bottom: solid 2px $alert-purple;
+	.plans-features-main__group.is-jetpack & {
+		&.is-personal-plan {
+			border-bottom: solid 2px var( --color-warning );
+		}
+		&.is-premium-plan {
+			border-bottom: solid 2px var( --color-success );
+		}
+		&.is-business-plan {
+			border-bottom: solid 2px $alert-purple;
+		}
 	}
 }
 
@@ -240,7 +262,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__header-title {
 	font-size: 22px;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	line-height: 0.7;
 
 	@include breakpoint( '<960px' ) {
@@ -281,7 +303,7 @@ $plan-features-sidebar-width: 272px;
 	height: 20px;
 	border-radius: 10px;
 	color: $white;
-	background: $alert-green;
+	background: var( --color-success );
 	font-weight: normal;
 	vertical-align: middle;
 	padding: 0 8px;
@@ -299,7 +321,7 @@ $plan-features-sidebar-width: 272px;
 	font-size: 12px;
 	font-style: italic;
 	font-weight: 400;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	line-height: normal;
 
 	&.is-placeholder {
@@ -447,7 +469,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__item-checkmark {
 	flex: 0 1 auto;
-	fill: $blue-wordpress;
+	fill: var( --color-primary );
 	margin-right: 10px;
 }
 
@@ -635,10 +657,15 @@ $plan-features-sidebar-width: 272px;
 
 	.plan-features__actions-button {
 		margin-top: 8px;
+
+		&.disabled,
+		&[disabled] {
+			color: $gray;
+		}
 	}
 
 	.plan-price.is-original:before {
-		border-color: $alert-green;
+		border-color: var( --color-success );
 	}
 
 	.plan-price,

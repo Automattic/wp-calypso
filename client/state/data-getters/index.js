@@ -9,7 +9,7 @@ import { omit, sortBy } from 'lodash';
  */
 import { http as rawHttp } from 'state/http/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestHttpData } from 'state/data-layer/http-data';
+import { requestHttpData, httpData, empty } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
 import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
@@ -22,6 +22,26 @@ import {
 } from 'state/analytics/actions';
 import { convertToSnakeCase } from 'state/data-layer/utils';
 import { dummyTaxRate } from 'lib/tax'; // #tax-on-checkout-placeholder
+import { isEnabled } from 'config';
+import { addQueryArgs } from 'lib/route';
+
+/**
+ * Fetches content from a URL with a GET request
+ *
+ * @example
+ * waitForData( {
+ *     planets: requestFromUrl( 'https://swapi.co/api/planets/' ),
+ * } ).then( ( { planets } ) => {
+ *     console.log( planets.data );
+ * } );
+ *
+ * @param {string} url location from which to GET data
+ * @return {object} HTTP data wrapped value
+ */
+export const requestFromUrl = url =>
+	requestHttpData( `get-at-url-${ url }`, rawHttp( { method: 'GET', url } ), {
+		fromApi: () => data => [ [ `get-at-url-${ url }`, data ] ],
+	} );
 
 export const requestActivityActionTypeCounts = (
 	siteId,
@@ -185,13 +205,17 @@ export const requestGutenbergDemoContent = () =>
 		{ fromApi: () => data => [ [ 'gutenberg-demo-content', data ] ] }
 	);
 
-export const requestSitePost = ( siteId, postId, postType ) => {
+export const requestSitePost = ( siteId, postId, postType, freshness ) => {
 	//post and page types are plural except for custom post types
 	//eg /sites/<siteId>/posts/1234 vs /sites/<siteId>/jetpack-testimonial/4
 	const path =
 		postType === 'page' || postType === 'post'
 			? `/sites/${ siteId }/${ postType }s/${ postId }?context=edit`
 			: `/sites/${ siteId }/${ postType }/${ postId }?context=edit`;
+	if ( freshness === 0 ) {
+		//clear cache. TODO: add a helper for this, or fix this case
+		httpData.set( `gutenberg-site-${ siteId }-post-${ postId }`, empty );
+	}
 	return requestHttpData(
 		`gutenberg-site-${ siteId }-post-${ postId }`,
 		http(
@@ -202,7 +226,10 @@ export const requestSitePost = ( siteId, postId, postType ) => {
 			},
 			{}
 		),
-		{ fromApi: () => post => [ [ `gutenberg-site-${ siteId }-post-${ postId }`, post ] ] }
+		{
+			freshness,
+			fromApi: () => post => [ [ `gutenberg-site-${ siteId }-post-${ postId }`, post ] ],
+		}
 	);
 };
 
@@ -255,4 +282,20 @@ export const requestTaxRate = ( countryCode, postalCode, httpOptions ) => {
 		},
 		...optionsWithDefaults,
 	} );
+};
+
+export const requestGutenbergBlockAvailability = siteSlug => {
+	const betaQueryArgument = addQueryArgs( { beta: isEnabled( 'jetpack/blocks/beta' ) }, '' );
+	return requestHttpData(
+		`gutenberg-block-availability-${ siteSlug }`,
+		http(
+			{
+				path: `/sites/${ siteSlug }/gutenberg/available-extensions${ betaQueryArgument }`,
+				method: 'GET',
+				apiNamespace: 'wpcom/v2',
+			},
+			{}
+		),
+		{ fromApi: () => data => [ [ `gutenberg-block-availability-${ siteSlug }`, data ] ] }
+	);
 };

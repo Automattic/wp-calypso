@@ -63,11 +63,11 @@
 
 	a,
 	a:visited {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 
 	a:hover {
-		color: $blue-light;
+		color: var( --color-primary-light );
 	}
 
 	@include breakpoint( "<660px" ) {
@@ -269,11 +269,11 @@
 
 	.section-nav-tab__link {
 		background-color: transparent;
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		padding: 16px;
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 
@@ -405,11 +405,11 @@
 	.follow-button {
 
 		.gridicon {
-			fill: $blue-medium;
+			fill: var( --color-accent );
 		}
 
 		.follow-button__label {
-			color: $blue-medium;
+			color: var( --color-accent );
 
 			@include breakpoint ( "<660px" ) {
 				display: inline;
@@ -418,11 +418,11 @@
 
 		&.is-following {
 			.gridicon {
-				fill: $alert-green;
+				fill: var( --color-success );
 			}
 
 			.follow-button__label {
-				color: $alert-green;
+				color: var( --color-success );
 			}
 		}
 	}

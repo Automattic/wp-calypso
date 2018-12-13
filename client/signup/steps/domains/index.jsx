@@ -14,7 +14,6 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import MapDomainStep from 'components/domains/map-domain-step';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
@@ -41,6 +40,12 @@ import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getDomainProductSlug } from 'lib/domains';
 import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
+import { getSuggestionsVendor } from 'lib/domains/suggestions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class DomainsStep extends React.Component {
 	static propTypes = {
@@ -321,7 +326,18 @@ class DomainsStep extends React.Component {
 
 		// If it's the first load, rerun the search with whatever we get from the query param
 		const initialQuery = get( this.props, 'queryObject.new', '' );
-		if ( initialQuery && this.searchOnInitialRender ) {
+		if (
+			// If we landed here from /domains Search
+			( initialQuery && this.searchOnInitialRender ) ||
+			// If the subdomain type has changed, rerun the search
+			( initialState &&
+				initialState.subdomainSearchResults &&
+				endsWith(
+					get( initialState, 'subdomainSearchResults[0].domain_name', '' ),
+					// Inverted the ending, so we know it's the wrong subdomain in the saved results
+					this.shouldIncludeDotBlogSubdomain() ? '.wordpress.com' : '.blog'
+				) )
+		) {
 			this.searchOnInitialRender = false;
 			if ( initialState ) {
 				initialState.searchResults = null;
@@ -354,7 +370,7 @@ class DomainsStep extends React.Component {
 				surveyVertical={ this.props.surveyVertical }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
-				vendor={ abtest( 'krackenRebootM33' ) }
+				vendor={ getSuggestionsVendor() }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 			/>
 		);

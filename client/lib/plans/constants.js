@@ -46,7 +46,6 @@ export const PLAN_HOST_BUNDLE = 'host-bundle';
 export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
 export const PLAN_CHARGEBACK = 'chargeback';
 
-export const POPULAR_PLANS = [ PLAN_PREMIUM ];
 export const NEW_PLANS = [];
 export const BEST_VALUE_PLANS = [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
 export const JETPACK_PLANS = [
@@ -162,6 +161,12 @@ export const FEATURE_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
 export const FEATURE_CONCIERGE_SETUP = 'concierge-setup-jetpack';
 export const FEATURE_MARKETING_AUTOMATION = 'marketing-automation';
 export const FEATURE_SEARCH = 'search';
+export const FEATURE_ACCEPT_PAYMENTS = 'accept-payments';
+export const FEATURE_SHIPPING_CARRIERS = 'shipping-carriers';
+export const FEATURE_UNLIMITED_PRODUCTS_SERVICES = 'unlimited-products-service';
+export const FEATURE_ECOMMERCE_MARKETING = 'ecommerce-marketing';
+export const FEATURE_PREMIUM_CUSTOMIZABE_THEMES = 'premium-customizable-themes';
+export const FEATURE_ALL_BUSINESS_FEATURES = 'all-business-features';
 
 // Meta grouping constants
 export const GROUP_WPCOM = 'GROUP_WPCOM';
@@ -187,15 +192,13 @@ const getPlanBloggerDetails = () => ( {
 	type: TYPE_BLOGGER,
 	getTitle: () => i18n.translate( 'Blogger' ),
 	// @TODO not updating copy for now, we need to update it after the first round of design {{{
-	getAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getBlogAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getStoreAudience: () => i18n.translate( 'Best for hobbyists' ),
+	getAudience: () => i18n.translate( 'Best for bloggers' ),
+	getBlogAudience: () => i18n.translate( 'Best for bloggers' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for bloggers' ),
+	getStoreAudience: () => i18n.translate( 'Best for bloggers' ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for Personal Use:{{/strong}} Boost your' +
-				' website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Get access to high-quality email and live chat support.',
+			'{{strong}}Best for Bloggers:{{/strong}} Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and email support.',
 			{
 				components: {
 					strong: (
@@ -217,7 +220,7 @@ const getPlanBloggerDetails = () => ( {
 	],
 	getSignupFeatures: () => [
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
-		FEATURE_FREE_DOMAIN,
+		FEATURE_BLOG_DOMAIN,
 		FEATURE_ALL_FREE_FEATURES,
 	],
 	getBlogSignupFeatures: () => [
@@ -238,10 +241,10 @@ const getPlanPersonalDetails = () => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
 	getTitle: () => i18n.translate( 'Personal' ),
-	getAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getBlogAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for hobbyists' ),
-	getStoreAudience: () => i18n.translate( 'Best for hobbyists' ),
+	getAudience: () => i18n.translate( 'Best for personal use' ),
+	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
+	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for Personal Use:{{/strong}} Boost your' +
@@ -288,13 +291,13 @@ const getPlanPremiumDetails = () => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PREMIUM,
 	getTitle: () => i18n.translate( 'Premium' ),
-	getAudience: () => i18n.translate( 'Best for entrepreneurs' ),
-	getBlogAudience: () => i18n.translate( 'Best for professionals' ),
+	getAudience: () => i18n.translate( 'Best for freelancers' ),
+	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for Entrepreneurs & Freelancers:{{/strong}}' +
+			'{{strong}}Best for Freelancers:{{/strong}}' +
 				' Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
 				' and the ability to monetize your site with ads.',
 			{
@@ -351,13 +354,13 @@ const getPlanBusinessDetails = () => ( {
 	type: TYPE_BUSINESS,
 	getTitle: () => i18n.translate( 'Business' ),
 	getAudience: () => i18n.translate( 'Best for small businesses' ),
-	getBlogAudience: () => i18n.translate( 'Best for brands' ),
+	getBlogAudience: () => i18n.translate( 'Best for small businesses' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
-	getStoreAudience: () => i18n.translate( 'The plan for stores and small businesses' ),
+	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
 	getDescription: abtest => {
 		if ( abtest && abtest( 'businessPlanDescriptionAT' ) === 'pluginsAndThemes' ) {
 			return i18n.translate(
-				'{{strong}}Best for Small Business:{{/strong}} Power your' +
+				'{{strong}}Best for Small Businesses:{{/strong}} Power your' +
 					' business website with custom plugins and themes, unlimited premium and business theme templates,' +
 					' Google Analytics support, unlimited' +
 					' storage, and the ability to remove WordPress.com branding.',
@@ -371,7 +374,7 @@ const getPlanBusinessDetails = () => ( {
 			);
 		}
 		return i18n.translate(
-			'{{strong}}Best for Small Business:{{/strong}} Power your' +
+			'{{strong}}Best for Small Businesses:{{/strong}} Power your' +
 				' business website with unlimited premium and business theme templates, Google Analytics support, unlimited' +
 				' storage, and the ability to remove WordPress.com branding.',
 			{
@@ -419,7 +422,7 @@ const getPlanBusinessDetails = () => ( {
 	],
 	getSignupFeatures: () => [
 		FEATURE_UPLOAD_THEMES_PLUGINS,
-		FEATURE_GOOGLE_ANALYTICS_SIGNUP,
+		FEATURE_ADVANCED_SEO_TOOLS,
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
 	getBlogSignupFeatures: () => [
@@ -440,15 +443,15 @@ const getPlanEcommerceDetails = () => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_ECOMMERCE,
 	getTitle: () => i18n.translate( 'eCommerce' ),
-	getAudience: () => i18n.translate( 'Best for eCommerce sites' ),
+	getAudience: () => i18n.translate( 'Best for online stores' ),
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
-	getStoreAudience: () => i18n.translate( 'The plan for stores and small businesses' ),
+	getStoreAudience: () => i18n.translate( 'Best for online stores' ),
 	getDescription: () => {
 		return i18n.translate(
-			'{{strong}}Best for eCommerce:{{/strong}} Start your' +
-				' online store with a specifically designed WooCommerce software bundle, unlimited' +
-				' storage, premium themes, and the ability to remove WordPress.com branding.',
+			'{{strong}}Best for Online Stores:{{/strong}} Sell products or services with this powerful, ' +
+				'all-in-one online store experience. This plan includes premium integrations and is extendable, ' +
+				'so it’ll grow with you as your business grows.',
 			{
 				components: {
 					strong: (
@@ -472,9 +475,21 @@ const getPlanEcommerceDetails = () => ( {
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_NO_ADS,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			FEATURE_SIMPLE_PAYMENTS,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS,
 			FEATURE_BUSINESS_ONBOARDING,
+			FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
+			FEATURE_GOOGLE_ANALYTICS,
+			FEATURE_NO_BRANDING,
+			FEATURE_ACCEPT_PAYMENTS,
+			FEATURE_SHIPPING_CARRIERS,
+			FEATURE_UNLIMITED_PRODUCTS_SERVICES,
+			FEATURE_ECOMMERCE_MARKETING,
+			FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 		] ),
 	getPromotedFeatures: () => [
 		FEATURE_UNLIMITED_STORAGE,
@@ -484,11 +499,23 @@ const getPlanEcommerceDetails = () => ( {
 		FEATURE_ADVANCED_DESIGN,
 		FEATURE_BUSINESS_ONBOARDING,
 	],
-	getSignupFeatures: () => [ FEATURE_UNLIMITED_STORAGE, FEATURE_NO_ADS ],
-	getBlogSignupFeatures: () => [ FEATURE_UPLOAD_THEMES_PLUGINS ],
-	getPortfolioSignupFeatures: () => [ FEATURE_UPLOAD_THEMES_PLUGINS ],
+	getSignupFeatures: () => [
+		FEATURE_ACCEPT_PAYMENTS,
+		FEATURE_SHIPPING_CARRIERS,
+		FEATURE_ALL_BUSINESS_FEATURES,
+	],
+	getBlogSignupFeatures: () => [
+		FEATURE_ACCEPT_PAYMENTS,
+		FEATURE_SHIPPING_CARRIERS,
+		FEATURE_ALL_BUSINESS_FEATURES,
+	],
+	getPortfolioSignupFeatures: () => [
+		FEATURE_ACCEPT_PAYMENTS,
+		FEATURE_SHIPPING_CARRIERS,
+		FEATURE_ALL_BUSINESS_FEATURES,
+	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS ],
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS, FEATURE_UPLOAD_THEMES_PLUGINS ],
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -686,7 +713,7 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: () => [],
+		availableFor: plan => includes( [ PLAN_FREE ], plan ),
 		getProductId: () => 1011,
 		getStoreSlug: () => PLAN_ECOMMERCE,
 		getPathSlug: () => 'ecommerce',
@@ -696,9 +723,7 @@ export const PLANS_LIST = {
 		...getPlanEcommerceDetails(),
 		term: TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
-		availableFor: plan => {
-			return PLAN_ECOMMERCE === plan;
-		},
+		availableFor: plan => includes( [ PLAN_FREE, PLAN_ECOMMERCE ], plan ),
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
 		getPathSlug: () => 'ecommerce-2-years',
@@ -1083,7 +1108,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_ALL_FREE_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_FREE_FEATURES,
 		getTitle: () => i18n.translate( 'All free features' ),
-		getDescription: () => i18n.translate( 'Also includes all features offered in the Free plan.' ),
+		getDescription: () => i18n.translate( 'Also includes all features offered in the free plan.' ),
 	},
 
 	[ FEATURE_ALL_PERSONAL_FEATURES_JETPACK ]: {
@@ -1108,7 +1133,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_ALL_PERSONAL_FEATURES,
 		getTitle: () => i18n.translate( 'All Personal features' ),
 		getDescription: () =>
-			i18n.translate( 'Also includes all features offered in the Personal plan.' ),
+			i18n.translate( 'Including email and live chat support, an ad-free experience for your visitors, increased storage space, and a custom domain name for one year.' ),
 	},
 
 	[ FEATURE_ALL_PREMIUM_FEATURES_JETPACK ]: {
@@ -1133,7 +1158,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_ALL_PREMIUM_FEATURES,
 		getTitle: () => i18n.translate( 'All Premium features' ),
 		getDescription: () =>
-			i18n.translate( 'Also includes all features offered in the Premium plan.' ),
+			i18n.translate( 'Including unlimited premium themes, advanced design and monetization options, simple payment buttons, and a custom domain name for one year.' ),
 	},
 
 	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
@@ -1146,11 +1171,11 @@ export const FEATURES_LIST = {
 	},
 
 	[ FEATURE_FREE_BLOG_DOMAIN ]: {
-		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Free .blog Domain for One Year' ),
+		getSlug: () => FEATURE_FREE_BLOG_DOMAIN,
+		getTitle: () => i18n.translate( 'Free .blog domain for one year' ),
 		getDescription: () =>
 			i18n.translate(
-				'Get a free .blog domain for one year. Premium domains not included. Your domain will renew at its regular price.'
+				'Get a free custom .blog domain for one year. Premium domains not included. Your domain will renew at its regular price.'
 			),
 	},
 
@@ -1183,7 +1208,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_UPLOAD_THEMES_PLUGINS ]: {
 		getSlug: () => FEATURE_UPLOAD_THEMES_PLUGINS,
-		getTitle: () => i18n.translate( 'Upload themes and plugins' ),
+		getTitle: () => i18n.translate( 'Upload Themes and Plugins' ),
 		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
 	},
 
@@ -1197,7 +1222,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Email support' ),
 		getDescription: () =>
 			i18n.translate(
-				'High quality support to help you get your website up and running and working how you want it.'
+				'High quality email support to help you get your website up and running and working how you want it.'
 			),
 	},
 
@@ -1329,7 +1354,7 @@ export const FEATURES_LIST = {
 			}
 
 			return i18n.translate(
-				'Get a free .blog domain for one year. Premium domains not included. Your domain will renew at its regular price.'
+				'Get a free custom .blog domain for one year. Premium domains not included. Your domain will renew at its regular price.'
 			);
 		},
 	},
@@ -1593,7 +1618,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_EMAIL_SUPPORT,
 		getTitle: () => i18n.translate( 'Email Support' ),
 		getDescription: () =>
-			i18n.translate( 'Live chat support to help you get started with your site.' ),
+			i18n.translate( 'High quality email support to help you get your website up and running and working how you want it.' ),
 	},
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
@@ -1860,6 +1885,42 @@ export const FEATURES_LIST = {
 				'Fast, relevant search results with custom filtering, powered by Elasticsearch.'
 			),
 	},
+
+	[ FEATURE_ACCEPT_PAYMENTS ]: {
+		getSlug: () => FEATURE_ACCEPT_PAYMENTS,
+		getTitle: () => i18n.translate( 'Accept Payments in 60+ Countries' ),
+		getDescription: () => i18n.translate( 'Built-in payment processing from leading providers like Stripe, PayPal, and more. Accept payments from customers all over the world.' ),
+	},
+
+	[ FEATURE_SHIPPING_CARRIERS ]: {
+		getSlug: () => FEATURE_SHIPPING_CARRIERS,
+		getTitle: () => i18n.translate( 'Integrations with Top Shipping Carriers' ),
+		getDescription: () => i18n.translate( 'Ship physical products in a snap - show live rates from shipping carriers like UPS and other shipping options.' ),
+	},
+
+	[ FEATURE_UNLIMITED_PRODUCTS_SERVICES ]: {
+		getSlug: () => FEATURE_UNLIMITED_PRODUCTS_SERVICES,
+		getTitle: () => i18n.translate( 'Unlimited Products or Services' ),
+		getDescription: () => i18n.translate( 'Grow your store as big as you want with the ability to add and sell unlimited products and services.' ),
+	},
+
+	[ FEATURE_ECOMMERCE_MARKETING ]: {
+		getSlug: () => FEATURE_ECOMMERCE_MARKETING,
+		getTitle: () => i18n.translate( 'eCommerce Marketing Tools' ),
+		getDescription: () => i18n.translate( 'Optimize your store for sales by adding in email and social integrations with Facebook and Mailchimp, and more.' ),
+	},
+
+	[ FEATURE_PREMIUM_CUSTOMIZABE_THEMES ]: {
+		getSlug: () => FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
+		getTitle: () => i18n.translate( 'Premium Customizable Starter Themes' ),
+		getDescription: () => i18n.translate( 'Quickly get up and running with a beautiful store theme and additional design options that you can easily make your own.' ),
+	},
+
+	[ FEATURE_ALL_BUSINESS_FEATURES ]: {
+		getSlug: () => FEATURE_ALL_BUSINESS_FEATURES,
+		getTitle: () => i18n.translate( 'All Business Features' ),
+		getDescription: () => i18n.translate( 'Including the ability to upload plugins and themes, priority support, advanced monetization options, and unlimited premium themes.' ),
+	},
 };
 
 export const getPlanObject = planName => {
@@ -1883,10 +1944,6 @@ export const getPlanFeaturesObject = planFeaturesList => {
 
 export function isMonthly( plan ) {
 	return includes( JETPACK_MONTHLY_PLANS, plan );
-}
-
-export function isPopular( plan ) {
-	return includes( POPULAR_PLANS, plan );
 }
 
 export function isNew( plan ) {

@@ -19,6 +19,11 @@ import { getCustomizerUrl, getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequesting, getPluginOnSite } from 'state/plugins/installed/selectors';
 
+/**
+ * Style dependencies
+ */
+import './jetpack.scss';
+
 const AmpJetpack = ( {
 	ampPluginInstalled,
 	customizerAmpPanelUrl,

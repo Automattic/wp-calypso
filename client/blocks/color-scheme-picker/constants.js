@@ -1,27 +1,36 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { compact } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import config from 'config';
 
 export default function( translate ) {
-	return [
+	return compact( [
 		{
-			label: translate( 'Default' ),
-			value: 'default',
+			label: translate( 'Classic Blue' ),
+			value: 'classic-blue',
 			thumbnail: {
-				cssClass: 'is-default',
+				cssClass: 'is-classic-blue',
 			},
 		},
 		{
-			label: translate( 'Light' ),
-			value: 'light',
+			label: translate( 'Classic Bright' ),
+			value: 'classic-bright',
 			thumbnail: {
-				cssClass: 'is-light',
+				cssClass: 'is-classic-bright',
 			},
 		},
-		{
-			label: translate( 'Dark' ),
-			value: 'dark',
+		config.isEnabled( 'me/account/color-schemes/laser-black' ) && {
+			label: translate( 'Laser Black' ),
+			value: 'laser-black',
 			thumbnail: {
-				cssClass: 'is-dark',
+				cssClass: 'is-laser-black',
 			},
 		},
-	];
+	] );
 }

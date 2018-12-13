@@ -29,6 +29,7 @@ import SitePicker from 'signup/steps/site-picker';
 import SiteTitleComponent from 'signup/steps/site-title';
 import SiteTopicComponent from 'signup/steps/site-topic';
 import SiteTypeComponent from 'signup/steps/site-type';
+import SiteInformationComponent from 'signup/steps/site-information';
 import SurveyStepComponent from 'signup/steps/survey';
 import ThemeSelectionComponent from 'signup/steps/theme-selection';
 import UserSignupComponent from 'signup/steps/user';
@@ -64,6 +65,7 @@ export default {
 	'rewind-were-backing': RewindWereBacking,
 	'rewind-add-creds': RewindAddCreds,
 	'rewind-form-creds': RewindFormCreds,
+	'site-information': SiteInformationComponent,
 	'site-or-domain': SiteOrDomainComponent,
 	'site-picker': SitePicker,
 	'site-title': SiteTitleComponent,
@@ -82,5 +84,6 @@ export default {
 	user: UserSignupComponent,
 	'oauth2-user': UserSignupComponent,
 	'oauth2-name': UserSignupComponent,
+	displayname: UserSignupComponent,
 	'reader-landing': ReaderLandingStepComponent,
 };

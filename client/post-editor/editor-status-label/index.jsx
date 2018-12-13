@@ -20,6 +20,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
 import { getSitePost } from 'state/posts/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class EditorStatusLabel extends React.Component {
 	static propTypes = {
 		post: PropTypes.object,

@@ -22,26 +22,20 @@ import { transferStates } from 'state/automated-transfer/constants';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestStatus = ( { dispatch }, action ) => {
-	const { siteId } = action;
-
-	dispatch(
-		http(
-			{
-				method: 'GET',
-				path: `/sites/${ siteId }/automated-transfers/status`,
-				apiVersion: '1',
-			},
-			action
-		)
+export const requestStatus = action =>
+	http(
+		{
+			method: 'GET',
+			path: `/sites/${ action.siteId }/automated-transfers/status`,
+			apiVersion: '1',
+		},
+		action
 	);
-};
 
 export const receiveStatus = (
-	{ dispatch },
 	{ siteId },
 	{ status, uploaded_plugin_slug, transfer_id }
-) => {
+) => dispatch => {
 	const pluginId = uploaded_plugin_slug;
 
 	dispatch( setAutomatedTransferStatus( siteId, status, pluginId ) );
@@ -63,12 +57,16 @@ export const receiveStatus = (
 	}
 };
 
-export const requestingStatusFailure = ( { dispatch }, { siteId } ) => {
-	dispatch( automatedTransferStatusFetchingFailure( siteId ) );
+export const requestingStatusFailure = ( { siteId } ) => {
+	return automatedTransferStatusFetchingFailure( siteId );
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/status/index.js', {
 	[ AUTOMATED_TRANSFER_STATUS_REQUEST ]: [
-		dispatchRequest( requestStatus, receiveStatus, requestingStatusFailure ),
+		dispatchRequest( {
+			fetch: requestStatus,
+			onSuccess: receiveStatus,
+			onError: requestingStatusFailure,
+		} ),
 	],
 } );

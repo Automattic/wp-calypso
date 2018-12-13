@@ -53,8 +53,8 @@
 		align-items: center;
 
 	&:focus {
-		border-color: $blue-medium;
-		box-shadow: 0 0 0 2px $blue-light;
+		border-color: var( --color-accent );
+		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 }
 
@@ -63,7 +63,7 @@
 }
 
 .plugin-list-header__actions-remove-item {
-	color: $alert-red;
+	color: var( --color-error );
 
 	&.is-disabled {
 		color: lighten( $alert-red, 30% );

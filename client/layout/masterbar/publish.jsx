@@ -13,15 +13,16 @@ import { connect } from 'react-redux';
 import { recordTracksEvent } from 'state/analytics/actions';
 import MasterbarItem from './item';
 import SitesPopover from 'components/sites-popover';
-import { newPost } from 'lib/paths';
 import { isMobile } from 'lib/viewport';
 import { preload } from 'sections-helper';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import getPrimarySiteSlug from 'state/selectors/get-primary-site-slug';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
 import MasterbarDrafts from './drafts';
 import isRtlSelector from 'state/selectors/is-rtl';
 import TranslatableString from 'components/translatable/proptype';
+import { getEditorUrl } from 'state/selectors/get-editor-url';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import { reduxGetState } from 'lib/redux-bridge';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {
@@ -29,7 +30,6 @@ class MasterbarItemNew extends React.Component {
 		className: PropTypes.string,
 		tooltip: TranslatableString,
 		// connected props
-		currentSiteSlug: PropTypes.string,
 		hasMoreThanOneVisibleSite: PropTypes.bool,
 		isRtl: PropTypes.bool,
 	};
@@ -75,9 +75,17 @@ class MasterbarItemNew extends React.Component {
 		return 'bottom left';
 	}
 
-	onSiteSelect = () => {
+	onSiteSelect = siteId => {
 		this.props.recordTracksEvent( 'calypso_masterbar_write_button_clicked' );
-		return false; // handledByHost = false, continue handling by navigating to /post/:site
+		//To avoid binding in connect, please remove me later.
+		const redirectURL = getEditorUrl( reduxGetState(), siteId, null, 'post' );
+		if ( typeof window !== 'undefined' ) {
+			setTimeout( () => {
+				window.location = redirectURL;
+			}, 0 );
+			return true; // handledByHost = true, don't let the component nav
+		}
+		return false; //otherwise fallback to normal handling
 	};
 
 	renderPopover() {
@@ -94,19 +102,19 @@ class MasterbarItemNew extends React.Component {
 				onClose={ this.closeSitesPopover }
 				onSiteSelect={ this.onSiteSelect }
 				position={ this.getPopoverPosition() }
+				isGutenbergOverride
 			/>
 		);
 	}
 
 	render() {
 		const classes = classNames( this.props.className );
-		const newPostPath = newPost( this.props.currentSiteSlug );
 
 		return (
 			<div className="masterbar__publish">
 				<MasterbarItem
 					ref={ this.postButtonRef }
-					url={ newPostPath }
+					url={ this.props.editorUrl }
 					icon="create"
 					onClick={ this.onClick }
 					isActive={ this.props.isActive }
@@ -124,10 +132,12 @@ class MasterbarItemNew extends React.Component {
 }
 
 const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
+
 	return {
-		currentSiteSlug: getSelectedSiteSlug( state ) || getPrimarySiteSlug( state ),
 		hasMoreThanOneVisibleSite: getCurrentUserVisibleSiteCount( state ) > 1,
 		isRtl: isRtlSelector( state ),
+		editorUrl: getEditorUrl( state, siteId, null, 'post' ),
 	};
 };
 

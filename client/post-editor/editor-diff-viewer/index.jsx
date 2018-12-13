@@ -22,6 +22,11 @@ import scrollTo from 'lib/scroll-to';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isWithinBreakpoint } from 'lib/viewport';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const getCenterOffset = node => get( node, 'offsetTop', 0 ) + get( node, 'offsetHeight', 0 ) / 2;
 
 class EditorDiffViewer extends PureComponent {

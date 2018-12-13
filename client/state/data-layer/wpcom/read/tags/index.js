@@ -11,7 +11,7 @@ import { translate } from 'i18n-calypso';
 import { READER_TAGS_REQUEST } from 'state/action-types';
 import { receiveTags } from 'state/reader/tags/items/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx, getHeaders } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest, getHeaders } from 'state/data-layer/wpcom-http/utils';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { errorNotice } from 'state/notices/actions';
 
@@ -74,7 +74,7 @@ export function receiveTagsError( action, error ) {
 
 registerHandlers( 'state/data-layer/wpcom/read/tags/index.js', {
 	[ READER_TAGS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestTags,
 			onSuccess: receiveTagsSuccess,
 			onError: receiveTagsError,

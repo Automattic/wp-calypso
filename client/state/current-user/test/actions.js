@@ -8,17 +8,17 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { setCurrentUserId } from '../actions';
-import { CURRENT_USER_ID_SET } from 'state/action-types';
+import { setCurrentUser } from '../actions';
+import { CURRENT_USER_RECEIVE } from 'state/action-types';
 
 describe( 'actions', () => {
-	describe( '#setCurrentUserId()', () => {
+	describe( '#setCurrentUser()', () => {
 		test( 'should return an action object', () => {
-			const action = setCurrentUserId( 73705554 );
+			const action = setCurrentUser( { ID: 73705554 } );
 
 			expect( action ).to.eql( {
-				type: CURRENT_USER_ID_SET,
-				userId: 73705554,
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: 73705554 },
 			} );
 		} );
 	} );

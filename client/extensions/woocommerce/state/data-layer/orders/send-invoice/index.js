@@ -3,7 +3,7 @@
  * Internal dependencies
  */
 import { createNoteSuccess } from 'woocommerce/state/sites/orders/notes/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
 	orderInvoiceFailure,
 	orderInvoiceSuccess,
@@ -36,6 +36,6 @@ export const onSuccess = ( action, { data } ) => dispatch => {
 
 export default {
 	[ WOOCOMMERCE_ORDER_INVOICE_SEND ]: [
-		dispatchRequestEx( { fetch, onSuccess, onError, fromApi: verifyResponseHasData } ),
+		dispatchRequest( { fetch, onSuccess, onError, fromApi: verifyResponseHasData } ),
 	],
 };

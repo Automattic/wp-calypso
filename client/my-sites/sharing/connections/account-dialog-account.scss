@@ -31,7 +31,7 @@
 .account-dialog-account.is-conflict .gridicons-notice {
 	position: absolute;
 		left: -5px;
-	color: $alert-yellow;
+	color: var( --color-warning );
 }
 
 // specificity of .account-dialog is needed for display property to apply

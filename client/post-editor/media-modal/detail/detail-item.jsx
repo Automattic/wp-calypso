@@ -16,6 +16,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import EditorMediaModalContent from '../content';
 import EditorMediaModalDetailFields from './detail-fields';
 import EditorMediaModalDetailFileInfo from './detail-file-info';
 import EditorMediaModalDetailPreviewImage from './detail-preview-image';
@@ -293,7 +294,7 @@ export class EditorMediaModalDetailItem extends Component {
 
 		return (
 			<figure className={ classes }>
-				<div className="editor-media-modal-detail__content editor-media-modal__content">
+				<EditorMediaModalContent className="editor-media-modal-detail__content">
 					<div className="editor-media-modal-detail__preview-wrapper">
 						{ this.renderItem() }
 						{ this.renderMediaEditorButtons( item ) }
@@ -309,7 +310,7 @@ export class EditorMediaModalDetailItem extends Component {
 						{ this.renderFields() }
 						<EditorMediaModalDetailFileInfo item={ item } />
 					</div>
-				</div>
+				</EditorMediaModalContent>
 			</figure>
 		);
 	}

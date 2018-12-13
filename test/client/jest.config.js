@@ -12,7 +12,9 @@ module.exports = {
 	rootDir: './../../',
 	roots: [ '<rootDir>/client/' ],
 	testEnvironment: 'node',
-	transformIgnorePatterns: [ 'node_modules[\\/\\\\](?!flag-icon-css|redux-form)' ],
+	transformIgnorePatterns: [
+		'node_modules[\\/\\\\](?!flag-icon-css|redux-form|simple-html-tokenizer)',
+	],
 	testMatch: [ '<rootDir>/client/**/test/*.js?(x)' ],
 	testURL: 'https://example.com',
 	setupTestFrameworkScriptFile: '<rootDir>/test/client/setup-test-framework.js',

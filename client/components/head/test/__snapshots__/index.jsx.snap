@@ -37,6 +37,11 @@ exports[`Head should render custom title 1`] = `
     name="referrer"
   />
   <link
+    as="document"
+    href="https://public-api.wordpress.com/wp-admin/rest-proxy/?v=2.0"
+    rel="prefetch"
+  />
+  <link
     href="https://arbitrary-favicon-url"
     rel="shortcut icon"
     sizes="16x16 32x32"
@@ -135,8 +140,30 @@ exports[`Head should render custom title 1`] = `
     rel="manifest"
   />
   <link
+    as="style"
     href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
-    rel="stylesheet"
+    rel="preload"
+  />
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
+      rel="stylesheet"
+    />
+  </noscript>
+  <script
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "
+			(function() {
+				var m = document.createElement( \\"link\\" );
+				m.rel = \\"stylesheet\\";
+				m.href = \\"https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese\\";
+				document.head.insertBefore( m, document.head.childNodes[ document.head.childNodes.length - 1 ].nextSibling );
+			})()
+			",
+      }
+    }
+    type="text/javascript"
   />
 </head>
 `;
@@ -178,6 +205,11 @@ exports[`Head should render default title 1`] = `
     name="referrer"
   />
   <link
+    as="document"
+    href="https://public-api.wordpress.com/wp-admin/rest-proxy/?v=2.0"
+    rel="prefetch"
+  />
+  <link
     href="https://arbitrary-favicon-url"
     rel="shortcut icon"
     sizes="16x16 32x32"
@@ -276,8 +308,30 @@ exports[`Head should render default title 1`] = `
     rel="manifest"
   />
   <link
+    as="style"
     href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
-    rel="stylesheet"
+    rel="preload"
+  />
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
+      rel="stylesheet"
+    />
+  </noscript>
+  <script
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "
+			(function() {
+				var m = document.createElement( \\"link\\" );
+				m.rel = \\"stylesheet\\";
+				m.href = \\"https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese\\";
+				document.head.insertBefore( m, document.head.childNodes[ document.head.childNodes.length - 1 ].nextSibling );
+			})()
+			",
+      }
+    }
+    type="text/javascript"
   />
 </head>
 `;

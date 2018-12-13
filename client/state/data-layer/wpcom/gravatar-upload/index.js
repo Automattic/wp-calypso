@@ -11,7 +11,7 @@ import {
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -65,7 +65,7 @@ export function announceFailure() {
 
 registerHandlers( 'state/data-layer/wpcom/gravatar-upload/index.js', {
 	[ GRAVATAR_UPLOAD_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: uploadGravatar,
 			onSuccess: announceSuccess,
 			onError: announceFailure,

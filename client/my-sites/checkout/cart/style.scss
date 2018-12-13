@@ -34,7 +34,7 @@
 		}
 
 		.product-domain {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 			display: block;
 			font-size: 12px;
 			text-overflow: ellipsis;
@@ -46,7 +46,7 @@
 		}
 
 		.product-price {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 			display: block;
 			font-size: 13px;
 		}
@@ -56,7 +56,7 @@
 		}
 
 		.cart__free-text {
-			color: $alert-green;
+			color: var( --color-success );
 			padding-left: 8px;
 		}
 
@@ -65,7 +65,7 @@
 		}
 
 		.product-monthly-price {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 			display: block;
 			font-size: 11px;
 			font-style: italic;
@@ -85,14 +85,14 @@
 			top: 0;
 
 			&:hover {
-				color: $alert-red;
+				color: var( --color-error );
 			}
 
 			&:focus {
 				outline: none;
 
 				.accessible-focus & {
-					box-shadow: inset 0 0 0 2px $blue-light;
+					box-shadow: inset 0 0 0 2px var( --color-primary-light );
 				}
 			}
 		}
@@ -107,8 +107,7 @@
 	}
 
 	.cart__total {
-		color: $gray-text-min;
-		font-weight: 600;
+		color: var( --color-text-subtle );
 		font-size: 14px;
 
 		.cart__total-label {
@@ -120,7 +119,21 @@
 			display: inline-block;
 			text-align: right;
 			width: 30%;
+
 		}
+
+		.grand-total {
+			font-weight: 600;
+		}
+	}
+
+	.cart__total-divider {
+		border-top: 1px solid $gray-lighten-30;
+		height: 0;
+		width: 30%;
+		margin-left: 70%;
+		padding-top: 5px;
+		margin-top: 5px;
 	}
 
 	.cart__coupon {
@@ -131,7 +144,7 @@
 		}
 
 		a {
-			color: $blue-medium;
+			color: var( --color-accent );
 			outline: none;
 		}
 
@@ -158,7 +171,7 @@
 }
 
 .cart-items__expander {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	text-decoration: none;
 	font-size: 12px;
 }
@@ -219,7 +232,7 @@
 		outline: none;
 
 		.accessible-focus & {
-			box-shadow: inset 0 0 0 2px $blue-light;
+			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 		}
 	}
 }
@@ -382,6 +395,8 @@ div.popover-cart__popover {
 	@include breakpoint( '<660px' ) {
 		left: 0;
 		margin-top: 10px;
+		// Create space for the inline help button
+		margin-bottom: 65px;
 		max-height: 100%;
 		position: relative;
 		top: 0;

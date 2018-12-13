@@ -16,6 +16,7 @@ const resources = [
 	[ 'statsEvents', 'posts/' ],
 	[ 'statsInsights', 'stats/insights', '1.1' ],
 	[ 'statsPodcastDownloads', 'stats/podcast-downloads', '1.1' ],
+	[ 'statsAds', 'wordads/stats', '1.1' ],
 	[ 'sshCredentialsNew', 'ssh-credentials/new', '1.1', 'post' ],
 	[ 'sshCredentialsMine', 'ssh-credentials/mine', '1.1' ],
 	[ 'sshCredentialsMineDelete', 'ssh-credentials/mine/delete', '1.1', 'post' ],

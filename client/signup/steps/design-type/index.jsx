@@ -22,6 +22,11 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 import { getThemeForDesignType } from 'signup/utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class DesignTypeStep extends Component {
 	static propTypes = {
 		translate: PropTypes.func,

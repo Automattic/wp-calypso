@@ -15,7 +15,7 @@ import classnames from 'classnames';
  */
 import AsyncLoad from 'components/async-load';
 import Button from 'components/button';
-import Dialog from 'components/dialog';
+import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import Image from 'components/image';
@@ -41,6 +41,12 @@ import Spinner from 'components/spinner';
  * Debug
  */
 import debugModule from 'debug';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const debug = debugModule( 'calypso:podcast-image' );
 
 class PodcastCoverImageSetting extends PureComponent {
@@ -253,9 +259,7 @@ class PodcastCoverImageSetting extends PureComponent {
 				<MediaLibrarySelectedData siteId={ siteId }>
 					<AsyncLoad
 						require="post-editor/media-modal"
-						placeholder={
-							<Dialog additionalClassNames="editor-media-modal" isVisible={ isModalVisible } />
-						}
+						placeholder={ <EditorMediaModalDialog isVisible /> }
 						siteId={ siteId }
 						onClose={ this.editSelectedMedia }
 						isParentReady={ this.isParentReady }

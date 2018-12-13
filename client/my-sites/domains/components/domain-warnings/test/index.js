@@ -131,7 +131,7 @@ describe( 'index', () => {
 			expect( textContent ).to.contain( 'name server records should be configured' );
 			assert(
 				links.some(
-					link => link.href === 'https://support.wordpress.com/domain-helper/?host=1.com'
+					link => link.href === 'https://en.support.wordpress.com/domain-helper/?host=1.com'
 				)
 			);
 		} );

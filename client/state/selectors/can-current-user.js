@@ -19,10 +19,12 @@ import { isValidCapability } from 'state/current-user/selectors';
  * @param  {String}   capability Capability label
  * @return {?Boolean}            Whether current user has capability
  */
-export default function canCurrentUser( state, siteId, capability ) {
+export const canCurrentUser = ( state, siteId, capability ) => {
 	if ( ! isValidCapability( state, siteId, capability ) ) {
 		return null;
 	}
 
 	return state.currentUser.capabilities[ siteId ][ capability ];
-}
+};
+
+export default canCurrentUser;

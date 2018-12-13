@@ -1,11 +1,14 @@
-/*
+/**
+ * /*
  * Animations
- *
+ * 
  * Defines `slide-in-up` `slide-out-up` `scale-fade`
  * Used for section overlays
+ *
+ * @format
  */
 
-$sidebar-width:	269px;
+$sidebar-width: 269px;
 
 body,
 html {
@@ -25,32 +28,32 @@ html {
 	.show-in {
 		opacity: 0;
 
-		&:nth-child(10n + 2) {
-			animation-delay: .05s !important;
+		&:nth-child( 10n + 2 ) {
+			animation-delay: 0.05s !important;
 		}
-		&:nth-child(10n + 3) {
-			animation-delay: .1s !important;
+		&:nth-child( 10n + 3 ) {
+			animation-delay: 0.1s !important;
 		}
-		&:nth-child(10n + 4) {
-			animation-delay: .15s !important;
+		&:nth-child( 10n + 4 ) {
+			animation-delay: 0.15s !important;
 		}
-		&:nth-child(10n + 5) {
-			animation-delay: .2s !important;
+		&:nth-child( 10n + 5 ) {
+			animation-delay: 0.2s !important;
 		}
-		&:nth-child(10n + 6) {
-			animation-delay: .25s !important;
+		&:nth-child( 10n + 6 ) {
+			animation-delay: 0.25s !important;
 		}
-		&:nth-child(10n + 7) {
-			animation-delay: .3s !important;
+		&:nth-child( 10n + 7 ) {
+			animation-delay: 0.3s !important;
 		}
-		&:nth-child(10n + 8) {
-			animation-delay: .35s !important;
+		&:nth-child( 10n + 8 ) {
+			animation-delay: 0.35s !important;
 		}
-		&:nth-child(10n + 9) {
-			animation-delay: .4s !important;
+		&:nth-child( 10n + 9 ) {
+			animation-delay: 0.4s !important;
 		}
-		&:nth-child(10n + 10) {
-			animation-delay: .45s !important;
+		&:nth-child( 10n + 10 ) {
+			animation-delay: 0.45s !important;
 		}
 	}
 
@@ -58,27 +61,29 @@ html {
 	// Includes timings and animation curves
 	&.animate {
 		.slide-out-up {
-			transition: transform .2s ease-out;
-			transform: translate3d( 0, 0, 0 ) ;
+			transition: transform 0.2s ease-out;
+			transform: translate3d( 0, 0, 0 );
 		}
 		.slide-in-up {
-			transition: transform .4s cubic-bezier( .215, .61, .355, 1 );
+			transition: transform 0.4s cubic-bezier( 0.215, 0.61, 0.355, 1 );
 		}
 		.slide-in-left {
-			transition: transform .3s cubic-bezier( .215, .61, .355, 1 ), opacity .3s cubic-bezier( .19, 1, .22, 1 );
+			transition: transform 0.3s cubic-bezier( 0.215, 0.61, 0.355, 1 ),
+				opacity 0.3s cubic-bezier( 0.19, 1, 0.22, 1 );
 		}
 		.slide-out-right {
-			transition: transform .5s cubic-bezier( .215, .61, .355, 1 ), opacity .5s cubic-bezier( .19, 1, .22, 1 );
+			transition: transform 0.5s cubic-bezier( 0.215, 0.61, 0.355, 1 ),
+				opacity 0.5s cubic-bezier( 0.19, 1, 0.22, 1 );
 		}
 		.scale-fade {
-			transition: transform .5s, opacity .5s;
+			transition: transform 0.5s, opacity 0.5s;
 			transform-origin: 50% 60px;
 		}
 		.fade {
-			transition:  opacity .5s cubic-bezier( .4, 1, .4, 1 );
+			transition: opacity 0.5s cubic-bezier( 0.4, 1, 0.4, 1 );
 		}
 		.fade-background {
-			transition: background-color .2s cubic-bezier( .4, 1, .4, 1 );
+			transition: background-color 0.2s cubic-bezier( 0.4, 1, 0.4, 1 );
 		}
 	}
 
@@ -91,8 +96,8 @@ html {
 			transform: translate3d( 0, 0, 0 );
 		}
 		.scale-fade {
-			transform: scale( .95 );
-			opacity: .8;
+			transform: scale( 0.95 );
+			opacity: 0.8;
 		}
 		.fade {
 			opacity: 1;
@@ -186,45 +191,45 @@ html {
 
 @keyframes rotateOpen {
 	0% {
-		transform: rotate(0);
+		transform: rotate( 0 );
 	}
 
 	50% {
-		transform: rotate(200deg)
+		transform: rotate( 200deg );
 	}
 
 	75% {
-		transform: rotate(175deg);
+		transform: rotate( 175deg );
 	}
 
 	90% {
-		transform: rotate(185deg)
+		transform: rotate( 185deg );
 	}
 
 	100% {
-		transform: rotate(180deg)
+		transform: rotate( 180deg );
 	}
 }
 
 @keyframes rotateClosed {
 	0% {
-		transform: rotate(180deg)
+		transform: rotate( 180deg );
 	}
 
 	50% {
-		transform: rotate(-20deg)
+		transform: rotate( -20deg );
 	}
 
 	75% {
-		transform: rotate(5deg);
+		transform: rotate( 5deg );
 	}
 
 	90% {
-		transform: rotate(-5deg);
+		transform: rotate( -5deg );
 	}
 
 	100% {
-		transform: rotate(0);
+		transform: rotate( 0 );
 	}
 }
 
@@ -250,17 +255,31 @@ html {
 }
 
 @keyframes pulse-light {
-	50% { background-color: $gray-lighten-30; }
+	50% {
+		background-color: $gray-lighten-30;
+	}
 }
 
 @keyframes loading-dot-pulse {
-	0% { opacity: 0; }
-	50% { opacity: 1; }
-	100% { opacity: 0; }
+	0% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
 }
 
 @keyframes loading-fade {
-	0% { opacity: .5; }
-	50% { opacity: 1; }
-	100% { opacity: .5; }
+	0% {
+		opacity: 0.5;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0.5;
+	}
 }

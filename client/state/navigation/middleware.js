@@ -47,7 +47,13 @@ export const navigationMiddleware = store => {
 				return next( action );
 			case HISTORY_REPLACE:
 				if ( action.path ) {
-					page.replace( action.path );
+					if ( action.saveContext ) {
+						// Replace the history entry, but don't dispatch a new navigation context.
+						//path, state, init, dispatch
+						page.replace( action.path, null, false, false );
+					} else {
+						page.replace( action.path );
+					}
 				}
 				return next( action );
 			default:

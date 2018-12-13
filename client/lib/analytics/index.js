@@ -364,13 +364,15 @@ const analytics = {
 
 			tracksDebug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
-			window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
+			if ( 'undefined' !== typeof window ) {
+				window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
+			}
 			analytics.emit( 'record-event', eventName, eventProperties );
 		},
 
 		recordPageView: function( urlPath, params ) {
 			let eventProperties = {
-				build_timestamp: BUILD_TIMESTAMP,
+				build_timestamp: window.BUILD_TIMESTAMP,
 				do_not_track: doNotTrack() ? 1 : 0,
 				path: urlPath,
 			};

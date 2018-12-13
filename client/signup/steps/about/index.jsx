@@ -23,12 +23,7 @@ import { setUserExperience } from 'state/signup/steps/user-experience/actions';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	getThemeForSiteType,
-	getThemeForSiteGoals,
-	getDesignTypeForSiteType,
-	getDesignTypeForSiteGoals,
-} from 'signup/utils';
+import { getThemeForSiteGoals, getDesignTypeForSiteGoals } from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { hints } from 'lib/signup/hint-data';
@@ -37,6 +32,7 @@ import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { abtest } from 'lib/abtest';
 import { isUserLoggedIn } from 'state/current-user/selectors';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 //Form components
 import Card from 'components/card';
@@ -50,6 +46,11 @@ import FormInputCheckbox from 'components/forms/form-checkbox';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
 import SuggestionSearch from 'components/suggestion-search';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class AboutStep extends Component {
 	constructor( props ) {
@@ -169,6 +170,7 @@ class AboutStep extends Component {
 			goToNextStep,
 			stepName,
 			flowName,
+			shouldHideSiteTitle,
 			shouldHideSiteGoals,
 			previousFlowName,
 			translate,
@@ -187,13 +189,15 @@ class AboutStep extends Component {
 		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
 		const eventAttributes = {};
 
-		//Site Title
-		if ( siteTitleInput !== '' ) {
-			siteTitleValue = siteTitleInput;
-			this.props.setSiteTitle( siteTitleValue );
+		if ( ! shouldHideSiteTitle ) {
+			const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
+			//Site Title
+			if ( siteTitleInput !== '' ) {
+				siteTitleValue = siteTitleInput;
+				this.props.setSiteTitle( siteTitleValue );
+			}
+			eventAttributes.site_title = siteTitleInput || 'N/A';
 		}
-
-		eventAttributes.site_title = siteTitleInput || 'N/A';
 
 		//Site Topic
 		const englishSiteTopicInput = this.state.hasPrepopulatedVertical
@@ -213,10 +217,15 @@ class AboutStep extends Component {
 
 		//Site Goals
 		if ( shouldHideSiteGoals ) {
-			themeRepo = this.state.hasPrepopulatedVertical
-				? 'pub/radcliffe-2'
-				: getThemeForSiteType( siteType );
-			designType = getDesignTypeForSiteType( siteType, flowName );
+			themeRepo =
+				getSiteTypePropertyValue( 'slug', siteType, 'theme' ) || 'pub/independent-publisher-2';
+
+			if ( 'ecommerce' === flowName ) {
+				designType = 'page';
+			} else {
+				designType = getSiteTypePropertyValue( 'slug', siteType, 'designType' ) || 'blog';
+			}
+
 			eventAttributes.site_type = siteType;
 		} else {
 			const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
@@ -452,7 +461,7 @@ class AboutStep extends Component {
 	}
 
 	renderContent() {
-		const { translate, siteTitle, shouldHideSiteGoals } = this.props;
+		const { translate, siteTitle, shouldHideSiteTitle, shouldHideSiteGoals } = this.props;
 
 		const pressableWrapperClassName = classNames( 'about__pressable-wrapper', {
 			'about__wrapper-is-hidden': ! this.state.showStore,
@@ -476,24 +485,26 @@ class AboutStep extends Component {
 				<div className={ aboutFormClassName }>
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
-							<FormFieldset>
-								<FormLabel htmlFor="siteTitle">
-									{ translate( 'What would you like to name your site?' ) }
-									<InfoPopover className="about__info-popover" position="top">
-										{ translate(
-											"We'll use this as your site title. " +
-												"Don't worry, you can change this later."
-										) }
-									</InfoPopover>
-								</FormLabel>
-								<FormTextInput
-									id="siteTitle"
-									name="siteTitle"
-									placeholder={ translate( "e.g. Mel's Diner, Stevie’s Blog, Vail Renovations" ) }
-									defaultValue={ siteTitle }
-									onChange={ this.handleChangeEvent }
-								/>
-							</FormFieldset>
+							{ ! shouldHideSiteTitle && (
+								<FormFieldset>
+									<FormLabel htmlFor="siteTitle">
+										{ translate( 'What would you like to name your site?' ) }
+										<InfoPopover className="about__info-popover" position="top">
+											{ translate(
+												"We'll use this as your site title. " +
+													"Don't worry, you can change this later."
+											) }
+										</InfoPopover>
+									</FormLabel>
+									<FormTextInput
+										id="siteTitle"
+										name="siteTitle"
+										placeholder={ translate( "e.g. Mel's Diner, Stevie’s Blog, Vail Renovations" ) }
+										defaultValue={ siteTitle }
+										onChange={ this.handleChangeEvent }
+									/>
+								</FormFieldset>
+							) }
 
 							{ this.shouldShowSiteTopicField() && (
 								<FormFieldset>
@@ -570,6 +581,12 @@ export default connect(
 		isLoggedIn: isUserLoggedIn( state ),
 		shouldHideSiteGoals:
 			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
+		shouldHideSiteTitle:
+			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-information' ),
+		shouldSkipAboutStep:
+			includes( ownProps.steps, 'site-type' ) &&
+			includes( ownProps.steps, 'site-topic' ) &&
+			includes( ownProps.steps, 'site-information' ),
 	} ),
 	{
 		setSiteTitle,

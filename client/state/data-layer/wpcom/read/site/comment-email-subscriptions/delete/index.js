@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
  */
 import { READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { subscribeToNewCommentEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
@@ -47,7 +47,7 @@ export function receiveCommentEmailUnsubscriptionError( action ) {
 
 registerHandlers( 'state/data-layer/wpcom/read/site/comment-email-subscriptions/delete/index.js', {
 	[ READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestCommentEmailUnsubscription,
 			onSuccess: receiveCommentEmailUnsubscription,
 			onError: receiveCommentEmailUnsubscriptionError,

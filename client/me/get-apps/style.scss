@@ -125,7 +125,7 @@
 	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
 		0 1px 2px $gray-lighten-30;
 	box-sizing: border-box;
-	color: $blue-dark;
+	color: var( --color-primary-dark );
 	max-width: 980px;
 	overflow: hidden;
 	padding: 16px;
@@ -163,7 +163,7 @@
 }
 
 .get-apps__also-available {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 13px;
 	font-style: italic;
 }

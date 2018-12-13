@@ -58,11 +58,11 @@
 	}
 
 	&.waiting .gridicon {
-		color: $alert-yellow;
+		color: var( --color-warning );
 	}
 
 	&.sent .gridicon {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 }
 

@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign } from 'lodash';
+import { assign, kebabCase } from 'lodash';
 import { createElement, render } from '@wordpress/element';
 
 export class FrontendManagement {
@@ -13,22 +13,26 @@ export class FrontendManagement {
 		} );
 	}
 	initializeFrontendReactBlocks( component, options = {}, rootNode ) {
-		const { name, attributes } = options.settings;
+		const { attributes, name, prefix } = options.settings;
 		const { selector } = options;
-		const blockClass = [ '.wp-block', name.replace( '/', '-' ) ].join( '-' );
-		rootNode.querySelectorAll( blockClass ).forEach( node => {
-			const data = this.extractAttributesFromContainer( node.dataset, attributes );
+		const fullName = prefix && prefix.length ? `${ prefix }/${ name }` : name;
+		const blockClass = `.wp-block-${ fullName.replace( '/', '-' ) }`;
+
+		const blockNodeList = rootNode.querySelectorAll( blockClass );
+		for ( const node of blockNodeList ) {
+			const data = this.extractAttributesFromContainer( node, attributes );
 			assign( data, options.props );
 			const children = this.extractChildrenFromContainer( node );
 			const el = createElement( component, data, children );
 			render( el, selector ? node.querySelector( selector ) : node );
-		} );
+		}
 	}
-	extractAttributesFromContainer( dataset, attributes ) {
+	extractAttributesFromContainer( node, attributes ) {
 		const data = {};
 		for ( const name in attributes ) {
 			const attribute = attributes[ name ];
-			data[ name ] = dataset[ name ];
+			const dataAttributeName = 'data-' + kebabCase( name );
+			data[ name ] = node.getAttribute( dataAttributeName );
 			if ( attribute.type === 'boolean' ) {
 				data[ name ] = data[ name ] === 'false' ? false : !! data[ name ];
 			}
@@ -44,8 +48,7 @@ export class FrontendManagement {
 		return data;
 	}
 	extractChildrenFromContainer( node ) {
-		const children = [];
-		node.childNodes.forEach( childNode => children.push( childNode ) );
+		const children = [ ...node.childNodes ];
 		return children.map( child => {
 			const attr = {};
 			for ( let i = 0; i < child.attributes.length; i++ ) {

@@ -315,14 +315,10 @@ describe( 'handlers', () => {
 
 	describe( '#productsRequest', () => {
 		test( 'should dispatch a get action', () => {
-			const dispatch = spy();
-
 			const action = fetchProducts( 123, {} );
+			const result = productsRequest( action );
 
-			productsRequest( { dispatch }, action );
-
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
+			expect( result ).to.eql(
 				http(
 					{
 						method: 'GET',

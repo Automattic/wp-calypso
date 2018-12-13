@@ -190,7 +190,7 @@
 			color: $gray;
 		}
 		span {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 			display: inline-block;
 			font-size: 13px;
 			margin-left: 8px;
@@ -200,7 +200,7 @@
 
 		&:hover {
 			.gridicon, span {
-				color: $blue-medium;
+				color: var( --color-accent );
 			}
 		}
 	}
@@ -213,7 +213,7 @@
 	font-style: italic;
 }
 .editor-html-toolbar__button-a.button {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	text-decoration: underline;
 }
 .editor-html-toolbar__button-del {

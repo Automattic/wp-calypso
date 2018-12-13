@@ -4,9 +4,9 @@
 	padding: 0;
 
 	&.is-focused {
-		border-color: $blue-wordpress;
+		border-color: var( --color-primary );
 		outline: none;
-		box-shadow: 0 0 0 2px $blue-light;
+		box-shadow: 0 0 0 2px var( --color-primary-light );
 
 		&.is-valid {
 			box-shadow: 0 0 0 2px lighten( $alert-green, 35 );
@@ -42,7 +42,7 @@
 	}
 
 	&.is-valid {
-		border-color: $alert-green;
+		border-color: var( --color-success );
 	}
 
 	&.is-valid:hover {
@@ -50,7 +50,7 @@
 	}
 
 	&.is-error {
-		border-color: $alert-red;
+		border-color: var( --color-error );
 	}
 
 	&.is-error:hover {

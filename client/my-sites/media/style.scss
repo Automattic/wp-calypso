@@ -17,7 +17,7 @@
 	border: 0;
 
 	.dialog__button-label {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	&:hover {

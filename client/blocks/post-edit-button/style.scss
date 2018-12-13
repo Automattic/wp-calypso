@@ -13,11 +13,11 @@
 	&:active {
 
 		.gridicon {
-			fill: $blue-medium;
+			fill: var( --color-accent );
 		}
 
 		.post-edit-button__label {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 

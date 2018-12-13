@@ -174,6 +174,12 @@ export const loginUser = ( usernameOrEmail, password, redirectTo ) => dispatch =
 		} );
 };
 
+export const updateNonce = ( nonceType, twoStepNonce ) => ( {
+	type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
+	nonceType,
+	twoStepNonce,
+} );
+
 /**
  * Logs a user in with a two factor verification code.
  *
@@ -212,11 +218,7 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
 
 			if ( twoStepNonce ) {
-				dispatch( {
-					type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
-					twoStepNonce,
-					nonceType: twoFactorAuthType,
-				} );
+				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
 			}
 
 			const error = getErrorFromHTTPError( httpError );

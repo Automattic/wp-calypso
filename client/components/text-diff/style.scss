@@ -1,10 +1,10 @@
 .text-diff__additions {
 	background: lighten($blue-wordpress, 58%);
-	border-bottom: 2px solid $blue-wordpress;
+	border-bottom: 2px solid var( --color-primary );
 }
 
 .text-diff__deletions {
 	background: lighten($alert-red, 38%);
-	border-bottom: 2px solid $alert-red;
+	border-bottom: 2px solid var( --color-error );
 	text-decoration: line-through;
 }

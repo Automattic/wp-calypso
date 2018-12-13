@@ -20,7 +20,7 @@
 .help-result {
 	&:hover {
 		.help-result__title {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 }
@@ -33,7 +33,7 @@
 
 .help-result__title {
 	margin: -2px 0px 0px 32px;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	font: 16px/20px $sans;
 }
 

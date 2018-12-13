@@ -22,7 +22,7 @@ import {
 /**
  * Internal dependencies
  */
-import treeSelect from 'lib/tree-select';
+import treeSelect from '@automattic/tree-select';
 import { fetchStatusInitialState } from './reducer';
 import { getStateKey, deconstructStateKey, getErrorKey } from './utils';
 

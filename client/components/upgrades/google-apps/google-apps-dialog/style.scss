@@ -70,7 +70,7 @@
 }
 
 .google-apps-dialog__price-per-user {
-	color: $blue-medium;
+	color: var( --color-accent );
 	font-size: 18px;
 	font-weight: 600;
 	line-height: 1.3;
@@ -106,7 +106,7 @@
 	}
 }
 
-form.google-apps-dialog {
+.google-apps-dialog__form {
 	.notice li {
 		list-style: disc;
 	}
@@ -197,7 +197,7 @@ form.google-apps-dialog {
 	}
 
 	.google-apps-dialog__checkout-button {
-		color: $blue-medium;
+		color: var( --color-accent );
 
 		@include breakpoint( '<480px' ) {
 			width: 100%;

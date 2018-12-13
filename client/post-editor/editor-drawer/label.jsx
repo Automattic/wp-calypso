@@ -12,6 +12,11 @@ import React from 'react';
  */
 import InfoPopover from 'components/info-popover';
 
+/**
+ * Style dependencies
+ */
+import './label.scss'
+
 export default function EditorDrawerLabel( { children, labelText, helpText } ) {
 	return (
 		<label className="editor-drawer__label">
