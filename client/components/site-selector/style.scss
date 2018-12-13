@@ -41,27 +41,27 @@
 
 	// Highlight selected site
 	&.is-selected {
-		background-color: $gray;
+		background-color: var( --site-selector-selected-background );
 
 		.site__badge {
-			color: $white;
+			color: var( --site-selector-selected-color );
 		}
 
 		.site__title,
 		.site__domain {
-			color: $white;
+			color: var( --site-selector-selected-color );
 			&::after {
-				@include long-content-fade( $color: hex-to-rgb( $gray ) );
+				@include long-content-fade( $color: var( --site-selector-selected-background-gradient ) );
 			}
 		}
 
 		.count {
-			border-color: $white;
-			color: $white;
+			border-color: var( --site-selector-selected-color );
+			color: var( --site-selector-selected-color );
 		}
 
 		&.is-private .site__title::before {
-			color: $white;
+			color: var( --site-selector-selected-color );
 		}
 	}
 }
