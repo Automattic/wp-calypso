@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
-import { countBy, get, map, omit, values, flatten } from 'lodash';
+import { countBy, map, omit, values, flatten } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -45,17 +45,14 @@ class BlogSettingsHeader extends PureComponent {
 
 	getLegend = () => {
 		const { settings } = this.props;
-
-		// Ignore blog_id, email.achievement and devices (we'll handle devices separately).
-		const filteredSettings = {
-			...omit( settings, [ 'blog_id', 'devices' ] ),
-			email: omit( get( settings, 'email', {} ), [
-				'achievement',
-				'store_order',
-				'scheduled_publicize',
-			] ),
-			timeline: omit( get( settings, 'timeline', {} ), 'store_order' ),
-		};
+		const filteredSettings = omit( settings, [
+			'blog_id',
+			'devices',
+			'email.achievement',
+			'email.store_order',
+			'email.scheduled_publicize',
+			'timeline.store_order',
+		] );
 		// Ignore the device_id of each device found.
 		const devicesSettings = map( settings.devices, device => omit( device, 'device_id' ) );
 		const { true: onCount, false: offCount } = countBy(
