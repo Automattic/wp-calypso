@@ -120,7 +120,7 @@
 	top: 47px;
 	left: 0;
 	bottom: 0;
-	color: var( --sidebar-color );
+	color: var( --color-text );
 	background: var( --sidebar-background );
 	border-right: 1px solid darken( $sidebar-bg-color, 5% );
 	width: $sidebar-width-max;
@@ -161,7 +161,7 @@
 		.site__title,
 		.site__domain {
 			&::after {
-				@include long-content-fade( $color: hex-to-rgb( $gray-lighten-30 ) );
+				@include long-content-fade( $color: var( --sidebar-background ) );
 			}
 		}
 	}

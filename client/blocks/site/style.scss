@@ -96,7 +96,7 @@
 }
 
 .site__title {
-	color: var( --sidebar-color );
+	color: var( --color-text );
 	display: block;
 	font-size: 13px;
 	font-weight: 400;
@@ -104,7 +104,7 @@
 }
 
 .site__domain {
-	color: var( --sidebar-secondary-color );
+	color: var( --color-text-subtle );
 	display: block;
 	max-width: 95%;
 	font-size: 11px;
@@ -160,7 +160,7 @@
 }
 
 .site__badge {
-	color: $gray;
+	color: var( --site-selector-gridicon-fill );
 	padding-right: 4px;
 	line-height: 0;
 	position: relative;

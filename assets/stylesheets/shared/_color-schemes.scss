@@ -22,6 +22,8 @@
 	// --color-error-light: #{};
 	// --color-error-dark: #{};
 
+	--color-text: #{$gray-dark};
+	--color-text-subtle: #{$gray-text-min};
 	--color-surface: #{$muriel-white};
 	--color-surface-backdrop: #{$gray-light};
 
@@ -37,8 +39,6 @@
 	--masterbar-toggle-drafts-editor-border-color: #{darken( $blue-wordpress, 5% )};
 	--masterbar-toggle-drafts-editor-hover-background: #{darken( $blue-wordpress, 17% )};
 
-	--sidebar-color: #{$gray-dark};
-	--sidebar-secondary-color: #{$gray-text-min};
 	--sidebar-background: #{$gray-lighten-30};
 	--sidebar-secondary-background: #{$muriel-white};
 	--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
@@ -53,6 +53,15 @@
 	--sidebar-menu-hover-background: #{lighten( $sidebar-bg-color, 3% )};
 	--sidebar-menu-hover-background-gradient: #{hex-to-rgb( lighten( $sidebar-bg-color, 3% ) )};
 	--sidebar-menu-hover-color: #{$blue-medium};
+
+	// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
+	--site-selector-gridicon-fill: #{$gray};
+	--site-selector-selected-color: #{$muriel-white};
+	--site-selector-selected-background: #{$gray};
+	--site-selector-selected-background-gradient: #{hex-to-rgb( $gray )};
+	--site-selector-hover-color: #{$muriel-white};
+	--site-selector-hover-background: var( --color-accent );
+	--site-selector-hover-background-gradient: #{hex-to-rgb( $blue-medium )};
 
 	--button-is-borderless-color: #{$gray-text-min};
 	--count-border-color: #{$gray};
@@ -83,6 +92,8 @@
 		--color-error-light: #{$muriel-hot-red-700};
 		--color-error-dark: #{$muriel-hot-red-300};
 
+		--color-text: #{$muriel-gray-800};
+		--color-text-subtle: #{$muriel-gray-500};
 		--color-surface: #{$muriel-white};
 		--color-surface-backdrop: #{$muriel-gray-0};
 
@@ -98,8 +109,6 @@
 		--masterbar-toggle-drafts-editor-border-color: #{$gray-lighten-20};
 		--masterbar-toggle-drafts-editor-hover-background: #{$gray-darken-10};
 
-		--sidebar-color: #{$muriel-gray-800};
-		--sidebar-secondary-color: #{$muriel-gray-500};
 		--sidebar-background: #{$muriel-white};
 		--sidebar-secondary-background: #{$muriel-white};
 		--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
@@ -114,6 +123,17 @@
 		--sidebar-menu-hover-background: #{$muriel-gray-50};
 		--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-gray-50 )};
 		--sidebar-menu-hover-color: #{$muriel-gray-800};
+
+		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
+		--site-selector-gridicon-fill: var( --sidebar-gridicon-fill );
+		--site-selector-selected-color: var( --sidebar-menu-selected-a-color );
+		--site-selector-selected-background: var( --sidebar-menu-selected-background-color );
+		--site-selector-selected-background-gradient: var(
+			--sidebar-menu-selected-a-first-child-after-background
+		);
+		--site-selector-hover-color: var( --sidebar-menu-hover-color );
+		--site-selector-hover-background: var( --sidebar-menu-hover-background );
+		--site-selector-hover-background-gradient: var( --sidebar-menu-hover-background-gradient );
 
 		--button-is-borderless-color: #{$gray-dark};
 		--count-border-color: #{$gray-dark};
@@ -142,6 +162,8 @@
 		--color-error-light: #{$muriel-hot-red-200};
 		--color-error-dark: #{$muriel-hot-red-600};
 
+		--color-text: #{$muriel-gray-100};
+		--color-text-subtle: #{$muriel-gray-400};
 		--color-surface: #000;
 		--color-surface-backdrop: #111;
 
@@ -157,8 +179,6 @@
 		--masterbar-toggle-drafts-editor-border-color: #{$gray-lighten-20};
 		--masterbar-toggle-drafts-editor-hover-background: #{$gray-darken-10};
 
-		--sidebar-color: #{$muriel-gray-100};
-		--sidebar-secondary-color: #{$muriel-gray-400};
 		--sidebar-background: #{$muriel-gray-900};
 		--sidebar-secondary-background: #{$muriel-gray-900};
 		--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-gray-900 )};
@@ -173,6 +193,17 @@
 		--sidebar-menu-hover-background: #{$muriel-gray-700};
 		--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-gray-700 )};
 		--sidebar-menu-hover-color: #{$muriel-gray-100};
+
+		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
+		--site-selector-gridicon-fill: var( --sidebar-gridicon-fill );
+		--site-selector-selected-color: var( --sidebar-menu-selected-a-color );
+		--site-selector-selected-background: var( --sidebar-menu-selected-background-color );
+		--site-selector-selected-background-gradient: var(
+			--sidebar-menu-selected-a-first-child-after-background
+		);
+		--site-selector-hover-color: var( --sidebar-menu-hover-color );
+		--site-selector-hover-background: var( --sidebar-menu-hover-background );
+		--site-selector-hover-background-gradient: var( --sidebar-menu-hover-background-gradient );
 
 		--button-is-borderless-color: #{$gray-dark};
 		--count-border-color: #{$gray-dark};
