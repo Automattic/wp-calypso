@@ -9,7 +9,7 @@
 	//Setting height to zero removes the offset
 	//so the sticky panel sticks to the top.
 
-	&.has-no-masterbar .masterbar {
+	&.has-no-masterbar .masterbar:not( .header__masterbar-mock ) {
 		height: 0;
 	}
 }
@@ -70,7 +70,7 @@
 
 // Skip button
 .step-wrapper__buttons {
-	text-align: center;	
+	text-align: center;
 }
 
 

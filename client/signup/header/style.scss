@@ -33,3 +33,14 @@
 	}
 }
 
+.header__masterbar-mock,
+.has-no-masterbar .header .header__masterbar-mock {
+	opacity: 0;
+	height: 48px;
+	animation: .5s hideMockMasterbar ease-out;
+}
+
+@keyframes hideMockMasterbar {
+	from { opacity: 1; transform: translateY( 0 ) }
+	to { opacity: .5; transform: translateY( -48px ) }
+}

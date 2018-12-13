@@ -30,6 +30,24 @@ export default class SignupHeader extends Component {
 		shouldShowLoadingScreen: PropTypes.bool,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = { showMockMasterBar: true };
+	}
+
+	// We want to show the mock masterbar to transition into the signup steps
+	// and then animate it out, and remove it
+	shouldShowMockMasterBar() {
+		if ( ! this.state.showMockMasterBar ) {
+			return false;
+		}
+		// we want to remove it altogether after the animation is done
+		setTimeout( () => {
+			this.setState( { showMockMasterBar: false } );
+		}, 500 );
+		return true;
+	}
+
 	render() {
 		const logoClasses = classnames( {
 			'wordpress-logo': true,
@@ -38,6 +56,7 @@ export default class SignupHeader extends Component {
 
 		return (
 			<div className="header">
+				{ this.shouldShowMockMasterBar() && <div className="header__masterbar-mock masterbar" /> }
 				<WordPressLogo size={ 120 } className={ logoClasses } />
 
 				{ /* Ideally, this is where the back button
