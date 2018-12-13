@@ -121,6 +121,7 @@
 .site-selector__sites {
 	max-height: calc( 100% - 93px );
 	overflow-y: auto;
+	background: var( --sidebar-secondary-background );
 
 	@include breakpoint( '<660px' ) {
 		max-height: calc( 100% - 109px );
