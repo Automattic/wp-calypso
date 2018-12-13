@@ -58,6 +58,9 @@
 	--site-selector-selected-color: #{$muriel-white};
 	--site-selector-selected-background: #{$gray};
 	--site-selector-selected-background-gradient: #{hex-to-rgb( $gray )};
+	--site-selector-hover-color: #{$muriel-white};
+	--site-selector-hover-background: var( --color-accent );
+	--site-selector-hover-background-gradient: #{hex-to-rgb( $blue-medium )};
 
 	--button-is-borderless-color: #{$gray-text-min};
 	--count-border-color: #{$gray};
@@ -126,6 +129,9 @@
 		--site-selector-selected-background-gradient: var(
 			--sidebar-menu-selected-a-first-child-after-background
 		);
+		--site-selector-hover-color: var( --sidebar-menu-hover-color );
+		--site-selector-hover-background: var( --sidebar-menu-hover-background );
+		--site-selector-hover-background-gradient: var( --sidebar-menu-hover-background-gradient );
 
 		--button-is-borderless-color: #{$gray-dark};
 		--count-border-color: #{$gray-dark};
@@ -192,6 +198,9 @@
 		--site-selector-selected-background-gradient: var(
 			--sidebar-menu-selected-a-first-child-after-background
 		);
+		--site-selector-hover-color: var( --sidebar-menu-hover-color );
+		--site-selector-hover-background: var( --sidebar-menu-hover-background );
+		--site-selector-hover-background-gradient: var( --sidebar-menu-hover-background-gradient );
 
 		--button-is-borderless-color: #{$gray-dark};
 		--count-border-color: #{$gray-dark};

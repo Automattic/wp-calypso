@@ -71,28 +71,28 @@
 .site-selector .all-sites.is-highlighted,
 .notouch .site-selector.is-hover-enabled .site:hover,
 .notouch .site-selector.is-hover-enabled .all-sites:hover {
-	background: var( --color-accent );
+	background: var( --site-selector-hover-background );
 	cursor: pointer;
 
 	.site__badge {
-		color: $white;
+		color: var( --site-selector-hover-color );
 	}
 
 	.site__title,
 	.site__domain {
-		color: white;
+		color: var( --site-selector-hover-color );
 		&::after {
-			@include long-content-fade( $color: hex-to-rgb( $blue-medium ) );
+			@include long-content-fade( $color: var( --site-selector-hover-background-gradient ) );
 		}
 	}
 
 	.site__title:before {
-		color: white;
+		color: var( --site-selector-hover-color );
 	}
 
 	.count {
-		border-color: $white;
-		color: $white;
+		border-color: var( --site-selector-hover-color );
+		color: var( --site-selector-hover-color );
 	}
 }
 
