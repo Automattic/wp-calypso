@@ -99,4 +99,12 @@ export default {
 		},
 		defaultVariation: 'showAll',
 	},
+	removeUsername: {
+		datestamp: '20181213',
+		variations: {
+			showUsername: 50,
+			hideUsername: 50,
+		},
+		defaultVariation: 'showUsername',
+	},
 };
