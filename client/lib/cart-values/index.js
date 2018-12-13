@@ -14,7 +14,6 @@ import config from 'config';
  */
 import cartItems from './cart-items';
 import productsValues from 'lib/products-values';
-import { requestGeoLocation } from 'state/data-getters';
 
 // #tax-on-checout-placeholder
 import { reduxGetState } from 'lib/redux-bridge';
@@ -317,15 +316,6 @@ function paymentMethodName( method ) {
 		} ),
 		'web-payment': i18n.translate( 'Wallet' ),
 	};
-
-	// Temporarily override 'credit or debit' with just 'credit' for india
-	// while debit cards are served by the paywall
-	if ( method === 'credit-card' ) {
-		const userCountryCode = requestGeoLocation().data;
-		if ( 'IN' === userCountryCode ) {
-			return i18n.translate( 'Credit Card' );
-		}
-	}
 
 	return paymentMethodsNames[ method ] || method;
 }
