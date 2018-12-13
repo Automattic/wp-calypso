@@ -7,4 +7,17 @@
 .checklist-prompt__title {
 	font-weight: bold;
 	font-size: 16px;
+	margin: 0 0 0.4375em;
+}
+
+.checklist-prompt__description {
+	font-size: 14px;
+	margin: 0 0 0.4375em;
+}
+
+.checklist-prompt__duration {
+	color: $gray-darken-20;
+	font-style: italic;
+	font-size: 11px;
+	margin: 0 0 1em;
 }

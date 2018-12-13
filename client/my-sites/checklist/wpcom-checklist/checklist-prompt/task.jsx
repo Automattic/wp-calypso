@@ -16,6 +16,7 @@ class ChecklistPromptTask extends PureComponent {
 		buttonText: PropTypes.node,
 		completed: PropTypes.bool,
 		description: PropTypes.node,
+		duration: PropTypes.string,
 		onClick: PropTypes.func,
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -27,14 +28,17 @@ class ChecklistPromptTask extends PureComponent {
 			return null;
 		}
 
-		const { description, onClick, title, translate } = this.props;
+		const { description, onClick, title, duration, translate } = this.props;
 		const { buttonText = translate( 'Do it!' ) } = this.props;
 
 		return (
 			<>
 				<div className="checklist-prompt__content">
 					<h3 className="checklist-prompt__title">{ title }</h3>
-					<p className="checklist-prompt__description">{ description }</p>
+					<div className="checklist-prompt__description">{ description }</div>
+					<div className="checklist-prompt__duration">
+						{ translate( 'Estimated time:' ) } { duration }
+					</div>
 					<div className="checklist-prompt__actions">
 						{ onClick && (
 							<Button onClick={ onClick } className="checklist-prompt__button" primary>
