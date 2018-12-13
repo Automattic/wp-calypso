@@ -16,7 +16,7 @@ import {
 } from '@wordpress/editor';
 
 import { IconButton, SelectControl, Toolbar, withNotices } from '@wordpress/components';
-import { filter, pick } from 'lodash';
+import { filter, get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,10 @@ import { settings } from './settings';
 const ALLOWED_MEDIA_TYPES = [ 'image' ];
 
 export const pickRelevantMediaFiles = image => {
-	return pick( image, [ 'alt', 'id', 'link', 'url', 'caption' ] );
+	const simpleImage = pick( image, [ 'alt', 'id', 'link', 'url', 'caption' ] );
+	simpleImage.width = get( image, 'sizes.full.width' );
+	simpleImage.height = get( image, 'sizes.full.height' );
+	return simpleImage;
 };
 
 class SlideshowEdit extends Component {
@@ -156,10 +159,16 @@ class SlideshowEdit extends Component {
 				{ noticeUI }
 				<Slideshow className={ className } effect={ effect } align={ align }>
 					{ images.map( ( image, index ) => {
-						const { alt, caption, id, url } = image;
+						const { alt, caption, height, id, url, width } = image;
 						return (
 							<div className="wp-block-slideshow_image_container" key={ index }>
-								<img src={ url } alt={ alt } data-id={ id } />
+								<img
+									src={ url }
+									alt={ alt }
+									data-id={ id }
+									data-height={ height }
+									data-width={ width }
+								/>
 								<figcaption>{ caption }</figcaption>
 							</div>
 						);
