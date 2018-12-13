@@ -88,4 +88,8 @@ export default {
 	'oauth2-name': UserSignupComponent,
 	displayname: UserSignupComponent,
 	'reader-landing': ReaderLandingStepComponent,
+	// Steps with preview
+	'site-topic-with-preview': SiteTopicComponent,
+	'site-information-with-preview': SiteInformationComponent,
+	'domains-with-preview': DomainsStepComponent,
 };

@@ -388,6 +388,36 @@ export function generateSteps( {
 			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
 		},
 
+		// Steps with preview
+		// These can be removed once we make the preview the default
+		'site-topic-with-preview': {
+			stepName: 'site-topic-with-preview',
+			providesDependencies: [ 'siteTopic' ],
+			props: {
+				showSiteMockups: true,
+			},
+		},
+
+		'site-information-with-preview': {
+			stepName: 'site-information-with-preview',
+			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
+			props: {
+				showSiteMockups: true,
+			},
+		},
+
+		'domains-with-preview': {
+			stepName: 'domains-with-preview',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			props: {
+				showSiteMockups: true,
+				isDomainOnly: false,
+			},
+			dependencies: [ 'themeSlugWithRepo' ],
+			delayApiRequestUntilComplete: true,
+		},
+
 		'site-style': {
 			stepName: 'site-style',
 			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],

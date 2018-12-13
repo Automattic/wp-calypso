@@ -13,6 +13,7 @@ import classNames from 'classnames';
  */
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
+import SiteMockups from 'signup/site-mockup';
 
 /**
  * Style dependencies
@@ -98,7 +99,14 @@ class StepWrapper extends Component {
 	}
 
 	render() {
-		const { stepContent, headerButton, hideFormattedHeader, hideBack, hideSkip } = this.props;
+		const {
+			stepContent,
+			headerButton,
+			hideFormattedHeader,
+			hideBack,
+			hideSkip,
+			showSiteMockups,
+		} = this.props;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': this.props.isWideLayout,
 		} );
@@ -121,6 +129,7 @@ class StepWrapper extends Component {
 					{ ! hideBack && this.renderBack() }
 					{ ! hideSkip && this.renderSkip() }
 				</div>
+				{ showSiteMockups && <SiteMockups /> }
 			</div>
 		);
 	}
