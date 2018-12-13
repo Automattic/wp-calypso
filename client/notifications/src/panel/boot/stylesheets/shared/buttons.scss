@@ -59,8 +59,8 @@
       }
     }
     &:focus {
-      border-color: $blue-medium;
-      box-shadow: 0 0 0 2px $blue-light;
+      border-color: var( --color-accent );
+      box-shadow: 0 0 0 2px var( --color-primary-light );
     }
     &.is-compact {
       padding: 7px;
@@ -91,12 +91,12 @@
 
   // Primary buttons
   .wpnc__button.is-primary {
-    background: $blue-medium;
-    border-color: $blue-wordpress;
+    background: var( --color-accent );
+    border-color: var( --color-primary );
     color: $white;
 
     &:hover, &:focus {
-      border-color: $blue-dark;
+      border-color: var( --color-primary-dark );
       color: $white;
     }
     &[disabled], &:disabled {
@@ -111,10 +111,10 @@
 
   // Scary buttons
   .wpnc__button.is-scary {
-    color: $alert-red;
+    color: var( --color-error );
 
     &:hover, &:focus {
-      border-color: $alert-red;
+      border-color: var( --color-error );
     }
     &:focus {
       box-shadow: 0 0 0 2px lighten($alert-red, 20%);
@@ -126,7 +126,7 @@
   }
 
   .wpnc__button.is-primary.is-scary {
-    background: $alert-red;
+    background: var( --color-error );
     border-color: darken($alert-red, 20%);
     color: $white;
 
@@ -169,7 +169,7 @@
       }
     }
     &.is-scary {
-      color: $alert-red;
+      color: var( --color-error );
 
       &:hover, &:focus {
         color: darken($alert-red, 20%);

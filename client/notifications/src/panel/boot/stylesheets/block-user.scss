@@ -44,7 +44,7 @@ div.wpnc__user {
     color: $gray-text-min;
 
     &:hover {
-      color: $blue-wordpress;
+      color: var( --color-primary );
     }
   }
 }
