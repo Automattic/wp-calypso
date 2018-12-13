@@ -21,11 +21,13 @@ import { attachments } from './test/fixtures/attachments';
 import { Jetpack_Tiled_Gallery_Grouper } from './grouper';
 import { Jetpack_Tiled_Gallery_Shape } from './shapes/jetpack-tiled-gallery-shape';
 
-const grouper = new Jetpack_Tiled_Gallery_Grouper( cloneDeep( attachments ) );
+export const mosaicLayout = ( { images } ) => {
+	const grouper = new Jetpack_Tiled_Gallery_Grouper( images );
+	Jetpack_Tiled_Gallery_Shape.reset_last_shape();
+	return grouper.grouped_images;
+};
 
-Jetpack_Tiled_Gallery_Shape.reset_last_shape();
-
-const output = inspect( grouper.grouped_images, { showHidden: false, depth: null } );
-
+// For debugging while building this
+const layout = mosaicLayout( { images: cloneDeep( attachments ) } );
 // eslint-disable-next-line no-console
-console.log( 'Rows:', output );
+console.log( inspect( layout, { showHidden: false, depth: null } ) );
