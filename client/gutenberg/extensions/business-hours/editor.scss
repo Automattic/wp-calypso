@@ -1,0 +1,31 @@
+.business-hours {
+	overflow: hidden;
+
+	dt {
+		width: 7em;
+		float: left;
+		clear: both;
+	}
+
+	dd {
+		overflow: hidden;
+		width: calc(100% - 8em);
+		float: right;
+		margin: 0;
+
+		> .components-base-control {
+			display: inline-block;
+			max-width: 45%;
+
+			.components-base-control__label {
+				display: inline-block;
+				font-weight: 700;
+			}
+
+			.components-text-control__input {
+				width: 9em;
+				margin-left: 0.5em;
+			}
+		}
+	}
+}
