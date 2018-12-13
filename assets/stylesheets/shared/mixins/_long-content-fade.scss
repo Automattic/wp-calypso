@@ -5,12 +5,21 @@
 //
 // Creates a fading overlay to signify that the content is longer
 // than the space allows.
+//
+// Note: To support CSS custom properties, any color that is passed in to
+// the mixin needs to be escaped with the hex-to-rgb() function.
+//
+// Usage:
+// @include long-content-fade();
+// @include long-content-fade( $color: hex-to-rgb( $muriel-gray-500 ) );
+// --sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-blue-50 )};
+// @include long-content-fade( $color: var( --sidebar-secondary-background-gradient ) );
 // ==========================================================================
 
 @mixin long-content-fade(
 	$direction: right,
 	$size: 20%,
-	$color: #fff,
+	$color: hex-to-rgb( $muriel-white ),
 	$edge: 0px,
 	$z-index: false
 ) {
@@ -30,7 +39,7 @@
 	}
 
 	@if $direction == 'bottom' {
-		background: linear-gradient( to top, rgba( $color, 0 ), $color 90% );
+		background: overflow-gradient( $color, 90%, to top );
 		left: $edge;
 		right: $edge;
 		top: $edge;
@@ -39,7 +48,7 @@
 	}
 
 	@if $direction == 'top' {
-		background: linear-gradient( to bottom, rgba( $color, 0 ), $color 90% );
+		background: overflow-gradient( $color, 90%, to bottom );
 		top: calc( 100% - $size );
 		left: $edge;
 		right: $edge;
@@ -48,7 +57,7 @@
 	}
 
 	@if $direction == 'left' {
-		background: linear-gradient( to left, rgba( $color, 0 ), $color 90% );
+		background: overflow-gradient( $color, 90%, to left );
 		top: $edge;
 		left: $edge;
 		bottom: $edge;
@@ -58,7 +67,7 @@
 	}
 
 	@if $direction == 'right' {
-		background: linear-gradient( to right, rgba( $color, 0 ), $color 90% );
+		background: overflow-gradient( $color );
 		top: $edge;
 		bottom: $edge;
 		right: $edge;

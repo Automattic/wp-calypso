@@ -229,6 +229,19 @@ export function generateSteps( {
 			},
 		},
 
+		displayname: {
+			stepName: 'displayname',
+			apiRequestFunction: createAccount,
+			providesToken: true,
+			providesDependencies: [ 'bearer_token', 'username' ],
+			unstorableDependencies: [ 'bearer_token' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+				displayNameInput: true,
+				displayUsernameInput: false,
+			},
+		},
+
 		'get-dot-blog-plans': {
 			apiRequestFunction: createSiteWithCart,
 			stepName: 'get-dot-blog-plans',

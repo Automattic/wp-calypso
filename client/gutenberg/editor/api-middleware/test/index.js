@@ -8,18 +8,19 @@
  */
 import { wpcomPathMappingMiddleware } from '../index';
 
-const testSiteSlug = 'example.wordpress.com';
+const getSiteSlug = () => 'example.wordpress.com';
 
 const optionsReturner = options => {
 	let output;
 
-	wpcomPathMappingMiddleware( options, nextOutput => ( output = nextOutput ), testSiteSlug );
+	wpcomPathMappingMiddleware( getSiteSlug )( options, nextOutput => ( output = nextOutput ) );
 
 	return output;
 };
 
 describe( 'wpcomPathMappingMiddleware', () => {
 	it( 'Adds the site slug to the path', () => {
+		const testSiteSlug = getSiteSlug();
 		[
 			[ '/', '/' ],
 			[ '/wp/v2/', `/sites/${ testSiteSlug }/` ],

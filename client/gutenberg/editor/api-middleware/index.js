@@ -5,16 +5,7 @@
  */
 import url from 'url';
 import { stringify } from 'qs';
-import {
-	toPairs,
-	identity,
-	includes,
-	get,
-	mapKeys,
-	partial,
-	partialRight,
-	flowRight,
-} from 'lodash';
+import { toPairs, identity, includes, get, mapKeys, partial, flowRight } from 'lodash';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
@@ -38,7 +29,9 @@ const debugMiddleware = ( options, next ) => {
 
 // Rewrite default API paths to match WP.com equivalents. Note that
 // passed apiNamespace will be prepended to the replaced path.
-export const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
+export const wpcomPathMappingMiddleware = getSiteSlug => ( options, next ) => {
+	const siteSlug = getSiteSlug();
+
 	//support for fetchAllMiddleware, that uses url instead of path
 	if ( ! options.path && options.url ) {
 		return next( {
@@ -203,7 +196,7 @@ const wpcomProxyMiddleware = options => {
 };
 
 // Utility function to apply all required API middleware in correct order.
-export const applyAPIMiddleware = siteSlug => {
+export const applyAPIMiddleware = getSiteSlug => {
 	// First middleware in, last out.
 
 	// This call intentionally breaks the middleware chain.
@@ -211,7 +204,7 @@ export const applyAPIMiddleware = siteSlug => {
 
 	apiFetch.use( debugMiddleware );
 
-	apiFetch.use( partialRight( wpcomPathMappingMiddleware, siteSlug ) );
+	apiFetch.use( wpcomPathMappingMiddleware( getSiteSlug ) );
 
 	//depends on wpcomPathMappingMiddleware
 	apiFetch.use( apiFetch.fetchAllMiddleware );

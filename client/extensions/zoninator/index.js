@@ -16,8 +16,12 @@ import Zone from './components/settings/zone';
 import ZonesDashboard from './components/settings/zones-dashboard';
 import installActionHandlers from './state/data-layer';
 import { makeLayout, render as clientRender } from 'controller';
+import reducer from './state/reducer';
 
-export default function() {
+export default async function( _, addReducer ) {
+	await addReducer( [ 'extensions', 'zoninator' ], reducer );
+	installActionHandlers();
+
 	page( '/extensions/zoninator', siteSelection, sites, makeLayout, clientRender );
 	page( '/extensions/zoninator/new', siteSelection, sites, makeLayout, clientRender );
 	page( '/extensions/zoninator/zone', siteSelection, sites, makeLayout, clientRender );
@@ -47,5 +51,3 @@ export default function() {
 		clientRender
 	);
 }
-
-installActionHandlers();

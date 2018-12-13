@@ -1,3 +1,5 @@
+/** @format */
+
 $masterbar-height: 46px;
 $autobar-height: 20px;
 
@@ -311,7 +313,7 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__notifications-bubble {
-		border: solid 2px $masterbar-color;
+		border: solid 2px var( --masterbar-background );
 		border-radius: 50%;
 		display: none;
 		font-size: 8px;
@@ -333,16 +335,16 @@ $autobar-height: 20px;
 	}
 
 	&:hover .masterbar__notifications-bubble {
-		border-color: lighten( $masterbar-color, 5% );
+		border-color: var( --masterbar-item-hover-background );
 	}
 
 	&.is-active .masterbar__notifications-bubble {
-		border-color: darken( $masterbar-color, 10% );
+		border-color: var( --masterbar-item-active-background );
 	}
 
 	&.has-unread .masterbar__notifications-bubble {
 		display: block;
-		background: $orange-jazzy;
+		background: var( --color-accent-light );
 	}
 
 	&.is-initial-load .masterbar__notifications-bubble {

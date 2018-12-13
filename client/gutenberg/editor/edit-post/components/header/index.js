@@ -10,7 +10,7 @@ import React from 'react';
  */
 import { __ } from '@wordpress/i18n';
 import { IconButton } from '@wordpress/components';
-import { PostPreviewButton, PostSavedState } from '@wordpress/editor';
+import { PostSavedState } from '@wordpress/editor';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 
@@ -19,6 +19,7 @@ import { compose } from '@wordpress/compose';
  */
 import MoreMenu from './more-menu';
 import HeaderToolbar from 'gutenberg/editor/components/header/header-toolbar'; // GUTENLYPSO
+import PostPreviewButton from 'gutenberg/editor/components/post-preview-button'; // GUTENLYPSO
 import PinnedPlugins from './pinned-plugins';
 import shortcuts from '../../keyboard-shortcuts';
 import PostPublishButtonOrToggle from './post-publish-button-or-toggle';
@@ -51,10 +52,7 @@ function Header( {
 					// when the publish sidebar has been closed.
 					<PostSavedState forceIsDirty={ hasActiveMetaboxes } forceIsSaving={ isSaving } />
 				) }
-				<PostPreviewButton
-					forceIsAutosaveable={ hasActiveMetaboxes }
-					forcePreviewLink={ isSaving ? null : undefined }
-				/>
+				<PostPreviewButton />
 				<PostPublishButtonOrToggle forceIsDirty={ hasActiveMetaboxes } forceIsSaving={ isSaving } />
 				<div>
 					<IconButton

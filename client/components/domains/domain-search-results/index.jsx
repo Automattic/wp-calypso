@@ -7,8 +7,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import classNames from 'classnames';
 import { get, includes, times, first } from 'lodash';
 
@@ -59,6 +57,7 @@ class DomainSearchResults extends React.Component {
 	renderDomainAvailability() {
 		const {
 			availableDomain,
+			domainsWithPlansOnly,
 			lastDomainIsTransferrable,
 			lastDomainStatus,
 			lastDomainSearched,
@@ -106,7 +105,7 @@ class DomainSearchResults extends React.Component {
 					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
 					{ args: { domain }, components }
 				);
-			} else if ( ! this.props.domainsWithPlansOnly || this.props.isSiteOnPaidPlan ) {
+			} else if ( ! domainsWithPlansOnly ) {
 				offer = translate(
 					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
 					{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
@@ -296,9 +295,7 @@ class DomainSearchResults extends React.Component {
 }
 
 const mapStateToProps = state => {
-	const selectedSiteId = getSelectedSiteId( state );
 	return {
-		isSiteOnPaidPlan: isSiteOnPaidPlan( state, selectedSiteId ),
 		siteDesignType: getDesignType( state ),
 	};
 };

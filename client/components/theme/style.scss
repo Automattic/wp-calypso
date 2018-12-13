@@ -20,7 +20,7 @@ $theme-info-height: 54px;
 			color: $white;
 
 			&:before {
-				@include long-content-fade( $color: $blue-medium );
+				@include long-content-fade( $color: hex-to-rgb( $blue-medium ) );
 			}
 		}
 
@@ -76,7 +76,7 @@ $theme-info-height: 54px;
 	white-space: nowrap;
 
 	&:before {
-		@include long-content-fade( $color: $white );
+		@include long-content-fade();
 	}
 }
 

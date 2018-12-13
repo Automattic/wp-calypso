@@ -6,9 +6,9 @@
     "redux",
     "selector"
   ],
-  "author": "Ben Lowery <ben.lowery@automattic.com>",
+  "author": "Jake Fried <samouri@users.noreply.github.com>",
   "homepage": "https://github.com/Automattic/wp-calypso",
-  "license": "GPL-2.0-only",
+  "license": "GPL-2.0-or-later",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "repository": {

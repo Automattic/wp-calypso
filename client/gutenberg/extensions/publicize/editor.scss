@@ -1,5 +1,8 @@
 /** @format */
 
+// @TODO: Replace with Gutenberg variables
+$dark-gray-500: #555d66;
+
 .jetpack-publicize-message-box {
 	background-color: #edeff0;
 	border-radius: 4px;
@@ -24,11 +27,23 @@
 }
 
 .jetpack-publicize-gutenberg-social-icon {
-	font-size: 2em;
+	fill: $dark-gray-500;
 	margin-right: 0.2em;
 
-	.layout__primary & {
-		margin-right: 0;
+	&.is-facebook {
+		fill: #3957a2;
+	}
+	&.is-twitter {
+		fill: #55acee;
+	}
+	&.is-linkedin {
+		fill: #0976b4;
+	}
+	&.is-tumblr {
+		fill: #35465c;
+	}
+	&.is-google-plus {
+		fill: #df4a33;
 	}
 }
 
@@ -38,6 +53,12 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+
+	.jetpack-publicize-gutenberg-social-icon,
+	.jetpack-publicize-connection-label-copy {
+		display: inline-block;
+		vertical-align: middle;
+	}
 }
 
 .jetpack-publicize-connection-toggle {
@@ -48,6 +69,7 @@
 	&.components-notice {
 		margin-left: 0;
 		margin-right: 0;
+		margin-bottom: 13px;
 	}
 
 	.components-button + .components-button {

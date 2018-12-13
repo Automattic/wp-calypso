@@ -31,10 +31,19 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 		}
 	}
 
-	//not ready yet
+	// Prevent Calypsoify redirects if Gutenlypso is enabled.
+	// This is intentionally placed after Atomic check - we want to default Atomic sites to
+	// Calypsoify even if Gutenlypso is on for now. This might change in the future if we decide to
+	// move Jetpack and Atomic sites to Gutenlypso too.
+	if ( isEnabled( 'gutenberg' ) ) {
+		return false;
+	}
+
+	// Not ready yet.
 	if ( isJetpackSite( state, siteId ) || isVipSite( state, siteId ) ) {
 		return false;
 	}
+
 	return isEnabled( 'calypsoify/gutenberg' );
 };
 
