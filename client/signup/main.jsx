@@ -63,7 +63,6 @@ import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteTopic } from 'state/signup/steps/site-topic/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 
-
 // Current directory dependencies
 import steps from './config/steps';
 import flows from './config/flows';
@@ -78,7 +77,6 @@ import {
 	getStepUrl,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
-import {abtest} from "../lib/abtest";
 
 /**
  * Constants
@@ -637,9 +635,11 @@ export default connect(
 		isLoggedIn: isUserLoggedIn( state ),
 		// TODO turn on for onboarding-dev only for now
 		shouldShowSiteMockups:
-			( /*'onboarding' === abtest( 'improvedOnboarding' ) || */'onboarding-dev' === ownProps.flowName ) &&
+			/*'onboarding' === abtest( 'improvedOnboarding' ) || */ 'onboarding-dev' ===
+				ownProps.flowName &&
 			'business' === getSiteType( state ) &&
-			-1 < indexOf( [ 'site-style', 'site-topic', 'site-information', 'domains' ], ownProps.stepName )
+			-1 <
+				indexOf( [ 'site-style', 'site-topic', 'site-information', 'domains' ], ownProps.stepName ),
 	} ),
 	{
 		setSurvey,
