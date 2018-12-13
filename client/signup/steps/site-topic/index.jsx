@@ -12,10 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
 import StepWrapper from 'signup/step-wrapper';
-import FormLabel from 'components/forms/form-label';
-import InfoPopover from 'components/info-popover';
 import FormFieldset from 'components/forms/form-fieldset';
 import SuggestionSearch from 'components/suggestion-search';
 import { submitSiteTopic, setSiteTopic } from 'state/signup/steps/site-topic/actions';
@@ -78,15 +75,9 @@ class SiteTopicStep extends Component {
 		const currentSiteTopic = this.trimedSiteTopicValue();
 
 		return (
-			<Card className="site-topic__content">
+			<div className="site-topic__content">
 				<form onSubmit={ this.onSubmit }>
 					<FormFieldset>
-						<FormLabel htmlFor="siteTopic">
-							{ topicLabel }
-							<InfoPopover className="site-topic__info-popover" position="top">
-								{ translate( "We'll use this to personalize your site and experience." ) }
-							</InfoPopover>
-						</FormLabel>
 						<SuggestionSearch
 							id="siteTopic"
 							placeholder={ placeholder }
@@ -94,14 +85,13 @@ class SiteTopicStep extends Component {
 							suggestions={ Object.values( hints ) }
 							value={ currentSiteTopic }
 						/>
-					</FormFieldset>
-					<div className="site-topic__submit-wrapper">
+
 						<Button type="submit" disabled={ ! currentSiteTopic } primary>
 							{ translate( 'Continue' ) }
 						</Button>
-					</div>
+					</FormFieldset>
 				</form>
-			</Card>
+			</div>
 		);
 	}
 
