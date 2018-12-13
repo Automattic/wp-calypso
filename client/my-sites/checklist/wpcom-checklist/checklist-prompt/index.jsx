@@ -14,6 +14,12 @@ import ChecklistPromptTask from './task';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
+/**
+ * Stylesheet dependencies
+ */
+
+import './style.scss';
+
 export class ChecklistPrompt extends Component {
 	static propTypes = {
 		isEligibleForDotcomChecklist: PropTypes.bool,
