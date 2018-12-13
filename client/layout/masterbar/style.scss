@@ -63,7 +63,7 @@ $autobar-height: 20px;
 			outline: none;
 
 			.accessible-focus & {
-				box-shadow: inset 0 0 0 2px $blue-light;
+				box-shadow: inset 0 0 0 2px var( --color-primary-light );
 			}
 		}
 	}
@@ -108,9 +108,9 @@ $autobar-height: 20px;
 		outline: none;
 
 		.accessible-focus & {
-			box-shadow: inset 0 0 0 2px $blue-light;
+			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 			color: var( --masterbar-color );
-			box-shadow: inset 0 0 0 2px $blue-light;
+			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 		}
 	}
 
@@ -227,7 +227,7 @@ $autobar-height: 20px;
 		.accessible-focus & {
 			background: $white;
 			color: var( --masterbar-item-new-color );
-			box-shadow: 0 0 0 2px $blue-light;
+			box-shadow: 0 0 0 2px var( --color-primary-light );
 			z-index: 1;
 		}
 	}
@@ -403,8 +403,8 @@ $autobar-height: 20px;
 
 	&:hover {
 		.count {
-			border-color: $blue-wordpress;
-			color: $blue-wordpress;
+			border-color: var( --color-primary );
+			color: var( --color-primary );
 		}
 	}
 

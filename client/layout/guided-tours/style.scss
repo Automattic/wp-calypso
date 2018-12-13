@@ -48,7 +48,7 @@
 	}
 
 	.tours__completed-icon-wrapper {
-		background: $alert-green;
+		background: var( --color-success );
 		border-radius: 100%;
 		display: inline-block;
 		margin-right: 10px;
