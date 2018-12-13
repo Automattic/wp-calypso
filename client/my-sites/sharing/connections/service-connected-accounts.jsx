@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -15,20 +15,17 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 
 const SharingServiceConnectedAccounts = ( { children, connect, service, translate } ) => (
-	<Fragment>
-		{ 'google_plus' !== service.ID && (
-			<div className="sharing-service-accounts-detail">
-				<ul className="sharing-service-connected-accounts">{ children }</ul>
-				{ 'publicize' === service.type && (
-					<Button onClick={ connect }>
-						{ translate( 'Connect a different account', {
-							comment: 'Sharing: Publicize connections',
-						} ) }
-					</Button>
-				) }
-			</div>
-		) }
-	</Fragment>
+	<div className="sharing-service-accounts-detail">
+		<ul className="sharing-service-connected-accounts">{ children }</ul>
+		{ 'publicize' === service.type &&
+			'google_plus' !== service.ID && (
+				<Button onClick={ connect }>
+					{ translate( 'Connect a different account', {
+						comment: 'Sharing: Publicize connections',
+					} ) }
+				</Button>
+			) }
+	</div>
 );
 
 SharingServiceConnectedAccounts.propTypes = {

@@ -67,11 +67,17 @@ const SharingServiceAction = ( {
 			context: 'Sharing: Publicize reconnect pending button label',
 		} );
 		warning = true;
-	} else if ( 'google_plus' === service.ID ) {
-		return null;
 	} else {
 		label = translate( 'Connect', { context: 'Sharing: Publicize connect pending button label' } );
 		primary = true;
+	}
+
+	if ( 'google_plus' === service.ID && 1 < removableConnections.length ) {
+		return (
+			<Button compact disabled={ true }>
+				Unavailable
+			</Button>
+		);
 	}
 
 	return (
