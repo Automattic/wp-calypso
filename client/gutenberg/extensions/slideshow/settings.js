@@ -29,26 +29,36 @@ export const settings = {
 			source: 'query',
 			selector: '.wp-block-slideshow_image_container',
 			query: {
-				url: {
-					source: 'attribute',
-					selector: 'img',
-					attribute: 'src',
-				},
 				alt: {
 					source: 'attribute',
 					selector: 'img',
 					attribute: 'alt',
 					default: '',
 				},
+				caption: {
+					type: 'string',
+					source: 'html',
+					selector: 'figcaption',
+				},
+				height: {
+					source: 'attribute',
+					selector: 'img',
+					attribute: 'data-height',
+				},
 				id: {
 					source: 'attribute',
 					selector: 'img',
 					attribute: 'data-id',
 				},
-				caption: {
-					type: 'string',
-					source: 'html',
-					selector: 'figcaption',
+				url: {
+					source: 'attribute',
+					selector: 'img',
+					attribute: 'src',
+				},
+				width: {
+					source: 'attribute',
+					selector: 'img',
+					attribute: 'data-width',
 				},
 			},
 		},

@@ -16,6 +16,10 @@ import 'swiper/dist/css/swiper.min.css';
 export class Slideshow extends Component {
 	constructor() {
 		super( ...arguments );
+		this.state = {
+			images: [],
+			imageHeight: 400,
+		};
 		this.slideshowRef = createRef();
 		this.btnNextRef = createRef();
 		this.btnPrevRef = createRef();
@@ -23,6 +27,7 @@ export class Slideshow extends Component {
 	}
 	render() {
 		const { children, className } = this.props;
+		const { imageHeight } = this.state;
 		const classNames = classnames( className, 'swiper-container' );
 		return (
 			<div className={ classNames } ref={ this.slideshowRef }>
@@ -34,9 +39,10 @@ export class Slideshow extends Component {
 						const img = child.props.children[ 0 ];
 						const figcaption = child.props.children[ 1 ];
 						const { src, alt } = img.props;
-						const { caption } = figcaption.props.children || {};
+						const caption = figcaption.props.children || '';
 						const style = {
 							backgroundImage: `url(${ src })`,
+							height: imageHeight,
 						};
 						return (
 							<div className="swiper-slide">
@@ -54,12 +60,15 @@ export class Slideshow extends Component {
 		);
 	}
 	componentDidMount() {
-		this.buildSwiper();
+		this.buildImageMetadata( this.buildSwiper );
 	}
 	componentWillUnmount() {}
 	componentDidUpdate( prevProps ) {
 		const { swiperInstance } = this.state;
 		const { align, effect, children } = this.props;
+		if ( children !== prevProps.children ) {
+			this.buildImageMetadata( this.sizeSlideshow );
+		}
 		/* A change in alignment or images only needs an update */
 		if ( align !== prevProps.align || children !== prevProps.children ) {
 			swiperInstance.update();
@@ -71,6 +80,23 @@ export class Slideshow extends Component {
 			this.buildSwiper( activeIndex );
 		}
 	}
+	buildImageMetadata = callback => {
+		const { children } = this.props;
+		this.setState(
+			{
+				images: Children.map( children, child => {
+					const image = child.props.children[ 0 ];
+					const meta = {
+						width: image.props[ 'data-width' ],
+						height: image.props[ 'data-height' ],
+					};
+					meta.ratio = meta.width / meta.height;
+					return meta;
+				} ),
+			},
+			callback
+		);
+	};
 	buildSwiper = ( initialSlide = 0 ) => {
 		const { effect } = this.props;
 		const swiperInstance = new Swiper( this.slideshowRef.current, {
@@ -98,8 +124,17 @@ export class Slideshow extends Component {
 			},
 			() => {
 				swiperInstance.init();
+				this.sizeSlideshow();
 			}
 		);
+	};
+
+	sizeSlideshow = () => {
+		const { images, swiperInstance } = this.state;
+		const ratio = Math.max( Math.min( images[ 0 ].ratio, 16 / 9 ), 1 );
+		const sanityHeight = window.innerHeight * 0.8;
+		const imageHeight = Math.min( swiperInstance.width / ratio, sanityHeight );
+		this.setState( { imageHeight } );
 	};
 }
 

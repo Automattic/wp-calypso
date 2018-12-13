@@ -2,7 +2,6 @@
 
 .wp-block-jetpack-slideshow {
 	position: relative;
-	height: 400px;
 	.swiper-container {
 		width: 100%;
 		height: 100%;
@@ -43,16 +42,27 @@
 		position: absolute;
 		width: 100%;
 		height: 100%;
+		background-color: white;
 	}
 	.atavist-cover-background-color {
-		background-color: lightgray;
 	}
 	.wp-block-slideshow-image-container {
-		height: 100%;
+		height: calc( 100% - 22px );
 		width: 100%;
 		background-position: 50% 50%;
 		background-repeat: no-repeat;
 		background-size: contain;
-		position: absolute;
+		background-color: rgb( 240, 240, 240 );
+		position: relative;
+	}
+	p.slideshow-slide-caption {
+		position: relative;
+		font-size: 14px;
+		line-heght: 14px;
+		vertical-align: center;
+		margin: 0;
+	}
+	.swiper-pagination {
+		bottom: 32px !important;
 	}
 }
