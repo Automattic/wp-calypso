@@ -145,6 +145,15 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		}
 	};
 
+	/**
+	 * @TODO
+	 *
+	 * The following two methods are virtually same, right? 🤨
+	 * One for width, one for height?
+	 *
+	 * Area for improvement.
+	 */
+
 	calculate_group_sizes = row => {
 		// Storing the calculated group heights in an array for rounding them later while preserving their sum
 		// This fixes the rounding error that can lead to a few ugly pixels sticking out in the gallery
@@ -161,8 +170,6 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		const rounded_group_widths_array = getRoundedConstrainedArray( group_widths_array, row.width );
 
 		for ( const group of row.groups ) {
-			// @TODO check what happens to `rounded_group_widths_array`
-			// in PHP `array_shift([])` vs JS `[].shift()` and if it has affects here
 			group.width = rounded_group_widths_array.shift();
 			this.calculate_image_sizes( group );
 		}
