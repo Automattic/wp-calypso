@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { findIndex, isEqual, map } from 'lodash';
 
@@ -37,7 +38,9 @@ class Suggestions extends Component {
 		suggestionPosition: 0,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	refsCollection = {};
+
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( isEqual( nextProps.suggestions, this.props.suggestions ) ) {
 			return;
 		}
@@ -51,16 +54,29 @@ class Suggestions extends Component {
 
 	suggest = position => this.props.suggest( this.props.suggestions[ position ] );
 
-	increasePosition = () =>
-		this.setState( {
-			suggestionPosition: ( this.state.suggestionPosition + 1 ) % this.getSuggestionsCount(),
+	moveSelectionDown = () => {
+		const position = ( this.state.suggestionPosition + 1 ) % this.getSuggestionsCount();
+		ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] ).scrollIntoView( {
+			block: 'nearest',
 		} );
 
-	decreasePosition = () =>
+		this.changePosition( position );
+	};
+
+	moveSelectionUp = () => {
+		const position =
+			( this.state.suggestionPosition - 1 + this.getSuggestionsCount() ) %
+			this.getSuggestionsCount();
+		ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] ).scrollIntoView( {
+			block: 'nearest',
+		} );
+
+		this.changePosition( position );
+	};
+
+	changePosition = position =>
 		this.setState( {
-			suggestionPosition:
-				( this.getSuggestionsCount() + this.state.suggestionPosition - 1 ) %
-				this.getSuggestionsCount(),
+			suggestionPosition: position,
 		} );
 
 	handleKeyEvent = event => {
@@ -70,12 +86,12 @@ class Suggestions extends Component {
 
 		switch ( event.key ) {
 			case 'ArrowDown':
-				this.increasePosition();
+				this.moveSelectionDown();
 				event.preventDefault();
 				break;
 
 			case 'ArrowUp':
-				this.decreasePosition();
+				this.moveSelectionUp();
 				event.preventDefault();
 				break;
 
@@ -108,6 +124,9 @@ class Suggestions extends Component {
 								onMouseDown={ this.handleMouseDown }
 								onMouseOver={ this.handleMouseOver }
 								label={ label }
+								ref={ suggestion => {
+									this.refsCollection[ 'suggestion_' + index ] = suggestion;
+								} }
 							/>
 						) ) }
 					</div>
