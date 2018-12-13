@@ -72,7 +72,7 @@ const SharingServiceAction = ( {
 		primary = true;
 	}
 
-	if ( 'google_plus' === service.ID && 1 < removableConnections.length ) {
+	if ( 'google_plus' === service.ID && 1 > removableConnections.length ) {
 		return (
 			<Button compact disabled={ true }>
 				Unavailable
