@@ -188,13 +188,15 @@ class InlineHelpPopover extends Component {
 					</Button>
 				) }
 
-				<WpcomChecklist
-					viewMode="navigation"
-					closePopover={ this.props.onClose }
-					showNotification={ showNotification }
-					setNotification={ setNotification }
-					setStoredTask={ setStoredTask }
-				/>
+				{ ! showSecondaryView && (
+					<WpcomChecklist
+						viewMode="navigation"
+						closePopover={ this.props.onClose }
+						showNotification={ showNotification }
+						setNotification={ setNotification }
+						setStoredTask={ setStoredTask }
+					/>
+				) }
 
 				<div className="inline-help__footer">
 					<Button
