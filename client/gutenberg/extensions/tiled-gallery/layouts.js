@@ -3,13 +3,14 @@
 /**
  * External dependencies
  */
-import { find } from 'lodash';
+import { find, mapKeys } from 'lodash';
 import TokenList from '@wordpress/token-list';
 
 /**
  * Internal dependencies
  */
 import { LAYOUT_STYLES, MAX_COLUMNS, TILE_MARGIN } from './constants';
+import { rectangularLayout } from '../../../../packages/tiled-grid';
 
 const squareLayout = ( { columns, margin, width, tileCount } ) => {
 	columns = Math.min( MAX_COLUMNS, columns );
@@ -73,16 +74,28 @@ const squareLayout = ( { columns, margin, width, tileCount } ) => {
 	return rows;
 };
 
-// @TODO
-const rectangularLayout = options => squareLayout( options );
+// @TODO Get rid of this
+// Let's rename `groups` to `tiles` at the package or `tiles` to `groups` in the block
+const rectangularLayoutModier = options => {
+	const rectangular = rectangularLayout( options );
+
+	// Rename `[ { groups } ]` to [ { tiles } ]
+	return rectangular.map( row => {
+		return mapKeys( row, ( value, key ) => {
+			return key === 'groups' ? 'tiles' : key;
+		} );
+	} );
+};
+
+// @TODO to be implemented...
 const columnsLayout = options => squareLayout( options );
 
-export const getLayout = ( { columns, tileCount, width, layout } ) => {
+export const getLayout = ( { columns, images, layout, tileCount, width } ) => {
 	const layoutOptions = {
 		columns,
 		margin: TILE_MARGIN,
-		tileCount,
-		width,
+		tileCount, // @TODO: Used by square layout, but perhaps just access images.length directly
+		width, // @TODO: Should be renamed to `contentWidth` for clarity
 	};
 
 	switch ( layout ) {
@@ -95,7 +108,11 @@ export const getLayout = ( { columns, tileCount, width, layout } ) => {
 			return columnsLayout( layoutOptions );
 		case 'rectangular':
 		default:
-			return rectangularLayout( layoutOptions );
+			return rectangularLayoutModier( {
+				...layoutOptions,
+				contentWidth: width,
+				images,
+			} );
 	}
 };
 

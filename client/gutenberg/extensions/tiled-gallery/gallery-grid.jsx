@@ -73,6 +73,7 @@ class TiledGalleryGrid extends Component {
 		const { width } = this.state;
 		const rows = getLayout( {
 			columns,
+			images,
 			layout,
 			tileCount: images.length,
 			width,
