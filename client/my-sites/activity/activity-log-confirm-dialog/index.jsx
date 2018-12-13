@@ -9,21 +9,26 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import ActivityIcon from '../activity-log-item/activity-icon';
 import Button from 'components/button';
 import Card from 'components/card';
+import FormLabel from 'components/forms/form-label';
+import FormCheckbox from 'components/forms/form-checkbox';
 import Gridicon from 'gridicons';
 import HappychatButton from 'components/happychat/button';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const ActivityLogConfirmDialog = ( {
+	allowPartialRestore = false,
 	children,
 	confirmTitle,
 	icon = 'history',
 	notice,
 	onClose,
 	onConfirm,
+	onSettingsChange,
 	supportLink,
 	title,
 	translate,
@@ -52,6 +57,34 @@ const ActivityLogConfirmDialog = ( {
 						{ confirmTitle }
 					</Button>
 				</div>
+				{ config.isEnabled( 'rewind/partial-restores' ) && (
+					<div>
+						<FormLabel>
+							<FormCheckbox name="themes" onChange={ onSettingsChange } defaultChecked />
+							{ translate( 'Themes' ) }
+						</FormLabel>
+						<FormLabel>
+							<FormCheckbox name="plugins" onChange={ onSettingsChange } defaultChecked />
+							{ translate( 'Plugins' ) }
+						</FormLabel>
+						<FormLabel>
+							<FormCheckbox name="uploads" onChange={ onSettingsChange } defaultChecked />
+							{ translate( 'Uploads' ) }
+						</FormLabel>
+						<FormLabel>
+							<FormCheckbox name="sqls" onChange={ onSettingsChange } defaultChecked />
+							{ translate( 'SQL' ) }
+						</FormLabel>
+						<FormLabel>
+							<FormCheckbox name="roots" onChange={ onSettingsChange } defaultChecked />
+							{ translate( 'Web Root' ) }
+						</FormLabel>
+						<FormLabel>
+							<FormCheckbox name="contents" onChange={ onSettingsChange } defaultChecked />
+							{ translate( 'wp-content' ) }
+						</FormLabel>
+					</div>
+				) }
 				<div className="activity-log-confirm-dialog__secondary-actions">
 					<Button
 						borderless={ true }

@@ -125,11 +125,12 @@ export function rewindRequestDismiss( siteId ) {
  * @param {number} timestamp Unix timestamp to restore site to
  * @return {Object} action object
  */
-export function rewindRestore( siteId, timestamp ) {
+export function rewindRestore( siteId, timestamp, args ) {
 	return {
 		type: REWIND_RESTORE,
 		siteId,
 		timestamp,
+		args,
 	};
 }
 

@@ -52,10 +52,30 @@ class ActivityLogItem extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
+	state = {
+		restoreArgs: {
+			themes: true,
+			plugins: true,
+			uploads: true,
+			sqls: true,
+			roots: true,
+			contents: true,
+		},
+	};
+
 	confirmBackup = () => this.props.confirmBackup( this.props.activity.rewindId );
 
 	confirmRewind = () =>
-		this.props.confirmRewind( this.props.activity.rewindId, this.props.activity.activityName );
+		this.props.confirmRewind(
+			this.props.activity.rewindId,
+			this.props.activity.activityName,
+			this.state.restoreArgs
+		);
+
+	restoreSettingsChange = ( { target: { name, checked } } ) =>
+		this.setState( {
+			restoreArgs: Object.assign( this.state.restoreArgs, { [ name ]: checked } ),
+		} );
 
 	renderHeader() {
 		const {
@@ -254,8 +274,10 @@ class ActivityLogItem extends Component {
 						}
 						onClose={ dismissRewind }
 						onConfirm={ this.confirmRewind }
+						onSettingsChange={ this.restoreSettingsChange }
 						supportLink="https://jetpack.com/support/how-to-rewind"
 						title={ translate( 'Rewind Site' ) }
+						allowPartialRestore={ true }
 					>
 						{ translate(
 							'This is the selected point for your site Rewind. ' +
@@ -274,6 +296,7 @@ class ActivityLogItem extends Component {
 						confirmTitle={ translate( 'Create download' ) }
 						onClose={ dismissBackup }
 						onConfirm={ this.confirmBackup }
+						onSettingsChange={ this.restoreSettingsChange }
 						supportLink="https://jetpack.com/support/backups"
 						title={ translate( 'Create downloadable backup' ) }
 						type={ 'backup' }
@@ -365,7 +388,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 			)
 		)
 	),
-	confirmRewind: ( rewindId, activityName ) => (
+	confirmRewind: ( rewindId, activityName, restoreArgs ) => (
 		scrollTo( { x: 0, y: 0, duration: 250 } ),
 		dispatch(
 			withAnalytics(
@@ -373,7 +396,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 					action_id: rewindId,
 					activity_name: activityName,
 				} ),
-				rewindRestore( siteId, rewindId )
+				rewindRestore( siteId, rewindId, restoreArgs )
 			)
 		)
 	),
