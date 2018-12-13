@@ -4,13 +4,7 @@
  * External dependencies
  */
 import { Component, Fragment } from '@wordpress/element';
-import {
-	TextControl,
-	Button,
-	ToggleControl,
-	Disabled,
-	withFallbackStyles,
-} from '@wordpress/components';
+import { TextControl, Button, ToggleControl, Disabled, withFallbackStyles } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -31,19 +25,14 @@ const { getComputedStyle } = window;
 const applyFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
 	const { textColor, backgroundColor } = ownProps;
 	const backgroundColorValue = backgroundColor && backgroundColor.color;
-	console.log( backgroundColorValue );
 	const textColorValue = textColor && textColor.color;
-	console.log( textColorValue );
 	// //avoid the use of querySelector if textColor color is known and verify if node is available.
-	const textNode =
-		! textColorValue && node ? node.querySelector( '[contenteditable="true"]' ) : null;
-	// return {
-	// 	fallbackBackgroundColor: backgroundColorValue || ! node ? undefined : getComputedStyle( node ).backgroundColor,
-	// 	fallbackTextColor: textColorValue || ! textNode ? undefined : getComputedStyle( textNode ).color,
-	// };
+	const textNode = ! textColorValue && node ? node.querySelector( '[contenteditable="true"]' ) : null;
+	return {
+		fallbackBackgroundColor: backgroundColorValue || ! node ? undefined : getComputedStyle( node ).backgroundColor,
+		fallbackTextColor: textColorValue || ! textNode ? undefined : getComputedStyle( textNode ).color,
+	};
 } );
-
-console.log( applyFallbackStyles.textColor );
 
 class SubscriptionEdit extends Component {
 	render() {
@@ -57,8 +46,7 @@ class SubscriptionEdit extends Component {
 			setBackgroundColor,
 			setTextColor,
 			fallbackBackgroundColor,
-			fallbackTextColor,
-		} = this.props;
+			fallbackTextColor } = this.props;
 		const {
 			subscribe_placeholder,
 			show_subscribers_total,
@@ -69,8 +57,8 @@ class SubscriptionEdit extends Component {
 		} = attributes;
 
 		const buttonStyle = {
-			'background-color': button_background_color,
-			color: button_text_color,
+			backgroundColor: backgroundColor.color,
+			color: textColor.color,
 			border: 'none',
 		};
 		// Get the subscriber count so it is available right away if the user toggles the setting
@@ -80,7 +68,13 @@ class SubscriptionEdit extends Component {
 			return (
 				<Fragment>
 					<div className={ className } role="form">
-						{ isSelected && <p role="heading">{ subscriber_count_string }</p> }
+						<ToggleControl // Move this back to the block
+							label={ __( 'Show total subscribers' ) }
+							checked={ show_subscribers_total }
+							onChange={ () => {
+								setAttributes( { show_subscribers_total: ! show_subscribers_total } );
+							} }
+						/>
 						<Disabled>
 							<TextControl placeholder={ subscribe_placeholder } required onChange={ () => {} } />
 						</Disabled>
@@ -89,13 +83,6 @@ class SubscriptionEdit extends Component {
 						</Button>
 					</div>
 					<InspectorControls>
-						<ToggleControl // Move this back to the block
-							label={ __( 'Show total subscribers' ) }
-							checked={ show_subscribers_total }
-							onChange={ () => {
-								setAttributes( { show_subscribers_total: ! show_subscribers_total } );
-							} }
-						/>
 						<ToggleControl
 							label={ __( 'Use a large button' ) }
 							checked={ button_large }
@@ -119,14 +106,16 @@ class SubscriptionEdit extends Component {
 							] }
 						/>
 						<ContrastChecker
-							{ ...{
-								isLargeText: false,
-								textColor: textColor.color,
-								backgroundColor: backgroundColor.color,
-								fallbackBackgroundColor,
-								fallbackTextColor,
-							} }
-						/>
+								{ ...{
+									// Text is considered large if font size is greater or equal to 18pt or 24px,
+									// currently that's not the case for button.
+									isLargeText: false,
+									textColor: textColor.color,
+									backgroundColor: backgroundColor.color,
+									fallbackBackgroundColor,
+									fallbackTextColor,
+								} }
+							/>
 					</InspectorControls>
 				</Fragment>
 			);
