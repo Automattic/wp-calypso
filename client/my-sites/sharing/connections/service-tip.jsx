@@ -76,15 +76,7 @@ class SharingServiceTip extends Component {
 	}
 
 	google_plus() {
-		return this.props.translate(
-			'You can also {{embedLink}}embed a Google+ post{{/embedLink}} onto a post or page.',
-			{
-				components: {
-					embedLink: <a href="https://support.wordpress.com/google-plus-embeds/" />,
-				},
-				context: 'Sharing: Tip in settings',
-			}
-		);
+		return null;
 	}
 
 	eventbrite() {
@@ -102,14 +94,15 @@ class SharingServiceTip extends Component {
 	}
 
 	render() {
-		if ( ! includes( SERVICES_WHITELIST, this.props.service.ID ) ) {
+		const { service } = this.props;
+		if ( ! includes( SERVICES_WHITELIST, service.ID ) || 'google_plus' === service.ID ) {
 			return <div className="sharing-service-tip" />;
 		}
 
 		return (
 			<div className="sharing-service-tip">
 				<Gridicon icon="info" size={ 18 } />
-				{ this[ this.props.service.ID ]() }
+				{ this[ service.ID ]() }
 			</div>
 		);
 	}

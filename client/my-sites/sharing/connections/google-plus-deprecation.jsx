@@ -6,20 +6,29 @@
 import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 
-const GooglePlusDeprication = () => (
+const GooglePlusDeprication = ( { translate } ) => (
 	<Fragment>
-		<h3>Google Plus support is being removed</h3>
+		<h3>{ translate( 'Google Plus support is being removed' ) }</h3>
 		<p>
-			Google recently{' '}
-			<a href="https://www.blog.google/technology/safety-security/expediting-changes-google-plus/">
-				announced
-			</a>{' '}
-			that Google Plus is shutting down in April 2019, and access via third-party tools like Jetpack
-			will cease in March 2019.
+			{ translate(
+				'Google recently {{a}}announced{{/a}} that Google Plus is shutting down in April 2019, and access via third-party tools like Jetpack will cease in March 2019.',
+				{
+					components: {
+						a: (
+							<a
+								href="https://www.blog.google/technology/safety-security/expediting-changes-google-plus/"
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				}
+			) }
 		</p>
 		<p>
-			For now, you can still post to Google Plus using existing connections, but you cannot add new
-			connections. The ability to post will be removed in early 2019.
+			{ translate(
+				'For now, you can still post to Google Plus using existing connections, but you cannot add new connections. The ability to post will be removed in early 2019.'
+			) }
 		</p>
 	</Fragment>
 );
