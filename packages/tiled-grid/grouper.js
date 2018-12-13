@@ -130,14 +130,12 @@ export class Jetpack_Tiled_Gallery_Grouper {
 	// @FIXME In conjuction with read_row
 	get_grouped_images = () => {
 		const grouped_images = [];
-		// @TODO change back to while() if we're reducing `images` somewhere?
-		// Yep, there's a bug in read_row compared to PHP. See comment there
-		//
-		// Needs to be replaced with (or lodash !empty):
-		// while ( this.images.length ) ) {
-		this.images.forEach( () => {
+
+		// this.read_row mutates this.images
+		while ( this.images.length ) {
 			grouped_images.push( new Jetpack_Tiled_Gallery_Row( this.read_row() ) );
-		} );
+		}
+
 		return grouped_images;
 	};
 
