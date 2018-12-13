@@ -14,7 +14,7 @@ import { flowRight, endsWith, get } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import getCurrentRoute from 'state/selectors/get-current-route';
-import { navigate, replaceHistory } from 'state/ui/actions';
+import { navigate, replaceHistory, setRoute } from 'state/ui/actions';
 
 const getPostTypeTrashUrl = ( postType, siteSlug, isSiteJetpack, isSiteSingleUser ) => {
 	const postTypeUrl = get( { page: 'pages', post: 'posts' }, postType, `types/${ postType }` );
@@ -53,6 +53,7 @@ export class BrowserURL extends Component {
 		) {
 			//save the current context, to avoid an error noted in https://github.com/Automattic/wp-calypso/pull/28847#issuecomment-442056014
 			this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
+			this.props.setRoute( `${ currentRoute }/${ postId }` );
 		}
 
 		if ( postStatus === 'trash' && endsWith( currentRoute, `/${ postId }` ) ) {
@@ -89,6 +90,6 @@ export default flowRight(
 				isSiteSingleUser: isSingleUserSite( state, siteId ),
 			};
 		},
-		{ navigate, replaceHistory }
+		{ navigate, replaceHistory, setRoute }
 	)
 )( BrowserURL );
