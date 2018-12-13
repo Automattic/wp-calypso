@@ -22,6 +22,8 @@
 	// --color-error-light: #{};
 	// --color-error-dark: #{};
 
+	--color-text: #{$gray-dark};
+	--color-text-subtle: #{$gray-text-min};
 	--color-surface: #{$muriel-white};
 	--color-surface-backdrop: #{$gray-light};
 
@@ -37,8 +39,6 @@
 	--masterbar-toggle-drafts-editor-border-color: #{darken( $blue-wordpress, 5% )};
 	--masterbar-toggle-drafts-editor-hover-background: #{darken( $blue-wordpress, 17% )};
 
-	--sidebar-color: #{$gray-dark};
-	--sidebar-secondary-color: #{$gray-text-min};
 	--sidebar-background: #{$gray-lighten-30};
 	--sidebar-secondary-background: #{$muriel-white};
 	--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
@@ -92,6 +92,8 @@
 		--color-error-light: #{$muriel-hot-red-700};
 		--color-error-dark: #{$muriel-hot-red-300};
 
+		--color-text: #{$muriel-gray-800};
+		--color-text-subtle: #{$muriel-gray-500};
 		--color-surface: #{$muriel-white};
 		--color-surface-backdrop: #{$muriel-gray-0};
 
@@ -107,8 +109,6 @@
 		--masterbar-toggle-drafts-editor-border-color: #{$gray-lighten-20};
 		--masterbar-toggle-drafts-editor-hover-background: #{$gray-darken-10};
 
-		--sidebar-color: #{$muriel-gray-800};
-		--sidebar-secondary-color: #{$muriel-gray-500};
 		--sidebar-background: #{$muriel-white};
 		--sidebar-secondary-background: #{$muriel-white};
 		--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
@@ -162,6 +162,8 @@
 		--color-error-light: #{$muriel-hot-red-200};
 		--color-error-dark: #{$muriel-hot-red-600};
 
+		--color-text: #{$muriel-gray-100};
+		--color-text-subtle: #{$muriel-gray-400};
 		--color-surface: #000;
 		--color-surface-backdrop: #111;
 
@@ -177,8 +179,6 @@
 		--masterbar-toggle-drafts-editor-border-color: #{$gray-lighten-20};
 		--masterbar-toggle-drafts-editor-hover-background: #{$gray-darken-10};
 
-		--sidebar-color: #{$muriel-gray-100};
-		--sidebar-secondary-color: #{$muriel-gray-400};
 		--sidebar-background: #{$muriel-gray-900};
 		--sidebar-secondary-background: #{$muriel-gray-900};
 		--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-gray-900 )};
