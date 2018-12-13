@@ -124,7 +124,7 @@ button {
 .button.is-primary {
 	background: var( --color-accent );
 	// border-color: darken( $blue-medium, 8% );
-	border-color: var( --color-accent-dark );
+	border-color: var( --button-primary-border-color );
 	color: $white;
 
 	&:hover,

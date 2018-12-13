@@ -8,7 +8,7 @@
 
 	--color-accent: #{$blue-medium};
 	--color-accent-light: #{$orange-jazzy};
-	--color-accent-dark: #{darken( $blue-medium, 8% )};
+	// --color-accent-dark: #{};
 
 	--color-success: #{$alert-green};
 	// --color-success-light: #{};
@@ -64,6 +64,7 @@
 	--site-selector-hover-background-gradient: #{hex-to-rgb( $blue-medium )};
 
 	--button-is-borderless-color: #{$gray-text-min};
+	--button-primary-border-color: #{darken($blue-medium, 8%)};
 	--count-border-color: #{$gray};
 	--count-color: #{$gray-text-min};
 	--profile-gravatar-user-secondary-info-color: #{$gray-darken-20};
@@ -136,6 +137,7 @@
 		--site-selector-hover-background-gradient: var( --sidebar-menu-hover-background-gradient );
 
 		--button-is-borderless-color: #{$gray-dark};
+		--button-primary-border-color: var( --color-accent-dark );
 		--count-border-color: #{$gray-dark};
 		--count-color: #{$gray-dark};
 		--profile-gravatar-user-secondary-info-color: #{$gray-dark};
@@ -206,6 +208,7 @@
 		--site-selector-hover-background-gradient: var( --sidebar-menu-hover-background-gradient );
 
 		--button-is-borderless-color: #{$gray-dark};
+		--button-primary-border-color: var( --color-accent-dark );
 		--count-border-color: #{$gray-dark};
 		--count-color: #{$gray-dark};
 		--profile-gravatar-user-secondary-info-color: #{$gray-dark};
