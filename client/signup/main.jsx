@@ -637,7 +637,7 @@ export default connect(
 		isLoggedIn: isUserLoggedIn( state ),
 		// TODO turn on for onboarding-dev only for now
 		shouldShowSiteMockups:
-			( /*'onboarding' === abtest( 'improvedOnboarding' ) || */'onboarding-dev' === flowName ) &&
+			( /*'onboarding' === abtest( 'improvedOnboarding' ) || */'onboarding-dev' === ownProps.flowName ) &&
 			'business' === getSiteType( state ) &&
 			-1 < indexOf( [ 'site-style', 'site-topic', 'site-information', 'domains' ], ownProps.stepName )
 	} ),
