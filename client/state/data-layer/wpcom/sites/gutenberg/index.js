@@ -55,7 +55,7 @@ const redirectToEditor = ( { redirectUrl } ) => dispatch => {
 	if ( ! redirectUrl ) {
 		return;
 	}
-	if ( has( window, 'location.replace' ) /* && -1 !== redirectUrl.indexOf( 'calypsoify=1' ) */ ) {
+	if ( has( window, 'location.replace' ) && -1 !== redirectUrl.indexOf( 'calypsoify=1' ) ) {
 		return window.location.replace( redirectUrl );
 	}
 	dispatch( replaceHistory( redirectUrl ) );
