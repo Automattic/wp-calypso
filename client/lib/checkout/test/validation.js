@@ -233,7 +233,10 @@ describe( 'validation', () => {
 
 				expect( result ).toEqual( {
 					errors: {
-						'phone-number': [ 'That phone number does not appear to be valid' ],
+						'phone-number': [
+							'Missing required Phone Number field',
+							'That phone number does not appear to be valid',
+						],
 					},
 				} );
 			} );
