@@ -1,5 +1,6 @@
 /** @format */
 /* eslint-disable no-console */
+
 /**
  * External dependencies
  */
@@ -9,7 +10,7 @@ const path = require( 'path' );
 const program = require( 'commander' );
 
 /**
- * Internal dependencie/
+ * Internal dependencies
  */
 const i18n = require( './i18n' );
 
