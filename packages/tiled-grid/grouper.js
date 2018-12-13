@@ -44,26 +44,26 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		Three,
 		Two_One,
 		Panoramic,
-		Two,
+		Two, // Fallback option, always matches
 	] );
 
 	images = [];
 
-	constructor( attachments, shapes = [] ) {
+	constructor( attachments, /* @TODO probably external API, irrelevant in JS: */ shapes ) {
 		const content_width = CONTENT_WIDTH;
 
-		this.overwrite_shapes( shapes );
-		this.last_shape = '';
+		// @TODO Let's remove this
+		if ( shapes ) {
+			this.overwrite_shapes( shapes );
+		}
+		// this.last_shape = ''; @TODO apparently this was unused
 		this.images = this.get_images_with_sizes( attachments );
 		this.grouped_images = this.get_grouped_images();
 		this.apply_content_width( content_width );
 	}
 
-	overwrite_shapes = shapes => {
-		if ( shapes.length ) {
-			this.shapes = shapes;
-		}
-	};
+	/* @TODO probably external API, irrelevant in JS: */
+	// overwrite_shapes = shapes => ( this.shapes = shapes );
 
 	get_current_row_size() {
 		if ( this.images.length < 3 ) {
@@ -86,7 +86,9 @@ export class Jetpack_Tiled_Gallery_Grouper {
 	get_images_with_sizes = attachments => {
 		const images_with_sizes = [];
 
+		// @TODO let's `return map( images… )`
 		for ( const image of attachments ) {
+			// @TODO will this continue to work? What data will gallery images include
 			// Attachments now already include all the meta we need
 			// meta = wp_get_attachment_metadata( $image->ID );
 			image.width_orig = image.width && image.width > 0 ? image.width : 1;
@@ -102,19 +104,31 @@ export class Jetpack_Tiled_Gallery_Grouper {
 	read_row = () => {
 		const vector = this.get_current_row_size();
 
+		// @TODO `return map( vector… )`
 		const row = [];
 		for ( const group_size of vector ) {
+			// @FIXME This is not synonymous, PHP modified this.images here:
 			row.push( new Jetpack_Tiled_Gallery_Group( this.images.slice( 0, group_size ) ) );
+
+			// PHP was:
+			// $row[] = new Jetpack_Tiled_Gallery_Group( array_splice( $this->images, 0, $group_size ) );
+			// Signature:
+			// array array_splice ( array &$input , int $offset [, int $length = count($input) [, mixed $replacement = array() ]] )
+			// This _modifies_ the this.images array!!!
 		}
 
 		return row;
 	};
 
+	// @FIXME In conjuction with read_row
 	get_grouped_images = () => {
 		const grouped_images = [];
 		// @TODO change back to while() if we're reducing `images` somewhere?
+		// Yep, there's a bug in read_row compared to PHP. See comment there
+		//
+		// Needs to be replaced with (or lodash !empty):
+		// while ( this.images.length ) ) {
 		this.images.forEach( () => {
-			// while ( ! empty( $this->images ) ) {
 			grouped_images.push( new Jetpack_Tiled_Gallery_Row( this.read_row() ) );
 		} );
 		return grouped_images;
