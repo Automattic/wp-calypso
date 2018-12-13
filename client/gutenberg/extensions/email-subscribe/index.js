@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import EmailSubscribeEdit from './edit';
+import edit from './edit';
 import './editor.scss';
 
 export const name = 'email-subscribe';
@@ -25,7 +25,7 @@ export const settings = {
 	category: 'jetpack',
 	keywords: [ __( 'email' ), __( 'mailchimp' ), 'jetpack' ],
 
-	edit: EmailSubscribeEdit,
+	edit,
 	attributes: fields.reduce( ( attrs, field ) => {
 		attrs[ field.id ] = {
 			type: 'string',
@@ -33,21 +33,8 @@ export const settings = {
 		};
 		return attrs;
 	}, {} ),
-	// We will generate shortcode as a fallback, so that this works even if gutenberg does not.
-	save: function( props ) {
-		let attrs = '';
-		if ( props.attributes ) {
-			attrs =
-				' ' +
-				Object.keys( props.attributes )
-					.filter( function( key ) {
-						return props.attributes[ key ];
-					} )
-					.map( function( key ) {
-						return key + '="' + props.attributes[ key ].replace( '"', "'" ) + '"';
-					} )
-					.join( ' ' );
-		}
-		return '[jetpack-email-subscribe' + attrs + ']';
+
+	save: function() {
+		return null;
 	},
 };

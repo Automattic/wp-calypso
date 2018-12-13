@@ -3,9 +3,9 @@
 /**
  * External dependencies
  */
-import { Fragment, Component } from '@wordpress/element';
 import { ServerSideRender, TextControl } from '@wordpress/components';
 import { InspectorControls } from '@wordpress/editor';
+import { Fragment, Component } from '@wordpress/element';
 /**
  * Internal dependencies
  */
@@ -26,16 +26,14 @@ class EmailSubscribeEdit extends Component {
 		return (
 			<Fragment>
 				<InspectorControls>
-					{ this.fields.map( function( field ) {
-						return (
-							<TextControl
-								label={ field.label }
-								key={ field.id }
-								value={ attributes[ field.id ] }
-								onChange={ field.set }
-							/>
-						);
-					} ) }
+					{ this.fields.map( field => (
+						<TextControl
+							label={ field.label }
+							key={ field.id }
+							value={ attributes[ field.id ] }
+							onChange={ field.set }
+						/>
+					) ) }
 				</InspectorControls>
 				<ServerSideRender block="jetpack/email-subscribe" attributes={ attributes } />
 			</Fragment>
