@@ -21,7 +21,7 @@ import {
 	getPurchasesError,
 	hasLoadedUserPurchasesFromServer,
 } from 'state/purchases/selectors';
-import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
+import { hasPrivacyProtection } from 'lib/purchases';
 import Main from 'components/main';
 import notices from 'notices';
 import Notice from 'components/notice';
@@ -130,18 +130,6 @@ class CancelPrivacyProtection extends Component {
 		);
 	};
 
-	renderWarningText = () => {
-		const { purchase } = this.props;
-
-		return (
-			<strong>
-				{ isRefundable( purchase )
-					? this.props.translate( 'You will receive a refund when the upgrade is cancelled.' )
-					: this.props.translate( 'You will not receive a refund when the upgrade is cancelled.' ) }
-			</strong>
-		);
-	};
-
 	renderButton = () => {
 		return (
 			<Button
@@ -178,25 +166,19 @@ class CancelPrivacyProtection extends Component {
 			'is-placeholder': ! this.props.hasLoadedUserPurchasesFromServer,
 		} );
 
-		let notice,
-			button,
-			descriptionText = (
-				<p>
-					<span />
-					<span />
-				</p>
-			),
-			warningText = (
-				<p>
-					<span />
-				</p>
-			);
+		let notice;
+		let button;
+		let descriptionText = (
+			<p>
+				<span />
+				<span />
+			</p>
+		);
 
 		if ( this.props.hasLoadedUserPurchasesFromServer && this.isDataValid() ) {
 			notice = this.renderNotice();
 			button = this.renderButton();
 			descriptionText = this.renderDescriptionText();
-			warningText = this.renderWarningText();
 		}
 
 		return (
@@ -218,10 +200,6 @@ class CancelPrivacyProtection extends Component {
 					<div className="cancel-privacy-protection__text">
 						<span>{ descriptionText }</span>
 					</div>
-					<div className="cancel-privacy-protection__text">
-						<span>{ warningText }</span>
-					</div>
-
 					{ button }
 				</Card>
 			</Main>
