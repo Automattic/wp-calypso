@@ -32,7 +32,7 @@ test-results*.xml
 /public/*.js.map
 /public/*.css
 /public/*.css.map
-/public/map/*
+/public/vendors~map/*
 /public/sections/*
 /public/sections-rtl/*
 /public/images/*.jpg

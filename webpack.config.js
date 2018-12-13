@@ -157,22 +157,6 @@ const wordpressExternals = ( context, request, callback ) =>
 		? callback( null, `root ${ wordpressRequire( request ) }` )
 		: callback();
 
-/*
- * Modules that are in the `node_modules` directory are bundled into a separate chunk with a
- * `vendors~` prefix. That's an optimization that seeks improved caching of 3rd party libraries.
- * We want to disable the prefix-adding for the `map/mapbox-gl` library that's a part of the
- * Map Gutenblock. That's why we need to implement a custom matching function for the cacheGroup.
- */
-const vendorsModuleTest = ( module, chunks ) => {
-	// the default check for modules inside /node_modules/
-	if ( ! module.nameForCondition || ! /[\\/]node_modules[\\/]/.test( module.nameForCondition() ) ) {
-		return false;
-	}
-
-	// don't add the 'vendors' prefix to the map/mapbox-gl
-	return ! _.some( chunks, { name: 'map/mapbox-gl' } );
-};
-
 /**
  * Return a webpack config object
  *
@@ -207,11 +191,6 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				name: isDevelopment || shouldEmitStats,
 				maxAsyncRequests: 20,
 				maxInitialRequests: 5,
-				cacheGroups: {
-					vendors: {
-						test: vendorsModuleTest,
-					},
-				},
 			},
 			runtimeChunk: codeSplit ? { name: 'manifest' } : false,
 			moduleIds: 'named',
