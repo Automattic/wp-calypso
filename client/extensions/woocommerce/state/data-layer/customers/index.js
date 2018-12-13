@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { customersFailure, customersReceive } from 'woocommerce/state/sites/customers/actions';
 import request from 'woocommerce/state/sites/http-request';
 import { WOOCOMMERCE_CUSTOMERS_REQUEST } from 'woocommerce/state/action-types';
@@ -19,5 +19,5 @@ export const onError = ( { siteId, searchTerm }, error ) =>
 	customersFailure( siteId, searchTerm, error );
 
 export default {
-	[ WOOCOMMERCE_CUSTOMERS_REQUEST ]: [ dispatchRequestEx( { fetch, onSuccess, onError } ) ],
+	[ WOOCOMMERCE_CUSTOMERS_REQUEST ]: [ dispatchRequest( { fetch, onSuccess, onError } ) ],
 };

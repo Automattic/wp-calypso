@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import request from 'woocommerce/state/sites/http-request';
 import {
 	fetchShippingClassesFailure,
@@ -27,7 +27,7 @@ const onSuccess = ( { siteId }, { data } ) => dispatch => {
 
 export default {
 	[ WOOCOMMERCE_SHIPPING_CLASSES_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch,
 			onSuccess,
 			onError,

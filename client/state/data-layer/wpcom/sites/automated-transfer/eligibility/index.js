@@ -9,7 +9,7 @@ import { get, identity, isEmpty, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST } from 'state/action-types';
 
@@ -130,7 +130,7 @@ export const updateAutomatedTransferEligibility = ( { siteId }, data ) =>
 
 registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/eligibility/index.js', {
 	[ AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestAutomatedTransferEligibility,
 			onSuccess: updateAutomatedTransferEligibility,
 			onError: () => {}, // noop

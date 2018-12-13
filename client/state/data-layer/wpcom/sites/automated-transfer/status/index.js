@@ -10,7 +10,7 @@ import { delay } from 'lodash';
  */
 import { AUTOMATED_TRANSFER_STATUS_REQUEST } from 'state/action-types';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { requestSite } from 'state/sites/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
@@ -63,7 +63,7 @@ export const requestingStatusFailure = ( { siteId } ) => {
 
 registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/status/index.js', {
 	[ AUTOMATED_TRANSFER_STATUS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestStatus,
 			onSuccess: receiveStatus,
 			onError: requestingStatusFailure,

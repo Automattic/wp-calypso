@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
  */
 import { APPLICATION_PASSWORD_DELETE } from 'state/action-types';
 import { deleteApplicationPasswordSuccess } from 'state/application-passwords/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
@@ -56,7 +56,7 @@ export const handleRemoveError = () =>
 
 registerHandlers( 'state/data-layer/wpcom/me/two-step/application-passwords/delete/index.js', {
 	[ APPLICATION_PASSWORD_DELETE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: removeApplicationPassword,
 			onSuccess: handleRemoveSuccess,
 			onError: handleRemoveError,

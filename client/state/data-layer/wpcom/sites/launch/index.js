@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { SITE_LAUNCH } from 'state/action-types';
 import { receiveSite } from 'state/sites/actions';
@@ -17,7 +17,7 @@ import { errorNotice, infoNotice, successNotice } from 'state/notices/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { requestSiteChecklist } from 'state/checklist/actions';
 
-const handleLaunchSiteRequest = dispatchRequestEx( {
+const handleLaunchSiteRequest = dispatchRequest( {
 	fetch: action => [
 		infoNotice( translate( 'Launching your site…' ), { duration: 1000 } ),
 		http(

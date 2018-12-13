@@ -14,7 +14,7 @@ import {
 	EXAMPLE_DATA_ADD,
 	NOTICE_CREATE,
 } from 'state/action-types';
-import { dispatchRequestEx } from 'state/wpcom-http/utils';
+import { dispatchRequest } from 'state/wpcom-http/utils';
 import { http } from 'state/http/actions';
 import { get } from 'lodash';
 
@@ -47,7 +47,7 @@ const receivedExampleDataError = ( action, error ) => {
 
 export default {
 	[ GET_EXAMPLE_DATA ]: [
-		dispatchRequestEx(
+		dispatchRequest(
 			fetch: requestExampleData,
 			onSuccess: receivedExampleData,
 			onError: receivedExampleDataError,

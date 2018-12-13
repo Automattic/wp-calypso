@@ -16,13 +16,13 @@ import {
 
 const debug = debugFactory( 'woocommerce:wc-api' );
 
-import { dispatchRequestEx as dataLayerDispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest as dataLayerDispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
-export function dispatchRequest( initiator, onSuccess, onFailure ) {
-	return dataLayerDispatchRequestEx( {
-		fetch: initiator,
-		onSuccess: apiSuccess( onSuccess, onFailure ),
-		onError: apiFailure( onFailure ),
+export function dispatchRequest( fetch, onSuccess, onError ) {
+	return dataLayerDispatchRequest( {
+		fetch,
+		onSuccess: apiSuccess( onSuccess, onError ),
+		onError: apiFailure( onError ),
 	} );
 }
 

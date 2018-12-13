@@ -11,7 +11,7 @@ import { mergeHandlers } from 'state/action-watchers/utils';
 import newLike from './new';
 import mine from './mine';
 import { POST_LIKES_REQUEST } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveLikes } from 'state/posts/likes/actions';
 
@@ -39,7 +39,7 @@ registerHandlers(
 	'state/data-layer/wpcom/sites/posts/likes/index.js',
 	mergeHandlers( newLike, mine, {
 		[ POST_LIKES_REQUEST ]: [
-			dispatchRequestEx( {
+			dispatchRequest( {
 				fetch,
 				fromApi,
 				onSuccess,

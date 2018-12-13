@@ -12,7 +12,7 @@ import { translate } from 'i18n-calypso';
  */
 import { READER_CONVERSATION_FOLLOW } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -59,7 +59,7 @@ export function receiveConversationFollowError( {
 
 registerHandlers( 'state/data-layer/wpcom/read/sites/posts/follow/index.js', {
 	[ READER_CONVERSATION_FOLLOW ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestConversationFollow,
 			onSuccess: receiveConversationFollow,
 			onError: receiveConversationFollowError,

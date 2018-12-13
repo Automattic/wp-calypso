@@ -10,7 +10,7 @@ import { delay } from 'lodash';
  */
 import { ATOMIC_TRANSFER_REQUEST } from 'state/action-types';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { requestSite } from 'state/sites/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
@@ -58,7 +58,7 @@ export const requestingTransferFailure = action => atomicTransferFetchingFailure
 
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfer/index.js', {
 	[ ATOMIC_TRANSFER_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestTransfer,
 			onSuccess: receiveTransfer,
 			onError: requestingTransferFailure,

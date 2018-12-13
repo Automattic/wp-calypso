@@ -12,7 +12,7 @@ import { flatMap, flatten, isArray, map } from 'lodash';
  */
 import { COMMENTS_TREE_SITE_ADD, COMMENTS_TREE_SITE_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import getRawSite from 'state/selectors/get-raw-site';
 
@@ -87,7 +87,7 @@ export const announceFailure = ( { query } ) => ( dispatch, getState ) => {
 
 registerHandlers( 'state/data-layer/wpcom/sites/comments-tree/index.js', {
 	[ COMMENTS_TREE_SITE_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchCommentsTreeForSite,
 			onSuccess: addCommentsTree,
 			onError: announceFailure,

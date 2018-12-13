@@ -9,7 +9,7 @@ import { noop } from 'lodash';
  */
 import { READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 import { bypassDataLayer } from 'state/data-layer/utils';
@@ -53,7 +53,7 @@ export function receiveNotificationUnsubscriptionError( action ) {
 
 registerHandlers( 'state/data-layer/wpcom/read/sites/notification-subscriptions/delete/index.js', {
 	[ READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestNotificationUnsubscription,
 			onSuccess: noop,
 			onError: receiveNotificationUnsubscriptionError,

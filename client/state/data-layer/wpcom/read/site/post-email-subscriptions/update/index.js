@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
  */
 import { READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { updateNewPostEmailSubscription } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 import { buildBody } from '../utils';
@@ -65,7 +65,7 @@ export function receiveUpdatePostEmailSubscriptionError( {
 
 registerHandlers( 'state/data-layer/wpcom/read/site/post-email-subscriptions/update/index.js', {
 	[ READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestUpdatePostEmailSubscription,
 			onSuccess: receiveUpdatePostEmailSubscription,
 			onError: receiveUpdatePostEmailSubscriptionError,

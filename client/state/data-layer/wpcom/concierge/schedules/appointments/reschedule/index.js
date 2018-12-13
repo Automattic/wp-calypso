@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { updateConciergeBookingStatus } from 'state/concierge/actions';
 import { CONCIERGE_APPOINTMENT_RESCHEDULE } from 'state/action-types';
 import { CONCIERGE_STATUS_BOOKING } from 'me/concierge/constants';
@@ -33,7 +33,7 @@ export const rescheduleConciergeAppointment = action => {
 
 registerHandlers( 'state/data-layer/wpcom/concierge/schedules/appointments/reschedule/index.js', {
 	[ CONCIERGE_APPOINTMENT_RESCHEDULE ]: [
-		dispatchRequestEx( { fetch: rescheduleConciergeAppointment, onSuccess, onError, fromApi } ),
+		dispatchRequest( { fetch: rescheduleConciergeAppointment, onSuccess, onError, fromApi } ),
 	],
 } );
 

@@ -5,7 +5,7 @@
  */
 
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
 	EMAIL_VERIFY_REQUEST,
 	EMAIL_VERIFY_REQUEST_SUCCESS,
@@ -50,7 +50,7 @@ export const handleError = ( action, rawError ) => ( {
  */
 export const handleSuccess = () => ( { type: EMAIL_VERIFY_REQUEST_SUCCESS } );
 
-export const dispatchEmailVerification = dispatchRequestEx( {
+export const dispatchEmailVerification = dispatchRequest( {
 	fetch: requestEmailVerification,
 	onSuccess: handleSuccess,
 	onError: handleError,

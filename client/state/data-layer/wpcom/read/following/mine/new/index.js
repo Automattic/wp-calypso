@@ -10,7 +10,7 @@ import { get } from 'lodash';
  */
 import config from 'config';
 import { READER_FOLLOW } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import { follow, unfollow, recordFollowError } from 'state/reader/follows/actions';
@@ -65,6 +65,6 @@ export function followError( action, response ) {
 
 registerHandlers( 'state/data-layer/wpcom/read/following/mine/new/index.js', {
 	[ READER_FOLLOW ]: [
-		dispatchRequestEx( { fetch: requestFollow, onSuccess: receiveFollow, onError: followError } ),
+		dispatchRequest( { fetch: requestFollow, onSuccess: receiveFollow, onError: followError } ),
 	],
 } );

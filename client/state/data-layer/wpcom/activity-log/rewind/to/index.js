@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { getRewindRestoreProgress } from 'state/activity-log/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -68,7 +68,7 @@ export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
 
 registerHandlers( 'state/data-layer/wpcom/activity-log/rewind/to/index.js', {
 	[ REWIND_RESTORE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestRestore,
 			onSuccess: receiveRestoreSuccess,
 			onError: receiveRestoreError,
@@ -77,7 +77,7 @@ registerHandlers( 'state/data-layer/wpcom/activity-log/rewind/to/index.js', {
 	],
 
 	[ REWIND_CLONE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestClone,
 			onSuccess: receiveRestoreSuccess,
 			onError: receiveRestoreError,

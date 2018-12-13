@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
  */
 import config from 'config';
 import { READER_UNFOLLOW } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import { follow } from 'state/reader/follows/actions';
@@ -69,7 +69,7 @@ export const unfollowError = action => ( dispatch, getState ) => {
 
 registerHandlers( 'state/data-layer/wpcom/read/following/mine/delete/index.js', {
 	[ READER_UNFOLLOW ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestUnfollow,
 			onSuccess: receiveUnfollow,
 			onError: unfollowError,

@@ -11,7 +11,7 @@ import { keyBy } from 'lodash';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { USER_DEVICES_REQUEST } from 'state/action-types';
 import { userDevicesAdd } from 'state/user-devices/actions';
 import { errorNotice } from 'state/notices/actions';
@@ -59,7 +59,7 @@ export const handleError = () =>
 
 registerHandlers( 'state/data-layer/wpcom/me/devices/index.js', {
 	[ USER_DEVICES_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestUserDevices,
 			onSuccess: handleSuccess,
 			onError: handleError,

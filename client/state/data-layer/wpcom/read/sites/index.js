@@ -5,7 +5,7 @@
  */
 import { READER_SITE_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import {
 	receiveReaderSiteRequestSuccess,
@@ -42,7 +42,7 @@ export function receiveReadSiteError( action, response ) {
 
 registerHandlers( 'state/data-layer/wpcom/read/sites/index.js', {
 	[ READER_SITE_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestReadSite,
 			onSuccess: receiveReadSiteSuccess,
 			onError: receiveReadSiteError,
