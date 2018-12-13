@@ -27,7 +27,7 @@
 }
 
 .auth.main {
-	background: $blue-wordpress;
+	background: var( --color-primary );
 	float: none;
 	height: 100%;
 	display: flex;
@@ -178,7 +178,7 @@
 
 .auth__self-hosted-instructions {
 	color: #fff;
-	background: $blue-dark;
+	background: var( --color-primary-dark );
 	border-radius: 8px;
 	padding: 40px;
 	position: absolute;
@@ -222,7 +222,7 @@
 		content: counter(item);
 		background: $white;
 		border-radius: 100%;
-		color: $blue-dark;
+		color: var( --color-primary-dark );
 		width: 24px;
 		height: 24px;
 		text-align: center;
@@ -238,7 +238,7 @@
 	}
 
 	a {
-		color: $blue-light;
+		color: var( --color-primary-light );
 		text-decoration: underline;
 	}
 
@@ -254,7 +254,7 @@
 	}
 
 	.auth__self-hosted-instructions-close:hover {
-		color: $blue-light;
+		color: var( --color-primary-light );
 	}
 
 }
