@@ -114,14 +114,14 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		// @TODO `return map( vector… )`
 		const row = [];
 		for ( const group_size of vector ) {
-			// @FIXME This is not synonymous, PHP modified this.images here:
-			row.push( new Jetpack_Tiled_Gallery_Group( this.images.slice( 0, group_size ) ) );
+			// @TODO This deeply nested mutation drives iteration, can we improve that?
+			row.push( new Jetpack_Tiled_Gallery_Group( this.images.splice( 0, group_size ) ) );
 
 			// PHP was:
 			// $row[] = new Jetpack_Tiled_Gallery_Group( array_splice( $this->images, 0, $group_size ) );
+			//
 			// Signature:
 			// array array_splice ( array &$input , int $offset [, int $length = count($input) [, mixed $replacement = array() ]] )
-			// This _modifies_ the this.images array!!!
 		}
 
 		return row;
