@@ -49,14 +49,21 @@ export class Jetpack_Tiled_Gallery_Grouper {
 
 	images = [];
 
-	constructor( attachments, /* @TODO probably external API, irrelevant in JS: */ shapes ) {
+	constructor( attachments /* @TODO probably external API, irrelevant in JS: */ /*shapes */ ) {
 		const content_width = CONTENT_WIDTH;
 
 		// @TODO Let's remove this
-		if ( shapes ) {
-			this.overwrite_shapes( shapes );
-		}
+		// if ( shapes ) {
+		// 	this.overwrite_shapes( shapes );
+		// }
 		// this.last_shape = ''; @TODO apparently this was unused
+
+		// @TODO This appears to be a pipeline attachments -> grouped images
+		// Layouts want grouped_images to define their rows
+		//
+		// This module could (should) become a transformation of <Array<Image>> -> <Array<Row>>
+		//
+		// If we redesign with that flow in mind, this may get much simpler and more testable
 		this.images = this.get_images_with_sizes( attachments );
 		this.grouped_images = this.get_grouped_images();
 		this.apply_content_width( content_width );
