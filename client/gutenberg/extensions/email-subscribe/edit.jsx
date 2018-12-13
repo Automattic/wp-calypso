@@ -34,7 +34,7 @@ const EmailSubscribeEdit = props => (
 						onChange={ value => {
 							const newVal = {};
 							newVal[ field.id ] = value;
-							props.setAttributes( newVal );
+							props.setAttributes( { [ field.id ]: value } );
 						} }
 					/>
 				);
