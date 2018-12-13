@@ -87,7 +87,7 @@ export function ebanxFieldRules( country ) {
 			},
 			'phone-number': {
 				description: i18n.translate( 'Phone Number' ),
-				rules: [ 'validPhone' ],
+				rules: [ 'required', 'validPhone' ],
 			},
 
 			'postal-code': {
