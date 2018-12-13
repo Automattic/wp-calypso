@@ -20,7 +20,7 @@
 	.keyed-suggestions__category-counter {
 		margin-left: 6px;
 		text-transform: uppercase;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 	}
 
 	.keyed-suggestions__category-show-all {
@@ -72,7 +72,7 @@
 	flex: 1 1 auto;
 	margin-left: 0.5em;
 	padding-top: 3px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 13px;
 	height: 19px; /* font-size + 2*padding */
 	overflow: hidden;

@@ -97,7 +97,7 @@
 }
 
 .purchase-item__purchase-type {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 12px;
 	margin: 0 0 4px;
 	overflow: hidden;

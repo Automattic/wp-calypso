@@ -87,7 +87,7 @@
 
 .activity-log-item__time {
 	font-size: 11px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	text-transform: uppercase;
 	white-space: nowrap;
 
@@ -290,7 +290,7 @@
 .activity-log-item__actor-role,
 .activity-log-item__description-summary {
 	font-size: 12px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 
 	@include breakpoint( '<480px' ) {
 		font-size: 14px;

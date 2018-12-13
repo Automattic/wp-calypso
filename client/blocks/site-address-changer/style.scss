@@ -50,7 +50,7 @@
 }
 
 .site-address-changer__info {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	flex-shrink: 1;
 	margin: 5px 0 0 0;
 	padding: 0;

@@ -5,7 +5,7 @@
 	text-align: center;
 	width: 100%;
 	max-width: 960px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 
 	@include breakpoint( "<660px" ) {
 		background: transparent;

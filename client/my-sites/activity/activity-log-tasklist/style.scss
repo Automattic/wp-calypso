@@ -48,7 +48,7 @@
 .activity-log-tasklist__update-text
 
 .activity-log-tasklist__update-version {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .activity-log-tasklist__update-bullet,
@@ -80,7 +80,7 @@
 	justify-content: space-between;
 	box-shadow: 0 -1px 0 transparentize( $gray-lighten-20, .5 );
 	padding: 16px 0;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 
 	a {
 		text-decoration: underline;

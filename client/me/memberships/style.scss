@@ -102,7 +102,7 @@
 	}
 
 	@include breakpoint( '>660px' ) {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		display: block;
 		font-family: $sans;
 		font-size: 12px;

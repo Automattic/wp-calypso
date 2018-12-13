@@ -34,7 +34,7 @@
 }
 
 .manage-connection__ownership-info-icon {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	flex: 0 0 24px;
 	margin-right: 20px;
 }

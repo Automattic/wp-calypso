@@ -92,7 +92,7 @@
 
 .language-picker__name-change {
 	text-transform: uppercase;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .language-picker__modal {

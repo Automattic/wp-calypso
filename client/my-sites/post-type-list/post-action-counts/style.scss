@@ -23,7 +23,7 @@
 .post-action-counts li a:active,
 .post-action-counts li a:visited
  {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 
 	&:hover {
 		text-decoration: underline;

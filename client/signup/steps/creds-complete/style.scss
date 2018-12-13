@@ -21,7 +21,7 @@
 }
 
 .creds-complete__description {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: rem( 14px );
 	font-weight: 100;
 	line-height: rem( 25px );

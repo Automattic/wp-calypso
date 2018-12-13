@@ -135,7 +135,7 @@
   }
 
   .wpnc__header a.wpnc__post {
-    color: $gray-text-min;
+    color: var( --color-text-subtle );
 
     &:hover {
       color: var( --color-primary );
@@ -160,7 +160,7 @@
   .wpnc__filter {
     width: 100%;
     background-color: $white;
-    color: $gray-text-min;
+    color: var( --color-text-subtle );
     border-bottom: 1px solid $gray-lighten-30;
     border-left: 1px solid $white;
     text-align: center; // Center filter in IE 9
@@ -280,7 +280,7 @@
 
   .wpnc__done-message {
     background: $gray-light;
-    color: $gray-text-min;
+    color: var( --color-text-subtle );
     text-align: center;
     line-height: 50px;
     font-style: italic;
@@ -410,7 +410,7 @@
         max-height: 3em;
         -webkit-line-clamp: 2;
         @extend %ellipsy-box;
-        color: $gray-text-min;
+        color: var( --color-text-subtle );
       }
     }
 
@@ -562,7 +562,7 @@
     }
 
     .wpnc__reply {
-      color: $gray-text-min;
+      color: var( --color-text-subtle );
       padding: $wpnc__padding-medium 0;
       border-bottom: 1px solid $gray-lighten-30;
 
@@ -576,7 +576,7 @@
 
       a {
         font-weight: 600;
-        color: $gray-text-min;
+        color: var( --color-text-subtle );
         text-decoration: underline;
       }
     }

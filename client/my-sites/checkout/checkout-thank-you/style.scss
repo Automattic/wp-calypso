@@ -93,7 +93,7 @@
 // Header subcomponent styles
 .checkout-thank-you__header {
 	position: relative;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	padding: 12px 24px 48px;
 	text-align: center;
 
@@ -264,7 +264,7 @@
 }
 
 .checkout-thank-you__jetpack-feature.with-error .checkout-thank-you__jetpack-feature-status-text {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .checkout-thank-you__jetpack-feature-status-icon .spinner,
@@ -312,7 +312,7 @@
 }
 
 .checkout-thank-you__jetpack-error-explanation {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 14px;
 	font-style: italic;
 	font-weight: 400;
