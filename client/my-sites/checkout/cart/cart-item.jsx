@@ -61,6 +61,10 @@ export class CartItem extends React.Component {
 
 		const cost = cartItem.cost * cartItem.volume;
 
+		if ( 0 === cost ) {
+			return <span className="cart__free-text">{ translate( 'Free' ) }</span>;
+		}
+
 		return translate( '%(cost)s %(currency)s', {
 			args: {
 				cost: cost,
