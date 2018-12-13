@@ -120,8 +120,8 @@ export class ConciergeSessionNudge extends React.Component {
 
 	body() {
 		const { translate, productCost, productDisplayCost, currencyCode } = this.props;
-		// Full cost should be 150% of base cost, rounded to nearest 50
-		const fullCost = Math.round( ( productCost * 1.5 ) / 50 ) * 50;
+		// Full cost should be 150% of base cost
+		const fullCost = Math.round( productCost * 1.5 );
 		const savings = fullCost - productCost;
 		return (
 			<Fragment>
