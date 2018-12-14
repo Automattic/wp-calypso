@@ -87,7 +87,7 @@ class ManagePurchase extends Component {
 		userId: PropTypes.number,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.isDataValid() ) {
 			page.redirect( purchasesRoot );
 			return;
@@ -100,7 +100,7 @@ class ManagePurchase extends Component {
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
 			page.redirect( purchasesRoot );
 			return;
