@@ -12,6 +12,20 @@
 	&.has-no-masterbar .masterbar:not( .header__masterbar-mock ) {
 		height: 0;
 	}
+
+	.form-fieldset {
+		position: relative;
+	}
+
+	.suggestions__wrapper {
+		position: absolute;
+			top: 66px;
+			left: 0;
+			right: 0;
+		max-height: 300px;
+		overflow: auto;
+		box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.2 );
+	}
 }
 
 
@@ -38,18 +52,9 @@
 		max-width: 1040px;
 	}
 
-	.form-fieldset {
-		position: relative;
-	}
-
-	.suggestions__wrapper {
-		position: absolute;
-			top: 66px;
-			left: 0;
-			right: 0;
-		max-height: 300px;
-		overflow: auto;
-		box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.2 );
+	// pressable-nux has no title or subtitle so needs to not hide the (W) logo
+	.is-pressable-nux & {
+		margin-top: 30px;
 	}
 }
 
