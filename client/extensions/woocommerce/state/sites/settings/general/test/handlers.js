@@ -3,9 +3,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { noop } from 'lodash';
-import { spy, match } from 'sinon';
 
 /**
  * Internal dependencies
@@ -50,12 +48,12 @@ describe( 'handlers', () => {
 					},
 				},
 			} );
-			const dispatch = spy();
+			const dispatch = jest.fn();
 			const action = fetchSettingsGeneral( siteId );
 
-			handleSettingsGeneral( { dispatch, getState }, action, noop );
-			expect( dispatch ).to.have.been.calledWith(
-				match( {
+			handleSettingsGeneral( action, noop )( dispatch, getState );
+			expect( dispatch ).toHaveBeenCalledWith(
+				expect.objectContaining( {
 					type: WPCOM_HTTP_REQUEST,
 					method: 'GET',
 					path: `/jetpack-blogs/${ siteId }/rest-api/`,
@@ -82,25 +80,22 @@ describe( 'handlers', () => {
 					},
 				},
 			} );
-			const dispatch = spy();
+			const dispatch = jest.fn();
 			const action = fetchSettingsGeneral( siteId );
 
-			handleSettingsGeneral( { dispatch, getState }, action );
-			expect( dispatch ).to.not.have.been.called;
+			handleSettingsGeneral( action )( dispatch, getState );
+			expect( dispatch ).not.toHaveBeenCalled();
 		} );
 	} );
 	describe( '#handleSettingsGeneralSuccess()', () => {
 		test( 'should dispatch success with settings data', () => {
 			const siteId = '123';
-			const store = {
-				dispatch: spy(),
-			};
 			const response = { data: settingsData };
 
 			const action = fetchSettingsGeneral( siteId );
-			handleSettingsGeneralSuccess( store, action, response );
+			const result = handleSettingsGeneralSuccess( action, response );
 
-			expect( store.dispatch ).calledWith( {
+			expect( result ).toEqual( {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 				siteId,
 				data: settingsData,
@@ -110,14 +105,10 @@ describe( 'handlers', () => {
 	describe( '#handleSettingsGeneralError()', () => {
 		test( 'should dispatch error', () => {
 			const siteId = '123';
-			const store = {
-				dispatch: spy(),
-			};
-
 			const action = fetchSettingsGeneral( siteId );
-			handleSettingsGeneralError( store, action, 'rest_no_route' );
+			const result = handleSettingsGeneralError( action, 'rest_no_route' );
 
-			expect( store.dispatch ).to.have.been.calledWithMatch( {
+			expect( result ).toEqual( {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 				siteId,
 				error: 'rest_no_route',

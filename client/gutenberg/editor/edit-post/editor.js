@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,15 +8,27 @@ import React from 'react';
  * WordPress dependencies
  */
 import { withSelect } from '@wordpress/data';
-import { EditorProvider, ErrorBoundary } from '@wordpress/editor';
+import { EditorProvider, ErrorBoundary, PostLockedModal } from '@wordpress/editor';
 
 /**
  * Internal dependencies
  */
 import Layout from './components/layout';
+// GUTENLYPSO START
+import './hooks';
 import './store';
+// GUTENLYPSO END
 
-function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...props } ) {
+function Editor( {
+	settings,
+	hasFixedToolbar,
+	focusMode,
+	post,
+	overridePost, // GUTENLYPSO
+	initialEdits,
+	onError,
+	...props
+} ) {
 	if ( ! post ) {
 		return null;
 	}
@@ -23,18 +36,27 @@ function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...pr
 	const editorSettings = {
 		...settings,
 		hasFixedToolbar,
+		focusMode,
 	};
 
 	return (
-		<EditorProvider settings={ editorSettings } post={ { ...post, ...overridePost } } { ...props }>
+		<EditorProvider
+			settings={ editorSettings }
+			post={ { ...post, ...overridePost } } // GUTENLYPSO
+			initialEdits={ initialEdits }
+			{ ...props }
+		>
 			<ErrorBoundary onError={ onError }>
 				<Layout />
 			</ErrorBoundary>
+			<PostLockedModal />
 		</EditorProvider>
 	);
 }
 
-
-export default withSelect( ( select ) => ( {
+// GUTENLYPSO START
+export default withSelect( select => ( {
 	hasFixedToolbar: select( 'core/edit-post' ).isFeatureActive( 'fixedToolbar' ),
+	focusMode: select( 'core/edit-post' ).isFeatureActive( 'focusMode' ),
 } ) )( Editor );
+// GUTENLYPSO END

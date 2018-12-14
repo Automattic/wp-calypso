@@ -100,7 +100,7 @@
 	color: lighten( $gray, 10 );
 
 	&.is-enabled {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 }
 
@@ -123,13 +123,13 @@
 	}
 
 	&.is-enable {
-		background: $blue-medium;
-		border-color: $blue-wordpress;
+		background: var( --color-accent );
+		border-color: var( --color-primary );
 		color: $white;
 
 		&:hover,
 		&:focus {
-			border-color: $blue-dark;
+			border-color: var( --color-primary-dark );
 			color: $white;
 		}
 		&[disabled],

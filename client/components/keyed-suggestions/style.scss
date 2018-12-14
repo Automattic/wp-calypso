@@ -1,6 +1,4 @@
-/*
- * Suggestions list
- */
+
 .keyed-suggestions__suggestions {
 	display: flex;
 	flex-direction: column;
@@ -21,7 +19,7 @@
 	.keyed-suggestions__category-counter {
 		margin-left: 6px;
 		text-transform: uppercase;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 	}
 
 	.keyed-suggestions__category-show-all {
@@ -40,7 +38,7 @@
 	cursor: pointer;
 
 	&.has-highlight {
-		background-color: $blue-medium;
+		background-color: var( --color-accent );
 		color: $white;
 
 		.keyed-suggestions__value-description {
@@ -73,16 +71,16 @@
 	flex: 1 1 auto;
 	margin-left: 0.5em;
 	padding-top: 3px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 13px;
 	height: 19px; /* font-size + 2*padding */
 	overflow: hidden;
 
 	&:before {
-		@include long-content-fade( $color : $white );
+		@include long-content-fade();
 
 		.has-highlight & {
-			@include long-content-fade( $color : $blue-medium );
+			@include long-content-fade( $color: hex-to-rgb( $blue-medium ) );
 		}
 	}
 }

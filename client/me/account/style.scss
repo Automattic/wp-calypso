@@ -32,13 +32,13 @@
 	color: $gray-dark;
 
 	&.is-warning {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 }
 
 .account__close-section-desc {
 	margin-bottom: 0;
 	font-size: 13px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-style: italic;
 }

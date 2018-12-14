@@ -91,7 +91,7 @@ ul.module-tabs {
 			clear: both;
 			display: block;
 			line-height: 24px;
-			color: $blue-wordpress;
+			color: var( --color-primary );
 			transition: font-size .3s 0 ease-out;
 
 			@include breakpoint( "<480px" ) {

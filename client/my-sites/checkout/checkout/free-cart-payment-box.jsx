@@ -16,6 +16,7 @@ import PaymentBox from './payment-box';
 import TermsOfService from './terms-of-service';
 import CartToggle from './cart-toggle';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
+import { hasOnlyProductsOf } from 'lib/cart-values/cart-items';
 
 class FreeCartPaymentBox extends React.Component {
 	static propTypes = {
@@ -23,31 +24,31 @@ class FreeCartPaymentBox extends React.Component {
 	};
 
 	content = () => {
-		const cart = this.props.cart;
+		const { cart, onSubmit, translate } = this.props;
+
+		const isUsingDomainCredit = cart.has_bundle_credit && ! hasOnlyProductsOf( cart, 'domain_map' );
 
 		return (
 			<React.Fragment>
-				<form onSubmit={ this.props.onSubmit }>
+				<form onSubmit={ onSubmit }>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="payment-box-section">
 						<div className="checkout__payment-box-section-content">
 							{ this.getDomainCreditIllustration() }
 
 							<h6>
-								{ cart.has_bundle_credit
-									? this.props.translate( 'You have a free domain credit!' )
-									: this.props.translate( "Woohoo! You don't owe us anything!" ) }
+								{ isUsingDomainCredit
+									? translate( 'You have a free domain credit!' )
+									: translate( "Woohoo! You don't owe us anything!" ) }
 							</h6>
 
 							<span>
-								{ cart.has_bundle_credit
-									? this.props.translate(
+								{ isUsingDomainCredit
+									? translate(
 											'You get a free domain for one year with your subscription to %(productName)s. Time to celebrate!',
 											{ args: { productName: this.getProductName() } }
 									  )
-									: this.props.translate(
-											'Just complete checkout to add these upgrades to your site.'
-									  ) }
+									: translate( 'Just complete checkout to add these upgrades to your site.' ) }
 							</span>
 						</div>
 					</div>
@@ -59,7 +60,7 @@ class FreeCartPaymentBox extends React.Component {
 						<PayButton
 							cart={ cart }
 							transactionStep={ this.props.transactionStep }
-							beforeSubmitText={ this.props.translate( 'Complete Checkout' ) }
+							beforeSubmitText={ translate( 'Complete Checkout' ) }
 						/>
 					</div>
 				</form>

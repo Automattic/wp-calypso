@@ -35,6 +35,11 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { withEnhancers } from 'state/utils';
 import { connectGoogleMyBusinessAccount } from 'state/google-my-business/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {
 		locations: PropTypes.array.isRequired,

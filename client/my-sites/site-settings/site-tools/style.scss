@@ -9,14 +9,14 @@
 	color: $gray-dark;
 
 	&.is-warning {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 }
 
 .site-tools__section-desc {
 	margin-bottom: 0;
 	font-size: 13px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-style: italic;
 }
 

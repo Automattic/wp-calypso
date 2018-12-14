@@ -30,6 +30,11 @@ import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions'
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import { withEnhancers } from 'state/utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class GoogleMyBusinessStats extends Component {
 	static propTypes = {
 		locationData: PropTypes.object,

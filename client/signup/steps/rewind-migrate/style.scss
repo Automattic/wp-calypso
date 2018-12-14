@@ -43,7 +43,7 @@
 
 .rewind-switch__description {
 	max-width: 600px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: rem( 13.5px );
 	font-weight: 100;
 	line-height: rem( 25px );

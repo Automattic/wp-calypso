@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
 	JETPACK_CREDENTIALS_AUTOCONFIGURE,
 	JETPACK_CREDENTIALS_STORE,
@@ -78,7 +78,7 @@ export const announceFailure = ( { noticeId } ) =>
 
 registerHandlers( 'state/data-layer/wpcom/activity-log/rewind/activate/index.js', {
 	[ JETPACK_CREDENTIALS_AUTOCONFIGURE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch,
 			onSuccess: storeAndAnnounce,
 			onError: announceFailure,

@@ -16,7 +16,7 @@ import {
 	COMMENTS_DELETE,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { requestCommentsList } from 'state/comments/actions';
@@ -204,7 +204,7 @@ export const announceDeleteFailure = action => {
 
 registerHandlers( 'state/data-layer/wpcom/comments/index.js', {
 	[ COMMENTS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchPostComments,
 			onSuccess: addComments,
 			onError: announceFailure,
@@ -212,7 +212,7 @@ registerHandlers( 'state/data-layer/wpcom/comments/index.js', {
 	],
 
 	[ COMMENTS_DELETE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: deleteComment,
 			onSuccess: handleDeleteSuccess,
 			onError: announceDeleteFailure,

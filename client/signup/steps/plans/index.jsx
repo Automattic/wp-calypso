@@ -17,6 +17,7 @@ import { parse as parseQs } from 'qs';
  */
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
+import { getTld, isSubdomain } from 'lib/domains';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -27,6 +28,8 @@ import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
 import { planHasFeature } from '../../../lib/plans';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -101,12 +104,24 @@ export class PlansStep extends Component {
 		);
 	}
 
+	getCustomerType() {
+		return (
+			this.props.customerType ||
+			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' )
+		);
+	}
+
 	handleFreePlanButtonClick = () => {
 		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 	};
 
 	plansFeaturesList() {
-		const { hideFreePlan, isDomainOnly, selectedSite, customerType, flowName } = this.props;
+		const {
+			disableBloggerPlanWithNonBlogDomain,
+			hideFreePlan,
+			isDomainOnly,
+			selectedSite,
+		} = this.props;
 
 		return (
 			<div>
@@ -120,7 +135,8 @@ export class PlansStep extends Component {
 					showFAQ={ false }
 					displayJetpackPlans={ false }
 					domainName={ this.getDomainName() }
-					customerType={ customerType || ( flowName === 'ecommerce' ? 'business' : undefined ) }
+					customerType={ this.getCustomerType() }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 				/>
 				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
 				   * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
@@ -164,6 +180,7 @@ export class PlansStep extends Component {
 
 PlansStep.propTypes = {
 	additionalStepData: PropTypes.object,
+	disableBloggerPlanWithNonBlogDomain: PropTypes.bool,
 	goToNextStep: PropTypes.func.isRequired,
 	hideFreePlan: PropTypes.bool,
 	selectedSite: PropTypes.object,
@@ -173,11 +190,31 @@ PlansStep.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( ( state, { path, signupDependencies: { siteSlug } } ) => ( {
+/**
+ * Checks if the domainItem picked in the domain step is a top level .blog domain -
+ * we only want to make Blogger plan available if it is.
+ *
+ * @param {Object} domainItem domainItem object stored in the "choose domain" step
+ * @return {bool} is .blog domain registration
+ */
+export const isDotBlogDomainRegistration = domainItem => {
+	if ( ! domainItem ) {
+		return false;
+	}
+	const { is_domain_registration, meta } = domainItem;
+
+	return is_domain_registration && getTld( meta ) === 'blog';
+};
+
+export default connect( ( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
+	// Blogger plan is only available if user chose either a free domain or a .blog domain registration
+	disableBloggerPlanWithNonBlogDomain:
+		domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
 	// This step could be used to set up an existing site, in which case
 	// some descendants of this component may display discounted prices if
 	// they apply to the given site.
 	isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
 	selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 	customerType: parseQs( path.split( '?' ).pop() ).customerType,
+	siteType: getSiteType( state ),
 } ) )( localize( PlansStep ) );

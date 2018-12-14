@@ -10,7 +10,7 @@ import classnames from 'classnames';
 import url from 'url';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flow, noop } from 'lodash';
+import { flow, noop, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +22,7 @@ import { hasTouch } from 'lib/touch-detect';
 import * as utils from 'state/posts/utils';
 import { getSite } from 'state/sites/selectors';
 import TimeSince from 'components/time-since';
+import { getEditorUrl } from 'state/selectors/get-editor-url';
 
 class Draft extends Component {
 	static propTypes = {
@@ -51,10 +52,8 @@ class Draft extends Component {
 			return this.postPlaceholder();
 		}
 
-		const site = this.props.site;
-
 		if ( utils.userCan( 'edit_post', post ) ) {
-			editPostURL = utils.getEditURL( post, site );
+			editPostURL = this.props.editorUrl;
 		}
 
 		if ( this.props.postImages && this.props.postImages.canonical_image ) {
@@ -120,8 +119,9 @@ class Draft extends Component {
 	}
 }
 
-const mapState = ( state, { siteId } ) => ( {
+const mapState = ( state, { siteId, post } ) => ( {
 	site: getSite( state, siteId ),
+	editorUrl: getEditorUrl( state, siteId, get( post, 'ID' ) ),
 } );
 
 export default flow(

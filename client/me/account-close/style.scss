@@ -29,12 +29,12 @@ h1.account-close__confirm-dialog-header {
 .account-close__confirm-dialog-label {
 	margin-bottom: 8px;
 	line-height: 24px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-weight: normal;
 }
 
 .account-close__confirm-dialog-target-username {
-	color: $alert-red;
+	color: var( --color-error );
 }
 
 // Placeholders

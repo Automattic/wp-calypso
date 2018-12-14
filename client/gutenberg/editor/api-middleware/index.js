@@ -5,16 +5,7 @@
  */
 import url from 'url';
 import { stringify } from 'qs';
-import {
-	toPairs,
-	identity,
-	includes,
-	get,
-	mapKeys,
-	partial,
-	partialRight,
-	flowRight,
-} from 'lodash';
+import { toPairs, identity, includes, get, mapKeys, partial, flowRight } from 'lodash';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
@@ -38,7 +29,9 @@ const debugMiddleware = ( options, next ) => {
 
 // Rewrite default API paths to match WP.com equivalents. Note that
 // passed apiNamespace will be prepended to the replaced path.
-export const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
+export const wpcomPathMappingMiddleware = getSiteSlug => ( options, next ) => {
+	const siteSlug = getSiteSlug();
+
 	//support for fetchAllMiddleware, that uses url instead of path
 	if ( ! options.path && options.url ) {
 		return next( {
@@ -57,6 +50,17 @@ export const wpcomPathMappingMiddleware = ( options, next, siteSlug ) => {
 		const path = options.path.replace( '/wp/v2/', `/sites/${ siteSlug }/` );
 
 		return next( { ...options, path, apiNamespace: 'wp/v2' } );
+	}
+
+	// wpcom/v2 namespace mapping
+	//
+	// Path rewrite example:
+	// 		/wpcom/v2/publicize/connection-test-results →
+	//		/wpcom/v2/sites/example.wordpress.com/publicize/connection-test-results
+	if ( /\/wpcom\/v2\//.test( options.path ) ) {
+		const path = options.path.replace( '/wpcom/v2/', `/sites/${ siteSlug }/` );
+
+		return next( { ...options, path, apiNamespace: 'wpcom/v2' } );
 	}
 
 	/*
@@ -192,7 +196,7 @@ const wpcomProxyMiddleware = options => {
 };
 
 // Utility function to apply all required API middleware in correct order.
-export const applyAPIMiddleware = siteSlug => {
+export const applyAPIMiddleware = getSiteSlug => {
 	// First middleware in, last out.
 
 	// This call intentionally breaks the middleware chain.
@@ -200,7 +204,7 @@ export const applyAPIMiddleware = siteSlug => {
 
 	apiFetch.use( debugMiddleware );
 
-	apiFetch.use( partialRight( wpcomPathMappingMiddleware, siteSlug ) );
+	apiFetch.use( wpcomPathMappingMiddleware( getSiteSlug ) );
 
 	//depends on wpcomPathMappingMiddleware
 	apiFetch.use( apiFetch.fetchAllMiddleware );

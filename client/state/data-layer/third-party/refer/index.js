@@ -12,7 +12,7 @@ import { http } from 'state/http/actions';
 import { AFFILIATE_REFERRAL } from 'state/action-types';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 const whitelistedEventProps = [
 	'status',
@@ -82,5 +82,5 @@ const fromApi = ( { status, body: { success, message, data } } ) => ( {
 } );
 
 registerHandlers( 'state/data-layer/third-party/refer', {
-	[ AFFILIATE_REFERRAL ]: [ dispatchRequestEx( { fetch, fromApi, onSuccess, onError } ) ],
+	[ AFFILIATE_REFERRAL ]: [ dispatchRequest( { fetch, fromApi, onSuccess, onError } ) ],
 } );

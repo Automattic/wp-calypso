@@ -89,6 +89,22 @@ function createProgressHandler() {
 	};
 }
 
+// Disable unsafe cssnano optimizations like renaming animations or rebasing z-indexes. These
+// optimizations don't work across independently minified stylesheets. As we minify each webpack
+// CSS chunk individually and then load multiple chunks into one document, the optimized names
+// conflict with each other, e.g., multiple animations named `a` or z-indexes starting from 1.
+// TODO: upgrade cssnano from v3 to v4. In v3, all optimizations, including unsafe ones, run by
+// default and need to be disabled explicitly as we do here. In v4, there is a new concept of
+// 'presets' and unsafe optimizations are opt-in rather than opt-out. The `default` preset enables
+// only the safe ones. https://cssnano.co/guides/optimisations
+const cssnanoOptions = {
+	autoprefixer: false,
+	discardUnused: false,
+	mergeIdents: false,
+	reduceIdents: false,
+	zindex: false,
+};
+
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
  * {
@@ -273,11 +289,6 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					],
 				},
 				{
-					test: /extensions[\/\\]index/,
-					exclude: path.join( __dirname, 'node_modules' ),
-					loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
-				},
-				{
 					include: path.join( __dirname, 'client/sections.js' ),
 					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
 				},
@@ -327,7 +338,6 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 			! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
 			new webpack.DefinePlugin( {
 				'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
-				BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
 				PROJECT_NAME: JSON.stringify( config( 'project' ) ),
 				global: 'window',
 			} ),
@@ -339,7 +349,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				rtlEnabled: true,
 			} ),
 			new WebpackRTLPlugin( {
-				minify: ! isDevelopment,
+				minify: isDevelopment ? false : cssnanoOptions,
 			} ),
 			new AssetsWriter( {
 				filename: 'assets.json',

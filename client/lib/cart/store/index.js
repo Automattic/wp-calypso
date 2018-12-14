@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { assign, flow, flowRight, partialRight } from 'lodash';
+import { assign, flow, flowRight, get, partialRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,17 +16,31 @@ import {
 	CART_ITEMS_ADD,
 	CART_PRIVACY_PROTECTION_ADD,
 	CART_PRIVACY_PROTECTION_REMOVE,
+	CART_TAX_COUNTRY_CODE_SET,
+	CART_TAX_POSTAL_CODE_SET,
 	GOOGLE_APPS_REGISTRATION_DATA_ADD,
+	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
+	TRANSACTION_PAYMENT_SET,
 } from 'lib/upgrades/action-types';
 import emitter from 'lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
 import PollerPool from 'lib/data-poller';
-import { recordEvents } from './cart-analytics';
+import { recordEvents, recordUnrecognizedPaymentMethod } from './cart-analytics';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
 import Dispatcher from 'dispatcher';
-import { applyCoupon, removeCoupon, cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
+import {
+	applyCoupon,
+	removeCoupon,
+	cartItems,
+	fillInAllCartItemAttributes,
+	setTaxCountryCode,
+	setTaxPostalCode,
+	setTaxLocation,
+} from 'lib/cart-values';
 import wp from 'lib/wp';
+
+import { extractStoredCardMetaValue } from 'state/ui/payment/reducer';
 
 const wpcom = wp.undocumented();
 
@@ -150,6 +164,52 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 
 		case CART_ITEM_REPLACE:
 			update( cartItems.replaceItem( action.oldItem, action.newItem ) );
+			break;
+
+		case TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
+			{
+				// typically set one or the other (or neither)
+				const countryCode = get( action, 'rawDetails.country' );
+				const postalCode = get( action, 'rawDetails.postal-code' );
+				postalCode && update( setTaxPostalCode( postalCode ) );
+				countryCode && update( setTaxCountryCode( countryCode ) );
+			}
+			break;
+
+		case TRANSACTION_PAYMENT_SET:
+			{
+				let postalCode, countryCode;
+
+				const paymentMethod = get( action, [ 'payment', 'paymentMethod' ] );
+				switch ( paymentMethod ) {
+					case 'WPCOM_Billing_MoneyPress_Stored':
+						postalCode = extractStoredCardMetaValue( action, 'card_zip' );
+						countryCode = extractStoredCardMetaValue( action, 'country_code' );
+						break;
+					case 'WPCOM_Billing_MoneyPress_Paygate':
+						const paymentDetails = get( action, 'payment.newCardDetails', {} );
+						postalCode = paymentDetails[ 'postal-code' ];
+						countryCode = paymentDetails.country;
+						break;
+					case 'WPCOM_Billing_WPCOM':
+						postalCode = null;
+						countryCode = null;
+						break;
+					default:
+						recordUnrecognizedPaymentMethod( action );
+						postalCode = null;
+						countryCode = null;
+				}
+				update( setTaxLocation( { postalCode, countryCode } ) );
+			}
+			break;
+
+		case CART_TAX_COUNTRY_CODE_SET:
+			update( setTaxCountryCode( action.countryCode ) );
+			break;
+
+		case CART_TAX_POSTAL_CODE_SET:
+			update( setTaxPostalCode( action.postalCode ) );
 			break;
 	}
 } );

@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { updateConciergeInitial } from 'state/concierge/actions';
 import { errorNotice } from 'state/notices/actions';
 import { CONCIERGE_INITIAL_REQUEST } from 'state/action-types';
@@ -37,7 +37,7 @@ export const showConciergeInitialFetchError = () => conciergeInitialFetchError()
 
 registerHandlers( 'state/data-layer/wpcom/concierge/schedules/initial/index.js', {
 	[ CONCIERGE_INITIAL_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchConciergeInitial,
 			onSuccess: storeFetchedConciergeInitial,
 			onError: showConciergeInitialFetchError,

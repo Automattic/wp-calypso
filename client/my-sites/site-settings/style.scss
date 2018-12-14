@@ -86,7 +86,7 @@
 		font-size: 13px;
 		font-style: italic;
 		font-weight: 400;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 
 		&.is-indented {
 			margin-left: 24px;
@@ -101,7 +101,7 @@
 
 	p.settings-alert {
 		font-weight: 400;
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	ul li,
@@ -157,13 +157,13 @@
 	}
 
 	.verification-code-error {
-		color: $alert-red;
+		color: var( --color-error );
 		font-weight: bold;
 	}
 
 	.seo-settings__seo-form .counted-textarea {
 		&.is-exceeding-acceptable-length {
-			background: $alert-yellow;
+			background: var( --color-warning );
 		}
 	}
 
@@ -397,11 +397,11 @@
 		}
 
 		.gridicons-checkmark {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 
 		.gridicons-notice-outline {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 	}
 
@@ -471,7 +471,7 @@
 
 button.site-settings__general-settings-set-guessed-timezone.button.is-borderless.is-compact {
 	text-decoration: underline;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	font-style: inherit;
 	font-weight: 400;
 

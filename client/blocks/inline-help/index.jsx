@@ -25,6 +25,8 @@ import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
+import { showInlineHelpPopover, hideInlineHelpPopover } from 'state/inline-help/actions';
+import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
 
 /**
  * Module variables
@@ -42,14 +44,15 @@ const InlineHelpPopover = props => (
 class InlineHelp extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
+		isPopoverVisible: PropTypes.bool.isRequired,
 	};
 
 	static defaultProps = {
 		translate: identity,
+		isPopoverVisible: false,
 	};
 
 	state = {
-		showInlineHelp: false,
 		showChecklistNotification: false,
 		storedTask: null,
 	};
@@ -66,7 +69,7 @@ class InlineHelp extends Component {
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.isHappychatOpen && nextProps.isHappychatOpen ) {
 			this.closeInlineHelp();
 		}
@@ -83,9 +86,7 @@ class InlineHelp extends Component {
 	};
 
 	toggleInlineHelp = () => {
-		const { showInlineHelp } = this.state;
-
-		if ( showInlineHelp ) {
+		if ( this.props.isPopoverVisible ) {
 			this.closeInlineHelp();
 		} else {
 			this.showInlineHelp();
@@ -95,13 +96,13 @@ class InlineHelp extends Component {
 	showInlineHelp = () => {
 		debug( 'showing inline help.' );
 		this.props.recordTracksEvent( 'calypso_inlinehelp_show' );
-		this.setState( { showInlineHelp: true } );
+		this.props.showInlineHelpPopover();
 	};
 
 	closeInlineHelp = () => {
 		debug( 'hiding inline help.' );
 		this.props.recordTracksEvent( 'calypso_inlinehelp_close' );
-		this.setState( { showInlineHelp: false } );
+		this.props.hideInlineHelpPopover();
 	};
 
 	handleHelpButtonClicked = () => {
@@ -144,18 +145,11 @@ class InlineHelp extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
-		const {
-			showInlineHelp,
-			showDialog,
-			videoLink,
-			dialogType,
-			showChecklistNotification,
-			storedTask,
-		} = this.state;
+		const { translate, isPopoverVisible } = this.props;
+		const { showDialog, videoLink, dialogType, showChecklistNotification, storedTask } = this.state;
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
-			'is-active': showInlineHelp,
+			'is-active': isPopoverVisible,
 			'has-notification': showChecklistNotification,
 		};
 
@@ -184,7 +178,7 @@ class InlineHelp extends Component {
 				>
 					<Gridicon icon="help-outline" size={ 36 } />
 				</Button>
-				{ showInlineHelp && (
+				{ isPopoverVisible && (
 					<InlineHelpPopover
 						context={ this.inlineHelpToggle }
 						onClose={ this.closeInlineHelp }
@@ -230,11 +224,14 @@ const mapStateToProps = state => {
 	return {
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
+		isPopoverVisible: isInlineHelpPopoverVisible( state ),
 	};
 };
 
 const mapDispatchToProps = {
 	recordTracksEvent,
+	showInlineHelpPopover,
+	hideInlineHelpPopover,
 };
 
 export default connect(

@@ -1,15 +1,16 @@
 /**
  * General styles
+ *
  */
 
 .wpcom-site__logo {
 	fill: $gray-lighten-20;
 	position: fixed;
-		top: 50%;
-		left: 50%;
+	top: 50%;
+	left: 50%;
 	transform: translate( -50%, -50% );
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		width: 100px;
 		height: 100px;
 	}
@@ -27,15 +28,24 @@
 	z-index: z-index( 'root', '.wpcom-site__global-noscript' );
 }
 
-
 /* =Global
 ----------------------------------------------- */
 
-@-webkit-viewport { width : device-width; }
-@-moz-viewport { width : device-width; }
-@-ms-viewport { width : device-width; }
-@-o-viewport { width : device-width; }
-@viewport { width : device-width; }
+@-webkit-viewport {
+	width: device-width;
+}
+@-moz-viewport {
+	width: device-width;
+}
+@-ms-viewport {
+	width: device-width;
+}
+@-o-viewport {
+	width: device-width;
+}
+@viewport {
+	width: device-width;
+}
 
 // make sure layout can fill the viewport
 html,
@@ -45,7 +55,7 @@ body,
 }
 
 * {
-	-webkit-tap-highlight-color: rgba( 0, 0, 0, 0);
+	-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
 }
 
 body {
@@ -54,9 +64,14 @@ body {
 
 	// This fixes an issue with the `click-outside` package not working on mobile.
 	// Specifically, this makes clicking outside a popover work on touch devices. -shaun
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		cursor: pointer;
 	}
+}
+
+.layout {
+	background: var( --color-surface-backdrop );
+	color: var( --color-text );
 }
 
 ::selection {
@@ -88,14 +103,14 @@ body.rtl,
 }
 
 /*rtl:ignore*/
-:lang(he) body.rtl,
-:lang(he) .rtl button,
-:lang(he) .rtl input,
-:lang(he) .rtl select,
-:lang(he) .rtl textarea,
-:lang(he) .rtl .button,
-:lang(he) .rtl #footer,
-:lang(he) .rtl #footer a.readmore {
+:lang( he ) body.rtl,
+:lang( he ) .rtl button,
+:lang( he ) .rtl input,
+:lang( he ) .rtl select,
+:lang( he ) .rtl textarea,
+:lang( he ) .rtl .button,
+:lang( he ) .rtl #footer,
+:lang( he ) .rtl #footer a.readmore {
 	font-family: $sans;
 }
 
@@ -126,11 +141,16 @@ body {
 noscript {
 	text-align: center;
 	margin-top: 3em;
-	display:block;
+	display: block;
 }
 
 /* Headings */
-h1,h2,h3,h4,h5,h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
 	clear: both;
 }
 hr {
@@ -144,7 +164,8 @@ hr {
 p {
 	margin-bottom: 1.5em;
 }
-ul, ol {
+ul,
+ol {
 	margin: 0 0 1.5em 3em;
 }
 ul {
@@ -153,7 +174,10 @@ ul {
 ol {
 	list-style: decimal;
 }
-ul ul, ol ol, ul ol, ol ul {
+ul ul,
+ol ol,
+ul ol,
+ol ul {
 	margin-bottom: 0;
 	margin-left: 1.5em;
 }
@@ -163,10 +187,14 @@ dt {
 dd {
 	margin: 0 1.5em 1.5em;
 }
-b, strong {
+b,
+strong {
 	font-weight: 600;
 }
-dfn, cite, em, i {
+dfn,
+cite,
+em,
+i {
 	font-style: italic;
 }
 blockquote {
@@ -188,16 +216,21 @@ pre {
 	overflow: auto;
 	max-width: 100%;
 }
-code, kbd, tt, var {
+code,
+kbd,
+tt,
+var {
 	font: 15px $code;
 }
-abbr, acronym {
+abbr,
+acronym {
 	border-bottom: 1px dotted $gray-darken-20;
 	cursor: help;
 	// Prevent double underline in Chrome
 	text-decoration: none;
 }
-mark, ins {
+mark,
+ins {
 	background: lighten( $alert-yellow, 23% );
 	text-decoration: none;
 }
@@ -218,7 +251,10 @@ th {
 	font-weight: 600;
 }
 
-.hide, .hidden { display: none; }
+.hide,
+.hidden {
+	display: none;
+}
 
 /* Links */
 a,
@@ -236,11 +272,10 @@ a:active {
 .link--caution:visited,
 .is-link.link--caution,
 .is-link.link--caution:visited {
-
 	&,
 	&:hover,
 	&:focus,
-	&:active  {
+	&:active {
 		color: $alert-red;
 	}
 }

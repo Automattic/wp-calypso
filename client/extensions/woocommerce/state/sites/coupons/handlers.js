@@ -22,16 +22,7 @@ import { couponDeleted, couponUpdated, couponsUpdated } from './actions';
 
 const debug = debugFactory( 'woocommerce:coupons' );
 
-export default {
-	[ WOOCOMMERCE_COUPONS_REQUEST ]: [
-		dispatchRequest( requestCoupons, requestCouponsSuccess, apiError ),
-	],
-	[ WOOCOMMERCE_COUPON_CREATE ]: [ dispatchRequest( couponCreate, couponCreateSuccess, apiError ) ],
-	[ WOOCOMMERCE_COUPON_UPDATE ]: [ dispatchRequest( couponUpdate, couponUpdateSuccess, apiError ) ],
-	[ WOOCOMMERCE_COUPON_DELETE ]: [ dispatchRequest( couponDelete, couponDeleteSuccess, apiError ) ],
-};
-
-export function requestCoupons( { dispatch }, action ) {
+export function requestCoupons( action ) {
 	const { siteId, params } = action;
 	const paramString = Object.keys( params )
 		.map(
@@ -40,10 +31,10 @@ export function requestCoupons( { dispatch }, action ) {
 		.join( '&' );
 	const path = `coupons?${ paramString }`;
 
-	dispatch( request( siteId, action ).getWithHeaders( path ) );
+	return request( siteId, action ).getWithHeaders( path );
 }
 
-export function requestCouponsSuccess( { dispatch }, action, { data } ) {
+export function requestCouponsSuccess( action, { data } ) {
 	const { siteId, params } = action;
 	const { body, headers } = data;
 	const totalPages = Number( headers[ 'X-WP-TotalPages' ] );
@@ -56,52 +47,56 @@ export function requestCouponsSuccess( { dispatch }, action, { data } ) {
 		return;
 	}
 
-	dispatch( couponsUpdated( siteId, params, body, totalPages, totalCoupons ) );
+	return couponsUpdated( siteId, params, body, totalPages, totalCoupons );
 }
 
-export function couponCreate( { dispatch }, action ) {
+export function couponCreate( action ) {
 	const { siteId, coupon } = action;
 	const path = 'coupons';
 
-	dispatch( request( siteId, action ).post( path, coupon ) );
+	return request( siteId, action ).post( path, coupon );
 }
 
-export function couponCreateSuccess( { dispatch }, action ) {
-	dispatch( couponUpdated( action.siteId, action.coupon ) );
+export function couponCreateSuccess( action ) {
+	const actions = [ couponUpdated( action.siteId, action.coupon ) ];
 	if ( action.successAction ) {
-		dispatch( action.successAction );
+		actions.push( action.successAction );
 	}
+
+	return actions;
 }
 
-export function couponUpdate( { dispatch }, action ) {
+export function couponUpdate( action ) {
 	const { siteId, coupon } = action;
 	const path = `coupons/${ coupon.id }`;
 
-	dispatch( request( siteId, action ).put( path, coupon ) );
+	return request( siteId, action ).put( path, coupon );
 }
 
-export function couponUpdateSuccess( { dispatch }, action ) {
-	dispatch( couponUpdated( action.siteId, action.coupon ) );
+export function couponUpdateSuccess( action ) {
+	const actions = [ couponUpdated( action.siteId, action.coupon ) ];
 	if ( action.successAction ) {
-		dispatch( action.successAction );
+		actions.push( action.successAction );
 	}
+	return actions;
 }
 
-export function couponDelete( { dispatch }, action ) {
+export function couponDelete( action ) {
 	const { siteId, couponId } = action;
 	const path = `coupons/${ couponId }?force=true`;
 
-	dispatch( request( siteId, action ).del( path ) );
+	return request( siteId, action ).del( path );
 }
 
-export function couponDeleteSuccess( { dispatch }, action ) {
-	dispatch( couponDeleted( action.siteId, action.couponId ) );
+export function couponDeleteSuccess( action ) {
+	const actions = [ couponDeleted( action.siteId, action.couponId ) ];
 	if ( action.successAction ) {
-		dispatch( action.successAction );
+		actions.push( action.successAction );
 	}
+	return actions;
 }
 
-function apiError( { dispatch }, action, error ) {
+function apiError( action, error ) {
 	warn( 'Coupon API Error: ', error );
 
 	const { failureAction } = action;
@@ -110,10 +105,10 @@ function apiError( { dispatch }, action, error ) {
 	}
 
 	if ( isFunction( failureAction ) ) {
-		dispatch( failureAction( error ) );
-	} else {
-		dispatch( failureAction );
+		return failureAction( error );
 	}
+
+	return failureAction;
 }
 
 function isValidCouponsArray( coupons ) {
@@ -133,3 +128,34 @@ function isValidCouponsArray( coupons ) {
 function isValidCoupon( coupon ) {
 	return coupon && coupon.id && 'number' === typeof coupon.id && 'string' === typeof coupon.code;
 }
+
+export default {
+	[ WOOCOMMERCE_COUPONS_REQUEST ]: [
+		dispatchRequest( {
+			fetch: requestCoupons,
+			onSuccess: requestCouponsSuccess,
+			onError: apiError,
+		} ),
+	],
+	[ WOOCOMMERCE_COUPON_CREATE ]: [
+		dispatchRequest( {
+			fetch: couponCreate,
+			onSuccess: couponCreateSuccess,
+			onError: apiError,
+		} ),
+	],
+	[ WOOCOMMERCE_COUPON_UPDATE ]: [
+		dispatchRequest( {
+			fetch: couponUpdate,
+			onSuccess: couponUpdateSuccess,
+			onError: apiError,
+		} ),
+	],
+	[ WOOCOMMERCE_COUPON_DELETE ]: [
+		dispatchRequest( {
+			fetch: couponDelete,
+			onSuccess: couponDeleteSuccess,
+			onError: apiError,
+		} ),
+	],
+};

@@ -1,4 +1,3 @@
-/** @format */
 
 .transfer-domain-step {
 	padding: 0;
@@ -39,7 +38,7 @@
 	}
 
 	.domain-suggestion.card {
-		border-left: 3px solid $alert-green;
+		border-left: 3px solid var( --color-success );
 	}
 }
 
@@ -174,7 +173,7 @@
 		.transfer-domain-step__section-heading-number {
 			background: none;
 			border: none;
-			color: $alert-green;
+			color: var( --color-success );
 
 			.gridicon {
 				margin-left: -4px;
@@ -210,19 +209,19 @@
 
 	&.transfer-domain-step__unlocked,
 	&.transfer-domain-step__auth-code-valid {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 
 	&.transfer-domain-step__locked {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	&.transfer-domain-step__unknown {
-		color: $alert-yellow;
+		color: var( --color-warning );
 	}
 
 	&.transfer-domain-step__refresh {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		cursor: pointer;
 	}
 }
@@ -283,7 +282,7 @@ input {
 		small {
 			font-size: 14px;
 			padding-left: 10px;
-			color: $blue-wordpress;
+			color: var( --color-primary );
 		}
 
 		color: $gray-dark;

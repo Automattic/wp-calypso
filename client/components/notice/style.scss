@@ -19,28 +19,28 @@
 	// Success!
 	&.is-success {
 		.notice__icon-wrapper {
-			background: $alert-green;
+			background: var( --color-success );
 		}
 	}
 
 	// Warning
 	&.is-warning {
 		.notice__icon-wrapper {
-			background: $alert-yellow;
+			background: var( --color-warning );
 		}
 	}
 
 	// Error! OHNO!
 	&.is-error {
 		.notice__icon-wrapper {
-			background: $alert-red;
+			background: var( --color-error );
 		}
 	}
 
 	// General notice
 	&.is-info {
 		.notice__icon-wrapper {
-			background: $blue-medium;
+			background: var( --color-accent );
 		}
 	}
 

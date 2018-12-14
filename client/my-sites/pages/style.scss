@@ -1,4 +1,3 @@
-/** @format */
 
 // Page list
 
@@ -157,7 +156,7 @@
 .page__delete-item.popover__menu-item {
 	&:hover,
 	&:focus {
-		background-color: $alert-red;
+		background-color: var( --color-error );
 		border: 0;
 		box-shadow: none;
 		color: $white;

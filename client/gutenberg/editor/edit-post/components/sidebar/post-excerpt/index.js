@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,16 +33,15 @@ function PostExcerpt( { isEnabled, isOpened, onTogglePanel } ) {
 }
 
 export default compose( [
-	withSelect( ( select ) => {
+	withSelect( select => {
 		return {
 			isEnabled: select( 'core/edit-post' ).isEditorPanelEnabled( PANEL_NAME ),
 			isOpened: select( 'core/edit-post' ).isEditorPanelOpened( PANEL_NAME ),
 		};
 	} ),
-	withDispatch( ( dispatch ) => ( {
+	withDispatch( dispatch => ( {
 		onTogglePanel() {
 			return dispatch( 'core/edit-post' ).toggleEditorPanelOpened( PANEL_NAME );
 		},
 	} ) ),
 ] )( PostExcerpt );
-

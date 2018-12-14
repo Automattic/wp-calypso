@@ -85,10 +85,9 @@ export function ebanxFieldRules( country ) {
 				description: i18n.translate( 'City' ),
 				rules: [ 'required' ],
 			},
-
 			'phone-number': {
 				description: i18n.translate( 'Phone Number' ),
-				rules: [ 'required' ],
+				rules: [ 'required', 'validPhone' ],
 			},
 
 			'postal-code': {

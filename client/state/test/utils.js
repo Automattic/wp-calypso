@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { testSchema } from './mocks/schema';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import {
 	cachingActionCreatorFactory,
 	createReducer,
@@ -1043,6 +1043,40 @@ describe( 'addReducer', () => {
 			} ).toThrow( "New reducer can be added only into a reducer created with 'combineReducers'" );
 		} );
 	} );
+
+	describe( 'interaction with persistence', () => {
+		const persistedToyReducer = initialState =>
+			withSchemaValidation( { type: 'string' }, toyReducer( initialState ) );
+
+		test( 'storageKey survives adding a new reducer', () => {
+			const origReducer = withStorageKey(
+				'foo',
+				combineReducers( {
+					a: withStorageKey(
+						'keyA',
+						combineReducers( {
+							b: persistedToyReducer( 'Hello from keyA.b' ),
+						} )
+					),
+				} )
+			);
+
+			const newReducer = origReducer.addReducer(
+				[ 'a', 'c' ],
+				persistedToyReducer( 'Hello from keyA.c' )
+			);
+
+			const state = newReducer( undefined, { type: 'INIT' } );
+			const serializedState = newReducer( state, { type: 'SERIALIZE' } );
+
+			expect( serializedState.get() ).toEqual( {
+				keyA: {
+					b: 'Hello from keyA.b',
+					c: 'Hello from keyA.c',
+				},
+			} );
+		} );
+	} );
 } );
 
 describe( 'withStorageKey', () => {
@@ -1072,5 +1106,76 @@ describe( 'withStorageKey', () => {
 			root: { posts: 'postsState' },
 			readerKey: 'readerState',
 		} );
+	} );
+} );
+
+describe( 'applyStoredState', () => {
+	// factory to manufacture toy reducers with custom persistence
+	const toyReducer = () => {
+		const r = ( state = null ) => state;
+		r.hasCustomPersistence = true;
+		return r;
+	};
+
+	test( 'stored state is correctly implanted into the right location', () => {
+		const reducer = combineReducers( {
+			a: toyReducer(),
+			b: withStorageKey( 'B', toyReducer() ),
+		} );
+		const action = { type: APPLY_STORED_STATE, storageKey: 'B', storedState: 'b+' };
+		const state = {
+			a: 'a',
+			b: 'b',
+		};
+		expect( reducer( state, action ) ).toEqual( {
+			a: 'a',
+			b: 'b+',
+		} );
+	} );
+
+	test( 'stored state is correctly implanted into a nested location', () => {
+		const reducer = combineReducers( {
+			a: toyReducer(),
+			b: combineReducers( {
+				c: toyReducer(),
+				d: withStorageKey( 'D', toyReducer() ),
+			} ),
+		} );
+		const action = { type: APPLY_STORED_STATE, storageKey: 'D', storedState: 'd+' };
+		const state = {
+			a: 'a',
+			b: {
+				c: 'c',
+				d: 'd',
+			},
+		};
+		expect( reducer( state, action ) ).toEqual( {
+			a: 'a',
+			b: {
+				c: 'c',
+				d: 'd+',
+			},
+		} );
+	} );
+
+	test( "implanting a stored state doesn't change identity of other state trees", () => {
+		const reducer = combineReducers( {
+			a: combineReducers( {
+				b: toyReducer(),
+				c: toyReducer(),
+			} ),
+			d: withStorageKey( 'D', toyReducer() ),
+		} );
+		const action = { type: APPLY_STORED_STATE, storageKey: 'D', storedState: 'd+' };
+		const prevState = {
+			a: {
+				b: 'b',
+				c: 'c',
+			},
+			d: 'd',
+		};
+		const nextState = reducer( prevState, action );
+		expect( nextState.a ).toBe( prevState.a ); // identical objects
+		expect( nextState.d ).toBe( 'd+' ); // stored state got implanted
 	} );
 } );

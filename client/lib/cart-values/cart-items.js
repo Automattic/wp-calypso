@@ -58,9 +58,10 @@ import { domainProductSlugs } from 'lib/domains/constants';
 import {
 	getTermDuration,
 	getPlan,
+	isBloggerPlan,
+	isBusinessPlan,
 	isPersonalPlan,
 	isPremiumPlan,
-	isBusinessPlan,
 	isWpComFreePlan,
 	isWpComBloggerPlan,
 } from 'lib/plans';
@@ -1044,6 +1045,10 @@ export function hasToUpgradeToPayForADomain( selectedSite, cart ) {
 	return false;
 }
 
+export function isDomainMappingFree( selectedSite ) {
+	return selectedSite && isPlan( selectedSite.plan ) && ! isBloggerPlan( selectedSite.plan );
+}
+
 export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion, isDomainOnly ) {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
@@ -1051,6 +1056,16 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 
 	if ( isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) {
 		return 'FREE_WITH_PLAN';
+	}
+
+	if ( isDomainMapping( suggestion ) ) {
+		if ( isDomainMappingFree( selectedSite ) ) {
+			return 'FREE_WITH_PLAN';
+		}
+
+		if ( withPlansOnly ) {
+			return 'INCLUDED_IN_HIGHER_PLAN';
+		}
 	}
 
 	if ( isDomainOnly ) {

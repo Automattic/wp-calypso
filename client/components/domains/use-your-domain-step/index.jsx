@@ -16,7 +16,11 @@ import { stringify } from 'qs';
  * Internal dependencies
  */
 import { getProductsList } from 'state/products-list/selectors';
-import { getCurrentUser, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import {
+	currentUserHasFlag,
+	getCurrentUser,
+	getCurrentUserCurrencyCode,
+} from 'state/current-user/selectors';
 import Card from 'components/card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -26,9 +30,14 @@ import Button from 'components/button';
 import { errorNotice } from 'state/notices/actions';
 import QueryProducts from 'components/data/query-products-list';
 import { getDomainPrice, getDomainProductSlug } from 'lib/domains';
-import { isDomainBundledWithPlan, isNextDomainFree } from 'lib/cart-values/cart-items';
+import {
+	isDomainBundledWithPlan,
+	isDomainMappingFree,
+	isNextDomainFree,
+} from 'lib/cart-values/cart-items';
 import formatCurrency from 'lib/format-currency';
 import { isPlan } from 'lib/products-values';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 
 class UseYourDomainStep extends React.Component {
 	static propTypes = {
@@ -162,7 +171,14 @@ class UseYourDomainStep extends React.Component {
 	};
 
 	getMappingPriceText = () => {
-		const { cart, currencyCode, productsList, translate } = this.props;
+		const {
+			cart,
+			currencyCode,
+			domainsWithPlansOnly,
+			productsList,
+			selectedSite,
+			translate,
+		} = this.props;
 		const { searchQuery } = this.state;
 
 		let mappingProductPrice;
@@ -173,9 +189,17 @@ class UseYourDomainStep extends React.Component {
 			mappingProductPrice += ' per year plus registration costs at your current provider';
 		}
 
-		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
+		if (
+			isDomainMappingFree( selectedSite ) ||
+			isNextDomainFree( cart ) ||
+			isDomainBundledWithPlan( cart, searchQuery )
+		) {
 			mappingProductPrice = translate(
 				'Free with your plan, but registration costs at your current provider still apply'
+			);
+		} else if ( domainsWithPlansOnly ) {
+			mappingProductPrice = translate(
+				'Included in paid plans, but registration costs at your current provider still apply'
 			);
 		}
 
@@ -290,7 +314,7 @@ class UseYourDomainStep extends React.Component {
 			translate( "Requires changes to the domain's DNS" ),
 			this.getMappingPriceText(),
 		];
-		const buttonText = translate( 'Buy Domain Mapping' );
+		const buttonText = translate( 'Map Your Domain' );
 		const learnMore = translate( '{{a}}Learn more about domain mapping{{/a}}', {
 			components: {
 				a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
@@ -347,6 +371,7 @@ export default connect(
 	state => ( {
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
+		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 		selectedSite: getSelectedSite( state ),
 		productsList: getProductsList( state ),
 	} ),

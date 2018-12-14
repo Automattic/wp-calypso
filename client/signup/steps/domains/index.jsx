@@ -40,6 +40,7 @@ import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getDomainProductSlug } from 'lib/domains';
 import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
+import { getSuggestionsVendor } from 'lib/domains/suggestions';
 
 /**
  * Style dependencies
@@ -369,7 +370,7 @@ class DomainsStep extends React.Component {
 				surveyVertical={ this.props.surveyVertical }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
-				vendor="domainsbot"
+				vendor={ getSuggestionsVendor() }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 			/>
 		);

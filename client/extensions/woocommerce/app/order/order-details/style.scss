@@ -1,4 +1,3 @@
-/** @format */
 .order-details__table {
 	margin: 0 -24px;
 	box-shadow: none;
@@ -7,13 +6,13 @@
 	.order-details__item-sku {
 		display: block;
 		margin-top: 6px;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		font-size: 11px;
 		text-transform: uppercase;
 	}
 
 	&.is-editing .order-details__item-tax {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		font-style: italic;
 	}
 
@@ -197,7 +196,7 @@
 		}
 
 		.order-details__totals-tax {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 			font-style: italic;
 		}
 	}

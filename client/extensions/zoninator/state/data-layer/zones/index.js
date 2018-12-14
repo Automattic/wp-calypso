@@ -6,7 +6,6 @@
 
 import { translate } from 'i18n-calypso';
 import { initialize, startSubmit, stopSubmit } from 'redux-form';
-import { reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +16,7 @@ import { errorNotice, removeNotice, successNotice } from 'state/notices/actions'
 import { navigate } from 'state/ui/actions';
 import { resetLock } from '../../locks/actions';
 import { requestZones, requestError, updateZone, updateZones } from '../../zones/actions';
-import { fromApi } from './utils';
+import { zoneFromApi, zonesListFromApi } from './utils';
 import {
 	ZONINATOR_ADD_ZONE,
 	ZONINATOR_DELETE_ZONE,
@@ -30,160 +29,126 @@ const settingsPath = '/extensions/zoninator';
 const saveZoneNotice = 'zoninator-zone-create';
 const deleteZoneNotice = 'zoninator-zone-delete';
 
-export const requestZonesList = ( { dispatch }, action ) => {
-	const { siteId } = action;
+export const requestZonesList = action =>
+	http(
+		{
+			method: 'GET',
+			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
+			query: { path: '/zoninator/v1/zones' },
+		},
+		action
+	);
 
-	dispatch(
-		http(
-			{
-				method: 'GET',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
-				query: {
-					path: '/zoninator/v1/zones',
-				},
+export const requestZonesError = action => requestError( action.siteId );
+
+export const updateZonesList = ( action, zonesList ) => updateZones( action.siteId, zonesList );
+
+export const createZone = action => [
+	startSubmit( action.form ),
+	removeNotice( saveZoneNotice ),
+	http(
+		{
+			method: 'POST',
+			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
+			query: {
+				body: JSON.stringify( action.data ),
+				json: true,
+				path: '/zoninator/v1/zones',
 			},
-			action
-		)
-	);
-};
+		},
+		action
+	),
+];
 
-export const requestZonesError = ( { dispatch }, { siteId } ) => dispatch( requestError( siteId ) );
-
-export const updateZonesList = ( { dispatch }, { siteId }, { data } ) =>
-	dispatch(
-		updateZones(
-			siteId,
-			reduce(
-				data,
-				( zones, rawZone ) => {
-					const zone = fromApi( rawZone );
-					zones[ zone.id ] = zone;
-					return zones;
-				},
-				{}
-			)
-		)
-	);
-
-export const createZone = ( { dispatch }, action ) => {
-	const { data, form, siteId } = action;
-
-	dispatch( startSubmit( form ) );
-	dispatch( removeNotice( saveZoneNotice ) );
-	dispatch(
-		http(
-			{
-				method: 'POST',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
-				query: {
-					body: JSON.stringify( data ),
-					json: true,
-					path: '/zoninator/v1/zones',
-				},
+export const saveZone = action => [
+	startSubmit( action.form ),
+	removeNotice( saveZoneNotice ),
+	resetLock( action.siteId, action.zoneId ),
+	http(
+		{
+			method: 'POST',
+			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
+			query: {
+				body: JSON.stringify( action.data ),
+				json: true,
+				path: `/zoninator/v1/zones/${ action.zoneId }&_method=PUT`,
 			},
-			action
-		)
-	);
-};
+		},
+		action
+	),
+];
 
-export const saveZone = ( { dispatch }, action ) => {
-	const { data, form, siteId, zoneId } = action;
+const announceZoneSaved = ( action, zone ) => [
+	stopSubmit( action.form ),
+	updateZone( action.siteId, zone.id, zone ),
+	successNotice( translate( 'Zone saved!' ), { id: saveZoneNotice } ),
+];
 
-	dispatch( startSubmit( form ) );
-	dispatch( removeNotice( saveZoneNotice ) );
-	dispatch( resetLock( siteId, zoneId ) );
-	dispatch(
-		http(
-			{
-				method: 'POST',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
-				query: {
-					body: JSON.stringify( data ),
-					json: true,
-					path: `/zoninator/v1/zones/${ zoneId }&_method=PUT`,
-				},
-			},
-			action
-		)
-	);
-};
+export const handleZoneCreated = ( action, zone ) => [
+	navigate( `${ settingsPath }/zone/${ action.siteSlug }/${ zone.id }` ),
+	...announceZoneSaved( action, zone ),
+];
 
-const announceZoneSaved = ( dispatch, { form, siteId }, zone ) => {
-	dispatch( stopSubmit( form ) );
-	dispatch( updateZone( siteId, zone.id, zone ) );
-	dispatch( successNotice( translate( 'Zone saved!' ), { id: saveZoneNotice } ) );
-};
+export const handleZoneSaved = action => [
+	initialize( action.form, action.data ),
+	...announceZoneSaved( action, action.data ),
+];
 
-export const handleZoneCreated = ( { dispatch }, action, response ) => {
-	const zone = fromApi( response.data );
+export const announceSaveFailure = action => [
+	stopSubmit( action.form ),
+	errorNotice( translate( 'There was a problem saving the zone. Please try again.' ), {
+		id: saveZoneNotice,
+	} ),
+];
 
-	dispatch( navigate( `${ settingsPath }/zone/${ action.siteSlug }/${ zone.id }` ) );
-	announceZoneSaved( dispatch, action, zone );
-};
+export const deleteZone = action => [
+	removeNotice( deleteZoneNotice ),
+	http(
+		{
+			method: 'POST',
+			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
+			query: { path: `/zoninator/v1/zones/${ action.zoneId }&_method=DELETE` },
+		},
+		action
+	),
+];
 
-export const handleZoneSaved = ( { dispatch }, action ) => {
-	const { data, form } = action;
+export const announceZoneDeleted = action => [
+	navigate( `${ settingsPath }/${ action.siteSlug }` ),
+	requestZones( action.siteId ),
+	successNotice( translate( 'The zone has been deleted.' ), { id: deleteZoneNotice } ),
+];
 
-	dispatch( initialize( form, data ) );
-	announceZoneSaved( dispatch, action, data );
-};
+export const announceDeleteFailure = () =>
+	errorNotice( translate( 'The zone could not be deleted. Please try again.' ), {
+		id: deleteZoneNotice,
+	} );
 
-export const announceSaveFailure = ( { dispatch }, { form } ) => {
-	dispatch( stopSubmit( form ) );
-	dispatch(
-		errorNotice( translate( 'There was a problem saving the zone. Please try again.' ), {
-			id: saveZoneNotice,
-		} )
-	);
-};
+const dispatchFetchZonesRequest = dispatchRequest( {
+	fetch: requestZonesList,
+	onSuccess: updateZonesList,
+	onError: requestZonesError,
+	fromApi: zonesListFromApi,
+} );
 
-export const deleteZone = ( { dispatch }, action ) => {
-	const { siteId, zoneId } = action;
+const dispatchAddZoneRequest = dispatchRequest( {
+	fetch: createZone,
+	onSuccess: handleZoneCreated,
+	onError: announceSaveFailure,
+	fromApi: zoneFromApi,
+} );
 
-	dispatch( removeNotice( deleteZoneNotice ) );
-	dispatch(
-		http(
-			{
-				method: 'POST',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
-				query: {
-					path: `/zoninator/v1/zones/${ zoneId }&_method=DELETE`,
-				},
-			},
-			action
-		)
-	);
-};
+const dispatchSaveZoneRequest = dispatchRequest( {
+	fetch: saveZone,
+	onSuccess: handleZoneSaved,
+	onError: announceSaveFailure,
+} );
 
-export const announceZoneDeleted = ( { dispatch }, { siteId, siteSlug } ) => {
-	dispatch( navigate( `${ settingsPath }/${ siteSlug }` ) );
-	dispatch( requestZones( siteId ) );
-	dispatch( successNotice( translate( 'The zone has been deleted.' ), { id: deleteZoneNotice } ) );
-};
-
-export const announceDeleteFailure = ( { dispatch } ) =>
-	dispatch(
-		errorNotice( translate( 'The zone could not be deleted. Please try again.' ), {
-			id: deleteZoneNotice,
-		} )
-	);
-
-const dispatchFetchZonesRequest = dispatchRequest(
-	requestZonesList,
-	updateZonesList,
-	requestZonesError
-);
-const dispatchAddZoneRequest = dispatchRequest(
-	createZone,
-	handleZoneCreated,
-	announceSaveFailure
-);
-const dispatchSaveZoneRequest = dispatchRequest( saveZone, handleZoneSaved, announceSaveFailure );
-const dispatchDeleteZoneRequest = dispatchRequest(
-	deleteZone,
-	announceZoneDeleted,
-	announceDeleteFailure
-);
+const dispatchDeleteZoneRequest = dispatchRequest( {
+	fetch: deleteZone,
+	onSuccess: announceZoneDeleted,
+	onError: announceDeleteFailure,
+} );
 
 export default {
 	[ ZONINATOR_REQUEST_ZONES ]: [ dispatchFetchZonesRequest ],

@@ -20,7 +20,7 @@
 		}
 
 		th {
-			color: $blue-dark;
+			color: var( --color-primary-dark );
 			font-size: 0.75em;
 			padding: 0.25em 3em 0.25em 0;
 		}
@@ -65,5 +65,5 @@
 .readme-viewer__not-available {
 	font-family: $sans;
 	text-align: center;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }

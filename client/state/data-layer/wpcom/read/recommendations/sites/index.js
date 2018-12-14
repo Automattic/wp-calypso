@@ -9,7 +9,7 @@ import { noop } from 'lodash';
  */
 import { READER_RECOMMENDED_SITES_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { receiveRecommendedSites } from 'state/reader/recommended-sites/actions';
 import { decodeEntities } from 'lib/formatting';
 
@@ -42,7 +42,7 @@ export const addRecommendedSites = ( { payload: { seed, offset } }, sites ) =>
 
 registerHandlers( 'state/data-layer/wpcom/read/recommendations/sites/index.js', {
 	[ READER_RECOMMENDED_SITES_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestRecommendedSites,
 			onSuccess: addRecommendedSites,
 			onError: noop,

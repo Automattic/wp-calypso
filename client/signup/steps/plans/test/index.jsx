@@ -49,7 +49,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { PlansStep } from '../index';
+import { PlansStep, isDotBlogDomainRegistration } from '../index';
 import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE,
@@ -280,5 +280,35 @@ describe( 'Plans.onSelectPlan', () => {
 			comp.onSelectPlan( cartItem );
 			expect( cartItem.extra ).toEqual( undefined );
 		} );
+	} );
+} );
+
+describe( 'isDotBlogDomainRegistration()', () => {
+	test( 'should return true for dot blog domain registrations', () => {
+		expect(
+			isDotBlogDomainRegistration( {
+				meta: 'domain.blog',
+				is_domain_registration: true,
+			} )
+		).toBe( true );
+	} );
+
+	test( 'should return false for dot blog domain mapping', () => {
+		expect(
+			isDotBlogDomainRegistration( {
+				meta: 'domain.blog',
+				is_domain_registration: false,
+				is_domain_mapping: true,
+			} )
+		).toBe( false );
+	} );
+
+	test( 'should return false for dot com domain registrations', () => {
+		expect(
+			isDotBlogDomainRegistration( {
+				meta: 'domain.com',
+				is_domain_registration: true,
+			} )
+		).toBe( false );
 	} );
 } );

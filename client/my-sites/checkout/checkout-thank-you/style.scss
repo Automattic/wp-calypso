@@ -93,7 +93,7 @@
 // Header subcomponent styles
 .checkout-thank-you__header {
 	position: relative;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	padding: 12px 24px 48px;
 	text-align: center;
 
@@ -209,13 +209,16 @@
 	}
 }
 
-.checkout-thank-you__verification-notice {
+.checkout-thank-you__verification-notice,
+.checkout-thank-you__verified-required {
 	width: 100%;
 	max-width: 500px;
 	text-align: left;
 	margin: 0 auto;
 }
-
+.checkout-thank-you__verified-required {
+	margin-top: 30px;
+}
 .checkout-thank-you__verification-notice-email {
 	word-break: break-word;
 }
@@ -261,7 +264,7 @@
 }
 
 .checkout-thank-you__jetpack-feature.with-error .checkout-thank-you__jetpack-feature-status-text {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .checkout-thank-you__jetpack-feature-status-icon .spinner,
@@ -270,19 +273,19 @@
 }
 
 .checkout-thank-you__jetpack-feature-status-icon .gridicons-notice-outline {
-	color: $alert-red;
+	color: var( --color-error );
 }
 
 .checkout-thank-you__jetpack {
 	&.is-personal-plan {
 		.checkout-thank-you__jetpack-feature-status-icon .gridicons-checkmark {
-			color: $alert-yellow;
+			color: var( --color-warning );
 		}
 	}
 
 	&.is-premium-plan {
 		.checkout-thank-you__jetpack-feature-status-icon .gridicons-checkmark {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 	}
 
@@ -309,7 +312,7 @@
 }
 
 .checkout-thank-you__jetpack-error-explanation {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 14px;
 	font-style: italic;
 	font-weight: 400;

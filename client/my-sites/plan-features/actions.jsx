@@ -27,6 +27,7 @@ const PlanFeaturesActions = ( {
 	className,
 	currentSitePlan,
 	current = false,
+	forceDisplayButton = false,
 	freePlan = false,
 	manageHref,
 	isLandingPage,
@@ -40,6 +41,7 @@ const PlanFeaturesActions = ( {
 	selectedPlan,
 	recordTracksEvent: trackTracksEvent,
 	translate,
+	...props
 } ) => {
 	let upgradeButton;
 
@@ -97,7 +99,13 @@ const PlanFeaturesActions = ( {
 
 		upgradeButton = (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
-				{ buttonText }
+				{ props.buttonText || buttonText }
+			</Button>
+		);
+	} else if ( ! availableForPurchase && forceDisplayButton ) {
+		upgradeButton = (
+			<Button className={ classes } disabled={ true }>
+				{ props.buttonText }
 			</Button>
 		);
 	}
@@ -111,9 +119,11 @@ const PlanFeaturesActions = ( {
 
 PlanFeaturesActions.propTypes = {
 	availableForPurchase: PropTypes.bool,
+	buttonText: PropTypes.string,
 	canPurchase: PropTypes.bool.isRequired,
 	className: PropTypes.string,
 	current: PropTypes.bool,
+	forceDisplayButton: PropTypes.bool,
 	freePlan: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	isLandingPage: PropTypes.bool,

@@ -8,7 +8,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { HELP_LINKS_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveHelpLinks } from 'state/help/actions';
@@ -45,7 +45,7 @@ export const handleRequestSuccess = ( action, helpLinks ) => receiveHelpLinks( h
 
 registerHandlers( 'state/data-layer/wpcom/help/search/index.js', {
 	[ HELP_LINKS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestHelpLinks,
 			onSuccess: handleRequestSuccess,
 			onError: noop,

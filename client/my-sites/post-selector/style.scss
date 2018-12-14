@@ -42,7 +42,7 @@ input[type=checkbox].post-selector__input {
 		color: $gray-dark;
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 }

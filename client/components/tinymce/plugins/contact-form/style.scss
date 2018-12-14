@@ -3,7 +3,7 @@
 
 		/* override color of the expanded icon on the foldable card */
 		.editor-contact-form-modal-fields .foldable-card.is-expanded .foldable-card__action.foldable-card__expand .gridicon {
-			fill: $blue-medium;
+			fill: var( --color-accent );
 		}
 
 		/* removes the transform on the icon when opening the foldable card */

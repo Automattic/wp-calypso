@@ -51,7 +51,8 @@ export class BrowserURL extends Component {
 			prevProps.postStatus === 'auto-draft' &&
 			! endsWith( currentRoute, `/${ postId }` )
 		) {
-			this.props.replaceHistory( `${ currentRoute }/${ postId }` );
+			//save the current context, to avoid an error noted in https://github.com/Automattic/wp-calypso/pull/28847#issuecomment-442056014
+			this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
 		}
 
 		if ( postStatus === 'trash' && endsWith( currentRoute, `/${ postId }` ) ) {

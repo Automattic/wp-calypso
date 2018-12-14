@@ -1,4 +1,6 @@
-/** @format */
+
+// @TODO: Replace with Gutenberg variables
+$dark-gray-500: #555d66;
 
 .jetpack-publicize-message-box {
 	background-color: #edeff0;
@@ -14,38 +16,70 @@
 	padding-left: 5px;
 }
 
+.jetpack-publicize__connections-list {
+	list-style-type: none;
+	margin: 13px 0;
+}
+
 .publicize-jetpack-connection-container {
 	display: flex;
 }
 
 .jetpack-publicize-gutenberg-social-icon {
-	font-size: 2em;
-	margin-right: 0.2em;
+	fill: $dark-gray-500;
+	margin-right: 5px;
+
+	&.is-facebook {
+		fill: #3957a2;
+	}
+	&.is-twitter {
+		fill: #55acee;
+	}
+	&.is-linkedin {
+		fill: #0976b4;
+	}
+	&.is-tumblr {
+		fill: #35465c;
+	}
+	&.is-google-plus {
+		fill: #df4a33;
+	}
 }
 
 .jetpack-publicize-connection-label {
 	flex: 1;
-	margin-right: 0.25em;
+	margin-right: 5px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+
+	.jetpack-publicize-gutenberg-social-icon,
+	.jetpack-publicize-connection-label-copy {
+		display: inline-block;
+		vertical-align: middle;
+	}
 }
 
 .jetpack-publicize-connection-toggle {
 	margin-top: 3px;
 }
 
-.jetpack-publicize-add-icon {
-	font-family: Dashicons;
-	font-size: 2em;
-	margin-right: 0.2em;
-	color: #555d66;
+.jetpack-publicize-notice {
+	&.components-notice {
+		margin-left: 0;
+		margin-right: 0;
+		margin-bottom: 13px;
+	}
+
+	.components-button + .components-button {
+		margin-top: 5px;
+	}
 }
 
 .jetpack-publicize-message-note {
 	display: inline-block;
 	margin-bottom: 4px;
-	margin-top: 1em;
+	margin-top: 13px;
 }
 
 .jetpack-publicize-add-connection-wrapper {

@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { compact, includes, omit, reduce, get } from 'lodash';
+import { compact, includes, omit, reduce, get, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -31,12 +31,12 @@ import {
 	isSingleUserSite,
 } from 'state/sites/selectors';
 import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
-import canCurrentUser from 'state/selectors/can-current-user';
+import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
-import getEditorUrl from 'state/selectors/get-editor-url';
+import { getEditorUrl as getEditorUrlStateSelector } from 'state/selectors/get-editor-url';
 
 class ManageMenu extends PureComponent {
 	static propTypes = {
@@ -45,11 +45,11 @@ class ManageMenu extends PureComponent {
 		siteId: PropTypes.number,
 		// connected props
 		allSingleSites: PropTypes.bool,
-		canCurrentUserFn: PropTypes.func,
+		canCurrentUser: PropTypes.func,
 		isJetpack: PropTypes.bool,
 		isSingleUser: PropTypes.bool,
 		postTypes: PropTypes.object,
-		getEditorUrlFn: PropTypes.func,
+		getEditorUrl: PropTypes.func,
 		siteAdminUrl: PropTypes.string,
 		site: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string,
@@ -75,7 +75,7 @@ class ManageMenu extends PureComponent {
 	}
 
 	getDefaultMenuItems() {
-		const { calypsoifyGutenberg, getEditorUrlFn, siteSlug, translate } = this.props;
+		const { calypsoifyGutenberg, getEditorUrl, siteSlug, translate } = this.props;
 
 		return [
 			{
@@ -85,7 +85,7 @@ class ManageMenu extends PureComponent {
 				queryable: true,
 				config: 'manage/pages',
 				link: '/pages',
-				buttonLink: getEditorUrlFn( 'page' ),
+				buttonLink: getEditorUrl( 'page' ),
 				forceButtonTargetInternal: calypsoifyGutenberg,
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
@@ -98,7 +98,7 @@ class ManageMenu extends PureComponent {
 				queryable: true,
 				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
-				buttonLink: getEditorUrlFn( 'post' ),
+				buttonLink: getEditorUrl( 'post' ),
 				forceButtonTargetInternal: calypsoifyGutenberg,
 				wpAdminLink: 'edit.php',
 				showOnAllMySites: true,
@@ -177,9 +177,9 @@ class ManageMenu extends PureComponent {
 	};
 
 	renderMenuItem( menuItem ) {
-		const { canCurrentUserFn, site, siteId, siteAdminUrl } = this.props;
+		const { canCurrentUser, site, siteId, siteAdminUrl } = this.props;
 
-		if ( siteId && ! canCurrentUserFn( menuItem.capability ) ) {
+		if ( siteId && ! canCurrentUser( menuItem.capability ) ) {
 			return null;
 		}
 
@@ -307,7 +307,7 @@ class ManageMenu extends PureComponent {
 
 				const buttonLink =
 					config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable
-						? this.props.getEditorUrlFn( postTypeSlug )
+						? this.props.getEditorUrl( postTypeSlug )
 						: undefined;
 
 				return memo.concat( {
@@ -353,29 +353,16 @@ class ManageMenu extends PureComponent {
 	}
 }
 
-/*
- * A functional selector that returns a function that takes `capability` as a parameter
- * and returns a boolean. Returns a new function on each invocation, so must be excluded
- * from the shallow prop comparison.
- */
-const canCurrentUserFn = ( state, siteId ) => capability =>
-	canCurrentUser( state, siteId, capability );
-
-/*
- * A functional selector similar to `canCurrentUserFn`, this time for generating editor URL
- * from a post type.
- */
-const getEditorUrlFn = ( state, siteId ) => postType =>
-	getEditorUrl( state, siteId, null, postType );
-
 export default connect(
 	( state, { siteId } ) => ( {
 		allSingleSites: areAllSitesSingleUser( state ),
-		canCurrentUserFn: canCurrentUserFn( state, siteId ),
+		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+		canCurrentUser: partial( canCurrentUserStateSelector, state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),
 		postTypes: getPostTypes( state, siteId ),
-		getEditorUrlFn: getEditorUrlFn( state, siteId ),
+		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+		getEditorUrl: partial( getEditorUrlStateSelector, state, siteId, null ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		site: getSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
@@ -385,5 +372,5 @@ export default connect(
 	} ),
 	{ recordTracksEvent },
 	null,
-	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUserFn', 'getEditorUrlFn' ] } ) }
+	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUser', 'getEditorUrl' ] } ) }
 )( localize( ManageMenu ) );

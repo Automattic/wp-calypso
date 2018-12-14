@@ -35,7 +35,7 @@
 }
 
 .mailchimp__getting-started-subtitle-text {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 12px;
 	line-height: 18px;
 	padding-bottom: 4px;
@@ -67,7 +67,7 @@
 }
 
 .mailchimp__getting-started-list {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	list-style: none;
 	margin: 0 0 16px 0;
 	font-size: 14px;
@@ -287,7 +287,7 @@
 }
 
 .mailchimp__header-description {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 12px;
 	line-height: 18px;
 }
@@ -311,7 +311,7 @@
 
 .mailchimp__account-info,
 .mailchimp__account-info-orders {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-weight: 400;
 }
 
@@ -403,7 +403,7 @@
 .mailchimp__dashboard-settings-preview-heading {
 	text-transform: uppercase;
 	font-size: 11px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .mailchimp__dashboard-settings-form-checkbox {

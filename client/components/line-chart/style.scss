@@ -4,19 +4,19 @@
 
 .line-chart__line-color-0 {
 	fill: none;
-	stroke: $blue-dark;
+	stroke: var( --color-primary-dark );
 	stroke-width: 3px;
 }
 
 .line-chart__line-color-1 {
 	fill: none;
-	stroke: $blue-medium;
+	stroke: var( --color-accent );
 	stroke-width: 3px;
 }
 
 .line-chart__line-color-2 {
 	fill: none;
-	stroke: $blue-light;
+	stroke: var( --color-primary-light );
 	stroke-width: 3px;
 }
 
@@ -29,17 +29,17 @@
 }
 
 .line-chart__area-color-0 {
-	fill: $blue-dark;
+	fill: var( --color-primary-dark );
 	opacity: 0.6;
 }
 
 .line-chart__area-color-1 {
-	fill: $blue-medium;
+	fill: var( --color-accent );
 	opacity: 0.3;
 }
 
 .line-chart__area-color-2 {
-	fill: $blue-light;
+	fill: var( --color-primary-light );
 	opacity: 0.1;
 }
 
@@ -50,15 +50,15 @@
 }
 
 .line-chart__line-point-color-0 {
-	stroke: $blue-dark;
+	stroke: var( --color-primary-dark );
 }
 
 .line-chart__line-point-color-1 {
-	stroke: $blue-medium;
+	stroke: var( --color-accent );
 }
 
 .line-chart__line-point-color-2 {
-	stroke: $blue-light;
+	stroke: var( --color-primary-light );
 }
 
 .line-chart__area-selected {
@@ -76,18 +76,18 @@
 }
 
 .line-chart__line-end-point-color-0 {
-	fill: $blue-dark;
-	stroke: $blue-dark;
+	fill: var( --color-primary-dark );
+	stroke: var( --color-primary-dark );
 }
 
 .line-chart__line-end-point-color-1 {
-	fill: $blue-medium;
-	stroke: $blue-medium;
+	fill: var( --color-accent );
+	stroke: var( --color-accent );
 }
 
 .line-chart__line-end-point-color-2 {
-	fill: $blue-light;
-	stroke: $blue-light;
+	fill: var( --color-primary-light );
+	stroke: var( --color-primary-light );
 }
 
 .line-chart__placeholder {
@@ -130,31 +130,31 @@
 }
 
 .line-chart__legend-sample-0 {
-	fill: $blue-dark;
+	fill: var( --color-primary-dark );
 }
 
 .line-chart__legend-sample-1 {
-	fill: $blue-medium;
+	fill: var( --color-accent );
 }
 
 .line-chart__legend-sample-2 {
-	fill: $blue-light;
+	fill: var( --color-primary-light );
 }
 
 .line-chart__legend-sample-0-fill {
-	fill: $blue-dark;
+	fill: var( --color-primary-dark );
 }
 
  .line-chart__legend-sample-1-fill {
-	fill: $blue-medium;
+	fill: var( --color-accent );
 }
 
 .line-chart__legend-sample-2-fill {
-	fill: $blue-light;
+	fill: var( --color-primary-light );
 }
 
 .line-chart__date-range-selected {
-	fill: $blue-medium;
+	fill: var( --color-accent );
 	opacity: 0.1;
 }
 

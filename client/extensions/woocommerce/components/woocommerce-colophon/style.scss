@@ -1,7 +1,7 @@
 .woocommerce-colophon {
 	margin-top: 40px;
 	text-align: center;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 
 	span {
 		display: inline-block;

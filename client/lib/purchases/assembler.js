@@ -18,6 +18,10 @@ function createPurchaseObject( purchase ) {
 		active: Boolean( purchase.active ),
 		amount: Number( purchase.amount ),
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
+		mostRecentRenewDate: purchase.most_recent_renew_date,
+		mostRecentRenewMoment: purchase.most_recent_renew_date
+			? i18n.moment( purchase.most_recent_renew_date )
+			: null,
 		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
 		canExplicitRenew: Boolean( purchase.can_explicit_renew ),
 		currencyCode: purchase.currency_code,
@@ -35,7 +39,7 @@ function createPurchaseObject( purchase ) {
 		isRenewable: Boolean( purchase.is_renewable ),
 		isRenewal: Boolean( purchase.is_renewal ),
 		meta: purchase.meta,
-		priceText: `${ purchase.currency_symbol }${ purchase.amount }`,
+		priceText: purchase.price_text,
 		payment: {
 			name: purchase.payment_name,
 			type: purchase.payment_type,
@@ -47,7 +51,7 @@ function createPurchaseObject( purchase ) {
 		productName: purchase.product_name,
 		productSlug: purchase.product_slug,
 		refundAmount: Number( purchase.refund_amount ),
-		refundText: `${ purchase.refund_currency_symbol }${ purchase.refund_amount }`,
+		refundText: purchase.refund_text,
 		refundPeriodInDays: purchase.refund_period_in_days,
 		renewDate: purchase.renew_date,
 		// only generate a moment if `renewDate` is present and positive

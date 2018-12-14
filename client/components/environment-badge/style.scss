@@ -2,7 +2,7 @@
 	padding: 16px 0;
 	position: fixed;
 	bottom: 0;
-	right: 16px;
+	right: 86px;
 	z-index: z-index( 'root', '.environment-badge' );
 
 	&:hover .environment {
@@ -55,17 +55,17 @@
 			}
 		}
 		&.is-staging {
-			background-color: $alert-yellow;
+			background-color: var( --color-warning );
 		}
 		&.is-wpcalypso {
 			background-color: #b1eed0;
 		}
 		&.is-dev {
-			background-color: $alert-red;
+			background-color: var( --color-error );
 		}
 		&.is-horizon,
 		&.is-feedback {
-			background-color: $blue-light;
+			background-color: var( --color-primary-light );
 		}
 		&.branch-name {
 			text-transform: inherit;

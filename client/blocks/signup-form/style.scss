@@ -7,6 +7,11 @@
 	&[type="password"] {
 		margin-bottom: 0;
 	}
+
+	&[name="username"] {
+		/*rtl:ignore*/
+		direction: ltr;
+	}
 }
 
 .signup-form .logged-out-form__footer {

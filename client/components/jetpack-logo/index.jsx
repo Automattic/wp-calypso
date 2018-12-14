@@ -11,7 +11,7 @@ import classNames from 'classnames';
  * Module constants
  */
 const logoPathSize32 = (
-	<g>
+	<>
 		<path
 			className="jetpack-logo__icon-circle"
 			fill="#00be28"
@@ -19,7 +19,7 @@ const logoPathSize32 = (
 		/>
 		<polygon className="jetpack-logo__icon-triangle" fill="#fff" points="15,19 7,19 15,3 " />
 		<polygon className="jetpack-logo__icon-triangle" fill="#fff" points="17,29 17,13 25,13 " />
-	</g>
+	</>
 );
 
 const JetpackLogo = ( { full = false, size = 32, className } ) => {

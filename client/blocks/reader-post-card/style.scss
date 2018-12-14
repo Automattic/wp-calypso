@@ -28,7 +28,7 @@
 				bottom: 0;
 				left: -8px;
 				width: 2px;
-			background: $blue-wordpress;
+			background: var( --color-primary );
 
 			@include breakpoint( ">660px" ) {
 				left: -16px;
@@ -275,12 +275,12 @@
 	margin-top: 2px;
 	cursor: pointer;
 	&:hover {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 }
 
 .reader-post-card__byline-details {
-	color: $blue-medium;
+	color: var( --color-accent );
 	width: 100%;
 }
 
@@ -390,15 +390,15 @@
 }
 
 .reader-post-card__link {
-	color: $blue-medium;
+	color: var( --color-accent );
 	cursor: pointer;
 
 	&:hover {
-		color: $blue-light;
+		color: var( --color-primary-light );
 	}
 
 	&:visited {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 }
 
@@ -569,21 +569,21 @@
 		top: 16px;
 
 	.gridicon {
-		fill: $blue-medium;
+		fill: var( --color-accent );
 	}
 
 	.follow-button__label {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 
 	&.is-following {
 
 		.gridicon {
-			fill: $alert-green;
+			fill: var( --color-success );
 		}
 
 		.follow-button__label {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 	}
 
@@ -663,7 +663,7 @@
 .reader-post-card__blocked-undo {
 	padding-left: 2px;
 	cursor: pointer;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 
 	&:hover {
 		color: $link-highlight;

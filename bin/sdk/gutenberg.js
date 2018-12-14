@@ -4,9 +4,9 @@
  * External dependencies
  */
 const fs = require( 'fs' );
-const GenerateJsonFile = require( 'generate-json-file-webpack-plugin' );
+const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const path = require( 'path' );
-const { compact } = require( 'lodash' );
+const { compact, get } = require( 'lodash' );
 
 const DIRECTORY_DEPTH = '../../'; // Relative path of the extensions to preset directory
 
@@ -31,7 +31,6 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	} );
 
 	const presetPath = path.join( inputDir, 'index.json' );
-	const presetBetaPath = path.join( inputDir, 'index-beta.json' ); // beta blocks live here
 
 	let editorScript;
 	let editorBetaScript;
@@ -41,8 +40,9 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	let presetBetaBlocks;
 
 	if ( fs.existsSync( presetPath ) ) {
-		presetBlocks = require( presetPath );
-		presetBetaBlocks = fs.existsSync( presetBetaPath ) ? require( presetBetaPath ) : [];
+		const presetIndex = require( presetPath );
+		presetBlocks = get( presetIndex, [ 'production' ], [] );
+		presetBetaBlocks = get( presetIndex, [ 'beta' ], [] );
 		const allPresetBlocks = [ ...presetBlocks, ...presetBetaBlocks ];
 
 		// Find all the shared scripts
@@ -88,13 +88,12 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 		plugins: compact( [
 			...baseConfig.plugins,
 			fs.existsSync( presetPath ) &&
-				new GenerateJsonFile( {
-					filename: 'block-manifest.json',
-					value: {
-						blocks: presetBlocks,
-						betaBlocks: presetBetaBlocks,
+				new CopyWebpackPlugin( [
+					{
+						from: presetPath,
+						to: 'index.json',
 					},
-				} ),
+				] ),
 		] ),
 		entry: {
 			editor: editorScript,

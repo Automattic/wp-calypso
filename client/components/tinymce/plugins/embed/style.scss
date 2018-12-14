@@ -37,7 +37,7 @@
 				width: 100%;
 
 				&.isError {
-					color: $alert-red;
+					color: var( --color-error );
 				}
 
 				&.isLoading {

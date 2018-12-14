@@ -18,78 +18,82 @@ const debug = debugFactory( 'woocommerce:wc-api' );
 
 import { dispatchRequest as dataLayerDispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
-export function dispatchRequest( initiator, onSuccess, onFailure ) {
-	return dataLayerDispatchRequest(
-		initiator,
-		apiSuccess( onSuccess, onFailure ),
-		apiFailure( onFailure )
-	);
+export function dispatchRequest( fetch, onSuccess, onError ) {
+	return dataLayerDispatchRequest( {
+		fetch,
+		onSuccess: apiSuccess( onSuccess, onError ),
+		onError: apiFailure( onError ),
+	} );
 }
 
 export function apiSuccess( onSuccess, onFailure ) {
-	return function apiSuccessHandler( store, action, response ) {
-		const { data } = response;
+	return function apiSuccessHandler( action, response ) {
+		return dispatch => {
+			const { data } = response;
 
-		switch ( data.status ) {
-			case 200:
-				store.dispatch( {
-					type: WOOCOMMERCE_WC_API_SUCCESS,
-					siteId: action.siteId,
-					action,
-				} );
-				onSuccess( store, action, response );
-				break;
-			case 404:
-				debug( 'API Unavailable: ', data );
-				// This means the woocommerce API endpoint requested is not available.
-				// Most likely, the woocommerce plugin is disabled.
-				store.dispatch( {
-					type: WOOCOMMERCE_WC_API_UNAVAILABLE,
-					siteId: action.siteId,
-					action,
-				} );
+			switch ( data.status ) {
+				case 200:
+					dispatch( {
+						type: WOOCOMMERCE_WC_API_SUCCESS,
+						siteId: action.siteId,
+						action,
+					} );
+					onSuccess( { dispatch }, action, response );
+					break;
+				case 404:
+					debug( 'API Unavailable: ', data );
+					// This means the woocommerce API endpoint requested is not available.
+					// Most likely, the woocommerce plugin is disabled.
+					dispatch( {
+						type: WOOCOMMERCE_WC_API_UNAVAILABLE,
+						siteId: action.siteId,
+						action,
+					} );
 
-				// TODO: Log to logstash
+					// TODO: Log to logstash
 
-				onFailure( store, action, response );
-				break;
-			default:
-				debug( 'Unrecognized site error: ', data );
+					onFailure( { dispatch }, action, response );
+					break;
+				default:
+					debug( 'Unrecognized site error: ', data );
 
-				store.dispatch( {
-					type: WOOCOMMERCE_WC_API_UNKNOWN_ERROR,
-					siteId: action.siteId,
-					action,
-					error: {
-						status: data.status,
-						code: data.body.code,
-						message: data.body.message,
-					},
-				} );
+					dispatch( {
+						type: WOOCOMMERCE_WC_API_UNKNOWN_ERROR,
+						siteId: action.siteId,
+						action,
+						error: {
+							status: data.status,
+							code: data.body.code,
+							message: data.body.message,
+						},
+					} );
 
-				// TODO: Log to logstash
+					// TODO: Log to logstash
 
-				onFailure( store, action, response );
-				break;
-		}
+					onFailure( { dispatch }, action, response );
+					break;
+			}
+		};
 	};
 }
 
 export function apiFailure( onFailure ) {
-	return function apiErrorHandler( store, action, error ) {
-		debug( 'Unrecognized API Error: ' + JSON.stringify( error ) );
+	return function apiErrorHandler( action, error ) {
+		return dispatch => {
+			debug( 'Unrecognized API Error: ' + JSON.stringify( error ) );
 
-		store.dispatch( {
-			type: WOOCOMMERCE_WC_API_UNKNOWN_ERROR,
-			siteId: action.siteId,
-			action,
-			error,
-		} );
+			dispatch( {
+				type: WOOCOMMERCE_WC_API_UNKNOWN_ERROR,
+				siteId: action.siteId,
+				action,
+				error,
+			} );
 
-		onFailure( store, action, error );
+			onFailure( { dispatch }, action, error );
 
-		if ( action.failureAction ) {
-			store.dispatch( action.failureAction );
-		}
+			if ( action.failureAction ) {
+				dispatch( action.failureAction );
+			}
+		};
 	};
 }

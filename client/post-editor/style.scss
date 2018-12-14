@@ -1,6 +1,9 @@
-/** @format */
 
 @import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' );
+
+.is-group-editor.layout {
+	background-color: var( --color-surface );
+}
 
 .is-group-editor::before {
 	content: '';
@@ -86,7 +89,7 @@
 	.site__title,
 	.site__domain {
 		&::after {
-			@include long-content-fade( $color: $gray-lighten-30 );
+			@include long-content-fade( $color: hex-to-rgb( $gray-lighten-30 ) );
 		}
 	}
 

@@ -1,4 +1,4 @@
-FROM node:10.13.0
+FROM node:10.14.0
 LABEL maintainer="Automattic"
 
 WORKDIR    /calypso
@@ -25,7 +25,7 @@ RUN        bash /tmp/env-config.sh
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY       . /calypso/
-RUN        npm ci --only=production
+RUN        npx lerna bootstrap --ci
 
 # Build the final layer
 #

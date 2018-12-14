@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,7 @@ import { withSelect, withDispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import shortcuts from '../../../keyboard-shortcuts';
+import shortcuts from 'gutenberg/editor/edit-post/keyboard-shortcuts';
 /**
  * Set of available mode options.
  *
@@ -32,7 +33,7 @@ const MODES = [
 ];
 
 function ModeSwitcher( { onSwitch, mode } ) {
-	const choices = MODES.map( ( choice ) => {
+	const choices = MODES.map( choice => {
 		if ( choice.value !== mode ) {
 			return { ...choice, shortcut: shortcuts.toggleEditorMode.label };
 		}
@@ -40,21 +41,14 @@ function ModeSwitcher( { onSwitch, mode } ) {
 	} );
 
 	return (
-		<MenuGroup
-			label={ __( 'Editor' ) }
-			filterName="editPost.MoreMenu.editor"
-		>
-			<MenuItemsChoice
-				choices={ choices }
-				value={ mode }
-				onSelect={ onSwitch }
-			/>
+		<MenuGroup label={ __( 'Editor' ) } filterName="editPost.MoreMenu.editor">
+			<MenuItemsChoice choices={ choices } value={ mode } onSelect={ onSwitch } />
 		</MenuGroup>
 	);
 }
 
 export default compose( [
-	withSelect( ( select ) => ( {
+	withSelect( select => ( {
 		mode: select( 'core/edit-post' ).getEditorMode(),
 	} ) ),
 	withDispatch( ( dispatch, ownProps ) => ( {

@@ -8,14 +8,11 @@ import { Component } from 'react';
 
 export default class QueryCountries extends Component {
 	static propTypes = {
-		isRequesting: PropTypes.bool.isRequired,
 		requestCountries: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
-		if ( ! this.props.isRequesting ) {
-			this.props.requestCountries();
-		}
+		this.props.requestCountries();
 	}
 
 	render() {

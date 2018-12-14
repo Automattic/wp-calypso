@@ -3,8 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -18,6 +16,7 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 import { pluginUploadError, updatePluginUploadProgress } from 'state/plugins/upload/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 const siteId = 1916284;
 
@@ -40,19 +39,23 @@ const INITIATE_FAILURE_RESPONSE = {
 
 describe( 'initiateTransferWithPluginZip', () => {
 	test( 'should dispatch an http request', () => {
-		const dispatch = sinon.spy();
-		initiateTransferWithPluginZip( { dispatch }, { siteId, pluginZip: 'foo' } );
-		expect( dispatch ).to.have.been.calledWithMatch( {
-			method: 'POST',
-			path: `/sites/${ siteId }/automated-transfers/initiate`,
-			formData: [ [ 'plugin_zip', 'foo' ] ],
-		} );
+		const result = initiateTransferWithPluginZip( { siteId, pluginZip: 'foo' } );
+		expect( result[ 1 ] ).toEqual(
+			http(
+				{
+					method: 'POST',
+					path: `/sites/${ siteId }/automated-transfers/initiate`,
+					apiVersion: '1',
+					formData: [ [ 'plugin_zip', 'foo' ] ],
+				},
+				{ siteId, pluginZip: 'foo' }
+			)
+		);
 	} );
 
 	test( 'should dispatch a tracks call', () => {
-		const dispatch = sinon.spy();
-		initiateTransferWithPluginZip( { dispatch }, { siteId, pluginZip: 'foo' } );
-		expect( dispatch ).to.have.been.calledWith(
+		const result = initiateTransferWithPluginZip( { siteId, pluginZip: 'foo' } );
+		expect( result[ 0 ] ).toEqual(
 			recordTracksEvent( 'calypso_automated_transfer_inititate_transfer', {
 				context: 'plugin_upload',
 			} )
@@ -62,15 +65,13 @@ describe( 'initiateTransferWithPluginZip', () => {
 
 describe( 'receiveResponse', () => {
 	test( 'should dispatch a status request', () => {
-		const dispatch = sinon.spy();
-		receiveResponse( { dispatch }, { siteId }, INITIATE_SUCCESS_RESPONSE );
-		expect( dispatch ).to.have.been.calledWith( fetchAutomatedTransferStatus( siteId ) );
+		const result = receiveResponse( { siteId }, INITIATE_SUCCESS_RESPONSE );
+		expect( result[ 1 ] ).toEqual( fetchAutomatedTransferStatus( siteId ) );
 	} );
 
 	test( 'should dispatch a tracks call', () => {
-		const dispatch = sinon.spy();
-		receiveResponse( { dispatch }, { siteId }, INITIATE_SUCCESS_RESPONSE );
-		expect( dispatch ).to.have.been.calledWith(
+		const result = receiveResponse( { siteId }, INITIATE_SUCCESS_RESPONSE );
+		expect( result[ 0 ] ).toEqual(
 			recordTracksEvent( 'calypso_automated_transfer_inititate_success', {
 				context: 'plugin_upload',
 			} )
@@ -78,17 +79,13 @@ describe( 'receiveResponse', () => {
 	} );
 
 	test( 'should dispatch error notice on unsuccessful initiation', () => {
-		const dispatch = sinon.spy();
-		receiveResponse( { dispatch }, { siteId }, INITIATE_FAILURE_RESPONSE );
-		expect( dispatch ).to.have.been.calledWithMatch( {
-			notice: { text: 'The uploaded file is not a valid plugin.' },
-		} );
+		const result = receiveResponse( { siteId }, INITIATE_FAILURE_RESPONSE );
+		expect( result[ 1 ].notice.text ).toBe( 'The uploaded file is not a valid plugin.' );
 	} );
 
 	test( 'should dispatch a tracks call on unsuccessful initiation', () => {
-		const dispatch = sinon.spy();
-		receiveResponse( { dispatch }, { siteId }, INITIATE_FAILURE_RESPONSE );
-		expect( dispatch ).to.have.been.calledWith(
+		const result = receiveResponse( { siteId }, INITIATE_FAILURE_RESPONSE );
+		expect( result[ 0 ] ).toEqual(
 			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
 				context: 'plugin_upload',
 				error: 'api_success_false',
@@ -99,23 +96,18 @@ describe( 'receiveResponse', () => {
 
 describe( 'receiveError', () => {
 	test( 'should dispatch a plugin upload error', () => {
-		const dispatch = sinon.spy();
-		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
-		expect( dispatch ).to.have.been.calledWith( pluginUploadError( siteId, ERROR_RESPONSE ) );
+		const result = receiveError( { siteId }, ERROR_RESPONSE );
+		expect( result[ 2 ] ).toEqual( pluginUploadError( siteId, ERROR_RESPONSE ) );
 	} );
 
 	test( 'should dispatch an error notice', () => {
-		const dispatch = sinon.spy();
-		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
-		expect( dispatch ).to.have.been.calledWithMatch( {
-			notice: { text: 'The uploaded file is not a valid zip.' },
-		} );
+		const result = receiveError( { siteId }, ERROR_RESPONSE );
+		expect( result[ 1 ].notice.text ).toBe( 'The uploaded file is not a valid zip.' );
 	} );
 
 	test( 'should dispatch a tracks call', () => {
-		const dispatch = sinon.spy();
-		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
-		expect( dispatch ).to.have.been.calledWith(
+		const result = receiveError( { siteId }, ERROR_RESPONSE );
+		expect( result[ 0 ] ).toEqual(
 			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
 				context: 'plugin_upload',
 				error: 'invalid_input',
@@ -126,8 +118,7 @@ describe( 'receiveError', () => {
 
 describe( 'updateUploadProgress', () => {
 	test( 'should dispatch plugin upload progress update', () => {
-		const dispatch = sinon.spy();
-		updateUploadProgress( { dispatch }, { siteId }, { loaded: 200, total: 400 } );
-		expect( dispatch ).to.have.been.calledWith( updatePluginUploadProgress( siteId, 50 ) );
+		const result = updateUploadProgress( { siteId }, { loaded: 200, total: 400 } );
+		expect( result ).toEqual( updatePluginUploadProgress( siteId, 50 ) );
 	} );
 } );

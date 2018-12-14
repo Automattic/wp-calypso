@@ -1,6 +1,7 @@
 /**
  * @component Search
  */
+
 .search {
 	display: flex;
 	flex: 1 1 auto;
@@ -22,7 +23,7 @@
 		height: 100%;
 
 		.accessible-focus &:focus {
-			box-shadow: inset 0 0 0 2px $blue-light;
+			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 			position: relative;
 			z-index: 9999;
 		}
@@ -33,7 +34,7 @@
 		flex: 0 0 auto;
 		width: 50px;
 		z-index: z-index( '.search', '.search .search__open-icon' );
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		cursor: pointer;
 	}
 
@@ -44,11 +45,11 @@
 	.search__close-icon {
 		color: $gray-darken-30;
 		opacity: 0;
-		transition: opacity .2s ease-in;
+		transition: opacity 0.2s ease-in;
 	}
 
 	&.is-open.has-focus {
-		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
+		box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-light );
 	}
 
 	&.is-compact {
@@ -87,13 +88,13 @@
 		display: flex;
 	}
 
-	.search__input[type="search"] {
+	.search__input[type='search'] {
 		flex: 1 1 auto;
 		display: flex;
 	}
 }
 
-.search__input[type="search"] {
+.search__input[type='search'] {
 	flex: 1 1 auto;
 	display: none;
 	z-index: z-index( '.search', '.search__input' );
@@ -149,13 +150,21 @@
 		font-size: 16px;
 		border-radius: inherit;
 		&::before {
-			@include long-content-fade( $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 2 );
+			@include long-content-fade(
+				$size: 32px,
+				$z-index: z-index( '.search', '.search__input' ) + 2
+			);
 			border-radius: inherit;
 		}
 
-		&.ltr { /*rtl:ignore*/
+		&.ltr {
+			/*rtl:ignore*/
 			&::before {
-				@include long-content-fade( $direction: right, $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 2 );
+				@include long-content-fade(
+					$direction: right,
+					$size: 32px,
+					$z-index: z-index( '.search', '.search__input' ) + 2
+				);
 				border-radius: inherit;
 			}
 		}
@@ -205,5 +214,5 @@
 }
 
 .animating.search-opening .search input {
-		opacity: 1;
+	opacity: 1;
 }

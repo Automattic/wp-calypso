@@ -80,7 +80,7 @@
 }
 
 .plugins-browser-item__author {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 13px;
 }
 
@@ -99,7 +99,7 @@
 	position: absolute;
 		bottom: 16px;
 		right: 16px;
-	color: $alert-green;
+	color: var( --color-success );
 	font-size: 12px;
 	font-weight: 500;
 	animation: appear .15s ease-in;

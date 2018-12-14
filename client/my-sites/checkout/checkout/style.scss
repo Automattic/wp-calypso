@@ -1,4 +1,3 @@
-/** @format */
 
 .checkout {
 	position: relative;
@@ -229,6 +228,14 @@
 	// Payment Boxes
 	// =============================================
 
+	.checkout__recent-renewals {
+		padding-top: 0.5em;
+	}
+
+	.checkout__recent-renewals li {
+		font-size: 12px;
+	}
+
 	.checkout-terms {
 		color: $gray-darken-10;
 		margin: 16px 0;
@@ -322,7 +329,7 @@
 
 		.payment-box-section.selected:not( .no-stored-cards ) {
 			.payment-box-section-inner {
-				border-left: 3px solid $alert-green;
+				border-left: 3px solid var( --color-success );
 			}
 			.checkout__new-card-fields {
 				background-color: #fafdf6;
@@ -356,14 +363,14 @@
 		}
 
 		.checkout__new-card-toggle {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 			padding: 15px 15px 15px 12px;
 			border: 0;
 			background: transparent;
 		}
 
 		.checkout__new-card-header {
-			color: $blue-medium;
+			color: var( --color-accent );
 			font-weight: 400;
 			margin-bottom: 15px;
 		}
@@ -464,7 +471,7 @@
 			padding: 20px 20px 20px 0;
 
 			.wordpress-logo {
-				fill: $blue-medium;
+				fill: var( --color-accent );
 				margin: 0 10px;
 				@include breakpoint( '>660px' ) {
 					margin: 0 20px;
@@ -473,7 +480,7 @@
 
 			.checkout__payment-box-section-content {
 				> h6 {
-					color: $blue-medium;
+					color: var( --color-accent );
 					font-size: 18px;
 				}
 
@@ -524,7 +531,7 @@
 				margin-bottom: 12px;
 			}
 			.checkout__wechat-qrcode-redirect {
-				color: $gray-text-min;
+				color: var( --color-text-subtle );
 				font-size: 12px;
 			}
 		}
@@ -770,7 +777,7 @@
 }
 
 .checkout__payment-chat-button.is-borderless {
-	color: $blue-medium;
+	color: var( --color-accent );
 	text-align: left;
 
 	@include breakpoint( '<660px' ) {
@@ -784,11 +791,11 @@
 	}
 
 	&:hover {
-		color: $blue-light;
+		color: var( --color-primary-light );
 	}
 
 	&:focus {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 
 	.gridicon {
@@ -820,7 +827,7 @@
 }
 
 .checkout__privacy-protection-free-text {
-	color: $alert-green;
+	color: var( --color-success );
 	padding-left: 8px;
 }
 
@@ -867,7 +874,7 @@
 }
 
 .checkout__privacy-protection-radio-price-text {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	margin: 4px 0 0 10px;
 	font-size: 15px;
 }
@@ -895,15 +902,15 @@
 
 		.section-nav-tab__link {
 			background: transparent;
-			color: $blue-wordpress;
+			color: var( --color-primary );
 			font-weight: bold;
 		}
 
 		.section-nav-tab.is-selected {
-			border-bottom-color: $blue-wordpress;
+			border-bottom-color: var( --color-primary );
 
 			.section-nav-tab__link {
-				color: $blue-wordpress;
+				color: var( --color-primary );
 				background-color: $gray-light;
 
 				@include breakpoint( '>480px' ) {

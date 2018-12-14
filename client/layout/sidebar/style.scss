@@ -1,3 +1,4 @@
+
 .sidebar {
 	display: flex;
 	flex-direction: column;
@@ -79,7 +80,7 @@
 			bottom: 0;
 			width: 15%;
 
-			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ) );
+			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ), 50% );
 
 			@include breakpoint( '<660px' ) {
 				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
@@ -92,7 +93,7 @@
 		line-height: 1;
 		position: relative;
 		padding: 11px 16px 11px 20px;
-		color: var( --sidebar-color );
+		color: var( --color-text );
 		box-sizing: border-box;
 		white-space: nowrap;
 		overflow: hidden;
@@ -101,7 +102,7 @@
 
 		.accessible-focus &:focus {
 			outline: none;
-			box-shadow: inset 0 0 0 2px $blue-light;
+			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 
 			&:after {
 				top: 2px;
@@ -157,8 +158,8 @@ form.sidebar__button {
 	height: 24px;
 	margin-right: 8px;
 	line-height: 18px;
-	background-color: $white;
-	color: $gray-darken-20;
+	background-color: var( --color-surface );
+	color: var( --color-text-subtle );
 	font-size: 12px;
 	font-weight: 600;
 	border-radius: 3px;
@@ -197,7 +198,8 @@ form.sidebar__button input {
 
 			&:first-child:after {
 				background: overflow-gradient(
-					var( --sidebar-menu-selected-a-first-child-after-background )
+					var( --sidebar-menu-selected-a-first-child-after-background ),
+					50%
 				);
 			}
 		}
@@ -207,7 +209,7 @@ form.sidebar__button input {
 			border: 1px solid $gray-darken-30;
 
 			&:hover {
-				color: $blue-medium;
+				color: var( --color-accent );
 			}
 		}
 
@@ -227,21 +229,17 @@ form.sidebar__button input {
 // Menu Hover
 .notouch .sidebar__menu li:hover {
 	&:not( .selected ) {
-		background-color: lighten( $sidebar-bg-color, 3% );
+		background-color: var( --sidebar-menu-hover-background );
 
 		a,
 		form {
 			&:first-child:after {
-				background: linear-gradient(
-					to right,
-					rgba( lighten( $sidebar-bg-color, 3% ), 0 ),
-					rgba( lighten( $sidebar-bg-color, 3% ), 1 ) 50%
-				);
+				background: overflow-gradient( var( --sidebar-menu-hover-background-gradient ), 50% );
 			}
 
 			&.sidebar__button {
 				background-color: lighten( $sidebar-bg-color, 10% );
-				color: $sidebar-text-color;
+				color: var( --color-text );
 			}
 		}
 	}
@@ -251,7 +249,7 @@ form.sidebar__button input {
 
 		a,
 		form {
-			color: $blue-medium;
+			color: var( --color-accent );
 
 			&:first-child:after {
 				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
@@ -264,7 +262,7 @@ form.sidebar__button input {
 		}
 
 		.gridicon {
-			fill: $blue-medium;
+			fill: var( --color-accent );
 		}
 	}
 }
@@ -273,7 +271,7 @@ form.sidebar__button input {
 	a,
 	form {
 		&.sidebar__button:hover {
-			color: $blue-medium;
+			color: var( --sidebar-menu-hover-color );
 		}
 	}
 
@@ -283,7 +281,7 @@ form.sidebar__button input {
 
 	a:hover,
 	form:hover {
-		color: $blue-medium;
+		color: var( --sidebar-menu-hover-color );
 
 		.sidebar__menu-link-secondary-text {
 			color: inherit;
@@ -291,7 +289,7 @@ form.sidebar__button input {
 
 		.gridicon,
 		.jetpack-logo {
-			fill: $blue-medium;
+			fill: var( --sidebar-menu-hover-color );
 		}
 	}
 }
@@ -323,7 +321,7 @@ form.sidebar__button input {
 	margin-right: auto;
 
 	&.is-active {
-		background: $blue-medium;
+		background: var( --color-accent );
 
 		.gridicon {
 			fill: $white;
@@ -372,10 +370,10 @@ form.sidebar__button input {
 		height: auto;
 		padding: 11px 16px 11px 18px;
 		outline: none;
-		box-shadow: inset 0 0 0 2px $blue-light;
+		box-shadow: inset 0 0 0 2px var( --color-primary-light );
 		font-size: 14px;
 		line-height: 1;
-		color: var( --sidebar-color );
+		color: var( --color-text );
 		box-sizing: border-box;
 		white-space: nowrap;
 		overflow: hidden;
@@ -427,6 +425,6 @@ form.sidebar__button input {
 	}
 
 	:hover + & .gridicon {
-		fill: $blue-medium;
+		fill: var( --color-accent );
 	}
 }

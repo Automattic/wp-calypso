@@ -172,14 +172,14 @@
 	}
 
 	.DayPicker-Day--start {
-		background-color: $blue-light;
+		background-color: var( --color-primary-light );
 		border-radius: 0;
 		border-top-left-radius: 50%;
 		border-bottom-left-radius: 50%;
 	}
 
 	.DayPicker-Day--end {
-		background-color: $blue-light;
+		background-color: var( --color-primary-light );
 		border-radius: 0;
 		border-top-right-radius: 50%;
 		border-bottom-right-radius: 50%;
@@ -208,7 +208,7 @@
 	}
 
 	.DayPicker-Day--selected .date-picker__day {
-		background-color: $blue-light;
+		background-color: var( --color-primary-light );
 		border-radius: 0;
 	}
 
@@ -234,7 +234,7 @@
 		right: 12px;
 		width: 20px;
 		height: 26px;
-		background-color: $blue-light;
+		background-color: var( --color-primary-light );
 	}
 
 	.DayPicker-Day--start .date-picker__day:after {
@@ -248,7 +248,7 @@
 		left: -1px;
 		right: auto;
 		z-index: -1;
-		background-color: $blue-wordpress;
+		background-color: var( --color-primary );
 		border-radius: 50%;
 	}
 
@@ -270,7 +270,7 @@
 .color-scheme.is-dark {
 
 	.filterbar__selection.button.is-borderless {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 
 		&:hover,
 		&:focus,

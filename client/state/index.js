@@ -24,6 +24,22 @@ import navigationMiddleware from './navigation/middleware';
 import noticesMiddleware from './notices/middleware';
 import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
 
+const addReducerEnhancer = nextCreator => ( reducer, initialState ) => {
+	const nextStore = nextCreator( reducer, initialState );
+
+	let currentReducer = reducer;
+	function addReducer( keys, subReducer ) {
+		currentReducer = currentReducer.addReducer( keys, subReducer );
+		this.replaceReducer( currentReducer );
+	}
+
+	function getCurrentReducer() {
+		return currentReducer;
+	}
+
+	return Object.assign( {}, nextStore, { addReducer, getCurrentReducer } );
+};
+
 /**
  * @typedef {Object} ReduxStore
  * @property {!Function} dispatch dispatches actions
@@ -32,7 +48,7 @@ import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
  * @property {Function} subscribe attaches an event listener to state changes
  */
 
-export function createReduxStore( initialState = {} ) {
+export function createReduxStore( initialState, reducer = initialReducer ) {
 	const isBrowser = typeof window === 'object';
 	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
 
@@ -59,6 +75,7 @@ export function createReduxStore( initialState = {} ) {
 	].filter( Boolean );
 
 	const enhancers = [
+		addReducerEnhancer,
 		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
 		httpDataEnhancer,
 		applyMiddleware( ...middlewares ),
@@ -66,5 +83,5 @@ export function createReduxStore( initialState = {} ) {
 		isBrowser && window.devToolsExtension && window.devToolsExtension(),
 	].filter( Boolean );
 
-	return createStore( initialReducer, initialState, compose( ...enhancers ) );
+	return createStore( reducer, initialState, compose( ...enhancers ) );
 }

@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { createStore } from 'redux';
 import { useFakeTimers } from 'sinon';
 
 /**
@@ -16,11 +15,8 @@ import { isEnabled } from 'config';
 import localforage from 'lib/localforage';
 import userFactory from 'lib/user';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
-import createReduxStoreFromPersistedInitialState, {
-	persistOnChange,
-	MAX_AGE,
-	SERIALIZE_THROTTLE,
-} from 'state/initial-state';
+import { createReduxStore } from 'state';
+import { getInitialState, persistOnChange, MAX_AGE, SERIALIZE_THROTTLE } from 'state/initial-state';
 import { combineReducers } from 'state/utils';
 
 jest.mock( 'config', () => {
@@ -41,7 +37,7 @@ jest.mock( 'lib/user/support-user-interop', () => ( {
 } ) );
 
 describe( 'initial-state', () => {
-	describe( 'createReduxStoreFromPersistedInitialState', () => {
+	describe( 'getInitialState', () => {
 		describe( 'persist-redux disabled', () => {
 			describe( 'with recently persisted data and initial server data', () => {
 				let state, consoleErrorSpy, getItemSpy;
@@ -61,14 +57,11 @@ describe( 'initial-state', () => {
 
 				const serverState = { currentUser: { id: 123456789 } };
 
-				beforeAll( done => {
+				beforeAll( async () => {
 					window.initialReduxState = serverState;
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
-					createReduxStoreFromPersistedInitialState( reduxStore => {
-						state = reduxStore.getState();
-						done();
-					} );
+					state = createReduxStore( await getInitialState() ).getState();
 				} );
 
 				afterAll( () => {
@@ -113,16 +106,13 @@ describe( 'initial-state', () => {
 						_timestamp: Date.now(),
 					};
 
-					beforeAll( done => {
+					beforeAll( async () => {
 						isEnabled.mockReturnValue( true );
 						isSupportUserSession.mockReturnValue( true );
 						window.initialReduxState = { currentUser: { currencyCode: 'USD' } };
 						consoleErrorSpy = jest.spyOn( global.console, 'error' );
 						getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
-						createReduxStoreFromPersistedInitialState( reduxStore => {
-							state = reduxStore.getState();
-							done();
-						} );
+						state = createReduxStore( await getInitialState() ).getState();
 					} );
 
 					afterAll( () => {
@@ -177,15 +167,12 @@ describe( 'initial-state', () => {
 					},
 				};
 
-				beforeAll( done => {
+				beforeAll( async () => {
 					window.initialReduxState = serverState;
 					isEnabled.mockReturnValue( true );
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
-					createReduxStoreFromPersistedInitialState( reduxStore => {
-						state = reduxStore.getState();
-						done();
-					} );
+					state = createReduxStore( await getInitialState() ).getState();
 				} );
 
 				afterAll( () => {
@@ -238,15 +225,12 @@ describe( 'initial-state', () => {
 					},
 				};
 
-				beforeAll( done => {
+				beforeAll( async () => {
 					window.initialReduxState = serverState;
 					isEnabled.mockReturnValue( true );
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
-					createReduxStoreFromPersistedInitialState( reduxStore => {
-						state = reduxStore.getState();
-						done();
-					} );
+					state = createReduxStore( await getInitialState() ).getState();
 				} );
 
 				afterAll( () => {
@@ -291,15 +275,12 @@ describe( 'initial-state', () => {
 
 				const serverState = {};
 
-				beforeAll( done => {
+				beforeAll( async () => {
 					window.initialReduxState = serverState;
 					isEnabled.mockReturnValue( true );
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
-					createReduxStoreFromPersistedInitialState( reduxStore => {
-						state = reduxStore.getState();
-						done();
-					} );
+					state = createReduxStore( await getInitialState() ).getState();
 				} );
 
 				afterAll( () => {
@@ -344,15 +325,12 @@ describe( 'initial-state', () => {
 
 				const serverState = {};
 
-				beforeAll( done => {
+				beforeAll( async () => {
 					window.initialReduxState = serverState;
 					isEnabled.mockReturnValue( true );
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
-					createReduxStoreFromPersistedInitialState( reduxStore => {
-						state = reduxStore.getState();
-						done();
-					} );
+					state = createReduxStore( await getInitialState() ).getState();
 				} );
 
 				afterAll( () => {
@@ -402,9 +380,8 @@ describe( 'initial-state', () => {
 		// current mocked user ID).
 		const initialState = { currentUser: { id: 123456789 } };
 
-		const serializeState = state => reducer( state, { type: 'SERIALIZE' } );
-
 		beforeEach( () => {
+			isEnabled.mockReturnValue( true );
 			// we use fake timers from Sinon (aka Lolex) because `lodash.throttle` also uses `Date.now()`
 			// and relies on it returning a mocked value. Jest fake timers don't mock `Date`, Lolex does.
 			clock = useFakeTimers();
@@ -412,10 +389,12 @@ describe( 'initial-state', () => {
 				.spyOn( localforage, 'setItem' )
 				.mockImplementation( value => Promise.resolve( value ) );
 
-			store = persistOnChange( createStore( reducer, initialState ), serializeState );
+			store = createReduxStore( initialState, reducer );
+			persistOnChange( store );
 		} );
 
 		afterEach( () => {
+			isEnabled.mockReturnValue( false );
 			clock.restore();
 			setItemSpy.mockRestore();
 		} );

@@ -1,3 +1,4 @@
+
 .site-icon {
 	position: relative;
 	overflow: hidden;
@@ -9,7 +10,7 @@
 	&.is-blank {
 		background: $gray-lighten-20;
 		.gridicon {
-			color: $white;
+			color: var( --color-surface );
 			z-index: z-index( 'root', '.site-icon.is-blank .gridicon' );
 		}
 	}
@@ -17,10 +18,10 @@
 
 .site-icon.is-transient .spinner {
 	position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	background-color: rgba( $white, 0.75 );
 }
 

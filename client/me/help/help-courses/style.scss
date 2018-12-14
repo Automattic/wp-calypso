@@ -13,11 +13,11 @@
 	}
 
 	.help__help-teaser-button-icon {
-		color: $alert-yellow !important;
+		color: var( --color-warning ) !important;
 	}
 
 	.help__help-teaser-button .card {
-		border-color: $alert-yellow !important;
+		border-color: var( --color-warning ) !important;
 	}
 }
 

@@ -1,4 +1,3 @@
-/** @format */
 
 // Comment Base Style
 
@@ -8,14 +7,14 @@
 	padding: 0;
 
 	.accessible-focus &:focus {
-		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
+		box-shadow: 0 0 0 1px var( --color-accent ), 0 0 0 3px var( --color-primary-light );
 		z-index: z-index( 'root', '.card.comment.accessible-focus:focus' );
 	}
 
 	&.is-pending {
 		background: mix( $alert-yellow, $white, 8.5% );
-		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
-			0 1px 2px $gray-lighten-30;
+		box-shadow: inset 4px 0 0 0 var( --color-warning ),
+			0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 	}
 
 	@include breakpoint( '>660px' ) {
@@ -80,7 +79,7 @@
 
 .comment__author-has-link {
 	margin: 0 4px -4px 0;
-	color: $alert-red;
+	color: var( --color-error );
 }
 
 .comment__author-info-element {
@@ -89,11 +88,11 @@
 	white-space: nowrap;
 
 	a {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 	}
 	a:focus,
 	a:hover {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 
 	.comment__post-link {
@@ -143,7 +142,7 @@
 	z-index: z-index( 'root', '.popover.comment__author-more-info-popover' );
 
 	.popover__inner {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		font-size: 13px;
 		max-width: 220px;
 		padding: 16px;
@@ -188,7 +187,7 @@
 		white-space: nowrap;
 
 		.gridicon {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 			margin: 0 4px -3px 0;
 		}
 	}
@@ -211,7 +210,7 @@
 
 	.comment__in-reply-to {
 		border-left: 4px solid $gray-lighten-30;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		margin-bottom: 16px;
 		overflow: hidden;
 		padding: 2px 4px;
@@ -228,11 +227,11 @@
 		}
 
 		a {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 		}
 		a:focus,
 		a:hover {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 		}
 	}
 
@@ -289,11 +288,11 @@
 	font-family: $serif;
 
 	a {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 	}
 	a:focus,
 	a:hover {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 }
 
@@ -330,7 +329,7 @@
 	}
 
 	&.comment__action-approve:hover {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 	&.comment__action-like:hover {
 		color: $orange-jazzy;
@@ -338,11 +337,11 @@
 	&.comment__action-delete:hover,
 	&.comment__action-spam:hover,
 	&.comment__action-trash:hover {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	&.is-approved {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 	&.is-liked {
 		color: $orange-jazzy;
@@ -399,7 +398,7 @@
 	word-wrap: break-word;
 
 	&::placeholder {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -429,7 +428,7 @@
 	text-transform: uppercase;
 
 	&.is-active {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		cursor: pointer;
 	}
 }
@@ -470,7 +469,7 @@
 	}
 
 	.comment__edit-jetpack-update-notice {
-		color: $alert-red;
+		color: var( --color-error );
 		margin-left: 8px;
 		margin-right: 8px;
 
@@ -481,7 +480,7 @@
 	}
 
 	.comment__edit-jetpack-update-notice-link {
-		color: $alert-red;
+		color: var( --color-error );
 		margin-left: 4px;
 		text-decoration: underline;
 	}
@@ -566,7 +565,7 @@
 	font-style: italic;
 }
 .comment-html-editor__toolbar-button-a.button {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	text-decoration: underline;
 }
 .comment-html-editor__toolbar-button-del {
@@ -616,11 +615,11 @@
 		z-index: z-index( 'root', '.card.comment.is-bulk-mode:hover' );
 	}
 	&.is-pending:hover {
-		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
+		box-shadow: inset 4px 0 0 0 var( --color-warning ), 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
 	}
 
 	a {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		cursor: default;
 		pointer-events: none;
 	}

@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { assign, cloneDeep, merge } from 'lodash';
+import { assign, cloneDeep, get, merge } from 'lodash';
 import update from 'immutability-helper';
 
 /**
@@ -85,7 +85,7 @@ function setNewCreditCardDetails( options ) {
 	// method is responsible for using the above data to populate the payment
 	// object correctly, e.g. by calling newCardPayment() and passing in the
 	// transaction.newCardRawDetails object from above.)
-	if ( _transaction.payment.newCardDetails ) {
+	if ( get( _transaction, [ 'payment', 'newCardDetails' ] ) ) {
 		transactionUpdates.payment = { newCardDetails: { $merge: options.rawDetails } };
 	}
 

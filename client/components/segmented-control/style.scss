@@ -1,7 +1,6 @@
 /**
  * Segmented Control
  *
- * @format
  */
 
 .segmented-control {
@@ -39,7 +38,7 @@
 	border-right: none;
 	font-size: 14px;
 	line-height: 18px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	text-align: center;
 	transition: color 0.1s linear, background-color 0.1s linear;
 
@@ -81,8 +80,8 @@
 	.segmented-control__item {
 		&.is-selected {
 			.segmented-control__link {
-				border-color: $blue-medium;
-				background-color: $blue-medium;
+				border-color: var( --color-accent );
+				background-color: var( --color-accent );
 				color: $white;
 
 				&:focus {
@@ -91,7 +90,7 @@
 			}
 
 			+ .segmented-control__item .segmented-control__link {
-				border-left-color: $blue-medium;
+				border-left-color: var( --color-accent );
 			}
 		}
 	}

@@ -21,8 +21,8 @@
 	}
 
 	&.is-active {
-		border-color: $blue-wordpress;
-		box-shadow: 0 0 0 2px $blue-light;
+		border-color: var( --color-primary );
+		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 }
 
@@ -64,14 +64,14 @@ input[type="text"].token-field__input {
 	&.is-success {
 		.token-field__token-text,
 		.token-field__remove-token {
-			background: $alert-green;
+			background: var( --color-success );
 		}
 	}
 
 	&.is-error {
 		.token-field__token-text,
 		.token-field__remove-token {
-			background: $alert-red;
+			background: var( --color-error );
 		}
 	}
 
@@ -88,7 +88,7 @@ input[type="text"].token-field__input {
 
 		.token-field__token-text {
 			background: transparent;
-			color: $blue-wordpress;
+			color: var( --color-primary );
 		}
 
 		.token-field__remove-token {
@@ -101,13 +101,13 @@ input[type="text"].token-field__input {
 
 		&.is-success {
 			.token-field__token-text {
-				color: $alert-green;
+				color: var( --color-success );
 			}
 		}
 
 		&.is-error {
 			.token-field__token-text {
-				color: $alert-red;
+				color: var( --color-error );
 				border-radius: 4px 0 0 4px;
 				padding: 0 4px 0 6px;
 			}
@@ -179,7 +179,7 @@ input[type="text"].token-field__input {
 	cursor: pointer;
 
 	&.is-selected {
-		background: $blue-medium;
+		background: var( --color-accent );
 		color: $white;
 	}
 }

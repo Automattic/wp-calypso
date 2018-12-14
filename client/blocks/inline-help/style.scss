@@ -1,4 +1,3 @@
-/** @format */
 
 .inline-help {
 	position: fixed;
@@ -15,7 +14,7 @@
 		line-height: 0;
 		padding: 1px;
 		border-radius: 100%;
-		background: $blue-wordpress;
+		background: var( --color-primary );
 		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
 		border: 1px solid darken( $blue-wordpress, 5 );
 
@@ -28,7 +27,7 @@
 		}
 
 		&.is-active {
-			background: $blue-medium;
+			background: var( --color-accent );
 			border-color: darken( $blue-medium, 5 );
 		}
 	}
@@ -39,8 +38,10 @@
 	}
 }
 
-.button.inline-help__classic-editor-toggle {
+.button.inline-help__classic-editor-toggle,
+.button.inline-help__gutenberg-editor-toggle {
 	margin-bottom: 16px;
+	width: calc( 100% - 32px );
 }
 
 .button.is-borderless.inline-help__button {
@@ -50,7 +51,7 @@
 	line-height: 0;
 	padding: 1px;
 	border-radius: 100%;
-	background: $blue-wordpress;
+	background: var( --color-primary );
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
 	border: 1px solid darken( $blue-wordpress, 5 );
 	transition: all 0.2s ease-in-out;
@@ -74,7 +75,7 @@
 	}
 
 	&.is-active {
-		background: $blue-medium;
+		background: var( --color-accent );
 		border-color: darken( $blue-medium, 5 );
 	}
 
@@ -90,6 +91,12 @@
 		top: -2px;
 		left: -3px;
 	}
+}
+
+//border-box in the gutenberg section makes the dot too small, update width/height to compensate
+.is-section-gutenberg-editor .button.is-borderless.inline-help__button.has-notification::before {
+	width: 14px;
+	height: 14px;
 }
 
 @keyframes wiggle {
@@ -175,10 +182,10 @@
 			height: auto;
 
 			&.is-open.has-focus {
-				box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 6px $blue-light;
+				box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 6px var( --color-primary-light );
 
 				@include breakpoint( '>660px' ) {
-					box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
+					box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-light );
 				}
 			}
 
@@ -195,7 +202,7 @@
 
 			.search__icon-navigation:focus {
 				border-radius: 3px;
-				box-shadow: 0 0 0 3px $blue-light;
+				box-shadow: 0 0 0 3px var( --color-primary-light );
 			}
 		}
 	}
@@ -221,6 +228,15 @@
 	.button {
 		width: 100%;
 		text-align: center;
+	}
+}
+
+// Hide extraneous UI inside secondary view
+.is-secondary-view-active {
+	.checklist-navigation,
+	.inline-help__gutenberg-editor-toggle,
+	.inline-help__classic-editor-toggle {
+		display: none;
 	}
 }
 
@@ -337,10 +353,10 @@
 		}
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 
 			.gridicon {
-				fill: $blue-medium;
+				fill: var( --color-accent );
 			}
 		}
 	}
@@ -387,7 +403,7 @@
 	}
 
 	a {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		text-decoration: underline;
 		font-weight: normal;
 		line-height: 1.4;
@@ -396,13 +412,13 @@
 
 		&:hover {
 			cursor: pointer;
-			color: $blue-medium;
+			color: var( --color-accent );
 			background: lighten( $gray, 35% );
 		}
 	}
 
 	&.is-selected {
-		background: $blue-medium;
+		background: var( --color-accent );
 		cursor: pointer;
 		color: $white;
 

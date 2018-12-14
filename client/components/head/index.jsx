@@ -11,7 +11,14 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 
-const Head = ( { title = 'WordPress.com', faviconURL, children, cdn, branchName } ) => {
+const Head = ( {
+	title = 'WordPress.com',
+	faviconURL,
+	children,
+	cdn,
+	branchName,
+	inlineScriptNonce,
+} ) => {
 	return (
 		<head>
 			<title>{ title }</title>
@@ -24,6 +31,12 @@ const Head = ( { title = 'WordPress.com', faviconURL, children, cdn, branchName 
 			<meta name="apple-mobile-web-app-capable" content="yes" />
 			<meta name="theme-color" content="#0087be" />
 			<meta name="referrer" content="origin" />
+
+			<link
+				rel="prefetch"
+				as="document"
+				href="https://public-api.wordpress.com/wp-admin/rest-proxy/?v=2.0"
+			/>
 
 			<link
 				rel="shortcut icon"
@@ -71,12 +84,34 @@ const Head = ( { title = 'WordPress.com', faviconURL, children, cdn, branchName 
 					href={ '/calypso/manifest.json?branch=' + encodeURIComponent( branchName ) }
 				/>
 			) }
-
 			<link
-				rel="stylesheet"
+				rel="preload"
 				href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
+				as="style"
 			/>
-
+			<noscript>
+				<link
+					rel="stylesheet"
+					href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
+				/>
+			</noscript>
+			{ /* eslint-disable react/no-danger */ }
+			<script
+				type="text/javascript"
+				nonce={ inlineScriptNonce }
+				dangerouslySetInnerHTML={ {
+					// eslint-disable
+					__html: `
+			(function() {
+				var m = document.createElement( "link" );
+				m.rel = "stylesheet";
+				m.href = "https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese";
+				document.head.insertBefore( m, document.head.childNodes[ document.head.childNodes.length - 1 ].nextSibling );
+			})()
+			`,
+				} }
+			/>
+			{ /* eslint-enable react/no-danger */ }
 			{ children }
 		</head>
 	);

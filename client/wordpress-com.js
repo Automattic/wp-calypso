@@ -213,7 +213,6 @@ const sections = [
 		enableLoggedOut: true,
 		secondary: true,
 		group: 'sites',
-		css: 'google-my-business',
 	},
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
@@ -463,7 +462,7 @@ sections.push( {
 
 sections.push( {
 	name: 'gutenberg-editor',
-	paths: [ '/gutenberg' ],
+	paths: [ '/block-editor' ],
 	module: 'gutenberg/editor',
 	group: 'gutenberg',
 	css: 'gutenberg-editor',

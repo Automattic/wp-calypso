@@ -23,7 +23,7 @@ import LRU from 'lru';
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { SerializationResult } from 'state/serialization-result';
 import warn from 'lib/warn';
 
@@ -474,14 +474,49 @@ function serializeState( reducers, state, action ) {
 	);
 }
 
+function applyStoredState( reducers, state, action ) {
+	let hasChanged = false;
+	const nextState = mapValues( reducers, ( reducer, key ) => {
+		// Replace the value for the key we want to init with action.storedState.
+		if ( reducer.storageKey === action.storageKey ) {
+			hasChanged = true;
+			return action.storedState;
+		}
+
+		// Descend into nested state levels, possibly the storageKey will be found there?
+		const prevStateForKey = state[ key ];
+		const nextStateForKey = reducer( prevStateForKey, action );
+		hasChanged = hasChanged || nextStateForKey !== prevStateForKey;
+		return nextStateForKey;
+	} );
+
+	// return identical state if the stored state didn't get applied in this reducer
+	return hasChanged ? nextState : state;
+}
+
+function getStorageKeys( reducers ) {
+	return function*() {
+		for ( const reducer of Object.values( reducers ) ) {
+			if ( reducer.storageKey ) {
+				yield { storageKey: reducer.storageKey, reducer };
+			}
+
+			if ( reducer.getStorageKeys ) {
+				yield* reducer.getStorageKeys();
+			}
+		}
+	};
+}
+
 /**
  * Create a new reducer from original `reducers` by adding a new `reducer` at `keyPath`
+ * @param {Function} origReducer Original reducer to copy `storageKey` and other flags from
  * @param {Object} reducers Object with reducer names as keys and reducer functions as values that
  *   is used as parameter to `combineReducers` (the original Redux one and our extension, too).
  * @return {Function} The function to be attached as `addReducer` method to the
  *   result of `combineReducers`.
  */
-export function addReducer( reducers ) {
+export function addReducer( origReducer, reducers ) {
 	return ( keyPath, reducer ) => {
 		// extract the first key from keyPath and dive recursively into the reducer tree
 		const [ key, ...restKeys ] = keyPath;
@@ -524,6 +559,9 @@ export function addReducer( reducers ) {
 		}
 
 		const newCombinedReducer = createCombinedReducer( { ...reducers, [ key ]: newReducer } );
+
+		// Preserve the storageKey of the updated reducer
+		newCombinedReducer.storageKey = origReducer.storageKey;
 
 		return newCombinedReducer;
 	};
@@ -608,13 +646,18 @@ function createCombinedReducer( reducers ) {
 		switch ( action.type ) {
 			case SERIALIZE:
 				return serializeState( reducers, state, action );
+
+			case APPLY_STORED_STATE:
+				return applyStoredState( reducers, state, action );
+
 			default:
 				return combined( state, action );
 		}
 	};
 
 	combinedReducer.hasCustomPersistence = true;
-	combinedReducer.addReducer = addReducer( reducers );
+	combinedReducer.addReducer = addReducer( combinedReducer, reducers );
+	combinedReducer.getStorageKeys = getStorageKeys( reducers );
 
 	return combinedReducer;
 }

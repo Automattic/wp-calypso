@@ -1,14 +1,14 @@
 .page-card-info {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 12px;
 	vertical-align: middle;
 
 	a,
 	&.post-actions__relative-time {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 }

@@ -1,3 +1,5 @@
+/** @format */
+
 .author-compact-profile {
 	font-size: 14px;
 	display: flex;
@@ -19,31 +21,30 @@
 		padding: 0;
 
 		.gridicons-reader-follow {
-			fill: $blue-medium;
+			fill: var( --color-accent );
 		}
 
 		.follow-button__label {
-			color: $blue-medium;
+			color: var( --color-accent );
 
-
-			@include breakpoint( "<660px" ) {
+			@include breakpoint( '<660px' ) {
 				display: inline-block;
 			}
 		}
 
 		&.is-following .follow-button__label {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 
 		// No hover if already following
 		&.is-following {
 			&:hover {
 				.gridicons-reader-follow {
-					fill: $alert-green;
+					fill: var( --color-success );
 				}
 
 				.follow-button__label {
-					color: $alert-green;
+					color: var( --color-success );
 				}
 			}
 		}
@@ -62,12 +63,12 @@
 .author-compact-profile__site-link,
 .author-compact-profile__follow {
 	align-items: center;
-	color: $blue-medium;
+	color: var( --color-accent );
 	display: flex;
 	justify-content: center;
 
 	&:hover {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 	}
 }
 
@@ -98,7 +99,7 @@
 }
 
 .author-compact-profile__site-link.is-placeholder {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-left: 50px;
 		margin-right: 50px;
 	}

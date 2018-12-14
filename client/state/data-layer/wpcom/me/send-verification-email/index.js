@@ -14,32 +14,48 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestEmailVerification = function( { dispatch }, action ) {
-	dispatch(
-		http(
-			{
-				apiVersion: '1.1',
-				method: 'POST',
-				path: '/me/send-verification-email',
-			},
-			action
-		)
+/**
+ * Creates an action for request for email verification
+ *
+ * @param 	{Object} action The action to dispatch next
+ * @returns {Object} Redux action
+ */
+export const requestEmailVerification = action =>
+	http(
+		{
+			apiVersion: '1.1',
+			method: 'POST',
+			path: '/me/send-verification-email',
+		},
+		action
 	);
-};
 
-export const handleError = ( { dispatch }, action, rawError ) => {
-	dispatch( {
-		type: EMAIL_VERIFY_REQUEST_FAILURE,
-		message: rawError.message,
-	} );
-};
+/**
+ * Creates an action for handling email verification error
+ *
+ * @param 	{Object} action The action to dispatch next
+ * @param   {Object} rawError The error object
+ * @returns {Object} Redux action
+ */
+export const handleError = ( action, rawError ) => ( {
+	type: EMAIL_VERIFY_REQUEST_FAILURE,
+	message: rawError.message,
+} );
 
-export const handleSuccess = ( { dispatch } ) => {
-	dispatch( { type: EMAIL_VERIFY_REQUEST_SUCCESS } );
-};
+/**
+ * Creates an action for email verification success
+ *
+ * @param 	{Object} action The action to dispatch next
+ * @returns {Object} Redux action
+ */
+export const handleSuccess = () => ( { type: EMAIL_VERIFY_REQUEST_SUCCESS } );
+
+export const dispatchEmailVerification = dispatchRequest( {
+	fetch: requestEmailVerification,
+	onSuccess: handleSuccess,
+	onError: handleError,
+} );
 
 registerHandlers( 'state/data-layer/wpcom/me/send-verification-email/index.js', {
-	[ EMAIL_VERIFY_REQUEST ]: [
-		dispatchRequest( requestEmailVerification, handleSuccess, handleError ),
-	],
+	[ EMAIL_VERIFY_REQUEST ]: [ dispatchEmailVerification ],
 } );

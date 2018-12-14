@@ -1,5 +1,5 @@
 .form-setting-explanation {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	display: block;
 	font-size: 13px;
 	font-style: italic;
@@ -11,7 +11,7 @@
 	}
 
 	button.is-borderless {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		font-size: inherit;
 		font-style: inherit;
 		font-weight: inherit;

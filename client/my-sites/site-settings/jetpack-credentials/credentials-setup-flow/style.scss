@@ -28,7 +28,7 @@
 	display: inline-block;
 	vertical-align: top;
 	margin-right: 10px;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 }
 
 .credentials-setup-flow__tos-text {
@@ -48,7 +48,7 @@
 
 .credentials-setup-flow__footer .button.is-borderless {
 	margin-right: 24px;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	padding: 0 0 5px;
 
 	&:hover {

@@ -14,7 +14,8 @@
  * External dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { Component } from '@wordpress/element';
+import { Button, Notice } from '@wordpress/components';
+import { Component, Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -22,12 +23,13 @@ import { Component } from '@wordpress/element';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class PublicizeConnectionVerify extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			failedConnections: {},
-			isLoading: false,
-		};
+	state = {
+		failedConnections: [],
+		isLoading: false,
+	};
+
+	componentDidMount() {
+		this.connectionTestStart();
 	}
 
 	/**
@@ -40,9 +42,10 @@ class PublicizeConnectionVerify extends Component {
 	 * @param {object} response Response from '/publicize/connection-test-results' endpoint
 	 */
 	connectionTestComplete = response => {
-		const failureList = response.data.filter( connection => ! connection.test_success );
+		const failedConnections = response.filter( connection => ! connection.test_success );
+
 		this.setState( {
-			failedConnections: failureList,
+			failedConnections,
 			isLoading: false,
 		} );
 	};
@@ -63,8 +66,8 @@ class PublicizeConnectionVerify extends Component {
 	 */
 	connectionTestStart = () => {
 		apiFetch( { path: '/wpcom/v2/publicize/connection-test-results' } )
-			.then( () => this.connectionTestComplete )
-			.catch( () => this.connectionTestRequestFailed );
+			.then( this.connectionTestComplete )
+			.catch( this.connectionTestRequestFailed );
 	};
 
 	/**
@@ -81,43 +84,68 @@ class PublicizeConnectionVerify extends Component {
 		// open a popup window
 		// when it is closed, kick off the tests again
 		const popupWin = window.open( href, title, '' );
-		window.setInterval( () => {
+		const popupTimer = window.setInterval( () => {
 			if ( false !== popupWin.closed ) {
+				window.clearInterval( popupTimer );
 				this.connectionTestStart();
 			}
 		}, 500 );
 	};
 
-	componentDidMount() {
-		this.connectionTestStart();
-	}
-
-	render() {
+	renderRefreshableConnections() {
 		const { failedConnections } = this.state;
-		if ( failedConnections.length > 0 ) {
+		const refreshableConnections = failedConnections.filter( connection => connection.can_refresh );
+
+		if ( refreshableConnections.length ) {
 			return (
-				<div className="below-h2 error publicize-token-refresh-message">
-					<p key="error-title">
+				<Notice className="jetpack-publicize-notice" isDismissible={ false } status="error">
+					<p>
 						{ __(
 							'Before you hit Publish, please refresh the following connection(s) to make sure we can Publicize your post:'
 						) }
 					</p>
-					{ failedConnections.filter( connection => connection.userCanRefresh ).map( connection => (
-						<a
-							className="pub-refresh-button button"
-							title={ connection.refreshText }
-							href={ connection.refreshURL }
-							target={ '_refresh_' + connection.serviceName }
+					{ refreshableConnections.map( connection => (
+						<Button
+							href={ connection.refresh_url }
+							isSmall
+							key={ connection.id }
 							onClick={ this.refreshConnectionClick }
-							key={ connection.connectionID }
+							title={ connection.refresh_text }
 						>
-							{ connection.refreshText }
-						</a>
+							{ connection.refresh_text }
+						</Button>
 					) ) }
-				</div>
+				</Notice>
 			);
 		}
+
 		return null;
+	}
+
+	renderNonRefreshableConnections() {
+		const { failedConnections } = this.state;
+		const nonRefreshableConnections = failedConnections.filter(
+			connection => ! connection.can_refresh
+		);
+
+		if ( nonRefreshableConnections.length ) {
+			return nonRefreshableConnections.map( connection => (
+				<Notice className="jetpack-publicize-notice" isDismissible={ false } status="error">
+					<p>{ connection.test_message }</p>
+				</Notice>
+			) );
+		}
+
+		return null;
+	}
+
+	render() {
+		return (
+			<Fragment>
+				{ this.renderRefreshableConnections() }
+				{ this.renderNonRefreshableConnections() }
+			</Fragment>
+		);
 	}
 }
 

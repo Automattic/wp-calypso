@@ -1,11 +1,10 @@
-/** @format */
 
 .remove-purchase__dialog {
 	max-width: 500px;
 }
 
 .remove-purchase__card {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	text-align: left;
 	width: 100%;
 

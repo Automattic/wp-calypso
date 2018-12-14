@@ -25,6 +25,10 @@ $gutenberg-breakpoint-sm: 782px;
 	}
 }
 
+.is-group-gutenberg.layout {
+	background-color: var( --color-surface );
+}
+
 .is-group-gutenberg::before {
 	content: '';
 	position: fixed;
@@ -57,6 +61,11 @@ $gutenberg-theme-primary: #0085ba;
 $gutenberg-theme-toggle: #11a0d2;
 //end static post css values
 //========================================================
+
+//Remove this if https://github.com/Automattic/wp-calypso/issues/28776 is resolved
+.editor-post-permalink__change {
+	display: none;
+}
 
 .is-section-gutenberg-editor {
 	box-sizing: border-box !important;
@@ -92,6 +101,14 @@ $gutenberg-theme-toggle: #11a0d2;
 
 		.editor-post-publish-panel {
 			top: 0;
+		}
+
+		.components-notice-list {
+			@media (max-width: 600px) {
+				top: auto;
+			}
+
+			left: 0;
 		}
 	}
 
@@ -195,10 +212,26 @@ $gutenberg-theme-toggle: #11a0d2;
 		}
 	}
 
+	.edit-post-sidebar-header ul {
+		list-style: none;
+		margin: 0;
+	}
+
+	.editor-block-navigation__list {
+		list-style: none;
+	}
+}
+
+.is-section-gutenberg-editor,
+.edit-post-options-modal {
+
 	// UNSET CALYPSO DEFAULT STYLES
 	input[type='text'],
 	input[type='search'] {
 		width: auto;
+	}
+	.components-text-control__input input[type='text'] {
+		width: 100%;
 	}
 
 	input[type='number'].components-range-control__number {
@@ -265,4 +298,39 @@ $gutenberg-theme-toggle: #11a0d2;
 		cursor: pointer;
 	}
 	// END Missing Core styles
+	.components-placeholder__fieldset {
+		color: #191e23; // $dark-gray-900;
+		p {
+			font-family: $sans;
+			font-size: 13px;
+
+		}
+	}
+
+	.components-placeholder__label svg {
+		margin-right: 1ch;
+	}
+}
+
+.editor__placeholder {
+	.placeholder {
+		@include placeholder;
+		height: 16px;
+		border-radius: 8px;
+	}
+
+	.placeholder-site {
+		margin-left: 18px;
+	}
+
+	.placeholder-button {
+		width: 40px;
+		margin: 0 8px;
+	}
+
+	.placeholder-title {
+			height: 40px;
+			border-radius: 20px;
+			margin: 0 8px;
+	}
 }

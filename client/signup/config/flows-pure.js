@@ -93,13 +93,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			lastModified: '2016-01-27',
 		},
 
-		'creative-mornings': {
-			steps: [ 'portfolio-themes', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description: 'Signup flow for creative mornings partnership',
-			lastModified: '2017-08-01',
-		},
-
 		subdomain: {
 			steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 			destination: getSiteDestination,
@@ -115,14 +108,14 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		onboarding: {
-			steps: [ 'user', 'site-type', 'site-topic', 'about', 'domains', 'plans' ],
+			steps: [ 'user', 'site-type', 'site-topic', 'site-information', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2018-10-22',
 		},
 
 		'onboarding-dev': {
-			steps: [ 'site-topic', 'about' ],
+			steps: [ 'user', 'site-type', 'site-topic', 'site-information', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'A temporary flow for holding under-development steps',
 			lastModified: '2018-10-29',
@@ -336,6 +329,13 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		lastModified: '2018-11-14',
 		disallowResume: true,
 		autoContinue: true,
+	};
+
+	flows.name = {
+		steps: [ 'displayname', 'about', 'domains', 'plans' ],
+		destination: getSiteDestination,
+		description: 'Ask for a display name not a user name',
+		lastModified: '2018-12-12',
 	};
 
 	return flows;

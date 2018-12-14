@@ -57,8 +57,8 @@ import {
 	isNew,
 	getPlanFeaturesObject,
 	getPlanClass,
-	TYPE_BLOGGER,
 	PLAN_FREE,
+	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
@@ -427,16 +427,18 @@ export class PlanFeatures extends Component {
 	renderTopButtons() {
 		const {
 			canPurchase,
+			disableBloggerPlanWithNonBlogDomain,
 			isInSignup,
 			isLandingPage,
 			planProperties,
 			selectedPlan,
 			selectedSiteSlug,
+			translate,
 		} = this.props;
 
 		return map( planProperties, properties => {
+			let { availableForPurchase } = properties;
 			const {
-				availableForPurchase,
 				current,
 				onUpgradeClick,
 				planName,
@@ -452,14 +454,27 @@ export class PlanFeatures extends Component {
 				'is-top-buttons'
 			);
 
+			let forceDisplayButton = false,
+				buttonText = null;
+
+			if ( disableBloggerPlanWithNonBlogDomain ) {
+				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
+					availableForPurchase = false;
+					forceDisplayButton = true;
+					buttonText = translate( 'Only with .blog domains' );
+				}
+			}
+
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions
 						availableForPurchase={ availableForPurchase }
+						buttonText={ buttonText }
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
 						freePlan={ isFreePlan( planName ) }
+						forceDisplayButton={ forceDisplayButton }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
 						isInSignup={ isInSignup }
@@ -602,6 +617,7 @@ export class PlanFeatures extends Component {
 PlanFeatures.propTypes = {
 	basePlansPath: PropTypes.string,
 	canPurchase: PropTypes.bool.isRequired,
+	disableBloggerPlanWithNonBlogDomain: PropTypes.bool,
 	displayJetpackPlans: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isJetpack: PropTypes.bool,
@@ -670,7 +686,7 @@ export default connect(
 			siteId,
 			displayJetpackPlans,
 			visiblePlans,
-			popularPlanType,
+			popularPlanSpec,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -697,7 +713,7 @@ export default connect(
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
-				const popular = planConstantObj.type === popularPlanType;
+				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
 				const newPlan = isNew( plan ) && ! isPaid;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;

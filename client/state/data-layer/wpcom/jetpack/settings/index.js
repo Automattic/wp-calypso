@@ -38,39 +38,33 @@ export const fromApi = response => {
 
 const toApi = settings => filterSettingsByActiveModules( sanitizeSettings( settings ) );
 
-const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) => {
-	dispatch( updateJetpackSettings( siteId, settings ) );
-};
-
+const receiveJetpackOnboardingSettings = ( { siteId }, settings ) =>
+	updateJetpackSettings( siteId, settings );
 /**
  * Dispatches a request to fetch settings for a given site
  *
- * @param   {Object}   store          Redux store
- * @param   {Function} store.dispatch Dispatch Redux action
  * @param   {Object}   action         Redux action
  * @returns {Object}   Dispatched http action
  */
-export const requestJetpackSettings = ( { dispatch }, action ) => {
+export const requestJetpackSettings = action => {
 	const { siteId, query } = action;
 
-	return dispatch(
-		http(
-			{
-				apiVersion: '1.1',
-				method: 'GET',
-				path: '/jetpack-blogs/' + siteId + '/rest-api/',
-				query: {
-					path: '/jetpack/v4/settings/',
-					query: JSON.stringify( query ),
-					json: true,
-				},
+	return http(
+		{
+			apiVersion: '1.1',
+			method: 'GET',
+			path: '/jetpack-blogs/' + siteId + '/rest-api/',
+			query: {
+				path: '/jetpack/v4/settings/',
+				query: JSON.stringify( query ),
+				json: true,
 			},
-			action
-		)
+		},
+		action
 	);
 };
 
-export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => {
+export const announceRequestFailure = ( { siteId } ) => ( dispatch, getState ) => {
 	const state = getState();
 	const url = getSiteUrl( state, siteId ) || getUnconnectedSiteUrl( state, siteId );
 	const noticeOptions = {
@@ -91,15 +85,14 @@ export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => 
  * @param   {Object} action Redux action
  * @returns {Object} Dispatched http action
  */
-export const saveJetpackSettings = ( { dispatch, getState }, action ) => {
+export const saveJetpackSettings = action => ( dispatch, getState ) => {
 	const { settings, siteId } = action;
 	const previousSettings = getJetpackSettings( getState(), siteId );
 
 	// We don't want Jetpack Onboarding credentials in our Jetpack Settings Redux state.
 	const settingsWithoutCredentials = omit( settings, [ 'onboarding.jpUser', 'onboarding.token' ] );
 	dispatch( updateJetpackSettings( siteId, settingsWithoutCredentials ) );
-
-	return dispatch(
+	dispatch(
 		http(
 			{
 				apiVersion: '1.1',
@@ -124,26 +117,19 @@ export const saveJetpackSettings = ( { dispatch, getState }, action ) => {
 // displaying an up to date progress indicator for some steps.
 // We also need this to store a regenerated post-by-email address in Redux state.
 export const handleSaveSuccess = (
-	{ dispatch },
 	{ siteId },
 	{ data: { code, message, ...updatedSettings } } // eslint-disable-line no-unused-vars
-) => dispatch( saveJetpackSettingsSuccess( siteId, updatedSettings ) );
+) => saveJetpackSettingsSuccess( siteId, updatedSettings );
 
-export const handleSaveFailure = (
-	{ dispatch },
-	{ siteId },
-	{ meta: { settings: previousSettings } }
-) => {
-	dispatch( updateJetpackSettings( siteId, previousSettings ) );
-	dispatch(
-		errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
-			id: `jpo-notice-error-${ siteId }`,
-			duration: 5000,
-		} )
-	);
-};
+export const handleSaveFailure = ( { siteId }, { meta: { settings: previousSettings } } ) => [
+	updateJetpackSettings( siteId, previousSettings ),
+	errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
+		id: `jpo-notice-error-${ siteId }`,
+		duration: 5000,
+	} ),
+];
 
-export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: errorMessage } ) => {
+export const retryOrAnnounceSaveFailure = ( action, { message: errorMessage } ) => {
 	const {
 		settings,
 		siteId,
@@ -160,13 +146,13 @@ export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: err
 		! startsWith( errorMessage, 'cURL error 28' ) || // cURL timeout
 		retryCount > MAX_WOOCOMMERCE_INSTALL_RETRIES
 	) {
-		return handleSaveFailure( { dispatch }, { siteId }, action );
+		return handleSaveFailure( { siteId }, action );
 	}
 
 	// We cannot use `extendAction( action, ... )` here, since `meta.dataLayer` now includes error information,
 	// which we would propagate, causing the data layer to think there's been an error on the subsequent attempt.
 	// Instead, we have to re-assemble our action.
-	dispatch( {
+	return {
 		settings,
 		siteId,
 		type,
@@ -176,22 +162,24 @@ export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: err
 				trackRequest: true,
 			},
 		},
-	} );
+	};
 };
 
 registerHandlers( 'state/data-layer/wpcom/jetpack/settings/index.js', {
 	[ JETPACK_SETTINGS_REQUEST ]: [
-		dispatchRequest(
-			requestJetpackSettings,
-			receiveJetpackOnboardingSettings,
-			announceRequestFailure,
-			{
-				fromApi,
-			}
-		),
+		dispatchRequest( {
+			fetch: requestJetpackSettings,
+			onSuccess: receiveJetpackOnboardingSettings,
+			onError: announceRequestFailure,
+			fromApi,
+		} ),
 	],
 
 	[ JETPACK_SETTINGS_SAVE ]: [
-		dispatchRequest( saveJetpackSettings, handleSaveSuccess, retryOrAnnounceSaveFailure ),
+		dispatchRequest( {
+			fetch: saveJetpackSettings,
+			onSuccess: handleSaveSuccess,
+			onError: retryOrAnnounceSaveFailure,
+		} ),
 	],
 } );

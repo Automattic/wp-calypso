@@ -166,7 +166,7 @@
 	}
 
 	&.is-hovered {
-		border-color: $blue-medium;
+		border-color: var( --color-accent );
 	}
 
 	.is-loading & {

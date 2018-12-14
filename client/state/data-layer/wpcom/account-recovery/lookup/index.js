@@ -3,7 +3,7 @@
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST } from 'state/action-types';
 import {
@@ -52,7 +52,7 @@ export const onSuccess = ( action, data ) => [
 
 registerHandlers( 'state/data-layer/wpcom/account-recovery/lookup/index.js', {
 	[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: [
-		dispatchRequestEx( { fetch, onSuccess, onError, fromApi } ),
+		dispatchRequest( { fetch, onSuccess, onError, fromApi } ),
 	],
 } );
 

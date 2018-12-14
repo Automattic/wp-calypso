@@ -22,6 +22,11 @@ import { getSiteKeyringsForService } from 'state/site-keyrings/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const loadKeyringsMiddleware = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );

@@ -1,3 +1,4 @@
+
 .editor-drawer {
 	font-size: 13px;
 	background: white;
@@ -10,11 +11,11 @@
 
 .editor-drawer .accordion:not( .is-expanded ) .accordion__toggle {
 	.accordion__subtitle::after {
-		@include long-content-fade( $color: $white );
+		@include long-content-fade();
 	}
 
 	&:hover .accordion__subtitle::after {
-		@include long-content-fade( $color: $white );
+		@include long-content-fade();
 	}
 }
 
@@ -25,8 +26,8 @@
 	&::before {
 		content: '';
 		position: absolute;
-			top: 1px;
-			bottom: 1px;
+		top: 1px;
+		bottom: 1px;
 		width: 60%;
 		background-color: $gray-lighten-20;
 		animation: loading-fade 1.6s ease-in-out infinite;
@@ -52,8 +53,8 @@
 	display: block;
 	margin-top: -16px;
 	position: absolute;
-		left: 0;
-		right: 0;
+	left: 0;
+	right: 0;
 }
 
 .editor-drawer .async-load {

@@ -18,7 +18,7 @@ import FormLabel from 'components/forms/form-label';
 import InfoPopover from 'components/info-popover';
 import FormFieldset from 'components/forms/form-fieldset';
 import SuggestionSearch from 'components/suggestion-search';
-import { setSiteTopic } from 'state/signup/steps/site-topic/actions';
+import { submitSiteTopic, setSiteTopic } from 'state/signup/steps/site-topic/actions';
 import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -60,6 +60,9 @@ class SiteTopicStep extends Component {
 
 	onSiteTopicChange = value => {
 		this.setState( { siteTopicValue: value } );
+		if ( this.props.flowName === 'onboarding-dev' ) {
+			this.props.setSiteTopic( value );
+		}
 	};
 
 	onSubmit = event => {
@@ -103,39 +106,29 @@ class SiteTopicStep extends Component {
 	}
 
 	getTextFromSiteType() {
-		const packText = ( headerText, subHeaderText, topicLabel, placeholder ) => ( {
-			headerText,
-			subHeaderText,
-			topicLabel,
-			placeholder,
-		} );
 		const { siteType, translate } = this.props;
 
+		const headerText = getSiteTypePropertyValue( 'slug', siteType, 'siteTopicHeader' ) || '';
+		const topicLabel = getSiteTypePropertyValue( 'slug', siteType, 'siteTopicLabel' ) || '';
 		// once we have more granular copies per segments, these two should only be used for the default case.
 		const commonPlaceholder = translate( 'e.g. Fashion, travel, design, plumber, electrician' );
 		const commonSubHeaderText = translate( "Don't stress, you can change this later." );
-		const businessSiteTypeValue = getSiteTypePropertyValue( 'id', 'business', 'slug' );
 
-		switch ( siteType ) {
-			case businessSiteTypeValue:
-				return packText(
-					translate( 'Search for your type of business.' ),
-					commonSubHeaderText,
-					translate( 'Type of Business' ),
-					commonPlaceholder
-				);
-			default:
-				return packText(
-					translate( 'What will your site be about?' ),
-					commonSubHeaderText,
-					translate( 'Type of Site' ),
-					commonPlaceholder
-				);
-		}
+		return {
+			headerText,
+			commonSubHeaderText,
+			topicLabel,
+			commonPlaceholder,
+		};
 	}
 
 	render() {
-		const { headerText, subHeaderText, topicLabel, placeholder } = this.getTextFromSiteType();
+		const {
+			headerText,
+			commonSubHeaderText,
+			topicLabel,
+			commonPlaceholder,
+		} = this.getTextFromSiteType();
 
 		return (
 			<div>
@@ -145,10 +138,10 @@ class SiteTopicStep extends Component {
 					positionInFlow={ this.props.positionInFlow }
 					headerText={ headerText }
 					fallbackHeaderText={ headerText }
-					subHeaderText={ subHeaderText }
-					fallbackSubHeaderText={ subHeaderText }
+					subHeaderText={ commonSubHeaderText }
+					fallbackSubHeaderText={ commonSubHeaderText }
 					signupProgress={ this.props.signupProgress }
-					stepContent={ this.renderContent( topicLabel, placeholder ) }
+					stepContent={ this.renderContent( topicLabel, commonPlaceholder ) }
 				/>
 			</div>
 		);
@@ -157,27 +150,21 @@ class SiteTopicStep extends Component {
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	submitSiteTopic: siteTopic => {
-		const { translate, flowName, stepName, goToNextStep } = ownProps;
+		const { flowName, goToNextStep } = ownProps;
 
-		dispatch( setSiteTopic( siteTopic ) );
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
 				value: siteTopic,
 			} )
 		);
 
-		SignupActions.submitSignupStep(
-			{
-				processingMessage: translate( 'Collecting your information' ),
-				stepName,
-			},
-			[],
-			{
-				siteTopic,
-			}
-		);
+		dispatch( submitSiteTopic( siteTopic ) );
 
 		goToNextStep( flowName );
+	},
+
+	setSiteTopic: siteTopic => {
+		dispatch( setSiteTopic( siteTopic ) );
 	},
 } );
 

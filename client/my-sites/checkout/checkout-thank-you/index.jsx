@@ -26,7 +26,11 @@ import { fetchReceipt } from 'state/receipts/actions';
 import { fetchSitePlans, refreshSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite, getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
-import { getCurrentUser, getCurrentUserDate } from 'state/current-user/selectors';
+import {
+	getCurrentUser,
+	getCurrentUserDate,
+	isCurrentUserEmailVerified,
+} from 'state/current-user/selectors';
 import GoogleAppsDetails from './google-apps-details';
 import GuidedTransferDetails from './guided-transfer-details';
 import HappinessSupport from 'components/happiness-support';
@@ -206,6 +210,27 @@ export class CheckoutThankYou extends React.Component {
 		);
 	};
 
+	renderVerifiedEmailRequired = ( props = this.props ) => {
+		const { isEmailVerified } = props;
+
+		if ( isEmailVerified ) {
+			return null;
+		}
+
+		return (
+			<Notice
+				className="checkout-thank-you__verified-required"
+				showDismiss={ false }
+				status="is-error"
+			>
+				{ this.props.translate(
+					'You’re almost there! Take one moment to check your email and ' +
+						'verify your address to complete set up of your eCommerce store'
+				) }
+			</Notice>
+		);
+	};
+
 	isDataLoaded = () => {
 		if ( this.isGenericReceipt() ) {
 			return true;
@@ -371,6 +396,7 @@ export class CheckoutThankYou extends React.Component {
 				<Main className="checkout-thank-you">
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 					{ this.renderConfirmationNotice() }
+					{ this.renderVerifiedEmailRequired() }
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
@@ -379,6 +405,7 @@ export class CheckoutThankYou extends React.Component {
 			if ( delayedTransferPurchase ) {
 				planProps = {
 					action: (
+						// eslint-disable-next-line
 						<a className="thank-you-card__button" onClick={ this.startTransfer }>
 							{ translate( 'Start Domain Transfer' ) }
 						</a>
@@ -594,6 +621,7 @@ export default connect(
 			transferComplete:
 				transferStates.COMPLETED ===
 				get( getAtomicTransfer( state, siteId ), 'status', transferStates.PENDING ),
+			isEmailVerified: isCurrentUserEmailVerified( state ),
 		};
 	},
 	dispatch => {

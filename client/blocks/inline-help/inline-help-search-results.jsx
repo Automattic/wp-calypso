@@ -25,6 +25,7 @@ import {
 import { getLastRouteAction } from 'state/ui/action-log/selectors';
 import { setSearchResults, selectResult } from 'state/inline-help/actions';
 import { getContextResults } from './contextual-help';
+import { localizeUrl } from 'lib/i18n-utils';
 
 class InlineHelpSearchResults extends Component {
 	static propTypes = {
@@ -92,7 +93,7 @@ class InlineHelpSearchResults extends Component {
 				className={ classNames( 'inline-help__results-item', classes ) }
 			>
 				<a
-					href={ link.link }
+					href={ localizeUrl( link.link ) }
 					onClick={ this.onHelpLinkClick( index ) }
 					title={ decodeEntities( link.description ) }
 				>

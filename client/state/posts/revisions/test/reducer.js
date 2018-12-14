@@ -9,15 +9,12 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { diffs, requesting, selection, ui } from '../reducer';
+import reducer, { diffs, selection, ui } from '../reducer';
 import {
 	POST_EDIT,
 	POST_REVISIONS_DIALOG_CLOSE,
 	POST_REVISIONS_DIALOG_OPEN,
 	POST_REVISIONS_RECEIVE,
-	POST_REVISIONS_REQUEST,
-	POST_REVISIONS_REQUEST_FAILURE,
-	POST_REVISIONS_REQUEST_SUCCESS,
 	POST_REVISIONS_SELECT,
 	SELECTED_SITE_SET,
 } from 'state/action-types';
@@ -27,13 +24,7 @@ const TEST_POST_ID = 165;
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'diffs',
-			'requesting',
-			'selection',
-			'ui',
-			'authors',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'diffs', 'selection', 'ui', 'authors' ] );
 	} );
 
 	describe( '#diffs', () => {
@@ -285,116 +276,6 @@ describe( 'reducer', () => {
 							},
 						},
 					},
-				},
-			} );
-		} );
-	} );
-
-	describe( '#requesting', () => {
-		test( 'should default to an empty object', () => {
-			const state = requesting( undefined, {} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		test( 'should set to `true` if a request is initiated', () => {
-			const state = requesting( undefined, {
-				type: POST_REVISIONS_REQUEST,
-				siteId: 12345678,
-				postId: 50,
-			} );
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: true,
-				},
-			} );
-		} );
-
-		test( 'should set to `false` if the request is successful', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: POST_REVISIONS_REQUEST_SUCCESS,
-					siteId: 12345678,
-					postId: 50,
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: false,
-				},
-			} );
-		} );
-
-		test( 'should set to `false` if the request fails', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: POST_REVISIONS_REQUEST_FAILURE,
-					siteId: 12345678,
-					postId: 50,
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: false,
-				},
-			} );
-		} );
-
-		test( 'should support multiple sites', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: POST_REVISIONS_REQUEST,
-					siteId: 87654321,
-					postId: 10,
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: true,
-				},
-				87654321: {
-					10: true,
-				},
-			} );
-		} );
-
-		test( 'should support multiple posts', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: POST_REVISIONS_REQUEST,
-					siteId: 12345678,
-					postId: 10,
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: true,
-					10: true,
 				},
 			} );
 		} );

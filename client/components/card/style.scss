@@ -1,10 +1,11 @@
+
 .card {
 	display: block;
 	position: relative;
 	margin: 0 auto 10px auto;
 	padding: 16px;
 	box-sizing: border-box;
-	background: $white;
+	background: var( --color-surface );
 	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 
 	@include clear-fix;
@@ -27,7 +28,7 @@
 	&.is-card-link {
 		padding-right: 48px;
 		&:not( a ) {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 			font-size: 100%;
 			line-height: 1.5;
 			text-align: left;
@@ -50,25 +51,25 @@
 	}
 
 	&.is-error {
-		border-left: 3px solid $alert-red;
+		border-left: 3px solid var( --color-error );
 	}
 
 	&.is-info {
-		border-left: 3px solid $blue-wordpress;
+		border-left: 3px solid var( --color-primary );
 	}
 
 	&.is-success {
-		border-left: 3px solid $alert-green;
+		border-left: 3px solid var( --color-success );
 	}
 
 	&.is-warning {
-		border-left: 3px solid $alert-yellow;
+		border-left: 3px solid var( --color-warning );
 	}
 }
 
 // Clickable Card
 .card__link-indicator {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	display: block;
 	height: 100%;
 	position: absolute;

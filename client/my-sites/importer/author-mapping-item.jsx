@@ -16,6 +16,13 @@ import AuthorSelector from 'blocks/author-selector';
 import User from 'components/user';
 import { getCurrentUser } from 'state/current-user/selectors';
 
+const userShape = nameField =>
+	PropTypes.shape( {
+		ID: PropTypes.number.isRequired,
+		[ nameField ]: PropTypes.string.isRequired,
+		avatar_URL: PropTypes.string.isRequired,
+	} );
+
 class ImporterAuthorMapping extends React.Component {
 	static displayName = 'ImporterAuthorMapping';
 
@@ -26,11 +33,9 @@ class ImporterAuthorMapping extends React.Component {
 		sourceAuthor: PropTypes.shape( {
 			id: PropTypes.string.isRequired,
 			name: PropTypes.string.isRequired,
-			mappedTo: PropTypes.shape( {
-				ID: PropTypes.number.isRequired,
-				name: PropTypes.string.isRequired,
-				avatar_URL: PropTypes.string.isRequired,
-			} ),
+			// `currentUser` has `.display_name` and is used to map author on single author sites
+			// `users` endpoint returns `.name` and is used for multiple author sites
+			mappedTo: PropTypes.oneOfType( [ userShape( 'name' ), userShape( 'display_name' ) ] ),
 		} ).isRequired,
 		currentUser: PropTypes.object,
 	};

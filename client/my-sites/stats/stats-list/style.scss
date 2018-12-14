@@ -525,7 +525,7 @@ ul.module-content-list-item-action-submenu {
 
 	// Color follow action when already following
 	.module-content-list-item-action-wrapper.following .module-content-list-item-action-label {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 
 	// Display hidden label and change icon for Unfollow action
@@ -556,7 +556,7 @@ ul.module-content-list-item-action-submenu {
 
 	// Color spam action red
 	.module-content-list-item-action-wrapper.spam {
-		color: $alert-red;
+		color: var( --color-error );
 
 		// Hover state
 		@include breakpoint( ">480px" ) {
@@ -690,7 +690,7 @@ ul.module-content-list-legend {
 
 	// Change colors to highlight label when row is highlighted
 	.module-content-list-item-label {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 
 	// Highlight main action (usually what's indicated in the label)

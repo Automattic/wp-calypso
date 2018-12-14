@@ -18,7 +18,7 @@ function PendingWhoisUpdateCard( { translate } ) {
 	return (
 		<div className="edit-contact-info__pending-whois-update-card">
 			<Notice status="is-warning" showDismiss={ false }>
-				{ translate( 'Domain is pending contact information update' ) }
+				{ translate( 'Domain is pending contact information update.' ) }
 			</Notice>
 			<Card>
 				{ translate(

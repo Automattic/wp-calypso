@@ -12,6 +12,8 @@ import {
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
 	INLINE_HELP_CONTACT_FORM_RESET,
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
+	INLINE_HELP_POPOVER_SHOW,
+	INLINE_HELP_POPOVER_HIDE,
 } from 'state/action-types';
 
 /**
@@ -119,6 +121,22 @@ export function setSearchResults( searchQuery, searchResults ) {
 			type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 			searchQuery,
 			searchResults,
+		} );
+	};
+}
+
+export function showInlineHelpPopover() {
+	return dispatch => {
+		dispatch( {
+			type: INLINE_HELP_POPOVER_SHOW,
+		} );
+	};
+}
+
+export function hideInlineHelpPopover() {
+	return dispatch => {
+		dispatch( {
+			type: INLINE_HELP_POPOVER_HIDE,
 		} );
 	};
 }

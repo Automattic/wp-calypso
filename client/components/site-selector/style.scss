@@ -1,7 +1,9 @@
 /**
  * Site Selector
+ *
  * @component `selector`
  */
+
 .site-selector {
 	overflow: visible;
 	position: static;
@@ -14,7 +16,7 @@
 		opacity: 1;
 	}
 
-	&:not(.is-large) .search {
+	&:not( .is-large ) .search {
 		pointer-events: none;
 	}
 
@@ -28,9 +30,7 @@
 		.site__domain {
 			background-color: lighten( $gray, 35% );
 		}
-
 	}
-
 }
 
 // Styles for Site elements within the Selector
@@ -40,27 +40,27 @@
 
 	// Highlight selected site
 	&.is-selected {
-		background-color: $gray;
+		background-color: var( --site-selector-selected-background );
 
 		.site__badge {
-			color: $white;
+			color: var( --site-selector-selected-color );
 		}
 
 		.site__title,
 		.site__domain {
-			color: $white;
+			color: var( --site-selector-selected-color );
 			&::after {
-				@include long-content-fade( $color: $gray );
+				@include long-content-fade( $color: var( --site-selector-selected-background-gradient ) );
 			}
 		}
 
 		.count {
-			border-color: $white;
-			color: $white;
+			border-color: var( --site-selector-selected-color );
+			color: var( --site-selector-selected-color );
 		}
 
 		&.is-private .site__title::before {
-			color: $white;
+			color: var( --site-selector-selected-color );
 		}
 	}
 }
@@ -70,28 +70,28 @@
 .site-selector .all-sites.is-highlighted,
 .notouch .site-selector.is-hover-enabled .site:hover,
 .notouch .site-selector.is-hover-enabled .all-sites:hover {
-	background: $blue-medium;
+	background: var( --site-selector-hover-background );
 	cursor: pointer;
 
 	.site__badge {
-		color: $white;
+		color: var( --site-selector-hover-color );
 	}
 
 	.site__title,
 	.site__domain {
-		color: white;
+		color: var( --site-selector-hover-color );
 		&::after {
-			@include long-content-fade( $color: $blue-medium );
+			@include long-content-fade( $color: var( --site-selector-hover-background-gradient ) );
 		}
 	}
 
 	.site__title:before {
-		color: white;
+		color: var( --site-selector-hover-color );
 	}
 
 	.count {
-		border-color: $white;
-		color: $white;
+		border-color: var( --site-selector-hover-color );
+		color: var( --site-selector-hover-color );
 	}
 }
 
@@ -104,7 +104,7 @@
 	opacity: 0;
 	position: absolute;
 
-	.search__input[type="search"] {
+	.search__input[type='search'] {
 		font-size: 13px;
 	}
 
@@ -114,17 +114,21 @@
 		width: 32px;
 		height: 18px;
 	}
-
 }
 
 // The actual list of sites
 .site-selector__sites {
 	max-height: calc( 100% - 93px );
 	overflow-y: auto;
+	background: var( --sidebar-secondary-background );
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		max-height: calc( 100% - 109px );
 	}
+}
+
+.layout__secondary .site-selector__sites {
+	background: var( --sidebar-background );
 }
 
 .site-selector__no-results {
@@ -156,7 +160,7 @@
 		color: $gray-dark;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		padding: 16px;
 	}
 

@@ -22,29 +22,23 @@ import { ZONINATOR_REQUEST_FEED, ZONINATOR_SAVE_FEED } from 'zoninator/state/act
 const requestFeedNotice = 'zoninator-request-feed';
 const saveFeedNotice = 'zoninator-save-feed';
 
-export const requestZoneFeed = ( { dispatch }, action ) => {
-	const { siteId, zoneId } = action;
+export const requestZoneFeed = action => [
+	removeNotice( requestFeedNotice ),
+	http(
+		{
+			method: 'GET',
+			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
+			query: { path: `/zoninator/v1/zones/${ action.zoneId }/posts` },
+		},
+		action
+	),
+];
 
-	dispatch( removeNotice( requestFeedNotice ) );
-	dispatch(
-		http(
-			{
-				method: 'GET',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
-				query: {
-					path: `/zoninator/v1/zones/${ zoneId }/posts`,
-				},
-			},
-			action
-		)
-	);
-};
+export const updateZoneFeed = ( action, response ) =>
+	updateFeed( action.siteId, action.zoneId, fromApi( response.data, action.siteId ) );
 
-export const updateZoneFeed = ( { dispatch }, { siteId, zoneId }, { data } ) =>
-	dispatch( updateFeed( siteId, zoneId, fromApi( data, siteId ) ) );
-
-export const requestZoneFeedError = ( { dispatch, getState }, { siteId, zoneId } ) => {
-	const { name } = getZone( getState(), siteId, zoneId );
+export const requestZoneFeedError = action => ( dispatch, getState ) => {
+	const { name } = getZone( getState(), action.siteId, action.zoneId );
 
 	dispatch(
 		errorNotice(
@@ -56,54 +50,49 @@ export const requestZoneFeedError = ( { dispatch, getState }, { siteId, zoneId }
 	);
 };
 
-export const saveZoneFeed = ( { dispatch }, action ) => {
-	const { form, posts, siteId, zoneId } = action;
-
-	dispatch( startSubmit( form ) );
-	dispatch( removeNotice( saveFeedNotice ) );
-	dispatch( resetLock( siteId, zoneId ) );
-	dispatch(
-		http(
-			{
-				method: 'POST',
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
-				query: {
-					body: JSON.stringify( toApi( posts ) ),
-					json: true,
-					path: `/zoninator/v1/zones/${ zoneId }/posts&_method=PUT`,
-				},
+export const saveZoneFeed = action => [
+	startSubmit( action.form ),
+	removeNotice( saveFeedNotice ),
+	resetLock( action.siteId, action.zoneId ),
+	http(
+		{
+			method: 'POST',
+			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
+			query: {
+				body: JSON.stringify( toApi( action.posts ) ),
+				json: true,
+				path: `/zoninator/v1/zones/${ action.zoneId }/posts&_method=PUT`,
 			},
-			action
-		)
-	);
-};
+		},
+		action
+	),
+];
 
-export const announceSuccess = ( { dispatch }, { form, posts, siteId, zoneId } ) => {
-	dispatch( stopSubmit( form ) );
-	dispatch( initialize( form, { posts } ) );
-	dispatch( updateFeed( siteId, zoneId, posts ) );
-	dispatch( successNotice( translate( 'Zone feed saved!' ), { id: saveFeedNotice } ) );
-};
+export const announceSuccess = ( { form, posts, siteId, zoneId } ) => [
+	stopSubmit( form ),
+	initialize( form, { posts } ),
+	updateFeed( siteId, zoneId, posts ),
+	successNotice( translate( 'Zone feed saved!' ), { id: saveFeedNotice } ),
+];
 
-export const announceFailure = ( { dispatch }, { form } ) => {
-	dispatch( stopSubmit( form ) );
-	dispatch(
-		errorNotice( translate( 'There was a problem saving your changes. Please try again' ), {
-			id: saveFeedNotice,
-		} )
-	);
-};
+export const announceFailure = action => [
+	stopSubmit( action.form ),
+	errorNotice( translate( 'There was a problem saving your changes. Please try again' ), {
+		id: saveFeedNotice,
+	} ),
+];
 
-const dispatchZoneFeedRequest = dispatchRequest(
-	requestZoneFeed,
-	updateZoneFeed,
-	requestZoneFeedError
-);
-const dispatchSaveZoneFeedRequest = dispatchRequest(
-	saveZoneFeed,
-	announceSuccess,
-	announceFailure
-);
+const dispatchZoneFeedRequest = dispatchRequest( {
+	fetch: requestZoneFeed,
+	onSuccess: updateZoneFeed,
+	onError: requestZoneFeedError,
+} );
+
+const dispatchSaveZoneFeedRequest = dispatchRequest( {
+	fetch: saveZoneFeed,
+	onSuccess: announceSuccess,
+	onError: announceFailure,
+} );
 
 export default {
 	[ ZONINATOR_REQUEST_FEED ]: [ dispatchZoneFeedRequest ],

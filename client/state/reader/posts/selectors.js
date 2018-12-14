@@ -7,7 +7,7 @@ import { keyBy, some, get } from 'lodash';
 /**
  * Internal depedencies
  */
-import treeSelect from 'lib/tree-select';
+import treeSelect from '@automattic/tree-select';
 import { keyToString, keyForPost } from 'reader/post-key';
 
 /**

@@ -7,15 +7,15 @@
 			// fixes focus styles in stacking context
 			position: relative;
 			z-index: z-index( 'button-group-parent', '.button-group .button:focus' );
-			box-shadow: inset 1px 0 0 $blue-medium, 0 0 0 2px $blue-light;
+			box-shadow: inset 1px 0 0 var( --color-accent ) 0 0 0 2px var( --color-primary-light );
 		}
 
 		&.is-primary:focus {
-			box-shadow: inset 1px 0 0 $blue-dark, 0 0 0 2px $blue-light;
+			box-shadow: inset 1px 0 0 var( --color-primary-dark ), 0 0 0 2px var( --color-primary-light );
 		}
 
 		&.is-scary:focus {
-			box-shadow: inset 1px 0 0 $alert-red, 0 0 0 2px lighten( $alert-red, 20% );
+			box-shadow: inset 1px 0 0 var( --color-error ), 0 0 0 2px lighten( $alert-red, 20% );
 		}
 
 		&.is-primary.is-scary:focus {
@@ -23,7 +23,7 @@
 		}
 
 		&:first-child:focus {
-			box-shadow: 0 0 0 2px $blue-light;
+			box-shadow: 0 0 0 2px var( --color-primary-light );
 		}
 
 		&.is-scary:first-child:focus {

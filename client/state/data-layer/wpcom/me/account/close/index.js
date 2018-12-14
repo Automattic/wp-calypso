@@ -12,7 +12,7 @@ import { translate } from 'i18n-calypso';
  */
 import { ACCOUNT_CLOSE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { closeAccountSuccess } from 'state/account/actions';
 
@@ -50,7 +50,7 @@ export function receiveAccountCloseError() {
 
 registerHandlers( 'state/data-layer/wpcom/me/account/close/index.js', {
 	[ ACCOUNT_CLOSE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestAccountClose,
 			onSuccess: receiveAccountCloseSuccess,
 			onError: receiveAccountCloseError,

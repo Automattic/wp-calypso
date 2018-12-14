@@ -8,6 +8,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
+import { TYPE_BUSINESS } from 'lib/plans/constants';
 
 /**
  * Current list of site types that are displayed in the signup site-type step
@@ -22,6 +23,10 @@ export const allSiteTypes = [
 		description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
 		theme: 'pub/independent-publisher-2',
 		designType: 'blog',
+		siteTitleLabel: i18n.translate( 'What would you like to call your blog?' ),
+		siteTitlePlaceholder: i18n.translate( "E.g. Stevie's blog " ),
+		siteTopicHeader: i18n.translate( 'Search for your type of blog.' ),
+		siteTopicLabel: i18n.translate( 'What will your blog be about?' ),
 	},
 	{
 		id: 'business',
@@ -30,6 +35,11 @@ export const allSiteTypes = [
 		description: i18n.translate( 'Promote products and services.' ),
 		theme: 'pub/radcliffe-2',
 		designType: 'page',
+		siteTitleLabel: i18n.translate( 'What is the name of your business?' ),
+		siteTitlePlaceholder: i18n.translate( 'E.g. Vail Renovations' ),
+		siteTopicHeader: i18n.translate( 'Search for your type of business.' ),
+		siteTopicLabel: i18n.translate( 'What type of business do you have?' ),
+		customerType: TYPE_BUSINESS,
 	},
 	{
 		id: 'professional',
@@ -38,6 +48,10 @@ export const allSiteTypes = [
 		description: i18n.translate( 'Showcase your portfolio and work.' ),
 		theme: 'pub/altofocus',
 		designType: 'portfolio',
+		siteTitleLabel: i18n.translate( 'What is your name?' ),
+		siteTitlePlaceholder: i18n.translate( 'E.g. John Appleseed' ),
+		siteTopicHeader: i18n.translate( 'Search for your type of website.' ),
+		siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
 	},
 	{
 		id: 'education',
@@ -46,14 +60,23 @@ export const allSiteTypes = [
 		description: i18n.translate( 'Share school projects and class info.' ),
 		theme: 'pub/twentyfifteen',
 		designType: 'blog',
+		siteTitleLabel: i18n.translate( 'What is the name of your site?' ),
+		siteTitlePlaceholder: i18n.translate( 'E.g. My class' ),
+		siteTopicHeader: i18n.translate( 'Search for your type of website.' ),
+		siteTopicLabel: i18n.translate( 'What will your site be about?' ),
 	},
 	{
 		id: 'store',
 		slug: 'online-store',
 		label: i18n.translate( 'Online store' ),
-		description: i18n.translate( 'Sell your collection of products online. ' ),
+		description: i18n.translate( 'Sell your collection of products online.' ),
 		theme: 'pub/dara',
 		designType: 'store',
+		siteTitleLabel: i18n.translate( 'What is the name of your store?' ),
+		siteTitlePlaceholder: i18n.translate( "E.g. Mel's Diner" ),
+		siteTopicHeader: i18n.translate( 'Search for your type of website.' ),
+		siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
+		customerType: TYPE_BUSINESS,
 	},
 ];
 

@@ -4,7 +4,7 @@
 
 	border-top: 1px solid $gray-lighten-20;
 	border-left: 3px solid transparent;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 13px;
 	font-weight: 200;
 
@@ -14,7 +14,7 @@
 	align-items: center;
 
 	&.is-selected {
-		border-left: 3px solid $blue-wordpress;
+		border-left: 3px solid var( --color-primary );
 		color: $gray-dark;
 		font-weight: 400;
 
@@ -28,10 +28,10 @@
 	}
 
 	&:not(.is-selected):hover {
-		color: $blue-medium;
+		color: var( --color-accent );
 
 		.social-logo {
-			fill: $blue-medium;
+			fill: var( --color-accent );
 		}
 	}
 }

@@ -120,11 +120,11 @@ export function handleProductRequest( { dispatch }, action ) {
 	dispatch( get( siteId, 'products/' + productId, updatedSuccessAction, failureAction ) );
 }
 
-export function productsRequest( { dispatch }, action ) {
+export function productsRequest( action ) {
 	const { siteId, params } = action;
 	const queryString = stringify( omitBy( params, val => '' === val ) );
 
-	dispatch( request( siteId, action ).getWithHeaders( `products?${ queryString }` ) );
+	return request( siteId, action ).getWithHeaders( `products?${ queryString }` );
 }
 
 export function receivedProducts( { dispatch }, action, { data } ) {

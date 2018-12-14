@@ -1,3 +1,4 @@
+
 // ==========================================================================
 // Returns a linear gradient used to fade elements extending outside their parent
 //
@@ -12,10 +13,10 @@
 // background: overflow-gradient( var( --sidebar-rgba-test ) );
 // border-image: overflow-gradient( hex-to-rgb( $gray-light ), to left );
 // ==========================================================================
-@function overflow-gradient( $color, $direction: to right ) {
+@function overflow-gradient( $color, $stop: 90%, $direction: to right ) {
 	@return linear-gradient(
 		$direction,
-		#{ 'rgba(' } $color #{ ', 0 )' },
-		#{ 'rgba(' } $color #{ ', 1 )' } 50%
+		#{'rgba('} $color #{', 0 )'},
+		#{'rgba('} $color #{', 1 )'} $stop
 	);
 }

@@ -1,7 +1,14 @@
-[
-  "contact-form",
-  "map",
-  "markdown",
-  "publicize",
-  "simple-payments"
-]
+{
+  "production": [
+    "contact-form",
+    "map",
+    "markdown",
+    "publicize",
+    "simple-payments"
+  ],
+  "beta": [
+    "related-posts",
+    "tiled-gallery",
+    "vr"
+  ]
+}

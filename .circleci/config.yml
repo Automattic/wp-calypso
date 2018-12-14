@@ -6,7 +6,7 @@ references:
     CIRCLE_TEST_REPORTS: /tmp/test_results
 
   docker-image: &docker-image
-    - image: circleci/node:10.13.0-browsers
+    - image: circleci/node:10.14.0-browsers
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
@@ -18,6 +18,7 @@ references:
         "$CIRCLE_TEST_REPORTS/client"           \
         "$CIRCLE_TEST_REPORTS/eslint"           \
         "$CIRCLE_TEST_REPORTS/integration"      \
+        "$CIRCLE_TEST_REPORTS/packages"         \
         "$CIRCLE_TEST_REPORTS/server"           \
         "$HOME/jest-cache"                      \
         "$HOME/terser-cache"
@@ -92,35 +93,33 @@ references:
     paths:
       - ".git"
 
-  # node_modules cache
+  # npm cache
   #
-  # We'll cache node_modules to save ourselves npm installation during build. Any cache hit
-  # for identical `.nvmrc` and `npm-shrinkwrap.json` should produce identical node_modules,
-  # so the checksum for these files builds our cache.
+  # npm caches the modules it installs in ~/.npm.
+  # We cache that cache to save time pulling modules from the network.
   #
-  # We only match this cache identically with no fallbacks. This allows us to skip any npm
-  # installation if a cache hits and we find node_modules. Otherwise, cache misses and we'll
-  # need to do an npm install.
   #
   # Some prior art:
   #   - https://github.com/Automattic/wp-calypso/pull/25431
   #   - https://github.com/Automattic/wp-calypso/pull/25487
+  #   - https://github.com/Automattic/wp-calypso/pull/27180
   #
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
-  restore-node-modules-cache: &restore-node-modules-cache
-    name: "Restore node_modules cache"
-    key: v1-node-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+  restore-npm-cache: &restore-npm-cache
+    name: "Restore npm cache"
+    keys:
+      - v1-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+      - v1-npm-modules-{{ checksum ".nvmrc" }}
+
   npm-install: &npm-install
     name: Install npm dependencies
-    command: |
-      if [ ! -d node_modules ]; then
-        npm ci
-      fi
-  save-node-modules-cache: &save-node-modules-cache
+    command: npx lerna bootstrap
+
+  save-npm-cache: &save-npm-cache
     name: "Save node_modules cache"
-    key: v1-node-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+    key: v1-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
     paths:
-      - node_modules
+      - ~/.npm
 
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
@@ -170,9 +169,10 @@ jobs:
       - run: *update-git-master
       - save_cache: *save-git-cache
       # npm dependencies
-      - restore_cache: *restore-node-modules-cache
+      - restore_cache: *restore-npm-cache
       - run: *npm-install
-      - save_cache: *save-node-modules-cache
+      - save_cache: *save-npm-cache
+      - run: npm run build-packages
       - persist_to_workspace:
           root: '~'
           paths:
@@ -209,7 +209,7 @@ jobs:
             # Ensure this does not cause job failure (see `|| exit 0`)
             FILES_TO_LINT=$(
               git diff --name-only --diff-filter=d origin/master... \
-                | grep -E '^(client|server)'                        \
+                | grep -E '^(client/|server/|packages/)'            \
                 | grep -E '\.jsx?$'
             ) || exit 0
 
@@ -321,6 +321,29 @@ jobs:
       - save_cache: *save-jest-cache
       - store-artifacts-and-test-results
 
+  test-packages:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - restore_cache: *restore-jest-cache
+      - run:
+          name: Run Package Tests
+          no_output_timeout: 2m
+          command: |
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/packages/results.xml" \
+              ./node_modules/.bin/jest                                    \
+                --cacheDirectory="$HOME/jest-cache"                       \
+                --ci                                                      \
+                --maxWorkers=2                                            \
+                --reporters=default                                       \
+                --reporters=jest-junit                                    \
+                --silent                                                  \
+                --config=test/packages/jest.config.js
+      - save_cache: *save-jest-cache
+      - store-artifacts-and-test-results
+
+
   test-server:
     <<: *defaults
     parallelism: 1
@@ -342,14 +365,6 @@ jobs:
                 --config=test/server/jest.config.js
       - save_cache: *save-jest-cache
       - store-artifacts-and-test-results
-
-  danger:
-    <<: *defaults
-    steps:
-      - prepare
-      - run:
-          name: Danger.js
-          command: npx danger ci
 
   icfy-stats:
     <<: *defaults
@@ -448,12 +463,6 @@ workflows:
   calypso:
     jobs:
       - setup
-      - danger:
-          requires:
-            - setup
-          filters:
-            branches:
-              ignore: master
       - build-jetpack-blocks:
           requires:
             - setup
@@ -467,6 +476,9 @@ workflows:
           requires:
             - setup
       - test-client:
+          requires:
+            - setup
+      - test-packages:
           requires:
             - setup
       - test-server:
@@ -488,6 +500,9 @@ workflows:
           requires:
             - setup
       - test-integration:
+          requires:
+            - setup
+      - test-packages:
           requires:
             - setup
       - test-server:

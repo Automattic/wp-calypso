@@ -8,7 +8,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { USER_PROFILE_LINKS_REQUEST } from 'state/action-types';
 import { receiveUserProfileLinks } from 'state/profile-links/actions';
@@ -43,7 +43,7 @@ export const handleRequestSuccess = ( action, { profile_links } ) =>
 
 registerHandlers( 'state/data-layer/wpcom/me/settings/profile-links/index.js', {
 	[ USER_PROFILE_LINKS_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestUserProfileLinks,
 			onSuccess: handleRequestSuccess,
 			onError: noop,

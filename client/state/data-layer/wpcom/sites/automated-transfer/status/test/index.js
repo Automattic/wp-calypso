@@ -15,6 +15,7 @@ import {
 	fetchAutomatedTransferStatus,
 	setAutomatedTransferStatus,
 } from 'state/automated-transfer/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
 const siteId = 1916284;
@@ -34,12 +35,16 @@ const IN_PROGRESS_RESPONSE = {
 
 describe( 'requestStatus', () => {
 	test( 'should dispatch an http request', () => {
-		const dispatch = sinon.spy();
-		requestStatus( { dispatch }, { siteId } );
-		expect( dispatch ).to.have.been.calledWithMatch( {
-			method: 'GET',
-			path: `/sites/${ siteId }/automated-transfers/status`,
-		} );
+		expect( requestStatus( { siteId } ) ).to.eql(
+			http(
+				{
+					method: 'GET',
+					path: `/sites/${ siteId }/automated-transfers/status`,
+					apiVersion: '1',
+				},
+				{ siteId }
+			)
+		);
 	} );
 } );
 
@@ -49,7 +54,7 @@ describe( 'receiveStatus', () => {
 
 	test( 'should dispatch set status action', () => {
 		const dispatch = sinon.spy();
-		receiveStatus( { dispatch }, { siteId }, COMPLETE_RESPONSE );
+		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
 		expect( dispatch ).to.have.callCount( 3 );
 		expect( dispatch ).to.have.been.calledWith(
 			setAutomatedTransferStatus( siteId, 'complete', 'hello-dolly' )
@@ -58,7 +63,7 @@ describe( 'receiveStatus', () => {
 
 	test( 'should dispatch tracks event if complete', () => {
 		const dispatch = sinon.spy();
-		receiveStatus( { dispatch }, { siteId }, COMPLETE_RESPONSE );
+		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
 		expect( dispatch ).to.have.callCount( 3 );
 		expect( dispatch ).to.have.been.calledWith(
 			recordTracksEvent( 'calypso_automated_transfer_complete', {
@@ -71,7 +76,7 @@ describe( 'receiveStatus', () => {
 
 	test( 'should request status again if not complete', () => {
 		const dispatch = sinon.spy();
-		receiveStatus( { dispatch }, { siteId }, IN_PROGRESS_RESPONSE );
+		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 		clock.tick( 4000 );
 
 		expect( dispatch ).to.have.been.calledTwice;

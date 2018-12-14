@@ -1,3 +1,5 @@
-body.is-reader-page {
-	background-color: #fff;
+
+body.is-reader-page,
+.is-reader-page .layout {
+	background-color: var( --color-surface );
 }

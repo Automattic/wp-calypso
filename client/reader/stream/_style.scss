@@ -45,7 +45,7 @@
 	&.tag-afk.is-selected {
 
 		&::before {
-			background: $blue-wordpress;
+			background: var( --color-primary );
 			content: "";
 			position: absolute;
 				bottom: 0;

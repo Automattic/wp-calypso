@@ -219,7 +219,7 @@ const Account = createReactClass( {
 									<a
 										target="_blank"
 										rel="noopener noreferrer"
-										href="https://en.support.wordpress.com/community-translator/"
+										href="https://translate.wordpress.com/community-translator/"
 										onClick={ this.getClickHandler( 'Community Translator Learn More Link' ) }
 									/>
 								),

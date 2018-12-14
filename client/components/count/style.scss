@@ -11,7 +11,7 @@
 
 	&.is-primary {
 		color: $white;
-		border-color: $blue-medium;
-		background-color: $blue-medium;
+		border-color: var( --color-accent );
+		background-color: var( --color-accent );
 	}
 }

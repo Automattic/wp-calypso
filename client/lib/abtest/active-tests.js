@@ -81,12 +81,29 @@ export default {
 		},
 		defaultVariation: 'public',
 	},
-	crowdsignalNameBasedSignup: {
-		datestamp: '20181120',
+	simplifiedChecklistView: {
+		datestamp: '20181204',
 		variations: {
-			nameSignup: 50,
-			usernameSignup: 50,
+			showAll: 50,
+			showFirstOnly: 50,
 		},
-		defaultVariation: 'usernameSignup',
+		defaultVariation: 'showAll',
+	},
+	removeUsername: {
+		datestamp: '20181213',
+		variations: {
+			showUsername: 50,
+			hideUsername: 50,
+		},
+		defaultVariation: 'showUsername',
+	},
+	jetpackFreePlanButtonPosition: {
+		datestamp: '20181212',
+		variations: {
+			locationTop: 50,
+			locationBottom: 50,
+		},
+		defaultVariation: 'locationBottom',
+		allowExistingUsers: true,
 	},
 };

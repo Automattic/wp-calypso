@@ -18,6 +18,7 @@ import Emitter from 'lib/mixins/emitter';
  * Initialize a new list of products.
  *
  * @api public
+ * @returns {ProductsList} Products List
  */
 function ProductsList() {
 	if ( ! ( this instanceof ProductsList ) ) {
@@ -35,7 +36,7 @@ Emitter( ProductsList.prototype );
 /**
  * Gets the list of products from current object or store, triggers fetch on first request to update stale data.
  *
- * @return {array}
+ * @return {array} The array of products
  * @api public
  */
 ProductsList.prototype.get = function() {
@@ -76,15 +77,13 @@ ProductsList.prototype.fetch = function() {
 
 	wpcom.undocumented().getProducts(
 		function( error, data ) {
-			let productsList;
-
 			if ( error ) {
 				debug( 'error fetching ProductsList from api', error );
 
 				return;
 			}
 
-			productsList = data;
+			const productsList = data;
 
 			debug( 'ProductsList fetched from api:', productsList );
 
@@ -99,7 +98,11 @@ ProductsList.prototype.fetch = function() {
 			this.emit( 'change' );
 
 			if ( typeof localStorage !== 'undefined' ) {
-				localStorage.setItem( 'ProductsList', JSON.stringify( productsList ) );
+				try {
+					localStorage.setItem( 'ProductsList', JSON.stringify( productsList ) );
+				} catch ( e ) {
+					// ignore problems storing the list into local storage
+				}
 			}
 		}.bind( this )
 	);
@@ -107,6 +110,7 @@ ProductsList.prototype.fetch = function() {
 
 /**
  * Initializes data with a list of products.
+ * @param {Object} productsList The list of products
  **/
 ProductsList.prototype.initialize = function( productsList ) {
 	this.data = productsList;
@@ -116,7 +120,7 @@ ProductsList.prototype.initialize = function( productsList ) {
 /**
  * Determines whether the data has initially loaded from the server.
  *
- * @return {boolean}
+ * @return {boolean} Has it loaded
  */
 ProductsList.prototype.hasLoadedFromServer = function() {
 	return this.initialized;

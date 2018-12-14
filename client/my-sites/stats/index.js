@@ -209,7 +209,7 @@ export default function() {
 		}
 
 		page(
-			`/stats/wordads/:period(${ validPeriods.join( '|' ) })/:site`,
+			`/stats/ads/:period(${ validPeriods.join( '|' ) })/:site`,
 			siteSelection,
 			navigation,
 			statsController.wordAds,
@@ -218,7 +218,8 @@ export default function() {
 		);
 
 		// Anything else should redirect to default WordAds stats page
-		page( '/stats/wordads(.*)', statsController.redirectToDefaultWordAdsPeriod );
+		page( '/stats/wordads/(.*)', statsController.redirectToDefaultWordAdsPeriod );
+		page( '/stats/ads/(.*)', statsController.redirectToDefaultWordAdsPeriod );
 
 		// Anything else should redirect to default stats page
 		page( '/stats/(.*)', statsController.redirectToDefaultSitePage );

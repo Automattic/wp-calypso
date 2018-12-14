@@ -16,7 +16,7 @@
 
 .help__support-link .help__support-link-title {
 	&:hover {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 }
 
@@ -43,7 +43,7 @@
 
 .help__support-link-title {
 	font-size: 16px;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	@include breakpoint( ">660px" ) {
 		font-size: 21px;
 	}
@@ -64,7 +64,7 @@
 }
 
 .help__help-teaser-button .card {
-	border-left: 3px solid $blue-wordpress;
+	border-left: 3px solid var( --color-primary );
 	display: flex;
 	margin: 16px 0;
 	padding: 12px 12px;
@@ -83,7 +83,7 @@
 }
 
 .help__help-teaser-button-icon {
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	border-radius: 50%;
 	margin-right: 16px;
 	background-color: $white;

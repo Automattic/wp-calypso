@@ -29,7 +29,7 @@
 	}
 
 	&.is-selected {
-		border-left: 8px solid $blue-wordpress;
+		border-left: 8px solid var( --color-primary );
 		background: $gray-light;
 	}
 
@@ -54,7 +54,7 @@
 
 .draft__time {
 	font-size: 13px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .draft__excerpt {

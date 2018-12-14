@@ -99,8 +99,7 @@ export default connect( ( state, { siteId } ) => {
 			siteId
 		),
 		isStore: isSiteStore( state, siteId ),
-		isWordAds:
-			getSiteOption( state, siteId, 'wordads' ) && config.isEnabled( 'wordads/daily-stats' ),
+		isWordAds: getSiteOption( state, siteId, 'wordads' ),
 		siteId,
 	};
 } )( StatsNavigation );

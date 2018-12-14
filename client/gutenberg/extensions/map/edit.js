@@ -87,7 +87,7 @@ class MapEdit extends Component {
 	apiCall( serviceApiKey = null, method = 'GET' ) {
 		const { noticeOperations } = this.props;
 		const { apiKey } = this.state;
-		const path = '/jetpack/v4/service-api-keys/mapbox';
+		const path = '/wpcom/v2/service-api-keys/mapbox';
 		const fetch = serviceApiKey
 			? { path, method, data: { service_api_key: serviceApiKey } }
 			: { path, method };
@@ -207,17 +207,15 @@ class MapEdit extends Component {
 			<Placeholder icon={ settings.icon } label={ __( 'Map' ) } notices={ notices }>
 				<Fragment>
 					<div className="components-placeholder__instructions">
-						<p>{ __( 'To use the map block, you need an Access Token.' ) }</p>
-						<p>
-							<ExternalLink href="https://www.mapbox.com">
-								{ __( 'Create an account or log in to Mapbox.' ) }
-							</ExternalLink>
-						</p>
-						<p>
-							{ __(
-								'Locate and copy the default access token. Then, paste it into the field below.'
-							) }
-						</p>
+						{ __( 'To use the map block, you need an Access Token.' ) }
+						<br />
+						<ExternalLink href="https://www.mapbox.com">
+							{ __( 'Create an account or log in to Mapbox.' ) }
+						</ExternalLink>
+						<br />
+						{ __(
+							'Locate and copy the default access token. Then, paste it into the field below.'
+						) }
 					</div>
 					<TextControl
 						className="wp-block-jetpack-map-components-text-control-api-key"

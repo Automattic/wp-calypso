@@ -85,7 +85,7 @@
 
 	&:focus {
 		.plugin-sections__read-more-text {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 			outline: solid $gray 1px;
 		}
 	}

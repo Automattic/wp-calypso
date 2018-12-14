@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { updateDomainTransfer } from 'state/domains/transfer/actions';
 import { DOMAIN_TRANSFER_IPS_TAG_SAVE } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
@@ -62,7 +62,7 @@ export const handleIpsTagSaveFailure = ( { domain, selectedRegistrar } ) => [
 
 registerHandlers( 'state/data-layer/wpcom/domains/transfer/index.js', {
 	[ DOMAIN_TRANSFER_IPS_TAG_SAVE ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: saveDomainIpsTag,
 			onSuccess: handleIpsTagSaveSuccess,
 			onError: handleIpsTagSaveFailure,

@@ -70,6 +70,6 @@
 
 	.progress-bar__progress {
 		border-radius: 0;
-		background-color: $blue-medium;
+		background-color: var( --color-accent );
 	}
 }

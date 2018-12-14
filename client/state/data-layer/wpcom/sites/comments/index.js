@@ -18,7 +18,7 @@ import {
 } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest, dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import replies from './replies';
 import likes from './likes';
 import { errorNotice, removeNotice } from 'state/notices/actions';
@@ -26,6 +26,7 @@ import getRawSite from 'state/selectors/get-raw-site';
 import getSiteComment from 'state/selectors/get-site-comment';
 import {
 	changeCommentStatus,
+	editComment as editCommentAction,
 	receiveComments,
 	receiveCommentsError as receiveCommentErrorAction,
 	requestComment as requestCommentAction,
@@ -202,9 +203,9 @@ const announceFailure = ( { query: { siteId } } ) => ( dispatch, getState ) => {
 };
 
 // @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/
-export const editComment = ( { dispatch, getState }, action ) => {
+export const editComment = action => ( dispatch, getState ) => {
 	const { siteId, commentId, comment } = action;
-	const originalComment = getSiteComment( getState(), action.siteId, action.commentId );
+	const originalComment = getSiteComment( getState(), siteId, commentId );
 
 	// Comment Management allows for modifying nested fields, such as `author.name` and `author.url`.
 	// Though, there is no direct match between the GET response (which feeds the state) and the POST request.
@@ -227,62 +228,55 @@ export const editComment = ( { dispatch, getState }, action ) => {
 				apiVersion: '1.1',
 				body,
 			},
-			{
-				...action,
-				originalComment,
-			}
+			{ ...action, originalComment }
 		)
 	);
 };
 
-export const updateComment = ( store, action, data ) => {
-	store.dispatch( removeNotice( `comment-notice-error-${ action.commentId }` ) );
-	store.dispatch(
-		bypassDataLayer( {
-			...omit( action, [ 'originalComment' ] ),
-			comment: data,
-		} )
-	);
-};
+export const updateComment = ( action, data ) => [
+	removeNotice( `comment-notice-error-${ action.commentId }` ),
+	bypassDataLayer( editCommentAction( action.siteId, action.postId, action.commentId, data ) ),
+];
 
-export const announceEditFailure = ( { dispatch }, action ) => {
-	dispatch(
-		bypassDataLayer( {
-			...omit( action, [ 'originalComment' ] ),
-			comment: action.originalComment,
-		} )
-	);
-	dispatch( removeNotice( `comment-notice-${ action.commentId }` ) );
-	dispatch(
-		errorNotice( translate( "We couldn't update this comment." ), {
-			id: `comment-notice-error-${ action.commentId }`,
-		} )
-	);
-};
+export const announceEditFailure = action => [
+	bypassDataLayer(
+		editCommentAction( action.siteId, action.postId, action.commentId, action.originalComment )
+	),
+	removeNotice( `comment-notice-${ action.commentId }` ),
+	errorNotice( translate( "We couldn't update this comment." ), {
+		id: `comment-notice-error-${ action.commentId }`,
+	} ),
+];
 
 export const fetchHandler = {
 	[ COMMENTS_CHANGE_STATUS ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestChangeCommentStatus,
 			onSuccess: handleChangeCommentStatusSuccess,
 			onError: announceStatusChangeFailure,
 		} ),
 	],
 	[ COMMENTS_LIST_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: fetchCommentsList,
 			onSuccess: addComments,
 			onError: announceFailure,
 		} ),
 	],
 	[ COMMENT_REQUEST ]: [
-		dispatchRequestEx( {
+		dispatchRequest( {
 			fetch: requestComment,
 			onSuccess: receiveCommentSuccess,
 			onError: receiveCommentError,
 		} ),
 	],
-	[ COMMENTS_EDIT ]: [ dispatchRequest( editComment, updateComment, announceEditFailure ) ],
+	[ COMMENTS_EDIT ]: [
+		dispatchRequest( {
+			fetch: editComment,
+			onSuccess: updateComment,
+			onError: announceEditFailure,
+		} ),
+	],
 };
 
 registerHandlers(

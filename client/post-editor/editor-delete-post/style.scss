@@ -9,7 +9,7 @@
 }
 
 .editor-delete-post__button.button.is-borderless {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	padding: 0;
 
 	&.is-trashing {
@@ -30,7 +30,7 @@
 	}
 
 	.gridicon {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		margin-right: 4px;
 	}
 }

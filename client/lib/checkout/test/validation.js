@@ -15,7 +15,8 @@ import {
 	validatePaymentDetails,
 	getCreditCardType,
 	paymentFieldRules,
-	creditCardFieldRules,
+	getCreditCardFieldRules,
+	mergeValidationRules,
 } from '../validation';
 import * as ebanxMethods from '../ebanx';
 
@@ -47,7 +48,7 @@ describe( 'validation', () => {
 		city: 'Maracanaú',
 		state: 'CE',
 		document: '853.513.468-93',
-		'phone-number': '+85 2284-7035',
+		'phone-number': '085 2284-7035',
 		'address-1': 'Rua E',
 		'street-number': '1040',
 	};
@@ -111,7 +112,58 @@ describe( 'validation', () => {
 
 				expect( result ).toEqual( {
 					errors: {
-						'postal-code': [ 'Missing required Postal Code field' ],
+						'postal-code': expect.arrayContaining( [ 'Missing required Postal Code field' ] ),
+					},
+				} );
+			} );
+
+			test( 'should return error when US Postal Code is invalid', () => {
+				const invalidCardPostCode = {
+					...validCard,
+					country: 'US',
+					'postal-code': '1234',
+				};
+				const result = validatePaymentDetails( invalidCardPostCode );
+
+				expect( result ).toEqual( {
+					errors: {
+						'postal-code': expect.arrayContaining( [
+							'Postal Code is invalid. Must be a 5 digit number',
+						] ),
+					},
+				} );
+			} );
+
+			test( 'should not return error when US Postal Code is valid', () => {
+				const invalidCardPostCode = {
+					...validCard,
+					country: 'US',
+					'postal-code': '90001',
+				};
+				const result = validatePaymentDetails( invalidCardPostCode );
+
+				expect( result ).not.toEqual( {
+					errors: {
+						'postal-code': expect.arrayContaining( [
+							'Postal Code is invalid. Must be a 5 digit number',
+						] ),
+					},
+				} );
+			} );
+
+			test( 'should not return error when non-US Postal Code is invalid', () => {
+				const invalidCardPostCode = {
+					...validCard,
+					country: 'CA', // redundancy for explicitness
+					'postal-code': '1234',
+				};
+				const result = validatePaymentDetails( invalidCardPostCode );
+
+				expect( result ).not.toEqual( {
+					errors: {
+						'postal-code': expect.arrayContaining( [
+							'Postal Code is invalid. Must be a 5 digit number',
+						] ),
 					},
 				} );
 			} );
@@ -181,7 +233,21 @@ describe( 'validation', () => {
 
 				expect( result ).toEqual( {
 					errors: {
-						'phone-number': [ 'Missing required Phone Number field' ],
+						'phone-number': [
+							'Missing required Phone Number field',
+							'That phone number does not appear to be valid',
+						],
+					},
+				} );
+			} );
+
+			test( 'should return error when phone number is invalid', () => {
+				const invalidStPhNo = { ...validBrazilianEbanxCard, 'phone-number': '1234' };
+				const result = validatePaymentDetails( invalidStPhNo );
+
+				expect( result ).toEqual( {
+					errors: {
+						'phone-number': [ 'That phone number does not appear to be valid' ],
 					},
 				} );
 			} );
@@ -209,7 +275,90 @@ describe( 'validation', () => {
 
 		test( 'should return credit card field validation rules', () => {
 			const result = paymentFieldRules( {}, 'credit-card' );
-			expect( result ).toEqual( creditCardFieldRules() );
+			expect( result ).toEqual( getCreditCardFieldRules() );
+		} );
+	} );
+
+	describe( 'mergeValidationRules()', () => {
+		test( 'should add additional fields', () => {
+			const result = mergeValidationRules(
+				{
+					bird: {
+						description: 'A Bird',
+						rules: [ 'can-fly' ],
+					},
+				},
+				{
+					plane: {
+						description: 'A Plane',
+						rules: [ 'can-fly' ],
+					},
+				}
+			);
+
+			expect( result ).toEqual( {
+				bird: {
+					description: 'A Bird',
+					rules: [ 'can-fly' ],
+				},
+				plane: {
+					description: 'A Plane',
+					rules: [ 'can-fly' ],
+				},
+			} );
+		} );
+
+		test( 'should add additional tests to existing fields', () => {
+			const result = mergeValidationRules(
+				{
+					bird: {
+						description: 'A Bird',
+						rules: [ 'can-peck', 'can-fly' ],
+					},
+				},
+				{
+					bird: {
+						description: 'A Bird',
+						rules: [ 'can-fly', 'black' ],
+					},
+				}
+			);
+
+			expect( result ).toEqual( {
+				bird: {
+					description: 'A Bird',
+					rules: [ 'can-peck', 'can-fly', 'black' ],
+				},
+			} );
+		} );
+
+		test( 'should ignore empty values', () => {
+			const result = mergeValidationRules(
+				{
+					bird: {
+						description: 'A Bird',
+						rules: [ 'can-dodge' ],
+					},
+				},
+				false,
+				null,
+				undefined,
+				[],
+				{},
+				{
+					bird: {
+						description: 'A Bird',
+						rules: [ 'can-dodge' ],
+					},
+				}
+			);
+
+			expect( result ).toEqual( {
+				bird: {
+					description: 'A Bird',
+					rules: [ 'can-dodge' ],
+				},
+			} );
 		} );
 	} );
 

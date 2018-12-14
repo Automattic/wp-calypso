@@ -13,7 +13,8 @@ import page from 'page';
  * Internal dependencies
  */
 import { configureReduxStore, locales, setupMiddlewares, utils } from './common';
-import createReduxStoreFromPersistedInitialState from 'state/initial-state';
+import { createReduxStore } from 'state';
+import { getInitialState, persistOnChange } from 'state/initial-state';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
 
@@ -25,7 +26,9 @@ const boot = currentUser => {
 	const project = require( `./project/${ PROJECT_NAME }` );
 	utils();
 	invoke( project, 'utils' );
-	createReduxStoreFromPersistedInitialState( reduxStore => {
+	getInitialState().then( initialState => {
+		const reduxStore = createReduxStore( initialState );
+		persistOnChange( reduxStore );
 		locales( currentUser, reduxStore );
 		invoke( project, 'locales', currentUser, reduxStore );
 		configureReduxStore( currentUser, reduxStore );

@@ -1,4 +1,3 @@
-/** @format */
 
 .marked-lines {
 	padding: 0;
@@ -22,7 +21,7 @@
 .marked-lines__line-number {
 	padding: 0 4px;
 	background-color: $gray-lighten-20;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 
 	&.marked-lines__marked-line {
 		background-color: rgba( $alert-red, 0.15 );
@@ -41,7 +40,7 @@
 }
 
 .marked-lines__mark {
-	background-color: $alert-red;
+	background-color: var( --color-error );
 	color: white;
 	border-radius: 4px;
 	padding: 2px 4px;

@@ -11,7 +11,7 @@ import { noop } from 'lodash';
  */
 import { MEMBERSHIPS_PRODUCTS_RECEIVE, MEMBERSHIPS_PRODUCTS_LIST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
@@ -30,7 +30,7 @@ export const membershipProductFromApi = product => ( {
 	renewal_schedule: product.interval,
 } );
 
-export const handleMembershipProductsList = dispatchRequestEx( {
+export const handleMembershipProductsList = dispatchRequest( {
 	fetch: action =>
 		http(
 			{

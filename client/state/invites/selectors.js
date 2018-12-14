@@ -8,7 +8,7 @@ import { get, find, indexOf, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import treeSelect from 'lib/tree-select';
+import treeSelect from '@automattic/tree-select';
 
 /**
  * Returns true if currently requesting invites for the given site, or false

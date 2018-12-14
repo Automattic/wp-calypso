@@ -1,3 +1,4 @@
+
 @import 'components/screen-reader-text/style';
 
 .editor-media-modal-detail .header-cake.card {
@@ -6,7 +7,7 @@
 	height: 50px;
 	line-height: 1;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-bottom: 0;
 	}
 }
@@ -22,7 +23,7 @@
 	background-color: $gray-light;
 	box-shadow: inset 0 0 2px 2px rgba( lighten( $gray, 10 ), 0.1 );
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		flex: 2 0 0%;
 		margin: 0 0 16px 24px;
 		border: 0;
@@ -32,8 +33,8 @@
 .editor-media-modal-detail__preview-wrapper .spinner,
 .editor-media-modal-detail__preview {
 	position: absolute;
-		top: 50%;
-		left: 50%;
+	top: 50%;
+	left: 50%;
 	max-height: 100%;
 	max-width: 100%;
 	transform: translate( -50%, -50% );
@@ -66,7 +67,7 @@
 .editor-media-modal-detail__previous,
 .editor-media-modal-detail__next {
 	position: absolute;
-		top: 50%;
+	top: 50%;
 	width: 46px;
 	height: 46px;
 	transform: translateY( -50% );
@@ -85,7 +86,7 @@
 }
 
 .editor-media-modal-detail__previous {
-	left: 10px #{"/*rtl:ignore*/"};
+	left: 10px #{'/*rtl:ignore*/'};
 
 	&:before {
 		margin: 0 1px 0 0;
@@ -93,7 +94,7 @@
 }
 
 .editor-media-modal-detail__next {
-	right: 10px #{"/*rtl:ignore*/"};
+	right: 10px #{'/*rtl:ignore*/'};
 
 	&:before {
 		margin: 0 0 0 3px;
@@ -104,11 +105,11 @@
 	display: none;
 
 	&.is-desktop {
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			display: block;
 			position: absolute;
-				top: 8px;
-				right: 8px;
+			top: 8px;
+			right: 8px;
 
 			button {
 				margin-left: 8px;
@@ -117,7 +118,7 @@
 	}
 
 	&.is-mobile {
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			display: block;
 			text-align: right;
 
@@ -137,7 +138,7 @@
 	flex: 2 0 0%;
 	padding: 16px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		flex: 1 0 0%;
 		padding-top: 0;
 		padding-right: 24px;
@@ -187,7 +188,7 @@
 	white-space: nowrap;
 
 	&::after {
-		@include long-content-fade( $color: $white );
+		@include long-content-fade();
 	}
 
 	span {
@@ -202,8 +203,8 @@
 	&::before {
 		content: '';
 		position: absolute;
-			top: 0;
-			bottom: 0;
+		top: 0;
+		bottom: 0;
 		width: 80%;
 		background-color: $gray-lighten-30;
 		animation: loading-fade 1.6s ease-in-out infinite;

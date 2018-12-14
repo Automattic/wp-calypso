@@ -1,0 +1,135 @@
+
+@import './view.scss';
+
+@import './variables.scss';
+
+.wp-block-jetpack-tiled-gallery.components-placeholder {
+	margin: 0;
+}
+
+.wp-block-jetpack-tiled-gallery {
+	.tiled-gallery__row {
+		.tiled-gallery__item {
+			// Hide the focus outline that otherwise briefly appears when selecting a block.
+			figure:not( .is-selected ):focus {
+				outline: none;
+			}
+
+			.is-selected {
+				outline: 4px solid $tiled-gallery-selection;
+			}
+
+			/*
+			// Animation for photos being uploaded
+			// @TODO Import animation from Calypso
+			&.is-transient img {
+				@include loading_fade;
+			}
+			*/
+
+			.editor-rich-text {
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+				max-height: 100%;
+				overflow-y: auto;
+			}
+
+			.editor-rich-text figcaption:not( [data-is-placeholder-visible='true'] ) {
+				position: relative;
+				overflow: hidden;
+			}
+
+			.is-selected .editor-rich-text {
+				// IE calculates this incorrectly, so leave it to modern browsers.
+				@supports ( position: sticky ) {
+					right: 0;
+					left: 0;
+					margin-top: -4px;
+				}
+
+				// Override negative margins so this toolbar isn't hidden by overflow. Overflow is needed for long captions.
+				.editor-rich-text__inline-toolbar {
+					top: 0;
+				}
+
+				// Make extra space for the inline toolbar.
+				.editor-rich-text__tinymce {
+					padding-top: 48px;
+				}
+			}
+
+			.editor-rich-text .editor-rich-text__tinymce {
+				a {
+					color: $white;
+				}
+
+				&:focus a[data-mce-selected] {
+					color: rgba( 0, 0, 0, 0.2 );
+				}
+			}
+		}
+	}
+
+	// Circle layout doesn't support captions
+	&.is-style-circle .tiled-gallery__item .editor-rich-text {
+		display: none;
+	}
+
+	.tiled-gallery__row-extras {
+		&,
+		.components-form-file-upload,
+		.components-button.block-library-gallery-add-item-button {
+			width: 100%;
+			height: 100%;
+		}
+
+		.components-button.block-library-gallery-add-item-button {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			box-shadow: none;
+			border: none;
+			border-radius: 0;
+			min-height: 100px;
+
+			& .dashicon {
+				margin-top: 10px;
+			}
+
+			&:hover,
+			&:focus {
+				border: $tiled-gallery-add-item-border-width solid $tiled-gallery-add-item-border-color;
+			}
+		}
+	}
+
+	.block-library-gallery-item__inline-menu {
+		padding: 2px;
+		position: absolute;
+		top: -2px;
+		right: -2px;
+		background-color: $tiled-gallery-selection;
+		display: inline-flex;
+		// z-index: z-index( '.block-library-gallery-item__inline-menu' );
+
+		.components-button {
+			color: $white;
+			&:hover,
+			&:focus {
+				color: $white;
+			}
+		}
+	}
+
+	.blocks-gallery-item__remove {
+		padding: 0;
+	}
+
+	.blocks-gallery-item .components-spinner {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+	}
+}

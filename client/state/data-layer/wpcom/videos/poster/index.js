@@ -5,7 +5,7 @@
  */
 
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { VIDEO_EDITOR_UPDATE_POSTER } from 'state/action-types';
 import { setPosterUrl, showError, showUploadProgress } from 'state/ui/editor/video-editor/actions';
 
@@ -41,7 +41,7 @@ export const receiveUploadProgress = ( action, progress ) => {
 	return showUploadProgress( percentage );
 };
 
-export const dispatchPosterRequest = dispatchRequestEx( {
+export const dispatchPosterRequest = dispatchRequest( {
 	fetch: updatePoster,
 	onSuccess: receivePosterUrl,
 	onError: showError,

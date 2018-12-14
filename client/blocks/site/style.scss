@@ -1,5 +1,6 @@
 /**
  * Site
+ *
  */
 
 .site {
@@ -35,7 +36,6 @@
 				color: transparent;
 			}
 		}
-
 	}
 
 	&.is-compact {
@@ -59,7 +59,6 @@
 		.site__home .gridicon {
 			margin-top: 0;
 		}
-
 	}
 }
 
@@ -96,7 +95,7 @@
 }
 
 .site__title {
-	color: $gray-dark;
+	color: var( --color-text );
 	display: block;
 	font-size: 13px;
 	font-weight: 400;
@@ -104,7 +103,7 @@
 }
 
 .site__domain {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	display: block;
 	max-width: 95%;
 	font-size: 11px;
@@ -116,12 +115,12 @@
 	overflow: hidden;
 	white-space: nowrap;
 	&::after {
-		@include long-content-fade();
+		@include long-content-fade( $color: var( --sidebar-secondary-background-gradient ) );
 	}
 }
 
 .site__home {
-	background: $blue-medium;
+	background: var( --color-accent );
 	color: $white;
 	display: block;
 	width: 32px;
@@ -131,10 +130,10 @@
 	overflow: initial;
 	opacity: 0;
 	transition: opacity 0.2s;
-	transform: translate3d(0, 0, 0);
+	transform: translate3d( 0, 0, 0 );
 	position: absolute;
-		left: 16px;
-		top: 17px;
+	left: 16px;
+	top: 17px;
 
 	.gridicon {
 		margin-top: 5px;
@@ -150,7 +149,7 @@
 		color: $white;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }
@@ -160,7 +159,7 @@
 }
 
 .site__badge {
-	color: $gray;
+	color: var( --site-selector-gridicon-fill );
 	padding-right: 4px;
 	line-height: 0;
 	position: relative;

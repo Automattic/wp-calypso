@@ -2,7 +2,7 @@
 	display: flex;
 
 	.button.domain-suggestion__action {
-		color: $blue-medium;
+		color: var( --color-accent );
 	}
 }
 

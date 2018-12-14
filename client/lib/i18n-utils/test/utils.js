@@ -313,6 +313,15 @@ describe( 'utils', () => {
 			} );
 		} );
 
+		test( 'should not change relative URLs', () => {
+			[ '/me/account', '/settings' ].forEach( fullUrl => {
+				getLocaleSlug.mockImplementationOnce( () => 'en' );
+				expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
+				getLocaleSlug.mockImplementationOnce( () => 'fr' );
+				expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
+			} );
+		} );
+
 		test( 'handles invalid URLs', () => {
 			[ undefined, null, [], {}, { href: 'https://test' }, 'not-a-url', () => {} ].forEach(
 				fullUrl => {

@@ -1,3 +1,5 @@
+/** @format */
+
 // ==========================================================================
 // Buttons
 // ==========================================================================
@@ -62,12 +64,12 @@ button {
 		}
 	}
 	.accessible-focus &:focus {
-			border-color: $blue-medium;
-			box-shadow: 0 0 0 2px $blue-light;
+		border-color: var( --color-accent );
+		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 	&.is-compact {
 		padding: 7px;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		font-size: 12px;
 		line-height: 1;
 
@@ -94,19 +96,25 @@ button {
 	&.is-busy {
 		animation: button__busy-animation 3000ms infinite linear;
 		background-size: 120px 100%;
-		background-image: linear-gradient( -45deg, $gray-lighten-30 28%, $white 28%, $white 72%, $gray-lighten-30 72%);
+		background-image: linear-gradient(
+			-45deg,
+			$gray-lighten-30 28%,
+			$white 28%,
+			$white 72%,
+			$gray-lighten-30 72%
+		);
 	}
 	&.hidden {
 		display: none;
 	}
 	.gridicon {
 		position: relative;
-			top: 4px;
+		top: 4px;
 		margin-top: -2px;
 		width: 18px;
 		height: 18px;
 
-		&:not(:last-child) {
+		&:not( :last-child ) {
 			margin-right: 4px;
 		}
 	}
@@ -114,13 +122,13 @@ button {
 
 // Primary buttons
 .button.is-primary {
-	background: $blue-medium;
-	border-color: darken( $blue-medium, 8% );
+	background: var( --color-accent );
+	border-color: var( --button-primary-border-color );
 	color: $white;
 
 	&:hover,
 	&:focus {
-		border-color: $blue-dark;
+		border-color: var( --color-primary-dark );
 		color: $white;
 	}
 	&.is-compact {
@@ -135,22 +143,28 @@ button {
 	}
 	&.is-busy {
 		background-size: 120px 100%;
-		background-image: linear-gradient( -45deg, $blue-medium 28%, darken( $blue-medium, 5% ) 28%, darken( $blue-medium, 5% ) 72%, $blue-medium 72%);
+		background-image: linear-gradient(
+			-45deg,
+			$blue-medium 28%,
+			darken( $blue-medium, 5% ) 28%,
+			darken( $blue-medium, 5% ) 72%,
+			$blue-medium 72%
+		);
 		border-color: darken( $blue-medium, 8% );
 	}
 }
 
 // Scary buttons
 .button.is-scary {
-	color: $alert-red;
+	color: var( --color-error );
 
 	&:hover,
 	&:focus {
-		border-color: $alert-red;
+		border-color: var( --color-error );
 	}
 
 	.accessible-focus &:focus {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
+		box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
 	}
 
 	&[disabled],
@@ -161,7 +175,7 @@ button {
 }
 
 .button.is-primary.is-scary {
-	background: $alert-red;
+	background: var( --color-error );
 	border-color: darken( $alert-red, 20% );
 	color: $white;
 
@@ -176,7 +190,13 @@ button {
 	}
 	&.is-busy {
 		background-size: 120px 100%;
-		background-image: linear-gradient( -45deg, $alert-red 28%, darken( $alert-red, 5% ) 28%, darken( $alert-red, 5% ) 72%, $alert-red 72%);
+		background-image: linear-gradient(
+			-45deg,
+			$alert-red 28%,
+			darken( $alert-red, 5% ) 28%,
+			darken( $alert-red, 5% ) 72%,
+			$alert-red 72%
+		);
 		border-color: darken( $alert-red, 8% );
 	}
 }
@@ -210,7 +230,7 @@ button {
 		}
 	}
 	&.is-scary {
-		color: $alert-red;
+		color: var( --color-error );
 
 		&:hover,
 		&:focus {
@@ -223,7 +243,7 @@ button {
 	}
 
 	&.is-primary {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 
 		&:focus,
 		&:hover,
@@ -264,10 +284,10 @@ button {
 // Turn Reset 'buttons' into regular text links
 .layout__content input,
 .dialog__content input {
-	&[type=reset],
-	&[type=reset]:hover,
-	&[type=reset]:active,
-	&[type=reset]:focus {
+	&[type='reset'],
+	&[type='reset']:hover,
+	&[type='reset']:active,
+	&[type='reset']:focus {
 		background: 0 0;
 		border: 0;
 		padding: 0 2px 1px;
@@ -284,13 +304,13 @@ button {
 
 // Firefox Junk
 .layout__content button::-moz-focus-inner,
-.layout__content input[type=reset]::-moz-focus-inner,
-.layout__content input[type=button]::-moz-focus-inner,
-.layout__content input[type=submit]::-moz-focus-inner ,
+.layout__content input[type='reset']::-moz-focus-inner,
+.layout__content input[type='button']::-moz-focus-inner,
+.layout__content input[type='submit']::-moz-focus-inner,
 .dialog__content button::-moz-focus-inner,
-.dialog__content input[type=reset]::-moz-focus-inner,
-.dialog__content input[type=button]::-moz-focus-inner,
-.dialog__content input[type=submit]::-moz-focus-inner {
+.dialog__content input[type='reset']::-moz-focus-inner,
+.dialog__content input[type='button']::-moz-focus-inner,
+.dialog__content input[type='submit']::-moz-focus-inner {
 	border: 0;
 	padding: 0;
 }
@@ -304,7 +324,7 @@ button {
 	border: none;
 	border-radius: 0;
 	padding: 0;
-	color: $blue-medium;
+	color: var( --color-accent );
 	font-weight: 400;
 	font-size: inherit;
 	line-height: 1.65;
@@ -319,5 +339,7 @@ button {
 }
 
 @keyframes button__busy-animation {
-  0%   { background-position: 240px 0; }
+	0% {
+		background-position: 240px 0;
+	}
 }

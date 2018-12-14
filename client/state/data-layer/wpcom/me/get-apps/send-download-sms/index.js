@@ -5,7 +5,7 @@
  */
 
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
 	GET_APPS_SMS_REQUEST,
 	GET_APPS_SMS_REQUEST_FAILURE,
@@ -38,7 +38,7 @@ export const handleSuccess = (/* action, response */) => {
 	return { type: GET_APPS_SMS_REQUEST_SUCCESS };
 };
 
-export const requestSendSMS = dispatchRequestEx( {
+export const requestSendSMS = dispatchRequest( {
 	fetch: sendRequest,
 	onSuccess: handleSuccess,
 	onError: handleError,

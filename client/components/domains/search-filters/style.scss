@@ -1,4 +1,3 @@
-/** @format */
 
 .search-filters__dropdown-filters {
 	align-items: center;
@@ -30,12 +29,12 @@
 	}
 
 	&.search-filters__dropdown-filters--is-open {
-		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
+		box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-light );
 	}
 
 	&.search-filters__dropdown-filters--has-filter-values {
 		.button {
-			color: $blue-medium;
+			color: var( --color-accent );
 		}
 	}
 }

@@ -100,8 +100,6 @@ describe( 'ConciergeMain.render()', () => {
 		PLAN_BLOGGER_2_YEARS,
 		PLAN_PERSONAL,
 		PLAN_PERSONAL_2_YEARS,
-		PLAN_ECOMMERCE,
-		PLAN_ECOMMERCE_2_YEARS,
 		PLAN_JETPACK_PERSONAL,
 		PLAN_JETPACK_PERSONAL_MONTHLY,
 		PLAN_PREMIUM,
@@ -118,17 +116,25 @@ describe( 'ConciergeMain.render()', () => {
 		} );
 	} );
 
-	[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( product_slug => {
-		test( `Should render NoAvailableTimes if no times are available (${ product_slug })`, () => {
-			const propsWithoutAvailableTimes = { ...props, availableTimes: [] };
-			const comp = shallow(
-				<ConciergeMain { ...propsWithoutAvailableTimes } site={ { plan: { product_slug } } } />
-			);
-			expect( comp.find( 'NoAvailableTimes' ) ).toHaveLength( 1 );
-		} );
-	} );
+	[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS, PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ].forEach(
+		product_slug => {
+			test( `Should render NoAvailableTimes if no times are available (${ product_slug })`, () => {
+				const propsWithoutAvailableTimes = { ...props, availableTimes: [] };
+				const comp = shallow(
+					<ConciergeMain { ...propsWithoutAvailableTimes } site={ { plan: { product_slug } } } />
+				);
+				expect( comp.find( 'NoAvailableTimes' ) ).toHaveLength( 1 );
+			} );
+		}
+	);
 
-	[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( product_slug => {
+	[
+		PLAN_BUSINESS_MONTHLY,
+		PLAN_BUSINESS,
+		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
+	].forEach( product_slug => {
 		test( `Should render CurrentStep for business plans (${ product_slug })`, () => {
 			const comp = shallow( <ConciergeMain { ...props } site={ { plan: { product_slug } } } /> );
 			expect( comp.find( 'Upsell' ) ).toHaveLength( 0 );

@@ -14,11 +14,7 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
-	"livechat_support_locales": [
-		"en",
-		"es",
-		"pt-br"
-	],
+	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": false,
 		"apple-pay": true,
@@ -44,7 +40,6 @@
 		"google-analytics": false,
 		"gutenberg": false,
 		"gutenberg/opt-in": true,
-		"gutenberg/block/jetpack-preset": false,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
@@ -98,6 +93,7 @@
 		"nps-survey/dev-trigger": false,
 		"nps-survey/notice": true,
 		"onboarding-checklist": true,
+		"onboarding-checklist/email-setup": false,
 		"perfmon": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,
@@ -163,7 +159,6 @@
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/store-on-non-atomic-sites": true,
-		"wordads/daily-stats": true,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",

@@ -1,3 +1,5 @@
+/** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -18,20 +20,13 @@ const { Fill, Slot } = createSlotFill( 'Sidebar' );
  * @return {Object} The rendered sidebar.
  */
 const Sidebar = ( { children, label } ) => {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Fill>
-			<div
-				className="edit-post-sidebar"
-				role="region"
-				aria-label={ label }
-				tabIndex="-1"
-			>
+			<div className="edit-post-sidebar" role="region" aria-label={ label } tabIndex="-1">
 				{ children }
 			</div>
 		</Fill>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 const WrappedSidebar = compose(
@@ -39,7 +34,7 @@ const WrappedSidebar = compose(
 		isActive: select( 'core/edit-post' ).getActiveGeneralSidebarName() === name,
 	} ) ),
 	ifCondition( ( { isActive } ) => isActive ),
-	withFocusReturn,
+	withFocusReturn
 )( Sidebar );
 
 WrappedSidebar.Slot = Slot;

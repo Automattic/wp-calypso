@@ -100,7 +100,7 @@
 
 	&.is-expiring {
 		.current-plan__expires-in {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 	}
 
@@ -110,7 +110,7 @@
 }
 
 .current-plan__header-expires-in {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .current-plan__compare-plans {

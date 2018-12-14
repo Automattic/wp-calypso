@@ -1,11 +1,10 @@
-/** @format */
 
 .community-translator {
 	position: fixed;
 	bottom: 66px;
 	right: 24px;
 	border-radius: 27px;
-	background: $blue-wordpress;
+	background: var( --color-primary );
 	cursor: pointer;
 	padding: 4px;
 	font-size: 13px;

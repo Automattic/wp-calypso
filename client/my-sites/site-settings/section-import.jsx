@@ -15,7 +15,6 @@ import { filter, flow, get, isEmpty, once } from 'lodash';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import EmptyContent from 'components/empty-content';
 import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
 import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 import WordPressImporter from 'my-sites/importer/importer-wordpress';
@@ -38,6 +37,8 @@ import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Placeholder from 'my-sites/site-settings/placeholder';
+import DescriptiveHeader from 'my-sites/site-settings/settings-import/descriptive-header';
+import JetpackImporter from 'my-sites/site-settings/settings-import/jetpack-importer';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
@@ -226,47 +227,13 @@ class SiteSettingsImport extends Component {
 	};
 
 	renderImportersList() {
-		const { site, translate } = this.props;
-		const { slug, title: siteTitle } = site;
-
-		const title = siteTitle.length ? siteTitle : slug;
-		const description = translate(
-			'Import content from another site into ' +
-				'{{strong}}%(title)s{{/strong}}. Learn more about ' +
-				'the import process in our {{a}}support documentation{{/a}}. ' +
-				'Once you start importing, you can visit ' +
-				'this page to check on the progress.',
-			{
-				args: { title },
-				components: {
-					a: <a href="https://support.wordpress.com/import/" />,
-					strong: <strong />,
-				},
-			}
-		);
-
 		return (
 			<>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
-				<CompactCard>
-					<header>
-						<h1 className="site-settings__importer-section-title importer__section-title">
-							{ translate( 'Import Another Site' ) }
-						</h1>
-						<p className="site-settings__importer-section-description">{ description }</p>
-					</header>
-				</CompactCard>
+				<DescriptiveHeader />
 				{ this.renderImporters() }
 			</>
 		);
-	}
-
-	renderImportersListGate() {
-		if ( this.props.needsVerification && ! this.props.isUnlaunchedSite ) {
-			return <EmailVerificationGate>{ this.renderImportersList() }</EmailVerificationGate>;
-		}
-
-		return this.renderImportersList();
 	}
 
 	render() {
@@ -275,30 +242,18 @@ class SiteSettingsImport extends Component {
 			return <Placeholder />;
 		}
 
-		const {
-			jetpack: isJetpack,
-			options: { admin_url: adminUrl },
-			slug,
-			title: siteTitle,
-		} = site;
-		const title = siteTitle.length ? siteTitle : slug;
+		const { jetpack: isJetpack } = site;
 
 		return (
 			<Main>
 				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
 					<h1>{ translate( 'Import' ) }</h1>
 				</HeaderCake>
-				{ isJetpack && (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/illustration-jetpack.svg"
-						title={ translate( 'Want to import into your site?' ) }
-						line={ translate( "Visit your site's wp-admin for all your import and export needs." ) }
-						action={ translate( 'Import into %(title)s', { args: { title } } ) }
-						actionURL={ adminUrl + 'import.php' }
-						actionTarget="_blank"
-					/>
-				) }
-				{ ! isJetpack && this.renderImportersListGate() }
+				<EmailVerificationGate
+					needsVerification={ this.props.needsVerification && ! this.props.isUnlaunchedSite }
+				>
+					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
+				</EmailVerificationGate>
 			</Main>
 		);
 	}

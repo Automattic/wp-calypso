@@ -1,6 +1,7 @@
 /**
  * The currently selected site block
  * at the top of the sidebar in My Sites
+ *
  */
 
 .current-site.card {
@@ -33,7 +34,7 @@
 	transition: opacity 0.15s ease-in-out;
 
 	.site__info {
-		animation: appear .3s ease-in-out;
+		animation: appear 0.3s ease-in-out;
 	}
 
 	.focus-sites & {
@@ -45,14 +46,14 @@
 .current-site {
 	.site,
 	.all-sites {
-		background: $white;
+		background: var( --sidebar-secondary-background );
 		border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 	}
 }
 
 .current-site__switch-sites {
 	display: block;
-	background: var( --current-site-switch-sites-background );
+	background: var( --sidebar-background );
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 
 	.button.is-borderless {
@@ -62,15 +63,15 @@
 		padding: 12px 8px 12px 44px;
 		position: relative;
 		font-weight: normal;
-		color: $gray-text;
+		color: var( --color-text );
 
 		.gridicon {
 			height: 24px;
 			width: 24px;
-			fill: $gray-text;
+			fill: var( --sidebar-gridicon-fill );
 			position: absolute;
-				top: 12px;
-				left: 14px;
+			top: 12px;
+			left: 14px;
 		}
 	}
 
@@ -79,10 +80,10 @@
 
 		.button.is-borderless:hover,
 		.button.is-borderless:focus {
-			color: $blue-medium;
+			color: var( --color-accent );
 
 			.gridicon {
-				fill: $blue-medium;
+				fill: var( --color-accent );
 			}
 		}
 	}

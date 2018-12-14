@@ -71,7 +71,7 @@
 	fill: $gray-dark;
 
 	&:hover {
-		fill: $blue-light;
+		fill: var( --color-primary-light );
 	}
 }
 
@@ -99,7 +99,7 @@
 
 .editor-media-modal__secondary-action:not( .is-mobile ).editor-media-modal__delete {
 	line-height: 1;
-	color: $alert-red;
+	color: var( --color-error );
 
 	&:hover {
 		color: lighten( $alert-red, 10% );
@@ -117,7 +117,7 @@
 
 	.gridicon,
 	.gridicon:hover {
-		fill: $blue-medium;
+		fill: var( --color-accent );
 	}
 }
 

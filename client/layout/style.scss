@@ -1,12 +1,14 @@
-/*
-	Layout Elements
-	.layout__loading - Displays when loading Claypso
-	.layout__content - Contains primary and secondary elements
-		.layout__primary - Where the main content lives
-		.layout__secondary - Contains the site selector and sidebar elements
-			.sidebar
-			.site-selector
-*/
+/**
+ * /*
+ * 	Layout Elements
+ * 	.layout__loading - Displays when loading Claypso
+ * 	.layout__content - Contains primary and secondary elements
+ * 		.layout__primary - Where the main content lives
+ * 		.layout__secondary - Contains the site selector and sidebar elements
+ * 			.sidebar
+ * 			.site-selector
+ *
+ */
 
 // Set transitons for layout elements
 .layout__primary .main,
@@ -117,7 +119,7 @@
 	top: 47px;
 	left: 0;
 	bottom: 0;
-	color: var( --sidebar-color );
+	color: var( --color-text );
 	background: var( --sidebar-background );
 	border-right: 1px solid darken( $sidebar-bg-color, 5% );
 	width: $sidebar-width-max;
@@ -158,7 +160,7 @@
 		.site__title,
 		.site__domain {
 			&::after {
-				@include long-content-fade( $color: $gray-lighten-30 );
+				@include long-content-fade( $color: var( --sidebar-background ) );
 			}
 		}
 	}
@@ -239,7 +241,7 @@
 
 // Display sidebar as a panel under a main payment component in mobile checkout
 .layout.is-section-checkout {
-	@media (max-width: 660px) {
+	@media ( max-width: 660px ) {
 		.layout__content {
 			display: flex;
 			flex-flow: column;

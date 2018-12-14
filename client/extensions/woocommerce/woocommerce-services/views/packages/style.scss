@@ -83,7 +83,7 @@
 		.packages__packages-row-icon {
 			padding-left: 0;
 			text-align: center;
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 		}
 
 		.packages__packages-row-actions {

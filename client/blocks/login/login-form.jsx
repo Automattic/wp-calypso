@@ -50,6 +50,7 @@ import {
 import { isPasswordlessAccount, isRegularAccount } from 'state/login/utils';
 import Notice from 'components/notice';
 import SocialLoginForm from './social';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -370,7 +371,11 @@ export class LoginForm extends Component {
 									{
 										components: {
 											tosLink: (
-												<a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />
+												<a
+													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
 											),
 										},
 									}

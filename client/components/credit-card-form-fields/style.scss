@@ -51,6 +51,12 @@
 	input[disabled] {
 		cursor: not-allowed;
 	}
+
+	&.number input {
+		text-align: left;
+		/*rtl:ignore*/
+		direction:ltr;
+	}
 }
 
 .credit-card-form-fields__cvv-info {

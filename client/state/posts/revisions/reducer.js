@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { filter, get, isEmpty, isInteger, keyBy, merge, omit } from 'lodash';
+import { filter, get, isEmpty, isInteger, keyBy, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,9 +12,6 @@ import { filter, get, isEmpty, isInteger, keyBy, merge, omit } from 'lodash';
 import {
 	POST_EDIT,
 	POST_REVISIONS_RECEIVE,
-	POST_REVISIONS_REQUEST,
-	POST_REVISIONS_REQUEST_FAILURE,
-	POST_REVISIONS_REQUEST_SUCCESS,
 	POST_REVISIONS_SELECT,
 	POST_REVISIONS_DIALOG_CLOSE,
 	POST_REVISIONS_DIALOG_OPEN,
@@ -80,21 +77,6 @@ export function diffs( state = {}, { diffs: diffsFromServer, postId, revisions, 
 	};
 }
 
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
-		case POST_REVISIONS_REQUEST:
-		case POST_REVISIONS_REQUEST_FAILURE:
-		case POST_REVISIONS_REQUEST_SUCCESS:
-			return merge( {}, state, {
-				[ action.siteId ]: {
-					[ action.postId ]: action.type === POST_REVISIONS_REQUEST,
-				},
-			} );
-	}
-
-	return state;
-}
-
 export function selection( state = {}, action ) {
 	switch ( action.type ) {
 		case POST_REVISIONS_SELECT: {
@@ -126,7 +108,6 @@ export function ui( state = {}, action ) {
 
 export default combineReducers( {
 	diffs,
-	requesting,
 	selection,
 	ui,
 	authors,
