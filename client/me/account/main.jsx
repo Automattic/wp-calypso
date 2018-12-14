@@ -137,6 +137,7 @@ const Account = createReactClass( {
 		update( this.props.userSettings.settings, colorSchemeKey, value => value || 'default' );
 
 		this.props.recordTracksEvent( 'calypso_color_schemes_select', { color_scheme: colorScheme } );
+		this.props.recordGoogleEvent( 'Me', 'Selected Color Scheme', 'scheme', colorScheme );
 		this.updateUserSetting( colorSchemeKey, colorScheme );
 	},
 
@@ -284,9 +285,12 @@ const Account = createReactClass( {
 		const { unsavedSettings } = this.props.userSettings;
 		this.recordClickEvent( 'Save Account Settings Button' );
 		if ( has( unsavedSettings, colorSchemeKey ) ) {
+			const colorScheme = get( unsavedSettings, colorSchemeKey );
 			this.props.recordTracksEvent( 'calypso_color_schemes_save', {
-				color_scheme: get( unsavedSettings, colorSchemeKey ),
+				color_scheme: colorScheme,
 			} );
+			this.props.recordGoogleEvent( 'Me', 'Saved Color Scheme', 'scheme', colorScheme );
+			this.props.bumpStat( 'calypso_changed_color_scheme', colorScheme );
 		}
 
 		if ( has( unsavedSettings, 'language' ) ) {
@@ -821,7 +825,7 @@ export default compose(
 			requestingMissingSites: isRequestingMissingSites( state ),
 			countryCode: requestGeoLocation().data,
 		} ),
-		{ errorNotice, recordGoogleEvent, recordTracksEvent, successNotice }
+		{ bumpStat, errorNotice, recordGoogleEvent, recordTracksEvent, successNotice }
 	),
 	localize,
 	withLocalizedMoment,
