@@ -4,7 +4,7 @@ $autobar-height: 20px;
 
 // The WordPress.com Masterbar
 .masterbar {
-	background: var( --masterbar-background );
+	background: var( --color-primary );
 	border-bottom: 1px solid var( --masterbar-border-color );
 	color: var( --masterbar-color );
 	font-size: 16px;
@@ -312,7 +312,7 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__notifications-bubble {
-		border: solid 2px var( --masterbar-background );
+		border: solid 2px var( --color-primary );
 		border-radius: 50%;
 		display: none;
 		font-size: 8px;
