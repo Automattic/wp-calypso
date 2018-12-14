@@ -99,7 +99,7 @@ input[type='radio'] {
 		width: 8px;
 		height: 8px;
 		text-indent: -9999px;
-		background: $blue-medium;
+		background: var( --form-field-active-background );
 		vertical-align: middle;
 		border-radius: 50%;
 		animation: grow 0.2s ease-in-out;

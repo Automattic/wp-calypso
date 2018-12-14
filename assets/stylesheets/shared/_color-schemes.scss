@@ -67,6 +67,10 @@
 	--count-border-color: #{$gray};
 	--count-color: #{$gray-text-min};
 	--profile-gravatar-user-secondary-info-color: #{$gray-darken-20};
+
+	--form-field-active-background: #{$blue-medium};
+	--form-field-focus-border-color: #{$blue-wordpress};
+	--form-field-focus-box-shadow: #{$blue-light};
 }
 
 //additional color schemes
@@ -140,6 +144,10 @@
 		--count-border-color: #{$gray-dark};
 		--count-color: #{$gray-dark};
 		--profile-gravatar-user-secondary-info-color: #{$gray-dark};
+
+		--form-field-active-background: var( --color-primary );
+		--form-field-focus-border-color: var( --color-primary);
+		--form-field-focus-box-shadow: var( --color-primary-light );
 	}
 
 	&.is-laser-black {
@@ -211,5 +219,9 @@
 		--count-border-color: #{$gray-dark};
 		--count-color: #{$gray-dark};
 		--profile-gravatar-user-secondary-info-color: #{$gray-dark};
+
+		--form-field-active-background: var( --color-primary );
+		--form-field-focus-border-color: var( --color-primary );
+		--form-field-focus-box-shadow: var( --color-primary-light );
 	}
 }

@@ -29,9 +29,9 @@
 	}
 
 	&:focus {
-		border-color: $blue-wordpress;
+		border-color: var( --form-field-focus-border-color );
 		outline: none;
-		box-shadow: 0 0 0 2px $blue-light;
+		box-shadow: 0 0 0 2px var( --form-field-focus-box-shadow );
 
 		&::-ms-clear {
 			display: none;
