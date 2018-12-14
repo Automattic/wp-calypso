@@ -28,6 +28,8 @@ import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
 import { planHasFeature } from '../../../lib/plans';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -102,6 +104,13 @@ export class PlansStep extends Component {
 		);
 	}
 
+	getCustomerType() {
+		return (
+			this.props.customerType ||
+			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' )
+		);
+	}
+
 	handleFreePlanButtonClick = () => {
 		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 	};
@@ -112,8 +121,6 @@ export class PlansStep extends Component {
 			hideFreePlan,
 			isDomainOnly,
 			selectedSite,
-			customerType,
-			flowName,
 		} = this.props;
 
 		return (
@@ -128,7 +135,7 @@ export class PlansStep extends Component {
 					showFAQ={ false }
 					displayJetpackPlans={ false }
 					domainName={ this.getDomainName() }
-					customerType={ customerType || ( flowName === 'ecommerce' ? 'business' : undefined ) }
+					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 				/>
 				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
@@ -209,4 +216,5 @@ export default connect( ( state, { path, signupDependencies: { siteSlug, domainI
 	isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
 	selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 	customerType: parseQs( path.split( '?' ).pop() ).customerType,
+	siteType: getSiteType( state ),
 } ) )( localize( PlansStep ) );
