@@ -5,7 +5,6 @@
  */
 import { Component, Fragment, createRef } from '@wordpress/element';
 import classnames from 'classnames';
-import { defer } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
 
 /**
@@ -44,12 +43,13 @@ class TiledGalleryGrid extends Component {
 	}
 
 	componentDidMount() {
-		this.deferredMount = defer( () => {
-			// ResizeObserver has checks for `window` & `document`:
-			// it does nothing if those are not available.
+		if ( ! this.props.noResize ) {
+			if ( this.wrapper.current ) {
+				this.handleResize( [ this.wrapper.current.parentNode ] );
+			}
 			this.observer = new ResizeObserver( this.handleResize );
 			this.observer.observe( this.wrapper.current.parentNode );
-		} );
+		}
 	}
 
 	componentWillUnmount() {
@@ -68,6 +68,7 @@ class TiledGalleryGrid extends Component {
 			imageCrop,
 			images,
 			layout,
+			noResize,
 			renderGalleryImage,
 		} = this.props;
 		const { width } = this.state;
@@ -75,14 +76,17 @@ class TiledGalleryGrid extends Component {
 			columns,
 			images,
 			layout,
-			tileCount: images.length,
-			width,
+			contentWidth: width,
 		} );
 		let imageIndex = 0;
 
-		return (
+		console.group( 'single render' );
+		console.log( 'Images: %o', images );
+		console.log( 'Rows: %o', rows );
+
+		const res = (
 			<div
-				className={ classnames( className, {
+				className={ classnames( 'wp-block-jetpack-tiled-gallery', className, {
 					'is-cropped': imageCrop,
 					[ `align${ align }` ]: align,
 					[ `columns-${ columns }` ]: columns,
@@ -93,33 +97,78 @@ class TiledGalleryGrid extends Component {
 			>
 				<Fragment>
 					{ rows.map( ( row, rowIndex ) => {
+						console.log( 'Row %o: %o', rowIndex, row );
 						return (
 							<div
-								key={ `tiled-gallery-row-${ rowIndex }` }
+								key={ rowIndex }
 								className="tiled-gallery__row"
-								style={ {
-									width: row.width,
-									height: row.height,
-								} }
+								style={
+									noResize
+										? undefined
+										: {
+												width: row.width,
+												height: row.height,
+										  }
+								}
 							>
-								{ row.tiles.map( tile => {
-									const galleryItem = (
-										<div
-											className="tiled-gallery__item"
-											key={ images[ imageIndex ].id || images[ imageIndex ].url }
-											style={ {
-												width: tile.width,
-												height: tile.height,
-											} }
-										>
-											{ renderGalleryImage( imageIndex ) }
-										</div>
-									);
+								{ 'groups' in row
+									? row.groups.map( ( group, groupI ) => {
+											console.log( 'group: %o', group );
+											return (
+												<div key={ groupI } className="tiled-gallery__group">
+													{ group.images.map( ( image, imgI ) => {
+														console.log( image );
+														console.log( 'Image: %o', images[ imageIndex ] );
 
-									imageIndex++;
+														const galleryItem = (
+															<div
+																className="tiled-gallery__item"
+																key={ imgI }
+																style={
+																	noResize
+																		? undefined
+																		: {
+																				width: image.width,
+																				height: image.height,
+																		  }
+																}
+															>
+																{ renderGalleryImage( imageIndex ) }
+															</div>
+														);
 
-									return galleryItem;
-								} ) }
+														imageIndex++;
+
+														return galleryItem;
+													} ) }
+												</div>
+											);
+									  } )
+									: row.tiles.map( tile => {
+											console.log( tile );
+											console.log( 'Image: %o', images[ imageIndex ] );
+
+											const galleryItem = (
+												<div
+													className="tiled-gallery__item"
+													key={ images[ imageIndex ].id || images[ imageIndex ].url }
+													style={
+														noResize
+															? undefined
+															: {
+																	width: tile.width,
+																	height: tile.height,
+															  }
+													}
+												>
+													{ renderGalleryImage( imageIndex ) }
+												</div>
+											);
+
+											imageIndex++;
+
+											return galleryItem;
+									  } ) }
 							</div>
 						);
 					} ) }
@@ -134,6 +183,8 @@ class TiledGalleryGrid extends Component {
 				</Fragment>
 			</div>
 		);
+		console.groupEnd();
+		return res;
 	}
 }
 

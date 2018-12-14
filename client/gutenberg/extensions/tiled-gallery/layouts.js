@@ -12,11 +12,11 @@ import TokenList from '@wordpress/token-list';
 import { LAYOUT_STYLES, MAX_COLUMNS, TILE_MARGIN } from './constants';
 import { rectangularLayout } from '../../../../packages/tiled-grid';
 
-const squareLayout = ( { columns, margin, width, tileCount } ) => {
+const squareLayout = ( { columns, margin, contentWidth, tileCount } ) => {
 	columns = Math.min( MAX_COLUMNS, columns );
 	const tilesPerRow = columns > 1 ? columns : 1;
 	const marginSpace = tilesPerRow * margin * 2;
-	const size = Math.floor( ( width - marginSpace ) / tilesPerRow );
+	const size = Math.floor( ( contentWidth - marginSpace ) / tilesPerRow );
 	let remainderSize = size;
 	let tileSize = remainderSize;
 	const remainder = tileCount % tilesPerRow;
@@ -24,7 +24,7 @@ const squareLayout = ( { columns, margin, width, tileCount } ) => {
 
 	if ( remainder > 0 ) {
 		remainderSpace = remainder * margin * 2;
-		remainderSize = Math.floor( ( width - remainderSpace ) / remainder );
+		remainderSize = Math.floor( ( contentWidth - remainderSpace ) / remainder );
 	}
 
 	let c = 1;
@@ -54,7 +54,7 @@ const squareLayout = ( { columns, margin, width, tileCount } ) => {
 			tilesInRow = 0;
 
 			row.height = tileSize + margin * 2;
-			row.width = width;
+			row.width = contentWidth;
 			row.groupSize = tileSize + 2 * margin;
 
 			row = {
@@ -65,7 +65,7 @@ const squareLayout = ( { columns, margin, width, tileCount } ) => {
 
 	if ( row.tiles.length > 0 ) {
 		row.height = tileSize + margin * 2;
-		row.width = width;
+		row.width = contentWidth;
 		row.groupSize = tileSize + 2 * margin;
 
 		rows.push( row );
@@ -87,29 +87,28 @@ const rectangularLayoutModier = options => {
 	} );
 };
 
-// @TODO to be implemented...
-const columnsLayout = options => squareLayout( options );
-
-export const getLayout = ( { columns, images, layout, tileCount, width } ) => {
-	const layoutOptions = {
-		columns,
-		margin: TILE_MARGIN,
-		tileCount, // @TODO: Used by square layout, but perhaps just access images.length directly
-		width, // @TODO: Should be renamed to `contentWidth` for clarity
-	};
-
+export const getLayout = ( { columns, images, layout, width } ) => {
 	switch ( layout ) {
-		case 'square':
-			return squareLayout( layoutOptions );
-		case 'circle':
-			// Circle and square layouts are identical by size calculations
-			return squareLayout( layoutOptions );
+		// @TODO Columns is unimplemented
 		case 'columns':
-			return columnsLayout( layoutOptions );
+			if ( process.env.NODE_ENV !== 'production' ) {
+				// eslint-disable-next-line no-console
+				console.warn( 'Columns layout is unimplemented. Fallback to square' );
+			}
+
+		// Circle and square layouts are identical by size calculations
+		case 'square':
+		case 'circle': {
+			return squareLayout( {
+				columns,
+				contentWidth: width,
+				tileCount: images.length,
+				margin: TILE_MARGIN,
+			} );
+		}
 		case 'rectangular':
 		default:
-			return rectangularLayoutModier( {
-				...layoutOptions,
+			return rectangularLayout( {
 				contentWidth: width,
 				images,
 			} );

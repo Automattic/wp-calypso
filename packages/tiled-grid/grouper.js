@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { find, repeat } from 'lodash';
+import { cloneDeep, find, repeat } from 'lodash';
 
 /**
  * Internal dependencies
@@ -48,19 +48,8 @@ export class Jetpack_Tiled_Gallery_Grouper {
 
 	images = [];
 
-	constructor( {
-		attachments,
-		contentWidth,
-		margin,
-		/* @TODO probably external API, irrelevant in JS: shapes */
-	} ) {
+	constructor( { attachments, contentWidth, margin } ) {
 		this.margin = margin;
-
-		// @TODO Let's remove this
-		// if ( shapes ) {
-		// 	this.overwrite_shapes( shapes );
-		// }
-		// this.last_shape = ''; @TODO apparently this was unused
 
 		// @TODO This appears to be a pipeline attachments -> grouped images
 		// Layouts want grouped_images to define their rows
@@ -68,9 +57,14 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		// This module could (should) become a transformation of <Array<Image>> -> <Array<Row>>
 		//
 		// If we redesign with that flow in mind, this may get much simpler and more testable
-		this.images = this.get_images_with_sizes( attachments );
+
+		console.group( 'grouper' );
+		console.log( 'Grouper attachments: %o', attachments );
+		this.images = this.get_images_with_sizes( cloneDeep( attachments ) );
 		this.grouped_images = this.get_grouped_images();
 		this.apply_content_width( contentWidth );
+		console.log( 'Grouper grouped_images: %o', this.grouped_images );
+		console.groupEnd();
 	}
 
 	/* @TODO probably external API, irrelevant in JS: */

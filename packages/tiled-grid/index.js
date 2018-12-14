@@ -11,13 +11,13 @@
  * External dependencies
  */
 // eslint-disable-next-line import/no-nodejs-modules
-import { inspect } from 'util';
-import { cloneDeep } from 'lodash';
+// import { inspect } from 'util';
+// import { cloneDeep } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { attachments } from './test/fixtures/attachments';
+// import { attachments } from './test/fixtures/attachments';
 import { Jetpack_Tiled_Gallery_Grouper } from './grouper';
 import { Jetpack_Tiled_Gallery_Shape } from './shapes/jetpack-tiled-gallery-shape';
 import { TILE_MARGIN, CONTENT_WIDTH } from './constants.js';
@@ -36,7 +36,7 @@ export const rectangularLayout = ( {
 	return grouper.grouped_images;
 };
 
-// For debugging while building this
-const layout = rectangularLayout( { images: cloneDeep( attachments ) } );
-// eslint-disable-next-line no-console
-console.log( inspect( layout, { showHidden: false, depth: null } ) );
+// // For debugging while building this
+// const layout = rectangularLayout( { images: cloneDeep( attachments ) } );
+// // eslint-disable-next-line no-console
+// console.log( inspect( layout, { showHidden: false, depth: null } ) );

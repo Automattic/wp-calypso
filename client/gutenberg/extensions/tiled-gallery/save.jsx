@@ -70,12 +70,13 @@ export default ( { attributes } ) => {
 	return (
 		<GalleryGrid
 			align={ align }
-			className={ `wp-block-jetpack-tiled-gallery ${ className }` }
+			className={ className }
 			columns={ columns }
 			imageCrop={ imageCrop }
 			images={ images }
 			layout={ layout }
 			renderGalleryImage={ renderGalleryImage }
+			noResize
 		/>
 	);
 };

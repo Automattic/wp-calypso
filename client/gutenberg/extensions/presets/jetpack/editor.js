@@ -22,8 +22,8 @@ import { isEnabled } from 'config';
 export default [
 	{ name: ContactFormBlock.name, settings: ContactFormBlock.settings },
 	...ContactFormBlock.fields,
-	MarkdownBlock,
 	MapBlock,
+	MarkdownBlock,
 	PublicizeBlock,
 	SimplePaymentsBlock,
 	SubscriptionsBlock,

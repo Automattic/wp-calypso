@@ -6,7 +6,7 @@
 /**
  * External dependencies
  */
-import { map, property, sum } from 'lodash';
+import { map, property, some, sum } from 'lodash';
 
 const get_int_floor_array = bound_array => {
 	return bound_array.map( ( value, i ) => ( {
@@ -72,7 +72,14 @@ export const getRoundedConstrainedArray = ( bound_array, sum_value = false ) => 
 
 	let bound_array_int = get_int_floor_array( bound_array );
 
+	if ( some( bound_array_int, Number.isNaN ) ) {
+		console.log( 1 );
+	}
+
 	const lower_sum = sum( map( bound_array_int, property( 'floor' ) ) );
+	if ( Number.isNaN( lower_sum ) ) {
+		console.log( 2 );
+	}
 
 	if ( ! sum_value || sum_value < lower_sum ) {
 		// If value of sum is not supplied or is invalid,
@@ -83,8 +90,14 @@ export const getRoundedConstrainedArray = ( bound_array, sum_value = false ) => 
 	const diff_sum = sum_value - lower_sum;
 
 	bound_array_int = adjust_constrained_array( bound_array_int, diff_sum );
+	if ( some( bound_array_int, Number.isNaN ) ) {
+		console.log( 3 );
+	}
 
 	const bound_array_fin = map( bound_array_int, property( 'floor' ) );
+	if ( some( bound_array_fin, Number.isNaN ) ) {
+		console.log( 4 );
+	}
 
 	return bound_array_fin;
 	// Combines keys and values into an object using lodash.zipObject

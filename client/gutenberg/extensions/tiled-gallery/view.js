@@ -24,26 +24,34 @@ const applyNodeSize = ( node, { width, height } ) => {
 /**
  * Calculate new size for the gallery and apply it
  */
-const resizeGallery = ( { galleryNode, width, columns, layout } ) => {
-	const tileCount = galleryNode.querySelectorAll( '.tiled-gallery__item' ).length;
+const resizeGallery = ( { galleryNode, contentWidth, columns, layout } ) => {
+	const images = galleryNode.querySelectorAll( '.tiled-gallery__item' );
 
 	const galleryLayout = getLayout( {
 		columns,
 		layout,
-		tileCount,
-		width,
+		images,
+		contentWidth,
 	} );
 
 	// Resize rows within the gallery
 	galleryNode.childNodes.forEach( ( rowNode, rowIndex ) => {
 		const rowLayout = galleryLayout[ rowIndex ];
-		applyNodeSize( rowNode, rowLayout );
+		if ( rowLayout && rowLayout.width && rowLayout.height ) {
+			applyNodeSize( rowNode, rowLayout );
+		} else if ( process.env.NODE_ENV !== 'production' ) {
+			console.warn( 'Found node with no layout' ); // eslint-disable-line no-console
+		}
 
 		// Resize tiles within the row
 		const tileNodes = rowNode.querySelectorAll( '.tiled-gallery__item' );
 		tileNodes.forEach( ( tileNode, tileIndex ) => {
 			const tileLayout = rowLayout.tiles[ tileIndex ];
-			applyNodeSize( tileNode, tileLayout );
+			if ( tileLayout && tileLayout.width && tileLayout.height ) {
+				applyNodeSize( tileNode, tileLayout );
+			} else if ( process.env.NODE_ENV !== 'production' ) {
+				console.warn( 'Found node with no layout' ); // eslint-disable-line no-console
+			}
 		} );
 	} );
 };
@@ -68,7 +76,7 @@ function handleResize( entries ) {
 					columns: parseInt( entry.target.getAttribute( 'data-columns' ), 10 ),
 					galleryNode: entry.target,
 					layout: getActiveStyleName( entry.target.className ),
-					width,
+					contentWidth: width,
 				} );
 			}
 		}

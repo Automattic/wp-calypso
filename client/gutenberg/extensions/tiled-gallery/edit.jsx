@@ -3,6 +3,8 @@
 /**
  * External Dependencies
  */
+import debugFactory from 'debug';
+import photon from 'photon';
 import { filter, pick } from 'lodash';
 import { Component, Fragment } from '@wordpress/element';
 import {
@@ -33,6 +35,8 @@ import { ALLOWED_MEDIA_TYPES, MAX_COLUMNS, DEFAULT_COLUMNS } from './constants';
 import GalleryGrid from './gallery-grid';
 import GalleryImage from './gallery-image';
 import { getActiveStyleName } from './layouts';
+
+const debug = debugFactory( 'block:tiled-gallery:edit' );
 
 export function defaultColumnsNumber( attributes ) {
 	return Math.min( DEFAULT_COLUMNS, attributes.images.length );
@@ -133,6 +137,17 @@ class TiledGalleryEdit extends Component {
 		return checked ? __( 'Thumbnails are cropped to align.' ) : __( 'Thumbnails are not cropped.' );
 	}
 
+	photonizeImg( img ) {
+		const layout = getActiveStyleName( this.props.className );
+		let res = img.url;
+		if ( layout === 'square' || layout === 'circle' ) {
+			const dimension = Math.max( img.height, img.width );
+			res = photon( img.url, { resize: `${ dimension }px,${ dimension }px` } );
+		}
+		debug( 'Photonize %o: $o', img, res );
+		return res;
+	}
+
 	render() {
 		const { selectedImage } = this.state;
 
@@ -212,7 +227,7 @@ class TiledGalleryEdit extends Component {
 					onRemove={ this.handleRemveImageByIndex( index ) }
 					onSelect={ this.handleSelectImageByIndex( index ) }
 					setAttributes={ this.handleSetImageAttributesByIndex( index ) }
-					url={ image.url }
+					url={ this.photonizeImg( image ) }
 				/>
 			);
 		};
