@@ -222,10 +222,5 @@ function createRequestAction( options, action ) {
 		return onProgress( action, progress );
 	}
 
-	const fetchAction = fetch( action );
-	if ( ! fetchAction ) {
-		warn( "The `fetch` handler didn't return any action: no request will be issued" );
-	}
-
-	return fetchAction;
+	return fetch( action );
 }
