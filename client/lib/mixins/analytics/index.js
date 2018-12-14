@@ -217,36 +217,6 @@ const EVENTS = {
 				);
 			},
 		},
-
-		googleApps: {
-			addGoogleAppsUserClick( domainName ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Add Google Apps User" Button in Google Apps',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_google_apps_add_google_apps_user_click',
-					{ domain_name: domainName }
-				);
-			},
-
-			manageClick( domainName, email ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Manage" link in Google Apps',
-					'User Email',
-					email
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_google_apps_manage_click', {
-					domain_name: domainName,
-					email,
-				} );
-			},
-		},
 	},
 };
 
