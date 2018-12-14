@@ -36,7 +36,7 @@ const enhanceContextWithLogin = context => {
 			socialServiceResponse={ context.hash }
 			socialConnect={ flow === 'social-connect' }
 			privateSite={ flow === 'private-site' }
-			domain={ query.domain || null }
+			domain={ ( query && query.domain ) || null }
 		/>
 	);
 };
