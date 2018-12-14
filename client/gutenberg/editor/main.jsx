@@ -16,13 +16,18 @@ import EditorDocumentHead from './editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryPostTypes from 'components/data/query-post-types';
-import { createAutoDraft, requestSitePost, requestGutenbergDemoContent } from 'state/data-getters';
+import {
+	createAutoDraft,
+	requestSitePost,
+	requestGutenbergDemoContent,
+	requestActiveThemeSupport,
+} from 'state/data-getters';
 import { getHttpData } from 'state/data-layer/http-data';
 import { translate } from 'i18n-calypso';
 import './hooks'; // Needed for integrating Calypso's media library (and other hooks)
 import isRtlSelector from 'state/selectors/is-rtl';
 import refreshRegistrations from '../extensions/presets/jetpack/utils/refresh-registrations';
-import { getSiteOption } from 'state/sites/selectors';
+import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 
 /**
  * Style dependencies
@@ -88,10 +93,11 @@ class GutenbergEditor extends Component {
 	};
 
 	render() {
-		const { postType, siteId, post, overridePost, isRTL } = this.props;
+		const { alignWide, postType, siteId, post, overridePost, isRTL } = this.props;
 
 		//see also https://github.com/WordPress/gutenberg/blob/45bc8e4991d408bca8e87cba868e0872f742230b/lib/client-assets.php#L1451
 		const editorSettings = {
+			alignWide,
 			autosaveInterval: 10, //interval to debounce autosaving events, in seconds.
 			titlePlaceholder: translate( 'Add title' ),
 			bodyPlaceholder: translate( 'Write your story' ),
@@ -134,6 +140,18 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 	const isRTL = isRtlSelector( state );
 	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
 
+	/**
+	 * We don't expect any theme to have a specific Gutenberg support flag,
+	 * so, data.theme_support.gutenberg will always be false.
+	 * This is future proofing if that flag get's implemented.
+	 */
+	const siteSlug = getSiteSlug( state, siteId );
+	const { 'align-wide': alignWide, gutenberg: gutenbergThemeSupport } = get(
+		requestActiveThemeSupport( siteSlug ),
+		[ 'data', 'theme_support' ],
+		{}
+	);
+
 	let overridePost = null;
 	if ( !! demoContent ) {
 		overridePost = {
@@ -145,6 +163,8 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 	}
 
 	return {
+		//no theme uses the wide-images flag. This is future proofing in case it get's implemented.
+		alignWide: alignWide || get( gutenbergThemeSupport, 'wide-images', false ),
 		post,
 		overridePost,
 		isRTL,
