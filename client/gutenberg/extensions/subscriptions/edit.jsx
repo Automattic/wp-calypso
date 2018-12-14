@@ -61,7 +61,7 @@ class SubscriptionEdit extends Component {
 			// Handle error condition
 			if ( ! count.hasOwnProperty( 'count' ) ) {
 				this.setState( {
-					subscriberCountString: sprintf( __( 'Subscriber count unavailable' ) ),
+					subscriberCountString: __( 'Subscriber count unavailable' ),
 				} );
 			} else {
 				this.setState( {

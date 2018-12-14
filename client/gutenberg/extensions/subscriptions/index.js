@@ -26,8 +26,8 @@ export const settings = {
 	keywords: [ __( 'subscribe' ), __( 'join' ), __( 'follow' ) ],
 
 	attributes: {
-		subscribePlaceholder: { type: 'string', default: 'Email Address' },
-		subscribeButton: { type: 'string', default: 'Subscribe' },
+		subscribePlaceholder: { type: 'string', default: __( 'Email Address' ) },
+		subscribeButton: { type: 'string', default: __( 'Subscribe' ) },
 		showSubscribersTotal: { type: 'boolean', default: false },
 	},
 	edit,
