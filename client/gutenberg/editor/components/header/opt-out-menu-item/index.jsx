@@ -30,12 +30,26 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class OptOutMenuItem extends Component {
 	switchToClassicEditor = () => {
-		const { autosave, classicEditorRoute, isDraft, optOut, savePost, siteId } = this.props;
-		if ( isDraft ) {
+		const {
+			autosave,
+			currentRoute,
+			isDirty,
+			isDraft,
+			optOut,
+			postId,
+			savePost,
+			siteId,
+		} = this.props;
+
+		let classicEditorRoute = '/' + replace( currentRoute, '/block-editor/', '' );
+		if ( isDraft && isDirty ) {
 			savePost( { isPreview: true } );
+			classicEditorRoute += '/' + postId;
 		} else {
 			autosave( { isPreview: true } );
 		}
+		classicEditorRoute += '?force=true';
+
 		optOut( siteId, classicEditorRoute );
 	};
 
@@ -69,11 +83,13 @@ const optOut = ( siteId, classicEditorRoute ) => {
 
 export default compose( [
 	withSelect( select => ( {
+		isDirty: select( 'core/editor' ).isEditedPostDirty(),
 		isDraft:
 			[ 'draft', 'auto-draft' ].indexOf(
 				select( 'core/editor' ).getEditedPostAttribute( 'status' )
 			) !== -1,
 		isSaving: select( 'core/editor' ).isSavingPost(),
+		postId: select( 'core/editor' ).getCurrentPost().id,
 	} ) ),
 	withDispatch( dispatch => ( {
 		autosave: dispatch( 'core/editor' ).autosave,
@@ -82,11 +98,7 @@ export default compose( [
 ] )(
 	connect(
 		state => ( {
-			classicEditorRoute: `/${ replace(
-				getCurrentRoute( state ),
-				'/block-editor/',
-				''
-			) }?force=true`,
+			currentRoute: getCurrentRoute( state ),
 			siteId: getSelectedSiteId( state ),
 		} ),
 		{ optOut }
