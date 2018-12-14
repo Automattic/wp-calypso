@@ -5,7 +5,7 @@
  */
 import './shared/public-path';
 import './editor-shared/block-category'; // Register the Jetpack category
-import extensionSlugs from './index.json';
+import extensionSlugsJson from './index.json';
 
 // TODO: Generate dyanmically from index.json
 // Appending `Block` to the names to keep `Map` from colliding with JS' Map
@@ -20,8 +20,13 @@ import * as TiledGalleryBlock from 'gutenberg/extensions/tiled-gallery';
 import * as VRBlock from 'gutenberg/extensions/vr';
 import { isEnabled } from 'config';
 
+const extensionSlugs = [
+	...extensionSlugsJson.production,
+	...( isEnabled( 'jetpack/blocks/beta' ) ? extensionSlugsJson.beta : [] ),
+];
+
 export async function getExtensions() {
-	const promises = extensionSlugs.production.map( slug =>
+	const promises = extensionSlugs.map( slug =>
 		import( '../../' + slug ).then( ( { name, settings } ) => ( { name, settings } ) )
 	);
 
