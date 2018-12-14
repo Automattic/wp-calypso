@@ -29,7 +29,7 @@ class GoogleAppsUsers extends React.Component {
 	getNewUserFields() {
 		const { firstName, lastName } = this.props;
 		return {
-			email: { value: firstName, error: null },
+			email: { value: firstName.toLowerCase(), error: null },
 			firstName: { value: firstName, error: null },
 			lastName: { value: lastName, error: null },
 			domain: { value: this.props.domain, error: null },
