@@ -22,7 +22,9 @@
 
 	// This fixes a bug with .about__pressable-wrapper
 	// that causes a horizontal scrollbar. -shaun
-	overflow: hidden;
+	.signup__step.is-about & {
+		overflow: hidden;
+	}
 
 	// The "fix" above causes its own issue with card
 	// border (which are really box-shadows) being
