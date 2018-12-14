@@ -32,6 +32,7 @@ import {
 	isJetpackSiteMultiSite,
 	isRequestingSites,
 	getJetpackSiteRemoteManagementUrl,
+	isJetpackMinimumVersion,
 } from 'state/sites/selectors';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
@@ -582,6 +583,10 @@ export default connect(
 		}
 		const planFeatures =
 			plan && plan.getPlanCompareFeatures ? plan.getPlanCompareFeatures() : false;
+		const jetpackMyPlanPageAvailable = isJetpackMinimumVersion( state, siteId, '6.9-beta' );
+		const jetpackAdminPlansPageUrl = jetpackMyPlanPageAvailable
+			? 'admin.php?page=jetpack#/my-plan'
+			: 'admin.php?page=jetpack#/plans';
 
 		// We need to pass the raw redux site to JetpackSite() in order to properly build the site.
 		return {
@@ -598,7 +603,7 @@ export default connect(
 			selectedSite: getSite( state, siteId ),
 			isRequestingSites: isRequestingSites( state ),
 			siteId,
-			jetpackAdminPageUrl: getSiteAdminUrl( state, siteId, 'admin.php?page=jetpack#/plans' ),
+			jetpackAdminPageUrl: getSiteAdminUrl( state, siteId, jetpackAdminPlansPageUrl ),
 			remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, siteId ),
 			planFeatures,
 			planClass,
