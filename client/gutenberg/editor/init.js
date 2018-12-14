@@ -40,8 +40,7 @@ const addResetToRegistry = registry => {
 			const store = registry.registerStore( namespace, {
 				...options,
 				reducer: ( state, action ) => {
-					const shouldReset = 'GUTENLYPSO_RESET' === action.type && namespace === action.namespace;
-					if ( shouldReset ) {
+					if ( 'GUTENLYPSO_RESET' === action.type && namespace === action.namespace ) {
 						debug( `Resetting ${ namespace } store` );
 						return options.reducer( undefined, action );
 					}
