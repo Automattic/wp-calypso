@@ -15,7 +15,6 @@ export default function() {
 	page(
 		'/start/:flowName?/:stepName?/:stepSectionName?/:lang?',
 		controller.saveInitialContext,
-		controller.setMasterbar,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,
 		controller.start,
