@@ -49,16 +49,6 @@
 	--sidebar-menu-hover-color: #{$muriel-gray-800};
 
 	// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
-	--site-selector-gridicon-fill: var( --sidebar-gridicon-fill );
-	--site-selector-selected-color: var( --sidebar-menu-selected-a-color );
-	--site-selector-selected-background: var( --sidebar-menu-selected-background-color );
-	--site-selector-selected-background-gradient: var(
-		--sidebar-menu-selected-a-first-child-after-background
-	);
-	--site-selector-hover-color: var( --sidebar-menu-hover-color );
-	--site-selector-hover-background: var( --sidebar-menu-hover-background );
-	--site-selector-hover-background-gradient: var( --sidebar-menu-hover-background-gradient );
-
 	--button-is-borderless-color: #{$gray-dark};
 	--button-primary-border-color: var( --color-accent-dark );
 	--count-border-color: #{$gray-dark};
@@ -118,16 +108,6 @@
 		--sidebar-menu-hover-color: #{$muriel-gray-800};
 
 		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
-		--site-selector-gridicon-fill: var( --sidebar-gridicon-fill );
-		--site-selector-selected-color: var( --sidebar-menu-selected-a-color );
-		--site-selector-selected-background: var( --sidebar-menu-selected-background-color );
-		--site-selector-selected-background-gradient: var(
-			--sidebar-menu-selected-a-first-child-after-background
-		);
-		--site-selector-hover-color: var( --sidebar-menu-hover-color );
-		--site-selector-hover-background: var( --sidebar-menu-hover-background );
-		--site-selector-hover-background-gradient: var( --sidebar-menu-hover-background-gradient );
-
 		--button-is-borderless-color: #{$gray-dark};
 		--count-border-color: #{$gray-dark};
 		--count-color: #{$gray-dark};
@@ -189,16 +169,6 @@
 		--sidebar-menu-hover-color: #{$muriel-gray-100};
 
 		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
-		--site-selector-gridicon-fill: var( --sidebar-gridicon-fill );
-		--site-selector-selected-color: var( --sidebar-menu-selected-a-color );
-		--site-selector-selected-background: var( --sidebar-menu-selected-background-color );
-		--site-selector-selected-background-gradient: var(
-			--sidebar-menu-selected-a-first-child-after-background
-		);
-		--site-selector-hover-color: var( --sidebar-menu-hover-color );
-		--site-selector-hover-background: var( --sidebar-menu-hover-background );
-		--site-selector-hover-background-gradient: var( --sidebar-menu-hover-background-gradient );
-
 		--button-is-borderless-color: #{$gray-dark};
 		--button-primary-border-color: var( --color-accent-dark );
 		--count-border-color: #{$gray-dark};
