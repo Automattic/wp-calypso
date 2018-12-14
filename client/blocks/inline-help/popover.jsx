@@ -41,6 +41,7 @@ import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import isGutenbergEnabled from '../../state/selectors/is-gutenberg-enabled';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -119,13 +120,23 @@ class InlineHelpPopover extends Component {
 	};
 
 	switchToClassicEditor = () => {
-		const { siteId, optOut, classicUrl } = this.props;
-		optOut( siteId, classicUrl );
+		const { siteId, onClose, optOut, classicUrl } = this.props;
+
+		const proceed =
+			typeof window !== 'undefined'
+				? window.confirm( __( 'Are you sure you wish to leave this page?' ) )
+				: true;
+
+		if ( proceed ) {
+			optOut( siteId, classicUrl );
+			onClose();
+		}
 	};
 
 	switchToBlockEditor = () => {
-		const { siteId, optIn, gutenbergUrl } = this.props;
+		const { siteId, onClose, optIn, gutenbergUrl } = this.props;
 		optIn( siteId, gutenbergUrl );
+		onClose();
 	};
 
 	render() {
