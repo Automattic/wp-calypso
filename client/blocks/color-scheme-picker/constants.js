@@ -12,17 +12,17 @@ import config from 'config';
 export default function( translate ) {
 	return compact( [
 		{
-			label: translate( 'Classic Blue' ),
-			value: 'classic-blue',
-			thumbnail: {
-				cssClass: 'is-classic-blue',
-			},
-		},
-		{
 			label: translate( 'Classic Bright' ),
 			value: 'classic-bright',
 			thumbnail: {
 				cssClass: 'is-classic-bright',
+			},
+		},
+		{
+			label: translate( 'Classic Blue' ),
+			value: 'classic-blue',
+			thumbnail: {
+				cssClass: 'is-classic-blue',
 			},
 		},
 		config.isEnabled( 'me/account/color-schemes/laser-black' ) && {
