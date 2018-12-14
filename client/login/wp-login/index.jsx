@@ -148,6 +148,7 @@ export class Login extends React.Component {
 	renderContent() {
 		const {
 			clientId,
+			domain,
 			isLoggedIn,
 			isJetpack,
 			oauth2Client,
@@ -172,6 +173,7 @@ export class Login extends React.Component {
 				oauth2Client={ oauth2Client }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
+				domain={ domain }
 			/>
 		);
 	}

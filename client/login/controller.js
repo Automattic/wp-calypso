@@ -24,6 +24,7 @@ const enhanceContextWithLogin = context => {
 	const {
 		params: { flow, isJetpack, socialService, twoFactorAuthType },
 		path,
+		query,
 	} = context;
 
 	context.primary = (
@@ -35,6 +36,7 @@ const enhanceContextWithLogin = context => {
 			socialServiceResponse={ context.hash }
 			socialConnect={ flow === 'social-connect' }
 			privateSite={ flow === 'private-site' }
+			domain={ ( query && query.domain ) || null }
 		/>
 	);
 };
