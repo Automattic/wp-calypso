@@ -244,7 +244,9 @@ export class ConciergeSessionNudge extends React.Component {
 									}
 								) }
 							</b>{' '}
-							{ translate( 'Click the button below to confirm your purchase.' ) }
+							{ translate(
+								'Click the button below to confirm your purchase (sessions are currently limited to English language support).'
+							) }
 						</p>
 					</div>
 					<div className="concierge-session-nudge__column-doodle">
