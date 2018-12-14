@@ -97,4 +97,13 @@ export default {
 		},
 		defaultVariation: 'showUsername',
 	},
+	jetpackFreePlanButtonPosition: {
+		datestamp: '20181212',
+		variations: {
+			locationTop: 50,
+			locationBottom: 50,
+		},
+		defaultVariation: 'locationBottom',
+		allowExistingUsers: true,
+	},
 };

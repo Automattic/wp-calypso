@@ -150,10 +150,6 @@ exports[`Plans should render plans 1`] = `
       }
     }
   >
-    <Connect(Localized(PlansSkipButton))
-      isRtl={false}
-      onClick={[Function]}
-    />
     <Localized(PlansExtendedInfo)
       recordTracks={[Function]}
     />
