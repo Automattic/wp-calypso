@@ -1,10 +1,9 @@
-
 $masterbar-height: 46px;
 $autobar-height: 20px;
 
 // The WordPress.com Masterbar
 .masterbar {
-	background: var( --masterbar-background );
+	background: var( --color-primary );
 	border-bottom: 1px solid var( --masterbar-border-color );
 	color: var( --masterbar-color );
 	font-size: 16px;
@@ -99,7 +98,7 @@ $autobar-height: 20px;
 	}
 
 	&:hover {
-		background: var( --masterbar-item-hover-background );
+		background: var( --color-primary-light );
 		color: var( --masterbar-color );
 	}
 
@@ -114,7 +113,7 @@ $autobar-height: 20px;
 	}
 
 	&.is-active {
-		background: var( --masterbar-item-active-background );
+		background: var( --color-primary-dark );
 	}
 
 	.is-support-user &.is-active {
@@ -202,13 +201,13 @@ $autobar-height: 20px;
 .masterbar__item-new {
 	background: $white;
 	border-radius: 3px;
-	color: var( --masterbar-item-new-color );
+	color: var( --color-primary );
 	height: 36px;
 	margin: 5px 8px;
 	transition: all 0.2s ease-out;
 
 	&:visited {
-		color: var( --masterbar-item-new-color );
+		color: var( --color-primary );
 	}
 
 	&.is-active {
@@ -217,7 +216,7 @@ $autobar-height: 20px;
 
 	&:hover {
 		background: $gray-light;
-		color: var( --masterbar-item-new-color );
+		color: var( --color-primary );
 	}
 
 	&:focus {
@@ -225,14 +224,14 @@ $autobar-height: 20px;
 
 		.accessible-focus & {
 			background: $white;
-			color: var( --masterbar-item-new-color );
+			color: var( --color-primary );
 			box-shadow: 0 0 0 2px var( --color-primary-light );
 			z-index: 1;
 		}
 	}
 
 	.masterbar__item-content {
-		color: var( --masterbar-item-new-color );
+		color: var( --color-primary );
 		display: none;
 
 		@include breakpoint( '>960px' ) {
@@ -312,7 +311,7 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__notifications-bubble {
-		border: solid 2px var( --masterbar-background );
+		border: solid 2px var( --color-primary );
 		border-radius: 50%;
 		display: none;
 		font-size: 8px;
@@ -334,11 +333,11 @@ $autobar-height: 20px;
 	}
 
 	&:hover .masterbar__notifications-bubble {
-		border-color: var( --masterbar-item-hover-background );
+		border-color: var( --color-primary-light );
 	}
 
 	&.is-active .masterbar__notifications-bubble {
-		border-color: var( --masterbar-item-active-background );
+		border-color: var( --color-primary-dark );
 	}
 
 	&.has-unread .masterbar__notifications-bubble {

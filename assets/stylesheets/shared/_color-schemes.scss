@@ -45,11 +45,7 @@
 	--color-border-shadow: var( --color-neutral-0 );
 
 	--masterbar-color: #{$muriel-white};
-	--masterbar-background: var( --color-primary );
 	--masterbar-border-color: #{$gray-lighten-10};
-	--masterbar-item-hover-background: var( --color-primary-light );
-	--masterbar-item-active-background: var( --color-primary-dark );
-	--masterbar-item-new-color: var( --color-primary );
 	--masterbar-item-new-editor-background: #{$gray-darken-20};
 	--masterbar-item-new-editor-hover-background: #{$gray-darken-10};
 	--masterbar-toggle-drafts-editor-background: #{$gray-darken-10};
@@ -72,16 +68,6 @@
 	--sidebar-menu-hover-color: #{$muriel-gray-800};
 
 	// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
-	--site-selector-gridicon-fill: var( --sidebar-gridicon-fill );
-	--site-selector-selected-color: var( --sidebar-menu-selected-a-color );
-	--site-selector-selected-background: var( --sidebar-menu-selected-background-color );
-	--site-selector-selected-background-gradient: var(
-		--sidebar-menu-selected-a-first-child-after-background
-	);
-	--site-selector-hover-color: var( --sidebar-menu-hover-color );
-	--site-selector-hover-background: var( --sidebar-menu-hover-background );
-	--site-selector-hover-background-gradient: var( --sidebar-menu-hover-background-gradient );
-
 	--button-is-borderless-color: #{$gray-dark};
 	--button-primary-border-color: var( --color-accent-dark );
 	--count-border-color: #{$gray-dark};
@@ -118,11 +104,7 @@
 		--color-surface-backdrop: #{$muriel-gray-0};
 
 		--masterbar-color: #{$muriel-white};
-		--masterbar-background: var( --color-primary );
 		--masterbar-border-color: #{$gray-lighten-10};
-		--masterbar-item-hover-background: var( --color-primary-light );
-		--masterbar-item-active-background: var( --color-primary-dark );
-		--masterbar-item-new-color: var( --color-primary );
 		--masterbar-item-new-editor-background: #{$gray-darken-20};
 		--masterbar-item-new-editor-hover-background: #{$gray-darken-10};
 		--masterbar-toggle-drafts-editor-background: #{$gray-darken-10};
@@ -145,16 +127,6 @@
 		--sidebar-menu-hover-color: #{$muriel-gray-800};
 
 		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
-		--site-selector-gridicon-fill: var( --sidebar-gridicon-fill );
-		--site-selector-selected-color: var( --sidebar-menu-selected-a-color );
-		--site-selector-selected-background: var( --sidebar-menu-selected-background-color );
-		--site-selector-selected-background-gradient: var(
-			--sidebar-menu-selected-a-first-child-after-background
-		);
-		--site-selector-hover-color: var( --sidebar-menu-hover-color );
-		--site-selector-hover-background: var( --sidebar-menu-hover-background );
-		--site-selector-hover-background-gradient: var( --sidebar-menu-hover-background-gradient );
-
 		--button-is-borderless-color: #{$gray-dark};
 		--count-border-color: #{$gray-dark};
 		--count-color: #{$gray-dark};
@@ -193,11 +165,7 @@
 		--color-surface-backdrop: #111;
 
 		--masterbar-color: #{$muriel-white};
-		--masterbar-background: var( --color-primary );
 		--masterbar-border-color: #{$gray-lighten-10};
-		--masterbar-item-hover-background: var( --color-primary-light );
-		--masterbar-item-active-background: var( --color-primary-dark );
-		--masterbar-item-new-color: var( --color-primary );
 		--masterbar-item-new-editor-background: #{$gray-darken-20};
 		--masterbar-item-new-editor-hover-background: #{$gray-darken-10};
 		--masterbar-toggle-drafts-editor-background: #{$gray-darken-10};
@@ -220,16 +188,6 @@
 		--sidebar-menu-hover-color: #{$muriel-gray-100};
 
 		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
-		--site-selector-gridicon-fill: var( --sidebar-gridicon-fill );
-		--site-selector-selected-color: var( --sidebar-menu-selected-a-color );
-		--site-selector-selected-background: var( --sidebar-menu-selected-background-color );
-		--site-selector-selected-background-gradient: var(
-			--sidebar-menu-selected-a-first-child-after-background
-		);
-		--site-selector-hover-color: var( --sidebar-menu-hover-color );
-		--site-selector-hover-background: var( --sidebar-menu-hover-background );
-		--site-selector-hover-background-gradient: var( --sidebar-menu-hover-background-gradient );
-
 		--button-is-borderless-color: #{$gray-dark};
 		--button-primary-border-color: var( --color-accent-dark );
 		--count-border-color: #{$gray-dark};
