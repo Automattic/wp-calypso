@@ -93,34 +93,6 @@ const EVENTS = {
 			},
 		},
 
-		email: {
-			andMoreClick( domainName ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "and More!" Google Apps link in Email',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_email_and_more_click', {
-					domain_name: domainName,
-				} );
-			},
-
-			learnMoreClick( domainName ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Learn more" Google Apps link in Email',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_email_learn_more_click', {
-					domain_name: domainName,
-				} );
-			},
-		},
-
 		emailForwarding: {
 			addNewEmailForwardClick( domainName, mailbox, destination, success ) {
 				analytics.ga.recordEvent(
@@ -215,36 +187,6 @@ const EVENTS = {
 					'calypso_domain_management_email_forwarding_learn_more_click',
 					{ domain_name: domainName }
 				);
-			},
-		},
-
-		googleApps: {
-			addGoogleAppsUserClick( domainName ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Add Google Apps User" Button in Google Apps',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_google_apps_add_google_apps_user_click',
-					{ domain_name: domainName }
-				);
-			},
-
-			manageClick( domainName, email ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Manage" link in Google Apps',
-					'User Email',
-					email
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_google_apps_manage_click', {
-					domain_name: domainName,
-					email,
-				} );
 			},
 		},
 	},
