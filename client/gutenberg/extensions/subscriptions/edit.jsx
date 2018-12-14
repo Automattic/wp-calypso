@@ -37,7 +37,12 @@ class SubscriptionEdit extends Component {
 							setAttributes( { showSubscribersTotal: ! showSubscribersTotal } );
 						} }
 					/>
-					<TextControl placeholder={ subscribePlaceholder } required onChange={ () => {} } />
+					<TextControl
+						placeholder={ subscribePlaceholder }
+						required
+						disabled={ true }
+						onChange={ () => {} }
+					/>
 					<Button type="button" isDefault>
 						{ __( 'Subscribe' ) }
 					</Button>
