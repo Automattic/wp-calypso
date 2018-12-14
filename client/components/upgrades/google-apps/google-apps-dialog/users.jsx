@@ -13,6 +13,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import getUserSetting from 'state/selectors/get-user-setting';
 import GoogleAppsUsersForm from './users-form';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 
@@ -26,10 +27,11 @@ class GoogleAppsUsers extends React.Component {
 	}
 
 	getNewUserFields() {
+		const { firstName, lastName } = this.props;
 		return {
-			email: { value: '', error: null },
-			firstName: { value: '', error: null },
-			lastName: { value: '', error: null },
+			email: { value: firstName, error: null },
+			firstName: { value: firstName, error: null },
+			lastName: { value: lastName, error: null },
 			domain: { value: this.props.domain, error: null },
 		};
 	}
@@ -113,7 +115,10 @@ const recordInputFocus = ( userIndex, fieldName, inputValue ) =>
 	);
 
 export default connect(
-	null,
+	state => ( {
+		firstName: getUserSetting( state, 'first_name' ),
+		lastName: getUserSetting( state, 'last_name' ),
+	} ),
 	{
 		recordAddUserClick,
 		recordInputFocus,
