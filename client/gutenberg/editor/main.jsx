@@ -140,6 +140,11 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 	const isRTL = isRtlSelector( state );
 	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
 
+	/**
+	 * We don't expect any theme to have a specific Gutenberg support flag,
+	 * so, data.theme_support.gutenberg will always be false.
+	 * This is future proofing if that flag get's implemented.
+	 */
 	const siteSlug = getSiteSlug( state, siteId );
 	const { 'align-wide': alignWide, gutenberg: gutenbergThemeSupport } = get(
 		requestActiveThemeSupport( siteSlug ),
@@ -158,6 +163,7 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 	}
 
 	return {
+		//no theme uses the wide-images flag. This is future proofing in case it get's implemented.
 		alignWide: alignWide || get( gutenbergThemeSupport, 'wide-images', false ),
 		post,
 		overridePost,
