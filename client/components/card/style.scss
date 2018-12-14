@@ -5,7 +5,7 @@
 	padding: 16px;
 	box-sizing: border-box;
 	background: var( --color-surface );
-	box-shadow: 0 0 0 1px var( --color-border-subtle ), 0 1px 2px var( --color-border-shadow );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
 
 	@include clear-fix;
 
