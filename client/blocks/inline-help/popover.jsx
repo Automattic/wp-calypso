@@ -119,6 +119,47 @@ class InlineHelpPopover extends Component {
 		);
 	};
 
+	renderPrimaryView = () => {
+		const {
+			translate,
+			showNotification,
+			setNotification,
+			setStoredTask,
+			showOptIn,
+			showOptOut,
+		} = this.props;
+
+		return (
+			<>
+				{ showOptOut && (
+					<Button
+						onClick={ this.switchToClassicEditor }
+						className="inline-help__classic-editor-toggle"
+					>
+						{ translate( 'Switch to Classic Editor' ) }
+					</Button>
+				) }
+
+				{ showOptIn && (
+					<Button
+						onClick={ this.switchToBlockEditor }
+						className="inline-help__gutenberg-editor-toggle"
+					>
+						{ translate( 'Switch to Block Editor' ) }
+					</Button>
+				) }
+
+				<WpcomChecklist
+					viewMode="navigation"
+					closePopover={ this.props.onClose }
+					showNotification={ showNotification }
+					setNotification={ setNotification }
+					setStoredTask={ setStoredTask }
+				/>
+			</>
+		);
+	};
+
 	switchToClassicEditor = () => {
 		const { siteId, onClose, optOut, classicUrl } = this.props;
 		const proceed =
@@ -137,14 +178,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	render() {
-		const {
-			translate,
-			showNotification,
-			setNotification,
-			setStoredTask,
-			showOptIn,
-			showOptOut,
-		} = this.props;
+		const { translate } = this.props;
 		const { showSecondaryView } = this.state;
 		const popoverClasses = { 'is-secondary-view-active': showSecondaryView };
 
@@ -170,35 +204,7 @@ class InlineHelpPopover extends Component {
 
 				{ this.renderSecondaryView() }
 
-				{ ! showSecondaryView &&
-					showOptOut && (
-						<Button
-							onClick={ this.switchToClassicEditor }
-							className="inline-help__classic-editor-toggle"
-						>
-							{ translate( 'Switch to Classic Editor' ) }
-						</Button>
-					) }
-
-				{ ! showSecondaryView &&
-					showOptIn && (
-						<Button
-							onClick={ this.switchToBlockEditor }
-							className="inline-help__gutenberg-editor-toggle"
-						>
-							{ translate( 'Switch to Block Editor' ) }
-						</Button>
-					) }
-
-				{ ! showSecondaryView && (
-					<WpcomChecklist
-						viewMode="navigation"
-						closePopover={ this.props.onClose }
-						showNotification={ showNotification }
-						setNotification={ setNotification }
-						setStoredTask={ setStoredTask }
-					/>
-				) }
+				{ ! showSecondaryView && this.renderPrimaryView() }
 
 				<div className="inline-help__footer">
 					<Button
