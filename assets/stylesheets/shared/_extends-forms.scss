@@ -12,20 +12,20 @@
 	margin: 0;
 	padding: 7px 14px;
 	width: 100%;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 16px;
 	line-height: 1.5;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	background-color: $white;
 	transition: all 0.15s ease-in-out;
 	box-sizing: border-box;
 
 	&::placeholder {
-		color: $gray;
+		color: var( --color-neutral-500 );
 	}
 
 	&:hover {
-		border-color: $gray-lighten-10;
+		border-color: var( --color-neutral-200 );
 	}
 
 	&:focus {
@@ -39,18 +39,18 @@
 	}
 
 	&:disabled {
-		background: $gray-light;
-		border-color: $gray-lighten-30;
-		color: $gray-lighten-10;
+		background: var( --color-neutral-0 );
+		border-color: var( --color-neutral-0 );
+		color: var( --color-neutral-200 );
 		opacity: 1;
-		-webkit-text-fill-color: $gray-lighten-10;
+		-webkit-text-fill-color: var( --color-neutral-200 );
 
 		&:hover {
 			cursor: default;
 		}
 
 		&::placeholder {
-			color: $gray-lighten-10;
+			color: var( --color-neutral-200 );
 		}
 	}
 
