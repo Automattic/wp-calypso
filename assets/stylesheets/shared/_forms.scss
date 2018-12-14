@@ -99,14 +99,14 @@ input[type='radio'] {
 		width: 8px;
 		height: 8px;
 		text-indent: -9999px;
-		background: $blue-medium;
+		background: var( --color-primary );
 		vertical-align: middle;
 		border-radius: 50%;
 		animation: grow 0.2s ease-in-out;
 	}
 
 	&:disabled:checked:before {
-		background: $gray-lighten-30;
+		background: var( --color-neutral-0 );
 	}
 }
 
