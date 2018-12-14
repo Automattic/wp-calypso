@@ -10,7 +10,7 @@ import { getPlugin, registerPlugin, unregisterPlugin } from '@wordpress/plugins'
  * Internal dependencies
  */
 import getJetpackData from './get-jetpack-data';
-import extensions from '../editor';
+import { getExtensions } from '../editor';
 
 /**
  * Refreshes registration of Gutenberg extensions (blocks and plugins)
@@ -20,12 +20,15 @@ import extensions from '../editor';
  *
  * @returns {void}
  */
-export default function refreshRegistrations() {
+export default async function refreshRegistrations() {
 	const extensionAvailability = get( getJetpackData(), [ 'available_blocks' ] );
 
 	if ( ! extensionAvailability ) {
 		return;
 	}
+
+	const extensions = await getExtensions();
+
 	extensions.forEach( extension => {
 		const { name, settings } = extension;
 		const available = get( extensionAvailability, [ name, 'available' ] );

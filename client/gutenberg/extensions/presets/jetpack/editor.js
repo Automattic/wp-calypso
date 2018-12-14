@@ -25,7 +25,7 @@ export async function getExtensions() {
 		import( '../../' + slug ).then( ( { name, settings } ) => ( { name, settings } ) )
 	);
 
-	return await Promise.all( promises ); // Y U NO RETURN ARRAY BUT PROMISE?
+	return await Promise.all( promises );
 }
 
 export default [
