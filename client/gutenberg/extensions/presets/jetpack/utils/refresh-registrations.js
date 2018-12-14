@@ -30,7 +30,7 @@ export default async function refreshRegistrations() {
 	const extensions = await getExtensions();
 
 	extensions.forEach( extension => {
-		const { name, settings } = extension;
+		const { children, name, settings } = extension;
 		const available = get( extensionAvailability, [ name, 'available' ] );
 
 		if ( has( settings, [ 'render' ] ) ) {
@@ -49,7 +49,18 @@ export default async function refreshRegistrations() {
 
 			if ( available && ! registered ) {
 				registerBlockType( blockName, settings );
+				if ( children ) {
+					children.forEach(
+						( { name: childName, settings: childSettings } ) =>
+							void registerBlockType( `jetpack/${ childName }`, childSettings )
+					);
+				}
 			} else if ( ! available && registered ) {
+				if ( children ) {
+					children.forEach(
+						( { name: childName } ) => void unregisterBlockType( `jetpack/${ childName }` )
+					);
+				}
 				unregisterBlockType( blockName );
 			}
 		}
