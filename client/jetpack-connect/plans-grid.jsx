@@ -4,6 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,6 +15,7 @@ import FormattedHeader from 'components/formatted-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlansSkipButton from 'components/plans/plans-skip-button';
 import { abtest } from 'lib/abtest';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Constants
@@ -31,6 +33,12 @@ class JetpackPlansGrid extends Component {
 
 		// Connected
 		translate: PropTypes.func.isRequired,
+	};
+
+	handleSkipButtonClick = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
+
+		this.props.onSelect( null );
 	};
 
 	renderConnectHeader() {
@@ -79,4 +87,9 @@ class JetpackPlansGrid extends Component {
 	}
 }
 
-export default localize( JetpackPlansGrid );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+	}
+)( localize( JetpackPlansGrid ) );

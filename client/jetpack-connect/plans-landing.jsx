@@ -80,12 +80,6 @@ class PlansLanding extends Component {
 		}, 25 );
 	};
 
-	handleSkipButtonClick = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
-
-		this.storeSelectedPlan( null );
-	};
-
 	handleInfoButtonClick = info => () => {
 		this.props.recordTracksEvent( 'calypso_jpc_external_help_click', {
 			help_type: info,
