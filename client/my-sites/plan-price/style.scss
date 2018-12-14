@@ -53,7 +53,8 @@
 	color: var( --color-success );
 }
 
-.plan-price__currency-symbol {
+.plan-price__currency-symbol,
+.plan-price__tax-amount {
 	color: var( --color-neutral-light );
 }
 
