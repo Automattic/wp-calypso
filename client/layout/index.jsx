@@ -56,15 +56,38 @@ class Layout extends Component {
 		colorSchemePreference: PropTypes.string,
 	};
 
+	componentDidMount() {
+		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
+			return;
+		}
+		if ( typeof document !== 'undefined' ) {
+			if ( this.props.colorSchemePreference ) {
+				document
+					.querySelector( 'body' )
+					.classList.add( `is-${ this.props.colorSchemePreference }` );
+			}
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
+			return;
+		}
+		if ( prevProps.colorSchemePreference === this.props.colorSchemePreference ) {
+			return;
+		}
+		if ( typeof document !== 'undefined' ) {
+			const classList = document.querySelector( 'body' ).classList;
+			classList.remove( `is-${ prevProps.colorSchemePreference }` );
+			classList.add( `is-${ this.props.colorSchemePreference }` );
+		}
+
+		// intentionally don't remove these in unmount
+	}
+
 	render() {
 		const sectionClass = classnames(
 				'layout',
-				{
-					'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
-					[ `is-${ this.props.colorSchemePreference }` ]: config.isEnabled(
-						'me/account/color-scheme-picker'
-					),
-				},
 				`is-group-${ this.props.section.group }`,
 				`is-section-${ this.props.section.name }`,
 				`focus-${ this.props.currentLayoutFocus }`,
