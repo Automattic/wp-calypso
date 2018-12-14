@@ -96,12 +96,6 @@ class Layout extends Component {
 	render() {
 		const sectionClass = classnames(
 				'layout',
-				{
-					'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
-					[ `is-${ this.props.colorSchemePreference }` ]: config.isEnabled(
-						'me/account/color-scheme-picker'
-					),
-				},
 				`is-group-${ this.props.sectionGroup }`,
 				`is-section-${ this.props.sectionName }`,
 				`focus-${ this.props.currentLayoutFocus }`,
