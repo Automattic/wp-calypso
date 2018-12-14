@@ -336,7 +336,7 @@ export function getUsernameSuggestion( username, reduxState ) {
 	} );
 }
 
-export function addPlanToCart( callback, { siteId }, { cartItem, privacyItem } ) {
+export function addPlanToCart( callback, { siteSlug }, { cartItem } ) {
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
 		defer( callback );
@@ -344,11 +344,9 @@ export function addPlanToCart( callback, { siteId }, { cartItem, privacyItem } )
 		return;
 	}
 
-	const newCartItems = [ cartItem, privacyItem ].filter( item => item );
+	const newCartItems = [ cartItem ].filter( item => item );
 
-	SignupCart.addToCart( siteId, newCartItems, error =>
-		callback( error, { cartItem, privacyItem } )
-	);
+	SignupCart.addToCart( siteSlug, newCartItems, error => callback( error, { cartItem } ) );
 }
 
 export function createAccount(
