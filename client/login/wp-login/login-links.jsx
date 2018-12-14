@@ -8,20 +8,21 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
  */
+import config, { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import { addQueryArgs } from 'lib/url';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { isEnabled } from 'config';
 import { login } from 'lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
@@ -76,6 +77,10 @@ export class LoginLinks extends React.Component {
 
 	recordResetPasswordLinkClick = () => {
 		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+	};
+
+	recordSignUpLinkClick = () => {
+		this.props.recordTracksEvent( 'calypso_login_sign_up_link_click' );
 	};
 
 	renderBackLink() {
@@ -202,9 +207,52 @@ export class LoginLinks extends React.Component {
 		);
 	}
 
+	renderSignUpLink() {
+		// Taken from client/layout/masterbar/logged-out.jsx
+		const { currentQuery, currentRoute, pathname, translate } = this.props;
+
+		let signupUrl = config( 'signup_url' );
+		const signupFlow = get( currentQuery, 'signup_flow' );
+		if (
+			// Match locales like `/log-in/jetpack/es`
+			startsWith( currentRoute, '/log-in/jetpack' )
+		) {
+			// Basic validation that we're in a valid Jetpack Authorization flow
+			if (
+				includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
+				includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
+			) {
+				/**
+				 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
+				 * this case, the redirect_to will handle signups as part of the flow. Use the
+				 * `redirect_to` parameter directly for signup.
+				 */
+				signupUrl = currentQuery.redirect_to;
+			} else {
+				signupUrl = '/jetpack/new';
+			}
+		} else if ( '/jetpack-connect' === pathname ) {
+			signupUrl = '/jetpack/new';
+		} else if ( signupFlow ) {
+			signupUrl += '/' + signupFlow;
+		}
+
+		return (
+			<a
+				href={ signupUrl }
+				key="sign-up-link"
+				onClick={ this.recordSignUpLinkClick }
+				rel="external"
+			>
+				{ translate( 'Create a new account' ) }
+			</a>
+		);
+	}
+
 	render() {
 		return (
 			<div className="wp-login__links">
+				{ this.renderSignUpLink() }
 				{ this.renderLostPhoneLink() }
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
@@ -215,18 +263,16 @@ export class LoginLinks extends React.Component {
 	}
 }
 
-const mapState = state => ( {
-	isLoggedIn: Boolean( getCurrentUserId( state ) ),
-	oauth2Client: getCurrentOAuth2Client( state ),
-	query: getCurrentQueryArguments( state ),
-} );
-
-const mapDispatch = {
-	recordTracksEvent,
-	resetMagicLoginRequestForm,
-};
-
 export default connect(
-	mapState,
-	mapDispatch
+	state => ( {
+		currentQuery: getCurrentQueryArguments( state ),
+		currentRoute: getCurrentRoute( state ),
+		isLoggedIn: Boolean( getCurrentUserId( state ) ),
+		oauth2Client: getCurrentOAuth2Client( state ),
+		query: getCurrentQueryArguments( state ),
+	} ),
+	{
+		recordTracksEvent,
+		resetMagicLoginRequestForm,
+	}
 )( localize( LoginLinks ) );
