@@ -61,12 +61,15 @@ const addResetToRegistry = registry => {
 export const initGutenberg = once( ( userId, store ) => {
 	debug( 'Starting Gutenberg editor initialization...' );
 
+	const registry = use( addResetToRegistry );
+
 	debug( 'Registering data plugins' );
 	const storageKey = 'WP_DATA_USER_' + userId;
 	use( plugins.persistence, { storageKey: storageKey } );
 	use( plugins.controls );
 
-	const registry = use( addResetToRegistry );
+	debug( 'Initializing gutenberg/calypso store' );
+	require( 'gutenberg/editor/calypso-store' );
 
 	// We need to ensure that core-data is loaded after the data plugins have been registered.
 	debug( 'Initializing core-data store' );
