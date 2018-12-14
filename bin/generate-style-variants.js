@@ -3,8 +3,8 @@ const _ = require( 'lodash' );
 
 const [ basename, murielname ] = argv._;
 
-const variants = _.times( 10, num => {
-	const variant = num === 0 ? 50 : num * 100;
+const steps = [ 0, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900 ];
+const variants = _.map( steps, variant => {
 	return `--${ basename }-${ variant }: #{ \$muriel-color-${ murielname }-${ variant } };`;
 } );
 
