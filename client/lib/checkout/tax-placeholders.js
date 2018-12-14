@@ -16,13 +16,14 @@ export function maybeInjectTaxPlaceholdersIntoPurchase( purchase ) {
 	const purchasePriceText = get( purchase, 'price_text' );
 	if (
 		config.isEnabled( 'show-tax' ) &&
-		! has( purchase, 'taxAmount' ) &&
+		! has( purchase, 'tax_text' ) &&
 		isString( purchasePriceText ) &&
 		! purchasePriceText.match( /include/i ) // "Included with plan"
 	) {
 		debug( 'injecting taxAmount into purchase', purchase );
 		return Object.assign( purchase, {
-			taxAmount: purchase.price_text.replace( /(\d+)(\d)\.(\d*)\d/, '$1.$2$3' ),
+			tax_amount: purchase.amount / 10,
+			tax_text: purchasePriceText.replace( /(?<!\d|\.)(\d+)(\d)(?:\.(\d*)\d)?/, '$1.$2$3' ),
 		} );
 	}
 	return purchase;
