@@ -391,9 +391,8 @@ class ManagePurchase extends Component {
 							<PlanPrice
 								rawPrice={ purchase.amount }
 								currencyCode={ purchase.currencyCode }
-								taxAmount={ purchase.taxAmount }
+								taxText={ purchase.taxText }
 							/>
-							{ purchase.taxAmount }
 						</div>
 					</header>
 					{ this.renderPlanDescription() }
