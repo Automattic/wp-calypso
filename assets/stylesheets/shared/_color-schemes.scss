@@ -121,9 +121,9 @@
 		--sidebar-menu-selected-background-color: #{$muriel-gray-500};
 		--sidebar-menu-selected-a-color: #{$muriel-white};
 		--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $muriel-gray-500 )};
-		--sidebar-menu-hover-background: #{$muriel-gray-50};
-		--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-gray-50 )};
-		--sidebar-menu-hover-color: #{$muriel-gray-800};
+		--sidebar-menu-hover-background: #{$muriel-white};
+		--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-white )};
+		--sidebar-menu-hover-color: #{$muriel-blue-500};
 
 		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
 		--site-selector-gridicon-fill: var( --sidebar-gridicon-fill );
