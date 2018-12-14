@@ -141,7 +141,8 @@ export const post = async ( context, next ) => {
 		const { Editor, registry } = initGutenberg( userId, context.store );
 
 		// Reset the Gutenberg state
-		registry.reset();
+		registry.reset( 'core/editor' );
+		registry.reset( 'core/notices' );
 		dispatch( 'core/edit-post' ).closePublishSidebar();
 		dispatch( 'core/edit-post' ).closeModal();
 

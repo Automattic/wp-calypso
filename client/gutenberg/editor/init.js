@@ -34,26 +34,25 @@ const addResetToRegistry = registry => {
 		window.gutenbergState = () => mapValues( registry.stores, ( { store } ) => store.getState() );
 	}
 
-	const resettableStores = [ 'core/editor', 'core/notices' ];
-
 	const stores = [];
 	return {
 		registerStore( namespace, options ) {
-			let store;
-			if ( -1 === resettableStores.indexOf( namespace ) ) {
-				store = registry.registerStore( namespace, options );
-			} else {
-				store = registry.registerStore( namespace, {
-					...options,
-					reducer: ( state, action ) =>
-						options.reducer( 'GUTENLYPSO_RESET' === action.type ? undefined : state, action ),
-				} );
-			}
+			const store = registry.registerStore( namespace, {
+				...options,
+				reducer: ( state, action ) => {
+					const shouldReset = 'GUTENLYPSO_RESET' === action.type && namespace === action.namespace;
+					if ( shouldReset ) {
+						debug( `Resetting ${ namespace } store` );
+						return options.reducer( undefined, action );
+					}
+					return options.reducer( state, action );
+				},
+			} );
 			stores.push( store );
 			return store;
 		},
-		reset() {
-			stores.forEach( store => store.dispatch( { type: 'GUTENLYPSO_RESET' } ) );
+		reset( namespace ) {
+			stores.forEach( store => store.dispatch( { type: 'GUTENLYPSO_RESET', namespace } ) );
 		},
 	};
 };
