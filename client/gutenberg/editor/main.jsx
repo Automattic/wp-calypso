@@ -27,7 +27,7 @@ import { translate } from 'i18n-calypso';
 import './hooks'; // Needed for integrating Calypso's media library (and other hooks)
 import isRtlSelector from 'state/selectors/is-rtl';
 import refreshRegistrations from '../extensions/presets/jetpack/utils/refresh-registrations';
-import { getSiteOption } from 'state/sites/selectors';
+import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 
 /**
  * Style dependencies
@@ -132,16 +132,15 @@ const getPost = ( siteId, postId, postType ) => {
 	return null;
 };
 
-const mapStateToProps = (
-	state,
-	{ siteId, siteSlug, postId, uniqueDraftKey, postType, isDemoContent }
-) => {
+const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isDemoContent } ) => {
 	const draftPostId = get( getHttpData( uniqueDraftKey ), 'data.ID', null );
 	const post = getPost( siteId, postId || draftPostId, postType );
 	const demoContent = isDemoContent ? get( requestGutenbergDemoContent(), 'data' ) : null;
 	const isAutoDraft = 'auto-draft' === get( post, 'status', null );
 	const isRTL = isRtlSelector( state );
 	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
+
+	const siteSlug = getSiteSlug( state, siteId );
 	const { 'align-wide': alignWide, gutenberg: gutenbergThemeSupport } = get(
 		requestActiveThemeSupport( siteSlug ),
 		[ 'data', 'theme_support' ],
