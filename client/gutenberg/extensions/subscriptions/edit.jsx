@@ -14,6 +14,10 @@ import { sprintf } from '@wordpress/i18n/build/index';
 import apiFetch from '@wordpress/api-fetch';
 
 class SubscriptionEdit extends Component {
+	state = {
+		subscriberCountString: '',
+	};
+
 	componentDidMount() {
 		// Get the subscriber count so it is available right away if the user toggles the setting
 		this.get_subscriber_count();
@@ -21,7 +25,7 @@ class SubscriptionEdit extends Component {
 
 	render() {
 		const { attributes, className, isSelected, setAttributes } = this.props;
-		const { subscribePlaceholder, showSubscribersTotal, subscriberCountString } = attributes;
+		const { subscribePlaceholder, showSubscribersTotal } = attributes;
 
 		if ( isSelected ) {
 			return (
@@ -43,7 +47,7 @@ class SubscriptionEdit extends Component {
 
 		return (
 			<div className={ className } role="form">
-				{ showSubscribersTotal && <p role="heading">{ subscriberCountString }</p> }
+				{ showSubscribersTotal && <p role="heading">{ this.state.subscriberCountString }</p> }
 				<TextControl placeholder={ subscribePlaceholder } />
 				<Button type="button" isDefault>
 					{ __( 'Subscribe' ) }
@@ -53,15 +57,18 @@ class SubscriptionEdit extends Component {
 	}
 
 	get_subscriber_count() {
-		const { setAttributes } = this.props;
-
 		apiFetch( { path: '/wpcom/v2/subscribers/count' } ).then( count => {
-			if ( 1 === count ) {
-				setAttributes( {
+			// Handle error condition
+			if ( ! count.hasOwnProperty( 'count' ) ) {
+				this.setState( {
+					subscriberCountString: sprintf( __( 'Subscriber count unavailable' ) ),
+				} );
+			} else if ( 1 === count.count ) {
+				this.setState( {
 					subscriberCountString: sprintf( __( 'Join %s other subscriber' ), count.count ),
 				} );
 			} else {
-				setAttributes( {
+				this.setState( {
 					subscriberCountString: sprintf( __( 'Join %s other subscribers' ), count.count ),
 				} );
 			}
