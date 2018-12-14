@@ -13,7 +13,7 @@ import { Jetpack_Tiled_Gallery_Grouper } from '../grouper';
 
 describe( 'grouper', () => {
 	test( 'groups as expected', () => {
-		const grouper = new Jetpack_Tiled_Gallery_Grouper( cloneDeep( attachments ) );
+		const grouper = new Jetpack_Tiled_Gallery_Grouper( { attachments: cloneDeep( attachments ) } );
 		expect( grouper.grouped_images ).toMatchSnapshot();
 	} );
 } );
