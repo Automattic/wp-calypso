@@ -25,20 +25,24 @@
 	--color-surface: #{$muriel-white};
 	--color-surface-backdrop: #{$muriel-gray-0};
 
-	--color-neutral: #{$muriel-color-grey-500};
-	--color-neutral-dark: #{$muriel-color-grey-700};
-	--color-neutral-light: #{$muriel-color-grey-300};
-	--color-neutral-0: #{$muriel-color-grey-0};
-	--color-neutral-50: #{$muriel-color-grey-50};
-	--color-neutral-100: #{$muriel-color-grey-100};
-	--color-neutral-200: #{$muriel-color-grey-200};
-	--color-neutral-300: #{$muriel-color-grey-300};
-	--color-neutral-400: #{$muriel-color-grey-400};
-	--color-neutral-500: #{$muriel-color-grey-500};
-	--color-neutral-600: #{$muriel-color-grey-600};
-	--color-neutral-700: #{$muriel-color-grey-700};
-	--color-neutral-800: #{$muriel-color-grey-800};
-	--color-neutral-900: #{$muriel-color-grey-900};
+	--color-neutral: #{$muriel-color-gray-500};
+	--color-neutral-dark: #{$muriel-color-gray-700};
+	--color-neutral-light: #{$muriel-color-gray-300};
+	--color-neutral-0: #{$muriel-color-gray-0};
+	--color-neutral-50: #{$muriel-color-gray-50};
+	--color-neutral-100: #{$muriel-color-gray-100};
+	--color-neutral-200: #{$muriel-color-gray-200};
+	--color-neutral-300: #{$muriel-color-gray-300};
+	--color-neutral-400: #{$muriel-color-gray-400};
+	--color-neutral-500: #{$muriel-color-gray-500};
+	--color-neutral-600: #{$muriel-color-gray-600};
+	--color-neutral-700: #{$muriel-color-gray-700};
+	--color-neutral-800: #{$muriel-color-gray-800};
+	--color-neutral-900: #{$muriel-color-gray-900};
+
+	--color-border: var( --color-neutral-200 );
+	--color-border-subtle: var( --color-neutral-50 );
+	--color-border-shadow: var( --color-neutral-100 );
 
 	--masterbar-color: #{$muriel-white};
 	--masterbar-background: var( --color-primary );
