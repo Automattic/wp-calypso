@@ -201,13 +201,13 @@ $autobar-height: 20px;
 .masterbar__item-new {
 	background: $white;
 	border-radius: 3px;
-	color: var( --masterbar-item-new-color );
+	color: var( --color-primary );
 	height: 36px;
 	margin: 5px 8px;
 	transition: all 0.2s ease-out;
 
 	&:visited {
-		color: var( --masterbar-item-new-color );
+		color: var( --color-primary );
 	}
 
 	&.is-active {
@@ -216,7 +216,7 @@ $autobar-height: 20px;
 
 	&:hover {
 		background: $gray-light;
-		color: var( --masterbar-item-new-color );
+		color: var( --color-primary );
 	}
 
 	&:focus {
@@ -224,14 +224,14 @@ $autobar-height: 20px;
 
 		.accessible-focus & {
 			background: $white;
-			color: var( --masterbar-item-new-color );
+			color: var( --color-primary );
 			box-shadow: 0 0 0 2px var( --color-primary-light );
 			z-index: 1;
 		}
 	}
 
 	.masterbar__item-content {
-		color: var( --masterbar-item-new-color );
+		color: var( --color-primary );
 		display: none;
 
 		@include breakpoint( '>960px' ) {
