@@ -3,37 +3,53 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import createReactClass from 'create-react-class';
-import page from 'page';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Fragment } from 'react';
 
 /**
  * Internal dependencies
  */
+import { ADDING_GOOGLE_APPS_TO_YOUR_SITE } from 'lib/url/support';
 import Button from 'components/forms/form-button';
 import CompactCard from 'components/card/compact';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
 import { domainManagementAddGoogleApps } from 'my-sites/domains/paths';
-import { ADDING_GOOGLE_APPS_TO_YOUR_SITE } from 'lib/url/support';
-import analyticsMixin from 'lib/mixins/analytics';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 
-const AddGoogleAppsCard = createReactClass( {
-	displayName: 'AddGoogleAppsCard',
+class AddGoogleAppsCard extends React.Component {
+	constructor( props ) {
+		super( props );
+	}
 
-	propTypes: {
-		products: PropTypes.object.isRequired,
-		selectedDomainName: PropTypes.string,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-	},
+	renderAddGoogleAppsButton() {
+		const { translate } = this.props;
 
-	mixins: [ analyticsMixin( 'domainManagement', 'email' ) ],
+		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
+			return null;
+		}
+
+		return (
+			<Button type="button" onClick={ this.goToAddGoogleApps }>
+				{ translate( 'Add G Suite' ) }
+			</Button>
+		);
+	}
+
+	handleLearnMoreClick = () => {
+		this.props.learnMoreClick( this.props.selectedSite.domain || null );
+	};
+
+	goToAddGoogleApps = () => {
+		page(
+			domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.selectedSite.domain )
+		);
+	};
 
 	render() {
 		const { currencyCode, translate } = this.props,
@@ -45,7 +61,7 @@ const AddGoogleAppsCard = createReactClass( {
 		const monthlyPrice = getMonthlyPrice( price, currencyCode );
 
 		return (
-			<div>
+			<Fragment>
 				<CompactCard>
 					<header className="email__add-google-apps-card-header">
 						<h3 className="email__add-google-apps-card-product-logo">
@@ -95,7 +111,7 @@ const AddGoogleAppsCard = createReactClass( {
 						</div>
 
 						<div className="email__add-google-apps-card-logos">
-							<img src="/calypso/images/g-suite/g-suite.svg" />
+							<img alt="G Suite Logo" src="/calypso/images/g-suite/g-suite.svg" />
 						</div>
 					</div>
 				</CompactCard>
@@ -103,7 +119,7 @@ const AddGoogleAppsCard = createReactClass( {
 					<div className="email__add-google-apps-card-features">
 						<div className="email__add-google-apps-card-feature">
 							<div className="email__add-google-apps-card-feature-block">
-								<img src="/calypso/images/g-suite/logo_gmail_48dp.svg" />
+								<img alt="Gmail Logo" src="/calypso/images/g-suite/logo_gmail_48dp.svg" />
 							</div>
 							<div className="email__add-google-apps-card-feature-block">
 								<h5 className="email__add-google-apps-card-feature-header">
@@ -121,7 +137,7 @@ const AddGoogleAppsCard = createReactClass( {
 
 						<div className="email__add-google-apps-card-feature">
 							<div className="email__add-google-apps-card-feature-block">
-								<img src="/calypso/images/g-suite/logo_drive_48dp.svg" />
+								<img alt="Google Drive Logo" src="/calypso/images/g-suite/logo_drive_48dp.svg" />
 							</div>
 							<div className="email__add-google-apps-card-feature-block">
 								<h5 className="email__add-google-apps-card-feature-header">
@@ -135,7 +151,7 @@ const AddGoogleAppsCard = createReactClass( {
 
 						<div className="email__add-google-apps-card-feature">
 							<div className="email__add-google-apps-card-feature-block">
-								<img src="/calypso/images/g-suite/logo_docs_48dp.svg" />
+								<img alt="Google Docs Logo" src="/calypso/images/g-suite/logo_docs_48dp.svg" />
 							</div>
 							<div className="email__add-google-apps-card-feature-block">
 								<h5 className="email__add-google-apps-card-feature-header">
@@ -147,7 +163,10 @@ const AddGoogleAppsCard = createReactClass( {
 
 						<div className="email__add-google-apps-card-feature">
 							<div className="email__add-google-apps-card-feature-block">
-								<img src="/calypso/images/g-suite/logo_hangouts_48dp.svg" />
+								<img
+									alt="Google Hangouts Logo"
+									src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
+								/>
 							</div>
 							<div className="email__add-google-apps-card-feature-block">
 								<h5 className="email__add-google-apps-card-feature-header">
@@ -188,39 +207,32 @@ const AddGoogleAppsCard = createReactClass( {
 						</p>
 					</div>
 				</CompactCard>
-			</div>
+			</Fragment>
 		);
-	},
+	}
+}
 
-	renderAddGoogleAppsButton() {
-		const { translate } = this.props;
+AddGoogleAppsCard.propTypes = {
+	products: PropTypes.object.isRequired,
+	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+};
 
-		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
-			return null;
-		}
+const learnMoreClick = domainName =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_domain_management_email_learn_more_click', {
+			domain_name: domainName,
+		} ),
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked "Learn more" Google Apps link in Email',
+			'Domain Name',
+			domainName
+		)
+	);
 
-		return (
-			<Button type="button" onClick={ this.goToAddGoogleApps }>
-				{ translate( 'Add G Suite' ) }
-			</Button>
-		);
-	},
-
-	handleLearnMoreClick() {
-		this.recordEvent( 'learnMoreClick', this.props.selectedDomainName || null );
-	},
-
-	handleAndMoreClick() {
-		this.recordEvent( 'andMoreClick', this.props.selectedDomainName || null );
-	},
-
-	goToAddGoogleApps() {
-		page(
-			domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.selectedDomainName )
-		);
-	},
-} );
-
-export default connect( state => ( {
-	currencyCode: getCurrentUserCurrencyCode( state ),
-} ) )( localize( AddGoogleAppsCard ) );
+export default connect(
+	state => ( {
+		currencyCode: getCurrentUserCurrencyCode( state ),
+	} ),
+	{ learnMoreClick }
+)( localize( AddGoogleAppsCard ) );
