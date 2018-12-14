@@ -4,14 +4,14 @@
  * External dependencies
  */
 import { Component } from '@wordpress/element';
-import { TextControl, Button, ToggleControl } from '@wordpress/components';
+import { Button, TextControl, ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { sprintf } from '@wordpress/i18n/build/index';
 import apiFetch from '@wordpress/api-fetch';
+import { sprintf, _n } from '@wordpress/i18n';
 
 class SubscriptionEdit extends Component {
 	state = {
@@ -63,13 +63,12 @@ class SubscriptionEdit extends Component {
 				this.setState( {
 					subscriberCountString: sprintf( __( 'Subscriber count unavailable' ) ),
 				} );
-			} else if ( 1 === count.count ) {
-				this.setState( {
-					subscriberCountString: sprintf( __( 'Join %s other subscriber' ), count.count ),
-				} );
 			} else {
 				this.setState( {
-					subscriberCountString: sprintf( __( 'Join %s other subscribers' ), count.count ),
+					subscriberCountString: sprintf(
+						_n( 'Join %s other subscriber', 'Join %s other subscribers', count.count ),
+						count.count
+					),
 				} );
 			}
 		} );
