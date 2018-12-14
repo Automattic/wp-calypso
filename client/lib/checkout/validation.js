@@ -26,14 +26,14 @@ export function getCreditCardFieldRules() {
 	return {
 		name: {
 			description: i18n.translate( 'Cardholder Name', {
-				context: 'Upgrades: Card holder name label on credit card form',
+				comment: 'Cardholder name label on credit card form',
 			} ),
 			rules: [ 'required' ],
 		},
 
 		number: {
 			description: i18n.translate( 'Card Number', {
-				context: 'Upgrades: Card number label on credit card form',
+				comment: 'Card number label on credit card form',
 			} ),
 			rules: [ 'validCreditCardNumber' ],
 		},
@@ -55,7 +55,7 @@ export function getCreditCardFieldRules() {
 
 		'postal-code': {
 			description: i18n.translate( 'Postal Code', {
-				context: 'Upgrades: Postal code on credit card form',
+				comment: 'Postal code on credit card form',
 			} ),
 			rules: [ 'required' ],
 		},
@@ -92,14 +92,14 @@ export function tokenFieldRules() {
 	return {
 		name: {
 			description: i18n.translate( 'Cardholder Name', {
-				comment: 'Upgrades: Card holder name label on credit card form',
+				comment: 'Cardholder name label on credit card form',
 			} ),
 			rules: [ 'required' ],
 		},
 
 		tokenized_payment_data: {
 			description: i18n.translate( 'Tokenized Payment Data', {
-				comment: 'Upgrades: Tokenized payment data from the token provider',
+				comment: 'Tokenized payment data from the token provider',
 			} ),
 			rules: [ 'required' ],
 		},
@@ -340,7 +340,7 @@ function getConditionalCreditCardRules( { country } ) {
 			return {
 				'postal-code': {
 					description: i18n.translate( 'Postal Code', {
-						context: 'Upgrades: Postal code on credit card form',
+						comment: 'Postal code on credit card form',
 					} ),
 					rules: [ 'required', 'validPostalCodeUS' ],
 				},

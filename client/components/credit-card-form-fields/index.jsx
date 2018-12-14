@@ -146,14 +146,14 @@ export class CreditCardFormFields extends React.Component {
 				{ this.createField( 'name', Input, {
 					autoFocus,
 					label: translate( 'Cardholder Name', {
-						context: 'Card holder name label on credit card form',
+						comment: 'Cardholder name label on credit card form',
 					} ),
 				} ) }
 
 				{ this.createField( 'number', CreditCardNumberInput, {
 					inputMode: 'numeric',
 					label: translate( 'Card Number', {
-						context: 'Card number label on credit card form',
+						comment: 'Card number label on credit card form',
 					} ),
 				} ) }
 
@@ -168,7 +168,7 @@ export class CreditCardFormFields extends React.Component {
 					{ this.createField( 'cvv', Input, {
 						inputMode: 'numeric',
 						placeholder: translate( 'CVV', {
-							context: '3 digit security number on credit card form',
+							comment: '3 digit security number on credit card form',
 						} ),
 						label: translate( 'CVV {{infoPopover/}}', {
 							components: {
@@ -195,7 +195,7 @@ export class CreditCardFormFields extends React.Component {
 					) : (
 						this.createField( 'postal-code', Input, {
 							label: translate( 'Postal Code', {
-								context: 'Postal code on credit card form',
+								comment: 'Postal code on credit card form',
 							} ),
 						} )
 					) }
