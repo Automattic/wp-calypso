@@ -33,10 +33,10 @@ export const settings = {
 	keywords: [ __( 'subscribe' ), __( 'join' ), __( 'follow' ) ],
 
 	attributes: {
-		subscriber_count_string: { type: 'string', default: '' },
-		subscribe_placeholder: { type: 'string', default: 'Email Address' },
-		subscribe_button: { type: 'string', default: 'Subscribe' },
-		show_subscribers_total: { type: 'boolean', default: false },
+		subscriberCountString: { type: 'string', default: '' },
+		subscribePlaceholder: { type: 'string', default: 'Email Address' },
+		subscribeButton: { type: 'string', default: 'Subscribe' },
+		showSubscribersTotal: { type: 'boolean', default: false },
 	},
 	edit,
 	save,
