@@ -35,14 +35,19 @@
 	--color-error-light: #{$muriel-hot-red-700};
 	--color-error-dark: #{$muriel-hot-red-300};
 
-	--color-text: #{$muriel-gray-800};
-	--color-text-subtle: #{$muriel-gray-500};
 	--color-surface: #{$muriel-white};
 	--color-surface-backdrop: #{$muriel-gray-0};
+
+	--color-text: #{$muriel-gray-800};
+	--color-text-subtle: #{$muriel-gray-500};
 
 	--color-border: var( --color-neutral-200 );
 	--color-border-subtle: var( --color-neutral-50 );
 	--color-border-shadow: var( --color-neutral-0 );
+
+	--color-link: #{ $muriel-blue-500 };
+	--color-link-light: #{ $muriel-blue-300 };
+	--color-link-dark: #{ $muriel-gray-500 };
 
 	--masterbar-color: #{$muriel-white};
 	--masterbar-border-color: #{$gray-lighten-10};
