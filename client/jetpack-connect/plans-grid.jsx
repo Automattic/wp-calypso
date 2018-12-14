@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import MainWrapper from './main-wrapper';
 import FormattedHeader from 'components/formatted-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlansSkipButton from 'components/plans/plans-skip-button';
@@ -47,7 +47,7 @@ class JetpackPlansGrid extends Component {
 
 	render() {
 		return (
-			<Main wideLayout className="jetpack-connect__hide-plan-icons">
+			<MainWrapper isWide className="jetpack-connect__hide-plan-icons">
 				<div className="jetpack-connect__plans">
 					{ this.renderConnectHeader() }
 
@@ -66,13 +66,15 @@ class JetpackPlansGrid extends Component {
 							hideFreePlan={ this.props.hideFreePlan }
 							displayJetpackPlans={ true }
 						/>
+
 						{ abtest( 'jetpackFreePlanButtonPosition' ) === 'locationBottom' && (
 							<PlansSkipButton onClick={ this.handleSkipButtonClick } />
 						) }
+
 						{ this.props.children }
 					</div>
 				</div>
-			</Main>
+			</MainWrapper>
 		);
 	}
 }
