@@ -113,7 +113,7 @@ $autobar-height: 20px;
 	}
 
 	&.is-active {
-		background: var( --masterbar-item-active-background );
+		background: var( --color-primary-dark );
 	}
 
 	.is-support-user &.is-active {
@@ -337,7 +337,7 @@ $autobar-height: 20px;
 	}
 
 	&.is-active .masterbar__notifications-bubble {
-		border-color: var( --masterbar-item-active-background );
+		border-color: var( --color-primary-dark );
 	}
 
 	&.has-unread .masterbar__notifications-bubble {
