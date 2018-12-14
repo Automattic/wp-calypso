@@ -25,6 +25,20 @@
 	--color-surface: #{$muriel-white};
 	--color-surface-backdrop: #{$muriel-gray-0};
 
+	--color-neutral: #{$muriel-color-grey-500};
+	--color-neutral-dark: #{$muriel-color-grey-700};
+	--color-neutral-light: #{$muriel-color-grey-300};
+	--color-neutral-50: #{$muriel-color-grey-50};
+	--color-neutral-100: #{$muriel-color-grey-100};
+	--color-neutral-200: #{$muriel-color-grey-200};
+	--color-neutral-300: #{$muriel-color-grey-300};
+	--color-neutral-400: #{$muriel-color-grey-400};
+	--color-neutral-500: #{$muriel-color-grey-500};
+	--color-neutral-600: #{$muriel-color-grey-600};
+	--color-neutral-700: #{$muriel-color-grey-700};
+	--color-neutral-800: #{$muriel-color-grey-800};
+	--color-neutral-900: #{$muriel-color-grey-900};
+
 	--masterbar-color: #{$muriel-white};
 	--masterbar-background: var( --color-primary );
 	--masterbar-border-color: #{$gray-lighten-10};
