@@ -7,6 +7,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
+import { times } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Style dependencies
@@ -32,11 +34,7 @@ export default class Rating extends React.PureComponent {
 			height: size + 'px',
 		};
 
-		const stars = [];
-		for ( let i = 0; i < 5; i++ ) {
-			stars.push( <Gridicon key={ 'star-' + i } icon="star" style={ starStyles } /> );
-		}
-		return stars;
+		return times( 5, i => <Gridicon key={ i } icon="star" style={ starStyles } /> );
 	}
 
 	outlineStars() {
@@ -48,22 +46,15 @@ export default class Rating extends React.PureComponent {
 		const starStyles = {
 			width: size + 'px',
 			height: size + 'px',
-			fill: '#00aadc',
 		};
 
-		const stars = [];
-		for ( let i = 0; i < 5; i++ ) {
-			let allStyles = starStyles;
-			if ( i >= 5 - noFillOutlineCount ) {
-				allStyles = Object.assign( {}, starStyles, { fill: '#c8d7e1' } );
-			}
-
-			stars.push(
-				<Gridicon key={ 'star-outline-' + i } icon="star-outline" style={ allStyles } />
+		return times( 5, i => {
+			const isEmpty = i >= 5 - noFillOutlineCount;
+			const className = classNames( { 'is-empty': isEmpty } );
+			return (
+				<Gridicon key={ i } icon="star-outline" className={ className } style={ starStyles } />
 			);
-		}
-
-		return stars;
+		} );
 	}
 
 	render() {

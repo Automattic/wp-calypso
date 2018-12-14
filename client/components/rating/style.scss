@@ -11,5 +11,9 @@
 		.gridicon {
 			fill: var( --color-accent );
 		}
+
+		.is-empty {
+			fill: var( --color-neutral-100 );
+		}
 	}
 }
