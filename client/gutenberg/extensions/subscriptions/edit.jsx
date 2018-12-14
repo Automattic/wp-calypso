@@ -39,7 +39,6 @@ class SubscriptionEdit extends Component {
 					/>
 					<TextControl
 						placeholder={ subscribePlaceholder }
-						required
 						disabled={ true }
 						onChange={ () => {} }
 					/>
