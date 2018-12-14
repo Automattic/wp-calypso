@@ -50,5 +50,5 @@
 
 .orders__table-old-total {
 	text-decoration: line-through;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }

@@ -57,14 +57,14 @@
 		}
 
 		span {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 			font-size: 13px;
 			font-weight: normal;
 		}
 	}
 
 	.email__add-google-apps-card-billing-period {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		font-size: 13px;
 		font-style: italic;
 
@@ -148,7 +148,7 @@
 }
 
 .email__add-google-apps-card-learn-more {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 15px;
 	margin-top: 1em;
 	text-align: center;

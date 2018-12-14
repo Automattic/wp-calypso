@@ -4,14 +4,11 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -28,15 +25,7 @@ class PrivacyProtection extends Component {
 	};
 
 	render() {
-		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
-		const freeWithPlan = cartItems.hasOnlyBundledDomainProducts( this.props.cart );
 		const { translate } = this.props;
-		const numberOfDomainRegistrations = domainRegistrations.length;
-		const privacyProtectionCost = get(
-			this.props,
-			'productsList.private_whois.cost_display',
-			false
-		);
 
 		return (
 			<div>
@@ -78,22 +67,9 @@ class PrivacyProtection extends Component {
 											}
 										) }
 									</span>
-									<span
-										className={ classnames( 'checkout__privacy-protection-radio-price-text', {
-											'free-with-plan': freeWithPlan,
-										} ) }
-									>
-										{ privacyProtectionCost &&
-											translate( '%(cost)s/year', '%(cost)s per domain/year', {
-												args: { cost: privacyProtectionCost },
-												count: numberOfDomainRegistrations,
-											} ) }
+									<span className="checkout__privacy-protection-free-text">
+										{ translate( 'Free' ) }
 									</span>
-									{ freeWithPlan && (
-										<span className="checkout__privacy-protection-free-text">
-											{ translate( 'Free with your plan' ) }
-										</span>
-									) }
 									<br />
 									<span className="checkout__privacy-protection-radio-text-description">
 										{ translate(

@@ -88,7 +88,7 @@
 	white-space: nowrap;
 
 	a {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 	}
 	a:focus,
 	a:hover {
@@ -142,7 +142,7 @@
 	z-index: z-index( 'root', '.popover.comment__author-more-info-popover' );
 
 	.popover__inner {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		font-size: 13px;
 		max-width: 220px;
 		padding: 16px;
@@ -187,7 +187,7 @@
 		white-space: nowrap;
 
 		.gridicon {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 			margin: 0 4px -3px 0;
 		}
 	}
@@ -210,7 +210,7 @@
 
 	.comment__in-reply-to {
 		border-left: 4px solid $gray-lighten-30;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		margin-bottom: 16px;
 		overflow: hidden;
 		padding: 2px 4px;
@@ -227,7 +227,7 @@
 		}
 
 		a {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 		}
 		a:focus,
 		a:hover {
@@ -288,7 +288,7 @@
 	font-family: $serif;
 
 	a {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 	}
 	a:focus,
 	a:hover {
@@ -398,7 +398,7 @@
 	word-wrap: break-word;
 
 	&::placeholder {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -619,7 +619,7 @@
 	}
 
 	a {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		cursor: default;
 		pointer-events: none;
 	}

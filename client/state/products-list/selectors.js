@@ -44,6 +44,22 @@ export function getProductDisplayCost( state, productSlug ) {
 }
 
 /**
+ * Returns the price of a product
+ *
+ * @param {Object} state The Redux state tree
+ * @param {string} productSlug The internal product slug, eg 'jetpack_premium'
+ * @return {number} The price formatted in the user's currency, eg 29.15
+ */
+export function getProductCost( state, productSlug ) {
+	const product = state.productsList.items[ productSlug ];
+	if ( ! product ) {
+		return null;
+	}
+
+	return product.cost;
+}
+
+/**
  * Computes a price based on plan slug/constant, including any discounts available.
  *
  * @param {Object} state Current redux state

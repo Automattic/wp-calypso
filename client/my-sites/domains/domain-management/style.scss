@@ -120,7 +120,7 @@
 
 .domain-management-list-item__meta {
 	font-size: 12px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	min-height: 20px;
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -184,7 +184,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 .domain-management-primary-domain {
 	.primary-domain-explanation {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		display: block;
 		font-size: 13px;
 		font-style: italic;
@@ -203,7 +203,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 .contacts-privacy-card {
 	.settings-explanation {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		display: block;
 		font-size: 13px;
 		font-style: italic;
@@ -332,7 +332,7 @@ input[type='radio'].domain-management-list-item__radio {
 	text-align: center;
 
 	a {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		display: block;
 		font-size: 12px;
 		padding: 20px 0;
@@ -341,7 +341,7 @@ input[type='radio'].domain-management-list-item__radio {
 }
 
 .edit-contact-info-privacy-enabled-card__settings-explanation {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	display: block;
 	font-size: 13px;
 	font-style: italic;
@@ -357,7 +357,7 @@ input[type='radio'].domain-management-list-item__radio {
 	margin-top: 5px;
 	font-size: 13px;
 	font-style: italic;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .dns__domain-connect-explanation {
@@ -433,7 +433,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 	.domain-connect__dns-records {
 		background-color: $gray-light;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 
 		* {
 			&:last-child {
@@ -476,7 +476,7 @@ ul.email-forwarding__list {
 			}
 
 			strong {
-				color: $gray-text-min;
+				color: var( --color-text-subtle );
 				font-weight: normal;
 
 				&:first-child {
@@ -560,7 +560,7 @@ ul.email-forwarding__list {
 		font-size: 12px;
 
 		strong {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 			font-size: 15px;
 			font-weight: 600;
 		}
@@ -717,7 +717,7 @@ ul.email-forwarding__list {
 	}
 	.name-servers__explanation {
 		animation: appear 0.5s ease-in-out;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		font-size: 13px;
 		font-style: italic;
 		margin-bottom: 0;
@@ -809,7 +809,7 @@ ul.domain-connect__dns-list,
 		position: relative;
 
 		em {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 			display: block;
 			font-size: 11px;
 		}
@@ -827,7 +827,7 @@ ul.domain-connect__dns-list,
 		}
 
 		strong {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 			font-weight: normal;
 		}
 

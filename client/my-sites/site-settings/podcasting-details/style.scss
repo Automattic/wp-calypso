@@ -167,7 +167,7 @@
 }
 
 .podcasting-details__disable-podcasting {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	text-align: center;
 	width: 80%;
 	margin: 0 auto;

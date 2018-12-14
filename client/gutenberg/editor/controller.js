@@ -3,8 +3,8 @@
  * External dependencies
  */
 import React from 'react';
-import debug from 'debug';
 import config from 'config';
+import debugFactory from 'debug';
 import page from 'page';
 import { has, set, uniqueId } from 'lodash';
 
@@ -27,6 +27,8 @@ import { Placeholder } from './placeholder';
 import { JETPACK_DATA_PATH } from 'gutenberg/extensions/presets/jetpack/utils/get-jetpack-data';
 import { requestFromUrl, requestGutenbergBlockAvailability } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
+
+const debug = debugFactory( 'calypso:gutenberg:controller' );
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {

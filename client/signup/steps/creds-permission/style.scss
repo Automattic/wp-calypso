@@ -15,7 +15,7 @@
 }
 
 .creds-permission__description {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: rem( 13.5px );
 	font-weight: 100;
 	line-height: rem( 25px );

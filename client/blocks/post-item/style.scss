@@ -1,3 +1,5 @@
+/** @format */
+
 $post-item-background-color: $white;
 
 $post-item-border-color: darken( $sidebar-bg-color, 5% );
@@ -51,7 +53,7 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 	padding: 16px 16px 0;
 	margin-left: -16px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding-left: 24px;
 		margin-left: -24px;
 	}
@@ -108,7 +110,7 @@ a.post-item__title-link:visited {
 
 .post-item__meta {
 	font-size: 12px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .post-item__meta .post-time,
@@ -135,7 +137,7 @@ a.post-item__title-link:visited {
 .post-item__time-status-link,
 .post-item__time-status-link:active,
 .post-item__time-status-link:visited {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	display: block;
 }
 

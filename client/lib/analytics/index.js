@@ -372,7 +372,7 @@ const analytics = {
 
 		recordPageView: function( urlPath, params ) {
 			let eventProperties = {
-				build_timestamp: BUILD_TIMESTAMP,
+				build_timestamp: window.BUILD_TIMESTAMP,
 				do_not_track: doNotTrack() ? 1 : 0,
 				path: urlPath,
 			};

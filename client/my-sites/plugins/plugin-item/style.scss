@@ -114,7 +114,7 @@
 .plugin-item__count {
 	font-size: 12px;
 	line-height: 18px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .plugin-item__count .count {
@@ -139,7 +139,7 @@
 }
 
 .plugin-item__last-updated {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 13px;
 	overflow: hidden;
 	text-overflow: ellipsis;

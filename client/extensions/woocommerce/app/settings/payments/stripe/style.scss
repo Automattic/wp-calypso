@@ -39,7 +39,7 @@
 			}
 
 			.stripe__connect-account-email {
-				color: $gray-text-min;
+				color: var( --color-text-subtle );
 			}
 
 			.stripe__connect-account-status {

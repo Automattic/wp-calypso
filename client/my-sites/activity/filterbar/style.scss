@@ -270,7 +270,7 @@
 .color-scheme.is-dark {
 
 	.filterbar__selection.button.is-borderless {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 
 		&:hover,
 		&:focus,

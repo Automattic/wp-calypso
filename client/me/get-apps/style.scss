@@ -163,7 +163,7 @@
 }
 
 .get-apps__also-available {
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 	font-size: 13px;
 	font-style: italic;
 }

@@ -322,7 +322,7 @@
 	}
 
 	.form-click-to-edit-input__text {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		display: inline-block;
 		white-space: nowrap;
 		text-overflow: ellipsis;
@@ -592,7 +592,7 @@
 }
 
 .products__product-form-sku {
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 }
 
 .products__variation-settings-link {
@@ -772,7 +772,7 @@
 .products__additional-details-preview-label {
 	text-transform: uppercase;
 	font-size: 11px;
-	color: $gray-text-min;
+	color: var( --color-text-subtle );
 }
 
 .products__additional-details-preview-title {

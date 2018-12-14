@@ -31,19 +31,19 @@
 		display: flex;
 		flex: 1 1;
 		margin: 0;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 	}
 
 	&-progress-number {
 		display: flex;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		padding-left: 1em;
 	}
 
 	&-summary {
 		font-size: 12px;
 		line-height: 24px;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 		cursor: pointer;
 	}
 
@@ -200,7 +200,7 @@
 
 	&-duration {
 		font-size: 12px;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 
 		.checklist__task-primary & {
 			display: inline-block;
@@ -243,7 +243,7 @@
 
 		.checklist__task-title,
 		.checklist__task-title-link {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 			font-size: 14px;
 			cursor: default;
 		}
@@ -273,7 +273,7 @@
 			border: 0;
 			padding: 0;
 			text-decoration: underline;
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 			font-size: 12px;
 			font-weight: 400;
 			width: 100%;
@@ -295,7 +295,7 @@
 		}
 
 		.checklist__task-title-link {
-			color: $gray-text-min;
+			color: var( --color-text-subtle );
 		}
 	}
 

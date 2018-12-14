@@ -5,7 +5,6 @@
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,7 +15,6 @@ import CardContent from './card/content';
 import PrivacyProtectionCardHeader from './privacy-protection-card/header';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'my-sites/domains/domain-management/components/header';
-import { getProductDisplayCost } from 'state/products-list/selectors';
 import { getSelectedDomain } from 'lib/domains';
 import Main from 'components/main';
 import {
@@ -35,11 +33,11 @@ class PrivacyProtection extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.ensurePageCanLoad();
 	}
 
-	componentWillUpdate() {
+	UNSAFE_componentWillUpdate() {
 		this.ensurePageCanLoad();
 	}
 
@@ -71,7 +69,7 @@ class PrivacyProtection extends Component {
 			return <DomainMainPlaceholder goBack={ this.goToPreviousSection } />;
 		}
 
-		const { displayCost, selectedDomainName, selectedSite, translate } = this.props;
+		const { selectedDomainName, selectedSite, translate } = this.props;
 
 		return (
 			<Main className="domain-management-privacy-protection">
@@ -82,13 +80,10 @@ class PrivacyProtection extends Component {
 				</Header>
 
 				<Card className="privacy-protection-card">
-					{ displayCost && (
-						<PrivacyProtectionCardHeader
-							displayCost={ displayCost }
-							selectedDomainName={ selectedDomainName }
-							selectedSite={ selectedSite }
-						/>
-					) }
+					<PrivacyProtectionCardHeader
+						selectedDomainName={ selectedDomainName }
+						selectedSite={ selectedSite }
+					/>
 
 					<CardContent selectedDomainName={ selectedDomainName } selectedSite={ selectedSite } />
 				</Card>
@@ -111,6 +106,4 @@ class PrivacyProtection extends Component {
 	};
 }
 
-export default connect( state => ( {
-	displayCost: getProductDisplayCost( state, 'private_whois' ),
-} ) )( localize( PrivacyProtection ) );
+export default localize( PrivacyProtection );
