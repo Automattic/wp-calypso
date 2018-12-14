@@ -1,4 +1,3 @@
-
 $masterbar-height: 46px;
 $autobar-height: 20px;
 
@@ -99,7 +98,7 @@ $autobar-height: 20px;
 	}
 
 	&:hover {
-		background: var( --masterbar-item-hover-background );
+		background: var( --color-primary-light );
 		color: var( --masterbar-color );
 	}
 
@@ -334,7 +333,7 @@ $autobar-height: 20px;
 	}
 
 	&:hover .masterbar__notifications-bubble {
-		border-color: var( --masterbar-item-hover-background );
+		border-color: var( --color-primary-light );
 	}
 
 	&.is-active .masterbar__notifications-bubble {
