@@ -2,10 +2,14 @@
 
 .color-scheme-picker .form-radio-with-thumbnail__thumbnail {
 	height: 80px;
-	background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-default.svg' );
+	background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-legacy.svg' );
 
 	&.is-classic-bright {
 		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-light.svg' );
+	}
+
+	&.is-classic-blue {
+		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-default.svg' );
 	}
 
 	&.is-laser-black {
