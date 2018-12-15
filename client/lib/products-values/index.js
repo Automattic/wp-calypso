@@ -465,6 +465,13 @@ export function isSpaceUpgrade( product ) {
 	);
 }
 
+export function isConciergeSession( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return 'concierge-session' === product.product_slug;
+}
+
 export default {
 	formatProduct,
 	getDomainProductRanking,
@@ -510,4 +517,5 @@ export default {
 	isUnlimitedThemes,
 	isVideoPress,
 	whitelistAttributes,
+	isConciergeSession,
 };
