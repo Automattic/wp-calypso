@@ -82,7 +82,7 @@ export const Sharing = ( {
 				event="sharing_no_ads"
 				feature={ FEATURE_NO_ADS }
 				message={ translate( 'Prevent ads from showing on your site.' ) }
-				title={ translate( 'No Ads with WordPress.com Premium' ) }
+				title={ translate( 'No Ads with an Upgraded WordPress.com Plan' ) }
 			/>
 			{ contentComponent }
 		</Main>
