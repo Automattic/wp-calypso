@@ -44,12 +44,13 @@ class EmailEdit extends Component {
 		} = this.props;
 		return (
 			<div className={ isSelected ? 'jetpack-email-block is-selected' : 'jetpack-email-block' }>
-				{ ! isSelected && (
-					<div className={ className }>
-						<a href={ `mailto:${ email }` }>{ email }</a>
-					</div>
-				) }
-				{ isSelected && (
+				{ ! isSelected &&
+					email !== '' && (
+						<div className={ className }>
+							<a href={ `mailto:${ email }` }>{ email }</a>
+						</div>
+					) }
+				{ ( isSelected || email === '' ) && (
 					<PlainText
 						value={ email }
 						placeholder={ __( 'Email' ) }

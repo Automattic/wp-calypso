@@ -47,12 +47,13 @@ class PhoneEdit extends Component {
 		} = this.props;
 		return (
 			<div className={ isSelected ? 'jetpack-phone-block is-selected' : 'jetpack-phone-block' }>
-				{ ! isSelected && (
-					<div className={ className }>
-						<a href={ `tel:${ phone }` }>{ phone }</a>
-					</div>
-				) }
-				{ isSelected && (
+				{ ! isSelected &&
+					phone !== '' && (
+						<div className={ className }>
+							<a href={ `tel:${ phone }` }>{ phone }</a>
+						</div>
+					) }
+				{ ( isSelected || phone === '' ) && (
 					<PlainText
 						value={ phone }
 						placeholder={ __( 'Phone number' ) }

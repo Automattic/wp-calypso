@@ -24,23 +24,30 @@ class AddressEdit extends Component {
 			isSelected,
 			setAttributes,
 		} = this.props;
+
+		const hasContent =
+			[ address, address_line2, city, region, postal, country ]
+				.map( value => value !== '' )
+				.filter( Boolean ).length > 0;
+
 		return (
 			<div className={ isSelected ? 'jetpack-phone-block is-selected' : 'jetpack-phone-block' }>
-				{ ! isSelected && (
-					<div className={ className }>
-						{ address && <div>{ address }</div> }
-						{ address_line2 && <div>{ address_line2 }</div> }
-						{ city && ! ( region || postal ) && <div>{ city }</div> }
-						{ city &&
-							( region || postal ) && (
-								<div>{ sprintf( __( '%s, %s  %s' ), city, region, postal ) }</div>
-							) }
-						{ ! city &&
-							( region || postal ) && <div>{ sprintf( __( '%s  %s' ), region, postal ) }</div> }
-						{ country && <div>{ country }</div> }
-					</div>
-				) }
-				{ isSelected && (
+				{ ! isSelected &&
+					hasContent && (
+						<div className={ className }>
+							{ address && <div>{ address }</div> }
+							{ address_line2 && <div>{ address_line2 }</div> }
+							{ city && ! ( region || postal ) && <div>{ city }</div> }
+							{ city &&
+								( region || postal ) && (
+									<div>{ sprintf( __( '%s, %s  %s' ), city, region, postal ) }</div>
+								) }
+							{ ! city &&
+								( region || postal ) && <div>{ sprintf( __( '%s  %s' ), region, postal ) }</div> }
+							{ country && <div>{ country }</div> }
+						</div>
+					) }
+				{ ( isSelected || ! hasContent ) && (
 					<Fragment>
 						<PlainText
 							value={ address }
