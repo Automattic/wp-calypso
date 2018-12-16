@@ -170,7 +170,7 @@ const Flows = {
 	},
 
 	/**
-	 * Make `getFlow()` call to exclude the given steps.
+	 * Make `getFlow()` call to	 exclude the given steps.
 	 * The main usage at the moment is to serve as a quick solution to remove steps that have been pre-fulfilled
 	 * without explicit user inputs, e.g. query arguments.
 	 *

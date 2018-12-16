@@ -26,6 +26,8 @@ import userModule from 'lib/user';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import store from 'store';
 import SignupProgressStore from 'lib/signup/progress-store';
+// TODO: pull from action file after it's created :)
+import { setCurrentFlow } from 'state/signup/reducer';
 
 const user = userModule();
 
@@ -78,6 +80,7 @@ export default {
 		const flowName = getFlowName( context.params );
 		const localeFromParams = getLocale( context.params );
 		const localeFromStore = store.get( 'signup-locale' );
+		context.store.dispatch( setCurrentFlow( flowName ) );
 		SignupProgressStore.setReduxStore( context.store );
 
 		// if flow can be resumed, use saved locale
@@ -124,6 +127,7 @@ export default {
 		);
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );
+		context.store.dispatch( setCurrentFlow( flowName ) );
 
 		context.primary = React.createElement( SignupComponent, {
 			path: context.path,

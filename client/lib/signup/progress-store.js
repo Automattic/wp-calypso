@@ -103,7 +103,8 @@ function addStorableDependencies( step, action ) {
  */
 SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 	const { action } = payload;
-	const step = addTimestamp( action.data );
+	const currentFlow = get( SignupProgressStore.reduxStore.getState(), 'signup.currentFlow', null );
+	const step = { ...action.data, lastUpdated: Date.now() };
 
 	Dispatcher.waitFor( [ SignupDependencyStore.dispatchToken ] );
 
@@ -116,12 +117,18 @@ SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 	switch ( action.type ) {
 		case 'SAVE_SIGNUP_STEP':
 			SignupProgressStore.reduxStore.dispatch(
-				saveStep( addStorableDependencies( step, action ) )
+				saveStep( addStorableDependencies( {
+					...step,
+					lastKnownFlow: currentFlow,
+				}, action ) )
 			);
 			break;
 		case 'SUBMIT_SIGNUP_STEP':
 			SignupProgressStore.reduxStore.dispatch(
-				submitStep( addStorableDependencies( step, action ) )
+				submitStep( addStorableDependencies( {
+					...step,
+					lastKnownFlow: currentFlow,
+				}, action ) )
 			);
 			break;
 		case 'PROCESS_SIGNUP_STEP':

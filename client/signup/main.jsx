@@ -484,7 +484,8 @@ class Signup extends React.Component {
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
 			nextProgressItem = this.props.progress[ currentStepIndex + 1 ],
 			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
-
+// eslint-disable-next-line
+console.log( 'flowSteps', flowSteps );
 		if ( nextFlowName !== this.props.flowName ) {
 			SignupActions.changeSignupFlow( nextFlowName );
 			this.setState( { previousFlowName: this.props.flowName } );
