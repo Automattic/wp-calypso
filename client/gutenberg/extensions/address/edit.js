@@ -72,7 +72,7 @@ class AddressEdit extends Component {
 						/>
 						<PlainText
 							value={ region }
-							placeholder={ __( 'State/Provice/Region' ) }
+							placeholder={ __( 'State/Province/Region' ) }
 							onChange={ newRegion => setAttributes( { region: newRegion } ) }
 						/>
 						<PlainText
