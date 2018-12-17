@@ -85,10 +85,10 @@ class AddEmailAddressesCard extends React.Component {
 		}
 
 		return {
-			username: { value: firstName.toLowerCase() },
+			username: { value: ( firstName && firstName.toLowerCase() ) || '' },
 			domain: { value: domain },
-			firstName: { value: firstName },
-			lastName: { value: lastName },
+			firstName: { value: firstName || '' },
+			lastName: { value: lastName || '' },
 		};
 	}
 
