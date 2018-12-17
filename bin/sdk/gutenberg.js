@@ -18,12 +18,6 @@ function sharedScripts( folderName, inputDir ) {
 		.filter( fullPathToFile => fullPathToFile.endsWith( '.js' ) );
 }
 
-function blockScripts( type, inputDir, presetBlocks ) {
-	return presetBlocks
-		.map( block => path.join( inputDir, `${ DIRECTORY_DEPTH }${ block }/${ type }.js` ) )
-		.filter( fs.existsSync );
-}
-
 exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	const baseConfig = getBaseConfig( {
 		cssFilename: '[name].css',
@@ -32,8 +26,7 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 
 	const presetPath = path.join( inputDir, 'index.json' );
 
-	let editorScript;
-	let editorBetaScript;
+	const editorScript = path.join( inputDir, 'editor.js' );
 	let viewBlocksScripts;
 	let viewScriptEntry;
 	let presetBlocks;
@@ -57,28 +50,10 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 			return viewBlocks;
 		}, {} );
 
-		// Find all the editor shared scripts
-		const sharedEditorUtilsScripts = sharedScripts( 'editor-shared', inputDir );
-
-		// Combines all the different blocks into one editor.js script
-		editorScript = [
-			...sharedUtilsScripts,
-			...sharedEditorUtilsScripts,
-			...blockScripts( 'editor', inputDir, presetBlocks ),
-		];
-
-		// Combines all the different blocks into one editor-beta.js script
-		editorBetaScript = [
-			...sharedUtilsScripts,
-			...sharedEditorUtilsScripts,
-			...blockScripts( 'editor', inputDir, allPresetBlocks ),
-		];
-
 		// We explicitly don't create a view.js bundle since all the views are
 		// available via the individual folders.
 		viewScriptEntry = null;
 	} else {
-		editorScript = path.join( inputDir, 'editor.js' );
 		const viewScript = path.join( inputDir, 'view.js' );
 		viewScriptEntry = fs.existsSync( viewScript ) ? { view: viewScript } : {};
 	}
@@ -97,7 +72,6 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 		] ),
 		entry: {
 			editor: editorScript,
-			...( editorBetaScript && { 'editor-beta': editorBetaScript } ),
 			...viewScriptEntry,
 			...viewBlocksScripts,
 		},
