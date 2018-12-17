@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, has } from 'lodash';
+import { get, has, without } from 'lodash';
 import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
 import { getPlugin, registerPlugin, unregisterPlugin } from '@wordpress/plugins';
 
@@ -50,16 +50,24 @@ export default async function refreshRegistrations() {
 			if ( available && ! registered ) {
 				registerBlockType( blockName, settings );
 				if ( children ) {
-					children.forEach(
-						( { name: childName, settings: childSettings } ) =>
-							void registerBlockType( `jetpack/${ childName }`, childSettings )
-					);
+					children.forEach( ( { name: childName, settings: childSettings } ) => {
+						// This might have been registered by another parent before
+						if ( ! getBlockType( `jetpack/${ childName }` ) ) {
+							registerBlockType( `jetpack/${ childName }`, childSettings );
+						}
+					} );
 				}
 			} else if ( ! available && registered ) {
 				if ( children ) {
-					children.forEach(
-						( { name: childName } ) => void unregisterBlockType( `jetpack/${ childName }` )
-					);
+					children.forEach( ( { name: childName } ) => {
+						const childBlock = getBlockType( `jetpack/${ childName }` );
+						const otherParents = without( childBlock.parent, blockName );
+
+						// Are any of the other parents currently registered?
+						if ( ! otherParents.some( getBlockType ) ) {
+							unregisterBlockType( `jetpack/${ childName }` );
+						}
+					} );
 				}
 				unregisterBlockType( blockName );
 			}
