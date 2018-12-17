@@ -26,7 +26,9 @@ import {
 } from './shapes';
 
 export class Jetpack_Tiled_Gallery_Grouper {
-	margin = 4;
+	contentWidth;
+
+	margin;
 
 	// This list is ordered. If you put a shape that's likely to occur on top, it will happen all the time.
 	shapes = Object.freeze( [
@@ -47,6 +49,7 @@ export class Jetpack_Tiled_Gallery_Grouper {
 	images = [];
 
 	constructor( { attachments, contentWidth, margin } ) {
+		this.contentWidth = contentWidth;
 		this.margin = margin;
 
 		// @TODO This appears to be a pipeline attachments -> grouped images
@@ -70,7 +73,7 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		}
 
 		const Shape = find( this.shapes, Klass => {
-			return new Klass( this.images ).is_possible();
+			return new Klass( this.images, this.contentWidth ).is_possible();
 		} );
 
 		if ( Shape ) {
@@ -131,11 +134,12 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		return grouped_images;
 	};
 
-	apply_content_width = width => {
+	apply_content_width = contentWidth => {
 		for ( const row of this.grouped_images ) {
-			row.width = width;
+			row.width = contentWidth;
 			row.raw_height =
-				( 1 / row.ratio ) * ( width - this.margin * ( row.groups.length - row.weighted_ratio ) );
+				( 1 / row.ratio ) *
+				( contentWidth - this.margin * ( row.groups.length - row.weighted_ratio ) );
 			row.height = Math.round( row.raw_height );
 
 			this.calculate_group_sizes( row );

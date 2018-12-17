@@ -3,7 +3,7 @@
  */
 import { Jetpack_Tiled_Gallery_Grouper } from './grouper';
 import { Jetpack_Tiled_Gallery_Shape } from './shapes/jetpack-tiled-gallery-shape';
-import { TILE_MARGIN, CONTENT_WIDTH } from './constants.js';
+import { DEFAULT_GALLERY_WIDTH, TILE_MARGIN } from '../constants.js';
 
 /*
  * Rectangular tiled gallery layout
@@ -14,7 +14,7 @@ import { TILE_MARGIN, CONTENT_WIDTH } from './constants.js';
 export const rectangularLayout = ( {
 	images,
 	margin = TILE_MARGIN,
-	contentWidth = CONTENT_WIDTH,
+	contentWidth = DEFAULT_GALLERY_WIDTH,
 } ) => {
 	const grouper = new Jetpack_Tiled_Gallery_Grouper( {
 		attachments: images,

@@ -3,11 +3,6 @@
  */
 import { map, property, sum, take } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { CONTENT_WIDTH } from '../constants';
-
 // See
 // modules/tiled-gallery/tiled-gallery/tiled-gallery-shape.php
 
@@ -18,7 +13,8 @@ import { CONTENT_WIDTH } from '../constants';
 // etc...
 
 export class Jetpack_Tiled_Gallery_Shape {
-	constructor( images ) {
+	constructor( images, contentWidth ) {
+		this.contentWidth = contentWidth;
 		this.images = images;
 		this.images_left = images.length;
 	}
@@ -57,7 +53,7 @@ export class Jetpack_Tiled_Gallery_Shape {
 	// https://github.com/WordPress/gutenberg/blob/0416bae17c52b0a11ec1075c0928f879264b7d75/packages/editor/src/components/block-alignment-toolbar/index.js#L80
 	//
 	is_wide_theme = () => {
-		return CONTENT_WIDTH > 1000;
+		return this.contentWidth > 1000;
 	};
 
 	image_is_landscape = image => {
