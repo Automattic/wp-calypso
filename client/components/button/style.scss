@@ -123,12 +123,12 @@ button {
 // Primary buttons
 .button.is-primary {
 	background: var( --color-accent );
-	border-color: var( --button-primary-border-color );
+	border-color: var( --color-accent-dark );
 	color: $white;
 
 	&:hover,
 	&:focus {
-		border-color: var( --color-primary-dark );
+		border-color: var( --color-accent-dark );
 		color: $white;
 	}
 	&.is-compact {
