@@ -32,6 +32,8 @@ import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { getPageTemplates } from 'state/page-templates/selectors';
 import { MimeTypes } from 'lib/media/constants';
 
+import '../extensions/presets/jetpack/index.js'; // Jetpack preset setup
+
 /**
  * Style dependencies
  */

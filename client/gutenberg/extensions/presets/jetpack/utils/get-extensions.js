@@ -8,9 +8,7 @@ import { sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import './shared/public-path';
-import './editor-shared/block-category'; // Register the Jetpack category
-import extensionSlugsJson from './index.json';
+import extensionSlugsJson from '../index.json';
 import { _x } from './utils/i18n';
 import { isEnabled } from 'config';
 
