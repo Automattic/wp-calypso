@@ -11,7 +11,7 @@ import { identity, includes, isEmpty, omit, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'blocks/signup-form';
 import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
@@ -94,7 +94,7 @@ export class UserStep extends Component {
 	setSubHeaderText( props ) {
 		const { flowName, oauth2Client, translate } = props;
 
-		let subHeaderText = props.subHeaderText;
+		let subHeaderText = '';
 
 		if ( includes( [ 'wpcc', 'crowdsignal' ], flowName ) && oauth2Client ) {
 			if ( isWooOAuth2Client( oauth2Client ) ) {
@@ -215,7 +215,7 @@ export class UserStep extends Component {
 	}
 
 	getHeaderText() {
-		const { flowName, headerText, oauth2Client, translate } = this.props;
+		const { flowName, oauth2Client, translate } = this.props;
 
 		if ( includes( [ 'wpcc', 'crowdsignal' ], flowName ) && oauth2Client ) {
 			return translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
@@ -225,7 +225,7 @@ export class UserStep extends Component {
 			} );
 		}
 
-		return headerText;
+		return translate( 'Make something great' );
 	}
 
 	getRedirectToAfterLoginUrl() {
