@@ -21,6 +21,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import getUserSetting from 'state/selectors/get-user-setting';
 import { cartItems } from 'lib/cart-values';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import ValidationErrorList from 'notices/validation-error-list';
@@ -65,13 +66,14 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 class AddEmailAddressesCard extends React.Component {
 	constructor( props ) {
 		super( props );
+		const { firstName, lastName } = this.props;
 		this.state = {
-			fieldsets: this.getNewFieldset(),
+			fieldsets: [ this.getNewFieldset( firstName, lastName ) ],
 			validationErrors: null,
 		};
 	}
 
-	getNewFieldset() {
+	getNewFieldset( firstName = '', lastName = '' ) {
 		let domain;
 
 		if ( this.props.selectedDomainName ) {
@@ -82,14 +84,12 @@ class AddEmailAddressesCard extends React.Component {
 			domain = null;
 		}
 
-		return [
-			{
-				username: { value: '' },
-				domain: { value: domain },
-				firstName: { value: '' },
-				lastName: { value: '' },
-			},
-		];
+		return {
+			username: { value: firstName.toLowerCase() },
+			domain: { value: domain },
+			firstName: { value: firstName },
+			lastName: { value: lastName },
+		};
 	}
 
 	removeValidationErrors() {
@@ -270,7 +270,7 @@ class AddEmailAddressesCard extends React.Component {
 		event.preventDefault();
 
 		this.setState( {
-			fieldsets: this.state.fieldsets.concat( this.getNewFieldset() ),
+			fieldsets: this.state.fieldsets.concat( [ this.getNewFieldset() ] ),
 		} );
 
 		this.props.addAnotherEmailAddressClick( this.props.selectedDomainName );
@@ -426,7 +426,10 @@ AddEmailAddressesCard.propTypes = {
 };
 
 export default connect(
-	null,
+	state => ( {
+		firstName: getUserSetting( state, 'first_name' ),
+		lastName: getUserSetting( state, 'last_name' ),
+	} ),
 	{
 		addAnotherEmailAddressClick,
 		cancelClick,

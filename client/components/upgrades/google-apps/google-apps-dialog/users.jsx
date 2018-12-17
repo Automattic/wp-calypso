@@ -23,15 +23,15 @@ class GoogleAppsUsers extends React.Component {
 	}
 
 	getInitialFields() {
-		return [ this.getNewUserFields() ];
+		const { firstName, lastName } = this.props;
+		return [ this.getNewUserFields( firstName, lastName ) ];
 	}
 
-	getNewUserFields() {
-		const { firstName, lastName } = this.props;
+	getNewUserFields( firstName = '', lastName = '' ) {
 		return {
-			email: { value: firstName.toLowerCase(), error: null },
-			firstName: { value: firstName, error: null },
-			lastName: { value: lastName, error: null },
+			email: { value: ( firstName && firstName.toLowerCase() ) || '', error: null },
+			firstName: { value: firstName || '', error: null },
+			lastName: { value: lastName || '', error: null },
 			domain: { value: this.props.domain, error: null },
 		};
 	}
