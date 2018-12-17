@@ -164,8 +164,8 @@ class SiteInformation extends Component {
 	render() {
 		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
 
-		const headerText = translate( 'Almost done, just a few more things.' );
-		const subHeaderText = translate( "We'll add this information to your new website." );
+		const headerText = translate( 'Help customers find you' );
+		const subHeaderText = '';
 
 		return (
 			<StepWrapper
