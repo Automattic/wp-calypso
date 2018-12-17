@@ -350,7 +350,7 @@ $plan-features-sidebar-width: 272px;
 	background-color: transparent;
 	margin: 50px auto 20px;
 	max-width: 100%;
-	width: 540px;
+	width: 580px;
 
 	.segmented-control__item {
 		background-color: $gray-light;
@@ -384,7 +384,9 @@ $plan-features-sidebar-width: 272px;
 	.segmented-control__link {
 		border-radius: 6px;
 		border: 2px solid $gray-lighten-10;
+		color: $gray-dark;
 		font-size: 15px;
+		font-weight: 500;
 		padding: 15px;
 
 		&:hover {
