@@ -12,7 +12,7 @@ import TokenList from '@wordpress/token-list';
 import { LAYOUT_STYLES, MAX_COLUMNS, TILE_MARGIN } from './constants';
 import { rectangularLayout } from '../../../../packages/tiled-grid';
 
-const squareLayout = ( { columns, margin, width, tileCount } ) => {
+function squareLayout( { columns, margin, width, tileCount } ) {
 	columns = Math.min( MAX_COLUMNS, columns );
 	const tilesPerRow = columns > 1 ? columns : 1;
 	const marginSpace = tilesPerRow * margin * 2;
@@ -72,27 +72,27 @@ const squareLayout = ( { columns, margin, width, tileCount } ) => {
 	}
 
 	return rows;
-};
+}
 
-// @TODO to be implemented...
-const columnsLayout = options => squareLayout( options );
-
-export const getLayout = ( { columns, images, layout, tileCount, width } ) => {
-	const layoutOptions = {
-		columns,
-		margin: TILE_MARGIN,
-		tileCount, // @TODO: Used by square layout, but perhaps just access images.length directly
-		width, // @TODO: Should be renamed to `contentWidth` for clarity
-	};
-
+export function getLayout( { columns, images, layout, width } ) {
 	switch ( layout ) {
-		case 'square':
-			return squareLayout( layoutOptions );
-		case 'circle':
-			// Circle and square layouts are identical by size calculations
-			return squareLayout( layoutOptions );
+		// @TODO Columns is unimplemented, fallthrough to square
 		case 'columns':
-			return columnsLayout( layoutOptions );
+			if ( process.env.NODE_ENV !== 'production' ) {
+				// eslint-disable-next-line no-console
+				console.warn( 'Columns layout is unimplemented. Fallback to square' );
+			}
+
+		// Circle and square rely on the same layout
+		case 'square':
+		case 'circle': {
+			return squareLayout( {
+				columns,
+				contentWidth: width,
+				tileCount: images.length,
+				margin: TILE_MARGIN,
+			} );
+		}
 		case 'rectangular':
 		default:
 			return rectangularLayout( {
@@ -100,7 +100,7 @@ export const getLayout = ( { columns, images, layout, tileCount, width } ) => {
 				images,
 			} );
 	}
-};
+}
 
 /**
  * Returns the active style from the given className.
@@ -128,7 +128,7 @@ function getActiveStyle( styles, className ) {
 	return find( styles, 'isDefault' );
 }
 
-export const getActiveStyleName = className => {
+export function getActiveStyleName( className ) {
 	const activeStyle = getActiveStyle( LAYOUT_STYLES, className );
 	return activeStyle.name;
-};
+}
