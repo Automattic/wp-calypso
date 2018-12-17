@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, has } from 'lodash';
+import { get, has, without } from 'lodash';
 import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
 import { getPlugin, registerPlugin, unregisterPlugin } from '@wordpress/plugins';
 
@@ -10,7 +10,7 @@ import { getPlugin, registerPlugin, unregisterPlugin } from '@wordpress/plugins'
  * Internal dependencies
  */
 import getJetpackData from './get-jetpack-data';
-import extensions from '../editor';
+import { getExtensions } from '../editor';
 
 /**
  * Refreshes registration of Gutenberg extensions (blocks and plugins)
@@ -20,14 +20,17 @@ import extensions from '../editor';
  *
  * @returns {void}
  */
-export default function refreshRegistrations() {
+export default async function refreshRegistrations() {
 	const extensionAvailability = get( getJetpackData(), [ 'available_blocks' ] );
 
 	if ( ! extensionAvailability ) {
 		return;
 	}
+
+	const extensions = await getExtensions();
+
 	extensions.forEach( extension => {
-		const { name, settings } = extension;
+		const { childBlocks, name, settings } = extension;
 		const available = get( extensionAvailability, [ name, 'available' ] );
 
 		if ( has( settings, [ 'render' ] ) ) {
@@ -46,7 +49,26 @@ export default function refreshRegistrations() {
 
 			if ( available && ! registered ) {
 				registerBlockType( blockName, settings );
+				if ( childBlocks ) {
+					childBlocks.forEach( ( { name: childName, settings: childSettings } ) => {
+						// This might have been registered by another parent before
+						if ( ! getBlockType( `jetpack/${ childName }` ) ) {
+							registerBlockType( `jetpack/${ childName }`, childSettings );
+						}
+					} );
+				}
 			} else if ( ! available && registered ) {
+				if ( childBlocks ) {
+					childBlocks.forEach( ( { name: childName } ) => {
+						const childBlock = getBlockType( `jetpack/${ childName }` );
+						const otherParents = without( childBlock.parent, blockName );
+
+						// Are any of the other parents currently registered?
+						if ( ! otherParents.some( getBlockType ) ) {
+							unregisterBlockType( `jetpack/${ childName }` );
+						}
+					} );
+				}
 				unregisterBlockType( blockName );
 			}
 		}
