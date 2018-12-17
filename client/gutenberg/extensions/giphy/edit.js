@@ -128,7 +128,6 @@ class GiphyEdit extends Component {
 			<Fragment>
 				<BlockControls>
 					<BlockAlignmentToolbar
-						controls={ settings.validAlignments }
 						onChange={ value => setAttributes( { align: value } ) }
 						value={ align }
 					/>
@@ -151,7 +150,6 @@ class GiphyEdit extends Component {
 							/>
 						</button>
 						<iframe src={ giphyUrl } title={ searchText } />
-						<figcaption className="wp-block-jetpack-giphy_logo">Powered by Giphy</figcaption>
 					</figure>
 					<RichText
 						className="caption"

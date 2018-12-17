@@ -3,6 +3,7 @@
 		background: none;
 		border: none;
 		height: 100%;
+		left: 0;
 		margin: 0;
 		padding: 0;
 		position: absolute;
@@ -11,20 +12,17 @@
 		z-index: 1;
 	}
 	.wp-block-jetpack-giphy_text-input-field {
-		left: 10%;
+		left: 25%;
 		margin-top: -3em;
 		position: absolute;
+		padding: 2em 1em;
 		top: 50%;
-		width: 80%;
+		width: 50%;
 		&.has-focus .components-text-control__input {
 			opacity: 1;
 		}
 		.components-text-control__input {
-			border: none;
-			border-radius: 15px;
-			font-size: 2em;
 			opacity: 0;
-			padding: 0.5em 0;
 			text-align: center;
 			-webkit-transition: opacity 0.5s ease-in;
 			-moz-transition: opacity 0.5s ease-in;

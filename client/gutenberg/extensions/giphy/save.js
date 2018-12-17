@@ -20,7 +20,6 @@ class GiphySave extends Component {
 			<div className={ classes }>
 				<figure style={ style }>
 					<iframe src={ giphyUrl } title={ searchText } />
-					<figcaption className="wp-block-jetpack-giphy_logo">Powered by Giphy</figcaption>
 				</figure>
 				<RichText.Content className="caption" value={ caption } tagName="figcaption" />
 			</div>
