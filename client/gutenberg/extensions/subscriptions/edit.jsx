@@ -3,8 +3,9 @@
 /**
  * External dependencies
  */
-import { Component } from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
 import { Button, TextControl, ToggleControl } from '@wordpress/components';
+import { InspectorControls } from '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -29,23 +30,26 @@ class SubscriptionEdit extends Component {
 
 		if ( isSelected ) {
 			return (
-				<div className={ className } role="form">
-					<ToggleControl
-						label={ __( 'Show total subscribers' ) }
-						checked={ showSubscribersTotal }
-						onChange={ () => {
-							setAttributes( { showSubscribersTotal: ! showSubscribersTotal } );
-						} }
-					/>
-					<TextControl
-						placeholder={ subscribePlaceholder }
-						disabled={ true }
-						onChange={ () => {} }
-					/>
-					<Button type="button" isDefault>
-						{ __( 'Subscribe' ) }
-					</Button>
-				</div>
+				<Fragment>
+					<div className={ className } role="form">
+						<ToggleControl
+							label={ __( 'Show total subscribers' ) }
+							checked={ showSubscribersTotal }
+							onChange={ () => {
+								setAttributes( { showSubscribersTotal: ! showSubscribersTotal } );
+							} }
+						/>
+						<TextControl
+							placeholder={ subscribePlaceholder }
+							disabled={ true }
+							onChange={ () => {} }
+						/>
+						<Button type="button" isDefault>
+							{ __( 'Subscribe' ) }
+						</Button>
+					</div>
+					<InspectorControls />
+				</Fragment>
 			);
 		}
 
