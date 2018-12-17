@@ -19,7 +19,7 @@ const extensionSlugs = [
 	...( isEnabled( 'jetpack/blocks/beta' ) ? extensionSlugsJson.beta : [] ),
 ];
 
-export async function getExtensions() {
+export default async function getExtensions() {
 	const promises = extensionSlugs.map( slug =>
 		/**
 		 * Dynamically pull in extensions

@@ -10,7 +10,7 @@ import { getPlugin, registerPlugin, unregisterPlugin } from '@wordpress/plugins'
  * Internal dependencies
  */
 import getJetpackData from './get-jetpack-data';
-import { getExtensions } from '../index.js';
+import getExtensions from './get-extensions';
 
 /**
  * Refreshes registration of Gutenberg extensions (blocks and plugins)
