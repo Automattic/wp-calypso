@@ -3,15 +3,6 @@
  */
 import { map, property, sum, take } from 'lodash';
 
-// See
-// modules/tiled-gallery/tiled-gallery/tiled-gallery-shape.php
-
-// That file contains more classes that extend this class and need to be ported
-// Jetpack_Tiled_Gallery_Three
-// Jetpack_Tiled_Gallery_Four
-// Jetpack_Tiled_Gallery_Five
-// etc...
-
 export class Jetpack_Tiled_Gallery_Shape {
 	constructor( images, contentWidth ) {
 		this.contentWidth = contentWidth;
