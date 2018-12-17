@@ -358,10 +358,18 @@ $plan-features-sidebar-width: 272px;
 
 		&:first-of-type {
 			margin-right: 5px;
+
+			@include breakpoint( '<660px' ) {
+				margin: 0 15px 10px;
+			}
 		}
 
 		&:last-of-type {
 			margin-right: 5px;
+
+			@include breakpoint( '<660px' ) {
+				margin: 0 15px;
+			}
 		}
 
 		&.is-selected + .segmented-control__item .segmented-control__link {
@@ -383,6 +391,10 @@ $plan-features-sidebar-width: 272px;
 			background-color: transparent;
 			border: 2px solid $gray-dark;
 		}
+	}
+
+	@include breakpoint( '<660px' ) {
+		flex-wrap: wrap;
 	}
 
     @include breakpoint( '<480px' ) {
