@@ -1,6 +1,10 @@
-.navigation-link {
-	cursor: pointer;
-	display: inline-block;
-	margin: 24px 12px;
-	text-align: center;
+.button.is-borderless.navigation-link {
+	padding: 0;
+	color: $gray-dark;
+	font-size: 14px;
+	font-weight: 500;
+
+	svg {
+		fill: $gray-dark;
+	}
 }
