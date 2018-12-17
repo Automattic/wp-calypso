@@ -121,7 +121,7 @@ export const resetGutenbergState = ( registry, selectedSiteId ) => {
 	const previousGutenbergSiteId = select( 'gutenberg/calypso' ).getSelectedSiteId();
 
 	if ( !! previousGutenbergSiteId && previousGutenbergSiteId !== selectedSiteId ) {
-		registry.reset( 'core/data' );
+		registry.resetCoreResolvers();
 	}
 	dispatch( 'gutenberg/calypso' ).setSelectedSiteId( selectedSiteId );
 };

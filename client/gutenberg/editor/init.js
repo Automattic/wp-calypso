@@ -53,6 +53,16 @@ const addResetToRegistry = registry => {
 		reset( namespace ) {
 			stores.forEach( store => store.dispatch( { type: 'GUTENLYPSO_RESET', namespace } ) );
 		},
+		resetCoreResolvers() {
+			// @see https://github.com/WordPress/gutenberg/blob/e1092c0d0b75fe53ab57bc6c4cc9e32cb2e74e40/packages/data/src/resolvers-cache-middleware.js#L14-L34
+			const resolvers = registry.select( 'core/data' ).getCachedResolvers( 'core' );
+			debug( `Resetting core store resolvers: ${ Object.keys( resolvers ).toString() }` );
+			Object.entries( resolvers ).forEach( ( [ selectorName, resolversByArgs ] ) => {
+				resolversByArgs.forEach( ( value, args ) => {
+					registry.dispatch( 'core/data' ).invalidateResolution( 'core', selectorName, args );
+				} );
+			} );
+		},
 	};
 };
 
