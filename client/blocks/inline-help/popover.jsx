@@ -121,12 +121,9 @@ class InlineHelpPopover extends Component {
 
 	switchToClassicEditor = () => {
 		const { siteId, onClose, optOut, classicUrl } = this.props;
-
 		const proceed =
-			typeof window !== 'undefined'
-				? window.confirm( __( 'Are you sure you wish to leave this page?' ) )
-				: true;
-
+			typeof window === 'undefined' ||
+			window.confirm( __( 'Are you sure you wish to leave this page?' ) );
 		if ( proceed ) {
 			optOut( siteId, classicUrl );
 			onClose();
