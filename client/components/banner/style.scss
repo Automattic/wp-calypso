@@ -12,7 +12,7 @@
 
 	&.is-wpcom-plan {
 		&.is-upgrade-blogger {
-			@include banner-color( darken( $alert-green, 20% ) );
+			@include banner-color( var( --color-success-dark ) );
 		}
 
 		&.is-upgrade-personal {
@@ -20,7 +20,7 @@
 		}
 
 		&.is-upgrade-premium {
-			@include banner-color( $alert-yellow );
+			@include banner-color( var( --color-warning ) );
 		}
 
 		&.is-upgrade-business {
@@ -34,11 +34,11 @@
 
 	&.is-jetpack-plan {
 		&.is-upgrade-personal {
-			@include banner-color( $alert-yellow );
+			@include banner-color( var( --color-warning ) );
 		}
 
 		&.is-upgrade-premium {
-			@include banner-color( $alert-green );
+			@include banner-color( var( --color-success ) );
 		}
 
 		&.is-upgrade-business {
