@@ -1,5 +1,3 @@
-/** @format */
-
 export { Five } from './five';
 export { Four } from './four';
 export { Jetpack_Tiled_Gallery_Shape } from './jetpack-tiled-gallery-shape';

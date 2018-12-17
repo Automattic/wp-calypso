@@ -10,7 +10,7 @@ import TokenList from '@wordpress/token-list';
  * Internal dependencies
  */
 import { LAYOUT_STYLES, MAX_COLUMNS, TILE_MARGIN } from './constants';
-import { rectangularLayout } from '../../../../packages/tiled-grid';
+import { rectangularLayout } from './tiled-grid';
 
 function squareLayout( { columns, margin, width, tileCount } ) {
 	columns = Math.min( MAX_COLUMNS, columns );
