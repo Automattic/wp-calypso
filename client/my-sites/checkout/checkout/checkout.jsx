@@ -436,10 +436,6 @@ export class Checkout extends React.Component {
 		}
 
 		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
-			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
-				site: selectedSiteSlug,
-				plan: 'paid',
-			} );
 			return `/view/${ selectedSiteSlug }`;
 		}
 
