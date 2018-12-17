@@ -14,7 +14,7 @@ import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/rende
 const attributes = {};
 
 const save = ( { className } ) => (
-	<div className={ className }>
+	<div className={ className } itemprop="location" itemscope itemtype="http://schema.org/Place">
 		<InnerBlocks.Content />
 	</div>
 );

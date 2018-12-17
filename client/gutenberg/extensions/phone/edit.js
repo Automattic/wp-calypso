@@ -12,7 +12,7 @@ import { Component } from '@wordpress/element';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import textMatchReplace from 'gutenberg/extensions/presets/jetpack/utils/text-match-replace';
 
-function renderPhone( inputText ) {
+export function renderPhone( inputText ) {
 	return textMatchReplace(
 		inputText,
 		/([0-9\()+]{1}[\ \-().]?[0-9]{1,6}[\ \-().]?[0-9]{0,6}[\ \-()]?[0-9]{0,6}[\ \-().]?[0-9]{0,6}[\ \-().]?[0-9]{0,6}[\ \-().]?[0-9]{0,6})/g,
@@ -20,9 +20,10 @@ function renderPhone( inputText ) {
 			if ( number.trim() === '' ) {
 				return number;
 			}
+			const just_number = number.replace( /\D/g, '' );
 
 			return (
-				<a href={ `tel:${ number.replace( /\D/g, '' ) }` } key={ i }>
+				<a itemprop="telephone" content={ just_number } href={ `tel:${ just_number }` } key={ i }>
 					{ number }
 				</a>
 			);
@@ -30,7 +31,7 @@ function renderPhone( inputText ) {
 	);
 }
 
-class PhoneEdit extends Component {
+export class PhoneEdit extends Component {
 	constructor( ...args ) {
 		super( ...args );
 		this.onChange = this.onChange.bind( this );
@@ -62,5 +63,3 @@ class PhoneEdit extends Component {
 		);
 	}
 }
-
-export default PhoneEdit;

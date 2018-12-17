@@ -2,14 +2,12 @@
 /**
  * External dependencies
  */
-import { sprintf } from '@wordpress/i18n';
 import { Path, Circle } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import edit from './edit';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 
@@ -48,15 +46,37 @@ const save = ( {
 	attributes: { address, address_line2, address_line3, city, region, postal, country },
 	className,
 } ) => (
-	<div className={ className }>
-		{ address && <div>{ address }</div> }
-		{ address_line2 && <div>{ address_line2 }</div> }
-		{ address_line3 && <div>{ address_line3 }</div> }
-		{ city && ! ( region || postal ) && <div>{ city }</div> }
+	<div
+		className={ className }
+		itemprop="address"
+		itemscope
+		itemtype="http://schema.org/PostalAddress"
+	>
+		{ address && <div itemprop="streetAddress">{ address }</div> }
+		{ address_line2 && <div itemprop="streetAddress">{ address_line2 }</div> }
+		{ address_line3 && <div itemprop="streetAddress">{ address_line3 }</div> }
+		{ city && ! ( region || postal ) && <div itemprop="addressLocality">{ city }</div> }
 		{ city &&
-			( region || postal ) && <div>{ sprintf( __( '%s, %s  %s' ), city, region, postal ) }</div> }
-		{ ! city && ( region || postal ) && <div>{ sprintf( __( '%s  %s' ), region, postal ) }</div> }
-		{ country && <div>{ country }</div> }
+			( region || postal ) && (
+				<div>
+					{ [
+						<span itemprop="addressLocality">city</span>,
+						', ',
+						<span itemprop="addressRegion">region</span>,
+						<span itemprop="addressPostal">postal</span>,
+					] }
+				</div>
+			) }
+		{ ! city &&
+			( region || postal ) && (
+				<div>
+					{ [
+						<span itemprop="addressRegion">region</span>,
+						<span itemprop="addressPostal">postal</span>,
+					] }
+				</div>
+			) }
+		{ country && <div itemprop="addressCountry">{ country }</div> }
 	</div>
 );
 

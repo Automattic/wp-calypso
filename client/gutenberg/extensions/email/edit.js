@@ -12,7 +12,7 @@ import { Component } from '@wordpress/element';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import textMatchReplace from 'gutenberg/extensions/presets/jetpack/utils/text-match-replace';
 
-function renderEmail( inputText ) {
+export function renderEmail( inputText ) {
 	return textMatchReplace(
 		inputText,
 		/((?:[a-z|0-9+_](?:\.|_\+)*)+[a-z|0-9]\@(?:[a-z|0-9])+(?:(?:\.){0,1}[a-z|0-9]){2}\.[a-z]{2,22})/gim,
@@ -24,7 +24,7 @@ function renderEmail( inputText ) {
 	);
 }
 
-class EmailEdit extends Component {
+export class EmailEdit extends Component {
 	constructor( ...args ) {
 		super( ...args );
 
@@ -57,5 +57,3 @@ class EmailEdit extends Component {
 		);
 	}
 }
-
-export default EmailEdit;
