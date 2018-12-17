@@ -44,7 +44,9 @@ export class ConciergeSessionNudge extends React.Component {
 
 	render() {
 		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, translate } = this.props;
-		const title = translate( 'Checkout ‹ Support Session' );
+		const title = translate( 'Checkout ‹ Support Session', {
+			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
+		} );
 
 		return (
 			<Main className="concierge-session-nudge">
