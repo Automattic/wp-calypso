@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import registerJetpackBlock from 'gutenberg/extensions/presets/jetpack/utils/register-jetpack-block';
-import { children, name, settings } from '.';
+import { childBlocks, name, settings } from '.';
 
 registerJetpackBlock( name, settings );
-children.forEach( child => registerJetpackBlock( child.name, child.settings ) );
+childBlocks.forEach( childBlock => registerJetpackBlock( childBlock.name, childBlock.settings ) );

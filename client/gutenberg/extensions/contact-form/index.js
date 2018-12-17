@@ -193,7 +193,7 @@ const editMultiField = type => props => (
 	/>
 );
 
-export const children = [
+export const childBlocks = [
 	{
 		name: 'field-text',
 		settings: {
