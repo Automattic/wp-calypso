@@ -22,6 +22,12 @@ import Banner from 'components/banner';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import { TERM_ANNUALLY, TYPE_BUSINESS } from 'lib/plans/constants';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+import upgradeNudgeImage from './preview-upgrade-nudge.png';
+
 export const SeoPreviewNudge = ( { translate, site, isJetpack = false } ) => {
 	return (
 		<div className="preview-upgrade-nudge">
@@ -43,7 +49,7 @@ export const SeoPreviewNudge = ( { translate, site, isJetpack = false } ) => {
 
 			<div className="preview-upgrade-nudge__features">
 				<FeatureExample>
-					<img src="/calypso/images/advanced-seo-nudge.png" />
+					<img src={ upgradeNudgeImage } alt="" />
 				</FeatureExample>
 				<div className="preview-upgrade-nudge__features-details">
 					<ul className="preview-upgrade-nudge__features-list">

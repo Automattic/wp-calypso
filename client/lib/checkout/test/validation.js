@@ -252,6 +252,17 @@ describe( 'validation', () => {
 				} );
 			} );
 
+			test( 'should return error when street number is invalid', () => {
+				const invalidStreetNumber = { ...validBrazilianEbanxCard, 'street-number': '0' };
+				const result = validatePaymentDetails( invalidStreetNumber );
+
+				expect( result ).toEqual( {
+					errors: {
+						'street-number': [ 'Street number is invalid' ],
+					},
+				} );
+			} );
+
 			test( 'should return error when CPF is invalid', () => {
 				ebanxMethods.isValidCPF = jest.fn().mockImplementation( () => false );
 				const invalidCPF = { ...validBrazilianEbanxCard, document: 'blah' };

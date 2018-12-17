@@ -244,6 +244,13 @@ validators.validPhone = {
 	},
 };
 
+validators.validStreetNumber = {
+	isValid( streetNumber ) {
+		return streetNumber !== '0';
+	},
+	error: validationError,
+};
+
 /**
  * Runs payment fields through the relevant validation rules
  * use these validation rules, for example, in <CreditCardForm />, <PayPalPaymentBox /> and <RedirectPaymentBox />
