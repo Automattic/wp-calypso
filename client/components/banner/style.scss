@@ -8,7 +8,7 @@
 		padding-right: 48px;
 	}
 
-	@include banner-color( $blue-wordpress );
+	@include banner-color( var( --color-primary ) );
 
 	&.is-wpcom-plan {
 		&.is-upgrade-blogger {
@@ -16,7 +16,7 @@
 		}
 
 		&.is-upgrade-personal {
-			@include banner-color( $blue-wordpress );
+			@include banner-color( var( --color-primary ) );
 		}
 
 		&.is-upgrade-premium {
