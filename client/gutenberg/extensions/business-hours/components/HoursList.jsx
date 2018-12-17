@@ -3,26 +3,65 @@
 /**
  * External dependencies
  */
+import { Component } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 
 import HoursRow from './HoursRow';
-import getBusinessHours from 'gutenberg/extensions/presets/jetpack/utils/get-business-hours';
+import apiFetch from '@wordpress/api-fetch/build/index';
 
-const businessHours = getBusinessHours();
-const { start_of_week } = businessHours;
+const defaultData = {
+	days: {
+		Sun: 'Sunday',
+		Mon: 'Monday',
+		Tue: 'Tuesday',
+		Wed: 'Wednesday',
+		Thu: 'Thursday',
+		Fri: 'Friday',
+		Sat: 'Saturday',
+	},
+	startOfWeek: 0,
+};
 
-const HoursList = props => (
-	<dl className={ 'business-hours ' + ( props.edit ? 'edit' : '' ) }>
-		{ Object.keys( props.hours )
-			.concat( Object.keys( props.hours ).slice( 0, start_of_week ) )
-			.slice( start_of_week )
-			.map( function( day ) {
-				return <HoursRow day={ day } { ...props } />;
-			} ) }
-	</dl>
-);
+class HoursList extends Component {
+	state = {
+		data: defaultData,
+	};
+
+	componentDidMount() {
+		this.apiFetch();
+	}
+
+	apiFetch() {
+		this.setState( { data: defaultData }, () => {
+			apiFetch( { path: '/wpcom/v2/business-hours/localized-week' } ).then(
+				data => {
+					this.setState( { data } );
+				},
+				() => {
+					this.setState( { data: defaultData } );
+				}
+			);
+		} );
+	}
+
+	render() {
+		const { hours, edit } = this.props;
+		const { data } = this.state;
+		const { startOfWeek } = data;
+		return (
+			<dl className={ 'business-hours ' + ( edit ? 'edit' : '' ) }>
+				{ Object.keys( hours )
+					.concat( Object.keys( hours ).slice( 0, startOfWeek ) )
+					.slice( startOfWeek )
+					.map( day => {
+						return <HoursRow day={ day } data={ data } { ...this.props } />;
+					} ) }
+			</dl>
+		);
+	}
+}
 
 export default HoursList;
