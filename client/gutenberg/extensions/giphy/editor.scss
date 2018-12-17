@@ -1,0 +1,40 @@
+.wp-block-jetpack-giphy {
+	.wp-block-jetpack-giphy_cover {
+		background: none;
+		border: none;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		position: absolute;
+		top: 0;
+		width: 100%;
+		z-index: 1;
+	}
+	.wp-block-jetpack-giphy_text-input-field {
+		left: 10%;
+		margin-top: -3em;
+		position: absolute;
+		top: 50%;
+		width: 80%;
+		&.has-focus .components-text-control__input {
+			opacity: 1;
+		}
+		.components-text-control__input {
+			border: none;
+			border-radius: 15px;
+			font-size: 2em;
+			opacity: 0;
+			padding: 0.5em 0;
+			text-align: center;
+			-webkit-transition: opacity 0.5s ease-in;
+			-moz-transition: opacity 0.5s ease-in;
+			-o-transition: opacity 0.5s ease-in;
+			-ms-transition: opacity 0.5s ease-in;
+			transition: opacity 0.5s ease-in;
+		}
+		.components-base-control__label {
+			height: 0;
+			text-indent: -9999px;
+		}
+	}
+}
