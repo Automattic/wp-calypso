@@ -134,15 +134,7 @@ export class SignupProcessingScreen extends Component {
 			  );
 	}
 
-<<<<<<< HEAD
 	showPreviewAfterLogin = () => {
-=======
-	showChecklistAfterLogin = () => {
-		analytics.tracks.recordEvent( 'calypso_checklist_assign', {
-			site: this.state.siteSlug,
-			plan: 'free',
-		} );
->>>>>>> First step in updating the post-signup experience is redirecting the user to the site preview rather than the checklist.
 		this.props.loginHandler( { redirectTo: `/view/${ this.state.siteSlug }` } );
 	};
 
