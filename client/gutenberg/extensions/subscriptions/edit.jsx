@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import { Component, Fragment } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { Button, TextControl, ToggleControl, withFallbackStyles } from '@wordpress/components';
@@ -19,6 +20,8 @@ import {
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { sprintf, _n } from '@wordpress/i18n';
+
+const { getComputedStyle } = window;
 
 const applyFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
 	const { textColor, backgroundColor } = ownProps;
@@ -55,8 +58,6 @@ class SubscriptionEdit extends Component {
 			textColor,
 			setBackgroundColor,
 			setTextColor,
-			fallbackBackgroundColor,
-			fallbackTextColor,
 		} = this.props;
 		const { subscribePlaceholder, showSubscribersTotal } = attributes;
 
@@ -82,7 +83,17 @@ class SubscriptionEdit extends Component {
 							disabled={ true }
 							onChange={ () => {} }
 						/>
-						<Button type="button" isDefault style={ buttonStyle }>
+						<Button
+							type="button"
+							isDefault
+							className={ classnames( 'wp-block-button__link', {
+								'has-background': backgroundColor.color,
+								[ backgroundColor.class ]: backgroundColor.class,
+								'has-text-color': textColor.color,
+								[ textColor.class ]: textColor.class,
+							} ) }
+							style={ buttonStyle }
+						>
 							{ __( 'Subscribe' ) }
 						</Button>
 					</div>
@@ -109,8 +120,6 @@ class SubscriptionEdit extends Component {
 								isLargeText: false,
 								textColor: textColor.color,
 								backgroundColor: backgroundColor.color,
-								fallbackBackgroundColor,
-								fallbackTextColor,
 							} }
 						/>
 					</InspectorControls>
@@ -148,7 +157,7 @@ class SubscriptionEdit extends Component {
 	}
 }
 
-export default compose( [
-	withColors( 'backgroundColor', { textColor: 'color' } ),
-	applyFallbackStyles,
-] )( SubscriptionEdit );
+export default compose(
+	[ withColors( 'backgroundColor', { textColor: 'color' } ) ],
+	applyFallbackStyles
+)( SubscriptionEdit );
