@@ -1,4 +1,3 @@
-
 .jetpack-onboarding {
 	.steps__main {
 		animation: appearWithScaling 0.3s ease-in-out;
@@ -73,7 +72,7 @@
 
 		&.todo,
 		&.todo a {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 		}
 	}
 

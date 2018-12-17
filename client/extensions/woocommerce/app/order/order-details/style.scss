@@ -77,7 +77,7 @@
 
 	.button {
 		&.is-borderless {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 
 			&:hover {
 				color: $link-highlight;

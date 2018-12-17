@@ -41,7 +41,7 @@
 	justify-content: space-between;
 
 	.button {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 		padding-bottom: 0;
 
 		&:hover {
