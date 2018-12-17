@@ -94,7 +94,7 @@ export class UserStep extends Component {
 	setSubHeaderText( props ) {
 		const { flowName, oauth2Client, translate } = props;
 
-		let subHeaderText = '';
+		let subHeaderText = props.subHeaderText;
 
 		if ( includes( [ 'wpcc', 'crowdsignal' ], flowName ) && oauth2Client ) {
 			if ( isWooOAuth2Client( oauth2Client ) ) {
@@ -126,6 +126,9 @@ export class UserStep extends Component {
 		} else if ( 1 === getFlowSteps( flowName ).length ) {
 			// Displays specific sub header if users only want to create an account, without a site
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
+		} else if ( 'onboarding-dev' === flowName ) {
+			// Displays no sub header for onboarding-dev flow
+			subHeaderText = '';
 		}
 
 		this.setState( { subHeaderText } );
