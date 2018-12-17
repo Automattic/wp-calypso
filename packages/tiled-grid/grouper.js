@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { find, repeat } from 'lodash';
+import { cloneDeep, find, repeat } from 'lodash';
 
 /**
  * Internal dependencies
@@ -68,7 +68,11 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		// This module could (should) become a transformation of <Array<Image>> -> <Array<Row>>
 		//
 		// If we redesign with that flow in mind, this may get much simpler and more testable
-		this.images = this.get_images_with_sizes( attachments );
+		this.images = this.get_images_with_sizes(
+			// Use cloneDeep to avoid mutating the received attachments
+			// @FIXME In a future iteration, don't mutate and drop cloneDeep
+			cloneDeep( attachments )
+		);
 		this.grouped_images = this.get_grouped_images();
 		this.apply_content_width( contentWidth );
 	}
