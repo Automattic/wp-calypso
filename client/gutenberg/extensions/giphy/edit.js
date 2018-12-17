@@ -5,14 +5,9 @@
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import classNames from 'classnames';
-import { Component, Fragment } from '@wordpress/element';
+import { Component, createRef, Fragment } from '@wordpress/element';
 import { TextControl } from '@wordpress/components';
-import {
-	BlockAlignmentToolbar,
-	BlockControls,
-	InspectorControls,
-	RichText,
-} from '@wordpress/editor';
+import { BlockAlignmentToolbar, BlockControls, RichText } from '@wordpress/editor';
 import { debounce } from 'lodash';
 
 /**
@@ -23,6 +18,11 @@ import { settings } from './settings.js';
 class GiphyEdit extends Component {
 	constructor() {
 		super( ...arguments );
+		this.state = {
+			focus: false,
+		};
+		this.timer = null;
+		this.textControlRef = createRef();
 		this.debouncedParseSearch = debounce( this.parseSearch, 250 );
 	}
 	componentWillUnmount() {
@@ -32,6 +32,7 @@ class GiphyEdit extends Component {
 		const { setAttributes } = this.props;
 		setAttributes( { searchText } );
 		this.debouncedParseSearch( searchText );
+		this.maintainFocus();
 	};
 	parseSearch = searchText => {
 		// If search is hardcoded Giphy URL following this pattern: https://giphy.com/embed/4ZFekt94LMhNK
@@ -76,19 +77,53 @@ class GiphyEdit extends Component {
 					( giphyData.images.original.height / giphyData.images.original.width ) * 100;
 				const giphyUrl = giphyData.embed_url;
 				setAttributes( { giphyUrl, topPadding } );
+				this.maintainFocus( 500 );
 			} else {
 				// Error handling TK
 			}
 		};
 		xhr.send();
 	};
+	setFocus = () => {
+		this.maintainFocus();
+		this.textControlRef.current.querySelector( 'input' ).focus();
+	};
+	maintainFocus = ( timeoutDuration = 3000 ) => {
+		this.setState( { focus: true }, () => {
+			if ( this.timer ) {
+				clearTimeout( this.timer );
+			}
+			if ( this.hasSearchText() ) {
+				this.timer = setTimeout( () => {
+					this.setState( { focus: false } );
+				}, timeoutDuration );
+			}
+		} );
+	};
+	clearFocus = () => {
+		this.setState( { focus: false }, () => {
+			if ( this.timer ) {
+				clearTimeout( this.timer );
+			}
+		} );
+	};
+	hasSearchText = () => {
+		const { attributes } = this.props;
+		const { searchText } = attributes;
+		return searchText && searchText.length > 0;
+	};
 	render() {
 		const { attributes, className, setAttributes } = this.props;
 		const { align, caption, giphyUrl, searchText, topPadding } = attributes;
+		const { focus } = this.state;
 		const style = {
 			paddingTop: `${ topPadding }%`,
 		};
 		const classes = classNames( className, `align${ align }` );
+		const textControlClasses = classNames(
+			'wp-block-jetpack-giphy_text-input-field',
+			focus || ! this.hasSearchText() ? 'has-focus' : null
+		);
 		return (
 			<Fragment>
 				<BlockControls>
@@ -98,16 +133,23 @@ class GiphyEdit extends Component {
 						value={ align }
 					/>
 				</BlockControls>
-				<InspectorControls>
-					<TextControl
-						label={ __( 'Search or paste a Giphy URL' ) }
-						onChange={ this.onSearchTextChange }
-						value={ searchText }
-					/>
-				</InspectorControls>
 				<div className={ classes }>
 					<figure style={ style }>
-						<div className="wp-block-jetpack-giphy_cover" />
+						<button
+							className="wp-block-jetpack-giphy_cover"
+							onClick={ this.setFocus }
+							ref={ this.textControlRef }
+							tabIndex="0"
+						>
+							<TextControl
+								className={ textControlClasses }
+								label={ __( 'Search or paste a Giphy URL' ) }
+								placeholder={ __( 'Search or paste a Giphy URL' ) }
+								onChange={ this.onSearchTextChange }
+								onClick={ this.maintainFocus }
+								value={ searchText }
+							/>
+						</button>
 						<iframe src={ giphyUrl } title={ searchText } />
 						<figcaption className="wp-block-jetpack-giphy_logo">Powered by Giphy</figcaption>
 					</figure>
