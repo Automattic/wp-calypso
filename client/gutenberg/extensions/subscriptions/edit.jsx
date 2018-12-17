@@ -4,7 +4,13 @@
  * External dependencies
  */
 import { Component, Fragment } from '@wordpress/element';
-import { TextControl, Button, ToggleControl, Disabled, withFallbackStyles } from '@wordpress/components';
+import {
+	TextControl,
+	Button,
+	ToggleControl,
+	Disabled,
+	withFallbackStyles,
+} from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -27,10 +33,13 @@ const applyFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
 	const backgroundColorValue = backgroundColor && backgroundColor.color;
 	const textColorValue = textColor && textColor.color;
 	// //avoid the use of querySelector if textColor color is known and verify if node is available.
-	const textNode = ! textColorValue && node ? node.querySelector( '[contenteditable="true"]' ) : null;
+	const textNode =
+		! textColorValue && node ? node.querySelector( '[contenteditable="true"]' ) : null;
 	return {
-		fallbackBackgroundColor: backgroundColorValue || ! node ? undefined : getComputedStyle( node ).backgroundColor,
-		fallbackTextColor: textColorValue || ! textNode ? undefined : getComputedStyle( textNode ).color,
+		fallbackBackgroundColor:
+			backgroundColorValue || ! node ? undefined : getComputedStyle( node ).backgroundColor,
+		fallbackTextColor:
+			textColorValue || ! textNode ? undefined : getComputedStyle( textNode ).color,
 	};
 } );
 
@@ -46,7 +55,8 @@ class SubscriptionEdit extends Component {
 			setBackgroundColor,
 			setTextColor,
 			fallbackBackgroundColor,
-			fallbackTextColor } = this.props;
+			fallbackTextColor,
+		} = this.props;
 		const {
 			subscribe_placeholder,
 			show_subscribers_total,
@@ -106,24 +116,35 @@ class SubscriptionEdit extends Component {
 							] }
 						/>
 						<ContrastChecker
-								{ ...{
-									// Text is considered large if font size is greater or equal to 18pt or 24px,
-									// currently that's not the case for button.
-									isLargeText: false,
-									textColor: textColor.color,
-									backgroundColor: backgroundColor.color,
-									fallbackBackgroundColor,
-									fallbackTextColor,
-								} }
-							/>
+							{ ...{
+								// Text is considered large if font size is greater or equal to 18pt or 24px,
+								// currently that's not the case for button.
+								isLargeText: false,
+								textColor: textColor.color,
+								backgroundColor: backgroundColor.color,
+								fallbackBackgroundColor,
+								fallbackTextColor,
+							} }
+						/>
 					</InspectorControls>
 				</Fragment>
 			);
 		}
 
+		if ( show_subscribers_total === true ) {
+			return (
+				<div className={ className } role="form">
+					<p role="heading">{ subscriber_count_string }</p>
+					<TextControl placeholder={ subscribe_placeholder } />
+					<Button isLarge={ button_large } isDefault style={ buttonStyle }>
+						{ __( 'Subscribe' ) }
+					</Button>
+				</div>
+			);
+		}
+
 		return (
 			<div className={ className } role="form">
-				<p role="heading">{ subscriber_count_string }</p>
 				<TextControl placeholder={ subscribe_placeholder } />
 				<Button isLarge={ button_large } isDefault style={ buttonStyle }>
 					{ __( 'Subscribe' ) }
