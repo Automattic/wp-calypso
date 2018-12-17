@@ -15,7 +15,7 @@ const extensionSlugs = [
 
 export async function getExtensions() {
 	const promises = extensionSlugs.map( slug =>
-		import( '../../' + slug ).then( ( { children, name, settings } ) => ( {
+		import(   /* webpackMode: "eager" */ '../../' + slug ).then( ( { children, name, settings } ) => ( {
 			children,
 			name,
 			settings,
