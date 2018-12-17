@@ -4,7 +4,7 @@
 	padding-bottom: 8px;
 
 	button {
-		color: $blue-wordpress;
+		color: var( --color-primary );
 	}
 }
 
@@ -76,14 +76,19 @@
 		content: none;
 	}
 
-	.gridicon, span, p, a, button {
+	.gridicon,
+	span,
+	p,
+	a,
+	button {
 		animation: loading-fade 1.6s ease-in-out infinite;
 		background-color: lighten( $gray, 25% );
 		color: transparent;
 		cursor: default;
 	}
 
-	p, span {
+	p,
+	span {
 		display: block;
 		width: 100px;
 		height: 14px;

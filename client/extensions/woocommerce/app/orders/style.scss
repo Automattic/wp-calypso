@@ -37,7 +37,7 @@
 .orders__item-name {
 	display: inline-block;
 	font-weight: normal;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 }
 
 .orders__item-link {
