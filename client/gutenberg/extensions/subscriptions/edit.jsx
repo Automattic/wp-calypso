@@ -6,7 +6,12 @@
 import { Component, Fragment } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { Button, TextControl, ToggleControl, withFallbackStyles } from '@wordpress/components';
-import { InspectorControls, PanelColorSettings, withColors } from '@wordpress/editor';
+import {
+	InspectorControls,
+	PanelColorSettings,
+	ContrastChecker,
+	withColors,
+} from '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -50,6 +55,8 @@ class SubscriptionEdit extends Component {
 			textColor,
 			setBackgroundColor,
 			setTextColor,
+			fallbackBackgroundColor,
+			fallbackTextColor,
 		} = this.props;
 		const { subscribePlaceholder, showSubscribersTotal } = attributes;
 
@@ -88,6 +95,17 @@ class SubscriptionEdit extends Component {
 									label: __( 'Text Color' ),
 								},
 							] }
+						/>
+						<ContrastChecker
+							{ ...{
+								// Text is considered large if font size is greater or equal to 18pt or 24px,
+								// currently that's not the case for button.
+								isLargeText: false,
+								textColor: textColor.color,
+								backgroundColor: backgroundColor.color,
+								fallbackBackgroundColor,
+								fallbackTextColor,
+							} }
 						/>
 					</InspectorControls>
 				</Fragment>
