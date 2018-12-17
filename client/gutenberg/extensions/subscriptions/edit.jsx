@@ -4,8 +4,9 @@
  * External dependencies
  */
 import { Component, Fragment } from '@wordpress/element';
-import { Button, TextControl, ToggleControl } from '@wordpress/components';
-import { InspectorControls } from '@wordpress/editor';
+import { compose } from '@wordpress/compose';
+import { Button, TextControl, ToggleControl, withFallbackStyles } from '@wordpress/components';
+import { InspectorControls, PanelColorSettings, withColors } from '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -13,6 +14,21 @@ import { InspectorControls } from '@wordpress/editor';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { sprintf, _n } from '@wordpress/i18n';
+
+const applyFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
+	const { textColor, backgroundColor } = ownProps;
+	const backgroundColorValue = backgroundColor && backgroundColor.color;
+	const textColorValue = textColor && textColor.color;
+	//avoid the use of querySelector if textColor color is known and verify if node is available.
+	const textNode =
+		! textColorValue && node ? node.querySelector( '[contenteditable="true"]' ) : null;
+	return {
+		fallbackBackgroundColor:
+			backgroundColorValue || ! node ? undefined : getComputedStyle( node ).backgroundColor,
+		fallbackTextColor:
+			textColorValue || ! textNode ? undefined : getComputedStyle( textNode ).color,
+	};
+} );
 
 class SubscriptionEdit extends Component {
 	state = {
@@ -25,7 +41,16 @@ class SubscriptionEdit extends Component {
 	}
 
 	render() {
-		const { attributes, className, isSelected, setAttributes } = this.props;
+		const {
+			attributes,
+			className,
+			isSelected,
+			setAttributes,
+			backgroundColor,
+			textColor,
+			setBackgroundColor,
+			setTextColor,
+		} = this.props;
 		const { subscribePlaceholder, showSubscribersTotal } = attributes;
 
 		if ( isSelected ) {
@@ -48,7 +73,23 @@ class SubscriptionEdit extends Component {
 							{ __( 'Subscribe' ) }
 						</Button>
 					</div>
-					<InspectorControls />
+					<InspectorControls>
+						<PanelColorSettings
+							title={ __( 'Button Color Settings' ) }
+							colorSettings={ [
+								{
+									value: backgroundColor.color,
+									onChange: setBackgroundColor,
+									label: __( 'Background Color' ),
+								},
+								{
+									value: textColor.color,
+									onChange: setTextColor,
+									label: __( 'Text Color' ),
+								},
+							] }
+						/>
+					</InspectorControls>
 				</Fragment>
 			);
 		}
@@ -83,4 +124,7 @@ class SubscriptionEdit extends Component {
 	}
 }
 
-export default SubscriptionEdit;
+export default compose( [
+	withColors( 'backgroundColor', { textColor: 'color' } ),
+	applyFallbackStyles,
+] )( SubscriptionEdit );
