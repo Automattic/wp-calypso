@@ -356,7 +356,7 @@ export class Checkout extends React.Component {
 					plan: 'paid',
 				} );
 
-				if ( hasConciergeSessionInCart ) {
+				if ( config.isEnabled( 'upsell/concierge-session' ) && hasConciergeSessionInCart ) {
 					return `/checklist/${ selectedSiteSlug }`;
 				}
 				return `/checklist/${ selectedSiteSlug }?d=gsuite`;
