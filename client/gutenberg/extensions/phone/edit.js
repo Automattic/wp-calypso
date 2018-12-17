@@ -4,39 +4,40 @@
  * External dependencies
  */
 import { PlainText } from '@wordpress/editor';
-import { sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import HelpMessage from 'gutenberg/extensions/presets/jetpack/editor-shared/help-message';
+import textMatchReplace from 'gutenberg/extensions/presets/jetpack/utils/text-match-replace';
 
-const validatePhone = inputtxt => {
-	return inputtxt !== '' ? /^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g.test( inputtxt ) : true;
-};
+function renderPhone( inputText ) {
+	return textMatchReplace(
+		inputText,
+		/([0-9\()+]{1}[\ \-().]?[0-9]{1,6}[\ \-().]?[0-9]{0,6}[\ \-()]?[0-9]{0,6}[\ \-().]?[0-9]{0,6}[\ \-().]?[0-9]{0,6}[\ \-().]?[0-9]{0,6})/g,
+		( number, i ) => {
+			if ( number.trim() === '' ) {
+				return number;
+			}
+
+			return (
+				<a href={ `tel:${ number.replace( /\D/g, '' ) }` } key={ i }>
+					{ number }
+				</a>
+			);
+		}
+	);
+}
 
 class PhoneEdit extends Component {
 	constructor( ...args ) {
 		super( ...args );
-
-		this.onBlur = this.onBlur.bind( this );
 		this.onChange = this.onChange.bind( this );
-
-		this.state = {
-			hasError: ! validatePhone( this.props.attributes.phone ),
-		};
-	}
-
-	onBlur( event ) {
-		const isValid = validatePhone( event.target.value );
-		this.setState( { hasError: ! isValid } );
 	}
 
 	onChange( newPhone ) {
 		this.props.setAttributes( { phone: newPhone } );
-		this.setState( { hasError: false } );
 	}
 
 	render() {
@@ -45,26 +46,17 @@ class PhoneEdit extends Component {
 			className,
 			isSelected,
 		} = this.props;
+
 		return (
 			<div className={ isSelected ? 'jetpack-phone-block is-selected' : 'jetpack-phone-block' }>
 				{ ! isSelected &&
-					phone !== '' && (
-						<div className={ className }>
-							<a href={ `tel:${ phone }` }>{ phone }</a>
-						</div>
-					) }
+					phone !== '' && <div className={ className }>{ renderPhone( phone ) }</div> }
 				{ ( isSelected || phone === '' ) && (
 					<PlainText
 						value={ phone }
 						placeholder={ __( 'Phone number' ) }
-						onBlur={ this.onBlur }
 						onChange={ this.onChange }
 					/>
-				) }
-				{ this.state.hasError && (
-					<HelpMessage isError>
-						{ sprintf( __( '%s is not a valid phone number.' ), phone ) }
-					</HelpMessage>
 				) }
 			</div>
 		);

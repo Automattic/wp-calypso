@@ -4,36 +4,35 @@
  * External dependencies
  */
 import { PlainText } from '@wordpress/editor';
-import { sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
-import emailValidator from 'email-validator';
 
 /**
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import HelpMessage from 'gutenberg/extensions/presets/jetpack/editor-shared/help-message';
+import textMatchReplace from 'gutenberg/extensions/presets/jetpack/utils/text-match-replace';
+
+function renderEmail( inputText ) {
+	return textMatchReplace(
+		inputText,
+		/((?:[a-z|0-9+_](?:\.|_\+)*)+[a-z|0-9]\@(?:[a-z|0-9])+(?:(?:\.){0,1}[a-z|0-9]){2}\.[a-z]{2,22})/gim,
+		( email, i ) => (
+			<a href={ `mailto:${ email }` } key={ i }>
+				{ email }
+			</a>
+		)
+	);
+}
 
 class EmailEdit extends Component {
 	constructor( ...args ) {
 		super( ...args );
 
-		this.onBlur = this.onBlur.bind( this );
 		this.onChange = this.onChange.bind( this );
-
-		this.state = {
-			hasError: ! emailValidator.validate( this.props.attributes.email ),
-		};
-	}
-
-	onBlur( event ) {
-		const isValid = emailValidator.validate( event.target.value );
-		this.setState( { hasError: ! isValid } );
 	}
 
 	onChange( newEmail ) {
 		this.props.setAttributes( { email: newEmail } );
-		this.setState( { hasError: false } );
 	}
 
 	render() {
@@ -45,11 +44,7 @@ class EmailEdit extends Component {
 		return (
 			<div className={ isSelected ? 'jetpack-email-block is-selected' : 'jetpack-email-block' }>
 				{ ! isSelected &&
-					email !== '' && (
-						<div className={ className }>
-							<a href={ `mailto:${ email }` }>{ email }</a>
-						</div>
-					) }
+					email !== '' && <div className={ className }>{ renderEmail( email ) }</div> }
 				{ ( isSelected || email === '' ) && (
 					<PlainText
 						value={ email }
@@ -58,12 +53,6 @@ class EmailEdit extends Component {
 						onChange={ this.onChange }
 					/>
 				) }
-				{ this.state.hasError &&
-					email !== '' && (
-						<HelpMessage isError>
-							{ sprintf( __( '%s is not a valid email.' ), email ) }
-						</HelpMessage>
-					) }
 			</div>
 		);
 	}
