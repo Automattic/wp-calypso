@@ -2,7 +2,7 @@
 // FormToggle
 // ==========================================================================
 
-.form-toggle[type="checkbox"] {
+.form-toggle[type='checkbox'] {
 	display: none;
 }
 
@@ -18,13 +18,13 @@
 	align-self: flex-start;
 	outline: 0;
 	cursor: pointer;
-	transition: all .4s ease, box-shadow 0s;
+	transition: all 0.4s ease, box-shadow 0s;
 
 	&:before,
 	&:after {
 		position: relative;
 		display: block;
-		content: "";
+		content: '';
 		width: 20px;
 		height: 20px;
 	}
@@ -32,12 +32,12 @@
 		left: 0;
 		border-radius: 50%;
 		background: $white;
-		transition: all .2s ease;
+		transition: all 0.2s ease;
 	}
 	&:before {
 		display: none;
 	}
-	.accessible-focus &:focus{
+	.accessible-focus &:focus {
 		box-shadow: 0 0 0 2px var( --color-primary );
 	}
 }
@@ -66,16 +66,16 @@
 	}
 
 	& + .form-toggle__label .form-toggle__switch {
-		background: $gray-lighten-10;
+		background: var( --color-neutral-200 );
 	}
 
 	&:not( :disabled ) {
 		+ .form-toggle__label:hover .form-toggle__switch {
-			background: $gray-lighten-20;
+			background: var( --color-neutral-100 );
 		}
 	}
 
-	&:checked{
+	&:checked {
 		+ .form-toggle__label .form-toggle__switch {
 			background: var( --color-primary );
 
@@ -106,7 +106,7 @@
 	}
 	&:checked {
 		+ .form-toggle__label .form-toggle__switch {
-			background: $gray-lighten-20;
+			background: var( --color-neutral-100 );
 		}
 	}
 }
@@ -125,7 +125,7 @@
 	}
 	&:checked {
 		+ .form-toggle__label .form-toggle__switch {
-			&:after{
+			&:after {
 				left: 8px;
 			}
 		}
