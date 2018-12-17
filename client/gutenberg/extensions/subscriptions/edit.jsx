@@ -60,6 +60,12 @@ class SubscriptionEdit extends Component {
 		} = this.props;
 		const { subscribePlaceholder, showSubscribersTotal } = attributes;
 
+		const buttonStyle = {
+			border: 'none',
+			backgroundColor: backgroundColor.color,
+			color: textColor.color,
+		};
+
 		if ( isSelected ) {
 			return (
 				<Fragment>
@@ -76,7 +82,7 @@ class SubscriptionEdit extends Component {
 							disabled={ true }
 							onChange={ () => {} }
 						/>
-						<Button type="button" isDefault>
+						<Button type="button" isDefault style={ buttonStyle }>
 							{ __( 'Subscribe' ) }
 						</Button>
 					</div>
@@ -116,7 +122,7 @@ class SubscriptionEdit extends Component {
 			<div className={ className } role="form">
 				{ showSubscribersTotal && <p role="heading">{ this.state.subscriberCountString }</p> }
 				<TextControl placeholder={ subscribePlaceholder } />
-				<Button type="button" isDefault>
+				<Button type="button" isDefault style={ buttonStyle }>
 					{ __( 'Subscribe' ) }
 				</Button>
 			</div>
