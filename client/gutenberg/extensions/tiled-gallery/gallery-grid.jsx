@@ -24,32 +24,36 @@ class TiledGalleryGrid extends Component {
 
 	pendingRaf = null;
 
-	handleResize = entries => {
-		if ( this.pendingRaf ) {
-			cancelAnimationFrame( this.pendingRaf );
-		}
-		this.pendingRaf = requestAnimationFrame( () => {
-			this.pendingRaf = null;
-			for ( const entry of entries ) {
-				const { width } = entry.contentRect;
-				if ( width && width !== this.state.width ) {
-					this.setWidth( width );
+	handleResize = this.props.noResize
+		? () => {}
+		: entries => {
+				if ( this.pendingRaf ) {
+					cancelAnimationFrame( this.pendingRaf );
 				}
-			}
-		} );
-	};
+				this.pendingRaf = requestAnimationFrame( () => {
+					this.pendingRaf = null;
+					for ( const entry of entries ) {
+						const { width } = entry.contentRect;
+						if ( width && width !== this.state.width ) {
+							this.setWidth( width );
+						}
+					}
+				} );
+		  };
 
 	setWidth( width ) {
 		this.setState( { width } );
 	}
 
 	componentDidMount() {
-		this.deferredMount = defer( () => {
-			// ResizeObserver has checks for `window` & `document`:
-			// it does nothing if those are not available.
-			this.observer = new ResizeObserver( this.handleResize );
-			this.observer.observe( this.wrapper.current.parentNode );
-		} );
+		if ( ! this.props.noResize ) {
+			this.deferredMount = defer( () => {
+				// ResizeObserver has checks for `window` & `document`:
+				// it does nothing if those are not available.
+				this.observer = new ResizeObserver( this.handleResize );
+				this.observer.observe( this.wrapper.current.parentNode );
+			} );
+		}
 	}
 
 	componentWillUnmount() {
@@ -68,6 +72,7 @@ class TiledGalleryGrid extends Component {
 			imageCrop,
 			images,
 			layout,
+			noResize,
 			renderGalleryImage,
 		} = this.props;
 		const { width } = this.state;
@@ -88,7 +93,7 @@ class TiledGalleryGrid extends Component {
 				} ) }
 				data-columns={ columns }
 				ref={ this.wrapper }
-				style={ { width } }
+				style={ noResize ? undefined : { width } }
 			>
 				<Fragment>
 					{ rows.map( ( row, rowIndex ) => {
@@ -96,20 +101,28 @@ class TiledGalleryGrid extends Component {
 							<div
 								key={ `tiled-gallery-row-${ rowIndex }` }
 								className="tiled-gallery__row"
-								style={ {
-									width: row.width,
-									height: row.height,
-								} }
+								style={
+									noResize
+										? undefined
+										: {
+												width: row.width,
+												height: row.height,
+										  }
+								}
 							>
 								{ row.tiles.map( tile => {
 									const galleryItem = (
 										<div
 											className="tiled-gallery__item"
 											key={ images[ imageIndex ].id || images[ imageIndex ].url }
-											style={ {
-												width: tile.width,
-												height: tile.height,
-											} }
+											style={
+												noResize
+													? undefined
+													: {
+															width: tile.width,
+															height: tile.height,
+													  }
+											}
 										>
 											{ renderGalleryImage( imageIndex ) }
 										</div>
