@@ -155,7 +155,7 @@ export class PlansStep extends Component {
 	plansFeaturesSelection = () => {
 		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
 
-		const headerText = translate( "Pick a plan that's right for you." );
+		const headerText = translate( 'Pick your plan' );
 
 		return (
 			<StepWrapper
