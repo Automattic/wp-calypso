@@ -135,7 +135,7 @@ export class SignupProcessingScreen extends Component {
 			  );
 	}
 
-	showChecklistAfterLogin = () => {
+	showPreviewAfterLogin = () => {
 		analytics.tracks.recordEvent( 'calypso_checklist_assign', {
 			site: this.state.siteSlug,
 			plan: 'free',
@@ -160,7 +160,7 @@ export class SignupProcessingScreen extends Component {
 		const { loginHandler } = this.props;
 
 		if ( !! loginHandler ) {
-			this.shouldShowChecklist() ? this.showChecklistAfterLogin() : loginHandler();
+			this.shouldShowChecklist() ? this.showPreviewAfterLogin() : loginHandler();
 			return null;
 		}
 
