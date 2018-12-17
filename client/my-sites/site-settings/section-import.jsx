@@ -288,17 +288,20 @@ class SiteSettingsImport extends Component {
 				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
 					<h1>{ translate( 'Import' ) }</h1>
 				</HeaderCake>
-				{ isJetpack && (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/illustration-jetpack.svg"
-						title={ translate( 'Want to import into your site?' ) }
-						line={ translate( "Visit your site's wp-admin for all your import and export needs." ) }
-						action={ translate( 'Import into %(title)s', { args: { title } } ) }
-						actionURL={ adminUrl + 'import.php' }
-						actionTarget="_blank"
-					/>
-				) }
-				{ ! isJetpack && this.renderImportersListGate() }
+				{ false &&
+					isJetpack && (
+						<EmptyContent
+							illustration="/calypso/images/illustrations/illustration-jetpack.svg"
+							title={ translate( 'Want to import into your site?' ) }
+							line={ translate(
+								"Visit your site's wp-admin for all your import and export needs."
+							) }
+							action={ translate( 'Import into %(title)s', { args: { title } } ) }
+							actionURL={ adminUrl + 'import.php' }
+							actionTarget="_blank"
+						/>
+					) }
+				{ ( true || ! isJetpack ) && this.renderImportersListGate() }
 			</Main>
 		);
 	}
