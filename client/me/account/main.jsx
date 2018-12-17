@@ -34,7 +34,7 @@ import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormRadio from 'components/forms/form-radio';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent, bumpStat } from 'state/analytics/actions';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import Notice from 'components/notice';
