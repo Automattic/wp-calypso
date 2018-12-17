@@ -110,28 +110,66 @@ class TiledGalleryGrid extends Component {
 									  }
 							}
 						>
-							{ row.tiles.map( tile => {
-								const galleryItem = (
-									<div
-										className="tiled-gallery__item"
-										key={ images[ imageIndex ].id || images[ imageIndex ].url }
-										style={
-											noResize
-												? undefined
-												: {
-														width: tile.width,
-														height: tile.height,
-												  }
-										}
-									>
-										{ renderGalleryImage( imageIndex ) }
-									</div>
-								);
+							{ 'groups' in row
+								? row.groups.map( ( group, groupI ) => (
+										<div
+											key={ groupI }
+											className="tiled-gallery__group"
+											style={
+												noResize
+													? undefined
+													: {
+															width: group.width,
+															height: group.height,
+													  }
+											}
+										>
+											{ group.images.map( image => {
+												const galleryItem = (
+													<div
+														className="tiled-gallery__item"
+														key={ images[ imageIndex ].id || images[ imageIndex ].url }
+														style={
+															noResize
+																? undefined
+																: {
+																		width: image.width,
+																		height: image.height,
+																  }
+														}
+													>
+														{ renderGalleryImage( imageIndex ) }
+													</div>
+												);
 
-								imageIndex++;
+												imageIndex++;
 
-								return galleryItem;
-							} ) }
+												return galleryItem;
+											} ) }
+										</div>
+								  ) )
+								: row.tiles.map( tile => {
+										const galleryItem = (
+											<div
+												className="tiled-gallery__item"
+												key={ images[ imageIndex ].id || images[ imageIndex ].url }
+												style={
+													noResize
+														? undefined
+														: {
+																width: tile.width,
+																height: tile.height,
+														  }
+												}
+											>
+												{ renderGalleryImage( imageIndex ) }
+											</div>
+										);
+
+										imageIndex++;
+
+										return galleryItem;
+								  } ) }
 						</div>
 					);
 				} ) }
