@@ -304,7 +304,7 @@ function mapStateToProps( state ) {
 	const optInEnabled =
 		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) );
 
-	const sitePreview = section.name && section.name === 'preview';
+	const isSitePreview = section.name && section.name === 'preview';
 
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
@@ -314,7 +314,7 @@ function mapStateToProps( state ) {
 	return {
 		searchQuery: getSearchQuery( state ),
 		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
-		isSitePreview: sitePreview,
+		isSitePreview: isSitePreview,
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 		selectedEditor: getSelectedEditor( state, siteId ),
