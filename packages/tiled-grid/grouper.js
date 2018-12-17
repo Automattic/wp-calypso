@@ -48,19 +48,8 @@ export class Jetpack_Tiled_Gallery_Grouper {
 
 	images = [];
 
-	constructor( {
-		attachments,
-		contentWidth,
-		margin,
-		/* @TODO probably external API, irrelevant in JS: shapes */
-	} ) {
+	constructor( { attachments, contentWidth, margin } ) {
 		this.margin = margin;
-
-		// @TODO Let's remove this
-		// if ( shapes ) {
-		// 	this.overwrite_shapes( shapes );
-		// }
-		// this.last_shape = ''; @TODO apparently this was unused
 
 		// @TODO This appears to be a pipeline attachments -> grouped images
 		// Layouts want grouped_images to define their rows
@@ -76,9 +65,6 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		this.grouped_images = this.get_grouped_images();
 		this.apply_content_width( contentWidth );
 	}
-
-	/* @TODO probably external API, irrelevant in JS: */
-	// overwrite_shapes = shapes => ( this.shapes = shapes );
 
 	get_current_row_size() {
 		if ( this.images.length < 3 ) {
