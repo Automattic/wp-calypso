@@ -29,13 +29,11 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	const editorScript = path.join( inputDir, 'editor.js' );
 	let viewBlocksScripts;
 	let viewScriptEntry;
-	let presetBlocks;
-	let presetBetaBlocks;
 
 	if ( fs.existsSync( presetPath ) ) {
 		const presetIndex = require( presetPath );
-		presetBlocks = get( presetIndex, [ 'production' ], [] );
-		presetBetaBlocks = get( presetIndex, [ 'beta' ], [] );
+		const presetBlocks = get( presetIndex, [ 'production' ], [] );
+		const presetBetaBlocks = get( presetIndex, [ 'beta' ], [] );
 		const allPresetBlocks = [ ...presetBlocks, ...presetBetaBlocks ];
 
 		// Find all the shared scripts
