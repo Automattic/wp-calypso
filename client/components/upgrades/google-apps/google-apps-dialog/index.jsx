@@ -6,8 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import TransitionGroup from 'react-transition-group/TransitionGroup';
-import CSSTransition from 'react-transition-group/CSSTransition';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -43,7 +41,6 @@ class GoogleAppsDialog extends React.Component {
 	};
 
 	state = {
-		isAddingEmail: false,
 		users: null,
 		validationErrors: null,
 	};
@@ -85,13 +82,7 @@ class GoogleAppsDialog extends React.Component {
 				<CompactCard>{ this.header() }</CompactCard>
 				<CompactCard>
 					<GoogleAppsProductDetails domain={ this.props.domain } { ...prices } />
-					<TransitionGroup>
-						{ this.state.isAddingEmail && (
-							<CSSTransition classNames="google-apps-dialog__users" timeout={ 200 }>
-								{ this.renderGoogleAppsUsers() }
-							</CSSTransition>
-						) }
-					</TransitionGroup>
+					{ this.renderGoogleAppsUsers() }
 				</CompactCard>
 				<CompactCard>{ this.footer() }</CompactCard>
 			</form>
@@ -139,41 +130,22 @@ class GoogleAppsDialog extends React.Component {
 
 	footer() {
 		const { translate } = this.props;
-		const continueButtonHandler = this.state.isAddingEmail
-			? this.handleFormSubmit
-			: this.handleAddEmail;
-		const continueButtonText = this.state.isAddingEmail
-			? translate( 'Continue \u00BB' )
-			: translate( 'Yes, Add Email \u00BB' );
-
 		return (
 			<footer className="google-apps-dialog__footer">
-				{ ! this.state.isAddingEmail && (
-					<Button
-						className="google-apps-dialog__checkout-button"
-						onClick={ this.handleFormCheckout }
-					>
-						{ translate( 'Skip' ) }
-					</Button>
-				) }
+				<Button className="google-apps-dialog__checkout-button" onClick={ this.handleFormCheckout }>
+					{ translate( 'Skip' ) }
+				</Button>
+
 				<Button
 					primary
 					className="google-apps-dialog__continue-button"
-					onClick={ continueButtonHandler }
+					onClick={ this.handleFormSubmit }
 				>
-					{ continueButtonText }
+					{ translate( 'Yes, Add Email \u00BB' ) }
 				</Button>
 			</footer>
 		);
 	}
-
-	handleAddEmail = event => {
-		event.preventDefault();
-
-		this.props.recordAddEmailButtonClick( this.props.analyticsSection );
-
-		this.setState( { isAddingEmail: true } );
-	};
 
 	handleFormSubmit = event => {
 		event.preventDefault();
