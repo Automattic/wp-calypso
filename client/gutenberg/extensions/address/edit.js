@@ -19,14 +19,14 @@ class AddressEdit extends Component {
 
 	render() {
 		const {
-			attributes: { address, address_line2, city, region, postal, country },
+			attributes: { address, address_line2, address_line3, city, region, postal, country },
 			className,
 			isSelected,
 			setAttributes,
 		} = this.props;
 
 		const hasContent =
-			[ address, address_line2, city, region, postal, country ]
+			[ address, address_line2, address_line3, city, region, postal, country ]
 				.map( value => value !== '' )
 				.filter( Boolean ).length > 0;
 
@@ -37,6 +37,7 @@ class AddressEdit extends Component {
 						<div className={ className }>
 							{ address && <div>{ address }</div> }
 							{ address_line2 && <div>{ address_line2 }</div> }
+							{ address_line3 && <div>{ address_line3 }</div> }
 							{ city && ! ( region || postal ) && <div>{ city }</div> }
 							{ city &&
 								( region || postal ) && (
@@ -58,6 +59,11 @@ class AddressEdit extends Component {
 							value={ address_line2 }
 							placeholder={ __( 'Address Line 2' ) }
 							onChange={ newAddressLine2 => setAttributes( { address_line2: newAddressLine2 } ) }
+						/>
+						<PlainText
+							value={ address_line3 }
+							placeholder={ __( 'Address Line 3' ) }
+							onChange={ newAddressLine3 => setAttributes( { address_line3: newAddressLine3 } ) }
 						/>
 						<PlainText
 							value={ city }

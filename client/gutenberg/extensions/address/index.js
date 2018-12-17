@@ -22,6 +22,10 @@ const attributes = {
 		type: 'string',
 		default: '',
 	},
+	address_line3: {
+		type: 'string',
+		default: '',
+	},
 	city: {
 		type: 'string',
 		default: '',
@@ -41,15 +45,17 @@ const attributes = {
 };
 
 const save = ( {
-	attributes: { address, address_line2, city, region, postal, country },
+	attributes: { address, address_line2, address_line3, city, region, postal, country },
 	className,
 } ) => (
 	<div className={ className }>
 		{ address && <div>{ address }</div> }
 		{ address_line2 && <div>{ address_line2 }</div> }
-		{ ( city || region || postal ) && (
-			<div>{ sprintf( __( '%s, %s  %s' ), city, region, postal ) }</div>
-		) }
+		{ address_line3 && <div>{ address_line3 }</div> }
+		{ city && ! ( region || postal ) && <div>{ city }</div> }
+		{ city &&
+			( region || postal ) && <div>{ sprintf( __( '%s, %s  %s' ), city, region, postal ) }</div> }
+		{ ! city && ( region || postal ) && <div>{ sprintf( __( '%s  %s' ), region, postal ) }</div> }
 		{ country && <div>{ country }</div> }
 	</div>
 );
