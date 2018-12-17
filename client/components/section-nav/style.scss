@@ -271,7 +271,7 @@
 
 	.is-selected & {
 		color: $white;
-		background-color: var( --color-accent );
+		background-color: var( --color-primary );
 
 		@include breakpoint( '<480px' ) {
 			.count {
@@ -298,7 +298,7 @@
 
 	.notouch & {
 		&:hover {
-			color: var( --color-accent );
+			color: var( --color-primary );
 		}
 	}
 
