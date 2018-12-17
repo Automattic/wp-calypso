@@ -33,6 +33,7 @@ export const settings = {
 	),
 	category: 'jetpack',
 	attributes,
+	parent: [ 'jetpack/contact-info' ],
 	edit,
 	save,
 };

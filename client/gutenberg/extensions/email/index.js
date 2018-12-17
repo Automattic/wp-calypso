@@ -36,4 +36,5 @@ export const settings = {
 	attributes,
 	edit,
 	save,
+	parent: [ 'jetpack/contact-info' ],
 };
