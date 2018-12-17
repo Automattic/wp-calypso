@@ -8,17 +8,17 @@
 	padding-top: 16px;
 
 	.wordpress-logo {
-		height: 300px;
-		width: 300px;
+		height: 240px;
+		width: 240px;
 		fill: $blue-wordpress;
 		margin: 0 auto;
 		display: block;
 		transition: transform 0.4s ease-in;
-		transform: scale( 0.08 );
+		transform: scale( 0.1 );
 		transform-origin: 50% 0;
 
 		&.is-large {
-			transform: scale( 1 ) translateY( 20px );
+			transform: scale( 1 ) translateY( 60px );
 		}
 	}
 
