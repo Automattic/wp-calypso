@@ -24,40 +24,11 @@ import SignupActions from 'lib/signup/actions';
 import { setSiteStyle } from 'state/signup/steps/site-style/actions';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-
+import { getSiteStyleOptions } from 'lib/signup/site-styles';
 /**
  * Style dependencies
  */
 import './style.scss';
-
-// TODO: for testing only. Getting from backend or hardcoded in source?
-// siteStyleOptions[ {siteType} ]
-const siteStyleOptions = {
-	business: [
-		{
-			label: 'Modern',
-			name: 'modern',
-			value: 'pub/business',
-		},
-		{
-			label: 'Pro',
-			name: 'pro',
-			value: 'pub/business-professional',
-		},
-		{
-			label: 'Minimal',
-			name: 'minimal',
-			value: 'pub/business-minimal',
-		},
-		{
-			label: 'Elegant',
-			name: 'elegant',
-			value: 'pub/business-elegant',
-		},
-	],
-};
-
-// TODO: check if we need to skip this step conditionally if siteType !== 'business'
 
 export class SiteStyleStep extends Component {
 	static propTypes = {
@@ -201,7 +172,7 @@ export default connect(
 	state => {
 		const siteType = getSiteType( state );
 		const siteStyle = getSiteStyle( state );
-		const styleOptions = siteStyleOptions[ siteType ] || siteStyleOptions.business;
+		const styleOptions = getSiteStyleOptions( siteType );
 		return {
 			siteStyle,
 			siteType,
