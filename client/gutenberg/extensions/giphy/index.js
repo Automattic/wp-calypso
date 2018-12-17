@@ -19,6 +19,10 @@ export const settings = {
 	description: giphySettings.description,
 	attributes: giphySettings.attributes,
 	supports: giphySettings.supports,
+	getEditWrapperProps( attributes ) {
+		const { align } = attributes;
+		return { 'data-align': align };
+	},
 	edit,
 	save,
 };

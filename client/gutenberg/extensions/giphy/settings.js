@@ -42,6 +42,5 @@ export const settings = {
 	supports: {
 		html: false,
 	},
-	validAlignments: [ 'left', 'center', 'right' ],
 	apiKey: 'LtJmY9DnDJUA0',
 };
