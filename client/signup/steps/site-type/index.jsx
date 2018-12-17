@@ -94,7 +94,7 @@ class SiteType extends Component {
 	render() {
 		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
 
-		const headerText = translate( 'Choose a site type.' );
+		const headerText = translate( 'Start with a site type' );
 		const subHeaderText = '';
 
 		return (
