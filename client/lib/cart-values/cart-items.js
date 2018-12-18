@@ -32,7 +32,6 @@ import {
 	isDependentProduct,
 	isDomainMapping,
 	isDomainProduct,
-	isDomainRedemption,
 	isDomainRegistration,
 	isDomainTransfer,
 	isBundled,
@@ -45,7 +44,6 @@ import {
 	isPlan,
 	isBlogger,
 	isPremium,
-	isPrivacyProtection,
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isUnlimitedSpace,
@@ -94,24 +92,18 @@ export function add( newCartItem ) {
 
 /**
  * Determines if the given cart item should replace the cart.
+ *
  * This can happen if the given item:
- * - will result in mixed renewals/non-renewals or multiple renewals (excluding privacy protection).
+ *
+ * - will result in mixed renewals/non-renewals.
  * - is a free trial plan
+ * - is a Jetpack plan
  *
  * @param {Object} cartItem - `CartItemValue` object
  * @param {Object} cart - the existing shopping cart
  * @returns {Boolean} whether or not the item should replace the cart
  */
 export function cartItemShouldReplaceCart( cartItem, cart ) {
-	if (
-		isRenewal( cartItem ) &&
-		! isPrivacyProtection( cartItem ) &&
-		! isDomainRedemption( cartItem )
-	) {
-		// adding a renewal replaces the cart unless it is a privacy protection
-		return true;
-	}
-
 	if ( ! isRenewal( cartItem ) && hasRenewalItem( cart ) ) {
 		// all items should replace the cart if the cart contains a renewal
 		return true;
