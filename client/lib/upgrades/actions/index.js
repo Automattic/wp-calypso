@@ -11,6 +11,7 @@ export {
 	addGoogleAppsRegistrationData,
 	addItem,
 	addItems,
+	replaceCartWithItems,
 	addPrivacyToAllDomains,
 	applyCoupon,
 	removeCoupon,

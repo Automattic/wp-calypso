@@ -64,6 +64,12 @@ import {
 	isWpComBloggerPlan,
 } from 'lib/plans';
 
+export function clearCart() {
+	return function( cart ) {
+		return update( cart, { products: { $set: [] } } );
+	};
+}
+
 /**
  * Adds the specified item to a shopping cart.
  *
@@ -1099,6 +1105,7 @@ export default {
 	add,
 	addPrivacyToAllDomains,
 	businessPlan,
+	clearCart,
 	customDesignItem,
 	domainMapping,
 	domainPrivacyProtection,

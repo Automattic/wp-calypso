@@ -141,6 +141,15 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 			break;
 
 		case CART_ITEMS_ADD:
+			if ( action.replaceCartWithItems ) {
+				update(
+					flow(
+						cartItems.clearCart(),
+						...action.cartItems.map( cartItem => cartItems.add( cartItem ) )
+					)
+				);
+				break;
+			}
 			update( flow( ...action.cartItems.map( cartItem => cartItems.add( cartItem ) ) ) );
 			break;
 

@@ -84,6 +84,21 @@ export function addItems( items ) {
 	} );
 }
 
+export function replaceCartWithItems( items ) {
+	const extendedItems = items.map( item => {
+		const extra = assign( {}, item.extra, {
+			context: 'calypstore',
+		} );
+		return assign( {}, item, { extra } );
+	} );
+
+	Dispatcher.handleViewAction( {
+		type: CART_ITEMS_ADD,
+		cartItems: extendedItems,
+		replaceCartWithItems: true,
+	} );
+}
+
 export function removeItem( item, domainsWithPlansOnly ) {
 	Dispatcher.handleViewAction( {
 		type: CART_ITEM_REMOVE,

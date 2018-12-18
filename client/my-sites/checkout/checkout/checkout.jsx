@@ -41,7 +41,7 @@ import {
 } from 'lib/store-transactions/step-types';
 import {
 	addItem,
-	addItems,
+	replaceCartWithItems,
 	replaceItem,
 	applyCoupon,
 	resetTransaction,
@@ -220,7 +220,7 @@ export class Checkout extends React.Component {
 				);
 			} )
 			.filter( item => item );
-		addItems( itemsToAdd );
+		replaceCartWithItems( itemsToAdd );
 	}
 
 	getRenewalItemForProductAndSubscription( product, purchaseId, selectedSiteSlug ) {
