@@ -1,15 +1,9 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { find } from 'lodash';
-import TokenList from '@wordpress/token-list';
-
-/**
  * Internal dependencies
  */
-import { LAYOUT_STYLES, MAX_COLUMNS, TILE_MARGIN } from './constants';
+import { MAX_COLUMNS, TILE_MARGIN } from './constants';
 import { rectangularLayout } from './tiled-grid';
 
 function squareLayout( { columns, margin, width, tileCount } ) {
@@ -100,35 +94,4 @@ export function getLayout( { columns, images, layout, width } ) {
 				images,
 			} );
 	}
-}
-
-/**
- * Returns the active style from the given className.
- *
- * @param {Array} styles Block style variations.
- * @param {string} className  Class name
- *
- * @return {Object?} The active style.
- *
- * From https://github.com/WordPress/gutenberg/blob/077f6c4eb9ba061bc00d5f3ae956d4789a291fb5/packages/editor/src/components/block-styles/index.js#L21-L43
- */
-function getActiveStyle( styles, className ) {
-	for ( const style of new TokenList( className ).values() ) {
-		if ( style.indexOf( 'is-style-' ) === -1 ) {
-			continue;
-		}
-
-		const potentialStyleName = style.substring( 9 );
-		const activeStyle = find( styles, { name: potentialStyleName } );
-		if ( activeStyle ) {
-			return activeStyle;
-		}
-	}
-
-	return find( styles, 'isDefault' );
-}
-
-export function getActiveStyleName( className ) {
-	const activeStyle = getActiveStyle( LAYOUT_STYLES, className );
-	return activeStyle.name;
 }

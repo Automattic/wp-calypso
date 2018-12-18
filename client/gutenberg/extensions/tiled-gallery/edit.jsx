@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External Dependencies
  */
-import { filter, pick } from 'lodash';
+import { filter, pick, get } from 'lodash';
 import { Component, Fragment } from '@wordpress/element';
 import {
 	DropZone,
@@ -20,32 +18,36 @@ import {
 	BlockControls,
 	InspectorControls,
 	MediaPlaceholder,
-	mediaUpload,
 	MediaUpload,
+	mediaUpload,
 } from '@wordpress/editor';
-import { create } from '@wordpress/rich-text';
 
 /**
  * Internal dependencies
  */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { ALLOWED_MEDIA_TYPES, MAX_COLUMNS, DEFAULT_COLUMNS } from './constants';
-import GalleryGrid from './gallery-grid';
 import GalleryImage from './gallery-image';
-import { getActiveStyleName } from './layouts';
+import Layout from './layout';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { getActiveStyleName } from 'gutenberg/extensions/utils';
+import { ALLOWED_MEDIA_TYPES, LAYOUT_STYLES, MAX_COLUMNS } from './constants';
+
+const linkOptions = [
+	{ value: 'attachment', label: __( 'Attachment Page' ) },
+	{ value: 'media', label: __( 'Media File' ) },
+	{ value: 'none', label: __( 'None' ) },
+];
 
 export function defaultColumnsNumber( attributes ) {
-	return Math.min( DEFAULT_COLUMNS, attributes.images.length );
+	return Math.min( 3, attributes.images.length );
 }
 
-const pickRelevantMediaFiles = image => {
-	let { caption } = image;
-
-	if ( typeof caption !== 'object' ) {
-		caption = create( { html: caption } );
-	}
-
-	return Object.assign( pick( image, [ [ 'alt' ], [ 'id' ], [ 'link' ], [ 'url' ] ] ), caption );
+export const pickRelevantMediaFiles = image => {
+	const imageProps = pick( image, [ 'alt', 'id', 'link', 'caption' ] );
+	imageProps.url =
+		get( image, [ 'sizes', 'large', 'url' ] ) ||
+		get( image, [ 'media_details', 'sizes', 'large', 'source_url' ] ) ||
+		image.url;
+	return imageProps;
 };
 
 class TiledGalleryEdit extends Component {
@@ -61,71 +63,34 @@ class TiledGalleryEdit extends Component {
 		return null;
 	}
 
-	handleAddFiles = files => {
+	setAttributes( attributes ) {
+		if ( attributes.ids ) {
+			throw new Error(
+				'The "ids" attribute should not be changed directly. It is managed automatically when "images" attribute changes'
+			);
+		}
+
+		if ( attributes.images ) {
+			attributes = {
+				...attributes,
+				ids: attributes.images.map( ( { id } ) => id ),
+			};
+		}
+
+		this.props.setAttributes( attributes );
+	}
+
+	addFiles = files => {
 		const currentImages = this.props.attributes.images || [];
-		const { noticeOperations, setAttributes } = this.props;
+		const { noticeOperations } = this.props;
 		mediaUpload( {
 			allowedTypes: ALLOWED_MEDIA_TYPES,
 			filesList: files,
 			onFileChange: images => {
 				const imagesNormalized = images.map( image => pickRelevantMediaFiles( image ) );
-				setAttributes( {
-					images: currentImages.concat( imagesNormalized ),
-				} );
+				this.setAttributes( { images: currentImages.concat( imagesNormalized ) } );
 			},
 			onError: noticeOperations.createErrorNotice,
-		} );
-	};
-
-	handleColumnCountChange = columns => this.props.setAttributes( { columns } );
-
-	handleCropImageToggle = () =>
-		this.props.setAttributes( { imageCrop: ! this.props.attributes.imageCrop } );
-
-	handleFormFileUpload = event => this.handleAddFiles( event.target.files );
-
-	handleLinkToChange = linkTo => this.props.setAttributes( { linkTo } );
-
-	handleRemveImageByIndex = index => () => {
-		const images = filter( this.props.attributes.images, ( img, i ) => index !== i );
-		const { columns } = this.props.attributes;
-		this.setState( { selectedImage: null } );
-		this.props.setAttributes( {
-			images,
-			columns: columns ? Math.min( images.length, columns ) : columns,
-		} );
-	};
-
-	handleSelectImageByIndex = index => () => {
-		if ( this.state.selectedImage !== index ) {
-			this.setState( {
-				selectedImage: index,
-			} );
-		}
-	};
-
-	handleSelectImages = images =>
-		this.props.setAttributes( {
-			images: images.map( image => pickRelevantMediaFiles( image ) ),
-		} );
-
-	handleSetImageAttributesByIndex = index => newAttributes => {
-		const { attributes, setAttributes } = this.props;
-		const { images = [] } = attributes;
-
-		if ( ! images[ index ] ) {
-			return;
-		}
-
-		setAttributes( {
-			images: [
-				...images.slice( 0, index ),
-				{
-					...images[ index ],
-					...newAttributes,
-				},
-				...images.slice( index + 1 ),
-			],
 		} );
 	};
 
@@ -133,29 +98,72 @@ class TiledGalleryEdit extends Component {
 		return checked ? __( 'Thumbnails are cropped to align.' ) : __( 'Thumbnails are not cropped.' );
 	}
 
+	onRemoveImage = index => () => {
+		const images = filter( this.props.attributes.images, ( img, i ) => index !== i );
+		const { columns } = this.props.attributes;
+		this.setState( {
+			selectedImage: null,
+		} );
+		this.setAttributes( {
+			images,
+			columns: columns ? Math.min( images.length, columns ) : columns,
+		} );
+	};
+
+	onSelectImage = index => () => {
+		if ( this.state.selectedImage !== index ) {
+			this.setState( {
+				selectedImage: index,
+			} );
+		}
+	};
+
+	onSelectImages = images =>
+		this.setAttributes( { images: images.map( image => pickRelevantMediaFiles( image ) ) } );
+
+	setColumnsNumber = value => this.setAttributes( { columns: value } );
+
+	setImageAttributes = index => attributes => {
+		const {
+			attributes: { images },
+		} = this.props;
+		if ( ! images[ index ] ) {
+			return;
+		}
+		this.setAttributes( {
+			images: [
+				...images.slice( 0, index ),
+				{ ...images[ index ], ...attributes },
+				...images.slice( index + 1 ),
+			],
+		} );
+	};
+
+	setLinkTo = value => this.setAttributes( { linkTo: value } );
+
+	toggleImageCrop = () => this.setAttributes( { imageCrop: ! this.props.attributes.imageCrop } );
+
+	uploadFromFiles = event => this.addFiles( event.target.files );
+
 	render() {
 		const { selectedImage } = this.state;
-
 		const { attributes, isSelected, className, noticeOperations, noticeUI } = this.props;
-
 		const {
-			images,
 			columns = defaultColumnsNumber( attributes ),
-			align,
 			imageCrop,
+			images,
 			linkTo,
+			className: blockStyleClassName,
 		} = attributes;
 
-		const layoutsSupportingColumns = [ 'square', 'circle' ];
-
-		const dropZone = <DropZone onFilesDrop={ this.handleAddFiles } />;
+		const dropZone = <DropZone onFilesDrop={ this.addFiles } />;
 
 		const controls = (
 			<BlockControls>
 				{ !! images.length && (
 					<Toolbar>
 						<MediaUpload
-							onSelect={ this.handleSelectImages }
+							onSelect={ this.onSelectImages }
 							allowedTypes={ ALLOWED_MEDIA_TYPES }
 							multiple
 							gallery
@@ -185,7 +193,7 @@ class TiledGalleryEdit extends Component {
 							title: __( 'Tiled gallery' ),
 							name: __( 'images' ),
 						} }
-						onSelect={ this.handleSelectImages }
+						onSelect={ this.onSelectImages }
 						accept="image/*"
 						allowedTypes={ ALLOWED_MEDIA_TYPES }
 						multiple
@@ -196,29 +204,6 @@ class TiledGalleryEdit extends Component {
 			);
 		}
 
-		const renderGalleryImage = index => {
-			if ( ! images[ index ] ) {
-				return null;
-			}
-
-			const image = images[ index ];
-
-			return (
-				<GalleryImage
-					alt={ image.alt }
-					caption={ image.caption }
-					id={ image.id }
-					isSelected={ isSelected && selectedImage === index }
-					onRemove={ this.handleRemveImageByIndex( index ) }
-					onSelect={ this.handleSelectImageByIndex( index ) }
-					setAttributes={ this.handleSetImageAttributesByIndex( index ) }
-					url={ image.url }
-				/>
-			);
-		};
-
-		const layout = getActiveStyleName( this.props.className );
-
 		return (
 			<Fragment>
 				{ controls }
@@ -228,54 +213,55 @@ class TiledGalleryEdit extends Component {
 							<RangeControl
 								label={ __( 'Columns' ) }
 								value={ columns }
-								onChange={ this.handleColumnCountChange }
+								onChange={ this.setColumnsNumber }
 								min={ 1 }
-								disabled={ ! layoutsSupportingColumns.includes( layout ) }
 								max={ Math.min( MAX_COLUMNS, images.length ) }
 							/>
 						) }
 						<ToggleControl
-							label={ __( 'Crop images' ) }
+							label={ __( 'Crop Images' ) }
 							checked={ !! imageCrop }
-							onChange={ this.handleCropImageToggle }
+							onChange={ this.toggleImageCrop }
 							help={ this.getImageCropHelp }
 						/>
 						<SelectControl
-							label={ __( 'Link to' ) }
+							label={ __( 'Link To' ) }
 							value={ linkTo }
-							onChange={ this.handleLinkToChange }
-							options={ [
-								{ value: 'attachment', label: __( 'Attachment page' ) },
-								{ value: 'media', label: __( 'Media file' ) },
-								{ value: 'none', label: __( 'None' ) },
-							] }
+							onChange={ this.setLinkTo }
+							options={ linkOptions }
 						/>
 					</PanelBody>
 				</InspectorControls>
+
 				{ noticeUI }
-				{ dropZone }
-				<GalleryGrid
-					align={ align }
+
+				<Layout
 					className={ className }
 					columns={ columns }
+					galleryImage={ GalleryImage }
 					imageCrop={ imageCrop }
 					images={ images }
-					layout={ layout }
-					renderGalleryImage={ renderGalleryImage }
+					layoutStyle={ getActiveStyleName( LAYOUT_STYLES, blockStyleClassName ) }
+					linkTo={ linkTo }
+					onRemoveImage={ this.onRemoveImage }
+					onSelectImage={ this.onSelectImage }
+					selectedImage={ isSelected ? selectedImage : null }
+					setImageAttributes={ this.setImageAttributes }
 				>
+					{ dropZone }
 					{ isSelected && (
 						<FormFileUpload
 							multiple
 							isLarge
 							className="block-library-gallery-add-item-button"
-							onChange={ this.handleFormFileUpload }
+							onChange={ this.uploadFromFiles }
 							accept="image/*"
 							icon="insert"
 						>
 							{ __( 'Upload an image' ) }
 						</FormFileUpload>
 					) }
-				</GalleryGrid>
+				</Layout>
 			</Fragment>
 		);
 	}

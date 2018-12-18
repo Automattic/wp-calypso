@@ -1,44 +1,27 @@
-/** @format */
-
-/**
- * This component is originally from Gutenberg Gallery block:
- * @link https://github.com/WordPress/gutenberg/blob/1cd604df7e9017e0dbe3ab64897ac3af35ca35c5/packages/block-library/src/gallery/gallery-image.js
- */
-
 /**
  * External Dependencies
  */
+import classnames from 'classnames';
 import { BACKSPACE, DELETE } from '@wordpress/keycodes';
-import { Component } from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
 import { IconButton, Spinner } from '@wordpress/components';
+import { isBlobURL } from '@wordpress/blob'; // @TODO Add dep Jetpack-side
 import { RichText } from '@wordpress/editor';
 import { withSelect } from '@wordpress/data';
-import classnames from 'classnames';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class GalleryImage extends Component {
-	constructor() {
-		super( ...arguments );
+	state = {
+		captionSelected: false,
+	};
 
-		this.onImageClick = this.onImageClick.bind( this );
-		this.onSelectCaption = this.onSelectCaption.bind( this );
-		this.onKeyDown = this.onKeyDown.bind( this );
-		this.bindContainer = this.bindContainer.bind( this );
+	bindContainer = ref => void ( this.container = ref );
 
-		this.state = {
-			captionSelected: false,
-		};
-	}
-
-	bindContainer( ref ) {
-		this.container = ref;
-	}
-
-	onSelectCaption() {
+	onSelectCaption = () => {
 		if ( ! this.state.captionSelected ) {
 			this.setState( {
 				captionSelected: true,
@@ -48,9 +31,13 @@ class GalleryImage extends Component {
 		if ( ! this.props.isSelected ) {
 			this.props.onSelect();
 		}
-	}
+	};
 
-	onImageClick() {
+	onImageClick = e => {
+		// Don't let click event trigger naviagtion on <a>. @TODO How does g7g handle this?
+		e.preventDefault();
+		e.stopPropagation();
+
 		if ( ! this.props.isSelected ) {
 			this.props.onSelect();
 		}
@@ -60,9 +47,9 @@ class GalleryImage extends Component {
 				captionSelected: false,
 			} );
 		}
-	}
+	};
 
-	onKeyDown( event ) {
+	onKeyDown = event => {
 		if (
 			this.container === document.activeElement &&
 			this.props.isSelected &&
@@ -72,29 +59,41 @@ class GalleryImage extends Component {
 			event.preventDefault();
 			this.props.onRemove();
 		}
+	};
+
+	static getDerivedStateFromProps( props, state ) {
+		// unselect the caption so when the user selects other image and comeback
+		// the caption is not immediately selected
+		if ( ! props.isSelected && state.captionSelected ) {
+			return { captionSelected: false };
+		}
+		return null;
 	}
 
-	componentDidUpdate( prevProps ) {
-		const { isSelected, image, url } = this.props;
+	componentDidUpdate() {
+		const { image, url } = this.props;
 		if ( image && ! url ) {
 			this.props.setAttributes( {
 				url: image.source_url,
 				alt: image.alt_text,
 			} );
 		}
-
-		// unselect the caption so when the user selects other image and comeback
-		// the caption is not immediately selected
-		if ( this.state.captionSelected && ! isSelected && prevProps.isSelected ) {
-			//eslint-disable-next-line
-			this.setState( {
-				captionSelected: false,
-			} );
-		}
 	}
 
 	render() {
-		const { url, alt, id, linkTo, link, isSelected, caption, onRemove, setAttributes } = this.props;
+		const {
+			'aria-label': ariaLabel,
+			alt,
+			caption,
+			className,
+			id,
+			isSelected,
+			link,
+			linkTo,
+			onRemove,
+			setAttributes,
+			url,
+		} = this.props;
 
 		let href;
 
@@ -107,25 +106,33 @@ class GalleryImage extends Component {
 				break;
 		}
 
-		const img = url ? (
-			// Disable reason: Image itself is not meant to be
-			// interactive, but should direct image selection and unfocus caption fields
-			// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events
-			<img src={ url } alt={ alt } data-id={ id } onClick={ this.onImageClick } />
-		) : (
-			<Spinner />
+		const img = (
+			// Disable reason: Image itself is not meant to be interactive, but should
+			// direct image selection and unfocus caption fields.
+			/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */
+			<Fragment>
+				<img
+					src={ url }
+					alt={ alt }
+					data-id={ id }
+					onClick={ this.onImageClick }
+					tabIndex="0"
+					onKeyDown={ this.onImageClick }
+					aria-label={ ariaLabel }
+				/>
+				{ isBlobURL( url ) && <Spinner /> }
+			</Fragment>
+			/* eslint-enable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */
 		);
 
-		const className = classnames( {
-			'is-selected': isSelected,
-			'is-transient': url && 0 === url.indexOf( 'blob:' ),
-		} );
-
 		// Disable reason: Each block can be selected by clicking on it and we should keep the same saved markup
-		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/onclick-has-role, jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 		return (
 			<figure
-				className={ className }
+				className={ classnames( className, {
+					'is-selected': isSelected,
+					'is-transient': isBlobURL( url ),
+				} ) }
 				tabIndex="-1"
 				onKeyDown={ this.onKeyDown }
 				ref={ this.bindContainer }
@@ -154,7 +161,7 @@ class GalleryImage extends Component {
 				) : null }
 			</figure>
 		);
-		/* eslint-enable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/onclick-has-role, jsx-a11y/click-events-have-key-events */
+		/* eslint-enable jsx-a11y/no-noninteractive-element-interactions */
 	}
 }
 

@@ -11,7 +11,7 @@ import classnames from 'classnames';
  */
 import { defaultColumnsNumber } from './edit';
 import GalleryGrid from './gallery-grid';
-import { getActiveStyleName } from './layouts';
+import { getActiveStyleName } from 'gutenberg/extensions/utils';
 
 export default ( { attributes } ) => {
 	const {

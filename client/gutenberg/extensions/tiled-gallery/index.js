@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,50 +19,55 @@ import { DEFAULT_COLUMNS, DEFAULT_LAYOUT, LAYOUT_STYLES, LAYOUTS } from './const
 import './editor.scss';
 
 const blockAttributes = {
+	columns: {
+		default: DEFAULT_COLUMNS,
+		type: 'number',
+	},
+	ids: {
+		default: [],
+		type: 'array',
+	},
 	images: {
 		type: 'array',
 		default: [],
 		source: 'query',
-		selector: '.wp-block-jetpack-tiled-gallery .tiled-gallery__item',
+		selector: '.tiled-gallery__item',
 		query: {
-			url: {
-				source: 'attribute',
-				selector: 'img',
-				attribute: 'src',
-			},
-			link: {
-				source: 'attribute',
-				selector: 'img',
-				attribute: 'data-link',
-			},
 			alt: {
-				source: 'attribute',
-				selector: 'img',
 				attribute: 'alt',
 				default: '',
-			},
-			id: {
-				source: 'attribute',
 				selector: 'img',
-				attribute: 'data-id',
+				source: 'attribute',
 			},
 			caption: {
-				source: 'html',
 				selector: 'figcaption',
+				source: 'html',
+				type: 'string',
+			},
+			id: {
+				attribute: 'data-id',
+				selector: 'img',
+				source: 'attribute',
+			},
+			link: {
+				attribute: 'data-link',
+				selector: 'img',
+				source: 'attribute',
+			},
+			url: {
+				attribute: 'src',
+				selector: 'img',
+				source: 'attribute',
 			},
 		},
 	},
-	columns: {
-		type: 'number',
-		default: DEFAULT_COLUMNS,
-	},
 	imageCrop: {
-		type: 'boolean',
 		default: true,
+		type: 'boolean',
 	},
 	linkTo: {
-		type: 'string',
 		default: 'none',
+		type: 'string',
 	},
 };
 

@@ -28,6 +28,6 @@ export const LAYOUT_STYLES = [
 		name: 'circle',
 	},
 ];
-export const LAYOUTS = [ 'rectangular', 'columns', 'square', 'circle' ];
+export const LAYOUTS = LAYOUT_STYLES.map( ( { name } ) => name );
 export const MAX_COLUMNS = 20;
 export const TILE_MARGIN = 2;
