@@ -35,24 +35,15 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
-	test( 'should trigger search after 3 characters and call `onChange` prop', () => {
+	test( 'should trigger search after > 1 characters and call `onChange` prop', () => {
 		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
-		wrapper.instance().onSiteTopicChange( 'bo' );
+		wrapper.instance().onSiteTopicChange( 'b' );
 		expect( defaultProps.requestVerticals ).not.toHaveBeenCalled();
-		wrapper.instance().onSiteTopicChange( 'boo' );
-		expect( defaultProps.requestVerticals ).toHaveBeenLastCalledWith( 'boo' );
+		wrapper.instance().onSiteTopicChange( 'bo' );
+		expect( defaultProps.requestVerticals ).toHaveBeenLastCalledWith( 'bo' );
 		expect( defaultProps.onChange ).toHaveBeenLastCalledWith( {
-			vertical_name: 'boo',
-			vertical_slug: 'boo',
+			vertical_name: 'bo',
+			vertical_slug: 'bo',
 		} );
-	} );
-
-	test( 'should not trigger search if the next search query value is the same as the last', () => {
-		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
-		wrapper.instance().onSiteTopicChange( 'doo' );
-		expect( defaultProps.requestVerticals ).toHaveBeenCalledTimes( 1 );
-		expect( defaultProps.onChange ).toHaveBeenLastCalledWith( defaultProps.verticals[ 0 ] );
-		wrapper.instance().onSiteTopicChange( 'doo' );
-		expect( defaultProps.requestVerticals ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

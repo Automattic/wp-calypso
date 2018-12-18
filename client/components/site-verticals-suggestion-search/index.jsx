@@ -33,29 +33,28 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		super( props );
 		this.state = {
 			searchValue: props.initialValue,
-			lastSearchValue: '',
-			charsToTriggerSearch: 3,
+			charsToTriggerSearch: 1,
 		};
 	}
 
 	onSiteTopicChange = value => {
 		value = trim( value );
+		const verticalData = find( this.props.verticals, { vertical_name: value } );
 		if (
 			value &&
-			value !== this.state.lastSearchValue &&
-			value.length === this.state.charsToTriggerSearch
+			value.length > this.state.charsToTriggerSearch &&
+			// Don't trigger a search if the input value is present in the verticals results.
+			! verticalData
 		) {
 			this.props.requestVerticals( value );
-			this.setState( {
-				lastSearchValue: value,
-			} );
 		}
 		this.setState( { siteTopicValue: value } );
-		const verticalData = find( this.props.verticals, [ 'vertical_name', value ] ) || {
-			vertical_name: value,
-			vertical_slug: value,
-		};
-		this.props.onChange( verticalData );
+		this.props.onChange(
+			verticalData || {
+				vertical_name: value,
+				vertical_slug: value,
+			}
+		);
 	};
 
 	getSuggestions = () => this.props.verticals.map( vertical => vertical.vertical_name );
@@ -78,7 +77,9 @@ export class SiteVerticalsSuggestionSearch extends Component {
 }
 
 const SITE_VERTICALS_REQUEST_ID = 'site-verticals-search-results';
-const requestSiteVerticals = ( searchTerm, limit = 5 ) => {
+const requestSiteVerticals = debounce( ( searchTerm, limit = 5 ) => {
+	// eslint-disable-next-line
+	console.log( 'searchTerm', searchTerm );
 	return requestHttpData(
 		SITE_VERTICALS_REQUEST_ID,
 		http( {
@@ -95,13 +96,17 @@ const requestSiteVerticals = ( searchTerm, limit = 5 ) => {
 			freshness: -Infinity,
 		}
 	);
-};
+}, 250 );
 
 export default localize(
 	connect(
-		() => ( {
-			verticals: get( getHttpData( SITE_VERTICALS_REQUEST_ID ), 'data', [] ),
-		} ),
-		() => ( { requestVerticals: debounce( requestSiteVerticals, 500 ) } )
+		() => {
+			const siteVerticalsHttpData = getHttpData( SITE_VERTICALS_REQUEST_ID );
+			return {
+				isSearchPending: 'pending' === get( siteVerticalsHttpData, 'state', false ),
+				verticals: get( siteVerticalsHttpData, 'data', [] ),
+			};
+		},
+		() => ( { requestVerticals: requestSiteVerticals } )
 	)( SiteVerticalsSuggestionSearch )
 );
