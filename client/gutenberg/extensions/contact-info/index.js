@@ -10,6 +10,7 @@ import { Path } from '@wordpress/components';
  */
 import edit from './edit';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
+import './editor.scss';
 
 const attributes = {};
 
