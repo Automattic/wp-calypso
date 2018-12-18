@@ -98,10 +98,10 @@ button {
 		background-size: 120px 100%;
 		background-image: linear-gradient(
 			-45deg,
-			$gray-lighten-30 28%,
-			$white 28%,
-			$white 72%,
-			$gray-lighten-30 72%
+			var( --color-neutral-0 ) 28%,
+			var( --color-surface ) 28%,
+			var( --color-surface ) 72%,
+			var( --color-neutral-0 ) 72%
 		);
 	}
 	&.hidden {
@@ -200,10 +200,10 @@ button {
 		background-size: 120px 100%;
 		background-image: linear-gradient(
 			-45deg,
-			$alert-red 28%,
-			darken( $alert-red, 5% ) 28%,
-			darken( $alert-red, 5% ) 72%,
-			$alert-red 72%
+			var( --color-error ) 28%,
+			var( --color-error-dark ) 28%,
+			var( --color-error-dark ) 72%,
+			var( --color-error ) 72%
 		);
 		border-color: darken( $alert-red, 8% );
 	}
