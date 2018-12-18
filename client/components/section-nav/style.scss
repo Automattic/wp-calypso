@@ -237,6 +237,10 @@
 		&.is-selected {
 			border-bottom-color: $gray-dark;
 		}
+
+		&:hover:not( .is-selected ) {
+			border-bottom-color: var( --color-section-nav-item-background-hover );
+		}
 	}
 }
 
@@ -298,6 +302,7 @@
 
 	.notouch & {
 		&:hover {
+			background-color: var( --color-section-nav-item-background-hover );
 			color: var( --color-primary );
 		}
 	}
