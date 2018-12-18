@@ -8,7 +8,7 @@ import { CONCIERGE_INITIAL_REQUEST, CONCIERGE_INITIAL_UPDATE } from 'state/actio
 
 export const scheduleId = createReducer( null, {
 	[ CONCIERGE_INITIAL_REQUEST ]: () => null,
-	[ CONCIERGE_INITIAL_UPDATE ]: ( state, action ) => action.scheduleId,
+	[ CONCIERGE_INITIAL_UPDATE ]: ( state, { initial } ) => initial.scheduleId,
 } );
 
 export default scheduleId;

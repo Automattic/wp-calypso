@@ -25,7 +25,9 @@ describe( 'concierge/scheduleId/reducer', () => {
 		expect(
 			scheduleId( undefined, {
 				type: CONCIERGE_INITIAL_UPDATE,
-				scheduleId: expectedScheduleId,
+				initial: {
+					scheduleId: expectedScheduleId,
+				},
 			} )
 		).toEqual( expectedScheduleId );
 	} );
