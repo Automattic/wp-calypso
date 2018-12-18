@@ -60,10 +60,10 @@ const save = ( {
 			( region || postal ) && (
 				<div>
 					{ [
-						<span itemprop="addressLocality">city</span>,
+						<span itemprop="addressLocality">{ city }</span>,
 						', ',
-						<span itemprop="addressRegion">region</span>,
-						<span itemprop="addressPostal">postal</span>,
+						<span itemprop="addressRegion">{ region }</span>,
+						<span itemprop="addressPostal">{ postal }</span>,
 					] }
 				</div>
 			) }
@@ -71,8 +71,8 @@ const save = ( {
 			( region || postal ) && (
 				<div>
 					{ [
-						<span itemprop="addressRegion">region</span>,
-						<span itemprop="addressPostal">postal</span>,
+						<span itemprop="addressRegion">{ region }</span>,
+						<span itemprop="addressPostal">{ postal }</span>,
 					] }
 				</div>
 			) }
