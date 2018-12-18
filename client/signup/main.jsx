@@ -38,6 +38,7 @@ import './style.scss';
 import DocumentHead from 'components/data/document-head';
 import LocaleSuggestions from 'components/locale-suggestions';
 import SignupProcessingScreen from 'signup/processing-screen';
+import SignupHeader from 'signup/header';
 import SiteMockups from 'signup/site-mockup';
 
 // Libraries
@@ -66,7 +67,6 @@ import { submitSiteTopic } from 'state/signup/steps/site-topic/actions';
 import steps from './config/steps';
 import flows from './config/flows';
 import stepComponents from './config/step-components';
-import FlowProgressIndicator from './flow-progress-indicator';
 import {
 	canResumeFlow,
 	getCompletedSteps,
@@ -602,14 +602,13 @@ class Signup extends React.Component {
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 				<DocumentHead title={ pageTitle } />
-				{ ! this.state.shouldShowLoadingScreen &&
-					showProgressIndicator && (
-						<FlowProgressIndicator
-							positionInFlow={ this.getPositionInFlow() }
-							flowLength={ this.getFlowLength() }
-							flowName={ this.props.flowName }
-						/>
-					) }
+				<SignupHeader
+					positionInFlow={ this.getPositionInFlow() }
+					flowLength={ this.getFlowLength() }
+					flowName={ this.props.flowName }
+					showProgressIndicator={ showProgressIndicator }
+					shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
+				/>
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
 				{ this.shouldShowSiteMockups() && <SiteMockups /> }
 				{ this.state.bearerToken && (

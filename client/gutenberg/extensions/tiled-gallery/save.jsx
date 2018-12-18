@@ -76,6 +76,7 @@ export default ( { attributes } ) => {
 			images={ images }
 			layout={ layout }
 			renderGalleryImage={ renderGalleryImage }
+			noResize
 		/>
 	);
 };

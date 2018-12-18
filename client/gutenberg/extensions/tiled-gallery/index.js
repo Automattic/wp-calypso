@@ -91,6 +91,7 @@ export const settings = {
 	styles: LAYOUT_STYLES,
 	supports: {
 		align: true,
+		alignWide: true,
 		html: false,
 	},
 	title: __( 'Tiled gallery' ),
