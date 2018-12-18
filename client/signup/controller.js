@@ -26,8 +26,7 @@ import userModule from 'lib/user';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import store from 'store';
 import SignupProgressStore from 'lib/signup/progress-store';
-// TODO: pull from action file after it's created :)
-import { setCurrentFlow } from 'state/signup/reducer';
+import { setCurrentFlow } from 'state/signup/flow/actions';
 
 const user = userModule();
 
