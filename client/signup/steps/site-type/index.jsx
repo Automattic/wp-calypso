@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -55,7 +56,12 @@ class SiteType extends Component {
 
 	renderRadioOptions() {
 		return allSiteTypes.map( siteTypeProperties => (
-			<FormLabel className="site-type__option" key={ siteTypeProperties.id }>
+			<FormLabel
+				className={ classNames( 'site-type__option', {
+					'is-selected': siteTypeProperties.slug === this.state.siteType,
+				} ) }
+				key={ siteTypeProperties.id }
+			>
 				<FormRadio
 					value={ siteTypeProperties.slug }
 					checked={ siteTypeProperties.slug === this.state.siteType }
