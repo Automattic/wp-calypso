@@ -11,6 +11,7 @@ import {
 	InspectorControls,
 	PanelColorSettings,
 	ContrastChecker,
+	getColorClassName,
 	withColors,
 } from '@wordpress/editor';
 
@@ -56,9 +57,22 @@ class SubscriptionEdit extends Component {
 			setAttributes,
 			backgroundColor,
 			textColor,
+			customBackgroundColor,
+			customTextColor,
 			setBackgroundColor,
 			setTextColor,
 		} = this.props;
+
+		const textClass = getColorClassName( 'color', textColor );
+		const backgroundClass = getColorClassName( 'background-color', backgroundColor );
+
+		const buttonClasses = classnames( 'wp-block-button__link', {
+			'has-text-color': textColor || customTextColor,
+			[ textClass ]: textClass,
+			'has-background': backgroundColor || customBackgroundColor,
+			[ backgroundClass ]: backgroundClass,
+		} );
+
 		const { subscribePlaceholder, showSubscribersTotal } = attributes;
 
 		const buttonStyle = {
@@ -83,17 +97,7 @@ class SubscriptionEdit extends Component {
 							disabled={ true }
 							onChange={ () => {} }
 						/>
-						<Button
-							type="button"
-							isDefault
-							className={ classnames( 'wp-block-button__link', {
-								'has-background': backgroundColor.color,
-								[ backgroundColor.class ]: backgroundColor.class,
-								'has-text-color': textColor.color,
-								[ textColor.class ]: textColor.class,
-							} ) }
-							style={ buttonStyle }
-						>
+						<Button type="button" isDefault className={ buttonClasses } style={ buttonStyle }>
 							{ __( 'Subscribe' ) }
 						</Button>
 					</div>
@@ -131,7 +135,7 @@ class SubscriptionEdit extends Component {
 			<div className={ className } role="form">
 				{ showSubscribersTotal && <p role="heading">{ this.state.subscriberCountString }</p> }
 				<TextControl placeholder={ subscribePlaceholder } />
-				<Button type="button" isDefault style={ buttonStyle }>
+				<Button type="button" isDefault style={ buttonStyle } className={ buttonClasses }>
 					{ __( 'Subscribe' ) }
 				</Button>
 			</div>
