@@ -228,7 +228,7 @@ export class UserStep extends Component {
 			} );
 		}
 
-		if ( 'onboarding-dev' === flowName || 'onboarding' === flowName ) {
+		if ( 'onboarding-dev' === flowName ) {
 			return translate( 'Make something great' );
 		}
 
