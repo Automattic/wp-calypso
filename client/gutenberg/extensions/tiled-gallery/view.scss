@@ -27,14 +27,14 @@
 		}
 
 		figure {
-			margin: 0;
 			height: 100%;
+			margin: $tiled-gallery-gutter;
+			width: 100%;
 		}
 
 		img {
 			display: block;
 			height: auto;
-			margin: $tiled-gallery-gutter;
 			max-width: 100%;
 		}
 

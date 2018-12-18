@@ -30,4 +30,4 @@ export const LAYOUT_STYLES = [
 ];
 export const LAYOUTS = [ 'rectangular', 'columns', 'square', 'circle' ];
 export const MAX_COLUMNS = 20;
-export const TILE_MARGIN = 2;
+export const TILE_MARGIN = 4;
