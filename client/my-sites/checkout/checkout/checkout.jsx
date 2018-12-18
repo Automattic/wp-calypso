@@ -378,8 +378,7 @@ export class Checkout extends React.Component {
 						if ( abtest( 'showConciergeSessionUpsell' ) === 'show' ) {
 							// A user just purchased one of the qualifying plans and is in the "show" ab test variation
 							// Show them the concierge session upsell page
-							// return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
-							return `/checkout/${ selectedSiteSlug }/add-expert-session/${ receiptId }`;
+							return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
 						}
 					}
 				}
