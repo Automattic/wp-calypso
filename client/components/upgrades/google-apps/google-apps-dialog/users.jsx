@@ -18,7 +18,7 @@ import GoogleAppsUsersForm from './users-form';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 
 class GoogleAppsUsers extends React.Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.firstName ) {
 			this.props.onChange( this.props.fields ? this.props.fields : this.getInitialFields() );
 		}
