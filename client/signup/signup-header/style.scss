@@ -1,6 +1,6 @@
 // A masterbar-like header just for
 // the signup flow.
-.header {
+.signup-header {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -23,21 +23,21 @@
 		}
 	}
 
-	.header__left {
+	.signup-header__left {
 		position: absolute;
 		top: 12px;
 		left: 16px;
 	}
 
-	.header__right {
+	.signup-header__right {
 		position: absolute;
 		top: 12px;
 		right: 16px;
 	}
 }
 
-.header__masterbar-mock,
-.has-no-masterbar .header .header__masterbar-mock {
+.signup-header__masterbar-mock,
+.has-no-masterbar .signup-header .signup-header__masterbar-mock {
 	opacity: 0;
 	height: 48px;
 	animation: 0.5s hideMockMasterbar ease-out;

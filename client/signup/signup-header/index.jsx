@@ -55,17 +55,17 @@ export default class SignupHeader extends Component {
 		} );
 
 		return (
-			<div className="header">
-				{ this.shouldShowMockMasterBar() && <div className="header__masterbar-mock masterbar" /> }
+			<div className="signup-header">
+				{ this.shouldShowMockMasterBar() && <div className="signup-header__masterbar-mock masterbar" /> }
 				<WordPressLogo size={ 120 } className={ logoClasses } />
 
 				{ /* Ideally, this is where the back button
 			   would live. But thats hard to move, it seems. */ }
-				<div className="header__left" />
+				<div className="signup-header__left" />
 
 				{ /* This should show a sign in link instead of
 			   the progressIndicator on the account step. */ }
-				<div className="header__right">
+				<div className="signup-header__right">
 					{ ! this.props.shouldShowLoadingScreen &&
 						this.props.showProgressIndicator && (
 							<FlowProgressIndicator
