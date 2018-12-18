@@ -1,4 +1,7 @@
-/** @format */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
@@ -11,7 +14,9 @@ jest.mock( 'blocks/dismissible-card', () => {
 
 jest.mock( 'components/card', () => {
 	const React = require( 'react' );
-	return class Card extends React.Component {};
+	return class Card extends React.Component {
+		render = () => this.props.children;
+	};
 } );
 
 jest.mock( 'lib/analytics/track-component-view', () => {
@@ -28,14 +33,14 @@ jest.mock( 'i18n-calypso', () => ( {
 			} }
 		/>
 	),
-	numberFormat: x => x,
+	numberFormat: jest.requireActual( 'i18n-calypso' ).numberFormat,
 } ) );
 
 /**
  * External dependencies
  */
 import { assert } from 'chai';
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import React from 'react';
 import {
 	PLAN_FREE,
@@ -102,12 +107,12 @@ describe( 'Banner basic tests', () => {
 	} );
 
 	test( 'should render a <PlanPrice /> when price is specified', () => {
-		const comp = shallow( <Banner { ...props } price={ 100 } /> );
+		const comp = mount( <Banner { ...props } price={ 100 } /> );
 		assert.lengthOf( comp.find( 'PlanPrice' ), 1 );
 	} );
 
 	test( 'should render two <PlanPrice /> components when there are two prices', () => {
-		const comp = shallow( <Banner { ...props } price={ [ 100, 80 ] } /> );
+		const comp = mount( <Banner { ...props } price={ [ 100, 80 ] } /> );
 		assert.lengthOf( comp.find( 'PlanPrice' ), 2 );
 	} );
 
