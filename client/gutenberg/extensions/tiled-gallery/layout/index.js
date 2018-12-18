@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import photon from 'photon';
 import { __, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 
@@ -10,6 +11,15 @@ import { Component } from '@wordpress/element';
 import Square from './square';
 
 export default class Layout extends Component {
+	photonize( { height, width, url } ) {
+		const { layoutStyle } = this.props;
+		if ( [ 'circle', 'square' ].includes( layoutStyle ) && width && height ) {
+			const size = Math.min( width, height );
+			return photon( url, { resize: `${ size },${ size }` } );
+		}
+		return photon( url );
+	}
+
 	renderImage( img, i ) {
 		const {
 			columns,
@@ -33,6 +43,7 @@ export default class Layout extends Component {
 				caption={ img.caption }
 				className="tiled-gallery__item"
 				columns={ columns }
+				height={ img.height }
 				id={ img.id }
 				imageCrop={ imageCrop }
 				isSelected={ selectedImage === i }
@@ -41,7 +52,8 @@ export default class Layout extends Component {
 				onRemove={ onRemoveImage( i ) }
 				onSelect={ onSelectImage( i ) }
 				setAttributes={ setImageAttributes( i ) }
-				url={ img.url }
+				url={ this.photonize( img ) }
+				width={ img.width }
 			/>
 		);
 	}

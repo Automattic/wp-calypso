@@ -44,6 +44,12 @@ const blockAttributes = {
 				source: 'html',
 				type: 'string',
 			},
+			height: {
+				attribute: 'data-height',
+				selector: 'img',
+				source: 'attribute',
+				type: 'number',
+			},
 			id: {
 				attribute: 'data-id',
 				selector: 'img',
@@ -58,6 +64,12 @@ const blockAttributes = {
 				attribute: 'src',
 				selector: 'img',
 				source: 'attribute',
+			},
+			width: {
+				attribute: 'data-width',
+				selector: 'img',
+				source: 'attribute',
+				type: 'number',
 			},
 		},
 	},

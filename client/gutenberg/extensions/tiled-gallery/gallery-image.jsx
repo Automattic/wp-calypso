@@ -77,9 +77,9 @@ class GalleryImage extends Component {
 			const { width, height } = media_details;
 			this.props.setAttributes( {
 				alt: alt_text,
-				height: height,
+				height: +height,
 				url: source_url,
-				width: width,
+				width: +width,
 			} );
 		}
 	}
@@ -90,6 +90,7 @@ class GalleryImage extends Component {
 			alt,
 			caption,
 			className,
+			height,
 			id,
 			isSelected,
 			link,
@@ -97,6 +98,7 @@ class GalleryImage extends Component {
 			onRemove,
 			setAttributes,
 			url,
+			width,
 		} = this.props;
 
 		let href;
@@ -119,6 +121,8 @@ class GalleryImage extends Component {
 					src={ url }
 					alt={ alt }
 					data-id={ id }
+					data-height={ height }
+					data-width={ width }
 					onClick={ this.onImageClick }
 					tabIndex="0"
 					onKeyDown={ this.onImageClick }
