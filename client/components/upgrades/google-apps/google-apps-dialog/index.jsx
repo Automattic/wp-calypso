@@ -150,6 +150,7 @@ class GoogleAppsDialog extends React.Component {
 	handleFormSubmit = event => {
 		event.preventDefault();
 
+		this.props.recordAddEmailButtonClick( this.props.analyticsSection );
 		this.props.recordFormSubmit( this.props.analyticsSection );
 
 		if ( ! this.validateForm() ) {
