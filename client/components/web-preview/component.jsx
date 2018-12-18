@@ -63,6 +63,8 @@ export class WebPreviewModal extends Component {
 		hasSidebar: PropTypes.bool,
 		// The site/post description passed to the SeoPreviewPane
 		frontPageMetaDescription: PropTypes.string,
+		// A post object used to override the selected post in the SEO preview
+		overridePost: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -78,6 +80,7 @@ export class WebPreviewModal extends Component {
 		onClose: noop,
 		onEdit: noop,
 		hasSidebar: false,
+		overridePost: null,
 	};
 
 	constructor( props ) {

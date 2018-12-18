@@ -284,7 +284,10 @@ export class WebPreviewContent extends Component {
 						/>
 					</div>
 					{ 'seo' === this.state.device && (
-						<SeoPreviewPane frontPageMetaDescription={ this.props.frontPageMetaDescription } />
+						<SeoPreviewPane
+							overridePost={ this.props.overridePost }
+							frontPageMetaDescription={ this.props.frontPageMetaDescription }
+						/>
 					) }
 				</div>
 			</div>
@@ -344,6 +347,8 @@ WebPreviewContent.propTypes = {
 	frontPageMetaDescription: PropTypes.string,
 	// Whether the inline help popup is open
 	isInlineHelpPopoverVisible: PropTypes.bool,
+	// A post object used to override the selected post in the SEO preview
+	overridePost: PropTypes.object,
 };
 
 WebPreviewContent.defaultProps = {
@@ -363,6 +368,7 @@ WebPreviewContent.defaultProps = {
 	onDeviceUpdate: noop,
 	hasSidebar: false,
 	isModalWindow: false,
+	overridePost: null,
 };
 
 const mapState = state => ( {
