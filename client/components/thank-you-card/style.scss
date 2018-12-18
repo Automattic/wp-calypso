@@ -10,7 +10,7 @@
 	font-family: $sans;
 	text-align: center;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin-top: 28px;
 	}
 }
@@ -24,7 +24,7 @@
 	overflow: hidden;
 	z-index: z-index( 'root', '.thank-you-card__header' );
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 32px 0;
 	}
 }
@@ -37,7 +37,7 @@
 .thank-you-card__body {
 	padding: 24px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 40px;
 	}
 }
@@ -49,7 +49,7 @@
 	position: relative;
 	z-index: z-index( '.thank-you-card__header', '.thank-you-card__main-icon' );
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		width: 96px;
 		height: 96px;
 	}
@@ -90,7 +90,7 @@
 	font-weight: 600;
 	margin-bottom: 8px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 26px;
 	}
 }
@@ -103,7 +103,7 @@
 	margin: 0 auto 30px;
 	line-height: 20px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 15px;
 	}
 }
@@ -113,13 +113,11 @@
 	display: inline-block;
 	border-radius: 4px;
 	background-color: $white;
-	//color: darken( $alert-green, 30 );
 	font-size: 14px;
 	max-width: 280px;
 	padding: 8px 24px;
 	margin: 0 auto;
 	border-style: solid;
-	//border-color: darken( $alert-green, 20 );
 	border-width: 1px 1px 2px;
 }
 
@@ -127,24 +125,16 @@
 .thank-you-card__button.is-placeholder:visited {
 	@include placeholder();
 	pointer-events: none;
-	//background-color: lighten( $alert-green, 40 );
 	border-color: transparent;
 	border-radius: 0;
 }
 
-.thank-you-card__button:hover {
-	//border-color: darken( $alert-green, 30 );
-	//color: darken( $alert-green, 10 );
-}
-
 .thank-you-card__button:focus {
-	//color: darken( $alert-green, 10 );
 	outline: 1px dotted $white;
 }
 
 .thank-you-card__button:active {
 	border-width: 2px 1px 1px;
-	//color: darken( $alert-green, 30 );
 }
 
 @keyframes floating {
@@ -176,62 +166,62 @@
 		animation: floating 10s infinite ease-in-out;
 	}
 
-	.gridicon:nth-child(1) {
+	.gridicon:nth-child( 1 ) {
 		top: 18px;
 		left: 14.8%;
 		animation-delay: 6s;
 	}
-	.gridicon:nth-child(2) {
+	.gridicon:nth-child( 2 ) {
 		top: 118px;
 		left: 67.4%;
 		animation-delay: 4s;
 	}
-	.gridicon:nth-child(3) {
+	.gridicon:nth-child( 3 ) {
 		top: 108px;
 		left: 86.2%;
 		animation-delay: 7s;
 	}
-	.gridicon:nth-child(4) {
+	.gridicon:nth-child( 4 ) {
 		top: 190px;
 		left: 8.4%;
 		animation-delay: 1s;
 	}
-	.gridicon:nth-child(5) {
+	.gridicon:nth-child( 5 ) {
 		top: 233px;
 		left: 70.6%;
 		animation-delay: 7s;
 	}
-	.gridicon:nth-child(6) {
+	.gridicon:nth-child( 6 ) {
 		top: 83px;
 		left: 4.2%;
 		animation-delay: 6s;
 	}
-	.gridicon:nth-child(7) {
+	.gridicon:nth-child( 7 ) {
 		top: 213px;
 		left: 23.8%;
 		animation-delay: 3s;
 	}
-	.gridicon:nth-child(8) {
+	.gridicon:nth-child( 8 ) {
 		top: 30px;
 		left: 37.8%;
 		animation-delay: 5s;
 	}
-	.gridicon:nth-child(9) {
+	.gridicon:nth-child( 9 ) {
 		top: 26px;
 		left: 78.4%;
 		animation-delay: 7s;
 	}
-	.gridicon:nth-child(10) {
+	.gridicon:nth-child( 10 ) {
 		top: 101px;
 		left: 21%;
 		animation-delay: 5s;
 	}
-	.gridicon:nth-child(11) {
+	.gridicon:nth-child( 11 ) {
 		top: 21px;
 		left: 62%;
 		animation-delay: 9s;
 	}
-	.gridicon:nth-child(12) {
+	.gridicon:nth-child( 12 ) {
 		top: 161px;
 		left: 77.6%;
 		animation-delay: 4s;

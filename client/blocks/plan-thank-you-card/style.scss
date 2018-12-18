@@ -1,5 +1,5 @@
 @mixin plan-thank-you-card-color( $color ) {
-	.thank-you-card{
+	.thank-you-card {
 		background-color: darken( $color, 10 );
 	}
 
@@ -20,44 +20,13 @@
 			background-color: lighten( $color, 40 );
 		}
 	}
-
-	/*.thank-you-card__button,
-	.thank-you-card__button:visited {
-		color: darken( $color, 30 );
-		border-color: darken( $color, 20 );
-
-		&.is-placeholder {
-			background-color: lighten( $color, 40 );
-		}
-	}
-
-	.thank-you-card__button {
-		&:hover {
-			border-color: darken( $color, 30 );
-			color: darken( $color, 10 );
-		}
-
-		&:focus {
-			color: darken( $color, 10 );
-		}
-
-		&:active {
-			color: darken( $color, 30 );
-		}
-	}*/
 }
 
 .plan-thank-you-card .thank-you-card__main-icon {
 	margin-bottom: 8px;
 }
 
-.plan-thank-you-card.is-free-plan {
-	//@include plan-thank-you-card-color( $blue-medium );
-}
-
 .plan-thank-you-card.is-personal-plan {
-	//@include plan-thank-you-card-color( $alert-yellow );
-
 	.thank-you-card__header .plan-icon .plan-icon__personal-0 {
 		fill: darken( $alert-yellow, 10 );
 	}
@@ -70,8 +39,6 @@
 }
 
 .plan-thank-you-card.is-business-plan {
-	//@include plan-thank-you-card-color( $alert-purple );
-
 	.thank-you-card__header .plan-icon .plan-icon__business-0 {
 		fill: darken( $alert-purple, 10 );
 	}
