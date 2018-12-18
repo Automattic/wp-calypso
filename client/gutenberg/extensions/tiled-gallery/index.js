@@ -11,7 +11,7 @@ import { Rect, SVG } from '@wordpress/components';
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import edit from './edit';
 import save from './save';
-import { DEFAULT_COLUMNS, DEFAULT_LAYOUT, LAYOUT_STYLES, LAYOUTS } from './constants';
+import { DEFAULT_LAYOUT, LAYOUT_STYLES } from './constants';
 
 /**
  * Style dependencies
@@ -20,7 +20,6 @@ import './editor.scss';
 
 const blockAttributes = {
 	columns: {
-		default: DEFAULT_COLUMNS,
 		type: 'number',
 	},
 	ids: {
@@ -170,7 +169,9 @@ export const settings = {
 						type: 'string',
 						shortcode: ( { named: { type = DEFAULT_LAYOUT } } ) => {
 							// @TODO: if `type=slideshow`, return a slideshow block
-							return LAYOUTS.indexOf( type ) > -1 ? type : DEFAULT_LAYOUT;
+							return LAYOUT_STYLES.map( style => style.name ).includes( type )
+								? type
+								: DEFAULT_LAYOUT;
 						},
 					},
 				},

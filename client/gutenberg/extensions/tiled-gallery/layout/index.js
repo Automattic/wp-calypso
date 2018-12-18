@@ -9,6 +9,7 @@ import { Component } from '@wordpress/element';
  * Internal dependencies
  */
 import Square from './square';
+import GalleryImage from '../gallery-image';
 
 export default class Layout extends Component {
 	photonize( { height, width, url } ) {
@@ -23,7 +24,6 @@ export default class Layout extends Component {
 	renderImage( img, i ) {
 		const {
 			columns,
-			galleryImage: Image,
 			imageCrop,
 			images,
 			linkTo,
@@ -37,7 +37,7 @@ export default class Layout extends Component {
 		const ariaLabel = __( sprintf( 'image %1$d of %2$d in gallery', i + 1, images.length ) );
 
 		return (
-			<Image
+			<GalleryImage
 				alt={ img.alt }
 				aria-label={ ariaLabel }
 				caption={ img.caption }

@@ -28,6 +28,5 @@ export const LAYOUT_STYLES = [
 		name: 'columns',
 	},
 ];
-export const LAYOUTS = LAYOUT_STYLES.map( ( { name } ) => name );
 export const MAX_COLUMNS = 20;
 export const TILE_MARGIN = 2;

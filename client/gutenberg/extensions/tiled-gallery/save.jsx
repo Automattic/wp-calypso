@@ -1,82 +1,28 @@
-/** @format */
-
-/**
- * External dependencies
- */
-import { RichText } from '@wordpress/editor';
-import classnames from 'classnames';
-
 /**
  * Internal dependencies
  */
+import Layout from './layout';
 import { defaultColumnsNumber } from './edit';
-import GalleryGrid from './gallery-grid';
 import { getActiveStyleName } from 'gutenberg/extensions/utils';
+import { LAYOUT_STYLES } from './constants';
 
-export default ( { attributes } ) => {
-	const {
-		align,
-		className,
-		columns = defaultColumnsNumber( attributes ),
-		imageCrop,
-		images,
-		linkTo,
-	} = attributes;
+export default function TiledGallerySave( { attributes } ) {
+	const { images } = attributes;
 
-	const layout = getActiveStyleName( className );
+	if ( ! images.length ) {
+		return null;
+	}
 
-	const renderGalleryImage = index => {
-		if ( ! images[ index ] ) {
-			return null;
-		}
-
-		const image = images[ index ];
-
-		let href;
-
-		switch ( linkTo ) {
-			case 'media':
-				href = image.url;
-				break;
-			case 'attachment':
-				href = image.link;
-				break;
-		}
-
-		const img = (
-			<img
-				alt={ image.alt }
-				className={ classnames( {
-					[ `wp-image-${ image.id }` ]: image.id,
-				} ) }
-				data-id={ image.id }
-				data-link={ image.link }
-				src={ image.url }
-			/>
-		);
-
-		return (
-			<figure>
-				{ href ? <a href={ href }>{ img }</a> : img }
-				{ layout !== 'circle' &&
-					image.caption &&
-					image.caption.length > 0 && (
-						<RichText.Content tagName="figcaption" value={ image.caption } />
-					) }
-			</figure>
-		);
-	};
+	const { className, columns = defaultColumnsNumber( attributes ), imageCrop, linkTo } = attributes;
 
 	return (
-		<GalleryGrid
-			align={ align }
-			className={ `wp-block-jetpack-tiled-gallery ${ className }` }
+		<Layout
+			className={ className }
 			columns={ columns }
 			imageCrop={ imageCrop }
 			images={ images }
-			layout={ layout }
-			renderGalleryImage={ renderGalleryImage }
-			noResize
+			layoutStyle={ getActiveStyleName( LAYOUT_STYLES, className ) }
+			linkTo={ linkTo }
 		/>
 	);
-};
+}

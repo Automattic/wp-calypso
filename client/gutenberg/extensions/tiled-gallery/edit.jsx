@@ -25,7 +25,6 @@ import {
 /**
  * Internal dependencies
  */
-import GalleryImage from './gallery-image';
 import Layout from './layout';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { getActiveStyleName } from 'gutenberg/extensions/utils';
@@ -238,7 +237,6 @@ class TiledGalleryEdit extends Component {
 				<Layout
 					className={ className }
 					columns={ columns }
-					galleryImage={ GalleryImage }
 					imageCrop={ imageCrop }
 					images={ images }
 					layoutStyle={ getActiveStyleName( LAYOUT_STYLES, blockStyleClassName ) }
