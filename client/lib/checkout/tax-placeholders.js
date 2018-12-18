@@ -15,7 +15,7 @@ const debug = debugFactory( 'calypso:tax-placeholders' );
 export function maybeInjectTaxPlaceholdersIntoPurchase( purchase ) {
 	const purchasePriceText = get( purchase, 'price_text' );
 	if (
-		config.isEnabled( 'show-tax' ) &&
+		config.isEnabled( 'tax-placeholders' ) &&
 		! has( purchase, 'tax_text' ) &&
 		isString( purchasePriceText ) &&
 		! purchasePriceText.match( /include/i ) // "Included with plan"
@@ -30,7 +30,7 @@ export function maybeInjectTaxPlaceholdersIntoPurchase( purchase ) {
 }
 
 export function maybeInjectTaxPlaceholdersIntoPurchases( purchases ) {
-	if ( ! config.isEnabled( 'show-tax' ) ) {
+	if ( ! config.isEnabled( 'tax-placeholders' ) ) {
 		return purchases;
 	}
 	debug( 'injecting tax_amount into purchases', purchases );
