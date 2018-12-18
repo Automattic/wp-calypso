@@ -218,7 +218,7 @@ export class UserStep extends Component {
 	}
 
 	getHeaderText() {
-		const { flowName, oauth2Client, translate } = this.props;
+		const { flowName, oauth2Client, translate, headerText } = this.props;
 
 		if ( includes( [ 'wpcc', 'crowdsignal' ], flowName ) && oauth2Client ) {
 			return translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
@@ -228,7 +228,11 @@ export class UserStep extends Component {
 			} );
 		}
 
-		return translate( 'Make something great' );
+		if ( 'onboarding-dev' === flowName ) {
+			return translate( 'Make something great' );
+		}
+
+		return headerText;
 	}
 
 	getRedirectToAfterLoginUrl() {
@@ -266,7 +270,7 @@ export class UserStep extends Component {
 			return translate( 'Account created - Go to next step' );
 		}
 
-		return translate( 'Continue' );
+		return translate( 'Create your account' );
 	}
 
 	renderSignupForm() {
