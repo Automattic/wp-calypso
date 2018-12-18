@@ -62,6 +62,7 @@ class Document extends React.Component {
 			devDocsURL,
 			feedbackURL,
 			inlineScriptNonce,
+			section,
 		} = this.props;
 
 		const csskey = isRTL ? 'css.rtl' : 'css.ltr';
@@ -119,10 +120,13 @@ class Document extends React.Component {
 					) }
 				</Head>
 				<body
-					className={ classNames( {
-						rtl: isRTL,
-						'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
-					} ) }
+					className={ classNames(
+						{
+							rtl: isRTL,
+							'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
+						},
+						section.name
+					) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
 					{ renderedLayout ? (

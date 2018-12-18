@@ -16,7 +16,7 @@ import debugFactory from 'debug';
 import config from 'config';
 import { isDefaultLocale } from 'lib/i18n-utils';
 import { getLanguageFileUrl } from 'lib/i18n-utils/switch-locale';
-import { isSectionIsomorphic } from 'state/ui/selectors';
+import { isSectionIsomorphic, getSection } from 'state/ui/selectors';
 import {
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
@@ -180,6 +180,7 @@ export function serverRender( req, res ) {
 		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
 
+	context.section = getSection( context.store.getState() );
 	context.head = { title, metas, links };
 	context.clientData = config.clientData;
 	try {
