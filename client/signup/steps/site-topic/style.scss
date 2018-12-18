@@ -6,13 +6,26 @@
 		margin-bottom: 0;
 	}
 
+	.gridicon {
+		position: absolute;
+		top: 11px;
+		left: 11px;
+		fill: $gray-darken-30;
+	}
+
 	input {
-		padding: 10px 100px 10px 14px;
+		padding: 10px 100px 10px 42px;
+	}
+
+	.suggestions__wrapper {
+		// Without the extra padding from the Card, we need
+		// to adjust the position of the suggestions.
+		top: 48px;
 	}
 
 	.button {
-	    position: absolute;
-		    top: 3px;
-		    right: 3px;
+		position: absolute;
+		top: 3px;
+		right: 3px;
 	}
 }
