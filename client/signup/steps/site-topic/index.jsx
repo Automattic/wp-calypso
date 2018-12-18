@@ -22,6 +22,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
 import { hints } from 'lib/signup/hint-data';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import Gridicon from 'gridicons';
 
 /**
  * Style dependencies
@@ -78,6 +79,7 @@ class SiteTopicStep extends Component {
 			<div className="site-topic__content">
 				<form onSubmit={ this.onSubmit }>
 					<FormFieldset>
+						<Gridicon icon="search" />
 						<SuggestionSearch
 							id="siteTopic"
 							placeholder={ placeholder }
