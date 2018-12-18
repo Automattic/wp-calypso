@@ -37,7 +37,7 @@ export default async function getExtensions() {
 		 */
 		import( /* webpackMode: "eager" */
 		/* webpackInclude: /\/gutenberg\/extensions\/[a-zA-Z0-9_-]+\/index.js$/ */
-		`../../${ slug }/index.js` ).then( ( { childBlocks, name, settings } ) => ( {
+		`../../../${ slug }/index.js` ).then( ( { childBlocks, name, settings } ) => ( {
 			childBlocks,
 			name,
 			settings: extensionSlugsJson.beta.includes( slug )
