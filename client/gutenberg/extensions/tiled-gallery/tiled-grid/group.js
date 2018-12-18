@@ -1,8 +1,3 @@
-/**
- * Internal dependencies
- */
-import { Jetpack_Tiled_Gallery_Rectangular_Item } from './rectangular-item.js';
-
 export class Jetpack_Tiled_Gallery_Group {
 	constructor( images ) {
 		this.images = images;
@@ -24,13 +19,11 @@ export class Jetpack_Tiled_Gallery_Group {
 		return 1 / ratio;
 	};
 
-	items = ( needs_attachment_link, grayscale ) => {
+	items = () => {
 		const items = [];
 
 		for ( const image of this.images ) {
-			items.push(
-				new Jetpack_Tiled_Gallery_Rectangular_Item( image, needs_attachment_link, grayscale )
-			);
+			items.push( image );
 		}
 
 		return items;
