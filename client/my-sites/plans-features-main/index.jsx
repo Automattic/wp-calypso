@@ -323,10 +323,6 @@ const guessCustomerType = ( state, props ) => {
 		return props.customerType;
 	}
 
-	if ( isDiscountActive( getDiscountByName( 'default_plans_tab_business' ), state ) ) {
-		return 'business';
-	}
-
 	const site = props.site;
 	const currentPlan = getSitePlan( state, get( site, [ 'ID' ] ) );
 	if ( currentPlan ) {
