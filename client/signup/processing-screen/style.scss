@@ -15,7 +15,8 @@
 }
 
 @keyframes focus {
-	0%, 100% {
+	0%,
+	100% {
 		opacity: 0.1;
 		filter: blur( 1px );
 	}
@@ -28,9 +29,9 @@
 .signup-processing-screen__floaties {
 	pointer-events: none;
 	position: fixed;
-		top: 40px;
-		right: 0;
-		bottom: 0;
+	top: 40px;
+	right: 0;
+	bottom: 0;
 	max-height: calc( 100vw - 30px );
 	opacity: 0.1;
 	animation: focus 5s infinite ease-in-out;
@@ -263,13 +264,14 @@
 	padding-bottom: 30px;
 }
 
+/* Title */
 @keyframes fade-in {
 	0% {
 		transform: translateY( 0 );
 		opacity: 0;
 	}
 	100% {
-		transform: translateY( -40px );
+		transform: translateY( -80px );
 		opacity: 1;
 	}
 }
@@ -278,13 +280,14 @@
 	margin: 360px 0 0;
 	padding: 0 16px;
 	text-align: center;
-	animation: fade-in 0.4s 1 ease-in;
+	animation: fade-in 0.8s 1 cubic-bezier( 0.075, 0.82, 0.165, 1 );
 	animation-fill-mode: forwards;
 }
 
 /* Continue Button */
 @keyframes pulse {
-	0%, 100% {
+	0%,
+	100% {
 		opacity: 1;
 	}
 	60% {
@@ -300,9 +303,7 @@
 
 .processing-screen__continue-button:disabled {
 	animation: pulse 1s infinite linear;
-
 }
-
 
 // Not entirely sure what this stuff is all about... -shaun
 
@@ -319,7 +320,8 @@
 	@include hide-content-accessibly;
 }
 
-.signup-processing-screen__loader, .signup-processing-screen__loader::after {
+.signup-processing-screen__loader,
+.signup-processing-screen__loader:after {
 	border-radius: 50%;
 	height: 10em;
 	width: 10em;

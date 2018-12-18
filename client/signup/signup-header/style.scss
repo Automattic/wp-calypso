@@ -9,17 +9,17 @@
 	z-index: -1;
 
 	.wordpress-logo {
-		height: 240px;
-		width: 240px;
+		height: 200px;
+		width: 200px;
 		fill: $blue-wordpress;
 		margin: 0 auto;
 		display: block;
-		transition: transform 0.4s ease-in;
-		transform: scale( 0.1 );
+		transition: transform 0.8s cubic-bezier( 0.075, 0.82, 0.165, 1 );
+		transform: scale( 0.12 );
 		transform-origin: 50% 0;
 
 		&.is-large {
-			transform: scale( 1 ) translateY( 60px );
+			transform: scale( 1 ) translateY( 80px );
 		}
 	}
 
