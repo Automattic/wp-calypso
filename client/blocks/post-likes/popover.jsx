@@ -14,6 +14,7 @@ import classnames from 'classnames';
 import Popover from 'components/popover';
 import PostLikes from './index';
 import getPostLikes from 'state/selectors/get-post-likes';
+import countPostLikes from 'state/selectors/count-post-likes';
 
 function PostLikesPopover( props ) {
 	const {
@@ -24,6 +25,7 @@ function PostLikesPopover( props ) {
 		context,
 		onClose,
 		likes,
+		likeCount,
 		onMouseEnter,
 		onMouseLeave,
 	} = props;
@@ -38,7 +40,8 @@ function PostLikesPopover( props ) {
 		siteId,
 		postId,
 		showDisplayNames ? 'large' : 'small',
-		likes ? likes.length : 'null',
+		likes ? likes.length : 0,
+		likeCount,
 	].join( '-' );
 
 	const popoverProps = omit(
@@ -74,6 +77,7 @@ export default connect( ( state, ownProps ) => {
 	const { siteId, postId } = ownProps;
 
 	return {
+		likeCount: countPostLikes( state, siteId, postId ),
 		likes: getPostLikes( state, siteId, postId ),
 	};
 } )( PostLikesPopover );
