@@ -51,6 +51,9 @@
 
 	--color-section-nav-item-background-hover: #{ $muriel-blue-0 };
 
+	--color-button-primary-background-hover: #{ $muriel-hot-pink-400 };
+	--color-button-primary-scary-background-hover: #{ $muriel-hot-red-400 };
+
 	--masterbar-color: #{$muriel-white};
 	--masterbar-border-color: #{$gray-lighten-10};
 	--masterbar-item-new-editor-background: #{$gray-darken-20};
@@ -108,6 +111,8 @@
 		--color-text-subtle: #{$muriel-gray-500};
 		--color-surface: #{$muriel-white};
 		--color-surface-backdrop: #{$muriel-gray-0};
+
+		--color-button-primary-background-hover: #{ $muriel-blue-400 };
 
 		--masterbar-color: #{$muriel-white};
 		--masterbar-border-color: #{$gray-lighten-10};
