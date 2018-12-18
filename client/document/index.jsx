@@ -125,7 +125,7 @@ class Document extends React.Component {
 							rtl: isRTL,
 							'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
 						},
-						section.name
+						[ 'section-' + section.name ]
 					) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
