@@ -67,6 +67,7 @@ import getInlineHelpSupportVariation, {
 	SUPPORT_TICKET,
 	SUPPORT_FORUM,
 } from 'state/selectors/get-inline-help-support-variation';
+import getCurrentUserRegisterDate from 'state/selectors/get-current-user-register-date';
 
 const debug = debugFactory( 'calypso:help-contact' );
 
