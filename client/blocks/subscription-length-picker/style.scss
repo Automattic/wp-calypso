@@ -127,7 +127,7 @@
 	}
 
 	&.is-active {
-		border: 3px solid var( --color-success );
+		border: 3px solid var( --color-primary );
 		.subscription-length-picker__option-credit-info {
 			color: var( --color-success );
 		}
