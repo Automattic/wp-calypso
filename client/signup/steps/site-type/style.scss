@@ -1,99 +1,63 @@
 .site-type__wrapper {
-	position: relative;
+	margin: auto;
+	width: 380px;
 
-	strong {
-		color: rgb( 51, 69, 82 );
-		font-size: 1.2em;
-		display: block;
+	.card {
+		padding: 0;
+		margin: 0;
+		box-shadow: 0 2px 16px rgba( 0, 0, 0, 0.1 );
+		border-radius: 4px;
 	}
 
-	.form-label {
-		margin-bottom: 20px;
+	.form-fieldset {
+		margin: 0;
 	}
 
-	.form-radio {
-		margin-top: 15px;
-		margin-right: 15px;
+	.button {
+		margin: 16px;
+		width: calc( 100% - 32px );
 	}
-}
-
-.site-type__form-wrapper {
-	max-width: 500px;
-	margin: 0 auto;
-	filter: blur( 0 );
-	transform: translateZ( 0 ) translateX( 0 );
-	transition: 500ms ease-in-out opacity, 500ms ease-in-out filter, 500ms ease-in-out transform;
-}
-
-.site-type__wrapper-is-hidden {
-	pointer-events: none;
-	transform: translateZ( 0 ) translateX( 25% );
-	opacity: 0;
-}
-
-.site-type__segmented-control-wrapper {
-	display: flex;
-	justify-content: space-evenly;
-	align-items: center;
-}
-
-.site-type__segmented-control {
-	flex-grow: 1;
-}
-
-.site-type__segment-label {
-	color: $gray-darken-20;
-
-	&:hover {
-		cursor: pointer;
-	}
-}
-
-.site-type__min-label {
-	padding-right: 15px;
-}
-
-.site-type__max-label {
-	padding-left: 15px;
-}
-
-.site-type__submit-wrapper {
-	text-align: center;
-	margin-bottom: 0;
-	padding: 0 15px;
-}
-
-.site-type__submit-wrapper .button {
-	width: 180px;
-	@include breakpoint( '<480px' ) {
-		width: 100%;
-	}
-}
-
-.site-type__last-fieldset {
-	margin-bottom: 0;
-}
-
-.signup-form h3 {
-	font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
-	font-size: 1.4em;
-	font-weight: 700;
-	line-height: 1.2;
-	color: rgb( 51, 69, 82 );
-	margin-bottom: 20px;
 }
 
 .site-type__option {
-	border-bottom: 1px solid #c8d7e1;
-	margin: 0 -24px !important;
-	padding: 15px 24px;
+	border-bottom: 1px solid $gray-lighten-30;
+	padding: 13px 24px 13px 48px;
+	margin: 0;
+	font-weight: 400;
+	position: relative;
+
+	.form-radio {
+		position: absolute;
+		top: 16px;
+		left: 16px;
+		margin: 0;
+	}
+
+	.site-type__option-label,
+	.site-type__option-description {
+		display: block;
+		line-height: 1.4em;
+	}
+
+	.site-type__option-label {
+		font-size: 16px;
+	}
+
+	.site-type__option-description {
+		font-size: 14px;
+		color: $gray-text-min;
+	}
 
 	&:first-child {
-		border-top: 1px solid #c8d7e1;
+		border-radius: 4px 4px 0 0;
 	}
 
 	&:hover {
-		background: #f3f6f8;
 		cursor: pointer;
+		box-shadow: 0 0 0 1px $gray-lighten-20;
+
+		.site-type__option-label {
+			color: $blue-dark;
+		}
 	}
 }
