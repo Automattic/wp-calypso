@@ -81,6 +81,7 @@ describe( 'progress-store', () => {
 		expect( omit( first( SignupProgressStore.get() ), 'lastUpdated' ) ).toEqual( {
 			stepName: 'site-selection',
 			formData: { url: 'my-site.wordpress.com' },
+			lastKnownFlow: '',
 			status: 'completed',
 		} );
 	} );
