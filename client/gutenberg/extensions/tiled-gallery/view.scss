@@ -1,4 +1,3 @@
-
 @import './variables.scss';
 
 .wp-block-jetpack-tiled-gallery {
@@ -12,7 +11,7 @@
 		flex-direction: column;
 		flex-wrap: wrap;
 		justify-content: center;
-		margin: 0;
+		margin: 0 auto;
 
 		& + & {
 			margin-top: $tiled-gallery-gutter;
