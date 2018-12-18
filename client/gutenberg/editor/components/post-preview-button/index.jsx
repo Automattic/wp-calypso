@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import { get } from 'lodash';
 import url from 'url';
 
@@ -19,6 +20,8 @@ import { __, _x } from '@wordpress/i18n';
  * Internal dependencies
  */
 import WebPreview from 'components/web-preview';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteOption } from 'state/sites/selectors';
 
 export class PostPreviewButton extends Component {
 	state = {
@@ -45,11 +48,15 @@ export class PostPreviewButton extends Component {
 	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
 
 	getIframePreviewUrl = () => {
-		const { previewLink } = this.props;
+		const { frameNonce, previewLink, revisionsCount } = this.props;
+
 		const parsed = url.parse( previewLink, true );
+		if ( frameNonce ) {
+			parsed.query[ 'frame-nonce' ] = frameNonce;
+		}
 		parsed.query.preview = 'true';
 		parsed.query.iframe = 'true';
-		parsed.query.revision = String( this.props.revision );
+		parsed.query.revision = String( revisionsCount );
 		delete parsed.search;
 		return url.format( parsed );
 	};
@@ -59,15 +66,11 @@ export class PostPreviewButton extends Component {
 			return;
 		}
 
-		const { isSaving, previewLink } = this.props;
+		const { isSaving } = this.props;
 
 		if ( isSaving && ! prevProps.isSaving ) {
 			// Started saving
 			return this.setState( { iframeUrl: 'about:blank' } );
-		}
-
-		if ( ! previewLink ) {
-			return;
 		}
 
 		if ( ! isSaving && prevProps.isSaving ) {
@@ -77,14 +80,14 @@ export class PostPreviewButton extends Component {
 	};
 
 	render() {
-		const { currentPostLink } = this.props;
+		const { currentPostLink, isCleanNewPost } = this.props;
 		const { iframeUrl, isPreviewVisible } = this.state;
 
 		return (
 			<Fragment>
 				<Button
 					className="editor-post-preview"
-					disabled={ false }
+					disabled={ isCleanNewPost }
 					isLarge
 					onClick={ this.openPreviewModal }
 				>
@@ -109,8 +112,10 @@ export default compose( [
 	withSelect( select => {
 		const {
 			getCurrentPostAttribute,
+			getCurrentPostRevisionsCount,
 			getEditedPostAttribute,
 			getEditedPostPreviewLink,
+			isCleanNewPost,
 			isEditedPostAutosaveable,
 			isEditedPostSaveable,
 			isSavingPost,
@@ -124,9 +129,11 @@ export default compose( [
 			currentPostLink,
 			isAutosaveable: isEditedPostAutosaveable(),
 			isDraft: [ 'draft', 'auto-draft' ].indexOf( getEditedPostAttribute( 'status' ) ) !== -1,
+			isCleanNewPost: isCleanNewPost(),
 			isSaveable: isEditedPostSaveable(),
 			isSaving: isSavingPost(),
 			isViewable: get( postType, [ 'viewable' ], false ),
+			revisionsCount: getCurrentPostRevisionsCount(),
 			previewLink: previewLink || currentPostLink,
 		};
 	} ),
@@ -135,4 +142,8 @@ export default compose( [
 		savePost: dispatch( 'core/editor' ).savePost,
 	} ) ),
 	ifCondition( ( { isViewable } ) => isViewable ),
-] )( PostPreviewButton );
+] )(
+	connect( state => ( {
+		frameNonce: getSiteOption( state, getSelectedSiteId( state ), 'frame_nonce' ),
+	} ) )( PostPreviewButton )
+);
