@@ -22,8 +22,6 @@ export class Jetpack_Tiled_Gallery_Shape {
 
 	sum_ratios( number_of_images = 3 ) {
 		return sum( map( take( this.images, number_of_images ), property( 'ratio' ) ) );
-		// PHP was:
-		// return array_sum( array_slice( wp_list_pluck( $this->images, 'ratio' ), 0, $number_of_images ) );
 	}
 
 	next_images_are_symmetric = () => {
@@ -32,14 +30,12 @@ export class Jetpack_Tiled_Gallery_Shape {
 
 	is_not_as_previous( n = 1 ) {
 		return ! take( Jetpack_Tiled_Gallery_Shape.shapes_used, n ).includes( this.constructor );
-		// PHP was:
-		//return ! in_array( get_class( $this ), array_slice( self::$shapes_used, -$n ) );
 	}
 
 	//
-	// Find and replace usage with:
+	// Replace this with something more appropriate.
 	//
-	// wideControlsEnabled: select( 'core/editor' ).getEditorSettings().alignWide,
+	// Check for full/wide block alignment?
 	//
 	// https://github.com/WordPress/gutenberg/blob/0416bae17c52b0a11ec1075c0928f879264b7d75/packages/editor/src/components/block-alignment-toolbar/index.js#L80
 	//
