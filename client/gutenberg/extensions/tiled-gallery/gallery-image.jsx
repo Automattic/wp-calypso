@@ -73,9 +73,13 @@ class GalleryImage extends Component {
 	componentDidUpdate() {
 		const { image, url } = this.props;
 		if ( image && ! url ) {
+			const { alt_text, source_url, media_details } = image;
+			const { width, height } = media_details;
 			this.props.setAttributes( {
-				url: image.source_url,
-				alt: image.alt_text,
+				alt: alt_text,
+				height: height,
+				url: source_url,
+				width: width,
 			} );
 		}
 	}
