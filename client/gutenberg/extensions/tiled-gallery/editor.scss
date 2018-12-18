@@ -1,5 +1,4 @@
 @import './view.scss';
-
 @import './variables.scss';
 
 .wp-block-jetpack-tiled-gallery.components-placeholder {
@@ -15,7 +14,7 @@
 			}
 
 			.is-selected {
-				outline: $tiled-gallery-selected-outline-width solid $tiled-gallery-selection;
+				outline: $tiled-gallery-outline-width solid $tiled-gallery-selection;
 			}
 
 			/*
