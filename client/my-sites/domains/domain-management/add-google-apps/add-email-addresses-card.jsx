@@ -66,14 +66,35 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 class AddEmailAddressesCard extends React.Component {
 	constructor( props ) {
 		super( props );
-		const { firstName, lastName } = this.props;
 		this.state = {
-			fieldsets: [ this.getNewFieldset( firstName, lastName ) ],
+			fieldsets: [ this.getNewFieldset() ],
 			validationErrors: null,
 		};
 	}
 
-	getNewFieldset( firstName = '', lastName = '' ) {
+	static getDerivedStateFromProps( props, state ) {
+		if (
+			state.fieldsets[ 0 ].firstName.value === '' &&
+			state.fieldsets.length === 1 &&
+			props.firstName
+		) {
+			const { firstName, lastName } = props;
+			const fieldsets = [
+				{
+					...state.fieldsets[ 0 ],
+					firstName: { value: firstName || '' },
+					lastName: { value: lastName || '' },
+					username: { value: ( firstName && firstName.toLowerCase() ) || '' },
+				},
+			];
+			return {
+				fieldsets: fieldsets,
+			};
+		}
+		return null;
+	}
+
+	getNewFieldset() {
 		let domain;
 
 		if ( this.props.selectedDomainName ) {
@@ -85,10 +106,10 @@ class AddEmailAddressesCard extends React.Component {
 		}
 
 		return {
-			username: { value: ( firstName && firstName.toLowerCase() ) || '' },
+			username: { value: '' },
 			domain: { value: domain },
-			firstName: { value: firstName || '' },
-			lastName: { value: lastName || '' },
+			firstName: { value: '' },
+			lastName: { value: '' },
 		};
 	}
 
