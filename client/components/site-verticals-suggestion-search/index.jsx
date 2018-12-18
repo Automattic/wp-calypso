@@ -78,8 +78,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 
 const SITE_VERTICALS_REQUEST_ID = 'site-verticals-search-results';
 const requestSiteVerticals = debounce( ( searchTerm, limit = 5 ) => {
-	// eslint-disable-next-line
-	console.log( 'searchTerm', searchTerm );
 	return requestHttpData(
 		SITE_VERTICALS_REQUEST_ID,
 		http( {
