@@ -36,7 +36,7 @@ module.exports = {
 							[ 'svg', 'SVG' ],
 						].map( ( [ element, componentName ] ) => ( {
 							element,
-							message: `use cross-platform <${ componentName }> component instead.`,
+							message: `use <${ componentName }> from @wordpress/components`,
 						} ) ),
 					},
 				],
