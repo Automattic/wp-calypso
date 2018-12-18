@@ -30,11 +30,9 @@ const ALLOWED_BLOCKS = [
 	'core/spacer',
 	'core/subhead',
 	'core/video',
-	'core/columns',
-	'core/column',
 ];
 
-const TEMPLATE = [ [ 'jetpack/address' ], [ 'jetpack/email' ], [ 'jetpack/phone' ] ];
+const TEMPLATE = [ [ 'jetpack/email' ], [ 'jetpack/phone' ], [ 'jetpack/address' ] ];
 
 class ContactInfoEdit extends Component {
 	constructor( ...args ) {
