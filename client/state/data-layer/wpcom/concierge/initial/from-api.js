@@ -16,6 +16,7 @@ export const transform = response => {
 	return {
 		availableTimes: response.available_times.map( convertToMilliseconds ),
 		nextAppointment: nextAppointment,
+		scheduleId: response.schedule_id,
 	};
 };
 
