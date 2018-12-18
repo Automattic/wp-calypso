@@ -128,7 +128,7 @@ button {
 
 	&:hover,
 	&:focus {
-		border-color: var( --color-accent-dark );
+		background-color: var( --color-button-primary-background-hover );
 		color: $white;
 	}
 	&.is-compact {
@@ -181,7 +181,7 @@ button {
 
 	&:hover,
 	&:focus {
-		border-color: darken( $alert-red, 40% );
+		background-color: var( --color-button-primary-scary-background-hover );
 	}
 	&[disabled],
 	&:disabled {
@@ -210,6 +210,7 @@ button {
 
 	&:hover,
 	&:focus {
+		background: none;
 		color: $gray-dark;
 	}
 
