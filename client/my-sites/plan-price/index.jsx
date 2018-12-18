@@ -72,7 +72,7 @@ PlanPrice.propTypes = {
 	discounted: PropTypes.bool,
 	currencyCode: PropTypes.string,
 	className: PropTypes.string,
-	taxAmount: PropTypes.string,
+	taxText: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
 
