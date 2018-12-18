@@ -19,7 +19,9 @@ import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/an
 
 class GoogleAppsUsers extends React.Component {
 	componentWillMount() {
-		this.props.onChange( this.props.fields ? this.props.fields : this.getInitialFields() );
+		if ( this.props.firstName ) {
+			this.props.onChange( this.props.fields ? this.props.fields : this.getInitialFields() );
+		}
 	}
 
 	getInitialFields() {
