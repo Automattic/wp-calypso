@@ -24,17 +24,12 @@ export default function save( { attributes } ) {
 		[ backgroundClass ]: backgroundClass,
 	} );
 
-	const buttonStyle = {
-		backgroundColor: backgroundClass ? undefined : customBackgroundColor,
-		color: textClass ? undefined : customTextColor,
-	};
-
-	// TODO: Funnel buttonClasses and buttonStyle into the
-	// jetpack_subscription_form shortcode via Jetpack
+	const buttonBackgroundColor = backgroundClass ? '' : customBackgroundColor;
+	const buttonTextColor = textClass ? '' : customTextColor;
 
 	return (
 		<RawHTML>
-			{ `[jetpack_subscription_form show_subscribers_total="${ showSubscribersTotal }" show_only_email_and_button="true"]` }
+			{ `[jetpack_subscription_form button_classes="${ buttonClasses }" button_background_color="${ buttonBackgroundColor }" button_text_color="${ buttonTextColor }" show_subscribers_total="${ showSubscribersTotal }" show_only_email_and_button="true"]` }
 		</RawHTML>
 	);
 }
