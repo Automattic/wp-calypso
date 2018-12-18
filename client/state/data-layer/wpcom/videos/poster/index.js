@@ -32,6 +32,8 @@ export const updatePoster = action => {
 
 export const receivePosterUrl = ( action, { poster: posterUrl } ) => setPosterUrl( posterUrl );
 
+export const receivePosterError = () => showError();
+
 export const receiveUploadProgress = ( action, progress ) => {
 	const hasProgressData = 'loaded' in progress && 'total' in progress;
 	const percentage = hasProgressData
@@ -44,7 +46,7 @@ export const receiveUploadProgress = ( action, progress ) => {
 export const dispatchPosterRequest = dispatchRequest( {
 	fetch: updatePoster,
 	onSuccess: receivePosterUrl,
-	onError: showError,
+	onError: receivePosterError,
 	onProgress: receiveUploadProgress,
 } );
 
