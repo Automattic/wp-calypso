@@ -212,7 +212,7 @@ button {
 .button.is-borderless {
 	border: none;
 	background: none;
-	color: var( --button-is-borderless-color );
+	color: var( --color-neutral-700 );
 	padding-left: 0;
 	padding-right: 0;
 
@@ -258,7 +258,11 @@ button {
 		&:hover,
 		&:active,
 		&.is-active {
-			color: $link-highlight;
+			color: var( --color-primary-dark );
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px var( --color-primary-light );
 		}
 
 		&[disabled] {
