@@ -51,6 +51,9 @@
 
 	--color-section-nav-item-background-hover: #{ $muriel-blue-0 };
 
+	--color-button-primary-background-hover: #{ $muriel-hot-pink-400 };
+	--color-button-primary-scary-background-hover: #{ $muriel-hot-red-400 };
+
 	--masterbar-color: #{$muriel-white};
 	--masterbar-border-color: #{$gray-lighten-10};
 	--masterbar-item-new-editor-background: #{$gray-darken-20};
@@ -76,7 +79,6 @@
 
 	// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
 	--button-is-borderless-color: #{$gray-dark};
-	--button-primary-border-color: var( --color-accent-dark );
 	--count-border-color: #{$gray-dark};
 	--count-color: #{$gray-dark};
 	--profile-gravatar-user-secondary-info-color: #{$gray-dark};
@@ -110,6 +112,9 @@
 		--color-surface: #{$muriel-white};
 		--color-surface-backdrop: #{$muriel-gray-0};
 
+		--color-button-primary-background-hover: #{ $muriel-blue-400 };
+		--color-button-primary-scary-background-hover: #{ $muriel-hot-red-400 };
+
 		--masterbar-color: #{$muriel-white};
 		--masterbar-border-color: #{$gray-lighten-10};
 		--masterbar-item-new-editor-background: #{$gray-darken-20};
@@ -139,7 +144,6 @@
 		--count-color: #{$gray-dark};
 		--profile-gravatar-user-secondary-info-color: #{$gray-dark};
 		--button-is-borderless-color: #{$gray-text-min};
-		--button-primary-border-color: #{darken( $blue-medium, 8% )};
 		--count-border-color: #{$gray};
 		--count-color: #{$gray-text-min};
 		--profile-gravatar-user-secondary-info-color: #{$gray-darken-20};
@@ -196,7 +200,6 @@
 
 		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
 		--button-is-borderless-color: #{$gray-dark};
-		--button-primary-border-color: var( --color-accent-dark );
 		--count-border-color: #{$gray-dark};
 		--count-color: #{$gray-dark};
 		--profile-gravatar-user-secondary-info-color: #{$gray-dark};

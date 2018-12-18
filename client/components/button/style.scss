@@ -64,7 +64,7 @@ button {
 		}
 	}
 	.accessible-focus &:focus {
-		border-color: var( --color-accent );
+		border-color: var( --color-primary );
 		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 	&.is-compact {
@@ -98,10 +98,10 @@ button {
 		background-size: 120px 100%;
 		background-image: linear-gradient(
 			-45deg,
-			$gray-lighten-30 28%,
-			$white 28%,
-			$white 72%,
-			$gray-lighten-30 72%
+			var( --color-neutral-0 ) 28%,
+			var( --color-surface ) 28%,
+			var( --color-surface ) 72%,
+			var( --color-neutral-0 ) 72%
 		);
 	}
 	&.hidden {
@@ -123,17 +123,24 @@ button {
 // Primary buttons
 .button.is-primary {
 	background: var( --color-accent );
-	border-color: var( --button-primary-border-color );
+	border-color: var( --color-accent-dark );
 	color: $white;
 
 	&:hover,
 	&:focus {
-		border-color: var( --color-primary-dark );
+		background-color: var( --color-button-primary-background-hover );
+		border-color: var( --color-accent-dark );
 		color: $white;
 	}
+
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 2px var( --color-accent-light );
+	}
+
 	&.is-compact {
 		color: $white;
 	}
+
 	&[disabled],
 	&:disabled,
 	&.disabled {
@@ -141,16 +148,17 @@ button {
 		background: $white;
 		border-color: $gray-lighten-30;
 	}
+
 	&.is-busy {
 		background-size: 120px 100%;
 		background-image: linear-gradient(
 			-45deg,
-			$blue-medium 28%,
-			darken( $blue-medium, 5% ) 28%,
-			darken( $blue-medium, 5% ) 72%,
-			$blue-medium 72%
+			var( --color-accent ) 28%,
+			var( --color-accent-dark ) 28%,
+			var( --color-accent-dark ) 72%,
+			var( --color-accent ) 72%
 		);
-		border-color: darken( $blue-medium, 8% );
+		border-color: var( --color-accent-dark );
 	}
 }
 
@@ -164,7 +172,7 @@ button {
 	}
 
 	.accessible-focus &:focus {
-		box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
+		box-shadow: 0 0 0 2px var( --color-error-light );
 	}
 
 	&[disabled],
@@ -181,7 +189,7 @@ button {
 
 	&:hover,
 	&:focus {
-		border-color: darken( $alert-red, 40% );
+		background-color: var( --color-button-primary-scary-background-hover );
 	}
 	&[disabled],
 	&:disabled {
@@ -192,10 +200,10 @@ button {
 		background-size: 120px 100%;
 		background-image: linear-gradient(
 			-45deg,
-			$alert-red 28%,
-			darken( $alert-red, 5% ) 28%,
-			darken( $alert-red, 5% ) 72%,
-			$alert-red 72%
+			var( --color-error ) 28%,
+			var( --color-error-dark ) 28%,
+			var( --color-error-dark ) 72%,
+			var( --color-error ) 72%
 		);
 		border-color: darken( $alert-red, 8% );
 	}
@@ -204,12 +212,13 @@ button {
 .button.is-borderless {
 	border: none;
 	background: none;
-	color: var( --button-is-borderless-color );
+	color: var( --color-neutral-700 );
 	padding-left: 0;
 	padding-right: 0;
 
 	&:hover,
 	&:focus {
+		background: none;
 		color: $gray-dark;
 	}
 
@@ -249,7 +258,11 @@ button {
 		&:hover,
 		&:active,
 		&.is-active {
-			color: $link-highlight;
+			color: var( --color-primary-dark );
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px var( --color-primary-light );
 		}
 
 		&[disabled] {
