@@ -6,7 +6,7 @@
 /**
  * External dependencies
  */
-import { map, property, sum } from 'lodash';
+import { map, sum } from 'lodash';
 
 const get_int_floor_array = bound_array => {
 	return bound_array.map( ( value, i ) => ( {
@@ -66,7 +66,7 @@ const adjust_constrained_array = ( bound_array_int, adjustment ) => {
 export const getRoundedConstrainedArray = ( bound_array, sum_value = false ) => {
 	let bound_array_int = get_int_floor_array( bound_array );
 
-	const lower_sum = sum( map( bound_array_int, property( 'floor' ) ) );
+	const lower_sum = sum( map( bound_array_int, 'floor' ) );
 
 	if ( ! sum_value || sum_value < lower_sum ) {
 		// If value of sum is not supplied or is invalid,
@@ -78,5 +78,5 @@ export const getRoundedConstrainedArray = ( bound_array, sum_value = false ) => 
 
 	bound_array_int = adjust_constrained_array( bound_array_int, diff_sum );
 
-	return map( bound_array_int, property( 'floor' ) );
+	return map( bound_array_int, 'floor' );
 };
