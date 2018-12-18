@@ -61,10 +61,8 @@ class SiteType extends Component {
 					checked={ siteTypeProperties.slug === this.state.siteType }
 					onChange={ this.handleRadioChange }
 				/>
-				<span>
-					<strong>{ siteTypeProperties.label }</strong>
-					<span>{ siteTypeProperties.description }</span>
-				</span>
+				<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
+				<span className="site-type__option-description">{ siteTypeProperties.description }</span>
 			</FormLabel>
 		) );
 	}
@@ -74,19 +72,14 @@ class SiteType extends Component {
 
 		return (
 			<div className="site-type__wrapper">
-				<div className="site-type__form-wrapper">
-					<form onSubmit={ this.handleSubmit }>
-						<Card>
-							<FormFieldset>{ this.renderRadioOptions() }</FormFieldset>
-
-							<div className="site-type__submit-wrapper">
-								<Button primary={ true } type="submit">
-									{ translate( 'Continue' ) }
-								</Button>
-							</div>
-						</Card>
-					</form>
-				</div>
+				<form onSubmit={ this.handleSubmit }>
+					<Card>
+						<FormFieldset>{ this.renderRadioOptions() }</FormFieldset>
+						<Button primary={ true } type="submit">
+							{ translate( 'Continue' ) }
+						</Button>
+					</Card>
+				</form>
 			</div>
 		);
 	}
