@@ -18,15 +18,20 @@ import GoogleAppsUsersForm from './users-form';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 
 class GoogleAppsUsers extends React.Component {
-	UNSAFE_componentWillRecieveProps() {
-		if ( ! this.props.fields && this.props.firstName ) {
-			this.props.onChange( this.props.fields ? this.props.fields : this.getInitialFields() );
-		}
+	UNSAFE_componentWillMount() {
+		this.maybeGetInitialFields( this.props );
+	}
+	UNSAFE_componentWillReceiveProps( nextProps ) {
+		this.maybeGetInitialFields( nextProps );
 	}
 
-	getInitialFields() {
-		const { firstName, lastName } = this.props;
-		return [ this.getNewUserFields( firstName, lastName ) ];
+	maybeGetInitialFields( props ) {
+		if ( ! props.fields && props.firstName ) {
+			const { firstName, lastName } = props;
+			this.props.onChange(
+				this.props.fields ? this.props.fields : [ this.getNewUserFields( firstName, lastName ) ]
+			);
+		}
 	}
 
 	getNewUserFields( firstName = '', lastName = '' ) {
@@ -39,9 +44,8 @@ class GoogleAppsUsers extends React.Component {
 	}
 
 	render() {
-		const fields = this.props.fields || this.getInitialFields();
-		const allUserInputs = fields.map( this.inputsForUser );
-		const { translate } = this.props;
+		const { fields, translate } = this.props;
+		const allUserInputs = fields && fields.map( this.inputsForUser );
 
 		return (
 			<div className="google-apps-dialog__users" key="google-apps-dialog__users">
