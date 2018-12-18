@@ -99,7 +99,10 @@ import userSettings from './user-settings/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
 
+import jetpackImporterTest from './jetpack-importer-test/reducer';
+
 const reducers = {
+	jetpackImporterTest,
 	account,
 	accountRecovery,
 	activePromotions,
