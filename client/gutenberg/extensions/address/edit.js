@@ -4,13 +4,13 @@
  * External dependencies
  */
 import { PlainText } from '@wordpress/editor';
-import { sprintf } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import save from './save';
 
 class AddressEdit extends Component {
 	constructor( ...args ) {
@@ -29,7 +29,6 @@ class AddressEdit extends Component {
 	render() {
 		const {
 			attributes: { address, address_line2, address_line3, city, region, postal, country },
-			className,
 			isSelected,
 			setAttributes,
 		} = this.props;
@@ -41,22 +40,7 @@ class AddressEdit extends Component {
 
 		return (
 			<div className={ isSelected ? 'jetpack-phone-block is-selected' : 'jetpack-phone-block' }>
-				{ ! isSelected &&
-					hasContent && (
-						<div className={ className }>
-							{ address && <div>{ address }</div> }
-							{ address_line2 && <div>{ address_line2 }</div> }
-							{ address_line3 && <div>{ address_line3 }</div> }
-							{ city && ! ( region || postal ) && <div>{ city }</div> }
-							{ city &&
-								( region || postal ) && (
-									<div>{ sprintf( __( '%s, %s  %s' ), city, region, postal ) }</div>
-								) }
-							{ ! city &&
-								( region || postal ) && <div>{ sprintf( __( '%s  %s' ), region, postal ) }</div> }
-							{ country && <div>{ country }</div> }
-						</div>
-					) }
+				{ ! isSelected && hasContent && save( this.props ) }
 				{ ( isSelected || ! hasContent ) && (
 					<Fragment>
 						<PlainText

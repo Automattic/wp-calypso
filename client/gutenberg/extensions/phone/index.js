@@ -6,8 +6,8 @@ import { Path } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { renderPhone, PhoneEdit } from './edit';
-
+import edit from './edit';
+import save from './save';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 
 const attributes = {
@@ -16,10 +16,6 @@ const attributes = {
 		default: '',
 	},
 };
-
-const save = ( { attributes: { phone }, className } ) => (
-	<div className={ className }>{ renderPhone( phone ) }</div>
-);
 
 export const name = 'phone';
 
@@ -31,6 +27,6 @@ export const settings = {
 	category: 'jetpack',
 	attributes,
 	parent: [ 'jetpack/contact-info' ],
-	PhoneEdit,
+	edit,
 	save,
 };

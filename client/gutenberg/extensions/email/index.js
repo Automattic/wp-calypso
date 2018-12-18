@@ -7,7 +7,8 @@ import { Path } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { renderEmail, EmailEdit } from './edit';
+import edit from './edit';
+import save from './save';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 
 const attributes = {
@@ -16,10 +17,6 @@ const attributes = {
 		default: '',
 	},
 };
-
-const save = ( { attributes: { email }, className } ) => (
-	<div className={ className }>{ renderEmail( email ) }</div>
-);
 
 export const name = 'email';
 
@@ -30,7 +27,7 @@ export const settings = {
 	),
 	category: 'jetpack',
 	attributes,
-	EmailEdit,
+	edit,
 	save,
 	parent: [ 'jetpack/contact-info' ],
 };
