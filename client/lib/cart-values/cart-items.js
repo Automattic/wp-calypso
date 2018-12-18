@@ -44,6 +44,7 @@ import {
 	isNoAds,
 	isPlan,
 	isBlogger,
+	isPersonal,
 	isPremium,
 	isPrivacyProtection,
 	isSiteRedirect,
@@ -51,6 +52,7 @@ import {
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
+	isConciergeSession,
 } from 'lib/products-values';
 import sortProducts from 'lib/products-values/sort';
 import { getTld } from 'lib/domains';
@@ -293,6 +295,10 @@ export function hasBloggerPlan( cart ) {
 	return some( getAll( cart ), isBlogger );
 }
 
+export function hasPersonalPlan( cart ) {
+	return some( getAll( cart ), isPersonal );
+}
+
 export function hasPremiumPlan( cart ) {
 	return some( getAll( cart ), isPremium );
 }
@@ -416,6 +422,16 @@ export function getDomainTransfers( cart ) {
  */
 export function hasOnlyRenewalItems( cart ) {
 	return every( getAll( cart ), isRenewal );
+}
+
+/**
+ * Determines whether there is at least one concierge session item in the specified shopping cart.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one concierge session item, false otherwise
+ */
+export function hasConciergeSession( cart ) {
+	return some( getAll( cart ), isConciergeSession );
 }
 
 /**
@@ -1149,11 +1165,14 @@ export default {
 	hasOnlyRenewalItems,
 	hasPlan,
 	hasOnlyBundledDomainProducts,
+	hasBloggerPlan,
+	hasPersonalPlan,
 	hasPremiumPlan,
 	hasProduct,
 	hasRenewableSubscription,
 	hasRenewalItem,
 	hasTld,
+	hasConciergeSession,
 	noAdsItem,
 	planItem,
 	premiumPlan,

@@ -68,6 +68,8 @@ import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import config from 'config';
+import { abtest } from 'lib/abtest';
 
 export class Checkout extends React.Component {
 	static propTypes = {
@@ -341,18 +343,46 @@ export class Checkout extends React.Component {
 		if ( this.props.isNewlyCreatedSite && receipt && isEmpty( receipt.failed_purchases ) ) {
 			const siteDesignType = get( selectedSite, 'options.design_type' );
 			const hasGoogleAppsInCart = cartItems.hasGoogleApps( cart );
+			const hasConciergeSessionInCart = cartItems.hasConciergeSession( cart );
 
+			// Handle the redirect path after a purchase of GSuite or Concierge Session
 			// The onboarding checklist currently supports the blog type only.
-			if ( hasGoogleAppsInCart && domainReceiptId && 'store' !== siteDesignType ) {
+			if (
+				( hasConciergeSessionInCart || ( hasGoogleAppsInCart && domainReceiptId ) ) &&
+				'store' !== siteDesignType
+			) {
 				analytics.tracks.recordEvent( 'calypso_checklist_assign', {
 					site: selectedSiteSlug,
 					plan: 'paid',
 				} );
+
+				if ( config.isEnabled( 'upsell/concierge-session' ) && hasConciergeSessionInCart ) {
+					return `/checklist/${ selectedSiteSlug }`;
+				}
 				return `/checklist/${ selectedSiteSlug }?d=gsuite`;
 			}
 
-			if ( ! hasGoogleAppsInCart && cartItems.hasDomainRegistration( cart ) ) {
+			if (
+				! hasGoogleAppsInCart &&
+				! hasConciergeSessionInCart &&
+				cartItems.hasDomainRegistration( cart )
+			) {
 				const domainsForGSuite = this.getEligibleDomainFromCart();
+
+				if ( config.isEnabled( 'upsell/concierge-session' ) ) {
+					if (
+						cartItems.hasBloggerPlan( cart ) ||
+						cartItems.hasPersonalPlan( cart ) ||
+						cartItems.hasPremiumPlan( cart )
+					) {
+						if ( abtest( 'showConciergeSessionUpsell' ) === 'show' ) {
+							// A user just purchased one of the qualifying plans and is in the "show" ab test variation
+							// Show them the concierge session upsell page
+							// return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
+							return `/checkout/${ selectedSiteSlug }/add-expert-session/${ receiptId }`;
+						}
+					}
+				}
 
 				if ( domainsForGSuite.length ) {
 					return `/checkout/${ selectedSiteSlug }/with-gsuite/${
