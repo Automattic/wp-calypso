@@ -156,7 +156,7 @@ class ManageMenu extends PureComponent {
 			name: 'import',
 			label: translate( 'Import' ),
 			capability: 'manage_options',
-			queryable: ! isJetpack,
+			queryable: true || ! isJetpack,
 			config: 'manage/import-in-sidebar',
 			link: '/settings/import', // @TODO make it a top level section & add a redirect
 			paths: [ '/settings/import' ],
