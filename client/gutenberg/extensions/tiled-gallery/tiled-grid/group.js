@@ -18,14 +18,4 @@ export class Jetpack_Tiled_Gallery_Group {
 
 		return 1 / ratio;
 	};
-
-	items = () => {
-		const items = [];
-
-		for ( const image of this.images ) {
-			items.push( image );
-		}
-
-		return items;
-	};
 }
