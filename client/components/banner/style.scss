@@ -12,33 +12,33 @@
 
 	&.is-wpcom-plan {
 		&.is-upgrade-blogger {
-			@include banner-color( var( --color-success-dark ) );
+			@include banner-color( $muriel-celadon-500 );
 		}
 
 		&.is-upgrade-personal {
-			@include banner-color( var( --color-primary ) );
+			@include banner-color( $muriel-hot-blue-500 );
 		}
 
 		&.is-upgrade-premium {
-			@include banner-color( var( --color-warning ) );
+			@include banner-color( $muriel-yellow-500 );
 		}
 
 		&.is-upgrade-business {
-			@include banner-color( $orange-jazzy );
+			@include banner-color( $muriel-orange-500 );
 		}
 
 		&.is-upgrade-ecommerce {
-			@include banner-color( $alert-purple );
+			@include banner-color( $muriel-hot-purple-500 );
 		}
 	}
 
 	&.is-jetpack-plan {
 		&.is-upgrade-personal {
-			@include banner-color( var( --color-warning ) );
+			@include banner-color( $muriel-yellow-500 );
 		}
 
 		&.is-upgrade-premium {
-			@include banner-color( var( --color-success ) );
+			@include banner-color( $muriel-green-500 );
 		}
 
 		&.is-upgrade-business {
