@@ -43,12 +43,14 @@ export class ConciergeSessionNudge extends React.Component {
 	};
 
 	render() {
-		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans } = this.props;
-		const title = 'Checkout ‹ Expert Session';
+		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, translate } = this.props;
+		const title = translate( 'Checkout ‹ Support Session', {
+			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
+		} );
 
 		return (
 			<Main className="concierge-session-nudge">
-				<PageViewTracker path="/checkout/:site/add-expert-session/:receipt_id" title={ title } />
+				<PageViewTracker path="/checkout/:site/add-support-session/:receipt_id" title={ title } />
 				<DocumentHead title={ title } />
 				<QuerySites siteId={ selectedSiteId } />
 				{ ! hasProductsList && <QueryProductsList /> }
