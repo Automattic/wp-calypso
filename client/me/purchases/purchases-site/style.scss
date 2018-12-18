@@ -16,7 +16,7 @@
 .purchases-site__slug {
 	white-space: nowrap;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		line-height: 15px;
 	}
 }
@@ -47,7 +47,7 @@
 }
 
 .purchases-list .action-card__illustration {
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		margin: -40px 20px 0 -20px;
 	}
 }

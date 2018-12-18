@@ -1,4 +1,3 @@
-
 .promotions__form {
 	&.is-placeholder div {
 		@include placeholder();
@@ -6,11 +5,11 @@
 		width: 720px;
 		margin-bottom: 8px;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			width: 100%;
 		}
 
-		@include breakpoint( "660px-960px" ) {
+		@include breakpoint( '660px-960px' ) {
 			width: 620px;
 		}
 

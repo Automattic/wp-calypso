@@ -41,8 +41,8 @@
 	}
 
 	&.is-full-width {
-		width:100%;
-		@include breakpoint( ">660px" ) {
+		width: 100%;
+		@include breakpoint( '>660px' ) {
 			max-width: 420px;
 		}
 	}

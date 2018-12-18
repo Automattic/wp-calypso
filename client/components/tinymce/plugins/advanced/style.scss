@@ -14,7 +14,7 @@
 .mce-toolbar .mce-advanced.mce-btn button {
 	display: none;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		display: block;
 	}
 }
@@ -22,6 +22,6 @@
 .mce-toolbar .mce-btn-group .mce-advanced.mce-btn.mce-last {
 	background-color: $transparent;
 	position: absolute;
-		top: 0;
-		right: 8px;
+	top: 0;
+	right: 8px;
 }

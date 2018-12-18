@@ -4,7 +4,9 @@
 	align-items: center;
 
 	&.is-placeholder {
-		.gridicon, button, span {
+		.gridicon,
+		button,
+		span {
 			@include placeholder();
 			color: transparent;
 			cursor: default;
@@ -62,7 +64,7 @@
 		.shipping-zone__methods-column-title {
 			width: 50%;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				width: 30%;
 			}
 		}
@@ -70,7 +72,7 @@
 		.shipping-zone__methods-column-summary {
 			display: none;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				width: 30%;
 				display: block;
 			}
@@ -82,7 +84,12 @@
 		pointer-events: none;
 		background: $white;
 
-		.shipping-zone__placeholder-flag, .gridicon, p, a, span, button {
+		.shipping-zone__placeholder-flag,
+		.gridicon,
+		p,
+		a,
+		span,
+		button {
 			animation: loading-fade 1.6s ease-in-out infinite;
 			background-color: lighten( $gray, 25% );
 			color: transparent;
@@ -96,7 +103,8 @@
 			border-radius: 4px;
 		}
 
-		p, span {
+		p,
+		span {
 			width: 100px;
 			height: 14px;
 			margin-right: 10px;
@@ -121,7 +129,7 @@
 		font-size: 14px;
 		width: 50%;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 30%;
 		}
 	}
@@ -130,7 +138,7 @@
 		font-size: 14px;
 		width: 30%;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			width: 100%;
 			order: 4;
 			padding-top: 0px;
@@ -146,7 +154,7 @@
 		vertical-align: top;
 		text-transform: uppercase;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 25%;
 		}
 
@@ -172,7 +180,7 @@
 			flex-shrink: 0;
 		}
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 15%;
 		}
 	}
@@ -181,7 +189,7 @@
 		font-size: 14px;
 		width: 100%;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 30%;
 		}
 	}
@@ -190,7 +198,7 @@
 		font-size: 14px;
 		width: 70%;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			width: 100%;
 			order: 4;
 			padding-top: 0px;
@@ -199,7 +207,7 @@
 }
 
 &.shipping-zone__method-dialog {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: 660px;
 	}
 
@@ -302,7 +310,7 @@
 }
 
 &.shipping-zone__location-dialog {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: 660px;
 	}
 
@@ -340,8 +348,8 @@
 		color: var( --color-text-subtle );
 
 		img {
-			filter: grayscale(1);
-			opacity: .5;
+			filter: grayscale( 1 );
+			opacity: 0.5;
 		}
 
 		&:hover {

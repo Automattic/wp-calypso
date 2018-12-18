@@ -24,7 +24,8 @@
 	stroke-width: 5px;
 }
 
-.line-chart__line-not-selected, .line-chart__area-not-selected {
+.line-chart__line-not-selected,
+.line-chart__area-not-selected {
 	opacity: 0.5;
 }
 
@@ -145,7 +146,7 @@
 	fill: var( --color-primary-dark );
 }
 
- .line-chart__legend-sample-1-fill {
+.line-chart__legend-sample-1-fill {
 	fill: var( --color-accent );
 }
 

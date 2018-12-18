@@ -1,5 +1,4 @@
 .contact-details-form-fields {
-
 	margin-bottom: 0;
 
 	.contact-details-form-fields__container.country-code,
@@ -57,7 +56,7 @@
 		.g-apps-fieldset {
 			.country {
 				margin-top: 15px;
-				width: calc( 66% - 8px  );
+				width: calc( 66% - 8px );
 				float: left;
 			}
 			.postal-code {
@@ -110,7 +109,6 @@
 		width: 100%;
 		min-width: 100px;
 	}
-
 }
 
 .contact-details-form-fields__contact-details {
@@ -135,6 +133,3 @@
 .contact-details-form-fields__container > div.hidden-input {
 	margin-top: 0;
 }
-
-
-

@@ -27,7 +27,7 @@
 		border-bottom: 1px solid $gray-lighten-20;
 	}
 
-	&:not(.is-selected):hover {
+	&:not( .is-selected ):hover {
 		color: var( --color-accent );
 
 		.social-logo {

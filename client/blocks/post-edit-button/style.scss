@@ -11,7 +11,6 @@
 	&:hover,
 	&:focus,
 	&:active {
-
 		.gridicon {
 			fill: var( --color-accent );
 		}
@@ -29,7 +28,7 @@
 	.post-edit-button__label {
 		color: $gray;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			display: none;
 		}
 	}
@@ -39,7 +38,7 @@
 	font-size: 14px;
 	margin-left: 4px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }

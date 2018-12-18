@@ -7,9 +7,9 @@
 	margin-bottom: 1em;
 }
 
-.application-passwords__add-new-card{
+.application-passwords__add-new-card {
 	display: none;
-	&.is-visible{
+	&.is-visible {
 		display: block;
 	}
 }
@@ -33,7 +33,7 @@
 
 .application-passwords__new-password-message {
 	color: $gray-darken-10;
-	font-size: .9em;
+	font-size: 0.9em;
 }
 
 .application-passwords__new-password-help {

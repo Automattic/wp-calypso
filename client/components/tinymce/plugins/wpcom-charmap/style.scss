@@ -6,7 +6,7 @@
 		margin: 0 -24px;
 		padding: 16px 8px 16px 24px;
 		overflow-y: auto;
-		transform: translateZ(0);
+		transform: translateZ( 0 );
 		pointer-events: all;
 	}
 
@@ -14,7 +14,7 @@
 		margin: 0 -24px;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		max-width: 700px;
 	}
 }

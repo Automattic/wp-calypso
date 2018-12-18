@@ -27,7 +27,7 @@
 	background-color: $gray-dark;
 
 	// Break into 3 columns on larger screens
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		display: flex;
 	}
 }
@@ -44,7 +44,7 @@
 	z-index: z-index( 'root', '.reader__featured-post' );
 
 	// Break into 3 columns on larger screens
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex: 1;
 		min-height: 216px;
 
@@ -76,7 +76,7 @@
 	text-align: left;
 	z-index: z-index( 'root', '.reader__featured-post-title' );
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		position: absolute;
 		top: 32px;
 	}

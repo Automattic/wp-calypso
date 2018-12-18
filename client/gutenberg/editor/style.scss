@@ -86,8 +86,7 @@ $gutenberg-theme-toggle: #11a0d2;
 		top: 0;
 	}
 
-
-	@media (min-width: 600px) {
+	@media ( min-width: 600px ) {
 		.edit-post-sidebar {
 			top: 56px;
 		}
@@ -104,7 +103,7 @@ $gutenberg-theme-toggle: #11a0d2;
 		}
 
 		.components-notice-list {
-			@media (max-width: 600px) {
+			@media ( max-width: 600px ) {
 				top: auto;
 			}
 
@@ -116,20 +115,26 @@ $gutenberg-theme-toggle: #11a0d2;
 		margin-left: 0px;
 		margin-right: 0px;
 
-		@media (min-width: 600px) {
+		@media ( min-width: 600px ) {
 			margin-left: -2px;
 			margin-right: -2px;
 		}
 	}
 
 	.wp-block-heading {
-		h1, h2, h3, h4, h5, h6 {
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
 			font-weight: 600;
 		}
 	}
 
 	.editor-block-list__block {
-		ul ul, ol ol {
+		ul ul,
+		ol ol {
 			list-style-type: circle;
 		}
 	}
@@ -142,8 +147,8 @@ $gutenberg-theme-toggle: #11a0d2;
 	// @see https://make.wordpress.org/accessibility/handbook/markup/the-css-class-screen-reader-text/
 	.screen-reader-text {
 		border: 0;
-		clip: rect(1px, 1px, 1px, 1px);
-		clip-path: inset(50%);
+		clip: rect( 1px, 1px, 1px, 1px );
+		clip-path: inset( 50% );
 		height: 1px;
 		margin: -1px;
 		overflow: hidden;
@@ -224,7 +229,6 @@ $gutenberg-theme-toggle: #11a0d2;
 
 .is-section-gutenberg-editor,
 .edit-post-options-modal {
-
 	// UNSET CALYPSO DEFAULT STYLES
 	input[type='text'],
 	input[type='search'] {
@@ -238,8 +242,8 @@ $gutenberg-theme-toggle: #11a0d2;
 		width: 50px;
 	}
 
-	input[type=checkbox],
-	input[type=radio] {
+	input[type='checkbox'],
+	input[type='radio'] {
 		float: none;
 
 		& + span {
@@ -303,7 +307,6 @@ $gutenberg-theme-toggle: #11a0d2;
 		p {
 			font-family: $sans;
 			font-size: 13px;
-
 		}
 	}
 
@@ -329,8 +332,8 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 
 	.placeholder-title {
-			height: 40px;
-			border-radius: 20px;
-			margin: 0 8px;
+		height: 40px;
+		border-radius: 20px;
+		margin: 0 8px;
 	}
 }

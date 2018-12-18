@@ -2,7 +2,7 @@
 	.notice {
 		margin-bottom: 10px;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			margin-bottom: 15px;
 		}
 	}
