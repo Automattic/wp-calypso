@@ -7,7 +7,7 @@
 	margin-top: 24px;
 	padding: 0 14px 14px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding-left: 0;
 		padding-right: 0;
 		margin-top: 0;
@@ -32,7 +32,7 @@
 		fill: $white;
 		height: 24px;
 		position: relative;
-			top: 12px;
+		top: 12px;
 		width: 24px;
 	}
 }
@@ -44,7 +44,7 @@
 	margin: 0 10px;
 	width: calc( 100% - 15px );
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: calc( 100% - 165px );
 	}
 }
@@ -81,15 +81,14 @@
 		z-index: z-index( '.list-stream__header-follow', '.follow-button' );
 
 		.gridicon {
-			fill: var( --color-accent );
+			fill: var( --color-primary );
 		}
 
 		.follow-button__label {
-			color: var( --color-accent );
+			color: var( --color-primary );
 		}
 
 		&.is-following {
-
 			.gridicon {
 				fill: var( --color-success );
 			}
@@ -133,8 +132,8 @@
 		fill: $gray;
 		margin: auto;
 		position: relative;
-			bottom: 0;
-			top: 12px;
-			right: -6px;
+		bottom: 0;
+		top: 12px;
+		right: -6px;
 	}
 }

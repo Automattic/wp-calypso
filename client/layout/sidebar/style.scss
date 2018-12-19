@@ -208,7 +208,7 @@ form.sidebar__button input {
 			border: 1px solid $gray-darken-30;
 
 			&:hover {
-				color: var( --color-accent );
+				color: var( --sidebar-menu-selected-a-color );
 			}
 		}
 
@@ -248,7 +248,7 @@ form.sidebar__button input {
 
 		a,
 		form {
-			color: var( --color-accent );
+			color: var( --color-primary );
 
 			&:first-child:after {
 				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
@@ -261,7 +261,7 @@ form.sidebar__button input {
 		}
 
 		.gridicon {
-			fill: var( --color-accent );
+			fill: var( --color-primary );
 		}
 	}
 }
@@ -320,7 +320,7 @@ form.sidebar__button input {
 	margin-right: auto;
 
 	&.is-active {
-		background: var( --color-accent );
+		background: var( --color-primary );
 
 		.gridicon {
 			fill: $white;

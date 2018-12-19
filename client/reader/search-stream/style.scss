@@ -277,7 +277,7 @@
 		padding: 16px;
 
 		&:hover {
-			color: var( --color-accent );
+			color: var( --color-primary );
 		}
 	}
 
@@ -404,11 +404,11 @@
 
 	.follow-button {
 		.gridicon {
-			fill: var( --color-accent );
+			fill: var( --color-primary );
 		}
 
 		.follow-button__label {
-			color: var( --color-accent );
+			color: var( --color-primary );
 
 			@include breakpoint( '<660px' ) {
 				display: inline;
