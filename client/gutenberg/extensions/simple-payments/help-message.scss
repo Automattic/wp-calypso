@@ -1,4 +1,3 @@
-
 .wp-block-jetpack-simple-payments {
 	.simple-payments__help-message {
 		display: flex;
@@ -14,9 +13,9 @@
 			margin-top: 2px;
 		}
 		&.simple-payments__help-message-is-error {
-			color: $alert-red;
+			color: var( --color-error );
 			svg {
-				fill: $alert-red;
+				fill: var( --color-error );
 			}
 		}
 	}

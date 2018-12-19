@@ -22,6 +22,6 @@
 }
 
 .lost-password-form__error-message {
-	color: $alert-red;
+	color: var( --color-error );
 	margin-bottom: 4px;
 }

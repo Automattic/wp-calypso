@@ -1,5 +1,5 @@
 .field-error {
-	color: $alert-red;
+	color: var( --color-error );
 }
 
 .field-error__input-validation {
