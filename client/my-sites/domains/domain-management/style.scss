@@ -601,7 +601,7 @@ ul.email-forwarding__list {
 	}
 
 	h5 {
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		font-size: 12px;
 		line-height: 130%;
 		margin: 9px 0;

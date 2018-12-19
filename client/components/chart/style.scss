@@ -61,7 +61,7 @@ $y-axis-padding: 0 20px 0 10px;
 	height: 200px;
 	padding: $y-axis-padding;
 	font-size: 11px;
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	margin-bottom: 30px;
 }
 

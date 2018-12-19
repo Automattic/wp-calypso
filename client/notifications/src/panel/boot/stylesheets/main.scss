@@ -77,7 +77,7 @@
 
 		h1 {
 			@extend %headertext;
-			color: $gray-darken-10;
+			color: var( --color-neutral-400 );
 			display: inline;
 		}
 
@@ -427,7 +427,7 @@
 		.wpnc__time-group-title {
 			display: flex;
 			@extend %headertext;
-			color: $gray-darken-10;
+			color: var( --color-neutral-400 );
 			padding: 6px 0px;
 			background: rgba( 255, 255, 255, 0.95 );
 			border-bottom: 1px solid var( --color-neutral-0 );

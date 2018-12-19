@@ -54,11 +54,11 @@
 
 	.action-header__site-title {
 		font-size: 10px;
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		margin: 2px 0 -3px;
 
 		a, a:hover {
-			color: $gray-darken-10;
+			color: var( --color-neutral-400 );
 		}
 	}
 

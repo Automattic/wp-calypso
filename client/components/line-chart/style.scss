@@ -111,7 +111,7 @@
 }
 
 .line-chart__y-axis text {
-	fill: $gray-darken-10;
+	fill: var( --color-neutral-400 );
 }
 
 .line-chart__legend {

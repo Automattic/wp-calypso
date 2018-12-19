@@ -16,7 +16,7 @@
 	}
 
 	strong {
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 	}
 
 	&.is-publish strong {

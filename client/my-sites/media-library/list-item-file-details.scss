@@ -14,7 +14,7 @@
 	margin: 0 auto;
 	padding-bottom: 25%;
 	line-height: 0.5;
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 }
 
 .media-library__list-item-icon .gridicon {

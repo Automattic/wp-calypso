@@ -430,7 +430,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 
 	&:hover,
 	&:focus {
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 	}
 }
 

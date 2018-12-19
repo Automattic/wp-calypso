@@ -50,7 +50,7 @@
 	}
 
 	&:hover {
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		cursor: pointer;
 	}
 }
@@ -198,7 +198,7 @@
 
 .following-manage__search-results.is-empty,
 .following-manage__subscriptions-list.is-empty {
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 }
 
 .following-manage__search-results .reader-subscription-list-item__options {
@@ -238,7 +238,7 @@
 .following-manage__url-follow-no-search-results-message {
 	margin-top: -5px;
 	padding-bottom: 15px;
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 }
 
 .following-manage__url-follow {

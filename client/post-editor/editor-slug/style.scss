@@ -17,7 +17,7 @@
 
 .editor-slug .form-text-input {
 	border: none;
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	font-size: 13px;
 	padding: 4px 0;
 	width: 200px;

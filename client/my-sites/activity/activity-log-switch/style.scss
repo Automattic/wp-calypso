@@ -79,7 +79,7 @@
 }
 
 .activity-log-switch__feature-heading {
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	font-size: 21px;
 	margin-bottom: 8px;
 	width: 100%;

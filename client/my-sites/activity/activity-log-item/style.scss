@@ -207,7 +207,7 @@
 		width: 40px;
 		height: 40px;
 		margin-right: 16px;
-		fill: $gray-darken-10;
+		fill: var( --color-neutral-400 );
 
 		@include breakpoint( '<960px' ) {
 			width: 32px;
@@ -228,7 +228,7 @@
 	}
 
 	.jetpack-logo__icon-circle {
-		fill: $gray-darken-10;
+		fill: var( --color-neutral-400 );
 	}
 
 	.gridicon {

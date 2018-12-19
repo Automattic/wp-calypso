@@ -17,7 +17,7 @@
 }
 
 .editor-word-count__is-selected-text {
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 }
 
 .editor-word-count__separator {

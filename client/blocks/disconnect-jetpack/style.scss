@@ -16,7 +16,7 @@
 }
 
 .disconnect-jetpack__highlight {
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	margin-bottom: 1.5em;
 	font-size: 16px;
 }

@@ -32,7 +32,7 @@
 }
 
 .application-passwords__new-password-message {
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	font-size: .9em;
 }
 

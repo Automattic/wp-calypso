@@ -362,7 +362,7 @@
 }
 .signup-processing__address-bar {
 	display: flex;
-	background: $gray-darken-10;
+	background: var( --color-neutral-400 );
 	border-radius: 8px;
 	flex-direction: row;
 	padding: 10px;
@@ -430,7 +430,7 @@
 .signup-processing__nudge-message {
 	width: 400px;
 	max-width: 96%;
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	margin: 1.5em auto;
 	box-sizing: border-box;
 }

@@ -22,6 +22,6 @@
 	fill: $gray;
 
 	&:hover {
-		fill: $gray-darken-10;
+		fill: var( --color-neutral-400 );
 	}
 }

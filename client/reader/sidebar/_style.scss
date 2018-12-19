@@ -48,7 +48,7 @@
 			}
 
 			.sidebar__button {
-				background-color: $gray-darken-10;
+				background-color: var( --color-neutral-400 );
 				color: $white;
 			}
 		}
@@ -138,7 +138,7 @@
 					background: $white;
 					border: 1px solid var( --color-neutral-100 );
 					border-radius: 3px;
-					color: $gray-darken-10;
+					color: var( --color-neutral-400 );
 					font-size: 11px;
 					padding: 6px 7px;
 					position: absolute;

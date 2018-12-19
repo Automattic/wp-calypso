@@ -15,7 +15,7 @@ $image-height: 47px;
 }
 
 .wp-login__header {
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	font-size: 16px;
 	margin-bottom: 16px;
 	text-align: center;

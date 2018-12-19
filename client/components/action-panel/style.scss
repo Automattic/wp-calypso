@@ -19,7 +19,7 @@
 .action-panel__body {
 	font-size: 14px;
 	line-height: 20px;
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	overflow: hidden;
 
 	p {
