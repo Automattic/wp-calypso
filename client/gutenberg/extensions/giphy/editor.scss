@@ -15,7 +15,6 @@
 		left: 25%;
 		margin-top: -3em;
 		position: absolute;
-		padding: 2em 1em;
 		top: 50%;
 		width: 50%;
 		&.has-focus .components-text-control__input {
@@ -23,6 +22,7 @@
 		}
 		.components-text-control__input {
 			opacity: 0;
+			padding: 8px 2px;
 			text-align: center;
 			-webkit-transition: opacity 0.5s ease-in;
 			-moz-transition: opacity 0.5s ease-in;
