@@ -4,29 +4,37 @@
  * External dependencies
  */
 
-import {get, map, pickBy} from 'lodash';
+import { get, filter, head, orderBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
 
-const initialState = [];
-export function getSignupProgress( state ) {
-	return get( state, 'signup.progress', initialState );
-}
+/**
+ * Returns the progress collection of the signup flopw
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Array}        The progress collection
+ */
+export const getSignupProgress = state => get( state, 'signup.progress', [] );
 
-// TODO: memoize
-// Here want to which the step the user last attempted
 /**
  * Returns the last incomplete step in the signup flow
  *
  * @param  {Object}  state  Global state tree
- * @return {Object}        The step object
+ * @return {String}        The step name, or '' if none found
  */
-export function getLatestIncompleteStep( state ) {
-	//get latest in-progress, use progress date
-}
-
-
-
+export const getLastIncompleteSignupStep = createSelector(
+	state => {
+		const lastSignupStepInProgress = head(
+			orderBy(
+				filter( state.signup.progress, { status: 'in-progress' } ),
+				[ 'lastUpdated' ],
+				[ 'desc' ]
+			)
+		);
+		return lastSignupStepInProgress || {};
+	},
+	[ getSignupProgress ]
+);
