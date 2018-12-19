@@ -20,7 +20,7 @@
 		}
 		& [fill="#00A6DB"],
 		& [fill="#74DCFC"] {
-			fill: $gray-lighten-30;
+			fill: var( --color-neutral-0 );
 		}
 	}
 }

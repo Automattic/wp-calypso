@@ -6,7 +6,7 @@
 
 .logged-out-form__footer {
 	background: lighten( $gray, 34% );
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 	box-shadow: none;
 	margin: 0 -16px -16px -16px;
 	padding: 16px;

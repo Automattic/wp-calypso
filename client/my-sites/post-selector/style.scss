@@ -96,7 +96,7 @@ input[type=checkbox].post-selector__input {
 
 	.post-selector__list-item.is-placeholder & {
 		color: transparent;
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }

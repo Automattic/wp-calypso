@@ -355,7 +355,7 @@
 }
 
 .shipping-zone__location-dialog-list-item:hover {
-	background: $gray-lighten-30;
+	background: var( --color-neutral-0 );
 }
 
 .shipping-zone__location-dialog-list-item-checkbox {

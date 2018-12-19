@@ -25,7 +25,7 @@
 	float: left;
 	margin: 4px 12px 12px 0;
 	border-radius: 50%;
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 	color: $gray-dark;
 }
 
@@ -39,7 +39,7 @@
 .editor-media-modal__gallery-help-actions {
 	overflow-y: hidden;
 	padding: 8px 16px;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 }
 
 .editor-media-modal__gallery-help-remember-dismiss {

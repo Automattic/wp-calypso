@@ -1,7 +1,7 @@
 
 .marked-lines {
 	padding: 0;
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 	font-family: $monospace;
 	display: flex;
 	flex-direction: row;

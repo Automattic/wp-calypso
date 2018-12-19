@@ -63,7 +63,7 @@
 
 	&.is-uploaded, &.is-uploading {
 		border: 1px solid var( --color-neutral-200 );
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 	}
 }
 

@@ -197,8 +197,8 @@
 }
 
 .editor-ground-control .edit-post-status {
-	border-top: 1px solid $gray-lighten-30;
-	border-bottom: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
+	border-bottom: 1px solid var( --color-neutral-0 );
 	margin: 0 -16px 16px;
 	padding: 16px;
 }

@@ -56,7 +56,7 @@
 	}
 
 	header {
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 		box-sizing: border-box;
 		background-color: $white;
 		font-size: $wpnc__capital-font-size;
@@ -167,7 +167,7 @@
 		width: 100%;
 		background-color: $white;
 		color: var( --color-text-subtle );
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 		border-left: 1px solid $white;
 		text-align: center; // Center filter in IE 9
 		height: $wpnc__filter-height;
@@ -177,7 +177,7 @@
 	}
 
 	.wpnc__note-list:not( .is-note-open ) .wpnc__filter {
-		border-left: 1px solid $gray-lighten-30;
+		border-left: 1px solid var( --color-neutral-0 );
 	}
 
 	.wpnc__filter__segmented-control {
@@ -251,7 +251,7 @@
 		font-weight: normal;
 		position: relative;
 		clear: both;
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 
 		div.wpnc__body > p,
 		div.wpnc__preface p {
@@ -342,7 +342,7 @@
 		background-color: $gray-light;
 		overflow-y: scroll;
 		-webkit-overflow-scrolling: touch;
-		border-left: 1px solid $gray-lighten-30;
+		border-left: 1px solid var( --color-neutral-0 );
 
 		&.is-empty-list {
 			overflow-y: hidden;
@@ -430,7 +430,7 @@
 			color: $gray-darken-10;
 			padding: 6px 0px;
 			background: rgba( 255, 255, 255, 0.95 );
-			border-bottom: 1px solid $gray-lighten-30;
+			border-bottom: 1px solid var( --color-neutral-0 );
 
 			.gridicons-time {
 				align-self: center;
@@ -505,7 +505,7 @@
 		box-shadow: -3px 1px 10px -2px rgba( $gray-dark, 0.075 );
 
 		@media only screen and ( min-width: 480px ) {
-			border-left: 1px solid $gray-lighten-30;
+			border-left: 1px solid var( --color-neutral-0 );
 		}
 
 		background-color: $gray-light;
@@ -576,7 +576,7 @@
 		.wpnc__reply {
 			color: var( --color-text-subtle );
 			padding: $wpnc__padding-medium 0;
-			border-bottom: 1px solid $gray-lighten-30;
+			border-bottom: 1px solid var( --color-neutral-0 );
 
 			.wpnc__gridicon {
 				padding: 0 10px;
@@ -762,12 +762,12 @@
 	.wpnc__comment .wpnc__body .wpnc__body-content,
 	.wpnc__new_post .wpnc__body .wpnc__body-content,
 	.wpnc__automattcher .wpnc__body .wpnc__body-content {
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 		padding-top: $wpnc__padding-small;
 	}
 
 	.wpnc__comment .wpnc__body .wpnc__body-content {
-		box-shadow: inset 4px 0 0 $gray-lighten-30;
+		box-shadow: inset 4px 0 0 var( --color-neutral-0 );
 		margin: 0 0 0 $wpnc__padding-medium;
 	}
 

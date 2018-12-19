@@ -365,7 +365,7 @@
 	a {
 		display: inline-block;
 		position: relative;
-		background: $gray-lighten-30;
+		background: var( --color-neutral-0 );
 		color: $gray-dark;
 		margin: 4px;
 		padding: 2px 12px;

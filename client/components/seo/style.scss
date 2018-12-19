@@ -13,7 +13,7 @@
 	margin: 0;
 	padding: 8px 0;
 	background-color: $gray-light;
-	border: 1px solid $gray-lighten-30;
+	border: 1px solid var( --color-neutral-0 );
 	border-bottom: 0;
 	font-size: 11px;
 	line-height: 1;
@@ -24,7 +24,7 @@
 }
 
 .seo-search-preview__display {
-	border: 1px solid $gray-lighten-30;
+	border: 1px solid var( --color-neutral-0 );
 	font-family: arial, sans-serif;
 	padding: 10px 20px;
 	word-wrap: break-word;

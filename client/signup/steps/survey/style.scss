@@ -101,7 +101,7 @@
 
 	&:active {
 		border-top-width: 1px;
-		background: $gray-lighten-30;
+		background: var( --color-neutral-0 );
 	}
 }
 

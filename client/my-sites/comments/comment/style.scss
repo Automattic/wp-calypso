@@ -13,7 +13,7 @@
 	&.is-pending {
 		background: mix( $alert-yellow, $white, 8.5% );
 		box-shadow: inset 4px 0 0 0 var( --color-warning ),
-			0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+			0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	}
 
 	@include breakpoint( '>660px' ) {
@@ -208,7 +208,7 @@
 	}
 
 	.comment__in-reply-to {
-		border-left: 4px solid $gray-lighten-30;
+		border-left: 4px solid var( --color-neutral-0 );
 		color: var( --color-text-subtle );
 		margin-bottom: 16px;
 		overflow: hidden;
@@ -241,7 +241,7 @@
 	.comment__content-body blockquote {
 		padding: 8px 16px;
 		margin: 8px 0 16px;
-		border-left: 2px solid $gray-lighten-30;
+		border-left: 2px solid var( --color-neutral-0 );
 	}
 }
 
@@ -299,7 +299,7 @@
 
 .comment__actions {
 	align-items: center;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 	display: flex;
 	flex-flow: row;
 	flex-wrap: nowrap;
@@ -369,11 +369,11 @@
 }
 
 .button[disabled].is-borderless.comment__action.is-approved {
-	color: $gray-lighten-30;
+	color: var( --color-neutral-0 );
 }
 
 .button[disabled].is-borderless.comment__action:hover {
-	color: $gray-lighten-30;
+	color: var( --color-neutral-0 );
 }
 
 // Comment Reply Block
@@ -486,7 +486,7 @@
 }
 
 .comment__edit-header {
-	border-bottom: 1px solid $gray-lighten-30;
+	border-bottom: 1px solid var( --color-neutral-0 );
 	padding: 12px 16px;
 }
 
@@ -662,7 +662,7 @@
 	}
 
 	.comment__author-gravatar-placeholder {
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		border-radius: 50%;
 		display: block;
 		height: 32px;
@@ -674,7 +674,7 @@
 	}
 
 	.comment__author-info-element {
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		color: transparent;
 		height: 16px;
 

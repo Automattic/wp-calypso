@@ -114,7 +114,7 @@
 			padding-right: 4%;
 
 			@include breakpoint( '<660px' ) {
-				border-bottom: 1px solid $gray-lighten-30;
+				border-bottom: 1px solid var( --color-neutral-0 );
 				padding-bottom: 10px;
 			}
 
@@ -130,7 +130,7 @@
 	}
 
 	.sharing-service-example-screenshot {
-		border: 1px solid $gray-lighten-30;
+		border: 1px solid var( --color-neutral-0 );
 
 		img {
 			vertical-align: top;
@@ -347,8 +347,8 @@
 .sharing-service.is-placeholder .gridicons-share,
 .sharing-service.is-placeholder .sharing-service__name,
 .sharing-service.is-placeholder .sharing-service__description {
-	background-color: $gray-lighten-30;
-	color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
+	color: var( --color-neutral-0 );
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
@@ -485,7 +485,7 @@
 
 .sharing-settings.sharing-buttons {
 	.sharing-button-styles {
-		box-shadow: 0 -2px 0 $gray-lighten-30 inset;
+		box-shadow: 0 -2px 0 var( --color-neutral-0 ) inset;
 		padding-bottom: 0.5em;
 	}
 
@@ -573,7 +573,7 @@
 	margin-bottom: 20px;
 	padding: 20px 24px;
 	background: $white;
-	box-shadow: 0 0 0 1px rgba( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px rgba( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
 }
 
 .sharing-buttons__fieldset-group {
@@ -701,8 +701,8 @@
 
 	&:disabled {
 		cursor: default;
-		border-color: $gray-lighten-30;
-		color: $gray-lighten-30;
+		border-color: var( --color-neutral-0 );
+		color: var( --color-neutral-0 );
 	}
 
 	&.is-top::after,
@@ -719,7 +719,7 @@
 
 	&:disabled.is-top::after,
 	&:disabled.is-bottom::after {
-		border-color: $gray-lighten-30;
+		border-color: var( --color-neutral-0 );
 	}
 
 	&.is-top {
@@ -793,7 +793,7 @@
 
 .sharing-buttons-preview__display {
 	padding: 10px 20px;
-	border: 1px solid $gray-lighten-30;
+	border: 1px solid var( --color-neutral-0 );
 	box-shadow: 0 3px 6px -3px rgba( 0, 0, 0, 0.05 );
 }
 
@@ -801,7 +801,7 @@
 	margin: 0;
 	padding: 8px 0;
 	background-color: $gray-light;
-	border: 1px solid $gray-lighten-30;
+	border: 1px solid var( --color-neutral-0 );
 	border-bottom: 0;
 	font-size: 11px;
 	line-height: 1;
@@ -814,7 +814,7 @@
 .sharing-buttons-preview.is-placeholder .sharing-buttons-preview__label,
 .sharing-buttons-preview.is-placeholder .sharing-buttons-preview__buttons {
 	display: block;
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
@@ -1084,7 +1084,7 @@
 .sharing-buttons-preview__panel-actions {
 	padding: 10px 20px;
 	text-align: right;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 }
 
 .sharing-buttons-preview__panel-action {

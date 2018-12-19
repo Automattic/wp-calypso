@@ -245,7 +245,7 @@
 }
 
 .reader-related-card__featured-image {
-	border: 1px solid $gray-lighten-30;
+	border: 1px solid var( --color-neutral-0 );
 	min-height: 78px;
 
 	@include breakpoint( '>960px' ) {

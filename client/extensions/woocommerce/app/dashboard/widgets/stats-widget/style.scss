@@ -22,7 +22,7 @@
 	}
 
 	.dashboard-widget__title {
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 		white-space: nowrap;
 
 		p {
@@ -82,7 +82,7 @@
 		max-width: 50%;
 		min-width: 50%;
 		box-sizing: border-box;
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 		padding: 32px;
 		text-align: left;
 
@@ -154,7 +154,7 @@
 	}
 
 	.stats-widget__box-contents:nth-child( odd ) {
-		border-right: 1px solid $gray-lighten-30;
+		border-right: 1px solid var( --color-neutral-0 );
 	}
 
 	.store-stats-module .card {

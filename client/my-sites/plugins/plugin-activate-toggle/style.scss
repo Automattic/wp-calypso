@@ -16,7 +16,7 @@
 }
 
 .plugin-activate-toggle__disabled .plugin-activate-toggle__icon {
-	color: $gray-lighten-30;
+	color: var( --color-neutral-0 );
 }
 
 .plugin-activate-toggle__label {

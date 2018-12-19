@@ -192,7 +192,7 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 
 	.primary-domain-notice {
-		background: $gray-lighten-30;
+		background: var( --color-neutral-0 );
 		font-size: 13px;
 		color: $gray-dark;
 		&::before {
@@ -220,7 +220,7 @@ input[type='radio'].domain-management-list-item__radio {
 	.contact-display {
 		h2 {
 			background-color: $gray-light;
-			border: 1px solid $gray-lighten-30;
+			border: 1px solid var( --color-neutral-0 );
 			border-bottom: 0;
 			color: $gray;
 			font-size: 11px;
@@ -233,7 +233,7 @@ input[type='radio'].domain-management-list-item__radio {
 		}
 
 		.contact-display-content {
-			border: 1px solid $gray-lighten-30;
+			border: 1px solid var( --color-neutral-0 );
 			color: lighten( $gray-dark, 20% );
 			font-size: 12px;
 			line-height: 140%;
@@ -516,7 +516,7 @@ ul.email-forwarding__list {
 }
 
 .privacy-protection-card__header {
-	border-bottom: 1px solid $gray-lighten-30;
+	border-bottom: 1px solid var( --color-neutral-0 );
 	display: block;
 	overflow: auto;
 	padding: 16px 16px 20px;

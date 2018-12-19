@@ -390,7 +390,7 @@
 .signup-processing__address-field.is-placeholder:after {
 	content: 'placeholder.wordpress.com';
 	color: transparent;
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 .signup-processing__bubble {

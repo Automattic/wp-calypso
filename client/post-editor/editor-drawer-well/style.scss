@@ -13,7 +13,7 @@
 	min-height: 150px;
 	padding: 24px;
 	margin: 0;
-	background: $gray-lighten-30;
+	background: var( --color-neutral-0 );
 	cursor: pointer;
 
 	&:hover {

@@ -25,7 +25,7 @@
 @include breakpoint( '<660px' ) {
 	.is-group-editor.focus-sidebar::before,
 	.is-group-editor.focus-editor-confirmation-sidebar::before {
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 	}
 
 	.is-group-editor .sidebar {
@@ -75,7 +75,7 @@
 .post-editor__site {
 	display: flex;
 	margin-bottom: 16px;
-	background: $gray-lighten-30;
+	background: var( --color-neutral-0 );
 
 	@include breakpoint( '>660px' ) {
 		display: none;
@@ -243,7 +243,7 @@
 }
 
 .post-editor .drafts__list + .list-end::after {
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 }
 
 .post-editor .draft {

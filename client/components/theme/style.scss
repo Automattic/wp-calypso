@@ -207,7 +207,7 @@ $theme-info-height: 54px;
 	.gridicon {
 		display: block;
 		margin: -5% auto;
-		fill: $gray-lighten-30;
+		fill: var( --color-neutral-0 );
 	}
 }
 

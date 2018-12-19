@@ -36,14 +36,14 @@
 
 	.reviews__product-name {
 		padding: 16px;
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 	}
 
 	&.is-expanded {
 		margin: 16px auto;
 
 		.reviews__header {
-			border-bottom: 1px solid $gray-lighten-30;
+			border-bottom: 1px solid var( --color-neutral-0 );
 		}
 
 		.reviews__content {
@@ -297,13 +297,13 @@
 }
 
 .reviews__expanded-card-details-wrap {
-	border-left: 4px solid $gray-lighten-30;
+	border-left: 4px solid var( --color-neutral-0 );
 	margin-left: 16px;
 }
 
 .reviews__reply {
-	border-top: 1px solid $gray-lighten-30;
-	border-left: 4px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
+	border-left: 4px solid var( --color-neutral-0 );
 	margin-left: 16px;
 	padding-bottom: 16px;
 	background: lighten( $gray, 35% );
@@ -321,7 +321,7 @@
 	line-height: 0;
 	overflow: hidden;
 	position: relative;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 
 	textarea {
 		font-size: 14px;
@@ -394,7 +394,7 @@
 }
 
 .reviews__reply-edit {
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 	padding: 8px;
 
 	.reviews__reply-edit-buttons {

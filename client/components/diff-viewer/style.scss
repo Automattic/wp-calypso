@@ -6,7 +6,7 @@
 }
 
 .diff-viewer__file {
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 	display: flex;
 	font-family: $monospace;
 	flex-direction: row;

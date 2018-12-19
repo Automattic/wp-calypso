@@ -30,15 +30,15 @@
 
   &:disabled {
     background: $white;
-    border-color: $gray-lighten-30;
-    color: $gray-lighten-30;
+    border-color: var( --color-neutral-0 );
+    color: var( --color-neutral-0 );
 
     &:hover {
       cursor: default;
     }
 
     &::placeholder {
-      color: $gray-lighten-30;
+      color: var( --color-neutral-0 );
     }
   }
 }

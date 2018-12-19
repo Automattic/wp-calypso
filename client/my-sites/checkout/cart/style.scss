@@ -1,5 +1,5 @@
 .cart__header {
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 
 	&.is-compact {
 		padding: 11px 15px;
@@ -17,7 +17,7 @@
 	.cart-item {
 		list-style: none;
 		display: block;
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 		padding-bottom: 15px;
 		margin-bottom: 15px;
 		position: relative;
@@ -128,7 +128,7 @@
 	}
 
 	.cart__total-divider {
-		border-top: 1px solid $gray-lighten-30;
+		border-top: 1px solid var( --color-neutral-0 );
 		height: 0;
 		width: 30%;
 		margin-left: 70%;
@@ -150,7 +150,7 @@
 
 		form {
 			display: block;
-			border-top: 1px solid $gray-lighten-30;
+			border-top: 1px solid var( --color-neutral-0 );
 			margin: 15px -15px 0 -15px;
 			padding: 15px 15px 0 15px;
 
@@ -185,7 +185,7 @@
 
 .cart__cart-ad {
 	background: lighten( $gray, 34% );
-	border: 1px solid $gray-lighten-30;
+	border: 1px solid var( --color-neutral-0 );
 	border-radius: 4px;
 	font-size: 12px;
 	margin: 15px 15px 0px 15px;
@@ -303,7 +303,7 @@ div.popover-cart__popover {
 	}
 
 	.cart__total {
-		border-top: 1px solid $gray-lighten-30;
+		border-top: 1px solid var( --color-neutral-0 );
 		font-size: 16px;
 		padding: 15px;
 	}
@@ -347,7 +347,7 @@ div.popover-cart__popover {
 	}
 
 	.cart__total {
-		border-top: 1px solid $gray-lighten-30;
+		border-top: 1px solid var( --color-neutral-0 );
 		font-size: 16px;
 		padding: 15px;
 	}

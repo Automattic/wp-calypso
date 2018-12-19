@@ -61,7 +61,7 @@
 
 	&.is-open {
 		display: block;
-		background: $gray-lighten-30;
+		background: var( --color-neutral-0 );
 		bottom: 0;
 		z-index: z-index( 'root', '.happychat__container.is-open' );
 	}

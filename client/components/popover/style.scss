@@ -179,9 +179,9 @@
 	}
 
 	&[disabled] {
-		color: $gray-lighten-30;
+		color: var( --color-neutral-0 );
 		.gridicon {
-			color: $gray-lighten-30;
+			color: var( --color-neutral-0 );
 		}
 	}
 

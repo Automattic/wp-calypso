@@ -94,14 +94,14 @@
 
 hr.post-schedule__hr {
 	height: 1px;
-	background: $gray-lighten-30;
+	background: var( --color-neutral-0 );
 	margin: 0 -16px;
 }
 
 input[type='text'].post-schedule__clock-time {
 	height: 28px;
 	display: inline-block;
-	border: 1px solid $gray-lighten-30;
+	border: 1px solid var( --color-neutral-0 );
 	width: 42px;
 	text-align: center;
 	padding: 0;

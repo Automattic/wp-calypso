@@ -27,7 +27,7 @@
 
 	&.is-disabled {
 		background: $gray-light;
-		border-color: $gray-lighten-30;
+		border-color: var( --color-neutral-0 );
 		color: var( --color-neutral-200 );
 		opacity: 1;
 		-webkit-text-fill-color: var( --color-neutral-200 );

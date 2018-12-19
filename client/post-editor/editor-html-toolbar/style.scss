@@ -101,7 +101,7 @@
 	}
 
 	.button {
-		border-right: 1px solid $gray-lighten-30;
+		border-right: 1px solid var( --color-neutral-0 );
 		color: $gray-darken-20;
 		height: 26px;
 		margin: 6px 0;
@@ -135,7 +135,7 @@
 	height: 38px;
 
 	.editor-html-toolbar__button-insert-content-dropdown.button {
-		border-right: 1px solid $gray-lighten-30;
+		border-right: 1px solid var( --color-neutral-0 );
 		height: 38px;
 		margin: 0;
 		min-width: auto;
@@ -226,7 +226,7 @@
 	font-family: $code;
 }
 .editor-html-toolbar__button-close-tags.button[disabled]:hover {
-	color: $gray-lighten-30;
+	color: var( --color-neutral-0 );
 }
 
 .editor-html-toolbar__dialog {

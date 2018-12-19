@@ -32,7 +32,7 @@
 		.is-empty {
 			.payment-box-section,
 			.checkout__payment-box-section {
-				border: 1px solid $gray-lighten-30;
+				border: 1px solid var( --color-neutral-0 );
 				margin: 5px 0;
 				display: flex;
 				flex-flow: row wrap;
@@ -122,7 +122,7 @@
 				margin: 40px 0 20px;
 				width: 100%;
 				height: 0;
-				border-bottom: 1px solid $gray-lighten-30;
+				border-bottom: 1px solid var( --color-neutral-0 );
 
 				@include breakpoint( '<480px' ) {
 					display: none;
@@ -302,10 +302,10 @@
 
 		.payment-box-section {
 			cursor: pointer;
-			border-bottom: 1px solid $gray-lighten-30;
+			border-bottom: 1px solid var( --color-neutral-0 );
 
 			&:first-of-type {
-				border-top: 1px solid $gray-lighten-30;
+				border-top: 1px solid var( --color-neutral-0 );
 			}
 
 			&.selected {
@@ -314,10 +314,10 @@
 		}
 
 		.payment-box-section-inner {
-			border-left: 1px solid $gray-lighten-30;
+			border-left: 1px solid var( --color-neutral-0 );
 			padding-left: 2px;
 			position: relative;
-			border-right: 1px solid $gray-lighten-30;
+			border-right: 1px solid var( --color-neutral-0 );
 			min-height: 50px;
 		}
 
@@ -404,7 +404,7 @@
 		left: -80px;
 		margin-top: 1.7em;
 		margin-bottom: 1.7em;
-		background: $gray-lighten-30;
+		background: var( --color-neutral-0 );
 	}
 
 	.subscription-length-picker + &__subscription-length-picker-separator {
@@ -423,7 +423,7 @@
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 
 			@include breakpoint( '>660px' ) {
-				border: 1px solid $gray-lighten-30;
+				border: 1px solid var( --color-neutral-0 );
 				box-shadow: none;
 			}
 		}
@@ -716,7 +716,7 @@
 	}
 
 	@include breakpoint( '<660px' ) {
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 		margin: 10px 0 0;
 		text-align: center;
 	}

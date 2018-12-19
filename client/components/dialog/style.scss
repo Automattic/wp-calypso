@@ -84,7 +84,7 @@
 
 .dialog__action-buttons {
 	position: relative;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 	padding: 16px;
 	margin: 0;
 	text-align: right;

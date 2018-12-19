@@ -6,7 +6,7 @@
 		text-shadow: 0 0 10px #f00, 0 0 2px #dd3d36 !important;
 	}
 	&:hover {
-		border-bottom: 1px dotted $gray-lighten-30;
+		border-bottom: 1px dotted var( --color-neutral-0 );
 	}
 }
 
@@ -17,7 +17,7 @@
 .community-translator__dialog-header {
 	margin-bottom: 14px;
 	font-weight: bold;
-	border-bottom: 1px solid $gray-lighten-30;
+	border-bottom: 1px solid var( --color-neutral-0 );
 	padding-bottom: 7px;
 	h2 {
 		font-weight: normal;
@@ -39,7 +39,7 @@
 .community-translator__string-container {
 	margin-bottom: 20px;
 	display: flex;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 	padding-top: 10px;
 	&:first-child {
 		border-top : 0;
