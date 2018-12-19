@@ -21,6 +21,11 @@ export default class Layout extends Component {
 		return photon( url );
 	}
 
+	// This is tricky:
+	// - We need to "photonize" to resize the images at appropriate dimensions
+	// - The resize will depend on the image size and the layout in some cases
+	// - Handlers need to be created by index so that the image changes can be applied correctly.
+	//   This is because the images are stored in an array in the block attributes.
 	renderImage( img, i ) {
 		const {
 			columns,
