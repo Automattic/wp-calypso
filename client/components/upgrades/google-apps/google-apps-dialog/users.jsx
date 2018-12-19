@@ -13,39 +13,31 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import getUserSetting from 'state/selectors/get-user-setting';
 import GoogleAppsUsersForm from './users-form';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 
 class GoogleAppsUsers extends React.Component {
-	UNSAFE_componentWillMount() {
-		this.maybeGetInitialFields( this.props );
-	}
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.maybeGetInitialFields( nextProps );
+	componentWillMount() {
+		this.props.onChange( this.props.fields ? this.props.fields : this.getInitialFields() );
 	}
 
-	maybeGetInitialFields( props ) {
-		if ( ! props.fields && props.firstName ) {
-			const { firstName, lastName } = props;
-			this.props.onChange(
-				this.props.fields ? this.props.fields : [ this.getNewUserFields( firstName, lastName ) ]
-			);
-		}
+	getInitialFields() {
+		return [ this.getNewUserFields() ];
 	}
 
-	getNewUserFields( firstName = '', lastName = '' ) {
+	getNewUserFields() {
 		return {
-			email: { value: ( firstName && firstName.toLowerCase() ) || '', error: null },
-			firstName: { value: firstName || '', error: null },
-			lastName: { value: lastName || '', error: null },
+			email: { value: '', error: null },
+			firstName: { value: '', error: null },
+			lastName: { value: '', error: null },
 			domain: { value: this.props.domain, error: null },
 		};
 	}
 
 	render() {
-		const { fields, translate } = this.props;
-		const allUserInputs = fields && fields.map( this.inputsForUser );
+		const fields = this.props.fields || this.getInitialFields();
+		const allUserInputs = fields.map( this.inputsForUser );
+		const { translate } = this.props;
 
 		return (
 			<div className="google-apps-dialog__users" key="google-apps-dialog__users">
@@ -121,10 +113,7 @@ const recordInputFocus = ( userIndex, fieldName, inputValue ) =>
 	);
 
 export default connect(
-	state => ( {
-		firstName: getUserSetting( state, 'first_name' ),
-		lastName: getUserSetting( state, 'last_name' ),
-	} ),
+	null,
 	{
 		recordAddUserClick,
 		recordInputFocus,
