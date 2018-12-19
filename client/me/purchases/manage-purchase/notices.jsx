@@ -27,7 +27,7 @@ import {
 	isPaidWithCredits,
 	subscribedWithinPastWeek,
 } from 'lib/purchases';
-import { isDomainTransfer } from 'lib/products-values';
+import { isDomainTransfer, isConciergeSession } from 'lib/products-values';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { isMonthly } from 'lib/plans/constants';
@@ -244,6 +244,28 @@ class PurchaseNotice extends Component {
 		);
 	}
 
+	renderConciergeConsumedNotice() {
+		const { purchase, translate } = this.props;
+
+		if ( ! isConciergeSession( purchase ) ) {
+			return null;
+		}
+
+		if ( ! isExpired( purchase ) ) {
+			return null;
+		}
+
+		return (
+			<Notice
+				showDismiss={ false }
+				status="is-error"
+				text={ translate( 'This session has been used and is no longer in use.' ) }
+			>
+				{ this.trackImpression( 'concierge-expired' ) }
+			</Notice>
+		);
+	}
+
 	render() {
 		if ( this.props.isDataLoading ) {
 			return null;
@@ -251,6 +273,11 @@ class PurchaseNotice extends Component {
 
 		if ( isDomainTransfer( this.props.purchase ) ) {
 			return null;
+		}
+
+		const consumedConciergeSessionNotice = this.renderConciergeConsumedNotice();
+		if ( consumedConciergeSessionNotice ) {
+			return consumedConciergeSessionNotice;
 		}
 
 		const expiredNotice = this.renderExpiredRenewNotice();

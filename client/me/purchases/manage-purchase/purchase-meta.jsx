@@ -28,7 +28,7 @@ import {
 	paymentLogoType,
 } from 'lib/purchases';
 import { isMonthly } from 'lib/plans/constants';
-import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
+import { isDomainRegistration, isDomainTransfer, isConciergeSession } from 'lib/products-values';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { getUser } from 'state/users/selectors';
@@ -105,6 +105,10 @@ class PurchaseMeta extends Component {
 		if ( isExpired( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				return translate( 'Domain expired on' );
+			}
+
+			if ( isConciergeSession ) {
+				return translate( 'Session used on' );
 			}
 
 			if ( isSubscription( purchase ) ) {

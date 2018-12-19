@@ -259,6 +259,10 @@ function isRemovable( purchase ) {
 		return false;
 	}
 
+	if ( isConciergeSession ) {
+		return false;
+	}
+
 	return (
 		isJetpackPlan( purchase ) ||
 		isExpiring( purchase ) ||
