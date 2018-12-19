@@ -21,12 +21,14 @@ import QueryPluginKeys from 'components/data/query-plugin-keys';
 import analytics from 'lib/analytics';
 import { SETTING_UP_PREMIUM_SERVICES } from 'lib/url/support';
 import { getSiteFileModDisableReason } from 'lib/site/utils';
+import { isCalypsoStartedConnection } from 'jetpack-connect/persistence-utils';
 import HappyChatButton from 'components/happychat/button';
 
 // Redux actions & selectors
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getSite,
+	getSiteSlug,
 	getSiteAdminUrl,
 	isJetpackSiteMainNetworkSite,
 	isJetpackSiteMultiSite,
@@ -480,8 +482,8 @@ export class JetpackThankYouCard extends Component {
 	}
 
 	renderAction( progress = 0 ) {
-		const { jetpackAdminPageUrl, selectedSite: site, translate } = this.props;
-		const buttonUrl = site && jetpackAdminPageUrl;
+		const { goBackToSiteLink, selectedSite: site, translate } = this.props;
+		const buttonUrl = site && goBackToSiteLink;
 		// We return instructions for setting up manually
 		// when we finish if something errored
 		if ( this.isErrored() && ! this.props.isInstalling ) {
@@ -573,6 +575,7 @@ export class JetpackThankYouCard extends Component {
 export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSiteSlug( state, siteId );
 		const whitelist = ownProps.whitelist || false;
 		let plan = getCurrentPlan( state, siteId );
 		let planSlug;
@@ -587,6 +590,10 @@ export default connect(
 		const jetpackAdminPlansPageUrl = jetpackMyPlanPageAvailable
 			? 'admin.php?page=jetpack#/my-plan'
 			: 'admin.php?page=jetpack#/plans';
+		const jetpackAdminPageUrl = getSiteAdminUrl( state, siteId, jetpackAdminPlansPageUrl );
+		const goBackToSiteLink = isCalypsoStartedConnection
+			? `/plans/my-plan/${ siteSlug }`
+			: jetpackAdminPageUrl;
 
 		// We need to pass the raw redux site to JetpackSite() in order to properly build the site.
 		return {
@@ -603,11 +610,11 @@ export default connect(
 			selectedSite: getSite( state, siteId ),
 			isRequestingSites: isRequestingSites( state ),
 			siteId,
-			jetpackAdminPageUrl: getSiteAdminUrl( state, siteId, jetpackAdminPlansPageUrl ),
 			remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, siteId ),
 			planFeatures,
 			planClass,
 			planSlug,
+			goBackToSiteLink,
 		};
 	},
 	{
