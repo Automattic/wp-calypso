@@ -21,8 +21,8 @@
 			border-bottom: 1px #1785be solid;
 
 			&:hover {
-				color: var( --color-accent );
-				border-bottom: 1px solid var( --color-accent );
+				color: var( --color-primary );
+				border-bottom: 1px solid var( --color-primary );
 			}
 		}
 	}
@@ -36,7 +36,7 @@
 	background-size: 450px;
 	min-height: 140px;
 
-	@media (min-width: 661px) and (max-width: 773px) {
+	@media ( min-width: 661px ) and ( max-width: 773px ) {
 		background-position: 150px 20px;
 	}
 
@@ -58,7 +58,7 @@
 		margin-right: -2px; // prevent right cropping of illustration
 
 		// Hides the character when main content column gets too narrow
-		@media (min-width: 661px) and (max-width: 773px) {
+		@media ( min-width: 661px ) and ( max-width: 773px ) {
 			display: none;
 		}
 
@@ -82,7 +82,7 @@
 	justify-content: center;
 	margin-left: 24px;
 
-	@media (min-width: 661px) and (max-width: 773px) {
+	@media ( min-width: 661px ) and ( max-width: 773px ) {
 		margin-bottom: 20px;
 		margin-top: 20px;
 	}
