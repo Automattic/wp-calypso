@@ -1,4 +1,3 @@
-
 $current-theme-height: 56px;
 $current-theme-border: 1px solid transparentize( $gray-lighten-20, 0.25 );
 
@@ -119,12 +118,12 @@ $current-theme-border: 1px solid transparentize( $gray-lighten-20, 0.25 );
 	}
 
 	&:not( .disabled ):hover {
-		background: $gray-light;
+		background: var( --color-themes-active-text );
 		cursor: pointer;
 	}
 
 	&:not( .disabled ):active {
-		background: $gray-light;
+		background: var( --color-themes-active-text );
 	}
 
 	.accessible-focus &:focus {
@@ -143,7 +142,7 @@ $current-theme-border: 1px solid transparentize( $gray-lighten-20, 0.25 );
 	}
 
 	.current-theme__button:not( .disabled ):hover &:after {
-		@include long-content-fade( $size: 10% );
+		@include long-content-fade( $color: var( --color-themes-active-text-rgb ), $size: 10% );
 	}
 }
 
