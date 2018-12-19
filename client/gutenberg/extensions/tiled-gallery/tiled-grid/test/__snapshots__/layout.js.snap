@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`layout has columns as expected 1`] = `
+exports[`layout has rows and columns as expected 1`] = `
 Array [
   Jetpack_Tiled_Gallery_Row {
     "get_ratio": [Function],

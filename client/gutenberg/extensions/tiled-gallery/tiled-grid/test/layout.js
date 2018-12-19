@@ -10,7 +10,7 @@ import { attachments } from './fixtures/attachments';
 import { TiledGalleryLayout } from '../layout';
 
 describe( 'layout', () => {
-	test( 'creates columns as expected', () => {
+	test( 'creates layout as expected', () => {
 		const layout = new TiledGalleryLayout( {
 			attachments: cloneDeep( attachments ),
 			contentWidth: 640,
