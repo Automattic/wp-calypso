@@ -59,11 +59,11 @@
 	}
 
 	.mce-toolbar .mce-btn-group .mce-ico {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 	}
 
 	.mce-toolbar .mce-btn-group .mce-btn .gridicon {
-		fill: $gray-darken-20;
+		fill: var( --color-neutral-500 );
 	}
 
 	.mce-toolbar .mce-btn-group .mce-btn:hover .mce-ico,

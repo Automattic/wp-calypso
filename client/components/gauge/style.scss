@@ -11,7 +11,7 @@
 
 	.gauge__metric {
 		display: block;
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		text-transform: uppercase;
 		font-size: 10px;
 		letter-spacing: 0.1em;

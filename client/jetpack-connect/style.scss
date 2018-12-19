@@ -521,7 +521,7 @@
 .jetpack-connect__happychat-button {
 	background: none;
 	border: none;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-weight: normal;
 	padding: 16px 24px;
 	text-align: left;

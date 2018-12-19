@@ -24,7 +24,7 @@
 		text-align: center;
 		text-transform: uppercase;
 		font-weight: 600;
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		display: block;
 		width: 70%;
 		background: $gray-light;
@@ -43,7 +43,7 @@
 		text-align: center;
 		text-transform: uppercase;
 		font-weight: 600;
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		display: block;
 		width: 60px;
 		background: $gray-light;

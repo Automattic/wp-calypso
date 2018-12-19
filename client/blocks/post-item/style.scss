@@ -94,7 +94,7 @@ a.post-item__title-link:visited {
 	padding-right: 8px;
 
 	&:hover {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 	}
 
 	.post-item__panel.is-untitled & {

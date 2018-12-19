@@ -81,7 +81,7 @@
 }
 
 .purchase-detail__icon {
-	background: $gray-darken-20;
+	background: var( --color-neutral-500 );
 	border-radius: 50%;
 	color: $white;
 	margin-bottom: 10px;

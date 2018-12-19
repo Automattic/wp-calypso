@@ -41,7 +41,7 @@
 
 .about__checkbox-option {
 	border-top: 1px solid var( --color-neutral-100 );
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	display: block;
 	font-weight: normal;
 	margin: 0;
@@ -77,7 +77,7 @@
 }
 
 .about__segment-label {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 
 	&:hover {
 		cursor: pointer;

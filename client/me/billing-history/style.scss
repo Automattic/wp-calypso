@@ -208,7 +208,7 @@
 		}
 
 		strong {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 			display: block;
 			font-size: 12px;
 			font-weight: 600;

@@ -59,7 +59,7 @@
 	&:hover {
 		.gridicons-chevron-down,
 		.gridicons-chevron-up {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 		}
 	}
 }

@@ -168,7 +168,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 .domain-management-list-item__busy-message {
 	text-transform: uppercase;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-weight: 600;
 	font-size: 12px;
 	text-overflow: ellipsis;
@@ -279,7 +279,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 		&.is-busy:disabled {
 			border-color: var( --color-neutral-100 );
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 		}
 
 		@include breakpoint( '>480px' ) {
@@ -881,7 +881,7 @@ ul.domain-connect__dns-list,
 }
 
 .domain-only-site__settings-notice {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	margin-top: 30px;
 	text-align: center;
 

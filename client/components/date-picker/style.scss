@@ -152,7 +152,7 @@ $date-picker_nav_button_size: 20px;
 	font-size: 11px;
 	text-align: center;
 	font-weight: 600;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	text-transform: uppercase;
 
 	abbr {
@@ -217,7 +217,7 @@ $date-picker_nav_button_size: 20px;
 	background-color: $gray-dark;
 
 	&:hover {
-		background-color: $gray-darken-20;
+		background-color: var( --color-neutral-500 );
 	}
 }
 

@@ -240,7 +240,7 @@
 
 		.reader__post-title-link,
 		.reader__post-title-link:visited {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 		}
 
 		.reader__post-title-link:hover {

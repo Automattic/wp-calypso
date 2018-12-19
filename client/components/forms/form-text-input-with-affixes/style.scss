@@ -52,7 +52,7 @@
 	position: relative;
 	background: $gray-light;
 	border: 1px solid var( --color-neutral-100 );
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	padding: 8px 14px;
 	white-space: nowrap;
 	flex: 1 0 auto;

@@ -42,7 +42,7 @@
 }
 
 .site-type__segment-label {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 
 	&:hover {
 		cursor: pointer;

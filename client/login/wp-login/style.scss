@@ -24,7 +24,7 @@ $image-height: 47px;
 .wp-login__links,
 .wp-login__footer {
 	a, button {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		text-decoration: none;
 	}
 }

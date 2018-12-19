@@ -42,6 +42,6 @@
 }
 
 .wpcom-charmap__character:hover {
-	background-color: $gray-darken-20;
+	background-color: var( --color-neutral-500 );
 	color: $white;
 }

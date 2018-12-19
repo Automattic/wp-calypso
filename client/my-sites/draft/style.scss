@@ -14,7 +14,7 @@
 		background: lighten( $gray, 35 );
 
 		.draft__title {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 		}
 	}
 

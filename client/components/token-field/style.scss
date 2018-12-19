@@ -131,7 +131,7 @@ input[type="text"].token-field__input {
 .token-field__remove-token {
 	display: inline-block;
 	line-height: 24px;
-	background: $gray-darken-20;
+	background: var( --color-neutral-500 );
 	transition: all .2s cubic-bezier( .4, 1, .4, 1 );
 }
 

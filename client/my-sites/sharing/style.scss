@@ -314,7 +314,7 @@
 
 .sharing-service__description {
 	margin: 0;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-size: 14px;
 
 	@include breakpoint( '<480px' ) {

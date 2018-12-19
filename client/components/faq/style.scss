@@ -54,7 +54,7 @@ $faq-gutter-width: 24px;
 
 .faq__answer {
 	margin-bottom: 1em;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 
 	a {
 		color: var( --color-accent );

@@ -61,7 +61,7 @@
 }
 
 .checkout-thank-you__features-header {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-size: 24px;
 	font-weight: 300;
 	line-height: 32px;

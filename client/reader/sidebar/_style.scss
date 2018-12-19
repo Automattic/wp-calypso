@@ -39,7 +39,7 @@
 			background-color: $gray-light;
 
 			.gridicon {
-				fill: $gray-darken-20;
+				fill: var( --color-neutral-500 );
 			}
 
 			.sidebar__menu-item-label,

@@ -13,7 +13,7 @@
 
 .popover.info-popover__tooltip {
 	.popover__inner {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		font-size: 13px;
 		max-width: 220px;
 		padding: 16px;

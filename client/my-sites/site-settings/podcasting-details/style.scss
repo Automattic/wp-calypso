@@ -18,7 +18,7 @@
 		}
 
 		.podcasting-details__link-button {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 			font-weight: 600;
 			flex-shrink: 0;
 			margin-left: 12px;
@@ -71,7 +71,7 @@
 }
 
 .podcasting-details__publish-button {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-weight: 600;
 	flex-shrink: 0;
 	margin-left: 12px;

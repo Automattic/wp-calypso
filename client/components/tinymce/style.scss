@@ -102,11 +102,11 @@
 	}
 
 	.mce-toolbar .mce-ico {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 	}
 
 	.mce-toolbar .mce-btn .gridicon {
-		fill: $gray-darken-20;
+		fill: var( --color-neutral-500 );
 	}
 
 	.mce-colorbutton .mce-preview {
@@ -233,7 +233,7 @@
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-wpcom-icon-button button {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	height: 38px;
 	padding: 0 8px;
 	margin-top: 0px;
@@ -243,7 +243,7 @@
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-wpcom-icon-button .gridicon {
-	fill: $gray-darken-20;
+	fill: var( --color-neutral-500 );
 
 	&:hover {
 		fill: $gray-dark;
@@ -575,7 +575,7 @@ div.mce-path {
 }
 
 .post-editor .mce-path-item {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-family: $sans;
 }
 
@@ -734,7 +734,7 @@ div.mce-path {
 .mce-toolbar .mce-btn-group .mce-btn.mce-listbox button .mce-txt {
 	width: auto;
 	padding: 0;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-family: $sans;
 	font-size: 13px;
 	text-overflow: initial;

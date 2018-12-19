@@ -217,7 +217,7 @@
 }
 
 .domain-only-site__settings-notice {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	margin-top: 30px;
 	text-align: center;
 

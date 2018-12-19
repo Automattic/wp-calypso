@@ -2,7 +2,7 @@
 .disconnect-jetpack__block {
 	text-align: center;
 	max-width: 400px;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 
 	.disconnect-jetpack__header {
 		color: $gray-dark;

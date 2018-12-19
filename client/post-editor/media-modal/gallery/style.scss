@@ -293,7 +293,7 @@ input[type].editor-media-modal-gallery__input-width-auto {
 
 .editor-media-modal-gallery__preview-individual .wp-caption-dd {
 	background: $gray-light;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-size: 14px;
 	line-height: 1.7;
 	padding: 16px;

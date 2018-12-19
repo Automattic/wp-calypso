@@ -67,7 +67,7 @@
 
 	.table.is-compact-table .table-item {
 		font-size: 14px;
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 	}
 
 	.table.is-compact-table .table-heading:nth-child(3), .table.is-compact-table .table-item:nth-child(3) {
@@ -128,7 +128,7 @@
 		}
 
 		.stats-widget__box-value {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 			font-size: rem( 20px );
 			font-weight: 400;
 		}

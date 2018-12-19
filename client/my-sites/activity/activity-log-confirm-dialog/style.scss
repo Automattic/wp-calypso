@@ -16,7 +16,7 @@
 }
 
 .activity-log-confirm-dialog .dialog__content {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 
 	h1 {
 		color: $gray-dark;

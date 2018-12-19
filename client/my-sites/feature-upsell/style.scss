@@ -426,7 +426,7 @@ $feature-upsell-break-at: '1040px';
 	padding-left: 20px;
 	font-size: 13px;
 	line-height: 1.2;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 
 	&:before {
 		position: absolute;
