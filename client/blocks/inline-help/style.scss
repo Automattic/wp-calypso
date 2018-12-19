@@ -53,7 +53,7 @@
 	border-radius: 100%;
 	background: var( --color-primary );
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
-	border: 1px solid darken( $blue-wordpress, 5 );
+	border: 1px solid var( --color-primary-dark );
 	transition: all 0.2s ease-in-out;
 	overflow: visible;
 
@@ -81,7 +81,7 @@
 
 	&.has-notification::before {
 		display: block;
-		background-color: $orange-jazzy;
+		background-color: var( --color-accent );
 		border: 2px solid $white;
 		content: '';
 		border-radius: 50%;
