@@ -28,6 +28,7 @@ export class SiteSettingsNavigation extends Component {
 		const { translate } = this.props;
 		return {
 			general: translate( 'General', { context: 'settings screen' } ),
+			performance: translate( 'Performance', { context: 'settings screen' } ),
 			writing: translate( 'Writing', { context: 'settings screen' } ),
 			discussion: translate( 'Discussion', { context: 'settings screen' } ),
 			traffic: translate( 'Traffic', { context: 'settings screen' } ),
@@ -54,6 +55,14 @@ export class SiteSettingsNavigation extends Component {
 				<NavTabs>
 					<NavItem path={ `/settings/general/${ site.slug }` } selected={ section === 'general' }>
 						{ strings.general }
+					</NavItem>
+
+					<NavItem
+						path={ `/settings/performance/${ site.slug }` }
+						preloadSectionName="settings-performance"
+						selected={ section === 'performance' }
+					>
+						{ strings.performance }
 					</NavItem>
 
 					<NavItem
