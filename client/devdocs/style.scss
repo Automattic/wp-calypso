@@ -18,7 +18,7 @@ $devdocs-max-width: 720px;
 			text-decoration: underline;
 
 			&:hover {
-				color: $blue-medium;
+				color: var( --color-primary );
 			}
 		}
 	}
@@ -125,11 +125,14 @@ $devdocs-max-width: 720px;
 	.docs-example__wrapper-content {
 		background: var( --color-surface-backdrop );
 		padding: 16px;
-		--docs-example-grid: #{ hex-to-rgb( $gray-dark ) };
+		--docs-example-grid: #{hex-to-rgb( $gray-dark )};
 		box-shadow: inset 0 2px 1px rgba( var( --docs-example-grid ), 0.075 );
 
 		// Grid background
-		background-image: linear-gradient( rgba( var( --docs-example-grid ), 0.05 ) 1px, transparent 1px ),
+		background-image: linear-gradient(
+				rgba( var( --docs-example-grid ), 0.05 ) 1px,
+				transparent 1px
+			),
 			linear-gradient( 90deg, rgba( var( --docs-example-grid ), 0.05 ) 1px, transparent 1px ),
 			linear-gradient( rgba( var( --docs-example-grid ), 0.025 ) 1px, transparent 1px ),
 			linear-gradient( 90deg, rgba( var( --docs-example-grid ), 0.025 ) 1px, transparent 1px );

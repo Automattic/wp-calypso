@@ -89,12 +89,12 @@
 		}
 
 		.reviews__action-collapse:hover .gridicon {
-			fill: $blue-medium;
+			fill: var( --color-primary );
 		}
 
 		&.is-preview {
 			&:hover .reviews__action-collapse .gridicon {
-				fill: $blue-medium;
+				fill: var( --color-primary );
 			}
 			.reviews__action-collapse {
 				flex: none;
@@ -375,7 +375,7 @@
 		padding: 10px;
 
 		&.is-active {
-			color: $blue-medium;
+			color: var( --color-primary );
 			cursor: pointer;
 		}
 
@@ -387,7 +387,7 @@
 		}
 
 		.accessible-focus &:focus {
-			border-color: $blue-medium;
+			border-color: var( --color-primary );
 			box-shadow: 0 0 0 2px $blue-light;
 		}
 	}
