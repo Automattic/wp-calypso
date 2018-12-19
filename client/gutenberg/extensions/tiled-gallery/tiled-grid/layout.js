@@ -7,7 +7,7 @@ import { cloneDeep, find, repeat } from 'lodash';
  * Internal dependencies
  */
 import { getRoundedConstrainedArray } from './constrained-array-rounding';
-import { Jetpack_Tiled_Gallery_Group } from './group.js';
+import { Jetpack_Tiled_Gallery_Column } from './column.js';
 import { Jetpack_Tiled_Gallery_Row } from './row.js';
 import {
 	Five,
@@ -25,7 +25,7 @@ import {
 	Two_One,
 } from './shapes';
 
-export class Jetpack_Tiled_Gallery_Grouper {
+export class Jetpack_Tiled_Gallery_Layout {
 	contentWidth;
 
 	margin;
@@ -52,8 +52,8 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		this.contentWidth = contentWidth;
 		this.margin = margin;
 
-		// @TODO This appears to be a pipeline attachments -> grouped images
-		// Layouts want grouped_images to define their rows
+		// @TODO This appears to be a pipeline attachments -> columns
+		// Layouts want columns to define their rows
 		//
 		// This module could (should) become a transformation of <Array<Image>> -> <Array<Row>>
 		//
@@ -63,7 +63,7 @@ export class Jetpack_Tiled_Gallery_Grouper {
 			// @FIXME In a future iteration, don't mutate and drop cloneDeep
 			cloneDeep( attachments )
 		);
-		this.grouped_images = this.get_grouped_images();
+		this.columns = this.get_columns();
 		this.apply_content_width( contentWidth );
 	}
 
@@ -105,35 +105,35 @@ export class Jetpack_Tiled_Gallery_Grouper {
 
 		// @TODO `return map( vector… )`
 		const row = [];
-		for ( const group_size of vector ) {
+		for ( const column_size of vector ) {
 			// @TODO This deeply nested mutation drives iteration, can we improve that?
-			row.push( new Jetpack_Tiled_Gallery_Group( this.images.splice( 0, group_size ) ) );
+			row.push( new Jetpack_Tiled_Gallery_Column( this.images.splice( 0, column_size ) ) );
 		}
 
 		return row;
 	};
 
 	// @FIXME In conjuction with read_row
-	get_grouped_images = () => {
-		const grouped_images = [];
+	get_columns = () => {
+		const columns = [];
 
 		// this.read_row mutates this.images
 		while ( this.images.length ) {
-			grouped_images.push( new Jetpack_Tiled_Gallery_Row( this.read_row() ) );
+			columns.push( new Jetpack_Tiled_Gallery_Row( this.read_row() ) );
 		}
 
-		return grouped_images;
+		return columns;
 	};
 
 	apply_content_width = contentWidth => {
-		for ( const row of this.grouped_images ) {
+		for ( const row of this.columns ) {
 			row.width = contentWidth;
 			row.raw_height =
 				( 1 / row.ratio ) *
-				( contentWidth - this.margin * ( row.groups.length - row.weighted_ratio ) );
+				( contentWidth - this.margin * ( row.columns.length - row.weighted_ratio ) );
 			row.height = Math.round( row.raw_height );
 
-			this.calculate_group_sizes( row );
+			this.calculate_column_sizes( row );
 		}
 	};
 
@@ -146,45 +146,45 @@ export class Jetpack_Tiled_Gallery_Grouper {
 	 * Area for improvement.
 	 */
 
-	calculate_group_sizes = row => {
-		// Storing the calculated group heights in an array for rounding them later while preserving their sum
+	calculate_column_sizes = row => {
+		// Storing the calculated column heights in an array for rounding them later while preserving their sum
 		// This fixes the rounding error that can lead to a few ugly pixels sticking out in the gallery
-		const group_widths_array = [];
-		for ( const group of row.groups ) {
-			group.height = row.height;
+		const column_widths_array = [];
+		for ( const column of row.columns ) {
+			column.height = row.height;
 			// Storing the raw calculations in a separate property to prevent
 			// rounding errors from cascading down and for diagnostics
-			group.raw_width =
-				( row.raw_height - this.margin * group.images.length ) * group.ratio + this.margin;
-			group_widths_array.push( group.raw_width );
+			column.raw_width =
+				( row.raw_height - this.margin * column.images.length ) * column.ratio + this.margin;
+			column_widths_array.push( column.raw_width );
 		}
 
-		const rounded_group_widths_array = getRoundedConstrainedArray( group_widths_array, row.width );
+		const rounded_column_widths_array = getRoundedConstrainedArray( column_widths_array, row.width );
 
-		for ( const group of row.groups ) {
-			group.width = rounded_group_widths_array.shift();
-			this.calculate_image_sizes( group );
+		for ( const column of row.columns ) {
+			column.width = rounded_column_widths_array.shift();
+			this.calculate_image_sizes( column );
 		}
 	};
 
-	calculate_image_sizes = group => {
+	calculate_image_sizes = column => {
 		// Storing the calculated image heights in an array for rounding them later while preserving their sum
 		// This fixes the rounding error that can lead to a few ugly pixels sticking out in the gallery
 		const image_heights_array = [];
-		for ( const image of group.images ) {
-			image.width = group.width - this.margin;
+		for ( const image of column.images ) {
+			image.width = column.width - this.margin;
 			// Storing the raw calculations in a separate property for diagnostics
-			image.raw_height = ( group.raw_width - this.margin ) / image.ratio;
+			image.raw_height = ( column.raw_width - this.margin ) / image.ratio;
 			image_heights_array.push( image.raw_height );
 		}
 
-		const image_height_sum = group.height - image_heights_array.length * this.margin;
+		const image_height_sum = column.height - image_heights_array.length * this.margin;
 		const rounded_image_heights_array = getRoundedConstrainedArray(
 			image_heights_array,
 			image_height_sum
 		);
 
-		for ( const image of group.images ) {
+		for ( const image of column.images ) {
 			// @TODO check what happens to `rounded_image_heights_array`
 			// in PHP `array_shift([])` vs JS `[].shift()` and if it has affects here
 			image.height = rounded_image_heights_array.shift();

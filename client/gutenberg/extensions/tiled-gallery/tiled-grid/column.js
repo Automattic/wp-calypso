@@ -1,4 +1,4 @@
-export class Jetpack_Tiled_Gallery_Group {
+export class Jetpack_Tiled_Gallery_Column {
 	constructor( images ) {
 		this.images = images;
 		this.ratio = this.get_ratio();

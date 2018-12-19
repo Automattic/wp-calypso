@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`grouper groups as expected 1`] = `
+exports[`layout has columns as expected 1`] = `
 Array [
   Jetpack_Tiled_Gallery_Row {
     "get_ratio": [Function],
     "get_weighted_ratio": [Function],
-    "groups": Array [
-      Jetpack_Tiled_Gallery_Group {
+    "columns": Array [
+      Jetpack_Tiled_Gallery_Column {
         "get_ratio": [Function],
         "height": 282,
         "images": Array [
@@ -64,7 +64,7 @@ Array [
         "raw_width": 421.35042567765936,
         "width": 421,
       },
-      Jetpack_Tiled_Gallery_Group {
+      Jetpack_Tiled_Gallery_Column {
         "get_ratio": [Function],
         "height": 282,
         "images": Array [
@@ -187,8 +187,8 @@ Array [
   Jetpack_Tiled_Gallery_Row {
     "get_ratio": [Function],
     "get_weighted_ratio": [Function],
-    "groups": Array [
-      Jetpack_Tiled_Gallery_Group {
+    "columns": Array [
+      Jetpack_Tiled_Gallery_Column {
         "get_ratio": [Function],
         "height": 279,
         "images": Array [
@@ -307,7 +307,7 @@ Array [
         "raw_width": 223.3504,
         "width": 223,
       },
-      Jetpack_Tiled_Gallery_Group {
+      Jetpack_Tiled_Gallery_Column {
         "get_ratio": [Function],
         "height": 279,
         "images": Array [

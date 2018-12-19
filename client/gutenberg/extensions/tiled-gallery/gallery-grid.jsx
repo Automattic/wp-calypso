@@ -110,21 +110,21 @@ class TiledGalleryGrid extends Component {
 									  }
 							}
 						>
-							{ 'groups' in row
-								? row.groups.map( ( group, groupI ) => (
+							{ 'columns' in row
+								? row.columns.map( ( column, columnIndex ) => (
 										<div
-											key={ groupI }
-											className="tiled-gallery__group"
+											key={ columnIndex }
+											className="tiled-gallery__col"
 											style={
 												noResize
 													? undefined
 													: {
-															width: group.width,
-															height: group.height,
+															width: column.width,
+															height: column.height,
 													  }
 											}
 										>
-											{ group.images.map( image => {
+											{ column.images.map( image => {
 												const galleryItem = (
 													<div
 														className="tiled-gallery__item"

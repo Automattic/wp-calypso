@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { Jetpack_Tiled_Gallery_Grouper } from './grouper';
+import { Jetpack_Tiled_Gallery_Layout } from './layout';
 import { Jetpack_Tiled_Gallery_Shape } from './shapes/jetpack-tiled-gallery-shape';
 import { DEFAULT_GALLERY_WIDTH, TILE_MARGIN } from '../constants.js';
 
@@ -16,11 +16,11 @@ export const rectangularLayout = ( {
 	margin = TILE_MARGIN,
 	contentWidth = DEFAULT_GALLERY_WIDTH,
 } ) => {
-	const grouper = new Jetpack_Tiled_Gallery_Grouper( {
+	const layout = new Jetpack_Tiled_Gallery_Layout( {
 		attachments: images,
 		contentWidth,
 		margin,
 	} );
 	Jetpack_Tiled_Gallery_Shape.reset_last_shape();
-	return grouper.grouped_images;
+	return layout.get_columns();
 };
