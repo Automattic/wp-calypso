@@ -157,9 +157,8 @@ function ratiosToRows( ratios, { isWide } ) {
 }
 
 function isNotRecentShape( shape, numRecents ) {
-	return recents => {
+	return recents =>
 		! some( takeRight( recents, numRecents ), recentShape => isEqual( recentShape, shape ) );
-	};
 }
 
 function checkNextRatios( shape ) {
