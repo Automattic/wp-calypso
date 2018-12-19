@@ -259,7 +259,7 @@ function isRemovable( purchase ) {
 		return false;
 	}
 
-	if ( isConciergeSession ) {
+	if ( isConciergeSession( purchase ) ) {
 		return false;
 	}
 
@@ -378,7 +378,7 @@ function purchaseType( purchase ) {
 	}
 
 	if ( isConciergeSession( purchase ) ) {
-		return i18n.translate( 'Concierge Support' );
+		return i18n.translate( 'One-on-one Support' );
 	}
 
 	if ( isPlan( purchase ) ) {

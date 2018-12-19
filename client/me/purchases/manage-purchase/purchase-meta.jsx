@@ -107,7 +107,7 @@ class PurchaseMeta extends Component {
 				return translate( 'Domain expired on' );
 			}
 
-			if ( isConciergeSession ) {
+			if ( isConciergeSession( purchase ) ) {
 				return translate( 'Session used on' );
 			}
 
