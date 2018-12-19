@@ -3,13 +3,48 @@
  *
  * @format
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
+
+/**
+ * This file is sourced early and cannot easily be connected to the state tree...
+ * so, this function consults the value in localStorage.
+ *
+ * @returns {string} The preference setting that exists in localStorage (if any)
+ */
+function getColorSchemePreferenceFromLocalStorage() {
+	try {
+		const prefs = localStorage.getItem( 'preferences-data' );
+		if ( isEmpty( prefs ) ) {
+			return 'default';
+		}
+		const parsed = JSON.parse( prefs );
+		return get( parsed, 'colorScheme', 'default' );
+	} catch ( err ) {
+		return 'default';
+	}
+}
+
+/**
+ * This function is used in setting the "theme_color" head | meta value.
+ * It is used to customize the (browser UI) color for mobile Chrome, Opera, etc. on Android
+ *
+ * @see https://developers.google.com/web/fundamentals/design-and-ux/browser-customization/#meta_theme_color_for_chrome_and_opera
+ * @returns {string} The color for the selected color scheme
+ */
+function getBrowserThemeColor() {
+	const DEFAULT_COLOR = '#016087'; // blue-500
+	const colors = {
+		'classic-blue': DEFAULT_COLOR,
+		'classic-bright': DEFAULT_COLOR,
+	};
+	return get( colors, getColorSchemePreferenceFromLocalStorage(), DEFAULT_COLOR );
+}
 
 const Head = ( {
 	title = 'WordPress.com',
@@ -29,7 +64,7 @@ const Head = ( {
 			<meta name="format-detection" content="telephone=no" />
 			<meta name="mobile-web-app-capable" content="yes" />
 			<meta name="apple-mobile-web-app-capable" content="yes" />
-			<meta name="theme-color" content="#016087" />
+			<meta name="theme-color" content={ getBrowserThemeColor() } />
 			<meta name="referrer" content="origin" />
 
 			<link

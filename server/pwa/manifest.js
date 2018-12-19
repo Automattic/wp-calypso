@@ -34,7 +34,6 @@ const buildManifest = ( { branchName } ) => {
 		display: 'standalone',
 		gcm_sender_id: '87234302238',
 		background_color: '#0078be',
-		theme_color: '#0078be',
 		icons: [
 			{
 				src: '/calypso/images/manifest/icon-144x144.png' + environmentUrlSuffix,
