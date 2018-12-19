@@ -25,8 +25,8 @@
 	margin-bottom: 8px;
 	&.has-notification::before {
 		display: inline-block;
-		background-color: $orange-jazzy;
-		content: "";
+		background-color: var( --color-primary );
+		content: '';
 		border-radius: 50%;
 		margin-right: 6px;
 		width: 8px;

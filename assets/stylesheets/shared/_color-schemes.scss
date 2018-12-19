@@ -3,10 +3,12 @@
 	--color-primary: #{$muriel-blue-500};
 	--color-primary-light: #{$muriel-blue-300};
 	--color-primary-dark: #{$muriel-blue-700};
+	--color-primary-rgb: #{ hex-to-rgb( $muriel-blue-500 ) };
 
 	--color-accent: #{$muriel-hot-pink-500};
 	--color-accent-light: #{$muriel-hot-pink-300};
 	--color-accent-dark: #{$muriel-hot-pink-700};
+	--color-accent-rgb: #{ hex-to-rgb( $muriel-hot-pink-500 ) };
 
 	--color-neutral: #{$muriel-gray-500};
 	--color-neutral-dark: #{$muriel-gray-700};
@@ -90,10 +92,12 @@
 		--color-primary: #{$muriel-blue-500};
 		--color-primary-light: #{$muriel-blue-300};
 		--color-primary-dark: #{$muriel-blue-700};
+		--color-primary-rgb: #{ hex-to-rgb( $muriel-blue-500 ) };
 
 		--color-accent: var( --color-primary );
 		--color-accent-dark: var( --color-primary-dark );
 		--color-accent-light: var( --color-primary-light );
+		--color-accent-rgb: var( --color-primary-rgb );
 
 		--color-success: #{$muriel-hot-green-500};
 		--color-success-light: #{$muriel-hot-green-300};

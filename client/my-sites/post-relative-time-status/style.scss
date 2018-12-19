@@ -9,7 +9,7 @@
 	.pages__page-list &,
 	.posts__list & {
 		.is-sticky {
-			color: $orange-jazzy;
+			color: var( --color-primary );
 		}
 		.is-pending {
 			color: var( --color-warning );
@@ -28,7 +28,6 @@
 	display: inline-block;
 	margin-right: ( 11 / 12 ) * 1em;
 }
-
 
 .post-relative-time-status__time-text {
 	display: inline-block;

@@ -1,4 +1,3 @@
-
 // Comment Base Style
 
 .card.comment {
@@ -332,7 +331,7 @@
 		color: var( --color-success );
 	}
 	&.comment__action-like:hover {
-		color: $orange-jazzy;
+		color: var( --color-primary );
 	}
 	&.comment__action-delete:hover,
 	&.comment__action-spam:hover,
@@ -344,7 +343,7 @@
 		color: var( --color-success );
 	}
 	&.is-liked {
-		color: $orange-jazzy;
+		color: var( --color-primary );
 	}
 
 	@include breakpoint( '>480px' ) {

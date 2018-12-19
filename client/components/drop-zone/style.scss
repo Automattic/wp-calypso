@@ -1,9 +1,9 @@
 .drop-zone {
 	position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 
 	margin: 15px;
 
@@ -34,9 +34,9 @@
 
 .drop-zone__content {
 	position: absolute;
-		top: 50%;
-		left: 0;
-		right: 0;
+	top: 50%;
+	left: 0;
+	right: 0;
 	z-index: z-index( 'root', '.drop-zone__content' );
 	transform: translateY( -50% );
 	width: 100%;
@@ -70,7 +70,7 @@
 }
 
 .drop-zone.editor-featured-image__dropzone {
-	background-color: rgba( $orange-jazzy, 0.7 );
+	background-color: rgba( var( --color-primary-rgb ), 0.7 );
 	border: 6px solid $orange-jazzy;
 
 	&.is-dragging-over-element {
@@ -78,7 +78,6 @@
 	}
 
 	.drop-zone__content {
-		color: #542B06;
-
+		color: #542b06;
 	}
 }

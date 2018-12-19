@@ -1,4 +1,3 @@
-
 .people-profile {
 	position: relative;
 	@include clear-fix;
@@ -100,7 +99,7 @@
 	}
 
 	&.role-super-admin {
-		background: $orange-fire;
+		background: var( --color-error );
 		border: none;
 		color: $white;
 	}
