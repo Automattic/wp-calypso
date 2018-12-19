@@ -64,7 +64,7 @@
 		}
 
 		.sidebar__heading {
-			color: $gray-darken-30;
+			color: var( --color-neutral-600 );
 			cursor: pointer;
 			font-weight: normal;
 			margin: 0;

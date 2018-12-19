@@ -220,7 +220,7 @@ $feature-upsell-break-at: '1040px';
 
 	&-header.is-title {
 		font-size: 24px;
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 		margin-bottom: 20px;
 		@include breakpoint( '<1280px' ) {
 			font-size: 20px;
@@ -230,7 +230,7 @@ $feature-upsell-break-at: '1040px';
 	&-header.is-sub {
 		font-size: 21px;
 		font-weight: 300;
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 		margin-bottom: 20px;
 		@include breakpoint( '<1280px' ) {
 			font-size: 18px;
@@ -346,7 +346,7 @@ $feature-upsell-break-at: '1040px';
 	&-name {
 		font-size: 24px;
 		font-weight: 600;
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 		@include breakpoint( '<1280px' ) {
 			font-size: 20px;
 		}
@@ -496,7 +496,7 @@ $feature-upsell-break-at: '1040px';
 		font-weight: 600;
 		font-size: 21px;
 		line-height: 1.5;
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 		clear: none;
 		margin-top: 10px;
 	}
@@ -518,7 +518,7 @@ $feature-upsell-break-at: '1040px';
 		margin: 0;
 		padding: 11px 14px;
 		border-radius: 100px;
-		background: $gray-darken-30;
+		background: var( --color-neutral-600 );
 		color: #fff;
 	}
 

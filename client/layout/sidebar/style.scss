@@ -205,7 +205,7 @@ form.sidebar__button input {
 
 		.sidebar__button {
 			color: $gray-dark;
-			border: 1px solid $gray-darken-30;
+			border: 1px solid var( --color-neutral-600 );
 
 			&:hover {
 				color: var( --sidebar-menu-selected-a-color );

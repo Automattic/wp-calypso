@@ -54,7 +54,7 @@
 
 		&:hover {
 			.gridicon {
-				color: $gray-darken-30;
+				color: var( --color-neutral-600 );
 			}
 		}
 	}
@@ -118,7 +118,7 @@
 
 	&:hover {
 		.gridicon {
-			color: $gray-darken-30;
+			color: var( --color-neutral-600 );
 		}
 	}
 }

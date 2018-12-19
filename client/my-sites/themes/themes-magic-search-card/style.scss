@@ -51,7 +51,7 @@
 
 		.themes-magic-search-card__icon-close {
 			flex: 0 0 auto;
-			color: $gray-darken-30;
+			color: var( --color-neutral-600 );
 			align-items: center;
 		}
 	}

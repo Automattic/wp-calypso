@@ -15,7 +15,7 @@
 	&.is-open {
 		.gridicon,
 		.editor-author__name {
-			color: $gray-darken-30;
+			color: var( --color-neutral-600 );
 		}
 	}
 }

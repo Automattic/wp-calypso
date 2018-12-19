@@ -2,7 +2,7 @@ $devdocs-max-width: 720px;
 
 // Sidebar Title
 .devdocs__title {
-	color: $gray-darken-30;
+	color: var( --color-neutral-600 );
 	font-weight: 300;
 	font-size: 24px;
 	padding: 24px;
@@ -366,7 +366,7 @@ $devdocs-max-width: 720px;
 		line-height: 1.2;
 		margin: 32px 0 16px;
 		font-size: 21px;
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 	}
 
 	h1 {

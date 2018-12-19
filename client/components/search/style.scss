@@ -39,11 +39,11 @@
 	}
 
 	.search__open-icon:hover {
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 	}
 
 	.search__close-icon {
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 		opacity: 0;
 		transition: opacity 0.2s ease-in;
 	}
@@ -127,7 +127,7 @@
 	width: 100%;
 
 	.search__open-icon {
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 	}
 
 	.search__close-icon {

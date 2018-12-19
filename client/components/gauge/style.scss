@@ -4,7 +4,7 @@
 	text-align: center;
 
 	.gauge__number {
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 		display: block;
 		margin-top: -5px;
 	}

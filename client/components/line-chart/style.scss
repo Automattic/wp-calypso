@@ -107,7 +107,7 @@
 }
 
 .line-chart__x-axis text {
-	fill: $gray-darken-30;
+	fill: var( --color-neutral-600 );
 }
 
 .line-chart__y-axis text {

@@ -1,6 +1,6 @@
 
 .domain-product-price {
-	color: $gray-darken-30;
+	color: var( --color-neutral-600 );
 	font-weight: 600;
 	line-height: 1;
 
@@ -39,7 +39,7 @@
 	}
 
 	.domain-product-price__free-text {
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 		display: block;
 		font-size: 14px;
 		font-weight: 400;

@@ -54,7 +54,7 @@
 	}
 
 	li {
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 		font-size: 13px;
 
 		@include breakpoint( '<660px' ) {
@@ -85,7 +85,7 @@
 		}
 
 		> a {
-			color: $gray-darken-30;
+			color: var( --color-neutral-600 );
 			display: block;
 			text-decoration: none;
 		}

@@ -283,7 +283,7 @@
 }
 
 .comments__comment-author {
-	color: $gray-darken-30;
+	color: var( --color-neutral-600 );
 	display: flex;
 	flex-wrap: wrap;
 	font-size: 14px;
@@ -360,7 +360,7 @@
 }
 
 .comments__comment-username {
-	color: $gray-darken-30;
+	color: var( --color-neutral-600 );
 	height: 21px;
 	margin-right: 7px;
 }
@@ -398,7 +398,7 @@ a.comments__comment-username {
 	word-break: break-word;
 
 	p {
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 
 		&:last-child {
 			margin-bottom: 0;
@@ -409,7 +409,7 @@ a.comments__comment-username {
 		background: $gray-light;
 		border-left: 2px solid var( --color-neutral-0 );
 		border-radius: 0;
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 		margin: 8px 0 16px;
 		padding: 8px 16px;
 	}

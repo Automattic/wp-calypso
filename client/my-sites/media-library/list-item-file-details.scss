@@ -32,7 +32,7 @@
 	max-width: 80%;
 	margin: 0 auto;
 	white-space: nowrap;
-	color: $gray-darken-30;
+	color: var( --color-neutral-600 );
 
 	&::after {
 		@include long-content-fade( $color: hex-to-rgb( $gray-lighten-20 ) );
