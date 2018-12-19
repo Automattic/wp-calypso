@@ -132,7 +132,7 @@ function ratiosToRows( ratios, { isWide } ) {
 				overEvery( gte( 0.9 ), lt( 2 ) ),
 				lt( 1.6 ),
 			] )( toProcess ) &&
-			isNotRecentShape( [ 1, 2 ], 3 )( processed )
+			isNotRecentShape( [ 2, 1 ], 3 )( processed )
 		) {
 			next = [ 2, 1 ];
 		} else if ( /* Panoramic */ checkNextRatios( [ isPanoramic ] )( toProcess ) ) {
