@@ -25,6 +25,14 @@ class GiphyEdit extends Component {
 		this.textControlRef = createRef();
 		this.debouncedParseSearch = debounce( this.parseSearch, 250 );
 	}
+	componentDidUpdate( prevProps ) {
+		const { isSelected } = this.props;
+		// When block becomes selected, show the search field, give it focus, and start the timer to hide.
+		if ( isSelected && ! prevProps.isSelected ) {
+			this.maintainFocus();
+			this.textControlRef.current.querySelector( 'input' ).focus();
+		}
+	}
 	componentWillUnmount() {
 		this.debouncedParseSearch.cancel();
 	}
@@ -84,10 +92,6 @@ class GiphyEdit extends Component {
 		};
 		xhr.send();
 	};
-	setFocus = () => {
-		this.maintainFocus();
-		this.textControlRef.current.querySelector( 'input' ).focus();
-	};
 	maintainFocus = ( timeoutDuration = 3000 ) => {
 		this.setState( { focus: true }, () => {
 			if ( this.timer ) {
@@ -134,12 +138,7 @@ class GiphyEdit extends Component {
 				</BlockControls>
 				<div className={ classes }>
 					<figure style={ style }>
-						<button
-							className="wp-block-jetpack-giphy_cover"
-							onClick={ this.setFocus }
-							ref={ this.textControlRef }
-							tabIndex="0"
-						>
+						<div className="wp-block-jetpack-giphy_cover" ref={ this.textControlRef }>
 							<TextControl
 								className={ textControlClasses }
 								label={ __( 'Search or paste a Giphy URL' ) }
@@ -148,7 +147,7 @@ class GiphyEdit extends Component {
 								onClick={ this.maintainFocus }
 								value={ searchText }
 							/>
-						</button>
+						</div>
 						<iframe src={ giphyUrl } title={ searchText } />
 					</figure>
 					{ ( ! RichText.isEmpty( caption ) || isSelected ) && (
