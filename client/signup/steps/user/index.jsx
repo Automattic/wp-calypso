@@ -11,7 +11,7 @@ import { identity, includes, isEmpty, omit, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
+import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'blocks/signup-form';
 import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
@@ -126,6 +126,9 @@ export class UserStep extends Component {
 		} else if ( 1 === getFlowSteps( flowName ).length ) {
 			// Displays specific sub header if users only want to create an account, without a site
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
+		} else if ( 'onboarding-dev' === flowName ) {
+			// Displays no sub header for onboarding-dev flow
+			subHeaderText = '';
 		}
 
 		this.setState( { subHeaderText } );
@@ -215,7 +218,7 @@ export class UserStep extends Component {
 	}
 
 	getHeaderText() {
-		const { flowName, headerText, oauth2Client, translate } = this.props;
+		const { flowName, oauth2Client, translate, headerText } = this.props;
 
 		if ( includes( [ 'wpcc', 'crowdsignal' ], flowName ) && oauth2Client ) {
 			return translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
@@ -223,6 +226,10 @@ export class UserStep extends Component {
 				comment:
 					"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')",
 			} );
+		}
+
+		if ( 'onboarding-dev' === flowName ) {
+			return translate( 'Make something great' );
 		}
 
 		return headerText;
@@ -263,7 +270,7 @@ export class UserStep extends Component {
 			return translate( 'Account created - Go to next step' );
 		}
 
-		return translate( 'Continue' );
+		return translate( 'Create your account' );
 	}
 
 	renderSignupForm() {
