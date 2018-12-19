@@ -3,7 +3,7 @@
 /**
  * External Dependencies
  */
-import { filter, pick } from 'lodash';
+import { filter, get, pick } from 'lodash';
 import { Component, Fragment } from '@wordpress/element';
 import {
 	DropZone,
@@ -39,13 +39,19 @@ export function defaultColumnsNumber( attributes ) {
 }
 
 const pickRelevantMediaFiles = image => {
-	let { caption } = image;
+	const imageProps = pick( image, [ 'alt', 'id', 'link', 'caption' ] );
+	const largeImage =
+		get( image, [ 'sizes', 'large' ] ) || get( image, [ 'media_details', 'sizes', 'large' ] );
 
-	if ( typeof caption !== 'object' ) {
-		caption = create( { html: caption } );
+	imageProps.width = largeImage.width || image.width;
+	imageProps.height = largeImage.height || image.height;
+	imageProps.url = largeImage.url || largeImage.source_url || image.url;
+
+	if ( typeof imageProps.caption !== 'object' ) {
+		imageProps.caption = create( { html: imageProps.caption } );
 	}
 
-	return Object.assign( pick( image, [ [ 'alt' ], [ 'id' ], [ 'link' ], [ 'url' ] ] ), caption );
+	return imageProps;
 };
 
 class TiledGalleryEdit extends Component {
