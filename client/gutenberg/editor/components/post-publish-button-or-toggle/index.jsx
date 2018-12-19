@@ -60,9 +60,11 @@ export class PostPublishButtonOrToggle extends Component {
 				actions: [
 					{
 						label: translate( 'Learn More' ),
-						url: true, // This causes a warning because true is not a valid href attribute, but it is
-						// needed in order to display the action button as a link
-						onClick: () => setState( { showEmailVerificationNotice: true } ),
+						url: '#',
+						onClick: e => {
+							e.preventDefault();
+							setState( { showEmailVerificationNotice: true } );
+						},
 					},
 				],
 			} );
