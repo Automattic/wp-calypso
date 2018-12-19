@@ -6,7 +6,7 @@
 /**
  * External dependencies
  */
-import { map, property, sum } from 'lodash';
+import { map, sum } from 'lodash';
 
 const get_int_floor_array = bound_array => {
 	return bound_array.map( ( value, i ) => ( {
@@ -64,15 +64,9 @@ const adjust_constrained_array = ( bound_array_int, adjustment ) => {
  * @returns {Array} Array with numeric elements rounded to integers, while their sum is preserved.
  */
 export const getRoundedConstrainedArray = ( bound_array, sum_value = false ) => {
-	// Convert associative arrays before working with them and convert them
-	// back before returning the values
-	// const keys = Object.keys( bound_array );
-
-	bound_array = Object.values( bound_array );
-
 	let bound_array_int = get_int_floor_array( bound_array );
 
-	const lower_sum = sum( map( bound_array_int, property( 'floor' ) ) );
+	const lower_sum = sum( map( bound_array_int, 'floor' ) );
 
 	if ( ! sum_value || sum_value < lower_sum ) {
 		// If value of sum is not supplied or is invalid,
@@ -84,9 +78,5 @@ export const getRoundedConstrainedArray = ( bound_array, sum_value = false ) => 
 
 	bound_array_int = adjust_constrained_array( bound_array_int, diff_sum );
 
-	const bound_array_fin = map( bound_array_int, property( 'floor' ) );
-
-	return bound_array_fin;
-	// Combines keys and values into an object using lodash.zipObject
-	//return zipObject( keys, bound_array_fin );
+	return map( bound_array_int, 'floor' );
 };
