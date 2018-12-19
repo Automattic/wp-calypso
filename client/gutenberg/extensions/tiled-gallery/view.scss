@@ -24,6 +24,20 @@
 			& + & {
 				margin-left: $tiled-gallery-gutter;
 			}
+
+			a,
+			img {
+				// IE11 doesn't support object-fit, so just make sure images aren't skewed.
+				// The following rules are for all browsers.
+				width: 100%;
+
+				// IE11 doesn't read rules inside this query. They are applied only to modern browsers.
+				@supports ( position: sticky ) {
+					height: 100%;
+					flex: 1;
+					object-fit: cover;
+				}
+			}
 		}
 
 		figure {
@@ -82,23 +96,6 @@
 
 	&.is-style-circle .tiled-gallery__item img {
 		border-radius: 50%;
-	}
-
-	// Cropped
-	&.is-cropped .tiled-gallery__item {
-		a,
-		img {
-			// IE11 doesn't support object-fit, so just make sure images aren't skewed.
-			// The following rules are for all browsers.
-			width: 100%;
-
-			// IE11 doesn't read rules inside this query. They are applied only to modern browsers.
-			@supports ( position: sticky ) {
-				height: 100%;
-				flex: 1;
-				object-fit: cover;
-			}
-		}
 	}
 
 	// Apply max-width to floated items that have no intrinsic width

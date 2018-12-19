@@ -18,7 +18,6 @@ export default ( { attributes } ) => {
 		align,
 		className,
 		columns = defaultColumnsNumber( attributes ),
-		imageCrop,
 		images,
 		linkTo,
 	} = attributes;
@@ -72,7 +71,6 @@ export default ( { attributes } ) => {
 			align={ align }
 			className={ `wp-block-jetpack-tiled-gallery ${ className }` }
 			columns={ columns }
-			imageCrop={ imageCrop }
 			images={ images }
 			layout={ layout }
 			renderGalleryImage={ renderGalleryImage }

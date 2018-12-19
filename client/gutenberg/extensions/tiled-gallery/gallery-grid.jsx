@@ -69,7 +69,6 @@ class TiledGalleryGrid extends Component {
 			children,
 			className,
 			columns,
-			imageCrop,
 			images,
 			layout,
 			noResize,
@@ -88,7 +87,6 @@ class TiledGalleryGrid extends Component {
 		return (
 			<div
 				className={ classnames( className, {
-					'is-cropped': imageCrop,
 					[ `align${ align }` ]: align,
 					[ `columns-${ columns }` ]: columns,
 				} ) }
