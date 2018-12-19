@@ -5,8 +5,6 @@
 	.card {
 		padding: 0;
 		margin: 0;
-		box-shadow: 0 2px 16px rgba( 0, 0, 0, 0.1 );
-		border-radius: 4px;
 	}
 
 	.form-fieldset {
@@ -46,10 +44,6 @@
 	.site-type__option-description {
 		font-size: 14px;
 		color: $gray-text-min;
-	}
-
-	&:first-child {
-		border-radius: 4px 4px 0 0;
 	}
 
 	&:hover {
