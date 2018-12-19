@@ -1,36 +1,30 @@
 /** @format **/
 
-/**
- * Internal dependencies
- */
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-
+// TODO: should this data come from an API endpoint, somehow related to verticals?
 export const siteStyleOptions = {
 	business: [
 		{
 			label: 'Modern',
 			name: 'modern',
-			value: 'pub/business',
+			value: 'pub/radcliffe-2',
 		},
 		{
 			label: 'Pro',
 			name: 'pro',
-			value: 'pub/business-professional',
+			value: 'pub/radcliffe-2-professional',
 		},
 		{
 			label: 'Minimal',
 			name: 'minimal',
-			value: 'pub/business-minimal',
+			value: 'pub/radcliffe-2-minimal',
 		},
 		{
 			label: 'Elegant',
 			name: 'elegant',
-			value: 'pub/business-elegant',
+			value: 'pub/radcliffe-2	-elegant',
 		},
 	],
 };
 
-export const getSiteStyleOptions = siteType =>
-	getSiteTypePropertyValue( 'slug', siteType, 'slug' ) && siteStyleOptions[ siteType ]
-		? siteStyleOptions[ siteType ]
-		: siteStyleOptions.business;
+export const getSiteStyleOptions = vertical =>
+	siteStyleOptions[ vertical ] ? siteStyleOptions[ vertical ] : siteStyleOptions.business;
