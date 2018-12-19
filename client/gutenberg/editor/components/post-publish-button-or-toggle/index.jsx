@@ -4,7 +4,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { get } from 'lodash';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -47,6 +47,7 @@ export class PostPublishButtonOrToggle extends Component {
 			unlockPostSaving,
 			createWarningNotice,
 			setState,
+			translate,
 		} = this.props;
 
 		const lockName = 'blockEditorPostSavingLock';
@@ -74,7 +75,7 @@ export class PostPublishButtonOrToggle extends Component {
 	}
 
 	getVerificationNoticeLabel() {
-		const { isPublished, isBeingScheduled } = this.props;
+		const { isPublished, isBeingScheduled, translate } = this.props;
 		if ( isPublished ) {
 			return translate( 'To update, check your email and confirm your address.' );
 		} else if ( isBeingScheduled ) {
@@ -202,4 +203,4 @@ export default compose(
 			userNeedsVerification,
 		};
 	} )
-)( PostPublishButtonOrToggle );
+)( localize( PostPublishButtonOrToggle ) );
