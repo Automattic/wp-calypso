@@ -5,7 +5,7 @@
  */
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import AddGoogleAppsCard from './add-google-apps-card';
+import GSuiteMarketingCopy from 'my-sites/domains/domain-management/g-suite/g-suite-purchase-cta';
 import GoogleAppsUsersCard from './google-apps-users-card';
 import Placeholder from './placeholder';
 import VerticalNav from 'components/vertical-nav';
@@ -146,16 +146,18 @@ class Email extends React.Component {
 	}
 
 	addGoogleAppsCard() {
+		const { products, selectedSite } = this.props;
+		const gapps = products.gapps;
 		return (
-			<div>
+			<Fragment>
 				<EmailVerificationGate
 					noticeText={ this.props.translate( 'You must verify your email to purchase G Suite.' ) }
 					noticeStatus="is-info"
 				>
-					<AddGoogleAppsCard { ...this.props } />
+					<GSuiteMarketingCopy product={ gapps } selectedSite={ selectedSite } />
 				</EmailVerificationGate>
 				{ this.addEmailForwardingCard() }
-			</div>
+			</Fragment>
 		);
 	}
 
