@@ -148,6 +148,7 @@ class TiledGalleryEdit extends Component {
 		const { selectedImage } = this.state;
 		const { attributes, isSelected, className, noticeOperations, noticeUI } = this.props;
 		const {
+			align,
 			columns = defaultColumnsNumber( attributes ),
 			imageCrop,
 			images,
@@ -245,6 +246,7 @@ class TiledGalleryEdit extends Component {
 					onSelectImage={ this.onSelectImage }
 					selectedImage={ isSelected ? selectedImage : null }
 					setImageAttributes={ this.setImageAttributes }
+					isWide={ [ 'full', 'wide' ].includes( align ) }
 				>
 					{ dropZone }
 					{ isSelected && (

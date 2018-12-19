@@ -9,9 +9,9 @@ import { every, isEqual, overEvery, some, sum, take, takeRight, zipWith } from '
 import Row from './row';
 import Column from './column';
 
-export default function Mosaic( { images, renderedImages } ) {
+export default function Mosaic( { images, isWide, renderedImages } ) {
 	const ratios = images.map( ( { height, width } ) => ( height && width ? width / height : 1 ) );
-	const rows = ratiosToRows( ratios );
+	const rows = ratiosToRows( ratios, { isWide } );
 
 	let cursor = 0;
 	return rows.map( ( row, rowIndex ) => (
@@ -30,10 +30,7 @@ export default function Mosaic( { images, renderedImages } ) {
 // split the remaining rows
 // recurse
 
-function ratiosToRows( ratios ) {
-	// @TODO check full/wide alignment on block - g7g version of wide theme check
-	const isWide = false;
-
+function ratiosToRows( ratios, { isWide } ) {
 	// This function will recursively process the input until it is consumed
 	const go = ( processed, toProcess ) => {
 		if ( ! toProcess.length ) {
