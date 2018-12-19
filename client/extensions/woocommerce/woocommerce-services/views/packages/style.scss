@@ -64,7 +64,7 @@
 	}
 
 	&.packages__packages-header {
-		border-bottom-color: $gray-lighten-20;
+		border-bottom-color: var( --color-neutral-100 );
 	}
 
 	&.prefixed {
@@ -186,7 +186,7 @@
 	margin-bottom: 0;
 
 	.packages__packages-header {
-		border-top: 1px solid $gray-lighten-20;
+		border-top: 1px solid var( --color-neutral-100 );
 	}
 
 	.foldable-card__header {

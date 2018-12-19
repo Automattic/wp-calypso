@@ -140,7 +140,7 @@
 }
 
 .auth__lost-password a {
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 }
 
 // should be a new component

@@ -273,7 +273,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 
 	&.is-placeholder {
 		@include placeholder();

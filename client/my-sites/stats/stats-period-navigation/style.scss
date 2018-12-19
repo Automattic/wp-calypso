@@ -16,7 +16,7 @@
 
 	.stats-period-navigation__previous, .stats-period-navigation__next {
 		cursor: pointer;
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 
 		&:hover {
 			color: var( --color-accent );

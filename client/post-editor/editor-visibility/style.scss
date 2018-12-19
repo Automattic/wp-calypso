@@ -71,7 +71,7 @@
 	&.is-touch,
 	&:hover {
 		.editor-visibility__label {
-			color: $gray-darken-10;
+			color: var( --color-neutral-400 );
 		}
 	}
 

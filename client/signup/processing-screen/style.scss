@@ -351,7 +351,7 @@
 }
 .signup-processing__title-subdomain {
 	text-transform: uppercase;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-size: 0.7em;
 	margin: 3px;
 	text-align: left;
@@ -362,7 +362,7 @@
 }
 .signup-processing__address-bar {
 	display: flex;
-	background: $gray-darken-10;
+	background: var( --color-neutral-400 );
 	border-radius: 8px;
 	flex-direction: row;
 	padding: 10px;
@@ -390,7 +390,7 @@
 .signup-processing__address-field.is-placeholder:after {
 	content: 'placeholder.wordpress.com';
 	color: transparent;
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 .signup-processing__bubble {
@@ -430,7 +430,7 @@
 .signup-processing__nudge-message {
 	width: 400px;
 	max-width: 96%;
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	margin: 1.5em auto;
 	box-sizing: border-box;
 }

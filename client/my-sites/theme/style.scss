@@ -365,7 +365,7 @@
 	a {
 		display: inline-block;
 		position: relative;
-		background: $gray-lighten-30;
+		background: var( --color-neutral-0 );
 		color: $gray-dark;
 		margin: 4px;
 		padding: 2px 12px;
@@ -419,7 +419,7 @@
 	}
 
 	.gridicon {
-		color: $gray-lighten-20;
+		color: var( --color-neutral-100 );
 		flex: 0 0 auto;
 	}
 
@@ -454,7 +454,7 @@
 	}
 
 	.gridicon {
-		color: $gray-lighten-20;
+		color: var( --color-neutral-100 );
 		flex: 0 0 auto;
 	}
 
@@ -479,8 +479,8 @@
 }
 
 .theme__sheet-footer-line {
-	color: $gray-lighten-20;
-	border-top: 1px solid $gray-lighten-20;
+	color: var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-100 );
 	margin: 32px 0 20px;
 
 	.gridicon {

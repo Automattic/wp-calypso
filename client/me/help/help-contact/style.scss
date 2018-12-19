@@ -3,14 +3,14 @@
 
 	.help-contact__header {
 		@include placeholder();
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		height: 18px;
 		margin-bottom: 2px;
 		width: 150px;
 	}
 	.help-contact__textarea {
 		@include placeholder();
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		height: 50px;
 		margin-bottom: 32px;
 	}

@@ -103,7 +103,7 @@ a img {
 
 .wp-caption-dd {
 	background: $gray-light;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-size: 14px;
 	line-height: 1.7;
 	padding: 16px;
@@ -197,9 +197,9 @@ hr {
 	margin: 0;
 	border-radius: 2px;
 	color: $gray-dark;
-	background: $gray-lighten-30;
+	background: var( --color-neutral-0 );
 }
 
 .mce-content-body code[data-mce-selected] {
-	background: $gray-lighten-20;
+	background: var( --color-neutral-100 );
 }

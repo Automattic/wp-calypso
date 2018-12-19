@@ -74,7 +74,7 @@
 	vertical-align: bottom;
 	margin-top: -2px;
 	margin-right: 16px;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 
 	.survey-step__vertical:hover & {
 		color: $gray;
@@ -101,18 +101,18 @@
 
 	&:active {
 		border-top-width: 1px;
-		background: $gray-lighten-30;
+		background: var( --color-neutral-0 );
 	}
 }
 
 .survey__vertical-label {
 	margin: 10px;
 	font-weight: 400;
-	color: $gray-darken-30;
+	color: var( --color-neutral-600 );
 }
 
 .survey__vertical-chevron {
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 	pointer-events: none;
 }
 
@@ -143,7 +143,7 @@ input.survey__other-write-in {
 
 .survey__other-copy {
 	text-align: center;
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 	padding-top: 0.5em;
 }
 

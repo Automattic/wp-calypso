@@ -45,7 +45,7 @@
 
 	.site-icon {
 		margin-right: 6px;
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 
 		.gridicon {
 			color: $white;
@@ -59,7 +59,7 @@
 	.follow-button {
 		background: transparent;
 		border: 0;
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 		float: none;
 		font-size: 13px;
 		padding: 0;

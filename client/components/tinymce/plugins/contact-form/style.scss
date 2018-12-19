@@ -98,7 +98,7 @@
 }
 
 .editor-contact-form-modal-field__remove {
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 	cursor: pointer;
 	transition: color 200ms;
 

@@ -11,7 +11,7 @@
 	margin: 0 0 17px 0;
 	background: var( --color-surface );
 	box-sizing: border-box;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
 
 	&.is-empty .section-nav__panel {
 		visibility: hidden;
@@ -53,7 +53,7 @@
 	cursor: pointer;
 
 	.gridicons-chevron-down {
-		fill: $gray-darken-20;
+		fill: var( --color-neutral-500 );
 		flex-shrink: 0;
 		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
@@ -106,7 +106,7 @@
 	@include breakpoint( '<480px' ) {
 		.section-nav.is-open & {
 			padding-bottom: 15px;
-			border-top: solid 1px $gray-lighten-20;
+			border-top: solid 1px var( --color-neutral-100 );
 			background: linear-gradient( to bottom, $gray-light 0%, $white 4px );
 		}
 	}
@@ -126,7 +126,7 @@
 	position: relative;
 	margin-top: 16px;
 	padding-top: 16px;
-	border-top: solid 1px $gray-lighten-20;
+	border-top: solid 1px var( --color-neutral-100 );
 
 	&:first-child {
 		padding-top: 0;
@@ -269,7 +269,7 @@
 
 	&[disabled],
 	.notouch &[disabled]:hover {
-		color: $gray-lighten-30;
+		color: var( --color-neutral-0 );
 		cursor: default;
 	}
 

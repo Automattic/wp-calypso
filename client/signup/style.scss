@@ -70,7 +70,7 @@
 	.formatted-header__subtitle {
 		margin: 0;
 		font-size: 15px;
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 	}
 }
 
@@ -102,7 +102,7 @@
 .is-section-signup::before,
 .is-section-signup .layout__primary::before {
 	content: '';
-	background: $gray-lighten-30;
+	background: var( --color-neutral-0 );
 	display: block;
 	position: fixed;
 	width: 250px;

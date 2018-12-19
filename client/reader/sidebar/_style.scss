@@ -39,7 +39,7 @@
 			background-color: $gray-light;
 
 			.gridicon {
-				fill: $gray-darken-20;
+				fill: var( --color-neutral-500 );
 			}
 
 			.sidebar__menu-item-label,
@@ -48,7 +48,7 @@
 			}
 
 			.sidebar__button {
-				background-color: $gray-darken-10;
+				background-color: var( --color-neutral-400 );
 				color: $white;
 			}
 		}
@@ -64,7 +64,7 @@
 		}
 
 		.sidebar__heading {
-			color: $gray-darken-30;
+			color: var( --color-neutral-600 );
 			cursor: pointer;
 			font-weight: normal;
 			margin: 0;
@@ -136,9 +136,9 @@
 
 				.add-new {
 					background: $white;
-					border: 1px solid $gray-lighten-20;
+					border: 1px solid var( --color-neutral-100 );
 					border-radius: 3px;
-					color: $gray-darken-10;
+					color: var( --color-neutral-400 );
 					font-size: 11px;
 					padding: 6px 7px;
 					position: absolute;
@@ -222,7 +222,7 @@
 	}
 
 	.sidebar__menu-add-button {
-		border: 1px solid $gray-lighten-20;
+		border: 1px solid var( --color-neutral-100 );
 		border-radius: 3px;
 		padding: 6px 7px;
 		position: absolute;
