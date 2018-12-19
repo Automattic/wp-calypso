@@ -30,10 +30,11 @@ export class PostPublishButtonOrToggle extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { userNeedsVerification, verificationNoticeLabel } = this.props;
+		const { userNeedsVerification, isPublished, isBeingScheduled } = this.props;
 		if (
 			userNeedsVerification !== prevProps.userNeedsVerification ||
-			verificationNoticeLabel !== prevProps.verificationNoticeLabel
+			isPublished !== prevProps.isPublished ||
+			isBeingScheduled !== prevProps.isBeingScheduled
 		) {
 			this.togglePostSaving();
 		}
@@ -46,7 +47,6 @@ export class PostPublishButtonOrToggle extends Component {
 			unlockPostSaving,
 			createWarningNotice,
 			setState,
-			verificationNoticeLabel,
 		} = this.props;
 
 		const lockName = 'blockEditorPostSavingLock';
@@ -54,7 +54,7 @@ export class PostPublishButtonOrToggle extends Component {
 		if ( userNeedsVerification ) {
 			lockPostSaving( lockName );
 
-			createWarningNotice( verificationNoticeLabel, {
+			createWarningNotice( this.getVerificationNoticeLabel(), {
 				id: 'verify-email-notice',
 				isDismissible: false,
 				actions: [
@@ -71,6 +71,16 @@ export class PostPublishButtonOrToggle extends Component {
 		} else {
 			unlockPostSaving( lockName );
 		}
+	}
+
+	getVerificationNoticeLabel() {
+		const { isPublished, isBeingScheduled } = this.props;
+		if ( isPublished ) {
+			return translate( 'To update, check your email and confirm your address.' );
+		} else if ( isBeingScheduled ) {
+			return translate( 'To schedule, check your email and confirm your address.' );
+		}
+		return translate( 'To publish, check your email and confirm your address.' );
 	}
 
 	closeVerifyEmailDialog = () => {
@@ -150,61 +160,31 @@ export class PostPublishButtonOrToggle extends Component {
 	}
 }
 
-const applyWithSelect = withSelect( select => {
-	const {
-		getCurrentPost,
-		isEditedPostBeingScheduled,
-		isCurrentPostPending,
-		isCurrentPostPublished,
-		isPublishSidebarEnabled,
-		isCurrentPostScheduled,
-		isPostSavingLocked,
-	} = select( 'core/editor' );
-
-	const { isPublishSidebarOpened } = select( 'core/edit-post' );
-
-	const isPublished = isCurrentPostPublished();
-	const isBeingScheduled = isEditedPostBeingScheduled();
-
-	let verificationNoticeLabel;
-	if ( isPublished ) {
-		verificationNoticeLabel = translate( 'To update, check your email and confirm your address.' );
-	} else if ( isBeingScheduled ) {
-		verificationNoticeLabel = translate(
-			'To schedule, check your email and confirm your address.'
-		);
-	} else {
-		verificationNoticeLabel = translate( 'To publish, check your email and confirm your address.' );
-	}
-
-	return {
-		hasPublishAction: get( getCurrentPost(), [ '_links', 'wp:action-publish' ], false ),
-		isBeingScheduled,
-		isPending: isCurrentPostPending(),
-		isPublished,
-		isPublishSidebarEnabled: isPublishSidebarEnabled(),
-		isPublishSidebarOpened: isPublishSidebarOpened(),
-		isScheduled: isCurrentPostScheduled(),
-		isPostSavingLocked: isPostSavingLocked(),
-		verificationNoticeLabel,
-	};
-} );
-
-const applyWithDispatch = withDispatch( dispatch => {
-	const { togglePublishSidebar } = dispatch( 'core/edit-post' );
-	const { createWarningNotice } = dispatch( 'core/notices' );
-	const { lockPostSaving, unlockPostSaving } = dispatch( 'core/editor' );
-	return {
-		togglePublishSidebar,
-		createWarningNotice,
-		lockPostSaving,
-		unlockPostSaving,
-	};
-} );
-
 export default compose(
-	applyWithSelect,
-	applyWithDispatch,
+	withSelect( select => ( {
+		hasPublishAction: get(
+			select( 'core/editor' ).getCurrentPost(),
+			[ '_links', 'wp:action-publish' ],
+			false
+		),
+		isBeingScheduled: select( 'core/editor' ).isEditedPostBeingScheduled(),
+		isPending: select( 'core/editor' ).isCurrentPostPending(),
+		isPublished: select( 'core/editor' ).isCurrentPostPublished(),
+		isPublishSidebarEnabled: select( 'core/editor' ).isPublishSidebarEnabled(),
+		isPublishSidebarOpened: select( 'core/edit-post' ).isPublishSidebarOpened(),
+		isScheduled: select( 'core/editor' ).isCurrentPostScheduled(),
+	} ) ),
+	withDispatch( dispatch => {
+		const { togglePublishSidebar } = dispatch( 'core/edit-post' );
+		const { createWarningNotice } = dispatch( 'core/notices' );
+		const { lockPostSaving, unlockPostSaving } = dispatch( 'core/editor' );
+		return {
+			togglePublishSidebar,
+			createWarningNotice,
+			lockPostSaving,
+			unlockPostSaving,
+		};
+	} ),
 	withViewportMatch( { isLessThanMediumViewport: '< medium' } ),
 	withState( {
 		showEmailVerificationNotice: false,
