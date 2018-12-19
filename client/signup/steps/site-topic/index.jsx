@@ -12,10 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
 import StepWrapper from 'signup/step-wrapper';
-import FormLabel from 'components/forms/form-label';
-import InfoPopover from 'components/info-popover';
 import FormFieldset from 'components/forms/form-fieldset';
 import SuggestionSearch from 'components/suggestion-search';
 import { submitSiteTopic, setSiteTopic } from 'state/signup/steps/site-topic/actions';
@@ -25,6 +22,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
 import { hints } from 'lib/signup/hint-data';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import Gridicon from 'gridicons';
 
 /**
  * Style dependencies
@@ -78,15 +76,10 @@ class SiteTopicStep extends Component {
 		const currentSiteTopic = this.trimedSiteTopicValue();
 
 		return (
-			<Card className="site-topic__content">
+			<div className="site-topic__content">
 				<form onSubmit={ this.onSubmit }>
 					<FormFieldset>
-						<FormLabel htmlFor="siteTopic">
-							{ topicLabel }
-							<InfoPopover className="site-topic__info-popover" position="top">
-								{ translate( "We'll use this to personalize your site and experience." ) }
-							</InfoPopover>
-						</FormLabel>
+						<Gridicon icon="search" />
 						<SuggestionSearch
 							id="siteTopic"
 							placeholder={ placeholder }
@@ -94,14 +87,13 @@ class SiteTopicStep extends Component {
 							suggestions={ Object.values( hints ) }
 							value={ currentSiteTopic }
 						/>
-					</FormFieldset>
-					<div className="site-topic__submit-wrapper">
+
 						<Button type="submit" disabled={ ! currentSiteTopic } primary>
 							{ translate( 'Continue' ) }
 						</Button>
-					</div>
+					</FormFieldset>
 				</form>
-			</Card>
+			</div>
 		);
 	}
 
@@ -112,7 +104,7 @@ class SiteTopicStep extends Component {
 		const topicLabel = getSiteTypePropertyValue( 'slug', siteType, 'siteTopicLabel' ) || '';
 		// once we have more granular copies per segments, these two should only be used for the default case.
 		const commonPlaceholder = translate( 'e.g. Fashion, travel, design, plumber, electrician' );
-		const commonSubHeaderText = translate( "Don't stress, you can change this later." );
+		const commonSubHeaderText = '';
 
 		return {
 			headerText,

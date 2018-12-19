@@ -73,14 +73,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	privateByDefault: {
-		datestamp: '20181115',
-		variations: {
-			private: 10,
-			public: 90,
-		},
-		defaultVariation: 'public',
-	},
 	simplifiedChecklistView: {
 		datestamp: '20181204',
 		variations: {
@@ -113,5 +105,13 @@ export default {
 			googleMyBusinessBanner: 90,
 		},
 		defaultVariation: 'googleMyBusinessBanner',
+	},
+	privateByDefault: {
+		datestamp: '20181217',
+		variations: {
+			private: 10,
+			public: 90,
+		},
+		defaultVariation: 'public',
 	},
 };

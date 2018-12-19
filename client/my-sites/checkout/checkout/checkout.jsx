@@ -41,6 +41,7 @@ import {
 } from 'lib/store-transactions/step-types';
 import {
 	addItem,
+	replaceCartWithItems,
 	replaceItem,
 	applyCoupon,
 	resetTransaction,
@@ -185,7 +186,7 @@ export class Checkout extends React.Component {
 
 	addProductToCart() {
 		if ( this.props.purchaseId ) {
-			this.addRenewItemToCart();
+			this.addRenewItemsToCart();
 		} else {
 			this.addNewItemToCart();
 		}
@@ -194,8 +195,35 @@ export class Checkout extends React.Component {
 		}
 	}
 
-	addRenewItemToCart() {
+	addRenewItemsToCart() {
 		const { product, purchaseId, selectedSiteSlug } = this.props;
+		// products can sometimes contain multiple items separated by commas
+		const products = product.split( ',' );
+
+		if ( ! purchaseId ) {
+			return;
+		}
+
+		// purchaseId can sometimes contain multiple items separated by commas
+		const purchaseIds = purchaseId.split( ',' );
+
+		const itemsToAdd = purchaseIds
+			.map( ( subscriptionId, currentIndex ) => {
+				const productSlug = products[ currentIndex ];
+				if ( ! productSlug ) {
+					return null;
+				}
+				return this.getRenewalItemForProductAndSubscription(
+					productSlug,
+					subscriptionId,
+					selectedSiteSlug
+				);
+			} )
+			.filter( item => item );
+		replaceCartWithItems( itemsToAdd );
+	}
+
+	getRenewalItemForProductAndSubscription( product, purchaseId, selectedSiteSlug ) {
 		const [ slug, meta ] = product.split( ':' );
 		const productSlug = this.getProductSlugFromSynonym( slug );
 
@@ -214,7 +242,7 @@ export class Checkout extends React.Component {
 			}
 		);
 
-		addItem( cartItem );
+		return cartItem;
 	}
 
 	addNewItemToCart() {

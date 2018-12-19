@@ -17,6 +17,7 @@ import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import AsyncLoad from 'components/async-load';
 import { getNeverShowBannerStatus } from 'my-sites/checklist/wpcom-checklist/checklist-banner/never-show';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 class WpcomChecklist extends Component {
 	static propTypes = {
@@ -111,7 +112,8 @@ export default connect( ( state, ownProps ) => {
 	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
 	const isSection = isSiteSection( state );
 	const taskStatuses = get( getSiteChecklist( state, siteId ), [ 'tasks' ] );
-	const taskList = getTaskList( taskStatuses, designType );
+	const isSiteUnlaunched = isUnlaunchedSite( state, siteId );
+	const taskList = getTaskList( taskStatuses, designType, isSiteUnlaunched );
 
 	const { viewMode, storedTask } = ownProps;
 

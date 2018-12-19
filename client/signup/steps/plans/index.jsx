@@ -7,7 +7,7 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { isEmpty } from 'lodash';
+import { isEmpty, intersection } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
@@ -28,6 +28,7 @@ import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
 import { planHasFeature } from '../../../lib/plans';
+import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
@@ -105,9 +106,11 @@ export class PlansStep extends Component {
 	}
 
 	getCustomerType() {
+		const siteGoals = this.props.siteGoals.split( ',' );
 		return (
 			this.props.customerType ||
-			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' )
+			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) ||
+			( intersection( siteGoals, [ 'sell', 'promote' ] ).length > 0 ? 'business' : 'personal' )
 		);
 	}
 
@@ -152,7 +155,12 @@ export class PlansStep extends Component {
 	plansFeaturesSelection = () => {
 		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
 
-		const headerText = translate( "Pick a plan that's right for you." );
+		let headerText = translate( "Pick a plan that's right for you." );
+
+		//Temporary header for onboarding-dev flow
+		if ( 'onboarding-dev' === flowName ) {
+			headerText = translate( 'Pick your plan' );
+		}
 
 		return (
 			<StepWrapper
@@ -216,5 +224,6 @@ export default connect( ( state, { path, signupDependencies: { siteSlug, domainI
 	isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
 	selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 	customerType: parseQs( path.split( '?' ).pop() ).customerType,
+	siteGoals: getSiteGoals( state ) || '',
 	siteType: getSiteType( state ),
 } ) )( localize( PlansStep ) );

@@ -142,6 +142,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__table-item.has-partial-border {
+
 	&::after {
 		content: '';
 		display: block;
@@ -219,12 +220,15 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plans-features-main__group.is-jetpack & {
+
 		&.is-personal-plan {
 			border-bottom: solid 2px var( --color-warning );
 		}
+
 		&.is-premium-plan {
 			border-bottom: solid 2px var( --color-success );
 		}
+
 		&.is-business-plan {
 			border-bottom: solid 2px $alert-purple;
 		}
@@ -240,6 +244,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .is-section-plans .plan-features__header-figure {
+
 	@include breakpoint( '<1280px' ) {
 		width: 24px;
 		height: 24px;
@@ -250,6 +255,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__header-figure,
 .plan-features__table.has-1-cols .plan-features__header-figure,
 .plan-features__table.has-2-cols .plan-features__header-figure {
+
 	@include breakpoint( '<1040px' ) {
 		display: none;
 	}
@@ -279,6 +285,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__header-price-group {
 	width: calc( 100% + 20px );
+
 	@include breakpoint( '<960px' ) {
 		width: calc( 100% + 10px );
 	}
@@ -286,6 +293,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__header-price-group-prices {
 	max-width: calc( 100% - 20px );
+
 	@include breakpoint( '<960px' ) {
 		max-width: calc( 100% - 10px );
 	}
@@ -308,6 +316,7 @@ $plan-features-sidebar-width: 272px;
 	vertical-align: middle;
 	padding: 0 8px;
 	margin-bottom: 4px;
+
 	@include breakpoint( '>960px' ) {
 		margin-left: 4px;
 	}
@@ -325,6 +334,7 @@ $plan-features-sidebar-width: 272px;
 	line-height: normal;
 
 	&.is-placeholder {
+
 		@include placeholder( 23% );
 		width: 140px;
 		height: 12px;
@@ -337,16 +347,56 @@ $plan-features-sidebar-width: 272px;
 }
 
 .segmented-control.is-customer-type-toggle {
-	width: 500px;
+	background-color: transparent;
+	margin: 50px auto 20px;
 	max-width: 100%;
-	margin: 30px auto 35px;
-
-	& + .plans-features-main__group {
-		padding-top: 8px;
-	}
+	width: 580px;
 
 	.segmented-control__item {
+		background-color: $gray-light;
 		min-width: 50%;
+
+		&:first-of-type {
+			margin-right: 5px;
+
+			@include breakpoint( '<660px' ) {
+				margin: 0 15px 10px;
+			}
+		}
+
+		&:last-of-type {
+			margin-right: 5px;
+
+			@include breakpoint( '<660px' ) {
+				margin: 0 15px;
+			}
+		}
+
+		&.is-selected + .segmented-control__item .segmented-control__link {
+			border-left-color: $gray-lighten-10;
+
+			&:hover {
+				border-left-color: $gray-dark;
+			}
+		}
+	}
+
+	.segmented-control__link {
+		border-radius: 6px;
+		border: 2px solid $gray-lighten-10;
+		color: $gray-dark;
+		font-size: 15px;
+		font-weight: 500;
+		padding: 15px;
+
+		&:hover {
+			background-color: transparent;
+			border: 2px solid $gray-dark;
+		}
+	}
+
+	@include breakpoint( '<660px' ) {
+		flex-wrap: wrap;
 	}
 
     @include breakpoint( '<480px' ) {
@@ -356,39 +406,42 @@ $plan-features-sidebar-width: 272px;
 		.segmented-control__item {
 			width: 100%;
 		}
-		.segmented-control__link {
-			border-left: 0;
-			border-right: 0;
-			border-radius: 0;
-		}
+	}
+
+	&.is-primary .segmented-control__link:hover {
+		background-color: transparent;
 	}
 }
 
 .info-popover.plan-features__header-tip-info {
 	position: relative;
-	top: 4px;
-	left: 3px;
+		top: 4px;
+		left: 3px;
 	margin-top: -10px;
 	margin-bottom: -10px;
 	display: inline-block;
 }
 
 .plan-features__price {
+
 	&.is-placeholder {
+
 		@include placeholder( 23% );
-		width: 45px;
-		height: 25px;
-		margin-top: 9px;
-		margin-bottom: 5px;
+			width: 45px;
+			height: 25px;
+			margin-top: 9px;
+			margin-bottom: 5px;
 	}
 }
 .plan-features__price-jetpack {
+
 	&.is-placeholder {
+
 		@include placeholder( 23% );
-		height: 32px;
-		margin-top: 5px;
-		margin-bottom: 5px;
-		width: 140px;
+			height: 32px;
+			margin-top: 5px;
+			margin-bottom: 5px;
+			width: 140px;
 
 		@include breakpoint( '<960px' ) {
 			height: 26px;
@@ -541,11 +594,6 @@ $plan-features-sidebar-width: 272px;
 	padding: 20px 0 10px;
 	transform: translateY( -20px );
 	overflow-x: auto;
-}
-
-.signup .is-customer-type-toggle {
-	margin-top: 32px;
-	margin-bottom: 28px;
 }
 
 .plan-features--signup {
