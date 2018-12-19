@@ -92,7 +92,7 @@ class GiphyEdit extends Component {
 		};
 		xhr.send();
 	};
-	maintainFocus = ( timeoutDuration = 3000 ) => {
+	maintainFocus = ( timeoutDuration = 3500 ) => {
 		this.setState( { focus: true }, () => {
 			if ( this.timer ) {
 				clearTimeout( this.timer );
