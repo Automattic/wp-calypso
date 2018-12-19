@@ -10,6 +10,9 @@
 		top: 0;
 		width: 100%;
 		z-index: 1;
+		&:focus {
+			outline: none;
+		}
 	}
 	.wp-block-jetpack-giphy_text-input-field {
 		left: 25%;
