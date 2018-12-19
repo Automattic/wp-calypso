@@ -64,7 +64,7 @@
 	width: 24px;
 
 	.conversations__intro-close-icon {
-		fill: $gray-lighten-10;
+		fill: var( --color-neutral-200 );
 		position: absolute;
 
 		// Fix for 1px (0.5pt) misalignment in Safari under retina. See

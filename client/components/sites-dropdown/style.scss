@@ -9,7 +9,7 @@
 
 	.gridicons-chevron-down {
 		align-self: center;
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 		flex-grow: 0;
 		flex-shrink: 0;
 		margin-right: 16px;
@@ -34,8 +34,8 @@
 	}
 
 	.has-multiple-sites &:hover {
-		border-color: $gray-lighten-10;
-		box-shadow: 0 1px $gray-lighten-10;
+		border-color: var( --color-neutral-200 );
+		box-shadow: 0 1px var( --color-neutral-200 );
 	}
 }
 

@@ -86,10 +86,10 @@
 	height: 28px;
 	/*rtl:ignore*/
 	transform: translate( 25%, -25% );
-	border: 1px solid $gray-lighten-10;
+	border: 1px solid var( --color-neutral-200 );
 	border-radius: 50%;
 	background-color: $gray-light;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	cursor: pointer;
 }
 
@@ -203,7 +203,7 @@ input.editor-media-modal-gallery__caption[type="text"] {
 	&::after {
 		top: calc( 146px + 2% );
 		height: 240px;
-		background: $gray-lighten-10;
+		background: var( --color-neutral-200 );
 	}
 
 	&.is-loading::before,

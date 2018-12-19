@@ -140,12 +140,12 @@
 
 	&.is-disabled label,
 	&.is-disabled .form-setting-explanation {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 	}
 
 	&.is-disabled .form-text-input,
 	&.is-disabled .form-textarea {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 		border-color: $gray-lighten-20;
 	}
 }

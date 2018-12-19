@@ -62,7 +62,7 @@
 	height: 200px;
 
 	&.is-uploaded, &.is-uploading {
-		border: 1px solid $gray-lighten-10;
+		border: 1px solid var( --color-neutral-200 );
 		background-color: $gray-lighten-30;
 	}
 }
@@ -83,7 +83,7 @@
 	width: 24px;
 	height: 24px;
 	transform: translate(50%, -50%);
-	border: 1px solid $gray-lighten-10;
+	border: 1px solid var( --color-neutral-200 );
 	border-radius: 50%;
 	background-color: $gray-light;
 	cursor: pointer;
@@ -101,7 +101,7 @@
 	width: 20px;
 	height: 20px;
 	margin: 0;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 
 	&:hover {
 		color: $gray-darken-10;

@@ -17,7 +17,7 @@
 	cursor: pointer;
 
 	&:hover {
-		border-color: $gray-lighten-10;
+		border-color: var( --color-neutral-200 );
 		color: $gray-dark;
 	}
 }

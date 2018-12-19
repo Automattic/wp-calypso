@@ -12,7 +12,7 @@
 	transition: all .15s ease-in-out;
 
 	&:hover {
-		border-color: $gray-lighten-10;
+		border-color: var( --color-neutral-200 );
 	}
 
 	&.is-disabled {

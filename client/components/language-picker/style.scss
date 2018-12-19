@@ -33,7 +33,7 @@
 	&:not( [disabled] ):hover {
 		&,
 		.language-picker__icon {
-			border-color: $gray-lighten-10;
+			border-color: var( --color-neutral-200 );
 		}
 	}
 

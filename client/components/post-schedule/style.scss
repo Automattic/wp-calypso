@@ -71,7 +71,7 @@
 	left: 0;
 	height: 16px;
 	cursor: pointer;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 
 	&:hover {
 		color: $gray;

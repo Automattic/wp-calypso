@@ -43,7 +43,7 @@
 	align-self: center;
 
 	.is-disabled & {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 	}
 }
 
@@ -64,7 +64,7 @@
 	.is-disabled &:disabled {
 		background-color: $gray-light;
 		border-color: $gray-lighten-20;
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 	}
 
 	@include breakpoint( '>960px' ) {

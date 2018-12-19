@@ -58,7 +58,7 @@
 }
 
 .title-format-editor__editor-wrapper {
-	border: 1px solid $gray-lighten-10;
+	border: 1px solid var( --color-neutral-200 );
 	padding: 7px 14px;
 	line-height: 24px;
 }
@@ -78,7 +78,7 @@
 
 .title-format-editor__token-close {
 	margin-left: 10px;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	font-size: 10px;
 }
 

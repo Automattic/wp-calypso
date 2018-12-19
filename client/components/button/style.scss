@@ -62,7 +62,7 @@ button {
 	border-color: $gray-lighten-20;
 
 	&:hover {
-		border-color: $gray-lighten-10;
+		border-color: var( --color-neutral-200 );
 		color: $gray-dark;
 	}
 

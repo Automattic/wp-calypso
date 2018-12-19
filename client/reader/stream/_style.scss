@@ -82,7 +82,7 @@
 		margin: 8px 0;
 		padding: 0;
 		font-size: 14px;
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 
 		.gravatar {
 			height: 16px;
@@ -421,7 +421,7 @@
 }
 
 .reader-stream__recommended-posts-header {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	font-size: 14px;
 	font-weight: 600;
 	letter-spacing: 0.01em;
@@ -430,7 +430,7 @@
 	text-transform: uppercase;
 
 	.gridicon {
-		fill: $gray-lighten-10;
+		fill: var( --color-neutral-200 );
 		margin-right: -2px;
 		position: relative;
 			left: -2px;
@@ -473,7 +473,7 @@
 		}
 
 		.gridicon {
-			fill: $gray-lighten-10;
+			fill: var( --color-neutral-200 );
 			width: 14px;
 			height: 14px;
 			top: -3px;

@@ -98,7 +98,7 @@ $theme-info-height: 54px;
 
 .theme__upsell-icon svg {
 	transform: scale( 0.8 );
-	border: 2px solid $gray-lighten-10;
+	border: 2px solid var( --color-neutral-200 );
 	border-radius: 100%;
 	display: inline-block;
 	width: 22px;

@@ -89,7 +89,7 @@
 		font-size: 12px;
 		font-weight: 600;
 		text-transform: uppercase;
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {
@@ -193,7 +193,7 @@
 		font-size: 12px;
 		font-weight: 600;
 		text-transform: uppercase;
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {
@@ -309,7 +309,7 @@
 
 	.gridicon {
 		height: 24px;
-		fill: $gray-lighten-10;
+		fill: var( --color-neutral-200 );
 		margin-left: 4px;
 		margin-top: 4px;
 	}

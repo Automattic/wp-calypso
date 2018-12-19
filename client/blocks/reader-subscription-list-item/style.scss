@@ -72,7 +72,7 @@
 .reader-subscription-list-item__site-url,
 .reader-subscription-list-item__site-url:visited,
 .reader-subscription-list-item__timestamp {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 }
 
 .reader-subscription-list-item__site-title,

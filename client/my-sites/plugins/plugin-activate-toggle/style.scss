@@ -12,7 +12,7 @@
 }
 
 .plugin-activate-toggle__disabled {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 }
 
 .plugin-activate-toggle__disabled .plugin-activate-toggle__icon {

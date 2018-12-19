@@ -215,7 +215,7 @@
 .example-components__browser-chrome-dot {
 	display: inline-block;
 	margin-right: 8px;
-	background-color: $gray-lighten-10;
+	background-color: var( --color-neutral-200 );
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
@@ -395,7 +395,7 @@
 }
 
 .jetpack-connect__sso-user-email {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	font-weight: 400;
 	text-align: center;
 }

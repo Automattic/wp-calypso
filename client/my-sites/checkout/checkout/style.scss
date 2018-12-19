@@ -574,7 +574,7 @@
 		}
 
 		li {
-			color: $gray-lighten-10;
+			color: var( --color-neutral-200 );
 			text-align: center;
 
 			@include breakpoint( '>660px' ) {
@@ -604,7 +604,7 @@
 
 	.credit-card-supporting-text__refund-link {
 		white-space: nowrap;
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 		text-decoration: underline;
 	}
 }
@@ -756,7 +756,7 @@
 }
 
 .checkout__secure-payment {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	flex-grow: 1;
 	margin-top: 10px;
 
@@ -1105,7 +1105,7 @@
 
 .checkout__form-info-text {
 	margin-left: 15px;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	display: block;
 	font-size: 12px;
 	font-style: italic;

@@ -28,16 +28,16 @@
 	&.is-disabled {
 		background: $gray-light;
 		border-color: $gray-lighten-30;
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 		opacity: 1;
-		-webkit-text-fill-color: $gray-lighten-10;
+		-webkit-text-fill-color: var( --color-neutral-200 );
 
 		&:hover {
 			cursor: default;
 		}
 
 		&::placeholder {
-			color: $gray-lighten-10;
+			color: var( --color-neutral-200 );
 		}
 	}
 

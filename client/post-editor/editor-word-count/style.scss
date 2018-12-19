@@ -7,7 +7,7 @@
 	text-transform: uppercase;
 	font-size: 11px;
 	line-height: 1;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	pointer-events: none;
 	z-index: z-index( 'root', '.editor-word-count' );
 
@@ -21,5 +21,5 @@
 }
 
 .editor-word-count__separator {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 }

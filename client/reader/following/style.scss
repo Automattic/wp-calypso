@@ -151,7 +151,7 @@
 
 .following__intro .following__intro-close {
 	.following__intro-close-icon {
-		fill: $gray-lighten-10;
+		fill: var( --color-neutral-200 );
 	}
 
 	.following__intro-close-icon-bg {
