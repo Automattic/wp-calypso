@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { every, isEqual, some, sum, takeRight, zipWith } from 'lodash';
+import { every, isEqual, overEvery, some, sum, take, takeRight, zipWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +31,9 @@ export default function Mosaic( { images, renderedImages } ) {
 // recurse
 
 function ratiosToRows( ratios ) {
+	// @TODO check full/wide alignment on block - g7g version of wide theme check
+	const isWide = false;
+
 	// This function will recursively process the input until it is consumed
 	const go = ( processed, toProcess ) => {
 		if ( ! toProcess.length ) {
@@ -39,51 +42,105 @@ function ratiosToRows( ratios ) {
 
 		let next;
 
-		if ( false ) {
-			// Reverse_Symmetric_Row
-		} else if ( false ) {
-			// Long_Symmetric_Row
-		} else if ( false ) {
-			// Symmetric_Row
-		} else if (
-			checkNextRatios( [ isPortrait, isLandscape, isLandscape, isLandscape ] )( toProcess ) &&
-			! some( takeRight( processed, 3 ), shape => isEqual( shape, [ 1, 3 ] ) )
+		if (
+			/* Reverse_Symmetric_Row */
+			toProcess.length > 15 &&
+			checkNextRatios( [ isLandscape, isLandscape, isPortrait, isLandscape, isLandscape ] )(
+				toProcess
+			) &&
+			isNotRecentShape( [ 2, 1, 2 ], 5 )( processed )
 		) {
-			// One_Three
+			next = [ 2, 1, 2 ];
+		} else if (
+			/* Long_Symmetric_Row */
+			toProcess.length > 15 &&
+			checkNextRatios( [
+				isLandscape,
+				isLandscape,
+				isLandscape,
+				isPortrait,
+				isLandscape,
+				isLandscape,
+				isLandscape,
+			] )( toProcess ) &&
+			isNotRecentShape( [ 3, 1, 3 ], 5 )( processed )
+		) {
+			next = [ 3, 1, 3 ];
+		} else if (
+			/* Symmetric_Row */
+			toProcess.length !== 5 &&
+			checkNextRatios( [ isPortrait, isLandscape, isLandscape, isPortrait ] )( toProcess ) &&
+			isNotRecentShape( [ 1, 2, 1 ], 5 )( processed )
+		) {
+			next = [ 1, 2, 1 ];
+		} else if (
+			/* One_Three */
+			checkNextRatios( [ isPortrait, isLandscape, isLandscape, isLandscape ] )( toProcess ) &&
+			isNotRecentShape( [ 1, 3 ], 3 )( processed )
+		) {
 			next = [ 1, 3 ];
 		} else if (
+			/* Three_One */
 			checkNextRatios( [ isLandscape, isLandscape, isLandscape, isPortrait ] )( toProcess ) &&
-			! some( takeRight( processed, 3 ), shape => isEqual( shape, [ 3, 1 ] ) )
+			isNotRecentShape( [ 3, 1 ], 3 )( processed )
 		) {
-			// Three_One
 			next = [ 3, 1 ];
 		} else if (
+			/* One_Two */
 			checkNextRatios( [
 				lt( 1.6 ),
-				every( gte( 0.9 ), lt( 2 ) ),
-				every( gte( 0.9 ), lt( 2 ) ),
+				overEvery( gte( 0.9 ), lt( 2 ) ),
+				overEvery( gte( 0.9 ), lt( 2 ) ),
 			] ) &&
-			! some( takeRight( processed, 3 ), shape => isEqual( shape, [ 1, 2 ] ) )
+			isNotRecentShape( [ 1, 2 ], 3 )( processed )
 		) {
-			// One_Two
 			next = [ 1, 2 ];
-		} else if ( false ) {
-			// Five
+		} else if (
+			/* Five */
+			isWide &&
+			( toProcess.length === 5 || ( toProcess.length !== 10 && toProcess.length > 6 ) ) &&
+			isNotRecentShape( [ 1, 1, 1, 1, 1 ], 1 )( processed ) &&
+			sum( take( toProcess, 5 ) ) < 5
+		) {
 			next = [ 1, 1, 1, 1, 1 ];
-		} else if ( false ) {
-			// Four
+		} else if (
+			/* Four */
+			isNotRecentShape( [ 1, 1, 1, 1 ], 1 )( processed ) &&
+			( function( ratio ) {
+				return ( ratio < 3.5 && toProcess.length > 5 ) || ( ratio < 7 && toProcess.length === 4 );
+			} )( sum( take( toProcess, 4 ) ) )
+		) {
 			next = [ 1, 1, 1, 1 ];
-		} else if ( false ) {
-			// Three
+		} else if (
+			/* Three */
+			toProcess.length >= 3 &&
+			! [ 4, 6 ].includes( toProcess.length ) &&
+			isNotRecentShape( [ 1, 1, 1 ], 3 ) &&
+			( function( ratio ) {
+				return (
+					ratio < 2.5 ||
+					( ratio < 5 &&
+						/* nextAreSymettric */
+						( toProcess.length >= 3 &&
+							/* @FIXME floating point equality?? */ toProcess[ 0 ] === toProcess[ 2 ] ) ) ||
+					isWide
+				);
+			} )( sum( take( toProcess, 3 ) ) )
+		) {
 			next = [ 1, 1, 1 ];
-		} else if ( false ) {
-			// Two_One
+		} else if (
+			/* Two_One */
+			checkNextRatios( [
+				overEvery( gte( 0.9 ), lt( 2 ) ),
+				overEvery( gte( 0.9 ), lt( 2 ) ),
+				lt( 1.6 ),
+			] ) &&
+			isNotRecentShape( [ 1, 2 ], 3 )( processed )
+		) {
 			next = [ 2, 1 ];
-		} else if ( checkNextRatios( [ isPanoramic ] )( toProcess ) ) {
-			// Panoramic
+		} else if ( /* Panoramic */ checkNextRatios( [ isPanoramic ] )( toProcess ) ) {
 			next = [ 1 ];
-		} else if ( toProcess.length > 3 ) {
-			// One_One
+		} else if ( /* One_One */ toProcess.length > 3 ) {
 			next = [ 1, 1 ];
 		} else {
 			// Everything left
@@ -100,6 +157,12 @@ function ratiosToRows( ratios ) {
 		return go( nextProcessed, nextToProcess );
 	};
 	return go( [], ratios );
+}
+
+function isNotRecentShape( shape, numRecents ) {
+	return recents => {
+		! some( takeRight( recents, numRecents ), recentShape => isEqual( recentShape, shape ) );
+	};
 }
 
 function checkNextRatios( shape ) {
