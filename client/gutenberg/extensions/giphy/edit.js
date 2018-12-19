@@ -140,14 +140,16 @@ class GiphyEdit extends Component {
 							ref={ this.textControlRef }
 							tabIndex="0"
 						>
-							<TextControl
-								className={ textControlClasses }
-								label={ __( 'Search or paste a Giphy URL' ) }
-								placeholder={ __( 'Search or paste a Giphy URL' ) }
-								onChange={ this.onSearchTextChange }
-								onClick={ this.maintainFocus }
-								value={ searchText }
-							/>
+							{ ( ! searchText || isSelected ) && (
+								<TextControl
+									className={ textControlClasses }
+									label={ __( 'Search or paste a Giphy URL' ) }
+									placeholder={ __( 'Search or paste a Giphy URL' ) }
+									onChange={ this.onSearchTextChange }
+									onClick={ this.maintainFocus }
+									value={ searchText }
+								/>
+							) }
 						</button>
 						<iframe src={ giphyUrl } title={ searchText } />
 					</figure>
