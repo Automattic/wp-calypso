@@ -54,8 +54,14 @@ export default class WpcomTaskList {
 			addTask( 'site_launched' );
 		}
 
-		if ( config.isEnabled( 'onboarding-checklist/email-setup' ) && hasTask( 'email_setup' ) ) {
-			addTask( 'email_setup' );
+		if ( config.isEnabled( 'onboarding-checklist/email-setup' ) ) {
+			if ( hasTask( 'email_setup' ) ) {
+				addTask( 'email_setup' );
+			}
+
+			if ( hasTask( 'upgrade_email_forwarding' ) ) {
+				addTask( 'upgrade_email_forwarding' );
+			}
 		}
 
 		debug( 'designType: ', designType );
