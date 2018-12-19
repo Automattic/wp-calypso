@@ -17,11 +17,8 @@ button {
 }
 
 .button {
-	background: $white;
-	border-color: $gray-lighten-20;
 	border-style: solid;
 	border-width: 1px 1px 2px;
-	color: $gray-dark;
 	cursor: pointer;
 	display: inline-block;
 	margin: 0;
@@ -39,22 +36,45 @@ button {
 	-webkit-appearance: none;
 	appearance: none;
 
-	&:hover {
-		border-color: $gray-lighten-10;
-		color: $gray-dark;
+	&.hidden {
+		display: none;
 	}
+
+	.gridicon {
+		position: relative;
+		top: 4px;
+		margin-top: -2px;
+		width: 18px;
+		height: 18px;
+
+		&:not( :last-child ) {
+			margin-right: 4px;
+		}
+	}
+
 	&:active,
 	&.is-active {
 		border-width: 2px 1px 1px;
 	}
+
+	background-color: $white;
+	color: $gray-dark;
+	border-color: $gray-lighten-20;
+
+	&:hover {
+		border-color: $gray-lighten-10;
+		color: $gray-dark;
+	}
+
 	&:visited {
 		color: $gray-dark;
 	}
+
 	&[disabled],
 	&:disabled,
 	&.disabled {
 		color: $gray-lighten-30;
-		background: $white;
+		background-color: $white;
 		border-color: $gray-lighten-30;
 		cursor: default;
 
@@ -63,10 +83,12 @@ button {
 			border-width: 1px 1px 2px;
 		}
 	}
+
 	.accessible-focus &:focus {
 		border-color: var( --color-primary );
 		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
+
 	&.is-compact {
 		padding: 7px;
 		color: var( --color-text-subtle );
@@ -93,6 +115,7 @@ button {
 			margin-left: -4px;
 		}
 	}
+
 	&.is-busy {
 		animation: button__busy-animation 3000ms infinite linear;
 		background-size: 120px 100%;
@@ -104,25 +127,11 @@ button {
 			var( --color-neutral-0 ) 72%
 		);
 	}
-	&.hidden {
-		display: none;
-	}
-	.gridicon {
-		position: relative;
-		top: 4px;
-		margin-top: -2px;
-		width: 18px;
-		height: 18px;
-
-		&:not( :last-child ) {
-			margin-right: 4px;
-		}
-	}
 }
 
 // Primary buttons
 .button.is-primary {
-	background: var( --color-accent );
+	background-color: var( --color-accent );
 	border-color: var( --color-accent-dark );
 	color: $white;
 
@@ -145,20 +154,18 @@ button {
 	&:disabled,
 	&.disabled {
 		color: $gray-lighten-30;
-		background: $white;
+		background-color: $white;
 		border-color: $gray-lighten-30;
 	}
 
 	&.is-busy {
-		background-size: 120px 100%;
 		background-image: linear-gradient(
 			-45deg,
 			var( --color-accent ) 28%,
-			var( --color-accent-dark ) 28%,
-			var( --color-accent-dark ) 72%,
+			var( --color-accent-600 ) 28%,
+			var( --color-accent-600 ) 72%,
 			var( --color-accent ) 72%
 		);
-		border-color: var( --color-accent-dark );
 	}
 }
 
@@ -183,7 +190,7 @@ button {
 }
 
 .button.is-primary.is-scary {
-	background: var( --color-error );
+	background-color: var( --color-error );
 	border-color: darken( $alert-red, 20% );
 	color: $white;
 
@@ -191,21 +198,21 @@ button {
 	&:focus {
 		background-color: var( --color-button-primary-scary-background-hover );
 	}
+
 	&[disabled],
 	&:disabled {
-		background: lighten( $alert-red, 20% );
+		background-color: lighten( $alert-red, 20% );
 		border-color: tint( $alert-red, 30% );
 	}
+
 	&.is-busy {
-		background-size: 120px 100%;
 		background-image: linear-gradient(
 			-45deg,
 			var( --color-error ) 28%,
-			var( --color-error-dark ) 28%,
-			var( --color-error-dark ) 72%,
+			var( --color-error-600 ) 28%,
+			var( --color-error-600 ) 72%,
 			var( --color-error ) 72%
 		);
-		border-color: darken( $alert-red, 8% );
 	}
 }
 

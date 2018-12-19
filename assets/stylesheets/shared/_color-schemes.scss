@@ -9,6 +9,7 @@
 	--color-accent-light: #{$muriel-hot-pink-300};
 	--color-accent-dark: #{$muriel-hot-pink-700};
 	--color-accent-rgb: #{hex-to-rgb( $muriel-hot-pink-500 )};
+	--color-accent-600: #{$muriel-hot-pink-600};
 
 	--color-neutral: #{$muriel-gray-500};
 	--color-neutral-dark: #{$muriel-gray-700};
@@ -36,6 +37,7 @@
 	--color-error: #{$muriel-hot-red-500};
 	--color-error-light: #{$muriel-hot-red-300};
 	--color-error-dark: #{$muriel-hot-red-700};
+	--color-error-600: #{$muriel-hot-red-600};
 
 	--color-surface: #{$muriel-white};
 	--color-surface-backdrop: #{$muriel-gray-0};
@@ -95,11 +97,13 @@
 		--color-primary-light: #{$muriel-blue-300};
 		--color-primary-dark: #{$muriel-blue-700};
 		--color-primary-rgb: #{hex-to-rgb( $muriel-blue-500 )};
+		--color-primary-600: #{$muriel-blue-600};
 
 		--color-accent: var( --color-primary );
 		--color-accent-dark: var( --color-primary-dark );
 		--color-accent-light: var( --color-primary-light );
 		--color-accent-rgb: var( --color-primary-rgb );
+		--color-accent-600: var( --color-primary-600 );
 
 		--color-success: #{$muriel-hot-green-500};
 		--color-success-light: #{$muriel-hot-green-300};
@@ -112,6 +116,7 @@
 		--color-error: #{$muriel-hot-red-500};
 		--color-error-light: #{$muriel-hot-red-300};
 		--color-error-dark: #{$muriel-hot-red-700};
+		--color-error-600: #{$muriel-hot-red-600};
 
 		--color-text: #{$muriel-gray-800};
 		--color-text-subtle: #{$muriel-gray-500};
