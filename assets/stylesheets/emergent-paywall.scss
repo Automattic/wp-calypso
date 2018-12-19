@@ -368,7 +368,7 @@ textarea {
 			}
 
 			&.btn-primary {
-				background: $blue-medium;
+				background: var( --color-primary );
 				border-color: darken( $blue-medium, 8% );
 				color: $white;
 
@@ -478,7 +478,7 @@ div[ng-show='busyIndicator'] {
 
 .busy-indicator,
 .less-busy-indicator {
-	border-top-color: $blue-medium;
+	border-top-color: var( --color-primary );
 	width: 35px;
 	height: 35px;
 }
@@ -488,8 +488,8 @@ div[ng-show='busyIndicator'] {
 	content: '';
 	width: 100%;
 	height: 100%;
-	border-top-color: $blue-medium;
-	border-right-color: $blue-medium;
+	border-top-color: var( --color-primary );
+	border-right-color: var( --color-primary );
 	opacity: 0.4;
 }
 

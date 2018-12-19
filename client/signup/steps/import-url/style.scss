@@ -50,7 +50,7 @@
 	&__example-url {
 		font-family: monospace;
 		font-size: 14px;
-		color: $blue-medium;
+		color: var( --color-primary );
 
 		&:first-of-type {
 			padding-top: 8px;
