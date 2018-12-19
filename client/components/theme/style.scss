@@ -64,7 +64,7 @@ $theme-info-height: 54px;
 .theme__info-title {
 	flex: 1 1 auto;
 	position: relative;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	font-weight: 600;
 	padding: 16px 14px;
@@ -165,7 +165,7 @@ $theme-info-height: 54px;
 		border: 1px solid $gray-light;
 		border-radius: 2px;
 
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		text-transform: uppercase;
 		font-size: 11px;
 		font-weight: 600;
@@ -280,7 +280,7 @@ $theme-info-height: 54px;
 	text-decoration: none;
 
 	&:visited {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	&:hover,

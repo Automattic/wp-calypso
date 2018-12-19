@@ -284,7 +284,7 @@ $devdocs-max-width: 720px;
 
 		.docs-selectors__result-arguments,
 		.docs-selectors__result-return {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 			background: $gray-lighten-30;
 			border-radius: 4px;
 			padding: 16px 24px;
@@ -313,11 +313,11 @@ $devdocs-max-width: 720px;
 		.docs-selectors__result-arguments-name strong,
 		.docs-selectors__param-type {
 			font-family: $code;
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 
 		.docs-selectors__result-arguments-name strong {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 			background: $white;
 			border-radius: 3px;
 			display: inline-block;
@@ -370,7 +370,7 @@ $devdocs-max-width: 720px;
 	}
 
 	h1 {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 54px;
 		line-height: 1.4;
 		margin-top: 0;
@@ -378,7 +378,7 @@ $devdocs-max-width: 720px;
 
 	h2 {
 		font-size: 32px;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	h3 {

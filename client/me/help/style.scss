@@ -52,7 +52,7 @@
 .help__support-link-content {
 	margin-bottom: 0;
 	font-size: 14px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .help__help-teaser-button {
@@ -91,7 +91,7 @@
 }
 
 .help__help-teaser-button-title {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	font-weight: 500;
 	padding-right: 15px;

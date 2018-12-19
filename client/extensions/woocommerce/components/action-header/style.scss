@@ -8,7 +8,7 @@
 	flex-direction: row;
 	align-items: center;
 	box-sizing: border-box;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	background: $white;
 	border-bottom: 1px solid $gray-lighten-20;
 	position: fixed;

@@ -106,7 +106,7 @@
 
 	.subscription-length-picker__option-price {
 		display: inline-block;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	.subscription-length-picker__option-side-note {

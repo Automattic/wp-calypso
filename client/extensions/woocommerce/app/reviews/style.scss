@@ -291,7 +291,7 @@
 			color: $alert-red;
 		}
 		&.is-trash {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 	}
 }

@@ -888,7 +888,7 @@
 		}
 		.is-selected {
 			background-color: $gray-light;
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 	}
 

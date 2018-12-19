@@ -19,7 +19,7 @@
 	color: $gray-darken-20;
 
 	h1 {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 24px;
 		font-weight: 300;
 		height: 2em;

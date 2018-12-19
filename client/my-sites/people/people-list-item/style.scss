@@ -138,7 +138,7 @@
 	&.is-success {
 		background-color: $gray-light;
 		border: 0;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		cursor: default;
 	}
 }

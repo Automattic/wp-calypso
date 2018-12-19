@@ -10,7 +10,7 @@
 
 	.order__detail-header,
 	.order__details-total {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	.form-text-input,

@@ -23,7 +23,7 @@
 	width: 200px;
 	&:focus {
 		box-shadow: none;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 

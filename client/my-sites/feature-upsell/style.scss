@@ -13,7 +13,7 @@ $feature-upsell-break-at: '1040px';
 .feature-upsell__main {
 	max-width: 960px;
 	margin-top: 48px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .feature-upsell__placeholder {

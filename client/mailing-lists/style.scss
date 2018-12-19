@@ -38,7 +38,7 @@
 
 		&.gridicons-cross {
 			fill: white;
-			background: $gray-dark;
+			background: var( --color-neutral-700 );
 			border-radius: 100%;
 			box-shadow: 0 0 0 3px $gray-light;
 
@@ -54,7 +54,7 @@
 	h1 {
 		font-size: 32px;
 		line-height: 1.2;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 
 		@include breakpoint( '<480px' ) {
 			font-size: 24px;

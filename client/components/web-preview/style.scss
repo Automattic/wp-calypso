@@ -149,7 +149,7 @@ a.web-preview__external.button {
 	padding-right: 8px;
 
 	&.is-active {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	@include breakpoint( "<660px" ) {
@@ -163,7 +163,7 @@ a.web-preview__external.button {
 	height: 100%;
 
 	&.is-active {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	&.is-showing-device-switcher {

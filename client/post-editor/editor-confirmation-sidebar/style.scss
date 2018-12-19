@@ -133,7 +133,7 @@ input[type='checkbox'].editor-confirmation-sidebar__display-preference-checkbox 
 }
 
 .editor-confirmation-sidebar__header {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 15px;
 	padding-bottom: 24px;
 }

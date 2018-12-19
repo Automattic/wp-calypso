@@ -40,7 +40,7 @@
 }
 
 .magic-login__form-label {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	display: block;
 	font-size: 14px;
 	line-height: 1.5;

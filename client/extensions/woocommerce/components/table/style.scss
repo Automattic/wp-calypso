@@ -150,7 +150,7 @@
 	}
 
 	&.is-header {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-weight: 600;
 	}
 

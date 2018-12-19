@@ -139,7 +139,7 @@
 }
 
 .reader-full-post__story-content {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 17px;
 	line-height: 28px;
 }
@@ -414,7 +414,7 @@
 
 .reader-full-post__header-title {
 	clear: none;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-family: $serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -444,7 +444,7 @@
 
 	.reader-full-post__header-title-link,
 	.reader-full-post__header-title-link:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 

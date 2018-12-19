@@ -48,7 +48,7 @@
 	line-height: 16px;
 	height: 46px;
 	box-sizing: border-box;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-weight: 600;
 	cursor: pointer;
 
@@ -235,7 +235,7 @@
 		text-align: center;
 
 		&.is-selected {
-			border-bottom-color: $gray-dark;
+			border-bottom-color: var( --color-neutral-700 );
 		}
 
 		&:hover:not( .is-selected ) {
@@ -260,11 +260,11 @@
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 18px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	cursor: pointer;
 
 	&:visited {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	&[disabled],
@@ -325,7 +325,7 @@
 		}
 
 		.is-selected & {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 			background-color: transparent;
 
 			&:after {
@@ -335,7 +335,7 @@
 
 		.notouch .is-selected & {
 			&:hover {
-				color: $gray-dark;
+				color: var( --color-neutral-700 );
 			}
 		}
 	}
@@ -362,7 +362,7 @@
 	width: 100%;
 	font-size: 14px;
 	line-height: 18px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 // -------- Nav Tabs - dropdowns --------

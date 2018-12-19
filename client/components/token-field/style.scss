@@ -7,7 +7,7 @@
 	padding: 0;
 	background-color: $white;
 	border: 1px solid $gray-lighten-20;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	cursor: text;
 	transition: all .15s ease-in-out;
 
@@ -46,7 +46,7 @@ input[type="text"].token-field__input {
 	outline: none;
 	font-family: inherit;
 	font-size: 14px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 
 	&:focus {
 		box-shadow: none;
@@ -115,7 +115,7 @@ input[type="text"].token-field__input {
 
 		&.is-validating {
 			.token-field__token-text {
-				color: $gray-dark;
+				color: var( --color-neutral-700 );
 			}
 		}
 	}
@@ -185,5 +185,5 @@ input[type="text"].token-field__input {
 }
 
 .token-field__suggestion-match {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }

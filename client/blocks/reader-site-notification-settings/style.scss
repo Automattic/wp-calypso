@@ -47,7 +47,7 @@
 .reader-site-notification-settings__popout-toggle,
 .reader-site-notification-settings__popout-instructions {
 	border-top: 1px solid $gray-lighten-20;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	padding: 10px 0 10px 15px;
 	text-align: left;

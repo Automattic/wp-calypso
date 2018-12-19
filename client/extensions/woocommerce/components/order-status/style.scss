@@ -27,7 +27,7 @@
 	&.is-refunded,
 	&.is-completed {
 		background: $gray-light;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 
 		span + span {
 			border-color: $gray-lighten-20;

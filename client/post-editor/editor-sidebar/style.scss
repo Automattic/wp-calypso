@@ -68,7 +68,7 @@
 .editor-sidebar__header {
 	align-items: center;
 	background: $gray-lighten-30;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	display: flex;
 	flex-shrink: 0;
 	font-size: 13px;
@@ -108,7 +108,7 @@
 
 	// Needed for extra specificity over .button style
 	&.button {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 
 		&:hover {
 			color: var( --color-accent );

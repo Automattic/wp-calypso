@@ -1,6 +1,6 @@
 
 .help-contact-closed {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	&.card.is-compact {
 		margin: 0 0 16px;

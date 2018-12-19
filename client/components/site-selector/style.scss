@@ -159,7 +159,7 @@
 	line-height: 2.1;
 
 	&:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	@include breakpoint( '<660px' ) {

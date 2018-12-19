@@ -3,12 +3,12 @@
 	color: $gray-lighten-10;
 
 	&:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 
 .info-popover.is_active .gridicon {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .popover.info-popover__tooltip {

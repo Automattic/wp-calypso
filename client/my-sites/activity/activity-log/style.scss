@@ -178,7 +178,7 @@
 .activity-log__threat-alert-title {
 	padding-right: 16px;
 	font-weight: 500;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 
 	.activity-log__threat-alert-filename {
 		padding: 0 2px;

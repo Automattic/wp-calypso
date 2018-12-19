@@ -34,7 +34,7 @@
 
 .stats-insights__nonperiodic {
 	&.has-no-recent {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-weight: 300;
 
 		p {
@@ -149,7 +149,7 @@
 	@extend %mobile-interface-element;
 	@extend %placeholder;
 
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-weight: 600;
 	height: 40px; // 1
 	overflow: hidden; // 1
@@ -268,7 +268,7 @@ ul.module-header-actions {
 
 .module-content-text {
 	box-sizing: border-box;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 13px;
 	padding: 16px 16px 0 16px;
 	min-height: 1em;
@@ -299,7 +299,7 @@ ul.module-header-actions {
 	&-info {
 		background: $gray-light;
 		box-shadow: inset 0 1px 0 $gray-light;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		display: none;
 		position: relative;
 
@@ -464,7 +464,7 @@ ul.module-header-actions {
 		.stats-module & td.highest-count:hover,
 		tbody tr td:hover {
 			background: $gray-light;
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 	}
 

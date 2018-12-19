@@ -44,7 +44,7 @@
 
 			.sidebar__menu-item-label,
 			.menu-link-text {
-				color: $gray-dark;
+				color: var( --color-neutral-700 );
 			}
 
 			.sidebar__button {
@@ -182,7 +182,7 @@
 	.sidebar__menu-empty,
 	.sidebar__menu-empty:hover {
 		background-color: transparent !important; // needs to be more specific
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 13px;
 		max-width: 60%;
 		padding-right: 32px;

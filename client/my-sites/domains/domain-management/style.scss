@@ -101,7 +101,7 @@
 
 .domain-management-list-item__title {
 	display: block;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	font-weight: 600;
 	text-overflow: ellipsis;
@@ -194,7 +194,7 @@ input[type='radio'].domain-management-list-item__radio {
 	.primary-domain-notice {
 		background: $gray-lighten-30;
 		font-size: 13px;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		&::before {
 			line-height: 1.5em;
 		}
@@ -633,7 +633,7 @@ ul.email-forwarding__list {
 	}
 
 	h2 {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 16px;
 		font-weight: 400;
 		line-height: 120%;

@@ -72,7 +72,7 @@
 	font-weight: 700;
 	font-size: 28px;
 	line-height: 1.416;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	margin: 24px 0 8px 0;
 	max-width: 750px;
 	overflow-wrap: break-word;
@@ -84,7 +84,7 @@
 	}
 
 	.reader__post-title-link, .reader__post-title-link:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 

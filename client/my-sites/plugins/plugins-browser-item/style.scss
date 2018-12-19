@@ -73,7 +73,7 @@
 }
 
 .plugins-browser-item__title {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-weight: 600;
 	font-size: 15px;
 	margin-top: 3px;

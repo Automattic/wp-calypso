@@ -11,7 +11,7 @@
 	margin-bottom: 24px;
 	box-sizing: border-box;
 	animation: appear .3s ease-in-out;
-	background: $gray-dark;
+	background: var( --color-neutral-700 );
 	color: $white;
 	border-radius: 3px;
 	line-height: 1.5;

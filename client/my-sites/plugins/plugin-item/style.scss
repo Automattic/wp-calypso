@@ -82,7 +82,7 @@
 
 // Plugin title
 .plugin-item__title {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	display: block;
 	font-size: 15px;
 	font-weight: 600;

@@ -255,7 +255,7 @@
 
 .reader-related-card__title,
 .reader-related-card__excerpt {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-family: $serif;
 }
 

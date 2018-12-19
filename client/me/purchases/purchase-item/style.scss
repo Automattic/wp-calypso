@@ -105,6 +105,6 @@
 }
 
 .purchase-item__purchase-date {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 12px;
 }

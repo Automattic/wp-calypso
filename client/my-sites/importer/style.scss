@@ -14,13 +14,13 @@
 	font-size: 21px;
 	font-weight: 300;
 	line-height: 24px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	margin-bottom: 16px;
 }
 
 .site-settings__importer-section-description {
 	font-size: 14px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .importer__service-icon {
@@ -31,7 +31,7 @@
 	padding: 2px;
 	margin-right: 16px;
 
-	background-color: $gray-dark;
+	background-color: var( --color-neutral-700 );
 	fill: $white;
 	border-radius: 4px;
 
@@ -200,7 +200,7 @@
 	padding-top: 7px;
 	float: left;
 	display: inline-block;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 
 	text-align: left;
 	font-size: 14px;

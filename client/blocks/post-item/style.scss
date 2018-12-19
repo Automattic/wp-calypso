@@ -88,7 +88,7 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 
 a.post-item__title-link,
 a.post-item__title-link:visited {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	display: block;
 	padding-bottom: 2px;
 	padding-right: 8px;

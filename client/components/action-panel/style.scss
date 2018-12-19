@@ -11,7 +11,7 @@
 	font-size: 21px;
 	font-weight: 300;
 	line-height: 24px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	clear: none;
 }
 
@@ -77,7 +77,7 @@ a.action-panel__body-text-link {
 	border-top: solid 1px $gray-lighten-20;
 	font-size: 14px;
 	line-height: 18px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 
 	&:first-child {
 		border-top: none;

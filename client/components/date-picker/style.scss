@@ -206,7 +206,7 @@ $date-picker_nav_button_size: 20px;
 	border-radius: 50%;
 	cursor: pointer;
 	border: 1px solid $transparent;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	text-align: center;
 	margin: 0 auto;
 }
@@ -214,7 +214,7 @@ $date-picker_nav_button_size: 20px;
 // `today` day
 .DayPicker-Day--today .date-picker__day {
 	color: $white;
-	background-color: $gray-dark;
+	background-color: var( --color-neutral-700 );
 
 	&:hover {
 		background-color: $gray-darken-20;

@@ -35,15 +35,15 @@
 		padding-left: 16px;
 		padding-right: 16px;
 		border: 0;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	::placeholder {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	::-moz-placeholder {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		opacity: 1;
 	}
 }

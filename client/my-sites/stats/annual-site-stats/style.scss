@@ -47,7 +47,7 @@
 	text-transform: uppercase;
 
 	@include breakpoint( '<480px' ) {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 14px;
 		text-transform: capitalize;
 		width: 50%;

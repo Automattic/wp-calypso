@@ -70,7 +70,7 @@
 	}
 
 	h1 {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 1.375em;
 		font-weight: 600;
 		line-height: 2em;

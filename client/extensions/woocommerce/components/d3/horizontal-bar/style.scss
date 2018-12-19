@@ -6,7 +6,7 @@
 		fill: $white;
 
 		&.is-offset-text {
-			fill: $gray-dark;
+			fill: var( --color-neutral-700 );
 		}
 	}
 }

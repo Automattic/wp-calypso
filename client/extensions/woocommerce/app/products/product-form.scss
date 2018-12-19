@@ -300,7 +300,7 @@
 	.form-label {
 		display: inline;
 		margin-right: 4px;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 13px;
 		line-height: 35px;
 	}

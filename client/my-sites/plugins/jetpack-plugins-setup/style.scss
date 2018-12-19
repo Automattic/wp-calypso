@@ -23,7 +23,7 @@
 	@include heading;
 	margin-bottom: .75em;
 	text-align: center;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .jetpack-plugins-setup__description {

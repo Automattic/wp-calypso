@@ -48,7 +48,7 @@
 }
 
 .profile-link__title {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	float: left;
 	font-size: 13px;
 	font-weight: 400;
