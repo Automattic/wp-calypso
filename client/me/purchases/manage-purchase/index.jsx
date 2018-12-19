@@ -53,6 +53,7 @@ import {
 	isDomainMapping,
 	isDomainTransfer,
 	isTheme,
+	isConciergeSession,
 } from 'lib/products-values';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
@@ -87,7 +88,7 @@ class ManagePurchase extends Component {
 		userId: PropTypes.number,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.isDataValid() ) {
 			page.redirect( purchasesRoot );
 			return;
@@ -100,7 +101,7 @@ class ManagePurchase extends Component {
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
 			page.redirect( purchasesRoot );
 			return;
@@ -310,6 +311,8 @@ class ManagePurchase extends Component {
 			description = plan.getDescription();
 		} else if ( isTheme( purchase ) && theme ) {
 			description = theme.description;
+		} else if ( isConciergeSession( purchase ) ) {
+			description = purchase.meta;
 		} else if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
 			description = translate(
 				"Replaces your site's free address, %(domain)s, with the domain, " +
