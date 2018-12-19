@@ -35,7 +35,7 @@
 }
 
 .search-stream .search-stream__input-card.card {
-	box-shadow: 0 0 0 2px $gray-lighten-20, 0 1px 2px $gray-lighten-20;
+	box-shadow: 0 0 0 2px var( --color-neutral-100 ), 0 1px 2px var( --color-neutral-100 );
 	margin-bottom: 0;
 }
 
@@ -54,7 +54,7 @@
 
 // Search term suggestions
 .search-stream__blank-suggestions {
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	font-size: 13px;
 	color: $gray;
 	padding: 16px 0;
@@ -107,7 +107,7 @@
 
 .is-reader-page .search-stream__recommendation-list-item {
 	box-sizing: border-box;
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	display: flex;
 	flex-basis: calc( 50% - 15px );
 	margin: 0 0 0 15px;
@@ -217,7 +217,7 @@
 
 .search-stream__post-header,
 .search-stream__site-header {
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	padding-bottom: 15px;
 }
 
@@ -242,7 +242,7 @@
 
 .search-stream__header .section-nav {
 	background: inherit;
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	box-shadow: none;
 	height: 53px;
 	margin-bottom: 0;

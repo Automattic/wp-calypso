@@ -193,7 +193,7 @@
 
 .editor-ground-control__save-status {
 	text-decoration: none;
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 }
 
 .editor-ground-control .edit-post-status {
@@ -212,7 +212,7 @@
 	padding: 8px 8px 8px 40px;
 	background: white;
 	color: var( --color-primary );
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	cursor: pointer;
 	fill: var( --color-primary );
 	position: absolute;
@@ -234,8 +234,8 @@
 		top: -6px;
 		right: 48px;
 		transform: translate(-50%) rotate(45deg);
-		border-top: 1px solid $gray-lighten-20;
-		border-left: 1px solid $gray-lighten-20;
+		border-top: 1px solid var( --color-neutral-100 );
+		border-left: 1px solid var( --color-neutral-100 );
 	}
 
 	&:focus:not(:active) {

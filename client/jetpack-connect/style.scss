@@ -100,7 +100,7 @@
 			position: absolute;
 			top: 8px;
 			left: 8px;
-			color: $gray-lighten-20;
+			color: var( --color-neutral-100 );
 		}
 
 		.form-text-input {
@@ -197,7 +197,7 @@
 	width: 100%;
 
 	&:hover > div {
-		box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
 	}
 }
 
@@ -654,7 +654,7 @@
 		z-index: z-index( 'root', '.jetpack-connect__password-form .gridicon' );
 		left: 8px;
 		top: 7px;
-		fill: $gray-lighten-20;
+		fill: var( --color-neutral-100 );
 	}
 }
 

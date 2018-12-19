@@ -42,7 +42,7 @@
 .media-library__list-item-details-separator {
 	width: 20%;
 	margin: 3% auto;
-	background-color: $gray-lighten-20;
+	background-color: var( --color-neutral-100 );
 }
 
 .media-library__list-item-file-extension {

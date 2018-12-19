@@ -23,7 +23,7 @@
 	cursor: pointer;
 
 	svg {
-		fill: $gray-lighten-20;
+		fill: var( --color-neutral-100 );
 	}
 }
 

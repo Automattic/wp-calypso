@@ -21,7 +21,7 @@
 			color: $gray-dark;
 			background: $gray-lighten-30;
 			border-radius: 3px;
-			border: 1px solid $gray-lighten-20;
+			border: 1px solid var( --color-neutral-100 );
 		}
 
 		a .gridicon {

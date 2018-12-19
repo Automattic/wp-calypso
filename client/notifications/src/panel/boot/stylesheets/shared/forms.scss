@@ -5,7 +5,7 @@
   color: $gray-dark;
   font-size: 16px;
   line-height: 1.5;
-  border: 1px solid $gray-lighten-20;
+  border: 1px solid var( --color-neutral-100 );
   background-color: $white;
   transition: all .15s ease-in-out;
   box-sizing: border-box;

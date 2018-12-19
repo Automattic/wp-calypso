@@ -249,7 +249,7 @@
 		right: 16px;
 		bottom: 16px;
 		left: 16px;
-		background-color: $gray-lighten-20;
+		background-color: var( --color-neutral-100 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
@@ -656,7 +656,7 @@
 }
 
 .sharing-buttons-preview__fake-user {
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	display: inline-block;
 	height: 24px;
 	width: 24px;
@@ -681,7 +681,7 @@
 	align-items: center;
 	padding: 8px;
 	cursor: pointer;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	border-radius: 4px;
 	box-shadow: 0 0 8px rgba( $gray-dark, 0.04 );
 	background-color: $white;
@@ -712,7 +712,7 @@
 		display: block;
 		width: 12px;
 		height: 12px;
-		border: 1px solid $gray-lighten-20;
+		border: 1px solid var( --color-neutral-100 );
 		background-color: $white;
 		transform: rotate( 45deg );
 	}
@@ -958,14 +958,14 @@
 	position: relative;
 	display: none;
 	background: $white;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	border-radius: 4px;
 	box-shadow: 0 0 8px rgba( $gray-dark, 0.04 );
 
 	&::before {
 		content: '';
 		position: absolute;
-		border: 1px solid $gray-lighten-20;
+		border: 1px solid var( --color-neutral-100 );
 		border-right-width: 0 #{'/*rtl:ignore*/'};
 		border-bottom-width: 0;
 		background: $white;

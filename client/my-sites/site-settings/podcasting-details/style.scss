@@ -135,7 +135,7 @@
 
 	&.is-disabled {
 		background-color: $gray-light;
-		border-color: $gray-lighten-20;
+		border-color: var( --color-neutral-100 );
 	}
 
 	&.is-disabled label,
@@ -146,7 +146,7 @@
 	&.is-disabled .form-text-input,
 	&.is-disabled .form-textarea {
 		color: var( --color-neutral-200 );
-		border-color: $gray-lighten-20;
+		border-color: var( --color-neutral-100 );
 	}
 }
 

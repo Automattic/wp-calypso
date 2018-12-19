@@ -45,7 +45,7 @@
 
 	.site-icon {
 		margin-right: 6px;
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 
 		.gridicon {
 			color: $white;

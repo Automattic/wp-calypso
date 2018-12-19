@@ -4,7 +4,7 @@
 
 	&.disabled {
 		.title-format-editor__editor-wrapper {
-			border: 1px solid $gray-lighten-20;
+			border: 1px solid var( --color-neutral-100 );
 			background-color: $gray-light;
 		}
 
@@ -38,7 +38,7 @@
 	border-radius: 3px;
 	background-color: $white;
 	color: $gray-darken-30;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	padding: 3px 8px 3px 8px;
 	margin-left: 10px;
 	margin-top: 3px;

@@ -69,7 +69,7 @@
 	}
 	&.placeholder > span {
 		animation: pulse-light 800ms ease-in-out infinite;
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 		height: 20px;
 	}
 }

@@ -83,7 +83,7 @@
 
 		.domain-management-list-item__title,
 		.domain-management-list-item__meta {
-			color: $gray-lighten-20;
+			color: var( --color-neutral-100 );
 		}
 	}
 }
@@ -278,7 +278,7 @@ input[type='radio'].domain-management-list-item__radio {
 		width: 100%;
 
 		&.is-busy:disabled {
-			border-color: $gray-lighten-20;
+			border-color: var( --color-neutral-100 );
 			color: $gray-darken-20;
 		}
 
@@ -372,7 +372,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 	&.fetching input[type='text'] {
 		animation: pulse-light 0.8s ease-in-out infinite;
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 	}
 }
 
@@ -886,7 +886,7 @@ ul.domain-connect__dns-list,
 	text-align: center;
 
 	&::before {
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 		content: '';
 		display: block;
 		height: 1px;

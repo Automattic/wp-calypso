@@ -137,7 +137,7 @@
 		height: 48px;
 		margin-top: 0px;
 		padding: 0;
-		background-color: $gray-lighten-20;
+		background-color: var( --color-neutral-100 );
 
 		@include breakpoint( '<480px' ) {
 			width: 32px;
@@ -385,7 +385,7 @@
 }
 
 .activity-log-item__activity-media .gridicon {
-	background-color: $gray-lighten-20;
+	background-color: var( --color-neutral-100 );
 }
 .activity-log-item__activity-media .is-thumbnail {
 	width: auto;

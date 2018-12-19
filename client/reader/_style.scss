@@ -171,7 +171,7 @@
 		font-family: $sans;
 		font-size: 15px;
 		padding-top: 5px;
-		border-top: 1px solid $gray-lighten-20;
+		border-top: 1px solid var( --color-neutral-100 );
 
 		a {
 			padding: 5px 10px;

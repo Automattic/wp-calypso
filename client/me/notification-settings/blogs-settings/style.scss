@@ -69,7 +69,7 @@
 	animation: loading-fade 1.6s ease-in-out infinite;
 	background-color: $gray-lighten-30;
 	position: relative;
-	background: $gray-lighten-20;
+	background: var( --color-neutral-100 );
 	border: 1px solid white;
 	height: 32px;
 	width: 32px;

@@ -16,7 +16,7 @@
 }
 
 .following-manage__input-card.card.is-compact {
-	box-shadow: 0 0 0 2px $gray-lighten-20, 0 1px 2px $gray-lighten-20;
+	box-shadow: 0 0 0 2px var( --color-neutral-100 ), 0 1px 2px var( --color-neutral-100 );
 }
 
 .following-manage__subscriptions {
@@ -26,7 +26,7 @@
 
 // Load more results
 .following-manage__show-more {
-	border-top: 1px solid $gray-lighten-20;
+	border-top: 1px solid var( --color-neutral-100 );
 	display: flex;
 	justify-content: center;
 	margin-top: 10px;
@@ -174,7 +174,7 @@
 }
 
 .following-manage .reader-recommended-sites {
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 }
 
 .following-manage__search-followed {

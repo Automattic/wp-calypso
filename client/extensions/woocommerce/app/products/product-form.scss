@@ -263,7 +263,7 @@
 	@include placeholder();
 	background: lighten( $gray, 35% );
 	height: 225px;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 }
 
 .products__product-form-details-basic-description.form-fieldset {
@@ -786,7 +786,7 @@
 }
 
 .products__additional-details-preview {
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	padding: 16px 16px 4px 16px;
 	margin-top: 4px;
 	font-size: 13px;

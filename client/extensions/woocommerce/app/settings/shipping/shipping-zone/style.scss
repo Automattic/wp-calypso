@@ -231,7 +231,7 @@
 .shipping-zone__method-container {
 	position: relative;
 	padding: 20px;
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	margin-bottom: 24px;
 
 	.form-text-input-with-affixes {
@@ -254,7 +254,7 @@
 	}
 
 	input:disabled {
-		border-color: $gray-lighten-20;
+		border-color: var( --color-neutral-100 );
 	}
 }
 

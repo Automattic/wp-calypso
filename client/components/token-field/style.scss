@@ -6,7 +6,7 @@
 	margin: 0;
 	padding: 0;
 	background-color: $white;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	color: $gray-dark;
 	cursor: text;
 	transition: all .15s ease-in-out;
@@ -146,7 +146,7 @@ input[type="text"].token-field__input {
 .token-field__remove-token {
 	cursor: pointer;
 	border-radius: 0 4px 4px 0;
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 
 	&:hover {
 		color: white;
@@ -165,7 +165,7 @@ input[type="text"].token-field__input {
 
 	&.is-expanded {
 		background: $white;
-		border-top: 1px solid $gray-lighten-20;
+		border-top: 1px solid var( --color-neutral-100 );
 		max-height: 9em;
 		padding-top: 3px;
 	}

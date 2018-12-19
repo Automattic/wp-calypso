@@ -54,8 +54,8 @@
 
 .nps-survey__recommendation-select-wrapper {
 	background-color: $gray-light;
-	border-top: 1px solid $gray-lighten-20;
-	border-bottom: 1px solid $gray-lighten-20;
+	border-top: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-100 );
 	padding: 16px 0;
 	text-align: center;
 

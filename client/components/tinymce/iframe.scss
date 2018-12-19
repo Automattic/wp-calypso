@@ -201,5 +201,5 @@ hr {
 }
 
 .mce-content-body code[data-mce-selected] {
-	background: $gray-lighten-20;
+	background: var( --color-neutral-100 );
 }

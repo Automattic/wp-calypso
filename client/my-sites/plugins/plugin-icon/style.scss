@@ -33,7 +33,7 @@
 		opacity: 0.3;
 	}
 	&.is-fallback {
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 	}
 }
 

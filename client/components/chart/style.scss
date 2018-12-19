@@ -362,7 +362,7 @@ $y-axis-padding: 0 20px 0 10px;
 					text-align: right;
 					float: right;
 					min-width: 22px;
-					color: $gray-lighten-20;
+					color: var( --color-neutral-100 );
 				}
 
 				.label {
@@ -423,7 +423,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 		.label {
 			text-transform: none;
-			color: $gray-lighten-20;
+			color: var( --color-neutral-100 );
 			overflow: hidden;
 			letter-spacing: 0;
 			height: 19px;

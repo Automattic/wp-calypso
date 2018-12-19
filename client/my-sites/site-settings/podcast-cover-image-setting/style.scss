@@ -4,7 +4,7 @@
 	float: left;
 	margin: 0;
 	text-align: center;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	cursor: pointer;
 	height: 96px;
 	width: 96px;
@@ -63,7 +63,7 @@
 
 	.is-disabled &:disabled {
 		background-color: $gray-light;
-		border-color: $gray-lighten-20;
+		border-color: var( --color-neutral-100 );
 		color: var( --color-neutral-200 );
 	}
 

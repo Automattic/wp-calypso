@@ -320,7 +320,7 @@ div.popover-cart__popover {
 
 .popover-cart__mobile-cart {
 	background-color: $white;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 	margin: -1px;
 	position: relative;

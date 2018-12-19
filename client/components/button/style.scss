@@ -59,7 +59,7 @@ button {
 
 	background-color: $white;
 	color: $gray-dark;
-	border-color: $gray-lighten-20;
+	border-color: var( --color-neutral-100 );
 
 	&:hover {
 		border-color: var( --color-neutral-200 );

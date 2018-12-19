@@ -222,7 +222,7 @@
 	text-align: center;
 
 	&::before {
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 		content: '';
 		display: block;
 		height: 1px;

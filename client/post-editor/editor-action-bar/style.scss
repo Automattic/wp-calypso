@@ -81,7 +81,7 @@
 	}
 
 	@include breakpoint( ">660px" ) {
-		color: $gray-lighten-20;
+		color: var( --color-neutral-100 );
 	}
 
 	.gridicon {

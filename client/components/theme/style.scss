@@ -46,7 +46,7 @@ $theme-info-height: 54px;
 	}
 
 	&.is-placeholder {
-		background-color: $gray-lighten-20;
+		background-color: var( --color-neutral-100 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
@@ -202,7 +202,7 @@ $theme-info-height: 54px;
 	bottom: 54px;
 	width: 100%;
 	padding-top: 36%;
-	background: $gray-lighten-20;
+	background: var( --color-neutral-100 );
 
 	.gridicon {
 		display: block;

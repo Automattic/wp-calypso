@@ -67,7 +67,7 @@ button.security-2fa-backups-codes-list__generate-button {
 	}
 
 	&:before {
-		color: $gray-lighten-20;
+		color: var( --color-neutral-100 );
 		display: inline-block;
 		font-weight: normal;
 		margin-right: 10px;

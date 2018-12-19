@@ -39,7 +39,7 @@
 	}
 
 	&.level-1 {
-		background-color: $gray-lighten-20;
+		background-color: var( --color-neutral-100 );
 	}
 
 	&.level-2 {

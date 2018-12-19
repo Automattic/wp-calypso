@@ -229,7 +229,7 @@ $date-picker_nav_button_size: 20px;
 
 // `disabled` day
 .DayPicker-Day--disabled:not( .DayPicker-Day--outside ) .date-picker__day {
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 	cursor: default;
 }
 
@@ -260,7 +260,7 @@ $date-picker_nav_button_size: 20px;
 
 .DayPicker-Day--events.DayPicker-Day--disabled:not( .DayPicker-Day--is-selected )
 	.date-picker__day {
-	border-color: $gray-lighten-20;
+	border-color: var( --color-neutral-100 );
 }
 
 @keyframes isSelectedDay {

@@ -64,7 +64,7 @@ a.action-panel__body-text-link {
 
 .action-panel__figure-list {
 	margin: 0 0 20px;
-	border: solid 1px $gray-lighten-20;
+	border: solid 1px var( --color-neutral-100 );
 	border-radius: 4px;
 	list-style: none;
 	text-align: left;
@@ -74,7 +74,7 @@ a.action-panel__body-text-link {
 	box-sizing: border-box;
 	width: 100%;
 	padding: 12px 16px;
-	border-top: solid 1px $gray-lighten-20;
+	border-top: solid 1px var( --color-neutral-100 );
 	font-size: 14px;
 	line-height: 18px;
 	color: $gray-dark;

@@ -46,11 +46,11 @@ body {
 		border-radius: 2px;
 		padding: 0;
 		text-align: inherit;
-		border-color: $gray-lighten-20;
+		border-color: var( --color-neutral-100 );
 		z-index: z-index( 'root', 'body .webui-popover' ); // Appear above dialog
 
 		.webui-popover-title {
-			background-color: $gray-lighten-20;
+			background-color: var( --color-neutral-100 );
 			border-color: $gray-lighten-30;
 			border-radius: 1px 1px 0 0;
 		}
@@ -59,7 +59,7 @@ body {
 		&.top-right,
 		&.top-left {
 			.arrow {
-				border-top-color: $gray-lighten-20;
+				border-top-color: var( --color-neutral-100 );
 			}
 		}
 
@@ -67,7 +67,7 @@ body {
 		&.right-top,
 		&.right-bottom {
 			.arrow {
-				border-right-color: $gray-lighten-20;
+				border-right-color: var( --color-neutral-100 );
 			}
 		}
 
@@ -75,7 +75,7 @@ body {
 		&.left-top,
 		&.left-bottom {
 			.arrow {
-				border-left-color: $gray-lighten-20;
+				border-left-color: var( --color-neutral-100 );
 			}
 		}
 
@@ -83,9 +83,9 @@ body {
 		&.bottom-right,
 		&.bottom-left {
 			.arrow {
-				border-bottom-color: $gray-lighten-20;
+				border-bottom-color: var( --color-neutral-100 );
 				&:after {
-					border-bottom-color: $gray-lighten-20;
+					border-bottom-color: var( --color-neutral-100 );
 				}
 			}
 		}

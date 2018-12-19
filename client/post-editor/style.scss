@@ -175,7 +175,7 @@
 	}
 
 	&:focus {
-		border-color: $gray-lighten-20;
+		border-color: var( --color-neutral-100 );
 		box-shadow: none;
 	}
 }
@@ -209,25 +209,25 @@
 
 	&:last-of-type {
 		.segmented-control__link {
-			border-right-color: $gray-lighten-20;
+			border-right-color: var( --color-neutral-100 );
 			border-bottom-right-radius: 0;
 		}
 	}
 
 	&.is-selected {
 		+ .segmented-control__item .segmented-control__link {
-			border-left-color: $gray-lighten-20;
+			border-left-color: var( --color-neutral-100 );
 		}
 	}
 }
 
 .post-editor__switch-mode .segmented-control__link {
 	background: $gray-light;
-	border-color: $gray-lighten-20;
+	border-color: var( --color-neutral-100 );
 }
 
 .post-editor__switch-mode .segmented-control__item.is-selected .segmented-control__link {
-	border-color: $gray-lighten-20;
+	border-color: var( --color-neutral-100 );
 	border-bottom-color: $white;
 	background-color: $white;
 }

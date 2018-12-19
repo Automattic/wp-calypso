@@ -130,7 +130,7 @@
 	width: 7px;
 	height: 7px;
 	border: 1px solid $gray-light;
-	background-color: $gray-lighten-20;
+	background-color: var( --color-neutral-100 );
 	margin: 0;
 }
 
@@ -142,7 +142,7 @@
 	}
 
 	&.is-today {
-		background-color: $gray-lighten-20;
+		background-color: var( --color-neutral-100 );
 	}
 
 	&.is-after-today {
