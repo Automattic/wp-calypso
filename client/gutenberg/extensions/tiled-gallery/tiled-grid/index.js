@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { Jetpack_Tiled_Gallery_Layout } from './layout';
+import { TiledGalleryLayout } from './layout';
 import { Jetpack_Tiled_Gallery_Shape } from './shapes/jetpack-tiled-gallery-shape';
 import { DEFAULT_GALLERY_WIDTH, TILE_MARGIN } from '../constants.js';
 
@@ -16,7 +16,7 @@ export const rectangularLayout = ( {
 	margin = TILE_MARGIN,
 	contentWidth = DEFAULT_GALLERY_WIDTH,
 } ) => {
-	const layout = new Jetpack_Tiled_Gallery_Layout( {
+	const layout = new TiledGalleryLayout( {
 		attachments: images,
 		contentWidth,
 		margin,

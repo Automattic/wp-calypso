@@ -25,7 +25,7 @@ import {
 	Two_One,
 } from './shapes';
 
-export class Jetpack_Tiled_Gallery_Layout {
+export class TiledGalleryLayout {
 	contentWidth;
 
 	margin;
@@ -159,7 +159,10 @@ export class Jetpack_Tiled_Gallery_Layout {
 			column_widths_array.push( column.raw_width );
 		}
 
-		const rounded_column_widths_array = getRoundedConstrainedArray( column_widths_array, row.width );
+		const rounded_column_widths_array = getRoundedConstrainedArray(
+			column_widths_array,
+			row.width
+		);
 
 		for ( const column of row.columns ) {
 			column.width = rounded_column_widths_array.shift();
