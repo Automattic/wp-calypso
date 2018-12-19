@@ -247,7 +247,7 @@ export class PlansFeaturesMain extends Component {
 					selected={ customerType === 'business' }
 					path={ '?customerType=business' }
 				>
-					{ translate( 'Online Stores and Business Sites' ) }
+					{ translate( 'Business Sites and Online Stores' ) }
 				</SegmentedControlItem>
 			</SegmentedControl>
 		);
