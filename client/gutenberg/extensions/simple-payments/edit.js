@@ -18,6 +18,7 @@ import {
 	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
+
 /**
  * Internal dependencies
  */
@@ -103,11 +104,11 @@ class SimplePaymentsEdit extends Component {
 			content,
 			currency,
 			email,
+			featuredMediaId,
 			multiple,
 			price,
 			productId,
 			title,
-			featuredMediaId,
 		} = attributes;
 
 		if ( productId && simplePayment ) {
@@ -115,10 +116,10 @@ class SimplePaymentsEdit extends Component {
 				content: get( simplePayment, [ 'content', 'raw' ], content ),
 				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency ),
 				email: get( simplePayment, [ 'meta', 'spay_email' ], email ),
+				featuredMediaId: get( simplePayment, [ 'featured_media' ], featuredMediaId ),
 				multiple: Boolean( get( simplePayment, [ 'meta', 'spay_multiple' ], Boolean( multiple ) ) ),
 				price: get( simplePayment, [ 'meta', 'spay_price' ], price || undefined ),
 				title: get( simplePayment, [ 'title', 'raw' ], title ),
-				featuredMediaId: get( simplePayment, [ 'featured_media' ], featuredMediaId ),
 			} );
 			this.shouldInjectPaymentAttributes = ! this.shouldInjectPaymentAttributes;
 		}
@@ -130,11 +131,11 @@ class SimplePaymentsEdit extends Component {
 			content,
 			currency,
 			email,
+			featuredMediaId,
 			multiple,
 			price,
 			productId,
 			title,
-			featuredMediaId,
 		} = attributes;
 
 		return {
@@ -345,6 +346,10 @@ class SimplePaymentsEdit extends Component {
 		this.setState( { fieldEmailError: null } );
 	};
 
+	handleFeaturedMediaSelect = media => {
+		this.props.setAttributes( { featuredMediaId: get( media, 'id', 0 ) } );
+	};
+
 	handleContentChange = content => {
 		this.props.setAttributes( { content } );
 	};
@@ -372,10 +377,6 @@ class SimplePaymentsEdit extends Component {
 		this.setState( { fieldTitleError: null } );
 	};
 
-	handleFeaturedMediaSelect = media => {
-		this.props.setAttributes( { featuredMediaId: get( media, 'id', 0 ) } );
-	};
-
 	getCurrencyList = SUPPORTED_CURRENCY_LIST.map( value => {
 		const { symbol } = getCurrencyDefaults( value );
 		// if symbol is equal to the code (e.g., 'CHF' === 'CHF'), don't duplicate it.
@@ -388,11 +389,11 @@ class SimplePaymentsEdit extends Component {
 		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
 		const {
 			attributes,
+			featuredMedia,
 			instanceId,
 			isSelected,
-			simplePayment,
-			featuredMedia,
 			setAttributes,
+			simplePayment,
 		} = this.props;
 		const { content, currency, email, multiple, price, productId, title } = attributes;
 
