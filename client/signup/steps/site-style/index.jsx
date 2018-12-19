@@ -83,6 +83,7 @@ export class SiteStyleStep extends Component {
 			const isChecked = siteStyleProperties.value === this.state.themeSlugWithRepo;
 			const optionLabelClasses = classNames( 'site-style__option-label', {
 				'is-checked': isChecked,
+				[ `site-style__variation-${ siteStyleProperties.name }` ]: siteStyleProperties.name,
 			} );
 			return (
 				<FormLabel
