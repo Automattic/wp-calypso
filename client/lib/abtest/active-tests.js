@@ -73,14 +73,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	simplifiedChecklistView: {
-		datestamp: '20181204',
-		variations: {
-			showAll: 50,
-			showFirstOnly: 50,
-		},
-		defaultVariation: 'showAll',
-	},
 	removeUsername: {
 		datestamp: '20181213',
 		variations: {
