@@ -75,9 +75,11 @@ class GalleryImage extends Component {
 		if ( image && ! url ) {
 			const { alt_text, source_url, media_details } = image;
 			const { width, height } = media_details;
+			const ratio = height && width ? width / height : 1;
 			this.props.setAttributes( {
 				alt: alt_text,
 				height: +height,
+				ratio,
 				url: source_url,
 				width: +width,
 			} );
@@ -96,6 +98,7 @@ class GalleryImage extends Component {
 			link,
 			linkTo,
 			onRemove,
+			ratio,
 			setAttributes,
 			url,
 			width,
@@ -122,6 +125,7 @@ class GalleryImage extends Component {
 					alt={ alt }
 					data-id={ id }
 					data-height={ height }
+					data-ratio={ ratio }
 					data-width={ width }
 					onClick={ this.onImageClick }
 					tabIndex="0"

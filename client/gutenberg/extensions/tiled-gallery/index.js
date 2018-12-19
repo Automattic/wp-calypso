@@ -59,6 +59,12 @@ const blockAttributes = {
 				selector: 'img',
 				source: 'attribute',
 			},
+			ratio: {
+				attribute: 'data-ratio',
+				selector: 'img',
+				source: 'attribute',
+				type: 'number',
+			},
 			url: {
 				attribute: 'src',
 				selector: 'img',
