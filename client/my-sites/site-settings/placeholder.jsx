@@ -28,6 +28,9 @@ const Placeholder = ( { translate } ) => {
 						<span className="site-settings__placeholder-item">{ translate( 'General' ) }</span>
 					</NavItem>
 					<NavItem>
+						<span className="site-settings__placeholder-item">{ translate( 'Performance' ) }</span>
+					</NavItem>
+					<NavItem>
 						<span className="site-settings__placeholder-item">{ translate( 'Writing' ) }</span>
 					</NavItem>
 					<NavItem>
