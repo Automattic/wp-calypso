@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import url from 'url';
 
 /**
  * Internal Dependencies
@@ -68,9 +69,10 @@ class InlineHelpPopover extends Component {
 	};
 
 	componentDidMount() {
-		//If we're in the site preview and eligible for the checklist,
-		//open Checklist Prompt in secondary view
-		if ( this.props.isSitePreview && this.props.isEligibleForDotcomChecklist ) {
+		//Open the Checklist prompt when query string 'onboard=1' is present.
+		const parsed = url.parse( window.location.href, true );
+
+		if ( parsed && '1' === parsed.query.onboard ) {
 			this.openChecklistView();
 		}
 	}
