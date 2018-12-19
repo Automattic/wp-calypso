@@ -31,11 +31,9 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import FeedSettings from 'my-sites/site-settings/feed-settings';
 import PodcastingLink from 'my-sites/site-settings/podcasting-details/link';
 import Masterbar from './masterbar';
-import MediaSettings from './media-settings';
 import ThemeEnhancements from './theme-enhancements';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import SpeedUpYourSite from './speed-up-site-settings';
 
 class SiteSettingsFormWriting extends Component {
 	renderSectionHeader( title, showButton = true ) {
@@ -79,10 +77,8 @@ class SiteSettingsFormWriting extends Component {
 			setFieldValue,
 			siteId,
 			siteIsJetpack,
-			submitForm,
 			translate,
 			updateFields,
-			jetpackVersionSupportsLazyImages,
 		} = this.props;
 
 		const jetpackSettingsUI = siteIsJetpack && jetpackSettingsUISupported;
@@ -124,34 +120,6 @@ class SiteSettingsFormWriting extends Component {
 					fields={ fields }
 					updateFields={ updateFields }
 				/>
-				{ jetpackSettingsUI && (
-					<div>
-						{ this.renderSectionHeader( translate( 'Media' ) ) }
-						<MediaSettings
-							siteId={ siteId }
-							handleAutosavingToggle={ handleAutosavingToggle }
-							onChangeField={ onChangeField }
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							fields={ fields }
-							jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
-						/>
-					</div>
-				) }
-
-				{ jetpackSettingsUI &&
-					jetpackVersionSupportsLazyImages && (
-						<div>
-							{ this.renderSectionHeader( translate( 'Performance & speed' ), false ) }
-							<SpeedUpYourSite
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-								jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
-								submitForm={ submitForm }
-								updateFields={ updateFields }
-							/>
-						</div>
-					) }
 
 				{ this.renderSectionHeader( translate( 'Content types' ) ) }
 
@@ -226,7 +194,6 @@ const connectComponent = connect(
 			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
 			siteIsJetpack,
 			siteId,
-			jetpackVersionSupportsLazyImages: isJetpackMinimumVersion( state, siteId, '5.8-alpha' ),
 			isMasterbarSectionVisible:
 				siteIsJetpack &&
 				isJetpackMinimumVersion( state, siteId, '4.8' ) &&
@@ -274,17 +241,11 @@ const getFormSettings = settings => {
 		'Phrases to Avoid',
 		'Redundant Expression',
 		'ignored_phrases',
-		'photon',
-		'carousel',
-		'carousel_background_color',
-		'carousel_display_exif',
 		'date_format',
 		'start_of_week',
 		'time_format',
 		'timezone_string',
-		'lazy-images',
 		'podcasting_category_id',
-		'photon-cdn',
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values
