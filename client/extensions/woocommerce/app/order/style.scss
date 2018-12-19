@@ -1,4 +1,3 @@
-
 .order__container {
 	padding-bottom: 0;
 
@@ -100,7 +99,7 @@
 	}
 
 	.order-payment__label .gridicon {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 
 	.order-payment__action,
