@@ -70,7 +70,7 @@ $compact-header-height: 35;
 
 	font-size: 14px;
 	font-weight: 600;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	transition: background-color 0.2s ease;
 	cursor: pointer;
 
@@ -193,7 +193,7 @@ $compact-header-height: 35;
 	line-height: #{$option-height}px;
 	padding: 0 #{$side-margin + 46}px 0 #{$side-margin}px;
 
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	font-weight: 400;
 	white-space: nowrap;
@@ -209,7 +209,7 @@ $compact-header-height: 35;
 	}
 
 	&:visited {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	&.is-selected {

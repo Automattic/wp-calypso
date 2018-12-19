@@ -313,7 +313,7 @@
 	.form-label,
 	.form-fieldset,
 	.shipping-zone__location-dialog-header {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 

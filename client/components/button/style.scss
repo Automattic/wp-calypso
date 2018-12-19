@@ -58,16 +58,16 @@ button {
 	}
 
 	background-color: $white;
-	color: $gray-dark;
-	border-color: var( --color-neutral-100 );
+	color: var( --color-neutral-700 );
+	border-color:var( --color-neutral-100 );
 
 	&:hover {
 		border-color: var( --color-neutral-200 );
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	&:visited {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	&[disabled],
@@ -226,7 +226,7 @@ button {
 	&:hover,
 	&:focus {
 		background: none;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	.gridicon {

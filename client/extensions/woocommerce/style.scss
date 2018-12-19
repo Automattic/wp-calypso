@@ -203,7 +203,7 @@
 		&.selected {
 			.count,
 			&:hover .count {
-				color: $gray-dark;
+				color: var( --color-neutral-700 );
 				background-color: $white;
 			}
 		}

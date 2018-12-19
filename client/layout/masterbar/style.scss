@@ -468,11 +468,11 @@ $autobar-height: 20px;
 	}
 
 	&:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 
 		.count {
-			color: $gray-dark;
-			border-color: $gray-dark;
+			color: var( --color-neutral-700 );
+			border-color: var( --color-neutral-700 );
 		}
 	}
 }

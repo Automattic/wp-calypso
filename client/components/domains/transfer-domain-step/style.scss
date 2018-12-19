@@ -165,7 +165,7 @@
 		align-items: flex-start;
 
 		.transfer-domain-step__section-heading {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 	}
 
@@ -285,7 +285,7 @@ input {
 			color: var( --color-primary );
 		}
 
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		margin-bottom: 0;
 		font-size: 16px;
 	}

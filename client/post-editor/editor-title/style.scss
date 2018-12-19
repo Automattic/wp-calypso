@@ -41,7 +41,7 @@
 	border: none;
 	font-family: $serif;
 	font-size: 28px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-weight: 600;
 	resize: none;
 	-ms-overflow-y: hidden !important;

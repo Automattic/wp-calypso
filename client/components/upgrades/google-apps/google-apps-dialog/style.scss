@@ -36,7 +36,7 @@
 	text-align: center;
 
 	.google-apps-dialog__title {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-weight: 600;
 		margin: 0;
 	}
@@ -47,7 +47,7 @@
 }
 
 .google-apps-dialog__product-features {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 15px;
 	line-height: 130%;
 	list-style-type: none;

@@ -123,7 +123,7 @@
 .page__title,
 .page__title:visited {
 	@extend %content-font;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-weight: 700;
 	font-size: 18px;
 	line-height: 1.2;

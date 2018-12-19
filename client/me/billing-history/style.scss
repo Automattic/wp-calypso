@@ -57,7 +57,7 @@
 
 // Table Body
 .billing-history__transaction {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	height: 66px;
 	border-bottom: 1px solid var( --color-neutral-0 );
@@ -198,7 +198,7 @@
 	}
 
 	li {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 13px;
 		margin: 0 0 15px 0;
 		padding: 0;

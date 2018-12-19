@@ -68,11 +68,11 @@
 
 	.mce-toolbar .mce-btn-group .mce-btn:hover .mce-ico,
 	.mce-toolbar .mce-btn-group .mce-btn:focus .mce-ico {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	.mce-toolbar .mce-btn-group .mce-btn:hover .gridicon,
 	.mce-toolbar .mce-btn-group .mce-btn:focus .gridicon {
-		fill: $gray-dark;
+		fill: var( --color-neutral-700 );
 	}
 }

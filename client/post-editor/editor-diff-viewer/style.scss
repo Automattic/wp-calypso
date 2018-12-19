@@ -17,7 +17,7 @@
 	.editor-diff-viewer__title {
 		font-family: $serif;
 		font-size: 32px;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-weight: 600;
 		margin: 0 0 24px;
 		height: auto;

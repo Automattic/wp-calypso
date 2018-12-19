@@ -144,7 +144,7 @@
 .focus-sidebar .editor-ground-control__toggle-sidebar:focus,
 .focus-sidebar .editor-ground-control__toggle-sidebar {
 	color: $white;
-	background: $gray-dark;
+	background: var( --color-neutral-700 );
 }
 
 .focus-sidebar .editor-ground-control__toggle-sidebar svg {

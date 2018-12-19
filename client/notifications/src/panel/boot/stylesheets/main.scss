@@ -10,7 +10,7 @@
 		size: $wpnc__font-size;
 	}
 	line-height: $wpnc__line-height;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	// Fixes font anti-aliasing in iframes: andrewmoreton.co.uk/typekit-iframes-safari-weird-antialiasing/
 	-webkit-font-smoothing: subpixel-antialiased;
 
@@ -131,13 +131,13 @@
 	span.wpnc__user {
 		font-weight: 600;
 		a.wpnc__user__home {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 	}
 
 	.wpnc__header a.wpnc__user {
 		font-weight: 600;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	.wpnc__header a.wpnc__post {
@@ -209,7 +209,7 @@
 		flex: auto; // Fill horizontal space
 
 		&:hover {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 
 		&:first-of-type {

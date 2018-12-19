@@ -48,7 +48,7 @@
 }
 
 .site-or-domain__choice-text {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 @include breakpoint( ">480px" ) {

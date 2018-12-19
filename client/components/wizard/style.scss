@@ -23,7 +23,7 @@
 	color: darken( $gray, 20 );
 
 	&:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 

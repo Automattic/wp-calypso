@@ -4,7 +4,7 @@
 	overflow: hidden;
 	transition: background 0.05s ease-in-out;
 	text-decoration: none;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 
 	.card__link-indicator {
 		display: none;

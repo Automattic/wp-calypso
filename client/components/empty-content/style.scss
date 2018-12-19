@@ -19,7 +19,7 @@
 }
 
 .empty-content__title {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 34px;
 	font-weight: 300;
 

@@ -12,7 +12,7 @@
 }
 
 .domain-search-page-wrapper h3 {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 15px;
 	word-wrap: break-word;
 
@@ -36,7 +36,7 @@
 	}
 
 	p {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 13px;
 		font-weight: 600;
 		margin-bottom: 0;

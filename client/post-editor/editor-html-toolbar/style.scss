@@ -121,7 +121,7 @@
 		}
 
 		&:hover {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 
 		&:last-child {

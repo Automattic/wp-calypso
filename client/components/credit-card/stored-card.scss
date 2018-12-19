@@ -16,7 +16,7 @@
 }
 
 .credit-card__stored-card-number {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	flex-basis: 100%;
 	font-weight: 600;
 }

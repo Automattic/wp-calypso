@@ -45,7 +45,7 @@
 }
 
 .people-profile__username {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 16px;
 	font-weight: 600;
 	white-space: pre;
@@ -106,7 +106,7 @@
 
 	&.role-administrator,
 	&.role-admin-owner {
-		background: $gray-dark;
+		background: var( --color-neutral-700 );
 		border: none;
 		color: $white;
 	}

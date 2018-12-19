@@ -136,7 +136,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	}
 
 	&.is-active {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 

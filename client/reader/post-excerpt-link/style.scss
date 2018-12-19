@@ -31,7 +31,7 @@
 
 	&.is-showing-notice {
 		.gridicon {
-			fill: $gray-dark;
+			fill: var( --color-neutral-700 );
 		}
 
 		.post-excerpt-link__helper {

@@ -112,7 +112,7 @@
 
 	&.is-compact {
 		margin-top: 23px;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		.gridicon {
 			padding-right: 4px;
 		}

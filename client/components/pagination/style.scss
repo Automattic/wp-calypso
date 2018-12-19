@@ -101,7 +101,7 @@
 // // Hover/focus states
 .pagination__list-item .button:not( [disabled] ):hover,
 .pagination__list-item .button:focus {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	outline: none;
 }
 

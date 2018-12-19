@@ -264,11 +264,11 @@
 	display: flex;
 
 	.section-nav-tab.is-selected {
-		border-bottom: 2px solid $gray-dark;
+		border-bottom: 2px solid var( --color-neutral-700 );
 	}
 
 	.is-selected .section-nav-tab__link {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	.section-nav-tab__link {

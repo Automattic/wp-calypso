@@ -3,7 +3,7 @@
 	bottom: 0;
 	width: 100%;
 	padding: 16px;
-	background-color: $gray-dark;
+	background-color: var( --color-neutral-700 );
 	color: $white;
 	z-index: z-index( 'root', '.gdpr-banner' );
 

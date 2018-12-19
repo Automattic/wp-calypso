@@ -204,7 +204,7 @@ form.sidebar__button input {
 		}
 
 		.sidebar__button {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 			border: 1px solid var( --color-neutral-600 );
 
 			&:hover {
@@ -256,7 +256,7 @@ form.sidebar__button input {
 
 			&.sidebar__button {
 				background-color: $white;
-				color: $gray-dark;
+				color: var( --color-neutral-700 );
 			}
 		}
 
@@ -325,7 +325,7 @@ form.sidebar__button input {
 	}
 
 	&:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	@include breakpoint( '<660px' ) {

@@ -184,6 +184,6 @@
 	}
 
 	.token-field__suggestion {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }

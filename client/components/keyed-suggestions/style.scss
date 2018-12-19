@@ -12,7 +12,7 @@
 
 	.keyed-suggestions__category-name {
 		text-transform: uppercase;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	.keyed-suggestions__category-counter {

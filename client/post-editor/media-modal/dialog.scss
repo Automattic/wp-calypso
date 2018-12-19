@@ -24,7 +24,7 @@
 
 .editor-media-modal .dialog__content {
 	position: static;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	height: 100%;
 	padding: 0;
 }

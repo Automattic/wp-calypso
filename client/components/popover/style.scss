@@ -162,7 +162,7 @@
 
 	&,
 	&:visited {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	&.is-selected,
