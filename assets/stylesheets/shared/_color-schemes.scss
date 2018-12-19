@@ -3,12 +3,12 @@
 	--color-primary: #{$muriel-blue-500};
 	--color-primary-light: #{$muriel-blue-300};
 	--color-primary-dark: #{$muriel-blue-700};
-	--color-primary-rgb: #{ hex-to-rgb( $muriel-blue-500 ) };
+	--color-primary-rgb: #{hex-to-rgb( $muriel-blue-500 )};
 
 	--color-accent: #{$muriel-hot-pink-500};
 	--color-accent-light: #{$muriel-hot-pink-300};
 	--color-accent-dark: #{$muriel-hot-pink-700};
-	--color-accent-rgb: #{ hex-to-rgb( $muriel-hot-pink-500 ) };
+	--color-accent-rgb: #{hex-to-rgb( $muriel-hot-pink-500 )};
 
 	--color-neutral: #{$muriel-gray-500};
 	--color-neutral-dark: #{$muriel-gray-700};
@@ -47,15 +47,15 @@
 	--color-border-subtle: var( --color-neutral-50 );
 	--color-border-shadow: var( --color-neutral-0 );
 
-	--color-link: #{ $muriel-blue-500 };
-	--color-link-light: #{ $muriel-blue-300 };
-	--color-link-dark: #{ $muriel-blue-700 };
+	--color-link: #{$muriel-blue-500};
+	--color-link-light: #{$muriel-blue-300};
+	--color-link-dark: #{$muriel-blue-700};
 
-	--color-section-nav-item-background-hover: #{ $muriel-blue-0 };
+	--color-section-nav-item-background-hover: #{$muriel-blue-0};
 	--color-themes-active-text: #{ $muriel-blue-0 };
 
-	--color-button-primary-background-hover: #{ $muriel-hot-pink-400 };
-	--color-button-primary-scary-background-hover: #{ $muriel-hot-red-400 };
+	--color-button-primary-background-hover: #{$muriel-hot-pink-400};
+	--color-button-primary-scary-background-hover: #{$muriel-hot-red-400};
 
 	--masterbar-color: #{$muriel-white};
 	--masterbar-border-color: #{$gray-lighten-10};
@@ -66,6 +66,7 @@
 	--masterbar-toggle-drafts-editor-hover-background: #{$gray-darken-10};
 
 	--sidebar-background: #{$muriel-white};
+	--sidebar-background-gradient: #{hex-to-rgb( $muriel-white )};
 	--sidebar-secondary-background: #{$muriel-white};
 	--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
 	--sidebar-gridicon-fill: #{$muriel-gray-500};
@@ -93,7 +94,7 @@
 		--color-primary: #{$muriel-blue-500};
 		--color-primary-light: #{$muriel-blue-300};
 		--color-primary-dark: #{$muriel-blue-700};
-		--color-primary-rgb: #{ hex-to-rgb( $muriel-blue-500 ) };
+		--color-primary-rgb: #{hex-to-rgb( $muriel-blue-500 )};
 
 		--color-accent: var( --color-primary );
 		--color-accent-dark: var( --color-primary-dark );
@@ -117,8 +118,8 @@
 		--color-surface: #{$muriel-white};
 		--color-surface-backdrop: #{$muriel-gray-0};
 
-		--color-button-primary-background-hover: #{ $muriel-blue-400 };
-		--color-button-primary-scary-background-hover: #{ $muriel-hot-red-400 };
+		--color-button-primary-background-hover: #{$muriel-blue-400};
+		--color-button-primary-scary-background-hover: #{$muriel-hot-red-400};
 
 		--masterbar-color: #{$muriel-white};
 		--masterbar-border-color: #{$gray-lighten-10};
@@ -129,6 +130,7 @@
 		--masterbar-toggle-drafts-editor-hover-background: #{$gray-darken-10};
 
 		--sidebar-background: #{$muriel-gray-50};
+		--sidebar-background-gradient: #{hex-to-rgb( $muriel-gray-50 )};
 		--sidebar-secondary-background: #{$muriel-white};
 		--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-white )};
 		--sidebar-gridicon-fill: #{$muriel-gray-500};
@@ -189,6 +191,7 @@
 		--masterbar-toggle-drafts-editor-hover-background: #{$gray-darken-10};
 
 		--sidebar-background: #{$muriel-gray-900};
+		--sidebar-background-gradient: #{hex-to-rgb( $muriel-gray-900 )};
 		--sidebar-secondary-background: #{$muriel-gray-900};
 		--sidebar-secondary-background-gradient: #{hex-to-rgb( $muriel-gray-900 )};
 		--sidebar-gridicon-fill: #{$muriel-gray-400};
