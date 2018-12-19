@@ -122,7 +122,7 @@ class StatsGeochart extends Component {
 			keepAspectRatio: true,
 			enableRegionInteractivity: true,
 			region: 'world',
-			colorAxis: { colors: [ '#FFF088', '#F34605' ] },
+			colorAxis: { colors: [ '#bbc9d5', '#23354b' ] },
 			domain: currentUserCountryCode,
 		};
 

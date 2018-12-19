@@ -1,6 +1,6 @@
 .zoninator__search-autocomplete {
 	&.has-highlight {
-		box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px $blue-light;
+		box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-light );
 	}
 
 	.search.has-focus {

@@ -19,6 +19,7 @@ $autobar-height: 20px;
 	transition: transform 0.2s ease-out;
 
 	.is-support-user & {
+		// DO NOT style these with theme colors. We want them to override whatever theme colors the user has picked.
 		background: $orange-jazzy;
 		border-bottom: 1px solid darken( $orange-jazzy, 4% );
 	}

@@ -69,7 +69,7 @@
 	vertical-align: top;
 
 	&.active-action {
-		color: $orange-jazzy;
+		color: var( --color-primary );
 
 		&:hover {
 			color: var( --color-text-subtle );
@@ -80,7 +80,7 @@
 		}
 
 		.gridicon {
-			fill: $orange-jazzy;
+			fill: var( --color-primary );
 		}
 	}
 
@@ -88,10 +88,10 @@
 		color: var( --color-text-subtle );
 
 		&:hover {
-			color: $orange-jazzy;
+			color: var( --color-primary );
 
 			.gridicon {
-				fill: $orange-jazzy;
+				fill: var( --color-primary );
 			}
 		}
 

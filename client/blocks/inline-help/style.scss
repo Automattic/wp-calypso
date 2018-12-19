@@ -32,8 +32,8 @@
 	}
 
 	.button.inline-help__happychat-button.has-unread {
-		background-color: $orange-jazzy;
-		border-color: $orange-jazzy;
+		background-color: var( --color-accent );
+		border-color: var( --color-accent );
 	}
 }
 
