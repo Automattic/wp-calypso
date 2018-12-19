@@ -122,7 +122,7 @@ class GiphyEdit extends Component {
 		const classes = classNames( className, `align${ align }` );
 		const textControlClasses = classNames(
 			'wp-block-jetpack-giphy_text-input-field',
-			focus || ! this.hasSearchText() ? 'has-focus' : null
+			focus || ! this.hasSearchText() ? 'has-focus' : 'no-focus'
 		);
 		return (
 			<Fragment>
