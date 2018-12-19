@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { repeat } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,21 +13,17 @@ export default function Mosaic( { images, renderedImages } ) {
 	const rows = ratiosToShapes( ratios );
 
 	let cursor = 0;
-
-	return rows.map( ( columns, rowIndex ) => (
+	return rows.map( ( row, rowIndex ) => (
 		<Row key={ rowIndex }>
-			{ columns.map( ( imageCount, colIndex ) => {
-				const column = renderedImages
-					.slice( cursor, imageCount )
-					.map( image => <Column key={ colIndex }>{ image }</Column> );
-				cursor += imageCount;
-
-				return column;
+			{ row.map( ( colSize, colIndex ) => {
+				const columnImages = renderedImages.slice( cursor, cursor + colSize );
+				cursor += colSize;
+				return <Column key={ colIndex }>{ columnImages }</Column>;
 			} ) }
 		</Row>
 	) );
 }
 
 function ratiosToShapes( ratios ) {
-	return [ repeat( 1, ratios.length ) ];
+	return [ Array( ratios.length ).fill( 1 ) ];
 }
