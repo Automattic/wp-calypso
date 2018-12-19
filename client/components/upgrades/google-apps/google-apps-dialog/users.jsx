@@ -26,7 +26,7 @@ class GoogleAppsUsers extends React.Component {
 	}
 
 	maybeGetInitialFields( props ) {
-		if ( ! props.fields && props.firstName ) {
+		if ( ! props.fields && null !== props.firstName ) {
 			const { firstName, lastName } = props;
 			this.props.onChange(
 				this.props.fields ? this.props.fields : [ this.getNewUserFields( firstName, lastName ) ]

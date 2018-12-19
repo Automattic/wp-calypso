@@ -74,9 +74,9 @@ class AddEmailAddressesCard extends React.Component {
 
 	static getDerivedStateFromProps( props, state ) {
 		if (
-			state.fieldsets[ 0 ].firstName.value === '' &&
-			state.fieldsets.length === 1 &&
-			props.firstName
+			'' === state.fieldsets[ 0 ].firstName.value &&
+			1 === state.fieldsets.length &&
+			null !== props.firstName
 		) {
 			const { firstName, lastName } = props;
 			const fieldsets = [
