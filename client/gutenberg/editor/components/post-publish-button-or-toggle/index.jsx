@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * WordPress dependencies.
  */
-import { compose, withState } from '@wordpress/compose';
+import { compose } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { PostPublishButton } from '@wordpress/editor';
 import { withViewportMatch } from '@wordpress/viewport';
@@ -25,6 +25,10 @@ import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import isVipSite from 'state/selectors/is-vip-site';
 
 export class PostPublishButtonOrToggle extends Component {
+	state = {
+		showEmailVerificationDialog: false,
+	};
+
 	componentDidMount() {
 		this.togglePostSaving();
 	}
@@ -46,7 +50,6 @@ export class PostPublishButtonOrToggle extends Component {
 			lockPostSaving,
 			unlockPostSaving,
 			createWarningNotice,
-			setState,
 			translate,
 		} = this.props;
 
@@ -64,7 +67,7 @@ export class PostPublishButtonOrToggle extends Component {
 						url: '#',
 						onClick: e => {
 							e.preventDefault();
-							setState( { showEmailVerificationNotice: true } );
+							this.setState( { showEmailVerificationDialog: true } );
 						},
 					},
 				],
@@ -85,7 +88,7 @@ export class PostPublishButtonOrToggle extends Component {
 	}
 
 	closeVerifyEmailDialog = () => {
-		this.props.setState( { showEmailVerificationNotice: false } );
+		this.setState( { showEmailVerificationDialog: false } );
 	};
 
 	render() {
@@ -101,8 +104,9 @@ export class PostPublishButtonOrToggle extends Component {
 			isPublishSidebarOpened,
 			isScheduled,
 			togglePublishSidebar,
-			showEmailVerificationNotice,
 		} = this.props;
+
+		const { showEmailVerificationDialog } = this.state;
 
 		const IS_TOGGLE = 'toggle';
 		const IS_BUTTON = 'button';
@@ -153,7 +157,7 @@ export class PostPublishButtonOrToggle extends Component {
 					isToggle={ component === IS_TOGGLE }
 					onToggle={ togglePublishSidebar }
 				/>
-				{ showEmailVerificationNotice && (
+				{ showEmailVerificationDialog && (
 					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
 				) }
 			</Fragment>
@@ -187,9 +191,6 @@ export default compose(
 		};
 	} ),
 	withViewportMatch( { isLessThanMediumViewport: '< medium' } ),
-	withState( {
-		showEmailVerificationNotice: false,
-	} ),
 	connect( state => {
 		const siteId = getSelectedSiteId( state );
 
