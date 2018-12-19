@@ -203,13 +203,13 @@
 		padding: 8px 16px 8px 55px;
 
 		&::after {
-			@include long-content-fade( $color: hex-to-rgb( $gray-lighten-30 ), $size: 20px );
+			@include long-content-fade( $color: var( --sidebar-background-gradient ), $size: 20px );
 			padding-right: 50px;
 		}
 
 		.sidebar__menu-item-tagname {
 			&::after {
-				@include long-content-fade( $color: hex-to-rgb( $gray-lighten-30 ), $size: 20px );
+				@include long-content-fade( $color: var( --sidebar-background-gradient ), $size: 20px );
 				right: 60px;
 			}
 		}
