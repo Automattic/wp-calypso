@@ -14,6 +14,7 @@
 	--color-neutral-dark: #{$muriel-gray-700};
 	--color-neutral-light: #{$muriel-gray-300};
 	--color-neutral-0: #{$muriel-gray-0};
+	--color-neutral-0-rgb: #{hex-to-rgb( $muriel-gray-0 )};
 	--color-neutral-50: #{$muriel-gray-50};
 	--color-neutral-100: #{$muriel-gray-100};
 	--color-neutral-200: #{$muriel-gray-200};
@@ -52,7 +53,7 @@
 	--color-link-dark: #{$muriel-blue-700};
 
 	--color-section-nav-item-background-hover: #{$muriel-blue-0};
-	--color-themes-active-text: #{ $muriel-blue-0 };
+	--color-themes-active-text: #{$muriel-blue-0};
 
 	--color-button-primary-background-hover: #{$muriel-hot-pink-400};
 	--color-button-primary-scary-background-hover: #{$muriel-hot-red-400};
