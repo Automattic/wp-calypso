@@ -271,11 +271,8 @@ form.sidebar__button input {
 	form {
 		&.sidebar__button:hover {
 			color: var( --sidebar-menu-hover-color );
+			border-color: var( --sidebar-menu-hover-color );
 		}
-	}
-
-	form.sidebar__button:hover {
-		border-color: darken( $sidebar-bg-color, 10% );
 	}
 
 	a:hover,
