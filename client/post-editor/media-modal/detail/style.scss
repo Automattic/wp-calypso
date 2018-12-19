@@ -87,7 +87,7 @@
 .editor-media-modal-detail__previous {
 	left: 10px #{'/*rtl:ignore*/'};
 
-	&:before {
+	&::before {
 		margin: 0 1px 0 0;
 	}
 }
@@ -95,7 +95,7 @@
 .editor-media-modal-detail__next {
 	right: 10px #{'/*rtl:ignore*/'};
 
-	&:before {
+	&::before {
 		margin: 0 0 0 3px;
 	}
 }

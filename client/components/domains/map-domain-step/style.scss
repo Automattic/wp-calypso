@@ -80,7 +80,7 @@ input.map-domain-step__external-domain {
 
 .map-domain-step__go {
 	flex-grow: 1;
-	margin: 10px 0 0 0;
+	margin: 10px 0 0;
 
 	@include breakpoint( '>660px' ) {
 		min-width: 80px;

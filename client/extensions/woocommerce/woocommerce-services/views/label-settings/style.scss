@@ -72,7 +72,7 @@
 	pointer-events: none;
 	background: $white;
 
-	&:after {
+	&::after {
 		content: none;
 	}
 

@@ -144,7 +144,7 @@
 
 @keyframes happychat-disappear {
 	0% {
-		top: 0px;
+		top: 0;
 	}
 	50% {
 		top: 4px;
@@ -285,7 +285,7 @@
 		}
 	}
 
-	&:after {
+	&::after {
 		content: '';
 		display: block;
 		position: absolute;
@@ -302,9 +302,9 @@
 	.is-user-message & {
 		color: $white;
 		background: var( --color-accent );
-		border-radius: 8px 8px 0 8px;
+		border-radius: 8px 8px 0;
 
-		&:after {
+		&::after {
 			left: auto;
 			right: -8px;
 
@@ -430,7 +430,7 @@
 		}
 
 		.happychat__message > textarea {
-			padding: 12px 12px 32px 12px;
+			padding: 12px 12px 32px;
 		}
 
 		.happychat__conversation,

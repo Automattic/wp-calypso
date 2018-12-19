@@ -9,7 +9,7 @@
     "function-name-case": "lower",
     "function-url-quotes": "always",
     "function-whitespace-after": "always",
-    "function-parentheses-space-inside": "always",
+    "function-parentheses-space-inside": "always-single-line",
 
     "media-feature-parentheses-space-inside": "always",
 
@@ -22,7 +22,7 @@
 
     "unit-case": "lower",
     "unit-no-unknown": true,
-    "unit-whitelist": ["px", "%", "deg", "ms", "em", "vh", "vw", "rem"],
+    "unit-whitelist": ["px", "%", "deg", "ms", "em", "vh", "vw", "rem", "s"],
 
     "value-list-comma-space-after": "always-single-line",
     "value-list-comma-space-before": "never",

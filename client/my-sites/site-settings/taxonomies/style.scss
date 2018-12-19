@@ -17,7 +17,7 @@
 	white-space: nowrap;
 	overflow: hidden;
 
-	&:after {
+	&::after {
 		@include long-content-fade( $size: 40% );
 	}
 

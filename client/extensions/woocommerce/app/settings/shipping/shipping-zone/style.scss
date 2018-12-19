@@ -115,7 +115,7 @@
 			stroke: transparent;
 		}
 
-		&:after {
+		&::after {
 			display: none;
 		}
 	}
@@ -141,7 +141,7 @@
 		@include breakpoint( '<660px' ) {
 			width: 100%;
 			order: 4;
-			padding-top: 0px;
+			padding-top: 0;
 		}
 	}
 
@@ -201,7 +201,7 @@
 		@include breakpoint( '<660px' ) {
 			width: 100%;
 			order: 4;
-			padding-top: 0px;
+			padding-top: 0;
 		}
 	}
 }
@@ -326,7 +326,7 @@
 }
 
 .shipping-zone__location-dialog-header {
-	padding: 0 0 24px 0;
+	padding: 0 0 24px;
 	font-size: 18px;
 }
 

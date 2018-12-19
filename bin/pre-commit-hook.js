@@ -49,10 +49,29 @@ if ( toPrettify.length ) {
 }
 
 // linting should happen after formatting
-const toLint = files.filter( file => ! file.endsWith( '.scss' ) );
+const toStylelint = files.filter( file => file.endsWith( '.scss' ) );
+if ( toStylelint.length ) {
+	console.log( 'running stylelint on ', toStylelint );
+	const lintResult = spawnSync(
+		'./node_modules/.bin/stylelint',
+		[ '--syntax', 'scss', ...toStylelint ],
+		{
+			shell: true,
+			stdio: 'inherit',
+		}
+	);
+	if ( lintResult.status ) {
+		console.log(
+			chalk.yellow( 'STYLE WARNINGS:' ),
+			'stylelint reported some problems. Please consider fixing them.'
+		);
+	}
+}
 
-if ( toLint.length ) {
-	const lintResult = spawnSync( './node_modules/.bin/eslint', [ '--quiet', ...toLint ], {
+const toEslint = files.filter( file => ! file.endsWith( '.scss' ) );
+
+if ( toEslint.length ) {
+	const lintResult = spawnSync( './node_modules/.bin/eslint', [ '--quiet', ...toEslint ], {
 		shell: true,
 		stdio: 'inherit',
 	} );
@@ -60,7 +79,7 @@ if ( toLint.length ) {
 	if ( lintResult.status ) {
 		console.log(
 			chalk.red( 'COMMIT ABORTED:' ),
-			'The linter reported some problems. ' +
+			'eslint reported some problems. ' +
 				'If you are aware of them and it is OK, ' +
 				'repeat the commit command with --no-verify to avoid this check.'
 		);

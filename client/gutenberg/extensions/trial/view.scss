@@ -32,14 +32,14 @@
 		margin: 0;
 	}
 
-	address:not( :empty ):before {
+	address:not( :empty )::before {
 		content: 'Team:';
 		font-style: italic;
 		float: left;
 		margin-right: 6px;
 	}
 
-	aside:not( :empty ):before {
+	aside:not( :empty )::before {
 		content: 'Links:';
 		font-style: italic;
 		float: left;

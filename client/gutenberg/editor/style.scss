@@ -112,8 +112,8 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 
 	.edit-post-visual-editor .editor-post-title__block > div {
-		margin-left: 0px;
-		margin-right: 0px;
+		margin-left: 0;
+		margin-right: 0;
 
 		@media ( min-width: 600px ) {
 			margin-left: -2px;

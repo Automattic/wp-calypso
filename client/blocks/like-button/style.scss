@@ -57,7 +57,7 @@
 
 	&.has-count {
 		&.has-label {
-			.like-button__label-status:before {
+			.like-button__label-status::before {
 				content: ' ';
 			}
 		}

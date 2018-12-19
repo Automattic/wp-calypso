@@ -84,7 +84,7 @@ body {
 		&.bottom-left {
 			.arrow {
 				border-bottom-color: $gray-lighten-20;
-				&:after {
+				&::after {
 					border-bottom-color: $gray-lighten-20;
 				}
 			}

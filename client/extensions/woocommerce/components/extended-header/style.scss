@@ -1,6 +1,6 @@
 .extended-header {
 	.section-header__label {
-		&:before {
+		&::before {
 			display: none;
 		}
 	}

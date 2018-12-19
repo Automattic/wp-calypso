@@ -111,7 +111,7 @@
 		max-width: initial;
 
 		@media ( max-width: 660px ) {
-			margin: 0px;
+			margin: 0;
 		}
 	}
 }
@@ -155,7 +155,7 @@
 			position: fixed;
 			width: 100%;
 			top: 47px;
-			left: 0px;
+			left: 0;
 			min-height: 46px;
 			z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
 			background: $white;

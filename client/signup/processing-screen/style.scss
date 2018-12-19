@@ -64,7 +64,7 @@
 		animation: floating 10s infinite ease-in-out;
 	}
 	.gridicons-add {
-		top: 0px;
+		top: 0;
 		left: calc( 50% - 320px );
 		height: 150px;
 		width: 150px;
@@ -297,7 +297,7 @@
 .processing-screen__continue-button {
 	display: block;
 	padding: 10px 24px;
-	margin: 24px auto 48px auto;
+	margin: 24px auto 48px;
 }
 
 .processing-screen__continue-button:disabled {
@@ -320,7 +320,7 @@
 }
 
 .signup-processing-screen__loader,
-.signup-processing-screen__loader:after {
+.signup-processing-screen__loader::after {
 	border-radius: 50%;
 	height: 10em;
 	width: 10em;
@@ -388,7 +388,7 @@
 	width: 100%;
 	overflow: auto;
 }
-.signup-processing__address-field.is-placeholder:after {
+.signup-processing__address-field.is-placeholder::after {
 	content: 'placeholder.wordpress.com';
 	color: transparent;
 	background-color: $gray-lighten-30;

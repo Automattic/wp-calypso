@@ -8,7 +8,7 @@ $selected-color: var( --color-accent );
 $img-size: 24px;
 $img-border-radius: 50%;
 $border-radius: 3px;
-$box-shadow: 0px 5px 6px rgba( lighten( $gray, 20% ), 0.5 );
+$box-shadow: 0 5px 6px rgba( lighten( $gray, 20% ), 0.5 );
 
 .wpnc__suggestions {
 	position: relative;
