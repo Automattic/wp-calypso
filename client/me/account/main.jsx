@@ -611,7 +611,7 @@ const Account = createReactClass( {
 				{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
 					supportsCssCustomProperties() && (
 						<FormFieldset>
-							<FormLabel htmlFor="color_scheme">{ translate( 'Admin Color Scheme' ) }</FormLabel>
+							<FormLabel htmlFor="color_scheme">{ translate( 'Dashboard Color Scheme' ) }</FormLabel>
 							<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
 						</FormFieldset>
 					) }
