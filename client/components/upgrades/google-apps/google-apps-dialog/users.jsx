@@ -19,18 +19,22 @@ import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/an
 
 class GoogleAppsUsers extends React.Component {
 	UNSAFE_componentWillMount() {
-		this.maybeGetInitialFields( this.props );
+		const { firstName, lastName } = this.props;
+		this.props.onChange(
+			this.props.fields ? this.props.fields : [ this.getNewUserFields( firstName, lastName ) ]
+		);
 	}
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.maybeGetInitialFields( nextProps );
-	}
-
-	maybeGetInitialFields( props ) {
-		if ( ! props.fields && null !== props.firstName ) {
-			const { firstName, lastName } = props;
-			this.props.onChange(
-				this.props.fields ? this.props.fields : [ this.getNewUserFields( firstName, lastName ) ]
-			);
+		const { fields, firstName, lastName } = nextProps;
+		if ( this.props.firstName !== firstName && fields.length === 1 ) {
+			this.props.onChange( [
+				{
+					...fields[ 0 ],
+					firstName: { value: firstName || '' },
+					lastName: { value: lastName || '' },
+					username: { value: ( firstName && firstName.toLowerCase() ) || '' },
+				},
+			] );
 		}
 	}
 
