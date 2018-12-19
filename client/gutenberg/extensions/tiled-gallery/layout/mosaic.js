@@ -1,28 +1,34 @@
 /**
  * External dependencies
  */
-import { chunk, drop, take } from 'lodash';
+import { repeat } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Row from './row';
 import Column from './column';
-import { MAX_COLUMNS } from '../constants';
 
-export default function Mosaic( { columns, renderedImages } ) {
-	const columnCount = Math.min( MAX_COLUMNS, columns );
+export default function Mosaic( { images, renderedImages } ) {
+	const ratios = images.map( ( { height, width } ) => ( height && width ? width / height : 1 ) );
+	const rows = ratiosToShapes( ratios );
 
-	const remainder = renderedImages.length % columnCount;
+	let cursor = 0;
 
-	return [
-		...( remainder ? [ take( renderedImages, remainder ) ] : [] ),
-		...chunk( drop( renderedImages, remainder ), columnCount ),
-	].map( ( imagesInRow, rowIndex ) => (
-		<Row key={ rowIndex } className={ `columns-${ imagesInRow.length }` }>
-			{ imagesInRow.map( ( image, colIndex ) => (
-				<Column key={ colIndex }>{ image }</Column>
-			) ) }
+	return rows.map( ( columns, rowIndex ) => (
+		<Row key={ rowIndex }>
+			{ columns.map( ( imageCount, colIndex ) => {
+				const column = renderedImages
+					.slice( cursor, imageCount )
+					.map( image => <Column key={ colIndex }>{ image }</Column> );
+				cursor += imageCount;
+
+				return column;
+			} ) }
 		</Row>
 	) );
+}
+
+function ratiosToShapes( ratios ) {
+	return [ repeat( 1, ratios.length ) ];
 }

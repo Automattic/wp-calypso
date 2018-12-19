@@ -65,7 +65,7 @@ export default class Layout extends Component {
 	}
 
 	render() {
-		const { children, className, layoutStyle } = this.props;
+		const { children, className, layoutStyle, images } = this.props;
 
 		// eslint-disable-next-line no-nested-ternary
 		const LayoutRenderer = isSquareishLayout( layoutStyle )
@@ -78,7 +78,11 @@ export default class Layout extends Component {
 
 		return (
 			<div className={ className }>
-				<LayoutRenderer columns={ this.props.columns } renderedImages={ renderedImages } />
+				<LayoutRenderer
+					columns={ this.props.columns }
+					images={ images }
+					renderedImages={ renderedImages }
+				/>
 				{ children }
 			</div>
 		);
