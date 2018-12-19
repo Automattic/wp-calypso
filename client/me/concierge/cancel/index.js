@@ -17,12 +17,9 @@ import Main from 'components/main';
 import { localize } from 'i18n-calypso';
 import Confirmation from '../shared/confirmation';
 import { cancelConciergeAppointment } from 'state/concierge/actions';
-import {
-	WPCOM_CONCIERGE_SCHEDULE_ID,
-	CONCIERGE_STATUS_CANCELLED,
-	CONCIERGE_STATUS_CANCELLING,
-} from '../constants';
+import { CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING } from '../constants';
 import getConciergeAppointmentDetails from 'state/selectors/get-concierge-appointment-details';
+import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
 import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -33,18 +30,26 @@ class ConciergeCancel extends Component {
 		analyticsTitle: PropTypes.string,
 		appointmentId: PropTypes.string.isRequired,
 		siteSlug: PropTypes.string.isRequired,
+		scheduleId: PropTypes.number,
 	};
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_concierge_cancel_step' );
 	}
 	cancelAppointment = () => {
-		const { appointmentId } = this.props;
-		this.props.cancelConciergeAppointment( WPCOM_CONCIERGE_SCHEDULE_ID, appointmentId );
+		const { appointmentId, scheduleId } = this.props;
+		this.props.cancelConciergeAppointment( scheduleId, appointmentId );
 	};
 
 	getDisplayComponent = () => {
-		const { appointmentId, appointmentDetails, siteSlug, signupForm, translate } = this.props;
+		const {
+			appointmentId,
+			appointmentDetails,
+			scheduleId,
+			siteSlug,
+			signupForm,
+			translate,
+		} = this.props;
 
 		switch ( signupForm.status ) {
 			case CONCIERGE_STATUS_CANCELLED:
@@ -79,7 +84,7 @@ class ConciergeCancel extends Component {
 					<div>
 						<QueryConciergeAppointmentDetails
 							appointmentId={ appointmentId }
-							scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID }
+							scheduleId={ scheduleId }
 						/>
 
 						<Confirmation
@@ -126,6 +131,7 @@ export default connect(
 	( state, props ) => ( {
 		appointmentDetails: getConciergeAppointmentDetails( state, props.appointmentId ),
 		signupForm: getConciergeSignupForm( state ),
+		scheduleId: getConciergeScheduleId( state ),
 	} ),
 	{ cancelConciergeAppointment, recordTracksEvent }
 )( localize( ConciergeCancel ) );
