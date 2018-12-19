@@ -88,7 +88,7 @@ function ratiosToRows( ratios, { isWide } ) {
 				lt( 1.6 ),
 				overEvery( gte( 0.9 ), lt( 2 ) ),
 				overEvery( gte( 0.9 ), lt( 2 ) ),
-			] ) &&
+			] )( toProcess ) &&
 			isNotRecentShape( [ 1, 2 ], 3 )( processed )
 		) {
 			next = [ 1, 2 ];
@@ -112,7 +112,7 @@ function ratiosToRows( ratios, { isWide } ) {
 			/* Three */
 			toProcess.length >= 3 &&
 			! [ 4, 6 ].includes( toProcess.length ) &&
-			isNotRecentShape( [ 1, 1, 1 ], 3 ) &&
+			isNotRecentShape( [ 1, 1, 1 ], 3 )( processed ) &&
 			( function( ratio ) {
 				return (
 					ratio < 2.5 ||
@@ -131,7 +131,7 @@ function ratiosToRows( ratios, { isWide } ) {
 				overEvery( gte( 0.9 ), lt( 2 ) ),
 				overEvery( gte( 0.9 ), lt( 2 ) ),
 				lt( 1.6 ),
-			] ) &&
+			] )( toProcess ) &&
 			isNotRecentShape( [ 1, 2 ], 3 )( processed )
 		) {
 			next = [ 2, 1 ];
