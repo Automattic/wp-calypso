@@ -113,7 +113,7 @@ class GiphyEdit extends Component {
 		return searchText && searchText.length > 0;
 	};
 	render() {
-		const { attributes, className, setAttributes } = this.props;
+		const { attributes, className, isSelected, setAttributes } = this.props;
 		const { align, caption, giphyUrl, searchText, topPadding } = attributes;
 		const { focus } = this.state;
 		const style = {
@@ -151,14 +151,16 @@ class GiphyEdit extends Component {
 						</button>
 						<iframe src={ giphyUrl } title={ searchText } />
 					</figure>
-					<RichText
-						className="caption"
-						inlineToolbar
-						onChange={ value => setAttributes( { caption: value } ) }
-						placeholder={ __( 'Write caption…' ) }
-						tagName="figcaption"
-						value={ caption }
-					/>
+					{ ( ! RichText.isEmpty( caption ) || isSelected ) && (
+						<RichText
+							className="caption"
+							inlineToolbar
+							onChange={ value => setAttributes( { caption: value } ) }
+							placeholder={ __( 'Write caption…' ) }
+							tagName="figcaption"
+							value={ caption }
+						/>
+					) }
 				</div>
 			</Fragment>
 		);
