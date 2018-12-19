@@ -71,7 +71,7 @@ class InlineHelpPopover extends Component {
 		//Open the Checklist prompt when query string 'onboard=1' is present.
 		const parsed = url.parse( window.location.href, true );
 
-		if ( parsed && '1' === parsed.query.onboard ) {
+		if ( parsed && '1' === parsed.query.onboard && this.props.isEligibleForDotcomChecklist ) {
 			this.openChecklistView();
 		}
 	}
