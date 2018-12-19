@@ -1,18 +1,6 @@
 // @TODO: Replace with Gutenberg variables
 $dark-gray-300: #6c7781;
 
-.wp-block-jetpack-related-posts {
-	&.alignfull {
-		padding: 0 20px;
-	}
-
-	&.aligncenter {
-		.wp-block-jetpack-related-posts__preview-post-link {
-			text-align: center;
-		}
-	}
-}
-
 .wp-block-jetpack-related-posts__preview-items {
 	.is-grid & {
 		display: flex;
