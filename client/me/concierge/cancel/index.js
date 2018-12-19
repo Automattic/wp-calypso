@@ -11,6 +11,8 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
+import QuerySites from 'components/data/query-sites';
+import QueryConciergeInitial from 'components/data/query-concierge-initial';
 import QueryConciergeAppointmentDetails from 'components/data/query-concierge-appointment-details';
 import Button from 'components/button';
 import Main from 'components/main';
@@ -18,6 +20,7 @@ import { localize } from 'i18n-calypso';
 import Confirmation from '../shared/confirmation';
 import { cancelConciergeAppointment } from 'state/concierge/actions';
 import { CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING } from '../constants';
+import { getSite } from 'state/sites/selectors';
 import getConciergeAppointmentDetails from 'state/selectors/get-concierge-appointment-details';
 import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
 import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
@@ -75,17 +78,21 @@ class ConciergeCancel extends Component {
 					includes(
 						[ CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING ],
 						signupForm.status
-					) || ! appointmentDetails;
+					) ||
+					! appointmentDetails ||
+					! scheduleId;
 
 				const disabledRescheduling =
-					signupForm.status === CONCIERGE_STATUS_CANCELLING || ! appointmentDetails;
+					signupForm.status === CONCIERGE_STATUS_CANCELLING || ! appointmentDetails || ! scheduleId;
 
 				return (
 					<div>
-						<QueryConciergeAppointmentDetails
-							appointmentId={ appointmentId }
-							scheduleId={ scheduleId }
-						/>
+						{ scheduleId && (
+							<QueryConciergeAppointmentDetails
+								appointmentId={ appointmentId }
+								scheduleId={ scheduleId }
+							/>
+						) }
 
 						<Confirmation
 							description={ translate(
@@ -117,9 +124,13 @@ class ConciergeCancel extends Component {
 	};
 
 	render() {
-		const { analyticsPath, analyticsTitle } = this.props;
+		const { analyticsPath, analyticsTitle, site } = this.props;
+		const siteId = site && site.ID;
+
 		return (
 			<Main>
+				<QuerySites />
+				{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
 				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
 				{ this.getDisplayComponent() }
 			</Main>
@@ -131,6 +142,7 @@ export default connect(
 	( state, props ) => ( {
 		appointmentDetails: getConciergeAppointmentDetails( state, props.appointmentId ),
 		signupForm: getConciergeSignupForm( state ),
+		site: getSite( state, props.siteSlug ),
 		scheduleId: getConciergeScheduleId( state ),
 	} ),
 	{ cancelConciergeAppointment, recordTracksEvent }
