@@ -12,6 +12,19 @@ import config from 'config';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:tax-placeholders' );
 
+/*
+ * The functions in this file are a temporary convenience to let us
+ * write the front-end changes related to US sales tax before the actual
+ * data is available from the backend.
+ *
+ * All of these functions should be inert without the `tax-placeholders`
+ * configuration flag, and this flag should never be enable in production.
+ *
+ * This entire file should be removed after the backend changes are ready.
+ *
+ * See also https://github.com/Automattic/wp-calypso/projects/78
+ */
+
 export function maybeInjectTaxPlaceholdersIntoPurchase( purchase ) {
 	const purchasePriceText = get( purchase, 'price_text' );
 	if (
