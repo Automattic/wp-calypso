@@ -1,7 +1,4 @@
-/**
- * @format
- * @jest-environment jsdom
- */
+/** @format */
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
@@ -14,9 +11,7 @@ jest.mock( 'blocks/dismissible-card', () => {
 
 jest.mock( 'components/card', () => {
 	const React = require( 'react' );
-	return class Card extends React.Component {
-		render = () => this.props.children;
-	};
+	return class Card extends React.Component {};
 } );
 
 jest.mock( 'lib/analytics/track-component-view', () => {
@@ -33,14 +28,14 @@ jest.mock( 'i18n-calypso', () => ( {
 			} }
 		/>
 	),
-	numberFormat: jest.requireActual( 'i18n-calypso' ).numberFormat,
+	numberFormat: x => x,
 } ) );
 
 /**
  * External dependencies
  */
 import { assert } from 'chai';
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import React from 'react';
 import {
 	PLAN_FREE,
@@ -57,6 +52,7 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
+import PlanPrice from 'my-sites/plan-price/';
 
 /**
  * Internal dependencies
@@ -107,18 +103,18 @@ describe( 'Banner basic tests', () => {
 	} );
 
 	test( 'should render a <PlanPrice /> when price is specified', () => {
-		const comp = mount( <Banner { ...props } price={ 100 } /> );
-		assert.lengthOf( comp.find( 'PlanPrice' ), 1 );
+		const comp = shallow( <Banner { ...props } price={ 100 } /> );
+		assert.lengthOf( comp.find( PlanPrice ), 1 );
 	} );
 
 	test( 'should render two <PlanPrice /> components when there are two prices', () => {
-		const comp = mount( <Banner { ...props } price={ [ 100, 80 ] } /> );
-		assert.lengthOf( comp.find( 'PlanPrice' ), 2 );
+		const comp = shallow( <Banner { ...props } price={ [ 100, 80 ] } /> );
+		assert.lengthOf( comp.find( PlanPrice ), 2 );
 	} );
 
 	test( 'should render no <PlanPrice /> components when there are no prices', () => {
 		const comp = shallow( <Banner { ...props } /> );
-		assert.lengthOf( comp.find( 'PlanPrice' ), 0 );
+		assert.lengthOf( comp.find( PlanPrice ), 0 );
 	} );
 
 	test( 'should render a .banner__description when description is specified', () => {
