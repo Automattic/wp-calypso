@@ -23,15 +23,15 @@ class PrimaryHeader extends Component {
 			<Fragment>
 				<ClosureNotice
 					holidayName="Christmas"
-					displayAt="2018-12-17 00:00 UTC"
-					closesAt="2018-12-24 00:00 UTC"
-					reopensAt="2018-12-26 07:00 UTC"
+					displayAt="2018-12-17 00:00Z"
+					closesAt="2018-12-24 00:00Z"
+					reopensAt="2018-12-26 07:00Z"
 				/>
 				<ClosureNotice
 					holidayName="New Year's Day"
-					displayAt="2018-12-26 07:00 UTC"
-					closesAt="2019-01-01 00:00 UTC"
-					reopensAt="2019-01-02 07:00 UTC"
+					displayAt="2018-12-26 07:00Z"
+					closesAt="2019-01-01 00:00Z"
+					reopensAt="2019-01-02 07:00Z"
 				/>
 				<Card>
 					<img
