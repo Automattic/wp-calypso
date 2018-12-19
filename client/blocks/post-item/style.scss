@@ -47,7 +47,7 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 	cursor: pointer;
 
 	&:hover .form-checkbox {
-		border-color: $gray-lighten-10;
+		border-color: var( --color-neutral-200 );
 	}
 
 	padding: 16px 16px 0;
@@ -94,7 +94,7 @@ a.post-item__title-link:visited {
 	padding-right: 8px;
 
 	&:hover {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 	}
 
 	.post-item__panel.is-untitled & {

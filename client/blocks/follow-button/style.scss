@@ -1,4 +1,4 @@
-$follow-button-gray-disabled: $gray-lighten-20;
+$follow-button-gray-disabled: var( --color-neutral-100 );
 
 .follow-button,
 button.follow-button {

@@ -54,7 +54,7 @@
 	cursor: pointer;
 
 	.is-disabled & {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 		cursor: default;
 	}
 

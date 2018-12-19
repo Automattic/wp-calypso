@@ -131,7 +131,7 @@
 }
 
 .wp-super-cache__stat {
-	border-bottom: 1px solid $gray-lighten-30;
+	border-bottom: 1px solid var( --color-neutral-0 );
 	color: var( --color-neutral-700 );
 	font-size: 14px;
 	height: 30px;

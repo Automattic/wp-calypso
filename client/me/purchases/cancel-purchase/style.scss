@@ -7,7 +7,7 @@
 	}
 
 	p {
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		font-size: 14px;
 	}
 
@@ -57,7 +57,7 @@
 }
 
 .cancel-purchase__section {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	margin: 0;
 }
 

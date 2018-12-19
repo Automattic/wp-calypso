@@ -11,7 +11,7 @@
 	.mce-container.mce-tinymce.is-pinned .mce-container.mce-top-part > .mce-container-body {
 		> div.mce-toolbar-grp {
 			background: $white;
-			border: 1px solid $gray-lighten-30;
+			border: 1px solid var( --color-neutral-0 );
 			overflow: hidden;
 			position: static;
 			top: 0;
@@ -71,8 +71,8 @@
 		}
 
 		&.mce-listbox {
-			border-left: 1px solid $gray-lighten-30;
-			border-right: 1px solid $gray-lighten-30;
+			border-left: 1px solid var( --color-neutral-0 );
+			border-right: 1px solid var( --color-neutral-0 );
 			height: auto;
 			margin: 0 2px 0 0;
 			padding: 0 8px;
@@ -97,7 +97,7 @@
 		}
 
 		.mce-ico {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 		}
 	}
 

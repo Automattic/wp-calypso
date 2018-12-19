@@ -162,7 +162,7 @@
 	}
 
 	.notice & {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 
 		&:hover,
 		&:focus {
@@ -178,7 +178,7 @@ a.notice__action {
 	font-weight: 400;
 	text-decoration: none;
 	white-space: nowrap;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	padding: 13px;
 	display: flex;
 	align-items: center;
@@ -199,7 +199,7 @@ a.notice__action {
 	}
 
 	&:visited {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 	}
 
 	&:hover {

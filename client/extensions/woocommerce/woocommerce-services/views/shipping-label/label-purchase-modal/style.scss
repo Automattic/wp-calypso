@@ -155,7 +155,7 @@
 }
 
 .label-purchase-modal__price-item-help {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	cursor: help;
 
 	svg {

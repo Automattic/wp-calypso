@@ -159,7 +159,7 @@
 			min-height: 46px;
 			z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
 			background: $white;
-			border-bottom: 1px solid $gray-lighten-20;
+			border-bottom: 1px solid var( --color-neutral-100 );
 		}
 	}
 

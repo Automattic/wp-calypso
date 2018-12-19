@@ -3,7 +3,7 @@
 	margin: 6px auto;
 
 	.gridicons-calendar {
-		color: $gray-lighten-20;
+		color: var( --color-neutral-100 );
 		z-index: z-index( '.popover', '.input-chrono__container .gridicons-calendar' );
 		font-size: 8px;
 		width: 20px;
@@ -19,7 +19,7 @@ input.input-chrono {
 	height: 36px;
 	line-height: 36px;
 	padding: 0 10px;
-	border: 1px solid $gray-lighten-30;
+	border: 1px solid var( --color-neutral-0 );
 	box-sizing: border-box;
 	background-color: $transparent;
 	color: var( --color-text-subtle );

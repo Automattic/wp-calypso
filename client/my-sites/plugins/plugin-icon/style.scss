@@ -28,12 +28,12 @@
 		fill: $white;
 	}
 	&.is-placeholder {
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 		opacity: 0.3;
 	}
 	&.is-fallback {
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 	}
 }
 

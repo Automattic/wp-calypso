@@ -137,7 +137,7 @@
 		height: 48px;
 		margin-top: 0px;
 		padding: 0;
-		background-color: $gray-lighten-20;
+		background-color: var( --color-neutral-100 );
 
 		@include breakpoint( '<480px' ) {
 			width: 32px;
@@ -207,7 +207,7 @@
 		width: 40px;
 		height: 40px;
 		margin-right: 16px;
-		fill: $gray-darken-10;
+		fill: var( --color-neutral-400 );
 
 		@include breakpoint( '<960px' ) {
 			width: 32px;
@@ -228,7 +228,7 @@
 	}
 
 	.jetpack-logo__icon-circle {
-		fill: $gray-darken-10;
+		fill: var( --color-neutral-400 );
 	}
 
 	.gridicon {
@@ -385,7 +385,7 @@
 }
 
 .activity-log-item__activity-media .gridicon {
-	background-color: $gray-lighten-20;
+	background-color: var( --color-neutral-100 );
 }
 .activity-log-item__activity-media .is-thumbnail {
 	width: auto;

@@ -68,7 +68,7 @@
 	}
 
 	.external-link .gridicons-external {
-		fill: $gray-darken-10;
+		fill: var( --color-neutral-400 );
 		top: 5px;
 
 		@include breakpoint( '>660px' ) {
@@ -77,7 +77,7 @@
 	}
 
 	.external-link {
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		display: block;
 		padding: 10px 10px 15px 6px;
 
@@ -332,7 +332,7 @@
 		align-items: flex-start;
 		background: white;
 		display: flex;
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 		flex-direction: row;
 		height: 47px;
 		justify-content: flex-end;

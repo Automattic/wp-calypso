@@ -22,8 +22,8 @@
 }
 
 .sites-popover.has-header .sites-popover__header {
-	border-bottom: 1px solid $gray-lighten-30;
-	color: $gray-darken-10;
+	border-bottom: 1px solid var( --color-neutral-0 );
+	color: var( --color-neutral-400 );
 	font-size: 12px;
 	font-weight: bold;
 	padding: 10px 10px 8px 8px;

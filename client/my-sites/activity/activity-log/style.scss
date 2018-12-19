@@ -20,7 +20,7 @@
 		top: 0;
 		height: 100%;
 		z-index: -2;
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 	}
 
 	&:after {
@@ -47,7 +47,7 @@
 		height: 23px;
 		width: 100px;
 		margin: 3px 0;
-		background-color: $gray-lighten-20;
+		background-color: var( --color-neutral-100 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }

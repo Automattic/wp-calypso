@@ -102,11 +102,11 @@
 	}
 
 	.mce-toolbar .mce-ico {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 	}
 
 	.mce-toolbar .mce-btn .gridicon {
-		fill: $gray-darken-20;
+		fill: var( --color-neutral-500 );
 	}
 
 	.mce-colorbutton .mce-preview {
@@ -117,8 +117,8 @@
 		margin: 0 2px 0 0;
 		padding: 0 8px;
 		vertical-align: top;
-		border-left: 1px solid $gray-lighten-30;
-		border-right: 1px solid $gray-lighten-30;
+		border-left: 1px solid var( --color-neutral-0 );
+		border-right: 1px solid var( --color-neutral-0 );
 		height: 36px;
 
 		@include breakpoint( '<660px' ) {
@@ -154,7 +154,7 @@
 	top: -6px;
 	bottom: -6px;
 	width: 1px;
-	background-color: $gray-lighten-20;
+	background-color: var( --color-neutral-100 );
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-hidden {
@@ -233,7 +233,7 @@
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-wpcom-icon-button button {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	height: 38px;
 	padding: 0 8px;
 	margin-top: 0px;
@@ -243,7 +243,7 @@
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-wpcom-icon-button .gridicon {
-	fill: $gray-darken-20;
+	fill: var( --color-neutral-500 );
 
 	&:hover {
 		fill: var( --color-neutral-700 );
@@ -367,7 +367,7 @@
 .mce-container .mce-floatpanel.mce-popover {
 	z-index: auto !important;
 	background-color: $white;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	border-radius: 0 0 4px 4px;
 	box-shadow: none;
 	padding: 0;
@@ -404,7 +404,7 @@ div.mce-panel {
 }
 
 .mce-container .mce-panel.mce-menu {
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 }
 .mce-container .mce-menu-item .mce-text {
 	color: var( --color-neutral-700 );
@@ -427,7 +427,7 @@ div.mce-toolbar-grp {
 
 div.mce-inline-toolbar-grp {
 	background-color: $white;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	border-radius: 4px;
 	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 	box-sizing: border-box;
@@ -472,14 +472,14 @@ div.mce-inline-toolbar-grp:after {
 
 div.mce-inline-toolbar-grp.mce-arrow-up:before {
 	top: -18px;
-	border-bottom-color: $gray-lighten-20;
+	border-bottom-color: var( --color-neutral-100 );
 	border-width: 9px;
 	margin-left: -9px;
 }
 
 div.mce-inline-toolbar-grp.mce-arrow-down:before {
 	bottom: -18px;
-	border-top-color: $gray-lighten-20;
+	border-top-color: var( --color-neutral-100 );
 	border-width: 9px;
 	margin-left: -9px;
 }
@@ -544,7 +544,7 @@ div.mce-inline-toolbar-grp.mce-arrow-full > div {
 
 .mce-tinymce .mce-stack-layout-item.mce-last {
 	@include breakpoint( '>960px' ) {
-		border-top: 1px solid $gray-lighten-30;
+		border-top: 1px solid var( --color-neutral-0 );
 	}
 }
 
@@ -566,7 +566,7 @@ div.mce-inline-toolbar-grp.mce-arrow-full > div {
 }
 
 div.mce-statusbar {
-	border-top: 1px solid $gray-lighten-20;
+	border-top: 1px solid var( --color-neutral-100 );
 }
 
 div.mce-path {
@@ -575,7 +575,7 @@ div.mce-path {
 }
 
 .post-editor .mce-path-item {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-family: $sans;
 }
 
@@ -632,13 +632,13 @@ div.mce-path {
 #wp-fullscreen-buttons .mce-btn:active,
 .qt-dfw.active {
 	color: var( --color-neutral-700 );
-	border-color: $gray-lighten-20;
+	border-color: var( --color-neutral-100 );
 	background: $white;
 	box-shadow: none;
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-active:hover {
-	border-color: $gray-lighten-20;
+	border-color: var( --color-neutral-100 );
 	color: var( --color-neutral-700 );
 }
 
@@ -648,7 +648,7 @@ div.mce-path {
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-disabled i.mce-ico {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-disabled:hover,
@@ -716,7 +716,7 @@ div.mce-path {
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-listbox.mce-active {
 	border-color: $white;
-	border-right: 1px solid $gray-lighten-30;
+	border-right: 1px solid var( --color-neutral-0 );
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-listbox button {
@@ -734,7 +734,7 @@ div.mce-path {
 .mce-toolbar .mce-btn-group .mce-btn.mce-listbox button .mce-txt {
 	width: auto;
 	padding: 0;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-family: $sans;
 	font-size: 13px;
 	text-overflow: initial;
@@ -746,8 +746,8 @@ div.mce-path {
 
 .post-editor .mce-toolbar .mce-btn-group .mce-btn.mce-listbox:hover {
 	background-image: none;
-	border-left-color: $gray-lighten-30;
-	border-right-color: $gray-lighten-30;
+	border-left-color: var( --color-neutral-0 );
+	border-right-color: var( --color-neutral-0 );
 
 	@include breakpoint( '<660px' ) {
 		border-right-color: $white;
@@ -1021,7 +1021,7 @@ div.mce-menu .mce-menu-item-sep,
 .mce-toolbar .mce-btn:hover .mce-open,
 .mce-toolbar .mce-btn:focus .mce-open,
 .mce-toolbar .mce-btn.mce-active .mce-open {
-	border-left-color: $gray-lighten-30;
+	border-left-color: var( --color-neutral-0 );
 }
 
 i.mce-i-bold,

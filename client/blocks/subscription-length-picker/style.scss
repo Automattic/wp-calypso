@@ -99,7 +99,7 @@
 	.subscription-length-picker__option-old-price {
 		position: relative;
 		display: inline-block;
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		margin-right: 5px;
 		text-decoration: line-through;
 	}

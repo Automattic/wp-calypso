@@ -162,7 +162,7 @@ form.sidebar__button {
 	font-size: 12px;
 	font-weight: 600;
 	border-radius: 3px;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 
 	@include breakpoint( '<660px' ) {
 		font-size: 14px;
@@ -205,7 +205,7 @@ form.sidebar__button input {
 
 		.sidebar__button {
 			color: var( --color-neutral-700 );
-			border: 1px solid $gray-darken-30;
+			border: 1px solid var( --color-neutral-600 );
 
 			&:hover {
 				color: var( --sidebar-menu-selected-a-color );

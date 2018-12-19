@@ -5,7 +5,7 @@
 
 	.post-status__text {
 		display: none;
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		margin-left: 4px;
 		vertical-align: baseline;
 	}

@@ -24,7 +24,7 @@
 	}
 
 	.steps__description {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		font-size: 12px;
 		margin-bottom: 30px;
 		text-align: center;
@@ -67,7 +67,7 @@
 
 		&.completed,
 		&.completed a {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 		}
 
 		&.todo,

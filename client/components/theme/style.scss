@@ -46,7 +46,7 @@ $theme-info-height: 54px;
 	}
 
 	&.is-placeholder {
-		background-color: $gray-lighten-20;
+		background-color: var( --color-neutral-100 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
@@ -98,7 +98,7 @@ $theme-info-height: 54px;
 
 .theme__upsell-icon svg {
 	transform: scale( 0.8 );
-	border: 2px solid $gray-lighten-10;
+	border: 2px solid var( --color-neutral-200 );
 	border-radius: 100%;
 	display: inline-block;
 	width: 22px;
@@ -202,12 +202,12 @@ $theme-info-height: 54px;
 	bottom: 54px;
 	width: 100%;
 	padding-top: 36%;
-	background: $gray-lighten-20;
+	background: var( --color-neutral-100 );
 
 	.gridicon {
 		display: block;
 		margin: -5% auto;
-		fill: $gray-lighten-30;
+		fill: var( --color-neutral-0 );
 	}
 }
 

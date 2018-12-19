@@ -36,7 +36,7 @@ $current-theme-border: 1px solid transparentize( $gray-lighten-20, 0.25 );
 	}
 	width: 75px;
 	color: transparent;
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 	animation: loading-fade 1.6s ease-in-out infinite;
 	height: 100%;
 }
@@ -63,7 +63,7 @@ $current-theme-border: 1px solid transparentize( $gray-lighten-20, 0.25 );
 
 .current-theme__placeholder {
 	color: transparent;
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 

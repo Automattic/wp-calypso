@@ -8,7 +8,7 @@
 		padding-bottom: 8px;
 		border-radius: 4px;
 		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 2px 5px $gray-lighten-20;
+		0 2px 5px var( --color-neutral-100 );
 	}
 	.activity-log-item__activity-icon {
 		background: var( --color-accent );
@@ -16,7 +16,7 @@
 }
 
 .activity-log-confirm-dialog .dialog__content {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 
 	h1 {
 		color: var( --color-neutral-700 );
@@ -161,7 +161,7 @@
 
 .activity-log-confirm-dialog__dialog__action-buttons {
 	overflow: hidden;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 	padding: 16px;
 	margin: 0 -24px -24px;
 	text-align: right;

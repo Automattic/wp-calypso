@@ -22,10 +22,10 @@
 		user-select: none;
 
 		.gridicon {
-			fill: $gray-lighten-10;
+			fill: var( --color-neutral-200 );
 
 			&:hover {
-				fill: $gray-darken-10;
+				fill: var( --color-neutral-400 );
 			}
 		}
 	}

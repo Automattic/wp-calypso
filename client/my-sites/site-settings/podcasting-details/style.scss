@@ -18,7 +18,7 @@
 		}
 
 		.podcasting-details__link-button {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 			font-weight: 600;
 			flex-shrink: 0;
 			margin-left: 12px;
@@ -41,7 +41,7 @@
 
 .podcasting-details__publish-notice {
 	position: relative;
-	background: $gray-lighten-30;
+	background: var( --color-neutral-0 );
 	border-radius: 4px;
 	align-self: stretch;
 	padding: 6px;
@@ -71,7 +71,7 @@
 }
 
 .podcasting-details__publish-button {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-weight: 600;
 	flex-shrink: 0;
 	margin-left: 12px;
@@ -135,18 +135,18 @@
 
 	&.is-disabled {
 		background-color: $gray-light;
-		border-color: $gray-lighten-20;
+		border-color: var( --color-neutral-100 );
 	}
 
 	&.is-disabled label,
 	&.is-disabled .form-setting-explanation {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 	}
 
 	&.is-disabled .form-text-input,
 	&.is-disabled .form-textarea {
-		color: $gray-lighten-10;
-		border-color: $gray-lighten-20;
+		color: var( --color-neutral-200 );
+		border-color: var( --color-neutral-100 );
 	}
 }
 
