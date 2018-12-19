@@ -9,12 +9,13 @@ import { Component } from '@wordpress/element';
  * Internal dependencies
  */
 import Square from './square';
+import Mosaic from './mosaic';
 import GalleryImage from '../gallery-image';
 
 export default class Layout extends Component {
 	photonize( { height, width, url } ) {
 		const { layoutStyle } = this.props;
-		if ( [ 'circle', 'square' ].includes( layoutStyle ) && width && height ) {
+		if ( isSquareishLayout( layoutStyle ) && width && height ) {
 			const size = Math.min( width, height );
 			return photon( url, { resize: `${ size },${ size }` } );
 		}
@@ -64,15 +65,26 @@ export default class Layout extends Component {
 	}
 
 	render() {
-		const { children, className /*layoutStyle*/ } = this.props;
+		const { children, className, layoutStyle } = this.props;
+
+		// eslint-disable-next-line no-nested-ternary
+		const LayoutRenderer = isSquareishLayout( layoutStyle )
+			? Square
+			: 'columns' === layoutStyle
+				? Square
+				: Mosaic;
 
 		const renderedImages = this.props.images.map( this.renderImage, this );
 
 		return (
 			<div className={ className }>
-				<Square columns={ this.props.columns } renderedImages={ renderedImages } />
+				<LayoutRenderer columns={ this.props.columns } renderedImages={ renderedImages } />
 				{ children }
 			</div>
 		);
 	}
+}
+
+function isSquareishLayout( layout ) {
+	return [ 'circle', 'square' ].includes( layout );
 }
