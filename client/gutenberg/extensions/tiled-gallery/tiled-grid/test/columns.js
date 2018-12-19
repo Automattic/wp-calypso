@@ -7,11 +7,11 @@ import { cloneDeep } from 'lodash';
  * Internal dependencies
  */
 import { attachments } from './fixtures/attachments';
-import { Jetpack_Tiled_Gallery_Layout } from '../layout';
+import { TiledGalleryLayout } from '../layout';
 
 describe( 'layout', () => {
 	test( 'creates columns as expected', () => {
-		const layout = new Jetpack_Tiled_Gallery_Layout( {
+		const layout = new TiledGalleryLayout( {
 			attachments: cloneDeep( attachments ),
 			contentWidth: 640,
 			margin: 4,
