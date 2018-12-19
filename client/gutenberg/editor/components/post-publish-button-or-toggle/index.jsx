@@ -30,7 +30,7 @@ export class PostPublishButtonOrToggle extends Component {
 	};
 
 	componentDidMount() {
-		this.togglePostSaving();
+		this.toggleLockPostSaving();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -40,11 +40,14 @@ export class PostPublishButtonOrToggle extends Component {
 			isPublished !== prevProps.isPublished ||
 			isBeingScheduled !== prevProps.isBeingScheduled
 		) {
-			this.togglePostSaving();
+			this.toggleLockPostSaving();
 		}
 	}
 
-	togglePostSaving() {
+	/**
+	 * Locks the post saving if the user needs to verify their email, or unlocks it otherwise.
+	 */
+	toggleLockPostSaving() {
 		const {
 			userNeedsVerification,
 			lockPostSaving,
@@ -77,6 +80,10 @@ export class PostPublishButtonOrToggle extends Component {
 		}
 	}
 
+	/**
+	 * Gets the label to be used in the verification notice which depends on the post status
+	 * @returns {string} The verification notice label
+	 */
 	getVerificationNoticeLabel() {
 		const { isPublished, isBeingScheduled, translate } = this.props;
 		if ( isPublished ) {
@@ -87,6 +94,9 @@ export class PostPublishButtonOrToggle extends Component {
 		return translate( 'To publish, check your email and confirm your address.' );
 	}
 
+	/**
+	 * Closes the dialog explaining why we need to verify the email
+	 */
 	closeVerifyEmailDialog = () => {
 		this.setState( { showEmailVerificationDialog: false } );
 	};
