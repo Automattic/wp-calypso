@@ -57,7 +57,6 @@ export default class Layout extends Component {
 				linkTo={ linkTo }
 				onRemove={ onRemoveImage( i ) }
 				onSelect={ onSelectImage( i ) }
-				ratio={ img.ratio }
 				setAttributes={ setImageAttributes( i ) }
 				url={ this.photonize( img ) }
 				width={ img.width }
