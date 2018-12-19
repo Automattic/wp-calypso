@@ -112,7 +112,7 @@ class SiteTopicStep extends Component {
 		const topicLabel = getSiteTypePropertyValue( 'slug', siteType, 'siteTopicLabel' ) || '';
 		// once we have more granular copies per segments, these two should only be used for the default case.
 		const commonPlaceholder = translate( 'e.g. Fashion, travel, design, plumber, electrician' );
-		const commonSubHeaderText = translate( "Don't stress, you can change this later." );
+		const commonSubHeaderText = '';
 
 		return {
 			headerText,
