@@ -258,6 +258,7 @@ class AddEmailAddressesCard extends React.Component {
 	addAnotherEmailAddressLink() {
 		return (
 			<button
+				type="button"
 				className="add-google-apps__add-another-email-address-link"
 				onClick={ this.handleAddAnotherEmailAddress }
 			>
