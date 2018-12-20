@@ -12,9 +12,22 @@ import './product-placeholder.scss';
 import paypalImage from './paypal-button.png';
 import paypalImage2x from './paypal-button-2x.png';
 
-export default ( { title = '', content = '', formattedPrice = '', multiple = false } ) => (
+export default ( {
+	title = '',
+	content = '',
+	formattedPrice = '',
+	multiple = false,
+	featuredMedia = null,
+} ) => (
 	<div className="jetpack-simple-payments-wrapper">
 		<div className="jetpack-simple-payments-product">
+			{ featuredMedia && (
+				<div className="jetpack-simple-payments-product-image">
+					<figure className="jetpack-simple-payments-image">
+						<img src={ featuredMedia.source_url } alt={ featuredMedia.alt_text } />
+					</figure>
+				</div>
+			) }
 			<div className="jetpack-simple-payments-details">
 				{ title && (
 					<div className="jetpack-simple-payments-title">

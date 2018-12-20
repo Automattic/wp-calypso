@@ -61,6 +61,10 @@ export const settings = {
 			type: 'string',
 			default: '',
 		},
+		featuredMediaId: {
+			type: 'number',
+			default: 0,
+		},
 		multiple: {
 			type: 'boolean',
 			default: false,
