@@ -119,7 +119,6 @@
 			display: inline-block;
 			text-align: right;
 			width: 30%;
-
 		}
 
 		.grand-total {
@@ -146,6 +145,17 @@
 		a {
 			color: var( --color-accent );
 			outline: none;
+		}
+
+		.cart__toggle-link {
+			color: var( --color-link );
+
+			&:hover,
+			&:focus,
+			&:active,
+			&.is-active {
+				color: var( --color-link-dark );
+			}
 		}
 
 		form {
