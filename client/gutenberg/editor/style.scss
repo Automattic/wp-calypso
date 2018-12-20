@@ -216,6 +216,38 @@ $gutenberg-theme-toggle: #11a0d2;
 		}
 	}
 
+	.edit-post-header-toolbar__block-toolbar {
+		background: $white;
+		border-bottom: 1px solid #e2e4e7;
+		left: 0;
+		min-height: 37px;
+		padding-left: 0;
+		position: absolute;
+		right: 0;
+		top: 56px;
+		.editor-block-toolbar {
+			margin: 0;
+			.components-toolbar {
+				padding: 0;
+			}
+		}
+		@include breakpoint( '>1280px' ) {
+			background: none;
+			border-bottom: none;
+			left: auto;
+			min-height: auto;
+			padding-left: 8px;
+			position: static;
+			right: auto;
+			.editor-block-toolbar {
+				margin: -9px 0;
+				.components-toolbar {
+					padding: 10px 4px 9px;
+				}
+			}
+		}
+	}
+
 	.editor-inserter {
 		margin-left: 10px;
 	}
