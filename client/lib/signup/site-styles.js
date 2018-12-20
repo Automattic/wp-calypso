@@ -1,30 +1,60 @@
 /** @format **/
 
-// TODO: should this data come from an API endpoint, somehow related to verticals?
+/**
+ * External dependencies
+ */
+import i18n from 'i18n-calypso';
+import { get } from 'lodash';
+
+// For now the site style step will determine which 'style pack' to use on pub/radcliffe-2
 export const siteStyleOptions = {
 	business: [
 		{
-			label: 'Modern',
-			name: 'modern',
-			value: 'pub/radcliffe-2',
+			description: i18n.translate(
+				'A bright, versatile canvas, offering a crisp reading experience for visitors.',
+				{
+					comment: 'A description of a WordPress theme style.',
+				}
+			),
+			id: 'default',
+			label: 'Radcliffe Perfect',
+			theme: 'pub/radcliffe-2',
 		},
 		{
-			label: 'Pro',
-			name: 'pro',
-			value: 'pub/radcliffe-2-professional',
+			description: i18n.translate(
+				'The power of minimalism, embodied in a clean black-and-white design.',
+				{
+					comment: 'A description of a WordPress theme style.',
+				}
+			),
+			id: 'modern',
+			label: 'Modern Bauhaus',
+			theme: 'pub/radcliffe-2',
 		},
 		{
-			label: 'Minimal',
-			name: 'minimal',
-			value: 'pub/radcliffe-2-minimal',
+			description: i18n.translate(
+				'Timeless, simple elegance, with classic fonts and a touch of sepia.',
+				{
+					comment: 'A description of a WordPress theme style.',
+				}
+			),
+			id: 'vintage',
+			label: 'Vintage Paper',
+			theme: 'pub/radcliffe-2',
 		},
 		{
-			label: 'Elegant',
-			name: 'elegant',
-			value: 'pub/radcliffe-2	-elegant',
+			description: i18n.translate(
+				'For an extra layer of playfulness, from bold color palettes to a vibrant font.',
+				{
+					comment: 'A description of a WordPress theme style.',
+				}
+			),
+			id: 'colorful',
+			label: 'Upbeat Pop',
+			theme: 'pub/radcliffe-2',
 		},
 	],
 };
 
 export const getSiteStyleOptions = vertical =>
-	siteStyleOptions[ vertical ] ? siteStyleOptions[ vertical ] : siteStyleOptions.business;
+	get( siteStyleOptions, vertical, siteStyleOptions.business );

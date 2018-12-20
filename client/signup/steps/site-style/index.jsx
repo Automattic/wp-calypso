@@ -48,11 +48,11 @@ export class SiteStyleStep extends Component {
 
 	constructor( props ) {
 		super( props );
-		const siteStyle = props.siteStyle || 'modern';
-		const selectedStyle = find( props.styleOptions, [ 'name', siteStyle ] );
+		const selectedStyle =
+			find( props.styleOptions, [ 'id', props.siteStyle ] ) || props.styleOptions[ 0 ];
 		this.state = {
-			siteStyle: selectedStyle.name,
-			themeSlugWithRepo: selectedStyle.value,
+			siteStyle: selectedStyle.id,
+			themeSlugWithRepo: selectedStyle.theme,
 		};
 	}
 
@@ -63,13 +63,13 @@ export class SiteStyleStep extends Component {
 	}
 
 	handleStyleOptionChange = event => {
-		const selectedStyle = find( this.props.styleOptions, [ 'value', event.currentTarget.value ] );
+		const selectedStyle = find( this.props.styleOptions, [ 'id', event.currentTarget.value ] );
 		this.setState(
 			{
-				siteStyle: selectedStyle.name,
-				themeSlugWithRepo: selectedStyle.value,
+				siteStyle: selectedStyle.id,
+				themeSlugWithRepo: selectedStyle.theme,
 			},
-			() => this.props.setSiteStyle( selectedStyle.name )
+			() => this.props.setSiteStyle( selectedStyle.id )
 		);
 	};
 
@@ -80,20 +80,21 @@ export class SiteStyleStep extends Component {
 
 	renderStyleOptions() {
 		return this.props.styleOptions.map( siteStyleProperties => {
-			const isChecked = siteStyleProperties.value === this.state.themeSlugWithRepo;
+			const isChecked = siteStyleProperties.id === this.state.siteStyle;
 			const optionLabelClasses = classNames( 'site-style__option-label', {
 				'is-checked': isChecked,
-				[ `site-style__variation-${ siteStyleProperties.name }` ]: siteStyleProperties.name,
+				[ `site-style__variation-${ siteStyleProperties.id }` ]: siteStyleProperties.id,
 			} );
 			return (
 				<FormLabel
-					htmlFor={ siteStyleProperties.name }
+					htmlFor={ siteStyleProperties.id }
 					className={ optionLabelClasses }
-					key={ siteStyleProperties.name }
+					key={ siteStyleProperties.id }
+					title={ siteStyleProperties.description || '' }
 				>
 					<FormRadio
-						id={ siteStyleProperties.name }
-						value={ siteStyleProperties.value }
+						id={ siteStyleProperties.id }
+						value={ siteStyleProperties.id }
 						name="site-style-option"
 						checked={ isChecked }
 						onChange={ this.handleStyleOptionChange }
@@ -106,26 +107,24 @@ export class SiteStyleStep extends Component {
 		} );
 	}
 
-	renderContent = () => {
-		return (
-			<div className="site-style__wrapper">
-				<Card>
-					<div className="site-style__form-wrapper">
-						<form className="site-style__form" onSubmit={ this.handleSubmit }>
-							<FormFieldset className="site-style__fieldset">
-								{ this.renderStyleOptions() }
-							</FormFieldset>
-							<div className="site-style__submit-wrapper">
-								<Button primary={ true } type="submit">
-									{ this.props.translate( 'Continue' ) }
-								</Button>
-							</div>
-						</form>
-					</div>
-				</Card>
-			</div>
-		);
-	};
+	renderContent = () => (
+		<div className="site-style__wrapper">
+			<Card>
+				<div className="site-style__form-wrapper">
+					<form className="site-style__form" onSubmit={ this.handleSubmit }>
+						<FormFieldset className="site-style__fieldset">
+							{ this.renderStyleOptions() }
+						</FormFieldset>
+						<div className="site-style__submit-wrapper">
+							<Button primary={ true } type="submit">
+								{ this.props.translate( 'Continue' ) }
+							</Button>
+						</div>
+					</form>
+				</div>
+			</Card>
+		</div>
+	);
 
 	render() {
 		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
@@ -153,7 +152,7 @@ export class SiteStyleStep extends Component {
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteStyle: ( { themeSlugWithRepo } ) => {
+	submitSiteStyle: ( { siteStyle, themeSlugWithRepo } ) => {
 		const { flowName, stepName, goToNextStep } = ownProps;
 		SignupActions.submitSignupStep(
 			{
@@ -162,6 +161,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 			},
 			[],
 			{
+				siteStyle,
 				themeSlugWithRepo,
 			}
 		);

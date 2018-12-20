@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find, get } from 'lodash';
+import { isString, find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,18 +44,20 @@ const defaultPreviewData = getVerticalDataPreview(
 );
 
 function normalizeVerticalName( name ) {
-	return name
-		.trim()
-		.toLowerCase()
-		.replace( /\s/g, '-' );
+	return isString( name )
+		? name
+				.trim()
+				.toLowerCase()
+				.replace( /\s/g, '-' )
+		: '';
 }
 
-function getVerticalDataPreview( vertical ) {
-	vertical = normalizeVerticalName( vertical );
+function getVerticalDataPreview( verticalName, verticalCollection ) {
+	verticalName = normalizeVerticalName( verticalName );
 	return (
 		get(
-			find( verticalList, v => {
-				return normalizeVerticalName( v.vertical_name ) === vertical;
+			find( verticalCollection, v => {
+				return normalizeVerticalName( v.vertical_name ) === verticalName;
 			} ),
 			'preview',
 			null
