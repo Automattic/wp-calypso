@@ -50,9 +50,9 @@
 		}
 		&[disabled],
 		&:disabled {
-			color: lighten( $gray, 30% );
+			color: var( --color-neutral-0 );
 			background: $white;
-			border-color: lighten( $gray, 30% );
+			border-color: var( --color-neutral-0 );
 			cursor: default;
 
 			&:active {
@@ -71,7 +71,7 @@
 			text-transform: uppercase;
 
 			&:disabled {
-				color: lighten( $gray, 30% );
+				color: var( --color-neutral-0 );
 			}
 			.gridicon {
 				top: 4px;
@@ -126,7 +126,7 @@
 		&[disabled],
 		&:disabled {
 			color: lighten( $alert-red, 30% );
-			border-color: lighten( $gray, 30% );
+			border-color: var( --color-neutral-0 );
 		}
 	}
 
@@ -168,7 +168,7 @@
 
 		&[disabled],
 		&:disabled {
-			color: lighten( $gray, 30% );
+			color: var( --color-neutral-0 );
 			background: $white;
 			cursor: default;
 
