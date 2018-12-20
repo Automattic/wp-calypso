@@ -145,7 +145,7 @@ td {
 table,
 th,
 td {
-	border: 1px solid lighten( $gray, 20 );
+	border: 1px solid var( --color-neutral-100 );
 }
 table {
 	border-collapse: separate;
@@ -172,14 +172,14 @@ th, td {
 	padding: 0.4em;
 }
 .mce-item-table, .mce-item-table td, .mce-item-table th, .mce-item-table caption {
-	border: 1px solid lighten( $gray, 20 );
+	border: 1px solid var( --color-neutral-100 );
 }
 
 hr {
 	border: 0;
 	height: 1px;
 	margin: 8px 0;
-	background: lighten( $gray, 20 );
+	background: var( --color-neutral-100 );
 }
 
 /* Styles for formatting the boundaries of anchors and code elements */

@@ -155,7 +155,7 @@
 		font-size: 15px;
 		font-weight: bold;
 		line-height: 1.6;
-		border-top: 1px solid lighten( $gray, 20 );
+		border-top: 1px solid var( --color-neutral-100 );
 		background: linear-gradient( to bottom,
 						rgba( $gray-light, 1 ) 0%,
 						rgba( $gray-light, 0 ) 100% );

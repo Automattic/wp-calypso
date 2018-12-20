@@ -305,7 +305,7 @@
 .site-mockup__outline {
 	margin-bottom: 24px;
 	height: 150px;
-	border: 2px dashed lighten( $gray, 20 );
+	border: 2px dashed var( --color-neutral-100 );
 
 	&.is-title {
 		max-width: 480px;
