@@ -7,6 +7,7 @@
 
 	--color-accent: #{$muriel-hot-pink-500};
 	--color-accent-light: #{$muriel-hot-pink-300};
+	--color-accent-light-rgb: #{hex-to-rgb( $muriel-hot-pink-300 )};
 	--color-accent-dark: #{$muriel-hot-pink-700};
 	--color-accent-rgb: #{hex-to-rgb( $muriel-hot-pink-500 )};
 	--color-accent-600: #{$muriel-hot-pink-600};
