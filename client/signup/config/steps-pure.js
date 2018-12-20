@@ -82,7 +82,7 @@ export function generateSteps( {
 		'plans-site-selected': {
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug', 'siteId' ],
+			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
 		},
 
@@ -147,14 +147,14 @@ export function generateSteps( {
 		plans: {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug', 'siteId' ],
+			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
 		},
 
 		'plans-store-nux': {
 			stepName: 'plans-store-nux',
 			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],
+			dependencies: [ 'siteSlug', 'domainItem' ],
 			providesDependencies: [ 'cartItem' ],
 		},
 
