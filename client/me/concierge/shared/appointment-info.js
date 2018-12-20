@@ -23,6 +23,12 @@ class AppointmentInfo extends Component {
 			translate,
 		} = this.props;
 
+		const beginTimeFormat = translate( 'LL [at] LT', {
+			comment:
+				'moment.js formatting string. See http://momentjs.com/docs/#/displaying/format/.' +
+				'e.g. Thursday, December 20, 2018 at 8PM.',
+		} );
+
 		return (
 			<Confirmation
 				title={ translate( 'Your upcoming appointment' ) }
@@ -32,7 +38,7 @@ class AppointmentInfo extends Component {
 						'-- we look forward to chatting!',
 					{
 						args: {
-							beginTime: moment( beginTimestamp ).format( 'LLLL' ),
+							beginTime: moment( beginTimestamp ).format( beginTimeFormat ),
 							duration: moment( endTimestamp ).diff( beginTimestamp, 'minutes' ),
 						},
 					}
