@@ -115,6 +115,8 @@ class UpworkStatsNudge extends Component {
 								href={ '/experts/upwork?source=stat-banner' }
 								primary
 								onClick={ this.onStartNowClick }
+								target="_blank"
+								rel="noopener noreferrer"
 							>
 								{ this.props.translate( 'Find your expert' ) }
 							</Button>
