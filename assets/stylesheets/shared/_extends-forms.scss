@@ -63,11 +63,11 @@
 	}
 
 	&.is-valid {
-		border-color: $alert-green;
+		border-color: var( --color-success );
 	}
 
 	&.is-valid:hover {
-		border-color: darken( $alert-green, 10 );
+		border-color: var( --color-success-dark );
 	}
 
 	&.is-error {
@@ -80,11 +80,11 @@
 
 	&:focus {
 		&.is-valid {
-			box-shadow: 0 0 0 2px lighten( $alert-green, 35 );
+			box-shadow: 0 0 0 2px var( --color-success-100 );
 		}
 
 		&.is-valid:hover {
-			box-shadow: 0 0 0 2px lighten( $alert-green, 25 );
+			box-shadow: 0 0 0 2px var( --color-success-200 );
 		}
 
 		&.is-error {
