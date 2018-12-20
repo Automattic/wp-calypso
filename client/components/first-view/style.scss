@@ -142,7 +142,7 @@
 }
 
 .first-view__hide-preference {
-	color: darken( $gray, 30 );
+	color: var( --color-neutral-600 );
 	padding: 8px 0;
 
 	@include breakpoint( "<480px" ) {
