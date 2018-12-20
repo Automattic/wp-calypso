@@ -152,7 +152,7 @@ export class EditorDiscussion extends React.Component {
 											<a
 												href="https://en.support.wordpress.com/comments/pingbacks/"
 												target="_blank"
-												rel="noopen noreferrer"
+												rel="noopener noreferrer"
 											/>
 										),
 										b: (
