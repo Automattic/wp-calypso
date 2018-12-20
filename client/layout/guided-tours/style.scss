@@ -16,7 +16,7 @@
 	animation-timing-function: ease-in-out;
 
 	p {
-		color: lighten( $gray, 30 );
+		color: var( --color-neutral-0 );
 		margin-bottom: 16px;
 
 		strong {

@@ -50,9 +50,9 @@
 		}
 		&[disabled],
 		&:disabled {
-			color: lighten( $gray, 30% );
+			color: var( --color-neutral-0 );
 			background: $white;
-			border-color: lighten( $gray, 30% );
+			border-color: var( --color-neutral-0 );
 			cursor: default;
 
 			&:active {
@@ -65,13 +65,13 @@
 		}
 		&.is-compact {
 			padding: 7px;
-			color: darken( $gray, 10% );
+			color: var( --color-neutral-400 );
 			font-size: 11px;
 			line-height: 1;
 			text-transform: uppercase;
 
 			&:disabled {
-				color: lighten( $gray, 30% );
+				color: var( --color-neutral-0 );
 			}
 			.gridicon {
 				top: 4px;
@@ -126,7 +126,7 @@
 		&[disabled],
 		&:disabled {
 			color: lighten( $alert-red, 30% );
-			border-color: lighten( $gray, 30% );
+			border-color: var( --color-neutral-0 );
 		}
 	}
 
@@ -148,7 +148,7 @@
 
 	.wpnc__button.is-borderless {
 		border: none;
-		color: darken( $gray, 10% );
+		color: var( --color-neutral-400 );
 		padding-left: 0;
 		padding-right: 0;
 
@@ -168,7 +168,7 @@
 
 		&[disabled],
 		&:disabled {
-			color: lighten( $gray, 30% );
+			color: var( --color-neutral-0 );
 			background: $white;
 			cursor: default;
 

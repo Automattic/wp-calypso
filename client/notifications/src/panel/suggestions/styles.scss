@@ -1,7 +1,7 @@
 $base-background-color: $white;
 $list-background: $white;
 $border-color: var( --color-neutral-100 );
-$light-border-color: lighten( $gray, 30% );
+$light-border-color: var( --color-neutral-0 );
 $text-color: var( --color-neutral-700 );
 $name-color: $gray;
 $selected-color: var( --color-primary );
