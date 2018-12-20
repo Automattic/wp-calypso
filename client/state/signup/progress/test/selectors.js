@@ -33,7 +33,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getLastIncompleteSignupStep', () => {
-		test( 'should return empty object if no in-progress step is found', () => {
+		test( 'should return `null` if no in-progress step is found', () => {
 			const state = {
 				signup: {
 					progress: [
@@ -44,7 +44,7 @@ describe( 'selectors', () => {
 					],
 				},
 			};
-			expect( getLastIncompleteSignupStep( state ) ).toEqual( {} );
+			expect( getLastIncompleteSignupStep( state ) ).toEqual( null );
 		} );
 
 		test( 'should return in-progress step', () => {

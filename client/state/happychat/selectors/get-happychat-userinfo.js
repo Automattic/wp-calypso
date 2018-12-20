@@ -10,7 +10,7 @@ import moment from 'moment';
 import getGeoLocation from 'state/happychat/selectors/get-geolocation';
 import getCurrentUserRegisterDate from 'state/selectors/get-current-user-register-date';
 import { getLastIncompleteSignupStep } from 'state/signup/progress/selectors';
-import { abtest } from 'lib/abtest';
+import { getcurrentFlowName } from 'state/signup/flow/selectors';
 
 export default state => ( { site, howCanWeHelp, howYouFeel } ) => {
 	const info = {
@@ -48,19 +48,17 @@ export default state => ( { site, howCanWeHelp, howYouFeel } ) => {
 		info.geoLocation = geoLocation;
 	}
 
-	// Is the user going through the onboarding flow?
-	if ( 'onboarding' === abtest( 'improvedOnboarding' ) ) {
-		info.isUsingNewOnboardingFlow = true;
+	// Add the signup flow name
+	const lastSignupFlow = getcurrentFlowName( state );
+	if ( lastSignupFlow ) {
+		info.lastSignupFlow = lastSignupFlow;
 	}
 
 	// Add last incomplete signup step if any
 	const lastIncompleteSignupStep = getLastIncompleteSignupStep( state );
 	if ( lastIncompleteSignupStep ) {
 		info.lastIncompleteSignupStep = lastIncompleteSignupStep.stepName;
-		info.daysSinceSignupProgress = moment().diff(
-			moment( lastIncompleteSignupStep.lastUpdated ),
-			'days'
-		);
+		info.lastSignupProgress = moment( lastIncompleteSignupStep.lastUpdated ).fromNow();
 	}
 
 	return info;

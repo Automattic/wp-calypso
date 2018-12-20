@@ -34,7 +34,7 @@ export const getLastIncompleteSignupStep = createSelector(
 				[ 'desc' ]
 			)
 		);
-		return lastSignupStepInProgress || {};
+		return lastSignupStepInProgress || null;
 	},
 	[ getSignupProgress ]
 );
