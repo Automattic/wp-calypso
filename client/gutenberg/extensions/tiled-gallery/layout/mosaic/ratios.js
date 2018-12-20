@@ -134,28 +134,12 @@ export function ratiosToRows( ratios, { isWide } = {} ) {
 			next = [ 1, 1, 1, 1, 1 ];
 		} else if (
 			/* Four */
-			fourIsNotRecent( processed ) &&
-			( function( ratio ) {
-				return ( ratio < 3.5 && toProcess.length > 5 ) || ( ratio < 7 && toProcess.length === 4 );
-			} )( sum( take( toProcess, 4 ) ) )
+			isFourValidCandidate( processed, toProcess )
 		) {
 			next = [ 1, 1, 1, 1 ];
 		} else if (
 			/* Three */
-			toProcess.length >= 3 &&
-			toProcess.length !== 4 &&
-			toProcess.length !== 6 &&
-			threeIsNotRecent( processed ) &&
-			( function( ratio ) {
-				return (
-					ratio < 2.5 ||
-					( ratio < 5 &&
-						/* nextAreSymettric */
-						( toProcess.length >= 3 &&
-							/* @FIXME floating point equality?? */ toProcess[ 0 ] === toProcess[ 2 ] ) ) ||
-					isWide
-				);
-			} )( sum( take( toProcess, 3 ) ) )
+			isThreeValidCandidate( processed, toProcess, isWide )
 		) {
 			next = [ 1, 1, 1 ];
 		} else if (
@@ -183,6 +167,30 @@ export function ratiosToRows( ratios, { isWide } = {} ) {
 		return go( nextProcessed, nextToProcess );
 	};
 	return go( [], ratios );
+}
+
+function isThreeValidCandidate( processed, toProcess, isWide ) {
+	const ratio = sum( take( toProcess, 3 ) );
+	return (
+		toProcess.length >= 3 &&
+		toProcess.length !== 4 &&
+		toProcess.length !== 6 &&
+		threeIsNotRecent( processed ) &&
+		( ratio < 2.5 ||
+			( ratio < 5 &&
+				/* nextAreSymettric */
+				( toProcess.length >= 3 &&
+					/* @FIXME floating point equality?? */ toProcess[ 0 ] === toProcess[ 2 ] ) ) ||
+			isWide )
+	);
+}
+
+function isFourValidCandidate( processed, toProcess ) {
+	const ratio = sum( take( toProcess, 4 ) );
+	return (
+		( fourIsNotRecent( processed ) && ( ratio < 3.5 && toProcess.length > 5 ) ) ||
+		( ratio < 7 && toProcess.length === 4 )
+	);
 }
 
 function isNotRecentShape( shape, numRecents ) {
