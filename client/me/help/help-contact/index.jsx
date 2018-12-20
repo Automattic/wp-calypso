@@ -115,8 +115,9 @@ class HelpContact extends React.Component {
 		this.recordCompactSubmit( 'happychat' );
 		this.props.openHappychat();
 		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
-
-		this.props.sendUserInfo( this.props.getUserInfo( { howCanWeHelp, howYouFeel, site } ) );
+		const userInfo = this.props.getUserInfo( { howCanWeHelp, howYouFeel, site } );
+		debug( 'Starting HappyChat with the following user information:', userInfo );
+		this.props.sendUserInfo( userInfo );
 		this.props.sendHappychatMessage( message, { includeInSummary: true } );
 
 		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
