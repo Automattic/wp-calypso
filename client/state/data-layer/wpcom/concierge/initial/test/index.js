@@ -23,15 +23,18 @@ describe( 'wpcom-api', () => {
 		test( 'fetchConciergeInitial()', () => {
 			const action = {
 				type: CONCIERGE_INITIAL_REQUEST,
-				scheduleId: 123,
+				siteId: 999,
 			};
 
 			expect( fetchConciergeInitial( action ) ).toEqual(
 				http(
 					{
 						method: 'GET',
-						path: `/concierge/schedules/${ action.scheduleId }/initial`,
+						path: '/concierge/initial',
 						apiNamespace: 'wpcom/v2',
+						query: {
+							site_id: action.siteId,
+						},
 					},
 					action
 				)
@@ -45,6 +48,7 @@ describe( 'wpcom-api', () => {
 					new Date( '2017-01-01 02:00:00' ),
 					new Date( '2017-01-01 03:00:00' ),
 				],
+				schedule_id: 18,
 			};
 
 			expect( storeFetchedConciergeInitial( {}, mockInitial ) ).toEqual(

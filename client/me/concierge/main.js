@@ -30,7 +30,6 @@ import { planMatches } from 'lib/plans';
 import { GROUP_WPCOM, TYPE_BUSINESS, TYPE_ECOMMERCE } from 'lib/plans/constants';
 import getConciergeAvailableTimes from 'state/selectors/get-concierge-available-times';
 import getUserSettings from 'state/selectors/get-user-settings';
-import { WPCOM_CONCIERGE_SCHEDULE_ID } from './constants';
 import { getSite } from 'state/sites/selectors';
 import NoAvailableTimes from './shared/no-available-times';
 import Upsell from './shared/upsell';
@@ -91,14 +90,15 @@ export class ConciergeMain extends Component {
 
 	render() {
 		const { analyticsPath, analyticsTitle, site } = this.props;
+		const siteId = site && site.ID;
 
 		return (
 			<Main>
 				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
 				<QueryUserSettings />
-				<QueryConciergeInitial scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID } />
 				<QuerySites />
-				{ site && <QuerySitePlans siteId={ site.ID } /> }
+				{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
+				{ siteId && <QuerySitePlans siteId={ siteId } /> }
 				{ this.getDisplayComponent() }
 			</Main>
 		);

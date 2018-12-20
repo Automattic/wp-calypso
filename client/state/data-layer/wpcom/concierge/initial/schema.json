@@ -23,6 +23,9 @@
 				},
 				"schedule_id": { "type": "number" }
 			}
+		},
+		"schedule_id": {
+			"type": "number"
 		}
 	}
 }

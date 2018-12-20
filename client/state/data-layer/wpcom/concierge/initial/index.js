@@ -21,8 +21,11 @@ export const fetchConciergeInitial = action =>
 	http(
 		{
 			method: 'GET',
-			path: `/concierge/schedules/${ action.scheduleId }/initial`,
+			path: '/concierge/initial',
 			apiNamespace: 'wpcom/v2',
+			query: {
+				site_id: action.siteId,
+			},
 		},
 		action
 	);
@@ -45,5 +48,3 @@ registerHandlers( 'state/data-layer/wpcom/concierge/schedules/initial/index.js',
 		} ),
 	],
 } );
-
-export default {};
