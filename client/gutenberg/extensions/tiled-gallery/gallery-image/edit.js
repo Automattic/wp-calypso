@@ -14,7 +14,7 @@ import { withSelect } from '@wordpress/data';
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
-class GalleryImage extends Component {
+class GalleryImageEdit extends Component {
 	state = {
 		captionSelected: false,
 	};
@@ -180,4 +180,4 @@ export default withSelect( ( select, ownProps ) => {
 	return {
 		image: id ? getMedia( id ) : null,
 	};
-} )( GalleryImage );
+} )( GalleryImageEdit );

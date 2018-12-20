@@ -21,17 +21,9 @@ export default function TiledGallerySave( { attributes } ) {
 			columns={ columns }
 			imageCrop={ imageCrop }
 			images={ images }
+			isSave
 			layoutStyle={ getActiveStyleName( LAYOUT_STYLES, className ) }
 			linkTo={ linkTo }
-			onRemoveImage={ callOnMe }
-			onSelectImage={ callOnMe }
-			setImageAttributes={ callOnMe }
 		/>
 	);
-}
-
-// Just a thing we can call and call and call…
-// Useful to make maybe curried handlers that we don't care about
-function callOnMe() {
-	return callOnMe;
 }

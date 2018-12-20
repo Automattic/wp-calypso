@@ -10,7 +10,8 @@ import { Component } from '@wordpress/element';
  */
 import Square from './square';
 import Mosaic from './mosaic';
-import GalleryImage from '../gallery-image';
+import GalleryImageEdit from '../gallery-image/edit';
+import GalleryImageSave from '../gallery-image/save';
 
 export default class Layout extends Component {
 	photonize( { height, width, url } ) {
@@ -32,6 +33,7 @@ export default class Layout extends Component {
 			columns,
 			imageCrop,
 			images,
+			isSave,
 			linkTo,
 			onRemoveImage,
 			onSelectImage,
@@ -41,9 +43,10 @@ export default class Layout extends Component {
 
 		/* translators: %1$d is the order number of the image, %2$d is the total number of images. */
 		const ariaLabel = __( sprintf( 'image %1$d of %2$d in gallery', i + 1, images.length ) );
+		const Image = isSave ? GalleryImageSave : GalleryImageEdit;
 
 		return (
-			<GalleryImage
+			<Image
 				alt={ img.alt }
 				aria-label={ ariaLabel }
 				caption={ img.caption }
@@ -51,13 +54,14 @@ export default class Layout extends Component {
 				columns={ columns }
 				height={ img.height }
 				id={ img.id }
+				image={ img }
 				imageCrop={ imageCrop }
 				isSelected={ selectedImage === i }
 				key={ i }
 				linkTo={ linkTo }
-				onRemove={ onRemoveImage( i ) }
-				onSelect={ onSelectImage( i ) }
-				setAttributes={ setImageAttributes( i ) }
+				onRemove={ isSave ? undefined : onRemoveImage( i ) }
+				onSelect={ isSave ? undefined : onSelectImage( i ) }
+				setAttributes={ isSave ? undefined : setImageAttributes( i ) }
 				url={ this.photonize( img ) }
 				width={ img.width }
 			/>
