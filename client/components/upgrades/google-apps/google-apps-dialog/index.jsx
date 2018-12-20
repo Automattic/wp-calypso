@@ -51,9 +51,9 @@ class GoogleAppsDialog extends React.Component {
 		}
 	}
 
-	removeValidationErrors() {
+	removeValidationErrors = () => {
 		this.setState( { validationErrors: null } );
-	}
+	};
 
 	getPrices() {
 		const { currencyCode, productsList } = this.props;
