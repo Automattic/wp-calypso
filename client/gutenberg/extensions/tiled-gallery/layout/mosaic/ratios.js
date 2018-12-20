@@ -1,36 +1,13 @@
 /**
  * External dependencies
  */
-import { every, isEqual, overEvery, some, sum, take, takeRight, zipWith } from 'lodash';
+import { every, isEqual, map, overEvery, some, sum, take, takeRight, zipWith } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import Row from './row';
-import Column from './column';
-
-export default function Mosaic( { images, isWide, renderedImages } ) {
-	const ratios = images.map( ( { height, width } ) => ( height && width ? width / height : 1 ) );
-	const rows = ratiosToRows( ratios, { isWide } );
-
-	let cursor = 0;
-	return rows.map( ( row, rowIndex ) => (
-		<Row key={ rowIndex }>
-			{ row.map( ( colSize, colIndex ) => {
-				const columnImages = renderedImages.slice( cursor, cursor + colSize );
-				cursor += colSize;
-				return <Column key={ colIndex }>{ columnImages }</Column>;
-			} ) }
-		</Row>
-	) );
+export function imagesToRatios( images ) {
+	return map( images, ( { height, width } ) => ( height && width ? width / height : 1 ) );
 }
 
-// check for more to process
-// figure out the next row
-// split the remaining rows
-// recurse
-
-function ratiosToRows( ratios, { isWide } ) {
+export function ratiosToRows( ratios, { isWide } ) {
 	// This function will recursively process the input until it is consumed
 	const go = ( processed, toProcess ) => {
 		if ( ! toProcess.length ) {
@@ -166,8 +143,6 @@ function checkNextRatios( shape ) {
 		ratios.length >= shape.length &&
 		every( zipWith( shape, ratios.slice( 0, shape.length ), ( f, r ) => f( r ) ) );
 }
-
-/* eslint-disable no-unused-vars */
 
 function isAny() {
 	return true;

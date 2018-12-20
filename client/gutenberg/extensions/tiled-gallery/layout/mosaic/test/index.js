@@ -8,8 +8,8 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import Mosaic from '../mosaic';
-import * as imageSets from './fixtures/image-sets';
+import Mosaic from '..';
+import * as imageSets from '../../test/fixtures/image-sets';
 
 test( 'renders as expected', () => {
 	Object.keys( imageSets ).forEach( k => {
