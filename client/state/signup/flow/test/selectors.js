@@ -3,23 +3,23 @@
 /**
  * Internal dependencies
  */
-import { getCurrentFlow } from '../selectors';
+import { getCurrentFlowName } from '../selectors';
 
-describe( 'getCurrentFlow()', () => {
+describe( 'getCurrentFlowName()', () => {
 	test( 'should return the current flow', () => {
-		const currentFlow = 'sultana_wetsuit';
+		const currentFlowName = 'sultana_wetsuit';
 		expect(
-			getCurrentFlow( {
+			getCurrentFlowName( {
 				signup: {
 					flow: {
-						currentFlow,
+						currentFlowName,
 					},
 				},
 			} )
-		).toEqual( currentFlow );
+		).toEqual( currentFlowName );
 	} );
 
 	test( 'should default to be an empty string', () => {
-		expect( getCurrentFlow( {} ) ).toEqual( '' );
+		expect( getCurrentFlowName( {} ) ).toEqual( '' );
 	} );
 } );

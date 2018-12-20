@@ -23,7 +23,7 @@ import {
 	submitStep,
 } from 'state/signup/progress/actions';
 import { getSignupProgress } from 'state/signup/progress/selectors';
-import { getCurrentFlow } from 'state/signup/flow/selectors';
+import { getCurrentFlowName } from 'state/signup/flow/selectors';
 import SignupDependencyStore from './dependency-store';
 
 const SignupProgressStore = {
@@ -100,7 +100,7 @@ function addStorableDependencies( step, action ) {
  */
 SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 	const { action } = payload;
-	const currentFlow = getCurrentFlow( SignupProgressStore.reduxStore.getState() );
+	const currentFlowName = getCurrentFlowName( SignupProgressStore.reduxStore.getState() );
 	const step = { ...action.data, lastUpdated: Date.now() };
 
 	Dispatcher.waitFor( [ SignupDependencyStore.dispatchToken ] );
@@ -118,7 +118,7 @@ SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 					addStorableDependencies(
 						{
 							...step,
-							lastKnownFlow: currentFlow,
+							lastKnownFlow: currentFlowName,
 						},
 						action
 					)
@@ -131,7 +131,7 @@ SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 					addStorableDependencies(
 						{
 							...step,
-							lastKnownFlow: currentFlow,
+							lastKnownFlow: currentFlowName,
 						},
 						action
 					)

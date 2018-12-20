@@ -3,11 +3,11 @@
 /**
  * Internal dependencies
  */
-import { SIGNUP_CURRENT_FLOW_SET } from 'state/action-types';
+import { SIGNUP_CURRENT_FLOW_NAME_SET } from 'state/action-types';
 
-export function setCurrentFlow( flowName ) {
+export function setCurrentFlowName( flowName ) {
 	return {
-		type: SIGNUP_CURRENT_FLOW_SET,
+		type: SIGNUP_CURRENT_FLOW_NAME_SET,
 		flowName,
 	};
 }

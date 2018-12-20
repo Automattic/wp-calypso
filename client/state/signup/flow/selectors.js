@@ -6,6 +6,6 @@
 
 import { get } from 'lodash';
 
-export function getCurrentFlow( state ) {
-	return get( state, 'signup.flow.currentFlow', '' );
+export function getCurrentFlowName( state ) {
+	return get( state, 'signup.flow.currentFlowName', '' );
 }
