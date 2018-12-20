@@ -51,10 +51,6 @@ class GoogleAppsDialog extends React.Component {
 		}
 	}
 
-	removeValidationErrors() {
-		this.setState( { validationErrors: null } );
-	}
-
 	getPrices() {
 		const { currencyCode, productsList } = this.props;
 		const price = get( productsList, [ 'gapps', 'prices', currencyCode ], 0 );

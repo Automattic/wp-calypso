@@ -92,9 +92,9 @@ class AddEmailAddressesCard extends React.Component {
 		];
 	}
 
-	removeValidationErrors() {
+	removeValidationErrors = () => {
 		this.setState( { validationErrors: null } );
-	}
+	};
 
 	validationErrors() {
 		if ( this.state.validationErrors ) {
