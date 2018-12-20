@@ -43,7 +43,7 @@
 
 .editor-ground-control__separator {
 	margin: 0 -16px;
-	background: lighten( $gray, 30 );
+	background: var( --color-neutral-0 );
 }
 
 .editor-ground-control__status {
