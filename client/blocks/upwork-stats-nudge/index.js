@@ -88,7 +88,7 @@ class UpworkStatsNudge extends Component {
 					<div className="upwork-stats-nudge__image-wrapper">
 						<img
 							className="upwork-stats-nudge__image"
-							src="/calypso/images/google-my-business/phone-screenshot-cropped.png"
+							src="/calypso/images/upwork/illustration-builder-referral.svg"
 							alt={ this.props.translate( 'Your business with Google My Business' ) }
 						/>
 					</div>
