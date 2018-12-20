@@ -1,6 +1,6 @@
 .post-excerpt-link {
 	background: $gray-light;
-	color: darken( $gray, 20 );
+	color: var( --color-neutral-500 );
 	padding: 16px 48px 16px 24px;
 	margin: 20px 0 8px;
 	position: relative;

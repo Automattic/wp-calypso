@@ -132,7 +132,7 @@ blockquote {
 	padding: 16px;
 	margin: 8px 0 24px 0;
 	border-left: 2px solid $gray;
-	color: darken( $gray, 20 );
+	color: var( --color-neutral-500 );
 	background: lighten( $gray, 30 );
 }
 

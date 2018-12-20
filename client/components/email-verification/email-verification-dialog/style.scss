@@ -21,7 +21,7 @@
 .email-verification-dialog__confirmation-dialog-email,
 .email-verification-dialog__confirmation-dialog-explanation,
 .email-verification-dialog__confirmation-dialog-reasoning {
-	color: darken( $gray, 30 );
+	color: var( --color-neutral-600 );
 	margin: 0 0 8px 0;
 }
 

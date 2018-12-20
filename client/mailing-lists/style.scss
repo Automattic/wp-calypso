@@ -28,7 +28,7 @@
 		}
 
 		&.gridicons-mail {
-			fill: darken( $gray, 20 );
+			fill: var( --color-neutral-500 );
 
 			@include breakpoint( '<480px' ) {
 				height: 24px;
@@ -62,7 +62,7 @@
 	}
 
 	p {
-		color: darken( $gray, 20 );
+		color: var( --color-neutral-500 );
 		margin: 0;
 	}
 }
@@ -77,7 +77,7 @@
 
 	h4 {
 		font-weight: bold;
-		color: darken( $gray, 20 );
+		color: var( --color-neutral-500 );
 		font-size: 15px;
 	}
 
