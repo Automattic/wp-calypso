@@ -564,6 +564,10 @@ ul.module-header-actions {
 		&.disabled {
 			color: var( --color-neutral-200 );
 		}
+
+		&:hover:not( [disabled] ) {
+			color: var( --color-text );
+		}
 	}
 }
 
