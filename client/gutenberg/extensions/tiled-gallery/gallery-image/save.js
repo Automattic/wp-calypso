@@ -4,11 +4,6 @@
 import { isBlobURL } from '@wordpress/blob'; // @TODO Add dep Jetpack-side
 import { RichText } from '@wordpress/editor';
 
-/**
- * Internal dependencies
- */
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-
 export default function GalleryImageSave( props ) {
 	const {
 		'aria-label': ariaLabel,
@@ -53,11 +48,7 @@ export default function GalleryImageSave( props ) {
 		<figure className={ className }>
 			{ href ? <a href={ href }>{ img }</a> : img }
 			{ ! RichText.isEmpty( caption ) && (
-				<RichText.Content
-					tagName="figcaption"
-					placeholder={ __( 'Write caption…' ) }
-					value={ caption }
-				/>
+				<RichText.Content tagName="figcaption" value={ caption } />
 			) }
 		</figure>
 	);
