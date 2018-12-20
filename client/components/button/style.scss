@@ -73,9 +73,9 @@ button {
 	&[disabled],
 	&:disabled,
 	&.disabled {
-		color: var( --color-neutral-0 );
+		color: var( --color-neutral-50 );
 		background-color: $white;
-		border-color: var( --color-neutral-0 );
+		border-color: var( --color-neutral-50 );
 		cursor: default;
 
 		&:active,
@@ -96,7 +96,7 @@ button {
 		line-height: 1;
 
 		&:disabled {
-			color: var( --color-neutral-0 );
+			color: var( --color-neutral-50 );
 		}
 		.gridicon {
 			top: 5px;
@@ -153,9 +153,9 @@ button {
 	&[disabled],
 	&:disabled,
 	&.disabled {
-		color: var( --color-neutral-0 );
+		color: var( --color-neutral-50 );
 		background-color: $white;
-		border-color: var( --color-neutral-0 );
+		border-color: var( --color-neutral-50 );
 	}
 
 	&.is-busy {
@@ -185,7 +185,7 @@ button {
 	&[disabled],
 	&:disabled {
 		color: lighten( $alert-red, 30% );
-		border-color: var( --color-neutral-0 );
+		border-color: var( --color-neutral-50 );
 	}
 }
 
@@ -237,7 +237,7 @@ button {
 
 	&[disabled],
 	&:disabled {
-		color: var( --color-neutral-0 );
+		color: var( --color-neutral-50 );
 		cursor: default;
 
 		&:active,
@@ -273,7 +273,7 @@ button {
 		}
 
 		&[disabled] {
-			color: var( --color-neutral-0 );
+			color: var( --color-neutral-50 );
 		}
 	}
 
