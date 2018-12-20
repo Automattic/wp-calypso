@@ -20,7 +20,7 @@ const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
  * @return {Number}  Timestamp marking the last time the nudge was dismissed
  */
 const getLastDismissTime = ( state, siteId ) => {
-	const preference = getPreference( state, 'google-my-business-dismissible-nudge' ) || {};
+	const preference = getPreference( state, 'upwork-dismissible-nudge' ) || {};
 	const sitePreference = preference[ siteId ] || [];
 	const lastEvent = last( sitePreference.filter( event => 'dismiss' === event.type ) );
 
@@ -28,13 +28,11 @@ const getLastDismissTime = ( state, siteId ) => {
 };
 
 /**
- * Returns true if the Google My Business nudge has recently been dismissed by the current user
+ * Returns true if the Upwork nudge has recently been dismissed by the current user
  * and this action is still effective for this site
  *
  * The conditions for it to be effective (and thus make the nudge invisible) are the following:
  * - The last time it was dismissed must be less than 2 weeks ago
- * OR
- * - It must have been dismissed more than MAX_DISMISS times in total
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId The Id of the site
