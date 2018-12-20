@@ -6,7 +6,7 @@
 
 .design-type__disclaimer {
 	text-align: center;
-	color: darken( $gray, 20 );
+	color: var( --color-neutral-500 );
 	font-size: 0.875em;
 	width: 100%;
 	padding: 1.8em;
