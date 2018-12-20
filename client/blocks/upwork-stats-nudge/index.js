@@ -107,7 +107,7 @@ class UpworkStatsNudge extends Component {
 						</h1>
 						<p>
 							{ this.props.translate(
-								"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. They know their stun and they're waiting to help you build your dream site."
+								"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. They know their stuff and they're waiting to help you build your dream site."
 							) }
 						</p>
 						<div className="upwork-stats-nudge__button-row">
