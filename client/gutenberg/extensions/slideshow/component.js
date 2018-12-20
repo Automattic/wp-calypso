@@ -62,7 +62,6 @@ export class Slideshow extends Component {
 	componentDidMount() {
 		this.buildImageMetadata( this.buildSwiper );
 	}
-	componentWillUnmount() {}
 	componentDidUpdate( prevProps ) {
 		const { swiperInstance } = this.state;
 		const { align, effect, children } = this.props;
