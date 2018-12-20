@@ -48,6 +48,7 @@ class Document extends React.Component {
 			urls,
 			hasSecondary,
 			sectionGroup,
+			sectionName,
 			clientData,
 			isFluidWidth,
 			sectionCss,
@@ -62,7 +63,6 @@ class Document extends React.Component {
 			devDocsURL,
 			feedbackURL,
 			inlineScriptNonce,
-			section,
 		} = this.props;
 
 		const csskey = isRTL ? 'css.rtl' : 'css.ltr';
@@ -120,13 +120,12 @@ class Document extends React.Component {
 					) }
 				</Head>
 				<body
-					className={ classNames(
-						{
-							rtl: isRTL,
-							'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
-						},
-						[ 'section-' + section.name ]
-					) }
+					className={ classNames( {
+						rtl: isRTL,
+						'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
+						[ 'is-group-' + sectionGroup ]: sectionGroup,
+						[ 'is-section-' + sectionName ]: sectionName,
+					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
 					{ renderedLayout ? (
@@ -142,6 +141,7 @@ class Document extends React.Component {
 							<div
 								className={ classNames( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
+									[ 'is-section-' + sectionName ]: sectionName,
 								} ) }
 							>
 								<div className="masterbar" />
