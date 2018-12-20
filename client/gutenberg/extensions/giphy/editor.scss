@@ -15,11 +15,11 @@
 		}
 	}
 	.wp-block-jetpack-giphy_text-input-field {
-		left: 25%;
-		margin-top: -3em;
+		margin-top: -1em;
 		position: absolute;
 		top: 50%;
-		width: 50%;
+		width: 100%;
+		padding: 0 1em;
 		&.has-focus .components-text-control__input {
 			opacity: 1;
 			-webkit-transition: opacity 0;
@@ -36,9 +36,11 @@
 			transition: opacity 0.5s ease-in;
 		}
 		.components-text-control__input {
-			opacity: 0;
+			opacity: 1;
+			max-width: 350px;
 			padding: 8px 2px;
 			text-align: center;
+			width: 100%;
 		}
 		.components-base-control__label {
 			height: 0;
