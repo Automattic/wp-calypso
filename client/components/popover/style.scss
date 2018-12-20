@@ -201,7 +201,7 @@
 
 	// with gridicons
 	.gridicon {
-		color: lighten( $gray, 10 );
+		color: var( --color-neutral-200 );
 		vertical-align: bottom;
 		margin-right: 8px;
 	}

@@ -39,7 +39,7 @@
 		appearance: none;
 
 		&:hover {
-			border-color: lighten( $gray, 10% );
+			border-color: var( --color-neutral-200 );
 			color: var( --color-neutral-700 );
 		}
 		&:active {

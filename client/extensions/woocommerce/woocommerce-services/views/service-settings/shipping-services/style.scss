@@ -99,7 +99,7 @@
 		box-shadow: none;
 
 		&:disabled {
-			color: lighten( $gray, 10% );
+			color: var( --color-neutral-200 );
 			background-color: $gray-light;
 			border-color: lighten( $gray, 30% );
 		}
