@@ -14,26 +14,25 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import isGoogleMyBusinessStatsNudgeDismissed from 'state/selectors/is-google-my-business-stats-nudge-dismissed';
+import isUpworkStatsNudgeDismissed from 'state/selectors/is-upwork-stats-nudge-dismissed';
 import QueryPreferences from 'components/data/query-preferences';
 import SectionHeader from 'components/section-header';
 import { dismissNudge } from './actions';
-import { enhanceWithDismissCount } from 'my-sites/google-my-business/utils';
 import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
 
-class GoogleMyBusinessStatsNudge extends Component {
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+class UpworkStatsNudge extends Component {
 	static propTypes = {
 		isDismissed: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
-		visible: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		visible: true,
 	};
 
 	componentDidMount() {
@@ -48,21 +47,21 @@ class GoogleMyBusinessStatsNudge extends Component {
 
 	recordView() {
 		if ( this.isVisible() ) {
-			this.props.recordTracksEvent( 'calypso_google_my_business_stats_nudge_view' );
+			this.props.recordTracksEvent( 'calypso_upwork_stats_nudge_view' );
 		}
 	}
 
 	onDismissClick = () => {
-		this.props.recordTracksEvent( 'calypso_google_my_business_stats_nudge_dismiss_icon_click' );
+		this.props.recordTracksEvent( 'calypso_upworks_stats_nudge_dismiss_icon_click' );
 		this.props.dismissNudge();
 	};
 
 	onStartNowClick = () => {
-		this.props.recordTracksEvent( 'calypso_google_my_business_stats_nudge_start_now_button_click' );
+		this.props.recordTracksEvent( 'calypso_upwork_stats_nudge_start_now_button_click' );
 	};
 
 	isVisible() {
-		return ! this.props.isDismissed && this.props.visible;
+		return ! this.props.isDismissed;
 	}
 
 	render() {
@@ -71,47 +70,45 @@ class GoogleMyBusinessStatsNudge extends Component {
 		}
 
 		return (
-			<Card className="google-my-business-stats-nudge">
+			<Card className="upwork-stats-nudge">
 				<QueryPreferences />
 
 				<Gridicon
 					icon="cross"
-					className="google-my-business-stats-nudge__close-icon"
+					className="upwork-stats-nudge__close-icon"
 					onClick={ this.onDismissClick }
 				/>
 
 				<SectionHeader
-					className="google-my-business-stats-nudge__header"
+					className="upwork-stats-nudge__header"
 					label={ this.props.translate( 'Recommendations from WordPress.com' ) }
 				/>
 
-				<div className="google-my-business-stats-nudge__body">
-					<div className="google-my-business-stats-nudge__image-wrapper">
+				<div className="upwork-stats-nudge__body">
+					<div className="upwork-stats-nudge__image-wrapper">
 						<img
-							className="google-my-business-stats-nudge__image"
+							className="upwork-stats-nudge__image"
 							src="/calypso/images/google-my-business/phone-screenshot-cropped.png"
 							alt={ this.props.translate( 'Your business with Google My Business' ) }
 						/>
 					</div>
 
-					<div className="google-my-business-stats-nudge__info">
-						<h1 className="google-my-business-stats-nudge__title">
-							{ this.props.translate( 'Can your customers find you on Google?' ) }
+					<div className="upwork-stats-nudge__info">
+						<h1 className="upwork-stats-nudge__title">
+							{ this.props.translate( 'Need an expert to help realize your vision? Hire one!' ) }
 						</h1>
-
-						<h2 className="google-my-business-stats-nudge__description">
+						<p>
 							{ this.props.translate(
-								'Be there when customers search businesses like yours on Google Search and Maps.'
+								"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. They know their stun and they're waiting to help you build your dream site."
 							) }
-						</h2>
-
-						<div className="google-my-business-stats-nudge__button-row">
+						</p>
+						<div className="upwork-stats-nudge__button-row">
 							<Button
-								href={ `/google-my-business/${ this.props.siteSlug }` }
+								href={ '/experts/upwork?source=stat-banner' }
 								primary
 								onClick={ this.onStartNowClick }
 							>
-								{ this.props.translate( 'Start Now' ) }
+								{ this.props.translate( 'Find your expert' ) }
 							</Button>
 						</div>
 					</div>
@@ -123,13 +120,10 @@ class GoogleMyBusinessStatsNudge extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		isDismissed: isGoogleMyBusinessStatsNudgeDismissed( state, ownProps.siteId ),
+		isDismissed: isUpworkStatsNudgeDismissed( state, ownProps.siteId ),
 	} ),
 	{
 		dismissNudge,
-		recordTracksEvent: withEnhancers( recordTracksEvent, [
-			enhanceWithDismissCount,
-			enhanceWithSiteType,
-		] ),
+		recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
 	}
-)( localize( GoogleMyBusinessStatsNudge ) );
+)( localize( UpworkStatsNudge ) );

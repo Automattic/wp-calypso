@@ -1,0 +1,70 @@
+.card.upwork-stats-nudge {
+	padding: 0; // allow section header to perfectly sit over the top of the card
+}
+
+.upwork-stats-nudge__body {
+	display: flex;
+	flex-direction: row;
+	padding: 11px 24px 11px 24px; // standard padding
+
+	@include breakpoint( '>960px' ) {
+		max-height: 300px;
+		padding-bottom: 0px; // allow image to go right to the edge of the card
+	}
+}
+
+.upwork-stats-nudge__info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	@include breakpoint( '>960px' ) {
+		padding-right: 12px; // the image has about 12 px of whitespace, this helps "balance" the block
+	}
+}
+
+.upwork-stats-nudge__title {
+	font-size: 21px;
+	font-weight: 400;
+	margin: 10px 0 5px;
+}
+
+.upwork-stats-nudge__description {
+	font-size: 16px;
+	font-weight: 400;
+}
+
+.upwork-stats-nudge__button-row {
+	align-content: center;
+	display: flex;
+	flex-direction: row;
+	margin: 20px 0;
+	.button {
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+			text-align: center;
+		}
+	}
+}
+
+.upwork-stats-nudge__image-wrapper {
+	display: none;
+	padding: 0 40px;
+	@include breakpoint( '>960px' ) {
+		display: flex;
+		min-width: 250px;
+	}
+}
+
+.upwork-stats-nudge__image {
+	max-height: 250px;
+}
+
+.upwork-stats-nudge__close-icon {
+	position: absolute;
+	top: 14px;
+	right: 18px;
+	color: $gray;
+	cursor: pointer;
+	z-index: 1;
+}
