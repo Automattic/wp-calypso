@@ -26,6 +26,6 @@
 	}
 
 	&.is-disabled .gridicon {
-		color: lighten( $gray, 10% );
+		color: var( --color-neutral-200 );
 	}
 }
