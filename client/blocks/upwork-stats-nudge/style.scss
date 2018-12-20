@@ -3,13 +3,14 @@
 }
 
 .upwork-stats-nudge__body {
+	align-items: flex-end;
 	display: flex;
 	flex-direction: row;
-	padding: 11px 24px 11px 24px; // standard padding
+	padding: 11px 24px 11px 24px; // Standard padding
 
 	@include breakpoint( '>960px' ) {
 		max-height: 300px;
-		padding-bottom: 0px; // allow image to go right to the edge of the card
+		padding-bottom: 0px; // Allow image to go right to the edge of the card
 	}
 }
 
@@ -19,7 +20,7 @@
 	justify-content: center;
 
 	@include breakpoint( '>960px' ) {
-		padding-right: 12px; // the image has about 12 px of whitespace, this helps "balance" the block
+		padding-right: 12px; // The image has about 12 px of whitespace, this helps "balance" the block
 	}
 }
 
@@ -38,7 +39,12 @@
 	align-content: center;
 	display: flex;
 	flex-direction: row;
-	margin: 20px 0;
+	margin-bottom: 20px;
+
+	@include breakpoint( '>960px' ) {
+		margin-bottom: 30px;
+	}
+
 	.button {
 		@include breakpoint( '<480px' ) {
 			width: 100%;
@@ -49,15 +55,17 @@
 
 .upwork-stats-nudge__image-wrapper {
 	display: none;
-	padding: 0 40px;
+
 	@include breakpoint( '>960px' ) {
 		display: flex;
-		min-width: 250px;
+		height: 200px;
+		margin-right: 40px;
+		min-width: 260px;
 	}
 }
 
 .upwork-stats-nudge__image {
-	max-height: 250px;
+	width: 100%;
 }
 
 .upwork-stats-nudge__close-icon {
