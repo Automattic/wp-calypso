@@ -92,24 +92,10 @@
 	margin-right: auto;
 }
 
-.editor-confirmation-sidebar__action .button {
-	background: var( --color-accent );
-	border-color: var( --button-primary-border-color );
-	color: $white;
-
+.editor-confirmation-sidebar__action .button {	
 	padding: 7px 24px;
 	min-width: 120px;
 	margin: 4px 0 4px 12px;
-
-	&:hover,
-	&:focus {
-		border-color: darken( $alert-green, 40% );
-	}
-	&[disabled],
-	&:disabled {
-		background: lighten( $alert-green, 20% );
-		border-color: tint( $alert-green, 30% );
-	}
 }
 
 .editor-confirmation-sidebar__content-wrap {
