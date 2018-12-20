@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import Main from 'components/main';
 import Button from 'components/button';
 import ThemesSelection from './themes-selection';
@@ -234,7 +235,14 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					{ showBanners && <RandomThemesBanner banners={ themeBanners } /> }
+					{ showBanners &&
+						abtest( 'builderReferralThemesBanner' ) === 'original' && (
+							<RandomThemesBanner banners={ themeBanners } />
+						) }
+					{ showBanners &&
+						abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
+							<RandomThemesBanner banners={ themeBanners } />
+						) }
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }
