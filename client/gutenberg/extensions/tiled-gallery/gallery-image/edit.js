@@ -96,6 +96,7 @@ class GalleryImageEdit extends Component {
 			link,
 			linkTo,
 			onRemove,
+			origUrl,
 			setAttributes,
 			url,
 			width,
@@ -122,6 +123,7 @@ class GalleryImageEdit extends Component {
 					alt={ alt }
 					data-id={ id }
 					data-height={ height }
+					data-url={ origUrl }
 					data-width={ width }
 					onClick={ this.onImageClick }
 					tabIndex="0"

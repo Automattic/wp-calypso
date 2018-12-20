@@ -14,6 +14,7 @@ export default function GalleryImageSave( props ) {
 		id,
 		link,
 		linkTo,
+		origUrl,
 		url,
 		width,
 	} = props;
@@ -39,6 +40,7 @@ export default function GalleryImageSave( props ) {
 			alt={ alt }
 			data-id={ id }
 			data-height={ height }
+			data-url={ origUrl }
 			data-width={ width }
 			aria-label={ ariaLabel }
 		/>

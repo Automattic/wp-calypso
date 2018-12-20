@@ -60,7 +60,7 @@ const blockAttributes = {
 				source: 'attribute',
 			},
 			url: {
-				attribute: 'src',
+				attribute: 'data-url',
 				selector: 'img',
 				source: 'attribute',
 			},

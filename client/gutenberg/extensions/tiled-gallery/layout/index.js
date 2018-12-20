@@ -54,7 +54,7 @@ export default class Layout extends Component {
 				columns={ columns }
 				height={ img.height }
 				id={ img.id }
-				image={ img }
+				origUrl={ img.url }
 				imageCrop={ imageCrop }
 				isSelected={ selectedImage === i }
 				key={ i }
