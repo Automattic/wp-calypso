@@ -82,7 +82,7 @@
 	}
 
 	p {
-		color: darken( $gray, 10 );
+		color: var( --color-neutral-400 );
 		margin: 0;
 		font-size: 15px;
 	}

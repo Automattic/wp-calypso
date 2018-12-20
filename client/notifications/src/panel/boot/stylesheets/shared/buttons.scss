@@ -65,7 +65,7 @@
 		}
 		&.is-compact {
 			padding: 7px;
-			color: darken( $gray, 10% );
+			color: var( --color-neutral-400 );
 			font-size: 11px;
 			line-height: 1;
 			text-transform: uppercase;
@@ -148,7 +148,7 @@
 
 	.wpnc__button.is-borderless {
 		border: none;
-		color: darken( $gray, 10% );
+		color: var( --color-neutral-400 );
 		padding-left: 0;
 		padding-right: 0;
 

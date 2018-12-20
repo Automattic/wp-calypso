@@ -144,7 +144,7 @@
 	.sharing-service-tip {
 		margin-top: 16px;
 		font-size: 14px;
-		color: darken( $gray, 10 );
+		color: var( --color-neutral-400 );
 
 		.gridicons-info {
 			margin-right: 3px;

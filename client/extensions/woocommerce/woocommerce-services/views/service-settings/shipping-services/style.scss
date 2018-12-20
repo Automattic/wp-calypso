@@ -114,6 +114,6 @@
 }
 
 .shipping-services__delivery-estimate {
-	color: darken( $gray, 10% );
+	color: var( --color-neutral-400 );
 	margin-left: 3px;
 }
