@@ -73,8 +73,9 @@ class GiphyEdit extends Component {
 				if ( ! giphyData.images ) {
 					return;
 				}
-				const topPadding =
-					( giphyData.images.original.height / giphyData.images.original.width ) * 100;
+				const topPadding = Math.floor(
+					( giphyData.images.original.height / giphyData.images.original.width ) * 100
+				);
 				const giphyUrl = giphyData.embed_url;
 				setAttributes( { giphyUrl, topPadding } );
 				this.maintainFocus( 500 );
