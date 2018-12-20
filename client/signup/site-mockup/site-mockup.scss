@@ -8,16 +8,16 @@
 	// help signify its a browser.
 	svg {
 		position: absolute;
-			top: 8px;
-			left: 8px;
+		top: 8px;
+		left: 8px;
 		fill: $gray;
 	}
 
 	.site-mockup__chrome-label {
 		position: absolute;
-			top: 7px;
-			right: 0;
-			left: 0;
+		top: 7px;
+		right: 0;
+		left: 0;
 
 		margin: 0 auto;
 		font-size: 11px;
@@ -37,7 +37,7 @@
 
 	.site-mockup__chrome-label {
 		position: relative;
-			top: 6px;
+		top: 6px;
 		margin: 0 auto;
 		font-size: 11px;
 		text-align: center;
@@ -51,7 +51,6 @@
 	}
 }
 
-
 // Mockup document body; Where all the
 // stuff goes.
 .site-mockup__body {
@@ -61,17 +60,11 @@
 	// Mobile body is scrollable and needs to
 	// make room for the chrome.
 	.site-mockup__viewport.is-mobile & {
-		margin: 0 6px 6px 6px;
+		margin: 0 6px 24px 6px;
 		border: 1px solid $gray-lighten-20;
 		border-radius: 3px;
-		max-height: 400px;
-
-		@include breakpoint( '<660px' ) {
-			max-height: 600px;
-		}
 	}
 }
-
 
 // Demo content - WIP
 //
@@ -82,9 +75,9 @@
 	.site-mockup__viewport.is-mobile & {
 		padding: 0 16px;
 	}
-	font-family: Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: Lato, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+		Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
-
 
 // Everything but the cover image has a max-width
 // and is centered inside the viewport.
@@ -105,7 +98,10 @@
 		display: block;
 	}
 
-	h1, h2, h3, h4 {
+	h1,
+	h2,
+	h3,
+	h4 {
 		clear: none;
 	}
 
@@ -134,8 +130,8 @@
 .site-mockup__phone {
 	display: inline-block;
 	.site-mockup__address + &::before {
-		content: "•";
-		padding: 0 .5em;
+		content: '•';
+		padding: 0 0.5em;
 		.site-mockup__viewport.is-mobile & {
 			display: none;
 		}
@@ -143,9 +139,7 @@
 	.site-mockup__viewport.is-mobile & {
 		display: block;
 	}
-
 }
-
 
 .site-mockup__h2,
 .site-mockup__entry-content h2 {
@@ -182,7 +176,7 @@
 
 	span {
 		font-size: 18px;
-		color: rgb(110, 115, 129);
+		color: rgb( 110, 115, 129 );
 	}
 
 	.site-mockup__viewport.is-desktop & {
@@ -289,11 +283,11 @@
 		width: auto;
 	}
 
-	&:not(:last-child) {
+	&:not( :last-child ) {
 		margin-right: 20px;
 		width: calc( 50% - 20px );
 	}
-	&:not(:first-child) {
+	&:not( :first-child ) {
 		margin-left: 20px;
 	}
 }
