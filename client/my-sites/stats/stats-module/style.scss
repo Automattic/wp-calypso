@@ -556,6 +556,15 @@ ul.module-header-actions {
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
+
+	.button.download-csv {
+		color: var( --color-text-subtle );
+
+		&[disabled],
+		&.disabled {
+			color: var( --color-neutral-200 );
+		}
+	}
 }
 
 .stats-module__header.is-refreshing {
