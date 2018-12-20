@@ -49,7 +49,12 @@
 	}
 
 	&.is-open.has-focus {
-		box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-light );
+		border-color: var( --color-primary );
+		box-shadow: 0 0 0 2px var( --color-primary-100 );
+
+		&:hover {
+			box-shadow: 0 0 0 2px var( --color-primary-200 );
+		}
 	}
 
 	&.is-compact {
@@ -119,6 +124,11 @@
 	&:focus {
 		box-shadow: none;
 		border: none;
+
+		&:hover {
+			border: none;
+			box-shadow: none;
+		}
 	}
 }
 
