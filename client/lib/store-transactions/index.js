@@ -27,6 +27,7 @@ import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	translatedEbanxError,
 } from 'lib/checkout/ebanx';
+import analytics from 'lib/analytics';
 
 const wpcom = wp.undocumented();
 
@@ -333,7 +334,8 @@ export function createCardToken( requestType, cardDetails, callback, forcedPayga
 		return createEbanxToken( requestType, cardDetails ).then(
 			result => callback( null, result ),
 			function( reason ) {
-				debug( 'Error creating EBANX token', reason );
+				analytics.mc.bumpStat( 'cc_token_fallback', 'ebanx_to_paygate' );
+				debug( 'Error creating EBANX token, falling back to paygate', reason );
 				return createCardToken( requestType, cardDetails, callback, true );
 			}
 		);
