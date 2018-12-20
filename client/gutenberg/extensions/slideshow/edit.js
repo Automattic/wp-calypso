@@ -41,11 +41,9 @@ class SlideshowEdit extends Component {
 			selectedImage: null,
 		};
 	}
-	componentDidMount() {}
 	onSelectImages = images => {
 		const { setAttributes } = this.props;
 		const mapped = images.map( image => pickRelevantMediaFiles( image ) );
-
 		setAttributes( {
 			images: mapped,
 		} );
