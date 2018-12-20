@@ -14,7 +14,7 @@ import wpcom from 'lib/wp';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
 const user = userFactory();
-import { getSavedVariations, abtest } from 'lib/abtest';
+import { getABTestVariation, getSavedVariations, abtest } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
 import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
@@ -160,7 +160,10 @@ export function createSiteWithCart(
 		newSiteParams.blog_name = importingFromUrl;
 		newSiteParams.find_available_url = true;
 		newSiteParams.public = -1;
-	} else if ( flowName === 'onboarding' ) {
+	} else if (
+		flowName === 'onboarding' &&
+		'remove' === getABTestVariation( 'removeDomainsStepFromOnboarding' )
+	) {
 		newSiteParams.blog_name = get( user.get(), 'username', siteTitle ) || siteType || siteVertical;
 		newSiteParams.find_available_url = true;
 		newSiteParams.public = 1;

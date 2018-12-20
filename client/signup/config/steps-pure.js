@@ -385,6 +385,11 @@ export function generateSteps( {
 
 		'site-information': {
 			stepName: 'site-information',
+			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
+		},
+
+		'site-information-without-domains': {
+			stepName: 'site-information-without-domains',
 			apiRequestFunction: createSiteWithCart,
 			providesDependencies: [
 				'siteTitle',
