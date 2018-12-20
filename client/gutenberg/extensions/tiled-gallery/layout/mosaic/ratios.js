@@ -7,7 +7,7 @@ export function imagesToRatios( images ) {
 	return map( images, ( { height, width } ) => ( height && width ? width / height : 1 ) );
 }
 
-export function ratiosToRows( ratios, { isWide } ) {
+export function ratiosToRows( ratios, { isWide } = {} ) {
 	// This function will recursively process the input until it is consumed
 	const go = ( processed, toProcess ) => {
 		if ( ! toProcess.length ) {
