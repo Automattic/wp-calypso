@@ -26,13 +26,17 @@
 		.help-result__title {
 			color: var( --color-primary-dark );
 		}
+
+		.help-result__icon {
+			fill: var( --color-primary-dark );
+		}
 	}
 }
 
 .help-result__icon {
 	position: absolute;
 	margin: -2px 16px 0px -8px;
-	fill: $gray;
+	fill: var( --color-neutral );
 }
 
 .help-result__title {
