@@ -27,13 +27,13 @@ export async function getExtensions() {
 		 * At build time, webpack needs to compile modules that will be dynamically imported at
 		 * runtime.
 		 *
-		 * Becuase the import path is dynamic (it includes a variable), webpack does not know at
+		 * Because the import path is dynamic (it includes a variable), webpack does not know at
 		 * build time what might be imported at runtime. Therefore, webpack will attempt to find any
 		 * import that could be reached by completing the string and build the modules.
 		 *
 		 * By fixing parts of the path with literal strings, we can limit what webpack needs bundle
-		 * here. However, any number of path parts could be insterted in the variable. Therefore, we
-		 * must also include a `webpackInclude` regex to fix our string further and ensure webpack
+		 * here. However, any number of path parts could be inserted in the variable. Therefore, we
+		 * must also include a `webpackInclude` comment to fix our string further and ensure webpack
 		 * does not attempt to build problematic targets and instead only parses our
 		 * intended modules.
 		 */
