@@ -22,7 +22,7 @@ import HeaderToolbar from 'gutenberg/editor/components/header/header-toolbar'; /
 import PostPreviewButton from 'gutenberg/editor/components/post-preview-button'; // GUTENLYPSO
 import PinnedPlugins from './pinned-plugins';
 import shortcuts from '../../keyboard-shortcuts';
-import PostPublishButtonOrToggle from './post-publish-button-or-toggle';
+import PostPublishButtonOrToggle from 'gutenberg/editor/components/post-publish-button-or-toggle'; // GUTENLYPSO
 
 function Header( {
 	closeGeneralSidebar,
