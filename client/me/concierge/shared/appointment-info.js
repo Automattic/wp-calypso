@@ -25,10 +25,11 @@ class AppointmentInfo extends Component {
 
 		return (
 			<Confirmation
-				title={ translate( 'Your up-coming appointment' ) }
+				title={ translate( 'Your upcoming appointment' ) }
 				description={ translate(
-					'You have made an appointment with us from %(beginTime)s for %(duration)d minutes. ' +
-						'We are looking forward to seeing you there!',
+					"You have a session with us on %(beginTime)s. It'll last about %(duration)d minutes, " +
+						'and we can talk about anything related to your site. Get all your questions ready ' +
+						'-- we look forward to chatting!',
 					{
 						args: {
 							beginTime: moment( beginTimestamp ).format( 'LLLL' ),
