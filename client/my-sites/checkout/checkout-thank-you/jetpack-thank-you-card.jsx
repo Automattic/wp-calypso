@@ -25,10 +25,9 @@ import { isCalypsoStartedConnection } from 'jetpack-connect/persistence-utils';
 import HappyChatButton from 'components/happychat/button';
 
 // Redux actions & selectors
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getSite,
-	getSiteSlug,
 	getSiteAdminUrl,
 	isJetpackSiteMainNetworkSite,
 	isJetpackSiteMultiSite,
@@ -575,7 +574,7 @@ export class JetpackThankYouCard extends Component {
 export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
-		const siteSlug = getSiteSlug( state, siteId );
+		const siteSlug = getSelectedSiteSlug( state );
 		const whitelist = ownProps.whitelist || false;
 		let plan = getCurrentPlan( state, siteId );
 		let planSlug;
@@ -587,11 +586,13 @@ export default connect(
 		const planFeatures =
 			plan && plan.getPlanCompareFeatures ? plan.getPlanCompareFeatures() : false;
 		const jetpackMyPlanPageAvailable = isJetpackMinimumVersion( state, siteId, '6.9-beta' );
+
+		const connectionStartedInCalypso = isCalypsoStartedConnection( siteSlug );
 		const jetpackAdminPlansPageUrl = jetpackMyPlanPageAvailable
 			? 'admin.php?page=jetpack#/my-plan'
 			: 'admin.php?page=jetpack#/plans';
 		const jetpackAdminPageUrl = getSiteAdminUrl( state, siteId, jetpackAdminPlansPageUrl );
-		const goBackToSiteLink = isCalypsoStartedConnection
+		const goBackToSiteLink = connectionStartedInCalypso
 			? `/plans/my-plan/${ siteSlug }`
 			: jetpackAdminPageUrl;
 
