@@ -59,7 +59,7 @@ button {
 
 	background-color: $white;
 	color: var( --color-neutral-700 );
-	border-color:var( --color-neutral-100 );
+	border-color: var( --color-neutral-100 );
 
 	&:hover {
 		border-color: var( --color-neutral-200 );
@@ -344,7 +344,7 @@ button {
 	border: none;
 	border-radius: 0;
 	padding: 0;
-	color: var( --color-accent );
+	color: var( --color-link );
 	font-weight: 400;
 	font-size: inherit;
 	line-height: 1.65;
@@ -353,7 +353,7 @@ button {
 	&:focus,
 	&:active,
 	&.is-active {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 		box-shadow: none;
 	}
 }
