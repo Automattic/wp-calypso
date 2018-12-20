@@ -11,7 +11,7 @@
 	}
 
 	.form-label__optional {
-		color: darken( $gray, 20% );
+		color: var( --color-neutral-500 );
 		font-weight: normal;
 		margin-left: 6px;
 	}

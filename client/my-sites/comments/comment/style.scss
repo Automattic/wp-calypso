@@ -531,7 +531,7 @@
 .comment-html-editor__toolbar .button {
 	border-right: 1px solid var( --color-neutral-0 );
 	border-radius: 0px;
-	color: darken( $gray, 20% );
+	color: var( --color-neutral-500 );
 	margin-bottom: 8px;
 	min-width: 30px;
 	padding: 4px 8px;
