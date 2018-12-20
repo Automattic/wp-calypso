@@ -59,6 +59,10 @@ $tiled-gallery-max-column-count: 20;
 .tiled-gallery__item {
 	justify-content: center;
 	position: relative;
+
+	& + & {
+		margin-top: $tiled-gallery-gutter;
+	}
 	figure {
 		margin: 0;
 		height: 100%;
