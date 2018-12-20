@@ -33,6 +33,8 @@ import userFactory from 'lib/user';
 import { launchSite } from 'state/sites/launch/actions';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import createSelector from 'lib/create-selector';
+import { getLoginUrl } from 'lib/google-apps';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
 const userLib = userFactory();
 
@@ -596,6 +598,29 @@ class WpcomChecklistComponent extends PureComponent {
 			/>
 		);
 	};
+
+	renderAcceptGSuiteTOS = ( TaskComponent, baseProps, task ) => {
+		const { domains, translate, siteSlug } = this.props;
+
+		// TODO: can domains ever be empty?
+		const domainName = domains[ 0 ].name;
+		const users = domains[ 0 ].googleAppsSubscription.pendingUsers;
+
+		return (
+			<TaskComponent
+				{ ...baseProps }
+				title={ translate( 'Accept the G Suite TOS to complete email setup' ) }
+				description={ translate( "You're almost done setting up G Suite!" ) }
+				onClick={ () => {
+					this.trackTaskStart( task, {
+						sub_step_name: 'fix_gsuite_tos_acceptance',
+					} );
+					page( `/domains/manage/email/${ siteSlug }` );
+					window.location.href = getLoginUrl( users[ 0 ], domainName );
+				} }
+			/>
+		);
+	};
 }
 
 function getContactPage( posts ) {
@@ -641,6 +666,7 @@ export default connect(
 			userEmail: ( user && user.email ) || '',
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
+			domains: getDomainsBySiteId( state, siteId ),
 		};
 	},
 	{
