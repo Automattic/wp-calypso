@@ -1,11 +1,17 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { sprintf } from '@wordpress/i18n';
+
+/**
  * Internal dependencies
  */
 import './shared/public-path';
 import './editor-shared/block-category'; // Register the Jetpack category
 import extensionSlugsJson from './index.json';
+import { __ } from './utils/i18n';
 import { isEnabled } from 'config';
 
 const extensionSlugs = [
@@ -22,7 +28,9 @@ export async function getExtensions() {
 			( { childBlocks, name, settings } ) => ( {
 				childBlocks,
 				name,
-				settings,
+				settings: extensionSlugsJson.beta.includes( slug )
+					? { ...settings, title: sprintf( __( '%s (beta)' ), settings.title ) }
+					: settings,
 			} )
 		)
 	);
