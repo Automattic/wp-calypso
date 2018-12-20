@@ -11,6 +11,15 @@ export function ratioFromImage( { height, width } ) {
 	return height && width ? width / height : 1;
 }
 
+/**
+ * These are partially applied functions.
+ * They rely on helper function (defined below) to create a function that expects to be passed ratios
+ * during processing.
+ *
+ * …FitsNextImages() functions should be passed ratios to be processed
+ * …IsNotRecent() functions should be passed the processed shapes
+ */
+
 const reverseSymmetricRowIsNotRecent = isNotRecentShape( [ 2, 1, 2 ], 5 );
 const reverseSymmetricFitsNextImages = checkNextRatios( [
 	isLandscape,
