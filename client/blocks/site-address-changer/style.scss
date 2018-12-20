@@ -2,7 +2,7 @@
 .site-address-changer__dialog {
 	text-align: left;
 	max-width: 400px;
-	color: darken( $gray, 20% );
+	color: var( --color-neutral-500 );
 }
 
 .site-address-changer__copy-addition {

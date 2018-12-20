@@ -122,7 +122,7 @@
 }
 
 .reader-landing__feature-description {
-	color: darken( $gray, 20 );
+	color: var( --color-neutral-500 );
 	font-size: 1em;
 	margin-top: 4px;
 

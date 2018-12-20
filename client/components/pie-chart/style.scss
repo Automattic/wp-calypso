@@ -67,7 +67,7 @@
 
 .pie-chart__placeholder-drawing-element {
 	@include placeholder();
-	fill: lighten( $gray, 30% );
+	fill: var( --color-neutral-0 );
 }
 
 .pie-chart__placeholder-legend-item {

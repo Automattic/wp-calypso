@@ -19,7 +19,7 @@
 
 	@include breakpoint( '<480px' ) {
 		&.is-open {
-			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
 		}
 	}
 
@@ -160,7 +160,7 @@
 }
 
 .section-nav__hr {
-	background: lighten( $gray, 30 );
+	background: var( --color-neutral-0 );
 }
 
 // -------- Labels --------
