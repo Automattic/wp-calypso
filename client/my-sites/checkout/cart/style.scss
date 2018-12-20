@@ -147,17 +147,6 @@
 			outline: none;
 		}
 
-		.cart__toggle-link {
-			color: var( --color-link );
-
-			&:hover,
-			&:focus,
-			&:active,
-			&.is-active {
-				color: var( --color-link-dark );
-			}
-		}
-
 		form {
 			display: block;
 			border-top: 1px solid var( --color-neutral-0 );
