@@ -11,7 +11,7 @@
 	}
 
 	&.is-pending {
-		background: mix( $alert-yellow, $white, 8.5% );
+		background: var( --color-surface );
 		box-shadow: inset 4px 0 0 0 var( --color-warning ),
 			0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	}
@@ -614,7 +614,8 @@
 		z-index: z-index( 'root', '.card.comment.is-bulk-mode:hover' );
 	}
 	&.is-pending:hover {
-		box-shadow: inset 4px 0 0 0 var( --color-warning ), 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
+		box-shadow: inset 4px 0 0 0 var( --color-warning ), 0 0 0 1px $gray,
+			0 2px 4px var( --color-neutral-100 );
 	}
 
 	a {
