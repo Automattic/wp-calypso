@@ -10,7 +10,7 @@ import moment from 'moment';
 import getGeoLocation from 'state/happychat/selectors/get-geolocation';
 import getCurrentUserRegisterDate from 'state/selectors/get-current-user-register-date';
 import { getLastIncompleteSignupStep } from 'state/signup/progress/selectors';
-import { getcurrentFlowName } from 'state/signup/flow/selectors';
+import { getCurrentFlowName } from 'state/signup/flow/selectors';
 
 export default state => ( { site, howCanWeHelp, howYouFeel } ) => {
 	const info = {
@@ -49,7 +49,7 @@ export default state => ( { site, howCanWeHelp, howYouFeel } ) => {
 	}
 
 	// Add the signup flow name
-	const lastSignupFlow = getcurrentFlowName( state );
+	const lastSignupFlow = getCurrentFlowName( state );
 	if ( lastSignupFlow ) {
 		info.lastSignupFlow = lastSignupFlow;
 	}
