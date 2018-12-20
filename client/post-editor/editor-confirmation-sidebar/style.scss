@@ -93,8 +93,8 @@
 }
 
 .editor-confirmation-sidebar__action .button {
-	background: var( --color-success );
-	border-color: darken( $alert-green, 20% );
+	background: var( --color-accent );
+	border-color: var( --button-primary-border-color );
 	color: $white;
 
 	padding: 7px 24px;
