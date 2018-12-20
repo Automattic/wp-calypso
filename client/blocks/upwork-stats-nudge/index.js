@@ -19,6 +19,7 @@ import QueryPreferences from 'components/data/query-preferences';
 import SectionHeader from 'components/section-header';
 import { dismissNudge } from './actions';
 import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { withEnhancers } from 'state/utils';
 
 /**
@@ -29,6 +30,7 @@ import './style.scss';
 class UpworkStatsNudge extends Component {
 	static propTypes = {
 		isDismissed: PropTypes.bool.isRequired,
+		plan: PropTypes.object,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
@@ -52,12 +54,18 @@ class UpworkStatsNudge extends Component {
 	}
 
 	onDismissClick = () => {
-		this.props.recordTracksEvent( 'calypso_upworks_stats_nudge_dismiss_icon_click' );
+		const plan = this.props.plan ? this.props.plan.productSlug : '';
+		this.props.recordTracksEvent( 'calypso_upworks_stats_nudge_dismiss_icon_click', {
+			plan,
+		} );
 		this.props.dismissNudge();
 	};
 
 	onStartNowClick = () => {
-		this.props.recordTracksEvent( 'calypso_upwork_stats_nudge_start_now_button_click' );
+		const plan = this.props.plan ? this.props.plan.productSlug : '';
+		this.props.recordTracksEvent( 'calypso_upwork_stats_nudge_start_now_button_click', {
+			plan,
+		} );
 	};
 
 	isVisible() {
@@ -121,6 +129,7 @@ class UpworkStatsNudge extends Component {
 export default connect(
 	( state, ownProps ) => ( {
 		isDismissed: isUpworkStatsNudgeDismissed( state, ownProps.siteId ),
+		plan: getCurrentPlan( state, ownProps.siteId ),
 	} ),
 	{
 		dismissNudge,
