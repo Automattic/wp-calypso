@@ -63,7 +63,7 @@ class WpcomChecklistComponent extends PureComponent {
 			mobile_app_installed: this.renderMobileAppInstalledTask,
 			site_launched: this.renderSiteLaunchedTask,
 			email_setup: this.renderEmailSetupTask,
-			upgrade_email_forwarding: this.renderUpgradeEmailForwardingTask,
+			upgrade_email_forwarding_to_gsuite: this.renderUpgradeEmailForwardingToGSuiteTask,
 		};
 	}
 
@@ -558,7 +558,7 @@ class WpcomChecklistComponent extends PureComponent {
 		);
 	};
 
-	renderUpgradeEmailForwardingTask = ( TaskComponent, baseProps, task ) => {
+	renderUpgradeEmailForwardingToGSuiteTask = ( TaskComponent, baseProps, task ) => {
 		const { translate, siteSlug } = this.props;
 
 		baseProps.completed = true;
