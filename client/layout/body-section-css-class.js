@@ -15,12 +15,14 @@ import React from 'react';
 const patchBodyClass = toClass => ( next = null, prev = null ) => {
 	if ( prev === next ) {
 		return;
-	} else if ( prev && ! next ) {
+	}
+
+	if ( prev ) {
 		document.body.classList.remove( toClass( prev ) );
-	} else if ( ! prev && next ) {
+	}
+
+	if ( next ) {
 		document.body.classList.add( toClass( next ) );
-	} else {
-		document.body.classList.replace( toClass( prev ), toClass( next ) );
 	}
 };
 
