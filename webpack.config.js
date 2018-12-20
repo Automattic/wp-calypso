@@ -232,27 +232,6 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 								babelrc: false,
 								cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
 								cacheIdentifier,
-								overrides: [
-									{
-										test: './client/gutenberg/extensions',
-										plugins: [
-											[
-												'@wordpress/import-jsx-pragma',
-												{
-													scopeVariable: 'createElement',
-													source: '@wordpress/element',
-													isDefault: false,
-												},
-											],
-											[
-												'@babel/transform-react-jsx',
-												{
-													pragma: 'createElement',
-												},
-											],
-										],
-									},
-								],
 							},
 						},
 					],
