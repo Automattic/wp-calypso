@@ -136,7 +136,37 @@ export class EditorDiscussion extends React.Component {
 						disabled={ ! this.props.post }
 						onChange={ this.onChange }
 					/>
-					<span>{ this.props.translate( 'Allow Pingbacks & Trackbacks' ) }</span>
+					<span>
+						{ this.props.translate( 'Allow Pingbacks & Trackbacks' ) }
+						<InfoPopover
+							position="top right"
+							className="editor-ping_status__info"
+							gaEventCategory="Editor"
+							popoverName="PingStatus"
+						>
+							{ this.props.translate(
+								'{{a}}Pingbacks{{/a}} and {{b}}trackbacks{{/b}} are automated comments you will receive when others create links to your post elsewhere.',
+								{
+									components: {
+										a: (
+											<a
+												href="https://en.support.wordpress.com/comments/pingbacks/"
+												target="_blank"
+												rel="noopen noreferrer"
+											/>
+										),
+										b: (
+											<a
+												href="https://en.support.wordpress.com/comments/trackbacks/"
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						</InfoPopover>
+					</span>
 				</label>
 			</EditorFieldset>
 		);
