@@ -135,11 +135,13 @@ class GiphyEdit extends Component {
 				</BlockControls>
 				<div className={ classes }>
 					<figure style={ style }>
-						<button
+						<div
 							className="wp-block-jetpack-giphy_cover"
 							onClick={ this.setFocus }
+							onKeyDown={ this.setFocus }
 							ref={ this.textControlRef }
-							tabIndex="0"
+							role="button"
+							tabindex="0"
 						>
 							{ ( ! searchText || isSelected ) && (
 								<TextControl
@@ -151,7 +153,7 @@ class GiphyEdit extends Component {
 									value={ searchText }
 								/>
 							) }
-						</button>
+						</div>
 						<iframe src={ giphyUrl } title={ searchText } />
 					</figure>
 					{ ( ! RichText.isEmpty( caption ) || isSelected ) && (
