@@ -35,7 +35,11 @@
 	&:focus {
 		border-color: var( --color-primary );
 		outline: none;
-		box-shadow: 0 0 0 2px var( --color-primary-light );
+		box-shadow: 0 0 0 2px var( --color-primary-100 );
+
+		&:hover {
+			box-shadow: 0 0 0 2px var( --color-primary-200 );
+		}
 
 		&::-ms-clear {
 			display: none;
