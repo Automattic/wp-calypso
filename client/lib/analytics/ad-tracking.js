@@ -40,6 +40,7 @@ const isAolEnabled = true;
 const isExperianEnabled = true;
 const isLinkedinEnabled = true;
 const isOutbrainEnabled = true;
+const isIconMediaEnabled = true;
 const isYahooEnabled = false;
 let isYandexEnabled = false;
 const isCriteoEnabled = false;
@@ -83,6 +84,12 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		'?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26',
 	EXPERIAN_CONVERSION_PIXEL_URL =
 		'https://d.turn.com/r/dd/id/L21rdC84MTYvY2lkLzE3NDc0MzIzNDgvdC8yL2NhdC8zMjE4NzUwOQ',
+	ICON_MEDIA_RETARGETING_PIXEL_URL =
+		'https://tags.w55c.net/rs?id=cab35a3a79dc4173b8ce2c47adad2cea&t=marketing',
+	ICON_MEDIA_SIGNUP_PIXEL_URL =
+		'https://tags.w55c.net/rs?id=d239e9cb6d164f7299d2dbf7298f930a&t=marketing',
+	ICON_MEDIA_ORDER_PIXEL_URL =
+		'https://tags.w55c.net/rs?id=d299eef42f2d4135a96d0d40ace66f3a&t=checkout',
 	YAHOO_TRACKING_SCRIPT_URL = 'https://s.yimg.com/wi/ytc.js',
 	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
 	DCM_FLOODLIGHT_IFRAME_URL = 'https://6355556.fls.doubleclick.net/activityi',
@@ -530,6 +537,11 @@ function only_retarget() {
 	if ( isOutbrainEnabled ) {
 		window.obApi( 'track', 'PAGE_VIEW' );
 	}
+
+	// Icon Media
+	if ( isIconMediaEnabled ) {
+		new Image().src = ICON_MEDIA_RETARGETING_PIXEL_URL;
+	}
 }
 
 /**
@@ -801,6 +813,16 @@ export function recordOrder( cart, orderId ) {
 
 	if ( isQuoraEnabled && ! cart.is_signup ) {
 		window.qp( 'track', 'Generic' );
+	}
+
+	if ( isIconMediaEnabled ) {
+		if ( cart.is_signup ) {
+			new Image().src = ICON_MEDIA_SIGNUP_PIXEL_URL;
+		} else {
+			const skus = cart.products.map( product => product.product_slug ).join( ',' );
+			new Image().src =
+				ICON_MEDIA_ORDER_PIXEL_URL + `&tx=${ orderId }&sku=${ skus }&price=${ usdTotalCost }`;
+		}
 	}
 }
 
