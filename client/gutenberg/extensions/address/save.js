@@ -20,7 +20,7 @@ const save = ( {
 						', ',
 						<span itemprop="addressRegion">{ region }</span>,
 						' ',
-						<span itemprop="addressPostal">{ postal }</span>,
+						<span itemprop="postalCode">{ postal }</span>,
 					] }
 				</div>
 			) }
@@ -30,7 +30,7 @@ const save = ( {
 					{ [
 						<span itemprop="addressRegion">{ region }</span>,
 						' ',
-						<span itemprop="addressPostal">{ postal }</span>,
+						<span itemprop="postalCode">{ postal }</span>,
 					] }
 				</div>
 			) }
