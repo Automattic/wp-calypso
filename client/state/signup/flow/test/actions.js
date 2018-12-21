@@ -3,16 +3,18 @@
 /**
  * Internal dependencies
  */
-import { setCurrentFlowName } from '../actions';
-import { SIGNUP_CURRENT_FLOW_NAME_SET } from 'state/action-types';
+import { setCurrentFlowDetails } from '../actions';
+import { SIGNUP_CURRENT_FLOW_DETAILS_SET } from 'state/action-types';
 
-describe( 'setCurrentFlowName()', () => {
+describe( 'setCurrentFlowDetails()', () => {
 	test( 'should return the expected action object', () => {
-		const flowName = 'besties4eva';
+		const name = 'besties4eva';
+		const step = '<3';
 
-		expect( setCurrentFlowName( flowName ) ).toEqual( {
-			type: SIGNUP_CURRENT_FLOW_NAME_SET,
-			flowName,
+		expect( setCurrentFlowDetails( { name, step } ) ).toEqual( {
+			type: SIGNUP_CURRENT_FLOW_DETAILS_SET,
+			name,
+			step,
 		} );
 	} );
 } );

@@ -10,7 +10,7 @@ import moment from 'moment';
 import getGeoLocation from 'state/happychat/selectors/get-geolocation';
 import getCurrentUserRegisterDate from 'state/selectors/get-current-user-register-date';
 import { getLastIncompleteSignupStep } from 'state/signup/progress/selectors';
-import { getCurrentFlowName } from 'state/signup/flow/selectors';
+import { getCurrentFlowName, getCurrentStepName } from 'state/signup/flow/selectors';
 import { getSectionName } from 'state/ui/selectors';
 
 export default state => ( { site, howCanWeHelp, howYouFeel } ) => {
@@ -55,6 +55,7 @@ export default state => ( { site, howCanWeHelp, howYouFeel } ) => {
 		const lastIncompleteSignupStep = getLastIncompleteSignupStep( state );
 		info.currentSignupStatus = {
 			flowName: getCurrentFlowName( state ) || 'unknown',
+			currentStep: getCurrentStepName( state ) || 'unknown',
 			lastIncompleteStep: lastIncompleteSignupStep.stepName || 'unknown',
 		};
 	}

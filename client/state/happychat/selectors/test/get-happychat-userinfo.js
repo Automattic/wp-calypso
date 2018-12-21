@@ -25,7 +25,8 @@ describe( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO action', () => {
 		},
 		signup: {
 			flow: {
-				currentFlowName: 'river',
+				name: 'river',
+				step: 'lake',
 			},
 			progress: [
 				{
@@ -82,6 +83,7 @@ describe( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO action', () => {
 			siteUrl: 'siteUrl',
 			currentSignupStatus: {
 				flowName: 'river',
+				currentStep: 'lake',
 				lastIncompleteStep: 'site-type',
 			},
 			localDateTime: moment().format( 'h:mm a, MMMM Do YYYY' ),
