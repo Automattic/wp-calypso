@@ -72,23 +72,25 @@ class UpworkBanner extends PureComponent {
 			<a
 				className="themes-banner__upwork"
 				role="button"
-				style={ { backgroundColor: '#DBF5FB' } }
+				style={ { backgroundColor: '#DAF5FC' } }
 				onClick={ this.onStartNowClick }
 				href={ '/experts/upwork?source=stat-banner' }
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				<h1 className="themes-banner__title">
-					{ translate( 'Hire a WordPress.com Expert to Build Your Website' ) }
-				</h1>
-				<p className="themes-banner__description">
-					{ translate(
-						"WordPres has partnered with Upwork - tap into an unlimited resource of talented professionals to help build the site you've always wanted."
-					) }
-				</p>
-				<Button className="themes-banner__cta" compact primary>
-					{ translate( 'Hire a WordPress.com Expert' ) }
-				</Button>
+				<div className="themes-banner__copy">
+					<h1 className="themes-banner__title">
+						{ translate( 'Need an expert to help realize your vision? Hire one!' ) }
+					</h1>
+					<p className="themes-banner__description">
+						{ translate(
+							"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. They know their stuff and they're waiting to help you build your dream site."
+						) }
+					</p>
+					<Button className="themes-banner__cta" compact primary>
+						{ translate( 'Find your expert' ) }
+					</Button>
+				</div>
 				<Button className="themes-banner__close" onClick={ this.onDismissClick }>
 					<Gridicon icon="cross-small" size={ 18 } />
 				</Button>
@@ -97,7 +99,6 @@ class UpworkBanner extends PureComponent {
 					width={ 390 }
 					className="themes-banner__image"
 					src={ safeImageUrl( '/calypso/images/themes-banner/illustration-builder-referral.svg' ) }
-					style={ { transform: 'translateY(-4.4%) translateX(17%)' } }
 				/>
 			</a>
 		);

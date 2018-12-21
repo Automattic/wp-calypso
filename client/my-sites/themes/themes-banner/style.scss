@@ -1,7 +1,6 @@
 .themes-banner,
 .themes-banner__upwork {
 	$image_max_width: 410px;
-
 	display: none;
 	position: relative;
 	background: no-repeat var( --color-accent );
@@ -17,12 +16,12 @@
 	}
 
 	&:before {
-		position: absolute;
 		display: block;
 		content: '\020';
 		background: rgba( black, 0.13 );
 		width: 100%;
 		height: 100%;
+		position: absolute;
 		top: 0;
 		left: 0;
 		z-index: 1;
@@ -56,13 +55,13 @@
 	}
 
 	img {
-		position: absolute;
 		transform-origin: top right;
 		max-width: $image_max_width;
 		transition: opacity 400ms ease-in-out;
-		user-select: none;
+		position: absolute;
 		top: 0;
 		right: 0;
+		user-select: none;
 
 		@include breakpoint( '<1400px' ) {
 			opacity: 0.5;
@@ -75,16 +74,16 @@
 
 	.button.themes-banner__close {
 		display: block;
-		position: absolute;
 		background: rgba( white, 0.66 );
-		border-radius: 0;
 		border: none;
-		padding: 1px 0;
-		width: 1.7em;
+		border-radius: 0;
 		line-height: 0.9;
-		z-index: 4;
-		top: 0;
+		padding: 1px 0;
+		position: absolute;
 		right: 0;
+		top: 0;
+		width: 1.7em;
+		z-index: 4;
 
 		&:hover {
 			cursor: pointer;
@@ -92,12 +91,33 @@
 
 		.gridicons-cross-small {
 			position: relative;
-			fill: black;
 			top: 2px;
+			fill: black;
 		}
 	}
 
 	@media ( min-width: 769px ) {
 		display: block;
+	}
+}
+
+.themes-banner__upwork {
+	h1,
+	p {
+		color: $gray-dark;
+		text-shadow: none;
+	}
+
+	&::before {
+		display: none;
+	}
+
+	img {
+		max-width: 190px;
+		right: 30px;
+
+		@include breakpoint( '<960px' ) {
+			display: none;
+		}
 	}
 }
