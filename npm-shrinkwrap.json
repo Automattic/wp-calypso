@@ -4,6 +4,25 @@
 	"lockfileVersion": 1,
 	"requires": true,
 	"dependencies": {
+		"@automattic/babel-plugin-i18n-calypso": {
+			"version": "1.0.3",
+			"resolved": "https://registry.npmjs.org/@automattic/babel-plugin-i18n-calypso/-/babel-plugin-i18n-calypso-1.0.3.tgz",
+			"integrity": "sha512-VSeguTpsMyM5HADJrtX1b+iFZjno68vv9vRfnPu8HzammamnAbKW5RVK86y35yeStu7zpOkTLgTnZDb+BVzT3w==",
+			"dev": true,
+			"requires": {
+				"@babel/runtime": "^7.0.0",
+				"gettext-parser": "^1.3.1",
+				"lodash": "^4.17.10"
+			}
+		},
+		"@automattic/tree-select": {
+			"version": "1.0.2",
+			"resolved": "https://registry.npmjs.org/@automattic/tree-select/-/tree-select-1.0.2.tgz",
+			"integrity": "sha512-UCmGnCUNpdPnLM6wTp+us6H5qCgUOO4K9C1+Me1lxEnfvxFVO2AAMGOktzvrsXrOvQ43vHDyNFeXLH550LE7qQ==",
+			"requires": {
+				"lodash": "^4.17.0"
+			}
+		},
 		"@babel/cli": {
 			"version": "7.2.0",
 			"resolved": "https://registry.npmjs.org/@babel/cli/-/cli-7.2.0.tgz",
@@ -6916,6 +6935,12 @@
 				}
 			}
 		},
+		"eslint-config-wpcalypso": {
+			"version": "4.0.1",
+			"resolved": "https://registry.npmjs.org/eslint-config-wpcalypso/-/eslint-config-wpcalypso-4.0.1.tgz",
+			"integrity": "sha512-/MdCPOQusYRJI57/GFNi523CW75CUIoqKEY+8XhDtkz0iSeFXl12c2hW2l4ezE0cDbhMUwSslI07YpSPW7nRgA==",
+			"dev": true
+		},
 		"eslint-import-resolver-node": {
 			"version": "0.3.2",
 			"resolved": "https://registry.npmjs.org/eslint-import-resolver-node/-/eslint-import-resolver-node-0.3.2.tgz",
@@ -7126,6 +7151,15 @@
 						"esutils": "^2.0.2"
 					}
 				}
+			}
+		},
+		"eslint-plugin-wpcalypso": {
+			"version": "4.0.2",
+			"resolved": "https://registry.npmjs.org/eslint-plugin-wpcalypso/-/eslint-plugin-wpcalypso-4.0.2.tgz",
+			"integrity": "sha512-XqsgUlz4kiPppuZBjMMUtcPRsLduxfRBrrBpGGipxQpwCYp1+yPBOwjk17WrR/BeHEw/RJ9+Xrt+F8vrRv2qBw==",
+			"dev": true,
+			"requires": {
+				"requireindex": "^1.1.0"
 			}
 		},
 		"eslint-scope": {
@@ -18368,6 +18402,12 @@
 					"dev": true
 				}
 			}
+		},
+		"requireindex": {
+			"version": "1.2.0",
+			"resolved": "https://registry.npmjs.org/requireindex/-/requireindex-1.2.0.tgz",
+			"integrity": "sha512-L9jEkOi3ASd9PYit2cwRfyppc9NoABujTP8/5gFcbERmo5jUoAKovIC3fsF17pkTnGsrByysqX+Kxd2OTNI1ww==",
+			"dev": true
 		},
 		"resize-observer-polyfill": {
 			"version": "1.5.0",

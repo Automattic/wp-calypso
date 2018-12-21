@@ -235,16 +235,18 @@ class TiledGalleryEdit extends Component {
 				>
 					{ dropZone }
 					{ isSelected && (
-						<FormFileUpload
-							multiple
-							isLarge
-							className="block-library-gallery-add-item-button"
-							onChange={ this.uploadFromFiles }
-							accept="image/*"
-							icon="insert"
-						>
-							{ __( 'Upload an image' ) }
-						</FormFileUpload>
+						<div className="tiled-gallery__add-item">
+							<FormFileUpload
+								multiple
+								isLarge
+								className="tiled-gallery__add-item-button"
+								onChange={ this.uploadFromFiles }
+								accept="image/*"
+								icon="insert"
+							>
+								{ __( 'Upload an image' ) }
+							</FormFileUpload>
+						</div>
 					) }
 				</Layout>
 			</Fragment>
