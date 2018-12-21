@@ -35,6 +35,11 @@ const linkOptions = [
 	{ value: 'none', label: __( 'None' ) },
 ];
 
+// @TODO keep here or move to ./layout ?
+function layoutSupportsColumns( layout ) {
+	return [ 'circle', 'square' ].includes( layout );
+}
+
 export function defaultColumnsNumber( attributes ) {
 	return Math.min( 3, attributes.images.length );
 }
@@ -196,20 +201,23 @@ class TiledGalleryEdit extends Component {
 			);
 		}
 
+		const layoutStyle = getActiveStyleName( LAYOUT_STYLES, blockStyleClassName );
+
 		return (
 			<Fragment>
 				{ controls }
 				<InspectorControls>
 					<PanelBody title={ __( 'Tiled gallery settings' ) }>
-						{ images.length > 1 && (
-							<RangeControl
-								label={ __( 'Columns' ) }
-								value={ columns }
-								onChange={ this.setColumnsNumber }
-								min={ 1 }
-								max={ Math.min( MAX_COLUMNS, images.length ) }
-							/>
-						) }
+						{ layoutSupportsColumns( layoutStyle ) &&
+							images.length > 1 && (
+								<RangeControl
+									label={ __( 'Columns' ) }
+									value={ columns }
+									onChange={ this.setColumnsNumber }
+									min={ 1 }
+									max={ Math.min( MAX_COLUMNS, images.length ) }
+								/>
+							) }
 						<SelectControl
 							label={ __( 'Link To' ) }
 							value={ linkTo }
@@ -225,7 +233,7 @@ class TiledGalleryEdit extends Component {
 					className={ className }
 					columns={ columns }
 					images={ images }
-					layoutStyle={ getActiveStyleName( LAYOUT_STYLES, blockStyleClassName ) }
+					layoutStyle={ layoutStyle }
 					linkTo={ linkTo }
 					onRemoveImage={ this.onRemoveImage }
 					onSelectImage={ this.onSelectImage }
