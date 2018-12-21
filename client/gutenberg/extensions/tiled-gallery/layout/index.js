@@ -2,17 +2,16 @@
  * External dependencies
  */
 import photon from 'photon';
+import { __, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
+import Square from './square';
+import Mosaic from './mosaic';
 import GalleryImageEdit from '../gallery-image/edit';
 import GalleryImageSave from '../gallery-image/save';
-import Mosaic from './mosaic';
-import Square from './square';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 export default class Layout extends Component {
 	photonize( { height, width, url } ) {
@@ -31,6 +30,8 @@ export default class Layout extends Component {
 	//   This is because the images are stored in an array in the block attributes.
 	renderImage( img, i ) {
 		const {
+			columns,
+			imageCrop,
 			images,
 			isSave,
 			linkTo,
@@ -50,9 +51,11 @@ export default class Layout extends Component {
 				aria-label={ ariaLabel }
 				caption={ img.caption }
 				className="tiled-gallery__item"
+				columns={ columns }
 				height={ img.height }
 				id={ img.id }
 				origUrl={ img.url }
+				imageCrop={ imageCrop }
 				isSelected={ selectedImage === i }
 				key={ i }
 				linkTo={ linkTo }
@@ -66,20 +69,7 @@ export default class Layout extends Component {
 	}
 
 	render() {
-		const {
-			children,
-			className,
-			columns,
-			images,
-			isSave,
-			isWide,
-			layoutStyle,
-			linkTo,
-			onRemoveImage,
-			onSelectImage,
-			selectedImage,
-			setImageAttributes,
-		} = this.props;
+		const { isWide, children, className, layoutStyle, images } = this.props;
 
 		// eslint-disable-next-line no-nested-ternary
 		const LayoutRenderer = isSquareishLayout( layoutStyle )
@@ -89,22 +79,14 @@ export default class Layout extends Component {
 				: Mosaic;
 
 		const renderedImages = this.props.images.map( this.renderImage, this );
-		const ImageComponent = isSave ? GalleryImageSave : GalleryImageEdit;
 
 		return (
 			<div className={ className }>
 				<LayoutRenderer
-					columns={ columns }
-					ImageComponent={ ImageComponent }
-					images={ images }
-					isSave={ isSave }
 					isWide={ isWide }
-					linkTo={ linkTo }
-					onRemoveImage={ onRemoveImage }
-					onSelectImage={ onSelectImage }
+					columns={ this.props.columns }
+					images={ images }
 					renderedImages={ renderedImages }
-					selectedImage={ selectedImage }
-					setImageAttributes={ setImageAttributes }
 				/>
 				{ children }
 			</div>
