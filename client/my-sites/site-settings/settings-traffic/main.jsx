@@ -113,10 +113,6 @@ const getFormSettings = partialRight( pick, [
 	'jetpack_relatedposts_enabled',
 	'jetpack_relatedposts_show_headline',
 	'jetpack_relatedposts_show_thumbnails',
-	'jetpack_search_enabled',
-	'jetpack_search_supported',
-	'amp_is_supported',
-	'amp_is_enabled',
 	'blog_public',
 ] );
 
