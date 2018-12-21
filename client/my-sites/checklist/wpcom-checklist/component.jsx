@@ -539,6 +539,16 @@ class WpcomChecklistComponent extends PureComponent {
 	renderEmailSetupTask = ( TaskComponent, baseProps, task ) => {
 		const { translate, siteSlug } = this.props;
 
+		const clickProps = baseProps.completed
+			? {}
+			: {
+					onClick: () => {
+						this.trackTaskStart( task );
+						page( `/domains/manage/email/${ siteSlug }` );
+					},
+					onDismiss: () => this.handleTaskDismiss( task.id ),
+			  };
+
 		return (
 			<TaskComponent
 				{ ...baseProps }
@@ -549,11 +559,7 @@ class WpcomChecklistComponent extends PureComponent {
 					'Subscribe to G Suite to get a dedicated inbox, docs, and cloud storage.'
 				) }
 				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
-				onClick={ () => {
-					this.trackTaskStart( task );
-					page( `/domains/manage/email/${ siteSlug }` );
-				} }
-				onDismiss={ this.handleTaskDismiss( task.id ) }
+				{ ...clickProps }
 			/>
 		);
 	};
