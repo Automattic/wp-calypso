@@ -13,7 +13,7 @@
 	font-size: 15px;
 	white-space: pre-wrap;
 	cursor: pointer;
-
+	text-align: left;
 	&.has-highlight {
 		background-color: var( --color-accent );
 		color: $white;

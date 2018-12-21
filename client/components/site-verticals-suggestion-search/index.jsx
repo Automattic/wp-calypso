@@ -39,16 +39,19 @@ export class SiteVerticalsSuggestionSearch extends Component {
 
 	onSiteTopicChange = value => {
 		value = trim( value );
-		const verticalData = find( this.props.verticals, { vertical_name: value } );
 		if (
 			value &&
 			value.length > this.state.charsToTriggerSearch &&
-			// Don't trigger a search if the input value is present in the verticals results.
-			! verticalData
+			// Don't trigger a search if a non-user-defined input value is present in the verticals results.
+			! find( this.props.verticals, { vertical_name: value, is_user_input_vertical: false } )
 		) {
 			this.props.requestVerticals( value );
 		}
+
 		this.setState( { siteTopicValue: value } );
+
+		// Pluck out any match from the vertical list
+		const verticalData = find( this.props.verticals, { vertical_name: value } );
 		this.props.onChange(
 			verticalData || {
 				vertical_name: value,
@@ -77,24 +80,28 @@ export class SiteVerticalsSuggestionSearch extends Component {
 }
 
 const SITE_VERTICALS_REQUEST_ID = 'site-verticals-search-results';
-const requestSiteVerticals = debounce( ( searchTerm, limit = 5 ) => {
-	return requestHttpData(
-		SITE_VERTICALS_REQUEST_ID,
-		http( {
-			apiNamespace: 'wpcom/v2',
-			method: 'GET',
-			path: '/verticals',
-			query: {
-				search: searchTerm,
-				limit,
-			},
-		} ),
-		{
-			fromApi: () => data => [ [ SITE_VERTICALS_REQUEST_ID, data ] ],
-			freshness: -Infinity,
-		}
-	);
-}, 250 );
+const requestSiteVerticals = debounce(
+	( searchTerm, limit = 5 ) => {
+		return requestHttpData(
+			SITE_VERTICALS_REQUEST_ID,
+			http( {
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+				path: '/verticals',
+				query: {
+					search: searchTerm,
+					limit,
+				},
+			} ),
+			{
+				fromApi: () => data => [ [ SITE_VERTICALS_REQUEST_ID, data ] ],
+				freshness: -Infinity,
+			}
+		);
+	},
+	250,
+	{ leading: false, trailing: true }
+);
 
 export default localize(
 	connect(
