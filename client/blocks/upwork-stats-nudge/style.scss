@@ -72,5 +72,5 @@
 	right: 18px;
 	color: $gray;
 	cursor: pointer;
-	z-index: 1;
+	z-index: z-index( 'root', '.upwork-stats-nudge__close-icon' );
 }
