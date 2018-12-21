@@ -146,7 +146,8 @@ export class EditorDiscussion extends React.Component {
 							popoverName="PingStatus"
 						>
 							{ this.props.translate(
-								'{{pingbacksLink}}Pingbacks{{/pingbacksLink}} and {{trackbacksLink}}trackbacks{{/trackbacksLink}} are automated comments you will receive when others create links to your post elsewhere.',
+								'{{pingbacksLink}}Pingbacks{{/pingbacksLink}} and {{trackbacksLink}}trackbacks{{/trackbacksLink}} ' +
+									'are automated comments you will receive when others create links to your post elsewhere.',
 								{
 									components: {
 										pingbacksLink: (
