@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import EditorFieldset from 'post-editor/editor-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import InfoPopover from 'components/info-popover';
+import ExternalLink from 'components/external-link';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -145,21 +146,21 @@ export class EditorDiscussion extends React.Component {
 							popoverName="PingStatus"
 						>
 							{ this.props.translate(
-								'{{a}}Pingbacks{{/a}} and {{b}}trackbacks{{/b}} are automated comments you will receive when others create links to your post elsewhere.',
+								'{{pingbacksLink}}Pingbacks{{/pingbacksLink}} and {{trackbacksLink}}trackbacks{{/trackbacksLink}} are automated comments you will receive when others create links to your post elsewhere.',
 								{
 									components: {
-										a: (
-											<a
+										pingbacksLink: (
+											<ExternalLink
 												href="https://en.support.wordpress.com/comments/pingbacks/"
 												target="_blank"
-												rel="noopener noreferrer"
+												icon="true"
 											/>
 										),
-										b: (
-											<a
+										trackbacksLink: (
+											<ExternalLink
 												href="https://en.support.wordpress.com/comments/trackbacks/"
 												target="_blank"
-												rel="noopener noreferrer"
+												icon="true"
 											/>
 										),
 									},
