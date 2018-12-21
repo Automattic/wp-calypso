@@ -60,7 +60,7 @@ class UpworkStatsNudge extends Component {
 	};
 
 	onDismissClick = () => {
-		this.recordClick( 'calypso_upworks_stats_nudge_dismiss_icon_click' );
+		this.recordClick( 'calypso_upwork_stats_nudge_dismiss_icon_click' );
 		this.props.dismissNudge();
 	};
 
