@@ -1,10 +1,5 @@
 @import './view.scss';
-
 @import './variables.scss';
-
-.wp-block-jetpack-tiled-gallery.components-placeholder {
-	margin: 0;
-}
 
 .wp-block-jetpack-tiled-gallery {
 	.tiled-gallery__row {
@@ -18,14 +13,6 @@
 				outline: 4px solid $tiled-gallery-selection;
 			}
 
-			/*
-			// Animation for photos being uploaded
-			// @TODO Import animation from Calypso
-			&.is-transient img {
-				@include loading_fade;
-			}
-			*/
-
 			.editor-rich-text {
 				position: absolute;
 				bottom: 0;
@@ -37,6 +24,7 @@
 			.editor-rich-text figcaption:not( [data-is-placeholder-visible='true'] ) {
 				position: relative;
 				overflow: hidden;
+				color: $white;
 			}
 
 			.is-selected .editor-rich-text {
@@ -102,7 +90,6 @@
 		right: -2px;
 		background-color: $tiled-gallery-selection;
 		display: inline-flex;
-		// z-index: z-index( '.block-library-gallery-item__inline-menu' );
 
 		.components-button {
 			color: $white;
