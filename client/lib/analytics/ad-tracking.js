@@ -36,7 +36,6 @@ const isGeminiEnabled = true;
 const isDonutsGtagEnabled = true;
 const isQuantcastEnabled = true;
 const isTwitterEnabled = true;
-const isAolEnabled = true;
 const isExperianEnabled = true;
 const isLinkedinEnabled = true;
 const isOutbrainEnabled = true;
@@ -74,11 +73,6 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088&ec=wordpresspurchase',
 	YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL =
 		'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088',
-	ONE_BY_AOL_CONVERSION_PIXEL_URL =
-		'https://secure.ace-tag.advertising.com/action/type=132958/bins=1/rich=0/Mnum=1516/',
-	ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL =
-		'https://secure.leadback.advertising.com/adcedge/lb' +
-		'?site=695501&betr=sslbet_1472760417=[+]ssprlb_1472760417[720]|sslbet_1472760452=[+]ssprlb_1472760452[8760]',
 	PANDORA_CONVERSION_PIXEL_URL =
 		'https://data.adxcel-ec2.com/pixel/' +
 		'?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26',
@@ -518,11 +512,6 @@ function only_retarget() {
 		new Image().src = YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL;
 	}
 
-	// One by AOL
-	if ( isAolEnabled ) {
-		new Image().src = ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL;
-	}
-
 	// Quora
 	if ( isQuoraEnabled ) {
 		window.qp( 'track', 'ViewContent' );
@@ -801,10 +790,6 @@ export function recordOrder( cart, orderId ) {
 	if ( isGeminiEnabled && ! cart.is_signup ) {
 		new Image().src =
 			YAHOO_GEMINI_CONVERSION_PIXEL_URL + ( usdTotalCost !== null ? '&gv=' + usdTotalCost : '' );
-	}
-
-	if ( isAolEnabled && ! cart.is_signup ) {
-		new Image().src = ONE_BY_AOL_CONVERSION_PIXEL_URL;
 	}
 
 	if ( isPandoraEnabled && ! cart.is_signup ) {
