@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, has, isString, map } from 'lodash';
+import { get, has, isArray, isEmpty, isNumber, isString, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,27 +25,39 @@ const debug = debugFactory( 'calypso:tax-placeholders' );
  * See also https://github.com/Automattic/wp-calypso/projects/78
  */
 
-export function maybeInjectTaxPlaceholdersIntoPurchase( purchase ) {
+/*
+ * Adds tax_amount and tax_text fields to purchase object(s) if required.
+ *
+ * @param {Object[] | Object} purchase One or more purchase objects
+ * @returns {Object[] | Object}
+ */
+export function maybeInjectTaxPlaceholdersIntoPurchases( purchase ) {
+	if ( ! config.isEnabled( 'tax-placeholders' ) ) {
+		return purchase;
+	}
+
+	if ( isArray( purchase ) ) {
+		debug( 'injecting tax_amount into multiple purchases', purchase );
+		return map( purchase, maybeInjectTaxPlaceholdersIntoPurchases );
+	}
+
 	const purchasePriceText = get( purchase, 'price_text' );
-	if (
-		config.isEnabled( 'tax-placeholders' ) &&
+	const needsPriceText =
 		! has( purchase, 'tax_text' ) &&
 		isString( purchasePriceText ) &&
-		! purchasePriceText.match( /include/i ) // "Included with plan"
-	) {
-		debug( 'injecting taxAmount into purchase', purchase );
-		return Object.assign( purchase, {
-			tax_amount: purchase.amount / 10,
-			tax_text: purchasePriceText.replace( /(?<!\d|\.)(\d+)(\d)(?:\.(\d*)\d)?/, '$1.$2$3' ),
-		} );
-	}
-	return purchase;
-}
+		! purchasePriceText.match( /include/i ); // skip if "Included with plan"
 
-export function maybeInjectTaxPlaceholdersIntoPurchases( purchases ) {
-	if ( ! config.isEnabled( 'tax-placeholders' ) ) {
-		return purchases;
+	const text = needsPriceText
+		? { tax_text: purchasePriceText.replace( /(?<!\d|\.)(\d+)(\d)(?:\.(\d*)\d)?/, '$1.$2$3' ) }
+		: {};
+
+	const needsTaxAmount = ! has( purchase, 'tax_amount' ) && isNumber( get( purchase, 'amount' ) );
+	const amount = needsTaxAmount ? { tax_amount: purchase.amount / 10 } : {};
+
+	if ( isEmpty( amount ) && isEmpty( text ) ) {
+		return purchase;
 	}
-	debug( 'injecting tax_amount into purchases', purchases );
-	return map( purchases, maybeInjectTaxPlaceholdersIntoPurchase );
+
+	debug( 'injecting taxAmount into purchase', purchase );
+	return Object.assign( {}, purchase, text, amount );
 }
