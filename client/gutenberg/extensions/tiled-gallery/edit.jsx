@@ -71,7 +71,7 @@ class TiledGalleryEdit extends Component {
 		if ( attributes.images ) {
 			attributes = {
 				...attributes,
-				ids: attributes.images.map( ( { id } ) => id ),
+				ids: attributes.images.map( ( { id } ) => parseInt( id, 10 ) ),
 			};
 		}
 
