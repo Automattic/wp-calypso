@@ -28,6 +28,7 @@ import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors'
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
+import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { requestSites } from 'state/sites/actions';
 import { supportsPrivacyProtectionPurchase } from 'lib/cart-values/cart-items';
@@ -132,6 +133,7 @@ export function createSiteWithCart(
 	const siteVertical = getSiteVertical( state );
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
+	const siteStyle = getSiteStyle( state ).trim();
 	const siteInformation = getSiteInformation( state );
 
 	const newSiteParams = {
@@ -144,6 +146,7 @@ export function createSiteWithCart(
 			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 			vertical: siteVertical || undefined,
 			siteGoals: siteGoals || undefined,
+			siteStyle: siteStyle || undefined,
 			site_information: siteInformation || undefined,
 			siteType: siteType || undefined,
 		},
