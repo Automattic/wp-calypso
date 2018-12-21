@@ -11,6 +11,7 @@ import getGeoLocation from 'state/happychat/selectors/get-geolocation';
 import getCurrentUserRegisterDate from 'state/selectors/get-current-user-register-date';
 import { getLastIncompleteSignupStep } from 'state/signup/progress/selectors';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
+import { getSectionName } from 'state/ui/selectors';
 
 export default state => ( { site, howCanWeHelp, howYouFeel } ) => {
 	const info = {
@@ -48,17 +49,14 @@ export default state => ( { site, howCanWeHelp, howYouFeel } ) => {
 		info.geoLocation = geoLocation;
 	}
 
-	// Add the signup flow name
-	const lastSignupFlow = getCurrentFlowName( state );
-	if ( lastSignupFlow ) {
-		info.lastSignupFlow = lastSignupFlow;
-	}
-
-	// Add last incomplete signup step if any
-	const lastIncompleteSignupStep = getLastIncompleteSignupStep( state );
-	if ( lastIncompleteSignupStep ) {
-		info.lastIncompleteSignupStep = lastIncompleteSignupStep.stepName;
-		info.lastSignupProgress = moment( lastIncompleteSignupStep.lastUpdated ).fromNow();
+	// Add signup info if the user is currently in signup
+	const isUserInSignUp = 'signup' === getSectionName( state );
+	if ( isUserInSignUp ) {
+		const lastIncompleteSignupStep = getLastIncompleteSignupStep( state );
+		info.currentSignupStatus = {
+			flowName: getCurrentFlowName( state ) || 'unknown',
+			lastIncompleteStep: lastIncompleteSignupStep.stepName || 'unknown',
+		};
 	}
 
 	return info;

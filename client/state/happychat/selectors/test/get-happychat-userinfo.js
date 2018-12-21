@@ -43,6 +43,11 @@ describe( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO action', () => {
 				},
 			},
 		},
+		ui: {
+			section: {
+				name: 'signup',
+			},
+		},
 	};
 
 	const previousWindow = global.window;
@@ -71,13 +76,14 @@ describe( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO action', () => {
 
 	test( 'should send relevant browser information to the connection', () => {
 		const expectedInfo = {
-			lastSignupProgress: moment( state.signup.progress[ 0 ].lastUpdated ).fromNow(),
 			howCanWeHelp: 'howCanWeHelp',
 			howYouFeel: 'howYouFeel',
 			siteId: 'siteId',
 			siteUrl: 'siteUrl',
-			lastIncompleteSignupStep: 'site-type',
-			lastSignupFlow: 'river',
+			currentSignupStatus: {
+				flowName: 'river',
+				lastIncompleteStep: 'site-type',
+			},
 			localDateTime: moment().format( 'h:mm a, MMMM Do YYYY' ),
 			screenSize: {
 				width: 'screenWidth',
