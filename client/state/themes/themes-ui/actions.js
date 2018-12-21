@@ -13,7 +13,7 @@ export function hideThemesBanner() {
 }
 
 // Hides the theme showcase banner.
-export function hideUpworkThemesBanner() {
+export function hideThemesUpworkBanner() {
 	return {
 		type: THEMES_UPWORK_BANNER_HIDE,
 	};

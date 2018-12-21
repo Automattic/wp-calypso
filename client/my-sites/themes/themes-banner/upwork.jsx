@@ -20,7 +20,7 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { isThemesUpworkBannerVisible } from 'state/themes/themes-ui/selectors';
-import { hideThemesUpworkBanner as hideThemesBannerAction } from 'state/themes/themes-ui/actions';
+import { hideThemesUpworkBanner } from 'state/themes/themes-ui/actions';
 
 class UpworkBanner extends PureComponent {
 	static propTypes = {
@@ -28,6 +28,7 @@ class UpworkBanner extends PureComponent {
 		siteId: PropTypes.number,
 		currentPlan: PropTypes.object,
 		isBannerVisible: PropTypes.bool,
+		hideThemesBanner: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
@@ -54,8 +55,8 @@ class UpworkBanner extends PureComponent {
 
 	onDismissClick = e => {
 		this.recordClick( 'calypso_upwork_themes_banner_dismiss_icon_click' );
-		this.props.hideThemesBanner();
 		e.preventDefault();
+		this.props.hideThemesBanner();
 	};
 
 	onStartNowClick = () => {
@@ -118,6 +119,6 @@ export default connect(
 	mapStateToProps,
 	{
 		recordTracksEvent: recordTracksEventAction,
-		hideThemesBanner: hideThemesBannerAction,
+		hideThemesBanner: hideThemesUpworkBanner,
 	}
 )( localize( UpworkBanner ) );
