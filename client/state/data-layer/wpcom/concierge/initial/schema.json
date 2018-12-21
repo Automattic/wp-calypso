@@ -7,6 +7,9 @@
 				"type": "integer"
 			}
 		},
+		"appointment_timespan": {
+			"type": "number"
+		},
 		"next_appointment": {
 			"type": [ "object", "null" ],
 			"properties": {
