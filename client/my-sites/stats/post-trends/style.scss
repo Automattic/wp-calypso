@@ -115,7 +115,7 @@
 .post-trends__label {
 	text-align: center;
 	font-size: 11px;
-	color: darken( $gray, 10 );
+	color: var( --color-neutral-400 );
 	margin-top: 10px;
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
@@ -129,7 +129,7 @@
 	display: inline-block;
 	width: 7px;
 	height: 7px;
-	border: 1px solid $gray-light;
+	border: 1px solid var( --color-neutral-0 );
 	background-color: var( --color-neutral-100 );
 	margin: 0;
 }
@@ -137,8 +137,8 @@
 .post-trends__day,
 .post-trends__key-day {
 	&.is-outside-month {
-		background-color: $transparent;
-		border-color: $white;
+		background-color: transparent;
+		border-color: var( --color-white );
 	}
 
 	&.is-today {
@@ -146,27 +146,27 @@
 	}
 
 	&.is-after-today {
-		background-color: lighten( $gray, 25% );
+		background-color: var( --color-neutral-50 );
 	}
 
 	&.is-level-1 {
-		background-color: lighten( $blue-light, 5% );
+		background-color: var( --color-primary-100 );
 	}
 
 	&.is-level-2 {
-		background-color: lighten( $blue-medium, 5% );
+		background-color: var( --color-primary-light );
 	}
 
 	&.is-level-3 {
-		background-color: darken( $blue-medium, 10% );
+		background-color: var( --color-primary );
 	}
 
 	&.is-level-4 {
-		background-color: darken( $blue-medium, 30% );
+		background-color: var( --color-primary-dark );
 	}
 
 	&.is-hovered {
-		border-color: var( --color-accent );
+		border-color: var( --color-primary );
 	}
 
 	.is-loading & {
@@ -202,8 +202,8 @@
 
 .post-trends__key-label {
 	font-size: 11px;
-	color: $gray;
 	letter-spacing: 0.1em;
+	color: var( --color-neutral );
 	text-transform: uppercase;
 }
 
