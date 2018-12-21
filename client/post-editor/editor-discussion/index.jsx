@@ -119,7 +119,7 @@ export class EditorDiscussion extends React.Component {
 						{ this.props.translate( 'Allow comments' ) }
 						<InfoPopover
 							position="top right"
-							className="editor-comment_status__info"
+							className="editor-discussion__status-info"
 							gaEventCategory="Editor"
 							popoverName="CommentStatus"
 						>
@@ -140,7 +140,7 @@ export class EditorDiscussion extends React.Component {
 						{ this.props.translate( 'Allow Pingbacks & Trackbacks' ) }
 						<InfoPopover
 							position="top right"
-							className="editor-ping_status__info"
+							className="editor-discussion__status-info"
 							gaEventCategory="Editor"
 							popoverName="PingStatus"
 						>
