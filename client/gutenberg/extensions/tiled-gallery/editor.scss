@@ -14,7 +14,7 @@
 				outline: none;
 			}
 
-			.is-selected {
+			&.is-selected {
 				outline: 4px solid $tiled-gallery-selection;
 			}
 
