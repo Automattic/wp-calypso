@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PerformanceMain from 'my-sites/site-settings/settings-performance/main';
+import PerformanceMain from './main';
 
 export default {
 	performance( context, next ) {
