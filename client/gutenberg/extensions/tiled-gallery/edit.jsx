@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import { filter, pick, get } from 'lodash';
-import { Component, Fragment } from '@wordpress/element';
+import { createRef, Component, Fragment } from '@wordpress/element';
 import {
 	DropZone,
 	FormFileUpload,
@@ -26,8 +26,9 @@ import {
  */
 import Layout from './layout';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { getActiveStyleName } from 'gutenberg/extensions/utils';
 import { ALLOWED_MEDIA_TYPES, LAYOUT_STYLES, MAX_COLUMNS } from './constants';
+import { getActiveStyleName } from 'gutenberg/extensions/utils';
+import { handleResize } from './resize';
 
 const linkOptions = [
 	{ value: 'attachment', label: __( 'Attachment Page' ) },
@@ -54,6 +55,8 @@ export const pickRelevantMediaFiles = image => {
 };
 
 class TiledGalleryEdit extends Component {
+	container = createRef();
+
 	state = {
 		selectedImage: null,
 	};
@@ -64,6 +67,20 @@ class TiledGalleryEdit extends Component {
 			return { selectedImage: null };
 		}
 		return null;
+	}
+	componentDidMount() {
+		if ( this.container.current ) {
+			Array.from( this.container.current.querySelectorAll( '.tiled-gallery__row' ) ).forEach(
+				handleResize
+			);
+		}
+	}
+	componentDidUpdate() {
+		if ( this.container.current ) {
+			Array.from( this.container.current.querySelectorAll( '.tiled-gallery__row' ) ).forEach(
+				handleResize
+			);
+		}
 	}
 
 	setAttributes( attributes ) {
@@ -230,6 +247,7 @@ class TiledGalleryEdit extends Component {
 				{ noticeUI }
 
 				<Layout
+					containerRef={ this.container }
 					className={ className }
 					columns={ columns }
 					images={ images }
