@@ -71,16 +71,27 @@ class GalleryImageEdit extends Component {
 	}
 
 	componentDidUpdate() {
-		const { image, url } = this.props;
-		if ( image && ! url ) {
-			const { alt_text, source_url, media_details } = image;
-			const { width, height } = media_details;
-			this.props.setAttributes( {
-				alt: alt_text,
-				height: +height,
-				url: source_url,
-				width: +width,
-			} );
+		const { alt, height, image, url, width } = this.props;
+
+		if ( image ) {
+			const nextAtts = {};
+
+			if ( ! url && image.source_url ) {
+				nextAtts.url = image.source_url;
+			}
+			if ( ! alt && image.alt_text ) {
+				nextAtts.alt = image.alt_text;
+			}
+			if ( ! width && image.media_details && image.media_details.width ) {
+				nextAtts.width = +image.media_details.width;
+			}
+			if ( ! height && image.media_details && image.media_details.height ) {
+				nextAtts.height = +image.media_details.height;
+			}
+
+			if ( Object.keys( nextAtts ).length ) {
+				this.props.setAttributes( nextAtts );
+			}
 		}
 	}
 
