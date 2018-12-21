@@ -385,7 +385,46 @@ export function generateSteps( {
 
 		'site-information': {
 			stepName: 'site-information',
-			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
+			providesDependencies: [ 'siteTitle', 'address', 'phone' ],
+			props: {
+				headerText: i18n.translate( 'Help customers find you' ),
+			},
+		},
+
+		'site-information-title': {
+			stepName: 'site-information',
+			providesDependencies: [ 'title' ],
+			props: {
+				headerText: i18n.translate( "What's your business name?" ),
+				informationType: 'title',
+				fieldDescription: i18n.translate(
+					"We'll use this as your site title. Don't worry, you can change this later."
+				),
+			},
+		},
+
+		'site-information-address': {
+			stepName: 'site-information',
+			providesDependencies: [ 'address' ],
+			props: {
+				headerText: i18n.translate( 'Help customers find you' ),
+				fieldLabel: i18n.translate( 'Address' ),
+				fieldDescription: i18n.translate( 'Where can people find your business?' ),
+				fieldPlaceholder: 'E.g., 60 29th Street #343, San Francisco, CA 94110',
+				informationType: 'address',
+			},
+		},
+
+		'site-information-phone': {
+			stepName: 'site-information',
+			providesDependencies: [ 'phone' ],
+			props: {
+				headerText: i18n.translate( 'Let customers get in touch' ),
+				fieldLabel: i18n.translate( 'Phone number' ),
+				fieldDescription: i18n.translate( 'How can people contact you?' ),
+				fieldPlaceholder: i18n.translate( 'E.g. (555) 555-5555' ),
+				informationType: 'phone',
+			},
 		},
 
 		'site-information-without-domains': {

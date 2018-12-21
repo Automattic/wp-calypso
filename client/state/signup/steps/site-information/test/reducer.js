@@ -3,24 +3,39 @@
 /**
  * Internal dependencies
  */
-import signupDependencyStore from '../reducer';
+import reducer from '../reducer';
 import { SIGNUP_STEPS_SITE_INFORMATION_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
-	test( 'should update the site type', () => {
-		const siteInformation = {
-			address: '27 Pleasant Crescent',
-			phone: '+39 1234 1234',
-			email: 'hello@123.com',
-		};
+	const siteInformationMockData = {
+		title: 'Fwwwooorrr!',
+		address: '27 Pleasant Crescent',
+		phone: '+39 1234 1234',
+	};
+	test( 'should update the site information', () => {
 		expect(
-			signupDependencyStore(
+			reducer(
 				{},
 				{
 					type: SIGNUP_STEPS_SITE_INFORMATION_SET,
-					...siteInformation,
+					data: siteInformationMockData,
 				}
 			)
-		).toEqual( siteInformation );
+		).toEqual( siteInformationMockData );
+	} );
+
+	test( 'should assign new values to site information properties and maintain existing values', () => {
+		const newSiteInformation = {
+			title: 'Yeehah!',
+		};
+		expect(
+			reducer( siteInformationMockData, {
+				type: SIGNUP_STEPS_SITE_INFORMATION_SET,
+				data: newSiteInformation,
+			} )
+		).toEqual( {
+			...siteInformationMockData,
+			...newSiteInformation,
+		} );
 	} );
 } );

@@ -12,11 +12,10 @@ import { siteInformationSchema } from './schema';
 export default createReducer(
 	{},
 	{
-		[ SIGNUP_STEPS_SITE_INFORMATION_SET ]: ( state, { address, email, phone } ) => {
+		[ SIGNUP_STEPS_SITE_INFORMATION_SET ]: ( state, { data } ) => {
 			return {
-				address,
-				email,
-				phone,
+				...state,
+				...data,
 			};
 		},
 		[ SIGNUP_COMPLETE_RESET ]: () => {
