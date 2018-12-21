@@ -1,1 +1,1 @@
-export { getActiveStyleName } from './get-active-style-name';
+export { getActiveStyleName, getDefaultStyleClass, hasStyleClass } from './block-styles';

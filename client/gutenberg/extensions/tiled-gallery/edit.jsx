@@ -2,6 +2,8 @@
  * External Dependencies
  */
 import { filter, pick, get } from 'lodash';
+import { compose } from '@wordpress/compose';
+import { withDispatch } from '@wordpress/data';
 import { createRef, Component, Fragment } from '@wordpress/element';
 import {
 	DropZone,
@@ -27,8 +29,8 @@ import {
 import Layout from './layout';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { ALLOWED_MEDIA_TYPES, LAYOUT_STYLES, MAX_COLUMNS } from './constants';
-import { getActiveStyleName } from 'gutenberg/extensions/utils';
 import { handleResize } from './resize';
+import { getActiveStyleName, getDefaultStyleClass, hasStyleClass } from 'gutenberg/extensions/utils';
 
 const linkOptions = [
 	{ value: 'attachment', label: __( 'Attachment Page' ) },
@@ -69,10 +71,17 @@ class TiledGalleryEdit extends Component {
 		return null;
 	}
 	componentDidMount() {
+		const { className } = this.props;
+
 		if ( this.container.current ) {
 			Array.from( this.container.current.querySelectorAll( '.tiled-gallery__row' ) ).forEach(
 				handleResize
 			);
+		}
+
+		// If block is missing a style class when mounting, set it to default
+		if ( ! hasStyleClass( className ) ) {
+			this.props.changeClassName( `${ className } ${ getDefaultStyleClass( LAYOUT_STYLES ) }` );
 		}
 	}
 	componentDidUpdate() {
@@ -280,4 +289,16 @@ class TiledGalleryEdit extends Component {
 	}
 }
 
-export default withNotices( TiledGalleryEdit );
+
+export default compose( [
+	withDispatch( ( dispatch, { clientId } ) => {
+		return {
+			changeClassName( newClassName ) {
+				dispatch( 'core/editor' ).updateBlockAttributes( clientId, {
+					className: newClassName,
+				} );
+			},
+		};
+	} ),
+	withNotices
+] )( TiledGalleryEdit );

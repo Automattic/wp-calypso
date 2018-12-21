@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import TokenList from '@wordpress/token-list'; // @TODO: Make sure dep is declared Jetpack-side
+import TokenList from '@wordpress/token-list';
 import { find } from 'lodash';
 
 /**
@@ -33,4 +33,22 @@ function getActiveStyle( styles, className ) {
 export function getActiveStyleName( styles, className ) {
 	const style = getActiveStyle( styles, className );
 	return style ? style.name : null;
+}
+
+export function getDefaultStyleClass( styles ) {
+	const defaultStyle = find( styles, 'isDefault' );
+	return defaultStyle ? `is-style-${ defaultStyle.name }` : null;
+}
+
+/**
+ * Checks if className has a class selector starting with `is-style-`
+ * Does not check validity of found style.
+ *
+ * @param {String} className Selector(s) separated by spaces
+ * @return {Boolean} true if `className` has a
+ */
+export function hasStyleClass( className ) {
+	// @TODO check if it has a _valid_ style class
+	const tokens = new TokenList( className ).values();
+	return tokens.length ? Boolean( tokens.find( token => token.startsWith( 'is-style-' ) ) ) : false;
 }
