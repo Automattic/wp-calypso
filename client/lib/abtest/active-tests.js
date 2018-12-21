@@ -73,22 +73,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	privateByDefault: {
-		datestamp: '20181115',
-		variations: {
-			private: 10,
-			public: 90,
-		},
-		defaultVariation: 'public',
-	},
-	simplifiedChecklistView: {
-		datestamp: '20181204',
-		variations: {
-			showAll: 50,
-			showFirstOnly: 50,
-		},
-		defaultVariation: 'showAll',
-	},
 	removeUsername: {
 		datestamp: '20181213',
 		variations: {
@@ -105,5 +89,21 @@ export default {
 		},
 		defaultVariation: 'locationBottom',
 		allowExistingUsers: true,
+	},
+	builderReferralStatsNudge: {
+		datestamp: '20181218',
+		variations: {
+			builderReferralBanner: 10,
+			googleMyBusinessBanner: 90,
+		},
+		defaultVariation: 'googleMyBusinessBanner',
+	},
+	privateByDefault: {
+		datestamp: '20181217',
+		variations: {
+			private: 10,
+			public: 90,
+		},
+		defaultVariation: 'public',
 	},
 };

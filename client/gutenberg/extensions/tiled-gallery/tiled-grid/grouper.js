@@ -90,9 +90,6 @@ export class Jetpack_Tiled_Gallery_Grouper {
 
 		// @TODO let's `return map( images… )`
 		for ( const image of attachments ) {
-			// @TODO will this continue to work? What data will gallery images include
-			// Attachments now already include all the meta we need
-			// meta = wp_get_attachment_metadata( $image->ID );
 			image.width_orig = image.width && image.width > 0 ? image.width : 1;
 			image.height_orig = image.height && image.height > 0 ? image.height : 1;
 			image.ratio = image.width_orig / image.height_orig;
@@ -111,12 +108,6 @@ export class Jetpack_Tiled_Gallery_Grouper {
 		for ( const group_size of vector ) {
 			// @TODO This deeply nested mutation drives iteration, can we improve that?
 			row.push( new Jetpack_Tiled_Gallery_Group( this.images.splice( 0, group_size ) ) );
-
-			// PHP was:
-			// $row[] = new Jetpack_Tiled_Gallery_Group( array_splice( $this->images, 0, $group_size ) );
-			//
-			// Signature:
-			// array array_splice ( array &$input , int $offset [, int $length = count($input) [, mixed $replacement = array() ]] )
 		}
 
 		return row;

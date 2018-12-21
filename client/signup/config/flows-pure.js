@@ -338,6 +338,13 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		lastModified: '2018-12-12',
 	};
 
+	flows[ 'plan-no-domain' ] = {
+		steps: [ 'user', 'site', 'plans' ],
+		destination: getSiteDestination,
+		description: 'Allow users to select a plan without a domain',
+		lastModified: '2018-12-12',
+	};
+
 	return flows;
 }
 

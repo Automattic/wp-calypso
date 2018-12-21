@@ -14,7 +14,7 @@ import wpcom from 'lib/wp';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
 const user = userFactory();
-import { getSavedVariations } from 'lib/abtest';
+import { getSavedVariations, abtest } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
 import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
@@ -156,11 +156,11 @@ export function createSiteWithCart(
 	if ( importingFromUrl ) {
 		newSiteParams.blog_name = importingFromUrl;
 		newSiteParams.find_available_url = true;
-		newSiteParams.public = 1;
+		newSiteParams.public = -1;
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
-		newSiteParams.public = 1;
+		newSiteParams.public = abtest( 'privateByDefault' ) === 'private' ? -1 : 1;
 	}
 
 	wpcom.undocumented().sitesNew( newSiteParams, function( error, response ) {
@@ -336,7 +336,7 @@ export function getUsernameSuggestion( username, reduxState ) {
 	} );
 }
 
-export function addPlanToCart( callback, { siteId }, { cartItem, privacyItem } ) {
+export function addPlanToCart( callback, { siteSlug }, { cartItem } ) {
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
 		defer( callback );
@@ -344,11 +344,9 @@ export function addPlanToCart( callback, { siteId }, { cartItem, privacyItem } )
 		return;
 	}
 
-	const newCartItems = [ cartItem, privacyItem ].filter( item => item );
+	const newCartItems = [ cartItem ].filter( item => item );
 
-	SignupCart.addToCart( siteId, newCartItems, error =>
-		callback( error, { cartItem, privacyItem } )
-	);
+	SignupCart.addToCart( siteSlug, newCartItems, error => callback( error, { cartItem } ) );
 }
 
 export function createAccount(

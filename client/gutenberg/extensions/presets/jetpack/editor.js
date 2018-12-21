@@ -1,11 +1,17 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { sprintf } from '@wordpress/i18n';
+
+/**
  * Internal dependencies
  */
 import './shared/public-path';
 import './editor-shared/block-category'; // Register the Jetpack category
 import extensionSlugsJson from './index.json';
+import { _x } from './utils/i18n';
 import { isEnabled } from 'config';
 
 const extensionSlugs = [
@@ -22,7 +28,12 @@ export async function getExtensions() {
 			( { childBlocks, name, settings } ) => ( {
 				childBlocks,
 				name,
-				settings,
+				settings: extensionSlugsJson.beta.includes( slug )
+					? {
+							...settings,
+							title: sprintf( _x( '%s (beta)', 'Gutenberg Block in beta stage' ), settings.title ),
+					  }
+					: settings,
 			} )
 		)
 	);

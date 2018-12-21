@@ -137,7 +137,6 @@ class SiteOrDomain extends Component {
 		} );
 		SignupActions.submitSignupStep( { stepName: 'plans-site-selected', wasSkipped: true }, [], {
 			cartItem: null,
-			privacyItem: null,
 		} );
 		goToStep( 'user' );
 	}

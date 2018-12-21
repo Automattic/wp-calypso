@@ -113,9 +113,9 @@ class AddEmailAddressesCard extends React.Component {
 		};
 	}
 
-	removeValidationErrors() {
+	removeValidationErrors = () => {
 		this.setState( { validationErrors: null } );
-	}
+	};
 
 	validationErrors() {
 		if ( this.state.validationErrors ) {
@@ -279,6 +279,7 @@ class AddEmailAddressesCard extends React.Component {
 	addAnotherEmailAddressLink() {
 		return (
 			<button
+				type="button"
 				className="add-google-apps__add-another-email-address-link"
 				onClick={ this.handleAddAnotherEmailAddress }
 			>

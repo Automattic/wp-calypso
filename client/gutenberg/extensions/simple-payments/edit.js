@@ -24,6 +24,7 @@ import {
  */
 import HelpMessage from './help-message';
 import ProductPlaceholder from './product-placeholder';
+import FeaturedMedia from './featured-media';
 import { __, _n } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { decimalPlaces, formatPrice } from 'lib/simple-payments/utils';
 import { getCurrencyDefaults } from 'lib/format-currency/currencies';
@@ -99,13 +100,23 @@ class SimplePaymentsEdit extends Component {
 		}
 
 		const { attributes, setAttributes, simplePayment } = this.props;
-		const { content, currency, email, multiple, price, productId, title } = attributes;
+		const {
+			content,
+			currency,
+			email,
+			featuredMediaId,
+			multiple,
+			price,
+			productId,
+			title,
+		} = attributes;
 
 		if ( productId && simplePayment ) {
 			setAttributes( {
 				content: get( simplePayment, [ 'content', 'raw' ], content ),
 				currency: get( simplePayment, [ 'meta', 'spay_currency' ], currency ),
 				email: get( simplePayment, [ 'meta', 'spay_email' ], email ),
+				featuredMediaId: get( simplePayment, [ 'featured_media' ], featuredMediaId ),
 				multiple: Boolean( get( simplePayment, [ 'meta', 'spay_multiple' ], Boolean( multiple ) ) ),
 				price: get( simplePayment, [ 'meta', 'spay_price' ], price || undefined ),
 				title: get( simplePayment, [ 'title', 'raw' ], title ),
@@ -116,12 +127,21 @@ class SimplePaymentsEdit extends Component {
 
 	toApi() {
 		const { attributes } = this.props;
-		const { content, currency, email, multiple, price, productId, title } = attributes;
+		const {
+			content,
+			currency,
+			email,
+			featuredMediaId,
+			multiple,
+			price,
+			productId,
+			title,
+		} = attributes;
 
 		return {
 			id: productId,
 			content,
-			featured_media: 0,
+			featured_media: featuredMediaId,
 			meta: {
 				spay_currency: currency,
 				spay_email: email,
@@ -326,6 +346,10 @@ class SimplePaymentsEdit extends Component {
 		this.setState( { fieldEmailError: null } );
 	};
 
+	handleFeaturedMediaSelect = media => {
+		this.props.setAttributes( { featuredMediaId: get( media, 'id', 0 ) } );
+	};
+
 	handleContentChange = content => {
 		this.props.setAttributes( { content } );
 	};
@@ -363,7 +387,14 @@ class SimplePaymentsEdit extends Component {
 
 	render() {
 		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
-		const { attributes, instanceId, isSelected, simplePayment } = this.props;
+		const {
+			attributes,
+			featuredMedia,
+			instanceId,
+			isSelected,
+			setAttributes,
+			simplePayment,
+		} = this.props;
 		const { content, currency, email, multiple, price, productId, title } = attributes;
 
 		/**
@@ -398,6 +429,7 @@ class SimplePaymentsEdit extends Component {
 				<ProductPlaceholder
 					aria-busy="false"
 					content={ content }
+					featuredMedia={ featuredMedia }
 					formattedPrice={ formatPrice( price, currency ) }
 					multiple={ multiple }
 					title={ title }
@@ -409,97 +441,100 @@ class SimplePaymentsEdit extends Component {
 
 		return (
 			<Wrapper className="wp-block-jetpack-simple-payments">
-				<TextControl
-					aria-describedby={ `${ instanceId }-title-error` }
-					className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
-						'simple-payments__field-has-error': fieldTitleError,
-					} ) }
-					label={ __( 'Item name' ) }
-					onChange={ this.handleTitleChange }
-					placeholder={ __( 'Item name' ) }
-					required
-					type="text"
-					value={ title }
-				/>
-				<HelpMessage id={ `${ instanceId }-title-error` } isError>
-					{ fieldTitleError }
-				</HelpMessage>
-
-				<TextareaControl
-					className="simple-payments__field simple-payments__field-content"
-					label={ __( 'Describe your item in a few words' ) }
-					onChange={ this.handleContentChange }
-					placeholder={ __( 'Describe your item in a few words' ) }
-					value={ content }
-				/>
-
-				<div className="simple-payments__price-container">
-					<SelectControl
-						className="simple-payments__field simple-payments__field-currency"
-						label={ __( 'Currency' ) }
-						onChange={ this.handleCurrencyChange }
-						options={ this.getCurrencyList }
-						value={ currency }
-					/>
+				<FeaturedMedia { ...{ featuredMedia, setAttributes } } />
+				<div>
 					<TextControl
-						aria-describedby={ `${ instanceId }-price-error` }
-						className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
-							'simple-payments__field-has-error': fieldPriceError,
+						aria-describedby={ `${ instanceId }-title-error` }
+						className={ classNames( 'simple-payments__field', 'simple-payments__field-title', {
+							'simple-payments__field-has-error': fieldTitleError,
 						} ) }
-						label={ __( 'Price' ) }
-						onChange={ this.handlePriceChange }
-						placeholder={ formatPrice( 0, currency, false ) }
+						label={ __( 'Item name' ) }
+						onChange={ this.handleTitleChange }
+						placeholder={ __( 'Item name' ) }
 						required
-						step="1"
-						type="number"
-						value={ price || '' }
+						type="text"
+						value={ title }
 					/>
-					<HelpMessage id={ `${ instanceId }-price-error` } isError>
-						{ fieldPriceError }
+					<HelpMessage id={ `${ instanceId }-title-error` } isError>
+						{ fieldTitleError }
+					</HelpMessage>
+
+					<TextareaControl
+						className="simple-payments__field simple-payments__field-content"
+						label={ __( 'Describe your item in a few words' ) }
+						onChange={ this.handleContentChange }
+						placeholder={ __( 'Describe your item in a few words' ) }
+						value={ content }
+					/>
+
+					<div className="simple-payments__price-container">
+						<SelectControl
+							className="simple-payments__field simple-payments__field-currency"
+							label={ __( 'Currency' ) }
+							onChange={ this.handleCurrencyChange }
+							options={ this.getCurrencyList }
+							value={ currency }
+						/>
+						<TextControl
+							aria-describedby={ `${ instanceId }-price-error` }
+							className={ classNames( 'simple-payments__field', 'simple-payments__field-price', {
+								'simple-payments__field-has-error': fieldPriceError,
+							} ) }
+							label={ __( 'Price' ) }
+							onChange={ this.handlePriceChange }
+							placeholder={ formatPrice( 0, currency, false ) }
+							required
+							step="1"
+							type="number"
+							value={ price || '' }
+						/>
+						<HelpMessage id={ `${ instanceId }-price-error` } isError>
+							{ fieldPriceError }
+						</HelpMessage>
+					</div>
+
+					<div className="simple-payments__field-multiple">
+						<ToggleControl
+							checked={ Boolean( multiple ) }
+							label={ __( 'Allow people to buy more than one item at a time' ) }
+							onChange={ this.handleMultipleChange }
+						/>
+					</div>
+
+					<TextControl
+						aria-describedby={ `${ instanceId }-email-${ fieldEmailError ? 'error' : 'help' }` }
+						className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
+							'simple-payments__field-has-error': fieldEmailError,
+						} ) }
+						label={ __( 'Email' ) }
+						onChange={ this.handleEmailChange }
+						placeholder={ __( 'Email' ) }
+						required
+						type="email"
+						value={ email }
+					/>
+					<HelpMessage id={ `${ instanceId }-email-error` } isError>
+						{ fieldEmailError }
+					</HelpMessage>
+					<HelpMessage id={ `${ instanceId }-email-help` }>
+						{ __(
+							'Enter the email address associated with your PayPal account. Don’t have an account?'
+						) + ' ' }
+						<ExternalLink href="https://www.paypal.com/">
+							{ __( 'Create one on PayPal' ) }
+						</ExternalLink>
 					</HelpMessage>
 				</div>
-
-				<div className="simple-payments__field-multiple">
-					<ToggleControl
-						checked={ Boolean( multiple ) }
-						label={ __( 'Allow people to buy more than one item at a time' ) }
-						onChange={ this.handleMultipleChange }
-					/>
-				</div>
-
-				<TextControl
-					aria-describedby={ `${ instanceId }-email-${ fieldEmailError ? 'error' : 'help' }` }
-					className={ classNames( 'simple-payments__field', 'simple-payments__field-email', {
-						'simple-payments__field-has-error': fieldEmailError,
-					} ) }
-					label={ __( 'Email' ) }
-					onChange={ this.handleEmailChange }
-					placeholder={ __( 'Email' ) }
-					required
-					type="email"
-					value={ email }
-				/>
-				<HelpMessage id={ `${ instanceId }-email-error` } isError>
-					{ fieldEmailError }
-				</HelpMessage>
-				<HelpMessage id={ `${ instanceId }-email-help` }>
-					{ __(
-						'Enter the email address associated with your PayPal account. Don’t have an account?'
-					) + ' ' }
-					<ExternalLink href="https://www.paypal.com/">
-						{ __( 'Create one on PayPal' ) }
-					</ExternalLink>
-				</HelpMessage>
 			</Wrapper>
 		);
 	}
 }
 
 const mapSelectToProps = withSelect( ( select, props ) => {
-	const { getEntityRecord } = select( 'core' );
+	const { getEntityRecord, getMedia } = select( 'core' );
 	const { isSavingPost, getCurrentPost } = select( 'core/editor' );
 
-	const { productId } = props.attributes;
+	const { productId, featuredMediaId } = props.attributes;
 
 	const fields = [
 		[ 'content' ],
@@ -508,6 +543,7 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 		[ 'meta', 'spay_multiple' ],
 		[ 'meta', 'spay_price' ],
 		[ 'title', 'raw' ],
+		[ 'featured_media' ],
 	];
 
 	const simplePayment = productId
@@ -518,6 +554,7 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 		hasPublishAction: !! get( getCurrentPost(), [ '_links', 'wp:action-publish' ] ),
 		isSaving: !! isSavingPost(),
 		simplePayment,
+		featuredMedia: featuredMediaId ? getMedia( featuredMediaId ) : null,
 	};
 } );
 

@@ -82,16 +82,19 @@ describe( 'state/concierge', () => {
 		} );
 
 		test( 'requestConciergeInitial()', () => {
-			const scheduleId = 123;
+			const siteId = 456;
 
-			expect( requestConciergeInitial( scheduleId ) ).toEqual( {
+			expect( requestConciergeInitial( siteId ) ).toEqual( {
 				type: CONCIERGE_INITIAL_REQUEST,
-				scheduleId,
+				siteId,
 			} );
 		} );
 
 		test( 'updateConciergeInitial()', () => {
-			const initial = { available_times: [ 111, 222, 333 ] };
+			const initial = {
+				availableTimes: [ 111, 222, 333 ],
+				scheduleId: 123,
+			};
 
 			expect( updateConciergeInitial( initial ) ).toEqual( {
 				type: CONCIERGE_INITIAL_UPDATE,

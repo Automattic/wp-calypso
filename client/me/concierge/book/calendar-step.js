@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import HeaderCake from 'components/header-cake';
 import CompactCard from 'components/card/compact';
 import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
+import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
 import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
 import { bookConciergeAppointment, requestConciergeInitial } from 'state/concierge/actions';
 import AvailableTimePicker from '../shared/available-time-picker';
@@ -21,7 +22,6 @@ import {
 	CONCIERGE_STATUS_BOOKED,
 	CONCIERGE_STATUS_BOOKING,
 	CONCIERGE_STATUS_BOOKING_ERROR,
-	WPCOM_CONCIERGE_SCHEDULE_ID,
 } from '../constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -34,10 +34,11 @@ class CalendarStep extends Component {
 		onComplete: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 		signupForm: PropTypes.object.isRequired,
+		scheduleId: PropTypes.number.isRequired,
 	};
 
 	onSubmit = timestamp => {
-		const { currentUserId, signupForm, site } = this.props;
+		const { currentUserId, signupForm, site, scheduleId } = this.props;
 		const meta = {
 			firstname: signupForm.firstname,
 			lastname: signupForm.lastname,
@@ -46,26 +47,20 @@ class CalendarStep extends Component {
 			isRebrandCitiesSite: signupForm.isRebrandCitiesSite,
 		};
 
-		this.props.bookConciergeAppointment(
-			WPCOM_CONCIERGE_SCHEDULE_ID,
-			timestamp,
-			currentUserId,
-			site.ID,
-			meta
-		);
+		this.props.bookConciergeAppointment( scheduleId, timestamp, currentUserId, site.ID, meta );
 	};
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_concierge_book_calendar_step' );
 	}
 
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
 			// go to confirmation page if booking was successfull
 			this.props.onComplete();
 		} else if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKING_ERROR ) {
 			// request new available times
-			this.props.requestConciergeInitial( WPCOM_CONCIERGE_SCHEDULE_ID );
+			this.props.requestConciergeInitial( this.props.scheduleId );
 		}
 	}
 
@@ -96,6 +91,7 @@ class CalendarStep extends Component {
 export default connect(
 	state => ( {
 		signupForm: getConciergeSignupForm( state ),
+		scheduleId: getConciergeScheduleId( state ),
 		currentUserId: getCurrentUserId( state ),
 		currentUserLocale: getCurrentUserLocale( state ),
 	} ),

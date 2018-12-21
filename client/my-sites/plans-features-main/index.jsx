@@ -247,7 +247,7 @@ export class PlansFeaturesMain extends Component {
 					selected={ customerType === 'business' }
 					path={ '?customerType=business' }
 				>
-					{ translate( 'Online Stores and Business Sites' ) }
+					{ translate( 'Business Sites and Online Stores' ) }
 				</SegmentedControlItem>
 			</SegmentedControl>
 		);
@@ -321,10 +321,6 @@ PlansFeaturesMain.defaultProps = {
 const guessCustomerType = ( state, props ) => {
 	if ( props.customerType ) {
 		return props.customerType;
-	}
-
-	if ( isDiscountActive( getDiscountByName( 'default_plans_tab_business' ), state ) ) {
-		return 'business';
 	}
 
 	const site = props.site;
