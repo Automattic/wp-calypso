@@ -16,7 +16,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { some, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,9 +26,8 @@ import QueryConciergeInitial from 'components/data/query-concierge-initial';
 import QueryUserSettings from 'components/data/query-user-settings';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { planMatches } from 'lib/plans';
-import { GROUP_WPCOM, TYPE_BUSINESS, TYPE_ECOMMERCE } from 'lib/plans/constants';
 import getConciergeAvailableTimes from 'state/selectors/get-concierge-available-times';
+import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
 import getUserSettings from 'state/selectors/get-user-settings';
 import { getSite } from 'state/sites/selectors';
 import NoAvailableTimes from './shared/no-available-times';
@@ -53,22 +52,17 @@ export class ConciergeMain extends Component {
 	};
 
 	getDisplayComponent = () => {
-		const { appointmentId, availableTimes, site, steps, userSettings } = this.props;
+		const { appointmentId, availableTimes, site, steps, userSettings, scheduleId } = this.props;
 
 		const CurrentStep = steps[ this.state.currentStep ];
 		const Skeleton = this.props.skeleton;
 
-		if ( ! availableTimes || ! site || ! site.plan || ! userSettings ) {
+		if ( ! availableTimes || ! site || ! site.plan || null == scheduleId || ! userSettings ) {
 			return <Skeleton />;
 		}
 
-		const shouldDisplayUpsell = ! some(
-			[ TYPE_BUSINESS, TYPE_ECOMMERCE ].map( type =>
-				planMatches( site.plan.product_slug, { type, group: GROUP_WPCOM } )
-			)
-		);
-
-		if ( shouldDisplayUpsell ) {
+		// if scheduleId is 0, it means the user is not eligible for the concierge service.
+		if ( scheduleId === 0 ) {
 			return <Upsell site={ site } />;
 		}
 
@@ -108,5 +102,6 @@ export class ConciergeMain extends Component {
 export default connect( ( state, props ) => ( {
 	availableTimes: getConciergeAvailableTimes( state ),
 	site: getSite( state, props.siteSlug ),
+	scheduleId: getConciergeScheduleId( state ),
 	userSettings: getUserSettings( state ),
 } ) )( ConciergeMain );
