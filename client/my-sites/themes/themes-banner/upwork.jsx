@@ -78,19 +78,17 @@ class UpworkBanner extends PureComponent {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				<div className="themes-banner__copy">
-					<h1 className="themes-banner__title">
-						{ translate( 'Need an expert to help realize your vision? Hire one!' ) }
-					</h1>
-					<p className="themes-banner__description">
-						{ translate(
-							"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. They know their stuff and they're waiting to help you build your dream site."
-						) }
-					</p>
-					<Button className="themes-banner__cta" compact primary>
-						{ translate( 'Find your expert' ) }
-					</Button>
-				</div>
+				<h1 className="themes-banner__title">
+					{ translate( 'Need an expert to help realize your vision? Hire one!' ) }
+				</h1>
+				<p className="themes-banner__description">
+					{ translate(
+						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. They know their stuff and they're waiting to help you build your dream site."
+					) }
+				</p>
+				<Button className="themes-banner__cta" compact primary>
+					{ translate( 'Find your expert' ) }
+				</Button>
 				<Button className="themes-banner__close" onClick={ this.onDismissClick }>
 					<Gridicon icon="cross-small" size={ 18 } />
 				</Button>
