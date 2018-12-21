@@ -29,6 +29,7 @@ import { addItem } from 'lib/upgrades/actions';
 import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
 import { filter as filterUsers, validate as validateUsers } from 'lib/domains/google-apps-users';
 import DomainsSelect from './domains-select';
+import QueryUserSettings from 'components/data/query-user-settings';
 
 /**
  * Internal dependencies
@@ -160,6 +161,7 @@ class AddEmailAddressesCard extends React.Component {
 	render() {
 		return (
 			<div className="add-google-apps__card">
+				<QueryUserSettings />
 				{ this.validationErrors() }
 
 				<Card className="add-google-apps__inner">

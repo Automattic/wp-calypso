@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
  */
 import getUserSetting from 'state/selectors/get-user-setting';
 import GoogleAppsUsersForm from './users-form';
+import QueryUserSettings from 'components/data/query-user-settings';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 
 class GoogleAppsUsers extends React.Component {
@@ -53,6 +54,7 @@ class GoogleAppsUsers extends React.Component {
 
 		return (
 			<div className="google-apps-dialog__users" key="google-apps-dialog__users">
+				<QueryUserSettings />
 				<h4>{ translate( 'New G Suite User:' ) }</h4>
 
 				{ allUserInputs }
