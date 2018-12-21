@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { filter, pick, get } from 'lodash';
+import { defer, filter, pick, get } from 'lodash';
 import { compose } from '@wordpress/compose';
 import { withDispatch } from '@wordpress/data';
 import { createRef, Component, Fragment } from '@wordpress/element';
@@ -63,6 +63,8 @@ export const pickRelevantMediaFiles = image => {
 class TiledGalleryEdit extends Component {
 	container = createRef();
 
+	pendingRaf = null;
+
 	state = {
 		selectedImage: null,
 	};
@@ -74,26 +76,36 @@ class TiledGalleryEdit extends Component {
 		}
 		return null;
 	}
+
 	componentDidMount() {
 		const { className } = this.props;
-
-		if ( this.container.current ) {
-			Array.from( this.container.current.querySelectorAll( '.tiled-gallery__row' ) ).forEach(
-				handleRowResize
-			);
-		}
 
 		// If block is missing a style class when mounting, set it to default
 		if ( ! hasStyleClass( className ) ) {
 			this.props.changeClassName( `${ className } ${ getDefaultStyleClass( LAYOUT_STYLES ) }` );
 		}
+
+		this.deferredMount = defer( () => {
+			// ResizeObserver has checks for `window` & `document`:
+			// it does nothing if those are not available.
+			this.observer = new ResizeObserver( this.onGalleryResize );
+			this.observer.observe( this.container.current ); //parentNode
+		} );
 	}
-	componentDidUpdate() {
-		if ( this.container.current ) {
-			Array.from( this.container.current.querySelectorAll( '.tiled-gallery__row' ) ).forEach(
-				handleRowResize
-			);
+
+	componentWillUnmount() {
+		if ( this.observer ) {
+			this.observer.disconnect();
 		}
+		clearTimeout( this.deferredMount );
+	}
+
+	componentDidUpdate() {
+		/*
+		if ( this.container.current ) {
+			Array.from( this.container.current.querySelectorAll( '.tiled-gallery__row' ) ).forEach( handleRowResize );
+		}
+		*/
 	}
 
 	setAttributes( attributes ) {
@@ -113,6 +125,28 @@ class TiledGalleryEdit extends Component {
 		this.props.setAttributes( attributes );
 	}
 
+	onGalleryResize( [ gallery ] ) {
+		if ( this.pendingRaf ) {
+			cancelAnimationFrame( this.pendingRaf );
+		}
+		this.pendingRaf = requestAnimationFrame( () => {
+			this.pendingRaf = null;
+			const { width: galleryWidth } = gallery.contentRect;
+			// @TODO would be nice to just use childNodes at this point but it contains
+			// upload button and dropzone — could we move it outside the observed wrapper?
+			const rows = Array.from( gallery.target.querySelectorAll( '.tiled-gallery__row' ) );
+			rows.forEach( row => handleRowResize( row, galleryWidth ) );
+		} );
+	}
+
+	onGalleryContentChange() {
+		if ( this.container.current ) {
+			Array.from( this.container.current.querySelectorAll( '.tiled-gallery__row' ) ).forEach(
+				handleRowResize
+			);
+		}
+	}
+
 	addFiles = files => {
 		const currentImages = this.props.attributes.images || [];
 		const { noticeOperations } = this.props;
@@ -122,6 +156,7 @@ class TiledGalleryEdit extends Component {
 			onFileChange: images => {
 				const imagesNormalized = images.map( image => pickRelevantMediaFiles( image ) );
 				this.setAttributes( { images: currentImages.concat( imagesNormalized ) } );
+				this.onGalleryContentChange();
 			},
 			onError: noticeOperations.createErrorNotice,
 		} );
@@ -137,6 +172,7 @@ class TiledGalleryEdit extends Component {
 			images,
 			columns: columns ? Math.min( images.length, columns ) : columns,
 		} );
+		this.onGalleryContentChange();
 	};
 
 	onSelectImage = index => () => {
