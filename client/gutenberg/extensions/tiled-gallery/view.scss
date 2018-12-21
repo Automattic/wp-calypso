@@ -41,9 +41,6 @@ $tiled-gallery-max-column-count: 20;
 	flex-direction: row;
 	justify-content: center;
 	margin: 0 auto;
-	& + & {
-		margin-top: $tiled-gallery-gutter;
-	}
 }
 
 .tiled-gallery__col {
