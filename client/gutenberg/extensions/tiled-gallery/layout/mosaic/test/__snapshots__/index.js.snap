@@ -8,7 +8,19 @@ Array [
     <Column
       key="0"
     >
-      0
+      <image-component
+        alt=""
+        aria-label="image 1 of 14 in gallery"
+        caption=""
+        className="tiled-gallery__item"
+        height={2048}
+        id={163}
+        isSelected={false}
+        key="0"
+        origUrl="https://example.files.wordpress.com/2018/12/architecture-bay-bridge-356830.jpg"
+        url="https://i2.wp.com/example.files.wordpress.com/2018/12/architecture-bay-bridge-356830.jpg?ssl=1"
+        width={8192}
+      />
     </Column>
   </Row>,
   <Row
@@ -17,7 +29,19 @@ Array [
     <Column
       key="0"
     >
-      1
+      <image-component
+        alt=""
+        aria-label="image 2 of 14 in gallery"
+        caption=""
+        className="tiled-gallery__item"
+        height={1562}
+        id={162}
+        isSelected={false}
+        key="1"
+        origUrl="https://example.files.wordpress.com/2018/12/bloom-blossom-flora-40797-1.jpg"
+        url="https://i0.wp.com/example.files.wordpress.com/2018/12/bloom-blossom-flora-40797-1.jpg?ssl=1"
+        width={3531}
+      />
     </Column>
   </Row>,
   <Row
@@ -26,22 +50,70 @@ Array [
     <Column
       key="0"
     >
-      2
+      <image-component
+        alt=""
+        aria-label="image 3 of 14 in gallery"
+        caption=""
+        className="tiled-gallery__item"
+        height={4221}
+        id={161}
+        isSelected={false}
+        key="2"
+        origUrl="https://example.files.wordpress.com/2018/12/architecture-building-city-597049.jpg"
+        url="https://i0.wp.com/example.files.wordpress.com/2018/12/architecture-building-city-597049.jpg?ssl=1"
+        width={2818}
+      />
     </Column>
     <Column
       key="1"
     >
-      3
+      <image-component
+        alt=""
+        aria-label="image 4 of 14 in gallery"
+        caption=""
+        className="tiled-gallery__item"
+        height={4032}
+        id={160}
+        isSelected={false}
+        key="3"
+        origUrl="https://example.files.wordpress.com/2018/12/architecture-art-blue-699466.jpg"
+        url="https://i2.wp.com/example.files.wordpress.com/2018/12/architecture-art-blue-699466.jpg?ssl=1"
+        width={3024}
+      />
     </Column>
     <Column
       key="2"
     >
-      4
+      <image-component
+        alt=""
+        aria-label="image 5 of 14 in gallery"
+        caption=""
+        className="tiled-gallery__item"
+        height={3193}
+        id={159}
+        isSelected={false}
+        key="4"
+        origUrl="https://example.files.wordpress.com/2018/12/black-and-white-construction-ladder-54335.jpg"
+        url="https://i2.wp.com/example.files.wordpress.com/2018/12/black-and-white-construction-ladder-54335.jpg?ssl=1"
+        width={2377}
+      />
     </Column>
     <Column
       key="3"
     >
-      5
+      <image-component
+        alt=""
+        aria-label="image 6 of 14 in gallery"
+        caption=""
+        className="tiled-gallery__item"
+        height={6000}
+        id={158}
+        isSelected={false}
+        key="5"
+        origUrl="https://example.files.wordpress.com/2018/12/architecture-buildings-city-1672110.jpg"
+        url="https://i0.wp.com/example.files.wordpress.com/2018/12/architecture-buildings-city-1672110.jpg?ssl=1"
+        width={4000}
+      />
     </Column>
   </Row>,
   <Row
@@ -50,12 +122,36 @@ Array [
     <Column
       key="0"
     >
-      6
+      <image-component
+        alt=""
+        aria-label="image 7 of 14 in gallery"
+        caption=""
+        className="tiled-gallery__item"
+        height={3401}
+        id={157}
+        isSelected={false}
+        key="6"
+        origUrl="https://example.files.wordpress.com/2018/12/architectural-design-architecture-black-and-white-1672122-1.jpg"
+        url="https://i0.wp.com/example.files.wordpress.com/2018/12/architectural-design-architecture-black-and-white-1672122-1.jpg?ssl=1"
+        width={2721}
+      />
     </Column>
     <Column
       key="1"
     >
-      7
+      <image-component
+        alt=""
+        aria-label="image 8 of 14 in gallery"
+        caption=""
+        className="tiled-gallery__item"
+        height={2198}
+        id={156}
+        isSelected={false}
+        key="7"
+        origUrl="https://example.files.wordpress.com/2018/12/grass-hd-wallpaper-lake-127753.jpg"
+        url="https://i0.wp.com/example.files.wordpress.com/2018/12/grass-hd-wallpaper-lake-127753.jpg?ssl=1"
+        width={7999}
+      />
     </Column>
   </Row>,
   <Row
@@ -64,13 +160,49 @@ Array [
     <Column
       key="0"
     >
-      8
+      <image-component
+        alt=""
+        aria-label="image 9 of 14 in gallery"
+        caption=""
+        className="tiled-gallery__item"
+        height={599}
+        id={122}
+        isSelected={false}
+        key="8"
+        origUrl="https://example.files.wordpress.com/2018/12/texaco-car-1.jpg"
+        url="https://i2.wp.com/example.files.wordpress.com/2018/12/texaco-car-1.jpg?ssl=1"
+        width={800}
+      />
     </Column>
     <Column
       key="1"
     >
-      9
-      10
+      <image-component
+        alt=""
+        aria-label="image 10 of 14 in gallery"
+        caption=""
+        className="tiled-gallery__item"
+        height={159}
+        id={92}
+        isSelected={false}
+        key="9"
+        origUrl="https://example.files.wordpress.com/2018/12/43824553435_ea38cbc92a_m.jpg"
+        url="https://i1.wp.com/example.files.wordpress.com/2018/12/43824553435_ea38cbc92a_m.jpg?ssl=1"
+        width={240}
+      />
+      <image-component
+        alt=""
+        aria-label="image 11 of 14 in gallery"
+        caption=""
+        className="tiled-gallery__item"
+        height={150}
+        id={90}
+        isSelected={false}
+        key="10"
+        origUrl="https://example.files.wordpress.com/2018/12/42924685680_7b5632e58e_m.jpg"
+        url="https://i1.wp.com/example.files.wordpress.com/2018/12/42924685680_7b5632e58e_m.jpg?ssl=1"
+        width={240}
+      />
     </Column>
   </Row>,
   <Row
@@ -79,13 +211,49 @@ Array [
     <Column
       key="0"
     >
-      11
-      12
+      <image-component
+        alt=""
+        aria-label="image 12 of 14 in gallery"
+        caption=""
+        className="tiled-gallery__item"
+        height={427}
+        id={89}
+        isSelected={false}
+        key="11"
+        origUrl="https://example.files.wordpress.com/2018/12/31962299833_1e106f7f7a_z-1-e1545262352979.jpg"
+        url="https://i2.wp.com/example.files.wordpress.com/2018/12/31962299833_1e106f7f7a_z-1-e1545262352979.jpg?ssl=1"
+        width={564}
+      />
+      <image-component
+        alt=""
+        aria-label="image 13 of 14 in gallery"
+        caption=""
+        className="tiled-gallery__item"
+        height={1511}
+        id={88}
+        isSelected={false}
+        key="12"
+        origUrl="https://example.files.wordpress.com/2018/12/29797558147_3c72afa8f4_k.jpg"
+        url="https://i0.wp.com/example.files.wordpress.com/2018/12/29797558147_3c72afa8f4_k.jpg?ssl=1"
+        width={2048}
+      />
     </Column>
     <Column
       key="1"
     >
-      13
+      <image-component
+        alt=""
+        aria-label="image 14 of 14 in gallery"
+        caption=""
+        className="tiled-gallery__item"
+        height={1067}
+        id={8}
+        isSelected={false}
+        key="13"
+        origUrl="https://example.files.wordpress.com/2018/11/person-smartphone-office-table.jpeg"
+        url="https://i1.wp.com/example.files.wordpress.com/2018/11/person-smartphone-office-table.jpeg?ssl=1"
+        width={1600}
+      />
     </Column>
   </Row>,
 ]

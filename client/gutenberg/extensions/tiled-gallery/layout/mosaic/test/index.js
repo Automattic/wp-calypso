@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { range } from 'lodash';
+import { noop } from 'lodash';
 import { shallow } from 'enzyme';
 
 /**
@@ -11,11 +11,19 @@ import { shallow } from 'enzyme';
 import Mosaic from '..';
 import * as imageSets from '../../test/fixtures/image-sets';
 
+const defaultProps = {
+	onRemoveImage: noop,
+	onSelectImage: noop,
+	setImageAttributes: noop,
+};
+
 test( 'renders as expected', () => {
 	Object.keys( imageSets ).forEach( k => {
 		const images = imageSets[ k ];
 		expect(
-			shallow( <Mosaic images={ images } renderedImages={ range( images.length ) } /> )
+			shallow(
+				<Mosaic { ...defaultProps } ImageComponent={ 'image-component' } images={ images } />
+			)
 		).toMatchSnapshot();
 	} );
 } );
