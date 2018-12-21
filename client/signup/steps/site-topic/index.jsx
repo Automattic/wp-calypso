@@ -89,22 +89,18 @@ class SiteTopicStep extends Component {
 	}
 
 	getTextFromSiteType() {
-		const { siteType } = this.props;
-
-		const headerText = getSiteTypePropertyValue( 'slug', siteType, 'siteTopicHeader' ) || '';
-		const topicLabel = getSiteTypePropertyValue( 'slug', siteType, 'siteTopicLabel' ) || '';
+		const headerText = getSiteTypePropertyValue( 'slug', this.props.siteType, 'siteTopicHeader' ) || '';
 		// once we have more granular copies per segments, these two should only be used for the default case.
 		const commonSubHeaderText = '';
 
 		return {
 			headerText,
 			commonSubHeaderText,
-			topicLabel,
 		};
 	}
 
 	render() {
-		const { headerText, commonSubHeaderText, topicLabel } = this.getTextFromSiteType();
+		const { headerText, commonSubHeaderText } = this.getTextFromSiteType();
 
 		return (
 			<div>
@@ -117,7 +113,7 @@ class SiteTopicStep extends Component {
 					subHeaderText={ commonSubHeaderText }
 					fallbackSubHeaderText={ commonSubHeaderText }
 					signupProgress={ this.props.signupProgress }
-					stepContent={ this.renderContent( topicLabel ) }
+					stepContent={ this.renderContent() }
 				/>
 			</div>
 		);
