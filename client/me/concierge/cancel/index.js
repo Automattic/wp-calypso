@@ -59,7 +59,7 @@ class ConciergeCancel extends Component {
 				return (
 					<Confirmation
 						description={ translate( 'Would you like to schedule a new session?' ) }
-						title={ translate( 'Your Concierge session has been cancelled.' ) }
+						title={ translate( 'Your session has been cancelled.' ) }
 					>
 						<Button
 							className="cancel__schedule-button"
@@ -98,7 +98,7 @@ class ConciergeCancel extends Component {
 							description={ translate(
 								'You can also reschedule your session. What would you like to do?'
 							) }
-							title={ translate( 'Cancel your Concierge session' ) }
+							title={ translate( 'Cancel your session' ) }
 						>
 							<Button
 								className="cancel__reschedule-button"

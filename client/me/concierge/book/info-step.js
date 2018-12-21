@@ -96,12 +96,9 @@ class InfoStep extends Component {
 		} = this.props;
 		const language = getLanguage( currentUserLocale ).name;
 		const isEnglish = includes( config( 'english_locales' ), currentUserLocale );
-		const noticeText = translate(
-			'All Concierge Sessions are in English (%(language)s is not available)',
-			{
-				args: { language },
-			}
-		);
+		const noticeText = translate( 'All sessions are in English (%(language)s is not available)', {
+			args: { language },
+		} );
 
 		return (
 			<div>
