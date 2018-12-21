@@ -6,8 +6,13 @@ const MARGIN = 4;
 
 const memo = new WeakMap();
 
-export function handleResize( row ) {
-	applyRowRatio( row, getRowRatio( row ) );
+export function handleRowResize( row, galleryWidth ) {
+	// @TODO this width is passed already from the `view`;
+	// we'll need to pass it down from the `edit` as well and then
+	// remove this line.
+	galleryWidth = galleryWidth || row.scrollWidth;
+
+	applyRowRatio( row, getRowRatio( row ), galleryWidth );
 }
 
 function getRowRatio( row ) {
@@ -61,9 +66,7 @@ function getImageRatio( img ) {
 	return result;
 }
 
-function applyRowRatio( row, [ ratio, weightedRatio ] ) {
-	const width = row.scrollWidth;
-
+function applyRowRatio( row, [ ratio, weightedRatio ], width ) {
 	const rawHeight =
 		( 1 / ratio ) *
 		( width - MARGIN * row.children.length * ( row.children.length - weightedRatio ) );

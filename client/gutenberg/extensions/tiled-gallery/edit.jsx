@@ -29,8 +29,12 @@ import {
 import Layout from './layout';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { ALLOWED_MEDIA_TYPES, LAYOUT_STYLES, MAX_COLUMNS } from './constants';
-import { handleResize } from './resize';
-import { getActiveStyleName, getDefaultStyleClass, hasStyleClass } from 'gutenberg/extensions/utils';
+import {
+	getActiveStyleName,
+	getDefaultStyleClass,
+	hasStyleClass,
+} from 'gutenberg/extensions/utils';
+import { handleRowResize } from './resize';
 
 const linkOptions = [
 	{ value: 'attachment', label: __( 'Attachment Page' ) },
@@ -75,7 +79,7 @@ class TiledGalleryEdit extends Component {
 
 		if ( this.container.current ) {
 			Array.from( this.container.current.querySelectorAll( '.tiled-gallery__row' ) ).forEach(
-				handleResize
+				handleRowResize
 			);
 		}
 
@@ -87,7 +91,7 @@ class TiledGalleryEdit extends Component {
 	componentDidUpdate() {
 		if ( this.container.current ) {
 			Array.from( this.container.current.querySelectorAll( '.tiled-gallery__row' ) ).forEach(
-				handleResize
+				handleRowResize
 			);
 		}
 	}
@@ -289,7 +293,6 @@ class TiledGalleryEdit extends Component {
 	}
 }
 
-
 export default compose( [
 	withDispatch( ( dispatch, { clientId } ) => {
 		return {
@@ -300,5 +303,5 @@ export default compose( [
 			},
 		};
 	} ),
-	withNotices
+	withNotices,
 ] )( TiledGalleryEdit );
