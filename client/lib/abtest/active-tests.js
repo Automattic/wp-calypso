@@ -73,14 +73,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	removeUsername: {
-		datestamp: '20181213',
-		variations: {
-			showUsername: 50,
-			hideUsername: 50,
-		},
-		defaultVariation: 'showUsername',
-	},
 	jetpackFreePlanButtonPosition: {
 		datestamp: '20181212',
 		variations: {
