@@ -90,6 +90,14 @@ export default {
 		defaultVariation: 'locationBottom',
 		allowExistingUsers: true,
 	},
+	builderReferralStatsNudge: {
+		datestamp: '20181218',
+		variations: {
+			builderReferralBanner: 10,
+			googleMyBusinessBanner: 90,
+		},
+		defaultVariation: 'googleMyBusinessBanner',
+	},
 	privateByDefault: {
 		datestamp: '20181217',
 		variations: {
