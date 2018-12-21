@@ -10,6 +10,7 @@ import page from 'page';
 import { connect } from 'react-redux';
 import { get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
+import urlUtils from 'url';
 
 /**
  * Internal dependencies
@@ -70,6 +71,7 @@ import {
 	isRemoteSiteOnSitesList,
 } from 'state/jetpack-connect/selectors';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
+import { affiliateReferral } from 'state/refer/actions';
 
 /**
  * Constants
@@ -159,6 +161,29 @@ export class JetpackAuthorize extends Component {
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
 			return retryAuth( site, attempts + 1 );
+		}
+	}
+
+	componentDidMount() {
+		this.trackAffiliate();
+	}
+
+	/**
+	 * Track affiliate code based on the aff and cid URL params.
+	 */
+	trackAffiliate() {
+		const urlPath = location.href;
+		const parsedUrl = urlUtils.parse( urlPath, true );
+		const affiliateId = parsedUrl.query.aff;
+		const campaignId = parsedUrl.query.cid;
+		const subId = parsedUrl.query.sid;
+
+		if ( affiliateId && ! isNaN( affiliateId ) ) {
+			this.props.recordTracksEvent( 'calypso_jpc_refer_visit', {
+				flow: this.props.flowName,
+				page: `${ parsedUrl.host }${ parsedUrl.pathname }`,
+			} );
+			this.props.trackAffiliateReferral( { affiliateId, campaignId, subId, urlPath } );
 		}
 	}
 
@@ -673,5 +698,6 @@ export default connect(
 		authorize: authorizeAction,
 		recordTracksEvent: recordTracksEventAction,
 		retryAuth: retryAuthAction,
+		trackAffiliateReferral: affiliateReferral,
 	}
 )( localize( JetpackAuthorize ) );
