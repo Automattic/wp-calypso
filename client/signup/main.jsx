@@ -38,7 +38,7 @@ import './style.scss';
 import DocumentHead from 'components/data/document-head';
 import LocaleSuggestions from 'components/locale-suggestions';
 import SignupProcessingScreen from 'signup/processing-screen';
-import SignupHeader from 'signup/header';
+import SignupHeader from 'signup/signup-header';
 import SiteMockups from 'signup/site-mockup';
 
 // Libraries
