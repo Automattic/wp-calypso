@@ -36,6 +36,7 @@ export class ClassicEdit extends Component {
 		const { isSelected, setSelected } = this.props;
 		return (
 			<TinyMCE
+				isGutenbergClassicBlock
 				mode="tinymce"
 				onChange={ this.debouncedOnContentChange }
 				onClick={ isSelected ? noop : setSelected }
