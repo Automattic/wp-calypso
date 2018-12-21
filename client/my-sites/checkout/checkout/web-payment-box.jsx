@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 import config from 'config';
 import Gridicon from 'gridicons';
 import debugFactory from 'debug';
+import { concat } from 'lodash';
 
 /**
  * Internal dependencies
@@ -229,6 +230,22 @@ export class WebPaymentBox extends React.Component {
 				},
 			},
 		];
+		let displayItems = cart.products.map( product => {
+			return {
+				label: product.product_name,
+				amount: {
+					currency: product.currency,
+					value: product.cost,
+				},
+			};
+		} );
+		if ( config.isEnabled( 'show-tax' ) ) {
+			displayItems = concat( displayItems, {
+				label: 'Tax',
+				amount: { currency: cart.products[ 0 ].currency, value: cart.products[ 0 ].cost / 10 },
+			} );
+		}
+
 		const paymentDetails = {
 			total: {
 				label: translate( 'Total' ),
@@ -237,15 +254,7 @@ export class WebPaymentBox extends React.Component {
 					value: cart.total_cost.toString(),
 				},
 			},
-			displayItems: cart.products.map( product => {
-				return {
-					label: product.product_name,
-					amount: {
-						currency: product.currency,
-						value: product.cost.toString(),
-					},
-				};
-			} ),
+			displayItems,
 		};
 
 		const paymentRequest = new PaymentRequest(
