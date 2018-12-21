@@ -610,7 +610,7 @@
 }
 
 .privacy-protection {
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	float: left;
 	margin-bottom: 15px;
 	margin-top: 15px;
@@ -887,7 +887,7 @@
 			display: none;
 		}
 		.is-selected {
-			background-color: $gray-light;
+			background-color: var( --color-neutral-0 );
 			color: var( --color-neutral-700 );
 		}
 	}
@@ -910,7 +910,7 @@
 
 			.section-nav-tab__link {
 				color: var( --color-primary );
-				background-color: $gray-light;
+				background-color: var( --color-neutral-0 );
 
 				@include breakpoint( '>480px' ) {
 					background-color: transparent;

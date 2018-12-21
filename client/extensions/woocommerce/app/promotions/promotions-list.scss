@@ -52,7 +52,7 @@
 		margin-right: 16px;
 
 		&.is-thumb-placeholder {
-			background: $gray-light;
+			background: var( --color-neutral-0 );
 		}
 
 		img {

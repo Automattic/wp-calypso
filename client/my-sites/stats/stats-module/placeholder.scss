@@ -6,7 +6,7 @@
 
 	// Block placeholder, primarily for SVGs and similar
 	&.is-block {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 	}
 
 	// Spinner placeholder, to be used in Summary views, where we already have some data

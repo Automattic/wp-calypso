@@ -189,7 +189,7 @@
 	margin: 0;
 
 	li {
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		padding: 20px 24px;
 		@include clear-fix;
 
@@ -198,7 +198,7 @@
 		}
 
 		&:last-of-type {
-			border-bottom: 1px solid $gray-light;
+			border-bottom: 1px solid var( --color-neutral-0 );
 		}
 	}
 

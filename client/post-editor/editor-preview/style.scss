@@ -4,7 +4,7 @@
 }
 
 .editor-preview.is-fullscreen .web-preview__inner {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	display: none;
 	opacity: 0;
 	position: fixed;

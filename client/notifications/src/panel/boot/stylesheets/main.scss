@@ -15,7 +15,7 @@
 	-webkit-font-smoothing: subpixel-antialiased;
 
 	@media only screen and ( max-width: 799px ) {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 	}
 	@media only screen and ( min-width: 409px ) and ( max-width: 430px ) {
 		background-color: $white;
@@ -289,7 +289,7 @@
 	}
 
 	.wpnc__done-message {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		color: var( --color-text-subtle );
 		text-align: center;
 		line-height: 50px;
@@ -297,7 +297,7 @@
 	}
 
 	.wpnc__empty-notes-container {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 	}
 
 	.wpnc__empty-notes {
@@ -319,7 +319,7 @@
 
 	.wpnc__loading-indicator {
 		display: block;
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 		height: 90px;
 	}
 
@@ -339,7 +339,7 @@
 
 	.wpnc__list-view {
 		height: 100%;
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 		overflow-y: scroll;
 		-webkit-overflow-scrolling: touch;
 		border-left: 1px solid var( --color-neutral-0 );
@@ -374,7 +374,7 @@
 
 		.unread .wpnc__note-icon .wpnc__gridicon {
 			background: var( --color-primary );
-			border-color: $gray-light;
+			border-color: var( --color-neutral-0 );
 		}
 
 		.wpnc__comment-unapproved .wpnc__note-icon .wpnc__gridicon {
@@ -383,7 +383,7 @@
 		}
 
 		.unread {
-			background: $gray-light;
+			background: var( --color-neutral-0 );
 		}
 
 		.wpnc__selected-note {
@@ -508,7 +508,7 @@
 			border-left: 1px solid var( --color-neutral-0 );
 		}
 
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 		ol {
 			height: 100%;
 			overflow-y: auto;
@@ -678,7 +678,7 @@
 			}
 
 			pre {
-				background: $gray-light;
+				background: var( --color-neutral-0 );
 				border: 1px solid var( --color-neutral-100 );
 				border-radius: 3px;
 				padding: 4px;
@@ -693,7 +693,7 @@
 				font-family: $code;
 				font-size: 90%;
 				color: var( --color-neutral-500 );
-				background: $gray-light;
+				background: var( --color-neutral-0 );
 				border: 1px solid var( --color-neutral-100 );
 				border-radius: 3px;
 				padding: 0 2px;
@@ -888,7 +888,7 @@
 
 	@keyframes wpnc__selectIn {
 		from {
-			background-color: $gray-light;
+			background-color: var( --color-neutral-0 );
 		}
 		to {
 			background-color: $white;

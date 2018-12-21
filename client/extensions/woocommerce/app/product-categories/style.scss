@@ -10,7 +10,7 @@
 }
 
 .product-categories__list-item {
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 }
 
 .product-categories__list-item-card.card.is-compact {
@@ -172,7 +172,7 @@
 		transform: translate( 25%, -25% );
 		border: 1px solid var( --color-neutral-200 );
 		border-radius: 50%;
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 		cursor: pointer;
 
 		&:hover {

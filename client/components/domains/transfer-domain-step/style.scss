@@ -131,7 +131,7 @@
 	line-height: 28px;
 	border-radius: 50%;
 	border: 1px solid var( --color-neutral-100 );
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	color: var( --color-neutral-500 );
 	font-size: 18px;
 	text-align: center;
@@ -157,7 +157,7 @@
 	}
 
 	.transfer-domain-step__section-callout {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		margin: 14px 0;
 	}
 

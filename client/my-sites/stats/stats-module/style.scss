@@ -88,7 +88,7 @@
 
 	a {
 		@extend %mobile-link-element;
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		display: block;
 		font-size: 14px;
 		padding: 0 24px;
@@ -97,14 +97,14 @@
 		// Hover state
 		@include breakpoint( '>480px' ) {
 			&:hover {
-				background: $gray-light;
+				background: var( --color-neutral-0 );
 				border-top-color: $white;
 			}
 		}
 
 		// Focus state
 		&:focus {
-			background: $gray-light;
+			background: var( --color-neutral-0 );
 			border-top-color: $white;
 		}
 
@@ -200,8 +200,8 @@ ul.module-header-actions {
 		.stats-module.is-loading &::before,
 		.stats-module.is-loading &:hover,
 		.stats-module.is-loading & {
-			color: $gray-light;
-			fill: $gray-light;
+			color: var( --color-neutral-0 );
+			fill: var( --color-neutral-0 );
 		}
 	}
 
@@ -297,8 +297,8 @@ ul.module-header-actions {
 
 	// Hidden info box
 	&-info {
-		background: $gray-light;
-		box-shadow: inset 0 1px 0 $gray-light;
+		background: var( --color-neutral-0 );
+		box-shadow: inset 0 1px 0 var( --color-neutral-0 );
 		color: var( --color-neutral-700 );
 		display: none;
 		position: relative;
@@ -352,7 +352,7 @@ ul.module-header-actions {
 			}
 
 			@include breakpoint( '<480px' ) {
-				border-bottom: 1px solid $gray-light;
+				border-bottom: 1px solid var( --color-neutral-0 );
 
 				&:last-child {
 					border: 0;
@@ -402,8 +402,8 @@ ul.module-header-actions {
 	// 2: Make right padding much greater to accommodate for increased gradient
 	td,
 	th {
-		border-bottom: 1px solid $gray-light;
-		border-right: 1px solid $gray-light;
+		border-bottom: 1px solid var( --color-neutral-0 );
+		border-right: 1px solid var( --color-neutral-0 );
 		font-size: 12px;
 		padding: 8px 12px;
 		white-space: nowrap; // 1
@@ -458,12 +458,12 @@ ul.module-header-actions {
 		.stats-module & td.has-no-data:hover, // 1
 		tbody tr:hover td,
 		tbody tr:hover th {
-			background: $gray-light;
+			background: var( --color-neutral-0 );
 		}
 
 		.stats-module & td.highest-count:hover,
 		tbody tr td:hover {
-			background: $gray-light;
+			background: var( --color-neutral-0 );
 			color: var( --color-neutral-700 );
 		}
 	}

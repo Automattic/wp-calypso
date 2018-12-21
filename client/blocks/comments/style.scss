@@ -298,7 +298,7 @@
 }
 
 .comments__comment-trackbackicon {
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	border-radius: 50%;
 	height: 32px;
 	margin-right: 9px;
@@ -406,7 +406,7 @@ a.comments__comment-username {
 	}
 
 	blockquote {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		border-left: 2px solid var( --color-neutral-0 );
 		border-radius: 0;
 		color: var( --color-neutral-600 );
@@ -540,7 +540,7 @@ a.comments__comment-username {
 
 .comments__view-replies-btn {
 	cursor: pointer;
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	width: 100%;
 	color: var( --color-neutral-400 );
 	text-align: left;

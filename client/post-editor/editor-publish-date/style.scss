@@ -46,7 +46,7 @@
 	.editor-publish-date.is-open & {
 		border-radius: 4px 4px 0 0;
 		box-shadow: none;
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 	}
 
 	// Chevron

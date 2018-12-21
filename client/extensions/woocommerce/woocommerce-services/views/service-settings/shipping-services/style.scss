@@ -36,7 +36,7 @@
 
 	@include breakpoint( '<480px' ) {
 		padding: 4px 0;
-		border-bottom: 1px solid $gray-light;
+		border-bottom: 1px solid var( --color-neutral-0 );
 
 		&:last-child {
 			border-bottom: 0;
@@ -100,7 +100,7 @@
 
 		&:disabled {
 			color: var( --color-neutral-200 );
-			background-color: $gray-light;
+			background-color: var( --color-neutral-0 );
 			border-color: var( --color-neutral-0 );
 		}
 	}

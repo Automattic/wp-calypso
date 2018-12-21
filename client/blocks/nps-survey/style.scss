@@ -53,7 +53,7 @@
 }
 
 .nps-survey__recommendation-select-wrapper {
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	border-top: 1px solid var( --color-neutral-100 );
 	border-bottom: 1px solid var( --color-neutral-100 );
 	padding: 16px 0;

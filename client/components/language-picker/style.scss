@@ -189,7 +189,7 @@
 
 .language-picker__modal-suggested {
 	flex: none;
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	border-top: 1px solid var( --color-neutral-0 );
 	padding: 8px 16px;
 	z-index: 1;

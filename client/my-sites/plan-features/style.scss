@@ -545,7 +545,7 @@ $plan-features-sidebar-width: 272px;
 
 	@include breakpoint( '<660px' ) {
 		padding: 0 20px 20px;
-		border-bottom: solid 1px $gray-light;
+		border-bottom: solid 1px var( --color-neutral-0 );
 	}
 }
 

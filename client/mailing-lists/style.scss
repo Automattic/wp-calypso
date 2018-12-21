@@ -40,7 +40,7 @@
 			fill: white;
 			background: var( --color-neutral-700 );
 			border-radius: 100%;
-			box-shadow: 0 0 0 3px $gray-light;
+			box-shadow: 0 0 0 3px var( --color-neutral-0 );
 
 			@include breakpoint( '<480px' ) {
 				height: 16px;

@@ -129,7 +129,7 @@
 	display: inline-block;
 	width: 7px;
 	height: 7px;
-	border: 1px solid $gray-light;
+	border: 1px solid var( --color-neutral-0 );
 	background-color: var( --color-neutral-100 );
 	margin: 0;
 }

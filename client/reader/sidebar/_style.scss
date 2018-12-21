@@ -36,7 +36,7 @@
 		}
 
 		.is-action-button-selected {
-			background-color: $gray-light;
+			background-color: var( --color-neutral-0 );
 
 			.gridicon {
 				fill: var( --color-neutral-500 );
@@ -86,7 +86,7 @@
 
 			&:hover {
 				color: var( --color-primary );
-				background-color: $gray-light;
+				background-color: var( --color-neutral-0 );
 
 				.gridicon {
 					fill: var( --color-primary );
@@ -109,7 +109,7 @@
 
 		&.is-toggle-open {
 			.sidebar__heading {
-				background-color: $gray-light;
+				background-color: var( --color-neutral-0 );
 				box-shadow: 0 1px 0 var( --color-neutral-100 ), 0 -1px 0 var( --color-neutral-100 );
 
 				.gridicon {

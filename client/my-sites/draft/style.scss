@@ -30,7 +30,7 @@
 
 	&.is-selected {
 		border-left: 8px solid var( --color-primary );
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 	}
 
 	&.is-image-zoomed {

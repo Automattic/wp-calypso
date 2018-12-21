@@ -42,7 +42,7 @@
 			}
 
 			&:hover {
-				background: $gray-light;
+				background: var( --color-neutral-0 );
 
 				.table-item__cell-title:after {
 					background-image: linear-gradient(
@@ -142,7 +142,7 @@
 
 .table-row {
 	&:hover {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 
 		&.is-header {
 			background-color: initial;

@@ -181,7 +181,7 @@
 		.theme__sheet-preview-link-text {
 			margin: 0 auto;
 			padding: 2px 8px 3px;
-			background-color: $gray-light;
+			background-color: var( --color-neutral-0 );
 			color: var( --color-text-subtle );
 			font-size: 11px;
 			font-weight: 600;
@@ -232,7 +232,7 @@
 
 	.wp-caption {
 		border: 1px solid var( --color-neutral-0 );
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 		margin-bottom: 20px;
 	}
 
@@ -302,7 +302,7 @@
 
 	code {
 		font-size: 14px;
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		padding: 1px 4px;
 		border-radius: 2px;
 	}
@@ -314,7 +314,7 @@
 	}
 
 	.notes {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		margin: 40px -20px 40px;
 		border-top: 1px solid #e9eff3;
 		border-bottom: 1px solid #e9eff3;
@@ -486,7 +486,7 @@
 	.gridicon {
 		display: block;
 		margin: -12px auto 0;
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 	}
 }
 

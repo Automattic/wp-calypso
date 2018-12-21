@@ -43,7 +43,7 @@ code {
 }
 
 pre {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	font-family: $code;
 	padding: 8px;
 	overflow-x: auto;
@@ -106,7 +106,7 @@ a img {
 }
 
 .wp-caption-dd {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	color: var( --color-neutral-500 );
 	font-size: 14px;
 	line-height: 1.7;

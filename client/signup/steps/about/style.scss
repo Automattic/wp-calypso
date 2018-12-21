@@ -53,7 +53,7 @@
 
 	&:hover {
 		cursor: pointer;
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 	}
 }
 

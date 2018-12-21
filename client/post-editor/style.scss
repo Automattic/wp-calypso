@@ -222,7 +222,7 @@
 }
 
 .post-editor__switch-mode .segmented-control__link {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	border-color: var( --color-neutral-100 );
 }
 

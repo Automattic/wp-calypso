@@ -211,7 +211,7 @@
 		}
 
 		&.is-placeholder {
-			background: $gray-light;
+			background: var( --color-neutral-0 );
 		}
 
 		img {

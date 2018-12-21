@@ -13,7 +13,7 @@
 
 	a {
 		@extend %mobile-link-element;
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		display: block;
 		font-size: 14px;
 		padding: 0 24px;
@@ -22,14 +22,14 @@
 		// Hover state
 		@include breakpoint( '>480px' ) {
 			&:hover {
-				background: $gray-light;
+				background: var( --color-neutral-0 );
 				border-top-color: $white;
 			}
 		}
 
 		// Focus state
 		&:focus {
-			background: $gray-light;
+			background: var( --color-neutral-0 );
 			border-top-color: $white;
 		}
 

@@ -39,7 +39,7 @@ button.security-2fa-backups-codes-list__generate-button {
 }
 
 .security-2fa-backup-codes-list__codes {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	list-style-type: none;
 	padding: 20px;
 	margin-left: 0;

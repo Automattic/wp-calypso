@@ -36,7 +36,7 @@
 	// Increase touch targets on mobile
 	@include breakpoint( '<480px' ) {
 		line-height: 48px;
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 
 		&:first-child {
 			border-top-color: $transparent;
@@ -44,7 +44,7 @@
 
 		// Darken color for sublists
 		.module-content-list-sublist & {
-			border-top-color: $gray-light;
+			border-top-color: var( --color-neutral-0 );
 		}
 	}
 
@@ -114,7 +114,7 @@
 	.module-content-list-item-link .module-content-list-item-wrapper:hover {
 		&,
 		.module-content-list-item-right {
-			background-color: $gray-light;
+			background-color: var( --color-neutral-0 );
 		}
 
 		.module-content-list-item-right::before {
@@ -145,7 +145,7 @@
 .module-content-list-item .module-content-list-item-wrapper:focus {
 	&,
 	.module-content-list-item-right {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 	}
 
 	.module-content-list-item-right::before {
@@ -283,7 +283,7 @@
 	.module-content-list-item-label-section {
 		margin-right: 11px;
 		padding-right: 12px;
-		border-right: 1px solid $gray-light;
+		border-right: 1px solid var( --color-neutral-0 );
 
 		&:last-child {
 			margin: 0;
@@ -341,7 +341,7 @@ ul.module-content-list-item-actions {
 	&.collapsed {
 		@include dropdown-menu;
 
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		display: none;
 		z-index: z-index( 'root', 'ul.module-content-list-item-actions.collapsed' );
 		margin: 0;
@@ -354,7 +354,7 @@ ul.module-content-list-item-actions {
 		}
 
 		&::after {
-			border-bottom-color: $gray-light;
+			border-bottom-color: var( --color-neutral-0 );
 			right: 18px; // Logically this should be 24px but thanks to the borders (?) 18px is actually centered
 			left: auto;
 		}
@@ -378,7 +378,7 @@ ul.module-content-list-item-actions {
 	@include breakpoint( '<480px' ) {
 		@include dropdown-menu;
 
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		display: none;
 		z-index: z-index( 'root', 'ul.module-content-list-item-actions' );
 		margin: 0;
@@ -391,7 +391,7 @@ ul.module-content-list-item-actions {
 		}
 
 		&::after {
-			border-bottom-color: $gray-light;
+			border-bottom-color: var( --color-neutral-0 );
 			right: 18px; // Logically this should be 24px but thanks to the borders (?) 18px is actually centered
 			left: auto;
 		}
@@ -724,7 +724,7 @@ ul.module-content-list-legend {
 
 // Active (sublist is showing)
 .module-content-list-item-toggle.is-expanded {
-	border-top-color: $gray-light;
+	border-top-color: var( --color-neutral-0 );
 
 	> .module-content-list {
 		display: block;
@@ -734,7 +734,7 @@ ul.module-content-list-legend {
 	&,
 	> .module-content-list-item-wrapper,
 	> .module-content-list-item-wrapper .module-content-list-item-right {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 	}
 
 	> .module-content-list-item-wrapper .module-content-list-item-value {
@@ -788,7 +788,7 @@ ul.module-content-list-legend {
 	// Change background and gradient color
 	> .module-content-list-item-wrapper .module-content-list-item-right,
 	> .module-content-list-item-wrapper {
-		background: $gray-light; // Default non-active color
+		background: var( --color-neutral-0 ); // Default non-active color
 	}
 
 	.module-content-list-item-right::before {

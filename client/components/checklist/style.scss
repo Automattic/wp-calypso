@@ -53,7 +53,7 @@
 		right: 0;
 		width: 48px;
 		height: 100%;
-		border-left: 1px solid $gray-light;
+		border-left: 1px solid var( --color-neutral-0 );
 		cursor: pointer;
 
 		.gridicon {
@@ -229,7 +229,7 @@
 	&.is-completed {
 		padding-top: 12px;
 		padding-bottom: 12px;
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 
 		.checklist__task-icon {
 			top: 13px;

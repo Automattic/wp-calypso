@@ -62,7 +62,7 @@
 	text-align: center;
 
 	.is-disabled &:disabled {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 		border-color: var( --color-neutral-100 );
 		color: var( --color-neutral-200 );
 	}

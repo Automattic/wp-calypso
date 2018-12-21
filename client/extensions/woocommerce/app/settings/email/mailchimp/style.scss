@@ -295,7 +295,7 @@
 .mailchimp__account-data {
 	font-weight: 600;
 	padding: 4px 16px;
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	border-top: 1px solid var( --color-neutral-0 );
 
 	@include breakpoint( '>480px' ) {
