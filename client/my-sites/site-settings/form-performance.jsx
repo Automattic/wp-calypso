@@ -12,11 +12,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import wrapSettingsForm from './wrap-settings-form';
-import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import MediaSettings from 'my-sites/site-settings/media-settings';
+import SectionHeader from 'components/section-header';
 import SpeedUpYourSite from 'my-sites/site-settings/speed-up-site-settings';
+import wrapSettingsForm from './wrap-settings-form';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isJetpackSite,
