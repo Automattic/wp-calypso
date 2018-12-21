@@ -26,7 +26,7 @@
 	}
 }
 
-.get-apps__mobile > div{
+.get-apps__mobile > div {
 	width: 100%;
 }
 
@@ -54,7 +54,7 @@
 		order: 2;
 	}
 
-	.get-apps__store-subpanel{
+	.get-apps__store-subpanel {
 	
 		@include breakpoint('>480px') {
 			display: flex;
@@ -62,37 +62,37 @@
 			align-items: center;
 		}
 
-		.get-apps__badges{
+		.get-apps__badges {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
 		}
 	}
 
-	.get-apps__sms-subpanel{
+	.get-apps__sms-subpanel {
 		
 		// This is a hack to allow us to use a feature flag to hide this subpanel
 		// without the parent card having a big ugly blank space at the bottom.
 		margin-top: 64px;
 
-		.get-apps__sms-field-wrapper .form-phone-input{
+		.get-apps__sms-field-wrapper .form-phone-input {
 			@include breakpoint('>800px') {
 				display: flex;
 				flex-direction: row;
 				align-items: center;
 			}
 
-			.form-fieldset__country{
+			.form-fieldset__country {
 				flex: 0;
 				padding-right: 24px;
 			}
 
-			.form-fieldset__phone-number{
+			.form-fieldset__phone-number {
 				flex: 1;
 			}
 		}
 
-		.get-apps__sms-button-wrapper{
+		.get-apps__sms-button-wrapper {
 
 			@include breakpoint('>480px') {
 				display: flex;
@@ -101,18 +101,18 @@
 				align-items: center;
 			}
 
-			p{
+			p {
 				margin: 0;
 				padding-right: 16px;
 			}
 			
 			@include breakpoint('<480px') {
 
-				p{
+				p {
 					margin-bottom: 24px;
 				}
 
-				.get-apps__sms-button{
+				.get-apps__sms-button {
 					width: 100%;
 				}
 			}

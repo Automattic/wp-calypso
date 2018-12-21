@@ -1,4 +1,4 @@
-.store-stats-referrer-widget.card  {
+.store-stats-referrer-widget.card {
 		padding: 0;
 
 		.table {
@@ -9,7 +9,7 @@
 	.table-row.is-selected,
 	.table-row.is-selected:hover {
 		box-shadow: inset 4px 0 0 $orange-jazzy;
-		background-color: rgba( $orange-jazzy, .1 );
+		background-color: rgba( $orange-jazzy, 0.1 );
 
 		.table-item__cell-title::after {
 			background-image: none;

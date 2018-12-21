@@ -5,11 +5,11 @@
 .upwork-stats-nudge__body {
 	align-items: flex-end;
 	display: flex;
-	padding: 11px 24px 11px 24px; // Standard padding
+	padding: 11px 24px; // Standard padding
 
 	@include breakpoint( '>960px' ) {
 		max-height: 300px;
-		padding-bottom: 0px; // Allow image to go right to the edge of the card
+		padding-bottom: 0; // Allow image to go right to the edge of the card
 	}
 }
 

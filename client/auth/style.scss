@@ -43,13 +43,13 @@
 
 	.notice {
 		width: calc( 100% - 20px );
-		margin: 20px auto 0 auto;
+		margin: 20px auto 0;
 	}
 
 	.notice.is-info {
 		color: $gray-light;
 		padding: 0;
-		margin: 20px auto 0 auto;
+		margin: 20px auto 0;
 	}
 
 	.notice.is-info .notice__text {
@@ -70,8 +70,8 @@
 		z-index: z-index( 'root', '.auth__form .form-fieldset input' );
 	}
 
-	.form-fieldset input[type="text"],
-	.form-fieldset input[type="password"] {
+	.form-fieldset input[type='text'],
+	.form-fieldset input[type='password'] {
 		padding-left: 36px;
 	}
 
@@ -96,16 +96,16 @@
 	}
 
 	.form-buttons-bar .button.is-primary[disabled],
-	.form-fieldset input[type="password"]:disabled,
-	.form-fieldset input[type="text"]:disabled {
-		opacity: .5;
+	.form-fieldset input[type='password']:disabled,
+	.form-fieldset input[type='text']:disabled {
+		opacity: 0.5;
 	}
 
-	.form-fieldset input[type="text"]:disabled {
+	.form-fieldset input[type='text']:disabled {
 		margin-bottom: 1px;
 	}
 
-	.form-fieldset input[type="tel"] {
+	.form-fieldset input[type='tel'] {
 		text-align: center;
 	}
 
@@ -116,7 +116,7 @@
 		}
 	}
 
-	input[type="tel"]::-webkit-inner-spin-button {
+	input[type='tel']::-webkit-inner-spin-button {
 		-webkit-appearance: none;
 		margin: 0;
 	}
@@ -146,7 +146,7 @@
 // should be a new component
 .wordpress-logo {
 	fill: $white;
-	margin: 0 auto 20px auto;
+	margin: 0 auto 20px;
 }
 
 .auth__help,
@@ -193,7 +193,7 @@
 	text-align: left;
 	counter-reset: item;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		left: 0;
 		top: -8px;
 		right: 0;
@@ -217,9 +217,9 @@
 		margin-bottom: 1.5em;
 	}
 
-	ol li:before {
+	ol li::before {
 		margin-right: 2em;
-		content: counter(item);
+		content: counter( item );
 		background: $white;
 		border-radius: 100%;
 		color: var( --color-primary-dark );

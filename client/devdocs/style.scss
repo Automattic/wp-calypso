@@ -65,7 +65,7 @@ $devdocs-max-width: 720px;
 			column-count: 2;
 		}
 
-		@media (min-width: 2000px) {
+		@media ( min-width: 2000px ) {
 			column-count: 3;
 		}
 	}
@@ -183,7 +183,7 @@ $devdocs-max-width: 720px;
 			max-width: $devdocs-max-width;
 		}
 
-		@media (min-width: 2000px) {
+		@media ( min-width: 2000px ) {
 			padding-top: 60px;
 
 			.docs-example__wrapper-header-title a {
