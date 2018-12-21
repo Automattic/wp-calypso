@@ -64,7 +64,7 @@ class SiteSettingsFormPerformance extends Component {
 			<form
 				id="site-settings"
 				onSubmit={ handleSubmitForm }
-				className="site-settings__security-settings"
+				className="site-settings__performance-settings"
 			>
 				<QueryJetpackModules siteId={ this.props.siteId } />
 
