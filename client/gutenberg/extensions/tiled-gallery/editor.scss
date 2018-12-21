@@ -76,6 +76,7 @@
 	}
 
 	.tiled-gallery__add-item {
+		margin-top: $tiled-gallery-gutter;
 		width: 100%;
 
 		.components-form-file-upload,
