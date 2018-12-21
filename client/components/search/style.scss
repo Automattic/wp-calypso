@@ -50,10 +50,10 @@
 
 	&.is-open.has-focus {
 		border-color: var( --color-primary );
-		box-shadow: 0 0 0 2px var( --color-primary-100 );
+		box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-100 );
 
 		&:hover {
-			box-shadow: 0 0 0 2px var( --color-primary-200 );
+			box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-200 );
 		}
 	}
 
