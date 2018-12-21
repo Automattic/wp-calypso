@@ -43,11 +43,11 @@ export const settings = {
 			type: 'string',
 			default: '',
 		},
-		submit_button_text: {
+		submitButtonText: {
 			type: 'string',
 			default: __( 'Submit' ),
 		},
-		has_form_settings_set: {
+		hasFormSettingsSet: {
 			type: 'string',
 			default: null,
 		},
@@ -55,6 +55,29 @@ export const settings = {
 
 	edit: JetpackContactForm,
 	save: InnerBlocks.Content,
+	deprecated: [
+		{
+			attributes: {
+				submit_button_text: {
+					type: 'string',
+					default: __( 'Submit' ),
+				},
+				has_form_settings_set: {
+					type: 'string',
+					default: null,
+				},
+			},
+
+			migrate: function( attributes ) {
+				return {
+					submitButtonText: attributes.submit_button_text,
+					hasFormSettingsSet: attributes.has_form_settings_set,
+				};
+			},
+
+			save: InnerBlocks.Content,
+		},
+	],
 };
 
 const FieldDefaults = {

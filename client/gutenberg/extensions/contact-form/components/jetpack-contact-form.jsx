@@ -110,8 +110,8 @@ class JetpackContactForm extends Component {
 		this.props.setAttributes( { to } );
 	}
 
-	onChangeSubmit( submit_button_text ) {
-		this.props.setAttributes( { submit_button_text } );
+	onChangeSubmit( submitButtonText ) {
+		this.props.setAttributes( { submitButtonText } );
 	}
 
 	onFormSettingsSet( event ) {
@@ -120,7 +120,7 @@ class JetpackContactForm extends Component {
 			// don't submit the form if there are errors.
 			return;
 		}
-		this.props.setAttributes( { has_form_settings_set: 'yes' } );
+		this.props.setAttributes( { hasFormSettingsSet: 'yes' } );
 	}
 
 	getfieldEmailError( errors ) {
@@ -193,9 +193,9 @@ class JetpackContactForm extends Component {
 
 	render() {
 		const { className, attributes } = this.props;
-		const { has_form_settings_set, submit_button_text } = attributes;
+		const { hasFormSettingsSet } = attributes;
 		const formClassnames = classnames( className, 'jetpack-contact-form', {
-			'has-intro': ! has_form_settings_set,
+			'has-intro': ! hasFormSettingsSet,
 		} );
 
 		return (
@@ -205,18 +205,8 @@ class JetpackContactForm extends Component {
 						{ this.renderToAndSubjectFields() }
 					</PanelBody>
 				</InspectorControls>
-				<InspectorControls>
-					<PanelBody title={ __( 'Button settings' ) }>
-						<TextControl
-							label={ __( 'Submit button label' ) }
-							value={ submit_button_text }
-							placeholder={ __( 'Submit' ) }
-							onChange={ this.onChangeSubmit }
-						/>
-					</PanelBody>
-				</InspectorControls>
 				<div className={ formClassnames }>
-					{ ! has_form_settings_set && (
+					{ ! hasFormSettingsSet && (
 						<Placeholder
 							label={ __( 'Form' ) }
 							icon={ renderMaterialIcon(
@@ -239,7 +229,7 @@ class JetpackContactForm extends Component {
 							</form>
 						</Placeholder>
 					) }
-					{ has_form_settings_set && (
+					{ hasFormSettingsSet && (
 						<InnerBlocks
 							allowedBlocks={ ALLOWED_BLOCKS }
 							templateLock={ false }
