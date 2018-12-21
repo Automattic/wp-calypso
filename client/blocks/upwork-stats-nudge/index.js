@@ -53,19 +53,19 @@ class UpworkStatsNudge extends Component {
 		}
 	}
 
-	onDismissClick = () => {
+	recordClick = eventName => {
 		const plan = this.props.plan ? this.props.plan.productSlug : '';
-		this.props.recordTracksEvent( 'calypso_upworks_stats_nudge_dismiss_icon_click', {
-			plan,
-		} );
+
+		this.props.recordTracksEvent( eventName, { plan } );
+	};
+
+	onDismissClick = () => {
+		this.recordClick( 'calypso_upworks_stats_nudge_dismiss_icon_click' );
 		this.props.dismissNudge();
 	};
 
 	onStartNowClick = () => {
-		const plan = this.props.plan ? this.props.plan.productSlug : '';
-		this.props.recordTracksEvent( 'calypso_upwork_stats_nudge_start_now_button_click', {
-			plan,
-		} );
+		this.recordClick( 'calypso_upwork_stats_nudge_start_now_button_click' );
 	};
 
 	isVisible() {
@@ -73,6 +73,8 @@ class UpworkStatsNudge extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
+
 		if ( ! this.isVisible() ) {
 			return null;
 		}
@@ -89,7 +91,7 @@ class UpworkStatsNudge extends Component {
 
 				<SectionHeader
 					className="upwork-stats-nudge__header"
-					label={ this.props.translate( 'Recommendations from WordPress.com' ) }
+					label={ translate( 'Recommendations from WordPress.com' ) }
 				/>
 
 				<div className="upwork-stats-nudge__body">
@@ -97,16 +99,16 @@ class UpworkStatsNudge extends Component {
 						<img
 							className="upwork-stats-nudge__image"
 							src="/calypso/images/upwork/illustration-builder-referral.svg"
-							alt={ this.props.translate( 'Your business with Google My Business' ) }
+							alt={ translate( 'Build your dream site with Upwork' ) }
 						/>
 					</div>
 
 					<div className="upwork-stats-nudge__info">
 						<h1 className="upwork-stats-nudge__title">
-							{ this.props.translate( 'Need an expert to help realize your vision? Hire one!' ) }
+							{ translate( 'Need an expert to help realize your vision? Hire one!' ) }
 						</h1>
 						<p>
-							{ this.props.translate(
+							{ translate(
 								"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. They know their stuff and they're waiting to help you build your dream site."
 							) }
 						</p>
@@ -118,7 +120,7 @@ class UpworkStatsNudge extends Component {
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								{ this.props.translate( 'Find your expert' ) }
+								{ translate( 'Find your expert' ) }
 							</Button>
 						</div>
 					</div>

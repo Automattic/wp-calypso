@@ -5,7 +5,6 @@
 .upwork-stats-nudge__body {
 	align-items: flex-end;
 	display: flex;
-	flex-direction: row;
 	padding: 11px 24px 11px 24px; // Standard padding
 
 	@include breakpoint( '>960px' ) {
@@ -38,7 +37,6 @@
 .upwork-stats-nudge__button-row {
 	align-content: center;
 	display: flex;
-	flex-direction: row;
 	margin-bottom: 20px;
 
 	@include breakpoint( '>960px' ) {
