@@ -112,7 +112,10 @@
 	}
 }
 
-// Hide captions in style picker preview
-.editor-block-preview__content .wp-block-jetpack-tiled-gallery figcaption {
-	display: none;
+// Hide captions and upload buttons in style picker preview
+.editor-block-preview__content .wp-block-jetpack-tiled-gallery {
+	.editor-media-placeholder,
+	figcaption {
+		display: none;
+	}
 }
