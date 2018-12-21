@@ -40,7 +40,6 @@ class SiteInformation extends Component {
 		this.state = {
 			name: props.siteTitle,
 			address: props.siteInformation.address || '',
-			email: props.siteInformation.email || '',
 			phone: props.siteInformation.phone || '',
 		};
 	}
@@ -79,73 +78,69 @@ class SiteInformation extends Component {
 				<div className="site-information__form-wrapper ">
 					<form>
 						<Card>
-							<FormFieldset>
-								<FormLabel htmlFor="name">
-									{ siteTitleLabel }
-									<InfoPopover className="site-information__info-popover" position="top">
-										{ translate(
-											"We'll use this as your site title. Don't worry, you can change this later."
-										) }
-									</InfoPopover>
-								</FormLabel>
-								<FormTextInput
-									id="name"
-									name="name"
-									placeholder={ siteTitlePlaceholder }
-									onChange={ this.handleInputChange }
-									value={ this.state.name }
-								/>
-							</FormFieldset>
-
-							{ isBusinessSiteSelected && (
+							{ this.props.informationType == 'title' && (
 								<>
 									<FormFieldset>
-										<FormLabel htmlFor="address">
-											{ translate( 'Address' ) }
+										<FormLabel htmlFor="name">
+											{ siteTitleLabel }
 											<InfoPopover className="site-information__info-popover" position="top">
-												{ translate( 'Where can people find your business?' ) }
-											</InfoPopover>
-										</FormLabel>
-										<FormTextarea
-											id="address"
-											name="address"
-											placeholder={ 'E.g. 60 29th Street #343\nSan Francisco, CA\n94110' }
-											onChange={ this.handleInputChange }
-											value={ this.state.address }
-										/>
-									</FormFieldset>
-									<FormFieldset>
-										<FormLabel htmlFor="email">
-											{ translate( 'Contact Email' ) }
-											<InfoPopover className="site-information__info-popover" position="top">
-												{ translate( 'Does your business have an email address?' ) }
+												{ translate(
+													"We'll use this as your site title. Don't worry, you can change this later."
+												) }
 											</InfoPopover>
 										</FormLabel>
 										<FormTextInput
-											id="email"
-											name="email"
-											type="email"
-											placeholder={ 'E.g. email@domain.com' }
+											id="name"
+											name="name"
+											placeholder={ siteTitlePlaceholder }
 											onChange={ this.handleInputChange }
-											value={ this.state.email }
+											value={ this.state.name }
 										/>
 									</FormFieldset>
-									<FormFieldset>
-										<FormLabel htmlFor="phone">
-											{ translate( 'Phone number' ) }
-											<InfoPopover className="site-information__info-popover" position="top">
-												{ translate( 'How can people contact you?' ) }
-											</InfoPopover>
-										</FormLabel>
-										<FormTelInput
-											id="phone"
-											name="phone"
-											placeholder={ translate( 'E.g. (555) 555-5555' ) }
-											onChange={ this.handleInputChange }
-											value={ this.state.phone }
-											pattern="*"
-										/>
-									</FormFieldset>
+								</>
+							) }
+
+							{ isBusinessSiteSelected && (
+								<>
+									{ this.props.informationType == 'address' && (
+										<>
+											<FormFieldset>
+												<FormLabel htmlFor="address">
+													{ translate( 'Address' ) }
+													<InfoPopover className="site-information__info-popover" position="top">
+														{ translate( 'Where can people find your business?' ) }
+													</InfoPopover>
+												</FormLabel>
+												<FormTextarea
+													id="address"
+													name="address"
+													placeholder={ 'E.g. 60 29th Street #343\nSan Francisco, CA\n94110' }
+													onChange={ this.handleInputChange }
+													value={ this.state.address }
+												/>
+											</FormFieldset>
+										</>
+									) }
+									{ this.props.informationType == 'phone' && (
+										<>
+											<FormFieldset>
+												<FormLabel htmlFor="phone">
+													{ translate( 'Phone number' ) }
+													<InfoPopover className="site-information__info-popover" position="top">
+														{ translate( 'How can people contact you?' ) }
+													</InfoPopover>
+												</FormLabel>
+												<FormTelInput
+													id="phone"
+													name="phone"
+													placeholder={ translate( 'E.g. (555) 555-5555' ) }
+													onChange={ this.handleInputChange }
+													value={ this.state.phone }
+													pattern="*"
+												/>
+											</FormFieldset>
+										</>
+									) }
 								</>
 							) }
 
@@ -164,7 +159,7 @@ class SiteInformation extends Component {
 	render() {
 		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
 
-		const headerText = translate( 'Help customers find you' );
+		const headerText = this.props.headerText;
 		const subHeaderText = '';
 
 		return (
@@ -194,26 +189,24 @@ export default connect(
 		};
 	},
 	( dispatch, ownProps ) => {
-		function updateStep( { name, address, email, phone } ) {
+		function updateStep( { name, address, phone } ) {
 			dispatch( setSiteTitle( name ) );
-			dispatch( setSiteInformation( { address, email, phone } ) );
+			dispatch( setSiteInformation( { address, phone } ) );
 		}
 
 		return {
-			submitStep: ( { name, address, email, phone } ) => {
+			submitStep: ( { name, address, phone } ) => {
 				const siteTitle = trim( name );
 				const siteTitleTracksAttribute = siteTitle || 'N/A';
 				address = trim( address );
-				email = trim( email );
 				phone = trim( phone );
 
-				updateStep( { name: siteTitle, address, email, phone } );
+				updateStep( { name: siteTitle, address, phone } );
 
 				dispatch(
 					recordTracksEvent( 'calypso_signup_actions_submit_site_information', {
 						site_title: siteTitleTracksAttribute,
 						address,
-						email,
 						phone,
 					} )
 				);
@@ -228,7 +221,6 @@ export default connect(
 					{
 						siteTitle,
 						address,
-						email,
 						phone,
 					}
 				);
