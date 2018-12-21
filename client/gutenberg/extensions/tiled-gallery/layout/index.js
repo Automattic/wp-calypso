@@ -13,11 +13,14 @@ import Mosaic from './mosaic';
 import GalleryImageEdit from '../gallery-image/edit';
 import GalleryImageSave from '../gallery-image/save';
 
+// @TODO put in consts?
+const PHOTON_MAX_RESIZE = 2000;
+
 export default class Layout extends Component {
 	photonize( { height, width, url } ) {
 		const { layoutStyle } = this.props;
 		if ( isSquareishLayout( layoutStyle ) && width && height ) {
-			const size = Math.min( width, height );
+			const size = Math.min( PHOTON_MAX_RESIZE, width, height );
 			return photon( url, { resize: `${ size },${ size }` } );
 		}
 		return photon( url );
