@@ -80,6 +80,7 @@ export function generateSteps( {
 		},
 
 		'plans-site-selected': {
+			// This should be called plans-without-free
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
@@ -145,6 +146,7 @@ export function generateSteps( {
 		},
 
 		plans: {
+			// There should be no changes required to this step
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
@@ -158,15 +160,25 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 		},
 
+		// This step is the source of a lot of problems. We should really separate the creation of the site from the domain selection.
+		// The suggestions here aren't necessary to implement but they might be useful.
 		domains: {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ], // I don't understnad why this step provides a theme item
 			props: {
-				isDomainOnly: false,
+				isDomainOnly: false, // This should be a default so we only need to specify it if it's true
 			},
-			dependencies: [ 'themeSlugWithRepo' ],
+			dependencies: [ 'themeSlugWithRepo' ], // I can't see why this is needed. We shouldn't need to know a theme to create a site
 			delayApiRequestUntilComplete: true,
+		},
+
+		'domains-site-selected': {
+			stepName: 'domains-site-selected',
+			apiRequestFunction: addItemToCart, // This is a new function we'll need to create
+			providesDependencies: [ 'domainItem' ], // This step will only need to provide a domain
+			dependencies: [ 'siteSlug' ], // This is needed to add the domain to the cart
+			//delayApiRequestUntilComplete: true, I don't think this should be needed. The signup flow should always wait for the dependencies to be met before calling the API
 		},
 
 		'domain-only': {

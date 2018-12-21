@@ -286,11 +286,22 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	};
 
 	flows[ 'site-selected' ] = {
+		// This is similar to what we need already
 		steps: [ 'themes-site-selected', 'plans-site-selected' ],
 		destination: getSiteDestination,
 		providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
 		description: 'A flow to test updating an existing site with `Signup`',
 		lastModified: '2017-01-19',
+	};
+
+	flows[ 'launch' ] = {
+		// we'll need a way to hide the domain and plan step depending on whether the user already has a domain/plan
+		steps: [ 'domains-site-selected', 'plans' ], // we replace the theme step with the domains step
+		destination: launchSiteAndGoToPreview, // This is a new action which will launch the site and then load the preview. Launch site could be added as a (hidden?) step to the flow
+		// I think we should just look for all the dependencies in the query (?dependencies=)
+		providesDependenciesInQuery: [ 'siteSlug' ], // The siteId was needed for the cart, but it's not anymore, so we should remove it
+		description: 'A flow to launch an unlaunched site.',
+		lastModified: '2018-12-21',
 	};
 
 	flows.private = {

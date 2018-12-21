@@ -110,6 +110,7 @@ function getSiteVertical( state ) {
 	return ( getSignupStepsSiteTopic( state ) || getSurveyVertical( state ) ).trim();
 }
 
+// This function is way too complex. We should totally separate this and have one function to create a site and one to add an item to the cart
 export function createSiteWithCart(
 	callback,
 	dependencies,
@@ -336,6 +337,7 @@ export function getUsernameSuggestion( username, reduxState ) {
 	} );
 }
 
+// This can probably be renamed addItemToCart and used for plans and domains
 export function addPlanToCart( callback, { siteSlug }, { cartItem } ) {
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan

@@ -125,6 +125,7 @@ class Signup extends React.Component {
 
 		let providedDependencies;
 
+		// I think it would be simpler to just provide all dependencies in a ?dependencies query string
 		if ( flow.providesDependenciesInQuery ) {
 			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
 		}
