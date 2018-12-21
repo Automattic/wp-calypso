@@ -28,10 +28,12 @@ import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import getConciergeAvailableTimes from 'state/selectors/get-concierge-available-times';
 import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
+import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
 import getUserSettings from 'state/selectors/get-user-settings';
 import { getSite } from 'state/sites/selectors';
 import NoAvailableTimes from './shared/no-available-times';
 import Upsell from './shared/upsell';
+import AppointmentInfo from './shared/appointment-info';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 export class ConciergeMain extends Component {
@@ -52,7 +54,15 @@ export class ConciergeMain extends Component {
 	};
 
 	getDisplayComponent = () => {
-		const { appointmentId, availableTimes, site, steps, userSettings, scheduleId } = this.props;
+		const {
+			appointmentId,
+			availableTimes,
+			site,
+			steps,
+			scheduleId,
+			userSettings,
+			nextAppointment,
+		} = this.props;
 
 		const CurrentStep = steps[ this.state.currentStep ];
 		const Skeleton = this.props.skeleton;
@@ -64,6 +74,10 @@ export class ConciergeMain extends Component {
 		// if scheduleId is 0, it means the user is not eligible for the concierge service.
 		if ( scheduleId === 0 ) {
 			return <Upsell site={ site } />;
+		}
+
+		if ( nextAppointment ) {
+			return <AppointmentInfo appointment={ nextAppointment } />;
 		}
 
 		if ( isEmpty( availableTimes ) ) {
@@ -101,6 +115,7 @@ export class ConciergeMain extends Component {
 
 export default connect( ( state, props ) => ( {
 	availableTimes: getConciergeAvailableTimes( state ),
+	nextAppointment: getConciergeNextAppointment( state ),
 	site: getSite( state, props.siteSlug ),
 	scheduleId: getConciergeScheduleId( state ),
 	userSettings: getUserSettings( state ),
