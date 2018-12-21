@@ -13,13 +13,12 @@ export default function TiledGallerySave( { attributes } ) {
 		return null;
 	}
 
-	const { className, columns = defaultColumnsNumber( attributes ), imageCrop, linkTo } = attributes;
+	const { className, columns = defaultColumnsNumber( attributes ), linkTo } = attributes;
 
 	return (
 		<Layout
 			className={ className }
 			columns={ columns }
-			imageCrop={ imageCrop }
 			images={ images }
 			isSave
 			layoutStyle={ getActiveStyleName( LAYOUT_STYLES, className ) }

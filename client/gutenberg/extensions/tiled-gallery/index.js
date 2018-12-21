@@ -72,10 +72,6 @@ const blockAttributes = {
 			},
 		},
 	},
-	imageCrop: {
-		default: true,
-		type: 'boolean',
-	},
 	linkTo: {
 		default: 'none',
 		type: 'string',
@@ -181,8 +177,8 @@ export const settings = {
 			{
 				type: 'block',
 				blocks: [ 'core/gallery' ],
-				transform: ( { images, columns, imageCrop, linkTo } ) =>
-					createBlock( 'core/gallery', { images, columns, imageCrop, linkTo } ),
+				transform: ( { images, columns, linkTo } ) =>
+					createBlock( 'core/gallery', { images, columns, imageCrop: true, linkTo } ),
 			},
 			{
 				type: 'block',

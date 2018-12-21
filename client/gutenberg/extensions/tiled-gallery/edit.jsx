@@ -10,7 +10,6 @@ import {
 	PanelBody,
 	RangeControl,
 	SelectControl,
-	ToggleControl,
 	Toolbar,
 	withNotices,
 } from '@wordpress/components';
@@ -93,10 +92,6 @@ class TiledGalleryEdit extends Component {
 		} );
 	};
 
-	getImageCropHelp( checked ) {
-		return checked ? __( 'Thumbnails are cropped to align.' ) : __( 'Thumbnails are not cropped.' );
-	}
-
 	onRemoveImage = index => () => {
 		const images = filter( this.props.attributes.images, ( img, i ) => index !== i );
 		const { columns } = this.props.attributes;
@@ -140,8 +135,6 @@ class TiledGalleryEdit extends Component {
 
 	setLinkTo = value => this.setAttributes( { linkTo: value } );
 
-	toggleImageCrop = () => this.setAttributes( { imageCrop: ! this.props.attributes.imageCrop } );
-
 	uploadFromFiles = event => this.addFiles( event.target.files );
 
 	render() {
@@ -150,7 +143,6 @@ class TiledGalleryEdit extends Component {
 		const {
 			align,
 			columns = defaultColumnsNumber( attributes ),
-			imageCrop,
 			images,
 			linkTo,
 			className: blockStyleClassName,
@@ -218,12 +210,6 @@ class TiledGalleryEdit extends Component {
 								max={ Math.min( MAX_COLUMNS, images.length ) }
 							/>
 						) }
-						<ToggleControl
-							label={ __( 'Crop Images' ) }
-							checked={ !! imageCrop }
-							onChange={ this.toggleImageCrop }
-							help={ this.getImageCropHelp }
-						/>
 						<SelectControl
 							label={ __( 'Link To' ) }
 							value={ linkTo }
@@ -238,7 +224,6 @@ class TiledGalleryEdit extends Component {
 				<Layout
 					className={ className }
 					columns={ columns }
-					imageCrop={ imageCrop }
 					images={ images }
 					layoutStyle={ getActiveStyleName( LAYOUT_STYLES, blockStyleClassName ) }
 					linkTo={ linkTo }
