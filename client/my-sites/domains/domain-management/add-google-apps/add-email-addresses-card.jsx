@@ -21,6 +21,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import getUserSetting from 'state/selectors/get-user-setting';
 import { cartItems } from 'lib/cart-values';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import ValidationErrorList from 'notices/validation-error-list';
@@ -28,6 +29,7 @@ import { addItem } from 'lib/upgrades/actions';
 import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
 import { filter as filterUsers, validate as validateUsers } from 'lib/domains/google-apps-users';
 import DomainsSelect from './domains-select';
+import QueryUserSettings from 'components/data/query-user-settings';
 
 /**
  * Internal dependencies
@@ -66,9 +68,31 @@ class AddEmailAddressesCard extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			fieldsets: this.getNewFieldset(),
+			fieldsets: [ this.getNewFieldset() ],
 			validationErrors: null,
 		};
+	}
+
+	static getDerivedStateFromProps( props, state ) {
+		if (
+			state.fieldsets[ 0 ].firstName.value === '' &&
+			state.fieldsets.length === 1 &&
+			props.firstName !== null
+		) {
+			const { firstName, lastName } = props;
+			const fieldsets = [
+				{
+					...state.fieldsets[ 0 ],
+					firstName: { value: firstName || '' },
+					lastName: { value: lastName || '' },
+					username: { value: ( firstName && firstName.toLowerCase() ) || '' },
+				},
+			];
+			return {
+				fieldsets: fieldsets,
+			};
+		}
+		return null;
 	}
 
 	getNewFieldset() {
@@ -82,14 +106,12 @@ class AddEmailAddressesCard extends React.Component {
 			domain = null;
 		}
 
-		return [
-			{
-				username: { value: '' },
-				domain: { value: domain },
-				firstName: { value: '' },
-				lastName: { value: '' },
-			},
-		];
+		return {
+			username: { value: '' },
+			domain: { value: domain },
+			firstName: { value: '' },
+			lastName: { value: '' },
+		};
 	}
 
 	removeValidationErrors = () => {
@@ -139,6 +161,7 @@ class AddEmailAddressesCard extends React.Component {
 	render() {
 		return (
 			<div className="add-google-apps__card">
+				<QueryUserSettings />
 				{ this.validationErrors() }
 
 				<Card className="add-google-apps__inner">
@@ -271,7 +294,7 @@ class AddEmailAddressesCard extends React.Component {
 		event.preventDefault();
 
 		this.setState( {
-			fieldsets: this.state.fieldsets.concat( this.getNewFieldset() ),
+			fieldsets: this.state.fieldsets.concat( [ this.getNewFieldset() ] ),
 		} );
 
 		this.props.addAnotherEmailAddressClick( this.props.selectedDomainName );
@@ -427,7 +450,10 @@ AddEmailAddressesCard.propTypes = {
 };
 
 export default connect(
-	null,
+	state => ( {
+		firstName: getUserSetting( state, 'first_name' ),
+		lastName: getUserSetting( state, 'last_name' ),
+	} ),
 	{
 		addAnotherEmailAddressClick,
 		cancelClick,
