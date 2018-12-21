@@ -201,6 +201,7 @@ export default class extends React.Component {
 		onSetContent: PropTypes.func,
 		onUndo: PropTypes.func,
 		onTextEditorChange: PropTypes.func,
+		isGutenbergClassicBlock: PropTypes.bool,
 	};
 
 	static contextTypes = {
@@ -210,6 +211,7 @@ export default class extends React.Component {
 	static defaultProps = {
 		mode: 'tinymce',
 		isNew: false,
+		isGutenbergClassicBlock: false,
 	};
 
 	state = {
@@ -236,6 +238,7 @@ export default class extends React.Component {
 	}
 
 	componentDidMount() {
+		const { isGutenbergClassicBlock } = this.props;
 		this.mounted = true;
 
 		const setup = function( editor ) {
@@ -268,6 +271,7 @@ export default class extends React.Component {
 		this.localize( isRtl, localeSlug );
 
 		const ltrButton = isRtl ? 'ltr,' : '';
+		const gutenbergClassName = isGutenbergClassicBlock ? ' is-gutenberg' : '';
 
 		tinymce.init( {
 			selector: '#' + this._id,
@@ -339,8 +343,10 @@ export default class extends React.Component {
 			// Try to find a suitable minimum size based on the viewport height
 			// minus the surrounding editor chrome to avoid scrollbars. In the
 			// future, we should calculate from the rendered editor bounds.
-			autoresize_min_height: Math.max( document.documentElement.clientHeight - 300, 300 ),
-			autoresize_bottom_margin: isMobile() ? 10 : 50,
+			autoresize_min_height: isGutenbergClassicBlock
+				? 150
+				: Math.max( document.documentElement.clientHeight - 300, 300 ),
+			autoresize_bottom_margin: isGutenbergClassicBlock || isMobile() ? 10 : 50,
 
 			toolbar1: `wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,${ ltrButton }wpcom_advanced`,
 			toolbar2:
@@ -350,7 +356,7 @@ export default class extends React.Component {
 
 			tabfocus_elements: 'content-html,save-post',
 			tabindex: this.props.tabIndex,
-			body_class: 'content post-type-post post-status-draft post-format-standard locale-en-us',
+			body_class: `content post-type-post post-status-draft post-format-standard locale-en-us${ gutenbergClassName }`,
 			add_unload_trigger: false,
 
 			setup: setup,
