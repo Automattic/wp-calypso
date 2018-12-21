@@ -15,6 +15,7 @@ import { compose, withInstanceId } from '@wordpress/compose';
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
+import SubmitButton from 'gutenberg/extensions/presets/jetpack/utils/submit-button';
 import HelpMessage from 'gutenberg/extensions/presets/jetpack/editor-shared/help-message';
 const ALLOWED_BLOCKS = [
 	'jetpack/markdown',
@@ -251,11 +252,7 @@ class JetpackContactForm extends Component {
 							] }
 						/>
 					) }
-					{ has_form_settings_set && (
-						<div className="button button-primary button-default jetpack-submit-button">
-							{ submit_button_text ? submit_button_text : __( 'Submit' ) }
-						</div>
-					) }
+					{ hasFormSettingsSet && SubmitButton( this.props ) }
 				</div>
 			</Fragment>
 		);
