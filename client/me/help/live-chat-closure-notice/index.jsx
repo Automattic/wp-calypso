@@ -6,15 +6,12 @@
 
 import React from 'react';
 import i18n, { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getUserPurchases } from 'state/purchases/selectors';
 
 const LiveChatClosureNotice = ( {
 	closureStartDate,
@@ -99,7 +96,4 @@ const LiveChatClosureNotice = ( {
 	);
 };
 
-export default connect( state => {
-	const userId = getCurrentUserId( state );
-	return { purchases: getUserPurchases( state, userId ) };
-} )( localize( LiveChatClosureNotice ) );
+export default localize( LiveChatClosureNotice );
