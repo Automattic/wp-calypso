@@ -6,7 +6,8 @@
 	.is-loading & {
 		display: none;
 	}
-	td, th {
+	td,
+	th {
 		padding: 6px;
 		text-align: center;
 		cursor: pointer;
@@ -19,7 +20,7 @@
 
 	th {
 		font-size: 11px;
-		color: darken( $gray, 10 );
+		color: var( --color-neutral-400 );
 	}
 }
 
@@ -31,7 +32,7 @@
 		background: none;
 		text-align: left;
 		font-size: 11px;
-		color: darken( $gray, 10 );
+		color: var( --color-neutral-400 );
 	}
 
 	&.level-0 {
@@ -43,20 +44,20 @@
 	}
 
 	&.level-2 {
-		background-color: lighten( $blue-light, 5% );
+		background-color: var( --color-primary-50 );
 	}
 
 	&.level-3 {
-		background-color: lighten( $blue-medium, 5% );
+		background-color: var( --color-primary-200 );
 	}
 
 	&.level-4 {
-		background-color: darken( $blue-medium, 10% );
+		background-color: var( --color-primary-400 );
 		color: white;
 	}
 
 	&.level-5 {
-		background-color: darken( $blue-medium, 30% );
+		background-color: var( --color-primary-800 );
 		color: white;
 	}
 }
@@ -86,7 +87,7 @@
 
 .stats-views__key-label {
 	font-size: 11px;
-	color: $gray;
+	color: var( --color-neutral );
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
 }
