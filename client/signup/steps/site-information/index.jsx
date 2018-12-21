@@ -78,7 +78,7 @@ class SiteInformation extends Component {
 				<div className="site-information__form-wrapper ">
 					<form>
 						<Card>
-							{ this.props.informationType == 'title' && (
+							{ this.props.informationType === 'title' && (
 								<>
 									<FormFieldset>
 										<FormLabel htmlFor="name">
@@ -102,7 +102,7 @@ class SiteInformation extends Component {
 
 							{ isBusinessSiteSelected && (
 								<>
-									{ this.props.informationType == 'address' && (
+									{ this.props.informationType === 'address' && (
 										<>
 											<FormFieldset>
 												<FormLabel htmlFor="address">
@@ -121,7 +121,7 @@ class SiteInformation extends Component {
 											</FormFieldset>
 										</>
 									) }
-									{ this.props.informationType == 'phone' && (
+									{ this.props.informationType === 'phone' && (
 										<>
 											<FormFieldset>
 												<FormLabel htmlFor="phone">
@@ -157,7 +157,7 @@ class SiteInformation extends Component {
 	}
 
 	render() {
-		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const { flowName, positionInFlow, signupProgress, stepName } = this.props;
 
 		const headerText = this.props.headerText;
 		const subHeaderText = '';
