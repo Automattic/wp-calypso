@@ -27,6 +27,7 @@ export const domainAvailability = {
 	AVAILABLE: 'available',
 	AVAILABILITY_CHECK_ERROR: 'availability_check_error',
 	BLACKLISTED: 'blacklisted_domain',
+	DOMAIN_SUGGESTIONS_THROTTLED: 'domain_suggestions_throttled',
 	DOTBLOG_SUBDOMAIN: 'dotblog_subdomain',
 	EMPTY_QUERY: 'empty_query',
 	EMPTY_RESULTS: 'empty_results',
