@@ -123,11 +123,23 @@ class CalendarCard extends Component {
 	};
 
 	render() {
-		const { actionText, disabled, isDefaultLocale, times, translate } = this.props;
+		const {
+			actionText,
+			disabled,
+			isDefaultLocale,
+			times,
+			translate,
+			appointmentTimespan,
+		} = this.props;
+
+		const durationInMinutes = moment.duration( appointmentTimespan, 'seconds' ).minutes();
+
 		const description = isDefaultLocale
-			? translate( 'Sessions are 30 minutes long.' )
-			: translate( 'Sessions are 30 minutes long and in %(defaultLanguage)s.', {
-					args: { defaultLanguage },
+			? translate( 'Sessions are %(durationInMinutes)d minutes long.', {
+					args: { durationInMinutes },
+			  } )
+			: translate( 'Sessions are %(durationInMinutes)d minutes long and in %(defaultLanguage)s.', {
+					args: { defaultLanguage, durationInMinutes },
 			  } );
 
 		return (

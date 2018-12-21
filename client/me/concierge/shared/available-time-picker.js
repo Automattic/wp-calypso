@@ -39,6 +39,7 @@ class AvailableTimePicker extends Component {
 	static propTypes = {
 		actionText: PropTypes.string.isRequired,
 		availableTimes: PropTypes.array.isRequired,
+		appointmentTimespan: PropTypes.number.isRequired,
 		onSubmit: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 		timezone: PropTypes.string.isRequired,
@@ -48,6 +49,7 @@ class AvailableTimePicker extends Component {
 		const {
 			actionText,
 			availableTimes,
+			appointmentTimespan,
 			currentUserLocale,
 			disabled,
 			onSubmit,
@@ -60,6 +62,7 @@ class AvailableTimePicker extends Component {
 				{ availability.map( ( { date, times } ) => (
 					<AvailableTimeCard
 						actionText={ actionText }
+						appointmentTimespan={ appointmentTimespan }
 						date={ date }
 						disabled={ disabled }
 						isDefaultLocale={ isDefaultLocale( currentUserLocale ) }
