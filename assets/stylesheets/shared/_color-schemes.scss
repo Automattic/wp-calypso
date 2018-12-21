@@ -58,6 +58,8 @@
 	--color-accent-900: #{$muriel-hot-pink-900};
 	--color-accent-900-rgb: #{hex-to-rgb( $muriel-hot-pink-900 )};
 
+	--color-white: #{ $muriel-white };
+	--color-white-rgb: #{ hex-to-rgb( $muriel-white ) };
 	--color-neutral: #{$muriel-gray-500};
 	--color-neutral-rgb: #{hex-to-rgb( $muriel-gray-500 )};
 	--color-neutral-dark: #{$muriel-gray-700};

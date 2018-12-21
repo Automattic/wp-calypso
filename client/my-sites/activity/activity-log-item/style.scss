@@ -63,7 +63,7 @@
 
 .activity-log-item__type {
 	align-self: flex-start;
-	background: $gray-light;
+	background: var( --color-surface-backdrop );
 	text-align: center;
 	margin: 1px 22px 0 10px;
 	padding: 4px 0 6px;
@@ -80,7 +80,7 @@
 	.activity-log-item__card.is-expanded & {
 		margin-left: 0px;
 		margin-right: 16px;
-		background: $white;
+		background: var( --color-surface );
 	}
 }
 
@@ -97,8 +97,8 @@
 
 .activity-log-item__activity-icon {
 	// General notice
-	background: $gray;
-	color: $white;
+	background: var( --color-neutral-200 );
+	color: var( --color-white );
 	display: flex;
 	border-radius: 50%;
 	padding: 12px;
@@ -222,7 +222,7 @@
 	}
 
 	.social-logo {
-		fill: $white;
+		fill: var( --color-white );
 		background: $color-wordpressOrg;
 		border-radius: 50%;
 	}
@@ -234,14 +234,14 @@
 	.gridicon {
 		width: 24px;
 		height: 24px;
-		background: $gray;
-		color: $white;
+		background: var( --color-neutral-200 );
+		color: var( --color-white );
 		display: flex;
 		padding: 8px;
 		border-radius: 50%;
 		margin-right: 14px;
 		margin-top: 2px;
-		fill: $white;
+		fill: var( --color-white );
 
 		@include breakpoint( '<480px' ) {
 			padding: 7px;
@@ -338,7 +338,7 @@
 }
 
 .activity-log-item__help-action {
-	color: $gray;
+	color: var( --color-neutral-200 );
 	font-weight: 400;
 	font-size: 13px;
 	white-space: nowrap;
@@ -381,7 +381,7 @@
 
 .activity-log-item__activity-media {
 	margin-right: 16px;
-	color: $white;
+	color: var( --color-white );
 }
 
 .activity-log-item__activity-media .gridicon {
@@ -429,7 +429,7 @@
 	justify-content: space-between;
 	padding: 16px 0 0;
 	margin: 0;
-	border-top: 1px solid $gray-light;
+	border-top: 1px solid var( --color-surface-backdrop );
 
 	p {
 		margin-bottom: 0;
