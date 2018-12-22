@@ -82,7 +82,7 @@ class TiledGalleryEdit extends Component {
 
 		// If block is missing a style class when mounting, set it to default
 		if ( ! hasStyleClass( className ) ) {
-			this.props.changeClassName( `${ className } ${ getDefaultStyleClass( LAYOUT_STYLES ) }` );
+			this.props.changeClassName( getDefaultStyleClass( LAYOUT_STYLES ) );
 		}
 
 		this.deferredMount = defer( () => {
