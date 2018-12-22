@@ -102,6 +102,7 @@ export const settings = {
 	supports: {
 		align: true,
 		alignWide: true,
+		customClassName: false,
 		html: false,
 	},
 	title: __( 'Tiled gallery' ),
