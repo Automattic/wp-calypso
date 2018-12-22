@@ -237,7 +237,7 @@ export const waitForData = ( query, { timeout } = {} ) =>
 					return [
 						{ ...values, [ name ]: value },
 						allBad && value.state === 'failure',
-						allDone && value.state !== 'pending',
+						allDone && ( value.state === 'success' || value.state === 'failure' ),
 					];
 				},
 				[ {}, true, true ]
