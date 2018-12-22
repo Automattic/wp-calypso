@@ -231,38 +231,25 @@ export const waitForData = ( query, { timeout } = {} ) =>
 
 		const getValues = () =>
 			names.reduce(
-				( [ values, allGood, allBad, allDone ], name ) => {
+				( [ values, allBad, allDone ], name ) => {
 					const value = query[ name ]();
 
 					return [
 						{ ...values, [ name ]: value },
-						allGood && value.state === 'success',
 						allBad && value.state === 'failure',
 						allDone && value.state !== 'pending',
 					];
 				},
-				[ {}, true, true, true ]
+				[ {}, true, true ]
 			);
 
 		const listener = () => {
-			const [ values, allGood, allBad, allDone ] = getValues();
-
-			if ( allBad ) {
-				clearTimeout( timer );
-				unsubscribe();
-				reject( values );
-			}
-
-			if ( allGood ) {
-				clearTimeout( timer );
-				unsubscribe();
-				resolve( values );
-			}
+			const [ values, allBad, allDone ] = getValues();
 
 			if ( allDone ) {
 				clearTimeout( timer );
 				unsubscribe();
-				resolve( values );
+				allBad ? reject( values ) : resolve( values );
 			}
 		};
 
