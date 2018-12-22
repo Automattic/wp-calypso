@@ -226,21 +226,15 @@ class AddEmailAddressesCard extends React.Component {
 			context: 'part of e-mail address',
 			comment: 'As it would be part of an e-mail address contact@example.com',
 		} );
-		let suffix, select;
-
-		if ( this.props.selectedDomainName ) {
-			suffix = '@' + field.domain.value;
-		} else {
-			select = (
-				<DomainsSelect
-					domains={ getGoogleAppsSupportedDomains( this.props.domains ) }
-					isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
-					value={ this.state.fieldsets[ index ].domain.value }
-					onChange={ this.handleFieldChange.bind( this, 'domain', index ) }
-					onFocus={ this.handleFieldFocus.bind( this, 'Domain', index ) }
-				/>
-			);
-		}
+		const select = (
+			<DomainsSelect
+				domains={ getGoogleAppsSupportedDomains( this.props.domains ) }
+				isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
+				value={ this.state.fieldsets[ index ].domain.value }
+				onChange={ this.handleFieldChange.bind( this, 'domain', index ) }
+				onFocus={ this.handleFieldFocus.bind( this, 'Domain', index ) }
+			/>
+		);
 
 		return (
 			<div className="add-google-apps__email-address-fieldset" key={ index }>
@@ -250,7 +244,6 @@ class AddEmailAddressesCard extends React.Component {
 					placeholder={ this.props.translate( 'e.g. %(example)s', {
 						args: { example: contactText },
 					} ) }
-					suffix={ suffix }
 					type="text"
 					value={ field.username.value }
 				/>
