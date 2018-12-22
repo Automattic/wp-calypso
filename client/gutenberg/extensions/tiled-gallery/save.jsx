@@ -1,9 +1,18 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * Internal dependencies
  */
 import Layout from './layout';
 import { defaultColumnsNumber } from './edit';
-import { getActiveStyleName } from 'gutenberg/extensions/utils';
+import {
+	getActiveStyleName,
+	getDefaultStyleClass,
+	hasStyleClass,
+} from 'gutenberg/extensions/utils';
 import { LAYOUT_STYLES } from './constants';
 
 export default function TiledGallerySave( { attributes } ) {
@@ -17,7 +26,12 @@ export default function TiledGallerySave( { attributes } ) {
 
 	return (
 		<Layout
-			className={ className }
+			className={ classnames( className, {
+				// If block is missing a style class when saving, set it to default.
+				// While this happens also at componentDidMount, we need it here
+				// to make sure the block doesn't get invalidated
+				[ getDefaultStyleClass( LAYOUT_STYLES ) ]: ! hasStyleClass( className ),
+			} ) }
 			columns={ columns }
 			images={ images }
 			isSave
