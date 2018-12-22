@@ -100,14 +100,6 @@ class TiledGalleryEdit extends Component {
 		clearTimeout( this.deferredMount );
 	}
 
-	componentDidUpdate() {
-		/*
-		if ( this.container.current ) {
-			Array.from( this.container.current.querySelectorAll( '.tiled-gallery__row' ) ).forEach( handleRowResize );
-		}
-		*/
-	}
-
 	setAttributes( attributes ) {
 		if ( attributes.ids ) {
 			throw new Error(
