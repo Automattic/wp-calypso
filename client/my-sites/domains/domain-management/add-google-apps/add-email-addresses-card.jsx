@@ -20,22 +20,17 @@ import FormFooter from 'my-sites/domains/domain-management/components/form-foote
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import { getEligibleDomain } from 'lib/domains/gsuite';
 import getUserSetting from 'state/selectors/get-user-setting';
 import { cartItems } from 'lib/cart-values';
 import { domainManagementEmail } from 'my-sites/domains/paths';
-import ValidationErrorList from 'notices/validation-error-list';
 import { addItem } from 'lib/upgrades/actions';
 import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
 import { filter as filterUsers, validate as validateUsers } from 'lib/domains/google-apps-users';
 import DomainsSelect from './domains-select';
 import QueryUserSettings from 'components/data/query-user-settings';
-
-/**
- * Internal dependencies
- */
-import Notice from 'components/notice';
 
 function getGoogleAppsCartItems( { domains, fieldsets } ) {
 	let groups = groupBy( fieldsets, function( fieldset ) {
@@ -134,13 +129,13 @@ class AddEmailAddressesCard extends React.Component {
 	};
 
 	validationErrors() {
-		if ( this.state.validationErrors ) {
-			return (
-				<Notice onDismissClick={ this.removeValidationErrors } status="is-error">
-					<ValidationErrorList messages={ this.state.validationErrors } />
-				</Notice>
-			);
-		}
+		// if ( this.state.validationErrors ) {
+		// 	return (
+		// 		<Notice onDismissClick={ this.removeValidationErrors } status="is-error">
+		// 			<ValidationErrorList messages={ this.state.validationErrors } />
+		// 		</Notice>
+		// 	);
+		// }
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -188,23 +183,22 @@ class AddEmailAddressesCard extends React.Component {
 	}
 
 	renderFieldsets() {
-		return this.state.fieldsets.map( ( _, index ) => {
+		return this.state.fieldsets.map( ( fields, index ) => {
 			return (
 				<Fragment key={ index }>
 					{ index > 0 && <hr /> }
 					<div className="add-google-apps__email-address-fieldsets">
-						{ this.emailAddressFieldset( index ) }
+						{ this.emailAddressFieldset( index, fields.username, fields.domain ) }
 					</div>
 					<div className="add-google-apps__name-fieldsets">
-						{ this.renderNameFieldset( index ) }
+						{ this.renderNameFieldset( index, fields.firstName, fields.lastName ) }
 					</div>
 				</Fragment>
 			);
 		} );
 	}
 
-	renderNameFieldset( index ) {
-		const field = this.state.fieldsets[ index ];
+	renderNameFieldset( index, firstName, lastName ) {
 		const { translate } = this.props;
 
 		return (
@@ -215,7 +209,13 @@ class AddEmailAddressesCard extends React.Component {
 						name="firstName"
 						maxLength={ 60 }
 						onChange={ this.handleFieldChange.bind( this, 'firstName', index ) }
-						value={ field.firstName.value }
+						value={ firstName.value }
+						isError={ has( firstName, 'error' ) && null !== firstName.error }
+					/>
+					<FormInputValidation
+						isHidden={ ! has( firstName, 'error' ) || null === firstName.error }
+						isError={ has( firstName, 'error' ) && null !== firstName.error }
+						text={ firstName.error || '\u00A0' }
 					/>
 				</FormFieldset>
 				<FormFieldset>
@@ -224,15 +224,20 @@ class AddEmailAddressesCard extends React.Component {
 						name="lastName"
 						maxLength={ 60 }
 						onChange={ this.handleFieldChange.bind( this, 'lastName', index ) }
-						value={ field.lastName.value }
+						value={ lastName.value }
+						isError={ has( lastName, 'error' ) && null !== lastName.error }
+					/>
+					<FormInputValidation
+						isHidden={ ! has( lastName, 'error' ) || null === lastName.error }
+						isError={ has( lastName, 'error' ) && null !== lastName.error }
+						text={ lastName.error || '\u00A0' }
 					/>
 				</FormFieldset>
 			</Fragment>
 		);
 	}
 
-	emailAddressFieldset( index ) {
-		const field = this.state.fieldsets[ index ];
+	emailAddressFieldset( index, username, domain ) {
 		const contactText = this.props.translate( 'contact', {
 			context: 'part of e-mail address',
 			comment: 'As it would be part of an e-mail address contact@example.com',
@@ -256,7 +261,13 @@ class AddEmailAddressesCard extends React.Component {
 						args: { example: contactText },
 					} ) }
 					type="text"
-					value={ field.username.value }
+					value={ username.value }
+					isError={ has( username, 'error' ) && null !== username.error }
+				/>
+				<FormInputValidation
+					isHidden={ ! has( username, 'error' ) || null === username.error }
+					isError={ has( username, 'error' ) && null !== username.error }
+					text={ username.error || '\u00A0' }
 				/>
 
 				{ select }
