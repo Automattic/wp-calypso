@@ -328,10 +328,10 @@ $gutenberg-theme-toggle: #11a0d2;
 			border-radius: 20px;
 			margin: 0 8px;
 	}
-}
+
 
 	// Box Widths  
-.is-section-gutenberg-editor {	
+	
     .components-popover input[type=search].editor-inserter__search {
 	width: auto;
 	}
@@ -340,8 +340,8 @@ $gutenberg-theme-toggle: #11a0d2;
 	input[type='search'] {
 		width: auto;
 	}
-
+} 
     .edit-post-settings-sidebar__panel-block .components-panel__body input[type=text] {
 	    width: 100%;
   }
-} 
+
