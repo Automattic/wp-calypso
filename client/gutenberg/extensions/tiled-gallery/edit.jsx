@@ -89,7 +89,9 @@ class TiledGalleryEdit extends Component {
 			// ResizeObserver has checks for `window` & `document`:
 			// it does nothing if those are not available.
 			this.observer = new ResizeObserver( this.onGalleryResize );
-			this.observer.observe( this.container.current ); //parentNode
+			if ( this.container.current ) {
+				this.observer.observe( this.container.current );
+			}
 		} );
 	}
 
