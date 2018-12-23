@@ -61,7 +61,7 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
-import { submitSiteTopic } from 'state/signup/steps/site-topic/actions';
+import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -280,7 +280,7 @@ class Signup extends React.Component {
 				surveyQuestion: vertical,
 			} );
 
-			this.props.submitSiteTopic( vertical );
+			this.props.submitSiteVertical( { name: vertical } );
 
 			// Track our landing page verticals
 			if ( isValidLandingPageVertical( vertical ) ) {
@@ -643,7 +643,7 @@ export default connect(
 	{
 		setSurvey,
 		submitSiteType,
-		submitSiteTopic,
+		submitSiteVertical,
 		loadTrackingTool,
 		trackAffiliateReferral: affiliateReferral,
 	},
