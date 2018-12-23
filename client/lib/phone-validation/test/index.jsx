@@ -27,16 +27,14 @@ describe( 'Phone Validation Library', () => {
 	test( 'should fail an invalid number', () => {
 		assert.strictEqual( phoneValidation( '+111111111' ).error, 'phone_number_invalid' );
 	} );
-	test( 'should fail an invalid 9-digit argentine no-leading-9 number', () => {
+	test( 'should fail an invalid 9-digit argentine number', () => {
 		assert.strictEqual( phoneValidation( '+54299123456' ).error, 'phone_number_invalid' );
 	} );
-	test( 'should pass a valid 10 digit argentine no-leading-9 number', () => {
-		assert.strictEqual( phoneValidation( '+543511234567' ).info, 'phone_number_valid' );
+	test( 'should pass a valid 10 digit argentine without leading 9 number', () => {
+		assert.strictEqual( phoneValidation( '+542231234567' ).info, 'phone_number_valid' );
 	} );
-	test( 'should pass a valid 10 digit argentine mobile number', () => {
-		assert.strictEqual( phoneValidation( '+541112345678' ).info, 'phone_number_valid' );
-	} );
-
+	test( 'should pass a valid 10 digit argentine with leading 9 number', () => {
+		assert.strictEqual( phoneValidation( '+5492231234567' ).info, 'phone_number_valid' );
 	} );
 	test( 'should pass a valid 8-digit croatian number', () => {
 		assert.strictEqual( phoneValidation( '+38598123456' ).info, 'phone_number_valid' );
