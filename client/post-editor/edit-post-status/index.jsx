@@ -100,7 +100,7 @@ export class EditPostStatus extends Component {
 				{ showSticky && (
 					<label className="edit-post-status__sticky">
 						<span className="edit-post-status__label-text">
-							{ translate( 'Stick to the front page' ) }
+							{ translate( 'Stick to the top' ) }
 							<InfoPopover position="top right" gaEventCategory="Editor" popoverName="Sticky Post">
 								{ translate( 'Sticky posts will appear at the top of the posts listing.' ) }
 							</InfoPopover>
