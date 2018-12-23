@@ -6,6 +6,10 @@
 
 import { get } from 'lodash';
 
-export function getSiteVertical( state ) {
-	return get( state, 'signup.steps.siteVertical', {} );
+export function getSiteVerticalName( state ) {
+	return get( state, 'signup.steps.siteVertical.name', '' );
+}
+
+export function getSiteVerticalSlug( state ) {
+	return get( state, 'signup.steps.siteVertical.slug', '' );
 }

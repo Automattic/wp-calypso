@@ -3,28 +3,35 @@
 /**
  * Internal dependencies
  */
-import { getSiteVertical } from '../selectors';
+import { getSiteVerticalName, getSiteVerticalSlug } from '../selectors';
 
 describe( 'selectors', () => {
-	test( 'should return empty object as a default state', () => {
-		expect( getSiteVertical( { name: undefined } ) ).toEqual( {} );
-	} );
-
-	test( 'should return site vertical from the state', () => {
-		expect(
-			getSiteVertical( {
-				signup: {
-					steps: {
-						siteVertical: {
-							name: 'felice',
-							slug: 'happy',
-						},
-					},
+	const state = {
+		signup: {
+			steps: {
+				siteVertical: {
+					name: 'felice',
+					slug: 'happy',
 				},
-			} )
-		).toEqual( {
-			name: 'felice',
-			slug: 'happy',
+			},
+		},
+	};
+	describe( 'getSiteVerticalName', () => {
+		test( 'should return empty string as a default state', () => {
+			expect( getSiteVerticalName( {} ) ).toEqual( '' );
+		} );
+
+		test( 'should return site vertical from the state', () => {
+			expect( getSiteVerticalName( state ) ).toEqual( state.signup.steps.siteVertical.name );
+		} );
+	} );
+	describe( 'getSiteVerticalSlug', () => {
+		test( 'should return empty string as a default state', () => {
+			expect( getSiteVerticalSlug( {} ) ).toEqual( '' );
+		} );
+
+		test( 'should return site vertical from the state', () => {
+			expect( getSiteVerticalSlug( state ) ).toEqual( state.signup.steps.siteVertical.slug );
 		} );
 	} );
 } );
