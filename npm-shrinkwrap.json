@@ -14471,8 +14471,8 @@
 			"integrity": "sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns="
 		},
 		"phone": {
-			"version": "git+https://github.com/Automattic/node-phone.git#6be6549b03137f2cca01e202250bf2590750119e",
-			"from": "git+https://github.com/Automattic/node-phone.git#1.0.8"
+			"version": "git+https://github.com/Automattic/node-phone.git#3b1cc3e654a48e66afecfc87dd36dc83430bf238",
+			"from": "git+https://github.com/Automattic/node-phone.git#v2.4.0-pre"
 		},
 		"photon": {
 			"version": "2.0.1",

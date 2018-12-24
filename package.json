@@ -152,7 +152,7 @@
     "page": "1.11.3",
     "path-browserify": "1.0.0",
     "percentage-regex": "3.0.0",
-    "phone": "git+https://github.com/Automattic/node-phone.git#1.0.8",
+    "phone": "git+https://github.com/Automattic/node-phone.git#v2.4.0-pre",
     "photon": "2.0.1",
     "postcss-cli": "6.0.1",
     "postcss-custom-properties": "8.0.9",
