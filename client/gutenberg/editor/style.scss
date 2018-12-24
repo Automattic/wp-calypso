@@ -228,7 +228,16 @@ $gutenberg-theme-toggle: #11a0d2;
 .edit-post-options-modal {
 
 	// UNSET CALYPSO DEFAULT STYLES
-
+				
+input[type='text'],
+input[type='search'] {
+	width: auto;
+	
+	&.components-text-control__input {
+		width: 100%;
+	}
+}
+	
 	input[type='number'].components-range-control__number {
 		width: 50px;
 	}
@@ -328,20 +337,6 @@ $gutenberg-theme-toggle: #11a0d2;
 			border-radius: 20px;
 			margin: 0 8px;
 	}
-
-
-	// Box Widths  
-	
-    .components-popover input[type=search].editor-inserter__search {
-	width: auto;
-	}
-
-    input[type='text'],
-	input[type='search'] {
-		width: auto;
-	}
-} 
-    .edit-post-settings-sidebar__panel-block .components-panel__body input[type=text] {
-	    width: 100%;
+	 
   }
 
