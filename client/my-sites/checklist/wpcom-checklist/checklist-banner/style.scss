@@ -1,8 +1,7 @@
-
 .checklist-banner {
 	display: flex;
 	flex-direction: row;
-	background: #daf5fb;
+	background: $muriel-blue-0;
 	min-height: 200px;
 
 	@include breakpoint( '<660px' ) {
