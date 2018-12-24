@@ -27,12 +27,12 @@ function getTitle( filter, translate ) {
 function getSubtitle( filter, translate ) {
 	if ( filter === 'audio' ) {
 		return translate(
-			"By upgrading to the Personal Plan, you'll enable audio upload support on your site."
+			"By upgrading to the Personal plan, you'll enable audio upload support on your site."
 		);
 	}
 
 	return translate(
-		"By upgrading to the Premium Plan, you'll enable VideoPress support on your site."
+		"By upgrading to the Premium plan, you'll enable VideoPress support on your site."
 	);
 }
 
