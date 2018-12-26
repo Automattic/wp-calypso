@@ -14,7 +14,7 @@ import { translate } from 'i18n-calypso';
 import SiteMockup from './site-mockup';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteVertical } from 'state/signup/steps/site-vertical/selectors';
+import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import { getVerticalData } from './mock-data';
 
