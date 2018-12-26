@@ -50,7 +50,7 @@ const LiveChatClosureNotice = ( {
 		);
 	} else {
 		message = translate(
-			'Live chat is closed today for %(holidayName)s and will reopen %(reopensAt)s. ' +
+			'Live chat is closed for %(holidayName)s and will reopen %(reopensAt)s. ' +
 				'You can reach us by email below and we’ll get back to you as fast as we can. Thank you!',
 			{
 				args: {
