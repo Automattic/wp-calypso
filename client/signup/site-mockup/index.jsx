@@ -80,7 +80,7 @@ class SiteMockups extends Component {
 }
 
 export default connect( state => {
-	const vertical = getSiteVertical( state );
+	const vertical = getSiteVerticalName( state );
 	return {
 		title: getSiteTitle( state ) || translate( 'Your New Website' ),
 		siteInformation: getSiteInformation( state ),
