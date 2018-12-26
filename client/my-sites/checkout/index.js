@@ -97,7 +97,7 @@ export default function() {
 
 	if ( config.isEnabled( 'upsell/concierge-session' ) ) {
 		page(
-			'/checkout/:site/add-expert-session/:receiptId?',
+			'/checkout/:site/add-support-session/:receiptId?',
 			redirectLoggedOut,
 			siteSelection,
 			conciergeSessionNudge,

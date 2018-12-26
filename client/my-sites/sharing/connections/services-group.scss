@@ -2,6 +2,15 @@
 	display: none;
 }
 
+.sharing-services-group__header {
+	margin: 0 0 30px 20px;
+}
+
+.sharing-service-group__title {
+	@include heading;
+	margin: 0 0 4px;
+}
+
 .sharing-services-group__services {
 	margin: 0 0 30px;
 	padding: 0;

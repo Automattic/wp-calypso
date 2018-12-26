@@ -1,7 +1,6 @@
 /**
  * General styles
  *
- * @format
  */
 
 .wpcom-site__logo {
@@ -60,7 +59,11 @@ body,
 }
 
 body {
-	background: $gray-light;
+	background: var( --color-surface-backdrop );
+	color: var( --color-text );
+	font-size: 15px;
+	line-height: 1.5;
+
 	-ms-overflow-style: scrollbar;
 
 	// This fixes an issue with the `click-outside` package not working on mobile.
@@ -68,11 +71,6 @@ body {
 	@include breakpoint( '<660px' ) {
 		cursor: pointer;
 	}
-}
-
-.layout {
-	background: var( --color-surface-backdrop );
-	color: var( --color-text );
 }
 
 ::selection {
@@ -131,12 +129,6 @@ body.rtl,
 
 .notifications {
 	display: inherit;
-}
-
-body {
-	color: $gray-dark;
-	font-size: 15px;
-	line-height: 1.5;
 }
 
 noscript {

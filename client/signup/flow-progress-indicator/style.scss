@@ -1,17 +1,7 @@
 .flow-progress-indicator {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	color: darken( $gray, 20 );
+	color: $gray-dark;
 	font-size: 14px;
-	font-weight: 300;
-	margin-bottom: -10px;
-	text-align: center;
-
-	@include breakpoint( '<660px' ) {
-		padding-top: 10px;
-	}
+	font-weight: 500;
 }
 
 .flow-progress-indicator__rebrand-cities {

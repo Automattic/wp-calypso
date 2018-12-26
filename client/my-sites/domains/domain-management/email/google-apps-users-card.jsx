@@ -3,42 +3,30 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
-import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
 import { find, get, groupBy } from 'lodash';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Notice from 'components/notice';
 import Button from 'components/button';
-import PendingGappsTosNotice from 'my-sites/domains/components/domain-warnings/pending-gapps-tos-notice';
-import { domainManagementAddGoogleApps } from 'my-sites/domains/paths';
-import analyticsMixin from 'lib/mixins/analytics';
-import SectionHeader from 'components/section-header';
-import GoogleAppsUserItem from './google-apps-user-item';
-import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
 import { CALYPSO_CONTACT } from 'lib/url/support';
+import CompactCard from 'components/card/compact';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { domainManagementAddGoogleApps } from 'my-sites/domains/paths';
+import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
+import GoogleAppsUserItem from './google-apps-user-item';
+import Notice from 'components/notice';
+import PendingGappsTosNotice from 'my-sites/domains/components/domain-warnings/pending-gapps-tos-notice';
+import SectionHeader from 'components/section-header';
 
-const GoogleAppsUsers = createReactClass( {
-	displayName: 'GoogleAppsUsers',
-	mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],
-
-	propTypes: {
-		domains: PropTypes.array.isRequired,
-		googleAppsUsers: PropTypes.array.isRequired,
-		selectedDomainName: PropTypes.string,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-		user: PropTypes.object.isRequired,
-	},
-
+class GoogleAppsUsers extends React.Component {
 	getDomainsAsList() {
 		return this.props.selectedDomainName ? [ getSelectedDomain( this.props ) ] : this.props.domains;
-	},
+	}
 
 	canAddUsers( domainName ) {
 		return this.getDomainsAsList().some(
@@ -46,28 +34,28 @@ const GoogleAppsUsers = createReactClass( {
 				domain.name === domainName &&
 				get( domain, 'googleAppsSubscription.ownedByUserId' ) === this.props.user.ID
 		);
-	},
+	}
 
 	isNewUser( user, subscribedDate ) {
 		return this.props
 			.moment()
 			.subtract( 1, 'day' )
 			.isBefore( subscribedDate );
-	},
+	}
 
 	generateClickHandler( user ) {
 		return () => {
-			this.recordEvent( 'manageClick', this.props.selectedDomainName, user );
+			this.props.manageClick( this.props.selectedDomainName, user );
 		};
-	},
+	}
 
-	goToAddGoogleApps() {
-		this.recordEvent( 'addGoogleAppsUserClick', this.props.selectedDomainName );
-	},
+	goToAddGoogleApps = () => {
+		this.props.addGoogleAppsUserClick( this.props.selectedDomainName );
+	};
 
 	renderDomain( domain, users ) {
 		return (
-			<div key={ `google-apps-user-${ domain }` } className="google-apps-users-card">
+			<div key={ `google-apps-user-${ domain }` } className="email__google-apps-users-card">
 				<SectionHeader label={ domain }>
 					{ this.canAddUsers( domain ) && (
 						<Button
@@ -80,14 +68,14 @@ const GoogleAppsUsers = createReactClass( {
 						</Button>
 					) }
 				</SectionHeader>
-				<CompactCard className="google-apps-users-card__user-list">
-					<ul className="google-apps-users-card__user-list-inner">
+				<CompactCard className="email__google-apps-users-card-user-list">
+					<ul className="email__google-apps-users-card-user-list-inner">
 						{ users.map( ( user, index ) => this.renderUser( user, index ) ) }
 					</ul>
 				</CompactCard>
 			</div>
 		);
-	},
+	}
 
 	renderUser( user, index ) {
 		if ( user.error ) {
@@ -130,7 +118,7 @@ const GoogleAppsUsers = createReactClass( {
 				onClick={ this.generateClickHandler( user ) }
 			/>
 		);
-	},
+	}
 
 	render() {
 		const pendingDomains = this.getDomainsAsList().filter( hasPendingGoogleAppsUsers );
@@ -152,7 +140,47 @@ const GoogleAppsUsers = createReactClass( {
 				) }
 			</div>
 		);
-	},
-} );
+	}
+}
 
-export default localize( GoogleAppsUsers );
+const addGoogleAppsUserClick = domainName =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked "Add Google Apps User" Button in Google Apps',
+			'Domain Name',
+			domainName
+		),
+
+		recordTracksEvent( 'calypso_domain_management_google_apps_add_google_apps_user_click', {
+			domain_name: domainName,
+		} )
+	);
+
+const manageClick = ( domainName, email ) =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked "Manage" link in Google Apps',
+			'User Email',
+			email
+		),
+
+		recordTracksEvent( 'calypso_domain_management_google_apps_manage_click', {
+			domain_name: domainName,
+			email,
+		} )
+	);
+
+GoogleAppsUsers.propTypes = {
+	domains: PropTypes.array.isRequired,
+	googleAppsUsers: PropTypes.array.isRequired,
+	selectedDomainName: PropTypes.string,
+	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+	user: PropTypes.object.isRequired,
+};
+
+export default connect(
+	null,
+	{ addGoogleAppsUserClick, manageClick }
+)( localize( GoogleAppsUsers ) );

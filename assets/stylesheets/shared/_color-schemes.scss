@@ -1,4 +1,3 @@
-/** @format */
 
 //default color scheme
 :root {
@@ -64,6 +63,7 @@
 	--site-selector-hover-background-gradient: #{hex-to-rgb( $blue-medium )};
 
 	--button-is-borderless-color: #{$gray-text-min};
+	--button-primary-border-color: #{darken($blue-medium, 8%)};
 	--count-border-color: #{$gray};
 	--count-color: #{$gray-text-min};
 	--profile-gravatar-user-secondary-info-color: #{$gray-darken-20};
@@ -77,8 +77,8 @@
 		--color-primary-dark: #{$muriel-blue-700};
 
 		--color-accent: #{$muriel-hot-pink-500};
-		--color-accent-dark: #{$muriel-hot-pink-700};
 		--color-accent-light: #{$muriel-hot-pink-300};
+		--color-accent-dark: #{$muriel-hot-pink-700};
 
 		--color-success: #{$muriel-hot-green-500};
 		--color-success-light: #{$muriel-hot-green-700};
@@ -136,6 +136,7 @@
 		--site-selector-hover-background-gradient: var( --sidebar-menu-hover-background-gradient );
 
 		--button-is-borderless-color: #{$gray-dark};
+		--button-primary-border-color: var( --color-accent-dark );
 		--count-border-color: #{$gray-dark};
 		--count-color: #{$gray-dark};
 		--profile-gravatar-user-secondary-info-color: #{$gray-dark};
@@ -147,8 +148,8 @@
 		--color-primary-dark: #{$muriel-hot-blue-700};
 
 		--color-accent: #{$muriel-hot-pink-400};
-		--color-accent-dark: #{$muriel-hot-pink-200};
-		--color-accent-light: #{$muriel-hot-pink-600};
+		--color-accent-light: #{$muriel-hot-pink-200};
+		--color-accent-dark: #{$muriel-hot-pink-600};
 
 		--color-success: #{$muriel-hot-green-400};
 		--color-success-light: #{$muriel-hot-green-200};
@@ -206,6 +207,7 @@
 		--site-selector-hover-background-gradient: var( --sidebar-menu-hover-background-gradient );
 
 		--button-is-borderless-color: #{$gray-dark};
+		--button-primary-border-color: var( --color-accent-dark );
 		--count-border-color: #{$gray-dark};
 		--count-color: #{$gray-dark};
 		--profile-gravatar-user-secondary-info-color: #{$gray-dark};

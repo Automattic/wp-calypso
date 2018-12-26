@@ -6,7 +6,6 @@ import creditcards from 'creditcards';
 import { capitalize, compact, isArray, isEmpty, mergeWith, union } from 'lodash';
 import i18n from 'i18n-calypso';
 import { isValidPostalCode } from 'lib/postal-code';
-import phone from 'phone';
 
 /**
  * Internal dependencies
@@ -231,17 +230,11 @@ validators.validPostalCodeUS = {
 	},
 };
 
-validators.validPhone = {
-	isValid( phoneNumber, paymentDetails ) {
-		if ( ! phoneNumber ) {
-			return false;
-		}
-
-		return phone( phoneNumber, paymentDetails.country ).length > 0;
+validators.validStreetNumber = {
+	isValid( streetNumber ) {
+		return streetNumber !== '0';
 	},
-	error: function() {
-		return i18n.translate( 'That phone number does not appear to be valid' );
-	},
+	error: validationError,
 };
 
 /**

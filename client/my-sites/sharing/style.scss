@@ -1,3 +1,5 @@
+/** @format */
+
 .foldable-card.sharing-service {
 	.sharing-service__logo {
 		float: left;
@@ -230,6 +232,11 @@
 
 .sharing-service__content {
 	position: relative;
+
+	h3 {
+		font-size: 18px;
+		margin-bottom: 10px;
+	}
 
 	&.is-placeholder {
 		height: 180px;
@@ -1092,4 +1099,16 @@
 
 .sharing-buttons-label-editor__input {
 	max-width: 300px;
+}
+
+@include breakpoint( '<660px' ) {
+	.right-column {
+		box-sizing: border-box;
+	}
+
+	.sharing-content {
+		.new-account {
+			margin-left: 10px;
+		}
+	}
 }

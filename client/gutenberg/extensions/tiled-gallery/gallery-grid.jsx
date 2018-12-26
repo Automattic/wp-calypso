@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { Component, Fragment, createRef } from '@wordpress/element';
+import { Component, createRef } from '@wordpress/element';
 import classnames from 'classnames';
 import { defer } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -24,32 +24,36 @@ class TiledGalleryGrid extends Component {
 
 	pendingRaf = null;
 
-	handleResize = entries => {
-		if ( this.pendingRaf ) {
-			cancelAnimationFrame( this.pendingRaf );
-		}
-		this.pendingRaf = requestAnimationFrame( () => {
-			this.pendingRaf = null;
-			for ( const entry of entries ) {
-				const { width } = entry.contentRect;
-				if ( width && width !== this.state.width ) {
-					this.setWidth( width );
+	handleResize = this.props.noResize
+		? () => {}
+		: entries => {
+				if ( this.pendingRaf ) {
+					cancelAnimationFrame( this.pendingRaf );
 				}
-			}
-		} );
-	};
+				this.pendingRaf = requestAnimationFrame( () => {
+					this.pendingRaf = null;
+					for ( const entry of entries ) {
+						const { width } = entry.contentRect;
+						if ( width && width !== this.state.width ) {
+							this.setWidth( width );
+						}
+					}
+				} );
+		  };
 
 	setWidth( width ) {
 		this.setState( { width } );
 	}
 
 	componentDidMount() {
-		this.deferredMount = defer( () => {
-			// ResizeObserver has checks for `window` & `document`:
-			// it does nothing if those are not available.
-			this.observer = new ResizeObserver( this.handleResize );
-			this.observer.observe( this.wrapper.current.parentNode );
-		} );
+		if ( ! this.props.noResize ) {
+			this.deferredMount = defer( () => {
+				// ResizeObserver has checks for `window` & `document`:
+				// it does nothing if those are not available.
+				this.observer = new ResizeObserver( this.handleResize );
+				this.observer.observe( this.wrapper.current.parentNode );
+			} );
+		}
 	}
 
 	componentWillUnmount() {
@@ -68,11 +72,13 @@ class TiledGalleryGrid extends Component {
 			imageCrop,
 			images,
 			layout,
+			noResize,
 			renderGalleryImage,
 		} = this.props;
 		const { width } = this.state;
 		const rows = getLayout( {
 			columns,
+			images,
 			layout,
 			tileCount: images.length,
 			width,
@@ -88,49 +94,93 @@ class TiledGalleryGrid extends Component {
 				} ) }
 				data-columns={ columns }
 				ref={ this.wrapper }
-				style={ { width } }
+				style={ noResize ? undefined : { width } }
 			>
-				<Fragment>
-					{ rows.map( ( row, rowIndex ) => {
-						return (
-							<div
-								key={ `tiled-gallery-row-${ rowIndex }` }
-								className="tiled-gallery__row"
-								style={ {
-									width: row.width,
-									height: row.height,
-								} }
-							>
-								{ row.tiles.map( tile => {
-									const galleryItem = (
-										<div
-											className="tiled-gallery__item"
-											key={ images[ imageIndex ].id || images[ imageIndex ].url }
-											style={ {
-												width: tile.width,
-												height: tile.height,
-											} }
-										>
-											{ renderGalleryImage( imageIndex ) }
-										</div>
-									);
-
-									imageIndex++;
-
-									return galleryItem;
-								} ) }
-							</div>
-						);
-					} ) }
-					{ children ? (
+				{ rows.map( ( row, rowIndex ) => {
+					return (
 						<div
-							key="tiled-gallery-row-extras"
-							className="tiled-gallery__row tiled-gallery__row-extras"
+							key={ `tiled-gallery-row-${ rowIndex }` }
+							className="tiled-gallery__row"
+							style={
+								noResize
+									? undefined
+									: {
+											width: row.width,
+											height: row.height,
+									  }
+							}
 						>
-							{ children }
+							{ 'groups' in row
+								? row.groups.map( ( group, groupI ) => (
+										<div
+											key={ groupI }
+											className="tiled-gallery__group"
+											style={
+												noResize
+													? undefined
+													: {
+															width: group.width,
+															height: group.height,
+													  }
+											}
+										>
+											{ group.images.map( image => {
+												const galleryItem = (
+													<div
+														className="tiled-gallery__item"
+														key={ images[ imageIndex ].id || images[ imageIndex ].url }
+														style={
+															noResize
+																? undefined
+																: {
+																		width: image.width,
+																		height: image.height,
+																  }
+														}
+													>
+														{ renderGalleryImage( imageIndex ) }
+													</div>
+												);
+
+												imageIndex++;
+
+												return galleryItem;
+											} ) }
+										</div>
+								  ) )
+								: row.tiles.map( tile => {
+										const galleryItem = (
+											<div
+												className="tiled-gallery__item"
+												key={ images[ imageIndex ].id || images[ imageIndex ].url }
+												style={
+													noResize
+														? undefined
+														: {
+																width: tile.width,
+																height: tile.height,
+														  }
+												}
+											>
+												{ renderGalleryImage( imageIndex ) }
+											</div>
+										);
+
+										imageIndex++;
+
+										return galleryItem;
+								  } ) }
 						</div>
-					) : null }
-				</Fragment>
+					);
+				} ) }
+				{ children ? (
+					<div
+						key="tiled-gallery-row-extras"
+						className="tiled-gallery__row tiled-gallery__row-extras"
+					>
+						{ children }
+					</div>
+				) : null }
 			</div>
 		);
 	}

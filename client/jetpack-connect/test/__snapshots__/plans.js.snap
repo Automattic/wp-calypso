@@ -16,7 +16,7 @@ exports[`Plans should render plans 1`] = `
   <Connect(QuerySitePlans)
     siteId={1234567}
   />
-  <Localized(JetpackPlansGrid)
+  <Connect(Localized(JetpackPlansGrid))
     basePlansPath="/jetpack/connect/plans"
     hideFreePlan={true}
     isLanding={false}
@@ -150,10 +150,6 @@ exports[`Plans should render plans 1`] = `
       }
     }
   >
-    <Connect(Localized(PlansSkipButton))
-      isRtl={false}
-      onClick={[Function]}
-    />
     <Localized(PlansExtendedInfo)
       recordTracks={[Function]}
     />
@@ -167,6 +163,6 @@ exports[`Plans should render plans 1`] = `
         />
       </Connect(Localized(JetpackConnectHappychatButton))>
     </LoggedOutFormLinks>
-  </Localized(JetpackPlansGrid)>
+  </Connect(Localized(JetpackPlansGrid))>
 </Fragment>
 `;

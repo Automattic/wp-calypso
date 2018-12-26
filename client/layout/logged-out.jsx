@@ -99,9 +99,12 @@ LayoutLoggedOut.propTypes = {
 	showOAuth2Layout: PropTypes.bool,
 };
 
-export default connect( state => ( {
-	masterbarIsHidden: ! masterbarIsVisible( state ),
-	section: getSection( state ),
-	oauth2Client: getCurrentOAuth2Client( state ),
-	useOAuth2Layout: showOAuth2Layout( state ),
-} ) )( LayoutLoggedOut );
+export default connect( state => {
+	const section = getSection( state );
+	return {
+		masterbarIsHidden: ! masterbarIsVisible( state ) || 'signup' === section.name,
+		section,
+		oauth2Client: getCurrentOAuth2Client( state ),
+		useOAuth2Layout: showOAuth2Layout( state ),
+	};
+} )( LayoutLoggedOut );

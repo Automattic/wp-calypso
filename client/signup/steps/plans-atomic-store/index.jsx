@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { cartItems } from 'lib/cart-values';
 import getSiteId from 'state/selectors/get-site-id';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
@@ -59,16 +58,13 @@ export class PlansAtomicStoreStep extends Component {
 
 	onSelectPlan( cartItem ) {
 		const {
-				additionalStepData,
-				stepSectionName,
-				stepName,
-				goToNextStep,
-				translate,
-				signupDependencies: { domainItem },
-				designType,
-			} = this.props,
-			privacyItem =
-				cartItem && domainItem && cartItems.domainPrivacyProtection( { domain: domainItem.meta } );
+			additionalStepData,
+			stepSectionName,
+			stepName,
+			goToNextStep,
+			translate,
+			designType,
+		} = this.props;
 
 		if ( cartItem ) {
 			analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
@@ -101,11 +97,10 @@ export class PlansAtomicStoreStep extends Component {
 			stepName,
 			stepSectionName,
 			cartItem,
-			privacyItem,
 			...additionalStepData,
 		};
 
-		const providedDependencies = { cartItem, privacyItem };
+		const providedDependencies = { cartItem };
 
 		SignupActions.submitSignupStep( step, [], providedDependencies );
 

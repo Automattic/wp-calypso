@@ -3,15 +3,14 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { successNotice, errorNotice } from 'state/notices/actions';
 import Main from 'components/main';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
@@ -19,30 +18,23 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from './navigation';
 import BlogsSettings from './blogs-settings';
 import PushNotificationSettings from './push-notification-settings';
-import store from 'lib/notification-settings-store';
 import QueryUserDevices from 'components/data/query-user-devices';
-import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { fetchSettings, toggle, saveSettings } from 'state/notification-settings/actions';
+import {
+	getNotificationSettings,
+	hasUnsavedNotificationSettingsChanges,
+} from 'state/notification-settings/selectors';
 
 class NotificationSettings extends Component {
-	state = {
-		settings: null,
-		hasUnsavedChanges: false,
-	};
-
 	componentDidMount() {
-		store.on( 'change', this.onChange );
-		fetchSettings();
-	}
-
-	componentWillUnmount() {
-		store.off( 'change', this.onChange );
+		this.props.fetchSettings();
 	}
 
 	onChange = () => {
-		const state = store.getStateFor( 'blogs' );
+		const { error, status } = this.props;
 
-		if ( state.error ) {
+		if ( error ) {
 			this.props.errorNotice(
 				this.props.translate( 'There was a problem saving your changes. Please, try again.' ),
 				{
@@ -51,21 +43,21 @@ class NotificationSettings extends Component {
 			);
 		}
 
-		if ( state.status === 'success' ) {
+		if ( status === 'success' ) {
 			this.props.successNotice( this.props.translate( 'Settings saved successfully!' ), {
 				id: 'notif-settings-save',
 				duration: 4000,
 			} );
 		}
-
-		this.setState( state );
 	};
 
 	render() {
+		// TODO: We should avoid creating functions in the render method
 		const findSettingsForBlog = blogId =>
-			this.state.settings.find( blog => blog.get( 'blog_id' ) === parseInt( blogId, 10 ) );
-		const onSave = blogId => saveSettings( 'blogs', findSettingsForBlog( blogId ) );
-		const onSaveToAll = blogId => saveSettings( 'blogs', findSettingsForBlog( blogId ), true );
+			find( this.props.settings, { blog_id: parseInt( blogId, 10 ) } );
+		const onSave = blogId => this.props.saveSettings( 'blogs', findSettingsForBlog( blogId ) );
+		const onSaveToAll = blogId =>
+			this.props.saveSettings( 'blogs', findSettingsForBlog( blogId ), true );
 
 		return (
 			<Main className="notification-settings">
@@ -76,9 +68,9 @@ class NotificationSettings extends Component {
 				<Navigation path={ this.props.path } />
 				<PushNotificationSettings pushNotifications={ this.props.pushNotifications } />
 				<BlogsSettings
-					settings={ this.state.settings }
-					hasUnsavedChanges={ this.state.hasUnsavedChanges }
-					onToggle={ toggle }
+					settings={ this.props.settings }
+					hasUnsavedChanges={ this.props.hasUnsavedChanges }
+					onToggle={ this.props.toggle }
 					onSave={ onSave }
 					onSaveToAll={ onSaveToAll }
 				/>
@@ -88,6 +80,9 @@ class NotificationSettings extends Component {
 }
 
 export default connect(
-	null,
-	{ successNotice, errorNotice }
+	state => ( {
+		settings: getNotificationSettings( state, 'blogs' ),
+		hasUnsavedChanges: hasUnsavedNotificationSettingsChanges( state, 'blogs' ),
+	} ),
+	{ fetchSettings, toggle, saveSettings }
 )( localize( NotificationSettings ) );

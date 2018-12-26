@@ -3,74 +3,23 @@
 /**
  * External dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
 import classNames from 'classnames';
-import { Component, Fragment } from '@wordpress/element';
-import { BlockAlignmentToolbar, BlockControls, InspectorControls } from '@wordpress/editor';
+import { BlockControls, InspectorControls } from '@wordpress/editor';
 import { Button, PanelBody, RangeControl, ToggleControl, Toolbar } from '@wordpress/components';
+import { Component, Fragment } from '@wordpress/element';
+import { get } from 'lodash';
 import { withSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { ALIGNMENT_OPTIONS, DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
+import { DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
 
 class RelatedPostsEdit extends Component {
-	state = {
-		posts: [],
-		fetchingPosts: false,
-	};
-
-	componentDidMount() {
-		this.fetchPosts();
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.isSaving && ! this.props.isSaving ) {
-			this.fetchPosts();
-		}
-	}
-
-	fetchPosts() {
-		const { postId } = this.props;
-		const { fetchingPosts } = this.state;
-
-		if ( ! postId || fetchingPosts ) {
-			return;
-		}
-
-		this.setState( {
-			fetchingPosts: true,
-		} );
-
-		apiFetch( {
-			path: '/jetpack/v4/site/posts/related?http_envelope=1&post_id=' + postId,
-		} )
-			.then( response => {
-				this.setState( {
-					posts: response.posts,
-					fetchingPosts: false,
-				} );
-			} )
-			.catch( () => {
-				this.setState( {
-					fetchingPosts: false,
-				} );
-			} );
-	}
-
 	render() {
-		const { attributes, className, setAttributes } = this.props;
-		const { posts } = this.state;
-		const {
-			align,
-			displayContext,
-			displayDate,
-			displayThumbnails,
-			postLayout,
-			postsToShow,
-		} = attributes;
+		const { attributes, className, posts, setAttributes } = this.props;
+		const { displayContext, displayDate, displayThumbnails, postLayout, postsToShow } = attributes;
 
 		const layoutControls = [
 			{
@@ -122,13 +71,6 @@ class RelatedPostsEdit extends Component {
 				</InspectorControls>
 
 				<BlockControls>
-					<BlockAlignmentToolbar
-						value={ align }
-						onChange={ nextAlign => {
-							setAttributes( { align: nextAlign } );
-						} }
-						controls={ ALIGNMENT_OPTIONS }
-					/>
 					<Toolbar controls={ layoutControls } />
 				</BlockControls>
 
@@ -136,7 +78,6 @@ class RelatedPostsEdit extends Component {
 					className={ classNames( `${ className }`, {
 						'is-grid': postLayout === 'grid',
 						[ `columns-${ postsToShow }` ]: postLayout === 'grid',
-						[ `align${ align }` ]: align,
 					} ) }
 				>
 					<div className={ `${ className }__preview-items` }>
@@ -172,10 +113,10 @@ class RelatedPostsEdit extends Component {
 }
 
 export default withSelect( select => {
-	const { getCurrentPostId, isSavingPost } = select( 'core/editor' );
+	const { getCurrentPost } = select( 'core/editor' );
+	const posts = get( getCurrentPost(), 'jetpack-related-posts', [] );
 
 	return {
-		isSaving: !! isSavingPost(),
-		postId: getCurrentPostId(),
+		posts,
 	};
 } )( RelatedPostsEdit );

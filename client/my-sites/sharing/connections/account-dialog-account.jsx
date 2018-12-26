@@ -3,20 +3,12 @@
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
+import Image from 'components/image';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-
-/**
- * Internal dependencies
- */
-import Image from 'components/image';
-
-/**
- * Style dependencies
- */
-import './account-dialog-account.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const AccountDialogAccount = ( { account, conflicting, onChange, selected, defaultIcon } ) => {

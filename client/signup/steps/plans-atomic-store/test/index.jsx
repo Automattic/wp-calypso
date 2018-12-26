@@ -119,7 +119,6 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 		expect( args[ 0 ].stepName ).toEqual( 'Step name' );
 		expect( args[ 0 ].stepSectionName ).toEqual( 'Step section name' );
 		expect( args[ 0 ].cartItem ).toBe( cartItem );
-		expect( args[ 0 ].privacyItem ).toEqual( null );
 		expect( 'test' in args[ 0 ] ).toEqual( false );
 	} );
 
@@ -153,32 +152,6 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 		const calls = SignupActions.submitSignupStep.mock.calls;
 		const args = calls[ calls.length - 1 ];
 		expect( args[ 2 ].cartItem ).toBe( cartItem );
-		expect( args[ 2 ].privacyItem ).toEqual( null );
-		expect( args[ 0 ].privacyItem ).toEqual( null );
-	} );
-
-	test( 'Should call submitSignupStep with correct privacyItem', () => {
-		const myProps = {
-			...tplProps,
-			signupDependencies: {
-				domainItem: {
-					meta: {},
-				},
-			},
-		};
-
-		SignupActions.submitSignupStep.mockReset();
-
-		const comp = new PlansAtomicStoreStep( myProps );
-		const cartItem = { product_slug: PLAN_FREE };
-		comp.onSelectPlan( cartItem );
-
-		expect( SignupActions.submitSignupStep ).toBeCalled();
-
-		const calls = SignupActions.submitSignupStep.mock.calls;
-		const args = calls[ calls.length - 1 ];
-		expect( args[ 0 ].privacyItem ).toEqual( 43 );
-		expect( args[ 2 ].privacyItem ).toEqual( 43 );
 	} );
 
 	test( 'Should call recordEvent when cartItem is specified', () => {

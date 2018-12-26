@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { map } from 'lodash';
-import Immutable from 'immutable';
 
 /**
  * Internal dependencies
@@ -21,7 +20,7 @@ class NotificationSettingsFormStreamSelector extends PureComponent {
 	static propTypes = {
 		devices: PropTypes.array,
 		selectedStream: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
-		settings: PropTypes.instanceOf( Immutable.Map ),
+		settings: PropTypes.object,
 		onChange: PropTypes.func.isRequired,
 	};
 

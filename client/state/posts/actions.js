@@ -53,6 +53,7 @@ import {
 	normalizeTermsForApi,
 } from 'state/posts/utils';
 import editedPostHasContent from 'state/selectors/edited-post-has-content';
+import isPreviousRouteGutenberg from 'state/selectors/is-previous-route-gutenberg';
 import {
 	startEditingPost,
 	startEditingNewPost,
@@ -550,7 +551,8 @@ function normalizeApiAttributes( attributes ) {
 export const startEditingExistingPost = ( siteId, postId ) => ( dispatch, getState ) => {
 	const currentSiteId = getSelectedSiteId( getState() );
 	const currentPostId = getEditorPostId( getState() );
-	if ( currentSiteId === siteId && currentPostId === postId ) {
+	const hasJustOptedOutOfGutenberg = isPreviousRouteGutenberg( getState() );
+	if ( ! hasJustOptedOutOfGutenberg && currentSiteId === siteId && currentPostId === postId ) {
 		// already editing same post
 		return Promise.resolve( getEditedPost( getState(), siteId, postId ) );
 	}

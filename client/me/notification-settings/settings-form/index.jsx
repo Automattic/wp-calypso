@@ -3,10 +3,8 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Immutable from 'immutable';
 
 /**
  * Internal dependencies
@@ -18,7 +16,7 @@ class NotificationSettingsForm extends Component {
 	static propTypes = {
 		sourceId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
-		settings: PropTypes.instanceOf( Immutable.Map ),
+		settings: PropTypes.object,
 		isApplyAllVisible: PropTypes.bool,
 		hasUnsavedChanges: PropTypes.bool.isRequired,
 		onToggle: PropTypes.func.isRequired,

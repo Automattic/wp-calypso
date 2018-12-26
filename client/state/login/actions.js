@@ -115,9 +115,10 @@ export const remoteLoginUser = loginLinks => {
  * @param  {String}   usernameOrEmail Username or email of the user
  * @param  {String}   password        Password of the user
  * @param  {String}   redirectTo      Url to redirect the user to upon successful login
+ * @param  {String}   domain          A domain to reverse login to
  * @return {Function}                 A thunk that can be dispatched
  */
-export const loginUser = ( usernameOrEmail, password, redirectTo ) => dispatch => {
+export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => dispatch => {
 	dispatch( {
 		type: LOGIN_REQUEST,
 	} );
@@ -134,6 +135,7 @@ export const loginUser = ( usernameOrEmail, password, redirectTo ) => dispatch =
 			redirect_to: redirectTo,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
+			domain: domain,
 		} )
 		.then( response => {
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {

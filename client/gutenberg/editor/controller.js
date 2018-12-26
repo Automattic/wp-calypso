@@ -3,8 +3,8 @@
  * External dependencies
  */
 import React from 'react';
-import debug from 'debug';
 import config from 'config';
+import debugFactory from 'debug';
 import page from 'page';
 import { has, set, uniqueId } from 'lodash';
 
@@ -12,14 +12,14 @@ import { has, set, uniqueId } from 'lodash';
  * WordPress dependencies
  */
 import { setLocaleData } from '@wordpress/i18n';
-import { dispatch } from '@wordpress/data';
+import { dispatch, select } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
-import { asyncLoader } from './async-loader';
+import { asyncLoader } from 'components/async-loader';
 import { EDITOR_START } from 'state/action-types';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -27,6 +27,8 @@ import { Placeholder } from './placeholder';
 import { JETPACK_DATA_PATH } from 'gutenberg/extensions/presets/jetpack/utils/get-jetpack-data';
 import { requestFromUrl, requestGutenbergBlockAvailability } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
+
+const debug = debugFactory( 'calypso:gutenberg:controller' );
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -108,6 +110,22 @@ export const loadGutenbergBlockAvailability = store => {
 	} );
 };
 
+export const resetGutenbergState = ( registry, selectedSiteId ) => {
+	// Always reset core/editor, core/notices, and other UI parts
+	registry.reset( 'core/editor' );
+	registry.reset( 'core/notices' );
+	dispatch( 'core/edit-post' ).closePublishSidebar();
+	dispatch( 'core/edit-post' ).closeModal();
+
+	// Only reset core/data on site change
+	const previousGutenbergSiteId = select( 'gutenberg/calypso' ).getSelectedSiteId();
+
+	if ( !! previousGutenbergSiteId && previousGutenbergSiteId !== selectedSiteId ) {
+		registry.resetCoreResolvers();
+	}
+	dispatch( 'gutenberg/calypso' ).setSelectedSiteId( selectedSiteId );
+};
+
 export const redirect = ( { store: { getState } }, next ) => {
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
@@ -138,10 +156,7 @@ export const post = async ( context, next ) => {
 
 		const { Editor, registry } = initGutenberg( userId, context.store );
 
-		// Reset the Gutenberg state
-		registry.reset();
-		dispatch( 'core/edit-post' ).closePublishSidebar();
-		dispatch( 'core/edit-post' ).closeModal();
+		resetGutenbergState( registry, siteId );
 
 		return props => (
 			<Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent, ...props } } />

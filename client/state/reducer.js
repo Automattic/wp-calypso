@@ -58,6 +58,7 @@ import memberships from './memberships/reducer';
 import mailchimp from './mailchimp/reducer';
 import mobileDownloadSMS from './mobile-download-sms/reducer';
 import notices from './notices/reducer';
+import notificationSettings from './notification-settings/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
 import npsSurvey from './nps-survey/reducer';
 import oauth2Clients from './oauth2-clients/reducer';
@@ -143,6 +144,7 @@ const reducers = {
 	media,
 	mobileDownloadSMS,
 	notices,
+	notificationSettings,
 	notificationsUnseenCount,
 	npsSurvey,
 	oauth2Clients,

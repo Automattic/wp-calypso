@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Immutable from 'immutable';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,7 +31,7 @@ class NotificationSettingsForm extends PureComponent {
 		blogId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
 		devices: PropTypes.array,
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
-		settings: PropTypes.instanceOf( Immutable.Map ).isRequired,
+		settings: PropTypes.object.isRequired,
 		onToggle: PropTypes.func.isRequired,
 	};
 
@@ -39,12 +39,12 @@ class NotificationSettingsForm extends PureComponent {
 
 	getSelectedStreamSettings = () => {
 		if ( isNaN( this.state.selectedStream ) ) {
-			return this.props.settings.get( this.state.selectedStream );
+			return get( this.props.settings, this.state.selectedStream );
 		}
 
-		return this.props.settings
-			.get( 'devices' )
-			.find( device => device.get( 'device_id' ) === parseInt( this.state.selectedStream, 10 ) );
+		return find( get( this.props.settings, 'devices' ), {
+			device_id: parseInt( this.state.selectedStream, 10 ),
+		} );
 	};
 
 	render() {
@@ -64,7 +64,7 @@ class NotificationSettingsForm extends PureComponent {
 						blogId={ this.props.blogId }
 						stream={ streams.TIMELINE }
 						settingKeys={ this.props.settingKeys }
-						settings={ this.props.settings.get( streams.TIMELINE ) }
+						settings={ get( this.props.settings, streams.TIMELINE ) }
 						onToggle={ this.props.onToggle }
 					/>
 					<Stream
@@ -72,7 +72,7 @@ class NotificationSettingsForm extends PureComponent {
 						blogId={ this.props.blogId }
 						stream={ streams.EMAIL }
 						settingKeys={ this.props.settingKeys }
-						settings={ this.props.settings.get( streams.EMAIL ) }
+						settings={ get( this.props.settings, streams.EMAIL ) }
 						onToggle={ this.props.onToggle }
 					/>
 					{ this.props.devices &&
@@ -82,7 +82,7 @@ class NotificationSettingsForm extends PureComponent {
 								blogId={ this.props.blogId }
 								devices={ this.props.devices }
 								settingKeys={ this.props.settingKeys }
-								settings={ this.props.settings.get( streams.DEVICES ) }
+								settings={ get( this.props.settings, streams.DEVICES ) }
 								onToggle={ this.props.onToggle }
 							/>
 						) }

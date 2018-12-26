@@ -6,7 +6,7 @@ module.exports = {
 	},
 	transform: {
 		'^.+\\.jsx?$': 'babel-jest',
-		'\\.(svg|(sc|sa|c)ss)$': '<rootDir>/test/test/helpers/assets/transform.js',
+		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': '<rootDir>/test/test/helpers/assets/transform.js',
 	},
 	modulePaths: [ '<rootDir>/test/', '<rootDir>/client/', '<rootDir>/client/extensions/' ],
 	rootDir: './../../',

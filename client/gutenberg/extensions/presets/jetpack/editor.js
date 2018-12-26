@@ -1,31 +1,55 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { sprintf } from '@wordpress/i18n';
+
+/**
  * Internal dependencies
  */
 import './shared/public-path';
 import './editor-shared/block-category'; // Register the Jetpack category
-
-// TODO: Generate dyanmically from index.json
-// Appending `Block` to the names to keep `Map` from colliding with JS' Map
-import * as ContactFormBlock from 'gutenberg/extensions/contact-form';
-import * as MarkdownBlock from 'gutenberg/extensions/markdown';
-import * as MapBlock from 'gutenberg/extensions/map';
-import * as PublicizeBlock from 'gutenberg/extensions/publicize';
-import * as RelatedPostsBlock from 'gutenberg/extensions/related-posts';
-import * as SimplePaymentsBlock from 'gutenberg/extensions/simple-payments';
-import * as TiledGalleryBlock from 'gutenberg/extensions/tiled-gallery';
-import * as VRBlock from 'gutenberg/extensions/vr';
+import extensionSlugsJson from './index.json';
+import { _x } from './utils/i18n';
 import { isEnabled } from 'config';
 
-export default [
-	{ name: ContactFormBlock.name, settings: ContactFormBlock.settings },
-	...ContactFormBlock.fields,
-	MarkdownBlock,
-	MapBlock,
-	PublicizeBlock,
-	SimplePaymentsBlock,
-	...( isEnabled( 'jetpack/blocks/beta' )
-		? [ RelatedPostsBlock, TiledGalleryBlock, VRBlock ]
-		: [] ),
+const extensionSlugs = [
+	...extensionSlugsJson.production,
+	...( isEnabled( 'jetpack/blocks/beta' ) ? extensionSlugsJson.beta : [] ),
 ];
+
+export async function getExtensions() {
+	const promises = extensionSlugs.map( slug =>
+		/**
+		 * Dynamically pull in extensions
+		 *
+		 * At build time, webpack needs to compile modules that will be dynamically imported at
+		 * runtime.
+		 *
+		 * Because the import path is dynamic (it includes a variable), webpack does not know at
+		 * build time what might be imported at runtime. Therefore, webpack will attempt to find any
+		 * import that could be reached by completing the string and build the modules.
+		 *
+		 * By fixing parts of the path with literal strings, we can limit what webpack needs bundle
+		 * here. However, any number of path parts could be inserted in the variable. Therefore, we
+		 * must also include a `webpackInclude` comment to fix our string further and ensure webpack
+		 * does not attempt to build problematic targets and instead only parses our
+		 * intended modules.
+		 */
+		import( /* webpackMode: "eager" */
+		/* webpackInclude: /\/gutenberg\/extensions\/[a-zA-Z0-9_-]+\/index.js$/ */
+		`../../${ slug }/index.js` ).then( ( { childBlocks, name, settings } ) => ( {
+			childBlocks,
+			name,
+			settings: extensionSlugsJson.beta.includes( slug )
+				? {
+						...settings,
+						title: sprintf( _x( '%s (beta)', 'Gutenberg Block in beta stage' ), settings.title ),
+				  }
+				: settings,
+		} ) )
+	);
+
+	return await Promise.all( promises );
+}

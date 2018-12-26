@@ -1,10 +1,16 @@
-.step-wrapper {
-	max-width: 960px;
-	margin: 0 auto;
+// Adjust the layout for the signup header.
+.is-section-signup {
+	.layout__content {
+		padding: 32px 0 0 0;
+	}
 
+	//Masterbar is hidden but still has height
+	//which is how sticky panel offset is calculated.
+	//Setting height to zero removes the offset
+	//so the sticky panel sticks to the top.
 
-	&.is-wide-layout {
-		max-width: 1040px;
+	&.has-no-masterbar .masterbar:not( .header__masterbar-mock ) {
+		height: 0;
 	}
 
 	.form-fieldset {
@@ -13,73 +19,71 @@
 
 	.suggestions__wrapper {
 		position: absolute;
-			top: 66px;
-			left: 0;
-			right: 0;
+		top: 66px;
+		left: 0;
+		right: 0;
 		max-height: 300px;
 		overflow: auto;
 		box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.2 );
 	}
 }
 
-.signup__step-enter {
-	opacity: 0.01;
+// Most steps have a narrow width.
+.step-wrapper {
+	max-width: 960px;
+	margin: 0 auto;
 
-	.is-animated-content {
-		transform: translate3d( 0, 32px, 0 );
+	// This fixes a bug with .about__pressable-wrapper
+	// that causes a horizontal scrollbar. -shaun
+	.signup__step.is-about & {
+		overflow: hidden;
+	}
+
+	// The "fix" above causes its own issue with card
+	// border (which are really box-shadows) being
+	// cut off on the bottom. 4px to account for
+	// input:focus states. -shaun
+	padding: 1px 4px;
+
+	// Some steps (like plans) need a larger
+	// width column.
+	&.is-wide-layout {
+		max-width: 1040px;
+	}
+
+	// pressable-nux has no title or subtitle so needs to not hide the (W) logo
+	.is-pressable-nux & {
+		margin-top: 30px;
 	}
 }
 
-.signup__step-enter.signup__step-enter-active,
-.signup__step-exit.signup__step-exit-active {
-	pointer-events: none;
-}
+// Signup headings
+.is-section-signup .formatted-header {
+	margin: 16px 0 24px 0;
 
-.signup__step-enter.signup__step-enter-active {
-	opacity: 1;
-	transition: 200ms ease-in-out;
-	transition-delay: 200ms;
+	.formatted-header__title {
+		margin: 0;
+		font-weight: 700;
+	}
 
-	.is-animated-content {
-		transform: translate3d( 0, 0, 0 );
-		transition: 200ms ease-in-out;
-		transition-delay: 200ms;
+	.formatted-header__subtitle {
+		margin: 0;
+		font-size: 15px;
+		color: $gray-darken-20;
 	}
 }
 
-.signup__step-exit {
-	opacity: 1;
-
-	.is-animated-content {
-		transform: translate3d( 0, 0, 0 );
-	}
+// Skip button
+.step-wrapper__buttons {
+	text-align: center;
 }
 
-.signup__step-exit.signup__step-exit-active {
-	opacity: 0.01;
-	transition: 200ms ease-in-out;
-
-	.is-animated-content {
-		transform: translate3d( 0, 32px, 0 ) scale( 0.9 );
-		transition: 200ms ease-in-out;
-	}
+// Back button
+.navigation-link.button.back {
+	position: absolute;
+	top: 6px;
+	left: 16px;
 }
-
-.is-section-signup .layout__content {
-	overflow: visible;
-}
-
-/* New Signup Styles */
-
-
-.formatted-header__title {
-	font-family: $signup-sans;
-	font-size: 2.953em;
-	font-weight: 700;
-	line-height: 1.2;
-	margin-top: 1em;
-}
-
 
 .is-section-signup .layout__content,
 .is-section-signup .layout__primary {
@@ -88,6 +92,8 @@
 	overflow: visible;
 }
 
+// The Floating Squares
+// (Is that a band name?)
 .is-section-signup::before,
 .is-section-signup .layout__primary::before {
 	content: '';
@@ -110,6 +116,7 @@
 	z-index: z-index( '.is-section-signup', '.layout__primary::before' );
 }
 
+// Segment (site-type) Step
 .is-section-signup .site-type__wrapper .card {
 	padding-top: 0px;
 }
@@ -117,15 +124,3 @@
 .is-section-signup .site-type__wrapper .site-type__option:first-child {
 	border-top: none;
 }
-
-
-@include breakpoint( '>1040px' ) {
- 	.formatted-header__title {
-		font-size: 3.375em;
-	}
-
- 	.formatted-header__subtitle {
-		font-size: 1.313em;
-	}
-}
-

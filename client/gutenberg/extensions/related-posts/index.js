@@ -1,17 +1,12 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import './style.scss';
 import edit from './edit';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { ALIGNMENT_OPTIONS, MAX_POSTS_TO_SHOW } from './constants';
+import { MAX_POSTS_TO_SHOW } from './constants';
 
 export const name = 'related-posts';
 
@@ -42,10 +37,6 @@ export const settings = {
 	keywords: [ __( 'similar' ), __( 'linked' ), __( 'connected' ) ],
 
 	attributes: {
-		align: {
-			type: 'string',
-			default: '',
-		},
 		postLayout: {
 			type: 'string',
 			default: 'grid',
@@ -68,16 +59,9 @@ export const settings = {
 		},
 	},
 
-	getEditWrapperProps: attributes => {
-		const { align } = attributes;
-
-		if ( includes( ALIGNMENT_OPTIONS, align ) ) {
-			return { 'data-align': align };
-		}
-	},
-
 	supports: {
 		html: false,
+		multiple: false,
 	},
 
 	transforms: {

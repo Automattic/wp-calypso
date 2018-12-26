@@ -1,14 +1,18 @@
 /** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import { Component } from '@wordpress/element';
-import { debounce } from 'lodash';
+import { debounce, noop } from 'lodash';
 import TinyMCE from 'components/tinymce';
 
-export default class ClassicEdit extends Component {
+/**
+ * WordPress dependencies
+ */
+import { withDispatch } from '@wordpress/data';
+
+export class ClassicEdit extends Component {
 	componentDidMount() {
 		const { attributes } = this.props;
 		const { content } = attributes;
@@ -29,15 +33,22 @@ export default class ClassicEdit extends Component {
 	}, 300 );
 
 	render() {
+		const { isSelected, setSelected } = this.props;
 		return (
 			<TinyMCE
+				isGutenbergClassicBlock
 				mode="tinymce"
-				ref={ this.storeEditor }
 				onChange={ this.debouncedOnContentChange }
+				onClick={ isSelected ? noop : setSelected }
+				onKeyUp={ this.debouncedOnContentChange }
 				onSetContent={ this.debouncedOnContentChange }
 				onTextEditorChange={ this.debouncedOnContentChange }
-				onKeyUp={ this.debouncedOnContentChange }
+				ref={ this.storeEditor }
 			/>
 		);
 	}
 }
+
+export default withDispatch( ( dispatch, { clientId } ) => ( {
+	setSelected: () => dispatch( 'core/editor' ).selectBlock( clientId ),
+} ) )( ClassicEdit );

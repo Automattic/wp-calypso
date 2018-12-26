@@ -43,9 +43,7 @@ toPrettify.forEach( file => console.log( `Prettier formatting staged file: ${ fi
 
 if ( toPrettify.length ) {
 	execSync(
-		`./node_modules/.bin/prettier --ignore-path .eslintignore --write --require-pragma ${ toPrettify.join(
-			' '
-		) }`
+		`./node_modules/.bin/prettier --ignore-path .eslintignore --write ${ toPrettify.join( ' ' ) }`
 	);
 	execSync( `git add ${ toPrettify.join( ' ' ) }` );
 }

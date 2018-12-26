@@ -6,7 +6,5 @@ trailingComma: es5
 bracketSpacing: true
 parenSpacing: true
 jsxBracketSameLine: false
-insertPragma: true
-requirePragma: false
 semi: true
 arrowParens: avoid

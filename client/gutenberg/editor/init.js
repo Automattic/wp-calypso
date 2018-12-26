@@ -34,26 +34,34 @@ const addResetToRegistry = registry => {
 		window.gutenbergState = () => mapValues( registry.stores, ( { store } ) => store.getState() );
 	}
 
-	const resettableStores = [ 'core/editor', 'core/notices' ];
-
 	const stores = [];
 	return {
 		registerStore( namespace, options ) {
-			let store;
-			if ( -1 === resettableStores.indexOf( namespace ) ) {
-				store = registry.registerStore( namespace, options );
-			} else {
-				store = registry.registerStore( namespace, {
-					...options,
-					reducer: ( state, action ) =>
-						options.reducer( 'GUTENLYPSO_RESET' === action.type ? undefined : state, action ),
-				} );
-			}
+			const store = registry.registerStore( namespace, {
+				...options,
+				reducer: ( state, action ) => {
+					if ( 'GUTENLYPSO_RESET' === action.type && namespace === action.namespace ) {
+						debug( `Resetting ${ namespace } store` );
+						return options.reducer( undefined, action );
+					}
+					return options.reducer( state, action );
+				},
+			} );
 			stores.push( store );
 			return store;
 		},
-		reset() {
-			stores.forEach( store => store.dispatch( { type: 'GUTENLYPSO_RESET' } ) );
+		reset( namespace ) {
+			stores.forEach( store => store.dispatch( { type: 'GUTENLYPSO_RESET', namespace } ) );
+		},
+		resetCoreResolvers() {
+			// @see https://github.com/WordPress/gutenberg/blob/e1092c0d0b75fe53ab57bc6c4cc9e32cb2e74e40/packages/data/src/resolvers-cache-middleware.js#L14-L34
+			const resolvers = registry.select( 'core/data' ).getCachedResolvers( 'core' );
+			debug( `Resetting core store resolvers: ${ Object.keys( resolvers ).toString() }` );
+			Object.entries( resolvers ).forEach( ( [ selectorName, resolversByArgs ] ) => {
+				resolversByArgs.forEach( ( value, args ) => {
+					registry.dispatch( 'core/data' ).invalidateResolution( 'core', selectorName, args );
+				} );
+			} );
 		},
 	};
 };
@@ -63,12 +71,15 @@ const addResetToRegistry = registry => {
 export const initGutenberg = once( ( userId, store ) => {
 	debug( 'Starting Gutenberg editor initialization...' );
 
+	const registry = use( addResetToRegistry );
+
 	debug( 'Registering data plugins' );
 	const storageKey = 'WP_DATA_USER_' + userId;
 	use( plugins.persistence, { storageKey: storageKey } );
 	use( plugins.controls );
 
-	const registry = use( addResetToRegistry );
+	debug( 'Initializing gutenberg/calypso store' );
+	require( 'gutenberg/editor/calypso-store' );
 
 	// We need to ensure that core-data is loaded after the data plugins have been registered.
 	debug( 'Initializing core-data store' );

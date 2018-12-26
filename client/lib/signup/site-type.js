@@ -24,7 +24,7 @@ export const allSiteTypes = [
 		designType: 'blog',
 		siteTitleLabel: i18n.translate( 'What would you like to call your blog?' ),
 		siteTitlePlaceholder: i18n.translate( "E.g. Stevie's blog " ),
-		siteTopicHeader: i18n.translate( 'Search for your type of blog.' ),
+		siteTopicHeader: i18n.translate( 'Tell us about your blog' ),
 		siteTopicLabel: i18n.translate( 'What will your blog be about?' ),
 	},
 	{
@@ -36,8 +36,9 @@ export const allSiteTypes = [
 		designType: 'page',
 		siteTitleLabel: i18n.translate( 'What is the name of your business?' ),
 		siteTitlePlaceholder: i18n.translate( 'E.g. Vail Renovations' ),
-		siteTopicHeader: i18n.translate( 'Search for your type of business.' ),
+		siteTopicHeader: i18n.translate( 'Tell us about your business' ),
 		siteTopicLabel: i18n.translate( 'What type of business do you have?' ),
+		customerType: 'business',
 	},
 	{
 		id: 'professional',
@@ -48,7 +49,7 @@ export const allSiteTypes = [
 		designType: 'portfolio',
 		siteTitleLabel: i18n.translate( 'What is your name?' ),
 		siteTitlePlaceholder: i18n.translate( 'E.g. John Appleseed' ),
-		siteTopicHeader: i18n.translate( 'Search for your type of website.' ),
+		siteTopicHeader: i18n.translate( 'Tell us about your website' ),
 		siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
 	},
 	{
@@ -60,7 +61,7 @@ export const allSiteTypes = [
 		designType: 'blog',
 		siteTitleLabel: i18n.translate( 'What is the name of your site?' ),
 		siteTitlePlaceholder: i18n.translate( 'E.g. My class' ),
-		siteTopicHeader: i18n.translate( 'Search for your type of website.' ),
+		siteTopicHeader: i18n.translate( 'Tell us about your website' ),
 		siteTopicLabel: i18n.translate( 'What will your site be about?' ),
 	},
 	{
@@ -72,8 +73,9 @@ export const allSiteTypes = [
 		designType: 'store',
 		siteTitleLabel: i18n.translate( 'What is the name of your store?' ),
 		siteTitlePlaceholder: i18n.translate( "E.g. Mel's Diner" ),
-		siteTopicHeader: i18n.translate( 'Search for your type of website.' ),
+		siteTopicHeader: i18n.translate( 'Tell us about your website' ),
 		siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
+		customerType: 'business',
 	},
 ];
 

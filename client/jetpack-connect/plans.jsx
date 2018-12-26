@@ -19,7 +19,6 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
 import PlansExtendedInfo from './plans-extended-info';
-import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { addItem } from 'lib/upgrades/actions';
@@ -37,7 +36,6 @@ import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import isRtl from 'state/selectors/is-rtl';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
@@ -190,7 +188,7 @@ class Plans extends Component {
 	};
 
 	render() {
-		const { interval, isRtlLayout, selectedSite, translate } = this.props;
+		const { interval, selectedSite, translate } = this.props;
 
 		if ( this.shouldShowPlaceholder() ) {
 			return (
@@ -216,7 +214,6 @@ class Plans extends Component {
 					interval={ interval }
 					selectedSite={ selectedSite }
 				>
-					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
 					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton
@@ -250,7 +247,6 @@ export default connect(
 				: true,
 			hasPlan: selectedSite ? isCurrentPlanPaid( state, selectedSite.ID ) : null,
 			isAutomatedTransfer: selectedSite ? isSiteAutomatedTransfer( state, selectedSite.ID ) : null,
-			isRtlLayout: isRtl( state ),
 			isSitesInitialized: hasInitializedSites( state ),
 			notJetpack: selectedSite ? ! isJetpackSite( state, selectedSite.ID ) : null,
 			selectedPlan,

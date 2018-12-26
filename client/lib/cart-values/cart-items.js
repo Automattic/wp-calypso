@@ -92,6 +92,34 @@ export function add( newCartItem ) {
 	};
 }
 
+export function clearCart() {
+	return function( cart ) {
+		return update( cart, { products: { $set: [] } } );
+	};
+}
+
+/**
+ * Adds the specified item to a shopping cart without replacing the cart
+ *
+ * @param {Object} newCartItem - new item as `CartItemValue` object
+ * @returns {Function} the function that adds the item to a shopping cart
+ */
+export function addWithoutReplace( newCartItem ) {
+	function appendItem( products ) {
+		products = products || [];
+
+		const isDuplicate = products.some( function( existingCartItem ) {
+			return isEqual( newCartItem, existingCartItem );
+		} );
+
+		return isDuplicate ? products : products.concat( [ newCartItem ] );
+	}
+
+	return function( cart ) {
+		return update( cart, { products: { $apply: appendItem } } );
+	};
+}
+
 /**
  * Determines if the given cart item should replace the cart.
  * This can happen if the given item:
@@ -1106,7 +1134,9 @@ export function hasStaleItem( cart ) {
 export default {
 	add,
 	addPrivacyToAllDomains,
+	addWithoutReplace,
 	businessPlan,
+	clearCart,
 	customDesignItem,
 	domainMapping,
 	domainPrivacyProtection,

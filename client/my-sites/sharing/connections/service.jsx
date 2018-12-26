@@ -412,6 +412,7 @@ export class SharingService extends Component {
 		}
 		return get( this, 'props.service.ID' ) === 'mailchimp';
 	};
+
 	render() {
 		const connections = this.getConnections();
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID );

@@ -18,6 +18,8 @@ import NoticeAction from 'components/notice/notice-action';
 import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { savePreference } from 'state/preferences/actions';
+import { getPreference } from 'state/preferences/selectors';
 
 /**
  * Style dependencies
@@ -30,20 +32,14 @@ class EditorGutenbergOptInNotice extends Component {
 		// connected properties
 		showDialog: PropTypes.func,
 		optInEnabled: PropTypes.bool,
+		noticeDismissed: PropTypes.bool,
+		dismissNotice: PropTypes.func,
 	};
 
-	state = {
-		dismissed: false,
-	};
-
-	dismissNotice = () => this.setState( { dismissed: true } );
+	dismissNotice = () => this.props.dismissNotice( 'gutenberg_nudge_notice_dismissed', true );
 
 	render() {
-		if ( ! this.props.optInEnabled ) {
-			return null;
-		}
-
-		if ( this.state.dismissed ) {
+		if ( ! this.props.optInEnabled || this.props.noticeDismissed ) {
 			return null;
 		}
 
@@ -65,9 +61,13 @@ class EditorGutenbergOptInNotice extends Component {
 const mapStateToProps = state => ( {
 	optInEnabled:
 		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) ),
+	noticeDismissed: getPreference( state, 'gutenberg_nudge_notice_dismissed' ),
 } );
 
-const mapDispatchToProps = { showDialog: showGutenbergOptInDialog };
+const mapDispatchToProps = {
+	showDialog: showGutenbergOptInDialog,
+	dismissNotice: savePreference,
+};
 
 export default connect(
 	mapStateToProps,

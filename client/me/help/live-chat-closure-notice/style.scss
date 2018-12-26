@@ -1,0 +1,10 @@
+/** @format */
+
+.live-chat-closure-notice {
+	color: $gray-dark;
+	font-size: 14px;
+	&.card.is-compact {
+		margin: 0 0 16px;
+		font-size: 12px;
+	}
+}

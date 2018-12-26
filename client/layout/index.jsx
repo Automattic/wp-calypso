@@ -24,7 +24,14 @@ import QueryPreferences from 'components/data/query-preferences';
 import QuerySites from 'components/data/query-sites';
 import QuerySiteSelectedEditor from 'components/data/query-site-selected-editor';
 import { isOffline } from 'state/application/selectors';
-import { getSelectedSiteId, hasSidebar, masterbarIsVisible } from 'state/ui/selectors';
+import {
+	getSelectedSiteId,
+	hasSidebar,
+	masterbarIsVisible,
+	getSectionGroup,
+	getSectionName,
+	isSectionLoading,
+} from 'state/ui/selectors';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import SitePreview from 'blocks/site-preview';
 import SupportArticleDialog from 'blocks/support-article-dialog';
@@ -51,22 +58,46 @@ class Layout extends Component {
 		masterbarIsHidden: PropTypes.bool,
 		isLoading: PropTypes.bool,
 		isSupportUser: PropTypes.bool,
-		section: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		isOffline: PropTypes.bool,
+		sectionGroup: PropTypes.string,
+		sectionName: PropTypes.string,
 		colorSchemePreference: PropTypes.string,
 	};
+
+	componentDidMount() {
+		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
+			return;
+		}
+		if ( typeof document !== 'undefined' ) {
+			if ( this.props.colorSchemePreference ) {
+				document
+					.querySelector( 'body' )
+					.classList.add( `is-${ this.props.colorSchemePreference }` );
+			}
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
+			return;
+		}
+		if ( prevProps.colorSchemePreference === this.props.colorSchemePreference ) {
+			return;
+		}
+		if ( typeof document !== 'undefined' ) {
+			const classList = document.querySelector( 'body' ).classList;
+			classList.remove( `is-${ prevProps.colorSchemePreference }` );
+			classList.add( `is-${ this.props.colorSchemePreference }` );
+		}
+
+		// intentionally don't remove these in unmount
+	}
 
 	render() {
 		const sectionClass = classnames(
 				'layout',
-				{
-					'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
-					[ `is-${ this.props.colorSchemePreference }` ]: config.isEnabled(
-						'me/account/color-scheme-picker'
-					),
-				},
-				`is-group-${ this.props.section.group }`,
-				`is-section-${ this.props.section.name }`,
+				`is-group-${ this.props.sectionGroup }`,
+				`is-section-${ this.props.sectionName }`,
 				`focus-${ this.props.currentLayoutFocus }`,
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
@@ -89,8 +120,8 @@ class Layout extends Component {
 				{ config.isEnabled( 'nps-survey/notice' ) && ! isE2ETest() && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				<MasterbarLoggedIn
-					section={ this.props.section.group }
-					compact={ this.props.section.name === 'checkout' }
+					section={ this.props.sectionGroup }
+					compact={ this.props.sectionName === 'checkout' }
 				/>
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<div className={ loadingClass }>
@@ -102,7 +133,7 @@ class Layout extends Component {
 					<GlobalNotices
 						id="notices"
 						notices={ notices.list }
-						forcePinned={ 'post' === this.props.section.name }
+						forcePinned={ 'post' === this.props.sectionName }
 					/>
 
 					<div id="secondary" className="layout__secondary" role="navigation">
@@ -117,13 +148,13 @@ class Layout extends Component {
 				) : (
 					<TranslatorLauncher />
 				) }
-				{ this.props.section.group === 'sites' && <SitePreview /> }
+				{ this.props.sectionGroup === 'sites' && <SitePreview /> }
 				{ config.isEnabled( 'happychat' ) &&
 					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
-				{ ( 'jetpack-connect' !== this.props.section.name ||
+				{ ( 'jetpack-connect' !== this.props.sectionName ||
 					this.props.currentRoute === '/jetpack/new' ) &&
 					this.props.currentRoute !== '/log-in/jetpack' && (
 						<AsyncLoad require="blocks/inline-help" placeholder={ null } />
@@ -137,12 +168,14 @@ class Layout extends Component {
 }
 
 export default connect( state => {
-	const { isLoading, section } = state.ui;
+	const sectionGroup = getSectionGroup( state );
+	const sectionName = getSectionName( state );
 	return {
-		masterbarIsHidden: ! masterbarIsVisible( state ),
-		isLoading,
+		masterbarIsHidden: ! masterbarIsVisible( state ) || 'signup' === sectionName,
+		isLoading: isSectionLoading( state ),
 		isSupportUser: state.support.isSupportUser,
-		section,
+		sectionGroup,
+		sectionName,
 		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
 		currentLayoutFocus: getCurrentLayoutFocus( state ),

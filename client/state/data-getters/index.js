@@ -299,3 +299,17 @@ export const requestGutenbergBlockAvailability = siteSlug => {
 		{ fromApi: () => data => [ [ `gutenberg-block-availability-${ siteSlug }`, data ] ] }
 	);
 };
+
+export const requestActiveThemeSupport = siteSlug =>
+	requestHttpData(
+		`active-theme-support-${ siteSlug }`,
+		http(
+			{
+				path: `/sites/${ siteSlug }/theme-support`,
+				method: 'GET',
+				apiNamespace: 'wpcom/v2',
+			},
+			{}
+		),
+		{ fromApi: () => data => [ [ `active-theme-support-${ siteSlug }`, data ] ] }
+	);

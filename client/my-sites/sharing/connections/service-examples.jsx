@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSite } from 'state/ui/selectors';
 import ServiceExample from './service-example';
+import GooglePlusDeprication from './google-plus-deprecation';
 
 /**
  * Module constants
@@ -163,39 +164,6 @@ class SharingServiceExamples extends Component {
 				},
 				label: this.props.translate(
 					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their friends.',
-					{
-						components: {
-							link: <a href={ this.getSharingButtonsLink() } />,
-						},
-					}
-				),
-			},
-		];
-	}
-
-	google_plus() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/google-publicize.png',
-					alt: this.props.translate( 'Share posts to your Google+ page', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to automatically share posts to your Google+ page.',
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/google-sharing.png',
-					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their circles.',
 					{
 						components: {
 							link: <a href={ this.getSharingButtonsLink() } />,
@@ -361,6 +329,10 @@ class SharingServiceExamples extends Component {
 	render() {
 		if ( ! includes( SERVICES_WHITELIST, this.props.service.ID ) ) {
 			return <div className="sharing-service-examples" />;
+		}
+
+		if ( 'google_plus' === this.props.service.ID ) {
+			return <GooglePlusDeprication />;
 		}
 
 		const examples = this[ this.props.service.ID ]();

@@ -57,7 +57,7 @@ const SpamFilteringSettings = ( {
 	if ( ! inTransition && ! hasAkismetFeature && ! isValidKey ) {
 		return (
 			<Banner
-				description={ translate( 'Detect and tweeze spam automatically, with Akismet.' ) }
+				description={ translate( 'Automatically remove spam from comments and contact forms.' ) }
 				event={ 'calypso_akismet_settings_upgrade_nudge' }
 				feature={ FEATURE_SPAM_AKISMET_PLUS }
 				plan={ PLAN_JETPACK_PERSONAL }
