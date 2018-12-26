@@ -30,6 +30,7 @@ import isRtlSelector from 'state/selectors/is-rtl';
 import refreshRegistrations from '../extensions/presets/jetpack/utils/refresh-registrations';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { getPageTemplates } from 'state/page-templates/selectors';
+import { MimeTypes } from 'lib/media/constants';
 
 /**
  * Style dependencies
@@ -94,6 +95,18 @@ class GutenbergEditor extends Component {
 		}
 	};
 
+	getAllowedMimeTypes = () => {
+		const { allowedFileTypes } = this.props;
+		const allowedMimeTypes = {};
+		allowedFileTypes.forEach( fileType => {
+			const mimeType = get( MimeTypes, fileType );
+			if ( mimeType ) {
+				allowedMimeTypes[ fileType ] = mimeType;
+			}
+		} );
+		return allowedMimeTypes;
+	};
+
 	render() {
 		const { alignWide, postType, siteId, pageTemplates, post, overridePost, isRTL } = this.props;
 
@@ -106,6 +119,7 @@ class GutenbergEditor extends Component {
 			bodyPlaceholder: translate( 'Write your story' ),
 			postLock: {},
 			isRTL,
+			allowedMimeTypes: this.getAllowedMimeTypes(),
 		};
 
 		return (
@@ -143,6 +157,7 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 	const isAutoDraft = 'auto-draft' === get( post, 'status', null );
 	const isRTL = isRtlSelector( state );
 	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
+	const allowedFileTypes = getSiteOption( state, siteId, 'allowed_file_types' );
 
 	/**
 	 * We don't expect any theme to have a specific Gutenberg support flag,
@@ -179,6 +194,7 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 		overridePost,
 		isRTL,
 		gmtOffset,
+		allowedFileTypes,
 	};
 };
 
