@@ -11,9 +11,15 @@
     "related-posts",
     "shortlinks",
     "simple-payments",
-    "slideshow",
     "subscriptions",
-    "tiled-gallery",
+    "tiled-gallery"
+  ],
+  "beta": [
+    "business-hours",
+    "contact-info",
+    "likes-and-sharing",
+    "mailchimp",
+    "slideshow",
     "videopress",
     "wordads"
   ],
