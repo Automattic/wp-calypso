@@ -1,3 +1,5 @@
+/** @format */
+
 // Block library
 @import '~@wordpress/block-library/build-style/style';
 
@@ -289,14 +291,16 @@ $gutenberg-theme-toggle: #11a0d2;
 .is-section-gutenberg-editor,
 .edit-post-options-modal {
 	// UNSET CALYPSO DEFAULT STYLES
+				
 	input[type='text'],
 	input[type='search'] {
 		width: auto;
-	}
-	.components-text-control__input input[type='text'] {
-		width: 100%;
-	}
 
+		&.components-text-control__input {
+			width: 100%;
+		}
+	}
+	
 	input[type='number'].components-range-control__number {
 		width: 50px;
 	}
@@ -395,8 +399,10 @@ $gutenberg-theme-toggle: #11a0d2;
 		border-radius: 20px;
 		margin: 0 8px;
 	}
+	  
 }
 
 .editor-post-publish-button[aria-disabled='true'] {
 	pointer-events: none;
 }
+
