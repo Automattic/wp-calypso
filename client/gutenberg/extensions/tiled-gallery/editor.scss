@@ -133,3 +133,8 @@
 		transform: translate( -50%, -50% );
 	}
 }
+
+// Hide captions in style picker preview
+.editor-block-preview__content .wp-block-jetpack-tiled-gallery figcaption {
+	display: none;
+}
