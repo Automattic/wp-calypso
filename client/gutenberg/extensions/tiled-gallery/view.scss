@@ -9,14 +9,6 @@ $tiled-gallery-max-column-count: 20;
 		border-radius: 50%;
 	}
 
-	[data-align='left'] &,
-	[data-align='right'] &,
-	&.alignleft,
-	&.alignright {
-		max-width: ( $tiled-gallery-content-width / 2 );
-		width: 100%;
-	}
-
 	&.is-style-square,
 	&.is-style-circle {
 		.tiled-gallery__row {
