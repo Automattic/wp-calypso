@@ -4,16 +4,11 @@
 
 const MARGIN = 4;
 
-const memo = new WeakMap();
-
 export function handleRowResize( row, width ) {
 	applyRowRatio( row, getRowRatio( row ), width );
 }
 
 function getRowRatio( row ) {
-	if ( memo.has( row ) ) {
-		return memo.get( row );
-	}
 	const result = getRowCols( row )
 		.map( getColumnRatio )
 		.reduce(
@@ -22,7 +17,6 @@ function getRowRatio( row ) {
 			},
 			[ 0, 0 ]
 		);
-	memo.set( row, result );
 	return result;
 }
 
@@ -39,9 +33,6 @@ function getColImgs( col ) {
 }
 
 function getColumnRatio( col ) {
-	if ( memo.has( col ) ) {
-		return memo.get( col );
-	}
 	const imgs = getColImgs( col );
 	const imgCount = imgs.length;
 	const ratio =
@@ -50,18 +41,13 @@ function getColumnRatio( col ) {
 			return partialColRatio + 1 / imgRatio;
 		}, 0 );
 	const result = [ ratio, ratio * imgCount || 1 ];
-	memo.set( col, result );
 	return result;
 }
 
 function getImageRatio( img ) {
-	if ( memo.has( img ) ) {
-		return memo.get( img );
-	}
 	const w = parseInt( img.dataset.width, 10 );
 	const h = parseInt( img.dataset.height, 10 );
 	const result = w && ! Number.isNaN( w ) && h && ! Number.isNaN( h ) ? w / h : 1;
-	memo.set( img, result );
 	return result;
 }
 
