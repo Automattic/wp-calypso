@@ -128,7 +128,7 @@
 
 	.tiled-gallery__media-placeholder-icon {
 		height: 20px;
-		margin-right: 13px;
+		margin-right: 1ch; // stylelint-disable-line unit-whitelist
 		width: 20px;
 	}
 }
