@@ -19,6 +19,10 @@ import { DEFAULT_LAYOUT, LAYOUT_STYLES } from './constants';
 import './editor.scss';
 
 const blockAttributes = {
+	align: {
+		default: 'center',
+		type: 'string',
+	},
 	columns: {
 		type: 'number',
 	},
@@ -100,8 +104,7 @@ export const settings = {
 	],
 	styles: LAYOUT_STYLES,
 	supports: {
-		align: true,
-		alignWide: true,
+		align: [ 'center', 'wide', 'full' ],
 		customClassName: false,
 		html: false,
 	},
