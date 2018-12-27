@@ -2,57 +2,60 @@
 @import './variables.scss';
 
 .wp-block-jetpack-tiled-gallery {
-	.tiled-gallery__row {
-		.tiled-gallery__item {
-			// Hide the focus outline that otherwise briefly appears when selecting a block.
-			figure:not( .is-selected ):focus {
-				outline: none;
+	// Ensure that selected image outlines are visibile
+	padding-left: 4px;
+	padding-right: 4px;
+
+	.tiled-gallery__item {
+		// Hide the focus outline that otherwise briefly appears when selecting a block.
+		> img:focus {
+			outline: none;
+		}
+
+		&.is-selected {
+			outline: 4px solid $tiled-gallery-selection;
+		}
+
+		&.is-transient img {
+			opacity: 0.3;
+		}
+
+		.editor-rich-text {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			max-height: 100%;
+			overflow-y: auto;
+		}
+
+		.editor-rich-text figcaption:not( [data-is-placeholder-visible='true'] ) {
+			position: relative;
+			overflow: hidden;
+			color: $white;
+		}
+
+		.is-selected .editor-rich-text {
+			// IE calculates this incorrectly, so leave it to modern browsers.
+			@supports ( position: sticky ) {
+				right: 0;
+				left: 0;
+				margin-top: -4px;
 			}
 
-			&.is-selected {
-				outline: 4px solid $tiled-gallery-selection;
+			// Override negative margins so this toolbar isn't hidden by overflow. Overflow is needed for long captions.
+			.editor-rich-text__inline-toolbar {
+				top: 0;
 			}
 
-			&.is-transient img {
-				opacity: 0.3;
-			}
-
-			.editor-rich-text {
-				position: absolute;
-				bottom: 0;
-				width: 100%;
-				max-height: 100%;
-				overflow-y: auto;
-			}
-
-			.editor-rich-text figcaption:not( [data-is-placeholder-visible='true'] ) {
-				position: relative;
-				overflow: hidden;
-				color: $white;
-			}
-
-			.is-selected .editor-rich-text {
-				// IE calculates this incorrectly, so leave it to modern browsers.
-				@supports ( position: sticky ) {
-					right: 0;
-					left: 0;
-					margin-top: -4px;
-				}
-
-				// Override negative margins so this toolbar isn't hidden by overflow. Overflow is needed for long captions.
-				.editor-rich-text__inline-toolbar {
-					top: 0;
-				}
-
-				// Make extra space for the inline toolbar.
-				.editor-rich-text__tinymce {
-					padding-top: 48px;
-				}
+			// Make extra space for the inline toolbar.
+			.editor-rich-text__tinymce {
+				padding-top: 48px;
 			}
 		}
 	}
 
 	// Circle layout doesn't support captions
+	// @TODO handle this in the component
 	&.is-style-circle .tiled-gallery__item .editor-rich-text {
 		display: none;
 	}
@@ -76,7 +79,7 @@
 			border-radius: 0;
 			min-height: 100px;
 
-			& .dashicon {
+			.dashicon {
 				margin-top: 10px;
 			}
 
@@ -114,12 +117,12 @@
 		left: 50%;
 		transform: translate( -50%, -50% );
 	}
-}
 
-// Hide captions and upload buttons in style picker preview
-.editor-block-preview__content .wp-block-jetpack-tiled-gallery {
-	.editor-media-placeholder,
-	figcaption {
-		display: none;
+	// Hide captions and upload buttons in style picker preview
+	.editor-block-preview__content & {
+		.editor-media-placeholder,
+		figcaption {
+			display: none;
+		}
 	}
 }

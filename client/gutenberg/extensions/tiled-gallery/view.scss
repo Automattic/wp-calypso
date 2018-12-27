@@ -3,9 +3,7 @@
 $tiled-gallery-max-column-count: 20;
 
 .wp-block-jetpack-tiled-gallery {
-	display: flex;
-	padding: 0;
-	flex-wrap: wrap;
+	margin: 0 auto;
 
 	&.is-style-circle .tiled-gallery__item img {
 		border-radius: 50%;
@@ -36,11 +34,19 @@ $tiled-gallery-max-column-count: 20;
 	}
 }
 
+.tiled-gallery__gallery {
+	width: 100%;
+	display: flex;
+	padding: 0;
+	flex-wrap: wrap;
+}
+
 .tiled-gallery__row {
+	width: 100%;
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
-	margin: 0 auto;
+	margin: 0;
 }
 
 .tiled-gallery__col {
@@ -48,6 +54,7 @@ $tiled-gallery-max-column-count: 20;
 	flex-direction: column;
 	justify-content: center;
 	margin: 0 auto;
+
 	& + & {
 		margin-left: $tiled-gallery-gutter;
 	}
@@ -61,32 +68,13 @@ $tiled-gallery-max-column-count: 20;
 	& + & {
 		margin-top: $tiled-gallery-gutter;
 	}
-	figure {
-		margin: 0;
-		height: 100%;
 
-		// IE doesn't support flex so omit that.
-		@supports ( position: sticky ) {
-			display: flex;
-			align-items: flex-end;
-			justify-content: flex-start;
-		}
-	}
-
-	img {
+	> a > img,
+	> img {
 		display: block;
-		max-width: 100%;
 		height: auto;
-	}
-
-	// IE doesn't handle cropping, so we need an explicit width here.
-	img {
+		max-width: 100%;
 		width: 100%;
-
-		// IE11 doesn't read rules inside this query. They are applied only to modern browsers.
-		@supports ( position: sticky ) {
-			width: auto;
-		}
 	}
 
 	figcaption {
@@ -108,23 +96,5 @@ $tiled-gallery-max-column-count: 20;
 			transparent
 		);
 		// stylelint-enable function-parentheses-space-inside
-
-		img {
-			display: inline;
-		}
-	}
-
-	a,
-	img {
-		// IE11 doesn't support object-fit, so just make sure images aren't skewed.
-		// The following rules are for all browsers.
-		width: 100%;
-
-		// IE11 doesn't read rules inside this query. They are applied only to modern browsers.
-		@supports ( position: sticky ) {
-			height: 100%;
-			flex: 1;
-			object-fit: cover;
-		}
 	}
 }
