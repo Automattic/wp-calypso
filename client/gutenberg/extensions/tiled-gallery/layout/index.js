@@ -1,23 +1,29 @@
 /**
  * External dependencies
  */
-import photon from 'photon';
 import { __, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
+import { isBlobURL } from '@wordpress/blob';
+import photon from 'photon';
 
 /**
  * Internal dependencies
  */
-import Square from './square';
-import Mosaic from './mosaic';
 import GalleryImageEdit from '../gallery-image/edit';
 import GalleryImageSave from '../gallery-image/save';
+import Mosaic from './mosaic';
+import Square from './square';
 
 // @TODO put in consts?
 const PHOTON_MAX_RESIZE = 2000;
 
 export default class Layout extends Component {
 	photonize( { height, width, url } ) {
+		// Do not Photonize images that are still uploading or from localhost
+		if ( isBlobURL( url ) || /^https?:\/\/localhost/.test( url ) ) {
+			return url;
+		}
+
 		const { layoutStyle } = this.props;
 		if ( isSquareishLayout( layoutStyle ) && width && height ) {
 			const size = Math.min( PHOTON_MAX_RESIZE, width, height );
