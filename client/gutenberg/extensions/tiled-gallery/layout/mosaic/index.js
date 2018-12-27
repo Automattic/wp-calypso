@@ -27,7 +27,7 @@ export default class Mosaic extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.images !== this.props.images ) {
+		if ( prevProps.images !== this.props.images || prevProps.isWide !== this.props.isWide ) {
 			this.triggerResize();
 		}
 	}
