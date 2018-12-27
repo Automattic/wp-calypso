@@ -49,13 +49,10 @@ export class PostTrashLink extends Component {
 }
 
 export default withSelect( select => {
-	const { getCurrentPostId, getCurrentPostType, getEditedPostAttribute, isEditedPostNew } = select(
-		'core/editor'
-	);
+	const { getCurrentPostId, getCurrentPostType, isEditedPostNew } = select( 'core/editor' );
 	return {
 		isNew: isEditedPostNew(),
 		postId: getCurrentPostId(),
-		postStatus: getEditedPostAttribute( 'status' ),
 		postType: getCurrentPostType(),
 	};
 } )(
