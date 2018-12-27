@@ -69,6 +69,7 @@ $tiled-gallery-max-column-count: 20;
 	position: relative;
 	margin: 0;
 	overflow: hidden;
+	display: flex;
 
 	& + & {
 		margin-top: $tiled-gallery-gutter;
@@ -80,6 +81,8 @@ $tiled-gallery-max-column-count: 20;
 		height: auto;
 		max-width: 100%;
 		width: 100%;
+		object-fit: cover;
+		object-position: center;
 	}
 
 	figcaption {
