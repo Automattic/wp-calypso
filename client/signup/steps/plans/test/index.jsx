@@ -73,6 +73,7 @@ import {
 
 const props = {
 	translate,
+	siteGoals: '',
 	stepName: 'Step name',
 	stepSectionName: 'Step section name',
 	signupDependencies: {
@@ -122,7 +123,6 @@ describe( 'Plans.onSelectPlan', () => {
 		expect( args[ 0 ].stepName ).toEqual( 'Step name' );
 		expect( args[ 0 ].stepSectionName ).toEqual( 'Step section name' );
 		expect( args[ 0 ].cartItem ).toBe( cartItem );
-		expect( args[ 0 ].privacyItem ).toEqual( null );
 		expect( 'test' in args[ 0 ] ).toEqual( false );
 	} );
 
@@ -156,32 +156,6 @@ describe( 'Plans.onSelectPlan', () => {
 		const calls = SignupActions.submitSignupStep.mock.calls;
 		const args = calls[ calls.length - 1 ];
 		expect( args[ 2 ].cartItem ).toBe( cartItem );
-		expect( args[ 2 ].privacyItem ).toEqual( null );
-		expect( args[ 0 ].privacyItem ).toEqual( null );
-	} );
-
-	test( 'Should call submitSignupStep with correct privacyItem', () => {
-		const myProps = {
-			...tplProps,
-			signupDependencies: {
-				domainItem: {
-					meta: {},
-				},
-			},
-		};
-
-		SignupActions.submitSignupStep.mockReset();
-
-		const comp = new PlansStep( myProps );
-		const cartItem = { product_slug: PLAN_FREE };
-		comp.onSelectPlan( cartItem );
-
-		expect( SignupActions.submitSignupStep ).toBeCalled();
-
-		const calls = SignupActions.submitSignupStep.mock.calls;
-		const args = calls[ calls.length - 1 ];
-		expect( args[ 0 ].privacyItem ).toEqual( 43 );
-		expect( args[ 2 ].privacyItem ).toEqual( 43 );
 	} );
 
 	test( 'Should call recordEvent when cartItem is specified', () => {
@@ -280,6 +254,35 @@ describe( 'Plans.onSelectPlan', () => {
 			comp.onSelectPlan( cartItem );
 			expect( cartItem.extra ).toEqual( undefined );
 		} );
+	} );
+} );
+
+describe( 'Plans.getCustomerType', () => {
+	describe( 'Should return "business" if at least one site goal seem related to business', () => {
+		const goals = [ 'sell', 'share', 'educate,sell', 'promote,educate' ];
+		goals.forEach( goal =>
+			test( `Should return "business" for site goals ${ goal }`, () => {
+				const comp = new PlansStep( { ...props, siteGoals: 'sell' } );
+				expect( comp.getCustomerType() ).toEqual( 'business' );
+			} )
+		);
+	} );
+	describe( 'Should return "business" if none of site goal sseem related to business', () => {
+		const goals = [ 'educate', 'share', 'showcase', 'share,showcase,educate' ];
+		goals.forEach( goal =>
+			test( `Should return "business" for site goals ${ goal }`, () => {
+				const comp = new PlansStep( { ...props, siteGoals: 'sell' } );
+				expect( comp.getCustomerType() ).toEqual( 'business' );
+			} )
+		);
+	} );
+	test( 'Should return site type property is siteType is provided', () => {
+		const comp = new PlansStep( { ...props, siteGoals: 'share', siteType: 'online-store' } );
+		expect( comp.getCustomerType() ).toEqual( 'business' );
+	} );
+	test( "Should return customerType prop when it's provided", () => {
+		const comp = new PlansStep( { ...props, siteGoals: 'sell', customerType: 'personal' } );
+		expect( comp.getCustomerType() ).toEqual( 'personal' );
 	} );
 } );
 

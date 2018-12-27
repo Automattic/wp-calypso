@@ -256,11 +256,10 @@ export class SeoPreviewPane extends PureComponent {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state, { overridePost } ) => {
 	const site = getSelectedSite( state );
-	const postId = getEditorPostId( state );
-	const post = getSitePost( state, site.ID, postId );
-	const isEditorShowing = 'post-editor' === getSectionName( state );
+	const post = overridePost || getSitePost( state, site.ID, getEditorPostId( state ) );
+	const isEditorShowing = [ 'gutenberg-editor', 'post-editor' ].includes( getSectionName( state ) );
 
 	return {
 		site: {

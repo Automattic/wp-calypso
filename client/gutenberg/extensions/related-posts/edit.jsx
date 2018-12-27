@@ -4,7 +4,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { BlockAlignmentToolbar, BlockControls, InspectorControls } from '@wordpress/editor';
+import { BlockControls, InspectorControls } from '@wordpress/editor';
 import { Button, PanelBody, RangeControl, ToggleControl, Toolbar } from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
 import { get } from 'lodash';
@@ -14,19 +14,12 @@ import { withSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { ALIGNMENT_OPTIONS, DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
+import { DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
 
 class RelatedPostsEdit extends Component {
 	render() {
 		const { attributes, className, posts, setAttributes } = this.props;
-		const {
-			align,
-			displayContext,
-			displayDate,
-			displayThumbnails,
-			postLayout,
-			postsToShow,
-		} = attributes;
+		const { displayContext, displayDate, displayThumbnails, postLayout, postsToShow } = attributes;
 
 		const layoutControls = [
 			{
@@ -78,13 +71,6 @@ class RelatedPostsEdit extends Component {
 				</InspectorControls>
 
 				<BlockControls>
-					<BlockAlignmentToolbar
-						value={ align }
-						onChange={ nextAlign => {
-							setAttributes( { align: nextAlign } );
-						} }
-						controls={ ALIGNMENT_OPTIONS }
-					/>
 					<Toolbar controls={ layoutControls } />
 				</BlockControls>
 
@@ -92,7 +78,6 @@ class RelatedPostsEdit extends Component {
 					className={ classNames( `${ className }`, {
 						'is-grid': postLayout === 'grid',
 						[ `columns-${ postsToShow }` ]: postLayout === 'grid',
-						[ `align${ align }` ]: align,
 					} ) }
 				>
 					<div className={ `${ className }__preview-items` }>

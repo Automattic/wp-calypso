@@ -49,9 +49,9 @@ class GoogleAppsUsers extends React.Component {
 		};
 	}
 
-	goToAddGoogleApps() {
+	goToAddGoogleApps = () => {
 		this.props.addGoogleAppsUserClick( this.props.selectedDomainName );
-	}
+	};
 
 	renderDomain( domain, users ) {
 		return (

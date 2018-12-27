@@ -3,10 +3,10 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Dispatcher from 'dispatcher';
 import classNames from 'classnames';
@@ -24,6 +24,10 @@ import Sidebar from 'layout/sidebar';
 import CartBodyLoadingPlaceholder from 'my-sites/checkout/cart/cart-body/loading-placeholder';
 import { CART_ON_MOBILE_SHOW } from 'lib/upgrades/action-types';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import JetpackLogo from 'components/jetpack-logo';
 
 class SecondaryCart extends Component {
 	static propTypes = {
@@ -35,7 +39,7 @@ class SecondaryCart extends Component {
 		cartVisible: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.dispatchToken = Dispatcher.register(
 			function( payload ) {
 				if ( payload.action.type === CART_ON_MOBILE_SHOW ) {
@@ -61,7 +65,7 @@ class SecondaryCart extends Component {
 	};
 
 	render() {
-		const { cart, selectedSite } = this.props;
+		const { cart, selectedSite, isJetpackNotAtomic } = this.props;
 		const cartClasses = classNames( {
 			'secondary-cart': true,
 			'secondary-cart__hidden': ! this.state.cartVisible,
@@ -90,9 +94,18 @@ class SecondaryCart extends Component {
 					showCoupon={ true }
 				/>
 				<CartPlanDiscountAd cart={ cart } selectedSite={ selectedSite } />
+
+				{ isJetpackNotAtomic && <JetpackLogo full /> }
 			</Sidebar>
 		);
 	}
 }
 
-export default localize( SecondaryCart );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+
+	return {
+		isJetpackNotAtomic:
+			isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
+	};
+} )( localize( SecondaryCart ) );

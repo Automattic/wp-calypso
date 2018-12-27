@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { get, noop, set } from 'lodash';
+import { get, keyBy, mapValues, noop, set } from 'lodash';
 import { setSettings as setDateSettings, __experimentalGetSettings } from '@wordpress/date';
 
 /**
@@ -16,6 +16,7 @@ import EditorDocumentHead from './editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryPostTypes from 'components/data/query-post-types';
+import QueryPageTemplates from 'components/data/query-page-templates';
 import {
 	createAutoDraft,
 	requestSitePost,
@@ -28,6 +29,8 @@ import './hooks'; // Needed for integrating Calypso's media library (and other h
 import isRtlSelector from 'state/selectors/is-rtl';
 import refreshRegistrations from '../extensions/presets/jetpack/utils/refresh-registrations';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
+import { getPageTemplates } from 'state/page-templates/selectors';
+import { MimeTypes } from 'lib/media/constants';
 
 /**
  * Style dependencies
@@ -92,22 +95,37 @@ class GutenbergEditor extends Component {
 		}
 	};
 
+	getAllowedMimeTypes = () => {
+		const { allowedFileTypes } = this.props;
+		const allowedMimeTypes = {};
+		allowedFileTypes.forEach( fileType => {
+			const mimeType = get( MimeTypes, fileType );
+			if ( mimeType ) {
+				allowedMimeTypes[ fileType ] = mimeType;
+			}
+		} );
+		return allowedMimeTypes;
+	};
+
 	render() {
-		const { alignWide, postType, siteId, post, overridePost, isRTL } = this.props;
+		const { alignWide, postType, siteId, pageTemplates, post, overridePost, isRTL } = this.props;
 
 		//see also https://github.com/WordPress/gutenberg/blob/45bc8e4991d408bca8e87cba868e0872f742230b/lib/client-assets.php#L1451
 		const editorSettings = {
 			alignWide,
+			availableTemplates: pageTemplates,
 			autosaveInterval: 10, //interval to debounce autosaving events, in seconds.
 			titlePlaceholder: translate( 'Add title' ),
 			bodyPlaceholder: translate( 'Write your story' ),
 			postLock: {},
 			isRTL,
+			allowedMimeTypes: this.getAllowedMimeTypes(),
 		};
 
 		return (
 			<Fragment>
 				<QueryPostTypes siteId={ siteId } />
+				<QueryPageTemplates siteId={ siteId } />
 				<PageViewTracker { ...this.getAnalyticsPathAndTitle() } />
 				<EditorPostTypeUnsupported type={ postType } />
 				<EditorDocumentHead postType={ postType } />
@@ -139,6 +157,7 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 	const isAutoDraft = 'auto-draft' === get( post, 'status', null );
 	const isRTL = isRtlSelector( state );
 	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
+	const allowedFileTypes = getSiteOption( state, siteId, 'allowed_file_types' );
 
 	/**
 	 * We don't expect any theme to have a specific Gutenberg support flag,
@@ -151,6 +170,11 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 		[ 'data', 'theme_support' ],
 		{}
 	);
+
+	const pageTemplates = {
+		'': translate( 'Default Template' ),
+		...mapValues( keyBy( getPageTemplates( state, siteId ), 'file' ), 'label' ),
+	};
 
 	let overridePost = null;
 	if ( !! demoContent ) {
@@ -165,10 +189,12 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 	return {
 		//no theme uses the wide-images flag. This is future proofing in case it get's implemented.
 		alignWide: alignWide || get( gutenbergThemeSupport, 'wide-images', false ),
+		pageTemplates,
 		post,
 		overridePost,
 		isRTL,
 		gmtOffset,
+		allowedFileTypes,
 	};
 };
 

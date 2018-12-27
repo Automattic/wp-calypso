@@ -14,6 +14,7 @@ import {
 	CART_ITEM_REMOVE,
 	CART_ITEM_REPLACE,
 	CART_ITEMS_ADD,
+	CART_ITEMS_REPLACE_ALL,
 	CART_PRIVACY_PROTECTION_ADD,
 	CART_PRIVACY_PROTECTION_REMOVE,
 	CART_TAX_COUNTRY_CODE_SET,
@@ -142,6 +143,15 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 
 		case CART_ITEMS_ADD:
 			update( flow( ...action.cartItems.map( cartItem => cartItems.add( cartItem ) ) ) );
+			break;
+
+		case CART_ITEMS_REPLACE_ALL:
+			update(
+				flow(
+					cartItems.clearCart(),
+					...action.cartItems.map( cartItem => cartItems.addWithoutReplace( cartItem ) )
+				)
+			);
 			break;
 
 		case CART_COUPON_APPLY:

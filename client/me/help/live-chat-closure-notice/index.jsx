@@ -13,22 +13,20 @@ import i18n, { localize } from 'i18n-calypso';
 import FoldableCard from 'components/foldable-card';
 import FormSectionHeading from 'components/forms/form-section-heading';
 
+const DATE_FORMAT = 'MMMM D h:mma z';
+
 const LiveChatClosureNotice = ( {
-	closureStartDate,
-	closureEndDate,
+	closesAt,
 	compact,
-	displayDate,
+	displayAt,
 	holidayName,
+	reopensAt,
 	translate,
 } ) => {
 	const currentDate = i18n.moment();
+	const guessedTimezone = i18n.moment.tz.guess();
 
-	if (
-		! currentDate.isBetween(
-			i18n.moment.utc( displayDate ),
-			i18n.moment.utc( closureEndDate ).endOf( 'day' )
-		)
-	) {
+	if ( ! currentDate.isBetween( i18n.moment( displayAt ), i18n.moment( reopensAt ) ) ) {
 		return null;
 	}
 
@@ -38,34 +36,25 @@ const LiveChatClosureNotice = ( {
 
 	let message;
 
-	if ( currentDate.isBefore( i18n.moment.utc( closureStartDate ) ) ) {
+	if ( currentDate.isBefore( closesAt ) ) {
 		message = translate(
-			'Live chat will be closed %(closureStartDate)s through %(closureEndDate)s for the ' +
-				'%(holidayName)s holiday. You’ll be able to reach us by email and we’ll get ' +
-				'back to you as fast as we can. Live chat will reopen on %(reopenDate)s. Thank you!',
+			'Live chat will be closed for %(holidayName)s from %(closesAt)s until %(reopensAt)s. ' +
+				'You’ll be able to reach us by email and we’ll get back to you as fast as we can. Thank you!',
 			{
 				args: {
-					closureStartDate: i18n.moment( closureStartDate ).format( 'dddd, MMMM Do' ),
-					closureEndDate: i18n.moment( closureEndDate ).format( 'dddd, MMMM Do' ),
-					reopenDate: i18n
-						.moment( closureEndDate )
-						.add( 1, 'day' )
-						.format( 'MMMM Do' ),
+					closesAt: i18n.moment.tz( closesAt, guessedTimezone ).format( DATE_FORMAT ),
+					reopensAt: i18n.moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
 					holidayName,
 				},
 			}
 		);
 	} else {
 		message = translate(
-			'Live chat is closed today for the %(holidayName)s holiday. You can reach us ' +
-				'by email below and we’ll get back to you as fast as we can. Live chat will ' +
-				'reopen on %(reopenDate)s. Thank you!',
+			'Live chat is closed for %(holidayName)s and will reopen %(reopensAt)s. ' +
+				'You can reach us by email below and we’ll get back to you as fast as we can. Thank you!',
 			{
 				args: {
-					reopenDate: i18n
-						.moment( closureEndDate )
-						.add( 1, 'day' )
-						.format( 'MMMM Do' ),
+					reopensAt: i18n.moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
 					holidayName,
 				},
 			}

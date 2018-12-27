@@ -7,7 +7,9 @@
     "simple-payments"
   ],
   "beta": [
+    "mailchimp",
     "related-posts",
+    "shortlinks",
     "subscriptions",
     "tiled-gallery",
     "vr"

@@ -1,0 +1,47 @@
+.jetpack-email-subscribe-email {
+	display: block;
+	padding: 3px 9px;
+	width: 50%;
+}
+
+.jetpack-email-subscribe-consent-label {
+	color: #999;
+	display: block;
+	font-style: italic;
+	line-height: 20px;
+	margin-bottom: 23px;
+}
+
+.jetpack-email-subscribe-submit {
+	margin: 18px 0 13px;
+}
+
+.jetpack-email-subscribe-form-error {
+	border: 1px solid #ff0000;
+}
+
+.jetpack-email-subscribe-processing {
+	background-color: #e0e5e9;
+	display:none;
+	margin-bottom: 23px;
+	padding: 20px;
+	text-align: center;
+}
+
+.jetpack-email-subscribe-error {
+	background-color: #da5544;
+	color: #FFF;
+	display:none;
+	margin-bottom: 23px;
+	padding: 20px;
+	text-align: center;
+}
+
+.jetpack-email-subscribe-success {
+	background-color: #73b961;
+	color: #fff;
+	display:none;
+	margin-bottom: 23px;
+	padding: 20px;
+	text-align: center;
+}
