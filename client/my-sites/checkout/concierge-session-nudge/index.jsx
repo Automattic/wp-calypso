@@ -154,7 +154,7 @@ export class ConciergeSessionNudge extends React.Component {
 								<span className="concierge-session-nudge__checklist-item-text">
 									{ translate( '{{b}}Design:{{/b}} Which template to choose.', {
 										components: { b: <b /> },
-										comment: "This a benefit on a 'Purchase a call with us' page",
+										comment: "This is a benefit listed on a 'Purchase a call with us' page",
 									} ) }
 								</span>
 							</li>
@@ -168,7 +168,7 @@ export class ConciergeSessionNudge extends React.Component {
 										'{{b}}Traffic:{{/b}} How to get free search engine traffic with SEO tools.',
 										{
 											components: { b: <b /> },
-											comment: "This a benefit on a 'Purchase a call with us' page",
+											comment: "This is a benefit listed on a 'Purchase a call with us' page",
 										}
 									) }
 								</span>
@@ -183,7 +183,7 @@ export class ConciergeSessionNudge extends React.Component {
 										"{{b}}Site building tools:{{/b}} Learn how to create a site you're proud to share.",
 										{
 											components: { b: <b /> },
-											comment: "This a benefit on a 'Purchase a call with us' page",
+											comment: "This is a benefit listed on a 'Purchase a call with us' page",
 										}
 									) }
 								</span>
@@ -198,7 +198,7 @@ export class ConciergeSessionNudge extends React.Component {
 										'{{b}}Content:{{/b}} What information to include and where it should go.',
 										{
 											components: { b: <b /> },
-											comment: "This a benefit on a 'Purchase a call with us' page",
+											comment: "This is a benefit listed on a 'Purchase a call with us' page",
 										}
 									) }
 								</span>
@@ -211,7 +211,7 @@ export class ConciergeSessionNudge extends React.Component {
 								<span className="concierge-session-nudge__checklist-item-text">
 									{ translate( "{{b}}And more:{{/b}} Tell our experts what you'd like to cover.", {
 										components: { b: <b /> },
-										comment: "This a benefit on a 'Purchase a call with us' page",
+										comment: "This is a benefit listed on a 'Purchase a call with us' page",
 									} ) }
 								</span>
 							</li>
