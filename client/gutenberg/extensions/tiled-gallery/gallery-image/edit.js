@@ -100,7 +100,6 @@ class GalleryImageEdit extends Component {
 			'aria-label': ariaLabel,
 			alt,
 			caption,
-			className,
 			height,
 			id,
 			isSelected,
@@ -150,7 +149,7 @@ class GalleryImageEdit extends Component {
 		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 		return (
 			<figure
-				className={ classnames( className, {
+				className={ classnames( 'tiled-gallery__item', {
 					'is-selected': isSelected,
 					'is-transient': isBlobURL( origUrl ),
 				} ) }

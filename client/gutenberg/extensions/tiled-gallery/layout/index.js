@@ -59,7 +59,6 @@ export default class Layout extends Component {
 				alt={ img.alt }
 				aria-label={ ariaLabel }
 				caption={ img.caption }
-				className="tiled-gallery__item"
 				columns={ columns }
 				height={ img.height }
 				id={ img.id }

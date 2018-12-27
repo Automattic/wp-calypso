@@ -9,7 +9,6 @@ export default function GalleryImageSave( props ) {
 		'aria-label': ariaLabel,
 		alt,
 		caption,
-		className,
 		height,
 		id,
 		link,
@@ -47,7 +46,7 @@ export default function GalleryImageSave( props ) {
 	);
 
 	return (
-		<figure className={ className }>
+		<figure className="tiled-gallery__item">
 			{ href ? <a href={ href }>{ img }</a> : img }
 			{ ! RichText.isEmpty( caption ) && (
 				<RichText.Content tagName="figcaption" value={ caption } />
