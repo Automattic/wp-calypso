@@ -34,7 +34,7 @@ export const settings = {
 
 	category: 'jetpack',
 
-	keywords: [ __( 'similar' ), __( 'linked' ), __( 'connected' ) ],
+	keywords: [ __( 'similar content' ), __( 'linked' ), __( 'connected' ) ],
 
 	attributes: {
 		postLayout: {
