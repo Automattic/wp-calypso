@@ -141,7 +141,7 @@ class GalleryImageEdit extends Component {
 					onKeyDown={ this.onImageClick }
 					aria-label={ ariaLabel }
 				/>
-				{ isBlobURL( url ) && <Spinner /> }
+				{ isBlobURL( origUrl ) && <Spinner /> }
 			</Fragment>
 			/* eslint-enable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */
 		);
@@ -152,7 +152,7 @@ class GalleryImageEdit extends Component {
 			<figure
 				className={ classnames( className, {
 					'is-selected': isSelected,
-					'is-transient': isBlobURL( url ),
+					'is-transient': isBlobURL( origUrl ),
 				} ) }
 				tabIndex="-1"
 				onKeyDown={ this.onKeyDown }

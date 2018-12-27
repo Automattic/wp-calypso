@@ -19,7 +19,7 @@ export default function GalleryImageSave( props ) {
 		width,
 	} = props;
 
-	if ( isBlobURL( url ) ) {
+	if ( isBlobURL( origUrl ) ) {
 		return null;
 	}
 
