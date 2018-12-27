@@ -3,9 +3,10 @@
  */
 import './view.scss';
 import ResizeObserver from 'resize-observer-polyfill';
-import { handleRowResize } from './resize';
+import { handleRowResize } from './layout/mosaic/resize';
 
 /**
+ * Handler for Gallery ResizeObserver
  *
  * @param {Array<ResizeObserverEntry>} galleries Resized galleries
  */
@@ -26,11 +27,13 @@ function handleObservedResize( galleries ) {
 /**
  * Get all the galleries on the document
  *
- * @returns {Array} List of gallery nodes
+ * @return {Array} List of gallery nodes
  */
 function getGalleries() {
 	return Array.from(
-		document.querySelectorAll( '.wp-block-jetpack-tiled-gallery.is-style-rectangular' )
+		document.querySelectorAll(
+			'.wp-block-jetpack-tiled-gallery.is-style-rectangular > .tiled-gallery__gallery'
+		)
 	);
 }
 
@@ -46,7 +49,7 @@ const observeGalleries = () => {
 
 	const observer = new ResizeObserver( handleObservedResize );
 
-	galleries.forEach( gallery => void observer.observe( gallery ) );
+	galleries.forEach( gallery => observer.observe( gallery ) );
 };
 
 if ( typeof window !== 'undefined' && typeof document !== 'undefined' ) {

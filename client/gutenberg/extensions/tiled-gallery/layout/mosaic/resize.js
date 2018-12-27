@@ -6,13 +6,8 @@ const MARGIN = 4;
 
 const memo = new WeakMap();
 
-export function handleRowResize( row, galleryWidth ) {
-	// @TODO this width is passed already from the `view`;
-	// we'll need to pass it down from the `edit` as well and then
-	// remove this line.
-	galleryWidth = galleryWidth || row.scrollWidth;
-
-	applyRowRatio( row, getRowRatio( row ), galleryWidth );
+export function handleRowResize( row, width ) {
+	applyRowRatio( row, getRowRatio( row ), width );
 }
 
 function getRowRatio( row ) {
@@ -29,6 +24,10 @@ function getRowRatio( row ) {
 		);
 	memo.set( row, result );
 	return result;
+}
+
+export function getGalleryRows( gallery ) {
+	return Array.from( gallery.querySelectorAll( '.tiled-gallery__row' ) );
 }
 
 function getRowCols( row ) {

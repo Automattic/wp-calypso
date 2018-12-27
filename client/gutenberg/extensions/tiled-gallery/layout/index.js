@@ -84,7 +84,7 @@ export default class Layout extends Component {
 		const renderedImages = this.props.images.map( this.renderImage, this );
 
 		return (
-			<div className={ className } ref={ this.props.containerRef }>
+			<div className={ className }>
 				<LayoutRenderer
 					isWide={ isWide }
 					columns={ this.props.columns }

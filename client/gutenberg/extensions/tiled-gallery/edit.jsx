@@ -1,6 +1,10 @@
 /**
  * External Dependencies
  */
+import { Component, Fragment } from '@wordpress/element';
+import { compose } from '@wordpress/compose';
+import { filter, get, pick } from 'lodash';
+import { withDispatch } from '@wordpress/data';
 import {
 	BlockControls,
 	InspectorControls,
@@ -8,9 +12,6 @@ import {
 	MediaUpload,
 	mediaUpload,
 } from '@wordpress/editor';
-import { compose } from '@wordpress/compose';
-import { createRef, Component, Fragment } from '@wordpress/element';
-import { defer, filter, pick, get } from 'lodash';
 import {
 	DropZone,
 	FormFileUpload,
@@ -21,8 +22,6 @@ import {
 	Toolbar,
 	withNotices,
 } from '@wordpress/components';
-import { withDispatch } from '@wordpress/data';
-import ResizeObserver from 'resize-observer-polyfill';
 
 /**
  * Internal dependencies
@@ -35,7 +34,6 @@ import {
 	getDefaultStyleClass,
 	hasStyleClass,
 } from 'gutenberg/extensions/utils';
-import { handleRowResize } from './resize';
 
 const linkOptions = [
 	{ value: 'attachment', label: __( 'Attachment Page' ) },
@@ -62,10 +60,6 @@ export const pickRelevantMediaFiles = image => {
 };
 
 class TiledGalleryEdit extends Component {
-	container = createRef();
-
-	pendingRaf = null;
-
 	state = {
 		selectedImage: null,
 	};
@@ -81,26 +75,11 @@ class TiledGalleryEdit extends Component {
 	componentDidMount() {
 		const { className } = this.props;
 
+		// @FIXME Can attributes change on mount be avoided?
 		// If block is missing a style class when mounting, set it to default
 		if ( ! hasStyleClass( className ) ) {
 			this.props.changeClassName( getDefaultStyleClass( LAYOUT_STYLES ) );
 		}
-
-		this.deferredMount = defer( () => {
-			// ResizeObserver has checks for `window` & `document`:
-			// it does nothing if those are not available.
-			this.observer = new ResizeObserver( this.onGalleryResize );
-			if ( this.container.current ) {
-				this.observer.observe( this.container.current );
-			}
-		} );
-	}
-
-	componentWillUnmount() {
-		if ( this.observer ) {
-			this.observer.disconnect();
-		}
-		clearTimeout( this.deferredMount );
 	}
 
 	setAttributes( attributes ) {
@@ -120,28 +99,6 @@ class TiledGalleryEdit extends Component {
 		this.props.setAttributes( attributes );
 	}
 
-	onGalleryResize( [ gallery ] ) {
-		if ( this.pendingRaf ) {
-			cancelAnimationFrame( this.pendingRaf );
-		}
-		this.pendingRaf = requestAnimationFrame( () => {
-			this.pendingRaf = null;
-			const { width: galleryWidth } = gallery.contentRect;
-			// @TODO would be nice to just use childNodes at this point but it contains
-			// upload button and dropzone — could we move it outside the observed wrapper?
-			const rows = Array.from( gallery.target.querySelectorAll( '.tiled-gallery__row' ) );
-			rows.forEach( row => handleRowResize( row, galleryWidth ) );
-		} );
-	}
-
-	onGalleryContentChange() {
-		if ( this.container.current ) {
-			Array.from( this.container.current.querySelectorAll( '.tiled-gallery__row' ) ).forEach(
-				handleRowResize
-			);
-		}
-	}
-
 	addFiles = files => {
 		const currentImages = this.props.attributes.images || [];
 		const { noticeOperations } = this.props;
@@ -151,7 +108,6 @@ class TiledGalleryEdit extends Component {
 			onFileChange: images => {
 				const imagesNormalized = images.map( image => pickRelevantMediaFiles( image ) );
 				this.setAttributes( { images: currentImages.concat( imagesNormalized ) } );
-				this.onGalleryContentChange();
 			},
 			onError: noticeOperations.createErrorNotice,
 		} );
@@ -167,7 +123,6 @@ class TiledGalleryEdit extends Component {
 			images,
 			columns: columns ? Math.min( images.length, columns ) : columns,
 		} );
-		this.onGalleryContentChange();
 	};
 
 	onSelectImage = index => () => {
@@ -206,13 +161,7 @@ class TiledGalleryEdit extends Component {
 	render() {
 		const { selectedImage } = this.state;
 		const { attributes, isSelected, className, noticeOperations, noticeUI } = this.props;
-		const {
-			align,
-			columns = defaultColumnsNumber( attributes ),
-			images,
-			linkTo,
-			className: blockStyleClassName,
-		} = attributes;
+		const { align, columns = defaultColumnsNumber( attributes ), images, linkTo } = attributes;
 
 		const dropZone = <DropZone onFilesDrop={ this.addFiles } />;
 
@@ -262,14 +211,16 @@ class TiledGalleryEdit extends Component {
 			);
 		}
 
-		const layoutStyle = getActiveStyleName( LAYOUT_STYLES, blockStyleClassName );
+		const layoutStyle = getActiveStyleName( LAYOUT_STYLES, attributes.className );
 
 		return (
 			<Fragment>
 				{ controls }
 				<InspectorControls>
 					<PanelBody title={ __( 'Tiled gallery settings' ) }>
-						{ layoutSupportsColumns( layoutStyle ) &&
+						{ /* @TODO disable with title comment, don't remove */ layoutSupportsColumns(
+							layoutStyle
+						) &&
 							images.length > 1 && (
 								<RangeControl
 									label={ __( 'Columns' ) }
