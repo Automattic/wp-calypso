@@ -12,7 +12,7 @@ import { Fragment, Component } from '@wordpress/element';
 
 import { fields } from '.';
 
-class EmailSubscribeEdit extends Component {
+class MailchimpSubscribeEdit extends Component {
 	constructor( ...args ) {
 		super( ...args );
 		this.fields = fields.map( field => {
@@ -41,4 +41,4 @@ class EmailSubscribeEdit extends Component {
 	}
 }
 
-export default EmailSubscribeEdit;
+export default MailchimpSubscribeEdit;
