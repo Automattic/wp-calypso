@@ -242,7 +242,6 @@ class TiledGalleryEdit extends Component {
 				{ noticeUI }
 
 				<Layout
-					containerRef={ this.container }
 					className={ className }
 					columns={ columns }
 					images={ images }
