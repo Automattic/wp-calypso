@@ -4,7 +4,9 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { debounce, includes, isArray, map } from 'lodash';
+import { get, includes, isArray, isEqual, map } from 'lodash';
+import { compose } from '@wordpress/compose';
+import { withSelect, withDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -23,7 +25,7 @@ export class MediaUpload extends Component {
 
 	componentDidMount() {
 		if ( includes( this.props.allowedTypes, 'image' ) ) {
-			MediaStore.on( 'change', this.updateMedia );
+			MediaStore.on( 'change', this.updateImageBlockUrlAttribute );
 		}
 		MediaActions.setLibrarySelectedItems( this.props.siteId, this.getSelectedItems() );
 	}
@@ -58,18 +60,37 @@ export class MediaUpload extends Component {
 		}
 	};
 
-	updateMedia = debounce( () => {
-		const { multiple, siteId, value } = this.props;
+	updateImageBlockUrlAttribute = () => {
+		const { multiple, siteId, value, getSelectedBlock, updateBlockAttributes } = this.props;
+
 		if ( ! value ) {
 			return;
 		}
-		const media = {
-			items: multiple
-				? map( value, id => MediaStore.get( siteId, id ) )
-				: [ MediaStore.get( siteId, value ) ],
-		};
-		this.insertMedia( media );
-	} );
+
+		const { clientId, attributes } = getSelectedBlock();
+
+		if ( multiple ) {
+			const images = get( attributes, 'images', [] );
+			images.forEach( image => {
+				const mediaItem = MediaStore.get( siteId, parseInt( image.id ) );
+				if ( image.url !== mediaItem.URL ) {
+					image.url = mediaItem.URL;
+				}
+			} );
+
+			if ( images.length && ! isEqual( images, attributes.images ) ) {
+				updateBlockAttributes( clientId, { images: images } );
+			}
+		} else {
+			const mediaId = get( attributes, 'id' );
+			if ( mediaId ) {
+				const mediaItem = MediaStore.get( siteId, parseInt( attributes.id ) );
+				if ( attributes.url !== mediaItem.URL ) {
+					updateBlockAttributes( clientId, { url: mediaItem.URL } );
+				}
+			}
+		}
+	};
 
 	onCloseModal = media => {
 		if ( media ) {
@@ -133,4 +154,12 @@ const mapStateToProps = state => ( {
 	siteId: getSelectedSiteId( state ),
 } );
 
-export default connect( mapStateToProps )( MediaUpload );
+export default compose( [
+	withSelect( select => ( {
+		getSelectedBlock: select( 'core/editor' ).getSelectedBlock,
+	} ) ),
+	withDispatch( dispatch => ( {
+		updateBlockAttributes: dispatch( 'core/editor' ).updateBlockAttributes,
+	} ) ),
+	connect( mapStateToProps ),
+] )( MediaUpload );
