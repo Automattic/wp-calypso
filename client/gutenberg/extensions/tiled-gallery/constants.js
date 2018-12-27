@@ -13,7 +13,7 @@ export const LAYOUT_STYLES = [
 	{
 		isDefault: true,
 		label: _x( 'Tiled mosaic', 'Tiled gallery layout' ),
-		name: 'rectangular',
+		name: DEFAULT_LAYOUT,
 	},
 	{
 		label: _x( 'Circles', 'Tiled gallery layout' ),
