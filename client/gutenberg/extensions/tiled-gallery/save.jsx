@@ -13,10 +13,11 @@ export default function TiledGallerySave( { attributes } ) {
 		return null;
 	}
 
-	const { className, columns = defaultColumnsNumber( attributes ), linkTo } = attributes;
+	const { align, className, columns = defaultColumnsNumber( attributes ), linkTo } = attributes;
 
 	return (
 		<Layout
+			align={ align }
 			className={ className }
 			columns={ columns }
 			images={ images }
