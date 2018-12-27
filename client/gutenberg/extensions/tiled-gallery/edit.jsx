@@ -242,6 +242,7 @@ class TiledGalleryEdit extends Component {
 				{ noticeUI }
 
 				<Layout
+					align={ align }
 					className={ className }
 					columns={ columns }
 					images={ images }
@@ -251,7 +252,6 @@ class TiledGalleryEdit extends Component {
 					onSelectImage={ this.onSelectImage }
 					selectedImage={ isSelected ? selectedImage : null }
 					setImageAttributes={ this.setImageAttributes }
-					isWide={ [ 'full', 'wide' ].includes( align ) }
 				>
 					{ dropZone }
 					{ isSelected && (

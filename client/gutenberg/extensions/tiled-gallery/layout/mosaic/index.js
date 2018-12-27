@@ -27,7 +27,7 @@ export default class Mosaic extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.images !== this.props.images || prevProps.isWide !== this.props.isWide ) {
+		if ( prevProps.images !== this.props.images || prevProps.align !== this.props.align ) {
 			this.triggerResize();
 		}
 	}
@@ -73,9 +73,9 @@ export default class Mosaic extends Component {
 	}
 
 	render() {
-		const { images, isWide, renderedImages } = this.props;
+		const { images, align, renderedImages } = this.props;
 		const ratios = imagesToRatios( images );
-		const rows = ratiosToRows( ratios, { isWide } );
+		const rows = ratiosToRows( ratios, { isWide: [ 'full', 'wide' ].includes( align ) } );
 
 		let cursor = 0;
 		return (
