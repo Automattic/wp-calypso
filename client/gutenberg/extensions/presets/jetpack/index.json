@@ -1,13 +1,13 @@
 {
   "production": [
     "contact-form",
+    "mailchimp",
     "map",
     "markdown",
     "publicize",
     "simple-payments"
   ],
   "beta": [
-    "email-subscribe",
     "related-posts",
     "shortlinks",
     "subscriptions",

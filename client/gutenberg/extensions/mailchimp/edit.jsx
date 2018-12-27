@@ -35,7 +35,7 @@ class EmailSubscribeEdit extends Component {
 						/>
 					) ) }
 				</InspectorControls>
-				<ServerSideRender block="jetpack/email-subscribe" attributes={ attributes } />
+				<ServerSideRender block="jetpack/mailchimp" attributes={ attributes } />
 			</Fragment>
 		);
 	}

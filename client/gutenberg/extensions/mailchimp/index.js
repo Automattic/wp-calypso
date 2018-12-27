@@ -7,7 +7,8 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import edit from './edit';
 import './editor.scss';
 
-export const name = 'email-subscribe';
+
+export const name = 'mailchimp';
 
 export const fields = [
 	{ id: 'title', label: __( 'Title' ) },
@@ -20,7 +21,7 @@ export const fields = [
 ];
 
 export const settings = {
-	title: __( 'Email Subscribe' ),
+	title: __( 'MailChimp' ),
 	icon: 'email',
 	category: 'jetpack',
 	keywords: [ __( 'email' ), __( 'mailchimp' ), 'jetpack' ],
