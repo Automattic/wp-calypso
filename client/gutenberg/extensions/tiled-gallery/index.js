@@ -19,6 +19,7 @@ import { DEFAULT_LAYOUT, LAYOUT_STYLES } from './constants';
 import './editor.scss';
 
 const blockAttributes = {
+	// Set default align
 	align: {
 		default: 'center',
 		type: 'string',
