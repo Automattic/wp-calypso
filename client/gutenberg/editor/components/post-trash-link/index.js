@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -20,9 +19,9 @@ import { compose } from '@wordpress/compose';
  */
 import { removeNotice, successNotice } from 'state/notices/actions';
 import { restorePost } from 'state/posts/actions';
-import { getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import { navigate } from 'state/ui/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
 
 export class PostTrashLink extends Component {
 	state = {
@@ -30,7 +29,7 @@ export class PostTrashLink extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const { postId, postStatus, siteId, translate } = this.props;
+		const { postId, postStatus, siteId, translate, trashUrl } = this.props;
 
 		if ( 'trash' !== prevProps.postStatus && 'trash' === postStatus ) {
 			const noticeId = `trash_${ siteId }_${ postId }`;
@@ -44,21 +43,9 @@ export class PostTrashLink extends Component {
 				},
 			} );
 
-			this.props.navigate( this.getPostTypeTrashUrl() );
+			this.props.navigate( trashUrl );
 		}
 	}
-
-	getPostTypeTrashUrl = () => {
-		const { isSiteJetpack, isSiteSingleUser, postType, siteSlug } = this.props;
-
-		const postTypeUrl = get( { page: 'pages', post: 'posts' }, postType, `types/${ postType }` );
-
-		if ( postType === 'post' && ! isSiteJetpack && ! isSiteSingleUser ) {
-			return `/${ postTypeUrl }/my/trashed/${ siteSlug }`;
-		}
-
-		return `/${ postTypeUrl }/trashed/${ siteSlug }`;
-	};
 
 	onClick = () => {
 		const { postId, postType, trashPost } = this.props;
@@ -109,16 +96,10 @@ export default compose( [
 	} ) ),
 ] )(
 	connect(
-		state => {
-			const siteId = getSelectedSiteId( state );
-
-			return {
-				isSiteJetpack: isJetpackSite( state, siteId ),
-				isSiteSingleUser: isSingleUserSite( state, siteId ),
-				siteId,
-				siteSlug: getSiteSlug( state, siteId ),
-			};
-		},
+		( state, { postType } ) => ( {
+			siteId: getSelectedSiteId( state ),
+			trashUrl: getPostTypeTrashUrl( state, postType ),
+		} ),
 		{
 			navigate,
 			removeNotice,
