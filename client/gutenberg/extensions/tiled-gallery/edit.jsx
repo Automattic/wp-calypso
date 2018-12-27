@@ -2,9 +2,7 @@
  * External Dependencies
  */
 import { Component, Fragment } from '@wordpress/element';
-import { compose } from '@wordpress/compose';
 import { filter, get, pick } from 'lodash';
-import { withDispatch } from '@wordpress/data';
 import {
 	BlockControls,
 	InspectorControls,
@@ -29,11 +27,7 @@ import {
 import Layout from './layout';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { ALLOWED_MEDIA_TYPES, LAYOUT_STYLES, MAX_COLUMNS } from './constants';
-import {
-	getActiveStyleName,
-	getDefaultStyleClass,
-	hasStyleClass,
-} from 'gutenberg/extensions/utils';
+import { getActiveStyleName } from 'gutenberg/extensions/utils';
 
 const linkOptions = [
 	{ value: 'attachment', label: __( 'Attachment Page' ) },
@@ -70,16 +64,6 @@ class TiledGalleryEdit extends Component {
 			return { selectedImage: null };
 		}
 		return null;
-	}
-
-	componentDidMount() {
-		const { className } = this.props;
-
-		// @FIXME Can attributes change on mount be avoided?
-		// If block is missing a style class when mounting, set it to default
-		if ( ! hasStyleClass( className ) ) {
-			this.props.changeClassName( getDefaultStyleClass( LAYOUT_STYLES ) );
-		}
 	}
 
 	setAttributes( attributes ) {
@@ -274,15 +258,4 @@ class TiledGalleryEdit extends Component {
 	}
 }
 
-export default compose( [
-	withDispatch( ( dispatch, { clientId } ) => {
-		return {
-			changeClassName( newClassName ) {
-				dispatch( 'core/editor' ).updateBlockAttributes( clientId, {
-					className: newClassName,
-				} );
-			},
-		};
-	} ),
-	withNotices,
-] )( TiledGalleryEdit );
+export default withNotices( TiledGalleryEdit );
