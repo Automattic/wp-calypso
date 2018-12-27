@@ -91,12 +91,12 @@
 	}
 
 	.tiled-gallery__item__inline-menu {
-		padding: 2px;
-		position: absolute;
-		top: -2px;
-		right: -2px;
 		background-color: $tiled-gallery-selection;
 		display: inline-flex;
+		padding: 0 0 2px 2px;
+		position: absolute;
+		right: 0;
+		top: 0;
 
 		.components-button {
 			color: $white;
