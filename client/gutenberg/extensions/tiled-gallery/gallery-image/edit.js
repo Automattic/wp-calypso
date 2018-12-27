@@ -49,9 +49,8 @@ class GalleryImageEdit extends Component {
 		}
 	};
 
-	onKeyDown = event => {
+	onImageKeyDown = event => {
 		event.stopPropagation();
-		event.preventDefault();
 		if (
 			this.img.current === document.activeElement &&
 			this.props.isSelected &&
@@ -136,7 +135,7 @@ class GalleryImageEdit extends Component {
 					data-url={ origUrl }
 					data-width={ width }
 					onClick={ this.onImageClick }
-					onKeyDown={ this.onKeyDown }
+					onKeyDown={ this.onImageKeyDown }
 					ref={ this.img }
 					src={ url }
 					tabIndex="0"
