@@ -40,7 +40,6 @@ export default class Layout extends Component {
 	renderImage( img, i ) {
 		const {
 			columns,
-			imageCrop,
 			images,
 			isSave,
 			linkTo,
@@ -63,7 +62,6 @@ export default class Layout extends Component {
 				height={ img.height }
 				id={ img.id }
 				origUrl={ img.url }
-				imageCrop={ imageCrop }
 				isSelected={ selectedImage === i }
 				key={ i }
 				linkTo={ linkTo }
