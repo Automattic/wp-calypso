@@ -3,7 +3,7 @@
  */
 import classnames from 'classnames';
 import { BACKSPACE, DELETE } from '@wordpress/keycodes';
-import { Component, Fragment } from '@wordpress/element';
+import { Component, createRef, Fragment } from '@wordpress/element';
 import { IconButton, Spinner } from '@wordpress/components';
 import { isBlobURL } from '@wordpress/blob'; // @TODO Add dep Jetpack-side
 import { RichText } from '@wordpress/editor';
@@ -15,11 +15,11 @@ import { withSelect } from '@wordpress/data';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class GalleryImageEdit extends Component {
+	img = createRef();
+
 	state = {
 		captionSelected: false,
 	};
-
-	bindContainer = ref => void ( this.container = ref );
 
 	onSelectCaption = () => {
 		if ( ! this.state.captionSelected ) {
@@ -50,13 +50,13 @@ class GalleryImageEdit extends Component {
 	};
 
 	onKeyDown = event => {
+		event.stopPropagation();
+		event.preventDefault();
 		if (
-			this.container === document.activeElement &&
+			this.img.current === document.activeElement &&
 			this.props.isSelected &&
-			[ BACKSPACE, DELETE ].indexOf( event.keyCode ) !== -1
+			[ BACKSPACE, DELETE ].includes( event.keyCode )
 		) {
-			event.stopPropagation();
-			event.preventDefault();
 			this.props.onRemove();
 		}
 	};
@@ -129,16 +129,17 @@ class GalleryImageEdit extends Component {
 			/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */
 			<Fragment>
 				<img
-					src={ url }
 					alt={ alt }
-					data-id={ id }
+					aria-label={ ariaLabel }
 					data-height={ height }
+					data-id={ id }
 					data-url={ origUrl }
 					data-width={ width }
 					onClick={ this.onImageClick }
+					onKeyDown={ this.onKeyDown }
+					ref={ this.img }
+					src={ url }
 					tabIndex="0"
-					onKeyDown={ this.onImageClick }
-					aria-label={ ariaLabel }
 				/>
 				{ isBlobURL( origUrl ) && <Spinner /> }
 			</Fragment>
@@ -146,16 +147,12 @@ class GalleryImageEdit extends Component {
 		);
 
 		// Disable reason: Each block can be selected by clicking on it and we should keep the same saved markup
-		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 		return (
 			<figure
 				className={ classnames( 'tiled-gallery__item', {
 					'is-selected': isSelected,
 					'is-transient': isBlobURL( origUrl ),
 				} ) }
-				tabIndex="-1"
-				onKeyDown={ this.onKeyDown }
-				ref={ this.bindContainer }
 			>
 				{ isSelected && (
 					<div className="tiled-gallery__item__inline-menu">
@@ -181,7 +178,6 @@ class GalleryImageEdit extends Component {
 				) : null }
 			</figure>
 		);
-		/* eslint-enable jsx-a11y/no-noninteractive-element-interactions */
 	}
 }
 
