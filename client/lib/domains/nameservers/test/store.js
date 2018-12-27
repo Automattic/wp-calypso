@@ -33,19 +33,7 @@ describe( 'store', () => {
 		expect( NameserversStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
 			isFetching: false,
 			hasLoadedFromServer: false,
-			list: null,
-		} );
-	} );
-
-	test( 'should return an object with enabled isFetching flag when fetching domain data triggered', () => {
-		Dispatcher.handleViewAction( {
-			type: NAMESERVERS_FETCH,
-			domainName: DOMAIN_NAME,
-		} );
-
-		expect( NameserversStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
-			isFetching: true,
-			hasLoadedFromServer: false,
+			error: false,
 			list: null,
 		} );
 	} );
@@ -59,6 +47,21 @@ describe( 'store', () => {
 		expect( NameserversStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
 			isFetching: false,
 			hasLoadedFromServer: false,
+			error: true,
+			list: null,
+		} );
+	} );
+
+	test( 'should return an object with enabled isFetching flag when fetching domain data triggered', () => {
+		Dispatcher.handleViewAction( {
+			type: NAMESERVERS_FETCH,
+			domainName: DOMAIN_NAME,
+		} );
+
+		expect( NameserversStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
+			isFetching: true,
+			hasLoadedFromServer: false,
+			error: false,
 			list: null,
 		} );
 	} );
@@ -73,6 +76,7 @@ describe( 'store', () => {
 		expect( NameserversStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
 			isFetching: false,
 			hasLoadedFromServer: true,
+			error: false,
 			list: NAMSERVERS,
 		} );
 	} );
@@ -89,6 +93,7 @@ describe( 'store', () => {
 		expect( NameserversStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
 			isFetching: false,
 			hasLoadedFromServer: true,
+			error: false,
 			list: UPDATED_NAMESERVERS,
 		} );
 	} );
