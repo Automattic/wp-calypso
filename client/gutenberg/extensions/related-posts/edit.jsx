@@ -82,8 +82,8 @@ class RelatedPostsEdit extends Component {
 					} ) }
 				>
 					<div className={ previewClassName }>
-						{ displayPosts.map( ( post, i ) => (
-							<div className={ `${ previewClassName }-post` } key={ i }>
+						{ displayPosts.map( post => (
+							<div className={ `${ previewClassName }-post` } key={ post.id }>
 								{ displayThumbnails &&
 									post.img &&
 									post.img.src && (
