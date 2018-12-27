@@ -32,6 +32,12 @@ $tiled-gallery-max-column-count: 20;
 			}
 		}
 	}
+
+	&.is-style-rectangular {
+		.tiled-gallery__item {
+			display: flex;
+		}
+	}
 }
 
 .tiled-gallery__gallery {
@@ -69,7 +75,6 @@ $tiled-gallery-max-column-count: 20;
 	position: relative;
 	margin: 0;
 	overflow: hidden;
-	display: flex;
 
 	& + & {
 		margin-top: $tiled-gallery-gutter;
