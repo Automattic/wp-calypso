@@ -1,10 +1,16 @@
 /**
  * External Dependencies
  */
-import { defer, filter, pick, get } from 'lodash';
+import {
+	BlockControls,
+	InspectorControls,
+	MediaPlaceholder,
+	MediaUpload,
+	mediaUpload,
+} from '@wordpress/editor';
 import { compose } from '@wordpress/compose';
-import { withDispatch } from '@wordpress/data';
 import { createRef, Component, Fragment } from '@wordpress/element';
+import { defer, filter, pick, get } from 'lodash';
 import {
 	DropZone,
 	FormFileUpload,
@@ -15,13 +21,7 @@ import {
 	Toolbar,
 	withNotices,
 } from '@wordpress/components';
-import {
-	BlockControls,
-	InspectorControls,
-	MediaPlaceholder,
-	MediaUpload,
-	mediaUpload,
-} from '@wordpress/editor';
+import { withDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
