@@ -146,7 +146,7 @@ export function createSiteWithCart(
 			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 			vertical: siteVertical || undefined,
 			siteGoals: siteGoals || undefined,
-			siteStyle: siteStyle || undefined,
+			site_style: siteStyle || undefined,
 			site_information: siteInformation || undefined,
 			siteType: siteType || undefined,
 		},

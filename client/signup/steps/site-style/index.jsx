@@ -25,7 +25,7 @@ import { setSiteStyle } from 'state/signup/steps/site-style/actions';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteStyleOptions } from 'lib/signup/site-styles';
-import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
+import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
 
 /**
  * Style dependencies
@@ -46,41 +46,29 @@ export class SiteStyleStep extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-		const selectedStyle =
-			find( props.styleOptions, [ 'id', props.siteStyle ] ) || props.styleOptions[ 0 ];
-		this.state = {
-			siteStyle: selectedStyle.id,
-			themeSlugWithRepo: selectedStyle.theme,
-		};
-	}
-
 	componentDidMount() {
 		SignupActions.saveSignupStep( {
 			stepName: this.props.stepName,
 		} );
 	}
 
-	handleStyleOptionChange = event => {
-		const selectedStyle = find( this.props.styleOptions, [ 'id', event.currentTarget.value ] );
-		this.setState(
-			{
-				siteStyle: selectedStyle.id,
-				themeSlugWithRepo: selectedStyle.theme,
-			},
-			() => this.props.setSiteStyle( selectedStyle.id )
-		);
-	};
+	handleStyleOptionChange = event =>
+		this.props.setSiteStyle( this.getSelectedStyleDataById( event.currentTarget.value ).id );
 
 	handleSubmit = event => {
 		event.preventDefault();
-		this.props.submitSiteStyle( this.state );
+		this.props.submitSiteStyle( this.props.siteStyle, this.getSelectedStyleDataById().theme );
 	};
 
+	getSelectedStyleDataById( id ) {
+		return find( this.props.styleOptions, [ 'id', id || this.props.siteStyle ] );
+	}
+
 	renderStyleOptions() {
-		return this.props.styleOptions.map( siteStyleProperties => {
-			const isChecked = siteStyleProperties.id === this.state.siteStyle;
+		return this.props.styleOptions.map( ( siteStyleProperties, index ) => {
+			const isChecked = this.props.siteStyle
+				? siteStyleProperties.id === this.props.siteStyle
+				: 0 === index;
 			const optionLabelClasses = classNames( 'site-style__option-label', {
 				'is-checked': isChecked,
 				[ `site-style__variation-${ siteStyleProperties.id }` ]: siteStyleProperties.id,
@@ -152,7 +140,7 @@ export class SiteStyleStep extends Component {
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteStyle: ( { siteStyle, themeSlugWithRepo } ) => {
+	submitSiteStyle: ( siteStyle, themeSlugWithRepo ) => {
 		const { flowName, stepName, goToNextStep } = ownProps;
 		SignupActions.submitSignupStep(
 			{
@@ -175,7 +163,7 @@ export default connect(
 	state => ( {
 		siteStyle: getSiteStyle( state ),
 		siteType: getSiteType( state ),
-		styleOptions: getSiteStyleOptions( getSignupStepsSiteTopic( state ) ),
+		styleOptions: getSiteStyleOptions( getSiteVerticalName( state ) ),
 	} ),
 	mapDispatchToProps
 )( localize( SiteStyleStep ) );
