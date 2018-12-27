@@ -44,11 +44,9 @@ export function getDefaultStyleClass( styles ) {
  * Checks if className has a class selector starting with `is-style-`
  * Does not check validity of found style.
  *
- * @param {String} className Selector(s) separated by spaces
- * @return {Boolean} true if `className` has a
+ * @param  {String}  classNames Optional. Space separated classNames. Defaults to ''.
+ * @return {Boolean} true if `classNames` has a Gutenberg style class
  */
-export function hasStyleClass( className ) {
-	// @TODO check if it has a _valid_ style class
-	const tokens = new TokenList( className ).values();
-	return tokens.length ? Boolean( tokens.find( token => token.startsWith( 'is-style-' ) ) ) : false;
+export function hasStyleClass( classNames = '' ) {
+	return classNames.split( ' ' ).some( className => className.startsWith( 'is-style-' ) );
 }
