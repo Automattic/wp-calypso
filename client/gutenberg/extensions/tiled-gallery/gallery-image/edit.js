@@ -159,11 +159,11 @@ class GalleryImageEdit extends Component {
 				ref={ this.bindContainer }
 			>
 				{ isSelected && (
-					<div className="block-library-gallery-item__inline-menu">
+					<div className="tiled-gallery__item__inline-menu">
 						<IconButton
 							icon="no-alt"
 							onClick={ onRemove }
-							className="blocks-gallery-item__remove"
+							className="tiled-gallery__item__remove"
 							label={ __( 'Remove Image' ) }
 						/>
 					</div>

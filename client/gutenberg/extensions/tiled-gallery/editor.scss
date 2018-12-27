@@ -87,7 +87,7 @@
 		}
 	}
 
-	.block-library-gallery-item__inline-menu {
+	.tiled-gallery__item__inline-menu {
 		padding: 2px;
 		position: absolute;
 		top: -2px;
@@ -104,11 +104,11 @@
 		}
 	}
 
-	.blocks-gallery-item__remove {
+	.tiled-gallery__item__remove {
 		padding: 0;
 	}
 
-	.blocks-gallery-item .components-spinner {
+	.tiled-gallery__item .components-spinner {
 		position: absolute;
 		top: 50%;
 		left: 50%;
