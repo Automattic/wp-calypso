@@ -70,7 +70,7 @@ function applyColRatio( row, { rawHeight, rowWidth } ) {
 		col => ( rawHeight - MARGIN * col.children.length ) * getColumnRatio( col )[ 0 ]
 	);
 
-	const adjustedWidths = getRoundedConstrainedArray( colWidths, rowWidth - row.children.length );
+	const adjustedWidths = getRoundedConstrainedArray( colWidths, rowWidth );
 
 	cols.forEach( ( col, i ) => {
 		const rawWidth = colWidths[ i ];
