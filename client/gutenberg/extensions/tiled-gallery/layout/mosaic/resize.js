@@ -1,9 +1,17 @@
-/**
- * Internal dependencies
- */
-import { getRoundedConstrainedArray } from 'gutenberg/extensions/tiled-gallery/tiled-grid/constrained-array-rounding';
-
 const MARGIN = 4;
+
+/**
+ * Distribute a difference across ns so that their sum matches the target
+ *
+ * @param {Array<number>}  parts  Array of numbers to fit
+ * @param {number}         target Number that sum should match
+ * @return {Array<number>}        Adjusted parts
+ */
+function adjustFit( parts, target ) {
+	const diff = target - parts.reduce( ( sum, n ) => sum + n, 0 );
+	const partialDiff = diff / parts.length;
+	return parts.map( p => p + partialDiff );
+}
 
 export function handleRowResize( row, width ) {
 	applyRowRatio( row, getRowRatio( row ), width );
@@ -70,7 +78,7 @@ function applyColRatio( row, { rawHeight, rowWidth } ) {
 		col => ( rawHeight - MARGIN * col.children.length ) * getColumnRatio( col )[ 0 ]
 	);
 
-	const adjustedWidths = getRoundedConstrainedArray( colWidths, rowWidth );
+	const adjustedWidths = adjustFit( colWidths, rowWidth );
 
 	cols.forEach( ( col, i ) => {
 		const rawWidth = colWidths[ i ];
@@ -81,7 +89,7 @@ function applyColRatio( row, { rawHeight, rowWidth } ) {
 
 function applyImgRatio( col, { colHeight, width, rawWidth } ) {
 	const imgHeights = getColImgs( col ).map( img => rawWidth / getImageRatio( img ) );
-	const adjustedHeights = getRoundedConstrainedArray( imgHeights, colHeight );
+	const adjustedHeights = adjustFit( imgHeights, colHeight );
 
 	// Set size of col children, not the <img /> element
 	Array.from( col.children ).forEach( ( item, i ) => {
