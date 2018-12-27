@@ -13,6 +13,10 @@
 				outline: 4px solid $tiled-gallery-selection;
 			}
 
+			&.is-transient {
+				background: $tiled-gallery-transient-background-color;
+			}
+
 			.editor-rich-text {
 				position: absolute;
 				bottom: 0;
