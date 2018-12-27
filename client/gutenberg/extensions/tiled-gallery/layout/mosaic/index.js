@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { Component, createRef } from '@wordpress/element';
+import ResizeObserver from 'resize-observer-polyfill';
 
 /**
  * Internal dependencies
