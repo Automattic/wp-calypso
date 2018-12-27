@@ -76,7 +76,7 @@ class RelatedPostsEdit extends Component {
 				</BlockControls>
 
 				<div
-					className={ classNames( `${ className }`, {
+					className={ classNames( className, {
 						'is-grid': postLayout === 'grid',
 						[ `columns-${ postsToShow }` ]: postLayout === 'grid',
 					} ) }
