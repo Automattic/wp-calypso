@@ -59,6 +59,9 @@ export default class Mosaic extends Component {
 	observeResize() {
 		this.triggerResize();
 		this.ro = new ResizeObserver( this.handleGalleryResize );
+		if ( this.gallery.current ) {
+			this.ro.observe( this.gallery.current );
+		}
 	}
 
 	unobserveResize() {
