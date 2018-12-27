@@ -125,4 +125,11 @@
 			display: none;
 		}
 	}
+
+	// Matches with `.dashicon` in `MediaPlaceholder` component
+	.tiled-gallery__media-placeholder-icon {
+		height: 20px;
+		margin-right: 1ch; // stylelint-disable-line unit-whitelist
+		width: 20px;
+	}
 }
