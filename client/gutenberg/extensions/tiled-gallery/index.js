@@ -24,6 +24,11 @@ const blockAttributes = {
 		default: 'center',
 		type: 'string',
 	},
+	// Set default className (used with block styles)
+	className: {
+		default: `is-style-${ DEFAULT_LAYOUT }`,
+		type: 'string',
+	},
 	columns: {
 		type: 'number',
 	},
