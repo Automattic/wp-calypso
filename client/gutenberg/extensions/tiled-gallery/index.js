@@ -122,7 +122,7 @@ export const settings = {
 				transform: attributes => {
 					const validImages = filter( attributes.images, ( { id, url } ) => id && url );
 					if ( validImages.length > 0 ) {
-						return createBlock( name, {
+						return createBlock( `jetpack/${ name }`, {
 							images: validImages.map( ( { id, url, alt, caption } ) => ( {
 								id,
 								url,
@@ -131,7 +131,7 @@ export const settings = {
 							} ) ),
 						} );
 					}
-					return createBlock( name );
+					return createBlock( `jetpack/${ name }` );
 				},
 			},
 			{
