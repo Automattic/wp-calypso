@@ -22,6 +22,7 @@ import {
 	withNotices,
 } from '@wordpress/components';
 import { withDispatch } from '@wordpress/data';
+import ResizeObserver from 'resize-observer-polyfill';
 
 /**
  * Internal dependencies
