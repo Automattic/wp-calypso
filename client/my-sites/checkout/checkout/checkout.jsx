@@ -403,7 +403,7 @@ export class Checkout extends React.Component {
 						cartItems.hasPersonalPlan( cart ) ||
 						cartItems.hasPremiumPlan( cart )
 					) {
-						if ( abtest( 'showConciergeSessionUpsell' ) === 'show' ) {
+						if ( 'show' === abtest( 'showConciergeSessionUpsell' ) ) {
 							// A user just purchased one of the qualifying plans and is in the "show" ab test variation
 							// Show them the concierge session upsell page
 							return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
