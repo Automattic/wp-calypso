@@ -13,8 +13,8 @@
 				outline: 4px solid $tiled-gallery-selection;
 			}
 
-			&.is-transient {
-				background: $tiled-gallery-transient-background-color;
+			&.is-transient img {
+				opacity: 0.3;
 			}
 
 			.editor-rich-text {
