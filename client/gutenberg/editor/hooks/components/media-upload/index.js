@@ -67,24 +67,27 @@ export class MediaUpload extends Component {
 			return;
 		}
 
-		const { clientId, attributes } = getSelectedBlock();
+		const selectedBlock = getSelectedBlock();
+		if ( selectedBlock ) {
+			const { clientId, attributes } = selectedBlock;
 
-		if ( multiple ) {
-			const images = get( attributes, 'images', [] );
-			images.forEach( image => {
-				const mediaItem = MediaStore.get( siteId, image.id );
-				if ( mediaItem && image.url !== mediaItem.URL ) {
-					image.url = mediaItem.URL;
+			if ( multiple ) {
+				const images = get( attributes, 'images', [] );
+				images.forEach( image => {
+					const mediaItem = MediaStore.get( siteId, image.id );
+					if ( mediaItem && image.url !== mediaItem.URL ) {
+						image.url = mediaItem.URL;
+					}
+				} );
+
+				if ( images.length && ! isEqual( images, attributes.images ) ) {
+					updateBlockAttributes( clientId, { images: images } );
 				}
-			} );
-
-			if ( images.length && ! isEqual( images, attributes.images ) ) {
-				updateBlockAttributes( clientId, { images: images } );
-			}
-		} else {
-			const mediaItem = MediaStore.get( siteId, attributes.id );
-			if ( mediaItem && attributes.url !== mediaItem.URL ) {
-				updateBlockAttributes( clientId, { url: mediaItem.URL } );
+			} else {
+				const mediaItem = MediaStore.get( siteId, attributes.id );
+				if ( mediaItem && attributes.url !== mediaItem.URL ) {
+					updateBlockAttributes( clientId, { url: mediaItem.URL } );
+				}
 			}
 		}
 	};
