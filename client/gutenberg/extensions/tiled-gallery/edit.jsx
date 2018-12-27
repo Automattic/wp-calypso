@@ -28,6 +28,7 @@ import Layout from './layout';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { ALLOWED_MEDIA_TYPES, LAYOUT_STYLES, MAX_COLUMNS } from './constants';
 import { getActiveStyleName } from 'gutenberg/extensions/utils';
+import { icon } from '.';
 
 const linkOptions = [
 	{ value: 'attachment', label: __( 'Attachment Page' ) },
@@ -178,7 +179,7 @@ class TiledGalleryEdit extends Component {
 				<Fragment>
 					{ controls }
 					<MediaPlaceholder
-						icon="format-gallery"
+						icon={ <div className="tiled-gallery__media-placeholder-icon">{ icon }</div> }
 						className={ className }
 						labels={ {
 							title: __( 'Tiled gallery' ),
