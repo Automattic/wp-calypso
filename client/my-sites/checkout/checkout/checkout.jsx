@@ -396,22 +396,22 @@ export class Checkout extends React.Component {
 				cartItems.hasDomainRegistration( cart )
 			) {
 				const domainsForGSuite = this.getEligibleDomainFromCart();
-
-				if ( config.isEnabled( 'upsell/concierge-session' ) ) {
-					if (
-						cartItems.hasBloggerPlan( cart ) ||
-						cartItems.hasPersonalPlan( cart ) ||
-						cartItems.hasPremiumPlan( cart )
-					) {
-						if ( 'show' === abtest( 'showConciergeSessionUpsell' ) ) {
-							// A user just purchased one of the qualifying plans and is in the "show" ab test variation
-							// Show them the concierge session upsell page
-							return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
+				if ( domainsForGSuite.length ) {
+					if ( config.isEnabled( 'upsell/concierge-session' ) ) {
+						if (
+							cartItems.hasBloggerPlan( cart ) ||
+							cartItems.hasPersonalPlan( cart ) ||
+							cartItems.hasPremiumPlan( cart )
+						) {
+							// Assign a test group as late as possible
+							if ( 'show' === abtest( 'showConciergeSessionUpsell' ) ) {
+								// A user just purchased one of the qualifying plans and is in the "show" ab test variation
+								// Show them the concierge session upsell page
+								return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
+							}
 						}
 					}
-				}
 
-				if ( domainsForGSuite.length ) {
 					return `/checkout/${ selectedSiteSlug }/with-gsuite/${
 						domainsForGSuite[ 0 ].meta
 					}/${ receiptId }`;
