@@ -72,8 +72,8 @@ export class MediaUpload extends Component {
 		if ( multiple ) {
 			const images = get( attributes, 'images', [] );
 			images.forEach( image => {
-				const mediaItem = MediaStore.get( siteId, parseInt( image.id ) );
-				if ( image.url !== mediaItem.URL ) {
+				const mediaItem = MediaStore.get( siteId, image.id );
+				if ( mediaItem && image.url !== mediaItem.URL ) {
 					image.url = mediaItem.URL;
 				}
 			} );
@@ -82,12 +82,9 @@ export class MediaUpload extends Component {
 				updateBlockAttributes( clientId, { images: images } );
 			}
 		} else {
-			const mediaId = get( attributes, 'id' );
-			if ( mediaId ) {
-				const mediaItem = MediaStore.get( siteId, parseInt( attributes.id ) );
-				if ( attributes.url !== mediaItem.URL ) {
-					updateBlockAttributes( clientId, { url: mediaItem.URL } );
-				}
+			const mediaItem = MediaStore.get( siteId, attributes.id );
+			if ( mediaItem && attributes.url !== mediaItem.URL ) {
+				updateBlockAttributes( clientId, { url: mediaItem.URL } );
 			}
 		}
 	};
