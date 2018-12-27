@@ -16,7 +16,10 @@ import StepWrapper from 'signup/step-wrapper';
 import FormFieldset from 'components/forms/form-fieldset';
 import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
 import { submitSiteVertical, setSiteVertical } from 'state/signup/steps/site-vertical/actions';
-import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
+import {
+	getSiteVerticalName,
+	getSiteVerticalSlug,
+} from 'state/signup/steps/site-vertical/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
@@ -45,6 +48,7 @@ class SiteTopicStep extends Component {
 		super( props );
 		this.state = {
 			siteTopicValue: props.siteTopic || '',
+			siteTopicSlug: props.siteSlug || '',
 		};
 	}
 
@@ -55,13 +59,17 @@ class SiteTopicStep extends Component {
 	}
 
 	onSiteTopicChange = ( { vertical_name, vertical_slug } ) => {
-		this.setState( {
-			siteTopicValue: vertical_name,
-			siteTopicSlug: vertical_slug,
-		} );
-		if ( this.props.flowName === 'onboarding-dev' ) {
-			this.props.setSiteTopic( vertical_name );
-		}
+		this.setState(
+			{
+				siteTopicValue: vertical_name,
+				siteTopicSlug: vertical_slug,
+			},
+			() => {
+				if ( this.props.flowName === 'onboarding-dev' ) {
+					this.props.setSiteTopic( this.state );
+				}
+			}
+		);
 	};
 
 	onSubmit = event => {
@@ -89,8 +97,9 @@ class SiteTopicStep extends Component {
 	}
 
 	getTextFromSiteType() {
-		const headerText = getSiteTypePropertyValue( 'slug', this.props.siteType, 'siteTopicHeader' ) || '';
-		// once we have more granular copies per segments, these two should only be used for the default case.
+		// once we have more granular copies per segments, these should only be used for the default case.
+		const headerText =
+			getSiteTypePropertyValue( 'slug', this.props.siteType, 'siteTopicHeader' ) || '';
 		const commonSubHeaderText = '';
 
 		return {
@@ -130,13 +139,13 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 			} )
 		);
 
-		dispatch( submitSiteVertical( { name: siteTopicValue } ) );
+		dispatch( submitSiteVertical( { name: siteTopicValue, slug: siteTopicSlug } ) );
 
 		goToNextStep( flowName );
 	},
 
-	setSiteTopic: siteTopic => {
-		dispatch( setSiteVertical( { name: siteTopic } ) );
+	setSiteTopic: ( { siteTopicSlug, siteTopicValue } ) => {
+		dispatch( setSiteVertical( { name: siteTopicValue, slug: siteTopicSlug } ) );
 	},
 } );
 
@@ -144,6 +153,7 @@ export default localize(
 	connect(
 		state => ( {
 			siteTopic: getSiteVerticalName( state ),
+			siteSlug: getSiteVerticalSlug( state ),
 			siteType: getSiteType( state ),
 		} ),
 		mapDispatchToProps
