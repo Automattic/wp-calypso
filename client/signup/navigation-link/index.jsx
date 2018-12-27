@@ -44,12 +44,12 @@ export class NavigationLink extends Component {
 	};
 
 	/**
-	 * Returns the previous step name, skipping over steps with the
+	 * Returns the previous step , skipping over steps with the
 	 * `wasSkipped` property.
 	 *
-	 * @return {string|null} The previous step name
+	 * @return {Object} The previous step object
 	 */
-	getPreviousStepName() {
+	getPreviousStep() {
 		const { stepName, signupProgress } = this.props;
 
 		const currentStepIndex = findIndex( signupProgress, { stepName } );
@@ -59,7 +59,7 @@ export class NavigationLink extends Component {
 			step => ! step.wasSkipped
 		);
 
-		return previousStep ? previousStep.stepName : null;
+		return previousStep || { stepName: null };
 	}
 
 	getBackUrl() {
@@ -71,15 +71,15 @@ export class NavigationLink extends Component {
 			return this.props.backUrl;
 		}
 
-		const previousStepName = this.getPreviousStepName();
+		const previousStep = this.getPreviousStep();
 
 		const stepSectionName = get(
-			find( this.props.signupProgress, { stepName: previousStepName } ),
+			find( this.props.signupProgress, { stepName: previousStep.stepName } ),
 			'stepSectionName',
 			''
 		);
 
-		return getStepUrl( this.props.flowName, previousStepName, stepSectionName, getLocaleSlug() );
+		return getStepUrl( previousStep.lastKnownFlow || this.props.flowName, previousStep.stepName, stepSectionName, getLocaleSlug() );
 	}
 
 	handleClick = () => {
