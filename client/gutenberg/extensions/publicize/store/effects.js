@@ -19,9 +19,12 @@ import { setConnectionTestResults } from './actions';
 export async function refreshConnectionTestResults( action, store ) {
 	const { dispatch } = store;
 
-	const results = await apiFetch( { path: '/wpcom/v2/publicize/connection-test-results' } );
-
-	return dispatch( setConnectionTestResults( results ) );
+	try {
+		const results = await apiFetch( { path: '/wpcom/v2/publicize/connection-test-results' } );
+		return dispatch( setConnectionTestResults( results ) );
+	} catch ( error ) {
+		// Refreshing connections failed
+	}
 }
 
 export default {
