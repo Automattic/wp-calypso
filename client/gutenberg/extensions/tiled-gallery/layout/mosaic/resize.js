@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { getRoundedConstrainedArray } from 'gutenberg/extensions/tiled-gallery/tiled-grid/constrained-array-rounding';
 
 const MARGIN = 4;
 
@@ -55,19 +56,36 @@ function applyRowRatio( row, [ ratio, weightedRatio ], width ) {
 	const rawHeight =
 		( 1 / ratio ) *
 		( width - MARGIN * row.children.length * ( row.children.length - weightedRatio ) );
-	const height = Math.round( rawHeight );
 
-	row.setAttribute( 'style', `height:${ height }px;` );
-
-	applyColRatio( row, { height, rawHeight } );
+	applyColRatio( row, {
+		rawHeight,
+		rowWidth: width - MARGIN * row.children.length,
+	} );
 }
 
-function applyColRatio( row, { height, rawHeight } ) {
-	getRowCols( row ).forEach( col => {
-		/* Calculate and set column width */
-		const width = Math.round(
-			( rawHeight - MARGIN * col.children.length ) * getColumnRatio( col )[ 0 ]
-		);
-		col.setAttribute( 'style', `height:${ height }px;width:${ width }px;` );
+function applyColRatio( row, { rawHeight, rowWidth } ) {
+	const cols = getRowCols( row );
+
+	const colWidths = cols.map(
+		col => ( rawHeight - MARGIN * col.children.length ) * getColumnRatio( col )[ 0 ]
+	);
+
+	const adjustedWidths = getRoundedConstrainedArray( colWidths, rowWidth );
+
+	cols.forEach( ( col, i ) => {
+		const rawWidth = colWidths[ i ];
+		const width = adjustedWidths[ i ];
+		applyImgRatio( col, { colHeight: rawHeight - MARGIN * col.children.length, width, rawWidth } );
+	} );
+}
+
+function applyImgRatio( col, { colHeight, width, rawWidth } ) {
+	const imgHeights = getColImgs( col ).map( img => rawWidth / getImageRatio( img ) );
+	const adjustedHeights = getRoundedConstrainedArray( imgHeights, colHeight );
+
+	// Set size of col children, not the <img /> element
+	Array.from( col.children ).forEach( ( item, i ) => {
+		const height = adjustedHeights[ i ];
+		item.setAttribute( 'style', `height:${ height }px;width:${ width }px;` );
 	} );
 }
