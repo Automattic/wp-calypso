@@ -34,7 +34,7 @@
 			color: $white;
 		}
 
-		.is-selected .editor-rich-text {
+		&.is-selected .editor-rich-text {
 			// IE calculates this incorrectly, so leave it to modern browsers.
 			@supports ( position: sticky ) {
 				right: 0;
