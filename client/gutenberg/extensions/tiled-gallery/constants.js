@@ -23,12 +23,10 @@ export const LAYOUT_STYLES = [
 		label: _x( 'Square tiles', 'Tiled gallery layout' ),
 		name: 'square',
 	},
-	/* Unimplemented
 	{
 		label: _x( 'Tiled columns', 'Tiled gallery layout' ),
 		name: 'columns',
 	},
-	*/
 ];
 export const MAX_COLUMNS = 20;
 export const PHOTON_MAX_RESIZE = 2000;
