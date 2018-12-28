@@ -15,7 +15,7 @@ const { updateBlockAttributes, editPost } = dispatch( 'core/editor' );
 const { getBlocks, getEditedPostAttribute } = select( 'core/editor' );
 
 /**
- * Update the previewed images on the post when they are edited within ght Media Modal
+ * Update the previewed images on the post when they are edited within the Media Modal
  */
 class EditedImagesUpdater {
 	editedImages = [];
@@ -90,7 +90,7 @@ class EditedImagesUpdater {
 		block,
 		imagesAttrName = 'images',
 		urlAttrName = 'url',
-		idAttrName = 'id '
+		idAttrName = 'id'
 	) => {
 		const images = block.attributes[ imagesAttrName ];
 		images.forEach( image => {
