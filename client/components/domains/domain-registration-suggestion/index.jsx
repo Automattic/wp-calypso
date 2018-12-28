@@ -49,6 +49,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		uiPosition: PropTypes.number,
 		fetchAlgo: PropTypes.string,
 		query: PropTypes.string,
+		pendingCheckSuggestion: PropTypes.object,
 	};
 
 	componentDidMount() {
@@ -102,6 +103,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			selectedSite,
 			suggestion,
 			translate,
+			pendingCheckSuggestion,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
@@ -119,8 +121,18 @@ class DomainRegistrationSuggestion extends React.Component {
 					  } )
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
+
+		let buttonProps = { primary: true };
+		if ( pendingCheckSuggestion ) {
+			if ( pendingCheckSuggestion.domain_name === suggestion.domain_name ) {
+				buttonProps = { primary: true, busy: true };
+			} else {
+				buttonProps = { primary: true, disabled: true };
+			}
+		}
 		return {
 			buttonContent,
+			buttonProps,
 		};
 	}
 
