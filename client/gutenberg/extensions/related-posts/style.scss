@@ -3,7 +3,7 @@ $dark-gray-300: #6c7781;
 
 .wp-block-jetpack-related-posts {
 	.related-posts__preview {
-		.is-grid & {
+		&.is-grid {
 			display: flex;
 			margin: 0 -10px;
 		}
