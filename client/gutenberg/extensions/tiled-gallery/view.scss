@@ -92,7 +92,6 @@ $tiled-gallery-max-column-count: 20;
 		color: $white;
 		text-align: center;
 		font-size: $root-font-size;
-		// @TODO: conflicting linting rules
 		// stylelint-disable function-parentheses-space-inside
 		background: linear-gradient(
 			0deg,

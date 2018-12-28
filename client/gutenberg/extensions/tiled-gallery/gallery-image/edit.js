@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import { BACKSPACE, DELETE } from '@wordpress/keycodes';
 import { Component, createRef, Fragment } from '@wordpress/element';
 import { IconButton, Spinner } from '@wordpress/components';
-import { isBlobURL } from '@wordpress/blob'; // @TODO Add dep Jetpack-side
+import { isBlobURL } from '@wordpress/blob';
 import { RichText } from '@wordpress/editor';
 import { withSelect } from '@wordpress/data';
 
@@ -34,7 +34,6 @@ class GalleryImageEdit extends Component {
 	};
 
 	onImageClick = e => {
-		// Don't let click event trigger naviagtion on <a>. @TODO How does g7g handle this?
 		e.preventDefault();
 		e.stopPropagation();
 

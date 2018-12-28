@@ -30,3 +30,4 @@ export const LAYOUT_STYLES = [
 	*/
 ];
 export const MAX_COLUMNS = 20;
+export const PHOTON_MAX_RESIZE = 2000;
