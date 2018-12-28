@@ -137,11 +137,6 @@ export default compose(
 		hasActiveMetaboxes: select( 'core/edit-post' ).hasMetaBoxes(),
 		isSaving: select( 'core/edit-post' ).isSavingMetaBoxes(),
 		isRichEditingEnabled: select( 'core/editor' ).getEditorSettings().richEditingEnabled,
-		// GUTENLYPSO START
-		post: select( 'core/editor' ).getCurrentPost(),
-		postType: select( 'core/editor' ).getCurrentPostType(),
-		isTrash: 'trash' === select( 'core/editor' ).getEditedPostAttribute( 'status' ),
-		// GUTENLYPSO END
 	} ) ),
 	withDispatch( dispatch => {
 		const { closePublishSidebar, togglePublishSidebar } = dispatch( 'core/edit-post' );
