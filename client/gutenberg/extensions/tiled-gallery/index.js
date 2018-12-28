@@ -9,7 +9,7 @@ import { Path, SVG } from '@wordpress/components';
  * Internal dependencies
  */
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import edit from './edit';
+import edit, { defaultColumnsNumber } from './edit';
 import save from './save';
 import { DEFAULT_LAYOUT, LAYOUT_STYLES } from './constants';
 
@@ -97,6 +97,8 @@ export const icon = (
 	</SVG>
 );
 
+const supportedAligns = [ 'center', 'wide', 'full' ];
+
 export const settings = {
 	attributes: blockAttributes,
 	category: 'jetpack',
@@ -109,7 +111,7 @@ export const settings = {
 	],
 	styles: LAYOUT_STYLES,
 	supports: {
-		align: [ 'center', 'wide', 'full' ],
+		align: supportedAligns,
 		customClassName: false,
 		html: false,
 	},
@@ -121,17 +123,31 @@ export const settings = {
 				blocks: [ 'core/gallery' ],
 				transform: attributes => {
 					const validImages = filter( attributes.images, ( { id, url } ) => id && url );
+
+					const galleryAttributes = {
+						align: supportedAligns.includes( attributes.align )
+							? attributes.align
+							: blockAttributes.align.default,
+						className: blockAttributes.className.default,
+						columns:
+							parseInt( attributes.columns, 10 ) || defaultColumnsNumber( { images: validImages } ),
+						linkTo: attributes.linkTo || blockAttributes.linkTo.default,
+					};
+
 					if ( validImages.length > 0 ) {
-						return createBlock( name, {
-							images: validImages.map( ( { id, url, alt, caption } ) => ( {
-								id,
-								url,
-								alt,
-								caption,
-							} ) ),
+						const images = validImages.map( ( { id, url, alt, caption } ) => ( {
+							id,
+							url,
+							alt,
+							caption,
+						} ) );
+
+						return createBlock( `jetpack/${ name }`, {
+							...galleryAttributes,
+							images,
 						} );
 					}
-					return createBlock( name );
+					return createBlock( `jetpack/${ name }`, galleryAttributes );
 				},
 			},
 			{
