@@ -13,9 +13,7 @@ import GalleryImageEdit from '../gallery-image/edit';
 import GalleryImageSave from '../gallery-image/save';
 import Mosaic from './mosaic';
 import Square from './square';
-
-// @TODO put in consts?
-const PHOTON_MAX_RESIZE = 2000;
+import { PHOTON_MAX_RESIZE } from '../constants';
 
 export default class Layout extends Component {
 	photonize( { height, width, url } ) {
