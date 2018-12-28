@@ -69,7 +69,7 @@ class GalleryImageEdit extends Component {
 	}
 
 	componentDidUpdate() {
-		const { alt, height, image, url, width } = this.props;
+		const { alt, height, image, link, url, width } = this.props;
 
 		if ( image ) {
 			const nextAtts = {};
@@ -85,6 +85,9 @@ class GalleryImageEdit extends Component {
 			}
 			if ( ! height && image.media_details && image.media_details.height ) {
 				nextAtts.height = +image.media_details.height;
+			}
+			if ( ! link && image.link ) {
+				nextAtts.link = image.link;
 			}
 
 			if ( Object.keys( nextAtts ).length ) {
@@ -131,6 +134,7 @@ class GalleryImageEdit extends Component {
 					aria-label={ ariaLabel }
 					data-height={ height }
 					data-id={ id }
+					data-link={ link }
 					data-url={ origUrl }
 					data-width={ width }
 					onClick={ this.onImageClick }

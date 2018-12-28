@@ -62,6 +62,7 @@ export default class Layout extends Component {
 				origUrl={ img.url }
 				isSelected={ selectedImage === i }
 				key={ i }
+				link={ img.link }
 				linkTo={ linkTo }
 				onRemove={ isSave ? undefined : onRemoveImage( i ) }
 				onSelect={ isSave ? undefined : onSelectImage( i ) }
