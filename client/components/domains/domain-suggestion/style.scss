@@ -132,7 +132,7 @@
 	padding: 0.25em 3em;
 	float: right;
 
-	&.is-primary {
+	&.is-primary:not( :disabled ) {
 		color: $white;
 		transition: all 0.1s linear;
 
@@ -140,7 +140,9 @@
 			background-color: lighten( $blue-medium, 4% );
 			border-color: darken( $blue-medium, 4% );
 		}
+	}
 
+	&.is-primary {
 		@include breakpoint( '>480px' ) {
 			margin-left: 1em;
 			margin-top: 0;
