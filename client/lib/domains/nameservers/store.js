@@ -3,7 +3,6 @@
 /**
  * Internal dependencies
  */
-
 import { createReducerStore } from 'lib/store';
 import { initialDomainState, reducer } from './reducer';
 

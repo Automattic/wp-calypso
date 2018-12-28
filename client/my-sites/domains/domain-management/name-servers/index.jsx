@@ -27,6 +27,7 @@ import { WPCOM_DEFAULTS, isWpcomDefaults } from 'lib/domains/nameservers';
 import { getSelectedDomain } from 'lib/domains';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
+import FetchError from './fetch-error';
 
 class NameServers extends React.Component {
 	static propTypes = {
@@ -68,7 +69,7 @@ class NameServers extends React.Component {
 	}
 
 	isLoading() {
-		return this.props.isRequestingSiteDomains || ! this.props.nameservers.hasLoadedFromServer;
+		return this.props.isRequestingSiteDomains || this.props.nameservers.isFetching;
 	}
 
 	isPendingTransfer() {
@@ -78,6 +79,10 @@ class NameServers extends React.Component {
 	}
 
 	getContent() {
+		if ( this.props.nameservers.error ) {
+			return <FetchError selectedDomainName={ this.props.selectedDomainName } />;
+		}
+
 		const domain = getSelectedDomain( this.props );
 
 		return (
