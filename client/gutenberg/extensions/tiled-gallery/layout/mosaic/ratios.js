@@ -56,7 +56,6 @@ export function ratiosToColumns( ratios ) {
 		} ).length;
 		row.push( colSize );
 		toProcess = drop( toProcess, colSize );
-		i++;
 	}
 
 	// Don't calculate last column, just add what's left
