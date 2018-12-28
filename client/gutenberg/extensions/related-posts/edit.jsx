@@ -75,13 +75,13 @@ class RelatedPostsEdit extends Component {
 					<Toolbar controls={ layoutControls } />
 				</BlockControls>
 
-				<div className={ className }>
-					<div
-						className={ classNames( previewClassName, {
-							'is-grid': postLayout === 'grid',
-							[ `columns-${ postsToShow }` ]: postLayout === 'grid',
-						} ) }
-					>
+				<div
+					className={ classNames( className, {
+						'is-grid': postLayout === 'grid',
+						[ `columns-${ postsToShow }` ]: postLayout === 'grid',
+					} ) }
+				>
+					<div className={ previewClassName }>
 						{ displayPosts.map( post => (
 							<div className={ `${ previewClassName }-post` } key={ post.id }>
 								{ displayThumbnails &&
