@@ -32,6 +32,12 @@ $tiled-gallery-max-column-count: 20;
 			}
 		}
 	}
+
+	&.is-style-rectangular {
+		.tiled-gallery__item {
+			display: flex;
+		}
+	}
 }
 
 .tiled-gallery__gallery {
@@ -80,6 +86,8 @@ $tiled-gallery-max-column-count: 20;
 		height: auto;
 		max-width: 100%;
 		width: 100%;
+		object-fit: cover;
+		object-position: center;
 	}
 
 	figcaption {
