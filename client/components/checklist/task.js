@@ -26,14 +26,15 @@ class Task extends PureComponent {
 		completedTitle: PropTypes.node,
 		description: PropTypes.node,
 		duration: PropTypes.string,
+		isWarning: PropTypes.bool,
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
-	renderCheckmarkIcon( completed ) {
-		const { translate } = this.props;
+	renderCheckmarkIcon() {
+		const { completed, isWarning, translate } = this.props;
 		const onDismiss = ! completed ? this.props.onDismiss : undefined;
 
 		if ( onDismiss ) {
@@ -46,7 +47,7 @@ class Task extends PureComponent {
 					<ScreenReaderText>
 						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
 					</ScreenReaderText>
-					<Gridicon icon="checkmark" size={ 18 } />
+					{ this.renderGridicon() }
 				</Focusable>
 			);
 		}
@@ -55,12 +56,33 @@ class Task extends PureComponent {
 			return (
 				<div className="checklist__task-icon">
 					<ScreenReaderText>{ translate( 'Complete' ) }</ScreenReaderText>
-					<Gridicon icon="checkmark" size={ 18 } />
+					{ this.renderGridicon() }
+				</div>
+			);
+		}
+
+		if ( isWarning ) {
+			return (
+				<div>
+					<ScreenReaderText>{ translate( 'Warning' ) }</ScreenReaderText>
+					{ this.renderGridicon() }
 				</div>
 			);
 		}
 
 		return null;
+	}
+
+	renderGridicon() {
+		const { isWarning } = this.props;
+		return isWarning ? (
+			<div>
+				<div className="checklist__task-warning-background" />
+				<Gridicon icon={ 'notice-outline' } size={ 24 } />
+			</div>
+		) : (
+			<Gridicon icon={ 'checkmark' } size={ 18 } />
+		);
 	}
 
 	render() {
@@ -72,6 +94,7 @@ class Task extends PureComponent {
 			completedTitle,
 			description,
 			duration,
+			isWarning,
 			onClick,
 			title,
 			translate,
@@ -84,6 +107,7 @@ class Task extends PureComponent {
 		return (
 			<CompactCard
 				className={ classNames( 'checklist__task', {
+					warning: isWarning,
 					'is-completed': completed,
 					'has-actionlink': hasActionlink,
 					'is-collapsed': isCollapsed,
@@ -116,7 +140,7 @@ class Task extends PureComponent {
 					) }
 				</div>
 
-				{ this.renderCheckmarkIcon( completed ) }
+				{ this.renderCheckmarkIcon() }
 			</CompactCard>
 		);
 	}

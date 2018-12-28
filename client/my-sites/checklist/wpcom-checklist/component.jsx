@@ -66,6 +66,7 @@ class WpcomChecklistComponent extends PureComponent {
 			site_launched: this.renderSiteLaunchedTask,
 			email_setup: this.renderEmailSetupTask,
 			email_forwarding_upgraded_to_gsuite: this.renderEmailForwardingUpgradedToGSuiteTask,
+			gsuite_tos_accepted: this.renderGSuiteTOSAcceptedTask,
 		};
 	}
 
@@ -599,10 +600,9 @@ class WpcomChecklistComponent extends PureComponent {
 		);
 	};
 
-	renderAcceptGSuiteTOS = ( TaskComponent, baseProps, task ) => {
-		const { domains, translate, siteSlug } = this.props;
+	renderGSuiteTOSAcceptedTask = ( TaskComponent, baseProps, task ) => {
+		const { domains, translate } = this.props;
 
-		// TODO: can domains ever be empty?
 		const domainName = domains[ 0 ].name;
 		const users = domains[ 0 ].googleAppsSubscription.pendingUsers;
 
@@ -611,12 +611,12 @@ class WpcomChecklistComponent extends PureComponent {
 				{ ...baseProps }
 				title={ translate( 'Accept the G Suite TOS to complete email setup' ) }
 				description={ translate( "You're almost done setting up G Suite!" ) }
+				isWarning={ true }
 				onClick={ () => {
 					this.trackTaskStart( task, {
 						sub_step_name: 'fix_gsuite_tos_acceptance',
 					} );
-					page( `/domains/manage/email/${ siteSlug }` );
-					window.location.href = getLoginUrl( users[ 0 ], domainName );
+					window.location = getLoginUrl( users[ 0 ], domainName );
 				} }
 			/>
 		);

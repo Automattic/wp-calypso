@@ -63,8 +63,8 @@ export default class WpcomTaskList {
 				addTask( 'email_forwarding_upgraded_to_gsuite' );
 			}
 
-			if ( hasTask( 'accept_gsuite_tos' ) ) {
-				addTask( 'accept_gsuite_tos' );
+			if ( hasTask( 'gsuite_tos_accepted' ) ) {
+				addTask( 'gsuite_tos_accepted' );
 			}
 		}
 

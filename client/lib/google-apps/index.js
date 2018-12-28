@@ -32,4 +32,12 @@ function formatPrice( cost, currencyCode, options = {} ) {
 	return formatCurrency( cost, currencyCode, cost % 1 > 0 ? {} : { precision: 0 } );
 }
 
-export { getAnnualPrice, getMonthlyPrice, googleAppsSettingsUrl, formatPrice };
+function getLoginUrl( email, domain ) {
+	return (
+		`https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel` +
+		`&continue=https%3A%2F%2Fadmin.google.com%2F${ domain }` +
+		'%2FAcceptTermsOfService%3Fcontinue%3Dhttps%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F1'
+	);
+}
+
+export { getAnnualPrice, getMonthlyPrice, googleAppsSettingsUrl, formatPrice, getLoginUrl };
