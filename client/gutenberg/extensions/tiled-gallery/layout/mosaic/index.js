@@ -11,7 +11,7 @@ import Column from '../column';
 import Gallery from '../gallery';
 import Row from '../row';
 import { getGalleryRows, handleRowResize } from './resize';
-import { imagesToRatios, ratiosToRows } from './ratios';
+import { imagesToRatios, ratiosToColumns, ratiosToMosaicRows } from './ratios';
 
 export default class Mosaic extends Component {
 	gallery = createRef();
@@ -76,9 +76,13 @@ export default class Mosaic extends Component {
 	}
 
 	render() {
-		const { images, align, renderedImages } = this.props;
+		const { align, images, layoutStyle, renderedImages } = this.props;
+
 		const ratios = imagesToRatios( images );
-		const rows = ratiosToRows( ratios, { isWide: [ 'full', 'wide' ].includes( align ) } );
+		const rows =
+			'columns' === layoutStyle
+				? ratiosToColumns( ratios )
+				: ratiosToMosaicRows( ratios, { isWide: [ 'full', 'wide' ].includes( align ) } );
 
 		let cursor = 0;
 		return (

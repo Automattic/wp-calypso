@@ -77,11 +77,7 @@ export default class Layout extends Component {
 		const { align, children, className, columns, images, layoutStyle } = this.props;
 
 		// eslint-disable-next-line no-nested-ternary
-		const LayoutRenderer = isSquareishLayout( layoutStyle )
-			? Square
-			: 'columns' === layoutStyle
-				? Square
-				: Mosaic;
+		const LayoutRenderer = isSquareishLayout( layoutStyle ) ? Square : Mosaic;
 
 		const renderedImages = this.props.images.map( this.renderImage, this );
 
@@ -91,6 +87,7 @@ export default class Layout extends Component {
 					align={ align }
 					columns={ columns }
 					images={ images }
+					layoutStyle={ layoutStyle }
 					renderedImages={ renderedImages }
 				/>
 				{ children }
