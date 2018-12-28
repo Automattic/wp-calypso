@@ -49,7 +49,9 @@ export function ratiosToColumns( ratios ) {
 	for ( let i = 0; i <= columnCount - 1; i++ ) {
 		const colSize = takeWhile( toProcess, ratio => {
 			const shouldTake = accumulatedRatio <= ( i + 1 ) * targetColRatio;
-			accumulatedRatio += ratio;
+			if ( shouldTake ) {
+				accumulatedRatio += ratio;
+			}
 			return shouldTake;
 		} ).length;
 		row.push( colSize );
