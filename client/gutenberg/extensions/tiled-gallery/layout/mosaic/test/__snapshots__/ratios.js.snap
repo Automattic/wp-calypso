@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ratiosToRows transforms as expected 1`] = `
+exports[`ratiosToMosaicRows transforms as expected 1`] = `
 Array [
   Array [
     1,
