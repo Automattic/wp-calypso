@@ -279,7 +279,7 @@ class Signup extends React.Component {
 				surveyQuestion: vertical,
 			} );
 
-			this.props.submitSiteVertical( { name: vertical } );
+			this.props.submitSiteVertical( { name: vertical }, siteTopicStepName );
 
 			// Track our landing page verticals
 			if ( isValidLandingPageVertical( vertical ) ) {
