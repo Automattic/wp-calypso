@@ -124,7 +124,7 @@ export const settings = {
 				transform: attributes => {
 					const validImages = filter( attributes.images, ( { id, url } ) => id && url );
 
-					const galleryAttributes = {
+					const newAttributes = {
 						align: supportedAligns.includes( attributes.align )
 							? attributes.align
 							: blockAttributes.align.default,
@@ -143,11 +143,11 @@ export const settings = {
 						} ) );
 
 						return createBlock( `jetpack/${ name }`, {
-							...galleryAttributes,
+							...newAttributes,
 							images,
 						} );
 					}
-					return createBlock( `jetpack/${ name }`, galleryAttributes );
+					return createBlock( `jetpack/${ name }`, newAttributes );
 				},
 			},
 			{
