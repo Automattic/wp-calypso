@@ -14,7 +14,6 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import Button from 'components/button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -96,21 +95,15 @@ export class SiteStyleStep extends Component {
 	}
 
 	renderContent = () => (
-		<div className="site-style__wrapper">
-			<Card>
-				<div className="site-style__form-wrapper">
-					<form className="site-style__form" onSubmit={ this.handleSubmit }>
-						<FormFieldset className="site-style__fieldset">
-							{ this.renderStyleOptions() }
-						</FormFieldset>
-						<div className="site-style__submit-wrapper">
-							<Button primary={ true } type="submit">
-								{ this.props.translate( 'Continue' ) }
-							</Button>
-						</div>
-					</form>
+		<div className="site-style__form-wrapper">
+			<form className="site-style__form" onSubmit={ this.handleSubmit }>
+				<FormFieldset className="site-style__fieldset">{ this.renderStyleOptions() }</FormFieldset>
+				<div className="site-style__submit-wrapper">
+					<Button primary={ true } type="submit">
+						{ this.props.translate( 'Continue' ) }
+					</Button>
 				</div>
-			</Card>
+			</form>
 		</div>
 	);
 

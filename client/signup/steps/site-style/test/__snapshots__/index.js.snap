@@ -8,68 +8,59 @@ exports[`<SiteStyleStep /> should render 1`] = `
     headerText="Choose a style"
     stepContent={
       <div
-        className="site-style__wrapper"
+        className="site-style__form-wrapper"
       >
-        <Card
-          highlight={false}
-          tagName="div"
+        <form
+          className="site-style__form"
+          onSubmit={[Function]}
         >
-          <div
-            className="site-style__form-wrapper"
+          <FormFieldset
+            className="site-style__fieldset"
           >
-            <form
-              className="site-style__form"
-              onSubmit={[Function]}
+            <Localized(FormLabel)
+              className="site-style__option-label is-checked site-style__variation-default"
+              htmlFor="default"
+              title=""
             >
-              <FormFieldset
-                className="site-style__fieldset"
-              >
-                <Localized(FormLabel)
-                  className="site-style__option-label is-checked site-style__variation-default"
-                  htmlFor="default"
-                  title=""
-                >
-                  <FormRadio
-                    checked={true}
-                    id="default"
-                    name="site-style-option"
-                    onChange={[Function]}
-                    value="default"
-                  />
-                  <span>
-                    <strong />
-                  </span>
-                </Localized(FormLabel)>
-                <Localized(FormLabel)
-                  className="site-style__option-label site-style__variation-eyesore"
-                  htmlFor="eyesore"
-                  title=""
-                >
-                  <FormRadio
-                    checked={false}
-                    id="eyesore"
-                    name="site-style-option"
-                    onChange={[Function]}
-                    value="eyesore"
-                  />
-                  <span>
-                    <strong />
-                  </span>
-                </Localized(FormLabel)>
-              </FormFieldset>
-              <div
-                className="site-style__submit-wrapper"
-              >
-                <Button
-                  primary={true}
-                  type="submit"
-                >
-                  Continue
-                </Button>
-              </div>
-            </form>
+              <FormRadio
+                checked={true}
+                id="default"
+                name="site-style-option"
+                onChange={[Function]}
+                value="default"
+              />
+              <span>
+                <strong />
+              </span>
+            </Localized(FormLabel)>
+            <Localized(FormLabel)
+              className="site-style__option-label site-style__variation-eyesore"
+              htmlFor="eyesore"
+              title=""
+            >
+              <FormRadio
+                checked={false}
+                id="eyesore"
+                name="site-style-option"
+                onChange={[Function]}
+                value="eyesore"
+              />
+              <span>
+                <strong />
+              </span>
+            </Localized(FormLabel)>
+          </FormFieldset>
+          <div
+            className="site-style__submit-wrapper"
+          >
+            <Button
+              primary={true}
+              type="submit"
+            >
+              Continue
+            </Button>
           </div>
-        </Card>
+        </form>
       </div>
     }
     subHeaderText="Choose a style for your site's theme. Don't worry, you can always change it later."
