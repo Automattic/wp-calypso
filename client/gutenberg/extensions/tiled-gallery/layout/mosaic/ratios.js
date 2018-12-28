@@ -46,7 +46,7 @@ export function ratiosToColumns( ratios ) {
 	let accumulatedRatio = 0;
 
 	// We skip the last column in the loop and add rest later
-	for ( let i = 0; i <= columnCount - 1; i++ ) {
+	for ( let i = 0; i < columnCount - 1; i++ ) {
 		const colSize = takeWhile( toProcess, ratio => {
 			const shouldTake = accumulatedRatio <= ( i + 1 ) * targetColRatio;
 			if ( shouldTake ) {
