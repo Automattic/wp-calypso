@@ -16,7 +16,7 @@ See [`applyAPIMiddleware`](./api-middleware/index.js).
 
 See [`/calypso-store`](./calypso-store).
 
-## The `edit-post Module
+## The `edit-post` Module
 
 The Gutenberg's [`edit-post` module](https://github.com/WordPress/gutenberg/tree/84e1e8031cb54b322f01adde9d560112290c6909/packages/edit-post), which contains the header, sidebar, and other essential parts of the editor, is not meant to be used outside of WordPress Core, and therefore is not fully exported and available externally.
 
