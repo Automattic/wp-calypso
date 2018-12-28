@@ -268,6 +268,18 @@ export class Map extends Component {
 			this.setState( { mapboxgl: mapboxgl }, this.scriptsLoaded );
 		} );
 	}
+	// Fix map map point objects that aren't formatted correctly for Mapbox
+	// Because of an issue with Gutenberg deprectations when default values have been changed,
+	// the default mapCenter value remains in the old, incorrect format, so this conversion is essential.
+	sanitizeMapCenter = mapCenter => {
+		if ( mapCenter.longitude && mapCenter.latitude ) {
+			return {
+				lon: mapCenter.longitude,
+				lat: mapCenter.latitude,
+			};
+		}
+		return mapCenter;
+	};
 	initMap( mapCenter ) {
 		const { mapboxgl } = this.state;
 		const { zoom, onMapLoaded, onError, admin } = this.props;
@@ -276,7 +288,7 @@ export class Map extends Component {
 			map = new mapboxgl.Map( {
 				container: this.mapRef.current,
 				style: this.getMapStyle(),
-				center: mapCenter,
+				center: this.sanitizeMapCenter( mapCenter ),
 				zoom: parseInt( zoom, 10 ),
 				pitchWithRotate: false,
 				attributionControl: false,
