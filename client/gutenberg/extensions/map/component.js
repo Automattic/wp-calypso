@@ -182,7 +182,7 @@ export class Map extends Component {
 		this.setBoundsByMarkers();
 	};
 	setBoundsByMarkers = () => {
-		const { zoom, points, onSetZoom } = this.props;
+		const { zoom, points, onSetZoom, onSetMapCenter } = this.props;
 		const { map, activeMarker, mapboxgl, zoomControl, boundsSetProgrammatically } = this.state;
 		if ( ! map ) {
 			return;
@@ -199,6 +199,7 @@ export class Map extends Component {
 		points.forEach( point => {
 			bounds.extend( [ point.coordinates.longitude, point.coordinates.latitude ] );
 		} );
+		onSetMapCenter( bounds.getCenter() );
 
 		// If there are multiple points, zoom is determined by the area they cover, and zoom control is removed.
 		if ( points.length > 1 ) {
@@ -275,7 +276,7 @@ export class Map extends Component {
 			map = new mapboxgl.Map( {
 				container: this.mapRef.current,
 				style: this.getMapStyle(),
-				center: this.googlePoint2Mapbox( mapCenter ),
+				center: mapCenter,
 				zoom: parseInt( zoom, 10 ),
 				pitchWithRotate: false,
 				attributionControl: false,
@@ -311,13 +312,6 @@ export class Map extends Component {
 			window.addEventListener( 'resize', this.debouncedSizeMap );
 		} );
 	}
-	googlePoint2Mapbox( google_point ) {
-		const mapCenter = [
-			google_point.longitude ? google_point.longitude : 0,
-			google_point.latitude ? google_point.latitude : 0,
-		];
-		return mapCenter;
-	}
 }
 
 Map.defaultProps = {
@@ -325,6 +319,7 @@ Map.defaultProps = {
 	mapStyle: 'default',
 	zoom: 13,
 	onSetZoom: () => {},
+	onSetMapCenter: () => {},
 	onMapLoaded: () => {},
 	onMarkerClick: () => {},
 	onError: () => {},
