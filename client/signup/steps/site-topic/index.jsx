@@ -127,7 +127,7 @@ class SiteTopicStep extends Component {
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	submitSiteTopic: ( { is_user_input_vertical, vertical_name, vertical_slug } ) => {
-		const { flowName, goToNextStep } = ownProps;
+		const { flowName, goToNextStep, stepName } = ownProps;
 
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
@@ -141,7 +141,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 				isUserInput: is_user_input_vertical,
 				name: vertical_name,
 				slug: vertical_slug,
-			} )
+			}, stepName )
 		);
 
 		goToNextStep( flowName );
