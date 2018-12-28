@@ -66,13 +66,12 @@ function getImageRatio( img ) {
 }
 
 function applyRowRatio( row, [ ratio, weightedRatio ], width ) {
-	weightedRatio = weightedRatio > 0 ? weightedRatio : 1;
 	const rawHeight =
 		( 1 / ratio ) * ( width - GUTTER_WIDTH * ( row.childElementCount - 1 ) - weightedRatio );
 
 	applyColRatio( row, {
 		rawHeight,
-		rowWidth: width,
+		rowWidth: width - GUTTER_WIDTH * ( row.childElementCount - 1 ),
 	} );
 }
 
