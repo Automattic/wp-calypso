@@ -179,11 +179,12 @@ export class JetpackAuthorize extends Component {
 		const subId = parsedUrl.query.sid;
 
 		if ( affiliateId && ! isNaN( affiliateId ) ) {
+			const hostPath = `${ parsedUrl.host }${ parsedUrl.pathname }`;
 			this.props.recordTracksEvent( 'calypso_jpc_refer_visit', {
 				flow: this.props.flowName,
-				page: `${ parsedUrl.host }${ parsedUrl.pathname }`,
+				page: hostPath,
 			} );
-			this.props.trackAffiliateReferral( { affiliateId, campaignId, subId, urlPath } );
+			this.props.trackAffiliateReferral( { affiliateId, campaignId, subId, hostPath } );
 		}
 	}
 
