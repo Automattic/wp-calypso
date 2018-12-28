@@ -41,7 +41,9 @@ function getRowCols( row ) {
 }
 
 function getColImgs( col ) {
-	return Array.from( col.querySelectorAll( '.tiled-gallery__item > img, .tiled-gallery__item > a > img' ) );
+	return Array.from(
+		col.querySelectorAll( '.tiled-gallery__item > img, .tiled-gallery__item > a > img' )
+	);
 }
 
 function getColumnRatio( col ) {
