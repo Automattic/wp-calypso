@@ -90,6 +90,14 @@ export default {
 		defaultVariation: 'locationBottom',
 		allowExistingUsers: true,
 	},
+	showConciergeSessionUpsell: {
+		datestamp: '20181214',
+		variations: {
+			skip: 90,
+			show: 10,
+		},
+		defaultVariation: 'skip',
+	},
 	builderReferralStatsNudge: {
 		datestamp: '20181218',
 		variations: {
