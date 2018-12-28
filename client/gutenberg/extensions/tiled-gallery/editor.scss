@@ -58,10 +58,22 @@
 		}
 	}
 
-	// Circle layout doesn't support captions
-	// @TODO handle this in the component
-	&.is-style-circle .tiled-gallery__item .editor-rich-text {
-		display: none;
+	&.is-style-circle {
+		// Circle layout doesn't support captions
+		// @TODO handle this in the component
+		.tiled-gallery__item .editor-rich-text {
+			display: none;
+		}
+		.tiled_gallery__cropped_placeholder {
+			border-radius: 50%;
+		}
+	}
+
+	.tiled_gallery__cropped_placeholder {
+		background-position: 50% 50%;
+		background-size: cover;
+		height: 100%;
+		width: 100%;
 	}
 
 	.tiled-gallery__add-item {
@@ -109,13 +121,6 @@
 				color: $white;
 			}
 		}
-	}
-
-	.tiled_gallery__cropped_placeholder {
-		background-position: 50% 50%;
-		background-size: cover;
-		height: 100%;
-		width: 100%;
 	}
 
 	.tiled-gallery__item__remove {
