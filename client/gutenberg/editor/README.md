@@ -14,7 +14,7 @@ See [`applyAPIMiddleware`](./api-middleware/index.js).
 
 ## Additional State
 
-See [`calypso-store`](./calypso-store).
+See [`/calypso-store`](./calypso-store).
 
 ## The `edit-post Module
 
