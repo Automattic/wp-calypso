@@ -35,7 +35,7 @@ export class GutenlypsoLayout extends Component {
 	navigateBack = () => page.back( this.props.trashUrl );
 
 	restorePost = () => {
-		this.props.seditPost( { status: 'draft' } );
+		this.props.editPost( { status: 'draft' } );
 		this.props.savePost();
 	};
 
