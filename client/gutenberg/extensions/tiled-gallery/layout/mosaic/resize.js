@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { MOSAIC_MARGIN } from '../../constants';
+import { GUTTER_WIDTH } from '../../constants';
 
 /**
  * Distribute a difference across ns so that their sum matches the target
@@ -66,11 +66,11 @@ function getImageRatio( img ) {
 function applyRowRatio( row, [ ratio, weightedRatio ], width ) {
 	const rawHeight =
 		( 1 / ratio ) *
-		( width - MOSAIC_MARGIN * row.children.length * ( row.children.length - weightedRatio ) );
+		( width - GUTTER_WIDTH * row.children.length * ( row.children.length - weightedRatio ) );
 
 	applyColRatio( row, {
 		rawHeight,
-		rowWidth: width - MOSAIC_MARGIN * row.children.length,
+		rowWidth: width - GUTTER_WIDTH * row.children.length,
 	} );
 }
 
@@ -78,7 +78,7 @@ function applyColRatio( row, { rawHeight, rowWidth } ) {
 	const cols = getRowCols( row );
 
 	const colWidths = cols.map(
-		col => ( rawHeight - MOSAIC_MARGIN * col.children.length ) * getColumnRatio( col )[ 0 ]
+		col => ( rawHeight - GUTTER_WIDTH * col.children.length ) * getColumnRatio( col )[ 0 ]
 	);
 
 	const adjustedWidths = adjustFit( colWidths, rowWidth );
@@ -87,7 +87,7 @@ function applyColRatio( row, { rawHeight, rowWidth } ) {
 		const rawWidth = colWidths[ i ];
 		const width = adjustedWidths[ i ];
 		applyImgRatio( col, {
-			colHeight: rawHeight - MOSAIC_MARGIN * col.children.length,
+			colHeight: rawHeight - GUTTER_WIDTH * col.children.length,
 			width,
 			rawWidth,
 		} );
