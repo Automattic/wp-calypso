@@ -5,12 +5,12 @@ $tiled-gallery-max-column-count: 20;
 .wp-block-jetpack-tiled-gallery {
 	margin: 0 auto;
 
-	&.is-style-circle .tiled-gallery__item img {
+	> .is-style-circle .tiled-gallery__item img {
 		border-radius: 50%;
 	}
 
-	&.is-style-square,
-	&.is-style-circle {
+	> .is-style-square,
+	> .is-style-circle {
 		.tiled-gallery__row {
 			flex-grow: 1;
 			width: 100%;
@@ -25,7 +25,7 @@ $tiled-gallery-max-column-count: 20;
 		}
 	}
 
-	&.is-style-rectangular {
+	> .is-style-rectangular {
 		.tiled-gallery__item {
 			display: flex;
 		}
