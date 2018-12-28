@@ -16,8 +16,12 @@
 			outline: 4px solid $tiled-gallery-selection;
 		}
 
-		&.is-transient img {
-			opacity: 0.3;
+		&.is-transient {
+			height: 100%;
+			.tiled_gallery__cropped_placeholder,
+			img {
+				opacity: 0.3;
+			}
 		}
 
 		.editor-rich-text {
@@ -105,6 +109,13 @@
 				color: $white;
 			}
 		}
+	}
+
+	.tiled_gallery__cropped_placeholder {
+		background-position: 50% 50%;
+		background-size: cover;
+		height: 100%;
+		width: 100%;
 	}
 
 	.tiled-gallery__item__remove {

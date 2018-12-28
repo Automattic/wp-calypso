@@ -40,6 +40,7 @@ export default class Layout extends Component {
 			columns,
 			images,
 			isSave,
+			layoutStyle,
 			linkTo,
 			onRemoveImage,
 			onSelectImage,
@@ -57,15 +58,16 @@ export default class Layout extends Component {
 				aria-label={ ariaLabel }
 				caption={ img.caption }
 				columns={ columns }
+				croppedImage={ isSquareishLayout( layoutStyle ) }
 				height={ img.height }
 				id={ img.id }
-				origUrl={ img.url }
 				isSelected={ selectedImage === i }
 				key={ i }
 				link={ img.link }
 				linkTo={ linkTo }
 				onRemove={ isSave ? undefined : onRemoveImage( i ) }
 				onSelect={ isSave ? undefined : onSelectImage( i ) }
+				origUrl={ img.url }
 				setAttributes={ isSave ? undefined : setImageAttributes( i ) }
 				url={ this.photonize( img ) }
 				width={ img.width }
