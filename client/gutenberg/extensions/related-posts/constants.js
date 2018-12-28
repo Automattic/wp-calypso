@@ -10,6 +10,7 @@ import imgWedding from 'assets/images/related-posts/mobile-wedding.jpg';
 export const MAX_POSTS_TO_SHOW = 3;
 export const DEFAULT_POSTS = [
 	{
+		id: 123,
 		title: 'Big iPhone/iPad Update Now Available',
 		img: {
 			src: imgCatBlog,
@@ -18,6 +19,7 @@ export const DEFAULT_POSTS = [
 		context: 'In "Mobile"',
 	},
 	{
+		id: 456,
 		title: 'The WordPress for Android App Gets a Big Facelift',
 		img: {
 			src: imgDevices,
@@ -26,6 +28,7 @@ export const DEFAULT_POSTS = [
 		context: 'In "Mobile"',
 	},
 	{
+		id: 789,
 		title: 'Upgrade Focus: VideoPress For Weddings',
 		img: {
 			src: imgWedding,
