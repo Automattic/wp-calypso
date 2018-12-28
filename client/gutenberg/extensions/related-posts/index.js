@@ -56,6 +56,7 @@ export const settings = {
 	supports: {
 		html: false,
 		multiple: false,
+		reusable: false,
 	},
 
 	transforms: {
