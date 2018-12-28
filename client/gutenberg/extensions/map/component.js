@@ -289,7 +289,7 @@ export class Map extends Component {
 				container: this.mapRef.current,
 				style: this.getMapStyle(),
 				center: this.sanitizeMapCenter( mapCenter ),
-				zoom: parseInt( zoom, 10 ),
+				zoom: zoom,
 				pitchWithRotate: false,
 				attributionControl: false,
 				dragRotate: false,
