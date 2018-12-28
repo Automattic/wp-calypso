@@ -2,19 +2,21 @@
 $dark-gray-300: #6c7781;
 
 .wp-block-jetpack-related-posts {
-	.related-posts__preview {
-		.is-grid & {
+	&.is-grid {
+		.related-posts__preview {
 			display: flex;
 			margin: 0 -10px;
-		}
 
-		&-post {
-			.is-grid & {
+			&-post {
 				flex-grow: 1;
 				flex-basis: 0;
 				margin: 0 10px;
 			}
+		}
+	}
 
+	.related-posts__preview {
+		&-post {
 			&-link {
 				font-size: inherit;
 			}
