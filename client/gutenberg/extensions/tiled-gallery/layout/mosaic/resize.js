@@ -64,13 +64,12 @@ function getImageRatio( img ) {
 }
 
 function applyRowRatio( row, [ ratio, weightedRatio ], width ) {
-	const rawHeight =
-		( 1 / ratio ) *
-		( width - GUTTER_WIDTH * row.children.length * ( row.children.length - weightedRatio ) );
+	const rowWidth = width - GUTTER_WIDTH * row.children.length;
+	const rawHeight = ( 1 / ratio ) * ( rowWidth * ( row.children.length - weightedRatio ) );
 
 	applyColRatio( row, {
 		rawHeight,
-		rowWidth: width - GUTTER_WIDTH * row.children.length,
+		rowWidth,
 	} );
 }
 
