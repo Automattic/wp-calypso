@@ -64,12 +64,13 @@ function getImageRatio( img ) {
 }
 
 function applyRowRatio( row, [ ratio, weightedRatio ], width ) {
-	const rowWidth = width - GUTTER_WIDTH * ( row.children.length - 1 );
-	const rawHeight = ( 1 / ratio ) * ( rowWidth * ( row.children.length - weightedRatio ) );
+	weightedRatio = weightedRatio > 0 ? weightedRatio : 1;
+	const rawHeight =
+		( 1 / ratio ) * ( width - GUTTER_WIDTH * ( row.childElementCount - 1 ) - weightedRatio );
 
 	applyColRatio( row, {
 		rawHeight,
-		rowWidth,
+		rowWidth: width,
 	} );
 }
 
@@ -77,7 +78,7 @@ function applyColRatio( row, { rawHeight, rowWidth } ) {
 	const cols = getRowCols( row );
 
 	const colWidths = cols.map(
-		col => ( rawHeight - GUTTER_WIDTH * ( col.children.length - 1 ) ) * getColumnRatio( col )[ 0 ]
+		col => ( rawHeight - GUTTER_WIDTH * ( col.childElementCount - 1 ) ) * getColumnRatio( col )[ 0 ]
 	);
 
 	const adjustedWidths = adjustFit( colWidths, rowWidth );
@@ -86,7 +87,7 @@ function applyColRatio( row, { rawHeight, rowWidth } ) {
 		const rawWidth = colWidths[ i ];
 		const width = adjustedWidths[ i ];
 		applyImgRatio( col, {
-			colHeight: rawHeight - GUTTER_WIDTH * ( col.children.length - 1 ),
+			colHeight: rawHeight - GUTTER_WIDTH * ( col.childElementCount - 1 ),
 			width,
 			rawWidth,
 		} );
