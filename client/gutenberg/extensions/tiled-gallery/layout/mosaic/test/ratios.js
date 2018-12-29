@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { ratiosToRows } from '../ratios';
+import { ratiosToMosaicRows } from '../ratios';
 import { ratios } from './fixtures/ratios';
 
-describe( 'ratiosToRows', () => {
+describe( 'ratiosToMosaicRows', () => {
 	test( 'transforms as expected', () => {
-		expect( ratiosToRows( ratios ) ).toMatchSnapshot();
+		expect( ratiosToMosaicRows( ratios ) ).toMatchSnapshot();
 	} );
 } );

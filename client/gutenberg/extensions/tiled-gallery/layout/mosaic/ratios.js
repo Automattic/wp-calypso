@@ -1,7 +1,19 @@
 /**
  * External dependencies
  */
-import { every, isEqual, map, overEvery, some, sum, take, takeRight, zipWith } from 'lodash';
+import {
+	drop,
+	every,
+	isEqual,
+	map,
+	overEvery,
+	some,
+	sum,
+	take,
+	takeRight,
+	takeWhile,
+	zipWith,
+} from 'lodash';
 
 export function imagesToRatios( images ) {
 	return map( images, ratioFromImage );
@@ -9,6 +21,48 @@ export function imagesToRatios( images ) {
 
 export function ratioFromImage( { height, width } ) {
 	return height && width ? width / height : 1;
+}
+
+/**
+ * Build three columns, each of which should contain approximately 1/3 of the total ratio
+ *
+ * @param  {Array<number>} ratios Images ratios
+ *
+ * @return {Array<Array<number>>} Shape of rows and columns
+ */
+export function ratiosToColumns( ratios ) {
+	const columnCount = 3;
+
+	// If we don't have more than 1 per column, just return a simple 1 ratio per column shape
+	if ( ratios.length <= columnCount ) {
+		return [ Array( ratios.length ).fill( 1 ) ];
+	}
+
+	const total = sum( ratios );
+	const targetColRatio = total / columnCount;
+
+	const row = [];
+	let toProcess = ratios;
+	let accumulatedRatio = 0;
+
+	// We skip the last column in the loop and add rest later
+	for ( let i = 0; i < columnCount - 1; i++ ) {
+		const colSize = takeWhile( toProcess, ratio => {
+			const shouldTake = accumulatedRatio <= ( i + 1 ) * targetColRatio;
+			if ( shouldTake ) {
+				accumulatedRatio += ratio;
+			}
+			return shouldTake;
+		} ).length;
+		row.push( colSize );
+		toProcess = drop( toProcess, colSize );
+	}
+
+	// Don't calculate last column, just add what's left
+	row.push( toProcess.length );
+
+	// A shape is an array of rows. Wrap our row in an array.
+	return [ row ];
 }
 
 /**
@@ -76,7 +130,7 @@ const twoOneFitsNextImages = checkNextRatios( [
 const twoOneIsNotRecent = isNotRecentShape( [ 2, 1 ], 3 );
 const panoramicFitsNextImages = checkNextRatios( [ isPanoramic ] );
 
-export function ratiosToRows( ratios, { isWide } = {} ) {
+export function ratiosToMosaicRows( ratios, { isWide } = {} ) {
 	// This function will recursively process the input until it is consumed
 	const go = ( processed, toProcess ) => {
 		if ( ! toProcess.length ) {

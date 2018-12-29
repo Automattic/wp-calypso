@@ -25,6 +25,7 @@ $tiled-gallery-max-column-count: 20;
 		}
 	}
 
+	&.is-style-columns,
 	&.is-style-rectangular {
 		.tiled-gallery__item {
 			display: flex;

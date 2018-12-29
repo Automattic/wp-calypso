@@ -41,7 +41,9 @@ function getRowCols( row ) {
 }
 
 function getColImgs( col ) {
-	return Array.from( col.querySelectorAll( '.tiled-gallery__item > img, .tiled-gallery__item > a > img' ) );
+	return Array.from(
+		col.querySelectorAll( '.tiled-gallery__item > img, .tiled-gallery__item > a > img' )
+	);
 }
 
 function getColumnRatio( col ) {
@@ -65,12 +67,11 @@ function getImageRatio( img ) {
 
 function applyRowRatio( row, [ ratio, weightedRatio ], width ) {
 	const rawHeight =
-		( 1 / ratio ) *
-		( width - GUTTER_WIDTH * row.children.length * ( row.children.length - weightedRatio ) );
+		( 1 / ratio ) * ( width - GUTTER_WIDTH * ( row.childElementCount - 1 ) - weightedRatio );
 
 	applyColRatio( row, {
 		rawHeight,
-		rowWidth: width - GUTTER_WIDTH * row.children.length,
+		rowWidth: width - GUTTER_WIDTH * ( row.childElementCount - 1 ),
 	} );
 }
 
@@ -78,7 +79,7 @@ function applyColRatio( row, { rawHeight, rowWidth } ) {
 	const cols = getRowCols( row );
 
 	const colWidths = cols.map(
-		col => ( rawHeight - GUTTER_WIDTH * col.children.length ) * getColumnRatio( col )[ 0 ]
+		col => ( rawHeight - GUTTER_WIDTH * ( col.childElementCount - 1 ) ) * getColumnRatio( col )[ 0 ]
 	);
 
 	const adjustedWidths = adjustFit( colWidths, rowWidth );
@@ -87,7 +88,7 @@ function applyColRatio( row, { rawHeight, rowWidth } ) {
 		const rawWidth = colWidths[ i ];
 		const width = adjustedWidths[ i ];
 		applyImgRatio( col, {
-			colHeight: rawHeight - GUTTER_WIDTH * col.children.length,
+			colHeight: rawHeight - GUTTER_WIDTH * ( col.childElementCount - 1 ),
 			width,
 			rawWidth,
 		} );
