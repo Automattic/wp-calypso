@@ -168,7 +168,7 @@ class ProfileLinks extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<div className="me-profile-links">
 				<QueryProfileLinks />
 				<SectionHeader label={ this.props.translate( 'Profile Links' ) }>
 					<AddProfileLinksButtons
