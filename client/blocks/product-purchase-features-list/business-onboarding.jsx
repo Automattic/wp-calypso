@@ -13,16 +13,23 @@ import { noop } from 'lodash';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { translate, link, onClick = noop } ) => {
+export default localize( ( { isBusinessPlan, translate, link, onClick = noop } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon={ <img alt="" src="/calypso/images/illustrations/jetpack-concierge.svg" /> }
 				title={ translate( 'Concierge orientation' ) }
-				description={ translate(
-					'Schedule a one-on-one orientation session to set up your site ' +
-						'and learn more about WordPress.com.'
-				) }
+				description={
+					isBusinessPlan
+						? translate(
+								'Schedule a one-on-one orientation session to set up your site ' +
+									'and learn more about WordPress.com.'
+						  )
+						: translate(
+								'Schedule a one-on-one orientation session to set up your site ' +
+									'and learn more about Jetpack.'
+						  )
+				}
 				buttonText={ translate( 'Schedule a session' ) }
 				href={ link }
 				onClick={ onClick }

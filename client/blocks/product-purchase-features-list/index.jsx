@@ -101,6 +101,8 @@ export class ProductPurchaseFeaturesList extends Component {
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<BusinessOnboarding
+					isBusinessPlan
+					selectedSite={ selectedSite }
 					onClick={ this.props.recordBusinessOnboardingClick }
 					link={ `/me/concierge/${ selectedSite.slug }/book` }
 				/>
