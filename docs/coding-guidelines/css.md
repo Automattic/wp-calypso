@@ -256,7 +256,7 @@ When defining positioning properties, indent the top/right/bottom/left one level
 
 ```css
 selector {
-  postion: absolute;
+  position: absolute;
     left: 0;
     top: 20px;
 }
