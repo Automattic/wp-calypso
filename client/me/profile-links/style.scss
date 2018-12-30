@@ -1,3 +1,5 @@
+/** @format */
+
 .profile-links__list {
 	margin: 0;
 	list-style: none;
@@ -16,3 +18,9 @@
 .button.add-buttons__add-wp-site{
 	margin-left: 8px;
 }
+
+@media (max-width: 481px) {
+	.me-profile-links { 		
+		padding-bottom: 10%;
+	}
+} 
