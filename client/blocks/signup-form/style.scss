@@ -1,15 +1,14 @@
-/*rtl:ignore*/
 .signup-form .signup-form__input {
 	margin-bottom: 20px;
 	transition: none;
 
 	&.is-error,
-	&[type="password"] {
+	&[type='password'] {
 		margin-bottom: 0;
 	}
 
-	&[name="username"] {
-		/*rtl:ignore*/
+	&[name='username'] {
+		/*!rtl:ignore*/
 		direction: ltr;
 	}
 }
@@ -24,7 +23,7 @@
 	text-align: center;
 
 	a {
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			white-space: pre;
 		}
 	}

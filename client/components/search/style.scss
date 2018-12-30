@@ -158,7 +158,7 @@
 		}
 
 		&.ltr {
-			/*rtl:ignore*/
+			/*!rtl:ignore*/
 			&::before {
 				@include long-content-fade(
 					$direction: right,
