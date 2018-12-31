@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, groupBy, isEmpty, map, mapValues, snakeCase } from 'lodash';
+import { find, groupBy, isEmpty, kebabCase, map, mapValues, snakeCase } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
@@ -67,6 +67,7 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 class AddEmailAddressesCard extends React.Component {
 	constructor( props ) {
 		super( props );
+
 		this.state = {
 			fieldsets: [ this.getNewFieldset() ],
 			validationErrors: null,
@@ -74,25 +75,39 @@ class AddEmailAddressesCard extends React.Component {
 	}
 
 	static getDerivedStateFromProps( props, state ) {
-		if (
-			state.fieldsets[ 0 ].firstName.value === '' &&
-			state.fieldsets.length === 1 &&
-			props.firstName !== null
-		) {
-			const { firstName, lastName } = props;
-			const fieldsets = [
-				{
-					...state.fieldsets[ 0 ],
-					firstName: { value: firstName || '' },
-					lastName: { value: lastName || '' },
-					username: { value: ( firstName && firstName.toLowerCase() ) || '' },
-				},
-			];
-			return {
-				fieldsets: fieldsets,
-			};
+		// Retrieves information from the first additional user
+		const [ { firstName: { value: firstName }, lastName: { value: lastName }, wasUserEdited } ] = state.fieldsets;
+
+		if ( wasUserEdited ) {
+			return null;
 		}
-		return null;
+
+		if ( props.firstName === null || props.lastName === null ) {
+			return null;
+		}
+
+		if ( props.firstName === firstName && props.lastName === lastName ) {
+			return null;
+		}
+
+		// Updates information of the first additional user with the current user settings data
+		const fieldsets = state.fieldsets.map( ( fieldset, index ) => {
+			if ( index !== 0 ) {
+				return fieldset;
+			}
+
+			return {
+				...fieldset,
+				firstName: { value: props.firstName },
+				lastName: { value: props.lastName },
+				username: { value: kebabCase( props.firstName ) },
+			};
+		} );
+
+		return {
+			...state,
+			fieldsets
+		};
 	}
 
 	getNewFieldset() {
@@ -111,6 +126,7 @@ class AddEmailAddressesCard extends React.Component {
 			domain: { value: domain },
 			firstName: { value: '' },
 			lastName: { value: '' },
+			wasUserEdited: false
 		};
 	}
 
@@ -259,6 +275,7 @@ class AddEmailAddressesCard extends React.Component {
 
 		command.fieldsets[ index ] = {};
 		command.fieldsets[ index ][ fieldName ] = { value: { $set: newValue.trim() } };
+		command.fieldsets[ index ].wasUserEdited = { $set: true };
 
 		if ( fieldName === 'domain' ) {
 			this.props.domainChange( newValue, index );
