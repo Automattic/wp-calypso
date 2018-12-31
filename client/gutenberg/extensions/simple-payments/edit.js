@@ -395,7 +395,23 @@ class SimplePaymentsEdit extends Component {
 			setAttributes,
 			simplePayment,
 		} = this.props;
-		const { content, currency, email, multiple, price, productId, title } = attributes;
+		const {
+			content,
+			currency,
+			email,
+			featuredMediaId,
+			featuredMediaUrl: featuredMediaUrlAttribute,
+			featuredMediaTitle: featuredMediaTitleAttribute,
+			multiple,
+			price,
+			productId,
+			title,
+		} = attributes;
+
+		const featuredMediaUrl =
+			featuredMediaUrlAttribute || ( featuredMedia && featuredMedia.source_url );
+		const featuredMediaTitle =
+			featuredMediaTitleAttribute || ( featuredMedia && featuredMedia.alt_text );
 
 		/**
 		 * The only disabled state that concerns us is when we expect a product but don't have it in
@@ -429,7 +445,8 @@ class SimplePaymentsEdit extends Component {
 				<ProductPlaceholder
 					aria-busy="false"
 					content={ content }
-					featuredMedia={ featuredMedia }
+					featuredMediaUrl={ featuredMediaUrl }
+					featuredMediaTitle={ featuredMediaTitle }
 					formattedPrice={ formatPrice( price, currency ) }
 					multiple={ multiple }
 					title={ title }
@@ -441,7 +458,9 @@ class SimplePaymentsEdit extends Component {
 
 		return (
 			<Wrapper className="wp-block-jetpack-simple-payments">
-				<FeaturedMedia { ...{ featuredMedia, setAttributes } } />
+				<FeaturedMedia
+					{ ...{ featuredMediaId, featuredMediaUrl, featuredMediaTitle, setAttributes } }
+				/>
 				<div>
 					<TextControl
 						aria-describedby={ `${ instanceId }-title-error` }
