@@ -16,7 +16,7 @@ import { withSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { restorePost, trashPost } from 'state/posts/actions';
+import { trashPost } from 'state/posts/actions';
 import { navigate } from 'state/ui/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
@@ -63,7 +63,6 @@ export default withSelect( select => {
 		} ),
 		{
 			navigate,
-			restorePost,
 			trashPost,
 		}
 	)( localize( PostTrashLink ) )
