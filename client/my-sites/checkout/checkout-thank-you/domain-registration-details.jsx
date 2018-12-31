@@ -24,7 +24,7 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 			selectedSite.options &&
 			selectedSite.options.is_mapped_domain &&
 			selectedSite.domain !== domain,
-		isRestrictedToBlogDomains = purchases.some( isBlogger );
+		isRestrictedToBlogDomains = purchases.some( isBlogger ) || isBlogger( selectedSite.plan );
 
 	return (
 		<div>

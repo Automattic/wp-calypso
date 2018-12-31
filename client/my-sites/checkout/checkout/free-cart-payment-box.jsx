@@ -89,7 +89,7 @@ class FreeCartPaymentBox extends React.Component {
 			return;
 		}
 
-		const isRestrictedToBlogDomains = cart.products.some( isBlogger );
+		const isRestrictedToBlogDomains = isBlogger( this.props.selectedSite.plan );
 
 		return (
 			<span className="checkout__free-domain-credit-illustration">
