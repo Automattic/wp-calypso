@@ -47,7 +47,7 @@ class AddGoogleAppsCard extends React.Component {
 
 	goToAddGoogleApps = () => {
 		page(
-			domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.selectedSite.domain )
+			domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.selectedDomainName )
 		);
 	};
 

@@ -98,7 +98,10 @@ class AddEmailAddressesCard extends React.Component {
 	getNewFieldset() {
 		let domain;
 
-		if ( this.props.selectedDomainName ) {
+		if (
+			this.props.selectedDomainName &&
+			getGoogleAppsSupportedDomains( [ this.props.selectedDomainName ] ).length
+		) {
 			domain = this.props.selectedDomainName;
 		} else if ( ! this.props.isRequestingSiteDomains ) {
 			domain = this.getFirstDomainName();
