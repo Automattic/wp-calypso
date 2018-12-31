@@ -31,7 +31,7 @@ import refreshRegistrations from '../extensions/presets/jetpack/utils/refresh-re
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { getPageTemplates } from 'state/page-templates/selectors';
 import { MimeTypes } from 'lib/media/constants';
-import autoUpdateEditedImages from './utils/edited-images-updater';
+import autoUpdateMedia from './utils/media-updater';
 
 /**
  * Style dependencies
@@ -55,7 +55,7 @@ class GutenbergEditor extends Component {
 
 		setDateGMTOffset( gmtOffset );
 
-		autoUpdateEditedImages();
+		autoUpdateMedia( siteId );
 	}
 
 	componentDidUpdate( prevProp ) {

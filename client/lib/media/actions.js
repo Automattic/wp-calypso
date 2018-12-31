@@ -230,7 +230,6 @@ MediaActions.update = function( siteId, item, editMediaFile = false ) {
 
 	const mediaId = item.ID;
 	const newItem = assign( {}, MediaStore.get( siteId, mediaId ), item );
-	const method = editMediaFile ? 'edit' : 'update';
 
 	// Let's update the media modal immediately
 	// with a fake transient media item
@@ -238,26 +237,33 @@ MediaActions.update = function( siteId, item, editMediaFile = false ) {
 		type: 'RECEIVE_MEDIA_ITEM',
 		siteId,
 		data: newItem,
-		method,
 	};
 
-	if ( item.media || ( 'edit' === method && item.media_url ) ) {
+	if ( item.media ) {
 		// Show a fake transient media item that can be rendered into the list immediately,
 		// even before the media has persisted to the server
 		updateAction.data = {
 			...newItem,
-			...createTransientMedia( item.media || item.media_url ),
+			...createTransientMedia( item.media ),
+			ID: mediaId,
+		};
+	} else if ( editMediaFile && item.media_url ) {
+		updateAction.data = {
+			...newItem,
+			...createTransientMedia( item.media_url ),
 			ID: mediaId,
 		};
 	}
 
-	if ( 'edit' === method && updateAction.data ) {
+	if ( editMediaFile && updateAction.data ) {
 		// We need this to show a transient (edited) image in post/page editor after it has been edited there.
 		updateAction.data.isDirty = true;
 	}
 
 	debug( 'Updating media for %o by ID %o to %o', siteId, mediaId, updateAction );
 	Dispatcher.handleViewAction( updateAction );
+
+	const method = editMediaFile ? 'edit' : 'update';
 
 	wpcom
 		.site( siteId )
@@ -267,8 +273,7 @@ MediaActions.update = function( siteId, item, editMediaFile = false ) {
 				type: 'RECEIVE_MEDIA_ITEM',
 				error: error,
 				siteId: siteId,
-				data: 'edit' === method ? { ...data, isDirty: true } : data,
-				method,
+				data: editMediaFile ? { ...data, isDirty: true } : data,
 			} );
 		} );
 };

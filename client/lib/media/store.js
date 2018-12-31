@@ -48,8 +48,6 @@ function receiveSingle( siteId, item, itemId ) {
 	}
 
 	MediaStore._media[ siteId ][ item.ID ] = item;
-
-	return item;
 }
 
 function removeSingle( siteId, item ) {
@@ -67,7 +65,6 @@ function receivePage( siteId, items ) {
 	items.forEach( function( item ) {
 		receiveSingle( siteId, item );
 	} );
-	return items;
 }
 
 function clearPointers( siteId ) {
@@ -119,20 +116,10 @@ MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
 				break;
 			}
 
-			const isEditMethod = action.method && 'edit' === action.method;
-
 			if ( Array.isArray( action.data.media ) ) {
-				const items = receivePage( action.siteId, action.data.media );
-
-				if ( isEditMethod ) {
-					MediaStore.emit( 'edit', items );
-				}
+				receivePage( action.siteId, action.data.media );
 			} else {
-				const item = receiveSingle( action.siteId, action.data, action.id );
-
-				if ( isEditMethod ) {
-					MediaStore.emit( 'edit', [ item ] );
-				}
+				receiveSingle( action.siteId, action.data, action.id );
 			}
 
 			MediaStore.emit( 'change' );
