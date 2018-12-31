@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { clone } from 'lodash';
+import { clone, kebabCase } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
@@ -19,12 +19,14 @@ import QueryUserSettings from 'components/data/query-user-settings';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 
 class GoogleAppsUsers extends React.Component {
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		const { firstName, lastName } = this.props;
+
 		this.props.onChange(
 			this.props.fields ? this.props.fields : [ this.getNewUserFields( firstName, lastName ) ]
 		);
 	}
+
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { fields, firstName, lastName } = nextProps;
 		if ( this.props.firstName !== firstName && fields.length === 1 ) {
@@ -33,7 +35,7 @@ class GoogleAppsUsers extends React.Component {
 					...fields[ 0 ],
 					firstName: { value: firstName || '' },
 					lastName: { value: lastName || '' },
-					username: { value: ( firstName && firstName.toLowerCase() ) || '' },
+					username: { value: kebabCase( firstName ) },
 				},
 			] );
 		}
@@ -41,7 +43,7 @@ class GoogleAppsUsers extends React.Component {
 
 	getNewUserFields( firstName = '', lastName = '' ) {
 		return {
-			email: { value: ( firstName && firstName.toLowerCase() ) || '', error: null },
+			email: { value: kebabCase( firstName ), error: null },
 			firstName: { value: firstName || '', error: null },
 			lastName: { value: lastName || '', error: null },
 			domain: { value: this.props.domain, error: null },

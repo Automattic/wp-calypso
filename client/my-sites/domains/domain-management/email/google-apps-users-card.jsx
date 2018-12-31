@@ -31,6 +31,7 @@ class GoogleAppsUsers extends React.Component {
 	canAddUsers( domainName ) {
 		return this.getDomainsAsList().some(
 			domain =>
+				domain &&
 				domain.name === domainName &&
 				get( domain, 'googleAppsSubscription.ownedByUserId' ) === this.props.user.ID
 		);
