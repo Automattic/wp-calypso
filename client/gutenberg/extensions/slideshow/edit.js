@@ -163,11 +163,12 @@ class SlideshowEdit extends Component {
 								<img
 									src={ url }
 									alt={ alt }
+									data-is-image={ true }
 									data-id={ id }
 									data-height={ height }
 									data-width={ width }
 								/>
-								<figcaption>{ caption }</figcaption>
+								<figcaption data-is-caption={ true }>{ caption }</figcaption>
 							</div>
 						);
 					} ) }
