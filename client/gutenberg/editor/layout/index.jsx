@@ -72,8 +72,7 @@ export default compose( [
 			resetBlocks,
 		};
 	} ),
-] )(
 	connect( ( state, { postType } ) => ( {
 		trashUrl: getPostTypeTrashUrl( state, postType ),
-	} ) )( GutenlypsoLayout )
-);
+	} ) ),
+] )( GutenlypsoLayout );
