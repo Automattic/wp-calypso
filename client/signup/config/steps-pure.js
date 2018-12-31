@@ -383,14 +383,6 @@ export function generateSteps( {
 			providesDependencies: [ 'siteTopic' ],
 		},
 
-		'site-information': {
-			stepName: 'site-information',
-			providesDependencies: [ 'siteTitle', 'address', 'phone' ],
-			props: {
-				headerText: i18n.translate( 'Help customers find you' ),
-			},
-		},
-
 		'site-information-title': {
 			stepName: 'site-information',
 			providesDependencies: [ 'title' ],
