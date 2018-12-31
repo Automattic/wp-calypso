@@ -36,10 +36,21 @@ export class Slideshow extends Component {
 						if ( ! child.props.children ) {
 							return null;
 						}
-						const img = child.props.children[ 0 ];
-						const figcaption = child.props.children[ 1 ];
-						const { src, alt } = img.props;
-						const caption = figcaption.props.children || '';
+						const img = Children.map( child.props.children, subchild => {
+							if ( subchild.props[ 'data-is-image' ] ) {
+								return subchild;
+							}
+						} );
+						const figcaption = Children.map( child.props.children, subchild => {
+							if ( subchild.props[ 'data-is-caption' ] ) {
+								return subchild.props.children;
+							}
+						} );
+						if ( ! img || ! figcaption ) {
+							return null;
+						}
+						const { src, alt } = img[ 0 ].props;
+						const caption = figcaption[ 0 ] || '';
 						const style = {
 							backgroundImage: `url(${ src })`,
 							height: imageHeight,
