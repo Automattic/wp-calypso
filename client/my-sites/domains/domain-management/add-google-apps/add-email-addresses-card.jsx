@@ -70,6 +70,7 @@ class AddEmailAddressesCard extends React.Component {
 		this.state = {
 			fieldsets: [ this.getNewFieldset() ],
 			validationErrors: null,
+			nameAdded: false,
 		};
 	}
 
@@ -77,7 +78,8 @@ class AddEmailAddressesCard extends React.Component {
 		if (
 			state.fieldsets[ 0 ].firstName.value === '' &&
 			state.fieldsets.length === 1 &&
-			props.firstName !== null
+			props.firstName !== null &&
+			! state.nameAdded
 		) {
 			const { firstName, lastName } = props;
 			const fieldsets = [
@@ -89,6 +91,7 @@ class AddEmailAddressesCard extends React.Component {
 				},
 			];
 			return {
+				nameAdded: true,
 				fieldsets: fieldsets,
 			};
 		}
