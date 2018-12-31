@@ -58,6 +58,10 @@ class ConvertToBlocksDialog extends Component {
 	};
 
 	render() {
+		if ( this.props.isDirty ) {
+			return null;
+		}
+
 		const { translate } = this.props;
 		const { isDialogVisible } = this.state;
 
@@ -101,9 +105,10 @@ const blockToBlocks = block =>
 
 export default compose(
 	withSelect( select => {
-		const { getBlocks } = select( 'core/editor' );
+		const { getBlocks, isEditedPostDirty } = select( 'core/editor' );
 
 		return {
+			isDirty: isEditedPostDirty(),
 			rootBlocks: getBlocks(),
 		};
 	} ),
