@@ -21,6 +21,8 @@ import config from 'config';
 import { domainManagementAddGoogleApps } from 'my-sites/domains/paths';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
+import { getGoogleAppsSupportedDomains } from 'lib/domains';
 
 class AddGoogleAppsCard extends React.Component {
 	constructor( props ) {
@@ -42,17 +44,17 @@ class AddGoogleAppsCard extends React.Component {
 	}
 
 	handleLearnMoreClick = () => {
-		this.props.learnMoreClick( this.props.selectedDomainName || null );
+		this.props.learnMoreClick( this.props.eligibleDomainName );
 	};
 
 	goToAddGoogleApps = () => {
 		page(
-			domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.selectedDomainName )
+			domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.eligibleDomainName )
 		);
 	};
 
 	render() {
-		const { currencyCode, selectedDomainName, translate } = this.props,
+		const { currencyCode, eligibleDomainName, translate } = this.props,
 			price = get( this.props, [ 'products', 'gapps', 'prices', currencyCode ], 0 ),
 			googleAppsSupportUrl = ADDING_GOOGLE_APPS_TO_YOUR_SITE;
 
@@ -61,6 +63,7 @@ class AddGoogleAppsCard extends React.Component {
 
 		return (
 			<Fragment>
+
 				<CompactCard>
 					<header className="email__add-google-apps-card-header">
 						<h3 className="email__add-google-apps-card-product-logo">
@@ -69,6 +72,7 @@ class AddGoogleAppsCard extends React.Component {
 						</h3>
 					</header>
 				</CompactCard>
+
 				<CompactCard>
 					<div className="email__add-google-apps-card-product-details">
 						<div className="email__add-google-apps-card-description">
@@ -114,6 +118,7 @@ class AddGoogleAppsCard extends React.Component {
 						</div>
 					</div>
 				</CompactCard>
+
 				<CompactCard>
 					<div className="email__add-google-apps-card-features">
 						<div className="email__add-google-apps-card-feature">
@@ -124,7 +129,7 @@ class AddGoogleAppsCard extends React.Component {
 								<h5 className="email__add-google-apps-card-feature-header">
 									{ translate( 'Gmail for @%(domain)s', {
 										args: {
-											domain: selectedDomainName,
+											domain: eligibleDomainName,
 										},
 									} ) }
 								</h5>
@@ -212,6 +217,8 @@ class AddGoogleAppsCard extends React.Component {
 }
 
 AddGoogleAppsCard.propTypes = {
+	currencyCode: PropTypes.string.isRequired,
+	eligibleDomainName: PropTypes.string.isRequired,
 	products: PropTypes.object.isRequired,
 	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 };
@@ -230,8 +237,14 @@ const learnMoreClick = domainName =>
 	);
 
 export default connect(
-	state => ( {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-	} ),
+	( state, { selectedSite } ) => {
+		const domains = getDomainsBySiteId( state, selectedSite.ID );
+		const [ eligibleDomain ] = getGoogleAppsSupportedDomains( domains );
+
+		return {
+			currencyCode: getCurrentUserCurrencyCode( state ),
+			eligibleDomainName: eligibleDomain && eligibleDomain.name || 'example.com',
+		};
+	},
 	{ learnMoreClick }
 )( localize( AddGoogleAppsCard ) );
