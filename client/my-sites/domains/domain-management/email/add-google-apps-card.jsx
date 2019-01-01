@@ -42,7 +42,7 @@ class AddGoogleAppsCard extends React.Component {
 	}
 
 	handleLearnMoreClick = () => {
-		this.props.learnMoreClick( this.props.selectedSite.domain || null );
+		this.props.learnMoreClick( this.props.selectedDomainName || null );
 	};
 
 	goToAddGoogleApps = () => {
@@ -52,10 +52,9 @@ class AddGoogleAppsCard extends React.Component {
 	};
 
 	render() {
-		const { currencyCode, translate } = this.props,
+		const { currencyCode, selectedDomainName, translate } = this.props,
 			price = get( this.props, [ 'products', 'gapps', 'prices', currencyCode ], 0 ),
-			googleAppsSupportUrl = ADDING_GOOGLE_APPS_TO_YOUR_SITE,
-			selectedDomainName = this.props.selectedSite.domain;
+			googleAppsSupportUrl = ADDING_GOOGLE_APPS_TO_YOUR_SITE;
 
 		const annualPrice = getAnnualPrice( price, currencyCode );
 		const monthlyPrice = getMonthlyPrice( price, currencyCode );
