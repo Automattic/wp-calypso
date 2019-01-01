@@ -53,8 +53,11 @@ class ConvertToBlocksDialog extends Component {
 		};
 	}
 
-	closeDialog = () => {
-		this.setState( { isDismissed: true } );
+	closeDialog = () => this.setState( { isDismissed: true } );
+
+	convertToBlocks = () => {
+		this.props.convertToBlocks();
+		this.closeDialog();
 	};
 
 	render() {
@@ -68,9 +71,9 @@ class ConvertToBlocksDialog extends Component {
 		const buttons = [
 			{
 				action: 'convert',
-				label: translate( 'Convert to Blocks' ),
-				onClick: this.props.convertToBlocks,
 				isPrimary: true,
+				label: translate( 'Convert to Blocks' ),
+				onClick: this.convertToBlocks,
 			},
 			{
 				action: 'cancel',
@@ -82,8 +85,8 @@ class ConvertToBlocksDialog extends Component {
 		return (
 			<Dialog
 				additionalClassNames="editor-gutenberg-convert-blocks-dialog"
-				isVisible={ isDialogVisible }
 				buttons={ buttons }
+				isVisible={ isDialogVisible }
 				onClose={ this.closeDialog }
 			>
 				<h1>{ translate( 'Ready to try blocks?' ) }</h1>
