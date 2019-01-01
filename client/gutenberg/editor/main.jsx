@@ -31,6 +31,7 @@ import refreshRegistrations from '../extensions/presets/jetpack/utils/refresh-re
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { getPageTemplates } from 'state/page-templates/selectors';
 import { MimeTypes } from 'lib/media/constants';
+import autoUpdateMedia from './utils/media-updater';
 
 /**
  * Style dependencies
@@ -53,6 +54,8 @@ class GutenbergEditor extends Component {
 		refreshRegistrations();
 
 		setDateGMTOffset( gmtOffset );
+
+		autoUpdateMedia( siteId );
 	}
 
 	componentDidUpdate( prevProp ) {
