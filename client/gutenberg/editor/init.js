@@ -27,6 +27,7 @@ const WPCOM_UNSUPPORTED_CORE_BLOCKS = [
 const loadA8CExtensions = () => {
 	// This will also load required TinyMCE plugins via Calypso's TinyMCE component
 	require( '../extensions/classic-block/editor' );
+	require( '../extensions/file/editor' );
 };
 
 const addResetToRegistry = registry => {

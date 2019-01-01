@@ -1,0 +1,38 @@
+.wp-block-a8c-file {
+	margin-bottom: 1.5em;
+
+	&.aligncenter {
+		text-align: center;
+	}
+
+	&.alignright {
+		/*rtl:ignore*/
+		text-align: right;
+	}
+
+	.wp-block-a8c-file__button {
+		background: $gray-darken-30;
+		border-radius: 2em;
+		color: $white;
+		font-size: $root-font-size;
+		padding: 0.5em 1em;
+	}
+
+	a.wp-block-a8c-file__button {
+		text-decoration: none;
+
+		&:hover,
+		&:visited,
+		&:focus,
+		&:active {
+			box-shadow: none;
+			color: $white;
+			opacity: 0.85;
+			text-decoration: none;
+		}
+	}
+
+	* + .wp-block-a8c-file__button {
+		margin-left: 0.75em;
+	}
+}

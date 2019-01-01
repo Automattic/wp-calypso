@@ -1,0 +1,44 @@
+.wp-block-a8c-file {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 0;
+
+	&.is-transient {
+		animation: edit-post__loading-fade-animation 1.6s ease-in-out infinite;
+	}
+
+	.wp-block-a8c-file__content-wrapper {
+		flex-grow: 1;
+	}
+
+	.wp-block-a8c-file__textlink {
+		display: inline-block;
+		min-width: 1em;
+
+		&:focus {
+			box-shadow: none;
+		}
+	}
+
+	.wp-block-a8c-file__button-richtext-wrapper {
+		display: inline-block;
+		margin-left: 0.75em;
+	}
+
+	.wp-block-a8c-file__copy-url-button {
+		margin-left: 1em;
+	}
+}
+
+@keyframes edit-post__loading-fade-animation {
+	0% {
+		opacity: 0.5;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0.5;
+	}
+}
