@@ -19,5 +19,6 @@
 		"enabled": true,
 		"schedule": "every weekday"
 	},
-	"prConcurrentLimit": 0
+	"prConcurrentLimit": 0,
+	"prHourlyLimit": 50
 }
