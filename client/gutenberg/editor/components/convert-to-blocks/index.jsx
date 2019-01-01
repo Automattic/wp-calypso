@@ -86,11 +86,11 @@ class ConvertToBlocksDialog extends Component {
 				buttons={ buttons }
 				onClose={ this.closeDialog }
 			>
-				<h1>{ translate( 'This post uses content from the old editor' ) }</h1>
+				<h1>{ translate( 'Ready to try blocks?' ) }</h1>
 
 				<p>
 					{ translate(
-						'For the best editing experience we suggest that you convert old content to blocks.'
+						'This post contains content you created using the older editor. For the best editing experience, we recommend converting this content to blocks.'
 					) }
 				</p>
 			</Dialog>
