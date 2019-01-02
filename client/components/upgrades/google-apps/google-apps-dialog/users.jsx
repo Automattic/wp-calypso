@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { clone } from 'lodash';
+import { clone, kebabCase } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
@@ -15,28 +15,35 @@ import Gridicon from 'gridicons';
  */
 import getUserSetting from 'state/selectors/get-user-setting';
 import GoogleAppsUsersForm from './users-form';
+import QueryUserSettings from 'components/data/query-user-settings';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 
 class GoogleAppsUsers extends React.Component {
-	UNSAFE_componentWillMount() {
-		this.maybeGetInitialFields( this.props );
-	}
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.maybeGetInitialFields( nextProps );
+	componentDidMount() {
+		const { firstName, lastName } = this.props;
+
+		this.props.onChange(
+			this.props.fields ? this.props.fields : [ this.getNewUserFields( firstName, lastName ) ]
+		);
 	}
 
-	maybeGetInitialFields( props ) {
-		if ( ! props.fields && props.firstName ) {
-			const { firstName, lastName } = props;
-			this.props.onChange(
-				this.props.fields ? this.props.fields : [ this.getNewUserFields( firstName, lastName ) ]
-			);
+	UNSAFE_componentWillReceiveProps( nextProps ) {
+		const { fields, firstName, lastName } = nextProps;
+		if ( this.props.firstName !== firstName && fields.length === 1 ) {
+			this.props.onChange( [
+				{
+					...fields[ 0 ],
+					firstName: { value: firstName || '' },
+					lastName: { value: lastName || '' },
+					username: { value: kebabCase( firstName ) },
+				},
+			] );
 		}
 	}
 
 	getNewUserFields( firstName = '', lastName = '' ) {
 		return {
-			email: { value: ( firstName && firstName.toLowerCase() ) || '', error: null },
+			email: { value: kebabCase( firstName ), error: null },
 			firstName: { value: firstName || '', error: null },
 			lastName: { value: lastName || '', error: null },
 			domain: { value: this.props.domain, error: null },
@@ -49,6 +56,7 @@ class GoogleAppsUsers extends React.Component {
 
 		return (
 			<div className="google-apps-dialog__users" key="google-apps-dialog__users">
+				<QueryUserSettings />
 				<h4>{ translate( 'New G Suite User:' ) }</h4>
 
 				{ allUserInputs }

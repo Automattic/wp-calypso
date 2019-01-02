@@ -5,6 +5,10 @@ body {
 	line-height: 1.7;
 	margin-top: 32px;
 	margin-bottom: 72px;
+
+	&.is-gutenberg {
+		margin-bottom: 32px;
+	}
 }
 
 p {
@@ -112,10 +116,10 @@ a img {
 .wpview-body::before {
 	content: '';
 	position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	cursor: default;
 
 	.wpview-wrap[data-mce-selected] & {
@@ -168,10 +172,15 @@ th {
 td {
 	border-width: 0 1px 1px 0;
 }
-th, td {
+th,
+td {
 	padding: 0.4em;
 }
-.mce-item-table, .mce-item-table td, .mce-item-table th, .mce-item-table caption {
+
+.mce-item-table,
+.mce-item-table td,
+.mce-item-table th,
+.mce-item-table caption {
 	border: 1px solid var( --color-neutral-100 );
 }
 

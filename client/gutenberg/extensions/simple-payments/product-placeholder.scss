@@ -30,6 +30,33 @@ body .jetpack-simple-payments-wrapper .jetpack-simple-payments-details p {
 	flex-direction: column;
 }
 
+.jetpack-simple-payments-product-image {
+	flex: 0 0 30%;
+	margin-bottom: 1.5em;
+}
+
+.jetpack-simple-payments-image {
+	box-sizing: border-box;
+	min-width: 70px;
+	padding-top: 100%;
+	position: relative;
+}
+
+.jetpack-simple-payments-image img {
+	border: 0;
+	border-radius: 0;
+	height: auto;
+	left: 50%;
+	margin: 0;
+	max-height: 100%;
+	max-width: 100%;
+	padding: 0;
+	position: absolute;
+	top: 50%;
+	transform: translate( -50%, -50% );
+	width: auto;
+}
+
 .jetpack-simple-payments-title p,
 .jetpack-simple-payments-price p {
 	font-weight: bold;

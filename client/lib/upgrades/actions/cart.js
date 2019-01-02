@@ -14,6 +14,7 @@ import {
 	CART_ITEM_REMOVE,
 	CART_ITEM_REPLACE,
 	CART_ITEMS_ADD,
+	CART_ITEMS_REPLACE_ALL,
 	CART_ON_MOBILE_SHOW,
 	CART_POPUP_CLOSE,
 	CART_POPUP_OPEN,
@@ -80,6 +81,20 @@ export function addItems( items ) {
 
 	Dispatcher.handleViewAction( {
 		type: CART_ITEMS_ADD,
+		cartItems: extendedItems,
+	} );
+}
+
+export function replaceCartWithItems( items ) {
+	const extendedItems = items.map( item => {
+		const extra = assign( {}, item.extra, {
+			context: 'calypstore',
+		} );
+		return assign( {}, item, { extra } );
+	} );
+
+	Dispatcher.handleViewAction( {
+		type: CART_ITEMS_REPLACE_ALL,
 		cartItems: extendedItems,
 	} );
 }

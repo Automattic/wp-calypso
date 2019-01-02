@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { find, get } from 'lodash';
 import url from 'url';
 
 /**
@@ -80,7 +80,7 @@ export class PostPreviewButton extends Component {
 	};
 
 	render() {
-		const { currentPostLink, isCleanNewPost } = this.props;
+		const { currentPostLink, editedPost, isCleanNewPost } = this.props;
 		const { iframeUrl, isPreviewVisible } = this.state;
 
 		return (
@@ -100,6 +100,7 @@ export class PostPreviewButton extends Component {
 				<WebPreview
 					externalUrl={ currentPostLink }
 					onClose={ this.closePreviewModal }
+					overridePost={ editedPost }
 					previewUrl={ iframeUrl }
 					showPreview={ isPreviewVisible }
 				/>
@@ -120,13 +121,31 @@ export default compose( [
 			isEditedPostSaveable,
 			isSavingPost,
 		} = select( 'core/editor' );
-		const { getPostType } = select( 'core' );
+		const { getAuthors, getMedia, getPostType } = select( 'core' );
 
 		const currentPostLink = getCurrentPostAttribute( 'link' );
 		const postType = getPostType( getEditedPostAttribute( 'type' ) );
 		const previewLink = getEditedPostPreviewLink();
+
+		const featuredImage = get(
+			getMedia( getEditedPostAttribute( 'featured_media' ) ),
+			'source_url',
+			null
+		);
+		const author = find( getAuthors(), { id: getCurrentPostAttribute( 'author' ) } );
+
+		const editedPost = {
+			title: getEditedPostAttribute( 'title' ),
+			URL: getEditedPostAttribute( 'link' ),
+			excerpt: getEditedPostAttribute( 'excerpt' ),
+			content: getEditedPostAttribute( 'content' ),
+			featured_image: featuredImage,
+			author,
+		};
+
 		return {
 			currentPostLink,
+			editedPost,
 			isAutosaveable: isEditedPostAutosaveable(),
 			isDraft: [ 'draft', 'auto-draft' ].indexOf( getEditedPostAttribute( 'status' ) ) !== -1,
 			isCleanNewPost: isCleanNewPost(),

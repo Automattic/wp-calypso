@@ -44,6 +44,7 @@ import {
 	isNoAds,
 	isPlan,
 	isBlogger,
+	isPersonal,
 	isPremium,
 	isPrivacyProtection,
 	isSiteRedirect,
@@ -51,6 +52,7 @@ import {
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
+	isConciergeSession,
 } from 'lib/products-values';
 import sortProducts from 'lib/products-values/sort';
 import { getTld } from 'lib/domains';
@@ -88,6 +90,34 @@ export function add( newCartItem ) {
 			return update( cart, { products: { $set: [ newCartItem ] } } );
 		}
 
+		return update( cart, { products: { $apply: appendItem } } );
+	};
+}
+
+export function clearCart() {
+	return function( cart ) {
+		return update( cart, { products: { $set: [] } } );
+	};
+}
+
+/**
+ * Adds the specified item to a shopping cart without replacing the cart
+ *
+ * @param {Object} newCartItem - new item as `CartItemValue` object
+ * @returns {Function} the function that adds the item to a shopping cart
+ */
+export function addWithoutReplace( newCartItem ) {
+	function appendItem( products ) {
+		products = products || [];
+
+		const isDuplicate = products.some( function( existingCartItem ) {
+			return isEqual( newCartItem, existingCartItem );
+		} );
+
+		return isDuplicate ? products : products.concat( [ newCartItem ] );
+	}
+
+	return function( cart ) {
 		return update( cart, { products: { $apply: appendItem } } );
 	};
 }
@@ -293,6 +323,10 @@ export function hasBloggerPlan( cart ) {
 	return some( getAll( cart ), isBlogger );
 }
 
+export function hasPersonalPlan( cart ) {
+	return some( getAll( cart ), isPersonal );
+}
+
 export function hasPremiumPlan( cart ) {
 	return some( getAll( cart ), isPremium );
 }
@@ -416,6 +450,16 @@ export function getDomainTransfers( cart ) {
  */
 export function hasOnlyRenewalItems( cart ) {
 	return every( getAll( cart ), isRenewal );
+}
+
+/**
+ * Determines whether there is at least one concierge session item in the specified shopping cart.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one concierge session item, false otherwise
+ */
+export function hasConciergeSession( cart ) {
+	return some( getAll( cart ), isConciergeSession );
 }
 
 /**
@@ -1106,7 +1150,9 @@ export function hasStaleItem( cart ) {
 export default {
 	add,
 	addPrivacyToAllDomains,
+	addWithoutReplace,
 	businessPlan,
+	clearCart,
 	customDesignItem,
 	domainMapping,
 	domainPrivacyProtection,
@@ -1149,11 +1195,14 @@ export default {
 	hasOnlyRenewalItems,
 	hasPlan,
 	hasOnlyBundledDomainProducts,
+	hasBloggerPlan,
+	hasPersonalPlan,
 	hasPremiumPlan,
 	hasProduct,
 	hasRenewableSubscription,
 	hasRenewalItem,
 	hasTld,
+	hasConciergeSession,
 	noAdsItem,
 	planItem,
 	premiumPlan,

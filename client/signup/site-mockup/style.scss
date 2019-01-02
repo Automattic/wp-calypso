@@ -4,12 +4,10 @@
 	padding: 0 16px;
 	transition: max-width 0.2s ease-in-out;
 
-
 	// This is temporary until we reduce the vertical
 	// and info steps down to a single row.
 	// position: relative;
 	// z-index: 1000000; // Yea yea, I know... -shaun
-
 
 	// Side by side layout uses flexbox to show
 	// both mockups next to each other.
@@ -36,10 +34,9 @@
 
 		.site-mockup__viewport.is-mobile {
 			position: absolute;
-				top: 40px;
-				right: 8px;
-			box-shadow: 0 0 0 1px $gray,
-				0 4px 12px 0 rgba( 0, 0, 0, 0.30 );
+			top: 40px;
+			right: 8px;
+			box-shadow: 0 0 0 1px $gray, 0 4px 12px 0 rgba( 0, 0, 0, 0.3 );
 
 			.site-mockup__body {
 				height: 500px;
@@ -89,5 +86,30 @@
 		border-radius: 12px;
 		width: 280px;
 		transition-delay: 0.2s;
+	}
+
+	// Default, radcliffe-2 style variations
+	// The following styles are placeholders only.
+	&.is-business {
+		&.is-default {
+		}
+
+		&.is-modern {
+			.site-mockup__body {
+				background-color: #eee;
+			}
+		}
+
+		&.is-vintage {
+			.site-mockup__body {
+				background-color: #eae8dc;
+			}
+		}
+
+		&.is-colorful {
+			.site-mockup__body {
+				background-color: #c9fffd;
+			}
+		}
 	}
 }

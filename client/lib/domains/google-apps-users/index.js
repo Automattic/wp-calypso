@@ -21,7 +21,7 @@ export function validate( { users, fields } ) {
 		return mapValues( user, function( field, key ) {
 			let error = null;
 
-			if ( isEmpty( field.value ) ) {
+			if ( isEmpty( field.value ) && key !== 'wasUserEdited' ) {
 				error = i18n.translate( 'This field is required.' );
 			} else if ( includes( [ 'firstName', 'lastName' ], key ) ) {
 				if ( field.value.length > 60 ) {

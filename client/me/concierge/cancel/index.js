@@ -11,18 +11,18 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
+import QuerySites from 'components/data/query-sites';
+import QueryConciergeInitial from 'components/data/query-concierge-initial';
 import QueryConciergeAppointmentDetails from 'components/data/query-concierge-appointment-details';
 import Button from 'components/button';
 import Main from 'components/main';
 import { localize } from 'i18n-calypso';
 import Confirmation from '../shared/confirmation';
 import { cancelConciergeAppointment } from 'state/concierge/actions';
-import {
-	WPCOM_CONCIERGE_SCHEDULE_ID,
-	CONCIERGE_STATUS_CANCELLED,
-	CONCIERGE_STATUS_CANCELLING,
-} from '../constants';
+import { CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING } from '../constants';
+import { getSite } from 'state/sites/selectors';
 import getConciergeAppointmentDetails from 'state/selectors/get-concierge-appointment-details';
+import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
 import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -33,25 +33,33 @@ class ConciergeCancel extends Component {
 		analyticsTitle: PropTypes.string,
 		appointmentId: PropTypes.string.isRequired,
 		siteSlug: PropTypes.string.isRequired,
+		scheduleId: PropTypes.number,
 	};
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_concierge_cancel_step' );
 	}
 	cancelAppointment = () => {
-		const { appointmentId } = this.props;
-		this.props.cancelConciergeAppointment( WPCOM_CONCIERGE_SCHEDULE_ID, appointmentId );
+		const { appointmentId, scheduleId } = this.props;
+		this.props.cancelConciergeAppointment( scheduleId, appointmentId );
 	};
 
 	getDisplayComponent = () => {
-		const { appointmentId, appointmentDetails, siteSlug, signupForm, translate } = this.props;
+		const {
+			appointmentId,
+			appointmentDetails,
+			scheduleId,
+			siteSlug,
+			signupForm,
+			translate,
+		} = this.props;
 
 		switch ( signupForm.status ) {
 			case CONCIERGE_STATUS_CANCELLED:
 				return (
 					<Confirmation
 						description={ translate( 'Would you like to schedule a new session?' ) }
-						title={ translate( 'Your Concierge session has been cancelled.' ) }
+						title={ translate( 'Your session has been cancelled.' ) }
 					>
 						<Button
 							className="cancel__schedule-button"
@@ -70,23 +78,27 @@ class ConciergeCancel extends Component {
 					includes(
 						[ CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING ],
 						signupForm.status
-					) || ! appointmentDetails;
+					) ||
+					! appointmentDetails ||
+					! scheduleId;
 
 				const disabledRescheduling =
-					signupForm.status === CONCIERGE_STATUS_CANCELLING || ! appointmentDetails;
+					signupForm.status === CONCIERGE_STATUS_CANCELLING || ! appointmentDetails || ! scheduleId;
 
 				return (
 					<div>
-						<QueryConciergeAppointmentDetails
-							appointmentId={ appointmentId }
-							scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID }
-						/>
+						{ scheduleId && (
+							<QueryConciergeAppointmentDetails
+								appointmentId={ appointmentId }
+								scheduleId={ scheduleId }
+							/>
+						) }
 
 						<Confirmation
 							description={ translate(
 								'You can also reschedule your session. What would you like to do?'
 							) }
-							title={ translate( 'Cancel your Concierge session' ) }
+							title={ translate( 'Cancel your session' ) }
 						>
 							<Button
 								className="cancel__reschedule-button"
@@ -112,9 +124,13 @@ class ConciergeCancel extends Component {
 	};
 
 	render() {
-		const { analyticsPath, analyticsTitle } = this.props;
+		const { analyticsPath, analyticsTitle, site } = this.props;
+		const siteId = site && site.ID;
+
 		return (
 			<Main>
+				<QuerySites />
+				{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
 				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
 				{ this.getDisplayComponent() }
 			</Main>
@@ -126,6 +142,8 @@ export default connect(
 	( state, props ) => ( {
 		appointmentDetails: getConciergeAppointmentDetails( state, props.appointmentId ),
 		signupForm: getConciergeSignupForm( state ),
+		site: getSite( state, props.siteSlug ),
+		scheduleId: getConciergeScheduleId( state ),
 	} ),
 	{ cancelConciergeAppointment, recordTracksEvent }
 )( localize( ConciergeCancel ) );
