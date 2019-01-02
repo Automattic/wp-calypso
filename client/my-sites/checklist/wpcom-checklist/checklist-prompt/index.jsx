@@ -22,15 +22,18 @@ import './style.scss';
 
 export class ChecklistPrompt extends Component {
 	static propTypes = {
+		children: PropTypes.array,
 		isEligibleForDotcomChecklist: PropTypes.bool,
+		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
+		taskList: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 	};
 
 	render() {
-		const { translate, taskList } = this.props;
+		const { translate, taskList, children } = this.props;
 
-		const childrenArray = Children.toArray( this.props.children );
+		const childrenArray = Children.toArray( children );
 
 		const firstIncomplete = taskList.getFirstIncompleteTask();
 		const isFinished = ! firstIncomplete;
