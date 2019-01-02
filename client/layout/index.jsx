@@ -47,6 +47,7 @@ import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 import { isE2ETest } from 'lib/e2e';
+import BodySectionCssClass from './body-section-css-class';
 
 class Layout extends Component {
 	static displayName = 'Layout';
@@ -111,6 +112,7 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
+				<BodySectionCssClass group={ this.props.sectionGroup } section={ this.props.sectionName } />
 				<DocumentHead />
 				<QuerySites primaryAndRecent />
 				<QuerySites allSites />
