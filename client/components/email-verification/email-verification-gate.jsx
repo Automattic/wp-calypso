@@ -14,14 +14,17 @@ import { connect } from 'react-redux';
 
 import EmailUnverifiedNotice from './email-unverified-notice.jsx';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 export class EmailVerificationGate extends React.Component {
 	static propTypes = {
+		allowUnlaunched: PropTypes.bool,
 		noticeText: PropTypes.node,
 		noticeStatus: PropTypes.string,
 		//connected
 		userEmail: PropTypes.string,
-		needsVerification: PropTypes.bool,
+		emailIsUnverified: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -33,8 +36,13 @@ export class EmailVerificationGate extends React.Component {
 		e.target.blur();
 	};
 
+	enforceGate = () => {
+		const { allowUnlaunched, emailIsUnverified, selectedSiteIsUnlaunched } = this.props;
+		return emailIsUnverified && ! ( selectedSiteIsUnlaunched && allowUnlaunched );
+	};
+
 	render() {
-		if ( this.props.needsVerification ) {
+		if ( this.enforceGate() ) {
 			return (
 				<div tabIndex="-1" className="email-verification-gate" onFocus={ this.handleFocus }>
 					<EmailUnverifiedNotice
@@ -55,6 +63,7 @@ export default connect( state => {
 	const user = getCurrentUser( state );
 	return {
 		userEmail: user && user.email,
-		needsVerification: ! isCurrentUserEmailVerified( state ),
+		selectedSiteIsUnlaunched: isUnlaunchedSite( state, getSelectedSiteId( state ) ),
+		emailIsUnverified: ! isCurrentUserEmailVerified( state ),
 	};
 } )( EmailVerificationGate );
