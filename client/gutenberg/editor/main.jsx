@@ -153,9 +153,13 @@ const getPost = ( siteId, postId, postType ) => {
 	return null;
 };
 
-const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isDemoContent } ) => {
+const mapStateToProps = (
+	state,
+	{ siteId, postId, uniqueDraftKey, postType, isDemoContent, duplicatePostId }
+) => {
 	const draftPostId = get( getHttpData( uniqueDraftKey ), 'data.ID', null );
 	const post = getPost( siteId, postId || draftPostId, postType );
+	const postCopy = getPost( siteId, duplicatePostId, postType );
 	const demoContent = isDemoContent ? get( requestGutenbergDemoContent(), 'data' ) : null;
 	const isAutoDraft = 'auto-draft' === get( post, 'status', null );
 	const isRTL = isRtlSelector( state );
@@ -180,7 +184,12 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 	};
 
 	let overridePost = null;
-	if ( !! demoContent ) {
+	if ( duplicatePostId && postCopy ) {
+		overridePost = {
+			title: postCopy.title.raw,
+			content: postCopy.content,
+		};
+	} else if ( !! demoContent ) {
 		overridePost = {
 			title: demoContent.title.raw,
 			content: demoContent.content,
