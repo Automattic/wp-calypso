@@ -13,12 +13,12 @@ import Button from 'components/button';
 
 class ChecklistPromptTask extends PureComponent {
 	static propTypes = {
-		buttonText: PropTypes.node,
+		buttonText: PropTypes.string,
 		completed: PropTypes.bool,
 		description: PropTypes.node,
 		duration: PropTypes.string,
 		onClick: PropTypes.func,
-		title: PropTypes.node.isRequired,
+		title: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
