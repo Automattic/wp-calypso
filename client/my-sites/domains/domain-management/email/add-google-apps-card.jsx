@@ -235,19 +235,20 @@ const learnMoreClick = domainName =>
 		)
 	);
 
+const getEligibleSelectedSite = ( selectedDomainName, domains ) => {
+	if ( selectedDomainName && canAddGoogleApps( selectedDomainName ) ) {
+		return selectedDomainName;
+	}
+	const [ eligibleDomain ] = getGoogleAppsSupportedDomains( domains );
+	return ( eligibleDomain && eligibleDomain.name ) || 'example.com';
+};
+
 export default connect(
-	( state, { selectedSite, selectedDomainName } ) => {
+	( state, { selectedDomainName, selectedSite } ) => {
 		const domains = getDomainsBySiteId( state, selectedSite.ID );
-		let eligibleDomainName = 'example.com';
-		const [ eligibleDomain ] = getGoogleAppsSupportedDomains( domains );
-		if ( selectedDomainName && canAddGoogleApps( selectedDomainName ) ) {
-			eligibleDomainName = selectedDomainName;
-		} else if ( eligibleDomain.name ) {
-			eligibleDomainName = eligibleDomain.name;
-		}
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			eligibleDomainName,
+			eligibleDomainName: getEligibleSelectedSite( selectedDomainName, domains ),
 		};
 	},
 	{ learnMoreClick }
