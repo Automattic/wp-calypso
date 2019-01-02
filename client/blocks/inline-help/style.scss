@@ -236,11 +236,6 @@
 	}
 }
 
-//...but not on the Preview page.
-.is-secondary-view-active .inline-help__checklist + .checklist-navigation {
-	display: block;
-}
-
 .inline-help__checklist {
 	min-height: 0;
 }
