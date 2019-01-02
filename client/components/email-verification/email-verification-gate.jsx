@@ -24,7 +24,7 @@ export class EmailVerificationGate extends React.Component {
 		noticeStatus: PropTypes.string,
 		//connected
 		userEmail: PropTypes.string,
-		emailIsUnverified: PropTypes.bool,
+		needsVerification: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -36,13 +36,8 @@ export class EmailVerificationGate extends React.Component {
 		e.target.blur();
 	};
 
-	enforceGate = () => {
-		const { allowUnlaunched, emailIsUnverified, selectedSiteIsUnlaunched } = this.props;
-		return emailIsUnverified && ! ( selectedSiteIsUnlaunched && allowUnlaunched );
-	};
-
 	render() {
-		if ( this.enforceGate() ) {
+		if ( this.props.needsVerification ) {
 			return (
 				<div tabIndex="-1" className="email-verification-gate" onFocus={ this.handleFocus }>
 					<EmailUnverifiedNotice
@@ -59,11 +54,13 @@ export class EmailVerificationGate extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state, { allowUnlaunched } ) => {
 	const user = getCurrentUser( state );
+	const emailIsUnverified = ! isCurrentUserEmailVerified( state );
 	return {
 		userEmail: user && user.email,
-		selectedSiteIsUnlaunched: isUnlaunchedSite( state, getSelectedSiteId( state ) ),
-		emailIsUnverified: ! isCurrentUserEmailVerified( state ),
+		needsVerification:
+			emailIsUnverified &&
+			! ( allowUnlaunched && isUnlaunchedSite( state, getSelectedSiteId( state ) ) ),
 	};
 } )( EmailVerificationGate );
