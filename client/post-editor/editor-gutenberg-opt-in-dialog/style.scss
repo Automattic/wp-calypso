@@ -45,12 +45,12 @@
 		border: none;
 		text-align: inherit;
 
-		&:before {
+		&::before {
 			display: none;
 		}
 
 		.button {
-			margin: 0 24px 8px 24px;
+			margin: 0 24px 8px;
 
 			@include breakpoint( '<660px' ) {
 				display: block;
@@ -86,7 +86,7 @@
 		bottom: 0;
 	}
 
-	&:after {
+	&::after {
 		content: '';
 		position: absolute;
 		right: 0;

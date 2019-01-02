@@ -27,6 +27,7 @@ import RewindFormCreds from 'signup/steps/rewind-form-creds';
 import SiteOrDomainComponent from 'signup/steps/site-or-domain';
 import SitePicker from 'signup/steps/site-picker';
 import SiteTitleComponent from 'signup/steps/site-title';
+import SiteStyleComponent from 'signup/steps/site-style';
 import SiteTopicComponent from 'signup/steps/site-topic';
 import SiteTypeComponent from 'signup/steps/site-type';
 import SiteInformationComponent from 'signup/steps/site-information';
@@ -68,6 +69,7 @@ export default {
 	'site-information': SiteInformationComponent,
 	'site-or-domain': SiteOrDomainComponent,
 	'site-picker': SitePicker,
+	'site-style': SiteStyleComponent,
 	'site-title': SiteTitleComponent,
 	'site-topic': SiteTopicComponent,
 	'site-type': SiteTypeComponent,

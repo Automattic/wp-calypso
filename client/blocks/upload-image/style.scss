@@ -11,7 +11,7 @@
 	bottom: 0;
 	left: 0;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		top: 5%;
 		bottom: 5%;
 		left: 5%;
@@ -19,7 +19,7 @@
 		width: 90%;
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		left: 12.5%;
 		right: 12.5%;
 		width: 75%;
@@ -82,7 +82,7 @@
 		right: 0;
 	width: 24px;
 	height: 24px;
-	transform: translate(50%, -50%);
+	transform: translate( 50%, -50% );
 	border: 1px solid $gray-lighten-10;
 	border-radius: 50%;
 	background-color: $gray-light;
@@ -97,7 +97,7 @@
 	position: absolute;
 		top: 50%;
 		left: 50%;
-	transform: translate(-50%, -50%);
+	transform: translate( -50%, -50% );
 	width: 20px;
 	height: 20px;
 	margin: 0;
@@ -111,7 +111,7 @@
 .upload-image__uploading-image, .upload-image__uploaded-image-wrapper {
 	position: relative;
 	top: 50%;
-	transform: perspective(1px) translateY(-50%);
+	transform: perspective( 1px ) translateY( -50% );
 	line-height: 0;
 }
 
@@ -134,7 +134,7 @@
 	line-height: 0;
 	padding: 4px;
 	border: none;
-	background: rgba(0, 0, 0, 0.2);
+	background: rgba( 0, 0, 0, 0.2 );
 	border-radius: 50%;
 
 	&:hover {

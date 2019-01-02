@@ -7,11 +7,11 @@
 	position: relative;
 	line-height: 28px;
 
-	&:after {
+	&::after {
 		content: '';
 	}
 
-	&.is-empty .section-header__label:after {
+	&.is-empty .section-header__label::after {
 		content: '\00a0';
 	}
 }
@@ -23,7 +23,7 @@
 	position: relative;
 	overflow: hidden;
 
-	&:before {
+	&::before {
 		@include long-content-fade();
 	}
 

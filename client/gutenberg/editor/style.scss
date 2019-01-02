@@ -1,3 +1,5 @@
+/** @format */
+
 // Block library
 @import '~@wordpress/block-library/build-style/style';
 
@@ -86,8 +88,7 @@ $gutenberg-theme-toggle: #11a0d2;
 		top: 0;
 	}
 
-
-	@media (min-width: 600px) {
+	@media ( min-width: 600px ) {
 		.edit-post-sidebar {
 			top: 56px;
 		}
@@ -104,7 +105,7 @@ $gutenberg-theme-toggle: #11a0d2;
 		}
 
 		.components-notice-list {
-			@media (max-width: 600px) {
+			@media ( max-width: 600px ) {
 				top: auto;
 			}
 
@@ -113,23 +114,29 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 
 	.edit-post-visual-editor .editor-post-title__block > div {
-		margin-left: 0px;
-		margin-right: 0px;
+		margin-left: 0;
+		margin-right: 0;
 
-		@media (min-width: 600px) {
+		@media ( min-width: 600px ) {
 			margin-left: -2px;
 			margin-right: -2px;
 		}
 	}
 
 	.wp-block-heading {
-		h1, h2, h3, h4, h5, h6 {
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
 			font-weight: 600;
 		}
 	}
 
 	.editor-block-list__block {
-		ul ul, ol ol {
+		ul ul,
+		ol ol {
 			list-style-type: circle;
 		}
 	}
@@ -142,8 +149,8 @@ $gutenberg-theme-toggle: #11a0d2;
 	// @see https://make.wordpress.org/accessibility/handbook/markup/the-css-class-screen-reader-text/
 	.screen-reader-text {
 		border: 0;
-		clip: rect(1px, 1px, 1px, 1px);
-		clip-path: inset(50%);
+		clip: rect( 1px, 1px, 1px, 1px );
+		clip-path: inset( 50% );
 		height: 1px;
 		margin: -1px;
 		overflow: hidden;
@@ -173,23 +180,87 @@ $gutenberg-theme-toggle: #11a0d2;
 		border-right: 1px solid lighten( $gray, 25% );
 		border-radius: 0;
 		padding: 10px;
+		.rtl & {
+			button {
+				transform: scaleX( -1 );
+			}
+		}
 	}
 
 	.edit-post-header-toolbar .site {
 		border-right: 1px solid lighten( $gray, 25% );
-		margin-right: 10px;
 		.site__info {
 			width: auto;
 		}
-		.site__title::after {
-			width: 0;
+		.site__title {
+			max-width: 200px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			&::after {
+				width: 0;
+			}
 		}
 		&.is-compact .site__title {
 			line-height: 56px;
 		}
-		@include breakpoint( '<800px' ) {
+		@include breakpoint( '<960px' ) {
 			display: none;
 		}
+	}
+
+	.edit-post-header-toolbar > .components-button {
+		display: none;
+		@include breakpoint( '>660px' ) {
+			display: inline-flex;
+		}
+	}
+	.edit-post-header-toolbar .editor-block-navigation,
+	.edit-post-header-toolbar .table-of-contents {
+		display: none;
+		@include breakpoint( '>660px' ) {
+			display: flex;
+		}
+	}
+
+	.edit-post-header-toolbar__block-toolbar {
+		background: $white;
+		border-bottom: 1px solid #e2e4e7;
+		left: 0;
+		min-height: 37px;
+		padding-left: 0;
+		position: absolute;
+		right: 0;
+		top: 56px;
+		.editor-block-toolbar {
+			margin: 0;
+			.components-toolbar {
+				padding: 0;
+			}
+		}
+		@include breakpoint( '>1280px' ) {
+			background: none;
+			border-bottom: none;
+			left: auto;
+			min-height: auto;
+			padding-left: 8px;
+			position: static;
+			right: auto;
+			.editor-block-toolbar {
+				margin: -9px 0;
+				.components-toolbar {
+					padding: 10px 4px 9px;
+				}
+			}
+		}
+	}
+
+	.editor-inserter {
+		margin-left: 10px;
+	}
+
+	.editor-post-switch-to-draft {
+		white-space: nowrap;
 	}
 
 	.edit-post-post-visibility__dialog .editor-post-visibility__dialog-info {
@@ -224,22 +295,23 @@ $gutenberg-theme-toggle: #11a0d2;
 
 .is-section-gutenberg-editor,
 .edit-post-options-modal {
-
 	// UNSET CALYPSO DEFAULT STYLES
+
 	input[type='text'],
 	input[type='search'] {
 		width: auto;
-	}
-	.components-text-control__input input[type='text'] {
-		width: 100%;
+
+		&.components-text-control__input {
+			width: 100%;
+		}
 	}
 
 	input[type='number'].components-range-control__number {
 		width: 50px;
 	}
 
-	input[type=checkbox],
-	input[type=radio] {
+	input[type='checkbox'],
+	input[type='radio'] {
 		float: none;
 
 		& + span {
@@ -303,7 +375,6 @@ $gutenberg-theme-toggle: #11a0d2;
 		p {
 			font-family: $sans;
 			font-size: 13px;
-
 		}
 	}
 
@@ -329,8 +400,12 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 
 	.placeholder-title {
-			height: 40px;
-			border-radius: 20px;
-			margin: 0 8px;
+		height: 40px;
+		border-radius: 20px;
+		margin: 0 8px;
 	}
+}
+
+.editor-post-publish-button[aria-disabled='true'] {
+	pointer-events: none;
 }

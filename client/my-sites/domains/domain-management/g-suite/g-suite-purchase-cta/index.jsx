@@ -15,12 +15,14 @@ import React, { Fragment } from 'react';
  */
 import { ADDING_GOOGLE_APPS_TO_YOUR_SITE } from 'lib/url/support';
 import Button from 'components/forms/form-button';
+import { canAddGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
 import CompactCard from 'components/card/compact';
 import config from 'config';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { domainManagementAddGoogleApps } from 'my-sites/domains/paths';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
 /**
  * Style dependencies
@@ -29,12 +31,12 @@ import './style.scss';
 
 class GSuiteMarketingCopy extends React.Component {
 	handleLearnMoreClick = () => {
-		this.props.learnMoreClick( this.props.selectedSite.domain || null );
+		this.props.learnMoreClick( this.props.eligibleDomainName );
 	};
 
 	goToAddGoogleApps = () => {
 		page(
-			domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.selectedSite.domain )
+			domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.eligibleDomainName )
 		);
 	};
 
@@ -55,10 +57,8 @@ class GSuiteMarketingCopy extends React.Component {
 	}
 
 	render() {
-		const { currencyCode, translate } = this.props;
-		const price = get( this.props, [ 'product', 'prices', currencyCode ], 0 );
-		const selectedDomainName = this.props.selectedSite.domain;
-
+		const { currencyCode, eligibleDomainName, translate } = this.props;
+		const price = get( this.props, [ 'products', 'gapps', 'prices', currencyCode ], 0 );
 		const annualPrice = getAnnualPrice( price, currencyCode );
 		const monthlyPrice = getMonthlyPrice( price, currencyCode );
 		const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
@@ -74,6 +74,7 @@ class GSuiteMarketingCopy extends React.Component {
 						</h3>
 					</header>
 				</CompactCard>
+
 				<CompactCard>
 					<div className="g-suite-purchase-cta__add-google-apps-card-product-details">
 						<div className="g-suite-purchase-cta__add-google-apps-card-description">
@@ -123,6 +124,7 @@ class GSuiteMarketingCopy extends React.Component {
 						</div>
 					</div>
 				</CompactCard>
+
 				<CompactCard>
 					<div className="g-suite-purchase-cta__add-google-apps-card-features">
 						<div className="g-suite-purchase-cta__add-google-apps-card-feature">
@@ -133,7 +135,7 @@ class GSuiteMarketingCopy extends React.Component {
 								<h5 className="g-suite-purchase-cta__add-google-apps-card-feature-header">
 									{ translate( 'Gmail for @%(domain)s', {
 										args: {
-											domain: selectedDomainName,
+											domain: eligibleDomainName,
 										},
 									} ) }
 								</h5>
@@ -235,14 +237,28 @@ const learnMoreClick = domainName =>
 		)
 	);
 
+const getEligibleSelectedSite = ( selectedDomainName, domains ) => {
+	if ( selectedDomainName && canAddGoogleApps( selectedDomainName ) ) {
+		return selectedDomainName;
+	}
+	const [ eligibleDomain ] = getGoogleAppsSupportedDomains( domains );
+	return ( eligibleDomain && eligibleDomain.name ) || 'example.com';
+};
+
 GSuiteMarketingCopy.propTypes = {
+	currencyCode: PropTypes.string.isRequired,
+	eligibleDomainName: PropTypes.string.isRequired,
 	product: PropTypes.object.isRequired,
 	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 };
 
 export default connect(
-	state => ( {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-	} ),
+	( state, { selectedDomainName, selectedSite } ) => {
+		const domains = getDomainsBySiteId( state, selectedSite.ID );
+		return {
+			currencyCode: getCurrentUserCurrencyCode( state ),
+			eligibleDomainName: getEligibleSelectedSite( selectedDomainName, domains ),
+		};
+	},
 	{ learnMoreClick }
 )( localize( GSuiteMarketingCopy ) );

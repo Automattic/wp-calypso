@@ -1,31 +1,35 @@
 // @TODO: Replace with Gutenberg variables
 $dark-gray-300: #6c7781;
 
-.wp-block-jetpack-related-posts__preview-items {
-	.is-grid & {
-		display: flex;
-		margin: 0 -10px;
-	}
-}
+.wp-block-jetpack-related-posts {
+	&.is-grid {
+		.related-posts__preview {
+			display: flex;
+			margin: 0 -10px;
 
-.wp-block-jetpack-related-posts__preview-post {
-	.is-grid & {
-		flex-grow: 1;
-		flex-basis: 0;
-		margin: 0 10px;
-	}
-
-	.wp-block-jetpack-related-posts__preview-post-link {
-		font-size: inherit;
+			&-post {
+				flex-grow: 1;
+				flex-basis: 0;
+				margin: 0 10px;
+			}
+		}
 	}
 
-	.wp-block-jetpack-related-posts__preview-post-date {
-		color: $dark-gray-300;
-	}
+	.related-posts__preview {
+		&-post {
+			&-link {
+				font-size: inherit;
+			}
 
-	.wp-block-jetpack-related-posts__preview-post-context {
-		color: $dark-gray-300;
-		font-size: 12px;
-		margin: 0;
+			&-date {
+				color: $dark-gray-300;
+			}
+
+			&-context {
+				color: $dark-gray-300;
+				font-size: 12px;
+				margin: 0;
+			}
+		}
 	}
 }

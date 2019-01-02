@@ -19,7 +19,7 @@ import { dispatch, select } from '@wordpress/data';
  */
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
-import { asyncLoader } from './async-loader';
+import { asyncLoader } from 'components/async-loader';
 import { EDITOR_START } from 'state/action-types';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';

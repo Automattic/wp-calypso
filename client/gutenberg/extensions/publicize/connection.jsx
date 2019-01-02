@@ -12,6 +12,7 @@
  */
 import { Component } from '@wordpress/element';
 import { Disabled, FormToggle } from '@wordpress/components';
+import { withSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -23,6 +24,11 @@ class PublicizeConnection extends Component {
 		const { id } = this.props;
 		this.props.toggleConnection( id );
 	};
+
+	connectionIsFailing() {
+		const { failedConnections, name } = this.props;
+		return failedConnections.some( connection => connection.service_name === name );
+	}
 
 	render() {
 		const { disabled, enabled, id, label, name } = this.props;
@@ -39,7 +45,7 @@ class PublicizeConnection extends Component {
 			/>
 		);
 
-		if ( disabled ) {
+		if ( disabled || this.connectionIsFailing() ) {
 			toggle = <Disabled>{ toggle }</Disabled>;
 		}
 
@@ -57,4 +63,6 @@ class PublicizeConnection extends Component {
 	}
 }
 
-export default PublicizeConnection;
+export default withSelect( select => ( {
+	failedConnections: select( 'jetpack/publicize' ).getFailedConnections(),
+} ) )( PublicizeConnection );

@@ -14,7 +14,7 @@ import wpcom from 'lib/wp';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
 const user = userFactory();
-import { getSavedVariations } from 'lib/abtest';
+import { getSavedVariations, abtest } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
 import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
@@ -24,10 +24,11 @@ import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
+import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
+import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { requestSites } from 'state/sites/actions';
 import { supportsPrivacyProtectionPurchase } from 'lib/cart-values/cart-items';
@@ -104,10 +105,10 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	}
 }
 
-// We are experimenting making site topic a separate step from the survey.
-// Once we've decided to fully move away from the survey form, we can just keep the site topic here.
+// We are experimenting making site topic (site vertical name) a separate step from the survey.
+// Once we've decided to fully move away from the survey form, we can just keep the site vertical name here.
 function getSiteVertical( state ) {
-	return ( getSignupStepsSiteTopic( state ) || getSurveyVertical( state ) ).trim();
+	return ( getSiteVerticalName( state ) || getSurveyVertical( state ) ).trim();
 }
 
 export function createSiteWithCart(
@@ -132,6 +133,7 @@ export function createSiteWithCart(
 	const siteVertical = getSiteVertical( state );
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
+	const siteStyle = getSiteStyle( state ).trim();
 	const siteInformation = getSiteInformation( state );
 
 	const newSiteParams = {
@@ -144,6 +146,7 @@ export function createSiteWithCart(
 			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 			vertical: siteVertical || undefined,
 			siteGoals: siteGoals || undefined,
+			site_style: siteStyle || undefined,
 			site_information: siteInformation || undefined,
 			siteType: siteType || undefined,
 		},
@@ -156,11 +159,11 @@ export function createSiteWithCart(
 	if ( importingFromUrl ) {
 		newSiteParams.blog_name = importingFromUrl;
 		newSiteParams.find_available_url = true;
-		newSiteParams.public = 1;
+		newSiteParams.public = -1;
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingItem;
-		newSiteParams.public = 1;
+		newSiteParams.public = abtest( 'privateByDefault' ) === 'private' ? -1 : 1;
 	}
 
 	wpcom.undocumented().sitesNew( newSiteParams, function( error, response ) {
@@ -336,7 +339,7 @@ export function getUsernameSuggestion( username, reduxState ) {
 	} );
 }
 
-export function addPlanToCart( callback, { siteId }, { cartItem, privacyItem } ) {
+export function addPlanToCart( callback, { siteSlug }, { cartItem } ) {
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
 		defer( callback );
@@ -344,11 +347,9 @@ export function addPlanToCart( callback, { siteId }, { cartItem, privacyItem } )
 		return;
 	}
 
-	const newCartItems = [ cartItem, privacyItem ].filter( item => item );
+	const newCartItems = [ cartItem ].filter( item => item );
 
-	SignupCart.addToCart( siteId, newCartItems, error =>
-		callback( error, { cartItem, privacyItem } )
-	);
+	SignupCart.addToCart( siteSlug, newCartItems, error => callback( error, { cartItem } ) );
 }
 
 export function createAccount(

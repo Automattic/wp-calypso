@@ -82,8 +82,8 @@ export function generateSteps( {
 		'plans-site-selected': {
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug', 'siteId' ],
-			providesDependencies: [ 'cartItem', 'privacyItem' ],
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
 		},
 
 		'design-type': {
@@ -147,15 +147,15 @@ export function generateSteps( {
 		plans: {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],
-			providesDependencies: [ 'cartItem', 'privacyItem' ],
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
 		},
 
 		'plans-store-nux': {
 			stepName: 'plans-store-nux',
 			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],
-			providesDependencies: [ 'cartItem', 'privacyItem' ],
+			dependencies: [ 'siteSlug', 'domainItem' ],
+			providesDependencies: [ 'cartItem' ],
 		},
 
 		domains: {
@@ -249,14 +249,7 @@ export function generateSteps( {
 			apiRequestFunction: createSiteWithCart,
 			stepName: 'get-dot-blog-plans',
 			dependencies: [ 'cartItem' ],
-			providesDependencies: [
-				'cartItem',
-				'siteSlug',
-				'siteId',
-				'domainItem',
-				'themeItem',
-				'privacyItem',
-			],
+			providesDependencies: [ 'cartItem', 'siteSlug', 'siteId', 'domainItem', 'themeItem' ],
 		},
 
 		'get-dot-blog-themes': {
@@ -294,14 +287,7 @@ export function generateSteps( {
 				headerText: i18n.translate( 'Choose your site?' ),
 			},
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
-			dependencies: [
-				'cartItem',
-				'designType',
-				'domainItem',
-				'privacyItem',
-				'siteUrl',
-				'themeSlugWithRepo',
-			],
+			dependencies: [ 'cartItem', 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo' ],
 			delayApiRequestUntilComplete: true,
 		},
 
@@ -400,6 +386,11 @@ export function generateSteps( {
 		'site-information': {
 			stepName: 'site-information',
 			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
+		},
+
+		'site-style': {
+			stepName: 'site-style',
+			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
 		},
 	};
 }

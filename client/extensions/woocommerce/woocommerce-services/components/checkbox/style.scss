@@ -9,7 +9,7 @@
 	input {
 		margin: 0;
 
-		&:before {
+		&::before {
 			display: none !important; // Prevent Calypso's Noticons font
 		}
 	}
