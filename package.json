@@ -132,7 +132,6 @@
     "jquery": "1.12.3",
     "json-stable-stringify": "1.0.1",
     "jsx-to-string": "1.4.0",
-    "key-mirror": "1.0.1",
     "keymaster": "1.6.2",
     "lerna": "3.6.0",
     "loader-utils": "1.1.0",

@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import keyMirror from 'key-mirror';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,10 +14,10 @@ import { localize } from 'i18n-calypso';
 import FormButton from 'components/forms/form-button';
 import analytics from 'lib/analytics';
 
-const views = keyMirror( {
-	VIEWING: null,
-	EDITING: null,
-} );
+const views = {
+	VIEWING: 'VIEWING',
+	EDITING: 'EDITING',
+};
 
 class ManageContact extends Component {
 	constructor( props ) {
