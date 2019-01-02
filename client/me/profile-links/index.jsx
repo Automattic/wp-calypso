@@ -22,6 +22,7 @@ import ProfileLinksAddOther from 'me/profile-links-add-other';
 import { deleteUserProfileLink, resetUserProfileLinkErrors } from 'state/profile-links/actions';
 import getProfileLinks from 'state/selectors/get-profile-links';
 import getProfileLinksErrorType from 'state/selectors/get-profile-links-error-type';
+import ListEnd from 'components/list-end';
 
 class ProfileLinks extends React.Component {
 	state = {
@@ -168,7 +169,7 @@ class ProfileLinks extends React.Component {
 
 	render() {
 		return (
-			<div className="profile-links__main">
+			<div>
 				<QueryProfileLinks />
 				<SectionHeader label={ this.props.translate( 'Profile Links' ) }>
 					<AddProfileLinksButtons
@@ -182,6 +183,7 @@ class ProfileLinks extends React.Component {
 				</SectionHeader>
 				<Card>{ !! this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
 			</div>
+			<ListEnd />;			
 		);
 	}
 }
