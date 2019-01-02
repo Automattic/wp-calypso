@@ -111,7 +111,7 @@ class GutenbergEditor extends Component {
 	};
 
 	render() {
-		const { alignWide, postType, siteId, pageTemplates, post, overridePost, isRTL } = this.props;
+		const { alignWide, postType, siteId, pageTemplates, post, initialEdits, isRTL } = this.props;
 
 		//see also https://github.com/WordPress/gutenberg/blob/45bc8e4991d408bca8e87cba868e0872f742230b/lib/client-assets.php#L1451
 		const editorSettings = {
@@ -137,7 +137,7 @@ class GutenbergEditor extends Component {
 					hasFixedToolbar={ true }
 					post={ post }
 					onError={ noop }
-					overridePost={ overridePost }
+					initialEdits={ initialEdits }
 				/>
 			</Fragment>
 		);
@@ -183,19 +183,19 @@ const mapStateToProps = (
 		...mapValues( keyBy( getPageTemplates( state, siteId ), 'file' ), 'label' ),
 	};
 
-	let overridePost = null;
+	let initialEdits = null;
 	if ( duplicatePostId && postCopy ) {
-		overridePost = {
+		initialEdits = {
 			title: postCopy.title.raw,
-			content: postCopy.content,
+			content: postCopy.content.raw,
 		};
 	} else if ( !! demoContent ) {
-		overridePost = {
+		initialEdits = {
 			title: demoContent.title.raw,
-			content: demoContent.content,
+			content: demoContent.content.raw,
 		};
-	} else if ( isAutoDraft ) {
-		overridePost = { title: '' };
+	} else if ( ( isAutoDraft && ! duplicatePostId ) || ! isDemoContent ) {
+		initialEdits = { title: '' };
 	}
 
 	return {
@@ -203,7 +203,7 @@ const mapStateToProps = (
 		alignWide: alignWide || get( gutenbergThemeSupport, 'wide-images', false ),
 		pageTemplates,
 		post,
-		overridePost,
+		initialEdits,
 		isRTL,
 		gmtOffset,
 		allowedFileTypes,
