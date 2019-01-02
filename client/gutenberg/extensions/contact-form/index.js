@@ -47,8 +47,8 @@ export const settings = {
 			type: 'string',
 			default: __( 'Submit' ),
 		},
-		backgroundButtonColor: { type: 'string' },
-		textButtonColor: { type: 'string' },
+		customBackgroundButtonColor: { type: 'string' },
+		customTextButtonColor: { type: 'string' },
 		hasFormSettingsSet: {
 			type: 'string',
 			default: null,
