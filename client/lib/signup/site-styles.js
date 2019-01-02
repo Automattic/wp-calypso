@@ -56,5 +56,5 @@ export const siteStyleOptions = {
 	],
 };
 
-export const getSiteStyleOptions = vertical =>
-	get( siteStyleOptions, vertical, siteStyleOptions.business );
+export const getSiteStyleOptions = siteType =>
+	get( siteStyleOptions, siteType, siteStyleOptions.business );
