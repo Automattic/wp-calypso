@@ -23,11 +23,13 @@ export class ClassicEdit extends Component {
 	}
 
 	storeEditor = ref => {
-		//By the time editor lifecycle events like PostProcess fire, this editor instance is already marked for removal
-		//so any content manipulation doesn't get reflected in this block.
+		// By the time editor lifecycle events like PostProcess fire, this editor instance is already marked for removal
+		// so any content manipulation doesn't get reflected in this block.
 		//
-		//For now, when we detect an unmount, get content from the editor marked to be destroyed and update block attributes.
-		//https://github.com/Automattic/wp-calypso/issues/29643
+		// For now, when we detect an unmount, get content from the editor marked to be destroyed and update block
+		// attributes.
+		//
+		// https://github.com/Automattic/wp-calypso/issues/29643
 		if ( ! ref && this.editor ) {
 			const content = this.editor._editor.getContent();
 			this.props.setAttributes( { content } );
