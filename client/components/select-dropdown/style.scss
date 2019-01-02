@@ -120,7 +120,7 @@ $compact-header-height: 35;
 		}
 	}
 
-	.accessible-focus .select-dropdown:not(.is-open) .select-dropdown__container:focus & {
+	.accessible-focus .select-dropdown:not( .is-open ) .select-dropdown__container:focus & {
 		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 
@@ -284,6 +284,6 @@ $compact-header-height: 35;
 
 	label {
 		font-size: 12px;
-		padding: 0px #{$side-margin}px;
+		padding: 0 #{$side-margin}px;
 	}
 }

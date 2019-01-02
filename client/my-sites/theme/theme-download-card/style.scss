@@ -5,7 +5,7 @@
 	.gridicon {
 		display: inline-block;
 		margin: -0.5em 0 -1.1em;
-		fill: #C8D7E1;
+		fill: #c8d7e1;
 	}
 
 	.button {
@@ -22,7 +22,7 @@
 
 }
 
-@include breakpoint( ">1040px" ) {
+@include breakpoint( '>1040px' ) {
 
 	.theme-download-card {
 		text-align: inherit;
@@ -30,7 +30,7 @@
 		.gridicon {
 			position: absolute;
 			transform: translateY( -50% );
-			margin: 0.3em 0 0 0;
+			margin: 0.3em 0 0;
 			float: left;
 			top: 50%;
 		}

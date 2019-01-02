@@ -11,7 +11,7 @@
 	margin: 0 -16px -16px -16px;
 	padding: 16px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin: 0 -24px -24px -24px;
 		padding: 24px;
 	}

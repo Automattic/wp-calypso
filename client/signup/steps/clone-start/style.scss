@@ -11,15 +11,15 @@
 .clone-start__image {
 	max-width: 293px;
 	display: block;
-	margin: 8px auto 32px auto;
+	margin: 8px auto 32px;
 
 	.clone-start__destination {
-		& [fill="#00BE28"],
-		& [fill="#004F84"] {
+		& [fill='#00BE28'],
+		& [fill='#004F84'] {
 			fill: $gray-lighten-20;
 		}
-		& [fill="#00A6DB"],
-		& [fill="#74DCFC"] {
+		& [fill='#00A6DB'],
+		& [fill='#74DCFC'] {
 			fill: $gray-lighten-30;
 		}
 	}

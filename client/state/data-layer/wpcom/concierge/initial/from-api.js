@@ -15,6 +15,7 @@ export const transform = response => {
 
 	return {
 		availableTimes: response.available_times.map( convertToMilliseconds ),
+		appointmentTimespan: response.appointment_timespan,
 		nextAppointment: nextAppointment,
 		scheduleId: response.schedule_id,
 	};

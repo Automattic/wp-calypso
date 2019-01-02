@@ -38,6 +38,7 @@ class RelatedPostsEdit extends Component {
 
 		const postsToDisplay = posts.length ? posts : DEFAULT_POSTS;
 		const displayPosts = postsToDisplay.slice( 0, postsToShow );
+		const previewClassName = 'related-posts__preview';
 
 		return (
 			<Fragment>
@@ -75,33 +76,33 @@ class RelatedPostsEdit extends Component {
 				</BlockControls>
 
 				<div
-					className={ classNames( `${ className }`, {
+					className={ classNames( className, {
 						'is-grid': postLayout === 'grid',
 						[ `columns-${ postsToShow }` ]: postLayout === 'grid',
 					} ) }
 				>
-					<div className={ `${ className }__preview-items` }>
-						{ displayPosts.map( ( post, i ) => (
-							<div className={ `${ className }__preview-post` } key={ i }>
+					<div className={ previewClassName }>
+						{ displayPosts.map( post => (
+							<div className={ `${ previewClassName }-post` } key={ post.id }>
 								{ displayThumbnails &&
 									post.img &&
 									post.img.src && (
-										<Button className={ `${ className }__preview-post-link` } isLink>
+										<Button className={ `${ previewClassName }-post-link` } isLink>
 											<img src={ post.img.src } alt={ post.title } />
 										</Button>
 									) }
 								<h4>
-									<Button className={ `${ className }__preview-post-link` } isLink>
+									<Button className={ `${ previewClassName }-post-link` } isLink>
 										{ post.title }
 									</Button>
 								</h4>
 								{ displayDate && (
-									<span className={ `${ className }__preview-post-date has-small-font-size` }>
+									<span className={ `${ previewClassName }-post-date has-small-font-size` }>
 										{ post.date }
 									</span>
 								) }
 								{ displayContext && (
-									<p className={ `${ className }__preview-post-context` }>{ post.context }</p>
+									<p className={ `${ previewClassName }-post-context` }>{ post.context }</p>
 								) }
 							</div>
 						) ) }

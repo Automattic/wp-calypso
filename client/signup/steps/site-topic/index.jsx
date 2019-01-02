@@ -15,8 +15,8 @@ import Button from 'components/button';
 import StepWrapper from 'signup/step-wrapper';
 import FormFieldset from 'components/forms/form-fieldset';
 import SuggestionSearch from 'components/suggestion-search';
-import { submitSiteTopic, setSiteTopic } from 'state/signup/steps/site-topic/actions';
-import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
+import { submitSiteVertical, setSiteVertical } from 'state/signup/steps/site-vertical/actions';
+import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
@@ -150,20 +150,20 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 			} )
 		);
 
-		dispatch( submitSiteTopic( siteTopic ) );
+		dispatch( submitSiteVertical( { name: siteTopic } ) );
 
 		goToNextStep( flowName );
 	},
 
 	setSiteTopic: siteTopic => {
-		dispatch( setSiteTopic( siteTopic ) );
+		dispatch( setSiteVertical( { name: siteTopic } ) );
 	},
 } );
 
 export default localize(
 	connect(
 		state => ( {
-			siteTopic: getSignupStepsSiteTopic( state ),
+			siteTopic: getSiteVerticalName( state ),
 			siteType: getSiteType( state ),
 		} ),
 		mapDispatchToProps

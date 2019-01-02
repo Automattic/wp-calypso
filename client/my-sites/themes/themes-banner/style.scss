@@ -15,7 +15,7 @@
 		color: white !important;
 	}
 
-	&:before {
+	&::before {
 		background: rgba( black, 0.13 );
 		content: '\020';
 		display: block;

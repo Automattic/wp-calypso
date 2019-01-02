@@ -115,7 +115,15 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		'onboarding-dev': {
-			steps: [ 'user', 'site-type', 'site-topic', 'site-information', 'domains', 'plans' ],
+			steps: [
+				'user',
+				'site-type',
+				'site-topic',
+				'site-style',
+				'site-information',
+				'domains',
+				'plans',
+			],
 			destination: getSiteDestination,
 			description: 'A temporary flow for holding under-development steps',
 			lastModified: '2018-10-29',
@@ -335,6 +343,13 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		steps: [ 'displayname', 'about', 'domains', 'plans' ],
 		destination: getSiteDestination,
 		description: 'Ask for a display name not a user name',
+		lastModified: '2018-12-12',
+	};
+
+	flows[ 'plan-no-domain' ] = {
+		steps: [ 'user', 'site', 'plans' ],
+		destination: getSiteDestination,
+		description: 'Allow users to select a plan without a domain',
 		lastModified: '2018-12-12',
 	};
 

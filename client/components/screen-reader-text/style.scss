@@ -1,6 +1,6 @@
 // Text meant only for screen readers
 .screen-reader-text { // TODO add _accessibility.scss
-	clip: rect(1px, 1px, 1px, 1px);
+	clip: rect( 1px, 1px, 1px, 1px );
 	position: absolute !important;
 
 	&:hover,
@@ -8,7 +8,7 @@
 	&:focus {
 		background-color: #f1f1f1;
 		border-radius: 3px;
-		box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
+		box-shadow: 0 0 2px 2px rgba( 0, 0, 0, 0.6 );
 		clip: auto !important;
 		color: #21759b;
 		display: block;

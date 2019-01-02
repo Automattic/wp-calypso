@@ -307,6 +307,12 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 
+		case domainAvailability.DOMAIN_SUGGESTIONS_THROTTLED:
+			message = translate(
+				'You have made too many domain suggestions requests in a short time. Please wait a few minutes and try again.'
+			);
+			break;
+
 		default:
 			message = translate(
 				'Sorry, there was a problem processing your request. Please try again in a few minutes.'

@@ -1,11 +1,11 @@
 .app-promo {
 	position: relative;
 	max-width: 300px;
-	margin: 0 auto 15px auto;
+	margin: 0 auto 15px;
 	padding: 5px 0;
 	overflow: hidden;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }
@@ -34,7 +34,7 @@
 	background-color: $white;
 	color: var( --color-accent );
 	font-size: 12px;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
 		0 1px 2px $gray-lighten-30;
 
 	&:hover {

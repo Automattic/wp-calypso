@@ -61,7 +61,7 @@
 	// Mobile body is scrollable and needs to
 	// make room for the chrome.
 	.site-mockup__viewport.is-mobile & {
-		margin: 0 6px 6px 6px;
+		margin: 0 6px 6px;
 		border: 1px solid $gray-lighten-20;
 		border-radius: 3px;
 		max-height: 400px;
@@ -82,7 +82,7 @@
 	.site-mockup__viewport.is-mobile & {
 		padding: 0 16px;
 	}
-	font-family: Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: Lato, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
 
@@ -134,8 +134,8 @@
 .site-mockup__phone {
 	display: inline-block;
 	.site-mockup__address + &::before {
-		content: "•";
-		padding: 0 .5em;
+		content: '•';
+		padding: 0 0.5em;
 		.site-mockup__viewport.is-mobile & {
 			display: none;
 		}
@@ -182,7 +182,7 @@
 
 	span {
 		font-size: 18px;
-		color: rgb(110, 115, 129);
+		color: rgb( 110, 115, 129 );
 	}
 
 	.site-mockup__viewport.is-desktop & {
@@ -289,11 +289,11 @@
 		width: auto;
 	}
 
-	&:not(:last-child) {
+	&:not( :last-child ) {
 		margin-right: 20px;
 		width: calc( 50% - 20px );
 	}
-	&:not(:first-child) {
+	&:not( :first-child ) {
 		margin-left: 20px;
 	}
 }

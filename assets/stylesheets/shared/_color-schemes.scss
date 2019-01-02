@@ -63,7 +63,7 @@
 	--site-selector-hover-background-gradient: #{hex-to-rgb( $blue-medium )};
 
 	--button-is-borderless-color: #{$gray-text-min};
-	--button-primary-border-color: #{darken($blue-medium, 8%)};
+	--button-primary-border-color: #{darken( $blue-medium, 8% )};
 	--count-border-color: #{$gray};
 	--count-color: #{$gray-text-min};
 	--profile-gravatar-user-secondary-info-color: #{$gray-darken-20};

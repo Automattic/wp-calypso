@@ -1,10 +1,10 @@
 // Adds a top border to first card in the Site Stream
-.is-reader-page .is-site-stream .reader-post-card.card:nth-child(2) {
+.is-reader-page .is-site-stream .reader-post-card.card:nth-child( 2 ) {
 	border-top: 1px solid $gray-lighten-20;
 }
 
 // Removes top border from first card in Discover Stream
-.is-reader-page .is-discover-stream.is-site-stream .reader-post-card.card:nth-child(2) {
+.is-reader-page .is-discover-stream.is-site-stream .reader-post-card.card:nth-child( 2 ) {
 	border-top: 0;
 }
 
@@ -15,7 +15,7 @@
 	padding: 18px 0 20px;
 	position: relative;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin: 0;
 	}
 
@@ -30,7 +30,7 @@
 				width: 2px;
 			background: var( --color-primary );
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				left: -16px;
 			}
 		}
@@ -45,13 +45,13 @@
 			max-width: 190px;
 			box-sizing: border-box;
 
-			@include breakpoint( ">960px" ) {
+			@include breakpoint( '>960px' ) {
 				max-width: 250px;
 			}
 
-			@include breakpoint( "<480px" ) {
+			@include breakpoint( '<480px' ) {
 				height: 100px;
-				margin: 0 0 15px 0;
+				margin: 0 0 15px;
 				max-width: 100%;
 			}
 		}
@@ -78,7 +78,7 @@
 				position: relative;
 					bottom: 30px;
 					left: 20px;
-				text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+				text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
 				width: calc( 100% - 44px );
 				text-overflow: ellipsis;
 				overflow: hidden;
@@ -156,7 +156,7 @@
 			margin-top: 0;
 			margin-left: 0;
 
-			@include breakpoint( ">480px" ) {
+			@include breakpoint( '>480px' ) {
 				margin-left: 5px;
 			}
 		}
@@ -190,7 +190,7 @@
 		.reader-post-card__post {
 			margin-top: 0;
 
-			@include breakpoint( "<960px" ) {
+			@include breakpoint( '<960px' ) {
 				flex-direction: row;
 			}
 		}
@@ -246,9 +246,9 @@
 		content: '';
 		background: linear-gradient(
 			to bottom,
-			rgba(0, 0, 0, 0) 0%,
-			rgba(0, 0, 0, 0.37) 65%,
-			rgba(0, 0, 0, 1) 110%
+			rgba( 0, 0, 0, 0 ) 0%,
+			rgba( 0, 0, 0, 0.37 ) 65%,
+			rgba( 0, 0, 0, 1 ) 110%
 		);
 		height: 80px;
 		opacity: 0.4;
@@ -302,7 +302,7 @@
 		@include long-content-fade( $size: 10% );
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: calc( 100% - 90px );
 	}
 }
@@ -329,7 +329,7 @@
 	position: relative;
 	width: calc( 100% - 140px );
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		max-width: 500px;
 	}
 
@@ -346,7 +346,7 @@
 		content: ', ';
 	}
 
-	&:last-child:after {
+	&:last-child::after {
 		display: none;
 	}
 }
@@ -408,7 +408,7 @@
 	flex-direction: row;
 	margin-top: 14px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		flex-direction: column;
 	}
 
@@ -445,7 +445,7 @@
 		color: $gray-dark;
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 19px;
 	}
 }
@@ -464,13 +464,13 @@
 }
 
 // If it's not a discover card, clamp lines
-.reader-post-card.card:not(.is-discover) {
+.reader-post-card.card:not( .is-discover ) {
 	.reader-excerpt {
 		overflow: hidden;
 		max-height: 15px * 1.6 * 3.2;
 
 		// Clamp to 2 lines on wider viewports
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			max-height: 15px * 1.6 * 2;
 		}
 
@@ -499,7 +499,7 @@
 }
 
 // 3 line excerpt for thumbnail cards
-.reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-compact) {
+.reader-post-card.card.has-thumbnail:not( .is-gallery ):not( .is-compact ) {
 
 	.reader-excerpt {
 		max-height: 15px * 1.6 * 3.2;
@@ -548,11 +548,11 @@
 	.comment-button__label-status,
 	.like-button__label-status {
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			display: none;
 		}
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			display: none;
 		}
 	}
@@ -595,7 +595,7 @@
 		margin-bottom: 3px;
 
 		.follow-button__label {
-			@include breakpoint( "<660px" ) {
+			@include breakpoint( '<660px' ) {
 				display: inline;
 			}
 		}
@@ -635,9 +635,9 @@
 		margin-right: 0;
 	}
 
-	&:nth-last-of-type(-n + 2) {
+	&:nth-last-of-type( -n + 2 ) {
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			display: none;
 		}
 	}
@@ -650,7 +650,7 @@
 .reader-post-card__gallery-image {
 	height: 100px;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		height: 130px;
 	}
 }

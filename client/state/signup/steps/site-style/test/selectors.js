@@ -5,8 +5,8 @@
  */
 import { getSiteStyle } from '../selectors';
 
-describe( 'getSignupStepsSiteTopic()', () => {
-	test( 'should return the site topic field', () => {
+describe( 'getSiteStyle()', () => {
+	test( 'should return the site style value', () => {
 		const siteStyle = 'elegant';
 		expect(
 			getSiteStyle( {
