@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { parse } from 'url';
 
 /**
  * Internal Dependencies
@@ -21,7 +20,11 @@ import Popover from 'components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
-import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
+import {
+	getSearchQuery,
+	getInlineHelpCurrentlySelectedResult,
+	isInlineHelpChecklistPromptVisible,
+} from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
@@ -56,6 +59,7 @@ class InlineHelpPopover extends Component {
 		optIn: PropTypes.func,
 		redirect: PropTypes.func,
 		isEligibleForDotcomChecklist: PropTypes.bool.isRequired,
+		isChecklistPromptVisible: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -68,10 +72,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	componentDidMount() {
-		//Open the Checklist prompt when query string 'onboard=1' is present.
-		const parsed = parse( window.location.href, true );
-
-		if ( parsed && '1' === parsed.query.onboard && this.props.isEligibleForDotcomChecklist ) {
+		if ( this.props.isChecklistPromptVisible && this.props.isEligibleForDotcomChecklist ) {
 			this.openChecklistView();
 		}
 	}
@@ -311,6 +312,7 @@ function mapStateToProps( state ) {
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 
 	return {
+		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
 		searchQuery: getSearchQuery( state ),
 		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		selectedSite: getHelpSelectedSite( state ),
