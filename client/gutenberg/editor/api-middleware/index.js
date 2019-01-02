@@ -137,6 +137,13 @@ const createFetchResponse = ( body, headers ) => {
 	};
 };
 
+const forceFeaturedImageSupport = response => {
+	if ( !! get( response, [ 0, 'theme_supports' ] ) ) {
+		response[ 0 ].theme_supports[ 'post-thumbnails' ] = true;
+	}
+	return response;
+};
+
 const wpcomProxyMiddleware = options => {
 	// Make authenticated calls using the WordPress.com REST Proxy
 	// bypassing the apiFetch call that uses window.fetch.
@@ -149,7 +156,7 @@ const wpcomProxyMiddleware = options => {
 		apiVersion,
 		apiNamespace = 'wp/v2',
 		onError = identity,
-		fromApi = identity,
+		fromApi = forceFeaturedImageSupport,
 		parse = true,
 	} = options;
 
