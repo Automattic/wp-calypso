@@ -15,6 +15,7 @@ import {
 	get,
 	includes,
 	isEmpty,
+	isEqual,
 	mapKeys,
 	noop,
 	pick,
@@ -271,14 +272,14 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	checkForBloggerPlan() {
-		const isBloggerPlan =
-			( this.props.selectedSite && isBlogger( this.props.selectedSite.plan ) ) ||
-			( this.props.cart.products && this.props.cart.products.some( isBlogger ) );
+		const plan = get( this.props, 'selectedSite.plan', false );
+		const products = get( this.props, 'cart.products', [] );
+		const isBloggerPlan = isBlogger( plan ) || products.some( isBlogger );
 
 		if (
 			! this.state.bloggerFilterAdded &&
 			isBloggerPlan &&
-			JSON.stringify( this.getInitialFiltersState() ) === JSON.stringify( this.state.filters )
+			isEqual( this.getInitialFiltersState(), this.state.filters )
 		) {
 			this.setState( { bloggerFilterAdded: true } );
 			this.onFiltersChange( { tlds: [ 'blog' ] } );
