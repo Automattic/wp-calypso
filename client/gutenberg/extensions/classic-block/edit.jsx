@@ -30,7 +30,8 @@ export class ClassicEdit extends Component {
 		// attributes.
 		//
 		// https://github.com/Automattic/wp-calypso/issues/29643
-		if ( ! ref && this.editor ) {
+		const isUnmounting = ! ref && this.editor;
+		if ( isUnmounting ) {
 			const content = this.editor._editor.getContent();
 			this.props.setAttributes( { content } );
 		}
@@ -53,6 +54,11 @@ export class ClassicEdit extends Component {
 		}
 		const editor = this.editor._editor;
 
+		// Taken from the Core Classic Editor, this returns an offset bookmark, whose position is based after content
+		// normalization.
+		//
+		// https://www.tiny.cloud/docs/api/tinymce.dom/tinymce.dom.selection/#getbookmark
+		// https://github.com/tinymce/tinymce/blob/146c3c7c98206f21fbe12f61537ff42dbe5c6c3a/src/core/main/ts/bookmark/GetBookmark.ts#L154
 		this.bookmark = editor.selection.getBookmark( 2, true );
 
 		this.props.setAttributes( {
