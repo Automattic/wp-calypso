@@ -22,14 +22,17 @@ jest.mock( 'lib/signup/actions', () => ( {
 
 describe( '<SiteStyleStep />', () => {
 	const defaultProps = {
+		goToNextStep: x => x,
 		styleOptions: [
 			{
 				id: 'default',
 				theme: 'pub/default',
+				label: 'nice',
 			},
 			{
 				id: 'eyesore',
 				theme: 'pub/hipster',
+				label: 'nicer',
 			},
 		],
 		siteStyle: 'default',
@@ -72,6 +75,10 @@ describe( '<SiteStyleStep />', () => {
 		wrapper.instance().handleSubmit( {
 			preventDefault: () => {},
 		} );
-		expect( defaultProps.submitSiteStyle ).toHaveBeenCalledWith( 'eyesore', 'pub/hipster' );
+		expect( defaultProps.submitSiteStyle ).toHaveBeenCalledWith(
+			'eyesore',
+			'pub/hipster',
+			'nicer'
+		);
 	} );
 } );

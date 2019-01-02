@@ -70,15 +70,7 @@ class SiteMockups extends Component {
 		return parts.slice( 0, 2 ).join( ', ' );
 	}
 
-	shouldRender() {
-		// currently only showing on business site types
-		return this.props.siteType === 'business';
-	}
-
 	render() {
-		if ( ! this.shouldRender() ) {
-			return null;
-		}
 		const siteMockupClasses = classNames( {
 			'site-mockup__wrap': true,
 			'is-empty': isEmpty( this.props.verticalData ),

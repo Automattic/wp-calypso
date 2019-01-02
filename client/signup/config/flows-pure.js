@@ -114,6 +114,21 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			lastModified: '2019-01-10',
 		},
 
+		'onboarding-with-preview': {
+			steps: [
+				'user',
+				'site-type',
+				'site-topic-with-preview',
+				'site-style-with-preview',
+				'site-information-with-preview',
+				'domains-with-preview',
+				'plans',
+			],
+			destination: getSiteDestination,
+			description: 'The improved onboarding flow for business with integrated site preview.',
+			lastModified: '2019-01-02',
+		},
+
 		'onboarding-dev': {
 			steps: [
 				'user',

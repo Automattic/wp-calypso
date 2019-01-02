@@ -129,10 +129,11 @@ export default connect(
 			let nextFlowName = ownProps.flowName;
 			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 'store', 'slug' ) ) {
 				nextFlowName = 'ecommerce';
-			} else if ( 'ecommerce' === ownProps.flowName && ownProps.previousFlowName ) {
-				nextFlowName = ownProps.previousFlowName;
 			}
 
+			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 'business', 'slug' ) ) {
+				nextFlowName = 'onboarding-with-preview';
+			}
 			ownProps.goToNextStep( nextFlowName );
 		},
 	} )
