@@ -19,7 +19,7 @@
       width: 100%;
       font-size: 14px;
       font-family: inherit;
-      transition: border .15s ease-in-out, box-shadow .15s ease-in-out;
+      transition: border 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
       resize: vertical;
     }
 
@@ -100,7 +100,7 @@
     }
   }
 
-  @media screen and (max-width: 370px) {
+  @media screen and ( max-width: 370px ) {
     padding: 0 12px;
   }
 

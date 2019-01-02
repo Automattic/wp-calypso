@@ -14,10 +14,10 @@
   // Fixes font anti-aliasing in iframes: andrewmoreton.co.uk/typekit-iframes-safari-weird-antialiasing/
   -webkit-font-smoothing: subpixel-antialiased;
 
-  @media only screen and (max-width: 799px) {
+  @media only screen and ( max-width: 799px ) {
     background-color: $gray-light;
   }
-  @media only screen and (min-width: 409px) and (max-width: 430px) {
+  @media only screen and ( min-width: 409px ) and ( max-width: 430px ) {
     background-color: $white;
   }
 
@@ -114,7 +114,7 @@
   .wpnc__list-view.wpnc__current {
     display: none;
   }
-  .wpnc__single-view:not(.wpnc__current) {
+  .wpnc__single-view:not( .wpnc__current ) {
     display: none;
   }
 
@@ -153,8 +153,8 @@
     font-size: $wpnc__capital-font-size;
   }
 
-  .rtl header .back:after {
-    transform: rotate(90deg);
+  .rtl header .back::after {
+    transform: rotate( 90deg );
   }
 
   .wpnc__filter {
@@ -170,7 +170,7 @@
     display: table; //fallback for browsers not supporting flexbox
   }
 
-  .wpnc__note-list:not(.is-note-open) .wpnc__filter {
+  .wpnc__note-list:not( .is-note-open ) .wpnc__filter {
     border-left: 1px solid $gray-lighten-30;
   }
 
@@ -295,7 +295,7 @@
     position: relative;
     top: 50%;
     padding: 0 32px;
-    transform: translateY(-50%);
+    transform: translateY( -50% );
 
     h2 {
       font: 300 21px/24px $sans;
@@ -322,8 +322,8 @@
     left: 0;
     bottom: 0;
     overflow: hidden;
-    &:not(.is-note-open) {
-      box-shadow: -3px 1px 10px -2px rgba($gray-dark, 0.075);
+    &:not( .is-note-open ) {
+      box-shadow: -3px 1px 10px -2px rgba( $gray-dark, 0.075 );
     }
   }
 
@@ -338,7 +338,7 @@
       overflow-y: hidden;
     }
 
-    @media only screen and (min-width: 409px) and (max-width: 430px) {
+    @media only screen and ( min-width: 409px ) and ( max-width: 430px ) {
       left: 9px;
     }
 
@@ -354,7 +354,7 @@
       position: absolute;
       bottom: -5px;
       right: -8px;
-      background-color: lighten($gray, 5%);
+      background-color: lighten( $gray, 5% );
       border-color: $white;
     }
 
@@ -418,8 +418,8 @@
       display: flex;
       @extend %headertext;
       color: $gray-darken-10;
-      padding: 6px 0px;
-      background: rgba(255, 255, 255, 0.95);
+      padding: 6px 0;
+      background: rgba( 255, 255, 255, 0.95 );
       border-bottom: 1px solid $gray-lighten-30;
 
       .gridicons-time {
@@ -489,11 +489,11 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    left: 0px;
-    right: 0px;
-    box-shadow: -3px 1px 10px -2px rgba($gray-dark, 0.075);
+    left: 0;
+    right: 0;
+    box-shadow: -3px 1px 10px -2px rgba( $gray-dark, 0.075 );
 
-    @media only screen and (min-width: 480px) {
+    @media only screen and ( min-width: 480px ) {
       border-left: 1px solid $gray-lighten-30;
     }
 
@@ -524,7 +524,7 @@
       }
 
       .wpnc__user__meta {
-        &:not(.wpnc__user__bulleted) {
+        &:not( .wpnc__user__bulleted ) {
           .wpnc__user__site {
             -webkit-line-clamp: 1;
             @extend %ellipsy-box;
@@ -581,7 +581,7 @@
       }
     }
 
-    .wpnc__note:not(.wpnc__current) {
+    .wpnc__note:not( .wpnc__current ) {
       display: none;
     }
 
@@ -614,8 +614,8 @@
     .wpnc__preface p {
       display: inline;
 
-      &:after {
-        content: " ";
+      &::after {
+        content: ' ';
       }
 
       &:first-of-type {
@@ -657,7 +657,7 @@
         display: inline-block;
         margin-left: 2em;
         br {
-          content: " ";
+          content: ' ';
           display: block;
         }
       }
@@ -700,11 +700,11 @@
     .wpnc__body-todo {
       list-style: none;
 
-      .wpnc__todo-done:before {
+      .wpnc__todo-done::before {
         content: '◉ ';
       }
 
-      .wpnc__todo-not-done:before {
+      .wpnc__todo-not-done::before {
         content: '◎ ';
       }
     }
@@ -794,7 +794,7 @@
   }
 
   .wpnc__comment-unapproved div.wpnc__user .wpnc__user__meta a:hover {
-    color: darken($wpnc__yellow-dark, 15%);
+    color: darken( $wpnc__yellow-dark, 15% );
   }
 
   .wpnc__comment-unapproved .wpnc__body div.wpnc__user .wpnc__user__home {
@@ -814,7 +814,7 @@
     padding: $wpnc__padding-large $wpnc__padding-medium 0;
   }
 
-  @media only screen and (min-width: 800px) {
+  @media only screen and ( min-width: 800px ) {
     .wpnc__list-view.wpnc__current {
       display: block;
 
@@ -836,8 +836,8 @@
     .wpnc__single-view {
       right: 410px;
       left: 10px;
-      top: 0px;
-      bottom: 0px;
+      top: 0;
+      bottom: 0;
       z-index: -1;
 
       header {
@@ -847,7 +847,7 @@
       }
 
       .wpnc__note {
-        margin-top: 0px;
+        margin-top: 0;
       }
 
       -webkit-transform: translate3d(
@@ -868,12 +868,12 @@
 
   @keyframes wpnc__slideIn {
     from {
-      -webkit-transform: translateX(100%);
-      transform: translateX(100%);
+      -webkit-transform: translateX( 100% );
+      transform: translateX( 100% );
     }
     to {
-      -webkit-transform: translateX(0%);
-      transform: translateX(0%);
+      -webkit-transform: translateX( 0% );
+      transform: translateX( 0% );
     }
   }
 

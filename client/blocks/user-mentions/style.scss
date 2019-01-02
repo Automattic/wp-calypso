@@ -8,7 +8,7 @@ $avatar-margin: 10px;
 		display: none;
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		width: 20%;
 		min-width: 29em;
 	}
@@ -26,7 +26,7 @@ $avatar-margin: 10px;
 		direction: ltr; // Required to get the '@' on the correct side.
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		line-height: 24px;
 	}
 }
@@ -56,7 +56,7 @@ $avatar-margin: 10px;
 	margin-left: $avatar-size + $avatar-margin;
 	font-size: 11px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		float: right;
 		clear: none;
 		margin-left: 0;

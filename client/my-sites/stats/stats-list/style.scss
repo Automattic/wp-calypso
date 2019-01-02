@@ -2,7 +2,7 @@
 
 .module-content-list {
 	padding: 0;
-	margin: 0 0 .5em;
+	margin: 0 0 0.5em;
 	list-style-type: none;
 
 	.stats-module.is-loading &,
@@ -24,7 +24,7 @@
 	line-height: 40px;
 
 	// List item height shorter on 2-column modules
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & {
 			font-size: 12px;
 			line-height: 28px;
@@ -34,7 +34,7 @@
 	border-top: 1px solid $transparent;
 
 	// Increase touch targets on mobile
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		line-height: 48px;
 		border-top: 1px solid $gray-light;
 
@@ -51,12 +51,12 @@
 	&.disabled {
 		.module-content-list-item-label,
 		.module-content-list-item-value {
-			opacity: .15;
-			transition: opacity .3s ease .15s;
+			opacity: 0.15;
+			transition: opacity 0.3s ease 0.15s;
 		}
 
 		.module-content-list-item-right {
-			&:before {
+			&::before {
 				display: none;
 			}
 		}
@@ -64,7 +64,7 @@
 		.module-content-list-item-actions {
 			cursor: pointer;
 			opacity: 1;
-			transition: opacity .3s ease .15s;
+			transition: opacity 0.3s ease 0.15s;
 			position: relative;
 			right: -20px;
 		}
@@ -88,7 +88,7 @@
 		line-height: inherit;
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 
 		.stats__module-list & {
 			line-height: 28px;
@@ -111,7 +111,7 @@
 
 // Module Content List Item Hover
 
-@include breakpoint( ">480px" ) {
+@include breakpoint( '>480px' ) {
 	.module-content-list .module-content-list-item-wrapper:hover,
 	.module-content-list-item-link .module-content-list-item-wrapper:hover {
 
@@ -121,7 +121,7 @@
 		}
 
 		.module-content-list-item-right::before {
-			background-image: linear-gradient(to right, $transparent 0%, $gray-light 90%);
+			background-image: linear-gradient( to right, $transparent 0%, $gray-light 90% );
 		}
 
 		// Display hidden actions
@@ -153,7 +153,7 @@
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient(to right, $transparent 0%, $gray-light 90%);
+		background-image: linear-gradient( to right, $transparent 0%, $gray-light 90% );
 	}
 
 	// Display hidden actions
@@ -164,7 +164,7 @@
 
 // Highlight toggle icon if item has a sublist
 
-@include breakpoint( ">480px" ) {
+@include breakpoint( '>480px' ) {
 	.module-content-list > .module-content-list-item-toggle > .module-content-list-item-wrapper:hover .module-content-list-item-label::before {
 		color: $link-highlight;
 	}
@@ -185,13 +185,13 @@
 	height: 40px; // 2
 
 	// List item height shorter on 2-column modules
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & {
 			height: 28px;
 		}
 	}
 
-	@include breakpoint( "<480px" )	 {
+	@include breakpoint( '<480px' ) {
 		height: 48px; // ### see ^
 	}
 
@@ -248,7 +248,7 @@
 	}
 
 	// Icons smaller on 2col
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & .icon {
 			font-size: 20px;
 			line-height: 1.3;
@@ -266,7 +266,7 @@
 	}
 
 	.avatar-user {
-		border-radius: 12px
+		border-radius: 12px;
 	}
 
 	.user-selectable & {
@@ -300,13 +300,13 @@
 	margin-left: -48px; // ### keep? experimental: to force labels to go longer than they normally would to make sure the fade out shows
 
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & {
 			height: 28px;
 		}
 	}
 
-	@include breakpoint( "<480px" )	{
+	@include breakpoint( '<480px' ) {
 		height: 48px;
 	}
 
@@ -332,7 +332,7 @@
 // Actions list
 ul.module-content-list-item-actions {
 	display: inline-block;
-	margin: 0 .5em 0 0;
+	margin: 0 0.5em 0 0;
 
 	// ### guess we need to abstract this to a mixin since its repeated now
 	// ### this should be fixed but refraining since we're going to use
@@ -374,7 +374,7 @@ ul.module-content-list-item-actions {
 		}
 	}
 
-	@include breakpoint( "<480px" )	{
+	@include breakpoint( '<480px' ) {
 		@include dropdown-menu;
 
 		background: $gray-light;
@@ -423,7 +423,7 @@ ul.module-content-list-item-actions {
 	height: 40px;
 	line-height: inherit;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & {
 			height: 28px;
 		}
@@ -433,7 +433,7 @@ ul.module-content-list-item-actions {
 		vertical-align: middle;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: inline-block;
 		height: 48px;
 	}
@@ -452,7 +452,7 @@ ul.module-content-list-item-action-submenu {
 	list-style: none;
 	margin: 0;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 
 		@include dropdown-menu;
 
@@ -484,13 +484,13 @@ ul.module-content-list-item-action-submenu {
 	margin: 0 1em 0 0;
 
 	// So that 'View' label is moved more to the right since icon has been dropped
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & {
 			margin: 0;
 		}
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		margin-right: 0;
 	}
 
@@ -502,7 +502,7 @@ ul.module-content-list-item-action-submenu {
 		margin: 0;
 		line-height: inherit;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			min-width: 24px;
 			padding: 0 12px;
 
@@ -516,7 +516,7 @@ ul.module-content-list-item-action-submenu {
 		}
 
 		// Hide 'View' label next to icon on 2-column modules
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			.stats__module-list & span.module-content-list-item-action-label-view {
 				display: none;
 			}
@@ -559,15 +559,15 @@ ul.module-content-list-item-action-submenu {
 		color: var( --color-error );
 
 		// Hover state
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			&:hover {
-				color: tint($alert-red, 30%);
+				color: tint( $alert-red, 30% );
 			}
 		}
 
 		// Focus state
 		&:focus {
-			color: tint($alert-red, 30%);
+			color: tint( $alert-red, 30% );
 		}
 	}
 }
@@ -577,7 +577,7 @@ ul.module-content-list-item-action-submenu {
 // (a legend for the data displayed)
 
 ul.module-content-list-legend {
-	padding-top: .5em;
+	padding-top: 0.5em;
 	margin-bottom: 0;
 }
 
@@ -596,7 +596,7 @@ ul.module-content-list-legend {
 
 // Display full action labels in header to use them as legends for the list's actions
 .module-content-list-legend .module-content-list-item .module-content-list-item-action .module-content-list-item-action-label {
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: inline;
 	}
 }
@@ -622,7 +622,7 @@ ul.module-content-list-legend {
 
 	> .module-content-list-item-wrapper {
 		line-height: 48px;
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			.stats__module-list & {
 				line-height: 28px;
 			}
@@ -631,7 +631,7 @@ ul.module-content-list-legend {
 
 	> .module-content-list-item-wrapper .module-content-list-item-label {
 		height: 48px;
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			.stats__module-list & {
 				height: 28px;
 			}
@@ -648,7 +648,7 @@ ul.module-content-list-legend {
 		line-height: 32px;
 		width: 32px;
 		height: 32px;
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			.stats__module-list & {
 				width: 24px;
 				height: 24px;
@@ -656,7 +656,7 @@ ul.module-content-list-legend {
 		}
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		.stats__module-list & > .module-content-list-item-wrapper .module-content-list-item-label .icon {
 			margin-top: -2px; // Really couldn't figure out a better way to correctly position the avatar
 		}
@@ -665,7 +665,7 @@ ul.module-content-list-legend {
 	> .module-content-list-item-wrapper .module-content-list-item-label .avatar {
 		width: 32px;
 		height: 32px;
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			.stats__module-list & {
 				width: 24px;
 				height: 24px;
@@ -695,7 +695,7 @@ ul.module-content-list-legend {
 
 	// Highlight main action (usually what's indicated in the label)
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		.module-content-list-item-wrapper:hover .module-content-list-item-label {
 			color: $link-highlight;
 		}
@@ -715,8 +715,8 @@ ul.module-content-list-legend {
 	// Toggle icon
 	> .module-content-list-item-wrapper .module-content-list-item-label .gridicons-chevron-down {
 		vertical-align: middle;
-		transition: .2s transform ease-out;
-		transform: translate3d(0,0,0);
+		transition: 0.2s transform ease-out;
+		transform: translate3d( 0, 0, 0 );
 	}
 }
 
@@ -740,12 +740,12 @@ ul.module-content-list-legend {
 	}
 
 	> .module-content-list-item-wrapper .module-content-list-item-right::before {
-		background-image: linear-gradient(to right, $transparent 0%, $gray-light 90%);
+		background-image: linear-gradient( to right, $transparent 0%, $gray-light 90% );
 	}
 
 	// Rotate toggle icon
 	> .module-content-list-item-wrapper .module-content-list-item-label .gridicons-chevron-down {
-		transform: rotate(180deg);
+		transform: rotate( 180deg );
 	}
 
 	// Hide the top border of an active sub-list
@@ -754,7 +754,7 @@ ul.module-content-list-legend {
 	}
 
 	// Hover changes
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		> .module-content-list-item-wrapper:hover {
 
 			// Change background and gradient color
@@ -764,7 +764,7 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient(to right, $transparent 0%, $white 90%);
+				background-image: linear-gradient( to right, $transparent 0%, $white 90% );
 			}
 		}
 	}
@@ -792,11 +792,11 @@ ul.module-content-list-legend {
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient(to right, $transparent 0%, $gray-light 90%);
+		background-image: linear-gradient( to right, $transparent 0%, $gray-light 90% );
 	}
 
 	// Hover changes
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		&-link .module-content-list-item-wrapper:hover,
 		&-normal .module-content-list-item-wrapper:hover {
 
@@ -807,7 +807,7 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient(to right, $transparent 0%, $white 90%);
+				background-image: linear-gradient( to right, $transparent 0%, $white 90% );
 			}
 		}
 	}

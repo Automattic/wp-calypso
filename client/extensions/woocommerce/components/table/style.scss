@@ -22,7 +22,7 @@
 	}
 
 	&.is-compact-table {
-		padding: .5em 0;
+		padding: 0.5em 0;
 
 		.table-heading,
 		.table-item {
@@ -44,8 +44,8 @@
 			&:hover {
 				background: $gray-light;
 
-				.table-item__cell-title:after {
-					background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, $gray-light 90%);
+				.table-item__cell-title::after {
+					background-image: linear-gradient( to right, rgba( 255, 255, 255, 0 ) 0%, $gray-light 90% );
 				}
 			}
 		}
@@ -83,13 +83,13 @@
 			overflow: hidden;
 
 			&::after {
-				background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, $white 90%);
+				background-image: linear-gradient( to right, rgba( 255, 255, 255, 0 ) 0%, $white 90% );
 				position: absolute;
 				z-index: 1;
 				right: 0;
 				top: 0;
 				bottom: 0;
-				content: "";
+				content: '';
 				width: 48px;
 			}
 		}
@@ -100,19 +100,19 @@
 			position: relative;
 			overflow: hidden;
 
-			&:after {
-				content: "";
+			&::after {
+				content: '';
 				display: block;
 				width: 24px;
 				height: 100%;
 				position: absolute;
 				right: -12px;
 				top: 0;
-				background: radial-gradient( ellipse at center, rgba( $gray-dark,.125 ) 0%, rgba( $white,0 ) 75%, rgba( $white,0 ) 90% );
+				background: radial-gradient( ellipse at center, rgba( $gray-dark, 0.125 ) 0%, rgba( $white, 0 ) 75%, rgba( $white, 0 ) 90% );
 			}
 
-			@include breakpoint( ">660px" ) {
-				&:after {
+			@include breakpoint( '>660px' ) {
+				&::after {
 					display: none;
 				}
 			}

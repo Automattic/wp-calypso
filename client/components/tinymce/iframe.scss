@@ -12,7 +12,7 @@ body {
 }
 
 p {
-	margin: 0 0 24px 0;
+	margin: 0 0 24px;
 
 	.mce-content-body & {
 		/* To override lightgray/content.min.css */
@@ -134,7 +134,7 @@ a img {
 
 blockquote {
 	padding: 16px;
-	margin: 8px 0 24px 0;
+	margin: 8px 0 24px;
 	border-left: 2px solid $gray;
 	color: darken( $gray, 20 );
 	background: lighten( $gray, 30 );

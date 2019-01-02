@@ -17,7 +17,7 @@
 
   .wpnc__button {
     background: $white;
-    border-color: lighten($gray, 20%);
+    border-color: lighten( $gray, 20% );
     border-style: solid;
     border-width: 1px 1px 2px;
     color: $gray-dark;
@@ -39,7 +39,7 @@
     appearance: none;
 
     &:hover {
-      border-color: lighten($gray, 10%);
+      border-color: lighten( $gray, 10% );
       color: $gray-dark;
     }
     &:active {
@@ -49,9 +49,9 @@
       color: $gray-dark;
     }
     &[disabled], &:disabled {
-      color: lighten($gray, 30%);
+      color: lighten( $gray, 30% );
       background: $white;
-      border-color: lighten($gray, 30%);
+      border-color: lighten( $gray, 30% );
       cursor: default;
 
       &:active {
@@ -64,13 +64,13 @@
     }
     &.is-compact {
       padding: 7px;
-      color: darken($gray, 10%);
+      color: darken( $gray, 10% );
       font-size: 11px;
       line-height: 1;
       text-transform: uppercase;
 
       &:disabled {
-        color: lighten($gray, 30%);
+        color: lighten( $gray, 30% );
       }
       .gridicon {
         top: 4px;
@@ -100,8 +100,8 @@
       color: $white;
     }
     &[disabled], &:disabled {
-      background: tint($blue-light, 50%);
-      border-color: tint($blue-wordpress, 55%);
+      background: tint( $blue-light, 50% );
+      border-color: tint( $blue-wordpress, 55% );
       color: $white;
     }
     &.is-compact {
@@ -117,31 +117,31 @@
       border-color: var( --color-error );
     }
     &:focus {
-      box-shadow: 0 0 0 2px lighten($alert-red, 20%);
+      box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
     }
     &[disabled], &:disabled {
-      color: lighten($alert-red, 30%);
-      border-color: lighten($gray, 30%);
+      color: lighten( $alert-red, 30% );
+      border-color: lighten( $gray, 30% );
     }
   }
 
   .wpnc__button.is-primary.is-scary {
     background: var( --color-error );
-    border-color: darken($alert-red, 20%);
+    border-color: darken( $alert-red, 20% );
     color: $white;
 
     &:hover, &:focus {
-      border-color: darken($alert-red, 40%);
+      border-color: darken( $alert-red, 40% );
     }
     &[disabled], &:disabled {
-      background: lighten($alert-red, 20%);
-      border-color: tint($alert-red, 30%);
+      background: lighten( $alert-red, 20% );
+      border-color: tint( $alert-red, 30% );
     }
   }
 
   .wpnc__button.is-borderless {
     border: none;
-    color: darken($gray, 10%);
+    color: darken( $gray, 10% );
     padding-left: 0;
     padding-right: 0;
 
@@ -160,7 +160,7 @@
     }
 
     &[disabled], &:disabled {
-      color: lighten($gray, 30%);
+      color: lighten( $gray, 30% );
       background: $white;
       cursor: default;
 
@@ -172,11 +172,11 @@
       color: var( --color-error );
 
       &:hover, &:focus {
-        color: darken($alert-red, 20%);
+        color: darken( $alert-red, 20% );
       }
 
       &[disabled] {
-        color: lighten($alert-red, 30%);
+        color: lighten( $alert-red, 30% );
       }
     }
 

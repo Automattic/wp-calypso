@@ -42,11 +42,11 @@
 	}
 
 	.image-thumb {
-		margin: 12px 16px 0px 16px;
+		margin: 12px 16px 0;
 	}
 
 	.count {
-		margin: 18px 0px 0px 16px;
+		margin: 18px 0 0 16px;
 	}
 
 	&:hover {
@@ -73,13 +73,13 @@
 .product-categories__form-info-fields {
 	display: flex;
 	flex-direction: column;
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 }
 
 .product-categories__form-name-description {
-	flex: 2
+	flex: 2;
 }
 
 .product_categories__list-wrapper {
@@ -97,23 +97,23 @@
 	margin-bottom: 16px;
 
 	.product-image-uploader__wrapper {
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			width: 175px;
 			height: 175px;
 		}
-		@include breakpoint( ">1040px" ) {
+		@include breakpoint( '>1040px' ) {
 			width: 225px;
 			height: 225px;
 		}
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		margin-bottom: 0;
 		width: 175px;
 		margin-right: 24px;
 	}
 
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( '>1040px' ) {
 		width: 225px;
 	}
 

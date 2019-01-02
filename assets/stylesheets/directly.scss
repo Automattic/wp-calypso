@@ -256,9 +256,9 @@ textarea {
 		background: #14abdd;
 		margin-left: inherit;
 		margin-right: 20px;
-		border-top-right-radius: 0px;
+		border-top-right-radius: 0;
 		position: relative;
-		&:after {
+		&::after {
 			// Triangle for the corner
 			position: absolute;
 			top: 0;
@@ -269,7 +269,7 @@ textarea {
 			height: 0;
 			border-style: solid;
 			border-width: 10px 10px 0 0;
-			border-color: #14abdd transparent transparent transparent;
+			border-color: #14abdd transparent transparent;
 		}
 	}
 
@@ -280,7 +280,7 @@ textarea {
 		margin-right: inherit;
 		margin-left: 20px;
 		position: relative;
-		&:after {
+		&::after {
 			// Triangle for the corner
 			position: absolute;
 			top: 0;
@@ -409,7 +409,7 @@ textarea {
 		.beacon {
 			background: $blue-wordpress;
 			margin: 5px auto;
-			&:after {
+			&::after {
 				background: $blue-wordpress;
 			}
 		}

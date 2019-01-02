@@ -21,7 +21,7 @@
 .media-library__header .is-desktop {
 	display: none;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: inline-block;
 	}
 }
@@ -32,7 +32,7 @@
 
 .media-library__header .button.media-library__upload-button {
 	margin-right: 0;
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		border-top-right-radius: 0;
 		border-bottom-right-radius: 0;
 	}
@@ -44,7 +44,7 @@
 .media-library__header.media-library__upload-url {
 	margin-bottom: 10px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin-bottom: 16px;
 	}
 }
@@ -60,7 +60,7 @@
 	align-items: stretch;
 	position: relative;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		flex-wrap: wrap;
 	}
 
@@ -68,7 +68,7 @@
 		flex: 1 auto;
 		z-index: z-index( 'root', '.media-library .search.is-expanded-to-container' );
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			width: auto;
 		}
 	}
@@ -77,7 +77,7 @@
 		display: none;
 		margin-bottom: 9px;
 		box-shadow:
-		  0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+		  0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
 		  0 1px 2px $gray-lighten-30;
 		background-color: $white;
 		padding-left: 24px;
@@ -85,15 +85,15 @@
 		box-sizing: border-box;
 		flex: 1 0 auto;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			display: flex;
 		}
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			display: none;
 		}
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			display: flex;
 			margin-bottom: 17px;
 		}
@@ -101,7 +101,7 @@
 
 	.media-library__datasource {
 		box-shadow:
-		  0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+		  0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
 		  0 1px 2px $gray-lighten-30;
 		background-color: $white;
 		box-sizing: border-box;
@@ -123,12 +123,12 @@
 			}
 		}
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			align-items: normal;
 			padding-top: 6px;
 		}
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			margin-bottom: 9px;
 		}
 	}
@@ -137,7 +137,7 @@
 .editor-media-modal .media-library__datasource {
 	margin-bottom: 16px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		margin-bottom: 9px;
 	}
 }
@@ -166,7 +166,7 @@
 
 .editor-media-modal .media-library__filter-bar {
 	.plan-storage {
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			margin-bottom: 16px;
 		}
 	}
@@ -179,7 +179,7 @@
 	line-height: 40px;
 	margin-right: 12px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }
@@ -206,7 +206,7 @@
 		padding: 2px 4px;
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		display: none;
 	}
 }
@@ -214,7 +214,7 @@
 .media-library__scale-range {
 	display: none;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		display: block;
 	}
 }
@@ -262,9 +262,9 @@
 	box-shadow: none;
 	margin: 0;
 
-	@include breakpoint( ">960px") {
+	@include breakpoint( '>960px') {
 		top: 50%;
-		transform: translateY(-50%);
+		transform: translateY( -50% );
 	}
 }
 
