@@ -48,7 +48,7 @@ class UpworkBanner extends PureComponent {
 	}
 
 	recordClick = eventName => {
-		const plan = this.props.plan ? this.props.plan.productSlug : '';
+		const plan = this.props.currentPlan ? this.props.currentPlan.productSlug : '';
 
 		this.props.recordTracksEvent( eventName, { plan } );
 	};
