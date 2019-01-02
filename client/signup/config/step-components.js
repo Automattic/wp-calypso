@@ -93,6 +93,7 @@ export default {
 	displayname: UserSignupComponent,
 	'reader-landing': ReaderLandingStepComponent,
 	// Steps with preview
+	'site-style-with-preview': SiteStyleComponent,
 	'site-topic-with-preview': SiteTopicComponent,
 	'site-information-with-preview': SiteInformationComponent,
 	'domains-with-preview': DomainsStepComponent,
