@@ -15,6 +15,7 @@ import React, { Fragment } from 'react';
  */
 import { ADDING_GOOGLE_APPS_TO_YOUR_SITE } from 'lib/url/support';
 import Button from 'components/forms/form-button';
+import { canAddGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
 import CompactCard from 'components/card/compact';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
@@ -22,7 +23,6 @@ import { domainManagementAddGoogleApps } from 'my-sites/domains/paths';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { getGoogleAppsSupportedDomains } from 'lib/domains';
 
 class AddGoogleAppsCard extends React.Component {
 	constructor( props ) {
@@ -63,7 +63,6 @@ class AddGoogleAppsCard extends React.Component {
 
 		return (
 			<Fragment>
-
 				<CompactCard>
 					<header className="email__add-google-apps-card-header">
 						<h3 className="email__add-google-apps-card-product-logo">
@@ -237,13 +236,18 @@ const learnMoreClick = domainName =>
 	);
 
 export default connect(
-	( state, { selectedSite } ) => {
+	( state, { selectedSite, selectedDomainName } ) => {
 		const domains = getDomainsBySiteId( state, selectedSite.ID );
+		let eligibleDomainName = 'example.com';
 		const [ eligibleDomain ] = getGoogleAppsSupportedDomains( domains );
-
+		if ( selectedDomainName && canAddGoogleApps( selectedDomainName ) ) {
+			eligibleDomainName = selectedDomainName;
+		} else if ( eligibleDomain.name ) {
+			eligibleDomainName = eligibleDomain.name;
+		}
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			eligibleDomainName: eligibleDomain && eligibleDomain.name || 'example.com',
+			eligibleDomainName,
 		};
 	},
 	{ learnMoreClick }
