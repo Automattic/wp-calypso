@@ -40,17 +40,15 @@ class SiteTopicStep extends Component {
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		siteTopic: PropTypes.string,
+		siteSlug: PropTypes.string,
 		siteType: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			siteTopicValue: props.siteTopic || '',
-			siteTopicSlug: props.siteSlug || '',
-		};
-	}
+	static defaultProps = {
+		siteTopic: '',
+		siteSlug: '',
+	};
 
 	componentDidMount() {
 		SignupActions.saveSignupStep( {
@@ -58,26 +56,19 @@ class SiteTopicStep extends Component {
 		} );
 	}
 
-	onSiteTopicChange = ( { vertical_name, vertical_slug } ) => {
-		this.setState(
-			{
-				siteTopicValue: vertical_name,
-				siteTopicSlug: vertical_slug,
-			},
-			() => {
-				if ( this.props.flowName === 'onboarding-dev' ) {
-					this.props.setSiteTopic( this.state );
-				}
-			}
-		);
-	};
+	onSiteTopicChange = verticalData => this.props.setSiteTopic( { ...verticalData } );
 
 	onSubmit = event => {
 		event.preventDefault();
-		this.props.submitSiteTopic( this.state );
+		const { submitSiteTopic, siteTopic, siteSlug } = this.props;
+		submitSiteTopic( {
+			vertical_name: siteTopic,
+			vertical_slug: siteSlug,
+		} );
 	};
 
 	renderContent() {
+		const { translate, siteTopic } = this.props;
 		return (
 			<div className="site-topic__content">
 				<form onSubmit={ this.onSubmit }>
@@ -85,10 +76,10 @@ class SiteTopicStep extends Component {
 						<Gridicon icon="search" />
 						<SiteVerticalsSuggestionSearch
 							onChange={ this.onSiteTopicChange }
-							initialValue={ this.state.siteTopicValue }
+							initialValue={ siteTopic }
 						/>
-						<Button type="submit" disabled={ ! this.state.siteTopicValue } primary>
-							{ this.props.translate( 'Continue' ) }
+						<Button type="submit" disabled={ ! siteTopic } primary>
+							{ translate( 'Continue' ) }
 						</Button>
 					</FormFieldset>
 				</form>
@@ -130,30 +121,35 @@ class SiteTopicStep extends Component {
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteTopic: ( { siteTopicSlug, siteTopicValue } ) => {
+	submitSiteTopic: ( { vertical_name, vertical_slug } ) => {
 		const { flowName, goToNextStep } = ownProps;
 
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
-				value: siteTopicSlug,
+				value: vertical_slug,
 			} )
 		);
 
-		dispatch( submitSiteVertical( { name: siteTopicValue, slug: siteTopicSlug } ) );
+		dispatch( submitSiteVertical( { name: vertical_name, slug: vertical_slug } ) );
 
 		goToNextStep( flowName );
 	},
 
-	setSiteTopic: ( { siteTopicSlug, siteTopicValue } ) => {
-		dispatch( setSiteVertical( { name: siteTopicValue, slug: siteTopicSlug } ) );
+	setSiteTopic: ( { vertical_name, vertical_slug } ) => {
+		dispatch( setSiteVertical( { name: vertical_name, slug: vertical_slug } ) );
+		dispatch(
+			recordTracksEvent( 'calypso_signup_actions_select_site_topic', {
+				vertical_name,
+			} )
+		);
 	},
 } );
 
 export default localize(
 	connect(
 		state => ( {
-			siteTopic: getSiteVerticalName( state ),
-			siteSlug: getSiteVerticalSlug( state ),
+			siteTopic: getSiteVerticalName( state ) || '',
+			siteSlug: getSiteVerticalSlug( state ) || '',
 			siteType: getSiteType( state ),
 		} ),
 		mapDispatchToProps

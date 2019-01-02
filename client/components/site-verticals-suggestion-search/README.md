@@ -17,6 +17,7 @@ render() {
 		<SiteVerticalsSuggestionSearch
 			onChange={ this.onChange }
 			initialValue={ this.state.initialValue }
+			charsToTriggerSearch={ 3 }
 		/>
 	);
 }
@@ -30,6 +31,9 @@ An _optional_ initial value of the search input field. Default is `''`;
 
 ### _(String)_ `placeholder`
 _Optional_ placeholder text for the search input field.
+
+### _(Integer)_ `charsToTriggerSearch`
+_Optional_ number of characters before an API search is triggered.
 
 ### _(Function)_ `onChange` 
 The callback function for receiving updated value. 

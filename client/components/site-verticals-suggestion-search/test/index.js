@@ -22,7 +22,10 @@ const defaultProps = {
 	translate: str => str,
 	initialValue: 'scooby',
 	verticals: [ { vertical_name: 'doo', vertical_slug: 'doo' } ],
+	charsToTriggerSearch: 2,
 };
+
+defaultProps.requestVerticals.cancel = jest.fn();
 
 describe( '<SiteVerticalsSuggestionSearch />', () => {
 	afterEach( () => {
@@ -45,5 +48,13 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 			vertical_name: 'bo',
 			vertical_slug: 'bo',
 		} );
+	} );
+
+	test( 'should cancel debounced invocations when the search value is falsey or has fewer chars than `props.charsToTriggerSearch`', () => {
+		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
+		wrapper.instance().onSiteTopicChange( 'b' );
+		expect( defaultProps.requestVerticals.cancel ).toHaveBeenCalledTimes( 1 );
+		wrapper.instance().onSiteTopicChange( null );
+		expect( defaultProps.requestVerticals.cancel ).toHaveBeenCalledTimes( 2 );
 	} );
 } );

@@ -21,27 +21,34 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		initialValue: PropTypes.string,
 		onChange: PropTypes.func,
 		placeholder: PropTypes.string,
+		charsToTriggerSearch: PropTypes.number,
 	};
 
 	static defaultProps = {
 		initialValue: '',
 		onChange: noop,
 		placeholder: '',
+		charsToTriggerSearch: 2,
 	};
 
 	constructor( props ) {
 		super( props );
 		this.state = {
 			searchValue: props.initialValue,
-			charsToTriggerSearch: 1,
 		};
 	}
 
 	onSiteTopicChange = value => {
 		value = trim( value );
+
+		// Cancel delayed invocations in case of deletion.
+		if ( ! value || value.length < this.props.charsToTriggerSearch ) {
+			this.props.requestVerticals.cancel();
+		}
+
 		if (
 			value &&
-			value.length > this.state.charsToTriggerSearch &&
+			value.length >= this.props.charsToTriggerSearch &&
 			// Don't trigger a search if a non-user-defined input value is present in the verticals results.
 			! find( this.props.verticals, { vertical_name: value, is_user_input_vertical: false } )
 		) {
@@ -99,7 +106,7 @@ const requestSiteVerticals = debounce(
 			}
 		);
 	},
-	250,
+	333,
 	{ leading: false, trailing: true }
 );
 

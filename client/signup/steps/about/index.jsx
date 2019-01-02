@@ -110,7 +110,7 @@ class AboutStep extends Component {
 		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { vertical_name } );
 		this.formStateController.handleFieldChange( {
 			name: 'siteTopic',
-			vertical_name,
+			value: vertical_name,
 		} );
 	};
 
@@ -178,19 +178,19 @@ class AboutStep extends Component {
 		} = this.props;
 
 		//Defaults
-		let themeRepo = 'pub/radcliffe-2',
-			designType = 'blog',
-			siteTitleValue = 'Site Title',
-			nextFlowName = flowName;
+		let themeRepo = 'pub/radcliffe-2';
+		let designType = 'blog';
+		let siteTitleValue = 'Site Title';
+		let nextFlowName = flowName;
 
 		//Inputs
-		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 		const userExperienceInput = this.state.userExperience;
 		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
 		const eventAttributes = {};
 
 		if ( ! shouldHideSiteTitle ) {
 			//Site Title
+			const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 			if ( siteTitleInput !== '' ) {
 				siteTitleValue = siteTitleInput;
 				this.props.setSiteTitle( siteTitleValue );
@@ -201,10 +201,10 @@ class AboutStep extends Component {
 		// Set Site Topic value for tracking/marketing
 		eventAttributes.site_topic = this.state.hasPrepopulatedVertical
 			? this.state.siteTopicValue
-			: this.state.siteTopicSlug || siteTopicInput || 'N/A';
+			: this.state.siteTopicSlug || siteTopicInput;
 
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
-			value: eventAttributes.site_topic,
+			value: eventAttributes.site_topic || 'N/A',
 		} );
 
 		this.props.setSurvey( {
