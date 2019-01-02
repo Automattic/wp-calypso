@@ -42,18 +42,15 @@
 			$opposite-side: 'bottom';
 			$cross-side: 'left';
 			$cross-opposite-side: 'right';
-		}
- @else if $side == 'bottom' {
+		} @else if $side == 'bottom' {
 			$opposite-side: 'top';
 			$cross-side: 'left';
 			$cross-opposite-side: 'right';
-		}
- @else if $side == 'left' {
+		} @else if $side == 'left' {
 			$opposite-side: 'right';
 			$cross-side: 'top';
 			$cross-opposite-side: 'bottom';
-		}
- @else if $side == 'right' {
+		} @else if $side == 'right' {
 			$opposite-side: 'left';
 			$cross-side: 'top';
 			$cross-opposite-side: 'bottom';
