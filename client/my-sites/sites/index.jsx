@@ -78,6 +78,17 @@ export class Sites extends Component {
 				break;
 		}
 
+		if ( path === 'page' ) {
+			return i18n.translate( 'Select a site to start writing', {
+				args: {
+					path: path,
+				},
+				components: {
+					strong: <strong />,
+				},
+			} );
+		}
+
 		return i18n.translate( 'Please select a site to open {{strong}}%(path)s{{/strong}}', {
 			args: {
 				path: path,
