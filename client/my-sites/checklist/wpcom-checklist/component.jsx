@@ -33,7 +33,7 @@ import userFactory from 'lib/user';
 import { launchSite } from 'state/sites/launch/actions';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import createSelector from 'lib/create-selector';
-import { getLoginUrl } from 'lib/google-apps';
+import { getLoginUrlWithTOSRedirect } from 'lib/google-apps';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
 const userLib = userFactory();
@@ -603,8 +603,14 @@ class WpcomChecklistComponent extends PureComponent {
 	renderGSuiteTOSAcceptedTask = ( TaskComponent, baseProps, task ) => {
 		const { domains, translate } = this.props;
 
-		const domainName = domains[ 0 ].name;
-		const users = domains[ 0 ].googleAppsSubscription.pendingUsers;
+		let domainName;
+		let users;
+		let loginUrlWithTOSRedirect;
+		if ( Array.isArray( domains ) && domains.length > 0 ) {
+			domainName = domains[ 0 ].name;
+			users = domains[ 0 ].googleAppsSubscription.pendingUsers;
+			loginUrlWithTOSRedirect = getLoginUrlWithTOSRedirect( users[ 0 ], domainName );
+		}
 
 		return (
 			<TaskComponent
@@ -613,10 +619,14 @@ class WpcomChecklistComponent extends PureComponent {
 				description={ translate( "You're almost done setting up G Suite!" ) }
 				isWarning={ true }
 				onClick={ () => {
+					if ( ! loginUrlWithTOSRedirect ) {
+						return;
+					}
+
 					this.trackTaskStart( task, {
-						sub_step_name: 'fix_gsuite_tos_acceptance',
+						sub_step_name: 'gsuite_tos_accepted',
 					} );
-					window.location = getLoginUrl( users[ 0 ], domainName );
+					window.location = loginUrlWithTOSRedirect;
 				} }
 			/>
 		);

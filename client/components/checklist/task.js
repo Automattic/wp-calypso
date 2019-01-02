@@ -74,15 +74,16 @@ class Task extends PureComponent {
 	}
 
 	renderGridicon() {
-		const { isWarning } = this.props;
-		return isWarning ? (
-			<div>
-				<div className="checklist__task-warning-background" />
-				<Gridicon icon={ 'notice-outline' } size={ 24 } />
-			</div>
-		) : (
-			<Gridicon icon={ 'checkmark' } size={ 18 } />
-		);
+		if ( this.props.isWarning ) {
+			return (
+				<div>
+					<div className="checklist__task-warning-background" />
+					<Gridicon icon={ 'notice-outline' } size={ 24 } />
+				</div>
+			);
+		}
+
+		return <Gridicon icon={ 'checkmark' } size={ 18 } />;
 	}
 
 	render() {

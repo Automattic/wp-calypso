@@ -32,7 +32,7 @@ function formatPrice( cost, currencyCode, options = {} ) {
 	return formatCurrency( cost, currencyCode, cost % 1 > 0 ? {} : { precision: 0 } );
 }
 
-function getLoginUrl( email, domain ) {
+function getLoginUrlWithTOSRedirect( email, domain ) {
 	return (
 		`https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel` +
 		`&continue=https%3A%2F%2Fadmin.google.com%2F${ domain }` +
@@ -40,4 +40,10 @@ function getLoginUrl( email, domain ) {
 	);
 }
 
-export { getAnnualPrice, getMonthlyPrice, googleAppsSettingsUrl, formatPrice, getLoginUrl };
+export {
+	getAnnualPrice,
+	getMonthlyPrice,
+	googleAppsSettingsUrl,
+	formatPrice,
+	getLoginUrlWithTOSRedirect,
+};

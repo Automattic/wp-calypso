@@ -18,7 +18,7 @@ import { COMPLETING_GOOGLE_APPS_SIGNUP } from 'lib/url/support';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import PendingGappsTosNoticeMultipleDomainListItem from './pending-gapps-tos-notice-multiple-domain-list-item';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { getLoginUrl } from 'lib/google-apps';
+import { getLoginUrlWithTOSRedirect } from 'lib/google-apps';
 
 const learnMoreLink = (
 	<a href={ COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" rel="noopener noreferrer" />
@@ -161,7 +161,7 @@ class PendingGappsTosNotice extends React.PureComponent {
 				) }
 			>
 				<NoticeAction
-					href={ getLoginUrl( users[ 0 ], domainName ) }
+					href={ getLoginUrlWithTOSRedirect( users[ 0 ], domainName ) }
 					onClick={ this.logInClickHandlerOneDomain }
 					external
 				>
@@ -197,7 +197,7 @@ class PendingGappsTosNotice extends React.PureComponent {
 								<li key={ `pending-gapps-tos-acceptance-domain-${ domainName }` }>
 									<strong>{ users.join( ', ' ) } </strong>
 									<PendingGappsTosNoticeMultipleDomainListItem
-										href={ getLoginUrl( users[ 0 ], domainName ) }
+										href={ getLoginUrlWithTOSRedirect( users[ 0 ], domainName ) }
 										domainName={ domainName }
 										user={ users[ 0 ] }
 										onClick={ this.logInClickHandlerMultipleDomains }
