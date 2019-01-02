@@ -58,7 +58,7 @@ class GSuiteMarketingCopy extends React.Component {
 
 	render() {
 		const { currencyCode, eligibleDomainName, translate } = this.props;
-		const price = get( this.props, [ 'products', 'gapps', 'prices', currencyCode ], 0 );
+		const price = get( this.props, [ 'product', 'prices', currencyCode ], 0 );
 		const annualPrice = getAnnualPrice( price, currencyCode );
 		const monthlyPrice = getMonthlyPrice( price, currencyCode );
 		const upgradeAvailable = config.isEnabled( 'upgrades/checkout' );
