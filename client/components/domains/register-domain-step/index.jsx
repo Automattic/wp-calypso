@@ -15,6 +15,7 @@ import {
 	get,
 	includes,
 	isEmpty,
+	isEqual,
 	mapKeys,
 	noop,
 	pick,
@@ -81,6 +82,7 @@ import {
 } from 'components/domains/register-domain-step/analytics';
 import Spinner from 'components/spinner';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
+import { isBlogger } from 'lib/products-values';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
@@ -201,6 +203,7 @@ class RegisterDomainStep extends React.Component {
 			availabilityError: null,
 			availabilityErrorData: null,
 			availableTlds: [],
+			bloggerFilterAdded: false,
 			clickedExampleSuggestion: false,
 			filters: this.getInitialFiltersState(),
 			lastDomainIsTransferrable: false,
@@ -268,6 +271,21 @@ class RegisterDomainStep extends React.Component {
 		}
 	}
 
+	checkForBloggerPlan() {
+		const plan = get( this.props, 'selectedSite.plan', false );
+		const products = get( this.props, 'cart.products', [] );
+		const isBloggerPlan = isBlogger( plan ) || products.some( isBlogger );
+
+		if (
+			! this.state.bloggerFilterAdded &&
+			isBloggerPlan &&
+			isEqual( this.getInitialFiltersState(), this.state.filters )
+		) {
+			this.setState( { bloggerFilterAdded: true } );
+			this.onFiltersChange( { tlds: [ 'blog' ] } );
+		}
+	}
+
 	componentWillUnmount() {
 		this._isMounted = false;
 	}
@@ -287,6 +305,8 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		this.checkForBloggerPlan();
+
 		if (
 			this.props.selectedSite &&
 			this.props.selectedSite.domain !== prevProps.selectedSite.domain
