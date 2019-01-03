@@ -194,7 +194,7 @@ const mapStateToProps = (
 			title: demoContent.title.raw,
 			content: demoContent.content.raw,
 		};
-	} else if ( ( isAutoDraft && ! duplicatePostId ) || ! isDemoContent ) {
+	} else if ( isAutoDraft && ! ( duplicatePostId || isDemoContent ) ) {
 		initialEdits = { title: '' };
 	}
 
