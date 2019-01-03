@@ -21,7 +21,7 @@
 			}
 		}
 
-		&:after {
+		&::after {
 			position: absolute;
 			right: 1px;
 			top: 0;
@@ -102,7 +102,7 @@
 	}
 
 	.mce-toolbar .mce-btn-group .mce-advanced.mce-btn.mce-last {
-		right: 0px;
+		right: 0;
 		button {
 			height: auto;
 			padding: 4px;

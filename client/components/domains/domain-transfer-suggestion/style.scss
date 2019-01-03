@@ -9,7 +9,7 @@
 .domain-transfer-suggestion__domain-description {
 	padding-right: 1em;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: 75%;
 	}
 
@@ -20,7 +20,7 @@
 		margin-bottom: 0;
 		opacity: 0.7;
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			margin-bottom: 8px;
 		}
 	}

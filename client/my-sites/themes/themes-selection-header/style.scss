@@ -3,7 +3,7 @@
 		background-color: transparent;
 		border-color: transparent;
 		box-shadow: none;
-		padding: 24px 0px 0px;
+		padding: 24px 0 0;
 		margin-bottom: 4px;
 	}
 
@@ -11,7 +11,7 @@
 		background-image: none;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		.card {
 			padding-left: 15px;
 			padding-right: 15px;

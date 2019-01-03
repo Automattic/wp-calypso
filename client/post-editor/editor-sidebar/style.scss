@@ -2,7 +2,7 @@
     position: fixed;
     top: 46px;
     right: -$sidebar-width-max;
-    bottom: 0px;
+    bottom: 0;
 	display: flex;
 	flex-direction: column;
 	z-index: z-index( 'root', '.editor-sidebar' );
@@ -12,7 +12,7 @@
 	border-right: none;
 	box-sizing: border-box;
 	left: auto;
-	transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
+	transition: all 0.15s cubic-bezier( 0.075, 0.82, 0.165, 1 );
 	overflow-x: hidden;
 
 	.focus-sidebar & {
@@ -23,13 +23,13 @@
 		transition: none;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		border-right: 1px solid darken( $sidebar-bg-color, 5% );
 		width: $sidebar-width-max;
 	}
 
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		position: relative;
 		top: 0;
 		left: 0;
@@ -85,14 +85,14 @@
 	white-space: nowrap;
 	max-width: 50%;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: block;
 	}
 }
 
 .editor-sidebar__toggle-sidebar {
 	margin-left: 16px;
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: none;
 	}
 }

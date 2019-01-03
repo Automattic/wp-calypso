@@ -104,7 +104,7 @@
 			position: relative;
 			overflow: hidden;
 
-			&:after {
+			&::after {
 				content: '';
 				display: block;
 				width: 24px;
@@ -121,7 +121,7 @@
 			}
 
 			@include breakpoint( '>660px' ) {
-				&:after {
+				&::after {
 					display: none;
 				}
 			}

@@ -70,7 +70,7 @@
 }
 
 @keyframes progress-bar-animation {
-	0%   { background-position: 100px 0; }
+	0% { background-position: 100px 0; }
 	100% {  }
 }
 
@@ -79,7 +79,7 @@
 	border-radius: 0;
 	height: 8px;
 	width: 150px;
-	.progress-bar__progress{
+	.progress-bar__progress {
 		border-radius: 0;
 	}
 }

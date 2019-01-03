@@ -6,7 +6,7 @@ import React from 'react';
 import config from 'config';
 import debugFactory from 'debug';
 import page from 'page';
-import { has, set, uniqueId } from 'lodash';
+import { has, set, uniqueId, get } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -145,6 +145,7 @@ export const post = async ( context, next ) => {
 	const postId = getPostID( context );
 	const postType = determinePostType( context );
 	const isDemoContent = ! postId && has( context.query, 'gutenberg-demo' );
+	const duplicatePostId = get( context, 'query.copy', null );
 
 	const makeEditor = import( './init' ).then( ( { initGutenberg } ) => {
 		const state = context.store.getState();
@@ -159,7 +160,17 @@ export const post = async ( context, next ) => {
 		resetGutenbergState( registry, siteId );
 
 		return props => (
-			<Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent, ...props } } />
+			<Editor
+				{ ...{
+					siteId,
+					postId,
+					postType,
+					uniqueDraftKey,
+					isDemoContent,
+					duplicatePostId,
+					...props,
+				} }
+			/>
 		);
 	} );
 

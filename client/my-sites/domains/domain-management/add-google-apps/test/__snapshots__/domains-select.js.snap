@@ -16,7 +16,7 @@ exports[`DomainSelect it renders DomainsSelect loading state correctly 1`] = `
 
 exports[`DomainSelect it renders DomainsSelect with one domain correctly 1`] = `
 <select
-  disabled={false}
+  disabled={true}
   onChange={[Function]}
   onFocus={[Function]}
   value="foo"

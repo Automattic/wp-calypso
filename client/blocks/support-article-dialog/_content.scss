@@ -76,14 +76,14 @@
 		margin: 24px auto;
 	}
 
-	iframe[class^="twitter-"],
-	iframe[class^="instagram-"],
+	iframe[class^='twitter-'],
+	iframe[class^='instagram-'],
 	.fb_iframe_widget {
 		display: block;
 		margin: 24px auto !important;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		.alignleft {
 			max-width: 100%;
 			float: left;
@@ -101,7 +101,7 @@
 		}
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		.alignleft,
 		.alignright {
 			clear: both;
@@ -140,7 +140,7 @@
 		&.alignleft {
 			max-width: 100%;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				max-width: 50%;
 			}
 
@@ -181,9 +181,9 @@
 		box-sizing: border-box;
 		font-size: 14px;
 		line-height: 1.4285;
-		animation: appear .3s ease-in-out;
+		animation: appear 0.3s ease-in-out;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			padding: 13px 48px;
 			font-size: inherit;
 		}

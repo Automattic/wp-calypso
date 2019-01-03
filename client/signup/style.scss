@@ -1,7 +1,7 @@
 // Adjust the layout for the signup header.
 .is-section-signup {
 	.layout__content {
-		padding: 32px 0 0 0;
+		padding: 32px 0 0;
 	}
 
 	//Masterbar is hidden but still has height
@@ -59,7 +59,7 @@
 
 // Signup headings
 .is-section-signup .formatted-header {
-	margin: 16px 0 24px 0;
+	margin: 16px 0 24px;
 
 	.formatted-header__title {
 		margin: 0;
@@ -118,7 +118,7 @@
 
 // Segment (site-type) Step
 .is-section-signup .site-type__wrapper .card {
-	padding-top: 0px;
+	padding-top: 0;
 }
 
 .is-section-signup .site-type__wrapper .site-type__option:first-child {

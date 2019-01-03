@@ -6,7 +6,7 @@
 	display: flex;
 	flex: 1 1 auto;
 
-	>:first-child {
+	> :first-child {
 		flex: 1;
 		margin-left: 12px;
 	}
@@ -40,7 +40,7 @@
 	display: none;		/* disabled */
 	box-sizing: border-box;
 
-	transform: translateZ(0);
+	transform: translateZ( 0 );
 	backface-visibility: hidden;
 
 	.happychat__title {
@@ -133,7 +133,7 @@
  */
 
 .layout .happychat .happychat__container.is-open.is-minimizing {
-	animation: happychat-minimize .5s 1 forwards;
+	animation: happychat-minimize 0.5s 1 forwards;
 
 	> .happychat__composer,
 	> .happychat__welcome,
@@ -143,16 +143,16 @@
 	}
 
 	> .happychat__title {
-		transform: translateZ(0);
+		transform: translateZ( 0 );
 		position: relative;
-		animation: happychat-disappear .1s 1 forwards;
+		animation: happychat-disappear 0.1s 1 forwards;
 	}
 
 }
 
 @keyframes happychat-disappear {
 	0% {
-		top: 0px;
+		top: 0;
 	}
 	50% {
 		top: 4px;
@@ -181,7 +181,7 @@
 	}
 }
 
-@include breakpoint( ">960px" ) {
+@include breakpoint( '>960px' ) {
 	@keyframes happychat-minimize {
 		0% {
 			max-height: 100%;
@@ -283,12 +283,12 @@
 
 	p {
 		margin: 8px 0;
-		&:first-child { margin-top: 0 }
-		&:last-child { margin-bottom: 0 }
+		&:first-child { margin-top: 0; }
+		&:last-child { margin-bottom: 0; }
 	}
 
-	&:after {
-		content: "";
+	&::after {
+		content: '';
 		display: block;
 		position: absolute;
 		bottom: 0;
@@ -304,9 +304,9 @@
 	.is-user-message & {
 		color: $white;
 		background: var( --color-accent );
-		border-radius: 8px 8px 0 8px;
+		border-radius: 8px 8px 0;
 
-		&:after {
+		&::after {
 			left: auto;
 			right: -8px;
 
@@ -355,11 +355,11 @@
  * Panel mode
  */
 
-@include breakpoint( ">480px" ) {
+@include breakpoint( '>480px' ) {
 
 	.layout:not( .is-section-happychat ) {
 		.happychat__container.is-open {
-			box-shadow: 0 1px 2px rgba( 0,0,0,.2 ), 0 1px 10px rgba( 0,0,0, .1 );
+			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.2 ), 0 1px 10px rgba( 0, 0, 0, 0.1 );
 			width: 280px;
 		}
 
@@ -380,7 +380,7 @@
 
 }
 
-@include breakpoint( "<480px" ) {
+@include breakpoint( '<480px' ) {
 
 	.layout:not( .is-section-happychat ) {
 		.happychat__container.is-open {
@@ -401,7 +401,7 @@
  * Sidebar mode
  */
 
-@include breakpoint( ">1040px" ) {
+@include breakpoint( '>1040px' ) {
 
 	// be more specific in scope to override the panel mode
 	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ) .happychat__container.is-open {
@@ -438,7 +438,7 @@
 		}
 
 		.happychat__message > textarea {
-			padding: 12px 12px 32px 12px;
+			padding: 12px 12px 32px;
 		}
 
 		.happychat__conversation,

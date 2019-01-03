@@ -56,14 +56,11 @@ class DialogBase extends Component {
 				appElement={ document.getElementById( 'wpcom' ) }
 				overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't
 				className={ dialogClassName }
+				htmlOpenClassName="ReactModal__Html--open"
 				role="dialog"
 				shouldCloseOnEsc={ shouldCloseOnEsc }
 			>
-				<div
-					className={ classnames( this.props.className, contentClassName ) }
-					ref="content"
-					tabIndex="-1"
-				>
+				<div className={ classnames( this.props.className, contentClassName ) } tabIndex="-1">
 					{ this.props.children }
 				</div>
 				{ this._renderButtonsBar() }
@@ -80,7 +77,7 @@ class DialogBase extends Component {
 		}
 
 		return (
-			<div className={ buttonsClassName } ref="actionButtons">
+			<div className={ buttonsClassName }>
 				{ this.props.buttons.map( this._renderButton, this ) }
 			</div>
 		);

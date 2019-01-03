@@ -56,7 +56,7 @@
 		}
 
 		.module-content-list-item-right {
-			&:before {
+			&::before {
 				display: none;
 			}
 		}
@@ -657,8 +657,7 @@ ul.module-content-list-legend {
 
 	@include breakpoint( '>960px' ) {
 		.stats__module-list
-			&
-			> .module-content-list-item-wrapper
+			& > .module-content-list-item-wrapper
 			.module-content-list-item-label
 			.icon {
 			margin-top: -2px; // Really couldn't figure out a better way to correctly position the avatar

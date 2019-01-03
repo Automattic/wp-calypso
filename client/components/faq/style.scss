@@ -3,11 +3,11 @@ $faq-gutter-width: 24px;
 .faq {
 	padding: 0 16px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 0 24px;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding: 0;
 	}
 }
@@ -36,12 +36,12 @@ $faq-gutter-width: 24px;
 	padding-right: ($faq-gutter-width / 2);
 
 	@media
-		(min-width: 480px) and (max-width: 660px),
-		(min-width: 800px) and (max-width: 1040px) {
+		( min-width: 480px ) and ( max-width: 660px ),
+		( min-width: 800px ) and ( max-width: 1040px ) {
 			width: 50%;
 	}
 
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( '>1040px' ) {
 		width: (100% / 3);
 	}
 }

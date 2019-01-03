@@ -36,7 +36,7 @@ $date-picker_nav_button_size: 20px;
 	position: relative;
 	width: 100%;
 
-	&:after {
+	&::after {
 		@include long-content-fade( $color: hex-to-rgb( $gray-darken-30 ) );
 	}
 }
@@ -115,7 +115,7 @@ $date-picker_nav_button_size: 20px;
 	cursor: pointer;
 	font-size: 18px;
 
-	&:before {
+	&::before {
 		height: $date-picker_nav_button_size;
 	}
 }
@@ -131,7 +131,7 @@ $date-picker_nav_button_size: 20px;
 	position: relative;
 	cursor: pointer;
 
-	&:first-letter {
+	&::first-letter {
 		text-transform: uppercase;
 	}
 }

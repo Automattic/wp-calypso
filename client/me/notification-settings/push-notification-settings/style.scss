@@ -1,5 +1,5 @@
 .notification-settings-push-notification-settings__instruction {
-	margin: 24px 0 0 0;
+	margin: 24px 0 0;
 }
 
 .notification-settings-push-notification-settings__instruction-dialog {
@@ -31,7 +31,7 @@
 	max-width: 500px;
 	text-align: center;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		text-align: left;
 	}
 }
@@ -49,10 +49,10 @@
 	padding: 0 24px;
 
 	p {
-		margin: 16px 0 0 0;
+		margin: 16px 0 0;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 100%;
 		min-height: 80px;
 		position: relative;
@@ -107,7 +107,7 @@
 .notification-settings-push-notification-settings__settings-description {
 	margin-bottom: 0;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-right: 130px;
 	}
 }
@@ -115,7 +115,7 @@
 .notification-settings-push-notification-settings__settings-button {
 	margin-top: 8px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-top: 0;
 		position: absolute;
 	 	bottom: 24px;

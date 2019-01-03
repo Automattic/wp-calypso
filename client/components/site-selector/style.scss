@@ -87,7 +87,7 @@
 		}
 	}
 
-	.site__title:before {
+	.site__title::before {
 		color: var( --sidebar-menu-hover-color );
 	}
 

@@ -6,7 +6,7 @@
 	display: none;
 }
 
-.editor-slug.editor-more-options__slug-field input[type="text"].form-text-input {
+.editor-slug.editor-more-options__slug-field input[type='text'].form-text-input {
 	@extend %form-field;
 	font-size: 13px;
 }

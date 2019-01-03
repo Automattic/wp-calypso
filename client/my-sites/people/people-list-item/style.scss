@@ -12,7 +12,7 @@
 		padding-bottom: 24px;
 	}
 
-	&:nth-of-type(1) {
+	&:nth-of-type( 1 ) {
 		margin-top: -16px;
 
 		@include breakpoint( '>480px' ) {
@@ -40,7 +40,7 @@
 	top: 48px;
 	left: 2px;
 
-	&:after { // Making tap area larger
+	&::after { // Making tap area larger
 		content: '';
 		position: absolute;
 		top: -20px;
@@ -75,7 +75,7 @@
 }
 
 .people-list-item .card__link-indicator {
-	right: 0px;
+	right: 0;
 	z-index: z-index( 'root', '.people-list-item .card__link-indicator' );
 }
 

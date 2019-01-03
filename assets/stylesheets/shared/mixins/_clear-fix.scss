@@ -4,7 +4,7 @@
 // ==========================================================================
 
 @mixin clear-fix {
-	&:after {
+	&::after {
 		content: '.';
 		display: block;
 		height: 0;

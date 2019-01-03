@@ -6,7 +6,7 @@
 	position: relative;
 	text-align: center;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin: 0 15px;
 	}
 
@@ -17,7 +17,7 @@
 
 	&::before,
 	&::after {
-		content: "";
+		content: '';
 		display: block;
 		position: absolute;
 			left: 0;
@@ -25,7 +25,7 @@
 	}
 
 	&::before {
-		background: linear-gradient(-135deg, $gray-lighten-30 8px, transparent 0) 0 8px, linear-gradient( 135deg, $gray-lighten-30 8px, transparent 0) 0 8px;
+		background: linear-gradient( -135deg, $gray-lighten-30 8px, transparent 0 ) 0 8px, linear-gradient( 135deg, $gray-lighten-30 8px, transparent 0 ) 0 8px;
 		background-position: top left;
 		background-repeat: repeat-x;
 		background-size: 16px 16px;
@@ -34,7 +34,7 @@
 	}
 
 	&::after {
-		background: linear-gradient(-135deg, $white 8px, transparent 0) 0 8px, linear-gradient( 135deg, $white 8px, transparent 0) 0 8px;
+		background: linear-gradient( -135deg, $white 8px, transparent 0 ) 0 8px, linear-gradient( 135deg, $white 8px, transparent 0 ) 0 8px;
 		background-position: top left;
 		background-repeat: repeat-x;
 		background-size: 16px 16px;
