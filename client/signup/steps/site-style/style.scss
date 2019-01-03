@@ -32,7 +32,7 @@
 	border-radius: 5px;
 
 	&.site-style__variation-default:hover {
-		background-color: $gray-lighten-30;
+		border: 1px outset #c43f80;
 	}
 
 	&.site-style__variation-default.is-checked {
