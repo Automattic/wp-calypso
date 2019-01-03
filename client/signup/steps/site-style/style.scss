@@ -1,3 +1,5 @@
+@import '../../site-mockup/style';
+
 .site-style__form,
 .site-style__form-wrapper {
 	justify-content: center;
@@ -24,17 +26,33 @@
 	margin: 0 10px 0 0;
 	height: 100%;
 	min-width: 60px;
+	max-width: 100px;
 	text-align: center;
 	background: white;
 	border-radius: 5px;
 
-	&.is-checked,
-	&.is-checked:hover {
-		background-color: $gray-lighten-20;
+	&.site-style__variation-default:hover {
+		background-color: $gray-lighten-30;
 	}
 
-	&:hover {
-		background-color: $gray-lighten-30;
+	&.site-style__variation-default.is-checked {
+		border: 1px outset #c43f80;
+	}
+
+	&.site-style__variation-modern.is-checked,
+	&.site-style__variation-modern:hover {
+		@include modern-background();
+	}
+
+	&.site-style__variation-vintage.is-checked,
+	&.site-style__variation-vintage:hover {
+		// background-color: $gray-lighten-30;
+		@include vintage-background();
+	}
+
+	&.site-style__variation-colorful.is-checked,
+	&.site-style__variation-colorful:hover {
+		@include colorful-background();
 	}
 
 	input[type='radio'] {

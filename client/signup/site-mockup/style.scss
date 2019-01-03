@@ -61,6 +61,22 @@
 	}
 }
 
+@mixin modern-background {
+	background-color: #eee;
+	border: 1px solid #eee;
+}
+
+@mixin vintage-background {
+	background-color: #eae8dc;
+	border: 1px solid #eae8dc;
+}
+
+@mixin colorful-background {
+	background-color: #c9fffd;
+	border: 1px solid #c9fffd;
+}
+
+
 // The mockups themselves, both mobile
 // and desktop variants.
 .site-mockup__viewport {
@@ -96,19 +112,19 @@
 
 		&.is-modern {
 			.site-mockup__body {
-				background-color: #eee;
+				@include modern-background();
 			}
 		}
 
 		&.is-vintage {
 			.site-mockup__body {
-				background-color: #eae8dc;
+				@include vintage-background();
 			}
 		}
 
 		&.is-colorful {
 			.site-mockup__body {
-				background-color: #c9fffd;
+				@include colorful-background();
 			}
 		}
 	}
