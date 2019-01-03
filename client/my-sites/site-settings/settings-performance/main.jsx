@@ -84,10 +84,10 @@ const connectComponent = connect( state => {
 } );
 
 const getFormSettings = partialRight( pick, [
+	'amp_is_enabled',
+	'amp_is_supported',
 	'jetpack_search_enabled',
 	'jetpack_search_supported',
-	'amp_is_supported',
-	'amp_is_enabled',
 ] );
 
 export default flowRight(
