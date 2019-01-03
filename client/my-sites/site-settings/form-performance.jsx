@@ -117,12 +117,12 @@ const connectComponent = connect( state => {
 } );
 
 const getFormSettings = partialRight( pick, [
-	'photon',
-	'photon-cdn',
-	'lazy-images',
 	'carousel',
 	'carousel_background_color',
 	'carousel_display_exif',
+	'lazy-images',
+	'photon',
+	'photon-cdn',
 ] );
 
 export default flowRight(
