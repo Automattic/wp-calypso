@@ -43,11 +43,11 @@ class GalleryImageEdit extends Component {
 			this.props.onSelect();
 		}
 
-		if ( this.state.captionSelected ) {
-			this.setState( {
-				captionSelected: false,
-			} );
-		}
+		// if ( this.state.captionSelected ) {
+		// 	this.setState( {
+		// 		captionSelected: false,
+		// 	} );
+		// }
 	};
 
 	onImageKeyDown = event => {
