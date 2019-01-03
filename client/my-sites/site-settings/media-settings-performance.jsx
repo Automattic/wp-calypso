@@ -17,9 +17,6 @@ import Card from 'components/card';
 import filesize from 'filesize';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormSelect from 'components/forms/form-select';
-import FormLabel from 'components/forms/form-label';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
 import SupportInfo from 'components/support-info';
 import {
 	PLAN_JETPACK_PREMIUM,
@@ -80,7 +77,7 @@ class MediaSettingsPerformance extends Component {
 
 		return (
 			isVideoPressAvailable && (
-				<FormFieldset className={ videoFieldsetClasses } >
+				<FormFieldset className={ videoFieldsetClasses }>
 					<SupportInfo
 						text={ translate( 'Hosts your video files on the global WordPress.com servers.' ) }
 						link="https://jetpack.com/support/videopress/"
@@ -163,11 +160,9 @@ class MediaSettingsPerformance extends Component {
 
 	render() {
 		const {
-			fields,
-			handleAutosavingToggle,
 			isRequestingSettings,
 			isSavingSettings,
-			onChangeField,
+			isVideoPressAvailable,
 			photonModuleUnavailable,
 			selectedSiteId,
 			siteId,
@@ -178,30 +173,34 @@ class MediaSettingsPerformance extends Component {
 
 		return (
 			<div className="site-settings__module-settings site-settings__media-settings">
-				<Card>
-					<QueryJetpackConnection siteId={ selectedSiteId } />
-					{ /**
-					 * In Jetpack 5.8-alpha, we introduced Lazy Images, created a new "Speed up your site" section,
-					 * and moved the photon setting there. To minimize confusion, if this Jetpack site doesn't have 5.8-alpha,
-					 * let's show the Photon setting here instead of in the "Speed up your site" section.
-					 */ }
-					{ ! jetpackVersionSupportsLazyImages && (
-						<FormFieldset>
-							<SupportInfo
-								text={ translate( 'Hosts your image files on the global WordPress.com servers.' ) }
-								link="https://jetpack.com/support/photon/"
-							/>
-							<JetpackModuleToggle
-								siteId={ siteId }
-								moduleSlug="photon"
-								label={ translate( 'Speed up images and photos' ) }
-								description={ translate( 'Must be enabled to use tiled galleries.' ) }
-								disabled={ isRequestingOrSaving || photonModuleUnavailable }
-							/>
-						</FormFieldset>
-					) }
-					{ this.renderVideoSettings() }
-				</Card>
+				{ ( ! jetpackVersionSupportsLazyImages || isVideoPressAvailable ) && (
+					<Card>
+						<QueryJetpackConnection siteId={ selectedSiteId } />
+						{ /**
+						 * In Jetpack 5.8-alpha, we introduced Lazy Images, created a new "Speed up your site" section,
+						 * and moved the photon setting there. To minimize confusion, if this Jetpack site doesn't have 5.8-alpha,
+						 * let's show the Photon setting here instead of in the "Speed up your site" section.
+						 */ }
+						{ ! jetpackVersionSupportsLazyImages && (
+							<FormFieldset>
+								<SupportInfo
+									text={ translate(
+										'Hosts your image files on the global WordPress.com servers.'
+									) }
+									link="https://jetpack.com/support/photon/"
+								/>
+								<JetpackModuleToggle
+									siteId={ siteId }
+									moduleSlug="photon"
+									label={ translate( 'Speed up images and photos' ) }
+									description={ translate( 'Must be enabled to use tiled galleries.' ) }
+									disabled={ isRequestingOrSaving || photonModuleUnavailable }
+								/>
+							</FormFieldset>
+						) }
+						{ this.renderVideoSettings() }
+					</Card>
+				) }
 				{ this.renderVideoUpgradeNudge() }
 			</div>
 		);
