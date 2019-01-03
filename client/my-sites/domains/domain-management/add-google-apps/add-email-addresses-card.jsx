@@ -26,7 +26,11 @@ import { cartItems } from 'lib/cart-values';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import ValidationErrorList from 'notices/validation-error-list';
 import { addItem } from 'lib/upgrades/actions';
-import { hasGoogleApps, getGoogleAppsSupportedDomains, hasGoogleAppsSupportedDomain } from 'lib/domains';
+import {
+	hasGoogleApps,
+	getGoogleAppsSupportedDomains,
+	hasGoogleAppsSupportedDomain,
+} from 'lib/domains';
 import { filter as filterUsers, validate as validateUsers } from 'lib/domains/google-apps-users';
 import DomainsSelect from './domains-select';
 import QueryUserSettings from 'components/data/query-user-settings';
@@ -76,7 +80,13 @@ class AddEmailAddressesCard extends React.Component {
 
 	static getDerivedStateFromProps( props, state ) {
 		// Retrieves information from the first additional user
-		const [ { firstName: { value: firstName }, lastName: { value: lastName }, wasUserEdited } ] = state.fieldsets;
+		const [
+			{
+				firstName: { value: firstName },
+				lastName: { value: lastName },
+				wasUserEdited,
+			},
+		] = state.fieldsets;
 
 		if ( wasUserEdited ) {
 			return null;
@@ -106,7 +116,7 @@ class AddEmailAddressesCard extends React.Component {
 
 		return {
 			...state,
-			fieldsets
+			fieldsets,
 		};
 	}
 
@@ -129,7 +139,7 @@ class AddEmailAddressesCard extends React.Component {
 			domain: { value: domain },
 			firstName: { value: '' },
 			lastName: { value: '' },
-			wasUserEdited: false
+			wasUserEdited: false,
 		};
 	}
 
