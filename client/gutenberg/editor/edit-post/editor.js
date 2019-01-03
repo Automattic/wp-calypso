@@ -19,16 +19,7 @@ import './hooks';
 import './store';
 // GUTENLYPSO END
 
-function Editor( {
-	settings,
-	hasFixedToolbar,
-	focusMode,
-	post,
-	overridePost, // GUTENLYPSO
-	initialEdits,
-	onError,
-	...props
-} ) {
+function Editor( { settings, hasFixedToolbar, focusMode, post, initialEdits, onError, ...props } ) {
 	if ( ! post ) {
 		return null;
 	}
@@ -42,7 +33,7 @@ function Editor( {
 	return (
 		<EditorProvider
 			settings={ editorSettings }
-			post={ { ...post, ...overridePost } } // GUTENLYPSO
+			post={ post }
 			initialEdits={ initialEdits }
 			{ ...props }
 		>

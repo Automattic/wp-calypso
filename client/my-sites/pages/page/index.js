@@ -39,6 +39,7 @@ import { isEnabled } from 'config';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import getEditorUrl from 'state/selectors/get-editor-url';
+import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -271,7 +272,7 @@ class Page extends Component {
 	}
 
 	getCopyItem() {
-		const { calypsoifyGutenberg, page: post, siteSlugOrId } = this.props;
+		const { calypsoifyGutenberg, page: post, duplicateUrl } = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
 			! utils.userCan( 'edit_post', post ) ||
@@ -280,10 +281,7 @@ class Page extends Component {
 			return null;
 		}
 		return (
-			<PopoverMenuItem
-				onClick={ this.copyPage }
-				href={ `/page/${ siteSlugOrId }?copy=${ post.ID }` }
-			>
+			<PopoverMenuItem onClick={ this.copyPage } href={ duplicateUrl }>
 				<Gridicon icon="clipboard" size={ 18 } />
 				{ this.props.translate( 'Copy' ) }
 			</PopoverMenuItem>
@@ -639,6 +637,7 @@ const mapState = ( state, props ) => {
 		calypsoifyGutenberg:
 			isCalypsoifyGutenbergEnabled( state, pageSiteId ) &&
 			'gutenberg' === getSelectedEditor( state, pageSiteId ),
+		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
 	};
 };
 
