@@ -109,7 +109,7 @@
 .survey__vertical-label {
 	margin: 10px;
 	font-weight: 400;
-	color: $gray-darken-30
+	color: $gray-darken-30;
 }
 
 .survey__vertical-chevron {
@@ -122,7 +122,7 @@
 	position: relative;
 }
 
-@include breakpoint( ">480px" ) {
+@include breakpoint( '>480px' ) {
 	.survey__other {
 		margin: 0 auto 2em;
 		max-width: 500px;
@@ -156,13 +156,13 @@ input.survey__other-write-in {
 		transform: none;
 	}
 	70% {
-		transform: translate(5px, 0);
+		transform: translate( 5px, 0 );
 	}
 	80% {
 		transform: none;
 	}
 	90% {
-		transform: translate(5px, 0);
+		transform: translate( 5px, 0 );
 	}
 	100% {
 		transform: none;

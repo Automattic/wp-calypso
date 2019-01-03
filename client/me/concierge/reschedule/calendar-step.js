@@ -20,17 +20,15 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import QueryConciergeAppointmentDetails from 'components/data/query-concierge-appointment-details';
 import getConciergeAppointmentDetails from 'state/selectors/get-concierge-appointment-details';
 import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
+import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
+import getConciergeAppointmentTimespan from 'state/selectors/get-concierge-appointment-timespan';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import {
 	rescheduleConciergeAppointment,
 	updateConciergeAppointmentDetails,
 } from 'state/concierge/actions';
 import AvailableTimePicker from '../shared/available-time-picker';
-import {
-	CONCIERGE_STATUS_BOOKING,
-	CONCIERGE_STATUS_BOOKED,
-	WPCOM_CONCIERGE_SCHEDULE_ID,
-} from '../constants';
+import { CONCIERGE_STATUS_BOOKING, CONCIERGE_STATUS_BOOKED } from '../constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class CalendarStep extends Component {
@@ -42,13 +40,14 @@ class CalendarStep extends Component {
 		onComplete: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 		signupForm: PropTypes.object.isRequired,
+		scheduleId: PropTypes.number,
 	};
 
 	onSubmit = timestamp => {
-		const { appointmentDetails, appointmentId } = this.props;
+		const { appointmentDetails, appointmentId, scheduleId } = this.props;
 
 		this.props.rescheduleConciergeAppointment(
-			WPCOM_CONCIERGE_SCHEDULE_ID,
+			scheduleId,
 			appointmentId,
 			timestamp,
 			appointmentDetails
@@ -73,7 +72,7 @@ class CalendarStep extends Component {
 		this.props.recordTracksEvent( 'calypso_concierge_reschedule_calendar_step' );
 	}
 
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
 			// go to confirmation page if booking was successful
 			this.props.onComplete();
@@ -84,9 +83,11 @@ class CalendarStep extends Component {
 		const {
 			appointmentDetails,
 			appointmentId,
+			appointmentTimespan,
 			currentUserLocale,
 			signupForm,
 			site,
+			scheduleId,
 			translate,
 		} = this.props;
 
@@ -94,12 +95,12 @@ class CalendarStep extends Component {
 			<div>
 				<QueryConciergeAppointmentDetails
 					appointmentId={ appointmentId }
-					scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID }
+					scheduleId={ scheduleId }
 				/>
 
 				<CompactCard>
 					{ translate(
-						'To reschedule your Concierge session, let us know your timezone and preferred day.'
+						'To reschedule your session, let us know your timezone and preferred day.'
 					) }
 				</CompactCard>
 
@@ -123,6 +124,7 @@ class CalendarStep extends Component {
 						<AvailableTimePicker
 							actionText={ translate( 'Reschedule to this date' ) }
 							availableTimes={ this.getFilteredTimeSlots() }
+							appointmentTimespan={ appointmentTimespan }
 							currentUserLocale={ currentUserLocale }
 							disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING || ! appointmentDetails }
 							onBack={ null }
@@ -140,8 +142,10 @@ class CalendarStep extends Component {
 export default connect(
 	( state, props ) => ( {
 		appointmentDetails: getConciergeAppointmentDetails( state, props.appointmentId ),
+		appointmentTimespan: getConciergeAppointmentTimespan( state ),
 		currentUserLocale: getCurrentUserLocale( state ),
 		signupForm: getConciergeSignupForm( state ),
+		scheduleId: getConciergeScheduleId( state ),
 	} ),
 	{ recordTracksEvent, rescheduleConciergeAppointment, updateConciergeAppointmentDetails }
 )( localize( CalendarStep ) );

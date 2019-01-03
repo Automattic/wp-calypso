@@ -43,12 +43,14 @@ export class ConciergeSessionNudge extends React.Component {
 	};
 
 	render() {
-		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans } = this.props;
-		const title = 'Checkout ‹ Expert Session';
+		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, translate } = this.props;
+		const title = translate( 'Checkout ‹ Support Session', {
+			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
+		} );
 
 		return (
 			<Main className="concierge-session-nudge">
-				<PageViewTracker path="/checkout/:site/add-expert-session/:receipt_id" title={ title } />
+				<PageViewTracker path="/checkout/:site/add-support-session/:receipt_id" title={ title } />
 				<DocumentHead title={ title } />
 				<QuerySites siteId={ selectedSiteId } />
 				{ ! hasProductsList && <QueryProductsList /> }
@@ -112,7 +114,7 @@ export class ConciergeSessionNudge extends React.Component {
 		return (
 			<header className="concierge-session-nudge__header">
 				<h2 className="concierge-session-nudge__title">
-					{ translate( 'Congratulations, Your site is being upgraded.' ) }
+					{ translate( 'Congratulations, your site is being upgraded.' ) }
 				</h2>
 			</header>
 		);
@@ -143,82 +145,77 @@ export class ConciergeSessionNudge extends React.Component {
 
 						<p>{ translate( 'What our team of experts can help you with:' ) }</p>
 
-						<p>
-							<ul className="concierge-session-nudge__checklist">
-								<li className="concierge-session-nudge__checklist-item">
-									<Gridicon
-										icon="checkmark"
-										className="concierge-session-nudge__checklist-item-icon"
-									/>
-									<span className="concierge-session-nudge__checklist-item-text">
-										{ translate( '{{b}}Design:{{/b}} Which template to choose.', {
+						<ul className="concierge-session-nudge__checklist">
+							<li className="concierge-session-nudge__checklist-item">
+								<Gridicon
+									icon="checkmark"
+									className="concierge-session-nudge__checklist-item-icon"
+								/>
+								<span className="concierge-session-nudge__checklist-item-text">
+									{ translate( '{{b}}Design:{{/b}} Which template to choose.', {
+										components: { b: <b /> },
+										comment: "This is a benefit listed on a 'Purchase a call with us' page",
+									} ) }
+								</span>
+							</li>
+							<li className="concierge-session-nudge__checklist-item">
+								<Gridicon
+									icon="checkmark"
+									className="concierge-session-nudge__checklist-item-icon"
+								/>
+								<span className="concierge-session-nudge__checklist-item-text">
+									{ translate(
+										'{{b}}Traffic:{{/b}} How to get free search engine traffic with SEO tools.',
+										{
 											components: { b: <b /> },
-											comment: "This a benefit on a 'Purchase a call with us' page",
-										} ) }
-									</span>
-								</li>
-								<li className="concierge-session-nudge__checklist-item">
-									<Gridicon
-										icon="checkmark"
-										className="concierge-session-nudge__checklist-item-icon"
-									/>
-									<span className="concierge-session-nudge__checklist-item-text">
-										{ translate(
-											'{{b}}Traffic:{{/b}} How to get free search engine traffic with SEO tools.',
-											{
-												components: { b: <b /> },
-												comment: "This a benefit on a 'Purchase a call with us' page",
-											}
-										) }
-									</span>
-								</li>
-								<li className="concierge-session-nudge__checklist-item">
-									<Gridicon
-										icon="checkmark"
-										className="concierge-session-nudge__checklist-item-icon"
-									/>
-									<span className="concierge-session-nudge__checklist-item-text">
-										{ translate(
-											"{{b}}Site building tools:{{/b}} Learn how to create a site you're proud to share.",
-											{
-												components: { b: <b /> },
-												comment: "This a benefit on a 'Purchase a call with us' page",
-											}
-										) }
-									</span>
-								</li>
-								<li className="concierge-session-nudge__checklist-item">
-									<Gridicon
-										icon="checkmark"
-										className="concierge-session-nudge__checklist-item-icon"
-									/>
-									<span className="concierge-session-nudge__checklist-item-text">
-										{ translate(
-											'{{b}}Content:{{/b}} What information to include and where it should go.',
-											{
-												components: { b: <b /> },
-												comment: "This a benefit on a 'Purchase a call with us' page",
-											}
-										) }
-									</span>
-								</li>
-								<li className="concierge-session-nudge__checklist-item">
-									<Gridicon
-										icon="checkmark"
-										className="concierge-session-nudge__checklist-item-icon"
-									/>
-									<span className="concierge-session-nudge__checklist-item-text">
-										{ translate(
-											"{{b}}And more:{{/b}} Tell our experts what you'd like to cover.",
-											{
-												components: { b: <b /> },
-												comment: "This a benefit on a 'Purchase a call with us' page",
-											}
-										) }
-									</span>
-								</li>
-							</ul>
-						</p>
+											comment: "This is a benefit listed on a 'Purchase a call with us' page",
+										}
+									) }
+								</span>
+							</li>
+							<li className="concierge-session-nudge__checklist-item">
+								<Gridicon
+									icon="checkmark"
+									className="concierge-session-nudge__checklist-item-icon"
+								/>
+								<span className="concierge-session-nudge__checklist-item-text">
+									{ translate(
+										"{{b}}Site building tools:{{/b}} Learn how to create a site you're proud to share.",
+										{
+											components: { b: <b /> },
+											comment: "This is a benefit listed on a 'Purchase a call with us' page",
+										}
+									) }
+								</span>
+							</li>
+							<li className="concierge-session-nudge__checklist-item">
+								<Gridicon
+									icon="checkmark"
+									className="concierge-session-nudge__checklist-item-icon"
+								/>
+								<span className="concierge-session-nudge__checklist-item-text">
+									{ translate(
+										'{{b}}Content:{{/b}} What information to include and where it should go.',
+										{
+											components: { b: <b /> },
+											comment: "This is a benefit listed on a 'Purchase a call with us' page",
+										}
+									) }
+								</span>
+							</li>
+							<li className="concierge-session-nudge__checklist-item">
+								<Gridicon
+									icon="checkmark"
+									className="concierge-session-nudge__checklist-item-icon"
+								/>
+								<span className="concierge-session-nudge__checklist-item-text">
+									{ translate( "{{b}}And more:{{/b}} Tell our experts what you'd like to cover.", {
+										components: { b: <b /> },
+										comment: "This is a benefit listed on a 'Purchase a call with us' page",
+									} ) }
+								</span>
+							</li>
+						</ul>
 
 						<h4 className="concierge-session-nudge__sub-header">
 							{ translate(
@@ -244,7 +241,9 @@ export class ConciergeSessionNudge extends React.Component {
 									}
 								) }
 							</b>{' '}
-							{ translate( 'Click the button below to confirm your purchase.' ) }
+							{ translate(
+								'Click the button below to confirm your purchase (sessions are currently limited to English language support).'
+							) }
 						</p>
 					</div>
 					<div className="concierge-session-nudge__column-doodle">

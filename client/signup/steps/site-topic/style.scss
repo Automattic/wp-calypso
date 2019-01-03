@@ -1,26 +1,31 @@
-.site-topic__content {
+.step-wrapper .site-topic__content {
 	max-width: 600px;
 	margin: 0 auto;
-}
 
-.site-topic__submit-wrapper {
-	text-align: center;
-	margin-bottom: 0;
-	padding: 0 15px;
-}
-
-.site-topic__submit-wrapper .button {
-	width: 180px;
-	@include breakpoint( '<480px' ) {
-		width: 100%;
+	.form-fieldset {
+		margin-bottom: 0;
 	}
-}
-
-.info-popover.site-topic__info-popover {
-	margin-left: 5px;
 
 	.gridicon {
-		color: $gray;
-		margin-bottom: -3px;
+		position: absolute;
+		top: 11px;
+		left: 11px;
+		fill: $gray-darken-30;
+	}
+
+	input {
+		padding: 10px 100px 10px 42px;
+	}
+
+	.suggestions__wrapper {
+		// Without the extra padding from the Card, we need
+		// to adjust the position of the suggestions.
+		top: 48px;
+	}
+
+	.button {
+		position: absolute;
+		top: 3px;
+		right: 3px;
 	}
 }

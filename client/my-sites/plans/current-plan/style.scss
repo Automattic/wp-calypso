@@ -9,10 +9,10 @@
 	background-color: $white;
 	padding: 32px;
 	width: 100%;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
 		0 1px 2px $gray-lighten-30;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		text-align: left;
 	}
 	flex-direction: column;
@@ -46,7 +46,7 @@
 .current-plan__header-heading {
 	font-size: 24px;
 	font-weight: 400;
-	margin: 24px 0 8px 0;
+	margin: 24px 0 8px;
 }
 
 .current-plan__header-text {
@@ -65,7 +65,7 @@
 
 		display: block;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			margin: 0 auto;
 		}
 	}
@@ -80,7 +80,7 @@
 		margin-top: 15px;
 		width: 90%;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			margin-bottom: 18px;
 			margin-top: 18px;
 		}

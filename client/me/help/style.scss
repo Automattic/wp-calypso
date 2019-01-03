@@ -44,7 +44,7 @@
 .help__support-link-title {
 	font-size: 16px;
 	color: var( --color-primary );
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 21px;
 	}
 }
@@ -67,7 +67,7 @@
 	border-left: 3px solid var( --color-primary );
 	display: flex;
 	margin: 16px 0;
-	padding: 12px 12px;
+	padding: 12px;
 
 	.button {
 		margin-left: auto;

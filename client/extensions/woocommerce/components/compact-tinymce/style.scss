@@ -28,24 +28,24 @@
 		border-right: 1px solid $gray-lighten-20;
 		height: 36px;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			height: 44px;
 		}
 	}
 
 	.mce-tinymce .mce-stack-layout-item.mce-last {
-		border-top-width: 0px;
+		border-top-width: 0;
 	}
 
 	.mce-container.mce-tinymce {
 		& > .mce-container-body {
-			&:after {
-				@include breakpoint( "<660px" ) {
-					@include long-content-fade( $size: 0px );
+			&::after {
+				@include breakpoint( '<660px' ) {
+					@include long-content-fade( $size: 0 );
 				}
 
-				@include breakpoint( "660px-960px" ) {
-					@include long-content-fade( $size: 0px );
+				@include breakpoint( '660px-960px' ) {
+					@include long-content-fade( $size: 0 );
 				}
 			}
 		}

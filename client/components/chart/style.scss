@@ -37,7 +37,7 @@
 		top: 0;
 	width: 100%;
 	height: 1px;
-	border-top: 1px solid rgba( $gray-lighten-30, .1 );
+	border-top: 1px solid rgba( $gray-lighten-30, 0.1 );
 }
 
 .chart__bar-marker,
@@ -105,7 +105,7 @@ $y-axis-padding: 0 20px 0 10px;
 	position: absolute;
 		top: -4px;
 		left: 50%;
-	margin-left: -.5px;
+	margin-left: -0.5px;
 	width: 1px;
 	height: 5px;
 	background: $gray-darken-30;
@@ -149,17 +149,17 @@ $y-axis-padding: 0 20px 0 10px;
 
 
 	&.is-weekend {
-		background-color: rgba( $gray-lighten-30, .5 );
+		background-color: rgba( $gray-lighten-30, 0.5 );
 	}
 
 	&:hover {
 		cursor: pointer;
-		background-color: rgba( $gray-lighten-30, .3 );
+		background-color: rgba( $gray-lighten-30, 0.3 );
 	}
 
 	&.is-selected {
 		cursor: default;
-		background-color: rgba( $orange-jazzy, .1 );
+		background-color: rgba( $orange-jazzy, 0.1 );
 	}
 }
 
@@ -193,7 +193,7 @@ $y-axis-padding: 0 20px 0 10px;
 	}
 
 	&.is-ghost::after {
-		content: "";
+		content: '';
 		display: block;
 		position: absolute;
 			top: 160px;
@@ -202,7 +202,7 @@ $y-axis-padding: 0 20px 0 10px;
 		z-index: z-index( 'root', '.chart__bar-section.is-ghost::after' );
 		width: 100%;
 		height: 40px;
-		background-image: linear-gradient(to bottom, $transparent, rgba( $gray-lighten-30, .5 ) ); // TODO: needs to use default color for gradient
+		background-image: linear-gradient( to bottom, $transparent, rgba( $gray-lighten-30, 0.5 ) ); // TODO: needs to use default color for gradient
 
 		.chart__bar:hover & {
 			display: none;
@@ -241,7 +241,7 @@ $y-axis-padding: 0 20px 0 10px;
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		width: 100%;
 	}
 
@@ -254,7 +254,7 @@ $y-axis-padding: 0 20px 0 10px;
 	text-align: left;
 
 	// Expand labels to create bigger touch targets
-	@include breakpoint( "<480px") {
+	@include breakpoint( '<480px') {
 		width: 50%;
 		display: inline-block;
 	}
@@ -276,7 +276,7 @@ $y-axis-padding: 0 20px 0 10px;
 		}
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: block;
 	}
 }
@@ -295,7 +295,7 @@ $y-axis-padding: 0 20px 0 10px;
 	margin: 3px 5px 3px 8px; // 1
 }
 
-@include breakpoint( "<480px" ) {
+@include breakpoint( '<480px' ) {
 	.chart__legend-option:first-child .chart__legend-color {
 		margin-left: 2px; // 2
 	}
@@ -436,7 +436,7 @@ $y-axis-padding: 0 20px 0 10px;
 			&::before {
 				content: '';
 				position: relative;
-				background-image: linear-gradient(to right, rgba(61, 89, 109, 0) 0%, rgba(61, 89, 109, 0.5), rgba(61, 89, 109, 1));
+				background-image: linear-gradient( to right, rgba( 61, 89, 109, 0 ) 0%, rgba( 61, 89, 109, 0.5 ), rgba( 61, 89, 109, 1 ) );
 				left: -30px;
 				width: 30px;
 				height: 24px;

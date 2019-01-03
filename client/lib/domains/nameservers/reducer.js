@@ -19,6 +19,7 @@ import {
 const initialDomainState = {
 	isFetching: false,
 	hasLoadedFromServer: false,
+	error: false,
 	list: null,
 };
 
@@ -47,11 +48,13 @@ function reducer( state, payload ) {
 		case NAMESERVERS_FETCH:
 			state = updateState( state, action.domainName, {
 				isFetching: true,
+				error: false,
 			} );
 			break;
 		case NAMESERVERS_FETCH_FAILED:
 			state = updateState( state, action.domainName, {
 				isFetching: false,
+				error: true,
 			} );
 			break;
 		case NAMESERVERS_FETCH_COMPLETED:

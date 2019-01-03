@@ -62,7 +62,7 @@
 		.shipping-zone__methods-column-title {
 			width: 50%;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				width: 30%;
 			}
 		}
@@ -70,7 +70,7 @@
 		.shipping-zone__methods-column-summary {
 			display: none;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				width: 30%;
 				display: block;
 			}
@@ -107,7 +107,7 @@
 			stroke: transparent;
 		}
 
-		&:after {
+		&::after {
 			display: none;
 		}
 	}
@@ -121,7 +121,7 @@
 		font-size: 14px;
 		width: 50%;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 30%;
 		}
 	}
@@ -130,10 +130,10 @@
 		font-size: 14px;
 		width: 30%;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			width: 100%;
 			order: 4;
-			padding-top: 0px;
+			padding-top: 0;
 		}
 	}
 
@@ -146,7 +146,7 @@
 		vertical-align: top;
 		text-transform: uppercase;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 25%;
 		}
 
@@ -172,7 +172,7 @@
 			flex-shrink: 0;
 		}
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 15%;
 		}
 	}
@@ -181,7 +181,7 @@
 		font-size: 14px;
 		width: 100%;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 30%;
 		}
 	}
@@ -190,16 +190,16 @@
 		font-size: 14px;
 		width: 70%;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			width: 100%;
 			order: 4;
-			padding-top: 0px;
+			padding-top: 0;
 		}
 	}
 }
 
 &.shipping-zone__method-dialog {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: 660px;
 	}
 
@@ -302,7 +302,7 @@
 }
 
 &.shipping-zone__location-dialog {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: 660px;
 	}
 
@@ -318,7 +318,7 @@
 }
 
 .shipping-zone__location-dialog-header {
-	padding: 0 0 24px 0;
+	padding: 0 0 24px;
 	font-size: 18px;
 }
 
@@ -340,8 +340,8 @@
 		color: var( --color-text-subtle );
 
 		img {
-			filter: grayscale(1);
-			opacity: .5;
+			filter: grayscale( 1 );
+			opacity: 0.5;
 		}
 
 		&:hover {

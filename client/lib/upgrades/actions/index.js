@@ -20,6 +20,7 @@ export {
 	removeDomainFromCart,
 	removeItem,
 	removePrivacyFromAllDomains,
+	replaceCartWithItems,
 	replaceItem,
 	showCartOnMobile,
 } from './cart';

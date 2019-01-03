@@ -30,13 +30,13 @@
 		margin-top: 24px; // Give labels some margin when they immediately follow a select
 	}
 
-	input[type="number"] {
+	input[type='number'] {
 		padding: 0;
 		width: 50px;
 		text-align: center;
 	}
 
-	input[type="text"] {
+	input[type='text'] {
 		-webkit-appearance: none;
 	}
 
@@ -50,10 +50,10 @@
 	legend + label,
 	label + label,
 	li label,
-	input[type="checkbox"] + label,
-	input[type="radio"] + label,
-	label input[type="checkbox"],
-	label input[type="radio"] {
+	input[type='checkbox'] + label,
+	input[type='radio'] + label,
+	label input[type='checkbox'],
+	label input[type='radio'] {
 		font-weight: normal;
 	}
 
@@ -129,7 +129,7 @@
 	}
 
 	.site-settings__blogaddress-settings {
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			display: flex;
 		}
 
@@ -138,7 +138,7 @@
 			margin-left: 0;
 			margin-top: 5px;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				width: 45%;
 				margin-left: 16px;
 				margin-top: 0;
@@ -186,7 +186,7 @@
 	fieldset.site-icon-setting {
 		padding-bottom: 16px;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			flex: 0 0 122px;
 			order: 1;
 			margin-bottom: 0;
@@ -196,21 +196,21 @@
 	}
 
 	.site-icon-setting__heading {
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			justify-content: space-between;
 			white-space: nowrap;
 		}
 	}
 
 	.site-icon-setting__icon {
-		@include breakpoint( "<660px") {
+		@include breakpoint( '<660px') {
 			float: left;
 			margin-right: 8px;
 		}
 	}
 
 	.site-icon-setting__button {
-		@include breakpoint( "<660px") {
+		@include breakpoint( '<660px') {
 			display: block;
 			margin-bottom: 8px;
 		}
@@ -301,7 +301,7 @@
 }
 
 .site-settings__site-options {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: flex;
 	}
 
@@ -313,7 +313,7 @@
 }
 
 .site-settings__site-title-tagline {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		flex: 0 1 100%;
 		order: 2;
 	}
@@ -339,14 +339,14 @@
 	justify-content: space-between;
 }
 .site-settings__footer-credit-explanation p {
-	margin: 0
+	margin: 0;
 }
 
 
 .writing-settings,
 .general-settings {
-	@include breakpoint( "<660px" ) {
-		select{
+	@include breakpoint( '<660px' ) {
+		select {
 			width: 100%;
 		}
 	}
@@ -363,7 +363,7 @@
 // @TODO: Remove has-divider once all instances have been replaced with .site-settings__has-divider
 .has-divider, .site-settings__has-divider {
 	margin: 0 -24px;
-	padding: 24px 24px 16px 24px;
+	padding: 24px 24px 16px;
 	border: 1px $gray-lighten-30 solid;
 	border-width: 1px 0;
 

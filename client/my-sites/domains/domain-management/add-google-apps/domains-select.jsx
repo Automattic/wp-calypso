@@ -28,13 +28,14 @@ class DomainsSelect extends React.Component {
 	}
 
 	render() {
-		const { isRequestingSiteDomains, onChange, onFocus, value } = this.props;
+		const { domains, isRequestingSiteDomains, onChange, onFocus, value } = this.props;
+
 		return (
 			<select
 				value={ value }
 				onChange={ onChange }
 				onFocus={ onFocus }
-				disabled={ isRequestingSiteDomains }
+				disabled={ isRequestingSiteDomains || 1 === domains.length }
 			>
 				{ isRequestingSiteDomains && this.renderLoadingState() }
 				{ ! isRequestingSiteDomains && this.renderDomainSelect() }

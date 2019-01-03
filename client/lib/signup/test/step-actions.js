@@ -64,7 +64,9 @@ describe( 'createSiteWithCart()', () => {
 			getState: () => ( {
 				signup: {
 					steps: {
-						siteTopic,
+						siteVertical: {
+							name: siteTopic,
+						},
 						survey: {
 							vertical: 'should not use this',
 						},

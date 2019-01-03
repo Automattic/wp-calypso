@@ -37,7 +37,7 @@
 }
 
 .masterbar__oauth-client-wpcc-sign-in {
-	background-color: rgba(255, 255, 255, 0.15);
+	background-color: rgba( 255, 255, 255, 0.15 );
 	border-radius: 3px;
 	color: #fff;
 	display: block;
@@ -48,19 +48,19 @@
 	top: 4px;
 
 	&:hover {
-		background: rgba(255, 255, 255, 0.2);
+		background: rgba( 255, 255, 255, 0.2 );
 	}
 
-	&:after {
+	&::after {
 		clear: both;
-		content: " ";
+		content: ' ';
 		display: block;
 		height: 0;
 		visibility: hidden;
 	}
 }
 .masterbar__oauth-client-wpcom {
-	color: rgba(255, 255, 255, 0.8);
+	color: rgba( 255, 255, 255, 0.8 );
 	cursor: pointer;
 	float: left;
 	line-height: 32px;
@@ -71,7 +71,7 @@
 	}
 
 	&:visited {
-		color: rgba(255, 255, 255, 0.8);
+		color: rgba( 255, 255, 255, 0.8 );
 	}
 
 
@@ -311,13 +311,13 @@
 	.login__form-header {
 		font-size: 1.5em;
 		margin-top: 1.2em;
-		margin-bottom: .3em;
+		margin-bottom: 0.3em;
 		padding: 0 20px;
 
 		@include breakpoint( '>480px' ) {
 			font-size: 2em;
 			margin-top: 1.5em;
-			margin-bottom: .4em;
+			margin-bottom: 0.4em;
 			padding: 0 80px;
 		}
 
@@ -329,7 +329,7 @@
 	}
 
 	.login__form-header {
-		margin-top: .2em;
+		margin-top: 0.2em;
 	}
 
 	.login__form-header-wrapper {
@@ -425,7 +425,7 @@
 		}
 
 		&:disabled {
-			background-color: #DDDDDD;
+			background-color: #dddddd;
 		}
 	}
 
@@ -462,7 +462,7 @@
 
 		&:focus, &.is-error:hover {
 			border: 1px solid #e6e6e6;
-			box-shadow: 0 0 5px 0 rgba(113, 176, 47, 0.8);
+			box-shadow: 0 0 5px 0 rgba( 113, 176, 47, 0.8 );
 			outline: 0;
 		}
 	}

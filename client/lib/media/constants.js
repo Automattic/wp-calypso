@@ -1,27 +1,21 @@
 /** @format */
 
 /**
- * External dependencies
- */
-
-import keyMirror from 'key-mirror';
-
-/**
  * An enum set of possible media validation errors.
  *
  * @type {Object}
  * @typedef MediaValidationError
  */
-export const ValidationErrors = keyMirror( {
-	FILE_TYPE_UNSUPPORTED: null,
-	FILE_TYPE_NOT_IN_PLAN: null,
-	SERVER_ERROR: null,
-	UPLOAD_VIA_URL_404: null,
-	EXCEEDS_MAX_UPLOAD_SIZE: null,
-	EXCEEDS_PLAN_STORAGE_LIMIT: null,
-	NOT_ENOUGH_SPACE: null,
-	SERVICE_FAILED: null,
-} );
+export const ValidationErrors = {
+	FILE_TYPE_UNSUPPORTED: 'FILE_TYPE_UNSUPPORTED',
+	FILE_TYPE_NOT_IN_PLAN: 'FILE_TYPE_NOT_IN_PLAN',
+	SERVER_ERROR: 'SERVER_ERROR',
+	UPLOAD_VIA_URL_404: 'UPLOAD_VIA_URL_404',
+	EXCEEDS_MAX_UPLOAD_SIZE: 'EXCEEDS_MAX_UPLOAD_SIZE',
+	EXCEEDS_PLAN_STORAGE_LIMIT: 'EXCEEDS_PLAN_STORAGE_LIMIT',
+	NOT_ENOUGH_SPACE: 'NOT_ENOUGH_SPACE',
+	SERVICE_FAILED: 'SERVICE_FAILED',
+};
 
 export const ThumbnailSizeDimensions = {
 	thumbnail: {

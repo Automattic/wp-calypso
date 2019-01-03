@@ -126,7 +126,7 @@
 	height: 125px;
 	margin: 0 auto;
 	overflow: hidden;
-	border: 1px solid #E1E8ED;
+	border: 1px solid #e1e8ed;
 	border-radius: 0.42857em;
 }
 
@@ -135,7 +135,7 @@
 	height: auto;
 	margin: 0 auto;
 	overflow: hidden;
-	border: 1px solid #E1E8ED;
+	border: 1px solid #e1e8ed;
 	border-radius: 0.42857em;
 }
 
@@ -155,13 +155,13 @@
 .twitter-share-preview__image {
 	width: 506px;
 	height: 254px;
-	border-bottom: 1px solid #E1E8ED;
+	border-bottom: 1px solid #e1e8ed;
 }
 
 .twitter-share-preview__body {
-	padding: .75em;
+	padding: 0.75em;
 	text-decoration: none;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-size: 14px;
 	color: black;
 	text-align: left;
@@ -172,7 +172,7 @@
 .twitter-share-preview__summary
 .twitter-share-preview__body {
 	margin-left: 125px;
-	border-left: 1px solid #E1E8ED;
+	border-left: 1px solid #e1e8ed;
 	height: 100%;
 }
 
@@ -187,7 +187,7 @@
 	white-space: nowrap;
 	font-weight: bold;
 	font-size: 1em;
-	margin: 0 0 .15em;
+	margin: 0 0 0.15em;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
@@ -201,7 +201,7 @@
 
 .twitter-share-preview__url {
 	text-transform: lowercase;
-	color: #8899A6;
+	color: #8899a6;
 	max-height: 1.3em;
 	white-space: nowrap;
 	overflow: hidden;

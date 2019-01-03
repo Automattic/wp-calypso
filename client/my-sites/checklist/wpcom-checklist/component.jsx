@@ -63,6 +63,7 @@ class WpcomChecklistComponent extends PureComponent {
 			mobile_app_installed: this.renderMobileAppInstalledTask,
 			site_launched: this.renderSiteLaunchedTask,
 			email_setup: this.renderEmailSetupTask,
+			email_forwarding_upgraded_to_gsuite: this.renderEmailForwardingUpgradedToGSuiteTask,
 		};
 	}
 
@@ -538,53 +539,62 @@ class WpcomChecklistComponent extends PureComponent {
 	renderEmailSetupTask = ( TaskComponent, baseProps, task ) => {
 		const { translate, siteSlug } = this.props;
 
-		const getStartProps = ( startingTask, clicked_element ) => {
-			return {
-				email_forwarding: startingTask.email_forwarding,
-				clicked_element,
-			};
-		};
-
-		const emailSetupProps = {
-			title: translate( 'Get email for your site' ),
-			bannerImageSrc: '/calypso/images/stats/tasks/email.svg', // TODO: get an actual svg for this
-			description: translate(
-				'Subscribe to G Suite to get a dedicated inbox, docs, and cloud storage.'
-			),
-			duration: translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ),
-			onClick: () => {
-				this.trackTaskStart( task, getStartProps( task, 'button' ) );
-				page( `/domains/manage/email/${ siteSlug }` );
-			},
-			onDismiss: this.handleTaskDismiss( task.id ),
-		};
-
-		const emailForwardingUsed = {
-			completedTitle: translate( 'You set up email forwarding for your site' ),
-			completedDescription: translate(
-				'Want a dedicated inbox, docs, and cloud storage? {{link}}Upgrade to G Suite!{{/link}}',
-				{
-					components: {
-						link: (
-							<a
-								onClick={ () => this.trackTaskStart( task, getStartProps( task, 'hyperlink' ) ) }
-								href={ `/domains/manage/email/${ siteSlug }` }
-							/>
-						),
+		const clickProps = baseProps.completed
+			? {}
+			: {
+					onClick: () => {
+						this.trackTaskStart( task );
+						page( `/domains/manage/email/${ siteSlug }` );
 					},
-				}
-			),
-			completedButtonText: translate( 'Upgrade' ),
-		};
-		const emailForwardingNotUsed = {
-			completedTitle: translate( 'You set up email for your site' ),
-		};
+					onDismiss: () => this.handleTaskDismiss( task.id ),
+			  };
 
-		const emailForwardingProps = task.email_forwarding
-			? emailForwardingUsed
-			: emailForwardingNotUsed;
+		return (
+			<TaskComponent
+				{ ...baseProps }
+				title={ translate( 'Get email for your site' ) }
+				completedTitle={ translate( 'You set up email for your site' ) }
+				bannerImageSrc={ '/calypso/images/stats/tasks/email.svg' } // TODO: get an actual svg for this
+				description={ translate(
+					'Subscribe to G Suite to get a dedicated inbox, docs, and cloud storage.'
+				) }
+				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
+				{ ...clickProps }
+			/>
+		);
+	};
 
-		return <TaskComponent { ...baseProps } { ...emailSetupProps } { ...emailForwardingProps } />;
+	renderEmailForwardingUpgradedToGSuiteTask = ( TaskComponent, baseProps, task ) => {
+		const { translate, siteSlug } = this.props;
+
+		baseProps.completed = true;
+		return (
+			<TaskComponent
+				{ ...baseProps }
+				title={ translate( 'Get email for your site' ) }
+				completedTitle={ translate( 'You set up email forwarding for your site' ) }
+				bannerImageSrc={ '/calypso/images/stats/tasks/email.svg' } // TODO: get an actual svg for this
+				completedDescription={ translate(
+					'Want a dedicated inbox, docs, and cloud storage? {{link}}Upgrade to G Suite!{{/link}}',
+					{
+						components: {
+							link: (
+								<a
+									onClick={ () => this.trackTaskStart( task, { clicked_element: 'hyperlink' } ) }
+									href={ `/domains/manage/email/${ siteSlug }` }
+								/>
+							),
+						},
+					}
+				) }
+				completedButtonText={ translate( 'Upgrade' ) }
+				onClick={ () => {
+					this.trackTaskStart( task, { clicked_element: 'button' } );
+					page( `/domains/manage/email/${ siteSlug }` );
+				} }
+				onDismiss={ this.handleTaskDismiss( task.id ) }
+			/>
+		);
 	};
 }
 

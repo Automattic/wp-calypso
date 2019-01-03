@@ -41,6 +41,7 @@ import {
 } from 'lib/store-transactions/step-types';
 import {
 	addItem,
+	replaceCartWithItems,
 	replaceItem,
 	applyCoupon,
 	resetTransaction,
@@ -68,6 +69,8 @@ import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import config from 'config';
+import { abtest } from 'lib/abtest';
 
 export class Checkout extends React.Component {
 	static propTypes = {
@@ -185,7 +188,7 @@ export class Checkout extends React.Component {
 
 	addProductToCart() {
 		if ( this.props.purchaseId ) {
-			this.addRenewItemToCart();
+			this.addRenewItemsToCart();
 		} else {
 			this.addNewItemToCart();
 		}
@@ -194,8 +197,35 @@ export class Checkout extends React.Component {
 		}
 	}
 
-	addRenewItemToCart() {
+	addRenewItemsToCart() {
 		const { product, purchaseId, selectedSiteSlug } = this.props;
+		// products can sometimes contain multiple items separated by commas
+		const products = product.split( ',' );
+
+		if ( ! purchaseId ) {
+			return;
+		}
+
+		// purchaseId can sometimes contain multiple items separated by commas
+		const purchaseIds = purchaseId.split( ',' );
+
+		const itemsToAdd = purchaseIds
+			.map( ( subscriptionId, currentIndex ) => {
+				const productSlug = products[ currentIndex ];
+				if ( ! productSlug ) {
+					return null;
+				}
+				return this.getRenewalItemForProductAndSubscription(
+					productSlug,
+					subscriptionId,
+					selectedSiteSlug
+				);
+			} )
+			.filter( item => item );
+		replaceCartWithItems( itemsToAdd );
+	}
+
+	getRenewalItemForProductAndSubscription( product, purchaseId, selectedSiteSlug ) {
 		const [ slug, meta ] = product.split( ':' );
 		const productSlug = this.getProductSlugFromSynonym( slug );
 
@@ -214,7 +244,7 @@ export class Checkout extends React.Component {
 			}
 		);
 
-		addItem( cartItem );
+		return cartItem;
 	}
 
 	addNewItemToCart() {
@@ -341,20 +371,47 @@ export class Checkout extends React.Component {
 		if ( this.props.isNewlyCreatedSite && receipt && isEmpty( receipt.failed_purchases ) ) {
 			const siteDesignType = get( selectedSite, 'options.design_type' );
 			const hasGoogleAppsInCart = cartItems.hasGoogleApps( cart );
+			const hasConciergeSessionInCart = cartItems.hasConciergeSession( cart );
 
+			// Handle the redirect path after a purchase of GSuite or Concierge Session
 			// The onboarding checklist currently supports the blog type only.
-			if ( hasGoogleAppsInCart && domainReceiptId && 'store' !== siteDesignType ) {
+			if (
+				( hasConciergeSessionInCart || ( hasGoogleAppsInCart && domainReceiptId ) ) &&
+				'store' !== siteDesignType
+			) {
 				analytics.tracks.recordEvent( 'calypso_checklist_assign', {
 					site: selectedSiteSlug,
 					plan: 'paid',
 				} );
+
+				if ( config.isEnabled( 'upsell/concierge-session' ) && hasConciergeSessionInCart ) {
+					return `/checklist/${ selectedSiteSlug }`;
+				}
 				return `/checklist/${ selectedSiteSlug }?d=gsuite`;
 			}
 
-			if ( ! hasGoogleAppsInCart && cartItems.hasDomainRegistration( cart ) ) {
+			if (
+				! hasGoogleAppsInCart &&
+				! hasConciergeSessionInCart &&
+				cartItems.hasDomainRegistration( cart )
+			) {
 				const domainsForGSuite = this.getEligibleDomainFromCart();
-
 				if ( domainsForGSuite.length ) {
+					if ( config.isEnabled( 'upsell/concierge-session' ) ) {
+						if (
+							cartItems.hasBloggerPlan( cart ) ||
+							cartItems.hasPersonalPlan( cart ) ||
+							cartItems.hasPremiumPlan( cart )
+						) {
+							// Assign a test group as late as possible
+							if ( 'show' === abtest( 'showConciergeSessionUpsell' ) ) {
+								// A user just purchased one of the qualifying plans and is in the "show" ab test variation
+								// Show them the concierge session upsell page
+								return `/checkout/${ selectedSiteSlug }/add-support-session/${ receiptId }`;
+							}
+						}
+					}
+
 					return `/checkout/${ selectedSiteSlug }/with-gsuite/${
 						domainsForGSuite[ 0 ].meta
 					}/${ receiptId }`;

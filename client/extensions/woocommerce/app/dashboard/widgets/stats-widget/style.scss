@@ -70,7 +70,7 @@
 		color: $gray-darken-20;
 	}
 
-	.table.is-compact-table .table-heading:nth-child(3), .table.is-compact-table .table-item:nth-child(3) {
+	.table.is-compact-table .table-heading:nth-child( 3 ), .table.is-compact-table .table-item:nth-child( 3 ) {
 		padding-left: 32px;
 
 		@include breakpoint( '<960px' ) {
@@ -162,7 +162,7 @@
 		.table-row {
 			&:hover {
 				background: inherit;
-				.table-item__cell-title:after {
+				.table-item__cell-title::after {
 					background: none;
 				}
 			}

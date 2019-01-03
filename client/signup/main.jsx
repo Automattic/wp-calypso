@@ -38,7 +38,7 @@ import './style.scss';
 import DocumentHead from 'components/data/document-head';
 import LocaleSuggestions from 'components/locale-suggestions';
 import SignupProcessingScreen from 'signup/processing-screen';
-import SignupHeader from 'signup/header';
+import SignupHeader from 'signup/signup-header';
 import SiteMockups from 'signup/site-mockup';
 
 // Libraries
@@ -61,7 +61,7 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
-import { submitSiteTopic } from 'state/signup/steps/site-topic/actions';
+import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -280,7 +280,7 @@ class Signup extends React.Component {
 				surveyQuestion: vertical,
 			} );
 
-			this.props.submitSiteTopic( vertical );
+			this.props.submitSiteVertical( { name: vertical } );
 
 			// Track our landing page verticals
 			if ( isValidLandingPageVertical( vertical ) ) {
@@ -626,7 +626,7 @@ class Signup extends React.Component {
 		if ( this.props.flowName !== 'onboarding-dev' ) {
 			return false;
 		}
-		const stepsToShowOn = [ 'site-topic', 'about', 'site-information', 'domains' ];
+		const stepsToShowOn = [ 'site-style', 'site-topic', 'about', 'site-information', 'domains' ];
 		return stepsToShowOn.indexOf( this.props.stepName ) >= 0;
 	}
 }
@@ -643,7 +643,7 @@ export default connect(
 	{
 		setSurvey,
 		submitSiteType,
-		submitSiteTopic,
+		submitSiteVertical,
 		loadTrackingTool,
 		trackAffiliateReferral: affiliateReferral,
 	},

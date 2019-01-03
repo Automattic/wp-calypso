@@ -4,7 +4,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { BlockAlignmentToolbar, BlockControls, InspectorControls } from '@wordpress/editor';
+import { BlockControls, InspectorControls } from '@wordpress/editor';
 import { Button, PanelBody, RangeControl, ToggleControl, Toolbar } from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
 import { get } from 'lodash';
@@ -14,19 +14,12 @@ import { withSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { ALIGNMENT_OPTIONS, DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
+import { DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
 
 class RelatedPostsEdit extends Component {
 	render() {
 		const { attributes, className, posts, setAttributes } = this.props;
-		const {
-			align,
-			displayContext,
-			displayDate,
-			displayThumbnails,
-			postLayout,
-			postsToShow,
-		} = attributes;
+		const { displayContext, displayDate, displayThumbnails, postLayout, postsToShow } = attributes;
 
 		const layoutControls = [
 			{
@@ -45,6 +38,7 @@ class RelatedPostsEdit extends Component {
 
 		const postsToDisplay = posts.length ? posts : DEFAULT_POSTS;
 		const displayPosts = postsToDisplay.slice( 0, postsToShow );
+		const previewClassName = 'related-posts__preview';
 
 		return (
 			<Fragment>
@@ -78,45 +72,37 @@ class RelatedPostsEdit extends Component {
 				</InspectorControls>
 
 				<BlockControls>
-					<BlockAlignmentToolbar
-						value={ align }
-						onChange={ nextAlign => {
-							setAttributes( { align: nextAlign } );
-						} }
-						controls={ ALIGNMENT_OPTIONS }
-					/>
 					<Toolbar controls={ layoutControls } />
 				</BlockControls>
 
 				<div
-					className={ classNames( `${ className }`, {
+					className={ classNames( className, {
 						'is-grid': postLayout === 'grid',
 						[ `columns-${ postsToShow }` ]: postLayout === 'grid',
-						[ `align${ align }` ]: align,
 					} ) }
 				>
-					<div className={ `${ className }__preview-items` }>
-						{ displayPosts.map( ( post, i ) => (
-							<div className={ `${ className }__preview-post` } key={ i }>
+					<div className={ previewClassName }>
+						{ displayPosts.map( post => (
+							<div className={ `${ previewClassName }-post` } key={ post.id }>
 								{ displayThumbnails &&
 									post.img &&
 									post.img.src && (
-										<Button className={ `${ className }__preview-post-link` } isLink>
+										<Button className={ `${ previewClassName }-post-link` } isLink>
 											<img src={ post.img.src } alt={ post.title } />
 										</Button>
 									) }
 								<h4>
-									<Button className={ `${ className }__preview-post-link` } isLink>
+									<Button className={ `${ previewClassName }-post-link` } isLink>
 										{ post.title }
 									</Button>
 								</h4>
 								{ displayDate && (
-									<span className={ `${ className }__preview-post-date has-small-font-size` }>
+									<span className={ `${ previewClassName }-post-date has-small-font-size` }>
 										{ post.date }
 									</span>
 								) }
 								{ displayContext && (
-									<p className={ `${ className }__preview-post-context` }>{ post.context }</p>
+									<p className={ `${ previewClassName }-post-context` }>{ post.context }</p>
 								) }
 							</div>
 						) ) }

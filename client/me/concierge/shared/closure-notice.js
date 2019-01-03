@@ -12,36 +12,27 @@ import i18n, { localize } from 'i18n-calypso';
  */
 import Card from 'components/card/compact';
 
-const ClosureNotice = ( {
-	closureStartDate,
-	closureEndDate,
-	displayDate,
-	holidayName,
-	translate,
-} ) => {
-	const currentDate = i18n.moment();
+const DATE_FORMAT = 'MMMM D h:mma z';
 
-	if (
-		! currentDate.isBetween(
-			i18n.moment.utc( displayDate ),
-			i18n.moment.utc( closureEndDate ).endOf( 'day' )
-		)
-	) {
+const ClosureNotice = ( { closesAt, displayAt, holidayName, reopensAt, translate } ) => {
+	const currentDate = i18n.moment();
+	const guessedTimezone = i18n.moment.tz.guess();
+
+	if ( ! currentDate.isBetween( i18n.moment( displayAt ), i18n.moment( reopensAt ) ) ) {
 		return null;
 	}
 
 	let message;
 
-	if ( currentDate.isBefore( i18n.moment.utc( closureStartDate ) ) ) {
+	if ( currentDate.isBefore( i18n.moment.utc( closesAt ) ) ) {
 		message = translate(
-			'{{strong}}Note:{{/strong}} Concierge will be closed %(closureStartDate)s through ' +
-				'%(closureEndDate)s for the %(holidayName)s holiday. If you need to get in touch ' +
-				'with us, you’ll be able to {{link}}submit a support request{{/link}} and we’ll ' +
-				'get to it as fast as we can.',
+			'{{strong}}Note:{{/strong}} Support sessions will be closed for %(holidayName)s from %(closesAt)s until %(reopensAt)s. ' +
+				'If you need to get in touch with us, you’ll be able to {{link}}submit a support request{{/link}} and we’ll ' +
+				'get to it as fast as we can. Thank you!',
 			{
 				args: {
-					closureStartDate: i18n.moment( closureStartDate ).format( 'dddd, MMMM Do' ),
-					closureEndDate: i18n.moment( closureEndDate ).format( 'dddd, MMMM Do' ),
+					closesAt: i18n.moment.tz( closesAt, guessedTimezone ).format( DATE_FORMAT ),
+					reopensAt: i18n.moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
 					holidayName,
 				},
 				components: {
@@ -52,16 +43,12 @@ const ClosureNotice = ( {
 		);
 	} else {
 		message = translate(
-			'{{strong}}Note:{{/strong}} Concierge is closed today for the %(holidayName)s holiday. ' +
-				'If you need to get in touch with us, you’ll be able to {{link}}submit a support ' +
-				'request{{/link}} and we’ll get back to you as fast as we can. Concierge will ' +
-				'reopen on %(reopenDate)s. Thank you!',
+			'{{strong}}Note:{{/strong}} Support sessions are closed for %(holidayName)s and will reopen %(reopensAt)s. ' +
+				'If you need to get in touch with us, you’ll be able to {{link}}submit a support request{{/link}} and we’ll ' +
+				'get back to you as fast as we can. Thank you!',
 			{
 				args: {
-					reopenDate: i18n
-						.moment( closureEndDate )
-						.add( 1, 'day' )
-						.format( 'MMMM Do' ),
+					reopensAt: i18n.moment.tz( reopensAt, guessedTimezone ).format( DATE_FORMAT ),
 					holidayName,
 				},
 				components: {

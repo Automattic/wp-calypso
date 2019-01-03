@@ -14,8 +14,9 @@ import { translate } from 'i18n-calypso';
 import SiteMockup from './site-mockup';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors';
+import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
+import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getVerticalData } from './mock-data';
 
 /**
@@ -68,6 +69,8 @@ class SiteMockups extends Component {
 			title: this.props.title,
 			tagline: this.getTagline(),
 			data: this.props.verticalData,
+			siteType: this.props.siteType,
+			siteStyle: this.props.siteStyle,
 		};
 
 		return (
@@ -80,10 +83,11 @@ class SiteMockups extends Component {
 }
 
 export default connect( state => {
-	const vertical = getSignupStepsSiteTopic( state );
+	const vertical = getSiteVerticalName( state );
 	return {
 		title: getSiteTitle( state ) || translate( 'Your New Website' ),
 		siteInformation: getSiteInformation( state ),
+		siteStyle: getSiteStyle( state ),
 		siteType: getSiteType( state ),
 		vertical,
 		verticalData: getVerticalData( vertical ),

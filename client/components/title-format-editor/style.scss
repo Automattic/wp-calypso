@@ -39,14 +39,14 @@
 	background-color: $white;
 	color: $gray-darken-30;
 	border: 1px solid $gray-lighten-20;
-	padding: 3px 8px 3px 8px;
+	padding: 3px 8px;
 	margin-left: 10px;
 	margin-top: 3px;
 	font-size: 12px;
 	font-weight: 600;
 	cursor: pointer;
 
-	&:before {
+	&::before {
 		content: '+';
 		margin-right: 4px;
 		font-weight: 600;
