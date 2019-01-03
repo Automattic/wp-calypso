@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, partialRight, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -70,7 +70,7 @@ class SiteSettingsFormPerformance extends Component {
 
 				{ jetpackSettingsUI &&
 					jetpackVersionSupportsLazyImages && (
-						<div>
+						<Fragment>
 							{ this.renderSectionHeader( translate( 'Performance & speed' ), false ) }
 							<SpeedUpYourSite
 								isSavingSettings={ isSavingSettings }
@@ -79,11 +79,11 @@ class SiteSettingsFormPerformance extends Component {
 								submitForm={ submitForm }
 								updateFields={ updateFields }
 							/>
-						</div>
+						</Fragment>
 					) }
 
 				{ jetpackSettingsUI && (
-					<div>
+					<Fragment>
 						{ this.renderSectionHeader( translate( 'Media' ) ) }
 						<MediaSettings
 							siteId={ siteId }
@@ -94,7 +94,7 @@ class SiteSettingsFormPerformance extends Component {
 							fields={ fields }
 							jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
 						/>
-					</div>
+					</Fragment>
 				) }
 			</form>
 		);
