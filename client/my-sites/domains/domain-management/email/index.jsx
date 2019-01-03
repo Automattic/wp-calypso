@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import GSuiteMarketingCopy from 'my-sites/domains/domain-management/g-suite/g-suite-purchase-cta';
+import GSuitePurchaseCta from 'my-sites/domains/domain-management/g-suite/g-suite-purchase-cta';
 import GoogleAppsUsersCard from './google-apps-users-card';
 import Placeholder from './placeholder';
 import VerticalNav from 'components/vertical-nav';
@@ -34,7 +34,6 @@ import {
 	isGsuiteRestricted,
 } from 'lib/domains';
 import { isPlanFeaturesEnabled } from 'lib/plans';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import DocumentHead from 'components/data/document-head';
 
 class Email extends React.Component {
@@ -146,16 +145,14 @@ class Email extends React.Component {
 	}
 
 	addGoogleAppsCard() {
-		const { products, selectedSite } = this.props;
-		const gapps = products.gapps;
+		const { products, selectedDomainName, selectedSite } = this.props;
 		return (
 			<Fragment>
-				<EmailVerificationGate
-					noticeText={ this.props.translate( 'You must verify your email to purchase G Suite.' ) }
-					noticeStatus="is-info"
-				>
-					<GSuiteMarketingCopy product={ gapps } selectedSite={ selectedSite } />
-				</EmailVerificationGate>
+				<GSuitePurchaseCta
+					product={ products.gapps }
+					selectedDomainName={ selectedDomainName }
+					selectedSite={ selectedSite }
+				/>
 				{ this.addEmailForwardingCard() }
 			</Fragment>
 		);

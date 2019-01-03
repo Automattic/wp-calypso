@@ -15,29 +15,28 @@ import React, { Fragment } from 'react';
  */
 import { ADDING_GOOGLE_APPS_TO_YOUR_SITE } from 'lib/url/support';
 import Button from 'components/forms/form-button';
-import { canAddGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
 import CompactCard from 'components/card/compact';
 import config from 'config';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { domainManagementAddGoogleApps } from 'my-sites/domains/paths';
+import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
+import { getEligibleSelectedSite } from 'lib/domains/gsuite';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-class GSuiteMarketingCopy extends React.Component {
+class GSuitePurchaseCta extends React.Component {
 	handleLearnMoreClick = () => {
-		this.props.learnMoreClick( this.props.eligibleDomainName );
+		this.props.learnMoreClick( this.props.domainName );
 	};
 
 	goToAddGoogleApps = () => {
-		page(
-			domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.eligibleDomainName )
-		);
+		page( domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.domainName ) );
 	};
 
 	getStorageText() {
@@ -56,8 +55,8 @@ class GSuiteMarketingCopy extends React.Component {
 		}
 	}
 
-	render() {
-		const { currencyCode, eligibleDomainName, translate } = this.props;
+	renderCta() {
+		const { currencyCode, domainName, translate } = this.props;
 		const price = get( this.props, [ 'product', 'prices', currencyCode ], 0 );
 		const annualPrice = getAnnualPrice( price, currencyCode );
 		const monthlyPrice = getMonthlyPrice( price, currencyCode );
@@ -135,7 +134,7 @@ class GSuiteMarketingCopy extends React.Component {
 								<h5 className="g-suite-purchase-cta__add-google-apps-card-feature-header">
 									{ translate( 'Gmail for @%(domain)s', {
 										args: {
-											domain: eligibleDomainName,
+											domain: domainName,
 										},
 									} ) }
 								</h5>
@@ -222,6 +221,17 @@ class GSuiteMarketingCopy extends React.Component {
 			</Fragment>
 		);
 	}
+
+	render() {
+		return (
+			<EmailVerificationGate
+				noticeText={ this.props.translate( 'You must verify your email to purchase G Suite.' ) }
+				noticeStatus="is-info"
+			>
+				{ this.renderCta() }
+			</EmailVerificationGate>
+		);
+	}
 }
 
 const learnMoreClick = domainName =>
@@ -237,18 +247,11 @@ const learnMoreClick = domainName =>
 		)
 	);
 
-const getEligibleSelectedSite = ( selectedDomainName, domains ) => {
-	if ( selectedDomainName && canAddGoogleApps( selectedDomainName ) ) {
-		return selectedDomainName;
-	}
-	const [ eligibleDomain ] = getGoogleAppsSupportedDomains( domains );
-	return ( eligibleDomain && eligibleDomain.name ) || 'example.com';
-};
-
-GSuiteMarketingCopy.propTypes = {
+GSuitePurchaseCta.propTypes = {
 	currencyCode: PropTypes.string.isRequired,
-	eligibleDomainName: PropTypes.string.isRequired,
+	domainName: PropTypes.string.isRequired,
 	product: PropTypes.object.isRequired,
+	selectedDomainName: PropTypes.string,
 	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 };
 
@@ -257,8 +260,8 @@ export default connect(
 		const domains = getDomainsBySiteId( state, selectedSite.ID );
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			eligibleDomainName: getEligibleSelectedSite( selectedDomainName, domains ),
+			domainName: getEligibleSelectedSite( selectedDomainName, domains ),
 		};
 	},
 	{ learnMoreClick }
-)( localize( GSuiteMarketingCopy ) );
+)( localize( GSuitePurchaseCta ) );
