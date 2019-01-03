@@ -25,9 +25,9 @@
 	text-transform: uppercase;
 }
 .ribbon .ribbon__title::before {
-	content: "";
+	content: '';
 	position: absolute;
-	left: 0px;
+	left: 0;
 	top: 100%;
 	z-index: z-index( '.ribbon', '.ribbon__title::before' );
 	border-left: 3px solid var( --color-primary-dark );
@@ -36,7 +36,7 @@
 	border-top: 3px solid var( --color-primary-dark );
 }
 .ribbon .ribbon__title::after {
-	content: "";
+	content: '';
 	position: absolute;
 	right: 0;
 	top: 100%;
@@ -49,7 +49,7 @@
 
 .ribbon.is-green {
 	.ribbon__title {
-		background-color: var( --color-success )
+		background-color: var( --color-success );
 	}
 	.ribbon__title::before {
 		border-left-color: darken( $alert-green, 20% );

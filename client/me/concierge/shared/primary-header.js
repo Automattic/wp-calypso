@@ -22,21 +22,27 @@ class PrimaryHeader extends Component {
 		return (
 			<Fragment>
 				<ClosureNotice
-					displayDate="2018-12-17"
-					closureStartDate="2018-12-24"
-					closureEndDate="2018-12-25"
 					holidayName="Christmas"
+					displayAt="2018-12-17 00:00Z"
+					closesAt="2018-12-24 00:00Z"
+					reopensAt="2018-12-26 07:00Z"
+				/>
+				<ClosureNotice
+					holidayName="New Year's Day"
+					displayAt="2018-12-26 07:00Z"
+					closesAt="2019-01-01 00:00Z"
+					reopensAt="2019-01-02 07:00Z"
 				/>
 				<Card>
 					<img
 						className="shared__info-illustration"
-						alt="concierge session signup form header"
+						alt="support session signup form header"
 						src={ '/calypso/images/illustrations/illustration-start.svg' }
 					/>
 					<FormattedHeader
-						headerText={ translate( 'WordPress.com Business Concierge Session' ) }
+						headerText={ translate( 'WordPress.com Support Scheduler' ) }
 						subHeaderText={ translate(
-							"In this 30-minute session we'll help you get started with your site."
+							'Use the tool below to book your in-depth support session.'
 						) }
 					/>
 					<ExternalLink

@@ -48,7 +48,7 @@ describe( 'validation', () => {
 		city: 'Maracanaú',
 		state: 'CE',
 		document: '853.513.468-93',
-		'phone-number': '085 2284-7035',
+		'phone-number': '+85 2284-7035',
 		'address-1': 'Rua E',
 		'street-number': '1040',
 	};
@@ -233,21 +233,7 @@ describe( 'validation', () => {
 
 				expect( result ).toEqual( {
 					errors: {
-						'phone-number': [
-							'Missing required Phone Number field',
-							'That phone number does not appear to be valid',
-						],
-					},
-				} );
-			} );
-
-			test( 'should return error when phone number is invalid', () => {
-				const invalidStPhNo = { ...validBrazilianEbanxCard, 'phone-number': '1234' };
-				const result = validatePaymentDetails( invalidStPhNo );
-
-				expect( result ).toEqual( {
-					errors: {
-						'phone-number': [ 'That phone number does not appear to be valid' ],
+						'phone-number': [ 'Missing required Phone Number field' ],
 					},
 				} );
 			} );

@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Focusable from 'components/focusable';
@@ -80,13 +79,7 @@ class Task extends PureComponent {
 		} = this.props;
 		const { buttonText = translate( 'Do it!' ) } = this.props;
 		const hasActionlink = completed && completedButtonText;
-
-		let isCollapsed;
-		if ( abtest( 'simplifiedChecklistView' ) === 'showAll' ) {
-			isCollapsed = false;
-		} else {
-			isCollapsed = firstIncomplete && firstIncomplete.id !== this.props.id;
-		}
+		const isCollapsed = firstIncomplete && firstIncomplete.id !== this.props.id;
 
 		return (
 			<CompactCard

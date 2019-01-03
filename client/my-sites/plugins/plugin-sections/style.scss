@@ -89,7 +89,7 @@
 			outline: solid $gray 1px;
 		}
 	}
-	&:after {
+	&::after {
 		position: absolute;
 			left: 0;
 			bottom: 100%;

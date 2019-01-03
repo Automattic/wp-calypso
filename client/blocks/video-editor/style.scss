@@ -5,7 +5,7 @@
 }
 
 .editor-media-modal .video-editor .notice {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-top: 0;
 	}
 }
@@ -18,7 +18,7 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-	background: darken($gray, 52%);
+	background: darken( $gray, 52% );
 }
 
 .video-editor__preview-wrapper {
@@ -26,7 +26,7 @@
 	position: relative;
 	border-bottom: 1px solid $gray-lighten-20;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin: 16px 24px;
 		border: 0;
 	}

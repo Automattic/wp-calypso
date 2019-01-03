@@ -315,7 +315,7 @@
 		margin-top: 4px;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		top: -4px;
 	}
 }
@@ -486,7 +486,7 @@ a.comments__comment-username {
 		display: none;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		.comments__comment-actions-approve,
 		.comments__comment-actions-trash,
 		.comments__comment-actions-spam,
@@ -499,7 +499,7 @@ a.comments__comment-username {
 		}
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		.like-button .like-button__label-status {
 			display: inline;
 		}

@@ -31,6 +31,7 @@ class GoogleAppsUsers extends React.Component {
 	canAddUsers( domainName ) {
 		return this.getDomainsAsList().some(
 			domain =>
+				domain &&
 				domain.name === domainName &&
 				get( domain, 'googleAppsSubscription.ownedByUserId' ) === this.props.user.ID
 		);
@@ -49,9 +50,9 @@ class GoogleAppsUsers extends React.Component {
 		};
 	}
 
-	goToAddGoogleApps() {
+	goToAddGoogleApps = () => {
 		this.props.addGoogleAppsUserClick( this.props.selectedDomainName );
-	}
+	};
 
 	renderDomain( domain, users ) {
 		return (

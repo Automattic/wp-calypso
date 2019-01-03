@@ -5,7 +5,7 @@
  */
 import cookie from 'cookie';
 import debugFactory from 'debug';
-import { assign, clone, cloneDeep, get, some, includes, noop } from 'lodash';
+import { assign, clone, cloneDeep, some, includes, noop } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 /**
@@ -17,6 +17,7 @@ import userModule from 'lib/user';
 import { loadScript as loadScriptCallback } from 'lib/load-script';
 import { shouldSkipAds, hashPii } from 'lib/analytics/utils';
 import { promisify } from '../../utils';
+import request from 'superagent';
 
 /**
  * Module variables
@@ -36,10 +37,10 @@ const isGeminiEnabled = true;
 const isDonutsGtagEnabled = true;
 const isQuantcastEnabled = true;
 const isTwitterEnabled = true;
-const isAolEnabled = true;
 const isExperianEnabled = true;
 const isLinkedinEnabled = true;
 const isOutbrainEnabled = true;
+const isIconMediaEnabled = true;
 const isYahooEnabled = false;
 let isYandexEnabled = false;
 const isCriteoEnabled = false;
@@ -73,16 +74,17 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088&ec=wordpresspurchase',
 	YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL =
 		'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088',
-	ONE_BY_AOL_CONVERSION_PIXEL_URL =
-		'https://secure.ace-tag.advertising.com/action/type=132958/bins=1/rich=0/Mnum=1516/',
-	ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL =
-		'https://secure.leadback.advertising.com/adcedge/lb' +
-		'?site=695501&betr=sslbet_1472760417=[+]ssprlb_1472760417[720]|sslbet_1472760452=[+]ssprlb_1472760452[8760]',
 	PANDORA_CONVERSION_PIXEL_URL =
 		'https://data.adxcel-ec2.com/pixel/' +
 		'?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26',
 	EXPERIAN_CONVERSION_PIXEL_URL =
 		'https://d.turn.com/r/dd/id/L21rdC84MTYvY2lkLzE3NDc0MzIzNDgvdC8yL2NhdC8zMjE4NzUwOQ',
+	ICON_MEDIA_RETARGETING_PIXEL_URL =
+		'https://tags.w55c.net/rs?id=cab35a3a79dc4173b8ce2c47adad2cea&t=marketing',
+	ICON_MEDIA_SIGNUP_PIXEL_URL =
+		'https://tags.w55c.net/rs?id=d239e9cb6d164f7299d2dbf7298f930a&t=marketing',
+	ICON_MEDIA_ORDER_PIXEL_URL =
+		'https://tags.w55c.net/rs?id=d299eef42f2d4135a96d0d40ace66f3a&t=checkout',
 	YAHOO_TRACKING_SCRIPT_URL = 'https://s.yimg.com/wi/ytc.js',
 	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
 	DCM_FLOODLIGHT_IFRAME_URL = 'https://6355556.fls.doubleclick.net/activityi',
@@ -169,6 +171,43 @@ if ( typeof window !== 'undefined' ) {
 	if ( isOutbrainEnabled ) {
 		setupOutbrainGlobal();
 	}
+}
+
+/**
+ * Refreshes the GDPR `country_code` cookie every 6 hours (like A8C_Analytics wpcom plugin).
+ *
+ * @param {Function} callback - Callback functon to call once the `country_code` cooke has been succesfully refreshed.
+ * @returns {Boolean} Returns `true` if the `country_code` cooke needs to be refreshed.
+ */
+export function maybeRefreshCountryCodeCookieGdpr( callback ) {
+	const cookieMaxAgeSeconds = 6 * 60 * 60;
+
+	const cookies = cookie.parse( document.cookie );
+
+	if ( ! cookies.country_code || 'unknown ' === cookies.country_code ) {
+		// cache buster
+		const v = new Date().getTime();
+		request
+			.get( 'https://public-api.wordpress.com/geo/?v=' + v )
+			.then( res => {
+				document.cookie = cookie.serialize( 'country_code', res.body.country_short, {
+					path: '/',
+					maxAge: cookieMaxAgeSeconds,
+				} );
+				callback();
+			} )
+			.catch( err => {
+				document.cookie = cookie.serialize( 'country_code', 'unknown', {
+					path: '/',
+					maxAge: cookieMaxAgeSeconds,
+				} );
+				debug( 'refreshGeoIpCountryCookieGdpr Error: ', err );
+			} );
+
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -451,6 +490,10 @@ function isAdTrackingAllowed() {
  * @returns {void}
  */
 function only_retarget() {
+	if ( maybeRefreshCountryCodeCookieGdpr( only_retarget ) ) {
+		return;
+	}
+
 	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
@@ -511,11 +554,6 @@ function only_retarget() {
 		new Image().src = YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL;
 	}
 
-	// One by AOL
-	if ( isAolEnabled ) {
-		new Image().src = ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL;
-	}
-
 	// Quora
 	if ( isQuoraEnabled ) {
 		window.qp( 'track', 'ViewContent' );
@@ -530,12 +568,17 @@ function only_retarget() {
 	if ( isOutbrainEnabled ) {
 		window.obApi( 'track', 'PAGE_VIEW' );
 	}
+
+	// Icon Media
+	if ( isIconMediaEnabled ) {
+		new Image().src = ICON_MEDIA_RETARGETING_PIXEL_URL;
+	}
 }
 
 /**
  * Returns a boolean telling whether we may track the current user.
  *
- * @return {Boolean}        Whether we may track the current user
+ * @returns {Boolean} Whether we may track the current user
  */
 export function mayWeTrackCurrentUserGdpr() {
 	const cookies = cookie.parse( document.cookie );
@@ -551,15 +594,16 @@ export function mayWeTrackCurrentUserGdpr() {
 /**
  * Returns a boolean telling whether the current user could be in the GDPR zone.
  *
- * @return {Boolean}        Whether the current user could be in the GDPR zone
+ * @returns {Boolean} Whether the current user could be in the GDPR zone
  */
 export function isCurrentUserMaybeInGdprZone() {
-	const currentUser = user.get();
-	const countryCode = get( currentUser, 'user_ip_country_code' );
-	// if we don't have the country code they could be in the GDPR zone, so, yes
-	if ( ! countryCode ) {
+	const cookies = cookie.parse( document.cookie );
+	const countryCode = cookies.country_code;
+
+	if ( ! countryCode || 'unknown' === countryCode ) {
 		return true;
 	}
+
 	const gdprCountries = [
 		// European Member countries
 		'AT', // Austria
@@ -791,16 +835,22 @@ export function recordOrder( cart, orderId ) {
 			YAHOO_GEMINI_CONVERSION_PIXEL_URL + ( usdTotalCost !== null ? '&gv=' + usdTotalCost : '' );
 	}
 
-	if ( isAolEnabled && ! cart.is_signup ) {
-		new Image().src = ONE_BY_AOL_CONVERSION_PIXEL_URL;
-	}
-
 	if ( isPandoraEnabled && ! cart.is_signup ) {
 		new Image().src = PANDORA_CONVERSION_PIXEL_URL;
 	}
 
 	if ( isQuoraEnabled && ! cart.is_signup ) {
 		window.qp( 'track', 'Generic' );
+	}
+
+	if ( isIconMediaEnabled ) {
+		if ( cart.is_signup ) {
+			new Image().src = ICON_MEDIA_SIGNUP_PIXEL_URL;
+		} else {
+			const skus = cart.products.map( product => product.product_slug ).join( ',' );
+			new Image().src =
+				ICON_MEDIA_ORDER_PIXEL_URL + `&tx=${ orderId }&sku=${ skus }&price=${ usdTotalCost }`;
+		}
 	}
 }
 

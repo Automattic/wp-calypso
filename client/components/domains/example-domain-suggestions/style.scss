@@ -4,7 +4,7 @@
 	padding-top: 16px;
 	padding-right: 348px;
 	max-width: 600px;
-	margin: 0 auto 60px auto;
+	margin: 0 auto 60px;
 
 	p {
 		color: $gray-darken-20;
@@ -16,7 +16,7 @@
 		text-decoration: underline;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		max-width: 100%;
 		padding: 16px;
 		margin: 0 auto;
@@ -33,7 +33,7 @@
 		right: 0;
 	width: 300px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		padding-top: 24px;
 		position: relative;
 		margin: 0 auto;
