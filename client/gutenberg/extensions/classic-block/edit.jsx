@@ -41,7 +41,14 @@ export class ClassicEdit extends Component {
 	componentDidUpdate( prevProps ) {
 		const {
 			attributes: { content },
+			isSelected,
 		} = this.props;
+
+		const blockBlur = prevProps.isSelected === true && isSelected === false;
+
+		if ( blockBlur ) {
+			this.updateBlockContentAndBookmark();
+		}
 
 		if ( this.editor && prevProps.attributes.content !== content ) {
 			this.editor.setEditorContent( content || '' );
@@ -80,11 +87,7 @@ export class ClassicEdit extends Component {
 			<TinyMCE
 				isGutenbergClassicBlock
 				mode="tinymce"
-				onBlur={ this.updateBlockContentAndBookmark }
 				onClick={ isSelected ? noop : setSelected }
-				onKeyUp={ this.debouncedOnContentChange }
-				onSetContent={ this.debouncedOnContentChange }
-				onTextEditorChange={ this.debouncedOnContentChange }
 				ref={ this.storeEditor }
 			/>
 		);
