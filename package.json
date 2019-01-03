@@ -307,7 +307,7 @@
     "jest-junit": "5.2.0",
     "md5-file": "4.0.0",
     "mixedindentlint": "1.2.0",
-    "nock": "10.0.2",
+    "nock": "10.0.6",
     "npm-merge-driver": "2.3.5",
     "prettier": "github:Automattic/wp-prettier#wp-prettier-1.14.0",
     "react-test-renderer": "16.6.3",
