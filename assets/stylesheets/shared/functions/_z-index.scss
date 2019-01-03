@@ -184,6 +184,7 @@ $z-layers: (
 		'.webpack-build-monitor': 99999999,
 		'.image-selector__item.is-transient::after': 1,
 		'.image-selector__item .spinner': 2,
+		'.upwork-stats-nudge__close-icon': 1,
 	),
 	'.is-section-signup': (
 		'.is-section-signup::before': -1,
@@ -297,7 +298,7 @@ $z-layers: (
 @function map-deep-get( $map, $keys... ) {
 	@each $key in $keys {
 		@if not map-has-key( $map, $key) {
-			@warn "No layer found for `#{$key}` of `[#{ $keys }]` in $z-layers map. Property omitted.";
+			@warn 'No layer found for `#{$key}` of `[#{ $keys }]` in $z-layers map. Property omitted.';
 			@return map-get( $map, $key );
 		}
 		$map: map-get( $map, $key );

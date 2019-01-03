@@ -1,11 +1,11 @@
-.help-courses__course-list{
+.help-courses__course-list {
 	&.is-placeholder {
 		@include placeholder( 23% );
 		height: 300px;
 	}
 }
 
-.help-courses__course{
+.help-courses__course {
 	margin-top: 16px;
 
 	&.is-placeholder {
@@ -39,7 +39,7 @@
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 24px;
 		line-height: 1.416;
 	}
@@ -50,9 +50,9 @@
 	@extend %content-font;
 	font-size: 15px;
 	line-height: 22px;
-	margin-bottom: 0px;
+	margin-bottom: 0;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 16px;
 		line-height: 1.618;
 	}
@@ -67,10 +67,10 @@
 .help-courses__course-schedule-item-date {
 	font-size: 13px;
 	display: inline-block;
-	margin: 0px 10px 0px 0px;
+	margin: 0 10px 0 0;
 	white-space: normal;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 15px;
 	}
 }
@@ -108,9 +108,9 @@
 .help-courses__course-video-embed {
 	/*Maintain a 16:9 aspect ratio*/
 	position: relative;
-	&:before {
+	&::before {
 		display: block;
-		content: "";
+		content: '';
 		width: 100%;
 		padding-top: ( 9 / 16 ) * 100%;
 		background-color: #000;

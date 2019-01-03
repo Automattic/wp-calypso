@@ -4,7 +4,7 @@
 .pagination {
 	width: 100%;
 
-	&.is-compact .pagination__list-item  {
+	&.is-compact .pagination__list-item {
 		.button {
 			padding: 5px 8px;
 		}
@@ -14,7 +14,7 @@
 		}
 
 		&.pagination__arrow .button {
-			padding: 6px 6px;
+			padding: 6px;
 		}
 
 
@@ -102,7 +102,7 @@
 }
 
 // // Hover/focus states
-.pagination__list-item .button:not([disabled]):hover,
+.pagination__list-item .button:not( [disabled] ):hover,
 .pagination__list-item .button:focus {
 	color: $gray-dark;
 	outline: none;

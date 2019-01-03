@@ -4,7 +4,7 @@
  * External dependencies
  */
 import page from 'page';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize, translate } from 'i18n-calypso';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
@@ -13,6 +13,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import DocumentHead from 'components/data/document-head';
 import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
@@ -37,6 +38,7 @@ import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
+import UpworkStatsNudge from 'blocks/upwork-stats-nudge';
 import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
 
 function updateQueryString( query = {} ) {
@@ -119,15 +121,27 @@ class StatsSite extends Component {
 		}
 	};
 
+	displayBanner() {
+		const { isGoogleMyBusinessStatsNudgeVisible, siteId, slug } = this.props;
+		return (
+			<Fragment>
+				{ config.isEnabled( 'google-my-business' ) &&
+					abtest( 'builderReferralStatsNudge' ) === 'googleMyBusinessBanner' &&
+					siteId && (
+						<GoogleMyBusinessStatsNudge
+							siteSlug={ slug }
+							siteId={ siteId }
+							visible={ isGoogleMyBusinessStatsNudgeVisible }
+						/>
+					) }
+				{ abtest( 'builderReferralStatsNudge' ) === 'builderReferralBanner' &&
+					siteId && <UpworkStatsNudge siteSlug={ slug } siteId={ siteId } /> }
+			</Fragment>
+		);
+	}
+
 	render() {
-		const {
-			date,
-			hasPodcasts,
-			isGoogleMyBusinessStatsNudgeVisible,
-			isJetpack,
-			siteId,
-			slug,
-		} = this.props;
+		const { date, hasPodcasts, isJetpack, siteId, slug } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -186,14 +200,7 @@ class StatsSite extends Component {
 				/>
 				<div id="my-stats-content">
 					{ config.isEnabled( 'onboarding-checklist' ) && <WpcomChecklist viewMode="banner" /> }
-					{ config.isEnabled( 'google-my-business' ) &&
-						siteId && (
-							<GoogleMyBusinessStatsNudge
-								siteSlug={ slug }
-								siteId={ siteId }
-								visible={ isGoogleMyBusinessStatsNudgeVisible }
-							/>
-						) }
+					{ this.displayBanner() }
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
 						activeLegend={ this.state.activeLegend }

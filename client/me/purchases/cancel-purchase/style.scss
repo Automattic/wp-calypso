@@ -18,9 +18,9 @@
 
 .cancel-purchase__content {
 	margin: 0;
-	padding: 0 0 10px 0;
+	padding: 0 0 10px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: 55%;
 	}
 
@@ -73,7 +73,7 @@
 	flex-wrap: wrap;
 	justify-content: space-between;
 
-	&:after {
+	&::after {
 		display:none;
 	}
 }
@@ -86,7 +86,7 @@
 }
 
 .cancel-purchase__button {
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 100%;
 	}
 }

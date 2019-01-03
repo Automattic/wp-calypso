@@ -19,7 +19,7 @@
 	width: 47%;
 	margin: 0 27%;
 
-	&:first-letter {
+	&::first-letter {
 		text-transform: uppercase;
 	}
 
@@ -98,7 +98,7 @@ hr.post-schedule__hr {
 	margin: 0 -16px;
 }
 
-input[type="text"].post-schedule__clock-time {
+input[type='text'].post-schedule__clock-time {
 	height: 28px;
 	display: inline-block;
 	border: 1px solid $gray-lighten-30;

@@ -3,7 +3,7 @@
 	position: static;
 	width: 100%;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		background: transparent;
 		padding: 14px;
 	}

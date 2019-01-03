@@ -13,7 +13,9 @@ import { requestConciergeInitial } from 'state/concierge/actions';
 
 class QueryConciergeInitial extends Component {
 	componentDidMount() {
-		this.props.requestConciergeInitial( this.props.scheduleId );
+		const { siteId } = this.props;
+
+		this.props.requestConciergeInitial( siteId );
 	}
 
 	render() {

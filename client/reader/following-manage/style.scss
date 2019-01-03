@@ -2,7 +2,7 @@
 	font-weight: 600;
 	margin: 14px 0 14px 14px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin: 36px 0 20px;
 	}
 }
@@ -59,11 +59,11 @@
 .following-manage__subscriptions-controls {
 	display: flex;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		flex-wrap: wrap;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin: 0 15px;
 	}
 
@@ -76,7 +76,7 @@
 		font-weight: 600;
 		padding: 4px 0 15px;
 
-		@include breakpoint( "<960px" ) {
+		@include breakpoint( '<960px' ) {
 			flex: 0 0 auto;
 			width: 100%;
 		}
@@ -87,7 +87,7 @@
 
 		&::before {
 
-			@include breakpoint( "<960px" ) {
+			@include breakpoint( '<960px' ) {
 
 				@include long-content-fade( $size: 20% );
 				height: 30px;
@@ -100,7 +100,7 @@
 	.following-manage__subscriptions-sort,
 	.following-manage__subscriptions-search {
 
-		@include breakpoint( "<960px" ) {
+		@include breakpoint( '<960px' ) {
 			flex: 1;
 		}
 	}
@@ -112,7 +112,7 @@
 		padding-top: 8px;
 		width: 100%;
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			min-width: 200px;
 		}
 	}
@@ -120,18 +120,18 @@
 	.following-manage__subscriptions-search {
 		margin-top: 1px;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			margin-right: 0;
 		}
 	}
 
 	.following-manage__subscriptions-search .search-card {
-		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .3 );
+		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.3 );
 
 		.following-manage__search-followed-input.is-compact {
 			height: 32px;
 
-			@include breakpoint( "<660px" ) {
+			@include breakpoint( '<660px' ) {
 				min-width: 0;
 			}
 		}
@@ -145,7 +145,7 @@
 	.following-manage__subscriptions-import-export {
 		margin-right: 0;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			display: none;
 		}
 
@@ -187,7 +187,7 @@
 
 .following-manage__search-followed-input {
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		min-width: 200px;
 	}
 }
@@ -195,7 +195,7 @@
 .following-manage__search-results > div {
 	border-bottom: 1px solid $gray-lighten-30;
 
-	&:nth-last-child(2),
+	&:nth-last-child( 2 ),
 	&:last-child {
 		border-bottom: 0;
 	}
@@ -211,13 +211,13 @@
 	flex-direction: column;
 	min-width: 24px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		min-width: 90px;
 	}
 
 	.button.follow-button {
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			display: flex;
 		}
 	}
@@ -244,7 +244,7 @@
 .following-manage__url-follow-no-search-results-message {
 	margin-top: -5px;
 	padding-bottom: 15px;
-	color: $gray-darken-10
+	color: $gray-darken-10;
 }
 
 .following-manage__url-follow {
@@ -264,7 +264,7 @@
 		.follow-button__label {
 			color: var( --color-accent );
 
-			@include breakpoint ("<660px" ) {
+			@include breakpoint ('<660px' ) {
 				display: inline;
 			}
 		}

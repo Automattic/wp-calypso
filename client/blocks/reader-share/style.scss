@@ -14,7 +14,7 @@
 	}
 
 	.gridicon {
-		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 
 	&.is-active {
@@ -29,14 +29,14 @@
 .reader-share__button-label {
 	margin-left: 6px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }
 
 .reader-share__popover {
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		width: 152px;
 		padding-right: 2px;
 	}
@@ -49,7 +49,7 @@
 		line-height: 24px;
 		margin-left: 34px;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			margin-left: 27px;
 		}
 	}
@@ -64,7 +64,7 @@
 		padding: 0;
 		fill: $gray;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			left: 11px;
 		}
 	}
@@ -78,7 +78,7 @@
 	}
 
 	.social-logo.facebook {
-		fill: #3B5998;
+		fill: #3b5998;
 	}
 
 	&:hover,
@@ -112,7 +112,7 @@
 .reader-share__site-selector .site__domain {
 
 	&::after {
-		background: linear-gradient(to right, rgba(255, 255, 255, 0), $gray-light 90%);
+		background: linear-gradient( to right, rgba( 255, 255, 255, 0 ), $gray-light 90% );
 		border-radius: 50%;
 	}
 }

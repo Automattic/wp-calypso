@@ -1,88 +1,42 @@
-/** @format */
-
-/**
- * External dependencies
- */
-import ResizeObserver from 'resize-observer-polyfill';
-
 /**
  * Internal dependencies
  */
-import { DEFAULT_GALLERY_WIDTH } from './constants';
-import { getActiveStyleName, getLayout } from './layouts';
-
-/**
- * Styles
- */
 import './view.scss';
-
-const applyNodeSize = ( node, { width, height } ) => {
-	node.style.width = `${ width }px`;
-	node.style.height = `${ height }px`;
-};
+import ResizeObserver from 'resize-observer-polyfill';
+import { handleRowResize } from './layout/mosaic/resize';
 
 /**
- * Calculate new size for the gallery and apply it
+ * Handler for Gallery ResizeObserver
+ *
+ * @param {Array<ResizeObserverEntry>} galleries Resized galleries
  */
-const resizeGallery = ( { galleryNode, width, columns, layout } ) => {
-	const tileCount = galleryNode.querySelectorAll( '.tiled-gallery__item' ).length;
-
-	const galleryLayout = getLayout( {
-		columns,
-		layout,
-		tileCount,
-		width,
-	} );
-
-	// Resize rows within the gallery
-	galleryNode.childNodes.forEach( ( rowNode, rowIndex ) => {
-		const rowLayout = galleryLayout[ rowIndex ];
-		applyNodeSize( rowNode, rowLayout );
-
-		// Resize tiles within the row
-		const tileNodes = rowNode.querySelectorAll( '.tiled-gallery__item' );
-		tileNodes.forEach( ( tileNode, tileIndex ) => {
-			const tileLayout = rowLayout.tiles[ tileIndex ];
-			applyNodeSize( tileNode, tileLayout );
-		} );
-	} );
-};
-
-/**
- * Compares gallery width to its previous width to decide if to resize it.
- * @param {Array<ResizeObserverEntry>} entries Resized entries
- */
-function handleResize( entries ) {
-	if ( handleResize.pendingRaf ) {
-		cancelAnimationFrame( handleResize.pendingRaf );
+function handleObservedResize( galleries ) {
+	if ( handleObservedResize.pendingRaf ) {
+		cancelAnimationFrame( handleObservedResize.pendingRaf );
 	}
-	handleResize.pendingRaf = requestAnimationFrame( () => {
-		handleResize.pendingRaf = null;
-		for ( const entry of entries ) {
-			const { width } = entry.contentRect;
-			// Don't resize if width didn't chance
-			if ( width !== entry.target.getAttribute( 'data-width' ) ) {
-				// Store width for later comparison
-				entry.target.setAttribute( 'data-width', width );
-				resizeGallery( {
-					columns: parseInt( entry.target.getAttribute( 'data-columns' ), 10 ),
-					galleryNode: entry.target,
-					layout: getActiveStyleName( entry.target.className ),
-					width,
-				} );
-			}
+	handleObservedResize.pendingRaf = requestAnimationFrame( () => {
+		handleObservedResize.pendingRaf = null;
+		for ( const gallery of galleries ) {
+			const { width: galleryWidth } = gallery.contentRect;
+			const rows = Array.from( gallery.target.childNodes );
+			rows.forEach( row => handleRowResize( row, galleryWidth ) );
 		}
 	} );
 }
 
 /**
- * Get different galleries on the page
+ * Get all the galleries on the document
  *
- * @returns {Array} List of gallery nodes on the page
+ * @return {Array} List of gallery nodes
  */
-const getGalleries = () => {
-	return document ? [ ...document.querySelectorAll( '.wp-block-jetpack-tiled-gallery' ) ] : [];
-};
+function getGalleries() {
+	return Array.from(
+		document.querySelectorAll(
+			'.wp-block-jetpack-tiled-gallery.is-style-rectangular > .tiled-gallery__gallery,' +
+				'.wp-block-jetpack-tiled-gallery.is-style-columns > .tiled-gallery__gallery'
+		)
+	);
+}
 
 /**
  * Setup ResizeObserver to follow each gallery on the page
@@ -94,22 +48,9 @@ const observeGalleries = () => {
 		return;
 	}
 
-	const observer = new ResizeObserver( handleResize );
+	const observer = new ResizeObserver( handleObservedResize );
 
-	galleries.forEach( gallery => {
-		// Observe only if gallery has child nodes
-		if ( gallery.childNodes.length > 0 ) {
-			// By default gallery has fixed width; element fluid fluid and move
-			// width to `data-` to be able to compare changes in element's
-			// current width to element's previous width.
-			gallery.setAttribute(
-				'data-width',
-				parseInt( gallery.style.width, 10 ) || DEFAULT_GALLERY_WIDTH
-			);
-			gallery.style.width = 'auto';
-			observer.observe( gallery );
-		}
-	} );
+	galleries.forEach( gallery => observer.observe( gallery ) );
 };
 
 if ( typeof window !== 'undefined' && typeof document !== 'undefined' ) {

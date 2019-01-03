@@ -23,13 +23,11 @@ import { Fragment } from '@wordpress/element';
 import { PluginArea } from '@wordpress/plugins';
 import { withViewportMatch } from '@wordpress/viewport';
 import { compose } from '@wordpress/compose';
-import { parse } from '@wordpress/blocks';
 import { PluginPostPublishPanel, PluginPrePublishPanel } from '@wordpress/edit-post'; // GUTENLYPSO
 
 /**
  * Internal dependencies
  */
-import BrowserURL from 'gutenberg/editor/browser-url'; // GUTENLYPSO
 import Header from '../header';
 import TextEditor from '../text-editor';
 import VisualEditor from '../visual-editor';
@@ -39,7 +37,7 @@ import OptionsModal from '../options-modal';
 import MetaBoxes from '../meta-boxes';
 import SettingsSidebar from '../sidebar/settings-sidebar';
 import Sidebar from '../sidebar';
-import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
+import GutenlypsoLayout from 'gutenberg/editor/layout'; // GUTENLYPSO
 
 function Layout( {
 	mode,
@@ -53,17 +51,13 @@ function Layout( {
 	isSaving,
 	isMobileViewport,
 	isRichEditingEnabled,
-	// GUTENLYPSO START
-	updatePost,
-	resetBlocks,
-	post,
-	// GUTENLYPSO END
 } ) {
 	const sidebarIsOpened = editorSidebarOpened || pluginSidebarOpened || publishSidebarOpened;
 
 	const className = classnames( 'edit-post-layout', {
 		'is-sidebar-opened': sidebarIsOpened,
 		'has-fixed-toolbar': hasFixedToolbar,
+		'wp-embed-responsive': true, //GUTENLYPSO
 	} );
 
 	const publishLandmarkProps = {
@@ -73,20 +67,9 @@ function Layout( {
 		tabIndex: -1,
 	};
 
-	// GUTENLYPSO START
-	const loadRevision = revision => {
-		const { post_content: content, post_title: title, post_excerpt: excerpt } = revision;
-		const postRevision = { ...post, content, title, excerpt };
-		//update post does not automatically update content/blocks intentionally
-		updatePost( postRevision );
-		const blocks = parse( content );
-		resetBlocks( blocks );
-	};
-	// GUTENLYPSO END
-
 	return (
 		<div className={ className }>
-			<BrowserURL />
+			<GutenlypsoLayout />
 			<UnsavedChangesWarning />
 			<AutosaveMonitor />
 			<Header />
@@ -111,7 +94,6 @@ function Layout( {
 					<MetaBoxes location="advanced" />
 				</div>
 			</div>
-			<EditorRevisionsDialog loadRevision={ loadRevision } /> { /* GUTENLYPSO */ }
 			{ publishSidebarOpened ? (
 				<PostPublishPanel
 					{ ...publishLandmarkProps }
@@ -147,7 +129,6 @@ function Layout( {
 
 export default compose(
 	withSelect( select => ( {
-		post: select( 'core/editor' ).getCurrentPost(), // GUTENLYPSO
 		mode: select( 'core/edit-post' ).getEditorMode(),
 		editorSidebarOpened: select( 'core/edit-post' ).isEditorSidebarOpened(),
 		pluginSidebarOpened: select( 'core/edit-post' ).isPluginSidebarOpened(),
@@ -158,13 +139,10 @@ export default compose(
 		isRichEditingEnabled: select( 'core/editor' ).getEditorSettings().richEditingEnabled,
 	} ) ),
 	withDispatch( dispatch => {
-		const { updatePost, resetBlocks } = dispatch( 'core/editor' ); // GUTENLYPSO
 		const { closePublishSidebar, togglePublishSidebar } = dispatch( 'core/edit-post' );
 		return {
 			closePublishSidebar,
 			togglePublishSidebar,
-			updatePost, // GUTENLYPSO
-			resetBlocks, // GUTENLYPSO
 		};
 	} ),
 	navigateRegions,

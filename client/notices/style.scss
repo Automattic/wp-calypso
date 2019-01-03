@@ -11,11 +11,11 @@
 			z-index: z-index( 'root', '.notices-list.is-pinned .notice' );
 		}
 
-		@include breakpoint( "<960px" ) {
+		@include breakpoint( '<960px' ) {
 			width: calc( 100% - 228px - 24px - 24px );
 		}
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			top: 16px;
 			width: calc( 100% - 16px );
 		}

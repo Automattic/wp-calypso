@@ -38,6 +38,7 @@ export default function( phoneNumber ) {
 		};
 	}
 
+	// phone module validates mobile numbers
 	if ( ! phone( phoneNumber ).length ) {
 		return {
 			error: 'phone_number_invalid',

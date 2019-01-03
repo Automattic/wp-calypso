@@ -526,13 +526,22 @@ class HelpContact extends React.Component {
 		return (
 			<div>
 				{ isUserAffectedByLiveChatClosure && (
-					<LiveChatClosureNotice
-						compact={ compact }
-						displayDate="2018-12-17"
-						closureStartDate="2018-12-24"
-						closureEndDate="2018-12-25"
-						holidayName="Christmas"
-					/>
+					<Fragment>
+						<LiveChatClosureNotice
+							holidayName="Christmas"
+							compact={ compact }
+							displayAt="2018-12-17 00:00Z"
+							closesAt="2018-12-24 00:00Z"
+							reopensAt="2018-12-26 07:00Z"
+						/>
+						<LiveChatClosureNotice
+							holidayName="New Year's Day"
+							compact={ compact }
+							displayAt="2018-12-26 07:00Z"
+							closesAt="2019-01-01 00:00Z"
+							reopensAt="2019-01-02 07:00Z"
+						/>
+					</Fragment>
 				) }
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) && (
 					<Notice

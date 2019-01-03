@@ -71,7 +71,7 @@
 		width: 0;
 
 		// Fade overlay for longer labels
-		&:after {
+		&::after {
 			content: '';
 			text-align: right;
 			position: absolute;
@@ -104,7 +104,7 @@
 			outline: none;
 			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 
-			&:after {
+			&::after {
 				top: 2px;
 				right: 2px;
 				bottom: 2px;
@@ -114,7 +114,7 @@
 		-webkit-tap-highlight-color: rgba( $gray-dark, 0.2 );
 
 		.sidebar__menu-link-secondary-text {
-			padding: 3px 8px 4px 8px;
+			padding: 3px 8px 4px;
 			margin-right: 8px;
 			align-self: center;
 			font-weight: 600;
@@ -154,7 +154,7 @@ form.sidebar__button {
 	align-self: center;
 	box-sizing: border-box;
 	overflow: hidden;
-	padding: 2px 8px 3px 8px;
+	padding: 2px 8px 3px;
 	height: 24px;
 	margin-right: 8px;
 	line-height: 18px;
@@ -173,7 +173,7 @@ form.sidebar__button {
 }
 
 // Expanding clickable area of mini buttons
-a.sidebar__button:after,
+a.sidebar__button::after,
 form.sidebar__button input {
 	content: '';
 	position: absolute;
@@ -196,7 +196,7 @@ form.sidebar__button input {
 				color: inherit;
 			}
 
-			&:first-child:after {
+			&:first-child::after {
 				background: overflow-gradient(
 					var( --sidebar-menu-selected-a-first-child-after-background ),
 					50%
@@ -219,7 +219,7 @@ form.sidebar__button input {
 		}
 
 		&.is-action-button-selected a {
-			&:first-child:after {
+			&:first-child::after {
 				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
 			}
 		}
@@ -233,7 +233,7 @@ form.sidebar__button input {
 
 		a,
 		form {
-			&:first-child:after {
+			&:first-child::after {
 				background: overflow-gradient( var( --sidebar-menu-hover-background-gradient ), 50% );
 			}
 
@@ -251,7 +251,7 @@ form.sidebar__button input {
 		form {
 			color: var( --color-accent );
 
-			&:first-child:after {
+			&:first-child::after {
 				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
 			}
 
@@ -380,7 +380,7 @@ form.sidebar__button input {
 		display: flex;
 		align-items: center;
 
-		&:after {
+		&::after {
 			top: 2px;
 			right: 2px;
 			bottom: 2px;
@@ -407,7 +407,7 @@ form.sidebar__button input {
 		}
 
 		a {
-			&:after {
+			&::after {
 				display: none;
 			}
 		}

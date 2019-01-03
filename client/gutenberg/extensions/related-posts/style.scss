@@ -2,42 +2,34 @@
 $dark-gray-300: #6c7781;
 
 .wp-block-jetpack-related-posts {
-	&.alignfull {
-		padding: 0 20px;
-	}
+	&.is-grid {
+		.related-posts__preview {
+			display: flex;
+			margin: 0 -10px;
 
-	&.aligncenter {
-		.wp-block-jetpack-related-posts__preview-post-link {
-			text-align: center;
+			&-post {
+				flex-grow: 1;
+				flex-basis: 0;
+				margin: 0 10px;
+			}
 		}
 	}
-}
 
-.wp-block-jetpack-related-posts__preview-items {
-	.is-grid & {
-		display: flex;
-		margin: 0 -10px;
-	}
-}
+	.related-posts__preview {
+		&-post {
+			&-link {
+				font-size: inherit;
+			}
 
-.wp-block-jetpack-related-posts__preview-post {
-	.is-grid & {
-		flex-grow: 1;
-		flex-basis: 0;
-		margin: 0 10px;
-	}
+			&-date {
+				color: $dark-gray-300;
+			}
 
-	.wp-block-jetpack-related-posts__preview-post-link {
-		font-size: inherit;
-	}
-
-	.wp-block-jetpack-related-posts__preview-post-date {
-		color: $dark-gray-300;
-	}
-
-	.wp-block-jetpack-related-posts__preview-post-context {
-		color: $dark-gray-300;
-		font-size: 12px;
-		margin: 0;
+			&-context {
+				color: $dark-gray-300;
+				font-size: 12px;
+				margin: 0;
+			}
+		}
 	}
 }
