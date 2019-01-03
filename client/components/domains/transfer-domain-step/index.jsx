@@ -162,7 +162,7 @@ class TransferDomainStep extends React.Component {
 
 		let domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
 
-		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
+		if ( isNextDomainFree( cart, searchQuery ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
 			domainProductPrice = translate( 'Free with your plan' );
 		} else if ( domainsWithPlansOnlyButNoPlan ) {
 			domainProductPrice = translate( 'Included in paid plans' );
@@ -356,7 +356,7 @@ class TransferDomainStep extends React.Component {
 
 	render() {
 		let content;
-		const { precheck } = this.state;
+		const { precheck, searchQuery } = this.state;
 		const { isSignupStep, translate, cart, selectedSite } = this.props;
 		const transferIsRestricted = this.transferIsRestricted();
 
@@ -364,7 +364,7 @@ class TransferDomainStep extends React.Component {
 			content = this.getTransferRestrictionMessage();
 		} else if ( precheck && ! isSignupStep ) {
 			content = this.getTransferDomainPrecheck();
-		} else if ( hasToUpgradeToPayForADomain( selectedSite, cart ) ) {
+		} else if ( hasToUpgradeToPayForADomain( selectedSite, cart, searchQuery ) ) {
 			content = (
 				<Banner
 					description={ translate( 'To transfer your own domain, upgrade to a personal plan.' ) }

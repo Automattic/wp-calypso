@@ -1074,15 +1074,18 @@ export function shouldBundleDomainWithPlan(
  *
  * @param {object} selectedSite Site
  * @param {object} cart Cart
+ * @param {string} domain Domain name
  * @return {boolean} See description
  */
-export function hasToUpgradeToPayForADomain( selectedSite, cart ) {
+export function hasToUpgradeToPayForADomain( selectedSite, cart, domain ) {
 	const sitePlanSlug = ( ( selectedSite || {} ).plan || {} ).product_slug;
-	if ( sitePlanSlug && isWpComBloggerPlan( sitePlanSlug ) ) {
+	const isDotBlogDomain = domain && getTld( domain ) === 'blog';
+
+	if ( sitePlanSlug && ( isWpComBloggerPlan( sitePlanSlug ) && ! isDotBlogDomain ) ) {
 		return true;
 	}
 
-	if ( hasBloggerPlan( cart ) ) {
+	if ( hasBloggerPlan( cart ) && ! isDotBlogDomain ) {
 		return true;
 	}
 
