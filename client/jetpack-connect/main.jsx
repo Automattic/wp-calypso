@@ -75,7 +75,7 @@ export class JetpackConnectMain extends Component {
 				waitingForSites: false,
 		  };
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.url ) {
 			this.checkUrl( cleanUrl( this.props.url ) );
 		}
