@@ -5,11 +5,11 @@
     "markdown",
     "publicize",
     "related-posts",
+    "shortlinks",
     "simple-payments"
   ],
   "beta": [
     "mailchimp",
-    "shortlinks",
     "subscriptions",
     "tiled-gallery",
     "vr"
