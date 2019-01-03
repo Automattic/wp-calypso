@@ -26,7 +26,7 @@ import {
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 class SiteSettingsFormPerformance extends Component {
-	renderSectionHeader( title, showButton = true, disableButton = false ) {
+	renderSectionHeader( title, showButton = true ) {
 		const { isRequestingSettings, isSavingSettings, translate } = this.props;
 		return (
 			<SectionHeader label={ title }>
@@ -35,7 +35,7 @@ class SiteSettingsFormPerformance extends Component {
 						compact
 						primary
 						onClick={ this.props.handleSubmitForm }
-						disabled={ isRequestingSettings || isSavingSettings || disableButton }
+						disabled={ isRequestingSettings || isSavingSettings }
 					>
 						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 					</Button>
