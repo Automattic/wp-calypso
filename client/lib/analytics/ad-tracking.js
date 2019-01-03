@@ -5,7 +5,7 @@
  */
 import cookie from 'cookie';
 import debugFactory from 'debug';
-import { assign, clone, cloneDeep, get, some, includes, noop } from 'lodash';
+import { assign, clone, cloneDeep, some, includes, noop } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 /**
@@ -17,6 +17,7 @@ import userModule from 'lib/user';
 import { loadScript as loadScriptCallback } from 'lib/load-script';
 import { shouldSkipAds, hashPii } from 'lib/analytics/utils';
 import { promisify } from '../../utils';
+import request from 'superagent';
 
 /**
  * Module variables
@@ -170,6 +171,43 @@ if ( typeof window !== 'undefined' ) {
 	if ( isOutbrainEnabled ) {
 		setupOutbrainGlobal();
 	}
+}
+
+/**
+ * Refreshes the GDPR `country_code` cookie every 6 hours (like A8C_Analytics wpcom plugin).
+ *
+ * @param {Function} callback - Callback functon to call once the `country_code` cooke has been succesfully refreshed.
+ * @returns {Boolean} Returns `true` if the `country_code` cooke needs to be refreshed.
+ */
+export function maybeRefreshCountryCodeCookieGdpr( callback ) {
+	const cookieMaxAgeSeconds = 6 * 60 * 60;
+
+	const cookies = cookie.parse( document.cookie );
+
+	if ( ! cookies.country_code || 'unknown ' === cookies.country_code ) {
+		// cache buster
+		const v = new Date().getTime();
+		request
+			.get( 'https://public-api.wordpress.com/geo/?v=' + v )
+			.then( res => {
+				document.cookie = cookie.serialize( 'country_code', res.body.country_short, {
+					path: '/',
+					maxAge: cookieMaxAgeSeconds,
+				} );
+				callback();
+			} )
+			.catch( err => {
+				document.cookie = cookie.serialize( 'country_code', 'unknown', {
+					path: '/',
+					maxAge: cookieMaxAgeSeconds,
+				} );
+				debug( 'refreshGeoIpCountryCookieGdpr Error: ', err );
+			} );
+
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -452,6 +490,10 @@ function isAdTrackingAllowed() {
  * @returns {void}
  */
 function only_retarget() {
+	if ( maybeRefreshCountryCodeCookieGdpr( only_retarget ) ) {
+		return;
+	}
+
 	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
@@ -536,7 +578,7 @@ function only_retarget() {
 /**
  * Returns a boolean telling whether we may track the current user.
  *
- * @return {Boolean}        Whether we may track the current user
+ * @returns {Boolean} Whether we may track the current user
  */
 export function mayWeTrackCurrentUserGdpr() {
 	const cookies = cookie.parse( document.cookie );
@@ -552,15 +594,16 @@ export function mayWeTrackCurrentUserGdpr() {
 /**
  * Returns a boolean telling whether the current user could be in the GDPR zone.
  *
- * @return {Boolean}        Whether the current user could be in the GDPR zone
+ * @returns {Boolean} Whether the current user could be in the GDPR zone
  */
 export function isCurrentUserMaybeInGdprZone() {
-	const currentUser = user.get();
-	const countryCode = get( currentUser, 'user_ip_country_code' );
-	// if we don't have the country code they could be in the GDPR zone, so, yes
-	if ( ! countryCode ) {
+	const cookies = cookie.parse( document.cookie );
+	const countryCode = cookies.country_code;
+
+	if ( ! countryCode || 'unknown' === countryCode ) {
 		return true;
 	}
+
 	const gdprCountries = [
 		// European Member countries
 		'AT', // Austria
