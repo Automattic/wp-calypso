@@ -79,7 +79,8 @@ export class Sites extends Component {
 		}
 
 		// nicer wording for editor routes
-		if ( 'page' === path || 'post' === path || 'block-editor' === path ) {
+		const editorRouters = [ 'page', 'post', 'edit', 'block-editor' ];
+		if ( editorRouters.includes( path ) ) {
 			return i18n.translate( 'Select a site to start writing' );
 		}
 

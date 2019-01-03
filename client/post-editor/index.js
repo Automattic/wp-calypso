@@ -30,6 +30,7 @@ export default function() {
 	page(
 		'/page/:site?/:post?',
 		siteSelection,
+
 		controller.gutenberg,
 		controller.post,
 		makeLayout,
