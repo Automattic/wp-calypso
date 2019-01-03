@@ -162,6 +162,8 @@ const getInitialEdits = ( {
 	isDemoContent,
 	demoContent,
 	duplicatePostId,
+	overrideTitle,
+	overrideContent,
 } ) => {
 	// has saved content
 	if ( ! isAutoDraft ) {
@@ -176,6 +178,14 @@ const getInitialEdits = ( {
 	// copy content is loading:
 	if ( duplicatePostId && ! postCopy ) {
 		return null;
+	}
+
+	// Reader Share (PressThis)
+	if ( overrideTitle && overrideContent ) {
+		return {
+			title: overrideTitle,
+			content: overrideContent,
+		};
 	}
 
 	// Duplicate a Post ?copy=
@@ -206,7 +216,16 @@ const getInitialEdits = ( {
 
 const mapStateToProps = (
 	state,
-	{ siteId, postId, uniqueDraftKey, postType, isDemoContent, duplicatePostId }
+	{
+		siteId,
+		postId,
+		uniqueDraftKey,
+		postType,
+		isDemoContent,
+		duplicatePostId,
+		overrideTitle,
+		overrideContent,
+	}
 ) => {
 	const draftPostId = get( getHttpData( uniqueDraftKey ), 'data.ID', null );
 	const post = getPost( siteId, postId || draftPostId, postType );
@@ -246,6 +265,8 @@ const mapStateToProps = (
 		postCopy,
 		isDemoContent,
 		demoContent,
+		overrideTitle,
+		overrideContent,
 	} );
 
 	return {

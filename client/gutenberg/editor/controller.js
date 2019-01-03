@@ -142,6 +142,32 @@ export const redirect = ( { store: { getState } }, next ) => {
 	return page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
 };
 
+function getPressThisContent( query ) {
+	//also, embed
+	const { text, url, title, image } = query;
+	let content = '';
+
+	//TODO: EMBEDS!
+	// if ( isValidUrl( embed ) ) {
+	// 	pieces.push( ReactDomServer.renderToStaticMarkup( <p>{ embed }</p> ) );
+	// }
+
+	if ( image ) {
+		content = content.concat(
+			`<!-- wp:image --><figure class="wp-block-image"><a href="$\{ url }"><img alt="" src="${ image }"/></a></figure><!-- /wp:image -->`
+		);
+	}
+	if ( text ) {
+		content = content.concat(
+			`<!-- wp:quote --><blockquote class="wp-block-quote"><p>${ text }</p></blockquote><!-- /wp:quote -->`
+		);
+	}
+
+	return content.concat(
+		`<!-- wp:paragraph --><p><a href="${ url }">${ title }</a></p><!-- /wp:paragraph -->`
+	);
+}
+
 export const post = async ( context, next ) => {
 	//see post-editor/controller.js for reference
 
@@ -150,6 +176,8 @@ export const post = async ( context, next ) => {
 	const postType = determinePostType( context );
 	const isDemoContent = ! postId && has( context.query, 'gutenberg-demo' );
 	const duplicatePostId = get( context, 'query.copy', null );
+	const overrideTitle = get( context, 'query.title', null );
+	const overrideContent = overrideTitle ? getPressThisContent( context.query ) : null;
 
 	const makeEditor = import( './init' ).then( ( { initGutenberg } ) => {
 		const state = context.store.getState();
@@ -178,6 +206,8 @@ export const post = async ( context, next ) => {
 					uniqueDraftKey,
 					isDemoContent,
 					duplicatePostId,
+					overrideTitle,
+					overrideContent,
 					...props,
 				} }
 			/>

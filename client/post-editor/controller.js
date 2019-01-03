@@ -178,7 +178,10 @@ async function maybeCalypsoifyGutenberg( context, next ) {
 		( isCalypsoifyGutenbergEnabled( state, siteId ) || isGutenlypsoEnabled( state, siteId ) ) &&
 		'gutenberg' === getSelectedEditor( state, siteId )
 	) {
-		return window.location.replace( getEditorUrl( state, siteId, postId, postType ) );
+		//pass along parameters, for example press-this
+		return window.location.replace(
+			`${ getEditorUrl( state, siteId, postId, postType ) }?${ stringify( context.query ) }`
+		);
 	}
 	next();
 }
