@@ -31,6 +31,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import FeedSettings from 'my-sites/site-settings/feed-settings';
 import PodcastingLink from 'my-sites/site-settings/podcasting-details/link';
 import Masterbar from './masterbar';
+import MediaSettingsWriting from './media-settings-writing';
 import ThemeEnhancements from './theme-enhancements';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
@@ -73,6 +74,7 @@ class SiteSettingsFormWriting extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			jetpackSettingsUISupported,
+			jetpackVersionSupportsLazyImages,
 			onChangeField,
 			setFieldValue,
 			siteId,
@@ -120,6 +122,21 @@ class SiteSettingsFormWriting extends Component {
 					fields={ fields }
 					updateFields={ updateFields }
 				/>
+
+				{ jetpackSettingsUI && (
+					<div>
+						{ this.renderSectionHeader( translate( 'Media' ) ) }
+						<MediaSettingsWriting
+							siteId={ siteId }
+							handleAutosavingToggle={ handleAutosavingToggle }
+							onChangeField={ onChangeField }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+							jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
+						/>
+					</div>
+				) }
 
 				{ this.renderSectionHeader( translate( 'Content types' ) ) }
 
@@ -192,6 +209,7 @@ const connectComponent = connect(
 
 		return {
 			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
+			jetpackVersionSupportsLazyImages: isJetpackMinimumVersion( state, siteId, '5.8-alpha' ),
 			siteIsJetpack,
 			siteId,
 			isMasterbarSectionVisible:
@@ -241,6 +259,9 @@ const getFormSettings = settings => {
 		'Phrases to Avoid',
 		'Redundant Expression',
 		'ignored_phrases',
+		'carousel',
+		'carousel_background_color',
+		'carousel_display_exif',
 		'date_format',
 		'start_of_week',
 		'time_format',
