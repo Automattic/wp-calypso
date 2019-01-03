@@ -712,6 +712,12 @@ ul.email-forwarding__list {
 			margin-left: -1px;
 		}
 	}
+
+	select:disabled {
+		background: none;
+		cursor: default;
+		padding-right: 14px;
+	}
 }
 
 .name-servers__dns {
