@@ -4,13 +4,13 @@
  */
 import React from 'react';
 import { Component } from '@wordpress/element';
-import { noop } from 'lodash';
+import { debounce, noop, flowRight } from 'lodash';
 import TinyMCE from 'components/tinymce';
 
 /**
  * WordPress dependencies
  */
-import { withDispatch } from '@wordpress/data';
+import { withDispatch, withSelect } from '@wordpress/data';
 
 export class ClassicEdit extends Component {
 	componentDidMount() {
@@ -20,6 +20,7 @@ export class ClassicEdit extends Component {
 		if ( this.editor && content ) {
 			this.editor.setEditorContent( content );
 		}
+		this.lastContentUpdate = Date.now();
 	}
 
 	storeEditor = ref => {
@@ -46,17 +47,26 @@ export class ClassicEdit extends Component {
 
 		const blockBlur = prevProps.isSelected === true && isSelected === false;
 
+		//A fresh classic block does not fire the blur handler on the first blur event
+		//So make sure we blur when the block is unselected, for example, when we click on save.
 		if ( blockBlur ) {
 			this.updateBlockContentAndBookmark();
 		}
 
-		if ( this.editor && prevProps.attributes.content !== content ) {
+		const shouldSetEditorContent =
+			this.editor &&
+			this.editor._editor &&
+			prevProps.attributes.content !== content &&
+			this.editor._editor.getContent() !== content &&
+			this.props.mode !== 'html';
+
+		if ( shouldSetEditorContent ) {
 			this.editor.setEditorContent( content || '' );
 		}
 	}
 
-	updateBlockContentAndBookmark = () => {
-		if ( ! this.editor ) {
+	updateBlockContentAndBookmark = debounce( () => {
+		if ( ! this.editor || this.props.mode === 'html' ) {
 			return;
 		}
 		const editor = this.editor._editor;
@@ -79,21 +89,47 @@ export class ClassicEdit extends Component {
 		} );
 
 		return false;
-	};
+	}, 300 );
+
+	updateBlockContent = debounce( () => {
+		if ( ! this.editor || this.props.mode === 'html' ) {
+			return;
+		}
+		const editor = this.editor._editor;
+		const content = editor.getContent();
+
+		this.props.setAttributes( { content } );
+	}, 300 );
 
 	render() {
 		const { isSelected, setSelected } = this.props;
+		// The block in wordpress/editor, block-list/block-html.js takes over the html editing (Edit as HTML),
+		// while this component handles the visual mode (Edit Visually). When in html mode, don't bother setting
+		// editor content, or try to update block attributes, as the other component is already handling that.
 		return (
 			<TinyMCE
 				isGutenbergClassicBlock
 				mode="tinymce"
+				onBlur={ this.updateBlockContentAndBookmark }
+				onChange={ this.updateBlockContent }
 				onClick={ isSelected ? noop : setSelected }
+				onKeyUp={ this.updateBlockContent }
+				onSetContent={ this.updateBlockContent }
+				onTextEditorChange={ this.updateBlockContent }
 				ref={ this.storeEditor }
 			/>
 		);
 	}
 }
 
-export default withDispatch( ( dispatch, { clientId } ) => ( {
-	setSelected: () => dispatch( 'core/editor' ).selectBlock( clientId ),
-} ) )( ClassicEdit );
+export default flowRight( [
+	withSelect( ( select, { clientId } ) => {
+		const { getBlockMode } = select( 'core/editor' );
+		return {
+			mode: getBlockMode( clientId ),
+		};
+	} ),
+	withDispatch( ( dispatch, { clientId } ) => ( {
+		setSelected: () => dispatch( 'core/editor' ).selectBlock( clientId ),
+	} ) ),
+] )( ClassicEdit );
