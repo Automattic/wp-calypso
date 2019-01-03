@@ -11,9 +11,7 @@ import React from 'react';
  */
 import SiteSettingsPerformance from './main';
 
-export default {
-	performance( context, next ) {
-		context.primary = React.createElement( SiteSettingsPerformance );
-		next();
-	},
-};
+export function performance( context, next ) {
+	context.primary = React.createElement( SiteSettingsPerformance );
+	next();
+}
