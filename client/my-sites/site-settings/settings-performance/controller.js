@@ -9,11 +9,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PerformanceMain from './main';
+import SiteSettingsPerformance from './main';
 
 export default {
 	performance( context, next ) {
-		context.primary = React.createElement( PerformanceMain );
+		context.primary = React.createElement( SiteSettingsPerformance );
 		next();
 	},
 };
