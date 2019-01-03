@@ -603,12 +603,10 @@ class WpcomChecklistComponent extends PureComponent {
 	renderGSuiteTOSAcceptedTask = ( TaskComponent, baseProps, task ) => {
 		const { domains, translate } = this.props;
 
-		let domainName;
-		let users;
 		let loginUrlWithTOSRedirect;
 		if ( Array.isArray( domains ) && domains.length > 0 ) {
-			domainName = domains[ 0 ].name;
-			users = domains[ 0 ].googleAppsSubscription.pendingUsers;
+			const domainName = domains[ 0 ].name;
+			const users = domains[ 0 ].googleAppsSubscription.pendingUsers;
 			loginUrlWithTOSRedirect = getLoginUrlWithTOSRedirect( users[ 0 ], domainName );
 		}
 
@@ -626,7 +624,7 @@ class WpcomChecklistComponent extends PureComponent {
 					this.trackTaskStart( task, {
 						sub_step_name: 'gsuite_tos_accepted',
 					} );
-					window.location = loginUrlWithTOSRedirect;
+					window.open( loginUrlWithTOSRedirect, '_blank' );
 				} }
 			/>
 		);
