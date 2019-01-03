@@ -55,6 +55,7 @@ class SiteSettingsFormPerformance extends Component {
 			jetpackVersionSupportsLazyImages,
 			onChangeField,
 			siteId,
+			siteIsJetpack,
 			submitForm,
 			translate,
 			updateFields,
@@ -66,7 +67,7 @@ class SiteSettingsFormPerformance extends Component {
 				onSubmit={ handleSubmitForm }
 				className="site-settings__performance-settings"
 			>
-				<QueryJetpackModules siteId={ this.props.siteId } />
+				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 				{ jetpackSettingsUI &&
 					jetpackVersionSupportsLazyImages && (
