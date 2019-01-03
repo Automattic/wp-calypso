@@ -86,7 +86,7 @@ const Privacy = createReactClass( {
 									{ translate(
 										'Share information with our analytics tool about your use of services while ' +
 											'logged in to your WordPress.com account. {{cookiePolicyLink}}Learn more' +
-											'{{/cookiePolicyLink}}',
+											'{{/cookiePolicyLink}}.',
 										{
 											components: {
 												cookiePolicyLink,
@@ -100,7 +100,7 @@ const Privacy = createReactClass( {
 								{ translate(
 									'This information helps us improve our products, make marketing to you more ' +
 										'relevant, personalize your WordPress.com experience, and more as detailed in ' +
-										'our {{privacyPolicyLink}}privacy policy{{/privacyPolicyLink}}',
+										'our {{privacyPolicyLink}}privacy policy{{/privacyPolicyLink}}.',
 									{
 										components: {
 											privacyPolicyLink,
