@@ -100,7 +100,7 @@ const Privacy = createReactClass( {
 								{ translate(
 									'This information helps us improve our products, make marketing to you more ' +
 										'relevant, personalize your WordPress.com experience, and more as detailed in ' +
-										'our {{privacyPolicyLink}}privacy policy{{/privacyPolicyLink}}',
+										'our {{privacyPolicyLink}}privacy policy{{/privacyPolicyLink}}.',
 									{
 										components: {
 											privacyPolicyLink,
