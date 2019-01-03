@@ -12,16 +12,16 @@ import { flowRight, partialRight, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
-import FormPerformance from 'my-sites/site-settings/form-performance';
-import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
-import Search from 'my-sites/site-settings/search';
+import DocumentHead from 'components/data/document-head';
+import FormPerformance from 'my-sites/site-settings/form-performance';
+import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
+import Main from 'components/main';
 import Placeholder from 'my-sites/site-settings/placeholder';
+import Search from 'my-sites/site-settings/search';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
