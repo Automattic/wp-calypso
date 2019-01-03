@@ -387,31 +387,19 @@ class SimplePaymentsEdit extends Component {
 
 	render() {
 		const { fieldEmailError, fieldPriceError, fieldTitleError } = this.state;
-		const {
-			attributes,
-			featuredMedia,
-			instanceId,
-			isSelected,
-			setAttributes,
-			simplePayment,
-		} = this.props;
+		const { attributes, instanceId, isSelected, setAttributes, simplePayment } = this.props;
 		const {
 			content,
 			currency,
 			email,
 			featuredMediaId,
-			featuredMediaUrl: featuredMediaUrlAttribute,
-			featuredMediaTitle: featuredMediaTitleAttribute,
+			featuredMediaUrl,
+			featuredMediaTitle,
 			multiple,
 			price,
 			productId,
 			title,
 		} = attributes;
-
-		const featuredMediaUrl =
-			featuredMediaUrlAttribute || ( featuredMedia && featuredMedia.source_url );
-		const featuredMediaTitle =
-			featuredMediaTitleAttribute || ( featuredMedia && featuredMedia.alt_text );
 
 		/**
 		 * The only disabled state that concerns us is when we expect a product but don't have it in
@@ -550,10 +538,10 @@ class SimplePaymentsEdit extends Component {
 }
 
 const mapSelectToProps = withSelect( ( select, props ) => {
-	const { getEntityRecord, getMedia } = select( 'core' );
+	const { getEntityRecord } = select( 'core' );
 	const { isSavingPost, getCurrentPost } = select( 'core/editor' );
 
-	const { productId, featuredMediaId } = props.attributes;
+	const { productId } = props.attributes;
 
 	const fields = [
 		[ 'content' ],
@@ -573,7 +561,6 @@ const mapSelectToProps = withSelect( ( select, props ) => {
 		hasPublishAction: !! get( getCurrentPost(), [ '_links', 'wp:action-publish' ] ),
 		isSaving: !! isSavingPost(),
 		simplePayment,
-		featuredMedia: featuredMediaId ? getMedia( featuredMediaId ) : null,
 	};
 } );
 
