@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import Main from 'components/main';
 import Button from 'components/button';
 import ThemesSelection from './themes-selection';
@@ -39,6 +40,7 @@ import PhotoBlogBanner from './themes-banner/photo-blog';
 import SmallBusinessBanner from './themes-banner/small-business';
 import RandomThemesBanner from './themes-banner/random-themes-banner';
 import { getActiveTheme } from 'state/themes/selectors';
+import UpworkBanner from './themes-banner/upwork';
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -234,7 +236,14 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					{ showBanners && <RandomThemesBanner banners={ themeBanners } /> }
+					{ showBanners &&
+						abtest( 'builderReferralThemesBanner' ) === 'original' && (
+							<RandomThemesBanner banners={ themeBanners } />
+						) }
+					{ showBanners &&
+						abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
+							<UpworkBanner />
+						) }
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }
