@@ -99,7 +99,7 @@ function getSyncProgressPercentage( state, siteId ) {
 	const countQueued = reduce(
 		queued,
 		( sum, value ) => {
-			return ( sum += value );
+			return ( sum + value );
 		},
 		0
 	);
@@ -107,7 +107,7 @@ function getSyncProgressPercentage( state, siteId ) {
 	const countSent = reduce(
 		sent,
 		( sum, value ) => {
-			return ( sum += value );
+			return ( sum + value );
 		},
 		0
 	);
@@ -115,7 +115,7 @@ function getSyncProgressPercentage( state, siteId ) {
 	const countTotal = reduce(
 		total,
 		( sum, value ) => {
-			return ( sum += value );
+			return ( sum + value );
 		},
 		0
 	);
