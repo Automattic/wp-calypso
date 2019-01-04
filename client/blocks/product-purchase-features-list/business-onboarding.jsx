@@ -13,7 +13,7 @@ import { noop } from 'lodash';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { isWPcomPlan, translate, link, onClick = noop } ) => {
+export default localize( ( { isWpcomPlan, translate, link, onClick = noop } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
@@ -24,7 +24,7 @@ export default localize( ( { isWPcomPlan, translate, link, onClick = noop } ) =>
 						'and learn more about %(serviceName)s.',
 					{
 						args: {
-							serviceName: isWPcomPlan ? 'WordPress.com' : 'Jetpack',
+							serviceName: isWpcomPlan ? 'WordPress.com' : 'Jetpack',
 						},
 					}
 				) }
