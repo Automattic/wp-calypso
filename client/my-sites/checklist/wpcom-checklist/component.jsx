@@ -33,6 +33,8 @@ import userFactory from 'lib/user';
 import { launchSite } from 'state/sites/launch/actions';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import createSelector from 'lib/create-selector';
+import { getLoginUrlWithTOSRedirect } from 'lib/google-apps';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
 const userLib = userFactory();
 
@@ -64,6 +66,7 @@ class WpcomChecklistComponent extends PureComponent {
 			site_launched: this.renderSiteLaunchedTask,
 			email_setup: this.renderEmailSetupTask,
 			email_forwarding_upgraded_to_gsuite: this.renderEmailForwardingUpgradedToGSuiteTask,
+			gsuite_tos_accepted: this.renderGSuiteTOSAcceptedTask,
 		};
 	}
 
@@ -596,6 +599,36 @@ class WpcomChecklistComponent extends PureComponent {
 			/>
 		);
 	};
+
+	renderGSuiteTOSAcceptedTask = ( TaskComponent, baseProps, task ) => {
+		const { domains, translate } = this.props;
+
+		let loginUrlWithTOSRedirect;
+		if ( Array.isArray( domains ) && domains.length > 0 ) {
+			const domainName = domains[ 0 ].name;
+			const users = domains[ 0 ].googleAppsSubscription.pendingUsers;
+			loginUrlWithTOSRedirect = getLoginUrlWithTOSRedirect( users[ 0 ], domainName );
+		}
+
+		return (
+			<TaskComponent
+				{ ...baseProps }
+				title={ translate( 'Accept the G Suite TOS to complete email setup' ) }
+				description={ translate( "You're almost done setting up G Suite!" ) }
+				isWarning={ true }
+				onClick={ () => {
+					if ( ! loginUrlWithTOSRedirect ) {
+						return;
+					}
+
+					this.trackTaskStart( task, {
+						sub_step_name: 'gsuite_tos_accepted',
+					} );
+					window.open( loginUrlWithTOSRedirect, '_blank' );
+				} }
+			/>
+		);
+	};
 }
 
 function getContactPage( posts ) {
@@ -641,6 +674,7 @@ export default connect(
 			userEmail: ( user && user.email ) || '',
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
+			domains: getDomainsBySiteId( state, siteId ),
 		};
 	},
 	{
