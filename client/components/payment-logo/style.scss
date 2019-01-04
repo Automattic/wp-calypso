@@ -12,13 +12,13 @@
 
 	@each $brand in $payment-cc-brands {
 		&.is-#{$brand} {
-			background-image: url('/calypso/images/upgrades/cc-#{$brand}.svg');
+			background-image: url( '/calypso/images/upgrades/cc-#{$brand}.svg' );
 		}
 	}
 
 	@each $type in $payment-types {
 		&.is-#{$type} {
-			background-image: url('/calypso/images/upgrades/#{$type}.svg');
+			background-image: url( '/calypso/images/upgrades/#{$type}.svg' );
 		}
 	}
 

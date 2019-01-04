@@ -119,24 +119,7 @@ class InlineHelpPopover extends Component {
 		);
 	};
 
-	switchToClassicEditor = () => {
-		const { siteId, onClose, optOut, classicUrl } = this.props;
-		const proceed =
-			typeof window === 'undefined' ||
-			window.confirm( __( 'Are you sure you wish to leave this page?' ) );
-		if ( proceed ) {
-			optOut( siteId, classicUrl );
-			onClose();
-		}
-	};
-
-	switchToBlockEditor = () => {
-		const { siteId, onClose, optIn, gutenbergUrl } = this.props;
-		optIn( siteId, gutenbergUrl );
-		onClose();
-	};
-
-	render() {
+	renderPrimaryView = () => {
 		const {
 			translate,
 			showNotification,
@@ -145,31 +128,9 @@ class InlineHelpPopover extends Component {
 			showOptIn,
 			showOptOut,
 		} = this.props;
-		const { showSecondaryView } = this.state;
-		const popoverClasses = { 'is-secondary-view-active': showSecondaryView };
 
 		return (
-			<Popover
-				isVisible
-				onClose={ this.props.onClose }
-				position="top left"
-				context={ this.props.context }
-				className={ classNames( 'inline-help__popover', popoverClasses ) }
-			>
-				<QuerySupportTypes />
-				<div className="inline-help__search">
-					<InlineHelpSearchCard
-						openResult={ this.openResultView }
-						query={ this.props.searchQuery }
-					/>
-					<InlineHelpSearchResults
-						openResult={ this.openResultView }
-						searchQuery={ this.props.searchQuery }
-					/>
-				</div>
-
-				{ this.renderSecondaryView() }
-
+			<>
 				{ showOptOut && (
 					<Button
 						onClick={ this.switchToClassicEditor }
@@ -195,6 +156,55 @@ class InlineHelpPopover extends Component {
 					setNotification={ setNotification }
 					setStoredTask={ setStoredTask }
 				/>
+			</>
+		);
+	};
+
+	switchToClassicEditor = () => {
+		const { siteId, onClose, optOut, classicUrl } = this.props;
+		const proceed =
+			typeof window === 'undefined' ||
+			window.confirm( __( 'Are you sure you wish to leave this page?' ) );
+		if ( proceed ) {
+			optOut( siteId, classicUrl );
+			onClose();
+		}
+	};
+
+	switchToBlockEditor = () => {
+		const { siteId, onClose, optIn, gutenbergUrl } = this.props;
+		optIn( siteId, gutenbergUrl );
+		onClose();
+	};
+
+	render() {
+		const { translate } = this.props;
+		const { showSecondaryView } = this.state;
+		const popoverClasses = { 'is-secondary-view-active': showSecondaryView };
+
+		return (
+			<Popover
+				isVisible
+				onClose={ this.props.onClose }
+				position="top left"
+				context={ this.props.context }
+				className={ classNames( 'inline-help__popover', popoverClasses ) }
+			>
+				<QuerySupportTypes />
+				<div className="inline-help__search">
+					<InlineHelpSearchCard
+						openResult={ this.openResultView }
+						query={ this.props.searchQuery }
+					/>
+					<InlineHelpSearchResults
+						openResult={ this.openResultView }
+						searchQuery={ this.props.searchQuery }
+					/>
+				</div>
+
+				{ this.renderSecondaryView() }
+
+				{ ! showSecondaryView && this.renderPrimaryView() }
 
 				<div className="inline-help__footer">
 					<Button

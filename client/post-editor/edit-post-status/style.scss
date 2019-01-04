@@ -3,7 +3,7 @@
 	align-content: center;
 	display: flex;
 	justify-content: space-between;
-	margin: 8px 0px;
+	margin: 8px 0;
 
 	.gridicon {
 		margin-top: 2px;
@@ -17,7 +17,7 @@
 	font-size: 13px;
 	line-height: 1.7;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		.info-popover {
 			display: none;
 		}
@@ -63,7 +63,7 @@
 	font-size: 10px;
 	margin-right: 4px;
 	overflow: hidden;
-	padding: 2px 6px 2px 6px;
+	padding: 2px 6px;
 	text-overflow: ellipsis;
 	vertical-align: middle;
 	white-space: pre;

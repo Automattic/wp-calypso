@@ -15,6 +15,7 @@ import HeaderCake from 'components/header-cake';
 import CompactCard from 'components/card/compact';
 import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
 import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
+import getConciergeAppointmentTimespan from 'state/selectors/get-concierge-appointment-timespan';
 import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
 import { bookConciergeAppointment, requestConciergeInitial } from 'state/concierge/actions';
 import AvailableTimePicker from '../shared/available-time-picker';
@@ -28,6 +29,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 class CalendarStep extends Component {
 	static propTypes = {
 		availableTimes: PropTypes.array.isRequired,
+		appointmentTimespan: PropTypes.number.isRequired,
 		currentUserId: PropTypes.number.isRequired,
 		currentUserLocale: PropTypes.string.isRequired,
 		onBack: PropTypes.func.isRequired,
@@ -65,18 +67,25 @@ class CalendarStep extends Component {
 	}
 
 	render() {
-		const { availableTimes, currentUserLocale, onBack, signupForm, site, translate } = this.props;
+		const {
+			availableTimes,
+			appointmentTimespan,
+			currentUserLocale,
+			onBack,
+			signupForm,
+			site,
+			translate,
+		} = this.props;
 
 		return (
 			<div>
-				<HeaderCake onClick={ onBack }>{ translate( 'Choose Concierge Session' ) }</HeaderCake>
-				<CompactCard>
-					{ translate( 'Please select a day to have your Concierge session.' ) }
-				</CompactCard>
+				<HeaderCake onClick={ onBack }>{ translate( 'Choose Session' ) }</HeaderCake>
+				<CompactCard>{ translate( 'Please select a day to have your session.' ) }</CompactCard>
 
 				<AvailableTimePicker
 					actionText={ translate( 'Book this session' ) }
 					availableTimes={ availableTimes }
+					appointmentTimespan={ appointmentTimespan }
 					currentUserLocale={ currentUserLocale }
 					disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING }
 					onSubmit={ this.onSubmit }
@@ -90,6 +99,7 @@ class CalendarStep extends Component {
 
 export default connect(
 	state => ( {
+		appointmentTimespan: getConciergeAppointmentTimespan( state ),
 		signupForm: getConciergeSignupForm( state ),
 		scheduleId: getConciergeScheduleId( state ),
 		currentUserId: getCurrentUserId( state ),

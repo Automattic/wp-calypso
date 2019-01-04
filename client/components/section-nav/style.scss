@@ -8,7 +8,7 @@
 	position: relative;
 	width: 100%;
 	padding: 0;
-	margin: 0 0 17px 0;
+	margin: 0 0 17px;
 	background: var( --color-surface );
 	box-sizing: border-box;
 	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
@@ -67,7 +67,7 @@
 	.section-nav.has-pinned-items & {
 		padding-right: 50px;
 
-		&:after {
+		&::after {
 			margin-left: 8px;
 		}
 	}
@@ -311,7 +311,7 @@
 	@include breakpoint( '>480px' ) {
 		display: block;
 		width: auto;
-		padding: 16px 16px 14px 16px;
+		padding: 16px 16px 14px;
 		color: var( --color-primary );
 		font-weight: 400;
 
@@ -323,7 +323,7 @@
 			color: $gray-dark;
 			background-color: transparent;
 
-			&:after {
+			&::after {
 				display: none;
 			}
 		}

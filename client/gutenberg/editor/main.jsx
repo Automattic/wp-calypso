@@ -30,6 +30,9 @@ import isRtlSelector from 'state/selectors/is-rtl';
 import refreshRegistrations from '../extensions/presets/jetpack/utils/refresh-registrations';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { getPageTemplates } from 'state/page-templates/selectors';
+import { MimeTypes } from 'lib/media/constants';
+import autoUpdateMedia from './utils/media-updater';
+import ConvertToBlocksDialog from './components/convert-to-blocks';
 
 /**
  * Style dependencies
@@ -52,6 +55,8 @@ class GutenbergEditor extends Component {
 		refreshRegistrations();
 
 		setDateGMTOffset( gmtOffset );
+
+		autoUpdateMedia( siteId );
 	}
 
 	componentDidUpdate( prevProp ) {
@@ -94,8 +99,20 @@ class GutenbergEditor extends Component {
 		}
 	};
 
+	getAllowedMimeTypes = () => {
+		const { allowedFileTypes } = this.props;
+		const allowedMimeTypes = {};
+		allowedFileTypes.forEach( fileType => {
+			const mimeType = get( MimeTypes, fileType );
+			if ( mimeType ) {
+				allowedMimeTypes[ fileType ] = mimeType;
+			}
+		} );
+		return allowedMimeTypes;
+	};
+
 	render() {
-		const { alignWide, postType, siteId, pageTemplates, post, overridePost, isRTL } = this.props;
+		const { alignWide, postType, siteId, pageTemplates, post, initialEdits, isRTL } = this.props;
 
 		//see also https://github.com/WordPress/gutenberg/blob/45bc8e4991d408bca8e87cba868e0872f742230b/lib/client-assets.php#L1451
 		const editorSettings = {
@@ -106,6 +123,7 @@ class GutenbergEditor extends Component {
 			bodyPlaceholder: translate( 'Write your story' ),
 			postLock: {},
 			isRTL,
+			allowedMimeTypes: this.getAllowedMimeTypes(),
 		};
 
 		return (
@@ -115,12 +133,13 @@ class GutenbergEditor extends Component {
 				<PageViewTracker { ...this.getAnalyticsPathAndTitle() } />
 				<EditorPostTypeUnsupported type={ postType } />
 				<EditorDocumentHead postType={ postType } />
+				<ConvertToBlocksDialog />
 				<Editor
 					settings={ editorSettings }
 					hasFixedToolbar={ true }
 					post={ post }
 					onError={ noop }
-					overridePost={ overridePost }
+					initialEdits={ initialEdits }
 				/>
 			</Fragment>
 		);
@@ -136,13 +155,18 @@ const getPost = ( siteId, postId, postType ) => {
 	return null;
 };
 
-const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isDemoContent } ) => {
+const mapStateToProps = (
+	state,
+	{ siteId, postId, uniqueDraftKey, postType, isDemoContent, duplicatePostId }
+) => {
 	const draftPostId = get( getHttpData( uniqueDraftKey ), 'data.ID', null );
 	const post = getPost( siteId, postId || draftPostId, postType );
+	const postCopy = getPost( siteId, duplicatePostId, postType );
 	const demoContent = isDemoContent ? get( requestGutenbergDemoContent(), 'data' ) : null;
 	const isAutoDraft = 'auto-draft' === get( post, 'status', null );
 	const isRTL = isRtlSelector( state );
 	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
+	const allowedFileTypes = getSiteOption( state, siteId, 'allowed_file_types' );
 
 	/**
 	 * We don't expect any theme to have a specific Gutenberg support flag,
@@ -161,14 +185,19 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 		...mapValues( keyBy( getPageTemplates( state, siteId ), 'file' ), 'label' ),
 	};
 
-	let overridePost = null;
-	if ( !! demoContent ) {
-		overridePost = {
-			title: demoContent.title.raw,
-			content: demoContent.content,
+	let initialEdits = null;
+	if ( duplicatePostId && postCopy ) {
+		initialEdits = {
+			title: postCopy.title.raw,
+			content: postCopy.content.raw,
 		};
-	} else if ( isAutoDraft ) {
-		overridePost = { title: '' };
+	} else if ( !! demoContent ) {
+		initialEdits = {
+			title: demoContent.title.raw,
+			content: demoContent.content.raw,
+		};
+	} else if ( isAutoDraft && ! ( duplicatePostId || isDemoContent ) ) {
+		initialEdits = { title: '' };
 	}
 
 	return {
@@ -176,9 +205,10 @@ const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType, isD
 		alignWide: alignWide || get( gutenbergThemeSupport, 'wide-images', false ),
 		pageTemplates,
 		post,
-		overridePost,
+		initialEdits,
 		isRTL,
 		gmtOffset,
+		allowedFileTypes,
 	};
 };
 

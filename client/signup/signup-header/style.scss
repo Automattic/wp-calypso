@@ -1,0 +1,55 @@
+// A masterbar-like header just for
+// the signup flow.
+.signup-header {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	padding-top: 16px;
+	z-index: -1;
+
+	.wordpress-logo {
+		height: 240px;
+		width: 240px;
+		fill: $blue-wordpress;
+		margin: 0 auto;
+		display: block;
+		transition: transform 0.4s ease-in;
+		transform: scale( 0.1 );
+		transform-origin: 50% 0;
+
+		&.is-large {
+			transform: scale( 1 ) translateY( 60px );
+		}
+	}
+
+	.signup-header__left {
+		position: absolute;
+		top: 12px;
+		left: 16px;
+	}
+
+	.signup-header__right {
+		position: absolute;
+		top: 12px;
+		right: 16px;
+	}
+}
+
+.signup-header__masterbar-mock,
+.has-no-masterbar .signup-header .signup-header__masterbar-mock {
+	opacity: 0;
+	height: 48px;
+	animation: 0.5s hideMockMasterbar ease-out;
+}
+
+@keyframes hideMockMasterbar {
+	from {
+		opacity: 1;
+		transform: translateY( 0 );
+	}
+	to {
+		opacity: 0.5;
+		transform: translateY( -48px );
+	}
+}

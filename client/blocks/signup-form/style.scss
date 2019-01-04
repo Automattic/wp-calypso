@@ -4,11 +4,11 @@
 	transition: none;
 
 	&.is-error,
-	&[type="password"] {
+	&[type='password'] {
 		margin-bottom: 0;
 	}
 
-	&[name="username"] {
+	&[name='username'] {
 		/*rtl:ignore*/
 		direction: ltr;
 	}
@@ -20,11 +20,11 @@
 
 .signup-form__terms-of-service-link {
 	font-size: 11px;
-	margin: 0 0 20px 0;
+	margin: 0 0 20px;
 	text-align: center;
 
 	a {
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			white-space: pre;
 		}
 	}
@@ -32,7 +32,7 @@
 
 .signup-form__social {
 	p {
-		margin: 0 0 20px 0;
+		margin: 0 0 20px;
 		text-align: center;
 
 		&:last-child {

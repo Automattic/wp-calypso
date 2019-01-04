@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, groupBy, isEmpty, map, mapValues, snakeCase } from 'lodash';
+import { find, groupBy, isEmpty, kebabCase, map, mapValues, snakeCase } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
@@ -21,13 +21,19 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import getUserSetting from 'state/selectors/get-user-setting';
 import { cartItems } from 'lib/cart-values';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import ValidationErrorList from 'notices/validation-error-list';
 import { addItem } from 'lib/upgrades/actions';
-import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
+import {
+	hasGoogleApps,
+	getGoogleAppsSupportedDomains,
+	hasGoogleAppsSupportedDomain,
+} from 'lib/domains';
 import { filter as filterUsers, validate as validateUsers } from 'lib/domains/google-apps-users';
 import DomainsSelect from './domains-select';
+import QueryUserSettings from 'components/data/query-user-settings';
 
 /**
  * Internal dependencies
@@ -65,16 +71,62 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 class AddEmailAddressesCard extends React.Component {
 	constructor( props ) {
 		super( props );
+
 		this.state = {
-			fieldsets: this.getNewFieldset(),
+			fieldsets: [ this.getNewFieldset() ],
 			validationErrors: null,
+		};
+	}
+
+	static getDerivedStateFromProps( props, state ) {
+		// Retrieves information from the first additional user
+		const [
+			{
+				firstName: { value: firstName },
+				lastName: { value: lastName },
+				wasUserEdited,
+			},
+		] = state.fieldsets;
+
+		if ( wasUserEdited ) {
+			return null;
+		}
+
+		if ( props.firstName === null || props.lastName === null ) {
+			return null;
+		}
+
+		if ( props.firstName === firstName && props.lastName === lastName ) {
+			return null;
+		}
+
+		// Updates information of the first additional user with the current user settings data
+		const fieldsets = state.fieldsets.map( ( fieldset, index ) => {
+			if ( index !== 0 ) {
+				return fieldset;
+			}
+
+			return {
+				...fieldset,
+				firstName: { value: props.firstName },
+				lastName: { value: props.lastName },
+				username: { value: kebabCase( props.firstName ) },
+			};
+		} );
+
+		return {
+			...state,
+			fieldsets,
 		};
 	}
 
 	getNewFieldset() {
 		let domain;
 
-		if ( this.props.selectedDomainName ) {
+		if (
+			this.props.selectedDomainName &&
+			hasGoogleAppsSupportedDomain( [ this.props.selectedDomainName ] )
+		) {
 			domain = this.props.selectedDomainName;
 		} else if ( ! this.props.isRequestingSiteDomains ) {
 			domain = this.getFirstDomainName();
@@ -82,14 +134,13 @@ class AddEmailAddressesCard extends React.Component {
 			domain = null;
 		}
 
-		return [
-			{
-				username: { value: '' },
-				domain: { value: domain },
-				firstName: { value: '' },
-				lastName: { value: '' },
-			},
-		];
+		return {
+			username: { value: '' },
+			domain: { value: domain },
+			firstName: { value: '' },
+			lastName: { value: '' },
+			wasUserEdited: false,
+		};
 	}
 
 	removeValidationErrors = () => {
@@ -139,6 +190,7 @@ class AddEmailAddressesCard extends React.Component {
 	render() {
 		return (
 			<div className="add-google-apps__card">
+				<QueryUserSettings />
 				{ this.validationErrors() }
 
 				<Card className="add-google-apps__inner">
@@ -203,21 +255,15 @@ class AddEmailAddressesCard extends React.Component {
 			context: 'part of e-mail address',
 			comment: 'As it would be part of an e-mail address contact@example.com',
 		} );
-		let suffix, select;
-
-		if ( this.props.selectedDomainName ) {
-			suffix = '@' + field.domain.value;
-		} else {
-			select = (
-				<DomainsSelect
-					domains={ getGoogleAppsSupportedDomains( this.props.domains ) }
-					isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
-					value={ this.state.fieldsets[ index ].domain.value }
-					onChange={ this.handleFieldChange.bind( this, 'domain', index ) }
-					onFocus={ this.handleFieldFocus.bind( this, 'Domain', index ) }
-				/>
-			);
-		}
+		const select = (
+			<DomainsSelect
+				domains={ getGoogleAppsSupportedDomains( this.props.domains ) }
+				isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
+				value={ this.state.fieldsets[ index ].domain.value }
+				onChange={ this.handleFieldChange.bind( this, 'domain', index ) }
+				onFocus={ this.handleFieldFocus.bind( this, 'Domain', index ) }
+			/>
+		);
 
 		return (
 			<div className="add-google-apps__email-address-fieldset" key={ index }>
@@ -227,7 +273,6 @@ class AddEmailAddressesCard extends React.Component {
 					placeholder={ this.props.translate( 'e.g. %(example)s', {
 						args: { example: contactText },
 					} ) }
-					suffix={ suffix }
 					type="text"
 					value={ field.username.value }
 				/>
@@ -243,6 +288,7 @@ class AddEmailAddressesCard extends React.Component {
 
 		command.fieldsets[ index ] = {};
 		command.fieldsets[ index ][ fieldName ] = { value: { $set: newValue.trim() } };
+		command.fieldsets[ index ].wasUserEdited = { $set: true };
 
 		if ( fieldName === 'domain' ) {
 			this.props.domainChange( newValue, index );
@@ -271,7 +317,7 @@ class AddEmailAddressesCard extends React.Component {
 		event.preventDefault();
 
 		this.setState( {
-			fieldsets: this.state.fieldsets.concat( this.getNewFieldset() ),
+			fieldsets: this.state.fieldsets.concat( [ this.getNewFieldset() ] ),
 		} );
 
 		this.props.addAnotherEmailAddressClick( this.props.selectedDomainName );
@@ -427,7 +473,10 @@ AddEmailAddressesCard.propTypes = {
 };
 
 export default connect(
-	null,
+	state => ( {
+		firstName: getUserSetting( state, 'first_name' ),
+		lastName: getUserSetting( state, 'last_name' ),
+	} ),
 	{
 		addAnotherEmailAddressClick,
 		cancelClick,

@@ -4,12 +4,13 @@
     "map",
     "markdown",
     "publicize",
-    "simple-payments"
-  ],
-  "beta": [
     "related-posts",
     "shortlinks",
-    "subscriptions",
+    "simple-payments",
+    "subscriptions"
+  ],
+  "beta": [
+    "mailchimp",
     "tiled-gallery",
     "vr"
   ]
