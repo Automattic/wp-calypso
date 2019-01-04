@@ -234,6 +234,7 @@ const mapStateToProps = (
 		...mapValues( keyBy( getPageTemplates( state, siteId ), 'file' ), 'label' ),
 	};
 
+<<<<<<< HEAD
 	const initialEdits = getInitialEdits( {
 		isAutoDraft,
 		duplicatePostId,
@@ -241,6 +242,28 @@ const mapStateToProps = (
 		isDemoContent,
 		demoContent,
 	} );
+=======
+	let initialEdits = null;
+	if ( duplicatePostId && postCopy ) {
+		initialEdits = {
+			title: postCopy.title.raw,
+			content: postCopy.content.raw,
+			excerpt: postCopy.excerpt.raw,
+			featured_media: postCopy.featured_media,
+			type: postCopy.type,
+			format: postCopy.format,
+			categories: postCopy.categories,
+			tags: postCopy.tags,
+		};
+	} else if ( !! demoContent ) {
+		initialEdits = {
+			title: demoContent.title.raw,
+			content: demoContent.content.raw,
+		};
+	} else if ( isAutoDraft && ! ( duplicatePostId || isDemoContent ) ) {
+		initialEdits = { title: '' };
+	}
+>>>>>>> Add more post attributes to the copy post logic
 
 	return {
 		//no theme uses the wide-images flag. This is future proofing in case it get's implemented.
