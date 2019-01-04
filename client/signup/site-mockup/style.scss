@@ -38,7 +38,7 @@
 			box-shadow: 0 0 0 1px $gray, 0 4px 12px 0 rgba( 0, 0, 0, 0.3 );
 
 			.site-mockup__body {
-				height: 500px;
+				height: 400px;
 			}
 		}
 	}
@@ -49,13 +49,14 @@
 		padding: 0 10px;
 
 		.site-mockup__viewport.is-desktop {
-			display: none;
+			//display: none;
 		}
 
 		.site-mockup__viewport.is-mobile {
-			width: auto;
+			display: none;
+			width: 100%;
 			margin: 15px auto;
-			max-width: 380px;
+			//max-width: 380px;
 		}
 	}
 }
