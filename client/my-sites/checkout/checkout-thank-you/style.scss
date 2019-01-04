@@ -42,7 +42,8 @@
 	}
 }
 
-.checkout-thank-you__domain-mapping-details, .checkout-thank-you__failed-purchases-details {
+.checkout-thank-you__domain-mapping-details,
+.checkout-thank-you__failed-purchases-details {
 	.purchase-detail__icon {
 		top: 30%;
 	}
@@ -52,7 +53,8 @@
 	}
 }
 
-.checkout-thank-you__domain-mapping-details-nameservers, .checkout-thank-you__failed-purchases-details-list {
+.checkout-thank-you__domain-mapping-details-nameservers,
+.checkout-thank-you__failed-purchases-details-list {
 	border-left: solid 5px lighten( $gray, 25% );
 	list-style: none;
 	margin-left: 0;
@@ -173,10 +175,6 @@
 
 	.checkout-thank-you__header-heading {
 		width: 50%;
-
-		@include breakpoint( '<660px' ) {
-
-		}
 	}
 
 	.checkout-thank-you__header-text {
@@ -223,6 +221,11 @@
 	word-break: break-word;
 }
 
+.checkout-thank-you .checkout-thank-you__gsuite-support-link {
+	color: inherit;
+	text-decoration: underline;
+}
+
 // Jetpack thank you styles
 .checkout-thank-you__jetpack {
 	max-width: 500px;
@@ -235,65 +238,6 @@
 
 .checkout-thank-you__jetpack-plugins {
 	margin: 0 auto;
-}
-
-.checkout-thank-you__jetpack-features {
-	display: inline-block;
-	margin: 0 auto;
-}
-
-.checkout-thank-you__jetpack-feature {
-	display: flex;
-	margin-bottom: 4px;
-
-	&.is-placeholder {
-		@include placeholder();
-	}
-}
-
-.checkout-thank-you__jetpack-feature-status-icon {
-	align-items: center;
-	display: flex;
-	margin-right: 8px;
-	width: 18px;
-}
-
-.checkout-thank-you__jetpack-feature-status-text {
-	font-size: 16px;
-	text-align: left;
-}
-
-.checkout-thank-you__jetpack-feature.with-error .checkout-thank-you__jetpack-feature-status-text {
-	color: var( --color-text-subtle );
-}
-
-.checkout-thank-you__jetpack-feature-status-icon .spinner,
-.checkout-thank-you__jetpack-feature-status-icon .spinner__image {
-	display: inline;
-}
-
-.checkout-thank-you__jetpack-feature-status-icon .gridicons-notice-outline {
-	color: var( --color-error );
-}
-
-.checkout-thank-you__jetpack {
-	&.is-personal-plan {
-		.checkout-thank-you__jetpack-feature-status-icon .gridicons-checkmark {
-			color: var( --color-warning );
-		}
-	}
-
-	&.is-premium-plan {
-		.checkout-thank-you__jetpack-feature-status-icon .gridicons-checkmark {
-			color: var( --color-success );
-		}
-	}
-
-	&.is-business-plan {
-		.checkout-thank-you__jetpack-feature-status-icon .gridicons-checkmark {
-			color: $alert-purple;
-		}
-	}
 }
 
 .checkout-thank-you__jetpack .button.thank-you-card__button {
@@ -324,14 +268,37 @@
 }
 
 .checkout-thank-you__jetpack-action-buttons {
-	display:flex;
+	display: flex;
 }
 
-.checkout-thank-you__jetpack .thank-you-card__action .button {
-	max-width: 45%;
-}
+.checkout-thank-you__jetpack {
+	.thank-you-card__action .button {
+		max-width: 45%;
+	}
 
-.checkout-thank-you .checkout-thank-you__gsuite-support-link {
-	color: inherit;
-	text-decoration: underline;
+	.plan-thank-you-card {
+		&.is-personal-plan,
+		&.is-premium-plan,
+		&.is-business-plan {
+			.thank-you-card {
+				color: $gray-dark;
+				background-color: $white;
+				box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+			}
+		}
+	}
+
+	.thank-you-card__header {
+		color: $gray-dark;
+		background-color: $white;
+		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 );
+	}
+
+	.thank-you-card__price {
+		color: $gray-darken-30;
+	}
+
+	.thank-you-card__description {
+		width: 340px;
+	}
 }
