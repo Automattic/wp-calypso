@@ -45,6 +45,10 @@ class GoogleAppsDialog extends React.Component {
 		validationErrors: null,
 	};
 
+	componentDidMount() {
+		this.props.recordAddEmailButtonClick( this.props.analyticsSection );
+	}
+
 	UNSAFE_componentWillMount() {
 		if ( this.props.initialState ) {
 			this.setState( this.props.initialState );
