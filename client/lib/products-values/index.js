@@ -413,13 +413,6 @@ export function isTheme( product ) {
 	return 'premium_theme' === product.product_slug;
 }
 
-export function isConciergeSession( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return 'concierge-session' === product.product_slug;
-}
-
 export function isCustomDesign( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -520,7 +513,6 @@ export default {
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isTheme,
-	isConciergeSession,
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
