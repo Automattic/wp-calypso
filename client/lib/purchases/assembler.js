@@ -26,6 +26,7 @@ function createPurchaseObject( purchase ) {
 		canExplicitRenew: Boolean( purchase.can_explicit_renew ),
 		currencyCode: purchase.currency_code,
 		currencySymbol: purchase.currency_symbol,
+		description: purchase.description,
 		domain: purchase.domain,
 		error: null,
 		expiryDate: purchase.expiry_date,

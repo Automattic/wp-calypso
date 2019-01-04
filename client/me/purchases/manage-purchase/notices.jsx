@@ -258,7 +258,7 @@ class PurchaseNotice extends Component {
 		return (
 			<Notice
 				showDismiss={ false }
-				status="is-error"
+				status="is-info"
 				text={ translate( 'This session has been used.' ) }
 			>
 				{ this.trackImpression( 'concierge-session-used' ) }

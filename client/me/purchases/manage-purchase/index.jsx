@@ -312,7 +312,7 @@ class ManagePurchase extends Component {
 		} else if ( isTheme( purchase ) && theme ) {
 			description = theme.description;
 		} else if ( isConciergeSession( purchase ) ) {
-			description = purchase.meta;
+			description = purchase.description;
 		} else if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
 			description = translate(
 				"Replaces your site's free address, %(domain)s, with the domain, " +
