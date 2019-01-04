@@ -1,27 +1,3 @@
-@mixin plan-thank-you-card-color( $color ) {
-	.thank-you-card {
-		background-color: darken( $color, 10 );
-	}
-
-	.thank-you-card .thank-you-card__header {
-		background-color: $color;
-	}
-
-	.thank-you-card__name {
-		&.is-placeholder {
-			background-color: lighten( $color, 40 );
-		}
-	}
-
-	.thank-you-card__price {
-		color: lighten( $color, 40 );
-
-		&.is-placeholder {
-			background-color: lighten( $color, 40 );
-		}
-	}
-}
-
 .plan-thank-you-card .thank-you-card__main-icon {
 	margin-bottom: 8px;
 }
