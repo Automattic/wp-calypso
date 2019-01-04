@@ -23,7 +23,6 @@ import {
 	domainManagementPrivacyProtection,
 	domainManagementManageConsent,
 } from 'my-sites/domains/paths';
-import { registrar as registrarNames } from 'lib/domains/constants';
 import { getSelectedDomain } from 'lib/domains';
 import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/utils';
 
@@ -44,7 +43,7 @@ class ContactsPrivacy extends React.PureComponent {
 		const domain = getSelectedDomain( this.props );
 		const { hasPrivacyProtection, privateDomain, privacyAvailable, currentUserCanManage } = domain;
 		const canManageConsent =
-			config.isEnabled( 'domains/gdpr-consent-page' ) && domain.registrar !== registrarNames.WWD;
+			config.isEnabled( 'domains/gdpr-consent-page' ) && domain.supportsGdprConsentManagement;
 		const contactInformation = privateDomain
 			? findPrivacyServiceWhois( whois.data )
 			: findRegistrantWhois( whois.data );
