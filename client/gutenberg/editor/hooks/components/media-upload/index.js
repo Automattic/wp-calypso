@@ -61,8 +61,20 @@ export class MediaUpload extends Component {
 		this.closeModal();
 	};
 
-	getDisabledDataSources = () =>
-		includes( this.props.allowedTypes, 'image' ) ? [] : [ 'google_photos', 'pexels' ];
+	getDisabledDataSources = () => {
+		const { allowedTypes } = this.props;
+		// Additional data sources are enabled for all blocks supporting images.
+		// The File block supports images, but doesn't explicitly allow any media type:
+		// its `allowedTypes` prop can be either undefined or an empty array.
+		if (
+			! allowedTypes ||
+			( isArray( allowedTypes ) && ! allowedTypes.length ) ||
+			includes( allowedTypes, 'image' )
+		) {
+			return [];
+		}
+		return [ 'google_photos', 'pexels' ];
+	};
 
 	getEnabledFilters = () => {
 		const { allowedTypes } = this.props;
