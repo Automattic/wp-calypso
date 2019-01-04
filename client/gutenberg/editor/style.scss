@@ -81,7 +81,11 @@ $gutenberg-theme-toggle: #11a0d2;
 	.layout__content {
 		padding: 0;
 	}
-
+		
+	.media-library .empty-content { 
+		line-height: 1.5; //Prevent overlap caused by default Calypso styles (Issue 29905)
+	}	
+			
 	.edit-post-header {
 		padding: 0 10px 0 0;
 		left: 0;
