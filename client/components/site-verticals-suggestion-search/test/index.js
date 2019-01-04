@@ -21,7 +21,7 @@ const defaultProps = {
 	requestVerticals: jest.fn(),
 	translate: str => str,
 	initialValue: 'scooby',
-	verticals: [ { vertical_name: 'doo', vertical_slug: 'doo' } ],
+	verticals: [ { vertical_name: 'doo', vertical_slug: 'doo', is_user_input_vertical: false } ],
 	charsToTriggerSearch: 2,
 };
 
@@ -47,7 +47,14 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		expect( defaultProps.onChange ).toHaveBeenLastCalledWith( {
 			vertical_name: 'bo',
 			vertical_slug: 'bo',
+			is_user_input_vertical: true,
 		} );
+	} );
+
+	test( 'should pass an exact non-user vertical match to the `onChange` prop', () => {
+		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
+		wrapper.instance().onSiteTopicChange( 'doo' );
+		expect( defaultProps.onChange ).toHaveBeenLastCalledWith( defaultProps.verticals[ 0 ] );
 	} );
 
 	test( 'should cancel debounced invocations when the search value is falsey or has fewer chars than `props.charsToTriggerSearch`', () => {

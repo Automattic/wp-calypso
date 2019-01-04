@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -50,21 +51,38 @@ class SiteTopicStep extends Component {
 		siteSlug: '',
 	};
 
+	state = {
+		isUserInputVertical: true,
+	};
+
 	componentDidMount() {
 		SignupActions.saveSignupStep( {
 			stepName: this.props.stepName,
 		} );
 	}
 
-	onSiteTopicChange = verticalData => this.props.setSiteTopic( { ...verticalData } );
+	shouldComponentUpdate( nextProps ) {
+		return nextProps.siteTopic !== this.props.siteTopic;
+	}
+
+	onSiteTopicChange = verticalData =>
+		this.setState(
+			{
+				isUserInputVertical: get( verticalData, 'is_user_input_vertical', true ),
+			},
+			() => this.props.setSiteTopic( { ...verticalData } )
+		);
 
 	onSubmit = event => {
 		event.preventDefault();
 		const { submitSiteTopic, siteTopic, siteSlug } = this.props;
-		submitSiteTopic( {
-			vertical_name: siteTopic,
-			vertical_slug: siteSlug,
-		} );
+		submitSiteTopic(
+			{
+				vertical_name: siteTopic,
+				vertical_slug: siteSlug,
+			},
+			this.state.isUserInputVertical
+		);
 	};
 
 	renderContent() {
@@ -121,12 +139,13 @@ class SiteTopicStep extends Component {
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteTopic: ( { vertical_name, vertical_slug } ) => {
+	submitSiteTopic: ( { vertical_name, vertical_slug }, is_user_input_vertical ) => {
 		const { flowName, goToNextStep } = ownProps;
 
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
 				value: vertical_slug,
+				is_user_input_vertical,
 			} )
 		);
 
@@ -135,14 +154,8 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 		goToNextStep( flowName );
 	},
 
-	setSiteTopic: ( { vertical_name, vertical_slug } ) => {
-		dispatch( setSiteVertical( { name: vertical_name, slug: vertical_slug } ) );
-		dispatch(
-			recordTracksEvent( 'calypso_signup_actions_select_site_topic', {
-				vertical_name,
-			} )
-		);
-	},
+	setSiteTopic: ( { vertical_name, vertical_slug } ) =>
+		dispatch( setSiteVertical( { name: vertical_name, slug: vertical_slug } ) ),
 } );
 
 export default localize(

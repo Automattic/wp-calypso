@@ -58,13 +58,14 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		this.setState( { siteTopicValue: value } );
 
 		// Pluck out any match from the vertical list
-		const verticalData = find( this.props.verticals, { vertical_name: value } );
-		this.props.onChange(
-			verticalData || {
-				vertical_name: value,
-				vertical_slug: value,
-			}
-		);
+		// otherwise return a default model
+		const verticalData = find( this.props.verticals, { vertical_name: value } ) || {
+			vertical_name: value,
+			vertical_slug: value,
+			is_user_input_vertical: true,
+		};
+
+		this.props.onChange( verticalData );
 	};
 
 	getSuggestions = () => this.props.verticals.map( vertical => vertical.vertical_name );
