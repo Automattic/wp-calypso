@@ -48,11 +48,7 @@ export const name = 'address';
 
 export const settings = {
 	title: __( 'Address' ),
-	description: (
-		<Fragment>
-			<p>{ __( 'Lets you add a physical address with Schema markup.' ) }</p>
-		</Fragment>
-	),
+	description: __( 'Lets you add a physical address with Schema markup.' ),
 	keywords: [
 		_x( 'location', 'block search term' ),
 		_x( 'direction', 'block search term' ),

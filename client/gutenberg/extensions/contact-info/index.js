@@ -3,7 +3,6 @@
  * External dependencies
  */
 import { InnerBlocks } from '@wordpress/editor';
-import { Fragment } from '@wordpress/element';
 import { Path } from '@wordpress/components';
 
 /**
@@ -26,14 +25,8 @@ export const name = 'contact-info';
 
 export const settings = {
 	title: __( 'Contact Info' ),
-	description: (
-		<Fragment>
-			<p>
-				{ __(
-					'Lets you add an email address, phone number, and physical address with improved markup for better SEO results.'
-				) }
-			</p>
-		</Fragment>
+	description: __(
+		'Lets you add an email address, phone number, and physical address with improved markup for better SEO results.'
 	),
 	keywords: [
 		_x( 'email', 'block search term' ),

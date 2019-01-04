@@ -2,8 +2,8 @@
 /**
  * External dependencies
  */
-import { Fragment } from '@wordpress/element';
 import { Path } from '@wordpress/components';
+
 /**
  * Internal dependencies
  */
@@ -23,12 +23,8 @@ export const name = 'phone';
 
 export const settings = {
 	title: __( 'Phone Number' ),
-	description: (
-		<Fragment>
-			<p>
-				{ __( 'Lets you add a phone number with an automatically generated click-to-call link.' ) }
-			</p>
-		</Fragment>
+	description: __(
+		'Lets you add a phone number with an automatically generated click-to-call link.'
 	),
 	keywords: [
 		_x( 'mobile', 'block search term' ),

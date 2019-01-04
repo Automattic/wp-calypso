@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { Fragment } from '@wordpress/element';
 import { Path } from '@wordpress/components';
 
 /**
@@ -24,14 +23,8 @@ export const name = 'email';
 
 export const settings = {
 	title: __( 'Email Address' ),
-	description: (
-		<Fragment>
-			<p>
-				{ __(
-					'Lets you add an email address with an automatically generated click-to-email link.'
-				) }
-			</p>
-		</Fragment>
+	description: __(
+		'Lets you add an email address with an automatically generated click-to-email link.'
 	),
 	keywords: [
 		'e-mail', // not translatable on purpose
