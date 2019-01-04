@@ -73,7 +73,7 @@ export class MediaUpload extends Component {
 			video: 'videos',
 		};
 
-		return isArray( allowedTypes )
+		return isArray( allowedTypes ) && allowedTypes.length
 			? allowedTypes.map( type => enabledFiltersMap[ type ] )
 			: undefined;
 	};
