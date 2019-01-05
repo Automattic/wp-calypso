@@ -156,14 +156,25 @@ const getPost = ( siteId, postId, postType ) => {
 	return null;
 };
 
-const getInitialEdits = ( { isAutoDraft, postCopy, isDemoContent, demoContent } ) => {
+const getInitialEdits = ( {
+	isAutoDraft,
+	postCopy,
+	isDemoContent,
+	demoContent,
+	duplicatePostId,
+} ) => {
 	// has saved content
 	if ( ! isAutoDraft ) {
 		return null;
 	}
 
-	// override content is loading:
+	// demo content is loading:
 	if ( isDemoContent && ! demoContent ) {
+		return null;
+	}
+
+	// copy content is loading:
+	if ( duplicatePostId && ! postCopy ) {
 		return null;
 	}
 
@@ -225,6 +236,7 @@ const mapStateToProps = (
 
 	const initialEdits = getInitialEdits( {
 		isAutoDraft,
+		duplicatePostId,
 		postCopy,
 		isDemoContent,
 		demoContent,
