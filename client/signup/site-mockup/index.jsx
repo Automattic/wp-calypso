@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -12,7 +13,6 @@ import { isEmpty } from 'lodash';
  */
 import { translate } from 'i18n-calypso';
 import SiteMockup from './site-mockup';
-import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
@@ -25,6 +25,24 @@ import { getVerticalData } from './mock-data';
 import './style.scss';
 
 class SiteMockups extends Component {
+	static propTypes = {
+		siteInformation: PropTypes.object,
+		siteStyle: PropTypes.string,
+		siteType: PropTypes.string,
+		title: PropTypes.string,
+		vertical: PropTypes.string,
+		verticalData: PropTypes.object,
+	};
+
+	static defaultProps = {
+		siteInformation: {},
+		siteStyle: '',
+		siteType: '',
+		title: '',
+		vertical: '',
+		verticalData: {},
+	};
+
 	getTagline() {
 		const { siteInformation = {} } = this.props;
 		const { address, phone } = siteInformation;
@@ -84,9 +102,10 @@ class SiteMockups extends Component {
 
 export default connect( state => {
 	const vertical = getSiteVerticalName( state );
+	const siteInformation = getSiteInformation( state );
 	return {
-		title: getSiteTitle( state ) || translate( 'Your New Website' ),
-		siteInformation: getSiteInformation( state ),
+		title: siteInformation.title || translate( 'Your New Website' ),
+		siteInformation,
 		siteStyle: getSiteStyle( state ),
 		siteType: getSiteType( state ),
 		vertical,
