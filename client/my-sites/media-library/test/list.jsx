@@ -214,47 +214,4 @@ describe( 'MediaLibraryList item selection', () => {
 			expect( grid.props.getItemGroup() ).to.equal( 'pexels' );
 		} );
 	} );
-
-	describe( 'google photos', () => {
-		let largeLibrary = [];
-
-		const getList = ( media, source ) => {
-			return mount(
-				<MediaList
-					filterRequiresUpgrade={ false }
-					site={ { ID: DUMMY_SITE_ID } }
-					media={ media }
-					mediaScale={ 0.24 }
-					source={ source }
-					single
-				/>
-			)
-				.find( MediaList )
-				.instance();
-		};
-
-		beforeAll( () => {
-			while ( largeLibrary.length < 1000 ) {
-				largeLibrary = largeLibrary.concat( fixtures.media );
-			}
-		} );
-
-		test( 'displays a trailing message when media library showing > 1000 google photos', () => {
-			const list = getList( largeLibrary, 'google_photos' );
-
-			expect( list.renderTrailingItems() ).to.not.be.null;
-		} );
-
-		test( 'doesnt displays a trailing message when media library showing > 1000 non-google photos', () => {
-			const list = getList( largeLibrary, '' );
-
-			expect( list.renderTrailingItems() ).to.be.null;
-		} );
-
-		test( 'doesnt display a trailing message when media library showing < 1000 photos', () => {
-			const list = getList( largeLibrary.slice( 0, 10 ), 'google_photos' );
-
-			expect( list.renderTrailingItems() ).to.be.null;
-		} );
-	} );
 } );
