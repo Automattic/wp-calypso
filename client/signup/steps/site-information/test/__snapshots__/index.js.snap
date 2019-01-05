@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SiteInformation /> should render 1`] = `
+<Localized(StepWrapper)
+  fallbackHeaderText="a"
+  headerText="a"
+  stepContent={
+    <div
+      className="site-information__wrapper"
+    >
+      <div
+        className="site-information__form-wrapper site-information__title"
+      >
+        <form>
+          <FormFieldset>
+            <Localized(FormLabel)
+              htmlFor="title"
+            >
+              What is the name of your business?
+              <InfoPopover
+                autoRtl={true}
+                className="site-information__info-popover"
+                icon="info-outline"
+                iconSize={18}
+                position="top"
+              >
+                c
+              </InfoPopover>
+            </Localized(FormLabel)>
+            <FormTextInput
+              id="title"
+              name="title"
+              onChange={[Function]}
+              placeholder="E.g. Vail Renovations"
+              value="Ho ho ho!"
+            />
+            <Button
+              onClick={[Function]}
+              primary={true}
+              type="submit"
+            >
+              Continue
+            </Button>
+          </FormFieldset>
+        </form>
+      </div>
+    </div>
+  }
+/>
+`;

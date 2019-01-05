@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -29,7 +30,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
  */
 import './style.scss';
 
-class SiteInformation extends Component {
+export class SiteInformation extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
@@ -91,12 +92,17 @@ class SiteInformation extends Component {
 	}
 
 	renderContent() {
-		const { translate, informationType } = this.props;
+		const { translate, informationType, siteInformationValue } = this.props;
 		const { fieldLabel, fieldPlaceholder, fieldDescription } = this.getFieldTexts();
 
 		return (
 			<div className="site-information__wrapper">
-				<div className="site-information__form-wrapper ">
+				<div
+					className={ classNames(
+						'site-information__form-wrapper',
+						`site-information__${ informationType }`
+					) }
+				>
 					<form>
 						<FormFieldset>
 							<FormLabel htmlFor={ informationType }>
@@ -110,14 +116,12 @@ class SiteInformation extends Component {
 								name={ informationType }
 								placeholder={ fieldPlaceholder }
 								onChange={ this.handleInputChange }
-								value={ this.props.siteInformationValue }
+								value={ siteInformationValue }
 							/>
-						</FormFieldset>
-						<div className="site-information__submit-wrapper">
 							<Button primary type="submit" onClick={ this.handleSubmit }>
 								{ translate( 'Continue' ) }
 							</Button>
-						</div>
+						</FormFieldset>
 					</form>
 				</div>
 			</div>
@@ -142,14 +146,10 @@ class SiteInformation extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const siteType = getSiteType( state );
-		const siteInformationValue = get( getSiteInformation( state ), ownProps.informationType, '' );
-		return {
-			siteInformationValue,
-			siteType,
-		};
-	},
+	( state, ownProps ) => ( {
+		siteInformationValue: get( getSiteInformation( state ), ownProps.informationType, '' ),
+		siteType: getSiteType( state ),
+	} ),
 	( dispatch, ownProps ) => {
 		return {
 			submitStep: siteInformationValue => {
