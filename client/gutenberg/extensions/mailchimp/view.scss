@@ -1,0 +1,46 @@
+.wp-block-jetpack-mailchimp {
+	&.is-processing {
+		form {
+			display: none;
+		}
+	}
+	.wp-block-jetpack-mailchimp-notification {
+		display: none;
+		margin-bottom: 23px;
+		padding: 20px;
+		text-align: center;
+		&.is-visible {
+			display: block;
+		}
+	}
+	.wp-block-jetpack-mailchimp-error {
+		background-color: #da5544;
+		color: #fff;
+	}
+	.wp-block-jetpack-mailchimp-processing {
+		background-color: #e0e5e9;
+	}
+	.wp-block-jetpack-mailchimp-success {
+		background-color: #73b961;
+		color: #fff;
+	}
+	.wp-block-jetpack-mailchimp-email {
+		display: block;
+		padding: 3px 9px;
+		width: 50%;
+	}
+	figcaption {
+		color: #999;
+		display: block;
+		font-style: italic;
+		line-height: 20px;
+		margin-bottom: 23px;
+	}
+	button {
+		margin: 18px 0 13px;
+	}
+	.wp-block-jetpack-mailchimp-form-error {
+		border: 1px solid #ff0000;
+	}
+
+}
