@@ -22,6 +22,7 @@ export Count from 'components/count/docs/example';
 export CountedTextareas from 'components/forms/counted-textarea/docs/example';
 export CreditCard from 'components/credit-card/docs/example';
 export DatePicker from 'components/date-picker/docs/example';
+export DateRange from 'components/date-range/docs/example';
 export DiffViewerExample from 'components/diff-viewer/docs/example';
 export DropZones from 'components/drop-zone/docs/example';
 export EllipsisMenu from 'components/ellipsis-menu/docs/example';

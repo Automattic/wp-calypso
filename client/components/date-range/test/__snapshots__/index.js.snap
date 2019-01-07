@@ -1,0 +1,125 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DateRange should render 1`] = `
+<div
+  className="date-range"
+>
+  <Button
+    className="date-range__trigger-btn"
+    compact={true}
+    onClick={[Function]}
+    type="button"
+  >
+    <t
+      className="date-range__trigger-btn-icon"
+      icon="calendar"
+      size={24}
+    />
+    <span
+      className="date-range__trigger-btn-text"
+    >
+      01/05/2018
+      -
+      01/06/2018
+    </span>
+    <t
+      icon="chevron-down"
+      size={24}
+    />
+  </Button>
+  <Connect(Popover)
+    className="date-range__popover is-dialog-visible"
+    context={null}
+    isVisible={false}
+    onClose={[Function]}
+    position="bottom"
+  >
+    <div
+      className="date-range__popover-inner"
+    >
+      <div
+        className="date-range__popover-header"
+      >
+        <Button
+          className="date-range__cancel-btn"
+          compact={true}
+          onClick={[Function]}
+          type="button"
+        >
+          Cancel
+        </Button>
+        <Button
+          className="date-range__apply-btn"
+          compact={true}
+          onClick={[Function]}
+          primary={true}
+          type="button"
+        >
+          <t
+            icon="checkmark"
+            size={24}
+          />
+          Apply Dates
+        </Button>
+      </div>
+      <div
+        className="date-range__date-inputs"
+      >
+        <div
+          className="date-range__date-input date-range__date-input--from"
+        >
+          <Localized(FormLabel)
+            htmlFor="startDate"
+          >
+            From
+          </Localized(FormLabel)>
+          <FormTextInput
+            id="startDate"
+            name="startDate"
+            onBlur={[Function]}
+            onChange={[Function]}
+            value="01/06/2018"
+          />
+        </div>
+        <div
+          className="date-range__date-input date-range__date-input--to"
+        >
+          <Localized(FormLabel)
+            htmlFor="endDate"
+          >
+            To
+          </Localized(FormLabel)>
+          <FormTextInput
+            id="endDate"
+            name="endDate"
+            onBlur={[Function]}
+            onChange={[Function]}
+            value="01/06/2018"
+          />
+        </div>
+      </div>
+      <Localized(DatePicker)
+        calendarViewDate={2018-04-30T23:00:00.000Z}
+        className="date-range__popover-date-picker"
+        disabledDays={
+          Array [
+            Object {
+              "after": 2018-05-31T23:00:00.000Z,
+            },
+          ]
+        }
+        numberOfMonths={2}
+        onSelectDay={[Function]}
+        selectedDays={
+          Object {
+            "from": 2018-04-30T23:00:00.000Z,
+            "to": 2018-05-31T23:00:00.000Z,
+          }
+        }
+        showOutsideDays={false}
+        toMonth={2018-05-31T23:00:00.000Z}
+      />
+    </div>
+  </Connect(Popover)>
+</div>
+`;
