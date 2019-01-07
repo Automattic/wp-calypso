@@ -12,13 +12,13 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 import DatePicker from 'components/date-picker';
 import Button from 'components/button';
 import Popover from 'components/popover';
-import Gridicon from 'gridicons';
-import { localize } from 'i18n-calypso';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import DateRangeInputs from './inputs';
+import DateRangeHeader from './header';
 
 export class DateRange extends Component {
 	static propTypes = {
@@ -235,20 +235,6 @@ export class DateRange extends Component {
 		);
 	}
 
-	renderPopoverHeader() {
-		return (
-			<div className="date-range__popover-header">
-				<Button className="date-range__cancel-btn" onClick={ this.togglePopover } compact>
-					Cancel
-				</Button>
-				<Button className="date-range__apply-btn" primary onClick={ this.commitDates } compact>
-					<Gridicon icon="checkmark" />
-					Apply Dates
-				</Button>
-			</div>
-		);
-	}
-
 	renderTriggerButton() {
 		return (
 			<Button
@@ -268,33 +254,6 @@ export class DateRange extends Component {
 		);
 	}
 
-	renderPopoverInputs() {
-		return (
-			<div className="date-range__date-inputs">
-				<div className="date-range__date-input date-range__date-input--from">
-					<FormLabel htmlFor="startDate">From</FormLabel>
-					<FormTextInput
-						id="startDate"
-						name="startDate"
-						value={ this.state.inputFromDate }
-						onChange={ this.handleInputChange }
-						onBlur={ this.handleInputBlur }
-					/>
-				</div>
-				<div className="date-range__date-input date-range__date-input--to">
-					<FormLabel htmlFor="endDate">To</FormLabel>
-					<FormTextInput
-						id="endDate"
-						name="endDate"
-						value={ this.state.inputToDate }
-						onChange={ this.handleInputChange }
-						onBlur={ this.handleInputBlur }
-					/>
-				</div>
-			</div>
-		);
-	}
-
 	renderPopover() {
 		const popoverClassNames = classNames( {
 			'date-range__popover': true,
@@ -310,8 +269,13 @@ export class DateRange extends Component {
 				onClose={ this.togglePopover }
 			>
 				<div className="date-range__popover-inner">
-					{ this.renderPopoverHeader() }
-					{ this.renderPopoverInputs() }
+					<DateRangeHeader onApplyClick={ this.commitDates } onCancelClick={ this.togglePopover } />
+					<DateRangeInputs
+						fromDateValue={ this.state.inputFromDate }
+						toDateValue={ this.state.inputToDate }
+						onInputChange={ this.handleInputChange }
+						onInputBlur={ this.handleInputBlur }
+					/>
 					{ this.renderDatePicker() }
 				</div>
 			</Popover>
