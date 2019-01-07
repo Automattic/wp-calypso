@@ -27,8 +27,8 @@
 
 .post-trends__year {
 	position: relative;
-	top: 0;
-	left: 0;
+		top: 0;
+		left: 0;
 	display: block;
 	white-space: nowrap;
 	transition: left, 1s, ease-in-out;
@@ -202,8 +202,8 @@
 
 .post-trends__key-label {
 	font-size: 11px;
-	letter-spacing: 0.1em;
 	color: var( --color-neutral );
+	letter-spacing: 0.1em;
 	text-transform: uppercase;
 }
 
