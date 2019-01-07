@@ -13,8 +13,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import wrapSettingsForm from './wrap-settings-form';
-import SectionHeader from 'components/section-header';
-import Button from 'components/button';
 import Protect from './protect';
 import Sso from './sso';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
@@ -23,29 +21,12 @@ import { siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
+import SettingsSectionHeader from './settings-section-header';
 import SpamFilteringSettings from './spam-filtering-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import { isATEnabled } from 'lib/automated-transfer';
 
 class SiteSettingsFormSecurity extends Component {
-	renderSectionHeader( title, showButton = true, disableButton = false ) {
-		const { isRequestingSettings, isSavingSettings, translate } = this.props;
-		return (
-			<SectionHeader label={ title }>
-				{ showButton && (
-					<Button
-						compact
-						primary
-						onClick={ this.props.handleSubmitForm }
-						disabled={ isRequestingSettings || isSavingSettings || disableButton }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				) }
-			</SectionHeader>
-		);
-	}
-
 	render() {
 		const {
 			akismetUnavailable,
@@ -81,11 +62,13 @@ class SiteSettingsFormSecurity extends Component {
 			>
 				<QueryJetpackModules siteId={ siteId } />
 
-				{ this.renderSectionHeader(
-					translate( 'Prevent brute force login attacks' ),
-					true,
-					disableProtect
-				) }
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings || disableProtect }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Prevent brute force login attacks' ) }
+				/>
 				<Protect
 					fields={ fields }
 					isSavingSettings={ isSavingSettings }
@@ -98,11 +81,13 @@ class SiteSettingsFormSecurity extends Component {
 
 				{ ! isAtomic && (
 					<div>
-						{ this.renderSectionHeader(
-							translate( 'Spam filtering' ),
-							true,
-							disableSpamFiltering
-						) }
+						<SettingsSectionHeader
+							disabled={ isRequestingSettings || isSavingSettings || disableSpamFiltering }
+							isSaving={ isSavingSettings }
+							onButtonClick={ handleSubmitForm }
+							showButton
+							title={ translate( 'Spam filtering' ) }
+						/>
 						<SpamFilteringSettings
 							dirtyFields={ dirtyFields }
 							fields={ fields }
@@ -114,7 +99,7 @@ class SiteSettingsFormSecurity extends Component {
 					</div>
 				) }
 
-				{ this.renderSectionHeader( translate( 'WordPress.com sign in' ), false ) }
+				<SettingsSectionHeader title={ translate( 'WordPress.com sign in' ) } />
 				<Sso
 					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }
