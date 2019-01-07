@@ -53,6 +53,7 @@ class DomainSearchResults extends React.Component {
 		railcarId: PropTypes.string,
 		fetchAlgo: PropTypes.string,
 		pendingCheckSuggestion: PropTypes.object,
+		unavailableDomains: PropTypes.array,
 	};
 
 	renderDomainAvailability() {
@@ -238,6 +239,7 @@ class DomainSearchResults extends React.Component {
 					secondarySuggestion={ first( bestAlternativeSuggestions ) }
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
+					unavailableDomains={ this.props.unavailableDomains }
 				/>
 			);
 
@@ -261,6 +263,7 @@ class DomainSearchResults extends React.Component {
 						query={ this.props.lastDomainSearched }
 						onButtonClick={ this.props.onClickResult }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
+						unavailableDomains={ this.props.unavailableDomains }
 					/>
 				);
 			} );
