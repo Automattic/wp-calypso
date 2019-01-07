@@ -7,6 +7,11 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 
+/**
+ * Interal dependencies
+ */
+import FormSelect from 'components/forms/form-select';
+
 class DomainsSelect extends React.Component {
 	renderDomainSelect() {
 		return this.props.domains.map( domain => {
@@ -31,7 +36,7 @@ class DomainsSelect extends React.Component {
 		const { domains, isRequestingSiteDomains, onChange, onFocus, value } = this.props;
 
 		return (
-			<select
+			<FormSelect
 				value={ value }
 				onChange={ onChange }
 				onFocus={ onFocus }
@@ -39,7 +44,7 @@ class DomainsSelect extends React.Component {
 			>
 				{ isRequestingSiteDomains && this.renderLoadingState() }
 				{ ! isRequestingSiteDomains && this.renderDomainSelect() }
-			</select>
+			</FormSelect>
 		);
 	}
 }

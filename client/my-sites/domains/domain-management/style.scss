@@ -699,6 +699,9 @@ ul.email-forwarding__list {
 	select {
 		border-bottom-width: 1px;
 		border-top-left-radius: 0;
+		padding-bottom: 7px;
+		line-height: 1.5;
+		height: 40px;
 
 		@include breakpoint( '<480px' ) {
 			border-top-right-radius: 0;

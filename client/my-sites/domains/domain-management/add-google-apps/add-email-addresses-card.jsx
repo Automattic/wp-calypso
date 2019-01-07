@@ -243,13 +243,21 @@ class AddEmailAddressesCard extends React.Component {
 			comment: 'As it would be part of an e-mail address contact@example.com',
 		} );
 		const select = (
-			<DomainsSelect
-				domains={ getGoogleAppsSupportedDomains( this.props.domains ) }
-				isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
-				value={ this.state.fieldsets[ index ].domain.value }
-				onChange={ this.handleFieldChange.bind( this, 'domain', index ) }
-				onFocus={ this.handleFieldFocus.bind( this, 'Domain', index ) }
-			/>
+			<FormFieldset>
+				<DomainsSelect
+					domains={ getGoogleAppsSupportedDomains( this.props.domains ) }
+					isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
+					value={ domain.value }
+					onChange={ this.handleFieldChange.bind( this, 'domain', index ) }
+					onFocus={ this.handleFieldFocus.bind( this, 'Domain', index ) }
+					isError={ has( domain, 'error' ) && null !== domain.error }
+				/>
+				<FormInputValidation
+					isHidden={ ! has( domain, 'error' ) || null === domain.error }
+					isError={ has( domain, 'error' ) && null !== domain.error }
+					text={ domain.error || '\u00A0' }
+				/>
+			</FormFieldset>
 		);
 
 		return (
