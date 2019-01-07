@@ -40,7 +40,6 @@ export class SiteStyleStep extends Component {
 		styleOptions: PropTypes.array.isRequired,
 		stepName: PropTypes.string,
 		siteStyle: PropTypes.string,
-		siteType: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -152,13 +151,9 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 } );
 
 export default connect(
-	state => {
-		const siteType = getSiteType( state );
-		return {
-			siteStyle: getSiteStyle( state ),
-			siteType,
-			styleOptions: getSiteStyleOptions( siteType ),
-		};
-	},
+	state => ( {
+		siteStyle: getSiteStyle( state ),
+		styleOptions: getSiteStyleOptions( getSiteType( state ) ),
+	} ),
 	mapDispatchToProps
 )( localize( SiteStyleStep ) );
