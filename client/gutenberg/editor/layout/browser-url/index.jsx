@@ -27,7 +27,7 @@ export class BrowserURL extends Component {
 		const { postId, postStatus, currentRoute } = this.props;
 
 		if (
-			postStatus === 'draft' &&
+			postStatus !== 'auto-draft' &&
 			prevProps.postStatus === 'auto-draft' &&
 			! endsWith( currentRoute, `/${ postId }` )
 		) {

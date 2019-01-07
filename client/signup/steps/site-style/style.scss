@@ -10,12 +10,24 @@
 	background-color: $gray-light;
 	border-color: $gray-lighten-30;
 	border-radius: 5px;
+	@include breakpoint( '<660px' ) {
+		padding: 0 10px;
+		width: 100%;
+	}
 }
 
 .site-style__fieldset,
 .site-style__submit-wrapper {
 	align-self: center;
 	margin-bottom: 0;
+
+	@include breakpoint( '<480px' ) {
+		flex-basis: 50%;
+	}
+}
+
+.site-style__submit-wrapper {
+	text-align: center;
 }
 
 .site-style__option-label {
@@ -27,6 +39,16 @@
 	text-align: center;
 	background: white;
 	border-radius: 5px;
+
+	@include breakpoint( '<660px' ) {
+		min-width: 45%;
+		margin-bottom: 10px;
+	}
+
+	@include breakpoint( '<480px' ) {
+		min-width: 100%;
+		display: block;
+	}
 
 	&.is-checked,
 	&.is-checked:hover {
@@ -46,6 +68,9 @@
 		margin: 0;
 		padding: 10px;
 		display: block;
+		@include breakpoint( '<660px' ) {
+			padding: 5px;
+		}
 	}
 }
 

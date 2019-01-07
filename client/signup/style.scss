@@ -115,12 +115,3 @@
 	right: -30px;
 	z-index: z-index( '.is-section-signup', '.layout__primary::before' );
 }
-
-// Segment (site-type) Step
-.is-section-signup .site-type__wrapper .card {
-	padding-top: 0;
-}
-
-.is-section-signup .site-type__wrapper .site-type__option:first-child {
-	border-top: none;
-}
