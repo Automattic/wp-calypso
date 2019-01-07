@@ -41,20 +41,18 @@ class PrimaryDomainButton extends React.Component {
 	}
 }
 
-const makePrimaryClick = domain => {
-	const domainType = getDomainTypeText( domain );
+const makePrimaryClick = domain =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			`Clicked "Make Primary" link on a ${ domainType } in Edit`,
+			`Clicked "Make Primary" link on a ${ getDomainTypeText( domain ) } in Edit`,
 			'Domain Name',
 			domain.name
-		)
-	),
+		),
 		recordTracksEvent( 'calypso_domain_management_edit_make_primary_click', {
-			section: snakeCase( domainType ),
-		} );
-};
+			section: snakeCase( getDomainTypeText( domain ) ),
+		} )
+	);
 
 PrimaryDomainButton.propTypes = {
 	domain: PropTypes.object.isRequired,

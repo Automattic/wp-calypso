@@ -299,7 +299,7 @@ function getAvailableTlds( query = {} ) {
 	return wpcom.undocumented().getAvailableTlds( query );
 }
 
-function getDomainTypeText( domain ) {
+function getDomainTypeText( domain = {} ) {
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
 			return 'Mapped Domain';
