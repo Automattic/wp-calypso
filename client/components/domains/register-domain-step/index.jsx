@@ -224,6 +224,7 @@ class RegisterDomainStep extends React.Component {
 			suggestionError: null,
 			suggestionErrorData: null,
 			pendingCheckSuggestion: null,
+			unavailableDomains: [],
 		};
 	}
 
@@ -990,6 +991,7 @@ class RegisterDomainStep extends React.Component {
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						onButtonClick={ this.onAddDomain }
 						pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
+						unavailableDomains={ this.state.unavailableDomains }
 					/>
 				);
 			}, this );
@@ -1037,6 +1039,7 @@ class RegisterDomainStep extends React.Component {
 				.then( status => {
 					this.setState( { pendingCheckSuggestion: null } );
 					if ( status ) {
+						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
 						this.showAvailabilityErrorMessage( domain, status, {
 							availabilityPreCheck: true,
 						} );
@@ -1110,6 +1113,7 @@ class RegisterDomainStep extends React.Component {
 				fetchAlgo={ '/domains/search/' + this.props.vendor + isSignup }
 				cart={ this.props.cart }
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
+				unavailableDomains={ this.state.unavailableDomains }
 			>
 				{ showTldFilterBar && (
 					<TldFilterBar
