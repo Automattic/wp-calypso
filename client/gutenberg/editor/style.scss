@@ -69,7 +69,7 @@ $gutenberg-theme-toggle: #11a0d2;
 	display: none;
 }
 
-.is-section-gutenberg-editor {
+.layout.is-section-gutenberg-editor {
 	box-sizing: border-box !important;
 
 	*,
@@ -293,7 +293,7 @@ $gutenberg-theme-toggle: #11a0d2;
 	}
 }
 
-.is-section-gutenberg-editor,
+.layout.is-section-gutenberg-editor,
 .edit-post-options-modal {
 	// UNSET CALYPSO DEFAULT STYLES
 
