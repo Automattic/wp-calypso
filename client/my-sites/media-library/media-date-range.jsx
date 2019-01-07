@@ -31,6 +31,8 @@ export class MediaDateRange extends Component {
 		onDateCommit: noop,
 	};
 
+	static dateFormat = 'MM/DD/YYYY';
+
 	constructor( props ) {
 		super( props );
 
@@ -92,11 +94,11 @@ export class MediaDateRange extends Component {
 	handleInputBlur( e ) {
 		const val = e.target.value;
 		const startOrEnd = e.target.id;
-		const date = this.props.moment( val );
+		const date = this.props.moment( val, MediaDateRange.dateFormat );
 		const today = this.props.moment();
-		const epoch = this.props.moment( '01/01/1970' );
-		const fromDate = this.props.moment( this.state.inputFromDate );
-		const toDate = this.props.moment( this.state.inputToDate );
+		const epoch = this.props.moment( '01/01/1970', MediaDateRange.dateFormat );
+		const fromDate = this.props.moment( this.state.inputFromDate, MediaDateRange.dateFormat );
+		const toDate = this.props.moment( this.state.inputToDate, MediaDateRange.dateFormat );
 
 		// Ensure dates are:
 		// i) valid

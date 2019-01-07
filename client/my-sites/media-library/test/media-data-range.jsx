@@ -204,6 +204,8 @@ describe( 'MediaDateRange', () => {
 	describe( 'text inputs', () => {
 		let startDate;
 		let endDate;
+		let startDateISO;
+		let endDateISO;
 		let momentStartDate;
 		let momentEndDate;
 		let startDateEvent;
@@ -211,9 +213,11 @@ describe( 'MediaDateRange', () => {
 
 		beforeEach( () => {
 			startDate = '01/04/2018';
+			startDateISO = '2018-01-04';
 			endDate = '01/05/2018';
-			momentStartDate = moment( startDate );
-			momentEndDate = moment( endDate );
+			endDateISO = '2018-01-05';
+			momentStartDate = moment( startDateISO );
+			momentEndDate = moment( endDateISO );
 
 			startDateEvent = {
 				target: {
