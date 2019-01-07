@@ -39,6 +39,7 @@ export const itemsSchema = {
 					registrationDate: { type: 'string' },
 					subscriptionId: { type: [ 'null', 'string' ] },
 					supportsDomainConnect: { type: 'boolean', optional: true },
+					supportsGdprConsentManagement: { type: 'boolean', optional: true },
 					type: { type: 'string' },
 				},
 			},
