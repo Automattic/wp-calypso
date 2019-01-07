@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import DayPicker from 'react-day-picker';
-import { noop, merge, map, filter, get } from 'lodash';
+import { noop, map, filter, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -23,7 +23,16 @@ class DatePicker extends PureComponent {
 		calendarViewDate: PropTypes.object,
 		showOutsideDays: PropTypes.bool,
 		events: PropTypes.array,
-		selectedDays: PropTypes.array,
+		selectedDays: PropTypes.oneOfType( [
+			PropTypes.instanceOf( Date ),
+			PropTypes.shape( {
+				from: PropTypes.instanceOf( Date ),
+				to: PropTypes.instanceOf( Date ),
+			} ),
+			PropTypes.array,
+			PropTypes.func,
+		] ),
+
 		disabledDays: PropTypes.array,
 		locale: PropTypes.string,
 		localeUtils: PropTypes.shape( {
@@ -57,7 +66,6 @@ class DatePicker extends PureComponent {
 		fromMonth: null,
 		locale: 'en',
 		selectedDay: null,
-
 		onMonthChange: noop,
 		onSelectDay: noop,
 		onDayMouseEnter: noop,
