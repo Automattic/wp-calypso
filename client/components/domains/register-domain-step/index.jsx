@@ -849,6 +849,7 @@ class RegisterDomainStep extends React.Component {
 				? '/domains/search/wpcom'
 				: '/domains/search/dotblogsub';
 			suggestion.vendor = vendor;
+			suggestion.isSubDomainSuggestion = true;
 
 			return suggestion;
 		} );
@@ -1027,7 +1028,8 @@ class RegisterDomainStep extends React.Component {
 
 	onAddDomain = suggestion => {
 		const domain = get( suggestion, 'domain_name' );
-		if ( ! cartItems.hasDomainInCart( this.props.cart, domain ) ) {
+		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
+		if ( ! cartItems.hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
 			this.setState( { pendingCheckSuggestion: suggestion } );
 
 			this.preCheckDomainAvailability( domain )
