@@ -12,12 +12,13 @@ import Button from 'components/button';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 
 const postId = 143180;
-const postUrl = 'https://en.support.wordpress.com/do-i-need-a-website-a-blog-or-a-website-with-a-blog/';
+const postUrl =
+	'https://en.support.wordpress.com/do-i-need-a-website-a-blog-or-a-website-with-a-blog/';
 
 class SupportArticleDialogExample extends Component {
 	handleClick = () => {
 		this.props.openSupportArticleDialog( { postId, postUrl } );
-	}
+	};
 
 	render() {
 		return (

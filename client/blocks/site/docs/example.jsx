@@ -1,7 +1,7 @@
 /** @format */
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';

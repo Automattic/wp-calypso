@@ -7,8 +7,8 @@
 import React from 'react';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 import InfoPopover from 'components/info-popover';
 
 class InfoPopoverExample extends React.PureComponent {
