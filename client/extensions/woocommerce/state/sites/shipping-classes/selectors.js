@@ -12,11 +12,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const getShippingClassesFromState = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get(
-		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'shippingClasses' ],
-		false
-	);
+	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'shippingClasses' ], false );
 };
 
 /**
