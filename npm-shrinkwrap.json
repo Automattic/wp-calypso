@@ -5475,9 +5475,9 @@
 			}
 		},
 		"core-js": {
-			"version": "2.6.0",
-			"resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.0.tgz",
-			"integrity": "sha512-kLRC6ncVpuEW/1kwrOXYX6KQASCVtrh1gQr/UiaVgFlf9WE5Vp+lNe5+h3LuMr5PAucWnnEXwH0nQHRH/gpGtw=="
+			"version": "2.6.1",
+			"resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.1.tgz",
+			"integrity": "sha512-L72mmmEayPJBejKIWe2pYtGis5r0tQ5NaJekdhyXgeMQTpJoBsH0NL4ElY2LfSoV15xeQWKQ+XTTOZdyero5Xg=="
 		},
 		"core-util-is": {
 			"version": "1.0.2",
