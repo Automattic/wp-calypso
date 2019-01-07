@@ -71,7 +71,7 @@ class SiteSettingsPerformance extends Component {
 		} = this.props;
 
 		return (
-			<Main className="settings-performance site-settings">
+			<Main className="settings-performance site-settings site-settings__performance-settings">
 				<DocumentHead title={ translate( 'Site Settings' ) } />
 				<JetpackDevModeNotice />
 				<SidebarNavigation />
