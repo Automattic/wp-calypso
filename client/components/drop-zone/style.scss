@@ -70,11 +70,11 @@
 }
 
 .drop-zone.editor-featured-image__dropzone {
-	background-color: rgba( var( --color-primary-rgb ), 0.7 );
-	border: 6px solid $orange-jazzy;
+	background-color: var( --color-accent );
+	border: 6px solid var( --color-accent-dark );
 
 	&.is-dragging-over-element {
-		background-color: rgba( lighten( $orange-jazzy, 20 ), 0.8 );
+		background-color: var( --color-accent-light );
 	}
 
 	.drop-zone__content {
