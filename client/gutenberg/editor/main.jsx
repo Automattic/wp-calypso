@@ -183,6 +183,12 @@ const getInitialEdits = ( {
 		return {
 			title: postCopy.title.raw,
 			content: postCopy.content.raw,
+			excerpt: postCopy.excerpt.raw,
+			featured_media: postCopy.featured_media,
+			type: postCopy.type,
+			format: postCopy.format,
+			categories: postCopy.categories,
+			tags: postCopy.tags,
 		};
 	}
 
