@@ -42,18 +42,19 @@ const OauthClientMasterbar = ( { oauth2Client } ) => (
 					</li>
 				) }
 
-				{ ! isWooOAuth2Client( oauth2Client) && ! isCrowdsignalOAuth2Client( oauth2Client ) && (
-					<li className="masterbar__oauth-client-wpcc-sign-in">
-						<a
-							href={ localizeUrl( 'https://wordpress.com/' ) }
-							className="masterbar__oauth-client-wpcom"
-							target="_self"
-						>
-							<Gridicon icon="my-sites" size={ 24 } />
-							WordPress.com
-						</a>
-					</li>
-				) }
+				{ ! isWooOAuth2Client( oauth2Client ) &&
+					! isCrowdsignalOAuth2Client( oauth2Client ) && (
+						<li className="masterbar__oauth-client-wpcc-sign-in">
+							<a
+								href={ localizeUrl( 'https://wordpress.com/' ) }
+								className="masterbar__oauth-client-wpcom"
+								target="_self"
+							>
+								<Gridicon icon="my-sites" size={ 24 } />
+								WordPress.com
+							</a>
+						</li>
+					) }
 			</ul>
 		</nav>
 	</header>

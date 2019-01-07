@@ -375,7 +375,9 @@ class TransferDomainPrecheck extends React.Component {
 		if ( isSupportUserSession() ) {
 			return (
 				<Notice
-					text={ this.props.translate( 'Transfers cannot be initiated in a support session - please ask the user to do it instead.' ) }
+					text={ this.props.translate(
+						'Transfers cannot be initiated in a support session - please ask the user to do it instead.'
+					) }
 					status="is-warning"
 					showDismiss={ false }
 				/>

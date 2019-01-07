@@ -105,7 +105,7 @@ button.foldable-card__action {
 	width: 48px;
 
 	.gridicon {
-		fill: $gray;
+		fill: var( --color-neutral-300 );
 		display: flex;
 		align-items: center;
 		width: 100%;
@@ -115,11 +115,11 @@ button.foldable-card__action {
 	}
 
 	.gridicon:hover {
-		fill: $gray;
+		fill: var( --color-neutral-300 );
 	}
 
 	&:hover .gridicon {
-		fill: var( --color-accent );
+		fill: var( --color-neutral-500 );
 	}
 }
 

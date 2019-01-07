@@ -203,14 +203,14 @@
 	}
 
 	.site-icon-setting__icon {
-		@include breakpoint( '<660px') {
+		@include breakpoint( '<660px' ) {
 			float: left;
 			margin-right: 8px;
 		}
 	}
 
 	.site-icon-setting__button {
-		@include breakpoint( '<660px') {
+		@include breakpoint( '<660px' ) {
 			display: block;
 			margin-bottom: 8px;
 		}
@@ -233,6 +233,7 @@
 
 .site-settings__analytics-settings,
 .site-settings__general-settings,
+.site-settings__performance-settings,
 .site-settings__writing-settings,
 .site-settings__traffic-settings,
 .site-settings__security-settings,
@@ -329,19 +330,18 @@
 
 .site-settings__footer-credit-change {
 	width: 175px;
-	text-align:center;
+	text-align: center;
 	margin-left: 24px;
 }
 
 .site-settings__footer-credit-explanation {
-	display:flex;
+	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
 }
 .site-settings__footer-credit-explanation p {
 	margin: 0;
 }
-
 
 .writing-settings,
 .general-settings {
@@ -361,7 +361,8 @@
 }
 
 // @TODO: Remove has-divider once all instances have been replaced with .site-settings__has-divider
-.has-divider, .site-settings__has-divider {
+.has-divider,
+.site-settings__has-divider {
 	margin: 0 -24px;
 	padding: 24px 24px 16px;
 	border: 1px var( --color-neutral-0 ) solid;
@@ -391,7 +392,8 @@
 	.foldable-card__header {
 		padding: 24px;
 
-		.gridicons-checkmark, .gridicons-notice-outline {
+		.gridicons-checkmark,
+		.gridicons-notice-outline {
 			margin-right: 4px;
 			vertical-align: bottom;
 		}
@@ -453,10 +455,6 @@
 	margin-bottom: 16px;
 }
 
-.site-settings__media-settings > .banner {
-	margin-top: -16px;
-}
-
 .site-settings__general-jetpack {
 	margin-bottom: 16px;
 }
@@ -498,7 +496,7 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 }
 
 .site-settings__search-block {
-		margin-bottom: 16px;
+	margin-bottom: 16px;
 }
 
 .site-settings__speed-up-site-settings {

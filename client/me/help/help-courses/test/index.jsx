@@ -91,18 +91,16 @@ describe( 'mapStateToProps should return correct value for isBusinessPlanUser', 
 		} );
 	} );
 
-	[ 
+	[
 		PLAN_BUSINESS_MONTHLY,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach(
-		productSlug => {
-			test( `True for plan ${ productSlug }`, () => {
-				purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
-				expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( true );
-			} );
-		}
-	);
+	].forEach( productSlug => {
+		test( `True for plan ${ productSlug }`, () => {
+			purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
+			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( true );
+		} );
+	} );
 } );

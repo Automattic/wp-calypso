@@ -17,9 +17,6 @@ import Card from 'components/card';
 import filesize from 'filesize';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormSelect from 'components/forms/form-select';
-import FormLabel from 'components/forms/form-label';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
 import SupportInfo from 'components/support-info';
 import {
 	PLAN_JETPACK_PREMIUM,
@@ -42,7 +39,7 @@ import PlanStorageBar from 'blocks/plan-storage/bar';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import classNames from 'classnames';
 
-class MediaSettings extends Component {
+class MediaSettingsPerformance extends Component {
 	static propTypes = {
 		fields: PropTypes.object,
 		handleAutosavingToggle: PropTypes.func.isRequired,
@@ -53,7 +50,6 @@ class MediaSettings extends Component {
 		jetpackVersionSupportsLazyImages: PropTypes.bool,
 
 		// Connected props
-		carouselActive: PropTypes.bool.isRequired,
 		isVideoPressActive: PropTypes.bool,
 		isVideoPressAvailable: PropTypes.bool,
 		mediaStorageLimit: PropTypes.number,
@@ -69,14 +65,19 @@ class MediaSettings extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			isVideoPressAvailable,
+			jetpackVersionSupportsLazyImages,
 			siteId,
 			translate,
 		} = this.props;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
+		const videoFieldsetClasses = classNames( 'site-settings__formfieldset', {
+			'has-divider': ! jetpackVersionSupportsLazyImages,
+			'is-top-only': ! jetpackVersionSupportsLazyImages,
+		} );
 
 		return (
 			isVideoPressAvailable && (
-				<FormFieldset className="site-settings__formfieldset has-divider is-top-only">
+				<FormFieldset className={ videoFieldsetClasses }>
 					<SupportInfo
 						text={ translate( 'Hosts your video files on the global WordPress.com servers.' ) }
 						link="https://jetpack.com/support/videopress/"
@@ -159,91 +160,47 @@ class MediaSettings extends Component {
 
 	render() {
 		const {
-			carouselActive,
-			fields,
-			handleAutosavingToggle,
 			isRequestingSettings,
 			isSavingSettings,
-			onChangeField,
+			isVideoPressAvailable,
 			photonModuleUnavailable,
 			selectedSiteId,
 			siteId,
 			translate,
 			jetpackVersionSupportsLazyImages,
 		} = this.props;
-		const labelClassName = isSavingSettings || ! carouselActive ? 'is-disabled' : null;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
-		const carouselFieldsetClasses = classNames( 'site-settings__formfieldset', {
-			'has-divider': ! jetpackVersionSupportsLazyImages,
-			'is-top-only': ! jetpackVersionSupportsLazyImages,
-		} );
 
 		return (
 			<div className="site-settings__module-settings site-settings__media-settings">
-				<Card>
-					<QueryJetpackConnection siteId={ selectedSiteId } />
-					{ /**
-					 * In Jetpack 5.8-alpha, we introduced Lazy Images, created a new "Speed up your site" section,
-					 * and moved the photon setting there. To minimize confusion, if this Jetpack site doesn't have 5.8-alpha,
-					 * let's show the Photon setting here instead of in the "Speed up your site" section.
-					 */ }
-					{ ! jetpackVersionSupportsLazyImages && (
-						<FormFieldset>
-							<SupportInfo
-								text={ translate( 'Hosts your image files on the global WordPress.com servers.' ) }
-								link="https://jetpack.com/support/photon/"
-							/>
-							<JetpackModuleToggle
-								siteId={ siteId }
-								moduleSlug="photon"
-								label={ translate( 'Speed up images and photos' ) }
-								description={ translate( 'Must be enabled to use tiled galleries.' ) }
-								disabled={ isRequestingOrSaving || photonModuleUnavailable }
-							/>
-						</FormFieldset>
-					) }
-					<FormFieldset className={ carouselFieldsetClasses }>
-						<SupportInfo
-							text={ translate( 'Gorgeous full-screen photo browsing experience.' ) }
-							link="https://jetpack.com/support/carousel/"
-						/>
-						<JetpackModuleToggle
-							siteId={ siteId }
-							moduleSlug="carousel"
-							label={ translate(
-								'Transform standard image galleries into full-screen slideshows'
-							) }
-							disabled={ isRequestingOrSaving }
-						/>
-						<div className="site-settings__child-settings">
-							<CompactFormToggle
-								checked={ fields.carousel_display_exif || false }
-								disabled={ isRequestingOrSaving || ! carouselActive }
-								onChange={ handleAutosavingToggle( 'carousel_display_exif' ) }
-							>
-								{ translate( 'Show photo metadata in carousel, when available' ) }
-							</CompactFormToggle>
-							<FormLabel className={ labelClassName } htmlFor="carousel_background_color">
-								{ translate( 'Background color' ) }
-							</FormLabel>
-							<FormSelect
-								name="carousel_background_color"
-								id="carousel_background_color"
-								value={ fields.carousel_background_color || 'black' }
-								onChange={ onChangeField( 'carousel_background_color' ) }
-								disabled={ isRequestingOrSaving || ! carouselActive }
-							>
-								<option value="black" key="carousel_background_color_black">
-									{ translate( 'Black' ) }
-								</option>
-								<option value="white" key="carousel_background_color_white">
-									{ translate( 'White' ) }
-								</option>
-							</FormSelect>
-						</div>
-					</FormFieldset>
-					{ this.renderVideoSettings() }
-				</Card>
+				{ ( ! jetpackVersionSupportsLazyImages || isVideoPressAvailable ) && (
+					<Card>
+						<QueryJetpackConnection siteId={ selectedSiteId } />
+						{ /**
+						 * In Jetpack 5.8-alpha, we introduced Lazy Images, created a new "Speed up your site" section,
+						 * and moved the photon setting there. To minimize confusion, if this Jetpack site doesn't have 5.8-alpha,
+						 * let's show the Photon setting here instead of in the "Speed up your site" section.
+						 */ }
+						{ ! jetpackVersionSupportsLazyImages && (
+							<FormFieldset>
+								<SupportInfo
+									text={ translate(
+										'Hosts your image files on the global WordPress.com servers.'
+									) }
+									link="https://jetpack.com/support/photon/"
+								/>
+								<JetpackModuleToggle
+									siteId={ siteId }
+									moduleSlug="photon"
+									label={ translate( 'Speed up images and photos' ) }
+									description={ translate( 'Must be enabled to use tiled galleries.' ) }
+									disabled={ isRequestingOrSaving || photonModuleUnavailable }
+								/>
+							</FormFieldset>
+						) }
+						{ this.renderVideoSettings() }
+					</Card>
+				) }
 				{ this.renderVideoUpgradeNudge() }
 			</div>
 		);
@@ -265,7 +222,6 @@ export default connect( state => {
 		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
 
 	return {
-		carouselActive: !! isJetpackModuleActive( state, selectedSiteId, 'carousel' ),
 		isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
 		isVideoPressAvailable,
 		mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
@@ -275,4 +231,4 @@ export default connect( state => {
 		sitePlanSlug,
 		siteSlug: getSiteSlug( state, selectedSiteId ),
 	};
-} )( localize( MediaSettings ) );
+} )( localize( MediaSettingsPerformance ) );

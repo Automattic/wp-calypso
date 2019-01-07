@@ -1,4 +1,3 @@
-
 .checklist__header {
 	display: flex;
 	flex-direction: row;
@@ -162,6 +161,18 @@
 		}
 	}
 
+	&-warning-background {
+		display: block;
+		position: absolute;
+		top: 18px;
+		left: 28px;
+		width: 18px;
+		height: 18px;
+		border-radius: 16px;
+		background: $white;
+		cursor: pointer;
+	}
+
 	&-primary {
 		display: flex;
 		flex-direction: column;
@@ -224,6 +235,16 @@
 
 	&-action {
 		white-space: nowrap;
+	}
+
+	&.warning {
+		.gridicons-notice-outline {
+			display: block;
+			fill: var( --color-warning );
+			position: absolute;
+			top: 15px;
+			left: 22px;
+		}
 	}
 
 	&.is-completed {

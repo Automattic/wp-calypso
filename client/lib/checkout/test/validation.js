@@ -90,18 +90,18 @@ describe( 'validation', () => {
 
 				expect( result ).toEqual( {
 					errors: {
-						name: [ 'Missing required Name on Card field' ],
+						name: [ 'Missing required Cardholder Name field' ],
 					},
 				} );
 			} );
 
-			test( 'should return error when Name on Card is missing', () => {
+			test( 'should return error when Cardholder Name is missing', () => {
 				const invalidCardHolderName = { ...validCard, name: '' };
 				const result = validatePaymentDetails( invalidCardHolderName );
 
 				expect( result ).toEqual( {
 					errors: {
-						name: [ 'Missing required Name on Card field' ],
+						name: [ 'Missing required Cardholder Name field' ],
 					},
 				} );
 			} );

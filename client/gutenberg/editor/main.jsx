@@ -60,13 +60,14 @@ class GutenbergEditor extends Component {
 	}
 
 	componentDidUpdate( prevProp ) {
-		const { siteId, postId, postType } = this.props;
+		const { siteId, postId, postType, draftPostId } = this.props;
 		if (
 			prevProp.siteId !== siteId ||
 			prevProp.postId !== postId ||
-			prevProp.postType !== postType
+			prevProp.postType !== postType ||
+			prevProp.draftPostId !== draftPostId
 		) {
-			requestSitePost( siteId, postId, postType, 0 );
+			requestSitePost( siteId, postId || draftPostId, postType, 0 );
 		}
 	}
 
@@ -155,6 +156,54 @@ const getPost = ( siteId, postId, postType ) => {
 	return null;
 };
 
+const getInitialEdits = ( {
+	isAutoDraft,
+	postCopy,
+	isDemoContent,
+	demoContent,
+	duplicatePostId,
+} ) => {
+	// has saved content
+	if ( ! isAutoDraft ) {
+		return null;
+	}
+
+	// demo content is loading:
+	if ( isDemoContent && ! demoContent ) {
+		return null;
+	}
+
+	// copy content is loading:
+	if ( duplicatePostId && ! postCopy ) {
+		return null;
+	}
+
+	// Duplicate a Post ?copy=
+	if ( postCopy ) {
+		return {
+			title: postCopy.title.raw,
+			content: postCopy.content.raw,
+			excerpt: postCopy.excerpt.raw,
+			featured_media: postCopy.featured_media,
+			type: postCopy.type,
+			format: postCopy.format,
+			categories: postCopy.categories,
+			tags: postCopy.tags,
+		};
+	}
+
+	//Demo Content ?gutenberg-demo
+	if ( demoContent ) {
+		return {
+			title: demoContent.title.raw,
+			content: demoContent.content.raw,
+		};
+	}
+
+	// A new draft
+	return { title: '' };
+};
+
 const mapStateToProps = (
 	state,
 	{ siteId, postId, uniqueDraftKey, postType, isDemoContent, duplicatePostId }
@@ -163,7 +212,13 @@ const mapStateToProps = (
 	const post = getPost( siteId, postId || draftPostId, postType );
 	const postCopy = getPost( siteId, duplicatePostId, postType );
 	const demoContent = isDemoContent ? get( requestGutenbergDemoContent(), 'data' ) : null;
-	const isAutoDraft = 'auto-draft' === get( post, 'status', null );
+	// The post copy stored in httpData, will go stale after the block editor makes an update (save/publish)
+	// So also check if postId is passed because this means that this post has been saved by
+	// the user before.
+	//
+	// Provided that this doesn't cause a strange feedback loop, we may want to consider updating
+	// the cached post in httpData when the editor store updates.
+	const isAutoDraft = ! postId && 'auto-draft' === get( post, 'status', null );
 	const isRTL = isRtlSelector( state );
 	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
 	const allowedFileTypes = getSiteOption( state, siteId, 'allowed_file_types' );
@@ -185,20 +240,13 @@ const mapStateToProps = (
 		...mapValues( keyBy( getPageTemplates( state, siteId ), 'file' ), 'label' ),
 	};
 
-	let initialEdits = null;
-	if ( duplicatePostId && postCopy ) {
-		initialEdits = {
-			title: postCopy.title.raw,
-			content: postCopy.content.raw,
-		};
-	} else if ( !! demoContent ) {
-		initialEdits = {
-			title: demoContent.title.raw,
-			content: demoContent.content.raw,
-		};
-	} else if ( isAutoDraft && ! ( duplicatePostId || isDemoContent ) ) {
-		initialEdits = { title: '' };
-	}
+	const initialEdits = getInitialEdits( {
+		isAutoDraft,
+		duplicatePostId,
+		postCopy,
+		isDemoContent,
+		demoContent,
+	} );
 
 	return {
 		//no theme uses the wide-images flag. This is future proofing in case it get's implemented.

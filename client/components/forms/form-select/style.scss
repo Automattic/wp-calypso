@@ -15,11 +15,11 @@
 
 	&:focus {
 		&.is-error {
-			box-shadow: 0 0 0 2px var( --color-error-light );
+			box-shadow: 0 0 0 2px var( --color-error-100 );
 		}
 
 		&.is-error:hover {
-			box-shadow: 0 0 0 2px var( --color-error-light );
+			box-shadow: 0 0 0 2px var( --color-error-200 );
 		}
 	}
 }

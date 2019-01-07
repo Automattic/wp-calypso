@@ -79,7 +79,12 @@ export class NavigationLink extends Component {
 			''
 		);
 
-		return getStepUrl( previousStep.lastKnownFlow || this.props.flowName, previousStep.stepName, stepSectionName, getLocaleSlug() );
+		return getStepUrl(
+			previousStep.lastKnownFlow || this.props.flowName,
+			previousStep.stepName,
+			stepSectionName,
+			getLocaleSlug()
+		);
 	}
 
 	handleClick = () => {

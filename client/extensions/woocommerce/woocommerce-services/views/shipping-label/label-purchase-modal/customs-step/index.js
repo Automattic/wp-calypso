@@ -12,7 +12,10 @@ import { localize } from 'i18n-calypso';
 import PackageRow from './package-row';
 import StepContainer from '../step-container';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
-import { toggleStep, confirmCustoms } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	toggleStep,
+	confirmCustoms,
+} from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
 	getShippingLabel,
 	isLoaded,
@@ -23,16 +26,8 @@ import StepConfirmationButton from '../step-confirmation-button';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
-const CustomsStep = ( props ) => {
-	const {
-		siteId,
-		orderId,
-		errors,
-		expanded,
-		translate,
-		isSubmitted,
-		packageDescriptions,
-	} = props;
+const CustomsStep = props => {
+	const { siteId, orderId, errors, expanded, translate, isSubmitted, packageDescriptions } = props;
 	const summary = hasNonEmptyLeaves( errors )
 		? translate( 'Customs information incomplete' )
 		: translate( 'Customs information valid' );
@@ -44,20 +39,19 @@ const CustomsStep = ( props ) => {
 			expanded={ expanded }
 			toggleStep={ props.toggleStep }
 			isSuccess={ isSubmitted && ! hasNonEmptyLeaves( errors ) }
-			isError={ isSubmitted && hasNonEmptyLeaves( errors ) } >
-			{ Object.keys( packageDescriptions ).map( ( packageId, index ) =>
+			isError={ isSubmitted && hasNonEmptyLeaves( errors ) }
+		>
+			{ Object.keys( packageDescriptions ).map( ( packageId, index ) => (
 				<div className="customs-step__package-container" key={ packageId }>
 					{ index ? <hr /> : null }
 					<p className="customs-step__package-name">{ packageDescriptions[ packageId ] }</p>
-					<PackageRow
-						packageId={ packageId }
-						siteId={ siteId }
-						orderId={ orderId } />
+					<PackageRow packageId={ packageId } siteId={ siteId } orderId={ orderId } />
 				</div>
-			) }
+			) ) }
 			<StepConfirmationButton
 				disabled={ hasNonEmptyLeaves( errors ) }
-				onClick={ props.confirmCustoms } >
+				onClick={ props.confirmCustoms }
+			>
 				{ translate( 'Save customs form' ) }
 			</StepConfirmationButton>
 		</StepContainer>
@@ -81,7 +75,11 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const packages = shippingLabel.form.packages.selected;
 
 	return {
-		packageDescriptions: getPackageDescriptions( packages, getAllPackageDefinitions( state, siteId ), true ),
+		packageDescriptions: getPackageDescriptions(
+			packages,
+			getAllPackageDefinitions( state, siteId ),
+			true
+		),
 		expanded: shippingLabel.form.customs.expanded,
 		isSubmitted: isCustomsFormStepSubmitted( state, orderId, siteId ),
 		errors: loaded ? getFormErrors( state, orderId, siteId ).customs : {},
@@ -93,4 +91,7 @@ const mapDispatchToProps = ( dispatch, { orderId, siteId } ) => ( {
 	confirmCustoms: () => dispatch( confirmCustoms( orderId, siteId ) ),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CustomsStep ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( CustomsStep ) );

@@ -34,7 +34,13 @@ jest.mock( 'state/sites/selectors', () => ( {
 
 describe( 'siteHasEligibleWpcomPlan()', () => {
 	test( 'should return true if site has eligible WP.com plan', () => {
-		const plans = [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS, PLAN_BUSINESS_MONTHLY, PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ];
+		const plans = [
+			PLAN_BUSINESS,
+			PLAN_BUSINESS_2_YEARS,
+			PLAN_BUSINESS_MONTHLY,
+			PLAN_ECOMMERCE,
+			PLAN_ECOMMERCE_2_YEARS,
+		];
 
 		plans.forEach( plan => {
 			selectors.getSitePlanSlug.mockImplementation( () => plan );
