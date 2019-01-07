@@ -71,12 +71,10 @@ export const settings = {
 				},
 			},
 
-			migrate: function( attributes ) {
-				return {
-					submitButtonText: attributes.submit_button_text,
-					hasFormSettingsSet: attributes.has_form_settings_set,
-				};
-			},
+			migrate: ( { submit_button_text, has_form_settings_set } ) => ( {
+				submitButtonText: submit_button_text,
+				hasFormSettingsSet: has_form_settings_set,
+			} ),
 
 			save: InnerBlocks.Content,
 		},
