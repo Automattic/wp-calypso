@@ -95,7 +95,7 @@ class SiteSettingsPerformance extends Component {
 
 				{ jetpackSettingsUI && (
 					<Fragment>
-						{ this.renderSectionHeader( translate( 'Media' ) ) }
+						{ this.renderSectionHeader( translate( 'Media' ), false ) }
 						<MediaSettingsPerformance
 							siteId={ siteId }
 							handleAutosavingToggle={ handleAutosavingToggle }
