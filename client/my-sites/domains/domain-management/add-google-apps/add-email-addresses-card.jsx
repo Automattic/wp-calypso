@@ -254,21 +254,24 @@ class AddEmailAddressesCard extends React.Component {
 
 		return (
 			<div className="add-google-apps__email-address-fieldset" key={ index }>
-				<FormTextInputWithAffixes
-					onChange={ this.handleFieldChange.bind( this, 'username', index ) }
-					onFocus={ this.handleFieldFocus.bind( this, 'Email', index ) }
-					placeholder={ this.props.translate( 'e.g. %(example)s', {
-						args: { example: contactText },
-					} ) }
-					type="text"
-					value={ username.value }
-					isError={ has( username, 'error' ) && null !== username.error }
-				/>
-				<FormInputValidation
-					isHidden={ ! has( username, 'error' ) || null === username.error }
-					isError={ has( username, 'error' ) && null !== username.error }
-					text={ username.error || '\u00A0' }
-				/>
+				<FormFieldset>
+					<FormTextInputWithAffixes
+						onChange={ this.handleFieldChange.bind( this, 'username', index ) }
+						onFocus={ this.handleFieldFocus.bind( this, 'Email', index ) }
+						placeholder={ this.props.translate( 'e.g. %(example)s', {
+							args: { example: contactText },
+						} ) }
+						suffix={ suffix }
+						type="text"
+						value={ username.value }
+						isError={ has( username, 'error' ) && null !== username.error }
+					/>
+					<FormInputValidation
+						isHidden={ ! has( username, 'error' ) || null === username.error }
+						isError={ has( username, 'error' ) && null !== username.error }
+						text={ username.error || '\u00A0' }
+					/>
+				</FormFieldset>
 
 				{ select }
 			</div>

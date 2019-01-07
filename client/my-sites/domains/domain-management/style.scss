@@ -669,8 +669,6 @@ ul.email-forwarding__list {
 }
 
 .add-google-apps__name-fieldsets {
-	margin-top: 20px;
-
 	@include breakpoint( '>660px' ) {
 		display: flex;
 		justify-content: space-between;
