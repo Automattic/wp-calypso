@@ -1,6 +1,5 @@
 .purchase-item.card {
 	&.is-expired {
-
 		.purchase-item__plan-icon,
 		.purchase-item__title,
 		.purchase-item__purchase-type {
@@ -77,7 +76,7 @@
 }
 
 .purchase-item__title {
-	color: var( --color-primary );
+	color: var( --color-text );
 	display: block;
 	font-size: 14px;
 	line-height: 1.2em;
