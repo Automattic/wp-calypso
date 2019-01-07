@@ -3,29 +3,28 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSelect from 'components/forms/form-select';
-import FormLabel from 'components/forms/form-label';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import SupportInfo from 'components/support-info';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormSelect from 'components/forms/form-select';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import SupportInfo from 'components/support-info';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import classNames from 'classnames';
 
 class MediaSettingsWriting extends Component {
 	static propTypes = {
@@ -51,12 +50,12 @@ class MediaSettingsWriting extends Component {
 			handleAutosavingToggle,
 			isRequestingSettings,
 			isSavingSettings,
+			jetpackVersionSupportsLazyImages,
 			onChangeField,
 			photonModuleUnavailable,
 			selectedSiteId,
 			siteId,
 			translate,
-			jetpackVersionSupportsLazyImages,
 		} = this.props;
 		const labelClassName = isSavingSettings || ! carouselActive ? 'is-disabled' : null;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
