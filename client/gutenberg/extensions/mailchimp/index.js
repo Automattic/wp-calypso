@@ -7,7 +7,6 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import edit from './edit';
 import './editor.scss';
 
-
 export const name = 'mailchimp';
 
 export const fields = [

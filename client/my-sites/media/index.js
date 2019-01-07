@@ -15,7 +15,6 @@ import { makeLayout, render as clientRender } from 'controller';
 import { getSiteFragment } from 'lib/route';
 
 export default function() {
-
 	page( '/media', siteSelection, sites, makeLayout, clientRender );
 
 	page(

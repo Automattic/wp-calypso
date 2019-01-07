@@ -35,7 +35,7 @@ function sendBootStatus( status ) {
 console.log(
 	chalk.yellow( '%s booted in %dms - %s://%s:%s' ),
 	pkg.name,
-	( Date.now() ) - start,
+	Date.now() - start,
 	protocol,
 	host,
 	port
@@ -51,7 +51,10 @@ if ( protocol === 'https' ) {
 	if ( ! fs.existsSync( key ) || ! fs.existsSync( certificate ) ) {
 		try {
 			execSync( 'openssl version', execOptions );
-			execSync( `openssl req -x509 -newkey rsa:2048 -keyout ./config/server/key.tmp.pem -out ${ certificate } -days 365 -nodes -subj "/C=US/ST=Foo/L=Bar/O=Baz/CN=calypso.localhost"`, execOptions );
+			execSync(
+				`openssl req -x509 -newkey rsa:2048 -keyout ./config/server/key.tmp.pem -out ${ certificate } -days 365 -nodes -subj "/C=US/ST=Foo/L=Bar/O=Baz/CN=calypso.localhost"`,
+				execOptions
+			);
 			execSync( `openssl rsa -in ./config/server/key.tmp.pem -out ${ key }`, execOptions );
 			execSync( 'rm ./config/server/key.tmp.pem', execOptions );
 		} catch ( error ) {
@@ -60,11 +63,11 @@ if ( protocol === 'https' ) {
 
 			console.error( error );
 		}
-        }
+	}
 
-        const options = {
-                key: fs.readFileSync( key ),
-                cert: fs.readFileSync( certificate )
+	const options = {
+		key: fs.readFileSync( key ),
+		cert: fs.readFileSync( certificate ),
 	};
 	server = require( 'https' ).createServer( options, app );
 } else {
