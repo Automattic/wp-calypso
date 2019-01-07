@@ -46,14 +46,12 @@ describe( 'wpcom-api', () => {
 
 		describe( '#showCountriesTransactionsLoadingError', () => {
 			test( 'should dispatch error notice', () => {
-				expect( showCountriesTransactionsLoadingError() ).toMatchObject(
-					{
-						type: NOTICE_CREATE,
-						notice: {
-							text: "We couldn't load the countries list."
-						}
-					}
-				);
+				expect( showCountriesTransactionsLoadingError() ).toMatchObject( {
+					type: NOTICE_CREATE,
+					notice: {
+						text: "We couldn't load the countries list.",
+					},
+				} );
 			} );
 		} );
 	} );

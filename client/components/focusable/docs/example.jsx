@@ -40,7 +40,9 @@ class FocusableExample extends React.PureComponent {
 				<Focusable onClick={ noop }>
 					<p>
 						This keyboard-accessible component can contain other elements as children, including{' '}
-						<code>p</code>s, <code>div</code>s, or other components.
+						<code>p</code>
+						s, <code>div</code>
+						s, or other components.
 					</p>
 				</Focusable>
 				<p>

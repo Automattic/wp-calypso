@@ -16,8 +16,10 @@ export default function ScreenReaderTextExample() {
 	return (
 		<div>
 			<p>
-				This text is followed by the JSX "&lt;ScreenReaderText&gt;{ srText }&lt;/ScreenReaderText&gt;".
-				It is invisible on screen, but read out to screen readers. Inspect to see the example.
+				This text is followed by the JSX "&lt;ScreenReaderText&gt;
+				{ srText }
+				&lt;/ScreenReaderText&gt;". It is invisible on screen, but read out to screen readers.
+				Inspect to see the example.
 			</p>
 			<ScreenReaderText>{ srText }</ScreenReaderText>
 		</div>

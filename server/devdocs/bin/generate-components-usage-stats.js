@@ -11,14 +11,13 @@ var _ = require( 'lodash' ),
 	fspath = require( 'path' ),
 	globby = require( 'globby' ),
 	root = fspath.dirname( fspath.join( __dirname, '..', '..' ) ),
-
 	// Copyright (c) 2014-present, Facebook, Inc. See CREDITS.md#facebook/node-hastemodules
 	replacePatterns = {
 		BLOCK_COMMENT_RE: /(?:\/\*(.|\n)*?\*\/)|(\/\/.+(\n|$))/g,
 		LINE_COMMENT_RE: /\/\/.+(\n|$)/g,
 		IMPORT_RE: /(\bimport\s+?(?:.+\s+?from\s+?)?)(['"])([^'"]+)(\2)/g,
 		EXPORT_RE: /(\bexport\s+(?:[^'"]+\s+from\s+)??)(['"])([^'"]+)(\2)/g,
-		REQUIRE_RE: /(\brequire\s*?\(\s*?)(['"])([^'"]+)(\2\s*?\))/g
+		REQUIRE_RE: /(\brequire\s*?\(\s*?)(['"])([^'"]+)(\2\s*?\))/g,
 	};
 const promisify = require( 'util' ).promisify;
 const readFileAsync = promisify( fs.readFile );
@@ -28,7 +27,9 @@ function main() {
 	const fileList = globby.sync( process.argv.slice( 2 ) );
 
 	if ( fileList.length === 0 ) {
-		process.stderr.write( 'You must pass a list of files to process (try "npm run build-devcods:components-usage-stats"' );
+		process.stderr.write(
+			'You must pass a list of files to process (try "npm run build-devcods:components-usage-stats"'
+		);
 		process.exit( 1 );
 	}
 
@@ -44,7 +45,7 @@ function main() {
 			process.exit( 0 );
 		} )
 		.catch( function( error ) {
-			console.error( "An error occurred while processing the files: \n\t", error );
+			console.error( 'An error occurred while processing the files: \n\t', error );
 			process.exit( 1 );
 		} );
 }
@@ -63,7 +64,7 @@ function main() {
 
 function getModulesWithDependencies( root, fileList ) {
 	const filePromises = fileList.map( async fileWithPath => {
-		const fileSource = await readFileAsync( fspath.join( root, fileWithPath), 'utf8')
+		const fileSource = await readFileAsync( fspath.join( root, fileWithPath ), 'utf8' );
 		const deps = getDependencies( fileSource );
 
 		return [ fileWithPath, deps ];
@@ -84,7 +85,7 @@ function getDependencies( code ) {
 	var deps = [];
 
 	function addDependency( dep ) {
-		if ( !cache[ dep ] ) {
+		if ( ! cache[ dep ] ) {
 			cache[ dep ] = true;
 			deps.push( dep );
 		}
@@ -120,9 +121,12 @@ function getDependencies( code ) {
  */
 function generateUsageStats( modules ) {
 	function getCamelCasedDepName( dep ) {
-		return dep.split( '/' ).map( function( part ) {
-			return _.camelCase( part );
-		} ).join( '/' );
+		return dep
+			.split( '/' )
+			.map( function( part ) {
+				return _.camelCase( part );
+			} )
+			.join( '/' );
 	}
 	return Object.keys( modules ).reduce( function( target, moduleName ) {
 		var deps = modules[ moduleName ];
@@ -138,7 +142,7 @@ function generateUsageStats( modules ) {
 }
 
 function saveUsageStats( usageStats, filePath ) {
-	var json = jsFromJSON( JSON.stringify( usageStats, null, "\t" ) );
+	var json = jsFromJSON( JSON.stringify( usageStats, null, '\t' ) );
 	fs.writeFileSync( fspath.join( root, filePath ), json );
 }
 

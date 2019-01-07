@@ -515,7 +515,11 @@ const getPlanEcommerceDetails = () => ( {
 		FEATURE_ALL_BUSINESS_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_GOOGLE_MY_BUSINESS, FEATURE_UPLOAD_THEMES_PLUGINS ],
+	getHiddenFeatures: () => [
+		FEATURE_AUDIO_UPLOADS,
+		FEATURE_GOOGLE_MY_BUSINESS,
+		FEATURE_UPLOAD_THEMES_PLUGINS,
+	],
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -1133,7 +1137,9 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_ALL_PERSONAL_FEATURES,
 		getTitle: () => i18n.translate( 'All Personal features' ),
 		getDescription: () =>
-			i18n.translate( 'Including email and live chat support, an ad-free experience for your visitors, increased storage space, and a custom domain name for one year.' ),
+			i18n.translate(
+				'Including email and live chat support, an ad-free experience for your visitors, increased storage space, and a custom domain name for one year.'
+			),
 	},
 
 	[ FEATURE_ALL_PREMIUM_FEATURES_JETPACK ]: {
@@ -1158,7 +1164,9 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_ALL_PREMIUM_FEATURES,
 		getTitle: () => i18n.translate( 'All Premium features' ),
 		getDescription: () =>
-			i18n.translate( 'Including unlimited premium themes, advanced design and monetization options, simple payment buttons, and a custom domain name for one year.' ),
+			i18n.translate(
+				'Including unlimited premium themes, advanced design and monetization options, simple payment buttons, and a custom domain name for one year.'
+			),
 	},
 
 	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
@@ -1618,7 +1626,9 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_EMAIL_SUPPORT,
 		getTitle: () => i18n.translate( 'Email Support' ),
 		getDescription: () =>
-			i18n.translate( 'High quality email support to help you get your website up and running and working how you want it.' ),
+			i18n.translate(
+				'High quality email support to help you get your website up and running and working how you want it.'
+			),
 	},
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
@@ -1889,37 +1899,55 @@ export const FEATURES_LIST = {
 	[ FEATURE_ACCEPT_PAYMENTS ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS,
 		getTitle: () => i18n.translate( 'Accept Payments in 60+ Countries' ),
-		getDescription: () => i18n.translate( 'Built-in payment processing from leading providers like Stripe, PayPal, and more. Accept payments from customers all over the world.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Built-in payment processing from leading providers like Stripe, PayPal, and more. Accept payments from customers all over the world.'
+			),
 	},
 
 	[ FEATURE_SHIPPING_CARRIERS ]: {
 		getSlug: () => FEATURE_SHIPPING_CARRIERS,
 		getTitle: () => i18n.translate( 'Integrations with Top Shipping Carriers' ),
-		getDescription: () => i18n.translate( 'Ship physical products in a snap - show live rates from shipping carriers like UPS and other shipping options.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Ship physical products in a snap - show live rates from shipping carriers like UPS and other shipping options.'
+			),
 	},
 
 	[ FEATURE_UNLIMITED_PRODUCTS_SERVICES ]: {
 		getSlug: () => FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 		getTitle: () => i18n.translate( 'Unlimited Products or Services' ),
-		getDescription: () => i18n.translate( 'Grow your store as big as you want with the ability to add and sell unlimited products and services.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Grow your store as big as you want with the ability to add and sell unlimited products and services.'
+			),
 	},
 
 	[ FEATURE_ECOMMERCE_MARKETING ]: {
 		getSlug: () => FEATURE_ECOMMERCE_MARKETING,
 		getTitle: () => i18n.translate( 'eCommerce Marketing Tools' ),
-		getDescription: () => i18n.translate( 'Optimize your store for sales by adding in email and social integrations with Facebook and Mailchimp, and more.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Optimize your store for sales by adding in email and social integrations with Facebook and Mailchimp, and more.'
+			),
 	},
 
 	[ FEATURE_PREMIUM_CUSTOMIZABE_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 		getTitle: () => i18n.translate( 'Premium Customizable Starter Themes' ),
-		getDescription: () => i18n.translate( 'Quickly get up and running with a beautiful store theme and additional design options that you can easily make your own.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Quickly get up and running with a beautiful store theme and additional design options that you can easily make your own.'
+			),
 	},
 
 	[ FEATURE_ALL_BUSINESS_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_BUSINESS_FEATURES,
 		getTitle: () => i18n.translate( 'All Business Features' ),
-		getDescription: () => i18n.translate( 'Including the ability to upload plugins and themes, priority support, advanced monetization options, and unlimited premium themes.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Including the ability to upload plugins and themes, priority support, advanced monetization options, and unlimited premium themes.'
+			),
 	},
 };
 

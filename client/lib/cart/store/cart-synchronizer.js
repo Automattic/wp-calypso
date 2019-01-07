@@ -21,7 +21,6 @@ import { preprocessCartForServer } from 'lib/cart-values';
 const debug = debugFactory( 'calypso:cart-data:cart-synchronizer' );
 
 function preprocessCartFromServer( cart ) {
-
 	// #tax-on-checkout-placeholder
 	const taxOnCheckoutPlaceholder = {
 		tax: {

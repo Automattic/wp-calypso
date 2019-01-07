@@ -77,6 +77,4 @@ const WpcomDomain = createReactClass( {
 	},
 } );
 
-export default flow(
-	localize
-)( WpcomDomain );
+export default flow( localize )( WpcomDomain );
