@@ -32,8 +32,12 @@ import MediaLibraryHeader from './header';
 import MediaLibraryExternalHeader from './external-media-header';
 import MediaLibraryList from './list';
 import InlineConnection from 'my-sites/sharing/connections/inline-connection';
-import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
+import {
+	isKeyringConnectionsFetching,
+	getKeyringConnections,
+} from 'state/sharing/keyring/selectors';
 import { pauseGuidedTour, resumeGuidedTour } from 'state/ui/guided-tours/actions';
+import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { reduxDispatch } from 'lib/redux-bridge';
 
@@ -70,6 +74,29 @@ class MediaLibraryContent extends React.Component {
 		if ( this.props.shouldPauseGuidedTour !== prevProps.shouldPauseGuidedTour ) {
 			this.props.toggleGuidedTour( this.props.shouldPauseGuidedTour );
 		}
+
+		if (
+			this.hasExternalServiceExpired( prevProps ) !== this.hasExternalServiceExpired( this.props )
+		) {
+			// As soon as we detect a service has expired then trigger a keyring refresh so we get a proper service status.
+			this.props.requestKeyringConnections();
+		}
+
+		if (
+			this.getGoogleStatus( prevProps ) === 'invalid' &&
+			this.getGoogleStatus( this.props ) === 'ok'
+		) {
+			// Picasa => Google Photos migration complete. Force a refresh of the list (this won't
+			// happen automatically as we've cached our previous query that failed)
+			MediaActions.sourceChanged( this.props.site.ID );
+		}
+	}
+
+	getGoogleStatus( props ) {
+		const { connections } = props;
+		const google = connections.find( item => item.service === 'google_photos' );
+
+		return google ? google.status : null;
 	}
 
 	renderErrors() {
@@ -260,8 +287,16 @@ class MediaLibraryContent extends React.Component {
 		return this.props.source !== '' ? MEDIA_IMAGE_THUMBNAIL : MEDIA_IMAGE_RESIZER;
 	}
 
+	hasExternalServiceExpired( props ) {
+		const { mediaValidationErrorTypes, source } = props;
+
+		return source !== '' && mediaValidationErrorTypes.indexOf( 'SERVICE_AUTH_FAILED' ) !== -1;
+	}
+
 	needsToBeConnected() {
-		return this.props.source !== '' && ! this.props.isConnected;
+		const { source, isConnected } = this.props;
+
+		return source !== '' && ( ! isConnected || this.hasExternalServiceExpired( this.props ) );
 	}
 
 	renderMediaList() {
@@ -306,7 +341,10 @@ class MediaLibraryContent extends React.Component {
 	}
 
 	renderHeader() {
-		if ( ! this.props.isConnected && this.needsToBeConnected() ) {
+		if (
+			( ! this.props.isConnected && this.needsToBeConnected() ) ||
+			this.hasExternalServiceExpired( this.props )
+		) {
 			return null;
 		}
 
@@ -363,11 +401,14 @@ export default connect(
 		const mediaValidationErrorTypes = values( ownProps.mediaValidationErrors ).map( head );
 		const shouldPauseGuidedTour =
 			! isEmpty( guidedTourState.tour ) && 0 < size( mediaValidationErrorTypes );
+		const connections = getKeyringConnections( state );
+
 		return {
 			siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
 			isRequesting: isKeyringConnectionsFetching( state ),
 			mediaValidationErrorTypes,
 			shouldPauseGuidedTour,
+			connections,
 		};
 	},
 	() => ( {
@@ -375,6 +416,9 @@ export default connect(
 			// We're using `reduxDispatch` to avoid dispatch clashes with the media data Flux implementation.
 			// The eventual Reduxification of the media store should prevent this. See: #26168
 			reduxDispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() );
+		},
+		requestKeyringConnections: () => {
+			reduxDispatch( requestKeyringConnections() );
 		},
 	} ),
 	null,
