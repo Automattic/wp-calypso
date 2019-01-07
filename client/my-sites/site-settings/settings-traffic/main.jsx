@@ -24,10 +24,7 @@ import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice
 import JetpackSiteStats from 'my-sites/site-settings/jetpack-site-stats';
 import JetpackAds from 'my-sites/site-settings/jetpack-ads';
 import RelatedPosts from 'my-sites/site-settings/related-posts';
-import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
-import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
 import Sitemaps from 'my-sites/site-settings/sitemaps';
-import Search from 'my-sites/site-settings/search';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -38,15 +35,11 @@ const SiteSettingsTraffic = ( {
 	jetpackSettingsUiSupported,
 	handleAutosavingToggle,
 	handleSubmitForm,
-	isJetpack,
 	isRequestingSettings,
 	isSavingSettings,
 	setFieldValue,
 	site,
-	submitForm,
-	trackEvent,
 	translate,
-	updateFields,
 } ) => {
 	if ( ! site ) {
 		return <Placeholder />;
@@ -67,12 +60,6 @@ const SiteSettingsTraffic = ( {
 					fields={ fields }
 				/>
 			) }
-			<Search
-				handleAutosavingToggle={ handleAutosavingToggle }
-				isSavingSettings={ isSavingSettings }
-				isRequestingSettings={ isRequestingSettings }
-				fields={ fields }
-			/>
 			<SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } />
 			<SeoSettingsMain />
 			<RelatedPosts
@@ -82,18 +69,6 @@ const SiteSettingsTraffic = ( {
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
 			/>
-			{ isJetpack ? (
-				<AmpJetpack />
-			) : (
-				<AmpWpcom
-					submitForm={ submitForm }
-					trackEvent={ trackEvent }
-					updateFields={ updateFields }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-				/>
-			) }
 			{ jetpackSettingsUiSupported && (
 				<JetpackSiteStats
 					handleAutosavingToggle={ handleAutosavingToggle }
@@ -138,10 +113,6 @@ const getFormSettings = partialRight( pick, [
 	'jetpack_relatedposts_enabled',
 	'jetpack_relatedposts_show_headline',
 	'jetpack_relatedposts_show_thumbnails',
-	'jetpack_search_enabled',
-	'jetpack_search_supported',
-	'amp_is_supported',
-	'amp_is_enabled',
 	'blog_public',
 ] );
 
