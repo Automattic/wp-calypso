@@ -9,6 +9,7 @@ import { SIGNUP_STEPS_SITE_VERTICAL_SET } from 'state/action-types';
 describe( 'reducer', () => {
 	test( 'should update the site vertical', () => {
 		const siteVertical = {
+			isUserInput: false,
 			name: 'glücklich',
 			slug: 'happy',
 		};

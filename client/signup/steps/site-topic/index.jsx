@@ -7,7 +7,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +19,7 @@ import { submitSiteVertical, setSiteVertical } from 'state/signup/steps/site-ver
 import {
 	getSiteVerticalName,
 	getSiteVerticalSlug,
+	getSiteVerticalIsUserInput,
 } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -36,6 +36,7 @@ class SiteTopicStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
+		isUserInput: PropTypes.bool,
 		positionInFlow: PropTypes.number.isRequired,
 		submitSiteTopic: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
@@ -49,10 +50,7 @@ class SiteTopicStep extends Component {
 	static defaultProps = {
 		siteTopic: '',
 		siteSlug: '',
-	};
-
-	state = {
-		isUserInputVertical: true,
+		isUserInput: true,
 	};
 
 	componentDidMount() {
@@ -61,28 +59,16 @@ class SiteTopicStep extends Component {
 		} );
 	}
 
-	shouldComponentUpdate( nextProps ) {
-		return nextProps.siteTopic !== this.props.siteTopic;
-	}
-
-	onSiteTopicChange = verticalData =>
-		this.setState(
-			{
-				isUserInputVertical: get( verticalData, 'is_user_input_vertical', true ),
-			},
-			() => this.props.setSiteTopic( { ...verticalData } )
-		);
+	onSiteTopicChange = verticalData => this.props.setSiteTopic( { ...verticalData } );
 
 	onSubmit = event => {
 		event.preventDefault();
-		const { submitSiteTopic, siteTopic, siteSlug } = this.props;
-		submitSiteTopic(
-			{
-				vertical_name: siteTopic,
-				vertical_slug: siteSlug,
-			},
-			this.state.isUserInputVertical
-		);
+		const { isUserInput, submitSiteTopic, siteTopic, siteSlug } = this.props;
+		submitSiteTopic( {
+			is_user_input_vertical: isUserInput,
+			vertical_name: siteTopic,
+			vertical_slug: siteSlug,
+		} );
 	};
 
 	renderContent() {
@@ -139,7 +125,7 @@ class SiteTopicStep extends Component {
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteTopic: ( { vertical_name, vertical_slug }, is_user_input_vertical ) => {
+	submitSiteTopic: ( { is_user_input_vertical, vertical_name, vertical_slug } ) => {
 		const { flowName, goToNextStep } = ownProps;
 
 		dispatch(
@@ -149,13 +135,25 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 			} )
 		);
 
-		dispatch( submitSiteVertical( { name: vertical_name, slug: vertical_slug } ) );
+		dispatch(
+			submitSiteVertical( {
+				isUserInput: is_user_input_vertical,
+				name: vertical_name,
+				slug: vertical_slug,
+			} )
+		);
 
 		goToNextStep( flowName );
 	},
 
-	setSiteTopic: ( { vertical_name, vertical_slug } ) =>
-		dispatch( setSiteVertical( { name: vertical_name, slug: vertical_slug } ) ),
+	setSiteTopic: ( { vertical_name, vertical_slug, is_user_input_vertical } ) =>
+		dispatch(
+			setSiteVertical( {
+				name: vertical_name,
+				slug: vertical_slug,
+				isUserInput: is_user_input_vertical,
+			} )
+		),
 } );
 
 export default localize(
@@ -164,6 +162,7 @@ export default localize(
 			siteTopic: getSiteVerticalName( state ) || '',
 			siteSlug: getSiteVerticalSlug( state ) || '',
 			siteType: getSiteType( state ),
+			isUserInput: getSiteVerticalIsUserInput( state ),
 		} ),
 		mapDispatchToProps
 	)( SiteTopicStep )
