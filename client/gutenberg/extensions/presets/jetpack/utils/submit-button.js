@@ -69,6 +69,7 @@ const SubmitButton = ( {
 
 	const buttonStyle = { border: 'none', backgroundColor, color };
 
+	setAttributes( { submitButtonClasses: buttonClasses } );
 	return (
 		<Fragment>
 			<div className="wp-block-button jetpack-submit-button">
