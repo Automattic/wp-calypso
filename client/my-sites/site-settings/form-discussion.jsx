@@ -11,7 +11,6 @@ import { flowRight, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import SupportInfo from 'components/support-info';
 import CommentDisplaySettings from './comment-display-settings';
@@ -24,7 +23,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from './settings-section-header';
 import Subscriptions from './subscriptions';
 import wrapSettingsForm from './wrap-settings-form';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
@@ -566,24 +565,6 @@ class SiteSettingsFormDiscussion extends Component {
 		);
 	}
 
-	renderSectionHeader( title, showButton = true ) {
-		const { handleSubmitForm, isRequestingSettings, isSavingSettings, translate } = this.props;
-		return (
-			<SectionHeader label={ title }>
-				{ showButton && (
-					<Button
-						compact
-						primary
-						onClick={ handleSubmitForm }
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				) }
-			</SectionHeader>
-		);
-	}
-
 	render() {
 		const {
 			fields,
@@ -598,12 +579,18 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<form id="site-settings" onSubmit={ handleSubmitForm }>
-				{ this.renderSectionHeader( translate( 'Default Article Settings' ), false ) }
+				<SettingsSectionHeader title={ translate( 'Default Article Settings' ) } />
 				<Card className="site-settings__discussion-settings">
 					{ this.defaultArticleSettings() }
 				</Card>
 
-				{ this.renderSectionHeader( translate( 'Comments' ) ) }
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Comments' ) }
+				/>
 				<Card className="site-settings__discussion-settings">
 					{ this.commentDisplaySettings() }
 					{ this.otherCommentSettings() }
@@ -621,7 +608,7 @@ class SiteSettingsFormDiscussion extends Component {
 					<div>
 						<QueryJetpackModules siteId={ siteId } />
 
-						{ this.renderSectionHeader( translate( 'Subscriptions' ), false ) }
+						<SettingsSectionHeader title={ translate( 'Subscriptions' ) } />
 
 						<Subscriptions
 							onSubmitForm={ handleSubmitForm }
