@@ -206,6 +206,7 @@ class GSuitePurchaseCta extends React.Component {
 										strong: <strong />,
 										a: (
 											<a
+												className="g-suite-purchase-cta__add-google-apps-card-learn-more-link"
 												href={ ADDING_GOOGLE_APPS_TO_YOUR_SITE }
 												target="_blank"
 												rel="noopener noreferrer"
