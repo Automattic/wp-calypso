@@ -259,7 +259,8 @@ export class DateRange extends Component {
 			>
 				<Gridicon className="date-range__trigger-btn-icon" icon="calendar" />
 				<span className="date-range__trigger-btn-text">
-					{ this.dateToHumanReadable( this.state.startDate ) }-
+					{ this.dateToHumanReadable( this.state.startDate ) }
+					&nbsp; - &nbsp;
 					{ this.dateToHumanReadable( this.state.endDate ) }
 				</span>
 				<Gridicon icon="chevron-down" />
