@@ -14,8 +14,6 @@ import { flowRight, get, pick } from 'lodash';
 import wrapSettingsForm from './wrap-settings-form';
 import config from 'config';
 import PressThis from './press-this';
-import SectionHeader from 'components/section-header';
-import Button from 'components/button';
 import QueryTaxonomies from 'components/data/query-taxonomies';
 import TaxonomyCard from './taxonomies/taxonomy-card';
 import {
@@ -35,26 +33,9 @@ import MediaSettingsWriting from './media-settings-writing';
 import ThemeEnhancements from './theme-enhancements';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import SettingsSectionHeader from './settings-section-header';
 
 class SiteSettingsFormWriting extends Component {
-	renderSectionHeader( title, showButton = true ) {
-		const { handleSubmitForm, isRequestingSettings, isSavingSettings, translate } = this.props;
-		return (
-			<SectionHeader label={ title }>
-				{ showButton && (
-					<Button
-						compact
-						primary
-						onClick={ handleSubmitForm }
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				) }
-			</SectionHeader>
-		);
-	}
-
 	isMobile() {
 		return /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Silk/.test( navigator.userAgent );
 	}
@@ -93,7 +74,7 @@ class SiteSettingsFormWriting extends Component {
 			>
 				{ isMasterbarSectionVisible && (
 					<div>
-						{ this.renderSectionHeader( translate( 'WordPress.com toolbar' ), false ) }
+						<SettingsSectionHeader title={ translate( 'WordPress.com toolbar' ) } />
 						<Masterbar
 							isSavingSettings={ isSavingSettings }
 							isRequestingSettings={ isRequestingSettings }
@@ -109,7 +90,13 @@ class SiteSettingsFormWriting extends Component {
 					</div>
 				) }
 
-				{ this.renderSectionHeader( translate( 'Composing' ) ) }
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Composing' ) }
+				/>
 				<Composing
 					handleSelect={ handleSelect }
 					handleToggle={ handleToggle }
@@ -125,7 +112,13 @@ class SiteSettingsFormWriting extends Component {
 
 				{ jetpackSettingsUI && (
 					<div>
-						{ this.renderSectionHeader( translate( 'Media' ) ) }
+						<SettingsSectionHeader
+							disabled={ isRequestingSettings || isSavingSettings }
+							isSaving={ isSavingSettings }
+							onButtonClick={ handleSubmitForm }
+							showButton
+							title={ translate( 'Media' ) }
+						/>
 						<MediaSettingsWriting
 							siteId={ siteId }
 							handleAutosavingToggle={ handleAutosavingToggle }
@@ -138,8 +131,13 @@ class SiteSettingsFormWriting extends Component {
 					</div>
 				) }
 
-				{ this.renderSectionHeader( translate( 'Content types' ) ) }
-
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Content types' ) }
+				/>
 				<CustomContentTypes
 					handleAutosavingToggle={ handleAutosavingToggle }
 					onChangeField={ onChangeField }
@@ -184,13 +182,9 @@ class SiteSettingsFormWriting extends Component {
 					! this.isMobile() &&
 					! ( siteIsJetpack || jetpackSettingsUISupported ) && (
 						<div>
-							{ this.renderSectionHeader(
-								translate( 'Press This', {
-									context: 'name of browser bookmarklet tool',
-								} ),
-								false
-							) }
-
+							<SettingsSectionHeader
+								title={ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
+							/>
 							<PressThis />
 						</div>
 					) }
