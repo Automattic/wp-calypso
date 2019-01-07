@@ -594,6 +594,7 @@ class AboutStep extends Component {
 				stepContent={ this.renderContent() }
 				allowBackFirstStep={ allowBackFirstStep }
 				backUrl={ backUrl }
+				backLabelText={ hasMultipleSites ? translate( 'Back to dashboard' ) : false }
 			/>
 		);
 	}
