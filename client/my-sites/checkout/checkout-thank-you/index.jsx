@@ -71,7 +71,6 @@ import {
 	getFeatureByKey,
 	isJetpackBusinessPlan,
 	isWpComBusinessPlan,
-	isWpComEcommercePlan,
 	shouldFetchSitePlans,
 } from 'lib/plans';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
@@ -347,6 +346,7 @@ export class CheckoutThankYou extends React.Component {
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasDotcomPlanPurchased = false;
+		let wasEcommercePlanPurchased = false;
 		let delayedTransferPurchase = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
@@ -354,6 +354,7 @@ export class CheckoutThankYou extends React.Component {
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasDotcomPlanPurchased = purchases.some( isDotComPlan );
+			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 		}
 
@@ -385,7 +386,7 @@ export class CheckoutThankYou extends React.Component {
 			);
 		}
 
-		if ( isWpComEcommercePlan( this.props.planSlug ) ) {
+		if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
 				return (
 					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
