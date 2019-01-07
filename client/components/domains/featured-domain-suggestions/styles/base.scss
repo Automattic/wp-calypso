@@ -103,6 +103,12 @@
 			padding: 0.5em 3em;
 		}
 	}
+	&.is-unavailable {
+		.domain-registration-suggestion__progress-bar,
+		.domain-registration-suggestion__match-reasons {
+			display: none;
+		}
+	}
 }
 
 @include breakpoint( '<660px' ) {
