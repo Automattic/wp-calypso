@@ -40,24 +40,24 @@
 	}
 
 	&.level-1 {
-		background-color: var( --color-neutral-100 );
-	}
-
-	&.level-2 {
 		background-color: var( --color-primary-50 );
 	}
 
+	&.level-2 {
+		background-color: var( --color-primary-100 );
+	}
+
 	&.level-3 {
-		background-color: var( --color-primary-200 );
+		background-color: var( --color-primary-light );
 	}
 
 	&.level-4 {
-		background-color: var( --color-primary-400 );
+		background-color: var( --color-primary );
 		color: white;
 	}
 
 	&.level-5 {
-		background-color: var( --color-primary-800 );
+		background-color: var( --color-primary-dark );
 		color: white;
 	}
 }
