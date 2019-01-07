@@ -23,7 +23,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import SettingsSectionHeader from './settings-section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import Subscriptions from './subscriptions';
 import wrapSettingsForm from './wrap-settings-form';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';

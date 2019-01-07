@@ -33,7 +33,7 @@ import MediaSettingsWriting from './media-settings-writing';
 import ThemeEnhancements from './theme-enhancements';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import SettingsSectionHeader from './settings-section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 
 class SiteSettingsFormWriting extends Component {
 	isMobile() {

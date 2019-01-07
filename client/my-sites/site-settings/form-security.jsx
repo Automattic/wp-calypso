@@ -21,7 +21,7 @@ import { siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import SettingsSectionHeader from './settings-section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import SpamFilteringSettings from './spam-filtering-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import { isATEnabled } from 'lib/automated-transfer';
