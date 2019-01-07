@@ -65,7 +65,7 @@ const JetpackEmailSubscribe = {
 			this.fetch( blogId, email ).then(
 				response => {
 					processingEl.classList.remove( 'is-visible' );
-					if ( response.error ) {
+					if ( response.error && response.error !== 'member_exists' ) {
 						errorEl.classList.add( 'is-visible' );
 					} else {
 						successEl.classList.add( 'is-visible' );
