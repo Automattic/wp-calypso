@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
+
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import {
 	Button,
@@ -39,20 +39,35 @@ class MailchimpSubscribeEdit extends Component {
 		this.apiCall();
 	};
 	apiCall = () => {
-		const { noticeOperations } = this.props;
-		const path = '/wpcom/v2/mailchimp';
-		const method = 'GET';
-		const fetch = { path, method };
-		apiFetch( fetch ).then(
+		const blog_id = window && window.Jetpack_Editor_Initial_State.blog_id;
+		const connectURL = 'https://wordpress.com/sharing/' + blog_id;
+		const url =
+			'https://public-api.wordpress.com/rest/v1.1/sites/' + blog_id + '/mailchimp/settings';
+		const fetch = new Promise( function( resolve, reject ) {
+			const xhr = new XMLHttpRequest();
+			xhr.open( 'GET', url );
+			xhr.onload = function() {
+				if ( xhr.status === 200 ) {
+					const res = JSON.parse( xhr.responseText );
+					resolve( res );
+				} else {
+					const res = JSON.parse( xhr.responseText );
+					reject( res );
+				}
+			};
+			xhr.send();
+		} );
+		fetch.then(
 			result => {
 				const connected =
-					result.code === 'connected' ? API_STATE_CONNECTED : API_STATE_NOTCONNECTED;
-				const connectURL = result.connect_url;
+					result.keyring_id && result.follower_list_id
+						? API_STATE_CONNECTED
+						: API_STATE_NOTCONNECTED;
 				this.setState( { connected, connectURL } );
 			},
-			result => {
-				noticeOperations.removeAllNotices();
-				noticeOperations.createErrorNotice( result.message );
+			() => {
+				const connected = API_STATE_NOTCONNECTED;
+				this.setState( { connected, connectURL } );
 			}
 		);
 	};
@@ -93,7 +108,7 @@ class MailchimpSubscribeEdit extends Component {
 	};
 	render = () => {
 		const { attributes, className, notices, noticeUI, setAttributes } = this.props;
-		const { audition, connected } = this.state;
+		const { audition, connected, connectURL } = this.state;
 		const {
 			emailPlaceholder,
 			title,
@@ -116,9 +131,12 @@ class MailchimpSubscribeEdit extends Component {
 						'You need to connect your MailChimp account and choose a list in order to start collecting Email subscribers.'
 					) }
 					<br />
-					<ExternalLink href="https://wordpress.com/sharing/">
-						{ __( 'Set up MailChimp form' ) }
-					</ExternalLink>
+					<ExternalLink href={ connectURL }>{ __( 'Set up MailChimp form' ) }</ExternalLink>
+					<br />
+					<br />
+					<Button isPrimary onClick={ this.apiCall }>
+						{ __( 'Re-check Connection' ) }
+					</Button>
 				</div>
 			</Placeholder>
 		);
@@ -152,6 +170,9 @@ class MailchimpSubscribeEdit extends Component {
 						value={ errorLabel }
 						onChange={ this.updateErrorText }
 					/>
+				</PanelBody>
+				<PanelBody title={ __( 'Mailchimp Connection' ) }>
+					<ExternalLink href={ connectURL }>{ __( 'Manage Connection' ) }</ExternalLink>
 				</PanelBody>
 			</InspectorControls>
 		);
