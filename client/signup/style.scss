@@ -1,5 +1,19 @@
-// Adjust the layout for the signup header.
-.is-section-signup {
+body.is-section-signup {
+	// Use the primary color for our background. I wonder how we
+	// should deal with different color schemes?
+	background: var( --color-primary );
+
+	// With the dark background, the border on cards looks a
+	// a little strange. Lets try a shadow instead. -shaun
+	.is-site-type .card,
+	.is-site-information .card {
+		box-shadow: 0 5px 5px -3px rgba( 0, 0, 0, 0.2),
+					0 8px 10px 1px rgba( 0, 0, 0, 0.14),
+					0 3px 14px 2px rgba( 0, 0, 0, 0.12);
+	}
+
+
+	// Adjust the spacing for the signup-header
 	.layout__content {
 		padding: 32px 0 0;
 	}
@@ -8,10 +22,12 @@
 	//which is how sticky panel offset is calculated.
 	//Setting height to zero removes the offset
 	//so the sticky panel sticks to the top.
-	&.has-no-masterbar .masterbar:not( .header__masterbar-mock ) {
+	&.has-no-masterbar .masterbar {
 		height: 0;
 	}
 
+	// This allows us to position the search suggestions
+	// relative to their fieldset.
 	.form-fieldset {
 		position: relative;
 	}
@@ -79,13 +95,14 @@
 
 	.formatted-header__title {
 		margin: 0;
-		font-weight: 700;
+		font-weight: 400;
+		color: var( --color-white );
 	}
 
 	.formatted-header__subtitle {
 		margin: 0;
 		font-size: 15px;
-		color: var( --color-neutral-500 );
+		color: var( --color-white );
 	}
 }
 
