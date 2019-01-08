@@ -19,7 +19,7 @@ import { getDomainTypeText } from 'lib/domains';
 
 class PrimaryDomainButton extends React.Component {
 	handleClick = () => {
-		this.props.makePrimaryClick( this.props.domain );
+		this.props.recordMakePrimaryClick( this.props.domain );
 		page( domainManagementPrimaryDomain( this.props.selectedSite.slug, this.props.domain.name ) );
 	};
 
@@ -41,7 +41,7 @@ class PrimaryDomainButton extends React.Component {
 	}
 }
 
-const makePrimaryClick = domain =>
+const recordMakePrimaryClick = domain =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -56,12 +56,12 @@ const makePrimaryClick = domain =>
 
 PrimaryDomainButton.propTypes = {
 	domain: PropTypes.object.isRequired,
-	makePrimaryClick: PropTypes.func.isRequired,
+	recordMakePrimaryClick: PropTypes.func.isRequired,
 	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
 export default connect(
 	null,
-	{ makePrimaryClick }
+	{ recordMakePrimaryClick }
 )( localize( PrimaryDomainButton ) );
