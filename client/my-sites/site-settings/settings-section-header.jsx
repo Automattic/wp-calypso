@@ -13,6 +13,7 @@ import SectionHeader from 'components/section-header';
 
 const SettingsSectionHeader = ( {
 	disabled,
+	id,
 	isSaving,
 	onButtonClick,
 	showButton,
@@ -20,7 +21,7 @@ const SettingsSectionHeader = ( {
 	translate,
 } ) => {
 	return (
-		<SectionHeader label={ title }>
+		<SectionHeader label={ title } id={ id }>
 			{ showButton && (
 				<Button compact primary onClick={ onButtonClick } disabled={ disabled }>
 					{ isSaving ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
@@ -32,6 +33,7 @@ const SettingsSectionHeader = ( {
 
 SettingsSectionHeader.propTypes = {
 	disabled: PropTypes.bool,
+	id: PropTypes.string,
 	isSaving: PropTypes.bool,
 	onButtonClick: PropTypes.func,
 	showButton: PropTypes.bool,
