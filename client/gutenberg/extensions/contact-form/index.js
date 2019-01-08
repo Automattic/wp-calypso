@@ -54,6 +54,16 @@ export const settings = {
 			type: 'string',
 			default: null,
 		},
+
+		// Deprecated
+		has_form_settings_set: {
+			type: 'string',
+			default: null,
+		},
+		submit_button_text: {
+			type: 'string',
+			default: __( 'Submit' ),
+		},
 	},
 
 	edit: JetpackContactForm,
@@ -61,6 +71,14 @@ export const settings = {
 	deprecated: [
 		{
 			attributes: {
+				subject: {
+					type: 'string',
+					default: '',
+				},
+				to: {
+					type: 'string',
+					default: '',
+				},
 				submit_button_text: {
 					type: 'string',
 					default: __( 'Submit' ),
@@ -70,11 +88,22 @@ export const settings = {
 					default: null,
 				},
 			},
+			migrate: attr => {
+				return {
+					submitButtonText: attr.submit_button_text,
+					hasFormSettingsSet: attr.has_form_settings_set,
+					to: attr.to,
+					subject: attr.subject,
+				};
+			},
 
-			migrate: ( { submit_button_text, has_form_settings_set } ) => ( {
-				submitButtonText: submit_button_text,
-				hasFormSettingsSet: has_form_settings_set,
-			} ),
+			isEligible: attr => {
+				// when the deprecated, snake_case values are default, no need to migrate
+				if ( ! attr.has_form_settings_set && attr.submit_button_text === 'Submit' ) {
+					return false;
+				}
+				return true;
+			},
 
 			save: InnerBlocks.Content,
 		},
