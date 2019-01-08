@@ -19,7 +19,7 @@ import notices from 'notices';
 import { successNotice } from 'state/notices/actions';
 
 class EmailForwardingItem extends React.Component {
-	deleteItem() {
+	deleteItem = () => {
 		const { temporary, domain, mailbox, forward_address, email } = this.props.emailData;
 
 		if ( temporary ) {
@@ -57,10 +57,10 @@ class EmailForwardingItem extends React.Component {
 				);
 			}
 		} );
-	}
+	};
 
-	resendVerificationEmail() {
-		const { temporary, domain, mailbox, forward_address } = this.props.emailData;
+	resendVerificationEmail = () => {
+		const { domain, forward_address, mailbox, temporary } = this.props.emailData;
 
 		if ( temporary ) {
 			return;
@@ -93,7 +93,7 @@ class EmailForwardingItem extends React.Component {
 				);
 			}
 		} );
-	}
+	};
 
 	render() {
 		return (
@@ -173,9 +173,15 @@ const recordResendVerificationClick = ( domainName, mailbox, destination, succes
 
 EmailForwardingItem.propTypes = {
 	recordDeleteClick: PropTypes.func.isRequired,
-	emailData: PropTypes.object,
+	emailData: PropTypes.shape( {
+		domain: PropTypes.string.isRequired,
+		forward_address: PropTypes.string.isRequired,
+		mailbox: PropTypes.string.isRequired,
+		temporary: PropTypes.bool,
+	} ),
 	recordResendVerificationClick: PropTypes.func.isRequired,
 	successNotice: PropTypes.func.isRequired,
+	translate: PropTypes.func.isRequired,
 };
 
 export default connect(
