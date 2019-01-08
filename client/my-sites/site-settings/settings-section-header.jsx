@@ -12,6 +12,7 @@ import Button from 'components/button';
 import SectionHeader from 'components/section-header';
 
 const SettingsSectionHeader = ( {
+	children,
 	disabled,
 	id,
 	isSaving,
@@ -25,6 +26,7 @@ const SettingsSectionHeader = ( {
 } ) => {
 	return (
 		<SectionHeader label={ title } id={ id }>
+			{ children }
 			{ showButton && (
 				<Button compact primary onClick={ onButtonClick } disabled={ disabled } { ...buttonProps }>
 					{ isSaving ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
