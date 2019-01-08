@@ -15,8 +15,8 @@ import FormTextInput from 'components/forms/form-text-input';
 
 class DateRangeInputs extends Component {
 	static propTypes = {
-		fromDateValue: PropTypes.string.isRequired,
-		toDateValue: PropTypes.string.isRequired,
+		startDateValue: PropTypes.string.isRequired,
+		endDateValue: PropTypes.string.isRequired,
 		onInputChange: PropTypes.func,
 		onInputBlur: PropTypes.func,
 		startLabel: PropTypes.string,
@@ -38,7 +38,7 @@ class DateRangeInputs extends Component {
 					<FormTextInput
 						id="startDate"
 						name="startDate"
-						value={ this.props.fromDateValue }
+						value={ this.props.startDateValue }
 						onChange={ this.props.onInputChange }
 						onBlur={ this.props.onInputBlur }
 					/>
@@ -48,7 +48,7 @@ class DateRangeInputs extends Component {
 					<FormTextInput
 						id="endDate"
 						name="endDate"
-						value={ this.props.toDateValue }
+						value={ this.props.endDateValue }
 						onChange={ this.props.onInputChange }
 						onBlur={ this.props.onInputBlur }
 					/>
