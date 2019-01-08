@@ -210,11 +210,12 @@ export class DateRange extends Component {
 				// just in case user doesn't "Apply" and we need to revert
 				// to the original dates
 				if ( ! this.state.staleDatesSaved ) {
-					newState = Object.assign( {}, newState, {
+					newState = {
+						...newState,
 						staleStartDate: previousState.startDate,
 						staleEndDate: previousState.endDate,
 						staleDatesSaved: true, // marks that we have saved stale dates
-					} );
+					};
 				}
 
 				return newState;
