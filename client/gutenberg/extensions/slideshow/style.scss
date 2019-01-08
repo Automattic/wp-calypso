@@ -27,15 +27,10 @@
 		height: 40px;
 		background-size: 24px 40px;
 		box-sizing: content-box;
-		-moz-box-sizing: content-box;
 		padding: 12px 10px;
 		border-radius: 2px;
 		margin-top: -32px; /* half of total height, including padding */
 		border-radius: 2px;
-		-webkit-transition: background-color 200ms;
-		-moz-transition: background-color 200ms;
-		-ms-transition: background-color 200ms;
-		-o-transition: background-color 200ms;
 		transition: background-color 200ms;
 	}
 	.slide-background {
