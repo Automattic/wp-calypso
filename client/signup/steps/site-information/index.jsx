@@ -51,14 +51,8 @@ class SiteInformation extends Component {
 		} );
 	}
 
-	handleInputChange = ( { target: { name, value } } ) => {
-		this.setState( { [ name ]: value } );
-		if ( this.props.flowName === 'onboarding-dev' ) {
-			setTimeout( () => {
-				this.props.updateStep( this.state );
-			}, 50 );
-		}
-	};
+	handleInputChange = ( { target: { name, value } } ) =>
+		this.setState( { [ name ]: value }, () => this.props.updateStep( this.state ) );
 
 	handleSubmit = event => {
 		event.preventDefault();
@@ -212,9 +206,9 @@ export default connect(
 				dispatch(
 					recordTracksEvent( 'calypso_signup_actions_submit_site_information', {
 						site_title: siteTitleTracksAttribute,
-						address,
-						email,
-						phone,
+						user_entered_address: !! address,
+						user_entered_email: !! email,
+						user_entered_phone: !! phone,
 					} )
 				);
 
