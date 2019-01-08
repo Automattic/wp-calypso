@@ -14534,9 +14534,9 @@
 			"from": "git+https://github.com/Automattic/node-phone.git#v2.4.0-pre-1"
 		},
 		"photon": {
-			"version": "2.0.1",
-			"resolved": "https://registry.npmjs.org/photon/-/photon-2.0.1.tgz",
-			"integrity": "sha512-9/a0UvjyNL1xQI3v416Ym0GIm9HyzM4kHjOj06WFqGYGKnaFIEFJ1uJtjkobmur4KHIoXsxhHydrVsq2tJ1N5g==",
+			"version": "3.0.0",
+			"resolved": "https://registry.npmjs.org/photon/-/photon-3.0.0.tgz",
+			"integrity": "sha512-OcldEE6YUzq3tAhsSed3VC2tkEH5co/WgeaZL+YLQuu3RPerTFx1a4h/OLmHLyZr62p00kWYpLTWaJHot28Kcg==",
 			"requires": {
 				"crc32": "0.2.2",
 				"debug": "3.1.0",
