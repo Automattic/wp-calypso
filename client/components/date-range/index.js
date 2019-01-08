@@ -30,22 +30,22 @@ export class DateRange extends Component {
 		onDateCommit: noop,
 	};
 
-	static dateFormat = 'MM/DD/YYYY';
-
 	constructor( props ) {
 		super( props );
 
 		this.state = {
 			popoverVisible: false,
-			oldStartDate: '',
-			oldEndDate: '',
+			staleStartDate: '',
+			staleEndDate: '',
 			startDate: this.props.startDate || this.props.moment().subtract( 1, 'months' ),
 			endDate: this.props.endDate || this.props.moment(),
-			oldDatesSaved: false,
-			inputFromDate:
+			staleDatesSaved: false,
+			// this need to be independent from startDate because we must independently validate them
+			// before updating the central source of truth (ie: startDate)
+			textInputStartDate:
 				this.dateToHumanReadable( this.props.startDate ) ||
 				this.dateToHumanReadable( this.props.moment().subtract( 1, 'months' ) ),
-			inputToDate:
+			textInputEndDate:
 				this.dateToHumanReadable( this.props.endDate ) ||
 				this.dateToHumanReadable( this.props.moment() ),
 		};
@@ -60,82 +60,124 @@ export class DateRange extends Component {
 			'handleInputBlur',
 		] );
 
-		this.startButtonRef = React.createRef();
+		// Ref to the Trigger <button> used to position the Popover	component
+		this.triggerButtonRef = React.createRef();
 	}
 
+	/**
+	 * Toggles the popover and updates the inputs
+	 */
 	togglePopover() {
 		this.setState( {
 			popoverVisible: ! this.state.popoverVisible,
-			inputFromDate: this.dateToHumanReadable( this.state.startDate ),
-			inputToDate: this.dateToHumanReadable( this.state.endDate ),
 		} );
 
-		// Close the popover
+		// As no dates have been explicity accepted ("Apply" not clicked)
+		// we need to revert back to the original cached dates
 		this.revertDates();
 	}
 
+	/**
+	 * Closes the popover
+	 * Note this does not commit the current date state
+	 */
 	closePopover() {
 		this.setState( {
 			popoverVisible: false,
 		} );
 	}
 
+	/**
+	 * Updates state with current value of from/to
+	 * text inputs
+	 * @param  {SyntheticEvent} e the React SyntheticEvent representing the DOM input change Event
+	 */
 	handleInputChange( e ) {
 		const val = e.target.value;
 
-		const fromOrTo = e.target.id.includes( 'start' ) ? 'From' : 'To';
+		// Whitelist rather than be too clever...
+		const fromOrTo = e.target.id.includes( 'start' ) ? 'Start' : 'End';
 
 		this.setState( {
-			[ `input${ fromOrTo }Date` ]: val,
+			[ `textInput${ fromOrTo }Date` ]: val,
 		} );
 	}
 
+	/**
+	 * Ensure dates are
+	 * i) valid
+	 * ii) after 01/01/1970 (avoids bugs when really stale dates are treated as valid)
+	 * iii) before today (don't allow inputs to select dates that calendar is not allowed to show)
+	 *
+	 * @param  {moment}  date MomentJS date object
+	 * @return {Boolean}      whether date is considered valid or not
+	 */
+	isValidDate( date ) {
+		const today = this.props.moment();
+		const epoch = this.props.moment( '01/01/1970', this.getLocaleDateFormat() );
+
+		return date.isValid() && date.isSameOrAfter( epoch ) && date.isSameOrBefore( today );
+	}
+
+	/**
+	 * Updates the state when the date text inputs are blurred
+	 * @param  {SyntheticEvent} e React wrapper for DOM input blur event
+	 */
 	handleInputBlur( e ) {
 		const val = e.target.value;
 		const startOrEnd = e.target.id;
-		const date = this.props.moment( val, DateRange.dateFormat );
-		const today = this.props.moment();
-		const epoch = this.props.moment( '01/01/1970', DateRange.dateFormat );
-		const fromDate = this.props.moment( this.state.inputFromDate, DateRange.dateFormat );
-		const toDate = this.props.moment( this.state.inputToDate, DateRange.dateFormat );
+		const date = this.props.moment( val, this.getLocaleDateFormat() );
 
-		// Ensure dates are:
-		// i) valid
-		// ii) after 01/01/1970 (avoids bugs when really old dates are treated as valid)
-		// iii) before today (don't allow inputs to select dates that calendar is not allowed to show)
-		const isValidFrom =
-			fromDate.isValid() && fromDate.isSameOrAfter( epoch ) && fromDate.isSameOrBefore( today );
+		const fromDate = this.props.moment( this.state.textInputStartDate, this.getLocaleDateFormat() );
+		const toDate = this.props.moment( this.state.textInputEndDate, this.getLocaleDateFormat() );
 
-		const isValidTo =
-			toDate.isValid() && toDate.isSameOrAfter( epoch ) && toDate.isSameOrBefore( today );
+		// Check date validity
+		const isValidFrom = this.isValidDate( fromDate );
+		const isValidTo = this.isValidDate( toDate );
 
 		// If either of the date inputs are invalid then revert
 		// to current start/end date from state
 		if ( ! isValidFrom || ! isValidTo ) {
 			this.setState( {
-				inputFromDate: this.dateToHumanReadable( this.state.startDate ),
-				inputToDate: this.dateToHumanReadable( this.state.endDate ),
+				textInputStartDate: this.dateToHumanReadable( this.state.startDate ),
+				textInputEndDate: this.dateToHumanReadable( this.state.endDate ),
 			} );
 		}
 
-		// If the new date in the blurred input is valid...
-		// ...and it's
-		if (
-			date.isValid() &&
-			date.isSameOrAfter( epoch ) &&
-			date.isSameOrBefore( today ) &&
-			! this.state[ startOrEnd ].isSame( date, 'day' )
-		) {
+		// If the new date in the blurred input is valid
+		// and it's not the same as the existing value
+		if ( this.isValidDate( date ) && ! this.state[ startOrEnd ].isSame( date, 'day' ) ) {
 			this.onSelectDate( date );
 		}
 	}
 
+	/**
+	 * Converts moment dates to a DateRange
+	 * as required by Day Picker DateUtils
+	 * @param  {MomentJSDate} startDate the start date for the range
+	 * @param  {MomentJSDate} endDate   the end date for the range
+	 * @return {Object}           the date range object
+	 */
+	toDateRange( startDate, endDate ) {
+		return {
+			from: this.momentDateToNative( startDate ),
+			to: this.momentDateToNative( endDate ),
+		};
+	}
+
+	/**
+	 * Handles selection (only) of new dates persisting
+	 * the values to state. Note that if the user does not
+	 * commit the dates (eg: clicking "Apply") then the `revertDates`
+	 * method is triggered which restores the previous ("stale") dates.
+	 *
+	 * Dates are only persisted via the commitDates method.
+	 *
+	 * @param  {MomentJSDate} date the newly selected date object
+	 */
 	onSelectDate( date ) {
 		// DateUtils requires a range object with this shape
-		const range = {
-			from: this.momentDateToNative( this.state.startDate ),
-			to: this.momentDateToNative( this.state.endDate ),
-		};
+		const range = this.toDateRange( this.state.startDate, this.state.endDate );
 
 		const rawDay = this.momentDateToNative( date );
 
@@ -145,51 +187,49 @@ export class DateRange extends Component {
 		// Edge case: Range can sometimes be from: null, to: null
 		if ( ! newRange.from || ! newRange.to ) return;
 
+		// Update state to reflect new date range for
+		// calendar and text inputs
 		this.setState(
 			previousState => {
 				let newState = {
 					startDate: this.nativeDateToMoment( newRange.from ),
 					endDate: this.nativeDateToMoment( newRange.to ),
-					inputFromDate: this.nativeDateToMoment( newRange.from ).format( 'L' ),
-					inputToDate: this.nativeDateToMoment( newRange.to ).format( 'L' ),
+					textInputStartDate: this.nativeDateToMoment( newRange.from ).format( 'L' ),
+					textInputEndDate: this.nativeDateToMoment( newRange.to ).format( 'L' ),
 				};
 
 				// For first date selection only: "cache" previous dates
 				// just in case user doesn't "Apply" and we need to revert
 				// to the original dates
-				if ( ! this.state.oldDatesSaved ) {
+				if ( ! this.state.staleDatesSaved ) {
 					newState = Object.assign( {}, newState, {
-						oldStartDate: previousState.startDate,
-						oldEndDate: previousState.endDate,
-						oldDatesSaved: true, // marks that we have saved old dates
+						staleStartDate: previousState.startDate,
+						staleEndDate: previousState.endDate,
+						staleDatesSaved: true, // marks that we have saved stale dates
 					} );
 				}
 
 				return newState;
 			},
-			() => this.props.onDateSelect( this.state.startDate, this.state.endDate )
+			() => {
+				// Trigger callback prop to allow parent components to consume
+				// this components state
+				this.props.onDateSelect( this.state.startDate, this.state.endDate );
+			}
 		);
 	}
 
-	revertDates() {
-		this.setState( previousState => {
-			const newState = { oldDatesSaved: false };
-
-			if ( previousState.oldStartDate && previousState.oldEndDate ) {
-				newState.startDate = previousState.oldStartDate;
-				newState.endDate = previousState.oldEndDate;
-			}
-
-			return newState;
-		} );
-	}
-
+	/**
+	 * Updates the "stale" data to reflect the current start/end dates
+	 * This causes any cached data to be lost and thus the current start/end
+	 * dates are persisted. Typically called when user clicks "Apply"
+	 */
 	commitDates() {
 		this.setState(
 			previousState => ( {
-				oldStartDate: previousState.startDate, // update cached old dates
-				oldEndDate: previousState.endDate, // update cached old dates
-				oldDatesSaved: false,
+				staleStartDate: previousState.startDate, // update cached stale dates
+				staleEndDate: previousState.endDate, // update cached stale dates
+				staleDatesSaved: false,
 			} ),
 			() => {
 				this.props.onDateCommit( this.state.startDate, this.state.endDate );
@@ -198,18 +238,66 @@ export class DateRange extends Component {
 		);
 	}
 
+	/**
+	 * Reverts current start/end dates to the cache "stale" versions
+	 * Typically required when the user makes a selection but then dismisses
+	 * the DateRange without clicking "Apply"
+	 */
+	revertDates() {
+		this.setState( previousState => {
+			const newState = { staleDatesSaved: false };
+
+			if ( previousState.staleStartDate && previousState.staleEndDate ) {
+				newState.startDate = previousState.staleStartDate;
+				newState.endDate = previousState.staleEndDate;
+				newState.textInputStartDate = this.dateToHumanReadable( this.state.staleStartDate );
+				newState.textInputEndDate = this.dateToHumanReadable( this.state.staleEndDate );
+			}
+
+			return newState;
+		} );
+	}
+
+	/**
+	 * Converts a moment date to a native JS Date object
+	 * @param  {MomentJSDate} momentDate a momentjs date object to convert
+	 * @return {DATE}            the converted JS Date object
+	 */
 	momentDateToNative( momentDate ) {
 		return momentDate.toDate();
 	}
 
+	/**
+	 * Converts a native JS Date object to a MomentJS Date object
+	 * @param  {Date} nativeDate date to be converted
+	 * @return {MomentJSDate}            the converted Date
+	 */
 	nativeDateToMoment( nativeDate ) {
 		return this.props.moment( nativeDate );
 	}
 
+	/**
+	 * Formats a given date to the appropriate format for the
+	 * current locale
+	 * @param  {Date|MomentJSDate} date the date to be converted
+	 * @return {String}      the date as a formatted locale string
+	 */
 	dateToHumanReadable( date ) {
 		return this.props.moment( date ).format( 'L' );
 	}
 
+	/**
+	 * 	Gets the locale appropriate date format (eg: "MM/DD/YYYY")
+	 * @return {String} date format as a string
+	 */
+	getLocaleDateFormat() {
+		return this.props.moment.localeData().longDateFormat( 'L' );
+	}
+
+	/**
+	 * Renders the Popover component
+	 * @return {ReactComponent} the Popover component
+	 */
 	renderPopover() {
 		const popoverClassNames = classNames( {
 			'date-range__popover': true,
@@ -220,15 +308,15 @@ export class DateRange extends Component {
 			<Popover
 				className={ popoverClassNames }
 				isVisible={ this.state.popoverVisible }
-				context={ this.startButtonRef.current }
+				context={ this.triggerButtonRef.current }
 				position="bottom"
 				onClose={ this.togglePopover }
 			>
 				<div className="date-range__popover-inner">
 					<DateRangeHeader onApplyClick={ this.commitDates } onCancelClick={ this.togglePopover } />
 					<DateRangeInputs
-						fromDateValue={ this.state.inputFromDate }
-						toDateValue={ this.state.inputToDate }
+						fromDateValue={ this.state.textInputStartDate }
+						toDateValue={ this.state.textInputEndDate }
 						onInputChange={ this.handleInputChange }
 						onInputBlur={ this.handleInputBlur }
 					/>
@@ -238,6 +326,10 @@ export class DateRange extends Component {
 		);
 	}
 
+	/**
+	 * Renders the DatePicker component
+	 * @return {ReactComponent} the DatePicker component
+	 */
 	renderDatePicker() {
 		const now = new Date();
 
@@ -262,6 +354,10 @@ export class DateRange extends Component {
 		);
 	}
 
+	/**
+	 * Renders the component
+	 * @return {ReactComponent} the DateRange component
+	 */
 	render() {
 		const rootClassNames = classNames( {
 			'date-range': true,
@@ -273,7 +369,7 @@ export class DateRange extends Component {
 				<DateRangeTrigger
 					startDateText={ this.dateToHumanReadable( this.state.startDate ) }
 					endDateText={ this.dateToHumanReadable( this.state.endDate ) }
-					buttonRef={ this.startButtonRef }
+					buttonRef={ this.triggerButtonRef }
 					onTriggerClick={ this.togglePopover }
 				/>
 				{ this.renderPopover() }
