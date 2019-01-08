@@ -74,7 +74,7 @@ class UpworkBanner extends PureComponent {
 				role="button"
 				style={ { backgroundColor: '#DAF5FC' } }
 				onClick={ this.onStartNowClick }
-				href={ '/experts/upwork?source=stat-banner' }
+				href={ '/experts/upwork?source=theme-banner' }
 				target="_blank"
 				rel="noopener noreferrer"
 			>

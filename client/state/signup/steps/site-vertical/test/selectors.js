@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getSiteVerticalName, getSiteVerticalSlug } from '../selectors';
+import { getSiteVerticalName, getSiteVerticalSlug, getSiteVerticalIsUserInput } from '../selectors';
 
 describe( 'selectors', () => {
 	const state = {
@@ -12,6 +12,7 @@ describe( 'selectors', () => {
 				siteVertical: {
 					name: 'felice',
 					slug: 'happy',
+					isUserInput: false,
 				},
 			},
 		},
@@ -32,6 +33,17 @@ describe( 'selectors', () => {
 
 		test( 'should return site vertical from the state', () => {
 			expect( getSiteVerticalSlug( state ) ).toEqual( state.signup.steps.siteVertical.slug );
+		} );
+	} );
+	describe( 'getSiteVerticalIsUserInput', () => {
+		test( 'should return true as a default state', () => {
+			expect( getSiteVerticalIsUserInput( {} ) ).toBe( true );
+		} );
+
+		test( 'should return site vertical from the state', () => {
+			expect( getSiteVerticalIsUserInput( state ) ).toEqual(
+				state.signup.steps.siteVertical.isUserInput
+			);
 		} );
 	} );
 } );

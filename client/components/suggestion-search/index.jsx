@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop, uniq, startsWith } from 'lodash';
+import { escapeRegExp, noop, uniq, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -49,7 +49,6 @@ class SuggestionSearch extends Component {
 
 	handleSuggestionChangeEvent = ( { target: { value } } ) => {
 		this.setState( { query: value, inputValue: value } );
-
 		this.props.onChange( value );
 	};
 
@@ -148,7 +147,7 @@ class SuggestionSearch extends Component {
 				/>
 				<Suggestions
 					ref={ this.setSuggestionsRef }
-					query={ this.state.query }
+					query={ escapeRegExp( this.state.query ) }
 					suggestions={ this.getSuggestions() }
 					suggest={ this.handleSuggestionMouseDown }
 				/>
