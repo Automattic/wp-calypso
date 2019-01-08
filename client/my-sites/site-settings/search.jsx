@@ -14,7 +14,7 @@ import { overSome } from 'lodash';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -166,7 +166,7 @@ class Search extends Component {
 				  );
 			return (
 				<div>
-					<SectionHeader label={ translate( 'Jetpack Search' ) } />
+					<SettingsSectionHeader title={ translate( 'Jetpack Search' ) } />
 
 					<Banner
 						description={
@@ -196,7 +196,7 @@ class Search extends Component {
 			<div className="site-settings__search-block">
 				{ siteId && <QueryJetpackConnection siteId={ siteId } /> }
 
-				<SectionHeader label={ translate( 'Jetpack Search' ) } />
+				<SettingsSectionHeader title={ translate( 'Jetpack Search' ) } />
 
 				<CompactCard className="search__card site-settings__traffic-settings">
 					{ siteIsJetpack ? this.renderJetpackSettings() : this.renderWPComSettings() }
