@@ -3,28 +3,28 @@
 /**
  * Internal dependencies
  */
-import AddGoogleApps from './add-google-apps';
+
 import ContactsPrivacy from './contacts-privacy';
 import Dns from './dns';
 import DomainConnectMapping from './domain-connect-mapping';
 import Edit from './edit';
-import TransferIn from './edit/transfer-in';
 import EditContactInfo from './edit-contact-info';
-import ManageConsent from './manage-consent';
 import Email from './email';
 import EmailForwarding from './email-forwarding';
+import GSuiteAddUsers from './gsuite/gsuite-add-users';
 import List from './list';
+import ManageConsent from './manage-consent';
 import NameServers from './name-servers';
 import PrimaryDomain from './primary-domain';
 import PrivacyProtection from './privacy-protection';
 import SiteRedirect from './site-redirect';
+import Transfer from './transfer';
+import TransferIn from './edit/transfer-in';
 import TransferOut from './transfer/transfer-out';
 import TransferToOtherSite from './transfer/transfer-to-other-site';
 import TransferToOtherUser from './transfer/transfer-to-other-user';
-import Transfer from './transfer';
 
 export default {
-	AddGoogleApps,
 	ContactsPrivacy,
 	Dns,
 	DomainConnectMapping,
@@ -33,6 +33,7 @@ export default {
 	ManageConsent,
 	Email,
 	EmailForwarding,
+	GSuiteAddUsers,
 	List,
 	NameServers,
 	PrimaryDomain,

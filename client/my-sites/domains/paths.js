@@ -26,13 +26,13 @@ export function domainManagementEdit( siteName, domainName, slug ) {
 	return domainManagementRoot() + '/' + domainName + '/' + slug + '/' + siteName;
 }
 
-export function domainManagementAddGoogleApps( siteName, domainName ) {
+export function domainManagementAddGSuiteUsers( siteName, domainName ) {
 	let path;
 
 	if ( domainName ) {
-		path = domainManagementEdit( siteName, domainName, 'add-google-apps' );
+		path = domainManagementEdit( siteName, domainName, 'add-gsuite-users' );
 	} else {
-		path = domainManagementRoot() + '/add-google-apps/' + siteName;
+		path = domainManagementRoot() + '/add-gsuite-users/' + siteName;
 	}
 
 	return path;

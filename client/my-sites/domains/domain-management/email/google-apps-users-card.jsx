@@ -16,7 +16,7 @@ import Button from 'components/button';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import CompactCard from 'components/card/compact';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { domainManagementAddGoogleApps } from 'my-sites/domains/paths';
+import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
 import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
 import GoogleAppsUserItem from './google-apps-user-item';
 import Notice from 'components/notice';
@@ -62,7 +62,7 @@ class GoogleAppsUsers extends React.Component {
 						<Button
 							primary
 							compact
-							href={ domainManagementAddGoogleApps( this.props.selectedSite.slug, domain ) }
+							href={ domainManagementAddGSuiteUsers( this.props.selectedSite.slug, domain ) }
 							onClick={ this.goToAddGoogleApps }
 						>
 							{ this.props.translate( 'Add G Suite User' ) }

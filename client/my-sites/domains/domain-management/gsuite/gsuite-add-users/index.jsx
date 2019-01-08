@@ -18,7 +18,7 @@ import { hasGoogleAppsSupportedDomain } from 'lib/domains';
 import Main from 'components/main';
 import SectionHeader from 'components/section-header';
 
-class AddGoogleApps extends React.Component {
+class GSuiteAddUsers extends React.Component {
 	componentDidMount() {
 		this.redirectIfCannotAddEmail();
 	}
@@ -84,14 +84,12 @@ class AddGoogleApps extends React.Component {
 	}
 }
 
-AddGoogleApps.propTypes = {
+GSuiteAddUsers.propTypes = {
 	domains: PropTypes.array.isRequired,
 	isRequestingSiteDomains: PropTypes.bool.isRequired,
 	selectedDomainName: PropTypes.string.isRequired,
-	selectedSite: PropTypes.shape( {
-		slug: PropTypes.string.isRequired,
-	} ).isRequired,
+	selectedSite: PropTypes.object.isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( AddGoogleApps );
+export default localize( GSuiteAddUsers );
