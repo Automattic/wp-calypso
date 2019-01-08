@@ -6,7 +6,7 @@
 
 .editor-publish-date__wrapper {
 	background: $white;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	border-width: 1px 1px 2px;
 	border-radius: 4px;
 	box-sizing: border-box;
@@ -25,7 +25,7 @@
 	height: #{$option-height}px;
 	line-height: #{$option-height}px;
 
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	font-weight: 600;
 	white-space: nowrap;
@@ -46,12 +46,12 @@
 	.editor-publish-date.is-open & {
 		border-radius: 4px 4px 0 0;
 		box-shadow: none;
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 	}
 
 	// Chevron
 	.gridicon.editor-publish-date__header-chevron {
-		fill: $gray-darken-20;
+		fill: var( --color-neutral-500 );
 		position: absolute;
 		top: 11px;
 		right: 16px;
@@ -66,7 +66,7 @@
 	&.is-scheduled {
 		.editor-publish-date__header-icon,
 		.editor-publish-date__header-description {
-			color: $orange-jazzy;
+			color: var( --color-primary );
 		}
 	}
 }
@@ -119,18 +119,18 @@
 	top: 16px;
 	font-size: 12px;
 	line-height: 18px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .editor-publish-date__schedule {
 	overflow-y: auto;
 	position: static;
-	border-top: 1px solid $gray-lighten-20;
+	border-top: 1px solid var( --color-neutral-100 );
 	padding: 0 10px;
 
 	&.is-scheduled {
 		.DayPicker-Day.DayPicker-Day--is-selected > .date-picker__day {
-			background-color: $orange-jazzy;
+			background-color: var( --color-primary );
 		}
 	}
 }

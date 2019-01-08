@@ -17,18 +17,18 @@
 
 .editor-slug .form-text-input {
 	border: none;
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	font-size: 13px;
 	padding: 4px 0;
 	width: 200px;
 	&:focus {
 		box-shadow: none;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 
 .editor-slug__url-path {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	font-size: 13px;
 	margin-right: 0;
 	cursor: pointer;

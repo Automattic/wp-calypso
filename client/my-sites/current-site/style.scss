@@ -16,7 +16,7 @@
 		}
 
 		.site__title {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 			line-height: 35px;
 		}
 
@@ -80,10 +80,10 @@
 
 		.button.is-borderless:hover,
 		.button.is-borderless:focus {
-			color: var( --color-accent );
+			color: var( --color-primary );
 
 			.gridicon {
-				fill: var( --color-accent );
+				fill: var( --color-primary );
 			}
 		}
 	}

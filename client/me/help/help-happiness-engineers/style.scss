@@ -16,7 +16,7 @@
 .help-happiness-engineers__description {
 	margin: -16px 0 12px 0;
 	font: 14px/21px $sans;
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	@include breakpoint( '>660px' ) {
 		margin: -16px 0 20px 0;
 	}

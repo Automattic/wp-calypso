@@ -4,7 +4,7 @@
 	padding: 15px 0 15px 36px;
 	position: relative;
 	background: $white;
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	cursor: pointer;
 
 	@include breakpoint( '>660px' ) {
@@ -24,5 +24,5 @@
 
 .mobile-back-to-sidebar__content {
 	font-size: 15px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }

@@ -2,7 +2,7 @@
 	margin: 0;
 	font-size: 28px;
 	line-height: 1.5;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 
 	&.is-placeholder {
 		@include placeholder( 23% );
@@ -37,7 +37,7 @@
 	left: 0;
 	top: 50%;
 	right: 0;
-	border-top: 2px solid $orange-fire;
+	border-top: 2px solid var( --color-primary );
 	transform: rotate( -16deg );
 	opacity: 0.9;
 }

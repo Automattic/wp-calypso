@@ -9,7 +9,7 @@
 }
 
 .reader__featured-title {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	display: block;
 	font-size: 14px;
 	line-height: 1.6;
@@ -24,7 +24,7 @@
 	position: relative;
 	left: -24px;
 	width: calc( 100% + 48px );
-	background-color: $gray-dark;
+	background-color: var( --color-neutral-700 );
 
 	// Break into 3 columns on larger screens
 	@include breakpoint( '>960px' ) {
@@ -38,7 +38,7 @@
 	position: relative;
 	margin: 0;
 	min-height: 118px;
-	background-color: $gray-dark;
+	background-color: var( --color-neutral-700 );
 	transition: all 0.1s ease-in-out;
 	cursor: pointer;
 	z-index: z-index( 'root', '.reader__featured-post' );
@@ -49,7 +49,7 @@
 		min-height: 216px;
 
 		&:hover {
-			background-color: $gray-darken-30;
+			background-color: var( --color-neutral-600 );
 		}
 	}
 }

@@ -6,8 +6,8 @@
 	flex-direction: column;
 	flex: 2 0 0%;
 	margin: 80px 0 0;
-	background-color: $gray-light;
-	border: 1px solid $gray-lighten-20;
+	background-color: var( --color-neutral-0 );
+	border: 1px solid var( --color-neutral-100 );
 
 	@include breakpoint( '>660px' ) {
 		display: block;
@@ -42,7 +42,7 @@
 	}
 
 	.segmented-control__item .segmented-control__link {
-		border-color: $gray-lighten-20;
+		border-color: var( --color-neutral-100 );
 	}
 
 	.segmented-control__item:first-of-type .segmented-control__link {
@@ -51,11 +51,11 @@
 
 	.segmented-control__item:last-of-type .segmented-control__link {
 		border-bottom-right-radius: 0;
-		border-left-color: $gray-lighten-20;
+		border-left-color: var( --color-neutral-100 );
 	}
 
 	.segmented-control__item.is-selected .segmented-control__link {
-		border-bottom-color: $gray-light;
+		border-bottom-color: var( --color-neutral-0 );
 	}
 }
 
@@ -86,10 +86,10 @@
 	height: 28px;
 	/*rtl:ignore*/
 	transform: translate( 25%, -25% );
-	border: 1px solid $gray-lighten-10;
+	border: 1px solid var( --color-neutral-200 );
 	border-radius: 50%;
-	background-color: $gray-light;
-	color: $gray-lighten-10;
+	background-color: var( --color-neutral-0 );
+	color: var( --color-neutral-200 );
 	cursor: pointer;
 }
 
@@ -120,7 +120,7 @@
 
 	&:disabled {
 		opacity: 0.9;
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 	}
 }
 
@@ -203,7 +203,7 @@ input.editor-media-modal-gallery__caption[type='text'] {
 	&::after {
 		top: calc( 146px + 2% );
 		height: 240px;
-		background: $gray-lighten-10;
+		background: var( --color-neutral-200 );
 	}
 
 	&.is-loading::before,
@@ -292,8 +292,8 @@ input[type].editor-media-modal-gallery__input-width-auto {
 }
 
 .editor-media-modal-gallery__preview-individual .wp-caption-dd {
-	background: $gray-light;
-	color: $gray-darken-20;
+	background: var( --color-neutral-0 );
+	color: var( --color-neutral-500 );
 	font-size: 14px;
 	line-height: 1.7;
 	padding: 16px;

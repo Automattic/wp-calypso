@@ -35,7 +35,7 @@
 
 	.reader-feed-header__site-title-link,
 	.reader-feed-header__site-title-link:visited {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	&::after {
@@ -203,7 +203,7 @@
 	.feed-header__description,
 	.feed-header__follow-count {
 		color: transparent;
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }

@@ -1,7 +1,7 @@
 .order-details__table {
 	margin: 0 -24px;
 	box-shadow: none;
-	border-bottom: 1px solid $gray-lighten-30;
+	border-bottom: 1px solid var( --color-neutral-0 );
 
 	.order-details__item-sku {
 		display: block;
@@ -21,7 +21,7 @@
 	}
 
 	thead .table-heading {
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 	}
 
 	.table-row {
@@ -69,7 +69,7 @@
 .order-details__actions {
 	margin: 0 -24px;
 	padding: 16px 80px 16px 24px;
-	border-bottom: 1px solid $gray-lighten-30;
+	border-bottom: 1px solid var( --color-neutral-0 );
 
 	.button + .button {
 		margin-left: 24px;
@@ -77,7 +77,7 @@
 
 	.button {
 		&.is-borderless {
-			color: $blue-wordpress;
+			color: var( --color-primary );
 
 			&:hover {
 				color: $link-highlight;
@@ -110,12 +110,12 @@
 	.order-details__coupon-list {
 		.table-item {
 			padding-left: 24px;
-			border-bottom: 1px solid $gray-lighten-30;
+			border-bottom: 1px solid var( --color-neutral-0 );
 			padding-bottom: 16px;
 		}
 
 		.table-item:not( .is-row-heading ) {
-			border-bottom: 1px solid $gray-lighten-30;
+			border-bottom: 1px solid var( --color-neutral-0 );
 			padding-top: 0;
 			vertical-align: top;
 		}
@@ -140,7 +140,7 @@
 		color: $alert-red;
 
 		.table-item {
-			border-bottom: 1px solid $gray-lighten-30;
+			border-bottom: 1px solid var( --color-neutral-0 );
 			padding-bottom: 16px;
 		}
 

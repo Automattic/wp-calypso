@@ -14,14 +14,14 @@
 		justify-content: flex-start;
 		cursor: pointer;
 		padding: 8px 0;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		background: $white;
-		border-bottom: 1px solid $gray-lighten-20;
+		border-bottom: 1px solid var( --color-neutral-100 );
 	}
 
 	.current-section__site-title {
 		font-size: 10px;
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		margin: 2px 0 -3px;
 	}
 

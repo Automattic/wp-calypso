@@ -6,7 +6,11 @@
 	&.is-focused {
 		border-color: var( --color-primary );
 		outline: none;
-		box-shadow: 0 0 0 2px var( --color-primary-light );
+		box-shadow: 0 0 0 2px var( --color-primary-100 );
+
+		&:hover {
+			box-shadow: 0 0 0 2px var( --color-primary-200 );
+		}
 
 		&.is-valid {
 			box-shadow: 0 0 0 2px lighten( $alert-green, 35 );
@@ -26,18 +30,18 @@
 	}
 
 	&.is-disabled {
-		background: $gray-light;
-		border-color: $gray-lighten-30;
-		color: $gray-lighten-10;
+		background: var( --color-neutral-0 );
+		border-color: var( --color-neutral-0 );
+		color: var( --color-neutral-200 );
 		opacity: 1;
-		-webkit-text-fill-color: $gray-lighten-10;
+		-webkit-text-fill-color: var( --color-neutral-200 );
 
 		&:hover {
 			cursor: default;
 		}
 
 		&::placeholder {
-			color: $gray-lighten-10;
+			color: var( --color-neutral-200 );
 		}
 	}
 

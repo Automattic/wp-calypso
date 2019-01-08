@@ -6,7 +6,7 @@
 
 	.formatted-header__title {
 		font-family: $serif;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 34px;
 		font-weight: bold;
 		line-height: 1.2em;

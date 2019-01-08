@@ -15,7 +15,7 @@
 
 		.button {
 			&.is-borderless {
-				color: $blue-wordpress;
+				color: var( --color-primary );
 
 				&:hover {
 					color: $link-highlight;
@@ -87,7 +87,6 @@
 
 // PAYMENT-METHOD-ROW
 .payments__type-container {
-
 	p.payments__method-suggested {
 		font-size: 11px;
 		text-transform: uppercase;
@@ -102,8 +101,7 @@
 		padding: 0;
 	}
 
-	p.payments__method-information
-	p.payments__method-name {
+	p.payments__method-information p.payments__method-name {
 		font-size: 14px;
 	}
 
@@ -237,7 +235,7 @@
 .payments__method-loading-feelink,
 .payments__method-loading-enabled,
 .payments__method-loading-settings {
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 

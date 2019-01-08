@@ -28,7 +28,7 @@
 		}
 
 		&.gridicons-mail {
-			fill: darken( $gray, 20 );
+			fill: var( --color-neutral-500 );
 
 			@include breakpoint( '<480px' ) {
 				height: 24px;
@@ -38,9 +38,9 @@
 
 		&.gridicons-cross {
 			fill: white;
-			background: $gray-dark;
+			background: var( --color-neutral-700 );
 			border-radius: 100%;
-			box-shadow: 0 0 0 3px $gray-light;
+			box-shadow: 0 0 0 3px var( --color-neutral-0 );
 
 			@include breakpoint( '<480px' ) {
 				height: 16px;
@@ -54,7 +54,7 @@
 	h1 {
 		font-size: 32px;
 		line-height: 1.2;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 
 		@include breakpoint( '<480px' ) {
 			font-size: 24px;
@@ -62,7 +62,7 @@
 	}
 
 	p {
-		color: darken( $gray, 20 );
+		color: var( --color-neutral-500 );
 		margin: 0;
 	}
 }
@@ -77,12 +77,12 @@
 
 	h4 {
 		font-weight: bold;
-		color: darken( $gray, 20 );
+		color: var( --color-neutral-500 );
 		font-size: 15px;
 	}
 
 	p {
-		color: darken( $gray, 10 );
+		color: var( --color-neutral-400 );
 		margin: 0;
 		font-size: 15px;
 	}

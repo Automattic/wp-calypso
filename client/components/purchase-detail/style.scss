@@ -1,6 +1,6 @@
 .purchase-detail {
 	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
-		0 1px 2px $gray-lighten-30;
+		0 1px 2px var( --color-neutral-0 );
 	box-sizing: border-box;
 	color: var( --color-text-subtle );
 	height: 100%;
@@ -81,7 +81,7 @@
 }
 
 .purchase-detail__icon {
-	background: $gray-darken-20;
+	background: var( --color-neutral-500 );
 	border-radius: 50%;
 	color: $white;
 	margin-bottom: 10px;
@@ -136,7 +136,7 @@
 
 .purchase-detail__title {
 	clear: none;
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	font-size: 21px;
 }
 

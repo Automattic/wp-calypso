@@ -5,7 +5,7 @@
 
 	.editor-html-toolbar__wrapper {
 		background-color: rgba( $white, 0.92 );
-		border-color: $gray-lighten-20;
+		border-color: var( --color-neutral-100 );
 		border-style: solid;
 		border-left-width: 1px;
 		border-right-width: 1px;
@@ -101,8 +101,8 @@
 	}
 
 	.button {
-		border-right: 1px solid $gray-lighten-30;
-		color: $gray-darken-20;
+		border-right: 1px solid var( --color-neutral-0 );
+		color: var( --color-neutral-500 );
 		height: 26px;
 		margin: 6px 0;
 		padding: 4px 12px;
@@ -121,7 +121,7 @@
 		}
 
 		&:hover {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 
 		&:last-child {
@@ -135,7 +135,7 @@
 	height: 38px;
 
 	.editor-html-toolbar__button-insert-content-dropdown.button {
-		border-right: 1px solid $gray-lighten-30;
+		border-right: 1px solid var( --color-neutral-0 );
 		height: 38px;
 		margin: 0;
 		min-width: auto;
@@ -168,7 +168,7 @@
 
 .editor-html-toolbar__insert-content-dropdown {
 	background-color: $white;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	border-radius: 0 0 4px 4px;
 	display: none;
 	left: 0;
@@ -226,7 +226,7 @@
 	font-family: $code;
 }
 .editor-html-toolbar__button-close-tags.button[disabled]:hover {
-	color: $gray-lighten-30;
+	color: var( --color-neutral-0 );
 }
 
 .editor-html-toolbar__dialog {

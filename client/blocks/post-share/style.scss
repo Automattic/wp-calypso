@@ -124,7 +124,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	align-items: center;
 	cursor: pointer;
 	display: flex;
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 	margin-top: 16px;
 
 	&:first-of-type {
@@ -136,7 +136,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	}
 
 	&.is-active {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 
@@ -423,14 +423,14 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 }
 
 .post-share__external-url {
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 	transition: color 200ms;
 	height: 24px;
 	width: 24px;
 
 	&:hover,
 	&:focus {
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 	}
 }
 

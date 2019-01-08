@@ -1,4 +1,3 @@
-
 // Reader Sidebar
 .is-group-reader .sidebar {
 	overflow-x: hidden;
@@ -23,7 +22,7 @@
 
 			.gridicon {
 				@include breakpoint( '<660px' ) {
-					fill: var( --color-accent );
+					fill: var( --color-primary );
 				}
 			}
 
@@ -31,25 +30,25 @@
 			li > a:visited,
 			:not( .sidebar__button ) {
 				@include breakpoint( '<660px' ) {
-					color: var( --color-accent );
+					color: var( --color-primary );
 				}
 			}
 		}
 
 		.is-action-button-selected {
-			background-color: $gray-light;
+			background-color: var( --color-neutral-0 );
 
 			.gridicon {
-				fill: $gray-darken-20;
+				fill: var( --color-neutral-500 );
 			}
 
 			.sidebar__menu-item-label,
 			.menu-link-text {
-				color: $gray-dark;
+				color: var( --color-neutral-700 );
 			}
 
 			.sidebar__button {
-				background-color: $gray-darken-10;
+				background-color: var( --color-neutral-400 );
 				color: $white;
 			}
 		}
@@ -65,7 +64,7 @@
 		}
 
 		.sidebar__heading {
-			color: $gray-darken-30;
+			color: var( --color-neutral-600 );
 			cursor: pointer;
 			font-weight: normal;
 			margin: 0;
@@ -86,11 +85,11 @@
 			}
 
 			&:hover {
-				color: var( --color-accent );
-				background-color: $gray-light;
+				color: var( --color-primary );
+				background-color: var( --color-neutral-0 );
 
 				.gridicon {
-					fill: var( --color-accent );
+					fill: var( --color-primary );
 				}
 			}
 		}
@@ -110,8 +109,8 @@
 
 		&.is-toggle-open {
 			.sidebar__heading {
-				background-color: $gray-light;
-				box-shadow: 0 1px 0 lighten( $gray, 20 ), 0 -1px 0 lighten( $gray, 20 );
+				background-color: var( --color-neutral-0 );
+				box-shadow: 0 1px 0 var( --color-neutral-100 ), 0 -1px 0 var( --color-neutral-100 );
 
 				.gridicon {
 					transform: rotate( 180deg );
@@ -137,9 +136,9 @@
 
 				.add-new {
 					background: $white;
-					border: 1px solid $gray-lighten-20;
+					border: 1px solid var( --color-neutral-100 );
 					border-radius: 3px;
-					color: $gray-darken-10;
+					color: var( --color-neutral-400 );
 					font-size: 11px;
 					padding: 6px 7px;
 					position: absolute;
@@ -175,7 +174,7 @@
 
 		.selected .sidebar__menu-item-label {
 			@include breakpoint( '<660px' ) {
-				color: var( --color-accent );
+				color: var( --color-primary );
 			}
 		}
 	}
@@ -183,7 +182,7 @@
 	.sidebar__menu-empty,
 	.sidebar__menu-empty:hover {
 		background-color: transparent !important; // needs to be more specific
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 13px;
 		max-width: 60%;
 		padding-right: 32px;
@@ -204,13 +203,13 @@
 		padding: 8px 16px 8px 55px;
 
 		&::after {
-			@include long-content-fade( $color: hex-to-rgb( $gray-lighten-30 ), $size: 20px );
+			@include long-content-fade( $color: var( --sidebar-background-gradient ), $size: 20px );
 			padding-right: 50px;
 		}
 
 		.sidebar__menu-item-tagname {
 			&::after {
-				@include long-content-fade( $color: hex-to-rgb( $gray-lighten-30 ), $size: 20px );
+				@include long-content-fade( $color: var( --sidebar-background-gradient ), $size: 20px );
 				right: 60px;
 			}
 		}
@@ -223,7 +222,7 @@
 	}
 
 	.sidebar__menu-add-button {
-		border: 1px solid $gray-lighten-20;
+		border: 1px solid var( --color-neutral-100 );
 		border-radius: 3px;
 		padding: 6px 7px;
 		position: absolute;

@@ -11,7 +11,7 @@
 	font-size: 21px;
 	font-weight: 300;
 	line-height: 24px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	clear: none;
 }
 
@@ -19,7 +19,7 @@
 .action-panel__body {
 	font-size: 14px;
 	line-height: 20px;
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	overflow: hidden;
 
 	p {
@@ -64,7 +64,7 @@ a.action-panel__body-text-link {
 
 .action-panel__figure-list {
 	margin: 0 0 20px;
-	border: solid 1px $gray-lighten-20;
+	border: solid 1px var( --color-neutral-100 );
 	border-radius: 4px;
 	list-style: none;
 	text-align: left;
@@ -74,10 +74,10 @@ a.action-panel__body-text-link {
 	box-sizing: border-box;
 	width: 100%;
 	padding: 12px 16px;
-	border-top: solid 1px $gray-lighten-20;
+	border-top: solid 1px var( --color-neutral-100 );
 	font-size: 14px;
 	line-height: 18px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 
 	&:first-child {
 		border-top: none;
@@ -96,7 +96,7 @@ a.action-panel__body-text-link {
 		left: -16px;
 		right: -16px;
 		height: 1px;
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 
 		@include breakpoint( '>480px' ) {
 			left: -24px;

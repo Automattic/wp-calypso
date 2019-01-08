@@ -47,7 +47,7 @@
 	}
 
 	.notice.is-info {
-		color: $gray-light;
+		color: var( --color-neutral-0 );
 		padding: 0;
 		margin: 20px auto 0;
 	}
@@ -140,7 +140,7 @@
 }
 
 .auth__lost-password a {
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 }
 
 // should be a new component
@@ -173,7 +173,7 @@
 
 .auth__links a:hover,
 .auth__links a:focus {
-	color: $gray-light;
+	color: var( --color-neutral-0 );
 }
 
 .auth__self-hosted-instructions {

@@ -22,7 +22,7 @@
 
 .domain-management-form-footer,
 .primary-domain__actions {
-	border-top: 1px solid $gray-light;
+	border-top: 1px solid var( --color-neutral-0 );
 	margin: 16px -16px -16px -16px;
 	padding: 16px;
 	display: flex;
@@ -78,11 +78,11 @@
 
 .domain-management-list-item {
 	&.busy {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 
 		.domain-management-list-item__title,
 		.domain-management-list-item__meta {
-			color: $gray-lighten-20;
+			color: var( --color-neutral-100 );
 		}
 	}
 }
@@ -100,7 +100,7 @@
 
 .domain-management-list-item__title {
 	display: block;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	font-weight: 600;
 	text-overflow: ellipsis;
@@ -167,7 +167,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 .domain-management-list-item__busy-message {
 	text-transform: uppercase;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-weight: 600;
 	font-size: 12px;
 	text-overflow: ellipsis;
@@ -191,9 +191,9 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 
 	.primary-domain-notice {
-		background: $gray-lighten-30;
+		background: var( --color-neutral-0 );
 		font-size: 13px;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		&::before {
 			line-height: 1.5em;
 		}
@@ -218,8 +218,8 @@ input[type='radio'].domain-management-list-item__radio {
 
 	.contact-display {
 		h2 {
-			background-color: $gray-light;
-			border: 1px solid $gray-lighten-30;
+			background-color: var( --color-neutral-0 );
+			border: 1px solid var( --color-neutral-0 );
 			border-bottom: 0;
 			color: $gray;
 			font-size: 11px;
@@ -232,7 +232,7 @@ input[type='radio'].domain-management-list-item__radio {
 		}
 
 		.contact-display-content {
-			border: 1px solid $gray-lighten-30;
+			border: 1px solid var( --color-neutral-0 );
 			color: lighten( $gray-dark, 20% );
 			font-size: 12px;
 			line-height: 140%;
@@ -277,8 +277,8 @@ input[type='radio'].domain-management-list-item__radio {
 		width: 100%;
 
 		&.is-busy:disabled {
-			border-color: $gray-lighten-20;
-			color: $gray-darken-20;
+			border-color: var( --color-neutral-100 );
+			color: var( --color-neutral-500 );
 		}
 
 		@include breakpoint( '>480px' ) {
@@ -371,7 +371,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 	&.fetching input[type='text'] {
 		animation: pulse-light 0.8s ease-in-out infinite;
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 	}
 }
 
@@ -381,7 +381,7 @@ input[type='radio'].domain-management-list-item__radio {
 	.email-forwarding__limit,
 	.dns__form-content,
 	.form-content {
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		overflow: visible;
 		padding-top: 20px;
 	}
@@ -408,7 +408,7 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 
 	.domain-connect__footer {
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		padding-top: 10px;
 	}
 
@@ -431,7 +431,7 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 
 	.domain-connect__dns-records {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 		color: var( --color-text-subtle );
 
 		* {
@@ -460,7 +460,7 @@ ul.email-forwarding__list {
 	padding: 0;
 
 	li {
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		overflow: auto;
 		padding: 10px 0;
 		position: relative;
@@ -515,7 +515,7 @@ ul.email-forwarding__list {
 }
 
 .privacy-protection-card__header {
-	border-bottom: 1px solid $gray-lighten-30;
+	border-bottom: 1px solid var( --color-neutral-0 );
 	display: block;
 	overflow: auto;
 	padding: 16px 16px 20px;
@@ -600,7 +600,7 @@ ul.email-forwarding__list {
 	}
 
 	h5 {
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		font-size: 12px;
 		line-height: 130%;
 		margin: 9px 0;
@@ -632,7 +632,7 @@ ul.email-forwarding__list {
 	}
 
 	h2 {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 16px;
 		font-weight: 400;
 		line-height: 120%;
@@ -811,7 +811,7 @@ ul.domain-connect__dns-list,
 
 	li,
 	.dns__domain-connect-record-wrap {
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		display: flex;
 		justify-content: space-between;
 		overflow: auto;
@@ -866,7 +866,7 @@ ul.domain-connect__dns-list,
 
 .dns__domain-connect-record {
 	margin: 0;
-	border-top: 1px solid $gray-light;
+	border-top: 1px solid var( --color-neutral-0 );
 	display: flex;
 	justify-content: space-between;
 
@@ -891,12 +891,12 @@ ul.domain-connect__dns-list,
 }
 
 .domain-only-site__settings-notice {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	margin-top: 30px;
 	text-align: center;
 
 	&::before {
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 		content: '';
 		display: block;
 		height: 1px;

@@ -1,7 +1,7 @@
 .plugins-browser-list {
 	margin-bottom: 16px;
 	background: $white;
-	box-shadow: 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 1px 2px var( --color-neutral-0 );
 
 	.feature-example & {
 		margin: 0;
@@ -9,8 +9,8 @@
 }
 
 .plugins-browser-list__header {
-	background: $gray-light;
-	border-bottom: 1px solid $gray-lighten-30;
+	background: var( --color-neutral-0 );
+	border-bottom: 1px solid var( --color-neutral-0 );
 	overflow: hidden; // lazy clearfix
 }
 
@@ -18,7 +18,7 @@
 .plugins-browser-list__title {
 	display: inline-block;
 	padding: 5px 0;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 12px;
 	line-height: 1.5;
 

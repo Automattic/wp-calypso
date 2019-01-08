@@ -102,16 +102,16 @@
 
 	.domain,
 	line {
-		stroke: $gray-lighten-30;
+		stroke: var( --color-neutral-0 );
 	}
 }
 
 .line-chart__x-axis text {
-	fill: $gray-darken-30;
+	fill: var( --color-neutral-600 );
 }
 
 .line-chart__y-axis text {
-	fill: $gray-darken-10;
+	fill: var( --color-neutral-400 );
 }
 
 .line-chart__legend {

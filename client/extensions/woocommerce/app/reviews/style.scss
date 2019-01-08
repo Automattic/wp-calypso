@@ -36,14 +36,14 @@
 
 	.reviews__product-name {
 		padding: 16px;
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 	}
 
 	&.is-expanded {
 		margin: 16px auto;
 
 		.reviews__header {
-			border-bottom: 1px solid $gray-lighten-30;
+			border-bottom: 1px solid var( --color-neutral-0 );
 		}
 
 		.reviews__content {
@@ -89,12 +89,12 @@
 		}
 
 		.reviews__action-collapse:hover .gridicon {
-			fill: $blue-medium;
+			fill: var( --color-primary );
 		}
 
 		&.is-preview {
 			&:hover .reviews__action-collapse .gridicon {
-				fill: $blue-medium;
+				fill: var( --color-primary );
 			}
 			.reviews__action-collapse {
 				flex: none;
@@ -211,7 +211,7 @@
 		}
 
 		&.is-placeholder {
-			background: $gray-light;
+			background: var( --color-neutral-0 );
 		}
 
 		img {
@@ -291,20 +291,19 @@
 			color: $alert-red;
 		}
 		&.is-trash {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 	}
 }
 
-
 .reviews__expanded-card-details-wrap {
-	border-left: 4px solid $gray-lighten-30;
+	border-left: 4px solid var( --color-neutral-0 );
 	margin-left: 16px;
 }
 
 .reviews__reply {
-	border-top: 1px solid $gray-lighten-30;
-	border-left: 4px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
+	border-left: 4px solid var( --color-neutral-0 );
 	margin-left: 16px;
 	padding-bottom: 16px;
 	background: lighten( $gray, 35% );
@@ -322,7 +321,7 @@
 	line-height: 0;
 	overflow: hidden;
 	position: relative;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 
 	textarea {
 		font-size: 14px;
@@ -345,7 +344,7 @@
 
 		&:focus,
 		&.has-focus {
-			border-color: $blue-wordpress;
+			border-color: var( --color-primary );
 		}
 
 		&.has-scrollbar {
@@ -376,7 +375,7 @@
 		padding: 10px;
 
 		&.is-active {
-			color: $blue-medium;
+			color: var( --color-primary );
 			cursor: pointer;
 		}
 
@@ -388,14 +387,14 @@
 		}
 
 		.accessible-focus &:focus {
-			border-color: $blue-medium;
+			border-color: var( --color-primary );
 			box-shadow: 0 0 0 2px $blue-light;
 		}
 	}
 }
 
 .reviews__reply-edit {
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 	padding: 8px;
 
 	.reviews__reply-edit-buttons {

@@ -11,7 +11,7 @@
 }
 
 .form-label {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .address-view__editable-city-state-postcode {

@@ -1,6 +1,6 @@
 
 .domain-product-price {
-	color: $gray-darken-30;
+	color: var( --color-neutral-600 );
 	font-weight: 600;
 	line-height: 1;
 
@@ -39,7 +39,7 @@
 	}
 
 	.domain-product-price__free-text {
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 		display: block;
 		font-size: 14px;
 		font-weight: 400;
@@ -84,7 +84,7 @@
 
 		@include breakpoint( '<660px' ) {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: $gray-lighten-30;
+			background-color: var( --color-neutral-0 );
 			color: transparent;
 		}
 	}

@@ -4,7 +4,7 @@
 }
 
 .reader-subscription-list-item__byline {
-	color: $gray-darken-30;
+	color: var( --color-neutral-600 );
 	margin-right: 16px;
 	flex: 1 1 0;
 }
@@ -28,7 +28,6 @@
 	}
 
 	.button.follow-button {
-
 		@include breakpoint( '>660px' ) {
 			display: flex;
 		}
@@ -37,7 +36,7 @@
 
 .reader-subscription-list-item__link,
 .reader-subscription-list-item__link:visited {
-	color: var( --color-accent );
+	color: var( --color-primary );
 
 	&:hover {
 		color: var( --color-primary-light );
@@ -45,7 +44,7 @@
 }
 
 .reader-subscription-list-item__by-text .reader-subscription-list-item__link {
-	color: $gray-darken-30;
+	color: var( --color-neutral-600 );
 }
 
 .reader-subscription-list-item .gravatar {
@@ -73,7 +72,7 @@
 .reader-subscription-list-item__site-url,
 .reader-subscription-list-item__site-url:visited,
 .reader-subscription-list-item__timestamp {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 }
 
 .reader-subscription-list-item__site-title,
@@ -168,8 +167,7 @@
 }
 
 .reader-subscription-list-item .follow-button .gridicon {
-
- 	@include breakpoint( '<660px' ) {
+	@include breakpoint( '<660px' ) {
 		left: 3px;
 	}
 }

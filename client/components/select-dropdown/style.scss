@@ -63,25 +63,25 @@ $compact-header-height: 35;
 	align-items: center;
 
 	border-style: solid;
-	border-color: $gray-lighten-20;
+	border-color: var( --color-neutral-100 );
 	border-width: 1px 1px 2px;
 	border-radius: 4px;
 	background-color: $white;
 
 	font-size: 14px;
 	font-weight: 600;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	transition: background-color 0.2s ease;
 	cursor: pointer;
 
 	.gridicons-chevron-down {
-		fill: $gray-darken-20;
+		fill: var( --color-neutral-500 );
 		margin: 0;
 		flex-shrink: 0;
 		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 		.is-disabled & {
-			fill: $gray-lighten-30;
+			fill: var( --color-neutral-0 );
 		}
 	}
 
@@ -99,9 +99,9 @@ $compact-header-height: 35;
 	}
 
 	.is-disabled & {
-		color: $gray-lighten-30;
+		color: var( --color-neutral-0 );
 		background: $white;
-		border-color: $gray-lighten-30;
+		border-color: var( --color-neutral-0 );
 		cursor: default;
 
 		&:active,
@@ -113,7 +113,7 @@ $compact-header-height: 35;
 	.select-dropdown.is-open & {
 		border-radius: 4px 4px 0 0;
 		box-shadow: none;
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 
 		.gridicons-chevron-down {
 			transform: rotate( -180deg );
@@ -158,7 +158,7 @@ $compact-header-height: 35;
 	list-style: none;
 	margin: 0;
 	background-color: $white;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	border-top: 0;
 	// var( --color-primary ) for outer (with focus shadow), $gray for border with header
 	border-radius: 0 0 4px 4px;
@@ -168,7 +168,7 @@ $compact-header-height: 35;
 
 	.accessible-focus & {
 		border: solid 1px var( --color-primary );
-		border-top-color: $gray-lighten-20;
+		border-top-color: var( --color-neutral-100 );
 	}
 
 	.select-dropdown.is-open & {
@@ -193,7 +193,7 @@ $compact-header-height: 35;
 	line-height: #{$option-height}px;
 	padding: 0 #{$side-margin + 46}px 0 #{$side-margin}px;
 
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	font-weight: 400;
 	white-space: nowrap;
@@ -209,7 +209,7 @@ $compact-header-height: 35;
 	}
 
 	&:visited {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	&.is-selected {
@@ -272,7 +272,7 @@ $compact-header-height: 35;
 }
 
 .select-dropdown__separator {
-	border-top: 1px solid $gray-lighten-20;
+	border-top: 1px solid var( --color-neutral-100 );
 	display: block;
 	margin: 8px 0;
 }

@@ -19,8 +19,16 @@
 
 .help-result {
 	&:hover {
+		.help-result__wrapper {
+			background-color: var( ---color-themes-active-text );
+		}
+
 		.help-result__title {
-			color: var( --color-accent );
+			color: var( --color-primary-dark );
+		}
+
+		.help-result__icon {
+			fill: var( --color-primary-dark );
 		}
 	}
 }
@@ -28,7 +36,7 @@
 .help-result__icon {
 	position: absolute;
 	margin: -2px 16px 0 -8px;
-	fill: $gray;
+	fill: var( --color-neutral );
 }
 
 .help-result__title {
@@ -38,9 +46,7 @@
 }
 
 .help-result__description {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font: 14px/20px $sans;
 	margin: 2px 0 0 32px;
 }
-
-

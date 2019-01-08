@@ -2,11 +2,11 @@
  * @component Search
  */
 
- .filterbar.is-loading {
-	 	height: 50px;
- 		background-color: $gray-lighten-20;
-		animation: loading-fade 1.6s ease-in-out infinite;
- }
+.filterbar.is-loading {
+	height: 50px;
+	background-color: var( --color-neutral-100 );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
 
 .filterbar__wrap {
 	position: relative;
@@ -24,13 +24,13 @@
 
 	.filterbar__icon-reset {
 		width: 48px;
-	    margin-left: auto;
-	    margin-right: 8px;
+		margin-left: auto;
+		margin-right: 8px;
 	}
 
 	.filterbar__label {
 		margin: 0 2px 0 10px;
-		color: $gray;
+		color: var( --color-neutral );
 		white-space: nowrap;
 
 		@include breakpoint( '>660px' ) {
@@ -41,7 +41,7 @@
 	.filterbar__selection.button {
 		margin: 8px;
 		padding: 8px;
-		border: 1px solid $gray-lighten-10;
+		border: 1px solid var( --color-neutral-200 );
 		border-radius: 5px;
 		overflow: hidden;
 		white-space: nowrap;
@@ -50,8 +50,8 @@
 	.filterbar__selection.is-selected {
 		margin: 8px;
 		border-radius: 5px;
-		border: 1px solid $gray-darken-30;
-		background: $gray-darken-30;
+		border: 1px solid var( --color-neutral-600 );
+		background: var( --color-neutral-600 );
 		color: $white;
 
 		@include breakpoint( '>660px' ) {
@@ -64,20 +64,20 @@
 	.filterbar__selection.is-active {
 		margin: 8px;
 		border-radius: 5px;
-		border: 1px solid $gray-darken-30;
-		background: $gray-darken-30;
+		border: 1px solid var( --color-neutral-600 );
+		background: var( --color-neutral-600 );
 		color: $white;
 	}
 
 	.filterbar__selection-close {
 		margin: 8px 8px 8px 0;
 		padding: 8px 8px 8px 0;
-		background: $gray-darken-30;
+		background-color: var( --color-neutral-600 );
 		color: $white;
 		border-radius: 0;
 		border-top-right-radius: 5px;
 		border-bottom-right-radius: 5px;
-		border: 1px solid $gray-darken-30;
+		border: 1px solid var( --color-neutral-600 );
 		display: none;
 
 		@include breakpoint( '>660px' ) {
@@ -87,6 +87,7 @@
 
 	.filterbar__selection-close:hover {
 		color: $white;
+		background-color: var( --color-neutral-600 );
 	}
 }
 
@@ -110,14 +111,13 @@
 		}
 	}
 
-	input[type=checkbox] {
+	input[type='checkbox'] {
 		margin-top: 3px;
 		margin-right: 10px;
 	}
 }
 
 .filterbar__activity-types-selection-granular {
-
 	label {
 		font-weight: normal;
 	}
@@ -129,13 +129,14 @@
 	margin: 16px 0;
 }
 
-.filterbar__date-range-selection-info, .filterbar__activity-types-selection-info {
+.filterbar__date-range-selection-info,
+.filterbar__activity-types-selection-info {
 	display: flex;
 	flex-flow: row nowrap;
 	justify-content: space-between;
 	margin-top: 16px;
 	padding-top: 14px;
-	border-top: 1px solid lighten( $gray, 25% );
+	border-top: 1px solid var( --color-neutral-50 );
 }
 
 .filterbar__date-range-wrap {
@@ -160,7 +161,7 @@
 		justify-content: space-between;
 		margin-top: 16px;
 		padding-top: 14px;
-		border-top: 1px solid lighten( $gray, 25% );
+		border-top: 1px solid var( --color-neutral-50 );
 	}
 
 	.filterbar__date-range-info {
@@ -188,7 +189,7 @@
 	.DayPicker-Day--today .date-picker__day {
 		color: $white;
 		position: relative;
-		display:block;
+		display: block;
 		z-index: 0;
 		background: transparent;
 	}
@@ -197,7 +198,7 @@
 		content: '';
 		position: absolute;
 		display: block;
-		background-color: $gray-dark;
+		background-color: var( --color-neutral-700 );
 		z-index: -1;
 		border-radius: 50%;
 		width: 26px;
@@ -218,7 +219,7 @@
 		color: $white;
 		padding: 0;
 		position: relative;
-		display:block;
+		display: block;
 		z-index: 0;
 	}
 
@@ -226,7 +227,7 @@
 	.DayPicker-Day--end .date-picker__day::before,
 	.DayPicker-Day--start .date-picker__day::after,
 	.DayPicker-Day--end .date-picker__day::after {
-		content:'';
+		content: '';
 		display: block;
 		position: absolute;
 		z-index: -2;
@@ -258,24 +259,23 @@
 	}
 
 	.DayPicker-Day--disabled .date-picker__day {
-		 cursor: default;
+		cursor: default;
 	}
 
 	.gridicons-info {
 		margin: 3px 6px -8px 0;
-		fill: $gray;
+		fill: var( --color-neutral );
 	}
 }
 
 .color-scheme.is-dark {
-
 	.filterbar__selection.button.is-borderless {
 		color: var( --color-text-subtle );
 
 		&:hover,
 		&:focus,
 		&:active {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 
 		&.is-selected {

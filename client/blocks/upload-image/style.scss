@@ -37,7 +37,7 @@
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	box-shadow: inset 0 0 0 1px lighten( $gray, 25% );
 	font-size: 14px;
 
@@ -62,8 +62,8 @@
 	height: 200px;
 
 	&.is-uploaded, &.is-uploading {
-		border: 1px solid $gray-lighten-10;
-		background-color: $gray-lighten-30;
+		border: 1px solid var( --color-neutral-200 );
+		background-color: var( --color-neutral-0 );
 	}
 }
 
@@ -83,13 +83,13 @@
 	width: 24px;
 	height: 24px;
 	transform: translate( 50%, -50% );
-	border: 1px solid $gray-lighten-10;
+	border: 1px solid var( --color-neutral-200 );
 	border-radius: 50%;
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	cursor: pointer;
 
 	&:hover {
-		border-color: $gray-darken-10;
+		border-color: var( --color-neutral-400 );
 	}
 }
 
@@ -101,10 +101,10 @@
 	width: 20px;
 	height: 20px;
 	margin: 0;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 
 	&:hover {
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 	}
 }
 

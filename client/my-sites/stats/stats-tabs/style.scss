@@ -4,7 +4,7 @@
 .stats-tabs {
 	@include clear-fix;
 	background: $white;
-	border-top: 1px solid $gray-light;
+	border-top: 1px solid var( --color-neutral-0 );
 	list-style: none;
 	margin: 0;
 
@@ -14,7 +14,7 @@
 
 	.stats-tab {
 		background: $white;
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		box-sizing: border-box;
 		clear: none;
 		float: none;
@@ -27,7 +27,7 @@
 		}
 
 		&.is-compact {
-			border-top: 1px solid $gray-light;
+			border-top: 1px solid var( --color-neutral-0 );
 			border-left: none;
 			float: none;
 			width: 100%;
@@ -73,7 +73,7 @@
 
 		@include breakpoint( '>480px' ) {
 			border-top: none;
-			border-left: 1px solid $gray-light;
+			border-left: 1px solid var( --color-neutral-0 );
 			float: left;
 			width: 25%;
 			text-align: center;
@@ -84,7 +84,7 @@
 		}
 
 		a {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 
 		a,
@@ -180,13 +180,13 @@
 
 		&.is-selected a,
 		&.is-selected.is-low a {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 
 		&.is-selected a .value,
 		&.is-selected.is-low a .value,
 		&.is-selected a:hover .value {
-			color: $orange-jazzy;
+			color: var( --color-primary );
 		}
 
 		// Low state ('disabled')
@@ -202,7 +202,7 @@
 		}
 
 		.no-link .value {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 
 			&.is-low {
 				color: $gray;
@@ -256,15 +256,15 @@
 	}
 
 	&.is-enabled {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 
 		&,
 		li {
-			border-color: $gray-lighten-30;
+			border-color: var( --color-neutral-0 );
 		}
 
 		a {
-			background: $gray-light;
+			background: var( --color-neutral-0 );
 		}
 	}
 }

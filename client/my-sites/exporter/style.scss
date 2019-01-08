@@ -5,7 +5,7 @@
 .export-card__title {
 	font-size: 21px;
 	font-weight: 300;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	margin-bottom: 16px;
 	clear: left;
 }
@@ -13,7 +13,7 @@
 .export-media-card__title {
 	font-size: 21px;
 	font-weight: 300;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	margin-bottom: 16px;
 	clear: left;
 }
@@ -28,12 +28,12 @@
 
 .export-card__subtitle {
 	font-size: 14px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .export-media-card__subtitle {
 	font-size: 14px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .export-card__spinner-button {
@@ -56,7 +56,7 @@
 .export-card__advanced-settings-title {
 	font-size: 21px;
 	font-weight: 300;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	margin-bottom: 16px;
 }
 
@@ -118,7 +118,7 @@
 .guided-transfer-card__title {
 	font-size: 21px;
 	font-weight: 300;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	clear: left;
 }
 
@@ -143,7 +143,7 @@
 }
 
 .guided-transfer-card__details-title {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-weight: 600;
 	margin-bottom: 12px;
 }
@@ -192,8 +192,8 @@
 	height: 48px;
 	padding: 14px;
 	border-radius: 50%;
-	background-color: $gray-darken-20;
-	color: $gray-light;
+	background-color: var( --color-neutral-500 );
+	color: var( --color-neutral-0 );
 
 	@include breakpoint( '>660px' ) {
 		position: absolute;
@@ -205,13 +205,13 @@
 .guided-transfer-card__in-progress-title {
 	font-size: 24px;
 	font-weight: 300;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .guided-transfer-card__unavailable-notice {
-	background-color: $gray-dark;
+	background-color: var( --color-neutral-700 );
 	border-radius: 3px;
-	color: $gray-light;
+	color: var( --color-neutral-0 );
 	padding: 5px 12px;
 }
 
@@ -222,5 +222,5 @@
 
 .guided-transfer-card__unavailable-info-icon.info-popover .gridicon:hover,
 .guided-transfer-card__unavailable-info-icon.info-popover.is_active .gridicon {
-	color: $gray-light;
+	color: var( --color-neutral-0 );
 }

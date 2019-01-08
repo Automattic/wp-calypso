@@ -1,5 +1,5 @@
 .invite-form-header__title {
-	color: $gray-darken-30;
+	color: var( --color-neutral-600 );
 	font-family: $sans;
 	font-size: 21px;
 	font-weight: 300;
@@ -8,7 +8,7 @@
 }
 
 .invite-form-header__explanation {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-family: $sans;
 	font-size: 14px;
 	line-height: 21px;

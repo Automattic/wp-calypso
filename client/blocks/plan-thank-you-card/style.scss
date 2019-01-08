@@ -28,7 +28,7 @@
 
 	.thank-you-card {
 		background: $white;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	.thank-you-card__header {
@@ -37,7 +37,7 @@
 	}
 
 	.thank-you-card__price {
-		color: $gray-lighten-30;
+		color: var( --color-neutral-0 );
 	}
 
 	.thank-you-card__description {
@@ -45,7 +45,7 @@
 	}
 
 	.thank-you-card__button {
-		background: $gray-dark;
+		background: var( --color-neutral-700 );
 		color: $white;
 		border: 0;
 	}

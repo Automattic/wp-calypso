@@ -8,16 +8,18 @@
 
 .help__support-link {
 	display: flex;
+
+	&:hover {
+		background-color: var( --color-themes-active-text );
+
+		.help__support-link-title {
+			color: var( --color-primary-dark );
+		}
+	}
 }
 
 .help__support-link .help__support-link-section {
 	padding-right: 32px;
-}
-
-.help__support-link .help__support-link-title {
-	&:hover {
-		color: var( --color-accent );
-	}
 }
 
 .help__support-link-contact.is-card-link {
@@ -27,7 +29,7 @@
 .help__support-link-contact .help__support-link-section {
 	flex-grow: 1;
 }
-	
+
 .help__support-link-contact .gridicon {
 	display: none;
 }
@@ -52,7 +54,7 @@
 .help__support-link-content {
 	margin-bottom: 0;
 	font-size: 14px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .help__help-teaser-button {
@@ -91,7 +93,7 @@
 }
 
 .help__help-teaser-button-title {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	font-weight: 500;
 	padding-right: 15px;

@@ -1,5 +1,5 @@
 .pulsing-dot {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	transform: translate3d( 0, 0, 0 );
 	position: absolute;
 		top: 45%;

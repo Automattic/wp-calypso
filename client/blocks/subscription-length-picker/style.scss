@@ -99,14 +99,14 @@
 	.subscription-length-picker__option-old-price {
 		position: relative;
 		display: inline-block;
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		margin-right: 5px;
 		text-decoration: line-through;
 	}
 
 	.subscription-length-picker__option-price {
 		display: inline-block;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	.subscription-length-picker__option-side-note {
@@ -127,7 +127,7 @@
 	}
 
 	&.is-active {
-		border: 3px solid var( --color-success );
+		border: 3px solid var( --color-primary );
 		.subscription-length-picker__option-credit-info {
 			color: var( --color-success );
 		}

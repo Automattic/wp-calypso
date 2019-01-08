@@ -39,7 +39,7 @@
 }
 
 .email-verification__status-container {
-	border-top: 1px solid $gray-lighten-20;
+	border-top: 1px solid var( --color-neutral-100 );
 	margin: 25px -24px -16px -21px;
 	padding: 24px 24px 24px 21px;
 	position: relative;

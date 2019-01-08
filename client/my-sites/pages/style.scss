@@ -7,14 +7,14 @@
 
 	.placeholder-text {
 		color: transparent;
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
 
 .pages__page-list-header {
-	background: $gray-light;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+	background: var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	color: $gray;
 	font-size: 11px;
 	padding: 6px 11px;
@@ -76,12 +76,12 @@
 }
 
 .page__hierarchy-indent {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	position: absolute;
 	top: 0;
 	left: 0;
 	height: 100%;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
 
 	&.is-indented {
 		width: 112px;
@@ -123,7 +123,7 @@
 .page__title,
 .page__title:visited {
 	@extend %content-font;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-weight: 700;
 	font-size: 18px;
 	line-height: 1.2;

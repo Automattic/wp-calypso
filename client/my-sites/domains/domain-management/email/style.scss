@@ -33,7 +33,7 @@
 	margin: 0;
 
 	li {
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		padding: 20px 24px;
 		@include clear-fix;
 
@@ -42,7 +42,7 @@
 		}
 
 		&:last-of-type {
-			border-bottom: 1px solid $gray-light;
+			border-bottom: 1px solid var( --color-neutral-0 );
 		}
 	}
 
@@ -61,12 +61,12 @@
 }
 
 .domain-only-site__settings-notice {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	margin-top: 30px;
 	text-align: center;
 
 	&::before {
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 		content: '';
 		display: block;
 		height: 1px;

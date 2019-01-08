@@ -72,6 +72,7 @@
 		"manage/themes/details/jetpack": true,
 		"manage/themes/upload": true,
 		"me/account": true,
+		"me/account/color-scheme-picker": true,
 		"me/find-friends": false,
 		"me/my-profile": true,
 		"me/notifications": true,

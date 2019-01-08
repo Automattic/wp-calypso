@@ -1,5 +1,5 @@
 .plugins-browser-item {
-	border-left: 1px solid $gray-lighten-30;
+	border-left: 1px solid var( --color-neutral-0 );
 	box-sizing: border-box;
 	cursor: pointer;
 	display: block;
@@ -26,7 +26,7 @@
 		}
 
 		&:nth-child( n + 4 ) {
-			border-top: 1px solid $gray-lighten-30;
+			border-top: 1px solid var( --color-neutral-0 );
 		}
 	}
 
@@ -34,7 +34,7 @@
 		width: 100%;
 
 		&:nth-child( n + 2 ) {
-			border-top: 1px solid $gray-lighten-30;
+			border-top: 1px solid var( --color-neutral-0 );
 		}
 
 		&.is-empty {
@@ -67,13 +67,13 @@
 
 	.is-placeholder & {
 		color: transparent;
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
 
 .plugins-browser-item__title {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-weight: 600;
 	font-size: 15px;
 	margin-top: 3px;

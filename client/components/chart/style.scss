@@ -15,18 +15,18 @@
 
 .chart .chart__y-axis-markers {
 	position: absolute;
-		top: 8px; // 1
-		left: 0;
-		right: 0;
+	top: 8px; // 1
+	left: 0;
+	right: 0;
 	height: 200px;
 }
 
 .chart .chart__y-axis-marker {
 	position: absolute;
-		top: 0;
+	top: 0;
 	width: 100%;
 	height: 1px;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 }
 
 // Y-axis marker lines inside each chart__bar
@@ -34,7 +34,7 @@
 .chart__bar-marker {
 	z-index: z-index( 'root', '.chart__bar-marker' );
 	position: absolute;
-		top: 0;
+	top: 0;
 	width: 100%;
 	height: 1px;
 	border-top: 1px solid rgba( $gray-lighten-30, 0.1 );
@@ -61,14 +61,14 @@ $y-axis-padding: 0 20px 0 10px;
 	height: 200px;
 	padding: $y-axis-padding;
 	font-size: 11px;
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	margin-bottom: 30px;
 }
 
 .chart__y-axis-label {
 	position: absolute;
-		top: 0;
-		right: 20px; // 1
+	top: 0;
+	right: 20px; // 1
 	text-align: right;
 }
 
@@ -85,7 +85,7 @@ $y-axis-padding: 0 20px 0 10px;
 	font-size: 0; // 1
 	padding: 5px 0;
 	min-height: 18px;
-	color: $gray-darken-30;
+	color: var( --color-neutral-600 );
 }
 
 .chart__x-axis-label {
@@ -103,12 +103,12 @@ $y-axis-padding: 0 20px 0 10px;
 	content: '';
 	display: block;
 	position: absolute;
-		top: -4px;
-		left: 50%;
+	top: -4px;
+	left: 50%;
 	margin-left: -0.5px;
 	width: 1px;
 	height: 5px;
-	background: $gray-darken-30;
+	background: var( --color-neutral-600 );
 }
 
 .chart__x-axis-width-spacer {
@@ -147,7 +147,6 @@ $y-axis-padding: 0 20px 0 10px;
 	-ms-flex-shrink: 1;
 	flex-shrink: 1;
 
-
 	&.is-weekend {
 		background-color: rgba( $gray-lighten-30, 0.5 );
 	}
@@ -159,7 +158,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 	&.is-selected {
 		cursor: default;
-		background-color: rgba( $orange-jazzy, 0.1 );
+		background-color: rgba( var( --color-accent-rgb ), 0.1 );
 	}
 }
 
@@ -173,18 +172,18 @@ $y-axis-padding: 0 20px 0 10px;
 	display: inline-block;
 	background-color: var( --color-primary );
 	position: absolute;
-		top: 0; // 2
-		right: 16%; // 1
-		bottom: 0; // 1
-		left: 16%; // 1
+	top: 0; // 2
+	right: 16%; // 1
+	bottom: 0; // 1
+	left: 16%; // 1
 	z-index: z-index( 'root', '.chart__bar-section' );
 
 	.chart__bar:hover &.is-bar {
-		background-color: var( --color-accent );
+		background-color: var( --color-primary-light );
 	}
 
 	.chart__bar.is-selected &.is-bar {
-		background-color: $orange-jazzy;
+		background-color: var( --color-accent );
 	}
 
 	&.is-spacer {
@@ -196,13 +195,17 @@ $y-axis-padding: 0 20px 0 10px;
 		content: '';
 		display: block;
 		position: absolute;
-			top: 160px;
-			bottom: 0;
-			left: 0;
+		top: 160px;
+		bottom: 0;
+		left: 0;
 		z-index: z-index( 'root', '.chart__bar-section.is-ghost::after' );
 		width: 100%;
 		height: 40px;
-		background-image: linear-gradient( to bottom, $transparent, rgba( $gray-lighten-30, 0.5 ) ); // TODO: needs to use default color for gradient
+		background-image: linear-gradient(
+			to bottom,
+			$transparent,
+			rgba( $gray-lighten-30, 0.5 )
+		); // TODO: needs to use default color for gradient
 
 		.chart__bar:hover & {
 			display: none;
@@ -213,12 +216,12 @@ $y-axis-padding: 0 20px 0 10px;
 .chart__bar-section-inner {
 	background: darken( $blue-dark, 5% );
 	position: absolute;
-		right: 23.33%;
-		bottom: 0;
-		left: 23.33%;
+	right: 23.33%;
+	bottom: 0;
+	left: 23.33%;
 
 	.chart__bar.is-selected & {
-		background-color: $orange-fire;
+		background-color: var( --color-accent-dark );
 	}
 }
 
@@ -244,7 +247,6 @@ $y-axis-padding: 0 20px 0 10px;
 	@include breakpoint( '<480px' ) {
 		width: 100%;
 	}
-
 }
 
 // Chart legend option (list item)
@@ -254,7 +256,7 @@ $y-axis-padding: 0 20px 0 10px;
 	text-align: left;
 
 	// Expand labels to create bigger touch targets
-	@include breakpoint( '<480px') {
+	@include breakpoint( '<480px' ) {
 		width: 50%;
 		display: inline-block;
 	}
@@ -321,10 +323,10 @@ $y-axis-padding: 0 20px 0 10px;
 	display: flex;
 	justify-content: center;
 	position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	z-index: z-index( 'root', '.chart__empty' );
 }
 
@@ -360,7 +362,7 @@ $y-axis-padding: 0 20px 0 10px;
 					text-align: right;
 					float: right;
 					min-width: 22px;
-					color: $gray-lighten-20;
+					color: var( --color-neutral-100 );
 				}
 
 				.label {
@@ -407,7 +409,6 @@ $y-axis-padding: 0 20px 0 10px;
 }
 
 .chart__tooltip .module-content-list-item {
-
 	&.is-date-label {
 		font-size: 11px;
 		margin-bottom: 2px;
@@ -418,12 +419,11 @@ $y-axis-padding: 0 20px 0 10px;
 	}
 
 	&.is-published-item {
-
 		height: 19px;
 
 		.label {
 			text-transform: none;
-			color: $gray-lighten-20;
+			color: var( --color-neutral-100 );
 			overflow: hidden;
 			letter-spacing: 0;
 			height: 19px;
@@ -436,7 +436,12 @@ $y-axis-padding: 0 20px 0 10px;
 			&::before {
 				content: '';
 				position: relative;
-				background-image: linear-gradient( to right, rgba( 61, 89, 109, 0 ) 0%, rgba( 61, 89, 109, 0.5 ), rgba( 61, 89, 109, 1 ) );
+				background-image: linear-gradient(
+					to right,
+					rgba( 61, 89, 109, 0 ) 0%,
+					rgba( 61, 89, 109, 0.5 ),
+					rgba( 61, 89, 109, 1 )
+				);
 				left: -30px;
 				width: 30px;
 				height: 24px;

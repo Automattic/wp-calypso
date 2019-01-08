@@ -6,7 +6,7 @@
 }
 
 .is-reader-page .reader__card.card.is-placeholder {
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	box-shadow: none;
 	margin-bottom: 0;
 	padding: 6px 0 30px;
@@ -82,7 +82,7 @@
 		margin: 8px 0;
 		padding: 0;
 		font-size: 14px;
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 
 		.gravatar {
 			height: 16px;
@@ -99,7 +99,7 @@
 		.reader__placeholder-text,
 		.site-icon {
 			color: transparent;
-			background-color: $gray-lighten-30;
+			background-color: var( --color-neutral-0 );
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 
@@ -229,7 +229,7 @@
 .is-reader-page {
 
 	.reader__card.card.is-x-post {
-		border-bottom: 1px solid $gray-lighten-20;
+		border-bottom: 1px solid var( --color-neutral-100 );
 		margin: 0 15px;
 		padding: 20px;
 
@@ -240,11 +240,11 @@
 
 		.reader__post-title-link,
 		.reader__post-title-link:visited {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 		}
 
 		.reader__post-title-link:hover {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 
 		.reader-avatar {
@@ -276,9 +276,9 @@
 		top: 0;
 		left: -16px;
 	margin-bottom: 16px;
-	border-bottom: 1px solid lighten( $gray, 20 );
-	box-shadow: inset 0 0 2px 2px rgba( lighten( $gray, 10 ), 0.1 );
-	background: rgba( lighten( $gray, 30 ), 0.3 );
+	border-bottom: 1px solid var( --color-neutral-100 );
+	box-shadow: inset 0 0 2px 2px rgba( var( --color-neutral-200-rgb ), 0.1 );
+	background: rgba( var( --color-neutral-0-rgb ), 0.3 );
 
 	@include breakpoint( '>480px' ) {
 		left: -24px;
@@ -323,7 +323,7 @@
 		background: transparent;
 		border: none;
 
-		color: darken( $gray, 30 );
+		color: var( --color-neutral-600 );
 		line-height: 1.8;
 		overflow-wrap: break-word;
 		word-wrap: break-word;
@@ -357,7 +357,7 @@
 		p.reblog-source {
 			margin-bottom: 16px;
 			padding-bottom: 8px;
-			border-bottom: 1px solid lighten( $gray, 30 );
+			border-bottom: 1px solid var( --color-neutral-0 );
 		}
 	}
 }
@@ -405,14 +405,14 @@
 	display: flex;
 	flex-flow: row nowrap;
 	align-items: baseline;
-	color: lighten( $gray, 10 );
+	color: var( --color-neutral-200 );
 	font-size: 12px;
 	line-height: 1;
 }
 
 // In-stream Recommendations
 .reader-stream__recommended-posts {
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	padding-bottom: 12px;
 
 	@include breakpoint( '<660px' ) {
@@ -421,7 +421,7 @@
 }
 
 .reader-stream__recommended-posts-header {
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	font-size: 14px;
 	font-weight: 600;
 	letter-spacing: 0.01em;
@@ -430,7 +430,7 @@
 	text-transform: uppercase;
 
 	.gridicon {
-		fill: $gray-lighten-10;
+		fill: var( --color-neutral-200 );
 		margin-right: -2px;
 		position: relative;
 			left: -2px;
@@ -473,7 +473,7 @@
 		}
 
 		.gridicon {
-			fill: $gray-lighten-10;
+			fill: var( --color-neutral-200 );
 			width: 14px;
 			height: 14px;
 			top: -3px;
@@ -555,7 +555,7 @@
 	}
 
 	.reader-related-card__featured-image {
-		border: 1px solid $gray-lighten-30;
+		border: 1px solid var( --color-neutral-0 );
 		margin: 0 0 14px;
 	}
 }

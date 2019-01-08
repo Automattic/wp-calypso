@@ -1,5 +1,5 @@
 .product-image-uploader__wrapper {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	height: 250px;
 	width: 100%;
 	position: relative;
@@ -45,7 +45,7 @@
 		}
 
 		.gridicon {
-			color: $gray-darken-10;
+			color: var( --color-neutral-400 );
 		}
 
 		p {
@@ -54,7 +54,7 @@
 
 		&:hover {
 			.gridicon {
-				color: $gray-darken-30;
+				color: var( --color-neutral-600 );
 			}
 		}
 	}
@@ -65,7 +65,7 @@
 	margin-bottom: 16px;
 	margin-left: 8px;
 	margin-right: 8px;
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	border: 1px dashed $gray;
 	width: 70px;
 	height: 70px;
@@ -112,13 +112,13 @@
 			top: 50%;
 			left: 50%;
 			transform: translate( -50%, -50% );
-			color: $gray-darken-10;
+			color: var( --color-neutral-400 );
 		}
 	}
 
 	&:hover {
 		.gridicon {
-			color: $gray-darken-30;
+			color: var( --color-neutral-600 );
 		}
 	}
 }

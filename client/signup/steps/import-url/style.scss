@@ -42,7 +42,7 @@
 	}
 
 	&__example-urls {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		list-style: none;
 		margin: 1em 0 1.5em;
 	}
@@ -50,7 +50,7 @@
 	&__example-url {
 		font-family: monospace;
 		font-size: 14px;
-		color: $blue-medium;
+		color: var( --color-primary );
 
 		&:first-of-type {
 			padding-top: 8px;
@@ -58,7 +58,7 @@
 	}
 
 	&__escape {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		padding: 0 15px 24px;
 		text-align: center;
 

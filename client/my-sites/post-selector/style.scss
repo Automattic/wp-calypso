@@ -1,7 +1,7 @@
 .post-selector {
 	position: relative;
 	background-color: $white;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 
 	&.is-compact {
 		background-color: transparent;
@@ -39,7 +39,7 @@ input[type=checkbox].post-selector__input {
 		display: block;
 		margin-left: 24px;
 		transition: all 200ms ease-out;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 
 		&:hover {
 			color: var( --color-accent );
@@ -96,7 +96,7 @@ input[type=checkbox].post-selector__input {
 
 	.post-selector__list-item.is-placeholder & {
 		color: transparent;
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }

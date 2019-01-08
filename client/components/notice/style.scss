@@ -11,7 +11,7 @@
 	margin-bottom: 24px;
 	box-sizing: border-box;
 	animation: appear 0.3s ease-in-out;
-	background: $gray-dark;
+	background: var( --color-neutral-700 );
 	color: $white;
 	border-radius: 3px;
 	line-height: 1.5;
@@ -162,7 +162,7 @@
 	}
 
 	.notice & {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 
 		&:hover,
 		&:focus {
@@ -178,7 +178,7 @@ a.notice__action {
 	font-weight: 400;
 	text-decoration: none;
 	white-space: nowrap;
-	color: $gray-lighten-10;
+	color: var( --color-neutral-200 );
 	padding: 13px;
 	display: flex;
 	align-items: center;
@@ -199,7 +199,7 @@ a.notice__action {
 	}
 
 	&:visited {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 	}
 
 	&:hover {

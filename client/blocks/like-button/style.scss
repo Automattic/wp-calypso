@@ -16,7 +16,7 @@
 	.gridicons-star {
 		opacity: 0;
 		pointer-events: none;
-		fill: $orange-jazzy;
+		fill: var( --color-primary );
 		transform: scale( 4 ) rotate( 90deg );
 	}
 
@@ -30,7 +30,7 @@
 
 	&:hover {
 		cursor: pointer;
-		color: var( --color-accent );
+		color: var( --color-primary );
 	}
 
 	&.is-liked {
@@ -38,7 +38,7 @@
 
 		.gridicons-star {
 			opacity: 1;
-			fill: $orange-jazzy;
+			fill: var( --color-primary );
 			pointer-events: auto;
 			transform: scale( 1 ) rotate( 0 );
 		}
@@ -46,12 +46,12 @@
 		.gridicons-star-outline {
 			opacity: 0;
 			pointer-events: none;
-			fill: $orange-jazzy;
+			fill: var( --color-primary );
 			transform: translateX( -10px ) rotate( 1deg ) scale( 0.3 );
 		}
 
 		.like-button__label {
-			color: $orange-jazzy;
+			color: var( --color-primary );
 		}
 	}
 

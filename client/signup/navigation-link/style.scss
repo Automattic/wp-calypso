@@ -1,10 +1,10 @@
 .button.is-borderless.navigation-link {
 	padding: 0;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	font-weight: 500;
 
 	svg {
-		fill: $gray-dark;
+		fill: var( --color-neutral-700 );
 	}
 }

@@ -63,12 +63,12 @@
 
 .reader-combined-card__post-title-link,
 .reader-combined-card__post-title-link:visited {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	cursor: pointer;
 
 	&:hover,
 	&:focus {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	&::after {
@@ -89,7 +89,6 @@
 
 // Always indent the wrapper at larger breakpoints, asset or no asset
 .reader-combined-card__featured-asset-wrapper {
-
 	@include breakpoint( '>660px' ) {
 		min-width: 100px;
 		margin-right: 15px;
@@ -114,7 +113,6 @@
 	position: relative;
 
 	&.is-selected {
-
 		&::before {
 			content: '';
 			position: absolute;
@@ -207,7 +205,7 @@
 
 	&:hover,
 	&:active {
-		color: var( --color-accent );
+		color: var( --color-primary );
 	}
 }
 
@@ -230,7 +228,7 @@
 	&:focus,
 	&:link,
 	&:visited {
-		color: var( --color-accent );
+		color: var( --color-primary );
 	}
 
 	&:hover,
@@ -241,7 +239,7 @@
 
 // Override standard .card styles in stream
 .reader-combined-card.card {
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	box-shadow: none;
 	margin: 0 15px;
 	padding: 18px 0 0;
@@ -274,11 +272,11 @@
 	top: 13px;
 
 	.gridicon {
-		fill: var( --color-accent );
+		fill: var( --color-primary );
 	}
 
 	.follow-button__label {
-		color: var( --color-accent );
+		color: var( --color-primary );
 	}
 
 	&.is-following {

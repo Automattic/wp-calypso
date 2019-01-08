@@ -17,7 +17,7 @@
 	margin-bottom: 0.35em;
 	font-size: 34px;
 	font-weight: 300;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .jetpack-new-site__header-text {
@@ -44,8 +44,8 @@
 	&:hover {
 		z-index: 3;
 		transform: scale( 1.075 );
-		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
-		0 1px 2px $gray-lighten-30, 0 7px 18px transparentize( lighten( $gray, 15% ), 0.5 );
+		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 ),
+			0 7px 18px transparentize( lighten( $gray, 15% ), 0.5 );
 		transition: transform 0.25s ease, box-shadow 0.35s ease, z-index 0.175s ease;
 	}
 
@@ -64,7 +64,7 @@
 }
 
 .jetpack-new-site__wpcom-site .wordpress-logo {
-	fill: $blue-wordpress;
+	fill: var( --color-primary );
 }
 
 .jetpack-new-site__jetpack-site .jetpack-logo {
@@ -99,7 +99,6 @@
 
 .jetpack-new-site__jetpack-site,
 .jetpack-new-site__mobile-jetpack-site {
-
 	.jetpack-connect__connect-button-card {
 		background: transparent;
 	}
@@ -111,7 +110,7 @@
 			position: absolute;
 			top: 8px;
 			left: 8px;
-			color: $gray-lighten-20;
+			color: var( --color-neutral-100 );
 		}
 
 		.form-text-input {
@@ -129,7 +128,7 @@
 		display: none;
 	}
 
-	input[type=text] {
+	input[type='text'] {
 		&:focus {
 			border-color: $green-jetpack;
 			box-shadow: 0 0 0 2px lighten( $green-jetpack, 25% );

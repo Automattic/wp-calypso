@@ -181,7 +181,7 @@
 		.theme__sheet-preview-link-text {
 			margin: 0 auto;
 			padding: 2px 8px 3px;
-			background-color: $gray-light;
+			background-color: var( --color-neutral-0 );
 			color: var( --color-text-subtle );
 			font-size: 11px;
 			font-weight: 600;
@@ -210,7 +210,7 @@
 			max-width: 100%;
 			display: block;
 			margin: 20px auto;
-			border: 1px solid lighten( $gray, 30% );
+			border: 1px solid var( --color-neutral-0 );
 		}
 
 		&.alignright,
@@ -231,13 +231,13 @@
 	}
 
 	.wp-caption {
-		border: 1px solid lighten( $gray, 30% );
-		background-color: $gray-light;
+		border: 1px solid var( --color-neutral-0 );
+		background-color: var( --color-neutral-0 );
 		margin-bottom: 20px;
 	}
 
 	.wp-caption-text {
-		color: darken( $gray, 20% );
+		color: var( --color-neutral-500 );
 		font-size: 12px;
 		padding: 3px 8px 6px;
 	}
@@ -302,7 +302,7 @@
 
 	code {
 		font-size: 14px;
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		padding: 1px 4px;
 		border-radius: 2px;
 	}
@@ -314,7 +314,7 @@
 	}
 
 	.notes {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		margin: 40px -20px 40px;
 		border-top: 1px solid #e9eff3;
 		border-bottom: 1px solid #e9eff3;
@@ -365,8 +365,8 @@
 	a {
 		display: inline-block;
 		position: relative;
-		background: $gray-lighten-30;
-		color: $gray-dark;
+		background: var( --color-neutral-0 );
+		color: var( --color-neutral-700 );
 		margin: 4px;
 		padding: 2px 12px;
 		border-radius: 3px;
@@ -419,7 +419,7 @@
 	}
 
 	.gridicon {
-		color: $gray-lighten-20;
+		color: var( --color-neutral-100 );
 		flex: 0 0 auto;
 	}
 
@@ -454,7 +454,7 @@
 	}
 
 	.gridicon {
-		color: $gray-lighten-20;
+		color: var( --color-neutral-100 );
 		flex: 0 0 auto;
 	}
 
@@ -479,14 +479,14 @@
 }
 
 .theme__sheet-footer-line {
-	color: $gray-lighten-20;
-	border-top: 1px solid $gray-lighten-20;
+	color: var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-100 );
 	margin: 32px 0 20px;
 
 	.gridicon {
 		display: block;
 		margin: -12px auto 0;
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 	}
 }
 

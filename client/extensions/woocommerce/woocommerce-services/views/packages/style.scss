@@ -1,7 +1,7 @@
 .packages__add-package-weight {
 	margin-bottom: 8px;
 	@include breakpoint( '>660px' ) {
-		float:left;
+		float: left;
 	}
 
 	&:nth-child( 1 ) {
@@ -60,16 +60,16 @@
 	align-items: center;
 
 	&:not( :last-child ) {
-		border-bottom: 1px solid $gray-light;
+		border-bottom: 1px solid var( --color-neutral-0 );
 	}
 
 	&.packages__packages-header {
-		border-bottom-color: $gray-lighten-20;
+		border-bottom-color: var( --color-neutral-100 );
 	}
 
 	&.prefixed {
 		&:first-child {
-			border-top: 1px solid $gray-light;
+			border-top: 1px solid var( --color-neutral-0 );
 		}
 
 		.form-checkbox {
@@ -115,14 +115,19 @@
 		pointer-events: none;
 		background: $white;
 
-		.gridicon, span, p, a, button {
+		.gridicon,
+		span,
+		p,
+		a,
+		button {
 			animation: loading-fade 1.6s ease-in-out infinite;
 			background-color: lighten( $gray, 25% );
 			color: transparent;
 			cursor: default;
 		}
 
-		p, span {
+		p,
+		span {
 			display: block;
 			width: 100px;
 			height: 14px;
@@ -181,7 +186,7 @@
 	margin-bottom: 0;
 
 	.packages__packages-header {
-		border-top: 1px solid $gray-lighten-20;
+		border-top: 1px solid var( --color-neutral-100 );
 	}
 
 	.foldable-card__header {
@@ -216,7 +221,7 @@
 	font-style: italic;
 	font-weight: 400;
 	margin: 5px 0 0;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	text-decoration: underline;
 }
 

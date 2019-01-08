@@ -19,7 +19,7 @@
 }
 
 .empty-content__title {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 34px;
 	font-weight: 300;
 
@@ -29,7 +29,7 @@
 }
 
 .empty-content__line {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-size: 22px;
 	font-weight: 300;
 	margin-bottom: 40px;

@@ -89,7 +89,7 @@ class EditorConfirmationSidebar extends Component {
 		const disabled = this.props.isPasswordProtectedWithInvalidPassword;
 
 		return (
-			<Button disabled={ disabled } onClick={ this.closeAndPublish }>
+			<Button primary disabled={ disabled } onClick={ this.closeAndPublish }>
 				{ buttonLabel }
 			</Button>
 		);
@@ -128,11 +128,13 @@ class EditorConfirmationSidebar extends Component {
 
 		return (
 			<Button
-				disabled
-				className="editor-confirmation-sidebar__publishing-button is-busy is-primary"
-			>
-				{ buttonLabel }
-			</Button>
+				  disabled
+				  primary
+				  busy
+				  className="editor-confirmation-sidebar__publishing-button"
+				>
+				  { buttonLabel }
+				</Button>
 		);
 	}
 

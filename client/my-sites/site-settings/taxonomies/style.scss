@@ -1,7 +1,7 @@
 .taxonomies__card-title {
 	font-size: 16px;
 	line-height: 24px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	padding-bottom: 10px;
 
 	&.is-loading {
