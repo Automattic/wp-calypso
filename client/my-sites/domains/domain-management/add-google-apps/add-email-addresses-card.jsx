@@ -21,16 +21,13 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import { getEligibleDomain } from 'lib/domains/gsuite';
 import getUserSetting from 'state/selectors/get-user-setting';
 import { cartItems } from 'lib/cart-values';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import ValidationErrorList from 'notices/validation-error-list';
 import { addItem } from 'lib/upgrades/actions';
-import {
-	hasGoogleApps,
-	getGoogleAppsSupportedDomains,
-	hasGoogleAppsSupportedDomain,
-} from 'lib/domains';
+import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
 import { filter as filterUsers, validate as validateUsers } from 'lib/domains/google-apps-users';
 import DomainsSelect from './domains-select';
 import QueryUserSettings from 'components/data/query-user-settings';
@@ -121,19 +118,8 @@ class AddEmailAddressesCard extends React.Component {
 	}
 
 	getNewFieldset() {
-		let domain;
-
-		if (
-			this.props.selectedDomainName &&
-			hasGoogleAppsSupportedDomain( [ this.props.selectedDomainName ] )
-		) {
-			domain = this.props.selectedDomainName;
-		} else if ( ! this.props.isRequestingSiteDomains ) {
-			domain = this.getFirstDomainName();
-		} else {
-			domain = null;
-		}
-
+		const { selectedDomainName, domains } = this.props;
+		const domain = getEligibleDomain( selectedDomainName, domains );
 		return {
 			username: { value: '' },
 			domain: { value: domain },
@@ -171,16 +157,12 @@ class AddEmailAddressesCard extends React.Component {
 		);
 	}
 
-	getFirstDomainName() {
-		const domains = getGoogleAppsSupportedDomains( this.props.domains );
-		return domains[ 0 ].name;
-	}
-
 	setDomainFieldsToFirstDomainName() {
-		const firstDomainName = this.getFirstDomainName();
+		const { selectedDomainName, domains } = this.props;
+		const domain = getEligibleDomain( selectedDomainName, domains );
 		const nextFieldsets = this.state.fieldsets.map( fieldset => {
 			return update( fieldset, {
-				domain: { value: { $set: firstDomainName } },
+				domain: { value: { $set: domain } },
 			} );
 		} );
 
