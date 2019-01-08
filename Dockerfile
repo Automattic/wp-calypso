@@ -26,9 +26,7 @@ RUN        bash /tmp/env-config.sh
 # Calypso development.
 COPY       . /calypso/
 RUN        npx lerna bootstrap --ci
-WORKDIR    node_modules/node-sass
-RUN        npm run install
-WORKDIR    ../..
+RUN        cd node_modules/node-sass && npm run install
 
 # Build the final layer
 #
