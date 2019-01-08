@@ -50,6 +50,7 @@ import {
 	NOT_JETPACK,
 	NOT_WORDPRESS,
 	OUTDATED_JETPACK,
+	SITE_BLACKLISTED,
 	WORDPRESS_DOT_COM,
 } from './connection-notice-types';
 
@@ -243,9 +244,23 @@ export class JetpackConnectMain extends Component {
 		);
 	}
 
+	isError( error ) {
+		return (
+			this.state.currentUrl &&
+			this.isCurrentUrlFetched() &&
+			this.props.jetpackConnectSite &&
+			this.props.jetpackConnectSite.error &&
+			this.props.jetpackConnectSite.error.error === error
+		);
+	}
+
 	getStatus() {
 		if ( this.state.currentUrl === '' ) {
 			return false;
+		}
+
+		if ( this.isError( 'site_blacklisted' ) ) {
+			return SITE_BLACKLISTED;
 		}
 
 		if ( this.checkProperty( 'userOwnsSite' ) ) {
