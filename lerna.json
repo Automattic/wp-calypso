@@ -6,5 +6,6 @@
 		"**/.eslintrc.{js,json,yaml,yml}",
 		"**/package-lock.json",
 		"packages/i18n-calypso"
-	]
+	],
+	"npmClientArgs": [ "--unsafe-perm" ]
 }
