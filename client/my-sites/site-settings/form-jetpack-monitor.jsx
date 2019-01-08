@@ -16,7 +16,7 @@ import config from 'config';
 import Card from 'components/card';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import SupportInfo from 'components/support-info';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteMonitorSettings from 'components/data/query-site-monitor-settings';
@@ -133,7 +133,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 				<QueryJetpackModules siteId={ siteId } />
 				<QuerySiteMonitorSettings siteId={ siteId } />
 
-				<SectionHeader label={ translate( 'Downtime Monitoring' ) } />
+				<SettingsSectionHeader title={ translate( 'Downtime Monitoring' ) } />
 
 				<Card className="jetpack-monitor-settings">
 					<SupportInfo
