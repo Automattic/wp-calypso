@@ -80,7 +80,7 @@ if ( needsInstall( '.' ) ) {
 }
 
 function install() {
-	const installResult = spawnSync( 'npx', [ 'lerna', 'bootstrap', '--ci' ], {
+	const installResult = spawnSync( 'npx', [ 'lerna@3.8', 'bootstrap', '--ci' ], {
 		shell: true,
 		stdio: 'inherit',
 	} ).status;

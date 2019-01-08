@@ -25,7 +25,7 @@ RUN        bash /tmp/env-config.sh
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY       . /calypso/
-RUN        npx lerna bootstrap --ci
+RUN        npx lerna@3.8 bootstrap --ci
 
 # Build the final layer
 #
