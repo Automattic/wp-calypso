@@ -19,11 +19,12 @@ const SettingsSectionHeader = ( {
 	showButton,
 	title,
 	translate,
+	...buttonProps
 } ) => {
 	return (
 		<SectionHeader label={ title } id={ id }>
 			{ showButton && (
-				<Button compact primary onClick={ onButtonClick } disabled={ disabled }>
+				<Button compact primary onClick={ onButtonClick } disabled={ disabled } { ...buttonProps }>
 					{ isSaving ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 				</Button>
 			) }
