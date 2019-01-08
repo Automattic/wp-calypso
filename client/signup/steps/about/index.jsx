@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey, includes, get } from 'lodash';
+import { invoke, noop, findKey, includes } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -30,10 +30,11 @@ import { isValidLandingPageVertical } from 'lib/signup/verticals';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { abtest } from 'lib/abtest';
-import { isUserLoggedIn, getCurrentUser } from 'state/current-user/selectors';
+import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { getSiteVerticalId } from 'state/signup/steps/site-vertical/selectors';
 import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
 
 //Form components
 import Card from 'components/card';
@@ -565,21 +566,12 @@ class AboutStep extends Component {
 			signupProgress,
 			stepName,
 			translate,
-			hasMultipleSites,
+			hasInitializedSitesBackUrl,
 		} = this.props;
 		const headerText = translate( 'Let’s create a site.' );
 		const subHeaderText = translate(
 			'Please answer these questions so we can help you make the site you need.'
 		);
-
-		let allowBackFirstStep = false;
-		let backUrl;
-
-		//If we're starting a new site from an existing account, allow users to go back.
-		if ( hasMultipleSites ) {
-			allowBackFirstStep = true;
-			backUrl = '/';
-		}
 
 		return (
 			<StepWrapper
@@ -592,9 +584,9 @@ class AboutStep extends Component {
 				fallbackSubHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
-				allowBackFirstStep={ allowBackFirstStep }
-				backUrl={ backUrl }
-				backLabelText={ hasMultipleSites ? translate( 'Back to dashboard' ) : false }
+				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+				backUrl={ hasInitializedSitesBackUrl }
+				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to dashboard' ) : null }
 			/>
 		);
 	}
@@ -617,7 +609,7 @@ export default connect(
 			includes( ownProps.steps, 'site-type' ) &&
 			includes( ownProps.steps, 'site-topic' ) &&
 			includes( ownProps.steps, 'site-information' ),
-		hasMultipleSites: get( getCurrentUser( state ), 'site_count', 1 ) > 0,
+		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/' : false,
 	} ),
 	{
 		setSiteTitle,
