@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import CompactCard from 'components/card/compact';
 import QuerySitePlans from 'components/data/query-site-plans';
 import FormTextInput from 'components/forms/form-text-input';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { addQueryArgs } from 'lib/url';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -43,8 +43,8 @@ class DisconnectSurvey extends PureComponent {
 		return (
 			<div className="disconnect-site__survey main">
 				<QuerySitePlans siteId={ siteId } />
-				<SectionHeader
-					label={ translate(
+				<SettingsSectionHeader
+					title={ translate(
 						'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com?',
 						{
 							args: { siteName: siteSlug },
