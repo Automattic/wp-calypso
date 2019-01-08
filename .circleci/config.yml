@@ -108,19 +108,16 @@ references:
   restore-npm-cache: &restore-npm-cache
     name: "Restore npm cache"
     keys:
-      - v2-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-      - v2-npm-modules-{{ checksum ".nvmrc" }}
+      - v1-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+      - v1-npm-modules-{{ checksum ".nvmrc" }}
 
   npm-install: &npm-install
     name: Install npm dependencies
-    command: |
-      npx lerna bootstrap
-      cd node_modules/node-sass
-      npm install
+    command: npx lerna bootstrap
 
   save-npm-cache: &save-npm-cache
     name: "Save node_modules cache"
-    key: v2-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+    key: v1-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
     paths:
       - ~/.npm
 
