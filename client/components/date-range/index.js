@@ -33,21 +33,20 @@ export class DateRange extends Component {
 	constructor( props ) {
 		super( props );
 
+		const endDate = this.props.endDate || this.props.moment();
+		const startDate = this.props.startDate || this.props.moment( endDate ).subtract( 1, 'months' );
+
 		this.state = {
 			popoverVisible: false,
 			staleStartDate: '',
 			staleEndDate: '',
-			startDate: this.props.startDate || this.props.moment().subtract( 1, 'months' ),
-			endDate: this.props.endDate || this.props.moment(),
+			startDate: startDate,
+			endDate: endDate,
 			staleDatesSaved: false,
 			// this need to be independent from startDate because we must independently validate them
 			// before updating the central source of truth (ie: startDate)
-			textInputStartDate:
-				this.dateToHumanReadable( this.props.startDate ) ||
-				this.dateToHumanReadable( this.props.moment().subtract( 1, 'months' ) ),
-			textInputEndDate:
-				this.dateToHumanReadable( this.props.endDate ) ||
-				this.dateToHumanReadable( this.props.moment() ),
+			textInputStartDate: this.dateToHumanReadable( startDate ),
+			textInputEndDate: this.dateToHumanReadable( endDate ),
 		};
 
 		bindAll( this, [
