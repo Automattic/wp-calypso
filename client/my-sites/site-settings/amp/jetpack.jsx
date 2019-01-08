@@ -60,8 +60,9 @@ const AmpJetpack = ( {
 				</p>
 			</CompactCard>
 
-			{ ! requestingPlugins &&
-				customizerAmpPanelUrl && <CompactCard href={ linkUrl }>{ linkText }</CompactCard> }
+			{ ! requestingPlugins && customizerAmpPanelUrl && (
+				<CompactCard href={ linkUrl }>{ linkText }</CompactCard>
+			) }
 		</div>
 	);
 };

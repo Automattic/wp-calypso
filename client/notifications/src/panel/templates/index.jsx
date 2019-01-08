@@ -491,41 +491,40 @@ class Layout extends React.Component {
 				) }
 
 				<div className={ currentNote ? 'wpnc__single-view wpnc__current' : 'wpnc__single-view' }>
-					{ this.props.selectedNoteId &&
-						currentNote && (
-							<header>
-								<h1>{ currentNote.title }</h1>
-								<nav>
-									<BackButton
-										isEnabled={ this.state.navigationEnabled }
-										global={ this.props.global }
+					{ this.props.selectedNoteId && currentNote && (
+						<header>
+							<h1>{ currentNote.title }</h1>
+							<nav>
+								<BackButton
+									isEnabled={ this.state.navigationEnabled }
+									global={ this.props.global }
+								/>
+								<div>
+									<NavButton
+										iconName="arrow-up"
+										className="wpnc__prev"
+										isEnabled={
+											( filteredNotes[ 0 ] &&
+												filteredNotes[ 0 ].id != this.props.selectedNoteId ) ||
+											false
+										}
+										navigate={ this.navigateToPrevNote }
 									/>
-									<div>
-										<NavButton
-											iconName="arrow-up"
-											className="wpnc__prev"
-											isEnabled={
-												( filteredNotes[ 0 ] &&
-													filteredNotes[ 0 ].id != this.props.selectedNoteId ) ||
-												false
-											}
-											navigate={ this.navigateToPrevNote }
-										/>
-										<NavButton
-											iconName="arrow-down"
-											className="wpnc__next"
-											isEnabled={
-												( filteredNotes[ 0 ] &&
-													filteredNotes[ filteredNotes.length - 1 ].id !=
-														this.props.selectedNoteId ) ||
-												false
-											}
-											navigate={ this.navigateToNextNote }
-										/>
-									</div>
-								</nav>
-							</header>
-						) }
+									<NavButton
+										iconName="arrow-down"
+										className="wpnc__next"
+										isEnabled={
+											( filteredNotes[ 0 ] &&
+												filteredNotes[ filteredNotes.length - 1 ].id !=
+													this.props.selectedNoteId ) ||
+											false
+										}
+										navigate={ this.navigateToNextNote }
+									/>
+								</div>
+							</nav>
+						</header>
+					) }
 
 					{ currentNote && (
 						<ol ref={ this.storeDetailViewRef }>

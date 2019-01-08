@@ -27,15 +27,18 @@ const getConfigForPath = memoize(
 		) || false
 );
 
-export const getConfigForCurrentView = createSelector( state => {
-	const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
-	if ( ! currentRoute ) {
-		return false;
-	}
+export const getConfigForCurrentView = createSelector(
+	state => {
+		const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
+		if ( ! currentRoute ) {
+			return false;
+		}
 
-	const path = currentRoute.path ? currentRoute.path : '';
-	return getConfigForPath( path );
-}, getActionLog );
+		const path = currentRoute.path ? currentRoute.path : '';
+		return getConfigForPath( path );
+	},
+	getActionLog
+);
 
 export function isUserEligible( state, config ) {
 	const userStartDate = getCurrentUserDate( state );

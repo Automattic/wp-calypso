@@ -617,22 +617,21 @@ class SiteSettingsFormDiscussion extends Component {
 					{ this.commentBlacklistSettings() }
 				</Card>
 
-				{ isJetpack &&
-					jetpackSettingsUISupported && (
-						<div>
-							<QueryJetpackModules siteId={ siteId } />
+				{ isJetpack && jetpackSettingsUISupported && (
+					<div>
+						<QueryJetpackModules siteId={ siteId } />
 
-							{ this.renderSectionHeader( translate( 'Subscriptions' ), false ) }
+						{ this.renderSectionHeader( translate( 'Subscriptions' ), false ) }
 
-							<Subscriptions
-								onSubmitForm={ handleSubmitForm }
-								handleAutosavingToggle={ handleAutosavingToggle }
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-								fields={ fields }
-							/>
-						</div>
-					) }
+						<Subscriptions
+							onSubmitForm={ handleSubmitForm }
+							handleAutosavingToggle={ handleAutosavingToggle }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+						/>
+					</div>
+				) }
 			</form>
 		);
 	}

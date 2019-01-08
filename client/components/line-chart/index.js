@@ -39,9 +39,8 @@ const dateFormatFunction = displayMonthTicksOnly => ( date, index, tickRefs ) =>
 		Math.round(
 			mean(
 				tickRefs
-					.map(
-						( tickRef, tickRefIndex ) =>
-							tickRef.__data__.getMonth() === date.getMonth() ? tickRefIndex : null
+					.map( ( tickRef, tickRefIndex ) =>
+						tickRef.__data__.getMonth() === date.getMonth() ? tickRefIndex : null
 					)
 					.filter( e => e !== null )
 			)

@@ -422,12 +422,11 @@ class ReaderStream extends React.Component {
 		return (
 			<TopLevel className={ classnames( 'following', this.props.className ) }>
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
-				{ this.props.isMain &&
-					this.props.showMobileBackToSidebar && (
-						<MobileBackToSidebar>
-							<h1>{ this.props.translate( 'Streams' ) }</h1>
-						</MobileBackToSidebar>
-					) }
+				{ this.props.isMain && this.props.showMobileBackToSidebar && (
+					<MobileBackToSidebar>
+						<h1>{ this.props.translate( 'Streams' ) }</h1>
+					</MobileBackToSidebar>
+				) }
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
 				{ this.props.children }

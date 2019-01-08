@@ -141,16 +141,14 @@ export class PlanFeaturesHeader extends Component {
 			return (
 				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? billingTimeFrame : '' }
-					{ isDiscounted &&
-						! isUserCurrentlyOnAFreePlan &&
-						! isPlaceholder && (
-							<InfoPopover
-								className="plan-features__header-tip-info"
-								position={ isMobile() ? 'top' : 'bottom left' }
-							>
-								{ this.getDiscountTooltipMessage() }
-							</InfoPopover>
-						) }
+					{ isDiscounted && ! isUserCurrentlyOnAFreePlan && ! isPlaceholder && (
+						<InfoPopover
+							className="plan-features__header-tip-info"
+							position={ isMobile() ? 'top' : 'bottom left' }
+						>
+							{ this.getDiscountTooltipMessage() }
+						</InfoPopover>
+					) }
 				</p>
 			);
 		}

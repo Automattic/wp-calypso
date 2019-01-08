@@ -171,15 +171,14 @@ class SiteSettingsFormWriting extends Component {
 					fields={ fields }
 				/>
 
-				{ jetpackSettingsUI &&
-					config.isEnabled( 'press-this' ) && (
-						<PublishingTools
-							onSubmitForm={ handleSubmitForm }
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							fields={ fields }
-						/>
-					) }
+				{ jetpackSettingsUI && config.isEnabled( 'press-this' ) && (
+					<PublishingTools
+						onSubmitForm={ handleSubmitForm }
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+						fields={ fields }
+					/>
+				) }
 
 				{ config.isEnabled( 'press-this' ) &&
 					! this.isMobile() &&

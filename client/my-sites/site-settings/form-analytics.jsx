@@ -148,18 +148,17 @@ export class GoogleAnalyticsForm extends Component {
 			<form id="analytics" onSubmit={ handleSubmitForm }>
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
-				{ isJetpackUnsupported &&
-					! showUpgradeNudge && (
-						<Notice
-							status="is-warning"
-							showDismiss={ false }
-							text={ translate( 'Google Analytics require a newer version of Jetpack.' ) }
-						>
-							<NoticeAction href={ `/plugins/jetpack/${ siteSlug }` }>
-								{ translate( 'Update Now' ) }
-							</NoticeAction>
-						</Notice>
-					) }
+				{ isJetpackUnsupported && ! showUpgradeNudge && (
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate( 'Google Analytics require a newer version of Jetpack.' ) }
+					>
+						<NoticeAction href={ `/plugins/jetpack/${ siteSlug }` }>
+							{ translate( 'Update Now' ) }
+						</NoticeAction>
+					</Notice>
+				) }
 
 				<SectionHeader label={ translate( 'Google Analytics' ) }>
 					{ ! showUpgradeNudge && (

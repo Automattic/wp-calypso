@@ -114,11 +114,9 @@ class StatModuleFollowersPage extends Component {
 				<SectionHeader label={ translate( 'Comments Followers' ) } />
 				<Card className={ classNames( classes ) }>
 					<div className="module-content">
-						{ noData &&
-							! hasError &&
-							! isLoading && (
-								<ErrorPanel className="is-empty-message" message={ translate( 'No followers' ) } />
-							) }
+						{ noData && ! hasError && ! isLoading && (
+							<ErrorPanel className="is-empty-message" message={ translate( 'No followers' ) } />
+						) }
 
 						{ paginationSummary }
 

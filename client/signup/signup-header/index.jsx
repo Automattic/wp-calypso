@@ -68,14 +68,13 @@ export default class SignupHeader extends Component {
 				{ /* This should show a sign in link instead of
 			   the progressIndicator on the account step. */ }
 				<div className="signup-header__right">
-					{ ! this.props.shouldShowLoadingScreen &&
-						this.props.showProgressIndicator && (
-							<FlowProgressIndicator
-								positionInFlow={ this.props.positionInFlow }
-								flowLength={ this.props.flowLength }
-								flowName={ this.props.flowName }
-							/>
-						) }
+					{ ! this.props.shouldShowLoadingScreen && this.props.showProgressIndicator && (
+						<FlowProgressIndicator
+							positionInFlow={ this.props.positionInFlow }
+							flowLength={ this.props.flowLength }
+							flowName={ this.props.flowName }
+						/>
+					) }
 				</div>
 			</div>
 		);

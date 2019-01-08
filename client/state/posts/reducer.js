@@ -554,9 +554,8 @@ export function edits( state = {}, action ) {
 				const newPostId = action.savedPost.ID;
 				state = {
 					...state,
-					[ siteId ]: mapKeys(
-						state[ siteId ],
-						( value, key ) => ( key === '' ? newPostId : key )
+					[ siteId ]: mapKeys( state[ siteId ], ( value, key ) =>
+						key === '' ? newPostId : key
 					),
 				};
 			}

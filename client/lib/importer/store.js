@@ -146,15 +146,13 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 						...importerItem,
 						customData: {
 							...importerItem.customData,
-							sourceAuthors: map(
-								get( importerItem, 'customData.sourceAuthors' ),
-								author =>
-									sourceAuthor.id === author.id
-										? {
-												...author,
-												mappedTo: targetAuthor,
-										  }
-										: author
+							sourceAuthors: map( get( importerItem, 'customData.sourceAuthors' ), author =>
+								sourceAuthor.id === author.id
+									? {
+											...author,
+											mappedTo: targetAuthor,
+									  }
+									: author
 							),
 						},
 					},

@@ -35,8 +35,8 @@ const LikeButton = ( { commentId, isLiked, note, translate } ) => (
 					? translate( 'Remove like from comment' )
 					: translate( 'Remove like from post' )
 				: commentId
-					? translate( 'Like comment', { context: 'verb: imperative' } )
-					: translate( 'Like post', { context: 'verb: imperative' } ),
+				? translate( 'Like comment', { context: 'verb: imperative' } )
+				: translate( 'Like post', { context: 'verb: imperative' } ),
 		} }
 	/>
 );

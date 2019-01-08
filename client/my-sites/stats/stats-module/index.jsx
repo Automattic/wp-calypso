@@ -159,8 +159,9 @@ class StatsModule extends Component {
 
 		return (
 			<div>
-				{ siteId &&
-					statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
+				{ siteId && statType && (
+					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+				) }
 				{ ! isAllTime && (
 					<SectionHeader
 						className={ headerClass }
@@ -180,19 +181,19 @@ class StatsModule extends Component {
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					<StatsList moduleName={ path } data={ data } />
-					{ this.props.showSummaryLink &&
-						displaySummaryLink && <StatsModuleExpand href={ summaryLink } /> }
-					{ summary &&
-						'countryviews' === path && (
-							<UpgradeNudge
-								title={ translate( 'Add Google Analytics' ) }
-								message={ translate(
-									'Upgrade to a Business Plan for Google Analytics integration.'
-								) }
-								event="googleAnalytics-stats-countries"
-								feature={ FEATURE_GOOGLE_ANALYTICS }
-							/>
-						) }
+					{ this.props.showSummaryLink && displaySummaryLink && (
+						<StatsModuleExpand href={ summaryLink } />
+					) }
+					{ summary && 'countryviews' === path && (
+						<UpgradeNudge
+							title={ translate( 'Add Google Analytics' ) }
+							message={ translate(
+								'Upgrade to a Business Plan for Google Analytics integration.'
+							) }
+							event="googleAnalytics-stats-countries"
+							feature={ FEATURE_GOOGLE_ANALYTICS }
+						/>
+					) }
 				</Card>
 				{ isAllTime && (
 					<div className="stats-module__footer-actions">

@@ -296,27 +296,26 @@ class RemovePurchase extends Component {
 						{ args: { domain: productName } }
 					) }
 				</p>
-				{ ! isRefundable( purchase ) &&
-					maybeWithinRefundPeriod( purchase ) && (
-						<p>
-							<strong>
-								{ translate(
-									"We're not able to refund this purchase automatically. " +
-										"If you're canceling within %(refundPeriodInDays)s days of " +
-										'purchase, {{contactLink}}contact us{{/contactLink}} to ' +
-										'request a refund.',
-									{
-										args: {
-											refundPeriodInDays: purchase.refundPeriodInDays,
-										},
-										components: {
-											contactLink: <a href={ CALYPSO_CONTACT } />,
-										},
-									}
-								) }
-							</strong>
-						</p>
-					) }
+				{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase ) && (
+					<p>
+						<strong>
+							{ translate(
+								"We're not able to refund this purchase automatically. " +
+									"If you're canceling within %(refundPeriodInDays)s days of " +
+									'purchase, {{contactLink}}contact us{{/contactLink}} to ' +
+									'request a refund.',
+								{
+									args: {
+										refundPeriodInDays: purchase.refundPeriodInDays,
+									},
+									components: {
+										contactLink: <a href={ CALYPSO_CONTACT } />,
+									},
+								}
+							) }
+						</strong>
+					</p>
+				) }
 			</Dialog>
 		);
 	}

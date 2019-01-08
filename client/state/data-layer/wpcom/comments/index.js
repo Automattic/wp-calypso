@@ -31,18 +31,16 @@ import { decodeEntities } from 'lib/formatting';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const commentsFromApi = comments =>
-	map(
-		comments,
-		comment =>
-			comment.author
-				? {
-						...comment,
-						author: {
-							...comment.author,
-							name: decodeEntities( get( comment, [ 'author', 'name' ] ) ),
-						},
-				  }
-				: comment
+	map( comments, comment =>
+		comment.author
+			? {
+					...comment,
+					author: {
+						...comment.author,
+						name: decodeEntities( get( comment, [ 'author', 'name' ] ) ),
+					},
+			  }
+			: comment
 	);
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/posts/%24post_ID/replies/

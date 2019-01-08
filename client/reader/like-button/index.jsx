@@ -91,20 +91,17 @@ class ReaderLikeButton extends React.Component {
 					onLikeToggle={ this.recordLikeToggle }
 					likeSource="reader"
 				/>
-				{ showLikesPopover &&
-					siteId &&
-					postId &&
-					hasEnoughLikes && (
-						<PostLikesPopover
-							className="reader-likes-popover" // eslint-disable-line
-							onMouseEnter={ this.maybeShowLikesPopover }
-							onMouseLeave={ this.maybeHideLikesPopover }
-							siteId={ siteId }
-							postId={ postId }
-							showDisplayNames={ true }
-							context={ likesPopoverContext }
-						/>
-					) }
+				{ showLikesPopover && siteId && postId && hasEnoughLikes && (
+					<PostLikesPopover
+						className="reader-likes-popover" // eslint-disable-line
+						onMouseEnter={ this.maybeShowLikesPopover }
+						onMouseLeave={ this.maybeHideLikesPopover }
+						siteId={ siteId }
+						postId={ postId }
+						showDisplayNames={ true }
+						context={ likesPopoverContext }
+					/>
+				) }
 			</Fragment>
 		);
 	}

@@ -111,24 +111,23 @@ function ReaderSubscriptionListItem( {
 					}
 				</span>
 				<div className="reader-subscription-list-item__site-excerpt">{ siteExcerpt }</div>
-				{ ! isMultiAuthor &&
-					! isEmpty( authorName ) && (
-						<span className="reader-subscription-list-item__by-text">
-							{ translate( 'by {{author/}}', {
-								components: {
-									author: (
-										<a
-											href={ streamUrl }
-											className="reader-subscription-list-item__link"
-											onClick={ recordAuthorClick }
-										>
-											{ authorName }
-										</a>
-									),
-								},
-							} ) }
-						</span>
-					) }
+				{ ! isMultiAuthor && ! isEmpty( authorName ) && (
+					<span className="reader-subscription-list-item__by-text">
+						{ translate( 'by {{author/}}', {
+							components: {
+								author: (
+									<a
+										href={ streamUrl }
+										className="reader-subscription-list-item__link"
+										onClick={ recordAuthorClick }
+									>
+										{ authorName }
+									</a>
+								),
+							},
+						} ) }
+					</span>
+				) }
 				{ siteUrl && (
 					<div className="reader-subscription-list-item__site-url-timestamp">
 						<ExternalLink
@@ -156,8 +155,9 @@ function ReaderSubscriptionListItem( {
 					siteId={ siteId }
 					railcar={ railcar }
 				/>
-				{ isFollowing &&
-					showNotificationSettings && <ReaderSiteNotificationSettings siteId={ siteId } /> }
+				{ isFollowing && showNotificationSettings && (
+					<ReaderSiteNotificationSettings siteId={ siteId } />
+				) }
 			</div>
 		</div>
 	);

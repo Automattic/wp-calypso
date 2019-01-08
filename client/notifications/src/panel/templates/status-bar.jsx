@@ -35,9 +35,12 @@ export class StatusBar extends React.Component {
 		var component = this;
 
 		/* We only want this to appear for a bit, then disappear */
-		var timeout = window.setTimeout( function() {
-			component.disappear();
-		}, nextProps.statusTimeout ? nextProps.statusTimeout : this.props.statusTimeout );
+		var timeout = window.setTimeout(
+			function() {
+				component.disappear();
+			},
+			nextProps.statusTimeout ? nextProps.statusTimeout : this.props.statusTimeout
+		);
 
 		this.setState( {
 			isVisible: true,

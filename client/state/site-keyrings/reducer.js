@@ -80,11 +80,10 @@ const items = createReducer(
 		} ),
 		[ SITE_KEYRINGS_UPDATE_SUCCESS ]: ( state, { siteId, keyringId, externalUserId } ) => ( {
 			...state,
-			[ siteId ]: state[ siteId ].map(
-				keyring =>
-					keyring.keyring_id === keyringId
-						? { ...keyring, external_user_id: externalUserId }
-						: keyring
+			[ siteId ]: state[ siteId ].map( keyring =>
+				keyring.keyring_id === keyringId
+					? { ...keyring, external_user_id: externalUserId }
+					: keyring
 			),
 		} ),
 		[ SITE_KEYRINGS_DELETE_SUCCESS ]: ( state, { siteId, keyringId, externalUserId } ) => ( {

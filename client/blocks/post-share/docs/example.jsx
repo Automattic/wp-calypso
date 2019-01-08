@@ -38,16 +38,15 @@ class PostShareExample extends Component {
 				{ siteId && <QuerySitePlans siteId={ siteId } /> }
 				{ siteId && <QueryPosts siteId={ siteId } query={ { number: 1, type: 'post' } } /> }
 
-				{ site &&
-					post && (
-						<p>
-							Site: <strong>{ site.name }</strong> ({ siteId })<br />
-							Plan: <strong>{ planSlug }</strong>
-							<br />
-							Post: <em>{ post.title }</em>
-							<br />
-						</p>
-					) }
+				{ site && post && (
+					<p>
+						Site: <strong>{ site.name }</strong> ({ siteId })<br />
+						Plan: <strong>{ planSlug }</strong>
+						<br />
+						Post: <em>{ post.title }</em>
+						<br />
+					</p>
+				) }
 
 				<p onClick={ this.toggleEnable }>
 					<label>
