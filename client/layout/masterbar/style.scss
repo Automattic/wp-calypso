@@ -113,7 +113,6 @@ $autobar-height: 20px;
 		.accessible-focus & {
 			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 			color: var( --masterbar-color );
-			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 		}
 	}
 
@@ -233,6 +232,10 @@ $autobar-height: 20px;
 			box-shadow: 0 0 0 2px var( --color-primary-light );
 			z-index: 1;
 		}
+	}
+
+	.gridicon {
+		fill: var( --color-primary ); // only because safari gets currentColor wrong
 	}
 
 	.masterbar__item-content {
