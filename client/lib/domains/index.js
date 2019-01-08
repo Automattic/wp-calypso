@@ -312,6 +312,12 @@ function getDomainTypeText( domain = {} ) {
 
 		case domainTypes.WPCOM:
 			return 'Wpcom Domain';
+
+		case domainTypes.TRANSFER:
+			return 'Transfer';
+
+		default:
+			return '';
 	}
 }
 
