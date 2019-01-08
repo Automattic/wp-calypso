@@ -113,7 +113,7 @@ export const settings = {
 		customClassName: false,
 		html: false,
 	},
-	title: __( 'Tiled gallery' ),
+	title: __( 'Tiled Gallery' ),
 	transforms: {
 		from: [
 			{

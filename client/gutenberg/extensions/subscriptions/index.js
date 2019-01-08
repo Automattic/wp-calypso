@@ -9,7 +9,7 @@ import { Path } from '@wordpress/components';
 
 export const name = 'subscriptions';
 export const settings = {
-	title: __( 'Subscription form' ),
+	title: __( 'Subscription Form' ),
 
 	description: (
 		<p>
