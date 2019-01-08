@@ -252,7 +252,7 @@ class JetpackContactForm extends Component {
 							] }
 						/>
 					) }
-					{ hasFormSettingsSet && SubmitButton( this.props ) }
+					{ hasFormSettingsSet && <SubmitButton { ...this.props } /> }
 				</div>
 			</Fragment>
 		);
