@@ -24,7 +24,6 @@ import { setSiteStyle } from 'state/signup/steps/site-style/actions';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteStyleOptions } from 'lib/signup/site-styles';
-import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -151,6 +150,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 		const { flowName, stepName, goToNextStep } = ownProps;
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_style', {
+				// The untranslated 'product' name of the variation/theme
 				site_style: styleLabel,
 			} )
 		);

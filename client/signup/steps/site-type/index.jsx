@@ -129,9 +129,7 @@ export default connect(
 			let nextFlowName = ownProps.flowName;
 			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 'store', 'slug' ) ) {
 				nextFlowName = 'ecommerce';
-			}
-
-			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 'business', 'slug' ) ) {
+			} else if ( siteTypeValue === getSiteTypePropertyValue( 'id', 'business', 'slug' ) ) {
 				nextFlowName = 'onboarding-with-preview';
 			}
 			ownProps.goToNextStep( nextFlowName );
