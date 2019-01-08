@@ -24,15 +24,12 @@ class PrimaryDomainButton extends React.Component {
 	};
 
 	render() {
-		const domain = this.props.domain;
-		let label;
+		const { domain, translate } = this.props;
 
 		if ( domain && ! domain.isPrimary ) {
-			label = this.props.translate( 'Make Primary' );
-
 			return (
 				<Button compact onClick={ this.handleClick }>
-					{ label }
+					{ translate( 'Make Primary' ) }
 				</Button>
 			);
 		}
