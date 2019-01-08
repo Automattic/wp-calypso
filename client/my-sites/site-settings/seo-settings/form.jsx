@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import Button from 'components/button';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'components/seo/meta-title-editor';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -307,18 +307,6 @@ export class SeoForm extends React.Component {
 			? translate( 'Enable SEO Tools by upgrading to Jetpack Premium' )
 			: translate( 'Enable SEO Tools by upgrading to the Business plan' );
 
-		const seoSubmitButton = (
-			<Button
-				compact={ true }
-				onClick={ this.submitSeoForm }
-				primary={ true }
-				type="submit"
-				disabled={ isSaveDisabled || isSeoDisabled }
-			>
-				{ isSubmittingForm ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-			</Button>
-		);
-
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
@@ -386,9 +374,13 @@ export class SeoForm extends React.Component {
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
 					{ showAdvancedSeo && ! conflictedSeoPlugin && (
 						<div>
-							<SectionHeader label={ translate( 'Page Title Structure' ) }>
-								{ seoSubmitButton }
-							</SectionHeader>
+							<SettingsSectionHeader
+								disabled={ isSaveDisabled || isSeoDisabled }
+								isSaving={ isSubmittingForm }
+								onButtonClick={ this.submitSeoForm }
+								showButton
+								title={ translate( 'Page Title Structure' ) }
+							/>
 							<Card compact className="seo-settings__page-title-header">
 								<img
 									className="seo-settings__page-title-header-image"
@@ -415,9 +407,13 @@ export class SeoForm extends React.Component {
 					{ ! conflictedSeoPlugin &&
 						( showAdvancedSeo || ( ! siteIsJetpack && showWebsiteMeta ) ) && (
 							<div>
-								<SectionHeader label={ translate( 'Website Meta' ) }>
-									{ seoSubmitButton }
-								</SectionHeader>
+								<SettingsSectionHeader
+									disabled={ isSaveDisabled || isSeoDisabled }
+									isSaving={ isSubmittingForm }
+									onButtonClick={ this.submitSeoForm }
+									showButton
+									title={ translate( 'Website Meta' ) }
+								/>
 								<Card>
 									<p>
 										{ translate(
