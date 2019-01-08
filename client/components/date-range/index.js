@@ -13,12 +13,11 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 import DatePicker from 'components/date-picker';
-import Button from 'components/button';
 import Popover from 'components/popover';
 import DateRangeInputs from './inputs';
 import DateRangeHeader from './header';
+import DateRangeTrigger from './trigger';
 
 export class DateRange extends Component {
 	static propTypes = {
@@ -211,49 +210,6 @@ export class DateRange extends Component {
 		return this.props.moment( date ).format( 'L' );
 	}
 
-	renderDatePicker() {
-		const now = new Date();
-
-		return (
-			<DatePicker
-				className="date-range__popover-date-picker"
-				showOutsideDays={ false }
-				toMonth={ now }
-				onSelectDay={ this.onSelectDate }
-				selectedDays={ {
-					from: this.momentDateToNative( this.state.startDate ),
-					to: this.momentDateToNative( this.state.endDate ),
-				} }
-				numberOfMonths={ window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1 }
-				calendarViewDate={ this.momentDateToNative( this.state.startDate ) }
-				disabledDays={ [
-					{
-						after: now, // you can't look at photos from the future!
-					},
-				] }
-			/>
-		);
-	}
-
-	renderTriggerButton() {
-		return (
-			<Button
-				className="date-range__trigger-btn"
-				ref={ this.startButtonRef }
-				onClick={ this.togglePopover }
-				compact
-			>
-				<Gridicon className="date-range__trigger-btn-icon" icon="calendar" />
-				<span className="date-range__trigger-btn-text">
-					{ this.dateToHumanReadable( this.state.startDate ) }
-					&nbsp; - &nbsp;
-					{ this.dateToHumanReadable( this.state.endDate ) }
-				</span>
-				<Gridicon icon="chevron-down" />
-			</Button>
-		);
-	}
-
 	renderPopover() {
 		const popoverClassNames = classNames( {
 			'date-range__popover': true,
@@ -282,6 +238,30 @@ export class DateRange extends Component {
 		);
 	}
 
+	renderDatePicker() {
+		const now = new Date();
+
+		return (
+			<DatePicker
+				className="date-range__popover-date-picker"
+				showOutsideDays={ false }
+				toMonth={ now }
+				onSelectDay={ this.onSelectDate }
+				selectedDays={ {
+					from: this.momentDateToNative( this.state.startDate ),
+					to: this.momentDateToNative( this.state.endDate ),
+				} }
+				numberOfMonths={ window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1 }
+				calendarViewDate={ this.momentDateToNative( this.state.startDate ) }
+				disabledDays={ [
+					{
+						after: now, // you can't look at photos from the future!
+					},
+				] }
+			/>
+		);
+	}
+
 	render() {
 		const rootClassNames = classNames( {
 			'date-range': true,
@@ -290,7 +270,12 @@ export class DateRange extends Component {
 
 		return (
 			<div className={ rootClassNames }>
-				{ this.renderTriggerButton() }
+				<DateRangeTrigger
+					startDateText={ this.dateToHumanReadable( this.state.startDate ) }
+					endDateText={ this.dateToHumanReadable( this.state.endDate ) }
+					buttonRef={ this.startButtonRef }
+					onTriggerClick={ this.togglePopover }
+				/>
 				{ this.renderPopover() }
 			</div>
 		);
