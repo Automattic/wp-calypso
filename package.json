@@ -309,7 +309,7 @@
     "mixedindentlint": "1.2.0",
     "nock": "10.0.2",
     "npm-merge-driver": "2.3.5",
-    "prettier": "github:Automattic/wp-prettier#wp-prettier-1.14.0",
+    "prettier": "https://github.com/Automattic/wp-prettier/releases/download/wp-1.15.3/wp-prettier-1.15.3.tgz",
     "react-test-renderer": "16.6.3",
     "readline-sync": "1.4.9",
     "replace": "1.0.1",
