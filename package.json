@@ -133,7 +133,7 @@
     "json-stable-stringify": "1.0.1",
     "jsx-to-string": "1.4.0",
     "keymaster": "1.6.2",
-    "lerna": "3.8.5",
+    "lerna": "3.9.1",
     "loader-utils": "1.1.0",
     "localforage": "1.7.3",
     "lodash": "4.17.11",
