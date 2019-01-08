@@ -11,14 +11,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-
-import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
@@ -47,11 +45,13 @@ class FeedSettings extends Component {
 
 		return (
 			<div className="feed-settings">
-				<SectionHeader label={ translate( 'Feed Settings' ) }>
-					<Button compact primary disabled={ isDisabled } onClick={ handleSubmitForm }>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</SectionHeader>
+				<SettingsSectionHeader
+					disabled={ isDisabled }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Feed Settings' ) }
+				/>
 				<CompactCard>
 					<FormFieldset>
 						{ translate( 'Display {{field /}} most recent blog posts', {
