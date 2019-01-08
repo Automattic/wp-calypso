@@ -4,7 +4,7 @@
  */
 import { unstable__bootstrapServerSideBlockDefinitions } from '@wordpress/blocks';
 
-export const registerServerBlocks = () => {
+export const registerServerBlocksAttributes = () => {
 	const blocks = {
 		'core/latest-comments': {
 			attributes: {
@@ -29,7 +29,6 @@ export const registerServerBlocks = () => {
 				},
 				align: {
 					type: 'string',
-					enum: [ 'center', 'left', 'right', 'wide', 'full', '' ],
 				},
 			},
 		},
@@ -37,4 +36,4 @@ export const registerServerBlocks = () => {
 	unstable__bootstrapServerSideBlockDefinitions( blocks );
 };
 
-export default registerServerBlocks;
+export default registerServerBlocksAttributes;

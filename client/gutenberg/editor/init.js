@@ -14,7 +14,7 @@ import { use, plugins, dispatch } from '@wordpress/data';
  */
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { applyAPIMiddleware } from './api-middleware';
-import registerServerBlocks from './utils/register-server-blocks';
+import registerServerBlocksAttributes from './utils/register-server-blocks-attributes';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:gutenberg' );
@@ -81,7 +81,7 @@ export const initGutenberg = once( ( userId, store ) => {
 	require( '@wordpress/core-data' );
 
 	debug( 'Registering server-defined blocks attributes' );
-	registerServerBlocks();
+	registerServerBlocksAttributes();
 
 	// Avoid using top level imports for this since they will statically
 	// initialize core-data before required plugins are loaded.
