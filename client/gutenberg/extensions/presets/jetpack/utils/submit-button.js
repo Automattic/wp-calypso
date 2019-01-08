@@ -27,16 +27,34 @@ const applyFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
 	const backgroundColorValue = backgroundButtonColor && backgroundButtonColor.color;
 	const textColorValue = textButtonColor && textButtonColor.color;
 	//avoid the use of querySelector if textColor color is known and verify if node is available.
-	const textNode =
-		! textColorValue && node ? node.querySelector( '[contenteditable="true"]' ) : null;
-	const button = node.querySelector( '.wp-block-button__link' )
-		? node.querySelector( '.wp-block-button__link' )
-		: node;
+
+	let textNode;
+	let button;
+
+	if ( ! textColorValue && node ) {
+		textNode = node.querySelector( '[contenteditable="true"]' );
+	}
+
+	if ( node.querySelector( '.wp-block-button__link' ) ) {
+		button = node.querySelector( '.wp-block-button__link' );
+	} else {
+		button = node;
+	}
+
+	let fallbackBackgroundColor;
+	let fallbackTextColor;
+
+	if ( node ) {
+		fallbackBackgroundColor = getComputedStyle( button ).backgroundColor;
+	}
+
+	if ( textNode ) {
+		fallbackTextColor = getComputedStyle( textNode ).color;
+	}
+
 	return {
-		fallbackBackgroundColor:
-			backgroundColorValue || ! node ? undefined : getComputedStyle( button ).backgroundColor,
-		fallbackTextColor:
-			textColorValue || ! textNode ? undefined : getComputedStyle( textNode ).color,
+		fallbackBackgroundColor: backgroundColorValue || fallbackBackgroundColor,
+		fallbackTextColor: textColorValue || fallbackTextColor,
 	};
 } );
 
@@ -60,12 +78,8 @@ const SubmitButton = ( {
 		[ backgroundClass ]: backgroundClass,
 	} );
 
-	const backgroundColor = attributes.customBackgroundButtonColor
-		? attributes.customBackgroundButtonColor
-		: fallbackBackgroundColor;
-	const color = attributes.customTextButtonColor
-		? attributes.customTextButtonColor
-		: fallbackTextColor;
+	const backgroundColor = attributes.customBackgroundButtonColor || fallbackBackgroundColor;
+	const color = attributes.customTextButtonColor || fallbackTextColor;
 
 	const buttonStyle = { border: 'none', backgroundColor, color };
 
