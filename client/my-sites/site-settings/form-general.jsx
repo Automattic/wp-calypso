@@ -20,7 +20,7 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import LanguagePicker from 'components/language-picker';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import config from 'config';
 import notices from 'notices';
 import FormInput from 'components/forms/form-text-input';
@@ -376,17 +376,13 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Net Neutrality' ) }>
-					<Button
-						compact={ true }
-						onClick={ handleSubmitForm }
-						primary={ true }
-						type="submit"
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</SectionHeader>
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Net Neutrality' ) }
+				/>
 				<Card>
 					<FormFieldset>
 						<CompactFormToggle
@@ -476,7 +472,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<>
-				<SectionHeader label={ translate( 'Launch site' ) } />
+				<SettingsSectionHeader title={ translate( 'Launch site' ) } />
 				<Card className="site-settings__general-settings-launch-site">
 					<div className="site-settings__general-settings-launch-site-text">
 						<p>
@@ -498,17 +494,14 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<>
-				<SectionHeader label={ translate( 'Privacy' ) } id="site-privacy-settings">
-					<Button
-						compact={ true }
-						onClick={ handleSubmitForm }
-						primary={ true }
-						type="submit"
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</SectionHeader>
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings }
+					id="site-privacy-settings"
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Privacy' ) }
+				/>
 				<Card>
 					<form>{ this.visibilityOptions() }</form>
 				</Card>
@@ -552,18 +545,14 @@ export class SiteSettingsFormGeneral extends Component {
 
 				{ ! siteIsJetpack && this.netNeutralityOption() }
 
-				<SectionHeader label={ translate( 'Site Profile' ) }>
-					<Button
-						compact={ true }
-						onClick={ handleSubmitForm }
-						primary={ true }
-						data-tip-target="settings-site-profile-save"
-						type="submit"
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</SectionHeader>
+				<SettingsSectionHeader
+					data-tip-target="settings-site-profile-save"
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Site Profile' ) }
+				/>
 				<Card>
 					<form>
 						{ this.siteOptions() }
@@ -578,7 +567,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 				{ ! siteIsJetpack && (
 					<div className="site-settings__footer-credit-container">
-						<SectionHeader label={ translate( 'Footer Credit' ) } />
+						<SettingsSectionHeader title={ translate( 'Footer Credit' ) } />
 						<CompactCard className="site-settings__footer-credit-explanation">
 							<p>
 								{ preventWidows(
