@@ -65,8 +65,6 @@ const SubmitButton = ( {
 	fallbackBackgroundColor,
 	fallbackTextColor,
 	setAttributes,
-	setBackgroundButtonColor,
-	setTextButtonColor,
 } ) => {
 	const textClass = getColorClassName( 'color', textButtonColor );
 	const backgroundClass = getColorClassName( 'background-color', backgroundButtonColor );
@@ -103,7 +101,6 @@ const SubmitButton = ( {
 						{
 							value: backgroundColor,
 							onChange: nextColour => {
-								setBackgroundButtonColor( nextColour );
 								setAttributes( { customBackgroundButtonColor: nextColour } );
 							},
 							label: __( 'Background Color' ),
@@ -111,7 +108,6 @@ const SubmitButton = ( {
 						{
 							value: color,
 							onChange: nextColour => {
-								setTextButtonColor( nextColour );
 								setAttributes( { customTextButtonColor: nextColour } );
 							},
 							label: __( 'Text Color' ),
