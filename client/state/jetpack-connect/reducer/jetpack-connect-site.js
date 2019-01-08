@@ -20,6 +20,7 @@ export default function jetpackConnectSite( state = {}, action ) {
 				isDismissed: false,
 				installConfirmedByUser: null,
 				data: {},
+				error: null,
 			};
 
 		case JETPACK_CONNECT_CHECK_URL_RECEIVE:
@@ -28,6 +29,7 @@ export default function jetpackConnectSite( state = {}, action ) {
 					isFetching: false,
 					isFetched: true,
 					data: action.data,
+					error: action.error,
 				} );
 			}
 			return state;
