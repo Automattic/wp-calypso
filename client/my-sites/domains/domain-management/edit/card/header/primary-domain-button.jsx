@@ -56,7 +56,9 @@ const makePrimaryClick = domain =>
 
 PrimaryDomainButton.propTypes = {
 	domain: PropTypes.object.isRequired,
+	makePrimaryClick: PropTypes.func.isRequired,
 	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+	translate: PropTypes.func.isRequired,
 };
 
 export default connect(
