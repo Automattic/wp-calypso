@@ -35,6 +35,7 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
 import { isRequestingSitePlans, getPlansBySiteId } from 'state/sites/plans/selectors';
+import analytics from 'lib/analytics';
 
 export class ConciergeSessionNudge extends React.Component {
 	static propTypes = {
@@ -288,11 +289,16 @@ export class ConciergeSessionNudge extends React.Component {
 
 		trackUpsellButtonClick( 'decline' );
 
-		page(
-			isEligibleForChecklist
-				? `/checklist/${ siteSlug }`
-				: `/checkout/thank-you/${ siteSlug }/${ receiptId }`
-		);
+		if ( isEligibleForChecklist ) {
+			const { selectedSiteSlug } = this.props;
+			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
+				site: selectedSiteSlug,
+				plan: 'paid',
+			} );
+			page( `/checklist/${ siteSlug }` );
+		} else {
+			page( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
+		}
 	};
 
 	handleClickAccept = () => {
