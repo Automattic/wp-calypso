@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import apiFetch from '@wordpress/api-fetch';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import {
 	Button,
@@ -38,36 +38,27 @@ class MailchimpSubscribeEdit extends Component {
 	componentDidMount = () => {
 		this.apiCall();
 	};
+	onError = ( code, message ) => {
+		const { noticeOperations } = this.props;
+		noticeOperations.removeAllNotices();
+		noticeOperations.createErrorNotice( message );
+	};
 	apiCall = () => {
-		const blog_id = window && window.Jetpack_Editor_Initial_State.blog_id;
-		const connectURL = 'https://wordpress.com/sharing/' + blog_id;
-		const url =
-			'https://public-api.wordpress.com/rest/v1.1/sites/' + blog_id + '/mailchimp/settings';
-		const fetch = new Promise( function( resolve, reject ) {
-			const xhr = new XMLHttpRequest();
-			xhr.open( 'GET', url );
-			xhr.onload = function() {
-				if ( xhr.status === 200 ) {
-					const res = JSON.parse( xhr.responseText );
-					resolve( res );
-				} else {
-					const res = JSON.parse( xhr.responseText );
-					reject( res );
-				}
-			};
-			xhr.send();
-		} );
-		fetch.then(
+		const path = '/wpcom/v2/mailchimp';
+		const method = 'GET';
+		const fetch = { path, method };
+		apiFetch( fetch ).then(
 			result => {
+				const connectURL = result.connect_url;
 				const connected =
-					result.keyring_id && result.follower_list_id
-						? API_STATE_CONNECTED
-						: API_STATE_NOTCONNECTED;
+					result.code === 'connected' ? API_STATE_CONNECTED : API_STATE_NOTCONNECTED;
 				this.setState( { connected, connectURL } );
 			},
-			() => {
+			result => {
+				const connectURL = null;
 				const connected = API_STATE_NOTCONNECTED;
 				this.setState( { connected, connectURL } );
+				this.onError( null, result.message );
 			}
 		);
 	};
