@@ -6,7 +6,7 @@
 	}
 
 	.product-reviews-widget__label {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		display: block;
 		font-size: 14px;
 		font-weight: 600;

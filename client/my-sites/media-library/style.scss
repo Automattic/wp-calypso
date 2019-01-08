@@ -78,7 +78,7 @@
 		margin-bottom: 9px;
 		box-shadow:
 		  0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
-		  0 1px 2px $gray-lighten-30;
+		  0 1px 2px var( --color-neutral-0 );
 		background-color: $white;
 		padding-left: 24px;
 		padding-right: 24px;
@@ -102,7 +102,7 @@
 	.media-library__datasource {
 		box-shadow:
 		  0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
-		  0 1px 2px $gray-lighten-30;
+		  0 1px 2px var( --color-neutral-0 );
 		background-color: $white;
 		box-sizing: border-box;
 		display: flex;

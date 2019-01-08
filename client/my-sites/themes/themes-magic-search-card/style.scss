@@ -10,7 +10,7 @@
 	display: flex;
 	align-items: center;
 	background: white;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	transition: all 0.15s ease-in-out;
 
 	&.has-highlight {
@@ -35,7 +35,7 @@
 	}
 
 	.search .search-open__icon {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 	}
 
 	.themes-magic-search-card__icon {
@@ -51,7 +51,7 @@
 
 		.themes-magic-search-card__icon-close {
 			flex: 0 0 auto;
-			color: $gray-darken-30;
+			color: var( --color-neutral-600 );
 			align-items: center;
 		}
 	}
@@ -145,20 +145,20 @@
 .themes-magic-search-card__welcome {
 	color: $gray;
 	background-color: $white;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	display: flex;
 	flex-direction: column;
 }
 
 .themes-magic-search-card__welcome-header {
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	border-bottom: 1px solid darken( $gray-light, 10% );
 	border-top: 0;
 	padding: 4px 8px;
 	font-size: 13px;
 
 	text-transform: uppercase;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .themes-magic-search-card__welcome-taxonomies {
@@ -182,7 +182,7 @@
 	line-height: 16px;
 	text-transform: capitalize;
 	cursor: pointer;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	transition: all 200ms ease-in;
 
 	@include breakpoint( '>660px' ) {
@@ -190,7 +190,7 @@
 	}
 
 	.gridicon {
-		fill: $gray-dark;
+		fill: var( --color-neutral-700 );
 		margin: 0 auto;
 		transition: fill 200ms ease-in;
 	}

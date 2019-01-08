@@ -353,7 +353,7 @@
 }
 .signup-processing__title-subdomain {
 	text-transform: uppercase;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-size: 0.7em;
 	margin: 3px;
 	text-align: left;
@@ -364,7 +364,7 @@
 }
 .signup-processing__address-bar {
 	display: flex;
-	background: $gray-darken-10;
+	background: var( --color-neutral-400 );
 	border-radius: 8px;
 	flex-direction: row;
 	padding: 10px;
@@ -375,7 +375,7 @@
 	}
 }
 .signup-processing__address-bar .gridicon {
-	fill: $gray-dark;
+	fill: var( --color-neutral-700 );
 	margin-right: 10px;
 	align-self: center;
 	flex: 0 0 24px;
@@ -392,7 +392,7 @@
 .signup-processing__address-field.is-placeholder::after {
 	content: 'placeholder.wordpress.com';
 	color: transparent;
-	background-color: $gray-lighten-30;
+	background-color: var( --color-neutral-0 );
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 .signup-processing__bubble {
@@ -400,7 +400,7 @@
 	background: #c2f4ff url( '/calypso/images/signup/seo-guy.svg' ) no-repeat 28px 50%;
 	background-size: 121px auto;
 	border-radius: 28px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	width: 400px;
 	max-width: 96%;
 	padding: 28px;
@@ -432,7 +432,7 @@
 .signup-processing__nudge-message {
 	width: 400px;
 	max-width: 96%;
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	margin: 1.5em auto;
 	box-sizing: border-box;
 }

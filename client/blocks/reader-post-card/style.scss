@@ -1,6 +1,6 @@
 // Adds a top border to first card in the Site Stream
 .is-reader-page .is-site-stream .reader-post-card.card:nth-child( 2 ) {
-	border-top: 1px solid $gray-lighten-20;
+	border-top: 1px solid var( --color-neutral-100 );
 }
 
 // Removes top border from first card in Discover Stream
@@ -9,7 +9,7 @@
 }
 
 .reader-post-card.card {
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	box-shadow: none;
 	margin: 0 15px;
 	padding: 18px 0 20px;
@@ -20,14 +20,13 @@
 	}
 
 	&.is-selected {
-
 		&::before {
 			content: '';
 			position: absolute;
-				top: 0;
-				bottom: 0;
-				left: -8px;
-				width: 2px;
+			top: 0;
+			bottom: 0;
+			left: -8px;
+			width: 2px;
 			background: var( --color-primary );
 
 			@include breakpoint( '>660px' ) {
@@ -37,7 +36,6 @@
 	}
 
 	&.has-thumbnail {
-
 		.reader-featured-image {
 			flex-basis: auto;
 			flex-grow: 1;
@@ -76,8 +74,8 @@
 				color: $white;
 				font-family: $sans;
 				position: relative;
-					bottom: 30px;
-					left: 20px;
+				bottom: 30px;
+				left: 20px;
 				text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
 				width: calc( 100% - 44px );
 				text-overflow: ellipsis;
@@ -122,7 +120,6 @@
 
 	&.is-gallery,
 	&.is-photo {
-
 		.reader-post-card__post {
 			margin-top: 16px;
 		}
@@ -133,7 +130,6 @@
 	}
 
 	&.is-compact {
-
 		.reader-post-card__byline-details {
 			display: flex;
 			flex-direction: row;
@@ -163,7 +159,6 @@
 
 		.reader-post-card__byline-author-site,
 		.reader-post-card__timestamp-and-tag {
-
 			&::after {
 				display: none;
 			}
@@ -175,8 +170,8 @@
 
 		.reader-post-options-menu {
 			position: absolute;
-				right: 14px;
-				top: 0;
+			right: 14px;
+			top: 0;
 		}
 
 		.reader-featured-image {
@@ -212,7 +207,7 @@
 }
 
 .reader-post-card__photo {
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -221,7 +216,7 @@
 	margin-right: 20px;
 	cursor: pointer;
 	position: relative;
-		top: 0;
+	top: 0;
 	height: 225px;
 	margin-right: 0;
 	margin-bottom: 0;
@@ -253,8 +248,8 @@
 		height: 80px;
 		opacity: 0.4;
 		position: absolute;
-			bottom: 0;
-			left: 0;
+		bottom: 0;
+		left: 0;
 		width: 100%;
 	}
 }
@@ -275,12 +270,12 @@
 	margin-top: 2px;
 	cursor: pointer;
 	&:hover {
-		color: var( --color-accent );
+		color: var( --color-primary );
 	}
 }
 
 .reader-post-card__byline-details {
-	color: var( --color-accent );
+	color: var( --color-primary );
 	width: 100%;
 }
 
@@ -390,7 +385,7 @@
 }
 
 .reader-post-card__link {
-	color: var( --color-accent );
+	color: var( --color-primary );
 	cursor: pointer;
 
 	&:hover {
@@ -398,7 +393,7 @@
 	}
 
 	&:visited {
-		color: var( --color-accent );
+		color: var( --color-primary );
 	}
 }
 
@@ -435,14 +430,14 @@
 .reader__content .reader-post-card__title-link:visited,
 .reader-post-card__title-link,
 .reader-post-card__title-link:visited {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	cursor: pointer;
 	font-size: 19px;
 	font-weight: 700;
 	display: block;
 
 	&:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	@include breakpoint( '>480px' ) {
@@ -481,7 +476,7 @@
 		}
 	}
 
-	.reader-excerpt[direction=rtl] {
+	.reader-excerpt[direction='rtl'] {
 		&::before {
 			@include long-content-fade( $direction: left, $size: 15px * 1.6 * 5 );
 			top: inherit;
@@ -489,7 +484,7 @@
 		}
 	}
 
-	.reader-excerpt[direction=ltr] {
+	.reader-excerpt[direction='ltr'] {
 		&::before {
 			@include long-content-fade( $direction: right, $size: 15px * 1.6 * 5 );
 			top: inherit;
@@ -500,7 +495,6 @@
 
 // 3 line excerpt for thumbnail cards
 .reader-post-card.card.has-thumbnail:not( .is-gallery ):not( .is-compact ) {
-
 	.reader-excerpt {
 		max-height: 15px * 1.6 * 3.2;
 		overflow: hidden;
@@ -514,8 +508,8 @@
 
 	&.reader-post-actions__visit .gridicon {
 		position: relative;
-			left: -2px;
-			top: -1px;
+		left: -2px;
+		top: -1px;
 	}
 
 	.gridicons-external {
@@ -547,7 +541,6 @@
 	.reader-share__button-label,
 	.comment-button__label-status,
 	.like-button__label-status {
-
 		@include breakpoint( '>960px' ) {
 			display: none;
 		}
@@ -565,19 +558,18 @@
 	float: right;
 	padding: 0;
 	position: absolute;
-		right: 0;
-		top: 16px;
+	right: 0;
+	top: 16px;
 
 	.gridicon {
-		fill: var( --color-accent );
+		fill: var( --color-primary );
 	}
 
 	.follow-button__label {
-		color: var( --color-accent );
+		color: var( --color-primary );
 	}
 
 	&.is-following {
-
 		.gridicon {
 			fill: var( --color-success );
 		}
@@ -604,7 +596,6 @@
 
 // If chat window is open
 .is-group-reader.has-chat {
-
 	.reader-post-card__post .reader-featured-image {
 		height: 100px;
 		margin-right: 0;
@@ -626,7 +617,7 @@
 }
 
 .reader-post-card__gallery-item {
-	border: 1px solid $gray-lighten-30;
+	border: 1px solid var( --color-neutral-0 );
 	cursor: pointer;
 	flex: 1;
 	list-style-type: none;
@@ -636,7 +627,6 @@
 	}
 
 	&:nth-last-of-type( -n + 2 ) {
-
 		@include breakpoint( '<480px' ) {
 			display: none;
 		}
@@ -657,7 +647,7 @@
 
 .reader-post-card__blocked-description {
 	margin-bottom: 0;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .reader-post-card__blocked-undo {

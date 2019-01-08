@@ -4,7 +4,7 @@
 }
 
 .post-type-filter__multi-select-button {
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 
 	@include breakpoint( '<480px' ) {
 		position: absolute;

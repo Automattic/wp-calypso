@@ -29,7 +29,7 @@
 			border-right-width: 0;
 
 			& + .form-text-input-with-affixes__suffix {
-				border-left: 1px solid $gray-lighten-20;
+				border-left: 1px solid var( --color-neutral-100 );
 			}
 		}
 	}
@@ -50,9 +50,9 @@
 .form-text-input-with-affixes__prefix,
 .form-text-input-with-affixes__suffix {
 	position: relative;
-	background: $gray-light;
-	border: 1px solid $gray-lighten-20;
-	color: $gray-darken-20;
+	background: var( --color-neutral-0 );
+	border: 1px solid var( --color-neutral-100 );
+	color: var( --color-neutral-500 );
 	padding: 8px 14px;
 	white-space: nowrap;
 	flex: 1 0 auto;
@@ -84,7 +84,7 @@
 	& + input[type='text'],
 	& + input[type='number'] {
 		&:disabled {
-			border-left-color: $gray-lighten-20;
+			border-left-color: var( --color-neutral-100 );
 			border-right-width: 1px;
 		}
 	}

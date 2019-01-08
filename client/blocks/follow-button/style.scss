@@ -1,4 +1,4 @@
-$follow-button-gray-disabled: $gray-lighten-20;
+$follow-button-gray-disabled: var( --color-neutral-100 );
 
 .follow-button,
 button.follow-button {
@@ -6,19 +6,19 @@ button.follow-button {
 	padding: 0;
 
 	.gridicons-reader-follow {
-		fill: var( --color-accent );
+		fill: var( --color-primary );
 		pointer-events: auto;
 	}
 
 	.follow-button__label {
-		color: var( --color-accent );
+		color: var( --color-primary );
 	}
 
 	&:hover {
-		color: var( --color-accent );
+		color: var( --color-primary );
 
 		.gridicons-reader-follow {
-			fill: var( --color-accent );
+			fill: var( --color-primary );
 		}
 	}
 
@@ -33,7 +33,6 @@ button.follow-button {
 	}
 
 	&.is-following {
-
 		.gridicons-reader-following {
 			display: inline-block;
 			fill: var( --color-success );

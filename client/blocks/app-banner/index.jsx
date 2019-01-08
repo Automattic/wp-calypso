@@ -184,6 +184,7 @@ export class AppBanner extends Component {
 				</div>
 				<div className="app-banner__buttons">
 					<Button
+						primary
 						className="app-banner__open-button"
 						onClick={ this.openApp }
 						href={ this.getDeepLink() }

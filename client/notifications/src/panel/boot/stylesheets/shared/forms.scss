@@ -2,10 +2,10 @@
   margin: 0;
   padding: 7px 14px;
   width: 100%;
-  color: $gray-dark;
+  color: var( --color-neutral-700 );
   font-size: 16px;
   line-height: 1.5;
-  border: 1px solid $gray-lighten-20;
+  border: 1px solid var( --color-neutral-100 );
   background-color: $white;
   transition: all 0.15s ease-in-out;
   box-sizing: border-box;
@@ -15,7 +15,7 @@
   }
 
   &:hover {
-    border-color: $gray-lighten-10;
+    border-color: var( --color-neutral-200 );
   }
 
   &:focus {
@@ -30,15 +30,15 @@
 
   &:disabled {
     background: $white;
-    border-color: $gray-lighten-30;
-    color: $gray-lighten-30;
+    border-color: var( --color-neutral-0 );
+    color: var( --color-neutral-0 );
 
     &:hover {
       cursor: default;
     }
 
     &::placeholder {
-      color: $gray-lighten-30;
+      color: var( --color-neutral-0 );
     }
   }
 }

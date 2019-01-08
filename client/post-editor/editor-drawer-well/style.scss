@@ -13,12 +13,12 @@
 	min-height: 150px;
 	padding: 24px;
 	margin: 0;
-	background: $gray-lighten-30;
+	background: var( --color-neutral-0 );
 	cursor: pointer;
 
 	&:hover {
-		border-color: $gray-lighten-10;
-		color: $gray-dark;
+		border-color: var( --color-neutral-200 );
+		color: var( --color-neutral-700 );
 	}
 }
 

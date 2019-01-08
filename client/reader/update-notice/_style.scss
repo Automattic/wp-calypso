@@ -4,7 +4,7 @@
 	position: fixed;
 	top: ( 47px + 8px );
 	right: 16px;
-	background: rgba( $orange-jazzy, 0.96 );
+	background: rgba( var( --color-accent-rgb ), 0.96 );
 	padding: 8px 18px 8px 34px;
 	border-radius: 24px;
 	color: white;
@@ -18,7 +18,7 @@
 	font-size: 15px;
 
 	&:hover {
-		background: var( --color-accent );
+		background: var( --color-primary );
 	}
 
 	&.is-active {

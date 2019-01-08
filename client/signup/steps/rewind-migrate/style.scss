@@ -38,7 +38,7 @@
 	font-size: rem( 25px );
 	font-weight: 300;
 	letter-spacing: rem( 1.5px );
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .rewind-switch__description {

@@ -7,7 +7,7 @@
 	margin: 0 auto 60px;
 
 	p {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		text-align: right;
 		margin-bottom: 8px;
 	}

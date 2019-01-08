@@ -21,7 +21,7 @@
 
 .ads__earnings-breakdown-list {
 	margin: 0;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 }
 
 .ads__earnings-breakdown-item {
@@ -30,7 +30,7 @@
 	padding: 5px 0 10px;
 	list-style-type: none;
 	text-align: center;
-	border-left: 1px solid $gray-lighten-30;
+	border-left: 1px solid var( --color-neutral-0 );
 
 	@include breakpoint( '<480px' ) {
 		width: auto;
@@ -38,7 +38,7 @@
 		padding: 10px 24px;
 		text-align: left;
 		border: 0;
-		border-top: 1px solid $gray-lighten-30;
+		border-top: 1px solid var( --color-neutral-0 );
 	}
 
 	&:first-child {
@@ -47,7 +47,7 @@
 }
 
 .ads__earnings-breakdown-label {
-	color: $gray-darken-30;
+	color: var( --color-neutral-600 );
 	font-size: 10px;
 	letter-spacing: 0.1em;
 	line-height: 1.6;
@@ -105,7 +105,7 @@
 
 .ads__earnings-history-header {
 	color: $gray;
-	border: 1px solid $gray-light;
+	border: 1px solid var( --color-neutral-0 );
 	border-left: none;
 	border-right: none;
 	font-size: 11px;

@@ -1,13 +1,12 @@
-
 .horizontal-bar {
 	rect {
-		fill: $blue-wordpress;
+		fill: var( --color-primary );
 	}
 	text {
 		fill: $white;
 
 		&.is-offset-text {
-			fill: $gray-dark;
+			fill: var( --color-neutral-700 );
 		}
 	}
 }

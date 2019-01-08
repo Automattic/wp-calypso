@@ -231,7 +231,7 @@
 .shipping-zone__method-container {
 	position: relative;
 	padding: 20px;
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	margin-bottom: 24px;
 
 	.form-text-input-with-affixes {
@@ -254,7 +254,7 @@
 	}
 
 	input:disabled {
-		border-color: $gray-lighten-20;
+		border-color: var( --color-neutral-100 );
 	}
 }
 
@@ -313,7 +313,7 @@
 	.form-label,
 	.form-fieldset,
 	.shipping-zone__location-dialog-header {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 
@@ -355,7 +355,7 @@
 }
 
 .shipping-zone__location-dialog-list-item:hover {
-	background: $gray-lighten-30;
+	background: var( --color-neutral-0 );
 }
 
 .shipping-zone__location-dialog-list-item-checkbox {

@@ -6,7 +6,7 @@
 	font-size: 24px;
 	font-weight: 100;
 	margin-bottom: 8px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .account-dialog__connected-accounts {
@@ -30,7 +30,7 @@
 		display: inline-block;
 		width: 100%;
 		margin-left: 10px;
-		border-top: 1px solid $gray-lighten-20;
+		border-top: 1px solid var( --color-neutral-100 );
 	}
 }
 

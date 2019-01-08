@@ -57,7 +57,7 @@
 		.gridicon {
 			display: inline-block;
 			padding: 4px;
-			background: $blue-medium;
+			background: var( --color-primary );
 			fill: $white;
 			border-radius: 50%;
 			border: 4px solid white;
@@ -116,7 +116,7 @@
 		}
 
 		&:focus {
-			border-color: $blue-wordpress;
+			border-color: var( --color-primary );
 		}
 
 		@include breakpoint( '>480px' ) {

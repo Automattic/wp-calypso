@@ -1,11 +1,10 @@
-
 .keyed-suggestions__suggestions {
 	display: flex;
 	flex-direction: column;
 }
 
 .keyed-suggestions__category {
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	border: 1px solid darken( $gray-light, 10% );
 	border-top: 0;
 	padding: 4px 8px;
@@ -13,7 +12,7 @@
 
 	.keyed-suggestions__category-name {
 		text-transform: uppercase;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	.keyed-suggestions__category-counter {
@@ -38,7 +37,7 @@
 	cursor: pointer;
 
 	&.has-highlight {
-		background-color: var( --color-accent );
+		background-color: var( --color-primary );
 		color: $white;
 
 		.keyed-suggestions__value-description {
@@ -80,7 +79,7 @@
 		@include long-content-fade();
 
 		.has-highlight & {
-			@include long-content-fade( $color: hex-to-rgb( $blue-medium ) );
+			@include long-content-fade( $color: var( --color-primary-rgb ) );
 		}
 	}
 }

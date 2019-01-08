@@ -24,7 +24,7 @@
 }
 
 .setup__confirm .setup__header-subtitle {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	max-width: 490px;
 }
 

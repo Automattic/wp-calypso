@@ -73,13 +73,13 @@
 	width: 100%;
 
 	&.is-selected {
-		border-color: $blue-medium;
+		border-color: var( --color-primary );
 	}
 }
 
 .address-step__suggestion-edit {
 	margin-left: 24px;
-	color: $blue-wordpress;
+	color: var( --color-primary );
 	font-weight: bold;
 }
 

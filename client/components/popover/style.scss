@@ -12,16 +12,15 @@
 
 	.popover__inner {
 		background-color: $white;
-		border: 1px solid $gray-lighten-20;
+		border: 1px solid var( --color-neutral-100 );
 		border-radius: 4px;
-		box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ),
-			0 0 56px rgba( 0, 0, 0, 0.075 );
+		box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 		text-align: center;
 		position: relative;
 	}
 
 	.popover__arrow {
-		border: 10px dashed $gray-lighten-20;
+		border: 10px dashed var( --color-neutral-100 );
 		height: 0;
 		line-height: 0;
 		position: absolute;
@@ -32,7 +31,6 @@
 	&.fade {
 		transition: opacity 100ms;
 	}
-
 
 	@mixin popover__arrow( $side ) {
 		$cross-side: '';
@@ -164,13 +162,13 @@
 
 	&,
 	&:visited {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	&.is-selected,
 	&:hover,
 	&:focus {
-		background-color: var( --color-accent );
+		background-color: var( --color-primary );
 		border: 0;
 		box-shadow: none;
 		color: white;
@@ -181,9 +179,9 @@
 	}
 
 	&[disabled] {
-		color: $gray-lighten-30;
+		color: var( --color-neutral-0 );
 		.gridicon {
-			color: $gray-lighten-30;
+			color: var( --color-neutral-0 );
 		}
 	}
 
@@ -203,7 +201,7 @@
 
 	// with gridicons
 	.gridicon {
-		color: lighten( $gray, 10 );
+		color: var( --color-neutral-200 );
 		vertical-align: bottom;
 		margin-right: 8px;
 	}
@@ -225,5 +223,5 @@
 .popover__menu-separator,
 .popover__hr {
 	margin: 4px 0;
-	background: lighten( $gray, 30 );
+	background: var( --color-neutral-0 );
 }

@@ -21,7 +21,7 @@ $accordion-background-expanded: $white;
 	margin: 0;
 	padding: $accordion-padding;
 	padding-right: ( $accordion-padding + 22px );
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	background-color: $accordion-background-collapsed;
 	text-align: left;
 	transition: all 150ms ease-in;
@@ -43,7 +43,7 @@ $accordion-background-expanded: $white;
 		top: 50%;
 		right: ( $accordion-padding - 4px );
 		transform: translateY( -50% );
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		height: 24px;
 		.gridicon {
 			transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;

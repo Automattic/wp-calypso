@@ -31,20 +31,20 @@
 .post-share__sharing-preview-modal-header {
 	height: 48px;
 	background: $white;
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	border-radius: 4px 4px 0 0;
 	display: flex;
 }
 
 .post-share__sharing-preview-modal-close {
-	border-right: 1px solid $gray-lighten-20;
+	border-right: 1px solid var( --color-neutral-100 );
 	width: 48px;
 	height: 49px;
 	cursor: pointer;
 	color: $gray;
 
 	&:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 
@@ -107,7 +107,7 @@
 	}
 
 	@include breakpoint( '>660px' ) {
-		border-right: 1px solid $gray-lighten-20;
+		border-right: 1px solid var( --color-neutral-100 );
 		flex: 0 0 250px;
 	}
 }

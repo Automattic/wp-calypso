@@ -20,10 +20,10 @@
 }
 
 .wizard__navigation-links .button.is-borderless {
-	color: darken( $gray, 20 );
+	color: var( --color-neutral-500 );
 
 	&:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 

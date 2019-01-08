@@ -8,9 +8,9 @@
 	flex-direction: row;
 	align-items: center;
 	box-sizing: border-box;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	background: $white;
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 	position: fixed;
 	z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
 	top: 47px;
@@ -54,11 +54,11 @@
 
 	.action-header__site-title {
 		font-size: 10px;
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		margin: 2px 0 -3px;
 
 		a, a:hover {
-			color: $gray-darken-10;
+			color: var( --color-neutral-400 );
 		}
 	}
 

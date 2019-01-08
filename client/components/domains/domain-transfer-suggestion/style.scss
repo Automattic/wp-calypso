@@ -14,7 +14,7 @@
 	}
 
 	> p {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 12px;
 		font-weight: 600;
 		margin-bottom: 0;

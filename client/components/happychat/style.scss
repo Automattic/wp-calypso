@@ -61,7 +61,7 @@
 
 	&.is-open {
 		display: block;
-		background: $gray-lighten-30;
+		background: var( --color-neutral-0 );
 		bottom: 0;
 		z-index: z-index( 'root', '.happychat__container.is-open' );
 	}
@@ -85,7 +85,7 @@
 
 .happychat__notice {
 	padding: 12px;
-	border-top: 1px solid $gray-lighten-20;
+	border-top: 1px solid var( --color-neutral-100 );
 	color: $white;
 	background-color: lighten( $gray-dark, 20% );
 	margin: 0;
@@ -94,7 +94,7 @@
 .happychat__welcome {
 	flex: 1 auto;
 	padding: 16px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-end;
@@ -115,7 +115,7 @@
 
 	::-webkit-scrollbar-thumb {
 		border-radius: 10px;
-		background-color: $gray-lighten-10;
+		background-color: var( --color-neutral-200 );
 		border: 3px solid transparent;
 		background-clip: padding-box;
 
@@ -270,7 +270,7 @@
 	flex: 1;
 	padding: 8px 12px;
 	border-radius: 8px 8px 8px 0;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	background: $white;
 	position: relative;
 

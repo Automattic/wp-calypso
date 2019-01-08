@@ -2,7 +2,7 @@
 // a little more like a website/phone.
 .site-mockup__chrome-desktop {
 	height: 28px;
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 
 	// Desktop chrome has some OS dots to
 	// help signify its a browser.
@@ -24,10 +24,10 @@
 		text-align: center;
 		text-transform: uppercase;
 		font-weight: 600;
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		display: block;
 		width: 70%;
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		border-radius: 3px;
 	}
 }
@@ -43,10 +43,10 @@
 		text-align: center;
 		text-transform: uppercase;
 		font-weight: 600;
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		display: block;
 		width: 60px;
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		border-radius: 16px;
 	}
 }
@@ -62,7 +62,7 @@
 	// make room for the chrome.
 	.site-mockup__viewport.is-mobile & {
 		margin: 0 6px 6px;
-		border: 1px solid $gray-lighten-20;
+		border: 1px solid var( --color-neutral-100 );
 		border-radius: 3px;
 		max-height: 400px;
 
@@ -305,7 +305,7 @@
 .site-mockup__outline {
 	margin-bottom: 24px;
 	height: 150px;
-	border: 2px dashed lighten( $gray, 20 );
+	border: 2px dashed var( --color-neutral-100 );
 
 	&.is-title {
 		max-width: 480px;

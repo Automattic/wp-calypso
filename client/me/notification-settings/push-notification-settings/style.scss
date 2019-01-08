@@ -23,7 +23,7 @@
 
 	&:hover,
 	&:focus {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 
@@ -89,7 +89,7 @@
 	text-align: left;
 	margin-top: 32px;
 	margin-bottom: 0;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .notification-settings-push-notification-settings__settings-state {
@@ -97,7 +97,7 @@
 	font-weight: 500;
 	margin-left: 8px;
 	text-transform: uppercase;
-	color: lighten( $gray, 10 );
+	color: var( --color-neutral-200 );
 
 	&.is-enabled {
 		color: var( --color-success );

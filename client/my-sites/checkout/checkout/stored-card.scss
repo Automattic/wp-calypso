@@ -12,17 +12,17 @@
 	padding: 15px 15px 15px 95px;
 
 	.checkout__stored-card-name {
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 	}
 
 	.checkout__stored-card-number {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		flex-basis: 100%;
 		font-weight: 600;
 	}
 
 	.checkout__stored-card-expiration-date {
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		font-style: italic;
 		opacity: 0.7;
 		white-space: nowrap;

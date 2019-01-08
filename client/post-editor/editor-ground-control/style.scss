@@ -43,7 +43,7 @@
 
 .editor-ground-control__separator {
 	margin: 0 -16px;
-	background: lighten( $gray, 30 );
+	background: var( --color-neutral-0 );
 }
 
 .editor-ground-control__status {
@@ -137,14 +137,14 @@
 
 .editor-ground-control__toggle-sidebar:hover,
 .editor-ground-control__toggle-sidebar:focus {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 }
 
 .focus-sidebar .editor-ground-control__toggle-sidebar:hover,
 .focus-sidebar .editor-ground-control__toggle-sidebar:focus,
 .focus-sidebar .editor-ground-control__toggle-sidebar {
 	color: $white;
-	background: $gray-dark;
+	background: var( --color-neutral-700 );
 }
 
 .focus-sidebar .editor-ground-control__toggle-sidebar svg {
@@ -193,12 +193,12 @@
 
 .editor-ground-control__save-status {
 	text-decoration: none;
-	color: $gray-lighten-20;
+	color: var( --color-neutral-100 );
 }
 
 .editor-ground-control .edit-post-status {
-	border-top: 1px solid $gray-lighten-30;
-	border-bottom: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
+	border-bottom: 1px solid var( --color-neutral-0 );
 	margin: 0 -16px 16px;
 	padding: 16px;
 }
@@ -212,7 +212,7 @@
 	padding: 8px 8px 8px 40px;
 	background: white;
 	color: var( --color-primary );
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	cursor: pointer;
 	fill: var( --color-primary );
 	position: absolute;
@@ -234,8 +234,8 @@
 		top: -6px;
 		right: 48px;
 		transform: translate( -50% ) rotate( 45deg );
-		border-top: 1px solid $gray-lighten-20;
-		border-left: 1px solid $gray-lighten-20;
+		border-top: 1px solid var( --color-neutral-100 );
+		border-left: 1px solid var( --color-neutral-100 );
 	}
 
 	&:focus:not( :active ) {

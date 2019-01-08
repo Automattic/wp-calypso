@@ -38,10 +38,10 @@
 
 @keyframes cloneDot {
 	0% {
-		fill: $blue-wordpress;
+		fill: var( --color-primary );
 	}
 	5% {
-		fill: $blue-wordpress;
+		fill: var( --color-primary );
 	}
 	20% {
 		fill: $blue-light;

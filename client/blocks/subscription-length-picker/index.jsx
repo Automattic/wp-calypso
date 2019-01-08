@@ -26,6 +26,11 @@ import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
 import getPaymentPostalCode from 'state/selectors/get-payment-postal-code';
 import { requestTaxRate } from 'state/data-getters';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class SubscriptionLengthPicker extends React.Component {
 	static propTypes = {
 		initialValue: PropTypes.string,

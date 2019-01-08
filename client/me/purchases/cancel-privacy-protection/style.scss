@@ -9,7 +9,7 @@
 }
 
 .cancel-privacy-protection__card {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 
 	&.is-placeholder {
 		.cancel-privacy-protection__text span {

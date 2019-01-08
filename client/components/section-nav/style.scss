@@ -11,7 +11,7 @@
 	margin: 0 0 17px;
 	background: var( --color-surface );
 	box-sizing: border-box;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px var( --color-neutral-0 );
 
 	&.is-empty .section-nav__panel {
 		visibility: hidden;
@@ -19,7 +19,7 @@
 
 	@include breakpoint( '<480px' ) {
 		&.is-open {
-			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
 		}
 	}
 
@@ -48,12 +48,12 @@
 	line-height: 16px;
 	height: 46px;
 	box-sizing: border-box;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-weight: 600;
 	cursor: pointer;
 
 	.gridicons-chevron-down {
-		fill: $gray-darken-20;
+		fill: var( --color-neutral-500 );
 		flex-shrink: 0;
 		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
@@ -106,7 +106,7 @@
 	@include breakpoint( '<480px' ) {
 		.section-nav.is-open & {
 			padding-bottom: 15px;
-			border-top: solid 1px $gray-lighten-20;
+			border-top: solid 1px var( --color-neutral-100 );
 			background: linear-gradient( to bottom, $gray-light 0%, $white 4px );
 		}
 	}
@@ -126,7 +126,7 @@
 	position: relative;
 	margin-top: 16px;
 	padding-top: 16px;
-	border-top: solid 1px $gray-lighten-20;
+	border-top: solid 1px var( --color-neutral-100 );
 
 	&:first-child {
 		padding-top: 0;
@@ -160,7 +160,7 @@
 }
 
 .section-nav__hr {
-	background: lighten( $gray, 30 );
+	background: var( --color-neutral-0 );
 }
 
 // -------- Labels --------
@@ -235,7 +235,11 @@
 		text-align: center;
 
 		&.is-selected {
-			border-bottom-color: $gray-dark;
+			border-bottom-color: var( --color-neutral-700 );
+		}
+
+		&:hover:not( .is-selected ) {
+			border-bottom-color: var( --color-section-nav-item-background-hover );
 		}
 	}
 }
@@ -256,22 +260,22 @@
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 18px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	cursor: pointer;
 
 	&:visited {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	&[disabled],
 	.notouch &[disabled]:hover {
-		color: $gray-lighten-30;
+		color: var( --color-neutral-0 );
 		cursor: default;
 	}
 
 	.is-selected & {
 		color: $white;
-		background-color: var( --color-accent );
+		background-color: var( --color-primary );
 
 		@include breakpoint( '<480px' ) {
 			.count {
@@ -298,7 +302,8 @@
 
 	.notouch & {
 		&:hover {
-			color: var( --color-accent );
+			background-color: var( --color-section-nav-item-background-hover );
+			color: var( --color-primary );
 		}
 	}
 
@@ -320,7 +325,7 @@
 		}
 
 		.is-selected & {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 			background-color: transparent;
 
 			&::after {
@@ -330,7 +335,7 @@
 
 		.notouch .is-selected & {
 			&:hover {
-				color: $gray-dark;
+				color: var( --color-neutral-700 );
 			}
 		}
 	}
@@ -357,7 +362,7 @@
 	width: 100%;
 	font-size: 14px;
 	line-height: 18px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 // -------- Nav Tabs - dropdowns --------

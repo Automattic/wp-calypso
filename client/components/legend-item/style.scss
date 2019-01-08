@@ -54,6 +54,6 @@
 }
 
 .legend-item__placeholder-title-circle {
-	fill: lighten( $gray, 30% );
+	fill: var( --color-neutral-0 );
 	@include placeholder();
 }

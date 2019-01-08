@@ -15,11 +15,11 @@
 	.clone-destination__origin {
 		& [fill='#00BE28'],
 		& [fill='#004F84'] {
-			fill: $gray-lighten-20;
+			fill: var( --color-neutral-100 );
 		}
 		& [fill='#00A6DB'],
 		& [fill='#74DCFC'] {
-			fill: $gray-lighten-30;
+			fill: var( --color-neutral-0 );
 		}
 	}
 }

@@ -46,7 +46,7 @@
 		display: none;
 	}
 
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 17px;
 	line-height: 28px;
 }
@@ -62,7 +62,7 @@
 .support-article-dialog__header-title a {
 	text-decoration: none;
 	clear: none;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-family: $serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -93,7 +93,7 @@
 	.support-article-dialog__header-title-link,
 	.support-article-dialog__header-title-link:hover {
 		text-decoration: underline;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 }
 
