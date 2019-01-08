@@ -21,10 +21,9 @@
 		display: block;
 		height: 100%;
 		position: absolute;
-		top: 0;
-		left: 0;
+			top: 0;
+			left: 0;
 		width: 100%;
-		z-index: z-index( 'root', '.themes-banner__upwork::before' );
 	}
 
 	h1,
@@ -36,7 +35,6 @@
 	}
 
 	h1 {
-		font-weight: bold;
 		font-size: 1.6em;
 		font-weight: 500;
 		letter-spacing: 0.01em;
