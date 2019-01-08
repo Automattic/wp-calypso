@@ -2,6 +2,7 @@
 
 exports[`DomainSelect it renders DomainsSelect loading state correctly 1`] = `
 <select
+  className="form-select"
   disabled={true}
   onChange={[Function]}
   onFocus={[Function]}
@@ -16,6 +17,7 @@ exports[`DomainSelect it renders DomainsSelect loading state correctly 1`] = `
 
 exports[`DomainSelect it renders DomainsSelect with one domain correctly 1`] = `
 <select
+  className="form-select"
   disabled={true}
   onChange={[Function]}
   onFocus={[Function]}
@@ -32,6 +34,7 @@ exports[`DomainSelect it renders DomainsSelect with one domain correctly 1`] = `
 
 exports[`DomainSelect it renders DomainsSelect with two domains correctly 1`] = `
 <select
+  className="form-select"
   disabled={false}
   onChange={[Function]}
   onFocus={[Function]}
