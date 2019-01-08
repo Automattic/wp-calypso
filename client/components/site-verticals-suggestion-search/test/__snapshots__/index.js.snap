@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
+<SuggestionSearch
+  id="siteTopic"
+  onChange={[Function]}
+  placeholder="e.g. Fashion, travel, design, plumber, electrician"
+  suggestions={
+    Array [
+      "doo",
+    ]
+  }
+  value="scooby"
+/>
+`;

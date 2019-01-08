@@ -12,8 +12,9 @@ import { siteVerticalSchema } from './schema';
 export default createReducer(
 	{},
 	{
-		[ SIGNUP_STEPS_SITE_VERTICAL_SET ]: ( state, { name, slug } ) => {
+		[ SIGNUP_STEPS_SITE_VERTICAL_SET ]: ( state, { isUserInput, name, slug } ) => {
 			return {
+				isUserInput,
 				name,
 				slug,
 			};

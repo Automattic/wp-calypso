@@ -24,14 +24,16 @@ class LineChartExample extends Component {
 		return range( NUM_DATA_SERIES ).map( () => {
 			let date = now.clone();
 
-			return range( seriesLength ).map( () => {
-				date = date.subtract( 1, 'days' );
+			return range( seriesLength )
+				.map( () => {
+					date = date.subtract( 1, 'days' );
 
-				return {
-					date: date.valueOf(),
-					value: random( dataMin, dataMax ),
-				};
-			} ).reverse();
+					return {
+						date: date.valueOf(),
+						value: random( dataMin, dataMax ),
+					};
+				} )
+				.reverse();
 		} );
 	}
 
@@ -138,7 +140,6 @@ class LineChartExample extends Component {
 									checked={ this.state.fillArea }
 									onChange={ this.toggleFillArea }
 								/>
-
 								Fill Area
 							</label>
 						</div>

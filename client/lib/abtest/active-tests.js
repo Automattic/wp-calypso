@@ -114,4 +114,12 @@ export default {
 		},
 		defaultVariation: 'public',
 	},
+	builderReferralThemesBanner: {
+		datestamp: '20181218',
+		variations: {
+			builderReferralBanner: 10,
+			original: 90,
+		},
+		defaultVariation: 'original',
+	},
 };

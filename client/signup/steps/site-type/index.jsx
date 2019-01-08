@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -55,16 +56,19 @@ class SiteType extends Component {
 
 	renderRadioOptions() {
 		return allSiteTypes.map( siteTypeProperties => (
-			<FormLabel className="site-type__option" key={ siteTypeProperties.id }>
+			<FormLabel
+				className={ classNames( 'site-type__option', {
+					'is-selected': siteTypeProperties.slug === this.state.siteType,
+				} ) }
+				key={ siteTypeProperties.id }
+			>
 				<FormRadio
 					value={ siteTypeProperties.slug }
 					checked={ siteTypeProperties.slug === this.state.siteType }
 					onChange={ this.handleRadioChange }
 				/>
-				<span>
-					<strong>{ siteTypeProperties.label }</strong>
-					<span>{ siteTypeProperties.description }</span>
-				</span>
+				<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
+				<span className="site-type__option-description">{ siteTypeProperties.description }</span>
 			</FormLabel>
 		) );
 	}
@@ -74,19 +78,14 @@ class SiteType extends Component {
 
 		return (
 			<div className="site-type__wrapper">
-				<div className="site-type__form-wrapper">
-					<form onSubmit={ this.handleSubmit }>
-						<Card>
-							<FormFieldset>{ this.renderRadioOptions() }</FormFieldset>
-
-							<div className="site-type__submit-wrapper">
-								<Button primary={ true } type="submit">
-									{ translate( 'Continue' ) }
-								</Button>
-							</div>
-						</Card>
-					</form>
-				</div>
+				<form onSubmit={ this.handleSubmit }>
+					<Card>
+						<FormFieldset>{ this.renderRadioOptions() }</FormFieldset>
+						<Button primary={ true } type="submit">
+							{ translate( 'Continue' ) }
+						</Button>
+					</Card>
+				</form>
 			</div>
 		);
 	}

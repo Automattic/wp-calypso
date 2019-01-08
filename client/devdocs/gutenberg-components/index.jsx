@@ -21,7 +21,7 @@ import { camelCaseToSlug, slugToCamelCase } from 'devdocs/docs-example/util';
 import GutenbergComponentExample from './example';
 import examples from './examples.json';
 
-const getExampleData = ( example ) => {
+const getExampleData = example => {
 	const componentName = get( example, 'component' );
 	const readmeFilePath = get( example, 'readmeFilePath', camelCaseToSlug( componentName ) );
 	const render = get( example, 'render', `My${ componentName }` );
@@ -75,11 +75,7 @@ export default class extends React.Component {
 
 				<Collection component={ component } filter={ filter } section="gutenberg-components">
 					{ examples.map( example => {
-						const {
-							componentName,
-							readmeFilePath,
-							render,
-						} = getExampleData( example );
+						const { componentName, readmeFilePath, render } = getExampleData( example );
 						return (
 							<GutenbergComponentExample
 								key={ componentName }

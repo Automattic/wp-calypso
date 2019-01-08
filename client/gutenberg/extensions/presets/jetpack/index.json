@@ -6,11 +6,11 @@
     "publicize",
     "related-posts",
     "shortlinks",
-    "simple-payments"
+    "simple-payments",
+    "subscriptions"
   ],
   "beta": [
     "mailchimp",
-    "subscriptions",
     "tiled-gallery",
     "vr"
   ]

@@ -1,6 +1,6 @@
 import getSuggestions from './get-suggestions';
 
-export const getSiteSuggestions = (suggestionsState, siteId) =>
-  suggestionsState.bySite[siteId] || [];
+export const getSiteSuggestions = ( suggestionsState, siteId ) =>
+	suggestionsState.bySite[ siteId ] || [];
 
-export default (state, siteId) => getSiteSuggestions(getSuggestions(state), siteId);
+export default ( state, siteId ) => getSiteSuggestions( getSuggestions( state ), siteId );

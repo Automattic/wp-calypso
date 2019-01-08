@@ -13,7 +13,7 @@ import i18n from 'i18n-calypso';
  */
 import { getDomainManagementUrl } from './utils';
 import GoogleAppsDetails from './google-apps-details';
-import { isGoogleApps } from 'lib/products-values';
+import { isGoogleApps, isBlogger } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 import { EMAIL_VALIDATION_AND_VERIFICATION, REGISTER_DOMAIN } from 'lib/url/support';
 
@@ -23,7 +23,8 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 		hasOtherPrimaryDomain =
 			selectedSite.options &&
 			selectedSite.options.is_mapped_domain &&
-			selectedSite.domain !== domain;
+			selectedSite.domain !== domain,
+		isRestrictedToBlogDomains = purchases.some( isBlogger ) || isBlogger( selectedSite.plan );
 
 	return (
 		<div>
@@ -61,7 +62,16 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 
 			{ hasOtherPrimaryDomain && (
 				<PurchaseDetail
-					icon={ <img alt="" src="/calypso/images/upgrades/custom-domain.svg" /> }
+					icon={
+						<img
+							alt=""
+							src={
+								isRestrictedToBlogDomains
+									? '/calypso/images/illustrations/custom-domain-blogger.svg'
+									: '/calypso/images/upgrades/custom-domain.svg'
+							}
+						/>
+					}
 					title={ i18n.translate( 'Your primary domain' ) }
 					description={ i18n.translate(
 						'Your existing domain, {{em}}%(domain)s{{/em}}, is the domain visitors see when they visit your site. ' +

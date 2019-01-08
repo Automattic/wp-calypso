@@ -13,3 +13,7 @@ export function getSiteVerticalName( state ) {
 export function getSiteVerticalSlug( state ) {
 	return get( state, 'signup.steps.siteVertical.slug', '' );
 }
+
+export function getSiteVerticalIsUserInput( state ) {
+	return get( state, 'signup.steps.siteVertical.isUserInput', true );
+}

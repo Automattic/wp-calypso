@@ -24,7 +24,6 @@ import { setSiteStyle } from 'state/signup/steps/site-style/actions';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteStyleOptions } from 'lib/signup/site-styles';
-import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
 
 /**
  * Style dependencies
@@ -41,7 +40,6 @@ export class SiteStyleStep extends Component {
 		styleOptions: PropTypes.array.isRequired,
 		stepName: PropTypes.string,
 		siteStyle: PropTypes.string,
-		siteType: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -155,8 +153,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 export default connect(
 	state => ( {
 		siteStyle: getSiteStyle( state ),
-		siteType: getSiteType( state ),
-		styleOptions: getSiteStyleOptions( getSiteVerticalName( state ) ),
+		styleOptions: getSiteStyleOptions( getSiteType( state ) ),
 	} ),
 	mapDispatchToProps
 )( localize( SiteStyleStep ) );
