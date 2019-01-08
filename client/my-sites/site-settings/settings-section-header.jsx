@@ -19,6 +19,8 @@ const SettingsSectionHeader = ( {
 	showButton,
 	title,
 	translate,
+	moment,
+	numberFormat,
 	...buttonProps
 } ) => {
 	return (
