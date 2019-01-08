@@ -23,7 +23,7 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { getEligibleSelectedSite } from 'lib/domains/gsuite';
+import { getEligibleDomain } from 'lib/domains/gsuite';
 
 /**
  * Style dependencies
@@ -65,8 +65,8 @@ class GSuitePurchaseCta extends React.Component {
 		return (
 			<Fragment>
 				<CompactCard>
-					<header className="g-suite-purchase-cta__add-google-apps-card-header">
-						<h3 className="g-suite-purchase-cta__add-google-apps-card-product-logo">
+					<header className="gsuite-purchase-cta__add-google-apps-card-header">
+						<h3 className="gsuite-purchase-cta__add-google-apps-card-product-logo">
 							{ /* Intentionally not translated */ }
 							<strong>G Suite</strong>
 							{ this.getPlanText() }
@@ -75,21 +75,21 @@ class GSuitePurchaseCta extends React.Component {
 				</CompactCard>
 
 				<CompactCard>
-					<div className="g-suite-purchase-cta__add-google-apps-card-product-details">
-						<div className="g-suite-purchase-cta__add-google-apps-card-description">
-							<h2 className="g-suite-purchase-cta__add-google-apps-card-title">
+					<div className="gsuite-purchase-cta__add-google-apps-card-product-details">
+						<div className="gsuite-purchase-cta__add-google-apps-card-description">
+							<h2 className="gsuite-purchase-cta__add-google-apps-card-title">
 								{ translate( 'Professional email and so much more.' ) }
 							</h2>
 
-							<p className="g-suite-purchase-cta__add-google-apps-card-sub-title">
+							<p className="gsuite-purchase-cta__add-google-apps-card-sub-title">
 								{ translate(
 									"We've partnered with Google to offer you email, " +
 										'storage, docs, calendars, and more integrated with your site.'
 								) }
 							</p>
 
-							<div className="g-suite-purchase-cta__add-google-apps-card-price">
-								<h4 className="g-suite-purchase-cta__add-google-apps-card-price-per-user">
+							<div className="gsuite-purchase-cta__add-google-apps-card-price">
+								<h4 className="gsuite-purchase-cta__add-google-apps-card-price-per-user">
 									<span>
 										{ translate( '{{strong}}%(price)s{{/strong}} per user / month', {
 											components: {
@@ -108,7 +108,7 @@ class GSuitePurchaseCta extends React.Component {
 									</Button>
 								) }
 
-								<h5 className="g-suite-purchase-cta__add-google-apps-card-billing-period">
+								<h5 className="gsuite-purchase-cta__add-google-apps-card-billing-period">
 									{ translate( '%(price)s billed yearly (2 months free!)', {
 										args: {
 											price: annualPrice,
@@ -118,20 +118,20 @@ class GSuitePurchaseCta extends React.Component {
 							</div>
 						</div>
 
-						<div className="g-suite-purchase-cta__add-google-apps-card-logos">
+						<div className="gsuite-purchase-cta__add-google-apps-card-logos">
 							<img alt="G Suite Logo" src="/calypso/images/g-suite/g-suite.svg" />
 						</div>
 					</div>
 				</CompactCard>
 
 				<CompactCard>
-					<div className="g-suite-purchase-cta__add-google-apps-card-features">
-						<div className="g-suite-purchase-cta__add-google-apps-card-feature">
-							<div className="g-suite-purchase-cta__add-google-apps-card-feature-block">
+					<div className="gsuite-purchase-cta__add-google-apps-card-features">
+						<div className="gsuite-purchase-cta__add-google-apps-card-feature">
+							<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
 								<img alt="Gmail Logo" src="/calypso/images/g-suite/logo_gmail_48dp.svg" />
 							</div>
-							<div className="g-suite-purchase-cta__add-google-apps-card-feature-block">
-								<h5 className="g-suite-purchase-cta__add-google-apps-card-feature-header">
+							<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
+								<h5 className="gsuite-purchase-cta__add-google-apps-card-feature-header">
 									{ translate( 'Gmail for @%(domain)s', {
 										args: {
 											domain: domainName,
@@ -144,39 +144,39 @@ class GSuitePurchaseCta extends React.Component {
 							</div>
 						</div>
 
-						<div className="g-suite-purchase-cta__add-google-apps-card-feature">
-							<div className="g-suite-purchase-cta__add-google-apps-card-feature-block">
+						<div className="gsuite-purchase-cta__add-google-apps-card-feature">
+							<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
 								<img alt="Google Drive Logo" src="/calypso/images/g-suite/logo_drive_48dp.svg" />
 							</div>
-							<div className="g-suite-purchase-cta__add-google-apps-card-feature-block">
-								<h5 className="g-suite-purchase-cta__add-google-apps-card-feature-header">
+							<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
+								<h5 className="gsuite-purchase-cta__add-google-apps-card-feature-header">
 									{ translate( 'Keep all your files secure' ) }
 								</h5>
 								<p>{ this.getStorageText() }</p>
 							</div>
 						</div>
 
-						<div className="g-suite-purchase-cta__add-google-apps-card-feature">
-							<div className="g-suite-purchase-cta__add-google-apps-card-feature-block">
+						<div className="gsuite-purchase-cta__add-google-apps-card-feature">
+							<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
 								<img alt="Google Docs Logo" src="/calypso/images/g-suite/logo_docs_48dp.svg" />
 							</div>
-							<div className="g-suite-purchase-cta__add-google-apps-card-feature-block">
-								<h5 className="g-suite-purchase-cta__add-google-apps-card-feature-header">
+							<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
+								<h5 className="gsuite-purchase-cta__add-google-apps-card-feature-header">
 									{ translate( 'Docs, spreadsheets and forms' ) }
 								</h5>
 								<p>{ translate( 'Create and edit documents to get your work done faster.' ) }</p>
 							</div>
 						</div>
 
-						<div className="g-suite-purchase-cta__add-google-apps-card-feature">
-							<div className="g-suite-purchase-cta__add-google-apps-card-feature-block">
+						<div className="gsuite-purchase-cta__add-google-apps-card-feature">
+							<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
 								<img
 									alt="Google Hangouts Logo"
 									src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
 								/>
 							</div>
-							<div className="g-suite-purchase-cta__add-google-apps-card-feature-block">
-								<h5 className="g-suite-purchase-cta__add-google-apps-card-feature-header">
+							<div className="gsuite-purchase-cta__add-google-apps-card-feature-block">
+								<h5 className="gsuite-purchase-cta__add-google-apps-card-feature-header">
 									{ translate( 'Connect with your team' ) }
 								</h5>
 								<p>
@@ -188,7 +188,7 @@ class GSuitePurchaseCta extends React.Component {
 						</div>
 					</div>
 
-					<div className="g-suite-purchase-cta__add-google-apps-card-secondary-button">
+					<div className="gsuite-purchase-cta__add-google-apps-card-secondary-button">
 						{ upgradeAvailable && (
 							<Button type="button" onClick={ this.goToAddGoogleApps }>
 								{ translate( 'Add G Suite' ) }
@@ -196,7 +196,7 @@ class GSuitePurchaseCta extends React.Component {
 						) }
 					</div>
 
-					<div className="g-suite-purchase-cta__add-google-apps-card-learn-more">
+					<div className="gsuite-purchase-cta__add-google-apps-card-learn-more">
 						<p>
 							{ translate(
 								'{{strong}}No setup or software required.{{/strong}} ' +
@@ -206,7 +206,7 @@ class GSuitePurchaseCta extends React.Component {
 										strong: <strong />,
 										a: (
 											<a
-												className="g-suite-purchase-cta__add-google-apps-card-learn-more-link"
+												className="gsuite-purchase-cta__add-google-apps-card-learn-more-link"
 												href={ ADDING_GOOGLE_APPS_TO_YOUR_SITE }
 												target="_blank"
 												rel="noopener noreferrer"
@@ -261,7 +261,7 @@ export default connect(
 		const domains = getDomainsBySiteId( state, selectedSite.ID );
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			domainName: getEligibleSelectedSite( selectedDomainName, domains ),
+			domainName: getEligibleDomain( selectedDomainName, domains ),
 		};
 	},
 	{ learnMoreClick }

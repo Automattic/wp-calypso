@@ -1,4 +1,4 @@
-.g-suite-purchase-cta__add-google-apps-card-product-logo {
+.gsuite-purchase-cta__add-google-apps-card-product-logo {
 	@include breakpoint( '<660px' ) {
 		width: 236px;
 	}
@@ -19,13 +19,13 @@
 	}
 }
 
-.g-suite-purchase-cta__add-google-apps-card-product-details {
+.gsuite-purchase-cta__add-google-apps-card-product-details {
 	@include breakpoint( '>960px' ) {
 		display: flex;
 	}
 }
 
-.g-suite-purchase-cta__add-google-apps-card-description {
+.gsuite-purchase-cta__add-google-apps-card-description {
 	box-sizing: border-box;
 	font-size: 14px;
 
@@ -46,21 +46,21 @@
 	}
 }
 
-.g-suite-purchase-cta__add-google-apps-card-title {
+.gsuite-purchase-cta__add-google-apps-card-title {
 	color: $gray-dark;
 	font-size: 24px;
 	line-height: 120%;
 	margin: 0 0 10px;
 }
 
-.g-suite-purchase-cta__add-google-apps-card-sub-title {
+.gsuite-purchase-cta__add-google-apps-card-sub-title {
 	font-size: 18px;
 }
 
-.g-suite-purchase-cta__add-google-apps-card-price {
+.gsuite-purchase-cta__add-google-apps-card-price {
 	margin: 2em 0 1em;
 
-	.g-suite-purchase-cta__add-google-apps-card-price-per-user {
+	.gsuite-purchase-cta__add-google-apps-card-price-per-user {
 		strong {
 			color: $gray-text;
 			font-size: 24px;
@@ -74,7 +74,7 @@
 		}
 	}
 
-	.g-suite-purchase-cta__add-google-apps-card-billing-period {
+	.gsuite-purchase-cta__add-google-apps-card-billing-period {
 		color: var( --color-text-subtle );
 		font-size: 13px;
 		font-style: italic;
@@ -85,7 +85,7 @@
 	}
 }
 
-.g-suite-purchase-cta__add-google-apps-card-logos {
+.gsuite-purchase-cta__add-google-apps-card-logos {
 	display: none;
 
 	@include breakpoint( '>960px' ) {
@@ -101,7 +101,7 @@
 	}
 }
 
-.g-suite-purchase-cta__add-google-apps-card-features {
+.gsuite-purchase-cta__add-google-apps-card-features {
 	box-sizing: border-box;
 	justify-content: justify-content;
 	margin: 1em 0;
@@ -112,14 +112,14 @@
 	}
 }
 
-.g-suite-purchase-cta__add-google-apps-card-feature {
+.gsuite-purchase-cta__add-google-apps-card-feature {
 	display: flex;
 	flex-basis: 50%;
 	justify-content: flex-start;
 	margin-bottom: 1em;
 }
 
-.g-suite-purchase-cta__add-google-apps-card-feature-block {
+.gsuite-purchase-cta__add-google-apps-card-feature-block {
 	align-items: flex-start;
 	padding: 0 1em 0 0;
 
@@ -130,12 +130,12 @@
 	}
 }
 
-.g-suite-purchase-cta__add-google-apps-card-feature-header {
+.gsuite-purchase-cta__add-google-apps-card-feature-header {
 	font-size: 17px;
 	font-weight: 600;
 }
 
-.g-suite-purchase-cta__add-google-apps-card-secondary-button {
+.gsuite-purchase-cta__add-google-apps-card-secondary-button {
 	.button {
 		float: none;
 		margin: 1em 0;
@@ -147,7 +147,7 @@
 	}
 }
 
-.g-suite-purchase-cta__add-google-apps-card-learn-more {
+.gsuite-purchase-cta__add-google-apps-card-learn-more {
 	color: var( --color-text-subtle );
 	font-size: 15px;
 	margin-top: 1em;
