@@ -20,7 +20,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import SupportInfo from 'components/support-info';
 import {
 	PLAN_JETPACK_PREMIUM,
-	FEATURE_VIDEO_CDN_LIMITED,
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
@@ -148,7 +147,7 @@ class MediaSettingsPerformance extends Component {
 						'Get high-speed, high-resolution video hosting without ads or watermarks.'
 					) }
 					event={ 'jetpack_video_settings' }
-					feature={ FEATURE_VIDEO_CDN_LIMITED }
+					feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PRO }
 					plan={ PLAN_JETPACK_PREMIUM }
 					title={ translate(
 						'Host video right on your site! Upgrade to Jetpack Premium to get started'
