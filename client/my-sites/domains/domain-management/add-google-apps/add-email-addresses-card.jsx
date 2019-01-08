@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, groupBy, isEmpty, kebabCase, map, mapValues, snakeCase } from 'lodash';
+import { has, find, groupBy, isEmpty, kebabCase, map, mapValues, snakeCase } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
@@ -21,7 +21,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import { getEligibleDomain } from 'lib/domains/gsuite';
 import getUserSetting from 'state/selectors/get-user-setting';
 import { cartItems } from 'lib/cart-values';
@@ -66,7 +65,6 @@ class AddEmailAddressesCard extends React.Component {
 
 		this.state = {
 			fieldsets: [ this.getNewFieldset() ],
-			validationErrors: null,
 		};
 	}
 
@@ -124,20 +122,6 @@ class AddEmailAddressesCard extends React.Component {
 		};
 	}
 
-	removeValidationErrors = () => {
-		this.setState( { validationErrors: null } );
-	};
-
-	validationErrors() {
-		// if ( this.state.validationErrors ) {
-		// 	return (
-		// 		<Notice onDismissClick={ this.removeValidationErrors } status="is-error">
-		// 			<ValidationErrorList messages={ this.state.validationErrors } />
-		// 		</Notice>
-		// 	);
-		// }
-	}
-
 	componentDidUpdate( prevProps ) {
 		if ( this.needsToUpdateDomainFields( prevProps ) ) {
 			this.setDomainFieldsToFirstDomainName();
@@ -168,8 +152,6 @@ class AddEmailAddressesCard extends React.Component {
 		return (
 			<div className="add-google-apps__card">
 				<QueryUserSettings />
-				{ this.validationErrors() }
-
 				<Card className="add-google-apps__inner">
 					<form className="add-google-apps__form">
 						<FormLabel>{ this.props.translate( 'Add Email Addresses' ) }</FormLabel>
@@ -263,13 +245,12 @@ class AddEmailAddressesCard extends React.Component {
 		return (
 			<div className="add-google-apps__email-address-fieldset" key={ index }>
 				<FormFieldset>
-					<FormTextInputWithAffixes
+					<FormTextInput
 						onChange={ this.handleFieldChange.bind( this, 'username', index ) }
 						onFocus={ this.handleFieldFocus.bind( this, 'Email', index ) }
 						placeholder={ this.props.translate( 'e.g. %(example)s', {
 							args: { example: contactText },
 						} ) }
-						suffix={ suffix }
 						type="text"
 						value={ username.value }
 						isError={ has( username, 'error' ) && null !== username.error }
@@ -360,7 +341,6 @@ class AddEmailAddressesCard extends React.Component {
 
 		if ( ! isEmpty( validation.errors ) ) {
 			this.setState( {
-				validationErrors: validation.errors,
 				fieldsets: validation.users,
 			} );
 		}
