@@ -104,7 +104,8 @@
 
 .notice__text {
 	a,
-	a:visited {
+	a:visited,
+	button.is-link {
 		text-decoration: underline;
 		color: $white;
 
