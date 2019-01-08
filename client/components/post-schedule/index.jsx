@@ -91,7 +91,7 @@ class PostSchedule extends Component {
 		} );
 	}
 
-	locale() {
+	getLocaleUtils() {
 		return {
 			formatMonthTitle: function() {
 				return;
@@ -250,7 +250,7 @@ class PostSchedule extends Component {
 
 				<DatePicker
 					events={ this.events() }
-					locale={ this.locale() }
+					localeUtils={ this.getLocaleUtils() }
 					disabledDays={ this.props.disabledDays }
 					showOutsideDays={ this.props.showOutsideDays }
 					modifiers={ this.props.modifiers }
