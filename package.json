@@ -277,7 +277,7 @@
     "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
     "prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons npm run -s build-client",
     "whybundled": "whybundled stats.json",
-    "postinstall": "cd node_modules/node-sass && npm run --unsafe-perm install"
+    "postinstall": "cd node_modules/node-sass && npm install --unsafe-perm"
   },
   "devDependencies": {
     "@automattic/babel-plugin-i18n-calypso": "1.0.3",
