@@ -203,18 +203,17 @@ class EasyTab extends Component {
 						>
 							{ translate( 'Delete Cache' ) }
 						</Button>
-						{ site.jetpack &&
-							site.is_multisite && (
-								<Button
-									compact
-									busy={ this.state.isDeletingAll }
-									disabled={ isDeleting || isReadOnly }
-									name="wp_delete_all_cache"
-									onClick={ this.deleteAllCaches }
-								>
-									{ translate( 'Delete Cache On All Blogs' ) }
-								</Button>
-							) }
+						{ site.jetpack && site.is_multisite && (
+							<Button
+								compact
+								busy={ this.state.isDeletingAll }
+								disabled={ isDeleting || isReadOnly }
+								name="wp_delete_all_cache"
+								onClick={ this.deleteAllCaches }
+							>
+								{ translate( 'Delete Cache On All Blogs' ) }
+							</Button>
+						) }
 					</div>
 				</Card>
 				<QueryStatus siteId={ siteId } />

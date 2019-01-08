@@ -127,14 +127,9 @@ class EditorConfirmationSidebar extends Component {
 		const buttonLabel = this.getBusyButtonLabel( this.props.publishButtonStatus );
 
 		return (
-			<Button
-				  disabled
-				  primary
-				  busy
-				  className="editor-confirmation-sidebar__publishing-button"
-				>
-				  { buttonLabel }
-				</Button>
+			<Button disabled primary busy className="editor-confirmation-sidebar__publishing-button">
+				{ buttonLabel }
+			</Button>
 		);
 	}
 

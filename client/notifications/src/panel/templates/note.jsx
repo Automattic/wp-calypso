@@ -48,11 +48,9 @@ export const Note = props => {
 
 	return (
 		<li id={ 'note-' + note.id } className={ classes }>
-			{ detailView &&
-				note.header &&
-				note.header.length > 0 && (
-					<SummaryInSingle key={ 'note-summary-single-' + note.id } note={ note } />
-				) }
+			{ detailView && note.header && note.header.length > 0 && (
+				<SummaryInSingle key={ 'note-summary-single-' + note.id } note={ note } />
+			) }
 			{ ! detailView && (
 				<SummaryInList
 					currentNote={ currentNote }

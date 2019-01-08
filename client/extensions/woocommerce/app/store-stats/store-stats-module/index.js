@@ -59,12 +59,11 @@ class StoreStatsModule extends Component {
 						<StatsModulePlaceholder isLoading={ isLoading } />
 					</Card>
 				) }
-				{ ! isLoading &&
-					hasEmptyData && (
-						<Card className="stats-module is-showing-error has-no-data">
-							<ErrorPanel message={ emptyMessage } />
-						</Card>
-					) }
+				{ ! isLoading && hasEmptyData && (
+					<Card className="stats-module is-showing-error has-no-data">
+						<ErrorPanel message={ emptyMessage } />
+					</Card>
+				) }
 				{ ! isLoading && ! hasEmptyData && children }
 			</div>
 			/* eslint-enable wpcalypso/jsx-classname-namespace */

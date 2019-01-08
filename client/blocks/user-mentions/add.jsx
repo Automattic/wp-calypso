@@ -293,17 +293,16 @@ export default WrappedComponent =>
 						ref={ this.textInput }
 					/>
 
-					{ showPopover &&
-						this.matchingSuggestions.length > 0 && (
-							<UserMentionSuggestionList
-								suggestions={ this.matchingSuggestions }
-								selectedSuggestionId={ selectedSuggestionId }
-								popoverContext={ this.textInput.current }
-								popoverPosition={ popoverPosition }
-								onClick={ this.insertSuggestion }
-								onClose={ this.hidePopover }
-							/>
-						) }
+					{ showPopover && this.matchingSuggestions.length > 0 && (
+						<UserMentionSuggestionList
+							suggestions={ this.matchingSuggestions }
+							selectedSuggestionId={ selectedSuggestionId }
+							popoverContext={ this.textInput.current }
+							popoverPosition={ popoverPosition }
+							onClick={ this.insertSuggestion }
+							onClose={ this.hidePopover }
+						/>
+					) }
 				</Fragment>
 			);
 		}

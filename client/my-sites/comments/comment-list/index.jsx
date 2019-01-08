@@ -222,17 +222,15 @@ export class CommentList extends Component {
 					) }
 				</TransitionGroup>
 
-				{ ! isLoading &&
-					! showPlaceholder &&
-					! showEmptyContent && (
-						<Pagination
-							key="comment-list-pagination"
-							page={ validPage }
-							pageClick={ this.changePage }
-							perPage={ COMMENTS_PER_PAGE }
-							total={ commentsCount }
-						/>
-					) }
+				{ ! isLoading && ! showPlaceholder && ! showEmptyContent && (
+					<Pagination
+						key="comment-list-pagination"
+						page={ validPage }
+						pageClick={ this.changePage }
+						perPage={ COMMENTS_PER_PAGE }
+						total={ commentsCount }
+					/>
+				) }
 			</div>
 		);
 	}

@@ -234,16 +234,15 @@ export class CommentTree extends Component {
 						</CommentTransition>
 					) }
 				</TransitionGroup>
-				{ ! showPlaceholder &&
-					! showEmptyContent && (
-						<Pagination
-							key="comment-list-pagination"
-							page={ validPage }
-							pageClick={ this.changePage }
-							perPage={ COMMENTS_PER_PAGE }
-							total={ commentsCount }
-						/>
-					) }
+				{ ! showPlaceholder && ! showEmptyContent && (
+					<Pagination
+						key="comment-list-pagination"
+						page={ validPage }
+						pageClick={ this.changePage }
+						perPage={ COMMENTS_PER_PAGE }
+						total={ commentsCount }
+					/>
+				) }
 			</div>
 		);
 	}

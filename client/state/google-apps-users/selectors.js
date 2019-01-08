@@ -11,7 +11,10 @@ function getGoogleAppsUsersState( state ) {
 }
 
 function createGoogleAppsUsersSelector( fn ) {
-	return createSelector( fn, state => [ getGoogleAppsUsersState( state ) ] );
+	return createSelector(
+		fn,
+		state => [ getGoogleAppsUsersState( state ) ]
+	);
 }
 
 /**

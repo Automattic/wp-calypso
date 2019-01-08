@@ -86,12 +86,11 @@ function HeaderToolbar( {
 			<EditorHistoryRedo />
 			<TableOfContents />
 			<BlockNavigationDropdown />
-			{ hasFixedToolbar &&
-				isLargeViewport && (
-					<div className="edit-post-header-toolbar__block-toolbar">
-						<BlockToolbar />
-					</div>
-				) }
+			{ hasFixedToolbar && isLargeViewport && (
+				<div className="edit-post-header-toolbar__block-toolbar">
+					<BlockToolbar />
+				</div>
+			) }
 		</NavigableToolbar>
 	);
 }

@@ -597,19 +597,18 @@ export class SiteSettingsFormGeneral extends Component {
 								</Button>
 							</div>
 						</CompactCard>
-						{ site &&
-							! isBusiness( site.plan ) && (
-								<Banner
-									feature={ FEATURE_NO_BRANDING }
-									plan={ PLAN_BUSINESS }
-									title={ translate(
-										'Remove the footer credit entirely with WordPress.com Business'
-									) }
-									description={ translate(
-										'Upgrade to remove the footer credit, add Google Analytics and more'
-									) }
-								/>
-							) }
+						{ site && ! isBusiness( site.plan ) && (
+							<Banner
+								feature={ FEATURE_NO_BRANDING }
+								plan={ PLAN_BUSINESS }
+								title={ translate(
+									'Remove the footer credit entirely with WordPress.com Business'
+								) }
+								description={ translate(
+									'Upgrade to remove the footer credit, add Google Analytics and more'
+								) }
+							/>
+						) }
 					</div>
 				) }
 			</div>

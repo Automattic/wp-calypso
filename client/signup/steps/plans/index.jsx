@@ -137,12 +137,12 @@ export class PlansStep extends Component {
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 				/>
 				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
-				   * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
-				   * unless we've already selected an option that implies a paid plan.
-				   * This is in particular true for domain names. */
-				hideFreePlan &&
-					! isDomainOnly &&
-					! this.getDomainName() && <PlansSkipButton onClick={ this.handleFreePlanButtonClick } /> }
+				 * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
+				 * unless we've already selected an option that implies a paid plan.
+				 * This is in particular true for domain names. */
+				hideFreePlan && ! isDomainOnly && ! this.getDomainName() && (
+					<PlansSkipButton onClick={ this.handleFreePlanButtonClick } />
+				) }
 			</div>
 		);
 	}

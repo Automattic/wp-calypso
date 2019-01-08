@@ -89,10 +89,9 @@ class EmailProvider extends Component {
 							onChange={ this.onChange }
 							placeholder={ placeholder }
 						/>
-						{ token &&
-							! isDataValid && (
-								<FormInputValidation text={ translate( 'Invalid Token' ) } isError />
-							) }
+						{ token && ! isDataValid && (
+							<FormInputValidation text={ translate( 'Invalid Token' ) } isError />
+						) }
 					</FormFieldset>
 
 					<FormFooter>

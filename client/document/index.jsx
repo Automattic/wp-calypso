@@ -183,10 +183,10 @@ class Document extends React.Component {
 
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 					{ /*
-						* inline manifest in production, but reference by url for development.
-						* this lets us have the performance benefit in prod, without breaking HMR in dev
-						* since the manifest needs to be updated on each save
-						*/ }
+					 * inline manifest in production, but reference by url for development.
+					 * this lets us have the performance benefit in prod, without breaking HMR in dev
+					 * since the manifest needs to be updated on each save
+					 */ }
 					{ env === 'development' && <script src="/calypso/manifest.js" /> }
 					{ env !== 'development' && (
 						<script

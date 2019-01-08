@@ -334,10 +334,9 @@ export class PluginsMain extends Component {
 			/>
 		);
 
-		const morePluginsHeader = showInstalledPluginList &&
-			showSuggestedPluginsList && (
-				<h3 className="plugins__more-header">{ this.props.translate( 'More Plugins' ) }</h3>
-			);
+		const morePluginsHeader = showInstalledPluginList && showSuggestedPluginsList && (
+			<h3 className="plugins__more-header">{ this.props.translate( 'More Plugins' ) }</h3>
+		);
 
 		let searchTitle;
 		if ( search ) {

@@ -85,17 +85,16 @@ class ContactsPrivacy extends React.PureComponent {
 						</VerticalNavItem>
 					) }
 
-					{ ! hasPrivacyProtection &&
-						privacyAvailable && (
-							<VerticalNavItem
-								path={ domainManagementPrivacyProtection(
-									this.props.selectedSite.slug,
-									this.props.selectedDomainName
-								) }
-							>
-								{ translate( 'Privacy Protection' ) }
-							</VerticalNavItem>
-						) }
+					{ ! hasPrivacyProtection && privacyAvailable && (
+						<VerticalNavItem
+							path={ domainManagementPrivacyProtection(
+								this.props.selectedSite.slug,
+								this.props.selectedDomainName
+							) }
+						>
+							{ translate( 'Privacy Protection' ) }
+						</VerticalNavItem>
+					) }
 				</VerticalNav>
 			</Main>
 		);

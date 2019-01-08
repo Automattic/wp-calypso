@@ -135,11 +135,8 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
  * @returns {object} The aggregated ruleset
  */
 export function mergeValidationRules( ...rulesets ) {
-	return mergeWith(
-		{},
-		...rulesets,
-		( objValue, srcValue ) =>
-			isArray( objValue ) && isArray( srcValue ) ? union( objValue, srcValue ) : undefined
+	return mergeWith( {}, ...rulesets, ( objValue, srcValue ) =>
+		isArray( objValue ) && isArray( srcValue ) ? union( objValue, srcValue ) : undefined
 	);
 }
 

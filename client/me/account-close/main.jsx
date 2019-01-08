@@ -109,60 +109,53 @@ class AccountSettingsClose extends Component {
 									<ActionPanelFigureListItem>{ translate( 'Media' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Domains' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Gravatar' ) }</ActionPanelFigureListItem>
-									{ purchasedPremiumThemes &&
-										purchasedPremiumThemes.length > 0 && (
-											<ActionPanelFigureListItem>
-												{ translate( 'Premium themes' ) }
-											</ActionPanelFigureListItem>
-										) }
+									{ purchasedPremiumThemes && purchasedPremiumThemes.length > 0 && (
+										<ActionPanelFigureListItem>
+											{ translate( 'Premium themes' ) }
+										</ActionPanelFigureListItem>
+									) }
 								</ActionPanelFigureList>
 							</ActionPanelFigure>
 						) }
-						{ ! isLoading &&
-							hasAtomicSites && (
-								<Fragment>
-									<p className="account-close__body-copy">
-										{ translate(
-											'Account closure cannot be undone. It will remove your account along with all your sites and all their content.'
-										) }
-									</p>
-									<p className="account-close__body-copy">
-										{ translate(
-											'You will not be able to open a new WordPress.com account using the same email address for 30 days.'
-										) }
-									</p>
-									<p className="account-close__body-copy">
-										{ translate(
-											'To close this account now, {{a}}contact our support team{{/a}}.',
-											{
-												components: {
-													a: <ActionPanelLink href="/help/contact" />,
-												},
-											}
-										) }
-									</p>
-								</Fragment>
-							) }
-						{ ! isLoading &&
-							hasCancelablePurchases &&
-							! hasAtomicSites && (
-								<Fragment>
-									<p className="account-close__body-copy">
-										{ translate( 'You still have active purchases on your account.' ) }
-									</p>
-									<p className="account-close__body-copy">
-										{ translate(
-											"To delete your account, you'll need to cancel any active purchases " +
-												'in {{a}}Manage Purchases{{/a}} before proceeding.',
-											{
-												components: {
-													a: <ActionPanelLink href="/me/purchases" />,
-												},
-											}
-										) }
-									</p>
-								</Fragment>
-							) }
+						{ ! isLoading && hasAtomicSites && (
+							<Fragment>
+								<p className="account-close__body-copy">
+									{ translate(
+										'Account closure cannot be undone. It will remove your account along with all your sites and all their content.'
+									) }
+								</p>
+								<p className="account-close__body-copy">
+									{ translate(
+										'You will not be able to open a new WordPress.com account using the same email address for 30 days.'
+									) }
+								</p>
+								<p className="account-close__body-copy">
+									{ translate( 'To close this account now, {{a}}contact our support team{{/a}}.', {
+										components: {
+											a: <ActionPanelLink href="/help/contact" />,
+										},
+									} ) }
+								</p>
+							</Fragment>
+						) }
+						{ ! isLoading && hasCancelablePurchases && ! hasAtomicSites && (
+							<Fragment>
+								<p className="account-close__body-copy">
+									{ translate( 'You still have active purchases on your account.' ) }
+								</p>
+								<p className="account-close__body-copy">
+									{ translate(
+										"To delete your account, you'll need to cancel any active purchases " +
+											'in {{a}}Manage Purchases{{/a}} before proceeding.',
+										{
+											components: {
+												a: <ActionPanelLink href="/me/purchases" />,
+											},
+										}
+									) }
+								</p>
+							</Fragment>
+						) }
 						{ ( isLoading || isDeletePossible ) && (
 							<Fragment>
 								<p className="account-close__body-copy">
@@ -170,23 +163,22 @@ class AccountSettingsClose extends Component {
 										'Account closure cannot be undone. It will remove your account along with all your sites and all their content.'
 									) }
 								</p>
-								{ purchasedPremiumThemes &&
-									purchasedPremiumThemes.length > 0 && (
-										<Fragment>
-											{ translate(
-												'You will also lose access to the following premium themes you have purchased:'
-											) }
-											<ul className="account-close__theme-list">
-												{ map( purchasedPremiumThemes, purchasedPremiumTheme => {
-													return (
-														<li key={ purchasedPremiumTheme.id }>
-															{ purchasedPremiumTheme.productName }
-														</li>
-													);
-												} ) }
-											</ul>
-										</Fragment>
-									) }
+								{ purchasedPremiumThemes && purchasedPremiumThemes.length > 0 && (
+									<Fragment>
+										{ translate(
+											'You will also lose access to the following premium themes you have purchased:'
+										) }
+										<ul className="account-close__theme-list">
+											{ map( purchasedPremiumThemes, purchasedPremiumTheme => {
+												return (
+													<li key={ purchasedPremiumTheme.id }>
+														{ purchasedPremiumTheme.productName }
+													</li>
+												);
+											} ) }
+										</ul>
+									</Fragment>
+								) }
 								<p className="account-close__body-copy">
 									{ translate(
 										'You will not be able to open a new WordPress.com account using the same email address for 30 days.'
@@ -227,12 +219,11 @@ class AccountSettingsClose extends Component {
 								{ translate( 'Contact support' ) }
 							</Button>
 						) }
-						{ hasCancelablePurchases &&
-							! hasAtomicSites && (
-								<Button primary href="/me/purchases">
-									{ translate( 'Manage purchases', { context: 'button label' } ) }
-								</Button>
-							) }
+						{ hasCancelablePurchases && ! hasAtomicSites && (
+							<Button primary href="/me/purchases">
+								{ translate( 'Manage purchases', { context: 'button label' } ) }
+							</Button>
+						) }
 					</ActionPanelFooter>
 					<AccountCloseConfirmDialog
 						isVisible={ this.state.showConfirmDialog }

@@ -79,19 +79,18 @@ class SiteSettingsPerformance extends Component {
 
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
-				{ jetpackSettingsUI &&
-					jetpackVersionSupportsLazyImages && (
-						<Fragment>
-							{ this.renderSectionHeader( translate( 'Performance & speed' ), false ) }
-							<SpeedUpYourSite
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-								jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
-								submitForm={ submitForm }
-								updateFields={ updateFields }
-							/>
-						</Fragment>
-					) }
+				{ jetpackSettingsUI && jetpackVersionSupportsLazyImages && (
+					<Fragment>
+						{ this.renderSectionHeader( translate( 'Performance & speed' ), false ) }
+						<SpeedUpYourSite
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
+							submitForm={ submitForm }
+							updateFields={ updateFields }
+						/>
+					</Fragment>
+				) }
 
 				{ jetpackSettingsUI && (
 					<Fragment>

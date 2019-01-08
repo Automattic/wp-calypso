@@ -133,8 +133,8 @@ describe( 'selectors', () => {
 
 	describe( '#computeFullAndMonthlyPricesForPlan()', () => {
 		test( 'Should return shape { priceFull, priceMonthly }', () => {
-			getPlanDiscountedRawPrice.mockImplementation(
-				( a, b, c, { isMonthly } ) => ( isMonthly ? 10 : 120 )
+			getPlanDiscountedRawPrice.mockImplementation( ( a, b, c, { isMonthly } ) =>
+				isMonthly ? 10 : 120
 			);
 			getPlanRawPrice.mockImplementation( () => 150 );
 

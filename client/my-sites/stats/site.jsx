@@ -134,8 +134,9 @@ class StatsSite extends Component {
 							visible={ isGoogleMyBusinessStatsNudgeVisible }
 						/>
 					) }
-				{ abtest( 'builderReferralStatsNudge' ) === 'builderReferralBanner' &&
-					siteId && <UpworkStatsNudge siteSlug={ slug } siteId={ siteId } /> }
+				{ abtest( 'builderReferralStatsNudge' ) === 'builderReferralBanner' && siteId && (
+					<UpworkStatsNudge siteSlug={ slug } siteId={ siteId } />
+				) }
 			</Fragment>
 		);
 	}

@@ -151,8 +151,9 @@ class Layout extends Component {
 					<TranslatorLauncher />
 				) }
 				{ this.props.sectionGroup === 'sites' && <SitePreview /> }
-				{ config.isEnabled( 'happychat' ) &&
-					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
+				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && (
+					<AsyncLoad require="components/happychat" />
+				) }
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }

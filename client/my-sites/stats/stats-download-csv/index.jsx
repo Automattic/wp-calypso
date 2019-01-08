@@ -79,8 +79,9 @@ class StatsDownloadCsv extends Component {
 				disabled={ disabled }
 				borderless={ borderless }
 			>
-				{ siteId &&
-					statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
+				{ siteId && statType && (
+					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+				) }
 				<Gridicon icon="cloud-download" />{' '}
 				{ translate( 'Download data as CSV', {
 					context: 'Action shown in stats to download data as csv.',

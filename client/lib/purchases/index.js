@@ -47,8 +47,8 @@ function getPurchasesBySite( purchases, sites ) {
 					id: currentValue.siteId,
 					name: currentValue.siteName,
 					/* if the purchase is attached to a deleted site,
-				 * there will be no site with this ID in `sites`, so
-				 * we fall back on the domain. */
+					 * there will be no site with this ID in `sites`, so
+					 * we fall back on the domain. */
 					slug: siteObject ? siteObject.slug : currentValue.domain,
 					isDomainOnly: siteObject ? siteObject.options.is_domain_only : false,
 					title: currentValue.siteName || currentValue.domain || '',

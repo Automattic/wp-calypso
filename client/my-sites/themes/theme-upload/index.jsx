@@ -215,14 +215,14 @@ class Upload extends React.Component {
 
 		return (
 			<Card>
-				{ ! inProgress &&
-					! complete && <UploadDropZone doUpload={ uploadAction } disabled={ disabled } /> }
+				{ ! inProgress && ! complete && (
+					<UploadDropZone doUpload={ uploadAction } disabled={ disabled } />
+				) }
 				{ inProgress && this.renderProgressBar() }
 				{ complete && ! failed && uploadedTheme && this.renderTheme() }
-				{ complete &&
-					this.props.isSiteAutomatedTransfer && (
-						<WpAdminAutoLogin site={ this.props.selectedSite } />
-					) }
+				{ complete && this.props.isSiteAutomatedTransfer && (
+					<WpAdminAutoLogin site={ this.props.selectedSite } />
+				) }
 			</Card>
 		);
 	}

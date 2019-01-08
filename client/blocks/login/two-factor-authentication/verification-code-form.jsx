@@ -155,10 +155,9 @@ class VerificationCodeForm extends Component {
 							disabled={ this.state.isDisabled }
 						/>
 
-						{ requestError &&
-							requestError.field === 'twoStepCode' && (
-								<FormInputValidation isError text={ requestError.message } />
-							) }
+						{ requestError && requestError.field === 'twoStepCode' && (
+							<FormInputValidation isError text={ requestError.message } />
+						) }
 					</FormFieldset>
 
 					<FormButton

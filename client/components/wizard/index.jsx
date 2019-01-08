@@ -109,30 +109,27 @@ class Wizard extends Component {
 					...omit( otherProps, [ 'basePath', 'baseSuffix' ] ),
 				} ) }
 
-				{ ! hideNavigation &&
-					totalSteps > 1 && (
-						<div className="wizard__navigation-links">
-							{ ! hideBackLink &&
-								stepIndex > 0 && (
-									<NavigationLink
-										direction="back"
-										href={ backUrl }
-										text={ backText }
-										onClick={ onBackClick }
-									/>
-								) }
+				{ ! hideNavigation && totalSteps > 1 && (
+					<div className="wizard__navigation-links">
+						{ ! hideBackLink && stepIndex > 0 && (
+							<NavigationLink
+								direction="back"
+								href={ backUrl }
+								text={ backText }
+								onClick={ onBackClick }
+							/>
+						) }
 
-							{ ! hideForwardLink &&
-								stepIndex < totalSteps - 1 && (
-									<NavigationLink
-										direction="forward"
-										href={ forwardUrl }
-										text={ forwardText }
-										onClick={ onForwardClick }
-									/>
-								) }
-						</div>
-					) }
+						{ ! hideForwardLink && stepIndex < totalSteps - 1 && (
+							<NavigationLink
+								direction="forward"
+								href={ forwardUrl }
+								text={ forwardText }
+								onClick={ onForwardClick }
+							/>
+						) }
+					</div>
+				) }
 			</div>
 		);
 	}

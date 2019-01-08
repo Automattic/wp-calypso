@@ -398,31 +398,32 @@ class ActivityLog extends Component {
 
 		return (
 			<div>
-				{ siteId &&
-					'active' === rewindState.state && <QueryRewindBackupStatus siteId={ siteId } /> }
+				{ siteId && 'active' === rewindState.state && (
+					<QueryRewindBackupStatus siteId={ siteId } />
+				) }
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 
-				{ config.isEnabled( 'rewind-alerts' ) &&
-					siteId &&
-					isJetpack && <RewindAlerts siteId={ siteId } /> }
-				{ siteId &&
-					'unavailable' === rewindState.state && <RewindUnavailabilityNotice siteId={ siteId } /> }
-				{ 'awaitingCredentials' === rewindState.state &&
-					! siteIsOnFreePlan && (
-						<Banner
-							icon="history"
-							href={
-								rewindState.canAutoconfigure
-									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ slug }`
-									: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
-							}
-							title={ translate( 'Add site credentials' ) }
-							description={ translate(
-								'Backups and security scans require access to your site to work properly.'
-							) }
-						/>
-					) }
+				{ config.isEnabled( 'rewind-alerts' ) && siteId && isJetpack && (
+					<RewindAlerts siteId={ siteId } />
+				) }
+				{ siteId && 'unavailable' === rewindState.state && (
+					<RewindUnavailabilityNotice siteId={ siteId } />
+				) }
+				{ 'awaitingCredentials' === rewindState.state && ! siteIsOnFreePlan && (
+					<Banner
+						icon="history"
+						href={
+							rewindState.canAutoconfigure
+								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ slug }`
+								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
+						}
+						title={ translate( 'Add site credentials' ) }
+						description={ translate(
+							'Backups and security scans require access to your site to work properly.'
+						) }
+					/>
+				) }
 				{ 'provisioning' === rewindState.state && (
 					<Banner
 						icon="history"
@@ -455,34 +456,33 @@ class ActivityLog extends Component {
 						/>
 						<section className="activity-log__wrapper">
 							{ siteIsOnFreePlan && <div className="activity-log__fader" /> }
-							{ theseLogs.map(
-								log =>
-									log.isAggregate ? (
-										<Fragment key={ log.activityId }>
-											{ timePeriod( log ) }
-											<ActivityLogAggregatedItem
-												key={ log.activityId }
-												activity={ log }
-												disableRestore={ disableRestore }
-												disableBackup={ disableBackup }
-												hideRestore={ 'active' !== rewindState.state }
-												siteId={ siteId }
-												rewindState={ rewindState.state }
-											/>
-										</Fragment>
-									) : (
-										<Fragment key={ log.activityId }>
-											{ timePeriod( log ) }
-											<ActivityLogItem
-												key={ log.activityId }
-												activity={ log }
-												disableRestore={ disableRestore }
-												disableBackup={ disableBackup }
-												hideRestore={ 'active' !== rewindState.state }
-												siteId={ siteId }
-											/>
-										</Fragment>
-									)
+							{ theseLogs.map( log =>
+								log.isAggregate ? (
+									<Fragment key={ log.activityId }>
+										{ timePeriod( log ) }
+										<ActivityLogAggregatedItem
+											key={ log.activityId }
+											activity={ log }
+											disableRestore={ disableRestore }
+											disableBackup={ disableBackup }
+											hideRestore={ 'active' !== rewindState.state }
+											siteId={ siteId }
+											rewindState={ rewindState.state }
+										/>
+									</Fragment>
+								) : (
+									<Fragment key={ log.activityId }>
+										{ timePeriod( log ) }
+										<ActivityLogItem
+											key={ log.activityId }
+											activity={ log }
+											disableRestore={ disableRestore }
+											disableBackup={ disableBackup }
+											hideRestore={ 'active' !== rewindState.state }
+											siteId={ siteId }
+										/>
+									</Fragment>
+								)
 							) }
 						</section>
 						{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }

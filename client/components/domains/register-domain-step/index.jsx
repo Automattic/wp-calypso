@@ -401,15 +401,14 @@ class RegisterDomainStep extends React.Component {
 						showDismiss={ false }
 					/>
 				) }
-				{ suggestionMessage &&
-					availabilityError !== suggestionError && (
-						<Notice
-							className="register-domain-step__notice"
-							text={ suggestionMessage }
-							status={ `is-${ suggestionSeverity }` }
-							showDismiss={ false }
-						/>
-					) }
+				{ suggestionMessage && availabilityError !== suggestionError && (
+					<Notice
+						className="register-domain-step__notice"
+						text={ suggestionMessage }
+						status={ `is-${ suggestionSeverity }` }
+						showDismiss={ false }
+					/>
+				) }
 				{ this.renderContent() }
 				{ this.renderFilterResetNotice() }
 				{ this.renderPaginationControls() }

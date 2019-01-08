@@ -79,27 +79,26 @@ class PostsList extends Component {
 					</SearchAutocomplete>
 				</FormFieldset>
 
-				{ !! posts.length &&
-					! requesting && (
-						<FormFieldset>
-							<p className={ explanationTextClass }>
-								{ translate(
-									"You can reorder the zone's content by dragging it to a different location on the list."
-								) }
-							</p>
-							<SortableList direction="vertical" onChange={ this.changePostOrder( fields ) }>
-								{ posts.map( ( post, index ) => (
-									<PostCard
-										key={ post.id }
-										postId={ post.id }
-										postTitle={ post.title }
-										siteId={ post.siteId }
-										remove={ this.removePost( fields, index ) }
-									/>
-								) ) }
-							</SortableList>
-						</FormFieldset>
-					) }
+				{ !! posts.length && ! requesting && (
+					<FormFieldset>
+						<p className={ explanationTextClass }>
+							{ translate(
+								"You can reorder the zone's content by dragging it to a different location on the list."
+							) }
+						</p>
+						<SortableList direction="vertical" onChange={ this.changePostOrder( fields ) }>
+							{ posts.map( ( post, index ) => (
+								<PostCard
+									key={ post.id }
+									postId={ post.id }
+									postTitle={ post.title }
+									siteId={ post.siteId }
+									remove={ this.removePost( fields, index ) }
+								/>
+							) ) }
+						</SortableList>
+					</FormFieldset>
+				) }
 
 				{ requesting && times( 3, index => <PostPlaceholder key={ index } /> ) }
 			</div>

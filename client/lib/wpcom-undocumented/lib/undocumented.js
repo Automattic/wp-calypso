@@ -1516,7 +1516,7 @@ Undocumented.prototype.themeDetails = function( themeId, siteId, fn ) {
  * Hack! Calling the theme modify endpoint without specifying an action will return the full details for a theme.
  * FIXME In the long run, we should try to enable the /sites/${ siteId }/themes/${ theme } endpoint for Jetpack
  * sites so we can delete this method and use the regular `themeDetails` for Jetpack sites, too.
-*/
+ */
 Undocumented.prototype.jetpackThemeDetails = function( themeId, siteId, fn ) {
 	const path = `/sites/${ siteId }/themes`;
 	debug( path );

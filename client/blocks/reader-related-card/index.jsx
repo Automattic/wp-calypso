@@ -37,20 +37,19 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 				<Gravatar user={ post.author } />
 			</a>
 			<div className="reader-related-card__byline">
-				{ authorName &&
-					authorAndSiteAreDifferent && (
-						<span className="reader-related-card__byline-author">
-							<ReaderAuthorLink
-								author={ post.author }
-								siteUrl={ siteUrl }
-								post={ post }
-								onClick={ onSiteClick }
-								className="reader-related-card__link"
-							>
-								{ authorName }
-							</ReaderAuthorLink>
-						</span>
-					) }
+				{ authorName && authorAndSiteAreDifferent && (
+					<span className="reader-related-card__byline-author">
+						<ReaderAuthorLink
+							author={ post.author }
+							siteUrl={ siteUrl }
+							post={ post }
+							onClick={ onSiteClick }
+							className="reader-related-card__link"
+						>
+							{ authorName }
+						</ReaderAuthorLink>
+					</span>
+				) }
 				<span className="reader-related-card__byline-site">
 					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card__link">
 						{ siteName }

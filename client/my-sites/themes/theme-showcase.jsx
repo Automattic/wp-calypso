@@ -236,14 +236,12 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					{ showBanners &&
-						abtest( 'builderReferralThemesBanner' ) === 'original' && (
-							<RandomThemesBanner banners={ themeBanners } />
-						) }
-					{ showBanners &&
-						abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
-							<UpworkBanner />
-						) }
+					{ showBanners && abtest( 'builderReferralThemesBanner' ) === 'original' && (
+						<RandomThemesBanner banners={ themeBanners } />
+					) }
+					{ showBanners && abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
+						<UpworkBanner />
+					) }
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }

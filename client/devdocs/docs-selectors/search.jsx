@@ -62,10 +62,9 @@ export default class DocsSelectorsSearch extends Component {
 					delaySearch
 					onSearch={ this.onSearch }
 				/>
-				{ results &&
-					! results.length && (
-						<EmptyContent title="No selectors found" line="Try another search query" />
-					) }
+				{ results && ! results.length && (
+					<EmptyContent title="No selectors found" line="Try another search query" />
+				) }
 				<ul className="docs-selectors__results">
 					{ map( results, ( { name, description, tags } ) => (
 						<li key={ name }>

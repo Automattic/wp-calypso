@@ -494,10 +494,9 @@ export class SharingService extends Component {
 							</ServiceConnectedAccounts>
 						) }
 						<ServiceTip service={ this.props.service } />
-						{ this.isMailchimpService( connectionStatus ) &&
-							connectionStatus === 'connected' && (
-								<MailchimpSettings keyringConnections={ this.props.keyringConnections } />
-							) }
+						{ this.isMailchimpService( connectionStatus ) && connectionStatus === 'connected' && (
+							<MailchimpSettings keyringConnections={ this.props.keyringConnections } />
+						) }
 					</div>
 				</FoldableCard>
 			</li>

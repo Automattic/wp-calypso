@@ -571,13 +571,12 @@ export default class extends React.Component {
 
 		return (
 			<div className={ containerClassName }>
-				{ 'html' === mode &&
-					config.isEnabled( 'post-editor/html-toolbar' ) && (
-						<EditorHtmlToolbar
-							content={ this.textInput.current }
-							onToolbarChangeContent={ this.onToolbarChangeContent }
-						/>
-					) }
+				{ 'html' === mode && config.isEnabled( 'post-editor/html-toolbar' ) && (
+					<EditorHtmlToolbar
+						content={ this.textInput.current }
+						onToolbarChangeContent={ this.onToolbarChangeContent }
+					/>
+				) }
 				<textarea
 					ref={ this.textInput }
 					className={ className }
