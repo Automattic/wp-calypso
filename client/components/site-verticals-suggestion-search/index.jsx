@@ -22,6 +22,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		onChange: PropTypes.func,
 		placeholder: PropTypes.string,
 		charsToTriggerSearch: PropTypes.number,
+		verticals: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -29,6 +30,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		onChange: noop,
 		placeholder: '',
 		charsToTriggerSearch: 2,
+		verticals: [],
 	};
 
 	constructor( props ) {

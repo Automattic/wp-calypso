@@ -109,14 +109,18 @@ class SuggestionSearch extends Component {
 		);
 	}
 
-	doSearchWithInitialMatchPreferred( haystack, needle ) {
+	doSearchWithInitialMatchPreferred( suggestionsArray, queryString ) {
 		// first do the search
-		needle = needle.trim().toLocaleLowerCase();
-		const lazyResults = haystack.filter( val => val.toLocaleLowerCase().includes( needle ) );
-		// second find the words that start with the search
-		const startsWithResults = lazyResults.filter( val =>
-			startsWith( val.toLocaleLowerCase(), needle )
+		queryString = queryString.trim().toLocaleLowerCase();
+		const lazyResults = suggestionsArray.filter( val =>
+			val.toLocaleLowerCase().includes( queryString )
 		);
+		// second find the words that start with the search
+		// but not exact matches, which will appear in the lazy results
+		const startsWithResults = lazyResults.filter( val => {
+			val = val.toLocaleLowerCase();
+			return startsWith( val, queryString ) && val !== queryString;
+		} );
 		// merge, dedupe, bye
 		return uniq( startsWithResults.concat( lazyResults ) );
 	}
