@@ -9,10 +9,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
     className="card is-compact"
   >
     <header
-      className="g-suite-purchase-cta__add-google-apps-card-header"
+      className="gsuite-purchase-cta__add-google-apps-card-header"
     >
       <h3
-        className="g-suite-purchase-cta__add-google-apps-card-product-logo"
+        className="gsuite-purchase-cta__add-google-apps-card-product-logo"
       >
         <strong>
           G Suite
@@ -24,26 +24,26 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
     className="card is-compact"
   >
     <div
-      className="g-suite-purchase-cta__add-google-apps-card-product-details"
+      className="gsuite-purchase-cta__add-google-apps-card-product-details"
     >
       <div
-        className="g-suite-purchase-cta__add-google-apps-card-description"
+        className="gsuite-purchase-cta__add-google-apps-card-description"
       >
         <h2
-          className="g-suite-purchase-cta__add-google-apps-card-title"
+          className="gsuite-purchase-cta__add-google-apps-card-title"
         >
           Professional email and so much more.
         </h2>
         <p
-          className="g-suite-purchase-cta__add-google-apps-card-sub-title"
+          className="gsuite-purchase-cta__add-google-apps-card-sub-title"
         >
           We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site.
         </p>
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-price"
+          className="gsuite-purchase-cta__add-google-apps-card-price"
         >
           <h4
-            className="g-suite-purchase-cta__add-google-apps-card-price-per-user"
+            className="gsuite-purchase-cta__add-google-apps-card-price-per-user"
           >
             <span>
               <strong>
@@ -61,14 +61,14 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
             Add G Suite
           </button>
           <h5
-            className="g-suite-purchase-cta__add-google-apps-card-billing-period"
+            className="gsuite-purchase-cta__add-google-apps-card-billing-period"
           >
             $50 billed yearly (2 months free!)
           </h5>
         </div>
       </div>
       <div
-        className="g-suite-purchase-cta__add-google-apps-card-logos"
+        className="gsuite-purchase-cta__add-google-apps-card-logos"
       >
         <img
           alt="G Suite Logo"
@@ -81,13 +81,13 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
     className="card is-compact"
   >
     <div
-      className="g-suite-purchase-cta__add-google-apps-card-features"
+      className="gsuite-purchase-cta__add-google-apps-card-features"
     >
       <div
-        className="g-suite-purchase-cta__add-google-apps-card-feature"
+        className="gsuite-purchase-cta__add-google-apps-card-feature"
       >
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <img
             alt="Gmail Logo"
@@ -95,12 +95,12 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
           />
         </div>
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <h5
-            className="g-suite-purchase-cta__add-google-apps-card-feature-header"
+            className="gsuite-purchase-cta__add-google-apps-card-feature-header"
           >
-            Gmail for @example.com
+            Gmail for @
           </h5>
           <p>
             Professional ad-free email that works with most email clients.
@@ -108,10 +108,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
         </div>
       </div>
       <div
-        className="g-suite-purchase-cta__add-google-apps-card-feature"
+        className="gsuite-purchase-cta__add-google-apps-card-feature"
       >
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <img
             alt="Google Drive Logo"
@@ -119,10 +119,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
           />
         </div>
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <h5
-            className="g-suite-purchase-cta__add-google-apps-card-feature-header"
+            className="gsuite-purchase-cta__add-google-apps-card-feature-header"
           >
             Keep all your files secure
           </h5>
@@ -132,10 +132,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
         </div>
       </div>
       <div
-        className="g-suite-purchase-cta__add-google-apps-card-feature"
+        className="gsuite-purchase-cta__add-google-apps-card-feature"
       >
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <img
             alt="Google Docs Logo"
@@ -143,10 +143,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
           />
         </div>
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <h5
-            className="g-suite-purchase-cta__add-google-apps-card-feature-header"
+            className="gsuite-purchase-cta__add-google-apps-card-feature-header"
           >
             Docs, spreadsheets and forms
           </h5>
@@ -156,10 +156,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
         </div>
       </div>
       <div
-        className="g-suite-purchase-cta__add-google-apps-card-feature"
+        className="gsuite-purchase-cta__add-google-apps-card-feature"
       >
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <img
             alt="Google Hangouts Logo"
@@ -167,10 +167,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
           />
         </div>
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <h5
-            className="g-suite-purchase-cta__add-google-apps-card-feature-header"
+            className="gsuite-purchase-cta__add-google-apps-card-feature-header"
           >
             Connect with your team
           </h5>
@@ -181,7 +181,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
       </div>
     </div>
     <div
-      className="g-suite-purchase-cta__add-google-apps-card-secondary-button"
+      className="gsuite-purchase-cta__add-google-apps-card-secondary-button"
     >
       <button
         className="button form-button is-primary"
@@ -193,7 +193,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
       </button>
     </div>
     <div
-      className="g-suite-purchase-cta__add-google-apps-card-learn-more"
+      className="gsuite-purchase-cta__add-google-apps-card-learn-more"
     >
       <p>
         <strong>
@@ -201,7 +201,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with basic plan 1`] = `
         </strong>
          
         <a
-          className="g-suite-purchase-cta__add-google-apps-card-learn-more-link"
+          className="gsuite-purchase-cta__add-google-apps-card-learn-more-link"
           href="https://en.support.wordpress.com/adding-g-suite-to-your-site"
           onClick={[Function]}
           rel="noopener noreferrer"
@@ -224,10 +224,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
     className="card is-compact"
   >
     <header
-      className="g-suite-purchase-cta__add-google-apps-card-header"
+      className="gsuite-purchase-cta__add-google-apps-card-header"
     >
       <h3
-        className="g-suite-purchase-cta__add-google-apps-card-product-logo"
+        className="gsuite-purchase-cta__add-google-apps-card-product-logo"
       >
         <strong>
           G Suite
@@ -240,26 +240,26 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
     className="card is-compact"
   >
     <div
-      className="g-suite-purchase-cta__add-google-apps-card-product-details"
+      className="gsuite-purchase-cta__add-google-apps-card-product-details"
     >
       <div
-        className="g-suite-purchase-cta__add-google-apps-card-description"
+        className="gsuite-purchase-cta__add-google-apps-card-description"
       >
         <h2
-          className="g-suite-purchase-cta__add-google-apps-card-title"
+          className="gsuite-purchase-cta__add-google-apps-card-title"
         >
           Professional email and so much more.
         </h2>
         <p
-          className="g-suite-purchase-cta__add-google-apps-card-sub-title"
+          className="gsuite-purchase-cta__add-google-apps-card-sub-title"
         >
           We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site.
         </p>
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-price"
+          className="gsuite-purchase-cta__add-google-apps-card-price"
         >
           <h4
-            className="g-suite-purchase-cta__add-google-apps-card-price-per-user"
+            className="gsuite-purchase-cta__add-google-apps-card-price-per-user"
           >
             <span>
               <strong>
@@ -277,14 +277,14 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
             Add G Suite
           </button>
           <h5
-            className="g-suite-purchase-cta__add-google-apps-card-billing-period"
+            className="gsuite-purchase-cta__add-google-apps-card-billing-period"
           >
             $50 billed yearly (2 months free!)
           </h5>
         </div>
       </div>
       <div
-        className="g-suite-purchase-cta__add-google-apps-card-logos"
+        className="gsuite-purchase-cta__add-google-apps-card-logos"
       >
         <img
           alt="G Suite Logo"
@@ -297,13 +297,13 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
     className="card is-compact"
   >
     <div
-      className="g-suite-purchase-cta__add-google-apps-card-features"
+      className="gsuite-purchase-cta__add-google-apps-card-features"
     >
       <div
-        className="g-suite-purchase-cta__add-google-apps-card-feature"
+        className="gsuite-purchase-cta__add-google-apps-card-feature"
       >
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <img
             alt="Gmail Logo"
@@ -311,12 +311,12 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
           />
         </div>
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <h5
-            className="g-suite-purchase-cta__add-google-apps-card-feature-header"
+            className="gsuite-purchase-cta__add-google-apps-card-feature-header"
           >
-            Gmail for @example.com
+            Gmail for @
           </h5>
           <p>
             Professional ad-free email that works with most email clients.
@@ -324,10 +324,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
         </div>
       </div>
       <div
-        className="g-suite-purchase-cta__add-google-apps-card-feature"
+        className="gsuite-purchase-cta__add-google-apps-card-feature"
       >
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <img
             alt="Google Drive Logo"
@@ -335,10 +335,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
           />
         </div>
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <h5
-            className="g-suite-purchase-cta__add-google-apps-card-feature-header"
+            className="gsuite-purchase-cta__add-google-apps-card-feature-header"
           >
             Keep all your files secure
           </h5>
@@ -348,10 +348,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
         </div>
       </div>
       <div
-        className="g-suite-purchase-cta__add-google-apps-card-feature"
+        className="gsuite-purchase-cta__add-google-apps-card-feature"
       >
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <img
             alt="Google Docs Logo"
@@ -359,10 +359,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
           />
         </div>
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <h5
-            className="g-suite-purchase-cta__add-google-apps-card-feature-header"
+            className="gsuite-purchase-cta__add-google-apps-card-feature-header"
           >
             Docs, spreadsheets and forms
           </h5>
@@ -372,10 +372,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
         </div>
       </div>
       <div
-        className="g-suite-purchase-cta__add-google-apps-card-feature"
+        className="gsuite-purchase-cta__add-google-apps-card-feature"
       >
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <img
             alt="Google Hangouts Logo"
@@ -383,10 +383,10 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
           />
         </div>
         <div
-          className="g-suite-purchase-cta__add-google-apps-card-feature-block"
+          className="gsuite-purchase-cta__add-google-apps-card-feature-block"
         >
           <h5
-            className="g-suite-purchase-cta__add-google-apps-card-feature-header"
+            className="gsuite-purchase-cta__add-google-apps-card-feature-header"
           >
             Connect with your team
           </h5>
@@ -397,7 +397,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
       </div>
     </div>
     <div
-      className="g-suite-purchase-cta__add-google-apps-card-secondary-button"
+      className="gsuite-purchase-cta__add-google-apps-card-secondary-button"
     >
       <button
         className="button form-button is-primary"
@@ -409,7 +409,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
       </button>
     </div>
     <div
-      className="g-suite-purchase-cta__add-google-apps-card-learn-more"
+      className="gsuite-purchase-cta__add-google-apps-card-learn-more"
     >
       <p>
         <strong>
@@ -417,7 +417,7 @@ exports[`GSuitePurchaseCta it renders GSuitePurchaseCta with business plan 1`] =
         </strong>
          
         <a
-          className="g-suite-purchase-cta__add-google-apps-card-learn-more-link"
+          className="gsuite-purchase-cta__add-google-apps-card-learn-more-link"
           href="https://en.support.wordpress.com/adding-g-suite-to-your-site"
           onClick={[Function]}
           rel="noopener noreferrer"
