@@ -33,7 +33,7 @@ class DomainsSelect extends React.Component {
 	}
 
 	render() {
-		const { domains, isRequestingSiteDomains, onChange, onFocus, value } = this.props;
+		const { domains, isRequestingSiteDomains, isError, onChange, onFocus, value } = this.props;
 
 		return (
 			<FormSelect
@@ -41,6 +41,7 @@ class DomainsSelect extends React.Component {
 				onChange={ onChange }
 				onFocus={ onFocus }
 				disabled={ isRequestingSiteDomains || 1 === domains.length }
+				isError={ isError }
 			>
 				{ isRequestingSiteDomains && this.renderLoadingState() }
 				{ ! isRequestingSiteDomains && this.renderDomainSelect() }
@@ -51,11 +52,16 @@ class DomainsSelect extends React.Component {
 
 DomainsSelect.propTypes = {
 	domains: PropTypes.array.isRequired,
+	isError: PropTypes.bool,
 	isRequestingSiteDomains: PropTypes.bool.isRequired,
 	onChange: PropTypes.func.isRequired,
 	onFocus: PropTypes.func.isRequired,
 	translate: PropTypes.func.isRequired,
 	value: PropTypes.string.isRequired,
+};
+
+DomainsSelect.defaultProps = {
+	isError: false,
 };
 
 export default localize( DomainsSelect );

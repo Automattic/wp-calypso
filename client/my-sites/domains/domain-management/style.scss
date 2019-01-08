@@ -678,21 +678,42 @@ ul.email-forwarding__list {
 		@include breakpoint( '>660px' ) {
 			width: calc( 50% - 10px );
 		}
+		margin-bottom: 0;
+	}
+
+	.form-input-validation {
+		padding-bottom: 6px;
 	}
 }
 
 .add-google-apps__email-address-fieldsets {
 	.add-google-apps__email-address-fieldset {
-		display: flex;
-		flex-direction: column;
-		margin-bottom: 10px;
 
-		@include breakpoint( '>480px' ) {
-			flex-direction: row;
+		fieldset {
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+			margin-bottom: 10px;
+
+			@include breakpoint( '>480px' ) {
+				flex-direction: row;
+			}
+
+			&:last-of-type {
+				margin-bottom: 0;
+			}
+
+			input {
+				width: auto;
+			}
+			select {
+				width: 100%;
+			}
+
 		}
 
-		&:last-of-type {
-			margin-bottom: 0;
+		.form-input-validation {
+			padding-bottom: 6px;
 		}
 	}
 
