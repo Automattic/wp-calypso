@@ -190,7 +190,7 @@
 		transform: translate( 25%, -25% );
 		border: 1px solid var( --color-neutral-200 );
 		border-radius: 50%;
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 		cursor: pointer;
 
 		&:hover {
@@ -342,7 +342,7 @@
 
 .products__variation-types-form-wrapper {
 	padding: 24px;
-	border-top: 1px solid $gray-light;
+	border-top: 1px solid var( --color-neutral-0 );
 }
 
 .products__variation-types-form-group {
@@ -519,7 +519,7 @@
 		transform: translate( 33%, -33% );
 		border: 1px solid var( --color-neutral-200 );
 		border-radius: 50%;
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 		cursor: pointer;
 	}
 
@@ -740,7 +740,7 @@
 }
 
 .products__additional-details-form-inputs {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	border: 1px solid var( --color-neutral-0 );
 	padding: 16px 0 0;
 	margin-bottom: 8px;

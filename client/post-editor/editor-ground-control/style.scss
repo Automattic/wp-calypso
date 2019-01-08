@@ -137,7 +137,7 @@
 
 .editor-ground-control__toggle-sidebar:hover,
 .editor-ground-control__toggle-sidebar:focus {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 }
 
 .focus-sidebar .editor-ground-control__toggle-sidebar:hover,

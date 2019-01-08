@@ -22,7 +22,7 @@
 
 .domain-management-form-footer,
 .primary-domain__actions {
-	border-top: 1px solid $gray-light;
+	border-top: 1px solid var( --color-neutral-0 );
 	margin: 16px -16px -16px -16px;
 	padding: 16px;
 	display: flex;
@@ -78,7 +78,7 @@
 
 .domain-management-list-item {
 	&.busy {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 
 		.domain-management-list-item__title,
 		.domain-management-list-item__meta {
@@ -218,7 +218,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 	.contact-display {
 		h2 {
-			background-color: $gray-light;
+			background-color: var( --color-neutral-0 );
 			border: 1px solid var( --color-neutral-0 );
 			border-bottom: 0;
 			color: $gray;
@@ -381,7 +381,7 @@ input[type='radio'].domain-management-list-item__radio {
 	.email-forwarding__limit,
 	.dns__form-content,
 	.form-content {
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		overflow: visible;
 		padding-top: 20px;
 	}
@@ -408,7 +408,7 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 
 	.domain-connect__footer {
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		padding-top: 10px;
 	}
 
@@ -431,7 +431,7 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 
 	.domain-connect__dns-records {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 		color: var( --color-text-subtle );
 
 		* {
@@ -460,7 +460,7 @@ ul.email-forwarding__list {
 	padding: 0;
 
 	li {
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		overflow: auto;
 		padding: 10px 0;
 		position: relative;
@@ -811,7 +811,7 @@ ul.domain-connect__dns-list,
 
 	li,
 	.dns__domain-connect-record-wrap {
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		display: flex;
 		justify-content: space-between;
 		overflow: auto;
@@ -866,7 +866,7 @@ ul.domain-connect__dns-list,
 
 .dns__domain-connect-record {
 	margin: 0;
-	border-top: 1px solid $gray-light;
+	border-top: 1px solid var( --color-neutral-0 );
 	display: flex;
 	justify-content: space-between;
 

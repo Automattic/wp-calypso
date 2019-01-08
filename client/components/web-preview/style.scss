@@ -41,7 +41,7 @@
 	display: flex;
 	flex-direction: column;
 	box-shadow: 0 0 0 1px rgba( $gray, 0.5 );
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	border-radius: 4px 4px 0 0;
 	position: absolute;
 		top: 0;
@@ -233,7 +233,7 @@ a.web-preview__external.button {
 	width: 100%;
 
 	&.is-resizable {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 
 		.web-preview__frame {
 			.is-tablet & {

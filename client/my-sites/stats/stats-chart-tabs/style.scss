@@ -3,7 +3,7 @@
 
 ul.module-tabs {
 	@include clear-fix;
-	border-top: 1px solid $gray-light;
+	border-top: 1px solid var( --color-neutral-0 );
 	list-style: none;
 	background: $white;
 	margin: 0;
@@ -12,7 +12,7 @@ ul.module-tabs {
 		margin: 0;
 		font-size: 16px;
 		clear: none;
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		box-sizing: border-box;
 
 		&:first-child {
@@ -21,7 +21,7 @@ ul.module-tabs {
 
 		@include breakpoint( '>480px' ) {
 			border-top: none;
-			border-left: 1px solid $gray-light;
+			border-left: 1px solid var( --color-neutral-0 );
 			float: left;
 			width: 25%;
 			text-align: center;
@@ -217,15 +217,15 @@ ul.module-tabs {
 	}
 
 	&.is-enabled {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 
 		&,
 		li {
-			border-color: $gray-light;
+			border-color: var( --color-neutral-0 );
 		}
 
 		a {
-			background: $gray-light;
+			background: var( --color-neutral-0 );
 		}
 	}
 }

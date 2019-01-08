@@ -193,7 +193,7 @@
 	padding: 14px;
 	border-radius: 50%;
 	background-color: var( --color-neutral-500 );
-	color: $gray-light;
+	color: var( --color-neutral-0 );
 
 	@include breakpoint( '>660px' ) {
 		position: absolute;
@@ -211,7 +211,7 @@
 .guided-transfer-card__unavailable-notice {
 	background-color: var( --color-neutral-700 );
 	border-radius: 3px;
-	color: $gray-light;
+	color: var( --color-neutral-0 );
 	padding: 5px 12px;
 }
 
@@ -222,5 +222,5 @@
 
 .guided-transfer-card__unavailable-info-icon.info-popover .gridicon:hover,
 .guided-transfer-card__unavailable-info-icon.info-popover.is_active .gridicon {
-	color: $gray-light;
+	color: var( --color-neutral-0 );
 }

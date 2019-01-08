@@ -26,7 +26,7 @@
 	&.is-cancelled,
 	&.is-refunded,
 	&.is-completed {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		color: var( --color-neutral-700 );
 
 		span + span {

@@ -151,7 +151,7 @@
 }
 
 .themes-magic-search-card__welcome-header {
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	border-bottom: 1px solid darken( $gray-light, 10% );
 	border-top: 0;
 	padding: 4px 8px;

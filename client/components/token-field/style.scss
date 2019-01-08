@@ -16,7 +16,7 @@
 	}
 
 	&.is-disabled {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		border-color: var( --color-neutral-0 );
 	}
 

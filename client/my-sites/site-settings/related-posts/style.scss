@@ -8,7 +8,7 @@
 	margin-top: 8px;
 	padding: 16px 8px;
 	width: 100%;
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	box-sizing: border-box;
 
 	@include clear-fix;

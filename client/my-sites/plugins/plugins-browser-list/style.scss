@@ -9,7 +9,7 @@
 }
 
 .plugins-browser-list__header {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	border-bottom: 1px solid var( --color-neutral-0 );
 	overflow: hidden; // lazy clearfix
 }

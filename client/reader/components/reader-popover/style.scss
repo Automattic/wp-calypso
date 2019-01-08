@@ -1,5 +1,5 @@
 .reader-popover.popover .popover__inner {
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	border-color: var( --color-neutral-100 );
 }
 
@@ -8,7 +8,7 @@
 .reader-popover.popover.is-top-left .popover__arrow {
 
 	&::before {
-		border: 10px solid $gray-light;
+		border: 10px solid var( --color-neutral-0 );
 		border-bottom: none;
 		border-left-color: transparent;
 		border-right-color: transparent;
@@ -26,7 +26,7 @@
 .reader-popover.popover.is-bottom-right .popover__arrow {
 
 	&::before {
-		border: 10px solid $gray-light;
+		border: 10px solid var( --color-neutral-0 );
 		border-bottom-style: solid;
 		border-left-color: transparent;
 		border-right-color: transparent;
@@ -42,7 +42,7 @@
 .reader-popover.popover.is-left-top .popover__arrow {
 
 	&::before {
-		border: 10px solid $gray-light;
+		border: 10px solid var( --color-neutral-0 );
 		border-bottom-color: transparent;
 		border-right: none;
 		border-top-color: transparent;

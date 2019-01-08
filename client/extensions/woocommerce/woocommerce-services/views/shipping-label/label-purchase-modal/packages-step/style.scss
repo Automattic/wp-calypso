@@ -42,7 +42,7 @@
 	width: 100%;
 
 	&.is-selected {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 	}
 
 	.gridicon {

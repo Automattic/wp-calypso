@@ -96,7 +96,7 @@ a.action-panel__body-text-link {
 		left: -16px;
 		right: -16px;
 		height: 1px;
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 
 		@include breakpoint( '>480px' ) {
 			left: -24px;

@@ -8,7 +8,7 @@
 	}
 
 	&.is-expired {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 
 		.manage-purchase__header,
 		.manage-purchase__content,
@@ -46,7 +46,7 @@
 		}
 
 		.manage-purchase__header {
-			border-bottom: 2px solid $gray-light;
+			border-bottom: 2px solid var( --color-neutral-0 );
 		}
 
 		.manage-purchase__subtitle,
