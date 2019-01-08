@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
- * Interal dependencies
+ * Internal dependencies
  */
 import FormSelect from 'components/forms/form-select';
 
