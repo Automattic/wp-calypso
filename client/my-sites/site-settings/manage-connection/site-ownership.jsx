@@ -26,7 +26,7 @@ import isJetpackUserMaster from 'state/selectors/is-jetpack-user-master';
 import OwnershipInformation from './ownership-information';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { changeOwner } from 'state/jetpack/connection/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -264,7 +264,7 @@ class SiteOwnership extends Component {
 				{ siteIsJetpack && <QueryJetpackConnection siteId={ siteId } /> }
 				{ siteIsJetpack && <QueryJetpackUserConnection siteId={ siteId } /> }
 
-				<SectionHeader label={ translate( 'Site ownership' ) } />
+				<SettingsSectionHeader title={ translate( 'Site ownership' ) } />
 
 				{ siteIsConnected === null ? this.renderPlaceholder() : this.renderCardContent() }
 			</Fragment>
