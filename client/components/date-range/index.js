@@ -51,7 +51,7 @@ export class DateRange extends Component {
 		};
 
 		bindAll( this, [
-			'togglePopover',
+			'openPopover',
 			'closePopover',
 			'onSelectDate',
 			'revertDates',
@@ -64,17 +64,10 @@ export class DateRange extends Component {
 		this.triggerButtonRef = React.createRef();
 	}
 
-	/**
-	 * Toggles the popover and updates the inputs
-	 */
-	togglePopover() {
+	openPopover() {
 		this.setState( {
-			popoverVisible: ! this.state.popoverVisible,
+			popoverVisible: true,
 		} );
-
-		// As no dates have been explicity accepted ("Apply" not clicked)
-		// we need to revert back to the original cached dates
-		this.revertDates();
 	}
 
 	/**
@@ -85,10 +78,14 @@ export class DateRange extends Component {
 		this.setState( {
 			popoverVisible: false,
 		} );
+
+		// As no dates have been explicity accepted ("Apply" not clicked)
+		// we need to revert back to the original cached dates
+		this.revertDates();
 	}
 
 	/**
-	 * Updates state with current value of from/to
+	 * Updates state with current value of start/end
 	 * text inputs
 	 * @param  {SyntheticEvent} e the React SyntheticEvent representing the DOM input change Event
 	 */
@@ -96,11 +93,21 @@ export class DateRange extends Component {
 		const val = e.target.value;
 
 		// Whitelist rather than be too clever...
-		const fromOrTo = e.target.id.includes( 'start' ) ? 'Start' : 'End';
+		const startOrEnd = this.identifyStartEndFromInputId( e.target.id );
 
 		this.setState( {
-			[ `textInput${ fromOrTo }Date` ]: val,
+			[ `textInput${ startOrEnd }Date` ]: val,
 		} );
+	}
+
+	/**
+	 * Identifies the position (start or end) from the supplied
+	 * ID attr of an DOM `input` element
+	 * @param  {string} inputId the ID attr of the input element
+	 * @return {string}         either the "Start" or "End" identifier
+	 */
+	identifyStartEndFromInputId( inputId ) {
+		return inputId.includes( 'start' ) ? 'Start' : 'End';
 	}
 
 	/**
@@ -125,7 +132,7 @@ export class DateRange extends Component {
 	 */
 	handleInputBlur( e ) {
 		const val = e.target.value;
-		const startOrEnd = e.target.id;
+		const startOrEnd = this.identifyStartEndFromInputId( e.target.id );
 		const date = this.props.moment( val, this.getLocaleDateFormat() );
 
 		const fromDate = this.props.moment( this.state.textInputStartDate, this.getLocaleDateFormat() );
@@ -144,9 +151,11 @@ export class DateRange extends Component {
 			} );
 		}
 
+		const isSameDate = this.state[ `${ startOrEnd.toLowerCase() }Date` ].isSame( date, 'day' );
+
 		// If the new date in the blurred input is valid
 		// and it's not the same as the existing value
-		if ( this.isValidDate( date ) && ! this.state[ startOrEnd ].isSame( date, 'day' ) ) {
+		if ( this.isValidDate( date ) && ! isSameDate ) {
 			this.onSelectDate( date );
 		}
 	}
@@ -233,7 +242,7 @@ export class DateRange extends Component {
 			} ),
 			() => {
 				this.props.onDateCommit( this.state.startDate, this.state.endDate );
-				this.togglePopover();
+				this.closePopover();
 			}
 		);
 	}
@@ -310,13 +319,13 @@ export class DateRange extends Component {
 				isVisible={ this.state.popoverVisible }
 				context={ this.triggerButtonRef.current }
 				position="bottom"
-				onClose={ this.togglePopover }
+				onClose={ this.closePopover }
 			>
 				<div className="date-range__popover-inner">
-					<DateRangeHeader onApplyClick={ this.commitDates } onCancelClick={ this.togglePopover } />
+					<DateRangeHeader onApplyClick={ this.commitDates } onCancelClick={ this.closePopover } />
 					<DateRangeInputs
-						fromDateValue={ this.state.textInputStartDate }
-						toDateValue={ this.state.textInputEndDate }
+						startDateValue={ this.state.textInputStartDate }
+						endDateValue={ this.state.textInputEndDate }
 						onInputChange={ this.handleInputChange }
 						onInputBlur={ this.handleInputBlur }
 					/>
@@ -370,7 +379,7 @@ export class DateRange extends Component {
 					startDateText={ this.dateToHumanReadable( this.state.startDate ) }
 					endDateText={ this.dateToHumanReadable( this.state.endDate ) }
 					buttonRef={ this.triggerButtonRef }
-					onTriggerClick={ this.togglePopover }
+					onTriggerClick={ this.openPopover }
 				/>
 				{ this.renderPopover() }
 			</div>
