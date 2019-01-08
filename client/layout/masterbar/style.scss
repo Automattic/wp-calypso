@@ -94,6 +94,10 @@ $autobar-height: 20px;
 		color: var( --masterbar-color );
 	}
 
+	.gridicon {
+		fill: var( --masterbar-color ); // only because safari gets currentColor wrong
+	}
+
 	.gridicon + .masterbar__item-content {
 		padding: 0 0 0 6px;
 	}
