@@ -88,7 +88,9 @@ GSuiteAddUsers.propTypes = {
 	domains: PropTypes.array.isRequired,
 	isRequestingSiteDomains: PropTypes.bool.isRequired,
 	selectedDomainName: PropTypes.string.isRequired,
-	selectedSite: PropTypes.object.isRequired,
+	selectedSite: PropTypes.shape( {
+		slug: PropTypes.string.isRequired,
+	} ).isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
