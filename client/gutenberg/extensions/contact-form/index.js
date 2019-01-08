@@ -324,7 +324,7 @@ export const childBlocks = [
 		name: 'field-checkbox-multiple',
 		settings: {
 			...FieldDefaults,
-			title: __( 'Checkbox group' ),
+			title: __( 'Checkbox Group' ),
 			keywords: [ __( 'Choose Multiple' ), __( 'Option' ) ],
 			description: __( 'People love options. Add several checkbox items.' ),
 			icon: renderMaterialIcon(
