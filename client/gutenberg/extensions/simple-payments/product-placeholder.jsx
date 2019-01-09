@@ -17,14 +17,15 @@ export default ( {
 	content = '',
 	formattedPrice = '',
 	multiple = false,
-	featuredMedia = null,
+	featuredMediaUrl = null,
+	featuredMediaTitle = null,
 } ) => (
 	<div className="jetpack-simple-payments-wrapper">
 		<div className="jetpack-simple-payments-product">
-			{ featuredMedia && (
+			{ featuredMediaUrl && (
 				<div className="jetpack-simple-payments-product-image">
 					<figure className="jetpack-simple-payments-image">
-						<img src={ featuredMedia.source_url } alt={ featuredMedia.alt_text } />
+						<img src={ featuredMediaUrl } alt={ featuredMediaTitle } />
 					</figure>
 				</div>
 			) }

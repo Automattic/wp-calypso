@@ -14,10 +14,14 @@ import { get } from 'lodash';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 const onSelectMedia = setAttributes => media =>
-	setAttributes( { featuredMediaId: get( media, 'id', 0 ) } );
+	setAttributes( {
+		featuredMediaId: get( media, 'id', 0 ),
+		featuredMediaUrl: get( media, 'url', null ),
+		featuredMediaTitle: get( media, 'title', null ),
+	} );
 
-export default ( { featuredMedia, setAttributes } ) => {
-	if ( ! featuredMedia ) {
+export default ( { featuredMediaId, featuredMediaUrl, featuredMediaTitle, setAttributes } ) => {
+	if ( ! featuredMediaId ) {
 		return (
 			<MediaPlaceholder
 				icon="format-image"
@@ -39,7 +43,7 @@ export default ( { featuredMedia, setAttributes } ) => {
 						<MediaUpload
 							onSelect={ onSelectMedia( setAttributes ) }
 							allowedTypes={ [ 'image' ] }
-							value={ featuredMedia.id }
+							value={ featuredMediaId }
 							render={ ( { open } ) => (
 								<IconButton
 									className="components-toolbar__control"
@@ -52,12 +56,18 @@ export default ( { featuredMedia, setAttributes } ) => {
 						<ToolbarButton
 							icon={ 'trash' }
 							title={ __( 'Remove Image' ) }
-							onClick={ () => setAttributes( { featuredMediaId: null } ) }
+							onClick={ () =>
+								setAttributes( {
+									featuredMediaId: null,
+									featuredMediaUrl: null,
+									featuredMediaTitle: null,
+								} )
+							}
 						/>
 					</Toolbar>
 				</BlockControls>
 				<figure>
-					<img src={ featuredMedia.source_url } alt={ featuredMedia.alt_text } />
+					<img src={ featuredMediaUrl } alt={ featuredMediaTitle } />
 				</figure>
 			</Fragment>
 		</div>
