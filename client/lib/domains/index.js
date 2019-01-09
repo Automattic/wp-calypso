@@ -299,6 +299,28 @@ function getAvailableTlds( query = {} ) {
 	return wpcom.undocumented().getAvailableTlds( query );
 }
 
+function getDomainTypeText( domain = {} ) {
+	switch ( domain.type ) {
+		case domainTypes.MAPPED:
+			return 'Mapped Domain';
+
+		case domainTypes.REGISTERED:
+			return 'Registered Domain';
+
+		case domainTypes.SITE_REDIRECT:
+			return 'Site Redirect';
+
+		case domainTypes.WPCOM:
+			return 'Wpcom Domain';
+
+		case domainTypes.TRANSFER:
+			return 'Transfer';
+
+		default:
+			return '';
+	}
+}
+
 export {
 	canAddGoogleApps,
 	canRedirect,
@@ -307,6 +329,7 @@ export {
 	checkInboundTransferStatus,
 	getDomainPrice,
 	getDomainProductSlug,
+	getDomainTypeText,
 	getFixedDomainSearch,
 	getGoogleAppsSupportedDomains,
 	getMappedDomains,
