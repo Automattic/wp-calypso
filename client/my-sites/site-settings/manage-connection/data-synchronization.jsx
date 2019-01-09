@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -26,7 +25,7 @@ const DataSynchronization = ( { siteUrl, siteIsJetpack, translate } ) => {
 	}
 
 	return (
-		<div>
+		<Fragment>
 			<SettingsSectionHeader title={ translate( 'Data synchronization' ) } />
 
 			<JetpackSyncPanel />
@@ -36,7 +35,7 @@ const DataSynchronization = ( { siteUrl, siteIsJetpack, translate } ) => {
 			<CompactCard href={ 'https://jetpack.com/support/debug/?url=' + siteUrl } target="_blank">
 				{ translate( 'Diagnose a connection problem' ) }
 			</CompactCard>
-		</div>
+		</Fragment>
 	);
 };
 
