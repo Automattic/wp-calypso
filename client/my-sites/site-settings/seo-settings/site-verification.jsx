@@ -26,7 +26,7 @@ import QuerySiteSettings from 'components/data/query-site-settings';
 import SectionHeader from 'components/section-header';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
@@ -262,21 +262,14 @@ class SiteVerification extends Component {
 	};
 
 	render() {
-		const {
-			isVerificationToolsActive,
-			jetpackVersionSupportsSeo,
-			siteId,
-			siteIsJetpack,
-			translate,
-		} = this.props;
+		const { isVerificationToolsActive, siteId, siteIsJetpack, translate } = this.props;
 		const {
 			isSubmittingForm,
 			isFetchingSettings,
 			showPasteError = false,
 			invalidCodes = [],
 		} = this.state;
-		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsSeo;
-		const isDisabled = isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
+		const isDisabled = isSubmittingForm || isFetchingSettings;
 		const isVerificationDisabled = isDisabled || isVerificationToolsActive === false;
 		const isSaveDisabled =
 			isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
@@ -449,7 +442,6 @@ export default connect(
 		return {
 			isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 			isVerificationToolsActive: isJetpackModuleActive( state, siteId, 'verification-tools' ),
-			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
 			saveError: getSiteSettingsSaveError( state, siteId ),
 			site,
 			siteId,
