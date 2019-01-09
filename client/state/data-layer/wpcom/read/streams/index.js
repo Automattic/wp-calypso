@@ -64,7 +64,7 @@ const PER_GAP = 40;
 
 export const QUERY_META = [ 'post', 'discover_original_post' ].join( ',' );
 export const getQueryString = ( extras = {} ) => {
-	return { orderBy: 'date', meta: QUERY_META, ...extras, content_width: 675 };
+	return { orderBy: 'date', meta: QUERY_META, ...extras, content_width: 675, smallipop_support: 1 };
 };
 const defaultQueryFn = getQueryString;
 
@@ -122,6 +122,9 @@ const streamApis = {
 	},
 	a8c: {
 		path: () => '/read/a8c',
+		query: ( { query } ) => {
+			return { ...query, smallipop_support: 1 };
+		},
 		dateProperty: 'date',
 	},
 	'conversations-a8c': {

@@ -28,6 +28,7 @@ export const fetchCommentsTreeForSite = action => {
 			apiVersion: '1.1',
 			query: {
 				status: 'unapproved' === status ? 'pending' : status,
+				smallipop_support: 1,
 			},
 		},
 		action

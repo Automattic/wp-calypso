@@ -100,6 +100,7 @@ export function requestPostComments( {
 			order: direction === 'before' ? 'DESC' : 'ASC',
 			number: NUMBER_OF_COMMENTS_PER_FETCH,
 			status,
+			smallipop_support: 1,
 		},
 	};
 }

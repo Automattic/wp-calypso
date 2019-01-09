@@ -141,6 +141,7 @@ export const fetchCommentsList = action => {
 		...omit( action.query, [ 'listType', 'postId', 'siteId' ] ),
 		status,
 		type,
+		smallipop_support: 1,
 	};
 
 	return http(

@@ -1252,6 +1252,14 @@ function addReaderContentWidth( params ) {
 	}
 }
 
+function addSmallipopSupport( params ) {
+	if ( params.smallipop_support ) {
+		return;
+	}
+
+	params.smallipop_support = 1;
+}
+
 Undocumented.prototype.discoverFeed = function( query, fn ) {
 	debug( '/read/feed' );
 	return this.wpcom.req.get( '/read/feed/', query, fn );
@@ -1262,6 +1270,7 @@ Undocumented.prototype.readFeedPost = function( query, fn ) {
 	debug( '/read/feed/' + query.feedId + '/posts/' + query.postId );
 	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
+	addSmallipopSupport( params );
 
 	return this.wpcom.req.get(
 		'/read/feed/' +
@@ -1345,6 +1354,7 @@ Undocumented.prototype.readSitePost = function( query, fn ) {
 	const params = omit( query, [ 'site', 'postId' ] );
 	debug( '/read/sites/:site/post/:post' );
 	addReaderContentWidth( params );
+	addSmallipopSupport( params );
 	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts/' + query.postId, params, fn );
 };
 
