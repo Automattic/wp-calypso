@@ -31,11 +31,7 @@ import { saveSiteSettings } from 'state/site-settings/actions';
 import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 import { removeNotice, successNotice, errorNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isJetpackSite,
-	isJetpackMinimumVersion,
-	siteSupportsJetpackSettingsUi,
-} from 'state/sites/selectors';
+import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
@@ -150,24 +146,18 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const {
 				fields,
 				jetpackFieldsToUpdate,
-				jetpackSiteSettingsAPIVersion,
 				settingsFields,
 				siteId,
-				siteIsJetpack,
 				jetpackSettingsUISupported,
 			} = this.props;
 			this.props.removeNotice( 'site-settings-save' );
 			debug( 'submitForm', { fields, settingsFields } );
 
-			// Support site settings for older Jetpacks as needed
-			const siteFields = pick( fields, settingsFields.site );
-			const apiVersion = siteIsJetpack ? jetpackSiteSettingsAPIVersion : '1.4';
-
 			if ( jetpackSettingsUISupported ) {
 				this.props.saveJetpackSettings( siteId, jetpackFieldsToUpdate );
 			}
 
-			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion } );
+			this.props.saveSiteSettings( siteId, pick( fields, settingsFields.site ) );
 		};
 
 		handleRadio = event => {
@@ -285,15 +275,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const isJetpack = isJetpackSite( state, siteId );
 			const jetpackSettingsUISupported =
 				isJetpack && siteSupportsJetpackSettingsUi( state, siteId );
-			let jetpackSiteSettingsAPIVersion = false;
-			if ( isJetpack ) {
-				if ( isJetpackMinimumVersion( state, siteId, '5.4-beta3' ) ) {
-					jetpackSiteSettingsAPIVersion = '1.3';
-				}
-				if ( isJetpackMinimumVersion( state, siteId, '5.6-beta2' ) ) {
-					jetpackSiteSettingsAPIVersion = '1.4';
-				}
-			}
 
 			if ( jetpackSettingsUISupported ) {
 				const jetpackSettings = getJetpackSettings( state, siteId );
@@ -321,7 +302,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				isSavingSettings,
 				isSaveRequestSuccessful,
 				jetpackFieldsToUpdate,
-				jetpackSiteSettingsAPIVersion,
 				siteIsJetpack: isJetpack,
 				siteSettingsSaveError,
 				settings,
