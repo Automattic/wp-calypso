@@ -21,7 +21,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const ActivityLogConfirmDialog = ( {
-	allowPartialRestore = false,
 	children,
 	confirmTitle,
 	icon = 'history',
@@ -43,6 +42,38 @@ const ActivityLogConfirmDialog = ( {
 
 			<div className="activity-log-confirm-dialog__highlight">{ children }</div>
 
+			{ config.isEnabled( 'rewind/partial-restores' ) && (
+				<div className="activity-log-confirm-dialog__partial-restore-settings">
+					<p>
+						<strong>(A8C only)</strong> Include the following things in this Rewind:
+					</p>
+					<FormLabel>
+						<FormCheckbox name="themes" onChange={ onSettingsChange } defaultChecked />
+						{ translate( 'WordPress Themes' ) }
+					</FormLabel>
+					<FormLabel>
+						<FormCheckbox name="plugins" onChange={ onSettingsChange } defaultChecked />
+						{ translate( 'WordPress Plugins' ) }
+					</FormLabel>
+					<FormLabel>
+						<FormCheckbox name="uploads" onChange={ onSettingsChange } defaultChecked />
+						{ translate( 'Media Uploads' ) }
+					</FormLabel>
+					<FormLabel>
+						<FormCheckbox name="roots" onChange={ onSettingsChange } defaultChecked />
+						{ translate( 'WordPress Root (includes wp-config.php and any non-WordPress files)' ) }
+					</FormLabel>
+					<FormLabel>
+						<FormCheckbox name="contents" onChange={ onSettingsChange } defaultChecked />
+						{ translate( 'WP-Content Directory (excluding themes, plugins, and uploads)' ) }
+					</FormLabel>
+					<FormLabel>
+						<FormCheckbox name="sqls" onChange={ onSettingsChange } defaultChecked />
+						{ translate( 'Site Database (SQL)' ) }
+					</FormLabel>
+				</div>
+			) }
+
 			{ notice && (
 				<div className="activity-log-confirm-dialog__notice">
 					<Gridicon icon={ 'notice' } />
@@ -57,34 +88,6 @@ const ActivityLogConfirmDialog = ( {
 						{ confirmTitle }
 					</Button>
 				</div>
-				{ config.isEnabled( 'rewind/partial-restores' ) && (
-					<div>
-						<FormLabel>
-							<FormCheckbox name="themes" onChange={ onSettingsChange } defaultChecked />
-							{ translate( 'Themes' ) }
-						</FormLabel>
-						<FormLabel>
-							<FormCheckbox name="plugins" onChange={ onSettingsChange } defaultChecked />
-							{ translate( 'Plugins' ) }
-						</FormLabel>
-						<FormLabel>
-							<FormCheckbox name="uploads" onChange={ onSettingsChange } defaultChecked />
-							{ translate( 'Uploads' ) }
-						</FormLabel>
-						<FormLabel>
-							<FormCheckbox name="sqls" onChange={ onSettingsChange } defaultChecked />
-							{ translate( 'SQL' ) }
-						</FormLabel>
-						<FormLabel>
-							<FormCheckbox name="roots" onChange={ onSettingsChange } defaultChecked />
-							{ translate( 'Web Root' ) }
-						</FormLabel>
-						<FormLabel>
-							<FormCheckbox name="contents" onChange={ onSettingsChange } defaultChecked />
-							{ translate( 'wp-content' ) }
-						</FormLabel>
-					</div>
-				) }
 				<div className="activity-log-confirm-dialog__secondary-actions">
 					<Button
 						borderless={ true }
