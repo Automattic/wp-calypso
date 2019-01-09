@@ -23,13 +23,15 @@ export class DateRange extends Component {
 	static propTypes = {
 		onDateSelect: PropTypes.func,
 		onDateCommit: PropTypes.func,
-		disabledDays: PropTypes.string,
+		disablePastDates: PropTypes.bool,
+		disableFutureDates: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onDateSelect: noop,
 		onDateCommit: noop,
-		disabledDays: '',
+		disablePastDates: false,
+		disabledFutureDates: false,
 	};
 
 	constructor( props ) {
@@ -119,7 +121,7 @@ export class DateRange extends Component {
 	 * @return {Boolean}      whether date is considered valid or not
 	 */
 	isValidDate( date ) {
-		const { disabledDays } = this.props;
+		const { disablePastDates, disableFutureDates } = this.props;
 		const today = this.props.moment();
 		const epoch = this.props.moment( '01/01/1970', this.getLocaleDateFormat() );
 
@@ -129,12 +131,12 @@ export class DateRange extends Component {
 		let validations = date.isValid() && date.isSameOrAfter( epoch );
 
 		// Checks for disabling of future days and validates
-		if ( disabledDays === 'disableFutureDates' ) {
+		if ( disablePastDates ) {
 			validations = validations && date.isSameOrBefore( today );
 		}
 
 		// Checks for disabling of past days and validates
-		if ( disabledDays === 'disablePastDates' ) {
+		if ( disableFutureDates ) {
 			validations = validations && date.isSameOrAfter( today );
 		}
 
@@ -369,16 +371,16 @@ export class DateRange extends Component {
 				} }
 				numberOfMonths={ window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1 }
 				calendarViewDate={ this.momentDateToNative( this.state.startDate ) }
-				disabledDays={ this.getDisabledDays() }
+				disabledDays={ this.getDisabledDaysConfig() }
 			/>
 		);
 	}
 
 	getToMonth() {
 		const now = new Date();
-		const { disabledDays } = this.props;
+		const { disablePastDates } = this.props;
 
-		if ( disabledDays !== 'disableFutureDates' ) {
+		if ( ! disablePastDates ) {
 			return;
 		}
 
@@ -387,9 +389,9 @@ export class DateRange extends Component {
 
 	getFromMonth() {
 		const now = new Date();
-		const { disabledDays } = this.props;
+		const { disableFutureDates } = this.props;
 
-		if ( disabledDays !== 'disablePastDates' ) {
+		if ( ! disableFutureDates ) {
 			return;
 		}
 
@@ -398,21 +400,21 @@ export class DateRange extends Component {
 
 	// http://react-day-picker.js.org/api/DayPicker/#disabledDays
 	// http://react-day-picker.js.org/docs/matching-days
-	getDisabledDays() {
+	getDisabledDaysConfig() {
 		const now = new Date();
-		const { disabledDays } = this.props;
+		const { disablePastDates, disableFutureDates } = this.props;
 
 		let config;
 
-		if ( disabledDays === 'disableFutureDates' ) {
+		if ( disablePastDates ) {
 			config = {
-				after: now, // disable all days after today
+				before: now, // disable all days before today
 			};
 		}
 
-		if ( disabledDays === 'disablePastDates' ) {
+		if ( disableFutureDates ) {
 			config = {
-				before: now, // disable all days before today
+				after: now, // disable all days after today
 			};
 		}
 

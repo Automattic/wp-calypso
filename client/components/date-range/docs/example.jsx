@@ -26,12 +26,12 @@ class DateRangeExample extends Component {
 
 				<Card style={ { width: '300px', margin: 0 } }>
 					<h3>Select only past dates</h3>
-					<DateRange disabledDays="disableFutureDates" />
+					<DateRange disableFutureDates />
 				</Card>
 
 				<Card style={ { width: '300px', margin: 0 } }>
 					<h3>Select only future dates</h3>
-					<DateRange disabledDays="disablePastDates" />
+					<DateRange disablePastDates />
 				</Card>
 			</Fragment>
 		);
