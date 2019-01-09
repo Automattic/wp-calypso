@@ -96,6 +96,8 @@ export const getEventMessageFromTracksData = ( { name, properties } ) => {
 			return 'Changed the featured image on the current post';
 		case 'calypso_map_domain_step_add_domain_click':
 			return `Add "${ properties.domain_name }" to the cart in the "Map a domain" step`;
+		case 'calypso_view_site_page_view':
+			return `Looking at ${ properties.full_url } inside the View Site section`;
 	}
 	return null;
 };
