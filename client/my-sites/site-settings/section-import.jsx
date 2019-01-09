@@ -32,15 +32,13 @@ import {
 	SQUARESPACE,
 } from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getSelectedSite, getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import DescriptiveHeader from 'my-sites/site-settings/settings-import/descriptive-header';
 import JetpackImporter from 'my-sites/site-settings/settings-import/jetpack-importer';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 
 /**
  * Configuration for each of the importers to be rendered in this section. If
@@ -249,9 +247,7 @@ class SiteSettingsImport extends Component {
 				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
 					<h1>{ translate( 'Import' ) }</h1>
 				</HeaderCake>
-				<EmailVerificationGate
-					needsVerification={ this.props.needsVerification && ! this.props.isUnlaunchedSite }
-				>
+				<EmailVerificationGate allowUnlaunched>
 					{ isJetpack ? <JetpackImporter /> : this.renderImportersList() }
 				</EmailVerificationGate>
 			</Main>
@@ -263,8 +259,6 @@ export default flow(
 	connect( state => ( {
 		engine: getSelectedImportEngine( state ),
 		fromSite: getImporterSiteUrl( state ),
-		isUnlaunchedSite: isUnlaunchedSite( state, getSelectedSiteId( state ) ),
-		needsVerification: ! isCurrentUserEmailVerified( state ),
 		site: getSelectedSite( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ) ),
