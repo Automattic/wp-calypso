@@ -58,8 +58,8 @@
 	--color-accent-900: #{$muriel-hot-pink-900};
 	--color-accent-900-rgb: #{hex-to-rgb( $muriel-hot-pink-900 )};
 
-	--color-white: #{ $muriel-white };
-	--color-white-rgb: #{ hex-to-rgb( $muriel-white ) };
+	--color-white: #{$muriel-white};
+	--color-white-rgb: #{hex-to-rgb( $muriel-white )};
 	--color-neutral: #{$muriel-gray-500};
 	--color-neutral-rgb: #{hex-to-rgb( $muriel-gray-500 )};
 	--color-neutral-dark: #{$muriel-gray-700};
@@ -264,11 +264,34 @@
 		--color-primary-rgb: #{hex-to-rgb( $muriel-blue-500 )};
 		--color-primary-600: #{$muriel-blue-600};
 
-		--color-accent: var( --color-primary );
-		--color-accent-dark: var( --color-primary-dark );
-		--color-accent-light: var( --color-primary-light );
-		--color-accent-rgb: var( --color-primary-rgb );
-		--color-accent-600: var( --color-primary-600 );
+		--color-accent: #{$muriel-orange-500};
+		--color-accent-rgb: #{hex-to-rgb( $muriel-orange-500 )};
+		--color-accent-dark: #{$muriel-orange-700};
+		--color-accent-dark-rgb: #{hex-to-rgb( $muriel-orange-700 )};
+		--color-accent-light: #{$muriel-orange-300};
+		--color-accent-light-rgb: #{hex-to-rgb( $muriel-orange-300 )};
+		--color-accent-0: #{$muriel-orange-0};
+		--color-accent-0-rgb: #{hex-to-rgb( $muriel-orange-0 )};
+		--color-accent-50: #{$muriel-orange-50};
+		--color-accent-50-rgb: #{hex-to-rgb( $muriel-orange-50 )};
+		--color-accent-100: #{$muriel-orange-100};
+		--color-accent-100-rgb: #{hex-to-rgb( $muriel-orange-100 )};
+		--color-accent-200: #{$muriel-orange-200};
+		--color-accent-200-rgb: #{hex-to-rgb( $muriel-orange-200 )};
+		--color-accent-300: #{$muriel-orange-300};
+		--color-accent-300-rgb: #{hex-to-rgb( $muriel-orange-300 )};
+		--color-accent-400: #{$muriel-orange-400};
+		--color-accent-400-rgb: #{hex-to-rgb( $muriel-orange-400 )};
+		--color-accent-500: #{$muriel-orange-500};
+		--color-accent-500-rgb: #{hex-to-rgb( $muriel-orange-500 )};
+		--color-accent-600: #{$muriel-orange-600};
+		--color-accent-600-rgb: #{hex-to-rgb( $muriel-orange-600 )};
+		--color-accent-700: #{$muriel-orange-700};
+		--color-accent-700-rgb: #{hex-to-rgb( $muriel-orange-700 )};
+		--color-accent-800: #{$muriel-orange-800};
+		--color-accent-800-rgb: #{hex-to-rgb( $muriel-orange-800 )};
+		--color-accent-900: #{$muriel-orange-900};
+		--color-accent-900-rgb: #{hex-to-rgb( $muriel-orange-900 )};
 
 		--color-success: #{$muriel-hot-green-500};
 		--color-success-light: #{$muriel-hot-green-300};
@@ -288,7 +311,9 @@
 		--color-surface: #{$muriel-white};
 		--color-surface-backdrop: #{$muriel-gray-0};
 
-		--color-button-primary-background-hover: #{$muriel-blue-400};
+		--color-dot-indicator: #{$muriel-orange-400};
+
+		--color-button-primary-background-hover: #{$muriel-orange-400};
 		--color-button-primary-scary-background-hover: #{$muriel-hot-red-400};
 
 		--masterbar-color: #{$muriel-white};
