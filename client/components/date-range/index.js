@@ -90,27 +90,13 @@ export class DateRange extends Component {
 	/**
 	 * Updates state with current value of start/end
 	 * text inputs
-	 * @param  {SyntheticEvent} e the React SyntheticEvent representing the DOM input change Event
+	 * @param  {string} val        the value of the input
+	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
-	handleInputChange( e ) {
-		const val = e.target.value;
-
-		// Whitelist rather than be too clever...
-		const startOrEnd = this.identifyStartEndFromInputId( e.target.id );
-
+	handleInputChange( val, startOrEnd ) {
 		this.setState( {
 			[ `textInput${ startOrEnd }Date` ]: val,
 		} );
-	}
-
-	/**
-	 * Identifies the position (start or end) from the supplied
-	 * ID attr of an DOM `input` element
-	 * @param  {string} inputId the ID attr of the input element
-	 * @return {string}         either the "Start" or "End" identifier
-	 */
-	identifyStartEndFromInputId( inputId ) {
-		return inputId.includes( 'start' ) ? 'Start' : 'End';
 	}
 
 	/**
@@ -145,11 +131,10 @@ export class DateRange extends Component {
 
 	/**
 	 * Updates the state when the date text inputs are blurred
-	 * @param  {SyntheticEvent} e React wrapper for DOM input blur event
+	 * @param  {string} val        the value of the input
+	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
-	handleInputBlur( e ) {
-		const val = e.target.value;
-		const startOrEnd = this.identifyStartEndFromInputId( e.target.id );
+	handleInputBlur( val, startOrEnd ) {
 		const date = this.props.moment( val, this.getLocaleDateFormat() );
 
 		const fromDate = this.props.moment( this.state.textInputStartDate, this.getLocaleDateFormat() );

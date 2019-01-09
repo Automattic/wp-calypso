@@ -30,6 +30,26 @@ class DateRangeInputs extends Component {
 		onInputBlur: noop,
 	};
 
+	/**
+	 * Handles input events with fixed arguments
+	 * for consistency via partial application
+	 *
+	 * @param  {string} eventType  one of "change" or "blur"
+	 * @param  {string} startOrEnd one of "Start" or "End"
+	 * @return {function}            the partially applied function ready to recevie event data
+	 */
+	handleInputEvent = ( eventType, startOrEnd ) => e => {
+		const val = e.target.value;
+
+		if ( eventType === 'change' ) {
+			this.props.onInputChange( val, startOrEnd );
+		}
+
+		if ( eventType === 'blur' ) {
+			this.props.onInputBlur( val, startOrEnd );
+		}
+	};
+
 	render() {
 		return (
 			<div className="date-range__date-inputs">
@@ -39,8 +59,8 @@ class DateRangeInputs extends Component {
 						id="startDate"
 						name="startDate"
 						value={ this.props.startDateValue }
-						onChange={ this.props.onInputChange }
-						onBlur={ this.props.onInputBlur }
+						onChange={ this.handleInputEvent( 'change', 'Start' ) }
+						onBlur={ this.handleInputEvent( 'blur', 'Start' ) }
 					/>
 				</div>
 				<div className="date-range__date-input date-range__date-input--to">
@@ -49,8 +69,8 @@ class DateRangeInputs extends Component {
 						id="endDate"
 						name="endDate"
 						value={ this.props.endDateValue }
-						onChange={ this.props.onInputChange }
-						onBlur={ this.props.onInputBlur }
+						onChange={ this.handleInputEvent( 'change', 'End' ) }
+						onBlur={ this.handleInputEvent( 'blur', 'End' ) }
 					/>
 				</div>
 			</div>
