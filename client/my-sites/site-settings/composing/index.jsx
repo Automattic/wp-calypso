@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -35,7 +35,7 @@ const Composing = ( {
 	const CardComponent = siteIsJetpack ? CompactCard : Card;
 
 	return (
-		<div>
+		<Fragment>
 			<CardComponent className="composing__card site-settings">
 				<PublishConfirmation />
 				<DefaultPostFormat
@@ -66,7 +66,7 @@ const Composing = ( {
 					updateFields={ updateFields }
 				/>
 			) }
-		</div>
+		</Fragment>
 	);
 };
 
