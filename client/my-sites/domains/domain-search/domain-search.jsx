@@ -3,6 +3,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -21,10 +22,13 @@ import PlansNavigation from 'my-sites/plans/navigation';
 import Main from 'components/main';
 import { addItem, addItems, goToDomainCheckout, removeDomainFromCart } from 'lib/upgrades/actions';
 import cartItems from 'lib/cart-values/cart-items';
+import { isBlogger, isDomainMapping, isDomainRegistration } from 'lib/products-values';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
+import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
+import QuerySiteDomains from 'components/data/query-site-domains';
 import { getProductsList } from 'state/products-list/selectors';
 import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
@@ -122,6 +126,15 @@ class DomainSearch extends Component {
 			'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
 		} );
 		const { domainRegistrationMaintenanceEndTime } = this.state;
+
+		const { domains } = this.props;
+		const products = get( this.props, 'cart.products', [] );
+		const plan = get( this.props, 'selectedSite.plan', false );
+
+		const domainInCart = products.some( isDomainMapping ) || products.some( isDomainRegistration );
+		const isBloggerPlan = isBlogger( plan ) || products.some( isBlogger );
+		const atDomainLimit = isBloggerPlan && ( domains.length > 0 || domainInCart );
+
 		let content;
 
 		if ( ! this.state.domainRegistrationAvailable ) {
@@ -142,6 +155,20 @@ class DomainSearch extends Component {
 						},
 					} ) }
 					action={ translate( 'Back to Plans' ) }
+					actionURL={ '/plans/' + selectedSiteSlug }
+				/>
+			);
+		} else if ( atDomainLimit && domainInCart ) {
+			page( '/checkout/' + this.props.selectedSite.slug );
+		} else if ( atDomainLimit ) {
+			content = (
+				<EmptyContent
+					illustration="/calypso/images/illustrations/error.svg"
+					title={ translate( 'Domain limit reached' ) }
+					line={ translate(
+						'If you would like to add more domains please checkout our other plans.'
+					) }
+					action={ translate( 'View Plans' ) }
 					actionURL={ '/plans/' + selectedSiteSlug }
 				/>
 			);
@@ -179,6 +206,7 @@ class DomainSearch extends Component {
 		return (
 			<Main className={ classes } wideLayout>
 				<QueryProductsList />
+				<QuerySiteDomains siteId={ this.props.selectedSiteId } />
 				<SidebarNavigation />
 				{ content }
 			</Main>
@@ -187,14 +215,19 @@ class DomainSearch extends Component {
 }
 
 export default connect(
-	state => ( {
-		selectedSite: getSelectedSite( state ),
-		selectedSiteId: getSelectedSiteId( state ),
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
-		isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
-		productsList: getProductsList( state ),
-	} ),
+	state => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			domains: getDecoratedSiteDomains( state, siteId ),
+			selectedSite: getSelectedSite( state ),
+			selectedSiteId: siteId,
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
+			isSiteUpgradeable: isSiteUpgradeable( state, siteId ),
+			productsList: getProductsList( state ),
+		};
+	},
 	{
 		recordAddDomainButtonClick,
 		recordRemoveDomainButtonClick,
