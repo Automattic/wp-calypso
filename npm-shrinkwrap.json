@@ -3044,15 +3044,15 @@
 			"integrity": "sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg=="
 		},
 		"autoprefixer": {
-			"version": "9.4.2",
-			"resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.4.2.tgz",
-			"integrity": "sha512-tYQYJvZvqlJCzF+BLC//uAcdT/Yy4ik9bwZRXr/EehUJ/bjjpTthsWTy8dpowdoIE1sLCDf1ch4Eb2cOSzZC9w==",
+			"version": "9.4.4",
+			"resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.4.4.tgz",
+			"integrity": "sha512-7tpjBadJyHKf+gOJEmKhZIksWxdZCSrnKbbTJNsw+/zX9+f//DLELRQPWjjjVoDbbWlCuNRkN7RfmZwDVgWMLw==",
 			"requires": {
-				"browserslist": "^4.3.5",
-				"caniuse-lite": "^1.0.30000914",
+				"browserslist": "^4.3.7",
+				"caniuse-lite": "^1.0.30000926",
 				"normalize-range": "^0.1.2",
 				"num2fraction": "^1.2.2",
-				"postcss": "^7.0.6",
+				"postcss": "^7.0.7",
 				"postcss-value-parser": "^3.3.1"
 			}
 		},
