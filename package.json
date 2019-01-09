@@ -202,7 +202,7 @@
     "valid-url": "1.0.9",
     "webpack": "4.28.1",
     "webpack-bundle-analyzer": "3.0.3",
-    "webpack-cli": "3.1.2",
+    "webpack-cli": "3.2.1",
     "webpack-dev-middleware": "3.5.0",
     "webpack-rtl-plugin": "1.7.0",
     "wpcom": "5.4.2",
