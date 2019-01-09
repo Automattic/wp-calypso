@@ -669,6 +669,8 @@ ul.email-forwarding__list {
 }
 
 .add-google-apps__name-fieldsets {
+	margin-top: 20px;
+
 	@include breakpoint( '>660px' ) {
 		display: flex;
 		justify-content: space-between;
@@ -693,7 +695,7 @@ ul.email-forwarding__list {
 			display: flex;
 			flex-direction: column;
 			flex: 1;
-			margin-bottom: 10px;
+
 
 			@include breakpoint( '>480px' ) {
 				flex-direction: row;
@@ -710,10 +712,6 @@ ul.email-forwarding__list {
 				width: 100%;
 			}
 
-		}
-
-		.form-input-validation {
-			padding-bottom: 6px;
 		}
 	}
 
