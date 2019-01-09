@@ -16,7 +16,7 @@ import config from 'config';
 import PressThis from './press-this';
 import QueryTaxonomies from 'components/data/query-taxonomies';
 import TaxonomyCard from './taxonomies/taxonomy-card';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import Composing from './composing';
@@ -195,7 +195,6 @@ const connectComponent = connect(
 			siteId,
 			isMasterbarSectionVisible:
 				siteIsJetpack &&
-				isJetpackMinimumVersion( state, siteId, '4.8' ) &&
 				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
 				! siteIsAutomatedTransfer,
 			isPodcastingSupported,
