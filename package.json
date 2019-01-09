@@ -272,7 +272,7 @@
     "test-server": "jest -c=test/server/jest.config.js",
     "test-server:coverage": "npm run -s test-server -- --coverage",
     "test-server:watch": "npm run -s test-server -- --watch",
-    "translate": "babel --config-file ./i18n.babel.config.js",
+    "translate": "babel --config-file ./i18n.babel.config.js client && find build/i18n-calypso -name \\*.pot | msgcat -f- -o calypso-strings.pot",
     "update-deps": "npx rimraf npm-shrinkwrap.json packages/*/package-lock.json && npm run -s distclean && npx lerna bootstrap && npm shrinkwrap && replace --silent 'http://' 'https://' . --recursive --include='npm-shrinkwrap.json,package-lock.json'",
     "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
     "prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons npm run -s build-client",

@@ -192,7 +192,7 @@ jobs:
               --output-dir=$CIRCLE_ARTIFACTS/jetpack-blocks
       - store-artifacts-and-test-results
 
-  lint-and-translate:
+  lint:
     <<: *defaults
     parallelism: 1
     steps:
@@ -219,10 +219,16 @@ jobs:
                 --output-file "$CIRCLE_TEST_REPORTS/eslint/results.xml" \
                 $FILES_TO_LINT
             fi
+  translate:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
       - run:
           name: Build calypso-strings.pot
           when: always
           command: |
+            apt install gettext
             npm run translate
             mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
       - run:
@@ -472,7 +478,10 @@ workflows:
       - icfy-stats:
           requires:
             - setup
-      - lint-and-translate:
+      - lint:
+          requires:
+            - setup
+      - translate:
           requires:
             - setup
       - test-client:
