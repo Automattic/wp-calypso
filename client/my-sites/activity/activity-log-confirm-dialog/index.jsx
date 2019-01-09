@@ -43,9 +43,18 @@ const ActivityLogConfirmDialog = ( {
 			<div className="activity-log-confirm-dialog__highlight">{ children }</div>
 
 			{ config.isEnabled( 'rewind/partial-restores' ) && (
-				<div className="activity-log-confirm-dialog__partial-restore-settings">
+				<Card className="activity-log-confirm-dialog__partial-restore-settings">
 					<p>
-						<strong>(A8C only)</strong> Include the following things in this Rewind:
+						<strong>
+							{ notice
+								? translate( 'Partial Restore Settings (A8C Only)' )
+								: translate( 'Partial Download Settings (A8C Only)' ) }
+						</strong>
+					</p>
+					<p>
+						{ notice
+							? translate( 'Include the following things in this restore:' )
+							: translate( 'Include the following things in this download:' ) }
 					</p>
 					<FormLabel>
 						<FormCheckbox name="themes" onChange={ onSettingsChange } defaultChecked />
@@ -71,7 +80,7 @@ const ActivityLogConfirmDialog = ( {
 						<FormCheckbox name="sqls" onChange={ onSettingsChange } defaultChecked />
 						{ translate( 'Site Database (SQL)' ) }
 					</FormLabel>
-				</div>
+				</Card>
 			) }
 
 			{ notice && (

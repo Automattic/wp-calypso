@@ -277,7 +277,6 @@ class ActivityLogItem extends Component {
 						onSettingsChange={ this.restoreSettingsChange }
 						supportLink="https://jetpack.com/support/how-to-rewind"
 						title={ translate( 'Rewind Site' ) }
-						allowPartialRestore={ true }
 					>
 						{ translate(
 							'This is the selected point for your site Rewind. ' +
