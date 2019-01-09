@@ -28,13 +28,13 @@ import Sitemaps from 'my-sites/site-settings/sitemaps';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 const SiteSettingsTraffic = ( {
 	fields,
-	jetpackSettingsUiSupported,
 	handleAutosavingToggle,
 	handleSubmitForm,
+	isJetpack,
 	isRequestingSettings,
 	isSavingSettings,
 	setFieldValue,
@@ -52,7 +52,7 @@ const SiteSettingsTraffic = ( {
 			<SidebarNavigation />
 			<SiteSettingsNavigation site={ site } section="traffic" />
 
-			{ jetpackSettingsUiSupported && (
+			{ isJetpack && (
 				<JetpackAds
 					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }
@@ -69,7 +69,7 @@ const SiteSettingsTraffic = ( {
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
 			/>
-			{ jetpackSettingsUiSupported && (
+			{ isJetpack && (
 				<JetpackSiteStats
 					handleAutosavingToggle={ handleAutosavingToggle }
 					setFieldValue={ setFieldValue }
@@ -89,18 +89,10 @@ const SiteSettingsTraffic = ( {
 	);
 };
 
-const connectComponent = connect( state => {
-	const site = getSelectedSite( state );
-	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
-	const jetpackSettingsUiSupported = isJetpack && siteSupportsJetpackSettingsUi( state, siteId );
-
-	return {
-		site,
-		isJetpack,
-		jetpackSettingsUiSupported,
-	};
-} );
+const connectComponent = connect( state => ( {
+	isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+	site: getSelectedSite( state ),
+} ) );
 
 const getFormSettings = partialRight( pick, [
 	'stats',
