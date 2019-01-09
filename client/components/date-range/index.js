@@ -23,11 +23,18 @@ export class DateRange extends Component {
 	static propTypes = {
 		onDateSelect: PropTypes.func,
 		onDateCommit: PropTypes.func,
+		disabledDays: PropTypes.oneOfType( [
+			// http://react-day-picker.js.org/api/DayPicker/#disabledDays
+			PropTypes.object,
+			PropTypes.array,
+			PropTypes.func,
+		] ),
 	};
 
 	static defaultProps = {
 		onDateSelect: noop,
 		onDateCommit: noop,
+		disabledDays: {},
 	};
 
 	constructor( props ) {
@@ -354,11 +361,7 @@ export class DateRange extends Component {
 				} }
 				numberOfMonths={ window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1 }
 				calendarViewDate={ this.momentDateToNative( this.state.startDate ) }
-				disabledDays={ [
-					{
-						after: now, // you can't look at photos from the future!
-					},
-				] }
+				disabledDays={ this.props.disabledDays }
 			/>
 		);
 	}
