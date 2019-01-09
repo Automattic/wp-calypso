@@ -37,7 +37,7 @@ export class GsuiteNudge extends React.Component {
 
 		page(
 			isEligibleForChecklist
-				? `/checklist/${ siteSlug }`
+				? `/view/${ siteSlug }`
 				: `/checkout/thank-you/${ siteSlug }/${ receiptId }`
 		);
 	};
