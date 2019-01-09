@@ -3,7 +3,6 @@
 /**
  * Internal dependencies
  */
-
 import ContactsPrivacy from './contacts-privacy';
 import Dns from './dns';
 import DomainConnectMapping from './domain-connect-mapping';
