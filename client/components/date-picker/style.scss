@@ -294,8 +294,6 @@ $date-picker_nav_button_size: 20px;
 }
 
 .date-picker.date-picker--has-range .DayPicker-Day--range {
-	background-color: $gray-light !important;
-
 	.date-picker__day {
 		background: $blue-light;
 	}
