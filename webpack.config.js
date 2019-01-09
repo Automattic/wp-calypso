@@ -41,7 +41,9 @@ const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 
-const workerCount = +process.env.WORKERS || Math.max( 2, Math.floor( os.cpus().length / 2 ) );
+const workerCount = process.env.WORKERS
+	? Math.floor( +process.env.WORKERS / 2 )
+	: Math.max( 2, Math.floor( os.cpus().length / 2 ) );
 
 /*
  * Create reporter for ProgressPlugin (used with EMIT_STATS)
