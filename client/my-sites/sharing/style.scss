@@ -195,41 +195,6 @@
 	}
 }
 
-.sharing-service-action {
-	position: absolute;
-	right: 64px;
-	top: 26px;
-
-	@include breakpoint( '<660px' ) {
-		right: 10px;
-		top: 15px;
-	}
-
-	@include breakpoint( '<480px' ) {
-		top: 11px;
-	}
-
-	&.is-warning {
-		background: darken( $alert-yellow, 3% );
-		border-color: darken( $alert-yellow, 10% );
-		color: $white;
-
-		&:hover {
-			border-color: darken( $alert-yellow, 15% );
-		}
-
-		&:focus {
-			border-color: darken( $alert-yellow, 15% );
-		}
-
-		&[disabled] {
-			background: lighten( $alert-yellow, 12% ) !important;
-			color: $white !important;
-			border-color: lighten( $alert-yellow, 8% ) !important;
-		}
-	}
-}
-
 .sharing-service__content {
 	position: relative;
 
