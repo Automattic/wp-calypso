@@ -3,7 +3,7 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import { Fragment } from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { withFallbackStyles } from '@wordpress/components';
 import {
@@ -12,8 +12,8 @@ import {
 	ContrastChecker,
 	RichText,
 	withColors,
-	getColorClassName,
 } from '@wordpress/editor';
+import { isEqual, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -58,73 +58,82 @@ const applyFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
 	};
 } );
 
-const SubmitButton = ( {
-	attributes,
-	textButtonColor,
-	backgroundButtonColor,
-	fallbackBackgroundColor,
-	fallbackTextColor,
-	setAttributes,
-} ) => {
-	const textClass = getColorClassName( 'color', textButtonColor );
-	const backgroundClass = getColorClassName( 'background-color', backgroundButtonColor );
+class SubmitButton extends Component {
+	componentDidUpdate( prevProps ) {
+		if (
+			! isEqual( this.props.textButtonColor, prevProps.textButtonColor ) ||
+			! isEqual( this.props.backgroundButtonColor, prevProps.backgroundButtonColor )
+		) {
+			const buttonClasses = this.getButtonClasses();
+			this.props.setAttributes( { submitButtonClasses: buttonClasses } );
+		}
+	}
+	getButtonClasses() {
+		const { textButtonColor, backgroundButtonColor } = this.props;
+		const textClass = get( textButtonColor, 'class' );
+		const backgroundClass = get( backgroundButtonColor, 'class' );
+		return classnames( 'wp-block-button__link', {
+			'has-text-color': textButtonColor,
+			[ textClass ]: textClass,
+			'has-background': backgroundButtonColor,
+			[ backgroundClass ]: backgroundClass,
+		} );
+	}
+	render() {
+		const {
+			attributes,
+			fallbackBackgroundColor,
+			fallbackTextColor,
+			setAttributes,
+			setBackgroundButtonColor,
+			setTextButtonColor,
+		} = this.props;
 
-	const buttonClasses = classnames( 'wp-block-button__link', {
-		'has-text-color': textButtonColor,
-		[ textClass ]: textClass,
-		'has-background': backgroundButtonColor,
-		[ backgroundClass ]: backgroundClass,
-	} );
+		const backgroundColor = attributes.customBackgroundButtonColor || fallbackBackgroundColor;
+		const color = attributes.customTextButtonColor || fallbackTextColor;
+		const buttonStyle = { border: 'none', backgroundColor, color };
+		const buttonClasses = this.getButtonClasses();
 
-	const backgroundColor = attributes.customBackgroundButtonColor || fallbackBackgroundColor;
-	const color = attributes.customTextButtonColor || fallbackTextColor;
-
-	const buttonStyle = { border: 'none', backgroundColor, color };
-
-	setAttributes( { submitButtonClasses: buttonClasses } );
-	return (
-		<Fragment>
-			<div className="wp-block-button jetpack-submit-button">
-				<RichText
-					placeholder={ __( 'Add text…' ) }
-					value={ attributes.submitButtonText }
-					onChange={ nextValue => setAttributes( { submitButtonText: nextValue } ) }
-					className={ buttonClasses }
-					style={ buttonStyle }
-					keepPlaceholderOnFocus
-				/>
-			</div>
-			<InspectorControls>
-				<PanelColorSettings
-					title={ __( 'Button Color Settings' ) }
-					colorSettings={ [
-						{
-							value: backgroundColor,
-							onChange: nextColour => {
-								setAttributes( { customBackgroundButtonColor: nextColour } );
+		return (
+			<Fragment>
+				<div className="wp-block-button jetpack-submit-button">
+					<RichText
+						placeholder={ __( 'Add text…' ) }
+						value={ attributes.submitButtonText }
+						onChange={ nextValue => setAttributes( { submitButtonText: nextValue } ) }
+						className={ buttonClasses }
+						style={ buttonStyle }
+						keepPlaceholderOnFocus
+					/>
+				</div>
+				<InspectorControls>
+					<PanelColorSettings
+						title={ __( 'Button Color Settings' ) }
+						colorSettings={ [
+							{
+								value: backgroundColor,
+								onChange: nextColour => {
+									setBackgroundButtonColor( nextColour );
+									setAttributes( { customBackgroundButtonColor: nextColour } );
+								},
+								label: __( 'Background Color' ),
 							},
-							label: __( 'Background Color' ),
-						},
-						{
-							value: color,
-							onChange: nextColour => {
-								setAttributes( { customTextButtonColor: nextColour } );
+							{
+								value: color,
+								onChange: nextColour => {
+									setTextButtonColor( nextColour );
+									setAttributes( { customTextButtonColor: nextColour } );
+								},
+								label: __( 'Text Color' ),
 							},
-							label: __( 'Text Color' ),
-						},
-					] }
-				/>
-				<ContrastChecker
-					// Text is considered large if font size is greater or equal to 18pt or 24px,
-					// currently that's not the case for button.
-					isLargeText={ false }
-					textColor={ color }
-					backgroundColor={ backgroundColor }
-				/>
-			</InspectorControls>
-		</Fragment>
-	);
-};
+						] }
+					/>
+					<ContrastChecker textColor={ color } backgroundColor={ backgroundColor } />
+				</InspectorControls>
+			</Fragment>
+		);
+	}
+}
 
 export default compose( [
 	withColors( 'backgroundButtonColor', { textButtonColor: 'color' } ),
