@@ -630,6 +630,11 @@ export class JetpackAuthorize extends Component {
 
 	renderStateAction() {
 		const { authorizeSuccess } = this.props.authorizationData;
+
+		if ( this.props.isSiteBlacklisted ) {
+			return null;
+		}
+
 		if (
 			this.props.isFetchingAuthorizationSite ||
 			this.isAuthorizing() ||
