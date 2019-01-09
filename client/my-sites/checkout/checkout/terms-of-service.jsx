@@ -25,7 +25,7 @@ class TermsOfService extends React.Component {
 
 	renderTerms = () => {
 		let message = this.props.translate(
-			'By checking out, you agree to our {{link}}fascinating terms and conditions{{/link}}.',
+			'By checking out, you agree to our {{link}} terms and conditions{{/link}}.',
 			{
 				components: {
 					link: (

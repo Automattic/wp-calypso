@@ -584,7 +584,7 @@ class SignupForm extends Component {
 			/>
 		);
 		const tosText = this.props.translate(
-			'By creating an account you agree to our {{a}}fascinating Terms of Service{{/a}}.',
+			'By creating an account you agree to our {{a}}Terms of Service{{/a}}.',
 			{
 				components: {
 					a: tosLink,
