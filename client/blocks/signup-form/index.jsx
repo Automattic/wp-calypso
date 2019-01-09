@@ -18,7 +18,6 @@ import {
 	mapKeys,
 	pick,
 	snakeCase,
-	thru,
 } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
@@ -243,7 +242,7 @@ class SignupForm extends Component {
 				return debug( error || 'User validation failed.' );
 			}
 
-			const messages = response.success
+			let messages = response.success
 				? {}
 				: mapKeys( response.messages, ( value, key ) => camelCase( key ) );
 
