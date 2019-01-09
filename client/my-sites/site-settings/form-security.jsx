@@ -19,7 +19,6 @@ import Protect from './protect';
 import Sso from './sso';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
@@ -56,7 +55,6 @@ class SiteSettingsFormSecurity extends Component {
 			isAtomic,
 			isRequestingSettings,
 			isSavingSettings,
-			jetpackSettingsUiSupported,
 			onChangeField,
 			protectModuleActive,
 			protectModuleUnavailable,
@@ -65,11 +63,6 @@ class SiteSettingsFormSecurity extends Component {
 			siteId,
 			translate,
 		} = this.props;
-
-		if ( ! jetpackSettingsUiSupported ) {
-			return null;
-		}
-
 		const disableProtect = ! protectModuleActive || protectModuleUnavailable;
 		const disableSpamFiltering = ! fields.akismet || akismetUnavailable;
 
@@ -141,11 +134,9 @@ const connectComponent = connect( state => {
 		siteId,
 		'akismet'
 	);
-	const jetpackSettingsUiSupported = siteSupportsJetpackSettingsUi( state, siteId );
 
 	return {
 		isAtomic: isATEnabled( selectedSite ),
-		jetpackSettingsUiSupported,
 		protectModuleActive,
 		protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,
 		akismetUnavailable: siteInDevMode && akismetIsUnavailableInDevMode,
