@@ -61,9 +61,18 @@ class ActivityLogItem extends Component {
 			roots: true,
 			contents: true,
 		},
+		downloadArgs: {
+			themes: true,
+			plugins: true,
+			uploads: true,
+			sqls: true,
+			roots: true,
+			contents: true,
+		},
 	};
 
-	confirmBackup = () => this.props.confirmBackup( this.props.activity.rewindId );
+	confirmBackup = () =>
+		this.props.confirmBackup( this.props.activity.rewindId, this.state.downloadArgs );
 
 	confirmRewind = () =>
 		this.props.confirmRewind(
@@ -75,6 +84,11 @@ class ActivityLogItem extends Component {
 	restoreSettingsChange = ( { target: { name, checked } } ) =>
 		this.setState( {
 			restoreArgs: Object.assign( this.state.restoreArgs, { [ name ]: checked } ),
+		} );
+
+	downloadSettingsChange = ( { target: { name, checked } } ) =>
+		this.setState( {
+			downloadArgs: Object.assign( this.state.downloadArgs, { [ name ]: checked } ),
 		} );
 
 	renderHeader() {
@@ -295,7 +309,7 @@ class ActivityLogItem extends Component {
 						confirmTitle={ translate( 'Create download' ) }
 						onClose={ dismissBackup }
 						onConfirm={ this.confirmBackup }
-						onSettingsChange={ this.restoreSettingsChange }
+						onSettingsChange={ this.downloadSettingsChange }
 						supportLink="https://jetpack.com/support/backups"
 						title={ translate( 'Create downloadable backup' ) }
 						type={ 'backup' }
@@ -378,12 +392,12 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 				rewindRequestDismiss( siteId )
 			)
 		),
-	confirmBackup: rewindId => (
+	confirmBackup: ( rewindId, downloadArgs ) => (
 		scrollTo( { x: 0, y: 0, duration: 250 } ),
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_backup_confirm', { action_id: rewindId } ),
-				rewindBackup( siteId, rewindId )
+				rewindBackup( siteId, rewindId, downloadArgs )
 			)
 		)
 	),

@@ -203,11 +203,12 @@ export function rewindBackupDismiss( siteId ) {
  * @param  {number}        rewindId Id of activity up to the one the backup will be created.
  * @return {object}                 Action object
  */
-export function rewindBackup( siteId, rewindId ) {
+export function rewindBackup( siteId, rewindId, args ) {
 	return {
 		type: REWIND_BACKUP,
 		siteId,
 		rewindId,
+		args,
 	};
 }
 
