@@ -379,7 +379,7 @@
 
 		.wpnc__comment-unapproved .wpnc__note-icon .wpnc__gridicon {
 			background: var( --color-warning );
-			border-color: $wpnc__yellow-lighter;
+			border-color: var( --color-warning-0 );
 		}
 
 		.unread {
@@ -776,14 +776,14 @@
 	}
 
 	.wpnc__list-view .wpnc__comment-unapproved {
-		background: $wpnc__yellow-lighter;
+		background: var( --color-warning-0 );
 
 		.wpnc__subject {
 			color: $wpnc__red-darker;
 		}
 
 		.wpnc__excerpt {
-			color: $wpnc__yellow-dark;
+			color: var( --color-warning-dark );
 		}
 	}
 
@@ -791,7 +791,7 @@
 		.wpnc__body-content {
 			box-shadow: inset 4px 0 0 var( --color-warning );
 			border-bottom: 1px solid var( --color-warning );
-			background: $wpnc__yellow-lighter;
+			background: var( --color-warning-0 );
 			color: $wpnc__red-darker;
 		}
 
@@ -802,11 +802,12 @@
 
 	.wpnc__comment-unapproved .wpnc__body .wpnc__user__meta,
 	.wpnc__comment-unapproved div.wpnc__user .wpnc__user__meta a {
-		color: $wpnc__yellow-dark;
+		color: var( --color-warning-dark );
 	}
 
 	.wpnc__comment-unapproved div.wpnc__user .wpnc__user__meta a:hover {
-		color: darken( $wpnc__yellow-dark, 15% );
+		color: var( --color-warning-dark );
+		text-decoration: underline;
 	}
 
 	.wpnc__comment-unapproved .wpnc__body div.wpnc__user .wpnc__user__home {
