@@ -16,11 +16,7 @@ import config from 'config';
 import PressThis from './press-this';
 import QueryTaxonomies from 'components/data/query-taxonomies';
 import TaxonomyCard from './taxonomies/taxonomy-card';
-import {
-	isJetpackSite,
-	isJetpackMinimumVersion,
-	siteSupportsJetpackSettingsUi,
-} from 'state/sites/selectors';
+import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import Composing from './composing';
@@ -54,7 +50,6 @@ class SiteSettingsFormWriting extends Component {
 			isMasterbarSectionVisible,
 			isRequestingSettings,
 			isSavingSettings,
-			jetpackSettingsUISupported,
 			jetpackVersionSupportsLazyImages,
 			onChangeField,
 			setFieldValue,
@@ -63,8 +58,6 @@ class SiteSettingsFormWriting extends Component {
 			translate,
 			updateFields,
 		} = this.props;
-
-		const jetpackSettingsUI = siteIsJetpack && jetpackSettingsUISupported;
 
 		return (
 			<form
@@ -110,7 +103,7 @@ class SiteSettingsFormWriting extends Component {
 					updateFields={ updateFields }
 				/>
 
-				{ jetpackSettingsUI && (
+				{ siteIsJetpack && (
 					<div>
 						<SettingsSectionHeader
 							disabled={ isRequestingSettings || isSavingSettings }
@@ -157,7 +150,7 @@ class SiteSettingsFormWriting extends Component {
 
 				{ isPodcastingSupported && <PodcastingLink fields={ fields } /> }
 
-				{ jetpackSettingsUI && <QueryJetpackModules siteId={ siteId } /> }
+				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 				<ThemeEnhancements
 					onSubmitForm={ handleSubmitForm }
@@ -165,22 +158,23 @@ class SiteSettingsFormWriting extends Component {
 					handleAutosavingRadio={ handleAutosavingRadio }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
-					jetpackSettingsUI={ jetpackSettingsUI }
+					jetpackSettingsUI={ siteIsJetpack }
 					fields={ fields }
 				/>
 
-				{ jetpackSettingsUI && config.isEnabled( 'press-this' ) && (
-					<PublishingTools
-						onSubmitForm={ handleSubmitForm }
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-						fields={ fields }
-					/>
-				) }
+				{ siteIsJetpack &&
+					config.isEnabled( 'press-this' ) && (
+						<PublishingTools
+							onSubmitForm={ handleSubmitForm }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+						/>
+					) }
 
 				{ config.isEnabled( 'press-this' ) &&
 					! this.isMobile() &&
-					! ( siteIsJetpack || jetpackSettingsUISupported ) && (
+					! siteIsJetpack && (
 						<div>
 							<SettingsSectionHeader
 								title={ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
@@ -201,7 +195,6 @@ const connectComponent = connect(
 		const isPodcastingSupported = ! siteIsJetpack || siteIsAutomatedTransfer;
 
 		return {
-			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
 			jetpackVersionSupportsLazyImages: isJetpackMinimumVersion( state, siteId, '5.8-alpha' ),
 			siteIsJetpack,
 			siteId,
