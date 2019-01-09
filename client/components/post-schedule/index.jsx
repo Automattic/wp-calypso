@@ -60,9 +60,10 @@ class PostSchedule extends Component {
 		calendarViewDate: moment( this.props.selectedDay ? this.props.selectedDay : new Date() ),
 		tooltipContext: null,
 		showTooltip: false,
+		selectedDay: this.props.selectedDay,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( ! this.props.selectedDay ) {
 			return this.setState( {
 				localizedDate: null,
@@ -77,18 +78,25 @@ class PostSchedule extends Component {
 		} );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.selectedDay === nextProps.selectedDay ) {
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( prevState.selectedDay !== nextProps.selectedDay ) {
+			return { selectedDay: nextProps.selectedDay };
+		}
+		return null;
+	}
+
+	componentDidUpdate( prevProps, prevState ) {
+		if ( prevState.selectedDay === this.state.selectedDay ) {
 			return;
 		}
 
-		if ( ! nextProps.selectedDay ) {
-			return this.setState( { localizedDate: null } );
+		if ( ! this.state.selectedDay ) {
+			this.setState( { localizedDate: null } );
+		} else {
+			this.setState( {
+				localizedDate: this.getDateToUserLocation( this.state.selectedDay ),
+			} );
 		}
-
-		this.setState( {
-			localizedDate: this.getDateToUserLocation( nextProps.selectedDay ),
-		} );
 	}
 
 	getLocaleUtils() {
