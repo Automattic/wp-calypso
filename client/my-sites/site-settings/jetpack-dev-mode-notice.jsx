@@ -11,11 +11,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import { isJetpackSite } from 'state/sites/selectors';
 
 const JetpackDevModeNotice = ( { isJetpackSiteInDevMode, siteId, siteIsJetpack, translate } ) => {
@@ -48,8 +48,8 @@ export default connect( state => {
 	const siteIsJetpack = isJetpackSite( state, siteId );
 
 	return {
-		siteId,
 		isJetpackSiteInDevMode: isJetpackSiteInDevelopmentMode( state, siteId ),
+		siteId,
 		siteIsJetpack,
 	};
 } )( localize( JetpackDevModeNotice ) );
