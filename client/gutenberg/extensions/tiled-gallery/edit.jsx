@@ -38,7 +38,7 @@ const linkOptions = [
 
 // @TODO keep here or move to ./layout ?
 function layoutSupportsColumns( layout ) {
-	return [ 'circle', 'square' ].includes( layout );
+	return [ 'columns', 'circle', 'square' ].includes( layout );
 }
 
 export function defaultColumnsNumber( attributes ) {
@@ -208,9 +208,7 @@ class TiledGalleryEdit extends Component {
 				{ controls }
 				<InspectorControls>
 					<PanelBody title={ __( 'Tiled gallery settings' ) }>
-						{ /* @TODO disable with title comment, don't remove */ layoutSupportsColumns(
-							layoutStyle
-						) &&
+						{ layoutSupportsColumns( layoutStyle ) &&
 							images.length > 1 && (
 								<RangeControl
 									label={ __( 'Columns' ) }
