@@ -50,7 +50,6 @@ class SiteSettingsFormWriting extends Component {
 			isMasterbarSectionVisible,
 			isRequestingSettings,
 			isSavingSettings,
-			jetpackVersionSupportsLazyImages,
 			onChangeField,
 			setFieldValue,
 			siteId,
@@ -119,7 +118,6 @@ class SiteSettingsFormWriting extends Component {
 							isSavingSettings={ isSavingSettings }
 							isRequestingSettings={ isRequestingSettings }
 							fields={ fields }
-							jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
 						/>
 					</div>
 				) }
@@ -193,7 +191,6 @@ const connectComponent = connect(
 		const isPodcastingSupported = ! siteIsJetpack || siteIsAutomatedTransfer;
 
 		return {
-			jetpackVersionSupportsLazyImages: isJetpackMinimumVersion( state, siteId, '5.8-alpha' ),
 			siteIsJetpack,
 			siteId,
 			isMasterbarSectionVisible:
