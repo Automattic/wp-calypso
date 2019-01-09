@@ -25,10 +25,18 @@ class DatePicker extends PureComponent {
 		events: PropTypes.array,
 		selectedDays: PropTypes.array,
 		disabledDays: PropTypes.array,
-		locale: PropTypes.object,
+		locale: PropTypes.string,
+		localeUtils: PropTypes.shape( {
+			// http://react-day-picker.js.org/api/LocaleUtils
+			formatDay: PropTypes.func,
+			formatMonthTitle: PropTypes.func,
+			formatWeekdayLong: PropTypes.func,
+			formatWeekdayShort: PropTypes.func,
+			getFirstDayOfWeek: PropTypes.func,
+			getMonths: PropTypes.func,
+		} ),
 		modifiers: PropTypes.object,
 		moment: PropTypes.func.isRequired,
-
 		selectedDay: PropTypes.object,
 		timeReference: PropTypes.object,
 		fromMonth: PropTypes.object,
@@ -47,6 +55,7 @@ class DatePicker extends PureComponent {
 		calendarViewDate: new Date(),
 		modifiers: {},
 		fromMonth: null,
+		locale: 'en',
 		selectedDay: null,
 
 		onMonthChange: noop,
@@ -88,13 +97,13 @@ class DatePicker extends PureComponent {
 		return eventsInDay;
 	}
 
-	locale() {
-		const { moment } = this.props;
+	getLocaleUtils() {
+		const { moment, localeUtils } = this.props;
 		const localeData = moment().localeData();
 		const firstDayOfWeek = localeData.firstDayOfWeek();
 		const weekdaysMin = moment.weekdaysMin();
 		const weekdays = moment.weekdays();
-		const locale = {
+		const utils = {
 			formatDay: function( date ) {
 				return moment( date ).format( 'llll' );
 			},
@@ -120,7 +129,7 @@ class DatePicker extends PureComponent {
 			},
 		};
 
-		return merge( locale, this.props.locale );
+		return merge( {}, utils, localeUtils );
 	}
 
 	setCalendarDay = ( day, modifiers ) => {
@@ -207,7 +216,8 @@ class DatePicker extends PureComponent {
 				onDayTouchEnd={ this.setCalendarDay }
 				onDayTouchMove={ this.handleDayTouchMove }
 				renderDay={ this.renderDay }
-				localeUtils={ this.locale() }
+				locale={ this.props.locale }
+				localeUtils={ this.getLocaleUtils() }
 				onMonthChange={ this.props.onMonthChange }
 				showOutsideDays={ this.props.showOutsideDays }
 				navbarElement={ <DatePickerNavBar /> }
