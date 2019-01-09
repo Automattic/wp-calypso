@@ -29,6 +29,8 @@ export default class Mosaic extends Component {
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.images !== this.props.images || prevProps.align !== this.props.align ) {
 			this.triggerResize();
+		} else if ( 'columns' === this.props.layoutStyle && prevProps.columns !== this.props.columns ) {
+			this.triggerResize();
 		}
 	}
 
