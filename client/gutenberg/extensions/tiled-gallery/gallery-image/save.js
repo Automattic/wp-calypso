@@ -2,15 +2,13 @@
  * External Dependencies
  */
 import { isBlobURL } from '@wordpress/blob';
-
-/* @TODO Caption has been commented out */
-// import { RichText } from '@wordpress/editor';
+import { RichText } from '@wordpress/editor';
 
 export default function GalleryImageSave( props ) {
 	const {
 		'aria-label': ariaLabel,
 		alt,
-		// caption,
+		caption,
 		height,
 		id,
 		link,
@@ -51,9 +49,9 @@ export default function GalleryImageSave( props ) {
 	return (
 		<figure className="tiled-gallery__item">
 			{ href ? <a href={ href }>{ img }</a> : img }
-			{ /* ! RichText.isEmpty( caption ) && (
+			{ ! RichText.isEmpty( caption ) && (
 				<RichText.Content tagName="figcaption" value={ caption } />
-			) */ }
+			) }
 		</figure>
 	);
 }
