@@ -20,47 +20,45 @@
 			opacity: 0.3;
 		}
 
-		/* @TODO Caption has been commented out */
-		// .editor-rich-text {
-		// 	position: absolute;
-		// 	bottom: 0;
-		// 	width: 100%;
-		// 	max-height: 100%;
-		// 	overflow-y: auto;
-		// }
+		.editor-rich-text {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			max-height: 100%;
+			overflow-y: auto;
+		}
 
-		// .editor-rich-text figcaption:not( [data-is-placeholder-visible='true'] ) {
-		// 	position: relative;
-		// 	overflow: hidden;
-		// 	color: $white;
-		// }
+		.editor-rich-text figcaption:not( [data-is-placeholder-visible='true'] ) {
+			position: relative;
+			overflow: hidden;
+			color: $white;
+		}
 
-		// &.is-selected .editor-rich-text {
-		// 	// IE calculates this incorrectly, so leave it to modern browsers.
-		// 	@supports ( position: sticky ) {
-		// 		right: 0;
-		// 		left: 0;
-		// 		margin-top: -4px;
-		// 	}
+		&.is-selected .editor-rich-text {
+			// IE calculates this incorrectly, so leave it to modern browsers.
+			@supports ( position: sticky ) {
+				right: 0;
+				left: 0;
+				margin-top: -4px;
+			}
 
-		// 	// Override negative margins so this toolbar isn't hidden by overflow. Overflow is needed for long captions.
-		// 	.editor-rich-text__inline-toolbar {
-		// 		top: 0;
-		// 	}
+			// Override negative margins so this toolbar isn't hidden by overflow. Overflow is needed for long captions.
+			.editor-rich-text__inline-toolbar {
+				top: 0;
+			}
 
-		// 	// Make extra space for the inline toolbar.
-		// 	.editor-rich-text__tinymce {
-		// 		padding-top: 48px;
-		// 	}
-		// }
+			// Make extra space for the inline toolbar.
+			.editor-rich-text__tinymce {
+				padding-top: 48px;
+			}
+		}
 	}
 
 	// Circle layout doesn't support captions
 	// @TODO handle this in the component
-	/* @TODO Caption has been commented out */
-	// &.is-style-circle .tiled-gallery__item .editor-rich-text {
-	// 	display: none;
-	// }
+	&.is-style-circle .tiled-gallery__item .editor-rich-text {
+		display: none;
+	}
 
 	.tiled-gallery__add-item {
 		margin-top: $tiled-gallery-gutter;
@@ -122,8 +120,7 @@
 
 	// Hide captions and upload buttons in style picker preview
 	.editor-block-preview__content & {
-		/* @TODO Caption has been commented out */
-		// figcaption,
+		figcaption,
 		.editor-media-placeholder {
 			display: none;
 		}
