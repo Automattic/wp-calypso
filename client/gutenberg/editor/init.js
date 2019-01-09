@@ -8,10 +8,13 @@ import { mapValues, once } from 'lodash';
  * WordPress dependencies
  */
 import { use, plugins, dispatch } from '@wordpress/data';
+import { unstable__bootstrapServerSideBlockDefinitions } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
+import { requestGutenbergServerBlocksAttributes } from 'state/data-getters';
+import { waitForData } from 'state/data-layer/http-data';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { applyAPIMiddleware } from './api-middleware';
 import debugFactory from 'debug';
@@ -60,6 +63,18 @@ const addResetToRegistry = registry => {
 	};
 };
 
+const registerGutenbergBlocks = registerCoreBlocks =>
+	waitForData( {
+		serverBlocksAttributes: () => requestGutenbergServerBlocksAttributes(),
+	} ).then( ( { serverBlocksAttributes } ) => {
+		if ( serverBlocksAttributes.data ) {
+			debug( 'Registering server-defined blocks attributes' );
+			unstable__bootstrapServerSideBlockDefinitions( serverBlocksAttributes.data );
+		}
+		debug( 'Registering core blocks' );
+		registerCoreBlocks();
+	} );
+
 // We need to ensure that his function is executed only once to avoid duplicate
 // block registration, API middleware application etc.
 export const initGutenberg = once( ( userId, store ) => {
@@ -79,13 +94,12 @@ export const initGutenberg = once( ( userId, store ) => {
 	debug( 'Initializing core-data store' );
 	require( '@wordpress/core-data' );
 
-	// Avoid using top level imports for this since they will statically
+	// Avoid using top level imports for these since they will statically
 	// initialize core-data before required plugins are loaded.
 	const { registerCoreBlocks } = require( '@wordpress/block-library' );
 	const { setFreeformContentHandlerName } = require( '@wordpress/blocks' );
 
-	debug( 'Registering core blocks' );
-	registerCoreBlocks();
+	registerGutenbergBlocks( registerCoreBlocks );
 
 	// Prevent Guided tour from showing when editor loads.
 	dispatch( 'core/nux' ).disableTips();

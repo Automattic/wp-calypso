@@ -313,3 +313,17 @@ export const requestActiveThemeSupport = siteSlug =>
 		),
 		{ fromApi: () => data => [ [ `active-theme-support-${ siteSlug }`, data ] ] }
 	);
+
+export const requestGutenbergServerBlocksAttributes = () =>
+	requestHttpData(
+		'gutenberg-server-blocks-attributes',
+		http(
+			{
+				path: `/gutenberg/server-blocks-attributes`,
+				method: 'GET',
+				apiNamespace: 'wpcom/v2',
+			},
+			{}
+		),
+		{ fromApi: () => data => [ [ 'gutenberg-server-blocks-attributes', data ] ] }
+	);
