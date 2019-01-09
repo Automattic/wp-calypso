@@ -86,7 +86,7 @@
 
 	&.has-notification::before {
 		display: block;
-		background-color: var( --color-dot-indicator );
+		background-color: var( --color-accent-300 );
 		border: 2px solid $white;
 		content: '';
 		border-radius: 50%;

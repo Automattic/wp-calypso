@@ -215,8 +215,6 @@
 	--color-link-900: #{$muriel-blue-900};
 	--color-link-900-rgb: #{hex-to-rgb( $muriel-blue-900 )};
 
-	--color-dot-indicator: #{$muriel-hot-pink-400};
-
 	--color-section-nav-item-background-hover: #{$muriel-blue-0};
 	--color-themes-active-text: #{$muriel-blue-0};
 	--color-themes-active-text-rgb: #{hex-to-rgb( $muriel-blue-0 )};
@@ -310,8 +308,6 @@
 		--color-text-subtle: #{$muriel-gray-500};
 		--color-surface: #{$muriel-white};
 		--color-surface-backdrop: #{$muriel-gray-0};
-
-		--color-dot-indicator: #{$muriel-orange-400};
 
 		--color-button-primary-background-hover: #{$muriel-orange-400};
 		--color-button-primary-scary-background-hover: #{$muriel-hot-red-400};
