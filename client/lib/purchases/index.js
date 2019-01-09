@@ -20,6 +20,7 @@ import {
 	isJetpackPlan,
 	isPlan,
 	isTheme,
+	isConciergeSession,
 } from 'lib/products-values';
 import { addItems } from 'lib/upgrades/actions';
 
@@ -258,6 +259,10 @@ function isRemovable( purchase ) {
 		return false;
 	}
 
+	if ( isConciergeSession( purchase ) ) {
+		return false;
+	}
+
 	return (
 		isJetpackPlan( purchase ) ||
 		isExpiring( purchase ) ||
@@ -370,6 +375,10 @@ function paymentLogoType( purchase ) {
 function purchaseType( purchase ) {
 	if ( isTheme( purchase ) ) {
 		return i18n.translate( 'Premium Theme' );
+	}
+
+	if ( isConciergeSession( purchase ) ) {
+		return i18n.translate( 'One-on-one Support' );
 	}
 
 	if ( isPlan( purchase ) ) {
