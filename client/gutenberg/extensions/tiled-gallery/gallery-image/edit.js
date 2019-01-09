@@ -35,10 +35,7 @@ class GalleryImageEdit extends Component {
 	// 	}
 	// };
 
-	onImageClick = e => {
-		e.preventDefault();
-		e.stopPropagation();
-
+	onImageClick = () => {
 		if ( ! this.props.isSelected ) {
 			this.props.onSelect();
 		}
@@ -51,7 +48,6 @@ class GalleryImageEdit extends Component {
 	};
 
 	onImageKeyDown = event => {
-		event.stopPropagation();
 		if (
 			this.img.current === document.activeElement &&
 			this.props.isSelected &&
@@ -169,7 +165,9 @@ class GalleryImageEdit extends Component {
 						/>
 					</div>
 				) }
-				{ href ? <a href={ href }>{ img }</a> : img }
+				{ /* Keep the <a> HTML structure, but ensure there is no navigation from edit */
+				/* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+				{ href ? <a>{ img }</a> : img }
 				{ /* ( ! RichText.isEmpty( caption ) || isSelected ) && (
 					<RichText
 						tagName="figcaption"
