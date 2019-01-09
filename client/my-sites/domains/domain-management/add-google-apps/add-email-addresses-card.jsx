@@ -232,7 +232,7 @@ class AddEmailAddressesCard extends React.Component {
 
 		return (
 			<div className="add-google-apps__email-address-fieldset" key={ index }>
-				<FormFieldset>
+				<div>
 					<FormTextInput
 						onChange={ this.handleFieldChange.bind( this, 'username', index ) }
 						onFocus={ this.handleFieldFocus.bind( this, 'Email', index ) }
@@ -251,7 +251,7 @@ class AddEmailAddressesCard extends React.Component {
 						onFocus={ this.handleFieldFocus.bind( this, 'Domain', index ) }
 						isError={ isError }
 					/>
-				</FormFieldset>
+				</div>
 				<FormInputValidation isHidden={ ! isError } isError={ true } text={ errorMessage } />
 			</div>
 		);
