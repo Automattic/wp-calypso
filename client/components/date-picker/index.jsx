@@ -26,7 +26,15 @@ class DatePicker extends PureComponent {
 		selectedDays: PropTypes.array,
 		disabledDays: PropTypes.array,
 		locale: PropTypes.string,
-		localeUtils: PropTypes.object,
+		localeUtils: PropTypes.shape( {
+			// http://react-day-picker.js.org/api/LocaleUtils
+			formatDay: PropTypes.func,
+			formatMonthTitle: PropTypes.func,
+			formatWeekdayLong: PropTypes.func,
+			formatWeekdayShort: PropTypes.func,
+			getFirstDayOfWeek: PropTypes.func,
+			getMonths: PropTypes.func,
+		} ),
 		modifiers: PropTypes.object,
 		moment: PropTypes.func.isRequired,
 		selectedDay: PropTypes.object,
