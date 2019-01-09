@@ -183,9 +183,6 @@ class AddEmailAddressesCard extends React.Component {
 	renderNameFieldset( index, firstName, lastName ) {
 		const { translate } = this.props;
 
-		const isFirstNameError = has( firstName, 'error' ) && null !== firstName.error;
-		const isLastNameError = has( lastName, 'error' ) && null !== lastName.error;
-
 		return (
 			<Fragment key={ index }>
 				<FormFieldset>
@@ -195,11 +192,13 @@ class AddEmailAddressesCard extends React.Component {
 						maxLength={ 60 }
 						onChange={ this.handleFieldChange.bind( this, 'firstName', index ) }
 						value={ firstName.value }
-						isError={ isFirstNameError }
+						isError={ has( firstName, 'error' ) && null !== firstName.error }
 					/>
-					{ isFirstNameError && (
-						<FormInputValidation isError text={ firstName.error || '\u00A0' } />
-					) }
+					<FormInputValidation
+						isHidden={ ! has( firstName, 'error' ) || null === firstName.error }
+						isError={ has( firstName, 'error' ) && null !== firstName.error }
+						text={ firstName.error || '\u00A0' }
+					/>
 				</FormFieldset>
 				<FormFieldset>
 					<FormTextInput
@@ -208,9 +207,13 @@ class AddEmailAddressesCard extends React.Component {
 						maxLength={ 60 }
 						onChange={ this.handleFieldChange.bind( this, 'lastName', index ) }
 						value={ lastName.value }
-						isError={ isLastNameError }
+						isError={ has( lastName, 'error' ) && null !== lastName.error }
 					/>
-					{ isLastNameError && <FormInputValidation isError text={ lastName.error || '\u00A0' } /> }
+					<FormInputValidation
+						isHidden={ ! has( lastName, 'error' ) || null === lastName.error }
+						isError={ has( lastName, 'error' ) && null !== lastName.error }
+						text={ lastName.error || '\u00A0' }
+					/>
 				</FormFieldset>
 			</Fragment>
 		);
@@ -249,7 +252,7 @@ class AddEmailAddressesCard extends React.Component {
 						isError={ isError }
 					/>
 				</div>
-				{ isError && <FormInputValidation isError text={ errorMessage } /> }
+				<FormInputValidation isHidden={ ! isError } isError={ true } text={ errorMessage } />
 			</div>
 		);
 	}
