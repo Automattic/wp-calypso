@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey, includes } from 'lodash';
+import { invoke, noop, includes } from 'lodash';
 import classNames from 'classnames';
 
 /**
