@@ -90,7 +90,7 @@ class DatePicker extends PureComponent {
 	}
 
 	getLocaleUtils() {
-		const { moment, localUtils } = this.props;
+		const { moment, localeUtils } = this.props;
 		const localeData = moment().localeData();
 		const firstDayOfWeek = localeData.firstDayOfWeek();
 		const weekdaysMin = moment.weekdaysMin();
@@ -121,7 +121,7 @@ class DatePicker extends PureComponent {
 			},
 		};
 
-		return merge( {}, utils, localUtils );
+		return merge( {}, utils, localeUtils );
 	}
 
 	setCalendarDay = ( day, modifiers ) => {
