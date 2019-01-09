@@ -122,4 +122,12 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
+	domainsUseSecondaryButtons: {
+		datestamp: '20190109',
+		variations: {
+			secondaryButtons: 50,
+			original: 50,
+		},
+		defaultVariation: 'original',
+	},
 };

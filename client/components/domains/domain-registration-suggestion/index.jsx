@@ -14,6 +14,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import {
 	shouldBundleDomainWithPlan,
@@ -98,6 +99,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		const {
 			cart,
 			domainsWithPlansOnly,
+			isFeatured,
 			isSignupStep,
 			selectedSite,
 			suggestion,
@@ -107,7 +109,6 @@ class DomainRegistrationSuggestion extends React.Component {
 		const isAdded = hasDomainInCart( cart, domain );
 
 		let buttonContent;
-
 		if ( isAdded ) {
 			buttonContent = <Gridicon icon="checkmark" />;
 		} else {
@@ -118,6 +119,15 @@ class DomainRegistrationSuggestion extends React.Component {
 							context: 'Domain mapping suggestion button with plan upgrade',
 					  } )
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
+		}
+
+		if ( abtest( 'domainsUseSecondaryButtons' ) === 'secondaryButtons' ) {
+			return {
+				buttonContent,
+				buttonProps: {
+					primary: isFeatured,
+				},
+			};
 		}
 		return {
 			buttonContent,
