@@ -170,7 +170,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 .chart__bar-section {
 	display: inline-block;
-	background-color: var( --color-primary );
+	background-color: var( --color-primary-400 );
 	position: absolute;
 	top: 0; // 2
 	right: 16%; // 1
@@ -183,7 +183,7 @@ $y-axis-padding: 0 20px 0 10px;
 	}
 
 	.chart__bar.is-selected &.is-bar {
-		background-color: var( --color-accent );
+		background-color: var( --color-accent-400 );
 	}
 
 	&.is-spacer {
@@ -214,7 +214,7 @@ $y-axis-padding: 0 20px 0 10px;
 }
 
 .chart__bar-section-inner {
-	background: darken( $blue-dark, 5% );
+	background: var( --color-primary-dark );
 	position: absolute;
 	right: 23.33%;
 	bottom: 0;
