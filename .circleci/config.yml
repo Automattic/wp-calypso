@@ -108,8 +108,8 @@ references:
   restore-npm-cache: &restore-npm-cache
     name: "Restore npm cache"
     keys:
-      - v1-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-      - v1-npm-modules-{{ checksum ".nvmrc" }}
+      - v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+      - v3-npm-modules-{{ checksum ".nvmrc" }}
 
   npm-install: &npm-install
     name: Install npm dependencies
@@ -117,7 +117,7 @@ references:
 
   save-npm-cache: &save-npm-cache
     name: "Save node_modules cache"
-    key: v1-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+    key: v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
     paths:
       - ~/.npm
 
