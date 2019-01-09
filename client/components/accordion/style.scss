@@ -182,7 +182,7 @@ $accordion-background-expanded: $white;
 		color: var( --color-warning );
 
 		&:hover {
-			color: lighten( $alert-yellow, 5% );
+			color: var( --color-warning-light );
 		}
 	}
 
