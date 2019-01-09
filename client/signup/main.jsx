@@ -630,6 +630,7 @@ class Signup extends React.Component {
 			'site-style',
 			'site-topic',
 			'about',
+			'site-information',
 			'site-information-title',
 			'site-information-address',
 			'site-information-phone',

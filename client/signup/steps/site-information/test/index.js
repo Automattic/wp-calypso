@@ -22,16 +22,14 @@ jest.mock( 'lib/signup/actions', () => ( {
 
 describe( '<SiteInformation />', () => {
 	const defaultProps = {
-		siteInformationValue: 'Ho ho ho!',
 		siteType: 'business',
 		submitStep: jest.fn(),
 		updateStep: jest.fn(),
 		informationType: 'title',
 		translate: x => x,
-		headerText: 'a',
-		fieldLabel: 'b',
-		fieldDescription: 'c',
-		fieldPlaceholder: 'd',
+		siteInformation: { title: 'Ho ho ho!' },
+		headerText: 'headerTextoidaliciously',
+		informationFields: [ 'title' ],
 	};
 
 	afterEach( () => {
@@ -44,12 +42,15 @@ describe( '<SiteInformation />', () => {
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
-	test( 'should update field attributes based on the informationType', () => {
-		const wrapper = shallow( <SiteInformation { ...defaultProps } informationType="email" /> );
+	test( 'should update field attributes based on the informationFields array values', () => {
+		const wrapper = shallow(
+			<SiteInformation { ...defaultProps } informationFields={ [ 'phone', 'address' ] } />
+		);
 		const siteInformationContent = shallow( wrapper.instance().renderContent() );
-		const formInput = siteInformationContent.find( 'FormTextInput' );
-		expect( formInput.props().id ).toEqual( 'email' );
-		expect( formInput.props().name ).toEqual( 'email' );
+		const inputFields = siteInformationContent.find( 'FormTextInput' );
+		expect( inputFields ).toHaveLength( 2 );
+		expect( inputFields.get( 0 ).props.name ).toEqual( 'phone' );
+		expect( inputFields.get( 1 ).props.name ).toEqual( 'address' );
 	} );
 
 	test( 'should call `submitStep()` from `handleSubmit()`', () => {
@@ -57,14 +58,14 @@ describe( '<SiteInformation />', () => {
 		wrapper.instance().handleSubmit( {
 			preventDefault: () => {},
 		} );
-		expect( defaultProps.submitStep ).toHaveBeenCalledWith( defaultProps.siteInformationValue );
+		expect( defaultProps.submitStep ).toHaveBeenCalledWith( defaultProps.siteInformation );
 	} );
 
 	test( 'should call `updateStep()` from `handleInputChange()`', () => {
 		const wrapper = shallow( <SiteInformation { ...defaultProps } /> );
 		wrapper.instance().handleInputChange( {
-			currentTarget: { value: 'Tada!!!' },
+			currentTarget: { name: 'title', value: 'Tada!!!' },
 		} );
-		expect( defaultProps.updateStep ).toHaveBeenCalledWith( 'Tada!!!' );
+		expect( defaultProps.updateStep ).toHaveBeenCalledWith( 'title', 'Tada!!!' );
 	} );
 } );

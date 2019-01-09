@@ -1,17 +1,22 @@
 .site-information__wrapper {
 	position: relative;
+
+	.button {
+		margin: 0 auto;
+		display: block;
+		width: 200px;
+	}
 }
 
-.site-information__form-wrapper {
-	max-width: 600px;
-	margin: 0 auto;
+.site-information__field-control {
+	max-width: 450px;
+	margin: 0 auto 20px;
 	filter: blur( 0 );
 	transform: translateZ( 0 ) translateX( 0 );
 	transition: 500ms ease-in-out opacity, 500ms ease-in-out filter, 500ms ease-in-out transform;
 
-	&.site-information__email,
-	&.site-information__phone {
-		max-width: 500px;
+	&:last-child {
+		margin: 0 auto;
 	}
 
 	.form-fieldset {
@@ -26,6 +31,17 @@
 		position: absolute;
 		bottom: 3px;
 		right: 3px;
+		width: auto;
+	}
+}
+
+.site-information__wrapper:not( .has-multiple-fieldsets ) {
+	.site-information__field-control {
+		margin: 0 auto;
+	}
+	.site-information__email,
+	.site-information__phone {
+		max-width: 400px;
 	}
 }
 

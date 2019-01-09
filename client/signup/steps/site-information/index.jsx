@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
-import { get, trim } from 'lodash';
+import { each, reduce, trim, size } from 'lodash';
 
 /**
  * Internal dependencies
@@ -45,8 +45,15 @@ export class SiteInformation extends Component {
 		fieldDescription: PropTypes.string,
 		fieldPlaceholder: PropTypes.string,
 		siteInformationValue: PropTypes.string,
-		informationType: PropTypes.oneOf( [ 'title', 'address', 'phone' ] ),
+		siteInformationFields: PropTypes.arrayOf(
+			PropTypes.shape( {
+				title: PropTypes.string,
+				address: PropTypes.string,
+				phone: PropTypes.string,
+			} )
+		).isRequired,
 		translate: PropTypes.func.isRequired,
+		hasMultipleFieldSets: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -54,8 +61,20 @@ export class SiteInformation extends Component {
 		fieldLabel: '',
 		fieldDescription: '',
 		fieldPlaceholder: '',
-		siteInformationValue: '',
+		siteInformationFields: [],
 	};
+
+	constructor( props ) {
+		super( props );
+		this.state = reduce(
+			props.informationFields,
+			( result, fieldName ) => {
+				result[ fieldName ] = props.siteInformation[ fieldName ] || '';
+				return result;
+			},
+			{}
+		);
+	}
 
 	componentDidMount() {
 		SignupActions.saveSignupStep( {
@@ -63,74 +82,91 @@ export class SiteInformation extends Component {
 		} );
 	}
 
-	handleInputChange = event => this.props.updateStep( event.currentTarget.value );
+	handleInputChange = ( { currentTarget: { name = '', value = '' } } ) =>
+		this.setState( { [ name ]: value }, () => this.props.updateStep( name, value ) );
 
 	handleSubmit = event => {
 		event.preventDefault();
-		this.props.submitStep( this.props.siteInformationValue );
+		this.props.submitStep( this.props.siteInformation );
 	};
 
-	getFieldTexts() {
-		const {
-			fieldLabel,
-			fieldDescription,
-			fieldPlaceholder,
-			informationType,
-			siteType,
-		} = this.props;
-		return {
-			fieldLabel:
-				'title' === informationType
-					? getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' ) || ''
-					: fieldLabel,
-			fieldPlaceholder:
-				'title' === informationType
-					? getSiteTypePropertyValue( 'slug', siteType, 'siteTitlePlaceholder' ) || ''
-					: fieldPlaceholder,
-			fieldDescription,
-		};
+	getFieldTexts( informationType ) {
+		const { translate, siteType } = this.props;
+		switch ( informationType ) {
+			case 'address':
+				return {
+					fieldLabel: translate( 'Address' ),
+					fieldDescription: translate( 'Where can people find your business?' ),
+					fieldPlaceholder: 'E.g., 60 29th Street #343, San Francisco, CA 94110',
+				};
+			case 'phone':
+				return {
+					fieldLabel: translate( 'Phone number' ),
+					fieldDescription: translate( 'How can people contact you?' ),
+					fieldPlaceholder: translate( 'E.g. (555) 555-5555' ),
+				};
+			case 'title':
+				return {
+					fieldLabel: getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' ) || '',
+					fieldPlaceholder:
+						getSiteTypePropertyValue( 'slug', siteType, 'siteTitlePlaceholder' ) || '',
+					fieldDescription: translate(
+						"We'll use this as your site title. Don't worry, you can change this later."
+					),
+				};
+		}
 	}
 
-	renderContent() {
-		const { translate, informationType, siteInformationValue } = this.props;
-		const { fieldLabel, fieldPlaceholder, fieldDescription } = this.getFieldTexts();
+	renderSubmitButton = () => (
+		<Button primary type="submit" onClick={ this.handleSubmit }>
+			{ this.props.translate( 'Continue' ) }
+		</Button>
+	);
 
+	renderContent() {
+		const { hasMultipleFieldSets, informationFields } = this.props;
 		return (
-			<div className="site-information__wrapper">
-				<div
-					className={ classNames(
-						'site-information__form-wrapper',
-						`site-information__${ informationType }`
-					) }
-				>
-					<form>
-						<FormFieldset>
-							<FormLabel htmlFor={ informationType }>
-								{ fieldLabel }
-								<InfoPopover className="site-information__info-popover" position="top">
-									{ fieldDescription }
-								</InfoPopover>
-							</FormLabel>
-							<FormTextInput
-								id={ informationType }
-								name={ informationType }
-								placeholder={ fieldPlaceholder }
-								onChange={ this.handleInputChange }
-								value={ siteInformationValue }
-							/>
-							<Button primary type="submit" onClick={ this.handleSubmit }>
-								{ translate( 'Continue' ) }
-							</Button>
-						</FormFieldset>
-					</form>
-				</div>
+			<div
+				className={ classNames( 'site-information__wrapper', {
+					'has-multiple-fieldsets': hasMultipleFieldSets,
+				} ) }
+			>
+				<form>
+					{ informationFields.map( fieldName => {
+						const fieldTexts = this.getFieldTexts( fieldName );
+						const fieldIdentifier = `site-information__${ fieldName }`;
+						return (
+							<div
+								key={ fieldIdentifier }
+								className={ classNames( 'site-information__field-control', fieldIdentifier ) }
+							>
+								<FormFieldset>
+									<FormLabel htmlFor={ fieldName }>
+										{ fieldTexts.fieldLabel }
+										<InfoPopover className="site-information__info-popover" position="top">
+											{ fieldTexts.fieldDescription }
+										</InfoPopover>
+									</FormLabel>
+									<FormTextInput
+										id={ fieldName }
+										name={ fieldName }
+										placeholder={ fieldTexts.fieldPlaceholder }
+										onChange={ this.handleInputChange }
+										value={ this.state[ fieldName ] }
+									/>
+									{ ! hasMultipleFieldSets && this.renderSubmitButton() }
+								</FormFieldset>
+							</div>
+						);
+					} ) }
+					{ hasMultipleFieldSets && this.renderSubmitButton() }
+				</form>
 			</div>
 		);
 	}
 
 	render() {
-		const { flowName, positionInFlow, signupProgress, stepName, headerText } = this.props;
-
+		const { flowName, headerText, positionInFlow, signupProgress, stepName } = this.props;
 		return (
 			<StepWrapper
 				flowName={ flowName }
@@ -147,18 +183,22 @@ export class SiteInformation extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		siteInformationValue: get( getSiteInformation( state ), ownProps.informationType, '' ),
+		siteInformation: getSiteInformation( state ),
 		siteType: getSiteType( state ),
+		hasMultipleFieldSets: size( ownProps.informationFields ) > 1,
 	} ),
 	( dispatch, ownProps ) => {
 		return {
-			submitStep: siteInformationValue => {
-				siteInformationValue = trim( siteInformationValue );
-				dispatch( setSiteInformation( { [ ownProps.informationType ]: siteInformationValue } ) );
+			submitStep: siteInformation => {
+				const submitData = {};
+				const tracksEventData = {};
+				each( ownProps.informationFields, key => {
+					submitData[ key ] = trim( siteInformation[ key ] );
+					tracksEventData[ `user_entered_${ key }` ] = !! siteInformation[ key ];
+				} );
+				dispatch( setSiteInformation( submitData ) );
 				dispatch(
-					recordTracksEvent( 'calypso_signup_actions_submit_site_information', {
-						[ `user_entered_${ ownProps.informationType }` ]: !! siteInformationValue,
-					} )
+					recordTracksEvent( 'calypso_signup_actions_submit_site_information', tracksEventData )
 				);
 
 				// Create site
@@ -169,14 +209,11 @@ export default connect(
 						flowName: ownProps.flowName,
 					},
 					[],
-					{
-						[ ownProps.informationType ]: siteInformationValue,
-					}
+					submitData
 				);
 				ownProps.goToNextStep( ownProps.flowName );
 			},
-			updateStep: siteInformationValue =>
-				dispatch( setSiteInformation( { [ ownProps.informationType ]: siteInformationValue } ) ),
+			updateStep: ( name, value ) => dispatch( setSiteInformation( { [ name ]: value } ) ),
 		};
 	}
 )( localize( SiteInformation ) );

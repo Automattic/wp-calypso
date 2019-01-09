@@ -2,16 +2,16 @@
 
 exports[`<SiteInformation /> should render 1`] = `
 <Localized(StepWrapper)
-  fallbackHeaderText="a"
-  headerText="a"
+  fallbackHeaderText="headerTextoidaliciously"
+  headerText="headerTextoidaliciously"
   stepContent={
     <div
       className="site-information__wrapper"
     >
-      <div
-        className="site-information__form-wrapper site-information__title"
-      >
-        <form>
+      <form>
+        <div
+          className="site-information__field-control site-information__title"
+        >
           <FormFieldset>
             <Localized(FormLabel)
               htmlFor="title"
@@ -24,7 +24,7 @@ exports[`<SiteInformation /> should render 1`] = `
                 iconSize={18}
                 position="top"
               >
-                c
+                We'll use this as your site title. Don't worry, you can change this later.
               </InfoPopover>
             </Localized(FormLabel)>
             <FormTextInput
@@ -39,11 +39,12 @@ exports[`<SiteInformation /> should render 1`] = `
               primary={true}
               type="submit"
             >
+               
               Continue
             </Button>
           </FormFieldset>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   }
 />

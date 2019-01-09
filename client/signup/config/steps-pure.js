@@ -383,39 +383,39 @@ export function generateSteps( {
 			providesDependencies: [ 'siteTopic' ],
 		},
 
-		'site-information-title': {
+		'site-information': {
 			stepName: 'site-information',
+			providesDependencies: [ 'title', 'address', 'phone' ],
+			props: {
+				headerText: i18n.translate( 'Help customers find you' ),
+				informationFields: [ 'title', 'address', 'phone' ],
+			},
+		},
+
+		'site-information-title': {
+			stepName: 'site-information-title',
 			providesDependencies: [ 'title' ],
 			props: {
 				headerText: i18n.translate( "What's your business name?" ),
-				informationType: 'title',
-				fieldDescription: i18n.translate(
-					"We'll use this as your site title. Don't worry, you can change this later."
-				),
+				informationFields: [ 'title' ],
 			},
 		},
 
 		'site-information-address': {
-			stepName: 'site-information',
+			stepName: 'site-information-address',
 			providesDependencies: [ 'address' ],
 			props: {
 				headerText: i18n.translate( 'Help customers find you' ),
-				fieldLabel: i18n.translate( 'Address' ),
-				fieldDescription: i18n.translate( 'Where can people find your business?' ),
-				fieldPlaceholder: 'E.g., 60 29th Street #343, San Francisco, CA 94110',
-				informationType: 'address',
+				informationFields: [ 'address' ],
 			},
 		},
 
 		'site-information-phone': {
-			stepName: 'site-information',
+			stepName: 'site-information-phone',
 			providesDependencies: [ 'phone' ],
 			props: {
 				headerText: i18n.translate( 'Let customers get in touch' ),
-				fieldLabel: i18n.translate( 'Phone number' ),
-				fieldDescription: i18n.translate( 'How can people contact you?' ),
-				fieldPlaceholder: i18n.translate( 'E.g. (555) 555-5555' ),
-				informationType: 'phone',
+				informationFields: [ 'phone' ],
 			},
 		},
 
