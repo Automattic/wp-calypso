@@ -29,6 +29,8 @@ const isDevelopment = bundleEnv === 'development';
 
 const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
 
+const workerCount = +process.env.WORKERS || Math.max( 2, Math.floor( os.cpus().length / 2 ) );
+
 /**
  * This lists modules that must use commonJS `require()`s
  * All modules listed here need to be ES5.
@@ -107,7 +109,9 @@ const webpackConfig = {
 				use: [
 					{
 						loader: 'thread-loader',
-						options: { workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ) },
+						options: {
+							workers: workerCount,
+						},
 					},
 					babelLoader,
 				],

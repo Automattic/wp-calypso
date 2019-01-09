@@ -41,6 +41,8 @@ const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 
+const workerCount = +process.env.WORKERS || Math.max( 2, Math.floor( os.cpus().length / 2 ) );
+
 /*
  * Create reporter for ProgressPlugin (used with EMIT_STATS)
  */
@@ -201,7 +203,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					cache: process.env.CIRCLECI
 						? `${ process.env.HOME }/terser-cache`
 						: 'docker' !== process.env.CONTAINER,
-					parallel: process.env.CIRCLECI ? 2 : true,
+					parallel: process.env.CIRCLECI ? 2 : workerCount,
 					sourceMap: Boolean( process.env.SOURCEMAP ),
 					terserOptions: {
 						ecma: 5,
@@ -222,7 +224,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						{
 							loader: 'thread-loader',
 							options: {
-								workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ),
+								workers: process.env.CIRCLECI ? 2 : workerCount,
 							},
 						},
 						{
