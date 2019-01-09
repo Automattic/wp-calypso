@@ -21609,9 +21609,9 @@
 			"integrity": "sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg=="
 		},
 		"webpack": {
-			"version": "4.26.1",
-			"resolved": "https://registry.npmjs.org/webpack/-/webpack-4.26.1.tgz",
-			"integrity": "sha512-i2oOvEvuvLLSuSCkdVrknaxAhtUZ9g+nLSoHCWV0gDzqGX2DXaCrMmMUpbRsTSSLrUqAI56PoEiyMUZIZ1msug==",
+			"version": "4.28.1",
+			"resolved": "https://registry.npmjs.org/webpack/-/webpack-4.28.1.tgz",
+			"integrity": "sha512-qAS7BFyS5iuOZzGJxyDXmEI289h7tVNtJ5XMxf6Tz55J2riOyH42uaEsWF0F32TRaI+54SmI6qRgHM3GzsZ+sQ==",
 			"requires": {
 				"@webassemblyjs/ast": "1.7.11",
 				"@webassemblyjs/helper-module-context": "1.7.11",
