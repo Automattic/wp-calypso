@@ -77,14 +77,6 @@ describe( 'SeoForm basic tests', () => {
 		expect( comp.find( 'Notice' ) ).toHaveLength( 0 );
 	} );
 
-	test( 'should render Jetpack unsupported notice when is jetpack site and does not support seo', () => {
-		const comp = shallow(
-			<SeoForm { ...props } siteIsJetpack={ true } jetpackVersionSupportsSeo={ false } />
-		);
-		expect( comp.find( 'Notice' ) ).toHaveLength( 1 );
-		expect( comp.find( 'Notice' ).props().text ).toContain( 'require a newer version of Jetpack' );
-	} );
-
 	test( 'should not render Jetpack unsupported notice when is not jetpack site or supports seo', () => {
 		const comp = shallow( <SeoForm { ...props } /> );
 		expect( comp.find( 'Notice' ) ).toHaveLength( 0 );
