@@ -60,43 +60,25 @@ class PostSchedule extends Component {
 		calendarViewDate: moment( this.props.selectedDay ? this.props.selectedDay : new Date() ),
 		tooltipContext: null,
 		showTooltip: false,
-		selectedDay: this.props.selectedDay,
+		localizedDate: null,
+		isFutureDate: false,
 	};
-
-	componentDidMount() {
-		if ( ! this.props.selectedDay ) {
-			return this.setState( {
-				localizedDate: null,
-				isFutureDate: false,
-			} );
-		}
-
-		const localizedDate = this.getDateToUserLocation( this.props.selectedDay );
-		this.setState( {
-			localizedDate,
-			isFutureDate: localizedDate.isAfter(),
-		} );
-	}
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
 		if ( prevState.selectedDay !== nextProps.selectedDay ) {
-			return { selectedDay: nextProps.selectedDay };
+			if ( ! nextProps.selectedDay ) {
+				return {
+					localizedDate: null,
+					isFutureDate: false,
+				};
+			}
+			const localizedDate = PostSchedule.getDateToUserLocation( nextProps.selectedDay, nextProps );
+			return {
+				localizedDate,
+				isFutureDate: localizedDate.isAfter(),
+			};
 		}
 		return null;
-	}
-
-	componentDidUpdate( prevProps, prevState ) {
-		if ( prevState.selectedDay === this.state.selectedDay ) {
-			return;
-		}
-
-		if ( ! this.state.selectedDay ) {
-			this.setState( { localizedDate: null } );
-		} else {
-			this.setState( {
-				localizedDate: this.getDateToUserLocation( this.state.selectedDay ),
-			} );
-		}
 	}
 
 	getLocaleUtils() {
@@ -113,7 +95,7 @@ class PostSchedule extends Component {
 
 	getEventsFromPosts( postsList = [] ) {
 		return postsList.map( post => {
-			const localDate = this.getDateToUserLocation( post.date );
+			const localDate = PostSchedule.getDateToUserLocation( post.date );
 
 			return {
 				id: post.ID,
@@ -123,12 +105,9 @@ class PostSchedule extends Component {
 		} );
 	}
 
-	getDateToUserLocation( date ) {
-		return convertDateToUserLocation(
-			date || new Date(),
-			this.props.timezone,
-			this.props.gmtOffset
-		);
+	static getDateToUserLocation( date, nextProps ) {
+		const props = nextProps || this.props;
+		return convertDateToUserLocation( date || new Date(), props.timezone, props.gmtOffset );
 	}
 
 	setCurrentMonth = date => {
@@ -142,7 +121,7 @@ class PostSchedule extends Component {
 	};
 
 	getCurrentDate() {
-		return moment( this.state.localizedDate || this.getDateToUserLocation() );
+		return moment( this.state.localizedDate || PostSchedule.getDateToUserLocation() );
 	}
 
 	updateDate = date => {
@@ -222,7 +201,7 @@ class PostSchedule extends Component {
 		let date = this.state.localizedDate;
 
 		if ( ! date ) {
-			date = this.getDateToUserLocation( new Date() );
+			date = PostSchedule.getDateToUserLocation( new Date() );
 		}
 
 		return (
