@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import DayPicker from 'react-day-picker';
-import { noop, map, filter, get } from 'lodash';
+import { noop, map, filter, get, merge } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
