@@ -2,28 +2,24 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import createReactClass from 'create-react-class';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
 import Button from 'components/button';
+import { CALYPSO_CONTACT } from 'lib/url/support';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { deleteEmailForwarding, resendVerificationEmailForwarding } from 'lib/upgrades/actions';
 import notices from 'notices';
 import { successNotice } from 'state/notices/actions';
-import { CALYPSO_CONTACT } from 'lib/url/support';
-import { deleteEmailForwarding, resendVerificationEmailForwarding } from 'lib/upgrades/actions';
 
-const EmailForwardingItem = createReactClass( {
-	displayName: 'EmailForwardingItem',
-	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
-
-	deleteItem: function() {
+class EmailForwardingItem extends React.Component {
+	deleteItem = () => {
 		const { temporary, domain, mailbox, forward_address, email } = this.props.emailData;
 
 		if ( temporary ) {
@@ -31,7 +27,7 @@ const EmailForwardingItem = createReactClass( {
 		}
 
 		deleteEmailForwarding( domain, mailbox, error => {
-			this.recordEvent( 'deleteClick', domain, mailbox, forward_address, ! error );
+			this.props.recordDeleteClick( domain, mailbox, forward_address, ! error );
 
 			if ( error ) {
 				notices.error(
@@ -61,17 +57,17 @@ const EmailForwardingItem = createReactClass( {
 				);
 			}
 		} );
-	},
+	};
 
-	resendVerificationEmail: function() {
-		const { temporary, domain, mailbox, forward_address } = this.props.emailData;
+	resendVerificationEmail = () => {
+		const { domain, forward_address, mailbox, temporary } = this.props.emailData;
 
 		if ( temporary ) {
 			return;
 		}
 
 		resendVerificationEmailForwarding( domain, mailbox, ( error, response ) => {
-			this.recordEvent( 'resendVerificationClick', domain, mailbox, forward_address, ! error );
+			this.props.recordResendVerificationClick( domain, mailbox, forward_address, ! error );
 
 			if ( error || ! response.sent ) {
 				notices.error(
@@ -97,9 +93,9 @@ const EmailForwardingItem = createReactClass( {
 				);
 			}
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<li>
 				<Button borderless disabled={ this.props.emailData.temporary } onClick={ this.deleteItem }>
@@ -137,10 +133,58 @@ const EmailForwardingItem = createReactClass( {
 				</span>
 			</li>
 		);
-	},
-} );
+	}
+}
+
+const recordDeleteClick = ( domainName, mailbox, destination, success ) =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked delete Button in Email Forwarding',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent( 'calypso_domain_management_email_forwarding_delete_click', {
+			destination,
+			domain_name: domainName,
+			mailbox,
+			success,
+		} )
+	);
+
+const recordResendVerificationClick = ( domainName, mailbox, destination, success ) =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked resend verification email Button in Email Forwarding',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent(
+			'calypso_domain_management_email_forwarding_resend_verification_email_click',
+			{
+				destination,
+				domain_name: domainName,
+				mailbox,
+				success,
+			}
+		)
+	);
+
+EmailForwardingItem.propTypes = {
+	recordDeleteClick: PropTypes.func.isRequired,
+	emailData: PropTypes.shape( {
+		domain: PropTypes.string.isRequired,
+		forward_address: PropTypes.string.isRequired,
+		mailbox: PropTypes.string.isRequired,
+		temporary: PropTypes.bool,
+	} ),
+	recordResendVerificationClick: PropTypes.func.isRequired,
+	successNotice: PropTypes.func.isRequired,
+	translate: PropTypes.func.isRequired,
+};
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { successNotice }, dispatch )
+	{ recordDeleteClick, recordResendVerificationClick, successNotice }
 )( localize( EmailForwardingItem ) );

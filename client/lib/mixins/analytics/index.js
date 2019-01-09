@@ -95,41 +95,6 @@ const EVENTS = {
 				} );
 			},
 
-			deleteClick( domainName, mailbox, destination, success ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked delete Button in Email Forwarding',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_email_forwarding_delete_click', {
-					destination,
-					domain_name: domainName,
-					mailbox,
-					success,
-				} );
-			},
-
-			resendVerificationClick( domainName, mailbox, destination, success ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked resend verification email Button in Email Forwarding',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_email_forwarding_resend_verification_email_click',
-					{
-						destination,
-						domain_name: domainName,
-						mailbox,
-						success,
-					}
-				);
-			},
-
 			inputFocus( domainName, fieldName ) {
 				analytics.ga.recordEvent(
 					'Domain Management',
