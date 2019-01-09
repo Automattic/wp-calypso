@@ -6255,6 +6255,11 @@
 			"resolved": "https://registry.npmjs.org/destroy/-/destroy-1.0.4.tgz",
 			"integrity": "sha1-l4hXRCxEdJ5CBmE+N5RiBYJqvYA="
 		},
+		"detect-file": {
+			"version": "1.0.0",
+			"resolved": "https://registry.npmjs.org/detect-file/-/detect-file-1.0.0.tgz",
+			"integrity": "sha1-8NZtA2cqglyxtzvbP+YjEMjlUrc="
+		},
 		"detect-indent": {
 			"version": "5.0.0",
 			"resolved": "https://registry.npmjs.org/detect-indent/-/detect-indent-5.0.0.tgz",
@@ -7394,7 +7399,6 @@
 			"version": "2.0.2",
 			"resolved": "https://registry.npmjs.org/expand-tilde/-/expand-tilde-2.0.2.tgz",
 			"integrity": "sha1-l+gBqgUt8CRU3kawK/YhZCzchQI=",
-			"dev": true,
 			"requires": {
 				"homedir-polyfill": "^1.0.1"
 			}
@@ -7824,6 +7828,27 @@
 					"version": "2.1.0",
 					"resolved": "https://registry.npmjs.org/commander/-/commander-2.1.0.tgz",
 					"integrity": "sha1-0SG7roYNmZKj1Re6lvVliOR8Z4E="
+				}
+			}
+		},
+		"findup-sync": {
+			"version": "2.0.0",
+			"resolved": "https://registry.npmjs.org/findup-sync/-/findup-sync-2.0.0.tgz",
+			"integrity": "sha1-kyaxSIwi0aYIhlCoaQGy2akKLLw=",
+			"requires": {
+				"detect-file": "^1.0.0",
+				"is-glob": "^3.1.0",
+				"micromatch": "^3.0.4",
+				"resolve-dir": "^1.0.1"
+			},
+			"dependencies": {
+				"is-glob": {
+					"version": "3.1.0",
+					"resolved": "https://registry.npmjs.org/is-glob/-/is-glob-3.1.0.tgz",
+					"integrity": "sha1-e6WuJCF4BKxwcHuWkiVnSGzD6Eo=",
+					"requires": {
+						"is-extglob": "^2.1.0"
+					}
 				}
 			}
 		},
@@ -8523,7 +8548,6 @@
 			"version": "1.0.0",
 			"resolved": "https://registry.npmjs.org/global-modules/-/global-modules-1.0.0.tgz",
 			"integrity": "sha512-sKzpEkf11GpOFuw0Zzjzmt4B4UZwjOcG757PPvrfhxcLFbq0wpsgpOqxpxtxFiCG4DtG93M6XRVbF2oGdev7bg==",
-			"dev": true,
 			"requires": {
 				"global-prefix": "^1.0.1",
 				"is-windows": "^1.0.1",
@@ -8539,7 +8563,6 @@
 			"version": "1.0.2",
 			"resolved": "https://registry.npmjs.org/global-prefix/-/global-prefix-1.0.2.tgz",
 			"integrity": "sha1-2/dDxsFJklk8ZVVoy2btMsASLr4=",
-			"dev": true,
 			"requires": {
 				"expand-tilde": "^2.0.2",
 				"homedir-polyfill": "^1.0.1",
@@ -8824,7 +8847,6 @@
 			"version": "1.0.1",
 			"resolved": "https://registry.npmjs.org/homedir-polyfill/-/homedir-polyfill-1.0.1.tgz",
 			"integrity": "sha1-TCu8inWJmP7r9e1oWA921GdotLw=",
-			"dev": true,
 			"requires": {
 				"parse-passwd": "^1.0.0"
 			}
@@ -11746,6 +11768,11 @@
 				"immediate": "~3.0.5"
 			}
 		},
+		"lightercollective": {
+			"version": "0.1.0",
+			"resolved": "https://registry.npmjs.org/lightercollective/-/lightercollective-0.1.0.tgz",
+			"integrity": "sha512-J9tg5uraYoQKaWbmrzDDexbG6hHnMcWS1qLYgJSWE+mpA3U5OCSeMUhb+K55otgZJ34oFdR0ECvdIb3xuO5JOQ=="
+		},
 		"line-height": {
 			"version": "0.3.1",
 			"resolved": "https://registry.npmjs.org/line-height/-/line-height-0.3.1.tgz",
@@ -14316,8 +14343,7 @@
 		"parse-passwd": {
 			"version": "1.0.0",
 			"resolved": "https://registry.npmjs.org/parse-passwd/-/parse-passwd-1.0.0.tgz",
-			"integrity": "sha1-bVuTSkVpk7I9N/QKOC1vFmao5cY=",
-			"dev": true
+			"integrity": "sha1-bVuTSkVpk7I9N/QKOC1vFmao5cY="
 		},
 		"parse-year": {
 			"version": "1.0.0",
@@ -18091,7 +18117,6 @@
 			"version": "1.0.1",
 			"resolved": "https://registry.npmjs.org/resolve-dir/-/resolve-dir-1.0.1.tgz",
 			"integrity": "sha1-eaQGRMNivoLybv/nOcm7U4IEb0M=",
-			"dev": true,
 			"requires": {
 				"expand-tilde": "^2.0.0",
 				"global-modules": "^1.0.0"
@@ -21670,20 +21695,23 @@
 			}
 		},
 		"webpack-cli": {
-			"version": "3.1.2",
-			"resolved": "https://registry.npmjs.org/webpack-cli/-/webpack-cli-3.1.2.tgz",
-			"integrity": "sha512-Cnqo7CeqeSvC6PTdts+dywNi5CRlIPbLx1AoUPK2T6vC1YAugMG3IOoO9DmEscd+Dghw7uRlnzV1KwOe5IrtgQ==",
+			"version": "3.2.1",
+			"resolved": "https://registry.npmjs.org/webpack-cli/-/webpack-cli-3.2.1.tgz",
+			"integrity": "sha512-jeJveHwz/vwpJ3B8bxEL5a/rVKIpRNJDsKggfKnxuYeohNDW4Y/wB9N/XHJA093qZyS0r6mYL+/crLsIol4WKA==",
 			"requires": {
 				"chalk": "^2.4.1",
 				"cross-spawn": "^6.0.5",
 				"enhanced-resolve": "^4.1.0",
+				"findup-sync": "^2.0.0",
+				"global-modules": "^1.0.0",
 				"global-modules-path": "^2.3.0",
 				"import-local": "^2.0.0",
 				"interpret": "^1.1.0",
+				"lightercollective": "^0.1.0",
 				"loader-utils": "^1.1.0",
 				"supports-color": "^5.5.0",
 				"v8-compile-cache": "^2.0.2",
-				"yargs": "^12.0.2"
+				"yargs": "^12.0.4"
 			},
 			"dependencies": {
 				"cross-spawn": {
