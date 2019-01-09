@@ -157,7 +157,7 @@ export default connect(
 				dispatch( setSiteInformation( { [ ownProps.informationType ]: siteInformationValue } ) );
 				dispatch(
 					recordTracksEvent( 'calypso_signup_actions_submit_site_information', {
-						[ `site_${ ownProps.informationType }` ]: siteInformationValue || 'N/A',
+						[ `user_entered_${ ownProps.informationType }` ]: !! siteInformationValue,
 					} )
 				);
 
