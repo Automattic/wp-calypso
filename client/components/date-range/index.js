@@ -23,18 +23,13 @@ export class DateRange extends Component {
 	static propTypes = {
 		onDateSelect: PropTypes.func,
 		onDateCommit: PropTypes.func,
-		disabledDays: PropTypes.oneOfType( [
-			// http://react-day-picker.js.org/api/DayPicker/#disabledDays
-			PropTypes.object,
-			PropTypes.array,
-			PropTypes.func,
-		] ),
+		disabledDays: PropTypes.string,
 	};
 
 	static defaultProps = {
 		onDateSelect: noop,
 		onDateCommit: noop,
-		disabledDays: {},
+		disabledDays: '',
 	};
 
 	constructor( props ) {
@@ -117,19 +112,33 @@ export class DateRange extends Component {
 	}
 
 	/**
-	 * Ensure dates are
-	 * i) valid
-	 * ii) after 01/01/1970 (avoids bugs when really stale dates are treated as valid)
-	 * iii) before today (don't allow inputs to select dates that calendar is not allowed to show)
+	 * Ensure dates are valid according to standard rules
+	 * and special configuration component config props
 	 *
 	 * @param  {moment}  date MomentJS date object
 	 * @return {Boolean}      whether date is considered valid or not
 	 */
 	isValidDate( date ) {
+		const { disabledDays } = this.props;
 		const today = this.props.moment();
 		const epoch = this.props.moment( '01/01/1970', this.getLocaleDateFormat() );
 
-		return date.isValid() && date.isSameOrAfter( epoch ) && date.isSameOrBefore( today );
+		// By default check
+		// 1. Looks like a valid date
+		// 2. after 01/01/1970 (avoids bugs when really stale dates are treated as valid)
+		let validations = date.isValid() && date.isSameOrAfter( epoch );
+
+		// Checks for disabling of future days and validates
+		if ( disabledDays === 'disableFutureDates' ) {
+			validations = validations && date.isSameOrBefore( today );
+		}
+
+		// Checks for disabling of past days and validates
+		if ( disabledDays === 'disablePastDates' ) {
+			validations = validations && date.isSameOrAfter( today );
+		}
+
+		return validations;
 	}
 
 	/**
@@ -347,13 +356,12 @@ export class DateRange extends Component {
 	 * @return {ReactComponent} the DatePicker component
 	 */
 	renderDatePicker() {
-		const now = new Date();
-
 		return (
 			<DatePicker
 				className="date-range__popover-date-picker"
 				showOutsideDays={ false }
-				toMonth={ now }
+				fromMonth={ this.getFromMonth() }
+				toMonth={ this.getToMonth() }
 				onSelectDay={ this.onSelectDate }
 				selectedDays={ {
 					from: this.momentDateToNative( this.state.startDate ),
@@ -361,9 +369,54 @@ export class DateRange extends Component {
 				} }
 				numberOfMonths={ window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1 }
 				calendarViewDate={ this.momentDateToNative( this.state.startDate ) }
-				disabledDays={ this.props.disabledDays }
+				disabledDays={ this.getDisabledDays() }
 			/>
 		);
+	}
+
+	getToMonth() {
+		const now = new Date();
+		const { disabledDays } = this.props;
+
+		if ( disabledDays !== 'disableFutureDates' ) {
+			return;
+		}
+
+		return now;
+	}
+
+	getFromMonth() {
+		const now = new Date();
+		const { disabledDays } = this.props;
+
+		if ( disabledDays !== 'disablePastDates' ) {
+			return;
+		}
+
+		return now;
+	}
+
+	// http://react-day-picker.js.org/api/DayPicker/#disabledDays
+	// http://react-day-picker.js.org/docs/matching-days
+	getDisabledDays() {
+		const now = new Date();
+		const { disabledDays } = this.props;
+
+		let config;
+
+		if ( disabledDays === 'disableFutureDates' ) {
+			config = {
+				after: now, // disable all days after today
+			};
+		}
+
+		if ( disabledDays === 'disablePastDates' ) {
+			config = {
+				before: now, // disable all days before today
+			};
+		}
+
+		return [ config ];
 	}
 
 	/**
