@@ -388,6 +388,10 @@
 
 		.wpnc__selected-note {
 			box-shadow: inset 4px 0 0 var( --color-primary );
+
+			&.wpnc__comment-unapproved {
+				box-shadow: inset 4px 0 0 var( --color-warning );
+			}
 		}
 
 		.wpnc__text-summary {
@@ -837,6 +841,10 @@
 				animation-timing-function: ease-in;
 				animation-duration: 0.4s;
 				animation-iteration-count: 1;
+
+				&.wpnc__comment-unapproved {
+					--color-wpnc-select-in-to: var( --color-warning-0 );
+				}
 			}
 
 			box-shadow: none;
@@ -892,7 +900,7 @@
 			background-color: var( --color-neutral-0 );
 		}
 		to {
-			background-color: $white;
+			background-color: var( --color-wpnc-select-in-to, $white );
 		}
 	}
 }
