@@ -77,7 +77,6 @@
 		"manage/export/guided-transfer": true,
 		"manage/import-in-sidebar": true,
 		"manage/import/medium": true,
-		"manage/option_sync_non_public_post_stati": true,
 		"manage/pages": true,
 		"manage/payment-methods": true,
 		"manage/plan-features": true,
