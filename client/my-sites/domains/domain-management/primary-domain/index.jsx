@@ -1,4 +1,5 @@
 /** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
  * External dependencies
@@ -99,15 +100,12 @@ class PrimaryDomain extends React.Component {
 				<Header selectedDomainName={ selectedDomainName } onClick={ this.goToEditDomainRoot }>
 					{ translate( 'Primary Domain' ) }
 				</Header>
-
 				{ this.errors() }
-
 				<SectionHeader
 					label={ translate( 'Make %(domainName)s the Primary Domain', {
 						args: { domainName: selectedDomainName },
 					} ) }
 				/>
-
 				<Card className="primary-domain-card">
 					<section>
 						<div className="primary-domain-explanation">
@@ -115,13 +113,12 @@ class PrimaryDomain extends React.Component {
 								'Your primary domain is the address ' +
 									'visitors will see in their browser ' +
 									'when visiting your site.'
-							) }
+							) }{' '}
 							<a href={ primaryDomainSupportUrl } target="_blank" rel="noopener noreferrer">
-								{ translate( 'Learn More' ) }
+								{ translate( 'Learn More.' ) }
 							</a>
 						</div>
 					</section>
-
 					<Notice showDismiss={ false } className="primary-domain-notice">
 						{ translate(
 							'The primary domain for this site is currently ' +
@@ -136,7 +133,6 @@ class PrimaryDomain extends React.Component {
 							}
 						) }
 					</Notice>
-
 					<section className="primary-domain__actions">
 						<button
 							className="button is-primary"
