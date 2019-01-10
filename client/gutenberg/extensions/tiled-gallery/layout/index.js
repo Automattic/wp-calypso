@@ -120,12 +120,12 @@ function photonWpcomImage( url, opts ) {
 		removeLetterboxing: 'ulb',
 	};
 
-	// Discard auth, port, query, search
-	const { auth, port, query, search, ...params } = parseUrl( url );
+	// Discard some param parts
+	const { auth, hash, port, query, search, ...urlParts } = parseUrl( url );
 
 	// Build query
 	// This reduction intentionally mutates the query as it is built internally.
-	params.query = Object.keys( opts ).reduce(
+	urlParts.query = Object.keys( opts ).reduce(
 		( q, key ) =>
 			Object.assign( q, {
 				[ photonLibMappings.hasOwnProperty( key ) ? photonLibMappings[ key ] : key ]: opts[ key ],
@@ -133,5 +133,5 @@ function photonWpcomImage( url, opts ) {
 		{}
 	);
 
-	return formatUrl( params );
+	return formatUrl( urlParts );
 }
