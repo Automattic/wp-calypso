@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
+import photon from 'photon';
 import { __, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
+import { format as formatUrl, parse as parseUrl } from 'url';
 import { isBlobURL } from '@wordpress/blob';
-import photon from 'photon';
 
 /**
  * Internal dependencies
@@ -22,12 +23,19 @@ export default class Layout extends Component {
 			return url;
 		}
 
+		// Drop query args, photon URLs can't handle them
+		// This should be the "raw" url, we'll add dimensions later
+		const cleanUrl = url.split( '?', 1 )[ 0 ];
+
+		const photonImplementation = isWpcomFilesUrl( url ) ? photonWpcomImage : photon;
+
 		const { layoutStyle } = this.props;
+
 		if ( isSquareishLayout( layoutStyle ) && width && height ) {
 			const size = Math.min( PHOTON_MAX_RESIZE, width, height );
-			return photon( url, { resize: `${ size },${ size }` } );
+			return photonImplementation( cleanUrl, { resize: `${ size },${ size }` } );
 		}
-		return photon( url );
+		return photonImplementation( cleanUrl );
 	}
 
 	// This is tricky:
@@ -96,4 +104,34 @@ export default class Layout extends Component {
 
 function isSquareishLayout( layout ) {
 	return [ 'circle', 'square' ].includes( layout );
+}
+
+function isWpcomFilesUrl( url ) {
+	const { host } = parseUrl( url );
+	return /\.files\.wordpress\.com$/.test( host );
+}
+
+function photonWpcomImage( url, opts ) {
+	// Adhere to the same API as the photon.js lib
+	const photonLibMappings = {
+		width: 'w',
+		height: 'h',
+		letterboxing: 'lb',
+		removeLetterboxing: 'ulb',
+	};
+
+	// Discard auth, port, query, search
+	const { auth, port, query, search, ...params } = parseUrl( url );
+
+	// Build query
+	// This reduction intentionally mutates the query as it is built internally.
+	params.query = Object.keys( opts ).reduce(
+		( q, key ) =>
+			Object.assign( q, {
+				[ photonLibMappings.hasOwnProperty( key ) ? photonLibMappings[ key ] : key ]: opts[ key ],
+			} ),
+		{}
+	);
+
+	return formatUrl( params );
 }
