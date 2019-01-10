@@ -29,7 +29,8 @@ describe( '<SiteInformation />', () => {
 		translate: x => x,
 		siteInformation: { title: 'Ho ho ho!' },
 		headerText: 'headerTextoidaliciously',
-		informationFields: [ 'title' ],
+		formFields: [ 'title', 'address', 'phone' ],
+		stepName: 'site-information',
 	};
 
 	afterEach( () => {
@@ -44,7 +45,7 @@ describe( '<SiteInformation />', () => {
 
 	test( 'should update field attributes based on the informationFields array values', () => {
 		const wrapper = shallow(
-			<SiteInformation { ...defaultProps } informationFields={ [ 'phone', 'address' ] } />
+			<SiteInformation { ...defaultProps } formFields={ [ 'phone', 'address' ] } />
 		);
 		const siteInformationContent = shallow( wrapper.instance().renderContent() );
 		const inputFields = siteInformationContent.find( 'FormTextInput' );
@@ -58,7 +59,10 @@ describe( '<SiteInformation />', () => {
 		wrapper.instance().handleSubmit( {
 			preventDefault: () => {},
 		} );
-		expect( defaultProps.submitStep ).toHaveBeenCalledWith( defaultProps.siteInformation );
+		expect( defaultProps.submitStep ).toHaveBeenCalledWith(
+			defaultProps.siteInformation,
+			defaultProps.formFields
+		);
 	} );
 
 	test( 'should call `updateStep()` from `handleInputChange()`', () => {

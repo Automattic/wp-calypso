@@ -396,7 +396,7 @@ export function generateSteps( {
 			stepName: 'site-information-title',
 			providesDependencies: [ 'title' ],
 			props: {
-				headerText: i18n.translate( "What's your business name?" ),
+				headerText: i18n.translate( "Tell us your site's name" ),
 				informationFields: [ 'title' ],
 			},
 		},

@@ -39,7 +39,74 @@ exports[`<SiteInformation /> should render 1`] = `
               primary={true}
               type="submit"
             >
-               
+              Continue
+            </Button>
+          </FormFieldset>
+        </div>
+        <div
+          className="site-information__field-control site-information__address"
+        >
+          <FormFieldset>
+            <Localized(FormLabel)
+              htmlFor="address"
+            >
+              Address
+              <InfoPopover
+                autoRtl={true}
+                className="site-information__info-popover"
+                icon="info-outline"
+                iconSize={18}
+                position="top"
+              >
+                Where can people find your business?
+              </InfoPopover>
+            </Localized(FormLabel)>
+            <FormTextInput
+              id="address"
+              name="address"
+              onChange={[Function]}
+              placeholder="E.g., 60 29th Street #343, San Francisco, CA 94110"
+              value=""
+            />
+            <Button
+              onClick={[Function]}
+              primary={true}
+              type="submit"
+            >
+              Continue
+            </Button>
+          </FormFieldset>
+        </div>
+        <div
+          className="site-information__field-control site-information__phone"
+        >
+          <FormFieldset>
+            <Localized(FormLabel)
+              htmlFor="phone"
+            >
+              Phone number
+              <InfoPopover
+                autoRtl={true}
+                className="site-information__info-popover"
+                icon="info-outline"
+                iconSize={18}
+                position="top"
+              >
+                How can people contact you?
+              </InfoPopover>
+            </Localized(FormLabel)>
+            <FormTextInput
+              id="phone"
+              name="phone"
+              onChange={[Function]}
+              placeholder="E.g. (555) 555-5555"
+              value=""
+            />
+            <Button
+              onClick={[Function]}
+              primary={true}
+              type="submit"
+            >
               Continue
             </Button>
           </FormFieldset>
@@ -47,5 +114,6 @@ exports[`<SiteInformation /> should render 1`] = `
       </form>
     </div>
   }
+  stepName="site-information"
 />
 `;

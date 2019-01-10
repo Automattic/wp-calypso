@@ -45,13 +45,7 @@ export class SiteInformation extends Component {
 		fieldDescription: PropTypes.string,
 		fieldPlaceholder: PropTypes.string,
 		siteInformationValue: PropTypes.string,
-		siteInformationFields: PropTypes.arrayOf(
-			PropTypes.shape( {
-				title: PropTypes.string,
-				address: PropTypes.string,
-				phone: PropTypes.string,
-			} )
-		).isRequired,
+		formFields: PropTypes.array,
 		translate: PropTypes.func.isRequired,
 		hasMultipleFieldSets: PropTypes.bool,
 	};
@@ -61,13 +55,13 @@ export class SiteInformation extends Component {
 		fieldLabel: '',
 		fieldDescription: '',
 		fieldPlaceholder: '',
-		siteInformationFields: [],
+		formFields: [],
 	};
 
 	constructor( props ) {
 		super( props );
 		this.state = reduce(
-			props.informationFields,
+			props.formFields,
 			( result, fieldName ) => {
 				result[ fieldName ] = props.siteInformation[ fieldName ] || '';
 				return result;
@@ -87,7 +81,7 @@ export class SiteInformation extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		this.props.submitStep( this.props.siteInformation );
+		this.props.submitStep( this.props.siteInformation, this.props.formFields );
 	};
 
 	getFieldTexts( informationType ) {
@@ -124,7 +118,7 @@ export class SiteInformation extends Component {
 	);
 
 	renderContent() {
-		const { hasMultipleFieldSets, informationFields } = this.props;
+		const { hasMultipleFieldSets, formFields } = this.props;
 		return (
 			<div
 				className={ classNames( 'site-information__wrapper', {
@@ -132,7 +126,7 @@ export class SiteInformation extends Component {
 				} ) }
 			>
 				<form>
-					{ informationFields.map( fieldName => {
+					{ formFields.map( fieldName => {
 						const fieldTexts = this.getFieldTexts( fieldName );
 						const fieldIdentifier = `site-information__${ fieldName }`;
 						return (
@@ -182,17 +176,29 @@ export class SiteInformation extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		siteInformation: getSiteInformation( state ),
-		siteType: getSiteType( state ),
-		hasMultipleFieldSets: size( ownProps.informationFields ) > 1,
-	} ),
+	( state, ownProps ) => {
+		const siteType = getSiteType( state );
+		const isBusiness = 'business' === siteType;
+		return {
+			// Only business site types may show the full set of fields.
+			// This is a bespoke check until we implement a business-only flow,
+			// whereby the flow will determine the available site information steps.
+			formFields:
+				! isBusiness && 'site-information' === ownProps.stepName
+					? [ 'title' ]
+					: ownProps.informationFields,
+			siteInformation: getSiteInformation( state ),
+			siteType,
+			hasMultipleFieldSets: size( ownProps.informationFields ) > 1,
+			isBusiness,
+		};
+	},
 	( dispatch, ownProps ) => {
 		return {
-			submitStep: siteInformation => {
+			submitStep: ( siteInformation, formFields ) => {
 				const submitData = {};
 				const tracksEventData = {};
-				each( ownProps.informationFields, key => {
+				each( formFields, key => {
 					submitData[ key ] = trim( siteInformation[ key ] );
 					tracksEventData[ `user_entered_${ key }` ] = !! siteInformation[ key ];
 				} );
