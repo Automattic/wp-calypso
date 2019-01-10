@@ -779,24 +779,9 @@
 		font-weight: 600;
 	}
 
-	.wpnc__list-view .wpnc__comment-unapproved {
-		background: var( --color-warning-0 );
-
-		.wpnc__subject {
-			color: $wpnc__red-darker;
-		}
-
-		.wpnc__excerpt {
-			color: var( --color-warning-dark );
-		}
-	}
-
 	.wpnc__comment-unapproved .wpnc__body {
 		.wpnc__body-content {
 			box-shadow: inset 4px 0 0 var( --color-warning );
-			border-bottom: 1px solid var( --color-warning );
-			background: var( --color-warning-0 );
-			color: $wpnc__red-darker;
 		}
 
 		.blockquote {
@@ -804,18 +789,8 @@
 		}
 	}
 
-	.wpnc__comment-unapproved .wpnc__body .wpnc__user__meta,
-	.wpnc__comment-unapproved div.wpnc__user .wpnc__user__meta a {
-		color: var( --color-warning-dark );
-	}
-
 	.wpnc__comment-unapproved div.wpnc__user .wpnc__user__meta a:hover {
-		color: var( --color-warning-dark );
 		text-decoration: underline;
-	}
-
-	.wpnc__comment-unapproved .wpnc__body div.wpnc__user .wpnc__user__home {
-		color: $wpnc__red-darker;
 	}
 
 	.wpnc__comment .wpnc__body .wpnc__body-content .wpnc__user {
@@ -841,10 +816,6 @@
 				animation-timing-function: ease-in;
 				animation-duration: 0.4s;
 				animation-iteration-count: 1;
-
-				&.wpnc__comment-unapproved {
-					--color-wpnc-select-in-to: var( --color-warning-0 );
-				}
 			}
 
 			box-shadow: none;
@@ -900,7 +871,7 @@
 			background-color: var( --color-neutral-0 );
 		}
 		to {
-			background-color: var( --color-wpnc-select-in-to, $white );
+			background-color: var( --color-white );
 		}
 	}
 }
