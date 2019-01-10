@@ -29,6 +29,13 @@ export const settings = {
 		subscribePlaceholder: { type: 'string', default: __( 'Email Address' ) },
 		subscribeButton: { type: 'string', default: __( 'Subscribe' ) },
 		showSubscribersTotal: { type: 'boolean', default: false },
+		submitButtonText: {
+			type: 'string',
+			default: __( 'Submit' ),
+		},
+		customBackgroundButtonColor: { type: 'string' },
+		customTextButtonColor: { type: 'string' },
+		submitButtonClasses: { type: 'string' },
 	},
 	edit,
 	save,
