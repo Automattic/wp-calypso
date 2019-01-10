@@ -10,7 +10,6 @@ import { settings } from './settings.js';
 import FrontendManagement from 'gutenberg/extensions/shared/frontend-management.js';
 
 typeof window !== 'undefined' &&
-	window &&
 	window.addEventListener( 'load', function() {
 		const frontendManagement = new FrontendManagement();
 		frontendManagement.blockIterator( document, [
