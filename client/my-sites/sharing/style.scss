@@ -9,49 +9,49 @@
 	&.facebook {
 		h2,
 		.sharing-service__logo {
-			color: $color-facebook;
+			color: var( --color-facebook );
 		}
 	}
 
 	&.twitter {
 		h2,
 		.sharing-service__logo {
-			color: $color-twitter;
+			color: var( --color-twitter );
 		}
 	}
 
 	&.google_plus {
 		h2,
 		.sharing-service__logo {
-			color: $color-gplus;
+			color: var( --color-gplus );
 		}
 	}
 
 	&.linkedin {
 		h2,
 		.sharing-service__logo {
-			color: $color-linkedin;
+			color: var( --color-linkedin );
 		}
 	}
 
 	&.tumblr {
 		h2,
 		.sharing-service__logo {
-			color: $color-tumblr;
+			color: var( --color-tumblr );
 		}
 	}
 
 	&.eventbrite {
 		h2,
 		.sharing-service__logo {
-			color: $color-eventbrite;
+			color: var( --color-eventbrite );
 		}
 	}
 
 	&.instagram {
 		h2,
 		.sharing-service__logo {
-			color: $color-instagram;
+			color: var( --color-instagram );
 		}
 	}
 
