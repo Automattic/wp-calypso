@@ -109,8 +109,8 @@ export default {
 	privateByDefault: {
 		datestamp: '20181217',
 		variations: {
-			private: 10,
-			public: 90,
+			private: 50,
+			public: 50,
 		},
 		defaultVariation: 'public',
 	},
