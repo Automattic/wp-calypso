@@ -21,10 +21,15 @@ export function PendingPaymentBlocker( { translate } ) {
 			title={ translate( 'Payment Pending' ) }
 		>
 			<div className="checkout__payment-box-sections">
-				<p>{ translate( "Your previous order's payment is still being processed." ) }</p>
 				<p>
 					{ translate(
-						'Please wait for the previous payment to process before proceeding with a new purchase.'
+						"Looks like you've recently made another purchase, and we're still processing that payment."
+					) }
+				</p>
+
+				<p>
+					{ translate(
+						'Please wait for that payment to finish processing before buying something else -- use the "View Payment" button to check on the status. Thanks!'
 					) }
 				</p>
 
