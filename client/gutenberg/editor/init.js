@@ -94,6 +94,9 @@ export const initGutenberg = once( ( userId, store ) => {
 	debug( 'Initializing core-data store' );
 	require( '@wordpress/core-data' );
 
+	debug( 'Registering hooks' );
+	require( './hooks' );
+
 	// Avoid using top level imports for these since they will statically
 	// initialize core-data before required plugins are loaded.
 	const { registerCoreBlocks } = require( '@wordpress/block-library' );

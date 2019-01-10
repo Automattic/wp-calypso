@@ -31,6 +31,7 @@ const debugMiddleware = ( options, next ) => {
 // passed apiNamespace will be prepended to the replaced path.
 export const wpcomPathMappingMiddleware = getSiteSlug => ( options, next ) => {
 	const siteSlug = getSiteSlug();
+	const { addSiteSlug = true } = options;
 
 	//support for fetchAllMiddleware, that uses url instead of path
 	if ( ! options.path && options.url ) {
@@ -95,6 +96,21 @@ export const wpcomPathMappingMiddleware = getSiteSlug => ( options, next ) => {
 			apiNamespace: 'oembed/1.0',
 			onError: handleOembedError( embedUrl ),
 		} );
+	}
+
+	// rest/vX.X namespace mapping
+	//
+	// Path rewrite example:
+	// 		/rest/v1.2/media →
+	//		/rest/v1.2/sites/example.wordpress.com/media
+	if ( /\/rest\/v\d\.\d\//.test( options.path ) ) {
+		const apiVersion = /\/rest\/v(\d\.\d)\//.exec( options.path )[ 1 ];
+		const path = options.path.replace(
+			/\/rest\/v\d\.\d\//,
+			addSiteSlug ? `/sites/${ siteSlug }/` : '/'
+		);
+
+		return next( { ...options, path, apiVersion } );
 	}
 
 	return next( options );

@@ -3,12 +3,8 @@
 /**
  * WordPress dependencies
  */
-import { addFilter } from '@wordpress/hooks';
+import { removeFilter } from '@wordpress/hooks';
 
-const replaceMediaUpload = () => null; // GUTENLYPSO
-
-addFilter(
-	'editor.MediaUpload',
-	'core/edit-post/components/media-upload/replace-media-upload',
-	replaceMediaUpload
-);
+// GUTENLYPSO START
+removeFilter( 'editor.MediaUpload', 'core/edit-post/components/media-upload/replace-media-upload' );
+// GUTENLYPSO END
