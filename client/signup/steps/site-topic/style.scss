@@ -15,6 +15,12 @@
 
 	input {
 		padding: 10px 100px 10px 42px;
+
+		// Since there's a 1px padding on the container, and
+		// inputs use actual borders (unlike cards, which
+		// use box-shadow), we need to adjust.
+		margin: 0 -1px;
+		width: calc( 100% + 2px );
 	}
 
 	.suggestions__wrapper {
