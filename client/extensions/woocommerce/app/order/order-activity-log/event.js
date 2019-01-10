@@ -12,6 +12,7 @@ import React, { Component } from 'react';
  */
 import { EVENT_TYPES } from 'woocommerce/state/sites/orders/activity-log/selectors';
 import LabelItem from 'woocommerce/woocommerce-services/views/shipping-label/label-item';
+import LabelItemInProgress from 'woocommerce/woocommerce-services/views/shipping-label/label-item-in-progress';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import formatCurrency from 'lib/format-currency';
 
@@ -48,6 +49,19 @@ class OrderEvent extends Component {
 				// @todo Add comment author once we have that info
 				heading: translate( 'Note sent to customer' ),
 				content: decodeEntities( stripHTML( event.content ) ),
+			};
+		},
+
+		[ EVENT_TYPES.LABEL_PURCHASING ]: event => {
+			return {
+				icon: 'sync',
+				content: (
+					<LabelItemInProgress
+						label={ event }
+						orderId={ this.props.orderId }
+						siteId={ this.props.siteId }
+					/>
+				),
 			};
 		},
 
