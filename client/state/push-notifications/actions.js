@@ -10,6 +10,7 @@ import wpcom from 'lib/wp';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import {
 	PUSH_NOTIFICATIONS_API_READY,
 	PUSH_NOTIFICATIONS_API_NOT_READY,
@@ -30,6 +31,7 @@ import {
 	isUnsupportedChromeVersion,
 	getChromeVersion,
 	getOperaVersion,
+	urlBase64ToUint8Array,
 } from './utils';
 import { registerServerWorker } from 'lib/service-worker';
 import { recordTracksEvent, bumpStat } from 'state/analytics/actions';
@@ -245,7 +247,10 @@ export function activateSubscription() {
 		window.navigator.serviceWorker.ready
 			.then( serviceWorkerRegistration => {
 				serviceWorkerRegistration.pushManager
-					.subscribe( { userVisibleOnly: true } )
+					.subscribe( {
+						userVisibleOnly: true,
+						applicationServerKey: urlBase64ToUint8Array( config( 'push_notification_vapid_key' ) ),
+					} )
 					.then( () => dispatch( checkPermissionsState() ) )
 					.catch( err => {
 						debug( "Couldn't get subscription", err );
