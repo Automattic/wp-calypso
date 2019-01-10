@@ -5,34 +5,34 @@
 	}
 
 	.facebook {
-		fill: $color-facebook;
+		fill: var( --color-facebook );
 	}
 
 	.twitter {
-		fill: $color-twitter;
+		fill: var( --color-twitter );
 	}
 
 	.google-plus {
-		fill: $color-gplus;
+		fill: var( --color-gplus );
 	}
 
 	.tumblr {
-		fill: $color-tumblr;
+		fill: var( --color-tumblr );
 	}
 
 	.linkedin {
-		fill: $color-linkedin;
+		fill: var( --color-linkedin );
 	}
 
 	.pinterest {
-		fill: $color-pinterest;
+		fill: var( --color-pinterest );
 	}
 
 	.telegram {
-		fill: $color-telegram;
+		fill: var( --color-telegram );
 	}
 
 	.whatsapp {
-		fill: $color-whatsapp;
+		fill: var( --color-whatsapp );
 	}
 }
