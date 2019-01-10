@@ -49,19 +49,19 @@
 
 	.site-type__option-description {
 		font-size: 14px;
-		color: $gray-text-min;
+		color: var( --color-text-subtle );
 	}
 
 	&:hover {
 		cursor: pointer;
-		box-shadow: 0 0 0 1px $gray-lighten-20;
+		box-shadow: 0 0 0 1px var( --color-neutral-100 );
 
 		.site-type__option-label {
-			color: $blue-dark;
+			color: var( --color-primary-dark );
 		}
 	}
 
 	&.is-selected {
-		box-shadow: 0 0 0 1px $blue-medium;
+		box-shadow: 0 0 0 1px var( --color-primary );
 	}
 }
