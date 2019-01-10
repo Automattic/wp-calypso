@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, some } from 'lodash';
+import { get, includes, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,13 +12,15 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
 import getSitesItems from 'state/selectors/get-sites-items';
 import { isBusinessPlan, isEcommercePlan } from 'lib/plans';
 
+const SPANISH_LANG_SLUGS = [ 'es', 'es-cl', 'es-mx' ];
+
 /**
  * @param {Object} state Global state tree
  * @return {Boolean} Whether or not this customer should receive Upwork support
  */
 export default function isEligibleForUpworkSupport( state ) {
-	// Upwork is only available for es users currently
-	if ( getCurrentUserLocale( state ) !== 'es' ) {
+	// Upwork is currently available for Spanish-speaking users only
+	if ( ! includes( SPANISH_LANG_SLUGS, getCurrentUserLocale( state ) ) ) {
 		return false;
 	}
 
