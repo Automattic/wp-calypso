@@ -205,8 +205,12 @@ export class DateRange extends Component {
 				let newState = {
 					startDate: this.nativeDateToMoment( newRange.from ),
 					endDate: this.nativeDateToMoment( newRange.to ),
-					textInputStartDate: this.nativeDateToMoment( newRange.from ).format( 'L' ),
-					textInputEndDate: this.nativeDateToMoment( newRange.to ).format( 'L' ),
+					textInputStartDate: this.nativeDateToMoment( newRange.from ).format(
+						this.getLocaleDateFormat()
+					),
+					textInputEndDate: this.nativeDateToMoment( newRange.to ).format(
+						this.getLocaleDateFormat()
+					),
 				};
 
 				// For first date selection only: "cache" previous dates
@@ -361,7 +365,7 @@ export class DateRange extends Component {
 		);
 	}
 
-	getToMonth() {
+	getFromMonth() {
 		const now = new Date();
 		const { disablePastDates } = this.props;
 
@@ -372,7 +376,7 @@ export class DateRange extends Component {
 		return now;
 	}
 
-	getFromMonth() {
+	getToMonth() {
 		const now = new Date();
 		const { disableFutureDates } = this.props;
 
@@ -389,7 +393,7 @@ export class DateRange extends Component {
 		const now = new Date();
 		const { disablePastDates, disableFutureDates } = this.props;
 
-		let config;
+		let config = {};
 
 		if ( disablePastDates ) {
 			config = {
