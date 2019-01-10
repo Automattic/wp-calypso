@@ -97,7 +97,9 @@
 		@include breakpoint( '>660px' ) {
 			width: 75%;
 		}
+	}
 
+	> div {
 		.is-placeholder & {
 			color: transparent;
 		}

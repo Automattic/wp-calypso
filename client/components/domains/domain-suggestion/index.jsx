@@ -72,7 +72,7 @@ DomainSuggestion.Placeholder = function() {
 	return (
 		<div className="domain-suggestion card is-compact is-placeholder is-clickable">
 			<div className="domain-suggestion__content">
-				<h3 />
+				<div />
 			</div>
 			<div className="domain-suggestion__action" />
 			<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
