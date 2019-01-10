@@ -126,7 +126,7 @@ function isWpcomFilesUrl( url ) {
  *
  * @return {string}      Url string with options applied
  */
-function photonWpcomImage( url, opts ) {
+function photonWpcomImage( url, opts = {} ) {
 	// Adhere to the same options API as the photon.js lib
 	const photonLibMappings = {
 		width: 'w',
