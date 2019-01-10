@@ -26,4 +26,7 @@ export default class extends React.Component {
 
 `onDateSelect(startDate, endDate)` - **optional** callback function called when a date is _selected_ (but not committed ie: "Applied")
 
+'firstSelectableDate' - **optional** `Date` object for the first day you wish to be selectable in the date picker (see examples)
+
+'lastSelectableDate' - **optional** `Date` object for the last day you wish to be selectable in the date picker (see examples)
 ------------
