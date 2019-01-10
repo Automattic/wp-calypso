@@ -10,15 +10,15 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import AddEmailAddressesCard from './add-email-addresses-card';
+import AddEmailAddressesCard from 'my-sites/domains/domain-management/add-google-apps/add-email-addresses-card';
 import { domainManagementEmail } from 'my-sites/domains/paths';
+import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { hasGoogleAppsSupportedDomain } from 'lib/domains';
-import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
 import SectionHeader from 'components/section-header';
 
-class AddGoogleApps extends React.Component {
+class GSuiteAddUsers extends React.Component {
 	componentDidMount() {
 		this.redirectIfCannotAddEmail();
 	}
@@ -28,23 +28,16 @@ class AddGoogleApps extends React.Component {
 	}
 
 	redirectIfCannotAddEmail() {
-		if ( ! this.canAddEmail() ) {
-			this.goToEmail();
-		}
-	}
-
-	canAddEmail() {
 		const { domains, isRequestingSiteDomains } = this.props;
 		const gsuiteSupportedDomain = hasGoogleAppsSupportedDomain( domains );
-		return isRequestingSiteDomains || gsuiteSupportedDomain;
+		if ( isRequestingSiteDomains || gsuiteSupportedDomain ) {
+			return;
+		}
+		this.goToEmail();
 	}
 
 	goToEmail = () => {
-		const path = domainManagementEmail(
-			this.props.selectedSite.slug,
-			this.props.selectedDomainName
-		);
-		page( path );
+		page( domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	};
 
 	renderAddGSuite() {
@@ -73,9 +66,12 @@ class AddGoogleApps extends React.Component {
 		const { translate } = this.props;
 		return (
 			<Main>
-				<Header onClick={ this.goToEmail } selectedDomainName={ this.props.selectedDomainName }>
+				<DomainManagementHeader
+					onClick={ this.goToEmail }
+					selectedDomainName={ this.props.selectedDomainName }
+				>
 					{ translate( 'Add G Suite' ) }
-				</Header>
+				</DomainManagementHeader>
 
 				<EmailVerificationGate
 					noticeText={ translate( 'You must verify your email to purchase G Suite.' ) }
@@ -88,12 +84,14 @@ class AddGoogleApps extends React.Component {
 	}
 }
 
-AddGoogleApps.propTypes = {
+GSuiteAddUsers.propTypes = {
 	domains: PropTypes.array.isRequired,
 	isRequestingSiteDomains: PropTypes.bool.isRequired,
 	selectedDomainName: PropTypes.string.isRequired,
-	selectedSite: PropTypes.object.isRequired,
+	selectedSite: PropTypes.shape( {
+		slug: PropTypes.string.isRequired,
+	} ).isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( AddGoogleApps );
+export default localize( GSuiteAddUsers );

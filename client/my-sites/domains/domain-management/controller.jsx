@@ -13,7 +13,7 @@ import React from 'react';
 import DomainManagement from './domain-management';
 import DomainManagementData from 'components/data/domain-management';
 import {
-	domainManagementAddGoogleApps,
+	domainManagementAddGSuiteUsers,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementEdit,
@@ -240,15 +240,15 @@ export default {
 		next();
 	},
 
-	domainManagementAddGoogleApps( pageContext, next ) {
+	domainManagementAddGSuiteUsers( pageContext, next ) {
 		pageContext.primary = (
 			<DomainManagementData
-				analyticsPath={ domainManagementAddGoogleApps(
+				analyticsPath={ domainManagementAddGSuiteUsers(
 					':site',
 					pageContext.params.domain ? ':domain' : undefined
 				) }
 				analyticsTitle="Domain Management > Add Google Apps"
-				component={ DomainManagement.AddGoogleApps }
+				component={ DomainManagement.GSuiteAddUsers }
 				context={ pageContext }
 				needsCart
 				needsContactDetails
