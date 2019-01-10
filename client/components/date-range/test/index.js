@@ -159,11 +159,10 @@ describe( 'DateRange', () => {
 			expect( datePicker.props().numberOfMonths ).toEqual( 1 );
 		} );
 
-		test( 'should disable past dates on DatePicker if disablePastDates days is set', () => {
-			const wrapper = shallow( <DateRange moment={ moment } disablePastDates={ true } /> );
-			const datePicker = wrapper.find( DatePicker );
-
+		test( 'should disable dates before firstSelectableDate when set', () => {
 			const today = new Date();
+			const wrapper = shallow( <DateRange moment={ moment } firstSelectableDate={ today } /> );
+			const datePicker = wrapper.find( DatePicker );
 
 			const expected = [
 				{
@@ -176,11 +175,10 @@ describe( 'DateRange', () => {
 			expect( actual ).toEqual( expected );
 		} );
 
-		test( 'should disable future dates on DatePicker if disableFutureDates days is set', () => {
-			const wrapper = shallow( <DateRange moment={ moment } disableFutureDates={ true } /> );
-			const datePicker = wrapper.find( DatePicker );
-
+		test( 'should disable dates after lastSelectableDate when set', () => {
 			const today = new Date();
+			const wrapper = shallow( <DateRange moment={ moment } lastSelectableDate={ today } /> );
+			const datePicker = wrapper.find( DatePicker );
 
 			const expected = [
 				{
@@ -193,27 +191,25 @@ describe( 'DateRange', () => {
 			expect( actual ).toEqual( expected );
 		} );
 
-		test( 'should disable DatePicker UI for past months if disablePastDates days is set', () => {
-			const wrapper = shallow( <DateRange moment={ moment } disablePastDates={ true } /> );
-			const datePicker = wrapper.find( DatePicker );
-
+		test( 'should disable DatePicker UI for months previous to firstSelectableDate when set', () => {
 			const today = new Date();
 
-			const expected = today;
+			const wrapper = shallow( <DateRange moment={ moment } firstSelectableDate={ today } /> );
+			const datePicker = wrapper.find( DatePicker );
 
+			const expected = today;
 			const actual = datePicker.props().fromMonth;
 
 			expect( actual ).toEqual( expected );
 		} );
 
-		test( 'should disable DatePicker UI for future months if disableFutureDates days is set', () => {
-			const wrapper = shallow( <DateRange moment={ moment } disableFutureDates={ true } /> );
-			const datePicker = wrapper.find( DatePicker );
-
+		test( 'should disable DatePicker UI for months after lastSelectableDate when set', () => {
 			const today = new Date();
 
-			const expected = today;
+			const wrapper = shallow( <DateRange moment={ moment } lastSelectableDate={ today } /> );
+			const datePicker = wrapper.find( DatePicker );
 
+			const expected = today;
 			const actual = datePicker.props().toMonth;
 
 			expect( actual ).toEqual( expected );

@@ -23,15 +23,13 @@ export class DateRange extends Component {
 	static propTypes = {
 		onDateSelect: PropTypes.func,
 		onDateCommit: PropTypes.func,
-		disablePastDates: PropTypes.bool,
-		disableFutureDates: PropTypes.bool,
+		firstSelectableDate: PropTypes.instanceOf( Date ),
+		lastSelectableDate: PropTypes.instanceOf( Date ),
 	};
 
 	static defaultProps = {
 		onDateSelect: noop,
 		onDateCommit: noop,
-		disablePastDates: false,
-		disabledFutureDates: false,
 	};
 
 	constructor( props ) {
@@ -351,8 +349,8 @@ export class DateRange extends Component {
 			<DatePicker
 				className="date-range__popover-date-picker"
 				showOutsideDays={ false }
-				fromMonth={ this.getFromMonth() }
-				toMonth={ this.getToMonth() }
+				fromMonth={ this.props.firstSelectableDate }
+				toMonth={ this.props.lastSelectableDate }
 				onSelectDay={ this.onSelectDate }
 				selectedDays={ {
 					from: this.momentDateToNative( this.state.startDate ),
@@ -365,45 +363,33 @@ export class DateRange extends Component {
 		);
 	}
 
-	getFromMonth() {
-		const now = new Date();
-		const { disablePastDates } = this.props;
-
-		if ( ! disablePastDates ) {
-			return;
-		}
-
-		return now;
-	}
-
-	getToMonth() {
-		const now = new Date();
-		const { disableFutureDates } = this.props;
-
-		if ( ! disableFutureDates ) {
-			return;
-		}
-
-		return now;
-	}
-
-	// http://react-day-picker.js.org/api/DayPicker/#disabledDays
-	// http://react-day-picker.js.org/docs/matching-days
+	/**
+	 * Builds an appropriate disabledDays prop for DatePicker
+	 * based on firstSelectableDate and lastSelectableDate
+	 * config props
+	 *
+	 * See:
+	 * http://react-day-picker.js.org/api/DayPicker/#disabledDays
+	 * http://react-day-picker.js.org/docs/matching-days
+	 *
+	 * @return {array} configuration to be passed to DatePicker as disabledDays prop
+	 */
 	getDisabledDaysConfig() {
-		const now = new Date();
-		const { disablePastDates, disableFutureDates } = this.props;
+		const { firstSelectableDate, lastSelectableDate } = this.props;
 
 		let config = {};
 
-		if ( disablePastDates ) {
+		if ( firstSelectableDate ) {
 			config = {
-				before: now, // disable all days before today
+				...config,
+				before: firstSelectableDate, // disable all days before today
 			};
 		}
 
-		if ( disableFutureDates ) {
+		if ( lastSelectableDate ) {
 			config = {
-				after: now, // disable all days after today
+				...config,
+				after: lastSelectableDate, // disable all days before today
 			};
 		}
 
