@@ -105,8 +105,8 @@ export class DateRange extends Component {
 	 * @return {Boolean}      whether date is considered valid or not
 	 */
 	isValidDate( date ) {
-		const { disablePastDates, disableFutureDates } = this.props;
-		const today = this.props.moment();
+		const { firstSelectableDate, lastSelectableDate } = this.props;
+
 		const epoch = this.props.moment( '01/01/1970', this.getLocaleDateFormat() );
 
 		// By default check
@@ -114,14 +114,14 @@ export class DateRange extends Component {
 		// 2. after 01/01/1970 (avoids bugs when really stale dates are treated as valid)
 		let validations = date.isValid() && date.isSameOrAfter( epoch );
 
-		// Checks for disabling of future days and validates
-		if ( disablePastDates ) {
-			validations = validations && date.isSameOrBefore( today );
+		// Check not before the first selectable date
+		// https://momentjs.com/docs/#/query/is-same-or-before/
+		if ( firstSelectableDate ) {
+			validations = validations && ! date.isBefore( firstSelectableDate );
 		}
 
-		// Checks for disabling of past days and validates
-		if ( disableFutureDates ) {
-			validations = validations && date.isSameOrAfter( today );
+		if ( lastSelectableDate ) {
+			validations = validations && ! date.isAfter( lastSelectableDate );
 		}
 
 		return validations;

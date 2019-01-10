@@ -229,6 +229,32 @@ describe( 'DateRange', () => {
 			momentEndDate = moment( endDate, 'DD-MM-YYYY' );
 		} );
 
+		test( 'should see inputs reflect date picker selection', () => {
+			const wrapper = shallow( <DateRange moment={ moment } /> );
+
+			const expectedStart = '03/04/2018';
+			const expectedEnd = '29/04/2018';
+
+			const newStartDate = moment( expectedStart, 'DD/MM/YYYY' );
+			const newEndDate = moment( expectedEnd, 'DD/MM/YYYY' );
+
+			// Select dates using API
+			wrapper.instance().onSelectDate( newStartDate );
+			wrapper.instance().onSelectDate( newEndDate );
+
+			// Force update
+			wrapper.update();
+
+			const dateRangeInputs = wrapper.find( DateRangeInputs );
+
+			expect( dateRangeInputs.props() ).toEqual(
+				expect.objectContaining( {
+					startDateValue: expectedStart,
+					endDateValue: expectedEnd,
+				} )
+			);
+		} );
+
 		test( 'should update start date selection on start date input blur event', () => {
 			const wrapper = shallow( <DateRange moment={ moment } /> );
 
@@ -302,30 +328,48 @@ describe( 'DateRange', () => {
 			);
 		} );
 
-		test( 'should see inputs reflect date picker selection', () => {
-			const wrapper = shallow( <DateRange moment={ moment } /> );
+		test( 'should not update start date if input date is outside firstSelectableDate', () => {
+			const now = new Date();
 
-			const expectedStart = '03/04/2018';
-			const expectedEnd = '29/04/2018';
+			// Shouldn't be able to select dates before "today"
+			const pastDate = toHumanDate( moment.utc( now ).subtract( 6, 'months' ) );
 
-			const newStartDate = moment( expectedStart, 'DD/MM/YYYY' );
-			const newEndDate = moment( expectedEnd, 'DD/MM/YYYY' );
+			const wrapper = shallow( <DateRange firstSelectableDate={ now } moment={ moment } /> );
 
-			// Select dates using API
-			wrapper.instance().onSelectDate( newStartDate );
-			wrapper.instance().onSelectDate( newEndDate );
+			wrapper.instance().handleInputBlur( pastDate, 'Start' );
 
-			// Force update
-			wrapper.update();
+			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).not.toEqual( pastDate );
+		} );
 
-			const dateRangeInputs = wrapper.find( DateRangeInputs );
+		test( 'should not update end date if input date is outside firstSelectableDate', () => {
+			const now = new Date();
 
-			expect( dateRangeInputs.props() ).toEqual(
-				expect.objectContaining( {
-					startDateValue: expectedStart,
-					endDateValue: expectedEnd,
-				} )
-			);
+			// Shouldn't be able to select dates before "today"
+			const pastDate = toHumanDate( moment.utc( now ).subtract( 6, 'months' ) );
+
+			const wrapper = shallow( <DateRange firstSelectableDate={ now } moment={ moment } /> );
+
+			wrapper.instance().handleInputBlur( pastDate, 'End' );
+
+			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).not.toEqual( pastDate );
+		} );
+
+		test( 'should not update start or end date if the value of input for the start date is outside lastSelectableDate', () => {
+			const now = new Date();
+
+			// Shouldn't be able to select dates before "today"
+			const futureDate = toHumanDate( moment.utc( now ).add( 3, 'days' ) );
+
+			const wrapper = shallow( <DateRange lastSelectableDate={ now } moment={ moment } /> );
+
+			wrapper.instance().handleInputBlur( futureDate, 'Start' );
+
+			// We must check BOTH because due to the the need to ensure start is always before end
+			// in a range, if you select a start which is after "end" in the range then the range
+			// automatically causes it to become the new value for "end" and leave "start" untouched
+			// This means we have to test that neither start nor end have taken on the invalid date
+			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).not.toEqual( futureDate );
+			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).not.toEqual( futureDate );
 		} );
 	} );
 
