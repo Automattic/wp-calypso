@@ -123,6 +123,7 @@
 		"press-this": true,
 		"privacy-policy": true,
 		"publicize-preview": true,
+		"push-notifications": true,
 		"reader": true,
 		"reader/likes-hover": true,
 		"reader/following-intro": true,
