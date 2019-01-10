@@ -1,5 +1,8 @@
 /** @format */
 
+/* @TODO resolve linting issues */
+/* eslint-disable react/no-string-refs, wpcalypso/jsx-classname-namespace */
+
 /**
  * External dependencies
  */
