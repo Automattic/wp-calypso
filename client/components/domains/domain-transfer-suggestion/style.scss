@@ -1,6 +1,10 @@
 .domain-transfer-suggestion {
 	display: flex;
 	align-items: center;
+
+	& .button.domain-suggestion__action.is-borderless {
+	    flex: 1 0 auto;
+	}
 }
 
 .domain-transfer-suggestion__domain-description {
