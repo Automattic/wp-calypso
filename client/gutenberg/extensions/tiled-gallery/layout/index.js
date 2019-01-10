@@ -111,8 +111,23 @@ function isWpcomFilesUrl( url ) {
 	return /\.files\.wordpress\.com$/.test( host );
 }
 
-function photonWpcomImage( url, opts = {} ) {
-	// Adhere to the same API as the photon.js lib
+/**
+ * Apply photon arguments to *.files.wordpress.com images
+ *
+ * This function largely duplicates the functionlity of the photon.js lib.
+ * This is necessary because we want to serve images from *.files.wordpress.com so that private
+ * WordPress.com sites can use this block which depends on a Photon-like image service.
+ *
+ * If we pass all images through Photon servers, some images are unreachable. *.files.wordpress.com
+ * is already photon-like so we can pass it the same parameters for image resizing.
+ *
+ * @param  {string} url  Image url
+ * @param  {Object} opts Options to pass to photon
+ *
+ * @return {string}      Url string with options applied
+ */
+function photonWpcomImage( url, opts ) {
+	// Adhere to the same options API as the photon.js lib
 	const photonLibMappings = {
 		width: 'w',
 		height: 'h',
