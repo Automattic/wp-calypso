@@ -384,7 +384,7 @@ export class Checkout extends React.Component {
 					plan: 'paid',
 				} );
 
-				return `/checklist/${ selectedSiteSlug }?d=gsuite`;
+				return `/view/${ selectedSiteSlug }?d=gsuite`;
 			}
 
 			// Maybe show either the G Suite or Concierge Session upsell pages
