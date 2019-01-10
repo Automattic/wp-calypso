@@ -18,6 +18,12 @@
 			// all available horizontal space.
 			flex-grow: 1;
 		}
+
+		.site-mockup__viewport.is-mobile {
+			.site-mockup__body {
+				height: 440px;
+			}
+		}
 	}
 
 	// Grouped layout shows a fixed-height mobile mockup
