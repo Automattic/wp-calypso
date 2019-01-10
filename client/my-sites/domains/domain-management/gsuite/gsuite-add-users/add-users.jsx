@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { has, find, groupBy, isEmpty, kebabCase, map, mapValues, snakeCase } from 'lodash';
+import { find, groupBy, isEmpty, kebabCase, map, mapValues } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
@@ -17,19 +17,17 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 import Card from 'components/card/compact';
 import FormButton from 'components/forms/form-button';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
 import { getEligibleDomain } from 'lib/domains/gsuite';
 import getUserSetting from 'state/selectors/get-user-setting';
 import { cartItems } from 'lib/cart-values';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import { addItem } from 'lib/upgrades/actions';
-import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
+import { hasGoogleApps } from 'lib/domains';
 import { filter as filterUsers, validate as validateUsers } from 'lib/domains/google-apps-users';
-import DomainsSelect from './domains-select';
+
 import QueryUserSettings from 'components/data/query-user-settings';
+import NewUserForm from './new-user-form';
 
 /**
  * Style dependencies
@@ -170,99 +168,23 @@ class AddEmailAddressesCard extends React.Component {
 	}
 
 	renderFieldsets() {
-		return this.state.fieldsets.map( ( fields, index ) => {
+		const { domains, isRequestingSiteDomains } = this.props;
+		return this.state.fieldsets.map( ( fieldset, index ) => {
 			return (
 				<Fragment key={ index }>
 					{ index > 0 && <hr /> }
-					<div className="gsuite-add-users__email-address-fieldsets">
-						{ this.emailAddressFieldset( index, fields.username, fields.domain ) }
-					</div>
-					<div className="gsuite-add-users__name-fieldsets">
-						{ this.renderNameFieldset( index, fields.firstName, fields.lastName ) }
-					</div>
+					<NewUserForm
+						domains={ domains }
+						handleFieldChange={ this.handleFieldChange.bind( this, index ) }
+						isRequestingSiteDomains={ isRequestingSiteDomains }
+						user={ fieldset }
+					/>
 				</Fragment>
 			);
 		} );
 	}
 
-	renderNameFieldset( index, firstName, lastName ) {
-		const { translate } = this.props;
-
-		return (
-			<Fragment key={ index }>
-				<FormFieldset>
-					<FormTextInput
-						placeholder={ translate( 'First Name' ) }
-						name="firstName"
-						maxLength={ 60 }
-						onChange={ this.handleFieldChange.bind( this, 'firstName', index ) }
-						value={ firstName.value }
-						isError={ has( firstName, 'error' ) && null !== firstName.error }
-					/>
-					<FormInputValidation
-						isHidden={ ! has( firstName, 'error' ) || null === firstName.error }
-						isError={ has( firstName, 'error' ) && null !== firstName.error }
-						text={ firstName.error || '\u00A0' }
-					/>
-				</FormFieldset>
-				<FormFieldset>
-					<FormTextInput
-						placeholder={ translate( 'Last Name' ) }
-						name="lastName"
-						maxLength={ 60 }
-						onChange={ this.handleFieldChange.bind( this, 'lastName', index ) }
-						value={ lastName.value }
-						isError={ has( lastName, 'error' ) && null !== lastName.error }
-					/>
-					<FormInputValidation
-						isHidden={ ! has( lastName, 'error' ) || null === lastName.error }
-						isError={ has( lastName, 'error' ) && null !== lastName.error }
-						text={ lastName.error || '\u00A0' }
-					/>
-				</FormFieldset>
-			</Fragment>
-		);
-	}
-
-	emailAddressFieldset( index, username, domain ) {
-		const contactText = this.props.translate( 'contact', {
-			context: 'part of e-mail address',
-			comment: 'As it would be part of an e-mail address contact@example.com',
-		} );
-
-		const isError =
-			( has( username, 'error' ) && null !== username.error ) ||
-			( has( domain, 'error' ) && null !== domain.error );
-		const errorMessage = isError ? username.error || domain.error : '\u00A0';
-
-		return (
-			<div className="gsuite-add-users__email-address-fieldset" key={ index }>
-				<div>
-					<FormTextInput
-						onChange={ this.handleFieldChange.bind( this, 'username', index ) }
-						onFocus={ this.handleFieldFocus.bind( this, 'Email', index ) }
-						placeholder={ this.props.translate( 'e.g. %(example)s', {
-							args: { example: contactText },
-						} ) }
-						type="text"
-						value={ username.value }
-						isError={ isError }
-					/>
-					<DomainsSelect
-						domains={ getGoogleAppsSupportedDomains( this.props.domains ) }
-						isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
-						value={ domain.value }
-						onChange={ this.handleFieldChange.bind( this, 'domain', index ) }
-						onFocus={ this.handleFieldFocus.bind( this, 'Domain', index ) }
-						isError={ isError }
-					/>
-				</div>
-				<FormInputValidation isHidden={ ! isError } isError={ true } text={ errorMessage } />
-			</div>
-		);
-	}
-
-	handleFieldChange( fieldName, index, event ) {
+	handleFieldChange( index, fieldName, event ) {
 		const newValue = event.target.value;
 		const command = { fieldsets: {} };
 
@@ -275,10 +197,6 @@ class AddEmailAddressesCard extends React.Component {
 		}
 
 		this.setState( update( this.state, command ) );
-	}
-
-	handleFieldFocus( fieldName, index ) {
-		this.props.inputFocus( this.props.selectedDomainName, fieldName, index );
 	}
 
 	addAnotherEmailAddressLink() {
@@ -428,23 +346,6 @@ const domainChange = ( value, userIndex ) =>
 		} )
 	);
 
-const inputFocus = ( domainName, fieldName, userIndex ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			`Focused On "${ fieldName }" Input for User #${ userIndex } in Add Google Apps`,
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent(
-			`calypso_domain_management_add_google_apps_${ snakeCase( fieldName ) }_focus`,
-			{
-				domain_name: domainName,
-				user_index: userIndex,
-			}
-		)
-	);
-
 AddEmailAddressesCard.propTypes = {
 	domains: PropTypes.array.isRequired,
 	isRequestingSiteDomains: PropTypes.bool.isRequired,
@@ -461,6 +362,5 @@ export default connect(
 		cancelClick,
 		continueClick,
 		domainChange,
-		inputFocus,
 	}
 )( localize( AddEmailAddressesCard ) );
