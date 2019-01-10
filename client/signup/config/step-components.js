@@ -67,6 +67,7 @@ export default {
 	'rewind-add-creds': RewindAddCreds,
 	'rewind-form-creds': RewindFormCreds,
 	'site-information': SiteInformationComponent,
+	'site-information-without-domains': SiteInformationComponent,
 	'site-or-domain': SiteOrDomainComponent,
 	'site-picker': SitePicker,
 	'site-style': SiteStyleComponent,

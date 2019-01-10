@@ -122,4 +122,12 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
+	removeDomainsStepFromOnboarding: {
+		datestamp: '20181221',
+		variations: {
+			keep: 100,
+			remove: 0,
+		},
+		defaultVariation: 'keep',
+	},
 };

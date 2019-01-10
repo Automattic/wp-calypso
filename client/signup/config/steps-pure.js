@@ -388,6 +388,21 @@ export function generateSteps( {
 			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
 		},
 
+		'site-information-without-domains': {
+			stepName: 'site-information-without-domains',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [
+				'siteTitle',
+				'address',
+				'email',
+				'phone',
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+			],
+		},
+
 		'site-style': {
 			stepName: 'site-style',
 			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
