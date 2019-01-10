@@ -11,7 +11,7 @@ export const settings = {
 	prefix: 'jetpack',
 	title: __( 'Slideshow' ),
 	category: 'jetpack',
-	keywords: [ __( 'slideshow' ), __( 'image' ) ],
+	keywords: [ __( 'image' ) ],
 	description: __( 'Add an interactive slideshow.' ),
 	attributes: {
 		align: {
@@ -62,10 +62,10 @@ export const settings = {
 		},
 	},
 	effectOptions: [
-		{ label: 'Slide', value: 'slide' },
-		{ label: 'Fade', value: 'fade' },
-		{ label: 'Cover Flow', value: 'coverflow' },
-		{ label: 'Flip', value: 'flip' },
+		{ label: __( 'Slide' ), value: 'slide' },
+		{ label: __( 'Fade' ), value: 'fade' },
+		{ label: __( 'Cover Flow' ), value: 'coverflow' },
+		{ label: __( 'Flip' ), value: 'flip' },
 	],
 	validAlignments: [ 'center', 'wide', 'full' ],
 };
