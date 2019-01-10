@@ -8,7 +8,6 @@
 	//which is how sticky panel offset is calculated.
 	//Setting height to zero removes the offset
 	//so the sticky panel sticks to the top.
-
 	&.has-no-masterbar .masterbar:not( .header__masterbar-mock ) {
 		height: 0;
 	}
@@ -43,7 +42,7 @@
 	// border (which are really box-shadows) being
 	// cut off on the bottom. 4px to account for
 	// input:focus states. -shaun
-	padding: 1px 4px;
+	padding: 1px 8px;
 
 	// Some steps (like plans) need a larger
 	// width column.
@@ -51,9 +50,18 @@
 		max-width: 1040px;
 	}
 
-	// pressable-nux has no title or subtitle so needs to not hide the (W) logo
+	// pressable-nux has no title or subtitle so
+	// needs to not hide the (W) logo
 	.is-pressable-nux & {
 		margin-top: 30px;
+	}
+
+	// On small screens remove the margin from the
+	// bottom of the cards.
+	@include breakpoint( '<660px' ) {
+		.card {
+			margin-bottom: 0;
+		}
 	}
 }
 

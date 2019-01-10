@@ -1,7 +1,12 @@
-.logged-out-form,
-.logged-out-form__links {
+.logged-out-form {
 	margin: 0 auto;
 	max-width: 400px;
+}
+
+.logged-out-form__links {
+	margin: 0 auto;
+	max-width: 330px;
+	text-align: center;
 }
 
 .logged-out-form__footer {
