@@ -8,7 +8,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize, translate } from 'i18n-calypso';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
-import { find } from 'lodash';
+import { find, memoize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,6 +47,11 @@ function updateQueryString( query = {} ) {
 		...query,
 	};
 }
+
+const memoizedQuery = memoize( ( period, endOf ) => ( {
+	period,
+	date: endOf.format( 'YYYY-MM-DD' ),
+} ) );
 
 const CHARTS = [
 	{
@@ -150,10 +155,7 @@ class StatsSite extends Component {
 		let videoList;
 		let podcastList;
 
-		const query = {
-			period,
-			date: endOf.format( 'YYYY-MM-DD' ),
-		};
+		const query = memoizedQuery( period, endOf );
 
 		// Video plays, and tags and categories are not supported in JetPack Stats
 		if ( ! isJetpack ) {

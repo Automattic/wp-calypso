@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { flowRight } from 'lodash';
+import { flowRight, memoize } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { DEFAULT_HEARTBEAT } from 'components/data/query-site-stats/constants';
-import compareProps from 'lib/compare-props';
 import Chart from 'components/chart';
 import Legend from 'components/chart/legend';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -59,7 +58,9 @@ class StatModuleChartTabs extends Component {
 	intervalId = null;
 
 	componentDidMount() {
-		this.props.query && this.startQueryInterval();
+		if ( this.props.query ) {
+			this.startQueryInterval();
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -134,6 +135,15 @@ const NO_SITE_STATE = {
 	chartData: [],
 };
 
+const memoizedQuery = memoize( ( chartTab, date, period, quantity, siteId ) => ( {
+	chartTab,
+	date,
+	period,
+	quantity,
+	siteId,
+	statFields: QUERY_FIELDS,
+} ) );
+
 const connectComponent = connect(
 	( state, { activeLegend, period: { period }, chartTab, queryDate } ) => {
 		const siteId = getSelectedSiteId( state );
@@ -149,26 +159,18 @@ const connectComponent = connect(
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
-		const query = { chartTab, date, period, quantity, siteId, statFields: QUERY_FIELDS };
+		const query = memoizedQuery( chartTab, date, period, quantity, siteId );
 
 		return {
 			chartData,
 			counts,
 			isActiveTabLoading,
-			loadingTabs,
 			query,
 			queryKey,
 			siteId,
 		};
 	},
-	{ recordGoogleEvent, requestChartCounts },
-	null,
-	{
-		areStatePropsEqual: compareProps( {
-			shallow: [ 'activeTab', 'isActiveTabLoading' ],
-			deep: [ 'query', 'loadingTabs' ],
-		} ),
-	}
+	{ recordGoogleEvent, requestChartCounts }
 );
 
 export default flowRight(
