@@ -97,7 +97,6 @@ class PrimaryDomain extends React.Component {
 
 		return (
 			<Main className="domain-management-primary-domain">
-				/* eslint-enable wpcalypso/jsx-classname-namespace */
 				<Header selectedDomainName={ selectedDomainName } onClick={ this.goToEditDomainRoot }>
 					{ translate( 'Primary Domain' ) }
 				</Header>
