@@ -16,6 +16,13 @@ import MockDate from 'mockdate';
  */
 import { DateRange } from '../index.js';
 import DatePicker from 'components/date-picker';
+import DateRangeTrigger from 'components/date-range/trigger';
+import DateRangeInputs from 'components/date-range/inputs';
+import DateRangeHeader from 'components/date-range/header';
+
+function toHumanDate( date ) {
+	return date.format( 'DD/MM/YYYY' );
+}
 
 describe( 'DateRange', () => {
 	let fixedEndDate;
@@ -36,7 +43,7 @@ describe( 'DateRange', () => {
 		// test easier to assert against
 		moment.locale( [ 'en-GB' ] );
 
-		fixedEndDate = moment( '01-06-2018', 'DD-MM-YYYY' );
+		fixedEndDate = moment.utc( '01-06-2018', 'DD-MM-YYYY' );
 
 		// Set the clock for our test assertions so that new Date()
 		// will return the known `fixedEndDate` set above. This helps
@@ -50,229 +57,226 @@ describe( 'DateRange', () => {
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
-	test( "should render button text with date range of minus one month from today's date", () => {
-		const wrapper = shallow( <DateRange moment={ moment } /> );
-
-		const triggerText = wrapper.find( '.date-range__trigger-btn span' ).text();
-		const expectedText = '01/05/2018-01/06/2018';
-		expect( triggerText ).toBe( expectedText );
-	} );
-
-	test( 'should update trigger button text to match currently selected dates', () => {
-		const wrapper = shallow( <DateRange moment={ moment } /> );
-
-		const expectedStartDate = '01/04/2018';
-		const expectedEndDate = '29/04/2018';
-		const newStartDate = moment( expectedStartDate, 'DD/MM/YYYY' );
-		const newEndDate = moment( expectedEndDate, 'DD/MM/YYYY' );
-
-		// Select dates using API
-		wrapper.instance().onSelectDate( newStartDate );
-		wrapper.instance().onSelectDate( newEndDate );
-
-		expect(
-			wrapper
-				.update() // force re-render
-				.find( '.date-range__trigger-btn span' )
-				.text()
-		).toBe( `${ expectedStartDate }-${ expectedEndDate }` );
-	} );
-
-	test( 'should toggle Popover visibility on trigger button click', () => {
-		const wrapper = shallow( <DateRange moment={ moment } /> );
-		const triggerBtn = wrapper.find( '.date-range__trigger-btn' );
-		expect( wrapper.state().popoverVisible ).toBe( false );
-
-		triggerBtn.simulate( 'click' );
-
-		expect( wrapper.state().popoverVisible ).toBe( true );
-
-		triggerBtn.simulate( 'click' );
-
-		expect( wrapper.state().popoverVisible ).toBe( false );
-	} );
-
-	test( 'should only persist date selection when user clicks "Apply" button', () => {
-		const wrapper = shallow( <DateRange moment={ moment } /> );
-		const triggerBtn = wrapper.find( '.date-range__trigger-btn' );
-		const cancelBtn = wrapper.find( '.date-range__cancel-btn' );
-		const applyBtn = wrapper.find( '.date-range__apply-btn' );
-		const datePicker = wrapper.find( DatePicker );
-		const originalStartDate = wrapper.state().startDate;
-		const originalEndDate = wrapper.state().endDate;
-		const newStartDate = moment( '01-04-2018', 'DD-MM-YYYY' );
-		const newEndDate = moment( '29-04-2018', 'DD-MM-YYYY' );
-
-		function selectNewDates() {
-			triggerBtn.simulate( 'click' );
-			datePicker.props().onSelectDay( newStartDate );
-			datePicker.props().onSelectDay( newEndDate );
-		}
-
-		function assertDatesNotChanged() {
-			// Expect dates not persisted to state
-			expect( wrapper.state().startDate.format( 'DD-MM-YYYY' ) ).toBe(
-				originalStartDate.format( 'DD-MM-YYYY' )
-			);
-			expect( wrapper.state().endDate.format( 'DD-MM-YYYY' ) ).toBe(
-				originalEndDate.format( 'DD-MM-YYYY' )
-			);
-		}
-
-		// Open and select dates
-		selectNewDates();
-
-		expect( wrapper.state().startDate.format( 'DD-MM-YYYY' ) ).toBe(
-			newStartDate.format( 'DD-MM-YYYY' )
-		);
-
-		expect( wrapper.state().endDate.format( 'DD-MM-YYYY' ) ).toBe(
-			newEndDate.format( 'DD-MM-YYYY' )
-		);
-
-		// Close without Applying
-		triggerBtn.simulate( 'click' );
-
-		// Expected dates to have reverted back
-		assertDatesNotChanged();
-
-		// Open picker
-		selectNewDates();
-
-		// Click "cancel" button
-		cancelBtn.simulate( 'click' );
-
-		// Expected dates to have reverted back
-		assertDatesNotChanged();
-
-		// Open picker
-		selectNewDates();
-
-		// Click on "Apply" button
-		applyBtn.simulate( 'click' );
-
-		// Expect the new dates to be persisted to state
-		expect( wrapper.state().startDate.format( 'DD-MM-YYYY' ) ).toBe(
-			newStartDate.format( 'DD-MM-YYYY' )
-		);
-		expect( wrapper.state().endDate.format( 'DD-MM-YYYY' ) ).toBe(
-			newEndDate.format( 'DD-MM-YYYY' )
-		);
-	} );
-
-	test( 'should pass correct props to DatePicker', () => {
-		const wrapper = shallow( <DateRange moment={ moment } /> );
-		const instance = wrapper.instance();
-		const state = wrapper.state();
-		const datePicker = wrapper.find( DatePicker );
-		const today = new Date();
-
-		expect( datePicker.props() ).toEqual(
-			expect.objectContaining( {
-				selectedDays: {
-					from: state.startDate.toDate(),
-					to: state.endDate.toDate(),
-				},
-				numberOfMonths: 2,
-				calendarViewDate: state.startDate.toDate(),
-				onSelectDay: instance.onSelectDate,
-				disabledDays: [
-					{
-						after: today,
-					},
-				],
-			} )
-		);
-	} );
-
-	test( 'should show 1 month calendar view on screens <480px', () => {
-		window.matchMedia = jest.fn().mockImplementation( query => {
-			return {
-				matches: false,
-				media: query,
-				onchange: null,
-				addListener: jest.fn(),
-				removeListener: jest.fn(),
-			};
-		} );
-
-		const wrapper = shallow( <DateRange moment={ moment } /> );
-		const datePicker = wrapper.find( DatePicker );
-
-		expect( datePicker.props().numberOfMonths ).toEqual( 1 );
-	} );
-
-	describe( 'text inputs', () => {
-		let startDate;
-		let endDate;
-		let startDateISO;
-		let endDateISO;
-		let momentStartDate;
-		let momentEndDate;
-		let startDateEvent;
-		let endDateEvent;
-
-		beforeEach( () => {
-			startDate = '01/04/2018';
-			startDateISO = '2018-01-04';
-			endDate = '01/05/2018';
-			endDateISO = '2018-01-05';
-			momentStartDate = moment( startDateISO );
-			momentEndDate = moment( endDateISO );
-
-			startDateEvent = {
-				target: {
-					value: startDate,
-					id: 'startDate',
-				},
-			};
-
-			endDateEvent = {
-				target: {
-					value: endDate,
-					id: 'endDate',
-				},
-			};
-		} );
-
-		test( 'should allow date selection via inputs', () => {
+	describe( 'Trigger element', () => {
+		test( "should render trigger with appropriate default date range of minus one month from today's date", () => {
 			const wrapper = shallow( <DateRange moment={ moment } /> );
 
-			const startDateInput = wrapper.find( '#startDate' );
-			startDateInput.simulate( 'change', startDateEvent );
-			startDateInput.simulate( 'blur', startDateEvent );
+			const dateRangeTrigger = wrapper.find( DateRangeTrigger );
 
-			const endDateInput = wrapper.find( '#endDate' );
-			endDateInput.simulate( 'change', endDateEvent );
-			endDateInput.simulate( 'blur', endDateEvent );
+			const expected = {
+				startDateText: '01/05/2018',
+				endDateText: '01/06/2018',
+			};
+
+			expect( dateRangeTrigger.props() ).toEqual( expect.objectContaining( expected ) );
+		} );
+
+		test( 'should update trigger props to match currently selected dates', () => {
+			const wrapper = shallow( <DateRange moment={ moment } /> );
+
+			const expectedStartDate = '01/04/2018';
+			const expectedEndDate = '29/04/2018';
+			const newStartDate = moment( expectedStartDate, 'DD/MM/YYYY' );
+			const newEndDate = moment( expectedEndDate, 'DD/MM/YYYY' );
+
+			// Select dates using API
+			// note: not usually recommended to access component API directly
+			// but it's tricky to do this via DOM on a datepicker...
+			wrapper.instance().onSelectDate( newStartDate );
+			wrapper.instance().onSelectDate( newEndDate );
+
+			// Force re-render
+			wrapper.update();
+
+			const dateRangeTrigger = wrapper.find( DateRangeTrigger );
+
+			const expected = {
+				startDateText: expectedStartDate,
+				endDateText: expectedEndDate,
+			};
+
+			expect( dateRangeTrigger.props() ).toEqual( expect.objectContaining( expected ) );
+		} );
+	} );
+
+	describe( 'DatePicker element', () => {
+		const matchMediaDefaults = {
+			onchange: null,
+			addListener: jest.fn(),
+			removeListener: jest.fn(),
+		};
+
+		test( 'should pass correct props to DatePicker', () => {
+			const wrapper = shallow( <DateRange moment={ moment } /> );
+			const instance = wrapper.instance();
+			const state = wrapper.state();
+			const datePicker = wrapper.find( DatePicker );
+
+			expect( datePicker.props() ).toEqual(
+				expect.objectContaining( {
+					showOutsideDays: false,
+					fromMonth: undefined,
+					toMonth: undefined,
+					onSelectDay: instance.onSelectDate,
+					selectedDays: {
+						from: state.startDate.toDate(),
+						to: state.endDate.toDate(),
+					},
+					numberOfMonths: 2, // controlled via matchMedia mock
+					calendarViewDate: state.startDate.toDate(),
+					disabledDays: [ {} ],
+				} )
+			);
+		} );
+
+		test( 'should set 2 month calendar view on screens >480px', () => {
+			window.matchMedia = jest.fn().mockImplementation( query => {
+				return {
+					...matchMediaDefaults,
+					matches: true, // > 480px
+					media: query,
+				};
+			} );
+
+			const wrapper = shallow( <DateRange moment={ moment } /> );
+			const datePicker = wrapper.find( DatePicker );
+
+			expect( datePicker.props().numberOfMonths ).toEqual( 2 );
+		} );
+
+		test( 'should set 1 month calendar view on screens <480px', () => {
+			window.matchMedia = jest.fn().mockImplementation( query => {
+				return {
+					...matchMediaDefaults,
+					matches: false, // < 480px
+					media: query,
+				};
+			} );
+
+			const wrapper = shallow( <DateRange moment={ moment } /> );
+			const datePicker = wrapper.find( DatePicker );
+
+			expect( datePicker.props().numberOfMonths ).toEqual( 1 );
+		} );
+
+		test( 'should disable past dates on DatePicker if disablePastDates days is set', () => {
+			const wrapper = shallow( <DateRange moment={ moment } disablePastDates={ true } /> );
+			const datePicker = wrapper.find( DatePicker );
+
+			const today = new Date();
+
+			const expected = [
+				{
+					before: today,
+				},
+			];
+
+			const actual = datePicker.props().disabledDays;
+
+			expect( actual ).toEqual( expected );
+		} );
+
+		test( 'should disable future dates on DatePicker if disableFutureDates days is set', () => {
+			const wrapper = shallow( <DateRange moment={ moment } disableFutureDates={ true } /> );
+			const datePicker = wrapper.find( DatePicker );
+
+			const today = new Date();
+
+			const expected = [
+				{
+					after: today,
+				},
+			];
+
+			const actual = datePicker.props().disabledDays;
+
+			expect( actual ).toEqual( expected );
+		} );
+
+		test( 'should disable DatePicker UI for past months if disablePastDates days is set', () => {
+			const wrapper = shallow( <DateRange moment={ moment } disablePastDates={ true } /> );
+			const datePicker = wrapper.find( DatePicker );
+
+			const today = new Date();
+
+			const expected = today;
+
+			const actual = datePicker.props().fromMonth;
+
+			expect( actual ).toEqual( expected );
+		} );
+
+		test( 'should disable DatePicker UI for future months if disableFutureDates days is set', () => {
+			const wrapper = shallow( <DateRange moment={ moment } disableFutureDates={ true } /> );
+			const datePicker = wrapper.find( DatePicker );
+
+			const today = new Date();
+
+			const expected = today;
+
+			const actual = datePicker.props().toMonth;
+
+			expect( actual ).toEqual( expected );
+		} );
+	} );
+
+	describe( 'Input elements', () => {
+		let startDate;
+		let endDate;
+		let momentStartDate;
+		let momentEndDate;
+
+		beforeEach( () => {
+			startDate = '20/04/2018'; // DD/MM/YYYY
+			endDate = '28/05/2018'; // DD/MM/YYYY
+			momentStartDate = moment( startDate, 'DD-MM-YYYY' );
+			momentEndDate = moment( endDate, 'DD-MM-YYYY' );
+		} );
+
+		test( 'should update start date selection on start date input blur event', () => {
+			const wrapper = shallow( <DateRange moment={ moment } /> );
+
+			wrapper.instance().handleInputBlur( startDate, 'Start' );
 
 			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).toEqual(
 				momentStartDate.format( 'DD/MM/YYYY' )
 			);
+		} );
+
+		test( 'should update end date selection on end date input blur event', () => {
+			const wrapper = shallow( <DateRange moment={ moment } /> );
+
+			wrapper.instance().handleInputBlur( endDate, 'End' );
 
 			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).toEqual(
 				momentEndDate.format( 'DD/MM/YYYY' )
 			);
 		} );
 
-		test( 'should not update date selection before input is blurred', () => {
+		test( 'should not update date selection on input change event', () => {
 			const wrapper = shallow( <DateRange moment={ moment } /> );
 
-			const startDateInput = wrapper.find( '#startDate' );
-			startDateInput.simulate( 'change', startDateEvent );
+			wrapper.instance().handleInputChange( endDate, 'End' );
 
-			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).not.toEqual(
-				momentStartDate.format( 'DD/MM/YYYY' )
+			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).toEqual(
+				fixedEndDate.format( 'DD/MM/YYYY' )
 			);
 		} );
 
-		test( 'should not update start/end date selection if the new input date value is the same as that stored in state', () => {
+		test( 'should update `textInput*` state on input change event', () => {
+			const wrapper = shallow( <DateRange moment={ moment } /> );
+
+			wrapper.instance().handleInputChange( endDate, 'End' );
+
+			expect( wrapper.state().textInputEndDate ).toEqual( momentEndDate.format( 'DD/MM/YYYY' ) );
+		} );
+
+		test( 'should not update either start or end date selection if the new input date value is the same as that stored in state', () => {
 			const wrapper = shallow(
 				<DateRange startDate={ momentStartDate } endDate={ momentEndDate } moment={ moment } />
 			);
 
-			const startDateInput = wrapper.find( '#startDate' );
-			startDateInput.simulate( 'blur', startDateEvent );
+			wrapper.instance().handleInputBlur( startDate, 'Start' );
 
 			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).toEqual(
 				momentStartDate.format( 'DD/MM/YYYY' )
@@ -284,45 +288,22 @@ describe( 'DateRange', () => {
 		} );
 
 		test( 'should not update start/end dates if input date is invalid', () => {
-			const wrapper = shallow( <DateRange moment={ moment } /> );
-			const invalidDateString = '01/04/invaliddatestring';
+			const wrapper = shallow(
+				<DateRange startDate={ momentStartDate } endDate={ momentEndDate } moment={ moment } />
+			);
+			const invalidDateString = 'inv/alid/datestring';
 
-			const invalidStartDateEvent = Object.assign( {}, startDateEvent, {
-				value: invalidDateString,
-			} );
-
-			const startDateInput = wrapper.find( '#startDate' );
-			startDateInput.simulate( 'change', invalidStartDateEvent );
+			wrapper.instance().handleInputBlur( invalidDateString, 'Start' );
+			wrapper.instance().handleInputBlur( invalidDateString, 'End' );
 
 			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).not.toEqual( invalidDateString );
-		} );
-
-		test( 'should not update start/end dates if input date is in the future', () => {
-			const wrapper = shallow( <DateRange moment={ moment } /> );
-			const invalidDateString = '01/04/2154';
-
-			const invalidEndDateEvent = Object.assign( {}, endDateEvent, {
-				value: invalidDateString,
-			} );
-
-			const endDateInput = wrapper.find( '#endDate' );
-			endDateInput.simulate( 'blur', invalidEndDateEvent );
-
+			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).toEqual(
+				momentStartDate.format( 'DD/MM/YYYY' )
+			);
 			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).not.toEqual( invalidDateString );
-		} );
-
-		test( 'should not update start/end dates if input date is before Epoch date (1970)', () => {
-			const wrapper = shallow( <DateRange moment={ moment } /> );
-			const invalidDateString = '01/04/1969';
-
-			const invalidStartDateEvent = Object.assign( {}, startDateEvent, {
-				value: invalidDateString,
-			} );
-
-			const startDateInput = wrapper.find( '#startDate' );
-			startDateInput.simulate( 'blur', invalidStartDateEvent );
-
-			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).not.toEqual( invalidDateString );
+			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).toEqual(
+				momentEndDate.format( 'DD/MM/YYYY' )
+			);
 		} );
 
 		test( 'should see inputs reflect date picker selection', () => {
@@ -341,15 +322,18 @@ describe( 'DateRange', () => {
 			// Force update
 			wrapper.update();
 
-			const startDateInput = wrapper.find( '#startDate' );
-			const endDateInput = wrapper.find( '#endDate' );
+			const dateRangeInputs = wrapper.find( DateRangeInputs );
 
-			expect( startDateInput.props().value ).toBe( expectedStart );
-			expect( endDateInput.props().value ).toBe( expectedEnd );
+			expect( dateRangeInputs.props() ).toEqual(
+				expect.objectContaining( {
+					startDateValue: expectedStart,
+					endDateValue: expectedEnd,
+				} )
+			);
 		} );
 	} );
 
-	describe( 'callbacks', () => {
+	describe( 'Callback props', () => {
 		test( 'should call onDateSelect function when a date is selected', () => {
 			const callback = jest.fn();
 
@@ -394,6 +378,53 @@ describe( 'DateRange', () => {
 			expect( callback.mock.calls[ 0 ][ 1 ].format( 'DD/MM/YYYY' ) ).toEqual(
 				newEndDate.format( 'DD/MM/YYYY' )
 			);
+		} );
+	} );
+
+	describe( 'Apply and cancel', () => {
+		test( 'should only persist date selection when user clicks "Apply" button', () => {
+			const wrapper = shallow( <DateRange moment={ moment } /> );
+			const originalStartDate = wrapper.state().startDate;
+			const originalEndDate = wrapper.state().endDate;
+
+			// Get child components
+			const dateRangeHeader = wrapper.find( DateRangeHeader );
+			const datePicker = wrapper.find( DatePicker );
+
+			const newStartDate = moment( '01-04-2018', 'DD/MM/YYYY' );
+			const newEndDate = moment( '29-04-2018', 'DD/MM/YYYY' );
+
+			// Select dates using API
+			datePicker.props().onSelectDay( newStartDate );
+			datePicker.props().onSelectDay( newEndDate );
+
+			// Force update
+			wrapper.update();
+
+			// Calls whichever method DateRange passes into DateRangeHeader component
+			dateRangeHeader.props().onCancelClick();
+
+			// Should still be the original dates...
+			expect( wrapper.state() ).toEqual(
+				expect.objectContaining( {
+					startDate: originalStartDate,
+					endDate: originalEndDate,
+				} )
+			);
+
+			// Select dates using API
+			datePicker.props().onSelectDay( newStartDate );
+			datePicker.props().onSelectDay( newEndDate );
+
+			// Force update
+			wrapper.update();
+
+			// Calls whichever method DateRange passes into DateRangeHeader component
+			dateRangeHeader.props().onApplyClick();
+
+			// Should now be persisted
+			expect( toHumanDate( wrapper.state().startDate ) ).toEqual( toHumanDate( newStartDate ) );
+			expect( toHumanDate( wrapper.state().endDate ) ).toEqual( toHumanDate( newEndDate ) );
 		} );
 	} );
 
