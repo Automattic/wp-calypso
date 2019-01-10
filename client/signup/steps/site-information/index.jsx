@@ -12,6 +12,7 @@ import { each, reduce, trim, size } from 'lodash';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
@@ -122,39 +123,41 @@ export class SiteInformation extends Component {
 		return (
 			<div
 				className={ classNames( 'site-information__wrapper', {
-					'has-multiple-fieldsets': hasMultipleFieldSets,
+					'is-single-fieldset': ! hasMultipleFieldSets,
 				} ) }
 			>
-				<form>
-					{ formFields.map( fieldName => {
-						const fieldTexts = this.getFieldTexts( fieldName );
-						const fieldIdentifier = `site-information__${ fieldName }`;
-						return (
-							<div
-								key={ fieldIdentifier }
-								className={ classNames( 'site-information__field-control', fieldIdentifier ) }
-							>
-								<FormFieldset>
-									<FormLabel htmlFor={ fieldName }>
-										{ fieldTexts.fieldLabel }
-										<InfoPopover className="site-information__info-popover" position="top">
-											{ fieldTexts.fieldDescription }
-										</InfoPopover>
-									</FormLabel>
-									<FormTextInput
-										id={ fieldName }
-										name={ fieldName }
-										placeholder={ fieldTexts.fieldPlaceholder }
-										onChange={ this.handleInputChange }
-										value={ this.state[ fieldName ] }
-									/>
-									{ ! hasMultipleFieldSets && this.renderSubmitButton() }
-								</FormFieldset>
-							</div>
-						);
-					} ) }
-					{ hasMultipleFieldSets && this.renderSubmitButton() }
-				</form>
+				<Card>
+					<form>
+						{ formFields.map( fieldName => {
+							const fieldTexts = this.getFieldTexts( fieldName );
+							const fieldIdentifier = `site-information__${ fieldName }`;
+							return (
+								<div
+									key={ fieldIdentifier }
+									className={ classNames( 'site-information__field-control', fieldIdentifier ) }
+								>
+									<FormFieldset>
+										<FormLabel htmlFor={ fieldName }>
+											{ fieldTexts.fieldLabel }
+											<InfoPopover className="site-information__info-popover" position="top">
+												{ fieldTexts.fieldDescription }
+											</InfoPopover>
+										</FormLabel>
+										<FormTextInput
+											id={ fieldName }
+											name={ fieldName }
+											placeholder={ fieldTexts.fieldPlaceholder }
+											onChange={ this.handleInputChange }
+											value={ this.state[ fieldName ] }
+										/>
+										{ ! hasMultipleFieldSets && this.renderSubmitButton() }
+									</FormFieldset>
+								</div>
+							);
+						} ) }
+						{ hasMultipleFieldSets && this.renderSubmitButton() }
+					</form>
+				</Card>
 			</div>
 		);
 	}
@@ -179,18 +182,18 @@ export default connect(
 	( state, ownProps ) => {
 		const siteType = getSiteType( state );
 		const isBusiness = 'business' === siteType;
+		// Only business site types may show the full set of fields.
+		// This is a bespoke check until we implement a business-only flow,
+		// whereby the flow will determine the available site information steps.
+		const formFields =
+			! isBusiness && 'site-information' === ownProps.stepName
+				? [ 'title' ]
+				: ownProps.informationFields;
 		return {
-			// Only business site types may show the full set of fields.
-			// This is a bespoke check until we implement a business-only flow,
-			// whereby the flow will determine the available site information steps.
-			formFields:
-				! isBusiness && 'site-information' === ownProps.stepName
-					? [ 'title' ]
-					: ownProps.informationFields,
+			formFields,
 			siteInformation: getSiteInformation( state ),
 			siteType,
-			hasMultipleFieldSets: size( ownProps.informationFields ) > 1,
-			isBusiness,
+			hasMultipleFieldSets: size( formFields ) > 1,
 		};
 	},
 	( dispatch, ownProps ) => {

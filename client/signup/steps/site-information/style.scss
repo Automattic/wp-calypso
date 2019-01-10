@@ -1,10 +1,14 @@
 .site-information__wrapper {
 	position: relative;
-
+	display: flex;
 	.button {
 		margin: 0 auto;
 		display: block;
 		width: 200px;
+	}
+	.card {
+		width: 500px;
+		padding: 16px;
 	}
 }
 
@@ -23,10 +27,6 @@
 		margin-bottom: 0;
 	}
 
-	input {
-		padding: 10px 100px 10px 10px;
-	}
-
 	.button {
 		position: absolute;
 		bottom: 3px;
@@ -35,13 +35,23 @@
 	}
 }
 
-.site-information__wrapper:not( .has-multiple-fieldsets ) {
+.site-information__wrapper.is-single-fieldset {
 	.site-information__field-control {
 		margin: 0 auto;
 	}
 	.site-information__email,
 	.site-information__phone {
 		max-width: 400px;
+	}
+	input {
+		padding: 10px 100px 10px 10px;
+	}
+	.card {
+		margin: 0 auto;
+		background: transparent;
+		border: 0;
+		box-shadow: none;
+		padding: 0;
 	}
 }
 
