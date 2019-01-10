@@ -385,7 +385,38 @@ export function generateSteps( {
 
 		'site-information': {
 			stepName: 'site-information',
-			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
+			providesDependencies: [ 'title', 'address', 'phone' ],
+			props: {
+				headerText: i18n.translate( 'Help customers find you' ),
+				informationFields: [ 'title', 'address', 'phone' ],
+			},
+		},
+
+		'site-information-title': {
+			stepName: 'site-information-title',
+			providesDependencies: [ 'title' ],
+			props: {
+				headerText: i18n.translate( "Tell us your site's name" ),
+				informationFields: [ 'title' ],
+			},
+		},
+
+		'site-information-address': {
+			stepName: 'site-information-address',
+			providesDependencies: [ 'address' ],
+			props: {
+				headerText: i18n.translate( 'Help customers find you' ),
+				informationFields: [ 'address' ],
+			},
+		},
+
+		'site-information-phone': {
+			stepName: 'site-information-phone',
+			providesDependencies: [ 'phone' ],
+			props: {
+				headerText: i18n.translate( 'Let customers get in touch' ),
+				informationFields: [ 'phone' ],
+			},
 		},
 
 		'site-information-without-domains': {
