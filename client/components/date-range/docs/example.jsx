@@ -17,6 +17,8 @@ import DateRange from '../index.js';
  */
 class DateRangeExample extends Component {
 	render() {
+		const now = new Date();
+
 		return (
 			<Fragment>
 				<Card style={ { width: '300px', margin: 0 } }>
@@ -26,12 +28,12 @@ class DateRangeExample extends Component {
 
 				<Card style={ { width: '300px', margin: 0 } }>
 					<h3>Select only past dates</h3>
-					<DateRange disableFutureDates />
+					<DateRange lastSelectableDate={ now } />
 				</Card>
 
 				<Card style={ { width: '300px', margin: 0 } }>
 					<h3>Select only future dates</h3>
-					<DateRange disablePastDates />
+					<DateRange firstSelectableDate={ now } />
 				</Card>
 			</Fragment>
 		);
