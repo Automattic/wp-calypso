@@ -1,15 +1,6 @@
 .domain-transfer-suggestion {
 	display: flex;
 	align-items: center;
-
-	.button.domain-suggestion__action {
-		color: var( --color-primary );
-		flex: 1 0 auto;
-		margin: 0;
-		padding-left: 0;
-		padding-right: 0;
-		text-transform: none;
-	}
 }
 
 .domain-transfer-suggestion__domain-description {
