@@ -31,6 +31,11 @@ import { filter as filterUsers, validate as validateUsers } from 'lib/domains/go
 import DomainsSelect from './domains-select';
 import QueryUserSettings from 'components/data/query-user-settings';
 
+/**
+ * Style dependencies
+ */
+import './add-users.scss';
+
 function getGoogleAppsCartItems( { domains, fieldsets } ) {
 	let groups = groupBy( fieldsets, function( fieldset ) {
 		return fieldset.domain.value;
@@ -150,10 +155,10 @@ class AddEmailAddressesCard extends React.Component {
 
 	render() {
 		return (
-			<div className="add-google-apps__card">
+			<div className="gsuite-add-users__card">
 				<QueryUserSettings />
-				<Card className="add-google-apps__inner">
-					<form className="add-google-apps__form">
+				<Card className="gsuite-add-users__inner">
+					<form className="gsuite-add-users__form">
 						<FormLabel>{ this.props.translate( 'Add Email Addresses' ) }</FormLabel>
 						{ this.renderFieldsets() }
 						{ this.addAnotherEmailAddressLink() }
@@ -169,10 +174,10 @@ class AddEmailAddressesCard extends React.Component {
 			return (
 				<Fragment key={ index }>
 					{ index > 0 && <hr /> }
-					<div className="add-google-apps__email-address-fieldsets">
+					<div className="gsuite-add-users__email-address-fieldsets">
 						{ this.emailAddressFieldset( index, fields.username, fields.domain ) }
 					</div>
-					<div className="add-google-apps__name-fieldsets">
+					<div className="gsuite-add-users__name-fieldsets">
 						{ this.renderNameFieldset( index, fields.firstName, fields.lastName ) }
 					</div>
 				</Fragment>
@@ -231,7 +236,7 @@ class AddEmailAddressesCard extends React.Component {
 		const errorMessage = isError ? username.error || domain.error : '\u00A0';
 
 		return (
-			<div className="add-google-apps__email-address-fieldset" key={ index }>
+			<div className="gsuite-add-users__email-address-fieldset" key={ index }>
 				<div>
 					<FormTextInput
 						onChange={ this.handleFieldChange.bind( this, 'username', index ) }
@@ -280,7 +285,7 @@ class AddEmailAddressesCard extends React.Component {
 		return (
 			<button
 				type="button"
-				className="add-google-apps__add-another-email-address-link"
+				className="gsuite-add-users__add-another-email-address-link"
 				onClick={ this.handleAddAnotherEmailAddress }
 			>
 				{ this.props.translate( '+ Add another email address' ) }
@@ -300,7 +305,7 @@ class AddEmailAddressesCard extends React.Component {
 
 	formButtons() {
 		return (
-			<FormFooter className="add-google-apps__footer">
+			<FormFooter className="gsuite-add-users__footer">
 				<FormButton onClick={ this.handleContinue } disabled={ this.props.isRequestingSiteDomains }>
 					{ this.props.translate( 'Continue' ) }
 				</FormButton>

@@ -10,7 +10,7 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import AddEmailAddressesCard from 'my-sites/domains/domain-management/add-google-apps/add-email-addresses-card';
+import AddEmailAddressesCard from './add-users';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
