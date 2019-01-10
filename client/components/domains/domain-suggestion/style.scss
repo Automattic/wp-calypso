@@ -127,23 +127,9 @@
 	min-width: 66px;
 	text-align: center;
 	margin-top: 0.5em;
-	padding: 0.25em 3em;
+	padding: 0.25em;
 	float: right;
 	transition: all 0.1s linear;
-
-	&.is-primary {
-		color: $white;
-		transition: all 0.1s linear;
-
-		&:hover {
-			background-color: var( --color-button-primary-background-hover );
-		}
-
-		@include breakpoint( '>480px' ) {
-			margin-left: 1em;
-			margin-top: 0;
-		}
-	}
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
