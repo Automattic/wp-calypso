@@ -51,7 +51,7 @@
 		box-shadow: 0 0 0 1px $gray-lighten-20;
 
 		.site-type__option-label {
-			color: $blue-dark;
+			color: var( --color-primary-dark );
 		}
 	}
 

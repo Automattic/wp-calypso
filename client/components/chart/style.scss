@@ -304,7 +304,7 @@ $y-axis-padding: 0 20px 0 10px;
 }
 
 .chart__legend-color.is-dark-blue {
-	background: darken( $blue-dark, 5% );
+	background: var( --color-primary-dark );
 }
 
 // Chart legend checkbox
