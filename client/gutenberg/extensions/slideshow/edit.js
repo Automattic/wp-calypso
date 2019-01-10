@@ -15,7 +15,7 @@ import {
 	mediaUpload,
 } from '@wordpress/editor';
 
-import { IconButton, SelectControl, Toolbar, withNotices } from '@wordpress/components';
+import { IconButton, PanelBody, SelectControl, Toolbar, withNotices } from '@wordpress/components';
 import { filter, get, pick } from 'lodash';
 
 /**
@@ -92,14 +92,16 @@ class SlideshowEdit extends Component {
 		const controls = (
 			<Fragment>
 				<InspectorControls>
-					<SelectControl
-						label={ __( 'Transition effect' ) }
-						value={ effect }
-						onChange={ value => {
-							setAttributes( { effect: value } );
-						} }
-						options={ settings.effectOptions }
-					/>
+					<PanelBody title={ __( 'Effects' ) }>
+						<SelectControl
+							label={ __( 'Transition effect' ) }
+							value={ effect }
+							onChange={ value => {
+								setAttributes( { effect: value } );
+							} }
+							options={ settings.effectOptions }
+						/>
+					</PanelBody>
 				</InspectorControls>
 				<BlockControls>
 					<BlockAlignmentToolbar
