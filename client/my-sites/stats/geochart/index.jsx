@@ -116,13 +116,20 @@ class StatsGeochart extends Component {
 		const node = this.refs.chart;
 		const width = node.clientWidth;
 
+		const chartColorLight = getComputedStyle( document.body )
+			.getPropertyValue( '--color-accent-50' )
+			.trim();
+		const chartColorDark = getComputedStyle( document.body )
+			.getPropertyValue( '--color-accent' )
+			.trim();
+
 		const options = {
 			width: 100 + '%',
 			height: width <= 480 ? '238' : '480',
 			keepAspectRatio: true,
 			enableRegionInteractivity: true,
 			region: 'world',
-			colorAxis: { colors: [ '#bbc9d5', '#23354b' ] },
+			colorAxis: { colors: [ chartColorLight, chartColorDark ] },
 			domain: currentUserCountryCode,
 		};
 
