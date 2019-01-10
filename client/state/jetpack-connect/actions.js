@@ -361,10 +361,27 @@ export function authorize( queryObject ) {
 					data: data,
 					error: null,
 				} );
+
 				// Update the user now that we are fully connected.
 				const user = userFactory();
 				user.fetching = false;
 				user.fetch();
+
+				// @TODO: When user fetching is reduxified, let's get rid of this hack.
+				// Currently, we need it to make sure user has been refetched before we continue.
+				// Otherwise the user might see a confusing message that they have no sites.
+				// See p8oabR-j3-p2/#comment-2399 for more information.
+				return new Promise( resolve => {
+					const userFetched = setInterval( () => {
+						const loadedUser = user.get();
+						if ( loadedUser ) {
+							clearInterval( userFetched );
+							resolve( loadedUser );
+						}
+					}, 100 );
+				} );
+			} )
+			.then( () => {
 				// Site may not be accessible yet, so force fetch from wpcom
 				return wpcom.site( client_id ).get( {
 					force: 'wpcom',
