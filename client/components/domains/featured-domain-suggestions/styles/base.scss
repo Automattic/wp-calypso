@@ -17,8 +17,35 @@
 
 .featured-domain-suggestion {
 	flex-direction: column;
-	width: 100%;
 	margin-top: 0;
+	width: 100%;
+
+	.button.domain-suggestion__action {
+		min-width: 66px;
+		margin-top: 0.5em;
+		text-align: center;
+		padding: 0.25em 3em;
+		text-transform: none;
+		float: right;
+		transition: all 0.1s linear;
+		width: 100%;
+
+		.is-placeholder & {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			background-color: var( --color-neutral-0 );
+			border: none;
+			border-radius: 0;
+			color: transparent;
+			margin-left: 40px;
+			min-height: 26px;
+		}
+
+		@include breakpoint( '>480px' ) {
+			flex: 1 0 auto;
+			float: none;
+			margin-left: 1em;
+		}
+	}
 
 	.domain-suggestion__content {
 		display: flex;

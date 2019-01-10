@@ -112,6 +112,7 @@ export class FeaturedDomainSuggestions extends Component {
 						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 0 }
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
+						buttonStyles={ { primary: true } }
 						{ ...childProps }
 					/>
 				) }

@@ -34,6 +34,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		isDomainOnly: PropTypes.bool,
 		isSignupStep: PropTypes.bool,
 		isFeatured: PropTypes.bool,
+		buttonStyles: PropTypes.object,
 		cart: PropTypes.object,
 		suggestion: PropTypes.shape( {
 			domain_name: PropTypes.string.isRequired,
@@ -217,6 +218,8 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion: { domain_name: domain, product_slug: productSlug, cost },
 		} = this.props;
 
+		const buttonStyles = ! isFeatured ? { borderless: true } : this.props.buttonStyles;
+
 		const extraClasses = classNames( { 'featured-domain-suggestion': isFeatured } );
 
 		return (
@@ -227,6 +230,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				domain={ domain }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
+				buttonStyles={ buttonStyles }
 				{ ...this.getButtonProps() }
 			>
 				{ this.renderDomain() }
