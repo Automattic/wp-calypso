@@ -4,11 +4,6 @@
 	padding: 16px;
 	transition: max-width 0.2s ease-in-out;
 
-	// This is temporary until we reduce the vertical
-	// and info steps down to a single row.
-	// position: relative;
-	// z-index: 1000000; // Yea yea, I know... -shaun
-
 	// Side by side layout uses flexbox to show
 	// both mockups next to each other.
 	@include breakpoint( '>960px' ) {
@@ -23,11 +18,16 @@
 			// all available horizontal space.
 			flex-grow: 1;
 		}
+
+		.site-mockup__viewport.is-mobile {
+			.site-mockup__body {
+				height: 440px;
+			}
+		}
 	}
 
 	// Grouped layout shows a fixed-height mobile mockup
 	// overlaid on top of the desktop mockup.
-	// ==Currently not used
 	@include breakpoint( '660px-960px' ) {
 		position: relative;
 
@@ -38,7 +38,7 @@
 			box-shadow: 0 0 0 1px $gray, 0 4px 12px 0 rgba( 0, 0, 0, 0.3 );
 
 			.site-mockup__body {
-				height: 500px;
+				height: 440px;
 			}
 		}
 	}
@@ -46,16 +46,17 @@
 	// Only show the mobile view at small
 	// breakpoints.
 	@include breakpoint( '<660px' ) {
-		padding: 0 10px;
+		padding-right: 1px;
+		padding-left: 1px;
+		padding-bottom: 0;
 
 		.site-mockup__viewport.is-desktop {
 			display: none;
 		}
 
 		.site-mockup__viewport.is-mobile {
-			width: auto;
-			margin: 15px auto;
-			max-width: 380px;
+			width: 100%;
+			border-radius: 12px 12px 0 0;
 		}
 	}
 }

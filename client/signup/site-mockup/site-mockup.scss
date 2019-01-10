@@ -10,7 +10,7 @@
 		position: absolute;
 			top: 8px;
 			left: 8px;
-		fill: $gray;
+		fill: var( --color-neutral );
 	}
 
 	.site-mockup__chrome-label {
@@ -48,6 +48,13 @@
 		width: 60px;
 		background: var( --color-neutral-0 );
 		border-radius: 16px;
+
+		// At small screen sizes "hide" the label
+		// text as its mostly redundent.
+		@include breakpoint( '<660px' ) {
+			color: var( --color-neutral-0 );
+			width: 180px;
+		}
 	}
 }
 
@@ -61,13 +68,13 @@
 	// Mobile body is scrollable and needs to
 	// make room for the chrome.
 	.site-mockup__viewport.is-mobile & {
-		margin: 0 6px 6px;
-		border: 1px solid var( --color-neutral-100 );
-		border-radius: 3px;
-		max-height: 400px;
+		border-top: 1px solid var( --color-neutral-100 );
 
-		@include breakpoint( '<660px' ) {
-			max-height: 600px;
+		@include breakpoint( '>660px' ) {
+			border: 1px solid var( --color-neutral-100 );
+			margin: 0 6px 24px 6px;
+			border-radius: 3px;
+			overflow: hidden auto;
 		}
 	}
 }
