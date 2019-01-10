@@ -123,7 +123,8 @@
 	}
 }
 
-.button.domain-suggestion__action {
+.button.domain-suggestion__action.is-borderless {
+	color: var( --color-primary );
 	min-width: 66px;
 	text-align: center;
 	margin-top: 0.5em;
