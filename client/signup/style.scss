@@ -25,6 +25,14 @@
 		overflow: auto;
 		box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.2 );
 	}
+
+	@include breakpoint( '<660px' ) {
+		button {
+			font-size: 16px;
+			padding-top: 12px;
+			padding-bottom: 14px;
+		}
+	}
 }
 
 // Most steps have a narrow width.
