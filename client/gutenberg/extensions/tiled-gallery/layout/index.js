@@ -111,7 +111,7 @@ function isWpcomFilesUrl( url ) {
 	return /\.files\.wordpress\.com$/.test( host );
 }
 
-function photonWpcomImage( url, opts ) {
+function photonWpcomImage( url, opts = {} ) {
 	// Adhere to the same API as the photon.js lib
 	const photonLibMappings = {
 		width: 'w',
