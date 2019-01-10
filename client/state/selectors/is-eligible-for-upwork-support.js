@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { some } from 'lodash';
+import { get, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,11 +22,10 @@ export default function isEligibleForUpworkSupport( state ) {
 		return false;
 	}
 
-	const hasBusinessOrEcommercePlan = some(
-		getSitesItems( state ),
-		site => isBusinessPlan( site.plan ) || isEcommercePlan( site.plan )
-	);
-
+	const hasBusinessOrEcommercePlan = some( getSitesItems( state ), site => {
+		const planSlug = get( site, 'plan.product_slug' );
+		return isBusinessPlan( planSlug ) || isEcommercePlan( planSlug );
+	} );
 	// Upwork is not available if the customer has a Business or eCommerce plan
 	return ! hasBusinessOrEcommercePlan;
 }
