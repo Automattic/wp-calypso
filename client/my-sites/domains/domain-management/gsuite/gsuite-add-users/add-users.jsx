@@ -200,18 +200,6 @@ class AddEmailAddressesCard extends React.Component {
 		this.setState( update( this.state, command ) );
 	}
 
-	addAnotherEmailAddressLink() {
-		return (
-			<button
-				type="button"
-				className="gsuite-add-users__add-another-email-address-link"
-				onClick={ this.handleAddAnotherEmailAddress }
-			>
-				{ this.props.translate( '+ Add another email address' ) }
-			</button>
-		);
-	}
-
 	addBlankUser = () => {
 		this.setState( {
 			fieldsets: this.state.fieldsets.concat( [ this.getNewFieldset() ] ),

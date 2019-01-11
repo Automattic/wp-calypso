@@ -40,14 +40,13 @@ const recordAddUserClick = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Add another email address" link in Add Google Apps',
+			'Clicked "Add another email address" link in G Suite Add Users',
 			'Domain Name',
 			domainName
 		),
-		recordTracksEvent(
-			'calypso_domain_management_add_google_apps_add_another_email_address_click',
-			{ domain_name: domainName }
-		)
+		recordTracksEvent( 'calypso_domain_management_gsuite_add_another_user_click', {
+			domain_name: domainName,
+		} )
 	);
 
 AddAnotherUserLink.propTypes = {
