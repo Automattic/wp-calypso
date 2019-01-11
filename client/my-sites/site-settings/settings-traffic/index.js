@@ -7,7 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import settingsController from 'my-sites/site-settings/settings-controller';
+import { siteSettings } from 'my-sites/site-settings/settings-controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { traffic } from './controller';
@@ -21,7 +21,7 @@ export default function() {
 		'/settings/traffic/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.siteSettings,
+		siteSettings,
 		traffic,
 		makeLayout,
 		clientRender

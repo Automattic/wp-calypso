@@ -10,7 +10,7 @@ import page from 'page';
 import config from 'config';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import controller from 'my-sites/site-settings/controller';
-import settingsController from 'my-sites/site-settings/settings-controller';
+import { setScroll, siteSettings } from 'my-sites/site-settings/settings-controller';
 import { reasonComponents as reasons } from './disconnect-site';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -20,8 +20,8 @@ export default function() {
 		'/settings/general/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.setScroll,
-		settingsController.siteSettings,
+		setScroll,
+		siteSettings,
 		controller.general,
 		makeLayout,
 		clientRender
@@ -60,7 +60,7 @@ export default function() {
 		'/settings/delete-site/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.setScroll,
+		setScroll,
 		controller.redirectIfCantDeleteSite,
 		controller.deleteSite,
 		makeLayout,
@@ -78,7 +78,7 @@ export default function() {
 	page(
 		`/settings/disconnect-site/:reason(${ reasonSlugs.join( '|' ) })?/:site_id`,
 		siteSelection,
-		settingsController.setScroll,
+		setScroll,
 		controller.disconnectSite,
 		makeLayout,
 		clientRender
@@ -87,7 +87,7 @@ export default function() {
 	page(
 		'/settings/disconnect-site/confirm/:site_id',
 		siteSelection,
-		settingsController.setScroll,
+		setScroll,
 		controller.disconnectSiteConfirm,
 		makeLayout,
 		clientRender
@@ -97,7 +97,7 @@ export default function() {
 		'/settings/start-over/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.setScroll,
+		setScroll,
 		controller.redirectIfCantDeleteSite,
 		controller.startOver,
 		makeLayout,
@@ -107,7 +107,7 @@ export default function() {
 		'/settings/theme-setup/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.setScroll,
+		setScroll,
 		controller.themeSetup,
 		makeLayout,
 		clientRender
@@ -117,7 +117,7 @@ export default function() {
 		'/settings/manage-connection/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.setScroll,
+		setScroll,
 		controller.manageConnection,
 		makeLayout,
 		clientRender

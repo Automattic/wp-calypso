@@ -8,7 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-import settingsController from 'my-sites/site-settings/settings-controller';
+import { setScroll, siteSettings } from 'my-sites/site-settings/settings-controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { podcasting, taxonomies, writing } from './controller';
@@ -18,7 +18,7 @@ export default function() {
 		'/settings/writing/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.siteSettings,
+		siteSettings,
 		writing,
 		makeLayout,
 		clientRender
@@ -31,7 +31,7 @@ export default function() {
 			'/settings/taxonomies/:taxonomy/:site_id',
 			siteSelection,
 			navigation,
-			settingsController.setScroll,
+			setScroll,
 			taxonomies,
 			makeLayout,
 			clientRender
@@ -44,7 +44,7 @@ export default function() {
 		'/settings/podcasting/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.setScroll,
+		setScroll,
 		podcasting,
 		makeLayout,
 		clientRender
