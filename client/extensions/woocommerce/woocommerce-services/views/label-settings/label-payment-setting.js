@@ -49,18 +49,26 @@ class PaymentSetting extends Component {
 
 	isExpanded( { canEditPayments, pristine, selectedPaymentMethod } ) {
 		return canEditPayments && ( ! selectedPaymentMethod || ! pristine );
-    }
+	}
 
-    renderPlaceholder() {
-        return (
-            <div className="label-settings__placeholder">
-                <p className="label-settings__credit-card-description" />
-                <PaymentMethod selected={ false } isLoading={ true } />
-                <PaymentMethod selected={ false } isLoading={ true } />
-                <Button compact />
-            </div>
-        );
-    }
+	renderPaymentMethodPlaceholder() {
+		return (
+			<div className="label-settings__payment-methods label-settings__placeholder">
+				<PaymentMethod selected={ false } isLoading={ true } />
+				<PaymentMethod selected={ false } isLoading={ true } />
+			</div>
+		);
+	}
+
+	renderPlaceholder() {
+		return (
+			<div className="label-settings__placeholder">
+				<p className="label-settings__credit-card-description" />
+				{ this.state.expanded && this.renderPaymentMethodPlaceholder() }
+				<Button compact />
+			</div>
+		);
+	}
 
 
 	refetchSettings = () => {
@@ -78,7 +86,7 @@ class PaymentSetting extends Component {
 				<NoticeAction onClick={ this.refetchSettings }>{ translate( 'Retry' ) }</NoticeAction>
 			</Notice>
 		);
-    };
+	};
 
 	renderAddCardExternalInfo = () => {
 		const { masterUserWpcomLogin, masterUserEmail, translate } = this.props;
@@ -113,16 +121,16 @@ class PaymentSetting extends Component {
 
 	render() {
 		const {
-            siteId,
+			siteId,
 			canEditPayments,
 			paymentMethods,
 			selectedPaymentMethod,
-            isLoading,
-            isReloading,
+			isLoading,
+			isReloading,
 			translate,
-        } = this.props;
-        
-        if ( isLoading ) {
+		} = this.props;
+
+		if ( isLoading ) {
 			return this.renderPlaceholder();
 		}
 
@@ -207,14 +215,11 @@ class PaymentSetting extends Component {
 				{ ! isReloading && this.renderPaymentWarningNotice() }
 
 				<QueryStoredCards />
-				{ isReloading ? (
-					<div className="label-settings__placeholder">
-						<PaymentMethod selected={ false } isLoading={ true } />
-						<PaymentMethod selected={ false } isLoading={ true } />
-					</div>
-				) : (
-					paymentMethods.map( renderPaymentMethod )
-				) }
+				<div className="label-settings__payment-methods">
+					{ isReloading
+						? this.renderPaymentMethodPlaceholder()
+						: paymentMethods.map( renderPaymentMethod ) }
+				</div>
 
 				<AddCardDialog siteId={ siteId } />
 
@@ -230,12 +235,12 @@ class PaymentSetting extends Component {
 				</div>
 			</div>
 		);
-    };
+	};
 }
 
 PaymentSetting.propTypes = {
-	siteId: PropTypes.number.isRequired,
-	onChange: PropTypes.func.isRequired,
+	siteId: PropTypes.number,
+	onChange: PropTypes.func,
 };
 
 export default connect(
