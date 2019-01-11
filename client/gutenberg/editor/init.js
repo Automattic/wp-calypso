@@ -13,7 +13,7 @@ import { unstable__bootstrapServerSideBlockDefinitions } from '@wordpress/blocks
 /**
  * Internal dependencies
  */
-import { requestGutenbergServerBlocksAttributes } from 'state/data-getters';
+import { requestGutenbergCoreServerBlockSettings } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { applyAPIMiddleware } from './api-middleware';
@@ -65,11 +65,11 @@ const addResetToRegistry = registry => {
 
 const registerGutenbergBlocks = registerCoreBlocks =>
 	waitForData( {
-		serverBlocksAttributes: () => requestGutenbergServerBlocksAttributes(),
-	} ).then( ( { serverBlocksAttributes } ) => {
-		if ( serverBlocksAttributes.data ) {
-			debug( 'Registering server-defined blocks attributes' );
-			unstable__bootstrapServerSideBlockDefinitions( serverBlocksAttributes.data );
+		serverBlockSettings: () => requestGutenbergCoreServerBlockSettings(),
+	} ).then( ( { serverBlockSettings } ) => {
+		if ( serverBlockSettings.data ) {
+			debug( 'Registering core server-defined blocks attributes' );
+			unstable__bootstrapServerSideBlockDefinitions( serverBlockSettings.data );
 		}
 		debug( 'Registering core blocks' );
 		registerCoreBlocks();

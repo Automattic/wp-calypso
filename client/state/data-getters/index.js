@@ -314,16 +314,16 @@ export const requestActiveThemeSupport = siteSlug =>
 		{ fromApi: () => data => [ [ `active-theme-support-${ siteSlug }`, data ] ] }
 	);
 
-export const requestGutenbergServerBlocksAttributes = () =>
+export const requestGutenbergCoreServerBlockSettings = () =>
 	requestHttpData(
-		'gutenberg-server-blocks-attributes',
+		'gutenberg-core-server-block-settings',
 		http(
 			{
-				path: `/gutenberg/server-blocks-attributes`,
+				path: `/gutenberg/core-server-block-settings`,
 				method: 'GET',
 				apiNamespace: 'wpcom/v2',
 			},
 			{}
 		),
-		{ fromApi: () => data => [ [ 'gutenberg-server-blocks-attributes', data ] ] }
+		{ fromApi: () => data => [ [ 'gutenberg-core-server-block-settings', data ] ] }
 	);
