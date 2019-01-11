@@ -127,11 +127,11 @@ export default compose( [
 		const postType = getPostType( getEditedPostAttribute( 'type' ) );
 		const previewLink = getEditedPostPreviewLink();
 
-		const featuredImage = get(
-			getMedia( getEditedPostAttribute( 'featured_media' ) ),
-			'source_url',
-			null
-		);
+		const featuredImageId = getEditedPostAttribute( 'featured_media' );
+
+		const featuredImage = featuredImageId
+			? get( getMedia( getEditedPostAttribute( 'featured_media' ) ), 'source_url', null )
+			: null;
 		const author = find( getAuthors(), { id: getCurrentPostAttribute( 'author' ) } );
 
 		const editedPost = {
