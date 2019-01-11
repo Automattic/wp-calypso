@@ -228,13 +228,5 @@ export default connect(
 			selectedSite,
 		};
 	},
-	( dispatch, { selectedDomainName } ) => {
-		const googleAppsUsersFetcher = selectedDomainName
-			? () => fetchByDomain( selectedDomainName )
-			: siteId => fetchBySiteId( siteId );
-
-		return {
-			fetchGoogleAppsUsers: siteId => dispatch( googleAppsUsersFetcher( siteId ) ),
-		};
-	}
+	null
 )( DomainManagementData );
