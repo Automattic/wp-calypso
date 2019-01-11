@@ -238,8 +238,6 @@ class DatePicker extends PureComponent {
 				fromMonth={ this.props.fromMonth }
 				toMonth={ this.props.toMonth }
 				onDayClick={ this.setCalendarDay }
-				onDayTouchStart={ this.setCalendarDay }
-				onDayTouchEnd={ this.setCalendarDay }
 				onDayTouchMove={ this.handleDayTouchMove }
 				renderDay={ this.renderDay }
 				locale={ this.props.locale }
