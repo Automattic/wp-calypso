@@ -2076,13 +2076,13 @@
 			}
 		},
 		"@wordpress/api-fetch": {
-			"version": "2.2.7",
-			"resolved": "https://registry.npmjs.org/@wordpress/api-fetch/-/api-fetch-2.2.7.tgz",
-			"integrity": "sha512-7Bl4hfLLw5rWeQ7LIa3U/rananC2Tk6uZ55acetC+hag9gJpDpddbXOlW3Li8Zk1cJvvcpgfElVPwPFnS0e/qg==",
+			"version": "2.2.8",
+			"resolved": "https://registry.npmjs.org/@wordpress/api-fetch/-/api-fetch-2.2.8.tgz",
+			"integrity": "sha512-mbdP9GvDe8Ojv8cobk30mfg2btEZDQEe7IgO+rGSlvVlHC88U8cc2VgOLNX6c9/6/sCvkoGd4Tsy85VbdTlTXw==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
-				"@wordpress/hooks": "^2.0.4",
-				"@wordpress/i18n": "^3.1.0",
+				"@wordpress/hooks": "^2.0.5",
+				"@wordpress/i18n": "^3.1.1",
 				"@wordpress/url": "^2.3.3"
 			}
 		},
@@ -2095,17 +2095,17 @@
 			}
 		},
 		"@wordpress/babel-plugin-import-jsx-pragma": {
-			"version": "1.1.2",
-			"resolved": "https://registry.npmjs.org/@wordpress/babel-plugin-import-jsx-pragma/-/babel-plugin-import-jsx-pragma-1.1.2.tgz",
-			"integrity": "sha512-0w43MP56yecSLUNr1ayus2bFM7y2k9O1SpFvc7c6bAlabJ6euTpkZscVIZSjzTR+d90wSu1BclzxiX58Y4oAwQ==",
+			"version": "1.1.3",
+			"resolved": "https://registry.npmjs.org/@wordpress/babel-plugin-import-jsx-pragma/-/babel-plugin-import-jsx-pragma-1.1.3.tgz",
+			"integrity": "sha512-WkVeFZpM5yuHigWe8llZDeMRa4bhMQoHu9dzs1s3cmB1do2mhk341Iw34FidWto14Dzd+383K71vxJejqjKOwQ==",
 			"requires": {
 				"@babel/runtime": "^7.0.0"
 			}
 		},
 		"@wordpress/babel-plugin-makepot": {
-			"version": "2.1.2",
-			"resolved": "https://registry.npmjs.org/@wordpress/babel-plugin-makepot/-/babel-plugin-makepot-2.1.2.tgz",
-			"integrity": "sha512-YpQKaiqyvBrRuIBo9oAIESTxRSLDmL0q4ls7s4kUmqGEVifGUkgePF3yze3rmUVRTLP/Y4UoRSPqu1edLT3+Yg==",
+			"version": "2.1.3",
+			"resolved": "https://registry.npmjs.org/@wordpress/babel-plugin-makepot/-/babel-plugin-makepot-2.1.3.tgz",
+			"integrity": "sha512-8ijU4bYUmJuXPnHS47X9Y5OrESLmgx3VVGb+9tNO5hyPoXnZj+ELw9+SB4fJtg0Ur1MDNKRLz4ruJS4Y0tRnNQ==",
 			"dev": true,
 			"requires": {
 				"@babel/runtime": "^7.0.0",
@@ -2122,25 +2122,25 @@
 			}
 		},
 		"@wordpress/block-library": {
-			"version": "2.2.12",
-			"resolved": "https://registry.npmjs.org/@wordpress/block-library/-/block-library-2.2.12.tgz",
-			"integrity": "sha512-PFFWhTny1lN5TC7fDs5aH3hW5RgwEtbysoXk5zX9f6OS4N6Ye9CMFXC2tT+ZciG/bdE3TcNx+/Hadmnt10uE+w==",
+			"version": "2.2.13",
+			"resolved": "https://registry.npmjs.org/@wordpress/block-library/-/block-library-2.2.13.tgz",
+			"integrity": "sha512-xyM/oswytDqy/QiqnLJVPQisKIclcaM7PyTp7BUexJyPFijcyFHPyYZKbhjzTAGqYCw3lhEPAv9GrGhiqpwbIQ==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
 				"@wordpress/autop": "^2.0.2",
 				"@wordpress/blob": "^2.1.0",
-				"@wordpress/blocks": "^6.0.5",
-				"@wordpress/components": "^7.0.5",
-				"@wordpress/compose": "^3.0.0",
-				"@wordpress/core-data": "^2.0.16",
-				"@wordpress/data": "^4.2.0",
-				"@wordpress/deprecated": "^2.0.4",
-				"@wordpress/editor": "^9.0.7",
-				"@wordpress/element": "^2.1.8",
+				"@wordpress/blocks": "^6.0.6",
+				"@wordpress/components": "^7.0.6",
+				"@wordpress/compose": "^3.0.1",
+				"@wordpress/core-data": "^2.0.17",
+				"@wordpress/data": "^4.2.1",
+				"@wordpress/deprecated": "^2.0.5",
+				"@wordpress/editor": "^9.0.8",
+				"@wordpress/element": "^2.1.9",
 				"@wordpress/html-entities": "^2.0.4",
-				"@wordpress/i18n": "^3.1.0",
-				"@wordpress/keycodes": "^2.0.5",
-				"@wordpress/viewport": "^2.1.0",
+				"@wordpress/i18n": "^3.1.1",
+				"@wordpress/keycodes": "^2.0.6",
+				"@wordpress/viewport": "^2.1.1",
 				"classnames": "^2.2.5",
 				"lodash": "^4.17.10",
 				"memize": "^1.0.5",
@@ -2148,35 +2148,35 @@
 			}
 		},
 		"@wordpress/block-serialization-default-parser": {
-			"version": "2.0.3",
-			"resolved": "https://registry.npmjs.org/@wordpress/block-serialization-default-parser/-/block-serialization-default-parser-2.0.3.tgz",
-			"integrity": "sha512-VUP3QmTlCFc8Ay5ZrXdEibQeTLIk1XRX2UAZfFiXfw1IQzeVS6q64eZbG8rh0Gpj5iQrzB/qTo01sQ+dC4gBQQ==",
+			"version": "2.0.4",
+			"resolved": "https://registry.npmjs.org/@wordpress/block-serialization-default-parser/-/block-serialization-default-parser-2.0.4.tgz",
+			"integrity": "sha512-qTJRSiTLfPw/BlyxXIOv23ISpoQHNXOjbmC+XBmQNI0Ne/4U8cgAf6/2L8w/b2ZEFE+F5OqlOXuQ+4/QRvOnrA==",
 			"requires": {
 				"@babel/runtime": "^7.0.0"
 			}
 		},
 		"@wordpress/block-serialization-spec-parser": {
-			"version": "2.0.2",
-			"resolved": "https://registry.npmjs.org/@wordpress/block-serialization-spec-parser/-/block-serialization-spec-parser-2.0.2.tgz",
-			"integrity": "sha512-H3v+ndlMEEPfc1lX7mZ6dU1RqgPr3B6CWkV3v4MAJpQVZ6Rm1afw9VUNTZYSJ2aNnpb/fix0Qc3bt22vju69OQ=="
+			"version": "2.0.3",
+			"resolved": "https://registry.npmjs.org/@wordpress/block-serialization-spec-parser/-/block-serialization-spec-parser-2.0.3.tgz",
+			"integrity": "sha512-fLBKNRbnm5OZCseWYEuH2uHR2Sx6vWX9UY9wlu7ba1rQb4xjLEh547+yYs7985udB2pGmUG6JWdBcHAlTkkIqw=="
 		},
 		"@wordpress/blocks": {
-			"version": "6.0.5",
-			"resolved": "https://registry.npmjs.org/@wordpress/blocks/-/blocks-6.0.5.tgz",
-			"integrity": "sha512-ucludD4lvHuq/wn1SSjvfNlXv91GusniV1XhN8BuZZEadHdBEiMmD0MQiZoZL7YhWwHa94gWuKi+6yru3M6V3A==",
+			"version": "6.0.6",
+			"resolved": "https://registry.npmjs.org/@wordpress/blocks/-/blocks-6.0.6.tgz",
+			"integrity": "sha512-eVLfd7rZ7LlUcfyxL+CRvJeEJHdEe+vWMzMc6Chd6+JCQ23UcH4aUJBDuIWAZWHckLNep1O7NrjJOEIgxkeBOQ==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
 				"@wordpress/autop": "^2.0.2",
 				"@wordpress/blob": "^2.1.0",
-				"@wordpress/block-serialization-default-parser": "^2.0.3",
-				"@wordpress/block-serialization-spec-parser": "^2.0.2",
-				"@wordpress/data": "^4.2.0",
+				"@wordpress/block-serialization-default-parser": "^2.0.4",
+				"@wordpress/block-serialization-spec-parser": "^2.0.3",
+				"@wordpress/data": "^4.2.1",
 				"@wordpress/dom": "^2.0.8",
-				"@wordpress/element": "^2.1.8",
-				"@wordpress/hooks": "^2.0.4",
+				"@wordpress/element": "^2.1.9",
+				"@wordpress/hooks": "^2.0.5",
 				"@wordpress/html-entities": "^2.0.4",
-				"@wordpress/i18n": "^3.1.0",
-				"@wordpress/is-shallow-equal": "^1.1.4",
+				"@wordpress/i18n": "^3.1.1",
+				"@wordpress/is-shallow-equal": "^1.1.5",
 				"@wordpress/shortcode": "^2.0.2",
 				"hpq": "^1.3.0",
 				"lodash": "^4.17.10",
@@ -2188,21 +2188,21 @@
 			}
 		},
 		"@wordpress/components": {
-			"version": "7.0.5",
-			"resolved": "https://registry.npmjs.org/@wordpress/components/-/components-7.0.5.tgz",
-			"integrity": "sha512-Csu2z4r8g3PwwLWWRMDeA//vQhHh05J9hyogE15dMS/6jrSKyl8lonGWvbnO2PSrMzKIHPeoXYzutUeNBjY1pg==",
+			"version": "7.0.6",
+			"resolved": "https://registry.npmjs.org/@wordpress/components/-/components-7.0.6.tgz",
+			"integrity": "sha512-BHNSdjbPjW2JSJLfdStWJ5Yvn7rrbkNmm1UBIkpUBUVSKMqwkEee2CjoOKedrHG7Hxuo/1KW1G7MyqgxafP2sA==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
 				"@wordpress/a11y": "^2.0.2",
-				"@wordpress/api-fetch": "^2.2.7",
-				"@wordpress/compose": "^3.0.0",
+				"@wordpress/api-fetch": "^2.2.8",
+				"@wordpress/compose": "^3.0.1",
 				"@wordpress/dom": "^2.0.8",
-				"@wordpress/element": "^2.1.8",
-				"@wordpress/hooks": "^2.0.4",
-				"@wordpress/i18n": "^3.1.0",
-				"@wordpress/is-shallow-equal": "^1.1.4",
-				"@wordpress/keycodes": "^2.0.5",
-				"@wordpress/rich-text": "^3.0.4",
+				"@wordpress/element": "^2.1.9",
+				"@wordpress/hooks": "^2.0.5",
+				"@wordpress/i18n": "^3.1.1",
+				"@wordpress/is-shallow-equal": "^1.1.5",
+				"@wordpress/keycodes": "^2.0.6",
+				"@wordpress/rich-text": "^3.0.5",
 				"@wordpress/url": "^2.3.3",
 				"classnames": "^2.2.5",
 				"clipboard": "^2.0.1",
@@ -2221,24 +2221,24 @@
 			}
 		},
 		"@wordpress/compose": {
-			"version": "3.0.0",
-			"resolved": "https://registry.npmjs.org/@wordpress/compose/-/compose-3.0.0.tgz",
-			"integrity": "sha512-jghgcLLKYQiIxjKp1q9FGcLlbeTKmYUIbYcru2AX7VF1uqp85oeRcuWsowrQUvomWHADcf09psBfDo2Gz/OH8A==",
+			"version": "3.0.1",
+			"resolved": "https://registry.npmjs.org/@wordpress/compose/-/compose-3.0.1.tgz",
+			"integrity": "sha512-A58zlkYzx4KJ8Z4mV8rIPMECZueWFmiV5VUbgfxxcU0SL8K9yJPuEcsO7pm/MfLPpw919BiGlxr5CMJwJEb70w==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
-				"@wordpress/element": "^2.1.8",
-				"@wordpress/is-shallow-equal": "^1.1.4",
+				"@wordpress/element": "^2.1.9",
+				"@wordpress/is-shallow-equal": "^1.1.5",
 				"lodash": "^4.17.10"
 			}
 		},
 		"@wordpress/core-data": {
-			"version": "2.0.16",
-			"resolved": "https://registry.npmjs.org/@wordpress/core-data/-/core-data-2.0.16.tgz",
-			"integrity": "sha512-JU1p/geISRi1Mv5l8KdAfZbfYqQueacr2m0XND5V5/SKQ5xOc2+vbv/Rp0ZWrlKyGbAucCO5tK2ubW43M3dVug==",
+			"version": "2.0.17",
+			"resolved": "https://registry.npmjs.org/@wordpress/core-data/-/core-data-2.0.17.tgz",
+			"integrity": "sha512-gJIdV81u0JuRoDGazDMCvotnjLZVEPtygODDl2U4+eKJQM343ysKC06nw+PqWeh/gpg9RtXYmO693yMqF0Pk6A==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
-				"@wordpress/api-fetch": "^2.2.7",
-				"@wordpress/data": "^4.2.0",
+				"@wordpress/api-fetch": "^2.2.8",
+				"@wordpress/data": "^4.2.1",
 				"@wordpress/url": "^2.3.3",
 				"equivalent-key-map": "^0.2.2",
 				"lodash": "^4.17.10",
@@ -2246,15 +2246,15 @@
 			}
 		},
 		"@wordpress/data": {
-			"version": "4.2.0",
-			"resolved": "https://registry.npmjs.org/@wordpress/data/-/data-4.2.0.tgz",
-			"integrity": "sha512-9cdm5xBWgLJJ45nQCbUQFF26vGoG2PzEJrinNXLr45XNAr3XSzN/JsrmNCaHwI/NzyFIwFmFjv6ONQKxxkErrg==",
+			"version": "4.2.1",
+			"resolved": "https://registry.npmjs.org/@wordpress/data/-/data-4.2.1.tgz",
+			"integrity": "sha512-HI2kDDEnwb27c2JtkH7pgiVs5QHVmaqQ4fpb38TYiF+EGKAxEhXv+jOqJAGlumEUru3BAzxVXDvhZlhXLNaxVA==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
-				"@wordpress/compose": "^3.0.0",
-				"@wordpress/element": "^2.1.8",
-				"@wordpress/is-shallow-equal": "^1.1.4",
-				"@wordpress/redux-routine": "^3.0.3",
+				"@wordpress/compose": "^3.0.1",
+				"@wordpress/element": "^2.1.9",
+				"@wordpress/is-shallow-equal": "^1.1.5",
+				"@wordpress/redux-routine": "^3.0.4",
 				"equivalent-key-map": "^0.2.2",
 				"is-promise": "^2.1.0",
 				"lodash": "^4.17.10",
@@ -2273,12 +2273,12 @@
 			}
 		},
 		"@wordpress/deprecated": {
-			"version": "2.0.4",
-			"resolved": "https://registry.npmjs.org/@wordpress/deprecated/-/deprecated-2.0.4.tgz",
-			"integrity": "sha512-KvvQ6+aWWLSznpfhpMn/FZNZIA3sjtax0PY0TTmbm74eFnlV3eZHL/kX6Mp9KJYkrzDDRk5kg7UgW6QJLHFXhg==",
+			"version": "2.0.5",
+			"resolved": "https://registry.npmjs.org/@wordpress/deprecated/-/deprecated-2.0.5.tgz",
+			"integrity": "sha512-YMcXTpR63/h+15JGmPXn55je6l8fyGx0kbGAePNin9DXA1fToTJzJ2K/mrJX4Ztc+tIYskDs0ZsGI76SE2+Tqw==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
-				"@wordpress/hooks": "^2.0.4"
+				"@wordpress/hooks": "^2.0.5"
 			}
 		},
 		"@wordpress/dom": {
@@ -2299,62 +2299,62 @@
 			}
 		},
 		"@wordpress/edit-post": {
-			"version": "3.1.7",
-			"resolved": "https://registry.npmjs.org/@wordpress/edit-post/-/edit-post-3.1.7.tgz",
-			"integrity": "sha512-720hfAP03KSPigxuJR/kDBd9xLhddiFL1JQHQvyOFz4DAaBROUnhuaYHS6KOuqJMJgpbjw3Ey0nzEV7KHGaYhg==",
+			"version": "3.1.8",
+			"resolved": "https://registry.npmjs.org/@wordpress/edit-post/-/edit-post-3.1.8.tgz",
+			"integrity": "sha512-LH3WtEAzVo4kbKf/2iYSwsfxky7mwJW1cayEYJfw9cRXv4fDi3IMjvk21KPFbKf9p1RwtE5WC2g8ubsAjNXufQ==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
 				"@wordpress/a11y": "^2.0.2",
-				"@wordpress/api-fetch": "^2.2.7",
-				"@wordpress/block-library": "^2.2.12",
-				"@wordpress/blocks": "^6.0.5",
-				"@wordpress/components": "^7.0.5",
-				"@wordpress/compose": "^3.0.0",
-				"@wordpress/core-data": "^2.0.16",
-				"@wordpress/data": "^4.2.0",
-				"@wordpress/editor": "^9.0.7",
-				"@wordpress/element": "^2.1.8",
-				"@wordpress/format-library": "^1.2.10",
-				"@wordpress/hooks": "^2.0.4",
-				"@wordpress/i18n": "^3.1.0",
-				"@wordpress/keycodes": "^2.0.5",
-				"@wordpress/nux": "^3.0.6",
-				"@wordpress/plugins": "^2.0.10",
+				"@wordpress/api-fetch": "^2.2.8",
+				"@wordpress/block-library": "^2.2.13",
+				"@wordpress/blocks": "^6.0.6",
+				"@wordpress/components": "^7.0.6",
+				"@wordpress/compose": "^3.0.1",
+				"@wordpress/core-data": "^2.0.17",
+				"@wordpress/data": "^4.2.1",
+				"@wordpress/editor": "^9.0.8",
+				"@wordpress/element": "^2.1.9",
+				"@wordpress/format-library": "^1.2.11",
+				"@wordpress/hooks": "^2.0.5",
+				"@wordpress/i18n": "^3.1.1",
+				"@wordpress/keycodes": "^2.0.6",
+				"@wordpress/nux": "^3.0.7",
+				"@wordpress/plugins": "^2.0.11",
 				"@wordpress/url": "^2.3.3",
-				"@wordpress/viewport": "^2.1.0",
+				"@wordpress/viewport": "^2.1.1",
 				"classnames": "^2.2.5",
 				"lodash": "^4.17.10",
 				"refx": "^3.0.0"
 			}
 		},
 		"@wordpress/editor": {
-			"version": "9.0.7",
-			"resolved": "https://registry.npmjs.org/@wordpress/editor/-/editor-9.0.7.tgz",
-			"integrity": "sha512-6WlkzTrW2x3GXysWjjerU12l5xdGJtuKIOtWsB8UnooIU+lOP0PuNxrbKSBKDwlSJPeb0t2hbqF6xuuHgx6uhA==",
+			"version": "9.0.8",
+			"resolved": "https://registry.npmjs.org/@wordpress/editor/-/editor-9.0.8.tgz",
+			"integrity": "sha512-oBa1VIJiCLu8VZQlsmbzIGVumSiX6LZPcwG92BSIOc0Resx2jkCFNu5grEj4IiUOjaIBRrEW3DgCnsnb4V1Idw==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
 				"@wordpress/a11y": "^2.0.2",
-				"@wordpress/api-fetch": "^2.2.7",
+				"@wordpress/api-fetch": "^2.2.8",
 				"@wordpress/blob": "^2.1.0",
-				"@wordpress/blocks": "^6.0.5",
-				"@wordpress/components": "^7.0.5",
-				"@wordpress/compose": "^3.0.0",
-				"@wordpress/core-data": "^2.0.16",
-				"@wordpress/data": "^4.2.0",
+				"@wordpress/blocks": "^6.0.6",
+				"@wordpress/components": "^7.0.6",
+				"@wordpress/compose": "^3.0.1",
+				"@wordpress/core-data": "^2.0.17",
+				"@wordpress/data": "^4.2.1",
 				"@wordpress/date": "^3.0.1",
-				"@wordpress/deprecated": "^2.0.4",
+				"@wordpress/deprecated": "^2.0.5",
 				"@wordpress/dom": "^2.0.8",
-				"@wordpress/element": "^2.1.8",
-				"@wordpress/hooks": "^2.0.4",
+				"@wordpress/element": "^2.1.9",
+				"@wordpress/hooks": "^2.0.5",
 				"@wordpress/html-entities": "^2.0.4",
-				"@wordpress/i18n": "^3.1.0",
-				"@wordpress/is-shallow-equal": "^1.1.4",
-				"@wordpress/keycodes": "^2.0.5",
-				"@wordpress/notices": "^1.1.2",
-				"@wordpress/nux": "^3.0.6",
+				"@wordpress/i18n": "^3.1.1",
+				"@wordpress/is-shallow-equal": "^1.1.5",
+				"@wordpress/keycodes": "^2.0.6",
+				"@wordpress/notices": "^1.1.3",
+				"@wordpress/nux": "^3.0.7",
 				"@wordpress/token-list": "^1.1.0",
 				"@wordpress/url": "^2.3.3",
-				"@wordpress/viewport": "^2.1.0",
+				"@wordpress/viewport": "^2.1.1",
 				"@wordpress/wordcount": "^2.0.3",
 				"classnames": "^2.2.5",
 				"dom-scroll-into-view": "^1.2.1",
@@ -2380,9 +2380,9 @@
 			}
 		},
 		"@wordpress/element": {
-			"version": "2.1.8",
-			"resolved": "https://registry.npmjs.org/@wordpress/element/-/element-2.1.8.tgz",
-			"integrity": "sha512-hPbNWcxGQCpTeXoTdwr0Bu3kNJMSSKAnIb5B8P/2lTQ9mJ6w8l1Vc/0L11Yy8+uElaLwGq4Lja9ljgTlWbXUkA==",
+			"version": "2.1.9",
+			"resolved": "https://registry.npmjs.org/@wordpress/element/-/element-2.1.9.tgz",
+			"integrity": "sha512-qKluF0oIajTYllZPG4XlopWHWs3VADT0sUW1oPprCCMMj2URkq4RQ9q2DvUwLr/UYZKUfyLtzyb3oD44SFgNsQ==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
 				"@wordpress/escape-html": "^1.0.1",
@@ -2400,25 +2400,25 @@
 			}
 		},
 		"@wordpress/format-library": {
-			"version": "1.2.10",
-			"resolved": "https://registry.npmjs.org/@wordpress/format-library/-/format-library-1.2.10.tgz",
-			"integrity": "sha512-ksYU4GG1Pc+lNuz+V00yH0j8mgaBFVCzCemqVZqDbNqDrC8cdwWExv9cccn0miBGwNwLgcn6fj1IAjy91rtzeA==",
+			"version": "1.2.11",
+			"resolved": "https://registry.npmjs.org/@wordpress/format-library/-/format-library-1.2.11.tgz",
+			"integrity": "sha512-SdL4vUWfWe5FEdaeXQwoUNOZUBKXMwiMV8eA++XhiD4emhQnyPgx+BljeX/uz+5gqe4uXZOQg/SkEYXSh/yHKw==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
-				"@wordpress/components": "^7.0.5",
+				"@wordpress/components": "^7.0.6",
 				"@wordpress/dom": "^2.0.8",
-				"@wordpress/editor": "^9.0.7",
-				"@wordpress/element": "^2.1.8",
-				"@wordpress/i18n": "^3.1.0",
-				"@wordpress/keycodes": "^2.0.5",
-				"@wordpress/rich-text": "^3.0.4",
+				"@wordpress/editor": "^9.0.8",
+				"@wordpress/element": "^2.1.9",
+				"@wordpress/i18n": "^3.1.1",
+				"@wordpress/keycodes": "^2.0.6",
+				"@wordpress/rich-text": "^3.0.5",
 				"@wordpress/url": "^2.3.3"
 			}
 		},
 		"@wordpress/hooks": {
-			"version": "2.0.4",
-			"resolved": "https://registry.npmjs.org/@wordpress/hooks/-/hooks-2.0.4.tgz",
-			"integrity": "sha512-9Z+zymxRI1vNVPnAhGOYjp05Do/rNWdj/0lrx0oC8vluQFyaU9OWS7+il1eL8kfr+27nzcBnoU0e2WfvoXVhyg==",
+			"version": "2.0.5",
+			"resolved": "https://registry.npmjs.org/@wordpress/hooks/-/hooks-2.0.5.tgz",
+			"integrity": "sha512-EcE7lm5p6f3qB6nJClY3LPejFpbjo66b6j4ihgLLgrWMKqs4lLPGS2OzK4KyP0O52cofKj+Tv/wBaAiYSufFcA==",
 			"requires": {
 				"@babel/runtime": "^7.0.0"
 			}
@@ -2432,9 +2432,9 @@
 			}
 		},
 		"@wordpress/i18n": {
-			"version": "3.1.0",
-			"resolved": "https://registry.npmjs.org/@wordpress/i18n/-/i18n-3.1.0.tgz",
-			"integrity": "sha512-zHqLRuKrDV3FYh8PYDs4ABO/csiEAy1EfTffMtMS/8GAz4BcWrcqDjyH42GJF8iwWdG5+DdsllP5oerAQMHnng==",
+			"version": "3.1.1",
+			"resolved": "https://registry.npmjs.org/@wordpress/i18n/-/i18n-3.1.1.tgz",
+			"integrity": "sha512-qZx3GcrIfPG5uOhYjb/Sz0XBT7OMkdFXYa966S8/gxWIkewD5TWV0ROQ9UX6+u7ScbblNdS87irJI0FDQ0lM3Q==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
 				"gettext-parser": "^1.3.1",
@@ -2445,65 +2445,65 @@
 			}
 		},
 		"@wordpress/is-shallow-equal": {
-			"version": "1.1.4",
-			"resolved": "https://registry.npmjs.org/@wordpress/is-shallow-equal/-/is-shallow-equal-1.1.4.tgz",
-			"integrity": "sha512-ihJrYrW+G9GWtQjyB44DVKMCoiTTYPl5T/g1Ix9PMrKl2rk5uVbJw9yMmhik/jTIQqubpzhxGtrqsddwuUH1sw==",
+			"version": "1.1.5",
+			"resolved": "https://registry.npmjs.org/@wordpress/is-shallow-equal/-/is-shallow-equal-1.1.5.tgz",
+			"integrity": "sha512-8sRM/lg6ISi4jo7MBycSGRkUCsDP/k7kIXT7Au7m6XSuyfLGTuFQjFCUIufXmKsS08ALsp0I9PN6iCFMyirBSw==",
 			"requires": {
 				"@babel/runtime": "^7.0.0"
 			}
 		},
 		"@wordpress/keycodes": {
-			"version": "2.0.5",
-			"resolved": "https://registry.npmjs.org/@wordpress/keycodes/-/keycodes-2.0.5.tgz",
-			"integrity": "sha512-uEnLRbEe+6FkXKTdQordwR9fBExIngnsa6FmAJ2ODzEI872g271jM5W61m33WzsBHfbFHQKqUi+ZaFAzu7XUcg==",
+			"version": "2.0.6",
+			"resolved": "https://registry.npmjs.org/@wordpress/keycodes/-/keycodes-2.0.6.tgz",
+			"integrity": "sha512-fWMf6aq1ymfqUVYS0RQF/5RtUl5ijZGC1add1HGMyquWd3Gtu0DV9VNfWU9B+LvcHVuG5ETK3Lc8wBNri9a/tg==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
-				"@wordpress/i18n": "^3.1.0",
+				"@wordpress/i18n": "^3.1.1",
 				"lodash": "^4.17.10"
 			}
 		},
 		"@wordpress/notices": {
-			"version": "1.1.2",
-			"resolved": "https://registry.npmjs.org/@wordpress/notices/-/notices-1.1.2.tgz",
-			"integrity": "sha512-X4mYC1ANmKZK9m6TJirj1yZkbLEt7e+M/42+UO4EV4AdlusaUipp0IE1Mwn5rDX3B1EsCbqR/jnrvak6SRMebg==",
+			"version": "1.1.3",
+			"resolved": "https://registry.npmjs.org/@wordpress/notices/-/notices-1.1.3.tgz",
+			"integrity": "sha512-w18u3kbwlfWAg9poYQ13z275rqZyLfdo4QHytGy3g0BRQYZefHi/Pl4jK+dgnrBJEwCb4kgSW6Pwqc7mFZ+kAQ==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
 				"@wordpress/a11y": "^2.0.2",
-				"@wordpress/data": "^4.2.0",
+				"@wordpress/data": "^4.2.1",
 				"lodash": "^4.17.10"
 			}
 		},
 		"@wordpress/nux": {
-			"version": "3.0.6",
-			"resolved": "https://registry.npmjs.org/@wordpress/nux/-/nux-3.0.6.tgz",
-			"integrity": "sha512-HwEus1ErZmYDmFU2iD61/P+Tmq02S83ZK0p52Ih3Guz4QXjPpNrc0WG0yupmGxPYzBGVyG9aLTmenkC0mQ+ihA==",
+			"version": "3.0.7",
+			"resolved": "https://registry.npmjs.org/@wordpress/nux/-/nux-3.0.7.tgz",
+			"integrity": "sha512-lRPOX4ypszbAHFKMROJG/+ToSKFV0QRgksqflmgZtNM/jkhh9YByhq0pM8CMAk6L7me+ilYQQL81CDR321bviA==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
-				"@wordpress/components": "^7.0.5",
-				"@wordpress/compose": "^3.0.0",
-				"@wordpress/data": "^4.2.0",
-				"@wordpress/element": "^2.1.8",
-				"@wordpress/i18n": "^3.1.0",
+				"@wordpress/components": "^7.0.6",
+				"@wordpress/compose": "^3.0.1",
+				"@wordpress/data": "^4.2.1",
+				"@wordpress/element": "^2.1.9",
+				"@wordpress/i18n": "^3.1.1",
 				"lodash": "^4.17.10",
 				"rememo": "^3.0.0"
 			}
 		},
 		"@wordpress/plugins": {
-			"version": "2.0.10",
-			"resolved": "https://registry.npmjs.org/@wordpress/plugins/-/plugins-2.0.10.tgz",
-			"integrity": "sha512-bg2Xo9PSz0zBM4z2hh7aTRxitRIbr4ue27vIjpOfAXEn33L0UAzpefIhHVhrRGcFjAFBxiLicktoxcTXhNuz+w==",
+			"version": "2.0.11",
+			"resolved": "https://registry.npmjs.org/@wordpress/plugins/-/plugins-2.0.11.tgz",
+			"integrity": "sha512-Nd9gJ4HiOm5UYoNKyIIJO/1xmjeT1aOyWdS6ytRKSRS9UwUEm3E7I31NvFHUfe4old2HMXKToIzPxanugBIafg==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
-				"@wordpress/compose": "^3.0.0",
-				"@wordpress/element": "^2.1.8",
-				"@wordpress/hooks": "^2.0.4",
+				"@wordpress/compose": "^3.0.1",
+				"@wordpress/element": "^2.1.9",
+				"@wordpress/hooks": "^2.0.5",
 				"lodash": "^4.17.10"
 			}
 		},
 		"@wordpress/redux-routine": {
-			"version": "3.0.3",
-			"resolved": "https://registry.npmjs.org/@wordpress/redux-routine/-/redux-routine-3.0.3.tgz",
-			"integrity": "sha512-wT8GoG0qtwxq8J5g0uYxZYoNcnhQloFvMTkDQsaWWAvaO1wsTaamYbusHc6q7PS+EsS2TioQkZsxTtei6YwBBg==",
+			"version": "3.0.4",
+			"resolved": "https://registry.npmjs.org/@wordpress/redux-routine/-/redux-routine-3.0.4.tgz",
+			"integrity": "sha512-wkVkyW3k3l5vjW27T/SW3BQ/2ckT3mLZNXII8qhNMmZfCFc6xjb8+3PhQQX/abKz1sVTjnNLKZKQFIrZSklC2w==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
 				"is-promise": "^2.1.0",
@@ -2511,13 +2511,13 @@
 			}
 		},
 		"@wordpress/rich-text": {
-			"version": "3.0.4",
-			"resolved": "https://registry.npmjs.org/@wordpress/rich-text/-/rich-text-3.0.4.tgz",
-			"integrity": "sha512-dv14T0wk0YPZtDNdoJKuduf3McCdQpcUHczhMoYg3WssBkyOPY3Vak8RH6t/uEnEwZhgJIolkcwrTedIFXiC4Q==",
+			"version": "3.0.5",
+			"resolved": "https://registry.npmjs.org/@wordpress/rich-text/-/rich-text-3.0.5.tgz",
+			"integrity": "sha512-QgufyH481QN7cJCnUJ5qlIC22tLedmFe5D+QoIICmCvWHjxBBfDSe9IFvEz2RW5t0i8hrGAmIl962gLb1OY0KQ==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
-				"@wordpress/compose": "^3.0.0",
-				"@wordpress/data": "^4.2.0",
+				"@wordpress/compose": "^3.0.1",
+				"@wordpress/data": "^4.2.1",
 				"@wordpress/escape-html": "^1.0.1",
 				"lodash": "^4.17.10",
 				"rememo": "^3.0.0"
@@ -2552,14 +2552,14 @@
 			}
 		},
 		"@wordpress/viewport": {
-			"version": "2.1.0",
-			"resolved": "https://registry.npmjs.org/@wordpress/viewport/-/viewport-2.1.0.tgz",
-			"integrity": "sha512-CPa/ifeDCTY6mqF/1maS35kB3N2HT7nhBwEnzbWWVMVVr3joulQuPunzSoPO8TzBhyctdnaY9ltNoN+fo+u31w==",
+			"version": "2.1.1",
+			"resolved": "https://registry.npmjs.org/@wordpress/viewport/-/viewport-2.1.1.tgz",
+			"integrity": "sha512-9xxGvExINws+4FzoIzbjJCkl0iam4BW+YN8DWvZ09VO767U5P+5EvZAgZbvSUjs3XFEPaUU+DZHrXJSF/E9eSA==",
 			"requires": {
 				"@babel/runtime": "^7.0.0",
-				"@wordpress/compose": "^3.0.0",
-				"@wordpress/data": "^4.2.0",
-				"@wordpress/element": "^2.1.8",
+				"@wordpress/compose": "^3.0.1",
+				"@wordpress/data": "^4.2.1",
+				"@wordpress/element": "^2.1.9",
 				"lodash": "^4.17.10"
 			}
 		},
@@ -17266,7 +17266,7 @@
 		},
 		"react-autosize-textarea": {
 			"version": "3.0.3",
-			"resolved": "http://registry.npmjs.org/react-autosize-textarea/-/react-autosize-textarea-3.0.3.tgz",
+			"resolved": "https://registry.npmjs.org/react-autosize-textarea/-/react-autosize-textarea-3.0.3.tgz",
 			"integrity": "sha512-iOSZK7RUuJ+iEwkJ9rqYciqtjQgrG1CCRFL6h8Bk61kODnRyEq4tS74IgXpI1t4S6jBBZVm+6ugaU+tWTlVxXg==",
 			"requires": {
 				"autosize": "^4.0.0",
