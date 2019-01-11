@@ -31,7 +31,7 @@ const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMI
 
 const workerCount =
 	process.env.WORKERS && ! Number.isNaN( parseInt( process.env.WORKERS, 10 ) )
-		? parseInt( process.env.WORKERS, 10 )
+		? Math.max( 1, parseInt( process.env.WORKERS, 10 ) )
 		: Math.max( 2, Math.floor( os.cpus().length / 2 ) );
 
 /**
