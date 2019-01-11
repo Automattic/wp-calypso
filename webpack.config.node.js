@@ -29,9 +29,10 @@ const isDevelopment = bundleEnv === 'development';
 
 const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
 
-const workerCount = process.env.WORKERS
-	? Math.floor( +process.env.WORKERS / 2 )
-	: Math.max( 2, Math.floor( os.cpus().length / 2 ) );
+const workerCount =
+	process.env.WORKERS && ! Number.isNaN( parseInt( process.env.WORKERS, 10 ) )
+		? parseInt( process.env.WORKERS, 10 )
+		: Math.max( 2, Math.floor( os.cpus().length / 2 ) );
 
 /**
  * This lists modules that must use commonJS `require()`s
