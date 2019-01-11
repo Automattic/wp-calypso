@@ -57,4 +57,15 @@
 	.swiper-pagination {
 		bottom: 32px !important;
 	}
+	/* These styles apply to markup before the component renders. They are here to avoid jarring size changes when the component renders, and also to provide a reasonable fallback if the component fails. */
+	.wp-block-slideshow_image_container {
+		display: none;
+		&:first-of-type {
+			display: block;
+		}
+		img {
+			height: auto;
+			width: auto;
+		}
+	}
 }
