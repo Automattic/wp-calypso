@@ -209,7 +209,10 @@ class AddEmailAddressesCard extends React.Component {
 	formButtons() {
 		return (
 			<FormFooter className="gsuite-add-users__footer">
-				<FormButton onClick={ this.handleContinue } disabled={ this.props.isRequestingSiteDomains }>
+				<FormButton
+					onClick={ this.handleContinue }
+					disabled={ this.props.isRequestingSiteDomains || ! this.props.gsuiteUsersLoaded }
+				>
 					{ this.props.translate( 'Continue' ) }
 				</FormButton>
 
@@ -232,10 +235,13 @@ class AddEmailAddressesCard extends React.Component {
 	handleContinue = event => {
 		event.preventDefault();
 
-		const validation = validateUsers( {
-			users: this.state.fieldsets,
-			fields: this.getFields(),
-		} );
+		const validation = validateUsers(
+			{
+				users: this.state.fieldsets,
+				fields: this.getFields(),
+			},
+			this.props.gsuiteUsers
+		);
 
 		if ( ! isEmpty( validation.errors ) ) {
 			this.setState( {
@@ -320,6 +326,8 @@ const domainChange = ( value, userIndex ) =>
 AddEmailAddressesCard.propTypes = {
 	domains: PropTypes.array.isRequired,
 	isRequestingSiteDomains: PropTypes.bool.isRequired,
+	gsuiteUsers: PropTypes.array.isRequired,
+	gsuiteUsersLoaded: PropTypes.bool.isRequired,
 	selectedDomainName: PropTypes.string,
 };
 
