@@ -220,7 +220,7 @@ describe( 'DateRange', () => {
 						to: state.endDate.toDate(),
 					},
 					numberOfMonths: 2, // controlled via matchMedia mock
-					calendarViewDate: state.startDate.toDate(),
+					initialMonth: state.startDate.toDate(),
 					disabledDays: [ {} ],
 				} )
 			);
@@ -254,17 +254,6 @@ describe( 'DateRange', () => {
 			const datePicker = wrapper.find( DatePicker );
 
 			expect( datePicker.props().numberOfMonths ).toEqual( 1 );
-		} );
-
-		test( 'should allow custom function to determine numer of months to show', () => {
-			// Custom function that always return true which should
-			// ensure we always see 2 months
-			const mock = jest.fn().mockImplementation( () => true );
-
-			const wrapper = shallow( <DateRange moment={ moment } numMonths={ mock } /> );
-			const datePicker = wrapper.find( DatePicker );
-
-			expect( datePicker.props().numberOfMonths ).toEqual( 2 );
 		} );
 
 		test( 'should disable dates before firstSelectableDate when set', () => {
