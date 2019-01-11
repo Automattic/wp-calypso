@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import multiline from '../formatters/multiline';
+const multiline = require( '../formatters/multiline' );
 
 describe( 'multiline', function() {
 	test( 'should not split a short literal into multiple lines', function() {

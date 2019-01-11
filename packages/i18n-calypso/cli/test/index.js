@@ -2,12 +2,12 @@
 /**
  * External dependencies
  */
-import path from 'path';
+const path = require( 'path' );
 
 /**
  * Internal dependencies
  */
-import i18n from '../i18n';
+const i18n = require( '../i18n' );
 
 // generate whitelist file
 const sourceFiles = [
