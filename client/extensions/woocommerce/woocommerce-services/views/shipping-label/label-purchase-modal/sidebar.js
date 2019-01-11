@@ -17,6 +17,7 @@ import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import PriceSummary from './price-summary';
+import PaymentSetting from 'woocommerce/woocommerce-services/views/label-settings/label-payment-setting';
 import {
 	setEmailDetailsOption,
 	setFulfillOrderOption,
@@ -29,6 +30,9 @@ import {
 	shouldFulfillOrder,
 	shouldEmailDetails,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import {
+	setFormDataValue as setSettingsFormDataValue,
+} from 'woocommerce/woocommerce-services/state/label-settings/actions';
 
 const Sidebar = props => {
 	const { orderId, siteId, form, errors, paperSize, translate, fulfillOrder, emailDetails } = props;
@@ -36,6 +40,7 @@ const Sidebar = props => {
 	const onEmailDetailsChange = () => props.setEmailDetailsOption( orderId, siteId, ! emailDetails );
 	const onFulfillOrderChange = () => props.setFulfillOrderOption( orderId, siteId, ! fulfillOrder );
 	const onPaperSizeChange = value => props.updatePaperSize( orderId, siteId, value );
+	const onPaymentChange = value => props.setSettingsFormDataValue( siteId, 'selected_payment_method_id', value );
 
 	return (
 		<div className="label-purchase-modal__sidebar">
@@ -56,6 +61,7 @@ const Sidebar = props => {
 				<FormCheckbox checked={ fulfillOrder } onChange={ onFulfillOrderChange } />
 				<span>{ translate( 'Mark the order as fulfilled' ) }</span>
 			</FormLabel>
+			<PaymentSetting siteId={ siteId } onChange={ onPaymentChange } />
 		</div>
 	);
 };
@@ -87,6 +93,7 @@ const mapDispatchToProps = dispatch => {
 			setEmailDetailsOption,
 			setFulfillOrderOption,
 			updatePaperSize,
+			setSettingsFormDataValue,
 		},
 		dispatch
 	);

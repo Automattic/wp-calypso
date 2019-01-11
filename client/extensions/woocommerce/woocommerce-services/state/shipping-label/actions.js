@@ -45,7 +45,7 @@ import {
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
-import { getEmailReceipts } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
+import { getEmailReceipts, getSelectedPaymentMethodId } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-address-values';
 
 import {
@@ -1032,6 +1032,8 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 					};
 				} ),
 			};
+
+			formData.payment_method_id = getSelectedPaymentMethodId( getState(), siteId );
 
 			//compatibility - only add the email_receipt if the plugin and the server support it
 			const emailReceipt = getEmailReceipts( getState(), siteId );
