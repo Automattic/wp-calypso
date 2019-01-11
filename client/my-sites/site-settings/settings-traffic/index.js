@@ -7,10 +7,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { traffic } from './controller';
-import { navigation, siteSelection } from 'my-sites/controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
 import { makeLayout, render as clientRender } from 'controller';
+import { navigation, siteSelection } from 'my-sites/controller';
+import { traffic } from './controller';
 
 const redirectToTrafficSection = context => {
 	page.redirect( '/settings/traffic/' + ( context.params.site_id || '' ) );
