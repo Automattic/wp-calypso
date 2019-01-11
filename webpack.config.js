@@ -24,7 +24,7 @@ const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpac
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
-const { workerCount } = require( 'webpack.common' );
+const { workerCount } = require( './webpack.common' );
 
 /**
  * Internal variables

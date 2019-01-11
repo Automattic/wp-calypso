@@ -20,7 +20,7 @@ const _ = require( 'lodash' );
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( 'config' );
 const bundleEnv = config( 'env' );
-const { workerCount } = require( 'webpack.common' );
+const { workerCount } = require( './webpack.common' );
 
 /**
  * Internal variables
