@@ -10,16 +10,7 @@ import { addFilter } from '@wordpress/hooks';
  */
 import withVideoPressEdit from './edit';
 
-const addVideoPressSupport = ( settings, name ) => {
-	if ( 'core/video' === name ) {
-		const CoreVideoEdit = settings.edit;
-
-		settings = {
-			...settings,
-			edit: withVideoPressEdit( CoreVideoEdit ),
-		};
-	}
-	return settings;
-};
+const addVideoPressSupport = ( settings, name ) =>
+	'core/video' === name ? { ...settings, edit: withVideoPressEdit( settings.edit ) } : settings;
 
 addFilter( 'blocks.registerBlockType', 'gutenberg/extensions/videopress', addVideoPressSupport );
