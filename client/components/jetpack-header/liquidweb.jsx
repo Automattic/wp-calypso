@@ -7,7 +7,7 @@ import React from 'react';
 
 function JetpackLiquidWebLogo() {
 	return (
-		<svg id="jetpack-header__liquidweb-logo" viewBox="140 200 326.592 198.288">
+		<svg id="jetpack-header__liquidweb-logo" viewBox="120 200 326.592 198.288">
 			<defs>
 				<style>
 					{

@@ -83,7 +83,7 @@ export class JetpackHeader extends PureComponent {
 					return (
 						<JetpackPartnerLogoGroup
 							width={ width || 488 }
-							viewBox="0 0 1070 150"
+							viewBox="0 0 1034 150"
 							partnerName="Liquid Web"
 						>
 							<JetpackLiquidWebLogo />
