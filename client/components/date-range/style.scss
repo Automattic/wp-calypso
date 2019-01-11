@@ -80,6 +80,7 @@
 	}
 
 	.DayPicker-Month {
+		width: auto;
 		margin-right: 1em;
 
 		@include breakpoint( '>480px' ) {
