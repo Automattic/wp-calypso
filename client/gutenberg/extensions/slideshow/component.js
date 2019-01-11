@@ -36,21 +36,13 @@ export class Slideshow extends Component {
 						if ( ! child.props.children ) {
 							return null;
 						}
-						const img = Children.map( child.props.children, subchild => {
-							if ( subchild.props[ 'data-is-image' ] ) {
-								return subchild;
-							}
-						} );
-						const figcaption = Children.map( child.props.children, subchild => {
-							if ( subchild.props[ 'data-is-caption' ] ) {
-								return subchild.props.children;
-							}
-						} );
-						if ( ! img || ! figcaption ) {
+						const image = this.getChildByDataAttribute( child, 'data-is-image' );
+						if ( ! image ) {
 							return null;
 						}
-						const { src, alt } = img[ 0 ].props;
-						const caption = figcaption[ 0 ] || '';
+						const { src, alt } = image.props;
+						const figcaption = this.getChildByDataAttribute( child, 'data-is-caption' );
+						const caption = figcaption ? figcaption.props.children : null;
 						const style = {
 							backgroundImage: `url(${ src })`,
 							height: imageHeight,
@@ -59,7 +51,7 @@ export class Slideshow extends Component {
 							<div className="swiper-slide">
 								<div className="slide-background atavist-cover-background-color" />
 								<div className="wp-block-slideshow-image-container" style={ style } title={ alt } />
-								<p className="slideshow-slide-caption">{ caption }</p>
+								{ caption && <p className="slideshow-slide-caption">{ caption }</p> }
 							</div>
 						);
 					} ) }
@@ -95,7 +87,7 @@ export class Slideshow extends Component {
 		this.setState(
 			{
 				images: Children.map( children, child => {
-					const image = child.props.children[ 0 ];
+					const image = this.getChildByDataAttribute( child, 'data-is-image' );
 					const meta = {
 						width: image.props[ 'data-width' ],
 						height: image.props[ 'data-height' ],
@@ -138,7 +130,14 @@ export class Slideshow extends Component {
 			}
 		);
 	};
-
+	getChildByDataAttribute = ( parent, attributeName ) => {
+		const matches = Children.map( parent.props.children, child => {
+			if ( child && child.props[ attributeName ] ) {
+				return child;
+			}
+		} );
+		return matches && matches.length ? matches[ 0 ] : null;
+	};
 	sizeSlideshow = () => {
 		const { images, swiperInstance } = this.state;
 		const ratio = Math.max( Math.min( images[ 0 ].ratio, 16 / 9 ), 1 );

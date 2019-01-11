@@ -27,7 +27,7 @@ class SlideshowSave extends Component {
 								data-height={ height }
 								data-width={ width }
 							/>
-							<figcaption data-is-caption>{ caption }</figcaption>
+							{ caption && <figcaption data-is-caption>{ caption }</figcaption> }
 						</div>
 					);
 				} ) }
