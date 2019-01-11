@@ -456,8 +456,38 @@ export function generateSteps( {
 
 		'site-information-with-preview': {
 			stepName: 'site-information-with-preview',
-			providesDependencies: [ 'siteTitle', 'address', 'email', 'phone' ],
+			providesDependencies: [ 'title', 'address', 'phone' ],
 			props: {
+				showSiteMockups: true,
+			},
+		},
+
+		'site-information-title-with-preview': {
+			stepName: 'site-information-title-with-preview',
+			providesDependencies: [ 'title' ],
+			props: {
+				headerText: i18n.translate( "Tell us your site's name" ),
+				informationFields: [ 'title' ],
+				showSiteMockups: true,
+			},
+		},
+
+		'site-information-address-with-preview': {
+			stepName: 'site-information-address-with-preview',
+			providesDependencies: [ 'address' ],
+			props: {
+				headerText: i18n.translate( 'Help customers find you' ),
+				informationFields: [ 'address' ],
+				showSiteMockups: true,
+			},
+		},
+
+		'site-information-phone-with-preview': {
+			stepName: 'site-information-phone-with-preview',
+			providesDependencies: [ 'phone' ],
+			props: {
+				headerText: i18n.translate( 'Let customers get in touch' ),
+				informationFields: [ 'phone' ],
 				showSiteMockups: true,
 			},
 		},

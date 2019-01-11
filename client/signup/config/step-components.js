@@ -96,5 +96,8 @@ export default {
 	'site-style-with-preview': SiteStyleComponent,
 	'site-topic-with-preview': SiteTopicComponent,
 	'site-information-with-preview': SiteInformationComponent,
+	'site-information-title-with-preview': SiteInformationComponent,
+	'site-information-address-with-preview': SiteInformationComponent,
+	'site-information-phone-with-preview': SiteInformationComponent,
 	'domains-with-preview': DomainsStepComponent,
 };
