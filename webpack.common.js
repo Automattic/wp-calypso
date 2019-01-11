@@ -10,4 +10,6 @@ if ( process.env.CIRCLECI ) {
 	workerCount = Math.max( 2, Math.floor( require( 'os' ).cpus().length / 2 ) );
 }
 
-module.exports = workerCount;
+module.exports = {
+	workerCount,
+};
