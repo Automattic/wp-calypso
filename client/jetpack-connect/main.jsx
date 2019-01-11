@@ -7,7 +7,7 @@ import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { concat, flowRight, includes } from 'lodash';
+import { concat, flowRight, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -248,9 +248,7 @@ export class JetpackConnectMain extends Component {
 		return (
 			this.state.currentUrl &&
 			this.isCurrentUrlFetched() &&
-			this.props.jetpackConnectSite &&
-			this.props.jetpackConnectSite.error &&
-			this.props.jetpackConnectSite.error.error === error
+			get( this.props.jetpackConnectSite, [ 'error', 'error' ] ) === error
 		);
 	}
 
