@@ -7,7 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from './controller';
+import { security } from './controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
@@ -19,7 +19,7 @@ export default function() {
 		navigation,
 		settingsController.setScroll,
 		settingsController.siteSettings,
-		controller.security,
+		security,
 		makeLayout,
 		clientRender
 	);
