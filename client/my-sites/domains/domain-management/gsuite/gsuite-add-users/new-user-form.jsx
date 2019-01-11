@@ -30,11 +30,14 @@ class NewUserForm extends React.Component {
 	renderNameFieldset( firstName, lastName ) {
 		const { handleFieldChange, translate } = this.props;
 
+		const isFirstNameError = has( firstName, 'error' ) && null !== firstName.error;
+		const isLastNameError = has( lastName, 'error' ) && null !== lastName.error;
+
 		return (
 			<Fragment>
 				<FormFieldset>
 					<FormTextInput
-						isError={ has( firstName, 'error' ) && null !== firstName.error }
+						isError={ isFirstNameError }
 						maxLength={ 60 }
 						name="firstName"
 						onChange={ handleFieldChange.bind( this, 'firstName' ) }
@@ -42,15 +45,13 @@ class NewUserForm extends React.Component {
 						placeholder={ translate( 'First Name' ) }
 						value={ firstName.value }
 					/>
-					<FormInputValidation
-						isError={ has( firstName, 'error' ) && null !== firstName.error }
-						isHidden={ ! has( firstName, 'error' ) || null === firstName.error }
-						text={ firstName.error || '\u00A0' }
-					/>
+					{ isFirstNameError && (
+						<FormInputValidation isError text={ firstName.error || '\u00A0' } />
+					) }
 				</FormFieldset>
 				<FormFieldset>
 					<FormTextInput
-						isError={ has( lastName, 'error' ) && null !== lastName.error }
+						isError={ isLastNameError }
 						maxLength={ 60 }
 						name="lastName"
 						onChange={ handleFieldChange.bind( this, 'lastName' ) }
@@ -58,11 +59,7 @@ class NewUserForm extends React.Component {
 						placeholder={ translate( 'Last Name' ) }
 						value={ lastName.value }
 					/>
-					<FormInputValidation
-						isHidden={ ! has( lastName, 'error' ) || null === lastName.error }
-						isError={ has( lastName, 'error' ) && null !== lastName.error }
-						text={ lastName.error || '\u00A0' }
-					/>
+					{ isLastNameError && <FormInputValidation isError text={ lastName.error || '\u00A0' } /> }
 				</FormFieldset>
 			</Fragment>
 		);
@@ -95,7 +92,7 @@ class NewUserForm extends React.Component {
 						value={ domain.value }
 					/>
 				</div>
-				<FormInputValidation isHidden={ ! isError } isError={ true } text={ errorMessage } />
+				{ isError && <FormInputValidation isError text={ errorMessage } /> }
 			</div>
 		);
 	}
