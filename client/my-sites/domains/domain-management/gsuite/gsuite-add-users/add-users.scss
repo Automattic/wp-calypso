@@ -1,5 +1,9 @@
 .gsuite-add-users__inner {
 	@include clear-fix;
+
+	hr {
+		margin: 1.5em 0;
+	}
 }
 
 .gsuite-add-users__add-another-email-address-link {
