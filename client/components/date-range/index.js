@@ -47,7 +47,6 @@ export class DateRange extends Component {
 	static defaultProps = {
 		onDateSelect: noop,
 		onDateCommit: noop,
-		numMonths: () => window.matchMedia( '(min-width: 480px)' ).matches,
 		renderTrigger: props => <DateRangeTrigger { ...props } />,
 		renderHeader: props => <DateRangeHeader { ...props } />,
 		renderInputs: props => <DateRangeInputs { ...props } />,
@@ -490,7 +489,7 @@ export class DateRange extends Component {
 					from: this.momentDateToNative( this.state.startDate ),
 					to: this.momentDateToNative( this.state.endDate ),
 				} }
-				numberOfMonths={ this.props.numMonths() ? 2 : 1 }
+				numberOfMonths={ window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1 }
 				initialMonth={ this.momentDateToNative( this.state.startDate ) }
 				disabledDays={ this.getDisabledDaysConfig() }
 			/>

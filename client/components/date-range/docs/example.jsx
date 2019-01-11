@@ -65,11 +65,6 @@ class DateRangeExample extends Component {
 					<DateRange firstSelectableDate={ now } />
 				</Card>
 
-				<h3>Always show 2 month view</h3>
-				<Card>
-					<DateRange numMonths={ () => true } />
-				</Card>
-
 				<h3>Custom Trigger Component</h3>
 				<Card>{ this.withCustomTrigger() }</Card>
 

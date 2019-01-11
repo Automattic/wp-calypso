@@ -34,7 +34,6 @@ export default class extends React.Component {
 
 * `onDateSelect(startDate, endDate)` - **optional** callback function called when a date is _selected_ (but not committed ie: "Applied")
 
-* `numMonths()` - **optional** `Function` to be called on render which enables consumer to overide the function that determines whether the `DatePicker` component should display its `1` or `2` month view. By default this uses `matchMedia` to test on a screen size of `480px` with smaller screens getting the single month view.
 
 
 
