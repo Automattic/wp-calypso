@@ -7,6 +7,7 @@ import config from 'config';
 import debugFactory from 'debug';
 import page from 'page';
 import { has, set, uniqueId, get } from 'lodash';
+import { isWebUri as isValidUrl } from 'valid-url';
 
 /**
  * WordPress dependencies
@@ -143,29 +144,27 @@ export const redirect = ( { store: { getState } }, next ) => {
 };
 
 function getPressThisContent( query ) {
-	//also, embed
-	const { text, url, title, image } = query;
+	const { text, url, title, image, embed } = query;
+	const caption = !! text ? '' : '<figcaption><a href="${ url }">${ title }</a></figcaption>';
 	let content = '';
 
-	//TODO: EMBEDS!
-	// if ( isValidUrl( embed ) ) {
-	// 	pieces.push( ReactDomServer.renderToStaticMarkup( <p>{ embed }</p> ) );
-	// }
+	if ( isValidUrl( embed ) ) {
+		//TODO: this turns into an wp:html block
+		content = content + `<!-- wp:embed --><p>${ embed }</p><!-- /wp:embed -->`;
+	}
 
 	if ( image ) {
-		content = content.concat(
-			`<!-- wp:image --><figure class="wp-block-image"><a href="$\{ url }"><img alt="" src="${ image }"/></a></figure><!-- /wp:image -->`
-		);
+		content =
+			content +
+			`<!-- wp:image --><figure class="wp-block-image"><a href="$\{ url }"><img alt="" src="${ image }"/></a>${ caption }</figure><!-- /wp:image -->`;
 	}
 	if ( text ) {
-		content = content.concat(
-			`<!-- wp:quote --><blockquote class="wp-block-quote"><p>${ text }</p></blockquote><!-- /wp:quote -->`
-		);
+		content =
+			content +
+			`<!-- wp:quote --><blockquote class="wp-block-quote"><p>${ text }</p><cite><a href="${ url }">${ title }</a></cite></blockquote><!-- /wp:quote -->`;
 	}
 
-	return content.concat(
-		`<!-- wp:paragraph --><p><a href="${ url }">${ title }</a></p><!-- /wp:paragraph -->`
-	);
+	return content;
 }
 
 export const post = async ( context, next ) => {
