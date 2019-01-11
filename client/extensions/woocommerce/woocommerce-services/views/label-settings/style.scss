@@ -61,10 +61,10 @@
 	.form-fieldset:last-child {
 		margin-bottom: 0;
 	}
+}
 
-	.label-settings__external {
-		display: none;
-	}
+.label-settings__payment-setting .label-settings__external {
+	display: none;
 }
 
 .label-settings__placeholder {
