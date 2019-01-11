@@ -384,7 +384,7 @@ export class Checkout extends React.Component {
 					plan: 'paid',
 				} );
 
-				return `/checklist/${ selectedSiteSlug }?d=gsuite`;
+				return `/view/${ selectedSiteSlug }?d=gsuite`;
 			}
 
 			// Maybe show either the G Suite or Concierge Session upsell pages
@@ -436,11 +436,7 @@ export class Checkout extends React.Component {
 		}
 
 		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
-			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
-				site: selectedSiteSlug,
-				plan: 'paid',
-			} );
-			return `/checklist/${ selectedSiteSlug }`;
+			return `/view/${ selectedSiteSlug }`;
 		}
 
 		/**

@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import config from 'config';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -135,12 +134,8 @@ export class SignupProcessingScreen extends Component {
 			  );
 	}
 
-	showChecklistAfterLogin = () => {
-		analytics.tracks.recordEvent( 'calypso_checklist_assign', {
-			site: this.state.siteSlug,
-			plan: 'free',
-		} );
-		this.props.loginHandler( { redirectTo: `/checklist/${ this.state.siteSlug }` } );
+	showPreviewAfterLogin = () => {
+		this.props.loginHandler( { redirectTo: `/view/${ this.state.siteSlug }` } );
 	};
 
 	shouldShowChecklist() {
@@ -160,7 +155,7 @@ export class SignupProcessingScreen extends Component {
 		const { loginHandler } = this.props;
 
 		if ( !! loginHandler ) {
-			this.shouldShowChecklist() ? this.showChecklistAfterLogin() : loginHandler();
+			this.shouldShowChecklist() ? this.showPreviewAfterLogin() : loginHandler();
 			return null;
 		}
 
