@@ -422,6 +422,7 @@ export function generateSteps( {
 		'site-information-without-domains': {
 			stepName: 'site-information-without-domains',
 			apiRequestFunction: createSiteWithCart,
+			delayApiRequestUntilComplete: true,
 			providesDependencies: [
 				'title',
 				'address',
