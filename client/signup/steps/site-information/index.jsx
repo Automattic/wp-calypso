@@ -82,7 +82,7 @@ export class SiteInformation extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		this.props.submitStep( this.props.siteInformation, this.props.formFields );
+		this.props.submitStep( this.props.siteInformation );
 	};
 
 	getFieldTexts( informationType ) {
@@ -198,12 +198,12 @@ export default connect(
 	},
 	( dispatch, ownProps ) => {
 		return {
-			submitStep: ( siteInformation, formFields ) => {
+			submitStep: siteInformation => {
 				const submitData = {};
 				const tracksEventData = {};
-				each( formFields, key => {
-					submitData[ key ] = trim( siteInformation[ key ] );
-					tracksEventData[ `user_entered_${ key }` ] = !! siteInformation[ key ];
+				each( siteInformation, ( value, key ) => {
+					submitData[ key ] = trim( value );
+					tracksEventData[ `user_entered_${ key }` ] = !! value;
 				} );
 				dispatch( setSiteInformation( submitData ) );
 				dispatch(
