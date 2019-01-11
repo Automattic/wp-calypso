@@ -17,7 +17,8 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
+import CreditCard from 'components/credit-card';
+import { getCreditCardSummary } from 'components/credit-card/stored-card';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
 import {
 	openAddCardDialog,
@@ -52,10 +53,11 @@ class PaymentSetting extends Component {
 	}
 
 	renderPaymentMethodPlaceholder() {
+		const placeholderCard = { cardType: '', name: '', lastDigits: '', expiry: '' };
 		return (
 			<div className="label-settings__payment-methods label-settings__placeholder">
-				<PaymentMethod selected={ false } isLoading={ true } />
-				<PaymentMethod selected={ false } isLoading={ true } />
+				<CreditCard card={ placeholderCard } />
+				<CreditCard card={ placeholderCard } />
 			</div>
 		);
 	}
@@ -152,7 +154,7 @@ class PaymentSetting extends Component {
 						'account (%(card)s) to pay for the labels you print',
 					{
 						args: {
-							card: getPaymentMethodTitle( translate, selectedType, selectedDigits ),
+							card: getCreditCardSummary( translate, selectedType, selectedDigits ),
 						},
 					}
 				);
@@ -185,16 +187,18 @@ class PaymentSetting extends Component {
 			buttonLabel = translate( 'Add a credit card' );
 		}
 
-		const renderPaymentMethod = ( method, index ) => {
+		const renderPaymentMethod = method => {
 			const onSelect = () => this.props.onChange( method.payment_method_id );
 			return (
-				<PaymentMethod
-					key={ index }
+				<CreditCard
+					key={ method.payment_method_id }
 					selected={ selectedPaymentMethod === method.payment_method_id }
-					type={ method.card_type }
-					name={ method.name }
-					digits={ method.card_digits }
-					expiry={ method.expiry }
+					card={ {
+						cardType: method.card_type,
+						name: method.name,
+						lastDigits: method.card_digits,
+						expiry: method.expiry,
+					} }
 					onSelect={ onSelect }
 				/>
 			);
