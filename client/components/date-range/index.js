@@ -491,7 +491,7 @@ export class DateRange extends Component {
 					to: this.momentDateToNative( this.state.endDate ),
 				} }
 				numberOfMonths={ this.props.numMonths() ? 2 : 1 }
-				calendarViewDate={ this.momentDateToNative( this.state.startDate ) }
+				initialMonth={ this.momentDateToNative( this.state.startDate ) }
 				disabledDays={ this.getDisabledDaysConfig() }
 			/>
 		);
