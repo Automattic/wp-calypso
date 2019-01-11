@@ -13,6 +13,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import AddAnotherUserLink from './add-another-user-link';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import Card from 'components/card/compact';
 import FormButton from 'components/forms/form-button';
@@ -25,7 +26,6 @@ import { domainManagementEmail } from 'my-sites/domains/paths';
 import { addItem } from 'lib/upgrades/actions';
 import { hasGoogleApps } from 'lib/domains';
 import { filter as filterUsers, validate as validateUsers } from 'lib/domains/google-apps-users';
-
 import QueryUserSettings from 'components/data/query-user-settings';
 import NewUserForm from './new-user-form';
 
@@ -152,6 +152,7 @@ class AddEmailAddressesCard extends React.Component {
 	}
 
 	render() {
+		const { selectedDomainName } = this.props;
 		return (
 			<div className="gsuite-add-users__card">
 				<QueryUserSettings />
@@ -159,7 +160,7 @@ class AddEmailAddressesCard extends React.Component {
 					<form className="gsuite-add-users__form">
 						<FormLabel>{ this.props.translate( 'Add Email Addresses' ) }</FormLabel>
 						{ this.renderFieldsets() }
-						{ this.addAnotherEmailAddressLink() }
+						<AddAnotherUserLink addBlankUser={ this.addBlankUser } domain={ selectedDomainName } />
 						{ this.formButtons() }
 					</form>
 				</Card>
@@ -199,26 +200,10 @@ class AddEmailAddressesCard extends React.Component {
 		this.setState( update( this.state, command ) );
 	}
 
-	addAnotherEmailAddressLink() {
-		return (
-			<button
-				type="button"
-				className="gsuite-add-users__add-another-email-address-link"
-				onClick={ this.handleAddAnotherEmailAddress }
-			>
-				{ this.props.translate( '+ Add another email address' ) }
-			</button>
-		);
-	}
-
-	handleAddAnotherEmailAddress = event => {
-		event.preventDefault();
-
+	addBlankUser = () => {
 		this.setState( {
 			fieldsets: this.state.fieldsets.concat( [ this.getNewFieldset() ] ),
 		} );
-
-		this.props.addAnotherEmailAddressClick( this.props.selectedDomainName );
 	};
 
 	formButtons() {
@@ -291,20 +276,6 @@ class AddEmailAddressesCard extends React.Component {
 	}
 }
 
-const addAnotherEmailAddressClick = domainName =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Clicked "Add another email address" link in Add Google Apps',
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent(
-			'calypso_domain_management_add_google_apps_add_another_email_address_click',
-			{ domain_name: domainName }
-		)
-	);
-
 const cancelClick = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(
@@ -358,7 +329,6 @@ export default connect(
 		lastName: getUserSetting( state, 'last_name' ),
 	} ),
 	{
-		addAnotherEmailAddressClick,
 		cancelClick,
 		continueClick,
 		domainChange,
