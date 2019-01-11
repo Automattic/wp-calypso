@@ -59,10 +59,7 @@ describe( '<SiteInformation />', () => {
 		wrapper.instance().handleSubmit( {
 			preventDefault: () => {},
 		} );
-		expect( defaultProps.submitStep ).toHaveBeenCalledWith(
-			defaultProps.siteInformation,
-			defaultProps.formFields
-		);
+		expect( defaultProps.submitStep ).toHaveBeenCalledWith( defaultProps.siteInformation );
 	} );
 
 	test( 'should call `updateStep()` from `handleInputChange()`', () => {

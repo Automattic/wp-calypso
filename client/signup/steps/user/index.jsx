@@ -116,7 +116,7 @@ export class UserStep extends Component {
 					'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}',
 					{
 						components: {
-							a: <a href={ WPCC } target="_blank" />,
+							a: <a href={ WPCC } target="_blank" rel="noopener noreferrer" />,
 						},
 						comment:
 							'Text displayed on the Signup page to users willing to sign up for an app via WordPress.com',
@@ -144,12 +144,6 @@ export class UserStep extends Component {
 	submit = data => {
 		const { flowName, stepName, oauth2Signup, translate } = this.props;
 		const dependencies = {};
-		const siteInformationPreFill = { address: '', email: data.userData.email, phone: '' };
-
-		// If the site-information step is enabled, then the email field in that step
-		// will be pre-populated with the value given in the user step
-		this.props.setSiteInformation( siteInformationPreFill );
-
 		if ( oauth2Signup ) {
 			dependencies.oauth2_client_id = data.queryArgs.oauth2_client_id;
 			dependencies.oauth2_redirect = data.queryArgs.oauth2_redirect;

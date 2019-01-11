@@ -423,15 +423,18 @@ export function generateSteps( {
 			stepName: 'site-information-without-domains',
 			apiRequestFunction: createSiteWithCart,
 			providesDependencies: [
-				'siteTitle',
+				'title',
 				'address',
-				'email',
 				'phone',
 				'siteId',
 				'siteSlug',
 				'domainItem',
 				'themeItem',
 			],
+			props: {
+				headerText: i18n.translate( 'Help customers find you' ),
+				informationFields: [ 'title', 'address', 'phone' ],
+			},
 		},
 
 		'site-style': {
