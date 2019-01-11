@@ -55,9 +55,7 @@ export class DateRange extends Component {
 	constructor( props ) {
 		super( props );
 
-		let startDate;
-		let endDate;
-
+		// Define the date range as Moment instances
 		const firstSelectableDate = ! isNil( this.props.firstSelectableDate )
 			? this.props.moment( this.props.firstSelectableDate )
 			: undefined;
@@ -65,31 +63,27 @@ export class DateRange extends Component {
 			? this.props.moment( this.props.lastSelectableDate )
 			: undefined;
 
+		// Clamp dates to ranges (if specified)
+		let startDate;
+		let endDate;
+
 		endDate = ! isNil( this.props.selectedEndDate )
 			? this.props.moment( this.props.selectedEndDate )
 			: this.props.moment();
 
-		// Ensure endDate is within bounds of firstSelectableDate
-		if ( firstSelectableDate && endDate.isBefore( firstSelectableDate ) ) {
-			endDate = firstSelectableDate;
-		}
-
-		if ( lastSelectableDate && endDate.isAfter( lastSelectableDate ) ) {
-			endDate = lastSelectableDate;
-		}
+		endDate = this.clampDateToRange( endDate, {
+			dateFrom: firstSelectableDate,
+			dateTo: lastSelectableDate,
+		} );
 
 		startDate = ! isNil( this.props.selectedStartDate )
 			? this.props.moment( this.props.selectedStartDate )
 			: this.props.moment( endDate ).subtract( 1, 'months' );
 
-		// Ensure startDate is within bounds of firstSelectableDate
-		if ( firstSelectableDate && startDate.isBefore( firstSelectableDate ) ) {
-			startDate = firstSelectableDate;
-		}
-
-		if ( lastSelectableDate && startDate.isAfter( lastSelectableDate ) ) {
-			startDate = lastSelectableDate;
-		}
+		startDate = this.clampDateToRange( startDate, {
+			dateFrom: firstSelectableDate,
+			dateTo: lastSelectableDate,
+		} );
 
 		// Ensure start is before end otherwise flip the values
 		if ( endDate.isBefore( startDate ) ) {
@@ -97,6 +91,7 @@ export class DateRange extends Component {
 			[ startDate, endDate ] = [ endDate, startDate ];
 		}
 
+		// Build initial state
 		this.state = {
 			popoverVisible: false,
 			staleStartDate: '',
@@ -110,6 +105,7 @@ export class DateRange extends Component {
 			textInputEndDate: this.dateToHumanReadable( endDate ),
 		};
 
+		// Bind event handlers
 		bindAll( this, [
 			'openPopover',
 			'closePopover',
@@ -125,6 +121,10 @@ export class DateRange extends Component {
 		this.triggerButtonRef = React.createRef();
 	}
 
+	/**
+	 * Opens the popover
+	 * Note this does not commit the current date state
+	 */
 	openPopover() {
 		this.setState( {
 			popoverVisible: true,
@@ -145,6 +145,10 @@ export class DateRange extends Component {
 		this.revertDates();
 	}
 
+	/**
+	 * Toggles the popover between open/closed
+	 * Note this does not commit the current date state
+	 */
 	togglePopover() {
 		if ( this.state.popoverVisible ) {
 			this.closePopover();
@@ -377,6 +381,60 @@ export class DateRange extends Component {
 	}
 
 	/**
+	 * Enforces that given date is within the bounds of the
+	 * range specified
+	 * @param  {Moment} date             momentJS instance
+	 * @param  {Moment|Date} options.dateFrom the start of the date range
+	 * @param  {Moment|Date} options.dateTo   the end of the date range
+	 * @return {Moment}                  the date clamped to be within the range
+	 */
+	clampDateToRange( date, { dateFrom, dateTo } ) {
+		// Ensure endDate is within bounds of firstSelectableDate
+		if ( dateFrom && date.isBefore( dateFrom ) ) {
+			date = dateFrom;
+		}
+
+		if ( dateTo && date.isAfter( dateTo ) ) {
+			date = dateTo;
+		}
+
+		return date;
+	}
+
+	/**
+	 * Builds an appropriate disabledDays prop for DatePicker
+	 * based on firstSelectableDate and lastSelectableDate
+	 * config props
+	 *
+	 * See:
+	 * http://react-day-picker.js.org/api/DayPicker/#disabledDays
+	 * http://react-day-picker.js.org/docs/matching-days
+	 *
+	 * @return {array} configuration to be passed to DatePicker as disabledDays prop
+	 */
+	getDisabledDaysConfig() {
+		const { firstSelectableDate, lastSelectableDate } = this.props;
+
+		let config = {};
+
+		if ( firstSelectableDate ) {
+			config = {
+				...config,
+				before: this.momentDateToNative( firstSelectableDate ), // disable all days before today
+			};
+		}
+
+		if ( lastSelectableDate ) {
+			config = {
+				...config,
+				after: this.momentDateToNative( lastSelectableDate ), // disable all days before today
+			};
+		}
+
+		return [ config ];
+	}
+
+	/**
 	 * Renders the Popover component
 	 * @return {ReactComponent} the Popover component
 	 */
@@ -436,39 +494,6 @@ export class DateRange extends Component {
 				disabledDays={ this.getDisabledDaysConfig() }
 			/>
 		);
-	}
-
-	/**
-	 * Builds an appropriate disabledDays prop for DatePicker
-	 * based on firstSelectableDate and lastSelectableDate
-	 * config props
-	 *
-	 * See:
-	 * http://react-day-picker.js.org/api/DayPicker/#disabledDays
-	 * http://react-day-picker.js.org/docs/matching-days
-	 *
-	 * @return {array} configuration to be passed to DatePicker as disabledDays prop
-	 */
-	getDisabledDaysConfig() {
-		const { firstSelectableDate, lastSelectableDate } = this.props;
-
-		let config = {};
-
-		if ( firstSelectableDate ) {
-			config = {
-				...config,
-				before: this.momentDateToNative( firstSelectableDate ), // disable all days before today
-			};
-		}
-
-		if ( lastSelectableDate ) {
-			config = {
-				...config,
-				after: this.momentDateToNative( lastSelectableDate ), // disable all days before today
-			};
-		}
-
-		return [ config ];
 	}
 
 	/**
