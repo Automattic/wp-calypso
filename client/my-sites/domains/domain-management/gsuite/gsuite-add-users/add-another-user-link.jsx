@@ -30,7 +30,7 @@ class AddAnotherUserLink extends React.Component {
 				className="gsuite-add-users__add-another-user-link"
 				onClick={ this.handleAddUserClick }
 			>
-				{ this.props.translate( '+ Add another user' ) }
+				{ '+ ' + this.props.translate( 'Add another user' ) }
 			</button>
 		);
 	}
