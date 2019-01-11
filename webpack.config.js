@@ -17,7 +17,6 @@ const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
-const os = require( 'os' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 
 /**
@@ -25,6 +24,7 @@ const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpac
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
+const workerCount = require( './webpack-worker-count' );
 
 /**
  * Internal variables
@@ -40,11 +40,6 @@ const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
-
-const workerCount =
-	process.env.WORKERS && ! Number.isNaN( parseInt( process.env.WORKERS, 10 ) )
-		? Math.max( 1, parseInt( process.env.WORKERS, 10 ) )
-		: Math.max( 2, Math.floor( os.cpus().length / 2 ) );
 
 /*
  * Create reporter for ProgressPlugin (used with EMIT_STATS)
@@ -206,7 +201,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					cache: process.env.CIRCLECI
 						? `${ process.env.HOME }/terser-cache`
 						: 'docker' !== process.env.CONTAINER,
-					parallel: process.env.CIRCLECI ? 2 : workerCount,
+					parallel: workerCount,
 					sourceMap: Boolean( process.env.SOURCEMAP ),
 					terserOptions: {
 						ecma: 5,
@@ -227,7 +222,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						{
 							loader: 'thread-loader',
 							options: {
-								workers: process.env.CIRCLECI ? 2 : workerCount,
+								workers: workerCount,
 							},
 						},
 						{

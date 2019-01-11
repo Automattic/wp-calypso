@@ -13,7 +13,6 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const _ = require( 'lodash' );
-const os = require( 'os' );
 
 /**
  * Internal dependencies
@@ -21,6 +20,7 @@ const os = require( 'os' );
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( 'config' );
 const bundleEnv = config( 'env' );
+const workerCount = require( './webpack-worker-count' );
 
 /**
  * Internal variables
@@ -28,11 +28,6 @@ const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv === 'development';
 
 const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
-
-const workerCount =
-	process.env.WORKERS && ! Number.isNaN( parseInt( process.env.WORKERS, 10 ) )
-		? Math.max( 1, parseInt( process.env.WORKERS, 10 ) )
-		: Math.max( 2, Math.floor( os.cpus().length / 2 ) );
 
 /**
  * This lists modules that must use commonJS `require()`s
