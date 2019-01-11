@@ -180,25 +180,13 @@ $accordion-background-expanded: $white;
 
 	&.is-warning {
 		color: var( --color-warning );
-
-		&:hover {
-			color: lighten( $alert-yellow, 5% );
-		}
 	}
 
 	&.is-error {
 		color: var( --color-error );
-
-		&:hover {
-			color: lighten( $alert-red, 5% );
-		}
 	}
 
 	&.is-info {
 		color: var( --color-primary );
-
-		&:hover {
-			color: lighten( $blue-wordpress, 5% );
-		}
 	}
 }
