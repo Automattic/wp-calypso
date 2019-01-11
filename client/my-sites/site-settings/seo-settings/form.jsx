@@ -385,6 +385,7 @@ export class SeoForm extends React.Component {
 								<img
 									className="seo-settings__page-title-header-image"
 									src="/calypso/images/seo/page-title.svg"
+									alt=""
 								/>
 								<p className="seo-settings__page-title-header-text">
 									{ translate(

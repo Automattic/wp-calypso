@@ -128,6 +128,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 			return null;
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="site-settings__security-settings">
 				<QueryJetpackModules siteId={ siteId } />
@@ -156,6 +157,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 				</Card>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

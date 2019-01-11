@@ -226,6 +226,7 @@ class SiteSettingsFormDiscussion extends Component {
 			onChangeField,
 			uniqueEventTracker,
 		} = this.props;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FormTextInput
 				name="close_comments_days_old"
@@ -245,6 +246,7 @@ class SiteSettingsFormDiscussion extends Component {
 				onKeyPress={ uniqueEventTracker( 'Typed in Automatically Close Days Field' ) }
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	renderInputThreadDepth() {
@@ -255,6 +257,7 @@ class SiteSettingsFormDiscussion extends Component {
 			isSavingSettings,
 			onChangeField,
 		} = this.props;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FormSelect
 				className="is-compact"
@@ -271,6 +274,7 @@ class SiteSettingsFormDiscussion extends Component {
 				) ) }
 			</FormSelect>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	renderInputNumComments() {
@@ -282,6 +286,7 @@ class SiteSettingsFormDiscussion extends Component {
 			onChangeField,
 			uniqueEventTracker,
 		} = this.props;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FormTextInput
 				name="comments_per_page"
@@ -297,6 +302,7 @@ class SiteSettingsFormDiscussion extends Component {
 				onKeyPress={ uniqueEventTracker( 'Typed in Comments Per Page Field' ) }
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	renderInputDisplayDefault() {
@@ -308,6 +314,7 @@ class SiteSettingsFormDiscussion extends Component {
 			translate,
 			isSavingSettings,
 		} = this.props;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FormSelect
 				className="is-compact"
@@ -322,6 +329,7 @@ class SiteSettingsFormDiscussion extends Component {
 				<option value="oldest">{ translate( 'first' ) }</option>
 			</FormSelect>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	emailMeSettings() {
@@ -549,6 +557,7 @@ class SiteSettingsFormDiscussion extends Component {
 			onChangeField,
 			uniqueEventTracker,
 		} = this.props;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FormTextInput
 				name="comment_max_links"
@@ -563,6 +572,7 @@ class SiteSettingsFormDiscussion extends Component {
 				onKeyPress={ uniqueEventTracker( 'Typed in Comment Queue Link Count Field' ) }
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	render() {

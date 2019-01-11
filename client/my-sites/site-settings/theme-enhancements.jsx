@@ -194,6 +194,8 @@ class ThemeEnhancements extends Component {
 
 	render() {
 		const { jetpackSettingsUI, translate } = this.props;
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				<SettingsSectionHeader title={ translate( 'Theme Enhancements' ) } />
@@ -211,6 +213,7 @@ class ThemeEnhancements extends Component {
 				</Card>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
