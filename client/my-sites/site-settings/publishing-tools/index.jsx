@@ -13,7 +13,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import config from 'config';
-import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Button from 'components/button';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
@@ -30,6 +29,7 @@ import SupportInfo from 'components/support-info';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import PressThis from '../press-this';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 
 /**
  * Style dependencies
@@ -159,7 +159,7 @@ class PublishingTools extends Component {
 			<div>
 				<QueryJetpackConnection siteId={ selectedSiteId } />
 
-				<SectionHeader label={ translate( 'Publishing Tools' ) } />
+				<SettingsSectionHeader title={ translate( 'Publishing Tools' ) } />
 
 				<Card className="publishing-tools__card site-settings__module-settings">
 					{ this.renderPostByEmailModule() }

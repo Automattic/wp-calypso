@@ -15,7 +15,7 @@ import ApiCache from './api-cache';
 import CompactCard from 'components/card/compact';
 import JetpackSyncPanel from 'my-sites/site-settings/jetpack-sync-panel';
 import PublicPostTypes from './public-post-types';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import getSiteUrl from 'state/selectors/get-site-url';
@@ -27,7 +27,7 @@ const DataSynchronization = ( { siteUrl, supportsJetpackSync, translate } ) => {
 
 	return (
 		<div>
-			<SectionHeader label={ translate( 'Data synchronization' ) } />
+			<SettingsSectionHeader title={ translate( 'Data synchronization' ) } />
 
 			<JetpackSyncPanel />
 			<ApiCache />

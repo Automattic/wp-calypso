@@ -21,7 +21,7 @@ import SupportInfo from 'components/support-info';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QuerySiteRoles from 'components/data/query-site-roles';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
 import { getStatsPathForTab } from 'lib/route';
@@ -119,7 +119,7 @@ class JetpackSiteStats extends Component {
 				<QueryJetpackConnection siteId={ siteId } />
 				<QuerySiteRoles siteId={ siteId } />
 
-				<SectionHeader label={ translate( 'Site stats' ) } />
+				<SettingsSectionHeader title={ translate( 'Site stats' ) } />
 
 				<FoldableCard
 					className="site-settings__foldable-card is-top-level"

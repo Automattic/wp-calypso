@@ -11,7 +11,7 @@ import { findKey, isEmpty, toLower, values } from 'lodash';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import TokenField from 'components/token-field';
 import { addQueryArgs } from 'lib/url';
 
@@ -48,7 +48,7 @@ class MissingFeature extends PureComponent {
 
 		return (
 			<div className="disconnect-site__missing-feature">
-				<SectionHeader label={ translate( 'Which feature(s) were you looking for?' ) } />
+				<SettingsSectionHeader title={ translate( 'Which feature(s) were you looking for?' ) } />
 				<Card>
 					<TokenField
 						onChange={ this.handleTokenChange }

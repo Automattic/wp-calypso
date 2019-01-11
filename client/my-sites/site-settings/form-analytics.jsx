@@ -13,8 +13,6 @@ import { find, flowRight, partialRight, pick, overSome } from 'lodash';
  */
 import wrapSettingsForm from './wrap-settings-form';
 import Card from 'components/card';
-import Button from 'components/button';
-import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
 import SupportInfo from 'components/support-info';
 import Banner from 'components/banner';
@@ -53,6 +51,7 @@ import {
 } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
 const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness, isVipPlan );
@@ -160,18 +159,13 @@ export class GoogleAnalyticsForm extends Component {
 					</Notice>
 				) }
 
-				<SectionHeader label={ translate( 'Google Analytics' ) }>
-					{ ! showUpgradeNudge && (
-						<Button
-							primary
-							compact
-							disabled={ this.isSubmitButtonDisabled() }
-							onClick={ handleSubmitForm }
-						>
-							{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-						</Button>
-					) }
-				</SectionHeader>
+				<SettingsSectionHeader
+					disabled={ this.isSubmitButtonDisabled() }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton={ ! showUpgradeNudge }
+					title={ translate( 'Google Analytics' ) }
+				/>
 
 				{ showUpgradeNudge && site && site.plan ? (
 					<Banner
