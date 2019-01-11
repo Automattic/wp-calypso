@@ -57,6 +57,74 @@ describe( 'DateRange', () => {
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
+	test( 'should ensure selectedStartDate is before selectedEndDate', () => {
+		const selectedEndDate = moment( '01-06-2018', 'DD-MM-YYYY' );
+
+		const selectedStartDate = moment( selectedEndDate ).add( 1, 'months' );
+
+		const wrapper = shallow(
+			<DateRange
+				moment={ moment }
+				selectedStartDate={ selectedStartDate }
+				selectedEndDate={ selectedEndDate }
+			/>
+		);
+
+		const actualStartDate = wrapper.state().startDate;
+		const actualEndDate = wrapper.state().endDate;
+
+		// Check whether start is before end date
+		const isStartBeforeEnd = moment( actualStartDate ).isBefore( actualEndDate );
+
+		expect( isStartBeforeEnd ).toBe( true );
+	} );
+
+	test( 'should clamp selected dates to respect firstSelectableDate prop', () => {
+		const firstSelectableDate = moment( '01-06-2018', 'DD-MM-YYYY' );
+
+		const endDateInPast = moment( firstSelectableDate ).subtract( 1, 'months' );
+
+		const wrapper = shallow(
+			<DateRange
+				moment={ moment }
+				selectedEndDate={ endDateInPast }
+				firstSelectableDate={ firstSelectableDate }
+			/>
+		);
+
+		const expectedStartDate = toHumanDate( firstSelectableDate );
+		const expectedEndDate = toHumanDate( firstSelectableDate );
+
+		const actualStartDate = toHumanDate( wrapper.state().startDate );
+		const actualEndDate = toHumanDate( wrapper.state().endDate );
+
+		expect( actualStartDate ).toEqual( expectedStartDate );
+		expect( actualEndDate ).toEqual( expectedEndDate );
+	} );
+
+	test( 'should clamp selected dates to respect lastSelectableDate prop', () => {
+		const lastSelectableDate = moment( '01-06-2018', 'DD-MM-YYYY' );
+
+		const endDateInFuture = moment( lastSelectableDate ).add( 1, 'months' );
+
+		const wrapper = shallow(
+			<DateRange
+				moment={ moment }
+				selectedEndDate={ endDateInFuture }
+				lastSelectableDate={ lastSelectableDate }
+			/>
+		);
+
+		const expectedStartDate = toHumanDate( moment( lastSelectableDate ).subtract( 1, 'months' ) );
+		const expectedEndDate = toHumanDate( lastSelectableDate );
+
+		const actualStartDate = toHumanDate( wrapper.state().startDate );
+		const actualEndDate = toHumanDate( wrapper.state().endDate );
+
+		expect( actualStartDate ).toEqual( expectedStartDate );
+		expect( actualEndDate ).toEqual( expectedEndDate );
+	} );
+
 	describe( 'Trigger element', () => {
 		test( "should render trigger with appropriate default date range of minus one month from today's date", () => {
 			const wrapper = shallow( <DateRange moment={ moment } /> );
@@ -295,7 +363,11 @@ describe( 'DateRange', () => {
 
 		test( 'should not update either start or end date selection if the new input date value is the same as that stored in state', () => {
 			const wrapper = shallow(
-				<DateRange startDate={ momentStartDate } endDate={ momentEndDate } moment={ moment } />
+				<DateRange
+					selectedStartDate={ momentStartDate }
+					selectedEndDate={ momentEndDate }
+					moment={ moment }
+				/>
 			);
 
 			wrapper.instance().handleInputBlur( startDate, 'Start' );
@@ -311,7 +383,11 @@ describe( 'DateRange', () => {
 
 		test( 'should not update start/end dates if input date is invalid', () => {
 			const wrapper = shallow(
-				<DateRange startDate={ momentStartDate } endDate={ momentEndDate } moment={ moment } />
+				<DateRange
+					selectedStartDate={ momentStartDate }
+					selectedEndDate={ momentEndDate }
+					moment={ moment }
+				/>
 			);
 			const invalidDateString = 'inv/alid/datestring';
 

@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { bindAll, noop } from 'lodash';
+import { bindAll, noop, isNil } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 import DatePicker from 'components/date-picker';
 import Popover from 'components/popover';
 import DateRangeInputs from './inputs';
@@ -21,10 +21,24 @@ import DateRangeTrigger from './trigger';
 
 export class DateRange extends Component {
 	static propTypes = {
+		selectedStartDate: PropTypes.oneOfType( [
+			PropTypes.instanceOf( Date ),
+			PropTypes.instanceOf( moment ),
+		] ),
+		selectedEndDate: PropTypes.oneOfType( [
+			PropTypes.instanceOf( Date ),
+			PropTypes.instanceOf( moment ),
+		] ),
 		onDateSelect: PropTypes.func,
 		onDateCommit: PropTypes.func,
-		firstSelectableDate: PropTypes.instanceOf( Date ),
-		lastSelectableDate: PropTypes.instanceOf( Date ),
+		firstSelectableDate: PropTypes.oneOfType( [
+			PropTypes.instanceOf( Date ),
+			PropTypes.instanceOf( moment ),
+		] ),
+		lastSelectableDate: PropTypes.oneOfType( [
+			PropTypes.instanceOf( Date ),
+			PropTypes.instanceOf( moment ),
+		] ),
 	};
 
 	static defaultProps = {
@@ -35,8 +49,47 @@ export class DateRange extends Component {
 	constructor( props ) {
 		super( props );
 
-		const endDate = this.props.endDate || this.props.moment();
-		const startDate = this.props.startDate || this.props.moment( endDate ).subtract( 1, 'months' );
+		let startDate;
+		let endDate;
+
+		const firstSelectableDate = ! isNil( this.props.firstSelectableDate )
+			? this.props.moment( this.props.firstSelectableDate )
+			: undefined;
+		const lastSelectableDate = ! isNil( this.props.lastSelectableDate )
+			? this.props.moment( this.props.lastSelectableDate )
+			: undefined;
+
+		endDate = ! isNil( this.props.selectedEndDate )
+			? this.props.moment( this.props.selectedEndDate )
+			: this.props.moment();
+
+		// Ensure endDate is within bounds of firstSelectableDate
+		if ( firstSelectableDate && endDate.isBefore( firstSelectableDate ) ) {
+			endDate = firstSelectableDate;
+		}
+
+		if ( lastSelectableDate && endDate.isAfter( lastSelectableDate ) ) {
+			endDate = lastSelectableDate;
+		}
+
+		startDate = ! isNil( this.props.selectedStartDate )
+			? this.props.moment( this.props.selectedStartDate )
+			: this.props.moment( endDate ).subtract( 1, 'months' );
+
+		// Ensure startDate is within bounds of firstSelectableDate
+		if ( firstSelectableDate && startDate.isBefore( firstSelectableDate ) ) {
+			startDate = firstSelectableDate;
+		}
+
+		if ( lastSelectableDate && startDate.isAfter( lastSelectableDate ) ) {
+			startDate = lastSelectableDate;
+		}
+
+		// Ensure start is before end otherwise flip the values
+		if ( endDate.isBefore( startDate ) ) {
+			// flip values via array destructuring (think about it...)
+			[ startDate, endDate ] = [ endDate, startDate ];
+		}
 
 		this.state = {
 			popoverVisible: false,
@@ -278,7 +331,7 @@ export class DateRange extends Component {
 	 * @return {DATE}            the converted JS Date object
 	 */
 	momentDateToNative( momentDate ) {
-		return momentDate.toDate();
+		return this.props.moment.isMoment( momentDate ) ? momentDate.toDate() : momentDate;
 	}
 
 	/**
@@ -349,8 +402,8 @@ export class DateRange extends Component {
 			<DatePicker
 				className="date-range__popover-date-picker"
 				showOutsideDays={ false }
-				fromMonth={ this.props.firstSelectableDate }
-				toMonth={ this.props.lastSelectableDate }
+				fromMonth={ this.momentDateToNative( this.props.firstSelectableDate ) }
+				toMonth={ this.momentDateToNative( this.props.lastSelectableDate ) }
 				onSelectDay={ this.onSelectDate }
 				selectedDays={ {
 					from: this.momentDateToNative( this.state.startDate ),
@@ -382,14 +435,14 @@ export class DateRange extends Component {
 		if ( firstSelectableDate ) {
 			config = {
 				...config,
-				before: firstSelectableDate, // disable all days before today
+				before: this.momentDateToNative( firstSelectableDate ), // disable all days before today
 			};
 		}
 
 		if ( lastSelectableDate ) {
 			config = {
 				...config,
-				after: lastSelectableDate, // disable all days before today
+				after: this.momentDateToNative( lastSelectableDate ), // disable all days before today
 			};
 		}
 

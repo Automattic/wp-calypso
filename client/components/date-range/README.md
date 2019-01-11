@@ -22,6 +22,10 @@ export default class extends React.Component {
 
 #### Props
 
+`selectedStartDate` - **optional** `Date` object or 'Moment' instance for the first day of the range you wish to be selected by default in the date picker
+
+`selectedEndDate` - **optional** `Date` object or 'Moment' instance for the last day of the range you wish to be selected by default in the date picker
+
 `onDateCommit(startDate, endDate)` - **optional** callback function called when a date is _committed_ (ie: "Applied"). 
 
 `onDateSelect(startDate, endDate)` - **optional** callback function called when a date is _selected_ (but not committed ie: "Applied")
