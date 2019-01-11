@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
-import { each, reduce, trim, size } from 'lodash';
+import { each, includes, reduce, trim, size } from 'lodash';
 
 /**
  * Internal dependencies
@@ -186,7 +186,7 @@ export default connect(
 		// This is a bespoke check until we implement a business-only flow,
 		// whereby the flow will determine the available site information steps.
 		const formFields =
-			! isBusiness && 'site-information' === ownProps.stepName
+			! isBusiness && includes( ownProps.informationFields, 'title' )
 				? [ 'title' ]
 				: ownProps.informationFields;
 		return {
@@ -201,9 +201,10 @@ export default connect(
 			submitStep: siteInformation => {
 				const submitData = {};
 				const tracksEventData = {};
-				each( siteInformation, ( value, key ) => {
-					submitData[ key ] = trim( value );
-					tracksEventData[ `user_entered_${ key }` ] = !! value;
+				// For each field that the UI shows, gather the submit and tracking data.
+				each( ownProps.informationFields, key => {
+					submitData[ key ] = trim( siteInformation[ key ] );
+					tracksEventData[ `user_entered_${ key }` ] = !! siteInformation[ key ];
 				} );
 				dispatch( setSiteInformation( submitData ) );
 				dispatch(
