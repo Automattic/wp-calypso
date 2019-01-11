@@ -7,9 +7,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { siteSettings } from 'my-sites/site-settings/settings-controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection } from 'my-sites/controller';
+import { siteSettings } from 'my-sites/site-settings/settings-controller';
 import { traffic } from './controller';
 
 const redirectToTrafficSection = context => {

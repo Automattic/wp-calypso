@@ -10,10 +10,10 @@ import page from 'page';
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
-import { sectionify } from 'lib/route';
+import canCurrentUser from 'state/selectors/can-current-user';
 import titlecase from 'to-title-case';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
+import { sectionify } from 'lib/route';
 
 export function siteSettings( context, next ) {
 	let analyticsPageTitle = 'Site Settings';
