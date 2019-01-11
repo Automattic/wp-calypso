@@ -68,31 +68,47 @@
 		margin-top: 12px;
 		border-top: 1px solid $gray-lighten-20;
 	}
-
+	
 	.DayPicker-wrapper,
 	.DayPicker-Months {
 		display: flex;
-		flex-direction: column;
+	}
 
-		@include breakpoint( '>480px' ) {
-			flex-direction: row;
-		}
+	.DayPicker-Month {
+		
+	}
+
+	.DayPicker-Caption {
+		font-size: 12px;
+	}
+}
+
+.date-range__popover .date-picker--1up {
+	.DayPicker-wrapper,
+	.DayPicker-Months {
+		flex-direction: column;
+	}
+
+	.DayPicker-Month {
+		width: 100%;
+	}
+}
+
+.date-range__popover .date-picker--2up {
+
+	.DayPicker-wrapper,
+	.DayPicker-Months {
+		flex-direction: row;
 	}
 
 	.DayPicker-Month {
 		width: auto;
 		margin-right: 1em;
 
-		@include breakpoint( '>480px' ) {
-			&:last-child {
-				margin-left: 1em;
-				margin-right: 0;
-			}
+		&:last-child {
+			margin-left: 1em;
+			margin-right: 0;
 		}
-	}
-
-	.DayPicker-Caption {
-		font-size: 12px;
 	}
 }
 

@@ -227,6 +227,7 @@ class DatePicker extends PureComponent {
 		const rootClassNames = classNames( {
 			'date-picker': true,
 			'date-picker--has-range': hasDateRange,
+			[ `date-picker--${ this.props.numberOfMonths }up` ]: true,
 		} );
 
 		return (
