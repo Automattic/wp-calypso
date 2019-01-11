@@ -19726,9 +19726,9 @@
 			}
 		},
 		"source-map-support": {
-			"version": "0.5.9",
-			"resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.5.9.tgz",
-			"integrity": "sha512-gR6Rw4MvUlYy83vP0vxoVNzM6t8MUXqNuRsuBmBHQDu1Fh6X015FrLdgoDKcNdkwGubozq0P4N0Q37UyFVr1EA==",
+			"version": "0.5.10",
+			"resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.5.10.tgz",
+			"integrity": "sha512-YfQ3tQFTK/yzlGJuX8pTwa4tifQj4QS2Mj7UegOu8jAz59MqIiMGPXxQhVQiIMNzayuUSF/jEuVnfFF5JqybmQ==",
 			"requires": {
 				"buffer-from": "^1.0.0",
 				"source-map": "^0.6.0"
