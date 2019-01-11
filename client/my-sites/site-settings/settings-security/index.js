@@ -7,10 +7,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { security } from './controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
-import { navigation, siteSelection } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
+import { navigation, siteSelection } from 'my-sites/controller';
+import { security } from './controller';
 
 export default function() {
 	page(
