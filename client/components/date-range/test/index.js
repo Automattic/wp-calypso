@@ -226,7 +226,7 @@ describe( 'DateRange', () => {
 			);
 		} );
 
-		test( 'should set 2 month calendar view on screens >480px', () => {
+		test( 'should set 2 month calendar view on screens >480px by default', () => {
 			window.matchMedia = jest.fn().mockImplementation( query => {
 				return {
 					...matchMediaDefaults,
@@ -241,7 +241,7 @@ describe( 'DateRange', () => {
 			expect( datePicker.props().numberOfMonths ).toEqual( 2 );
 		} );
 
-		test( 'should set 1 month calendar view on screens <480px', () => {
+		test( 'should set 1 month calendar view on screens <480px by default', () => {
 			window.matchMedia = jest.fn().mockImplementation( query => {
 				return {
 					...matchMediaDefaults,
@@ -254,6 +254,17 @@ describe( 'DateRange', () => {
 			const datePicker = wrapper.find( DatePicker );
 
 			expect( datePicker.props().numberOfMonths ).toEqual( 1 );
+		} );
+
+		test( 'should allow custom function to determine numer of months to show', () => {
+			// Custom function that always return true which should
+			// ensure we always see 2 months
+			const mock = jest.fn().mockImplementation( () => true );
+
+			const wrapper = shallow( <DateRange moment={ moment } numMonths={ mock } /> );
+			const datePicker = wrapper.find( DatePicker );
+
+			expect( datePicker.props().numberOfMonths ).toEqual( 2 );
 		} );
 
 		test( 'should disable dates before firstSelectableDate when set', () => {
