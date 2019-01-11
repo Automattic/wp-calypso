@@ -44,6 +44,9 @@ export class DateRange extends Component {
 	static defaultProps = {
 		onDateSelect: noop,
 		onDateCommit: noop,
+		renderTrigger: props => <DateRangeTrigger { ...props } />,
+		renderHeader: props => <DateRangeHeader { ...props } />,
+		renderInputs: props => <DateRangeInputs { ...props } />,
 	};
 
 	constructor( props ) {
@@ -380,6 +383,18 @@ export class DateRange extends Component {
 			'is-dialog-visible': true, // forces to render when inside a modal. Is there a way to detect this from global state?
 		} );
 
+		const headerProps = {
+			onApplyClick: this.commitDates,
+			onCancelClick: this.closePopover,
+		};
+
+		const inputsProps = {
+			startDateValue: this.state.textInputStartDate,
+			endDateValue: this.state.textInputEndDate,
+			onInputChange: this.handleInputChange,
+			onInputBlur: this.handleInputBlur,
+		};
+
 		return (
 			<Popover
 				className={ popoverClassNames }
@@ -389,13 +404,8 @@ export class DateRange extends Component {
 				onClose={ this.closePopover }
 			>
 				<div className="date-range__popover-inner">
-					<DateRangeHeader onApplyClick={ this.commitDates } onCancelClick={ this.closePopover } />
-					<DateRangeInputs
-						startDateValue={ this.state.textInputStartDate }
-						endDateValue={ this.state.textInputEndDate }
-						onInputChange={ this.handleInputChange }
-						onInputBlur={ this.handleInputBlur }
-					/>
+					{ this.props.renderHeader( headerProps ) }
+					{ this.props.renderInputs( inputsProps ) }
 					{ this.renderDatePicker() }
 				</div>
 			</Popover>
@@ -468,14 +478,16 @@ export class DateRange extends Component {
 			'toggle-visible': this.state.popoverVisible,
 		} );
 
+		const triggerProps = {
+			startDateText: this.dateToHumanReadable( this.state.startDate ),
+			endDateText: this.dateToHumanReadable( this.state.endDate ),
+			buttonRef: this.triggerButtonRef,
+			onTriggerClick: this.togglePopover,
+		};
+
 		return (
 			<div className={ rootClassNames }>
-				<DateRangeTrigger
-					startDateText={ this.dateToHumanReadable( this.state.startDate ) }
-					endDateText={ this.dateToHumanReadable( this.state.endDate ) }
-					buttonRef={ this.triggerButtonRef }
-					onTriggerClick={ this.togglePopover }
-				/>
+				{ this.props.renderTrigger( triggerProps ) }
 				{ this.renderPopover() }
 			</div>
 		);

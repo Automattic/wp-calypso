@@ -573,6 +573,51 @@ describe( 'DateRange', () => {
 		} );
 	} );
 
+	describe( 'Render props', () => {
+		test( 'should allow for render prop to overide trigger render', () => {
+			const spyComponent = jest.fn();
+
+			shallow( <DateRange moment={ moment } renderTrigger={ spyComponent } /> );
+
+			const props = spyComponent.mock.calls[ 0 ][ 0 ];
+			const propKeys = Object.keys( props ).sort();
+
+			expect( spyComponent ).toHaveBeenCalledTimes( 1 );
+
+			expect( propKeys ).toEqual(
+				[ 'startDateText', 'endDateText', 'buttonRef', 'onTriggerClick' ].sort()
+			);
+		} );
+
+		test( 'should allow for render prop to overide header render', () => {
+			const spyComponent = jest.fn();
+
+			shallow( <DateRange moment={ moment } renderHeader={ spyComponent } /> );
+
+			const props = spyComponent.mock.calls[ 0 ][ 0 ];
+			const propKeys = Object.keys( props ).sort();
+
+			expect( spyComponent ).toHaveBeenCalledTimes( 1 );
+
+			expect( propKeys ).toEqual( [ 'onApplyClick', 'onCancelClick' ].sort() );
+		} );
+
+		test( 'should allow for render prop to overide inputs render', () => {
+			const spyComponent = jest.fn();
+
+			shallow( <DateRange moment={ moment } renderInputs={ spyComponent } /> );
+
+			const props = spyComponent.mock.calls[ 0 ][ 0 ];
+			const propKeys = Object.keys( props ).sort();
+
+			expect( spyComponent ).toHaveBeenCalledTimes( 1 );
+
+			expect( propKeys ).toEqual(
+				[ 'startDateValue', 'endDateValue', 'onInputChange', 'onInputBlur' ].sort()
+			);
+		} );
+	} );
+
 	afterEach( () => {
 		MockDate.reset();
 	} );
