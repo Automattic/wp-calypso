@@ -190,6 +190,12 @@ class SharingServiceDescription extends Component {
 			description = this.props.descriptions[ this.props.service.ID ].call( this );
 		}
 
+		/**
+		 * TODO: Refactoring this line has to be tackled in a seperate diff.
+		 * Touching this changes services-group.jsx which changes service.jsx
+		 * Basically whole folder needs refactoring.
+		 */
+		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		return <p className="sharing-service__description">{ description }</p>;
 	}
 }
