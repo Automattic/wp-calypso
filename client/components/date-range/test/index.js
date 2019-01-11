@@ -19,6 +19,7 @@ import DatePicker from 'components/date-picker';
 import DateRangeTrigger from 'components/date-range/trigger';
 import DateRangeInputs from 'components/date-range/inputs';
 import DateRangeHeader from 'components/date-range/header';
+import Popover from 'components/popover';
 
 function toHumanDate( date ) {
 	return date.format( 'DD/MM/YYYY' );
@@ -57,72 +58,74 @@ describe( 'DateRange', () => {
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
-	test( 'should ensure selectedStartDate is before selectedEndDate', () => {
-		const selectedEndDate = moment( '01-06-2018', 'DD-MM-YYYY' );
+	describe( 'Date range clamping', () => {
+		test( 'should ensure selectedStartDate is before selectedEndDate', () => {
+			const selectedEndDate = moment( '01-06-2018', 'DD-MM-YYYY' );
 
-		const selectedStartDate = moment( selectedEndDate ).add( 1, 'months' );
+			const selectedStartDate = moment( selectedEndDate ).add( 1, 'months' );
 
-		const wrapper = shallow(
-			<DateRange
-				moment={ moment }
-				selectedStartDate={ selectedStartDate }
-				selectedEndDate={ selectedEndDate }
-			/>
-		);
+			const wrapper = shallow(
+				<DateRange
+					moment={ moment }
+					selectedStartDate={ selectedStartDate }
+					selectedEndDate={ selectedEndDate }
+				/>
+			);
 
-		const actualStartDate = wrapper.state().startDate;
-		const actualEndDate = wrapper.state().endDate;
+			const actualStartDate = wrapper.state().startDate;
+			const actualEndDate = wrapper.state().endDate;
 
-		// Check whether start is before end date
-		const isStartBeforeEnd = moment( actualStartDate ).isBefore( actualEndDate );
+			// Check whether start is before end date
+			const isStartBeforeEnd = moment( actualStartDate ).isBefore( actualEndDate );
 
-		expect( isStartBeforeEnd ).toBe( true );
-	} );
+			expect( isStartBeforeEnd ).toBe( true );
+		} );
 
-	test( 'should clamp selected dates to respect firstSelectableDate prop', () => {
-		const firstSelectableDate = moment( '01-06-2018', 'DD-MM-YYYY' );
+		test( 'should clamp selected dates to respect firstSelectableDate prop', () => {
+			const firstSelectableDate = moment( '01-06-2018', 'DD-MM-YYYY' );
 
-		const endDateInPast = moment( firstSelectableDate ).subtract( 1, 'months' );
+			const endDateInPast = moment( firstSelectableDate ).subtract( 1, 'months' );
 
-		const wrapper = shallow(
-			<DateRange
-				moment={ moment }
-				selectedEndDate={ endDateInPast }
-				firstSelectableDate={ firstSelectableDate }
-			/>
-		);
+			const wrapper = shallow(
+				<DateRange
+					moment={ moment }
+					selectedEndDate={ endDateInPast }
+					firstSelectableDate={ firstSelectableDate }
+				/>
+			);
 
-		const expectedStartDate = toHumanDate( firstSelectableDate );
-		const expectedEndDate = toHumanDate( firstSelectableDate );
+			const expectedStartDate = toHumanDate( firstSelectableDate );
+			const expectedEndDate = toHumanDate( firstSelectableDate );
 
-		const actualStartDate = toHumanDate( wrapper.state().startDate );
-		const actualEndDate = toHumanDate( wrapper.state().endDate );
+			const actualStartDate = toHumanDate( wrapper.state().startDate );
+			const actualEndDate = toHumanDate( wrapper.state().endDate );
 
-		expect( actualStartDate ).toEqual( expectedStartDate );
-		expect( actualEndDate ).toEqual( expectedEndDate );
-	} );
+			expect( actualStartDate ).toEqual( expectedStartDate );
+			expect( actualEndDate ).toEqual( expectedEndDate );
+		} );
 
-	test( 'should clamp selected dates to respect lastSelectableDate prop', () => {
-		const lastSelectableDate = moment( '01-06-2018', 'DD-MM-YYYY' );
+		test( 'should clamp selected dates to respect lastSelectableDate prop', () => {
+			const lastSelectableDate = moment( '01-06-2018', 'DD-MM-YYYY' );
 
-		const endDateInFuture = moment( lastSelectableDate ).add( 1, 'months' );
+			const endDateInFuture = moment( lastSelectableDate ).add( 1, 'months' );
 
-		const wrapper = shallow(
-			<DateRange
-				moment={ moment }
-				selectedEndDate={ endDateInFuture }
-				lastSelectableDate={ lastSelectableDate }
-			/>
-		);
+			const wrapper = shallow(
+				<DateRange
+					moment={ moment }
+					selectedEndDate={ endDateInFuture }
+					lastSelectableDate={ lastSelectableDate }
+				/>
+			);
 
-		const expectedStartDate = toHumanDate( moment( lastSelectableDate ).subtract( 1, 'months' ) );
-		const expectedEndDate = toHumanDate( lastSelectableDate );
+			const expectedStartDate = toHumanDate( moment( lastSelectableDate ).subtract( 1, 'months' ) );
+			const expectedEndDate = toHumanDate( lastSelectableDate );
 
-		const actualStartDate = toHumanDate( wrapper.state().startDate );
-		const actualEndDate = toHumanDate( wrapper.state().endDate );
+			const actualStartDate = toHumanDate( wrapper.state().startDate );
+			const actualEndDate = toHumanDate( wrapper.state().endDate );
 
-		expect( actualStartDate ).toEqual( expectedStartDate );
-		expect( actualEndDate ).toEqual( expectedEndDate );
+			expect( actualStartDate ).toEqual( expectedStartDate );
+			expect( actualEndDate ).toEqual( expectedEndDate );
+		} );
 	} );
 
 	describe( 'Trigger element', () => {
@@ -164,6 +167,32 @@ describe( 'DateRange', () => {
 			};
 
 			expect( dateRangeTrigger.props() ).toEqual( expect.objectContaining( expected ) );
+		} );
+
+		test( 'should toggle popover on trigger click', () => {
+			const wrapper = shallow( <DateRange moment={ moment } /> );
+
+			const trigger = wrapper.find( DateRangeTrigger );
+
+			let popover;
+
+			// Open
+			trigger.props().onTriggerClick();
+
+			wrapper.update();
+
+			popover = wrapper.find( Popover );
+
+			expect( popover.props().isVisible ).toBe( true );
+
+			// Close
+			trigger.props().onTriggerClick();
+
+			wrapper.update();
+
+			popover = wrapper.find( Popover );
+
+			expect( popover.props().isVisible ).toBe( false );
 		} );
 	} );
 

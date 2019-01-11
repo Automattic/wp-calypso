@@ -107,6 +107,7 @@ export class DateRange extends Component {
 		bindAll( this, [
 			'openPopover',
 			'closePopover',
+			'togglePopover',
 			'onSelectDate',
 			'revertDates',
 			'commitDates',
@@ -136,6 +137,14 @@ export class DateRange extends Component {
 		// As no dates have been explicity accepted ("Apply" not clicked)
 		// we need to revert back to the original cached dates
 		this.revertDates();
+	}
+
+	togglePopover() {
+		if ( this.state.popoverVisible ) {
+			this.closePopover();
+		} else {
+			this.openPopover();
+		}
 	}
 
 	/**
@@ -465,7 +474,7 @@ export class DateRange extends Component {
 					startDateText={ this.dateToHumanReadable( this.state.startDate ) }
 					endDateText={ this.dateToHumanReadable( this.state.endDate ) }
 					buttonRef={ this.triggerButtonRef }
-					onTriggerClick={ this.openPopover }
+					onTriggerClick={ this.togglePopover }
 				/>
 				{ this.renderPopover() }
 			</div>
