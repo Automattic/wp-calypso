@@ -27,10 +27,10 @@ class AddAnotherUserLink extends React.Component {
 		return (
 			<button
 				type="button"
-				className="gsuite-add-users__add-another-email-address-link"
+				className="gsuite-add-users__add-another-user-link"
 				onClick={ this.handleAddUserClick }
 			>
-				{ this.props.translate( '+ Add another email address' ) }
+				{ this.props.translate( '+ Add another user' ) }
 			</button>
 		);
 	}
@@ -40,7 +40,7 @@ const recordAddUserClick = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Add another email address" link in G Suite Add Users',
+			'Clicked "Add another user" link in G Suite Add Users',
 			'Domain Name',
 			domainName
 		),
