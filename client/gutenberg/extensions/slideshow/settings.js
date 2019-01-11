@@ -68,4 +68,7 @@ export const settings = {
 		{ label: __( 'Flip' ), value: 'flip' },
 	],
 	validAlignments: [ 'center', 'wide', 'full' ],
+	supports: {
+		html: false,
+	},
 };
