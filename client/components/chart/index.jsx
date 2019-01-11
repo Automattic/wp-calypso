@@ -31,6 +31,7 @@ class Chart extends React.Component {
 		width: 650,
 		yMax: 0,
 		isTooltipVisible: false,
+		hasResized: false,
 	};
 
 	static propTypes = {
@@ -84,10 +85,13 @@ class Chart extends React.Component {
 		const width = isTouch && clientWidth <= 0 ? 350 : clientWidth; // mobile safari bug with zero width
 		const maxBars = Math.floor( width / minWidth );
 
-		this.setState( { maxBars, width }, () =>
+		const updatedData = this.calculateUpdatedData(
 			// this may get called either directly or as a resize event callback
-			this.updateData( props instanceof Event ? this.props : props )
+			props instanceof Event ? this.props : props,
+			maxBars
 		);
+
+		this.setState( { maxBars, width, hasResized: true, ...updatedData } );
 	};
 
 	getYAxisMax = values => {
@@ -115,17 +119,19 @@ class Chart extends React.Component {
 
 	storeChart = ref => ( this.chart = ref );
 
-	updateData = ( { data } ) => {
-		const { maxBars } = this.state;
-
+	calculateUpdatedData = ( { data }, { maxBars } = this.state ) => {
 		const nextData = data.length <= maxBars ? data : data.slice( 0 - maxBars );
 		const nextVals = data.map( ( { value } ) => value );
 
-		this.setState( {
+		return {
 			data: nextData,
 			isEmptyChart: Boolean( nextVals.length && ! nextVals.some( a => a > 0 ) ),
 			yMax: this.getYAxisMax( nextVals ),
-		} );
+		};
+	};
+
+	updateData = props => {
+		this.setState( this.calculateUpdatedData( props ) );
 	};
 
 	setTooltip = ( tooltipContext, tooltipPosition, tooltipData ) => {
@@ -147,7 +153,12 @@ class Chart extends React.Component {
 			tooltipContext,
 			tooltipPosition,
 			tooltipData,
+			hasResized,
 		} = this.state;
+
+		if ( ! hasResized ) {
+			return <div ref={ this.storeChart } className="chart" />;
+		}
 
 		return (
 			<div ref={ this.storeChart } className="chart">
