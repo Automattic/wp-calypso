@@ -113,7 +113,16 @@ class GutenbergEditor extends Component {
 	};
 
 	render() {
-		const { alignWide, postType, siteId, pageTemplates, post, initialEdits, isRTL } = this.props;
+		const {
+			alignWide,
+			postType,
+			siteId,
+			pageTemplates,
+			post,
+			initialEdits,
+			isRTL,
+			styles,
+		} = this.props;
 
 		//see also https://github.com/WordPress/gutenberg/blob/45bc8e4991d408bca8e87cba868e0872f742230b/lib/client-assets.php#L1451
 		const editorSettings = {
@@ -125,6 +134,7 @@ class GutenbergEditor extends Component {
 			postLock: {},
 			isRTL,
 			allowedMimeTypes: this.getAllowedMimeTypes(),
+			styles,
 		};
 
 		return (
@@ -229,7 +239,7 @@ const mapStateToProps = (
 	 * This is future proofing if that flag get's implemented.
 	 */
 	const siteSlug = getSiteSlug( state, siteId );
-	const { 'align-wide': alignWide, gutenberg: gutenbergThemeSupport } = get(
+	const { 'align-wide': alignWide, gutenberg: gutenbergThemeSupport, styles } = get(
 		requestActiveThemeSupport( siteSlug ),
 		[ 'data', 'theme_support' ],
 		{}
@@ -257,6 +267,7 @@ const mapStateToProps = (
 		isRTL,
 		gmtOffset,
 		allowedFileTypes,
+		styles,
 	};
 };
 
