@@ -8,10 +8,10 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-import { podcasting, taxonomies, writing } from './controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
-import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
+import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { podcasting, taxonomies, writing } from './controller';
 
 export default function() {
 	page(
