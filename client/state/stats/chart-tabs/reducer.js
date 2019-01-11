@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, pick, set } from 'lodash';
+import { get, pick, set, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,15 +26,25 @@ export function counts( state = {}, action ) {
 			const records = get( state, `${ action.siteId }.${ action.period }`, [] ).slice();
 			const recordIds = records.map( count => count[ ID ] );
 
+			let areThereChanges = false;
+
 			// Merge existing records with records from API
 			action.data.forEach( recordFromApi => {
 				const index = recordIds.indexOf( recordFromApi[ ID ] );
 				if ( index >= 0 ) {
-					records[ index ] = { ...records[ index ], ...recordFromApi };
+					const newRecords = { ...records[ index ], ...recordFromApi };
+					areThereChanges = areThereChanges || ! isEqual( newRecords, records[ index ] );
+					records[ index ] = newRecords;
 				} else {
+					areThereChanges = true;
 					records.push( recordFromApi );
 				}
 			} );
+
+			// Avoid changing state if nothing's changed.
+			if ( ! areThereChanges ) {
+				return state;
+			}
 
 			const newState = { ...state };
 			set( newState, `${ action.siteId }.${ action.period }`, records );
