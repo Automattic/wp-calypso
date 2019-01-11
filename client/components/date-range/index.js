@@ -39,6 +39,9 @@ export class DateRange extends Component {
 			PropTypes.instanceOf( Date ),
 			PropTypes.instanceOf( moment ),
 		] ),
+		renderTrigger: PropTypes.func,
+		renderHeader: PropTypes.func,
+		renderInputs: PropTypes.func,
 	};
 
 	static defaultProps = {
