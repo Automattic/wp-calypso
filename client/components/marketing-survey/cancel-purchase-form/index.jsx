@@ -337,7 +337,7 @@ class CancelPurchaseForm extends React.Component {
 				return (
 					<div>
 						<FormSectionHeading>
-							{ translate( 'Let us help you setup your site!' ) }
+							{ translate( 'Let us help you set up your site!' ) }
 						</FormSectionHeading>
 						{ this.renderConciergeOffer() }
 					</div>
