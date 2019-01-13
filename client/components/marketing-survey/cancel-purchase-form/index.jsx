@@ -282,7 +282,7 @@ class CancelPurchaseForm extends React.Component {
 					<p>
 						{ translate(
 							'Schedule a 30 minute orientation with one of our Happiness Engineers. ' +
-								"We'll help you to setup your site and answer any questions you have!"
+								"We'll help you to set up your site and answer any questions you have!"
 						) }
 					</p>
 					<Button onClick={ this.openConcierge } primary>
