@@ -275,7 +275,7 @@
     "test-server": "jest -c=test/server/jest.config.js",
     "test-server:coverage": "npm run -s test-server -- --coverage",
     "test-server:watch": "npm run -s test-server -- --watch",
-    "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -k translate,__,_x,_n,_nx -e date \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!public/**\" \"!node_modules/**\" \"!**/node_modules/**\" \"!packages/i18n-calypso/_test/**\" # FIXME: when tests are restored",
+    "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -k translate,__,_x,_n,_nx -e date '**/*.js' '**/*.jsx' '!build/**' '!public/**' '!**/test/**' '!node_modules/**' '!**/node_modules/**' '!packages/i18n-calypso/_test/**' # FIXME: when tests are restored",
     "update-deps": "npx rimraf npm-shrinkwrap.json packages/*/package-lock.json && npm run -s distclean && npx lerna bootstrap && npm shrinkwrap && replace --silent 'http://' 'https://' . --recursive --include='npm-shrinkwrap.json,package-lock.json'",
     "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
     "prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons npm run -s build-client",
