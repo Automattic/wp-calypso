@@ -4,7 +4,7 @@ exports[`DateRange should render 1`] = `
 <div
   className="date-range"
 >
-  <DateRangeTrigger
+  <Localized(DateRangeTrigger)
     buttonRef={
       Object {
         "current": null,

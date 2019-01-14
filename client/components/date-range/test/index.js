@@ -585,7 +585,7 @@ describe( 'DateRange', () => {
 			expect( spyComponent ).toHaveBeenCalledTimes( 1 );
 
 			expect( propKeys ).toEqual(
-				[ 'startDateText', 'endDateText', 'buttonRef', 'onTriggerClick' ].sort()
+				[ 'startDateText', 'endDateText', 'buttonRef', 'onTriggerClick', 'triggerText' ].sort()
 			);
 		} );
 
