@@ -47,7 +47,7 @@ class DateRangeInputs extends Component {
 	 *
 	 * @param  {string} eventType  one of "change" or "blur"
 	 * @param  {string} startOrEnd one of "Start" or "End"
-	 * @return {function}            the partially applied function ready to recevie event data
+	 * @return {function}            the partially applied function ready to recieve event data
 	 */
 	handleInputEvent = ( eventType, startOrEnd ) => e => {
 		const val = e.target.value;
