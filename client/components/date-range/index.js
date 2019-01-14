@@ -242,8 +242,8 @@ export class DateRange extends Component {
 	 */
 	toDateRange( startDate, endDate ) {
 		return {
-			from: this.momentDateToNative( startDate ),
-			to: this.momentDateToNative( endDate ),
+			from: this.momentDateToJsDate( startDate ),
+			to: this.momentDateToJsDate( endDate ),
 		};
 	}
 
@@ -261,7 +261,7 @@ export class DateRange extends Component {
 		// DateUtils requires a range object with this shape
 		const range = this.toDateRange( this.state.startDate, this.state.endDate );
 
-		const rawDay = this.momentDateToNative( date );
+		const rawDay = this.momentDateToJsDate( date );
 
 		// Calculate the new Date range
 		const newRange = DateUtils.addDayToRange( rawDay, range );
@@ -350,7 +350,7 @@ export class DateRange extends Component {
 	 * @param  {MomentJSDate} momentDate a momentjs date object to convert
 	 * @return {DATE}            the converted JS Date object
 	 */
-	momentDateToNative( momentDate ) {
+	momentDateToJsDate( momentDate ) {
 		return this.props.moment.isMoment( momentDate ) ? momentDate.toDate() : momentDate;
 	}
 
@@ -421,14 +421,14 @@ export class DateRange extends Component {
 		if ( firstSelectableDate ) {
 			config = {
 				...config,
-				before: this.momentDateToNative( firstSelectableDate ), // disable all days before today
+				before: this.momentDateToJsDate( firstSelectableDate ), // disable all days before today
 			};
 		}
 
 		if ( lastSelectableDate ) {
 			config = {
 				...config,
-				after: this.momentDateToNative( lastSelectableDate ), // disable all days before today
+				after: this.momentDateToJsDate( lastSelectableDate ), // disable all days before today
 			};
 		}
 
@@ -482,15 +482,15 @@ export class DateRange extends Component {
 			<DatePicker
 				className="date-range__popover-date-picker"
 				showOutsideDays={ false }
-				fromMonth={ this.momentDateToNative( this.props.firstSelectableDate ) }
-				toMonth={ this.momentDateToNative( this.props.lastSelectableDate ) }
+				fromMonth={ this.momentDateToJsDate( this.props.firstSelectableDate ) }
+				toMonth={ this.momentDateToJsDate( this.props.lastSelectableDate ) }
 				onSelectDay={ this.onSelectDate }
 				selectedDays={ {
-					from: this.momentDateToNative( this.state.startDate ),
-					to: this.momentDateToNative( this.state.endDate ),
+					from: this.momentDateToJsDate( this.state.startDate ),
+					to: this.momentDateToJsDate( this.state.endDate ),
 				} }
 				numberOfMonths={ window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1 }
-				initialMonth={ this.momentDateToNative( this.state.startDate ) }
+				initialMonth={ this.momentDateToJsDate( this.state.startDate ) }
 				disabledDays={ this.getDisabledDaysConfig() }
 			/>
 		);
