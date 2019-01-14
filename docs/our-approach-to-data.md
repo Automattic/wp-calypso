@@ -285,3 +285,11 @@ By now, you're hopefully convinced that a global application state can enable us
 We recommend that you only use the state tree to store user interface state when you know that the data being stored should be persisted between page views, or when it's to be used by distinct areas of the application on the same page. As an example, consider the currently selected site. When navigating between pages in the [_My Sites_](https://wordpress.com/stats) section, I'd expect that the selected site should not change. Additionally, many parts of the rendered application make use of selected site. For these reasons, it makes sense that the currently selected site be saved in the global state. By contrast, when I navigate to the Sharing page and expand one of the available sharing services, I don't have the same expectation that this interaction be preserved when I later leave and return to the page. In these cases, it might be more appropriate to use React state to track the expanded status of the component, local only to the current rendering context. Use your best judgment when considering whether to add to the global state, but don't feel compelled to avoid React state altogether.
 
 Files related to user-interface state can be found in the [`client/state/ui` directory](../client/state/ui).
+
+### Data Persistence
+
+Persisting our Redux state to browser storage (IndexedDB) allows us to avoid completely rebuilding the
+Redux tree from scratch on each page load and to display cached data in the UI (instead of placeholders)
+while fetching the latest updates from the REST API is still in progress.
+
+Information about this large topic is in a [dedicated document](./data-persistence.md)
