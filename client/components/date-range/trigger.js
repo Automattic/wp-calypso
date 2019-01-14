@@ -6,13 +6,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gridicon from 'gridicons';
-import { localize } from 'i18n-calypso';
 
 export class DateRangeTrigger extends Component {
 	static propTypes = {
