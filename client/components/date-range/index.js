@@ -101,8 +101,8 @@ export class DateRange extends Component {
 			staleDatesSaved: false,
 			// this need to be independent from startDate because we must independently validate them
 			// before updating the central source of truth (ie: startDate)
-			textInputStartDate: this.dateToHumanReadable( startDate ),
-			textInputEndDate: this.dateToHumanReadable( endDate ),
+			textInputStartDate: this.formatDateToLocale( startDate ),
+			textInputEndDate: this.formatDateToLocale( endDate ),
 		};
 
 		// Bind event handlers
@@ -218,8 +218,8 @@ export class DateRange extends Component {
 		// to current start/end date from state
 		if ( ! isValidFrom || ! isValidTo ) {
 			this.setState( {
-				textInputStartDate: this.dateToHumanReadable( this.state.startDate ),
-				textInputEndDate: this.dateToHumanReadable( this.state.endDate ),
+				textInputStartDate: this.formatDateToLocale( this.state.startDate ),
+				textInputEndDate: this.formatDateToLocale( this.state.endDate ),
 			} );
 		}
 
@@ -336,8 +336,8 @@ export class DateRange extends Component {
 			if ( previousState.staleStartDate && previousState.staleEndDate ) {
 				newState.startDate = previousState.staleStartDate;
 				newState.endDate = previousState.staleEndDate;
-				newState.textInputStartDate = this.dateToHumanReadable( this.state.staleStartDate );
-				newState.textInputEndDate = this.dateToHumanReadable( this.state.staleEndDate );
+				newState.textInputStartDate = this.formatDateToLocale( this.state.staleStartDate );
+				newState.textInputEndDate = this.formatDateToLocale( this.state.staleEndDate );
 			}
 
 			return newState;
@@ -368,7 +368,7 @@ export class DateRange extends Component {
 	 * @param  {Date|MomentJSDate} date the date to be converted
 	 * @return {String}      the date as a formatted locale string
 	 */
-	dateToHumanReadable( date ) {
+	formatDateToLocale( date ) {
 		return this.props.moment( date ).format( 'L' );
 	}
 
@@ -507,8 +507,8 @@ export class DateRange extends Component {
 		} );
 
 		const triggerProps = {
-			startDateText: this.dateToHumanReadable( this.state.startDate ),
-			endDateText: this.dateToHumanReadable( this.state.endDate ),
+			startDateText: this.formatDateToLocale( this.state.startDate ),
+			endDateText: this.formatDateToLocale( this.state.endDate ),
 			buttonRef: this.triggerButtonRef,
 			onTriggerClick: this.togglePopover,
 		};
