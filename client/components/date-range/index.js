@@ -68,18 +68,18 @@ export class DateRange extends Component {
 		let startDate;
 		let endDate;
 
-		endDate = ! isNil( this.props.selectedEndDate )
-			? this.props.moment( this.props.selectedEndDate )
-			: this.props.moment();
+		endDate = isNil( this.props.selectedEndDate )
+			? this.props.moment()
+			: this.props.moment( this.props.selectedEndDate );
 
 		endDate = this.clampDateToRange( endDate, {
 			dateFrom: firstSelectableDate,
 			dateTo: lastSelectableDate,
 		} );
 
-		startDate = ! isNil( this.props.selectedStartDate )
-			? this.props.moment( this.props.selectedStartDate )
-			: this.props.moment( endDate ).subtract( 1, 'months' );
+		startDate = isNil( this.props.selectedStartDate )
+			? this.props.moment( endDate ).subtract( 1, 'months' )
+			: this.props.moment( this.props.selectedStartDate );
 
 		startDate = this.clampDateToRange( startDate, {
 			dateFrom: firstSelectableDate,
