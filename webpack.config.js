@@ -248,13 +248,13 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					test: /\.(sc|sa|c)ss$/,
 					use: [
 						MiniCssExtractPluginWithRTL.loader,
-						'css-loader',
 						{
-							loader: 'postcss-loader',
+							loader: 'css-loader',
 							options: {
-								plugins: [ require( 'autoprefixer' ) ],
+								importLoaders: 2,
 							},
 						},
+						'postcss-loader',
 						{
 							loader: 'sass-loader',
 							options: {
@@ -328,7 +328,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				rtlEnabled: true,
 			} ),
 			new WebpackRTLPlugin( {
-				minify: isDevelopment ? false : cssnanoOptions,
+				minify: false, //isDevelopment ? false : cssnanoOptions,
 			} ),
 			new AssetsWriter( {
 				filename: 'assets.json',
