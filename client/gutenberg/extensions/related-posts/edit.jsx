@@ -16,6 +16,36 @@ import { withSelect } from '@wordpress/data';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
 
+class MockupPostEdit extends Component {
+	render() {
+		const { displayDate, displayContext, displayThumbnails } = this.props;
+		const previewClassName = 'related-posts__preview';
+
+		return (
+			<div className={ `${ previewClassName }-post` }>
+				{ displayThumbnails && (
+					<Button className={ `${ previewClassName }-post-image-mockup` } isLink>
+						<span className={ `${ previewClassName }-post-image-mockup-text` }>Featured Image</span>
+					</Button>
+				) }
+				<h4>
+					<Button className={ `${ previewClassName }-post-link` } isLink>
+						{ __( 'Previews are currently unavailable in the editor' ) }
+					</Button>
+				</h4>
+				{ displayDate && (
+					<span className={ `${ previewClassName }-post-date has-small-font-size` }>
+						{ __( 'August 3, 2018' ) }
+					</span>
+				) }
+				{ displayContext && (
+					<p className={ `${ previewClassName }-post-context` }>{ __( 'In "Uncategorized"' ) }</p>
+				) }
+			</div>
+		);
+	}
+}
+
 class RelatedPostsEdit extends Component {
 	render() {
 		const { attributes, className, posts, setAttributes } = this.props;
@@ -39,6 +69,20 @@ class RelatedPostsEdit extends Component {
 		const postsToDisplay = posts.length ? posts : DEFAULT_POSTS;
 		const displayPosts = postsToDisplay.slice( 0, postsToShow );
 		const previewClassName = 'related-posts__preview';
+
+		const displayMockupPosts = posts.length ? false : true;
+
+		const inlineMockupPosts = [];
+		for ( let i = 0; i < postsToShow; i++ ) {
+			inlineMockupPosts.push(
+				<MockupPostEdit
+					key={ i.toString() }
+					displayThumbnails={ displayThumbnails }
+					displayDate={ displayDate }
+					displayContext={ displayContext }
+				/>
+			);
+		}
 
 		return (
 			<Fragment>
@@ -82,28 +126,30 @@ class RelatedPostsEdit extends Component {
 					} ) }
 				>
 					<div className={ previewClassName }>
-						{ displayPosts.map( post => (
-							<div className={ `${ previewClassName }-post` } key={ post.id }>
-								{ displayThumbnails && post.img && post.img.src && (
-									<Button className={ `${ previewClassName }-post-link` } isLink>
-										<img src={ post.img.src } alt={ post.title } />
-									</Button>
-								) }
-								<h4>
-									<Button className={ `${ previewClassName }-post-link` } isLink>
-										{ post.title }
-									</Button>
-								</h4>
-								{ displayDate && (
-									<span className={ `${ previewClassName }-post-date has-small-font-size` }>
-										{ post.date }
-									</span>
-								) }
-								{ displayContext && (
-									<p className={ `${ previewClassName }-post-context` }>{ post.context }</p>
-								) }
-							</div>
-						) ) }
+						{ displayMockupPosts
+							? inlineMockupPosts
+							: displayPosts.map( post => (
+									<div className={ `${ previewClassName }-post` } key={ post.id }>
+										{ displayThumbnails && post.img && post.img.src && (
+											<Button className={ `${ previewClassName }-post-link` } isLink>
+												<img src={ post.img.src } alt={ post.title } />
+											</Button>
+										) }
+										<h4>
+											<Button className={ `${ previewClassName }-post-link` } isLink>
+												{ post.title }
+											</Button>
+										</h4>
+										{ displayDate && (
+											<span className={ `${ previewClassName }-post-date has-small-font-size` }>
+												{ post.date }
+											</span>
+										) }
+										{ displayContext && (
+											<p className={ `${ previewClassName }-post-context` }>{ post.context }</p>
+										) }
+									</div>
+							  ) ) }
 					</div>
 				</div>
 			</Fragment>
