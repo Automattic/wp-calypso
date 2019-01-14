@@ -21,8 +21,8 @@ import DateRangeInputs from 'components/date-range/inputs';
 import DateRangeHeader from 'components/date-range/header';
 import Popover from 'components/popover';
 
-function toHumanDate( date ) {
-	return date.format( 'DD/MM/YYYY' );
+function dateToLocalString( date ) {
+	return date.format( 'L' );
 }
 
 describe( 'DateRange', () => {
@@ -40,11 +40,9 @@ describe( 'DateRange', () => {
 			};
 		} );
 
-		// Note: forces locale to UK date format to make
-		// test easier to assert against
-		moment.locale( [ 'en-GB' ] );
-
-		fixedEndDate = moment.utc( '01-06-2018', 'DD-MM-YYYY' );
+		// Forces the date to be UTC format which avoids offset woes
+		// in the tests
+		fixedEndDate = moment.utc( '2018-06-01' );
 
 		// Set the clock for our test assertions so that new Date()
 		// will return the known `fixedEndDate` set above. This helps
@@ -60,7 +58,7 @@ describe( 'DateRange', () => {
 
 	describe( 'Date range clamping', () => {
 		test( 'should ensure selectedStartDate is before selectedEndDate', () => {
-			const selectedEndDate = moment( '01-06-2018', 'DD-MM-YYYY' );
+			const selectedEndDate = moment( '2018-06-01' );
 
 			const selectedStartDate = moment( selectedEndDate ).add( 1, 'months' );
 
@@ -82,7 +80,7 @@ describe( 'DateRange', () => {
 		} );
 
 		test( 'should clamp selected dates to respect firstSelectableDate prop', () => {
-			const firstSelectableDate = moment( '01-06-2018', 'DD-MM-YYYY' );
+			const firstSelectableDate = moment( '2018-06-01' );
 
 			const endDateInPast = moment( firstSelectableDate ).subtract( 1, 'months' );
 
@@ -94,18 +92,18 @@ describe( 'DateRange', () => {
 				/>
 			);
 
-			const expectedStartDate = toHumanDate( firstSelectableDate );
-			const expectedEndDate = toHumanDate( firstSelectableDate );
+			const expectedStartDate = dateToLocalString( firstSelectableDate );
+			const expectedEndDate = dateToLocalString( firstSelectableDate );
 
-			const actualStartDate = toHumanDate( wrapper.state().startDate );
-			const actualEndDate = toHumanDate( wrapper.state().endDate );
+			const actualStartDate = dateToLocalString( wrapper.state().startDate );
+			const actualEndDate = dateToLocalString( wrapper.state().endDate );
 
 			expect( actualStartDate ).toEqual( expectedStartDate );
 			expect( actualEndDate ).toEqual( expectedEndDate );
 		} );
 
 		test( 'should clamp selected dates to respect lastSelectableDate prop', () => {
-			const lastSelectableDate = moment( '01-06-2018', 'DD-MM-YYYY' );
+			const lastSelectableDate = moment( '2018-06-01' );
 
 			const endDateInFuture = moment( lastSelectableDate ).add( 1, 'months' );
 
@@ -117,11 +115,13 @@ describe( 'DateRange', () => {
 				/>
 			);
 
-			const expectedStartDate = toHumanDate( moment( lastSelectableDate ).subtract( 1, 'months' ) );
-			const expectedEndDate = toHumanDate( lastSelectableDate );
+			const expectedStartDate = dateToLocalString(
+				moment( lastSelectableDate ).subtract( 1, 'months' )
+			);
+			const expectedEndDate = dateToLocalString( lastSelectableDate );
 
-			const actualStartDate = toHumanDate( wrapper.state().startDate );
-			const actualEndDate = toHumanDate( wrapper.state().endDate );
+			const actualStartDate = dateToLocalString( wrapper.state().startDate );
+			const actualEndDate = dateToLocalString( wrapper.state().endDate );
 
 			expect( actualStartDate ).toEqual( expectedStartDate );
 			expect( actualEndDate ).toEqual( expectedEndDate );
@@ -135,8 +135,8 @@ describe( 'DateRange', () => {
 			const dateRangeTrigger = wrapper.find( DateRangeTrigger );
 
 			const expected = {
-				startDateText: '01/05/2018',
-				endDateText: '01/06/2018',
+				startDateText: '05/01/2018',
+				endDateText: '06/01/2018',
 			};
 
 			expect( dateRangeTrigger.props() ).toEqual( expect.objectContaining( expected ) );
@@ -145,10 +145,11 @@ describe( 'DateRange', () => {
 		test( 'should update trigger props to match currently selected dates', () => {
 			const wrapper = shallow( <DateRange moment={ moment } /> );
 
-			const expectedStartDate = '01/04/2018';
-			const expectedEndDate = '29/04/2018';
-			const newStartDate = moment( expectedStartDate, 'DD/MM/YYYY' );
-			const newEndDate = moment( expectedEndDate, 'DD/MM/YYYY' );
+			const expectedStartDate = '2018-04-01';
+			const expectedEndDate = '2018-04-29';
+
+			const newStartDate = moment.utc( expectedStartDate );
+			const newEndDate = moment.utc( expectedEndDate );
 
 			// Select dates using API
 			// note: not usually recommended to access component API directly
@@ -162,8 +163,8 @@ describe( 'DateRange', () => {
 			const dateRangeTrigger = wrapper.find( DateRangeTrigger );
 
 			const expected = {
-				startDateText: expectedStartDate,
-				endDateText: expectedEndDate,
+				startDateText: dateToLocalString( newStartDate ),
+				endDateText: dateToLocalString( newEndDate ),
 			};
 
 			expect( dateRangeTrigger.props() ).toEqual( expect.objectContaining( expected ) );
@@ -320,20 +321,20 @@ describe( 'DateRange', () => {
 		let momentEndDate;
 
 		beforeEach( () => {
-			startDate = '20/04/2018'; // DD/MM/YYYY
-			endDate = '28/05/2018'; // DD/MM/YYYY
-			momentStartDate = moment( startDate, 'DD-MM-YYYY' );
-			momentEndDate = moment( endDate, 'DD-MM-YYYY' );
+			startDate = '2018-04-20';
+			endDate = '2018-05-28';
+			momentStartDate = moment( startDate );
+			momentEndDate = moment( endDate );
 		} );
 
 		test( 'should see inputs reflect date picker selection', () => {
 			const wrapper = shallow( <DateRange moment={ moment } /> );
 
-			const expectedStart = '03/04/2018';
-			const expectedEnd = '29/04/2018';
+			const expectedStart = '2018-04-03';
+			const expectedEnd = '2018-04-29';
 
-			const newStartDate = moment( expectedStart, 'DD/MM/YYYY' );
-			const newEndDate = moment( expectedEnd, 'DD/MM/YYYY' );
+			const newStartDate = moment( expectedStart );
+			const newEndDate = moment( expectedEnd );
 
 			// Select dates using API
 			wrapper.instance().onSelectDate( newStartDate );
@@ -346,8 +347,8 @@ describe( 'DateRange', () => {
 
 			expect( dateRangeInputs.props() ).toEqual(
 				expect.objectContaining( {
-					startDateValue: expectedStart,
-					endDateValue: expectedEnd,
+					startDateValue: dateToLocalString( newStartDate ),
+					endDateValue: dateToLocalString( newEndDate ),
 				} )
 			);
 		} );
@@ -355,39 +356,37 @@ describe( 'DateRange', () => {
 		test( 'should update start date selection on start date input blur event', () => {
 			const wrapper = shallow( <DateRange moment={ moment } /> );
 
-			wrapper.instance().handleInputBlur( startDate, 'Start' );
+			wrapper.instance().handleInputBlur( '04/20/2018', 'Start' );
 
-			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).toEqual(
-				momentStartDate.format( 'DD/MM/YYYY' )
-			);
+			expect( wrapper.state().startDate.format( 'L' ) ).toEqual( momentStartDate.format( 'L' ) );
 		} );
 
 		test( 'should update end date selection on end date input blur event', () => {
 			const wrapper = shallow( <DateRange moment={ moment } /> );
 
-			wrapper.instance().handleInputBlur( endDate, 'End' );
+			wrapper.instance().handleInputBlur( '05/28/2018', 'End' );
 
-			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).toEqual(
-				momentEndDate.format( 'DD/MM/YYYY' )
+			expect( dateToLocalString( wrapper.state().endDate ) ).toEqual(
+				dateToLocalString( momentEndDate )
 			);
 		} );
 
 		test( 'should not update date selection on input change event', () => {
 			const wrapper = shallow( <DateRange moment={ moment } /> );
 
-			wrapper.instance().handleInputChange( endDate, 'End' );
+			wrapper.instance().handleInputChange( '05/28/2018', 'End' );
 
-			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).toEqual(
-				fixedEndDate.format( 'DD/MM/YYYY' )
+			expect( dateToLocalString( wrapper.state().endDate ) ).toEqual(
+				dateToLocalString( fixedEndDate )
 			);
 		} );
 
 		test( 'should update `textInput*` state on input change event', () => {
 			const wrapper = shallow( <DateRange moment={ moment } /> );
 
-			wrapper.instance().handleInputChange( endDate, 'End' );
+			wrapper.instance().handleInputChange( '05/28/2018', 'End' );
 
-			expect( wrapper.state().textInputEndDate ).toEqual( momentEndDate.format( 'DD/MM/YYYY' ) );
+			expect( wrapper.state().textInputEndDate ).toEqual( dateToLocalString( momentEndDate ) );
 		} );
 
 		test( 'should not update either start or end date selection if the new input date value is the same as that stored in state', () => {
@@ -399,15 +398,13 @@ describe( 'DateRange', () => {
 				/>
 			);
 
-			wrapper.instance().handleInputBlur( startDate, 'Start' );
+			wrapper.instance().handleInputBlur( '04/20/2018', 'Start' );
 
-			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).toEqual(
-				momentStartDate.format( 'DD/MM/YYYY' )
+			expect( dateToLocalString( wrapper.state().startDate ) ).toEqual(
+				dateToLocalString( momentStartDate )
 			);
 
-			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).toEqual(
-				momentEndDate.format( 'DD/MM/YYYY' )
-			);
+			expect( wrapper.state().endDate.format( 'L' ) ).toEqual( dateToLocalString( momentEndDate ) );
 		} );
 
 		test( 'should not update start/end dates if input date is invalid', () => {
@@ -423,13 +420,13 @@ describe( 'DateRange', () => {
 			wrapper.instance().handleInputBlur( invalidDateString, 'Start' );
 			wrapper.instance().handleInputBlur( invalidDateString, 'End' );
 
-			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).not.toEqual( invalidDateString );
-			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).toEqual(
-				momentStartDate.format( 'DD/MM/YYYY' )
+			expect( dateToLocalString( wrapper.state().startDate ) ).not.toEqual( invalidDateString );
+			expect( dateToLocalString( wrapper.state().startDate ) ).toEqual(
+				dateToLocalString( momentStartDate )
 			);
-			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).not.toEqual( invalidDateString );
-			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).toEqual(
-				momentEndDate.format( 'DD/MM/YYYY' )
+			expect( dateToLocalString( wrapper.state().endDate ) ).not.toEqual( invalidDateString );
+			expect( dateToLocalString( wrapper.state().endDate ) ).toEqual(
+				dateToLocalString( momentEndDate )
 			);
 		} );
 
@@ -437,33 +434,33 @@ describe( 'DateRange', () => {
 			const now = new Date();
 
 			// Shouldn't be able to select dates before "today"
-			const pastDate = toHumanDate( moment.utc( now ).subtract( 6, 'months' ) );
+			const pastDate = dateToLocalString( moment.utc( now ).subtract( 6, 'months' ) );
 
 			const wrapper = shallow( <DateRange firstSelectableDate={ now } moment={ moment } /> );
 
 			wrapper.instance().handleInputBlur( pastDate, 'Start' );
 
-			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).not.toEqual( pastDate );
+			expect( dateToLocalString( wrapper.state().startDate ) ).not.toEqual( pastDate );
 		} );
 
 		test( 'should not update end date if input date is outside firstSelectableDate', () => {
 			const now = new Date();
 
 			// Shouldn't be able to select dates before "today"
-			const pastDate = toHumanDate( moment.utc( now ).subtract( 6, 'months' ) );
+			const pastDate = dateToLocalString( moment.utc( now ).subtract( 6, 'months' ) );
 
 			const wrapper = shallow( <DateRange firstSelectableDate={ now } moment={ moment } /> );
 
 			wrapper.instance().handleInputBlur( pastDate, 'End' );
 
-			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).not.toEqual( pastDate );
+			expect( dateToLocalString( wrapper.state().endDate ) ).not.toEqual( pastDate );
 		} );
 
 		test( 'should not update start or end date if the value of input for the start date is outside lastSelectableDate', () => {
 			const now = new Date();
 
 			// Shouldn't be able to select dates before "today"
-			const futureDate = toHumanDate( moment.utc( now ).add( 3, 'days' ) );
+			const futureDate = dateToLocalString( moment.utc( now ).add( 3, 'days' ) );
 
 			const wrapper = shallow( <DateRange lastSelectableDate={ now } moment={ moment } /> );
 
@@ -473,8 +470,8 @@ describe( 'DateRange', () => {
 			// in a range, if you select a start which is after "end" in the range then the range
 			// automatically causes it to become the new value for "end" and leave "start" untouched
 			// This means we have to test that neither start nor end have taken on the invalid date
-			expect( wrapper.state().startDate.format( 'DD/MM/YYYY' ) ).not.toEqual( futureDate );
-			expect( wrapper.state().endDate.format( 'DD/MM/YYYY' ) ).not.toEqual( futureDate );
+			expect( dateToLocalString( wrapper.state().startDate ) ).not.toEqual( futureDate );
+			expect( dateToLocalString( wrapper.state().endDate ) ).not.toEqual( futureDate );
 		} );
 	} );
 
@@ -484,8 +481,8 @@ describe( 'DateRange', () => {
 
 			const wrapper = shallow( <DateRange moment={ moment } onDateSelect={ callback } /> );
 
-			const newStartDate = moment( '01/04/2018', 'DD/MM/YYYY' );
-			const newEndDate = moment( '29/04/2018', 'DD/MM/YYYY' );
+			const newStartDate = moment( '2018-04-01' );
+			const newEndDate = moment( '2018-04-29' );
 
 			// Select dates using API
 			wrapper.instance().onSelectDate( newStartDate );
@@ -493,11 +490,11 @@ describe( 'DateRange', () => {
 
 			expect( callback ).toHaveBeenCalledTimes( 2 );
 
-			expect( callback.mock.calls[ 0 ][ 0 ].format( 'DD/MM/YYYY' ) ).toEqual(
-				newStartDate.format( 'DD/MM/YYYY' )
+			expect( dateToLocalString( callback.mock.calls[ 0 ][ 0 ] ) ).toEqual(
+				dateToLocalString( newStartDate )
 			);
-			expect( callback.mock.calls[ 1 ][ 1 ].format( 'DD/MM/YYYY' ) ).toEqual(
-				newEndDate.format( 'DD/MM/YYYY' )
+			expect( dateToLocalString( callback.mock.calls[ 1 ][ 1 ] ) ).toEqual(
+				dateToLocalString( newEndDate )
 			);
 		} );
 
@@ -506,8 +503,8 @@ describe( 'DateRange', () => {
 
 			const wrapper = shallow( <DateRange moment={ moment } onDateCommit={ callback } /> );
 
-			const newStartDate = moment( '01/04/2018', 'DD/MM/YYYY' );
-			const newEndDate = moment( '29/04/2018', 'DD/MM/YYYY' );
+			const newStartDate = moment( '2018-04-01' );
+			const newEndDate = moment( '2018-04-29' );
 
 			// Select dates using API
 			wrapper.instance().onSelectDate( newStartDate );
@@ -517,11 +514,11 @@ describe( 'DateRange', () => {
 			wrapper.instance().commitDates();
 
 			expect( callback ).toHaveBeenCalledTimes( 1 );
-			expect( callback.mock.calls[ 0 ][ 0 ].format( 'DD/MM/YYYY' ) ).toEqual(
-				newStartDate.format( 'DD/MM/YYYY' )
+			expect( dateToLocalString( callback.mock.calls[ 0 ][ 0 ] ) ).toEqual(
+				dateToLocalString( newStartDate )
 			);
-			expect( callback.mock.calls[ 0 ][ 1 ].format( 'DD/MM/YYYY' ) ).toEqual(
-				newEndDate.format( 'DD/MM/YYYY' )
+			expect( dateToLocalString( callback.mock.calls[ 0 ][ 1 ] ) ).toEqual(
+				dateToLocalString( newEndDate )
 			);
 		} );
 	} );
@@ -536,8 +533,8 @@ describe( 'DateRange', () => {
 			const dateRangeHeader = wrapper.find( DateRangeHeader );
 			const datePicker = wrapper.find( DatePicker );
 
-			const newStartDate = moment( '01-04-2018', 'DD/MM/YYYY' );
-			const newEndDate = moment( '29-04-2018', 'DD/MM/YYYY' );
+			const newStartDate = moment( '2018-04-01' );
+			const newEndDate = moment( '2018-04-29' );
 
 			// Select dates using API
 			datePicker.props().onSelectDay( newStartDate );
@@ -568,8 +565,12 @@ describe( 'DateRange', () => {
 			dateRangeHeader.props().onApplyClick();
 
 			// Should now be persisted
-			expect( toHumanDate( wrapper.state().startDate ) ).toEqual( toHumanDate( newStartDate ) );
-			expect( toHumanDate( wrapper.state().endDate ) ).toEqual( toHumanDate( newEndDate ) );
+			expect( dateToLocalString( wrapper.state().startDate ) ).toEqual(
+				dateToLocalString( newStartDate )
+			);
+			expect( dateToLocalString( wrapper.state().endDate ) ).toEqual(
+				dateToLocalString( newEndDate )
+			);
 		} );
 	} );
 
