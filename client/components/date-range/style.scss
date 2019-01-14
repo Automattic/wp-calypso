@@ -6,6 +6,8 @@
 
 
 .date-range__trigger-btn {
+	text-align: left; // required to avoid content "jumping" as date text changes
+
 	.toggle-visible & {
 		box-shadow: none;
 		background-color: var(--color-neutral-0);
@@ -27,20 +29,10 @@
 	}
 }
 
-.date-range__btn-icon {
-	margin-right: 5px;
-}
 
-.date-range__btn-text {
-	@include hide-content-accessibly;
-
-	@include breakpoint( '>480px' ) {
-		clip: default;
-		height: auto;
-		overflow: visible;
-		position: static;
-		width: auto;
-	}
+.date-range__trigger-btn-text {
+	width: 12.5em; // required to avoid content "jumping" as date text changes
+    display: inline-block;
 }
 
 .date-range__popover-inner {
