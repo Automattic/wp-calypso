@@ -4,26 +4,21 @@
 	align-items: baseline;
 }
 
-.date-range__span {
-	margin: 0 8px 0 0;
-	font-size: 0.9em;
-	color: $gray;
-}
 
 .date-range__trigger-btn {
 	.toggle-visible & {
 		box-shadow: none;
-		background-color: $gray-light;
+		background-color: var(--color-neutral-0);
 	}
 
 	.gridicons-chevron-down {
-		fill: $gray-darken-20;
+		fill: var(--color-neutral-500);
 		margin: 0 0 0 5px;
 		flex-shrink: 0;
 		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 		.is-disabled & {
-			fill: $gray-lighten-30;
+			fill: var(--color-neutral-50);
 		}
 
 		.toggle-visible & {
@@ -66,7 +61,7 @@
 .date-range__popover {
 	.DayPicker {
 		margin-top: 12px;
-		border-top: 1px solid $gray-lighten-20;
+		border-top: 1px solid var(--color-neutral-50);
 	}
 	
 	.DayPicker-wrapper,
