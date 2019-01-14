@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, find, get, noop, trim } from 'lodash';
+import { debounce, find, get, noop, startsWith, trim, uniq } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -51,7 +51,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		if (
 			value &&
 			value.length >= this.props.charsToTriggerSearch &&
-			// Don't trigger a search if a non-user-defined input value is present in the verticals results.
+			// Don't trigger a search if there's already an exact, non-user-defined match from the API
 			! find( this.props.verticals, { vertical_name: value, is_user_input_vertical: false } )
 		) {
 			this.props.requestVerticals( value );
@@ -72,6 +72,22 @@ export class SiteVerticalsSuggestionSearch extends Component {
 
 	getSuggestions = () => this.props.verticals.map( vertical => vertical.vertical_name );
 
+	sortSearchResults = ( suggestionsArray, queryString ) => {
+		// first do the search
+		queryString = queryString.trim().toLocaleLowerCase();
+		const lazyResults = suggestionsArray.filter( val =>
+			val.toLocaleLowerCase().includes( queryString )
+		);
+		// second find the words that start with the search
+		// but not exact matches, which will appear in the lazy results
+		const startsWithResults = lazyResults.filter( val => {
+			val = val.toLocaleLowerCase();
+			return startsWith( val, queryString ) && val !== queryString;
+		} );
+		// merge, dedupe, bye
+		return uniq( startsWithResults.concat( lazyResults ) );
+	};
+
 	render() {
 		const { translate, placeholder } = this.props;
 
@@ -84,6 +100,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 				onChange={ this.onSiteTopicChange }
 				suggestions={ this.getSuggestions() }
 				value={ this.state.searchValue }
+				sortResults={ this.sortSearchResults }
 			/>
 		);
 	}

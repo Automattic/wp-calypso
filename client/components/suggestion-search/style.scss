@@ -1,0 +1,12 @@
+.suggestion-search {
+	position: relative;
+	input {
+		padding-left: 42px;
+	}
+	.gridicon {
+		position: absolute;
+		top: 10px;
+		left: 10px;
+		fill: $gray-darken-30;
+	}
+}

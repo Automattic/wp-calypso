@@ -5,7 +5,8 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { escapeRegExp, noop, uniq, startsWith } from 'lodash';
+import { escapeRegExp, noop } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -13,11 +14,17 @@ import { escapeRegExp, noop, uniq, startsWith } from 'lodash';
 import FormTextInput from 'components/forms/form-text-input';
 import Suggestions from 'components/suggestions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SuggestionSearch extends Component {
 	static propTypes = {
 		id: PropTypes.string,
 		placeholder: PropTypes.string,
 		onChange: PropTypes.func,
+		sortResults: PropTypes.func,
 		suggestions: PropTypes.array,
 		value: PropTypes.string,
 	};
@@ -26,6 +33,7 @@ class SuggestionSearch extends Component {
 		id: '',
 		placeholder: '',
 		onChange: noop,
+		sortResults: null,
 		suggestions: [],
 		value: '',
 	};
@@ -39,13 +47,9 @@ class SuggestionSearch extends Component {
 		};
 	}
 
-	setSuggestionsRef = ref => {
-		this.suggestionsRef = ref;
-	};
+	setSuggestionsRef = ref => ( this.suggestionsRef = ref );
 
-	hideSuggestions = () => {
-		this.setState( { query: '' } );
-	};
+	hideSuggestions = () => this.setState( { query: '' } );
 
 	handleSuggestionChangeEvent = ( { target: { value } } ) => {
 		this.setState( { query: value, inputValue: value } );
@@ -95,7 +99,6 @@ class SuggestionSearch extends Component {
 	handleSuggestionMouseDown = position => {
 		this.setState( { inputValue: position.label } );
 		this.hideSuggestions();
-
 		this.props.onChange( position.label );
 	};
 
@@ -104,25 +107,10 @@ class SuggestionSearch extends Component {
 			return [];
 		}
 
-		return this.doSearchWithInitialMatchPreferred( this.props.suggestions, this.state.query ).map(
-			hint => ( { label: hint } )
-		);
-	}
-
-	doSearchWithInitialMatchPreferred( suggestionsArray, queryString ) {
-		// first do the search
-		queryString = queryString.trim().toLocaleLowerCase();
-		const lazyResults = suggestionsArray.filter( val =>
-			val.toLocaleLowerCase().includes( queryString )
-		);
-		// second find the words that start with the search
-		// but not exact matches, which will appear in the lazy results
-		const startsWithResults = lazyResults.filter( val => {
-			val = val.toLocaleLowerCase();
-			return startsWith( val, queryString ) && val !== queryString;
-		} );
-		// merge, dedupe, bye
-		return uniq( startsWithResults.concat( lazyResults ) );
+		return ( 'function' === typeof this.props.sortResults
+			? this.props.sortResults( this.props.suggestions, this.state.query )
+			: this.props.suggestions
+		).map( hint => ( { label: hint } ) );
 	}
 
 	getSuggestionLabel( suggestionPosition ) {
@@ -131,7 +119,6 @@ class SuggestionSearch extends Component {
 
 	updateFieldFromSuggestion( newValue ) {
 		this.setState( { inputValue: newValue } );
-
 		this.props.onChange( newValue );
 	}
 
@@ -139,7 +126,8 @@ class SuggestionSearch extends Component {
 		const { id, placeholder } = this.props;
 
 		return (
-			<>
+			<div className="suggestion-search">
+				<Gridicon icon="search" />
 				<FormTextInput
 					id={ id }
 					placeholder={ placeholder }
@@ -155,7 +143,7 @@ class SuggestionSearch extends Component {
 					suggestions={ this.getSuggestions() }
 					suggest={ this.handleSuggestionMouseDown }
 				/>
-			</>
+			</div>
 		);
 	}
 }

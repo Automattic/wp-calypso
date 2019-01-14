@@ -6,19 +6,6 @@
 		margin-bottom: 0;
 	}
 
-	.gridicon {
-		position: absolute;
-		top: 11px;
-		left: 11px;
-		fill: $gray-darken-30;
-
-		// On smaller screens the input gets bigger,
-		// so this icon needs to move down a bit.
-		@include breakpoint( '<660px' ) {
-			top: 16px;
-		}
-	}
-
 	input {
 		padding: 10px 100px 10px 42px;
 
