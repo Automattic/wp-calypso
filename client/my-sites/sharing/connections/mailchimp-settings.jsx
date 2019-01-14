@@ -36,7 +36,7 @@ const MailchimpSettings = ( {
 					follower_list_id: 0,
 					keyring_id: 0,
 				},
-				translate( 'Follower emails will not be synced to MailChimp any more' )
+				translate( 'Subscriber emails will not be saved to MailChimp any more' )
 			);
 			return;
 		}
@@ -47,7 +47,7 @@ const MailchimpSettings = ( {
 				follower_list_id: event.target.value,
 				keyring_id: keyringConnections[ 0 ].ID,
 			},
-			translate( 'Follower emails will be synced to the %s MailChimp list', { args: list.name } )
+			translate( 'Subscriber emails will be saved to the %s MailChimp list', { args: list.name } )
 		);
 	};
 
@@ -56,7 +56,7 @@ const MailchimpSettings = ( {
 		<div>
 			<QueryMailchimpLists siteId={ siteId } />
 			<QueryMailchimpSettings siteId={ siteId } />
-			<p>{ translate( 'What MailChimp list should we sync follower emails to for this site?' ) }</p>
+			<p>{ translate( 'What MailChimp list should subscribers be added to?' ) }</p>
 			{ isArray( mailchimpLists ) && mailchimpLists.length === 0 && (
 				<Notice
 					status="is-info"
@@ -72,14 +72,14 @@ const MailchimpSettings = ( {
 				<Notice
 					status="is-warning"
 					text={ translate(
-						'Followers will not be synced for this site. Please select a list to sign them up for your MailChimp content'
+						'Subscribers will not be added to MailChimp for this site. Please select a list to sign them up for your MailChimp content'
 					) }
 					showDismiss={ false }
 				/>
 			) }
 			<select value={ mailchimpListId } onChange={ chooseMailchimpList }>
 				<option key="none" value={ 0 }>
-					{ translate( 'Do not sync follower emails for this site' ) }
+					{ translate( 'Do not save subscribers to MailChimp for this site' ) }
 				</option>
 				{ mailchimpLists &&
 					mailchimpLists.map( list => (
