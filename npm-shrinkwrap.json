@@ -17375,9 +17375,9 @@
 			}
 		},
 		"react-modal": {
-			"version": "3.7.1",
-			"resolved": "https://registry.npmjs.org/react-modal/-/react-modal-3.7.1.tgz",
-			"integrity": "sha512-eSgotXkqOCXi0b27AwLCoJ8yqLepKnbZdMp/zfUmZPnMNoe39pDT0mbAPq9rp+TToqM5GUTv8C36Cuja+ThbhA==",
+			"version": "3.8.1",
+			"resolved": "https://registry.npmjs.org/react-modal/-/react-modal-3.8.1.tgz",
+			"integrity": "sha512-aLKeZM9pgXpIKVwopRHMuvqKWiBajkqisDA8UzocdCF6S4fyKVfLWmZR5G1Q0ODBxxxxf2XIwiCP8G/11GJAuw==",
 			"requires": {
 				"exenv": "^1.2.0",
 				"prop-types": "^15.5.10",
