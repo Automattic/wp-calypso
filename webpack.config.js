@@ -18,7 +18,6 @@ const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
-const postcssCustomProperties = require( 'postcss-custom-properties' );
 
 /**
  * Internal dependencies
@@ -250,12 +249,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					use: [
 						MiniCssExtractPluginWithRTL.loader,
 						'css-loader',
-						{
-							loader: 'postcss-loader',
-							options: {
-								plugins: [ postcssCustomProperties(), require( 'autoprefixer' ) ],
-							},
-						},
+						'postcss-loader',
 						{
 							loader: 'sass-loader',
 							options: {
