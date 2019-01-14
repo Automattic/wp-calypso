@@ -33,8 +33,10 @@ export function counts( state = {}, action ) {
 				const index = recordIds.indexOf( recordFromApi[ ID ] );
 				if ( index >= 0 ) {
 					const newRecords = { ...records[ index ], ...recordFromApi };
-					areThereChanges = areThereChanges || ! isEqual( newRecords, records[ index ] );
-					records[ index ] = newRecords;
+					if ( ! isEqual( newRecords, records[ index ] ) ) {
+						areThereChanges = true;
+						records[ index ] = newRecords;
+					}
 				} else {
 					areThereChanges = true;
 					records.push( recordFromApi );
