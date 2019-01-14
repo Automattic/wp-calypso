@@ -156,7 +156,7 @@
 		overflow: hidden;
 
 		.is-desktop & {
-			min-height: 240px;
+			min-height: 300px;
 		}
 
 		&.has-background-dim:before {
@@ -167,7 +167,7 @@
 			bottom: 0;
 			left: 0;
 			background-color: #000;
-			opacity: 0.5;
+			opacity: 0.2;
 			z-index: 1; // Ugh, z-index...
 		}
 
@@ -203,7 +203,7 @@
 		&:before {
 			display: block;
 			content: "";
-			border: 2px solid #ffffff;
+			border: 1px solid #ffffff;
 			position: absolute;
 			top: 12px;
 			right: 12px;
@@ -211,12 +211,16 @@
 			left: 12px;
 
 			.is-mobile & {
-				border-width: 1px;
-				top: 3px;
-				right: 3px;
-				bottom: 3px;
-				left: 3px;
+				top: 8px;
+				right: 8px;
+				bottom: 8px;
+				left: 8px;
 			}
+		}
+
+		.is-mobile & {
+			grid-template-columns: 100% !important;
+			grid-template-areas: "media-text-media" "media-text-content";
 		}
 
 		&.has-media-on-the-right {
@@ -227,20 +231,25 @@
 			grid-area: media-text-media;
 			margin: 0;
 
-			img {}
+			img {
+				height: auto;
+				max-width: unset;
+				width: 100%;
+				vertical-align: middle;
+			}
 		}
 
 		.wp-block-media-text__content {
 			word-break: break-word;
 			grid-area: media-text-content;
-			padding: 0 30px;
+			padding: 15px 30px;
 
 			p {
 				margin: 0;
 			}
 
 			.is-mobile & {
-				padding: 0 10px;
+				padding: 15px 25px;
 			}
 		}
 	}
@@ -248,7 +257,7 @@
 	.wp-block-separator {
 		border: none;
 		max-width: 100px;
-		margin: 18px auto;
+		margin: 20px 16%;
 		background-color: #ccc;
 		height: 1px;
 	}
@@ -258,6 +267,7 @@
 		font-weight: 600;
 		line-height: 1.2;
 		margin: 32px auto;
+		padding: 0 20px;
 		max-width: 620px;
 
 		.is-mobile & {
@@ -266,15 +276,13 @@
 		}
 	}
 	
-	h3 {
-		font-size: 25px;
-		line-height: 1.44;
-	}
-	
 	p {
 		font-size: 20px;
 		font-weight: 400;
 		line-height: 1.6;
+		max-width: 620px;
+		margin-left: auto;
+		margin-right: auto;
 
 		&.has-small-font-size {
 			font-size: 20px
