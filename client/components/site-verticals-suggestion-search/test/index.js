@@ -65,9 +65,33 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		expect( defaultProps.requestVerticals.cancel ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	// TODO: test sortSearchResults
-	test.skip( 'should sort suggestion results', () => {
+	describe( 'sortSearchResults()', () => {
 		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
-		wrapper.instance().sortSearchResults( [ '', '', '', '' ], 'b' );
+		test( 'should return sorted results with `startsWith` matches at the start and exact match at the end', () => {
+			const sortedResults = wrapper
+				.instance()
+				.sortSearchResults( [ 'Bar', 'Bari Beaches', 'Bartender', 'Foobar', 'Crowbar' ], ' bar ' );
+			expect( sortedResults ).toEqual( [
+				'Bari Beaches',
+				'Bartender',
+				'Foobar',
+				'Crowbar',
+				'Bar',
+			] );
+		} );
+
+		test( 'should omit non-matchess', () => {
+			const sortedResults = wrapper
+				.instance()
+				.sortSearchResults( [ 'Bar', 'Bartender', 'Foobar', 'Terminal spiv' ], 'spiv' );
+			expect( sortedResults ).toEqual( [ 'Terminal spiv' ] );
+		} );
+
+		test( 'should not sort when no `startsWith` suggestions', () => {
+			const sortedResults = wrapper
+				.instance()
+				.sortSearchResults( [ 'Stammabschnitt', 'Tim Tam', '123 Tam', 'Tam' ], 'tam' );
+			expect( sortedResults ).toEqual( [ 'Stammabschnitt', 'Tim Tam', '123 Tam', 'Tam' ] );
+		} );
 	} );
 } );

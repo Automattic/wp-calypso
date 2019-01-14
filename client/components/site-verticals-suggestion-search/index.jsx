@@ -73,19 +73,27 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	getSuggestions = () => this.props.verticals.map( vertical => vertical.vertical_name );
 
 	sortSearchResults = ( suggestionsArray, queryString ) => {
-		// first do the search
+		let queryMatch;
+
+		// first do the search, omit and cache exact matches
 		queryString = queryString.trim().toLocaleLowerCase();
-		const lazyResults = suggestionsArray.filter( val =>
-			val.toLocaleLowerCase().includes( queryString )
-		);
-		// second find the words that start with the search
-		// but not exact matches, which will appear in the lazy results
-		const startsWithResults = lazyResults.filter( val => {
-			val = val.toLocaleLowerCase();
-			return startsWith( val, queryString ) && val !== queryString;
+		const lazyResults = suggestionsArray.filter( val => {
+			if ( val.toLocaleLowerCase() === queryString ) {
+				queryMatch = val;
+				return false;
+			}
+			return val.toLocaleLowerCase().includes( queryString );
 		} );
+
+		// second find the words that start with the search
+		const startsWithResults = lazyResults.filter( val =>
+			startsWith( val.toLocaleLowerCase(), queryString )
+		);
+
 		// merge, dedupe, bye
-		return uniq( startsWithResults.concat( lazyResults ) );
+		return uniq(
+			startsWithResults.concat( lazyResults.concat( queryMatch ? [ queryMatch ] : [] ) )
+		);
 	};
 
 	render() {
