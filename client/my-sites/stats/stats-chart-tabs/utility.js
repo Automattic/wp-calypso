@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import moment from 'moment';
 import { capitalize } from 'lodash';
 import { numberFormat, translate } from 'i18n-calypso';
+import memoizeLast from 'lib/memoize-last';
 
 /**
  * Internal dependencies
@@ -40,33 +41,6 @@ export function getQueryDate( queryDate, timezoneOffset, period, quantity ) {
 			.format( 'YYYY-MM-DD' );
 	}
 	return endOfPeriodDate;
-}
-
-/**
- * Wraps a function in a utility method that remembers the last invocation's
- * arguments and results, and returns the latter if the former match.
- *
- * @param {Function} fn The function to be wrapped.
- *
- * @returns {Function} The wrapped function.
- */
-function memoizeLast( fn ) {
-	let lastArgs;
-	let lastResult;
-
-	return ( ...args ) => {
-		const isSame =
-			lastArgs &&
-			args.length === lastArgs.length &&
-			args.every( ( arg, index ) => arg === lastArgs[ index ] );
-
-		if ( ! isSame ) {
-			lastArgs = args;
-			lastResult = fn( ...args );
-		}
-
-		return lastResult;
-	};
 }
 
 const EMPTY_RESULT = [];
