@@ -154,9 +154,10 @@
 		justify-content: center;
 		align-items: center;
 		overflow: hidden;
+		min-height: 300px;
 
-		.is-desktop & {
-			min-height: 300px;
+		.is-mobile & {
+			min-height: 200px;
 		}
 
 		&.has-background-dim:before {
@@ -219,6 +220,7 @@
 		}
 
 		.is-mobile & {
+			margin: 0 15px 20px 15px;
 			grid-template-columns: 100% !important;
 			grid-template-areas: "media-text-media" "media-text-content";
 		}
@@ -249,7 +251,7 @@
 			}
 
 			.is-mobile & {
-				padding: 15px 25px;
+				padding: 15px 0;
 			}
 		}
 	}
@@ -257,9 +259,13 @@
 	.wp-block-separator {
 		border: none;
 		max-width: 100px;
-		margin: 20px 16%;
+		margin: 30px 0 20px 16%;
 		background-color: #ccc;
 		height: 1px;
+
+		.is-mobile & {
+			margin-left: 15px;
+		}
 	}
 	
 	h2 {
@@ -267,7 +273,7 @@
 		font-weight: 600;
 		line-height: 1.2;
 		margin: 32px auto;
-		padding: 0 20px;
+		padding: 0 15px;
 		max-width: 620px;
 
 		.is-mobile & {
@@ -283,6 +289,8 @@
 		max-width: 620px;
 		margin-left: auto;
 		margin-right: auto;
+		padding-right: 15px;
+		padding-left: 15px;
 
 		&.has-small-font-size {
 			font-size: 20px
