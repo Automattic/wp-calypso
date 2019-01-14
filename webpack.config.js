@@ -328,7 +328,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				rtlEnabled: true,
 			} ),
 			new WebpackRTLPlugin( {
-				minify: false, //isDevelopment ? false : cssnanoOptions,
+				minify: isDevelopment ? false : cssnanoOptions,
 			} ),
 			new AssetsWriter( {
 				filename: 'assets.json',

@@ -1,8 +1,0 @@
-{
-	"plugins": {
-		"postcss-custom-properties": {
-			"importFrom": "assets/stylesheets/shared/_color-schemes.scss"
-		},
-		"autoprefixer": {}
-	}
-}
