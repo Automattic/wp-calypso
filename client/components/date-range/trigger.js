@@ -26,7 +26,17 @@ class DateRangeTrigger extends Component {
 
 	static defaultProps = {
 		onTriggerClick: noop,
+		triggerText: ( startDate, endDate ) => {
+			const space = String.fromCharCode( 160 );
+			const dash = String.fromCharCode( 45 );
+			return `${ startDate }${ space }${ dash }${ space }${ endDate }`;
+		},
 	};
+
+	dateRangeText() {
+		const { startDateText, endDateText } = this.props;
+		return this.props.triggerText( startDateText, endDateText );
+	}
 
 	render() {
 		const props = this.props;
@@ -39,11 +49,7 @@ class DateRangeTrigger extends Component {
 				compact
 			>
 				<Gridicon className="date-range__trigger-btn-icon" icon="calendar" />
-				<span className="date-range__trigger-btn-text">
-					{ props.startDateText }
-					&nbsp; - &nbsp;
-					{ props.endDateText }
-				</span>
+				<span className="date-range__trigger-btn-text">{ this.dateRangeText() }</span>
 				<Gridicon icon="chevron-down" />
 			</Button>
 		);
