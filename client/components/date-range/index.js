@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { bindAll, noop, isNil } from 'lodash';
+import { noop, isNil } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -106,18 +106,6 @@ export class DateRange extends Component {
 			textInputEndDate: this.formatDateToLocale( endDate ),
 		};
 
-		// Bind event handlers
-		bindAll( this, [
-			'openPopover',
-			'closePopover',
-			'togglePopover',
-			'onSelectDate',
-			'revertDates',
-			'commitDates',
-			'handleInputChange',
-			'handleInputBlur',
-		] );
-
 		// Ref to the Trigger <button> used to position the Popover	component
 		this.triggerButtonRef = React.createRef();
 	}
@@ -126,17 +114,17 @@ export class DateRange extends Component {
 	 * Opens the popover
 	 * Note this does not commit the current date state
 	 */
-	openPopover() {
+	openPopover = () => {
 		this.setState( {
 			popoverVisible: true,
 		} );
-	}
+	};
 
 	/**
 	 * Closes the popover
 	 * Note this does not commit the current date state
 	 */
-	closePopover() {
+	closePopover = () => {
 		this.setState( {
 			popoverVisible: false,
 		} );
@@ -144,19 +132,19 @@ export class DateRange extends Component {
 		// As no dates have been explicity accepted ("Apply" not clicked)
 		// we need to revert back to the original cached dates
 		this.revertDates();
-	}
+	};
 
 	/**
 	 * Toggles the popover between open/closed
 	 * Note this does not commit the current date state
 	 */
-	togglePopover() {
+	togglePopover = () => {
 		if ( this.state.popoverVisible ) {
 			this.closePopover();
 		} else {
 			this.openPopover();
 		}
-	}
+	};
 
 	/**
 	 * Updates state with current value of start/end
@@ -164,11 +152,11 @@ export class DateRange extends Component {
 	 * @param  {string} val        the value of the input
 	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
-	handleInputChange( val, startOrEnd ) {
+	handleInputChange = ( val, startOrEnd ) => {
 		this.setState( {
 			[ `textInput${ startOrEnd }Date` ]: val,
 		} );
-	}
+	};
 
 	/**
 	 * Ensure dates are valid according to standard rules
@@ -205,7 +193,7 @@ export class DateRange extends Component {
 	 * @param  {string} val        the value of the input
 	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
-	handleInputBlur( val, startOrEnd ) {
+	handleInputBlur = ( val, startOrEnd ) => {
 		const date = this.props.moment( val, this.getLocaleDateFormat() );
 
 		const fromDate = this.props.moment( this.state.textInputStartDate, this.getLocaleDateFormat() );
@@ -231,7 +219,7 @@ export class DateRange extends Component {
 		if ( this.isValidDate( date ) && ! isSameDate ) {
 			this.onSelectDate( date );
 		}
-	}
+	};
 
 	/**
 	 * Converts moment dates to a DateRange
@@ -257,7 +245,7 @@ export class DateRange extends Component {
 	 *
 	 * @param  {MomentJSDate} date the newly selected date object
 	 */
-	onSelectDate( date ) {
+	onSelectDate = date => {
 		// DateUtils requires a range object with this shape
 		const range = this.toDateRange( this.state.startDate, this.state.endDate );
 
@@ -304,14 +292,14 @@ export class DateRange extends Component {
 				this.props.onDateSelect( this.state.startDate, this.state.endDate );
 			}
 		);
-	}
+	};
 
 	/**
 	 * Updates the "stale" data to reflect the current start/end dates
 	 * This causes any cached data to be lost and thus the current start/end
 	 * dates are persisted. Typically called when user clicks "Apply"
 	 */
-	commitDates() {
+	commitDates = () => {
 		this.setState(
 			previousState => ( {
 				staleStartDate: previousState.startDate, // update cached stale dates
@@ -323,14 +311,14 @@ export class DateRange extends Component {
 				this.closePopover();
 			}
 		);
-	}
+	};
 
 	/**
 	 * Reverts current start/end dates to the cache "stale" versions
 	 * Typically required when the user makes a selection but then dismisses
 	 * the DateRange without clicking "Apply"
 	 */
-	revertDates() {
+	revertDates = () => {
 		this.setState( previousState => {
 			const newState = { staleDatesSaved: false };
 
@@ -343,7 +331,7 @@ export class DateRange extends Component {
 
 			return newState;
 		} );
-	}
+	};
 
 	/**
 	 * Converts a moment date to a native JS Date object
