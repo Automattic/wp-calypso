@@ -5,6 +5,7 @@ body.is-section-signup {
 
 	// With the dark background, the border on cards looks a
 	// a little strange. Lets try a shadow instead. -shaun
+	.is-about .card,
 	.is-site-type .card,
 	.is-site-information .card {
 		box-shadow: 0 5px 5px -3px rgba( 0, 0, 0, 0.2),
@@ -16,6 +17,10 @@ body.is-section-signup {
 	// Adjust the spacing for the signup-header
 	.layout__content {
 		padding: 32px 0 0;
+	}
+
+	.masterbar {
+		display: none;
 	}
 
 	//Masterbar is hidden but still has height
