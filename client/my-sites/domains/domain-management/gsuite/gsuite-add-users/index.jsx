@@ -17,8 +17,8 @@ import AddEmailAddressesCard from './add-users';
 import { domainManagementAddGSuiteUsers, domainManagementEmail } from 'my-sites/domains/paths';
 import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { fetchByDomain, fetchBySiteId } from 'state/google-apps-users/actions';
-import { getByDomain, getBySite, isLoaded } from 'state/google-apps-users/selectors';
+import { fetchBySiteId } from 'state/google-apps-users/actions';
+import { getBySite, isLoaded } from 'state/google-apps-users/selectors';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { hasGoogleAppsSupportedDomain } from 'lib/domains';
@@ -29,8 +29,9 @@ import SectionHeader from 'components/section-header';
 
 class GSuiteAddUsers extends React.Component {
 	componentDidMount() {
-		const { domains, isRequestingDomains } = this.props;
+		const { domains, isRequestingDomains, selectedSite } = this.props;
 		this.redirectIfCannotAddEmail( domains, isRequestingDomains );
+		this.props.fetchGoogleAppsUsers( selectedSite.ID );
 	}
 
 	shouldComponentUpdate( nextProps ) {
@@ -112,9 +113,9 @@ class GSuiteAddUsers extends React.Component {
 
 GSuiteAddUsers.propTypes = {
 	domains: PropTypes.array.isRequired,
-	isRequestingDomains: PropTypes.bool.isRequired,
 	gsuiteUsers: PropTypes.array.isRequired,
 	gsuiteUsersLoaded: PropTypes.bool.isRequired,
+	isRequestingDomains: PropTypes.bool.isRequired,
 	selectedDomainName: PropTypes.string.isRequired,
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,
@@ -126,9 +127,7 @@ export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
 		const siteId = get( selectedSite, 'ID', null );
-		const gsuiteUsers = selectedSite
-			? getByDomain( state, selectedSite )
-			: getBySite( state, siteId );
+		const gsuiteUsers = getBySite( state, siteId );
 		return {
 			domains: getDecoratedSiteDomains( state, siteId ),
 			gsuiteUsers,
@@ -137,10 +136,8 @@ export default connect(
 			selectedSite,
 		};
 	},
-	( dispatch, { selectedDomainName } ) => {
-		const googleAppsUsersFetcher = selectedDomainName
-			? () => fetchByDomain( selectedDomainName )
-			: siteId => fetchBySiteId( siteId );
+	dispatch => {
+		const googleAppsUsersFetcher = siteId => fetchBySiteId( siteId );
 
 		return {
 			fetchGoogleAppsUsers: siteId => dispatch( googleAppsUsersFetcher( siteId ) ),
