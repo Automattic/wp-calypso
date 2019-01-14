@@ -18,6 +18,7 @@ import { domainManagementAddGSuiteUsers, domainManagementEmail } from 'my-sites/
 import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { fetchByDomain, fetchBySiteId } from 'state/google-apps-users/actions';
+import { getByDomain, getBySite, isLoaded } from 'state/google-apps-users/selectors';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { hasGoogleAppsSupportedDomain } from 'lib/domains';
@@ -55,8 +56,8 @@ class GSuiteAddUsers extends React.Component {
 	renderAddGSuite() {
 		const {
 			domains,
-			googleAppsUsers,
-			googleAppsUsersLoaded,
+			gsuiteUsers,
+			gsuiteUsersLoaded,
 			isRequestingDomains,
 			selectedDomainName,
 			selectedSite,
@@ -69,8 +70,8 @@ class GSuiteAddUsers extends React.Component {
 				<AddEmailAddressesCard
 					domains={ domains }
 					isRequestingSiteDomains={ isRequestingDomains }
-					gsuiteUsers={ googleAppsUsers }
-					gsuiteUsersLoaded={ googleAppsUsersLoaded }
+					gsuiteUsers={ gsuiteUsers }
+					gsuiteUsersLoaded={ gsuiteUsersLoaded }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
 				/>
@@ -112,8 +113,8 @@ class GSuiteAddUsers extends React.Component {
 GSuiteAddUsers.propTypes = {
 	domains: PropTypes.array.isRequired,
 	isRequestingDomains: PropTypes.bool.isRequired,
-	googleAppsUsers: PropTypes.array.isRequired,
-	googleAppsUsersLoaded: PropTypes.bool.isRequired,
+	gsuiteUsers: PropTypes.array.isRequired,
+	gsuiteUsersLoaded: PropTypes.bool.isRequired,
 	selectedDomainName: PropTypes.string.isRequired,
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,
@@ -125,8 +126,13 @@ export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
 		const siteId = get( selectedSite, 'ID', null );
+		const gsuiteUsers = selectedSite
+			? getByDomain( state, selectedSite )
+			: getBySite( state, siteId );
 		return {
 			domains: getDecoratedSiteDomains( state, siteId ),
+			gsuiteUsers,
+			gsuiteUsersLoaded: isLoaded( state ),
 			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
 			selectedSite,
 		};
