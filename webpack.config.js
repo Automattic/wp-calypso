@@ -18,6 +18,7 @@ const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
+const postcssCustomProperties = require( 'postcss-custom-properties' );
 
 /**
  * Internal dependencies
@@ -252,7 +253,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						{
 							loader: 'postcss-loader',
 							options: {
-								plugins: [ require( 'autoprefixer' ), require( 'postcss-custom-properties' ) ],
+								plugins: [ postcssCustomProperties(), require( 'autoprefixer' ) ],
 							},
 						},
 						{
