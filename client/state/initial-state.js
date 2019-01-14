@@ -11,7 +11,6 @@ import { get, map, pick, throttle } from 'lodash';
  * Internal dependencies
  */
 import { APPLY_STORED_STATE, SERIALIZE, DESERIALIZE } from 'state/action-types';
-import initialReducer from 'state/reducer';
 import localforage from 'lib/localforage';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
 import config from 'config';
@@ -38,7 +37,7 @@ function deserialize( state, reducer ) {
 }
 
 // get bootstrapped state from a server-side render
-function getInitialServerState() {
+function getInitialServerState( initialReducer ) {
 	if ( typeof window !== 'object' || ! window.initialReduxState || isSupportUserSession() ) {
 		return null;
 	}
@@ -215,7 +214,7 @@ export function persistOnChange( reduxStore ) {
 	reduxStore.subscribe( throttledSaveState );
 }
 
-async function getInitialStoredState() {
+async function getInitialStoredState( initialReducer ) {
 	if ( ! shouldPersist() ) {
 		return null;
 	}
@@ -258,8 +257,8 @@ async function getInitialStoredState() {
 	return initialStoredState;
 }
 
-export async function getInitialState() {
-	const storedState = await getInitialStoredState();
-	const serverState = getInitialServerState();
+export async function getInitialState( initialReducer ) {
+	const storedState = await getInitialStoredState( initialReducer );
+	const serverState = getInitialServerState( initialReducer );
 	return { ...storedState, ...serverState };
 }

@@ -16,16 +16,22 @@ import localforage from 'lib/localforage';
 import userFactory from 'lib/user';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
 import { createReduxStore } from 'state';
+import initialReducer from 'state/reducer';
 import { getInitialState, persistOnChange, MAX_AGE, SERIALIZE_THROTTLE } from 'state/initial-state';
 import { combineReducers } from 'state/utils';
 
 jest.mock( 'config', () => {
+	let persistReduxEnabled = false;
+
 	const config = () => 'development';
 
-	config.isEnabled = jest.fn().mockReturnValue( false );
+	config.isEnabled = jest.fn( key => key === 'persist-redux' && persistReduxEnabled );
+	config.isEnabled.enablePersistRedux = () => ( persistReduxEnabled = true );
+	config.isEnabled.disablePersistRedux = () => ( persistReduxEnabled = false );
 
 	return config;
 } );
+
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 jest.mock( 'lib/user', () => () => ( {
 	get: () => ( {
@@ -61,7 +67,7 @@ describe( 'initial-state', () => {
 					window.initialReduxState = serverState;
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
-					state = createReduxStore( await getInitialState() ).getState();
+					state = await getInitialState( initialReducer );
 				} );
 
 				afterAll( () => {
@@ -70,19 +76,19 @@ describe( 'initial-state', () => {
 					getItemSpy.mockRestore();
 				} );
 
-				test( 'builds store without errors', () => {
+				test( 'builds initial state without errors', () => {
 					expect( consoleErrorSpy ).not.toHaveBeenCalled();
 				} );
 
-				test( 'does not build using local forage state', () => {
-					expect( state.postTypes.items[ 2916284 ] ).toBeUndefined();
+				test( 'does not build initial state using IndexedDB state', () => {
+					expect( state ).not.toHaveProperty( 'postTypes' );
 				} );
 
-				test( 'does not add timestamp to store', () => {
+				test( 'does not add timestamp to initial state', () => {
 					expect( state._timestamp ).toBeUndefined();
 				} );
 
-				test( 'builds state using server state', () => {
+				test( 'builds initial state using server state', () => {
 					expect( state.currentUser.id ).toBe( 123456789 );
 				} );
 			} );
@@ -107,36 +113,36 @@ describe( 'initial-state', () => {
 					};
 
 					beforeAll( async () => {
-						isEnabled.mockReturnValue( true );
+						isEnabled.enablePersistRedux();
 						isSupportUserSession.mockReturnValue( true );
 						window.initialReduxState = { currentUser: { currencyCode: 'USD' } };
 						consoleErrorSpy = jest.spyOn( global.console, 'error' );
 						getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
-						state = createReduxStore( await getInitialState() ).getState();
+						state = await getInitialState( initialReducer );
 					} );
 
 					afterAll( () => {
-						isEnabled.mockReturnValue( false );
+						isEnabled.disablePersistRedux();
 						isSupportUserSession.mockReturnValue( false );
 						window.initialReduxState = null;
 						consoleErrorSpy.mockRestore();
 						getItemSpy.mockRestore();
 					} );
 
-					test( 'builds store without errors', () => {
+					test( 'builds initial state without errors', () => {
 						expect( consoleErrorSpy ).not.toHaveBeenCalled();
 					} );
 
-					test( 'does not build using local forage state', () => {
-						expect( state.postTypes.items[ 2916284 ] ).toBeUndefined();
+					test( 'does not build initial state using IndexedDB state', () => {
+						expect( state.postTypes ).toBeUndefined();
 					} );
 
-					test( 'does not add timestamp to store', () => {
+					test( 'does not add timestamp to initial state', () => {
 						expect( state._timestamp ).toBeUndefined();
 					} );
 
-					test( 'does not build state using server state', () => {
-						expect( state.currentUser.currencyCode ).toBeNull();
+					test( 'does not build initial state using server state', () => {
+						expect( state.currentUser ).toBeUndefined();
 					} );
 				} );
 			} );
@@ -169,32 +175,32 @@ describe( 'initial-state', () => {
 
 				beforeAll( async () => {
 					window.initialReduxState = serverState;
-					isEnabled.mockReturnValue( true );
+					isEnabled.enablePersistRedux();
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
-					state = createReduxStore( await getInitialState() ).getState();
+					state = await getInitialState( initialReducer );
 				} );
 
 				afterAll( () => {
 					window.initialReduxState = null;
-					isEnabled.mockReturnValue( false );
+					isEnabled.disablePersistRedux();
 					consoleErrorSpy.mockRestore();
 					getItemSpy.mockRestore();
 				} );
 
-				test( 'builds store without errors', () => {
+				test( 'builds initial state without errors', () => {
 					expect( consoleErrorSpy ).not.toHaveBeenCalled();
 				} );
 
-				test( 'builds state using local forage state', () => {
+				test( 'builds initial state using IndexedDB state', () => {
 					expect( state.currentUser.id ).toBe( 123456789 );
 				} );
 
-				test( 'does not add timestamp to store', () => {
+				test( 'does not add timestamp to initial state', () => {
 					expect( state._timestamp ).toBeUndefined();
 				} );
 
-				test( 'server state shallowly overrides local forage state', () => {
+				test( 'server state shallowly overrides IndexedDB state', () => {
 					expect( state.postTypes.items ).toEqual( serverState.postTypes.items );
 				} );
 			} );
@@ -227,15 +233,15 @@ describe( 'initial-state', () => {
 
 				beforeAll( async () => {
 					window.initialReduxState = serverState;
-					isEnabled.mockReturnValue( true );
+					isEnabled.enablePersistRedux();
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
-					state = createReduxStore( await getInitialState() ).getState();
+					state = await getInitialState( initialReducer );
 				} );
 
 				afterAll( () => {
 					window.initialReduxState = null;
-					isEnabled.mockReturnValue( false );
+					isEnabled.disablePersistRedux();
 					consoleErrorSpy.mockRestore();
 					getItemSpy.mockRestore();
 				} );
@@ -244,12 +250,12 @@ describe( 'initial-state', () => {
 					expect( consoleErrorSpy ).not.toHaveBeenCalled();
 				} );
 
-				test( 'builds using server state', () => {
+				test( 'builds initial state using server state', () => {
 					expect( state.postTypes.items ).toEqual( serverState.postTypes.items );
 				} );
 
-				test( 'does not build using local forage state', () => {
-					expect( state.currentUser.id ).toBeNull();
+				test( 'does not build initial state using IndexedDB state', () => {
+					expect( state.currentUser ).toBeUndefined();
 				} );
 
 				test( 'does not add timestamp to store', () => {
@@ -277,20 +283,20 @@ describe( 'initial-state', () => {
 
 				beforeAll( async () => {
 					window.initialReduxState = serverState;
-					isEnabled.mockReturnValue( true );
+					isEnabled.enablePersistRedux();
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
-					state = createReduxStore( await getInitialState() ).getState();
+					state = await getInitialState( initialReducer );
 				} );
 
 				afterAll( () => {
 					window.initialReduxState = null;
-					isEnabled.mockReturnValue( false );
+					isEnabled.disablePersistRedux();
 					consoleErrorSpy.mockRestore();
 					getItemSpy.mockRestore();
 				} );
 
-				test( 'builds store without errors', () => {
+				test( 'builds initial state without errors', () => {
 					expect( consoleErrorSpy ).not.toHaveBeenCalled();
 				} );
 
@@ -327,28 +333,28 @@ describe( 'initial-state', () => {
 
 				beforeAll( async () => {
 					window.initialReduxState = serverState;
-					isEnabled.mockReturnValue( true );
+					isEnabled.enablePersistRedux();
 					consoleErrorSpy = jest.spyOn( global.console, 'error' );
 					getItemSpy = jest.spyOn( localforage, 'getItem' ).mockResolvedValue( savedState );
-					state = createReduxStore( await getInitialState() ).getState();
+					state = await getInitialState( initialReducer );
 				} );
 
 				afterAll( () => {
 					window.initialReduxState = null;
-					isEnabled.mockReturnValue( false );
+					isEnabled.disablePersistRedux();
 					consoleErrorSpy.mockRestore();
 					getItemSpy.mockRestore();
 				} );
 
-				test( 'builds store without errors', () => {
+				test( 'builds initial state without errors', () => {
 					expect( consoleErrorSpy ).not.toHaveBeenCalled();
 				} );
 
-				test( 'does not build using local forage state', () => {
-					expect( state.postTypes.items[ 2916284 ] ).toBeUndefined();
+				test( 'does not build initial state using IndexedDB state', () => {
+					expect( state.postTypes ).toBeUndefined();
 				} );
 
-				test( 'does not add timestamp to store', () => {
+				test( 'does not add timestamp to initial state', () => {
 					expect( state._timestamp ).toBeUndefined();
 				} );
 			} );
@@ -381,7 +387,7 @@ describe( 'initial-state', () => {
 		const initialState = { currentUser: { id: 123456789 } };
 
 		beforeEach( () => {
-			isEnabled.mockReturnValue( true );
+			isEnabled.enablePersistRedux();
 			// we use fake timers from Sinon (aka Lolex) because `lodash.throttle` also uses `Date.now()`
 			// and relies on it returning a mocked value. Jest fake timers don't mock `Date`, Lolex does.
 			clock = useFakeTimers();
@@ -394,7 +400,7 @@ describe( 'initial-state', () => {
 		} );
 
 		afterEach( () => {
-			isEnabled.mockReturnValue( false );
+			isEnabled.enablePersistRedux();
 			clock.restore();
 			setItemSpy.mockRestore();
 		} );
