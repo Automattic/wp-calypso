@@ -15,7 +15,7 @@ exports[`DateRange should render 1`] = `
     startDateText="01/05/2018"
   />
   <Connect(Popover)
-    className="date-range__popover is-dialog-visible"
+    className="date-range__popover"
     context={null}
     isVisible={false}
     onClose={[Function]}

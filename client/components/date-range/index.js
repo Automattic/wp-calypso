@@ -441,7 +441,6 @@ export class DateRange extends Component {
 	renderPopover() {
 		const popoverClassNames = classNames( {
 			'date-range__popover': true,
-			'is-dialog-visible': true, // forces to render when inside a modal. Is there a way to detect this from global state?
 		} );
 
 		const headerProps = {
