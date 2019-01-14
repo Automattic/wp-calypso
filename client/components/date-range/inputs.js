@@ -42,23 +42,25 @@ class DateRangeInputs extends Component {
 	}
 
 	/**
-	 * Handles input events with fixed arguments
+	 * Handles input blur events with fixed arguments
 	 * for consistency via partial application
-	 *
-	 * @param  {string} eventType  one of "change" or "blur"
 	 * @param  {string} startOrEnd one of "Start" or "End"
 	 * @return {function}            the partially applied function ready to recieve event data
 	 */
-	handleInputEvent = ( eventType, startOrEnd ) => e => {
-		const val = e.target.value;
+	handleInputBlur = startOrEnd => e => {
+		const { value } = e.target;
+		this.props.onInputBlur( value, startOrEnd );
+	};
 
-		if ( eventType === 'change' ) {
-			this.props.onInputChange( val, startOrEnd );
-		}
-
-		if ( eventType === 'blur' ) {
-			this.props.onInputBlur( val, startOrEnd );
-		}
+	/**
+	 * Handles input change events with fixed arguments
+	 * for consistency via partial application
+	 * @param  {string} startOrEnd one of "Start" or "End"
+	 * @return {function}            the partially applied function ready to recieve event data
+	 */
+	handleInputChange = startOrEnd => e => {
+		const { value } = e.target;
+		this.props.onInputChange( value, startOrEnd );
 	};
 
 	render() {
@@ -70,8 +72,8 @@ class DateRangeInputs extends Component {
 						id={ this.startDateID }
 						name={ this.startDateID }
 						value={ this.props.startDateValue }
-						onChange={ this.handleInputEvent( 'change', 'Start' ) }
-						onBlur={ this.handleInputEvent( 'blur', 'Start' ) }
+						onChange={ this.handleInputChange( 'Start' ) }
+						onBlur={ this.handleInputBlur( 'Start' ) }
 					/>
 				</div>
 				<div className="date-range__date-input date-range__date-input--to">
@@ -80,8 +82,8 @@ class DateRangeInputs extends Component {
 						id={ this.endDateID }
 						name={ this.endDateID }
 						value={ this.props.endDateValue }
-						onChange={ this.handleInputEvent( 'change', 'End' ) }
-						onBlur={ this.handleInputEvent( 'blur', 'End' ) }
+						onChange={ this.handleInputChange( 'End' ) }
+						onBlur={ this.handleInputBlur( 'End' ) }
 					/>
 				</div>
 			</div>
