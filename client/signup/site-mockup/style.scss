@@ -38,7 +38,8 @@
 			top: 40px;
 			right: 8px;
 			z-index: 2;
-			box-shadow: 0 4px 12px 0 rgba( 0, 0, 0, 0.3 );
+			box-shadow: 0 0 6px 0 rgba( 0, 0, 0, 0.5 ),
+						0 6px 50px 0 rgba( 0, 0, 0, 0.3 );
 
 			.site-mockup__body {
 				height: 440px;
