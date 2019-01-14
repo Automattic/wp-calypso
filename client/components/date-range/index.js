@@ -39,6 +39,7 @@ export class DateRange extends Component {
 			PropTypes.instanceOf( Date ),
 			PropTypes.instanceOf( moment ),
 		] ),
+		triggerText: PropTypes.func,
 		renderTrigger: PropTypes.func,
 		renderHeader: PropTypes.func,
 		renderInputs: PropTypes.func,
@@ -510,6 +511,7 @@ export class DateRange extends Component {
 			endDateText: this.formatDateToLocale( this.state.endDate ),
 			buttonRef: this.triggerButtonRef,
 			onTriggerClick: this.togglePopover,
+			triggerText: this.props.triggerText,
 		};
 
 		return (

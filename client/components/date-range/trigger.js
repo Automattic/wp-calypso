@@ -12,8 +12,9 @@ import { noop } from 'lodash';
  */
 import Button from 'components/button';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
-class DateRangeTrigger extends Component {
+export class DateRangeTrigger extends Component {
 	static propTypes = {
 		startDateText: PropTypes.string.isRequired,
 		endDateText: PropTypes.string.isRequired,
@@ -22,20 +23,27 @@ class DateRangeTrigger extends Component {
 			PropTypes.shape( { current: PropTypes.instanceOf( Button ) } ),
 		] ).isRequired,
 		onTriggerClick: PropTypes.func,
+		triggerText: PropTypes.func,
 	};
 
 	static defaultProps = {
 		onTriggerClick: noop,
-		triggerText: ( startDate, endDate ) => {
-			const space = String.fromCharCode( 160 );
-			const dash = String.fromCharCode( 45 );
-			return `${ startDate }${ space }${ dash }${ space }${ endDate }`;
-		},
 	};
 
 	dateRangeText() {
 		const { startDateText, endDateText } = this.props;
-		return this.props.triggerText( startDateText, endDateText );
+
+		if ( this.props.triggerText ) {
+			return this.props.triggerText( startDateText, endDateText );
+		}
+
+		return this.props.translate( '%(startDateText)s - %(endDateText)s', {
+			context: 'Date range text for DateRange input trigger',
+			args: {
+				startDateText,
+				endDateText,
+			},
+		} );
 	}
 
 	render() {
@@ -56,4 +64,4 @@ class DateRangeTrigger extends Component {
 	}
 }
 
-export default DateRangeTrigger;
+export default localize( DateRangeTrigger );
