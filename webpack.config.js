@@ -252,7 +252,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						{
 							loader: 'postcss-loader',
 							options: {
-								plugins: [ require( 'autoprefixer' ) ],
+								plugins: [ require( 'autoprefixer' ), require( 'postcss-custom-properties' ) ],
 							},
 						},
 						{
