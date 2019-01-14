@@ -81,4 +81,24 @@ describe( '<SiteStyleStep />', () => {
 			'nicer'
 		);
 	} );
+
+	test( 'should select and submit the first item from the options array if no site style yet saved in state', () => {
+		const wrapper = shallow( <SiteStyleStep { ...defaultProps } siteStyle={ null } /> );
+		const siteStyleContent = shallow( wrapper.instance().renderContent() );
+		const firstInputField = siteStyleContent.find( 'FormRadio' ).get( 0 );
+		// check that the default is the first item rendered
+		expect( firstInputField.props.value ).toEqual( defaultProps.styleOptions[ 0 ].id );
+		// check that it's been selected
+		expect( firstInputField.hasClass( 'is-checked' ) ).toBe( true );
+
+		wrapper.instance().handleSubmit( {
+			preventDefault: () => {},
+		} );
+		// check that we pass the default site option onSubmit
+		expect( defaultProps.submitSiteStyle ).toHaveBeenCalledWith(
+			defaultProps.styleOptions[ 0 ].id,
+			defaultProps.styleOptions[ 0 ].theme,
+			defaultProps.styleOptions[ 0 ].label
+		);
+	} );
 } );
