@@ -47,8 +47,10 @@ function SiteMockupContent( { data, title, tagline } ) {
 	/* eslint-disable react/no-danger */
 	return (
 		<>
-			<div className="site-mockup__title">{ title }</div>
-			<div className="site-mockup__tagline">{ tagline }</div>
+			<div className="site-mockup__site-identity">
+				<div className="site-mockup__title">{ title }</div>
+				<div className="site-mockup__tagline">{ tagline }</div>
+			</div>
 			<div
 				className="site-mockup__cover-image"
 				style={ { backgroundImage: `url("${ data.cover_image }")` } }
