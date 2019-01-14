@@ -6,6 +6,7 @@
 /**
  * External dependencies
  */
+import { mapKeys } from 'lodash';
 import { useFakeTimers } from 'sinon';
 
 /**
@@ -15,10 +16,12 @@ import { isEnabled } from 'config';
 import localforage from 'lib/localforage';
 import userFactory from 'lib/user';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { createReduxStore } from 'state';
 import initialReducer from 'state/reducer';
 import { getInitialState, persistOnChange, MAX_AGE, SERIALIZE_THROTTLE } from 'state/initial-state';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withStorageKey } from 'state/utils';
+import { addReducerToStore } from 'state/add-reducer';
 
 jest.mock( 'config', () => {
 	let persistReduxEnabled = false;
@@ -505,6 +508,125 @@ describe( 'initial-state', () => {
 				'redux-state-123456789',
 				expect.objectContaining( { data: 5 } )
 			);
+		} );
+	} );
+} );
+
+describe( 'loading stored state with dynamic reducers', () => {
+	// Creates a reducer that serializes objects by prefixing all keys with a given prefix.
+	// For example, `withKeyPrefix( 'A' )` serializes `{ x: 1, y: 2 }` into `{ 'A:x': 1, 'A:y': 2 }`
+	const withKeyPrefix = keyPrefix => {
+		const keyPrefixRe = new RegExp( `^${ keyPrefix }:` );
+		const reducer = ( state = {}, action ) => {
+			switch ( action.type ) {
+				case DESERIALIZE:
+					return mapKeys( state, ( value, key ) => key.replace( keyPrefixRe, '' ) );
+				case SERIALIZE:
+					return mapKeys( state, ( value, key ) => `${ keyPrefix }:${ key }` );
+				default:
+					return state;
+			}
+		};
+		reducer.hasCustomPersistence = true;
+		return reducer;
+	};
+
+	const currentUserReducer = ( state = { id: null } ) => state;
+	currentUserReducer.hasCustomPersistence = true;
+
+	let getItemSpy;
+
+	beforeEach( () => {
+		isEnabled.enablePersistRedux();
+
+		// state stored in IndexedDB
+		const _timestamp = Date.now();
+		const storedState = {
+			'redux-state-123456789': {
+				currentUser: { id: 123456789 },
+				_timestamp,
+			},
+			'redux-state-123456789:A': {
+				'A:city': 'London',
+				'A:country': 'UK',
+				_timestamp,
+			},
+			'redux-state-123456789:B': {
+				'B:city': 'Paris',
+				'B:country': 'France',
+				_timestamp,
+			},
+		};
+
+		// localforage mock to return mock IndexedDB state
+		getItemSpy = jest
+			.spyOn( localforage, 'getItem' )
+			.mockImplementation( key => storedState[ key ] );
+	} );
+
+	afterEach( () => {
+		isEnabled.disablePersistRedux();
+		getItemSpy.mockRestore();
+	} );
+
+	test( 'loads state from multiple storage keys', async () => {
+		// initial reducer. includes several subreducers with storageKey property
+		const reducer = combineReducers( {
+			currentUser: currentUserReducer,
+			a: withStorageKey( 'A', withKeyPrefix( 'A' ) ),
+			b: withStorageKey( 'B', withKeyPrefix( 'B' ) ),
+		} );
+
+		// load initial state and create Redux store with it
+		const state = await getInitialState( reducer );
+		const store = createReduxStore( state, reducer );
+
+		// verify that state from all storageKey's was loaded
+		expect( store.getState() ).toEqual( {
+			currentUser: {
+				id: 123456789,
+			},
+			a: {
+				city: 'London',
+				country: 'UK',
+			},
+			b: {
+				city: 'Paris',
+				country: 'France',
+			},
+		} );
+	} );
+
+	test( 'loads state after adding a reducer', async () => {
+		// initial reducer. includes only the `currentUser` subreducer.
+		const reducer = combineReducers( {
+			currentUser: currentUserReducer,
+		} );
+
+		// load initial state and create Redux store with it
+		const state = await getInitialState( reducer );
+		const store = createReduxStore( state, reducer );
+
+		// verify that the initial Redux store loaded state only for `currentUser`
+		expect( store.getState() ).toEqual( {
+			currentUser: {
+				id: 123456789,
+			},
+		} );
+
+		// load a reducer dynamically
+		const aReducer = withStorageKey( 'A', withKeyPrefix( 'A' ) );
+		await addReducerToStore( store )( 'a', aReducer );
+
+		// verify that the Redux store contains the stored state for `A` now
+		expect( store.getState() ).toEqual( {
+			currentUser: {
+				id: 123456789,
+			},
+			a: {
+				city: 'London',
+				country: 'UK',
+			},
 		} );
 	} );
 } );
