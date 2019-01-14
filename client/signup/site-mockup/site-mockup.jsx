@@ -61,17 +61,6 @@ function SiteMockupContent( { data, title, tagline } ) {
 				className="site-mockup__entry-content"
 				dangerouslySetInnerHTML={ { __html: data.content } }
 			/>
-			<div className="site-mockup__hr" />
-			<div className="site-mockup__h2">Send Us a Message</div>
-			<div className="site-mockup__contact-form">
-				<div className="site-mockup__label">Name</div>
-				<div className="site-mockup__input" />
-				<div className="site-mockup__label">Email</div>
-				<div className="site-mockup__input" />
-				<div className="site-mockup__label">Your Message</div>
-				<div className="site-mockup__textarea" />
-				<div className="site-mockup__button">Send</div>
-			</div>
 		</>
 	);
 	/* eslint-enable react/no-danger */
