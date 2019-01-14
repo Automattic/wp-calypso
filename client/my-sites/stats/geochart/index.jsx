@@ -119,12 +119,14 @@ class StatsGeochart extends Component {
 		const node = this.refs.chart;
 		const width = node.clientWidth;
 
-		const chartColorLight = getComputedStyle( document.body )
-			.getPropertyValue( '--color-accent-50' )
-			.trim();
-		const chartColorDark = getComputedStyle( document.body )
-			.getPropertyValue( '--color-accent' )
-			.trim();
+		const chartColorLight =
+			getComputedStyle( document.body )
+				.getPropertyValue( '--color-accent-50' )
+				.trim() || '#ffdff3';
+		const chartColorDark =
+			getComputedStyle( document.body )
+				.getPropertyValue( '--color-accent' )
+				.trim() || '#d52c82';
 
 		const options = {
 			width: 100 + '%',
