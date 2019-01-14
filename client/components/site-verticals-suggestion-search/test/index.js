@@ -64,4 +64,10 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		wrapper.instance().onSiteTopicChange( null );
 		expect( defaultProps.requestVerticals.cancel ).toHaveBeenCalledTimes( 2 );
 	} );
+
+	// TODO: test sortSearchResults
+	test.skip( 'should sort suggestion results', () => {
+		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
+		wrapper.instance().sortSearchResults( [ '', '', '', '' ], 'b' );
+	} );
 } );
