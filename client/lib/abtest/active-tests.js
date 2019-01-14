@@ -109,8 +109,8 @@ export default {
 	builderReferralStatsNudge: {
 		datestamp: '20181218',
 		variations: {
-			builderReferralBanner: 10,
-			googleMyBusinessBanner: 90,
+			builderReferralBanner: 50,
+			googleMyBusinessBanner: 50,
 		},
 		defaultVariation: 'googleMyBusinessBanner',
 	},
