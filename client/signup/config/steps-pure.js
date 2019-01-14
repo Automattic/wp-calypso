@@ -458,6 +458,8 @@ export function generateSteps( {
 			stepName: 'site-information-with-preview',
 			providesDependencies: [ 'title', 'address', 'phone' ],
 			props: {
+				headerText: i18n.translate( 'Help customers find you' ),
+				informationFields: [ 'title', 'address', 'phone' ],
 				showSiteMockups: true,
 			},
 		},
