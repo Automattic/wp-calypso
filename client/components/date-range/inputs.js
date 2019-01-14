@@ -6,6 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
+import uuidv4 from 'uuid/v4';
 
 /**
  * Internal dependencies
@@ -29,6 +30,16 @@ class DateRangeInputs extends Component {
 		onInputChange: noop,
 		onInputBlur: noop,
 	};
+
+	constructor( props ) {
+		super( props );
+
+		// Component instance ID
+		const uniqueId = uuidv4();
+
+		this.startDateID = `startDate-${ uniqueId }`;
+		this.endDateID = `endDate-${ uniqueId }`;
+	}
 
 	/**
 	 * Handles input events with fixed arguments
@@ -54,20 +65,20 @@ class DateRangeInputs extends Component {
 		return (
 			<div className="date-range__date-inputs">
 				<div className="date-range__date-input date-range__date-input--from">
-					<FormLabel htmlFor="startDate">{ this.props.startLabel }</FormLabel>
+					<FormLabel htmlFor={ this.startDateID }>{ this.props.startLabel }</FormLabel>
 					<FormTextInput
-						id="startDate"
-						name="startDate"
+						id={ this.startDateID }
+						name={ this.startDateID }
 						value={ this.props.startDateValue }
 						onChange={ this.handleInputEvent( 'change', 'Start' ) }
 						onBlur={ this.handleInputEvent( 'blur', 'Start' ) }
 					/>
 				</div>
 				<div className="date-range__date-input date-range__date-input--to">
-					<FormLabel htmlFor="endDate">{ this.props.endLabel }</FormLabel>
+					<FormLabel htmlFor={ this.endDateID }>{ this.props.endLabel }</FormLabel>
 					<FormTextInput
-						id="endDate"
-						name="endDate"
+						id={ this.endDateID }
+						name={ this.endDateID }
 						value={ this.props.endDateValue }
 						onChange={ this.handleInputEvent( 'change', 'End' ) }
 						onBlur={ this.handleInputEvent( 'blur', 'End' ) }
