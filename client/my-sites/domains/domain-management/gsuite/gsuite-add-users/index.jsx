@@ -44,6 +44,8 @@ class GSuiteAddUsers extends React.Component {
 		const {
 			domains,
 			isRequestingSiteDomains,
+			googleAppsUsers,
+			googleAppsUsersLoaded,
 			selectedDomainName,
 			selectedSite,
 			translate,
@@ -55,6 +57,8 @@ class GSuiteAddUsers extends React.Component {
 				<AddEmailAddressesCard
 					domains={ domains }
 					isRequestingSiteDomains={ isRequestingSiteDomains }
+					gsuiteUsers={ googleAppsUsers }
+					gsuiteUsersLoaded={ googleAppsUsersLoaded }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
 				/>
@@ -87,6 +91,8 @@ class GSuiteAddUsers extends React.Component {
 GSuiteAddUsers.propTypes = {
 	domains: PropTypes.array.isRequired,
 	isRequestingSiteDomains: PropTypes.bool.isRequired,
+	googleAppsUsers: PropTypes.array.isRequired,
+	googleAppsUsersLoaded: PropTypes.bool.isRequired,
 	selectedDomainName: PropTypes.string.isRequired,
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,

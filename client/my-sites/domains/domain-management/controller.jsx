@@ -253,6 +253,7 @@ export default {
 				needsCart
 				needsContactDetails
 				needsDomains
+				needsGoogleApps
 				needsPlans
 				needsProductsList
 				selectedDomainName={ pageContext.params.domain }
