@@ -45,6 +45,7 @@ class DomainSuggestion extends React.Component {
 			extraClasses
 		);
 
+		/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
 		return (
 			<div
 				className={ classes }
@@ -65,10 +66,12 @@ class DomainSuggestion extends React.Component {
 				) }
 			</div>
 		);
+		/* eslint-enable jsx-a11y/click-events-have-key-events jsx-a11y/interactive-supports-focus */
 	}
 }
 
 DomainSuggestion.Placeholder = function() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="domain-suggestion card is-compact is-placeholder is-clickable">
 			<div className="domain-suggestion__content">
@@ -78,6 +81,7 @@ DomainSuggestion.Placeholder = function() {
 			<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default DomainSuggestion;
