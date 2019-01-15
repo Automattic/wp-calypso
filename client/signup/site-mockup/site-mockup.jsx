@@ -10,7 +10,6 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { translate } from 'i18n-calypso';
-import loadFontandGetCSS from 'lib/signup/font-loader';
 
 /**
  * Style dependencies
@@ -99,10 +98,8 @@ export default function SiteMockup( { size, data, siteType, siteStyle, title, ta
 		[ `is-${ siteType }` ]: !! siteType,
 		[ `is-${ siteStyle }` ]: !! siteStyle,
 	} );
-	const fontStyle = loadFontandGetCSS( siteStyle, siteType, '.site-mockup__content' );
 	return (
 		<div className={ classes }>
-			<style>{ fontStyle }</style>
 			{ size === 'mobile' ? <MockupChromeMobile /> : <MockupChromeDesktop /> }
 			<div className="site-mockup__body">
 				<div className="site-mockup__content">

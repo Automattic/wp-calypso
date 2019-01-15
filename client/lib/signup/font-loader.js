@@ -2,14 +2,16 @@
 /**
  * External dependencies
  */
-import { find, includes, isEmpty } from 'lodash';
+import { find, includes, isEmpty, forEach } from 'lodash';
+import FontFaceObserver from 'fontfaceobserver';
 
 /**
  * Internal dependencies
  */
-import { getSiteStyleOptions } from 'lib/signup/site-styles';
+import { getSiteStyleOptions, siteStyleOptions } from 'lib/signup/site-styles';
 
 const loadedFonts = [];
+const addedFonts = [];
 
 function fontNameToId( fontName ) {
 	return fontName.trim().replace( / /g, '+' );
@@ -56,20 +58,30 @@ function getFont( siteStyle, siteType = 'business' ) {
  * Load a Google Font for our current site type and style
  * @param {string} siteStyle The currently chosen site style
  * @param {string} siteType The currently chosen site type
+ * @return {Promise} Promise object representing success of font loading
  */
 export function loadFont( siteStyle, siteType ) {
 	// will only work in the browser
 	if ( ! document ) {
-		return;
+		return Promise.reject( 'only in a browser' );
 	}
 	const font = getFont( siteStyle, siteType );
-	// no font, or font previously loaded? bye.
-	if ( ! font || includes( loadedFonts, font.id ) ) {
-		return;
+	if ( ! font ) {
+		return Promise.reject( 'No font found' );
+	}
+	if ( includes( loadedFonts, font.id ) ) {
+		return Promise.resolve( 'Already loaded' );
+	}
+	// only load if this is the first time
+	// separating "loading" from "adding" to prevent multiple adds
+	if ( ! includes( addedFonts, font.id ) ) {
+		addLinkHrefToHead( getLinkHref( font ) );
+		addedFonts.push( font.id );
 	}
 
-	addLinkHrefToHead( getLinkHref( font ) );
-	loadedFonts.push( font.id );
+	const observer = new FontFaceObserver( font.name ).load();
+	observer.then( () => loadedFonts.push( font.id ) );
+	return observer;
 }
 
 /**
@@ -84,9 +96,25 @@ export function getCSS( selector, siteStyle, siteType = 'business' ) {
 	if ( ! font ) {
 		return '';
 	}
+	const loadingSelector = '.is-loading ' + selector;
 	return `${ selector } {
-	font-family: "${ font.name }", monospace;
-}`;
+	font-family: "${ font.name }", serif;
+}
+${ loadingSelector } p,
+${ loadingSelector } span,
+${ loadingSelector } .site-mockup__title,
+${ loadingSelector } .site-mockup__tagline,
+${ loadingSelector } h1,
+${ loadingSelector } h2,
+${ loadingSelector } h3 {
+	visibility: hidden;
+}	`;
+}
+
+export function preLoadAllFonts() {
+	forEach( siteStyleOptions, ( options, siteType ) => {
+		forEach( options, siteStyle => loadFont( siteStyle.id, siteType ) );
+	} );
 }
 
 /**
