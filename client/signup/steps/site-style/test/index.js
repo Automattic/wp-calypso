@@ -98,8 +98,7 @@ describe( '<SiteStyleStep />', () => {
 		// check that we pass the default site option onSubmit
 		expect( defaultProps.submitSiteStyle ).toHaveBeenCalledWith(
 			defaultProps.styleOptions[ 0 ].id,
-			defaultProps.styleOptions[ 0 ].theme,
-			defaultProps.styleOptions[ 0 ].label
+			defaultProps.styleOptions[ 0 ].theme
 		);
 	} );
 } );

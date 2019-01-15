@@ -149,12 +149,15 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	submitSiteStyle: ( siteStyle, themeSlugWithRepo, styleLabel ) => {
 		const { flowName, stepName, goToNextStep } = ownProps;
 		dispatch( setSiteStyle( siteStyle ) );
+<<<<<<< HEAD
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_style', {
 				// The untranslated 'product' name of the variation/theme
 				site_style: styleLabel,
 			} )
 		);
+=======
+>>>>>>> For some reason `hasClass` was failing. Checking the `checked` prop now instead.
 		SignupActions.submitSignupStep(
 			{
 				processingMessage: i18n.translate( 'Collecting your information' ),
