@@ -1,5 +1,6 @@
 // @TODO: Replace with Gutenberg variables
-$dark-gray-300: #6c7781;
+$dark-gray-300: #2b2d2f;
+$gray-lighten-30: #f6f6f6;
 
 .wp-block-jetpack-related-posts {
 	&.is-grid {
@@ -17,16 +18,12 @@ $dark-gray-300: #6c7781;
 
 	.related-posts__preview {
 		&-post {
-			&-image-mockup {
+			&-image-placeholder {
 				width: 100%;
 				padding: 4em 0;
-				text-align: center;
-				background-color: #f0f0f0;
-				text-decoration: none;
-				&-text {
+				background-color: $gray-lighten-30;
+				&-icon {
 					margin: 0 auto;
-					color: #333;
-					font-weight: bold;
 				}
 			}
 

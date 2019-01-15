@@ -5,7 +5,15 @@
  */
 import classNames from 'classnames';
 import { BlockControls, InspectorControls } from '@wordpress/editor';
-import { Button, PanelBody, RangeControl, ToggleControl, Toolbar } from '@wordpress/components';
+import {
+	Button,
+	PanelBody,
+	RangeControl,
+	ToggleControl,
+	Toolbar,
+	Path,
+	SVG,
+} from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
 import { get } from 'lodash';
 import { withSelect } from '@wordpress/data';
@@ -14,9 +22,10 @@ import { withSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
 
-class MockupPostEdit extends Component {
+export const MAX_POSTS_TO_SHOW = 3;
+
+class PlaceholderPostEdit extends Component {
 	render() {
 		const { displayDate, displayContext, displayThumbnails } = this.props;
 		const previewClassName = 'related-posts__preview';
@@ -24,8 +33,16 @@ class MockupPostEdit extends Component {
 		return (
 			<div className={ `${ previewClassName }-post` }>
 				{ displayThumbnails && (
-					<Button className={ `${ previewClassName }-post-image-mockup` } isLink>
-						<span className={ `${ previewClassName }-post-image-mockup-text` }>Featured Image</span>
+					<Button className={ `${ previewClassName }-post-image-placeholder` } isLink>
+						<span
+							className={ `${ previewClassName }-post-image-placeholder-icon` }
+							aria-label={ __( 'Placeholder image' ) }
+						>
+							<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+								<Path fill="none" d="M0 0h24v24H0V0z" />
+								<Path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z" />
+							</SVG>
+						</span>
 					</Button>
 				) }
 				<h4>
@@ -66,17 +83,17 @@ class RelatedPostsEdit extends Component {
 			},
 		];
 
-		const postsToDisplay = posts.length ? posts : DEFAULT_POSTS;
+		const postsToDisplay = posts.length ? posts : [];
 		const displayPosts = postsToDisplay.slice( 0, postsToShow );
 		const previewClassName = 'related-posts__preview';
 
-		const displayMockupPosts = posts.length ? false : true;
+		const displayPlaceholderPosts = ! posts.length;
 
-		const inlineMockupPosts = [];
+		const inlinePlaceholderPosts = [];
 		for ( let i = 0; i < postsToShow; i++ ) {
-			inlineMockupPosts.push(
-				<MockupPostEdit
-					key={ i.toString() }
+			inlinePlaceholderPosts.push(
+				<PlaceholderPostEdit
+					key={ 'related-post-placeholder-' + i }
 					displayThumbnails={ displayThumbnails }
 					displayDate={ displayDate }
 					displayContext={ displayContext }
@@ -126,8 +143,8 @@ class RelatedPostsEdit extends Component {
 					} ) }
 				>
 					<div className={ previewClassName }>
-						{ displayMockupPosts
-							? inlineMockupPosts
+						{ displayPlaceholderPosts
+							? inlinePlaceholderPosts
 							: displayPosts.map( post => (
 									<div className={ `${ previewClassName }-post` } key={ post.id }>
 										{ displayThumbnails && post.img && post.img.src && (
