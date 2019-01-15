@@ -6,13 +6,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
-
+import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 
-class DateRangeHeader extends Component {
+export class DateRangeHeader extends Component {
 	static propTypes = {
 		onApplyClick: PropTypes.func,
 		onCancelClick: PropTypes.func,
@@ -23,15 +23,13 @@ class DateRangeHeader extends Component {
 	static defaultProps = {
 		onApplyClick: noop,
 		onCancelClick: noop,
-		applyButtonText: 'Apply',
-		cancelButtonText: 'Cancel',
 	};
 
 	render() {
 		return (
 			<div className="date-range__popover-header">
 				<Button className="date-range__cancel-btn" onClick={ this.props.onCancelClick } compact>
-					{ this.props.cancelButtonText }
+					{ this.props.cancelButtonText || this.props.translate( 'Cancel' ) }
 				</Button>
 				<Button
 					className="date-range__apply-btn"
@@ -39,11 +37,11 @@ class DateRangeHeader extends Component {
 					primary
 					compact
 				>
-					{ this.props.applyButtonText }
+					{ this.props.cancelButtonText || this.props.translate( 'Apply' ) }
 				</Button>
 			</div>
 		);
 	}
 }
 
-export default DateRangeHeader;
+export default localize( DateRangeHeader );

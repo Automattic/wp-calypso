@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 import uuidv4 from 'uuid/v4';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,7 +15,7 @@ import { translate } from 'i18n-calypso';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 
-class DateRangeInputs extends Component {
+export class DateRangeInputs extends Component {
 	static propTypes = {
 		startDateValue: PropTypes.string.isRequired,
 		endDateValue: PropTypes.string.isRequired,
@@ -26,12 +26,6 @@ class DateRangeInputs extends Component {
 	};
 
 	static defaultProps = {
-		startLabel: translate( 'From', {
-			comment: 'DateRange text input label for the start of the date range',
-		} ),
-		endLabel: translate( 'To', {
-			comment: 'DateRange text input label for the end of the date range',
-		} ),
 		onInputChange: noop,
 		onInputBlur: noop,
 	};
@@ -74,7 +68,12 @@ class DateRangeInputs extends Component {
 				<legend class="date-range__date-inputs-legend">Start and End Dates</legend>
 				<div className="date-range__date-inputs-inner">
 					<div className="date-range__date-input date-range__date-input--from">
-						<FormLabel htmlFor={ this.startDateID }>{ this.props.startLabel }</FormLabel>
+						<FormLabel htmlFor={ this.startDateID }>
+							{ this.props.startLabel ||
+								this.props.translate( 'From', {
+									comment: 'DateRange text input label for the start of the date range',
+								} ) }
+						</FormLabel>
 						<FormTextInput
 							id={ this.startDateID }
 							name={ this.startDateID }
@@ -84,7 +83,12 @@ class DateRangeInputs extends Component {
 						/>
 					</div>
 					<div className="date-range__date-input date-range__date-input--to">
-						<FormLabel htmlFor={ this.endDateID }>{ this.props.endLabel }</FormLabel>
+						<FormLabel htmlFor={ this.endDateID }>
+							{ this.props.startLabel ||
+								this.props.translate( 'To', {
+									comment: 'DateRange text input label for the end of the date range',
+								} ) }
+						</FormLabel>
 						<FormTextInput
 							id={ this.endDateID }
 							name={ this.endDateID }
@@ -99,4 +103,4 @@ class DateRangeInputs extends Component {
 	}
 }
 
-export default DateRangeInputs;
+export default localize( DateRangeInputs );
