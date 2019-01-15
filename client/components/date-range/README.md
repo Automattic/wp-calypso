@@ -11,7 +11,9 @@ First, display a `jsx` code block to show an example of usage, including import 
 import DateRange from 'components/date-range';
 
 export default class extends React.Component {
-	<DateRange />
+	render() {
+		return <DateRange />
+	}
 }
 ```
 
