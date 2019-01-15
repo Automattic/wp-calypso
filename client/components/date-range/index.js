@@ -107,7 +107,7 @@ export class DateRange extends Component {
 			textInputEndDate: this.formatDateToLocale( endDate ),
 		};
 
-		// Ref to the Trigger <button> used to position the Popover	component
+		// Ref to the Trigger <button> used to position the Popover component
 		this.triggerButtonRef = React.createRef();
 	}
 
