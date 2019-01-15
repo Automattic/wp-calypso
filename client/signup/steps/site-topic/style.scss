@@ -7,7 +7,16 @@
 	}
 
 	input {
+		// Extra padding to account for the button and
+		// the search icon.
 		padding: 10px 100px 10px 42px;
+
+		// Making the border feel a little more "at home"
+		// with signups dark background color.
+		border-color: var( --color-primary-700 );
+
+		// Trying out a rounded input
+		border-radius: 4px;
 
 		// Since there's a 1px padding on the container, and
 		// inputs use actual borders (unlike cards, which
