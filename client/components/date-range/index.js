@@ -424,10 +424,6 @@ export class DateRange extends Component {
 	 * @return {ReactComponent} the Popover component
 	 */
 	renderPopover() {
-		const popoverClassNames = classNames( {
-			'date-range__popover': true,
-		} );
-
 		const headerProps = {
 			onApplyClick: this.commitDates,
 			onCancelClick: this.closePopover,
@@ -442,7 +438,7 @@ export class DateRange extends Component {
 
 		return (
 			<Popover
-				className={ popoverClassNames }
+				className="date-range__popover"
 				isVisible={ this.state.popoverVisible }
 				context={ this.triggerButtonRef.current }
 				position="bottom"
