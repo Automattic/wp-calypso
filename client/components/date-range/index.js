@@ -403,22 +403,17 @@ export class DateRange extends Component {
 	getDisabledDaysConfig() {
 		const { firstSelectableDate, lastSelectableDate } = this.props;
 
-		let config = {};
+		const config = {};
 
 		if ( firstSelectableDate ) {
-			config = {
-				...config,
-				before: this.momentDateToJsDate( firstSelectableDate ), // disable all days before today
-			};
+			config.before = this.momentDateToJsDate( firstSelectableDate ); // disable all days before today
 		}
 
 		if ( lastSelectableDate ) {
-			config = {
-				...config,
-				after: this.momentDateToJsDate( lastSelectableDate ), // disable all days before today
-			};
+			config.after = this.momentDateToJsDate( lastSelectableDate ); // disable all days before today
 		}
 
+		// Requires a wrapping Array
 		return [ config ];
 	}
 
