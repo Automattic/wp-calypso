@@ -132,23 +132,92 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should mark status as loading upon receving the corresponding event', () => {
-			const state = isLoading( null, {
+			const state = isLoading( undefined, {
 				type: STATS_CHART_COUNTS_REQUEST,
 				siteId,
 				period,
 				statFields: [ 'views', 'visitors' ],
 			} );
-			expect( state ).toEqual( { [ siteId ]: { [ period ]: { views: true, visitors: true } } } );
+			expect( state ).toEqual( {
+				[ siteId ]: {
+					[ period ]: {
+						views: true,
+						visitors: true,
+					},
+				},
+			} );
+		} );
+
+		test( 'should keep existing loading status when issuing request for other fields', () => {
+			const state = isLoading(
+				{
+					[ siteId ]: {
+						[ period ]: {
+							apples: false,
+						},
+					},
+				},
+				{
+					type: STATS_CHART_COUNTS_REQUEST,
+					siteId,
+					period,
+					statFields: [ 'views', 'visitors' ],
+				}
+			);
+			expect( state ).toEqual( {
+				[ siteId ]: {
+					[ period ]: {
+						apples: false,
+						views: true,
+						visitors: true,
+					},
+				},
+			} );
 		} );
 
 		test( 'should mark status as done upon receving the corresponding event', () => {
-			const state = isLoading( null, {
+			const state = isLoading( undefined, {
 				type: STATS_CHART_COUNTS_RECEIVE,
 				siteId,
 				period,
 				data: responseWithViewsAndVisitors,
 			} );
-			expect( state ).toEqual( { [ siteId ]: { [ period ]: { views: false, visitors: false } } } );
+			expect( state ).toEqual( {
+				[ siteId ]: {
+					[ period ]: {
+						views: false,
+						visitors: false,
+					},
+				},
+			} );
+		} );
+
+		test( 'should keep existing loading status when receiving response with other fields', () => {
+			const state = isLoading(
+				{
+					[ siteId ]: {
+						[ period ]: {
+							apples: true,
+						},
+					},
+				},
+				{
+					type: STATS_CHART_COUNTS_RECEIVE,
+					siteId,
+					period,
+					data: responseWithViewsAndVisitors,
+				}
+			);
+
+			expect( state ).toEqual( {
+				[ siteId ]: {
+					[ period ]: {
+						apples: true,
+						views: false,
+						visitors: false,
+					},
+				},
+			} );
 		} );
 	} );
 } );
