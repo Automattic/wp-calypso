@@ -221,24 +221,24 @@ class GoogleAppsDialog extends React.Component {
 }
 
 const recordKeepSearching = () =>
-	recordGoogleEvent( 'Domain Search', 'Click "Keep Searching" Button in Google Apps Dialog' );
+	recordGoogleEvent( 'Domain Search', 'Click "Keep Searching" Button in G Suite Dialog' );
 
 const recordCancelButtonClick = section =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_google_apps_cancel_button_click', { section } ),
-		recordGoogleEvent( 'Domain Search', 'Clicked "Cancel" Button in Google Apps Dialog' )
+		recordTracksEvent( 'calypso_gsuite_cancel_button_click', { section } ),
+		recordGoogleEvent( 'Domain Search', 'Clicked "Cancel" Button in G Suite Dialog' )
 	);
 
 const recordAddEmailButtonClick = section =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_google_apps_add_email_button_click', { section } ),
-		recordGoogleEvent( 'Domain Search', 'Clicked "Add Email" Button in Google Apps Dialog' )
+		recordTracksEvent( 'calypso_gsuite_add_email_button_click', { section } ),
+		recordGoogleEvent( 'Domain Search', 'Clicked "Add Email" Button in G Suite Dialog' )
 	);
 
 const recordFormSubmit = section =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_google_apps_form_submit', { section } ),
-		recordGoogleEvent( 'Domain Search', 'Submitted Form in Google Apps Dialog' )
+		recordTracksEvent( 'calypso_gsuite_form_submit', { section } ),
+		recordGoogleEvent( 'Domain Search', 'Submitted Form in G Suite Dialog' )
 	);
 
 export default connect(

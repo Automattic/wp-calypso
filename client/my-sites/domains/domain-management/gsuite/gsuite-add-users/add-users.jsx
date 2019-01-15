@@ -286,11 +286,11 @@ const cancelClick = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Cancel" Button in Add Google Apps',
+			'Clicked "Cancel" Button in Add G Suite',
 			'Domain Name',
 			domainName
 		),
-		recordTracksEvent( 'calypso_domain_management_add_google_apps_cancel_click', {
+		recordTracksEvent( 'calypso_domain_management_add_gsuite_cancel_click', {
 			domain_name: domainName,
 		} )
 	);
@@ -299,11 +299,11 @@ const continueClick = ( domainName, success, numberOfLicenses ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Continue" Button in Add Google Apps',
+			'Clicked "Continue" Button in Add G SUite',
 			'Domain Name',
 			domainName
 		),
-		recordTracksEvent( 'calypso_domain_management_add_google_apps_continue_click', {
+		recordTracksEvent( 'calypso_domain_management_add_gsuite_continue_click', {
 			domain_name: domainName,
 			number_of_licenses: numberOfLicenses,
 			success,
@@ -314,10 +314,10 @@ const domainChange = ( value, userIndex ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			`Changed "Domain" Input for User #${ userIndex } in Add Google Apps`,
+			`Changed "Domain" Input for User #${ userIndex } in Add g SUite`,
 			'Domain Name'
 		),
-		recordTracksEvent( 'calypso_domain_management_add_google_apps_domain_change', {
+		recordTracksEvent( 'calypso_domain_management_add_gsuite_domain_change', {
 			user_index: userIndex,
 			value,
 		} )
