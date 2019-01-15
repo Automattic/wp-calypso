@@ -10,7 +10,7 @@ import { get, pick, set } from 'lodash';
  */
 import { combineReducers } from 'state/utils';
 import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'state/action-types';
-import { counts as countsSchema, isLoading as isLoadingSchema } from './schema';
+import { countsSchema } from './schema';
 import { QUERY_FIELDS } from './constants';
 
 /**
@@ -71,6 +71,5 @@ export function isLoading( state = {}, action ) {
 	}
 	return state;
 }
-isLoading.schema = isLoadingSchema;
 
 export default combineReducers( { counts, isLoading } );
