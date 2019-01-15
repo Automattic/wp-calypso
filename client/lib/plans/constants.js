@@ -649,6 +649,7 @@ export const PLANS_LIST = {
 		term: TERM_MONTHLY,
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		availableFor: plan =>
+			isEnabled( 'upgrades/wpcom-monthly-plans' ) &&
 			includes(
 				[
 					PLAN_FREE,

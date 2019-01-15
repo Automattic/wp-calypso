@@ -112,6 +112,7 @@
 		"upgrades/in-app-purchase": false,
 		"upgrades/redirect-payments": true,
 		"upgrades/premium-themes": true,
+		"upgrades/wpcom-monthly-plans": true,
 		"wpcom-user-bootstrap": false,
 		"woocommerce/extension-wcservices": true
 	}
