@@ -10,7 +10,6 @@ import Edit from './edit';
 import EditContactInfo from './edit-contact-info';
 import Email from './email';
 import EmailForwarding from './email-forwarding';
-import GSuiteAddUsers from './gsuite/gsuite-add-users';
 import List from './list';
 import ManageConsent from './manage-consent';
 import NameServers from './name-servers';
@@ -32,7 +31,6 @@ export default {
 	ManageConsent,
 	Email,
 	EmailForwarding,
-	GSuiteAddUsers,
 	List,
 	NameServers,
 	PrimaryDomain,

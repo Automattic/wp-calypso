@@ -13,7 +13,6 @@ import React from 'react';
 import DomainManagement from './domain-management';
 import DomainManagementData from 'components/data/domain-management';
 import {
-	domainManagementAddGSuiteUsers,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementEdit,
@@ -34,6 +33,7 @@ import {
 	domainManagementDomainConnectMapping,
 } from 'my-sites/domains/paths';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import GSuiteAddUsers from './gsuite/gsuite-add-users';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { decodeURIComponentIfValid } from 'lib/url';
 
@@ -241,24 +241,7 @@ export default {
 	},
 
 	domainManagementAddGSuiteUsers( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementAddGSuiteUsers(
-					':site',
-					pageContext.params.domain ? ':domain' : undefined
-				) }
-				analyticsTitle="Domain Management > Add Google Apps"
-				component={ DomainManagement.GSuiteAddUsers }
-				context={ pageContext }
-				needsCart
-				needsContactDetails
-				needsDomains
-				needsGoogleApps
-				needsPlans
-				needsProductsList
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
+		pageContext.primary = <GSuiteAddUsers selectedDomainName={ pageContext.params.domain } />;
 		next();
 	},
 
