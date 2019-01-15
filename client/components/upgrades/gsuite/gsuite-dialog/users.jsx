@@ -116,14 +116,14 @@ class GoogleAppsUsers extends React.Component {
 
 const recordAddUserClick = section =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_gsuite_add_user_button_click', { section } ),
-		recordGoogleEvent( 'Domain Search', 'Clicked "Add User" Button in G Suite Dialog' )
+		recordTracksEvent( 'calypso_google_apps_add_user_button_click', { section } ),
+		recordGoogleEvent( 'Domain Search', 'Clicked "Add User" Button in Google Apps Dialog' )
 	);
 
 const recordInputFocus = ( userIndex, fieldName, inputValue ) =>
 	recordGoogleEvent(
 		'Domain Search',
-		`Focused On "${ fieldName }" Input for User #${ userIndex } in G Suite Dialog`,
+		`Focused On "${ fieldName }" Input for User #${ userIndex } in Google Apps Dialog`,
 		'Input Value',
 		inputValue
 	);
