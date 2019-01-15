@@ -123,6 +123,7 @@ export function rewindRequestDismiss( siteId ) {
  *
  * @param {String|number} siteId the site ID
  * @param {number} timestamp Unix timestamp to restore site to
+ * @param {object} args Additional request params, such as `types`
  * @return {Object} action object
  */
 export function rewindRestore( siteId, timestamp, args ) {
@@ -201,6 +202,7 @@ export function rewindBackupDismiss( siteId ) {
  *
  * @param  {string|number} siteId   The site ID
  * @param  {number}        rewindId Id of activity up to the one the backup will be created.
+ * @param  {object}        args     Additional request params, such as `types`
  * @return {object}                 Action object
  */
 export function rewindBackup( siteId, rewindId, args ) {
