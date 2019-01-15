@@ -319,7 +319,7 @@
     "rimraf": "2.6.3",
     "sinon": "7.1.1",
     "sinon-chai": "3.3.0",
-    "socket.io": "2.1.1",
+    "socket.io": "2.2.0",
     "stacktrace-gps": "3.0.2",
     "stylelint": "9.9.0",
     "supertest": "3.3.0",
