@@ -1,5 +1,5 @@
 .logged-out-form {
-	margin: 0 auto;
+	margin: 0 auto 16px auto;
 	max-width: 480px;
 }
 
@@ -7,11 +7,17 @@
 	margin: 0 auto;
 	max-width: 330px;
 	text-align: center;
+
+	a {
+		color: var( --color-white );
+
+		&:hover {
+			color: var( --color-neutral-0 );
+		}
+	}
 }
 
 .logged-out-form__footer {
-	background: lighten( $gray, 34% );
-	border-top: 1px solid var( --color-neutral-0 );
 	box-shadow: none;
 	margin: 0 -16px -16px -16px;
 	padding: 16px;
