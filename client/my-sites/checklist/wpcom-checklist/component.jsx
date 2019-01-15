@@ -17,6 +17,8 @@ import Checklist from 'components/checklist';
 import ChecklistBanner from './checklist-banner';
 import ChecklistBannerTask from './checklist-banner/task';
 import ChecklistNavigation from './checklist-navigation';
+import ChecklistPrompt from './checklist-prompt';
+import ChecklistPromptTask from './checklist-prompt/task';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import QueryPosts from 'components/data/query-posts';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
@@ -87,7 +89,18 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	trackTaskStart = ( task, props ) => {
-		const location = 'banner' === this.props.viewMode ? 'checklist_banner' : 'checklist_show';
+		let location;
+
+		switch ( this.props.viewMode ) {
+			case 'banner':
+				location = 'checklist_banner';
+				break;
+			case 'prompt':
+				location = 'checklist_prompt';
+				break;
+			default:
+				location = 'checklist_show';
+		}
 
 		this.props.recordTracksEvent( 'calypso_checklist_task_start', {
 			checklist_name: 'new_blog',
@@ -212,6 +225,9 @@ class WpcomChecklistComponent extends PureComponent {
 			case 'navigation':
 				ChecklistComponent = ChecklistNavigation;
 				break;
+			case 'prompt':
+				ChecklistComponent = ChecklistPrompt;
+				break;
 			case 'notification':
 				return null;
 		}
@@ -248,7 +264,18 @@ class WpcomChecklistComponent extends PureComponent {
 
 	renderTask( task ) {
 		const { siteSlug, viewMode, taskStatuses, designType, isSiteUnlaunched } = this.props;
-		const TaskComponent = 'banner' === viewMode ? ChecklistBannerTask : Task;
+
+		let TaskComponent = Task;
+
+		switch ( viewMode ) {
+			case 'banner':
+				TaskComponent = ChecklistBannerTask;
+				break;
+			case 'prompt':
+				TaskComponent = ChecklistPromptTask;
+				break;
+		}
+
 		const taskList = getTaskList( taskStatuses, designType, isSiteUnlaunched );
 		const firstIncomplete = taskList.getFirstIncompleteTask();
 

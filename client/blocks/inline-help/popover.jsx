@@ -13,18 +13,23 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
-import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
+import { VIEW_CONTACT, VIEW_RICH_RESULT, VIEW_CHECKLIST } from './constants';
 import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
-import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
+import {
+	getSearchQuery,
+	getInlineHelpCurrentlySelectedResult,
+	isInlineHelpChecklistPromptVisible,
+} from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getSelectedSiteId, getSection } from 'state/ui/selectors';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import getCurrentRoute from 'state/selectors/get-current-route';
@@ -53,6 +58,8 @@ class InlineHelpPopover extends Component {
 		optOut: PropTypes.func,
 		optIn: PropTypes.func,
 		redirect: PropTypes.func,
+		isEligibleForDotcomChecklist: PropTypes.bool.isRequired,
+		isChecklistPromptVisible: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -63,6 +70,12 @@ class InlineHelpPopover extends Component {
 		showSecondaryView: false,
 		activeSecondaryView: '',
 	};
+
+	componentDidMount() {
+		if ( this.props.isChecklistPromptVisible && this.props.isEligibleForDotcomChecklist ) {
+			this.openChecklistView();
+		}
+	}
 
 	openResultView = event => {
 		event.preventDefault();
@@ -96,6 +109,10 @@ class InlineHelpPopover extends Component {
 		this.openSecondaryView( VIEW_CONTACT );
 	};
 
+	openChecklistView = () => {
+		this.openSecondaryView( VIEW_CHECKLIST );
+	};
+
 	renderSecondaryView = () => {
 		const classes = classNames(
 			'inline-help__secondary-view',
@@ -113,6 +130,7 @@ class InlineHelpPopover extends Component {
 								closePopover={ this.props.onClose }
 							/>
 						),
+						checklist: <WpcomChecklist viewMode="prompt" />,
 					}[ this.state.activeSecondaryView ]
 				}
 			</div>
@@ -294,7 +312,9 @@ function mapStateToProps( state ) {
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 
 	return {
+		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
 		searchQuery: getSearchQuery( state ),
+		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 		selectedEditor: getSelectedEditor( state, siteId ),
