@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { noop, isNil } from 'lodash';
+import { noop, isNil, has } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -57,12 +57,11 @@ export class DateRange extends Component {
 		super( props );
 
 		// Define the date range as Moment instances
-		const firstSelectableDate = ! isNil( this.props.firstSelectableDate )
-			? this.props.moment( this.props.firstSelectableDate )
-			: undefined;
-		const lastSelectableDate = ! isNil( this.props.lastSelectableDate )
-			? this.props.moment( this.props.lastSelectableDate )
-			: undefined;
+		const firstSelectableDate =
+			has( this.props, 'firstSelectableDate' ) &&
+			this.props.moment( this.props.firstSelectableDate );
+		const lastSelectableDate =
+			has( this.props, 'lastSelectableDate' ) && this.props.moment( this.props.lastSelectableDate );
 
 		// Clamp dates to ranges (if specified)
 		let startDate;
