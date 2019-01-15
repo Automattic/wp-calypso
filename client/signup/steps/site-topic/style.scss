@@ -1,5 +1,5 @@
 .step-wrapper .site-topic__content {
-	max-width: 600px;
+	max-width: 660px;
 	margin: 0 auto;
 
 	.form-fieldset {
@@ -11,16 +11,42 @@
 		top: 11px;
 		left: 11px;
 		fill: $gray-darken-30;
+
+		// On smaller screens the input gets bigger,
+		// so this icon needs to move down a bit.
+		@include breakpoint( '<660px' ) {
+			top: 16px;
+		}
 	}
 
 	input {
 		padding: 10px 100px 10px 42px;
+
+		// Since there's a 1px padding on the container, and
+		// inputs use actual borders (unlike cards, which
+		// use box-shadow), we need to adjust.
+		margin: 0 -1px;
+		width: calc( 100% + 2px );
+
+		// On smaller screens the buttons get bigger,
+		// so this input needs to get bigger, too.
+		@include breakpoint( '<660px' ) {
+			padding-top: 15px;
+			padding-bottom: 15px;
+		}
 	}
 
 	.suggestions__wrapper {
 		// Without the extra padding from the Card, we need
 		// to adjust the position of the suggestions.
 		top: 48px;
+
+
+		// On smaller screens the input gets bigger,
+		// so the suggestions need to move down a little.
+		@include breakpoint( '<660px' ) {
+			top: 54px;
+		}
 	}
 
 	.button {
