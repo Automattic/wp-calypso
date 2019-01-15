@@ -41,6 +41,12 @@
 		margin: 0 auto;
 	}
 
+	label {
+		// Labels should be white when placed directly
+		// on the primary background color
+		color: var( --color-white );
+	}
+
 	input {
 		// Extra padding to account for the button and
 		padding: 10px 100px 10px 10px;
@@ -81,5 +87,11 @@
 	.gridicon {
 		color: $gray;
 		margin-bottom: -3px;
+
+		.is-single-fieldset & {
+			// Make the icon white when its place on the
+			// primary background color.
+			color: var( --color-white );
+		}
 	}
 }
