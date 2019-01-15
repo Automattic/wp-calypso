@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 import uuidv4 from 'uuid/v4';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -25,8 +26,12 @@ class DateRangeInputs extends Component {
 	};
 
 	static defaultProps = {
-		startLabel: 'From',
-		endLabel: 'To',
+		startLabel: translate( 'From', {
+			comment: 'DateRange text input label for the start of the date range',
+		} ),
+		endLabel: translate( 'To', {
+			comment: 'DateRange text input label for the end of the date range',
+		} ),
 		onInputChange: noop,
 		onInputBlur: noop,
 	};
