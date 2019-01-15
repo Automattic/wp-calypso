@@ -101,7 +101,7 @@ export class DateRange extends Component {
 			startDate: startDate,
 			endDate: endDate,
 			staleDatesSaved: false,
-			// this need to be independent from startDate because we must independently validate them
+			// this needs to be independent from startDate because we must independently validate them
 			// before updating the central source of truth (ie: startDate)
 			textInputStartDate: this.formatDateToLocale( startDate ),
 			textInputEndDate: this.formatDateToLocale( endDate ),
