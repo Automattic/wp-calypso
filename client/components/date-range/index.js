@@ -174,19 +174,23 @@ export class DateRange extends Component {
 		// By default check
 		// 1. Looks like a valid date
 		// 2. after 01/01/1970 (avoids bugs when really stale dates are treated as valid)
-		let validations = date.isValid() && date.isSameOrAfter( epoch );
+		if ( ! date.isValid() || ! date.isSameOrAfter( epoch ) ) {
+			return false;
+		}
 
 		// Check not before the first selectable date
 		// https://momentjs.com/docs/#/query/is-same-or-before/
-		if ( firstSelectableDate ) {
-			validations = validations && ! date.isBefore( firstSelectableDate );
+		if ( firstSelectableDate && date.isBefore( firstSelectableDate ) ) {
+			return false;
 		}
 
-		if ( lastSelectableDate ) {
-			validations = validations && ! date.isAfter( lastSelectableDate );
+		// Check not before the last selectable date
+		// https://momentjs.com/docs/#/query/is-same-or-before/
+		if ( lastSelectableDate && date.isAfter( lastSelectableDate ) ) {
+			return false;
 		}
 
-		return validations;
+		return true;
 	}
 
 	/**
