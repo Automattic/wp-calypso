@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, pick, set, isEqual } from 'lodash';
+import { pick, set, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,42 +19,43 @@ import { QUERY_FIELDS } from './constants';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function counts( state = {}, action ) {
-	switch ( action.type ) {
-		case STATS_CHART_COUNTS_RECEIVE: {
-			const ID = 'period';
-			const records = get( state, `${ action.siteId }.${ action.period }`, [] ).slice();
-			const recordIds = records.map( count => count[ ID ] );
+export const counts = keyedReducer(
+	'siteId',
+	keyedReducer( 'period', ( state = [], action ) => {
+		switch ( action.type ) {
+			case STATS_CHART_COUNTS_RECEIVE: {
+				const ID = 'period';
+				let areThereChanges = false;
 
-			let areThereChanges = false;
+				const newState = action.data.reduce(
+					( nextState, recordFromApi ) => {
+						const index = nextState.findIndex( entry => entry[ ID ] === recordFromApi[ ID ] );
+						if ( index >= 0 ) {
+							const newRecord = { ...nextState[ index ], ...recordFromApi };
+							if ( ! isEqual( newRecord, recordFromApi ) ) {
+								areThereChanges = true;
+								nextState[ index ] = newRecord;
+							}
+						} else {
+							areThereChanges = true;
+							nextState.push( recordFromApi );
+						}
+						return nextState;
+					},
+					[ ...state ]
+				);
 
-			// Merge existing records with records from API
-			action.data.forEach( recordFromApi => {
-				const index = recordIds.indexOf( recordFromApi[ ID ] );
-				if ( index >= 0 ) {
-					const newRecords = { ...records[ index ], ...recordFromApi };
-					if ( ! isEqual( newRecords, records[ index ] ) ) {
-						areThereChanges = true;
-						records[ index ] = newRecords;
-					}
-				} else {
-					areThereChanges = true;
-					records.push( recordFromApi );
+				// Avoid changing state if nothing's changed.
+				if ( ! areThereChanges ) {
+					return state;
 				}
-			} );
 
-			// Avoid changing state if nothing's changed.
-			if ( ! areThereChanges ) {
-				return state;
+				return newState;
 			}
-
-			const newState = { ...state };
-			set( newState, `${ action.siteId }.${ action.period }`, records );
-			return newState;
 		}
-	}
-	return state;
-}
+		return state;
+	} )
+);
 counts.schema = countsSchema;
 
 /**
