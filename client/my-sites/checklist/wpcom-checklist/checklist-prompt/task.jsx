@@ -36,9 +36,11 @@ class ChecklistPromptTask extends PureComponent {
 				<div className="checklist-prompt__content">
 					<h3 className="checklist-prompt__title">{ title }</h3>
 					<div className="checklist-prompt__description">{ description }</div>
-					<div className="checklist-prompt__duration">
-						{ translate( 'Estimated time:' ) } { duration }
-					</div>
+					{ duration && (
+						<div className="checklist-prompt__duration">
+							{ translate( 'Estimated time:' ) } { duration }
+						</div>
+					) }
 					<div className="checklist-prompt__actions">
 						{ onClick && (
 							<Button onClick={ onClick } className="checklist-prompt__button" primary>
