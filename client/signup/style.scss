@@ -5,6 +5,7 @@ body.is-section-signup {
 
 	// With the dark background, the border on cards looks a
 	// a little strange. Lets try a shadow instead. -shaun
+	.signup-form > .card,
 	.is-about .card,
 	.is-site-type .card,
 	.is-site-information .card {
