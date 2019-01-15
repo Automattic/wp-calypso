@@ -121,6 +121,10 @@ $plan-features-sidebar-width: 272px;
 	background-color: $white;
 	position: relative;
 
+	body.is-section-signup & {
+		border: none;
+	}
+
 	&.is-highlighted {
 		border: 1px solid var( --color-primary );
 		background-color: rgba( $blue-wordpress, 0.1 );
@@ -157,15 +161,27 @@ $plan-features-sidebar-width: 272px;
 			margin: 0 12px;
 			width: calc( 100% - 24px );
 		}
+
+		body.is-section-signup & {
+			border-bottom: none;
+		}
 	}
 }
 
 .plan-features__table-item.has-border-bottom {
 	border-bottom: solid 1px lighten( $gray, 27% );
+
+	body.is-section-signup & {
+		border-bottom: none;
+	}
 }
 
 .plan-features__table-item.has-border-top {
 	border-top: solid 1px lighten( $gray, 27% );
+
+	body.is-section-signup & {
+		border-bottom: none;
+	}
 }
 
 .plan-features__table-item.is-placeholder {
