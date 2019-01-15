@@ -290,7 +290,6 @@ const sections = [
 		module: 'my-sites/feature-upsell',
 		group: 'sites',
 		secondary: true,
-		css: 'feature-upsell',
 	},
 ];
 
