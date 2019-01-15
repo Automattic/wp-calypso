@@ -142,7 +142,7 @@
     "lodash": "4.17.11",
     "lru": "3.1.0",
     "lunr": "2.3.5",
-    "mapbox-gl": "0.51.0",
+    "mapbox-gl": "0.52.0",
     "markdown-it": "8.4.2",
     "marked": "0.5.2",
     "mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl",
