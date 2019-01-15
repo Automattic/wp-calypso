@@ -237,12 +237,12 @@ class GSuitePurchaseCta extends React.Component {
 
 const learnMoreClick = domainName =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_domain_management_email_learn_more_click', {
+		recordTracksEvent( 'calypso_domain_management_gsuite_learn_more_click', {
 			domain_name: domainName,
 		} ),
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Learn more" Google Apps link in Email',
+			'Clicked "Learn more" G Suite link in Email',
 			'Domain Name',
 			domainName
 		)

@@ -148,12 +148,12 @@ const addGoogleAppsUserClick = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Add Google Apps User" Button in Google Apps',
+			'Clicked "Add G Suite User" Button in G Suite',
 			'Domain Name',
 			domainName
 		),
 
-		recordTracksEvent( 'calypso_domain_management_google_apps_add_google_apps_user_click', {
+		recordTracksEvent( 'calypso_domain_management_gsuite_add_gsuite_user_click', {
 			domain_name: domainName,
 		} )
 	);
@@ -162,12 +162,12 @@ const manageClick = ( domainName, email ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Manage" link in Google Apps',
+			'Clicked "Manage" link in G Suite',
 			'User Email',
 			email
 		),
 
-		recordTracksEvent( 'calypso_domain_management_google_apps_manage_click', {
+		recordTracksEvent( 'calypso_domain_management_gsuite_manage_click', {
 			domain_name: domainName,
 			email,
 		} )
