@@ -244,8 +244,6 @@
 	align-self: flex-start;
 	flex: 0 0 auto;
 	border-radius: 8px;
-	background: var( --color-accent );
-	color: $white;
 	padding: 4px 8px;
 	margin: 8px 12px 0 0;
 	cursor: pointer;
@@ -253,10 +251,6 @@
 	> svg {
 		fill: currentColor;
 		display: block;
-	}
-
-	&:hover {
-		background: lighten( $blue-medium, 10% );
 	}
 
 	&:disabled {
