@@ -34,6 +34,8 @@
 }
 
 .date-range__popover-inner {
+	display: flex; // required for content ordering
+	flex-direction: column;
 	padding: 15px;
 	max-width: 90%;
 
@@ -43,6 +45,8 @@
 }
 
 .date-range__popover-header {
+	order: 1;
+
 	.button {
 		margin: 0 0.5em;
 	}
@@ -50,6 +54,7 @@
 
 .date-range__popover {
 	.DayPicker {
+		order: 3;
 		margin-top: 12px;
 		border-top: 1px solid var(--color-neutral-50);
 	}
@@ -94,9 +99,17 @@
 }
 
 .date-range__date-inputs {
+	order: 2;
+}
+
+.date-range__date-inputs-inner {
 	display: flex;
 	text-align: left;
 	padding-top: 10px;
+}
+
+.date-range__date-inputs-legend {
+	@include hide-content-accessibly();
 }
 
 .date-range__date-input {
@@ -114,6 +127,8 @@
 	}
 }
 
+
+
 .date-range__date-input--from {
 	margin-right: 1em;
 }
@@ -121,3 +136,4 @@
 .date-range__date-input--to {
 	margin-left: 1em;
 }
+

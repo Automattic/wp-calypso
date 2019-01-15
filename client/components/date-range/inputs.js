@@ -65,28 +65,31 @@ class DateRangeInputs extends Component {
 
 	render() {
 		return (
-			<div className="date-range__date-inputs">
-				<div className="date-range__date-input date-range__date-input--from">
-					<FormLabel htmlFor={ this.startDateID }>{ this.props.startLabel }</FormLabel>
-					<FormTextInput
-						id={ this.startDateID }
-						name={ this.startDateID }
-						value={ this.props.startDateValue }
-						onChange={ this.handleInputChange( 'Start' ) }
-						onBlur={ this.handleInputBlur( 'Start' ) }
-					/>
+			<fieldset class="date-range__date-inputs">
+				<legend class="date-range__date-inputs-legend">Start and End Dates</legend>
+				<div className="date-range__date-inputs-inner">
+					<div className="date-range__date-input date-range__date-input--from">
+						<FormLabel htmlFor={ this.startDateID }>{ this.props.startLabel }</FormLabel>
+						<FormTextInput
+							id={ this.startDateID }
+							name={ this.startDateID }
+							value={ this.props.startDateValue }
+							onChange={ this.handleInputChange( 'Start' ) }
+							onBlur={ this.handleInputBlur( 'Start' ) }
+						/>
+					</div>
+					<div className="date-range__date-input date-range__date-input--to">
+						<FormLabel htmlFor={ this.endDateID }>{ this.props.endLabel }</FormLabel>
+						<FormTextInput
+							id={ this.endDateID }
+							name={ this.endDateID }
+							value={ this.props.endDateValue }
+							onChange={ this.handleInputChange( 'End' ) }
+							onBlur={ this.handleInputBlur( 'End' ) }
+						/>
+					</div>
 				</div>
-				<div className="date-range__date-input date-range__date-input--to">
-					<FormLabel htmlFor={ this.endDateID }>{ this.props.endLabel }</FormLabel>
-					<FormTextInput
-						id={ this.endDateID }
-						name={ this.endDateID }
-						value={ this.props.endDateValue }
-						onChange={ this.handleInputChange( 'End' ) }
-						onBlur={ this.handleInputBlur( 'End' ) }
-					/>
-				</div>
-			</div>
+			</fieldset>
 		);
 	}
 }

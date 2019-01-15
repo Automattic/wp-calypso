@@ -447,8 +447,8 @@ export class DateRange extends Component {
 				onClose={ this.closePopover }
 			>
 				<div className="date-range__popover-inner">
-					{ this.props.renderHeader( headerProps ) }
 					{ this.props.renderInputs( inputsProps ) }
+					{ this.props.renderHeader( headerProps ) }
 					{ this.renderDatePicker() }
 				</div>
 			</Popover>
