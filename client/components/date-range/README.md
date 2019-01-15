@@ -1,7 +1,7 @@
 DateRange
 ===
 
-A DateRange component for selecting a range of dates using a picker and form inputs. Comes with built-in trigger button and popover. 
+A DateRange component for displaying and selecting a range of dates using a picker and form inputs. Comes with built-in trigger button and popover. 
 
 ## Usage
 
