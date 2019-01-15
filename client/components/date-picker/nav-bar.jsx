@@ -33,8 +33,9 @@ export const DatePickerNavBar = ( {
 				<button
 					className="date-picker__previous-month button"
 					type="button"
-					aria-label={ translate( 'Previous month ', {
+					aria-label={ translate( 'Previous month (%s)', {
 						comment: 'Aria label for date picker controls',
+						args: localeUtils.formatMonthTitle( previousMonth ),
 					} ) }
 					onClick={ handleMonthClick( onPreviousClick ) }
 				>
@@ -46,8 +47,9 @@ export const DatePickerNavBar = ( {
 				<button
 					className="date-picker__next-month button"
 					type="button"
-					aria-label={ translate( 'Next month ', {
+					aria-label={ translate( 'Next month (%s)', {
 						comment: 'Aria label for date picker controls',
+						args: localeUtils.formatMonthTitle( nextMonth ),
 					} ) }
 					onClick={ handleMonthClick( onNextClick ) }
 				>
