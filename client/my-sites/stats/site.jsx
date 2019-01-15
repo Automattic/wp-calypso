@@ -8,7 +8,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize, translate } from 'i18n-calypso';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
-import { find, memoize } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,6 +40,7 @@ import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
 import UpworkStatsNudge from 'blocks/upwork-stats-nudge';
 import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
+import memoizeLast from 'lib/memoize-last';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -48,7 +49,7 @@ function updateQueryString( query = {} ) {
 	};
 }
 
-const memoizedQuery = memoize( ( period, endOf ) => ( {
+const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	period,
 	date: endOf.format( 'YYYY-MM-DD' ),
 } ) );

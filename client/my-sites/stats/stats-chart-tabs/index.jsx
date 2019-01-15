@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { flowRight, memoize } from 'lodash';
+import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -26,6 +26,7 @@ import { getSiteOption } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { buildChartData, getQueryDate } from './utility';
 import StatTabs from '../stats-tabs';
+import memoizeLast from 'lib/memoize-last';
 
 const ChartTabShape = PropTypes.shape( {
 	attr: PropTypes.string,
@@ -135,7 +136,7 @@ const NO_SITE_STATE = {
 	chartData: [],
 };
 
-const memoizedQuery = memoize( ( chartTab, date, period, quantity, siteId ) => ( {
+const memoizedQuery = memoizeLast( ( chartTab, date, period, quantity, siteId ) => ( {
 	chartTab,
 	date,
 	period,
