@@ -145,7 +145,7 @@
 		min-height: 300px;
 
 		.is-mobile & {
-			min-height: 200px;
+			min-height: 250px;
 		}
 
 		&.has-background-dim:before {
@@ -172,8 +172,8 @@
 			z-index: 1; // Ugh, z-index...
 
 			.is-mobile & {
-				font-size: 20px;
-				padding: 20px 10px;
+				font-size: 30px;
+				padding: 20px;
 			}
 		}
 	}
@@ -200,10 +200,10 @@
 			left: 12px;
 
 			.is-mobile & {
-				top: 8px;
-				right: 8px;
-				bottom: 8px;
-				left: 8px;
+				top: 6px;
+				right: 6px;
+				bottom: 6px;
+				left: 6px;
 			}
 		}
 
@@ -263,11 +263,6 @@
 		margin: 32px auto;
 		padding: 0 15px;
 		max-width: 620px;
-
-		.is-mobile & {
-			font-size: 20px;
-			margin: 10px auto;
-		}
 	}
 	
 	p {
@@ -277,58 +272,7 @@
 		max-width: 620px;
 		margin-left: auto;
 		margin-right: auto;
-		padding-right: 15px;
-		padding-left: 15px;
-
-		&.has-small-font-size {
-			font-size: 20px
-		}
-	
-		.is-mobile & {
-			font-size: 16px;
-			line-height: 1.4;
-		}
-	}
-	
-	.contact-form {
-		label {
-			font-weight: bold;
-			display: block;
-
-			span {
-				font-weight: normal;
-				color: #aaa;
-				margin-left: 4px;
-			}
-		}
-		input {
-			color: #222;
-			margin-bottom: 4px;
-			border: 1px solid #ccc;
-			border-radius: 3px;
-		}
-		
-		input[type='text'],
-		input[type='email'] {
-			width: 300px;
-			max-width: 100%;
-		}
-		
-		input[type=submit] {
-			-webkit-appearance: none;
-			border: none;
-			border-radius: 3px;
-			font-size: 14px;
-			line-height: 1.29;
-			margin: 0;
-			padding: 9px 18px;
-		}
-
-		textarea {
-			height: 200px;
-			border: 1px solid #ccc;
-			border-radius: 3px;
-			margin-bottom: 4px;
-		}
+		padding-right: 20px;
+		padding-left: 20px;
 	}
 }
