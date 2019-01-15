@@ -20,6 +20,8 @@
 		}
 
 		.site-mockup__viewport.is-mobile {
+			min-width: 280px;
+
 			.site-mockup__body {
 				height: 440px;
 			}
@@ -35,6 +37,7 @@
 			position: absolute;
 			top: 40px;
 			right: 8px;
+			z-index: 2;
 			box-shadow: 0 0 0 1px $gray, 0 4px 12px 0 rgba( 0, 0, 0, 0.3 );
 
 			.site-mockup__body {
@@ -55,7 +58,8 @@
 		}
 
 		.site-mockup__viewport.is-mobile {
-			width: 100%;
+			//width: 100%;
+			max-width: 480px;
 			border-radius: 12px 12px 0 0;
 		}
 	}
@@ -86,30 +90,5 @@
 		border-radius: 12px;
 		width: 280px;
 		transition-delay: 200ms;
-	}
-
-	// Default, radcliffe-2 style variations
-	// The following styles are placeholders only.
-	&.is-business {
-		&.is-default {
-		}
-
-		&.is-modern {
-			.site-mockup__body {
-				background-color: #eee;
-			}
-		}
-
-		&.is-vintage {
-			.site-mockup__body {
-				background-color: #eae8dc;
-			}
-		}
-
-		&.is-colorful {
-			.site-mockup__body {
-				background-color: #c9fffd;
-			}
-		}
 	}
 }
