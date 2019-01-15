@@ -66,7 +66,7 @@ class Chart extends React.Component {
 		}
 
 		if ( prevProps.data !== this.props.data ) {
-			this.updateData( this.props );
+			this.updateData( this.props.data );
 		}
 	}
 
@@ -74,7 +74,7 @@ class Chart extends React.Component {
 		window.removeEventListener( 'resize', this.resize );
 	}
 
-	resize = ( props = this.props ) => {
+	resize = () => {
 		if ( ! this.chart ) {
 			return;
 		}
@@ -85,11 +85,7 @@ class Chart extends React.Component {
 		const width = isTouch && clientWidth <= 0 ? 350 : clientWidth; // mobile safari bug with zero width
 		const maxBars = Math.floor( width / minWidth );
 
-		const updatedData = this.calculateUpdatedData(
-			// this may get called either directly or as a resize event callback
-			props instanceof Event ? this.props : props,
-			maxBars
-		);
+		const updatedData = this.calculateUpdatedData( this.props.data, maxBars );
 
 		this.setState( { maxBars, width, hasResized: true, ...updatedData } );
 	};
@@ -119,7 +115,7 @@ class Chart extends React.Component {
 
 	storeChart = ref => ( this.chart = ref );
 
-	calculateUpdatedData = ( { data }, { maxBars } = this.state ) => {
+	calculateUpdatedData = ( data, maxBars ) => {
 		const nextData = data.length <= maxBars ? data : data.slice( 0 - maxBars );
 		const nextVals = data.map( ( { value } ) => value );
 
@@ -130,8 +126,8 @@ class Chart extends React.Component {
 		};
 	};
 
-	updateData = props => {
-		this.setState( this.calculateUpdatedData( props ) );
+	updateData = data => {
+		this.setState( state => this.calculateUpdatedData( data, state.maxBars ) );
 	};
 
 	setTooltip = ( tooltipContext, tooltipPosition, tooltipData ) => {
