@@ -34,11 +34,11 @@ class GoogleAppsProductDetails extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div className="google-apps-dialog__product-details">
-				<div className="google-apps-dialog__product-intro">
-					<div className="google-apps-dialog__product-name">
+			<div className="gsuite-dialog__product-details">
+				<div className="gsuite-dialog__product-intro">
+					<div className="gsuite-dialog__product-name">
 						{ /* Intentionally not translable as it is a brand name and Google keeps it in English */ }
-						<span className="google-apps-dialog__product-logo">G Suite</span>
+						<span className="gsuite-dialog__product-logo">G Suite</span>
 					</div>
 
 					<p>
@@ -48,33 +48,33 @@ class GoogleAppsProductDetails extends Component {
 						) }
 					</p>
 
-					<div className="google-apps-dialog__price-per-user">{ this.renderPrice() }</div>
+					<div className="gsuite-dialog__price-per-user">{ this.renderPrice() }</div>
 
-					<div className="google-apps-dialog__billing-period">{ this.renderPeriod() }</div>
+					<div className="gsuite-dialog__billing-period">{ this.renderPeriod() }</div>
 				</div>
 
-				<ul className="google-apps-dialog__product-features">
-					<li className="google-apps-dialog__product-feature">
+				<ul className="gsuite-dialog__product-features">
+					<li className="gsuite-dialog__product-feature">
 						<img src="/calypso/images/g-suite/logo_gmail_48dp.svg" alt="" />
 						<p>
 							{ translate( 'Professional email {{nowrap}}(@%(domain)s){{/nowrap}}', {
 								args: { domain: this.props.domain },
-								components: { nowrap: <span className="google-apps-dialog__domain" /> },
+								components: { nowrap: <span className="gsuite-dialog__domain" /> },
 							} ) }
 						</p>
 					</li>
 
-					<li className="google-apps-dialog__product-feature">
+					<li className="gsuite-dialog__product-feature">
 						<img src="/calypso/images/g-suite/logo_drive_48dp.svg" alt="" />
 						<p>{ translate( '30GB Online File Storage' ) }</p>
 					</li>
 
-					<li className="google-apps-dialog__product-feature">
+					<li className="gsuite-dialog__product-feature">
 						<img src="/calypso/images/g-suite/logo_docs_48dp.svg" alt="" />
 						<p>{ translate( 'Docs, spreadsheets, and more' ) }</p>
 					</li>
 
-					<li className="google-apps-dialog__product-feature">
+					<li className="gsuite-dialog__product-feature">
 						<img src="/calypso/images/g-suite/logo_hangouts_48px.png" alt="" />
 						<p>{ translate( 'Video and voice calls' ) }</p>
 					</li>

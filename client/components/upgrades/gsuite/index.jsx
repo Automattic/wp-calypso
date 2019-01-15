@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { cartItems } from 'lib/cart-values';
-import GoogleAppsDialog from './google-apps-dialog';
+import GoogleAppsDialog from './gsuite-dialog';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSite } from 'state/ui/selectors';
 
