@@ -11,6 +11,7 @@ exports[`DateRange should render 1`] = `
       }
     }
     endDateText="06/01/2018"
+    isCompact={false}
     onTriggerClick={[Function]}
     startDateText="05/01/2018"
   />

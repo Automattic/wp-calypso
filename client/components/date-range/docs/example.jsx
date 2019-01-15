@@ -50,9 +50,13 @@ class DateRangeExample extends Component {
 		return (
 			<Fragment>
 				<h3>Defaults</h3>
-
 				<Card>
 					<DateRange />
+				</Card>
+
+				<h3>Compact</h3>
+				<Card>
+					<DateRange isCompact={ true } />
 				</Card>
 
 				<h3>Select only past dates</h3>

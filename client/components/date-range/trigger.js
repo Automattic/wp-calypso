@@ -28,6 +28,7 @@ export class DateRangeTrigger extends Component {
 
 	static defaultProps = {
 		onTriggerClick: noop,
+		isCompact: false,
 	};
 
 	dateRangeText() {
@@ -54,7 +55,7 @@ export class DateRangeTrigger extends Component {
 				className="date-range__trigger-btn"
 				ref={ props.buttonRef }
 				onClick={ props.onTriggerClick }
-				compact
+				compact={ props.isCompact }
 			>
 				<Gridicon className="date-range__trigger-btn-icon" icon="calendar" />
 				<span className="date-range__trigger-btn-text">{ this.dateRangeText() }</span>

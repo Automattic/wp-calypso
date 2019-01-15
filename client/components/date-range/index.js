@@ -40,6 +40,7 @@ export class DateRange extends Component {
 			PropTypes.instanceOf( moment ),
 		] ),
 		triggerText: PropTypes.func,
+		isCompact: PropTypes.bool,
 		renderTrigger: PropTypes.func,
 		renderHeader: PropTypes.func,
 		renderInputs: PropTypes.func,
@@ -48,6 +49,7 @@ export class DateRange extends Component {
 	static defaultProps = {
 		onDateSelect: noop,
 		onDateCommit: noop,
+		isCompact: false,
 		renderTrigger: props => <DateRangeTrigger { ...props } />,
 		renderHeader: props => <DateRangeHeader { ...props } />,
 		renderInputs: props => <DateRangeInputs { ...props } />,
@@ -494,6 +496,7 @@ export class DateRange extends Component {
 			buttonRef: this.triggerButtonRef,
 			onTriggerClick: this.togglePopover,
 			triggerText: this.props.triggerText,
+			isCompact: this.props.isCompact,
 		};
 
 		return (

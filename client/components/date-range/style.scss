@@ -28,6 +28,10 @@
 	}
 }
 
+.date-range__trigger-btn-icon {
+	margin-right: 0.5em; // more consistent spacing between "compact" & "non-compact" states
+}
+
 .date-range__trigger-btn-text {
 	min-width: 13.5em; // required to avoid content "jumping" as date text changes see https://github.com/Automattic/wp-calypso/pull/29938
     display: inline-block;
