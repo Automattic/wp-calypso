@@ -11,7 +11,6 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gridicon from 'gridicons';
 
 class DateRangeHeader extends Component {
 	static propTypes = {
@@ -40,7 +39,6 @@ class DateRangeHeader extends Component {
 					primary
 					compact
 				>
-					<Gridicon icon="checkmark" />
 					{ this.props.applyButtonText }
 				</Button>
 			</div>
