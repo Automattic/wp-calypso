@@ -40,6 +40,7 @@ describe( '<SiteStyleStep />', () => {
 		setSiteStyle: jest.fn(),
 		submitSiteStyle: jest.fn(),
 		translate: x => x,
+		goToNextStep: () => {},
 	};
 
 	afterEach( () => {
@@ -89,7 +90,7 @@ describe( '<SiteStyleStep />', () => {
 		// check that the default is the first item rendered
 		expect( firstInputField.props.value ).toEqual( defaultProps.styleOptions[ 0 ].id );
 		// check that it's been selected
-		expect( firstInputField.hasClass( 'is-checked' ) ).toBe( true );
+		expect( firstInputField.props.checked ).toBe( true );
 
 		wrapper.instance().handleSubmit( {
 			preventDefault: () => {},
@@ -97,8 +98,7 @@ describe( '<SiteStyleStep />', () => {
 		// check that we pass the default site option onSubmit
 		expect( defaultProps.submitSiteStyle ).toHaveBeenCalledWith(
 			defaultProps.styleOptions[ 0 ].id,
-			defaultProps.styleOptions[ 0 ].theme,
-			defaultProps.styleOptions[ 0 ].label
+			defaultProps.styleOptions[ 0 ].theme
 		);
 	} );
 } );
