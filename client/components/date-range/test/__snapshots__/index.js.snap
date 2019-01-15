@@ -24,12 +24,6 @@ exports[`DateRange should render 1`] = `
     <div
       className="date-range__popover-inner"
     >
-      <DateRangeHeader
-        applyButtonText="Apply"
-        cancelButtonText="Cancel"
-        onApplyClick={[Function]}
-        onCancelClick={[Function]}
-      />
       <DateRangeInputs
         endDateValue="06/01/2018"
         endLabel="To"
@@ -37,6 +31,12 @@ exports[`DateRange should render 1`] = `
         onInputChange={[Function]}
         startDateValue="05/01/2018"
         startLabel="From"
+      />
+      <DateRangeHeader
+        applyButtonText="Apply"
+        cancelButtonText="Cancel"
+        onApplyClick={[Function]}
+        onCancelClick={[Function]}
       />
       <Localized(DatePicker)
         className="date-range__popover-date-picker"
