@@ -25,17 +25,13 @@ exports[`DateRange should render 1`] = `
     <div
       className="date-range__popover-inner"
     >
-      <DateRangeInputs
+      <Localized(DateRangeInputs)
         endDateValue="06/01/2018"
-        endLabel="To"
         onInputBlur={[Function]}
         onInputChange={[Function]}
         startDateValue="05/01/2018"
-        startLabel="From"
       />
-      <DateRangeHeader
-        applyButtonText="Apply"
-        cancelButtonText="Cancel"
+      <Localized(DateRangeHeader)
         onApplyClick={[Function]}
         onCancelClick={[Function]}
       />
