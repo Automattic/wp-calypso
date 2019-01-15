@@ -358,7 +358,9 @@ describe( 'DateRange', () => {
 
 			wrapper.instance().handleInputBlur( '04/20/2018', 'Start' );
 
-			expect( wrapper.state().startDate.format( 'L' ) ).toEqual( momentStartDate.format( 'L' ) );
+			expect( dateToLocalString( wrapper.state().startDate ) ).toEqual(
+				dateToLocalString( momentStartDate )
+			);
 		} );
 
 		test( 'should update end date selection on end date input blur event', () => {
