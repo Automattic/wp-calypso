@@ -280,7 +280,7 @@ export class DateRange extends Component {
 				// For first date selection only: "cache" previous dates
 				// just in case user doesn't "Apply" and we need to revert
 				// to the original dates
-				if ( ! this.state.staleDatesSaved ) {
+				if ( ! previousState.staleDatesSaved ) {
 					newState = {
 						...newState,
 						staleStartDate: previousState.startDate,
