@@ -101,7 +101,7 @@
 // Mockup Site Title
 .site-mockup__title {
 	color: #1e1e1e;
-	font-size: 25px;
+	font-size: 24px;
 	font-weight: 700;
 	line-height: 1;
 
@@ -116,17 +116,27 @@
 	color: #1e1e1e;
 	font-size: 15px;
 	font-weight: 400;
-	line-height: 1;
 
 	.is-desktop & {
+		line-height: 25px;
 		text-align: right;
 		flex-grow: 1;
 		padding-left: 20px;
+
+		.site-mockup__phone {
+			margin-left: 20px;
+		}
 	}
 
 	.is-mobile & {
 		font-size: 14px;
+		line-height: 1.4;
+
+		.site-mockup__phone {
+			display: block;
+		}
 	}
+
 }
 
 // Gutenberg Content
