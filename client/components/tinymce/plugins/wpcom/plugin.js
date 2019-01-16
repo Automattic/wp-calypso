@@ -277,6 +277,11 @@ function wpcomPlugin( editor ) {
 
 		bodyClass.push( 'wp-editor' );
 
+		bodyClass.push( 'color-scheme' );
+		if ( editor.getParam( 'color_scheme' ) ) {
+			bodyClass.push( 'is-' + editor.getParam( 'color_scheme' ) );
+		}
+
 		each( bodyClass, function( cls ) {
 			if ( cls ) {
 				dom.addClass( doc.body, cls );
