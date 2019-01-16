@@ -1,12 +1,12 @@
-# Google Apps
+# G Suite
 
-G Suite is a React component used to add G SUite email addresses to domains
+G Suite is a React component used to add G Suite email addresses to domains
 
 ## Usage
 
 ```jsx
 import React from 'react';
-import GoogleApps from 'components/gsuite';
+import GoogleApps from 'components/upgrades/gsuite';
 import productsListFactory from 'lib/products-list';
 
 const productsList = productsListFactory();
