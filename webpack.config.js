@@ -161,6 +161,28 @@ function getWebpackConfig( {
 					exclude: /node_modules\//,
 				} ),
 				{
+					test: /\.jsx?$/,
+					include: /node_modules\//,
+					exclude: /@babel(?:\/|\\{1,2})runtime/,
+					use: [
+						{
+							loader: 'thread-loader',
+							options: {
+								workers: workerCount,
+							},
+						},
+						{
+							loader: 'babel-loader',
+							options: {
+								configFile: path.resolve( __dirname, 'babel.config.js' ),
+								babelrc: false,
+								cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+								cacheIdentifier,
+							},
+						},
+					],
+				},
+				{
 					test: /node_modules[/\\](redux-form|react-redux)[/\\]es/,
 					loader: 'babel-loader',
 					options: {
