@@ -173,6 +173,7 @@ export class SiteInformation extends Component {
 				fallbackHeaderText={ headerText }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
+				showSiteMockups={ this.props.showSiteMockups }
 			/>
 		);
 	}

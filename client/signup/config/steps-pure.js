@@ -443,6 +443,76 @@ export function generateSteps( {
 			stepName: 'site-style',
 			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
 		},
+
+		// Steps with preview
+		// These can be removed once we make the preview the default
+		'site-topic-with-preview': {
+			stepName: 'site-topic-with-preview',
+			providesDependencies: [ 'siteTopic' ],
+			props: {
+				showSiteMockups: true,
+			},
+		},
+
+		'site-information-with-preview': {
+			stepName: 'site-information-with-preview',
+			providesDependencies: [ 'title', 'address', 'phone' ],
+			props: {
+				headerText: i18n.translate( 'Help customers find you' ),
+				informationFields: [ 'title', 'address', 'phone' ],
+				showSiteMockups: true,
+			},
+		},
+
+		'site-information-title-with-preview': {
+			stepName: 'site-information-title-with-preview',
+			providesDependencies: [ 'title' ],
+			props: {
+				headerText: i18n.translate( "Tell us your site's name" ),
+				informationFields: [ 'title' ],
+				showSiteMockups: true,
+			},
+		},
+
+		'site-information-address-with-preview': {
+			stepName: 'site-information-address-with-preview',
+			providesDependencies: [ 'address' ],
+			props: {
+				headerText: i18n.translate( 'Help customers find you' ),
+				informationFields: [ 'address' ],
+				showSiteMockups: true,
+			},
+		},
+
+		'site-information-phone-with-preview': {
+			stepName: 'site-information-phone-with-preview',
+			providesDependencies: [ 'phone' ],
+			props: {
+				headerText: i18n.translate( 'Let customers get in touch' ),
+				informationFields: [ 'phone' ],
+				showSiteMockups: true,
+			},
+		},
+
+		'site-style-with-preview': {
+			stepName: 'site-style-with-preview',
+			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
+			props: {
+				showSiteMockups: true,
+			},
+		},
+
+		'domains-with-preview': {
+			stepName: 'domains-with-preview',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			props: {
+				showSiteMockups: true,
+				isDomainOnly: false,
+			},
+			dependencies: [ 'themeSlugWithRepo' ],
+			delayApiRequestUntilComplete: true,
+		},
 	};
 }
 
