@@ -24,6 +24,7 @@ import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
 import Button from 'components/button';
+import ScreenReaderText from 'components/screen-reader-text';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import versionCompare from 'lib/version-compare';
 import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'lib/media/utils';
@@ -232,7 +233,7 @@ export class EditorMediaModalDetailItem extends Component {
 		return (
 			<button onClick={ onShowPreviousItem } className="editor-media-modal-detail__previous">
 				<Gridicon icon="chevron-left" size={ 36 } />
-				<span className="screen-reader-text">{ translate( 'Previous' ) }</span>
+				<ScreenReaderText>{ translate( 'Previous' ) }</ScreenReaderText>
 			</button>
 		);
 	}
@@ -247,7 +248,7 @@ export class EditorMediaModalDetailItem extends Component {
 		return (
 			<button onClick={ onShowNextItem } className="editor-media-modal-detail__next">
 				<Gridicon icon="chevron-right" size={ 36 } />
-				<span className="screen-reader-text">{ translate( 'Next' ) }</span>
+				<ScreenReaderText>{ translate( 'Next' ) }</ScreenReaderText>
 			</button>
 		);
 	}
