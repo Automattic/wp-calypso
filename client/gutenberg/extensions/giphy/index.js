@@ -5,7 +5,6 @@
  */
 import { settings as giphySettings } from './settings.js';
 import edit from './edit';
-import save from './save';
 import './editor.scss';
 import './style.scss';
 
@@ -24,5 +23,7 @@ export const settings = {
 		return { 'data-align': align };
 	},
 	edit,
-	save,
+	save: () => {
+		return null;
+	},
 };
