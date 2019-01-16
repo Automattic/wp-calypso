@@ -35,17 +35,26 @@ class GiphyEdit extends Component {
 		this.maintainFocus();
 	};
 	parseSearch = searchText => {
+		let giphyID = null;
 		// If search is hardcoded Giphy URL following this pattern: https://giphy.com/embed/4ZFekt94LMhNK
 		if ( searchText.indexOf( '//giphy.com/gifs' ) !== -1 ) {
-			const giphyId = this.splitAndLast( this.splitAndLast( searchText, '/' ), '-' );
-			return this.fetch( this.urlForId( giphyId ) );
+			giphyID = this.splitAndLast( this.splitAndLast( searchText, '/' ), '-' );
 		}
 		// If search is hardcoded Giphy URL following this patterh: http://i.giphy.com/4ZFekt94LMhNK.gif
 		if ( searchText.indexOf( '//i.giphy.com' ) !== -1 ) {
-			const giphyId = this.splitAndLast( searchText, '/' ).replace( '.gif', '' );
-			return this.fetch( this.urlForId( giphyId ) );
+			giphyID = this.splitAndLast( searchText, '/' ).replace( '.gif', '' );
 		}
-		// Otherwise, treat it as a search
+		// https://media.giphy.com/media/gt0hYzKlMpfOg/giphy.gif
+		const match = searchText.match(
+			/http[s]?:\/\/media.giphy.com\/media\/([A-Za-z0-9\-\.]+)\/giphy.gif/
+		);
+		if ( match ) {
+			giphyID = match[ 1 ];
+		}
+		if ( giphyID ) {
+			return this.fetch( this.urlForId( giphyID ) );
+		}
+
 		return this.fetch( this.urlForSearch( searchText ) );
 	};
 	urlForSearch = searchText => {
