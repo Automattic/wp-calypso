@@ -27,6 +27,7 @@ class SuggestionSearch extends Component {
 		sortResults: PropTypes.func,
 		suggestions: PropTypes.array,
 		value: PropTypes.string,
+		autoFocus: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -36,6 +37,7 @@ class SuggestionSearch extends Component {
 		sortResults: null,
 		suggestions: [],
 		value: '',
+		autoFocus: false,
 	};
 
 	constructor( props ) {
@@ -123,7 +125,7 @@ class SuggestionSearch extends Component {
 	}
 
 	render() {
-		const { id, placeholder } = this.props;
+		const { id, placeholder, autoFocus } = this.props;
 
 		return (
 			<div className="suggestion-search">
@@ -136,6 +138,7 @@ class SuggestionSearch extends Component {
 					onBlur={ this.hideSuggestions }
 					onKeyDown={ this.handleSuggestionKeyDown }
 					autoComplete="off"
+					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 				/>
 				<Suggestions
 					ref={ this.setSuggestionsRef }

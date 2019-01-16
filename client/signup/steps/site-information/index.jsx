@@ -149,6 +149,7 @@ export class SiteInformation extends Component {
 											placeholder={ fieldTexts.fieldPlaceholder }
 											onChange={ this.handleInputChange }
 											value={ this.state[ fieldName ] }
+											autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 										/>
 										{ ! hasMultipleFieldSets && this.renderSubmitButton() }
 									</FormFieldset>
