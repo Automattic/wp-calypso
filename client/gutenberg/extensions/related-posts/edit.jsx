@@ -25,42 +25,39 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 export const MAX_POSTS_TO_SHOW = 3;
 
-class PlaceholderPostEdit extends Component {
-	render() {
-		const { displayDate, displayContext, displayThumbnails } = this.props;
-		const previewClassName = 'related-posts__preview';
+function PlaceholderPostEdit( props ) {
+	const previewClassName = 'related-posts__preview';
 
-		return (
-			<div className={ `${ previewClassName }-post` }>
-				{ displayThumbnails && (
-					<Button className={ `${ previewClassName }-post-image-placeholder` } isLink>
-						<span
-							className={ `${ previewClassName }-post-image-placeholder-icon` }
-							aria-label={ __( 'Placeholder image' ) }
-						>
-							<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-								<Path fill="none" d="M0 0h24v24H0V0z" />
-								<Path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z" />
-							</SVG>
-						</span>
-					</Button>
-				) }
-				<h4>
-					<Button className={ `${ previewClassName }-post-link` } isLink>
-						{ __( 'Previews are currently unavailable in the editor' ) }
-					</Button>
-				</h4>
-				{ displayDate && (
-					<span className={ `${ previewClassName }-post-date has-small-font-size` }>
-						{ __( 'August 3, 2018' ) }
+	return (
+		<div className={ `${ previewClassName }-post` }>
+			{ props.displayThumbnails && (
+				<Button className={ `${ previewClassName }-post-image-placeholder` } isLink>
+					<span
+						className={ `${ previewClassName }-post-image-placeholder-icon` }
+						aria-label={ __( 'Placeholder image' ) }
+					>
+						<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+							<Path fill="none" d="M0 0h24v24H0V0z" />
+							<Path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z" />
+						</SVG>
 					</span>
-				) }
-				{ displayContext && (
-					<p className={ `${ previewClassName }-post-context` }>{ __( 'In "Uncategorized"' ) }</p>
-				) }
-			</div>
-		);
-	}
+				</Button>
+			) }
+			<h4>
+				<Button className={ `${ previewClassName }-post-link` } isLink>
+					{ __( 'Previews are currently unavailable in the editor' ) }
+				</Button>
+			</h4>
+			{ props.displayDate && (
+				<span className={ `${ previewClassName }-post-date has-small-font-size` }>
+					{ __( 'August 3, 2018' ) }
+				</span>
+			) }
+			{ props.displayContext && (
+				<p className={ `${ previewClassName }-post-context` }>{ __( 'In "Uncategorized"' ) }</p>
+			) }
+		</div>
+	);
 }
 
 class RelatedPostsEdit extends Component {
