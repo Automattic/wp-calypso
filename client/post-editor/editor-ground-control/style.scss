@@ -220,7 +220,7 @@
 	right: 16px;
 	top: 40px;
 	border-radius: 2px;
-	box-shadow: 0 1px 4px rgba( $gray-dark, 0.2 );
+	box-shadow: 0 1px 4px rgba( var( --color-neutral-700-rgb ), 0.2 );
 	max-width: 264px;
 	box-sizing: border-box;
 	text-align: left;
@@ -286,7 +286,6 @@
 	.post-status {
 		display: none;
 	}
-
 }
 
 .popover {

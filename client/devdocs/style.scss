@@ -93,7 +93,7 @@ $devdocs-max-width: 720px;
 	padding: 3px 6px;
 	margin: 0 6px 4px 0;
 	font-family: $code;
-	box-shadow: 0 1px 2px rgba( $gray-dark, 0.05 );
+	box-shadow: 0 1px 2px rgba( var( --color-neutral-700-rgb ), 0.05 );
 }
 
 // The wrapper containing the actual examples
