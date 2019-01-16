@@ -112,25 +112,27 @@ class StepWrapper extends Component {
 		} );
 
 		return (
-			<div className={ classes }>
-				{ ! hideFormattedHeader && (
-					<FormattedHeader
-						id={ 'step-header' }
-						headerText={ this.headerText() }
-						subHeaderText={ this.subHeaderText() }
-					>
-						{ headerButton }
-					</FormattedHeader>
-				) }
+			<>
+				<div className={ classes }>
+					{ ! hideFormattedHeader && (
+						<FormattedHeader
+							id={ 'step-header' }
+							headerText={ this.headerText() }
+							subHeaderText={ this.subHeaderText() }
+						>
+							{ headerButton }
+						</FormattedHeader>
+					) }
 
-				<div className="step-wrapper__content">{ stepContent }</div>
+					<div className="step-wrapper__content">{ stepContent }</div>
 
-				<div className="step-wrapper__buttons">
-					{ ! hideBack && this.renderBack() }
-					{ ! hideSkip && this.renderSkip() }
+					<div className="step-wrapper__buttons">
+						{ ! hideBack && this.renderBack() }
+						{ ! hideSkip && this.renderSkip() }
+					</div>
 				</div>
 				{ showSiteMockups && <SiteMockups /> }
-			</div>
+			</>
 		);
 	}
 }
