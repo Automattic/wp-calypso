@@ -46,21 +46,23 @@ class SiteMockups extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.state = this.getFontLoaderState( props );
+		this.state = this.getNewFontLoaderState( props );
 	}
 
-	getFontLoaderState( props ) {
+	getNewFontLoaderState( props ) {
 		const state = {
 			fontLoaded: false,
-			fontLoader: loadFont( props.siteStyle, props.siteType ),
+			fontError: false,
 		};
 
-		state.fontLoader.then( () => this.setState( { fontLoaded: true } ) );
+		this.fontLoader = loadFont( props.siteStyle, props.siteType );
+		this.fontLoader.then( () => this.setState( { fontLoaded: true } ) );
+		this.fontLoader.catch( () => this.setState( { fontError: true } ) );
 		return state;
 	}
 
 	resetFontLoaderState( props ) {
-		this.setState( this.getFontLoaderState( props ) );
+		this.setState( this.getNewFontLoaderState( props ) );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -108,7 +110,8 @@ class SiteMockups extends Component {
 		const siteMockupClasses = classNames( {
 			'site-mockup__wrap': true,
 			'is-empty': isEmpty( this.props.verticalData ),
-			'is-loading': ! this.state.fontLoaded,
+			'is-font-loading': ! this.state.fontLoaded,
+			'is-font-error': ! this.state.fontError,
 		} );
 		const { siteStyle, siteType, title, verticalData } = this.props;
 		const otherProps = {
@@ -122,7 +125,7 @@ class SiteMockups extends Component {
 
 		return (
 			<div className={ siteMockupClasses }>
-				<style>{ fontStyle }</style>
+				{ ! this.state.fontError && <style>{ fontStyle }</style> }
 				<SiteMockup size="desktop" { ...otherProps } />
 				<SiteMockup size="mobile" { ...otherProps } />
 			</div>

@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find, includes, isEmpty, forEach } from 'lodash';
+import { find, includes, isEmpty, forEach, map } from 'lodash';
 import FontFaceObserver from 'fontfaceobserver';
 
 /**
@@ -13,6 +13,12 @@ import { getSiteStyleOptions, siteStyleOptions } from 'lib/signup/site-styles';
 const loadedFonts = [];
 const addedFonts = [];
 
+function fvdToFontWeightAndStyle( fvd ) {
+	const weight = fvd[ 1 ] + '00';
+	const style = fvd[ 0 ] === 'i' ? 'italic' : 'normal';
+	return { weight, style };
+}
+
 function fontNameToId( fontName ) {
 	return fontName.trim().replace( / /g, '+' );
 }
@@ -20,8 +26,8 @@ function fontNameToId( fontName ) {
 function getLinkHref( font ) {
 	const base = 'https://fonts.googleapis.com/css?family=';
 	const variations = font.variations.reduce( ( result, variation ) => {
-		const weight = variation[ 1 ] + '00';
-		const suffix = variation[ 0 ] === 'i' ? 'italic' : '';
+		const { weight, style } = fvdToFontWeightAndStyle( variation );
+		const suffix = style === 'italic' ? 'italic' : '';
 		result.push( weight + suffix );
 		return result;
 	}, [] );
@@ -79,9 +85,15 @@ export function loadFont( siteStyle, siteType ) {
 		addedFonts.push( font.id );
 	}
 
-	const observer = new FontFaceObserver( font.name ).load();
-	observer.then( () => loadedFonts.push( font.id ) );
-	return observer;
+	// load all of 'em
+	const observers = map( font.variations, variation => {
+		const opts = fvdToFontWeightAndStyle( variation );
+		return new FontFaceObserver( font.name, opts ).load();
+	} );
+
+	const all = Promise.all( observers );
+	all.then( () => loadedFonts.push( font.id ) );
+	return all;
 }
 
 /**
@@ -96,7 +108,7 @@ export function getCSS( selector, siteStyle, siteType = 'business' ) {
 	if ( ! font ) {
 		return '';
 	}
-	const loadingSelector = '.is-loading ' + selector;
+	const loadingSelector = '.is-font-loading ' + selector;
 	return `${ selector } {
 	font-family: "${ font.name }", serif;
 }
@@ -107,7 +119,7 @@ ${ loadingSelector } .site-mockup__tagline,
 ${ loadingSelector } h1,
 ${ loadingSelector } h2,
 ${ loadingSelector } h3 {
-	visibility: hidden;
+	opacity: 0;
 }	`;
 }
 
