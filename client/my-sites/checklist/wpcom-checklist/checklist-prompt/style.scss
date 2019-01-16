@@ -16,7 +16,7 @@
 }
 
 .checklist-prompt__duration {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-style: italic;
 	font-size: 11px;
 	margin: 0 0 1em;

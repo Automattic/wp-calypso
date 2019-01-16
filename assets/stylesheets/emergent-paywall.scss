@@ -1,4 +1,3 @@
-
 // The Emergent Paywall loads in an iframe, so we can't adjust its internal styles
 // with the primary Calypso stylesheet. This file is bundled as a separate CSS file to be
 // linked from inside the iframe.
@@ -135,7 +134,7 @@ textarea {
 
 			&:hover {
 				transition: all 150ms ease-in-out;
-				border-color: $gray-darken-20;
+				border-color: var( --color-neutral-500 );
 			}
 		}
 
