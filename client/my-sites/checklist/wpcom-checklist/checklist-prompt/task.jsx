@@ -27,7 +27,6 @@ class ChecklistPromptTask extends PureComponent {
 	};
 
 	dismissPopup = () => {
-		//Remove query string, too
 		this.props.hideChecklistPrompt();
 		this.props.closePopover();
 		this.props.recordTracksEvent( 'calypso_checklist_prompt_dismiss' );
