@@ -119,12 +119,19 @@ class StatsGeochart extends Component {
 		const node = this.refs.chart;
 		const width = node.clientWidth;
 
-		const chartColorLight = getComputedStyle( document.body )
-			.getPropertyValue( '--color-accent-50' )
-			.trim();
-		const chartColorDark = getComputedStyle( document.body )
-			.getPropertyValue( '--color-accent' )
-			.trim();
+		// Note that using raw hex values here is an exception due to
+		// IE11 and other older browser not supporting CSS custom props.
+		// We have to set values to Google GeoChart via JS. We don't
+		// support switching color schemes in IE11 thus applying the
+		// defaults as raw hex values here.
+		const chartColorLight =
+			getComputedStyle( document.body )
+				.getPropertyValue( '--color-accent-50' )
+				.trim() || '#ffdff3';
+		const chartColorDark =
+			getComputedStyle( document.body )
+				.getPropertyValue( '--color-accent' )
+				.trim() || '#d52c82';
 
 		const options = {
 			width: 100 + '%',
