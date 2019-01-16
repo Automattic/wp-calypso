@@ -1,6 +1,6 @@
 # G Suite
 
-G Suite is a React component used to add G Suite email addresses to domains
+G Suite is a React component used to add G Suite email addresses to domains.
 
 ## Usage
 
