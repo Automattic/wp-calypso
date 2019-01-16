@@ -39,7 +39,7 @@
 }
 
 body {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	-webkit-font-smoothing: subpixel-antialiased;
 }
 
@@ -263,7 +263,7 @@ textarea {
 				.form-control {
 					margin: 0;
 					padding: 7px 14px;
-					color: $gray-dark;
+					color: var( --color-neutral-700 );
 					font-size: 16px;
 					line-height: 1.5;
 					border: 1px solid $gray-lighten-20;
@@ -345,7 +345,7 @@ textarea {
 			border-color: $gray-lighten-20;
 			border-style: solid;
 			border-width: 1px 1px 2px;
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 			cursor: pointer;
 			display: inline-block;
 			margin: 0;

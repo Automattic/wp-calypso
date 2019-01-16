@@ -1,4 +1,3 @@
-
 // The Muriel Color Palette
 @import '../../../node_modules/color-studio/dist/color-variables';
 
@@ -18,7 +17,7 @@ $green-jetpack: #00be28;
 // Grays
 $gray: $muriel-gray-300;
 $gray-light: $muriel-gray-0;
-$gray-dark: $muriel-gray-700; 
+$gray-dark: $muriel-gray-700;
 
 // $gray-text: ideal for standard, non placeholder text
 // $gray-text-min: minimum contrast needed for WCAG 2.0 AA on white background
@@ -58,5 +57,5 @@ $podcasting-purple: #9b4dd5;
 // Layout
 $masterbar-color: $blue-wordpress;
 $sidebar-bg-color: $gray-lighten-30;
-$sidebar-text-color: $gray-dark;
+$sidebar-text-color: var( --color-neutral-700 );
 $sidebar-selected-color: $gray-text-min;
