@@ -82,7 +82,7 @@
 // Set the default font for the preview
 // which will require a web font to load.
 .site-mockup__content {
-	font-family: "Crimson Text", "Baskerville Old Face", Garamond, "Times New Roman", serif;
+	font-family: 'Crimson Text', 'Baskerville Old Face', Garamond, 'Times New Roman', serif;
 }
 
 // Title and Tagline Wrapper
@@ -158,8 +158,8 @@
 			min-height: 250px;
 		}
 
-		&.has-background-dim:before {
-			content: "";
+		&.has-background-dim::before {
+			content: '';
 			position: absolute;
 			top: 0;
 			right: 0;
@@ -194,14 +194,14 @@
 		background: #0d1b24;
 		color: #ffffff;
 		max-width: 800px;
-		margin: 0 auto 20px auto;
-		grid-template-areas: "media-text-media media-text-content";
+		margin: 0 auto 20px;
+		grid-template-areas: 'media-text-media media-text-content';
 		grid-template-columns: 60% auto;
 		position: relative;
 
-		&:before {
+		&::before {
 			display: block;
-			content: "";
+			content: '';
 			border: 1px solid #ffffff;
 			position: absolute;
 			top: 12px;
@@ -218,13 +218,13 @@
 		}
 
 		.is-mobile & {
-			margin: 0 15px 20px 15px;
+			margin: 0 15px 20px;
 			grid-template-columns: 100% !important;
-			grid-template-areas: "media-text-media" "media-text-content";
+			grid-template-areas: 'media-text-media' 'media-text-content';
 		}
 
 		&.has-media-on-the-right {
-			grid-template-areas: "media-text-content media-text-media";
+			grid-template-areas: 'media-text-content media-text-media';
 		}
 
 		.wp-block-media-text__media {
