@@ -295,7 +295,7 @@
 	}
 
 	.thank-you-card__price {
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 	}
 
 	.thank-you-card__description {

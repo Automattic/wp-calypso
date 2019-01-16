@@ -7,7 +7,7 @@
 		position: absolute;
 		top: 10px;
 		left: 10px;
-		fill: $gray-darken-30;
+		fill: var( --color-neutral-600 );
 
 		// On smaller screens the input gets bigger,
 		// so this icon needs to move down a bit.
