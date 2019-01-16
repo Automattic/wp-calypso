@@ -21,3 +21,12 @@
 	font-size: 11px;
 	margin: 0 0 1em;
 }
+
+.inline-help__secondary-view .checklist-prompt__button {
+	width: 49%;
+	margin-right: 2%;
+}
+
+.inline-help__secondary-view .checklist-prompt__button:last-of-type {
+	margin-right: 0;
+}

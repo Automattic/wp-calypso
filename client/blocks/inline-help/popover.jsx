@@ -130,7 +130,7 @@ class InlineHelpPopover extends Component {
 								closePopover={ this.props.onClose }
 							/>
 						),
-						checklist: <WpcomChecklist viewMode="prompt" />,
+						checklist: <WpcomChecklist closePopover={ this.props.onClose } viewMode="prompt" />,
 					}[ this.state.activeSecondaryView ]
 				}
 			</div>
@@ -145,6 +145,7 @@ class InlineHelpPopover extends Component {
 			setStoredTask,
 			showOptIn,
 			showOptOut,
+			onClose,
 		} = this.props;
 
 		return (
@@ -169,7 +170,7 @@ class InlineHelpPopover extends Component {
 
 				<WpcomChecklist
 					viewMode="navigation"
-					closePopover={ this.props.onClose }
+					closePopover={ onClose }
 					showNotification={ showNotification }
 					setNotification={ setNotification }
 					setStoredTask={ setStoredTask }
