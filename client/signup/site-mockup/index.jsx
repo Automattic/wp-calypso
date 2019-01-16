@@ -15,10 +15,12 @@ import { loadFont, getCSS } from 'lib/signup/font-loader';
  */
 import SiteMockup from './site-mockup';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
+import {
+	getSiteVerticalName,
+	getSiteVerticalPreview,
+} from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
-import { getVerticalData } from './mock-data';
 
 /**
  * Style dependencies
@@ -158,6 +160,6 @@ export default connect( state => {
 		siteStyle: getSiteStyle( state ),
 		siteType: getSiteType( state ),
 		vertical,
-		verticalPreviewContent: getVerticalData( vertical ),
+		verticalPreviewContent: getSiteVerticalPreview( state ),
 	};
 } )( SiteMockups );

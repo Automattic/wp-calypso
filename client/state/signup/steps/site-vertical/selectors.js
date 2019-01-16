@@ -17,3 +17,7 @@ export function getSiteVerticalSlug( state ) {
 export function getSiteVerticalIsUserInput( state ) {
 	return get( state, 'signup.steps.siteVertical.isUserInput', true );
 }
+
+export function getSiteVerticalPreview( state ) {
+	return get( state, 'signup.steps.siteVertical.preview', '' );
+}

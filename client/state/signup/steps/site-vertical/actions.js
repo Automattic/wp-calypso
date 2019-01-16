@@ -10,14 +10,15 @@ import SignupActions from 'lib/signup/actions';
 /**
  * Action creator: Set site vertical data
  *
- * @param {Object} siteVerticalData An object containing `isUserInput`, `name` and `slug` vertical values.
+ * @param {Object} siteVerticalData An object containing `isUserInput`, `name`, `preview` and `slug` vertical values.
  * @return {Object} The action object.
  */
-export function setSiteVertical( { isUserInput, name, slug } ) {
+export function setSiteVertical( { isUserInput, name, preview, slug } ) {
 	return {
 		type: SIGNUP_STEPS_SITE_VERTICAL_SET,
 		isUserInput,
 		name,
+		preview,
 		slug,
 	};
 }
@@ -27,11 +28,14 @@ export function setSiteVertical( { isUserInput, name, slug } ) {
  * If the signup state is fully reduxified, we can just keep setSiteVertical() and
  * keep all the dependency filling and progress filling in a middleware.
  *
- * @param {Object} siteVerticalData An object containing `isUserInput`, `name` and `slug` vertical values.
+ * @param {Object} siteVerticalData An object containing `isUserInput`, `name`, `preview` and `slug` vertical values.
  * @param {String} stepName The name of the step to submit. Default is `site-topic`
  * @return {Function} A thunk
  */
-export const submitSiteVertical = ( { isUserInput, name, slug }, stepName = 'site-topic' ) => dispatch => {
-	dispatch( setSiteVertical( { isUserInput, name, slug } ) );
+export const submitSiteVertical = (
+	{ isUserInput, name, preview, slug },
+	stepName = 'site-topic'
+) => dispatch => {
+	dispatch( setSiteVertical( { isUserInput, preview, name, slug } ) );
 	SignupActions.submitSignupStep( { stepName }, [], { siteTopic: name } );
 };

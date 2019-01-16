@@ -30,6 +30,7 @@ import { getSiteTypePropertyValue } from 'lib/signup/site-type';
  * Style dependencies
  */
 import './style.scss';
+import { getSiteVerticalPreview } from '../../../state/signup/steps/site-vertical/selectors';
 
 class SiteTopicStep extends Component {
 	static propTypes = {
@@ -58,15 +59,16 @@ class SiteTopicStep extends Component {
 		} );
 	}
 
-	onSiteTopicChange = verticalData => this.props.setSiteTopic( { ...verticalData } );
+	onSiteTopicChange = verticalData => this.props.setSiteVertical( { ...verticalData } );
 
 	onSubmit = event => {
 		event.preventDefault();
-		const { isUserInput, submitSiteTopic, siteTopic, siteSlug } = this.props;
+		const { isUserInput, preview, submitSiteTopic, siteTopic, siteSlug } = this.props;
 		submitSiteTopic( {
 			is_user_input_vertical: isUserInput,
 			vertical_name: siteTopic,
 			vertical_slug: siteSlug,
+			preview,
 		} );
 	};
 
@@ -124,7 +126,7 @@ class SiteTopicStep extends Component {
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteTopic: ( { is_user_input_vertical, vertical_name, vertical_slug } ) => {
+	submitSiteTopic: ( { is_user_input_vertical, preview, vertical_name, vertical_slug } ) => {
 		const { flowName, goToNextStep, stepName } = ownProps;
 
 		dispatch(
@@ -135,22 +137,27 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 		);
 
 		dispatch(
-			submitSiteVertical( {
-				isUserInput: is_user_input_vertical,
-				name: vertical_name,
-				slug: vertical_slug,
-			}, stepName )
+			submitSiteVertical(
+				{
+					isUserInput: is_user_input_vertical,
+					name: vertical_name,
+					preview,
+					slug: vertical_slug,
+				},
+				stepName
+			)
 		);
 
 		goToNextStep( flowName );
 	},
 
-	setSiteTopic: ( { vertical_name, vertical_slug, is_user_input_vertical } ) =>
+	setSiteVertical: ( { is_user_input_vertical, preview, vertical_name, vertical_slug } ) =>
 		dispatch(
 			setSiteVertical( {
-				name: vertical_name,
-				slug: vertical_slug,
 				isUserInput: is_user_input_vertical,
+				name: vertical_name,
+				preview,
+				slug: vertical_slug,
 			} )
 		),
 } );
@@ -158,8 +165,9 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 export default localize(
 	connect(
 		state => ( {
-			siteTopic: getSiteVerticalName( state ) || '',
-			siteSlug: getSiteVerticalSlug( state ) || '',
+			siteTopic: getSiteVerticalName( state ),
+			siteSlug: getSiteVerticalSlug( state ),
+			preview: getSiteVerticalPreview( state ),
 			siteType: getSiteType( state ),
 			isUserInput: getSiteVerticalIsUserInput( state ),
 		} ),
