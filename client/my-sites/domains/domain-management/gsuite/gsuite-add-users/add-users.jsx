@@ -299,7 +299,7 @@ const continueClick = ( domainName, success, numberOfLicenses ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Continue" Button in Add G SUite',
+			'Clicked "Continue" Button in Add G Suite',
 			'Domain Name',
 			domainName
 		),
@@ -314,7 +314,7 @@ const domainChange = ( value, userIndex ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			`Changed "Domain" Input for User #${ userIndex } in Add g SUite`,
+			`Changed "Domain" Input for User #${ userIndex } in Add G Suite`,
 			'Domain Name'
 		),
 		recordTracksEvent( 'calypso_domain_management_add_gsuite_domain_change', {
