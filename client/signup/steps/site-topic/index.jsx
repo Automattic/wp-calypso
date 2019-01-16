@@ -25,7 +25,6 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import Gridicon from 'gridicons';
 
 /**
  * Style dependencies
@@ -77,7 +76,6 @@ class SiteTopicStep extends Component {
 			<div className="site-topic__content">
 				<form onSubmit={ this.onSubmit }>
 					<FormFieldset>
-						<Gridicon icon="search" />
 						<SiteVerticalsSuggestionSearch
 							onChange={ this.onSiteTopicChange }
 							initialValue={ siteTopic }
