@@ -12,6 +12,7 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { translate } from 'i18n-calypso';
+import { loadFont, getCSS } from 'lib/signup/font-loader';
 import SiteMockup from './site-mockup';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
@@ -42,6 +43,33 @@ class SiteMockups extends Component {
 		vertical: '',
 		verticalData: {},
 	};
+
+	constructor( props ) {
+		super( props );
+		this.state = this.getNewFontLoaderState( props );
+	}
+
+	getNewFontLoaderState( props ) {
+		const state = {
+			fontLoaded: false,
+			fontError: false,
+		};
+
+		this.fontLoader = loadFont( props.siteStyle, props.siteType );
+		this.fontLoader.then( () => this.setState( { fontLoaded: true } ) );
+		this.fontLoader.catch( () => this.setState( { fontError: true } ) );
+		return state;
+	}
+
+	resetFontLoaderState( props ) {
+		this.setState( this.getNewFontLoaderState( props ) );
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.siteStyle !== this.props.siteStyle ) {
+			this.resetFontLoaderState( this.props );
+		}
+	}
 
 	getTagline() {
 		const { siteInformation = {} } = this.props;
@@ -74,17 +102,22 @@ class SiteMockups extends Component {
 		const siteMockupClasses = classNames( {
 			'site-mockup__wrap': true,
 			'is-empty': isEmpty( this.props.verticalData ),
+			'is-font-loading': ! this.state.fontLoaded,
+			'is-font-error': ! this.state.fontError,
 		} );
+		const { siteStyle, siteType, title, verticalData } = this.props;
 		const otherProps = {
-			title: this.props.title,
+			title,
 			tagline: this.getTagline(),
-			data: this.props.verticalData,
-			siteType: this.props.siteType,
-			siteStyle: this.props.siteStyle,
+			data: verticalData,
+			siteType,
+			siteStyle,
 		};
+		const fontStyle = getCSS( `.site-mockup__content`, siteStyle, siteType );
 
 		return (
 			<div className={ siteMockupClasses }>
+				{ ! this.state.fontError && <style>{ fontStyle }</style> }
 				<SiteMockup size="desktop" { ...otherProps } />
 				<SiteMockup size="mobile" { ...otherProps } />
 			</div>
