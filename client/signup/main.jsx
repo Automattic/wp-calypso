@@ -55,7 +55,12 @@ import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { currentUserHasFlag, getCurrentUser, isUserLoggedIn } from 'state/current-user/selectors';
+import {
+	currentUserHasFlag,
+	getCurrentUser,
+	isUserLoggedIn,
+	getCurrentUserSiteCount,
+} from 'state/current-user/selectors';
 import { affiliateReferral } from 'state/refer/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
@@ -326,10 +331,15 @@ class Signup extends React.Component {
 		}
 	};
 
-	recordStep = ( stepName = this.props.stepName, flowName = this.props.flowName ) => {
+	recordStep = (
+		stepName = this.props.stepName,
+		flowName = this.props.flowName,
+		sitesCount = this.props.sitesCount
+	) => {
 		analytics.tracks.recordEvent( 'calypso_signup_step_start', {
 			flow: flowName,
 			step: stepName,
+			user_has_sites: sitesCount,
 		} );
 	};
 
@@ -350,6 +360,7 @@ class Signup extends React.Component {
 			is_new_site: isNewSite,
 			has_cart_items: hasCartItems,
 			is_new_user_on_free_plan: isNewUserOnFreePlan,
+			user_has_sites: this.props.sitesCount,
 		} );
 		recordSignupCompletion( { isNewUser, isNewSite, hasCartItems, isNewUserOnFreePlan } );
 
@@ -649,6 +660,7 @@ export default connect(
 		progress: getSignupProgress( state ),
 		signupDependencies: getSignupDependencyStore( state ),
 		isLoggedIn: isUserLoggedIn( state ),
+		sitesCount: getCurrentUserSiteCount( state ),
 	} ),
 	{
 		setSurvey,
