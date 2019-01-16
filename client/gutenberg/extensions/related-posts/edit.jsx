@@ -45,7 +45,7 @@ function PlaceholderPostEdit( props ) {
 			) }
 			<h4>
 				<Button className={ `${ previewClassName }-post-link` } isLink>
-					{ __( 'Previews are currently unavailable in the editor' ) }
+					{ __( 'Related Posts will only display when you have 10 public posts' ) }
 				</Button>
 			</h4>
 			{ props.displayDate && (
