@@ -64,8 +64,8 @@ export class DateRangeInputs extends Component {
 
 	render() {
 		return (
-			<fieldset class="date-range__date-inputs">
-				<legend class="date-range__date-inputs-legend">Start and End Dates</legend>
+			<fieldset className="date-range__date-inputs">
+				<legend className="date-range__date-inputs-legend">Start and End Dates</legend>
 				<div className="date-range__date-inputs-inner">
 					<div className="date-range__date-input date-range__date-input--from">
 						<FormLabel htmlFor={ this.startDateID }>
