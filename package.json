@@ -243,7 +243,7 @@
 		"build-client-if-desktop": "node -e \"process.env.CALYPSO_ENV === 'desktop' && process.exit(1)\" || npm run build-client",
 		"build-packages": "node bin/build-packages.js",
 		"sdk": "node bin/sdk-cli.js",
-		"demo-breakage": "npm run sdk gutenberg -- client/gutenberg/extensions/demo-breakage",
+		"demo-breakage": "npm run sdk gutenberg -- client/gutenberg/extensions/demo-breakage && php -S localhost:9090 -t ./client/gutenberg/extensions/demo-breakage/build/",
 		"clean": "npm run -s clean:build && npm run -s clean:devdocs && npm run -s clean:public && npm run -s clean:packages",
 		"clean:build": "npx rimraf build server/bundler/*.json .babel-cache",
 		"clean:devdocs": "npx rimraf server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json",
