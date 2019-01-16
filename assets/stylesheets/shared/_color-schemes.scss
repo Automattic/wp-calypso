@@ -217,24 +217,25 @@
 
 	--color-wpcom: #{$muriel-blue-500};
 	--color-jetpack: #{$green-jetpack};
-	--color-email: #f8f8f8;
-    --color-eventbrite: #ff8000;
-    --color-facebook: #39579a;
-    --color-gplus: #df4a32;
-    --color-instagram: #d93174;
-    --color-linkedin: #0976b4;
-    --color-pinterest: #cc2127;
-    --color-pocket: #ee4256;
-    --color-print: #f8f8f8;
-    --color-reddit: #5f99cf;
-    --color-skype: #00aff0;
-    --color-stumbleupon: #eb4924;
-    --color-telegram: #0088cc;
-    --color-tumblr: #35465c;
-    --color-twitter: #55acee;
-    --color-whatsapp: #43d854;
-    --color-wordpress-org: #585c60;
-	
+	--color-facebook: #{$color-facebook};
+	--color-twitter: #{$color-twitter};
+	--color-gplus: #{$color-gplus};
+	--color-tumblr: #{$color-tumblr};
+	--color-linkedin: #{$color-linkedin};
+	--color-path: #{$color-path};
+	--color-instagram: #{$color-instagram};
+	--color-eventbrite: #{$color-eventbrite};
+	--color-stumbleupon: #{$color-stumbleupon};
+	--color-reddit: #{$color-reddit};
+	--color-pinterest: #{$color-pinterest};
+	--color-pocket: #{$color-pocket};
+	--color-email: #{$color-email};
+	--color-print: #{$color-print};
+	--color-skype: #{$color-skype};
+	--color-telegram: #{$color-telegram};
+	--color-whatsapp: #{$color-whatsapp};
+	--color-wordpress-org: #{$color-wordpressOrg};
+
 	--color-section-nav-item-background-hover: #{$muriel-blue-0};
 	--color-themes-active-text: #{$muriel-blue-0};
 	--color-themes-active-text-rgb: #{hex-to-rgb( $muriel-blue-0 )};
@@ -245,10 +246,10 @@
 	--masterbar-color: #{$muriel-white};
 	--masterbar-border-color: #{$gray-lighten-10};
 	--masterbar-item-new-editor-background: #{$gray-darken-20};
-	--masterbar-item-new-editor-hover-background: #{$gray-darken-10};
-	--masterbar-toggle-drafts-editor-background: #{$gray-darken-10};
+	--masterbar-item-new-editor-hover-background: #{$muriel-gray-400};
+	--masterbar-toggle-drafts-editor-background: #{$muriel-gray-400};
 	--masterbar-toggle-drafts-editor-border-color: #{$gray-lighten-20};
-	--masterbar-toggle-drafts-editor-hover-background: #{$gray-darken-10};
+	--masterbar-toggle-drafts-editor-hover-background: #{$muriel-gray-400};
 
 	--sidebar-background: #{$muriel-white};
 	--sidebar-background-gradient: #{hex-to-rgb( $muriel-white )};
@@ -335,10 +336,10 @@
 		--masterbar-color: #{$muriel-white};
 		--masterbar-border-color: #{$gray-lighten-10};
 		--masterbar-item-new-editor-background: #{$gray-darken-20};
-		--masterbar-item-new-editor-hover-background: #{$gray-darken-10};
-		--masterbar-toggle-drafts-editor-background: #{$gray-darken-10};
+		--masterbar-item-new-editor-hover-background: #{$muriel-gray-400};
+		--masterbar-toggle-drafts-editor-background: #{$muriel-gray-400};
 		--masterbar-toggle-drafts-editor-border-color: #{$gray-lighten-20};
-		--masterbar-toggle-drafts-editor-hover-background: #{$gray-darken-10};
+		--masterbar-toggle-drafts-editor-hover-background: #{$muriel-gray-400};
 
 		--sidebar-background: #{$muriel-gray-50};
 		--sidebar-background-gradient: #{hex-to-rgb( $muriel-gray-50 )};
@@ -427,10 +428,10 @@
 		--masterbar-color: #{$muriel-white};
 		--masterbar-border-color: #{$gray-lighten-10};
 		--masterbar-item-new-editor-background: #{$gray-darken-20};
-		--masterbar-item-new-editor-hover-background: #{$gray-darken-10};
-		--masterbar-toggle-drafts-editor-background: #{$gray-darken-10};
+		--masterbar-item-new-editor-hover-background: #{$muriel-gray-400};
+		--masterbar-toggle-drafts-editor-background: #{$muriel-gray-400};
 		--masterbar-toggle-drafts-editor-border-color: #{$gray-lighten-20};
-		--masterbar-toggle-drafts-editor-hover-background: #{$gray-darken-10};
+		--masterbar-toggle-drafts-editor-hover-background: #{$muriel-gray-400};
 
 		--sidebar-background: #{$muriel-gray-900};
 		--sidebar-background-gradient: #{hex-to-rgb( $muriel-gray-900 )};
