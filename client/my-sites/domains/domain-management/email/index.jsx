@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { getEligibleDomain } from 'lib/domains/gsuite';
 import GSuitePurchaseCta from 'my-sites/domains/domain-management/gsuite/gsuite-purchase-cta';
 import GoogleAppsUsersCard from './google-apps-users-card';
 import Placeholder from './placeholder';
@@ -159,21 +160,14 @@ class Email extends React.Component {
 	}
 
 	addEmailForwardingCard() {
+		const { domains, selectedDomainName, selectedSite, translate } = this.props;
+		const domain = getEligibleDomain( selectedDomainName, domains );
 		return (
-			<div>
-				{ this.props.selectedDomainName && (
-					<VerticalNav>
-						<VerticalNavItem
-							path={ domainManagementEmailForwarding(
-								this.props.selectedSite.slug,
-								this.props.selectedDomainName
-							) }
-						>
-							{ this.props.translate( 'Email Forwarding' ) }
-						</VerticalNavItem>
-					</VerticalNav>
-				) }
-			</div>
+			<VerticalNav>
+				<VerticalNavItem path={ domainManagementEmailForwarding( selectedSite.slug, domain ) }>
+					{ translate( 'Email Forwarding' ) }
+				</VerticalNavItem>
+			</VerticalNav>
 		);
 	}
 
