@@ -13,13 +13,10 @@ import SignupActions from 'lib/signup/actions';
  * @param {Object} siteVerticalData An object containing `isUserInput`, `name`, `preview` and `slug` vertical values.
  * @return {Object} The action object.
  */
-export function setSiteVertical( { isUserInput, name, preview, slug } ) {
+export function setSiteVertical( siteVerticalData ) {
 	return {
 		type: SIGNUP_STEPS_SITE_VERTICAL_SET,
-		isUserInput,
-		name,
-		preview,
-		slug,
+		...siteVerticalData,
 	};
 }
 
@@ -32,10 +29,7 @@ export function setSiteVertical( { isUserInput, name, preview, slug } ) {
  * @param {String} stepName The name of the step to submit. Default is `site-topic`
  * @return {Function} A thunk
  */
-export const submitSiteVertical = (
-	{ isUserInput, name, preview, slug },
-	stepName = 'site-topic'
-) => dispatch => {
-	dispatch( setSiteVertical( { isUserInput, preview, name, slug } ) );
-	SignupActions.submitSignupStep( { stepName }, [], { siteTopic: name } );
+export const submitSiteVertical = ( siteVerticalData, stepName = 'site-topic' ) => dispatch => {
+	dispatch( setSiteVertical( siteVerticalData ) );
+	SignupActions.submitSignupStep( { stepName }, [], { siteTopic: siteVerticalData.name } );
 };

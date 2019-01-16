@@ -1,4 +1,8 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,12 +16,10 @@ import { siteVerticalSchema } from './schema';
 export default createReducer(
 	{},
 	{
-		[ SIGNUP_STEPS_SITE_VERTICAL_SET ]: ( state, { isUserInput, name, preview, slug } ) => {
+		[ SIGNUP_STEPS_SITE_VERTICAL_SET ]: ( state, siteVerticalData ) => {
 			return {
-				isUserInput,
-				name,
-				preview,
-				slug,
+				...state,
+				...omit( siteVerticalData, 'type' ),
 			};
 		},
 		[ SIGNUP_COMPLETE_RESET ]: () => {
