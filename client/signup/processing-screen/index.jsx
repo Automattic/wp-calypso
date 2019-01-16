@@ -152,15 +152,17 @@ export class SignupProcessingScreen extends Component {
 		);
 	}
 
-	render() {
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
+	componentDidUpdate = () => {
 		const { loginHandler } = this.props;
 
 		if ( !! loginHandler ) {
 			this.shouldShowChecklist() ? this.showPreviewAfterLogin() : loginHandler();
 			return null;
 		}
+	};
 
+	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ this.renderFloaties() }
