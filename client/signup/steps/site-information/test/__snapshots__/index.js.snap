@@ -67,7 +67,7 @@ exports[`<SiteInformation /> should render 1`] = `
                 </InfoPopover>
               </Localized(FormLabel)>
               <FormTextInput
-                autoFocus={true}
+                autoFocus={false}
                 id="address"
                 name="address"
                 onChange={[Function]}
@@ -102,7 +102,7 @@ exports[`<SiteInformation /> should render 1`] = `
                 </InfoPopover>
               </Localized(FormLabel)>
               <FormTextInput
-                autoFocus={true}
+                autoFocus={false}
                 id="phone"
                 name="phone"
                 onChange={[Function]}
