@@ -47,12 +47,14 @@ export class SignupProcessingScreen extends Component {
 		}
 
 		const siteSlug = dependencies.siteSlug;
-		if ( siteSlug ) {
+		if ( siteSlug && this.state.siteSlug !== siteSlug ) {
 			this.setState( { siteSlug } );
 		}
 
 		const hasPaidSubscription = !! ( dependencies.cartItem || dependencies.domainItem );
-		this.setState( { hasPaidSubscription } );
+		if ( hasPaidSubscription && this.state.hasPaidSubscription !== hasPaidSubscription ) {
+			this.setState( { hasPaidSubscription } );
+		}
 	}
 
 	renderFloaties() {
