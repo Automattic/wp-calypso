@@ -148,6 +148,7 @@ export class SiteStyleStep extends Component {
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	submitSiteStyle: ( siteStyle, themeSlugWithRepo, styleLabel ) => {
 		const { flowName, stepName, goToNextStep } = ownProps;
+
 		dispatch( setSiteStyle( siteStyle ) );
 <<<<<<< HEAD
 		dispatch(
