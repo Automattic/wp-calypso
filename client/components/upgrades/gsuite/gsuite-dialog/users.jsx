@@ -55,13 +55,13 @@ class GoogleAppsUsers extends React.Component {
 		const allUserInputs = fields && fields.map( this.inputsForUser );
 
 		return (
-			<div className="google-apps-dialog__users" key="google-apps-dialog__users">
+			<div className="gsuite-dialog__users" key="gsuite-dialog__users">
 				<QueryUserSettings />
 				<h4>{ translate( 'New G Suite User:' ) }</h4>
 
 				{ allUserInputs }
 
-				<button className="google-apps-dialog__add-another-user-button" onClick={ this.addUser }>
+				<button className="gsuite-dialog__add-another-user-button" onClick={ this.addUser }>
 					<Gridicon icon="plus" />
 					{ translate( 'Add Another User' ) }
 				</button>
@@ -116,14 +116,14 @@ class GoogleAppsUsers extends React.Component {
 
 const recordAddUserClick = section =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_gsuite_add_user_button_click', { section } ),
-		recordGoogleEvent( 'Domain Search', 'Clicked "Add User" Button in G Suite Dialog' )
+		recordTracksEvent( 'calypso_google_apps_add_user_button_click', { section } ),
+		recordGoogleEvent( 'Domain Search', 'Clicked "Add User" Button in Google Apps Dialog' )
 	);
 
 const recordInputFocus = ( userIndex, fieldName, inputValue ) =>
 	recordGoogleEvent(
 		'Domain Search',
-		`Focused On "${ fieldName }" Input for User #${ userIndex } in G Suite Dialog`,
+		`Focused On "${ fieldName }" Input for User #${ userIndex } in Google Apps Dialog`,
 		'Input Value',
 		inputValue
 	);
