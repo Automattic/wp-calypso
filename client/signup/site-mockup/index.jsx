@@ -32,7 +32,7 @@ class SiteMockups extends Component {
 		siteType: PropTypes.string,
 		title: PropTypes.string,
 		vertical: PropTypes.string,
-		verticalData: PropTypes.object,
+		verticalPreviewContent: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -41,7 +41,7 @@ class SiteMockups extends Component {
 		siteType: '',
 		title: '',
 		vertical: '',
-		verticalData: {},
+		verticalPreviewContent: '',
 	};
 
 	constructor( props ) {
@@ -99,17 +99,17 @@ class SiteMockups extends Component {
 	}
 
 	render() {
+		const { siteStyle, siteType, title, verticalPreviewContent: content } = this.props;
 		const siteMockupClasses = classNames( {
 			'site-mockup__wrap': true,
-			'is-empty': isEmpty( this.props.verticalData ),
+			'is-empty': isEmpty( content ),
 			'is-font-loading': ! this.state.fontLoaded,
 			'is-font-error': ! this.state.fontError,
 		} );
-		const { siteStyle, siteType, title, verticalData } = this.props;
 		const otherProps = {
 			title,
 			tagline: this.getTagline(),
-			data: verticalData,
+			content,
 			siteType,
 			siteStyle,
 		};
@@ -134,6 +134,6 @@ export default connect( state => {
 		siteStyle: getSiteStyle( state ),
 		siteType: getSiteType( state ),
 		vertical,
-		verticalData: getVerticalData( vertical ),
+		verticalPreviewContent: getVerticalData( vertical ),
 	};
 } )( SiteMockups );

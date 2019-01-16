@@ -65,7 +65,7 @@ function getVerticalDataPreview( verticalName, verticalCollection ) {
 	);
 }
 
-export function getVerticalData( vertical = SIGNUP_SITE_MOCKUP_DEFAULT_VERTICAL_NAME ) {
+export function getVerticalData( verticalName = SIGNUP_SITE_MOCKUP_DEFAULT_VERTICAL_NAME ) {
 	// this probably needs to be memoized
-	return getVerticalDataPreview( vertical, verticalList );
+	return getVerticalDataPreview( verticalName, verticalList );
 }
