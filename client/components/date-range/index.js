@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { noop, isNil, has } from 'lodash';
+import { noop, isNil, isNull, has } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -208,22 +208,23 @@ export class DateRange extends Component {
 		const isValidFrom = this.isValidDate( fromDate );
 		const isValidTo = this.isValidDate( toDate );
 
-		// If either of the date inputs are invalid then revert
-		// to current start/end date from state
+		// If either of the date inputs are invalid then revert the
+		// text inputs values to the current start/end date from state
 		if ( ! isValidFrom || ! isValidTo ) {
 			this.setState( {
 				textInputStartDate: this.formatDateToLocale( this.state.startDate ),
 				textInputEndDate: this.formatDateToLocale( this.state.endDate ),
 			} );
+			return; // bail early
 		}
 
 		const isSameDate = this.state[ `${ startOrEnd.toLowerCase() }Date` ].isSame( date, 'day' );
 
-		// If the new date in the blurred input is valid
-		// and it's not the same as the existing value
-		if ( this.isValidDate( date ) && ! isSameDate ) {
-			this.onSelectDate( date );
+		if ( isSameDate ) {
+			return;
 		}
+
+		this.onSelectDate( date );
 	};
 
 	/**
@@ -251,6 +252,10 @@ export class DateRange extends Component {
 	 * @param  {MomentJSDate} date the newly selected date object
 	 */
 	onSelectDate = date => {
+		if ( ! this.isValidDate( date ) ) {
+			return;
+		}
+
 		// DateUtils requires a range object with this shape
 		const range = this.toDateRange( this.state.startDate, this.state.endDate );
 
@@ -260,21 +265,23 @@ export class DateRange extends Component {
 		const newRange = DateUtils.addDayToRange( rawDay, range );
 
 		// Edge case: Range can sometimes be from: null, to: null
-		if ( ! newRange.from || ! newRange.to ) return;
+		if ( isNull( newRange.from ) || isNull( newRange.to ) ) return;
 
 		// Update state to reflect new date range for
 		// calendar and text inputs
 		this.setState(
 			previousState => {
+				// Update start/end
 				let newState = {
 					startDate: this.nativeDateToMoment( newRange.from ),
 					endDate: this.nativeDateToMoment( newRange.to ),
-					textInputStartDate: this.nativeDateToMoment( newRange.from ).format(
-						this.getLocaleDateFormat()
-					),
-					textInputEndDate: this.nativeDateToMoment( newRange.to ).format(
-						this.getLocaleDateFormat()
-					),
+				};
+
+				// Update inputs
+				newState = {
+					...newState,
+					textInputStartDate: this.formatDateToLocale( newState.startDate ),
+					textInputEndDate: this.formatDateToLocale( newState.endDate ),
 				};
 
 				// For first date selection only: "cache" previous dates
@@ -469,10 +476,7 @@ export class DateRange extends Component {
 				fromMonth={ this.momentDateToJsDate( this.props.firstSelectableDate ) }
 				toMonth={ this.momentDateToJsDate( this.props.lastSelectableDate ) }
 				onSelectDay={ this.onSelectDate }
-				selectedDays={ {
-					from: this.momentDateToJsDate( this.state.startDate ),
-					to: this.momentDateToJsDate( this.state.endDate ),
-				} }
+				selectedDays={ this.toDateRange( this.state.startDate, this.state.endDate ) }
 				numberOfMonths={ window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1 }
 				initialMonth={ this.momentDateToJsDate( this.state.startDate ) }
 				disabledDays={ this.getDisabledDaysConfig() }
