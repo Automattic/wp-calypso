@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { each, isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
-import { loadFont, getCSS } from 'lib/signup/font-loader';
 
 /**
  * Internal dependencies
@@ -21,6 +20,7 @@ import {
 } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
+import { loadFont, getCSS } from 'lib/signup/font-loader';
 
 /**
  * Style dependencies
@@ -134,7 +134,7 @@ class SiteMockups extends Component {
 		const otherProps = {
 			title,
 			tagline: this.getTagline(),
-			content: this.getContent( verticalPreviewContent ),,
+			content: this.getContent( verticalPreviewContent ),
 			siteType,
 			siteStyle,
 		};

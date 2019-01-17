@@ -13,8 +13,15 @@ import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_SITE_VERTICAL_SET } from 'state/act
 import { createReducer } from 'state/utils';
 import { siteVerticalSchema } from './schema';
 
+const initialState = {
+	isUserInput: true,
+	name: '',
+	slug: '',
+	preview: '',
+};
+
 export default createReducer(
-	{},
+	initialState,
 	{
 		[ SIGNUP_STEPS_SITE_VERTICAL_SET ]: ( state, siteVerticalData ) => {
 			return {
