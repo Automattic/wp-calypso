@@ -255,7 +255,7 @@ form.sidebar__button input {
 			}
 
 			&.sidebar__button {
-				background-color: $white;
+				background-color: var( --color-white );
 				color: var( --color-neutral-700 );
 			}
 		}
@@ -320,7 +320,7 @@ form.sidebar__button input {
 		background: var( --color-primary );
 
 		.gridicon {
-			fill: $white;
+			fill: var( --color-white );
 		}
 	}
 

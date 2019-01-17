@@ -17,7 +17,7 @@
 			}
 
 			.sidebar-streams__edit-icon {
-				fill: $white;
+				fill: var( --color-white );
 			}
 
 			.gridicon {
@@ -49,7 +49,7 @@
 
 			.sidebar__button {
 				background-color: var( --color-neutral-400 );
-				color: $white;
+				color: var( --color-white );
 			}
 		}
 
@@ -135,7 +135,7 @@
 				transform: translateY( 0 );
 
 				.add-new {
-					background: $white;
+					background: var( --color-white );
 					border: 1px solid var( --color-neutral-100 );
 					border-radius: 3px;
 					color: var( --color-neutral-400 );
@@ -264,7 +264,7 @@
 	}
 
 	.selected .sidebar__menu-action .gridicon {
-		fill: $white !important;
+		fill: var( --color-white ) !important;
 
 		@include breakpoint( '<660px' ) {
 			fill: $gray !important;

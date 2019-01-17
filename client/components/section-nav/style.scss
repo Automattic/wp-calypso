@@ -274,13 +274,13 @@
 	}
 
 	.is-selected & {
-		color: $white;
+		color: var( --color-white );
 		background-color: var( --color-primary );
 
 		@include breakpoint( '<480px' ) {
 			.count {
-				color: $white;
-				border-color: $white;
+				color: var( --color-white );
+				border-color: var( --color-white );
 			}
 		}
 	}
@@ -309,7 +309,7 @@
 
 	.notouch .is-selected & {
 		&:hover {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 

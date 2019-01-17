@@ -331,7 +331,7 @@
 		min-height: 68px;
 
 		&:not( :focus ) {
-			border-color: $white;
+			border-color: var( --color-white );
 			padding-left: 48px;
 			padding-right: 16px;
 			resize: none;

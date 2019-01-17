@@ -761,7 +761,7 @@ ul.domain-connect__dns-list,
 		label {
 			background: $gray;
 			border-radius: 2px;
-			color: $white;
+			color: var( --color-white );
 			display: block;
 			font-size: 12px;
 			margin: 0 10px 0 0;

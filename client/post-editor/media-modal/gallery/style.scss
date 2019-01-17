@@ -116,7 +116,7 @@
 }
 
 .editor-media-modal-gallery .sortable-list__navigation-button {
-	background-color: $white;
+	background-color: var( --color-white );
 
 	&:disabled {
 		opacity: 0.9;

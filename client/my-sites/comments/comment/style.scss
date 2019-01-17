@@ -65,7 +65,7 @@
 	.gridicon {
 		background-color: $gray;
 		border-radius: 50%;
-		fill: $white;
+		fill: var( --color-white );
 		padding: 4px;
 	}
 }
@@ -652,7 +652,7 @@
 .card.comment.is-placeholder {
 	@include placeholder();
 
-	background-color: $white;
+	background-color: var( --color-white );
 
 	.comment__bulk-select {
 		display: none;

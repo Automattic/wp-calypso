@@ -18,7 +18,7 @@
 		flex: 0 0 auto;
 		display: flex;
 		align-items: center;
-		background-color: $white;
+		background-color: var( --color-white );
 		border-radius: inherit;
 		height: 100%;
 
@@ -107,7 +107,7 @@
 	border: none;
 	border-radius: inherit;
 	height: 100%;
-	background: $white;
+	background: var( --color-white );
 	appearance: none;
 	box-sizing: border-box;
 	padding: 0;
@@ -118,7 +118,7 @@
 	}
 
 	&:disabled {
-		background: $white;
+		background: var( --color-white );
 	}
 
 	&:focus {
@@ -219,7 +219,7 @@
 	display: flex;
 	width: 50px;
 	height: 100%;
-	background-color: $white;
+	background-color: var( --color-white );
 	z-index: z-index( '.search', '.search.is-searching .spinner' );
 }
 

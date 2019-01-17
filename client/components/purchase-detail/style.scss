@@ -83,7 +83,7 @@
 .purchase-detail__icon {
 	background: var( --color-neutral-500 );
 	border-radius: 50%;
-	color: $white;
+	color: var( --color-white );
 	margin-bottom: 10px;
 	padding: 16px;
 	width: 100%;
@@ -179,7 +179,7 @@
 
 .purchase-detail__required-notice {
 	background-color: var( --color-warning );
-	color: $white;
+	color: var( --color-white );
 	font-size: 14px;
 	padding: 8px;
 	text-align: center;

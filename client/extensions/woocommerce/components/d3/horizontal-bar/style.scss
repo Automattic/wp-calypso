@@ -3,7 +3,7 @@
 		fill: var( --color-primary );
 	}
 	text {
-		fill: $white;
+		fill: var( --color-white );
 
 		&.is-offset-text {
 			fill: var( --color-neutral-700 );

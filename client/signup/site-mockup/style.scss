@@ -69,7 +69,7 @@
 // and desktop variants.
 .site-mockup__viewport {
 	margin: 0 auto;
-	background: $white;
+	background: var( --color-white );
 	position: relative;
 	box-shadow: 0 0 0 1px $gray;
 	transition: all 200ms cubic-bezier( 0.175, 0.885, 0.32, 1.275 );

@@ -16,7 +16,7 @@
 	}
 
 	.wpnc__button {
-		background: $white;
+		background: var( --color-white );
 		border-color: var( --color-neutral-100 );
 		border-style: solid;
 		border-width: 1px 1px 2px;
@@ -51,7 +51,7 @@
 		&[disabled],
 		&:disabled {
 			color: var( --color-neutral-0 );
-			background: $white;
+			background: var( --color-white );
 			border-color: var( --color-neutral-0 );
 			cursor: default;
 
@@ -94,21 +94,21 @@
 	.wpnc__button.is-primary {
 		background: var( --color-primary );
 		border-color: var( --color-primary );
-		color: $white;
+		color: var( --color-white );
 
 		&:hover,
 		&:focus {
 			border-color: var( --color-primary-dark );
-			color: $white;
+			color: var( --color-white );
 		}
 		&[disabled],
 		&:disabled {
 			background: tint( $blue-light, 50% );
 			border-color: tint( $blue-wordpress, 55% );
-			color: $white;
+			color: var( --color-white );
 		}
 		&.is-compact {
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 
@@ -133,7 +133,7 @@
 	.wpnc__button.is-primary.is-scary {
 		background: var( --color-error );
 		border-color: darken( $alert-red, 20% );
-		color: $white;
+		color: var( --color-white );
 
 		&:hover,
 		&:focus {
@@ -169,7 +169,7 @@
 		&[disabled],
 		&:disabled {
 			color: var( --color-neutral-0 );
-			background: $white;
+			background: var( --color-white );
 			cursor: default;
 
 			&:active {

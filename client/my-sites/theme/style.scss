@@ -22,7 +22,7 @@
 .theme__sheet-bar-tag {
 	max-width: none;
 	display: block;
-	color: $white;
+	color: var( --color-white );
 	font-size: 16px;
 	font-weight: 200;
 	padding-top: 5px;
@@ -389,7 +389,7 @@
 		}
 
 		&:hover {
-			color: $white;
+			color: var( --color-white );
 			background-color: var( --color-primary-dark );
 
 			&::after {

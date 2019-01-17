@@ -346,9 +346,9 @@
 	font-weight: 300;
 }
 .signup-processing__upgrade-nudge {
-	background: $white;
+	background: var( --color-white );
 	text-align: center;
-	outline: 30px solid $white;
+	outline: 30px solid var( --color-white );
 	margin-bottom: 30px;
 }
 .signup-processing__title-subdomain {
@@ -382,7 +382,7 @@
 }
 .signup-processing__address-field {
 	flex: 1;
-	background: $white;
+	background: var( --color-white );
 	margin: 0 0 0 5px;
 	padding: 8px;
 	box-sizing: border-box;

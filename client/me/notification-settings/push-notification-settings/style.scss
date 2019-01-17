@@ -125,18 +125,18 @@
 	&.is-enable {
 		background: var( --color-accent );
 		border-color: var( --color-accent-dark );
-		color: $white;
+		color: var( --color-white );
 
 		&:hover,
 		&:focus {
 			border-color: var( --color-accent-dark );
-			color: $white;
+			color: var( --color-white );
 		}
 		&[disabled],
 		&:disabled {
 			background: tint( $blue-light, 50% );
 			border-color: tint( $blue-wordpress, 55% );
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 }

@@ -36,7 +36,7 @@
 	padding: $padding-size;
 	border-radius: 5px;
 
-	background: $white;
+	background: var( --color-white );
 
 	.subscription-length-picker__option-radio-wrapper {
 		width: 21px;

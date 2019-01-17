@@ -84,7 +84,7 @@
 
 .people-profile__role-badge {
 	float: left;
-	background: $white;
+	background: var( --color-white );
 	border: 1px solid $gray;
 	border-radius: 2px;
 	color: var( --color-text-subtle );
@@ -101,26 +101,26 @@
 	&.role-super-admin {
 		background: var( --color-error );
 		border: none;
-		color: $white;
+		color: var( --color-white );
 	}
 
 	&.role-administrator,
 	&.role-admin-owner {
 		background: var( --color-neutral-700 );
 		border: none;
-		color: $white;
+		color: var( --color-white );
 	}
 
 	&.role-editor {
 		background: var( --color-primary-dark );
 		border: none;
-		color: $white;
+		color: var( --color-white );
 	}
 
 	&.role-author,
 	&.role-contributor {
 		background: var( --color-primary );
 		border: none;
-		color: $white;
+		color: var( --color-white );
 	}
 }

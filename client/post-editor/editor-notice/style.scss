@@ -16,7 +16,7 @@
 
 		a {
 			text-decoration: underline;
-			color: $white;
+			color: var( --color-white );
 			background-image: none;
 
 			&:hover {

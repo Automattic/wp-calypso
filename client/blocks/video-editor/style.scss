@@ -51,7 +51,7 @@
 }
 
 .video-editor__text {
-	color: $white;
+	color: var( --color-white );
 	text-align: center;
 	margin: 16px 0;
 }

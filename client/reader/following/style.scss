@@ -10,7 +10,7 @@
 
 // Following intro
 .following__intro {
-	background: url( '/calypso/images/reader/reader-intro-background.svg' ) $white no-repeat 100% 20px;
+	background: url( '/calypso/images/reader/reader-intro-background.svg' ) var( --color-white ) no-repeat 100% 20px;
 	border: 1px solid var( --color-neutral-0 );
 
 	.following__intro-copy {
@@ -119,7 +119,7 @@
 	.following__intro-close-icon {
 		position: absolute;
 		z-index: z-index( 'root', '.following__intro-close-icon' );
-		fill: $white;
+		fill: var( --color-white );
 
 		// Fix for 1px (0.5pt) misalignment in Safari under retina. See
 		// https://github.com/Automattic/wp-calypso/pull/11282/#issuecomment-289837131
@@ -155,7 +155,7 @@
 	}
 
 	.following__intro-close-icon-bg {
-		background-color: $white;
+		background-color: var( --color-white );
 	}
 }
 

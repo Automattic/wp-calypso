@@ -46,7 +46,7 @@
 
 	.notice.is-compact {
 		margin: 0 0 0 8px;
-		color: $white;
+		color: var( --color-white );
 
 		&.is-success {
 			background: var( --color-success );
@@ -132,7 +132,7 @@
 	float: right;
 
 	&.is-primary {
-		color: $white;
+		color: var( --color-white );
 		transition: all 0.1s linear;
 
 		&:hover {

@@ -33,7 +33,7 @@
 	}
 
 	.segmented-control__link {
-		background: $white;
+		background: var( --color-white );
 	}
 
 	.reader-site-notification-settings__popout-toggle:nth-child( 2 ),

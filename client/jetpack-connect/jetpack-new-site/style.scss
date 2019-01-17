@@ -154,7 +154,7 @@
 		&:disabled {
 			background: tint( $green-jetpack, 50% );
 			border-color: tint( $green-jetpack, 35% );
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 }
@@ -204,7 +204,7 @@
 		z-index: 2;
 		padding: 8px;
 		color: $gray;
-		background: $white;
+		background: var( --color-white );
 	}
 
 	@include breakpoint( '<660px' ) {

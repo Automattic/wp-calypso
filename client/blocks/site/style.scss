@@ -121,7 +121,7 @@
 
 .site__home {
 	background: var( --color-accent );
-	color: $white;
+	color: var( --color-white );
 	display: block;
 	width: 32px;
 	height: 32px;
@@ -146,7 +146,7 @@
 	}
 
 	&:hover {
-		color: $white;
+		color: var( --color-white );
 	}
 
 	@include breakpoint( '<660px' ) {

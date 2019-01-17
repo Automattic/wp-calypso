@@ -14,7 +14,7 @@
 		display: inline-block;
 		width: 26px;
 		height: 26px;
-		background-color: $white;
+		background-color: var( --color-white );
 		border: solid 1px var( --color-neutral-700 );
 		border-radius: 50%;
 		color: var( --color-neutral-700 );
@@ -39,7 +39,7 @@
 		padding: 4px 7px 4px 6px;
 		vertical-align: middle;
 		transition: all 0.2s ease-out;
-		background-color: $white;
+		background-color: var( --color-white );
 		box-shadow: 0 0 0 1px var( --color-neutral-700 );
 
 		&.is-env {
@@ -70,7 +70,7 @@
 		&.branch-name {
 			text-transform: inherit;
 			background-color: var( --color-neutral-700 );
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 

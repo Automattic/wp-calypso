@@ -134,12 +134,12 @@
 		height: 16px;
 		border: 2px solid var( --color-neutral-100 );
 		border-radius: 16px;
-		background: $white;
+		background: var( --color-white );
 		cursor: pointer;
 
 		.gridicons-checkmark {
 			display: none;
-			fill: $white;
+			fill: var( --color-white );
 			position: absolute;
 			top: -1px;
 			left: 1px;
@@ -169,7 +169,7 @@
 		width: 18px;
 		height: 18px;
 		border-radius: 16px;
-		background: $white;
+		background: var( --color-white );
 		cursor: pointer;
 	}
 

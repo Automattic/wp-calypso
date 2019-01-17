@@ -57,7 +57,7 @@ button {
 		border-width: 2px 1px 1px;
 	}
 
-	background-color: $white;
+	background-color: var( --color-white );
 	color: var( --color-neutral-700 );
 	border-color: var( --color-neutral-100 );
 
@@ -74,7 +74,7 @@ button {
 	&:disabled,
 	&.disabled {
 		color: var( --color-neutral-50 );
-		background-color: $white;
+		background-color: var( --color-white );
 		border-color: var( --color-neutral-50 );
 		cursor: default;
 
@@ -133,13 +133,13 @@ button {
 .button.is-primary {
 	background-color: var( --color-accent );
 	border-color: var( --color-accent-dark );
-	color: $white;
+	color: var( --color-white );
 
 	&:hover,
 	&:focus {
 		background-color: var( --color-button-primary-background-hover );
 		border-color: var( --color-accent-dark );
-		color: $white;
+		color: var( --color-white );
 	}
 
 	.accessible-focus &:focus {
@@ -147,14 +147,14 @@ button {
 	}
 
 	&.is-compact {
-		color: $white;
+		color: var( --color-white );
 	}
 
 	&[disabled],
 	&:disabled,
 	&.disabled {
 		color: var( --color-neutral-50 );
-		background-color: $white;
+		background-color: var( --color-white );
 		border-color: var( --color-neutral-50 );
 	}
 
@@ -192,7 +192,7 @@ button {
 .button.is-primary.is-scary {
 	background-color: var( --color-error );
 	border-color: darken( $alert-red, 20% );
-	color: $white;
+	color: var( --color-white );
 
 	&:hover,
 	&:focus {

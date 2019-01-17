@@ -1,5 +1,5 @@
 .language-picker {
-	background: $white;
+	background: var( --color-white );
 	border: 1px solid var( --color-neutral-100 );
 	border-width: 1px 1px 2px;
 	border-radius: 4px;
@@ -183,7 +183,7 @@
 
 	&.is-selected {
 		background: var( --color-accent );
-		color: $white;
+		color: var( --color-white );
 	}
 }
 
