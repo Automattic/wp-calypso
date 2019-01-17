@@ -148,6 +148,10 @@
 	align-items: center;
 	justify-content: center;
 	padding: 0.5em 0;
+
+	// ensures `em` element retains whitespace
+	// https://stackoverflow.com/questions/39325039/css-flex-box-last-space-removed
+	white-space: pre-wrap; 
 	
 	&,
 	.button {
@@ -156,9 +160,10 @@
 
 	.button {
 		color: var(--color-link);
+		
 		&:hover,
 		&:focus {
-			color: var(--color-link-300);
+			color: var(--color-accent);
 		}
 	}
 
