@@ -17,7 +17,7 @@
 	}
 
 	> div:hover {
-		background: lighten( $blue-medium, 5% );
+		background: var( --color-primary-0 );
 	}
 
 	svg {
