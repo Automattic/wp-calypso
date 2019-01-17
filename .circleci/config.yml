@@ -183,6 +183,9 @@ jobs:
     parallelism: 1
     steps:
       - prepare
+      # @TODO SDK builds broken when generated file is missing
+      # Set up a more robust fix and remove this line.
+      - run: NODE_ENV=production npm run prebuild-css
       - run:
           name: Build Jetpack Blocks
           command: |
