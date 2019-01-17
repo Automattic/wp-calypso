@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { i18n, localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import config from 'config';
 import Gridicon from 'gridicons';
 import debugFactory from 'debug';
