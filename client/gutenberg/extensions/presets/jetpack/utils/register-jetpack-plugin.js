@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { registerPlugin } from '@wordpress/plugins';
+import { getPlugin, registerPlugin, unregisterPlugin } from '@wordpress/plugins';
 
 /**
  * Internal dependencies
@@ -17,10 +17,18 @@ import isJetpackExtensionAvailable from './is-jetpack-extension-available';
  * @returns {object|false} Either false if the plugin is not available, or the results of `registerPlugin`
  */
 export default function registerJetpackPlugin( name, settings ) {
-	if ( ! isJetpackExtensionAvailable( name ) ) {
+	const available = isJetpackExtensionAvailable( name );
+	const pluginName = `jetpack-${ name }`;
+	const registered = getPlugin( pluginName );
+
+	if ( available && ! registered ) {
+		registerPlugin( pluginName, settings );
+	} else if ( ! available ) {
+		if ( registered ) {
+			unregisterPlugin( pluginName );
+		}
+
 		// TODO: check 'unavailable_reason' and respond accordingly
 		return false;
 	}
-
-	return registerPlugin( `jetpack-${ name }`, settings );
 }
