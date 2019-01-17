@@ -21,6 +21,7 @@ import {
 	hasDomainInCart,
 } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { abtest } from 'lib/abtest';
 import {
 	parseMatchReasons,
 	VALID_MATCH_REASONS,
@@ -218,7 +219,10 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion: { domain_name: domain, product_slug: productSlug, cost },
 		} = this.props;
 
-		const buttonStyles = ! isFeatured ? { borderless: true } : this.props.buttonStyles;
+		let buttonStyles = { primary: true };
+		if ( abtest( 'domainSearchButtonStyles' ) === 'onePrimary' ) {
+			buttonStyles = ! isFeatured ? { borderless: true } : this.props.buttonStyles;
+		}
 
 		const extraClasses = classNames( { 'featured-domain-suggestion': isFeatured } );
 

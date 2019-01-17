@@ -122,4 +122,12 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
+	domainSearchButtonStyles: {
+		datestamp: '20190116',
+		variations: {
+			allPrimary: 50,
+			onePrimary: 50,
+		},
+		defaultVariation: 'allPrimary',
+	},
 };
