@@ -17,7 +17,7 @@
 	}
 
 	> div:hover {
-		background: lighten( $blue-medium, 5% );
+		background: var( --color-primary-0 );
 	}
 
 	svg {
@@ -46,9 +46,8 @@
 	.happychat__title {
 		cursor: default;
 		padding: 0;
-		background: var( --color-accent );
-		border-bottom: 1px solid darken( $blue-medium, 5% );
-		color: $white;
+		background: var( --color-surface );
+		color: var( --color-neutral-dark );
 		flex: 0 0 auto;
 		display: flex;
 		align-items: center;
@@ -245,8 +244,6 @@
 	align-self: flex-start;
 	flex: 0 0 auto;
 	border-radius: 8px;
-	background: var( --color-accent );
-	color: $white;
 	padding: 4px 8px;
 	margin: 8px 12px 0 0;
 	cursor: pointer;
@@ -254,10 +251,6 @@
 	> svg {
 		fill: currentColor;
 		display: block;
-	}
-
-	&:hover {
-		background: lighten( $blue-medium, 10% );
 	}
 
 	&:disabled {
@@ -302,8 +295,8 @@
 	}
 
 	.is-user-message & {
-		color: $white;
-		background: var( --color-accent );
+		color: var( --color-primary-dark );
+		background: var( --color-primary-50 );
 		border-radius: 8px 8px 0;
 
 		&::after {
@@ -313,7 +306,7 @@
 			// draw a triangle
 			width: 0;
 			height: 0;
-			border-bottom: 8px solid var( --color-accent );
+			border-bottom: 8px solid var( --color-primary-50 );
 			border-left: none;
 			border-right: 8px solid transparent;
 		}
@@ -419,10 +412,6 @@
 		.happychat__composer,
 		.happychat__welcome {
 			border-left: 1px solid lighten( $gray, 25% );
-		}
-
-		.happychat__active-toolbar {
-			border-left: 1px solid darken( $blue-medium, 2% );
 		}
 
 		.happychat__title {
