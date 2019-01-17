@@ -99,6 +99,21 @@ export const recordDomainAvailabilityReceive = (
 		} )
 	);
 
+export const recordDomainAddAvailabilityPreCheck = ( domain, unavailableStatus, section ) =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Search',
+			'Domain Add',
+			'Domain Precheck Unavailable',
+			unavailableStatus
+		),
+		recordTracksEvent( 'calypso_domain_add_availability_precheck', {
+			domain: domain,
+			unavailable_status: unavailableStatus,
+			section,
+		} )
+	);
+
 export function recordShowMoreResults( searchQuery, pageNumber, section ) {
 	return composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Show More Results' ),
