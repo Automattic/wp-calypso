@@ -131,6 +131,21 @@ export const active = stateSchema( 'active', {
 		},
 		rewind,
 		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
+		backup_status: {
+			type: 'object',
+			properties: {
+				backup_state: {
+					type: 'string',
+					pattern: '^(valid|invalid)$',
+				},
+				last_backup_time: {
+					oneOf: [ { type: 'string' }, { type: 'boolean' } ],
+				},
+				error: {
+					oneOf: [ { type: 'boolean' }, { type: 'string' } ],
+				},
+			},
+		},
 	},
 	required: [ 'state', 'last_updated' ],
 } );

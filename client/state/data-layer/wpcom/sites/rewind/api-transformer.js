@@ -70,6 +70,13 @@ export function transformApi( data ) {
 		data.credentials && { credentials: data.credentials.map( transformCredential ) },
 		data.downloads && { downloads: data.downloads.map( transformDownload ) },
 		data.reason && { reason: data.reason },
-		data.rewind && { rewind: transformRewind( data.rewind ) }
+		data.rewind && { rewind: transformRewind( data.rewind ) },
+		data.backup_status && {
+			backupStatus: {
+				backupState: data.backup_status.backup_state,
+				lastBackupTime: data.backup_status.last_backup_time,
+				error: data.backup_status.error,
+			},
+		}
 	);
 }
