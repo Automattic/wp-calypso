@@ -45,6 +45,18 @@
 	}
 	input {
 		padding: 10px 100px 10px 10px;
+		// Since there's a 1px padding on the container, and
+		// inputs use actual borders (unlike cards, which
+		// use box-shadow), we need to adjust.
+		margin: 0 -1px;
+		width: calc( 100% + 2px );
+
+		// On smaller screens the buttons get bigger,
+		// so this input needs to get bigger, too.
+		@include breakpoint( '<660px' ) {
+			padding-top: 15px;
+			padding-bottom: 15px;
+		}
 	}
 	.card {
 		margin: 0 auto;
