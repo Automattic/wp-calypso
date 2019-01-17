@@ -18,7 +18,8 @@ import Popover from 'components/popover';
 import DateRangeInputs from './inputs';
 import DateRangeHeader from './header';
 import DateRangeTrigger from './trigger';
-
+import Button from 'components/button';
+import Gridicon from 'gridicons';
 const NO_DATE_SELECTED_VALUE = null;
 
 export class DateRange extends Component {
@@ -111,6 +112,8 @@ export class DateRange extends Component {
 			// before updating the central source of truth (ie: startDate)
 			textInputStartDate: this.toDateString( startDate ),
 			textInputEndDate: this.toDateString( endDate ),
+			initialStartDate: startDate, // cache values in case we need to reset to them
+			initialEndDate: endDate, // cache values in case we need to reset to them
 		};
 
 		// Ref to the Trigger <button> used to position the Popover component
@@ -355,6 +358,23 @@ export class DateRange extends Component {
 		} );
 	};
 
+	resetDateRange = () => {
+		this.setState( previousState => {
+			const startDate = previousState.initialStartDate;
+			const endDate = previousState.initialEndDate;
+
+			const newState = {
+				staleDatesSaved: false,
+				startDate: startDate,
+				endDate: endDate,
+				textInputStartDate: this.toDateString( startDate ),
+				textInputEndDate: this.toDateString( endDate ),
+			};
+
+			return newState;
+		} );
+	};
+
 	/**
 	 * Converts a moment date to a native JS Date object
 	 * @param  {MomentJSDate} momentDate a momentjs date object to convert
@@ -456,6 +476,38 @@ export class DateRange extends Component {
 		return [ config ];
 	}
 
+	renderDateHelp() {
+		const { startDate, endDate } = this.state;
+
+		return (
+			<div className="date-range__info">
+				{ ! startDate &&
+					! endDate &&
+					this.props.translate( '{{icon/}} Please select the {{em}}first{{/em}} day.', {
+						components: {
+							icon: <Gridicon icon="info" />,
+							em: <em />,
+						},
+					} ) }
+				{ startDate &&
+					! endDate &&
+					this.props.translate( '{{icon/}} Please select the {{em}}last{{/em}} day.', {
+						components: {
+							icon: <Gridicon icon="info" />,
+							em: <em />,
+						},
+					} ) }
+				{ startDate && endDate && (
+					<Button borderless compact onClick={ this.resetDateRange }>
+						{ this.props.translate( '{{icon/}} clear dates', {
+							components: { icon: <Gridicon icon="cross-small" /> },
+						} ) }
+					</Button>
+				) }
+			</div>
+		);
+	}
+
 	/**
 	 * Renders the Popover component
 	 * @return {ReactComponent} the Popover component
@@ -485,6 +537,7 @@ export class DateRange extends Component {
 					{ this.props.renderInputs( inputsProps ) }
 					{ this.props.renderHeader( headerProps ) }
 					{ this.renderDatePicker() }
+					{ this.renderDateHelp() }
 				</div>
 			</Popover>
 		);

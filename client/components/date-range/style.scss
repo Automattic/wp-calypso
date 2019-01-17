@@ -141,3 +141,29 @@
 	margin-left: 1em;
 }
 
+
+.date-range__info {
+	order: 4;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.5em 0;
+	
+	&,
+	.button {
+		font-size: 12px;
+	}
+
+	.button {
+		color: var(--color-link);
+		&:hover,
+		&:focus {
+			color: var(--color-link-300);
+		}
+	}
+
+	.gridicon {
+		margin-right: 0.5em;
+	}
+}
+
