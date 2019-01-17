@@ -20,5 +20,7 @@
 		"schedule": "every weekday"
 	},
 	"prConcurrentLimit": 0,
-	"prHourlyLimit": 50
+	"prHourlyLimit": 50,
+	"semanticCommits": true,
+	"semanticCommitType": "chore"
 }
