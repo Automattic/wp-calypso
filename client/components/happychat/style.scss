@@ -410,7 +410,8 @@
 
 		.happychat__conversation,
 		.happychat__composer,
-		.happychat__welcome {
+		.happychat__welcome,
+		.happychat__active-toolbar {
 			border-left: 1px solid lighten( $gray, 25% );
 		}
 
