@@ -8,6 +8,7 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
+const { execSync } = require( 'child_process' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
@@ -40,6 +41,17 @@ const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
+
+/**
+ * Plugin that generates the `public/custom-properties.css` file before compilation
+ */
+class BuildCustomPropertiesCssPlugin {
+	apply( compiler ) {
+		compiler.hooks.compile.tap( 'BuildCustomPropertiesCssPlugin', () =>
+			execSync( 'node bin/build-custom-properties-css.js' )
+		);
+	}
+}
 
 /*
  * Create reporter for ProgressPlugin (used with EMIT_STATS)
@@ -355,6 +367,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					},
 				} ),
 			shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
+			new BuildCustomPropertiesCssPlugin(),
 		] ),
 		externals: _.compact( [
 			externalizeWordPressPackages && wordpressExternals,
