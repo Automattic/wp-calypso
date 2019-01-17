@@ -47,12 +47,14 @@ export class SignupProcessingScreen extends Component {
 		}
 
 		const siteSlug = dependencies.siteSlug;
-		if ( siteSlug ) {
+		if ( siteSlug && this.state.siteSlug !== siteSlug ) {
 			this.setState( { siteSlug } );
 		}
 
 		const hasPaidSubscription = !! ( dependencies.cartItem || dependencies.domainItem );
-		this.setState( { hasPaidSubscription } );
+		if ( hasPaidSubscription && this.state.hasPaidSubscription !== hasPaidSubscription ) {
+			this.setState( { hasPaidSubscription } );
+		}
 	}
 
 	renderFloaties() {
@@ -152,15 +154,17 @@ export class SignupProcessingScreen extends Component {
 		);
 	}
 
-	render() {
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
+	componentDidUpdate = () => {
 		const { loginHandler } = this.props;
 
 		if ( !! loginHandler ) {
 			this.shouldShowChecklist() ? this.showPreviewAfterLogin() : loginHandler();
 			return null;
 		}
+	};
 
+	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ this.renderFloaties() }
