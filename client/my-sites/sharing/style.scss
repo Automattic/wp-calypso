@@ -895,29 +895,29 @@
 		background: $color;
 
 		&:hover {
-			background: rgba( $color, 0.9 );
+			background: $color;
 		}
 	}
 }
 
-@include sharing-button-service( 'facebook', var( --color-facebook-rgb ));
-@include sharing-button-service( 'twitter', var( --color-twitter-rgb ));
-@include sharing-button-service( 'press-this', var( --color-primary-rgb ));
+@include sharing-button-service( 'facebook', var( --color-facebook ));
+@include sharing-button-service( 'twitter', var( --color-twitter ));
+@include sharing-button-service( 'press-this', var( --color-wpcom ));
 @include sharing-button-service( 'path', var( --color-path-rgb ));
-@include sharing-button-service( 'google-plus-1', var( --color-gplus-rgb ));
-@include sharing-button-service( 'instagram', var( --color-instagram-rgb ));
-@include sharing-button-service( 'eventbrite', var( --color-eventbrite-rgb ));
-@include sharing-button-service( 'linkedin', var( --color-linkedin-rgb ));
-@include sharing-button-service( 'stumbleupon', var( --color-stumbleupon-rgb ));
-@include sharing-button-service( 'tumblr', var( --color-tumblr-rgb ));
-@include sharing-button-service( 'reddit', var( --color-reddit-rgb ));
-@include sharing-button-service( 'pinterest', var( --color-pinterest-rgb ));
-@include sharing-button-service( 'pocket', var( --color-pocket-rgb ));
-@include sharing-button-service( 'email', var( --color-email-rgb ));
-@include sharing-button-service( 'print', var( --color-print-rgb ));
-@include sharing-button-service( 'skype', var( --color-skype-rgb ));
-@include sharing-button-service( 'telegram', var( --color-telegram-rgb ));
-@include sharing-button-service( 'jetpack-whatsapp', var( --color-whatsapp-rgb ));
+@include sharing-button-service( 'google-plus-1', var( --color-gplus ));
+@include sharing-button-service( 'instagram', var( --color-instagram ));
+@include sharing-button-service( 'eventbrite', var( --color-eventbrite ));
+@include sharing-button-service( 'linkedin', var( --color-linkedin ));
+@include sharing-button-service( 'stumbleupon', var( --color-stumbleupon ));
+@include sharing-button-service( 'tumblr', var( --color-tumblr ));
+@include sharing-button-service( 'reddit', var( --color-reddit ));
+@include sharing-button-service( 'pinterest', var( --color-pinterest ));
+@include sharing-button-service( 'pocket', var( --color-pocket ));
+@include sharing-button-service( 'email', var( --color-email ));
+@include sharing-button-service( 'print', var( --color-print ));
+@include sharing-button-service( 'skype', var( --color-skype ));
+@include sharing-button-service( 'telegram', var( --color-telegram ));
+@include sharing-button-service( 'jetpack-whatsapp', var( --color-whatsapp ));
 
 .sharing-buttons-preview__panel {
 	position: relative;
