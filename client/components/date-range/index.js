@@ -210,26 +210,12 @@ export class DateRange extends Component {
 	handleInputBlur = ( val, startOrEnd ) => {
 		const date = this.props.moment( val, this.getLocaleDateFormat() );
 
-		// Note that the `textInput[Start|End]Date` state is updated on "change" via
-		// handleInputChange
-		const fromDate = this.props.moment( this.state.textInputStartDate, this.getLocaleDateFormat() );
-		const toDate = this.props.moment( this.state.textInputEndDate, this.getLocaleDateFormat() );
+		// Either `startDate` or `endDate`
+		const stateKey = `${ startOrEnd.toLowerCase() }Date`;
 
-		// Check date validity
-		const isValidFrom = this.isValidDate( fromDate );
-		const isValidTo = this.isValidDate( toDate );
-
-		// If either of the date inputs are invalid then revert the
-		// text inputs values to the current start/end date from state
-		if ( ! isValidFrom || ! isValidTo ) {
-			this.setState( {
-				textInputStartDate: this.toDateString( this.state.startDate ),
-				textInputEndDate: this.toDateString( this.state.endDate ),
-			} );
-			return; // bail early
-		}
-
-		const isSameDate = this.state[ `${ startOrEnd.toLowerCase() }Date` ].isSame( date, 'day' );
+		const isSameDate = ! isNull( this.state[ stateKey ] )
+			? this.state[ stateKey ].isSame( date, 'day' )
+			: false;
 
 		if ( isSameDate ) {
 			return;

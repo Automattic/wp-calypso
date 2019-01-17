@@ -63,6 +63,12 @@ export class DateRangeInputs extends Component {
 	};
 
 	render() {
+		const localeDateFormat = this.props.moment.localeData().longDateFormat( 'L' );
+
+		const startValue =
+			this.props.startDateValue !== localeDateFormat ? this.props.startDateValue : '';
+		const endValue = this.props.endDateValue !== localeDateFormat ? this.props.startDateValue : '';
+
 		return (
 			<fieldset className="date-range__date-inputs">
 				<legend className="date-range__date-inputs-legend">Start and End Dates</legend>
@@ -77,9 +83,10 @@ export class DateRangeInputs extends Component {
 						<FormTextInput
 							id={ this.startDateID }
 							name={ this.startDateID }
-							value={ this.props.startDateValue }
+							value={ startValue }
 							onChange={ this.handleInputChange( 'Start' ) }
 							onBlur={ this.handleInputBlur( 'Start' ) }
+							placeholder={ localeDateFormat }
 						/>
 					</div>
 					<div className="date-range__date-input date-range__date-input--to">
@@ -92,9 +99,10 @@ export class DateRangeInputs extends Component {
 						<FormTextInput
 							id={ this.endDateID }
 							name={ this.endDateID }
-							value={ this.props.endDateValue }
+							value={ endValue }
 							onChange={ this.handleInputChange( 'End' ) }
 							onBlur={ this.handleInputBlur( 'End' ) }
+							placeholder={ localeDateFormat }
 						/>
 					</div>
 				</div>
