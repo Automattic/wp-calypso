@@ -480,7 +480,7 @@ export class DateRange extends Component {
 		const { startDate, endDate } = this.state;
 
 		return (
-			<div className="date-range__info">
+			<div className="date-range__info" role="status" aria-live="polite">
 				{ ! startDate &&
 					! endDate &&
 					this.props.translate( '{{icon/}} Please select the {{em}}first{{/em}} day.', {
@@ -499,7 +499,7 @@ export class DateRange extends Component {
 					} ) }
 				{ startDate && endDate && (
 					<Button borderless compact onClick={ this.resetDateRange }>
-						{ this.props.translate( '{{icon/}} clear dates', {
+						{ this.props.translate( '{{icon/}} clear selected dates', {
 							components: { icon: <Gridicon icon="cross-small" /> },
 						} ) }
 					</Button>
