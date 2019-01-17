@@ -1,45 +1,86 @@
 // @TODO: Replace with Gutenberg variables
-$dark-gray-300: #2b2d2f;
+
 $gray-lighten-30: #f6f6f6;
 
-.wp-block-jetpack-related-posts {
-	&.is-grid {
-		.related-posts__preview {
-			display: flex;
-			margin: 0 -10px;
+.jp-related-posts-i2 {
+	&__row {
+		display: flex;
+		margin-top: 1.5rem;
 
-			&-post {
-				flex-grow: 1;
-				flex-basis: 0;
-				margin: 0 10px;
-			}
+		&:first-child {
+			margin-top: 0;
+		}
+
+		&[data-post-count='3'] .jp-related-posts-i2__post {
+			max-width: calc( 33% - 20px );
+		}
+
+		&[data-post-count='2'] .jp-related-posts-i2__post,
+		&[data-post-count='1'] .jp-related-posts-i2__post {
+			max-width: calc( 50% - 20px );
 		}
 	}
 
-	.related-posts__preview {
-		&-post {
-			&-image-placeholder {
-				width: 100%;
-				padding: 4em 0;
-				background-color: $gray-lighten-30;
-				&-icon {
-					margin: 0 auto;
-				}
-			}
+	&__post {
+		flex-grow: 1;
+		flex-basis: 0;
+		margin: 0 10px;
+		display: flex;
+		flex-direction: column;
+	}
 
-			&-link {
-				font-size: inherit;
-			}
+	&__post-heading, &__post-img-link, &__post-date, &__post-context {
+		flex-direction: row;
+	}
 
-			&-date {
-				color: $dark-gray-300;
-			}
+	&__post-img-link, &__post-image-placeholder {
+		order: -1;
+	}
 
-			&-context {
-				color: $dark-gray-300;
-				font-size: 12px;
-				margin: 0;
-			}
+	&__post-heading {
+		margin: 0.5rem 0;
+		font-size: 1rem;
+		line-height: 1.2em;
+	}
+
+	&__post-link {
+		display: block;
+		width: 100%;
+	}
+
+	&__post-img {
+		width: 100%;
+	}
+
+	&__post-image-placeholder {
+		display: block;
+		position: relative;
+		margin: 0 auto;
+		max-width: 350px;
+		&-icon {
+			position: absolute;
+			top: calc( 50% - 12px );
+			left: calc( 50% - 12px );
 		}
+	}
+}
+
+/* List view */
+
+.jp-relatedposts-i2[data-layout='list'] {
+	.jp-related-posts-i2__row {
+		margin-top: 0;
+		display: block;
+	}
+	.jp-related-posts-i2__post {
+		max-width: none;
+		margin: 0;
+		margin-top: 1rem;
+	}
+	.jp-related-posts-i2__post-image-placeholder {
+		max-width: 350px;
+	}
+	.jp-related-posts-i2__post-img-link {
+		margin-top: 1rem;
 	}
 }
