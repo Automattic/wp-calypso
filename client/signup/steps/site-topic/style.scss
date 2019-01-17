@@ -41,7 +41,6 @@
 		// to adjust the position of the suggestions.
 		top: 48px;
 
-
 		// On smaller screens the input gets bigger,
 		// so the suggestions need to move down a little.
 		@include breakpoint( '<660px' ) {
