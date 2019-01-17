@@ -49,16 +49,17 @@
 
 	&.level-3 {
 		background-color: var( --color-primary-light );
+		color: var( --color-white );
 	}
 
 	&.level-4 {
 		background-color: var( --color-primary );
-		color: white;
+		color: var( --color-white );
 	}
 
 	&.level-5 {
 		background-color: var( --color-primary-dark );
-		color: white;
+		color: var( --color-white );
 	}
 }
 
