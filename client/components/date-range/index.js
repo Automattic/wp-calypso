@@ -19,6 +19,8 @@ import DateRangeInputs from './inputs';
 import DateRangeHeader from './header';
 import DateRangeTrigger from './trigger';
 
+const NO_DATE_SELECTED = null;
+
 export class DateRange extends Component {
 	static propTypes = {
 		selectedStartDate: PropTypes.oneOfType( [
@@ -70,25 +72,29 @@ export class DateRange extends Component {
 		let endDate;
 
 		endDate = isNil( this.props.selectedEndDate )
-			? this.props.moment()
+			? NO_DATE_SELECTED
 			: this.props.moment( this.props.selectedEndDate );
 
-		endDate = this.clampDateToRange( endDate, {
-			dateFrom: firstSelectableDate,
-			dateTo: lastSelectableDate,
-		} );
+		if ( ! isNull( endDate ) ) {
+			endDate = this.clampDateToRange( endDate, {
+				dateFrom: firstSelectableDate,
+				dateTo: lastSelectableDate,
+			} );
+		}
 
 		startDate = isNil( this.props.selectedStartDate )
-			? this.props.moment( endDate ).subtract( 1, 'months' )
+			? NO_DATE_SELECTED
 			: this.props.moment( this.props.selectedStartDate );
 
-		startDate = this.clampDateToRange( startDate, {
-			dateFrom: firstSelectableDate,
-			dateTo: lastSelectableDate,
-		} );
+		if ( ! isNull( startDate ) ) {
+			startDate = this.clampDateToRange( startDate, {
+				dateFrom: firstSelectableDate,
+				dateTo: lastSelectableDate,
+			} );
+		}
 
 		// Ensure start is before end otherwise flip the values
-		if ( endDate.isBefore( startDate ) ) {
+		if ( startDate && endDate && endDate.isBefore( startDate ) ) {
 			// flip values via array destructuring (think about it...)
 			[ startDate, endDate ] = [ endDate, startDate ];
 		}
@@ -103,8 +109,8 @@ export class DateRange extends Component {
 			staleDatesSaved: false,
 			// this needs to be independent from startDate because we must independently validate them
 			// before updating the central source of truth (ie: startDate)
-			textInputStartDate: this.toTextInput( startDate ),
-			textInputEndDate: this.toTextInput( endDate ),
+			textInputStartDate: this.toDateString( startDate ),
+			textInputEndDate: this.toDateString( endDate ),
 		};
 
 		// Ref to the Trigger <button> used to position the Popover component
@@ -118,7 +124,7 @@ export class DateRange extends Component {
 	 * @param  {Date|Moment} date the date for conversion
 	 * @return {string}      the date expressed as a locale appropriate string
 	 */
-	toTextInput( date ) {
+	toDateString( date ) {
 		if ( this.props.moment.isMoment( date ) || this.props.moment.isDate( date ) ) {
 			return this.formatDateToLocale( this.props.moment( date ) );
 		}
@@ -229,8 +235,8 @@ export class DateRange extends Component {
 		// text inputs values to the current start/end date from state
 		if ( ! isValidFrom || ! isValidTo ) {
 			this.setState( {
-				textInputStartDate: this.toTextInput( this.state.startDate ),
-				textInputEndDate: this.toTextInput( this.state.endDate ),
+				textInputStartDate: this.toDateString( this.state.startDate ),
+				textInputEndDate: this.toDateString( this.state.endDate ),
 			} );
 			return; // bail early
 		}
@@ -281,24 +287,24 @@ export class DateRange extends Component {
 		// Calculate the new Date range
 		const newRange = DateUtils.addDayToRange( rawDay, range );
 
-		// Edge case: Range can sometimes be from: null, to: null
-		if ( isNull( newRange.from ) || isNull( newRange.to ) ) return;
-
 		// Update state to reflect new date range for
 		// calendar and text inputs
 		this.setState(
 			previousState => {
-				// Update start/end
-				let newState = {
-					startDate: this.nativeDateToMoment( newRange.from ),
-					endDate: this.nativeDateToMoment( newRange.to ),
-				};
+				// Update to date or `null` which means "not date"
+				const newStartDate = isNull( newRange.from )
+					? NO_DATE_SELECTED
+					: this.nativeDateToMoment( newRange.from );
+				const newEndDate = isNull( newRange.to )
+					? NO_DATE_SELECTED
+					: this.nativeDateToMoment( newRange.to );
 
-				// Update inputs
-				newState = {
-					...newState,
-					textInputStartDate: this.toTextInput( newState.startDate ),
-					textInputEndDate: this.toTextInput( newState.endDate ),
+				// Update start/end state values
+				let newState = {
+					startDate: newStartDate,
+					endDate: newEndDate,
+					textInputStartDate: this.toDateString( newStartDate ),
+					textInputEndDate: this.toDateString( newEndDate ),
 				};
 
 				// For first date selection only: "cache" previous dates
@@ -351,11 +357,14 @@ export class DateRange extends Component {
 		this.setState( previousState => {
 			const newState = { staleDatesSaved: false };
 
+			const startDate = previousState.staleStartDate;
+			const endDate = previousState.staleEndDate;
+
 			if ( previousState.staleStartDate && previousState.staleEndDate ) {
-				newState.startDate = previousState.staleStartDate;
-				newState.endDate = previousState.staleEndDate;
-				newState.textInputStartDate = this.formatDateToLocale( this.state.staleStartDate );
-				newState.textInputEndDate = this.formatDateToLocale( this.state.staleEndDate );
+				newState.startDate = startDate;
+				newState.endDate = endDate;
+				newState.textInputStartDate = this.toDateString( startDate );
+				newState.textInputEndDate = this.toDateString( endDate );
 			}
 
 			return newState;
@@ -486,14 +495,40 @@ export class DateRange extends Component {
 	 * @return {ReactComponent} the DatePicker component
 	 */
 	renderDatePicker() {
+		const fromDate = this.momentDateToJsDate( this.state.startDate );
+		const toDate = this.momentDateToJsDate( this.state.endDate );
+
+		// Add "Range" modifier classes to Day component
+		// within Date Picker to aid "range" styling
+		// http://react-day-picker.js.org/api/DayPicker/#modifiers
+		const modifiers = {
+			start: fromDate,
+			end: toDate,
+			'range-start': fromDate,
+			'range-end': toDate,
+			range: {
+				from: fromDate,
+				to: toDate,
+			},
+		};
+
+		// Dates to be "selected" in Picker
+		const selected = [
+			fromDate,
+			{
+				from: fromDate,
+				to: toDate,
+			},
+		];
+
 		return (
 			<DatePicker
-				className="date-range__popover-date-picker"
+				modifiers={ modifiers }
 				showOutsideDays={ false }
 				fromMonth={ this.momentDateToJsDate( this.props.firstSelectableDate ) }
 				toMonth={ this.momentDateToJsDate( this.props.lastSelectableDate ) }
 				onSelectDay={ this.onSelectDate }
-				selectedDays={ this.toDateRange( this.state.startDate, this.state.endDate ) }
+				selectedDays={ selected }
 				numberOfMonths={ window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1 }
 				initialMonth={ this.momentDateToJsDate( this.state.startDate ) }
 				disabledDays={ this.getDisabledDaysConfig() }
@@ -512,8 +547,8 @@ export class DateRange extends Component {
 		} );
 
 		const triggerProps = {
-			startDateText: this.formatDateToLocale( this.state.startDate ),
-			endDateText: this.formatDateToLocale( this.state.endDate ),
+			startDateText: this.toDateString( this.state.startDate ),
+			endDateText: this.toDateString( this.state.endDate ),
 			buttonRef: this.triggerButtonRef,
 			onTriggerClick: this.togglePopover,
 			triggerText: this.props.triggerText,
