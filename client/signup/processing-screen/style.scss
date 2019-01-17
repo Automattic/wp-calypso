@@ -55,7 +55,7 @@
 	}
 
 	.gridicon {
-		fill: $gray;
+		fill: var( --color-white );
 		position: absolute;
 		height: auto;
 		width: auto;
@@ -262,6 +262,7 @@
 	max-width: 500px;
 	margin: 0 auto;
 	padding-bottom: 30px;
+	color: var( --color-white );
 }
 
 /* Title */
