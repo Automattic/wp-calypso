@@ -19,7 +19,7 @@ import DateRangeInputs from './inputs';
 import DateRangeHeader from './header';
 import DateRangeTrigger from './trigger';
 
-const NO_DATE_SELECTED = null;
+const NO_DATE_SELECTED_VALUE = null;
 
 export class DateRange extends Component {
 	static propTypes = {
@@ -72,7 +72,7 @@ export class DateRange extends Component {
 		let endDate;
 
 		endDate = isNil( this.props.selectedEndDate )
-			? NO_DATE_SELECTED
+			? NO_DATE_SELECTED_VALUE
 			: this.props.moment( this.props.selectedEndDate );
 
 		if ( ! isNull( endDate ) ) {
@@ -83,7 +83,7 @@ export class DateRange extends Component {
 		}
 
 		startDate = isNil( this.props.selectedStartDate )
-			? NO_DATE_SELECTED
+			? NO_DATE_SELECTED_VALUE
 			: this.props.moment( this.props.selectedStartDate );
 
 		if ( ! isNull( startDate ) ) {
@@ -115,21 +115,6 @@ export class DateRange extends Component {
 
 		// Ref to the Trigger <button> used to position the Popover component
 		this.triggerButtonRef = React.createRef();
-	}
-
-	/**
-	 * Converts date-like object to a string suitable
-	 * for display in a text input. Also converts
-	 * to locale appropriate format.
-	 * @param  {Date|Moment} date the date for conversion
-	 * @return {string}      the date expressed as a locale appropriate string
-	 */
-	toDateString( date ) {
-		if ( this.props.moment.isMoment( date ) || this.props.moment.isDate( date ) ) {
-			return this.formatDateToLocale( this.props.moment( date ) );
-		}
-
-		return this.getLocaleDateFormat(); // "MM/DD/YYY" or locale equivalent
 	}
 
 	/**
@@ -293,10 +278,10 @@ export class DateRange extends Component {
 			previousState => {
 				// Update to date or `null` which means "not date"
 				const newStartDate = isNull( newRange.from )
-					? NO_DATE_SELECTED
+					? NO_DATE_SELECTED_VALUE
 					: this.nativeDateToMoment( newRange.from );
 				const newEndDate = isNull( newRange.to )
-					? NO_DATE_SELECTED
+					? NO_DATE_SELECTED_VALUE
 					: this.nativeDateToMoment( newRange.to );
 
 				// Update start/end state values
@@ -355,17 +340,16 @@ export class DateRange extends Component {
 	 */
 	revertDates = () => {
 		this.setState( previousState => {
-			const newState = { staleDatesSaved: false };
-
 			const startDate = previousState.staleStartDate;
 			const endDate = previousState.staleEndDate;
 
-			if ( previousState.staleStartDate && previousState.staleEndDate ) {
-				newState.startDate = startDate;
-				newState.endDate = endDate;
-				newState.textInputStartDate = this.toDateString( startDate );
-				newState.textInputEndDate = this.toDateString( endDate );
-			}
+			const newState = {
+				staleDatesSaved: false,
+				startDate: startDate,
+				endDate: endDate,
+				textInputStartDate: this.toDateString( startDate ),
+				textInputEndDate: this.toDateString( endDate ),
+			};
 
 			return newState;
 		} );
@@ -426,6 +410,22 @@ export class DateRange extends Component {
 		}
 
 		return date;
+	}
+
+	/**
+	 * Converts date-like object to a string suitable
+	 * for display in a text input. Also converts
+	 * to locale appropriate format.
+	 * @param  {Date|Moment} date the date for conversion
+	 * @return {string}      the date expressed as a locale appropriate string or if null
+	 *                       then returns the locale format (eg: MM/DD/YYYY)
+	 */
+	toDateString( date ) {
+		if ( this.props.moment.isMoment( date ) || this.props.moment.isDate( date ) ) {
+			return this.formatDateToLocale( this.props.moment( date ) );
+		}
+
+		return this.getLocaleDateFormat(); // "MM/DD/YYY" or locale equivalent
 	}
 
 	/**
