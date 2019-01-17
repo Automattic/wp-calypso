@@ -191,7 +191,7 @@ button {
 
 .button.is-primary.is-scary {
 	background-color: var( --color-error );
-	border-color: darken( $alert-red, 20% );
+	border-color: var( --color-error-dark );
 	color: var( --color-white );
 
 	&:hover,
