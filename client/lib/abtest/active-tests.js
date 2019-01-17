@@ -138,4 +138,12 @@ export default {
 		},
 		defaultVariation: 'keep',
 	},
+	gSuitePlan: {
+		datestamp: '20190117',
+		variations: {
+			basic: 50,
+			business: 50,
+		},
+		defaultVariation: 'basic',
+	},
 };

@@ -18,6 +18,15 @@ class GoogleAppsProductDetails extends Component {
 		monthlyPrice: PropTypes.string.isRequired,
 	};
 
+	getStorageText() {
+		const { plan, translate } = this.props;
+		if ( 'gapps' === plan ) {
+			return translate( '30GB Online File Storage' );
+		} else if ( 'gapps_unlimited' === plan ) {
+			return translate( 'Unlimited cloud storage (or 1TB per user if fewer than 5 users)' );
+		}
+	}
+
 	renderPrice() {
 		return this.props.translate( '%(monthlyPrice)s per user / month', {
 			args: { monthlyPrice: this.props.monthlyPrice },
@@ -66,7 +75,7 @@ class GoogleAppsProductDetails extends Component {
 
 					<li className="gsuite-dialog__product-feature">
 						<img src="/calypso/images/g-suite/logo_drive_48dp.svg" alt="" />
-						<p>{ translate( '30GB Online File Storage' ) }</p>
+						<p>{ this.getStorageText() }</p>
 					</li>
 
 					<li className="gsuite-dialog__product-feature">
