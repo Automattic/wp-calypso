@@ -580,12 +580,48 @@ $plan-features-sidebar-width: 272px;
 /*= Plans in Signup
 ========================================*/
 
+// This is used for the monthly/yearly billing
+// which is currently us in the Jetpack flow.
 .price-toggle {
 	width: 250px;
 	margin: 0 auto 20px;
 
 	& + .plans-features-main__group {
 		padding-top: 8px;
+	}
+}
+
+// This is the customer type buttons that let
+// you toggle the visible plans in signup.
+// The #primary id is included to increase specificity
+// and override some of the segmented-control styles.
+// This UI should really use buttons instead.
+body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
+	.segmented-control__item {
+		background: none;
+
+		&:hover,
+		&:focus {
+			background: none;
+		}
+
+		a,
+		a:hover,
+		a:focus {
+			background: none;
+			border: none;
+			color: var( --color-white );
+			text-decoration: underline;
+		}
+
+		&.is-selected a,
+		&.is-selected a:hover,
+		&.is-selected a:focus {
+			background: var( --color-white );
+			color: var( --color-text );
+			text-decoration: none;
+			cursor: default;
+		}
 	}
 }
 
