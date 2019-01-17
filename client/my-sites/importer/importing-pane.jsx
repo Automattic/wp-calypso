@@ -115,8 +115,13 @@ class ImportingPane extends React.PureComponent {
 
 	getHeadingText = () => {
 		return this.props.translate(
-			'Importing may take a while if your site has a lot of media. ' +
-				"You can safely navigate away from this page if you'd like. We'll let you know when it's done!"
+			'Importing may take a while if your site has a lot of media.{{br/}}' +
+				"You can safely navigate away from this page if you'd like. We'll let you know when it's done!",
+			{
+				components: {
+					br: <br />,
+				},
+			}
 		);
 	};
 
