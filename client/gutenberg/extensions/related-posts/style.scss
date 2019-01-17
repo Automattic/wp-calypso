@@ -12,6 +12,7 @@ $gray-lighten-30: #f6f6f6;
 				flex-grow: 1;
 				flex-basis: 0;
 				margin: 0 10px;
+				max-width: 350px;
 			}
 		}
 	}
@@ -20,10 +21,17 @@ $gray-lighten-30: #f6f6f6;
 		&-post {
 			&-image-placeholder {
 				width: 100%;
-				padding: 4em 0;
+				padding: 57.14286% 0 0; // 1.75 ratio
+				position: relative;
 				background-color: $gray-lighten-30;
 				&-icon {
-					margin: 0 auto;
+					left: 50%;
+					position: absolute;
+					top: 50%;
+					transform: translate(-50%, -50%);
+					svg {
+						display: block;
+					}
 				}
 			}
 
