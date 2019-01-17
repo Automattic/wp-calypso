@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get, reduce } from 'lodash';
+import { get, reduce, sum } from 'lodash';
 
 /**
  * Returns a sync status object by site ID.
@@ -96,29 +96,9 @@ function getSyncProgressPercentage( state, siteId ) {
 		return 0;
 	}
 
-	const countQueued = reduce(
-		queued,
-		( sum, value ) => {
-			return ( sum + value );
-		},
-		0
-	);
-
-	const countSent = reduce(
-		sent,
-		( sum, value ) => {
-			return ( sum + value );
-		},
-		0
-	);
-
-	const countTotal = reduce(
-		total,
-		( sum, value ) => {
-			return ( sum + value );
-		},
-		0
-	);
+	const countQueued = sum(queued);
+	const countSent = sum(sent);
+	const countTotal = sum(total);
 
 	const percentQueued = ( countQueued / countTotal ) * queuedMultiplier * 100;
 	const percentSent = ( countSent / countTotal ) * sentMultiplier * 100;
