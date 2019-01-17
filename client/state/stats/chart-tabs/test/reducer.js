@@ -43,7 +43,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should append count records onto the state if no prior records exist', () => {
-			const state = counts( null, {
+			const state = counts( undefined, {
 				type: STATS_CHART_COUNTS_RECEIVE,
 				siteId,
 				period,

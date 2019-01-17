@@ -10,6 +10,8 @@ import { get } from 'lodash';
  */
 import { QUERY_FIELDS } from 'state/stats/chart-tabs/constants';
 
+const EMPTY_RESULT = [];
+
 /**
  * Returns the count records for a given site and period
  *
@@ -19,7 +21,7 @@ import { QUERY_FIELDS } from 'state/stats/chart-tabs/constants';
  * @returns {Array}            Array of count objects
  */
 export function getCountRecords( state, siteId, period ) {
-	return get( state, [ 'stats', 'chartTabs', 'counts', siteId, period ], [] );
+	return get( state, [ 'stats', 'chartTabs', 'counts', siteId, period ], EMPTY_RESULT );
 }
 
 /**

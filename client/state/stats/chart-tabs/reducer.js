@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, pick, set } from 'lodash';
+import { pick, set, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,30 +19,38 @@ import { QUERY_FIELDS } from './constants';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function counts( state = {}, action ) {
-	switch ( action.type ) {
-		case STATS_CHART_COUNTS_RECEIVE: {
-			const ID = 'period';
-			const records = get( state, `${ action.siteId }.${ action.period }`, [] ).slice();
-			const recordIds = records.map( count => count[ ID ] );
+export const counts = keyedReducer(
+	'siteId',
+	keyedReducer( 'period', ( state = [], action ) => {
+		switch ( action.type ) {
+			case STATS_CHART_COUNTS_RECEIVE: {
+				let areThereChanges = false;
 
-			// Merge existing records with records from API
-			action.data.forEach( recordFromApi => {
-				const index = recordIds.indexOf( recordFromApi[ ID ] );
-				if ( index >= 0 ) {
-					records[ index ] = { ...records[ index ], ...recordFromApi };
-				} else {
-					records.push( recordFromApi );
-				}
-			} );
+				const newState = action.data.reduce(
+					( nextState, recordFromApi ) => {
+						const index = nextState.findIndex( entry => entry.period === recordFromApi.period );
+						if ( index >= 0 ) {
+							const newRecord = { ...nextState[ index ], ...recordFromApi };
+							if ( ! isEqual( newRecord, recordFromApi ) ) {
+								areThereChanges = true;
+								nextState[ index ] = newRecord;
+							}
+						} else {
+							areThereChanges = true;
+							nextState.push( recordFromApi );
+						}
+						return nextState;
+					},
+					[ ...state ]
+				);
 
-			const newState = { ...state };
-			set( newState, `${ action.siteId }.${ action.period }`, records );
-			return newState;
+				// Avoid changing state if nothing's changed.
+				return areThereChanges ? newState : state;
+			}
 		}
-	}
-	return state;
-}
+		return state;
+	} )
+);
 counts.schema = countsSchema;
 
 /**

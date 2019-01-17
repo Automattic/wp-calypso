@@ -40,6 +40,7 @@ import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
 import UpworkStatsNudge from 'blocks/upwork-stats-nudge';
 import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
+import memoizeLast from 'lib/memoize-last';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -47,6 +48,11 @@ function updateQueryString( query = {} ) {
 		...query,
 	};
 }
+
+const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
+	period,
+	date: endOf.format( 'YYYY-MM-DD' ),
+} ) );
 
 const CHARTS = [
 	{
@@ -150,10 +156,7 @@ class StatsSite extends Component {
 		let videoList;
 		let podcastList;
 
-		const query = {
-			period,
-			date: endOf.format( 'YYYY-MM-DD' ),
-		};
+		const query = memoizedQuery( period, endOf );
 
 		// Video plays, and tags and categories are not supported in JetPack Stats
 		if ( ! isJetpack ) {
