@@ -69,6 +69,7 @@ import {
 } from 'components/domains/register-domain-step/utility';
 import {
 	recordDomainAvailabilityReceive,
+	recordDomainAddAvailabilityPreCheck,
 	recordFiltersReset,
 	recordFiltersSubmit,
 	recordMapDomainButtonClick,
@@ -1038,6 +1039,11 @@ class RegisterDomainStep extends React.Component {
 				.catch( () => [] )
 				.then( status => {
 					this.setState( { pendingCheckSuggestion: null } );
+					this.props.recordDomainAddAvailabilityPreCheck(
+						domain,
+						status,
+						this.props.analyticsSection
+					);
 					if ( status ) {
 						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
 						this.showAvailabilityErrorMessage( domain, status, {
@@ -1247,6 +1253,7 @@ export default connect(
 	},
 	{
 		recordDomainAvailabilityReceive,
+		recordDomainAddAvailabilityPreCheck,
 		recordFiltersReset,
 		recordFiltersSubmit,
 		recordMapDomainButtonClick,
