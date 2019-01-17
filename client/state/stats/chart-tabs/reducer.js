@@ -24,12 +24,11 @@ export const counts = keyedReducer(
 	keyedReducer( 'period', ( state = [], action ) => {
 		switch ( action.type ) {
 			case STATS_CHART_COUNTS_RECEIVE: {
-				const ID = 'period';
 				let areThereChanges = false;
 
 				const newState = action.data.reduce(
 					( nextState, recordFromApi ) => {
-						const index = nextState.findIndex( entry => entry[ ID ] === recordFromApi[ ID ] );
+						const index = nextState.findIndex( entry => entry.period === recordFromApi.period );
 						if ( index >= 0 ) {
 							const newRecord = { ...nextState[ index ], ...recordFromApi };
 							if ( ! isEqual( newRecord, recordFromApi ) ) {
@@ -46,11 +45,7 @@ export const counts = keyedReducer(
 				);
 
 				// Avoid changing state if nothing's changed.
-				if ( ! areThereChanges ) {
-					return state;
-				}
-
-				return newState;
+				return areThereChanges ? newState : state;
 			}
 		}
 		return state;
