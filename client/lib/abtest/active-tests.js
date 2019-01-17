@@ -141,8 +141,8 @@ export default {
 	gSuitePlan: {
 		datestamp: '20190117',
 		variations: {
-			basic: 50,
-			business: 50,
+			basic: 95,
+			business: 5,
 		},
 		defaultVariation: 'basic',
 	},
