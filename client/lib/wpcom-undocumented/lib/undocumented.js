@@ -467,16 +467,18 @@ Undocumented.prototype._sendRequest = function( originalParams, fn ) {
  *
  * @param {string} domain - The domain name to check.
  * @param {int} blogId - Optional blogId to determine if domain is used on another site.
+ * @param {boolean} isCartPreCheck - specifies whether this availability check is for a domain about to be added to the cart.
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
  * @api public
  */
-Undocumented.prototype.isDomainAvailable = function( domain, blogId, fn ) {
+Undocumented.prototype.isDomainAvailable = function( domain, blogId, isCartPreCheck, fn ) {
 	return this.wpcom.req.get(
 		`/domains/${ encodeURIComponent( domain ) }/is-available`,
 		{
 			blog_id: blogId,
 			apiVersion: '1.3',
+			is_cart_pre_check: isCartPreCheck,
 		},
 		fn
 	);
