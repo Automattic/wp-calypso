@@ -24,53 +24,74 @@ class ChecklistPromptTask extends PureComponent {
 		title: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		closePopover: PropTypes.func.isRequired,
+		autoCloseOnAction: PropTypes.bool.isRequired,
+		canDismiss: PropTypes.bool.isRequired,
+		dismissButtonText: PropTypes.string,
+		onDismiss: PropTypes.func,
 	};
 
-	dismissPopup = () => {
-		this.props.hideChecklistPrompt();
-		this.props.closePopover();
+	static defaultProps = {
+		canDismiss: true,
+		autoCloseOnClick: true,
+	};
+
+	handleDismiss = () => {
+		if ( this.props.autoCloseOnAction ) {
+			this.props.hideChecklistPrompt();
+			this.props.closePopover();
+		}
+
+		if ( this.props.onDismiss ) {
+			this.props.onDismiss();
+		}
+
 		this.props.recordTracksEvent( 'calypso_checklist_prompt_dismiss' );
 	};
 
-	goToAction = () => {
-		this.props.onClick();
-		this.props.closePopover();
+	handlePrimaryAction = () => {
+		if ( this.props.autoCloseOnAction ) {
+			this.props.hideChecklistPrompt();
+			this.props.closePopover();
+		}
+
+		if ( this.props.onClick ) {
+			this.props.onClick();
+		}
 	};
 
 	render() {
-		// Prompts never render completed Tasks
-		if ( this.props.completed ) {
-			return null;
-		}
-
-		const { description, onClick, title, duration, translate } = this.props;
+		const { canDismiss, description, onClick, title, duration, translate } = this.props;
 		const { buttonText = translate( 'Do it!' ) } = this.props;
-		const dismissButtonText = translate( 'Dismiss' );
+		const { dismissButtonText = translate( 'Dismiss' ) } = this.props;
 
 		return (
-			<>
-				<div className="checklist-prompt__content">
-					<h3 className="checklist-prompt__title">{ title }</h3>
-					<div className="checklist-prompt__description">{ description }</div>
-					{ duration && (
-						<div className="checklist-prompt__duration">
-							{ translate( 'Estimated time:' ) } { duration }
-						</div>
-					) }
-					<div className="checklist-prompt__actions">
-						{ onClick && (
-							<>
-								<Button onClick={ this.goToAction } className="checklist-prompt__button" primary>
-									{ buttonText }
-								</Button>
-								<Button onClick={ this.dismissPopup } className="checklist-prompt__button">
+			<div className="checklist-prompt__content">
+				<h3 className="checklist-prompt__title">{ title }</h3>
+				<div className="checklist-prompt__description">{ description }</div>
+				{ duration && (
+					<div className="checklist-prompt__duration">
+						{ translate( 'Estimated time:' ) } { duration }
+					</div>
+				) }
+				<div className="checklist-prompt__actions">
+					{ onClick && (
+						<>
+							<Button
+								onClick={ this.handlePrimaryAction }
+								className="checklist-prompt__button"
+								primary
+							>
+								{ buttonText }
+							</Button>
+							{ canDismiss && (
+								<Button onClick={ this.handleDismiss } className="checklist-prompt__button">
 									{ dismissButtonText }
 								</Button>
-							</>
-						) }
-					</div>
+							) }
+						</>
+					) }
 				</div>
-			</>
+			</div>
 		);
 	}
 }
