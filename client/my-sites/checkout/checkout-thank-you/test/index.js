@@ -175,9 +175,10 @@ describe( 'CheckoutThankYou', () => {
 			receipt: {
 				hasLoadedFromServer: true,
 				data: {
-					purchases: [ [], [] ],
+					purchases: [ { productSlug: PLAN_ECOMMERCE }, [] ],
 				},
 			},
+			refreshSitePlans: selectedSite => selectedSite,
 			planSlug: PLAN_ECOMMERCE,
 		};
 

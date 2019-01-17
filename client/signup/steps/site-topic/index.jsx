@@ -25,7 +25,6 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import Gridicon from 'gridicons';
 
 /**
  * Style dependencies
@@ -77,7 +76,6 @@ class SiteTopicStep extends Component {
 			<div className="site-topic__content">
 				<form onSubmit={ this.onSubmit }>
 					<FormFieldset>
-						<Gridicon icon="search" />
 						<SiteVerticalsSuggestionSearch
 							onChange={ this.onSiteTopicChange }
 							initialValue={ siteTopic }
@@ -118,6 +116,7 @@ class SiteTopicStep extends Component {
 					fallbackSubHeaderText={ commonSubHeaderText }
 					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderContent() }
+					showSiteMockups={ this.props.showSiteMockups }
 				/>
 			</div>
 		);
@@ -126,7 +125,7 @@ class SiteTopicStep extends Component {
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	submitSiteTopic: ( { is_user_input_vertical, vertical_name, vertical_slug } ) => {
-		const { flowName, goToNextStep } = ownProps;
+		const { flowName, goToNextStep, stepName } = ownProps;
 
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
@@ -140,7 +139,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 				isUserInput: is_user_input_vertical,
 				name: vertical_name,
 				slug: vertical_slug,
-			} )
+			}, stepName )
 		);
 
 		goToNextStep( flowName );

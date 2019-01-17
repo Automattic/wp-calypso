@@ -61,12 +61,12 @@ export default function() {
 
 	registerMultiPage( {
 		paths: [
-			paths.domainManagementAddGoogleApps( ':site', ':domain' ),
-			paths.domainManagementAddGoogleApps( ':site' ),
+			paths.domainManagementAddGSuiteUsers( ':site', ':domain' ),
+			paths.domainManagementAddGSuiteUsers( ':site' ),
 		],
 		handlers: [
 			...getCommonHandlers(),
-			domainManagementController.domainManagementAddGoogleApps,
+			domainManagementController.domainManagementAddGSuiteUsers,
 			makeLayout,
 			clientRender,
 		],

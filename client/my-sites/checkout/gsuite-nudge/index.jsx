@@ -14,7 +14,7 @@ import page from 'page';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import GoogleAppsDialog from 'components/upgrades/google-apps/google-apps-dialog';
+import GoogleAppsDialog from 'components/upgrades/gsuite/gsuite-dialog';
 import Main from 'components/main';
 import QuerySites from 'components/data/query-sites';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
@@ -37,7 +37,7 @@ export class GsuiteNudge extends React.Component {
 
 		page(
 			isEligibleForChecklist
-				? `/checklist/${ siteSlug }`
+				? `/view/${ siteSlug }`
 				: `/checkout/thank-you/${ siteSlug }/${ receiptId }`
 		);
 	};

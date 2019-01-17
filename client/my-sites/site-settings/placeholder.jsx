@@ -14,7 +14,7 @@ import Card from 'components/card';
 import Main from 'components/main';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import SectionNav from 'components/section-nav';
 
 const Placeholder = ( { translate } ) => {
@@ -45,7 +45,7 @@ const Placeholder = ( { translate } ) => {
 				</NavTabs>
 			</SectionNav>
 
-			<SectionHeader label={ header } />
+			<SettingsSectionHeader title={ header } />
 
 			<Card>
 				<div className="site-settings__placeholder-item">Example content here</div>

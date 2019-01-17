@@ -98,19 +98,27 @@ export default {
 		},
 		defaultVariation: 'skip',
 	},
+	showConciergeSessionUpsellNonGSuite: {
+		datestamp: '20181228',
+		variations: {
+			skip: 90,
+			show: 10,
+		},
+		defaultVariation: 'skip',
+	},
 	builderReferralStatsNudge: {
 		datestamp: '20181218',
 		variations: {
-			builderReferralBanner: 10,
-			googleMyBusinessBanner: 90,
+			builderReferralBanner: 50,
+			googleMyBusinessBanner: 50,
 		},
 		defaultVariation: 'googleMyBusinessBanner',
 	},
 	privateByDefault: {
 		datestamp: '20181217',
 		variations: {
-			private: 10,
-			public: 90,
+			private: 50,
+			public: 50,
 		},
 		defaultVariation: 'public',
 	},
@@ -122,12 +130,20 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	domainSearchButtonStyles: {
+	removeDomainsStepFromOnboarding: {
+		datestamp: '20181221',
+		variations: {
+			keep: 100,
+			remove: 0,
+		},
+		defaultVariation: 'keep',
+	},
+  domainSearchButtonStyles: {
 		datestamp: '20190116',
 		variations: {
 			allPrimary: 50,
 			onePrimary: 50,
 		},
 		defaultVariation: 'allPrimary',
-	},
+  },
 };

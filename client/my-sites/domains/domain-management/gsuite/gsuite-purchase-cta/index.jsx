@@ -18,7 +18,7 @@ import Button from 'components/forms/form-button';
 import CompactCard from 'components/card/compact';
 import config from 'config';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { domainManagementAddGoogleApps } from 'my-sites/domains/paths';
+import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -36,7 +36,7 @@ class GSuitePurchaseCta extends React.Component {
 	};
 
 	goToAddGoogleApps = () => {
-		page( domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.domainName ) );
+		page( domainManagementAddGSuiteUsers( this.props.selectedSite.slug, this.props.domainName ) );
 	};
 
 	getStorageText() {
@@ -237,12 +237,12 @@ class GSuitePurchaseCta extends React.Component {
 
 const learnMoreClick = domainName =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_domain_management_email_learn_more_click', {
+		recordTracksEvent( 'calypso_domain_management_gsuite_learn_more_click', {
 			domain_name: domainName,
 		} ),
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Learn more" Google Apps link in Email',
+			'Clicked "Learn more" G Suite link in Email',
 			'Domain Name',
 			domainName
 		)

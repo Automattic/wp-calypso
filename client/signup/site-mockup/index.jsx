@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -11,8 +12,8 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { translate } from 'i18n-calypso';
+import { loadFont, getCSS } from 'lib/signup/font-loader';
 import SiteMockup from './site-mockup';
-import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
@@ -25,6 +26,51 @@ import { getVerticalData } from './mock-data';
 import './style.scss';
 
 class SiteMockups extends Component {
+	static propTypes = {
+		siteInformation: PropTypes.object,
+		siteStyle: PropTypes.string,
+		siteType: PropTypes.string,
+		title: PropTypes.string,
+		vertical: PropTypes.string,
+		verticalData: PropTypes.object,
+	};
+
+	static defaultProps = {
+		siteInformation: {},
+		siteStyle: '',
+		siteType: '',
+		title: '',
+		vertical: '',
+		verticalData: {},
+	};
+
+	constructor( props ) {
+		super( props );
+		this.state = this.getNewFontLoaderState( props );
+	}
+
+	getNewFontLoaderState( props ) {
+		const state = {
+			fontLoaded: false,
+			fontError: false,
+		};
+
+		this.fontLoader = loadFont( props.siteStyle, props.siteType );
+		this.fontLoader.then( () => this.setState( { fontLoaded: true } ) );
+		this.fontLoader.catch( () => this.setState( { fontError: true } ) );
+		return state;
+	}
+
+	resetFontLoaderState( props ) {
+		this.setState( this.getNewFontLoaderState( props ) );
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.siteStyle !== this.props.siteStyle ) {
+			this.resetFontLoaderState( this.props );
+		}
+	}
+
 	getTagline() {
 		const { siteInformation = {} } = this.props;
 		const { address, phone } = siteInformation;
@@ -52,29 +98,26 @@ class SiteMockups extends Component {
 		return parts.slice( 0, 2 ).join( ', ' );
 	}
 
-	shouldRender() {
-		// currently only showing on business site types
-		return this.props.siteType === 'business';
-	}
-
 	render() {
-		if ( ! this.shouldRender() ) {
-			return null;
-		}
 		const siteMockupClasses = classNames( {
 			'site-mockup__wrap': true,
 			'is-empty': isEmpty( this.props.verticalData ),
+			'is-font-loading': ! this.state.fontLoaded,
+			'is-font-error': ! this.state.fontError,
 		} );
+		const { siteStyle, siteType, title, verticalData } = this.props;
 		const otherProps = {
-			title: this.props.title,
+			title,
 			tagline: this.getTagline(),
-			data: this.props.verticalData,
-			siteType: this.props.siteType,
-			siteStyle: this.props.siteStyle,
+			data: verticalData,
+			siteType,
+			siteStyle,
 		};
+		const fontStyle = getCSS( `.site-mockup__content`, siteStyle, siteType );
 
 		return (
 			<div className={ siteMockupClasses }>
+				{ ! this.state.fontError && <style>{ fontStyle }</style> }
 				<SiteMockup size="desktop" { ...otherProps } />
 				<SiteMockup size="mobile" { ...otherProps } />
 			</div>
@@ -84,9 +127,10 @@ class SiteMockups extends Component {
 
 export default connect( state => {
 	const vertical = getSiteVerticalName( state );
+	const siteInformation = getSiteInformation( state );
 	return {
-		title: getSiteTitle( state ) || translate( 'Your New Website' ),
-		siteInformation: getSiteInformation( state ),
+		title: siteInformation.title || translate( 'Your New Website' ),
+		siteInformation,
 		siteStyle: getSiteStyle( state ),
 		siteType: getSiteType( state ),
 		vertical,

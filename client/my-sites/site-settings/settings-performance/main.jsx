@@ -14,14 +14,13 @@ import { flowRight, partialRight, pick } from 'lodash';
  */
 import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
-import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import Main from 'components/main';
 import MediaSettingsPerformance from 'my-sites/site-settings/media-settings-performance';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import Search from 'my-sites/site-settings/search';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import SpeedUpYourSite from 'my-sites/site-settings/speed-up-site-settings';
@@ -34,24 +33,6 @@ import {
 } from 'state/sites/selectors';
 
 class SiteSettingsPerformance extends Component {
-	renderSectionHeader( title, showButton = true ) {
-		const { handleSubmitForm, isRequestingSettings, isSavingSettings, translate } = this.props;
-		return (
-			<SectionHeader label={ title }>
-				{ showButton && (
-					<Button
-						compact
-						primary
-						onClick={ handleSubmitForm }
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				) }
-			</SectionHeader>
-		);
-	}
-
 	render() {
 		const {
 			fields,
@@ -81,7 +62,7 @@ class SiteSettingsPerformance extends Component {
 
 				{ jetpackSettingsUI && jetpackVersionSupportsLazyImages && (
 					<Fragment>
-						{ this.renderSectionHeader( translate( 'Performance & speed' ), false ) }
+						<SettingsSectionHeader title={ translate( 'Performance & speed' ) } />
 						<SpeedUpYourSite
 							isSavingSettings={ isSavingSettings }
 							isRequestingSettings={ isRequestingSettings }
@@ -94,7 +75,7 @@ class SiteSettingsPerformance extends Component {
 
 				{ jetpackSettingsUI && (
 					<Fragment>
-						{ this.renderSectionHeader( translate( 'Media' ), false ) }
+						<SettingsSectionHeader title={ translate( 'Media' ) } />
 						<MediaSettingsPerformance
 							siteId={ siteId }
 							handleAutosavingToggle={ handleAutosavingToggle }

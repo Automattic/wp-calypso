@@ -111,22 +111,24 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			steps: [ 'user', 'site-type', 'site-topic', 'site-information', 'domains', 'plans' ],
 			destination: getSiteDestination,
 			description: 'The improved onboarding flow.',
-			lastModified: '2018-10-22',
+			lastModified: '2019-01-10',
 		},
 
 		'onboarding-dev': {
 			steps: [
 				'user',
 				'site-type',
-				'site-topic',
-				'site-style',
-				'site-information',
-				'domains',
+				'site-topic-with-preview',
+				'site-style-with-preview',
+				'site-information-title-with-preview',
+				'site-information-address-with-preview',
+				'site-information-phone-with-preview',
+				'domains-with-preview',
 				'plans',
 			],
 			destination: getSiteDestination,
 			description: 'A temporary flow for holding under-development steps',
-			lastModified: '2018-10-29',
+			lastModified: '2019-01-10',
 		},
 
 		'delta-discover': {

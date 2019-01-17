@@ -1,28 +1,24 @@
-//
-// Google Apps
-//
-
-.google-apps-dialog__product-details {
+.gsuite-dialog__product-details {
 	@include breakpoint( '>960px' ) {
 		display: flex;
 	}
 }
 
-.google-apps-dialog__product-intro {
+.gsuite-dialog__product-intro {
 	@include breakpoint( '>960px' ) {
 		max-width: 350px;
 		margin-right: 50px;
 	}
 }
 
-.google-apps-dialog__product-name {
+.gsuite-dialog__product-name {
 	color: #888;
 	font-size: 25px;
 	font-weight: 100;
 	margin: 0;
 }
 
-.google-apps-dialog__product-logo {
+.gsuite-dialog__product-logo {
 	background: url( '/calypso/images/upgrades/g-suite-logo.png' ) no-repeat left;
 	background-size: 73px;
 	display: inline-block;
@@ -32,21 +28,21 @@
 	width: 73px;
 }
 
-.google-apps-dialog__header {
+.gsuite-dialog__header {
 	text-align: center;
 
-	.google-apps-dialog__title {
+	.gsuite-dialog__title {
 		color: var( --color-neutral-700 );
 		font-weight: 600;
 		margin: 0;
 	}
 }
 
-.google-apps-dialog__no-setup-required {
+.gsuite-dialog__no-setup-required {
 	color: lighten( $gray-dark, 20% );
 }
 
-.google-apps-dialog__product-features {
+.gsuite-dialog__product-features {
 	color: var( --color-neutral-700 );
 	font-size: 15px;
 	line-height: 130%;
@@ -54,7 +50,7 @@
 	margin: 34px 0 1em;
 }
 
-.google-apps-dialog__product-feature {
+.gsuite-dialog__product-feature {
 	display: flex;
 
 	img {
@@ -64,12 +60,12 @@
 	}
 }
 
-.google-apps-dialog__domain {
+.gsuite-dialog__domain {
 	display: inline-block;
 	max-width: 20em;
 }
 
-.google-apps-dialog__price-per-user {
+.gsuite-dialog__price-per-user {
 	color: var( --color-primary );
 	font-size: 18px;
 	font-weight: 600;
@@ -95,7 +91,7 @@
 	}
 }
 
-.google-apps-dialog__billing-period {
+.gsuite-dialog__billing-period {
 	color: $gray;
 	font-size: 12px;
 	line-height: 1.6;
@@ -106,23 +102,23 @@
 	}
 }
 
-.google-apps-dialog__form {
+.gsuite-dialog__form {
 	.notice li {
 		list-style: disc;
 	}
 }
 
-.google-apps-dialog__users-enter {
+.gsuite-dialog__users-enter {
 	max-height: 0;
 	overflow: hidden;
 	transition: max-height 0.2s ease-in-out;
 }
 
-.google-apps-dialog__users-enter.google-apps-dialog__users-enter-active {
+.gsuite-dialog__users-enter.gsuite-dialog__users-enter-active {
 	max-height: 300px;
 }
 
-.google-apps-dialog__users {
+.gsuite-dialog__users {
 	border-bottom: 1px solid darken( $gray-light, 5% );
 	display: block;
 	padding: 0 30px;
@@ -133,12 +129,12 @@
 		margin-bottom: 4px;
 	}
 
-	.google-apps-dialog__user-fields {
-		animation: google-apps-user-show 0.3s ease-in-out;
+	.gsuite-dialog__user-fields {
+		animation: gsuite-user-show 0.3s ease-in-out;
 		margin-bottom: 20px;
 	}
 
-	.google-apps-dialog__user-first-name {
+	.gsuite-dialog__user-first-name {
 		@include breakpoint( '>660px' ) {
 			display: inline-block;
 			margin: 0 4px 0 0;
@@ -147,7 +143,7 @@
 		}
 	}
 
-	.google-apps-dialog__user-last-name {
+	.gsuite-dialog__user-last-name {
 		@include breakpoint( '>660px' ) {
 			display: inline-block;
 			margin: 0 0 0 5px;
@@ -156,7 +152,7 @@
 		}
 	}
 
-	.google-apps-dialog__add-another-user-button {
+	.gsuite-dialog__add-another-user-button {
 		border: 2px dashed var( --color-neutral-100 );
 		color: $gray;
 		cursor: pointer;
@@ -174,7 +170,7 @@
 	}
 }
 
-@keyframes 'google-apps-user-show' {
+@keyframes gsuite-user-show {
 	0% {
 		max-height: 0;
 	}
@@ -184,8 +180,8 @@
 	}
 }
 
-.google-apps-dialog__footer {
-	.google-apps-dialog__continue-button {
+.gsuite-dialog__footer {
+	.gsuite-dialog__continue-button {
 		@include breakpoint( '<480px' ) {
 			width: 100%;
 			margin-top: 10px;
@@ -196,7 +192,7 @@
 		}
 	}
 
-	.google-apps-dialog__checkout-button {
+	.gsuite-dialog__checkout-button {
 		color: var( --color-text-subtle );
 
 		@include breakpoint( '<480px' ) {

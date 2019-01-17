@@ -35,11 +35,11 @@
 	}
 
 	&.is-on-hold {
-		background: lighten( $alert-yellow, 20% );
-		color: darken( $alert-yellow, 40% );
+		background: var( --color-warning-50 );
+		color: var( --color-warning-dark );
 
 		span + span {
-			border-color: $alert-yellow;
+			border-color: var( --color-warning );
 		}
 	}
 

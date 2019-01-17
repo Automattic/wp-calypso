@@ -34,7 +34,8 @@ RUN        npx lerna bootstrap --ci
 ARG        commit_sha="(unknown)"
 ENV        COMMIT_SHA $commit_sha
 
-RUN        CALYPSO_ENV=production npm run build
+ARG        workers
+RUN        WORKERS=$workers CALYPSO_ENV=production npm run build
 
 USER       nobody
 CMD        NODE_ENV=production node build/bundle.js

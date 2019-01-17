@@ -77,7 +77,7 @@ class GoogleAppsDialog extends React.Component {
 		const prices = this.getPrices();
 
 		return (
-			<form className="google-apps-dialog__form" onSubmit={ this.handleFormSubmit }>
+			<form className="gsuite-dialog__form" onSubmit={ this.handleFormSubmit }>
 				<QueryProducts />
 				<CompactCard>{ this.header() }</CompactCard>
 				<CompactCard>
@@ -113,15 +113,15 @@ class GoogleAppsDialog extends React.Component {
 		const { translate } = this.props;
 
 		return (
-			<header className="google-apps-dialog__header">
-				<h2 className="google-apps-dialog__title">
+			<header className="gsuite-dialog__header">
+				<h2 className="gsuite-dialog__title">
 					{ translate( 'Add Professional email from G Suite by Google Cloud to %(domain)s', {
 						args: {
 							domain: this.props.domain,
 						},
 					} ) }
 				</h2>
-				<h5 className="google-apps-dialog__no-setup-required">
+				<h5 className="gsuite-dialog__no-setup-required">
 					{ translate( 'No setup or software required. Easy to manage from your dashboard.' ) }
 				</h5>
 			</header>
@@ -131,14 +131,14 @@ class GoogleAppsDialog extends React.Component {
 	footer() {
 		const { translate } = this.props;
 		return (
-			<footer className="google-apps-dialog__footer">
-				<Button className="google-apps-dialog__checkout-button" onClick={ this.handleFormCheckout }>
+			<footer className="gsuite-dialog__footer">
+				<Button className="gsuite-dialog__checkout-button" onClick={ this.handleFormCheckout }>
 					{ translate( 'Skip' ) }
 				</Button>
 
 				<Button
 					primary
-					className="google-apps-dialog__continue-button"
+					className="gsuite-dialog__continue-button"
 					onClick={ this.handleFormSubmit }
 				>
 					{ translate( 'Yes, Add Email \u00BB' ) }
@@ -221,24 +221,24 @@ class GoogleAppsDialog extends React.Component {
 }
 
 const recordKeepSearching = () =>
-	recordGoogleEvent( 'Domain Search', 'Click "Keep Searching" Button in Google Apps Dialog' );
+	recordGoogleEvent( 'Domain Search', 'Click "Keep Searching" Button in G Suite Dialog' );
 
 const recordCancelButtonClick = section =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_google_apps_cancel_button_click', { section } ),
-		recordGoogleEvent( 'Domain Search', 'Clicked "Cancel" Button in Google Apps Dialog' )
+		recordTracksEvent( 'calypso_gsuite_cancel_button_click', { section } ),
+		recordGoogleEvent( 'Domain Search', 'Clicked "Cancel" Button in G Suite Dialog' )
 	);
 
 const recordAddEmailButtonClick = section =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_google_apps_add_email_button_click', { section } ),
-		recordGoogleEvent( 'Domain Search', 'Clicked "Add Email" Button in Google Apps Dialog' )
+		recordTracksEvent( 'calypso_gsuite_add_email_button_click', { section } ),
+		recordGoogleEvent( 'Domain Search', 'Clicked "Add Email" Button in G Suite Dialog' )
 	);
 
 const recordFormSubmit = section =>
 	composeAnalytics(
-		recordTracksEvent( 'calypso_google_apps_form_submit', { section } ),
-		recordGoogleEvent( 'Domain Search', 'Submitted Form in Google Apps Dialog' )
+		recordTracksEvent( 'calypso_gsuite_form_submit', { section } ),
+		recordGoogleEvent( 'Domain Search', 'Submitted Form in G Suite Dialog' )
 	);
 
 export default connect(

@@ -1,5 +1,8 @@
 /** @format */
 
+/* @TODO resolve linting issues */
+/* eslint-disable react/no-string-refs, wpcalypso/jsx-classname-namespace */
+
 /**
  * External dependencies
  */
@@ -116,13 +119,27 @@ class StatsGeochart extends Component {
 		const node = this.refs.chart;
 		const width = node.clientWidth;
 
+		// Note that using raw hex values here is an exception due to
+		// IE11 and other older browser not supporting CSS custom props.
+		// We have to set values to Google GeoChart via JS. We don't
+		// support switching color schemes in IE11 thus applying the
+		// defaults as raw hex values here.
+		const chartColorLight =
+			getComputedStyle( document.body )
+				.getPropertyValue( '--color-accent-50' )
+				.trim() || '#ffdff3';
+		const chartColorDark =
+			getComputedStyle( document.body )
+				.getPropertyValue( '--color-accent' )
+				.trim() || '#d52c82';
+
 		const options = {
 			width: 100 + '%',
 			height: width <= 480 ? '238' : '480',
 			keepAspectRatio: true,
 			enableRegionInteractivity: true,
 			region: 'world',
-			colorAxis: { colors: [ '#bbc9d5', '#23354b' ] },
+			colorAxis: { colors: [ chartColorLight, chartColorDark ] },
 			domain: currentUserCountryCode,
 		};
 

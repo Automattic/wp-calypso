@@ -17,7 +17,6 @@ const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
-const os = require( 'os' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 
 /**
@@ -25,6 +24,7 @@ const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpac
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
+const { workerCount } = require( './webpack.common' );
 
 /**
  * Internal variables
@@ -201,7 +201,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					cache: process.env.CIRCLECI
 						? `${ process.env.HOME }/terser-cache`
 						: 'docker' !== process.env.CONTAINER,
-					parallel: process.env.CIRCLECI ? 2 : true,
+					parallel: workerCount,
 					sourceMap: Boolean( process.env.SOURCEMAP ),
 					terserOptions: {
 						ecma: 5,
@@ -222,7 +222,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						{
 							loader: 'thread-loader',
 							options: {
-								workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ),
+								workers: workerCount,
 							},
 						},
 						{
@@ -248,13 +248,13 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					test: /\.(sc|sa|c)ss$/,
 					use: [
 						MiniCssExtractPluginWithRTL.loader,
-						'css-loader',
 						{
-							loader: 'postcss-loader',
+							loader: 'css-loader',
 							options: {
-								plugins: [ require( 'autoprefixer' ) ],
+								importLoaders: 2,
 							},
 						},
+						'postcss-loader',
 						{
 							loader: 'sass-loader',
 							options: {

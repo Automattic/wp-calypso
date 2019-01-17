@@ -103,7 +103,7 @@ $autobar-height: 20px;
 	}
 
 	&:hover {
-		background: var( --color-primary-light );
+		background: var( --color-primary-400 );
 		color: var( --masterbar-color );
 	}
 
@@ -350,7 +350,7 @@ $autobar-height: 20px;
 
 	&.has-unread .masterbar__notifications-bubble {
 		display: block;
-		background: var( --color-dot-indicator );
+		background: var( --color-accent-300 );
 	}
 
 	&.is-initial-load .masterbar__notifications-bubble {

@@ -24,7 +24,7 @@ class WpcomChecklist extends Component {
 		designType: PropTypes.oneOf( [ 'blog', 'page', 'portfolio', 'store' ] ),
 		siteId: PropTypes.number,
 		taskStatuses: PropTypes.object,
-		viewMode: PropTypes.oneOf( [ 'checklist', 'banner', 'navigation', 'notification' ] ),
+		viewMode: PropTypes.oneOf( [ 'checklist', 'banner', 'navigation', 'notification', 'prompt' ] ),
 	};
 
 	static defaultProps = {

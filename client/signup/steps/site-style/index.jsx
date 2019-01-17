@@ -20,10 +20,12 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
+import { preLoadAllFonts } from 'lib/signup/font-loader';
 import { setSiteStyle } from 'state/signup/steps/site-style/actions';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteStyleOptions } from 'lib/signup/site-styles';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -35,6 +37,7 @@ export class SiteStyleStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
+		showSiteMockups: PropTypes.bool,
 		submitSiteStyle: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
 		styleOptions: PropTypes.array.isRequired,
@@ -44,6 +47,7 @@ export class SiteStyleStep extends Component {
 	};
 
 	componentDidMount() {
+		preLoadAllFonts();
 		SignupActions.saveSignupStep( {
 			stepName: this.props.stepName,
 		} );
@@ -54,7 +58,12 @@ export class SiteStyleStep extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		this.props.submitSiteStyle( this.props.siteStyle, this.getSelectedStyleDataById().theme );
+		const selectedStyleData = this.getSelectedStyleDataById();
+		this.props.submitSiteStyle(
+			this.props.siteStyle,
+			selectedStyleData.theme,
+			selectedStyleData.label
+		);
 	};
 
 	getSelectedStyleDataById( id ) {
@@ -106,7 +115,14 @@ export class SiteStyleStep extends Component {
 	);
 
 	render() {
-		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const {
+			flowName,
+			positionInFlow,
+			showSiteMockups,
+			signupProgress,
+			stepName,
+			translate,
+		} = this.props;
 		const headerText = translate( 'Choose a style' );
 		const subHeaderText = translate(
 			"Choose a style for your site's theme. Don't worry, you can always change it later."
@@ -124,6 +140,7 @@ export class SiteStyleStep extends Component {
 					fallbackSubHeaderText={ subHeaderText }
 					signupProgress={ signupProgress }
 					stepContent={ this.renderContent() }
+					showSiteMockups={ showSiteMockups }
 				/>
 			</div>
 		);
@@ -131,8 +148,14 @@ export class SiteStyleStep extends Component {
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteStyle: ( siteStyle, themeSlugWithRepo ) => {
+	submitSiteStyle: ( siteStyle, themeSlugWithRepo, styleLabel ) => {
 		const { flowName, stepName, goToNextStep } = ownProps;
+		dispatch(
+			recordTracksEvent( 'calypso_signup_actions_submit_site_style', {
+				// The untranslated 'product' name of the variation/theme
+				site_style: styleLabel,
+			} )
+		);
 		SignupActions.submitSignupStep(
 			{
 				processingMessage: i18n.translate( 'Collecting your information' ),

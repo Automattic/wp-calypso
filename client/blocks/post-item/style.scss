@@ -43,7 +43,7 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 .post-item__select {
 	align-self: stretch;
 	display: flex;
-	align-items: start;
+	align-items: flex-start;
 	cursor: pointer;
 
 	&:hover .form-checkbox {
