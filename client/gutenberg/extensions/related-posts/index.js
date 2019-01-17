@@ -11,7 +11,8 @@ import { G, Path, SVG } from '@wordpress/components';
 import './style.scss';
 import edit from './edit';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
-import { MAX_POSTS_TO_SHOW } from './constants';
+
+export const MAX_POSTS_TO_SHOW = 3;
 
 export const name = 'related-posts';
 
