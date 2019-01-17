@@ -1,5 +1,11 @@
 .notification-settings-push-notification-settings__instruction {
 	margin: 24px 0 0;
+
+	.is-link {
+		&:focus, &:active {
+			color: var( --color-neutral-200 );
+		}
+	}
 }
 
 .notification-settings-push-notification-settings__instruction-dialog {
