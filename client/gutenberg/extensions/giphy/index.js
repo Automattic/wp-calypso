@@ -23,7 +23,5 @@ export const settings = {
 		return { 'data-align': align };
 	},
 	edit,
-	save: () => {
-		return null;
-	},
+	save: () => null,
 };
