@@ -902,7 +902,7 @@
 
 @include sharing-button-service( 'facebook', var( --color-facebook-rgb ));
 @include sharing-button-service( 'twitter', var( --color-twitter-rgb ));
-@include sharing-button-service( 'press-this', $blue-wordpress );
+@include sharing-button-service( 'press-this', var( --color-primary-rgb ));
 @include sharing-button-service( 'path', var( --color-path-rgb ));
 @include sharing-button-service( 'google-plus-1', var( --color-gplus-rgb ));
 @include sharing-button-service( 'instagram', var( --color-instagram-rgb ));
