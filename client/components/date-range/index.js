@@ -103,12 +103,27 @@ export class DateRange extends Component {
 			staleDatesSaved: false,
 			// this needs to be independent from startDate because we must independently validate them
 			// before updating the central source of truth (ie: startDate)
-			textInputStartDate: this.formatDateToLocale( startDate ),
-			textInputEndDate: this.formatDateToLocale( endDate ),
+			textInputStartDate: this.toTextInput( startDate ),
+			textInputEndDate: this.toTextInput( endDate ),
 		};
 
 		// Ref to the Trigger <button> used to position the Popover component
 		this.triggerButtonRef = React.createRef();
+	}
+
+	/**
+	 * Converts date-like object to a string suitable
+	 * for display in a text input. Also converts
+	 * to locale appropriate format.
+	 * @param  {Date|Moment} date the date for conversion
+	 * @return {string}      the date expressed as a locale appropriate string
+	 */
+	toTextInput( date ) {
+		if ( this.props.moment.isMoment( date ) || this.props.moment.isDate( date ) ) {
+			return this.formatDateToLocale( this.props.moment( date ) );
+		}
+
+		return this.getLocaleDateFormat(); // "MM/DD/YYY" or locale equivalent
 	}
 
 	/**
@@ -201,6 +216,8 @@ export class DateRange extends Component {
 	handleInputBlur = ( val, startOrEnd ) => {
 		const date = this.props.moment( val, this.getLocaleDateFormat() );
 
+		// Note that the `textInput[Start|End]Date` state is updated on "change" via
+		// handleInputChange
 		const fromDate = this.props.moment( this.state.textInputStartDate, this.getLocaleDateFormat() );
 		const toDate = this.props.moment( this.state.textInputEndDate, this.getLocaleDateFormat() );
 
@@ -212,8 +229,8 @@ export class DateRange extends Component {
 		// text inputs values to the current start/end date from state
 		if ( ! isValidFrom || ! isValidTo ) {
 			this.setState( {
-				textInputStartDate: this.formatDateToLocale( this.state.startDate ),
-				textInputEndDate: this.formatDateToLocale( this.state.endDate ),
+				textInputStartDate: this.toTextInput( this.state.startDate ),
+				textInputEndDate: this.toTextInput( this.state.endDate ),
 			} );
 			return; // bail early
 		}
@@ -280,8 +297,8 @@ export class DateRange extends Component {
 				// Update inputs
 				newState = {
 					...newState,
-					textInputStartDate: this.formatDateToLocale( newState.startDate ),
-					textInputEndDate: this.formatDateToLocale( newState.endDate ),
+					textInputStartDate: this.toTextInput( newState.startDate ),
+					textInputEndDate: this.toTextInput( newState.endDate ),
 				};
 
 				// For first date selection only: "cache" previous dates
