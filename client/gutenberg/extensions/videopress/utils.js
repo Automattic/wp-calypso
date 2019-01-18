@@ -5,29 +5,28 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 
-const getVideoPressUrl = async videoId => {
+export const isVideoPressUrl = url => url.includes( 'videos.files.wordpress.com' );
+
+export const getVideoPressUrl = async videoId => {
 	if ( ! videoId ) {
 		return;
 	}
 
 	const videoData = await apiFetch( {
-		path: `/rest/v1.1/media/${ videoId }`,
+		path: `/wp/v2/media/${ videoId }`,
 	} );
 
-	if ( ! videoData.videopress_guid ) {
+	if ( ! videoData.jetpack_videopress ) {
 		return;
 	}
 
-	const videoPressData = await apiFetch( {
-		path: `/rest/v1.1/videos/${ videoData.videopress_guid }`,
-		addSiteSlug: false,
-	} );
-
 	const {
-		files_status: filesStatus,
-		file_url_base: { https: fileUrlBase },
-		files,
-	} = videoPressData;
+		jetpack_videopres: {
+			files_status: filesStatus,
+			file_url_base: { https: fileUrlBase },
+			files,
+		}
+	} = videoData;
 
 	const bestResolution = [ 'hd', 'dvd', 'std' ].find( resolution => {
 		return !! filesStatus[ resolution ];
@@ -43,5 +42,3 @@ const getVideoPressUrl = async videoId => {
 
 	return `${ fileUrlBase }${ files[ bestResolution ][ bestFormat ] }`;
 };
-
-export default getVideoPressUrl;
