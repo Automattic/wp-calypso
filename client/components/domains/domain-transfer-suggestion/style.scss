@@ -1,8 +1,9 @@
 .domain-transfer-suggestion {
 	display: flex;
+	align-items: center;
 
-	.button.domain-suggestion__action {
-		color: var( --color-accent );
+	& .button.domain-suggestion__action.is-borderless {
+	    flex: 1 0 auto;
 	}
 }
 

@@ -138,4 +138,12 @@ export default {
 		},
 		defaultVariation: 'keep',
 	},
+	domainSearchButtonStyles: {
+		datestamp: '20190119',
+		variations: {
+			allPrimary: 50,
+			onePrimary: 50,
+		},
+		defaultVariation: 'allPrimary',
+	},
 };

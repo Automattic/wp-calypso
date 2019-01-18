@@ -50,7 +50,7 @@
 
 .register-domain-step__filter-reset-notice,
 .register-domain-step__next-page {
-	color: var( --color-accent );
+	color: var( --color-primary );
 	font-weight: 500;
 	width: 100%;
 	position: relative;
@@ -67,7 +67,7 @@
 	transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
 
 	&:hover {
-		color: var( --color-accent );
+		color: var( --color-primary );
 
 		// from components/domains/domain-suggestion/style
 		box-shadow: 0 0 0 1px $gray;
