@@ -89,6 +89,7 @@ export default {
 			show: 10,
 		},
 		defaultVariation: 'skip',
+		allowExistingUsers: true,
 	},
 	showConciergeSessionUpsellNonGSuite: {
 		datestamp: '20181228',
@@ -97,6 +98,7 @@ export default {
 			show: 10,
 		},
 		defaultVariation: 'skip',
+		allowExistingUsers: true,
 	},
 	builderReferralStatsNudge: {
 		datestamp: '20181218',
