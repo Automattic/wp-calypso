@@ -2,7 +2,7 @@
 .login {
 	&.is-jetpack {
 		.button.is-primary {
-			background-color: $green-jetpack;
+			background-color: var( --color-jetpack );
 			border-color: darken( $green-jetpack, 5% );
 		}
 	}
