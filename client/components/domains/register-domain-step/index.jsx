@@ -648,7 +648,11 @@ class RegisterDomainStep extends React.Component {
 	preCheckDomainAvailability = domain => {
 		return new Promise( resolve => {
 			checkDomainAvailability(
-				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+				{
+					domainName: domain,
+					blogId: get( this.props, 'selectedSite.ID', null ),
+					isCartPreCheck: true,
+				},
 				( error, result ) => {
 					const status = get( result, 'status', error );
 					resolve( status !== domainAvailability.AVAILABLE ? status : null );
