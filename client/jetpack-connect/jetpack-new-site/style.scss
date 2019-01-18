@@ -68,7 +68,7 @@
 }
 
 .jetpack-new-site__jetpack-site .jetpack-logo {
-	fill: $green-jetpack;
+	fill: var( --color-jetpack );
 }
 
 .jetpack-new-site__card-title {
