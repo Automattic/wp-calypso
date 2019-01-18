@@ -80,7 +80,8 @@
 }
 
 // Set the default font for the preview
-// which will require a web font to load.
+// which will require a web font to load
+// (defined in lib/signup/site-styles.js).
 .site-mockup__content {
 	font-family: 'Crimson Text', 'Baskerville Old Face', Garamond, 'Times New Roman', serif;
 	-webkit-font-smoothing: antialiased;
@@ -89,15 +90,17 @@
 
 // Title and Tagline Wrapper
 .site-mockup__site-identity {
-	margin: 40px;
+	margin: 40px auto;
 	padding: 0 30px;
-	width: 800px;
+	max-width: 800px;
 
 	.is-desktop & {
 		display: flex;
+		align-items: baseline;
 	}
 
 	.is-mobile & {
+		margin: 0 auto;
 		padding: 20px 15px;
 	}
 }
@@ -110,8 +113,8 @@
 	line-height: 1;
 
 	.is-mobile & {
-		font-size: 18px;
-		margin-bottom: 5px;
+		font-size: 24px;
+		margin: 20px 0;
 	}
 }
 
@@ -135,6 +138,7 @@
 	.is-mobile & {
 		font-size: 14px;
 		line-height: 1.4;
+		margin: 10px 0;
 
 		.site-mockup__phone {
 			display: block;
@@ -159,7 +163,7 @@
 		min-height: 400px;
 
 		.is-mobile & {
-			min-height: 250px;
+			min-height: 300px;
 		}
 
 		&.has-background-dim::before {
@@ -221,14 +225,16 @@
 			}
 		}
 
+		&.has-media-on-the-right {
+			grid-template-areas: 'media-text-content media-text-media';
+		}
+
+		// Placing this below, because media
+		// is always on top on mobile.
 		.is-mobile & {
 			margin: 0 15px 20px;
 			grid-template-columns: 100% !important;
 			grid-template-areas: 'media-text-media' 'media-text-content';
-		}
-
-		&.has-media-on-the-right {
-			grid-template-areas: 'media-text-content media-text-media';
 		}
 
 		.wp-block-media-text__media {
@@ -252,13 +258,16 @@
 				margin: 0;
 			}
 
-			&.has-media-on-the-right { //.wp-block-media-text.has-media-on-the-right .wp-block-media-text__content
-				padding: 0 0 0 16px;
+			.is-mobile & {
+				padding: 8px 8px 16px;
 			}
-			// .site-mockup__entry-content .wp-block-media-text.has-media-on-the-right .wp-block-media-text__content
+		}
+
+		&.has-media-on-the-right .wp-block-media-text__content {
+			padding: 0 0 0 16px;
 
 			.is-mobile & {
-				padding: 17px 0;
+				padding: 8px 8px 16px;
 			}
 		}
 	}
@@ -279,7 +288,7 @@
 		font-size: 36px;
 		font-weight: 600;
 		line-height: 1.2;
-		margin: 32px auto;
+		margin: 48px auto 32px;
 		padding: 0 15px;
 		max-width: 620px;
 	}
