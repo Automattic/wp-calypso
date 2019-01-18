@@ -277,25 +277,3 @@ $date-picker_nav_button_size: 20px;
 .DayPicker--ar {
 	direction: rtl;
 }
-
-
-.date-picker.date-picker--has-range .DayPicker-Day.DayPicker-Day--range-start {
-	.date-picker__day {
-		background: var(--color-primary);
-		color: var(--color-white);
-	}
-}
-
-.date-picker.date-picker--has-range .DayPicker-Day.DayPicker-Day--range-end {
-	.date-picker__day {
-		background: var(--color-primary);
-		color: var(--color-white);
-	}
-}
-
-.date-picker.date-picker--has-range .DayPicker-Day--range {
-	.date-picker__day {
-		background: var(--color-neutral-50);
-		color: var(--color-primary);
-	}
-}

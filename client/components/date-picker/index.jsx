@@ -58,6 +58,7 @@ class DatePicker extends PureComponent {
 		onDayTouchStart: PropTypes.func,
 		onDayTouchEnd: PropTypes.func,
 		onDayTouchMove: PropTypes.func,
+		rootClassNames: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -74,6 +75,7 @@ class DatePicker extends PureComponent {
 		onDayTouchStart: noop,
 		onDayTouchEnd: noop,
 		onDayTouchMove: noop,
+		rootClassNames: {},
 	};
 
 	isSameDay( d0, d1 ) {
@@ -213,12 +215,14 @@ class DatePicker extends PureComponent {
 		}
 
 		const numMonths = this.props.numberOfMonths || 1;
-		const hasRange = modifiers.start || modifiers.end;
+		const rangeSelected = modifiers.start && modifiers.end;
 
 		const rootClassNames = classNames( {
 			'date-picker': true,
-			'date-picker--has-range': hasRange,
+			'date-picker--no-range-selected': ! rangeSelected,
+			'date-picker--range-selected': rangeSelected,
 			[ `date-picker--${ numMonths }up` ]: true,
+			...this.props.rootClassNames,
 		} );
 
 		return (

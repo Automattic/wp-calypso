@@ -560,8 +560,13 @@ export class DateRange extends Component {
 			},
 		];
 
+		const rootClassNames = {
+			'date-range__picker': true,
+		};
+
 		return (
 			<DatePicker
+				rootClassNames={ rootClassNames }
 				modifiers={ modifiers }
 				showOutsideDays={ false }
 				fromMonth={ this.momentDateToJsDate( this.props.firstSelectableDate ) }
