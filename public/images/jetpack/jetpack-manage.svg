@@ -14,8 +14,8 @@
                 <use xlink:href="#path-1"></use>
             </mask>
             <g id="Clip-4"></g>
-            <path d="M-160,197 L308,197 L308,-282 L-160,-282 L-160,197 Z" id="Fill-3" fill="#D2DDE5" mask="url(#mask-2)"></path>
-            <path d="M-1.821,-1.947 L151.034,-1.947 L151.034,150.199 L-1.821,150.199 L-1.821,-1.947 Z" id="Fill-5" fill="#D2DDE5" mask="url(#mask-2)"></path>
+            <path d="M-160,197 L308,197 L308,-282 L-160,-282 L-160,197 Z" id="Fill-3" fill="#D8DEE4" mask="url(#mask-2)"></path>
+            <path d="M-1.821,-1.947 L151.034,-1.947 L151.034,150.199 L-1.821,150.199 L-1.821,-1.947 Z" id="Fill-5" fill="#D8DEE4" mask="url(#mask-2)"></path>
             <mask id="mask-4" fill="white">
                 <use xlink:href="#path-3"></use>
             </mask>
