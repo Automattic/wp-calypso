@@ -3,6 +3,13 @@ body.is-section-signup {
 	// should deal with different color schemes?
 	background: var( --color-primary );
 
+	// Update the logo that appears when loading Calypso
+	// to match the homepage, using primary-dark with opacity.
+	.wpcom-site__logo {
+		fill: var( --color-primary-dark );
+		opacity: 0.3;
+	}
+
 	// With the dark background, the border on cards looks a
 	// a little strange. Lets try a shadow instead. -shaun
 	.signup-form > .card,
