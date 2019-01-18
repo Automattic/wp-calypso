@@ -3,8 +3,6 @@
 /**
  * External dependencies
  */
-
-import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop, uniq } from 'lodash';
@@ -34,6 +32,8 @@ export default class extends React.Component {
 		href: null,
 	};
 
+	formRef = React.createRef();
+
 	onClick = () => {
 		if ( this.props.onClick ) {
 			this.props.onClick();
@@ -49,7 +49,7 @@ export default class extends React.Component {
 			MediaActions.add( this.props.site, event.target.files );
 		}
 
-		ReactDom.findDOMNode( this.refs.form ).reset();
+		this.formRef.current.reset();
 		this.props.onAddMedia();
 		analytics.mc.bumpStat( 'editor_upload_via', 'add_button' );
 	};
@@ -78,7 +78,7 @@ export default class extends React.Component {
 		const classes = classNames( 'media-library__upload-button', 'button', this.props.className );
 
 		return (
-			<form ref="form" className={ classes }>
+			<form ref={ this.formRef } className={ classes }>
 				{ this.props.children }
 				<input
 					type="file"
