@@ -7,7 +7,7 @@ body.is-section-signup {
 	// Adjust the padding as we no longer
 	// show the masterbar.
 	.layout__content {
-		padding: 32px 0 0;
+		padding: 48px 0 0;
 	}
 
 	// Hide the masterbar for realz
@@ -141,7 +141,7 @@ body.is-section-signup .layout:not(.dops) .step-wrapper {
 
 // Signup headings
 body.is-section-signup .layout:not(.dops) .formatted-header {
-	margin: 16px 0;
+	margin: 0 0 16px 0;
 
 	.formatted-header__title {
 		margin: 0;
