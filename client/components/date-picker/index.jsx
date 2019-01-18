@@ -17,6 +17,11 @@ import classNames from 'classnames';
 import DayItem from 'components/date-picker/day';
 import DatePickerNavBar from 'components/date-picker/nav-bar';
 
+// Locking mechanic to stop multiple calls to
+// this.props.setCalendarDay due to click, touch and
+// mousemove handlers all firing repeatedly
+let setCalendarDayCalled = false;
+
 /* Internal dependencies
  */
 class DatePicker extends PureComponent {
@@ -146,6 +151,15 @@ class DatePicker extends PureComponent {
 	}
 
 	setCalendarDay = ( day, modifiers ) => {
+		// If this handler has been recently called bail out
+		if ( setCalendarDayCalled ) {
+			return;
+		}
+
+		// Mark this invocation as having been called
+		// by setting the lock
+		setCalendarDayCalled = true;
+
 		const momentDay = this.props.moment( day );
 
 		if ( modifiers.disabled ) {
@@ -161,6 +175,11 @@ class DatePicker extends PureComponent {
 		const date = ( this.props.timeReference || momentDay ).set( dateMods );
 
 		this.props.onSelectDay( date, dateMods, modifiers );
+
+		// Queue timeout to clear the lock
+		window.setTimeout( () => {
+			setCalendarDayCalled = false;
+		}, 500 );
 	};
 
 	getDateInstance( v ) {
@@ -237,6 +256,8 @@ class DatePicker extends PureComponent {
 				fromMonth={ this.props.fromMonth }
 				toMonth={ this.props.toMonth }
 				onDayClick={ this.setCalendarDay }
+				onDayTouchStart={ this.setCalendarDay }
+				onDayTouchEnd={ this.setCalendarDay }
 				onDayTouchMove={ this.handleDayTouchMove }
 				renderDay={ this.renderDay }
 				locale={ this.props.locale }
