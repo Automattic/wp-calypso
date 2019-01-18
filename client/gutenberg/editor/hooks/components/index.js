@@ -13,6 +13,6 @@ const replaceMediaUpload = () => MediaUpload;
 
 addFilter(
 	'editor.MediaUpload',
-	'calypso/gutenberg/editor/components/media-upload/replace-media-upload',
+	'core/edit-post/components/media-upload/replace-media-upload',
 	replaceMediaUpload
 );

@@ -25,6 +25,7 @@ import {
 } from 'state/data-getters';
 import { getHttpData } from 'state/data-layer/http-data';
 import { translate } from 'i18n-calypso';
+import './hooks'; // Needed for integrating Calypso's media library (and other hooks)
 import isRtlSelector from 'state/selectors/is-rtl';
 import { registerExtensions } from '../extensions/presets/jetpack/editor';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
