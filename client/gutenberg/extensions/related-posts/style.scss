@@ -1,6 +1,5 @@
 // @TODO: Replace with Gutenberg variables
 $dark-gray-300: #2b2d2f;
-$gray-lighten-30: #f6f6f6;
 
 .wp-block-jetpack-related-posts {
 	&.is-grid {
@@ -12,7 +11,6 @@ $gray-lighten-30: #f6f6f6;
 				flex-grow: 1;
 				flex-basis: 0;
 				margin: 0 10px;
-				max-width: 350px;
 			}
 		}
 	}
@@ -20,17 +18,19 @@ $gray-lighten-30: #f6f6f6;
 	.related-posts__preview {
 		&-post {
 			&-image-placeholder {
+				cursor: default;
 				width: 100%;
-				padding: 57.14286% 0 0; // 1.75 ratio
-				position: relative;
-				background-color: $gray-lighten-30;
 				&-icon {
-					left: 50%;
-					position: absolute;
-					top: 50%;
-					transform: translate(-50%, -50%);
+					max-width: 350px;
+					position: relative;
 					svg {
 						display: block;
+						+ svg {
+							left: 50%;
+							position: absolute;
+							top: 50%;
+							transform: translate(-50%, -50%);
+						}
 					}
 				}
 			}
