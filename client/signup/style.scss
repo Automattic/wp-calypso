@@ -10,6 +10,24 @@ body.is-section-signup {
 		opacity: 0.3;
 	}
 
+	// If there's an error lets make it look a little better
+	// on the primary colored background.
+	.empty-content {
+		.empty-content__illustration {
+			background: var( --color-white );
+			padding-bottom: 16px;
+			margin-bottom: 24px;
+			border-radius: 6px;
+			box-shadow: 0 5px 5px -3px rgba( 0, 0, 0, 0.2),
+						0 8px 10px 1px rgba( 0, 0, 0, 0.14),
+						0 3px 14px 2px rgba( 0, 0, 0, 0.12);
+		}
+
+		.empty-content__title {
+			color: var( --color-white );
+		}
+	}
+
 	// With the dark background, the border on cards looks a
 	// a little strange. Lets try a shadow instead. -shaun
 	.signup-form > .card,
