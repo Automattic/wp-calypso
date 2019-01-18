@@ -9,6 +9,13 @@
 	z-index: -1;
 	color: var( --color-white );
 
+	// Hide the signup header on oauth
+	// flows like Crowdsignal
+	.layout:not(.dops) {
+		display: none;
+		pointer-events: none;
+	}
+
 	.wordpress-logo {
 		height: 180px;
 		width: 180px;
