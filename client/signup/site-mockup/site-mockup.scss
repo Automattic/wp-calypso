@@ -83,11 +83,15 @@
 // which will require a web font to load.
 .site-mockup__content {
 	font-family: 'Crimson Text', 'Baskerville Old Face', Garamond, 'Times New Roman', serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 // Title and Tagline Wrapper
 .site-mockup__site-identity {
-	padding: 20px 30px;
+	margin: 40px;
+	padding: 0 30px;
+	width: 800px;
 
 	.is-desktop & {
 		display: flex;
@@ -152,7 +156,7 @@
 		justify-content: center;
 		align-items: center;
 		overflow: hidden;
-		min-height: 300px;
+		min-height: 400px;
 
 		.is-mobile & {
 			min-height: 250px;
@@ -204,16 +208,16 @@
 			content: '';
 			border: 1px solid #ffffff;
 			position: absolute;
-			top: 12px;
-			right: 12px;
-			bottom: 12px;
-			left: 12px;
+			top: 16px;
+			right: 16px;
+			bottom: 16px;
+			left: 16px;
 
 			.is-mobile & {
-				top: 6px;
-				right: 6px;
-				bottom: 6px;
-				left: 6px;
+				top: 8px;
+				right: 8px;
+				bottom: 8px;
+				left: 8px;
 			}
 		}
 
@@ -242,14 +246,19 @@
 		.wp-block-media-text__content {
 			word-break: break-word;
 			grid-area: media-text-content;
-			padding: 15px 30px;
+			padding: 0 16px 0 0;
 
 			p {
 				margin: 0;
 			}
 
+			&.has-media-on-the-right { //.wp-block-media-text.has-media-on-the-right .wp-block-media-text__content
+				padding: 0 0 0 16px;
+			}
+			// .site-mockup__entry-content .wp-block-media-text.has-media-on-the-right .wp-block-media-text__content
+
 			.is-mobile & {
-				padding: 15px 0;
+				padding: 17px 0;
 			}
 		}
 	}
@@ -276,9 +285,9 @@
 	}
 
 	p {
-		font-size: 20px;
+		font-size: 19px;
 		font-weight: 400;
-		line-height: 1.6;
+		line-height: 1.8;
 		max-width: 620px;
 		margin-left: auto;
 		margin-right: auto;
