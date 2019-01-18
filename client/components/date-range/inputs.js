@@ -21,6 +21,7 @@ export class DateRangeInputs extends Component {
 		endDateValue: PropTypes.string.isRequired,
 		onInputChange: PropTypes.func,
 		onInputBlur: PropTypes.func,
+		onInputFocus: PropTypes.func,
 		startLabel: PropTypes.string,
 		endLabel: PropTypes.string,
 	};
@@ -28,6 +29,7 @@ export class DateRangeInputs extends Component {
 	static defaultProps = {
 		onInputChange: noop,
 		onInputBlur: noop,
+		onInputFocus: noop,
 	};
 
 	constructor( props ) {
@@ -62,6 +64,11 @@ export class DateRangeInputs extends Component {
 		this.props.onInputChange( value, startOrEnd );
 	};
 
+	handleInputFocus = startOrEnd => e => {
+		const { value } = e.target;
+		this.props.onInputFocus( value, startOrEnd );
+	};
+
 	render() {
 		// => "MM/DD/YYYY" (or locale equivalent)
 		const localeDateFormat = this.props.moment.localeData().longDateFormat( 'L' );
@@ -89,6 +96,7 @@ export class DateRangeInputs extends Component {
 							value={ startValue }
 							onChange={ this.handleInputChange( 'Start' ) }
 							onBlur={ this.handleInputBlur( 'Start' ) }
+							onFocus={ this.handleInputFocus( 'Start' ) }
 							placeholder={ localeDateFormat }
 						/>
 					</div>
@@ -105,6 +113,7 @@ export class DateRangeInputs extends Component {
 							value={ endValue }
 							onChange={ this.handleInputChange( 'End' ) }
 							onBlur={ this.handleInputBlur( 'End' ) }
+							onFocus={ this.handleInputFocus( 'End' ) }
 							placeholder={ localeDateFormat }
 						/>
 					</div>

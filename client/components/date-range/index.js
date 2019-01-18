@@ -53,6 +53,7 @@ export class DateRange extends Component {
 		onDateSelect: noop,
 		onDateCommit: noop,
 		isCompact: false,
+		focusedMonth: null,
 		renderTrigger: props => <DateRangeTrigger { ...props } />,
 		renderHeader: props => <DateRangeHeader { ...props } />,
 		renderInputs: props => <DateRangeInputs { ...props } />,
@@ -114,6 +115,7 @@ export class DateRange extends Component {
 			textInputEndDate: this.toDateString( endDate ),
 			initialStartDate: startDate, // cache values in case we need to reset to them
 			initialEndDate: endDate, // cache values in case we need to reset to them
+			focusedMonth: this.props.focusedMonth,
 		};
 
 		// Ref to the Trigger <button> used to position the Popover component
@@ -222,6 +224,31 @@ export class DateRange extends Component {
 		}
 
 		this.onSelectDate( date );
+	};
+
+	/**
+	 * Updates the currently focused date picker month when one of the
+	 * inputs is focused.
+	 * http://react-day-picker.js.org/api/DayPicker/#month
+	 * @param  {string} val        the value of the input
+	 * @param  {string} startOrEnd either "Start" or "End"
+	 */
+	handleInputFocus = ( val, startOrEnd ) => {
+		// debugger;
+		const date = this.props.moment( val, this.getLocaleDateFormat() );
+		const numMonthsShowing = this.getNumberOfMonths(); // 2 or 1
+
+		// If we focused the endDate and we're showing more than 1 month
+		// then the picker should focus the month before
+		if ( startOrEnd === 'End' && numMonthsShowing > 1 ) {
+			// moment isn't immutable so this modifies
+			// the existing moment instance
+			date.subtract( 1, 'months' );
+		}
+
+		this.setState( {
+			focusedMonth: date.toDate(),
+		} );
 	};
 
 	/**
@@ -462,6 +489,10 @@ export class DateRange extends Component {
 		return [ config ];
 	}
 
+	getNumberOfMonths() {
+		return window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1;
+	}
+
 	renderDateHelp() {
 		const { startDate, endDate } = this.state;
 
@@ -509,6 +540,7 @@ export class DateRange extends Component {
 			endDateValue: this.state.textInputEndDate,
 			onInputChange: this.handleInputChange,
 			onInputBlur: this.handleInputBlur,
+			onInputFocus: this.handleInputFocus,
 		};
 
 		return (
@@ -566,6 +598,7 @@ export class DateRange extends Component {
 
 		return (
 			<DatePicker
+				calendarViewDate={ this.state.focusedMonth }
 				rootClassNames={ rootClassNames }
 				modifiers={ modifiers }
 				showOutsideDays={ false }
@@ -573,8 +606,7 @@ export class DateRange extends Component {
 				toMonth={ this.momentDateToJsDate( this.props.lastSelectableDate ) }
 				onSelectDay={ this.onSelectDate }
 				selectedDays={ selected }
-				numberOfMonths={ window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1 }
-				initialMonth={ this.momentDateToJsDate( this.state.startDate ) }
+				numberOfMonths={ this.getNumberOfMonths() }
 				disabledDays={ this.getDisabledDaysConfig() }
 			/>
 		);
