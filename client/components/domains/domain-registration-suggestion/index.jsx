@@ -221,7 +221,7 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		let buttonStyles = { primary: true };
 		if ( abtest( 'domainSearchButtonStyles' ) === 'onePrimary' ) {
-			buttonStyles = ! isFeatured ? { borderless: true } : this.props.buttonStyles;
+			buttonStyles = ! isFeatured ? {} : this.props.buttonStyles;
 		}
 
 		const extraClasses = classNames( { 'featured-domain-suggestion': isFeatured } );
