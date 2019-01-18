@@ -525,13 +525,18 @@ class Signup extends React.Component {
 		return flowSteps.length === completedSteps.length;
 	};
 
+	getVisibleFlowSteps() {
+		const rawSteps = flows.getFlow( this.props.flowName ).steps;
+
+		return rawSteps.filter( stepName => ! steps[ stepName ].hidden );
+	}
+
 	getPositionInFlow() {
-		const { flowName, stepName } = this.props;
-		return indexOf( flows.getFlow( flowName ).steps, stepName );
+		return indexOf( this.getVisibleFlowSteps(), this.props.stepName );
 	}
 
 	getFlowLength() {
-		return flows.getFlow( this.props.flowName ).steps.length;
+		return this.getVisibleFlowSteps().length;
 	}
 
 	renderCurrentStep() {
