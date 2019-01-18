@@ -58,9 +58,9 @@ export class SiteStyleStep extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const selectedStyleData = this.getSelectedStyleDataById();
+		const selectedStyleData = this.getSelectedStyleDataById() || this.props.styleOptions[ 0 ];
 		this.props.submitSiteStyle(
-			this.props.siteStyle,
+			selectedStyleData.id,
 			selectedStyleData.theme,
 			selectedStyleData.label
 		);
@@ -150,6 +150,7 @@ export class SiteStyleStep extends Component {
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	submitSiteStyle: ( siteStyle, themeSlugWithRepo, styleLabel ) => {
 		const { flowName, stepName, goToNextStep } = ownProps;
+		dispatch( setSiteStyle( siteStyle ) );
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_style', {
 				// The untranslated 'product' name of the variation/theme
