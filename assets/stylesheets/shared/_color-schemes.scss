@@ -376,6 +376,37 @@
 		--color-accent-light: #{$muriel-hot-pink-200};
 		--color-accent-dark: #{$muriel-hot-pink-600};
 
+		--color-white: #000;
+		--color-white-rgb: #{hex-to-rgb( #000 )};
+		--color-neutral: #{$muriel-gray-500};
+		--color-neutral-rgb: #{hex-to-rgb( $muriel-gray-500 )};
+		--color-neutral-dark: #{$muriel-gray-700};
+		--color-neutral-dark-rgb: #{hex-to-rgb( $muriel-gray-700 )};
+		--color-neutral-light: #{$muriel-gray-300};
+		--color-neutral-light-rgb: #{hex-to-rgb( $muriel-gray-300 )};
+		--color-neutral-0: #{$muriel-gray-900};
+		--color-neutral-0-rgb: #{hex-to-rgb( $muriel-gray-900 )};
+		--color-neutral-50: #{$muriel-gray-800};
+		--color-neutral-50-rgb: #{hex-to-rgb( $muriel-gray-800 )};
+		--color-neutral-100: #{$muriel-gray-700};
+		--color-neutral-100-rgb: #{hex-to-rgb( $muriel-gray-700 )};
+		--color-neutral-200: #{$muriel-gray-600};
+		--color-neutral-200-rgb: #{hex-to-rgb( $muriel-gray-600 )};
+		--color-neutral-300: #{$muriel-gray-500};
+		--color-neutral-300-rgb: #{hex-to-rgb( $muriel-gray-500 )};
+		--color-neutral-400: #{$muriel-gray-400};
+		--color-neutral-400-rgb: #{hex-to-rgb( $muriel-gray-400 )};
+		--color-neutral-500: #{$muriel-gray-300};
+		--color-neutral-500-rgb: #{hex-to-rgb( $muriel-gray-300 )};
+		--color-neutral-600: #{$muriel-gray-200};
+		--color-neutral-600-rgb: #{hex-to-rgb( $muriel-gray-200 )};
+		--color-neutral-700: #{$muriel-gray-100};
+		--color-neutral-700-rgb: #{hex-to-rgb( $muriel-gray-100 )};
+		--color-neutral-800: #{$muriel-gray-50};
+		--color-neutral-800-rgb: #{hex-to-rgb( $muriel-gray-50 )};
+		--color-neutral-900: #{$muriel-gray-0};
+		--color-neutral-900-rgb: #{hex-to-rgb( $muriel-gray-0 )};
+
 		--color-success: #{$muriel-hot-green-400};
 		--color-success-light: #{$muriel-hot-green-200};
 		--color-success-dark: #{$muriel-hot-green-600};
@@ -389,9 +420,9 @@
 		--color-error-dark: #{$muriel-hot-red-600};
 
 		--color-text: #{$muriel-gray-100};
-		--color-text-subtle: #{$muriel-gray-400};
+		--color-text-subtle: #{$muriel-gray-300};
 		--color-surface: #000;
-		--color-surface-backdrop: #111;
+		--color-surface-backdrop: #{$muriel-gray-900};
 
 		--masterbar-color: #{$muriel-white};
 		--masterbar-border-color: #{$gray-lighten-10};
