@@ -22,6 +22,7 @@ import DatePickerNavBar from 'components/date-picker/nav-bar';
 class DatePicker extends PureComponent {
 	static propTypes = {
 		calendarViewDate: PropTypes.object,
+		calendarInitialDate: PropTypes.object,
 		showOutsideDays: PropTypes.bool,
 		numberOfMonths: PropTypes.number,
 		events: PropTypes.array,
@@ -64,6 +65,7 @@ class DatePicker extends PureComponent {
 	static defaultProps = {
 		showOutsideDays: true,
 		calendarViewDate: new Date(),
+		calendarInitialDate: new Date(),
 		modifiers: {},
 		fromMonth: null,
 		locale: 'en',
@@ -230,6 +232,7 @@ class DatePicker extends PureComponent {
 				modifiers={ modifiers }
 				className={ rootClassNames }
 				disabledDays={ this.props.disabledDays }
+				initialMonth={ this.props.calendarInitialDate }
 				month={ this.props.calendarViewDate }
 				fromMonth={ this.props.fromMonth }
 				toMonth={ this.props.toMonth }
