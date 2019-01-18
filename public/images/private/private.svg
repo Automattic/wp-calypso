@@ -11,7 +11,7 @@
                             <polygon id="path-1" points="0 91.0185 116.28 91.0185 116.28 0.0005 0 0.0005"></polygon>
                         </mask>
                         <g id="Clip-6"></g>
-                        <polygon id="Fill-5" fill="#D8DEE4" mask="url(#mask-2)" points="4.927 52.1365 104.083 52.1365 104.083 16.4285 4.927 16.4285"></polygon>
+                        <polygon id="Fill-5" fill="#E1E2E2" mask="url(#mask-2)" points="4.927 52.1365 104.083 52.1365 104.083 16.4285 4.927 16.4285"></polygon>
                         <polygon id="Fill-7" fill="#CCCED0" mask="url(#mask-2)" points="16.533 85.1275 46.719 85.1275 46.719 61.5305 16.533 61.5305"></polygon>
                         <path d="M77.1664,38.6891 L16.5334,38.6891 L16.5334,31.8791 L70.9824,31.8791 C74.3974,31.8791 77.1664,34.6471 77.1664,38.0631 L77.1664,38.6891 Z" id="Fill-8" fill="#FFFFFF" mask="url(#mask-2)"></path>
                         <polygon id="Fill-9" fill="#CCCED0" mask="url(#mask-2)" points="55.863 85.1275 92.713 85.1275 92.713 61.5305 55.863 61.5305"></polygon>
