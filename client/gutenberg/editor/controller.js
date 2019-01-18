@@ -31,6 +31,7 @@ import {
 	requestSitePost,
 } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
+import IframeLoader from './iframe-loader';
 
 const debug = debugFactory( 'calypso:gutenberg:controller' );
 
@@ -195,7 +196,8 @@ export const post = async ( context, next ) => {
 		failure: () => <div>Couldn't load everything - try hitting reload in your browser…</div>,
 	} );
 
-	context.primary = <EditorLoader />;
+	// context.primary = <EditorLoader />;
+	context.primary = <IframeLoader />
 
 	next();
 };
