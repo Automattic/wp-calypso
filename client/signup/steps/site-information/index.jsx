@@ -22,7 +22,6 @@ import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
-import InfoPopover from 'components/info-popover';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -138,10 +137,10 @@ export class SiteInformation extends Component {
 								>
 									<FormFieldset>
 										<FormLabel htmlFor={ fieldName }>
-											{ fieldTexts.fieldLabel }
-											<InfoPopover className="site-information__info-popover" position="top">
+											<div className="site-information__field-title">{ fieldTexts.fieldLabel }</div>
+											<div className="site-information__field-description">
 												{ fieldTexts.fieldDescription }
-											</InfoPopover>
+											</div>
 										</FormLabel>
 										<FormTextInput
 											id={ fieldName }
