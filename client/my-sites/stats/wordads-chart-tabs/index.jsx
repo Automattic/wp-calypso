@@ -22,7 +22,10 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 import Card from 'components/card';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import {
+	getSiteStatsNormalizedData,
+	isRequestingSiteStatsForQuery,
+} from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { getSiteOption } from 'state/sites/selectors';
 import { formatDate, getQueryDate } from '../stats-chart-tabs/utility';
@@ -123,8 +126,8 @@ class WordAdsChartTabs extends Component {
 	}
 
 	render() {
-		const { isActiveTabLoading, siteId, query } = this.props;
-		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isActiveTabLoading } ];
+		const { siteId, query, isDataLoading } = this.props;
+		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isDataLoading } ];
 
 		return (
 			<div>
@@ -137,11 +140,11 @@ class WordAdsChartTabs extends Component {
 						tabs={ this.props.charts }
 					/>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-					<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
+					<StatsModulePlaceholder className="is-chart" isLoading={ isDataLoading } />
 					<Chart
 						barClick={ this.props.barClick }
 						data={ this.buildChartData() }
-						loading={ isActiveTabLoading }
+						loading={ isDataLoading }
 					/>
 					<StatTabs
 						data={ this.props.data }
@@ -175,11 +178,13 @@ const connectComponent = connect(
 
 		const query = { unit: period, date, quantity };
 		const data = getSiteStatsNormalizedData( state, siteId, 'statsAds', query );
+		const isDataLoading = isRequestingSiteStatsForQuery( state, siteId, 'statsAds', query );
 
 		return {
 			query,
 			siteId,
 			data,
+			isDataLoading,
 		};
 	},
 	{ recordGoogleEvent },
