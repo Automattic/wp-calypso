@@ -17,7 +17,7 @@ const sendMessage = message => {
 	window.parent.postMessage( JSON.stringify( { ...message, type: 'gutenbergIframeMessage' } ), '*' );
 };
 
-class MediaDialog extends Component {
+class MediaModal extends Component {
 	componentDidMount() {
 		window.addEventListener( 'message', this.onMessage, false );
 	}
@@ -55,5 +55,5 @@ class MediaDialog extends Component {
 wp.hooks.addFilter(
 	'editor.MediaUpload',
 	'core/edit-post/components/media-upload/replace-media-upload',
-	() => MediaDialog
+	() => MediaModal
 );
