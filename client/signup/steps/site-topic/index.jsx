@@ -58,7 +58,7 @@ class SiteTopicStep extends Component {
 		} );
 	}
 
-	onSiteTopicChange = verticalData => this.props.setSiteTopic( { ...verticalData } );
+	onSiteTopicChange = verticalData => this.props.setSiteVertical( { ...verticalData } );
 
 	onSubmit = event => {
 		event.preventDefault();
@@ -135,22 +135,26 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 		);
 
 		dispatch(
-			submitSiteVertical( {
-				isUserInput: is_user_input_vertical,
-				name: vertical_name,
-				slug: vertical_slug,
-			}, stepName )
+			submitSiteVertical(
+				{
+					isUserInput: is_user_input_vertical,
+					name: vertical_name,
+					slug: vertical_slug,
+				},
+				stepName
+			)
 		);
 
 		goToNextStep( flowName );
 	},
 
-	setSiteTopic: ( { vertical_name, vertical_slug, is_user_input_vertical } ) =>
+	setSiteVertical: ( { is_user_input_vertical, preview, vertical_name, vertical_slug } ) =>
 		dispatch(
 			setSiteVertical( {
-				name: vertical_name,
-				slug: vertical_slug,
 				isUserInput: is_user_input_vertical,
+				name: vertical_name,
+				preview,
+				slug: vertical_slug,
 			} )
 		),
 } );
@@ -158,8 +162,8 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 export default localize(
 	connect(
 		state => ( {
-			siteTopic: getSiteVerticalName( state ) || '',
-			siteSlug: getSiteVerticalSlug( state ) || '',
+			siteTopic: getSiteVerticalName( state ),
+			siteSlug: getSiteVerticalSlug( state ),
 			siteType: getSiteType( state ),
 			isUserInput: getSiteVerticalIsUserInput( state ),
 		} ),

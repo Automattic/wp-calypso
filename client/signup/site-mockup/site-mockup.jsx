@@ -43,7 +43,7 @@ function MockupChromeDesktop() {
 	);
 }
 
-function SiteMockupContent( { data, title, tagline } ) {
+function SiteMockupContent( { content, title, tagline } ) {
 	/* eslint-disable react/no-danger */
 	return (
 		<>
@@ -51,16 +51,7 @@ function SiteMockupContent( { data, title, tagline } ) {
 				<div className="site-mockup__title">{ title }</div>
 				<div className="site-mockup__tagline">{ tagline }</div>
 			</div>
-			<div
-				className="site-mockup__cover-image"
-				style={ { backgroundImage: `url("${ data.cover_image }")` } }
-			>
-				<span>{ data.cover_image_text }</span>
-			</div>
-			<div
-				className="site-mockup__entry-content"
-				dangerouslySetInnerHTML={ { __html: data.content } }
-			/>
+			<div className="site-mockup__entry-content" dangerouslySetInnerHTML={ { __html: content } } />
 		</>
 	);
 	/* eslint-enable react/no-danger */
@@ -84,7 +75,7 @@ function SiteMockupOutlines() {
 	);
 }
 
-export default function SiteMockup( { size, data, siteType, siteStyle, title, tagline } ) {
+export default function SiteMockup( { size, content, siteType, siteStyle, title, tagline } ) {
 	const classes = classNames( 'site-mockup__viewport', `is-${ size }`, {
 		[ `is-${ siteType }` ]: !! siteType,
 		[ `is-${ siteStyle }` ]: !! siteStyle,
@@ -94,10 +85,10 @@ export default function SiteMockup( { size, data, siteType, siteStyle, title, ta
 			{ size === 'mobile' ? <MockupChromeMobile /> : <MockupChromeDesktop /> }
 			<div className="site-mockup__body">
 				<div className="site-mockup__content">
-					{ isEmpty( data ) ? (
+					{ isEmpty( content ) ? (
 						<SiteMockupOutlines />
 					) : (
-						<SiteMockupContent { ...{ data, title, tagline } } />
+						<SiteMockupContent { ...{ content, title, tagline } } />
 					) }
 				</div>
 			</div>
