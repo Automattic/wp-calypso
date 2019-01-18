@@ -92,7 +92,7 @@ export class SiteInformation extends Component {
 				return {
 					fieldLabel: translate( 'Address' ),
 					fieldDescription: translate( 'Where can people find your business?' ),
-					fieldPlaceholder: 'E.g., 60 29th Street #343, San Francisco, CA 94110',
+					fieldPlaceholder: 'E.g., 60 29th St, San Francisco, CA 94110',
 				};
 			case 'phone':
 				return {
