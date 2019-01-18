@@ -15,7 +15,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isSitePreviewable } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { isWithinBreakpoint } from 'lib/viewport';
+import { isWithinBreakpoint, isMobile } from 'lib/viewport';
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
@@ -166,6 +166,7 @@ class PreviewMain extends React.Component {
 						'{{strong}}One moment, please…{{/strong}} loading your site.',
 						{ components: { strong: <strong /> } }
 					) }
+					defaultViewportDevice={ isMobile() ? 'phone' : 'computer' }
 				/>
 			</Main>
 		);
