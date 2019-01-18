@@ -1,19 +1,20 @@
 .site-information__wrapper {
 	position: relative;
 	display: flex;
+
 	.button {
 		margin: 0 auto;
 		display: block;
 		width: 200px;
 	}
+
 	.card {
-		width: 500px;
+		width: 480px;
 		padding: 16px;
 	}
 }
 
 .site-information__field-control {
-	max-width: 450px;
 	margin: 0 auto 20px;
 	filter: blur( 0 );
 	transform: translateZ( 0 ) translateX( 0 );
@@ -39,12 +40,10 @@
 	.site-information__field-control {
 		margin: 0 auto;
 	}
-	.site-information__email,
-	.site-information__phone {
-		max-width: 400px;
-	}
+
 	input {
 		padding: 10px 100px 10px 10px;
+
 		// Since there's a 1px padding on the container, and
 		// inputs use actual borders (unlike cards, which
 		// use box-shadow), we need to adjust.
@@ -58,6 +57,7 @@
 			padding-bottom: 15px;
 		}
 	}
+
 	.card {
 		margin: 0 auto;
 		background: transparent;
@@ -69,6 +69,7 @@
 
 .site-information__info-popover {
 	margin-left: 5px;
+
 	.gridicon {
 		color: $gray;
 		margin-bottom: -3px;
