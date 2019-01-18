@@ -15,7 +15,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isSitePreviewable } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { isWithinBreakpoint } from 'lib/viewport';
+import { isWithinBreakpoint, isMobile, isDesktop } from 'lib/viewport';
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
@@ -34,6 +34,12 @@ class PreviewMain extends React.Component {
 		previewUrl: null,
 		externalUrl: null,
 		showingClose: false,
+		// Set to one of the possible default values in client/components/web-preview/toolbar.jsx
+		device: isMobile() // eslint-disable-line no-nested-ternary
+			? 'phone'
+			: isDesktop()
+			? 'computer'
+			: 'tablet',
 	};
 
 	UNSAFE_componentWillMount() {
@@ -166,6 +172,7 @@ class PreviewMain extends React.Component {
 						'{{strong}}One moment, please…{{/strong}} loading your site.',
 						{ components: { strong: <strong /> } }
 					) }
+					defaultViewportDevice={ this.state.device }
 				/>
 			</Main>
 		);

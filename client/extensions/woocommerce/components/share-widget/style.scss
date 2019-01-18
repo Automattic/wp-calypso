@@ -32,26 +32,26 @@
 
 .share-widget__service .social-logo {
 	&.facebook {
-		color: $color-facebook;
+		color: var( --color-facebook );
 	}
 
 	&.twitter {
-		color: $color-twitter;
+		color: var( --color-twitter );
 	}
 
 	&.google-plus {
-		color: $color-gplus;
+		color: var( --color-gplus );
 	}
 
 	&.linkedin {
-		color: $color-linkedin;
+		color: var( --color-linkedin );
 	}
 
 	&.tumblr {
-		color: $color-tumblr;
+		color: var( --color-tumblr );
 	}
 
 	&.pinterest {
-		color: $color-pinterest;
+		color: var( --color-pinterest );
 	}
 }

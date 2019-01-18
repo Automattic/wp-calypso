@@ -30,19 +30,19 @@ $dark-gray-500: #555d66;
 	margin-right: 5px;
 
 	&.is-facebook {
-		fill: #3957a2;
+		fill: var( --color-facebook );
 	}
 	&.is-twitter {
-		fill: #55acee;
+		fill: var( --color-twitter );
 	}
 	&.is-linkedin {
-		fill: #0976b4;
+		fill: var( --color-linkedin );
 	}
 	&.is-tumblr {
-		fill: #35465c;
+		fill: var( --color-tumblr );
 	}
 	&.is-google-plus {
-		fill: #df4a33;
+		fill: var( --color-gplus );
 	}
 }
 

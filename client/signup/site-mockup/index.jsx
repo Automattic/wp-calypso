@@ -6,19 +6,21 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { isEmpty } from 'lodash';
+import { each, isEmpty } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { translate } from 'i18n-calypso';
-import { loadFont, getCSS } from 'lib/signup/font-loader';
 import SiteMockup from './site-mockup';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
+import {
+	getSiteVerticalName,
+	getSiteVerticalPreview,
+} from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
-import { getVerticalData } from './mock-data';
+import { loadFont, getCSS } from 'lib/signup/font-loader';
 
 /**
  * Style dependencies
@@ -27,21 +29,23 @@ import './style.scss';
 
 class SiteMockups extends Component {
 	static propTypes = {
-		siteInformation: PropTypes.object,
+		address: PropTypes.string,
+		phone: PropTypes.string,
 		siteStyle: PropTypes.string,
 		siteType: PropTypes.string,
 		title: PropTypes.string,
 		vertical: PropTypes.string,
-		verticalData: PropTypes.object,
+		verticalPreviewContent: PropTypes.string,
 	};
 
 	static defaultProps = {
-		siteInformation: {},
+		address: '',
+		phone: '',
 		siteStyle: '',
 		siteType: '',
 		title: '',
 		vertical: '',
-		verticalData: {},
+		verticalPreviewContent: '',
 	};
 
 	constructor( props ) {
@@ -71,9 +75,30 @@ class SiteMockups extends Component {
 		}
 	}
 
+	/**
+	 * Returns an interpolated site preview content block with template markers
+	 *
+	 * @param {string} content Content to format
+	 * @return {string} Formatted content
+	 */
+	getContent( content = '' ) {
+		const { title: CompanyName, address, phone } = this.props;
+		if ( 'string' === typeof content ) {
+			each(
+				{
+					CompanyName,
+					Address: this.formatAddress( address ) || translate( 'Your Address' ),
+					Phone: phone || translate( 'Your Phone Number' ),
+				},
+				( value, key ) =>
+					( content = content.replace( new RegExp( '{{' + key + '}}', 'gi' ), value ) )
+			);
+		}
+		return content;
+	}
+
 	getTagline() {
-		const { siteInformation = {} } = this.props;
-		const { address, phone } = siteInformation;
+		const { address, phone } = this.props;
 
 		if ( isEmpty( address ) && isEmpty( phone ) ) {
 			return translate( 'You’ll be able to customize this to your needs.' );
@@ -99,17 +124,17 @@ class SiteMockups extends Component {
 	}
 
 	render() {
+		const { siteStyle, siteType, title, verticalPreviewContent } = this.props;
 		const siteMockupClasses = classNames( {
 			'site-mockup__wrap': true,
-			'is-empty': isEmpty( this.props.verticalData ),
+			'is-empty': isEmpty( verticalPreviewContent ),
 			'is-font-loading': ! this.state.fontLoaded,
 			'is-font-error': ! this.state.fontError,
 		} );
-		const { siteStyle, siteType, title, verticalData } = this.props;
 		const otherProps = {
 			title,
 			tagline: this.getTagline(),
-			data: verticalData,
+			content: this.getContent( verticalPreviewContent ),
 			siteType,
 			siteStyle,
 		};
@@ -130,10 +155,11 @@ export default connect( state => {
 	const siteInformation = getSiteInformation( state );
 	return {
 		title: siteInformation.title || translate( 'Your New Website' ),
-		siteInformation,
+		address: siteInformation.address,
+		phone: siteInformation.phone,
 		siteStyle: getSiteStyle( state ),
 		siteType: getSiteType( state ),
 		vertical,
-		verticalData: getVerticalData( vertical ),
+		verticalPreviewContent: getSiteVerticalPreview( state ),
 	};
 } )( SiteMockups );

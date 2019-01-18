@@ -218,31 +218,27 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 .post-share__service.is-active,
 .post-share__handle {
 	.social-logo.twitter {
-		color: $color-twitter;
+		color: var( --color-twitter );
 	}
 
 	.social-logo.facebook {
-		color: $color-facebook;
+		color: var( --color-facebook );
 	}
 
 	.social-logo.google-plus {
-		color: $color-gplus;
+		color: var( --color-gplus );
 	}
 
 	.social-logo.linkedin {
-		color: $color-linkedin;
+		color: var( --color-linkedin );
 	}
 
 	.social-logo.tumblr {
-		color: $color-tumblr;
-	}
-
-	.social-logo.path {
-		color: $color-path;
+		color: var( --color-tumblr );
 	}
 
 	.social-logo.eventbrite {
-		color: $color-eventbrite;
+		color: var( --color-eventbrite );
 	}
 
 	.post-share__service-account-image::after {

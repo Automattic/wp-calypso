@@ -3,7 +3,12 @@
 /**
  * Internal dependencies
  */
-import { getSiteVerticalName, getSiteVerticalSlug, getSiteVerticalIsUserInput } from '../selectors';
+import {
+	getSiteVerticalName,
+	getSiteVerticalSlug,
+	getSiteVerticalIsUserInput,
+	getSiteVerticalPreview,
+} from '../selectors';
 
 describe( 'selectors', () => {
 	const state = {
@@ -13,6 +18,7 @@ describe( 'selectors', () => {
 					name: 'felice',
 					slug: 'happy',
 					isUserInput: false,
+					preview: '<!--gutenberg-besties-forever <p>Fist bump!</p>-->',
 				},
 			},
 		},
@@ -44,6 +50,15 @@ describe( 'selectors', () => {
 			expect( getSiteVerticalIsUserInput( state ) ).toEqual(
 				state.signup.steps.siteVertical.isUserInput
 			);
+		} );
+	} );
+	describe( 'getSiteVerticalPreview', () => {
+		test( 'should return empty string as a default state', () => {
+			expect( getSiteVerticalPreview( {} ) ).toBe( '' );
+		} );
+
+		test( 'should return site vertical from the state', () => {
+			expect( getSiteVerticalPreview( state ) ).toEqual( state.signup.steps.siteVertical.preview );
 		} );
 	} );
 } );

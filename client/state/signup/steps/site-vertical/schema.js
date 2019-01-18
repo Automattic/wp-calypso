@@ -9,6 +9,9 @@ export const siteVerticalSchema = {
 		name: {
 			type: 'string',
 		},
+		preview: {
+			type: 'string',
+		},
 		slug: {
 			type: 'string',
 		},

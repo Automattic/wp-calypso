@@ -8,6 +8,7 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
+const { execSync } = require( 'child_process' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
@@ -40,6 +41,17 @@ const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
+
+/**
+ * Plugin that generates the `public/custom-properties.css` file before compilation
+ */
+class BuildCustomPropertiesCssPlugin {
+	apply( compiler ) {
+		compiler.hooks.compile.tap( 'BuildCustomPropertiesCssPlugin', () =>
+			execSync( 'node bin/build-custom-properties-css.js' )
+		);
+	}
+}
 
 /*
  * Create reporter for ProgressPlugin (used with EMIT_STATS)
@@ -88,22 +100,6 @@ function createProgressHandler() {
 		console.log( message ); // eslint-disable-line no-console
 	};
 }
-
-// Disable unsafe cssnano optimizations like renaming animations or rebasing z-indexes. These
-// optimizations don't work across independently minified stylesheets. As we minify each webpack
-// CSS chunk individually and then load multiple chunks into one document, the optimized names
-// conflict with each other, e.g., multiple animations named `a` or z-indexes starting from 1.
-// TODO: upgrade cssnano from v3 to v4. In v3, all optimizations, including unsafe ones, run by
-// default and need to be disabled explicitly as we do here. In v4, there is a new concept of
-// 'presets' and unsafe optimizations are opt-in rather than opt-out. The `default` preset enables
-// only the safe ones. https://cssnano.co/guides/optimisations
-const cssnanoOptions = {
-	autoprefixer: false,
-	discardUnused: false,
-	mergeIdents: false,
-	reduceIdents: false,
-	zindex: false,
-};
 
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
@@ -328,7 +324,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				rtlEnabled: true,
 			} ),
 			new WebpackRTLPlugin( {
-				minify: isDevelopment ? false : cssnanoOptions,
+				minify: ! isDevelopment,
 			} ),
 			new AssetsWriter( {
 				filename: 'assets.json',
@@ -355,6 +351,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					},
 				} ),
 			shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
+			new BuildCustomPropertiesCssPlugin(),
 		] ),
 		externals: _.compact( [
 			externalizeWordPressPackages && wordpressExternals,

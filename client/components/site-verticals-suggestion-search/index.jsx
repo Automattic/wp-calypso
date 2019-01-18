@@ -126,6 +126,7 @@ const requestSiteVerticals = debounce(
 				query: {
 					search: searchTerm,
 					limit,
+					include_preview: true,
 				},
 			} ),
 			{
