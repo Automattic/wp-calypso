@@ -19,7 +19,6 @@ export function generateSteps( {
 	createSiteWithCart = noop,
 	currentPage = noop,
 	setThemeOnSite = noop,
-	removeUsernameTest = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -130,8 +129,6 @@ export function generateSteps( {
 			unstorableDependencies: [ 'bearer_token' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
-				displayNameInput: removeUsernameTest === 'hideUsername',
-				displayUsernameInput: removeUsernameTest !== 'hideUsername',
 			},
 		},
 
