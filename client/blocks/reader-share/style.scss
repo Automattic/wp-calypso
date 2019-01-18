@@ -72,11 +72,11 @@
 	}
 
 	.social-logo.twitter {
-		fill: #2aa9e0;
+		fill: var( --color-twitter );
 	}
 
 	.social-logo.facebook {
-		fill: #3b5998;
+		fill: var( --color-facebook );
 	}
 
 	&:hover,
