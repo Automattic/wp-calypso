@@ -22,6 +22,17 @@ export function generateSteps( {
 	removeUsernameTest = noop,
 } = {} ) {
 	return {
+		'add-business-plan': {
+			stepName: 'add-business-plan',
+			props: {
+				addPlan: 'business',
+			},
+			hidden: true,
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+		},
+
 		survey: {
 			stepName: 'survey',
 			props: {

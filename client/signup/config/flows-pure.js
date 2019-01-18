@@ -21,10 +21,8 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		business: {
-			steps: [ 'user', 'about', 'themes', 'domains' ],
-			destination: function( dependencies ) {
-				return '/plans/select/business/' + dependencies.siteSlug;
-			},
+			steps: [ 'user', 'about', 'themes', 'domains', 'add-business-plan' ],
+			destination: getSiteDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2018-01-24',
 			meta: {

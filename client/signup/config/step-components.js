@@ -3,6 +3,7 @@
  * Internal dependencies
  */
 import AboutStepComponent from 'signup/steps/about';
+import AddPlanComponent from 'signup/steps/add-plan';
 import CloneStartComponent from 'signup/steps/clone-start';
 import CloneDestinationComponent from 'signup/steps/clone-destination';
 import CloneCredentialsComponent from 'signup/steps/clone-credentials';
@@ -40,6 +41,7 @@ import ReaderLandingStepComponent from 'signup/steps/reader-landing';
 
 export default {
 	about: AboutStepComponent,
+	'add-business-plan': AddPlanComponent,
 	'clone-start': CloneStartComponent,
 	'clone-destination': CloneDestinationComponent,
 	'clone-credentials': CloneCredentialsComponent,
