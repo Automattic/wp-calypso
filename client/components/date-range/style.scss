@@ -48,11 +48,57 @@
 	}
 }
 
+.date-range__controls {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+
+	@include breakpoint( '>480px' ) {
+		flex-direction: row;
+	}
+}
+
 .date-range__popover-header {
-	order: 1;
+	order: 2;
 
 	.button {
 		margin: 0 0.5em;
+	}
+}
+
+
+.date-range__info {
+	order: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.5em 0;
+
+	// ensures `em` element retains whitespace
+	// https://stackoverflow.com/questions/39325039/css-flex-box-last-space-removed
+	white-space: pre-wrap; 
+	
+	@include breakpoint( '<480px' ) {
+		margin-bottom: 0.5em;
+	}
+	
+	&,
+	.button {
+		font-size: 12px;
+	}
+
+	.button {
+		color: var(--color-link);
+		
+		&:hover,
+		&:focus {
+			color: var(--color-accent);
+		}
+	}
+
+	.gridicon {
+		margin-right: 0.5em;
 	}
 }
 
@@ -142,35 +188,6 @@
 }
 
 
-.date-range__info {
-	order: 4;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 0.5em 0;
-
-	// ensures `em` element retains whitespace
-	// https://stackoverflow.com/questions/39325039/css-flex-box-last-space-removed
-	white-space: pre-wrap; 
-	
-	&,
-	.button {
-		font-size: 12px;
-	}
-
-	.button {
-		color: var(--color-link);
-		
-		&:hover,
-		&:focus {
-			color: var(--color-accent);
-		}
-	}
-
-	.gridicon {
-		margin-right: 0.5em;
-	}
-}
 
 
 .date-range__picker {

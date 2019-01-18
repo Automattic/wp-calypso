@@ -552,10 +552,12 @@ export class DateRange extends Component {
 				onClose={ this.closePopover }
 			>
 				<div className="date-range__popover-inner">
+					<div class="date-range__controls">
+						{ this.props.renderHeader( headerProps ) }
+						{ this.renderDateHelp() }
+					</div>
 					{ this.props.renderInputs( inputsProps ) }
-					{ this.props.renderHeader( headerProps ) }
 					{ this.renderDatePicker() }
-					{ this.renderDateHelp() }
 				</div>
 			</Popover>
 		);
