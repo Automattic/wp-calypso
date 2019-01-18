@@ -1,48 +1,11 @@
+
 .reader-landing {
 	margin: 0 20px;
 }
 
 .reader-landing__step-content {
 	text-align: left;
-	padding-bottom: 20px;
-}
-
-.reader-landing .formatted-header {
-	margin-bottom: 16px;
-
-	@include breakpoint( '>660px' ) {
-		display: flex;
-		justify-content: center;
-		max-width: 800px;
-		flex-direction: column;
-		margin-left: auto;
-		margin-right: auto;
-	}
-}
-
-.reader-landing .formatted-header__title {
-	font-size: 1.8em;
-	text-align: left;
-	padding: 0;
-
-	@include breakpoint( '>660px' ) {
-		font-size: 3.3em;
-		text-align: center;
-		margin-top: 0;
-	}
-}
-
-.reader-landing .formatted-header__subtitle {
-	font-size: 1em;
-	padding: 0;
-	text-align: left;
-
-	@include breakpoint( '>660px' ) {
-		text-align: center;
-		margin-top: 10px;
-		margin-bottom: 0;
-		font-size: 1.1em;
-	}
+	margin-top: 32px;
 }
 
 .reader-landing__button-wrapper {
