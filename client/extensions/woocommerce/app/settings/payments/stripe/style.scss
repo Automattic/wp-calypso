@@ -54,7 +54,7 @@
 				}
 
 				&.account-not-activated {
-					background-color: $alert-yellow;
+					background-color: var( --color-warning );
 				}
 			}
 

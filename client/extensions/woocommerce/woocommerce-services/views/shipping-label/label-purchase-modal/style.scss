@@ -56,7 +56,7 @@
 	}
 
 	.gridicon.is-warning {
-		color: $alert-yellow;
+		color: var( --color-warning );
 	}
 
 	.is-error:not( .notice ) {
