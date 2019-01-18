@@ -2,24 +2,22 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import QueryPlans from 'components/data/query-plans';
 import SignupActions from 'lib/signup/actions';
 import { planItem } from 'lib/cart-values/cart-items';
 
 class AddPlanComponent extends Component {
 	componentDidMount() {
-		const { stepName, stepSectionName, goToNextStep } = this.props;
+		const { stepName, stepSectionName, goToNextStep, planSlug } = this.props;
 
-		const cartItem = planItem( 'business-bundle' );
+		const cartItem = planItem( planSlug );
 
 		SignupActions.submitSignupStep(
 			{
-				processingMessage: 'Hey you!',
 				stepName,
 				stepSectionName,
 				cartItem,
@@ -34,7 +32,7 @@ class AddPlanComponent extends Component {
 	}
 
 	render() {
-		return <QueryPlans />;
+		return null;
 	}
 }
 

@@ -41,6 +41,8 @@ import ReaderLandingStepComponent from 'signup/steps/reader-landing';
 
 export default {
 	about: AboutStepComponent,
+	'add-personal-plan': AddPlanComponent,
+	'add-premium-plan': AddPlanComponent,
 	'add-business-plan': AddPlanComponent,
 	'clone-start': CloneStartComponent,
 	'clone-destination': CloneDestinationComponent,
