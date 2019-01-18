@@ -11,23 +11,10 @@
 .media__item-dialog .dialog__action-buttons {
 	display: flex;
 	justify-content: space-between;
-}
 
-.media__modal-delete-item-button {
-	border: 0;
-
-	.dialog__button-label {
-		color: var( --color-error );
-	}
-
-	&:hover {
-		color: lighten( $alert-red, 10% );
-	}
-
-	&:disabled {
-		cursor: default;
-		cursor: not-allowed;
-		color: lighten( $alert-red, 25% );
+	// remove the left margin of the left-aligned 'Delete' button
+	.button:first-child {
+		margin-left: 0;
 	}
 }
 
