@@ -184,7 +184,8 @@ button {
 
 	&[disabled],
 	&:disabled {
-		color: lighten( $alert-red, 30% );
+		color: var( --color-neutral-50 );
+		background-color: var( --color-white );
 		border-color: var( --color-neutral-50 );
 	}
 }
@@ -201,8 +202,9 @@ button {
 
 	&[disabled],
 	&:disabled {
-		background-color: lighten( $alert-red, 20% );
-		border-color: tint( $alert-red, 30% );
+		color: var( --color-neutral-50 );
+		background-color: var( --color-white );
+		border-color: var( --color-neutral-50 );
 	}
 
 	&.is-busy {
