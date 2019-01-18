@@ -20,14 +20,11 @@
 	.search {
 		flex: 0 1 auto;
 		margin: 0;
+		height: 58px;
 
-		&.has-focus {
+		&.has-focus, &.has-focus:hover {
 			box-shadow: none;
 		}
-	}
-
-	.search.is-expanded-to-container {
-		height: 58px;
 	}
 
 	.section-nav {
