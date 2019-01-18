@@ -12,6 +12,11 @@ import React from 'react';
  */
 import Gridicon from 'gridicons';
 
+/**
+ * Style dependencies
+ */
+import './list-item-file-details.scss';
+
 export default class extends React.Component {
 	static displayName = 'MediaLibraryListItemFileDetails';
 

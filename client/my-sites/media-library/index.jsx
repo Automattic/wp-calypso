@@ -29,6 +29,11 @@ import {
 } from 'state/sharing/keyring/selectors';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 // External media sources that do not need a user to connect them should be listed here.
 const noConnectionNeeded = [ 'pexels' ];
 
