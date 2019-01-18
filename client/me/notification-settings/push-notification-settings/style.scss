@@ -124,12 +124,12 @@
 
 	&.is-enable {
 		background: var( --color-accent );
-		border-color: var( --color-primary );
+		border-color: var( --color-accent-dark );
 		color: $white;
 
 		&:hover,
 		&:focus {
-			border-color: var( --color-primary-dark );
+			border-color: var( --color-accent-dark );
 			color: $white;
 		}
 		&[disabled],

@@ -86,7 +86,7 @@
 
 	&.has-notification::before {
 		display: block;
-		background-color: var( --color-dot-indicator );
+		background-color: var( --color-accent-300 );
 		border: 2px solid $white;
 		content: '';
 		border-radius: 50%;
@@ -234,6 +234,10 @@
 		width: 100%;
 		text-align: center;
 	}
+}
+
+.inline-help__checklist {
+	min-height: 0;
 }
 
 .inline-help__view-heading {

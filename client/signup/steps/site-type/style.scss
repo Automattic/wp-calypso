@@ -2,6 +2,12 @@
 	margin: auto;
 	width: 380px;
 
+	// At small screen sizes make the step
+	// full width. -shaun
+	@include breakpoint( '<660px' ) {
+		width: 100%;
+	}
+
 	.card {
 		padding: 0;
 		margin: 0;

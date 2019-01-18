@@ -182,7 +182,7 @@
 	&-secondary {
 		display: flex;
 		flex: 1 1 10%;
-		align-items: start;
+		align-items: flex-start;
 		padding-left: 10px;
 
 		@include breakpoint( '<480px' ) {

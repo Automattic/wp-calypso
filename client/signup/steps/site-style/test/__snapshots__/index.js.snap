@@ -30,7 +30,9 @@ exports[`<SiteStyleStep /> should render 1`] = `
                 value="default"
               />
               <span>
-                <strong />
+                <strong>
+                  nice
+                </strong>
               </span>
             </Localized(FormLabel)>
             <Localized(FormLabel)
@@ -46,7 +48,9 @@ exports[`<SiteStyleStep /> should render 1`] = `
                 value="eyesore"
               />
               <span>
-                <strong />
+                <strong>
+                  nicer
+                </strong>
               </span>
             </Localized(FormLabel)>
           </FormFieldset>

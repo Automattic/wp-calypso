@@ -14,9 +14,9 @@ import page from 'page';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -76,7 +76,7 @@ class AmpWpcom extends Component {
 
 		return (
 			<div className="amp__main site-settings__traffic-settings">
-				<SectionHeader label={ translate( 'Accelerated Mobile Pages (AMP)' ) } />
+				<SettingsSectionHeader title={ translate( 'Accelerated Mobile Pages (AMP)' ) } />
 
 				<CompactCard className="amp__explanation site-settings__amp-explanation">
 					<CompactFormToggle

@@ -116,24 +116,20 @@ export default connect(
 	state => ( {
 		siteType: getSiteType( state ),
 	} ),
-	( dispatch, ownProps ) => ( {
+	( dispatch, { goToNextStep, flowName } ) => ( {
 		submitStep: siteTypeValue => {
 			dispatch( submitSiteType( siteTypeValue ) );
-
 			dispatch(
 				recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
 					value: siteTypeValue,
 				} )
 			);
 
-			let nextFlowName = ownProps.flowName;
 			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 'store', 'slug' ) ) {
-				nextFlowName = 'ecommerce';
-			} else if ( 'ecommerce' === ownProps.flowName && ownProps.previousFlowName ) {
-				nextFlowName = ownProps.previousFlowName;
+				flowName = 'ecommerce';
 			}
 
-			ownProps.goToNextStep( nextFlowName );
+			goToNextStep( flowName );
 		},
 	} )
 )( localize( SiteType ) );

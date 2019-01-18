@@ -12,7 +12,7 @@ import { get, map, pick } from 'lodash';
  */
 import CompactCard from 'components/card/compact';
 import QuerySitePlans from 'components/data/query-site-plans';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { getSitePlanSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPlanClass } from 'lib/plans/constants';
@@ -49,7 +49,7 @@ function getFeatures( planClass, translate ) {
 const TooDifficult = ( { confirmHref, features, siteId, translate } ) => (
 	<div>
 		<QuerySitePlans siteId={ siteId } />
-		<SectionHeader label={ translate( 'Which feature or service caused you problems?' ) } />
+		<SettingsSectionHeader title={ translate( 'Which feature or service caused you problems?' ) } />
 		{ map( features, ( label, slug ) => (
 			<CompactCard
 				key={ slug }

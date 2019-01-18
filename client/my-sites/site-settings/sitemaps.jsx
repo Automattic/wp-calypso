@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Card from 'components/card';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -191,7 +191,7 @@ class Sitemaps extends Component {
 			<div>
 				{ siteId && <QueryJetpackConnection siteId={ siteId } /> }
 
-				<SectionHeader label={ translate( 'Sitemaps' ) } />
+				<SettingsSectionHeader title={ translate( 'Sitemaps' ) } />
 
 				<Card className="sitemaps__card site-settings__traffic-settings">
 					{ siteIsJetpack ? this.renderJetpackSettings() : this.renderWpcomSettings() }

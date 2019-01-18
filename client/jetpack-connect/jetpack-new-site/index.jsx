@@ -91,7 +91,7 @@ class JetpackNewSite extends Component {
 							<div className="jetpack-new-site__card-description">
 								<p>
 									{ this.props.translate(
-										"Tell us what type of site you need and we'll get you setup. " +
+										"Tell us what type of site you need and we'll get you set up. " +
 											'If you need help we’ve got you covered with 24/7 support.'
 									) }
 								</p>

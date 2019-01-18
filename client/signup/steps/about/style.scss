@@ -1,5 +1,8 @@
 .about__wrapper {
 	position: relative;
+	.suggestion-search .gridicon {
+		top: 8px;
+	}
 }
 
 .about__pressable-wrapper {
@@ -94,13 +97,9 @@
 
 .about__submit-wrapper {
 	text-align: center;
-	padding: 0 15px;
 	margin-top: 20px;
 }
 
 .about__submit-wrapper .button {
-	width: 180px;
-	@include breakpoint( '<480px' ) {
-		width: 100%;
-	}
+	width: 100%;
 }

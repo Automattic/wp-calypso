@@ -34,6 +34,7 @@ function createPurchaseObject( purchase ) {
 		expiryStatus: camelCase( purchase.expiry_status ),
 		hasPrivacyProtection: Boolean( purchase.has_private_registration ),
 		includedDomain: purchase.included_domain,
+		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,
 		isCancelable: Boolean( purchase.is_cancelable ),
 		isDomainRegistration: Boolean( purchase.is_domain_registration ),
 		isRefundable: Boolean( purchase.is_refundable ),

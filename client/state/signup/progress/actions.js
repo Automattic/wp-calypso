@@ -11,6 +11,7 @@ import {
 	SIGNUP_PROGRESS_INVALIDATE_STEP,
 	SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
 } from 'state/action-types';
+import { abtest } from 'lib/abtest';
 
 export function saveStep( step ) {
 	return {
@@ -49,8 +50,10 @@ export function invalidateStep( step, errors ) {
 }
 
 export function removeUnneededSteps( flowName ) {
+	const inImprovedOnboardingTest = 'onboarding' === abtest( 'improvedOnboarding' );
 	return {
 		type: SIGNUP_PROGRESS_REMOVE_UNNEEDED_STEPS,
 		flowName,
+		inImprovedOnboardingTest,
 	};
 }

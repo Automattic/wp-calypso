@@ -7,11 +7,11 @@
     "related-posts",
     "shortlinks",
     "simple-payments",
-    "subscriptions"
+    "subscriptions",
+    "tiled-gallery"
   ],
   "beta": [
     "mailchimp",
-    "tiled-gallery",
     "vr"
   ]
 }

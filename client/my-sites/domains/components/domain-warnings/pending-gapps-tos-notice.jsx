@@ -240,11 +240,11 @@ const pendingAccountLogInClick = ( {
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			`Clicked "Log in" link in Google Apps pending ToS notice in ${ section }`,
+			`Clicked "Log in" link in G Suite pending ToS notice in ${ section }`,
 			'Domain Name',
 			domainName
 		),
-		recordTracksEvent( 'calypso_domain_management_google_apps_pending_account_log_in_click', {
+		recordTracksEvent( 'calypso_domain_management_gsuite_pending_account_log_in_click', {
 			site_slug: siteSlug,
 			domain_name: domainName,
 			user,
@@ -257,7 +257,7 @@ const pendingAccountLogInClick = ( {
 const showPendingAccountNotice = ( { siteSlug, severity, isMultipleDomains, section } ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Management', 'Showed pending account notice', 'Site', siteSlug ),
-		recordTracksEvent( 'calypso_domain_management_google_apps_pending_account_notice_show', {
+		recordTracksEvent( 'calypso_domain_management_gsuite_pending_account_notice_show', {
 			site_slug: siteSlug,
 			severity,
 			is_multiple_domains: isMultipleDomains,
@@ -273,7 +273,7 @@ const fixPendingEmailSiteNoticeClick = siteSlug =>
 			'Site',
 			siteSlug
 		),
-		recordTracksEvent( 'calypso_domain_management_google_apps_site_fix_click', {
+		recordTracksEvent( 'calypso_domain_management_gsuite_site_fix_click', {
 			site_slug: siteSlug,
 		} )
 	);

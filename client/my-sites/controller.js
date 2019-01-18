@@ -36,7 +36,7 @@ import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import canCurrentUser from 'state/selectors/can-current-user';
 import {
-	domainManagementAddGoogleApps,
+	domainManagementAddGSuiteUsers,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementEdit,
@@ -162,7 +162,7 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 
 function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 	const allPaths = [
-		domainManagementAddGoogleApps,
+		domainManagementAddGSuiteUsers,
 		domainManagementContactsPrivacy,
 		domainManagementDns,
 		domainManagementEdit,

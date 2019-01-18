@@ -16,7 +16,7 @@ import Button from 'components/button';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import CompactCard from 'components/card/compact';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { domainManagementAddGoogleApps } from 'my-sites/domains/paths';
+import { domainManagementAddGSuiteUsers } from 'my-sites/domains/paths';
 import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
 import GoogleAppsUserItem from './google-apps-user-item';
 import Notice from 'components/notice';
@@ -62,7 +62,7 @@ class GoogleAppsUsers extends React.Component {
 						<Button
 							primary
 							compact
-							href={ domainManagementAddGoogleApps( this.props.selectedSite.slug, domain ) }
+							href={ domainManagementAddGSuiteUsers( this.props.selectedSite.slug, domain ) }
 							onClick={ this.goToAddGoogleApps }
 						>
 							{ this.props.translate( 'Add G Suite User' ) }
@@ -148,12 +148,12 @@ const addGoogleAppsUserClick = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Add Google Apps User" Button in Google Apps',
+			'Clicked "Add G Suite User" Button in G Suite',
 			'Domain Name',
 			domainName
 		),
 
-		recordTracksEvent( 'calypso_domain_management_google_apps_add_google_apps_user_click', {
+		recordTracksEvent( 'calypso_domain_management_gsuite_add_gsuite_user_click', {
 			domain_name: domainName,
 		} )
 	);
@@ -162,12 +162,12 @@ const manageClick = ( domainName, email ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Manage" link in Google Apps',
+			'Clicked "Manage" link in G Suite',
 			'User Email',
 			email
 		),
 
-		recordTracksEvent( 'calypso_domain_management_google_apps_manage_click', {
+		recordTracksEvent( 'calypso_domain_management_gsuite_manage_click', {
 			domain_name: domainName,
 			email,
 		} )

@@ -13,7 +13,6 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const _ = require( 'lodash' );
-const os = require( 'os' );
 
 /**
  * Internal dependencies
@@ -21,6 +20,7 @@ const os = require( 'os' );
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( 'config' );
 const bundleEnv = config( 'env' );
+const { workerCount } = require( './webpack.common' );
 
 /**
  * Internal variables
@@ -107,7 +107,9 @@ const webpackConfig = {
 				use: [
 					{
 						loader: 'thread-loader',
-						options: { workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ) },
+						options: {
+							workers: workerCount,
+						},
 					},
 					babelLoader,
 				],

@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, groupBy, isEmpty, kebabCase, map, mapValues, snakeCase } from 'lodash';
+import { find, groupBy, isEmpty, kebabCase, map, mapValues } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
@@ -13,29 +13,26 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import AddAnotherUserLink from './add-another-user-link';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import Card from 'components/card/compact';
 import FormButton from 'components/forms/form-button';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import { getEligibleDomain } from 'lib/domains/gsuite';
 import getUserSetting from 'state/selectors/get-user-setting';
 import { cartItems } from 'lib/cart-values';
 import { domainManagementEmail } from 'my-sites/domains/paths';
-import ValidationErrorList from 'notices/validation-error-list';
 import { addItem } from 'lib/upgrades/actions';
-import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
+import { hasGoogleApps } from 'lib/domains';
 import { filter as filterUsers, validate as validateUsers } from 'lib/domains/google-apps-users';
-import DomainsSelect from './domains-select';
 import QueryUserSettings from 'components/data/query-user-settings';
+import NewUserForm from './new-user-form';
 
 /**
- * Internal dependencies
+ * Style dependencies
  */
-import Notice from 'components/notice';
+import './add-users.scss';
 
 function getGoogleAppsCartItems( { domains, fieldsets } ) {
 	let groups = groupBy( fieldsets, function( fieldset ) {
@@ -71,7 +68,6 @@ class AddEmailAddressesCard extends React.Component {
 
 		this.state = {
 			fieldsets: [ this.getNewFieldset() ],
-			validationErrors: null,
 		};
 	}
 
@@ -129,20 +125,6 @@ class AddEmailAddressesCard extends React.Component {
 		};
 	}
 
-	removeValidationErrors = () => {
-		this.setState( { validationErrors: null } );
-	};
-
-	validationErrors() {
-		if ( this.state.validationErrors ) {
-			return (
-				<Notice onDismissClick={ this.removeValidationErrors } status="is-error">
-					<ValidationErrorList messages={ this.state.validationErrors } />
-				</Notice>
-			);
-		}
-	}
-
 	componentDidUpdate( prevProps ) {
 		if ( this.needsToUpdateDomainFields( prevProps ) ) {
 			this.setDomainFieldsToFirstDomainName();
@@ -170,16 +152,15 @@ class AddEmailAddressesCard extends React.Component {
 	}
 
 	render() {
+		const { selectedDomainName } = this.props;
 		return (
-			<div className="add-google-apps__card">
+			<div className="gsuite-add-users__card">
 				<QueryUserSettings />
-				{ this.validationErrors() }
-
-				<Card className="add-google-apps__inner">
-					<form className="add-google-apps__form">
+				<Card className="gsuite-add-users__inner">
+					<form className="gsuite-add-users__form">
 						<FormLabel>{ this.props.translate( 'Add Email Addresses' ) }</FormLabel>
 						{ this.renderFieldsets() }
-						{ this.addAnotherEmailAddressLink() }
+						<AddAnotherUserLink addBlankUser={ this.addBlankUser } domain={ selectedDomainName } />
 						{ this.formButtons() }
 					</form>
 				</Card>
@@ -188,83 +169,23 @@ class AddEmailAddressesCard extends React.Component {
 	}
 
 	renderFieldsets() {
-		return this.state.fieldsets.map( ( _, index ) => {
+		const { domains, isRequestingSiteDomains } = this.props;
+		return this.state.fieldsets.map( ( fieldset, index ) => {
 			return (
 				<Fragment key={ index }>
 					{ index > 0 && <hr /> }
-					<div className="add-google-apps__email-address-fieldsets">
-						{ this.emailAddressFieldset( index ) }
-					</div>
-					<div className="add-google-apps__name-fieldsets">
-						{ this.renderNameFieldset( index ) }
-					</div>
+					<NewUserForm
+						domains={ domains }
+						handleFieldChange={ this.handleFieldChange.bind( this, index ) }
+						isRequestingSiteDomains={ isRequestingSiteDomains }
+						user={ fieldset }
+					/>
 				</Fragment>
 			);
 		} );
 	}
 
-	renderNameFieldset( index ) {
-		const field = this.state.fieldsets[ index ];
-		const { translate } = this.props;
-
-		return (
-			<Fragment key={ index }>
-				<FormFieldset>
-					<FormTextInput
-						placeholder={ translate( 'First Name' ) }
-						name="firstName"
-						maxLength={ 60 }
-						onChange={ this.handleFieldChange.bind( this, 'firstName', index ) }
-						value={ field.firstName.value }
-					/>
-				</FormFieldset>
-				<FormFieldset>
-					<FormTextInput
-						placeholder={ translate( 'Last Name' ) }
-						name="lastName"
-						maxLength={ 60 }
-						onChange={ this.handleFieldChange.bind( this, 'lastName', index ) }
-						value={ field.lastName.value }
-					/>
-				</FormFieldset>
-			</Fragment>
-		);
-	}
-
-	emailAddressFieldset( index ) {
-		const field = this.state.fieldsets[ index ];
-		const contactText = this.props.translate( 'contact', {
-			context: 'part of e-mail address',
-			comment: 'As it would be part of an e-mail address contact@example.com',
-		} );
-		const select = (
-			<DomainsSelect
-				domains={ getGoogleAppsSupportedDomains( this.props.domains ) }
-				isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
-				value={ this.state.fieldsets[ index ].domain.value }
-				onChange={ this.handleFieldChange.bind( this, 'domain', index ) }
-				onFocus={ this.handleFieldFocus.bind( this, 'Domain', index ) }
-			/>
-		);
-
-		return (
-			<div className="add-google-apps__email-address-fieldset" key={ index }>
-				<FormTextInputWithAffixes
-					onChange={ this.handleFieldChange.bind( this, 'username', index ) }
-					onFocus={ this.handleFieldFocus.bind( this, 'Email', index ) }
-					placeholder={ this.props.translate( 'e.g. %(example)s', {
-						args: { example: contactText },
-					} ) }
-					type="text"
-					value={ field.username.value }
-				/>
-
-				{ select }
-			</div>
-		);
-	}
-
-	handleFieldChange( fieldName, index, event ) {
+	handleFieldChange( index, fieldName, event ) {
 		const newValue = event.target.value;
 		const command = { fieldsets: {} };
 
@@ -279,36 +200,19 @@ class AddEmailAddressesCard extends React.Component {
 		this.setState( update( this.state, command ) );
 	}
 
-	handleFieldFocus( fieldName, index ) {
-		this.props.inputFocus( this.props.selectedDomainName, fieldName, index );
-	}
-
-	addAnotherEmailAddressLink() {
-		return (
-			<button
-				type="button"
-				className="add-google-apps__add-another-email-address-link"
-				onClick={ this.handleAddAnotherEmailAddress }
-			>
-				{ this.props.translate( '+ Add another email address' ) }
-			</button>
-		);
-	}
-
-	handleAddAnotherEmailAddress = event => {
-		event.preventDefault();
-
+	addBlankUser = () => {
 		this.setState( {
 			fieldsets: this.state.fieldsets.concat( [ this.getNewFieldset() ] ),
 		} );
-
-		this.props.addAnotherEmailAddressClick( this.props.selectedDomainName );
 	};
 
 	formButtons() {
 		return (
-			<FormFooter className="add-google-apps__footer">
-				<FormButton onClick={ this.handleContinue } disabled={ this.props.isRequestingSiteDomains }>
+			<FormFooter className="gsuite-add-users__footer">
+				<FormButton
+					onClick={ this.handleContinue }
+					disabled={ this.props.isRequestingSiteDomains || ! this.props.gsuiteUsersLoaded }
+				>
 					{ this.props.translate( 'Continue' ) }
 				</FormButton>
 
@@ -331,14 +235,16 @@ class AddEmailAddressesCard extends React.Component {
 	handleContinue = event => {
 		event.preventDefault();
 
-		const validation = validateUsers( {
-			users: this.state.fieldsets,
-			fields: this.getFields(),
-		} );
+		const validation = validateUsers(
+			{
+				users: this.state.fieldsets,
+				fields: this.getFields(),
+			},
+			this.props.gsuiteUsers
+		);
 
 		if ( ! isEmpty( validation.errors ) ) {
 			this.setState( {
-				validationErrors: validation.errors,
 				fieldsets: validation.users,
 			} );
 		}
@@ -376,29 +282,15 @@ class AddEmailAddressesCard extends React.Component {
 	}
 }
 
-const addAnotherEmailAddressClick = domainName =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Clicked "Add another email address" link in Add Google Apps',
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent(
-			'calypso_domain_management_add_google_apps_add_another_email_address_click',
-			{ domain_name: domainName }
-		)
-	);
-
 const cancelClick = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Cancel" Button in Add Google Apps',
+			'Clicked "Cancel" Button in Add G Suite',
 			'Domain Name',
 			domainName
 		),
-		recordTracksEvent( 'calypso_domain_management_add_google_apps_cancel_click', {
+		recordTracksEvent( 'calypso_domain_management_add_gsuite_cancel_click', {
 			domain_name: domainName,
 		} )
 	);
@@ -407,11 +299,11 @@ const continueClick = ( domainName, success, numberOfLicenses ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			'Clicked "Continue" Button in Add Google Apps',
+			'Clicked "Continue" Button in Add G Suite',
 			'Domain Name',
 			domainName
 		),
-		recordTracksEvent( 'calypso_domain_management_add_google_apps_continue_click', {
+		recordTracksEvent( 'calypso_domain_management_add_gsuite_continue_click', {
 			domain_name: domainName,
 			number_of_licenses: numberOfLicenses,
 			success,
@@ -422,35 +314,20 @@ const domainChange = ( value, userIndex ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			`Changed "Domain" Input for User #${ userIndex } in Add Google Apps`,
+			`Changed "Domain" Input for User #${ userIndex } in Add G Suite`,
 			'Domain Name'
 		),
-		recordTracksEvent( 'calypso_domain_management_add_google_apps_domain_change', {
+		recordTracksEvent( 'calypso_domain_management_add_gsuite_domain_change', {
 			user_index: userIndex,
 			value,
 		} )
 	);
 
-const inputFocus = ( domainName, fieldName, userIndex ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			`Focused On "${ fieldName }" Input for User #${ userIndex } in Add Google Apps`,
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent(
-			`calypso_domain_management_add_google_apps_${ snakeCase( fieldName ) }_focus`,
-			{
-				domain_name: domainName,
-				user_index: userIndex,
-			}
-		)
-	);
-
 AddEmailAddressesCard.propTypes = {
 	domains: PropTypes.array.isRequired,
 	isRequestingSiteDomains: PropTypes.bool.isRequired,
+	gsuiteUsers: PropTypes.array.isRequired,
+	gsuiteUsersLoaded: PropTypes.bool.isRequired,
 	selectedDomainName: PropTypes.string,
 };
 
@@ -460,10 +337,8 @@ export default connect(
 		lastName: getUserSetting( state, 'last_name' ),
 	} ),
 	{
-		addAnotherEmailAddressClick,
 		cancelClick,
 		continueClick,
 		domainChange,
-		inputFocus,
 	}
 )( localize( AddEmailAddressesCard ) );

@@ -15,7 +15,7 @@ import CredentialsSetupFlow from './credentials-setup-flow';
 import CredentialsConfigured from './credentials-configured';
 import Notice from 'components/notice';
 import QueryRewindState from 'components/data/query-rewind-state';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getRewindState from 'state/selectors/get-rewind-state';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -34,7 +34,7 @@ class JetpackCredentials extends Component {
 		return (
 			<div className="jetpack-credentials">
 				<QueryRewindState siteId={ siteId } />
-				<SectionHeader label={ translate( 'Backups and security scans' ) }>
+				<SettingsSectionHeader title={ translate( 'Backups and security scans' ) }>
 					{ hasAuthorized && (
 						<Notice
 							icon="checkmark"
@@ -43,7 +43,7 @@ class JetpackCredentials extends Component {
 							text={ translate( 'Connected' ) }
 						/>
 					) }
-				</SectionHeader>
+				</SettingsSectionHeader>
 				{ hasCredentials ? (
 					<CredentialsConfigured siteId={ siteId } />
 				) : (

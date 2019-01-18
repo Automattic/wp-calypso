@@ -18,7 +18,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 
 class GoogleAppsUsersForm extends React.Component {
 	fieldClasses( fieldName ) {
-		return `google-apps-dialog__user-field google-apps-dialog__user-${ fieldName }`;
+		return `gsuite-dialog__user-field gsuite-dialog__user-${ fieldName }`;
 	}
 
 	updateInputField = event => {
@@ -48,7 +48,7 @@ class GoogleAppsUsersForm extends React.Component {
 		const lastNameError = get( user, 'lastName.error', false );
 
 		return (
-			<div className="google-apps-dialog__user-fields" key={ `google-apps-dialog-user-${ index }` }>
+			<div className="gsuite-dialog__user-fields" key={ `gsuite-dialog-user-${ index }` }>
 				<FormFieldset>
 					<FormTextInputWithAffixes
 						className={ this.fieldClasses( 'email' ) }
