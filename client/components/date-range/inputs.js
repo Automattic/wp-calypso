@@ -63,11 +63,14 @@ export class DateRangeInputs extends Component {
 	};
 
 	render() {
+		// => "MM/DD/YYYY" (or locale equivalent)
 		const localeDateFormat = this.props.moment.localeData().longDateFormat( 'L' );
 
+		// If we haven't received a actual date then don't show anything and utilise the placeholder
+		// as it is supposed to be used
 		const startValue =
 			this.props.startDateValue !== localeDateFormat ? this.props.startDateValue : '';
-		const endValue = this.props.endDateValue !== localeDateFormat ? this.props.startDateValue : '';
+		const endValue = this.props.endDateValue !== localeDateFormat ? this.props.endDateValue : '';
 
 		return (
 			<fieldset className="date-range__date-inputs">
