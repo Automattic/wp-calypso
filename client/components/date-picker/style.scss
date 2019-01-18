@@ -209,6 +209,11 @@ $date-picker_nav_button_size: 20px;
 	color: var( --color-neutral-700 );
 	text-align: center;
 	margin: 0 auto;
+
+	&:hover,
+	&:focus {
+		background-color: var(--color-neutral-50);
+	}
 }
 
 // `today` day
