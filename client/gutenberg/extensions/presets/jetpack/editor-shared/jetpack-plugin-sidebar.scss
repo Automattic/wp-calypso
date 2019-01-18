@@ -29,11 +29,11 @@
 			}
 
 			.jetpack-logo__icon-circle {
-				fill: $green-jetpack !important;
+				fill: var( --color-jetpack ) !important;
 			}
 
 			.jetpack-logo__icon-triangle {
-				fill: $white !important;
+				fill: var( --color-white ) !important;
 			}
 		}
 	}
