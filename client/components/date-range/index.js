@@ -210,7 +210,14 @@ export class DateRange extends Component {
 	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
 	handleInputBlur = ( val, startOrEnd ) => {
+		if ( val === '' ) {
+			return;
+		}
 		const date = this.props.moment( val, this.getLocaleDateFormat() );
+
+		if ( ! date.isValid() ) {
+			return; // bail out
+		}
 
 		// Either `startDate` or `endDate`
 		const stateKey = `${ startOrEnd.toLowerCase() }Date`;
@@ -234,8 +241,16 @@ export class DateRange extends Component {
 	 * @param  {string} startOrEnd either "Start" or "End"
 	 */
 	handleInputFocus = ( val, startOrEnd ) => {
-		// debugger;
+		if ( val === '' ) {
+			return;
+		}
+
 		const date = this.props.moment( val, this.getLocaleDateFormat() );
+
+		if ( ! date.isValid() ) {
+			return; // bail out
+		}
+
 		const numMonthsShowing = this.getNumberOfMonths(); // 2 or 1
 
 		// If we focused the endDate and we're showing more than 1 month
@@ -552,7 +567,7 @@ export class DateRange extends Component {
 				onClose={ this.closePopover }
 			>
 				<div className="date-range__popover-inner">
-					<div class="date-range__controls">
+					<div className="date-range__controls">
 						{ this.props.renderHeader( headerProps ) }
 						{ this.renderDateHelp() }
 					</div>
