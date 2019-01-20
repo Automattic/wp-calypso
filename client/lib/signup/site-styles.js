@@ -27,7 +27,7 @@ export const siteStyleOptions = {
 			} ),
 			id: 'sophisticated',
 			label: 'Sophisticated',
-			theme: 'pub/professional-business', // this will be 'pub/sophisticated-business'
+			theme: 'pub/sophisticated-business', // this will be 'pub/sophisticated-business'
 			font: {
 				name: 'Poppins',
 				variations: [ 'n4', 'n7' ], // variations in fvd format: https://github.com/typekit/fvd
@@ -39,7 +39,7 @@ export const siteStyleOptions = {
 			} ),
 			id: 'friendly',
 			label: 'Friendly',
-			theme: 'pub/professional-business', // this will be 'pub/friendly-business'
+			theme: 'pub/friendly-business', // this will be 'pub/friendly-business'
 			font: {
 				name: 'Rubik',
 				variations: [ 'n4', 'n7' ], // variations in fvd format: https://github.com/typekit/fvd
@@ -49,11 +49,11 @@ export const siteStyleOptions = {
 			description: i18n.translate( 'A gutenberg-ready business variation.', {
 				comment: 'A description of a WordPress theme style.',
 			} ),
-			id: 'modern',
-			label: 'Modern',
-			theme: 'pub/professional-business', // this will be 'pub/modern-business'
+			id: 'elegant',
+			label: 'Elegant',
+			theme: 'pub/elegant-business', // this will be 'pub/modern-business'
 			font: {
-				name: 'IBM Plex Sans',
+				name: 'Source Serif Pro',
 				variations: [ 'n4', 'n7' ], // variations in fvd format: https://github.com/typekit/fvd
 			},
 		},
