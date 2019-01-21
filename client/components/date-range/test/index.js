@@ -647,7 +647,7 @@ describe( 'DateRange', () => {
 		} );
 	} );
 
-	describe( 'Apply and cancel', () => {
+	describe( 'Actions and Information UI', () => {
 		test( 'should only persist date selection when user clicks "Apply" button', () => {
 			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
 			const originalStartDate = wrapper.state().startDate;
@@ -694,6 +694,84 @@ describe( 'DateRange', () => {
 			);
 			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
 				dateToLocaleString( newEndDate )
+			);
+		} );
+
+		test( 'Should display prompt to select first date when no start date selected', () => {
+			// Note that no dates are selected
+			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
+
+			const infoText = wrapper.find( '.date-range__info' ).text();
+
+			expect( infoText ).toEqual( expect.stringContaining( 'Please select the first day' ) );
+		} );
+
+		test( 'Should display prompt to select last date when no end date selected', () => {
+			const startDate = moment( '2018-04-28' );
+
+			// Note that no dates are selected
+			const wrapper = shallow(
+				<DateRange selectedStartDate={ startDate } translate={ translate } moment={ moment } />
+			);
+
+			const infoText = wrapper.find( '.date-range__info' ).text();
+
+			expect( infoText ).toEqual( expect.stringContaining( 'Please select the last day' ) );
+		} );
+
+		test( 'Should display reset button when both dates are selected', () => {
+			const startDate = moment( '2018-04-28' );
+			const endDate = moment( '2018-05-28' );
+
+			// Note that no dates are selected
+			const wrapper = shallow(
+				<DateRange
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
+
+			const resetExists = wrapper.exists( '.date-range__info-btn' );
+
+			expect( resetExists ).toBe( true );
+		} );
+
+		test( 'Should reset selection when reset UI clicked', () => {
+			const startDate = moment( '2018-04-28' );
+			const endDate = moment( '2018-05-28' );
+
+			const wrapper = shallow(
+				<DateRange
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
+
+			const inputs = wrapper.find( DateRangeInputs );
+			const resetBtn = wrapper.find( '.date-range__info-btn' );
+
+			inputs.props().onInputBlur( '03/20/2018', 'Start' );
+			inputs.props().onInputBlur( '09/20/2018', 'End' );
+
+			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual(
+				dateToLocaleString( '03/20/2018' )
+			);
+			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
+				dateToLocaleString( '09/20/2018' )
+			);
+
+			// Now click to "clear" or "reset" the selection
+			resetBtn.simulate( 'click' );
+
+			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual(
+				dateToLocaleString( '04/28/2018' )
+			);
+			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
+				dateToLocaleString( '05/28/2018' )
 			);
 		} );
 	} );

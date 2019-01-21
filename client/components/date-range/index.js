@@ -530,7 +530,12 @@ export class DateRange extends Component {
 						},
 					} ) }
 				{ startDate && endDate && (
-					<Button borderless compact onClick={ this.resetDateRange }>
+					<Button
+						className="date-range__info-btn"
+						borderless
+						compact
+						onClick={ this.resetDateRange }
+					>
 						{ this.props.translate( '{{icon/}} clear selected dates', {
 							components: { icon: <Gridicon icon="cross-small" /> },
 						} ) }
