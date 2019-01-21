@@ -34,6 +34,17 @@
 			}
 		}
 	}
+
+	&.is-unavailable {
+		cursor: default;
+
+		.domain-suggestion__content {
+			h3,
+			.domain-product-price {
+				color: $gray-lighten-30;
+			}
+		}
+	}
 }
 
 .domain-suggestion__content {
