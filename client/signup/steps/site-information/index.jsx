@@ -98,7 +98,7 @@ export class SiteInformation extends Component {
 				return {
 					fieldLabel: translate( 'Phone number' ),
 					fieldDescription: translate( 'How can people contact you?' ),
-					fieldPlaceholder: translate( 'E.g. (555) 555-5555' ),
+					fieldPlaceholder: translate( 'E.g., (555) 555-5555' ),
 				};
 			case 'title':
 				return {
