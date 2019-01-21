@@ -200,7 +200,8 @@ function getGoogleAppsSupportedDomains( domains ) {
 	return domains.filter( function( domain ) {
 		return (
 			includes( [ domainTypes.REGISTERED, domainTypes.MAPPED ], domain.type ) &&
-			canAddGoogleApps( domain.name )
+			canAddGoogleApps( domain.name ) &&
+			domain.hasWpcomNameservers
 		);
 	} );
 }
