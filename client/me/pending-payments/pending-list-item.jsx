@@ -35,10 +35,10 @@ export function PendingListItem( {
 				<span className="pending-payments__list-item-wrapper">
 					<div className="pending-payments__list-item-details">
 						<div className="pending-payments__list-item-title">{ productName }</div>
-						<div className="pending-payments__list-item-payment">
+						<div className="pending-payments__list-item-product">
 							{ purchaseType( { product_slug: productSlug } ) }
 						</div>
-						<div className="pending-payments__list-item-created">
+						<div className="pending-payments__list-item-payment">
 							{ translate(
 								'Payment of %(totalCost)s was initiated on %(dateCreated)s via %(paymentType)s.',
 								{
