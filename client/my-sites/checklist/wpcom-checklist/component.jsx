@@ -218,7 +218,7 @@ class WpcomChecklistComponent extends PureComponent {
 		const taskList = getTaskList( taskStatuses, designType, isSiteUnlaunched );
 
 		// Hide a task when we can't find the exact URL of the target page.
-		forEach( taskUrls, ( taskId, url ) => {
+		forEach( taskUrls, ( url, taskId ) => {
 			if ( ! url ) {
 				taskList.remove( taskId );
 			}
