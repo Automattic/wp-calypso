@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import DayPicker from 'react-day-picker';
-import { noop, merge, map, filter, get } from 'lodash';
+import { noop, merge, map, filter, get, debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -17,13 +17,6 @@ import classNames from 'classnames';
 import DayItem from 'components/date-picker/day';
 import DatePickerNavBar from 'components/date-picker/nav-bar';
 
-// Locking mechanic to stop multiple calls to
-// this.props.setCalendarDay due to click, touch and
-// mousemove handlers all firing repeatedly
-let setCalendarDayCalled = false;
-
-/* Internal dependencies
- */
 class DatePicker extends PureComponent {
 	static propTypes = {
 		calendarViewDate: PropTypes.object,
@@ -150,16 +143,15 @@ class DatePicker extends PureComponent {
 		return merge( {}, utils, localeUtils );
 	}
 
-	setCalendarDay = ( day, modifiers ) => {
-		// If this handler has been recently called bail out
-		if ( setCalendarDayCalled ) {
-			return;
-		}
-
-		// Mark this invocation as having been called
-		// by setting the lock
-		setCalendarDayCalled = true;
-
+	/**
+	 * Handler for the click/touch events on the calendar
+	 * Debounced to avoid multiple calls to this method
+	 * being fired for due to touch/click both being
+	 * called on touch devices.
+	 *
+	 * See https://github.com/Automattic/wp-calypso/pull/29938/
+	 */
+	setCalendarDay = debounce( ( day, modifiers ) => {
 		const momentDay = this.props.moment( day );
 
 		if ( modifiers.disabled ) {
@@ -175,12 +167,7 @@ class DatePicker extends PureComponent {
 		const date = ( this.props.timeReference || momentDay ).set( dateMods );
 
 		this.props.onSelectDay( date, dateMods, modifiers );
-
-		// Queue timeout to clear the lock
-		window.setTimeout( () => {
-			setCalendarDayCalled = false;
-		}, 500 );
-	};
+	}, 500 );
 
 	getDateInstance( v ) {
 		if ( this.props.moment.isMoment( v ) ) {
