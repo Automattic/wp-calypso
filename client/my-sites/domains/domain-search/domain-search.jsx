@@ -127,7 +127,7 @@ class DomainSearch extends Component {
 		} );
 		const { domainRegistrationMaintenanceEndTime } = this.state;
 
-		const { domains } = this.props;
+		const domains = this.props.domains.filter( domain => domain.type !== 'WPCOM' );
 		const products = get( this.props, 'cart.products', [] );
 		const plan = get( this.props, 'selectedSite.plan', false );
 
