@@ -1,4 +1,4 @@
-.step-wrapper .site-topic__content {
+body.is-section-signup .step-wrapper .site-topic__content {
 	max-width: 480px;
 	margin: 0 auto;
 
@@ -39,12 +39,12 @@
 	.suggestions__wrapper {
 		// Without the extra padding from the Card, we need
 		// to adjust the position of the suggestions.
-		top: 48px;
+		top: 46px;
 
 		// On smaller screens the input gets bigger,
 		// so the suggestions need to move down a little.
 		@include breakpoint( '<660px' ) {
-			top: 54px;
+			top: 52px;
 		}
 	}
 
