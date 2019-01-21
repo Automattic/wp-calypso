@@ -87,9 +87,14 @@
 		margin-bottom: 0.5em;
 	}
 	
+	// Match "naked" button and text styles
+	// to avoid small jumps in UI on date select
 	&,
 	.button {
+		padding: 0;
 		font-size: 12px;
+    	font-weight: 500;
+    	line-height: 18px;
 	}
 
 	.button {
