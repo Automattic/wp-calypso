@@ -8,8 +8,8 @@
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import moment from 'moment';
 import MockDate from 'mockdate';
+import { moment, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -21,8 +21,8 @@ import DateRangeInputs from 'components/date-range/inputs';
 import DateRangeHeader from 'components/date-range/header';
 import Popover from 'components/popover';
 
-function dateToLocalString( date ) {
-	return date.format( 'L' );
+function dateToLocaleString( date ) {
+	return moment.isDate( date ) || moment.isMoment( date ) ? moment( date ).format( 'L' ) : date;
 }
 
 describe( 'DateRange', () => {
@@ -52,12 +52,12 @@ describe( 'DateRange', () => {
 	} );
 
 	test( 'should render', () => {
-		const wrapper = shallow( <DateRange moment={ moment } /> );
+		const wrapper = shallow( <DateRange moment={ moment } translate={ translate } /> );
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
 	describe( 'Date range clamping', () => {
-		test( 'should ensure selectedStartDate is before selectedEndDate', () => {
+		test( 'should ensure the end date is not before the start date', () => {
 			const selectedEndDate = moment( '2018-06-01' );
 
 			const selectedStartDate = moment( selectedEndDate ).add( 1, 'months' );
@@ -65,6 +65,7 @@ describe( 'DateRange', () => {
 			const wrapper = shallow(
 				<DateRange
 					moment={ moment }
+					translate={ translate }
 					selectedStartDate={ selectedStartDate }
 					selectedEndDate={ selectedEndDate }
 				/>
@@ -83,21 +84,25 @@ describe( 'DateRange', () => {
 			const firstSelectableDate = moment( '2018-06-01' );
 
 			const endDateInPast = moment( firstSelectableDate ).subtract( 1, 'months' );
+			const startDateInPast = moment( endDateInPast ).subtract( 1, 'months' );
 
 			const wrapper = shallow(
 				<DateRange
 					moment={ moment }
+					translate={ translate }
+					selectedStartDate={ startDateInPast }
 					selectedEndDate={ endDateInPast }
 					firstSelectableDate={ firstSelectableDate }
 				/>
 			);
 
-			const expectedStartDate = dateToLocalString( firstSelectableDate );
-			const expectedEndDate = dateToLocalString( firstSelectableDate );
+			const expectedStartDate = dateToLocaleString( firstSelectableDate );
+			const expectedEndDate = dateToLocaleString( firstSelectableDate );
 
-			const actualStartDate = dateToLocalString( wrapper.state().startDate );
-			const actualEndDate = dateToLocalString( wrapper.state().endDate );
+			const actualStartDate = dateToLocaleString( wrapper.state().startDate );
+			const actualEndDate = dateToLocaleString( wrapper.state().endDate );
 
+			// Expect start/end are both clamped to the first selectable Date
 			expect( actualStartDate ).toEqual( expectedStartDate );
 			expect( actualEndDate ).toEqual( expectedEndDate );
 		} );
@@ -105,45 +110,47 @@ describe( 'DateRange', () => {
 		test( 'should clamp selected dates to respect lastSelectableDate prop', () => {
 			const lastSelectableDate = moment( '2018-06-01' );
 
-			const endDateInFuture = moment( lastSelectableDate ).add( 1, 'months' );
+			const startDateInFuture = moment( lastSelectableDate ).add( 1, 'months' );
+			const endDateInFuture = moment( lastSelectableDate ).add( 2, 'months' );
 
 			const wrapper = shallow(
 				<DateRange
 					moment={ moment }
+					translate={ translate }
+					selectedStartDate={ startDateInFuture }
 					selectedEndDate={ endDateInFuture }
 					lastSelectableDate={ lastSelectableDate }
 				/>
 			);
 
-			const expectedStartDate = dateToLocalString(
-				moment( lastSelectableDate ).subtract( 1, 'months' )
-			);
-			const expectedEndDate = dateToLocalString( lastSelectableDate );
+			const expectedStartDate = dateToLocaleString( lastSelectableDate );
+			const expectedEndDate = dateToLocaleString( lastSelectableDate );
 
-			const actualStartDate = dateToLocalString( wrapper.state().startDate );
-			const actualEndDate = dateToLocalString( wrapper.state().endDate );
+			const actualStartDate = dateToLocaleString( wrapper.state().startDate );
+			const actualEndDate = dateToLocaleString( wrapper.state().endDate );
 
+			// Expect start/end to be clamped to the last selectable date
 			expect( actualStartDate ).toEqual( expectedStartDate );
 			expect( actualEndDate ).toEqual( expectedEndDate );
 		} );
 	} );
 
 	describe( 'Trigger element', () => {
-		test( "should render trigger with appropriate default date range of minus one month from today's date", () => {
-			const wrapper = shallow( <DateRange moment={ moment } /> );
+		test( 'should render trigger with appropriate placeholders if no dates provided or selected', () => {
+			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
 
 			const dateRangeTrigger = wrapper.find( DateRangeTrigger );
 
 			const expected = {
-				startDateText: '05/01/2018',
-				endDateText: '06/01/2018',
+				startDateText: 'MM/DD/YYYY',
+				endDateText: 'MM/DD/YYYY',
 			};
 
 			expect( dateRangeTrigger.props() ).toEqual( expect.objectContaining( expected ) );
 		} );
 
 		test( 'should update trigger props to match currently selected dates', () => {
-			const wrapper = shallow( <DateRange moment={ moment } /> );
+			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
 
 			const expectedStartDate = '2018-04-01';
 			const expectedEndDate = '2018-04-29';
@@ -163,15 +170,15 @@ describe( 'DateRange', () => {
 			const dateRangeTrigger = wrapper.find( DateRangeTrigger );
 
 			const expected = {
-				startDateText: dateToLocalString( newStartDate ),
-				endDateText: dateToLocalString( newEndDate ),
+				startDateText: dateToLocaleString( newStartDate ),
+				endDateText: dateToLocaleString( newEndDate ),
 			};
 
 			expect( dateRangeTrigger.props() ).toEqual( expect.objectContaining( expected ) );
 		} );
 
 		test( 'should toggle popover on trigger click', () => {
-			const wrapper = shallow( <DateRange moment={ moment } /> );
+			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
 
 			const trigger = wrapper.find( DateRangeTrigger );
 
@@ -204,10 +211,9 @@ describe( 'DateRange', () => {
 			removeListener: jest.fn(),
 		};
 
-		test( 'should pass correct props to DatePicker', () => {
-			const wrapper = shallow( <DateRange moment={ moment } /> );
+		test( 'should pass expected default props to DatePicker', () => {
+			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
 			const instance = wrapper.instance();
-			const state = wrapper.state();
 			const datePicker = wrapper.find( DatePicker );
 
 			expect( datePicker.props() ).toEqual(
@@ -216,13 +222,29 @@ describe( 'DateRange', () => {
 					fromMonth: undefined,
 					toMonth: undefined,
 					onSelectDay: instance.onSelectDate,
-					selectedDays: {
-						from: state.startDate.toDate(),
-						to: state.endDate.toDate(),
-					},
+					selectedDays: [
+						null,
+						{
+							from: null,
+							to: null,
+						},
+					],
 					numberOfMonths: 2, // controlled via matchMedia mock
-					initialMonth: state.startDate.toDate(),
 					disabledDays: [ {} ],
+					calendarViewDate: null,
+					rootClassNames: {
+						'date-range__picker': true,
+					},
+					modifiers: {
+						start: null,
+						end: null,
+						range: {
+							from: null,
+							to: null,
+						},
+						'range-end': null,
+						'range-start': null,
+					},
 				} )
 			);
 		} );
@@ -236,7 +258,7 @@ describe( 'DateRange', () => {
 				};
 			} );
 
-			const wrapper = shallow( <DateRange moment={ moment } /> );
+			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
 			const datePicker = wrapper.find( DatePicker );
 
 			expect( datePicker.props().numberOfMonths ).toEqual( 2 );
@@ -251,7 +273,7 @@ describe( 'DateRange', () => {
 				};
 			} );
 
-			const wrapper = shallow( <DateRange moment={ moment } /> );
+			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
 			const datePicker = wrapper.find( DatePicker );
 
 			expect( datePicker.props().numberOfMonths ).toEqual( 1 );
@@ -259,7 +281,9 @@ describe( 'DateRange', () => {
 
 		test( 'should disable dates before firstSelectableDate when set', () => {
 			const today = new Date();
-			const wrapper = shallow( <DateRange moment={ moment } firstSelectableDate={ today } /> );
+			const wrapper = shallow(
+				<DateRange translate={ translate } moment={ moment } firstSelectableDate={ today } />
+			);
 			const datePicker = wrapper.find( DatePicker );
 
 			const expected = [
@@ -275,7 +299,9 @@ describe( 'DateRange', () => {
 
 		test( 'should disable dates after lastSelectableDate when set', () => {
 			const today = new Date();
-			const wrapper = shallow( <DateRange moment={ moment } lastSelectableDate={ today } /> );
+			const wrapper = shallow(
+				<DateRange translate={ translate } moment={ moment } lastSelectableDate={ today } />
+			);
 			const datePicker = wrapper.find( DatePicker );
 
 			const expected = [
@@ -292,7 +318,9 @@ describe( 'DateRange', () => {
 		test( 'should disable DatePicker UI for months previous to firstSelectableDate when set', () => {
 			const today = new Date();
 
-			const wrapper = shallow( <DateRange moment={ moment } firstSelectableDate={ today } /> );
+			const wrapper = shallow(
+				<DateRange translate={ translate } moment={ moment } firstSelectableDate={ today } />
+			);
 			const datePicker = wrapper.find( DatePicker );
 
 			const expected = today;
@@ -304,7 +332,9 @@ describe( 'DateRange', () => {
 		test( 'should disable DatePicker UI for months after lastSelectableDate when set', () => {
 			const today = new Date();
 
-			const wrapper = shallow( <DateRange moment={ moment } lastSelectableDate={ today } /> );
+			const wrapper = shallow(
+				<DateRange translate={ translate } moment={ moment } lastSelectableDate={ today } />
+			);
 			const datePicker = wrapper.find( DatePicker );
 
 			const expected = today;
@@ -315,20 +345,8 @@ describe( 'DateRange', () => {
 	} );
 
 	describe( 'Input elements', () => {
-		let startDate;
-		let endDate;
-		let momentStartDate;
-		let momentEndDate;
-
-		beforeEach( () => {
-			startDate = '2018-04-20';
-			endDate = '2018-05-28';
-			momentStartDate = moment( startDate );
-			momentEndDate = moment( endDate );
-		} );
-
 		test( 'should see inputs reflect date picker selection', () => {
-			const wrapper = shallow( <DateRange moment={ moment } /> );
+			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
 
 			const expectedStart = '2018-04-03';
 			const expectedEnd = '2018-04-29';
@@ -347,133 +365,233 @@ describe( 'DateRange', () => {
 
 			expect( dateRangeInputs.props() ).toEqual(
 				expect.objectContaining( {
-					startDateValue: dateToLocalString( newStartDate ),
-					endDateValue: dateToLocalString( newEndDate ),
+					startDateValue: dateToLocaleString( newStartDate ),
+					endDateValue: dateToLocaleString( newEndDate ),
 				} )
 			);
 		} );
 
 		test( 'should update start date selection on start date input blur event', () => {
-			const wrapper = shallow( <DateRange moment={ moment } /> );
+			const endDate = moment( '2018-05-30' );
+			const startDate = moment( endDate ).subtract( 1, 'months' );
 
-			wrapper.instance().handleInputBlur( '04/20/2018', 'Start' );
+			const wrapper = shallow(
+				<DateRange
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
 
-			expect( dateToLocalString( wrapper.state().startDate ) ).toEqual(
-				dateToLocalString( momentStartDate )
+			wrapper.instance().handleInputBlur( '03/20/2018', 'Start' );
+
+			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual(
+				dateToLocaleString( '03/20/2018' )
 			);
 		} );
 
 		test( 'should update end date selection on end date input blur event', () => {
-			const wrapper = shallow( <DateRange moment={ moment } /> );
+			const endDate = moment( '2018-05-30' );
+			const startDate = moment( endDate ).subtract( 1, 'months' );
 
-			wrapper.instance().handleInputBlur( '05/28/2018', 'End' );
+			const wrapper = shallow(
+				<DateRange
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
 
-			expect( dateToLocalString( wrapper.state().endDate ) ).toEqual(
-				dateToLocalString( momentEndDate )
+			const inputs = wrapper.find( DateRangeInputs );
+
+			inputs.props().onInputBlur( '05/28/2018', 'End' );
+
+			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
+				dateToLocaleString( '05/28/2018' )
 			);
 		} );
 
 		test( 'should not update date selection on input change event', () => {
-			const wrapper = shallow( <DateRange moment={ moment } /> );
+			const endDate = moment( '2018-05-28' );
+			const startDate = moment( endDate ).subtract( 1, 'months' );
 
-			wrapper.instance().handleInputChange( '05/28/2018', 'End' );
+			const wrapper = shallow(
+				<DateRange
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
 
-			expect( dateToLocalString( wrapper.state().endDate ) ).toEqual(
-				dateToLocalString( fixedEndDate )
+			wrapper.instance().handleInputChange( '05/30/2018', 'End' );
+
+			wrapper.instance().handleInputChange( '05/01/2018', 'Start' );
+
+			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
+				dateToLocaleString( endDate )
+			);
+
+			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual(
+				dateToLocaleString( startDate )
 			);
 		} );
 
 		test( 'should update `textInput*` state on input change event', () => {
-			const wrapper = shallow( <DateRange moment={ moment } /> );
+			const endDate = moment( '2018-05-28' );
+			const startDate = moment( endDate ).subtract( 1, 'months' );
 
-			wrapper.instance().handleInputChange( '05/28/2018', 'End' );
+			const newStartDate = '03/30/2018';
+			const newEndDate = '06/30/2018';
 
-			expect( wrapper.state().textInputEndDate ).toEqual( dateToLocalString( momentEndDate ) );
+			const wrapper = shallow(
+				<DateRange
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
+
+			wrapper.instance().handleInputChange( newStartDate, 'Start' );
+			wrapper.instance().handleInputChange( newEndDate, 'End' );
+
+			expect( wrapper.state().textInputStartDate ).toEqual( dateToLocaleString( newStartDate ) );
+			expect( wrapper.state().textInputEndDate ).toEqual( dateToLocaleString( newEndDate ) );
 		} );
 
 		test( 'should not update either start or end date selection if the new input date value is the same as that stored in state', () => {
+			const endDate = moment( '2018-05-28' );
+			const startDate = moment( endDate ).subtract( 1, 'months' );
+
 			const wrapper = shallow(
 				<DateRange
-					selectedStartDate={ momentStartDate }
-					selectedEndDate={ momentEndDate }
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					translate={ translate }
 					moment={ moment }
 				/>
 			);
 
-			wrapper.instance().handleInputBlur( '04/20/2018', 'Start' );
+			wrapper.instance().handleInputBlur( '2018-04-28', 'Start' ); // same as original date
+			wrapper.instance().handleInputBlur( '2018-05-28', 'End' ); // same as original date
 
-			expect( dateToLocalString( wrapper.state().startDate ) ).toEqual(
-				dateToLocalString( momentStartDate )
+			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual(
+				dateToLocaleString( startDate )
 			);
 
-			expect( wrapper.state().endDate.format( 'L' ) ).toEqual( dateToLocalString( momentEndDate ) );
+			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
+				dateToLocaleString( endDate )
+			);
 		} );
 
 		test( 'should not update start/end dates if input date is invalid', () => {
+			const endDate = moment( '2018-05-28' );
+			const startDate = moment( endDate ).subtract( 1, 'months' );
+
 			const wrapper = shallow(
 				<DateRange
-					selectedStartDate={ momentStartDate }
-					selectedEndDate={ momentEndDate }
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					translate={ translate }
 					moment={ moment }
 				/>
 			);
+
 			const invalidDateString = 'inv/alid/datestring';
 
 			wrapper.instance().handleInputBlur( invalidDateString, 'Start' );
 			wrapper.instance().handleInputBlur( invalidDateString, 'End' );
 
-			expect( dateToLocalString( wrapper.state().startDate ) ).not.toEqual( invalidDateString );
-			expect( dateToLocalString( wrapper.state().startDate ) ).toEqual(
-				dateToLocalString( momentStartDate )
+			expect( dateToLocaleString( wrapper.state().startDate ) ).not.toEqual( invalidDateString );
+			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual(
+				dateToLocaleString( startDate )
 			);
-			expect( dateToLocalString( wrapper.state().endDate ) ).not.toEqual( invalidDateString );
-			expect( dateToLocalString( wrapper.state().endDate ) ).toEqual(
-				dateToLocalString( momentEndDate )
+			expect( dateToLocaleString( wrapper.state().endDate ) ).not.toEqual( invalidDateString );
+			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
+				dateToLocaleString( endDate )
 			);
 		} );
 
 		test( 'should not update start date if input date is outside firstSelectableDate', () => {
-			const now = new Date();
+			const endDate = moment( '2018-05-28' );
+			const startDate = moment( '2018-04-28' );
 
-			// Shouldn't be able to select dates before "today"
-			const pastDate = dateToLocalString( moment.utc( now ).subtract( 6, 'months' ) );
+			const firstSelectableDate = moment( '2018-03-28' );
 
-			const wrapper = shallow( <DateRange firstSelectableDate={ now } moment={ moment } /> );
+			const badDate = moment( firstSelectableDate ).subtract( 11, 'months' );
 
-			wrapper.instance().handleInputBlur( pastDate, 'Start' );
+			const wrapper = shallow(
+				<DateRange
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					firstSelectableDate={ firstSelectableDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
 
-			expect( dateToLocalString( wrapper.state().startDate ) ).not.toEqual( pastDate );
+			const inputs = wrapper.find( DateRangeInputs );
+
+			inputs.props().onInputBlur( badDate, 'Start' );
+
+			expect( dateToLocaleString( wrapper.state().startDate ) ).not.toEqual( badDate );
 		} );
 
 		test( 'should not update end date if input date is outside firstSelectableDate', () => {
-			const now = new Date();
+			const endDate = moment( '2018-05-28' );
+			const startDate = moment( '2018-04-28' );
 
-			// Shouldn't be able to select dates before "today"
-			const pastDate = dateToLocalString( moment.utc( now ).subtract( 6, 'months' ) );
+			const firstSelectableDate = moment( '2018-03-28' );
 
-			const wrapper = shallow( <DateRange firstSelectableDate={ now } moment={ moment } /> );
+			const badDate = moment( firstSelectableDate ).subtract( 11, 'months' );
 
-			wrapper.instance().handleInputBlur( pastDate, 'End' );
+			const wrapper = shallow(
+				<DateRange
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					firstSelectableDate={ firstSelectableDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
 
-			expect( dateToLocalString( wrapper.state().endDate ) ).not.toEqual( pastDate );
+			const inputs = wrapper.find( DateRangeInputs );
+
+			inputs.props().onInputBlur( badDate, 'End' );
+
+			expect( dateToLocaleString( wrapper.state().startDate ) ).not.toEqual( badDate );
 		} );
 
 		test( 'should not update start or end date if the value of input for the start date is outside lastSelectableDate', () => {
-			const now = new Date();
+			const startDate = moment( '2018-04-28' );
+			const endDate = moment( '2018-05-28' );
 
-			// Shouldn't be able to select dates before "today"
-			const futureDate = dateToLocalString( moment.utc( now ).add( 3, 'days' ) );
+			const lastSelectableDate = moment( '2018-06-28' );
 
-			const wrapper = shallow( <DateRange lastSelectableDate={ now } moment={ moment } /> );
+			const badDate = dateToLocaleString( moment( lastSelectableDate ).add( 11, 'months' ) );
 
-			wrapper.instance().handleInputBlur( futureDate, 'Start' );
+			const wrapper = shallow(
+				<DateRange
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					lastSelectableDate={ lastSelectableDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
 
-			// We must check BOTH because due to the the need to ensure start is always before end
-			// in a range, if you select a start which is after "end" in the range then the range
-			// automatically causes it to become the new value for "end" and leave "start" untouched
-			// This means we have to test that neither start nor end have taken on the invalid date
-			expect( dateToLocalString( wrapper.state().startDate ) ).not.toEqual( futureDate );
-			expect( dateToLocalString( wrapper.state().endDate ) ).not.toEqual( futureDate );
+			const inputs = wrapper.find( DateRangeInputs );
+
+			inputs.props().onInputBlur( badDate, 'End' );
+
+			expect( dateToLocaleString( wrapper.state().startDate ) ).not.toEqual( badDate );
+			expect( dateToLocaleString( wrapper.state().endDate ) ).not.toEqual( badDate );
+
+			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual( '04/28/2018' );
+			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual( '05/28/2018' );
 		} );
 	} );
 
@@ -481,7 +599,9 @@ describe( 'DateRange', () => {
 		test( 'should call onDateSelect function when a date is selected', () => {
 			const callback = jest.fn();
 
-			const wrapper = shallow( <DateRange moment={ moment } onDateSelect={ callback } /> );
+			const wrapper = shallow(
+				<DateRange translate={ translate } moment={ moment } onDateSelect={ callback } />
+			);
 
 			const newStartDate = moment( '2018-04-01' );
 			const newEndDate = moment( '2018-04-29' );
@@ -492,18 +612,20 @@ describe( 'DateRange', () => {
 
 			expect( callback ).toHaveBeenCalledTimes( 2 );
 
-			expect( dateToLocalString( callback.mock.calls[ 0 ][ 0 ] ) ).toEqual(
-				dateToLocalString( newStartDate )
+			expect( dateToLocaleString( callback.mock.calls[ 0 ][ 0 ] ) ).toEqual(
+				dateToLocaleString( newStartDate )
 			);
-			expect( dateToLocalString( callback.mock.calls[ 1 ][ 1 ] ) ).toEqual(
-				dateToLocalString( newEndDate )
+			expect( dateToLocaleString( callback.mock.calls[ 1 ][ 1 ] ) ).toEqual(
+				dateToLocaleString( newEndDate )
 			);
 		} );
 
 		test( 'should call onDateCommit function when a date is committed/applied', () => {
 			const callback = jest.fn();
 
-			const wrapper = shallow( <DateRange moment={ moment } onDateCommit={ callback } /> );
+			const wrapper = shallow(
+				<DateRange translate={ translate } moment={ moment } onDateCommit={ callback } />
+			);
 
 			const newStartDate = moment( '2018-04-01' );
 			const newEndDate = moment( '2018-04-29' );
@@ -516,18 +638,18 @@ describe( 'DateRange', () => {
 			wrapper.instance().commitDates();
 
 			expect( callback ).toHaveBeenCalledTimes( 1 );
-			expect( dateToLocalString( callback.mock.calls[ 0 ][ 0 ] ) ).toEqual(
-				dateToLocalString( newStartDate )
+			expect( dateToLocaleString( callback.mock.calls[ 0 ][ 0 ] ) ).toEqual(
+				dateToLocaleString( newStartDate )
 			);
-			expect( dateToLocalString( callback.mock.calls[ 0 ][ 1 ] ) ).toEqual(
-				dateToLocalString( newEndDate )
+			expect( dateToLocaleString( callback.mock.calls[ 0 ][ 1 ] ) ).toEqual(
+				dateToLocaleString( newEndDate )
 			);
 		} );
 	} );
 
 	describe( 'Apply and cancel', () => {
 		test( 'should only persist date selection when user clicks "Apply" button', () => {
-			const wrapper = shallow( <DateRange moment={ moment } /> );
+			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
 			const originalStartDate = wrapper.state().startDate;
 			const originalEndDate = wrapper.state().endDate;
 
@@ -567,11 +689,11 @@ describe( 'DateRange', () => {
 			dateRangeHeader.props().onApplyClick();
 
 			// Should now be persisted
-			expect( dateToLocalString( wrapper.state().startDate ) ).toEqual(
-				dateToLocalString( newStartDate )
+			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual(
+				dateToLocaleString( newStartDate )
 			);
-			expect( dateToLocalString( wrapper.state().endDate ) ).toEqual(
-				dateToLocalString( newEndDate )
+			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
+				dateToLocaleString( newEndDate )
 			);
 		} );
 	} );
@@ -580,7 +702,9 @@ describe( 'DateRange', () => {
 		test( 'should allow for render prop to overide trigger render', () => {
 			const spyComponent = jest.fn();
 
-			shallow( <DateRange moment={ moment } renderTrigger={ spyComponent } /> );
+			shallow(
+				<DateRange translate={ translate } moment={ moment } renderTrigger={ spyComponent } />
+			);
 
 			const props = spyComponent.mock.calls[ 0 ][ 0 ];
 			const propKeys = Object.keys( props ).sort();
@@ -602,7 +726,9 @@ describe( 'DateRange', () => {
 		test( 'should allow for render prop to overide header render', () => {
 			const spyComponent = jest.fn();
 
-			shallow( <DateRange moment={ moment } renderHeader={ spyComponent } /> );
+			shallow(
+				<DateRange translate={ translate } moment={ moment } renderHeader={ spyComponent } />
+			);
 
 			const props = spyComponent.mock.calls[ 0 ][ 0 ];
 			const propKeys = Object.keys( props ).sort();
@@ -615,7 +741,9 @@ describe( 'DateRange', () => {
 		test( 'should allow for render prop to overide inputs render', () => {
 			const spyComponent = jest.fn();
 
-			shallow( <DateRange moment={ moment } renderInputs={ spyComponent } /> );
+			shallow(
+				<DateRange translate={ translate } moment={ moment } renderInputs={ spyComponent } />
+			);
 
 			const props = spyComponent.mock.calls[ 0 ][ 0 ];
 			const propKeys = Object.keys( props ).sort();
@@ -623,7 +751,7 @@ describe( 'DateRange', () => {
 			expect( spyComponent ).toHaveBeenCalledTimes( 1 );
 
 			expect( propKeys ).toEqual(
-				[ 'startDateValue', 'endDateValue', 'onInputChange', 'onInputBlur' ].sort()
+				[ 'startDateValue', 'endDateValue', 'onInputChange', 'onInputBlur', 'onInputFocus' ].sort()
 			);
 		} );
 	} );

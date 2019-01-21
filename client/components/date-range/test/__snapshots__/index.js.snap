@@ -10,10 +10,10 @@ exports[`DateRange should render 1`] = `
         "current": null,
       }
     }
-    endDateText="06/01/2018"
+    endDateText="MM/DD/YYYY"
     isCompact={false}
     onTriggerClick={[Function]}
-    startDateText="05/01/2018"
+    startDateText="MM/DD/YYYY"
   />
   <Connect(Popover)
     className="date-range__popover"
@@ -25,31 +25,73 @@ exports[`DateRange should render 1`] = `
     <div
       className="date-range__popover-inner"
     >
+      <div
+        className="date-range__controls"
+      >
+        <Localized(DateRangeHeader)
+          onApplyClick={[Function]}
+          onCancelClick={[Function]}
+        />
+        <div
+          aria-live="polite"
+          className="date-range__info"
+          role="status"
+        >
+          <t
+            icon="info"
+            key="interpolation-child-1/.0"
+            size={24}
+          />
+           Please select the 
+          <em
+            key="interpolation-child-3/.0"
+          >
+            first
+          </em>
+           day.
+        </div>
+      </div>
       <Localized(DateRangeInputs)
-        endDateValue="06/01/2018"
+        endDateValue="MM/DD/YYYY"
         onInputBlur={[Function]}
         onInputChange={[Function]}
-        startDateValue="05/01/2018"
-      />
-      <Localized(DateRangeHeader)
-        onApplyClick={[Function]}
-        onCancelClick={[Function]}
+        onInputFocus={[Function]}
+        startDateValue="MM/DD/YYYY"
       />
       <Localized(DatePicker)
-        className="date-range__popover-date-picker"
+        calendarViewDate={null}
         disabledDays={
           Array [
             Object {},
           ]
         }
-        initialMonth={2018-05-01T00:00:00.000Z}
+        modifiers={
+          Object {
+            "end": null,
+            "range": Object {
+              "from": null,
+              "to": null,
+            },
+            "range-end": null,
+            "range-start": null,
+            "start": null,
+          }
+        }
         numberOfMonths={2}
         onSelectDay={[Function]}
-        selectedDays={
+        rootClassNames={
           Object {
-            "from": 2018-05-01T00:00:00.000Z,
-            "to": 2018-06-01T00:00:00.000Z,
+            "date-range__picker": true,
           }
+        }
+        selectedDays={
+          Array [
+            null,
+            Object {
+              "from": null,
+              "to": null,
+            },
+          ]
         }
         showOutsideDays={false}
       />
