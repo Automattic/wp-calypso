@@ -62,38 +62,27 @@ export class DateRange extends Component {
 	constructor( props ) {
 		super( props );
 
-		// Define the date range as Moment instances
+		// Define the date range that is selectable (ie: not disabled)
 		const firstSelectableDate =
 			has( this.props, 'firstSelectableDate' ) &&
 			this.props.moment( this.props.firstSelectableDate );
 		const lastSelectableDate =
 			has( this.props, 'lastSelectableDate' ) && this.props.moment( this.props.lastSelectableDate );
 
-		// Clamp dates to ranges (if specified)
-		let startDate;
-		let endDate;
-
-		endDate = isNil( this.props.selectedEndDate )
+		// Clamp start/end dates to ranges (if specified)
+		let startDate = isNil( this.props.selectedStartDate )
 			? NO_DATE_SELECTED_VALUE
-			: this.props.moment( this.props.selectedEndDate );
+			: this.clampDateToRange( this.props.moment( this.props.selectedStartDate ), {
+					dateFrom: firstSelectableDate,
+					dateTo: lastSelectableDate,
+			  } );
 
-		if ( ! isNull( endDate ) ) {
-			endDate = this.clampDateToRange( endDate, {
-				dateFrom: firstSelectableDate,
-				dateTo: lastSelectableDate,
-			} );
-		}
-
-		startDate = isNil( this.props.selectedStartDate )
+		let endDate = isNil( this.props.selectedEndDate )
 			? NO_DATE_SELECTED_VALUE
-			: this.props.moment( this.props.selectedStartDate );
-
-		if ( ! isNull( startDate ) ) {
-			startDate = this.clampDateToRange( startDate, {
-				dateFrom: firstSelectableDate,
-				dateTo: lastSelectableDate,
-			} );
-		}
+			: this.clampDateToRange( this.props.moment( this.props.selectedEndDate ), {
+					dateFrom: firstSelectableDate,
+					dateTo: lastSelectableDate,
+			  } );
 
 		// Ensure start is before end otherwise flip the values
 		if ( startDate && endDate && endDate.isBefore( startDate ) ) {
