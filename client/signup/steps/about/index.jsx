@@ -498,7 +498,9 @@ class AboutStep extends Component {
 									<FormTextInput
 										id="siteTitle"
 										name="siteTitle"
-										placeholder={ translate( "e.g. Mel's Diner, Stevie’s Blog, Vail Renovations" ) }
+										placeholder={ translate(
+											"E.g., Mel's Diner, Stevie’s Blog, Vail Renovations"
+										) }
 										defaultValue={ siteTitle }
 										onChange={ this.handleChangeEvent }
 									/>

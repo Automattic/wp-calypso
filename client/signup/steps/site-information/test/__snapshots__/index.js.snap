@@ -35,7 +35,7 @@ exports[`<SiteInformation /> should render 1`] = `
                 id="title"
                 name="title"
                 onChange={[Function]}
-                placeholder="E.g. Vail Renovations"
+                placeholder="E.g., Vail Renovations"
                 value="Ho ho ho!"
               />
               <Button
@@ -69,7 +69,7 @@ exports[`<SiteInformation /> should render 1`] = `
                 id="address"
                 name="address"
                 onChange={[Function]}
-                placeholder="E.g., 60 29th Street #343, San Francisco, CA 94110"
+                placeholder="E.g., 60 29th St, San Francisco, CA 94110"
                 value=""
               />
               <Button
@@ -103,7 +103,7 @@ exports[`<SiteInformation /> should render 1`] = `
                 id="phone"
                 name="phone"
                 onChange={[Function]}
-                placeholder="E.g. (555) 555-5555"
+                placeholder="E.g., (555) 555-5555"
                 value=""
               />
               <Button

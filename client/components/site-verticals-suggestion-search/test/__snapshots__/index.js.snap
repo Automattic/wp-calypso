@@ -4,7 +4,7 @@ exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
 <SuggestionSearch
   id="siteTopic"
   onChange={[Function]}
-  placeholder="e.g. Fashion, travel, design, plumber, electrician"
+  placeholder="e.g. Fashion, travel, design, plumber"
   sortResults={[Function]}
   suggestions={
     Array [
