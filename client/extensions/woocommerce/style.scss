@@ -1,6 +1,3 @@
-// Core CSS Dependencies
-@import 'assets/stylesheets/shared/utils'; // utilities that are used by all CSS but don't produce any code
-
 .woocommerce {
 	@import 'app/dashboard/style';
 	@import 'app/dashboard/widgets/inventory-widget/style';
