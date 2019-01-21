@@ -13,10 +13,11 @@ import { includes, isArray, map } from 'lodash';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteAdminUrl } from 'state/sites/selectors';
+import { getSiteAdminUrl, getSiteOption } from 'state/sites/selectors';
 import { mediaCalypsoToGutenberg } from './hooks/components/media-upload/utils';
+import { addQueryArgs } from 'lib/route';
 
-const sendMessage = (iframe, message ) => {
+const sendMessage = ( iframe, message ) => {
 	iframe.contentWindow.postMessage(
 		JSON.stringify( {
 			...message,
@@ -56,15 +57,15 @@ class Calypsoified extends Component {
 		const message = JSON.parse( data );
 		const { action, type, payload } = message;
 
-		if( type !== 'gutenbergIframeMessage' ) {
+		if ( type !== 'gutenbergIframeMessage' ) {
 			return;
 		}
 
-		if( action === 'openModal') {
+		if ( action === 'openModal' ) {
 			const { gallery, multiple, allowedTypes } = payload;
-			this.setState( { isModalVisible: true, gallery, multiple, allowedTypes } )
+			this.setState( { isModalVisible: true, gallery, multiple, allowedTypes } );
 		}
-	}
+	};
 
 	openModal = () => {
 		if ( ! this.state.isModalVisible ) {
@@ -73,14 +74,14 @@ class Calypsoified extends Component {
 	};
 
 	closeModal = media => {
-		if( media ) {
+		if ( media ) {
 			const { multiple } = this.state;
 			const formattedMedia = map( media.items, item => mediaCalypsoToGutenberg( item ) );
 			const payload = multiple ? formattedMedia : formattedMedia[ 0 ];
 
 			sendMessage( this.iframe, {
 				action: 'selectMedia',
-				payload
+				payload,
 			} );
 		}
 
@@ -122,7 +123,9 @@ class Calypsoified extends Component {
 
 		return (
 			<Fragment>
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column customize is-iframe" role="main">
+					{ /* eslint-disable-next-line jsx-a11y/iframe-has-title, wpcalypso/jsx-classname-namespace */ }
 					<iframe ref={ this.setIframeRef } className={ 'is-iframe-loaded' } src={ iframeUrl } />
 				</div>
 				<MediaLibrarySelectedData siteId={ siteId }>
@@ -141,13 +144,18 @@ class Calypsoified extends Component {
 	}
 }
 
-export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const frameNonce = getSiteOption( state, siteId, 'frame_nonce' ) || '';
+	const iframeUrl = addQueryArgs(
+		{
+			'frame-nonce': frameNonce,
+		},
+		getSiteAdminUrl( state, siteId, 'post-new.php' )
+	);
 
-		return {
-			siteId,
-			iframeUrl: getSiteAdminUrl( state, siteId, 'post-new.php' )
-		}
-	}
-)( Calypsoified );
+	return {
+		siteId,
+		iframeUrl,
+	};
+} )( Calypsoified );
