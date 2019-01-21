@@ -11,15 +11,15 @@ export default function ExampleDomainBrowser( { className } ) {
 		<div className={ classNames( 'example-domain-browser', className ) }>
 			<svg width="295" height="102" viewBox="0 0 295 102" xmlns="http://www.w3.org/2000/svg">
 				<title>Example Browser</title>
-				<g fill="none" fill-rule="evenodd">
+				<g fill="none" fillRule="evenodd">
 					<path fill="#D8D8D8" d="M10 0h285v50H0V10C0 4.477 4.477 0 10 0z" />
 					<path fill="#FFF" d="M0 50h295v50H0zM94 9h201v30H94a4 4 0 0 1-4-4V13a4 4 0 0 1 4-4z" />
-					<text fill="#D8D8D8" font-family="SFUIText-Regular, SF UI Text" font-size="14">
+					<text fill="#D8D8D8" fontFamily="SFUIText-Regular, SF UI Text" fontSize="14">
 						<tspan x="99" y="29">
 							https://
 						</tspan>
 					</text>
-					<text fill="#424242" font-family="SFUIText-Regular, SF UI Text" font-size="14">
+					<text fill="#424242" fontFamily="SFUIText-Regular, SF UI Text" fontSize="14">
 						<tspan x="148" y="29">
 							example.com
 						</tspan>
