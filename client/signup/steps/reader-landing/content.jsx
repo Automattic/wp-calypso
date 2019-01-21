@@ -22,8 +22,7 @@ class ReaderLandingStepContent extends PureComponent {
 
 	render() {
 		const { translate } = this.props;
-		return (
-			<Card className="reader-landing__step-content">
+		return (			
 				<div className="reader-landing__button-wrapper">
 					<Button
 						primary={ true }
@@ -34,6 +33,8 @@ class ReaderLandingStepContent extends PureComponent {
 						{ translate( 'Start using the Reader' ) }
 					</Button>
 				</div>
+			
+			<Card className="reader-landing__step-content">
 
 				<section className="reader-landing__features">
 					<div className="reader-landing__feature">
