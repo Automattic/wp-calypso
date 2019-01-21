@@ -20,11 +20,19 @@ export default class FormTextInput extends PureComponent {
 	constructor() {
 		super( ...arguments );
 
+		this.textField = React.createRef();
+
 		this.selectOnFocus = this.selectOnFocus.bind( this );
+		this.setTextFieldRef = this.setTextFieldRef.bind( this );
+	}
+
+	setTextFieldRef( node ) {
+		this.props.inputRef && this.props.inputRef( node );
+		this.textField( node );
 	}
 
 	focus() {
-		this.refs.textField.focus();
+		this.textField && this.textField.current.focus();
 	}
 
 	selectOnFocus( event ) {
@@ -34,7 +42,6 @@ export default class FormTextInput extends PureComponent {
 	}
 
 	render() {
-		const { inputRef } = this.props;
 		const props = omit( this.props, 'isError', 'isValid', 'selectOnFocus', 'inputRef' );
 
 		const classes = classNames( 'form-text-input', this.props.className, {
@@ -46,7 +53,7 @@ export default class FormTextInput extends PureComponent {
 			<input
 				type="text"
 				{ ...props }
-				ref={ inputRef || 'textField' }
+				ref={ this.setTextFieldRef }
 				className={ classes }
 				onClick={ this.selectOnFocus }
 			/>
