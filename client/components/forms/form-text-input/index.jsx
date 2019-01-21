@@ -28,7 +28,7 @@ export default class FormTextInput extends PureComponent {
 
 	setTextFieldRef( node ) {
 		this.props.inputRef && this.props.inputRef( node );
-		this.textField( node );
+		this.textField = node;
 	}
 
 	focus() {
