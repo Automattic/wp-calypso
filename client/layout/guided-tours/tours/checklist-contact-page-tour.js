@@ -10,8 +10,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { getSectionName, getSelectedSiteId } from 'state/ui/selectors';
-import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
+import { getSectionName } from 'state/ui/selectors';
 import {
 	Continue,
 	ButtonRow,
@@ -27,17 +26,8 @@ function isPostEditorSection( state ) {
 	return getSectionName( state ) === 'post-editor';
 }
 
-function canStartTour( state ) {
-	return ! isGutenbergEnabled( state, getSelectedSiteId( state ) );
-}
-
 export const ChecklistContactPageTour = makeTour(
-	<Tour
-		name="checklistContactPage"
-		version="20171205"
-		path="/non-existent-route"
-		when={ canStartTour }
-	>
+	<Tour name="checklistContactPage" version="20171205" path="/non-existent-route">
 		<Step
 			name="init"
 			placement="right"
