@@ -43,7 +43,7 @@
 	}
 
 	&.has-low-stock {
-		border-left: 3px solid $alert-yellow;
+		border-left: 3px solid var( --color-warning );
 	}
 
 	&.has-no-stock {
