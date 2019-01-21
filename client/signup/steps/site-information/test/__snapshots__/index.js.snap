@@ -35,7 +35,7 @@ exports[`<SiteInformation /> should render 1`] = `
                 id="title"
                 name="title"
                 onChange={[Function]}
-                placeholder="E.g. Vail Renovations"
+                placeholder="E.g., Vail Renovations"
                 value="Ho ho ho!"
               />
               <Button
