@@ -7,7 +7,7 @@ import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { concat, flowRight, includes } from 'lodash';
+import { concat, flowRight, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -50,6 +50,7 @@ import {
 	NOT_JETPACK,
 	NOT_WORDPRESS,
 	OUTDATED_JETPACK,
+	SITE_BLACKLISTED,
 	WORDPRESS_DOT_COM,
 } from './connection-notice-types';
 
@@ -243,9 +244,21 @@ export class JetpackConnectMain extends Component {
 		);
 	}
 
+	isError( error ) {
+		return (
+			this.state.currentUrl &&
+			this.isCurrentUrlFetched() &&
+			get( this.props.jetpackConnectSite, [ 'error', 'error' ] ) === error
+		);
+	}
+
 	getStatus() {
 		if ( this.state.currentUrl === '' ) {
 			return false;
+		}
+
+		if ( this.isError( 'site_blacklisted' ) ) {
+			return SITE_BLACKLISTED;
 		}
 
 		if ( this.checkProperty( 'userOwnsSite' ) ) {

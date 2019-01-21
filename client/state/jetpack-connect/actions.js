@@ -153,7 +153,7 @@ export function checkUrl( url, isUrlOnSites ) {
 					type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
 					url: url,
 					data: null,
-					error: error,
+					error: pick( error, [ 'error', 'status', 'message' ] ),
 				} );
 				dispatch(
 					recordTracksEvent( 'calypso_jpc_error_other', {

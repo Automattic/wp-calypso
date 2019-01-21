@@ -96,3 +96,15 @@ export const hasExpiredSecretError = function( state ) {
 		includes( get( authorizeData, [ 'authorizeError', 'message' ] ), 'verify_secrets_expired' )
 	);
 };
+
+/**
+ * Returns true if the authorization error indicates that site has been blacklisted.
+ *
+ * @param  {object}  state Global state tree
+ * @return {Boolean}       True if there's a blacklisted site error, false otherwise
+ */
+export const isSiteBlacklistedError = function( state ) {
+	const authorizeData = getAuthorizationData( state );
+
+	return get( authorizeData, [ 'authorizeError', 'error' ] ) === 'site_blacklisted';
+};

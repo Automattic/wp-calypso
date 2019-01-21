@@ -50,6 +50,7 @@ import {
 	RETRY_AUTH,
 	RETRYING_AUTH,
 	SECRET_EXPIRED,
+	SITE_BLACKLISTED,
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	XMLRPC_ERROR,
 } from './connection-notice-types';
@@ -69,6 +70,7 @@ import {
 	hasExpiredSecretError as hasExpiredSecretErrorSelector,
 	hasXmlrpcError as hasXmlrpcErrorSelector,
 	isRemoteSiteOnSitesList,
+	isSiteBlacklistedError as isSiteBlacklistedSelector,
 } from 'state/jetpack-connect/selectors';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 import { affiliateReferral } from 'state/refer/actions';
@@ -98,6 +100,7 @@ export class JetpackAuthorize extends Component {
 		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
+		isSiteBlacklisted: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		retryAuth: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -153,6 +156,7 @@ export class JetpackAuthorize extends Component {
 			! this.retryingAuth &&
 			! nextProps.hasXmlrpcError &&
 			! nextProps.hasExpiredSecretError &&
+			! nextProps.isSiteBlacklisted &&
 			site
 		) {
 			// Expired secret errors, and XMLRPC errors will be resolved in `handleResolve`.
@@ -484,6 +488,14 @@ export class JetpackAuthorize extends Component {
 				</Fragment>
 			);
 		}
+		if ( this.props.isSiteBlacklisted ) {
+			return (
+				<JetpackConnectNotices
+					noticeType={ SITE_BLACKLISTED }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
+		}
 		return (
 			<Fragment>
 				<JetpackConnectNotices
@@ -618,6 +630,11 @@ export class JetpackAuthorize extends Component {
 
 	renderStateAction() {
 		const { authorizeSuccess } = this.props.authorizationData;
+
+		if ( this.props.isSiteBlacklisted ) {
+			return null;
+		}
+
 		if (
 			this.props.isFetchingAuthorizationSite ||
 			this.isAuthorizing() ||
@@ -688,6 +705,7 @@ export default connect(
 			isFetchingAuthorizationSite: isRequestingSite( state, authQuery.clientId ),
 			isFetchingSites: isRequestingSites( state ),
 			isMobileAppFlow,
+			isSiteBlacklisted: isSiteBlacklistedSelector( state ),
 			isVip: isVipSite( state, authQuery.clientId ),
 			mobileAppRedirect,
 			user: getCurrentUser( state ),

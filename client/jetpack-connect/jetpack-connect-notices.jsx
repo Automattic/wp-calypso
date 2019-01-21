@@ -28,6 +28,7 @@ import {
 	RETRY_AUTH,
 	RETRYING_AUTH,
 	SECRET_EXPIRED,
+	SITE_BLACKLISTED,
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	WORDPRESS_DOT_COM,
 	XMLRPC_ERROR,
@@ -60,6 +61,7 @@ export class JetpackConnectNotices extends Component {
 			RETRY_AUTH,
 			RETRYING_AUTH,
 			SECRET_EXPIRED,
+			SITE_BLACKLISTED,
 			USER_IS_ALREADY_CONNECTED_TO_SITE,
 			WORDPRESS_DOT_COM,
 			XMLRPC_ERROR,
@@ -85,6 +87,10 @@ export class JetpackConnectNotices extends Component {
 
 		switch ( noticeType ) {
 			case NOT_EXISTS:
+				return noticeValues;
+
+			case SITE_BLACKLISTED:
+				noticeValues.text = translate( "This site can't be connected to WordPress.com." );
 				return noticeValues;
 
 			case IS_DOT_COM:
