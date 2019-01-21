@@ -3,7 +3,7 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 
@@ -15,6 +15,7 @@ import Button from 'components/button';
 import { getSite, getSiteTitle, getSiteUrl, getSiteDomain } from 'state/sites/selectors';
 import PurchaseSiteHeader from '../purchases/purchases-site/header';
 import { purchaseType } from 'lib/purchases';
+import { paymentMethodName } from 'lib/cart-values';
 
 export function PendingListItem( {
 	translate,
@@ -41,7 +42,11 @@ export function PendingListItem( {
 							{ translate(
 								'Payment of %(totalCost)s was initiated on %(dateCreated)s via %(paymentType)s.',
 								{
-									args: { totalCost, dateCreated, paymentType }, // tofix: datetime localization
+									args: {
+										totalCost,
+										dateCreated: moment( dateCreated ).format( 'LLL' ),
+										paymentType: paymentMethodName( paymentType ),
+									},
 								}
 							) }
 						</div>
@@ -54,9 +59,8 @@ export function PendingListItem( {
 					</div>
 				</span>
 			</Card>
-			<br />
 		</React.Fragment>
-	); // tofix: remove br
+	);
 }
 
 export default connect( ( state, props ) => ( {
