@@ -31,6 +31,6 @@ While it is tempting to merge from `master` into your branch frequently, this le
 
 If you have a Pull Request branch that cannot be merged into `master` due to a conflict (this can happen for long-running Pull Request discussions), it's still best to rebase the branch (rather than merge) and resolve any conflicts on your local copy. 
 
-Once you have resolved any conflicts locally you can update the Pull Request with `git push --force-with-lease` (note: using `--force-with-lease` is preferred to `--force` in order to [help to protect remote commits](https://developer.atlassian.com/blog/2015/04/force-with-lease/)). 
+Once you have resolved any conflicts locally you can update the Pull Request with `git push --force-with-lease` (note: we prefer using `--force-with-lease` over `--force` to help protect remote commits). 
 
 **Be aware** that a force-push will still **replace** (overwrite) any commits currently in your shared branch, so anyone who is also using that branch will be in trouble. Only use `git push --force-with-lease` if the Pull Request is ready to merge and no one else is using it (or if you have coordinated the force-push with the other developers working on the branch).
