@@ -42,6 +42,7 @@ import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputCheckbox from 'components/forms/form-checkbox';
+import ScreenReaderText from 'components/screen-reader-text';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
 import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
@@ -346,9 +347,9 @@ class AboutStep extends Component {
 							key={ options[ item ].key }
 						>
 							{ 0 === index && (
-								<span className="about__screen-reader-text screen-reader-text">
+								<ScreenReaderText>
 									{ translate( 'What’s the primary goal you have for your site?' ) }
-								</span>
+								</ScreenReaderText>
 							) }
 							<FormInputCheckbox
 								name="siteGoals"
@@ -391,13 +392,10 @@ class AboutStep extends Component {
 							selected={ this.state.userExperience === 1 }
 							onClick={ this.handleSegmentClick( 1 ) }
 						>
-							<span className="about__screen-reader-text screen-reader-text">
+							<ScreenReaderText>
 								{ translate( 'How comfortable are you with creating a website?' ) }
-							</span>
-							1
-							<span className="about__screen-reader-text screen-reader-text">
-								{ translate( 'Beginner' ) }
-							</span>
+							</ScreenReaderText>
+							1<ScreenReaderText>{ translate( 'Beginner' ) }</ScreenReaderText>
 						</ControlItem>
 
 						<ControlItem
@@ -425,10 +423,7 @@ class AboutStep extends Component {
 							selected={ this.state.userExperience === 5 }
 							onClick={ this.handleSegmentClick( 5 ) }
 						>
-							5
-							<span className="about__screen-reader-text screen-reader-text">
-								{ translate( 'Expert' ) }
-							</span>
+							5<ScreenReaderText>{ translate( 'Expert' ) }</ScreenReaderText>
 						</ControlItem>
 					</SegmentedControl>
 					<span

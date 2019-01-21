@@ -19,6 +19,7 @@ import { __, _x } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import ScreenReaderText from 'components/screen-reader-text';
 import WebPreview from 'components/web-preview';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
@@ -92,10 +93,10 @@ export class PostPreviewButton extends Component {
 					onClick={ this.openPreviewModal }
 				>
 					{ _x( 'Preview', 'imperative verb' ) }
-					<span className="screen-reader-text">
+					<ScreenReaderText>
 						{ /* translators: accessibility text */
 						__( '(opens in a new tab)' ) }
-					</span>
+					</ScreenReaderText>
 				</Button>
 				<WebPreview
 					externalUrl={ currentPostLink }
