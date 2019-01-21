@@ -105,8 +105,6 @@ class SubmitButton extends Component {
 						style={ buttonStyle }
 						keepPlaceholderOnFocus
 						formattingControls={ [] }
-						// This disables new lines within the button
-						unstableOnSplit={ () => false }
 					/>
 				</div>
 				<InspectorControls>
