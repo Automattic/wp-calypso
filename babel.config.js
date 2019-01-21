@@ -4,6 +4,7 @@ const path = require( 'path' );
 
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 const isBrowser = isCalypsoClient || 'true' === process.env.TARGET_BROWSER;
+const output_dir = process.env.CALYPSO_SDK_OUTPUT_DIR || '.';
 
 const modules = isBrowser ? false : 'commonjs'; // Use commonjs for Node
 const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
@@ -55,6 +56,16 @@ const config = {
 		{
 			test: './client/gutenberg/extensions',
 			plugins: [
+				[
+					'@wordpress/babel-plugin-makepot',
+					{
+						output: output_dir + '/extensions.pot',
+						headers: {
+							'content-type': 'text/plain; charset=UTF-8',
+							'x-generator': 'calypso',
+						},
+					},
+				],
 				[
 					'@wordpress/import-jsx-pragma',
 					{

@@ -13,6 +13,9 @@ const path = require( 'path' );
 const yargsModule = require( 'yargs' );
 const webpack = require( 'webpack' );
 
+// This environment variable will be used by the Babel plugin that makes POT files, see babel.config.js.
+process.env.CALYPSO_SDK_OUTPUT_DIR = yargsModule.argv.outputDir;
+
 /**
  * Internal dependencies
  */
