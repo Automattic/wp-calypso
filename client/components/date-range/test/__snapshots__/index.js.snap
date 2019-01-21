@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DateRange should render 1`] = `
+<div
+  className="date-range"
+>
+  <Localized(DateRangeTrigger)
+    buttonRef={
+      Object {
+        "current": null,
+      }
+    }
+    endDateText="MM/DD/YYYY"
+    isCompact={false}
+    onTriggerClick={[Function]}
+    startDateText="MM/DD/YYYY"
+  />
+  <Connect(Popover)
+    className="date-range__popover"
+    context={null}
+    isVisible={false}
+    onClose={[Function]}
+    position="bottom"
+  >
+    <div
+      className="date-range__popover-inner"
+    >
+      <div
+        className="date-range__controls"
+      >
+        <Localized(DateRangeHeader)
+          onApplyClick={[Function]}
+          onCancelClick={[Function]}
+        />
+        <div
+          aria-live="polite"
+          className="date-range__info"
+          role="status"
+        >
+          <t
+            icon="info"
+            key="interpolation-child-1/.0"
+            size={24}
+          />
+           Please select the 
+          <em
+            key="interpolation-child-3/.0"
+          >
+            first
+          </em>
+           day.
+        </div>
+      </div>
+      <Localized(DateRangeInputs)
+        endDateValue="MM/DD/YYYY"
+        onInputBlur={[Function]}
+        onInputChange={[Function]}
+        onInputFocus={[Function]}
+        startDateValue="MM/DD/YYYY"
+      />
+      <Localized(DatePicker)
+        calendarViewDate={null}
+        disabledDays={
+          Array [
+            Object {},
+          ]
+        }
+        modifiers={
+          Object {
+            "end": null,
+            "range": Object {
+              "from": null,
+              "to": null,
+            },
+            "range-end": null,
+            "range-start": null,
+            "start": null,
+          }
+        }
+        numberOfMonths={2}
+        onSelectDay={[Function]}
+        rootClassNames={
+          Object {
+            "date-range__picker": true,
+          }
+        }
+        selectedDays={
+          Array [
+            null,
+            Object {
+              "from": null,
+              "to": null,
+            },
+          ]
+        }
+        showOutsideDays={false}
+      />
+    </div>
+  </Connect(Popover)>
+</div>
+`;
