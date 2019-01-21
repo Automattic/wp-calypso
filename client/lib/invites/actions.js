@@ -176,7 +176,7 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, formId ) 
 						} )
 					)
 				);
-				analytics.tracks.recordEvent( 'calypso_invite_send_success' );
+				analytics.tracks.recordEvent( 'calypso_invite_send_success', { role } );
 			}
 		} );
 	};
