@@ -8,18 +8,18 @@ import { noop, isNil, isNull, has } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import Gridicon from 'gridicons';
+import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { localize, moment } from 'i18n-calypso';
 import DatePicker from 'components/date-picker';
 import Popover from 'components/popover';
+import Button from 'components/button';
 import DateRangeInputs from './inputs';
 import DateRangeHeader from './header';
 import DateRangeTrigger from './trigger';
-import Button from 'components/button';
-import Gridicon from 'gridicons';
 
 /**
  * Module variables
