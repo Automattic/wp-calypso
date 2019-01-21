@@ -153,6 +153,9 @@
 		.date-picker__day {
 			padding: 0 7px;
 		}
+		.date-picker__day:hover {
+			padding: 0;
+		}
 	}
 
 	.filterbar__date-range-selection-info {
@@ -172,26 +175,29 @@
 		}
 	}
 
-	.DayPicker-Day--start {
+	.DayPicker-Day.DayPicker-Day--start {
 		background-color: var( --color-primary-light );
 		border-radius: 0;
 		border-top-left-radius: 50%;
 		border-bottom-left-radius: 50%;
 	}
 
-	.DayPicker-Day--end {
+	.DayPicker-Day.DayPicker-Day--end {
 		background-color: var( --color-primary-light );
 		border-radius: 0;
 		border-top-right-radius: 50%;
 		border-bottom-right-radius: 50%;
 	}
 
-	.DayPicker-Day--today .date-picker__day {
+	.DayPicker-Day.DayPicker-Day--today .date-picker__day {
 		color: $white;
 		position: relative;
 		display: block;
 		z-index: 0;
 		background: transparent;
+		&:hover {
+			padding: 0 7px;
+		}
 	}
 
 	.DayPicker-Day--today .date-picker__day::before {
@@ -208,19 +214,26 @@
 		z-index: -2;
 	}
 
-	.DayPicker-Day--selected .date-picker__day {
+	.DayPicker-Day.DayPicker-Day--selected .date-picker__day {
 		background-color: var( --color-primary-light );
 		border-radius: 0;
+		color: #FFF;
+		&:hover {
+			padding: 0 7px;
+		}
 	}
 
-	.DayPicker-Day--start .date-picker__day,
-	.DayPicker-Day--end .date-picker__day {
+	.DayPicker-Day.DayPicker-Day--start .date-picker__day,
+	.DayPicker-Day.DayPicker-Day--end .date-picker__day {
 		border-radius: 50%;
 		color: $white;
 		padding: 0;
 		position: relative;
 		display: block;
 		z-index: 0;
+		&:hover {
+			padding: 0;
+		}
 	}
 
 	.DayPicker-Day--start .date-picker__day::before,
