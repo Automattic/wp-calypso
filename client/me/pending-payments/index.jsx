@@ -133,11 +133,14 @@ export default connect(
 
 		for ( const payment of data ) {
 			pending.push( {
-				siteId: payment.site_id,
 				orderId: payment.order_id,
+				siteId: payment.site_id,
+				paymentMethod: payment.payment_method,
 				paymentType: payment.payment_type,
 				redirectUrl: payment.redirect_url,
-				totalCostDisplay: payment.total_cost,
+				totalCost: payment.total_cost,
+				dateCreated: payment.date_created,
+				dateUpdated: payment.date_status_update,
 				productSlug: payment.products[ 0 ].product_slug,
 				productName: payment.products[ 0 ].product_name,
 				products: payment.products,
