@@ -3,7 +3,7 @@
  * Exernal dependencies
  */
 import i18n from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +16,7 @@ import { find } from 'lodash';
  */
 export const allSiteTypes = [
 	{
-		id: 'blog',
+		id: 2,
 		slug: 'blog',
 		label: i18n.translate( 'Blog' ),
 		description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
@@ -28,7 +28,7 @@ export const allSiteTypes = [
 		siteTopicLabel: i18n.translate( 'What will your blog be about?' ),
 	},
 	{
-		id: 'business',
+		id: 1,
 		slug: 'business',
 		label: i18n.translate( 'Business' ),
 		description: i18n.translate( 'Promote products and services.' ),
@@ -41,7 +41,7 @@ export const allSiteTypes = [
 		customerType: 'business',
 	},
 	{
-		id: 'professional',
+		id: 3,
 		slug: 'professional',
 		label: i18n.translate( 'Professional' ),
 		description: i18n.translate( 'Showcase your portfolio and work.' ),
@@ -53,7 +53,7 @@ export const allSiteTypes = [
 		siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
 	},
 	{
-		id: 'education',
+		id: 4,
 		slug: 'education',
 		label: i18n.translate( 'Education' ),
 		description: i18n.translate( 'Share school projects and class info.' ),
@@ -65,7 +65,7 @@ export const allSiteTypes = [
 		siteTopicLabel: i18n.translate( 'What will your site be about?' ),
 	},
 	{
-		id: 'store',
+		id: 5,
 		slug: 'online-store',
 		label: i18n.translate( 'Online store' ),
 		description: i18n.translate( 'Sell your collection of products online.' ),
@@ -79,12 +79,20 @@ export const allSiteTypes = [
 	},
 ];
 
-export function getSiteTypePropertyValue( key, value, property ) {
-	if ( ! value ) {
-		return;
-	}
-
-	const siteTypeProperties = find( allSiteTypes, { [ key ]: value } );
-
-	return siteTypeProperties && siteTypeProperties[ property ];
+/**
+ * Finds in `allSiteTypes` for item match and returns a property value
+ *
+ * @example
+ * // Find the item in `allSiteTypes` where `id === 'blog'`, and return the value of `slug`
+ * const siteTypeValue = getSiteTypePropertyValue( 'id', 'blog', 'slug' );
+ *
+ * @param {string} key A property name of a site types item
+ * @param {string|number} value The value of `key` with which to filter items
+ * @param {string} property The name of the property whose value you wish to return
+ * @param {array} siteTypes (optional) A site type collection
+ * @return {string|int|bool} value of `property` or `false` if none is found
+ */
+export function getSiteTypePropertyValue( key, value, property, siteTypes = allSiteTypes ) {
+	const siteTypeProperties = find( siteTypes, { [ key ]: value } );
+	return get( siteTypeProperties, property, false );
 }

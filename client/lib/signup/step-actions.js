@@ -144,11 +144,13 @@ export function createSiteWithCart(
 			// step object itself depending on if the theme is provided in a
 			// query. See `getThemeSlug` in `DomainsStep`.
 			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
-			vertical: siteVertical || undefined,
+			vertical: siteVertical || undefined, // `options.vertical` is deprecated in favour of `options.site_vertical`
 			siteGoals: siteGoals || undefined,
 			site_style: siteStyle || undefined,
 			site_information: siteInformation || undefined,
-			siteType: siteType || undefined,
+			siteType: siteType || undefined, // `options.siteType` is deprecated in favour of `options.site_segment`
+			site_segment: siteType || undefined,
+			site_vertical: siteVertical || undefined,
 		},
 		validate: false,
 	};

@@ -34,7 +34,7 @@ describe( 'createSiteWithCart()', () => {
 			} );
 	} );
 
-	test( 'should use the vertical field in the survery tree if the site topic one is empty.', () => {
+	test( 'should use the vertical field in the survey tree if the site topic one is empty.', () => {
 		const vertical = 'foo topic';
 		const fakeStore = {
 			getState: () => ( {
@@ -50,7 +50,7 @@ describe( 'createSiteWithCart()', () => {
 
 		createSiteWithCart(
 			response => {
-				expect( response.requestBody.options.vertical ).toEqual( vertical );
+				expect( response.requestBody.options.site_vertical ).toEqual( vertical );
 			},
 			[],
 			[],
@@ -77,7 +77,7 @@ describe( 'createSiteWithCart()', () => {
 
 		createSiteWithCart(
 			response => {
-				expect( response.requestBody.options.vertical ).toEqual( siteTopic );
+				expect( response.requestBody.options.site_vertical ).toEqual( siteTopic );
 			},
 			[],
 			[],
