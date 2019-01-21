@@ -1,5 +1,4 @@
 .language-picker {
-	background: $white;
 	border: 1px solid var( --color-neutral-100 );
 	border-width: 1px 1px 2px;
 	border-radius: 4px;
@@ -52,7 +51,7 @@
 	}
 
 	&:focus {
-		border-color: var( --color-accent );
+		border-color: var( --color-primary );
 		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 }
@@ -182,7 +181,7 @@
 	cursor: pointer;
 
 	&.is-selected {
-		background: var( --color-accent );
+		background: var( --color-primary );
 		color: $white;
 	}
 }
