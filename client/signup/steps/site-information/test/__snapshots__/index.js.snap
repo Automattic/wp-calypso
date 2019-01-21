@@ -103,7 +103,7 @@ exports[`<SiteInformation /> should render 1`] = `
                 id="phone"
                 name="phone"
                 onChange={[Function]}
-                placeholder="E.g. (555) 555-5555"
+                placeholder="E.g., (555) 555-5555"
                 value=""
               />
               <Button
