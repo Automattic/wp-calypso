@@ -25,17 +25,9 @@
 		padding: 0 1em;
 		&.has-focus .components-text-control__input {
 			opacity: 1;
-			-webkit-transition: opacity 0;
-			-moz-transition: opacity 0;
-			-o-transition: opacity 0;
-			-ms-transition: opacity 0;
 			transition: opacity 0;
 		}
 		&.no-focus .components-text-control__input {
-			-webkit-transition: opacity 0.5s ease-in;
-			-moz-transition: opacity 0.5s ease-in;
-			-o-transition: opacity 0.5s ease-in;
-			-ms-transition: opacity 0.5s ease-in;
 			transition: opacity 0.5s ease-in;
 		}
 		.components-text-control__input {
