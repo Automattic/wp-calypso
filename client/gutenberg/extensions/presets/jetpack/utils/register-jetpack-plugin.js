@@ -22,7 +22,7 @@ export default function registerJetpackPlugin( name, settings ) {
 	const registered = getPlugin( pluginName );
 
 	if ( available && ! registered ) {
-		registerPlugin( pluginName, settings );
+		return registerPlugin( pluginName, settings );
 	} else if ( ! available ) {
 		if ( registered ) {
 			unregisterPlugin( pluginName );
