@@ -31,7 +31,7 @@ export const counts = keyedReducer(
 						const index = nextState.findIndex( entry => entry.period === recordFromApi.period );
 						if ( index >= 0 ) {
 							const newRecord = { ...nextState[ index ], ...recordFromApi };
-							if ( ! isEqual( newRecord, recordFromApi ) ) {
+							if ( ! isEqual( nextState[ index ], newRecord ) ) {
 								areThereChanges = true;
 								nextState[ index ] = newRecord;
 							}
