@@ -16,6 +16,7 @@ import {
 	createSiteOrDomain,
 	createSiteWithCart,
 	setThemeOnSite,
+	addDomainToCart,
 } from 'lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
@@ -27,4 +28,5 @@ export default generateSteps( {
 	createSiteWithCart,
 	currentPage,
 	setThemeOnSite,
+	addDomainToCart,
 } );

@@ -191,57 +191,19 @@ export function createSiteWithCart(
 			domainItem,
 			themeItem,
 		};
-		const addToCartAndProceed = () => {
-			let privacyItem = null;
 
-			if ( domainItem ) {
-				const { product_slug: productSlug } = domainItem;
-				const productsList = getProductsList( state );
-				if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
-					if ( isDomainTransfer( domainItem ) ) {
-						privacyItem = cartItems.domainTransferPrivacy( {
-							domain: domainItem.meta,
-							source: 'signup',
-						} );
-					} else {
-						privacyItem = cartItems.domainPrivacyProtection( {
-							domain: domainItem.meta,
-							source: 'signup',
-						} );
-					}
-				}
-			}
+		const newCartItems = [ cartItem, domainItem, googleAppsCartItem, themeItem ].filter(
+			item => item
+		);
 
-			const newCartItems = [
-				cartItem,
-				domainItem,
-				googleAppsCartItem,
-				themeItem,
-				privacyItem,
-			].filter( item => item );
-
-			if ( newCartItems.length ) {
-				SignupCart.addToCart( siteId, newCartItems, function( cartError ) {
-					callback( cartError, providedDependencies );
-				} );
-			} else {
-				callback( undefined, providedDependencies );
-			}
-		};
-
-		if ( ! user.get() && isFreeThemePreselected ) {
-			setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
-		} else if ( user.get() && isFreeThemePreselected ) {
-			fetchSitesAndUser(
-				siteSlug,
-				setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
-				reduxStore
-			);
-		} else if ( user.get() ) {
-			fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
-		} else {
-			addToCartAndProceed();
-		}
+		processItemCart(
+			providedDependencies,
+			newCartItems,
+			callback,
+			reduxStore,
+			isFreeThemePreselected,
+			themeSlugWithRepo
+		);
 	} );
 }
 
@@ -355,8 +317,83 @@ export function addPlanToCart( callback, { siteSlug }, { cartItem } ) {
 	}
 
 	const newCartItems = [ cartItem ].filter( item => item );
-
 	SignupCart.addToCart( siteSlug, newCartItems, error => callback( error, { cartItem } ) );
+}
+
+function processItemCart(
+	providedDependencies,
+	newCartItems,
+	callback,
+	reduxStore,
+	isFreeThemePreselected,
+	themeSlugWithRepo
+) {
+	const { siteId, siteSlug, domainItem } = providedDependencies;
+	const state = reduxStore.getState();
+	const addToCartAndProceed = () => {
+		let privacyItem = null;
+
+		if ( domainItem ) {
+			const { product_slug: productSlug } = domainItem;
+			const productsList = getProductsList( state );
+			if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
+				if ( isDomainTransfer( domainItem ) ) {
+					privacyItem = cartItems.domainTransferPrivacy( {
+						domain: domainItem.meta,
+						source: 'signup',
+					} );
+				} else {
+					privacyItem = cartItems.domainPrivacyProtection( {
+						domain: domainItem.meta,
+						source: 'signup',
+					} );
+				}
+
+				if ( privacyItem ) {
+					newCartItems.push( privacyItem );
+				}
+			}
+		}
+
+		if ( newCartItems.length ) {
+			SignupCart.addToCart( siteId, newCartItems, function( cartError ) {
+				callback( cartError, providedDependencies );
+			} );
+		} else {
+			callback( undefined, providedDependencies );
+		}
+	};
+
+	if ( ! user.get() && isFreeThemePreselected ) {
+		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
+	} else if ( user.get() && isFreeThemePreselected ) {
+		fetchSitesAndUser(
+			siteSlug,
+			setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
+			reduxStore
+		);
+	} else if ( user.get() ) {
+		fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
+	} else {
+		addToCartAndProceed();
+	}
+}
+export function addDomainToCart(
+	callback,
+	dependencies,
+	{ domainItem, googleAppsCartItem },
+	reduxStore
+) {
+	const { cartItem, siteId, siteSlug } = dependencies;
+	const providedDependencies = {
+		siteId,
+		siteSlug,
+		domainItem,
+	};
+
+	const newCartItems = [ cartItem, domainItem, googleAppsCartItem ].filter( item => item );
+
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, false, null );
 }
 
 export function createAccount(

@@ -19,6 +19,7 @@ export function generateSteps( {
 	createSiteWithCart = noop,
 	currentPage = noop,
 	setThemeOnSite = noop,
+	addDomainToCart = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -76,6 +77,18 @@ export function generateSteps( {
 			props: {
 				headerText: i18n.translate( 'Choose a theme for your new site.' ),
 			},
+		},
+
+		'domains-site-selected': {
+			stepName: 'domains-site-selected',
+			apiRequestFunction: addDomainToCart, // This is a new function we'll need to create
+			providesDependencies: [ 'domainItem', 'siteId', 'siteSlug' ], // This step will only need to provide a domain
+			props: {
+				isDomainOnly: false,
+			},
+			delayApiRequestUntilComplete: true,
+			dependencies: [ 'siteId', 'siteSlug' ], // This is needed to add the domain to the cart
+			//delayApiRequestUntilComplete: true, I don't think this should be needed. The signup flow should always wait for the dependencies to be met before calling the API
 		},
 
 		'plans-site-selected': {
