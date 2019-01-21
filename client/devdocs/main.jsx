@@ -19,6 +19,11 @@ import Main from 'components/main';
 import SearchCard from 'components/search-card';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Constants
  */
 
