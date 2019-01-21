@@ -34,6 +34,7 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"support_site_locales": [ "en", "es", "de", "ja", "pt-br" ],
 	"features": {
+		"async-payments": true,
 		"account-recovery": true,
 		"ad-tracking": false,
 		"automated-transfer": true,
