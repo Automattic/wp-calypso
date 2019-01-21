@@ -20,6 +20,10 @@ import DateRangeHeader from './header';
 import DateRangeTrigger from './trigger';
 import Button from 'components/button';
 import Gridicon from 'gridicons';
+
+/**
+ * Module variables
+ */
 const NO_DATE_SELECTED_VALUE = null;
 
 export class DateRange extends Component {
