@@ -23,6 +23,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
+import Banner from 'components/banner';
 
 export const requestId = userId => `pending-payments/${ userId }`;
 
@@ -83,11 +84,22 @@ export class PendingPayments extends Component {
 			);
 		} else if ( pendingPayments.length > 0 ) {
 			content = (
-				<div>
-					{ pendingPayments.map( purchase => (
-						<PendingListItem key={ purchase.siteId } { ...purchase } />
-					) ) }
-				</div>
+				<React.Fragment>
+					<Banner
+						callToAction={ translate( 'Back to My Sites' ) }
+						description={ translate(
+							'Your payment initiation has been confirmed. We are currently waiting for the funds to clear.'
+						) }
+						event="pending-payment-confirmation"
+						icon="star"
+						title={ translate( 'Thank you! Your payment is being processed.' ) }
+					/>
+					<div>
+						{ pendingPayments.map( purchase => (
+							<PendingListItem key={ purchase.siteId } { ...purchase } />
+						) ) }
+					</div>
+				</React.Fragment>
 			);
 		}
 
