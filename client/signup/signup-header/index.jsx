@@ -32,20 +32,6 @@ export default class SignupHeader extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.state = { showMockMasterBar: true };
-	}
-
-	// We want to show the mock masterbar to transition into the signup steps
-	// and then animate it out, and remove it
-	shouldShowMockMasterBar() {
-		if ( ! this.state.showMockMasterBar ) {
-			return false;
-		}
-		// we want to remove it altogether after the animation is done
-		setTimeout( () => {
-			this.setState( { showMockMasterBar: false } );
-		}, 500 );
-		return true;
 	}
 
 	render() {
@@ -56,9 +42,6 @@ export default class SignupHeader extends Component {
 
 		return (
 			<div className="signup-header">
-				{ this.shouldShowMockMasterBar() && (
-					<div className="signup-header__masterbar-mock masterbar" />
-				) }
 				<WordPressLogo size={ 120 } className={ logoClasses } />
 
 				{ /* Ideally, this is where the back button

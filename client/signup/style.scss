@@ -1,17 +1,75 @@
-// Adjust the layout for the signup header.
-.is-section-signup {
+body.is-section-signup {
+	// Use the primary color for our background. I wonder how we
+	// should deal with different color schemes?
+	background: var( --color-primary );
+
+
+	// Adjust the padding as we no longer
+	// show the masterbar.
 	.layout__content {
-		padding: 32px 0 0;
+		padding: 48px 0 0;
+	}
+
+	// Hide the masterbar for realz
+	.masterbar {
+		display: none;
+	}
+}
+
+// Notice the :not(.dops) selector. I've added this to try and
+// avoid stepping on the toes of our oauth users, like Crowdsignal.
+body.is-section-signup .layout:not(.dops) {
+
+	// Update the logo that appears when loading Calypso
+	// to match the homepage, using primary-dark with opacity.
+	.wpcom-site__logo {
+		fill: var( --color-primary-dark );
+		opacity: 0.3;
+	}
+
+	// If there's an error lets make it look a little better
+	// on the primary colored background.
+	.empty-content {
+		.empty-content__illustration {
+			background: var( --color-white );
+			padding-bottom: 16px;
+			margin-bottom: 24px;
+			border-radius: 6px;
+			box-shadow: 0 5px 5px -3px rgba( 0, 0, 0, 0.2),
+						0 8px 10px 1px rgba( 0, 0, 0, 0.14),
+						0 3px 14px 2px rgba( 0, 0, 0, 0.12);
+		}
+
+		.empty-content__title {
+			color: var( --color-white );
+		}
+	}
+
+	// With the dark background, the border on cards looks a
+	// a little strange. Lets try a shadow instead. -shaun
+	.signup-form > .card,
+	.is-about .card,
+	.is-site-type .card,
+	.is-site-information .card {
+		box-shadow: 0 5px 5px -3px rgba( 0, 0, 0, 0.2),
+					0 8px 10px 1px rgba( 0, 0, 0, 0.14),
+					0 3px 14px 2px rgba( 0, 0, 0, 0.12);
+
+		.dops & {
+			box-shadow: none;
+		}
 	}
 
 	//Masterbar is hidden but still has height
 	//which is how sticky panel offset is calculated.
 	//Setting height to zero removes the offset
 	//so the sticky panel sticks to the top.
-	&.has-no-masterbar .masterbar:not( .header__masterbar-mock ) {
+	&.has-no-masterbar .masterbar {
 		height: 0;
 	}
 
+	// This allows us to position the search suggestions
+	// relative to their fieldset.
 	.form-fieldset {
 		position: relative;
 	}
@@ -33,10 +91,18 @@
 			padding-bottom: 14px;
 		}
 	}
+
+	// Back button
+	.navigation-link.button.back {
+		position: absolute;
+		top: 6px;
+		left: 11px;
+	}
 }
 
-// Most steps have a narrow width.
-.step-wrapper {
+// The container wrapped around every
+// step in signup
+body.is-section-signup .layout:not(.dops) .step-wrapper {
 	max-width: 960px;
 	margin: 0 auto;
 
@@ -74,31 +140,25 @@
 }
 
 // Signup headings
-.is-section-signup .formatted-header {
-	margin: 16px 0;
+body.is-section-signup .layout:not(.dops) .formatted-header {
+	margin: 0 0 16px 0;
 
 	.formatted-header__title {
 		margin: 0;
-		font-weight: 700;
+		font-weight: 400;
+		color: var( --color-white );
 	}
 
 	.formatted-header__subtitle {
 		margin: 0;
 		font-size: 15px;
-		color: var( --color-neutral-500 );
+		color: var( --color-white );
 	}
 }
 
 // Skip button
 .step-wrapper__buttons {
 	text-align: center;
-}
-
-// Back button
-.navigation-link.button.back {
-	position: absolute;
-	top: 6px;
-	left: 11px;
 }
 
 .is-section-signup .layout__content,

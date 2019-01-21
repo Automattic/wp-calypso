@@ -7,11 +7,19 @@
 	left: 0;
 	padding-top: 16px;
 	z-index: -1;
+	color: var( --color-white );
+
+	// Hide the signup header on oauth
+	// flows like Crowdsignal
+	.layout:not(.dops) {
+		display: none;
+		pointer-events: none;
+	}
 
 	.wordpress-logo {
 		height: 180px;
 		width: 180px;
-		fill: $blue-wordpress;
+		fill: var( --color-white );
 		margin: 0 auto;
 		display: block;
 		transition: transform 0.8s cubic-bezier( 0.075, 0.82, 0.165, 1 );
@@ -33,23 +41,5 @@
 		position: absolute;
 		top: 12px;
 		right: 16px;
-	}
-}
-
-.signup-header__masterbar-mock,
-.has-no-masterbar .signup-header .signup-header__masterbar-mock {
-	opacity: 0;
-	height: 48px;
-	animation: 0.5s hideMockMasterbar ease-out;
-}
-
-@keyframes hideMockMasterbar {
-	from {
-		opacity: 1;
-		transform: translateY( 0 );
-	}
-	to {
-		opacity: 0.5;
-		transform: translateY( -48px );
 	}
 }

@@ -41,7 +41,14 @@
 		margin: 0 auto;
 	}
 
+	label {
+		// Labels should be white when placed directly
+		// on the primary background color
+		color: var( --color-white );
+	}
+
 	input {
+		// Extra padding to account for the button and
 		padding: 10px 100px 10px 10px;
 
 		// Since there's a 1px padding on the container, and
@@ -56,6 +63,13 @@
 			padding-top: 15px;
 			padding-bottom: 15px;
 		}
+
+		// Making the border feel a little more "at home"
+		// with signups dark background color.
+		border-color: var( --color-primary-700 );
+
+		// Trying out a rounded input
+		border-radius: 4px;
 	}
 
 	.card {
@@ -73,5 +87,11 @@
 	.gridicon {
 		color: $gray;
 		margin-bottom: -3px;
+
+		.is-single-fieldset & {
+			// Make the icon white when its place on the
+			// primary background color.
+			color: var( --color-white );
+		}
 	}
 }

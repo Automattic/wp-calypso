@@ -7,13 +7,14 @@
 	margin: 0 auto 60px;
 
 	p {
-		color: var( --color-neutral-500 );
+		color: var( --color-white );
 		text-align: right;
 		margin-bottom: 8px;
 	}
 
 	a {
 		text-decoration: underline;
+		color: var( --color-white );
 	}
 
 	@include breakpoint( '<660px' ) {

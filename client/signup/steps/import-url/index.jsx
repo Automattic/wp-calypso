@@ -11,7 +11,6 @@ import { flow, get, invoke, isEqual } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
 import ExampleDomainBrowser from 'components/domains/example-domain-browser';
 import ExternalLink from 'components/external-link';
 import StepWrapper from 'signup/step-wrapper';
@@ -208,7 +207,7 @@ class ImportURLStepComponent extends Component {
 
 		return (
 			<Fragment>
-				<Card className="import-url__card" tagName="div">
+				<div className="import-url__wrapper">
 					<form className="import-url__form" onSubmit={ this.handleSubmit }>
 						<ScreenReaderText>
 							<FormLabel htmlFor="url-input">Site URL</FormLabel>
@@ -251,7 +250,7 @@ class ImportURLStepComponent extends Component {
 							{ translate( 'Please enter the full URL of your site.' ) }
 						</FormSettingExplanation>
 					) }
-				</Card>
+				</div>
 
 				<div className="import-url__example">
 					<ul className="import-url__example-urls">

@@ -1,5 +1,5 @@
 .masterbar__oauth-client {
-	background-color: var( --color-primary );
+	background-color: var( --color-white );
 
 	nav {
 		display: flex;
@@ -90,10 +90,6 @@
 
 .crowdsignal {
 	background: #f2f2f2;
-
-	.layout__content {
-		padding-top: 200px;
-	}
 
 	.masterbar__oauth-client {
 		background-color: #fff;
@@ -364,10 +360,6 @@
 .woo {
 	background: #e6e6e6;
 
-	.layout__content {
-		padding-top: 150px;
-	}
-
 	.masterbar__oauth-client {
 		background-color: #fff;
 		border: 1px solid #d3d3d3;
@@ -516,7 +508,7 @@
 	}
 
 	.step-wrapper {
-		margin-bottom: 50px;
+		margin: 0 auto 50px auto;
 		width: 778px;
 	}
 
@@ -592,5 +584,18 @@
 		font-size: 2em;
 		font-family: $sans;
 		margin-top: 2em;
+	}
+}
+
+// Adding some CSS to cover the --color-primary
+// background color in the signup flow for Akismet.
+.layout.dops.akismet {
+	background: var( --color-neutral-0 );
+	min-height: 100%;
+
+	// When completing the Akismet signup flow
+	// ensure the text color is legible.
+	.signup-processing__content {
+		color: var( --color-text );
 	}
 }
