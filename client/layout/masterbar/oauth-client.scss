@@ -586,3 +586,16 @@
 		margin-top: 2em;
 	}
 }
+
+// Adding some CSS to cover the --color-primary
+// background color in the signup flow for Akismet.
+.layout.dops.akismet {
+	background: var( --color-neutral-0 );
+	min-height: 100%;
+
+	// When completing the Akismet signup flow
+	// ensure the text color is legible.
+	.signup-processing__content {
+		color: var( --color-text );
+	}
+}
