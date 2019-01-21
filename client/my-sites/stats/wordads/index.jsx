@@ -139,7 +139,7 @@ class WordAds extends Component {
 			<Main wideLayout={ true }>
 				<DocumentHead title={ translate( 'WordAds Stats' ) } />
 				<PageViewTracker
-					path={ `/stats/wordads/${ period }/:site` }
+					path={ `/stats/ads/${ period }/:site` }
 					title={ `WordAds > ${ titlecase( period ) }` }
 				/>
 				<PrivacyPolicyBanner />
@@ -172,13 +172,13 @@ class WordAds extends Component {
 							} // @TODO is there a more elegant way to do this? Similar to in_array() for php?
 							hideNextArrow={ yesterday === queryDate }
 							period={ period }
-							url={ `/stats/wordads/${ period }/${ slug }` }
+							url={ `/stats/ads/${ period }/${ slug }` }
 						>
 							<DatePicker
 								period={ period }
 								date={ queryDate }
 								query={ query }
-								statsType="statsTopPosts"
+								statsType="statsAds"
 								showQueryDate
 							/>
 						</StatsPeriodNavigation>
