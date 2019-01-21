@@ -151,23 +151,30 @@ class DatePicker extends PureComponent {
 	 *
 	 * See https://github.com/Automattic/wp-calypso/pull/29938/
 	 */
-	setCalendarDay = debounce( ( day, modifiers ) => {
-		const momentDay = this.props.moment( day );
+	setCalendarDay = debounce(
+		( day, modifiers ) => {
+			const momentDay = this.props.moment( day );
 
-		if ( modifiers.disabled ) {
-			return null;
+			if ( modifiers.disabled ) {
+				return null;
+			}
+
+			const dateMods = {
+				year: momentDay.year(),
+				month: momentDay.month(),
+				date: momentDay.date(),
+			};
+
+			const date = ( this.props.timeReference || momentDay ).set( dateMods );
+
+			this.props.onSelectDay( date, dateMods, modifiers );
+		},
+		500,
+		{
+			leading: true, // invoke call immediately
+			trailing: false, // debounce any subsequent calls
 		}
-
-		const dateMods = {
-			year: momentDay.year(),
-			month: momentDay.month(),
-			date: momentDay.date(),
-		};
-
-		const date = ( this.props.timeReference || momentDay ).set( dateMods );
-
-		this.props.onSelectDay( date, dateMods, modifiers );
-	}, 500 );
+	);
 
 	getDateInstance( v ) {
 		if ( this.props.moment.isMoment( v ) ) {
