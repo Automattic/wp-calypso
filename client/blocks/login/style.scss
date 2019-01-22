@@ -3,7 +3,7 @@
 	&.is-jetpack {
 		.button.is-primary {
 			background-color: var( --color-jetpack );
-			border-color: darken( $green-jetpack, 5% );
+			border-color: var( --color-jetpack-dark );
 		}
 	}
 }
