@@ -10,10 +10,7 @@ import { TextControl } from '@wordpress/components';
 import { RichText } from '@wordpress/editor';
 import { debounce } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { settings } from './settings.js';
+const GIPHY_API_KEY = 'LtJmY9DnDJUA0';
 
 class GiphyEdit extends Component {
 	timer = null;
@@ -59,17 +56,15 @@ class GiphyEdit extends Component {
 	}, 250 );
 
 	urlForSearch = searchText => {
-		const { apiKey } = settings;
 		return `//api.giphy.com/v1/gifs/search?q=${ encodeURIComponent(
 			searchText
-		) }&api_key=${ encodeURIComponent( apiKey ) }&limit=1`;
+		) }&api_key=${ encodeURIComponent( GIPHY_API_KEY ) }&limit=1`;
 	};
 
 	urlForId = giphyId => {
-		const { apiKey } = settings;
 		return `//api.giphy.com/v1/gifs/${ encodeURIComponent(
 			giphyId
-		) }?api_key=${ encodeURIComponent( apiKey ) }`;
+		) }?api_key=${ encodeURIComponent( GIPHY_API_KEY ) }`;
 	};
 
 	splitAndLast = ( array, delimiter ) => {
