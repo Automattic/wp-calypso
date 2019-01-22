@@ -123,6 +123,7 @@ export const settings = {
 				isMultiBlock: true,
 				blocks: [ 'core/image' ],
 				transform: attributes => {
+					// Leave out other than supported aligns: image block supports left and right, Tiled Gallery doesn't.
 					const objectsWithValidAlign = filter( attributes, object =>
 						settings.supports.align.includes( object.align )
 					);
