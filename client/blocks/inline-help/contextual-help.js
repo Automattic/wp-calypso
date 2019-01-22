@@ -764,6 +764,7 @@ const contextLinksForSection = {
 	comments: [
 		{
 			link: 'http://en.support.wordpress.com/comments/',
+			post_id: 113,
 			title: 'Comments',
 			description: 'Comments are a way for visitors to add feedback to your posts and pages.',
 		},
@@ -777,6 +778,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/unwanted-comments/',
+			post_id: 5882,
 			title: 'Unwanted Comments and Comment Spam',
 			description:
 				'There are many ways to protect your WordPress.com blogs from unwanted comments. Learn all about them!',
