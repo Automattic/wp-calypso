@@ -325,7 +325,7 @@
     "socket.io": "2.2.0",
     "stacktrace-gps": "3.0.2",
     "stylelint": "9.9.0",
-    "supertest": "3.4.1",
+    "supertest": "3.4.2",
     "webpack-hot-middleware": "2.24.3",
     "whybundled": "1.4.2"
   },
