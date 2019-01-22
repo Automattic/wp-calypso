@@ -8,21 +8,35 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-import { navigation, siteSelection, sites } from 'my-sites/controller';
-import controller from 'my-sites/site-settings/controller';
-import settingsController from 'my-sites/site-settings/settings-controller';
-import { reasonComponents as reasons } from './disconnect-site';
+import {
+	deleteSite,
+	disconnectSite,
+	disconnectSiteConfirm,
+	exportSite,
+	general,
+	guidedTransfer,
+	importSite,
+	legacyRedirects,
+	manageConnection,
+	redirectIfCantDeleteSite,
+	redirectToGeneral,
+	startOver,
+	themeSetup,
+} from 'my-sites/site-settings/controller';
 import { makeLayout, render as clientRender } from 'controller';
+import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { reasonComponents as reasons } from './disconnect-site';
+import { setScroll, siteSettings } from 'my-sites/site-settings/settings-controller';
 
 export default function() {
-	page( '/settings', siteSelection, controller.redirectToGeneral );
+	page( '/settings', siteSelection, redirectToGeneral );
 	page(
 		'/settings/general/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.setScroll,
-		settingsController.siteSettings,
-		controller.general,
+		setScroll,
+		siteSettings,
+		general,
 		makeLayout,
 		clientRender
 	);
@@ -31,7 +45,7 @@ export default function() {
 		'/settings/import/:site_id',
 		siteSelection,
 		navigation,
-		controller.importSite,
+		importSite,
 		makeLayout,
 		clientRender
 	);
@@ -41,7 +55,7 @@ export default function() {
 			'/settings/export/guided/:host_slug?/:site_id',
 			siteSelection,
 			navigation,
-			controller.guidedTransfer,
+			guidedTransfer,
 			makeLayout,
 			clientRender
 		);
@@ -51,7 +65,7 @@ export default function() {
 		'/settings/export/:site_id',
 		siteSelection,
 		navigation,
-		controller.exportSite,
+		exportSite,
 		makeLayout,
 		clientRender
 	);
@@ -60,9 +74,9 @@ export default function() {
 		'/settings/delete-site/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.setScroll,
-		controller.redirectIfCantDeleteSite,
-		controller.deleteSite,
+		setScroll,
+		redirectIfCantDeleteSite,
+		deleteSite,
 		makeLayout,
 		clientRender
 	);
@@ -78,8 +92,8 @@ export default function() {
 	page(
 		`/settings/disconnect-site/:reason(${ reasonSlugs.join( '|' ) })?/:site_id`,
 		siteSelection,
-		settingsController.setScroll,
-		controller.disconnectSite,
+		setScroll,
+		disconnectSite,
 		makeLayout,
 		clientRender
 	);
@@ -87,8 +101,8 @@ export default function() {
 	page(
 		'/settings/disconnect-site/confirm/:site_id',
 		siteSelection,
-		settingsController.setScroll,
-		controller.disconnectSiteConfirm,
+		setScroll,
+		disconnectSiteConfirm,
 		makeLayout,
 		clientRender
 	);
@@ -97,9 +111,9 @@ export default function() {
 		'/settings/start-over/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.setScroll,
-		controller.redirectIfCantDeleteSite,
-		controller.startOver,
+		setScroll,
+		redirectIfCantDeleteSite,
+		startOver,
 		makeLayout,
 		clientRender
 	);
@@ -107,8 +121,8 @@ export default function() {
 		'/settings/theme-setup/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.setScroll,
-		controller.themeSetup,
+		setScroll,
+		themeSetup,
 		makeLayout,
 		clientRender
 	);
@@ -117,18 +131,11 @@ export default function() {
 		'/settings/manage-connection/:site_id',
 		siteSelection,
 		navigation,
-		settingsController.setScroll,
-		controller.manageConnection,
+		setScroll,
+		manageConnection,
 		makeLayout,
 		clientRender
 	);
 
-	page(
-		'/settings/:section',
-		controller.legacyRedirects,
-		siteSelection,
-		sites,
-		makeLayout,
-		clientRender
-	);
+	page( '/settings/:section', legacyRedirects, siteSelection, sites, makeLayout, clientRender );
 }
