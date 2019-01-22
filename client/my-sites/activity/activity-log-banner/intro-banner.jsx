@@ -31,7 +31,7 @@ class IntroBanner extends Component {
 
 	recordDismiss = () => this.props.recordTracksEvent( 'calypso_activitylog_intro_banner_dismiss' );
 
-	cardContent() {
+	renderCardContent() {
 		const { siteIsJetpack, siteIsOnFreePlan, siteSlug, translate } = this.props;
 		const upgradePlan = siteIsJetpack ? PLAN_JETPACK_PERSONAL_MONTHLY : PLAN_PERSONAL;
 		const upgradeFeature = siteIsJetpack
@@ -114,7 +114,7 @@ class IntroBanner extends Component {
 					<CardHeading tagName="h1" size={ 24 }>
 						{ translate( 'Welcome to your site’s activity' ) }
 					</CardHeading>
-					{ this.cardContent() }
+					{ this.renderCardContent() }
 				</div>
 			</DismissibleCard>
 		);
