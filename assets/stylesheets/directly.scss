@@ -43,7 +43,7 @@
 }
 
 body {
-	color: var( --color-neutral-700 );
+	color: var( --color-text );
 	-webkit-font-smoothing: subpixel-antialiased;
 }
 
@@ -183,7 +183,7 @@ textarea {
 .chat-list-view-item-container {
 	background: $gray-lighten-30;
 	border-bottom: 1px solid lighten( $gray, 25% );
-	color: var( --color-neutral-700 );
+	color: var( --color-text );
 	padding: 18px 10px 18px 24px;
 	.chat-list-item-title {
 		margin-bottom: 2px;
