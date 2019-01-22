@@ -10,7 +10,7 @@ import { TextControl } from '@wordpress/components';
 import { RichText } from '@wordpress/editor';
 import { debounce } from 'lodash';
 
-const GIPHY_API_KEY = 'LtJmY9DnDJUA0';
+const GIPHY_API_KEY = 't1PkR1Vq0mzHueIFBvZSZErgFs9NBmYW';
 
 class GiphyEdit extends Component {
 	timer = null;
