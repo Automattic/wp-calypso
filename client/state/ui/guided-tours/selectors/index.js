@@ -23,7 +23,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'state/action-types';
-import { getSectionName } from 'state/ui/selectors';
+import { getSectionName, getSectionGroup } from 'state/ui/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import { getActionLog } from 'state/ui/action-log/selectors';
@@ -204,10 +204,10 @@ const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 export const getGuidedTourState = createSelector(
 	state => {
 		const emptyState = { shouldShow: false };
-
 		const tourState = getRawGuidedTourState( state );
 		const tour = findEligibleTour( state );
-		const shouldShow = !! tour;
+		const isGutenberg = getSectionGroup( state ) === 'gutenberg';
+		const shouldShow = !! tour && ! isGutenberg;
 		const isPaused = !! tourState.isPaused;
 
 		debug(

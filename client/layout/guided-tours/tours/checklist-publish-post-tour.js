@@ -5,7 +5,7 @@
  */
 
 import React, { Fragment } from 'react';
-import { delay, noop, negate as not } from 'lodash';
+import { delay, negate as not } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -59,7 +59,7 @@ function openFeatureImageUploadDialog() {
 }
 
 export const ChecklistPublishPostTour = makeTour(
-	<Tour name="checklistPublishPost" version="20171205" path="/non-existent-route" when={ noop }>
+	<Tour name="checklistPublishPost" version="20171205" path="/non-existent-route">
 		<Step
 			name="init"
 			placement="right"

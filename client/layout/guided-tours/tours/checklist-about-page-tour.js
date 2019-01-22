@@ -5,7 +5,6 @@
  */
 
 import React, { Fragment } from 'react';
-import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -22,7 +21,7 @@ import {
 import { SetFeaturedImageButton, UpdateButton } from '../button-labels';
 
 export const ChecklistAboutPageTour = makeTour(
-	<Tour name="checklistAboutPage" version="20171205" path="/non-existent-route" when={ noop }>
+	<Tour name="checklistAboutPage" version="20171205" path="/non-existent-route">
 		<Step name="init" target="page-about" arrow="top-left" placement="below">
 			{ ( { translate } ) => (
 				<Fragment>
