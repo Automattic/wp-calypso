@@ -2,10 +2,14 @@
 .search-filters__dropdown-filters {
 	align-items: center;
 	border-left: 1px solid var( --color-neutral-100 );
-	display: flex;
-	height: 51px; // same as .search
-	transition: 0.1s all linear;
+	height: 51px;// same as .search
 	z-index: z-index( 'root', '.search' );
+
+	// Move the filter so its "inside" the
+	// search input
+	position: absolute;
+	top: 0;
+	right: 0;
 
 	.button {
 		align-items: center;
@@ -21,10 +25,18 @@
 		.gridicon {
 			top: 0;
 			margin-right: 0;
+
+			@include breakpoint( '<660px' ) {
+				top: 2px;
+			}
 		}
 
 		.search-filters__dropdown-filters-button-text {
 			line-height: 1.2;
+
+			@include breakpoint( '<660px' ) {
+				display: none;
+			}
 		}
 	}
 
