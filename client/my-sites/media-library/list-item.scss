@@ -74,10 +74,10 @@
 .media-library__list-item.is-transient .media-library__list-item-figure::after {
 	content: '';
 	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
 	background-color: rgba( $white, 0.75 );
 	border-radius: 0;
 	z-index: z-index(
