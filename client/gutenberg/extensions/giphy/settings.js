@@ -35,9 +35,9 @@ export const settings = {
 		searchText: {
 			type: 'string',
 		},
-		topPadding: {
-			type: 'number',
-			default: 56.2,
+		paddingTop: {
+			type: 'string',
+			default: '56.2%',
 		},
 	},
 	supports: {

@@ -87,11 +87,12 @@ class GiphyEdit extends Component {
 				if ( ! giphyData.images ) {
 					return;
 				}
-				const topPadding = Math.floor(
+				const calculatedPaddingTop = Math.floor(
 					( giphyData.images.original.height / giphyData.images.original.width ) * 100
 				);
+				const paddingTop = `${ calculatedPaddingTop }%`;
 				const giphyUrl = giphyData.embed_url;
-				setAttributes( { giphyUrl, topPadding } );
+				setAttributes( { giphyUrl, paddingTop } );
 				this.maintainFocus( 500 );
 			} else {
 				// Error handling TK
@@ -134,11 +135,9 @@ class GiphyEdit extends Component {
 
 	render() {
 		const { attributes, className, isSelected, setAttributes } = this.props;
-		const { align, caption, giphyUrl, searchText, topPadding } = attributes;
+		const { align, caption, giphyUrl, searchText, paddingTop } = attributes;
 		const { focus } = this.state;
-		const style = {
-			paddingTop: `${ topPadding }%`,
-		};
+		const style = { paddingTop };
 		const classes = classNames( className, `align${ align }` );
 		const textControlClasses = classNames(
 			'wp-block-jetpack-giphy_text-input-field',
