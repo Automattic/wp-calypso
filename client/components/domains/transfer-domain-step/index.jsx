@@ -195,7 +195,7 @@ class TransferDomainStep extends React.Component {
 	};
 
 	addTransfer() {
-		const { translate } = this.props;
+		const { cart, selectedSite, translate } = this.props;
 		const { searchQuery, submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
 		const domainProductPrice = this.getProductPriceText();
@@ -217,6 +217,7 @@ class TransferDomainStep extends React.Component {
 
 					<div className="transfer-domain-step__add-domain" role="group">
 						<FormTextInputWithAffixes
+							autoFocus={ true }
 							prefix="http://"
 							type="text"
 							value={ searchQuery }
@@ -226,7 +227,11 @@ class TransferDomainStep extends React.Component {
 							onFocus={ this.recordInputFocus }
 						/>
 						<Button
-							disabled={ ! getTld( searchQuery ) || submitting }
+							disabled={
+								! getTld( searchQuery ) ||
+								hasToUpgradeToPayForADomain( selectedSite, cart, searchQuery ) ||
+								submitting
+							}
 							busy={ submitting }
 							className="transfer-domain-step__go button is-primary"
 							onClick={ this.handleFormSubmit }
@@ -364,16 +369,23 @@ class TransferDomainStep extends React.Component {
 			content = this.getTransferRestrictionMessage();
 		} else if ( precheck && ! isSignupStep ) {
 			content = this.getTransferDomainPrecheck();
-		} else if ( hasToUpgradeToPayForADomain( selectedSite, cart, searchQuery ) ) {
-			content = (
-				<Banner
-					description={ translate( 'To transfer your own domain, upgrade to a personal plan.' ) }
-					plan={ PLAN_PERSONAL }
-					title={ translate( 'Personal plan required' ) }
-				/>
-			);
 		} else {
 			content = this.addTransfer();
+		}
+
+		if ( hasToUpgradeToPayForADomain( selectedSite, cart, searchQuery ) ) {
+			content = (
+				<div>
+					<Banner
+						description={ translate(
+							'Only .blog domains are included with your plan, to use a different tld upgrade to a personal plan.'
+						) }
+						plan={ PLAN_PERSONAL }
+						title={ translate( 'Personal plan required' ) }
+					/>
+					{ content }
+				</div>
+			);
 		}
 
 		const header = ! isSignupStep && (

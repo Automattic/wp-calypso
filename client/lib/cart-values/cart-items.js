@@ -1078,8 +1078,12 @@ export function shouldBundleDomainWithPlan(
  * @return {boolean} See description
  */
 export function hasToUpgradeToPayForADomain( selectedSite, cart, domain ) {
+	if ( ! domain || ! getTld( domain ) ) {
+		return false;
+	}
+
 	const sitePlanSlug = ( ( selectedSite || {} ).plan || {} ).product_slug;
-	const isDotBlogDomain = domain && getTld( domain ) === 'blog';
+	const isDotBlogDomain = 'blog'.startsWith( getTld( domain ) );
 
 	if ( sitePlanSlug && ( isWpComBloggerPlan( sitePlanSlug ) && ! isDotBlogDomain ) ) {
 		return true;
