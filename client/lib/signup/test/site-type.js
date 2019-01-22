@@ -38,5 +38,6 @@ describe( 'getSiteTypePropertyValue()', () => {
 
 	test( 'should return value of supplied property', () => {
 		expect( getSiteTypePropertyValue( 'id', 1, 'slug', siteTypes ) ).toEqual( 'blah' );
+		expect( getSiteTypePropertyValue( 'slug', 'nah', 'id', siteTypes ) ).toEqual( 2 );
 	} );
 } );

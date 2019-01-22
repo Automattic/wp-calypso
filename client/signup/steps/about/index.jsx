@@ -32,6 +32,8 @@ import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { abtest } from 'lib/abtest';
 import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { getSiteVerticalId } from 'state/signup/steps/site-vertical/selectors';
+import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
 
 //Form components
 import Card from 'components/card';
@@ -60,8 +62,9 @@ class AboutStep extends Component {
 			isValidLandingPageVertical( props.siteTopic ) &&
 			props.queryObject.vertical === props.siteTopic;
 		this.state = {
-			siteTopicValue: this.props.siteTopic,
-			userExperience: this.props.userExperience,
+			verticalId: props.verticalId,
+			siteTopicValue: props.siteTopic,
+			userExperience: props.userExperience,
 			showStore: false,
 			pendingStoreClick: false,
 			hasPrepopulatedVertical,
@@ -102,8 +105,9 @@ class AboutStep extends Component {
 
 	setPressableStore = ref => ( this.pressableStore = ref );
 
-	onSiteTopicChange = ( { vertical_name, vertical_slug } ) => {
+	onSiteTopicChange = ( { vertical_id, vertical_name, vertical_slug } ) => {
 		this.setState( {
+			verticalId: vertical_id,
 			siteTopicValue: vertical_name,
 			siteTopicSlug: vertical_slug,
 		} );
@@ -212,6 +216,15 @@ class AboutStep extends Component {
 			vertical: eventAttributes.site_topic,
 			otherText: '',
 			siteType: designType,
+		} );
+
+		// Update the vertical state tree used for onboarding flows
+		// to maintain consistency
+		this.props.setSiteVertical( {
+			id: this.state.verticalId,
+			name: this.state.siteTopicValue,
+			slug: this.state.siteTopicSlug,
+			isUserInput: ! this.state.verticalId,
 		} );
 
 		//Site Goals
@@ -576,6 +589,7 @@ export default connect(
 		userExperience: getUserExperience( state ),
 		siteType: getSiteType( state ),
 		isLoggedIn: isUserLoggedIn( state ),
+		verticalId: getSiteVerticalId( state ),
 		shouldHideSiteGoals:
 			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
 		shouldHideSiteTitle:
@@ -592,5 +606,6 @@ export default connect(
 		setSurvey,
 		setUserExperience,
 		recordTracksEvent,
+		setSiteVertical,
 	}
 )( localize( AboutStep ) );

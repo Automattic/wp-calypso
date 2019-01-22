@@ -4,6 +4,7 @@
  * Internal dependencies
  */
 import {
+	getSiteVerticalId,
 	getSiteVerticalName,
 	getSiteVerticalSlug,
 	getSiteVerticalIsUserInput,
@@ -15,6 +16,7 @@ describe( 'selectors', () => {
 		signup: {
 			steps: {
 				siteVertical: {
+					id: 'p4u',
 					name: 'felice',
 					slug: 'happy',
 					isUserInput: false,
@@ -59,6 +61,15 @@ describe( 'selectors', () => {
 
 		test( 'should return site vertical from the state', () => {
 			expect( getSiteVerticalPreview( state ) ).toEqual( state.signup.steps.siteVertical.preview );
+		} );
+	} );
+	describe( 'getSiteVerticalId', () => {
+		test( 'should return empty string as a default state', () => {
+			expect( getSiteVerticalId( {} ) ).toBe( '' );
+		} );
+
+		test( 'should return site id from the state', () => {
+			expect( getSiteVerticalId( state ) ).toEqual( state.signup.steps.siteVertical.id );
 		} );
 	} );
 } );

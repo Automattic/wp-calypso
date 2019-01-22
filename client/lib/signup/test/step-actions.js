@@ -51,6 +51,7 @@ describe( 'createSiteWithCart()', () => {
 		createSiteWithCart(
 			response => {
 				expect( response.requestBody.options.site_vertical ).toEqual( vertical );
+				expect( response.requestBody.options.site_vertical_id ).toBeUndefined();
 			},
 			[],
 			[],
@@ -59,13 +60,16 @@ describe( 'createSiteWithCart()', () => {
 	} );
 
 	test( 'should use the site topic state if it is not empty.', () => {
-		const siteTopic = 'foo topic';
+		const verticalId = 'meh';
+		const siteTopicSlug = 'foo topic';
 		const fakeStore = {
 			getState: () => ( {
 				signup: {
 					steps: {
+						siteType: 'blog',
 						siteVertical: {
-							name: siteTopic,
+							id: verticalId,
+							slug: siteTopicSlug,
 						},
 						survey: {
 							vertical: 'should not use this',
@@ -77,7 +81,9 @@ describe( 'createSiteWithCart()', () => {
 
 		createSiteWithCart(
 			response => {
-				expect( response.requestBody.options.site_vertical ).toEqual( siteTopic );
+				expect( response.requestBody.options.site_vertical_id ).toEqual( verticalId );
+				expect( response.requestBody.options.site_vertical ).toEqual( siteTopicSlug );
+				expect( response.requestBody.options.site_segment ).toEqual( 'blog' );
 			},
 			[],
 			[],

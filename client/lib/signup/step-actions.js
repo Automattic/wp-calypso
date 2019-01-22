@@ -24,7 +24,7 @@ import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
+import { getSiteVerticalId, getSiteVerticalSlug } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
@@ -36,6 +36,7 @@ import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
 import { normalizeImportUrl } from 'state/importer-nux/utils';
 import { promisify } from '../../utils';
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
@@ -108,7 +109,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 // We are experimenting making site topic (site vertical name) a separate step from the survey.
 // Once we've decided to fully move away from the survey form, we can just keep the site vertical name here.
 function getSiteVertical( state ) {
-	return ( getSiteVerticalName( state ) || getSurveyVertical( state ) ).trim();
+	return ( getSiteVerticalSlug( state ) || getSurveyVertical( state ) ).trim();
 }
 
 export function createSiteWithCart(
@@ -130,6 +131,7 @@ export function createSiteWithCart(
 
 	const designType = getDesignType( state ).trim();
 	const siteTitle = getSiteTitle( state ).trim();
+	const siteVerticalId = getSiteVerticalId( state );
 	const siteVertical = getSiteVertical( state );
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
@@ -144,12 +146,16 @@ export function createSiteWithCart(
 			// step object itself depending on if the theme is provided in a
 			// query. See `getThemeSlug` in `DomainsStep`.
 			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
-			vertical: siteVertical || undefined, // `options.vertical` is deprecated in favour of `options.site_vertical`
+			// `options.vertical` will be deprecated in favour of `options.site_vertical`
+			vertical: siteVertical || undefined,
 			siteGoals: siteGoals || undefined,
 			site_style: siteStyle || undefined,
 			site_information: siteInformation || undefined,
-			siteType: siteType || undefined, // `options.siteType` is deprecated in favour of `options.site_segment`
+			// `options.siteType` will be deprecated in favour of `options.site_segment`
+			siteType: siteType || undefined,
+			site_segment_id: getSiteTypePropertyValue( 'slug', siteType, 'id' ) || undefined,
 			site_segment: siteType || undefined,
+			site_vertical_id: siteVerticalId || undefined,
 			site_vertical: siteVertical || undefined,
 		},
 		validate: false,
