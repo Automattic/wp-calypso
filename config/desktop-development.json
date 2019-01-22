@@ -46,7 +46,6 @@
 		"guided-tours/design-showcase-welcome": true,
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
-		"gutenberg": false,
 		"gutenberg/opt-in": false,
 		"help": true,
 		"help/courses": true,
