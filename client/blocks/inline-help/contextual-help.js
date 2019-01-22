@@ -617,6 +617,7 @@ const contextLinksForSection = {
 	plans: [
 		{
 			link: 'http://en.support.wordpress.com/discover-the-wordpress-com-plans/',
+			post_id: 140323,
 			title: 'Explore the WordPress.com Plans',
 			description:
 				"Upgrading your plan unlocks a ton of features! We'll help you pick the best fit for your needs and goals.",
@@ -630,6 +631,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/auto-renewal/',
+			post_id: 110924,
 			title: 'Subscriptions for Plans and Domains',
 			description:
 				'Your WordPress.com plans and any domains you add to your sites are based on a yearly ' +
