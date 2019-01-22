@@ -8,7 +8,7 @@
 .suggestions__item {
 	padding: 12px 16px;
 	background: $white;
-	border: 1px solid darken( $gray-light, 10% );
+	border: 1px solid var( --color-border-subtle );
 	border-top: 0;
 	font-size: 15px;
 	white-space: pre-wrap;
@@ -16,8 +16,8 @@
 	text-align: left;
 	margin: 0;
 	&.has-highlight {
-		background-color: var( --color-accent );
-		color: $white;
+		background-color: var( --color-neutral-0 );
+		color: var( --color-text );
 	}
 }
 
