@@ -29,10 +29,25 @@
 		}
 	}
 
-	&:not( [disabled] ):hover {
-		&,
-		.language-picker__icon {
-			border-color: var( --color-neutral-200 );
+	&:not( [disabled] ) {
+		&:hover {
+			&,
+			.language-picker__icon {
+				border-color: var( --color-neutral-200 );
+			}
+		}
+
+		&:focus {
+			&,
+			.language-picker__icon {
+				border-color: var( --color-primary );
+			}
+
+			box-shadow: 0 0 0 2px var( --color-primary-100 );
+
+			&:hover {
+				box-shadow: 0 0 0 2px var( --color-primary-200 );
+			}
 		}
 	}
 
@@ -48,11 +63,6 @@
 			height: 30px;
 			background-color: var( --color-neutral-0 );
 		}
-	}
-
-	&:focus {
-		border-color: var( --color-primary );
-		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 }
 
