@@ -152,9 +152,10 @@
 
 		.date-picker__day {
 			padding: 0 7px;
-		}
-		.date-picker__day:hover {
-			padding: 0;
+			&:hover,
+			&:focus {
+				padding: 0;
+			}
 		}
 	}
 
@@ -195,7 +196,8 @@
 		display: block;
 		z-index: 0;
 		background: transparent;
-		&:hover {
+		&:hover,
+		&:focus {
 			padding: 0 7px;
 		}
 	}
@@ -217,8 +219,9 @@
 	.DayPicker-Day.DayPicker-Day--selected .date-picker__day {
 		background-color: var( --color-primary-light );
 		border-radius: 0;
-		color: #FFF;
-		&:hover {
+		color: $white;
+		&:hover,
+		&:focus {
 			padding: 0 7px;
 		}
 	}
@@ -231,7 +234,8 @@
 		position: relative;
 		display: block;
 		z-index: 0;
-		&:hover {
+		&:hover,
+		&:focus {
 			padding: 0;
 		}
 	}
@@ -270,9 +274,12 @@
 	.DayPicker-Day--start.DayPicker-Day--end .date-picker__day::after {
 		background: transparent;
 	}
-
+	.DayPicker-Day.DayPicker-Day--disabled,
 	.DayPicker-Day--disabled .date-picker__day {
 		cursor: default;
+		&:hover {
+			background: transparent;
+		}
 	}
 
 	.gridicons-info {
@@ -286,8 +293,7 @@
 		color: var( --color-text-subtle );
 
 		&:hover,
-		&:focus,
-		&:active {
+		&:focus {
 			color: var( --color-neutral-700 );
 		}
 
