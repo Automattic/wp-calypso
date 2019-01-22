@@ -132,6 +132,14 @@ export default {
 		},
 		defaultVariation: 'keep',
 	},
+	gSuitePlan: {
+		datestamp: '20190117',
+		variations: {
+			basic: 99,
+			business: 1,
+		},
+		defaultVariation: 'basic',
+	},
 	domainSearchButtonStyles: {
 		datestamp: '20190119',
 		variations: {
