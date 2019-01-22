@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import apiFetch from '@wordpress/api-fetch';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import classNames from 'classnames';
 import { Component, createRef } from '@wordpress/element';
@@ -70,15 +71,12 @@ class GiphyEdit extends Component {
 		return split[ split.length - 1 ];
 	};
 
-	fetch = url => {
-		const { setAttributes } = this.props;
-		const xhr = new XMLHttpRequest();
-		xhr.open( 'GET', url );
-		xhr.onload = () => {
-			if ( xhr.status === 200 ) {
-				const res = JSON.parse( xhr.responseText );
-				const giphyData = res.data.length > 0 ? res.data[ 0 ] : res.data;
+	fetch = url =>
+		apiFetch( { url, credentials: 'omit', externalApi: true } ).then(
+			( { data } ) => {
+				const { setAttributes } = this.props;
 				// No results
+				const giphyData = data.length > 0 ? data[ 0 ] : data;
 				if ( ! giphyData.images ) {
 					return;
 				}
@@ -89,12 +87,10 @@ class GiphyEdit extends Component {
 				const giphyUrl = giphyData.embed_url;
 				setAttributes( { giphyUrl, paddingTop } );
 				this.maintainFocus( 500 );
-			} else {
-				// Error handling TK
-			}
-		};
-		xhr.send();
-	};
+			},
+			// eslint-disable-next-line no-console
+			'production' === process.env.NODE_ENV ? err => console.error( err ) : undefined
+		);
 
 	setFocus = () => {
 		this.maintainFocus();
