@@ -10,6 +10,7 @@ import { pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, getSiteAdminUrl } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
@@ -28,7 +29,8 @@ class CalypsoifyIframe extends Component {
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ /* eslint-disable-next-line jsx-a11y/iframe-has-title, wpcalypso/jsx-classname-namespace */ }
-					<iframe ref={ this.setIframeRef } className={ 'is-iframe-loaded' } src={ iframeUrl } />
+					<iframe className={ 'is-iframe-loaded' } src={ iframeUrl } />
+					<AsyncLoad require="blocks/inline-help" placeholder={ null } />
 				</div>
 			</Fragment>
 		);
