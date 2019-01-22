@@ -16,15 +16,15 @@ import { debounce } from 'lodash';
 import { settings } from './settings.js';
 
 class GiphyEdit extends Component {
-	constructor() {
-		super( ...arguments );
-		this.state = {
-			focus: false,
-		};
-		this.timer = null;
-		this.textControlRef = createRef();
-		this.debouncedParseSearch = debounce( this.parseSearch, 250 );
-	}
+	timer = null;
+	textControlRef = createRef();
+
+	state = {
+		focus: false,
+	};
+
+	debouncedParseSearch = debounce( this.parseSearch, 250 );
+
 	componentWillUnmount() {
 		this.debouncedParseSearch.cancel();
 	}
