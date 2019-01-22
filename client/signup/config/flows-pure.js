@@ -327,7 +327,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	};
 
 	flows[ 'site-launch' ] = {
-		steps: [ 'domains-site-selected', 'plans' ],
+		steps: [ 'domains-site-selected', 'plans', 'launch' ],
 		destination: getSiteDestination,
 		description: 'A flow to launch a private site.',
 		providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],

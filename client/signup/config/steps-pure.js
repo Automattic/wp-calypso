@@ -522,6 +522,12 @@ export function generateSteps( {
 			dependencies: [ 'themeSlugWithRepo' ],
 			delayApiRequestUntilComplete: true,
 		},
+
+		launch: {
+			stepName: 'launch',
+			dependencies: [ 'siteId', 'siteSlug' ],
+			providesDependencies: [ 'siteId', 'siteSlug' ],
+		},
 	};
 }
 

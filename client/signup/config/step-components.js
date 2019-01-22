@@ -37,6 +37,7 @@ import UserSignupComponent from 'signup/steps/user';
 import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
 import PlansAtomicStoreComponent from 'signup/steps/plans-atomic-store';
 import ReaderLandingStepComponent from 'signup/steps/reader-landing';
+import LaunchSiteComponent from 'signup/steps/launch-site';
 
 export default {
 	about: AboutStepComponent,
@@ -101,4 +102,5 @@ export default {
 	'site-information-address-with-preview': SiteInformationComponent,
 	'site-information-phone-with-preview': SiteInformationComponent,
 	'domains-with-preview': DomainsStepComponent,
+	launch: LaunchSiteComponent,
 };
