@@ -110,7 +110,7 @@
 			}
 		}
 
-		-webkit-tap-highlight-color: rgba( $gray-dark, 0.2 );
+		-webkit-tap-highlight-color: rgba( var( --color-neutral-700-rgb ), 0.2 );
 
 		.sidebar__menu-link-secondary-text {
 			padding: 3px 8px 4px;

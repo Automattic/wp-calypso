@@ -68,7 +68,7 @@
 	width: 46px;
 	height: 46px;
 	transform: translateY( -50% );
-	background-color: rgba( $gray-dark, 0.85 );
+	background-color: rgba( var( --color-neutral-700-rgb ), 0.85 );
 	border-radius: 24px;
 	color: $white;
 	cursor: pointer;

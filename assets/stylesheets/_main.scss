@@ -25,7 +25,7 @@
 	right: 0;
 	padding: 6px;
 	color: $white;
-	background: rgba( $gray-dark, 0.8 );
+	background: rgba( var( --color-neutral-700-rgb ), 0.8 );
 	text-align: center;
 	z-index: z-index( 'root', '.wpcom-site__global-noscript' );
 }
