@@ -61,12 +61,12 @@ class GiphyEdit extends Component {
 	urlForSearch = searchText => {
 		const { apiKey } = settings;
 		const encoded = searchText.replace( ' ', '+' );
-		return `//api.giphy.com/v1/gifs/search?q=${ encoded }&api_key=${ apiKey }&limit=1&offset=0`;
+		return `//api.giphy.com/v1/gifs/search?q=${ encoded }&api_key=${ apiKey }&limit=1`;
 	};
 
 	urlForId = giphyId => {
 		const { apiKey } = settings;
-		return `//api.giphy.com/v1/gifs/${ giphyId }?api_key=${ apiKey }&limit=1&offset=0`;
+		return `//api.giphy.com/v1/gifs/${ giphyId }?api_key=${ apiKey }`;
 	};
 
 	splitAndLast = ( array, delimiter ) => {
