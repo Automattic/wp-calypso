@@ -3,15 +3,15 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import DismissibleCard from 'blocks/dismissible-card';
-import CardHeading from 'components/card-heading';
 import Button from 'components/button';
+import CardHeading from 'components/card-heading';
+import DismissibleCard from 'blocks/dismissible-card';
 import {
 	FEATURE_JETPACK_ESSENTIAL,
 	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
