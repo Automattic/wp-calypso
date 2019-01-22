@@ -11,8 +11,18 @@ import { connect } from 'react-redux';
  */
 import AsyncLoad from 'components/async-load';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteAdminUrl, getSiteOption } from 'state/sites/selectors';
+import { getSiteOption, getSiteAdminUrl } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
+
+const getIframeUrl = ( siteAdminUrl, postId, postType ) => {
+	if ( postId ) {
+		return `${ siteAdminUrl }post.php?post=${ postId }&action=edit&calypsoify=1`;
+	}
+	if ( 'post' === postType ) {
+		return `${ siteAdminUrl }post-new.php?calypsoify=1`;
+	}
+	return `${ siteAdminUrl }post-new.php?post_type=${ postType }&calypsoify=1`;
+};
 
 class CalypsoifyIframe extends Component {
 	render() {
@@ -31,14 +41,16 @@ class CalypsoifyIframe extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const frameNonce = getSiteOption( state, siteId, 'frame_nonce' ) || '';
+	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+
 	const iframeUrl = addQueryArgs(
 		{
 			'frame-nonce': frameNonce,
 		},
-		getSiteAdminUrl( state, siteId, 'post-new.php' )
+		getIframeUrl( siteAdminUrl, ownProps.postId, ownProps.postType )
 	);
 
 	return {
