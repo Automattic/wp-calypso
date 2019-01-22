@@ -159,7 +159,7 @@ class GiphyEdit extends Component {
 							onKeyDown={ this.setFocus }
 							ref={ this.textControlRef }
 							role="button"
-							tabindex="0"
+							tabIndex="0"
 						>
 							{ ( ! searchText || isSelected ) && (
 								<TextControl
