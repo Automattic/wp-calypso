@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { createBlock } from '@wordpress/blocks';
-import { filter } from 'lodash';
+import { every, filter, get } from 'lodash';
 import { Path, SVG } from '@wordpress/components';
 
 /**
@@ -120,6 +120,35 @@ export const settings = {
 		from: [
 			{
 				type: 'block',
+				isMultiBlock: true,
+				blocks: [ 'core/image' ],
+				transform: attributes => {
+					const objectsWithValidAlign = filter( attributes, object =>
+						settings.supports.align.includes( object.align )
+					);
+
+					// Init the align attribute from the first item which may be either the placeholder or an image.
+					let align = get( objectsWithValidAlign, [ 0, 'align' ], undefined );
+
+					// Loop through all the images with valid align and check if they have the same align
+					align = every( objectsWithValidAlign, [ 'align', align ] ) ? align : undefined;
+
+					const validImages = filter( attributes, ( { id, url } ) => id && url );
+
+					return createBlock( `jetpack/${ name }`, {
+						images: validImages.map( ( { id, url, alt, caption } ) => ( {
+							id,
+							url,
+							alt,
+							caption,
+						} ) ),
+						ids: validImages.map( ( { id } ) => id ),
+						align,
+					} );
+				},
+			},
+			{
+				type: 'block',
 				blocks: [ 'core/gallery' ],
 				transform: attributes => {
 					const validImages = filter( attributes.images, ( { id, url } ) => id && url );
@@ -194,10 +223,10 @@ export const settings = {
 			{
 				type: 'block',
 				blocks: [ 'core/image' ],
-				transform: ( { images } ) => {
+				transform: ( { align, images } ) => {
 					if ( images.length > 0 ) {
 						return images.map( ( { id, url, alt, caption } ) =>
-							createBlock( 'core/image', { id, url, alt, caption } )
+							createBlock( 'core/image', { align, id, url, alt, caption } )
 						);
 					}
 					return createBlock( 'core/image' );
