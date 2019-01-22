@@ -23,7 +23,7 @@ class ReaderLandingStepContent extends PureComponent {
 	render() {
 		const { translate } = this.props;
 		return (
-			<div className="reader-landing">			
+			<>			
 				<div className="reader-landing__button-wrapper">
 					<Button
 						primary={ true }
@@ -55,7 +55,6 @@ class ReaderLandingStepContent extends PureComponent {
 							</p>
 						</div>
 					</div>
-                 </div>
 
 					<div className="reader-landing__feature is-even">
 						<img
@@ -123,6 +122,7 @@ class ReaderLandingStepContent extends PureComponent {
 					</Button>
 				</div>
 			</Card>
+          </>
 		);
 	}
 }
