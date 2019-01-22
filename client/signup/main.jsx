@@ -150,7 +150,7 @@ class Signup extends React.Component {
 			return page.redirect(
 				getStepUrl(
 					this.props.flowName,
-					flows.getFlow( this.props.flowName ).steps[ 0 ],
+					this.signupFlowController.getFlow().steps[ 0 ],
 					this.props.locale
 				)
 			);
@@ -260,7 +260,7 @@ class Signup extends React.Component {
 			flowName,
 		} = this.props;
 
-		const flowSteps = flows.getFlow( flowName ).steps;
+		const flowSteps = this.signupFlowController.getFlow().steps;
 		const fulfilledSteps = [];
 
 		// `vertical` query parameter
@@ -426,7 +426,7 @@ class Signup extends React.Component {
 	};
 
 	firstUnsubmittedStepName = () => {
-		const currentSteps = flows.getFlow( this.props.flowName ).steps,
+		const currentSteps = this.signupFlowController.getFlow().steps,
 			signupProgress = getFilteredSteps( this.props.flowName, this.props.progress ),
 			nextStepName = currentSteps[ signupProgress.length ],
 			firstInProgressStep = find( signupProgress, { status: 'in-progress' } ) || {},
@@ -484,16 +484,17 @@ class Signup extends React.Component {
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
-		const flowSteps = flows.getFlow( nextFlowName, this.props.stepName ).steps,
+		if ( nextFlowName !== this.props.flowName ) {
+			// SignupActions.changeSignupFlow( nextFlowName );
+			this.signupFlowController.changeFlowName( nextFlowName );
+			this.setState( { previousFlowName: this.props.flowName } );
+		}
+
+		const flowSteps = this.signupFlowController.getFlow( this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
 			nextProgressItem = this.props.progress[ currentStepIndex + 1 ],
 			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
-
-		if ( nextFlowName !== this.props.flowName ) {
-			SignupActions.changeSignupFlow( nextFlowName );
-			this.setState( { previousFlowName: this.props.flowName } );
-		}
 
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );
 	};
@@ -519,18 +520,18 @@ class Signup extends React.Component {
 	};
 
 	isEveryStepSubmitted = ( progress = this.props.progress ) => {
-		const flowSteps = flows.getFlow( this.props.flowName ).steps;
+		const flowSteps = this.signupFlowController.getFlow().steps;
 		const completedSteps = getCompletedSteps( this.props.flowName, progress );
 		return flowSteps.length === completedSteps.length;
 	};
 
 	getPositionInFlow() {
-		const { flowName, stepName } = this.props;
-		return indexOf( flows.getFlow( flowName ).steps, stepName );
+		const { stepName } = this.props;
+		return indexOf( this.signupFlowController.getFlow().steps, stepName );
 	}
 
 	getFlowLength() {
-		return flows.getFlow( this.props.flowName ).steps.length;
+		return this.signupFlowController.getFlow().steps.length;
 	}
 
 	renderCurrentStep() {
@@ -539,7 +540,7 @@ class Signup extends React.Component {
 			CurrentComponent = stepComponents[ this.props.stepName ],
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
 			stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName,
-			flow = flows.getFlow( this.props.flowName ),
+			flow = this.signupFlowController.getFlow(),
 			hideFreePlan = !! (
 				this.state.plans ||
 				( ( isDomainRegistration( domainItem ) ||

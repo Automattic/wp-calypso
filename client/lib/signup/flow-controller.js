@@ -294,8 +294,8 @@ assign( SignupFlowController.prototype, {
 		SignupActions.changeSignupFlow( this._flowName );
 	},
 
-	getFlow() {
-		return flows.getFlow( this._flowName );
+	getFlow( currentStep = '' ) {
+		return flows.getFlow( this._flowName, currentStep );
 	},
 } );
 
