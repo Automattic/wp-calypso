@@ -378,7 +378,7 @@ class TransferDomainStep extends React.Component {
 				<div>
 					<Banner
 						description={ translate(
-							'Only .blog domains are included with your plan, to use a different tld upgrade to a personal plan.'
+							'Only .blog domains are included with your plan, to use a different tld upgrade to a Personal plan.'
 						) }
 						plan={ PLAN_PERSONAL }
 						title={ translate( 'Personal plan required' ) }
