@@ -1,6 +1,7 @@
 {
   "production": [
     "contact-form",
+    "mailchimp",
     "map",
     "markdown",
     "publicize",
@@ -11,7 +12,6 @@
     "tiled-gallery"
   ],
   "beta": [
-    "mailchimp",
     "giphy",
     "vr"
   ]
