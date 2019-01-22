@@ -131,7 +131,7 @@
 	input[type='text'] {
 		&:focus {
 			border-color: $green-jetpack;
-			box-shadow: 0 0 0 2px lighten( $green-jetpack, 25% );
+			box-shadow: 0 0 0 2px var( --color-jetpack-light );
 		}
 	}
 
@@ -143,18 +143,18 @@
 
 		&:hover,
 		&:focus {
-			border-color: darken( $green-jetpack, 30% );
+			border-color: var( --color-jetpack-dark );
 		}
 
 		&:focus {
-			box-shadow: 0 0 0 2px lighten( $green-jetpack, 25% );
+			box-shadow: 0 0 0 2px var( --color-jetpack-light );
 		}
 
 		&[disabled],
 		&:disabled {
 			background: tint( $green-jetpack, 50% );
 			border-color: tint( $green-jetpack, 35% );
-			color: $white;
+			color: var( --color-white );
 		}
 	}
 }
