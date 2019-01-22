@@ -21,12 +21,11 @@ import {
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { isFreePlan } from 'lib/plans';
-//import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class IntroBanner extends Component {
-	recordLearnMore = () => {
-		//console.log( 'TO DO, record track: calypso_activitylog_intro_banner_learn_more' );
-	};
+	recordLearnMore = () =>
+		this.props.recordTracksEvent( 'calypso_activitylog_intro_banner_learn_more' );
 
 	cardContent() {
 		const { siteIsJetpack, siteIsOnFreePlan, siteSlug, translate } = this.props;
@@ -116,9 +115,14 @@ class IntroBanner extends Component {
 	}
 }
 
-export default connect( ( state, { siteId } ) => ( {
-	siteId,
-	siteIsJetpack: isJetpackSite( state, siteId ),
-	siteIsOnFreePlan: isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ),
-	siteSlug: getSiteSlug( state, siteId ),
-} ) )( localize( IntroBanner ) );
+export default connect(
+	( state, { siteId } ) => ( {
+		siteId,
+		siteIsJetpack: isJetpackSite( state, siteId ),
+		siteIsOnFreePlan: isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ),
+		siteSlug: getSiteSlug( state, siteId ),
+	} ),
+	{
+		recordTracksEvent,
+	}
+)( localize( IntroBanner ) );
