@@ -467,16 +467,18 @@ Undocumented.prototype._sendRequest = function( originalParams, fn ) {
  *
  * @param {string} domain - The domain name to check.
  * @param {int} blogId - Optional blogId to determine if domain is used on another site.
+ * @param {boolean} isCartPreCheck - specifies whether this availability check is for a domain about to be added to the cart.
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
  * @api public
  */
-Undocumented.prototype.isDomainAvailable = function( domain, blogId, fn ) {
+Undocumented.prototype.isDomainAvailable = function( domain, blogId, isCartPreCheck, fn ) {
 	return this.wpcom.req.get(
 		`/domains/${ encodeURIComponent( domain ) }/is-available`,
 		{
 			blog_id: blogId,
 			apiVersion: '1.3',
+			is_cart_pre_check: isCartPreCheck,
 		},
 		fn
 	);
@@ -645,13 +647,11 @@ Undocumented.prototype.getDomainContactInformation = function( fn ) {
 			method: 'get',
 		},
 		function( error, data ) {
-			let newData;
-
 			if ( error ) {
 				return fn( error );
 			}
 
-			newData = mapKeysRecursively( data, function( key ) {
+			const newData = mapKeysRecursively( data, function( key ) {
 				return key === '_headers' ? key : camelCase( key );
 			} );
 
@@ -709,13 +709,11 @@ Undocumented.prototype.validateDomainContactInformation = function(
 		error,
 		successData
 	) {
-		let newData;
-
 		if ( error ) {
 			return fn( error );
 		}
 
-		newData = mapKeysRecursively( successData, function( key ) {
+		const newData = mapKeysRecursively( successData, function( key ) {
 			return key === '_headers' ? key : camelCase( key );
 		} );
 
@@ -1024,8 +1022,6 @@ Undocumented.prototype.createConnection = function(
 	options,
 	fn
 ) {
-	let body, path;
-
 	// Method overloading: Optional `options`
 	if ( 'undefined' === typeof fn && 'function' === typeof options ) {
 		fn = options;
@@ -1033,7 +1029,7 @@ Undocumented.prototype.createConnection = function(
 	}
 
 	// Build request body
-	body = { keyring_connection_ID: keyringConnectionId };
+	const body = { keyring_connection_ID: keyringConnectionId };
 	if ( 'boolean' === typeof options.shared ) {
 		body.shared = options.shared;
 	}
@@ -1042,7 +1038,7 @@ Undocumented.prototype.createConnection = function(
 		body.external_user_ID = externalUserId;
 	}
 
-	path = siteId
+	const path = siteId
 		? '/sites/' + siteId + '/publicize-connections/new'
 		: '/me/publicize-connections/new';
 
@@ -1392,7 +1388,6 @@ Undocumented.prototype.saveABTestData = function( name, variation, callback ) {
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersNew = function( query, fn ) {
-	let args;
 	debug( '/users/new' );
 
 	// This API call is restricted to these OAuth keys
@@ -1400,7 +1395,7 @@ Undocumented.prototype.usersNew = function( query, fn ) {
 
 	// Set the language for the user
 	query.locale = getLocaleSlug();
-	args = {
+	const args = {
 		path: '/users/new',
 		body: query,
 	};
@@ -1705,7 +1700,7 @@ Undocumented.prototype.fetchDns = function( domainName, fn ) {
 };
 
 Undocumented.prototype.updateDns = function( domain, records, fn ) {
-	let filtered = reject( records, 'isBeingDeleted' ),
+	const filtered = reject( records, 'isBeingDeleted' ),
 		body = { dns: JSON.stringify( filtered ) };
 
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
@@ -1945,9 +1940,9 @@ Undocumented.prototype.updateImporter = function( siteId, importerStatus ) {
 };
 
 Undocumented.prototype.uploadExportFile = function( siteId, params ) {
-	return new Promise( ( resolve, reject ) => {
+	return new Promise( ( resolve, rejectPromise ) => {
 		const resolver = ( error, data ) => {
-			error ? reject( error ) : resolve( data );
+			error ? rejectPromise( error ) : resolve( data );
 		};
 
 		const req = this.wpcom.req.post(

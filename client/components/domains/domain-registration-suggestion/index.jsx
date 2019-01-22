@@ -51,6 +51,8 @@ class DomainRegistrationSuggestion extends React.Component {
 		uiPosition: PropTypes.number,
 		fetchAlgo: PropTypes.string,
 		query: PropTypes.string,
+		pendingCheckSuggestion: PropTypes.object,
+		unavailableDomains: PropTypes.array,
 	};
 
 	componentDidMount() {
@@ -86,14 +88,24 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	onButtonClick = () => {
-		if ( this.props.railcarId ) {
+		const { suggestion, railcarId } = this.props;
+
+		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
+			return;
+		}
+
+		if ( railcarId ) {
 			this.props.recordTracksEvent( 'calypso_traintracks_interact', {
-				railcar: this.props.railcarId,
+				railcar: railcarId,
 				action: 'domain_added_to_cart',
 			} );
 		}
 
-		this.props.onButtonClick( this.props.suggestion );
+		this.props.onButtonClick( suggestion );
+	};
+
+	isUnavailableDomain = domain => {
+		return includes( this.props.unavailableDomains, domain );
 	};
 
 	getButtonProps() {
@@ -104,6 +116,8 @@ class DomainRegistrationSuggestion extends React.Component {
 			selectedSite,
 			suggestion,
 			translate,
+			pendingCheckSuggestion,
+			isFeatured,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
@@ -121,8 +135,27 @@ class DomainRegistrationSuggestion extends React.Component {
 					  } )
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
+
+		let buttonStyles = { primary: true };
+		if ( abtest( 'domainSearchButtonStyles' ) === 'onePrimary' ) {
+			buttonStyles = ! isFeatured ? {} : this.props.buttonStyles;
+		}
+
+		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
+			buttonStyles = { ...buttonStyles, disabled: true };
+			buttonContent = translate( 'Unavailable', {
+				context: 'Domain suggestion is not available for registration',
+			} );
+		} else if ( pendingCheckSuggestion ) {
+			if ( pendingCheckSuggestion.domain_name === suggestion.domain_name ) {
+				buttonStyles = { ...buttonStyles, busy: true };
+			} else {
+				buttonStyles = { ...buttonStyles, disabled: true };
+			}
+		}
 		return {
 			buttonContent,
+			buttonStyles,
 		};
 	}
 
@@ -219,12 +252,12 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion: { domain_name: domain, product_slug: productSlug, cost },
 		} = this.props;
 
-		let buttonStyles = { primary: true };
-		if ( abtest( 'domainSearchButtonStyles' ) === 'onePrimary' ) {
-			buttonStyles = ! isFeatured ? {} : this.props.buttonStyles;
-		}
+		const isUnavailableDomain = this.isUnavailableDomain( domain );
 
-		const extraClasses = classNames( { 'featured-domain-suggestion': isFeatured } );
+		const extraClasses = classNames( {
+			'featured-domain-suggestion': isFeatured,
+			'is-unavailable': isUnavailableDomain,
+		} );
 
 		return (
 			<DomainSuggestion
@@ -234,7 +267,6 @@ class DomainRegistrationSuggestion extends React.Component {
 				domain={ domain }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
-				buttonStyles={ buttonStyles }
 				{ ...this.getButtonProps() }
 			>
 				{ this.renderDomain() }
