@@ -23,20 +23,18 @@ class GiphyEdit extends Component {
 		focus: false,
 	};
 
-	debouncedParseSearch = debounce( this.parseSearch, 250 );
-
 	componentWillUnmount() {
-		this.debouncedParseSearch.cancel();
+		this.parseSearch.cancel();
 	}
 
 	onSearchTextChange = searchText => {
 		const { setAttributes } = this.props;
 		setAttributes( { searchText } );
-		this.debouncedParseSearch( searchText );
+		this.parseSearch( searchText );
 		this.maintainFocus();
 	};
 
-	parseSearch = searchText => {
+	parseSearch = debounce( searchText => {
 		let giphyID = null;
 		// If search is hardcoded Giphy URL following this pattern: https://giphy.com/embed/4ZFekt94LMhNK
 		if ( searchText.indexOf( '//giphy.com/gifs' ) !== -1 ) {
@@ -58,7 +56,7 @@ class GiphyEdit extends Component {
 		}
 
 		return this.fetch( this.urlForSearch( searchText ) );
-	};
+	}, 250 );
 
 	urlForSearch = searchText => {
 		const { apiKey } = settings;
