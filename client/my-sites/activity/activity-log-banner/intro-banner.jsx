@@ -12,7 +12,14 @@ import { get } from 'lodash';
 import DismissibleCard from 'blocks/dismissible-card';
 import CardHeading from 'components/card-heading';
 import Button from 'components/button';
+import {
+	FEATURE_JETPACK_ESSENTIAL,
+	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_PERSONAL,
+} from 'lib/plans/constants';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { isFreePlan } from 'lib/plans';
 //import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
@@ -22,7 +29,12 @@ class IntroBanner extends Component {
 	};
 
 	cardContent() {
-		const { translate, siteIsOnFreePlan } = this.props;
+		const { siteIsJetpack, siteIsOnFreePlan, siteSlug, translate } = this.props;
+		const upgradePlan = siteIsJetpack ? PLAN_JETPACK_PERSONAL_MONTHLY : PLAN_PERSONAL;
+		const upgradeFeature = siteIsJetpack
+			? FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY
+			: FEATURE_JETPACK_ESSENTIAL;
+
 		return siteIsOnFreePlan ? (
 			<Fragment>
 				<p>
@@ -48,7 +60,10 @@ class IntroBanner extends Component {
 					</a>
 					.
 				</p>
-				<Button className="activity-log-banner__intro-button" href="/plans/">
+				<Button
+					className="activity-log-banner__intro-button"
+					href={ `/plans/${ siteSlug }?feature=${ upgradeFeature }&plan=${ upgradePlan }` }
+				>
 					{ translate( 'Upgrade now' ) }
 				</Button>
 			</Fragment>
@@ -102,6 +117,8 @@ class IntroBanner extends Component {
 }
 
 export default connect( ( state, { siteId } ) => ( {
-	siteId: siteId,
+	siteId,
+	siteIsJetpack: isJetpackSite( state, siteId ),
 	siteIsOnFreePlan: isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ),
+	siteSlug: getSiteSlug( state, siteId ),
 } ) )( localize( IntroBanner ) );
