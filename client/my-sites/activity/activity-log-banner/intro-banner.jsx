@@ -38,7 +38,7 @@ class IntroBanner extends Component {
 			? FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY
 			: FEATURE_JETPACK_ESSENTIAL;
 
-		return siteIsOnFreePlan ? (
+		return (
 			<Fragment>
 				<p>
 					{ translate(
@@ -46,13 +46,18 @@ class IntroBanner extends Component {
 					) }
 				</p>
 				<p>
-					{ translate(
-						'With your free plan, you can monitor the 20 most recent ' +
-							'events. A paid plan unlocks more powerful features. ' +
-							'You can access all site activity for the last 30 days ' +
-							'and filter events by type and time range to quickly find ' +
-							'the information you need. '
-					) }
+					{ siteIsOnFreePlan
+						? translate(
+								'With your free plan, you can monitor the 20 most recent ' +
+									'events. A paid plan unlocks more powerful features. ' +
+									'You can access all site activity for the last 30 days ' +
+									'and filter events by type and time range to quickly find ' +
+									'the information you need. '
+						  )
+						: translate(
+								'Explore the list below or filter events by type and ' +
+									'time range to quickly find the information you need. '
+						  ) }
 					<a
 						href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/"
 						target="_blank"
@@ -63,36 +68,16 @@ class IntroBanner extends Component {
 					</a>
 					.
 				</p>
-				<Button
-					className="activity-log-banner__intro-button"
-					href={ `/plans/${ siteSlug }?feature=${ upgradeFeature }&plan=${ upgradePlan }` }
-					onClick={ this.recordUpgrade }
-				>
-					{ translate( 'Upgrade now' ) }
-				</Button>
-			</Fragment>
-		) : (
-			<Fragment>
-				<p>
-					{ translate(
-						'The Activity tracks the events that occur on your site so that you don’t have to.'
-					) }
-				</p>
-				<p>
-					{ translate(
-						'Explore the list below or filter events by type and ' +
-							'time range to quickly find the information you need. '
-					) }
-					<a
-						href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/"
-						target="_blank"
-						rel="noopener noreferrer"
-						onClick={ this.recordLearnMore }
+
+				{ siteIsOnFreePlan && (
+					<Button
+						className="activity-log-banner__intro-button"
+						href={ `/plans/${ siteSlug }?feature=${ upgradeFeature }&plan=${ upgradePlan }` }
+						onClick={ this.recordUpgrade }
 					>
-						{ translate( 'Learn more' ) }
-					</a>
-					.
-				</p>
+						{ translate( 'Upgrade now' ) }
+					</Button>
+				) }
 			</Fragment>
 		);
 	}
