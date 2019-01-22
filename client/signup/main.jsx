@@ -18,7 +18,6 @@ import {
 	isEqual,
 	kebabCase,
 	last,
-	pick,
 	startsWith,
 } from 'lodash';
 import { translate } from 'i18n-calypso';
@@ -119,20 +118,20 @@ class Signup extends React.Component {
 		// here.
 		disableCart();
 
-		const flow = flows.getFlow( this.props.flowName );
+		// const flow = flows.getFlow( this.props.flowName );
 		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
-		let providedDependencies;
-
-		if ( flow.providesDependenciesInQuery ) {
-			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
-		}
+		// let providedDependencies;
+		//
+		// if ( flow.providesDependenciesInQuery ) {
+		// 	providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
+		// }
 
 		// Caution: any signup Flux actions should happen after this initialization.
 		// Otherwise, the redux adpatation layer won't work and the state can go off.
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
-			providedDependencies,
+			providedDependencies: queryObject,
 			reduxStore: this.context.store,
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );

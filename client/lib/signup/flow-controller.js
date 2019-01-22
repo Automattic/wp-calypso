@@ -57,8 +57,13 @@ function SignupFlowController( options ) {
 	this._resetStoresIfUserHasLoggedIn(); // reset the stores if user has newly authenticated
 
 	if ( this._flow.providesDependenciesInQuery ) {
-		this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
-		SignupActions.provideDependencies( options.providedDependencies );
+		const providedDependencies = pick(
+			options.providedDependencies,
+			this._flow.providesDependenciesInQuery
+		);
+
+		this._assertFlowProvidedDependenciesFromConfig( providedDependencies );
+		SignupActions.provideDependencies( providedDependencies );
 	} else {
 		const storedDependencies = this._getStoredDependencies();
 		if ( ! isEmpty( storedDependencies ) ) {
@@ -287,6 +292,10 @@ assign( SignupFlowController.prototype, {
 		this._flowName = flowName;
 		this._flow = flows.getFlow( flowName );
 		SignupActions.changeSignupFlow( this._flowName );
+	},
+
+	getFlow() {
+		return flows.getFlow( this._flowName );
 	},
 } );
 
