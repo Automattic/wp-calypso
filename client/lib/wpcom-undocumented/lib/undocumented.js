@@ -137,7 +137,16 @@ Undocumented.prototype.jetpackActivatePlugin = function( siteSlug, pluginPath ) 
 };
 
 // @TODO move everything except the network call to a lib
-Undocumented.prototype.jetpackFileImport = async function( siteId, { file, chunkSizeKb = 500 } ) {
+Undocumented.prototype.jetpackFileImport = async function(
+	siteSlug,
+	{ file, chunkSizeKb = 1000 }
+) {
+	const doPostRequest = ( subPath = '', data = {} ) =>
+		this.wpcom.req.post(
+			{ path: `/sites/${ siteSlug }/jetpack-file-imports/${ subPath }` },
+			{ apiNamespace: 'wp/v2' },
+			data
+		);
 	try {
 		const chunkSizeBytes = Math.floor( Math.max( 1, chunkSizeKb * 1000 ) );
 		const totalChunks = Math.ceil( file.size / chunkSizeBytes );
@@ -146,12 +155,10 @@ Undocumented.prototype.jetpackFileImport = async function( siteId, { file, chunk
 			return;
 		}
 
-		const cptResults = await this.wpcom.req.post(
-			{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-			{ path: `/wp/v2/jetpack-file-imports` }
-		);
+		const cptResults = await doPostRequest();
+		console.log( { cptResults } );
 
-		const cptId = get( cptResults, 'data.id' );
+		const cptId = get( cptResults, 'id' );
 		if ( ! cptId ) {
 			throw 'Could not create the attachment';
 		}
@@ -167,20 +174,13 @@ Undocumented.prototype.jetpackFileImport = async function( siteId, { file, chunk
 			const chunkBlob = new Blob( [ chunk ], { type: 'application/octet-stream' } );
 			const encodedChunk = await encodeBlobToBase64( chunkBlob );
 
-			const result = await this.wpcom.req.post(
-				{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-				{
-					path: `/wp/v2/jetpack-file-imports/${ cptId }/pieces/${ i }`,
-					body: JSON.stringify( { piece: encodedChunk } ),
-				}
-			);
+			// @TODO parallelize
+			const result = await doPostRequest( `${ cptId }/pieces/${ i }`, { piece: encodedChunk } );
+			console.log( { pieceResult: { i, result } } );
 			pieceResults.push( result );
 		}
 
-		const importResult = await this.wpcom.req.post(
-			{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-			{ path: `/wp/v2/jetpack-file-imports/${ cptId }/import-from-file` }
-		);
+		const importResult = await doPostRequest( `${ cptId }/import-from-pieces` );
 
 		console.log( { pieceResults, importResult } );
 	} catch ( jetpackFileImportError ) {

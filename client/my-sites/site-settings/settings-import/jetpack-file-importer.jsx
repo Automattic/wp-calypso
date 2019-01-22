@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import wp from 'lib/wp';
 import Button from 'components/button';
 
@@ -62,7 +62,7 @@ class JetpackFileImporter extends PureComponent {
 			return;
 		}
 
-		const { siteId, siteSlug } = this.props;
+		const { siteSlug } = this.props;
 
 		try {
 			const pluginAction = await ensurePluginIsInstalled(
@@ -72,7 +72,7 @@ class JetpackFileImporter extends PureComponent {
 			);
 
 			debug( { pluginAction } );
-			const result = await wp.undocumented().jetpackFileImport( siteId, { file } );
+			const result = await wp.undocumented().jetpackFileImport( siteSlug, { file } );
 			debug( { importSuccess: result } );
 		} catch ( errorImporting ) {
 			debug( { errorImporting } );
@@ -93,6 +93,5 @@ class JetpackFileImporter extends PureComponent {
 }
 
 export default connect( state => ( {
-	siteId: getSelectedSiteId( state ),
 	siteSlug: getSelectedSiteSlug( state ),
 } ) )( localize( JetpackFileImporter ) );
