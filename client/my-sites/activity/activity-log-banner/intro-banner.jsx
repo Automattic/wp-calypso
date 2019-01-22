@@ -29,6 +29,8 @@ class IntroBanner extends Component {
 
 	recordUpgrade = () => this.props.recordTracksEvent( 'calypso_activitylog_intro_banner_upgrade' );
 
+	recordDismiss = () => this.props.recordTracksEvent( 'calypso_activitylog_intro_banner_dismiss' );
+
 	cardContent() {
 		const { siteIsJetpack, siteIsOnFreePlan, siteSlug, translate } = this.props;
 		const upgradePlan = siteIsJetpack ? PLAN_JETPACK_PERSONAL_MONTHLY : PLAN_PERSONAL;
@@ -101,6 +103,7 @@ class IntroBanner extends Component {
 			<DismissibleCard
 				preferenceName="activity-introduction-banner"
 				className="activity-log-banner__intro"
+				onClick={ this.recordDismiss }
 			>
 				<img
 					className="activity-log-banner__intro-image"
