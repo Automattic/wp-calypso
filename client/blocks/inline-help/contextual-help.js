@@ -711,6 +711,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/following/',
+			post_id: 4899,
 			title: 'Follow Blogs',
 			description:
 				'When you follow a blog on WordPress.com, new posts from that site will automatically appear in your Reader.',
@@ -725,6 +726,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/grow-your-community/',
+			post_id: 132190,
 			title: 'Grow Your Community',
 			description:
 				'You’ve worked hard on building your site, now it’s time to explore the community and get noticed.',
