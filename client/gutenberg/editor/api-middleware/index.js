@@ -17,6 +17,15 @@ import wpcom from 'lib/wp';
 const debug = debugFactory( 'calypso:gutenberg' );
 
 const debugMiddleware = ( options, next ) => {
+	if ( options.externalApi ) {
+		if ( options.url ) {
+			debug( 'Skipping middlewares for external API request to: %o', options.url );
+			return next( options );
+		}
+		debug(
+			'`externalApi` option found, but no url provided. Provide a url to use an external API endpoint.'
+		);
+	}
 	const { path, apiNamespace = 'wp/v2', apiVersion } = options;
 	if ( apiVersion ) {
 		debug( 'Sending API request to: ', `/rest/v${ apiVersion }${ path }` );
@@ -30,6 +39,9 @@ const debugMiddleware = ( options, next ) => {
 // Rewrite default API paths to match WP.com equivalents. Note that
 // passed apiNamespace will be prepended to the replaced path.
 export const wpcomPathMappingMiddleware = getSiteSlug => ( options, next ) => {
+	if ( options.externalApi && options.url ) {
+		return next( options );
+	}
 	const siteSlug = getSiteSlug();
 
 	//support for fetchAllMiddleware, that uses url instead of path
@@ -137,7 +149,10 @@ const createFetchResponse = ( body, headers ) => {
 	};
 };
 
-const wpcomProxyMiddleware = options => {
+const wpcomProxyMiddleware = ( options, next ) => {
+	if ( options.externalApi ) {
+		return next( options );
+	}
 	// Make authenticated calls using the WordPress.com REST Proxy
 	// bypassing the apiFetch call that uses window.fetch.
 	// This intentionally breaks the middleware chain.
