@@ -15,19 +15,16 @@ class SlideshowSave extends Component {
 		const classes = classnames( className, alignClassName );
 		return (
 			<div className={ classes } data-effect={ effect }>
-				{ images.map( ( image, index ) => {
-					const { alt, caption, height, id, url, width } = image;
+				{ images.map( image => {
+					const { alt, caption, id, url } = image;
+					const style = {
+						backgroundImage: `url(${ url })`,
+					};
 					return (
-						<div className="wp-block-slideshow_image_container" key={ index }>
-							<img
-								src={ url }
-								alt={ alt }
-								data-is-image
-								data-id={ id }
-								data-height={ height }
-								data-width={ width }
-							/>
-							{ caption && <figcaption data-is-caption>{ caption }</figcaption> }
+						<div className="swiper-slide" key={ id }>
+							<div className="slide-background atavist-cover-background-color" />
+							<div className="wp-block-slideshow-image-container" style={ style } title={ alt } />
+							{ caption && <p className="slideshow-slide-caption">{ caption }</p> }
 						</div>
 					);
 				} ) }

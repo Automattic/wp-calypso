@@ -26,36 +26,12 @@ export class Slideshow extends Component {
 		this.paginationRef = createRef();
 	}
 	render() {
-		const { children, className } = this.props;
-		const { imageHeight } = this.state;
+		const { className } = this.props;
+		// const { imageHeight } = this.state;
 		const classNames = classnames( className, 'swiper-container' );
 		return (
 			<div className={ classNames } ref={ this.slideshowRef }>
-				<div className="swiper-wrapper">
-					{ Children.map( children, child => {
-						if ( ! child.props.children ) {
-							return null;
-						}
-						const image = this.getChildByDataAttribute( child, 'data-is-image' );
-						if ( ! image ) {
-							return null;
-						}
-						const { src, alt } = image.props;
-						const figcaption = this.getChildByDataAttribute( child, 'data-is-caption' );
-						const caption = figcaption ? figcaption.props.children : null;
-						const style = {
-							backgroundImage: `url(${ src })`,
-							height: imageHeight,
-						};
-						return (
-							<div className="swiper-slide">
-								<div className="slide-background atavist-cover-background-color" />
-								<div className="wp-block-slideshow-image-container" style={ style } title={ alt } />
-								{ caption && <p className="slideshow-slide-caption">{ caption }</p> }
-							</div>
-						);
-					} ) }
-				</div>
+				<div className="swiper-wrapper">{ Children }</div>
 				<div className="swiper-pagination swiper-pagination-white" ref={ this.paginationRef } />
 				<div className="swiper-button-prev swiper-button-white" ref={ this.btnPrevRef } />
 				<div className="swiper-button-next swiper-button-white" ref={ this.btnNextRef } />
@@ -67,10 +43,7 @@ export class Slideshow extends Component {
 	}
 	componentDidUpdate( prevProps ) {
 		const { swiperInstance } = this.state;
-		const { align, effect, children } = this.props;
-		if ( children !== prevProps.children ) {
-			this.buildImageMetadata( this.sizeSlideshow );
-		}
+		const { align, children, effect } = this.props;
 		/* A change in alignment or images only needs an update */
 		if ( align !== prevProps.align || children !== prevProps.children ) {
 			swiperInstance.update();
