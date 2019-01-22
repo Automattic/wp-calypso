@@ -572,6 +572,7 @@ const contextLinksForSection = {
 		{
 			link:
 				'http://en.support.wordpress.com/themes/uploading-setting-up-custom-themes/child-themes/',
+			post_id: 134704,
 			title: 'Child Themes',
 			description:
 				"The only limit on your site is your vision — if the themes you see don't match that, it's " +
@@ -603,6 +604,7 @@ const contextLinksForSection = {
 		{
 			link:
 				'http://en.support.wordpress.com/themes/uploading-setting-up-custom-themes/child-themes/',
+			post_id: 134704,
 			title: 'Child Themes',
 			description:
 				"The only limit on your site is your vision — if the themes you see don't match that, it's " +
