@@ -60,8 +60,9 @@ class GiphyEdit extends Component {
 
 	urlForSearch = searchText => {
 		const { apiKey } = settings;
-		const encoded = searchText.replace( ' ', '+' );
-		return `//api.giphy.com/v1/gifs/search?q=${ encoded }&api_key=${ apiKey }&limit=1`;
+		return `//api.giphy.com/v1/gifs/search?q=${ encodeURIComponent(
+			searchText
+		) }&api_key=${ apiKey }&limit=1`;
 	};
 
 	urlForId = giphyId => {
