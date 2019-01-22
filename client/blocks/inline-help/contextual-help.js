@@ -233,6 +233,7 @@ const contextLinksForSection = {
 	'notification-settings': [
 		{
 			link: 'http://en.support.wordpress.com/notifications/',
+			post_id: 40992,
 			title: 'Notifications',
 			description:
 				'Notifications help you stay on top of the activity on your site and all the things happening on ' +
