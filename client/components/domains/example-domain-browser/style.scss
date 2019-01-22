@@ -6,3 +6,11 @@
 		top: 15px;
 	}
 }
+
+.example-domain-browser__protocol {
+	fill: var( --color-text-subtle );
+}
+
+.example-domain-browser__domain {
+	fill: var( --color-text );
+}
