@@ -7,9 +7,11 @@
 
 	// Move the filter so its "inside" the
 	// search input
-	position: absolute;
-	top: 0;
-	right: 0;
+	body.is-section-signup & {
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
 
 	.button {
 		align-items: center;

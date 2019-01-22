@@ -373,7 +373,7 @@ class RegisterDomainStep extends React.Component {
 		return (
 			<div className="register-domain-step">
 				<StickyPanel className="register-domain-step__search">
-					<CompactCard>
+					<CompactCard className="register-domain-step__search-card">
 						<Search
 							additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
