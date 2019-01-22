@@ -24,8 +24,7 @@
 		width: 100%;
 		padding: 0 1em;
 
-		&.has-focus .components-text-control__input,
-		.components-text-control__input:focus {
+		&.has-focus .components-text-control__input {
 			opacity: 1;
 			transition: opacity 0;
 		}
