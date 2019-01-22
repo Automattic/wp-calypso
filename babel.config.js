@@ -63,6 +63,7 @@ const config = {
 						headers: {
 							'content-type': 'text/plain; charset=UTF-8',
 							'x-generator': 'calypso',
+							'plural-forms': 'nplurals=2; plural=n == 1 ? 0 : 1;',
 						},
 					},
 				],
