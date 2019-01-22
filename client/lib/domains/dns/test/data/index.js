@@ -8,6 +8,13 @@ export const RECORD_A = {
 	type: 'A',
 };
 
+export const RECORD_NS = {
+	data: 'ns1.wordpress.com',
+	id: '23466069',
+	name: 'dummy.com.',
+	type: 'NS',
+};
+
 export const RECORD_TXT = {
 	data: 'Test',
 	id: '23466015',
