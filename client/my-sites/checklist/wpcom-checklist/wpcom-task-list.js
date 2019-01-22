@@ -84,6 +84,15 @@ export default class WpcomTaskList {
 		return !! this.get( taskId );
 	}
 
+	remove( taskId ) {
+		const found = this.get( taskId );
+		if ( ! found ) {
+			return null;
+		}
+		this.tasks = this.tasks.filter( task => task.id !== taskId );
+		return found;
+	}
+
 	getFirstIncompleteTask() {
 		return this.tasks.find( task => ! task.isCompleted );
 	}

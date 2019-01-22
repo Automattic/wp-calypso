@@ -5,7 +5,7 @@
 import page from 'page';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { find, get, some } from 'lodash';
+import { find, get, some, forEach } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
@@ -204,6 +204,7 @@ class WpcomChecklistComponent extends PureComponent {
 			designType,
 			siteId,
 			taskStatuses,
+			taskUrls,
 			viewMode,
 			updateCompletion,
 			setNotification,
@@ -215,6 +216,13 @@ class WpcomChecklistComponent extends PureComponent {
 		} = this.props;
 
 		const taskList = getTaskList( taskStatuses, designType, isSiteUnlaunched );
+
+		// Hide a task when we can't find the exact URL of the target page.
+		forEach( taskUrls, ( url, taskId ) => {
+			if ( ! url ) {
+				taskList.remove( taskId );
+			}
+		} );
 
 		let ChecklistComponent = Checklist;
 
@@ -458,11 +466,6 @@ class WpcomChecklistComponent extends PureComponent {
 
 	renderContactPageUpdatedTask = ( TaskComponent, baseProps, task ) => {
 		const { translate, taskUrls } = this.props;
-
-		// Hide this task when we can't find the exact URL of the page.
-		if ( ! taskUrls.contact_page_updated ) {
-			return null;
-		}
 
 		return (
 			<TaskComponent
