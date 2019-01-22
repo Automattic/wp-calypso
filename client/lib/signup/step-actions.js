@@ -24,7 +24,11 @@ import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteVerticalId, getSiteVerticalSlug } from 'state/signup/steps/site-vertical/selectors';
+import {
+	getSiteVerticalId,
+	getSiteVerticalName,
+	getSiteVerticalSlug,
+} from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
@@ -109,7 +113,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 // We are experimenting making site topic (site vertical name) a separate step from the survey.
 // Once we've decided to fully move away from the survey form, we can just keep the site vertical name here.
 function getSiteVertical( state ) {
-	return ( getSiteVerticalSlug( state ) || getSurveyVertical( state ) ).trim();
+	return ( getSiteVerticalName( state ) || getSurveyVertical( state ) ).trim();
 }
 
 export function createSiteWithCart(
@@ -133,6 +137,7 @@ export function createSiteWithCart(
 	const siteTitle = getSiteTitle( state ).trim();
 	const siteVerticalId = getSiteVerticalId( state );
 	const siteVertical = getSiteVertical( state );
+	const siteVerticalSlug = getSiteVerticalSlug( state );
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
 	const siteStyle = getSiteStyle( state ).trim();
@@ -153,10 +158,10 @@ export function createSiteWithCart(
 			site_information: siteInformation || undefined,
 			// `options.siteType` will be deprecated in favour of `options.site_segment`
 			siteType: siteType || undefined,
-			site_segment_id: getSiteTypePropertyValue( 'slug', siteType, 'id' ) || undefined,
-			site_segment: siteType || undefined,
-			site_vertical_id: siteVerticalId || undefined,
-			site_vertical: siteVertical || undefined,
+			site_segment: getSiteTypePropertyValue( 'slug', siteType, 'id' ) || undefined,
+			site_segment_slug: siteType || undefined,
+			site_vertical: siteVerticalId || undefined,
+			site_vertical_slug: siteVerticalSlug || undefined,
 		},
 		validate: false,
 	};
