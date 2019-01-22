@@ -27,15 +27,15 @@
 
 	.button.is-primary {
 		background-color: var( --color-jetpack );
-		border-color: darken( $green-jetpack, 5% );
+		border-color: var( --color-jetpack-light );
 
 		&:hover,
 		&:focus {
-			border-color: darken( $green-jetpack, 30% );
+			border-color: var( --color-jetpack-dark );
 		}
 
 		&:focus {
-			box-shadow: 0 0 0 2px lighten( $green-jetpack, 25% );
+			box-shadow: 0 0 0 2px var( --color-jetpack-light );
 		}
 
 		&[disabled],
