@@ -42,6 +42,7 @@ export const settings = {
 	},
 	supports: {
 		html: false,
+		align: true,
 	},
 	apiKey: 'LtJmY9DnDJUA0',
 };

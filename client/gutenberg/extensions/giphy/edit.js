@@ -5,9 +5,9 @@
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import classNames from 'classnames';
-import { Component, createRef, Fragment } from '@wordpress/element';
+import { Component, createRef } from '@wordpress/element';
 import { TextControl } from '@wordpress/components';
-import { BlockAlignmentToolbar, BlockControls, RichText } from '@wordpress/editor';
+import { RichText } from '@wordpress/editor';
 import { debounce } from 'lodash';
 
 /**
@@ -145,48 +145,40 @@ class GiphyEdit extends Component {
 			focus || ! this.hasSearchText() ? 'has-focus' : 'no-focus'
 		);
 		return (
-			<Fragment>
-				<BlockControls>
-					<BlockAlignmentToolbar
-						onChange={ value => setAttributes( { align: value } ) }
-						value={ align }
+			<div className={ classes }>
+				<figure style={ style }>
+					<div
+						className="wp-block-jetpack-giphy_cover"
+						onClick={ this.setFocus }
+						onKeyDown={ this.setFocus }
+						ref={ this.textControlRef }
+						role="button"
+						tabIndex="0"
+					>
+						{ ( ! searchText || isSelected ) && (
+							<TextControl
+								className={ textControlClasses }
+								label={ __( 'Search or paste a Giphy URL' ) }
+								placeholder={ __( 'Search or paste a Giphy URL' ) }
+								onChange={ this.onSearchTextChange }
+								onClick={ this.maintainFocus }
+								value={ searchText }
+							/>
+						) }
+					</div>
+					<iframe src={ giphyUrl } title={ searchText } />
+				</figure>
+				{ ( ! RichText.isEmpty( caption ) || isSelected ) && (
+					<RichText
+						className="caption"
+						inlineToolbar
+						onChange={ value => setAttributes( { caption: value } ) }
+						placeholder={ __( 'Write caption…' ) }
+						tagName="figcaption"
+						value={ caption }
 					/>
-				</BlockControls>
-				<div className={ classes }>
-					<figure style={ style }>
-						<div
-							className="wp-block-jetpack-giphy_cover"
-							onClick={ this.setFocus }
-							onKeyDown={ this.setFocus }
-							ref={ this.textControlRef }
-							role="button"
-							tabIndex="0"
-						>
-							{ ( ! searchText || isSelected ) && (
-								<TextControl
-									className={ textControlClasses }
-									label={ __( 'Search or paste a Giphy URL' ) }
-									placeholder={ __( 'Search or paste a Giphy URL' ) }
-									onChange={ this.onSearchTextChange }
-									onClick={ this.maintainFocus }
-									value={ searchText }
-								/>
-							) }
-						</div>
-						<iframe src={ giphyUrl } title={ searchText } />
-					</figure>
-					{ ( ! RichText.isEmpty( caption ) || isSelected ) && (
-						<RichText
-							className="caption"
-							inlineToolbar
-							onChange={ value => setAttributes( { caption: value } ) }
-							placeholder={ __( 'Write caption…' ) }
-							tagName="figcaption"
-							value={ caption }
-						/>
-					) }
-				</div>
-			</Fragment>
+				) }
+			</div>
 		);
 	}
 }
