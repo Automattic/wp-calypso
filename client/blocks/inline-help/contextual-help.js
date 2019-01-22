@@ -169,6 +169,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/account-deactivation/',
+			post_id: 143899,
 			title: 'Account Deactivation',
 			description: 'Finished with your WordPress.com account? Would you like to shut it down?',
 		},
