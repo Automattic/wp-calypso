@@ -28,12 +28,14 @@ class GiphyEdit extends Component {
 	componentWillUnmount() {
 		this.debouncedParseSearch.cancel();
 	}
+
 	onSearchTextChange = searchText => {
 		const { setAttributes } = this.props;
 		setAttributes( { searchText } );
 		this.debouncedParseSearch( searchText );
 		this.maintainFocus();
 	};
+
 	parseSearch = searchText => {
 		let giphyID = null;
 		// If search is hardcoded Giphy URL following this pattern: https://giphy.com/embed/4ZFekt94LMhNK
@@ -57,19 +59,23 @@ class GiphyEdit extends Component {
 
 		return this.fetch( this.urlForSearch( searchText ) );
 	};
+
 	urlForSearch = searchText => {
 		const { apiKey } = settings;
 		const encoded = searchText.replace( ' ', '+' );
 		return `//api.giphy.com/v1/gifs/search?q=${ encoded }&api_key=${ apiKey }&limit=1&offset=0`;
 	};
+
 	urlForId = giphyId => {
 		const { apiKey } = settings;
 		return `//api.giphy.com/v1/gifs/${ giphyId }?api_key=${ apiKey }&limit=1&offset=0`;
 	};
+
 	splitAndLast = ( array, delimiter ) => {
 		const split = array.split( delimiter );
 		return split[ split.length - 1 ];
 	};
+
 	fetch = url => {
 		const { setAttributes } = this.props;
 		const xhr = new XMLHttpRequest();
@@ -94,10 +100,12 @@ class GiphyEdit extends Component {
 		};
 		xhr.send();
 	};
+
 	setFocus = () => {
 		this.maintainFocus();
 		this.textControlRef.current.querySelector( 'input' ).focus();
 	};
+
 	maintainFocus = ( timeoutDuration = 3500 ) => {
 		this.setState( { focus: true }, () => {
 			if ( this.timer ) {
@@ -110,6 +118,7 @@ class GiphyEdit extends Component {
 			}
 		} );
 	};
+
 	clearFocus = () => {
 		this.setState( { focus: false }, () => {
 			if ( this.timer ) {
@@ -117,11 +126,13 @@ class GiphyEdit extends Component {
 			}
 		} );
 	};
+
 	hasSearchText = () => {
 		const { attributes } = this.props;
 		const { searchText } = attributes;
 		return searchText && searchText.length > 0;
 	};
+
 	render() {
 		const { attributes, className, isSelected, setAttributes } = this.props;
 		const { align, caption, giphyUrl, searchText, topPadding } = attributes;
