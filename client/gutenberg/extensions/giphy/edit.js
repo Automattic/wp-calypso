@@ -54,13 +54,13 @@ class GiphyEdit extends Component {
 	}, 250 );
 
 	urlForSearch = searchText => {
-		return `//api.giphy.com/v1/gifs/search?q=${ encodeURIComponent(
+		return `https://api.giphy.com/v1/gifs/search?q=${ encodeURIComponent(
 			searchText
 		) }&api_key=${ encodeURIComponent( GIPHY_API_KEY ) }&limit=1`;
 	};
 
 	urlForId = giphyId => {
-		return `//api.giphy.com/v1/gifs/${ encodeURIComponent(
+		return `https://api.giphy.com/v1/gifs/${ encodeURIComponent(
 			giphyId
 		) }?api_key=${ encodeURIComponent( GIPHY_API_KEY ) }`;
 	};
