@@ -1,5 +1,5 @@
 /** @format */
-
+/* eslint-disable */
 /**
  * External dependencies
  */
@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import Card from 'components/card';
 import Button from 'components/button';
 import { recordTracksEvent } from 'state/analytics/actions';
-
+/* eslint-enable */
 class ReaderLandingStepContent extends PureComponent {
 	handleButtonClick = () => {
 		this.props.recordTracksEvent( 'calypso_signup_reader_landing_cta' );
@@ -22,7 +22,8 @@ class ReaderLandingStepContent extends PureComponent {
 
 	render() {
 		const { translate } = this.props;
-		return (			
+		return (
+			<div className="reader-landing">			
 				<div className="reader-landing__button-wrapper">
 					<Button
 						primary={ true }
@@ -54,6 +55,7 @@ class ReaderLandingStepContent extends PureComponent {
 							</p>
 						</div>
 					</div>
+                 </div>
 
 					<div className="reader-landing__feature is-even">
 						<img
