@@ -18,7 +18,7 @@ import { dispatch, select } from '@wordpress/data';
  * Internal dependencies
  */
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
+import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import { asyncLoader } from 'components/async-loader';
 import { EDITOR_START } from 'state/action-types';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -133,7 +133,7 @@ export const resetGutenbergState = ( registry, selectedSiteId ) => {
 export const redirect = ( { store: { getState } }, next ) => {
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
-	const hasGutenberg = isGutenbergEnabled( state, siteId );
+	const hasGutenberg = isCalypsoifyGutenbergEnabled( state, siteId );
 
 	if ( hasGutenberg ) {
 		return next();

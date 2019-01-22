@@ -2,7 +2,7 @@
 
 ## Editor Selection Flows
 
-See [`isGutenbergEnabled`](../../state/selectors/is-gutenberg-enabled.js) and [`getEditorUrl`](../../state/selectors/get-editor-url.js).
+See [`isCalypsoifyGutenbergEnabled`](../../state/selectors/is-calypsoify-gutenberg-enabled.js) and [`getEditorUrl`](../../state/selectors/get-editor-url.js).
 
 ## Initialization
 
