@@ -2,7 +2,7 @@
 .register-domain-step__search {
 	padding-bottom: 12px;
 
-	.card.is-compact {
+	.register-domain-step__search-card {
 		padding: 0;
 		display: flex;
 		align-items: center;
@@ -14,6 +14,11 @@
 		&.is-refocused {
 			animation: shake 0.5s both;
 			box-shadow: 0 0 0 1px $gray, 0 2px 4px var( --color-neutral-100 );
+		}
+
+		// Add some padding to account for the filter button.
+		body.is-section-signup & {
+			padding-right: 72px;
 		}
 	}
 
