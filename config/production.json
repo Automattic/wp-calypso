@@ -134,7 +134,7 @@
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
-		"upsell/concierge-session": false,
+		"upsell/concierge-session": true,
 		"upsell/nudge-a-palooza": false,
 		"woocommerce/extension-dashboard": true,
 		"woocommerce/extension-dashboard-stats-widget": true,
