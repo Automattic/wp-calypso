@@ -27,6 +27,8 @@ class IntroBanner extends Component {
 	recordLearnMore = () =>
 		this.props.recordTracksEvent( 'calypso_activitylog_intro_banner_learn_more' );
 
+	recordUpgrade = () => this.props.recordTracksEvent( 'calypso_activitylog_intro_banner_upgrade' );
+
 	cardContent() {
 		const { siteIsJetpack, siteIsOnFreePlan, siteSlug, translate } = this.props;
 		const upgradePlan = siteIsJetpack ? PLAN_JETPACK_PERSONAL_MONTHLY : PLAN_PERSONAL;
@@ -62,6 +64,7 @@ class IntroBanner extends Component {
 				<Button
 					className="activity-log-banner__intro-button"
 					href={ `/plans/${ siteSlug }?feature=${ upgradeFeature }&plan=${ upgradePlan }` }
+					onClick={ this.recordUpgrade }
 				>
 					{ translate( 'Upgrade now' ) }
 				</Button>
