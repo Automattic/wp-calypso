@@ -658,6 +658,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/adding-users/',
+			post_id: 2160,
 			title: 'Inviting Contributors, Followers, and Viewers',
 			description:
 				'Invite contributors, followers, and viewers to collaborate with others and grow your audience!',
@@ -680,6 +681,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/adding-users/',
+			post_id: 2160,
 			title: 'Inviting Contributors, Followers, and Viewers',
 			description:
 				'Invite contributors, followers, and viewers to collaborate with others and grow your audience!',
