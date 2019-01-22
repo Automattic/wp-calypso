@@ -20,7 +20,7 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { isEnabled } from 'config';
-import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
+import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -189,7 +189,8 @@ export default connect(
 		const postId = getEditorPostId( state );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );
 		const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
-		const optInEnabled = isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, siteId );
+		const optInEnabled =
+			isEnabled( 'gutenberg/opt-in' ) && isCalypsoifyGutenbergEnabled( state, siteId );
 
 		return {
 			postContent,

@@ -13,7 +13,7 @@ import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	if ( config.isEnabled( 'gutenberg' ) ) {
+	if ( config.isEnabled( 'calypsoify/gutenberg' ) ) {
 		page( '/block-editor', '/block-editor/post' );
 
 		page( '/block-editor/post', siteSelection, sites, makeLayout, clientRender );
