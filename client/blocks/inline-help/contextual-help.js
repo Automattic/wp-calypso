@@ -582,6 +582,7 @@ const contextLinksForSection = {
 	theme: [
 		{
 			link: 'http://en.support.wordpress.com/themes/',
+			post_id: 2278,
 			title: 'Themes: An Overview',
 			description:
 				'A theme controls the general look and feel of your site including things like ' +
@@ -589,6 +590,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/themes/mobile-themes/',
+			post_id: 4925,
 			title: 'Mobile Themes',
 			description:
 				'When a visitor browses to a WordPress.com site on a mobile device, we show ' +
@@ -596,6 +598,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/premium-themes/',
+			post_id: 12112,
 			title: 'Premium Themes',
 			description:
 				'On a site with the Premium or Business plan, you can switch to any premium theme at ' +
