@@ -42,7 +42,7 @@ class IntroBanner extends Component {
 			<Fragment>
 				<p>
 					{ translate(
-						'The Activity tracks the events that occur on your ' + 'site so that you don’t have to.'
+						'The Activity tracks the events that occur on your site so that you don’t have to.'
 					) }
 				</p>
 				<p>
@@ -75,7 +75,7 @@ class IntroBanner extends Component {
 			<Fragment>
 				<p>
 					{ translate(
-						'The Activity tracks the events that occur on your ' + 'site so that you don’t have to.'
+						'The Activity tracks the events that occur on your site so that you don’t have to.'
 					) }
 				</p>
 				<p>
