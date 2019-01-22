@@ -460,6 +460,7 @@ const contextLinksForSection = {
 	'settings-traffic': [
 		{
 			link: 'http://en.support.wordpress.com/getting-more-views-and-traffic/',
+			post_id: 3307,
 			title: 'Get More Views and Traffic',
 			description:
 				'Want more traffic? Here are some tips for attracting more visitors to your site!',
