@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import CardHeading from 'components/card-heading';
 import DismissibleCard from 'blocks/dismissible-card';
+import ExternalLink from 'components/external-link';
 import {
 	FEATURE_JETPACK_ESSENTIAL,
 	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -58,14 +59,14 @@ class IntroBanner extends Component {
 								'Explore the list below or filter events by type and ' +
 									'time range to quickly find the information you need. '
 						  ) }
-					<a
+					<ExternalLink
 						href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/"
-						target="_blank"
-						rel="noopener noreferrer"
+						icon
 						onClick={ this.recordLearnMore }
+						target="_blank"
 					>
 						{ translate( 'Learn more' ) }
-					</a>
+					</ExternalLink>
 					.
 				</p>
 
