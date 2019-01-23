@@ -85,8 +85,8 @@ export default {
 	showConciergeSessionUpsell: {
 		datestamp: '20181214',
 		variations: {
-			skip: 90,
-			show: 10,
+			skip: 50,
+			show: 50,
 		},
 		defaultVariation: 'skip',
 		allowExistingUsers: true,
@@ -94,8 +94,8 @@ export default {
 	showConciergeSessionUpsellNonGSuite: {
 		datestamp: '20181228',
 		variations: {
-			skip: 90,
-			show: 10,
+			skip: 50,
+			show: 50,
 		},
 		defaultVariation: 'skip',
 		allowExistingUsers: true,
