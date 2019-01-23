@@ -20,14 +20,13 @@ import Button from 'components/button';
 import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';
-import MediaDateRange from './media-date-range';
+import DateRange from 'components/date-range';
 
 const DEBOUNCE_TIME = 250;
 
 class MediaLibraryExternalHeader extends React.Component {
 	static propTypes = {
 		onMediaScaleChange: PropTypes.func,
-		onDateChange: PropTypes.func,
 		site: PropTypes.object.isRequired,
 		visible: PropTypes.bool.isRequired,
 		canCopy: PropTypes.bool,
@@ -37,6 +36,8 @@ class MediaLibraryExternalHeader extends React.Component {
 		hasAttribution: PropTypes.bool,
 		hasRefreshButton: PropTypes.bool,
 		hasDateFilters: PropTypes.bool,
+		filter: PropTypes.string,
+		onFilterChange: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -107,6 +108,16 @@ class MediaLibraryExternalHeader extends React.Component {
 		} );
 	};
 
+	onDateChange = ( startDate, endDate ) => {
+		const requiredDateFormat = 'YYYY-MM-DD';
+		const filterStartDate = this.props.moment( startDate ).format( requiredDateFormat );
+		const filterEndDate = this.props.moment( endDate ).format( requiredDateFormat );
+
+		const dateFilter = `dateRange=${ filterStartDate }:${ filterEndDate }`;
+
+		this.props.onFilterChange( dateFilter );
+	};
+
 	renderCopyButton() {
 		const { selectedItems, translate } = this.props;
 
@@ -162,8 +173,9 @@ class MediaLibraryExternalHeader extends React.Component {
 
 				{ canCopy && this.renderCopyButton() }
 
-				{ config.isEnabled( 'external-media/google-photos/date-filters' ) &&
-					hasDateFilters && <MediaDateRange onDateCommit={ this.props.onDateChange } /> }
+				{ config.isEnabled( 'external-media/google-photos/date-filters' ) && hasDateFilters && (
+					<DateRange onDateCommit={ this.onDateChange } />
+				) }
 
 				<MediaLibraryScale onChange={ onMediaScaleChange } />
 			</Card>
