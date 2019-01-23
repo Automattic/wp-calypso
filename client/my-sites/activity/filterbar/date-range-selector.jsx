@@ -239,6 +239,7 @@ export class DateRangeSelector extends Component {
 		const { isVisible } = this.props;
 		const from = this.getFromDate();
 		const to = this.getToDate();
+		const now = new Date();
 
 		const buttonClass = classnames( {
 			filterbar__selection: true,
@@ -250,6 +251,7 @@ export class DateRangeSelector extends Component {
 			<DateRangePicker
 				selectedStartDate={ from }
 				selectedEndDate={ to }
+				lastSelectableDate={ now }
 				onDateCommit={ this.handleDateRangeCommit }
 				renderTrigger={ props => (
 					<Fragment>
