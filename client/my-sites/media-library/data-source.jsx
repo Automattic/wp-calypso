@@ -65,7 +65,7 @@ export class MediaLibraryDataSource extends Component {
 			},
 			{
 				value: 'google_photos',
-				label: translate( 'Photos from your Google library' ),
+				label: translate( 'Google Photos library' ),
 				icon: <Gridicon icon="shutter" size={ 24 } />,
 			},
 		];
