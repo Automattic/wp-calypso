@@ -15,12 +15,9 @@ import createSwiper from './create-swiper';
 import SlideshowComponent from './slideshow';
 
 export class Slideshow extends Component {
-	constructor() {
-		super( ...arguments );
-		this.state = {
-			imageHeight: 400,
-		};
-	}
+	state = {
+		imageHeight: 400,
+	};
 
 	render() {
 		const { align, className, effect, images } = this.props;
