@@ -6,6 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 
 /**
@@ -14,6 +15,7 @@ import classNames from 'classnames';
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
 import SiteMockups from 'signup/site-mockup';
+import { getSiteType } from 'state/signup/steps/site-type/selectors';
 
 /**
  * Style dependencies
@@ -105,7 +107,7 @@ class StepWrapper extends Component {
 			hideFormattedHeader,
 			hideBack,
 			hideSkip,
-			showSiteMockups,
+			shouldShowSiteMockups,
 		} = this.props;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': this.props.isWideLayout,
@@ -131,10 +133,16 @@ class StepWrapper extends Component {
 						{ ! hideSkip && this.renderSkip() }
 					</div>
 				</div>
-				{ showSiteMockups && <SiteMockups /> }
+				{ shouldShowSiteMockups && <SiteMockups /> }
 			</>
 		);
 	}
 }
 
-export default localize( StepWrapper );
+export default connect(
+	( state, ownProps ) => ( {
+		// For now we only display site mockups (preview) for business
+		shouldShowSiteMockups: ownProps.showSiteMockups && 'business' === getSiteType( state ),
+	} ),
+	null
+)( localize( StepWrapper ) );
