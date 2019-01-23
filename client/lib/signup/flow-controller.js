@@ -70,6 +70,8 @@ function SignupFlowController( options ) {
 			SignupActions.provideDependencies( storedDependencies );
 		}
 	}
+
+	this._prefilledSteps = [];
 }
 
 assign( SignupFlowController.prototype, {
@@ -294,8 +296,46 @@ assign( SignupFlowController.prototype, {
 		SignupActions.changeSignupFlow( this._flowName );
 	},
 
+	preprocessFlow( options ) {
+		const prefilledDependencies = this._flow.preprocess ? this._flow.preprocess( options ) : {};
+
+		if ( isEmpty( prefilledDependencies ) ) {
+			return;
+		}
+
+		SignupActions.provideDependencies( prefilledDependencies );
+
+		const prefilledSteps = this._flow.steps.reduce( ( accumulator, stepName ) => {
+			const stepDependencies = get( steps, [ stepName, 'providesDependencies' ], [] );
+
+			if ( difference( stepDependencies, Object.keys( prefilledDependencies ) ).length !== 0 ) {
+				console.log( 'whhhhhhhhhat?', stepName, stepDependencies, prefilledDependencies );
+
+				return accumulator;
+			}
+
+			const prefilledStepDependencies = pick( prefilledDependencies, stepDependencies );
+
+			console.log( 'anyone here?', stepName, stepDependencies, prefilledDependencies );
+
+			SignupActions.submitSignupStep( { stepName }, [], prefilledStepDependencies );
+
+			accumulator[ stepName ] = true;
+
+			return accumulator;
+		}, {} );
+
+		console.log( '-------prefilledSteps: ', prefilledSteps );
+
+		this._prefilledSteps = prefilledSteps;
+	},
+
 	getFlow( currentStep = '' ) {
-		return flows.getFlow( this._flowName, currentStep );
+		const rawFlow = flows.getFlow( this._flowName, currentStep );
+		const rawSteps = rawFlow.steps;
+		const filteredSteps = rawSteps.filter( stepName => ! this._prefilledSteps[ stepName ] );
+
+		return assign( rawFlow, { steps: filteredSteps } );
 	},
 } );
 
