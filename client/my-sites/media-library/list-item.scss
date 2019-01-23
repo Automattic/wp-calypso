@@ -8,8 +8,8 @@
 	&.is-selected::after {
 		content: attr( data-selected-number ) '';
 		position: absolute;
-		right: 8px;
-		bottom: 18px;
+			right: 8px;
+			bottom: 18px;
 		z-index: z-index( '.media-library__list-item', '.media-library__list-item.is-selected::after' );
 		width: 28px;
 		height: 28px;
@@ -31,8 +31,8 @@
 
 .media-library__list-item-selected-icon .gridicon {
 	position: absolute;
-	bottom: 22px;
-	right: 12px;
+		bottom: 22px;
+		right: 12px;
 	z-index: z-index(
 		'.media-library__list-item',
 		'.media-library__list-item-selected-icon .gridicon'
