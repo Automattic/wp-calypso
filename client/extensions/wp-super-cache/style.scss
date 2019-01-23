@@ -43,7 +43,7 @@
 	vertical-align: bottom;
 
 	&.gridicons-checkmark-circle {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 
 	&.gridicons-cross-circle {
