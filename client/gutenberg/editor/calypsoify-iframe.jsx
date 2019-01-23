@@ -37,7 +37,7 @@ class CalypsoifyIframe extends Component {
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ /* eslint-disable-next-line jsx-a11y/iframe-has-title, wpcalypso/jsx-classname-namespace */ }
-					<iframe className={ 'is-iframe-loaded' } src={ iframeUrl } />
+					<iframe src={ iframeUrl } />
 				</div>
 			</Fragment>
 		);
