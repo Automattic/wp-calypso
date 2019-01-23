@@ -14,6 +14,10 @@ import createSwiper from './create-swiper';
 import SlideshowComponent from './slideshow';
 
 export class Slideshow extends Component {
+	static defaultProps = {
+		effect: 'slide',
+	};
+
 	render() {
 		const { align, className, effect, images } = this.props;
 
@@ -56,9 +60,5 @@ export class Slideshow extends Component {
 	// 	this.setState( { imageHeight } );
 	// };
 }
-
-Slideshow.defaultProps = {
-	effect: 'slide',
-};
 
 export default Slideshow;
