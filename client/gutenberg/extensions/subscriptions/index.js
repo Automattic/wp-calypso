@@ -6,6 +6,8 @@ import save from './save';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 import { Path } from '@wordpress/components';
+import { isEmpty } from 'lodash';
+import { RawHTML } from '@wordpress/element';
 
 export const name = 'subscriptions';
 export const settings = {
@@ -31,7 +33,7 @@ export const settings = {
 		showSubscribersTotal: { type: 'boolean', default: false },
 		submitButtonText: {
 			type: 'string',
-			default: __( 'Submit' ),
+			default: __( 'Subscribe' ),
 		},
 		customBackgroundButtonColor: { type: 'string' },
 		customTextButtonColor: { type: 'string' },
@@ -39,4 +41,36 @@ export const settings = {
 	},
 	edit,
 	save,
+	deprecated: [
+		{
+			attributes: {
+				subscribeButton: { type: 'string', default: __( 'Subscribe' ) },
+				showSubscribersTotal: { type: 'boolean', default: false },
+			},
+			migrate: attr => {
+				return {
+					subscribeButton: '',
+					submitButtonText: attr.subscribeButton,
+					showSubscribersTotal: attr.showSubscribersTotal,
+					customBackgroundButtonColor: '',
+					customTextButtonColor: '',
+					submitButtonClasses: '',
+				};
+			},
+
+			isEligible: attr => {
+				if ( ! isEmpty( attr.subscribeButton ) ) {
+					return false;
+				}
+				return true;
+			},
+			save: function( { attributes } ) {
+				return (
+					<RawHTML>{ `[jetpack_subscription_form show_subscribers_total="${
+						attributes.showSubscribersTotal
+					}" show_only_email_and_button="true"]` }</RawHTML>
+				);
+			},
+		},
+	],
 };
