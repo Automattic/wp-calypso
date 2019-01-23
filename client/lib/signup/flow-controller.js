@@ -297,7 +297,9 @@ assign( SignupFlowController.prototype, {
 	},
 
 	preprocessFlow( options ) {
-		const prefilledDependencies = this._flow.preprocess ? this._flow.preprocess( options ) : {};
+		const prefilledDependencies = this._flow.preprocess
+			? this._flow.preprocess( options, this._reduxStore.dispatch )
+			: {};
 
 		if ( isEmpty( prefilledDependencies ) ) {
 			return;

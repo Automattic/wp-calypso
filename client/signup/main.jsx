@@ -8,18 +8,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import url from 'url';
-import {
-	assign,
-	defer,
-	find,
-	get,
-	indexOf,
-	isEmpty,
-	isEqual,
-	kebabCase,
-	last,
-	startsWith,
-} from 'lodash';
+import { assign, defer, find, get, indexOf, isEqual, kebabCase, last, startsWith } from 'lodash';
 import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -44,11 +33,10 @@ import analytics from 'lib/analytics';
 import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
 import * as oauthToken from 'lib/oauth-token';
 import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
-import SignupActions from 'lib/signup/actions';
 import SignupFlowController from 'lib/signup/flow-controller';
 import { disableCart } from 'lib/upgrades/actions';
-import { isValidLandingPageVertical } from 'lib/signup/verticals';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+// import { isValidLandingPageVertical } from 'lib/signup/verticals';
+// import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -135,9 +123,7 @@ class Signup extends React.Component {
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
 
-		this.signupFlowController.preprocessFlow();
-
-		this.submitQueryDependencies();
+		this.signupFlowController.preprocessFlow( queryObject );
 
 		this.updateShouldShowLoadingScreen();
 
@@ -247,69 +233,6 @@ class Signup extends React.Component {
 			step,
 			value,
 		} );
-	};
-
-	submitQueryDependencies = () => {
-		if ( isEmpty( this.props.initialContext && this.props.initialContext.query ) ) {
-			return;
-		}
-
-		const {
-			initialContext: {
-				query: { vertical, site_type: siteType },
-			},
-			flowName,
-		} = this.props;
-
-		const flowSteps = this.signupFlowController.getFlow().steps;
-		const fulfilledSteps = [];
-
-		// `vertical` query parameter
-		if ( 'undefined' !== typeof vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
-			debug( 'From query string: vertical = %s', vertical );
-
-			const siteTopicStepName = 'site-topic';
-
-			this.props.setSurvey( {
-				vertical,
-				otherText: '',
-			} );
-			SignupActions.submitSignupStep( { stepName: 'survey' }, [], {
-				surveySiteType: 'blog',
-				surveyQuestion: vertical,
-			} );
-
-			this.props.submitSiteVertical( { name: vertical }, siteTopicStepName );
-
-			// Track our landing page verticals
-			if ( isValidLandingPageVertical( vertical ) ) {
-				analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
-					vertical,
-					flow: flowName,
-				} );
-			}
-
-			fulfilledSteps.push( siteTopicStepName );
-
-			this.recordExcludeStepEvent( siteTopicStepName, vertical );
-		}
-
-		//`site_type` query parameter
-		const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
-		if ( 'undefined' !== typeof siteTypeValue ) {
-			debug( 'From query string: site_type = %s', siteType );
-			debug( 'Site type value = %s', siteTypeValue );
-
-			const siteTypeStepName = 'site-type';
-
-			this.props.submitSiteType( siteTypeValue );
-
-			fulfilledSteps.push( siteTypeStepName );
-
-			this.recordExcludeStepEvent( siteTypeStepName, siteTypeValue );
-		}
-
-		flows.excludeSteps( fulfilledSteps );
 	};
 
 	checkForCartItems = signupDependencies => {

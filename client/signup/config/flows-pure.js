@@ -12,6 +12,9 @@ import config from 'config';
 import { addQueryArgs } from 'lib/route';
 import { planItem } from 'lib/cart-values/cart-items';
 
+import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
+import { setSiteType } from 'state/signup/steps/site-type/actions';
+
 export function generateFlows( { getSiteDestination = noop, getPostsDestination = noop } = {} ) {
 	const flows = {
 		account: {
@@ -117,6 +120,22 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			destination: getSiteDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2019-01-10',
+			preprocess: ( options, dispatch ) => {
+				const deps = {};
+
+				if ( options.vertical ) {
+					deps.siteTopic = options.vertical;
+					dispatch( setSiteVertical( options.vertical ) );
+				}
+
+				if ( options.site_type ) {
+					deps.siteType = options.site_type;
+					deps.themeSlugWithRepo = 'pub/radcliffe-2';
+					dispatch( setSiteType( options.site_type ) );
+				}
+
+				return deps;
+			},
 		},
 
 		'onboarding-dev': {
