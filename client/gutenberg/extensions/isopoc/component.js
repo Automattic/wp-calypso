@@ -3,16 +3,16 @@
 /**
  * External dependencies
  */
-import { Component, Fragment } from '@wordpress/element';
+import { Component } from '@wordpress/element';
 
 export class IsoPoc extends Component {
 	constructor() {
 		super( ...arguments );
 	}
 	render() {
-		const { children, complex, simple } = this.props;
+		const { className, children, complex, simple } = this.props;
 		return (
-			<Fragment>
+			<div className={ className }>
 				<h3>Simple:</h3>
 				<p>Simple: { simple }</p>
 				<h3>Complex:</h3>
@@ -23,7 +23,7 @@ export class IsoPoc extends Component {
 				</ol>
 				<h3>Children:</h3>
 				{ children }
-			</Fragment>
+			</div>
 		);
 	}
 }

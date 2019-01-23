@@ -3,9 +3,12 @@
 /**
  * External dependencies
  */
-
 import { Component } from '@wordpress/element';
-import { RichText } from '@wordpress/editor';
+
+/**
+ * Internal dependencies
+ */
+import IsoPocComponent from './component.js';
 
 class IsoPocSave extends Component {
 	render() {
@@ -13,13 +16,12 @@ class IsoPocSave extends Component {
 		const { align, content, complex, simple } = attributes;
 		const alignClassName = align ? `align${ align }` : null;
 		return (
-			<div
+			<IsoPocComponent
 				className={ alignClassName }
-				data-simple={ simple }
-				data-complex={ JSON.stringify( complex ) }
-			>
-				<RichText.Content tagName="figcaption" value={ content } />
-			</div>
+				content={ content }
+				complex={ complex }
+				simple={ simple }
+			/>
 		);
 	}
 }
