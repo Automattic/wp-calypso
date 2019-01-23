@@ -40,9 +40,9 @@
 
 		&[disabled],
 		&:disabled {
-			background: tint( $green-jetpack, 50% );
-			border-color: tint( $green-jetpack, 35% );
-			color: $white;
+			background: var( --color-white );
+			border-color: var( --color-neutral-50);
+			color: var( --color-neutral-50 );
 		}
 	}
 }
@@ -231,7 +231,7 @@
 .example-components__install-plugin-header {
 	width: 100%;
 	padding-bottom: 12%;
-	background-color: $green-jetpack;
+	background-color: var( --color-jetpack );
 }
 
 .example-components__install-plugin-body {
@@ -254,7 +254,7 @@
 	font-size: 12px;
 	padding: 7px 14px;
 	line-height: 1;
-	color: $white;
+	color: var( --color-white );
 	background-color: #008ec2; // wp-admin button blue
 	border: 1px solid #006799;
 	border-radius: 3px;
@@ -298,7 +298,7 @@
 	.example-components__content-wp-admin-connect-banner {
 		margin: 10px;
 		padding: 10px 10px 12px;
-		background-color: $white;
+		background-color: var( --color-white );
 	}
 
 	.example-components__content-wp-admin-connect-button {
@@ -306,7 +306,7 @@
 		font-size: 12px;
 		padding: 7px 14px;
 		line-height: 1;
-		color: $white;
+		color: var( --color-white );
 		border-radius: 3px;
 		background-color: #00be28;
 		border: 2px #00a523 solid;
@@ -328,7 +328,7 @@
 		font-size: 12px;
 		line-height: 1;
 		padding: 11px 10px;
-		color: $white;
+		color: var( --color-white );
 		background-color: #518d2a;
 		border-color: #518d2a;
 		border-radius: 4px;
@@ -339,7 +339,7 @@
 .example-components__content-wp-admin-plugin-card {
 	margin: 10px;
 	padding: 12px 10px;
-	background-color: $white;
+	background-color: var( --color-white );
 }
 
 .example-components__content-wp-admin-plugin-name {
@@ -622,8 +622,8 @@
 	}
 
 	&.is-primary {
-		background-color: $green-jetpack;
-		border-color: darken( $green-jetpack, 5% );
+		background-color: var( --color-jetpack );
+		border-color: var( --color-jetpack-light );
 	}
 }
 
