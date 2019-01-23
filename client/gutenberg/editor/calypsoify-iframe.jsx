@@ -9,10 +9,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, getSiteAdminUrl } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const getIframeUrl = ( siteAdminUrl, postId, postType ) => {
 	if ( postId ) {
@@ -31,10 +35,9 @@ class CalypsoifyIframe extends Component {
 		return (
 			<Fragment>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-				<div className="main main-column customize is-iframe" role="main">
+				<div className="main main-column calypsoify is-iframe" role="main">
 					{ /* eslint-disable-next-line jsx-a11y/iframe-has-title, wpcalypso/jsx-classname-namespace */ }
 					<iframe className={ 'is-iframe-loaded' } src={ iframeUrl } />
-					<AsyncLoad require="blocks/inline-help" placeholder={ null } />
 				</div>
 			</Fragment>
 		);

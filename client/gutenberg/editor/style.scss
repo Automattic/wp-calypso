@@ -409,3 +409,37 @@ $gutenberg-theme-toggle: #11a0d2;
 .editor-post-publish-button[aria-disabled='true'] {
 	pointer-events: none;
 }
+
+// Calypsoify iframe
+.main.calypsoify.is-iframe {
+	background-color: $gray-light;
+	margin: 0;
+	overflow-y: scroll;
+	padding: 0;
+	z-index: z-index( 'root', '.main.calypsoify.is-iframe' );
+	-webkit-overflow-scrolling: touch;
+	min-height: 0;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	top: 0;
+	width: auto;
+
+	iframe {
+		height: 100%;
+		position: absolute;
+		top: -1000px;
+		width: 100%;
+
+		&.is-iframe-loaded {
+			top: 0;
+		}
+	}
+}
+
+.main {
+	&.calypsoify {
+		max-width: 100%;
+	}
+}
