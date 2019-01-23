@@ -186,7 +186,7 @@ class GiphyEdit extends Component {
 							/>
 						) }
 					</div>
-					{ thumbnails && (
+					{ thumbnails && isSelected && (
 						<div className="wp-block-jetpack-giphy_thumbnails-container">
 							{ thumbnails.map( thumbnail => {
 								const thumbnailStyle = {
