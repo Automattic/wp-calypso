@@ -10,7 +10,7 @@ import { G, Path, SVG } from '@wordpress/components';
  */
 import './style.scss';
 import edit from './edit';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 export const MAX_POSTS_TO_SHOW = 3;
 
@@ -29,7 +29,11 @@ export const settings = {
 
 	category: 'jetpack',
 
-	keywords: [ __( 'similar content' ), __( 'linked' ), __( 'connected' ) ],
+	keywords: [
+		_x( 'Similar content', 'block search term' ),
+		_x( 'Linked', 'block search term' ),
+		_x( 'Connected', 'block search term' ),
+	],
 
 	attributes: {
 		postLayout: {
