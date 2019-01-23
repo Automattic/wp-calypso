@@ -32,7 +32,7 @@ class UpgradeBanner extends Component {
 						title={ translate( 'Unlock more activities now' ) }
 						description={ translate(
 							'With your free plan, you can monitor the 20 most ' +
-								'recent events on your site. Upgrade to a paid plan to' +
+								'recent events on your site. Upgrade to a paid plan to ' +
 								'unlock powerful features:'
 						) }
 						list={ [
@@ -49,7 +49,7 @@ class UpgradeBanner extends Component {
 						title={ translate( 'Unlock more activities now' ) }
 						description={ translate(
 							'With your free plan, you can monitor the 20 most ' +
-								'recent events on your site. Upgrade to a paid plan to' +
+								'recent events on your site. Upgrade to a paid plan to ' +
 								'unlock powerful features:'
 						) }
 						list={ [
