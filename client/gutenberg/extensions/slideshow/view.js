@@ -6,6 +6,11 @@
 import Swiper from 'swiper';
 import 'swiper/dist/css/swiper.min.css';
 
+/**
+ * Internal dependencies
+ */
+import './style.scss';
+
 // TODO: Use actual attributes
 const initialSlide = 0;
 const effect = 'fade';
