@@ -67,7 +67,6 @@ import flows from './config/flows';
 import stepComponents from './config/step-components';
 import {
 	canResumeFlow,
-	getCompletedSteps,
 	getDestination,
 	getFilteredSteps,
 	getFirstInvalidStep,
@@ -495,7 +494,10 @@ class Signup extends React.Component {
 		const flowSteps = this.signupFlowController.getFlow( this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
-			nextProgressItem = this.props.progress[ currentStepIndex + 1 ],
+			// nextProgressItem = this.props.progress[ currentStepIndex + 1 ],
+			nextProgressItem = this.props.progress.find( stepProgress => {
+				return stepProgress.stepName === nextStepName;
+			} ),
 			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );
@@ -521,10 +523,8 @@ class Signup extends React.Component {
 		}
 	};
 
-	isEveryStepSubmitted = ( progress = this.props.progress ) => {
-		const flowSteps = this.signupFlowController.getFlow().steps;
-		const completedSteps = getCompletedSteps( this.props.flowName, progress );
-		return flowSteps.length === completedSteps.length;
+	isEveryStepSubmitted = () => {
+		return this.signupFlowController.isEveryStepSubmitted();
 	};
 
 	getPositionInFlow() {

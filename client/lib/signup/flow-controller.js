@@ -303,29 +303,30 @@ assign( SignupFlowController.prototype, {
 			return;
 		}
 
-		SignupActions.provideDependencies( prefilledDependencies );
+		// SignupActions.provideDependencies( prefilledDependencies );
 
 		const prefilledSteps = this._flow.steps.reduce( ( accumulator, stepName ) => {
 			const stepDependencies = get( steps, [ stepName, 'providesDependencies' ], [] );
 
 			if ( difference( stepDependencies, Object.keys( prefilledDependencies ) ).length !== 0 ) {
-				console.log( 'whhhhhhhhhat?', stepName, stepDependencies, prefilledDependencies );
-
 				return accumulator;
 			}
 
 			const prefilledStepDependencies = pick( prefilledDependencies, stepDependencies );
 
-			console.log( 'anyone here?', stepName, stepDependencies, prefilledDependencies );
-
-			SignupActions.submitSignupStep( { stepName }, [], prefilledStepDependencies );
+			SignupActions.submitSignupStep(
+				{
+					stepName,
+					...prefilledStepDependencies,
+				},
+				[],
+				prefilledStepDependencies
+			);
 
 			accumulator[ stepName ] = true;
 
 			return accumulator;
 		}, {} );
-
-		console.log( '-------prefilledSteps: ', prefilledSteps );
 
 		this._prefilledSteps = prefilledSteps;
 	},
@@ -335,7 +336,21 @@ assign( SignupFlowController.prototype, {
 		const rawSteps = rawFlow.steps;
 		const filteredSteps = rawSteps.filter( stepName => ! this._prefilledSteps[ stepName ] );
 
-		return assign( rawFlow, { steps: filteredSteps } );
+		return assign( {}, rawFlow, { steps: filteredSteps } );
+	},
+
+	isEveryStepSubmitted() {
+		const currentSteps = this._flow.steps,
+			signupProgress = filter(
+				SignupProgressStore.get(),
+				_step => -1 !== currentSteps.indexOf( _step.stepName )
+			),
+			allStepsSubmitted =
+				reject( signupProgress, {
+					status: 'in-progress',
+				} ).length === currentSteps.length;
+
+		return allStepsSubmitted;
 	},
 } );
 
