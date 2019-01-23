@@ -4,7 +4,7 @@ const path = require( 'path' );
 
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 const isBrowser = isCalypsoClient || 'true' === process.env.TARGET_BROWSER;
-const output_dir = process.env.CALYPSO_SDK_OUTPUT_DIR || '.';
+const outputDir = process.env.CALYPSO_SDK_OUTPUT_DIR || false;
 
 const modules = isBrowser ? false : 'commonjs'; // Use commonjs for Node
 const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
@@ -12,6 +12,38 @@ const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 const targets = isBrowser
 	? { browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ] }
 	: { node: 'current' };
+
+const extensionOverrides = [
+	[
+		'@wordpress/import-jsx-pragma',
+		{
+			scopeVariable: 'createElement',
+			source: '@wordpress/element',
+			isDefault: false,
+		},
+	],
+	[
+		'@babel/transform-react-jsx',
+		{
+			pragma: 'createElement',
+		},
+	],
+];
+
+// The output directory is set when SDK runs, so we only set the POT generator override in that case.
+if ( outputDir ) {
+	extensionOverrides.unshift( [
+		'@wordpress/babel-plugin-makepot',
+		{
+			output: outputDir + '/extensions.pot',
+			headers: {
+				'content-type': 'text/plain; charset=UTF-8',
+				'x-generator': 'calypso',
+				'plural-forms': 'nplurals=2; plural=n == 1 ? 0 : 1;',
+			},
+		},
+	] );
+}
 
 const config = {
 	presets: [
@@ -55,33 +87,7 @@ const config = {
 	overrides: [
 		{
 			test: './client/gutenberg/extensions',
-			plugins: [
-				[
-					'@wordpress/babel-plugin-makepot',
-					{
-						output: output_dir + '/extensions.pot',
-						headers: {
-							'content-type': 'text/plain; charset=UTF-8',
-							'x-generator': 'calypso',
-							'plural-forms': 'nplurals=2; plural=n == 1 ? 0 : 1;',
-						},
-					},
-				],
-				[
-					'@wordpress/import-jsx-pragma',
-					{
-						scopeVariable: 'createElement',
-						source: '@wordpress/element',
-						isDefault: false,
-					},
-				],
-				[
-					'@babel/transform-react-jsx',
-					{
-						pragma: 'createElement',
-					},
-				],
-			],
+			plugins: extensionOverrides,
 		},
 	],
 	env: {
