@@ -149,6 +149,7 @@ const contextLinksForSection = {
 	account: [
 		{
 			link: 'http://en.support.wordpress.com/change-your-username/',
+			post_id: 2116,
 			title: 'Change Your Username',
 			description:
 				'You can change both your WordPress.com account username (the name you use to login) ' +
@@ -168,6 +169,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/account-deactivation/',
+			post_id: 143899,
 			title: 'Account Deactivation',
 			description: 'Finished with your WordPress.com account? Would you like to shut it down?',
 		},
@@ -231,6 +233,7 @@ const contextLinksForSection = {
 	'notification-settings': [
 		{
 			link: 'http://en.support.wordpress.com/notifications/',
+			post_id: 40992,
 			title: 'Notifications',
 			description:
 				'Notifications help you stay on top of the activity on your site and all the things happening on ' +
@@ -294,6 +297,7 @@ const contextLinksForSection = {
 	people: [
 		{
 			link: 'http://en.support.wordpress.com/user-roles/',
+			post_id: 1221,
 			title: 'User Roles',
 			description:
 				'User roles determine the access level or permissions of a person authorized to use a WordPress.com site.',
@@ -348,6 +352,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/business-plan/',
+			post_id: 134940,
 			title: 'Business Plan',
 			description:
 				"When you want to build a one-of-a-kind website, it's time for WordPress.com Business: " +
@@ -455,6 +460,7 @@ const contextLinksForSection = {
 	'settings-traffic': [
 		{
 			link: 'http://en.support.wordpress.com/getting-more-views-and-traffic/',
+			post_id: 3307,
 			title: 'Get More Views and Traffic',
 			description:
 				'Want more traffic? Here are some tips for attracting more visitors to your site!',
@@ -566,6 +572,7 @@ const contextLinksForSection = {
 		{
 			link:
 				'http://en.support.wordpress.com/themes/uploading-setting-up-custom-themes/child-themes/',
+			post_id: 134704,
 			title: 'Child Themes',
 			description:
 				"The only limit on your site is your vision — if the themes you see don't match that, it's " +
@@ -575,6 +582,7 @@ const contextLinksForSection = {
 	theme: [
 		{
 			link: 'http://en.support.wordpress.com/themes/',
+			post_id: 2278,
 			title: 'Themes: An Overview',
 			description:
 				'A theme controls the general look and feel of your site including things like ' +
@@ -582,6 +590,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/themes/mobile-themes/',
+			post_id: 4925,
 			title: 'Mobile Themes',
 			description:
 				'When a visitor browses to a WordPress.com site on a mobile device, we show ' +
@@ -589,6 +598,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/premium-themes/',
+			post_id: 12112,
 			title: 'Premium Themes',
 			description:
 				'On a site with the Premium or Business plan, you can switch to any premium theme at ' +
@@ -597,6 +607,7 @@ const contextLinksForSection = {
 		{
 			link:
 				'http://en.support.wordpress.com/themes/uploading-setting-up-custom-themes/child-themes/',
+			post_id: 134704,
 			title: 'Child Themes',
 			description:
 				"The only limit on your site is your vision — if the themes you see don't match that, it's " +
@@ -606,6 +617,7 @@ const contextLinksForSection = {
 	plans: [
 		{
 			link: 'http://en.support.wordpress.com/discover-the-wordpress-com-plans/',
+			post_id: 140323,
 			title: 'Explore the WordPress.com Plans',
 			description:
 				"Upgrading your plan unlocks a ton of features! We'll help you pick the best fit for your needs and goals.",
@@ -619,6 +631,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/auto-renewal/',
+			post_id: 110924,
 			title: 'Subscriptions for Plans and Domains',
 			description:
 				'Your WordPress.com plans and any domains you add to your sites are based on a yearly ' +
@@ -658,6 +671,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/adding-users/',
+			post_id: 2160,
 			title: 'Inviting Contributors, Followers, and Viewers',
 			description:
 				'Invite contributors, followers, and viewers to collaborate with others and grow your audience!',
@@ -680,6 +694,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/adding-users/',
+			post_id: 2160,
 			title: 'Inviting Contributors, Followers, and Viewers',
 			description:
 				'Invite contributors, followers, and viewers to collaborate with others and grow your audience!',
@@ -696,6 +711,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/following/',
+			post_id: 4899,
 			title: 'Follow Blogs',
 			description:
 				'When you follow a blog on WordPress.com, new posts from that site will automatically appear in your Reader.',
@@ -710,6 +726,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/grow-your-community/',
+			post_id: 132190,
 			title: 'Grow Your Community',
 			description:
 				'You’ve worked hard on building your site, now it’s time to explore the community and get noticed.',
@@ -745,6 +762,7 @@ const contextLinksForSection = {
 	comments: [
 		{
 			link: 'http://en.support.wordpress.com/comments/',
+			post_id: 113,
 			title: 'Comments',
 			description: 'Comments are a way for visitors to add feedback to your posts and pages.',
 		},
@@ -758,6 +776,7 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'http://en.support.wordpress.com/unwanted-comments/',
+			post_id: 5882,
 			title: 'Unwanted Comments and Comment Spam',
 			description:
 				'There are many ways to protect your WordPress.com blogs from unwanted comments. Learn all about them!',
