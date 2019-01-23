@@ -1063,15 +1063,3 @@
 .sharing-buttons-label-editor__input {
 	max-width: 300px;
 }
-
-@include breakpoint( '<660px' ) {
-	.right-column {
-		box-sizing: border-box;
-	}
-
-	.sharing-content {
-		.new-account {
-			margin-left: 10px;
-		}
-	}
-}
