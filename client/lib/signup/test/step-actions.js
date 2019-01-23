@@ -50,7 +50,6 @@ describe( 'createSiteWithCart()', () => {
 
 		createSiteWithCart(
 			response => {
-				expect( response.requestBody.options.site_vertical_slug ).toEqual( vertical );
 				expect( response.requestBody.options.site_vertical ).toBeUndefined();
 			},
 			[],
@@ -82,8 +81,6 @@ describe( 'createSiteWithCart()', () => {
 		createSiteWithCart(
 			response => {
 				expect( response.requestBody.options.site_vertical ).toEqual( verticalId );
-				expect( response.requestBody.options.site_vertical_slug ).toEqual( siteTopicSlug );
-				expect( response.requestBody.options.site_segment_slug ).toEqual( 'blog' );
 			},
 			[],
 			[],
