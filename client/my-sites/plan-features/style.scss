@@ -410,8 +410,8 @@ $plan-features-sidebar-width: 272px;
 
 .info-popover.plan-features__header-tip-info {
 	position: relative;
-	top: 4px;
-	left: 3px;
+		top: 4px;
+		left: 3px;
 	margin-top: -10px;
 	margin-bottom: -10px;
 	display: inline-block;
@@ -420,19 +420,19 @@ $plan-features-sidebar-width: 272px;
 .plan-features__price {
 	&.is-placeholder {
 		@include placeholder( 23% );
-		width: 45px;
-		height: 25px;
-		margin-top: 9px;
-		margin-bottom: 5px;
+			width: 45px;
+			height: 25px;
+			margin-top: 9px;
+			margin-bottom: 5px;
 	}
 }
 .plan-features__price-jetpack {
 	&.is-placeholder {
 		@include placeholder( 23% );
-		height: 32px;
-		margin-top: 5px;
-		margin-bottom: 5px;
-		width: 140px;
+			width: 140px;
+			height: 32px;
+			margin-top: 5px;
+			margin-bottom: 5px;
 
 		@include breakpoint( '<960px' ) {
 			height: 26px;
