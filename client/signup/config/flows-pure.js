@@ -10,6 +10,7 @@ import { noop } from 'lodash';
  */
 import config from 'config';
 import { addQueryArgs } from 'lib/route';
+import { planItem } from 'lib/cart-values/cart-items';
 
 export function generateFlows( { getSiteDestination = noop, getPostsDestination = noop } = {} ) {
 	const flows = {
@@ -21,15 +22,19 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		business: {
-			steps: [ 'user', 'about', 'themes', 'domains' ],
-			destination: function( dependencies ) {
-				return '/plans/select/business/' + dependencies.siteSlug;
-			},
+			steps: [ 'user', 'about', 'themes', 'domains', 'plans' ],
+			// destination: function( dependencies ) {
+			// 	return '/plans/select/business/' + dependencies.siteSlug;
+			// },
+			destination: getSiteDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
-			lastModified: '2018-01-24',
+			lastModified: '2019-01-23',
 			meta: {
 				skipBundlingPlan: true,
 			},
+			preprocess: () => ( {
+				cartItem: planItem( 'business-bundle' ),
+			} ),
 		},
 
 		premium: {
