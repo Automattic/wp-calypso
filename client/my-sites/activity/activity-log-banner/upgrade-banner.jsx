@@ -37,7 +37,7 @@ class UpgradeBanner extends Component {
 						) }
 						list={ [
 							translate( 'Access full activity for the past 30 days' ),
-							translate( 'Filter events by type and time range' ),
+							translate( 'Filter events by type and date range' ),
 						] }
 					/>
 				) : (
@@ -54,7 +54,7 @@ class UpgradeBanner extends Component {
 						) }
 						list={ [
 							translate( 'Access full activity for the past 30 days' ),
-							translate( 'Filter events by type and time range' ),
+							translate( 'Filter events by type and date range' ),
 						] }
 					/>
 				) }
