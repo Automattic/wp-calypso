@@ -130,7 +130,7 @@
 
 	input[type='text'] {
 		&:focus {
-			border-color: $green-jetpack;
+			border-color: var( --color-jetpack );
 			box-shadow: 0 0 0 2px var( --color-jetpack-light );
 		}
 	}
