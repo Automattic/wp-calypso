@@ -101,7 +101,7 @@
 			}
 
 			&.dashboard__process-orders-revenue .dashboard__process-orders-value {
-				color: $alert-green;
+				color: var( --color-success );
 			}
 
 			.dashboard__process-orders-label {
