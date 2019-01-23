@@ -13,33 +13,30 @@ import { union } from 'lodash';
  */
 import SiteIcon from 'blocks/site-icon';
 
+/**
+ * Style dependencies
+ */
+import './all-sites-icon.scss';
+
 const MAX_ICONS = 10;
 
-export default class extends React.Component {
-	static displayName = 'AllSitesIcon';
-
+export default class AllSitesIcon extends React.Component {
 	static propTypes = {
 		sites: PropTypes.array.isRequired,
 	};
 
-	getMaxSites = () => {
+	getMaxSites() {
 		return this.props.sites.slice( 0, MAX_ICONS );
-	};
+	}
 
-	getSitesWithIcons = () => {
-		return this.props.sites
-			.filter( function( site ) {
-				return site.icon;
-			} )
-			.slice( 0, MAX_ICONS );
-	};
+	getSitesWithIcons() {
+		return this.props.sites.filter( site => site.icon ).slice( 0, MAX_ICONS );
+	}
 
-	getIcons = () => {
+	getIcons() {
 		const sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, MAX_ICONS );
-		return sites.map( function( site ) {
-			return <SiteIcon site={ site } key={ site.ID + '-icon' } size={ 14 } />;
-		} );
-	};
+		return sites.map( site => <SiteIcon site={ site } key={ site.ID } size={ 14 } /> );
+	}
 
 	render() {
 		const icons = this.getIcons();
