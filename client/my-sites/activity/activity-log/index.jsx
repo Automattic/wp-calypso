@@ -26,6 +26,7 @@ import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
+import IntroBanner from '../activity-log-banner/intro-banner';
 import { isFreePlan } from 'lib/plans';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
@@ -68,6 +69,8 @@ import { emptyFilter } from 'state/activity-log/reducer';
 import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
 import withLocalizedMoment from 'components/with-localized-moment';
+
+import { getPreference } from 'state/preferences/selectors';
 
 const PAGE_SIZE = 20;
 
@@ -360,6 +363,7 @@ class ActivityLog extends Component {
 			slug,
 			translate,
 			isJetpack,
+			isIntroDismissed,
 		} = this.props;
 
 		const disableRestore =
@@ -435,6 +439,8 @@ class ActivityLog extends Component {
 						) }
 					/>
 				) }
+				<IntroBanner siteId={ siteId } />
+				{ siteIsOnFreePlan && isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
 				{ this.renderErrorMessage() }
 				{ this.renderActionProgress() }
@@ -485,7 +491,7 @@ class ActivityLog extends Component {
 								)
 							) }
 						</section>
-						{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
+						{ siteIsOnFreePlan && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
 							compact={ isMobile() }
 							className="activity-log__pagination is-bottom-pagination"
@@ -598,6 +604,7 @@ export default connect(
 			slug: getSiteSlug( state, siteId ),
 			timezone,
 			siteIsOnFreePlan,
+			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
 		};
 	},
 	{
