@@ -427,10 +427,14 @@ $gutenberg-theme-toggle: #11a0d2;
 	width: auto;
 
 	iframe {
-		position: absolute;
-		top: 0;
-		width: 100%;
 		height: 100%;
+		position: absolute;
+		top: -1000px;
+		width: 100%;
+
+		&.is-iframe-loaded {
+			top: 0;
+		}
 	}
 }
 
