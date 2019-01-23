@@ -152,9 +152,9 @@
 
 		&[disabled],
 		&:disabled {
-			background: tint( $green-jetpack, 50% );
-			border-color: tint( $green-jetpack, 35% );
-			color: var( --color-white );
+			background-color: var( --color-white );
+			border-color: var( --color-neutral-50 );
+			color: var( --color-neutral-50 );
 		}
 	}
 }
