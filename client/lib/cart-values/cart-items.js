@@ -1131,7 +1131,7 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		return 'INCLUDED_IN_HIGHER_PLAN';
 	}
 
-	if ( hasToUpgradeToPayForADomain( selectedSite, cart ) ) {
+	if ( hasToUpgradeToPayForADomain( selectedSite, cart, suggestion.domain_name ) ) {
 		return 'UPGRADE_TO_HIGHER_PLAN_TO_BUY';
 	}
 
