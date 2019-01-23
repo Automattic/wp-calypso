@@ -13,7 +13,7 @@ import './style.scss';
 
 // TODO: Use actual attributes
 const initialSlide = 0;
-const effect = 'fade';
+const effect = 'slide';
 
 typeof window !== 'undefined' &&
 	window.addEventListener( 'load', function() {
