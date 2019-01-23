@@ -22,7 +22,7 @@
 		min-width: 300px;
 	}
 	// Mirroring Gutenberg caption-style mixin: https://github.com/WordPress/gutenberg/blob/master/assets/stylesheets/_mixins.scss#L312-L318
-	figcaption {
+	.wp-block-jetpack-giphy-caption {
 		margin-top: 0.5em;
 		margin-bottom: 1em;
 		color: #555d66;
