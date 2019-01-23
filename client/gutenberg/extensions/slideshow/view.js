@@ -17,12 +17,10 @@ const effect = 'fade';
 
 typeof window !== 'undefined' &&
 	window.addEventListener( 'load', function() {
-		console.log( 'init swiper' ); // TODO: Remove
-
 		const swiperInstance = new Swiper( '.swiper-container', {
 			effect: effect,
 			grabCursor: true,
-			init: false,
+			init: true,
 			initialSlide: initialSlide,
 			navigation: {
 				nextEl: '.swiper-button-next',
