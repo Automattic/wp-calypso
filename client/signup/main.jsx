@@ -136,6 +136,8 @@ class Signup extends React.Component {
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
 
+		this.signupFlowController.preprocessFlow();
+
 		this.submitQueryDependencies();
 
 		this.updateShouldShowLoadingScreen();
