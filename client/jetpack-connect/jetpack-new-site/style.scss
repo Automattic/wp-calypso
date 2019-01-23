@@ -136,8 +136,8 @@
 	}
 
 	.button {
-		background-color: $green-jetpack;
-		border-color: darken( $green-jetpack, 5% );
+		background-color: var( --color-jetpack );
+		border-color: var( --color-jetpack-light );
 		margin-top: 16px;
 		width: 100%;
 
