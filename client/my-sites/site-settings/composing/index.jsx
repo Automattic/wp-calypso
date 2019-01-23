@@ -57,15 +57,13 @@ const Composing = ( {
 				/>
 			) }
 
-			{ ! siteIsJetpack && (
-				<DateTimeFormat
-					fields={ fields }
-					handleSelect={ handleSelect }
-					isRequestingSettings={ isRequestingSettings }
-					isSavingSettings={ isSavingSettings }
-					updateFields={ updateFields }
-				/>
-			) }
+			<DateTimeFormat
+				fields={ fields }
+				handleSelect={ handleSelect }
+				isRequestingSettings={ isRequestingSettings }
+				isSavingSettings={ isSavingSettings }
+				updateFields={ updateFields }
+			/>
 		</Fragment>
 	);
 };
