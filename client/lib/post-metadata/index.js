@@ -170,6 +170,21 @@ PostMetadata = {
 
 		return false;
 	},
+
+	/**
+	 * Given a post object, returns the sharing setting,
+	 * or `undefined` if the value cannot be determined.
+	 *
+	 * @param  {Object} post Post object
+	 * @return {bool}      Whether sharing is enabled
+	 */
+	isSharingEnabled: function( post ) {
+		if ( ! post ) {
+			return null;
+		}
+
+		return getValueByKey( post.metadata, 'sharing_enabled' );
+	},
 };
 
 export default PostMetadata;
