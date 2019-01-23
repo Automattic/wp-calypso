@@ -141,6 +141,7 @@
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
+		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
 		"upsell/nudge-a-palooza": false,
 		"woocommerce/extension-dashboard": true,

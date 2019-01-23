@@ -187,7 +187,8 @@ export class PlanFeaturesHeader extends Component {
 		}
 
 		if ( availableForPurchase ) {
-			if ( relatedMonthlyPlan ) {
+			// Only multiply price by 12 for Jetpack plans where we sell both monthly and yearly
+			if ( isJetpack && relatedMonthlyPlan ) {
 				return this.renderPriceGroup(
 					relatedMonthlyPlan.raw_price * 12,
 					discountPrice || rawPrice

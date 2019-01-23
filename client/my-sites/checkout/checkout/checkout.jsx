@@ -622,6 +622,11 @@ export class Checkout extends React.Component {
 			return false;
 		}
 
+		// Don't render when we're renewing a plan. Stick with the current period.
+		if ( planInCart.product_slug === currentPlanSlug ) {
+			return false;
+		}
+
 		const availableTerms = findPlansKeys( {
 			group: chosenPlan.group,
 			type: chosenPlan.type,

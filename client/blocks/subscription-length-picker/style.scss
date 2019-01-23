@@ -15,7 +15,16 @@
 	}
 
 	&__option-container {
-		flex-basis: calc( 50% - 10px );
+		&:first-child:nth-last-child( 2 ),
+		&:first-child:nth-last-child( 2 ) ~ div {
+			flex-basis: calc( 50% - 10px );
+			margin-top: 0;
+		}
+
+		flex-basis: calc( 100% );
+		&:not( :first-child ) {
+			margin-top: 20px;
+		}
 
 		@include breakpoint( '<960px' ) {
 			flex-basis: calc( 100% );

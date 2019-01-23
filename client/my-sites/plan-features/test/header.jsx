@@ -302,6 +302,7 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 			currentSitePlan: PLAN_FREE,
 			relatedMonthlyPlan: { raw_price: 5 },
 			rawPrice: 50,
+			isJetpack: true,
 		};
 
 		test( 'Should return two price groups', () => {
@@ -416,6 +417,7 @@ describe( 'PlanFeaturesHeader.render()', () => {
 			translate: identity,
 			currentSitePlan: PLAN_FREE,
 			rawPrice: 9,
+			isJetpack: true,
 		};
 
 		test( "Rendering monthly plan should yield no discount if there's no discountPrice", () => {
