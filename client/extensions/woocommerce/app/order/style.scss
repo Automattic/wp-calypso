@@ -100,7 +100,7 @@
 	}
 
 	.order-payment__label .gridicon {
-		color: $alert-green;
+		color: var( --color-success );
 	}
 
 	.order-payment__action,
