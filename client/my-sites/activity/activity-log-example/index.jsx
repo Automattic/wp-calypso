@@ -79,7 +79,7 @@ class ActivityLogExample extends Component {
 						/>
 					) ) }
 				</FeatureExample>
-				{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
+				{ siteIsOnFreePlan && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 			</div>
 		);
 	}
