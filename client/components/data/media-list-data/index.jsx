@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { assign, isEqual } from 'lodash';
+import { assign, isEqual, has } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -33,6 +33,12 @@ export default class extends React.Component {
 		postId: PropTypes.number,
 		filter: PropTypes.string,
 		search: PropTypes.string,
+		queryFilters: PropTypes.object,
+	};
+
+	static defaultProps = {
+		filter: '',
+		queryFilters: {},
 	};
 
 	state = getStateData( this.props.siteId );
@@ -61,6 +67,9 @@ export default class extends React.Component {
 
 		props = props || this.props;
 
+		// Initialise here as we may need to append to it later...
+		query.filter = [];
+
 		if ( props.search ) {
 			query.search = props.search;
 		}
@@ -78,6 +87,16 @@ export default class extends React.Component {
 		if ( props.source ) {
 			query.source = props.source;
 			query.path = 'recent';
+		}
+
+		if (
+			has( props, 'queryFilters.dateRange.from' ) &&
+			has( props, 'queryFilters.dateRange.to' )
+		) {
+			query.filter = [
+				...query.filter,
+				`dateRange=${ props.queryFilters.dateRange.from }:${ props.queryFilters.dateRange.to }`,
+			];
 		}
 
 		return query;

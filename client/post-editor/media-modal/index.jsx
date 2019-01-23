@@ -160,10 +160,7 @@ export class EditorMediaModal extends Component {
 			filter: '',
 			detailSelectedIndex: 0,
 			source: props.source ? props.source : '',
-			dateRange: {
-				from: props.moment(),
-				to: props.moment(),
-			},
+			queryFilters: {},
 			gallerySettings: props.initialGallerySettings,
 		};
 	}
@@ -442,11 +439,11 @@ export class EditorMediaModal extends Component {
 		this.setState( { source, search: undefined } );
 	};
 
-	onDateChange = ( startDate, endDate ) => {
+	onQueryFiltersChange = queryFilters => {
 		this.setState( {
-			dateRange: {
-				from: startDate,
-				to: endDate,
+			queryFilters: {
+				...this.state.queryFilters,
+				...queryFilters,
 			},
 		} );
 	};
@@ -628,7 +625,8 @@ export class EditorMediaModal extends Component {
 						enabledFilters={ this.props.enabledFilters }
 						search={ this.state.search }
 						source={ this.state.source }
-						dateRange={ this.state.dateRange }
+						queryFilters={ this.state.queryFilters }
+						onQueryFiltersChange={ this.onQueryFiltersChange }
 						onAddMedia={ this.onAddMedia }
 						onAddAndEditImage={ this.onAddAndEditImage }
 						onFilterChange={ this.onFilterChange }

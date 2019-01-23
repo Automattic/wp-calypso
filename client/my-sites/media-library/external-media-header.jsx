@@ -6,7 +6,7 @@
 
 import React from 'react';
 import Gridicon from 'gridicons';
-import { debounce } from 'lodash';
+import { debounce, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -38,6 +38,13 @@ class MediaLibraryExternalHeader extends React.Component {
 		hasDateFilters: PropTypes.bool,
 		filter: PropTypes.string,
 		onFilterChange: PropTypes.func,
+		queryFilters: PropTypes.object,
+		onQueryFiltersChange: PropTypes.func,
+	};
+
+	static defaultProps = {
+		queryFilters: {},
+		onQueryFiltersChange: noop,
 	};
 
 	constructor( props ) {
@@ -113,9 +120,14 @@ class MediaLibraryExternalHeader extends React.Component {
 		const filterStartDate = this.props.moment( startDate ).format( requiredDateFormat );
 		const filterEndDate = this.props.moment( endDate ).format( requiredDateFormat );
 
-		const dateFilter = `dateRange=${ filterStartDate }:${ filterEndDate }`;
+		// const dateFilter = `dateRange=${ filterStartDate }:${ filterEndDate }`;
 
-		this.props.onFilterChange( dateFilter );
+		this.props.onQueryFiltersChange( {
+			dateRange: {
+				from: filterStartDate,
+				to: filterEndDate,
+			},
+		} );
 	};
 
 	renderCopyButton() {
