@@ -21,8 +21,7 @@ import { filter, get, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-
-import Slideshow from './component.js';
+import Slideshow from './component';
 import { settings } from './settings';
 
 const ALLOWED_MEDIA_TYPES = [ 'image' ];
@@ -157,24 +156,7 @@ class SlideshowEdit extends Component {
 			<Fragment>
 				{ controls }
 				{ noticeUI }
-				<Slideshow className={ className } effect={ effect } align={ align }>
-					{ images.map( ( image, index ) => {
-						const { alt, caption, height, id, url, width } = image;
-						return (
-							<div className="wp-block-slideshow_image_container" key={ index }>
-								<img
-									src={ url }
-									alt={ alt }
-									data-is-image
-									data-id={ id }
-									data-height={ height }
-									data-width={ width }
-								/>
-								{ caption && <figcaption data-is-caption>{ caption }</figcaption> }
-							</div>
-						);
-					} ) }
-				</Slideshow>
+				<Slideshow align={ align } className={ className } effect={ effect } images={ images } />
 			</Fragment>
 		);
 	}
