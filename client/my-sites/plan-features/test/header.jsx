@@ -302,7 +302,7 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 			currentSitePlan: PLAN_FREE,
 			relatedMonthlyPlan: { raw_price: 5 },
 			rawPrice: 50,
-			isJetpack: 50,
+			isJetpack: true,
 		};
 
 		test( 'Should return two price groups', () => {
