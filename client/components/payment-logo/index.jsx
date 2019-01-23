@@ -31,6 +31,7 @@ const ALT_TEXT = {
 	wechat: i18n.translate( 'WeChat Pay', {
 		comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
 	} ),
+	'web-payment': 'Web Payment',
 };
 
 export const POSSIBLE_TYPES = keys( ALT_TEXT );
