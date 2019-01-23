@@ -43,7 +43,7 @@ class IntroBanner extends Component {
 			<Fragment>
 				<p>
 					{ translate(
-						'The Activity tracks the events that occur on your site so that you don’t have to.'
+						'Activity tracks the events that occur on your site so that you don’t have to.'
 					) }
 				</p>
 				<p>
@@ -52,12 +52,12 @@ class IntroBanner extends Component {
 								'With your free plan, you can monitor the 20 most recent ' +
 									'events. A paid plan unlocks more powerful features. ' +
 									'You can access all site activity for the last 30 days ' +
-									'and filter events by type and time range to quickly find ' +
+									'and filter events by type and date range to quickly find ' +
 									'the information you need. '
 						  )
 						: translate(
 								'Explore the list below or filter events by type and ' +
-									'time range to quickly find the information you need. '
+									'date range to quickly find the information you need. '
 						  ) }
 					<ExternalLink
 						href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/"
