@@ -45,6 +45,11 @@
 	}
 }
 .components-panel__body-giphy-branding {
+	svg {
+		display: block;
+		margin: 0 auto;
+		max-width: 200px;
+	}
 	svg path {
 		fill: #ccc;
 	}
