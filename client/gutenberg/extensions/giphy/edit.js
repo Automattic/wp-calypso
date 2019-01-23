@@ -17,7 +17,6 @@ class GiphyEdit extends Component {
 	state = {
 		focus: false,
 		results: null,
-		thumbnails: null,
 	};
 
 	componentWillUnmount() {
@@ -104,18 +103,6 @@ class GiphyEdit extends Component {
 		const paddingTop = `${ calculatedPaddingTop }%`;
 		const giphyUrl = giphy.embed_url;
 		setAttributes( { giphyUrl, paddingTop } );
-		this.selectThumbnails( giphy );
-	};
-
-	selectThumbnails = selected => {
-		const { results } = this.state;
-		const thumbnails = [];
-		results.forEach( result => {
-			if ( result.id !== selected.id ) {
-				thumbnails.push( result );
-			}
-		} );
-		this.setState( { thumbnails } );
 	};
 
 	setFocus = () => {
@@ -157,7 +144,7 @@ class GiphyEdit extends Component {
 	render() {
 		const { attributes, className, isSelected, setAttributes } = this.props;
 		const { align, caption, giphyUrl, searchText, paddingTop } = attributes;
-		const { focus, thumbnails } = this.state;
+		const { focus, results } = this.state;
 		const style = { paddingTop };
 		const classes = classNames( className, `align${ align }` );
 		const textControlClasses = classNames(
@@ -186,9 +173,12 @@ class GiphyEdit extends Component {
 							/>
 						) }
 					</div>
-					{ thumbnails && isSelected && (
+					{ results && isSelected && (
 						<div className="wp-block-jetpack-giphy_thumbnails-container">
-							{ thumbnails.map( thumbnail => {
+							{ results.map( thumbnail => {
+								if ( thumbnail.embed_url === giphyUrl ) {
+									return null;
+								}
 								const thumbnailStyle = {
 									backgroundImage: `url(${ thumbnail.images.preview_gif.url })`,
 								};
