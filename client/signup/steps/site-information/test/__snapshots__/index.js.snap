@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<SiteInformation /> should render 1`] = `
-<Localized(StepWrapper)
+<Connect(Localized(StepWrapper))
   fallbackHeaderText="headerTextoidaliciously"
   headerText="headerTextoidaliciously"
   stepContent={

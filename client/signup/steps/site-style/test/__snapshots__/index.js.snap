@@ -2,7 +2,7 @@
 
 exports[`<SiteStyleStep /> should render 1`] = `
 <div>
-  <Localized(StepWrapper)
+  <Connect(Localized(StepWrapper))
     fallbackHeaderText="Choose a style"
     fallbackSubHeaderText="Choose a style for your site's theme. Don't worry, you can always change it later."
     headerText="Choose a style"
