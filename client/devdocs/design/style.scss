@@ -25,7 +25,7 @@
 .design__error {
 	background: rgba( 0, 0, 0, 0.5 );
 	box-sizing: border-box;
-	color: $alert-red;
+	color: var( --color-error );
 	position: sticky;
 	top: 0;
 }

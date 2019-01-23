@@ -47,7 +47,7 @@
 	}
 
 	&.gridicons-cross-circle {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 }
 

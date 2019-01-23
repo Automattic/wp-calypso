@@ -13,9 +13,9 @@
 		margin-top: 2px;
 	}
 	&.help-message-is-error {
-		color: $alert-red;
+		color: var( --color-error );
 		svg {
-			fill: $alert-red;
+			fill: var( --color-error );
 		}
 	}
 }

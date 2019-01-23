@@ -143,13 +143,13 @@
 
 	&.is-scary {
 		.gridicon {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 
 		&.is-selected,
 		&:hover,
 		&:focus {
-			background: $alert-red;
+			background: var( --color-error );
 			color: $white;
 
 			.gridicon {
