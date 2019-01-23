@@ -750,13 +750,11 @@ const contextLinksForSection = {
 		},
 		{
 			link: 'https://en.support.wordpress.com/',
-			post_id: 20158,
 			title: 'All Support Articles',
 			description: 'Looking to learn more about a feature? Our docs have all the details.',
 		},
 		{
 			link: 'https://learn.wordpress.com/',
-			post_id: 4580,
 			title: 'Self-guided Online Tutorial',
 			description: 'A step-by-step guide to getting familiar with the platform.',
 		},
