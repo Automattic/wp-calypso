@@ -90,7 +90,9 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case SITE_BLACKLISTED:
-				noticeValues.text = translate( "This site can't be connected to WordPress.com." );
+				noticeValues.text = translate(
+					"This site can't be connected to WordPress.com because it violates our Terms of Service."
+				);
 				return noticeValues;
 
 			case IS_DOT_COM:
