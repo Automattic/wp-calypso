@@ -4,7 +4,6 @@
  * External dependencies
  */
 import { Component } from '@wordpress/element';
-import classnames from 'classnames';
 import { isEqual } from 'lodash';
 import 'swiper/dist/css/swiper.min.css';
 
