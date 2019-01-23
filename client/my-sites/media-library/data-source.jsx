@@ -66,7 +66,14 @@ export class MediaLibraryDataSource extends Component {
 			{
 				value: 'google_photos',
 				label: translate( 'Google Photos library' ),
-				icon: <Gridicon icon="shutter" size={ 24 } />,
+				icon: (
+					<img
+						src="/calypso/images/sharing/google-photos-logo.svg"
+						width="24"
+						height="24"
+						alt={ translate( 'Google Photos library' ) }
+					/>
+				),
 			},
 		];
 		if ( config.isEnabled( 'external-media/free-photo-library' ) ) {

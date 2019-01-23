@@ -7,7 +7,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { last, isEqual } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -75,7 +74,13 @@ export class GooglePhotos extends SharingService {
 	renderLogo() {
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			<Gridicon icon="image" size={ 48 } className="sharing-service__logo" />
+			<img
+				className="sharing-service__logo"
+				src="/calypso/images/sharing/google-photos-logo.svg"
+				width="48"
+				height="48"
+				alt=""
+			/>
 		);
 	}
 }
