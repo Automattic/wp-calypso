@@ -198,19 +198,19 @@ $plan-features-sidebar-width: 272px;
 
 	.plans-features-main__group.is-wpcom & {
 		&.is-blogger-plan {
-			border-bottom: solid 2px var( --color-success );
+			border-bottom: solid 2px var( --color-plan-blogger );
 		}
 
 		&.is-personal-plan {
-			border-bottom: solid 2px var( --color-primary );
+			border-bottom: solid 2px var( --color-plan-personal );
 		}
 
 		&.is-premium-plan {
-			border-bottom: solid 2px var( --color-warning );
+			border-bottom: solid 2px var( --color-plan-premium );
 		}
 
 		&.is-business-plan {
-			border-bottom: solid 2px $orange-jazzy;
+			border-bottom: solid 2px var( --color-plan-business );
 		}
 
 		&.is-ecommerce-plan {
@@ -228,7 +228,7 @@ $plan-features-sidebar-width: 272px;
 		}
 
 		&.is-business-plan {
-			border-bottom: solid 2px var( --color-plan-business );
+			border-bottom: solid 2px var( --color-plan-ecommerce );
 		}
 	}
 }
@@ -306,7 +306,7 @@ $plan-features-sidebar-width: 272px;
 	line-height: 20px;
 	height: 20px;
 	border-radius: 10px;
-	color: $white;
+	color: var( --color-white );
 	background: var( --color-success );
 	font-weight: normal;
 	vertical-align: middle;
