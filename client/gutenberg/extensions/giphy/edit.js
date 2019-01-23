@@ -15,6 +15,7 @@ class GiphyEdit extends Component {
 	textControlRef = createRef();
 
 	state = {
+		captionFocus: false,
 		focus: false,
 		results: null,
 	};
@@ -108,6 +109,7 @@ class GiphyEdit extends Component {
 	setFocus = () => {
 		this.maintainFocus();
 		this.textControlRef.current.querySelector( 'input' ).focus();
+		this.setState( { captionFocus: false } );
 	};
 
 	maintainFocus = ( timeoutDuration = 3500 ) => {
@@ -144,7 +146,7 @@ class GiphyEdit extends Component {
 	render() {
 		const { attributes, className, isSelected, setAttributes } = this.props;
 		const { align, caption, giphyUrl, searchText, paddingTop } = attributes;
-		const { focus, results } = this.state;
+		const { captionFocus, focus, results } = this.state;
 		const style = { paddingTop };
 		const classes = classNames( className, `align${ align }` );
 		const textControlClasses = classNames(
@@ -199,11 +201,15 @@ class GiphyEdit extends Component {
 				</figure>
 				{ ( ! RichText.isEmpty( caption ) || isSelected ) && (
 					<RichText
-						className="caption"
+						className="wp-block-jetpack-giphy-caption"
 						inlineToolbar
+						isSelected={ captionFocus }
+						unstableOnFocus={ () => {
+							this.setState( { captionFocus: true } );
+						} }
 						onChange={ value => setAttributes( { caption: value } ) }
 						placeholder={ __( 'Write caption…' ) }
-						tagName="figcaption"
+						tagName="p"
 						value={ caption }
 					/>
 				) }
