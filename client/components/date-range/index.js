@@ -590,7 +590,7 @@ export class DateRange extends Component {
 
 		return (
 			<Popover
-				className="date-range__popover"
+				className="date-range__popover is-dialog-visible"
 				isVisible={ this.state.popoverVisible }
 				context={ this.triggerButtonRef.current }
 				position="bottom"
