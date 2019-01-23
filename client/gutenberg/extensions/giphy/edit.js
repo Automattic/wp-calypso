@@ -16,6 +16,8 @@ class GiphyEdit extends Component {
 
 	state = {
 		focus: false,
+		results: null,
+		thumbnails: null,
 	};
 
 	componentWillUnmount() {
@@ -56,7 +58,7 @@ class GiphyEdit extends Component {
 	urlForSearch = searchText => {
 		return `https://api.giphy.com/v1/gifs/search?q=${ encodeURIComponent(
 			searchText
-		) }&api_key=${ encodeURIComponent( GIPHY_API_KEY ) }&limit=1`;
+		) }&api_key=${ encodeURIComponent( GIPHY_API_KEY ) }&limit=10`;
 	};
 
 	urlForId = giphyId => {
@@ -71,7 +73,6 @@ class GiphyEdit extends Component {
 	};
 
 	fetch = url => {
-		const { setAttributes } = this.props;
 		const xhr = new XMLHttpRequest();
 		xhr.open( 'GET', url );
 		xhr.onload = () => {
@@ -82,18 +83,39 @@ class GiphyEdit extends Component {
 				if ( ! giphyData.images ) {
 					return;
 				}
-				const calculatedPaddingTop = Math.floor(
-					( giphyData.images.original.height / giphyData.images.original.width ) * 100
-				);
-				const paddingTop = `${ calculatedPaddingTop }%`;
-				const giphyUrl = giphyData.embed_url;
-				setAttributes( { giphyUrl, paddingTop } );
+				if ( res.data.length > 1 ) {
+					this.setState( { results: res.data }, () => {
+						this.selectGiphy( giphyData );
+					} );
+				}
 				this.maintainFocus( 500 );
 			} else {
 				// Error handling TK
 			}
 		};
 		xhr.send();
+	};
+
+	selectGiphy = giphy => {
+		const { setAttributes } = this.props;
+		const calculatedPaddingTop = Math.floor(
+			( giphy.images.original.height / giphy.images.original.width ) * 100
+		);
+		const paddingTop = `${ calculatedPaddingTop }%`;
+		const giphyUrl = giphy.embed_url;
+		setAttributes( { giphyUrl, paddingTop } );
+		this.selectThumbnails( giphy );
+	};
+
+	selectThumbnails = selected => {
+		const { results } = this.state;
+		const thumbnails = [];
+		results.forEach( result => {
+			if ( result.id !== selected.id ) {
+				thumbnails.push( result );
+			}
+		} );
+		this.setState( { thumbnails } );
 	};
 
 	setFocus = () => {
@@ -128,10 +150,14 @@ class GiphyEdit extends Component {
 		return searchText && searchText.length > 0;
 	};
 
+	thumbnailClicked = thumbnail => {
+		this.selectGiphy( thumbnail );
+	};
+
 	render() {
 		const { attributes, className, isSelected, setAttributes } = this.props;
 		const { align, caption, giphyUrl, searchText, paddingTop } = attributes;
-		const { focus } = this.state;
+		const { focus, thumbnails } = this.state;
 		const style = { paddingTop };
 		const classes = classNames( className, `align${ align }` );
 		const textControlClasses = classNames(
@@ -160,6 +186,25 @@ class GiphyEdit extends Component {
 							/>
 						) }
 					</div>
+					{ thumbnails && (
+						<div className="wp-block-jetpack-giphy_thumbnails-container">
+							{ thumbnails.map( thumbnail => {
+								const thumbnailStyle = {
+									backgroundImage: `url(${ thumbnail.images.preview_gif.url })`,
+								};
+								return (
+									<button
+										className="wp-block-jetpack-giphy_thumbnail-container"
+										key={ thumbnail.id }
+										onClick={ () => {
+											this.thumbnailClicked( thumbnail );
+										} }
+										style={ thumbnailStyle }
+									/>
+								);
+							} ) }
+						</div>
+					) }
 					<iframe src={ giphyUrl } title={ searchText } />
 				</figure>
 				{ ( ! RichText.isEmpty( caption ) || isSelected ) && (
