@@ -67,7 +67,6 @@ class IntroBanner extends Component {
 					>
 						{ translate( 'Learn more' ) }
 					</ExternalLink>
-					.
 				</p>
 
 				{ siteIsOnFreePlan && (
