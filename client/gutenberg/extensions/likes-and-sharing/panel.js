@@ -21,17 +21,13 @@ class LikesAndSharingPanel extends Component {
 				<CheckboxControl
 					label={ __( 'Show likes.' ) }
 					checked={ areLikesEnabled }
-					onChange={ value => {
-						toggleLikes( value );
-					} }
+					onChange={ toggleLikes }
 				/>
 
 				<CheckboxControl
 					label={ __( 'Show sharing buttons.' ) }
 					checked={ isSharingEnabled }
-					onChange={ value => {
-						toggleSharing( value );
-					} }
+					onChange={ toggleSharing }
 				/>
 			</PanelBody>
 		);
@@ -50,21 +46,18 @@ const applyWithSelect = withSelect( select => {
 } );
 
 // Provide method to update post meta.
-const applyWithDispatch = withDispatch( ( dispatch, { meta } ) => {
-	const { editPost } = dispatch( 'core/editor' );
+const applyWithDispatch = withDispatch(
+	( dispatch, { meta, areLikesEnabled, isSharingEnabled } ) => {
+		const { editPost } = dispatch( 'core/editor' );
 
-	// todo: handle switch_like_status logic
+		// todo: handle switch_like_status logic
 
-	return {
-		toggleLikes( value ) {
-			editPost( { meta: { ...meta, switch_like_status: ! value } } );
-		},
-		toggleSharing( value ) {
-			// const value = get( meta, [ 'sharing_disabled' ] ); -- doesn't work - always false
-			editPost( { meta: { ...meta, sharing_disabled: ! value } } );
-		},
-	};
-} );
+		return {
+			toggleLikes: () => editPost( { meta: { ...meta, switch_like_status: ! areLikesEnabled } } ),
+			toggleSharing: () => editPost( { meta: { ...meta, sharing_disabled: ! isSharingEnabled } } ),
+		};
+	}
+);
 
 // Combine the higher-order components.
 export default compose( [ applyWithSelect, applyWithDispatch ] )( LikesAndSharingPanel );
