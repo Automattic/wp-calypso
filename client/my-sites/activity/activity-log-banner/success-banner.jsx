@@ -65,7 +65,7 @@ class SuccessBanner extends PureComponent {
 	handleDismiss = () =>
 		this.props.backupUrl
 			? this.props.dismissBackupProgress( this.props.siteId, this.props.downloadId )
-			: this.props.dismissRestoreProgress( this.props.siteId );
+			: this.props.dismissRestoreProgress( this.props.siteId, this.props.restoreId );
 
 	trackDownload = () =>
 		this.props.recordTracksEvent( 'calypso_activitylog_backup_download', {

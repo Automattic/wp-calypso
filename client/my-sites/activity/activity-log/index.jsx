@@ -288,6 +288,7 @@ class ActivityLog extends Component {
 						siteId={ siteId }
 						timestamp={ rewindId }
 						downloadId={ downloadId }
+						restoreId={ restoreId }
 						backupUrl={ url }
 						downloadCount={ downloadCount }
 						context={ context }
