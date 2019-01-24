@@ -301,7 +301,7 @@ textarea {
 
 				// Error label below each field
 				.text-danger {
-					color: $alert-red;
+					color: var( --color-error );
 					margin: 0;
 					padding: 4px 0;
 				}
@@ -697,7 +697,7 @@ body > .ui-select-bootstrap.open {
 
 /* Mark invalid Bootstrap */
 .ui-select-bootstrap.ng-dirty.ng-invalid > button.btn.ui-select-match {
-	border-color: $alert-red;
+	border-color: var( --color-error );
 }
 
 /* Handle up direction Bootstrap */
