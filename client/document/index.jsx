@@ -226,11 +226,12 @@ class Document extends React.Component {
 					/>
 					<script
 						nonce={ inlineScriptNonce }
-						type="text/javascript"
 						dangerouslySetInnerHTML={ {
 							__html: `
-							if ( 'serviceWorker' in navigator ) {
-								navigator.serviceWorker.register( '/service-worker.js' );
+							if ('serviceWorker' in navigator) {
+								window.addEventListener('load', function() {
+									navigator.serviceWorker.register('/service-worker.js');
+								});
 							}
 						 `,
 						} }
