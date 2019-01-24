@@ -26,6 +26,11 @@ import getSiteConnectionStatus from 'state/selectors/get-site-connection-status'
 import isRequestingSiteConnectionStatus from 'state/selectors/is-requesting-site-connection-status';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const WPAdminLink = props => <ExternalLink icon iconSize={ 12 } target="_blank" { ...props } />;
 
 class SiteIndicator extends Component {
