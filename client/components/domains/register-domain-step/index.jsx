@@ -303,6 +303,7 @@ class RegisterDomainStep extends React.Component {
 			this.onSearch( this.state.lastQuery );
 		} else {
 			this.getAvailableTlds();
+			this.save();
 		}
 		this._isMounted = true;
 		this.props.recordSearchFormView( this.props.analyticsSection );
