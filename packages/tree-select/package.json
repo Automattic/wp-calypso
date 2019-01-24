@@ -1,6 +1,6 @@
 {
   "name": "@automattic/tree-select",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A selector library for Redux",
   "keywords": [
     "redux",
@@ -24,8 +24,5 @@
   "files": [
     "dist",
     "src"
-  ],
-  "dependencies": {
-    "lodash": "^4.17.0"
-  }
+  ]
 }

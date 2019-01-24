@@ -20,7 +20,7 @@
     "> 1%"
   ],
   "dependencies": {
-    "@automattic/tree-select": "1.0.2",
+    "@automattic/tree-select": "1.0.3",
     "@babel/cli": "7.2.3",
     "@babel/core": "7.2.2",
     "@babel/plugin-proposal-class-properties": "7.3.0",
