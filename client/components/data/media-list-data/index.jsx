@@ -7,6 +7,7 @@
 import { assign, isEqual, has } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -89,14 +90,34 @@ export default class extends React.Component {
 			query.path = 'recent';
 		}
 
-		if (
-			has( props, 'queryFilters.dateRange.from' ) &&
-			has( props, 'queryFilters.dateRange.to' )
-		) {
-			query.filter = [
-				...query.filter,
-				`dateRange=${ props.queryFilters.dateRange.from }:${ props.queryFilters.dateRange.to }`,
-			];
+		// Convert date range to query format
+		if ( has( props, 'queryFilters.dateRange' ) ) {
+			// Date passed as: YYYY-MM-DD:YYYY-MM-DD (with 0 indicating an 'empty' value)
+			// https://developers.google.com/photos/library/reference/rest/v1/mediaItems/search#Date
+			const wildCardDate = '0000-00-00';
+			const dateFormat = 'YYYY-MM-DD';
+
+			let dateFrom = wildCardDate;
+			let dateTo = wildCardDate;
+
+			if (
+				has( props, 'queryFilters.dateRange.from' ) &&
+				moment( props.queryFilters.dateRange.from, dateFormat ).isValid()
+			) {
+				dateFrom = props.queryFilters.dateRange.from;
+			}
+
+			if (
+				has( props, 'queryFilters.dateRange.to' ) &&
+				moment( props.queryFilters.dateRange.to, dateFormat ).isValid()
+			) {
+				dateTo = props.queryFilters.dateRange.to;
+			}
+
+			// If both dates are *not* wildcards then pass a date range filter
+			if ( ! ( dateFrom === wildCardDate && dateTo === wildCardDate ) ) {
+				query.filter = [ ...query.filter, `dateRange=${ dateFrom }:${ dateTo }` ];
+			}
 		}
 
 		return query;
