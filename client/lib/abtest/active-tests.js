@@ -85,8 +85,8 @@ export default {
 	showConciergeSessionUpsell: {
 		datestamp: '20181214',
 		variations: {
-			skip: 50,
-			show: 50,
+			skip: 100,
+			show: 0,
 		},
 		defaultVariation: 'skip',
 		allowExistingUsers: true,
