@@ -48,6 +48,7 @@ export class DateRange extends Component {
 		] ),
 		triggerText: PropTypes.func,
 		isCompact: PropTypes.bool,
+		showTriggerClear: PropTypes.bool,
 		renderTrigger: PropTypes.func,
 		renderHeader: PropTypes.func,
 		renderInputs: PropTypes.func,
@@ -58,6 +59,7 @@ export class DateRange extends Component {
 		onDateCommit: noop,
 		isCompact: false,
 		focusedMonth: null,
+		showTriggerClear: true,
 		renderTrigger: props => <DateRangeTrigger { ...props } />,
 		renderHeader: props => <DateRangeHeader { ...props } />,
 		renderInputs: props => <DateRangeInputs { ...props } />,
@@ -379,7 +381,15 @@ export class DateRange extends Component {
 		} );
 	};
 
-	resetDateRange = () => {
+	/**
+	 * Resets any currently selected (not commmited!) dates
+	 * but leaves stale dates untouched. This makes it possible
+	 * for the user to revert back to the previous dates should
+	 * they so choose. Required for scenario where user selects dates
+	 * then wants to clear that selection entirely but then clicks away
+	 * without selecting any dates
+	 */
+	resetDates = () => {
 		this.setState( previousState => {
 			const startDate = previousState.initialStartDate;
 			const endDate = previousState.initialEndDate;
@@ -393,6 +403,21 @@ export class DateRange extends Component {
 			};
 
 			return newState;
+		} );
+	};
+
+	/**
+	 * Fully clears all dates to empty values
+	 * Affecting saying "get rid of all dates"
+	 */
+	clearDates = () => {
+		this.setState( {
+			startDate: null,
+			endDate: null,
+			staleStartDate: null,
+			staleEndDate: null,
+			textInputStartDate: '',
+			textInputEndDate: '',
 		} );
 	};
 
@@ -510,7 +535,7 @@ export class DateRange extends Component {
 					! endDate &&
 					this.props.translate( '{{icon/}} Please select the {{em}}first{{/em}} day.', {
 						components: {
-							icon: <Gridicon icon="info" />,
+							icon: <Gridicon aria-hidden="true" icon="info" />,
 							em: <em />,
 						},
 					} ) }
@@ -518,19 +543,14 @@ export class DateRange extends Component {
 					! endDate &&
 					this.props.translate( '{{icon/}} Please select the {{em}}last{{/em}} day.', {
 						components: {
-							icon: <Gridicon icon="info" />,
+							icon: <Gridicon aria-hidden="true" icon="info" />,
 							em: <em />,
 						},
 					} ) }
 				{ startDate && endDate && (
-					<Button
-						className="date-range__info-btn"
-						borderless
-						compact
-						onClick={ this.resetDateRange }
-					>
-						{ this.props.translate( '{{icon/}} clear selected dates', {
-							components: { icon: <Gridicon icon="cross-small" /> },
+					<Button className="date-range__info-btn" borderless compact onClick={ this.resetDates }>
+						{ this.props.translate( '{{icon/}} reset selected dates', {
+							components: { icon: <Gridicon aria-hidden="true" icon="cross-small" /> },
 						} ) }
 					</Button>
 				) }
@@ -638,12 +658,16 @@ export class DateRange extends Component {
 		} );
 
 		const triggerProps = {
+			startDate: this.state.startDate,
+			endDate: this.state.endDate,
 			startDateText: this.toDateString( this.state.startDate ),
 			endDateText: this.toDateString( this.state.endDate ),
 			buttonRef: this.triggerButtonRef,
 			onTriggerClick: this.togglePopover,
+			onClearClick: this.clearDates,
 			triggerText: this.props.triggerText,
 			isCompact: this.props.isCompact,
+			showClearBtn: this.props.showTriggerClear,
 		};
 
 		return (
