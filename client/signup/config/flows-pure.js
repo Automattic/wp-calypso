@@ -108,17 +108,26 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		onboarding: {
+			steps: [ 'user', 'site-type', 'site-topic', 'site-information', 'domains', 'plans' ],
+			destination: getSiteDestination,
+			description: 'The improved onboarding flow.',
+			lastModified: '2019-01-24',
+		},
+
+		'onboarding-for-business': {
 			steps: [
 				'user',
 				'site-type',
 				'site-topic-with-preview',
-				'site-information-with-preview',
+				'site-information-title-with-preview',
+				'site-information-address-with-preview',
+				'site-information-phone-with-preview',
 				'domains-with-preview',
 				'plans',
 			],
 			destination: getSiteDestination,
-			description: 'The improved onboarding flow.',
-			lastModified: '2019-01-23',
+			description: 'The improved onboarding flow for business site types.',
+			lastModified: '2019-01-24',
 		},
 
 		'onboarding-dev': {
