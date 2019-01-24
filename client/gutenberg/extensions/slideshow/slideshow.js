@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { Component } from '@wordpress/element';
+import { Component, createRef } from '@wordpress/element';
 import classnames from 'classnames';
 import { isEqual } from 'lodash';
 
@@ -17,9 +17,17 @@ class Slideshow extends Component {
 		effect: 'slide',
 	};
 
+	constructor( props ) {
+		super( props );
+
+		this.slideshowRef = createRef();
+		this.btnNextRef = createRef();
+		this.btnPrevRef = createRef();
+		this.paginationRef = createRef();
+	}
+
 	componentDidMount() {
-		const { effect } = this.props;
-		this.swiperInstance = createSwiper( { effect } );
+		this.swiperInstance = this.buildSwiper();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -35,7 +43,7 @@ class Slideshow extends Component {
 		if ( effect !== prevProps.effect ) {
 			const { activeIndex } = this.swiperInstance;
 			this.swiperInstance.destroy( true, true );
-			this.swiperInstance = createSwiper( { effect, initialSlide: activeIndex } );
+			this.swiperInstance = this.buildSwiper( activeIndex );
 		}
 	}
 
@@ -46,7 +54,7 @@ class Slideshow extends Component {
 
 		return (
 			<div className={ classes } data-effect={ effect }>
-				<div className="swiper-container">
+				<div className="swiper-container" ref={ this.slideshowRef }>
 					<div className="swiper-wrapper">
 						{ images.map( ( { alt, caption, id, url } ) => (
 							<figure className="swiper-slide atavist-cover-background-color" key={ id }>
@@ -63,13 +71,31 @@ class Slideshow extends Component {
 							</figure>
 						) ) }
 					</div>
-					<div className="swiper-pagination swiper-pagination-white" />
-					<div className="swiper-button-prev swiper-button-white" />
-					<div className="swiper-button-next swiper-button-white" />
+					<div className="swiper-pagination swiper-pagination-white" ref={ this.paginationRef } />
+					<div className="swiper-button-prev swiper-button-white" ref={ this.btnPrevRef } />
+					<div className="swiper-button-next swiper-button-white" ref={ this.btnNextRef } />
 				</div>
 			</div>
 		);
 	}
+
+	buildSwiper = ( initialSlide = 0 ) =>
+		// Using refs instead of className-based selectors allows us to
+		// have multiple swipers on one page without collisions, and
+		// without needing to add IDs or the like.
+		createSwiper( this.slideshowRef.current, {
+			effect: this.props.effect,
+			initialSlide,
+			navigation: {
+				nextEl: this.btnNextRef.current,
+				prevEl: this.btnPrevRef.current,
+			},
+			pagination: {
+				clickable: true,
+				el: this.paginationRef.current,
+				type: 'bullets',
+			},
+		} );
 }
 
 export default Slideshow;
