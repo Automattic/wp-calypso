@@ -45,7 +45,7 @@ class Slideshow extends Component {
 		const classes = classnames( className, alignClassName );
 
 		return (
-			<div className={ classes } effect={ effect }>
+			<div className={ classes } data-effect={ effect }>
 				<div className="swiper-container">
 					<div className="swiper-wrapper">
 						{ images.map( ( { alt, caption, id, url } ) => (
