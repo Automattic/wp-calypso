@@ -17,26 +17,15 @@ class Slideshow extends Component {
 			<div className={ classes } effect={ effect }>
 				<div className={ swiperClassNames }>
 					<div className="swiper-wrapper">
-						{ images.map( ( { alt, caption, id, url } ) => {
-							const style = {
-								backgroundImage: `url(${ url })`,
-								height: 400, // TODO
-							};
-
-							return (
-								<figure className="swiper-slide" key={ id }>
-									<div className="slide-background atavist-cover-background-color" />
-									<div
-										className="wp-block-slideshow-image-container"
-										style={ style }
-										title={ alt }
-									/>
-									{ caption && (
-										<figcaption className="slideshow-slide-caption">{ caption }</figcaption>
-									) }
-								</figure>
-							);
-						} ) }
+						{ images.map( ( { alt, caption, id, url } ) => (
+							<figure className="swiper-slide atavist-cover-background-color" key={ id }>
+								<div className="slide-background atavist-cover-background-color" />
+								<img alt={ alt } className="wp-block-slideshow-image-container" src={ url } />
+								{ caption && (
+									<figcaption className="slideshow-slide-caption">{ caption }</figcaption>
+								) }
+							</figure>
+						) ) }
 					</div>
 					<div className="swiper-pagination swiper-pagination-white" />
 					<div className="swiper-button-prev swiper-button-white" />
