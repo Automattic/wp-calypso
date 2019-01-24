@@ -4,9 +4,11 @@
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import classNames from 'classnames';
 import { Component, createRef } from '@wordpress/element';
-import { PanelBody, Path, SVG, TextControl } from '@wordpress/components';
+import { PanelBody, Path, Placeholder, SVG, TextControl } from '@wordpress/components';
 import { InspectorControls, RichText } from '@wordpress/editor';
 import { debounce } from 'lodash';
+
+import { icon } from './';
 
 const GIPHY_API_KEY = 't1PkR1Vq0mzHueIFBvZSZErgFs9NBmYW';
 
@@ -153,6 +155,16 @@ class GifEdit extends Component {
 			'wp-block-jetpack-gif_text-input-field',
 			focus || ! this.hasSearchText() ? 'has-focus' : 'no-focus'
 		);
+		const placeholder = (
+			<Placeholder className="wp-block-jetpack-gif_placeholder" icon={ icon } label={ __( 'GIF' ) }>
+				<TextControl
+					className="wp-block-jetpack-gif_placeholder-text-input"
+					label={ __( 'Search or paste a Giphy URL' ) }
+					onChange={ this.onSearchTextChange }
+					value={ searchText }
+				/>
+			</Placeholder>
+		);
 		return (
 			<div className={ classes }>
 				<InspectorControls>
@@ -163,51 +175,54 @@ class GifEdit extends Component {
 						</SVG>
 					</PanelBody>
 				</InspectorControls>
-				<figure style={ style }>
-					<div
-						className="wp-block-jetpack-gif_cover"
-						onClick={ this.setFocus }
-						onKeyDown={ this.setFocus }
-						ref={ this.textControlRef }
-						role="button"
-						tabIndex="0"
-					>
-						{ ( ! searchText || isSelected ) && (
-							<TextControl
-								className={ textControlClasses }
-								label={ __( 'Search or paste a Giphy URL' ) }
-								placeholder={ __( 'Search or paste a Giphy URL' ) }
-								onChange={ this.onSearchTextChange }
-								onClick={ this.maintainFocus }
-								value={ searchText }
-							/>
-						) }
-					</div>
-					{ results && isSelected && (
-						<div className="wp-block-jetpack-gif_thumbnails-container">
-							{ results.map( thumbnail => {
-								if ( thumbnail.embed_url === giphyUrl ) {
-									return null;
-								}
-								const thumbnailStyle = {
-									backgroundImage: `url(${ thumbnail.images.preview_gif.url })`,
-								};
-								return (
-									<button
-										className="wp-block-jetpack-gif_thumbnail-container"
-										key={ thumbnail.id }
-										onClick={ () => {
-											this.thumbnailClicked( thumbnail );
-										} }
-										style={ thumbnailStyle }
-									/>
-								);
-							} ) }
+				{ ! giphyUrl && placeholder }
+				{ !! giphyUrl && (
+					<figure style={ style }>
+						<div
+							className="wp-block-jetpack-gif_cover"
+							onClick={ this.setFocus }
+							onKeyDown={ this.setFocus }
+							ref={ this.textControlRef }
+							role="button"
+							tabIndex="0"
+						>
+							{ ( ! searchText || isSelected ) && (
+								<TextControl
+									className={ textControlClasses }
+									label={ __( 'Search or paste a Giphy URL' ) }
+									placeholder={ __( 'Search or paste a Giphy URL' ) }
+									onChange={ this.onSearchTextChange }
+									onClick={ this.maintainFocus }
+									value={ searchText }
+								/>
+							) }
 						</div>
-					) }
-					<iframe src={ giphyUrl } title={ searchText } />
-				</figure>
-				{ ( ! RichText.isEmpty( caption ) || isSelected ) && (
+						{ results && isSelected && (
+							<div className="wp-block-jetpack-gif_thumbnails-container">
+								{ results.map( thumbnail => {
+									if ( thumbnail.embed_url === giphyUrl ) {
+										return null;
+									}
+									const thumbnailStyle = {
+										backgroundImage: `url(${ thumbnail.images.preview_gif.url })`,
+									};
+									return (
+										<button
+											className="wp-block-jetpack-gif_thumbnail-container"
+											key={ thumbnail.id }
+											onClick={ () => {
+												this.thumbnailClicked( thumbnail );
+											} }
+											style={ thumbnailStyle }
+										/>
+									);
+								} ) }
+							</div>
+						) }
+						<iframe src={ giphyUrl } title={ searchText } />
+					</figure>
+				) }
+				{ ( ! RichText.isEmpty( caption ) || isSelected ) && !! giphyUrl && (
 					<RichText
 						className="wp-block-jetpack-gif-caption"
 						inlineToolbar
