@@ -23,7 +23,7 @@ export const settings = {
 	),
 	category: 'jetpack',
 	keywords: [ __( 'giphy' ) ],
-	description: __( 'Add a giphy graphic.' ),
+	description: __( 'Add a Giphy graphic.' ),
 	attributes: {
 		align: {
 			type: 'string',
