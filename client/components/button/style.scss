@@ -169,6 +169,33 @@ button {
 	}
 }
 
+// Jetpack buttons
+
+.button.is-jetpack {
+	background-color: var( --color-jetpack );
+	border-color: var( --color-jetpack-dark );
+	color: var( --color-white );
+
+	&:hover,
+	&:focus {
+		background-color: var( --color-jetpack-400 );
+		border-color: var( --color-jetpack-dark );
+		color: var( --color-white );
+	}
+
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 2px var( --color-jetpack-light );
+	}
+		
+    &[disabled],
+	&:disabled,	
+	&.disabled {
+		color: var( --color-neutral-50 );
+		background-color: var( --color-white );
+		border-color: var( --color-neutral-50 );
+	}
+}	
+	
 // Scary buttons
 .button.is-scary {
 	color: var( --color-error );
