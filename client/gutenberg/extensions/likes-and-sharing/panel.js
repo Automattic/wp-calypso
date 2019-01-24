@@ -14,7 +14,7 @@ import { withDispatch, withSelect } from '@wordpress/data';
 
 class LikesAndSharingPanel extends Component {
 	render() {
-		const { updateMeta, isSharingDisabled, areLikesEnabled } = this.props;
+		const { areLikesEnabled, isSharingEnabled, toggleLikes, toggleSharing } = this.props;
 
 		return (
 			<PanelBody title={ __( 'Likes and Sharing' ) }>
@@ -22,15 +22,15 @@ class LikesAndSharingPanel extends Component {
 					label={ __( 'Show likes.' ) }
 					checked={ areLikesEnabled }
 					onChange={ value => {
-						updateMeta( { switch_like_status: ! value } );
+						toggleLikes( value );
 					} }
 				/>
 
 				<CheckboxControl
 					label={ __( 'Show sharing buttons.' ) }
-					checked={ ! isSharingDisabled }
+					checked={ isSharingEnabled }
 					onChange={ value => {
-						updateMeta( { sharing_disabled: ! value } );
+						toggleSharing( value );
 					} }
 				/>
 			</PanelBody>
@@ -44,8 +44,8 @@ const applyWithSelect = withSelect( select => {
 	const meta = getEditedPostAttribute( 'meta' );
 
 	return {
-		isSharingDisabled: get( meta, [ 'sharing_disabled' ], '' ),
 		areLikesEnabled: ! get( meta, [ 'switch_like_status' ] ), // todo site option
+		isSharingEnabled: ! get( meta, [ 'sharing_disabled' ], '' ),
 	};
 } );
 
@@ -54,11 +54,14 @@ const applyWithDispatch = withDispatch( ( dispatch, { meta } ) => {
 	const { editPost } = dispatch( 'core/editor' );
 
 	// todo: handle switch_like_status logic
-	// todo: flip sharing_disabled here
 
 	return {
-		updateMeta( newMeta ) {
-			editPost( { meta: { ...meta, ...newMeta } } ); // Important: Old and new meta need to be merged in a non-mutating way!
+		toggleLikes( value ) {
+			editPost( { meta: { ...meta, switch_like_status: ! value } } );
+		},
+		toggleSharing( value ) {
+			// const value = get( meta, [ 'sharing_disabled' ] ); -- doesn't work - always false
+			editPost( { meta: { ...meta, sharing_disabled: ! value } } );
 		},
 	};
 } );
