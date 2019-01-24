@@ -120,8 +120,6 @@ class MediaLibraryExternalHeader extends React.Component {
 		const filterStartDate = this.props.moment( startDate ).format( requiredDateFormat );
 		const filterEndDate = this.props.moment( endDate ).format( requiredDateFormat );
 
-		// const dateFilter = `dateRange=${ filterStartDate }:${ filterEndDate }`;
-
 		this.props.onQueryFiltersChange( {
 			dateRange: {
 				from: filterStartDate,
@@ -186,7 +184,10 @@ class MediaLibraryExternalHeader extends React.Component {
 				{ canCopy && this.renderCopyButton() }
 
 				{ config.isEnabled( 'external-media/google-photos/date-filters' ) && hasDateFilters && (
-					<DateRange onDateCommit={ this.onDateChange } />
+					<DateRange
+						onDateCommit={ this.onDateChange }
+						lastSelectableDate={ this.props.moment() }
+					/>
 				) }
 
 				<MediaLibraryScale onChange={ onMediaScaleChange } />
