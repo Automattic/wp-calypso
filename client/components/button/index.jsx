@@ -10,6 +10,7 @@ export default class Button extends PureComponent {
 	static propTypes = {
 		compact: PropTypes.bool,
 		primary: PropTypes.bool,
+		jetpack: PropTypes.bool,
 		scary: PropTypes.bool,
 		busy: PropTypes.bool,
 		type: PropTypes.string,
@@ -27,13 +28,14 @@ export default class Button extends PureComponent {
 		const className = classNames( 'button', this.props.className, {
 			'is-compact': this.props.compact,
 			'is-primary': this.props.primary,
+			'is-jetpack': this.props.jetpack,
 			'is-scary': this.props.scary,
 			'is-busy': this.props.busy,
 			'is-borderless': this.props.borderless,
 		} );
 
 		if ( this.props.href ) {
-			const { compact, primary, scary, busy, borderless, type, ...props } = this.props;
+			const { compact, primary, jetpack, scary, busy, borderless, type, ...props } = this.props;
 
 			// block referrers when external link
 			const rel = props.target
@@ -43,7 +45,7 @@ export default class Button extends PureComponent {
 			return <a { ...props } rel={ rel } className={ className } />;
 		}
 
-		const { compact, primary, scary, busy, borderless, target, rel, ...props } = this.props;
+		const { compact, primary, jetpack, scary, busy, borderless, target, rel, ...props } = this.props;
 
 		return <button { ...props } className={ className } />;
 	}
