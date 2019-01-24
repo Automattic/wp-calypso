@@ -5,10 +5,42 @@
  */
 import { Component } from '@wordpress/element';
 import classnames from 'classnames';
+import { isEqual } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import createSwiper from './create-swiper';
 
 class Slideshow extends Component {
+	static defaultProps = {
+		effect: 'slide',
+	};
+
+	componentDidMount() {
+		const { effect } = this.props;
+		this.swiperInstance = createSwiper( { effect } );
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { align, effect, images } = this.props;
+		if ( ! isEqual( images, prevProps.images ) ) {
+			this.sizeSlideshow();
+		}
+		/* A change in alignment or images only needs an update */
+		if ( align !== prevProps.align || ! isEqual( images, prevProps.images ) ) {
+			this.swiperInstance.update();
+		}
+		/* A change in effect requires a full rebuild */
+		if ( effect !== prevProps.effect ) {
+			const { activeIndex } = this.swiperInstance;
+			this.swiperInstance.destroy( true, true );
+			this.swiperInstance = createSwiper( { effect, initialSlide: activeIndex } );
+		}
+	}
+
 	render() {
-		const { className, align, effect, images } = this.props;
+		const { align, className, effect, images } = this.props;
 		const alignClassName = align ? `align${ align }` : null;
 		const classes = classnames( className, alignClassName );
 		const swiperClassNames = classnames( className, 'swiper-container' );

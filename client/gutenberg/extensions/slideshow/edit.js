@@ -21,7 +21,7 @@ import { filter, get, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Slideshow from './component';
+import Slideshow from './slideshow';
 import { settings } from './settings';
 
 const ALLOWED_MEDIA_TYPES = [ 'image' ];
