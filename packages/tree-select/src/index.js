@@ -1,11 +1,14 @@
 /** @format */
 
-/**
- * External dependencies
- */
-import { isObject, some, isFunction } from 'lodash';
-
 const defaultGetCacheKey = ( ...args ) => args.join();
+
+const isFunction = fn => {
+	return fn && typeof fn === 'function';
+};
+
+const isObject = o => {
+	return o && typeof o === 'object';
+};
 
 /**
  * Returns a selector that caches values.
@@ -35,7 +38,7 @@ export default function treeSelect( getDependents, selector, options = {} ) {
 		const dependents = getDependents( state, ...args );
 
 		if ( process.env.NODE_ENV !== 'production' ) {
-			if ( getCacheKey === defaultGetCacheKey && some( args, isObject ) ) {
+			if ( getCacheKey === defaultGetCacheKey && args.some( isObject ) ) {
 				throw new Error( 'Do not pass objects as arguments to a treeSelector' );
 			}
 		}
