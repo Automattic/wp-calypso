@@ -202,6 +202,38 @@ describe( 'DateRange', () => {
 
 			expect( popover.props().isVisible ).toBe( false );
 		} );
+
+		test( 'should reset Dates on trigger clean btn click', () => {
+			const endDate = moment( '2018-05-30' );
+			const startDate = moment( '2018-04-30' );
+
+			const wrapper = shallow(
+				<DateRange
+					selectedStartDate={ startDate }
+					selectedEndDate={ endDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
+
+			const trigger = wrapper.find( DateRangeTrigger );
+
+			trigger.props().onClearClick();
+
+			wrapper.update();
+
+			// Should have completed reset the Dates
+			expect( wrapper.state() ).toEqual(
+				expect.objectContaining( {
+					startDate: null,
+					endDate: null,
+					staleStartDate: null,
+					staleEndDate: null,
+					textInputStartDate: '',
+					textInputEndDate: '',
+				} )
+			);
+		} );
 	} );
 
 	describe( 'DatePicker element', () => {
