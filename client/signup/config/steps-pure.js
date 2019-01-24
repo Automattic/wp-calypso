@@ -85,6 +85,8 @@ export function generateSteps( {
 			providesDependencies: [ 'domainItem', 'siteId', 'siteSlug' ],
 			props: {
 				isDomainOnly: true,
+				showExampleSuggestions: false,
+				showSkipButton: true,
 			},
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteId', 'siteSlug' ],

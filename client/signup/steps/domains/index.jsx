@@ -182,6 +182,32 @@ class DomainsStep extends React.Component {
 		return `${ repo }/${ themeSlug }`;
 	};
 
+	handleSkip = () => {
+		const domainItem = undefined,
+			googleAppsCartItem = undefined,
+			isPurchasingItem = false,
+			siteUrl = this.props.selectedSite.slug.replace( '.wordpress.com', '' );
+
+		SignupActions.submitSignupStep(
+			Object.assign(
+				{
+					processingMessage: this.props.translate( 'Adding your domain' ),
+					stepName: this.props.stepName,
+					domainItem,
+					googleAppsCartItem,
+					isPurchasingItem,
+					siteUrl,
+					stepSectionName: this.props.stepSectionName,
+				},
+				this.getThemeArgs()
+			),
+			[],
+			{ domainItem }
+		);
+
+		this.props.goToNextStep();
+	};
+
 	submitWithDomain = googleAppsCartItem => {
 		const suggestion = this.props.step.suggestion,
 			isPurchasingItem = Boolean( suggestion.product_slug ),
@@ -347,6 +373,11 @@ class DomainsStep extends React.Component {
 			}
 		}
 
+		let showExampleSuggestions = this.props.showExampleSuggestions;
+		if ( 'undefined' === typeof showExampleSuggestions ) {
+			showExampleSuggestions = true;
+		}
+
 		return (
 			<RegisterDomainStep
 				key="domainForm"
@@ -367,13 +398,15 @@ class DomainsStep extends React.Component {
 				includeWordPressDotCom={ ! this.props.isDomainOnly }
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
-				showExampleSuggestions={ this.props.showExampleSuggestions }
+				showExampleSuggestions={ showExampleSuggestions }
 				surveyVertical={ this.props.surveyVertical }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor() }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 				selectedSite={ this.props.selectedSite }
+				showSkipButton={ this.props.showSkipButton }
+				onSkip={ this.handleSkip }
 			/>
 		);
 	};
