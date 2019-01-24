@@ -39,6 +39,7 @@ import { getDomainProductSlug } from 'lib/domains';
 import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
+import { getSite } from 'state/sites/selectors';
 
 /**
  * Style dependencies
@@ -60,6 +61,7 @@ class DomainsStep extends React.Component {
 		step: PropTypes.object,
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
+		selectedSite: PropTypes.object,
 	};
 
 	static contextTypes = {
@@ -365,12 +367,13 @@ class DomainsStep extends React.Component {
 				includeWordPressDotCom={ ! this.props.isDomainOnly }
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
-				showExampleSuggestions
+				showExampleSuggestions={ this.props.showExampleSuggestions }
 				surveyVertical={ this.props.surveyVertical }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor() }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
+				selectedSite={ this.props.selectedSite }
 			/>
 		);
 	};
@@ -566,7 +569,7 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 
@@ -580,6 +583,7 @@ export default connect(
 			productsLoaded,
 			siteGoals: getSiteGoals( state ),
 			surveyVertical: getSurveyVertical( state ),
+			selectedSite: getSite( state, ownProps.signupDependencies.siteId ),
 		};
 	},
 	{

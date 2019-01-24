@@ -84,7 +84,7 @@ export function generateSteps( {
 			apiRequestFunction: addDomainToCart,
 			providesDependencies: [ 'domainItem', 'siteId', 'siteSlug' ],
 			props: {
-				isDomainOnly: false,
+				isDomainOnly: true,
 			},
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteId', 'siteSlug' ],
