@@ -23,7 +23,7 @@ export const settings = {
 	),
 	category: 'jetpack',
 	keywords: [ __( 'giphy' ) ],
-	description: __( 'Add a Giphy graphic.' ),
+	description: __( 'Search for and insert an animated image.' ),
 	attributes: {
 		align: {
 			type: 'string',
