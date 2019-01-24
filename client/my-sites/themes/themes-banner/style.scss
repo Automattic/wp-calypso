@@ -102,7 +102,7 @@
 .themes-banner__upwork {
 	h1,
 	p {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		text-shadow: none;
 	}
 
