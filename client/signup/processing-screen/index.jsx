@@ -137,7 +137,7 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	showPreviewAfterLogin = () => {
-		this.props.loginHandler( { redirectTo: `/view/${ this.state.siteSlug }` } );
+		this.props.loginHandler( { redirectTo: `/view/${ this.state.siteSlug }?help&checklist` } );
 	};
 
 	shouldShowChecklist() {
