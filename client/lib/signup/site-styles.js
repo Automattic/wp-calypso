@@ -17,8 +17,8 @@ export const siteStyleOptions = {
 				}
 			),
 			id: 'default',
-			label: 'Radcliffe Perfect',
-			theme: 'pub/radcliffe-2',
+			label: 'Classic',
+			theme: 'pub/twentynineteen',
 			font: {
 				name: 'Crimson Text',
 				// variations in fvd format: https://github.com/typekit/fvd
@@ -33,8 +33,8 @@ export const siteStyleOptions = {
 				}
 			),
 			id: 'modern',
-			label: 'Modern Bauhaus',
-			theme: 'pub/radcliffe-2',
+			label: 'Modern',
+			theme: 'pub/twentynineteen',
 			font: {
 				name: 'Work Sans',
 				variations: [ 'n4', 'n7' ],
@@ -48,8 +48,8 @@ export const siteStyleOptions = {
 				}
 			),
 			id: 'vintage',
-			label: 'Vintage Paper',
-			theme: 'pub/radcliffe-2',
+			label: 'Vintage',
+			theme: 'pub/twentynineteen',
 			font: {
 				name: 'Libre Baskerville',
 				variations: [ 'n4', 'n7' ],
@@ -63,8 +63,8 @@ export const siteStyleOptions = {
 				}
 			),
 			id: 'colorful',
-			label: 'Upbeat Pop',
-			theme: 'pub/radcliffe-2',
+			label: 'Upbeat',
+			theme: 'pub/twentynineteen',
 			font: {
 				name: 'Alegreya Sans',
 				variations: [ 'n4', 'n7' ],
