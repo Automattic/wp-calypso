@@ -17,40 +17,8 @@ export const name = 'likes-and-sharing';
 
 export const settings = {
 	render: () => (
-		// const { meta: { switch_like_status } = {}, updateMeta } = this.props;
-
 		<JetpackPluginSidebar>
 			<LikesAndSharesPanel />
 		</JetpackPluginSidebar>
 	),
 };
-
-// Fetch the post meta.
-// const applyWithSelect = withSelect( ( select ) => {
-// 	const { getEditedPostAttribute } = select( 'core/editor' );
-
-// 	return {
-// 		meta: getEditedPostAttribute( 'meta' ),
-// 	};
-// } );
-
-// Provide method to update post meta.
-// const applyWithDispatch = withDispatch( ( dispatch, { meta } ) => {
-// 	const { editPost } = dispatch( 'core/editor' );
-
-// 	return {
-// 		updateMeta( newMeta ) {
-// 			editPost( { meta: { ...meta, ...newMeta } } ); // Important: Old and new meta need to be merged in a non-mutating way!
-// 		},
-// 	};
-// } );
-
-// Combine the higher-order components.
-// const render = compose( [
-// 	applyWithSelect,
-// 	applyWithDispatch
-// ] )( LikesPlugin );
-
-// registerPlugin( 'wpcom-likes', {
-// 	render: render,
-// } );

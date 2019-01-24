@@ -1,41 +1,36 @@
 /**
  * External dependencies
  */
-import { withDispatch, withSelect } from '@wordpress/data';
-import { compose } from '@wordpress/compose';
-// import { Component, Fragment } from '@wordpress/element';
-import { Component } from '@wordpress/element';
-
-import { CheckboxControl, PanelBody } from '@wordpress/components';
-import PostMetadata from 'lib/post-metadata';
-// import { updatePostMetadata, deletePostMetadata } from 'state/posts/actions';
-// import { getSitePost, getEditedPost } from 'state/posts/selectors';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { Component } from '@wordpress/element';
+import { compose } from '@wordpress/compose';
+import { CheckboxControl, PanelBody } from '@wordpress/components';
+import { withDispatch, withSelect } from '@wordpress/data';
 
 class LikesAndSharingPanel extends Component {
 	render() {
-		const { meta: { switch_like_status, sharing_enabled } = {}, updateMeta } = this.props;
+		const { updateMeta, isSharingDisabled, areLikesEnabled } = this.props;
 
 		return (
 			<PanelBody title={ __( 'Likes and Sharing' ) }>
 				<CheckboxControl
-					label={ __( 'Show Like Button' ) }
-					checked={ switch_like_status }
+					label={ __( 'Show likes.' ) }
+					checked={ areLikesEnabled }
 					onChange={ value => {
-						updateMeta( { switch_like_status: value } );
+						updateMeta( { switch_like_status: ! value } );
 					} }
 				/>
 
 				<CheckboxControl
-					label={ __( 'Show Sharing Buttons' ) }
-					// checked={ sharing_enabled }
-					checked={ PostMetadata.isSharingEnabled( this.props.post ) }
+					label={ __( 'Show sharing buttons.' ) }
+					checked={ ! isSharingDisabled }
 					onChange={ value => {
-						updateMeta( { sharing_enabled: value } );
+						updateMeta( { sharing_disabled: ! value } );
 					} }
 				/>
 			</PanelBody>
@@ -46,15 +41,20 @@ class LikesAndSharingPanel extends Component {
 // Fetch the post meta.
 const applyWithSelect = withSelect( select => {
 	const { getEditedPostAttribute } = select( 'core/editor' );
+	const meta = getEditedPostAttribute( 'meta' );
 
 	return {
-		meta: getEditedPostAttribute( 'meta' ),
+		isSharingDisabled: get( meta, [ 'sharing_disabled' ], '' ),
+		areLikesEnabled: ! get( meta, [ 'switch_like_status' ] ), // todo site option
 	};
 } );
 
 // Provide method to update post meta.
 const applyWithDispatch = withDispatch( ( dispatch, { meta } ) => {
 	const { editPost } = dispatch( 'core/editor' );
+
+	// todo: handle switch_like_status logic
+	// todo: flip sharing_disabled here
 
 	return {
 		updateMeta( newMeta ) {
@@ -65,11 +65,3 @@ const applyWithDispatch = withDispatch( ( dispatch, { meta } ) => {
 
 // Combine the higher-order components.
 export default compose( [ applyWithSelect, applyWithDispatch ] )( LikesAndSharingPanel );
-
-// export default withSelect( select => {
-// 	const getEditedPostAttribute = select( 'core/editor' );
-
-// 	return {
-// 		meta: getEditedPostAttribute( 'meta' ),
-// 	}
-// } )( LikesAndSharingPanel );
