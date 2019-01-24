@@ -17,15 +17,14 @@ class Slideshow extends Component {
 			<div className={ classes } effect={ effect }>
 				<div className={ swiperClassNames }>
 					<div className="swiper-wrapper">
-						{ images.map( ( image, index ) => {
-							const { alt, caption, height, id, url, width } = image;
-
+						{ images.map( ( { alt, caption, id, url } ) => {
 							const style = {
 								backgroundImage: `url(${ url })`,
 								height: 400, // TODO
 							};
+
 							return (
-								<div className="swiper-slide">
+								<div className="swiper-slide" key={ id }>
 									<div className="slide-background atavist-cover-background-color" />
 									<div
 										className="wp-block-slideshow-image-container"
