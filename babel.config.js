@@ -12,23 +12,6 @@ const targets = isBrowser
 	? { browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ] }
 	: { node: 'current' };
 
-const extensionOverrides = [
-	[
-		'@wordpress/import-jsx-pragma',
-		{
-			scopeVariable: 'createElement',
-			source: '@wordpress/element',
-			isDefault: false,
-		},
-	],
-	[
-		'@babel/transform-react-jsx',
-		{
-			pragma: 'createElement',
-		},
-	],
-];
-
 const config = {
 	presets: [
 		[
@@ -68,12 +51,6 @@ const config = {
 		],
 		isCalypsoClient && './inline-imports.js',
 	] ),
-	overrides: [
-		{
-			test: './client/gutenberg/extensions',
-			plugins: extensionOverrides,
-		},
-	],
 	env: {
 		build_pot: {
 			plugins: [
