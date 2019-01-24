@@ -43,11 +43,10 @@ class Slideshow extends Component {
 		const { align, className, effect, images } = this.props;
 		const alignClassName = align ? `align${ align }` : null;
 		const classes = classnames( className, alignClassName );
-		const swiperClassNames = classnames( className, 'swiper-container' );
 
 		return (
 			<div className={ classes } effect={ effect }>
-				<div className={ swiperClassNames }>
+				<div className="swiper-container">
 					<div className="swiper-wrapper">
 						{ images.map( ( { alt, caption, id, url } ) => (
 							<figure className="swiper-slide atavist-cover-background-color" key={ id }>
