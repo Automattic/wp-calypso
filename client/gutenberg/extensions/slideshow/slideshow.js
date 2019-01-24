@@ -24,15 +24,17 @@ class Slideshow extends Component {
 							};
 
 							return (
-								<div className="swiper-slide" key={ id }>
+								<figure className="swiper-slide" key={ id }>
 									<div className="slide-background atavist-cover-background-color" />
 									<div
 										className="wp-block-slideshow-image-container"
 										style={ style }
 										title={ alt }
 									/>
-									{ caption && <p className="slideshow-slide-caption">{ caption }</p> }
-								</div>
+									{ caption && (
+										<figcaption className="slideshow-slide-caption">{ caption }</figcaption>
+									) }
+								</figure>
 							);
 						} ) }
 					</div>
