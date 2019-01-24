@@ -55,12 +55,8 @@ class SlideshowEdit extends Component {
 	onRemoveImage = index => {
 		return () => {
 			const images = filter( this.props.attributes.images, ( img, i ) => index !== i );
-			const { columns } = this.props.attributes;
 			this.setState( { selectedImage: null } );
-			this.props.setAttributes( {
-				images,
-				columns: columns ? Math.min( images.length, columns ) : columns,
-			} );
+			this.props.setAttributes( { images } );
 		};
 	};
 	updateAlignment = value => {
