@@ -27,11 +27,7 @@ import {
 import './style.scss';
 
 const sendMessage = ( iframe, message ) => {
-	if ( ! iframe || ! iframe.contentWindow ) {
-		return;
-	}
-
-	iframe.contentWindow.postMessage(
+	iframe.current.contentWindow.postMessage(
 		JSON.stringify( {
 			...message,
 			type: 'gutenbergIframeMessage',
@@ -47,7 +43,7 @@ class CalypsoifyIframe extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.iframe = null;
+		this.iframeRef = React.createRef();
 	}
 
 	componentDidMount() {
@@ -57,10 +53,6 @@ class CalypsoifyIframe extends Component {
 	componentWillUnmount() {
 		window.removeEventListener( 'message', this.onMessage, false );
 	}
-
-	setIframeRef = element => {
-		this.iframe = element;
-	};
 
 	onMessage = ( { data } ) => {
 		if ( typeof data !== 'string' || data[ 0 ] !== '{' ) {
@@ -91,7 +83,7 @@ class CalypsoifyIframe extends Component {
 			const formattedMedia = map( media.items, item => mediaCalypsoToGutenberg( item ) );
 			const payload = multiple ? formattedMedia : formattedMedia[ 0 ];
 
-			sendMessage( this.iframe, {
+			sendMessage( this.iframeRef, {
 				action: 'selectMedia',
 				payload,
 			} );
@@ -109,7 +101,7 @@ class CalypsoifyIframe extends Component {
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ /* eslint-disable-next-line jsx-a11y/iframe-has-title, wpcalypso/jsx-classname-namespace */ }
-					<iframe ref={ this.setIframeRef } className={ 'is-iframe-loaded' } src={ iframeUrl } />
+					<iframe ref={ this.iframeRef } className={ 'is-iframe-loaded' } src={ iframeUrl } />
 				</div>
 				<MediaLibrarySelectedData siteId={ siteId }>
 					<MediaModal
