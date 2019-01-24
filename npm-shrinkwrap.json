@@ -9278,11 +9278,11 @@
 			"integrity": "sha1-nbHb0Pr43m++D13V5Wu2BigN5ps="
 		},
 		"immutability-helper": {
-			"version": "2.8.1",
-			"resolved": "https://registry.npmjs.org/immutability-helper/-/immutability-helper-2.8.1.tgz",
-			"integrity": "sha512-8AVB5EUpRBUdXqfe4cFsFECsOIZ9hX/Arl8B8S9/tmwpYv3UWvOsXUPOjkuZIMaVxfSWkxCzkng1rjmEoSWrxQ==",
+			"version": "3.0.0",
+			"resolved": "https://registry.npmjs.org/immutability-helper/-/immutability-helper-3.0.0.tgz",
+			"integrity": "sha512-Ww7oOSnBIRb9ihT9UH9eHz0uhie0rw9bpqGYCb7qD5VpsdOLv+fx/KCRgHqvX/13LgSM5sDfsLpeSIM6kodUxQ==",
 			"requires": {
-				"invariant": "^2.2.0"
+				"invariant": "^2.2.4"
 			}
 		},
 		"immutable": {
