@@ -3,21 +3,7 @@
 /**
  * Internal dependencies
  */
-
 import './view.scss';
-
-//
-
-/*
- * WARNING: This file is distributed verbatim in Jetpack.
- * There should be nothing WordPress.com specific in this file.
- *
- * @hide-in-jetpack
- */
-/**
-
-/* global jQuery */
-/* jshint esversion: 5, es3:false */
 
 const blockClassName = 'wp-block-jetpack-mailchimp';
 
