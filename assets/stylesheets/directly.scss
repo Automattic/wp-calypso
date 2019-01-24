@@ -342,7 +342,7 @@ textarea {
 
 	// Yellow borders for warnings
 	&.warning {
-		background: $alert-yellow;
+		background: var( --color-warning );
 		border-color: transparent;
 		color: $white;
 		a {
@@ -379,7 +379,7 @@ textarea {
 		}
 		&.icon-warning {
 			background-color: $white;
-			color: $alert-yellow;
+			color: var( --color-warning );
 		}
 	}
 	&.inverted .icon.icon-success {
@@ -468,7 +468,7 @@ textarea {
 				background: $alert-green;
 			}
 			&.dot-yellow {
-				background: $alert-yellow;
+				background: var( --color-warning );
 			}
 			&.dot-red {
 				background: $alert-red;

@@ -401,7 +401,7 @@ textarea {
 		font-size: 14px;
 		margin-right: 0;
 		border-radius: 8px;
-		background: $alert-yellow;
+		background: var( --color-warning );
 		border-color: transparent;
 		color: $white;
 		a {
