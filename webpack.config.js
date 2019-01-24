@@ -216,13 +216,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					exclude: /node_modules\//,
 					use: [
 						{
-							loader: 'thread-loader',
-							options: {
-								workers: workerCount,
-							},
-						},
-						{
-							loader: 'babel-loader',
+							loader: path.join( __dirname, 'webpack.loader.js' ),
 							options: {
 								configFile: path.resolve( __dirname, 'babel.config.js' ),
 								babelrc: false,

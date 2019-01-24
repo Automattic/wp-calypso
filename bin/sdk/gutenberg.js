@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-const util = require( 'util' );
 const fs = require( 'fs' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const path = require( 'path' );
@@ -113,45 +112,8 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 			},
 			externals: [ ...baseConfig.externals, 'lodash' ],
 		};
-		config.module.rules[ 0 ].use.map( loader => {
-			if (
-				loader.loader === 'babel-loader' &&
-				( entryName === 'editor' || entryName === 'editor-beta' )
-			) {
-				loader.options.plugins = [
-					[
-						'@wordpress/babel-plugin-makepot',
-						{
-							output: outputPath + '/' + entryName + '.pot',
-							headers: {
-								'content-type': 'text/plain; charset=UTF-8',
-								'x-generator': 'calypso',
-								'plural-forms': 'nplurals=2; plural=n == 1 ? 0 : 1;',
-							},
-						},
-					],
-					[
-						'@wordpress/import-jsx-pragma',
-						{
-							scopeVariable: 'createElement',
-							source: '@wordpress/element',
-							isDefault: false,
-						},
-					],
-					[
-						'@babel/transform-react-jsx',
-						{
-							pragma: 'createElement',
-						},
-					],
-				];
-			} else {
-				delete loader.options.plugins;
-			}
-			return loader;
-		} );
+
 		config.entry[ entryName ] = entries[ entryName ];
-		console.log( util.inspect( config, false, null, true /* enable colors */ ) );
 		return config;
 	} );
 };
