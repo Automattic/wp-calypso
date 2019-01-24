@@ -26,6 +26,7 @@ Name | Type | Default | Description
 `primary` | `bool` | false | Provides extra visual weight and identifies the primary action in a set of buttons
 `borderless` | `bool` | false | Renders a button without borders
 `scary` | `bool` | false | Indicates a dangerous or potentially negative action
+`jetpack` | `bool` | false | Renders a button themed with Jetpack colours
 `busy` | `bool` | false | Indicates activity while a background action is being performed
 `href` | `string` | null | If provided, renders `a` instead of `button`
 
@@ -35,6 +36,7 @@ Name | Type | Default | Description
 * **Secondary**: Used most in the interface. Only use another style if a button requires more or less visual weight.
 * **Button with icon**: When words are not enough, icons can be used in buttons to better communicate what the button does.
 * **Scary**: Use when the action will delete customer data or be otherwise difficult to recover from. Destructive buttons should trigger a confirmation dialog before the action is completed. Be thoughtful about using destructive buttons because they can feel stressful for customers.
+* **Jetpack**: Use when a button should feature Jetpack colours
 * **Borderless**: Use for less important or less commonly used actions since they’re less prominent.
 * **Busy**: Use when a button has been pressed and the associated action is in progress.
 
