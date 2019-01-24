@@ -21,7 +21,7 @@ export const settings = {
 			type: 'array',
 			default: [],
 			source: 'query',
-			selector: '.wp-block-slideshow_image_container',
+			selector: '.swiper-slide',
 			query: {
 				alt: {
 					source: 'attribute',
@@ -34,11 +34,6 @@ export const settings = {
 					source: 'html',
 					selector: 'figcaption',
 				},
-				height: {
-					source: 'attribute',
-					selector: 'img',
-					attribute: 'data-height',
-				},
 				id: {
 					source: 'attribute',
 					selector: 'img',
@@ -48,11 +43,6 @@ export const settings = {
 					source: 'attribute',
 					selector: 'img',
 					attribute: 'src',
-				},
-				width: {
-					source: 'attribute',
-					selector: 'img',
-					attribute: 'data-width',
 				},
 			},
 		},

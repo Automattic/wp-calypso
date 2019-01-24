@@ -16,7 +16,7 @@ import {
 } from '@wordpress/editor';
 
 import { IconButton, PanelBody, SelectControl, Toolbar, withNotices } from '@wordpress/components';
-import { filter, get, pick } from 'lodash';
+import { filter, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,12 +26,8 @@ import { settings } from './settings';
 
 const ALLOWED_MEDIA_TYPES = [ 'image' ];
 
-export const pickRelevantMediaFiles = image => {
-	const simpleImage = pick( image, [ 'alt', 'id', 'link', 'url', 'caption' ] );
-	simpleImage.width = get( image, 'sizes.full.width' );
-	simpleImage.height = get( image, 'sizes.full.height' );
-	return simpleImage;
-};
+export const pickRelevantMediaFiles = image =>
+	pick( image, [ 'alt', 'id', 'link', 'url', 'caption' ] );
 
 class SlideshowEdit extends Component {
 	constructor() {

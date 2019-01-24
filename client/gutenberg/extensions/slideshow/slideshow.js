@@ -51,7 +51,12 @@ class Slideshow extends Component {
 						{ images.map( ( { alt, caption, id, url } ) => (
 							<figure className="swiper-slide atavist-cover-background-color" key={ id }>
 								<div className="slide-background atavist-cover-background-color" />
-								<img alt={ alt } className="wp-block-slideshow-image-container" src={ url } />
+								<img
+									alt={ alt }
+									className="wp-block-slideshow-image-container"
+									data-id={ id }
+									src={ url }
+								/>
 								{ caption && (
 									<figcaption className="slideshow-slide-caption">{ caption }</figcaption>
 								) }
