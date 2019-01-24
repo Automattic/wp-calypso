@@ -67,6 +67,10 @@
 	margin-bottom: 24px;
 	margin-top: 16px;
 	text-align: center;
+
+	body.is-section-signup & {
+		color: var( --color-white );
+	}
 }
 
 .login__form-terms,
