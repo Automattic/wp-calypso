@@ -6,21 +6,21 @@
 		width: 100%;
 		height: 100%;
 	}
+
+	.swiper-slide {
+		margin: 0;
+	}
+
 	img {
 		height: 100%;
 		height: calc( 100% - 22px );
 		background-color: rgb( 240, 240, 240 );
 		background-size: contain;
 		background-repeat: no-repeat;
-	}
-	img,
-	figcaption {
 		position: relative;
 		z-index: 1;
 	}
-	figcaption {
-		cursor: text;
-	}
+
 	.swiper-button-prev,
 	.swiper-button-next {
 		width: 24px;
@@ -47,7 +47,8 @@
 		background-color: rgb( 240, 240, 240 );
 		position: relative;
 	}
-	p.slideshow-slide-caption {
+	.slideshow-slide-caption {
+		cursor: text;
 		position: relative;
 		font-size: 14px;
 		line-height: 14px;
