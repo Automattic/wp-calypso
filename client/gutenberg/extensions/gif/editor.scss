@@ -1,8 +1,8 @@
-.wp-block-jetpack-giphy {
+.wp-block-jetpack-gif {
 	.components-base-control__field {
 		text-align: center;
 	}
-	.wp-block-jetpack-giphy_cover {
+	.wp-block-jetpack-gif_cover {
 		background: none;
 		border: none;
 		height: 100%;
@@ -17,7 +17,7 @@
 			outline: none;
 		}
 	}
-	.wp-block-jetpack-giphy_text-input-field {
+	.wp-block-jetpack-gif_text-input-field {
 		margin-top: -1em;
 		position: absolute;
 		top: 50%;
@@ -43,7 +43,7 @@
 			text-indent: -9999px;
 		}
 	}
-	.wp-block-jetpack-giphy_thumbnails-container {
+	.wp-block-jetpack-gif_thumbnails-container {
 		bottom: 8px;
 		display: flex;
 		left: 8px;
@@ -55,7 +55,7 @@
 			display: none;
 		}
 	}
-	.wp-block-jetpack-giphy_thumbnail-container {
+	.wp-block-jetpack-gif_thumbnail-container {
 		align-items: center;
 		background-size: cover;
 		background-repeat: no-repeat;
@@ -78,7 +78,7 @@
 		}
 	}
 }
-.components-panel__body-giphy-branding {
+.components-panel__body-gif-branding {
 	svg {
 		display: block;
 		margin: 0 auto;
