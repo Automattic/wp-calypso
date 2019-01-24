@@ -68,7 +68,7 @@
 }
 
 .jetpack-new-site__jetpack-site .jetpack-logo {
-	fill: $green-jetpack;
+	fill: var( --color-jetpack );
 }
 
 .jetpack-new-site__card-title {
@@ -130,31 +130,31 @@
 
 	input[type='text'] {
 		&:focus {
-			border-color: $green-jetpack;
-			box-shadow: 0 0 0 2px lighten( $green-jetpack, 25% );
+			border-color: var( --color-jetpack );
+			box-shadow: 0 0 0 2px var( --color-jetpack-light );
 		}
 	}
 
 	.button {
-		background-color: $green-jetpack;
-		border-color: darken( $green-jetpack, 5% );
+		background-color: var( --color-jetpack );
+		border-color: var( --color-jetpack-dark );
 		margin-top: 16px;
 		width: 100%;
 
 		&:hover,
 		&:focus {
-			border-color: darken( $green-jetpack, 30% );
+			background-color: var( --color-jetpack-400 );
 		}
 
 		&:focus {
-			box-shadow: 0 0 0 2px lighten( $green-jetpack, 25% );
+			box-shadow: 0 0 0 2px var( --color-jetpack-light );
 		}
 
 		&[disabled],
 		&:disabled {
-			background: tint( $green-jetpack, 50% );
-			border-color: tint( $green-jetpack, 35% );
-			color: $white;
+			background-color: var( --color-white );
+			border-color: var( --color-neutral-50 );
+			color: var( --color-neutral-50 );
 		}
 	}
 }

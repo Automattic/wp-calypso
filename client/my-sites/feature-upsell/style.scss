@@ -118,7 +118,7 @@ $feature-upsell-break-at: '1040px';
 	&-guarantee {
 		display: block;
 		opacity: 0.8;
-		color: $green-jetpack;
+		color: var( --color-jetpack );
 		font-size: 15px;
 		line-height: 31px;
 		font-weight: 300;

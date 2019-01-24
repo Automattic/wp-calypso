@@ -82,7 +82,7 @@
 	}
 
 	strong {
-		color: $green-jetpack;
+		color: var( --color-jetpack );
 		margin-left: 0.3em;
 
 		@include breakpoint( '<480px' ) {
