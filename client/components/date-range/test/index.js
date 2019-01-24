@@ -791,12 +791,16 @@ describe( 'DateRange', () => {
 
 			expect( propKeys ).toEqual(
 				[
+					'startDate',
+					'endDate',
 					'startDateText',
 					'endDateText',
 					'isCompact',
 					'buttonRef',
 					'onTriggerClick',
+					'onClearClick',
 					'triggerText',
+					'showClearBtn',
 				].sort()
 			);
 		} );
