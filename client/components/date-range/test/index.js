@@ -203,7 +203,7 @@ describe( 'DateRange', () => {
 			expect( popover.props().isVisible ).toBe( false );
 		} );
 
-		test( 'should reset Dates on trigger clean btn click', () => {
+		test( 'should reset Dates on trigger clear btn click', () => {
 			const endDate = moment( '2018-05-30' );
 			const startDate = moment( '2018-04-30' );
 

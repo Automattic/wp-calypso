@@ -408,7 +408,7 @@ export class DateRange extends Component {
 
 	/**
 	 * Fully clears all dates to empty values
-	 * Affecting saying "get rid of all dates"
+	 * affectively saying "get rid of all dates"
 	 */
 	clearDates = () => {
 		this.setState( {
