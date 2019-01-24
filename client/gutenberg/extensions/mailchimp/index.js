@@ -35,7 +35,7 @@ export const settings = {
 		},
 		processingLabel: {
 			type: 'string',
-			default: __( 'Processing...' ),
+			default: __( 'Processing…' ),
 		},
 		successLabel: {
 			type: 'string',
