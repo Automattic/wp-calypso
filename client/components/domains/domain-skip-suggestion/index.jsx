@@ -40,9 +40,8 @@ class DomainSkipSuggestion extends React.Component {
 				<div className="domain-transfer-suggestion__domain-description">
 					<h3>{ this.props.selectedSiteSlug }</h3>
 					<p>
-						{ translate( "You can use it as your site's address.", {
-							context: 'Upgrades: Register domain description',
-							comment: 'Explains how you could use an existing domain name with your site.',
+						{ translate( 'This is your current free site address', {
+							context: "Describes the user's currently selected site address",
 						} ) }
 					</p>
 				</div>
