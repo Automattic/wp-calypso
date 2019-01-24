@@ -4,7 +4,6 @@ const path = require( 'path' );
 
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 const isBrowser = isCalypsoClient || 'true' === process.env.TARGET_BROWSER;
-const outputDir = process.env.CALYPSO_SDK_OUTPUT_DIR || false;
 
 const modules = isBrowser ? false : 'commonjs'; // Use commonjs for Node
 const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
@@ -29,21 +28,6 @@ const extensionOverrides = [
 		},
 	],
 ];
-
-// The output directory is set when SDK runs, so we only set the POT generator override in that case.
-if ( outputDir ) {
-	extensionOverrides.unshift( [
-		'@wordpress/babel-plugin-makepot',
-		{
-			output: outputDir + '/extensions.pot',
-			headers: {
-				'content-type': 'text/plain; charset=UTF-8',
-				'x-generator': 'calypso',
-				'plural-forms': 'nplurals=2; plural=n == 1 ? 0 : 1;',
-			},
-		},
-	] );
-}
 
 const config = {
 	presets: [

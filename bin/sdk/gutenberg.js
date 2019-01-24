@@ -83,29 +83,76 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 		viewScriptEntry = fs.existsSync( viewScript ) ? { view: viewScript } : {};
 	}
 
-	return {
-		...baseConfig,
-		plugins: compact( [
-			...baseConfig.plugins,
-			fs.existsSync( presetPath ) &&
-				new CopyWebpackPlugin( [
-					{
-						from: presetPath,
-						to: 'index.json',
-					},
-				] ),
-		] ),
-		entry: {
-			editor: editorScript,
-			...( editorBetaScript && { 'editor-beta': editorBetaScript } ),
-			...viewScriptEntry,
-			...viewBlocksScripts,
-		},
-		output: {
-			path: outputDir || path.join( inputDir, 'build' ),
-			filename: '[name].js',
-			libraryTarget: 'window',
-		},
-		externals: [ ...baseConfig.externals, 'lodash' ],
+	const outputPath = outputDir || path.join( inputDir, 'build' );
+	const entries = {
+		editor: editorScript,
+		...( editorBetaScript && { 'editor-beta': editorBetaScript } ),
+		...viewScriptEntry,
+		...viewBlocksScripts,
 	};
+
+	return Object.keys( entries ).map( entryName => {
+		const config = {
+			...baseConfig,
+			plugins: compact( [
+				...baseConfig.plugins,
+				fs.existsSync( presetPath ) &&
+					new CopyWebpackPlugin( [
+						{
+							from: presetPath,
+							to: 'index.json',
+						},
+					] ),
+			] ),
+			entry: {},
+			output: {
+				path: outputPath,
+				filename: '[name].js',
+				libraryTarget: 'window',
+			},
+			externals: [ ...baseConfig.externals, 'lodash' ],
+		};
+		config.module.rules[ 0 ].use.map( loader => {
+			if (
+				loader.loader === 'babel-loader' &&
+				( entryName === 'editor' || entryName === 'editor-beta' )
+			) {
+				loader.options.overrides = [
+					{
+						test: './client/gutenberg/extensions',
+						plugins: [
+							[
+								'@wordpress/babel-plugin-makepot',
+								{
+									output: outputPath + '/' + entryName + '.pot',
+									headers: {
+										'content-type': 'text/plain; charset=UTF-8',
+										'x-generator': 'calypso',
+										'plural-forms': 'nplurals=2; plural=n == 1 ? 0 : 1;',
+									},
+								},
+							],
+							[
+								'@wordpress/import-jsx-pragma',
+								{
+									scopeVariable: 'createElement',
+									source: '@wordpress/element',
+									isDefault: false,
+								},
+							],
+							[
+								'@babel/transform-react-jsx',
+								{
+									pragma: 'createElement',
+								},
+							],
+						],
+					},
+				];
+			}
+			return loader;
+		} );
+		config.entry[ entryName ] = entries[ entryName ];
+		return config;
+	} );
 };
