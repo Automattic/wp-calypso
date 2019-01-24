@@ -33,6 +33,10 @@
 	margin-bottom: 24px;
 	margin-top: 16px;
 	text-align: center;
+
+	body.is-section-signup & {
+		color: var( --color-white );
+	}
 }
 
 .magic-login__email-fields {
@@ -73,6 +77,10 @@
 		}
 		&:last-of-type {
 			border-bottom: none;
+		}
+
+		body.is-section-signup & {
+			color: var( --color-white );
 		}
 	}
 	.gridicon {
