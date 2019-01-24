@@ -1,5 +1,3 @@
-.focusable {
-	.accessible-focus &:focus {
-		box-shadow: 0 0 0 2px var( --color-primary-light );
-	}
+.accessible-focus .focusable:focus {
+	box-shadow: 0 0 0 2px var( --color-primary-light );
 }
