@@ -168,7 +168,7 @@ class MediaLibraryContent extends React.Component {
 
 		if ( source === 'google_photos' ) {
 			return translate(
-				'We are moving to a new and faster Google Photos service. Please reconnect to continue accessing your photos.'
+				'We are moving to a new and faster Photos from Google service. Please reconnect to continue accessing your photos.'
 			);
 		}
 
