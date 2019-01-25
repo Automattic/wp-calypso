@@ -13,7 +13,7 @@ import GridiconAddOutline from 'gridicons/dist/add-outline';
  */
 import { menuItems, GridiconButton } from './menu-items';
 
-const initialize = editor => {
+function initialize( editor ) {
 	menuItems.forEach( item =>
 		editor.addMenuItem( item.name, {
 			classes: 'wpcom-insert-menu__menu-item',
@@ -37,7 +37,7 @@ const initialize = editor => {
 			);
 		},
 	} );
-};
+}
 
 export default () => {
 	tinymce.PluginManager.add( 'wpcom/insertmenu', initialize );

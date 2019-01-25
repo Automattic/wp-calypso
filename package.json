@@ -16,6 +16,21 @@
 		"defaults": [
 			"extends @wordpress/browserslist-config"
 		],
+		"evergreen": [
+			"last 2 Chrome versions",
+			"last 1 ChromeAndroid versions",
+			"last 2 Firefox versions",
+			"last 2 Safari versions",
+			"last 2 iOS versions",
+			"last 2 Edge versions",
+			"last 2 Opera versions",
+			"unreleased Chrome versions",
+			"unreleased ChromeAndroid versions",
+			"unreleased Firefox versions",
+			"unreleased FirefoxAndroid versions",
+			"unreleased Edge versions",
+			"unreleased Opera versions"
+		],
 		"server": [
 			"current node"
 		]
@@ -57,6 +72,8 @@
 		"body-parser": "1.18.3",
 		"bounding-client-rect": "1.0.5",
 		"browser-filesaver": "1.1.1",
+		"browserslist": "4.5.4",
+		"browserslist-useragent": "3.0.0",
 		"chalk": "2.4.2",
 		"chokidar": "2.1.2",
 		"chrono-node": "1.3.5",
@@ -189,6 +206,7 @@
 		"wpcom-oauth": "0.3.4",
 		"wpcom-proxy-request": "5.0.2",
 		"wpcom-xhr-request": "1.1.2",
+		"yamlparser": "0.0.2",
 		"yargs": "13.2.2"
 	},
 	"engines": {
@@ -196,8 +214,8 @@
 		"npm": "^6.4.1"
 	},
 	"scripts": {
-		"preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=true NODE_ARGS=--max_old_space_size=8192 npm run -s build-client",
-		"analyze-bundles": "webpack-bundle-analyzer stats.json public -h 127.0.0.1 -p 9898 -s gzip",
+		"preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=true NODE_ARGS=--max_old_space_size=8192 npm run -s build-client-evergreen",
+		"analyze-bundles": "webpack-bundle-analyzer stats.json public/evergreen -h 127.0.0.1 -p 9898 -s gzip",
 		"analyze-css": "node bin/analyze-css.js",
 		"autoprefixer": "postcss -u autoprefixer -r --no-map --config packages/calypso-build/postcss.config.js",
 		"postcss": "postcss -r --config packages/calypso-build/postcss.config.js",
@@ -215,8 +233,11 @@
 		"build-docker": "node bin/build-docker.js",
 		"prebuild-server": "mkdirp build",
 		"build-server": "cross-env-shell BROWSERSLIST_ENV=server NODE_PATH=$NODE_PATH:server:client:. webpack --display errors-only --config webpack.config.node.js",
-		"build-client": "cross-env-shell BROWSERSLIST_ENV=defaults NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS ./node_modules/webpack/bin/webpack.js --display errors-only",
-		"build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || cross-env-shell NODE_ARGS=--max_old_space_size=8192 npm run build-client",
+		"build-client": "npm run build-client-evergreen",
+		"build-client-fallback": "cross-env-shell BROWSERSLIST_ENV=defaults NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS ./node_modules/webpack/bin/webpack.js --display errors-only",
+		"build-client-evergreen": "cross-env-shell BROWSERSLIST_ENV=evergreen NODE_PATH=$NODE_PATH:server:client:. node $NODE_ARGS ./node_modules/webpack/bin/webpack.js --display errors-only",
+		"build-client-both": "concurrently -c cyan -n \"fallback ,evergreen\" \"npm run build-client-fallback\" \"npm run build-client-evergreen\"",
+		"build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || cross-env-shell NODE_ARGS=--max_old_space_size=8192 npm run build-client-both",
 		"build-client-if-desktop": "node -e \"process.env.CALYPSO_ENV === 'desktop' && process.exit(1)\" || npm run build-client",
 		"build-packages": "npx lerna run prepare --stream",
 		"sdk": "node bin/sdk-cli.js",
@@ -224,7 +245,7 @@
 		"clean:build": "npx rimraf build server/bundler/*.json .babel-cache",
 		"clean:devdocs": "npx rimraf server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json",
 		"clean:packages": "npx lerna run clean",
-		"clean:public": "npx rimraf public/*.{css,css.map,js,js.map} public/images/*.{gif,jpg,png,svg} public/{sections,sections-rtl,vendors~*}",
+		"clean:public": "npx rimraf public/*.{css,css.map} public/fallback/*.{css,css.map,js,js.map} public/evergreen/*.{css,css.map,js,js.map} public/fallback/images/*.{gif,jpg,png,svg} public/evergreen/images/*.{gif,jpg,png,svg} public/fallback/{sections,sections-rtl,vendors~*} public/evergreen/{sections,sections-rtl,vendors~*}",
 		"distclean": "npm run -s clean && npx rimraf node_modules packages/*/node_modules test/e2e/node_modules",
 		"docker": "docker run -it --name wp-calypso --rm -p 80:3000 wp-calypso",
 		"eslint-branch": "node bin/eslint-branch.js",
@@ -276,6 +297,7 @@
 		"chai-enzyme": "1.0.0-beta.1",
 		"check-node-version": "3.3.0",
 		"color-studio": "github:automattic/color-studio#1.0.1",
+		"concurrently": "4.1.0",
 		"enzyme": "3.9.0",
 		"enzyme-adapter-react-16": "1.11.2",
 		"enzyme-to-json": "3.3.5",
