@@ -4,7 +4,6 @@
  * External dependencies
  */
 import { Path, SVG } from '@wordpress/components';
-import { includes } from 'lodash';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 /**
@@ -13,8 +12,6 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import edit from './edit';
 import save from './save';
 import './style.scss';
-
-const validAlignments = [ 'center', 'wide', 'full' ];
 
 const icon = (
 	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -25,6 +22,7 @@ const icon = (
 
 const attributes = {
 	align: {
+		default: 'center',
 		type: 'string',
 	},
 	images: {
@@ -71,14 +69,10 @@ export const settings = {
 	description: __( 'Add an interactive slideshow.' ),
 	attributes,
 	supports: {
+		align: [ 'center', 'wide', 'full' ],
 		html: false,
 	},
 	icon,
-	getEditWrapperProps( { align } ) {
-		if ( ! includes( validAlignments, align ) ) {
-			return { 'data-align': align };
-		}
-	},
 	edit,
 	save,
 };

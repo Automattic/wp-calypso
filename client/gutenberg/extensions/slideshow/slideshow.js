@@ -4,7 +4,6 @@
  * External dependencies
  */
 import { Component, createRef } from '@wordpress/element';
-import classnames from 'classnames';
 import { isEqual } from 'lodash';
 
 /**
@@ -46,12 +45,10 @@ class Slideshow extends Component {
 	}
 
 	render() {
-		const { align, className, effect, images } = this.props;
-		const alignClassName = align ? `align${ align }` : null;
-		const classes = classnames( className, alignClassName );
+		const { className, effect, images } = this.props;
 
 		return (
-			<div className={ classes } data-effect={ effect }>
+			<div className={ className } data-effect={ effect }>
 				<div className="swiper-container" ref={ this.slideshowRef }>
 					<div className="swiper-wrapper">
 						{ images.map( ( { alt, caption, id, url } ) => (
