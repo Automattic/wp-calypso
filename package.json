@@ -12,13 +12,15 @@
   "bin": {
     "calypso-sdk": "./bin/sdk-cli.js"
   },
-  "browserslist": [
-    "last 2 versions",
-    "Safari >= 10",
-    "iOS >= 10",
-    "not ie <= 10",
-    "> 1%"
-  ],
+  "browserslist": {
+    "defaults": [
+      "last 2 versions",
+      "Safari >= 10",
+      "iOS >= 10",
+      "not ie <= 10",
+      "> 1%"
+    ]
+  },
   "dependencies": {
     "@automattic/tree-select": "1.0.3",
     "@babel/cli": "7.2.3",
@@ -291,6 +293,8 @@
     "babel-eslint": "10.0.1",
     "babel-jest": "23.6.0",
     "babel-plugin-dynamic-import-node": "2.2.0",
+    "browserslist": "4.4.1",
+    "caniuse-api": "3.0.0",
     "chai": "4.2.0",
     "chai-enzyme": "1.0.0-beta.1",
     "check-node-version": "3.2.0",
