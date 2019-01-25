@@ -1,0 +1,33 @@
+.checklist-onboarding-welcome {
+	margin: 15px 20px 20px;
+
+	h2 {
+		font-size: 18px;
+		font-weight: bold;
+	}
+
+	h2, p, .inline-help__confetti {
+		margin-bottom: 10px;
+	}
+}
+
+.checklist-onboarding-welcome__task-estimate {
+	color: $gray;
+	.gridicon {
+		margin: 0 4px -2px 0;
+	}
+}
+
+.checklist-onboarding-welcome__content {
+	text-align: left;
+}
+
+.checklist-onboarding-welcome__buttons {
+	display: flex;
+	.button:first-child {
+		margin-right: 10px;
+	}
+	.button {
+		flex-grow: 1;
+	}
+}

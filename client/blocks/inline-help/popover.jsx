@@ -17,7 +17,7 @@ import { VIEW_CONTACT, VIEW_RICH_RESULT, VIEW_CHECKLIST } from './constants';
 import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
 import Button from 'components/button';
 import Popover from 'components/popover';
-import InlineHelpOnboardingWelcome from './inline-help-onboarding-welcome';
+import ChecklistOnboardingWelcome from 'my-sites/checklist/wpcom-checklist/checklist-onboarding-welcome';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
@@ -25,6 +25,7 @@ import {
 	getSearchQuery,
 	getInlineHelpCurrentlySelectedResult,
 	isInlineHelpChecklistPromptVisible,
+	isOnboardingWelcomePromptVisible,
 } from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
@@ -118,6 +119,11 @@ class InlineHelpPopover extends Component {
 
 	renderPopoverContent = () => {
 		const { translate } = this.props;
+
+		if ( this.props.isOnboardingWelcomeVisible ) {
+			return <ChecklistOnboardingWelcome onClose={ this.props.onClose } />;
+		}
+
 		return (
 			<Fragment>
 				<QuerySupportTypes />
@@ -233,13 +239,6 @@ class InlineHelpPopover extends Component {
 		);
 	};
 
-	renderOnboardingWelcomeView = () => {
-		if ( this.props.isEligibleForChecklist ) {
-			return;
-		}
-		return <InlineHelpOnboardingWelcome onClose={ this.props.onClose } />;
-	};
-
 	switchToClassicEditor = () => {
 		const { siteId, onClose, optOut, classicUrl } = this.props;
 		const proceed =
@@ -259,7 +258,6 @@ class InlineHelpPopover extends Component {
 
 	render() {
 		const popoverClasses = { 'is-secondary-view-active': this.state.showSecondaryView };
-
 		return (
 			<Popover
 				isVisible
@@ -268,9 +266,6 @@ class InlineHelpPopover extends Component {
 				context={ this.props.context }
 				className={ classNames( 'inline-help__popover', popoverClasses ) }
 			>
-				{ /*
-				{ this.renderOnboardingWelcomeView() }
-*/ }
 				{ this.renderPopoverContent() }
 			</Popover>
 		);
@@ -320,7 +315,6 @@ function mapStateToProps( state ) {
 	const section = getSection( state );
 	const isCalypsoClassic = section.group && section.group === 'editor';
 	const isGutenbergEditor = section.group && section.group === 'gutenberg';
-	const isPreviewPage = section.group && section.name === 'preview';
 	const optInEnabled =
 		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) );
 	const postId = getEditorPostId( state );
@@ -329,10 +323,7 @@ function mapStateToProps( state ) {
 	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
 
 	return {
-		// The condition for this content is that the user has landed on the preview page
-		// for the first time after site creation
-		// and that they are eligible for a checklist
-		isOnboardingWelcomeVisible: isEligibleForChecklist && isPreviewPage,
+		isOnboardingWelcomeVisible: isEligibleForChecklist && isOnboardingWelcomePromptVisible( state ),
 		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
 		searchQuery: getSearchQuery( state ),
 		isEligibleForChecklist: isEligibleForDotcomChecklist( state, siteId ),
