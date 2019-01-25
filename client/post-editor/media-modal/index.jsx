@@ -439,6 +439,17 @@ export class EditorMediaModal extends Component {
 		this.setState( { source, search: undefined } );
 	};
 
+	/**
+	 * Handles updating the current queryFilters
+	 * which are passed into the Media Library
+	 * to allow filtering of Media items.
+	 *
+	 * This method is duplicated in
+	 * `client/my-sites/media/main.jsx` and any changes
+	 * here must also be mirrored across to that location
+	 *
+	 * @param  {object} queryFilters the filters to be updated
+	 */
 	onQueryFiltersChange = queryFilters => {
 		this.setState( {
 			queryFilters: {

@@ -43,6 +43,7 @@ class Media extends Component {
 		search: PropTypes.string,
 		source: PropTypes.string,
 		mediaId: PropTypes.number,
+		queryFilters: PropTypes.object,
 	};
 
 	state = {
@@ -51,6 +52,7 @@ class Media extends Component {
 		editedVideoItem: null,
 		selectedItems: [],
 		source: '',
+		queryFilters: {},
 	};
 
 	containerRef = React.createRef();
@@ -83,6 +85,26 @@ class Media extends Component {
 		}
 
 		page( redirect );
+	};
+
+	/**
+	 * Handles updating the current queryFilters
+	 * which are passed into the Media Library
+	 * to allow filtering of Media items.
+	 *
+	 * This method is duplicated in
+	 * `client/post-editor/media-modal/index.jsx` and any changes
+	 * here must also be mirrored across to that location
+	 *
+	 * @param  {object} queryFilters the filters to be updated
+	 */
+	onQueryFiltersChange = queryFilters => {
+		this.setState( {
+			queryFilters: {
+				...this.state.queryFilters,
+				...queryFilters,
+			},
+		} );
 	};
 
 	openDetailsModalForASingleImage = image => {
@@ -416,6 +438,8 @@ class Media extends Component {
 							single={ false }
 							filter={ this.props.filter }
 							source={ this.state.source }
+							queryFilters={ this.state.queryFilters }
+							onQueryFiltersChange={ this.onQueryFiltersChange }
 							onEditItem={ this.openDetailsModalForASingleImage }
 							onViewDetails={ this.openDetailsModalForAllSelected }
 							onDeleteItem={ this.handleDeleteMediaEvent }
