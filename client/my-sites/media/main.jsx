@@ -56,8 +56,11 @@ class Media extends Component {
 	containerRef = React.createRef();
 
 	componentDidMount() {
-		/* We need to rerender the inner `<MediaLibrary>` with the `containerWidth` that's
-		 * available only after the container gets actually rendered. */
+		// We need to rerender the inner `<MediaLibrary>` with the `containerWidth` that's
+		// available only after the container gets actually rendered.
+        // This is deemed valid, see:
+		// https://reactjs.org/docs/react-component.html#componentdidmount
+
 		/* eslint-disable-next-line react/no-did-mount-set-state */
 		this.setState( {
 			containerWidth: this.containerRef.current.clientWidth,
