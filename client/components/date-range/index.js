@@ -149,12 +149,12 @@ export class DateRange extends Component {
 		}
 	};
 
-	closePopoverandRevert = () => {
+	closePopoverAndRevert = () => {
 		this.closePopover();
 		this.revertDates();
 	};
 
-	closePopoverandCommit = () => {
+	closePopoverAndCommit = () => {
 		this.closePopover();
 		this.commitDates();
 	};
@@ -579,7 +579,7 @@ export class DateRange extends Component {
 	renderPopover() {
 		const headerProps = {
 			onApplyClick: this.commitDates,
-			onCancelClick: this.closePopoverandRevert,
+			onCancelClick: this.closePopoverAndRevert,
 		};
 
 		const inputsProps = {
@@ -596,7 +596,7 @@ export class DateRange extends Component {
 				isVisible={ this.state.popoverVisible }
 				context={ this.triggerButtonRef.current }
 				position="bottom"
-				onClose={ this.closePopoverandCommit }
+				onClose={ this.closePopoverAndCommit }
 			>
 				<div className="date-range__popover-inner">
 					<div className="date-range__controls">
