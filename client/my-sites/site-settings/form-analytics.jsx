@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { find, flowRight, partialRight, pick, overSome } from 'lodash';
@@ -110,14 +109,6 @@ export class GoogleAnalyticsForm extends Component {
 
 		const wooCommercePlugin = find( sitePlugins, { slug: 'woocommerce' } );
 		const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.active : false;
-		const showAnalyticsForStores =
-			config.isEnabled( 'jetpack/google-analytics-for-stores' ) &&
-			siteIsJetpack &&
-			wooCommerceActive;
-		const showAnonymizeIP =
-			config.isEnabled( 'jetpack/google-analytics-anonymize-ip' ) && siteIsJetpack;
-		const showEnhancedAnalyticsForStores =
-			config.isEnabled( 'jetpack/google-analytics-for-stores-enhanced' ) && siteIsJetpack;
 
 		const nudgeTitle = siteIsJetpack
 			? translate( 'Enable Google Analytics by upgrading to Jetpack Premium' )
@@ -201,7 +192,7 @@ export class GoogleAnalyticsForm extends Component {
 								{ translate( 'Where can I find my Tracking ID?' ) }
 							</ExternalLink>
 						</fieldset>
-						{ showAnonymizeIP && (
+						{ siteIsJetpack && (
 							<fieldset>
 								<CompactFormToggle
 									checked={ fields.wga ? Boolean( fields.wga.anonymize_ip ) : false }
@@ -226,11 +217,11 @@ export class GoogleAnalyticsForm extends Component {
 								</FormSettingExplanation>
 							</fieldset>
 						) }
-						{ showAnalyticsForStores && (
+						{ siteIsJetpack && wooCommerceActive && (
 							<FormAnalyticsStores
 								fields={ fields }
 								handleToggleChange={ this.handleToggleChange }
-								showEnhanced={ showEnhancedAnalyticsForStores }
+								showEnhanced={ siteIsJetpack }
 							/>
 						) }
 						<p>
