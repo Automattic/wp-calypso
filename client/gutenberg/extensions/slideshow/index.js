@@ -4,33 +4,78 @@
  * External dependencies
  */
 import { Path, SVG } from '@wordpress/components';
+import { includes } from 'lodash';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 /**
  * Internal dependencies
  */
-import { settings as slideshowSettings } from './settings.js';
 import edit from './edit';
 import save from './save';
 import './style.scss';
 
-export const { name } = slideshowSettings;
+const validAlignments = [ 'center', 'wide', 'full' ];
+
+const icon = (
+	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+		<Path d="M0 0h24v24H0z" fill="none" />
+		<Path d="M10 8v8l5-4-5-4zm9-5H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z" />
+	</SVG>
+);
+
+const attributes = {
+	align: {
+		type: 'string',
+	},
+	images: {
+		type: 'array',
+		default: [],
+		source: 'query',
+		selector: '.swiper-slide',
+		query: {
+			alt: {
+				source: 'attribute',
+				selector: 'img',
+				attribute: 'alt',
+				default: '',
+			},
+			caption: {
+				type: 'string',
+				source: 'html',
+				selector: 'figcaption',
+			},
+			id: {
+				source: 'attribute',
+				selector: 'img',
+				attribute: 'data-id',
+			},
+			url: {
+				source: 'attribute',
+				selector: 'img',
+				attribute: 'src',
+			},
+		},
+	},
+	effect: {
+		type: 'string',
+		default: 'slide',
+	},
+};
+
+export const name = 'slideshow';
 
 export const settings = {
-	title: slideshowSettings.title,
-	icon: (
-		<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-			<Path d="M0 0h24v24H0z" fill="none" />
-			<Path d="M10 8v8l5-4-5-4zm9-5H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z" />
-		</SVG>
-	),
-	category: slideshowSettings.category,
-	keywords: slideshowSettings.keywords,
-	description: slideshowSettings.description,
-	attributes: slideshowSettings.attributes,
-	supports: slideshowSettings.supports,
-	getEditWrapperProps( attributes ) {
-		const { align } = attributes;
-		if ( -1 !== slideshowSettings.validAlignments.indexOf( align ) ) {
+	title: __( 'Slideshow' ),
+	category: 'jetpack',
+	keywords: [ __( 'image' ) ],
+	description: __( 'Add an interactive slideshow.' ),
+	attributes,
+	supports: {
+		html: false,
+	},
+	icon,
+	getEditWrapperProps( { align } ) {
+		if ( ! includes( validAlignments, align ) ) {
 			return { 'data-align': align };
 		}
 	},
