@@ -33,9 +33,7 @@
 		}
 		.components-text-control__input {
 			opacity: 0;
-			max-width: 350px;
-			padding: 8px 2px;
-			text-align: center;
+			max-width: 400px;
 			width: 100%;
 		}
 		.components-base-control__label {
@@ -67,8 +65,8 @@
 		justify-content: center;
 		margin: 2px;
 		padding: 0;
-		padding-bottom: calc(100% / 9 - 4px);
-		width: calc(100% / 9 - 4px);
+		padding-bottom: calc( 100% / 9 - 4px );
+		width: calc( 100% / 9 - 4px );
 		&:hover {
 			box-shadow: 0 0 0 1px #555d66;
 		}
@@ -76,6 +74,13 @@
 			box-shadow: 0 0 0 2px #00a0d2;
 			outline: 0;
 		}
+	}
+	.wp-block-jetpack-gif_placeholder-text-input {
+		width: 100%;
+		max-width: 400px;
+	}
+	.wp-block-jetpack-gif_placeholder {
+		min-height: 200px;
 	}
 }
 .components-panel__body-gif-branding {
