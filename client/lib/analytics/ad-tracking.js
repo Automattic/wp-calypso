@@ -1117,9 +1117,13 @@ function recordOrderInDonutsGtag( cart, orderId ) {
 		return;
 	}
 
-	const orderSummary = cartToDonutsOrderSummary( cart );
+	const { orderSummary, orderValue } = cartToDonutsOrderSummary( cart );
 	if ( orderSummary ) {
-		recordParamsInDonutsGtag( 'purchase', 'DC-8907854/purch0/wpress+transactions', orderSummary );
+		recordParamsInDonutsGtag( 'purchase', 'DC-8907854/purch0/wpress+transactions', {
+			orderSummary,
+			orderValue,
+			orderId,
+		} );
 	}
 }
 
@@ -1267,14 +1271,20 @@ function recordSignupStartInDonutsGtag() {
 	recordParamsInDonutsGtag( 'conversion', 'DC-8907854/visit0/wpresslp+unique' );
 }
 
-function recordParamsInDonutsGtag( event_type, send_to, order_summary = false ) {
+function recordParamsInDonutsGtag(
+	event_type,
+	send_to,
+	{ orderSummary = false, orderValue = false, orderId = false } = {}
+) {
 	initDonutsGtag();
 	const params = {
 		allow_custom_scripts: false,
 		u1: document.referrer,
 		u2: document.location.href,
 		send_to: send_to,
-		...( order_summary && { u90: order_summary } ),
+		...( orderValue !== false && { value: orderValue } ),
+		...( orderId !== false && { transaction_id: orderId } ),
+		...( orderSummary !== false && { u90: orderSummary } ),
 	};
 	debug( 'Recording Donuts Gtag "' + event_type + '" event with parameters:', params );
 	window.gtag( 'event', event_type, params );
@@ -1534,9 +1544,12 @@ function recordViewCheckoutInDonutsGtag( cart ) {
 		return;
 	}
 
-	const orderSummary = cartToDonutsOrderSummary( cart );
+	const { orderSummary, orderValue } = cartToDonutsOrderSummary( cart );
 	if ( orderSummary ) {
-		recordParamsInDonutsGtag( 'conversion', 'DC-8907854/cartd0/wpress+unique', orderSummary );
+		recordParamsInDonutsGtag( 'conversion', 'DC-8907854/cartd0/wpress+unique', {
+			orderSummary,
+			orderValue,
+		} );
 	}
 }
 
@@ -1631,7 +1644,7 @@ function cartToDonutsOrderSummary( cart ) {
 	// types of products covered: domain registration, whois_privacy
 	// TODO: consider adding support for 'renewal' and 'transfer' products
 	debug( 'cartToDonutsOrderSummary:cart', cart );
-	const domain_registrations = cart.products
+	const domainRegistrations = cart.products
 		.filter( p => p.is_domain_registration || p.product_slug === 'private_whois' )
 		.map( p => {
 			let donuts_type = 'unknown';
@@ -1651,10 +1664,10 @@ function cartToDonutsOrderSummary( cart ) {
 				}
 			);
 		} );
-	const donuts_domain_registrations = domain_registrations.filter( p =>
+	const donutsDomainRegistrations = domainRegistrations.filter( p =>
 		includes( DONUTS_TLDS, p.tld )
 	);
-	const order_summary = donuts_domain_registrations.map( p => {
+	const orderSummary = donutsDomainRegistrations.map( p => {
 		return {
 			domain_name: p.domain_name,
 			duration: p.duration,
@@ -1663,9 +1676,13 @@ function cartToDonutsOrderSummary( cart ) {
 			type: p.donuts_type,
 		};
 	} );
-	debug( 'cartToDonutsOrderSummary:order_summary', order_summary );
-	if ( order_summary && order_summary.length > 0 ) {
-		return JSON.stringify( order_summary );
+	debug( 'cartToDonutsOrderSummary:orderSummary', orderSummary );
+	if ( orderSummary && orderSummary.length > 0 ) {
+		const orderValue = orderSummary.reduce( ( acc, p ) => {
+			return acc + ( parseFloat( p.price ) || 0.0 );
+		}, 0 );
+		debug( 'cartToDonutsOrderSummary:orderValue', orderValue );
+		return { orderSummary, orderValue };
 	}
 	return false;
 }
