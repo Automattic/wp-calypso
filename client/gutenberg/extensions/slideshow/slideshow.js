@@ -32,9 +32,7 @@ class Slideshow extends Component {
 
 	componentDidUpdate( prevProps ) {
 		const { align, effect, images } = this.props;
-		if ( ! isEqual( images, prevProps.images ) ) {
-			this.sizeSlideshow();
-		}
+
 		/* A change in alignment or images only needs an update */
 		if ( align !== prevProps.align || ! isEqual( images, prevProps.images ) ) {
 			this.swiperInstance.update();
