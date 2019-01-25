@@ -418,15 +418,13 @@ export class DateRange extends Component {
 	 */
 	clearDates = () => {
 		this.setState(
-			() => {
-				return {
-					startDate: null,
-					endDate: null,
-					staleStartDate: null,
-					staleEndDate: null,
-					textInputStartDate: '',
-					textInputEndDate: '',
-				};
+			{
+				startDate: null,
+				endDate: null,
+				staleStartDate: null,
+				staleEndDate: null,
+				textInputStartDate: '',
+				textInputEndDate: '',
 			},
 			() => {
 				// Fired to ensure date change is propagated upwards
