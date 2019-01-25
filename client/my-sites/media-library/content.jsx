@@ -136,7 +136,7 @@ class MediaLibraryContent extends React.Component {
 					);
 					break;
 				case MediaValidationErrors.SERVICE_AUTH_FAILED:
-					message = this.getAuthFailMessageForService( this.props.source );
+					message = this.getAuthFailMessageForSource();
 					status = 'is-warning';
 					tryAgain = false;
 					break;
@@ -163,10 +163,10 @@ class MediaLibraryContent extends React.Component {
 		} );
 	}
 
-	getAuthFailMessageForService( service ) {
-		const { translate } = this.props;
+	getAuthFailMessageForSource() {
+		const { translate, source } = this.props;
 
-		if ( service === 'google_photos' ) {
+		if ( source === 'google_photos' ) {
 			return translate(
 				'We are moving to a new and faster Google Photos service. Please reconnect to continue accessing your photos.'
 			);
