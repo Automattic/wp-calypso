@@ -3,7 +3,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -17,6 +17,7 @@ import { VIEW_CONTACT, VIEW_RICH_RESULT, VIEW_CHECKLIST } from './constants';
 import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
 import Button from 'components/button';
 import Popover from 'components/popover';
+import InlineHelpOnboardingWelcome from './inline-help-onboarding-welcome';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
@@ -58,12 +59,14 @@ class InlineHelpPopover extends Component {
 		optOut: PropTypes.func,
 		optIn: PropTypes.func,
 		redirect: PropTypes.func,
-		isEligibleForDotcomChecklist: PropTypes.bool.isRequired,
+		isEligibleForChecklist: PropTypes.bool.isRequired,
 		isChecklistPromptVisible: PropTypes.bool,
+		isOnboardingWelcomeVisible: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onClose: noop,
+		isOnboardingWelcomeVisible: false,
 	};
 
 	state = {
@@ -72,7 +75,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	componentDidMount() {
-		if ( this.props.isChecklistPromptVisible && this.props.isEligibleForDotcomChecklist ) {
+		if ( this.props.isChecklistPromptVisible && this.props.isEligibleForChecklist ) {
 			this.openChecklistView();
 		}
 	}
@@ -111,6 +114,57 @@ class InlineHelpPopover extends Component {
 
 	openChecklistView = () => {
 		this.openSecondaryView( VIEW_CHECKLIST );
+	};
+
+	renderPopoverContent = () => {
+		const { translate } = this.props;
+		return (
+			<Fragment>
+				<QuerySupportTypes />
+				<div className="inline-help__search">
+					<InlineHelpSearchCard
+						openResult={ this.openResultView }
+						query={ this.props.searchQuery }
+					/>
+					<InlineHelpSearchResults
+						openResult={ this.openResultView }
+						searchQuery={ this.props.searchQuery }
+					/>
+				</div>
+				{ this.renderSecondaryView() }
+				{ ! this.state.showSecondaryView && this.renderPrimaryView() }
+				<div className="inline-help__footer">
+					<Button
+						onClick={ this.moreHelpClicked }
+						className="inline-help__more-button"
+						borderless
+						href="/help"
+					>
+						<Gridicon icon="help" className="inline-help__gridicon-left" />
+						{ translate( 'More help' ) }
+					</Button>
+
+					<Button
+						onClick={ this.openContactView }
+						className="inline-help__contact-button"
+						borderless
+					>
+						<Gridicon icon="chat" className="inline-help__gridicon-left" />
+						{ translate( 'Contact us' ) }
+						<Gridicon icon="chevron-right" className="inline-help__gridicon-right" />
+					</Button>
+
+					<Button
+						onClick={ this.closeSecondaryView }
+						className="inline-help__cancel-button"
+						borderless
+					>
+						<Gridicon icon="chevron-left" className="inline-help__gridicon-left" />
+						{ translate( 'Back' ) }
+					</Button>
+				</div>
+			</Fragment>
+		);
 	};
 
 	renderSecondaryView = () => {
@@ -179,6 +233,13 @@ class InlineHelpPopover extends Component {
 		);
 	};
 
+	renderOnboardingWelcomeView = () => {
+		if ( this.props.isEligibleForChecklist ) {
+			return;
+		}
+		return <InlineHelpOnboardingWelcome onClose={ this.props.onClose } />;
+	};
+
 	switchToClassicEditor = () => {
 		const { siteId, onClose, optOut, classicUrl } = this.props;
 		const proceed =
@@ -197,9 +258,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
-		const { showSecondaryView } = this.state;
-		const popoverClasses = { 'is-secondary-view-active': showSecondaryView };
+		const popoverClasses = { 'is-secondary-view-active': this.state.showSecondaryView };
 
 		return (
 			<Popover
@@ -209,52 +268,10 @@ class InlineHelpPopover extends Component {
 				context={ this.props.context }
 				className={ classNames( 'inline-help__popover', popoverClasses ) }
 			>
-				<QuerySupportTypes />
-				<div className="inline-help__search">
-					<InlineHelpSearchCard
-						openResult={ this.openResultView }
-						query={ this.props.searchQuery }
-					/>
-					<InlineHelpSearchResults
-						openResult={ this.openResultView }
-						searchQuery={ this.props.searchQuery }
-					/>
-				</div>
-
-				{ this.renderSecondaryView() }
-
-				{ ! showSecondaryView && this.renderPrimaryView() }
-
-				<div className="inline-help__footer">
-					<Button
-						onClick={ this.moreHelpClicked }
-						className="inline-help__more-button"
-						borderless
-						href="/help"
-					>
-						<Gridicon icon="help" className="inline-help__gridicon-left" />
-						{ translate( 'More help' ) }
-					</Button>
-
-					<Button
-						onClick={ this.openContactView }
-						className="inline-help__contact-button"
-						borderless
-					>
-						<Gridicon icon="chat" className="inline-help__gridicon-left" />
-						{ translate( 'Contact us' ) }
-						<Gridicon icon="chevron-right" className="inline-help__gridicon-right" />
-					</Button>
-
-					<Button
-						onClick={ this.closeSecondaryView }
-						className="inline-help__cancel-button"
-						borderless
-					>
-						<Gridicon icon="chevron-left" className="inline-help__gridicon-left" />
-						{ translate( 'Back' ) }
-					</Button>
-				</div>
+				{ /*
+				{ this.renderOnboardingWelcomeView() }
+*/ }
+				{ this.renderPopoverContent() }
 			</Popover>
 		);
 	}
@@ -301,21 +318,24 @@ function mapStateToProps( state ) {
 	const currentRoute = getCurrentRoute( state );
 	const classicRoute = currentRoute.replace( '/block-editor/', '' );
 	const section = getSection( state );
-
 	const isCalypsoClassic = section.group && section.group === 'editor';
 	const isGutenbergEditor = section.group && section.group === 'gutenberg';
+	const isPreviewPage = section.group && section.name === 'preview';
 	const optInEnabled =
 		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) );
-
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
-
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
+	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
 
 	return {
+		// The condition for this content is that the user has landed on the preview page
+		// for the first time after site creation
+		// and that they are eligible for a checklist
+		isOnboardingWelcomeVisible: isEligibleForChecklist && isPreviewPage,
 		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
 		searchQuery: getSearchQuery( state ),
-		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
+		isEligibleForChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 		selectedEditor: getSelectedEditor( state, siteId ),
