@@ -46,6 +46,7 @@ const applyWithSelect = withSelect( select => {
 	return {
 		areLikesEnabled: ! get( meta, [ 'switch_like_status' ] ), // todo site option
 		isSharingEnabled: ! get( meta, [ 'sharing_disabled' ], '' ),
+		meta,
 	};
 } );
 
@@ -60,7 +61,6 @@ const applyWithDispatch = withDispatch( ( dispatch, { meta } ) => {
 			editPost( { meta: { ...meta, switch_like_status: ! value } } );
 		},
 		toggleSharing( value ) {
-			// const value = get( meta, [ 'sharing_disabled' ] ); -- doesn't work - always false
 			editPost( { meta: { ...meta, sharing_disabled: ! value } } );
 		},
 	};
