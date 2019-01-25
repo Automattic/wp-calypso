@@ -152,6 +152,10 @@ class ManageMenu extends PureComponent {
 	getImportItem = () => {
 		const { isJetpack, translate } = this.props;
 
+		const useCalypsoify = config.isEnabled( 'manage/import-jetpack-calypsoify' );
+		const wpAdminLink = useCalypsoify ? 'import.php?calypsoify=1' : 'import.php';
+		const forceInternalLink = isJetpack ? useCalypsoify : true;
+
 		return {
 			name: 'import',
 			label: translate( 'Import' ),
@@ -160,9 +164,9 @@ class ManageMenu extends PureComponent {
 			config: 'manage/import-in-sidebar',
 			link: '/settings/import', // @TODO make it a top level section & add a redirect
 			paths: [ '/settings/import' ],
-			wpAdminLink: 'import.php',
+			wpAdminLink,
 			showOnAllMySites: false,
-			forceInternalLink: ! isJetpack,
+			forceInternalLink,
 		};
 	};
 
