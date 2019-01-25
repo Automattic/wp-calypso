@@ -200,7 +200,13 @@ export default connect( state => {
 	let exportUrl = `/settings/export/${ siteSlug }`;
 	const cloneUrl = `/start/clone-site/${ siteSlug }`;
 	if ( isJetpack ) {
-		importUrl = getSiteAdminUrl( state, siteId, 'import.php' );
+		importUrl = getSiteAdminUrl(
+			state,
+			siteId,
+			config.isEnabled( 'manage/import-jetpack-calypsoify' )
+				? 'import.php?calypsoify=1'
+				: 'import.php'
+		);
 		exportUrl = getSiteAdminUrl( state, siteId, 'export.php' );
 	}
 
