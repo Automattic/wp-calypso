@@ -26,6 +26,14 @@ import {
  */
 import './style.scss';
 
+const parseJSON = data => {
+	try {
+		return JSON.parse( data );
+	} catch {
+		return null;
+	}
+};
+
 const sendMessage = ( iframe, message ) => {
 	iframe.current.contentWindow.postMessage(
 		JSON.stringify( {
@@ -55,10 +63,11 @@ class CalypsoifyIframe extends Component {
 	}
 
 	onMessage = ( { data } ) => {
-		if ( typeof data !== 'string' || data[ 0 ] !== '{' ) {
+		const message = parseJSON( data );
+		if ( ! message ) {
 			return;
 		}
-		const message = JSON.parse( data );
+
 		const { action, type, payload } = message;
 
 		if ( type !== 'gutenbergIframeMessage' ) {
