@@ -12,6 +12,7 @@ import './editor.scss';
 import './style.scss';
 
 export const name = 'gif';
+export const title = __( 'GIF' );
 
 export const icon = (
 	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -21,7 +22,7 @@ export const icon = (
 );
 
 export const settings = {
-	title: __( 'GIF' ),
+	title,
 	icon,
 	category: 'jetpack',
 	keywords: [ __( 'giphy' ) ],

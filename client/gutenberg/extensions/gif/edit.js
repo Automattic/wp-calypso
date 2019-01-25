@@ -8,7 +8,7 @@ import { PanelBody, Path, Placeholder, SVG, TextControl } from '@wordpress/compo
 import { InspectorControls, RichText } from '@wordpress/editor';
 import { debounce } from 'lodash';
 
-import { icon } from './';
+import { icon, title } from './';
 
 const GIPHY_API_KEY = 't1PkR1Vq0mzHueIFBvZSZErgFs9NBmYW';
 const SEARCH_INPUT_DEBOUNCE = 300; // Time before searching user input in ms
@@ -157,7 +157,7 @@ class GifEdit extends Component {
 			focus || ! this.hasSearchText() ? 'has-focus' : 'no-focus'
 		);
 		const placeholder = (
-			<Placeholder className="wp-block-jetpack-gif_placeholder" icon={ icon } label={ __( 'GIF' ) }>
+			<Placeholder className="wp-block-jetpack-gif_placeholder" icon={ icon } label={ title }>
 				<TextControl
 					className="wp-block-jetpack-gif_placeholder-text-input"
 					label={ __( 'Search or paste a Giphy URL' ) }
@@ -166,6 +166,7 @@ class GifEdit extends Component {
 				/>
 			</Placeholder>
 		);
+
 		return (
 			<div className={ classes }>
 				<InspectorControls>
