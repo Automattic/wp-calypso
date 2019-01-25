@@ -115,16 +115,25 @@ class MediaLibraryExternalHeader extends React.Component {
 		} );
 	};
 
-	onDateChange = ( startDate, endDate ) => {
+	onDateChange = ( startDate = null, endDate = null ) => {
 		const requiredDateFormat = 'YYYY-MM-DD';
-		const filterStartDate = this.props.moment( startDate ).format( requiredDateFormat );
-		const filterEndDate = this.props.moment( endDate ).format( requiredDateFormat );
+		const dateRange = {};
+
+		// Parse both dates into Moment
+		const momentStartDate = this.props.moment( startDate );
+		const momentEndDate = this.props.moment( endDate );
+
+		// Only add date to range if it is valid - can be null
+		if ( momentStartDate && momentStartDate.isValid() ) {
+			dateRange.from = momentStartDate.format( requiredDateFormat );
+		}
+
+		if ( momentEndDate && momentEndDate.isValid() ) {
+			dateRange.to = momentEndDate.format( requiredDateFormat );
+		}
 
 		this.props.onQueryFiltersChange( {
-			dateRange: {
-				from: filterStartDate,
-				to: filterEndDate,
-			},
+			dateRange,
 		} );
 	};
 
