@@ -1,4 +1,8 @@
 .wp-block-jetpack-gif {
+	figure {
+		transition: padding-top 125ms ease-in-out;
+	}
+
 	.components-base-control__field {
 		text-align: center;
 	}
