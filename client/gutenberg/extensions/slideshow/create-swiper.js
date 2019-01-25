@@ -2,7 +2,7 @@
  * External dependencies
  */
 import Swiper from 'swiper';
-import 'swiper/dist/css/swiper.min.css';
+import 'swiper/dist/css/swiper.css';
 import { merge } from 'lodash';
 
 export default function createSwiper( container = '.swiper-container', params = {} ) {
