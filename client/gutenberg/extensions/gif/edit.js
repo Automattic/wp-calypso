@@ -11,6 +11,7 @@ import { debounce } from 'lodash';
 import { icon } from './';
 
 const GIPHY_API_KEY = 't1PkR1Vq0mzHueIFBvZSZErgFs9NBmYW';
+const SEARCH_INPUT_DEBOUNCE = 300; // Time before searching user input in ms
 
 class GifEdit extends Component {
 	timer = null;
@@ -55,7 +56,7 @@ class GifEdit extends Component {
 		}
 
 		return this.fetch( this.urlForSearch( searchText ) );
-	}, 250 );
+	}, SEARCH_INPUT_DEBOUNCE );
 
 	urlForSearch = searchText => {
 		return `https://api.giphy.com/v1/gifs/search?q=${ encodeURIComponent(
