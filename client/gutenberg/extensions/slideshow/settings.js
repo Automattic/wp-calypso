@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 export const settings = {
 	name: 'slideshow',
@@ -51,12 +51,6 @@ export const settings = {
 			default: 'slide',
 		},
 	},
-	effectOptions: [
-		{ label: _x( 'Slide', 'Slideshow transition effect' ), value: 'slide' },
-		{ label: _x( 'Fade', 'Slideshow transition effect' ), value: 'fade' },
-		{ label: _x( 'Cover Flow', 'Slideshow transition effect' ), value: 'coverflow' },
-		{ label: _x( 'Flip', 'Slideshow transition effect' ), value: 'flip' },
-	],
 	validAlignments: [ 'center', 'wide', 'full' ],
 	supports: {
 		html: false,
