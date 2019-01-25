@@ -10,9 +10,13 @@ exports[`DateRange should render 1`] = `
         "current": null,
       }
     }
+    endDate={null}
     endDateText="MM/DD/YYYY"
     isCompact={false}
+    onClearClick={[Function]}
     onTriggerClick={[Function]}
+    showClearBtn={true}
+    startDate={null}
     startDateText="MM/DD/YYYY"
   />
   <Connect(Popover)
@@ -38,6 +42,7 @@ exports[`DateRange should render 1`] = `
           role="status"
         >
           <t
+            aria-hidden="true"
             icon="info"
             key="interpolation-child-1/.0"
             size={24}
