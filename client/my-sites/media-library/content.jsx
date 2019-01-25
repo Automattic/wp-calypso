@@ -136,7 +136,10 @@ class MediaLibraryContent extends React.Component {
 					);
 					break;
 				case MediaValidationErrors.SERVICE_AUTH_FAILED:
-					return this.getPicasaUpgradeNotice( errorType, onDismiss );
+					message = this.getAuthFailMessageForService( this.props.source );
+					status = 'is-warning';
+					tryAgain = false;
+					break;
 
 				case MediaValidationErrors.SERVICE_FAILED:
 					message = translate( 'We are unable to retrieve your full media library.' );
@@ -160,15 +163,17 @@ class MediaLibraryContent extends React.Component {
 		} );
 	}
 
-	getPicasaUpgradeNotice( errorType, onDismiss ) {
+	getAuthFailMessageForService( service ) {
 		const { translate } = this.props;
-		const message = translate(
-			'We are moving to a new and faster Google Photos service. Please reconnect to continue accessing your photos.'
-		);
 
-		return (
-			<Notice key={ errorType } status="is-warning" text={ message } onDismissClick={ onDismiss } />
-		);
+		if ( service === 'google_photos' ) {
+			return translate(
+				'We are moving to a new and faster Google Photos service. Please reconnect to continue accessing your photos.'
+			);
+		}
+
+		// Generic message. Nothing should use this, but just in case.
+		return translate( 'Your service has been disconnected. Please reconnect to continue.' );
 	}
 
 	renderTryAgain() {
