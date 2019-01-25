@@ -135,10 +135,6 @@ export class DateRange extends Component {
 		this.setState( {
 			popoverVisible: false,
 		} );
-
-		// As no dates have been explicity accepted ("Apply" not clicked)
-		// we need to revert back to the original cached dates
-		this.revertDates();
 	};
 
 	/**
@@ -151,6 +147,16 @@ export class DateRange extends Component {
 		} else {
 			this.openPopover();
 		}
+	};
+
+	closePopoverandRevert = () => {
+		this.closePopover();
+		this.revertDates();
+	};
+
+	closePopoverandCommit = () => {
+		this.closePopover();
+		this.commitDates();
 	};
 
 	/**
@@ -411,14 +417,22 @@ export class DateRange extends Component {
 	 * affectively saying "get rid of all dates"
 	 */
 	clearDates = () => {
-		this.setState( {
-			startDate: null,
-			endDate: null,
-			staleStartDate: null,
-			staleEndDate: null,
-			textInputStartDate: '',
-			textInputEndDate: '',
-		} );
+		this.setState(
+			() => {
+				return {
+					startDate: null,
+					endDate: null,
+					staleStartDate: null,
+					staleEndDate: null,
+					textInputStartDate: '',
+					textInputEndDate: '',
+				};
+			},
+			() => {
+				// Fired to ensure date change is propagated upwards
+				this.props.onDateCommit( this.state.startDate, this.state.endDate );
+			}
+		);
 	};
 
 	/**
@@ -565,7 +579,7 @@ export class DateRange extends Component {
 	renderPopover() {
 		const headerProps = {
 			onApplyClick: this.commitDates,
-			onCancelClick: this.closePopover,
+			onCancelClick: this.closePopoverandRevert,
 		};
 
 		const inputsProps = {
@@ -582,7 +596,7 @@ export class DateRange extends Component {
 				isVisible={ this.state.popoverVisible }
 				context={ this.triggerButtonRef.current }
 				position="bottom"
-				onClose={ this.closePopover }
+				onClose={ this.closePopoverandCommit }
 			>
 				<div className="date-range__popover-inner">
 					<div className="date-range__controls">
