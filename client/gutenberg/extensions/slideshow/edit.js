@@ -8,7 +8,6 @@ import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import {
 	BlockControls,
-	BlockAlignmentToolbar,
 	MediaUpload,
 	MediaPlaceholder,
 	InspectorControls,
@@ -65,9 +64,6 @@ class SlideshowEdit extends Component {
 			this.props.setAttributes( { images } );
 		};
 	};
-	updateAlignment = value => {
-		this.props.setAttributes( { align: value } );
-	};
 	addFiles( files ) {
 		const currentImages = this.props.attributes.images || [];
 		const { noticeOperations, setAttributes } = this.props;
@@ -101,11 +97,6 @@ class SlideshowEdit extends Component {
 					</PanelBody>
 				</InspectorControls>
 				<BlockControls>
-					<BlockAlignmentToolbar
-						value={ align }
-						onChange={ this.updateAlignment }
-						controls={ [ 'center', 'wide', 'full' ] }
-					/>
 					{ !! images.length && (
 						<Toolbar>
 							<MediaUpload
