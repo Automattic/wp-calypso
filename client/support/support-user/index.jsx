@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import { rebootNormally } from 'lib/user/support-user-interop';
-import { currentUserHasFlag } from 'state/current-user/selectors';
+import { isSupportSession } from 'state/support/selectors';
 
 class SupportUser extends Component {
 	componentDidMount() {
@@ -24,7 +24,7 @@ class SupportUser extends Component {
 	}
 
 	onKeyboardShortcut = () => {
-		if ( this.props.isSupportUser ) {
+		if ( this.props.isSupportSession ) {
 			rebootNormally();
 		}
 	};
@@ -34,9 +34,6 @@ class SupportUser extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	isEnabledForUser: currentUserHasFlag( state, 'calypso_support_user' ),
-	isSupportUser: state.support.isSupportUser,
-} );
-
-export default connect( mapStateToProps )( SupportUser );
+export default connect( state => ( {
+	isSupportSession: isSupportSession( state ),
+} ) )( SupportUser );

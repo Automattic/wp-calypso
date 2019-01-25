@@ -46,8 +46,11 @@ export function init() {
 		// require `lib/user/support-user-interop` here so that unit tests don't
 		// fail because of lack of `window` global when importing this module
 		// from test (before a chance to mock things is possible)
-		const isSupportUserSession = require( 'lib/user/support-user-interop' ).isSupportUserSession;
-		if ( isSupportUserSession() ) {
+		// TODO: read the `isSupportSession` flag with a Redux selector instead. That requires
+		// reorganizing the `configureReduxStore` function so that the flag is set *before* this
+		// init function is called. That currently happens too late, in a promise resolution callback.
+		const { isSupportSession } = require( 'lib/user/support-user-interop' );
+		if ( isSupportSession() ) {
 			debug( 'Push Notifications are not supported when SU is active' );
 			dispatch( apiNotReady() );
 			return;
