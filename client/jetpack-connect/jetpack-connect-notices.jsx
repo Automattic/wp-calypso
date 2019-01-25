@@ -91,7 +91,12 @@ export class JetpackConnectNotices extends Component {
 
 			case SITE_BLACKLISTED:
 				noticeValues.text = translate(
-					"This site can't be connected to WordPress.com because it violates our Terms of Service."
+					"This site can't be connected to WordPress.com because it violates our {{a}}Terms of Service{{/a}}.",
+					{
+						components: {
+							a: <a href="https://wordpress.com/tos" rel="noopener noreferrer" target="_blank" />,
+						},
+					}
 				);
 				return noticeValues;
 
