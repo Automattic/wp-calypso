@@ -385,7 +385,9 @@ export class Checkout extends React.Component {
 					plan: 'paid',
 				} );
 
-				return `/view/${ selectedSiteSlug }?d=gsuite`;
+				const destination = abtest( 'improvedOnboarding' ) === 'onboarding' ? 'view' : 'checklist';
+
+				return `/${ destination }/${ selectedSiteSlug }?d=gsuite`;
 			}
 
 			// Maybe show either the G Suite or Concierge Session upsell pages
@@ -437,7 +439,9 @@ export class Checkout extends React.Component {
 		}
 
 		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
-			return `/view/${ selectedSiteSlug }`;
+			const destination = abtest( 'improvedOnboarding' ) === 'main' ? 'checklist' : 'view';
+
+			return `/${ destination }/${ selectedSiteSlug }`;
 		}
 
 		/**
