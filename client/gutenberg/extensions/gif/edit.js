@@ -156,16 +156,6 @@ class GifEdit extends Component {
 			'wp-block-jetpack-gif_text-input-field',
 			focus || ! this.hasSearchText() ? 'has-focus' : 'no-focus'
 		);
-		const placeholder = (
-			<Placeholder className="wp-block-jetpack-gif_placeholder" icon={ icon } label={ title }>
-				<TextControl
-					className="wp-block-jetpack-gif_placeholder-text-input"
-					label={ __( 'Search or paste a Giphy URL' ) }
-					onChange={ this.onSearchTextChange }
-					value={ searchText }
-				/>
-			</Placeholder>
-		);
 
 		return (
 			<div className={ classes }>
@@ -177,8 +167,16 @@ class GifEdit extends Component {
 						</SVG>
 					</PanelBody>
 				</InspectorControls>
-				{ ! giphyUrl && placeholder }
-				{ !! giphyUrl && (
+				{ ! giphyUrl ? (
+					<Placeholder className="wp-block-jetpack-gif_placeholder" icon={ icon } label={ title }>
+						<TextControl
+							className="wp-block-jetpack-gif_placeholder-text-input"
+							label={ __( 'Search or paste a Giphy URL' ) }
+							onChange={ this.onSearchTextChange }
+							value={ searchText }
+						/>
+					</Placeholder>
+				) : (
 					<figure style={ style }>
 						<div
 							className="wp-block-jetpack-gif_cover"
