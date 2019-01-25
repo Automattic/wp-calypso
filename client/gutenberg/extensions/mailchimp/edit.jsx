@@ -15,6 +15,11 @@ import {
 import { InspectorControls, RichText } from '@wordpress/editor';
 import { Fragment, Component } from '@wordpress/element';
 
+/**
+ * Internal dependencies
+ */
+import { icon } from '.';
+
 const API_STATE_LOADING = 0;
 const API_STATE_CONNECTED = 1;
 const API_STATE_NOTCONNECTED = 2;
@@ -109,12 +114,12 @@ class MailchimpSubscribeEdit extends Component {
 		} = attributes;
 		const classPrefix = 'wp-block-jetpack-mailchimp-';
 		const waiting = (
-			<Placeholder icon="email" notices={ notices }>
+			<Placeholder icon={ icon } notices={ notices }>
 				<Spinner />
 			</Placeholder>
 		);
 		const placeholder = (
-			<Placeholder icon="email" label={ __( 'Mailchimp' ) } notices={ notices }>
+			<Placeholder icon={ icon } label={ __( 'Mailchimp' ) } notices={ notices }>
 				<div className="components-placeholder__instructions">
 					{ __(
 						'You need to connect your MailChimp account and choose a list in order to start collecting Email subscribers.'
@@ -123,7 +128,7 @@ class MailchimpSubscribeEdit extends Component {
 					<ExternalLink href={ connectURL }>{ __( 'Set up MailChimp form' ) }</ExternalLink>
 					<br />
 					<br />
-					<Button isPrimary onClick={ this.apiCall }>
+					<Button isDefault onClick={ this.apiCall }>
 						{ __( 'Re-check Connection' ) }
 					</Button>
 				</div>
