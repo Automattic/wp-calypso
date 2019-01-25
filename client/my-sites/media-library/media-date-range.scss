@@ -1,5 +1,10 @@
 
 .media-library__date-range {
+	
+	.date-range__trigger-btn.button {
+		margin-right: 0; // ensure cancel button butts up against the main trigger
+	}
+
 	.date-range__trigger-btn-text {
 		@include breakpoint( '<660px' ) {
 			@include hide-content-accessibly;
