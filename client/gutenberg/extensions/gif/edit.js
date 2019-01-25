@@ -11,7 +11,7 @@ import { debounce } from 'lodash';
 import { icon, title } from './';
 
 const GIPHY_API_KEY = 't1PkR1Vq0mzHueIFBvZSZErgFs9NBmYW';
-const SEARCH_INPUT_DEBOUNCE = 300; // Time before searching user input in ms
+const SEARCH_INPUT_DEBOUNCE = 450; // Time before searching user input in ms
 
 class GifEdit extends Component {
 	timer = null;
