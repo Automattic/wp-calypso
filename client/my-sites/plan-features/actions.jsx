@@ -34,6 +34,7 @@ const PlanFeaturesActions = ( {
 	isPlaceholder = false,
 	isPopular,
 	isInSignup,
+	isLaunchPage,
 	onUpgradeClick = noop,
 	planName,
 	planType,
@@ -69,7 +70,11 @@ const PlanFeaturesActions = ( {
 		if ( isLandingPage ) {
 			buttonText = translate( 'Select', { context: 'button' } );
 		}
-		if ( isInSignup ) {
+		if ( isLaunchPage ) {
+			if ( freePlan ) {
+				buttonText = translate( 'Keep this plan', { context: 'button' } );
+			}
+		} else if ( isInSignup ) {
 			buttonText = translate( 'Start with %(plan)s', {
 				args: {
 					plan: planName,
@@ -127,6 +132,7 @@ PlanFeaturesActions.propTypes = {
 	freePlan: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
+	isLaunchPage: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	planType: PropTypes.string,
 	primaryUpgrade: PropTypes.bool,

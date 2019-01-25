@@ -555,6 +555,8 @@ class DomainsStep extends React.Component {
 				backUrl={ backUrl }
 				positionInFlow={ this.props.positionInFlow }
 				signupProgress={ this.props.signupProgress }
+				headerText={ this.props.headerText }
+				subHeaderText={ this.props.subHeaderText }
 				fallbackHeaderText={ translate( 'Give your site an address.' ) }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={

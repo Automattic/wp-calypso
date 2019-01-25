@@ -79,14 +79,16 @@ export function generateSteps( {
 			},
 		},
 
-		'domains-site-selected': {
-			stepName: 'domains-site-selected',
+		'domains-launch': {
+			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
 			providesDependencies: [ 'domainItem', 'siteId', 'siteSlug' ],
 			props: {
 				isDomainOnly: true,
 				showExampleSuggestions: false,
 				showSkipButton: true,
+				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
+				subHeaderText: i18n.translate( 'Select a domain name for your website' ),
 			},
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteId', 'siteSlug' ],
@@ -160,6 +162,19 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
+		},
+
+		'plans-launch': {
+			stepName: 'plans-launch',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			props: {
+				headerText: i18n.translate( 'Getting ready to launch your website' ),
+				subHeaderText: i18n.translate( "Pick a plan that's right for you" ),
+				fallbackHeaderText: i18n.translate( "Almost there, pick a plan that's right for you." ),
+				isLaunchPage: true,
+			},
 		},
 
 		'plans-store-nux': {

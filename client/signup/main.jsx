@@ -334,18 +334,16 @@ class Signup extends React.Component {
 		}
 
 		if ( 'undefined' !== typeof excludePlanStep ) {
-			let planStepName = '';
-			if ( 'site-launch' === flowName ) {
-				planStepName = 'plans';
-			}
+			const planStepName = find( flowSteps, stepName => {
+				return startsWith( stepName, 'plan' );
+			} );
 			planStepName && fulfilledSteps.push( planStepName );
 		}
 
 		if ( 'undefined' !== typeof excludeDomainStep ) {
-			let domainStepName = '';
-			if ( 'site-launch' === flowName ) {
-				domainStepName = 'domains-site-selected';
-			}
+			const domainStepName = find( flowSteps, stepName => {
+				return startsWith( stepName, 'domain' );
+			} );
 			domainStepName && fulfilledSteps.push( domainStepName );
 		}
 
