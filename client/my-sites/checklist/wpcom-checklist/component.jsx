@@ -221,6 +221,10 @@ class WpcomChecklistComponent extends PureComponent {
 	handleInlineHelpProgress = ( task, isPrompt ) => () => {
 		const { taskUrls, taskStep, currentRoute } = this.props;
 
+		if ( task.isCompleted && ! isPrompt ) {
+			return;
+		}
+
 		if ( isPrompt ) {
 			this.props.setChecklistPromptStep( taskStep + 1 );
 		} else {
