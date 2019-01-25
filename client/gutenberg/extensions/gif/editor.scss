@@ -35,7 +35,6 @@
 			opacity: 0;
 			max-width: 400px;
 			padding: 8px 2px;
-			text-align: center;
 			width: 100%;
 		}
 		.components-base-control__label {
@@ -80,9 +79,6 @@
 	.wp-block-jetpack-gif_placeholder-text-input {
 		width: 100%;
 		max-width: 400px;
-		input {
-			text-align: center;
-		}
 	}
 	.wp-block-jetpack-gif_placeholder {
 		min-height: 200px;
