@@ -36,6 +36,7 @@ export class MediaLibraryList extends React.Component {
 		mediaLibrarySelectedItems: PropTypes.arrayOf( PropTypes.object ),
 		filter: PropTypes.string,
 		filterRequiresUpgrade: PropTypes.bool.isRequired,
+		queryFilters: PropTypes.object,
 		search: PropTypes.string,
 		containerWidth: PropTypes.number,
 		rowPadding: PropTypes.number,
@@ -59,6 +60,7 @@ export class MediaLibraryList extends React.Component {
 		single: false,
 		scrollable: false,
 		onEditItem: noop,
+		queryFilters: {},
 	};
 
 	state = {};
@@ -244,12 +246,16 @@ export class MediaLibraryList extends React.Component {
 		}
 
 		if ( ! this.props.mediaHasNextPage && this.props.media && 0 === this.props.media.length ) {
-			return React.createElement( this.props.search ? ListNoResults : ListNoContent, {
-				site: this.props.site,
-				filter: this.props.filter,
-				search: this.props.search,
-				source: this.props.source,
-			} );
+			return React.createElement(
+				this.props.search || this.props.queryFilters ? ListNoResults : ListNoContent,
+				{
+					site: this.props.site,
+					filter: this.props.filter,
+					search: this.props.search,
+					source: this.props.source,
+					queryFilters: this.props.queryFilters,
+				}
+			);
 		}
 
 		const onFetchNextPage = function() {

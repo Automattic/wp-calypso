@@ -299,6 +299,7 @@ class MediaLibraryContent extends React.Component {
 						site={ this.props.site }
 						filter={ this.props.filter }
 						filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
+						queryFilters={ this.props.queryFilters }
 						search={ this.props.search }
 						containerWidth={ this.props.containerWidth }
 						thumbnailType={ this.getThumbnailType() }
