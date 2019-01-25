@@ -184,10 +184,12 @@ class MediaLibraryExternalHeader extends React.Component {
 				{ canCopy && this.renderCopyButton() }
 
 				{ config.isEnabled( 'external-media/google-photos/date-filters' ) && hasDateFilters && (
-					<DateRange
-						onDateCommit={ this.onDateChange }
-						lastSelectableDate={ this.props.moment() }
-					/>
+					<div className="media-library__date-range">
+						<DateRange
+							onDateCommit={ this.onDateChange }
+							lastSelectableDate={ this.props.moment() }
+						/>
+					</div>
 				) }
 
 				<MediaLibraryScale onChange={ onMediaScaleChange } />
