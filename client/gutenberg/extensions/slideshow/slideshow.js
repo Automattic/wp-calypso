@@ -26,7 +26,7 @@ class Slideshow extends Component {
 	}
 
 	componentDidMount() {
-		this.swiperInstance = this.buildSwiper();
+		this.buildSwiper().then( swiper => ( this.swiperInstance = swiper ) );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -34,13 +34,13 @@ class Slideshow extends Component {
 
 		/* A change in alignment or images only needs an update */
 		if ( align !== prevProps.align || ! isEqual( images, prevProps.images ) ) {
-			this.swiperInstance.update();
+			this.swiperInstance && this.swiperInstance.update();
 		}
 		/* A change in effect requires a full rebuild */
 		if ( effect !== prevProps.effect ) {
 			const { activeIndex } = this.swiperInstance;
-			this.swiperInstance.destroy( true, true );
-			this.swiperInstance = this.buildSwiper( activeIndex );
+			this.swiperInstance && this.swiperInstance.destroy( true, true );
+			this.buildSwiper( activeIndex ).then( swiper => ( this.swiperInstance = swiper ) );
 		}
 	}
 
