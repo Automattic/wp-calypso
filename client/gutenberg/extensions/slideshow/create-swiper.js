@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-import Swiper from 'swiper';
-import 'swiper/dist/css/swiper.css';
 import { merge } from 'lodash';
 
-export default function createSwiper( container = '.swiper-container', params = {} ) {
+export default async function createSwiper( container = '.swiper-container', params = {} ) {
 	const defaultParams = {
 		effect: 'slide',
 		grabCursor: true,
@@ -25,5 +23,10 @@ export default function createSwiper( container = '.swiper-container', params = 
 		setWrapperSize: true,
 		touchStartPreventDefault: false,
 	};
+
+	const [ { default: Swiper } ] = await Promise.all( [
+		import( /* webpackChunkName: "swiper" */ 'swiper' ),
+		import( /* webpackChunkName: "swiper" */ 'swiper/dist/css/swiper.css' ),
+	] );
 	return new Swiper( container, merge( {}, defaultParams, params ) );
 }
