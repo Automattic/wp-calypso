@@ -142,7 +142,7 @@ export const redirect = ( { store: { getState } }, next ) => {
 	return page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
 };
 
-export const post = async ( context, next ) => {
+export const post = ( context, next ) => {
 	//see post-editor/controller.js for reference
 
 	const uniqueDraftKey = uniqueId( 'gutenberg-draft-' );
@@ -151,7 +151,8 @@ export const post = async ( context, next ) => {
 	const isDemoContent = ! postId && has( context.query, 'gutenberg-demo' );
 	const duplicatePostId = get( context, 'query.copy', null );
 
-	const makeEditor = import( './init' ).then( ( { initGutenberg } ) => {
+	const makeEditor = import( /* webpackChunkName: "gutenberg-init" */ './init' ).then( module => {
+		const { initGutenberg } = module;
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const userId = getCurrentUserId( state );
