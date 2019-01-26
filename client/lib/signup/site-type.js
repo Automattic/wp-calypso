@@ -32,7 +32,7 @@ export const allSiteTypes = [
 		slug: 'business',
 		label: i18n.translate( 'Business' ),
 		description: i18n.translate( 'Promote products and services.' ),
-		theme: 'pub/twentynineteen',
+		theme: 'pub/professional-business',
 		designType: 'page',
 		siteTitleLabel: i18n.translate( 'What is the name of your business?' ),
 		siteTitlePlaceholder: i18n.translate( 'E.g., Vail Renovations' ),
