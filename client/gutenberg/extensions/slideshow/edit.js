@@ -34,6 +34,8 @@ const effectOptions = [
 export const pickRelevantMediaFiles = image =>
 	pick( image, [ 'alt', 'id', 'link', 'url', 'caption' ] );
 
+export const calculateAspectRatio = image => image.sizes.full.width / image.sizes.full.height;
+
 class SlideshowEdit extends Component {
 	constructor() {
 		super( ...arguments );
@@ -44,8 +46,10 @@ class SlideshowEdit extends Component {
 	onSelectImages = images => {
 		const { setAttributes } = this.props;
 		const mapped = images.map( image => pickRelevantMediaFiles( image ) );
+		const aspectRatio = calculateAspectRatio( images[ 0 ] );
 		setAttributes( {
 			images: mapped,
+			aspectRatio,
 		} );
 	};
 	onSelectImage = index => {
@@ -72,8 +76,10 @@ class SlideshowEdit extends Component {
 			filesList: files,
 			onFileChange: images => {
 				const imagesNormalized = images.map( image => pickRelevantMediaFiles( image ) );
+				const aspectRatio = calculateAspectRatio( images[ 0 ] );
 				setAttributes( {
 					images: currentImages.concat( imagesNormalized ),
+					aspectRatio,
 				} );
 			},
 			onError: noticeOperations.createErrorNotice,
@@ -81,7 +87,7 @@ class SlideshowEdit extends Component {
 	}
 	render() {
 		const { attributes, className, noticeOperations, noticeUI, setAttributes } = this.props;
-		const { align, effect, images } = attributes;
+		const { align, aspectRatio, effect, images } = attributes;
 		const controls = (
 			<Fragment>
 				<InspectorControls>
@@ -145,7 +151,13 @@ class SlideshowEdit extends Component {
 			<Fragment>
 				{ controls }
 				{ noticeUI }
-				<Slideshow align={ align } className={ className } effect={ effect } images={ images } />
+				<Slideshow
+					align={ align }
+					aspectRatio={ aspectRatio }
+					className={ className }
+					effect={ effect }
+					images={ images }
+				/>
 			</Fragment>
 		);
 	}

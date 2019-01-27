@@ -31,13 +31,11 @@ class Slideshow extends Component {
 
 	componentDidUpdate( prevProps ) {
 		const { align, effect, images } = this.props;
-
-		/* A change in alignment or images only needs an update */
-		if ( align !== prevProps.align || ! isEqual( images, prevProps.images ) ) {
-			this.swiperInstance && this.swiperInstance.update();
-		}
-		/* A change in effect requires a full rebuild */
-		if ( effect !== prevProps.effect ) {
+		if (
+			align !== prevProps.align ||
+			! isEqual( images, prevProps.images ) ||
+			effect !== prevProps.effect
+		) {
 			const { activeIndex } = this.swiperInstance;
 			this.swiperInstance && this.swiperInstance.destroy( true, true );
 			this.buildSwiper( activeIndex ).then( swiper => ( this.swiperInstance = swiper ) );
@@ -45,10 +43,10 @@ class Slideshow extends Component {
 	}
 
 	render() {
-		const { className, effect, images } = this.props;
+		const { aspectRatio, className, effect, images } = this.props;
 
 		return (
-			<div className={ className } data-effect={ effect }>
+			<div className={ className } data-effect={ effect } data-aspect_ratio={ aspectRatio }>
 				<div
 					className="wp-block-jetpack-slideshow_container swiper-container"
 					ref={ this.slideshowRef }
@@ -93,19 +91,24 @@ class Slideshow extends Component {
 		// Using refs instead of className-based selectors allows us to
 		// have multiple swipers on one page without collisions, and
 		// without needing to add IDs or the like.
-		createSwiper( this.slideshowRef.current, {
-			effect: this.props.effect,
-			initialSlide,
-			navigation: {
-				nextEl: this.btnNextRef.current,
-				prevEl: this.btnPrevRef.current,
+		createSwiper(
+			this.slideshowRef.current,
+			{
+				effect: this.props.effect,
+				initialSlide,
+				navigation: {
+					nextEl: this.btnNextRef.current,
+					prevEl: this.btnPrevRef.current,
+				},
+				observer: true,
+				pagination: {
+					clickable: true,
+					el: this.paginationRef.current,
+					type: 'bullets',
+				},
 			},
-			pagination: {
-				clickable: true,
-				el: this.paginationRef.current,
-				type: 'bullets',
-			},
-		} );
+			this.props.aspectRatio
+		);
 }
 
 export default Slideshow;

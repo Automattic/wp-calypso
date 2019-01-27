@@ -58,6 +58,9 @@ const attributes = {
 		type: 'string',
 		default: 'slide',
 	},
+	aspectRatio: {
+		type: 'number',
+	},
 };
 
 export const name = 'slideshow';
