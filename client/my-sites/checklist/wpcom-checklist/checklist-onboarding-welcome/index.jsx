@@ -36,7 +36,7 @@ class ChecklistOnboardingWelcome extends Component {
 	};
 
 	goToChecklist = () => {
-		this.props.onClose();
+		this.onClose();
 		page( this.props.checkListUrl );
 	};
 
