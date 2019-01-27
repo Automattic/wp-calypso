@@ -11,7 +11,7 @@
 	}
 	.wp-block-jetpack-slideshow_image-container {
 		align-items: center;
-		background: #f0;
+		background: #f0f0f0;
 		display: flex;
 		height: calc( 100% - 22px );
 		justify-content: center;
@@ -24,6 +24,7 @@
 		max-height: 100%;
 		max-width: 100%;
 		width: auto;
+		object-fit: contain;
 	}
 	.wp-block-jetpack-slideshow_button-prev,
 	.wp-block-jetpack-slideshow_button-next {

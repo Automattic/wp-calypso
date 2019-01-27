@@ -3,7 +3,18 @@
  */
 import { merge } from 'lodash';
 
+const SIXTEEN_BY_NINE = 16 / 9;
+
 export default async function createSwiper( container = '.swiper-container', params = {} ) {
+	const autoSize = function() {
+		const img = this.slides[ 0 ].querySelector( 'img ' );
+		const aspectRatio = img.clientWidth / img.clientHeight;
+		const sanityAspectRatio = Math.max( Math.min( aspectRatio, SIXTEEN_BY_NINE ), 1 );
+		const sanityHeight = typeof window !== 'undefined' ? window.innerHeight * 0.8 : 600;
+		const swiperHeight = Math.min( this.width / sanityAspectRatio, sanityHeight );
+		this.$el[ 0 ].style.height = `${ Math.floor( swiperHeight ) }px`;
+	};
+
 	const defaultParams = {
 		effect: 'slide',
 		grabCursor: true,
@@ -22,6 +33,13 @@ export default async function createSwiper( container = '.swiper-container', par
 		releaseFormElements: false,
 		setWrapperSize: true,
 		touchStartPreventDefault: false,
+		/* We probably won't end up needing both init and imagesReady. Just casting a wide net for now. */
+		on: {
+			init: autoSize,
+			imagesReady: autoSize,
+			observerUpdate: autoSize,
+			resize: autoSize,
+		},
 	};
 
 	const [ { default: Swiper } ] = await Promise.all( [
