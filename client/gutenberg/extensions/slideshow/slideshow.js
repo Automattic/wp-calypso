@@ -49,26 +49,41 @@ class Slideshow extends Component {
 
 		return (
 			<div className={ className } data-effect={ effect }>
-				<div className="swiper-container" ref={ this.slideshowRef }>
+				<div
+					className="wp-block-jetpack-slideshow_container swiper-container"
+					ref={ this.slideshowRef }
+				>
 					<div className="swiper-wrapper">
 						{ images.map( ( { alt, caption, id, url } ) => (
-							<figure className="swiper-slide atavist-cover-background-color" key={ id }>
-								<div className="slide-background atavist-cover-background-color" />
-								<img
-									alt={ alt }
-									className="wp-block-slideshow-image-container"
-									data-id={ id }
-									src={ url }
-								/>
+							<figure className="wp-block-jetpack-slideshow_slide swiper-slide" key={ id }>
+								<div className="wp-block-jetpack-slideshow_image-container">
+									<img
+										alt={ alt }
+										className="wp-block-jetpack-slideshow_image"
+										data-id={ id }
+										src={ url }
+									/>
+								</div>
 								{ caption && (
-									<figcaption className="slideshow-slide-caption">{ caption }</figcaption>
+									<figcaption className="wp-block-jetpack-slideshow_caption">
+										{ caption }
+									</figcaption>
 								) }
 							</figure>
 						) ) }
 					</div>
-					<div className="swiper-pagination swiper-pagination-white" ref={ this.paginationRef } />
-					<div className="swiper-button-prev swiper-button-white" ref={ this.btnPrevRef } />
-					<div className="swiper-button-next swiper-button-white" ref={ this.btnNextRef } />
+					<div
+						className="wp-block-jetpack-slideshow_pagination swiper-pagination swiper-pagination-white"
+						ref={ this.paginationRef }
+					/>
+					<div
+						className="wp-block-jetpack-slideshow_button-prev swiper-button-prev swiper-button-white"
+						ref={ this.btnPrevRef }
+					/>
+					<div
+						className="wp-block-jetpack-slideshow_button-next swiper-button-next swiper-button-white"
+						ref={ this.btnNextRef }
+					/>
 				</div>
 			</div>
 		);
