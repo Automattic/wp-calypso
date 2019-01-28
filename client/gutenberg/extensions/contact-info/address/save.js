@@ -73,7 +73,12 @@ const save = props => (
 		itemtype="http://schema.org/PostalAddress"
 	>
 		{ props.attributes.linkToGoogleMaps && (
-			<a href={ googleMapsUrl( props ) } title={ __( 'Open address in Google Maps' ) }>
+			<a
+				href={ googleMapsUrl( props ) }
+				target="_blank"
+				rel="noopener noreferrer"
+				title={ __( 'Open address in Google Maps' ) }
+			>
 				<Address { ...props } />
 			</a>
 		) }
