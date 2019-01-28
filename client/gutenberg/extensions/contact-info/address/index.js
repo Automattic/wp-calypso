@@ -18,11 +18,11 @@ const attributes = {
 		type: 'string',
 		default: '',
 	},
-	address_line2: {
+	addressLine2: {
 		type: 'string',
 		default: '',
 	},
-	address_line3: {
+	addressLine3: {
 		type: 'string',
 		default: '',
 	},

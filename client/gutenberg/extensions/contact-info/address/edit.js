@@ -28,13 +28,13 @@ class AddressEdit extends Component {
 
 	render() {
 		const {
-			attributes: { address, address_line2, address_line3, city, region, postal, country },
+			attributes: { address, addressLine2, addressLine3, city, region, postal, country },
 			isSelected,
 			setAttributes,
 		} = this.props;
 
 		const hasContent =
-			[ address, address_line2, address_line3, city, region, postal, country ]
+			[ address, addressLine2, addressLine3, city, region, postal, country ]
 				.map( value => value !== '' )
 				.filter( Boolean ).length > 0;
 
@@ -50,15 +50,15 @@ class AddressEdit extends Component {
 							onKeyDown={ this.preventEnterKey }
 						/>
 						<PlainText
-							value={ address_line2 }
+							value={ addressLine2 }
 							placeholder={ __( 'Address Line 2' ) }
-							onChange={ newAddressLine2 => setAttributes( { address_line2: newAddressLine2 } ) }
+							onChange={ newAddressLine2 => setAttributes( { addressLine2: newAddressLine2 } ) }
 							onKeyDown={ this.preventEnterKey }
 						/>
 						<PlainText
-							value={ address_line3 }
+							value={ addressLine3 }
 							placeholder={ __( 'Address Line 3' ) }
-							onChange={ newAddressLine3 => setAttributes( { address_line3: newAddressLine3 } ) }
+							onChange={ newAddressLine3 => setAttributes( { addressLine3: newAddressLine3 } ) }
 							onKeyDown={ this.preventEnterKey }
 						/>
 						<PlainText
