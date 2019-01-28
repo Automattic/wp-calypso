@@ -20,6 +20,7 @@ export function generateSteps( {
 	currentPage = noop,
 	setThemeOnSite = noop,
 	addDomainToCart = noop,
+	launchSiteApi = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -542,8 +543,10 @@ export function generateSteps( {
 
 		launch: {
 			stepName: 'launch',
+			apiRequestFunction: launchSiteApi,
 			dependencies: [ 'siteId', 'siteSlug' ],
 			providesDependencies: [ 'siteId', 'siteSlug' ],
+			delayApiRequestUntilComplete: true,
 		},
 	};
 }

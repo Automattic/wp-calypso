@@ -396,6 +396,24 @@ export function addDomainToCart(
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, false, null );
 }
 
+export function launchSiteApi( callback, dependencies, {} ) {
+	const { siteId, siteSlug } = dependencies;
+	const providedDependencies = {
+		siteId,
+		siteSlug,
+	};
+
+	wpcom.undocumented().launchSite( siteId, function( error ) {
+		if ( error ) {
+			callback( error );
+
+			return;
+		}
+
+		callback( undefined, providedDependencies );
+	} );
+}
+
 export function createAccount(
 	callback,
 	dependencies,

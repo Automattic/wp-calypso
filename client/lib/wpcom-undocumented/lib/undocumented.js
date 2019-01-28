@@ -1439,6 +1439,18 @@ Undocumented.prototype.sitesNew = function( query, fn ) {
 	);
 };
 
+/**
+ * Launches a private site
+ *
+ * @param {string} - ID of the site to be launched
+ * @param {Function} fn - Function to invoke when request is complete
+ */
+Undocumented.prototype.launchSite = function( siteId, fn ) {
+	const path = `/sites/${ siteId }/launch`;
+	debug( path );
+	return this.wpcom.req.post( path, fn );
+};
+
 Undocumented.prototype.themes = function( siteId, query, fn ) {
 	const path = siteId ? '/sites/' + siteId + '/themes' : '/themes';
 	debug( path );

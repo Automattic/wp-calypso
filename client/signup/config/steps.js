@@ -17,6 +17,7 @@ import {
 	createSiteWithCart,
 	setThemeOnSite,
 	addDomainToCart,
+	launchSiteApi,
 } from 'lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
@@ -29,4 +30,5 @@ export default generateSteps( {
 	currentPage,
 	setThemeOnSite,
 	addDomainToCart,
+	launchSiteApi,
 } );

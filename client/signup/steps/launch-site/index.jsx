@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import SignupActions from 'lib/signup/actions';
-import { launchSite } from 'state/sites/launch/actions';
 
 class LaunchSiteComponent extends Component {
 	constructor( props ) {
@@ -21,7 +20,16 @@ class LaunchSiteComponent extends Component {
 	}
 
 	componentDidMount() {
-		this.props.launchPrivateSite( this.props.siteId );
+		const { flowName, stepName, goToNextStep } = this.props;
+		SignupActions.submitSignupStep(
+			{
+				stepName,
+			},
+			[],
+			{}
+		);
+
+		goToNextStep( flowName );
 	}
 
 	render() {
@@ -31,22 +39,5 @@ class LaunchSiteComponent extends Component {
 
 export default connect(
 	null,
-	( dispatch, ownProps ) => ( {
-		launchPrivateSite: () => {
-			const { flowName, stepName, stepSectionName, goToNextStep } = ownProps;
-
-			dispatch( launchSite( ownProps.signupDependencies.siteId ) );
-
-			SignupActions.submitSignupStep(
-				{
-					stepName,
-					stepSectionName,
-				},
-				[],
-				{}
-			);
-
-			goToNextStep( flowName );
-		},
-	} )
+	() => ( {} )
 )( localize( LaunchSiteComponent ) );
