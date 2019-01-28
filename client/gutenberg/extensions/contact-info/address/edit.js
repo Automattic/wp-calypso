@@ -85,7 +85,7 @@ class AddressEdit extends Component {
 							placeholder={ __( 'City' ) }
 							onChange={ newCity => setAttributes( { city: newCity.replace( '<br>', '' ) } ) }
 							keepPlaceholderOnFocus
-							formattingControls={ [ 'bold', 'italic', 'link' ] }
+							formattingControls={ formattingControls }
 							unstableOnSplit={ this.unstableOnSplit }
 						/>
 						<RichText
