@@ -23,7 +23,7 @@ import getSiteChecklist from 'state/selectors/get-site-checklist';
 import QueryPosts from 'components/data/query-posts';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import Task from 'components/checklist/task';
-import { createNotice } from 'state/notices/actions';
+import { successNotice } from 'state/notices/actions';
 import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, getSiteSlug, getSiteFrontPage } from 'state/sites/selectors';
@@ -135,7 +135,7 @@ class WpcomChecklistComponent extends PureComponent {
 		const { siteId } = this.props;
 
 		if ( taskId ) {
-			this.props.createNotice( 'is-success', 'You completed a task!' );
+			this.props.successNotice( 'You completed a task!', { duration: 5000 } );
 			this.props.requestSiteChecklistTaskUpdate( siteId, taskId );
 			this.trackTaskDismiss( taskId );
 		}
@@ -1023,7 +1023,7 @@ export default connect(
 		};
 	},
 	{
-		createNotice,
+		successNotice,
 		recordTracksEvent,
 		requestGuidedTour,
 		requestSiteChecklistTaskUpdate,

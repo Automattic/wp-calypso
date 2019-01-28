@@ -132,6 +132,7 @@ export function isInlineHelpChecklistPromptVisible( state ) {
  */
 export function isOnboardingWelcomePromptVisible( state ) {
 	return get( state, 'inlineHelp.onboardingWelcomePrompt.isVisible', false );
+}
 
 /**
  * Returns the task ID that should show up in the inline help popover.
