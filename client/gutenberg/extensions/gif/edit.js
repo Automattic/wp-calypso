@@ -177,7 +177,7 @@ class GifEdit extends Component {
 						/>
 					</Placeholder>
 				) : (
-					<figure style={ style }>
+					<figure>
 						<div
 							className="wp-block-jetpack-gif_cover"
 							onClick={ this.setFocus }
@@ -219,22 +219,24 @@ class GifEdit extends Component {
 								} ) }
 							</div>
 						) }
-						<iframe src={ giphyUrl } title={ searchText } />
+						<div class="wp-block-jetpack-gif-wrapper" style={ style }>
+							<iframe src={ giphyUrl } title={ searchText } />
+						</div>
+						{ ( ! RichText.isEmpty( caption ) || isSelected ) && !! giphyUrl && (
+							<RichText
+								className="wp-block-jetpack-gif-caption gallery-caption"
+								inlineToolbar
+								isSelected={ captionFocus }
+								unstableOnFocus={ () => {
+									this.setState( { captionFocus: true } );
+								} }
+								onChange={ value => setAttributes( { caption: value } ) }
+								placeholder={ __( 'Write caption…' ) }
+								tagName="figcaption"
+								value={ caption }
+							/>
+						) }
 					</figure>
-				) }
-				{ ( ! RichText.isEmpty( caption ) || isSelected ) && !! giphyUrl && (
-					<RichText
-						className="wp-block-jetpack-gif-caption"
-						inlineToolbar
-						isSelected={ captionFocus }
-						unstableOnFocus={ () => {
-							this.setState( { captionFocus: true } );
-						} }
-						onChange={ value => setAttributes( { caption: value } ) }
-						placeholder={ __( 'Write caption…' ) }
-						tagName="p"
-						value={ caption }
-					/>
 				) }
 			</div>
 		);

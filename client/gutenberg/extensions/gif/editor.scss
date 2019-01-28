@@ -2,7 +2,6 @@
 	figure {
 		transition: padding-top 125ms ease-in-out;
 	}
-
 	.components-base-control__field {
 		text-align: center;
 	}
@@ -85,6 +84,9 @@
 	}
 	.wp-block-jetpack-gif_placeholder {
 		min-height: 200px;
+	}
+	figcaption {
+		z-index: 2;
 	}
 }
 .components-panel__body-gif-branding {
