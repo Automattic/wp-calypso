@@ -79,6 +79,7 @@ class SiteTopicStep extends Component {
 						<SiteVerticalsSuggestionSearch
 							onChange={ this.onSiteTopicChange }
 							initialValue={ siteTopic }
+							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						/>
 						<Button type="submit" disabled={ ! siteTopic } primary>
 							{ translate( 'Continue' ) }

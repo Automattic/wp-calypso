@@ -97,7 +97,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	};
 
 	render() {
-		const { translate, placeholder } = this.props;
+		const { translate, placeholder, autoFocus } = this.props;
 
 		return (
 			<SuggestionSearch
@@ -107,6 +107,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 				suggestions={ this.getSuggestions() }
 				value={ this.state.searchValue }
 				sortResults={ this.sortSearchResults }
+				autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 			/>
 		);
 	}
