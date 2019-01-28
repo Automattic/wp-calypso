@@ -197,30 +197,30 @@ class GifEdit extends Component {
 								/>
 							) }
 						</div>
-						{ results && isSelected && (
-							<div className="wp-block-jetpack-gif_thumbnails-container">
-								{ results.map( thumbnail => {
-									if ( thumbnail.embed_url === giphyUrl ) {
-										return null;
-									}
-									const thumbnailStyle = {
-										backgroundImage: `url(${ thumbnail.images.preview_gif.url })`,
-									};
-									return (
-										<button
-											className="wp-block-jetpack-gif_thumbnail-container"
-											key={ thumbnail.id }
-											onClick={ () => {
-												this.thumbnailClicked( thumbnail );
-											} }
-											style={ thumbnailStyle }
-										/>
-									);
-								} ) }
-							</div>
-						) }
 						<div class="wp-block-jetpack-gif-wrapper" style={ style }>
 							<iframe src={ giphyUrl } title={ searchText } />
+							{ results && isSelected && (
+								<div className="wp-block-jetpack-gif_thumbnails-container">
+									{ results.map( thumbnail => {
+										if ( thumbnail.embed_url === giphyUrl ) {
+											return null;
+										}
+										const thumbnailStyle = {
+											backgroundImage: `url(${ thumbnail.images.preview_gif.url })`,
+										};
+										return (
+											<button
+												className="wp-block-jetpack-gif_thumbnail-container"
+												key={ thumbnail.id }
+												onClick={ () => {
+													this.thumbnailClicked( thumbnail );
+												} }
+												style={ thumbnailStyle }
+											/>
+										);
+									} ) }
+								</div>
+							) }
 						</div>
 						{ ( ! RichText.isEmpty( caption ) || isSelected ) && !! giphyUrl && (
 							<RichText
