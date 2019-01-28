@@ -225,7 +225,7 @@ function getWebpackConfig( {
 					sourceMap: Boolean( process.env.SOURCEMAP ),
 					terserOptions: {
 						ecma: chooseTerserEcmaVersion( browsers ),
-						ie8: browsers.includes( 'ie 8' ),
+						ie8: false,
 						safari10: browsers.some(
 							browser => browser.includes( 'safari 10' ) || browser.includes( 'ios_saf 10' )
 						),
