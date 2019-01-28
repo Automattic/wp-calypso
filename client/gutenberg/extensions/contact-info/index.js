@@ -12,6 +12,9 @@ import edit from './edit';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import './editor.scss';
+import { name as addressName, settings as addressSettings } from './address/';
+import { name as emailName, settings as emailSettings } from './email/';
+import { name as phoneName, settings as phoneSettings } from './phone/';
 
 const attributes = {};
 
@@ -45,3 +48,9 @@ export const settings = {
 	edit,
 	save,
 };
+
+export const childBlocks = [
+	{ name: addressName, settings: addressSettings },
+	{ name: emailName, settings: emailSettings },
+	{ name: phoneName, settings: phoneSettings },
+];
