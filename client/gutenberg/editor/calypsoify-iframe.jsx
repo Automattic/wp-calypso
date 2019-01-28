@@ -5,6 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,16 +18,6 @@ import { addQueryArgs } from 'lib/route';
  * Style dependencies
  */
 import './style.scss';
-
-const getIframeUrl = ( siteAdminUrl, postId, postType ) => {
-	if ( postId ) {
-		return `${ siteAdminUrl }post.php?post=${ postId }&action=edit&calypsoify=1`;
-	}
-	if ( 'post' === postType ) {
-		return `${ siteAdminUrl }post-new.php?calypsoify=1`;
-	}
-	return `${ siteAdminUrl }post-new.php?post_type=${ postType }&calypsoify=1`;
-};
 
 class CalypsoifyIframe extends Component {
 	render() {
@@ -46,14 +37,18 @@ class CalypsoifyIframe extends Component {
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
-	const frameNonce = getSiteOption( state, siteId, 'frame_nonce' ) || '';
-	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+	const postId = ownProps.postId;
+	const postType = ownProps.postType;
 
 	const iframeUrl = addQueryArgs(
-		{
-			'frame-nonce': frameNonce,
-		},
-		getIframeUrl( siteAdminUrl, ownProps.postId, ownProps.postType )
+		pickBy( {
+			post: postId,
+			action: postId && 'edit', // If postId is set, open edit view.
+			post_type: postType !== 'post' && postType, // Use postType if it's different than post.
+			calypsoify: 1,
+			'frame-nonce': getSiteOption( state, siteId, 'frame_nonce' ) || '',
+		} ),
+		getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' )
 	);
 
 	return {
