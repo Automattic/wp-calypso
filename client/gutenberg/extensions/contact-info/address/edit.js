@@ -43,6 +43,8 @@ class AddressEdit extends Component {
 				.map( value => value !== '' )
 				.filter( Boolean ).length > 0;
 
+		const formattingControls = [];
+
 		return (
 			<div className={ isSelected ? 'jetpack-address-block is-selected' : 'jetpack-address-block' }>
 				{ ! isSelected && hasContent && save( this.props ) }
@@ -55,7 +57,7 @@ class AddressEdit extends Component {
 								setAttributes( { address: newAddress.replace( '<br>', '' ) } )
 							}
 							keepPlaceholderOnFocus
-							formattingControls={ [ 'bold', 'italic', 'link' ] }
+							formattingControls={ formattingControls }
 							unstableOnSplit={ this.unstableOnSplit }
 						/>
 						<RichText
@@ -65,7 +67,7 @@ class AddressEdit extends Component {
 								setAttributes( { addressLine2: newAddressLine2.replace( '<br>', '' ) } )
 							}
 							keepPlaceholderOnFocus
-							formattingControls={ [ 'bold', 'italic', 'link' ] }
+							formattingControls={ formattingControls }
 							unstableOnSplit={ this.unstableOnSplit }
 						/>
 						<RichText
@@ -75,7 +77,7 @@ class AddressEdit extends Component {
 								setAttributes( { addressLine3: newAddressLine3.replace( '<br>', '' ) } )
 							}
 							keepPlaceholderOnFocus
-							formattingControls={ [ 'bold', 'italic', 'link' ] }
+							formattingControls={ formattingControls }
 							unstableOnSplit={ this.unstableOnSplit }
 						/>
 						<RichText
@@ -91,7 +93,7 @@ class AddressEdit extends Component {
 							placeholder={ __( 'State/Province/Region' ) }
 							onChange={ newRegion => setAttributes( { region: newRegion.replace( '<br>', '' ) } ) }
 							keepPlaceholderOnFocus
-							formattingControls={ [ 'bold', 'italic', 'link' ] }
+							formattingControls={ formattingControls }
 							unstableOnSplit={ this.unstableOnSplit }
 						/>
 						<RichText
@@ -99,7 +101,7 @@ class AddressEdit extends Component {
 							placeholder={ __( 'Postal/Zip Code' ) }
 							onChange={ newPostal => setAttributes( { postal: newPostal.replace( '<br>', '' ) } ) }
 							keepPlaceholderOnFocus
-							formattingControls={ [ 'bold', 'italic', 'link' ] }
+							formattingControls={ formattingControls }
 							unstableOnSplit={ this.unstableOnSplit }
 						/>
 						<RichText
@@ -109,7 +111,7 @@ class AddressEdit extends Component {
 								setAttributes( { country: newCountry.replace( '<br>', '' ) } )
 							}
 							keepPlaceholderOnFocus
-							formattingControls={ [ 'bold', 'italic', 'link' ] }
+							formattingControls={ formattingControls }
 							unstableOnSplit={ this.unstableOnSplit }
 						/>
 						<InspectorControls>
