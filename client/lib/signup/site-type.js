@@ -90,9 +90,9 @@ export const allSiteTypes = [
  * @param {string|number} value The value of `key` with which to filter items
  * @param {string} property The name of the property whose value you wish to return
  * @param {array} siteTypes (optional) A site type collection
- * @return {string|int|bool} value of `property` or `false` if none is found
+ * @return {(string|int)?} value of `property` or `null` if none is found
  */
 export function getSiteTypePropertyValue( key, value, property, siteTypes = allSiteTypes ) {
 	const siteTypeProperties = find( siteTypes, { [ key ]: value } );
-	return get( siteTypeProperties, property, false );
+	return get( siteTypeProperties, property, null );
 }
