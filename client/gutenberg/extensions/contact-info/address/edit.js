@@ -55,6 +55,7 @@ class AddressEdit extends Component {
 								setAttributes( { address: newAddress.replace( '<br>', '' ) } )
 							}
 							keepPlaceholderOnFocus
+							formattingControls={ [ 'bold', 'italic', 'link' ] }
 							unstableOnSplit={ this.unstableOnSplit }
 						/>
 						<RichText
@@ -64,6 +65,7 @@ class AddressEdit extends Component {
 								setAttributes( { addressLine2: newAddressLine2.replace( '<br>', '' ) } )
 							}
 							keepPlaceholderOnFocus
+							formattingControls={ [ 'bold', 'italic', 'link' ] }
 							unstableOnSplit={ this.unstableOnSplit }
 						/>
 						<RichText
@@ -73,6 +75,7 @@ class AddressEdit extends Component {
 								setAttributes( { addressLine3: newAddressLine3.replace( '<br>', '' ) } )
 							}
 							keepPlaceholderOnFocus
+							formattingControls={ [ 'bold', 'italic', 'link' ] }
 							unstableOnSplit={ this.unstableOnSplit }
 						/>
 						<RichText
@@ -80,6 +83,7 @@ class AddressEdit extends Component {
 							placeholder={ __( 'City' ) }
 							onChange={ newCity => setAttributes( { city: newCity.replace( '<br>', '' ) } ) }
 							keepPlaceholderOnFocus
+							formattingControls={ [ 'bold', 'italic', 'link' ] }
 							unstableOnSplit={ this.unstableOnSplit }
 						/>
 						<RichText
@@ -87,6 +91,7 @@ class AddressEdit extends Component {
 							placeholder={ __( 'State/Province/Region' ) }
 							onChange={ newRegion => setAttributes( { region: newRegion.replace( '<br>', '' ) } ) }
 							keepPlaceholderOnFocus
+							formattingControls={ [ 'bold', 'italic', 'link' ] }
 							unstableOnSplit={ this.unstableOnSplit }
 						/>
 						<RichText
@@ -94,6 +99,7 @@ class AddressEdit extends Component {
 							placeholder={ __( 'Postal/Zip Code' ) }
 							onChange={ newPostal => setAttributes( { postal: newPostal.replace( '<br>', '' ) } ) }
 							keepPlaceholderOnFocus
+							formattingControls={ [ 'bold', 'italic', 'link' ] }
 							unstableOnSplit={ this.unstableOnSplit }
 						/>
 						<RichText
@@ -103,6 +109,7 @@ class AddressEdit extends Component {
 								setAttributes( { country: newCountry.replace( '<br>', '' ) } )
 							}
 							keepPlaceholderOnFocus
+							formattingControls={ [ 'bold', 'italic', 'link' ] }
 							unstableOnSplit={ this.unstableOnSplit }
 						/>
 						<InspectorControls>
