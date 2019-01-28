@@ -1050,7 +1050,7 @@
 
 // Ebanx checkout fields
 // -----------------------------------
-.checkout__ebanx-payment-fields {
+.checkout__country-payment-fields {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
@@ -1098,7 +1098,7 @@
 	select {
 		width: 100%;
 	}
-	&.checkout__ebanx-mx .checkout__form-state-field {
+	&.checkout__country-mx .checkout__form-state-field {
 		display: none;
 	}
 }

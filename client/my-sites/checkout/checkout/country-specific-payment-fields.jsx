@@ -13,9 +13,9 @@ import { find, isEmpty, includes, get } from 'lodash';
  */
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import { StateSelect, Input, HiddenInput } from 'my-sites/domains/components/form';
-import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from 'lib/checkout/constants';
+import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
 
-export class EbanxPaymentFields extends Component {
+export class CountrySpecificPaymentFields extends Component {
 	static propTypes = {
 		countryCode: PropTypes.string.isRequired,
 		countriesList: PropTypes.array.isRequired,
@@ -35,7 +35,7 @@ export class EbanxPaymentFields extends Component {
 		super( props );
 		this.state = {
 			userSelectedPhoneCountryCode: '',
-			fields: get( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ props.countryCode ], 'fields', null ),
+			fields: get( PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ props.countryCode ], 'fields', null ),
 		};
 	}
 
@@ -47,7 +47,7 @@ export class EbanxPaymentFields extends Component {
 
 	setFieldsState( countryCode ) {
 		this.setState( {
-			fields: get( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ], 'fields', null ),
+			fields: get( PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ], 'fields', null ),
 		} );
 	}
 
@@ -89,13 +89,13 @@ export class EbanxPaymentFields extends Component {
 		const countryData = find( countriesList, { code: countryCode } );
 		const countryName = countryData && countryData.name ? countryData.name : '';
 		const containerClassName = classNames(
-			'checkout__ebanx-payment-fields',
-			`checkout__ebanx-${ countryCode.toLowerCase() }`
+			'checkout__country-payment-fields',
+			`checkout__country-${ countryCode.toLowerCase() }`
 		);
 
 		return (
 			<div className={ containerClassName }>
-				<span key="ebanx-required-fields" className="checkout__form-info-text">
+				<span key="country-required-fields" className="checkout__form-info-text">
 					{ countryName &&
 						translate( 'The following fields are also required for payments in %(countryName)s', {
 							args: {
@@ -159,4 +159,4 @@ export class EbanxPaymentFields extends Component {
 	}
 }
 
-export default localize( EbanxPaymentFields );
+export default localize( CountrySpecificPaymentFields );

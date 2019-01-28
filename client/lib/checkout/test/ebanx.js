@@ -13,7 +13,7 @@
 import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	isValidCPF,
-	shouldRenderAdditionalEbanxFields,
+	shouldRenderAdditionalCountryFields,
 } from '../ebanx';
 import { isPaymentMethodEnabled } from 'lib/cart-values';
 
@@ -53,7 +53,7 @@ describe( 'Ebanx payment processing methods', () => {
 		} );
 	} );
 
-	describe( 'shouldRenderAdditionalEbanxFields', () => {
+	describe( 'shouldRenderAdditionalCountryFields', () => {
 		beforeAll( () => {
 			isPaymentMethodEnabled.mockReturnValue( true );
 		} );
@@ -62,11 +62,11 @@ describe( 'Ebanx payment processing methods', () => {
 		} );
 
 		test( 'should return false for non-ebanx country', () => {
-			expect( shouldRenderAdditionalEbanxFields( 'AU' ) ).toEqual( false );
+			expect( shouldRenderAdditionalCountryFields( 'AU' ) ).toEqual( false );
 		} );
 		test( 'should return true for ebanx country that requires additional fields', () => {
-			expect( shouldRenderAdditionalEbanxFields( 'BR' ) ).toEqual( true );
-			expect( shouldRenderAdditionalEbanxFields( 'MX' ) ).toEqual( true );
+			expect( shouldRenderAdditionalCountryFields( 'BR' ) ).toEqual( true );
+			expect( shouldRenderAdditionalCountryFields( 'MX' ) ).toEqual( true );
 		} );
 	} );
 } );

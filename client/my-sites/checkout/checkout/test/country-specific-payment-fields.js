@@ -13,7 +13,7 @@ import { identity } from 'lodash';
  * Internal dependencies
  */
 
-import { EbanxPaymentFields } from '../ebanx-payment-fields';
+import { CountrySpecificPaymentFields } from '../country-specific-payment-fields';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
@@ -29,18 +29,18 @@ const defaultProps = {
 	getErrorMessage: jest.fn(),
 	getFieldValue: jest.fn(),
 	handleFieldChange: jest.fn(),
-	fieldClassName: 'ebanx-brazil',
+	fieldClassName: 'country-brazil',
 	translate: identity,
 };
 
-describe( '<EbanxPaymentFields />', () => {
+describe( '<CountrySpecificPaymentFields />', () => {
 	test( 'should render', () => {
-		const wrapper = shallow( <EbanxPaymentFields { ...defaultProps } /> );
+		const wrapper = shallow( <CountrySpecificPaymentFields { ...defaultProps } /> );
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
 	test( 'should call this.props.handleFieldChange when updating field', () => {
-		const wrapper = shallow( <EbanxPaymentFields { ...defaultProps } /> );
+		const wrapper = shallow( <CountrySpecificPaymentFields { ...defaultProps } /> );
 		const documentInput = wrapper.find( '[name="document"]' );
 		const event = { target: { name: 'document', value: 'spam' } };
 		documentInput.simulate( 'change', event );
@@ -48,7 +48,7 @@ describe( '<EbanxPaymentFields />', () => {
 	} );
 
 	test( 'should disable fields', () => {
-		const wrapper = shallow( <EbanxPaymentFields { ...defaultProps } /> );
+		const wrapper = shallow( <CountrySpecificPaymentFields { ...defaultProps } /> );
 		expect(
 			wrapper
 				.find( 'Input' )
