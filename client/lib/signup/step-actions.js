@@ -4,7 +4,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { assign, defer, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
+import { assign, defer, get, isEmpty, isNull, isString, omitBy, pick, startsWith } from 'lodash';
 import { parse as parseURL } from 'url';
 
 /**
@@ -109,7 +109,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 // We are experimenting making site topic (site vertical name) a separate step from the survey.
 // Once we've decided to fully move away from the survey form, we can just keep the site vertical name here.
 function getSiteVertical( state ) {
-	return ( getSiteVerticalName( state ) || getSurveyVertical( state ) ).trim();
+	return getSiteVerticalName( state ) || getSurveyVertical( state );
 }
 
 export function createSiteWithCart(
@@ -128,33 +128,35 @@ export function createSiteWithCart(
 	reduxStore
 ) {
 	const state = reduxStore.getState();
+	const safeTrim = s => ( isString( s ) && s.trim() ) || undefined;
 
-	const designType = getDesignType( state ).trim();
-	const siteTitle = getSiteTitle( state ).trim();
-	const siteVerticalId = getSiteVerticalId( state );
-	const siteVertical = getSiteVertical( state );
-	const siteGoals = getSiteGoals( state ).trim();
-	const siteType = getSiteType( state ).trim();
-	const siteStyle = getSiteStyle( state ).trim();
-	const siteInformation = getSiteInformation( state );
+	const designType = safeTrim( getDesignType( state ) );
+	const siteTitle = safeTrim( getSiteTitle( state ) );
+	const siteVerticalId = safeTrim( getSiteVerticalId( state ) );
+	const siteVertical = safeTrim( getSiteVertical( state ) );
+	const siteGoals = safeTrim( getSiteGoals( state ) );
+	const siteType = safeTrim( getSiteType( state ) );
+	const siteStyle = safeTrim( getSiteStyle( state ) );
+	const siteInformation = safeTrim( getSiteInformation( state ) );
+	const siteSegment = safeTrim( getSiteTypePropertyValue( 'slug', siteType, 'id' ) );
 
 	const newSiteParams = {
-		blog_title: siteTitle,
+		blog_title: siteTitle || '',
 		options: {
-			designType: designType || undefined,
+			designType,
 			// the theme can be provided in this step's dependencies or the
 			// step object itself depending on if the theme is provided in a
 			// query. See `getThemeSlug` in `DomainsStep`.
 			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 			// `options.vertical` will be deprecated in favour of `options.site_vertical`
-			vertical: siteVertical || undefined,
-			siteGoals: siteGoals || undefined,
-			site_style: siteStyle || undefined,
-			site_information: siteInformation || undefined,
+			vertical: siteVertical,
+			site_style: siteStyle,
+			site_information: siteInformation,
+			siteGoals,
 			// `options.siteType` will be deprecated in favour of `options.site_segment`
-			siteType: siteType || undefined,
-			site_segment: getSiteTypePropertyValue( 'slug', siteType, 'id' ) || undefined,
-			site_vertical: siteVerticalId || undefined,
+			siteType,
+			site_segment: siteSegment,
+			site_vertical: siteVerticalId,
 		},
 		validate: false,
 	};
