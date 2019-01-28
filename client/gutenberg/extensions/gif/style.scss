@@ -1,8 +1,6 @@
 .wp-block-jetpack-gif {
 	figure {
-		height: 0;
 		margin: 0;
-		padding: calc( 56.2% + 12px ) 0 0 0;
 		position: relative;
 		width: 100%;
 	}
@@ -27,6 +25,12 @@
 		margin-bottom: 1em;
 		color: #555d66;
 		text-align: center;
-		font-size: 13px;
+	}
+	.wp-block-jetpack-gif-wrapper {
+		height: 0;
+		margin: 0;
+		padding: calc( 56.2% + 12px ) 0 0 0;
+		position: relative;
+		width: 100%;
 	}
 }
