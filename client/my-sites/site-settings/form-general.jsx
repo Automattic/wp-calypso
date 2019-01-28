@@ -464,7 +464,7 @@ export class SiteSettingsFormGeneral extends Component {
 					<div className="site-settings__general-settings-launch-site-text">
 						<p>
 							{ translate(
-								"Your site hasn't been launched yet. Only you can see it until it is launched."
+								"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 							) }
 						</p>
 					</div>
