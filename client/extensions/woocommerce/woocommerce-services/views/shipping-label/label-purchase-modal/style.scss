@@ -60,7 +60,7 @@
 	}
 
 	.is-error:not( .notice ) {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 
 	.is-error,

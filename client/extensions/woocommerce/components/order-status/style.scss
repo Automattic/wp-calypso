@@ -19,7 +19,7 @@
 		color: darken( $alert-red, 30% );
 
 		span + span {
-			border-color: $alert-red;
+			border-color: var( --color-error );
 		}
 	}
 
