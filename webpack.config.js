@@ -348,6 +348,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						reasons: shouldEmitStatsWithReasons,
 						optimizationBailout: false,
 						chunkOrigins: false,
+						chunkGroups: true,
 					},
 				} ),
 			shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
