@@ -42,6 +42,10 @@ const attributes = {
 		type: 'string',
 		default: '',
 	},
+	linkToGoogleMaps: {
+		type: 'boolean',
+		default: false,
+	},
 };
 
 export const name = 'address';
