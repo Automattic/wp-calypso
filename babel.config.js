@@ -35,7 +35,7 @@ if ( outputDir ) {
 	extensionOverrides.unshift( [
 		'@wordpress/babel-plugin-makepot',
 		{
-			output: outputDir + '/extensions.pot',
+			output: path.join( outputDir, 'extensions.pot' ),
 			headers: {
 				'content-type': 'text/plain; charset=UTF-8',
 				'x-generator': 'calypso',
