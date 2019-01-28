@@ -15,8 +15,7 @@ const renderEmail = inputText => {
 	);
 };
 
-const save = ( { attributes: { email }, className } ) => (
-	<div className={ className }>{ renderEmail( email ) }</div>
-);
+const save = ( { attributes: { email }, className } ) =>
+	email && <p className={ className }>{ renderEmail( email ) }</p>;
 
 export default save;

@@ -22,8 +22,7 @@ export function renderPhone( inputText ) {
 	);
 }
 
-const save = ( { attributes: { phone }, className } ) => (
-	<div className={ className }>{ renderPhone( phone ) }</div>
-);
+const save = ( { attributes: { phone }, className } ) =>
+	phone && <div className={ className }>{ renderPhone( phone ) }</div>;
 
 export default save;
