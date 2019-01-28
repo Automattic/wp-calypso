@@ -149,13 +149,20 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 		goToNextStep( flowName );
 	},
 
-	setSiteVertical: ( { is_user_input_vertical, preview, vertical_name, vertical_slug } ) =>
+	setSiteVertical: ( {
+		is_user_input_vertical,
+		preview,
+		vertical_id,
+		vertical_name,
+		vertical_slug,
+	} ) =>
 		dispatch(
 			setSiteVertical( {
 				isUserInput: is_user_input_vertical,
 				name: vertical_name,
 				preview,
 				slug: vertical_slug,
+				id: vertical_id,
 			} )
 		),
 } );

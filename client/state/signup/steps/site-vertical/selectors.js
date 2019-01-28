@@ -10,6 +10,10 @@ export function getSiteVerticalName( state ) {
 	return get( state, 'signup.steps.siteVertical.name', '' );
 }
 
+export function getSiteVerticalId( state ) {
+	return get( state, 'signup.steps.siteVertical.id', '' );
+}
+
 export function getSiteVerticalSlug( state ) {
 	return get( state, 'signup.steps.siteVertical.slug', '' );
 }

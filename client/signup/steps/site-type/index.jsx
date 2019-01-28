@@ -48,8 +48,7 @@ class SiteType extends Component {
 	handleSubmit = event => {
 		event.preventDefault();
 		// Default siteType is 'blog'
-		const siteTypeInputVal =
-			this.state.siteType || getSiteTypePropertyValue( 'id', 'blog', 'slug' );
+		const siteTypeInputVal = this.state.siteType || getSiteTypePropertyValue( 'id', 2, 'slug' );
 
 		this.props.submitStep( siteTypeInputVal );
 	};
@@ -125,7 +124,7 @@ export default connect(
 				} )
 			);
 
-			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 'store', 'slug' ) ) {
+			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 5, 'slug' ) ) {
 				flowName = 'ecommerce';
 			}
 
