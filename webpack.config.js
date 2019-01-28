@@ -162,6 +162,15 @@ const wordpressExternals = ( context, request, callback ) =>
 		? callback( null, `root ${ wordpressRequire( request ) }` )
 		: callback();
 
+/**
+ * Auxiliary method to help in picking an ECMAScript version based on a list
+ * of supported browser versions.
+ * Used in configuring Terser.
+ *
+ * @param {Array<String>} supportedBrowsers The list of supported browsers.
+ *
+ * @returns {Number} The maximum supported ECMAScript version.
+ */
 function chooseTerserEcmaVersion( supportedBrowsers ) {
 	if ( ! caniuse.isSupported( 'arrow-functions', supportedBrowsers ) ) {
 		return 5;
