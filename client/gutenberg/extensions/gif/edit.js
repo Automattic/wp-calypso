@@ -172,11 +172,14 @@ class GifEdit extends Component {
 					<Placeholder className="wp-block-jetpack-gif_placeholder" icon={ icon } label={ title }>
 						<div className="wp-block-jetpack-gif_placeholder-input-container">
 							<TextControl
+								className="wp-block-jetpack-gif_placeholder-input"
 								label={ INPUT_PROMPT }
+								placeholder={ INPUT_PROMPT }
 								onChange={ this.onSearchTextChange }
+								onClick={ () => this.maintainFocus() }
 								value={ searchText }
 							/>
-							<Button isDefault onClick={ this.onSubmit }>
+							<Button isLarge onClick={ this.onSubmit }>
 								{ __( 'Search' ) }
 							</Button>
 						</div>

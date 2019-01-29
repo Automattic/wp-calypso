@@ -85,8 +85,22 @@
 		z-index: 2;
 	}
 	.wp-block-jetpack-gif_placeholder-input-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
 		width: 100%;
 		max-width: 400px;
+		flex-wrap: wrap;
+		z-index: 1;
+		.components-base-control__label {
+			height: 0;
+			margin: 0;
+			text-indent: -9999px;
+		}
+	}
+	.wp-block-jetpack-gif_placeholder-input {
+		flex-grow: 1;
+		margin-right: 0.5em;
 	}
 }
 .components-panel__body-gif-branding {
