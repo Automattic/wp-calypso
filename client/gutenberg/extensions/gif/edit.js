@@ -122,7 +122,7 @@ class GifEdit extends Component {
 		const style = { paddingTop };
 		const classes = classNames( className, `align${ align }` );
 		const inputFields = (
-			<div className="wp-block-jetpack-gif_input-container">
+			<div className="wp-block-jetpack-gif_input-container" ref={ this.textControlRef }>
 				<TextControl
 					className="wp-block-jetpack-gif_input"
 					label={ INPUT_PROMPT }
