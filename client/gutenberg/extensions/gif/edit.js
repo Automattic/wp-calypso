@@ -20,6 +20,11 @@ class GifEdit extends Component {
 		results: null,
 	};
 
+	onFormSubmit = event => {
+		event.preventDefault();
+		this.onSubmit();
+	};
+
 	onSubmit = () => {
 		const { attributes } = this.props;
 		const { searchText } = attributes;
@@ -123,7 +128,11 @@ class GifEdit extends Component {
 		const style = { paddingTop };
 		const classes = classNames( className, `align${ align }` );
 		const inputFields = (
-			<div className="wp-block-jetpack-gif_input-container" ref={ this.textControlRef }>
+			<form
+				className="wp-block-jetpack-gif_input-container"
+				onSubmit={ this.onFormSubmit }
+				ref={ this.textControlRef }
+			>
 				<TextControl
 					className="wp-block-jetpack-gif_input"
 					label={ INPUT_PROMPT }
@@ -134,7 +143,7 @@ class GifEdit extends Component {
 				<Button isLarge onClick={ this.onSubmit }>
 					{ __( 'Search' ) }
 				</Button>
-			</div>
+			</form>
 		);
 		return (
 			<div className={ classes }>
