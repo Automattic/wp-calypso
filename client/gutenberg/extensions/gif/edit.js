@@ -12,6 +12,7 @@ import { icon, title } from './';
 
 const GIPHY_API_KEY = 't1PkR1Vq0mzHueIFBvZSZErgFs9NBmYW';
 const SEARCH_INPUT_DEBOUNCE = 450; // Time before searching user input in ms
+const INPUT_PROMPT = __( 'Search for a term or paste a Giphy URL' );
 
 class GifEdit extends Component {
 	timer = null;
@@ -171,7 +172,7 @@ class GifEdit extends Component {
 					<Placeholder className="wp-block-jetpack-gif_placeholder" icon={ icon } label={ title }>
 						<TextControl
 							className="wp-block-jetpack-gif_placeholder-text-input"
-							label={ __( 'Search or paste a Giphy URL' ) }
+							label={ INPUT_PROMPT }
 							onChange={ this.onSearchTextChange }
 							value={ searchText }
 						/>
@@ -189,8 +190,8 @@ class GifEdit extends Component {
 							{ ( ! searchText || isSelected ) && (
 								<TextControl
 									className={ textControlClasses }
-									label={ __( 'Search or paste a Giphy URL' ) }
-									placeholder={ __( 'Search or paste a Giphy URL' ) }
+									label={ INPUT_PROMPT }
+									placeholder={ INPUT_PROMPT }
 									onChange={ this.onSearchTextChange }
 									onClick={ this.maintainFocus }
 									value={ searchText }
