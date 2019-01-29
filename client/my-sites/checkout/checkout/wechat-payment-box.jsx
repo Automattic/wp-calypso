@@ -31,6 +31,7 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 import RecentRenewals from './recent-renewals';
+import DomainRegistrationRefundPolicy from './credits-payment-box';
 
 export class WechatPaymentBox extends Component {
 	static propTypes = {
@@ -175,6 +176,7 @@ export class WechatPaymentBox extends Component {
 					<TermsOfService
 						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
 					/>
+					<DomainRegistrationRefundPolicy cart={ cart } />
 
 					<div className="checkout__payment-box-actions">
 						<div className="checkout__payment-buttons  payment-box__payment-buttons">

@@ -32,6 +32,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
 import RecentRenewals from './recent-renewals';
+import DomainRegistrationRefundPolicy from './credits-payment-box';
 
 const debug = debugFactory( 'calypso:checkout:payment:apple-pay' );
 
@@ -493,6 +494,7 @@ export class WebPaymentBox extends React.Component {
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
 				/>
+				<DomainRegistrationRefundPolicy cart={ cart } />
 
 				<span className="payment-box__payment-buttons">
 					<span className="pay-button">

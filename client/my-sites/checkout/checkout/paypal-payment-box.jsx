@@ -25,6 +25,7 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import CartToggle from './cart-toggle';
 import wp from 'lib/wp';
 import RecentRenewals from './recent-renewals';
+import DomainRegistrationRefundPolicy from './credits-payment-box';
 
 const wpcom = wp.undocumented();
 
@@ -169,6 +170,7 @@ export class PaypalPaymentBox extends React.Component {
 							this.props.cart
 						) }
 					/>
+					<DomainRegistrationRefundPolicy cart={ this.props.cart } />
 
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="payment-box-actions">
