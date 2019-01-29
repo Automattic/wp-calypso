@@ -114,8 +114,9 @@ export default class extends React.Component {
 				dateTo = props.queryFilters.dateRange.to;
 			}
 
-			// If both dates are *not* wildcards then pass a date range filter
-			if ( ! ( dateFrom === wildCardDate && dateTo === wildCardDate ) ) {
+			// As long as from/to are not BOTH wildcards then add a range filter
+			// otherwise do not add a filter as there isn't any reason to do so...
+			if ( dateFrom !== wildCardDate && dateTo !== wildCardDate ) {
 				query.filter = [ ...query.filter, `dateRange=${ dateFrom }:${ dateTo }` ];
 			}
 		}
