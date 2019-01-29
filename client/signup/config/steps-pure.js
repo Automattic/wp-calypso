@@ -92,7 +92,7 @@ export function generateSteps( {
 				subHeaderText: i18n.translate( 'Select a domain name for your website' ),
 			},
 			delayApiRequestUntilComplete: true,
-			dependencies: [ 'siteId', 'siteSlug' ],
+			dependencies: [ 'siteSlug' ],
 		},
 
 		'plans-site-selected': {
@@ -544,8 +544,8 @@ export function generateSteps( {
 		launch: {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
-			dependencies: [ 'siteId' ],
-			providesDependencies: [ 'siteId' ],
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'siteSlug' ],
 			delayApiRequestUntilComplete: true,
 		},
 	};

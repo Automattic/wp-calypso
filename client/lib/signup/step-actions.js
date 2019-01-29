@@ -399,10 +399,10 @@ function processItemCart(
 	}
 }
 
-export function launchSiteApi( callback, dependencies, {} ) {
-	const { siteId } = dependencies;
-
-	const providedDependencies = { siteId };
+export function launchSiteApi( callback, dependencies, {}, reduxStore ) {
+	const { siteSlug } = dependencies;
+	const siteId = getSiteId( reduxStore.getState(), siteSlug );
+	const providedDependencies = { siteSlug };
 
 	wpcom.undocumented().launchSite( siteId, function( error ) {
 		if ( error ) {

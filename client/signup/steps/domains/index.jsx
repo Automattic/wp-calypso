@@ -618,7 +618,7 @@ export default connect(
 			productsLoaded,
 			siteGoals: getSiteGoals( state ),
 			surveyVertical: getSurveyVertical( state ),
-			selectedSite: getSite( state, ownProps.signupDependencies.siteId ),
+			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 		};
 	},
 	{

@@ -330,7 +330,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
 		destination: getSiteDestination,
 		description: 'A flow to launch a private site.',
-		providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
+		providesDependenciesInQuery: [ 'siteSlug' ],
 		lastModified: '2019-01-16',
 	};
 
