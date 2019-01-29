@@ -16,7 +16,7 @@ module.exports = {
 		'^.+\\.jsx?$': 'babel-jest',
 		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': '<rootDir>/test/test/helpers/assets/transform.js',
 	},
-	transformIgnorePatterns: [ 'node_modules[\\/\\\\](?!redux-form)' ],
+	transformIgnorePatterns: [ 'node_modules[\\/\\\\](?!redux-form|draft-js)' ],
 	testMatch: [ '<rootDir>/server/**/test/*.js?(x)' ],
 	timers: 'fake',
 	setupTestFrameworkScriptFile: '<rootDir>/test/server/setup-test-framework.js',
