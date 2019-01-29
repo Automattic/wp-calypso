@@ -270,8 +270,7 @@ const mapStateToProps = state => {
 		site && site.plan && ( hasBusinessPlan( site.plan ) || isJetpackPremium( site.plan ) );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const googleAnalyticsEnabled =
-		site && ( ! siteIsJetpack || ( siteIsJetpack && jetpackModuleActive ) );
+	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
 	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
 
 	return {
