@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<EbanxPaymentFields /> should render 1`] = `
+exports[`<CountrySpecificPaymentFields /> should render 1`] = `
 <div
-  className="checkout__ebanx-payment-fields checkout__ebanx-br"
+  className="checkout__country-payment-fields checkout__country-br"
 >
   <span
     className="checkout__form-info-text"
-    key="ebanx-required-fields"
+    key="country-required-fields"
   >
     The following fields are also required for payments in %(countryName)s
   </span>
   <Input
-    additionalClasses="checkout__checkout-field ebanx-brazil"
+    additionalClasses="checkout__checkout-field country-brazil"
     autoComplete="off"
     autoFocus={false}
     disabled={false}
@@ -24,7 +24,7 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     value=""
   />
   <FormPhoneMediaInput
-    additionalClasses="checkout__checkout-field ebanx-brazil"
+    additionalClasses="checkout__checkout-field country-brazil"
     autoComplete="off"
     countriesList={
       Array [
@@ -45,7 +45,7 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     value=""
   />
   <Input
-    additionalClasses="checkout__checkout-field ebanx-brazil"
+    additionalClasses="checkout__checkout-field country-brazil"
     autoComplete="off"
     autoFocus={false}
     disabled={false}
@@ -59,7 +59,7 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     value=""
   />
   <Input
-    additionalClasses="checkout__checkout-field ebanx-brazil"
+    additionalClasses="checkout__checkout-field country-brazil"
     autoComplete="off"
     autoFocus={false}
     disabled={false}
@@ -73,7 +73,7 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     value=""
   />
   <HiddenInput
-    additionalClasses="checkout__checkout-field ebanx-brazil"
+    additionalClasses="checkout__checkout-field country-brazil"
     autoComplete="off"
     disabled={false}
     isError={false}
@@ -87,7 +87,7 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     value=""
   />
   <Input
-    additionalClasses="checkout__checkout-field ebanx-brazil"
+    additionalClasses="checkout__checkout-field country-brazil"
     autoComplete="off"
     autoFocus={false}
     disabled={false}
@@ -103,7 +103,7 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     className="checkout__form-state-field"
   >
     <Connect(Localized(StateSelect))
-      additionalClasses="checkout__checkout-field ebanx-brazil"
+      additionalClasses="checkout__checkout-field country-brazil"
       autoComplete="off"
       countryCode="BR"
       disabled={false}
@@ -117,7 +117,7 @@ exports[`<EbanxPaymentFields /> should render 1`] = `
     />
   </div>
   <Input
-    additionalClasses="checkout__checkout-field ebanx-brazil"
+    additionalClasses="checkout__checkout-field country-brazil"
     autoComplete="off"
     autoFocus={false}
     disabled={false}
