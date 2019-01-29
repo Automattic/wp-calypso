@@ -128,6 +128,10 @@ export default connect(
 				flowName = 'ecommerce';
 			}
 
+			if ( 'business' === siteTypeValue ) {
+				flowName = 'onboarding-for-business';
+			}
+
 			goToNextStep( flowName );
 		},
 	} )
