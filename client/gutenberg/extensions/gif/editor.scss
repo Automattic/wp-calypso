@@ -21,29 +21,24 @@
 		}
 	}
 	.wp-block-jetpack-gif_input-container {
-		margin-top: -1em;
-		opacity: 0;
-		padding: 0 1em;
-		position: absolute;
-		top: 50%;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
 		width: 100%;
+		flex-wrap: wrap;
 		z-index: 1;
-
-		&.has-focus {
-			opacity: 1;
-			transition: opacity 0;
-		}
-		&.no-focus {
-			transition: opacity 0.5s ease-in;
-		}
-		.components-text-control__input {
+		.wp-block-jetpack-gif_placeholder & {
 			max-width: 400px;
-			width: 100%;
 		}
 		.components-base-control__label {
 			height: 0;
+			margin: 0;
 			text-indent: -9999px;
 		}
+	}
+	.wp-block-jetpack-gif_input {
+		flex-grow: 1;
+		margin-right: 0.5em;
 	}
 	.wp-block-jetpack-gif_thumbnails-container {
 		display: flex;
@@ -73,34 +68,6 @@
 			box-shadow: 0 0 0 2px #00a0d2;
 			outline: 0;
 		}
-	}
-	.wp-block-jetpack-gif_placeholder-text-input {
-		width: 100%;
-		max-width: 400px;
-	}
-	.wp-block-jetpack-gif_placeholder {
-		min-height: 200px;
-	}
-	figcaption {
-		z-index: 2;
-	}
-	.wp-block-jetpack-gif_placeholder-input-container {
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		width: 100%;
-		max-width: 400px;
-		flex-wrap: wrap;
-		z-index: 1;
-		.components-base-control__label {
-			height: 0;
-			margin: 0;
-			text-indent: -9999px;
-		}
-	}
-	.wp-block-jetpack-gif_placeholder-input {
-		flex-grow: 1;
-		margin-right: 0.5em;
 	}
 }
 .components-panel__body-gif-branding {

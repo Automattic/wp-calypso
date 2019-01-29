@@ -150,14 +150,24 @@ class GifEdit extends Component {
 	render() {
 		const { attributes, className, isSelected, setAttributes } = this.props;
 		const { align, caption, giphyUrl, searchText, paddingTop } = attributes;
-		const { captionFocus, focus, results } = this.state;
+		const { captionFocus, results } = this.state;
 		const style = { paddingTop };
 		const classes = classNames( className, `align${ align }` );
-		const inputContainerClasses = classNames(
-			'wp-block-jetpack-gif_input-container',
-			focus || ! this.hasSearchText() ? 'has-focus' : 'no-focus'
+		const inputFields = (
+			<div className="wp-block-jetpack-gif_input-container">
+				<TextControl
+					className="wp-block-jetpack-gif_input"
+					label={ INPUT_PROMPT }
+					placeholder={ INPUT_PROMPT }
+					onChange={ this.onSearchTextChange }
+					onClick={ () => this.maintainFocus() }
+					value={ searchText }
+				/>
+				<Button isLarge onClick={ this.onSubmit }>
+					{ __( 'Search' ) }
+				</Button>
+			</div>
 		);
-
 		return (
 			<div className={ classes }>
 				<InspectorControls>
@@ -170,46 +180,11 @@ class GifEdit extends Component {
 				</InspectorControls>
 				{ ! giphyUrl ? (
 					<Placeholder className="wp-block-jetpack-gif_placeholder" icon={ icon } label={ title }>
-						<div className="wp-block-jetpack-gif_placeholder-input-container">
-							<TextControl
-								className="wp-block-jetpack-gif_placeholder-input"
-								label={ INPUT_PROMPT }
-								placeholder={ INPUT_PROMPT }
-								onChange={ this.onSearchTextChange }
-								onClick={ () => this.maintainFocus() }
-								value={ searchText }
-							/>
-							<Button isLarge onClick={ this.onSubmit }>
-								{ __( 'Search' ) }
-							</Button>
-						</div>
+						{ inputFields }
 					</Placeholder>
 				) : (
 					<figure>
-						<div className="wp-block-jetpack-gif-wrapper" style={ style }>
-							<div
-								className="wp-block-jetpack-gif_cover"
-								onClick={ this.setFocus }
-								onKeyDown={ this.setFocus }
-								role="button"
-								tabIndex="0"
-							/>
-							{ ( ! searchText || isSelected ) && (
-								<div className={ inputContainerClasses } ref={ this.textControlRef }>
-									<TextControl
-										label={ INPUT_PROMPT }
-										placeholder={ INPUT_PROMPT }
-										onChange={ this.onSearchTextChange }
-										onClick={ () => this.maintainFocus() }
-										value={ searchText }
-									/>
-									<Button isDefault onClick={ this.onSubmit }>
-										{ __( 'Search' ) }
-									</Button>
-								</div>
-							) }
-							<iframe src={ giphyUrl } title={ searchText } />
-						</div>
+						{ ( ! searchText || isSelected ) && inputFields }
 						{ results && isSelected && (
 							<div className="wp-block-jetpack-gif_thumbnails-container">
 								{ results.map( thumbnail => {
@@ -232,6 +207,16 @@ class GifEdit extends Component {
 								} ) }
 							</div>
 						) }
+						<div className="wp-block-jetpack-gif-wrapper" style={ style }>
+							<div
+								className="wp-block-jetpack-gif_cover"
+								onClick={ this.setFocus }
+								onKeyDown={ this.setFocus }
+								role="button"
+								tabIndex="0"
+							/>
+							<iframe src={ giphyUrl } title={ searchText } />
+						</div>
 						{ ( ! RichText.isEmpty( caption ) || isSelected ) && !! giphyUrl && (
 							<RichText
 								className="wp-block-jetpack-gif-caption gallery-caption"
