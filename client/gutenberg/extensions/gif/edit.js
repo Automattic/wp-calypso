@@ -73,15 +73,20 @@ class GifEdit extends Component {
 		xhr.onload = () => {
 			if ( xhr.status === 200 ) {
 				const res = JSON.parse( xhr.responseText );
-				const giphyData = res.data.length > 0 ? res.data[ 0 ] : res.data;
+				// If there is only one result, Giphy's API does not return an array.
+				// The following statement normalizes the data into an array with one member in this case.
+				const results = typeof res.data.images !== 'undefined' ? [ res.data ] : res.data;
+				const giphyData = results[ 0 ];
 				// No results
 				if ( ! giphyData.images ) {
 					return;
 				}
-				if ( res.data.length > 1 ) {
-					this.setState( { results: res.data }, () => {
+				if ( results > 1 ) {
+					this.setState( { results }, () => {
 						this.selectGiphy( giphyData );
 					} );
+				} else {
+					this.selectGiphy( giphyData );
 				}
 			} else {
 				// Error handling TK
