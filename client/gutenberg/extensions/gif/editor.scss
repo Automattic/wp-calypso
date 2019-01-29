@@ -26,6 +26,7 @@
 		top: 50%;
 		width: 100%;
 		padding: 0 1em;
+		z-index: 1;
 
 		&.has-focus .components-text-control__input {
 			opacity: 1;

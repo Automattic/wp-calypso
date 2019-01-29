@@ -187,18 +187,17 @@ class GifEdit extends Component {
 								ref={ this.textControlRef }
 								role="button"
 								tabIndex="0"
-							>
-								{ ( ! searchText || isSelected ) && (
-									<TextControl
-										className={ textControlClasses }
-										label={ INPUT_PROMPT }
-										placeholder={ INPUT_PROMPT }
-										onChange={ this.onSearchTextChange }
-										onClick={ this.maintainFocus }
-										value={ searchText }
-									/>
-								) }
-							</div>
+							/>
+							{ ( ! searchText || isSelected ) && (
+								<TextControl
+									className={ textControlClasses }
+									label={ INPUT_PROMPT }
+									placeholder={ INPUT_PROMPT }
+									onChange={ this.onSearchTextChange }
+									onClick={ this.maintainFocus }
+									value={ searchText }
+								/>
+							) }
 							<iframe src={ giphyUrl } title={ searchText } />
 						</div>
 						{ results && isSelected && (
