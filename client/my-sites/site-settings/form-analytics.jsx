@@ -221,7 +221,6 @@ export class GoogleAnalyticsForm extends Component {
 							<FormAnalyticsStores
 								fields={ fields }
 								handleToggleChange={ this.handleToggleChange }
-								showEnhanced={ siteIsJetpack }
 							/>
 						) }
 						<p>
