@@ -29,11 +29,13 @@
 			}
 
 			.jetpack-logo__icon-circle {
-				fill: var( --color-jetpack ) !important;
+				// CSS colour variables are not available in Gutenberg extensions when built by SDK
+				fill: $green-jetpack !important;
 			}
 
 			.jetpack-logo__icon-triangle {
-				fill: var( --color-white ) !important;
+				// CSS colour variables are not available in Gutenberg extensions when built by SDK
+				fill: $white !important;
 			}
 		}
 	}
