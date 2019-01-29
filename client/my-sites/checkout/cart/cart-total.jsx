@@ -19,7 +19,7 @@ class CartTotal extends React.Component {
 		cart: PropTypes.shape( {
 			tax: PropTypes.shape( {
 				location: PropTypes.object.isRequired,
-				display_tax: PropTypes.bool.isRequired,
+				display_taxes: PropTypes.bool.isRequired,
 			} ).isRequired,
 			sub_total: PropTypes.number.isRequired,
 			sub_total_display: PropTypes.string.isRequired,
@@ -45,7 +45,7 @@ class CartTotal extends React.Component {
 			return <div className="cart__total" />;
 		}
 
-		const showTax = cart.tax.display_tax && config.isEnabled( 'show-tax' );
+		const showTax = cart.tax.display_taxes && config.isEnabled( 'show-tax' );
 		return (
 			<div className="cart__total">
 				{ showTax && (
