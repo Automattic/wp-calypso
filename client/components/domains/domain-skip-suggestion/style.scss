@@ -1,4 +1,4 @@
-.domain-transfer-suggestion {
+.domain-skip-suggestion {
 	display: flex;
 	align-items: center;
 
@@ -7,7 +7,7 @@
 	}
 }
 
-.domain-transfer-suggestion__domain-description {
+.domain-skip-suggestion__domain-description {
 	padding-right: 1em;
 
 	@include breakpoint( '>660px' ) {

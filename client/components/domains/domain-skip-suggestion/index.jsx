@@ -17,27 +17,23 @@ class DomainSkipSuggestion extends React.Component {
 		onButtonClick: PropTypes.func.isRequired,
 	};
 
-	onButtonClick = () => {
-		this.props.onButtonClick( this.props.suggestion );
-	};
-
 	render() {
 		const { translate } = this.props;
 		const buttonContent = translate( 'Skip Purchase', {
-			context: 'Domain transfer or mapping suggestion button',
+			context: 'Button for skipping domain purchase',
 		} );
 
 		return (
 			<DomainSuggestion
 				buttonContent={ buttonContent }
 				buttonStyles={ { borderless: true } }
-				extraClasses="is-visible domain-transfer-suggestion"
+				extraClasses="is-visible domain-skip-suggestion"
 				hidePrice={ true }
 				onButtonClick={ this.props.onButtonClick }
 				showChevron
 				// tracksButtonClickSource={ this.props.tracksButtonClickSource }
 			>
-				<div className="domain-transfer-suggestion__domain-description">
+				<div className="domain-skip-suggestion__domain-description">
 					<h3>{ this.props.selectedSiteSlug }</h3>
 					<p>
 						{ translate( 'This is your current free site address', {
