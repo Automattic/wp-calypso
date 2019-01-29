@@ -4,14 +4,12 @@
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import classNames from 'classnames';
 import { Component, createRef } from '@wordpress/element';
-import { PanelBody, Path, Placeholder, SVG, TextControl } from '@wordpress/components';
+import { Button, PanelBody, Path, Placeholder, SVG, TextControl } from '@wordpress/components';
 import { InspectorControls, RichText } from '@wordpress/editor';
-import { debounce } from 'lodash';
 
 import { icon, title } from './';
 
 const GIPHY_API_KEY = 't1PkR1Vq0mzHueIFBvZSZErgFs9NBmYW';
-const SEARCH_INPUT_DEBOUNCE = 450; // Time before searching user input in ms
 const INPUT_PROMPT = __( 'Search for a term or paste a Giphy URL' );
 
 class GifEdit extends Component {
@@ -24,18 +22,20 @@ class GifEdit extends Component {
 		results: null,
 	};
 
-	componentWillUnmount() {
-		this.parseSearch.cancel();
-	}
-
 	onSearchTextChange = searchText => {
 		const { setAttributes } = this.props;
 		setAttributes( { searchText } );
+		this.maintainFocus();
+	};
+
+	onSubmit = () => {
+		const { attributes } = this.props;
+		const { searchText } = attributes;
 		this.parseSearch( searchText );
 		this.maintainFocus();
 	};
 
-	parseSearch = debounce( searchText => {
+	parseSearch = searchText => {
 		let giphyID = null;
 		// If search is hardcoded Giphy URL following this pattern: https://giphy.com/embed/4ZFekt94LMhNK
 		if ( searchText.indexOf( '//giphy.com/gifs' ) !== -1 ) {
@@ -57,7 +57,7 @@ class GifEdit extends Component {
 		}
 
 		return this.fetch( this.urlForSearch( searchText ) );
-	}, SEARCH_INPUT_DEBOUNCE );
+	};
 
 	urlForSearch = searchText => {
 		return `https://api.giphy.com/v1/gifs/search?q=${ encodeURIComponent(
@@ -153,8 +153,8 @@ class GifEdit extends Component {
 		const { captionFocus, focus, results } = this.state;
 		const style = { paddingTop };
 		const classes = classNames( className, `align${ align }` );
-		const textControlClasses = classNames(
-			'wp-block-jetpack-gif_text-input-field',
+		const inputContainerClasses = classNames(
+			'wp-block-jetpack-gif_input-container',
 			focus || ! this.hasSearchText() ? 'has-focus' : 'no-focus'
 		);
 
@@ -170,12 +170,16 @@ class GifEdit extends Component {
 				</InspectorControls>
 				{ ! giphyUrl ? (
 					<Placeholder className="wp-block-jetpack-gif_placeholder" icon={ icon } label={ title }>
-						<TextControl
-							className="wp-block-jetpack-gif_placeholder-text-input"
-							label={ INPUT_PROMPT }
-							onChange={ this.onSearchTextChange }
-							value={ searchText }
-						/>
+						<div className="wp-block-jetpack-gif_placeholder-input-container">
+							<TextControl
+								label={ INPUT_PROMPT }
+								onChange={ this.onSearchTextChange }
+								value={ searchText }
+							/>
+							<Button isDefault onClick={ this.onSubmit }>
+								{ __( 'Search' ) }
+							</Button>
+						</div>
 					</Placeholder>
 				) : (
 					<figure>
@@ -184,19 +188,22 @@ class GifEdit extends Component {
 								className="wp-block-jetpack-gif_cover"
 								onClick={ this.setFocus }
 								onKeyDown={ this.setFocus }
-								ref={ this.textControlRef }
 								role="button"
 								tabIndex="0"
 							/>
 							{ ( ! searchText || isSelected ) && (
-								<TextControl
-									className={ textControlClasses }
-									label={ INPUT_PROMPT }
-									placeholder={ INPUT_PROMPT }
-									onChange={ this.onSearchTextChange }
-									onClick={ this.maintainFocus }
-									value={ searchText }
-								/>
+								<div className={ inputContainerClasses } ref={ this.textControlRef }>
+									<TextControl
+										label={ INPUT_PROMPT }
+										placeholder={ INPUT_PROMPT }
+										onChange={ this.onSearchTextChange }
+										onClick={ () => this.maintainFocus() }
+										value={ searchText }
+									/>
+									<Button isDefault onClick={ this.onSubmit }>
+										{ __( 'Search' ) }
+									</Button>
+								</div>
 							) }
 							<iframe src={ giphyUrl } title={ searchText } />
 						</div>

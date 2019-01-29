@@ -20,23 +20,23 @@
 			outline: none;
 		}
 	}
-	.wp-block-jetpack-gif_text-input-field {
+	.wp-block-jetpack-gif_input-container {
 		margin-top: -1em;
+		opacity: 0;
+		padding: 0 1em;
 		position: absolute;
 		top: 50%;
 		width: 100%;
-		padding: 0 1em;
 		z-index: 1;
 
-		&.has-focus .components-text-control__input {
+		&.has-focus {
 			opacity: 1;
 			transition: opacity 0;
 		}
-		&.no-focus .components-text-control__input {
+		&.no-focus {
 			transition: opacity 0.5s ease-in;
 		}
 		.components-text-control__input {
-			opacity: 0;
 			max-width: 400px;
 			width: 100%;
 		}
@@ -83,6 +83,10 @@
 	}
 	figcaption {
 		z-index: 2;
+	}
+	.wp-block-jetpack-gif_placeholder-input-container {
+		width: 100%;
+		max-width: 400px;
 	}
 }
 .components-panel__body-gif-branding {
