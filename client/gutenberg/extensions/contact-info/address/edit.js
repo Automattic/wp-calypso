@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { RichText, InspectorControls } from '@wordpress/editor';
+import { PlainText, InspectorControls } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
 import { ToggleControl, PanelBody } from '@wordpress/components';
 
@@ -17,10 +17,15 @@ class AddressEdit extends Component {
 	constructor( ...args ) {
 		super( ...args );
 
-		this.unstableOnSplit = this.unstableOnSplit.bind( this );
+		this.preventEnterKey = this.preventEnterKey.bind( this );
 	}
 
-	unstableOnSplit = () => false;
+	preventEnterKey( event ) {
+		if ( event.key === 'Enter' ) {
+			event.preventDefault();
+			return;
+		}
+	}
 
 	render() {
 		const {
@@ -43,76 +48,52 @@ class AddressEdit extends Component {
 				.map( value => value !== '' )
 				.filter( Boolean ).length > 0;
 
-		const formattingControls = [];
-
 		return (
 			<div className={ isSelected ? 'jetpack-address-block is-selected' : 'jetpack-address-block' }>
 				{ ! isSelected && hasContent && save( this.props ) }
 				{ ( isSelected || ! hasContent ) && (
 					<Fragment>
-						<RichText
+						<PlainText
 							value={ address }
 							placeholder={ __( 'Street Address' ) }
-							onChange={ newAddress =>
-								setAttributes( { address: newAddress.replace( '<br>', '' ) } )
-							}
-							keepPlaceholderOnFocus
-							formattingControls={ formattingControls }
-							unstableOnSplit={ this.unstableOnSplit }
+							onChange={ newAddress => setAttributes( { address: newAddress } ) }
+							onKeyDown={ this.preventEnterKey }
 						/>
-						<RichText
+						<PlainText
 							value={ addressLine2 }
 							placeholder={ __( 'Address Line 2' ) }
-							onChange={ newAddressLine2 =>
-								setAttributes( { addressLine2: newAddressLine2.replace( '<br>', '' ) } )
-							}
-							keepPlaceholderOnFocus
-							formattingControls={ formattingControls }
-							unstableOnSplit={ this.unstableOnSplit }
+							onChange={ newAddressLine2 => setAttributes( { addressLine2: newAddressLine2 } ) }
+							onKeyDown={ this.preventEnterKey }
 						/>
-						<RichText
+						<PlainText
 							value={ addressLine3 }
 							placeholder={ __( 'Address Line 3' ) }
-							onChange={ newAddressLine3 =>
-								setAttributes( { addressLine3: newAddressLine3.replace( '<br>', '' ) } )
-							}
-							keepPlaceholderOnFocus
-							formattingControls={ formattingControls }
-							unstableOnSplit={ this.unstableOnSplit }
+							onChange={ newAddressLine3 => setAttributes( { addressLine3: newAddressLine3 } ) }
+							onKeyDown={ this.preventEnterKey }
 						/>
-						<RichText
+						<PlainText
 							value={ city }
 							placeholder={ __( 'City' ) }
-							onChange={ newCity => setAttributes( { city: newCity.replace( '<br>', '' ) } ) }
-							keepPlaceholderOnFocus
-							formattingControls={ formattingControls }
-							unstableOnSplit={ this.unstableOnSplit }
+							onChange={ newCity => setAttributes( { city: newCity } ) }
+							onKeyDown={ this.preventEnterKey }
 						/>
-						<RichText
+						<PlainText
 							value={ region }
 							placeholder={ __( 'State/Province/Region' ) }
-							onChange={ newRegion => setAttributes( { region: newRegion.replace( '<br>', '' ) } ) }
-							keepPlaceholderOnFocus
-							formattingControls={ formattingControls }
-							unstableOnSplit={ this.unstableOnSplit }
+							onChange={ newRegion => setAttributes( { region: newRegion } ) }
+							onKeyDown={ this.preventEnterKey }
 						/>
-						<RichText
+						<PlainText
 							value={ postal }
 							placeholder={ __( 'Postal/Zip Code' ) }
-							onChange={ newPostal => setAttributes( { postal: newPostal.replace( '<br>', '' ) } ) }
-							keepPlaceholderOnFocus
-							formattingControls={ formattingControls }
-							unstableOnSplit={ this.unstableOnSplit }
+							onChange={ newPostal => setAttributes( { postal: newPostal } ) }
+							onKeyDown={ this.preventEnterKey }
 						/>
-						<RichText
+						<PlainText
 							value={ country }
 							placeholder={ __( 'Country' ) }
-							onChange={ newCountry =>
-								setAttributes( { country: newCountry.replace( '<br>', '' ) } )
-							}
-							keepPlaceholderOnFocus
-							formattingControls={ formattingControls }
-							unstableOnSplit={ this.unstableOnSplit }
+							onChange={ newCountry => setAttributes( { country: newCountry } ) }
+							onKeyDown={ this.preventEnterKey }
 						/>
 						<InspectorControls>
 							<PanelBody title={ __( 'Link to Google Maps' ) }>
