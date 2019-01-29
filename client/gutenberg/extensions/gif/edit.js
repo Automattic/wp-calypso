@@ -198,7 +198,7 @@ class GifEdit extends Component {
 								/>
 							) }
 						</div>
-						<div class="wp-block-jetpack-gif-wrapper" style={ style }>
+						<div className="wp-block-jetpack-gif-wrapper" style={ style }>
 							<iframe src={ giphyUrl } title={ searchText } />
 							{ results && isSelected && (
 								<div className="wp-block-jetpack-gif_thumbnails-container">
