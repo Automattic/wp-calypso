@@ -27,7 +27,6 @@ import billingTransactions from './billing-transactions/reducer';
 import checklist from './checklist/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
-import concierge from './concierge/reducer';
 import connectedApplications from './connected-applications/reducer';
 import countries from './countries/reducer';
 import countryStates from './country-states/reducer';
@@ -113,7 +112,6 @@ const reducers = {
 	checklist,
 	comments,
 	componentsUsageStats,
-	concierge,
 	connectedApplications,
 	countries,
 	countryStates,
