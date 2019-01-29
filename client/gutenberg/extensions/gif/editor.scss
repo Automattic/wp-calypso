@@ -23,13 +23,12 @@
 	.wp-block-jetpack-gif_input-container {
 		display: flex;
 		flex-direction: row;
-		justify-content: center;
-		width: 100%;
 		flex-wrap: wrap;
+		justify-content: center;
+		margin: 0 auto;
+		max-width: 400px;
+		width: 100%;
 		z-index: 1;
-		.wp-block-jetpack-gif_placeholder & {
-			max-width: 400px;
-		}
 		.components-base-control__label {
 			height: 0;
 			margin: 0;
@@ -42,7 +41,10 @@
 	}
 	.wp-block-jetpack-gif_thumbnails-container {
 		display: flex;
+		margin: -2px 0 2px 0;
+		margin-left: calc( -4px / 2 );
 		overflow-x: auto;
+		width: calc( 100% + 4px );
 		&::-webkit-scrollbar {
 			display: none;
 		}
