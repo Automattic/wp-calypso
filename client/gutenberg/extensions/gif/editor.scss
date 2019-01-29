@@ -45,13 +45,8 @@
 		}
 	}
 	.wp-block-jetpack-gif_thumbnails-container {
-		bottom: 8px;
 		display: flex;
-		left: 8px;
 		overflow-x: auto;
-		position: absolute;
-		right: 8px;
-		z-index: 1;
 		&::-webkit-scrollbar {
 			display: none;
 		}
