@@ -235,7 +235,8 @@
 		font-size: 12px;
 	}
 
-	.checkout-terms {
+	.checkout-terms,
+    .checkout__domain-refund-policy {
 		color: var( --color-neutral-400 );
 		margin: 16px 0;
 		padding: 0;

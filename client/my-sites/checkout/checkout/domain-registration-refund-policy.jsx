@@ -27,7 +27,14 @@ class DomainRegistrationRefundPolicy extends React.Component {
 			'{{refundsSupportPage}}Domain name refunds{{/refundsSupportPage}} are limited to 48 hours after registration.',
 			{
 				components: {
-					refundsSupportPage: <a href={ REFUNDS } target="_blank" rel="noopener noreferrer" />,
+					refundsSupportPage: (
+						<a
+							href={ REFUNDS }
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ this.recordRefundsSupportClick }
+						/>
+					),
 				},
 			}
 		);
@@ -37,7 +44,14 @@ class DomainRegistrationRefundPolicy extends React.Component {
 				'{{refundsSupportPage}}Domain name refunds{{/refundsSupportPage}} are limited to 48 hours after registration. Refunds of paid plans will be less the standard cost of any domain name registered within a plan.',
 				{
 					components: {
-						refundsSupportPage: <a href={ REFUNDS } target="_blank" rel="noopener noreferrer" />,
+						refundsSupportPage: (
+							<a
+								href={ REFUNDS }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ this.recordRefundsSupportClick }
+							/>
+						),
 					},
 				}
 			);
@@ -52,7 +66,7 @@ class DomainRegistrationRefundPolicy extends React.Component {
 		}
 
 		return (
-			<div className="checkout-terms" onClick={ this.recordRefundsSupportClick }>
+			<div className="checkout__domain-refund-policy">
 				<Gridicon icon="info-outline" size={ 18 } />
 				<p>{ this.renderPolicy() }</p>
 			</div>
