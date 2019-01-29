@@ -23,13 +23,6 @@ const debug = debugFactory( 'calypso:cart-data:cart-synchronizer' );
 function preprocessCartFromServer( cart ) {
 	// #tax-on-checkout-placeholder
 	const taxOnCheckoutPlaceholder = {
-		tax: {
-			location: {
-				country_code: 'US',
-				postal_code: '90210',
-			},
-			display_tax: true, // **NEW** Whether to show the tax lines to the user or not.
-		},
 		sub_total: cart.total_cost,
 		sub_total_display: cart.total_cost_display,
 		total_tax: cart.total_cost,
