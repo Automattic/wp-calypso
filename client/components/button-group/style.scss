@@ -15,11 +15,11 @@
 		}
 
 		&.is-scary:focus {
-			box-shadow: inset 1px 0 0 var( --color-error ), 0 0 0 2px lighten( $alert-red, 20% );
+			box-shadow: inset 1px 0 0 var( --color-error ), 0 0 0 2px var( --color-error-200 );
 		}
 
 		&.is-primary.is-scary:focus {
-			box-shadow: inset 1px 0 0 darken( $alert-red, 30% ), 0 0 0 2px lighten( $alert-red, 20% );
+			box-shadow: inset 1px 0 0 var( -color-error-800 ), 0 0 0 2px var( --color-error-200 );
 		}
 
 		&:first-child:focus {
@@ -27,7 +27,7 @@
 		}
 
 		&.is-scary:first-child:focus {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
+			box-shadow: 0 0 0 2px var( --color-error-200 );
 		}
 	}
 

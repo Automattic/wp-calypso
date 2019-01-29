@@ -203,7 +203,7 @@
 		}
 		&.is-spam,
 		&.is-trash {
-			background: lighten( $alert-red, 18% );
+			background: var( --color-error-200 );
 		}
 	}
 

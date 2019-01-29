@@ -252,11 +252,11 @@ button {
 
 		&:hover,
 		&:focus {
-			color: darken( $alert-red, 20% );
+			color: var( --color-error-200 );
 		}
 
 		&[disabled] {
-			color: lighten( $alert-red, 30% );
+			color: var( --color-error-50 );
 		}
 	}
 

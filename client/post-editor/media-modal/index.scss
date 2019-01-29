@@ -102,13 +102,13 @@
 	color: var( --color-error );
 
 	&:hover {
-		color: lighten( $alert-red, 10% );
+		color: var( --color-error-300 );
 	}
 
 	&:disabled {
 		cursor: default;
 		cursor: not-allowed;
-		color: lighten( $alert-red, 25% );
+		color: var( --color-error-100 );
 	}
 }
 

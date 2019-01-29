@@ -42,7 +42,7 @@
 	}
 
 	& del {
-		background-color: lighten( $alert-red, 20% );
+		background-color: var( --color-error-200 );
 		text-decoration: none;
 	}
 
