@@ -199,7 +199,7 @@
 		padding: 0 10px;
 
 		&.is-pending {
-			background: lighten( $alert-yellow, 18% );
+			background: var( --color-warning-200 );
 		}
 		&.is-spam,
 		&.is-trash {
@@ -263,8 +263,8 @@
 .comment.is-pending .comment__content-preview::after {
 	background: linear-gradient(
 		to right,
-		rgba( mix( $alert-yellow, $white, 8.5% ), 0 ),
-		rgba( mix( $alert-yellow, $white, 8.5% ), 1 ) 50%
+		rgba( var( --color-warning-0-rgb ), 0 ),
+		rgba( var( --color-warning-0-rgb ), 1 ) 50%
 	);
 }
 
