@@ -339,11 +339,13 @@ class SiteIndicator extends Component {
 		const { site, siteIsJetpack } = this.props;
 
 		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<div className="site-indicator__wrapper">
 				{ siteIsJetpack && <QuerySiteConnectionStatus siteId={ site.ID } /> }
 
 				{ this.showIndicator() && this.renderIndicator() }
 			</div>
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		);
 	}
 }
