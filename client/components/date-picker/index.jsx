@@ -54,7 +54,7 @@ class DatePicker extends PureComponent {
 		onDayMouseLeave: PropTypes.func,
 		toMonth: PropTypes.object,
 		fromMonth: PropTypes.object,
-        onDayTouchStart: PropTypes.func,
+		onDayTouchStart: PropTypes.func,
 		onDayTouchEnd: PropTypes.func,
 		onDayTouchMove: PropTypes.func,
 		rootClassNames: PropTypes.object,
@@ -77,6 +77,12 @@ class DatePicker extends PureComponent {
 		onDayTouchMove: noop,
 		rootClassNames: {},
 	};
+
+	constructor( props ) {
+		super( props );
+
+		this.dayPickerRef = React.createRef();
+	}
 
 	isSameDay( d0, d1 ) {
 		d0 = this.props.moment( d0 );
@@ -231,13 +237,12 @@ class DatePicker extends PureComponent {
 				this.getDateInstance( event.date )
 			);
 		}
-	    
-	    const numMonths = this.props.numberOfMonths || 1;
-        const rangeSelected = modifiers.start && modifiers.end;
+
+		const numMonths = this.props.numberOfMonths || 1;
+		const rangeSelected = modifiers.start && modifiers.end;
 
 		if ( hasDateRange ) {
-
-            modifiers[ 'range-start' ] = this.props.selectedDays.from;
+			modifiers[ 'range-start' ] = this.props.selectedDays.from;
 			modifiers[ 'range-end' ] = this.props.selectedDays.to;
 			modifiers.range = {
 				from: this.props.selectedDays.from,
@@ -256,7 +261,7 @@ class DatePicker extends PureComponent {
 		return (
 			<DayPicker
 				modifiers={ modifiers }
-				ref="daypicker"
+				ref={ this.dayPickerRef }
 				className={ rootClassNames }
 				disabledDays={ this.props.disabledDays }
 				initialMonth={ this.props.calendarInitialDate }
