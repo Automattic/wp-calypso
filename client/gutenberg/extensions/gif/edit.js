@@ -13,26 +13,17 @@ const GIPHY_API_KEY = 't1PkR1Vq0mzHueIFBvZSZErgFs9NBmYW';
 const INPUT_PROMPT = __( 'Search for a term or paste a Giphy URL' );
 
 class GifEdit extends Component {
-	timer = null;
 	textControlRef = createRef();
 
 	state = {
 		captionFocus: false,
-		focus: false,
 		results: null,
-	};
-
-	onSearchTextChange = searchText => {
-		const { setAttributes } = this.props;
-		setAttributes( { searchText } );
-		this.maintainFocus();
 	};
 
 	onSubmit = () => {
 		const { attributes } = this.props;
 		const { searchText } = attributes;
 		this.parseSearch( searchText );
-		this.maintainFocus();
 	};
 
 	parseSearch = searchText => {
@@ -92,7 +83,6 @@ class GifEdit extends Component {
 						this.selectGiphy( giphyData );
 					} );
 				}
-				this.maintainFocus( 500 );
 			} else {
 				// Error handling TK
 			}
@@ -111,30 +101,8 @@ class GifEdit extends Component {
 	};
 
 	setFocus = () => {
-		this.maintainFocus();
 		this.textControlRef.current.querySelector( 'input' ).focus();
 		this.setState( { captionFocus: false } );
-	};
-
-	maintainFocus = ( timeoutDuration = 3500 ) => {
-		this.setState( { focus: true }, () => {
-			if ( this.timer ) {
-				clearTimeout( this.timer );
-			}
-			if ( this.hasSearchText() ) {
-				this.timer = setTimeout( () => {
-					this.setState( { focus: false } );
-				}, timeoutDuration );
-			}
-		} );
-	};
-
-	clearFocus = () => {
-		this.setState( { focus: false }, () => {
-			if ( this.timer ) {
-				clearTimeout( this.timer );
-			}
-		} );
 	};
 
 	hasSearchText = () => {
@@ -159,8 +127,7 @@ class GifEdit extends Component {
 					className="wp-block-jetpack-gif_input"
 					label={ INPUT_PROMPT }
 					placeholder={ INPUT_PROMPT }
-					onChange={ this.onSearchTextChange }
-					onClick={ () => this.maintainFocus() }
+					onChange={ value => setAttributes( { searchText: value } ) }
 					value={ searchText }
 				/>
 				<Button isLarge onClick={ this.onSubmit }>
@@ -184,8 +151,8 @@ class GifEdit extends Component {
 					</Placeholder>
 				) : (
 					<figure>
-						{ ( ! searchText || isSelected ) && inputFields }
-						{ results && isSelected && (
+						{ isSelected && inputFields }
+						{ isSelected && results && (
 							<div className="wp-block-jetpack-gif_thumbnails-container">
 								{ results.map( thumbnail => {
 									if ( thumbnail.embed_url === giphyUrl ) {
