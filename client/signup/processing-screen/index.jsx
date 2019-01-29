@@ -137,7 +137,9 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	showPreviewAfterLogin = () => {
-		const destination = [ 'onboarding', 'onboarding-dev' ].includes( this.props.flowName )
+		const destination = [ 'onboarding', 'onboarding-dev', 'onboarding-for-business' ].includes(
+			this.props.flowName
+		)
 			? 'view'
 			: 'checklist';
 
