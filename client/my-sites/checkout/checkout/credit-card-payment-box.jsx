@@ -31,6 +31,7 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
+import DomainRegistrationRefundPolicy from './credits-payment-box';
 
 export class CreditCardPaymentBox extends React.Component {
 	static propTypes = {
@@ -196,6 +197,7 @@ export class CreditCardPaymentBox extends React.Component {
 					<TermsOfService
 						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
 					/>
+					<DomainRegistrationRefundPolicy cart={ cart } />
 
 					{ this.paymentBoxActions() }
 				</form>

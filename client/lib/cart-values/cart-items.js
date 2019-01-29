@@ -412,6 +412,12 @@ export function hasDomainMapping( cart ) {
 	return some( getAll( cart ), isDomainMapping );
 }
 
+export function hasDomainBeingUsedForPlan( cart ) {
+	return some( getDomainRegistrations( cart ), registration =>
+		isDomainBeingUsedForPlan( cart, registration.meta )
+	);
+}
+
 /**
  * Determines whether there is at least one renewal item in the specified shopping cart.
  *
@@ -1182,6 +1188,7 @@ export default {
 	guidedTransferItem,
 	isDomainBeingUsedForPlan,
 	isNextDomainFree,
+	hasDomainBeingUsedForPlan,
 	hasDomainCredit,
 	hasDomainInCart,
 	hasDomainMapping,
