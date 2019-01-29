@@ -14,7 +14,11 @@ import Gridicon from 'gridicons';
  * Internal Dependencies
  */
 import { VIEW_CONTACT, VIEW_RICH_RESULT, VIEW_CHECKLIST } from './constants';
-import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
+import {
+	selectResult,
+	resetInlineHelpContactForm,
+	hideOnboardingWelcomePrompt,
+} from 'state/inline-help/actions';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import ChecklistOnboardingWelcome from 'my-sites/checklist/wpcom-checklist/checklist-onboarding-welcome';
@@ -117,9 +121,48 @@ class InlineHelpPopover extends Component {
 		this.openSecondaryView( VIEW_CHECKLIST );
 	};
 
-	renderPopoverContent = () => {
+	renderPopoverFooter = () => {
 		const { translate } = this.props;
+		return (
+			<div className="inline-help__footer">
+				<Button
+					onClick={ this.props.hideOnboardingWelcomePrompt }
+					className="inline-help__back-to-help-button"
+					borderless
+				>
+					<Gridicon icon="chevron-left" className="inline-help__gridicon-left" />
+					{ translate( 'Help' ) }
+				</Button>
 
+				<Button
+					onClick={ this.moreHelpClicked }
+					className="inline-help__more-button"
+					borderless
+					href="/help"
+				>
+					<Gridicon icon="help" className="inline-help__gridicon-left" />
+					{ translate( 'More help' ) }
+				</Button>
+
+				<Button onClick={ this.openContactView } className="inline-help__contact-button" borderless>
+					<Gridicon icon="chat" className="inline-help__gridicon-left" />
+					{ translate( 'Contact us' ) }
+					<Gridicon icon="chevron-right" className="inline-help__gridicon-right" />
+				</Button>
+
+				<Button
+					onClick={ this.closeSecondaryView }
+					className="inline-help__cancel-button"
+					borderless
+				>
+					<Gridicon icon="chevron-left" className="inline-help__gridicon-left" />
+					{ translate( 'Back' ) }
+				</Button>
+			</div>
+		);
+	};
+
+	renderPopoverContent = () => {
 		if ( this.props.isOnboardingWelcomeVisible ) {
 			return <ChecklistOnboardingWelcome onClose={ this.props.onClose } />;
 		}
@@ -139,36 +182,6 @@ class InlineHelpPopover extends Component {
 				</div>
 				{ this.renderSecondaryView() }
 				{ ! this.state.showSecondaryView && this.renderPrimaryView() }
-				<div className="inline-help__footer">
-					<Button
-						onClick={ this.moreHelpClicked }
-						className="inline-help__more-button"
-						borderless
-						href="/help"
-					>
-						<Gridicon icon="help" className="inline-help__gridicon-left" />
-						{ translate( 'More help' ) }
-					</Button>
-
-					<Button
-						onClick={ this.openContactView }
-						className="inline-help__contact-button"
-						borderless
-					>
-						<Gridicon icon="chat" className="inline-help__gridicon-left" />
-						{ translate( 'Contact us' ) }
-						<Gridicon icon="chevron-right" className="inline-help__gridicon-right" />
-					</Button>
-
-					<Button
-						onClick={ this.closeSecondaryView }
-						className="inline-help__cancel-button"
-						borderless
-					>
-						<Gridicon icon="chevron-left" className="inline-help__gridicon-left" />
-						{ translate( 'Back' ) }
-					</Button>
-				</div>
 			</Fragment>
 		);
 	};
@@ -257,7 +270,11 @@ class InlineHelpPopover extends Component {
 	};
 
 	render() {
-		const popoverClasses = { 'is-secondary-view-active': this.state.showSecondaryView };
+		const popoverClasses = {
+			'is-secondary-view-active': this.state.showSecondaryView,
+			'is-onboarding-welcome-active': this.props.isOnboardingWelcomeVisible,
+		};
+
 		return (
 			<Popover
 				isVisible
@@ -267,6 +284,7 @@ class InlineHelpPopover extends Component {
 				className={ classNames( 'inline-help__popover', popoverClasses ) }
 			>
 				{ this.renderPopoverContent() }
+				{ this.renderPopoverFooter() }
 			</Popover>
 		);
 	}
@@ -339,6 +357,7 @@ function mapStateToProps( state ) {
 }
 
 const mapDispatchToProps = {
+	hideOnboardingWelcomePrompt,
 	optOut,
 	optIn,
 	recordTracksEvent,
