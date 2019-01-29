@@ -81,13 +81,9 @@ class GifEdit extends Component {
 				if ( ! giphyData.images ) {
 					return;
 				}
-				if ( results > 1 ) {
-					this.setState( { results }, () => {
-						this.selectGiphy( giphyData );
-					} );
-				} else {
+				this.setState( { results }, () => {
 					this.selectGiphy( giphyData );
-				}
+				} );
 			} else {
 				// Error handling TK
 			}
@@ -157,14 +153,14 @@ class GifEdit extends Component {
 				) : (
 					<figure>
 						{ isSelected && inputFields }
-						{ isSelected && results && (
+						{ isSelected && results && results.length > 1 && (
 							<div className="wp-block-jetpack-gif_thumbnails-container">
 								{ results.map( thumbnail => {
 									if ( thumbnail.embed_url === giphyUrl ) {
 										return null;
 									}
 									const thumbnailStyle = {
-										backgroundImage: `url(${ thumbnail.images.preview_gif.url })`,
+										backgroundImage: `url(${ thumbnail.images.downsized_still.url })`,
 									};
 									return (
 										<button
