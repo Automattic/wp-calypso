@@ -179,26 +179,26 @@ class GifEdit extends Component {
 					</Placeholder>
 				) : (
 					<figure>
-						<div
-							className="wp-block-jetpack-gif_cover"
-							onClick={ this.setFocus }
-							onKeyDown={ this.setFocus }
-							ref={ this.textControlRef }
-							role="button"
-							tabIndex="0"
-						>
-							{ ( ! searchText || isSelected ) && (
-								<TextControl
-									className={ textControlClasses }
-									label={ INPUT_PROMPT }
-									placeholder={ INPUT_PROMPT }
-									onChange={ this.onSearchTextChange }
-									onClick={ this.maintainFocus }
-									value={ searchText }
-								/>
-							) }
-						</div>
 						<div className="wp-block-jetpack-gif-wrapper" style={ style }>
+							<div
+								className="wp-block-jetpack-gif_cover"
+								onClick={ this.setFocus }
+								onKeyDown={ this.setFocus }
+								ref={ this.textControlRef }
+								role="button"
+								tabIndex="0"
+							>
+								{ ( ! searchText || isSelected ) && (
+									<TextControl
+										className={ textControlClasses }
+										label={ INPUT_PROMPT }
+										placeholder={ INPUT_PROMPT }
+										onChange={ this.onSearchTextChange }
+										onClick={ this.maintainFocus }
+										value={ searchText }
+									/>
+								) }
+							</div>
 							<iframe src={ giphyUrl } title={ searchText } />
 							{ results && isSelected && (
 								<div className="wp-block-jetpack-gif_thumbnails-container">
