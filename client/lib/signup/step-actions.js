@@ -327,10 +327,9 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 }
 
 export function addDomainToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
-	const { siteId, siteSlug } = dependencies;
+	const { siteSlug } = dependencies;
 	const { domainItem, googleAppsCartItem } = stepProvidedItems;
 	const providedDependencies = {
-		siteId,
 		siteSlug,
 		domainItem,
 	};
@@ -401,11 +400,9 @@ function processItemCart(
 }
 
 export function launchSiteApi( callback, dependencies, {} ) {
-	const { siteId, siteSlug } = dependencies;
-	const providedDependencies = {
-		siteId,
-		siteSlug,
-	};
+	const { siteId } = dependencies;
+
+	const providedDependencies = { siteId };
 
 	wpcom.undocumented().launchSite( siteId, function( error ) {
 		if ( error ) {

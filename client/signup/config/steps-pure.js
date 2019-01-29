@@ -83,7 +83,7 @@ export function generateSteps( {
 		'domains-launch': {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
-			providesDependencies: [ 'domainItem', 'siteId', 'siteSlug' ],
+			providesDependencies: [ 'domainItem', 'siteSlug' ],
 			props: {
 				isDomainOnly: true,
 				showExampleSuggestions: false,
@@ -544,8 +544,8 @@ export function generateSteps( {
 		launch: {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
-			dependencies: [ 'siteId', 'siteSlug' ],
-			providesDependencies: [ 'siteId', 'siteSlug' ],
+			dependencies: [ 'siteId' ],
+			providesDependencies: [ 'siteId' ],
 			delayApiRequestUntilComplete: true,
 		},
 	};
