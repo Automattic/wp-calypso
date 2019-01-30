@@ -1,9 +1,14 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
+import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { noop } from 'lodash';
 
 /**
@@ -53,6 +58,17 @@ function getMediaContentInstance( props ) {
 }
 
 describe( 'MediaLibraryContent', () => {
+	let beforeWindow;
+
+	beforeAll( function() {
+		beforeWindow = global.window;
+		global.window = {};
+	} );
+
+	afterAll( function() {
+		global.window = beforeWindow;
+	} );
+
 	describe( 'getGoogleStatus', () => {
 		test( 'returns google status when using google source', () => {
 			const props = {
@@ -173,7 +189,9 @@ describe( 'MediaLibraryContent', () => {
 			const wrapper = getMediaContent( props );
 			const requestKeyringConnections = jest.fn();
 
+			jest.useFakeTimers();
 			wrapper.setProps( { mediaValidationErrorTypes, requestKeyringConnections } );
+			jest.advanceTimersByTime( 1 );
 
 			expect( requestKeyringConnections.mock.calls.length ).to.be.equal( 1 );
 		} );
@@ -183,7 +201,9 @@ describe( 'MediaLibraryContent', () => {
 			const wrapper = getMediaContent( props );
 			const requestKeyringConnections = jest.fn();
 
+			jest.useFakeTimers();
 			wrapper.setProps( { requestKeyringConnections } );
+			jest.advanceTimersByTime( 1 );
 
 			expect( requestKeyringConnections.mock.calls.length ).to.be.equal( 0 );
 		} );
