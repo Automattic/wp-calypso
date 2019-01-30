@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import { Component, Fragment } from '@wordpress/element';
+import { Component } from '@wordpress/element';
 import { ClipboardButton, TextControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import './clipboard-input.scss';
 
 class ClipboardInput extends Component {
 	state = {
@@ -29,7 +30,7 @@ class ClipboardInput extends Component {
 		}
 
 		return (
-			<Fragment>
+			<div className="jetpack-clipboard-input">
 				<TextControl readOnly onFocus={ this.onFocus } value={ link } />
 				<ClipboardButton
 					isDefault
@@ -39,7 +40,7 @@ class ClipboardInput extends Component {
 				>
 					{ hasCopied ? __( 'Copied!' ) : _x( 'Copy', 'verb' ) }
 				</ClipboardButton>
-			</Fragment>
+			</div>
 		);
 	}
 }

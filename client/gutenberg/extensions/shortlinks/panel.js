@@ -9,7 +9,6 @@ import { withSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import './editor.scss';
 import ClipboardInput from 'gutenberg/extensions/presets/jetpack/utils/clipboard-input';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
