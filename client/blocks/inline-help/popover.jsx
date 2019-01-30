@@ -13,7 +13,12 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
-import { VIEW_CONTACT, VIEW_RICH_RESULT, VIEW_CHECKLIST } from './constants';
+import {
+	VIEW_CONTACT,
+	VIEW_RICH_RESULT,
+	VIEW_CHECKLIST,
+	VIEW_ONBOARDING_WELCOME,
+} from './constants';
 import {
 	selectResult,
 	resetInlineHelpContactForm,
@@ -80,8 +85,21 @@ class InlineHelpPopover extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.props.isOnboardingWelcomeVisible ) {
+			return this.openOnboardingWelcomeView();
+		}
+
 		if ( this.props.isChecklistPromptVisible && this.props.isEligibleForChecklist ) {
-			this.openChecklistView();
+			return this.openChecklistView();
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if (
+			prevProps.isOnboardingWelcomeVisible !== this.props.isOnboardingWelcomeVisible &&
+			! this.props.isOnboardingWelcomeVisible
+		) {
+			this.closeSecondaryView();
 		}
 	}
 
@@ -110,6 +128,11 @@ class InlineHelpPopover extends Component {
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide` );
 		this.props.selectResult( -1 );
 		this.props.resetContactForm();
+		// If the welcome message is still active, return to that view
+		// otherwise close the secondary view altogether.
+		if ( this.props.isOnboardingWelcomeVisible ) {
+			return this.openOnboardingWelcomeView();
+		}
 		this.setState( { showSecondaryView: false } );
 	};
 
@@ -119,6 +142,10 @@ class InlineHelpPopover extends Component {
 
 	openChecklistView = () => {
 		this.openSecondaryView( VIEW_CHECKLIST );
+	};
+
+	openOnboardingWelcomeView = () => {
+		this.openSecondaryView( VIEW_ONBOARDING_WELCOME );
 	};
 
 	renderPopoverFooter = () => {
@@ -163,10 +190,6 @@ class InlineHelpPopover extends Component {
 	};
 
 	renderPopoverContent = () => {
-		if ( this.props.isOnboardingWelcomeVisible ) {
-			return <ChecklistOnboardingWelcome onClose={ this.props.onClose } />;
-		}
-
 		return (
 			<Fragment>
 				<QuerySupportTypes />
@@ -187,6 +210,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	renderSecondaryView = () => {
+		const { onClose, selectedResult, setDialogState } = this.props;
 		const classes = classNames(
 			'inline-help__secondary-view',
 			`inline-help__${ this.state.activeSecondaryView }`
@@ -195,15 +219,16 @@ class InlineHelpPopover extends Component {
 			<div className={ classes }>
 				{
 					{
-						contact: <InlineHelpContactView />,
-						richresult: (
+						[ VIEW_CONTACT ]: <InlineHelpContactView />,
+						[ VIEW_RICH_RESULT ]: (
 							<InlineHelpRichResult
-								result={ this.props.selectedResult }
-								setDialogState={ this.props.setDialogState }
-								closePopover={ this.props.onClose }
+								result={ selectedResult }
+								setDialogState={ setDialogState }
+								closePopover={ onClose }
 							/>
 						),
-						checklist: <WpcomChecklist closePopover={ this.props.onClose } viewMode="prompt" />,
+						[ VIEW_CHECKLIST ]: <WpcomChecklist closePopover={ onClose } viewMode="prompt" />,
+						[ VIEW_ONBOARDING_WELCOME ]: <ChecklistOnboardingWelcome onClose={ onClose } />,
 					}[ this.state.activeSecondaryView ]
 				}
 			</div>
@@ -272,7 +297,7 @@ class InlineHelpPopover extends Component {
 	render() {
 		const popoverClasses = {
 			'is-secondary-view-active': this.state.showSecondaryView,
-			'is-onboarding-welcome-active': this.props.isOnboardingWelcomeVisible,
+			'is-onboarding-welcome-active': VIEW_ONBOARDING_WELCOME === this.state.activeSecondaryView,
 		};
 
 		return (

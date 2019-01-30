@@ -1,6 +1,4 @@
 .checklist-onboarding-welcome {
-	margin: 15px 20px 20px;
-
 	h2 {
 		font-size: 18px;
 		font-weight: bold;
@@ -29,5 +27,6 @@
 	}
 	.button {
 		flex-grow: 1;
+		width: auto;
 	}
 }

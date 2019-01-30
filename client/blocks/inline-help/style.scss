@@ -361,9 +361,11 @@
 	}
 
 	.is-onboarding-welcome-active & {
+		.inline-help__cancel-button,
 		.inline-help__more-button {
 			display: none;
 		}
+		.inline-help__contact-button,
 		.inline-help__back-to-help-button {
 			display: inline-block;
 		}
