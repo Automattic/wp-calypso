@@ -41,7 +41,10 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
 import { login } from 'lib/paths';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import {
+	loadTrackingTool,
+	recordTracksEvent as recordTracksEventAction,
+} from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
 import {
 	ALREADY_CONNECTED,
@@ -169,6 +172,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	componentDidMount() {
+		this.props.loadTrackingTool( 'HotJar' );
 		this.trackAffiliate();
 	}
 
@@ -715,6 +719,7 @@ export default connect(
 	},
 	{
 		authorize: authorizeAction,
+		loadTrackingTool,
 		recordTracksEvent: recordTracksEventAction,
 		retryAuth: retryAuthAction,
 		trackAffiliateReferral: affiliateReferral,
