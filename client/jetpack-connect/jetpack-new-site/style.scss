@@ -146,8 +146,9 @@
 			background-color: var( --color-jetpack-400 );
 		}
 
-		&:focus {
+		.accessible-focus &:focus {
 			box-shadow: 0 0 0 2px var( --color-jetpack-light );
+			border-color: var( --color-jetpack-dark );
 		}
 
 		&[disabled],
