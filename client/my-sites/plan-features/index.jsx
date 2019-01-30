@@ -51,6 +51,7 @@ import {
 	isCurrentSitePlan,
 	isJetpackSite,
 } from 'state/sites/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import {
 	isBestValue,
 	isMonthly,
@@ -692,6 +693,7 @@ export default connect(
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
 		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
+		const isSiteAT = selectedSiteId ? isSiteAutomatedTransfer( state, selectedSiteId ) : false;
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
@@ -719,7 +721,8 @@ export default connect(
 				const currentPlan = sitePlan && sitePlan.product_slug;
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
-				const showMonthlyPrice = ! isJetpack || ( ! relatedMonthlyPlan && showMonthly );
+				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
+
 				let planFeatures = getPlanFeaturesObject(
 					planConstantObj.getPlanCompareFeatures( abtest )
 				);
