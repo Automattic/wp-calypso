@@ -40,6 +40,37 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		};
 	}
 
+	componentDidUpdate( prevProps ) {
+		// Check if there's a direct match for any subsequent
+		// HTTP requests
+		if ( prevProps.lastUpdated !== this.props.lastUpdated ) {
+			this.updateVerticalData(
+				this.searchInResult( this.state.searchValue ),
+				this.state.searchValue
+			);
+		}
+	}
+
+	searchInResult = value =>
+		find(
+			this.props.verticals,
+			item =>
+				item.vertical_name.toLowerCase() === value.toLowerCase() &&
+				false === item.is_user_input_vertical
+		);
+
+	updateVerticalData = ( result, value ) => {
+		// If there's not direct match
+		// return a default model
+		const verticalData = result || {
+			vertical_name: value,
+			vertical_slug: value,
+			is_user_input_vertical: true,
+		};
+
+		this.props.onChange( verticalData );
+	};
+
 	onSiteTopicChange = value => {
 		value = trim( value );
 
@@ -48,26 +79,19 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			this.props.requestVerticals.cancel();
 		}
 
+		const result = this.searchInResult( value );
+
 		if (
 			value &&
 			value.length >= this.props.charsToTriggerSearch &&
 			// Don't trigger a search if there's already an exact, non-user-defined match from the API
-			! find( this.props.verticals, { vertical_name: value, is_user_input_vertical: false } )
+			! result
 		) {
 			this.props.requestVerticals( value );
 		}
 
-		this.setState( { siteTopicValue: value } );
-
-		// Pluck out any match from the vertical list
-		// otherwise return a default model
-		const verticalData = find( this.props.verticals, { vertical_name: value } ) || {
-			vertical_name: value,
-			vertical_slug: value,
-			is_user_input_vertical: true,
-		};
-
-		this.props.onChange( verticalData );
+		this.setState( { searchValue: value } );
+		this.updateVerticalData( result, value );
 	};
 
 	getSuggestions = () => this.props.verticals.map( vertical => vertical.vertical_name );
@@ -98,7 +122,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 
 	render() {
 		const { translate, placeholder, autoFocus } = this.props;
-
 		return (
 			<SuggestionSearch
 				id="siteTopic"
@@ -113,7 +136,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	}
 }
 
-const SITE_VERTICALS_REQUEST_ID = 'site-verticals-search-results';
+export const SITE_VERTICALS_REQUEST_ID = 'site-verticals-search-results';
 const requestSiteVerticals = debounce(
 	( searchTerm, limit = 5 ) => {
 		return requestHttpData(
@@ -141,10 +164,10 @@ const requestSiteVerticals = debounce(
 export default localize(
 	connect(
 		() => {
-			const siteVerticalsHttpData = getHttpData( SITE_VERTICALS_REQUEST_ID );
+			const siteVerticalHttpData = getHttpData( SITE_VERTICALS_REQUEST_ID );
 			return {
-				isSearchPending: 'pending' === get( siteVerticalsHttpData, 'state', false ),
-				verticals: get( siteVerticalsHttpData, 'data', [] ),
+				lastUpdated: get( siteVerticalHttpData, 'lastUpdated', [] ),
+				verticals: get( siteVerticalHttpData, 'data', [] ),
 			};
 		},
 		() => ( { requestVerticals: requestSiteVerticals } )

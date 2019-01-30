@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +15,9 @@ import { connect } from 'react-redux';
 import Button from 'components/button';
 import StepWrapper from 'signup/step-wrapper';
 import FormFieldset from 'components/forms/form-fieldset';
-import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
+import SiteVerticalsSuggestionSearch, {
+	SITE_VERTICALS_REQUEST_ID,
+} from 'components/site-verticals-suggestion-search';
 import { submitSiteVertical, setSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import {
 	getSiteVerticalName,
@@ -25,6 +28,7 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { getHttpData } from 'state/data-layer/http-data';
 
 /**
  * Style dependencies
@@ -71,7 +75,7 @@ class SiteTopicStep extends Component {
 	};
 
 	renderContent() {
-		const { translate, siteTopic } = this.props;
+		const { isButtonDisabled, siteTopic, translate } = this.props;
 		return (
 			<div className="site-topic__content">
 				<form onSubmit={ this.onSubmit }>
@@ -81,7 +85,7 @@ class SiteTopicStep extends Component {
 							initialValue={ siteTopic }
 							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						/>
-						<Button type="submit" disabled={ ! siteTopic } primary>
+						<Button type="submit" disabled={ isButtonDisabled } primary>
 							{ translate( 'Continue' ) }
 						</Button>
 					</FormFieldset>
@@ -169,12 +173,19 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 
 export default localize(
 	connect(
-		state => ( {
-			siteTopic: getSiteVerticalName( state ),
-			siteSlug: getSiteVerticalSlug( state ),
-			siteType: getSiteType( state ),
-			isUserInput: getSiteVerticalIsUserInput( state ),
-		} ),
+		state => {
+			const siteTopic = getSiteVerticalName( state );
+			const isButtonDisabled =
+				! siteTopic ||
+				'success' !== get( getHttpData( SITE_VERTICALS_REQUEST_ID ), 'state', false );
+			return {
+				siteTopic,
+				siteSlug: getSiteVerticalSlug( state ),
+				siteType: getSiteType( state ),
+				isUserInput: getSiteVerticalIsUserInput( state ),
+				isButtonDisabled,
+			};
+		},
 		mapDispatchToProps
 	)( SiteTopicStep )
 );
