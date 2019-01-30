@@ -32,7 +32,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
 import RecentRenewals from './recent-renewals';
-import DomainRegistrationRefundPolicy from './credits-payment-box';
+import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 
 const debug = debugFactory( 'calypso:checkout:payment:apple-pay' );
 

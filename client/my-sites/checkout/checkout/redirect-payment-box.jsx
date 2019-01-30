@@ -29,7 +29,7 @@ import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-spe
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
-import DomainRegistrationRefundPolicy from './credits-payment-box';
+import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 
 export class RedirectPaymentBox extends PureComponent {
 	static displayName = 'RedirectPaymentBox';

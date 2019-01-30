@@ -31,7 +31,7 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 import RecentRenewals from './recent-renewals';
-import DomainRegistrationRefundPolicy from './credits-payment-box';
+import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 
 export class WechatPaymentBox extends Component {
 	static propTypes = {

@@ -31,7 +31,7 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
-import DomainRegistrationRefundPolicy from './credits-payment-box';
+import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 
 export class CreditCardPaymentBox extends React.Component {
 	static propTypes = {

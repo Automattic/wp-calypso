@@ -25,7 +25,7 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import CartToggle from './cart-toggle';
 import wp from 'lib/wp';
 import RecentRenewals from './recent-renewals';
-import DomainRegistrationRefundPolicy from './credits-payment-box';
+import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 
 const wpcom = wp.undocumented();
 

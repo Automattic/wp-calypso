@@ -18,7 +18,7 @@ import CartToggle from './cart-toggle';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import { hasOnlyProductsOf } from 'lib/cart-values/cart-items';
 import { isBlogger } from 'lib/products-values';
-import DomainRegistrationRefundPolicy from './credits-payment-box';
+import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 
 class FreeCartPaymentBox extends React.Component {
 	static propTypes = {
