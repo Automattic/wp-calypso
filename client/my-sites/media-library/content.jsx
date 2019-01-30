@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { groupBy, head, isEmpty, map, noop, size, values } from 'lodash';
+import { groupBy, head, isEmpty, map, noop, size, values, defer } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { localize } from 'i18n-calypso';
@@ -75,19 +75,23 @@ export class MediaLibraryContent extends React.Component {
 			this.props.toggleGuidedTour( this.props.shouldPauseGuidedTour );
 		}
 
+		// We do these here as the data and actions are in Redux and Flux, and it gets tricky
 		if (
 			! this.hasGoogleServiceExpired( prevProps ) &&
 			this.hasGoogleServiceExpired( this.props )
 		) {
 			// As soon as we detect Google has expired, trigger a keyring refresh so our keyring store is updated
-			this.props.requestKeyringConnections();
+			// Note: we defer to avoid dispatcher conflicts when calling Redux from inside Flux
+			defer( () => {
+				this.props.requestKeyringConnections();
+			} );
 		}
 
 		if (
 			this.getGoogleStatus( prevProps ) === 'invalid' &&
 			this.getGoogleStatus( this.props ) === 'ok'
 		) {
-			// Transitioned from an invalid Google status to a valid one - migration is complete
+			// We have transitioned from an invalid Google status to a valid one - migration is complete
 			// Force a refresh of the list (this won't happen automatically as we've cached our previous query that failed)
 			MediaActions.sourceChanged( this.props.site.ID );
 		}
