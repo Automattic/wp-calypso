@@ -239,6 +239,13 @@
 	--color-whatsapp: #43d854;
 	--color-wordpress-org: #585c60;
 
+	--color-plan-free: #{$muriel-gray-500};
+	--color-plan-blogger: #{$muriel-celadon-500};
+	--color-plan-personal: #{$muriel-hot-blue-500};
+	--color-plan-premium: #{$muriel-yellow-500};
+	--color-plan-business: #{$muriel-orange-500};
+	--color-plan-ecommerce: #{$muriel-hot-purple-500};
+
 	--color-section-nav-item-background-hover: #{$muriel-blue-0};
 	--color-themes-active-text: #{$muriel-blue-0};
 	--color-themes-active-text-rgb: #{hex-to-rgb( $muriel-blue-0 )};
