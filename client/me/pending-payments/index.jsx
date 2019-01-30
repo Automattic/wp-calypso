@@ -74,7 +74,7 @@ export class PendingPayments extends Component {
 					<EmptyContent
 						title={ translate( 'Looking to upgrade?' ) }
 						line={ translate(
-							'Our plans give your site the power to thrive. ' + 'Find the plan that works for you.'
+							'Our plans give your site the power to thrive. Find the plan that works for you.'
 						) }
 						action={ translate( 'Upgrade Now' ) }
 						actionURL={ '/plans' }
@@ -88,7 +88,7 @@ export class PendingPayments extends Component {
 					<Banner
 						callToAction={ translate( 'Back to My Sites' ) }
 						description={ translate(
-							'Your payment initiation has been confirmed. We are currently waiting for the funds to clear.'
+							'Your payment initiation has been confirmed. We are currently waiting for the funds to clear, this transfer process can take up to one week to complete.'
 						) }
 						event="pending-payment-confirmation"
 						icon="star"
