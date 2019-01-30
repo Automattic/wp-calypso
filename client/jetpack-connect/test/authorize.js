@@ -54,6 +54,7 @@ const DEFAULT_PROPS = deepFreeze( {
 	isAlreadyOnSitesList: false,
 	isFetchingAuthorizationSite: false,
 	isFetchingSites: false,
+	loadTrackingTool: noop,
 	recordTracksEvent: noop,
 	retryAuth: noop,
 	siteSlug: SITE_SLUG,

@@ -48,6 +48,7 @@ const DEFAULT_PROPS = deepFreeze( {
 		userEmail: `email@${ SITE_SLUG }`,
 	},
 	createAccount: noop,
+	loadTrackingTool: noop,
 	path: '/jetpack/connect/authorize',
 	recordTracksEvent: noop,
 	translate: identity,
