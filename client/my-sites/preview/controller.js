@@ -17,6 +17,7 @@ export function preview( context, next ) {
 			site={ context.params.site }
 			help={ typeof context.query.help !== 'undefined' }
 			checklist={ typeof context.query.checklist !== 'undefined' }
+			welcome={ typeof context.query.welcome !== 'undefined' }
 		/>
 	);
 	next();

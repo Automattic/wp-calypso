@@ -137,13 +137,13 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	showPreviewAfterLogin = () => {
-		const destination = [ 'onboarding', 'onboarding-dev', 'onboarding-for-business' ].includes(
+		const redirectTo = [ 'onboarding', 'onboarding-dev', 'onboarding-for-business' ].includes(
 			this.props.flowName
 		)
-			? 'view'
-			: 'checklist';
+			? `/view/${ this.state.siteSlug }?welcome`
+			: `/checklist/${ this.state.siteSlug }`;
 
-		this.props.loginHandler( { redirectTo: `/${ destination }/${ this.state.siteSlug }` } );
+		this.props.loginHandler( { redirectTo } );
 	};
 
 	shouldShowChecklist() {
