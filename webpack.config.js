@@ -48,7 +48,9 @@ const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 class BuildCustomPropertiesCssPlugin {
 	apply( compiler ) {
 		compiler.hooks.compile.tap( 'BuildCustomPropertiesCssPlugin', () =>
-			execSync( 'node', [ path.join( __dirname, 'bin', 'build-custom-properties-css.js' ) ] )
+			execSync( 'node ' + path.join( __dirname, 'bin', 'build-custom-properties-css.js' ), {
+				cwd: __dirname,
+			} )
 		);
 	}
 }
