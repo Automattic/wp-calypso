@@ -129,17 +129,15 @@
 		text-align: right;
 		flex-grow: 1;
 		padding-left: 20px;
-
-		.site-mockup__phone {
-			margin-left: 20px;
-		}
 	}
 
 	.is-mobile & {
 		font-size: 14px;
 		line-height: 1.4;
 		margin: 10px 0;
-
+		.site-mockup__tagline-separator {
+			display: none;
+		}
 		.site-mockup__phone {
 			display: block;
 		}

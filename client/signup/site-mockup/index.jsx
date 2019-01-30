@@ -103,12 +103,18 @@ class SiteMockups extends Component {
 		if ( isEmpty( address ) && isEmpty( phone ) ) {
 			return translate( 'You’ll be able to customize this to your needs.' );
 		}
+
+		const shouldShowAddress = ! isEmpty( address );
+		const shouldShowPhone = ! isEmpty( phone );
 		return (
 			<>
-				{ ! isEmpty( address ) && (
+				{ shouldShowAddress && (
 					<span className="site-mockup__address">{ this.formatAddress( address ) }</span>
 				) }
-				{ ! isEmpty( phone ) && <span className="site-mockup__phone">{ phone }</span> }
+				{ shouldShowAddress && shouldShowPhone && (
+					<span className="site-mockup__tagline-separator"> &middot; </span>
+				) }
+				{ shouldShowPhone && <span className="site-mockup__phone">{ phone }</span> }
 			</>
 		);
 	}
