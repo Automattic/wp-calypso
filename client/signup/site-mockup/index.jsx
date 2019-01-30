@@ -99,22 +99,22 @@ class SiteMockups extends Component {
 
 	getTagline() {
 		const { address, phone } = this.props;
+		const hasAddress = ! isEmpty( address );
+		const hasPhone = ! isEmpty( phone );
 
-		if ( isEmpty( address ) && isEmpty( phone ) ) {
+		if ( ! hasAddress && ! hasPhone ) {
 			return translate( 'You’ll be able to customize this to your needs.' );
 		}
 
-		const shouldShowAddress = ! isEmpty( address );
-		const shouldShowPhone = ! isEmpty( phone );
 		return (
 			<>
-				{ shouldShowAddress && (
+				{ hasAddress && (
 					<span className="site-mockup__address">{ this.formatAddress( address ) }</span>
 				) }
-				{ shouldShowAddress && shouldShowPhone && (
+				{ hasAddress && hasPhone && (
 					<span className="site-mockup__tagline-separator"> &middot; </span>
 				) }
-				{ shouldShowPhone && <span className="site-mockup__phone">{ phone }</span> }
+				{ hasPhone && <span className="site-mockup__phone">{ phone }</span> }
 			</>
 		);
 	}
