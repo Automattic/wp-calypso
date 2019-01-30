@@ -12,7 +12,6 @@ const config = {
 				shippedProposals: true, // allows es7 features like Promise.prototype.finally
 			},
 		],
-		'@babel/react',
 	],
 	plugins: [
 		'@babel/plugin-syntax-dynamic-import',
