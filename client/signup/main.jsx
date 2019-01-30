@@ -186,6 +186,10 @@ class Signup extends React.Component {
 		this.checkForCartItems( signupDependencies );
 	}
 
+	componentWillUnmount() {
+		this.signupFlowController.cleanup();
+	}
+
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		this.recordSignupStart();
@@ -193,7 +197,6 @@ class Signup extends React.Component {
 
 	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
 		const filteredDestination = getDestination( destination, dependencies, this.props.flowName );
-
 		return this.handleFlowComplete( dependencies, filteredDestination );
 	};
 
