@@ -195,6 +195,7 @@ class MediaLibraryExternalHeader extends React.Component {
 				{ config.isEnabled( 'external-media/google-photos/date-filters' ) && hasDateFilters && (
 					<div className="media-library__date-range">
 						<DateRange
+							isCompact={ true }
 							onDateCommit={ this.onDateChange }
 							lastSelectableDate={ this.props.moment() }
 						/>
