@@ -116,7 +116,7 @@ class SiteType extends Component {
 				stepContent={ this.renderContent() }
 				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ hasInitializedSitesBackUrl }
-				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to dashboard' ) : null }
+				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to My Sites' ) : null }
 			/>
 		);
 	}
@@ -125,7 +125,7 @@ class SiteType extends Component {
 export default connect(
 	state => ( {
 		siteType: getSiteType( state ),
-		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/' : false,
+		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
 	( dispatch, { goToNextStep, flowName } ) => ( {
 		submitStep: siteTypeValue => {
