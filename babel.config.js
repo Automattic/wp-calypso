@@ -25,6 +25,8 @@ const config = {
 		],
 		'@babel/react',
 	],
+	// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
+	exclude: [ 'transform-typeof-symbol' ],
 	plugins: _.compact( [
 		[
 			path.join(
