@@ -96,7 +96,7 @@ export class PendingPayments extends Component {
 					/>
 					<div>
 						{ pendingPayments.map( purchase => (
-							<PendingListItem key={ purchase.siteId } { ...purchase } />
+							<PendingListItem key={ purchase.orderId } { ...purchase } />
 						) ) }
 					</div>
 				</React.Fragment>
