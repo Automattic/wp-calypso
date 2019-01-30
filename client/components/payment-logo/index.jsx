@@ -32,6 +32,7 @@ const ALT_TEXT = {
 		comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
 	} ),
 	'web-payment': 'Web Payment',
+	sofort: 'Sofort',
 };
 
 export const POSSIBLE_TYPES = keys( ALT_TEXT );
