@@ -41,7 +41,7 @@ class DomainRegistrationRefundPolicy extends React.Component {
 
 		if ( cartItems.hasDomainBeingUsedForPlan( this.props.cart ) ) {
 			message = this.props.translate(
-				'{{refundsSupportPage}}Domain name refunds{{/refundsSupportPage}} are limited to 48 hours after registration. Refunds of paid plans will be less the standard cost of any domain name registered within a plan.',
+				'{{refundsSupportPage}}Domain name refunds{{/refundsSupportPage}} are limited to 48 hours after registration. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
 				{
 					components: {
 						refundsSupportPage: (
