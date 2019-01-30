@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, find, get, noop, startsWith, trim, uniq } from 'lodash';
+import { debounce, find, get, noop, startsWith, trim, uniq, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -51,12 +51,10 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		}
 	}
 
-	searchInResult = value =>
+	searchInResult = ( value = '' ) =>
 		find(
 			this.props.verticals,
-			item =>
-				item.vertical_name.toLowerCase() === value.toLowerCase() &&
-				false === item.is_user_input_vertical
+			item => item.vertical_name.toLowerCase() === value.toLowerCase() && ! isEmpty( item.preview )
 		);
 
 	updateVerticalData = ( result, value ) => {

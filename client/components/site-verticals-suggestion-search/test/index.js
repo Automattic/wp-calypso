@@ -21,7 +21,14 @@ const defaultProps = {
 	requestVerticals: jest.fn(),
 	translate: str => str,
 	initialValue: 'scooby',
-	verticals: [ { vertical_name: 'doo', vertical_slug: 'doo', is_user_input_vertical: false } ],
+	verticals: [
+		{
+			vertical_name: 'doo',
+			vertical_slug: 'doo',
+			is_user_input_vertical: false,
+			preview: '<marquee />',
+		},
+	],
 	charsToTriggerSearch: 2,
 };
 
@@ -65,6 +72,56 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		expect( defaultProps.requestVerticals.cancel ).toHaveBeenCalledTimes( 2 );
 	} );
 
+	describe( 'searchInResult()', () => {
+		test( 'should return `undefined` by default', () => {
+			const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
+			expect( wrapper.instance().searchInResult() ).toBeUndefined();
+		} );
+
+		test( 'should return `undefined` when vertical preview is not in vertical item', () => {
+			const wrapper = shallow(
+				<SiteVerticalsSuggestionSearch
+					{ ...defaultProps }
+					verticals={ [
+						{ vertical_name: 'doo', vertical_slug: 'doo', is_user_input_vertical: false },
+					] }
+				/>
+			);
+			expect( wrapper.instance().searchInResult() ).toBeUndefined();
+		} );
+
+		test( 'should return found match', () => {
+			const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
+			expect( wrapper.instance().searchInResult( 'DOO' ) ).toEqual( defaultProps.verticals[ 0 ] );
+		} );
+	} );
+
+	describe( 'updateVerticalData()', () => {
+		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
+		test( 'should return default vertical object', () => {
+			wrapper.instance().updateVerticalData();
+			expect( defaultProps.onChange ).toHaveBeenLastCalledWith( {
+				vertical_name: undefined,
+				vertical_slug: undefined,
+				is_user_input_vertical: true,
+			} );
+		} );
+
+		test( 'should return default vertical object with value', () => {
+			wrapper.instance().updateVerticalData( undefined, 'ciao' );
+			expect( defaultProps.onChange ).toHaveBeenLastCalledWith( {
+				vertical_name: 'ciao',
+				vertical_slug: 'ciao',
+				is_user_input_vertical: true,
+			} );
+		} );
+
+		test( 'should return result', () => {
+			wrapper.instance().updateVerticalData( { deal: 'nodeal' }, 'ciao' );
+			expect( defaultProps.onChange ).toHaveBeenLastCalledWith( { deal: 'nodeal' } );
+		} );
+	} );
+
 	describe( 'sortSearchResults()', () => {
 		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
 		test( 'should return sorted results with `startsWith` matches at the start and exact match at the end', () => {
@@ -80,7 +137,7 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 			] );
 		} );
 
-		test( 'should omit non-matchess', () => {
+		test( 'should omit non-matches', () => {
 			const sortedResults = wrapper
 				.instance()
 				.sortSearchResults( [ 'Bar', 'Bartender', 'Foobar', 'Terminal spiv' ], 'spiv' );
