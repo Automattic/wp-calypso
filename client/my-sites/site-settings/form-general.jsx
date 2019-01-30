@@ -464,7 +464,7 @@ export class SiteSettingsFormGeneral extends Component {
 					<div className="site-settings__general-settings-launch-site-text">
 						<p>
 							{ translate(
-								"Your site hasn't been launched yet. Only you can see it until it is launched."
+								"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 							) }
 						</p>
 					</div>
@@ -496,16 +496,35 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	disablePrivacySettings = e => {
+		e.target.blur();
+	};
+
 	privacySettingsWrapper() {
 		if ( this.props.isUnlaunchedSite ) {
 			if ( this.props.needsVerification ) {
-				return <EmailVerificationGate>{ this.renderLaunchSite() }</EmailVerificationGate>;
+				return (
+					<EmailVerificationGate>
+						{ this.renderLaunchSite() }
+						{ this.privacySettings() }
+					</EmailVerificationGate>
+				);
 			}
 
-			return this.renderLaunchSite();
+			return (
+				<>
+					{ this.renderLaunchSite() }
+					<div
+						className="site-settings__disable-privacy-settings"
+						onFocus={ this.disablePrivacySettings }
+					>
+						{ this.privacySettings() }
+					</div>
+				</>
+			);
 		}
 
-		return this.privacySettings();
+		return <>{ this.privacySettings() }</>;
 	}
 
 	render() {
