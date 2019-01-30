@@ -27,7 +27,6 @@ import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
 import SiteIconSetting from './site-icon-setting';
@@ -350,70 +349,6 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	netNeutralityOption() {
-		const {
-			fields,
-			isRequestingSettings,
-			translate,
-			handleToggle,
-			moment,
-			handleSubmitForm,
-			isSavingSettings,
-		} = this.props;
-
-		const today = moment();
-		// Days and years are 1-indexed, and other things are 0-indexed; i.e. December is month 11.
-		const lastDay = moment( { year: 2017, month: 11, day: 31 } );
-
-		if ( today.isAfter( lastDay, 'day' ) ) {
-			return null;
-		}
-
-		return (
-			<div>
-				<SettingsSectionHeader
-					disabled={ isRequestingSettings || isSavingSettings }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
-					showButton
-					title={ translate( 'Net Neutrality' ) }
-				/>
-				<Card>
-					<FormFieldset>
-						<CompactFormToggle
-							checked={ !! fields.net_neutrality }
-							disabled={ isRequestingSettings }
-							onChange={ handleToggle( 'net_neutrality' ) }
-						>
-							{ translate(
-								'The FCC wants to repeal Net Neutrality. Without Net Neutrality, ' +
-									'big cable and telecom companies can divide the internet into fast ' +
-									'and slow lanes. What would the Internet look like without net neutrality? ' +
-									'Find out by enabling this banner on your site: it shows your support ' +
-									'for real net neutrality rules by displaying a message on the bottom ' +
-									'of your site and "slowing down" some of your posts. ' +
-									'{{netNeutralityLink}}Learn more about Net Neutrality{{/netNeutralityLink}}',
-								{
-									components: {
-										netNeutralityLink: (
-											<a
-												target="_blank"
-												rel="noopener noreferrer"
-												href={
-													'https://en.blog.wordpress.com/2017/07/11/join-us-in-the-fight-for-net-neutrality/'
-												}
-											/>
-										),
-									},
-								}
-							) }
-						</CompactFormToggle>
-					</FormFieldset>
-				</Card>
-			</div>
-		);
-	}
-
 	Timezone() {
 		const { fields, isRequestingSettings, translate, moment } = this.props;
 		const guessedTimezone = moment.tz.guess();
@@ -549,8 +484,6 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
-				{ ! siteIsJetpack && this.netNeutralityOption() }
-
 				<SettingsSectionHeader
 					data-tip-target="settings-site-profile-save"
 					disabled={ isRequestingSettings || isSavingSettings }
@@ -664,7 +597,6 @@ const getFormSettings = settings => {
 		timezone_string: '',
 		blog_public: '',
 		admin_url: '',
-		net_neutrality: false,
 	};
 
 	if ( ! settings ) {
@@ -678,8 +610,6 @@ const getFormSettings = settings => {
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
 		timezone_string: settings.timezone_string,
-
-		net_neutrality: settings.net_neutrality,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
