@@ -66,15 +66,6 @@
 	padding-bottom: 6px;
 }
 
-.editor-media-modal .media-library__scale-toggle,
-.editor-media-modal .media-library__scale-range.range {
-	right: 16px;
-
-	@include breakpoint( '>660px' ) {
-		right: 24px;
-	}
-}
-
 .editor-media-modal .media-library__content .no-results {
 	padding: 0 24px 24px;
 }

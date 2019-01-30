@@ -1,13 +1,38 @@
 
 .media-library__date-range {
+
+	.date-range__trigger {
+		white-space: nowrap;
+	}
+	
+	.date-range__trigger-btn {
+		color: var(--color-text-subtle);
+	}
+
+	.date-range__clear-btn {
+		padding-left: 0.5em;
+		padding-right: 0.5em;
+	}
 	
 	.date-range__trigger-btn.button {
 		margin-right: 0; // ensure cancel button butts up against the main trigger
 	}
 
 	.date-range__trigger-btn-text {
+		font-size: 12px;
+
 		@include breakpoint( '<660px' ) {
 			@include hide-content-accessibly;
 		}
 	}
 }
+
+.main-column .media-library__date-range  {
+	.date-range__trigger-btn-text {
+		@include breakpoint( '<1040px' ) { 
+			@include hide-content-accessibly;
+		}
+	}
+}
+
+

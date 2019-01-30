@@ -1,14 +1,66 @@
 .media-library__header.card {
 	padding-top: 12px;
-	padding-bottom: 12px;
+	padding-bottom: 0; // we will fake the padding with bottom margin on the child elements (see below)
 	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start; 
+
+	&:after {
+		display: none; // remove clearfix to allow flex to work
+	}
+	
+	// this achives fake padding on the "media-library__header" so that when 
+	// elements wrap on smaller screens they are evenly spaced
+	> * {
+		margin-bottom: 12px; 
+	}
+
+	> .button {
+		white-space: nowrap;
+	}
+}
+
+.media-library__scale {
+	display: flex;
+	justify-content: flex-end;
+	
+	@include breakpoint( '>480px' ) {
+		margin-left: auto; // push to far RHS on large enough screens
+	}
+}
+
+.media-library__scale > * {
+	margin-bottom: 0;
+}
+
+.media-library__scale-toggle {
+
+	&.segmented-control.is-compact .segmented-control__link {
+		padding: 2px 4px;
+	}
+
+	@include breakpoint( '>480px' ) {
+		display: none;
+	}
+}
+
+.media-library__scale-range {
+	display: none;
+	min-width: 80px;
+
+	@include breakpoint( '>480px' ) {
+		display: block;
+	}
+}
+
+.media-library__scale-toggle .gridicon {
+	margin: 2px 4px;
+	vertical-align: middle;
 }
 
 .dialog__content .media-library__header.card {
 	box-shadow: none;
-	.media-library__scale-range.range {
-		top: 11px;
-	}
 }
 
 .media-library__header .is-desktop {
@@ -19,8 +71,16 @@
 	}
 }
 
+.media-library__header-start,
+.media-library__header-end {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
 .media-library__header-item,
-.media-library__header .button {
+.media-library__header .button,
+.media-library__header .button-group {
 	margin-right: 8px;
 	line-height: 1.5;
 }
@@ -192,30 +252,7 @@
 	}
 }
 
-.media-library__scale-toggle {
-	position: absolute;
-	right: 16px;
-	&.segmented-control.is-compact .segmented-control__link {
-		padding: 2px 4px;
-	}
 
-	@include breakpoint( '>480px' ) {
-		display: none;
-	}
-}
-
-.media-library__scale-range {
-	display: none;
-
-	@include breakpoint( '>480px' ) {
-		display: block;
-	}
-}
-
-.media-library__scale-toggle .gridicon {
-	margin: 2px 4px;
-	vertical-align: middle;
-}
 
 .media-library__content .notice {
 	margin-bottom: 0;
