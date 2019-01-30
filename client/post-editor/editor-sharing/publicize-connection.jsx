@@ -16,10 +16,12 @@ import Gridicon from 'gridicons';
  */
 import FormCheckbox from 'components/forms/form-checkbox';
 import PostMetadata from 'lib/post-metadata';
+import { addSiteFragment } from 'lib/route';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { updatePostMetadata, deletePostMetadata } from 'state/posts/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
@@ -35,6 +37,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 		connection: PropTypes.object,
 		onRefresh: PropTypes.func,
 		label: PropTypes.string,
+		siteSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -65,7 +68,8 @@ export class EditorSharingPublicizeConnection extends React.Component {
 		return (
 			! connection ||
 			connection.read_only ||
-			( connection.service === 'facebook' && ! this.isAdditionalExternalUser( connection ) )
+			( connection.service === 'facebook' && ! this.isAdditionalExternalUser( connection ) ) ||
+			( 'linkedin' === connection.service && 'must_reauth' === connection.status )
 		);
 	};
 
@@ -163,6 +167,35 @@ export class EditorSharingPublicizeConnection extends React.Component {
 		);
 	};
 
+	/**
+	 * If a connection needs reauthentication, display a warning linked to Sharing settings page so users can disconnect and reconnect.
+	 *
+	 * @returns {object} Warning about connection.
+	 */
+	renderMustReauthConnection = () => {
+		const { connection, siteSlug } = this.props;
+		if ( ! connection || connection.status !== 'must_reauth' ) {
+			return;
+		}
+
+		return (
+			<Notice
+				isCompact
+				className="editor-sharing__must-reauth-publicize-connection"
+				status="is-warning"
+				showDismiss={ false }
+			>
+				{ this.props.translate(
+					'Your LinkedIn connection needs to be reauthenticated to continue working – head to Sharing to take care of it.'
+				) }
+				<NoticeAction href={ addSiteFragment( '/sharing', siteSlug ) }>
+					{ this.props.translate( 'Go to Sharing settings' ) }{' '}
+					<Gridicon icon="external" size={ 18 } />
+				</NoticeAction>
+			</Notice>
+		);
+	};
+
 	render() {
 		const { connection, label } = this.props;
 
@@ -179,6 +212,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 				</label>
 				{ this.renderFacebookProfileWarning() }
 				{ this.renderBrokenConnection() }
+				{ this.renderMustReauthConnection() }
 			</div>
 		);
 	}
@@ -188,18 +222,17 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
-		const post = getEditedPost( state, siteId, postId );
-		const isKeyringFetching = isKeyringConnectionsFetching( state );
 
-		let keyringConnection = null;
-		if ( ownProps.connection ) {
-			keyringConnection = getKeyringConnectionById(
-				state,
-				ownProps.connection.keyring_connection_ID
-			);
-		}
-
-		return { isKeyringFetching, keyringConnection, siteId, postId, post };
+		return {
+			siteId,
+			postId,
+			post: getEditedPost( state, siteId, postId ),
+			isKeyringFetching: isKeyringConnectionsFetching( state ),
+			keyringConnection: ownProps.connection
+				? getKeyringConnectionById( state, ownProps.connection.keyring_connection_ID )
+				: null,
+			siteSlug: getSiteSlug( state, siteId ),
+		};
 	},
 	{ updatePostMetadata, deletePostMetadata, recordEditorStat, recordEditorEvent }
 )( localize( EditorSharingPublicizeConnection ) );
