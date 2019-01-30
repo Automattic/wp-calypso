@@ -412,12 +412,12 @@ const connectComponent = connect(
 	{
 		checkUrl,
 		dismissUrl,
+		loadTrackingTool,
 		recordTracksEvent,
 	}
 );
 
 export default flowRight(
 	connectComponent,
-	loadTrackingTool,
 	localize
 )( JetpackConnectMain );
