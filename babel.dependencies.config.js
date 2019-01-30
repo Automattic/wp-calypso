@@ -13,6 +13,8 @@ const config = {
 			},
 		],
 	],
+	// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
+	exclude: [ 'transform-typeof-symbol' ],
 	plugins: [
 		'@babel/plugin-syntax-dynamic-import',
 		[
