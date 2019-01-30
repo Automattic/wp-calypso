@@ -18,7 +18,7 @@ Our naming is based on function and describes the meaning of the color, not the 
 | `--color-accent`  | Accent (aka secondary) color |
 | `--color-neutral` | Gray color                   |
 | `--color-success` | Success status               |
-| `--color-warning` | Waring status                |
+| `--color-warning` | Warning status                |
 | `--color-error`   | Error status                 |
 
 
