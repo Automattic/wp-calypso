@@ -124,6 +124,10 @@
 	font-size: 15px;
 	font-weight: 400;
 
+	.site-mockup__phone {
+		white-space: nowrap;
+	}
+
 	.is-desktop & {
 		line-height: 25px;
 		text-align: right;
