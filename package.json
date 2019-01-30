@@ -243,7 +243,7 @@
     "build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || npm run build-client",
     "build-client-if-desktop": "node -e \"process.env.CALYPSO_ENV === 'desktop' && process.exit(1)\" || npm run build-client",
     "build-packages": "node bin/build-packages.js",
-    "sdk": "node bin/sdk-cli.js",
+    "sdk": "npm run prebuild-css && node bin/sdk-cli.js",
     "clean": "npm run -s clean:build && npm run -s clean:devdocs && npm run -s clean:public && npm run -s clean:packages",
     "clean:build": "npx rimraf build server/bundler/*.json .babel-cache",
     "clean:devdocs": "npx rimraf server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json",
