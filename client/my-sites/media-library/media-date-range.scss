@@ -2,11 +2,16 @@
 .media-library__date-range {
 
 	.date-range__trigger {
-		white-space: nowrap;
+		white-space: nowrap;		
 	}
 	
 	.date-range__trigger-btn {
 		color: var(--color-text-subtle);
+	}
+	
+	.date-range__trigger .date-range__trigger-btn:active {
+		border-right-width: 1px; // fix "jump" when button is clicked
+		border-right-color: transparent; // fix "jump" when button is clicked
 	}
 
 	.date-range__clear-btn {
