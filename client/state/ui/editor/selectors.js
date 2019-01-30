@@ -16,6 +16,7 @@ import { getPreference } from 'state/preferences/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { isPublished, isBackDatedPublished, isFutureDated, getPreviewURL } from 'state/posts/utils';
 import getEditorUrl from 'state/selectors/get-editor-url';
+import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 
 /**
  * Returns the current editor post ID, or `null` if a new post.
@@ -49,6 +50,20 @@ export function isEditorNewPost( state ) {
 export function getEditorDuplicatePostPath( state, siteId, postId, type = 'post' ) {
 	const editorNewPostPath = getEditorUrl( state, siteId, null, type );
 	return `${ editorNewPostPath }?copy=${ postId }`;
+}
+
+/**
+ * Returns the editor URL of a Calypsoified site for duplicating a given site ID, post ID pair.
+ *
+ * @param  {Object} state       Global state tree
+ * @param  {Number} siteId      Site ID
+ * @param  {Number} postId      Post ID
+ * @param  {String} type        Post type
+ * @return {String}             Editor URL path
+ */
+export function getCalypsoifyEditorDuplicatePostPath( state, siteId, postId, type = 'post' ) {
+	const gutenbergEditorUrl = getGutenbergEditorUrl( state, siteId, null, type );
+	return `${ gutenbergEditorUrl }&jetpack-copy=${ postId }`;
 }
 
 /**

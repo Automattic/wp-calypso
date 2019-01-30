@@ -15,7 +15,10 @@ import { includes } from 'lodash';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { getPost } from 'state/posts/selectors';
 import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
-import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
+import {
+	getEditorDuplicatePostPath,
+	getCalypsoifyEditorDuplicatePostPath,
+} from 'state/ui/editor/selectors';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
@@ -28,11 +31,10 @@ function PostActionsEllipsisMenuDuplicate( {
 	type,
 	duplicateUrl,
 	onDuplicateClick,
-	calypsoifyGutenberg,
 } ) {
 	const validStatus = includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], status );
 
-	if ( ! canEdit || ! validStatus || 'post' !== type || calypsoifyGutenberg ) {
+	if ( ! canEdit || ! validStatus || 'post' !== type ) {
 		return null;
 	}
 
@@ -51,7 +53,6 @@ PostActionsEllipsisMenuDuplicate.propTypes = {
 	type: PropTypes.string,
 	duplicateUrl: PropTypes.string,
 	onDuplicateClick: PropTypes.func,
-	calypsoifyGutenberg: PropTypes.bool,
 };
 
 const mapStateToProps = ( state, { globalId } ) => {
@@ -60,14 +61,18 @@ const mapStateToProps = ( state, { globalId } ) => {
 		return {};
 	}
 
+	const calypsoifyGutenberg =
+		isCalypsoifyGutenbergEnabled( state, post.site_ID ) &&
+		'gutenberg' === getSelectedEditor( state, post.site_ID );
+	const duplicateUrl = !! calypsoifyGutenberg
+		? getCalypsoifyEditorDuplicatePostPath( state, post.site_ID, post.ID )
+		: getEditorDuplicatePostPath( state, post.site_ID, post.ID );
+
 	return {
 		canEdit: canCurrentUserEditPost( state, globalId ),
+		duplicateUrl,
 		status: post.status,
 		type: post.type,
-		duplicateUrl: getEditorDuplicatePostPath( state, post.site_ID, post.ID ),
-		calypsoifyGutenberg:
-			isCalypsoifyGutenbergEnabled( state, post.site_ID ) &&
-			'gutenberg' === getSelectedEditor( state, post.site_ID ),
 	};
 };
 
