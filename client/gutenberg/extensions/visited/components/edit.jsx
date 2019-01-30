@@ -20,8 +20,8 @@ const getRadioOptions = memoize( threshold => [
 ] );
 
 export default class VisitedEdit extends Component {
-	onChangeCriteria = criteria => this.props.setAttributes( { criteria } );
-	onChangeThreshold = threshold => {
+	setCriteria = criteria => this.props.setAttributes( { criteria } );
+	setThreshold = threshold => {
 		threshold.length &&
 			Number.isFinite( +threshold ) &&
 			+threshold > 0 &&
@@ -34,13 +34,13 @@ export default class VisitedEdit extends Component {
 				<PanelBody title={ __( 'Visibility settings' ) }>
 					<RadioControl
 						label={ __( 'Criteria' ) }
-						onChange={ this.onChangeCriteria }
+						onChange={ this.setCriteria }
 						options={ getRadioOptions( this.props.attributes.threshold ) }
 						selected={ this.props.attributes.criteria }
 					/>
 					<TextControl
 						label={ __( 'Visit count threshold' ) }
-						onChange={ this.onChangeThreshold }
+						onChange={ this.setThreshold }
 						type="number"
 						min="1"
 						defaultValue={ this.props.attributes.threshold }
