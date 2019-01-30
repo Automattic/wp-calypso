@@ -3,9 +3,8 @@
 /**
  * External dependencies
  */
-import { Component } from '@wordpress/element';
 import { InnerBlocks } from '@wordpress/editor';
-
+import classnames from 'classnames';
 /**
  * Internal dependencies
  */
@@ -34,30 +33,22 @@ const ALLOWED_BLOCKS = [
 
 const TEMPLATE = [ [ 'jetpack/email' ], [ 'jetpack/phone' ], [ 'jetpack/address' ] ];
 
-class ContactInfoEdit extends Component {
-	constructor( ...args ) {
-		super( ...args );
-	}
+const ContactInfoEdit = props => {
+	const {
+		attributes: {},
+		isSelected,
+	} = props;
 
-	render() {
-		const {
-			attributes: {},
-			isSelected,
-		} = this.props;
-		return (
-			<div
-				className={
-					isSelected ? 'jetpack-contact-info-block is-selected' : 'jetpack-contact-info-block'
-				}
-			>
-				<InnerBlocks
-					allowedBlocks={ ALLOWED_BLOCKS }
-					templateLock={ false }
-					template={ TEMPLATE }
-				/>
-			</div>
-		);
-	}
-}
+	return (
+		<div
+			className={ classnames( {
+				'jetpack-contact-info-block': true,
+				'is-selected': isSelected,
+			} ) }
+		>
+			<InnerBlocks allowedBlocks={ ALLOWED_BLOCKS } templateLock={ false } template={ TEMPLATE } />
+		</div>
+	);
+};
 
 export default ContactInfoEdit;
