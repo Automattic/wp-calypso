@@ -9,7 +9,6 @@
 		"paths": [ "/store" ],
 		"module": "woocommerce",
 		"group": "sites",
-		"secondary": true,
-		"css": "woocommerce"
+		"secondary": true
 	}
 }
