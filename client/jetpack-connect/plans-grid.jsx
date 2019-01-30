@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +14,7 @@ import FormattedHeader from 'components/formatted-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlansSkipButton from 'components/plans/plans-skip-button';
 import { abtest } from 'lib/abtest';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Constants
@@ -34,6 +33,10 @@ class JetpackPlansGrid extends Component {
 		// Connected
 		translate: PropTypes.func.isRequired,
 	};
+
+	componentDidMount() {
+		this.props.loadTrackingTool( 'HotJar' );
+	}
 
 	handleSkipButtonClick = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
@@ -90,6 +93,7 @@ class JetpackPlansGrid extends Component {
 export default connect(
 	null,
 	{
+		loadTrackingTool,
 		recordTracksEvent,
 	}
 )( localize( JetpackPlansGrid ) );
