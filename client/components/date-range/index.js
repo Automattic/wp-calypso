@@ -263,7 +263,7 @@ export class DateRange extends Component {
 		}
 
 		this.setState( {
-			focusedMonth: date.toDate(),
+			focusedMonth: date,
 		} );
 	};
 
@@ -643,9 +643,15 @@ export class DateRange extends Component {
 			'date-range__picker': true,
 		};
 
+		// If we don't have an explicit month focused then default to the startDate being focused
+		// this ensures that when reopening the picker we will have the startDate shown in the calendar
+		const focusedMonth = isNull( this.state.focusedMonth )
+			? this.state.startDate
+			: this.state.focusedMonth;
+
 		return (
 			<DatePicker
-				calendarViewDate={ this.state.focusedMonth }
+				calendarViewDate={ this.momentDateToJsDate( focusedMonth ) }
 				rootClassNames={ rootClassNames }
 				modifiers={ modifiers }
 				showOutsideDays={ false }
