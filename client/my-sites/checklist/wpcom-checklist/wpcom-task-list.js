@@ -62,6 +62,10 @@ export default class WpcomTaskList {
 			if ( hasTask( 'email_forwarding_upgraded_to_gsuite' ) ) {
 				addTask( 'email_forwarding_upgraded_to_gsuite' );
 			}
+
+			if ( hasTask( 'gsuite_tos_accepted' ) ) {
+				addTask( 'gsuite_tos_accepted' );
+			}
 		}
 
 		debug( 'designType: ', designType );
@@ -78,6 +82,15 @@ export default class WpcomTaskList {
 
 	has( taskId ) {
 		return !! this.get( taskId );
+	}
+
+	remove( taskId ) {
+		const found = this.get( taskId );
+		if ( ! found ) {
+			return null;
+		}
+		this.tasks = this.tasks.filter( task => task.id !== taskId );
+		return found;
 	}
 
 	getFirstIncompleteTask() {

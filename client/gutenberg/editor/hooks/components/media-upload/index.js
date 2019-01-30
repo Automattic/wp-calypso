@@ -4,7 +4,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { debounce, includes, isArray, map } from 'lodash';
+import { includes, isArray, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,7 +12,6 @@ import { debounce, includes, isArray, map } from 'lodash';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
-import MediaStore from 'lib/media/store';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { mediaCalypsoToGutenberg } from './utils';
 
@@ -22,9 +21,6 @@ export class MediaUpload extends Component {
 	};
 
 	componentDidMount() {
-		if ( includes( this.props.allowedTypes, 'image' ) ) {
-			MediaStore.on( 'change', this.updateMedia );
-		}
 		MediaActions.setLibrarySelectedItems( this.props.siteId, this.getSelectedItems() );
 	}
 
@@ -58,19 +54,6 @@ export class MediaUpload extends Component {
 		}
 	};
 
-	updateMedia = debounce( () => {
-		const { multiple, siteId, value } = this.props;
-		if ( ! value ) {
-			return;
-		}
-		const media = {
-			items: multiple
-				? map( value, id => MediaStore.get( siteId, id ) )
-				: [ MediaStore.get( siteId, value ) ],
-		};
-		this.insertMedia( media );
-	} );
-
 	onCloseModal = media => {
 		if ( media ) {
 			this.insertMedia( media );
@@ -78,8 +61,20 @@ export class MediaUpload extends Component {
 		this.closeModal();
 	};
 
-	getDisabledDataSources = () =>
-		includes( this.props.allowedTypes, 'image' ) ? [] : [ 'google_photos', 'pexels' ];
+	getDisabledDataSources = () => {
+		const { allowedTypes } = this.props;
+		// Additional data sources are enabled for all blocks supporting images.
+		// The File block supports images, but doesn't explicitly allow any media type:
+		// its `allowedTypes` prop can be either undefined or an empty array.
+		if (
+			! allowedTypes ||
+			( isArray( allowedTypes ) && ! allowedTypes.length ) ||
+			includes( allowedTypes, 'image' )
+		) {
+			return [];
+		}
+		return [ 'google_photos', 'pexels' ];
+	};
 
 	getEnabledFilters = () => {
 		const { allowedTypes } = this.props;
@@ -90,7 +85,7 @@ export class MediaUpload extends Component {
 			video: 'videos',
 		};
 
-		return isArray( allowedTypes )
+		return isArray( allowedTypes ) && allowedTypes.length
 			? allowedTypes.map( type => enabledFiltersMap[ type ] )
 			: undefined;
 	};

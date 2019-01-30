@@ -1,6 +1,6 @@
 // The main comment list wrapper
 .comments__comment-list {
-	border-top: 1px solid $gray-lighten-20;
+	border-top: 1px solid var( --color-neutral-100 );
 	clear: both;
 	margin: 36px 0;
 	padding-top: 11px;
@@ -30,8 +30,8 @@
 
 	.gravatar {
 		position: absolute;
-			top: 0;
-			left: 0;
+		top: 0;
+		left: 0;
 		border-radius: 48px;
 	}
 
@@ -62,8 +62,8 @@
 
 		textarea {
 			position: absolute;
-				top: 0;
-				left: 0;
+			top: 0;
+			left: 0;
 			height: 100%;
 			resize: none;
 		}
@@ -83,17 +83,17 @@
 	button {
 		opacity: 0;
 		position: absolute;
-		  top: 4px;
-		  right: 16px;
+		top: 4px;
+		right: 16px;
 		padding: 4px;
 		font-size: 12px;
 		font-weight: 600;
 		text-transform: uppercase;
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {
-			color: var( --color-accent );
+			color: var( --color-primary );
 			cursor: pointer;
 		}
 
@@ -103,7 +103,7 @@
 	}
 
 	button:focus {
-		outline: dotted 1px var( --color-accent );
+		outline: dotted 1px var( --color-primary );
 		color: var( --color-primary );
 	}
 
@@ -119,11 +119,10 @@
 	margin-bottom: -3px;
 	font-family: $sans;
 	text-align: center;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 	padding-top: 22px;
 	font-size: 14px;
 }
-
 
 // A list of comments
 .comments__list {
@@ -167,8 +166,8 @@
 
 		textarea {
 			position: absolute;
-				top: 0;
-				left: 0;
+			top: 0;
+			left: 0;
 			height: 100%;
 			resize: none;
 		}
@@ -188,17 +187,17 @@
 	button {
 		opacity: 0;
 		position: absolute;
-		  top: 4px;
-		  right: 16px;
+		top: 4px;
+		right: 16px;
 		padding: 4px;
 		font-size: 12px;
 		font-weight: 600;
 		text-transform: uppercase;
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {
-			color: var( --color-accent );
+			color: var( --color-primary );
 			cursor: pointer;
 		}
 
@@ -208,7 +207,7 @@
 	}
 
 	button:focus {
-		outline: dotted 1px var( --color-accent );
+		outline: dotted 1px var( --color-primary );
 		color: var( --color-primary );
 	}
 
@@ -268,8 +267,8 @@
 	.gridicon {
 		fill: $gray;
 		position: relative;
-			left: -5px;
-			top: 3px;
+		left: -5px;
+		top: 3px;
 	}
 }
 
@@ -284,7 +283,7 @@
 }
 
 .comments__comment-author {
-	color: $gray-darken-30;
+	color: var( --color-neutral-600 );
 	display: flex;
 	flex-wrap: wrap;
 	font-size: 14px;
@@ -293,29 +292,29 @@
 	.gravatar {
 		border-radius: 48px;
 		position: absolute;
-			top: 8px;
-			left: -41px;
+		top: 8px;
+		left: -41px;
 	}
 }
 
 .comments__comment-trackbackicon {
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	border-radius: 50%;
 	height: 32px;
 	margin-right: 9px;
 	position: absolute;
-		left: 1px;
-		top: -5px;
+	left: 1px;
+	top: -5px;
 	width: 32px;
 
 	.gridicon {
 		height: 24px;
-		fill: $gray-lighten-10;
+		fill: var( --color-neutral-200 );
 		margin-left: 4px;
 		margin-top: 4px;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		top: -4px;
 	}
 }
@@ -361,13 +360,13 @@
 }
 
 .comments__comment-username {
-	color: $gray-darken-30;
+	color: var( --color-neutral-600 );
 	height: 21px;
 	margin-right: 7px;
 }
 
 a.comments__comment-username {
-	color: var( --color-accent );
+	color: var( --color-primary );
 	height: 21px;
 
 	&:hover {
@@ -399,7 +398,7 @@ a.comments__comment-username {
 	word-break: break-word;
 
 	p {
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 
 		&:last-child {
 			margin-bottom: 0;
@@ -407,10 +406,10 @@ a.comments__comment-username {
 	}
 
 	blockquote {
-		background: $gray-light;
-		border-left: 2px solid $gray-lighten-30;
+		background: var( --color-neutral-0 );
+		border-left: 2px solid var( --color-neutral-0 );
 		border-radius: 0;
-		color: $gray-darken-30;
+		color: var( --color-neutral-600 );
 		margin: 8px 0 16px;
 		padding: 8px 16px;
 	}
@@ -462,7 +461,7 @@ a.comments__comment-username {
 		}
 
 		&:hover {
-			color: var( --color-accent );
+			color: var( --color-primary );
 		}
 
 		&.comments__comment-actions-cancel-reply {
@@ -486,7 +485,7 @@ a.comments__comment-username {
 		display: none;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		.comments__comment-actions-approve,
 		.comments__comment-actions-trash,
 		.comments__comment-actions-spam,
@@ -499,7 +498,7 @@ a.comments__comment-username {
 		}
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		.like-button .like-button__label-status {
 			display: inline;
 		}
@@ -509,7 +508,7 @@ a.comments__comment-username {
 .comments__comment-actions-approve {
 	.gridicon .gridicon-checkmark,
 	&.is-approved {
-		color: $orange-jazzy;
+		color: $muriel-green-500;
 	}
 }
 
@@ -522,7 +521,7 @@ a.comments__comment-username {
 	overflow: auto;
 
 	&.is-no-comments {
-	  display: none;
+		display: none;
 	}
 }
 
@@ -541,16 +540,16 @@ a.comments__comment-username {
 
 .comments__view-replies-btn {
 	cursor: pointer;
-	background-color: $gray-light;
+	background-color: var( --color-neutral-0 );
 	width: 100%;
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	text-align: left;
 	margin-top: 15px;
 	padding: 5px 10px 10px 12px;
 
 	.gridicon {
 		position: relative;
-			top: 4px;
+		top: 4px;
 		margin-right: 4px;
 		transform: rotate( 180deg );
 	}
@@ -569,13 +568,13 @@ a.comments__comment-username {
 }
 
 .comments__comment-actions .comments__comment-actions-read-more {
-	color: var( --color-accent );
+	color: var( --color-primary );
 	margin: 0 10px 0 -3px;
 	padding-left: 0;
 }
 
 .comments__comment-actions-read-more-icon {
-	fill: var( --color-accent );
+	fill: var( --color-primary );
 }
 
 // Hide certain elements in excerpt comments

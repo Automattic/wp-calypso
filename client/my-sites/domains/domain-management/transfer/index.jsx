@@ -50,14 +50,13 @@ function Transfer( props ) {
 				<VerticalNavItem path={ domainManagementTransferOut( slug, selectedDomainName ) }>
 					{ translate( 'Transfer to another registrar' ) }
 				</VerticalNavItem>
-				{ ! isAtomic &&
-					! isDomainOnly && (
-						<VerticalNavItem
-							path={ domainManagementTransferToAnotherUser( slug, selectedDomainName ) }
-						>
-							{ translate( 'Transfer to another user' ) }
-						</VerticalNavItem>
-					) }
+				{ ! isAtomic && ! isDomainOnly && (
+					<VerticalNavItem
+						path={ domainManagementTransferToAnotherUser( slug, selectedDomainName ) }
+					>
+						{ translate( 'Transfer to another user' ) }
+					</VerticalNavItem>
+				) }
 
 				{ ( ( isAtomic && ! isPrimaryDomain ) || ! isAtomic ) && ( // Simple and Atomic (not primary domain )
 					<VerticalNavItem path={ domainManagementTransferToOtherSite( slug, selectedDomainName ) }>

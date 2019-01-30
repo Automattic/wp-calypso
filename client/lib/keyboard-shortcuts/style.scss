@@ -8,7 +8,7 @@
 	list-style: none;
 	margin: 0;
 	max-width: 620px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .keyboard-shortcuts__category {

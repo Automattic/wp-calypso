@@ -15,23 +15,31 @@ $image-height: 47px;
 }
 
 .wp-login__header {
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	font-size: 16px;
 	margin-bottom: 16px;
 	text-align: center;
+
+	body.is-section-signup & {
+		color: var( --color-white );
+	}
 }
 
 .wp-login__links,
 .wp-login__footer {
 	a, button {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		text-decoration: none;
+
+		body.is-section-signup & {
+			color: var( --color-white );
+		}
 	}
 }
 
 .wp-login__links {
 	a, button {
-		border-bottom: 1px solid $gray-lighten-20;
+		border-bottom: 1px solid var( --color-neutral-100 );
 		box-sizing: border-box;
 		cursor: pointer;
 		display: block;
@@ -40,6 +48,10 @@ $image-height: 47px;
 		padding: 0 24px;
 		text-align: left;
 		width: 100%;
+
+		body.is-section-signup & {
+			color: var( --color-white );
+		}
 	}
 
 	a:last-of-type {
@@ -57,8 +69,8 @@ $image-height: 47px;
 }
 
 .wp-login__footer--jetpack {
-	background: #fff;
-	border-top: solid 1px #f9fbfc;
+	background: var( --color-white );
+	border-top: solid 1px var( --color-neutral-50 );
 	text-align: center;
 
 	img {

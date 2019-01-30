@@ -51,7 +51,8 @@ function SignupFlowController( options ) {
 
 	this._assertFlowHasValidDependencies();
 
-	SignupProgressStore.on( 'change', this._process.bind( this ) );
+	this._onStoreChange = this._process.bind( this );
+	SignupProgressStore.on( 'change', this._onStoreChange );
 
 	this._resetStoresIfProcessing(); // reset the stores if the cached progress contained a processing step
 	this._resetStoresIfUserHasLoggedIn(); // reset the stores if user has newly authenticated
@@ -281,6 +282,10 @@ assign( SignupFlowController.prototype, {
 	reset() {
 		SignupProgressStore.reset();
 		SignupDependencyStore.reset();
+	},
+
+	cleanup() {
+		SignupProgressStore.off( 'change', this._onStoreChange );
 	},
 
 	changeFlowName( flowName ) {

@@ -62,19 +62,22 @@ function checkAuthCode( domainName, authCode, onComplete ) {
 
 function checkDomainAvailability( params, onComplete ) {
 	const { domainName, blogId } = params;
+	const isCartPreCheck = get( params, 'isCartPreCheck', false );
 	if ( ! domainName ) {
 		onComplete( null, { status: domainAvailability.EMPTY_QUERY } );
 		return;
 	}
 
-	wpcom.undocumented().isDomainAvailable( domainName, blogId, function( serverError, result ) {
-		if ( serverError ) {
-			onComplete( serverError.error );
-			return;
-		}
+	wpcom
+		.undocumented()
+		.isDomainAvailable( domainName, blogId, isCartPreCheck, function( serverError, result ) {
+			if ( serverError ) {
+				onComplete( serverError.error );
+				return;
+			}
 
-		onComplete( null, result );
-	} );
+			onComplete( null, result );
+		} );
 }
 
 function checkInboundTransferStatus( domainName, onComplete ) {
@@ -299,6 +302,28 @@ function getAvailableTlds( query = {} ) {
 	return wpcom.undocumented().getAvailableTlds( query );
 }
 
+function getDomainTypeText( domain = {} ) {
+	switch ( domain.type ) {
+		case domainTypes.MAPPED:
+			return 'Mapped Domain';
+
+		case domainTypes.REGISTERED:
+			return 'Registered Domain';
+
+		case domainTypes.SITE_REDIRECT:
+			return 'Site Redirect';
+
+		case domainTypes.WPCOM:
+			return 'Wpcom Domain';
+
+		case domainTypes.TRANSFER:
+			return 'Transfer';
+
+		default:
+			return '';
+	}
+}
+
 export {
 	canAddGoogleApps,
 	canRedirect,
@@ -307,6 +332,7 @@ export {
 	checkInboundTransferStatus,
 	getDomainPrice,
 	getDomainProductSlug,
+	getDomainTypeText,
 	getFixedDomainSearch,
 	getGoogleAppsSupportedDomains,
 	getMappedDomains,

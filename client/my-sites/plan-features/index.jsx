@@ -717,7 +717,9 @@ export default connect(
 				const newPlan = isNew( plan ) && ! isPaid;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
-				const showMonthlyPrice = ! relatedMonthlyPlan && showMonthly;
+
+				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
+				const showMonthlyPrice = ! isJetpack || ( ! relatedMonthlyPlan && showMonthly );
 				let planFeatures = getPlanFeaturesObject(
 					planConstantObj.getPlanCompareFeatures( abtest )
 				);

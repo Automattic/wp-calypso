@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import ScreenReaderText from 'components/screen-reader-text';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -122,7 +123,7 @@ class SharingConnection extends Component {
 						size={ 36 }
 					/>
 				) }
-				<span className="screen-reader-text">{ this.props.connection.label }</span>
+				<ScreenReaderText>{ this.props.connection.label }</ScreenReaderText>
 			</span>
 		);
 	}

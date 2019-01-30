@@ -22,6 +22,7 @@ export default class JetpackHeaderExample extends PureComponent {
 				<JetpackHeader partnerSlug="milesweb" />
 				<JetpackHeader partnerSlug="bluehost" />
 				<JetpackHeader partnerSlug="inmotion" />
+				<JetpackHeader partnerSlug="liquidweb" />
 			</div>
 		),
 	};

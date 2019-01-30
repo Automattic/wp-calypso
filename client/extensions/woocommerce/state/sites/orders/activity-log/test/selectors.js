@@ -398,7 +398,7 @@ describe( 'selectors', () => {
 					type: 'LABEL_REFUND_REJECTED',
 					timestamp: 4200000,
 					serviceName: 'Xpress',
-					labelIndex: 3,
+					labelIndex: 4,
 				},
 				{
 					key: 4,
@@ -409,7 +409,7 @@ describe( 'selectors', () => {
 					expiryDate: 4500000,
 					showDetails: true, // Refund rejected, user can refund/reprint again
 					labelId: 4,
-					labelIndex: 3,
+					labelIndex: 4,
 					amount: 10,
 					currency: 'CAD',
 					refundableAmount: 10,
@@ -426,7 +426,7 @@ describe( 'selectors', () => {
 					type: 'LABEL_REFUND_COMPLETED',
 					timestamp: 3200000,
 					serviceName: 'First Class',
-					labelIndex: 2,
+					labelIndex: 3,
 					amount: 6.95,
 					currency: 'USD',
 				},
@@ -439,7 +439,7 @@ describe( 'selectors', () => {
 					expiryDate: null,
 					showDetails: false, // Already requested refund
 					labelId: 3,
-					labelIndex: 2,
+					labelIndex: 3,
 					amount: 7,
 					currency: 'USD',
 					refundableAmount: 7,
@@ -456,7 +456,7 @@ describe( 'selectors', () => {
 					type: 'LABEL_REFUND_REQUESTED',
 					timestamp: 2100000,
 					serviceName: 'Xpress',
-					labelIndex: 1,
+					labelIndex: 2,
 					amount: 7,
 					currency: 'CAD',
 				},
@@ -469,7 +469,7 @@ describe( 'selectors', () => {
 					expiryDate: 2500000,
 					showDetails: false, // Already requested refund
 					labelId: 2,
-					labelIndex: 1,
+					labelIndex: 2,
 					amount: 7,
 					currency: 'CAD',
 					refundableAmount: 7,
@@ -490,7 +490,7 @@ describe( 'selectors', () => {
 					expiryDate: 1500000,
 					showDetails: true,
 					labelId: 1,
-					labelIndex: 0,
+					labelIndex: 1,
 					amount: 5,
 					currency: 'USD',
 					refundableAmount: 4.5,
@@ -501,6 +501,14 @@ describe( 'selectors', () => {
 					serviceName: 'First Class',
 					receiptId: 654321,
 					anonymized: false,
+				},
+				{
+					key: 10001,
+					type: 'LABEL_PURCHASING',
+					labelIndex: 0,
+					labelId: 10001,
+					serviceName: 'First Class',
+					carrierId: 'usps',
 				},
 			] );
 		} );

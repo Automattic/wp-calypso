@@ -6,10 +6,12 @@ import save from './save';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 import { Path } from '@wordpress/components';
+import { isEmpty } from 'lodash';
+import { RawHTML } from '@wordpress/element';
 
 export const name = 'subscriptions';
 export const settings = {
-	title: __( 'Subscription form' ),
+	title: __( 'Subscription Form' ),
 
 	description: (
 		<p>
@@ -29,7 +31,46 @@ export const settings = {
 		subscribePlaceholder: { type: 'string', default: __( 'Email Address' ) },
 		subscribeButton: { type: 'string', default: __( 'Subscribe' ) },
 		showSubscribersTotal: { type: 'boolean', default: false },
+		submitButtonText: {
+			type: 'string',
+			default: __( 'Subscribe' ),
+		},
+		customBackgroundButtonColor: { type: 'string' },
+		customTextButtonColor: { type: 'string' },
+		submitButtonClasses: { type: 'string' },
 	},
 	edit,
 	save,
+	deprecated: [
+		{
+			attributes: {
+				subscribeButton: { type: 'string', default: __( 'Subscribe' ) },
+				showSubscribersTotal: { type: 'boolean', default: false },
+			},
+			migrate: attr => {
+				return {
+					subscribeButton: '',
+					submitButtonText: attr.subscribeButton,
+					showSubscribersTotal: attr.showSubscribersTotal,
+					customBackgroundButtonColor: '',
+					customTextButtonColor: '',
+					submitButtonClasses: '',
+				};
+			},
+
+			isEligible: attr => {
+				if ( ! isEmpty( attr.subscribeButton ) ) {
+					return false;
+				}
+				return true;
+			},
+			save: function( { attributes } ) {
+				return (
+					<RawHTML>{ `[jetpack_subscription_form show_subscribers_total="${
+						attributes.showSubscribersTotal
+					}" show_only_email_and_button="true"]` }</RawHTML>
+				);
+			},
+		},
+	],
 };

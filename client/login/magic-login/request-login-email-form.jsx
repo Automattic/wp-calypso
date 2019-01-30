@@ -144,16 +144,15 @@ class RequestLoginEmailForm extends React.Component {
 						status="is-error"
 					/>
 				) }
-				{ currentUser &&
-					currentUser.username && (
-						<p>
-							{ translate( 'NOTE: You are already logged in as user: %(user)s', {
-								args: {
-									user: currentUser.username,
-								},
-							} ) }
-						</p>
-					) }
+				{ currentUser && currentUser.username && (
+					<p>
+						{ translate( 'NOTE: You are already logged in as user: %(user)s', {
+							args: {
+								user: currentUser.username,
+							},
+						} ) }
+					</p>
+				) }
 				<LoggedOutForm onSubmit={ this.onSubmit }>
 					<p>
 						{ translate(

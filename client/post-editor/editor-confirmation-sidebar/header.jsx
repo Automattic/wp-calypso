@@ -25,7 +25,7 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 				{ translate(
 					'{{strong}}Almost there!{{/strong}} ' +
 						'Double-check your settings, then ' +
-						'use the big green button to publish!',
+						'press the "Publish!" button.',
 					{
 						comment:
 							'This string appears as the header for the confirmation sidebar ' +
@@ -47,7 +47,7 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 				{ translate(
 					'{{strong}}Almost there!{{/strong}} ' +
 						'Double-check your settings below, then ' +
-						'use the big green button to schedule!',
+						'press the "Schedule!" button.',
 					{
 						comment:
 							'This string appears as the header for the confirmation sidebar ' +

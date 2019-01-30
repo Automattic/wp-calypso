@@ -48,6 +48,7 @@ class Document extends React.Component {
 			urls,
 			hasSecondary,
 			sectionGroup,
+			sectionName,
 			clientData,
 			isFluidWidth,
 			sectionCss,
@@ -122,6 +123,8 @@ class Document extends React.Component {
 					className={ classNames( {
 						rtl: isRTL,
 						'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
+						[ 'is-group-' + sectionGroup ]: sectionGroup,
+						[ 'is-section-' + sectionName ]: sectionName,
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
@@ -138,6 +141,7 @@ class Document extends React.Component {
 							<div
 								className={ classNames( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
+									[ 'is-section-' + sectionName ]: sectionName,
 								} ) }
 							>
 								<div className="masterbar" />
@@ -179,10 +183,10 @@ class Document extends React.Component {
 
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 					{ /*
-						* inline manifest in production, but reference by url for development.
-						* this lets us have the performance benefit in prod, without breaking HMR in dev
-						* since the manifest needs to be updated on each save
-						*/ }
+					 * inline manifest in production, but reference by url for development.
+					 * this lets us have the performance benefit in prod, without breaking HMR in dev
+					 * since the manifest needs to be updated on each save
+					 */ }
 					{ env === 'development' && <script src="/calypso/manifest.js" /> }
 					{ env !== 'development' && (
 						<script
@@ -222,11 +226,12 @@ class Document extends React.Component {
 					/>
 					<script
 						nonce={ inlineScriptNonce }
-						type="text/javascript"
 						dangerouslySetInnerHTML={ {
 							__html: `
-							if ( 'serviceWorker' in navigator ) {
-								navigator.serviceWorker.register( '/service-worker.js' );
+							if ('serviceWorker' in navigator) {
+								window.addEventListener('load', function() {
+									navigator.serviceWorker.register('/service-worker.js');
+								});
 							}
 						 `,
 						} }

@@ -22,7 +22,7 @@
 
 .domain-management-form-footer,
 .primary-domain__actions {
-	border-top: 1px solid $gray-light;
+	border-top: 1px solid var( --color-neutral-0 );
 	margin: 16px -16px -16px -16px;
 	padding: 16px;
 	display: flex;
@@ -40,7 +40,7 @@
 		margin: 0 0 0 15px;
 
 		&.is-primary {
-			margin: 0 0 15px 0;
+			margin: 0 0 15px;
 
 			@include breakpoint( '>480px' ) {
 				margin: 0;
@@ -78,11 +78,11 @@
 
 .domain-management-list-item {
 	&.busy {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 
 		.domain-management-list-item__title,
 		.domain-management-list-item__meta {
-			color: $gray-lighten-20;
+			color: var( --color-neutral-100 );
 		}
 	}
 }
@@ -100,7 +100,7 @@
 
 .domain-management-list-item__title {
 	display: block;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	font-weight: 600;
 	text-overflow: ellipsis;
@@ -167,7 +167,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 .domain-management-list-item__busy-message {
 	text-transform: uppercase;
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	font-weight: 600;
 	font-size: 12px;
 	text-overflow: ellipsis;
@@ -191,9 +191,9 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 
 	.primary-domain-notice {
-		background: $gray-lighten-30;
+		background: var( --color-neutral-0 );
 		font-size: 13px;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		&::before {
 			line-height: 1.5em;
 		}
@@ -218,21 +218,21 @@ input[type='radio'].domain-management-list-item__radio {
 
 	.contact-display {
 		h2 {
-			background-color: $gray-light;
-			border: 1px solid $gray-lighten-30;
+			background-color: var( --color-neutral-0 );
+			border: 1px solid var( --color-neutral-0 );
 			border-bottom: 0;
 			color: $gray;
 			font-size: 11px;
 			font-weight: 600;
 			line-height: 1;
-			margin: 16px 0 0 0;
+			margin: 16px 0 0;
 			padding: 8px 0;
 			text-transform: uppercase;
 			text-align: center;
 		}
 
 		.contact-display-content {
-			border: 1px solid $gray-lighten-30;
+			border: 1px solid var( --color-neutral-0 );
 			color: lighten( $gray-dark, 20% );
 			font-size: 12px;
 			line-height: 140%;
@@ -277,8 +277,8 @@ input[type='radio'].domain-management-list-item__radio {
 		width: 100%;
 
 		&.is-busy:disabled {
-			border-color: $gray-lighten-20;
-			color: $gray-darken-20;
+			border-color: var( --color-neutral-100 );
+			color: var( --color-neutral-500 );
 		}
 
 		@include breakpoint( '>480px' ) {
@@ -371,7 +371,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 	&.fetching input[type='text'] {
 		animation: pulse-light 0.8s ease-in-out infinite;
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 	}
 }
 
@@ -381,7 +381,7 @@ input[type='radio'].domain-management-list-item__radio {
 	.email-forwarding__limit,
 	.dns__form-content,
 	.form-content {
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		overflow: visible;
 		padding-top: 20px;
 	}
@@ -408,7 +408,7 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 
 	.domain-connect__footer {
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		padding-top: 10px;
 	}
 
@@ -417,7 +417,7 @@ input[type='radio'].domain-management-list-item__radio {
 			@include placeholder( 23% );
 
 			display: block;
-			margin: 0.8em 0 0.8em 0;
+			margin: 0.8em 0;
 			height: 1em;
 
 			&:last-child {
@@ -431,7 +431,7 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 
 	.domain-connect__dns-records {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 		color: var( --color-text-subtle );
 
 		* {
@@ -456,11 +456,11 @@ input[type='radio'].domain-management-list-item__radio {
 
 ul.email-forwarding__list {
 	list-style: none;
-	margin: 15px 0 0 0;
+	margin: 15px 0 0;
 	padding: 0;
 
 	li {
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		overflow: auto;
 		padding: 10px 0;
 		position: relative;
@@ -515,7 +515,7 @@ ul.email-forwarding__list {
 }
 
 .privacy-protection-card__header {
-	border-bottom: 1px solid $gray-lighten-30;
+	border-bottom: 1px solid var( --color-neutral-0 );
 	display: block;
 	overflow: auto;
 	padding: 16px 16px 20px;
@@ -579,7 +579,7 @@ ul.email-forwarding__list {
 	.button {
 		cursor: pointer;
 		display: block;
-		margin: 20px 0 5px 0;
+		margin: 20px 0 5px;
 		text-align: center;
 		width: 100%;
 
@@ -600,7 +600,7 @@ ul.email-forwarding__list {
 	}
 
 	h5 {
-		color: $gray-darken-10;
+		color: var( --color-neutral-400 );
 		font-size: 12px;
 		line-height: 130%;
 		margin: 9px 0;
@@ -632,11 +632,11 @@ ul.email-forwarding__list {
 	}
 
 	h2 {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 16px;
 		font-weight: 400;
 		line-height: 120%;
-		margin: 0 0 10px 0;
+		margin: 0 0 10px;
 	}
 
 	p {
@@ -649,67 +649,6 @@ ul.email-forwarding__list {
 			@include breakpoint( '>660px' ) {
 				display: block;
 			}
-		}
-	}
-}
-
-.add-google-apps__inner {
-	@include clear-fix;
-}
-
-.add-google-apps__add-another-email-address-link {
-	display: inline-block;
-	font-size: 12px;
-	margin-top: 5px;
-	cursor: pointer;
-}
-
-.add-google-apps__add-another-email-address-link:hover {
-	text-decoration: underline;
-}
-
-.add-google-apps__name-fieldsets {
-	margin-top: 20px;
-
-	@include breakpoint( '>660px' ) {
-		display: flex;
-		justify-content: space-between;
-	}
-
-	.form-fieldset {
-		@include breakpoint( '>660px' ) {
-			width: calc( 50% - 10px );
-		}
-	}
-}
-
-.add-google-apps__email-address-fieldsets {
-	.add-google-apps__email-address-fieldset {
-		display: flex;
-		flex-direction: column;
-		margin-bottom: 10px;
-
-		@include breakpoint( '>480px' ) {
-			flex-direction: row;
-		}
-
-		&:last-of-type {
-			margin-bottom: 0;
-		}
-	}
-
-	select {
-		border-bottom-width: 1px;
-		border-top-left-radius: 0;
-
-		@include breakpoint( '<480px' ) {
-			border-top-right-radius: 0;
-			margin-top: -1px;
-		}
-
-		@include breakpoint( '>480px' ) {
-			border-bottom-left-radius: 0;
-			margin-left: -1px;
 		}
 	}
 }
@@ -800,12 +739,12 @@ ul.email-forwarding__list {
 ul.domain-connect__dns-list,
 .dns__domain-connect-record {
 	list-style: none;
-	margin: 15px 0 0 0;
+	margin: 15px 0 0;
 	padding: 0;
 
 	li,
 	.dns__domain-connect-record-wrap {
-		border-top: 1px solid $gray-light;
+		border-top: 1px solid var( --color-neutral-0 );
 		display: flex;
 		justify-content: space-between;
 		overflow: auto;
@@ -860,7 +799,7 @@ ul.domain-connect__dns-list,
 
 .dns__domain-connect-record {
 	margin: 0;
-	border-top: 1px solid $gray-light;
+	border-top: 1px solid var( --color-neutral-0 );
 	display: flex;
 	justify-content: space-between;
 
@@ -885,12 +824,12 @@ ul.domain-connect__dns-list,
 }
 
 .domain-only-site__settings-notice {
-	color: $gray-darken-20;
+	color: var( --color-neutral-500 );
 	margin-top: 30px;
 	text-align: center;
 
 	&::before {
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 		content: '';
 		display: block;
 		height: 1px;

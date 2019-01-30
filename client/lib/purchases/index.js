@@ -20,6 +20,7 @@ import {
 	isJetpackPlan,
 	isPlan,
 	isTheme,
+	isConciergeSession,
 } from 'lib/products-values';
 import { addItems } from 'lib/upgrades/actions';
 
@@ -47,8 +48,8 @@ function getPurchasesBySite( purchases, sites ) {
 					id: currentValue.siteId,
 					name: currentValue.siteName,
 					/* if the purchase is attached to a deleted site,
-				 * there will be no site with this ID in `sites`, so
-				 * we fall back on the domain. */
+					 * there will be no site with this ID in `sites`, so
+					 * we fall back on the domain. */
 					slug: siteObject ? siteObject.slug : currentValue.domain,
 					isDomainOnly: siteObject ? siteObject.options.is_domain_only : false,
 					title: currentValue.siteName || currentValue.domain || '',
@@ -258,6 +259,10 @@ function isRemovable( purchase ) {
 		return false;
 	}
 
+	if ( isConciergeSession( purchase ) ) {
+		return false;
+	}
+
 	return (
 		isJetpackPlan( purchase ) ||
 		isExpiring( purchase ) ||
@@ -370,6 +375,10 @@ function paymentLogoType( purchase ) {
 function purchaseType( purchase ) {
 	if ( isTheme( purchase ) ) {
 		return i18n.translate( 'Premium Theme' );
+	}
+
+	if ( isConciergeSession( purchase ) ) {
+		return i18n.translate( 'One-on-one Support' );
 	}
 
 	if ( isPlan( purchase ) ) {

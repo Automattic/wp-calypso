@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Style dependencies
  */
-import './fieldset.scss'
+import './fieldset.scss';
 
 export default class extends React.Component {
 	static displayName = 'EditorMediaModalFieldset';

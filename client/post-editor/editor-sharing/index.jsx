@@ -14,7 +14,7 @@ import SharingLikeOptions from './sharing-like-options';
 /**
  * Style dependencies
  */
-import './style.scss'
+import './style.scss';
 
 export default function EditorSharing() {
 	return (

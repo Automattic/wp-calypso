@@ -137,14 +137,12 @@ class StatsComments extends Component {
 				<SectionHeader label={ translate( 'Comments' ) } />
 				<Card className={ classes }>
 					<div className="module-content">
-						{ noData &&
-							! hasError &&
-							! requestingCommentsStats && (
-								<StatsErrorPanel
-									className="is-empty-message"
-									message={ translate( 'No comments posted' ) }
-								/>
-							) }
+						{ noData && ! hasError && ! requestingCommentsStats && (
+							<StatsErrorPanel
+								className="is-empty-message"
+								message={ translate( 'No comments posted' ) }
+							/>
+						) }
 
 						<StatsModuleSelectDropdown options={ selectOptions } onSelect={ this.changeFilter } />
 

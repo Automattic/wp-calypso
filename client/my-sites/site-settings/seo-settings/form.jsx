@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import Button from 'components/button';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'components/seo/meta-title-editor';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -307,44 +307,29 @@ export class SeoForm extends React.Component {
 			? translate( 'Enable SEO Tools by upgrading to Jetpack Premium' )
 			: translate( 'Enable SEO Tools by upgrading to the Business plan' );
 
-		const seoSubmitButton = (
-			<Button
-				compact={ true }
-				onClick={ this.submitSeoForm }
-				primary={ true }
-				type="submit"
-				disabled={ isSaveDisabled || isSeoDisabled }
-			>
-				{ isSubmittingForm ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-			</Button>
-		);
-
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<PageViewTracker path="/settings/seo/:site" title="Site Settings > SEO" />
-				{ ( isSitePrivate || isSiteHidden ) &&
-					hasSupportingPlan( site.plan ) && (
-						<Notice
-							status="is-warning"
-							showDismiss={ false }
-							text={
-								isSitePrivate
-									? translate(
-											"SEO settings aren't recognized by search engines while your site is Private."
-									  )
-									: translate(
-											"SEO settings aren't recognized by search engines while your site is Hidden."
-									  )
-							}
-						>
-							<NoticeAction href={ generalTabUrl }>
-								{ translate( 'Privacy Settings' ) }
-							</NoticeAction>
-						</Notice>
-					) }
+				{ ( isSitePrivate || isSiteHidden ) && hasSupportingPlan( site.plan ) && (
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={
+							isSitePrivate
+								? translate(
+										"SEO settings aren't recognized by search engines while your site is Private."
+								  )
+								: translate(
+										"SEO settings aren't recognized by search engines while your site is Hidden."
+								  )
+						}
+					>
+						<NoticeAction href={ generalTabUrl }>{ translate( 'Privacy Settings' ) }</NoticeAction>
+					</Notice>
+				) }
 				{ conflictedSeoPlugin && (
 					<Notice
 						status="is-warning"
@@ -387,41 +372,49 @@ export class SeoForm extends React.Component {
 						/>
 					) }
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
-					{ showAdvancedSeo &&
-						! conflictedSeoPlugin && (
-							<div>
-								<SectionHeader label={ translate( 'Page Title Structure' ) }>
-									{ seoSubmitButton }
-								</SectionHeader>
-								<Card compact className="seo-settings__page-title-header">
-									<img
-										className="seo-settings__page-title-header-image"
-										src="/calypso/images/seo/page-title.svg"
-									/>
-									<p className="seo-settings__page-title-header-text">
-										{ translate(
-											'You can set the structure of page titles for different sections of your site. ' +
-												'Doing this will change the way your site title is displayed in search engines, ' +
-												'social media sites, and browser tabs.'
-										) }
-									</p>
-								</Card>
-								<Card>
-									<MetaTitleEditor
-										disabled={ isFetchingSite || isSeoDisabled }
-										onChange={ this.updateTitleFormats }
-										titleFormats={ this.state.seoTitleFormats }
-									/>
-								</Card>
-							</div>
-						) }
+					{ showAdvancedSeo && ! conflictedSeoPlugin && (
+						<div>
+							<SettingsSectionHeader
+								disabled={ isSaveDisabled || isSeoDisabled }
+								isSaving={ isSubmittingForm }
+								onButtonClick={ this.submitSeoForm }
+								showButton
+								title={ translate( 'Page Title Structure' ) }
+							/>
+							<Card compact className="seo-settings__page-title-header">
+								<img
+									className="seo-settings__page-title-header-image"
+									src="/calypso/images/seo/page-title.svg"
+									alt=""
+								/>
+								<p className="seo-settings__page-title-header-text">
+									{ translate(
+										'You can set the structure of page titles for different sections of your site. ' +
+											'Doing this will change the way your site title is displayed in search engines, ' +
+											'social media sites, and browser tabs.'
+									) }
+								</p>
+							</Card>
+							<Card>
+								<MetaTitleEditor
+									disabled={ isFetchingSite || isSeoDisabled }
+									onChange={ this.updateTitleFormats }
+									titleFormats={ this.state.seoTitleFormats }
+								/>
+							</Card>
+						</div>
+					) }
 
 					{ ! conflictedSeoPlugin &&
 						( showAdvancedSeo || ( ! siteIsJetpack && showWebsiteMeta ) ) && (
 							<div>
-								<SectionHeader label={ translate( 'Website Meta' ) }>
-									{ seoSubmitButton }
-								</SectionHeader>
+								<SettingsSectionHeader
+									disabled={ isSaveDisabled || isSeoDisabled }
+									isSaving={ isSubmittingForm }
+									onButtonClick={ this.submitSeoForm }
+									showButton
+									title={ translate( 'Website Meta' ) }
+								/>
 								<Card>
 									<p>
 										{ translate(

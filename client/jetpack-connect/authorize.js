@@ -10,6 +10,7 @@ import page from 'page';
 import { connect } from 'react-redux';
 import { get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
+import urlUtils from 'url';
 
 /**
  * Internal dependencies
@@ -49,6 +50,7 @@ import {
 	RETRY_AUTH,
 	RETRYING_AUTH,
 	SECRET_EXPIRED,
+	SITE_BLACKLISTED,
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	XMLRPC_ERROR,
 } from './connection-notice-types';
@@ -68,8 +70,10 @@ import {
 	hasExpiredSecretError as hasExpiredSecretErrorSelector,
 	hasXmlrpcError as hasXmlrpcErrorSelector,
 	isRemoteSiteOnSitesList,
+	isSiteBlacklistedError as isSiteBlacklistedSelector,
 } from 'state/jetpack-connect/selectors';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
+import { affiliateReferral } from 'state/refer/actions';
 
 /**
  * Constants
@@ -96,6 +100,7 @@ export class JetpackAuthorize extends Component {
 		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
+		isSiteBlacklisted: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		retryAuth: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -151,6 +156,7 @@ export class JetpackAuthorize extends Component {
 			! this.retryingAuth &&
 			! nextProps.hasXmlrpcError &&
 			! nextProps.hasExpiredSecretError &&
+			! nextProps.isSiteBlacklisted &&
 			site
 		) {
 			// Expired secret errors, and XMLRPC errors will be resolved in `handleResolve`.
@@ -159,6 +165,30 @@ export class JetpackAuthorize extends Component {
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
 			return retryAuth( site, attempts + 1 );
+		}
+	}
+
+	componentDidMount() {
+		this.trackAffiliate();
+	}
+
+	/**
+	 * Track affiliate code based on the aff and cid URL params.
+	 */
+	trackAffiliate() {
+		const urlPath = location.href;
+		const parsedUrl = urlUtils.parse( urlPath, true );
+		const affiliateId = parsedUrl.query.aff;
+		const campaignId = parsedUrl.query.cid;
+		const subId = parsedUrl.query.sid;
+
+		if ( affiliateId && ! isNaN( affiliateId ) ) {
+			const hostPath = `${ parsedUrl.host }${ parsedUrl.pathname }`;
+			this.props.recordTracksEvent( 'calypso_jpc_refer_visit', {
+				flow: this.props.flowName,
+				page: hostPath,
+			} );
+			this.props.trackAffiliateReferral( { affiliateId, campaignId, subId, hostPath } );
 		}
 	}
 
@@ -458,6 +488,14 @@ export class JetpackAuthorize extends Component {
 				</Fragment>
 			);
 		}
+		if ( this.props.isSiteBlacklisted ) {
+			return (
+				<JetpackConnectNotices
+					noticeType={ SITE_BLACKLISTED }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
+		}
 		return (
 			<Fragment>
 				<JetpackConnectNotices
@@ -592,6 +630,11 @@ export class JetpackAuthorize extends Component {
 
 	renderStateAction() {
 		const { authorizeSuccess } = this.props.authorizationData;
+
+		if ( this.props.isSiteBlacklisted ) {
+			return null;
+		}
+
 		if (
 			this.props.isFetchingAuthorizationSite ||
 			this.isAuthorizing() ||
@@ -662,6 +705,7 @@ export default connect(
 			isFetchingAuthorizationSite: isRequestingSite( state, authQuery.clientId ),
 			isFetchingSites: isRequestingSites( state ),
 			isMobileAppFlow,
+			isSiteBlacklisted: isSiteBlacklistedSelector( state ),
 			isVip: isVipSite( state, authQuery.clientId ),
 			mobileAppRedirect,
 			user: getCurrentUser( state ),
@@ -673,5 +717,6 @@ export default connect(
 		authorize: authorizeAction,
 		recordTracksEvent: recordTracksEventAction,
 		retryAuth: retryAuthAction,
+		trackAffiliateReferral: affiliateReferral,
 	}
 )( localize( JetpackAuthorize ) );

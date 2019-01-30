@@ -38,16 +38,15 @@ class PostShareExample extends Component {
 				{ siteId && <QuerySitePlans siteId={ siteId } /> }
 				{ siteId && <QueryPosts siteId={ siteId } query={ { number: 1, type: 'post' } } /> }
 
-				{ site &&
-					post && (
-						<p>
-							Site: <strong>{ site.name }</strong> ({ siteId })<br />
-							Plan: <strong>{ planSlug }</strong>
-							<br />
-							Post: <em>{ post.title }</em>
-							<br />
-						</p>
-					) }
+				{ site && post && (
+					<p>
+						Site: <strong>{ site.name }</strong> ({ siteId })<br />
+						Plan: <strong>{ planSlug }</strong>
+						<br />
+						Post: <em>{ post.title }</em>
+						<br />
+					</p>
+				) }
 
 				<p onClick={ this.toggleEnable }>
 					<label>
@@ -59,7 +58,9 @@ class PostShareExample extends Component {
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={ `Keep in mind that you are able to share the '${ post.title }' post now. Be careful!` }
+						text={ `Keep in mind that you are able to share the '${
+							post.title
+						}' post now. Be careful!` }
 					/>
 				) }
 

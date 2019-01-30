@@ -23,7 +23,6 @@ import {
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 import { schema } from './schema';
-import { abtest } from 'lib/abtest';
 import userFactory from 'lib/user';
 
 const debug = debugFactory( 'calypso:state:signup:progress:reducer' );
@@ -52,11 +51,11 @@ function processStep( state, { step } ) {
 	return updateStep( state, { ...step, status: 'processing' } );
 }
 
-function removeUnneededSteps( state, { flowName } ) {
+function removeUnneededSteps( state, { flowName, inImprovedOnboardingTest } ) {
 	let flowSteps = [];
 	const user = userFactory();
 
-	if ( 'onboarding' === abtest( 'improvedOnboarding' ) && 'ecommerce' === flowName ) {
+	if ( inImprovedOnboardingTest && 'ecommerce' === flowName ) {
 		flowName = 'ecommerce-onboarding';
 	}
 

@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { snakeCase } from 'lodash';
+import { snakeCase, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +31,17 @@ export class PaymentBox extends PureComponent {
 	constructor() {
 		super();
 		this.handlePaymentMethodChange = this.handlePaymentMethodChange.bind( this );
+	}
+
+	componentDidUpdate() {
+		// If the current payment method is no longer in the available methods list, switch to the first one available.
+		// Useful when some methods may be dropped based on payment option, like subscription length.
+		if (
+			this.props.paymentMethods &&
+			! includes( this.props.paymentMethods, this.props.currentPaymentMethod )
+		) {
+			this.props.onSelectPaymentMethod( this.props.paymentMethods[ 0 ] );
+		}
 	}
 
 	handlePaymentMethodChange( paymentMethod ) {

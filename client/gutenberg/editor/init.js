@@ -8,21 +8,18 @@ import { mapValues, once } from 'lodash';
  * WordPress dependencies
  */
 import { use, plugins, dispatch } from '@wordpress/data';
+import { unstable__bootstrapServerSideBlockDefinitions } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
+import { requestGutenbergCoreServerBlockSettings } from 'state/data-getters';
+import { waitForData } from 'state/data-layer/http-data';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { applyAPIMiddleware } from './api-middleware';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:gutenberg' );
-
-// List of Core blocks that can't be enabled on WP.com (e.g for security reasons).
-// We'll have to provide A8C custom versions of these blocks.
-const WPCOM_UNSUPPORTED_CORE_BLOCKS = [
-	'core/file', // see D19851 for more details.
-];
 
 const loadA8CExtensions = () => {
 	// This will also load required TinyMCE plugins via Calypso's TinyMCE component
@@ -66,6 +63,18 @@ const addResetToRegistry = registry => {
 	};
 };
 
+const registerGutenbergBlocks = registerCoreBlocks =>
+	waitForData( {
+		serverBlockSettings: () => requestGutenbergCoreServerBlockSettings(),
+	} ).then( ( { serverBlockSettings } ) => {
+		if ( serverBlockSettings.data ) {
+			debug( 'Registering core server-defined blocks attributes' );
+			unstable__bootstrapServerSideBlockDefinitions( serverBlockSettings.data );
+		}
+		debug( 'Registering core blocks' );
+		registerCoreBlocks();
+	} );
+
 // We need to ensure that his function is executed only once to avoid duplicate
 // block registration, API middleware application etc.
 export const initGutenberg = once( ( userId, store ) => {
@@ -85,16 +94,12 @@ export const initGutenberg = once( ( userId, store ) => {
 	debug( 'Initializing core-data store' );
 	require( '@wordpress/core-data' );
 
-	// Avoid using top level imports for this since they will statically
+	// Avoid using top level imports for these since they will statically
 	// initialize core-data before required plugins are loaded.
 	const { registerCoreBlocks } = require( '@wordpress/block-library' );
-	const { unregisterBlockType, setFreeformContentHandlerName } = require( '@wordpress/blocks' );
+	const { setFreeformContentHandlerName } = require( '@wordpress/blocks' );
 
-	debug( 'Registering core blocks' );
-	registerCoreBlocks();
-
-	debug( 'Removing core blocks that are not yet supported in Calypso' );
-	WPCOM_UNSUPPORTED_CORE_BLOCKS.forEach( blockName => unregisterBlockType( blockName ) );
+	registerGutenbergBlocks( registerCoreBlocks );
 
 	// Prevent Guided tour from showing when editor loads.
 	dispatch( 'core/nux' ).disableTips();

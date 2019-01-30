@@ -5,7 +5,7 @@
  */
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
@@ -15,7 +15,8 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import AddGoogleAppsCard from './add-google-apps-card';
+import { getEligibleDomain } from 'lib/domains/gsuite';
+import GSuitePurchaseCta from 'my-sites/domains/domain-management/gsuite/gsuite-purchase-cta';
 import GoogleAppsUsersCard from './google-apps-users-card';
 import Placeholder from './placeholder';
 import VerticalNav from 'components/vertical-nav';
@@ -34,7 +35,6 @@ import {
 	isGsuiteRestricted,
 } from 'lib/domains';
 import { isPlanFeaturesEnabled } from 'lib/plans';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import DocumentHead from 'components/data/document-head';
 
 class Email extends React.Component {
@@ -146,35 +146,28 @@ class Email extends React.Component {
 	}
 
 	addGoogleAppsCard() {
+		const { products, selectedDomainName, selectedSite } = this.props;
 		return (
-			<div>
-				<EmailVerificationGate
-					noticeText={ this.props.translate( 'You must verify your email to purchase G Suite.' ) }
-					noticeStatus="is-info"
-				>
-					<AddGoogleAppsCard { ...this.props } />
-				</EmailVerificationGate>
+			<Fragment>
+				<GSuitePurchaseCta
+					product={ products.gapps }
+					selectedDomainName={ selectedDomainName }
+					selectedSite={ selectedSite }
+				/>
 				{ this.addEmailForwardingCard() }
-			</div>
+			</Fragment>
 		);
 	}
 
 	addEmailForwardingCard() {
+		const { domains, selectedDomainName, selectedSite, translate } = this.props;
+		const domain = getEligibleDomain( selectedDomainName, domains );
 		return (
-			<div>
-				{ this.props.selectedDomainName && (
-					<VerticalNav>
-						<VerticalNavItem
-							path={ domainManagementEmailForwarding(
-								this.props.selectedSite.slug,
-								this.props.selectedDomainName
-							) }
-						>
-							{ this.props.translate( 'Email Forwarding' ) }
-						</VerticalNavItem>
-					</VerticalNav>
-				) }
-			</div>
+			<VerticalNav>
+				<VerticalNavItem path={ domainManagementEmailForwarding( selectedSite.slug, domain ) }>
+					{ translate( 'Email Forwarding' ) }
+				</VerticalNavItem>
+			</VerticalNav>
 		);
 	}
 

@@ -26,6 +26,7 @@ import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
+import IntroBanner from '../activity-log-banner/intro-banner';
 import { isFreePlan } from 'lib/plans';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
@@ -68,6 +69,8 @@ import { emptyFilter } from 'state/activity-log/reducer';
 import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
 import withLocalizedMoment from 'components/with-localized-moment';
+
+import { getPreference } from 'state/preferences/selectors';
 
 const PAGE_SIZE = 20;
 
@@ -360,6 +363,7 @@ class ActivityLog extends Component {
 			slug,
 			translate,
 			isJetpack,
+			isIntroDismissed,
 		} = this.props;
 
 		const disableRestore =
@@ -398,31 +402,32 @@ class ActivityLog extends Component {
 
 		return (
 			<div>
-				{ siteId &&
-					'active' === rewindState.state && <QueryRewindBackupStatus siteId={ siteId } /> }
+				{ siteId && 'active' === rewindState.state && (
+					<QueryRewindBackupStatus siteId={ siteId } />
+				) }
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 
-				{ config.isEnabled( 'rewind-alerts' ) &&
-					siteId &&
-					isJetpack && <RewindAlerts siteId={ siteId } /> }
-				{ siteId &&
-					'unavailable' === rewindState.state && <RewindUnavailabilityNotice siteId={ siteId } /> }
-				{ 'awaitingCredentials' === rewindState.state &&
-					! siteIsOnFreePlan && (
-						<Banner
-							icon="history"
-							href={
-								rewindState.canAutoconfigure
-									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ slug }`
-									: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
-							}
-							title={ translate( 'Add site credentials' ) }
-							description={ translate(
-								'Backups and security scans require access to your site to work properly.'
-							) }
-						/>
-					) }
+				{ config.isEnabled( 'rewind-alerts' ) && siteId && isJetpack && (
+					<RewindAlerts siteId={ siteId } />
+				) }
+				{ siteId && 'unavailable' === rewindState.state && (
+					<RewindUnavailabilityNotice siteId={ siteId } />
+				) }
+				{ 'awaitingCredentials' === rewindState.state && ! siteIsOnFreePlan && (
+					<Banner
+						icon="history"
+						href={
+							rewindState.canAutoconfigure
+								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ slug }`
+								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
+						}
+						title={ translate( 'Add site credentials' ) }
+						description={ translate(
+							'Backups and security scans require access to your site to work properly.'
+						) }
+					/>
+				) }
 				{ 'provisioning' === rewindState.state && (
 					<Banner
 						icon="history"
@@ -434,6 +439,8 @@ class ActivityLog extends Component {
 						) }
 					/>
 				) }
+				<IntroBanner siteId={ siteId } />
+				{ siteIsOnFreePlan && isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
 				{ this.renderErrorMessage() }
 				{ this.renderActionProgress() }
@@ -455,37 +462,36 @@ class ActivityLog extends Component {
 						/>
 						<section className="activity-log__wrapper">
 							{ siteIsOnFreePlan && <div className="activity-log__fader" /> }
-							{ theseLogs.map(
-								log =>
-									log.isAggregate ? (
-										<Fragment key={ log.activityId }>
-											{ timePeriod( log ) }
-											<ActivityLogAggregatedItem
-												key={ log.activityId }
-												activity={ log }
-												disableRestore={ disableRestore }
-												disableBackup={ disableBackup }
-												hideRestore={ 'active' !== rewindState.state }
-												siteId={ siteId }
-												rewindState={ rewindState.state }
-											/>
-										</Fragment>
-									) : (
-										<Fragment key={ log.activityId }>
-											{ timePeriod( log ) }
-											<ActivityLogItem
-												key={ log.activityId }
-												activity={ log }
-												disableRestore={ disableRestore }
-												disableBackup={ disableBackup }
-												hideRestore={ 'active' !== rewindState.state }
-												siteId={ siteId }
-											/>
-										</Fragment>
-									)
+							{ theseLogs.map( log =>
+								log.isAggregate ? (
+									<Fragment key={ log.activityId }>
+										{ timePeriod( log ) }
+										<ActivityLogAggregatedItem
+											key={ log.activityId }
+											activity={ log }
+											disableRestore={ disableRestore }
+											disableBackup={ disableBackup }
+											hideRestore={ 'active' !== rewindState.state }
+											siteId={ siteId }
+											rewindState={ rewindState.state }
+										/>
+									</Fragment>
+								) : (
+									<Fragment key={ log.activityId }>
+										{ timePeriod( log ) }
+										<ActivityLogItem
+											key={ log.activityId }
+											activity={ log }
+											disableRestore={ disableRestore }
+											disableBackup={ disableBackup }
+											hideRestore={ 'active' !== rewindState.state }
+											siteId={ siteId }
+										/>
+									</Fragment>
+								)
 							) }
 						</section>
-						{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
+						{ siteIsOnFreePlan && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
 							compact={ isMobile() }
 							className="activity-log__pagination is-bottom-pagination"
@@ -598,6 +604,7 @@ export default connect(
 			slug: getSiteSlug( state, siteId ),
 			timezone,
 			siteIsOnFreePlan,
+			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
 		};
 	},
 	{

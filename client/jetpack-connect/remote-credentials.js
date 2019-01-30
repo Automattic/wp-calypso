@@ -343,12 +343,11 @@ export class OrgCredentialsForm extends Component {
 
 		return (
 			<MainWrapper>
-				{ ! this.isInvalidCreds() &&
-					installError && (
-						<div className="jetpack-connect__notice">
-							<JetpackRemoteInstallNotices noticeType={ this.getError( installError ) } />
-						</div>
-					) }
+				{ ! this.isInvalidCreds() && installError && (
+					<div className="jetpack-connect__notice">
+						<JetpackRemoteInstallNotices noticeType={ this.getError( installError ) } />
+					</div>
+				) }
 				{ ( this.isInvalidCreds() || ! installError ) && (
 					<div>
 						{ this.renderHeadersText() }

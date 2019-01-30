@@ -12,7 +12,7 @@ body {
 }
 
 p {
-	margin: 0 0 24px 0;
+	margin: 0 0 24px;
 
 	.mce-content-body & {
 		/* To override lightgray/content.min.css */
@@ -43,7 +43,7 @@ code {
 }
 
 pre {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	font-family: $code;
 	padding: 8px;
 	overflow-x: auto;
@@ -106,8 +106,8 @@ a img {
 }
 
 .wp-caption-dd {
-	background: $gray-light;
-	color: $gray-darken-20;
+	background: var( --color-neutral-0 );
+	color: var( --color-neutral-500 );
 	font-size: 14px;
 	line-height: 1.7;
 	padding: 16px;
@@ -134,10 +134,10 @@ a img {
 
 blockquote {
 	padding: 16px;
-	margin: 8px 0 24px 0;
+	margin: 8px 0 24px;
 	border-left: 2px solid $gray;
-	color: darken( $gray, 20 );
-	background: lighten( $gray, 30 );
+	color: var( --color-neutral-500 );
+	background: var( --color-neutral-0 );
 }
 
 caption,
@@ -149,7 +149,7 @@ td {
 table,
 th,
 td {
-	border: 1px solid lighten( $gray, 20 );
+	border: 1px solid var( --color-neutral-100 );
 }
 table {
 	border-collapse: separate;
@@ -176,18 +176,19 @@ th,
 td {
 	padding: 0.4em;
 }
+
 .mce-item-table,
 .mce-item-table td,
 .mce-item-table th,
 .mce-item-table caption {
-	border: 1px solid lighten( $gray, 20 );
+	border: 1px solid var( --color-neutral-100 );
 }
 
 hr {
 	border: 0;
 	height: 1px;
 	margin: 8px 0;
-	background: lighten( $gray, 20 );
+	background: var( --color-neutral-100 );
 }
 
 /* Styles for formatting the boundaries of anchors and code elements */
@@ -204,10 +205,10 @@ hr {
 	padding: 2px 4px;
 	margin: 0;
 	border-radius: 2px;
-	color: $gray-dark;
-	background: $gray-lighten-30;
+	color: var( --color-neutral-700 );
+	background: var( --color-neutral-0 );
 }
 
 .mce-content-body code[data-mce-selected] {
-	background: $gray-lighten-20;
+	background: var( --color-neutral-100 );
 }

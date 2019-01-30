@@ -10,8 +10,17 @@ import { assign } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-import { SITE_CHECKLIST_RECEIVE, SITE_CHECKLIST_TASK_UPDATE } from 'state/action-types';
+import {
+	SITE_CHECKLIST_RECEIVE,
+	SITE_CHECKLIST_TASK_UPDATE,
+	SITE_CHECKLIST_REQUEST,
+} from 'state/action-types';
 import { items as itemSchemas } from './schema';
+
+export const isLoading = createReducer( false, {
+	[ SITE_CHECKLIST_REQUEST ]: () => true,
+	[ SITE_CHECKLIST_RECEIVE ]: () => false,
+} );
 
 export const items = createReducer(
 	{},
@@ -34,4 +43,5 @@ export const items = createReducer(
 
 export default combineReducers( {
 	items,
+	isLoading,
 } );

@@ -2,7 +2,6 @@
 	white-space: nowrap;
 }
 
-
 .editor-delete-post {
 	display: block;
 	margin-top: -7px;
@@ -13,19 +12,19 @@
 	padding: 0;
 
 	&.is-trashing {
-		color: $orange-fire;
+		color: var( --color-error );
 		.gridicon {
-			color: $orange-fire;
+			color: var( --color-error );
 		}
 	}
 
 	&:hover,
 	&:focus {
-		color: $orange-fire;
+		color: var( --color-error );
 		outline: none;
 
 		.gridicon {
-			color: $orange-fire;
+			color: var( --color-error );
 		}
 	}
 

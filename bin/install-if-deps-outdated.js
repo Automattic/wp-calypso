@@ -15,11 +15,34 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 const spawnSync = require( 'child_process' ).spawnSync;
+//const debug = require( 'debug' )( 'calypso:install' );
+
+const isEmptyObject = obj => ! obj || Object.keys( obj ).length === 0;
+
+const hasDependenciesToInstall = packageDir => {
+	let pkg;
+	try {
+		const packageFile = path.join( packageDir, 'package.json' );
+		if ( ! fs.existsSync( packageFile ) ) {
+			//debug( '[%s] no package.json', packageFile );
+			return false;
+		}
+		pkg = JSON.parse( fs.readFileSync( packageFile, 'utf8' ) );
+	} catch ( e ) {
+		//debug( 'no package file or invalid package file for %s', packageDir, e );
+		return false;
+	}
+
+	return ! isEmptyObject( Object.assign( {}, pkg.dependencies, pkg.devDependencies ) );
+};
 
 const needsInstall = pack => {
 	try {
 		let lockfileTime = 0;
 		const packageDir = path.dirname( pack );
+		if ( ! hasDependenciesToInstall( packageDir ) ) {
+			return false;
+		}
 		if ( fs.existsSync( path.resolve( packageDir, 'npm-shrinkwrap.json' ) ) ) {
 			lockfileTime = fs.statSync( path.join( packageDir, 'npm-shrinkwrap.json' ) ).mtime;
 		} else if ( fs.existsSync( path.join( packageDir, 'package-lock.json' ) ) ) {

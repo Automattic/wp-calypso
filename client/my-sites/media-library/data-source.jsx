@@ -15,6 +15,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Button from 'components/button';
+import ScreenReaderText from 'components/screen-reader-text';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import config from 'config';
@@ -79,9 +80,7 @@ export class MediaLibraryDataSource extends Component {
 	};
 
 	renderScreenReader( selected ) {
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return <span className="screen-reader-text">{ selected && selected.label }</span>;
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		return <ScreenReaderText>{ selected && selected.label }</ScreenReaderText>;
 	}
 
 	renderMenuItems( sources ) {

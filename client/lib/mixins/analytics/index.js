@@ -5,24 +5,8 @@
  */
 
 import analytics from 'lib/analytics';
-import { type as domainTypes } from 'lib/domains/constants';
+import { getDomainTypeText } from 'lib/domains';
 import { snakeCase } from 'lodash';
-
-const getDomainTypeText = function( domain ) {
-	switch ( domain.type ) {
-		case domainTypes.MAPPED:
-			return 'Mapped Domain';
-
-		case domainTypes.REGISTERED:
-			return 'Registered Domain';
-
-		case domainTypes.SITE_REDIRECT:
-			return 'Site Redirect';
-
-		case domainTypes.WPCOM:
-			return 'Wpcom Domain';
-	}
-};
 
 const EVENTS = {
 	popupCart: {
@@ -35,21 +19,6 @@ const EVENTS = {
 	},
 	domainManagement: {
 		edit: {
-			makePrimaryClick( domain ) {
-				const domainType = getDomainTypeText( domain );
-
-				analytics.ga.recordEvent(
-					'Domain Management',
-					`Clicked "Make Primary" link on a ${ domainType } in Edit`,
-					'Domain Name',
-					domain.name
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_edit_make_primary_click', {
-					section: snakeCase( domainType ),
-				} );
-			},
-
 			navigationClick( action, domain ) {
 				const domainType = getDomainTypeText( domain );
 
@@ -124,41 +93,6 @@ const EVENTS = {
 				analytics.tracks.recordEvent( 'calypso_domain_management_email_forwarding_cancel_click', {
 					domain_name: domainName,
 				} );
-			},
-
-			deleteClick( domainName, mailbox, destination, success ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked delete Button in Email Forwarding',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_email_forwarding_delete_click', {
-					destination,
-					domain_name: domainName,
-					mailbox,
-					success,
-				} );
-			},
-
-			resendVerificationClick( domainName, mailbox, destination, success ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked resend verification email Button in Email Forwarding',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_email_forwarding_resend_verification_email_click',
-					{
-						destination,
-						domain_name: domainName,
-						mailbox,
-						success,
-					}
-				);
 			},
 
 			inputFocus( domainName, fieldName ) {

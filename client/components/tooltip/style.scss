@@ -7,7 +7,7 @@
 	&.is-bottom-left,
 	&.is-bottom {
 		.popover__arrow {
-			border-bottom-color: $gray-darken-30;
+			border-bottom-color: var( --color-neutral-600 );
 			top: 4px;
 			right: 10px;
 
@@ -39,7 +39,7 @@
 	&.is-top-left,
 	&.is-top-right {
 		.popover__arrow {
-			border-top-color: $gray-darken-30;
+			border-top-color: var( --color-neutral-600 );
 			bottom: 4px;
 			right: 10px;
 
@@ -107,23 +107,23 @@
 	&.is-left {
 		.popover__arrow {
 			margin-right: 4px;
-			border-left-color: $gray-darken-30;
+			border-left-color: var( --color-neutral-600 );
 		}
 	}
 
 	&.is-right {
 		.popover__arrow {
 			margin-left: 4px;
-			border-right-color: $gray-darken-30;
+			border-right-color: var( --color-neutral-600 );
 		}
 	}
 
 	.popover__inner {
-		border: 0px;
+		border: 0;
 		box-shadow: none;
 		border-radius: 2px;
 		color: $white;
-		background: $gray-darken-30;
+		background: var( --color-neutral-600 );
 		font-size: 12px;
 		padding: 6px 10px;
 		text-align: left;

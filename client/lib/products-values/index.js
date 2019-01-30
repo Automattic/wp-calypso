@@ -86,6 +86,8 @@ export function formatProduct( product ) {
 	return assign( {}, product, {
 		product_slug: product.product_slug || product.productSlug,
 		product_type: product.product_type || product.productType,
+		included_domain_purchase_amount:
+			product.included_domain_purchase_amount || product.includedDomainPurchaseAmount,
 		is_domain_registration:
 			product.is_domain_registration !== undefined
 				? product.is_domain_registration
@@ -287,6 +289,13 @@ export function isDomainMapping( product ) {
 	return product.product_slug === 'domain_map';
 }
 
+export function getIncludedDomainPurchaseAmount( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return product.included_domain_purchase_amount;
+}
+
 export function isSiteRedirect( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -475,6 +484,7 @@ export function isConciergeSession( product ) {
 export default {
 	formatProduct,
 	getDomainProductRanking,
+	getIncludedDomainPurchaseAmount,
 	includesProduct,
 	isBusiness,
 	isChargeback,

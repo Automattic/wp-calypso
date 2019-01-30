@@ -79,7 +79,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 				title={ i18n.translate( 'Video and audio posts' ) }
 				description={ i18n.translate(
 					'Enrich your posts with video and audio, uploaded directly on your site. ' +
-						'No ads or limits. The Premium plan also adds 10GB of file storage.'
+						'No ads. The Premium plan offers 13GB of file storage.'
 				) }
 				buttonText={ i18n.translate( 'Start a new post' ) }
 				href={ newPost( selectedSite ) }

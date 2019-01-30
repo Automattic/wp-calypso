@@ -24,8 +24,8 @@ export const wpcomImplementation = path => {
 	// rank matches by the number of characters that match so e.g. /media won't map to /me
 	const bestMatch = maxBy( sections, section =>
 		max(
-			section.paths.map(
-				sectionPath => ( startsWith( path, sectionPath ) ? sectionPath.length : 0 )
+			section.paths.map( sectionPath =>
+				startsWith( path, sectionPath ) ? sectionPath.length : 0
 			)
 		)
 	);

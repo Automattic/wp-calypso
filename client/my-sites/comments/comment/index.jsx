@@ -210,15 +210,13 @@ export class Comment extends Component {
 					</div>
 				) }
 
-				{ isEditMode &&
-					! isLoading && (
-						<CommentEdit { ...{ commentId } } toggleEditMode={ this.toggleEditMode } />
-					) }
+				{ isEditMode && ! isLoading && (
+					<CommentEdit { ...{ commentId } } toggleEditMode={ this.toggleEditMode } />
+				) }
 
-				{ isPostView &&
-					isEnabled( 'comments/management/threaded-view' ) && (
-						<CommentRepliesList { ...{ siteId, commentParentId: commentId } } />
-					) }
+				{ isPostView && isEnabled( 'comments/management/threaded-view' ) && (
+					<CommentRepliesList { ...{ siteId, commentParentId: commentId } } />
+				) }
 			</Card>
 		);
 	}

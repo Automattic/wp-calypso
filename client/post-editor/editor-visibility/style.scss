@@ -19,7 +19,7 @@
 	.select-dropdown__header {
 		max-width: ( $sidebar-width-max - $accordion-padding * 2 );
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			max-width: 100%;
 			min-width: ( $sidebar-width-max - $accordion-padding * 2 );
 		}
@@ -55,7 +55,7 @@
 	}
 
 	.gridicon.is_active {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 
 		&:hover {
 			color: lighten( $gray, 15% );
@@ -71,7 +71,7 @@
 	&.is-touch,
 	&:hover {
 		.editor-visibility__label {
-			color: $gray-darken-10;
+			color: var( --color-neutral-400 );
 		}
 	}
 
@@ -80,7 +80,7 @@
 	}
 }
 
-.editor-visibility__dialog{
+.editor-visibility__dialog {
 	text-align: left;
 	width: 180px;
 	padding: 20px;
@@ -108,12 +108,12 @@
 		color: lighten( $gray, 15% );
 
 		&:hover {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 	}
 
 	.gridicon.is_active {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 
 		&:hover {
 			color: lighten( $gray, 15% );

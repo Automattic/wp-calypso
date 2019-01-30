@@ -5,7 +5,7 @@
 	height: 18px;
 	margin: 0;
 	padding: 0;
-	background: $gray-lighten-20;
+	background: var( --color-neutral-100 );
 	background: linear-gradient(
 		to bottom,
 		transparent,
@@ -25,8 +25,8 @@
 	width: 26px;
 	border: none;
 	background: radial-gradient(
-		$blue-medium,
-		$blue-medium 6px,
+		var( --color-primary ),
+		var( --color-primary ) 6px,
 		$blue-dark 7px,
 		transparent 8px,
 		transparent

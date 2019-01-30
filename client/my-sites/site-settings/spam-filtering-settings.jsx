@@ -107,10 +107,9 @@ const SpamFilteringSettings = ( {
 						disabled={ inTransition || ! akismetActive }
 						onChange={ onChangeField( 'wordpress_api_key' ) }
 					/>
-					{ ( isValidKey || isInvalidKey ) &&
-						! inTransition && (
-							<FormInputValidation isError={ isInvalidKey } text={ validationText } />
-						) }
+					{ ( isValidKey || isInvalidKey ) && ! inTransition && (
+						<FormInputValidation isError={ isInvalidKey } text={ validationText } />
+					) }
 					{ ( ! wordpress_api_key || isInvalidKey || ! isValidKey ) && (
 						<FormSettingExplanation>
 							{ translate(

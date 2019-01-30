@@ -5,7 +5,7 @@
 import page from 'page';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { find, get, some } from 'lodash';
+import { find, get, some, forEach } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
@@ -17,6 +17,8 @@ import Checklist from 'components/checklist';
 import ChecklistBanner from './checklist-banner';
 import ChecklistBannerTask from './checklist-banner/task';
 import ChecklistNavigation from './checklist-navigation';
+import ChecklistPrompt from './checklist-prompt';
+import ChecklistPromptTask from './checklist-prompt/task';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import QueryPosts from 'components/data/query-posts';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
@@ -33,6 +35,8 @@ import userFactory from 'lib/user';
 import { launchSite } from 'state/sites/launch/actions';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import createSelector from 'lib/create-selector';
+import { getLoginUrlWithTOSRedirect } from 'lib/google-apps';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
 const userLib = userFactory();
 
@@ -64,6 +68,7 @@ class WpcomChecklistComponent extends PureComponent {
 			site_launched: this.renderSiteLaunchedTask,
 			email_setup: this.renderEmailSetupTask,
 			email_forwarding_upgraded_to_gsuite: this.renderEmailForwardingUpgradedToGSuiteTask,
+			gsuite_tos_accepted: this.renderGSuiteTOSAcceptedTask,
 		};
 	}
 
@@ -84,7 +89,18 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	trackTaskStart = ( task, props ) => {
-		const location = 'banner' === this.props.viewMode ? 'checklist_banner' : 'checklist_show';
+		let location;
+
+		switch ( this.props.viewMode ) {
+			case 'banner':
+				location = 'checklist_banner';
+				break;
+			case 'prompt':
+				location = 'checklist_prompt';
+				break;
+			default:
+				location = 'checklist_show';
+		}
 
 		this.props.recordTracksEvent( 'calypso_checklist_task_start', {
 			checklist_name: 'new_blog',
@@ -188,6 +204,7 @@ class WpcomChecklistComponent extends PureComponent {
 			designType,
 			siteId,
 			taskStatuses,
+			taskUrls,
 			viewMode,
 			updateCompletion,
 			setNotification,
@@ -200,6 +217,13 @@ class WpcomChecklistComponent extends PureComponent {
 
 		const taskList = getTaskList( taskStatuses, designType, isSiteUnlaunched );
 
+		// Hide a task when we can't find the exact URL of the target page.
+		forEach( taskUrls, ( url, taskId ) => {
+			if ( ! url ) {
+				taskList.remove( taskId );
+			}
+		} );
+
 		let ChecklistComponent = Checklist;
 
 		switch ( viewMode ) {
@@ -208,6 +232,9 @@ class WpcomChecklistComponent extends PureComponent {
 				break;
 			case 'navigation':
 				ChecklistComponent = ChecklistNavigation;
+				break;
+			case 'prompt':
+				ChecklistComponent = ChecklistPrompt;
 				break;
 			case 'notification':
 				return null;
@@ -244,8 +271,26 @@ class WpcomChecklistComponent extends PureComponent {
 	}
 
 	renderTask( task ) {
-		const { siteSlug, viewMode, taskStatuses, designType, isSiteUnlaunched } = this.props;
-		const TaskComponent = 'banner' === viewMode ? ChecklistBannerTask : Task;
+		const {
+			siteSlug,
+			viewMode,
+			taskStatuses,
+			designType,
+			isSiteUnlaunched,
+			closePopover,
+		} = this.props;
+
+		let TaskComponent = Task;
+
+		switch ( viewMode ) {
+			case 'banner':
+				TaskComponent = ChecklistBannerTask;
+				break;
+			case 'prompt':
+				TaskComponent = ChecklistPromptTask;
+				break;
+		}
+
 		const taskList = getTaskList( taskStatuses, designType, isSiteUnlaunched );
 		const firstIncomplete = taskList.getFirstIncompleteTask();
 
@@ -256,6 +301,7 @@ class WpcomChecklistComponent extends PureComponent {
 			siteSlug,
 			firstIncomplete,
 			buttonPrimary: firstIncomplete && firstIncomplete.id === task.id,
+			closePopover: closePopover,
 		};
 
 		if ( this.shouldRenderTask( task.id ) ) {
@@ -420,11 +466,6 @@ class WpcomChecklistComponent extends PureComponent {
 
 	renderContactPageUpdatedTask = ( TaskComponent, baseProps, task ) => {
 		const { translate, taskUrls } = this.props;
-
-		// Hide this task when we can't find the exact URL of the page.
-		if ( ! taskUrls.contact_page_updated ) {
-			return null;
-		}
 
 		return (
 			<TaskComponent
@@ -596,6 +637,36 @@ class WpcomChecklistComponent extends PureComponent {
 			/>
 		);
 	};
+
+	renderGSuiteTOSAcceptedTask = ( TaskComponent, baseProps, task ) => {
+		const { domains, translate } = this.props;
+
+		let loginUrlWithTOSRedirect;
+		if ( Array.isArray( domains ) && domains.length > 0 ) {
+			const domainName = domains[ 0 ].name;
+			const users = domains[ 0 ].googleAppsSubscription.pendingUsers;
+			loginUrlWithTOSRedirect = getLoginUrlWithTOSRedirect( users[ 0 ], domainName );
+		}
+
+		return (
+			<TaskComponent
+				{ ...baseProps }
+				title={ translate( 'Accept the G Suite TOS to complete email setup' ) }
+				description={ translate( "You're almost done setting up G Suite!" ) }
+				isWarning={ true }
+				onClick={ () => {
+					if ( ! loginUrlWithTOSRedirect ) {
+						return;
+					}
+
+					this.trackTaskStart( task, {
+						sub_step_name: 'gsuite_tos_accepted',
+					} );
+					window.open( loginUrlWithTOSRedirect, '_blank' );
+				} }
+			/>
+		);
+	};
 }
 
 function getContactPage( posts ) {
@@ -641,6 +712,7 @@ export default connect(
 			userEmail: ( user && user.email ) || '',
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
+			domains: getDomainsBySiteId( state, siteId ),
 		};
 	},
 	{

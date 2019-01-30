@@ -1,4 +1,3 @@
-
 .sidebar {
 	display: flex;
 	flex-direction: column;
@@ -57,7 +56,7 @@
 		display: flex;
 
 		@include breakpoint( '<660px' ) {
-			background-color: $gray-light;
+			background-color: var( --color-neutral-0 );
 			border-bottom: 1px solid lighten( $gray, 25 );
 
 			&:first-child {
@@ -71,7 +70,7 @@
 		width: 0;
 
 		// Fade overlay for longer labels
-		&:after {
+		&::after {
 			content: '';
 			text-align: right;
 			position: absolute;
@@ -104,17 +103,17 @@
 			outline: none;
 			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 
-			&:after {
+			&::after {
 				top: 2px;
 				right: 2px;
 				bottom: 2px;
 			}
 		}
 
-		-webkit-tap-highlight-color: rgba( $gray-dark, 0.2 );
+		-webkit-tap-highlight-color: rgba( var( --color-neutral-700-rgb ), 0.2 );
 
 		.sidebar__menu-link-secondary-text {
-			padding: 3px 8px 4px 8px;
+			padding: 3px 8px 4px;
 			margin-right: 8px;
 			align-self: center;
 			font-weight: 600;
@@ -154,7 +153,7 @@ form.sidebar__button {
 	align-self: center;
 	box-sizing: border-box;
 	overflow: hidden;
-	padding: 2px 8px 3px 8px;
+	padding: 2px 8px 3px;
 	height: 24px;
 	margin-right: 8px;
 	line-height: 18px;
@@ -163,7 +162,7 @@ form.sidebar__button {
 	font-size: 12px;
 	font-weight: 600;
 	border-radius: 3px;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 
 	@include breakpoint( '<660px' ) {
 		font-size: 14px;
@@ -173,7 +172,7 @@ form.sidebar__button {
 }
 
 // Expanding clickable area of mini buttons
-a.sidebar__button:after,
+a.sidebar__button::after,
 form.sidebar__button input {
 	content: '';
 	position: absolute;
@@ -196,7 +195,7 @@ form.sidebar__button input {
 				color: inherit;
 			}
 
-			&:first-child:after {
+			&:first-child::after {
 				background: overflow-gradient(
 					var( --sidebar-menu-selected-a-first-child-after-background ),
 					50%
@@ -205,8 +204,8 @@ form.sidebar__button input {
 		}
 
 		.sidebar__button {
-			color: $gray-dark;
-			border: 1px solid $gray-darken-30;
+			color: var( --color-neutral-700 );
+			border: 1px solid var( --color-neutral-600 );
 
 			&:hover {
 				color: var( --color-accent );
@@ -219,7 +218,7 @@ form.sidebar__button input {
 		}
 
 		&.is-action-button-selected a {
-			&:first-child:after {
+			&:first-child::after {
 				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
 			}
 		}
@@ -233,7 +232,7 @@ form.sidebar__button input {
 
 		a,
 		form {
-			&:first-child:after {
+			&:first-child::after {
 				background: overflow-gradient( var( --sidebar-menu-hover-background-gradient ), 50% );
 			}
 
@@ -245,24 +244,24 @@ form.sidebar__button input {
 	}
 
 	@include breakpoint( '<660px' ) {
-		background-color: $gray-light;
+		background-color: var( --color-neutral-0 );
 
 		a,
 		form {
-			color: var( --color-accent );
+			color: var( --color-primary );
 
-			&:first-child:after {
+			&:first-child::after {
 				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
 			}
 
 			&.sidebar__button {
 				background-color: $white;
-				color: $gray-dark;
+				color: var( --color-neutral-700 );
 			}
 		}
 
 		.gridicon {
-			fill: var( --color-accent );
+			fill: var( --color-primary );
 		}
 	}
 }
@@ -271,12 +270,9 @@ form.sidebar__button input {
 	a,
 	form {
 		&.sidebar__button:hover {
-			color: var( --sidebar-menu-hover-color );
+			color: var( --color-accent );
+			border-color: var( --sidebar-menu-hover-color );
 		}
-	}
-
-	form.sidebar__button:hover {
-		border-color: darken( $sidebar-bg-color, 10% );
 	}
 
 	a:hover,
@@ -321,7 +317,7 @@ form.sidebar__button input {
 	margin-right: auto;
 
 	&.is-active {
-		background: var( --color-accent );
+		background: var( --color-primary );
 
 		.gridicon {
 			fill: $white;
@@ -329,7 +325,7 @@ form.sidebar__button input {
 	}
 
 	&:hover {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	@include breakpoint( '<660px' ) {
@@ -380,7 +376,7 @@ form.sidebar__button input {
 		display: flex;
 		align-items: center;
 
-		&:after {
+		&::after {
 			top: 2px;
 			right: 2px;
 			bottom: 2px;
@@ -407,7 +403,7 @@ form.sidebar__button input {
 		}
 
 		a {
-			&:after {
+			&::after {
 				display: none;
 			}
 		}
@@ -425,6 +421,6 @@ form.sidebar__button input {
 	}
 
 	:hover + & .gridicon {
-		fill: var( --color-accent );
+		fill: var( --color-primary );
 	}
 }

@@ -270,6 +270,10 @@ $z-layers: (
 		'.thank-you-card__main-icon': 2,
 		'.thank-you-card__header-detail': 2
 	),
+	'.themes-banner__upwork': (
+		'.button.themes-banner__cta': 2,
+		'.button.themes-banner__close': 4
+	),
 
 	// The following may be inserted into different areas.
 	// The parent stacking context may be root, or something else depending on where it is inserted.
@@ -298,7 +302,7 @@ $z-layers: (
 @function map-deep-get( $map, $keys... ) {
 	@each $key in $keys {
 		@if not map-has-key( $map, $key) {
-			@warn "No layer found for `#{$key}` of `[#{ $keys }]` in $z-layers map. Property omitted.";
+			@warn 'No layer found for `#{$key}` of `[#{ $keys }]` in $z-layers map. Property omitted.';
 			@return map-get( $map, $key );
 		}
 		$map: map-get( $map, $key );

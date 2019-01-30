@@ -261,17 +261,16 @@ export class Mentions extends Component {
 		return (
 			<div ref={ this.popoverContext }>
 				<QueryUsersSuggestions siteId={ siteId } />
-				{ this.matchingSuggestions.length > 0 &&
-					showPopover && (
-						<SuggestionList
-							query={ query }
-							suggestions={ this.matchingSuggestions }
-							selectedSuggestionId={ selectedSuggestionId }
-							popoverContext={ this.popoverContext.current }
-							onClick={ this.insertSuggestion }
-							onClose={ this.hidePopover }
-						/>
-					) }
+				{ this.matchingSuggestions.length > 0 && showPopover && (
+					<SuggestionList
+						query={ query }
+						suggestions={ this.matchingSuggestions }
+						selectedSuggestionId={ selectedSuggestionId }
+						popoverContext={ this.popoverContext.current }
+						onClick={ this.insertSuggestion }
+						onClose={ this.hidePopover }
+					/>
+				) }
 			</div>
 		);
 	}

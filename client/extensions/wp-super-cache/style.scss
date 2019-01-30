@@ -47,7 +47,7 @@
 	}
 
 	&.gridicons-cross-circle {
-		color: $alert-red;
+		color: var( --color-error );
 	}
 }
 
@@ -131,8 +131,8 @@
 }
 
 .wp-super-cache__stat {
-	border-bottom: 1px solid $gray-lighten-30;
-	color: $gray-dark;
+	border-bottom: 1px solid var( --color-neutral-0 );
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	height: 30px;
 
@@ -158,14 +158,14 @@
 	max-width: 140px;
 	overflow-wrap: break-word;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		max-width: none;
 		overflow-wrap: normal;
 	}
 }
 
 .wp-super-cache__stat-age {
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		width: 100%;
 	}
 }

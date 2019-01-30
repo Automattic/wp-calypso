@@ -13,6 +13,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
+import ScreenReaderText from 'components/screen-reader-text';
 import Gridicon from 'gridicons';
 
 class ActivityLogBanner extends Component {
@@ -72,9 +73,7 @@ class ActivityLogBanner extends Component {
 				</div>
 				{ isDismissable && (
 					<button className="activity-log-banner__dismiss" onClick={ onDismissClick } type="button">
-						<span className="activity-log-banner__screen-reader-text screen-reader-text">
-							{ translate( 'Dismiss' ) }
-						</span>
+						<ScreenReaderText>{ translate( 'Dismiss' ) }</ScreenReaderText>
 						<Gridicon icon="cross" size={ 24 } />
 					</button>
 				) }

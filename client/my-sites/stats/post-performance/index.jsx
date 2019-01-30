@@ -99,8 +99,9 @@ class StatsPostPerformance extends Component {
 		return (
 			<div>
 				{ siteId && <QueryPosts siteId={ siteId } query={ query } /> }
-				{ siteId &&
-					post && <QueryPostStats siteId={ siteId } postId={ post.ID } fields={ [ 'views' ] } /> }
+				{ siteId && post && (
+					<QueryPostStats siteId={ siteId } postId={ post.ID } fields={ [ 'views' ] } />
+				) }
 				<SectionHeader label={ translate( 'Latest Post Summary' ) } href={ summaryUrl } />
 				<Card className={ cardClass }>
 					<StatsModulePlaceholder isLoading={ loading && ! post } />

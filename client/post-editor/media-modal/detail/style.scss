@@ -1,6 +1,3 @@
-
-@import 'components/screen-reader-text/style';
-
 .editor-media-modal-detail .header-cake.card {
 	padding-top: 0;
 	padding-bottom: 0;
@@ -19,9 +16,9 @@
 .editor-media-modal-detail__preview-wrapper {
 	flex: 0 0 35%;
 	position: relative;
-	border-bottom: 1px solid $gray-lighten-20;
-	background-color: $gray-light;
-	box-shadow: inset 0 0 2px 2px rgba( lighten( $gray, 10 ), 0.1 );
+	border-bottom: 1px solid var( --color-neutral-100 );
+	background-color: var( --color-neutral-0 );
+	box-shadow: inset 0 0 2px 2px rgba( var( --color-neutral-200-rgb ), 0.1 );
 
 	@include breakpoint( '>660px' ) {
 		flex: 2 0 0%;
@@ -71,7 +68,7 @@
 	width: 46px;
 	height: 46px;
 	transform: translateY( -50% );
-	background-color: rgba( $gray-dark, 0.85 );
+	background-color: rgba( var( --color-neutral-700-rgb ), 0.85 );
 	border-radius: 24px;
 	color: $white;
 	cursor: pointer;
@@ -81,14 +78,14 @@
 	}
 
 	&:hover {
-		background-color: rgba( $gray-darken-20, 0.9 );
+		background-color: rgba( var( --color-neutral-500-rgb ), 0.9 );
 	}
 }
 
 .editor-media-modal-detail__previous {
 	left: 10px #{'/*rtl:ignore*/'};
 
-	&:before {
+	&::before {
 		margin: 0 1px 0 0;
 	}
 }
@@ -96,7 +93,7 @@
 .editor-media-modal-detail__next {
 	right: 10px #{'/*rtl:ignore*/'};
 
-	&:before {
+	&::before {
 		margin: 0 0 0 3px;
 	}
 }
@@ -206,7 +203,7 @@
 		top: 0;
 		bottom: 0;
 		width: 80%;
-		background-color: $gray-lighten-30;
+		background-color: var( --color-neutral-0 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }

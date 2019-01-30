@@ -42,7 +42,7 @@
 		+ span {
 			display: block;
 			text-align: center;
-			color: $gray-lighten-10;
+			color: var( --color-neutral-200 );
 			margin-top: 0.3em;
 		}
 	}
@@ -104,7 +104,7 @@
 }
 
 .sticky-panel.is-sticky .themes__search-card {
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 2px 4px $gray-lighten-20;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 2px 4px var( --color-neutral-100 );
 }
 
 .themes__upload-button {
@@ -112,7 +112,7 @@
 
 	&.is-compact {
 		margin-top: 23px;
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		.gridicon {
 			padding-right: 4px;
 		}

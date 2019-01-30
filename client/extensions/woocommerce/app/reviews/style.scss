@@ -1,7 +1,7 @@
 .reviews__placeholder {
 	display: inline-block;
 	width: 100%;
-	padding: 12px 0px;
+	padding: 12px 0;
 	@include placeholder();
 }
 
@@ -29,21 +29,20 @@
 
 	&.is-unapproved.is-collapsed {
 		.reviews__header {
-			background: mix( $alert-yellow, $white, 8.5% );
-			box-shadow: inset 4px 0 0 0 $alert-yellow;
+			box-shadow: inset 4px 0 0 0 var( --color-warning );
 		}
 	}
 
 	.reviews__product-name {
 		padding: 16px;
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 	}
 
 	&.is-expanded {
 		margin: 16px auto;
 
 		.reviews__header {
-			border-bottom: 1px solid $gray-lighten-30;
+			border-bottom: 1px solid var( --color-neutral-0 );
 		}
 
 		.reviews__content {
@@ -73,7 +72,7 @@
 		align-items: center;
 		flex-flow: row wrap;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			flex-flow: initial;
 		}
 	}
@@ -85,16 +84,16 @@
 		.reviews__action-collapse .gridicon {
 			fill: $gray;
 			transform: rotate( 180deg );
-			transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
+			transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;
 		}
 
 		.reviews__action-collapse:hover .gridicon {
-			fill: $blue-medium;
+			fill: var( --color-primary );
 		}
 
 		&.is-preview {
 			&:hover .reviews__action-collapse .gridicon {
-				fill: $blue-medium;
+				fill: var( --color-primary );
 			}
 			.reviews__action-collapse {
 				flex: none;
@@ -126,7 +125,7 @@
 		font-weight: 600;
 
 		.gridicon {
-			transform: translateX(4px) translateY(4px);
+			transform: translateX( 4px ) translateY( 4px );
 		}
 	}
 
@@ -160,7 +159,7 @@
 			display: block;
 		}
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			display: block;
 		}
 	}
@@ -170,7 +169,7 @@
 		margin-left: 16px;
 		width: calc( 100% - 157px );
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 150px;
 			margin-left: 8px;
 		}
@@ -187,7 +186,7 @@
 		margin-right: 16px;
 		margin-top: 0;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			order: 0;
 			width: calc( 100% - 304px );
 			margin-left: 8px;
@@ -204,14 +203,14 @@
 		flex-shrink: 0;
 		margin-right: 0;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			height: 32px;
 			width: 32px;
 			margin-right: 8px;
 		}
 
 		&.is-placeholder {
-			background: $gray-light;
+			background: var( --color-neutral-0 );
 		}
 
 		img {
@@ -263,7 +262,7 @@
 			font-weight: normal;
 			margin-left: 4px;
 
-			@include breakpoint( ">960px" ) {
+			@include breakpoint( '>960px' ) {
 				display: inline;
 			}
 		}
@@ -280,7 +279,7 @@
 		&.reviews__action-delete {
 			&:focus,
 			&:hover {
-				color: $alert-red;
+				color: var( --color-error );
 			}
 		}
 
@@ -288,23 +287,22 @@
 			color: $alert-green;
 		}
 		&.is-spam {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 		&.is-trash {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 		}
 	}
 }
 
-
 .reviews__expanded-card-details-wrap {
-	border-left: 4px solid $gray-lighten-30;
+	border-left: 4px solid var( --color-neutral-0 );
 	margin-left: 16px;
 }
 
 .reviews__reply {
-	border-top: 1px solid $gray-lighten-30;
-	border-left: 4px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
+	border-left: 4px solid var( --color-neutral-0 );
 	margin-left: 16px;
 	padding-bottom: 16px;
 	background: lighten( $gray, 35% );
@@ -322,7 +320,7 @@
 	line-height: 0;
 	overflow: hidden;
 	position: relative;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 
 	textarea {
 		font-size: 14px;
@@ -345,7 +343,7 @@
 
 		&:focus,
 		&.has-focus {
-			border-color: $blue-wordpress;
+			border-color: var( --color-primary );
 		}
 
 		&.has-scrollbar {
@@ -376,7 +374,7 @@
 		padding: 10px;
 
 		&.is-active {
-			color: $blue-medium;
+			color: var( --color-primary );
 			cursor: pointer;
 		}
 
@@ -388,14 +386,14 @@
 		}
 
 		.accessible-focus &:focus {
-			border-color: $blue-medium;
+			border-color: var( --color-primary );
 			box-shadow: 0 0 0 2px $blue-light;
 		}
 	}
 }
 
 .reviews__reply-edit {
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 	padding: 8px;
 
 	.reviews__reply-edit-buttons {

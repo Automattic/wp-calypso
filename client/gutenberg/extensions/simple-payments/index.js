@@ -65,6 +65,14 @@ export const settings = {
 			type: 'number',
 			default: 0,
 		},
+		featuredMediaUrl: {
+			type: 'string',
+			default: null,
+		},
+		featuredMediaTitle: {
+			type: 'string',
+			default: null,
+		},
 		multiple: {
 			type: 'boolean',
 			default: false,

@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { find, flowRight, partialRight, pick, overSome } from 'lodash';
@@ -13,8 +12,6 @@ import { find, flowRight, partialRight, pick, overSome } from 'lodash';
  */
 import wrapSettingsForm from './wrap-settings-form';
 import Card from 'components/card';
-import Button from 'components/button';
-import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
 import SupportInfo from 'components/support-info';
 import Banner from 'components/banner';
@@ -26,8 +23,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormAnalyticsStores from './form-analytics-stores';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 import {
 	isBusiness,
 	isEnterprise,
@@ -35,16 +30,9 @@ import {
 	isJetpackPremium,
 	isVipPlan,
 } from 'lib/products-values';
-import {
-	getSiteOption,
-	isJetpackMinimumVersion,
-	isJetpackSite,
-	siteSupportsGoogleAnalyticsIPAnonymization,
-	siteSupportsGoogleAnalyticsBasicEcommerceTracking,
-	siteSupportsGoogleAnalyticsEnhancedEcommerceTracking,
-} from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import {
 	FEATURE_GOOGLE_ANALYTICS,
 	TYPE_PREMIUM,
@@ -53,6 +41,7 @@ import {
 } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
 const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness, isVipPlan );
@@ -105,40 +94,21 @@ export class GoogleAnalyticsForm extends Component {
 			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
-			jetpackVersionSupportsModule,
 			showUpgradeNudge,
 			site,
 			sitePlugins,
 			siteId,
 			siteIsJetpack,
-			siteSlug,
-			siteSupportsBasicEcommerceTracking,
-			siteSupportsEnhancedEcommerceTracking,
-			siteSupportsIPAnonymization,
 			translate,
 			uniqueEventTracker,
 		} = this.props;
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
-		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsModule;
 		const analyticsSupportUrl = siteIsJetpack
 			? 'https://jetpack.com/support/google-analytics/'
 			: 'https://support.wordpress.com/google-analytics/';
 
 		const wooCommercePlugin = find( sitePlugins, { slug: 'woocommerce' } );
 		const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.active : false;
-		const showAnalyticsForStores =
-			config.isEnabled( 'jetpack/google-analytics-for-stores' ) &&
-			siteIsJetpack &&
-			wooCommerceActive &&
-			siteSupportsBasicEcommerceTracking;
-		const showAnonymizeIP =
-			config.isEnabled( 'jetpack/google-analytics-anonymize-ip' ) &&
-			siteIsJetpack &&
-			siteSupportsIPAnonymization;
-		const showEnhancedAnalyticsForStores =
-			config.isEnabled( 'jetpack/google-analytics-for-stores-enhanced' ) &&
-			siteIsJetpack &&
-			siteSupportsEnhancedEcommerceTracking;
 
 		const nudgeTitle = siteIsJetpack
 			? translate( 'Enable Google Analytics by upgrading to Jetpack Premium' )
@@ -148,31 +118,13 @@ export class GoogleAnalyticsForm extends Component {
 			<form id="analytics" onSubmit={ handleSubmitForm }>
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
-				{ isJetpackUnsupported &&
-					! showUpgradeNudge && (
-						<Notice
-							status="is-warning"
-							showDismiss={ false }
-							text={ translate( 'Google Analytics require a newer version of Jetpack.' ) }
-						>
-							<NoticeAction href={ `/plugins/jetpack/${ siteSlug }` }>
-								{ translate( 'Update Now' ) }
-							</NoticeAction>
-						</Notice>
-					) }
-
-				<SectionHeader label={ translate( 'Google Analytics' ) }>
-					{ ! showUpgradeNudge && (
-						<Button
-							primary
-							compact
-							disabled={ this.isSubmitButtonDisabled() }
-							onClick={ handleSubmitForm }
-						>
-							{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-						</Button>
-					) }
-				</SectionHeader>
+				<SettingsSectionHeader
+					disabled={ this.isSubmitButtonDisabled() }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton={ ! showUpgradeNudge }
+					title={ translate( 'Google Analytics' ) }
+				/>
 
 				{ showUpgradeNudge && site && site.plan ? (
 					<Banner
@@ -240,7 +192,7 @@ export class GoogleAnalyticsForm extends Component {
 								{ translate( 'Where can I find my Tracking ID?' ) }
 							</ExternalLink>
 						</fieldset>
-						{ showAnonymizeIP && (
+						{ siteIsJetpack && (
 							<fieldset>
 								<CompactFormToggle
 									checked={ fields.wga ? Boolean( fields.wga.anonymize_ip ) : false }
@@ -265,11 +217,10 @@ export class GoogleAnalyticsForm extends Component {
 								</FormSettingExplanation>
 							</fieldset>
 						) }
-						{ showAnalyticsForStores && (
+						{ siteIsJetpack && wooCommerceActive && (
 							<FormAnalyticsStores
 								fields={ fields }
 								handleToggleChange={ this.handleToggleChange }
-								showEnhanced={ showEnhancedAnalyticsForStores }
 							/>
 						) }
 						<p>
@@ -315,40 +266,20 @@ export class GoogleAnalyticsForm extends Component {
 const mapStateToProps = state => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
 	const isGoogleAnalyticsEligible =
 		site && site.plan && ( hasBusinessPlan( site.plan ) || isJetpackPremium( site.plan ) );
-	const jetpackManagementUrl = getSiteOption( state, siteId, 'admin_url' );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
-	const jetpackVersionSupportsModule = isJetpackMinimumVersion( state, siteId, '4.6-alpha' );
-	const siteSupportsIPAnonymization = siteSupportsGoogleAnalyticsIPAnonymization( state, siteId );
-	const siteSupportsBasicEcommerceTracking = siteSupportsGoogleAnalyticsBasicEcommerceTracking(
-		state,
-		siteId
-	);
-	const siteSupportsEnhancedEcommerceTracking = siteSupportsGoogleAnalyticsEnhancedEcommerceTracking(
-		state,
-		siteId
-	);
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const googleAnalyticsEnabled =
-		site &&
-		( ! siteIsJetpack || ( siteIsJetpack && jetpackModuleActive && jetpackVersionSupportsModule ) );
+	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
 	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
 
 	return {
 		site,
 		siteId,
-		siteSlug,
 		siteIsJetpack,
 		showUpgradeNudge: ! isGoogleAnalyticsEligible,
 		enableForm: isGoogleAnalyticsEligible && googleAnalyticsEnabled,
-		jetpackManagementUrl,
-		jetpackVersionSupportsModule,
 		sitePlugins,
-		siteSupportsBasicEcommerceTracking,
-		siteSupportsEnhancedEcommerceTracking,
-		siteSupportsIPAnonymization,
 	};
 };
 

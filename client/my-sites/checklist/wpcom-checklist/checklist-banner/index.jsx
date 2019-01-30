@@ -21,6 +21,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { setNeverShowBannerStatus } from './never-show';
 import { recordTracksEvent } from 'state/analytics/actions';
+import getSiteChecklistIsLoading from 'state/selectors/get-site-checklist-is-loading';
 
 export class ChecklistBanner extends Component {
 	static propTypes = {
@@ -43,21 +44,19 @@ export class ChecklistBanner extends Component {
 	};
 
 	render() {
-		if ( this.state.closed ) {
+		if ( this.state.closed || this.props.isLoading ) {
 			return null;
 		}
 
 		const { translate, taskList } = this.props;
-
 		const childrenArray = Children.toArray( this.props.children );
 		const { total, completed, percentage } = taskList.getCompletionStatus();
-
 		const firstIncomplete = taskList.getFirstIncompleteTask();
 		const isFinished = ! firstIncomplete;
 
 		return (
 			<Card className="checklist-banner">
-				<div className="checklist-banner__gauge">
+				<div className="checklist-banner__gauge animate__fade-in">
 					<span className="checklist-banner__gauge-additional-text">{ translate( 'setup' ) }</span>
 					<Gauge
 						width={ 152 }
@@ -123,6 +122,7 @@ const mapStateToProps = state => {
 	return {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		isLoading: getSiteChecklistIsLoading( state ),
 	};
 };
 

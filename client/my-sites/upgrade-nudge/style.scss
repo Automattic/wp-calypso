@@ -42,14 +42,14 @@
 
 	&.is-full-width {
 		width:100%;
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			max-width: 420px;
 		}
 	}
 }
 
 .upgrade-nudge__title {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-weight: 500;
 }
 

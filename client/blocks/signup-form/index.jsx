@@ -18,7 +18,6 @@ import {
 	mapKeys,
 	pick,
 	snakeCase,
-	thru,
 } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
@@ -243,7 +242,7 @@ class SignupForm extends Component {
 				return debug( error || 'User validation failed.' );
 			}
 
-			const messages = response.success
+			let messages = response.success
 				? {}
 				: mapKeys( response.messages, ( value, key ) => camelCase( key ) );
 
@@ -584,7 +583,7 @@ class SignupForm extends Component {
 			/>
 		);
 		const tosText = this.props.translate(
-			'By creating an account you agree to our {{a}}fascinating Terms of Service{{/a}}.',
+			'By creating an account you agree to our {{a}}Terms of Service{{/a}}.',
 			{
 				components: {
 					a: tosLink,
@@ -726,14 +725,13 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ this.props.isSocialSignupEnabled &&
-					! this.userCreationComplete() && (
-						<SocialSignupForm
-							handleResponse={ this.props.handleSocialResponse }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
-						/>
-					) }
+				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+					<SocialSignupForm
+						handleResponse={ this.props.handleSocialResponse }
+						socialService={ this.props.socialService }
+						socialServiceResponse={ this.props.socialServiceResponse }
+					/>
+				) }
 
 				{ this.props.footerLink || this.footerLink() }
 			</div>

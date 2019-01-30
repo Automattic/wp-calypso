@@ -12,6 +12,10 @@ module.exports = {
 	rootDir: './../../',
 	roots: [ '<rootDir>/server/' ],
 	testEnvironment: 'node',
+	transform: {
+		'^.+\\.jsx?$': 'babel-jest',
+		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': '<rootDir>/test/test/helpers/assets/transform.js',
+	},
 	transformIgnorePatterns: [ 'node_modules[\\/\\\\](?!redux-form)' ],
 	testMatch: [ '<rootDir>/server/**/test/*.js?(x)' ],
 	timers: 'fake',

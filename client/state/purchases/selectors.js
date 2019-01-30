@@ -11,7 +11,11 @@ import { get, find } from 'lodash';
 import createSelector from 'lib/create-selector';
 import { createPurchasesArray } from 'lib/purchases/assembler';
 import { isSubscription } from 'lib/purchases';
-import { isDomainRegistration, isDomainMapping } from 'lib/products-values';
+import {
+	getIncludedDomainPurchaseAmount,
+	isDomainRegistration,
+	isDomainMapping,
+} from 'lib/products-values';
 
 /**
  * Return the list of purchases from state object
@@ -64,12 +68,21 @@ export const getSitePurchases = ( state, siteId ) =>
 
 /***
  * Returns a purchase object that corresponds to that subscription's included domain
- * @param  {Object} state					global state
- * @param  {Object} subscriptionPurchase	subscription purchase object
+ *
+ * Even if a domain registration was purchased with the subscription, it will
+ * not be returned if the domain product was paid for separately (eg: if it was
+ * renewed on its own).
+ *
+ * @param  {Object} state  global state
+ * @param  {Object} subscriptionPurchase  subscription purchase object
  * @return {Object} domain purchase if there is one, null if none found or not a subscription object passed
  */
 export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
-	if ( ! subscriptionPurchase || ! isSubscription( subscriptionPurchase ) ) {
+	if (
+		! subscriptionPurchase ||
+		! isSubscription( subscriptionPurchase ) ||
+		getIncludedDomainPurchaseAmount( subscriptionPurchase )
+	) {
 		return null;
 	}
 

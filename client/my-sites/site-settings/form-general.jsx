@@ -20,7 +20,7 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import LanguagePicker from 'components/language-picker';
-import SectionHeader from 'components/section-header';
+import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import config from 'config';
 import notices from 'notices';
 import FormInput from 'components/forms/form-text-input';
@@ -35,7 +35,7 @@ import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
@@ -255,14 +255,9 @@ export class SiteSettingsFormGeneral extends Component {
 			isRequestingSettings,
 			onChangeField,
 			siteIsJetpack,
-			supportsLanguageSelection,
 			translate,
 		} = this.props;
 		const errorNotice = this.renderLanguagePickerNotice();
-
-		if ( ! supportsLanguageSelection ) {
-			return null;
-		}
 
 		return (
 			<FormFieldset className={ siteIsJetpack && 'site-settings__has-divider is-top-only' }>
@@ -376,17 +371,13 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Net Neutrality' ) }>
-					<Button
-						compact={ true }
-						onClick={ handleSubmitForm }
-						primary={ true }
-						type="submit"
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</SectionHeader>
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Net Neutrality' ) }
+				/>
 				<Card>
 					<FormFieldset>
 						<CompactFormToggle
@@ -424,20 +415,12 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	Timezone() {
-		const {
-			fields,
-			isRequestingSettings,
-			translate,
-			supportsLanguageSelection,
-			moment,
-		} = this.props;
+		const { fields, isRequestingSettings, translate, moment } = this.props;
 		const guessedTimezone = moment.tz.guess();
 		const setGuessedTimezone = this.onTimezoneSelect.bind( this, guessedTimezone );
 
 		return (
-			<FormFieldset
-				className={ ! supportsLanguageSelection && 'site-settings__has-divider is-top-only' }
-			>
+			<FormFieldset>
 				<FormLabel htmlFor="blogtimezone">{ translate( 'Site Timezone' ) }</FormLabel>
 
 				<Timezone
@@ -476,7 +459,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<>
-				<SectionHeader label={ translate( 'Launch site' ) } />
+				<SettingsSectionHeader title={ translate( 'Launch site' ) } />
 				<Card className="site-settings__general-settings-launch-site">
 					<div className="site-settings__general-settings-launch-site-text">
 						<p>
@@ -498,17 +481,14 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<>
-				<SectionHeader label={ translate( 'Privacy' ) } id="site-privacy-settings">
-					<Button
-						compact={ true }
-						onClick={ handleSubmitForm }
-						primary={ true }
-						type="submit"
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</SectionHeader>
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings }
+					id="site-privacy-settings"
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Privacy' ) }
+				/>
 				<Card>
 					<form>{ this.visibilityOptions() }</form>
 				</Card>
@@ -552,18 +532,14 @@ export class SiteSettingsFormGeneral extends Component {
 
 				{ ! siteIsJetpack && this.netNeutralityOption() }
 
-				<SectionHeader label={ translate( 'Site Profile' ) }>
-					<Button
-						compact={ true }
-						onClick={ handleSubmitForm }
-						primary={ true }
-						data-tip-target="settings-site-profile-save"
-						type="submit"
-						disabled={ isRequestingSettings || isSavingSettings }
-					>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				</SectionHeader>
+				<SettingsSectionHeader
+					data-tip-target="settings-site-profile-save"
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Site Profile' ) }
+				/>
 				<Card>
 					<form>
 						{ this.siteOptions() }
@@ -578,7 +554,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 				{ ! siteIsJetpack && (
 					<div className="site-settings__footer-credit-container">
-						<SectionHeader label={ translate( 'Footer Credit' ) } />
+						<SettingsSectionHeader title={ translate( 'Footer Credit' ) } />
 						<CompactCard className="site-settings__footer-credit-explanation">
 							<p>
 								{ preventWidows(
@@ -597,19 +573,18 @@ export class SiteSettingsFormGeneral extends Component {
 								</Button>
 							</div>
 						</CompactCard>
-						{ site &&
-							! isBusiness( site.plan ) && (
-								<Banner
-									feature={ FEATURE_NO_BRANDING }
-									plan={ PLAN_BUSINESS }
-									title={ translate(
-										'Remove the footer credit entirely with WordPress.com Business'
-									) }
-									description={ translate(
-										'Upgrade to remove the footer credit, add Google Analytics and more'
-									) }
-								/>
-							) }
+						{ site && ! isBusiness( site.plan ) && (
+							<Banner
+								feature={ FEATURE_NO_BRANDING }
+								plan={ PLAN_BUSINESS }
+								title={ translate(
+									'Remove the footer credit entirely with WordPress.com Business'
+								) }
+								description={ translate(
+									'Upgrade to remove the footer credit, add Google Analytics and more'
+								) }
+							/>
+						) }
 					</div>
 				) }
 			</div>
@@ -654,8 +629,6 @@ const connectComponent = connect(
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
-			supportsLanguageSelection:
-				! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '5.9-alpha' ),
 			selectedSite,
 		};
 	},

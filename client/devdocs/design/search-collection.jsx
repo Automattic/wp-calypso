@@ -114,13 +114,12 @@ const Collection = ( {
 
 	return (
 		<div className="design__collection">
-			{ showCounter > 1 &&
-				filter && (
-					<div className="design__instance-links">
-						<span className="design__instance-links-label">Results:</span>
-						{ summary }
-					</div>
-				) }
+			{ showCounter > 1 && filter && (
+				<div className="design__instance-links">
+					<span className="design__instance-links-label">Results:</span>
+					{ summary }
+				</div>
+			) }
 
 			{ /* Load first chunk, lazy load all others as needed. */ }
 

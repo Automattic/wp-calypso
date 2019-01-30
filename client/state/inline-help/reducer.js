@@ -14,6 +14,8 @@ import {
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_HIDE,
 	INLINE_HELP_POPOVER_SHOW,
+	INLINE_HELP_CHECKLIST_PROMPT_SHOW,
+	INLINE_HELP_CHECKLIST_PROMPT_HIDE,
 } from 'state/action-types';
 
 export const popover = createReducer(
@@ -23,6 +25,16 @@ export const popover = createReducer(
 	{
 		[ INLINE_HELP_POPOVER_SHOW ]: state => ( { ...state, isVisible: true } ),
 		[ INLINE_HELP_POPOVER_HIDE ]: state => ( { ...state, isVisible: false } ),
+	}
+);
+
+export const checklistPrompt = createReducer(
+	{
+		isVisible: false,
+	},
+	{
+		[ INLINE_HELP_CHECKLIST_PROMPT_SHOW ]: state => ( { ...state, isVisible: true } ),
+		[ INLINE_HELP_CHECKLIST_PROMPT_HIDE ]: state => ( { ...state, isVisible: false } ),
 	}
 );
 
@@ -116,4 +128,4 @@ export const contactForm = createReducer(
 	}
 );
 
-export default combineReducers( { popover, contactForm, searchResults } );
+export default combineReducers( { popover, checklistPrompt, contactForm, searchResults } );

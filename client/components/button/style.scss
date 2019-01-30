@@ -17,11 +17,8 @@ button {
 }
 
 .button {
-	background: $white;
-	border-color: $gray-lighten-20;
 	border-style: solid;
 	border-width: 1px 1px 2px;
-	color: $gray-dark;
 	cursor: pointer;
 	display: inline-block;
 	margin: 0;
@@ -39,23 +36,46 @@ button {
 	-webkit-appearance: none;
 	appearance: none;
 
-	&:hover {
-		border-color: $gray-lighten-10;
-		color: $gray-dark;
+	&.hidden {
+		display: none;
 	}
+
+	.gridicon {
+		position: relative;
+		top: 4px;
+		margin-top: -2px;
+		width: 18px;
+		height: 18px;
+
+		&:not( :last-child ) {
+			margin-right: 4px;
+		}
+	}
+
 	&:active,
 	&.is-active {
 		border-width: 2px 1px 1px;
 	}
-	&:visited {
-		color: $gray-dark;
+
+	background-color: var( --color-white );
+	color: var( --color-neutral-700 );
+	border-color: var( --color-neutral-100 );
+
+	&:hover {
+		border-color: var( --color-neutral-200 );
+		color: var( --color-neutral-700 );
 	}
+
+	&:visited {
+		color: var( --color-neutral-700 );
+	}
+
 	&[disabled],
 	&:disabled,
 	&.disabled {
-		color: $gray-lighten-30;
-		background: $white;
-		border-color: $gray-lighten-30;
+		color: var( --color-neutral-50 );
+		background-color: var( --color-white );
+		border-color: var( --color-neutral-50 );
 		cursor: default;
 
 		&:active,
@@ -63,10 +83,12 @@ button {
 			border-width: 1px 1px 2px;
 		}
 	}
+
 	.accessible-focus &:focus {
-		border-color: var( --color-accent );
+		border-color: var( --color-primary );
 		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
+
 	&.is-compact {
 		padding: 7px;
 		color: var( --color-text-subtle );
@@ -74,7 +96,7 @@ button {
 		line-height: 1;
 
 		&:disabled {
-			color: $gray-lighten-30;
+			color: var( --color-neutral-50 );
 		}
 		.gridicon {
 			top: 5px;
@@ -93,64 +115,57 @@ button {
 			margin-left: -4px;
 		}
 	}
+
 	&.is-busy {
 		animation: button__busy-animation 3000ms infinite linear;
 		background-size: 120px 100%;
 		background-image: linear-gradient(
 			-45deg,
-			$gray-lighten-30 28%,
-			$white 28%,
-			$white 72%,
-			$gray-lighten-30 72%
+			var( --color-neutral-0 ) 28%,
+			var( --color-surface ) 28%,
+			var( --color-surface ) 72%,
+			var( --color-neutral-0 ) 72%
 		);
-	}
-	&.hidden {
-		display: none;
-	}
-	.gridicon {
-		position: relative;
-		top: 4px;
-		margin-top: -2px;
-		width: 18px;
-		height: 18px;
-
-		&:not( :last-child ) {
-			margin-right: 4px;
-		}
 	}
 }
 
 // Primary buttons
 .button.is-primary {
-	background: var( --color-accent );
-	border-color: var( --button-primary-border-color );
-	color: $white;
+	background-color: var( --color-accent );
+	border-color: var( --color-accent-dark );
+	color: var( --color-white );
 
 	&:hover,
 	&:focus {
-		border-color: var( --color-primary-dark );
-		color: $white;
+		background-color: var( --color-button-primary-background-hover );
+		border-color: var( --color-accent-dark );
+		color: var( --color-white );
 	}
+
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 2px var( --color-accent-light );
+	}
+
 	&.is-compact {
-		color: $white;
+		color: var( --color-white );
 	}
+
 	&[disabled],
 	&:disabled,
 	&.disabled {
-		color: $gray-lighten-30;
-		background: $white;
-		border-color: $gray-lighten-30;
+		color: var( --color-neutral-50 );
+		background-color: var( --color-white );
+		border-color: var( --color-neutral-50 );
 	}
+
 	&.is-busy {
-		background-size: 120px 100%;
 		background-image: linear-gradient(
 			-45deg,
-			$blue-medium 28%,
-			darken( $blue-medium, 5% ) 28%,
-			darken( $blue-medium, 5% ) 72%,
-			$blue-medium 72%
+			var( --color-accent ) 28%,
+			var( --color-accent-600 ) 28%,
+			var( --color-accent-600 ) 72%,
+			var( --color-accent ) 72%
 		);
-		border-color: darken( $blue-medium, 8% );
 	}
 }
 
@@ -164,53 +179,56 @@ button {
 	}
 
 	.accessible-focus &:focus {
-		box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
+		box-shadow: 0 0 0 2px var( --color-error-light );
 	}
 
 	&[disabled],
 	&:disabled {
-		color: lighten( $alert-red, 30% );
-		border-color: $gray-lighten-30;
+		color: var( --color-neutral-50 );
+		background-color: var( --color-white );
+		border-color: var( --color-neutral-50 );
 	}
 }
 
 .button.is-primary.is-scary {
-	background: var( --color-error );
-	border-color: darken( $alert-red, 20% );
-	color: $white;
+	background-color: var( --color-error );
+	border-color: var( --color-error-dark );
+	color: var( --color-white );
 
 	&:hover,
 	&:focus {
-		border-color: darken( $alert-red, 40% );
+		background-color: var( --color-button-primary-scary-background-hover );
 	}
+
 	&[disabled],
 	&:disabled {
-		background: lighten( $alert-red, 20% );
-		border-color: tint( $alert-red, 30% );
+		color: var( --color-neutral-50 );
+		background-color: var( --color-white );
+		border-color: var( --color-neutral-50 );
 	}
+
 	&.is-busy {
-		background-size: 120px 100%;
 		background-image: linear-gradient(
 			-45deg,
-			$alert-red 28%,
-			darken( $alert-red, 5% ) 28%,
-			darken( $alert-red, 5% ) 72%,
-			$alert-red 72%
+			var( --color-error ) 28%,
+			var( --color-error-600 ) 28%,
+			var( --color-error-600 ) 72%,
+			var( --color-error ) 72%
 		);
-		border-color: darken( $alert-red, 8% );
 	}
 }
 
 .button.is-borderless {
 	border: none;
 	background: none;
-	color: var( --button-is-borderless-color );
+	color: var( --color-text-subtle );
 	padding-left: 0;
 	padding-right: 0;
 
 	&:hover,
 	&:focus {
-		color: $gray-dark;
+		background: none;
+		color: var( --color-neutral-700 );
 	}
 
 	.gridicon {
@@ -221,7 +239,7 @@ button {
 
 	&[disabled],
 	&:disabled {
-		color: $gray-lighten-30;
+		color: var( --color-neutral-50 );
 		cursor: default;
 
 		&:active,
@@ -249,11 +267,15 @@ button {
 		&:hover,
 		&:active,
 		&.is-active {
-			color: $link-highlight;
+			color: var( --color-primary-dark );
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px var( --color-primary-light );
 		}
 
 		&[disabled] {
-			color: $gray-lighten-30;
+			color: var( --color-neutral-50 );
 		}
 	}
 
@@ -324,7 +346,7 @@ button {
 	border: none;
 	border-radius: 0;
 	padding: 0;
-	color: var( --color-accent );
+	color: var( --color-link );
 	font-weight: 400;
 	font-size: inherit;
 	line-height: 1.65;
@@ -333,7 +355,7 @@ button {
 	&:focus,
 	&:active,
 	&.is-active {
-		color: $link-highlight;
+		color: var( --color-link-dark );
 		box-shadow: none;
 	}
 }

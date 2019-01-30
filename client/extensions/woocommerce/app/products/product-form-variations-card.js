@@ -158,21 +158,19 @@ class ProductFormVariationsCard extends Component {
 							onUploadFinish={ this.props.onUploadFinish }
 							storeIsManagingStock={ storeIsManagingStock }
 						/>
-						{ variations &&
-							variations.length &&
-							'no' === storeIsManagingStock && (
-								<FormSettingExplanation>
-									{ translate(
-										'Inventory management has been disabled for this store. ' +
-											'You can enable it under your {{managementLink}}inventory settings{{/managementLink}}.',
-										{
-											components: {
-												managementLink: <a href={ inventorySettingsUrl } target="_blank" />,
-											},
-										}
-									) }
-								</FormSettingExplanation>
-							) }
+						{ variations && variations.length && 'no' === storeIsManagingStock && (
+							<FormSettingExplanation>
+								{ translate(
+									'Inventory management has been disabled for this store. ' +
+										'You can enable it under your {{managementLink}}inventory settings{{/managementLink}}.',
+									{
+										components: {
+											managementLink: <a href={ inventorySettingsUrl } target="_blank" />,
+										},
+									}
+								) }
+							</FormSettingExplanation>
+						) }
 					</div>
 				) }
 			</FoldableCard>

@@ -321,13 +321,21 @@ class SharingServiceExamples extends Component {
 					src: '/calypso/images/sharing/mailchimp-screenshot.png',
 					alt: this.props.translate( 'Add subscribers to MailChimp', { textOnly: true } ),
 				},
-				label: this.props.translate( 'Automatically add blog subscribers to your MailChimp list.' ),
+				label: this.props.translate(
+					'Enable site visitors to sign up for your MailChimp content.'
+				),
 			},
 		];
 	}
 
 	render() {
 		if ( ! includes( SERVICES_WHITELIST, this.props.service.ID ) ) {
+			/**
+			 * TODO: Refactoring this line has to be tackled in a seperate diff.
+			 * Touching this changes services-group.jsx which changes service.jsx
+			 * Basically whole folder needs refactoring.
+			 */
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			return <div className="sharing-service-examples" />;
 		}
 
@@ -338,6 +346,12 @@ class SharingServiceExamples extends Component {
 		const examples = this[ this.props.service.ID ]();
 
 		return (
+			/**
+			 * TODO: Refactoring this line has to be tackled in a seperate diff.
+			 * Touching this changes services-group.jsx which changes service.jsx
+			 * Basically whole folder needs refactoring.
+			 */
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div className="sharing-service-examples">
 				{ examples.map( ( example, index ) => (
 					<ServiceExample

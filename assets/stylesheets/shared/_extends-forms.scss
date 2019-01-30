@@ -1,8 +1,4 @@
-/**
- * SASS placeholder selectors for form styles
- *
- * @format
- */
+// SASS placeholder selectors for form styles
 
 %form {
 	ul {
@@ -16,26 +12,30 @@
 	margin: 0;
 	padding: 7px 14px;
 	width: 100%;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 16px;
 	line-height: 1.5;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	background-color: $white;
 	transition: all 0.15s ease-in-out;
 	box-sizing: border-box;
 
 	&::placeholder {
-		color: $gray;
+		color: var( --color-neutral-500 );
 	}
 
 	&:hover {
-		border-color: $gray-lighten-10;
+		border-color: var( --color-neutral-200 );
 	}
 
 	&:focus {
-		border-color: $blue-wordpress;
+		border-color: var( --color-primary );
 		outline: none;
-		box-shadow: 0 0 0 2px $blue-light;
+		box-shadow: 0 0 0 2px var( --color-primary-100 );
+
+		&:hover {
+			box-shadow: 0 0 0 2px var( --color-primary-200 );
+		}
 
 		&::-ms-clear {
 			display: none;
@@ -43,52 +43,52 @@
 	}
 
 	&:disabled {
-		background: $gray-light;
-		border-color: $gray-lighten-30;
-		color: $gray-lighten-10;
+		background: var( --color-neutral-0 );
+		border-color: var( --color-neutral-0 );
+		color: var( --color-neutral-200 );
 		opacity: 1;
-		-webkit-text-fill-color: $gray-lighten-10;
+		-webkit-text-fill-color: var( --color-neutral-200 );
 
 		&:hover {
 			cursor: default;
 		}
 
 		&::placeholder {
-			color: $gray-lighten-10;
+			color: var( --color-neutral-200 );
 		}
 	}
 
 	&.is-valid {
-		border-color: $alert-green;
+		border-color: var( --color-success );
 	}
 
 	&.is-valid:hover {
-		border-color: darken( $alert-green, 10 );
+		border-color: var( --color-success-dark );
 	}
 
 	&.is-error {
-		border-color: $alert-red;
+		border-color: var( --color-error );
 	}
 
 	&.is-error:hover {
-		border-color: darken( $alert-red, 10 );
+		border-color: var( --color-error-dark );
 	}
 
 	&:focus {
 		&.is-valid {
-			box-shadow: 0 0 0 2px lighten( $alert-green, 35 );
+			box-shadow: 0 0 0 2px var( --color-success-100 );
 		}
 
 		&.is-valid:hover {
-			box-shadow: 0 0 0 2px lighten( $alert-green, 25 );
+			box-shadow: 0 0 0 2px var( --color-success-200 );
 		}
 
 		&.is-error {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 35 );
+			box-shadow: 0 0 0 2px var( --color-error-100 );
 		}
 
 		&.is-error:hover {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 25 );
+			box-shadow: 0 0 0 2px var( --color-error-200 );
 		}
 	}
 }

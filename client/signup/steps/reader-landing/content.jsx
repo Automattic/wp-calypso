@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import Button from 'components/button';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -22,7 +23,7 @@ class ReaderLandingStepContent extends PureComponent {
 	render() {
 		const { translate } = this.props;
 		return (
-			<div className="reader-landing__step-content">
+			<Card className="reader-landing__step-content">
 				<div className="reader-landing__button-wrapper">
 					<Button
 						primary={ true }
@@ -118,7 +119,7 @@ class ReaderLandingStepContent extends PureComponent {
 						{ translate( 'Start using the Reader' ) }
 					</Button>
 				</div>
-			</div>
+			</Card>
 		);
 	}
 }

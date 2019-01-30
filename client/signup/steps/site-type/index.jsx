@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -47,24 +48,26 @@ class SiteType extends Component {
 	handleSubmit = event => {
 		event.preventDefault();
 		// Default siteType is 'blog'
-		const siteTypeInputVal =
-			this.state.siteType || getSiteTypePropertyValue( 'id', 'blog', 'slug' );
+		const siteTypeInputVal = this.state.siteType || getSiteTypePropertyValue( 'id', 2, 'slug' );
 
 		this.props.submitStep( siteTypeInputVal );
 	};
 
 	renderRadioOptions() {
 		return allSiteTypes.map( siteTypeProperties => (
-			<FormLabel className="site-type__option" key={ siteTypeProperties.id }>
+			<FormLabel
+				className={ classNames( 'site-type__option', {
+					'is-selected': siteTypeProperties.slug === this.state.siteType,
+				} ) }
+				key={ siteTypeProperties.id }
+			>
 				<FormRadio
 					value={ siteTypeProperties.slug }
 					checked={ siteTypeProperties.slug === this.state.siteType }
 					onChange={ this.handleRadioChange }
 				/>
-				<span>
-					<strong>{ siteTypeProperties.label }</strong>
-					<span>{ siteTypeProperties.description }</span>
-				</span>
+				<strong className="site-type__option-label">{ siteTypeProperties.label }</strong>
+				<span className="site-type__option-description">{ siteTypeProperties.description }</span>
 			</FormLabel>
 		) );
 	}
@@ -74,19 +77,14 @@ class SiteType extends Component {
 
 		return (
 			<div className="site-type__wrapper">
-				<div className="site-type__form-wrapper">
-					<form onSubmit={ this.handleSubmit }>
-						<Card>
-							<FormFieldset>{ this.renderRadioOptions() }</FormFieldset>
-
-							<div className="site-type__submit-wrapper">
-								<Button primary={ true } type="submit">
-									{ translate( 'Continue' ) }
-								</Button>
-							</div>
-						</Card>
-					</form>
-				</div>
+				<form onSubmit={ this.handleSubmit }>
+					<Card>
+						<FormFieldset>{ this.renderRadioOptions() }</FormFieldset>
+						<Button primary={ true } type="submit">
+							{ translate( 'Continue' ) }
+						</Button>
+					</Card>
+				</form>
 			</div>
 		);
 	}
@@ -117,24 +115,24 @@ export default connect(
 	state => ( {
 		siteType: getSiteType( state ),
 	} ),
-	( dispatch, ownProps ) => ( {
+	( dispatch, { goToNextStep, flowName } ) => ( {
 		submitStep: siteTypeValue => {
 			dispatch( submitSiteType( siteTypeValue ) );
-
 			dispatch(
 				recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
 					value: siteTypeValue,
 				} )
 			);
 
-			let nextFlowName = ownProps.flowName;
-			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 'store', 'slug' ) ) {
-				nextFlowName = 'ecommerce';
-			} else if ( 'ecommerce' === ownProps.flowName && ownProps.previousFlowName ) {
-				nextFlowName = ownProps.previousFlowName;
+			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 5, 'slug' ) ) {
+				flowName = 'ecommerce';
 			}
 
-			ownProps.goToNextStep( nextFlowName );
+			if ( 'business' === siteTypeValue ) {
+				flowName = 'onboarding-for-business';
+			}
+
+			goToNextStep( flowName );
 		},
 	} )
 )( localize( SiteType ) );

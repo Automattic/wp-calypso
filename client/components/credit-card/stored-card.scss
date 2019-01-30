@@ -11,18 +11,18 @@
 }
 
 .credit-card__stored-card-name {
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	margin-right: 10px;
 }
 
 .credit-card__stored-card-number {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	flex-basis: 100%;
 	font-weight: 600;
 }
 
 .credit-card__stored-card-expiration-date {
-	color: $gray-darken-10;
+	color: var( --color-neutral-400 );
 	font-style: italic;
 	opacity: 0.7;
 	white-space: nowrap;

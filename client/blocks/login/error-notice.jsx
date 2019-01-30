@@ -75,7 +75,7 @@ class ErrorNotice extends Component {
 		/*
 		 * The user_exists error is caught in SocialLoginForm.
 		 * The relevant messages are displayed inline in LoginForm.
-		*/
+		 */
 		if ( error.code === 'user_exists' ) {
 			return null;
 		}

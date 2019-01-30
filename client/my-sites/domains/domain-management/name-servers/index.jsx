@@ -100,10 +100,9 @@ class NameServers extends React.Component {
 				</VerticalNav>
 
 				<VerticalNav>
-					{ this.hasWpcomNameservers() &&
-						! this.isPendingTransfer() && (
-							<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
-						) }
+					{ this.hasWpcomNameservers() && ! this.isPendingTransfer() && (
+						<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
+					) }
 				</VerticalNav>
 			</React.Fragment>
 		);

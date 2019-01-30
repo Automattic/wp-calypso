@@ -105,10 +105,10 @@ const wpcomRequest = method => {
 	 * and it always uses the `POST` method.
 	 * https://github.com/Automattic/wpcom.js/blob/master/lib/util/request.js#L70
 	 *
-	 * Instead we use wpcom.req.get for `DELETE`, that passes the method
+	 * Instead we use wpcom.req.get for `DELETE` and 'OPTIONS', that passes the method
 	 * along with the rest of the request parameters.
 	 */
-	if ( includes( [ 'GET', 'DELETE' ], method ) ) {
+	if ( includes( [ 'GET', 'DELETE', 'OPTIONS' ], method ) ) {
 		return wpcom.req.get.bind( wpcom.req );
 	}
 	return wpcom.req.post.bind( wpcom.req );

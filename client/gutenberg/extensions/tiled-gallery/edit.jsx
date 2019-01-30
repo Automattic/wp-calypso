@@ -38,7 +38,7 @@ const linkOptions = [
 
 // @TODO keep here or move to ./layout ?
 function layoutSupportsColumns( layout ) {
-	return [ 'circle', 'square' ].includes( layout );
+	return [ 'columns', 'circle', 'square' ].includes( layout );
 }
 
 export function defaultColumnsNumber( attributes ) {
@@ -46,7 +46,12 @@ export function defaultColumnsNumber( attributes ) {
 }
 
 export const pickRelevantMediaFiles = image => {
-	const imageProps = pick( image, [ [ 'alt' ], [ 'id' ], [ 'link' ], [ 'caption' ] ] );
+	const imageProps = pick( image, [
+		[ 'alt' ],
+		[ 'id' ],
+		[ 'link' ],
+		/* @TODO Captions disabled [ 'caption' ], */
+	] );
 	imageProps.url =
 		get( image, [ 'sizes', 'large', 'url' ] ) ||
 		get( image, [ 'media_details', 'sizes', 'large', 'source_url' ] ) ||
@@ -203,9 +208,7 @@ class TiledGalleryEdit extends Component {
 				{ controls }
 				<InspectorControls>
 					<PanelBody title={ __( 'Tiled gallery settings' ) }>
-						{ /* @TODO disable with title comment, don't remove */ layoutSupportsColumns(
-							layoutStyle
-						) &&
+						{ layoutSupportsColumns( layoutStyle ) &&
 							images.length > 1 && (
 								<RangeControl
 									label={ __( 'Columns' ) }

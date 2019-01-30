@@ -127,10 +127,10 @@ describe( 'PluginMeta basic tests', () => {
 		);
 	} );
 	test( 'should not show upgrade nudge has monthly business plan', () => {
-			const comp = shallow(
-				<PluginMeta
-					{ ...props }
-					selectedSite={ { ...selectedSite, plan: { product_slug: PLAN_BUSINESS_MONTHLY } } }
+		const comp = shallow(
+			<PluginMeta
+				{ ...props }
+				selectedSite={ { ...selectedSite, plan: { product_slug: PLAN_BUSINESS_MONTHLY } } }
 			/>
 		);
 		expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ) ).toHaveLength(

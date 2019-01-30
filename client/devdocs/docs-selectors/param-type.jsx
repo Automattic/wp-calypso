@@ -19,10 +19,9 @@ export default function DocsSelectorsParamType( { expression, name, type } ) {
 	return (
 		<div className="docs-selectors__param-type">
 			<code>{ get( expression, 'name', name ) }</code>
-			{ expression &&
-				REGEXP_EXPRESSION_TYPE.test( type ) && (
-					<span>({ type.match( REGEXP_EXPRESSION_TYPE )[ 1 ] })</span>
-				) }
+			{ expression && REGEXP_EXPRESSION_TYPE.test( type ) && (
+				<span>({ type.match( REGEXP_EXPRESSION_TYPE )[ 1 ] })</span>
+			) }
 		</div>
 	);
 }

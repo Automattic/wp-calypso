@@ -1,17 +1,17 @@
 .packages__add-package-weight {
 	margin-bottom: 8px;
 	@include breakpoint( '>660px' ) {
-		float:left;
+		float: left;
 	}
 
-	&:nth-child(1) {
+	&:nth-child( 1 ) {
 		width: 100%;
 		@include breakpoint( '>660px' ) {
 			width: 50%;
 		}
 	}
 
-	&:nth-child(2) {
+	&:nth-child( 2 ) {
 		width: 100%;
 		@include breakpoint( '>660px' ) {
 			width: 50%;
@@ -60,22 +60,22 @@
 	align-items: center;
 
 	&:not( :last-child ) {
-		border-bottom: 1px solid $gray-light;
+		border-bottom: 1px solid var( --color-neutral-0 );
 	}
 
 	&.packages__packages-header {
-		border-bottom-color: $gray-lighten-20;
+		border-bottom-color: var( --color-neutral-100 );
 	}
 
 	&.prefixed {
 		&:first-child {
-			border-top: 1px solid $gray-light;
+			border-top: 1px solid var( --color-neutral-0 );
 		}
 
 		.form-checkbox {
 			margin-left: 16px;
 
-			@include breakpoint( ">480px" ) {
+			@include breakpoint( '>480px' ) {
 				margin-left: 24px;
 			}
 		}
@@ -97,14 +97,14 @@
 	}
 
 	&.error {
-		color: $alert-red;
+		color: var( --color-error );
 		a {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 		.packages__packages-row-icon .gridicon {
 			background-color: unset;
 			border-radius: unset;
-			fill: $alert-red;
+			fill: var( --color-error );
 			padding: unset;
 			margin-left: -1px;
 		}
@@ -115,14 +115,19 @@
 		pointer-events: none;
 		background: $white;
 
-		.gridicon, span, p, a, button {
+		.gridicon,
+		span,
+		p,
+		a,
+		button {
 			animation: loading-fade 1.6s ease-in-out infinite;
 			background-color: lighten( $gray, 25% );
 			color: transparent;
 			cursor: default;
 		}
 
-		p, span {
+		p,
+		span {
 			display: block;
 			width: 100px;
 			height: 14px;
@@ -143,12 +148,12 @@
 	background: lighten( $gray, 35% );
 }
 
-.packages__packages-row-icon  {
+.packages__packages-row-icon {
 	width: 48px;
 	text-align: left;
 	padding-left: 16px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding-left: 24px;
 	}
 
@@ -168,7 +173,7 @@
 	text-align: right;
 	padding-right: 16px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding-right: 24px;
 	}
 }
@@ -181,7 +186,7 @@
 	margin-bottom: 0;
 
 	.packages__packages-header {
-		border-top: 1px solid $gray-lighten-20;
+		border-top: 1px solid var( --color-neutral-100 );
 	}
 
 	.foldable-card__header {
@@ -190,7 +195,7 @@
 			align-items: center;
 		}
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			padding-left: 24px;
 		}
 	}
@@ -215,8 +220,8 @@
 	font-size: 13px;
 	font-style: italic;
 	font-weight: 400;
-	margin: 5px 0 0 0;
-	color: $blue-wordpress;
+	margin: 5px 0 0;
+	color: var( --color-primary );
 	text-decoration: underline;
 }
 

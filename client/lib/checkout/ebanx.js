@@ -10,7 +10,7 @@ import { CPF } from 'cpf_cnpj';
 /**
  * Internal dependencies
  */
-import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from 'lib/checkout/constants';
+import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
 import { isPaymentMethodEnabled } from 'lib/cart-values';
 import CartStore from 'lib/cart/store';
 
@@ -21,7 +21,7 @@ import CartStore from 'lib/cart/store';
  */
 export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '' ) {
 	return (
-		! isUndefined( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ] ) &&
+		! isUndefined( PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ] ) &&
 		isPaymentMethodEnabled( CartStore.get(), 'ebanx' )
 	);
 }
@@ -31,10 +31,10 @@ export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '' )
  * @param {String} countryCode - a two-letter country code, e.g., 'DE', 'BR'
  * @returns {Boolean} Whether the country requires additional fields
  */
-export function shouldRenderAdditionalEbanxFields( countryCode = '' ) {
+export function shouldRenderAdditionalCountryFields( countryCode = '' ) {
 	return (
 		isEbanxCreditCardProcessingEnabledForCountry( countryCode ) &&
-		! isEmpty( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ].fields )
+		! isEmpty( PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ].fields )
 	);
 }
 
@@ -57,7 +57,7 @@ export function isValidCPF( cpf = '' ) {
  * @returns {object} the ruleset
  */
 export function ebanxFieldRules( country ) {
-	const ebanxFields = PAYMENT_PROCESSOR_EBANX_COUNTRIES[ country ].fields || [];
+	const ebanxFields = PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ country ].fields || [];
 
 	return pick(
 		{

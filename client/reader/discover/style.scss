@@ -23,14 +23,14 @@
 	}
 
 	.gravatar {
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		position: relative;
 		margin: 1px 6px 1px 0;
 	}
 
 	.discover-attribution__author,
 	.discover-attribution__blog {
-		color: var( --color-accent );
+		color: var( --color-primary );
 		text-decoration: none;
 		text-transform: none;
 
@@ -45,26 +45,26 @@
 
 	.site-icon {
 		margin-right: 6px;
-		background: $gray-lighten-20;
+		background: var( --color-neutral-100 );
 
 		.gridicon {
 			color: $white;
 		}
 	}
 
-	.site-icon:not(.is-blank) {
+	.site-icon:not( .is-blank ) {
 		background: inherit;
 	}
 
 	.follow-button {
 		background: transparent;
 		border: 0;
-		color: $gray-lighten-10;
+		color: var( --color-neutral-200 );
 		float: none;
 		font-size: 13px;
 		padding: 0;
 		position: relative;
-			top: -1px;
+		top: -1px;
 
 		&.is-following {
 			color: var( --color-success );
@@ -75,7 +75,7 @@
 		}
 
 		.follow-button__label {
-			@include breakpoint( "<660px" ) {
+			@include breakpoint( '<660px' ) {
 				display: inline-block;
 			}
 		}

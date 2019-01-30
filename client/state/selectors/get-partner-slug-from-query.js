@@ -46,6 +46,9 @@ export const getPartnerSlugFromQuery = function( state ) {
 		case 57752:
 		case 57753:
 			return 'wpwebhost';
+		case 60178:
+		case 60179:
+			return 'liquidweb';
 		default:
 			return null;
 	}

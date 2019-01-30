@@ -18,6 +18,7 @@ import { COMPLETING_GOOGLE_APPS_SIGNUP } from 'lib/url/support';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import PendingGappsTosNoticeMultipleDomainListItem from './pending-gapps-tos-notice-multiple-domain-list-item';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { getLoginUrlWithTOSRedirect } from 'lib/google-apps';
 
 const learnMoreLink = (
 	<a href={ COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" rel="noopener noreferrer" />
@@ -43,14 +44,6 @@ class PendingGappsTosNotice extends React.PureComponent {
 			isMultipleDomains: this.props.domains.length > 1,
 			section: this.props.section,
 		} );
-	}
-
-	getGappsLoginUrl( email, domain ) {
-		return (
-			`https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel` +
-			`&continue=https%3A%2F%2Fadmin.google.com%2F${ domain }` +
-			'%2FAcceptTermsOfService%3Fcontinue%3Dhttps%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F1'
-		);
 	}
 
 	getNoticeSeverity() {
@@ -168,7 +161,7 @@ class PendingGappsTosNotice extends React.PureComponent {
 				) }
 			>
 				<NoticeAction
-					href={ this.getGappsLoginUrl( users[ 0 ], domainName ) }
+					href={ getLoginUrlWithTOSRedirect( users[ 0 ], domainName ) }
 					onClick={ this.logInClickHandlerOneDomain }
 					external
 				>
@@ -204,7 +197,7 @@ class PendingGappsTosNotice extends React.PureComponent {
 								<li key={ `pending-gapps-tos-acceptance-domain-${ domainName }` }>
 									<strong>{ users.join( ', ' ) } </strong>
 									<PendingGappsTosNoticeMultipleDomainListItem
-										href={ this.getGappsLoginUrl( users[ 0 ], domainName ) }
+										href={ getLoginUrlWithTOSRedirect( users[ 0 ], domainName ) }
 										domainName={ domainName }
 										user={ users[ 0 ] }
 										onClick={ this.logInClickHandlerMultipleDomains }
@@ -247,11 +240,11 @@ const pendingAccountLogInClick = ( {
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			`Clicked "Log in" link in Google Apps pending ToS notice in ${ section }`,
+			`Clicked "Log in" link in G Suite pending ToS notice in ${ section }`,
 			'Domain Name',
 			domainName
 		),
-		recordTracksEvent( 'calypso_domain_management_google_apps_pending_account_log_in_click', {
+		recordTracksEvent( 'calypso_domain_management_gsuite_pending_account_log_in_click', {
 			site_slug: siteSlug,
 			domain_name: domainName,
 			user,
@@ -264,7 +257,7 @@ const pendingAccountLogInClick = ( {
 const showPendingAccountNotice = ( { siteSlug, severity, isMultipleDomains, section } ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Management', 'Showed pending account notice', 'Site', siteSlug ),
-		recordTracksEvent( 'calypso_domain_management_google_apps_pending_account_notice_show', {
+		recordTracksEvent( 'calypso_domain_management_gsuite_pending_account_notice_show', {
 			site_slug: siteSlug,
 			severity,
 			is_multiple_domains: isMultipleDomains,
@@ -280,7 +273,7 @@ const fixPendingEmailSiteNoticeClick = siteSlug =>
 			'Site',
 			siteSlug
 		),
-		recordTracksEvent( 'calypso_domain_management_google_apps_site_fix_click', {
+		recordTracksEvent( 'calypso_domain_management_gsuite_site_fix_click', {
 			site_slug: siteSlug,
 		} )
 	);

@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import EditorFieldset from 'post-editor/editor-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import InfoPopover from 'components/info-popover';
+import ExternalLink from 'components/external-link';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -119,7 +120,7 @@ export class EditorDiscussion extends React.Component {
 						{ this.props.translate( 'Allow comments' ) }
 						<InfoPopover
 							position="top right"
-							className="editor-comment_status__info"
+							className="editor-discussion__info-bubble"
 							gaEventCategory="Editor"
 							popoverName="CommentStatus"
 						>
@@ -136,7 +137,38 @@ export class EditorDiscussion extends React.Component {
 						disabled={ ! this.props.post }
 						onChange={ this.onChange }
 					/>
-					<span>{ this.props.translate( 'Allow Pingbacks & Trackbacks' ) }</span>
+					<span>
+						{ this.props.translate( 'Allow Pingbacks & Trackbacks' ) }
+						<InfoPopover
+							position="top right"
+							className="editor-discussion__info-bubble"
+							gaEventCategory="Editor"
+							popoverName="PingStatus"
+						>
+							{ this.props.translate(
+								'{{pingbacksLink}}Pingbacks{{/pingbacksLink}} and {{trackbacksLink}}trackbacks{{/trackbacksLink}} ' +
+									'are automated comments you will receive when others create links to your post elsewhere.',
+								{
+									components: {
+										pingbacksLink: (
+											<ExternalLink
+												href="https://support.wordpress.com/comments/pingbacks/"
+												target="_blank"
+												icon="true"
+											/>
+										),
+										trackbacksLink: (
+											<ExternalLink
+												href="https://support.wordpress.com/comments/trackbacks/"
+												target="_blank"
+												icon="true"
+											/>
+										),
+									},
+								}
+							) }
+						</InfoPopover>
+					</span>
 				</label>
 			</EditorFieldset>
 		);

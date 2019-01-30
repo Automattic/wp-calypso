@@ -1,4 +1,3 @@
-
 .inline-help {
 	position: fixed;
 	right: 24px;
@@ -27,14 +26,14 @@
 		}
 
 		&.is-active {
-			background: var( --color-accent );
+			background: var( --color-primary );
 			border-color: darken( $blue-medium, 5 );
 		}
 	}
 
 	.button.inline-help__happychat-button.has-unread {
-		background-color: $orange-jazzy;
-		border-color: $orange-jazzy;
+		background-color: var( --color-accent );
+		border-color: var( --color-accent );
 	}
 }
 
@@ -46,16 +45,21 @@
 
 .button.is-borderless.inline-help__button {
 	position: absolute;
-	right: 0px;
-	bottom: 0px;
+	right: 0;
+	bottom: 0;
 	line-height: 0;
 	padding: 1px;
 	border-radius: 100%;
-	background: var( --color-primary );
+	background-color: var( --color-primary );
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
-	border: 1px solid darken( $blue-wordpress, 5 );
+	border: 1px solid var( --color-primary-dark );
 	transition: all 0.2s ease-in-out;
 	overflow: visible;
+
+	&:focus {
+		background-color: var( --color-primary );
+		box-shadow: 0 0 0 2px var( --color-primary-light );
+	}
 
 	.gridicon {
 		fill: $white;
@@ -72,16 +76,17 @@
 	&:hover:not( .is-active ) {
 		animation: wiggle 0.8s 0.5s ease-in-out infinite;
 		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.3 );
+		background: var( --color-primary );
 	}
 
 	&.is-active {
-		background: var( --color-accent );
+		background: var( --color-primary );
 		border-color: darken( $blue-medium, 5 );
 	}
 
 	&.has-notification::before {
 		display: block;
-		background-color: $orange-jazzy;
+		background-color: var( --color-accent-300 );
 		border: 2px solid $white;
 		content: '';
 		border-radius: 50%;
@@ -161,10 +166,10 @@
 		bottom: 76px !important;
 	}
 
-	&.is-top .popover__arrow:before,
-	&.is-top-left .popover__arrow:before,
-	&.is-top-right .popover__arrow:before {
-		border-top: 10px solid $gray-light;
+	&.is-top .popover__arrow::before,
+	&.is-top-left .popover__arrow::before,
+	&.is-top-right .popover__arrow::before {
+		border-top: 10px solid var( --color-neutral-0 );
 	}
 }
 
@@ -231,6 +236,10 @@
 	}
 }
 
+.inline-help__checklist {
+	min-height: 0;
+}
+
 .inline-help__view-heading {
 	display: block;
 	font-size: 14px;
@@ -246,29 +255,6 @@
 		font-size: 14px;
 		font-weight: 600;
 		margin-bottom: 5px;
-	}
-}
-
-.inline-help__richresult__dialog.dialog.card {
-	width: 80vw;
-	max-width: 850px;
-}
-
-.inline-help__richresult__dialog__video {
-	position: relative;
-	padding-bottom: 56.25%;
-	padding-top: 30px;
-	height: 0;
-	overflow: hidden;
-
-	iframe,
-	object,
-	embed {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
 	}
 }
 
@@ -317,8 +303,8 @@
 }
 
 .inline-help__footer {
-	background: $gray-light;
-	border-top: 1px solid $gray-lighten-20;
+	background: var( --color-neutral-0 );
+	border-top: 1px solid var( --color-neutral-100 );
 	border-radius: 0 0 4px 4px;
 
 	.button.is-borderless.inline-help__more-button,
@@ -344,10 +330,10 @@
 		}
 
 		&:hover {
-			color: var( --color-accent );
+			color: var( --color-primary );
 
 			.gridicon {
-				fill: var( --color-accent );
+				fill: var( --color-primary );
 			}
 		}
 	}
@@ -394,7 +380,7 @@
 	}
 
 	a {
-		color: var( --color-primary );
+		//color: var( --color-primary );
 		text-decoration: underline;
 		font-weight: normal;
 		line-height: 1.4;
@@ -403,13 +389,13 @@
 
 		&:hover {
 			cursor: pointer;
-			color: var( --color-accent );
+			//color: var( --color-primary );
 			background: lighten( $gray, 35% );
 		}
 	}
 
 	&.is-selected {
-		background: var( --color-accent );
+		background: var( --color-primary );
 		cursor: pointer;
 		color: $white;
 
@@ -472,7 +458,7 @@
 		animation-delay: -3.8s;
 	}
 
-	&:after {
+	&::after {
 		content: '\00a0';
 	}
 }

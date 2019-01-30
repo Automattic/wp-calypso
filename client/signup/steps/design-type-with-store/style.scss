@@ -43,12 +43,12 @@
 .design-type-with-store__disclaimer {
 	text-align: center;
 	padding: 0 15px;
-	color: darken( $gray, 20 );
+	color: var( --color-neutral-500 );
 	font-size: 0.875em;
 	width: 100%;
 	box-sizing: border-box;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		padding: 0 20px;
 	}
 }

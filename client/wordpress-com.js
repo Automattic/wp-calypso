@@ -128,6 +128,13 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'settings-performance',
+		paths: [ '/settings/performance' ],
+		module: 'my-sites/site-settings/settings-performance',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'settings-writing',
 		paths: [ '/settings/writing', '/settings/taxonomies', '/settings/podcasting' ],
 		module: 'my-sites/site-settings/settings-writing',
@@ -283,7 +290,6 @@ const sections = [
 		module: 'my-sites/feature-upsell',
 		group: 'sites',
 		secondary: true,
-		css: 'feature-upsell',
 	},
 ];
 

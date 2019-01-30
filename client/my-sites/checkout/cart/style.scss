@@ -1,5 +1,5 @@
 .cart__header {
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 
 	&.is-compact {
 		padding: 11px 15px;
@@ -17,7 +17,7 @@
 	.cart-item {
 		list-style: none;
 		display: block;
-		border-bottom: 1px solid $gray-lighten-30;
+		border-bottom: 1px solid var( --color-neutral-0 );
 		padding-bottom: 15px;
 		margin-bottom: 15px;
 		position: relative;
@@ -27,7 +27,7 @@
 		}
 
 		.product-name {
-			color: $gray-dark;
+			color: var( --color-neutral-700 );
 			display: block;
 			font-size: 14px;
 			padding-right: 30px;
@@ -119,7 +119,6 @@
 			display: inline-block;
 			text-align: right;
 			width: 30%;
-
 		}
 
 		.grand-total {
@@ -128,7 +127,7 @@
 	}
 
 	.cart__total-divider {
-		border-top: 1px solid $gray-lighten-30;
+		border-top: 1px solid var( --color-neutral-0 );
 		height: 0;
 		width: 30%;
 		margin-left: 70%;
@@ -150,9 +149,9 @@
 
 		form {
 			display: block;
-			border-top: 1px solid $gray-lighten-30;
+			border-top: 1px solid var( --color-neutral-0 );
 			margin: 15px -15px 0 -15px;
-			padding: 15px 15px 0 15px;
+			padding: 15px 15px 0;
 
 			input[type='text'] {
 				font-size: 12px;
@@ -185,10 +184,10 @@
 
 .cart__cart-ad {
 	background: lighten( $gray, 34% );
-	border: 1px solid $gray-lighten-30;
+	border: 1px solid var( --color-neutral-0 );
 	border-radius: 4px;
 	font-size: 12px;
-	margin: 15px 15px 0px 15px;
+	margin: 15px 15px 0;
 	padding: 10px;
 
 	@include breakpoint( '<660px' ) {
@@ -221,7 +220,7 @@
 	cursor: pointer; // Needed for Safari
 
 	.gridicon {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		cursor: pointer;
 		position: absolute;
 		top: 12px;
@@ -260,13 +259,13 @@
 
 @keyframes pulsing-badge {
 	0% {
-		box-shadow: 0 0 0 0 rgba( 0, 170, 220, 0.4 );
+		box-shadow: 0 0 0 0 rgba( var( --color-accent-light-rgb ), 0.4 );
 	}
 	70% {
-		box-shadow: 0 0 0 10px rgba( 0, 170, 220, 0 );
+		box-shadow: 0 0 0 10px rgba( var( --color-accent-light-rgb ), 0 );
 	}
 	100% {
-		box-shadow: 0 0 0 0 rgba( 0, 170, 220, 0 );
+		box-shadow: 0 0 0 0 rgba( var( --color-accent-light-rgb ), 0 );
 	}
 }
 
@@ -303,14 +302,14 @@ div.popover-cart__popover {
 	}
 
 	.cart__total {
-		border-top: 1px solid $gray-lighten-30;
+		border-top: 1px solid var( --color-neutral-0 );
 		font-size: 16px;
 		padding: 15px;
 	}
 
 	.cart-buttons {
 		border-radius: 0 0 4px 4px;
-		padding: 0 15px 15px 15px;
+		padding: 0 15px 15px;
 	}
 
 	.cart-empty + .cart-buttons {
@@ -320,7 +319,7 @@ div.popover-cart__popover {
 
 .popover-cart__mobile-cart {
 	background-color: $white;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 	margin: -1px;
 	position: relative;
@@ -347,14 +346,14 @@ div.popover-cart__popover {
 	}
 
 	.cart__total {
-		border-top: 1px solid $gray-lighten-30;
+		border-top: 1px solid var( --color-neutral-0 );
 		font-size: 16px;
 		padding: 15px;
 	}
 
 	.cart-buttons {
 		border-radius: 0 0 4px 4px;
-		padding: 0 15px 15px 15px;
+		padding: 0 15px 15px;
 	}
 
 	.cart-empty + .cart-buttons {

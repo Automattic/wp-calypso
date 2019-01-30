@@ -1,5 +1,7 @@
 @media ( max-height: 450px ) {
-	.magic-login__handle-link, .magic-login__check-email, .magic-login__link-expired {
+	.magic-login__handle-link,
+	.magic-login__check-email,
+	.magic-login__link-expired {
 		img {
 			margin-top: -45px;
 			max-height: 180px;
@@ -31,6 +33,10 @@
 	margin-bottom: 24px;
 	margin-top: 16px;
 	text-align: center;
+
+	body.is-section-signup & {
+		color: var( --color-white );
+	}
 }
 
 .magic-login__email-fields {
@@ -38,7 +44,7 @@
 }
 
 .magic-login__form-label {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	display: block;
 	font-size: 14px;
 	line-height: 1.5;
@@ -58,7 +64,7 @@
 .magic-login__footer {
 	a {
 		border-bottom: 1px solid #c8d7e1;
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		display: block;
 		line-height: 4em;
 		font-size: 14px;
@@ -67,10 +73,14 @@
 		text-decoration: none;
 
 		&:hover {
-			color: $blue-medium;
+			color: var( --color-primary );
 		}
 		&:last-of-type {
 			border-bottom: none;
+		}
+
+		body.is-section-signup & {
+			color: var( --color-white );
 		}
 	}
 	.gridicon {

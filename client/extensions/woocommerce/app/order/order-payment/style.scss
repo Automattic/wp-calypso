@@ -4,13 +4,13 @@
 	padding: 0;
 	flex-grow: 0;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: 640px;
 	}
 
 	.order__detail-header,
 	.order__details-total {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 	}
 
 	.form-text-input,
@@ -44,14 +44,14 @@
 	justify-content: space-between;
 	margin: 0 -24px -24px;
 	padding: 24px;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid var( --color-neutral-0 );
 	background: lighten( $gray, 35% );
 
 	.order-payment__note {
 		margin-bottom: 16px;
 		width: 100%;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 40%;
 			margin-bottom: 0;
 		}
@@ -64,7 +64,7 @@
 	.order-payment__details {
 		margin-bottom: 0;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 55%;
 		}
 	}
@@ -76,7 +76,7 @@
 		justify-content: space-between;
 		padding: 14px;
 		margin-bottom: 16px;
-		background: $gray-lighten-30;
+		background: var( --color-neutral-0 );
 		border: 1px solid lighten( $gray, 15% );
 	}
 

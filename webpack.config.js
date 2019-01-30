@@ -8,6 +8,7 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
+const { execSync } = require( 'child_process' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
@@ -17,7 +18,6 @@ const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
-const os = require( 'os' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 
 /**
@@ -25,6 +25,7 @@ const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpac
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
+const { workerCount } = require( './webpack.common' );
 
 /**
  * Internal variables
@@ -40,6 +41,17 @@ const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
+
+/**
+ * Plugin that generates the `public/custom-properties.css` file before compilation
+ */
+class BuildCustomPropertiesCssPlugin {
+	apply( compiler ) {
+		compiler.hooks.compile.tap( 'BuildCustomPropertiesCssPlugin', () =>
+			execSync( 'node', [ path.join( __dirname, 'bin', 'build-custom-properties-css.js' ) ] )
+		);
+	}
+}
 
 /*
  * Create reporter for ProgressPlugin (used with EMIT_STATS)
@@ -88,22 +100,6 @@ function createProgressHandler() {
 		console.log( message ); // eslint-disable-line no-console
 	};
 }
-
-// Disable unsafe cssnano optimizations like renaming animations or rebasing z-indexes. These
-// optimizations don't work across independently minified stylesheets. As we minify each webpack
-// CSS chunk individually and then load multiple chunks into one document, the optimized names
-// conflict with each other, e.g., multiple animations named `a` or z-indexes starting from 1.
-// TODO: upgrade cssnano from v3 to v4. In v3, all optimizations, including unsafe ones, run by
-// default and need to be disabled explicitly as we do here. In v4, there is a new concept of
-// 'presets' and unsafe optimizations are opt-in rather than opt-out. The `default` preset enables
-// only the safe ones. https://cssnano.co/guides/optimisations
-const cssnanoOptions = {
-	autoprefixer: false,
-	discardUnused: false,
-	mergeIdents: false,
-	reduceIdents: false,
-	zindex: false,
-};
 
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
@@ -201,7 +197,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					cache: process.env.CIRCLECI
 						? `${ process.env.HOME }/terser-cache`
 						: 'docker' !== process.env.CONTAINER,
-					parallel: process.env.CIRCLECI ? 2 : true,
+					parallel: workerCount,
 					sourceMap: Boolean( process.env.SOURCEMAP ),
 					terserOptions: {
 						ecma: 5,
@@ -222,7 +218,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						{
 							loader: 'thread-loader',
 							options: {
-								workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ),
+								workers: workerCount,
 							},
 						},
 						{
@@ -248,13 +244,13 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					test: /\.(sc|sa|c)ss$/,
 					use: [
 						MiniCssExtractPluginWithRTL.loader,
-						'css-loader',
 						{
-							loader: 'postcss-loader',
+							loader: 'css-loader',
 							options: {
-								plugins: [ require( 'autoprefixer' ) ],
+								importLoaders: 2,
 							},
 						},
+						'postcss-loader',
 						{
 							loader: 'sass-loader',
 							options: {
@@ -328,7 +324,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				rtlEnabled: true,
 			} ),
 			new WebpackRTLPlugin( {
-				minify: isDevelopment ? false : cssnanoOptions,
+				minify: ! isDevelopment,
 			} ),
 			new AssetsWriter( {
 				filename: 'assets.json',
@@ -352,9 +348,11 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						reasons: shouldEmitStatsWithReasons,
 						optimizationBailout: false,
 						chunkOrigins: false,
+						chunkGroups: true,
 					},
 				} ),
 			shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
+			new BuildCustomPropertiesCssPlugin(),
 		] ),
 		externals: _.compact( [
 			externalizeWordPressPackages && wordpressExternals,

@@ -1,11 +1,11 @@
 .post-excerpt-link {
-	background: $gray-light;
-	color: darken( $gray, 20 );
+	background: var( --color-neutral-0 );
+	color: var( --color-neutral-500 );
 	padding: 16px 48px 16px 24px;
 	margin: 20px 0 8px;
 	position: relative;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		padding-left: 16px;
 	}
 
@@ -15,12 +15,12 @@
 			top: 10px;
 		padding: 8px;
 		cursor: pointer;
-		fill: lighten( $gray, 10 );
+		fill: var( --color-neutral-200 );
 		width: 20px;
 		height: 20px;
 		transition: all 0.15s ease-in-out;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			right: 8px;
 		}
 
@@ -31,7 +31,7 @@
 
 	&.is-showing-notice {
 		.gridicon {
-			fill: $gray-dark;
+			fill: var( --color-neutral-700 );
 		}
 
 		.post-excerpt-link__helper {

@@ -13,6 +13,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import ScreenReaderText from 'components/screen-reader-text';
 import { hasTouch } from 'lib/touch-detect';
 
 const debug = debugFactory( 'calypso:forms:sortable-list' );
@@ -327,7 +328,7 @@ class SortableList extends React.Component {
 					className="sortable-list__navigation-button is-previous"
 					disabled={ null === this.state.activeIndex || this.state.activeIndex === 0 }
 				>
-					<span className="screen-reader-text">{ this.props.translate( 'Move previous' ) }</span>
+					<ScreenReaderText>{ this.props.translate( 'Move previous' ) }</ScreenReaderText>
 					<Gridicon icon="chevron-down" size={ 24 } />
 				</button>
 				<button
@@ -339,7 +340,7 @@ class SortableList extends React.Component {
 						this.state.activeIndex === this.props.children.length - 1
 					}
 				>
-					<span className="screen-reader-text">{ this.props.translate( 'Move next' ) }</span>
+					<ScreenReaderText>{ this.props.translate( 'Move next' ) }</ScreenReaderText>
 					<Gridicon icon="chevron-up" size={ 24 } />
 				</button>
 			</div>

@@ -15,14 +15,15 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isSitePreviewable } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { isWithinBreakpoint } from 'lib/viewport';
+import { isWithinBreakpoint, isMobile, isDesktop } from 'lib/viewport';
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import Gridicon from 'gridicons';
 import Main from 'components/main';
-import { showInlineHelpPopover } from 'state/inline-help/actions';
+import { showInlineHelpPopover, showChecklistPrompt } from 'state/inline-help/actions';
 import WebPreview from 'components/web-preview';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:my-sites:preview' );
 
@@ -33,6 +34,12 @@ class PreviewMain extends React.Component {
 		previewUrl: null,
 		externalUrl: null,
 		showingClose: false,
+		// Set to one of the possible default values in client/components/web-preview/toolbar.jsx
+		device: isMobile() // eslint-disable-line no-nested-ternary
+			? 'phone'
+			: isDesktop()
+			? 'computer'
+			: 'tablet',
 	};
 
 	UNSAFE_componentWillMount() {
@@ -55,6 +62,10 @@ class PreviewMain extends React.Component {
 
 		if ( this.props.help ) {
 			this.props.showInlineHelpPopover();
+		}
+
+		if ( this.props.checklist ) {
+			this.props.showChecklistPrompt();
 		}
 	}
 
@@ -107,8 +118,11 @@ class PreviewMain extends React.Component {
 	}
 
 	updateSiteLocation = pathname => {
-		this.setState( {
-			externalUrl: this.props.site.URL + ( pathname === '/' ? '' : pathname ),
+		const externalUrl = this.props.site.URL + ( pathname === '/' ? '' : pathname );
+		this.setState( { externalUrl } );
+		this.props.recordTracksEvent( 'calypso_view_site_page_view', {
+			full_url: externalUrl,
+			pathname,
 		} );
 	};
 
@@ -158,6 +172,7 @@ class PreviewMain extends React.Component {
 						'{{strong}}One moment, please…{{/strong}} loading your site.',
 						{ components: { strong: <strong /> } }
 					) }
+					defaultViewportDevice={ this.state.device }
 				/>
 			</Main>
 		);
@@ -176,7 +191,9 @@ const mapState = state => {
 export default connect(
 	mapState,
 	{
+		recordTracksEvent,
 		setLayoutFocus,
 		showInlineHelpPopover,
+		showChecklistPrompt,
 	}
 )( localize( PreviewMain ) );

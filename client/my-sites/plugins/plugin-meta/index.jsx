@@ -622,8 +622,9 @@ export class PluginMeta extends Component {
 
 		return (
 			<div className="plugin-meta">
-				{ this.props.atEnabled &&
-					this.props.selectedSite && <QueryEligibility siteId={ this.props.selectedSite.ID } /> }
+				{ this.props.atEnabled && this.props.selectedSite && (
+					<QueryEligibility siteId={ this.props.selectedSite.ID } />
+				) }
 				<Card>
 					{ this.displayBanner() }
 					<div className={ cardClasses }>
@@ -648,20 +649,19 @@ export class PluginMeta extends Component {
 					</CompactCard>
 				) }
 
-				{ ! this.props.isMock &&
-					get( this.props.selectedSite, 'jetpack' ) && (
-						<PluginInformation
-							plugin={ this.props.plugin }
-							isPlaceholder={ this.props.isPlaceholder }
-							site={ this.props.selectedSite }
-							pluginVersion={ plugin && plugin.version }
-							siteVersion={
-								this.props.selectedSite && this.props.selectedSite.options.software_version
-							}
-							hasUpdate={ this.getAvailableNewVersions().length > 0 }
-							calypsoify={ this.props.calypsoify }
-						/>
-					) }
+				{ ! this.props.isMock && get( this.props.selectedSite, 'jetpack' ) && (
+					<PluginInformation
+						plugin={ this.props.plugin }
+						isPlaceholder={ this.props.isPlaceholder }
+						site={ this.props.selectedSite }
+						pluginVersion={ plugin && plugin.version }
+						siteVersion={
+							this.props.selectedSite && this.props.selectedSite.options.software_version
+						}
+						hasUpdate={ this.getAvailableNewVersions().length > 0 }
+						calypsoify={ this.props.calypsoify }
+					/>
+				) }
 
 				{ this.props.atEnabled && this.maybeDisplayUnsupportedNotice() }
 

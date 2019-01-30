@@ -5,6 +5,7 @@
 import config from 'config';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import isDirectlyReady from 'state/selectors/is-directly-ready';
+import isEligibleForUpworkSupport from 'state/selectors/is-eligible-for-upwork-support';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
 import { isTicketSupportEligible } from 'state/help/ticket/selectors';
@@ -22,7 +23,9 @@ export default function getSupportVariation( state ) {
 	if (
 		config.isEnabled( 'happychat' ) &&
 		isHappychatAvailable( state ) &&
-		isHappychatUserEligible( state )
+		isHappychatUserEligible( state ) &&
+		// Upwork-eligible customers should skip Happychat and get sent to Tickets
+		! isEligibleForUpworkSupport( state )
 	) {
 		return SUPPORT_HAPPYCHAT;
 	}

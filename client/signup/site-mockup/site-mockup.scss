@@ -2,7 +2,7 @@
 // a little more like a website/phone.
 .site-mockup__chrome-desktop {
 	height: 28px;
-	border-bottom: 1px solid $gray-lighten-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
 
 	// Desktop chrome has some OS dots to
 	// help signify its a browser.
@@ -10,7 +10,7 @@
 		position: absolute;
 			top: 8px;
 			left: 8px;
-		fill: $gray;
+		fill: var( --color-neutral );
 	}
 
 	.site-mockup__chrome-label {
@@ -24,10 +24,10 @@
 		text-align: center;
 		text-transform: uppercase;
 		font-weight: 600;
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		display: block;
 		width: 70%;
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		border-radius: 3px;
 	}
 }
@@ -43,11 +43,18 @@
 		text-align: center;
 		text-transform: uppercase;
 		font-weight: 600;
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 		display: block;
 		width: 60px;
-		background: $gray-light;
+		background: var( --color-neutral-0 );
 		border-radius: 16px;
+
+		// At small screen sizes "hide" the label
+		// text as its mostly redundent.
+		@include breakpoint( '<660px' ) {
+			color: var( --color-neutral-0 );
+			width: 180px;
+		}
 	}
 }
 
@@ -61,255 +68,240 @@
 	// Mobile body is scrollable and needs to
 	// make room for the chrome.
 	.site-mockup__viewport.is-mobile & {
-		margin: 0 6px 6px 6px;
-		border: 1px solid $gray-lighten-20;
-		border-radius: 3px;
-		max-height: 400px;
+		border-top: 1px solid var( --color-neutral-100 );
 
-		@include breakpoint( '<660px' ) {
-			max-height: 600px;
+		@include breakpoint( '>660px' ) {
+			border-top: 1px solid var( --color-neutral-100 );
+			border-bottom: 1px solid var( --color-neutral-100 );
+			margin: 0 0 24px 0;
+			overflow: hidden auto;
 		}
 	}
 }
 
-
-// Demo content - WIP
-//
+// Set the default font for the preview
+// which will require a web font to load
+// (defined in lib/signup/site-styles.js).
 .site-mockup__content {
-	.site-mockup__viewport.is-desktop & {
-		padding: 0 24px;
-	}
-	.site-mockup__viewport.is-mobile & {
-		padding: 0 16px;
-	}
-	font-family: Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: 'Crimson Text', 'Baskerville Old Face', Garamond, 'Times New Roman', serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
+// Title and Tagline Wrapper
+.site-mockup__site-identity {
+	margin: 40px auto;
+	padding: 0 30px;
+	max-width: 800px;
 
-// Everything but the cover image has a max-width
-// and is centered inside the viewport.
-.site-mockup__title,
-.site-mockup__tagline,
-.site-mockup__h2,
-.site-mockup__image-text,
-.site-mockup__contact-form,
-.site-mockup__entry-content {
-	max-width: 700px;
-	margin-right: auto;
-	margin-left: auto;
-}
-
-.site-mockup__entry-content {
-	.site-mockup__viewport.is-mobile & .featured-image {
-		float: none;
-		display: block;
+	.is-desktop & {
+		display: flex;
+		align-items: baseline;
 	}
 
-	h1, h2, h3, h4 {
-		clear: none;
+	.is-mobile & {
+		margin: 0 auto;
+		padding: 20px 15px;
+	}
+}
+
+// Mockup Site Title
+.site-mockup__title {
+	color: #1e1e1e;
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 1;
+
+	.is-mobile & {
+		font-size: 24px;
+		margin: 20px 0;
+	}
+}
+
+// Mockup Site Tagline
+.site-mockup__tagline {
+	color: #1e1e1e;
+	font-size: 15px;
+	font-weight: 400;
+
+	.is-desktop & {
+		line-height: 25px;
+		text-align: right;
+		flex-grow: 1;
+		padding-left: 20px;
+
+		.site-mockup__phone {
+			margin-left: 20px;
+		}
+	}
+
+	.is-mobile & {
+		font-size: 14px;
+		line-height: 1.4;
+		margin: 10px 0;
+
+		.site-mockup__phone {
+			display: block;
+		}
+	}
+
+}
+
+// Gutenberg Content
+.site-mockup__entry-content {
+	color: #1e1e1e;
+
+	.wp-block-cover {
+		position: relative;
+		background-color: #000;
+		background-size: cover;
+		background-position: center center;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		overflow: hidden;
+		min-height: 400px;
+
+		.is-mobile & {
+			min-height: 300px;
+		}
+
+		&.has-background-dim::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			background-color: #000;
+			opacity: 0.2;
+			z-index: 1; // Ugh, z-index...
+		}
+
+		p.wp-block-cover-text {
+			color: #fff;
+			font-size: 50px;
+			font-weight: 400;
+			line-height: 1;
+			margin: 0;
+			padding: 0;
+			max-width: 580px;
+			text-align: center;
+			z-index: 1; // Ugh, z-index...
+
+			.is-mobile & {
+				font-size: 30px;
+				line-height: 1.4;
+				padding: 20px;
+			}
+		}
+	}
+
+	.wp-block-media-text {
+		display: grid;
+		align-items: center;
+		background: #0d1b24;
+		color: #ffffff;
+		max-width: 800px;
+		margin: 0 auto 20px;
+		grid-template-areas: 'media-text-media media-text-content';
+		grid-template-columns: 60% auto;
+		position: relative;
+
+		&::before {
+			display: block;
+			content: '';
+			border: 1px solid #ffffff;
+			position: absolute;
+			top: 16px;
+			right: 16px;
+			bottom: 16px;
+			left: 16px;
+
+			.is-mobile & {
+				top: 8px;
+				right: 8px;
+				bottom: 8px;
+				left: 8px;
+			}
+		}
+
+		&.has-media-on-the-right {
+			grid-template-areas: 'media-text-content media-text-media';
+		}
+
+		// Placing this below, because media
+		// is always on top on mobile.
+		.is-mobile & {
+			margin: 0 15px 20px;
+			grid-template-columns: 100% !important;
+			grid-template-areas: 'media-text-media' 'media-text-content';
+		}
+
+		.wp-block-media-text__media {
+			grid-area: media-text-media;
+			margin: 0;
+
+			img {
+				height: auto;
+				max-width: unset;
+				width: 100%;
+				vertical-align: middle;
+			}
+		}
+
+		.wp-block-media-text__content {
+			word-break: break-word;
+			grid-area: media-text-content;
+			padding: 0 16px 0 0;
+
+			p {
+				margin: 0;
+			}
+
+			.is-mobile & {
+				padding: 8px 8px 16px;
+			}
+		}
+
+		&.has-media-on-the-right .wp-block-media-text__content {
+			padding: 0 0 0 16px;
+
+			.is-mobile & {
+				padding: 8px 8px 16px;
+			}
+		}
+	}
+
+	.wp-block-separator {
+		border: none;
+		max-width: 100px;
+		margin: 30px 0 20px 16%;
+		background-color: #ccc;
+		height: 1px;
+
+		.is-mobile & {
+			margin-left: 15px;
+		}
 	}
 
 	h2 {
-		font-weight: bold;
-		font-size: 18px;
-	}
-}
-
-.site-mockup__title {
-	margin-top: 20px;
-	font-weight: 800;
-	font-size: 26px;
-	line-height: 1.2;
-}
-
-.site-mockup__tagline {
-	font-size: 15px;
-	margin-bottom: 20px;
-}
-
-.site-mockup__address {
-	display: inline-block;
-}
-
-.site-mockup__phone {
-	display: inline-block;
-	.site-mockup__address + &::before {
-		content: "•";
-		padding: 0 .5em;
-		.site-mockup__viewport.is-mobile & {
-			display: none;
-		}
-	}
-	.site-mockup__viewport.is-mobile & {
-		display: block;
-	}
-
-}
-
-
-.site-mockup__h2,
-.site-mockup__entry-content h2 {
-	font-size: 27px;
-	font-weight: 800;
-	line-height: 1.4;
-	margin-bottom: 24px;
-}
-
-.site-mockup__cover-image {
-	margin: 24px -24px 16px -24px;
-	background-size: cover;
-	background-position: 50% 60%;
-
-	span {
-		color: #fff;
+		font-size: 36px;
 		font-weight: 600;
-		text-align: center;
-		font-size: 24px;
-		display: block;
-		background: rgba( black, 0.5 );
-
-		.site-mockup__viewport.is-desktop & {
-			padding: 160px 0;
-		}
-		.site-mockup__viewport.is-mobile & {
-			padding: 80px 0;
-		}
-	}
-}
-
-.site-mockup__image-text {
-	margin-bottom: 16px;
-
-	span {
-		font-size: 18px;
-		color: rgb(110, 115, 129);
+		line-height: 1.2;
+		margin: 48px auto 32px;
+		padding: 0 15px;
+		max-width: 620px;
 	}
 
-	.site-mockup__viewport.is-desktop & {
-		display: flex;
-		align-items: center;
-
-		img {
-			flex-grow: 1;
-		}
-
-		span {
-			flex-grow: 2;
-			padding: 0 16px;
-		}
-	}
-	.site-mockup__viewport.is-mobile & {
-		img,
-		span {
-			display: block;
-			width: 100%;
-			margin-bottom: 16px;
-		}
-	}
-
-	&.right {
-		img {
-			order: 2;
-		}
-		span {
-			order: 1;
-		}
-	}
-
-	&.left {
-		img {
-			order: 1;
-		}
-		span {
-			order: 2;
-		}
-	}
-}
-
-.site-mockup__hr {
-	width: 150px;
-	height: 3px;
-	background: rgba( 0, 0, 0, 0.075 );
-	margin: 32px auto;
-	clear: both;
-}
-
-.site-mockup__label {
-	font-size: 18px;
-	font-weight: 600;
-	color: #555;
-	margin-bottom: 8px;
-}
-
-.site-mockup__input,
-.site-mockup__textarea {
-	padding: 4px;
-	font-size: 18px;
-	color: #555;
-	margin-bottom: 16px;
-	border: 1px solid rgba( 0, 0, 0, 0.1 );
-}
-
-.site-mockup__input {
-	height: 28px;
-	.site-mockup__viewport.is-desktop & {
-		width: 40%;
-	}
-}
-
-.site-mockup__textarea {
-	height: 100px;
-}
-
-.site-mockup__button {
-	color: #fff;
-	font-weight: 800;
-	display: inline-block;
-	padding: 8px 16px;
-	background: purple;
-	border-radius: 3px;
-	margin-bottom: 32px;
-}
-
-.site-mockup__columns {
-	display: flex;
-	margin-top: 12px;
-	margin-bottom: 12px;
-	.site-mockup__viewport.is-mobile & {
-		display: block;
-	}
-}
-.site-mockup__column {
-	flex: 1;
-	flex-basis: 50%;
-	flex-grow: 0;
-
-	.site-mockup__viewport.is-mobile & {
-		margin: 0 0 12px;
-		width: auto;
-	}
-
-	&:not(:last-child) {
-		margin-right: 20px;
-		width: calc( 50% - 20px );
-	}
-	&:not(:first-child) {
-		margin-left: 20px;
-	}
-}
-.site-mockup__block-image {
-	display: block;
-	width: 100%;
-}
-
-.site-mockup__outline {
-	margin-bottom: 24px;
-	height: 150px;
-	border: 2px dashed lighten( $gray, 20 );
-
-	&.is-title {
-		max-width: 480px;
-		margin: 24px auto;
-		height: 40px;
+	p {
+		font-size: 19px;
+		font-weight: 400;
+		line-height: 1.8;
+		max-width: 620px;
+		margin-left: auto;
+		margin-right: auto;
+		padding-right: 20px;
+		padding-left: 20px;
 	}
 }

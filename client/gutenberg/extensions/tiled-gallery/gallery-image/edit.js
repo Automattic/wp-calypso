@@ -6,7 +6,8 @@ import { BACKSPACE, DELETE } from '@wordpress/keycodes';
 import { Component, createRef, Fragment } from '@wordpress/element';
 import { IconButton, Spinner } from '@wordpress/components';
 import { isBlobURL } from '@wordpress/blob';
-import { RichText } from '@wordpress/editor';
+/* @TODO Caption has been commented out */
+// import { RichText } from '@wordpress/editor';
 import { withSelect } from '@wordpress/data';
 
 /**
@@ -17,39 +18,36 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 class GalleryImageEdit extends Component {
 	img = createRef();
 
-	state = {
-		captionSelected: false,
-	};
+	/* @TODO Caption has been commented out */
+	// state = {
+	// 	captionSelected: false,
+	// };
 
-	onSelectCaption = () => {
-		if ( ! this.state.captionSelected ) {
-			this.setState( {
-				captionSelected: true,
-			} );
-		}
+	// onSelectCaption = () => {
+	// 	if ( ! this.state.captionSelected ) {
+	// 		this.setState( {
+	// 			captionSelected: true,
+	// 		} );
+	// 	}
 
+	// 	if ( ! this.props.isSelected ) {
+	// 		this.props.onSelect();
+	// 	}
+	// };
+
+	onImageClick = () => {
 		if ( ! this.props.isSelected ) {
 			this.props.onSelect();
 		}
-	};
 
-	onImageClick = e => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		if ( ! this.props.isSelected ) {
-			this.props.onSelect();
-		}
-
-		if ( this.state.captionSelected ) {
-			this.setState( {
-				captionSelected: false,
-			} );
-		}
+		// if ( this.state.captionSelected ) {
+		// 	this.setState( {
+		// 		captionSelected: false,
+		// 	} );
+		// }
 	};
 
 	onImageKeyDown = event => {
-		event.stopPropagation();
 		if (
 			this.img.current === document.activeElement &&
 			this.props.isSelected &&
@@ -59,14 +57,15 @@ class GalleryImageEdit extends Component {
 		}
 	};
 
-	static getDerivedStateFromProps( props, state ) {
-		// unselect the caption so when the user selects other image and comeback
-		// the caption is not immediately selected
-		if ( ! props.isSelected && state.captionSelected ) {
-			return { captionSelected: false };
-		}
-		return null;
-	}
+	/* @TODO Caption has been commented out */
+	// static getDerivedStateFromProps( props, state ) {
+	// 	// unselect the caption so when the user selects other image and comeback
+	// 	// the caption is not immediately selected
+	// 	if ( ! props.isSelected && state.captionSelected ) {
+	// 		return { captionSelected: false };
+	// 	}
+	// 	return null;
+	// }
 
 	componentDidUpdate() {
 		const { alt, height, image, link, url, width } = this.props;
@@ -100,7 +99,7 @@ class GalleryImageEdit extends Component {
 		const {
 			'aria-label': ariaLabel,
 			alt,
-			caption,
+			// caption,
 			height,
 			id,
 			isSelected,
@@ -108,7 +107,7 @@ class GalleryImageEdit extends Component {
 			linkTo,
 			onRemove,
 			origUrl,
-			setAttributes,
+			// setAttributes,
 			url,
 			width,
 		} = this.props;
@@ -166,8 +165,10 @@ class GalleryImageEdit extends Component {
 						/>
 					</div>
 				) }
-				{ href ? <a href={ href }>{ img }</a> : img }
-				{ ! RichText.isEmpty( caption ) || isSelected ? (
+				{ /* Keep the <a> HTML structure, but ensure there is no navigation from edit */
+				/* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+				{ href ? <a>{ img }</a> : img }
+				{ /* ( ! RichText.isEmpty( caption ) || isSelected ) && (
 					<RichText
 						tagName="figcaption"
 						placeholder={ __( 'Write caption…' ) }
@@ -177,7 +178,7 @@ class GalleryImageEdit extends Component {
 						unstableOnFocus={ this.onSelectCaption }
 						inlineToolbar
 					/>
-				) : null }
+				) */ }
 			</figure>
 		);
 	}

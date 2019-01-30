@@ -28,6 +28,7 @@ import {
 	isGoogleApps,
 	isPlan,
 	isTheme,
+	isConciergeSession,
 } from 'lib/products-values';
 import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
@@ -88,6 +89,12 @@ class PurchaseItem extends Component {
 		}
 
 		if ( isExpired( purchase ) ) {
+			if ( isConciergeSession( purchase ) ) {
+				return translate( 'Session used on %s', {
+					args: purchase.expiryMoment.format( 'LL' ),
+				} );
+			}
+
 			const expiredToday = moment().diff( purchase.expiryMoment, 'hours' ) < 24;
 			const expiredText = expiredToday
 				? purchase.expiryMoment.format( '[today]' )

@@ -44,7 +44,7 @@ import { getFirstConflictingPlugin } from 'lib/seo';
 /**
  * Style dependencies
  */
-import './style.scss'
+import './style.scss';
 
 /**
  * Constants

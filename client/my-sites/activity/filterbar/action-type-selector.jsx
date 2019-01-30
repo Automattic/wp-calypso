@@ -131,48 +131,46 @@ export class ActionTypeSelector extends Component {
 
 		return (
 			<div className="filterbar__activity-types-selection-wrap">
-				{ activityTypes &&
-					!! activityTypes.length && (
-						<div>
-							<Fragment>
-								<div className="filterbar__activity-types-selection-granular">
-									{ activityTypes.map( this.renderCheckbox ) }
-								</div>
-							</Fragment>
-							<div className="filterbar__activity-types-selection-info">
-								<div className="filterbar__date-range-info">
-									{ selectedCheckboxes.length === 0 && (
-										<Button borderless compact onClick={ this.handleToggleAllActionTypeSelector }>
-											{ translate( '{{icon/}} select all', {
-												components: { icon: <Gridicon icon="checkmark" /> },
-											} ) }
-										</Button>
-									) }
-									{ selectedCheckboxes.length !== 0 && (
-										<Button borderless compact onClick={ this.handleToggleAllActionTypeSelector }>
-											{ translate( '{{icon/}} clear', {
-												components: { icon: <Gridicon icon="cross-small" /> },
-											} ) }
-										</Button>
-									) }
-								</div>
-								<Button
-									className="filterbar__activity-types-apply"
-									primary
-									compact
-									disabled={ ! this.state.userHasSelected }
-									onClick={ this.handleClose }
-								>
-									{ translate( 'Apply' ) }
-								</Button>
+				{ activityTypes && !! activityTypes.length && (
+					<div>
+						<Fragment>
+							<div className="filterbar__activity-types-selection-granular">
+								{ activityTypes.map( this.renderCheckbox ) }
 							</div>
+						</Fragment>
+						<div className="filterbar__activity-types-selection-info">
+							<div className="filterbar__date-range-info">
+								{ selectedCheckboxes.length === 0 && (
+									<Button borderless compact onClick={ this.handleToggleAllActionTypeSelector }>
+										{ translate( '{{icon/}} select all', {
+											components: { icon: <Gridicon icon="checkmark" /> },
+										} ) }
+									</Button>
+								) }
+								{ selectedCheckboxes.length !== 0 && (
+									<Button borderless compact onClick={ this.handleToggleAllActionTypeSelector }>
+										{ translate( '{{icon/}} clear', {
+											components: { icon: <Gridicon icon="cross-small" /> },
+										} ) }
+									</Button>
+								) }
+							</div>
+							<Button
+								className="filterbar__activity-types-apply"
+								primary
+								compact
+								disabled={ ! this.state.userHasSelected }
+								onClick={ this.handleClose }
+							>
+								{ translate( 'Apply' ) }
+							</Button>
 						</div>
-					) }
+					</div>
+				) }
 				{ ! activityTypes && [ 1, 2, 3 ].map( this.renderPlaceholder ) }
-				{ activityTypes &&
-					! activityTypes.length && (
-						<p>{ translate( 'No activities recorded in the selected date range.' ) }</p>
-					) }
+				{ activityTypes && ! activityTypes.length && (
+					<p>{ translate( 'No activities recorded in the selected date range.' ) }</p>
+				) }
 			</div>
 		);
 	};

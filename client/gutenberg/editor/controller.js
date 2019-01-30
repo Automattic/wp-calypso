@@ -6,7 +6,7 @@ import React from 'react';
 import config from 'config';
 import debugFactory from 'debug';
 import page from 'page';
-import { has, set, uniqueId } from 'lodash';
+import { has, set, uniqueId, get } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -25,7 +25,11 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { Placeholder } from './placeholder';
 import { JETPACK_DATA_PATH } from 'gutenberg/extensions/presets/jetpack/utils/get-jetpack-data';
-import { requestFromUrl, requestGutenbergBlockAvailability } from 'state/data-getters';
+import {
+	requestFromUrl,
+	requestGutenbergBlockAvailability,
+	requestSitePost,
+} from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 
 const debug = debugFactory( 'calypso:gutenberg:controller' );
@@ -138,18 +142,26 @@ export const redirect = ( { store: { getState } }, next ) => {
 	return page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
 };
 
-export const post = async ( context, next ) => {
+export const post = ( context, next ) => {
 	//see post-editor/controller.js for reference
 
 	const uniqueDraftKey = uniqueId( 'gutenberg-draft-' );
 	const postId = getPostID( context );
 	const postType = determinePostType( context );
 	const isDemoContent = ! postId && has( context.query, 'gutenberg-demo' );
+	const duplicatePostId = get( context, 'query.copy', null );
 
-	const makeEditor = import( './init' ).then( ( { initGutenberg } ) => {
+	const makeEditor = import( /* webpackChunkName: "gutenberg-init" */ './init' ).then( module => {
+		const { initGutenberg } = module;
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const userId = getCurrentUserId( state );
+
+		// When copying a post, first invalidate the cache containing the `duplicatePostId` post,
+		// so that following `requestSitePost` will hit a freshly cached version of the post.
+		if ( !! duplicatePostId ) {
+			requestSitePost( siteId, duplicatePostId, postType, 0 );
+		}
 
 		//set postId on state.ui.editor.postId, so components like editor revisions can read from it
 		context.store.dispatch( { type: EDITOR_START, siteId, postId } );
@@ -159,7 +171,17 @@ export const post = async ( context, next ) => {
 		resetGutenbergState( registry, siteId );
 
 		return props => (
-			<Editor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent, ...props } } />
+			<Editor
+				{ ...{
+					siteId,
+					postId,
+					postType,
+					uniqueDraftKey,
+					isDemoContent,
+					duplicatePostId,
+					...props,
+				} }
+			/>
 		);
 	} );
 

@@ -14,7 +14,7 @@
 }
 
 .billing-history__transactions thead {
-	border-bottom: 1px solid $gray-lighten-30;
+	border-bottom: 1px solid var( --color-neutral-0 );
 }
 
 .billing-history__transactions thead .header-row {
@@ -41,7 +41,7 @@
 	padding: 3px 9px;
 	background-color: $white;
 	border-radius: 15px;
-	border: 1px solid $gray-lighten-30;
+	border: 1px solid var( --color-neutral-0 );
 	transition: width 0.25s ease-out;
 	outline: 0;
 
@@ -57,10 +57,10 @@
 
 // Table Body
 .billing-history__transaction {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 14px;
 	height: 66px;
-	border-bottom: 1px solid $gray-lighten-30;
+	border-bottom: 1px solid var( --color-neutral-0 );
 
 	&:last-child {
 		border-bottom: none;
@@ -126,7 +126,7 @@
 
 .billing-history__transaction-links {
 	font-size: 12px;
-	margin: 4px 0 0 0;
+	margin: 4px 0 0;
 
 	a {
 		padding-right: 8px;
@@ -172,7 +172,7 @@
 		color: $gray;
 		font-size: 13px;
 		font-style: italic;
-		padding: 5px 0 0 0;
+		padding: 5px 0 0;
 
 		@include breakpoint( '>480px' ) {
 			position: absolute;
@@ -187,10 +187,10 @@
 }
 
 .billing-history__receipt-details {
-	background: $gray-light;
+	background: var( --color-neutral-0 );
 	list-style: none;
 	padding: 20px 40px;
-	margin: 20px 0 0 0;
+	margin: 20px 0 0;
 	overflow: auto;
 
 	@include breakpoint( '<480px' ) {
@@ -198,9 +198,9 @@
 	}
 
 	li {
-		color: $gray-dark;
+		color: var( --color-neutral-700 );
 		font-size: 13px;
-		margin: 0 0 15px 0;
+		margin: 0 0 15px;
 		padding: 0;
 
 		&:last-child {
@@ -208,7 +208,7 @@
 		}
 
 		strong {
-			color: $gray-darken-20;
+			color: var( --color-neutral-500 );
 			display: block;
 			font-size: 12px;
 			font-weight: 600;
@@ -292,7 +292,7 @@
 
 		tbody tr {
 			td {
-				border-bottom: 1px solid $gray-lighten-30;
+				border-bottom: 1px solid var( --color-neutral-0 );
 			}
 
 			&:last-child td {

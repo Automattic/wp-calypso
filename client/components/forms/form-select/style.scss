@@ -6,20 +6,20 @@
 	}
 
 	&.is-error:hover {
-		border-color: darken( $alert-red, 10 );
+		border-color: var( --color-error-dark );
 	}
 
 	&:disabled {
-		color: $gray-lighten-10;
+		color: var( --color-neutral-100 );
 	}
 
 	&:focus {
 		&.is-error {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 35 );
+			box-shadow: 0 0 0 2px var( --color-error-100 );
 		}
 
 		&.is-error:hover {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 25 );
+			box-shadow: 0 0 0 2px var( --color-error-200 );
 		}
 	}
 }

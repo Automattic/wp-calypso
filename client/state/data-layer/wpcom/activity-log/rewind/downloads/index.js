@@ -24,6 +24,7 @@ const createBackup = action =>
 			path: `/sites/${ action.siteId }/rewind/downloads`,
 			body: {
 				rewindId: action.rewindId,
+				types: action.args,
 			},
 		},
 		action

@@ -24,7 +24,7 @@
 		margin-right: 5px;
 	}
 
-	.reader-post-card__timestamp-and-tag  {
+	.reader-post-card__timestamp-and-tag {
 		margin-left: 0;
 	}
 
@@ -94,7 +94,7 @@
 	margin-top: 30px;
 	max-width: 650px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-top: 70px;
 	}
 }

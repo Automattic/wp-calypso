@@ -36,6 +36,11 @@ export default function( state, siteId, planKey ) {
 		? freePlan
 		: get( plan, [ 'productSlug' ], freePlan );
 
+	// Exception for upgrading Atomic sites to eCommerce
+	if ( isWpComEcommercePlan( planKey ) && isSiteAutomatedTransfer( state, siteId ) ) {
+		return false;
+	}
+
 	// Exception for AutomatedTransfer on a free plan (expired subscription) to wpcom business plan
 	if (
 		( isWpComBusinessPlan( planKey ) || isWpComEcommercePlan( planKey ) ) &&

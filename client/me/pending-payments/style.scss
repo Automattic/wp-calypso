@@ -26,7 +26,7 @@
 	position: relative;
 	white-space: nowrap;
 
-	&:after:not( .is-placeholder ) {
+	&::after:not( .is-placeholder ) {
 		@include long-content-fade();
 	}
 
@@ -45,7 +45,7 @@
 }
 
 .pending-payments__list-item-purchase-cost {
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 	font-size: 12px;
 }
 

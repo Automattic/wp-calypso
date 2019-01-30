@@ -82,14 +82,13 @@ class ComponentPlayground extends Component {
 					</div>
 				) }
 
-				{ this.props.component &&
-					toggleCode && (
-						<div className="design__component-playground-show-code">
-							<Button onClick={ this.showCode }>
-								{ this.state.showCode ? 'Hide' : 'Show' } code <Gridicon icon="code" />
-							</Button>
-						</div>
-					) }
+				{ this.props.component && toggleCode && (
+					<div className="design__component-playground-show-code">
+						<Button onClick={ this.showCode }>
+							{ this.state.showCode ? 'Hide' : 'Show' } code <Gridicon icon="code" />
+						</Button>
+					</div>
+				) }
 			</LiveProvider>
 		);
 	}

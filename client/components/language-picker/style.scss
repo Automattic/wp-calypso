@@ -1,6 +1,5 @@
 .language-picker {
-	background: $white;
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid var( --color-neutral-100 );
 	border-width: 1px 1px 2px;
 	border-radius: 4px;
 	width: 300px;
@@ -21,19 +20,34 @@
 
 		&,
 		.language-picker__icon {
-			border-color: $gray-lighten-30;
+			border-color: var( --color-neutral-0 );
 		}
 
 		&,
 		.language-picker__name-change {
-			color: $gray-lighten-30;
+			color: var( --color-neutral-0 );
 		}
 	}
 
-	&:not( [disabled] ):hover {
-		&,
-		.language-picker__icon {
-			border-color: $gray-lighten-10;
+	&:not( [disabled] ) {
+		&:hover {
+			&,
+			.language-picker__icon {
+				border-color: var( --color-neutral-200 );
+			}
+		}
+
+		&:focus {
+			&,
+			.language-picker__icon {
+				border-color: var( --color-primary );
+			}
+
+			box-shadow: 0 0 0 2px var( --color-primary-100 );
+
+			&:hover {
+				box-shadow: 0 0 0 2px var( --color-primary-200 );
+			}
 		}
 	}
 
@@ -47,13 +61,8 @@
 		.language-picker__name-inner {
 			width: 100%;
 			height: 30px;
-			background-color: $gray-lighten-30;
+			background-color: var( --color-neutral-0 );
 		}
-	}
-
-	&:focus {
-		border-color: var( --color-accent );
-		box-shadow: 0 0 0 2px var( --color-primary-light );
 	}
 }
 
@@ -64,7 +73,7 @@
 	align-items: center;
 	justify-content: center;
 	flex: none;
-	border-right: 1px solid $gray-lighten-20;
+	border-right: 1px solid var( --color-neutral-100 );
 	transition: border-color 150ms ease-in-out;
 }
 
@@ -182,15 +191,15 @@
 	cursor: pointer;
 
 	&.is-selected {
-		background: var( --color-accent );
+		background: var( --color-primary );
 		color: $white;
 	}
 }
 
 .language-picker__modal-suggested {
 	flex: none;
-	background: $gray-light;
-	border-top: 1px solid $gray-lighten-30;
+	background: var( --color-neutral-0 );
+	border-top: 1px solid var( --color-neutral-0 );
 	padding: 8px 16px;
 	z-index: 1;
 	position: relative;
@@ -203,7 +212,7 @@
 		left: 16px;
 		right: 16px;
 		height: 24px;
-		background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, white 100%);
+		background: linear-gradient( to bottom, rgba( 255, 255, 255, 0 ) 0%, white 100% );
 		margin-bottom: 1px;
 	}
 

@@ -8,7 +8,8 @@ import React from 'react';
  * WordPress dependencies
  */
 import { PanelRow } from '@wordpress/components';
-import { PostTrash as PostTrashLink, PostTrashCheck } from '@wordpress/editor';
+import { PostTrashCheck } from '@wordpress/editor';
+import PostTrashLink from 'gutenberg/editor/components/post-trash-link'; // GUTENLYPSO
 
 export default function PostTrash() {
 	return (

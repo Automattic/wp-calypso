@@ -1,6 +1,6 @@
 .reader-popover.popover .popover__inner {
-	background-color: $gray-light;
-	border-color: $gray-lighten-20;
+	background-color: var( --color-neutral-0 );
+	border-color: var( --color-neutral-100 );
 }
 
 // Popover arrows
@@ -8,12 +8,12 @@
 .reader-popover.popover.is-top-left .popover__arrow {
 
 	&::before {
-		border: 10px solid $gray-light;
+		border: 10px solid var( --color-neutral-0 );
 		border-bottom: none;
 		border-left-color: transparent;
 		border-right-color: transparent;
 		border-top-style: solid;
-		content: " ";
+		content: ' ';
 		margin-left: -10px;
 		position: absolute;
 			bottom: 2px;
@@ -26,12 +26,12 @@
 .reader-popover.popover.is-bottom-right .popover__arrow {
 
 	&::before {
-		border: 10px solid $gray-light;
+		border: 10px solid var( --color-neutral-0 );
 		border-bottom-style: solid;
 		border-left-color: transparent;
 		border-right-color: transparent;
 		border-top: none;
-		content: " ";
+		content: ' ';
 		position: absolute;
 			left: 50%;
 			top: 2px;
@@ -41,12 +41,12 @@
 .reader-popover.popover.is-left .popover__arrow,
 .reader-popover.popover.is-left-top .popover__arrow {
 
-	&::before{
-		border: 10px solid $gray-light;
+	&::before {
+		border: 10px solid var( --color-neutral-0 );
 		border-bottom-color: transparent;
 		border-right: none;
 		border-top-color: transparent;
-		content: " ";
+		content: ' ';
 		margin-top: -10px;
 		position: absolute;
 			top: 50%;
@@ -60,8 +60,8 @@
 }
 
 .reader-popover__header {
-	border-bottom: 1px solid $gray-lighten-20;
-	color: $gray-dark;
+	border-bottom: 1px solid var( --color-neutral-100 );
+	color: var( --color-neutral-700 );
 	display: flex;
 	font-size: 14px;
 	justify-content: flex-start;

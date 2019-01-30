@@ -24,6 +24,8 @@ export class FeaturedDomainSuggestions extends Component {
 		railcarId: PropTypes.string,
 		secondarySuggestion: PropTypes.object,
 		showPlaceholders: PropTypes.bool,
+		pendingCheckSuggestion: PropTypes.object,
+		unavailableDomains: PropTypes.array,
 	};
 
 	getChildProps() {
@@ -35,6 +37,8 @@ export class FeaturedDomainSuggestions extends Component {
 			'onButtonClick',
 			'query',
 			'selectedSite',
+			'pendingCheckSuggestion',
+			'unavailableDomains',
 		];
 		return pick( this.props, childKeys );
 	}
@@ -112,6 +116,7 @@ export class FeaturedDomainSuggestions extends Component {
 						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 0 }
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
+						buttonStyles={ { primary: true } }
 						{ ...childProps }
 					/>
 				) }

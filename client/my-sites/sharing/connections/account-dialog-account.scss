@@ -30,7 +30,7 @@
 
 .account-dialog-account.is-conflict .gridicons-notice {
 	position: absolute;
-		left: -5px;
+	left: -22px;
 	color: var( --color-warning );
 }
 
@@ -50,7 +50,7 @@
 .account-dialog-account__content {
 	display: inline-block;
 	padding-left: 48px;
-	color: $gray-dark;
+	color: var( --color-neutral-700 );
 }
 
 .account-dialog-account__description {

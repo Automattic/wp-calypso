@@ -29,6 +29,8 @@ export default class Mosaic extends Component {
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.images !== this.props.images || prevProps.align !== this.props.align ) {
 			this.triggerResize();
+		} else if ( 'columns' === this.props.layoutStyle && prevProps.columns !== this.props.columns ) {
+			this.triggerResize();
 		}
 	}
 
@@ -76,12 +78,12 @@ export default class Mosaic extends Component {
 	}
 
 	render() {
-		const { align, images, layoutStyle, renderedImages } = this.props;
+		const { align, columns, images, layoutStyle, renderedImages } = this.props;
 
 		const ratios = imagesToRatios( images );
 		const rows =
 			'columns' === layoutStyle
-				? ratiosToColumns( ratios )
+				? ratiosToColumns( ratios, columns )
 				: ratiosToMosaicRows( ratios, { isWide: [ 'full', 'wide' ].includes( align ) } );
 
 		let cursor = 0;

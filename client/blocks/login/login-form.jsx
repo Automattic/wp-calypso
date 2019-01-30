@@ -328,10 +328,9 @@ export class LoginForm extends Component {
 							disabled={ isFormDisabled || this.isPasswordView() }
 						/>
 
-						{ requestError &&
-							requestError.field === 'usernameOrEmail' && (
-								<FormInputValidation isError text={ requestError.message } />
-							) }
+						{ requestError && requestError.field === 'usernameOrEmail' && (
+							<FormInputValidation isError text={ requestError.message } />
+						) }
 
 						<div
 							className={ classNames( 'login__form-password', {
@@ -354,10 +353,9 @@ export class LoginForm extends Component {
 								disabled={ isFormDisabled }
 							/>
 
-							{ requestError &&
-								requestError.field === 'password' && (
-									<FormInputValidation isError text={ requestError.message } />
-								) }
+							{ requestError && requestError.field === 'password' && (
+								<FormInputValidation isError text={ requestError.message } />
+							) }
 						</div>
 					</div>
 

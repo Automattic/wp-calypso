@@ -1,17 +1,28 @@
-.logged-out-form,
+.logged-out-form {
+	margin: 0 auto 16px auto;
+	max-width: 480px;
+}
+
 .logged-out-form__links {
 	margin: 0 auto;
-	max-width: 400px;
+	max-width: 330px;
+	text-align: center;
+
+	body:not(.is-section-jetpack-connect):not(.is-section-settings) .layout:not(.dops) & a {
+		color: var( --color-white );
+
+		&:hover {
+			color: var( --color-neutral-0 );
+		}
+	}
 }
 
 .logged-out-form__footer {
-	background: lighten( $gray, 34% );
-	border-top: 1px solid $gray-lighten-30;
 	box-shadow: none;
 	margin: 0 -16px -16px -16px;
 	padding: 16px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin: 0 -24px -24px -24px;
 		padding: 24px;
 	}
@@ -30,8 +41,8 @@
 }
 
 .logged-out-form__link-item {
-	border-bottom: 1px solid $gray-lighten-20;
-	color: $gray-darken-20;
+	border-bottom: 1px solid var( --color-neutral-100 );
+	color: var( --color-neutral-500 );
 	display: block;
 	font-family: $sans;
 	font-size: 14px;
@@ -44,7 +55,7 @@
 	}
 
 	&:visited {
-		color: $gray-darken-20;
+		color: var( --color-neutral-500 );
 	}
 
 	&:hover {

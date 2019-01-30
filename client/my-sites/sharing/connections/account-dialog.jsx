@@ -19,6 +19,12 @@ import AccountDialogAccount from './account-dialog-account';
 import Dialog from 'components/dialog';
 import { warningNotice } from 'state/notices/actions';
 
+/**
+ * Style dependencies
+ */
+import './account-dialog.scss';
+
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 class AccountDialog extends Component {
 	static propTypes = {
 		accounts: PropTypes.arrayOf( PropTypes.object ),
@@ -39,6 +45,20 @@ class AccountDialog extends Component {
 		warningNotice: () => {},
 	};
 
+	state = {
+		selectedAccount: null,
+	};
+
+	static getDerivedStateFromProps( props, state ) {
+		// When the account dialog is closed, reset the selected account so
+		// that the state doesn't leak into a future dialog
+		if ( ! props.isVisible && state.selectedAccount ) {
+			return { selectedAccount: null };
+		}
+
+		return null;
+	}
+
 	onClose = action => {
 		const accountToConnect = this.getAccountToConnect();
 		const externalUserId =
@@ -58,22 +78,6 @@ class AccountDialog extends Component {
 	};
 
 	onSelectedAccountChanged = account => this.setState( { selectedAccount: account } );
-
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			selectedAccount: null,
-		};
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		// When the account dialog is closed, reset the selected account so
-		// that the state doesn't leak into a future dialog
-		if ( ! nextProps.visible ) {
-			this.setState( { selectedAccount: null } );
-		}
-	}
 
 	getSelectedAccount() {
 		if ( this.state.selectedAccount ) {
@@ -144,6 +148,7 @@ class AccountDialog extends Component {
 		if ( connectedAccounts.length ) {
 			const hasConflictingAccounts = this.isSelectedAccountConflicting();
 
+			/*eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<div className="account-dialog__connected-accounts">
 					<h3 className="account-dialog__connected-accounts-heading">
@@ -164,6 +169,7 @@ class AccountDialog extends Component {
 					) }
 				</div>
 			);
+			/*eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 	}
 
@@ -176,9 +182,10 @@ class AccountDialog extends Component {
 			// If a single account is available, show a simple confirmation
 			// prompt to ask the user to confirm their connection.
 			return this.props.translate(
-				'Confirm this is the account you would like to authorize. Note that your posts will be automatically shared to this account.',
+				"Is this the account you'd like to connect? All your new blog posts will be automatically shared to this account. You'll be able to change this option in the editor sidebar when you're writing a post.",
 				{
-					context: 'Sharing: Publicize connection confirmation',
+					comment:
+						'Sharing: asks the user to confirm if they want to share future posts to a connected social media account.',
 				}
 			);
 		}
@@ -187,9 +194,10 @@ class AccountDialog extends Component {
 		// single Keyring connection, and the user must choose which
 		// account to connect.
 		return this.props.translate(
-			'Select the account you wish to authorize. Note that your posts will be shared to the selected account automatically.',
+			"Select the account you'd like to connect. All your new blog posts will be automatically shared to this account. You'll be able to change this option in the editor sidebar when you're writing a post.",
 			{
-				context: 'Sharing: Publicize connection confirmation',
+				comment:
+					'Sharing: asks the user to confirm if they want to share future posts to a connected social media account.',
 			}
 		);
 	}
@@ -203,6 +211,7 @@ class AccountDialog extends Component {
 				{ action: 'connect', label: this.props.translate( 'Connect' ), isPrimary: true },
 			];
 
+		/*eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Dialog
 				isVisible={ this.props.isVisible }
@@ -223,8 +232,10 @@ class AccountDialog extends Component {
 				{ this.getConnectedAccountsContent() }
 			</Dialog>
 		);
+		/*eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default connect(
 	null,

@@ -449,17 +449,16 @@ class PostCommentList extends React.Component {
 					</SegmentedControl>
 				) }
 				{ this.renderCommentsList( displayedComments ) }
-				{ showViewMoreComments &&
-					this.props.startingCommentId && (
-						<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
-							{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
-								args: {
-									shown: displayedCommentsCount,
-									total: actualCommentsCount,
-								},
-							} ) }
-						</button>
-					) }
+				{ showViewMoreComments && this.props.startingCommentId && (
+					<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
+						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
+							args: {
+								shown: displayedCommentsCount,
+								total: actualCommentsCount,
+							},
+						} ) }
+					</button>
+				) }
 				<PostCommentFormRoot
 					post={ this.props.post }
 					commentsTree={ this.props.commentsTree }
