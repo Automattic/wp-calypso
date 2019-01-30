@@ -109,12 +109,14 @@ class AddressEdit extends Component {
 										setAttributes( { linkToGoogleMaps: newlinkToGoogleMaps } )
 									}
 								/>
-								<ClipboardInput link={ googleMapsUrl( this.props ) } />
-								<div>
-									<ExternalLink href={ googleMapsUrl( this.props ) }>
-										{ __( 'Visit Google Maps' ) }
-									</ExternalLink>
-								</div>
+								{ hasContent && <ClipboardInput link={ googleMapsUrl( this.props ) } /> }
+								{ hasContent && (
+									<div>
+										<ExternalLink href={ googleMapsUrl( this.props ) }>
+											{ __( 'Visit Google Maps' ) }
+										</ExternalLink>
+									</div>
+								) }
 							</PanelBody>
 						</InspectorControls>
 					</Fragment>
