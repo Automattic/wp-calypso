@@ -59,11 +59,19 @@ export default class VisitedEdit extends Component {
 					<div className="wp-block-jetpack-visited-inner-block">
 						<InnerBlocks />
 						<Notice status="warning" isDismissible={ false }>
-							Above block will become visible to visitors who have visited the page
 							<strong>
-								{ this.props.attributes.criteria === CRITERIA_AFTER ? ' more than ' : '' }
-								{ this.props.attributes.criteria === CRITERIA_BEFORE ? ' less than ' : '' }
-								{ this.props.attributes.threshold } times
+								{ this.props.attributes.criteria === CRITERIA_AFTER
+									? sprintf(
+											'This block will only appear to people who have previously visited this page at least %d times.',
+											this.props.attributes.threshold
+									  )
+									: '' }
+								{ this.props.attributes.criteria === CRITERIA_BEFORE
+									? sprintf(
+											'This block will only appear to people who have visited the page less than %d times',
+											this.props.attributes.threshold
+									  )
+									: '' }
 							</strong>
 						</Notice>
 					</div>
