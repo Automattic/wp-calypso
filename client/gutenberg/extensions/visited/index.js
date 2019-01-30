@@ -32,7 +32,7 @@ export const settings = {
 		_x( 'visibility', 'block search term' ),
 	],
 	supports: { html: false },
-	title: __( 'Visited' ),
+	title: __( 'Previously Visited' ),
 	edit,
 	save,
 };
