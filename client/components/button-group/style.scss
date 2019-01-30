@@ -19,7 +19,7 @@
 		}
 
 		&.is-primary.is-scary:focus {
-			box-shadow: inset 1px 0 0 var( -color-error-800 ), 0 0 0 2px var( --color-error-200 );
+			box-shadow: inset 1px 0 0 var( --color-error-800 ), 0 0 0 2px var( --color-error-200 );
 		}
 
 		&:first-child:focus {
