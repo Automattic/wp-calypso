@@ -24,7 +24,7 @@ Our naming is based on function and describes the meaning of the color, not the 
 
 The colors above can be suffixed with `-light` or `-dark` to quickly get a variation of the color. They are helper aliases to make picking shades easier (e.g. `--color-primary-light` or `--color-primary-dark`). These suffixes correspond to the 300 and 700 value of that color. For example, **Blue 300** is equal to `--color-primary-light`, and **Blue 700** is equal to `--color-primary-dark`.
 
-The variables listed above can also be suffixed with the corresponding value number as shown on Color Studio If you need a specific value that is not covered by the `light` or `dark` helper aliases, then you can append the specific value number to the end of the variable. For example, you can use `--color-accent-100` or `color-neutral-900` to get a specific shade.
+The variables listed above can also be suffixed with the corresponding value number as shown on Color Studio. If you need a specific value that is not covered by the `light` or `dark` helper aliases, then you can append the specific value number to the end of the variable. For example, you can use `--color-accent-100` or `color-neutral-900` to get a specific shade.
 
 **Additional Variables**
 
