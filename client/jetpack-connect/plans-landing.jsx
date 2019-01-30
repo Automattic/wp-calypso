@@ -23,7 +23,7 @@ import QueryPlans from 'components/data/query-plans';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
 import { storePlan } from './persistence-utils';
 
 const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
@@ -39,6 +39,7 @@ class PlansLanding extends Component {
 	};
 
 	componentDidMount() {
+		this.props.loadTrackingTool( 'HotJar' );
 		const { cta_id, cta_from } = this.props.context.query;
 		this.props.recordTracksEvent( 'calypso_jpc_plans_landing_view', {
 			jpc_from: 'jetpack',
@@ -130,6 +131,7 @@ export default connect(
 		};
 	},
 	{
+		loadTrackingTool,
 		recordTracksEvent,
 	}
 )( localize( PlansLanding ) );
