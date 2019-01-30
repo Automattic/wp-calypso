@@ -32,7 +32,7 @@ import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/se
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import { persistSession, retrieveMobileRedirect } from './persistence-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
 import {
 	JPC_PATH_PLANS,
@@ -83,6 +83,8 @@ export class JetpackConnectMain extends Component {
 	}
 
 	componentDidMount() {
+		this.props.loadTrackingTool( 'HotJar' );
+
 		let from = 'direct';
 		if ( this.props.type === 'install' ) {
 			from = 'jpdotcom';
@@ -416,5 +418,6 @@ const connectComponent = connect(
 
 export default flowRight(
 	connectComponent,
+	loadTrackingTool,
 	localize
 )( JetpackConnectMain );
