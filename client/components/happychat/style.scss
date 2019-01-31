@@ -214,7 +214,7 @@
 	position: relative;
 
 	&.is-disabled {
-		background: lighten( $alert-yellow, 30 );
+		background: var( --color-warning-50 );
 	}
 }
 
