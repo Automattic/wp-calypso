@@ -25,6 +25,13 @@ export default function( translate ) {
 				cssClass: 'is-classic-blue',
 			},
 		},
+		{
+			label: translate( 'Powder Snow' ),
+			value: 'powder-snow',
+			thumbnail: {
+				cssClass: 'is-powder-snow',
+			},
+		},
 		config.isEnabled( 'me/account/color-schemes/laser-black' ) && {
 			label: translate( 'Laser Black' ),
 			value: 'laser-black',
