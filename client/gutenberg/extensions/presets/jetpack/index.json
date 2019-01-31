@@ -10,5 +10,5 @@
 		"subscriptions",
 		"tiled-gallery"
 	],
-	"beta": [ "ads", "mailchimp", "gif", "vr" ]
+	"beta": [ "gif", "mailchimp", "vr", "wordads" ]
 }

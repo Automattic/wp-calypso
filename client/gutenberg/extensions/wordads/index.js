@@ -9,7 +9,7 @@ import { Fragment } from '@wordpress/element';
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
-export const name = 'ads';
+export const name = 'wordads';
 
 export const settings = {
 	title: __( 'Ad' ),
