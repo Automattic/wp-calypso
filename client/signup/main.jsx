@@ -96,6 +96,8 @@ class Signup extends React.Component {
 		loadTrackingTool: PropTypes.func.isRequired,
 		setSurvey: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
+		siteDomains: PropTypes.array,
+		isPaidPlan: PropTypes.bool,
 		trackAffiliateReferral: PropTypes.func.isRequired,
 	};
 
@@ -106,6 +108,8 @@ class Signup extends React.Component {
 			controllerHasReset: false,
 			login: false,
 			dependencies: props.signupDependencies,
+			siteDomains: props.siteDomains,
+			isPaidPlan: props.isPaidPlan,
 			shouldShowLoadingScreen: false,
 			resumingStep: undefined,
 			loginHandler: null,
@@ -337,7 +341,8 @@ class Signup extends React.Component {
 	};
 
 	removeOtherFulfilledSteps = () => {
-		const { flowName, isPaidPlan, siteDomains } = this.props;
+		const { flowName } = this.props;
+		const { isPaidPlan, siteDomains } = this.state;
 		const flowSteps = flows.getFlow( flowName ).steps;
 		const fulfilledSteps = [];
 
