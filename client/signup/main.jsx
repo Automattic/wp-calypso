@@ -60,6 +60,9 @@ import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
+import getSiteId from 'state/selectors/get-site-id';
+import { isCurrentPlanPaid } from 'state/sites/selectors';
+import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -128,6 +131,8 @@ class Signup extends React.Component {
 		if ( flow.providesDependenciesInQuery ) {
 			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
 		}
+
+		this.removeOtherFulfilledSteps();
 
 		// Caution: any signup Flux actions should happen after this initialization.
 		// Otherwise, the redux adpatation layer won't work and the state can go off.
@@ -275,12 +280,7 @@ class Signup extends React.Component {
 
 		const {
 			initialContext: {
-				query: {
-					vertical,
-					site_type: siteType,
-					exclude_plan: excludePlanStep,
-					exclude_domain: excludeDomainStep,
-				},
+				query: { vertical, site_type: siteType },
 			},
 			flowName,
 		} = this.props;
@@ -333,14 +333,22 @@ class Signup extends React.Component {
 			this.recordExcludeStepEvent( siteTypeStepName, siteTypeValue );
 		}
 
-		if ( 'undefined' !== typeof excludePlanStep ) {
+		flows.excludeSteps( fulfilledSteps );
+	};
+
+	removeOtherFulfilledSteps = () => {
+		const { flowName, isPaidPlan, siteDomains } = this.props;
+		const flowSteps = flows.getFlow( flowName ).steps;
+		const fulfilledSteps = [];
+
+		if ( isPaidPlan ) {
 			const planStepName = find( flowSteps, stepName => {
 				return startsWith( stepName, 'plan' );
 			} );
 			planStepName && fulfilledSteps.push( planStepName );
 		}
 
-		if ( 'undefined' !== typeof excludeDomainStep ) {
+		if ( siteDomains && siteDomains.length > 1 ) {
 			const domainStepName = find( flowSteps, stepName => {
 				return startsWith( stepName, 'domain' );
 			} );
@@ -666,14 +674,21 @@ class Signup extends React.Component {
 }
 
 export default connect(
-	state => ( {
-		domainsWithPlansOnly: getCurrentUser( state )
-			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-			: true,
-		progress: getSignupProgress( state ),
-		signupDependencies: getSignupDependencyStore( state ),
-		isLoggedIn: isUserLoggedIn( state ),
-	} ),
+	state => {
+		const signupDependencies = getSignupDependencyStore( state );
+		const siteId = getSiteId( state, signupDependencies.siteSlug );
+		const siteDomains = getDomainsBySiteId( state, siteId );
+		return {
+			domainsWithPlansOnly: getCurrentUser( state )
+				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+				: true,
+			progress: getSignupProgress( state ),
+			signupDependencies,
+			isLoggedIn: isUserLoggedIn( state ),
+			isPaidPlan: isCurrentPlanPaid( state, siteId ),
+			siteDomains,
+		};
+	},
 	{
 		setSurvey,
 		submitSiteType,
