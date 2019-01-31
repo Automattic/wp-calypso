@@ -121,28 +121,28 @@
 			border-color: var( --color-error );
 		}
 		&:focus {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
+			box-shadow: 0 0 0 2px var( --color-error-200 );
 		}
 		&[disabled],
 		&:disabled {
-			color: lighten( $alert-red, 30% );
+			color: var( --color-error-50 );
 			border-color: var( --color-neutral-0 );
 		}
 	}
 
 	.wpnc__button.is-primary.is-scary {
 		background: var( --color-error );
-		border-color: darken( $alert-red, 20% );
+		border-color: var( --color-error-600 );
 		color: $white;
 
 		&:hover,
 		&:focus {
-			border-color: darken( $alert-red, 40% );
+			border-color: var( --color-error-900 );
 		}
 		&[disabled],
 		&:disabled {
-			background: lighten( $alert-red, 20% );
-			border-color: tint( $alert-red, 30% );
+			background: var( --color-error-200 );
+			border-color: var( --color-error-300 );
 		}
 	}
 
@@ -181,11 +181,11 @@
 
 			&:hover,
 			&:focus {
-				color: darken( $alert-red, 20% );
+				color: var( --color-error-600 );
 			}
 
 			&[disabled] {
-				color: lighten( $alert-red, 30% );
+				color: var( --color-error-50 );
 			}
 		}
 
