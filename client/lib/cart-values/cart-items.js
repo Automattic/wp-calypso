@@ -1085,7 +1085,7 @@ export function hasToUpgradeToPayForADomain( selectedSite, cart, domain ) {
 	const sitePlanSlug = ( ( selectedSite || {} ).plan || {} ).product_slug;
 	const isDotBlogDomain = 'blog'.startsWith( getTld( domain ) );
 
-	if ( sitePlanSlug && ( isWpComBloggerPlan( sitePlanSlug ) && ! isDotBlogDomain ) ) {
+	if ( sitePlanSlug && isWpComBloggerPlan( sitePlanSlug ) && ! isDotBlogDomain ) {
 		return true;
 	}
 
