@@ -30,18 +30,8 @@ const parseJSON = data => {
 	try {
 		return JSON.parse( data );
 	} catch {
-		return null;
+		return;
 	}
-};
-
-const sendMessage = ( iframe, message ) => {
-	iframe.current.contentWindow.postMessage(
-		JSON.stringify( {
-			...message,
-			type: 'gutenbergIframeMessage',
-		} ),
-		'*'
-	);
 };
 
 class CalypsoifyIframe extends Component {
@@ -124,10 +114,8 @@ class CalypsoifyIframe extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect( ( state, { postId, postType } ) => {
 	const siteId = getSelectedSiteId( state );
-	const postId = ownProps.postId;
-	const postType = ownProps.postType;
 	const siteSlug = getSiteSlug( state, siteId );
 
 	const iframeUrl = addQueryArgs(
