@@ -91,7 +91,7 @@ describe( 'MediaLibraryContent', () => {
 		} );
 	} );
 
-	describe( 'hasGoogleServiceExpired', () => {
+	describe( 'hasGoogleExpired', () => {
 		test( 'returns false when no media errors and google service', () => {
 			const props = {
 				mediaValidationErrorTypes: [],
@@ -99,7 +99,7 @@ describe( 'MediaLibraryContent', () => {
 			};
 			const wrapper = getMediaContentInstance();
 
-			expect( wrapper.hasGoogleServiceExpired( props ) ).to.be.equal( false );
+			expect( wrapper.hasGoogleExpired( props ) ).to.be.equal( false );
 		} );
 
 		test( 'returns false when media errors and not google service', () => {
@@ -109,7 +109,7 @@ describe( 'MediaLibraryContent', () => {
 			};
 			const wrapper = getMediaContentInstance();
 
-			expect( wrapper.hasGoogleServiceExpired( props ) ).to.be.equal( false );
+			expect( wrapper.hasGoogleExpired( props ) ).to.be.equal( false );
 		} );
 
 		test( 'returns true when media errors and google service', () => {
@@ -119,7 +119,7 @@ describe( 'MediaLibraryContent', () => {
 			};
 			const wrapper = getMediaContentInstance();
 
-			expect( wrapper.hasGoogleServiceExpired( props ) ).to.be.equal( true );
+			expect( wrapper.hasGoogleExpired( props ) ).to.be.equal( true );
 		} );
 	} );
 
