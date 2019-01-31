@@ -19,6 +19,7 @@ const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
+const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 
 /**
  * Internal dependencies
@@ -368,6 +369,9 @@ function getWebpackConfig( {
 				} ),
 			shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
 			new BuildCustomPropertiesCssPlugin(),
+			new MomentTimezoneDataPlugin( {
+				startYear: 2000,
+			} ),
 		] ),
 		externals: _.compact( [
 			externalizeWordPressPackages && wordpressExternals,
