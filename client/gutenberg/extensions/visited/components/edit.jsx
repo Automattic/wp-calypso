@@ -3,9 +3,9 @@
  * External dependencies
  */
 import { memoize } from 'lodash';
-import { Notice, PanelBody, RadioControl, TextControl } from '@wordpress/components';
+import { Notice, RadioControl, TextControl } from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
-import { InnerBlocks, InspectorControls } from '@wordpress/editor';
+import { InnerBlocks } from '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -28,34 +28,31 @@ export default class VisitedEdit extends Component {
 			this.props.setAttributes( { threshold } );
 	};
 
-	renderInspectorControls() {
+	renderControls() {
 		return (
-			<InspectorControls>
-				<PanelBody title={ __( 'Visibility settings' ) }>
-					<RadioControl
-						label={ __( 'Criteria' ) }
-						onChange={ this.setCriteria }
-						options={ getRadioOptions( this.props.attributes.threshold ) }
-						selected={ this.props.attributes.criteria }
-					/>
-					<TextControl
-						label={ __( 'Visit count threshold' ) }
-						onChange={ this.setThreshold }
-						type="number"
-						min="1"
-						defaultValue={ this.props.attributes.threshold }
-					/>
-				</PanelBody>
-			</InspectorControls>
+			<Fragment>
+				<RadioControl
+					label={ __( 'Visibility' ) }
+					onChange={ this.setCriteria }
+					options={ getRadioOptions( this.props.attributes.threshold ) }
+					selected={ this.props.attributes.criteria }
+				/>
+				<TextControl
+					label={ __( 'Visit count threshold' ) }
+					onChange={ this.setThreshold }
+					type="number"
+					min="1"
+					defaultValue={ this.props.attributes.threshold }
+				/>
+			</Fragment>
 		);
 	}
 
 	render() {
 		return (
 			<Fragment>
-				{ this.renderInspectorControls() }
-
 				<div className={ this.props.className }>
+					{ this.renderControls() }
 					<div className="wp-block-jetpack-visited-inner-block">
 						<InnerBlocks />
 						<Notice status="warning" isDismissible={ false }>
