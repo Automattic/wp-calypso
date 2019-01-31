@@ -24,7 +24,7 @@ class HoursRow extends Component {
 						{ edit ? (
 							<TextControl
 								type="time"
-								label={ __( 'Opening', 'random-blocks' ) }
+								label={ __( 'Opening' ) }
 								value={ hours[ day ].opening }
 								onChange={ value => {
 									resetFocus && resetFocus();
@@ -46,7 +46,7 @@ class HoursRow extends Component {
 						{ edit ? (
 							<TextControl
 								type="time"
-								label={ __( 'Closing', 'random-blocks' ) }
+								label={ __( 'Closing' ) }
 								value={ hours[ day ].closing }
 								onChange={ value => {
 									resetFocus && resetFocus();
@@ -66,7 +66,7 @@ class HoursRow extends Component {
 						) }
 					</dd>
 				) : (
-					<dd className={ day + ' closed' }>{ __( 'CLOSED', 'random-blocks' ) }</dd>
+					<dd className={ day + ' closed' }>{ __( 'CLOSED' ) }</dd>
 				) }
 			</Fragment>
 		);

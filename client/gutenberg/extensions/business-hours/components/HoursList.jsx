@@ -12,7 +12,7 @@ import { Component } from '@wordpress/element';
 import HoursRow from './HoursRow';
 import apiFetch from '@wordpress/api-fetch/build/index';
 
-const defaultData = {
+const defaultLocalization = {
 	days: {
 		Sun: 'Sunday',
 		Mon: 'Monday',
@@ -27,7 +27,7 @@ const defaultData = {
 
 class HoursList extends Component {
 	state = {
-		data: defaultData,
+		localization: defaultLocalization,
 	};
 
 	componentDidMount() {
@@ -35,13 +35,13 @@ class HoursList extends Component {
 	}
 
 	apiFetch() {
-		this.setState( { data: defaultData }, () => {
+		this.setState( { data: defaultLocalization }, () => {
 			apiFetch( { path: '/wpcom/v2/business-hours/localized-week' } ).then(
 				data => {
-					this.setState( { data } );
+					this.setState( { localization: data } );
 				},
 				() => {
-					this.setState( { data: defaultData } );
+					this.setState( { localization: defaultLocalization } );
 				}
 			);
 		} );
@@ -49,15 +49,15 @@ class HoursList extends Component {
 
 	render() {
 		const { hours, edit } = this.props;
-		const { data } = this.state;
-		const { startOfWeek } = data;
+		const { localization } = this.state;
+		const { startOfWeek } = localization;
 		return (
 			<dl className={ 'business-hours ' + ( edit ? 'edit' : '' ) }>
 				{ Object.keys( hours )
 					.concat( Object.keys( hours ).slice( 0, startOfWeek ) )
 					.slice( startOfWeek )
-					.map( day => {
-						return <HoursRow day={ day } data={ data } { ...this.props } />;
+					.map( dayOfTheWeek => {
+						return <HoursRow day={ dayOfTheWeek } data={ localization } { ...this.props } />;
 					} ) }
 			</dl>
 		);
