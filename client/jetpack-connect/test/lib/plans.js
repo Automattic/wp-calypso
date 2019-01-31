@@ -249,6 +249,7 @@ export const DEFAULT_PROPS = {
 	isRequestingPlans: false,
 	isRtlLayout: false,
 	jetpackConnectAuthorize: {},
+	loadTrackingTool: noop,
 	notJetpack: false,
 	recordTracksEvent: noop,
 	redirectingToWpAdmin: false,

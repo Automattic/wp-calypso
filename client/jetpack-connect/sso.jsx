@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -37,6 +36,7 @@ import SitePlaceholder from 'blocks/site/placeholder';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSSO } from 'state/jetpack-connect/selectors';
+import { loadTrackingTool } from 'state/analytics/actions';
 import { login } from 'lib/paths';
 import { persistSsoApproved } from './persistence-utils';
 import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
@@ -53,6 +53,10 @@ class JetpackSsoForm extends Component {
 
 	componentWillMount() {
 		this.maybeValidateSSO();
+	}
+
+	componentDidMount() {
+		this.props.loadTrackingTool( 'HotJar' );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -487,6 +491,7 @@ export default connect(
 	},
 	{
 		authorizeSSO,
+		loadTrackingTool,
 		validateSSONonce,
 	}
 )( localize( JetpackSsoForm ) );

@@ -21,13 +21,17 @@ import { addCalypsoEnvQueryArg } from './utils';
 import { confirmJetpackInstallStatus } from 'state/jetpack-connect/actions';
 import { externalRedirect } from 'lib/route';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_ACTIVATE, REMOTE_PATH_INSTALL } from './constants';
 
 class InstallInstructions extends Component {
 	static propTypes = {
 		remoteSiteUrl: PropTypes.string.isRequired,
 	};
+
+	componentDidMount() {
+		this.props.loadTrackingTool( 'HotJar' );
+	}
 
 	getInstructionsData() {
 		const { notJetpack, translate } = this.props;
@@ -134,6 +138,7 @@ export default connect(
 	},
 	{
 		confirmJetpackInstallStatus,
+		loadTrackingTool,
 		recordTracksEvent,
 	}
 )( localize( InstallInstructions ) );
