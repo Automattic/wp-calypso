@@ -23,7 +23,6 @@ import {
 	selectResult,
 	resetInlineHelpContactForm,
 	hideOnboardingWelcomePrompt,
-	hideChecklistPrompt,
 } from 'state/inline-help/actions';
 import Button from 'components/button';
 import Popover from 'components/popover';
@@ -129,13 +128,11 @@ class InlineHelpPopover extends Component {
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide` );
 		this.props.selectResult( -1 );
 		this.props.resetContactForm();
-
 		// If the welcome message is still active, return to that view
 		// otherwise close the secondary view altogether.
 		if ( this.props.isOnboardingWelcomeVisible ) {
 			return this.openOnboardingWelcomeView();
 		}
-
 		this.props.hideChecklistPrompt();
 		this.setState( { showSecondaryView: false } );
 	};
@@ -211,15 +208,6 @@ class InlineHelpPopover extends Component {
 				{ ! this.state.showSecondaryView && this.renderPrimaryView() }
 			</Fragment>
 		);
-	};
-
-	closePopover = () => {
-		// Disable implicit close when checklist prompt is visible.
-		if ( this.state.showSecondaryView && this.state.activeSecondaryView === VIEW_CHECKLIST ) {
-			return null;
-		}
-
-		this.props.onClose();
 	};
 
 	renderSecondaryView = () => {
@@ -316,7 +304,7 @@ class InlineHelpPopover extends Component {
 		return (
 			<Popover
 				isVisible
-				onClose={ this.closePopover }
+				onClose={ this.props.onClose }
 				position="top left"
 				context={ this.props.context }
 				className={ classNames( 'inline-help__popover', popoverClasses ) }
@@ -401,7 +389,6 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	selectResult,
 	resetContactForm: resetInlineHelpContactForm,
-	hideChecklistPrompt,
 };
 
 export default connect(
