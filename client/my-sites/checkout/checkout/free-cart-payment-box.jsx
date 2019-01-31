@@ -18,6 +18,7 @@ import CartToggle from './cart-toggle';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import { hasOnlyProductsOf } from 'lib/cart-values/cart-items';
 import { isBlogger } from 'lib/products-values';
+import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
 
 class FreeCartPaymentBox extends React.Component {
 	static propTypes = {
@@ -55,6 +56,7 @@ class FreeCartPaymentBox extends React.Component {
 					</div>
 
 					<TermsOfService />
+					<DomainRegistrationRefundPolicy cart={ cart } />
 
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="payment-box-actions">

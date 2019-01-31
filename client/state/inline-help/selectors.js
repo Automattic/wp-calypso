@@ -123,3 +123,13 @@ export function isInlineHelpPopoverVisible( state ) {
 export function isInlineHelpChecklistPromptVisible( state ) {
 	return get( state, 'inlineHelp.checklistPrompt.isVisible', false );
 }
+
+/**
+ * Returns a bool indicating if the inline help popover is currently showing the onboarding welcome message.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Boolean}        Is the inline help popover showing the onboarding welcome prompt.
+ */
+export function isOnboardingWelcomePromptVisible( state ) {
+	return get( state, 'inlineHelp.onboardingWelcomePrompt.isVisible', false );
+}

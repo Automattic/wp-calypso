@@ -16,6 +16,7 @@ import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { allSiteTypes, getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { recordTracksEvent } from 'state/analytics/actions';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
 
 //Form components
 import Card from 'components/card';
@@ -90,7 +91,14 @@ class SiteType extends Component {
 	}
 
 	render() {
-		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const {
+			flowName,
+			positionInFlow,
+			signupProgress,
+			stepName,
+			translate,
+			hasInitializedSitesBackUrl,
+		} = this.props;
 
 		const headerText = translate( 'Start with a site type' );
 		const subHeaderText = '';
@@ -106,6 +114,9 @@ class SiteType extends Component {
 				fallbackSubHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
+				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+				backUrl={ hasInitializedSitesBackUrl }
+				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to My Sites' ) : null }
 			/>
 		);
 	}
@@ -114,6 +125,7 @@ class SiteType extends Component {
 export default connect(
 	state => ( {
 		siteType: getSiteType( state ),
+		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
 	( dispatch, { goToNextStep, flowName } ) => ( {
 		submitStep: siteTypeValue => {

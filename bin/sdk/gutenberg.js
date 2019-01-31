@@ -28,6 +28,7 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	const baseConfig = getBaseConfig( {
 		cssFilename: '[name].css',
 		externalizeWordPressPackages: true,
+		preserveCssCustomProperties: false,
 	} );
 
 	const presetPath = path.join( inputDir, 'index.json' );

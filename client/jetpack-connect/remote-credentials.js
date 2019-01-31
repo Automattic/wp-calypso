@@ -38,7 +38,7 @@ import getJetpackRemoteInstallErrorCode from 'state/selectors/get-jetpack-remote
 import getJetpackRemoteInstallErrorMessage from 'state/selectors/get-jetpack-remote-install-error-message';
 import isJetpackRemoteInstallComplete from 'state/selectors/is-jetpack-remote-install-complete';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from './constants';
 import {
 	ACTIVATION_FAILURE,
@@ -91,6 +91,10 @@ export class OrgCredentialsForm extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_view', {
 			url: siteToConnect,
 		} );
+	}
+
+	componentDidMount() {
+		this.props.loadTrackingTool( 'HotJar' );
 	}
 
 	componentDidUpdate() {
@@ -384,6 +388,7 @@ export default connect(
 	{
 		jetpackRemoteInstall,
 		jetpackRemoteInstallUpdateError,
+		loadTrackingTool,
 		recordTracksEvent,
 	}
 )( localize( OrgCredentialsForm ) );

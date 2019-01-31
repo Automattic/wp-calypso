@@ -16,6 +16,8 @@ import {
 	INLINE_HELP_POPOVER_SHOW,
 	INLINE_HELP_CHECKLIST_PROMPT_SHOW,
 	INLINE_HELP_CHECKLIST_PROMPT_HIDE,
+	INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW,
+	INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE,
 } from 'state/action-types';
 
 export const popover = createReducer(
@@ -35,6 +37,16 @@ export const checklistPrompt = createReducer(
 	{
 		[ INLINE_HELP_CHECKLIST_PROMPT_SHOW ]: state => ( { ...state, isVisible: true } ),
 		[ INLINE_HELP_CHECKLIST_PROMPT_HIDE ]: state => ( { ...state, isVisible: false } ),
+	}
+);
+
+export const onboardingWelcomePrompt = createReducer(
+	{
+		isVisible: false,
+	},
+	{
+		[ INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW ]: state => ( { ...state, isVisible: true } ),
+		[ INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE ]: state => ( { ...state, isVisible: false } ),
 	}
 );
 
@@ -128,4 +140,10 @@ export const contactForm = createReducer(
 	}
 );
 
-export default combineReducers( { popover, checklistPrompt, contactForm, searchResults } );
+export default combineReducers( {
+	popover,
+	checklistPrompt,
+	onboardingWelcomePrompt,
+	contactForm,
+	searchResults,
+} );

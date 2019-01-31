@@ -36,7 +36,10 @@ import {
 } from 'state/notices/actions';
 import { isEnabled } from 'config';
 import { login } from 'lib/paths';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import {
+	loadTrackingTool,
+	recordTracksEvent as recordTracksEventAction,
+} from 'state/analytics/actions';
 import {
 	createAccount as createAccountAction,
 	createSocialAccount as createSocialAccountAction,
@@ -77,6 +80,8 @@ export class JetpackSignup extends Component {
 	}
 
 	componentDidMount() {
+		this.props.loadTrackingTool( 'HotJar' );
+
 		const { from, clientId } = this.props.authQuery;
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view', {
 			from,
@@ -241,7 +246,8 @@ export default connect(
 		createAccount: createAccountAction,
 		createSocialAccount: createSocialAccountAction,
 		errorNotice: errorNoticeAction,
-		warningNotice: warningNoticeAction,
+		loadTrackingTool,
 		recordTracksEvent: recordTracksEventAction,
+		warningNotice: warningNoticeAction,
 	}
 )( localize( JetpackSignup ) );

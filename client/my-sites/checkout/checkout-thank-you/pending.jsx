@@ -67,6 +67,12 @@ class CheckoutPending extends PureComponent {
 				return;
 			}
 
+			if ( ORDER_TRANSACTION_STATUS.ASYNC_PENDING === transaction.processingStatus ) {
+				page( '/me/purchases/pending' );
+
+				return;
+			}
+
 			// If the processing status indicates that there was something wrong.
 			// It could be because the user has cancelled the payment, or because the payment failed after being authorized
 			if (

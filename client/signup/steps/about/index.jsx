@@ -34,6 +34,7 @@ import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { getSiteVerticalId } from 'state/signup/steps/site-vertical/selectors';
 import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
 
 //Form components
 import Card from 'components/card';
@@ -559,7 +560,14 @@ class AboutStep extends Component {
 	}
 
 	render() {
-		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const {
+			flowName,
+			positionInFlow,
+			signupProgress,
+			stepName,
+			translate,
+			hasInitializedSitesBackUrl,
+		} = this.props;
 		const headerText = translate( 'Let’s create a site.' );
 		const subHeaderText = translate(
 			'Please answer these questions so we can help you make the site you need.'
@@ -576,6 +584,9 @@ class AboutStep extends Component {
 				fallbackSubHeaderText={ subHeaderText }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
+				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+				backUrl={ hasInitializedSitesBackUrl }
+				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to My Sites' ) : null }
 			/>
 		);
 	}
@@ -598,6 +609,7 @@ export default connect(
 			includes( ownProps.steps, 'site-type' ) &&
 			includes( ownProps.steps, 'site-topic' ) &&
 			includes( ownProps.steps, 'site-information' ),
+		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
 	{
 		setSiteTitle,

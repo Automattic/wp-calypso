@@ -25,7 +25,7 @@ export const settings = {
 	title,
 	icon,
 	category: 'jetpack',
-	keywords: [ __( 'giphy' ) ],
+	keywords: [ __( 'animated' ), __( 'giphy' ), __( 'image' ) ],
 	description: __( 'Search for and insert an animated image.' ),
 	attributes: {
 		align: {

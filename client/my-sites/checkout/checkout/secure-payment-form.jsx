@@ -572,6 +572,7 @@ export class SecurePaymentForm extends Component {
 			case 'ideal':
 			case 'p24':
 			case 'brazil-tef':
+			case 'sofort':
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }

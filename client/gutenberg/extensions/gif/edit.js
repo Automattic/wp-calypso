@@ -4,37 +4,34 @@
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import classNames from 'classnames';
 import { Component, createRef } from '@wordpress/element';
-import { PanelBody, Path, Placeholder, SVG, TextControl } from '@wordpress/components';
+import { Button, PanelBody, Path, Placeholder, SVG, TextControl } from '@wordpress/components';
 import { InspectorControls, RichText } from '@wordpress/editor';
-import { debounce } from 'lodash';
 
 import { icon, title } from './';
 
 const GIPHY_API_KEY = 't1PkR1Vq0mzHueIFBvZSZErgFs9NBmYW';
-const SEARCH_INPUT_DEBOUNCE = 450; // Time before searching user input in ms
+const INPUT_PROMPT = __( 'Search for a term or paste a Giphy URL' );
 
 class GifEdit extends Component {
-	timer = null;
 	textControlRef = createRef();
 
 	state = {
 		captionFocus: false,
-		focus: false,
 		results: null,
 	};
 
-	componentWillUnmount() {
-		this.parseSearch.cancel();
-	}
-
-	onSearchTextChange = searchText => {
-		const { setAttributes } = this.props;
-		setAttributes( { searchText } );
-		this.parseSearch( searchText );
-		this.maintainFocus();
+	onFormSubmit = event => {
+		event.preventDefault();
+		this.onSubmit();
 	};
 
-	parseSearch = debounce( searchText => {
+	onSubmit = () => {
+		const { attributes } = this.props;
+		const { searchText } = attributes;
+		this.parseSearch( searchText );
+	};
+
+	parseSearch = searchText => {
 		let giphyID = null;
 		// If search is hardcoded Giphy URL following this pattern: https://giphy.com/embed/4ZFekt94LMhNK
 		if ( searchText.indexOf( '//giphy.com/gifs' ) !== -1 ) {
@@ -56,7 +53,7 @@ class GifEdit extends Component {
 		}
 
 		return this.fetch( this.urlForSearch( searchText ) );
-	}, SEARCH_INPUT_DEBOUNCE );
+	};
 
 	urlForSearch = searchText => {
 		return `https://api.giphy.com/v1/gifs/search?q=${ encodeURIComponent(
@@ -81,17 +78,17 @@ class GifEdit extends Component {
 		xhr.onload = () => {
 			if ( xhr.status === 200 ) {
 				const res = JSON.parse( xhr.responseText );
-				const giphyData = res.data.length > 0 ? res.data[ 0 ] : res.data;
+				// If there is only one result, Giphy's API does not return an array.
+				// The following statement normalizes the data into an array with one member in this case.
+				const results = typeof res.data.images !== 'undefined' ? [ res.data ] : res.data;
+				const giphyData = results[ 0 ];
 				// No results
 				if ( ! giphyData.images ) {
 					return;
 				}
-				if ( res.data.length > 1 ) {
-					this.setState( { results: res.data }, () => {
-						this.selectGiphy( giphyData );
-					} );
-				}
-				this.maintainFocus( 500 );
+				this.setState( { results }, () => {
+					this.selectGiphy( giphyData );
+				} );
 			} else {
 				// Error handling TK
 			}
@@ -110,30 +107,8 @@ class GifEdit extends Component {
 	};
 
 	setFocus = () => {
-		this.maintainFocus();
 		this.textControlRef.current.querySelector( 'input' ).focus();
 		this.setState( { captionFocus: false } );
-	};
-
-	maintainFocus = ( timeoutDuration = 3500 ) => {
-		this.setState( { focus: true }, () => {
-			if ( this.timer ) {
-				clearTimeout( this.timer );
-			}
-			if ( this.hasSearchText() ) {
-				this.timer = setTimeout( () => {
-					this.setState( { focus: false } );
-				}, timeoutDuration );
-			}
-		} );
-	};
-
-	clearFocus = () => {
-		this.setState( { focus: false }, () => {
-			if ( this.timer ) {
-				clearTimeout( this.timer );
-			}
-		} );
 	};
 
 	hasSearchText = () => {
@@ -149,14 +124,27 @@ class GifEdit extends Component {
 	render() {
 		const { attributes, className, isSelected, setAttributes } = this.props;
 		const { align, caption, giphyUrl, searchText, paddingTop } = attributes;
-		const { captionFocus, focus, results } = this.state;
+		const { captionFocus, results } = this.state;
 		const style = { paddingTop };
 		const classes = classNames( className, `align${ align }` );
-		const textControlClasses = classNames(
-			'wp-block-jetpack-gif_text-input-field',
-			focus || ! this.hasSearchText() ? 'has-focus' : 'no-focus'
+		const inputFields = (
+			<form
+				className="wp-block-jetpack-gif_input-container"
+				onSubmit={ this.onFormSubmit }
+				ref={ this.textControlRef }
+			>
+				<TextControl
+					className="wp-block-jetpack-gif_input"
+					label={ INPUT_PROMPT }
+					placeholder={ INPUT_PROMPT }
+					onChange={ value => setAttributes( { searchText: value } ) }
+					value={ searchText }
+				/>
+				<Button isLarge onClick={ this.onSubmit }>
+					{ __( 'Search' ) }
+				</Button>
+			</form>
 		);
-
 		return (
 			<div className={ classes }>
 				<InspectorControls>
@@ -169,58 +157,42 @@ class GifEdit extends Component {
 				</InspectorControls>
 				{ ! giphyUrl ? (
 					<Placeholder className="wp-block-jetpack-gif_placeholder" icon={ icon } label={ title }>
-						<TextControl
-							className="wp-block-jetpack-gif_placeholder-text-input"
-							label={ __( 'Search or paste a Giphy URL' ) }
-							onChange={ this.onSearchTextChange }
-							value={ searchText }
-						/>
+						{ inputFields }
 					</Placeholder>
 				) : (
 					<figure>
-						<div
-							className="wp-block-jetpack-gif_cover"
-							onClick={ this.setFocus }
-							onKeyDown={ this.setFocus }
-							ref={ this.textControlRef }
-							role="button"
-							tabIndex="0"
-						>
-							{ ( ! searchText || isSelected ) && (
-								<TextControl
-									className={ textControlClasses }
-									label={ __( 'Search or paste a Giphy URL' ) }
-									placeholder={ __( 'Search or paste a Giphy URL' ) }
-									onChange={ this.onSearchTextChange }
-									onClick={ this.maintainFocus }
-									value={ searchText }
-								/>
-							) }
-						</div>
-						<div class="wp-block-jetpack-gif-wrapper" style={ style }>
+						{ isSelected && inputFields }
+						{ isSelected && results && results.length > 1 && (
+							<div className="wp-block-jetpack-gif_thumbnails-container">
+								{ results.map( thumbnail => {
+									if ( thumbnail.embed_url === giphyUrl ) {
+										return null;
+									}
+									const thumbnailStyle = {
+										backgroundImage: `url(${ thumbnail.images.downsized_still.url })`,
+									};
+									return (
+										<button
+											className="wp-block-jetpack-gif_thumbnail-container"
+											key={ thumbnail.id }
+											onClick={ () => {
+												this.thumbnailClicked( thumbnail );
+											} }
+											style={ thumbnailStyle }
+										/>
+									);
+								} ) }
+							</div>
+						) }
+						<div className="wp-block-jetpack-gif-wrapper" style={ style }>
+							<div
+								className="wp-block-jetpack-gif_cover"
+								onClick={ this.setFocus }
+								onKeyDown={ this.setFocus }
+								role="button"
+								tabIndex="0"
+							/>
 							<iframe src={ giphyUrl } title={ searchText } />
-							{ results && isSelected && (
-								<div className="wp-block-jetpack-gif_thumbnails-container">
-									{ results.map( thumbnail => {
-										if ( thumbnail.embed_url === giphyUrl ) {
-											return null;
-										}
-										const thumbnailStyle = {
-											backgroundImage: `url(${ thumbnail.images.preview_gif.url })`,
-										};
-										return (
-											<button
-												className="wp-block-jetpack-gif_thumbnail-container"
-												key={ thumbnail.id }
-												onClick={ () => {
-													this.thumbnailClicked( thumbnail );
-												} }
-												style={ thumbnailStyle }
-											/>
-										);
-									} ) }
-								</div>
-							) }
 						</div>
 						{ ( ! RichText.isEmpty( caption ) || isSelected ) && !! giphyUrl && (
 							<RichText

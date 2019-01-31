@@ -20,38 +20,31 @@
 			outline: none;
 		}
 	}
-	.wp-block-jetpack-gif_text-input-field {
-		margin-top: -1em;
-		position: absolute;
-		top: 50%;
+	.wp-block-jetpack-gif_input-container {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: center;
+		margin: 0 auto;
+		max-width: 400px;
 		width: 100%;
-		padding: 0 1em;
-
-		&.has-focus .components-text-control__input {
-			opacity: 1;
-			transition: opacity 0;
-		}
-		&.no-focus .components-text-control__input {
-			transition: opacity 0.5s ease-in;
-		}
-		.components-text-control__input {
-			opacity: 0;
-			max-width: 400px;
-			width: 100%;
-		}
+		z-index: 1;
 		.components-base-control__label {
 			height: 0;
+			margin: 0;
 			text-indent: -9999px;
 		}
 	}
+	.wp-block-jetpack-gif_input {
+		flex-grow: 1;
+		margin-right: 0.5em;
+	}
 	.wp-block-jetpack-gif_thumbnails-container {
-		bottom: 8px;
 		display: flex;
-		left: 8px;
+		margin: -2px 0 2px 0;
+		margin-left: calc( -4px / 2 );
 		overflow-x: auto;
-		position: absolute;
-		right: 8px;
-		z-index: 1;
+		width: calc( 100% + 4px );
 		&::-webkit-scrollbar {
 			display: none;
 		}
@@ -77,16 +70,6 @@
 			box-shadow: 0 0 0 2px #00a0d2;
 			outline: 0;
 		}
-	}
-	.wp-block-jetpack-gif_placeholder-text-input {
-		width: 100%;
-		max-width: 400px;
-	}
-	.wp-block-jetpack-gif_placeholder {
-		min-height: 200px;
-	}
-	figcaption {
-		z-index: 2;
 	}
 }
 .components-panel__body-gif-branding {

@@ -20,6 +20,11 @@ import RescheduleSkeleton from './reschedule/skeleton';
 import i18n from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const book = ( context, next ) => {
 	context.primary = (
 		<ConciergeMain

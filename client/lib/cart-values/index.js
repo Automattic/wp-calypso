@@ -34,6 +34,7 @@ const PAYMENT_METHODS = {
 	'brazil-tef': 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef',
 	wechat: 'WPCOM_Billing_Stripe_Source_Wechat',
 	'web-payment': 'WPCOM_Billing_Web_Payment',
+	sofort: 'WPCOM_Billing_Stripe_Source_Sofort',
 };
 
 /**
@@ -315,6 +316,7 @@ function paymentMethodName( method ) {
 			comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
 		} ),
 		'web-payment': i18n.translate( 'Wallet' ),
+		sofort: 'Sofort',
 	};
 
 	return paymentMethodsNames[ method ] || method;
@@ -332,6 +334,7 @@ function isPaymentMethodEnabled( cart, method ) {
 		'p24',
 		'brazil-tef',
 		'wechat',
+		'sofort',
 	];
 	const methodClassName = paymentMethodClassName( method );
 

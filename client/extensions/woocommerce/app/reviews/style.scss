@@ -175,7 +175,7 @@
 		}
 
 		.gridicon {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 	}
 
@@ -225,7 +225,7 @@
 	}
 
 	.reviews__verified-label {
-		color: $alert-green;
+		color: var( --color-success );
 		display: inline-block;
 		margin-left: 6px;
 		font-weight: normal;
@@ -270,7 +270,7 @@
 		&.reviews__action-approve {
 			&:focus,
 			&:hover {
-				color: $alert-green;
+				color: var( --color-success );
 			}
 		}
 
@@ -284,7 +284,7 @@
 		}
 
 		&.is-approved {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 		&.is-spam {
 			color: var( --color-error );

@@ -46,6 +46,7 @@ import ServiceTip from './service-tip';
 import requestExternalAccess from 'lib/sharing';
 import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
 import config from 'config';
+import PicasaMigration from './picasa-migration';
 
 export class SharingService extends Component {
 	static propTypes = {
@@ -290,7 +291,7 @@ export class SharingService extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! isEqual( this.props.siteUserConnections, nextProps.siteUserConnections ) ) {
 			this.setState( {
 				isConnecting: false,
@@ -406,12 +407,32 @@ export class SharingService extends Component {
 		);
 	}
 
+	shouldBeExpanded( status ) {
+		if ( this.isMailchimpService() && this.state.justConnected ) {
+			return true;
+		}
+
+		if ( this.isPicasaMigration( status ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
 	isMailchimpService = () => {
 		if ( ! config.isEnabled( 'mailchimp' ) ) {
 			return false;
 		}
 		return get( this, 'props.service.ID' ) === 'mailchimp';
 	};
+
+	isPicasaMigration( status ) {
+		if ( status === 'must-disconnect' && get( this, 'props.service.ID' ) === 'google_photos' ) {
+			return true;
+		}
+
+		return false;
+	}
 
 	render() {
 		const connections = this.getConnections();
@@ -462,7 +483,7 @@ export class SharingService extends Component {
 					header={ header }
 					clickableHeader
 					//For Mailchimp we want to open settings, because in other services we have the popup.
-					expanded={ this.isMailchimpService() && this.state.justConnected }
+					expanded={ this.shouldBeExpanded( connectionStatus ) }
 					compact
 					summary={ action }
 					expandedSummary={ action }
@@ -473,6 +494,9 @@ export class SharingService extends Component {
 						} ) }
 					>
 						<ServiceExamples service={ this.props.service } />
+
+						{ this.isPicasaMigration( connectionStatus ) && <PicasaMigration /> }
+
 						{ ! this.isMailchimpService( connectionStatus ) && (
 							<ServiceConnectedAccounts
 								connect={ this.connectAnother }

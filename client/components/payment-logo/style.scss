@@ -1,3 +1,5 @@
+/** @format */
+
 .payment-logo {
 	background-position: 0 center;
 	background-repeat: no-repeat;
@@ -8,7 +10,8 @@
 	width: 35px;
 
 	$payment-cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
-	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24', 'brazil-tef', 'emergent-paywall', 'wechat';
+	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24', 'brazil-tef',
+		'emergent-paywall', 'wechat', 'sofort';
 
 	@each $brand in $payment-cc-brands {
 		&.is-#{$brand} {
@@ -69,5 +72,15 @@
 		width: 200px;
 		margin-top: 5px;
 		height: 30px;
+	}
+
+	&.is-sofort {
+		background-size: 60px auto;
+		width: 80px;
+		height: 20px;
+
+		&.is-compact {
+			width: 16px;
+		}
 	}
 }
