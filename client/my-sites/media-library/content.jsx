@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { groupBy, head, isEmpty, map, noop, size, values, defer } from 'lodash';
+import { groupBy, head, isEmpty, map, noop, size, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { localize } from 'i18n-calypso';
@@ -34,11 +34,12 @@ import MediaLibraryList from './list';
 import InlineConnection from 'my-sites/sharing/connections/inline-connection';
 import {
 	isKeyringConnectionsFetching,
-	getKeyringConnections,
+	getKeyringConnectionsByName,
 } from 'state/sharing/keyring/selectors';
 import { pauseGuidedTour, resumeGuidedTour } from 'state/ui/guided-tours/actions';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import { deleteKeyringConnection } from 'state/sharing/keyring/actions';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
+import { withoutNotice } from 'state/notices/actions';
 import { reduxDispatch } from 'lib/redux-bridge';
 
 /**
@@ -75,37 +76,48 @@ export class MediaLibraryContent extends React.Component {
 			this.props.toggleGuidedTour( this.props.shouldPauseGuidedTour );
 		}
 
-		// We do these here as the data and actions are in Redux and Flux, and it gets tricky
 		if (
-			! this.hasGoogleServiceExpired( prevProps ) &&
-			this.hasGoogleServiceExpired( this.props )
+			! this.hasGoogleExpired( prevProps ) &&
+			this.hasGoogleExpired( this.props ) &&
+			this.props.googleConnection
 		) {
-			// As soon as we detect Google has expired, trigger a keyring refresh so our keyring store is updated
-			// Note: we defer to avoid dispatcher conflicts when calling Redux from inside Flux
-			defer( () => {
-				this.props.requestKeyringConnections();
-			} );
+			// As soon as we detect Google has expired, remove the connection from the keyring so we
+			// are prompted to connect again
+			this.props.deleteKeyringConnection( this.props.googleConnection );
 		}
 
 		if (
-			this.getGoogleStatus( prevProps ) === 'invalid' &&
-			this.getGoogleStatus( this.props ) === 'ok'
+			! this.isGoogleConnectedAndVisible( prevProps ) &&
+			this.isGoogleConnectedAndVisible( this.props ) &&
+			this.hasGoogleExpired( this.props )
 		) {
 			// We have transitioned from an invalid Google status to a valid one - migration is complete
-			// Force a refresh of the list (this won't happen automatically as we've cached our previous query that failed)
+			// Force a refresh of the list - this won't happen automatically as we've cached our previous failed query.
 			MediaActions.sourceChanged( this.props.site.ID );
 		}
 	}
 
-	getGoogleStatus( props ) {
-		const { connections, source } = props;
-		const google = connections.find( item => item.service === 'google_photos' );
+	isGoogleConnectedAndVisible( props ) {
+		const { googleConnection, source } = props;
 
-		if ( source === 'google_photos' && google ) {
-			return google.status;
+		if ( source === 'google_photos' && googleConnection && googleConnection.status === 'ok' ) {
+			return true;
 		}
 
-		return null;
+		return false;
+	}
+
+	hasGoogleExpired( props ) {
+		const { mediaValidationErrorTypes, source } = props;
+
+		if (
+			source === 'google_photos' &&
+			mediaValidationErrorTypes.indexOf( MediaValidationErrors.SERVICE_AUTH_FAILED ) !== -1
+		) {
+			return true;
+		}
+
+		return false;
 	}
 
 	renderErrors() {
@@ -296,15 +308,6 @@ export class MediaLibraryContent extends React.Component {
 		return this.props.source !== '' ? MEDIA_IMAGE_THUMBNAIL : MEDIA_IMAGE_RESIZER;
 	}
 
-	hasGoogleServiceExpired( props ) {
-		const { mediaValidationErrorTypes, source } = props;
-
-		return (
-			source === 'google_photos' &&
-			mediaValidationErrorTypes.indexOf( MediaValidationErrors.SERVICE_AUTH_FAILED ) !== -1
-		);
-	}
-
 	needsToBeConnected() {
 		const { source, isConnected } = this.props;
 
@@ -319,7 +322,7 @@ export class MediaLibraryContent extends React.Component {
 		}
 
 		// If we're on the Google service and it's expired then we need connecting
-		return this.hasGoogleServiceExpired( this.props );
+		return this.hasGoogleExpired( this.props );
 	}
 
 	renderMediaList() {
@@ -366,7 +369,7 @@ export class MediaLibraryContent extends React.Component {
 	renderHeader() {
 		if (
 			( ! this.props.isConnected && this.needsToBeConnected() ) ||
-			this.hasGoogleServiceExpired( this.props )
+			this.hasGoogleExpired( this.props )
 		) {
 			return null;
 		}
@@ -424,14 +427,14 @@ export default connect(
 		const mediaValidationErrorTypes = values( ownProps.mediaValidationErrors ).map( head );
 		const shouldPauseGuidedTour =
 			! isEmpty( guidedTourState.tour ) && 0 < size( mediaValidationErrorTypes );
-		const connections = getKeyringConnections( state );
+		const googleConnection = getKeyringConnectionsByName( state, 'google_photos' );
 
 		return {
 			siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
 			isRequesting: isKeyringConnectionsFetching( state ),
 			mediaValidationErrorTypes,
 			shouldPauseGuidedTour,
-			connections,
+			googleConnection: googleConnection ? googleConnection[ 0 ] : null, // There can be only one
 		};
 	},
 	() => ( {
@@ -440,8 +443,11 @@ export default connect(
 			// The eventual Reduxification of the media store should prevent this. See: #26168
 			reduxDispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() );
 		},
-		requestKeyringConnections: () => {
-			reduxDispatch( requestKeyringConnections() );
+		deleteKeyringConnection: connection => {
+			// We don't want this to trigger a global notice - a notice is shown inline
+			const deleteKeyring = withoutNotice( () => deleteKeyringConnection( connection ) );
+
+			reduxDispatch( deleteKeyring() );
 		},
 	} ),
 	null,

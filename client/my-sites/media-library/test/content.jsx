@@ -20,26 +20,16 @@ import MediaActions from 'lib/media/actions';
 
 jest.mock( 'lib/media/actions' );
 
-const googleConnections = [
-	{
-		service: 'something',
-		status: 'ok',
-	},
-	{
-		service: 'google_photos',
-		status: 'ok',
-	},
-];
-const googleConnectionsInvalid = [
-	{
-		service: 'something',
-		status: 'ok',
-	},
-	{
-		service: 'google_photos',
-		status: 'invalid',
-	},
-];
+const googleConnection = {
+	service: 'google_photos',
+	status: 'ok',
+};
+
+const googleConnectionInvalid = {
+	service: 'google_photos',
+	status: 'invalid',
+};
+
 const mediaValidationErrorTypes = [ ValidationErrors.SERVICE_AUTH_FAILED ];
 
 function getMediaContent( props ) {
@@ -69,35 +59,35 @@ describe( 'MediaLibraryContent', () => {
 		global.window = beforeWindow;
 	} );
 
-	describe( 'getGoogleStatus', () => {
-		test( 'returns google status when using google source', () => {
+	describe( 'isGoogleConnectedAndVisible', () => {
+		test( 'returns true when connected using google source', () => {
 			const props = {
-				connections: googleConnections,
+				googleConnection,
 				source: 'google_photos',
 			};
 			const wrapper = getMediaContentInstance();
 
-			expect( wrapper.getGoogleStatus( props ) ).to.be.equal( 'ok' );
+			expect( wrapper.isGoogleConnectedAndVisible( props ) ).to.be.equal( true );
 		} );
 
-		test( 'returns null when not using google source', () => {
+		test( 'returns false when not connected and using google source', () => {
 			const props = {
-				connections: googleConnections,
+				googleConnection,
 				source: '',
 			};
 			const wrapper = getMediaContentInstance();
 
-			expect( wrapper.getGoogleStatus( props ) ).to.be.equal( null );
+			expect( wrapper.isGoogleConnectedAndVisible( props ) ).to.be.equal( false );
 		} );
 
-		test( 'returns null when using google but not connected', () => {
+		test( 'returns false when using google source and not connected', () => {
 			const props = {
-				connections: [],
+				googleConnection: null,
 				source: 'google_photos',
 			};
 			const wrapper = getMediaContentInstance();
 
-			expect( wrapper.getGoogleStatus( props ) ).to.be.equal( null );
+			expect( wrapper.isGoogleConnectedAndVisible( props ) ).to.be.equal( false );
 		} );
 	} );
 
@@ -139,7 +129,7 @@ describe( 'MediaLibraryContent', () => {
 				source: '',
 				mediaValidationErrorTypes,
 				isConnected: false,
-				connections: googleConnections,
+				googleConnection,
 			};
 			const wrapper = getMediaContentInstance( props );
 
@@ -151,7 +141,7 @@ describe( 'MediaLibraryContent', () => {
 				source: 'google_photos',
 				mediaValidationErrorTypes,
 				isConnected: true,
-				connections: googleConnections,
+				googleConnection,
 			};
 			const wrapper = getMediaContentInstance( props );
 
@@ -163,7 +153,7 @@ describe( 'MediaLibraryContent', () => {
 				source: 'example',
 				mediaValidationErrorTypes,
 				isConnected: false,
-				connections: googleConnections,
+				googleConnection,
 			};
 			const wrapper = getMediaContentInstance( props );
 
@@ -175,7 +165,7 @@ describe( 'MediaLibraryContent', () => {
 				source: 'google_photos',
 				mediaValidationErrorTypes,
 				isConnected: false,
-				connections: googleConnections,
+				googleConnection,
 			};
 			const wrapper = getMediaContentInstance( props );
 
@@ -184,40 +174,37 @@ describe( 'MediaLibraryContent', () => {
 	} );
 
 	describe( 'componentDidUpdate', () => {
-		test( 'requestKeyringConnections issued when google service goes from ok to expired', () => {
-			const props = { source: 'google_photos', isConnected: true, connections: googleConnections };
+		test( 'deleteKeyringConnection issued when google service goes from ok to expired', () => {
+			const props = { source: 'google_photos', isConnected: true, googleConnection };
 			const wrapper = getMediaContent( props );
-			const requestKeyringConnections = jest.fn();
+			const deleteKeyringConnection = jest.fn();
 
-			jest.useFakeTimers();
-			wrapper.setProps( { mediaValidationErrorTypes, requestKeyringConnections } );
-			jest.advanceTimersByTime( 1 );
+			wrapper.setProps( { mediaValidationErrorTypes, deleteKeyringConnection } );
 
-			expect( requestKeyringConnections.mock.calls.length ).to.be.equal( 1 );
+			expect( deleteKeyringConnection.mock.calls.length ).to.be.equal( 1 );
 		} );
 
-		test( 'requestKeyringConnections not issued if no service expires', () => {
-			const props = { source: 'google_photos', isConnected: true, connections: googleConnections };
+		test( 'deleteKeyringConnection not issued if no service expires', () => {
+			const props = { source: 'google_photos', isConnected: true, googleConnection };
 			const wrapper = getMediaContent( props );
-			const requestKeyringConnections = jest.fn();
+			const deleteKeyringConnection = jest.fn();
 
-			jest.useFakeTimers();
-			wrapper.setProps( { requestKeyringConnections } );
-			jest.advanceTimersByTime( 1 );
+			wrapper.setProps( { deleteKeyringConnection } );
 
-			expect( requestKeyringConnections.mock.calls.length ).to.be.equal( 0 );
+			expect( deleteKeyringConnection.mock.calls.length ).to.be.equal( 0 );
 		} );
 
 		test( 'sourceChanged issued when expired google service goes from invalid to ok', () => {
 			const propsBefore = {
 				source: 'google_photos',
 				isConnected: false,
-				connections: googleConnectionsInvalid,
+				googleConnection: null,
+				mediaValidationErrorTypes,
 			};
 			const propsAfter = {
 				source: 'google_photos',
 				isConnected: false,
-				connections: googleConnections,
+				googleConnection,
 			};
 			const wrapper = getMediaContent( propsBefore );
 
@@ -231,7 +218,7 @@ describe( 'MediaLibraryContent', () => {
 			const propsBefore = {
 				source: 'google_photos',
 				isConnected: false,
-				connections: googleConnectionsInvalid,
+				googleConnection: googleConnectionInvalid,
 			};
 			const wrapper = getMediaContent( propsBefore );
 
