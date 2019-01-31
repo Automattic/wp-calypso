@@ -42,6 +42,10 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		};
 	}
 
+	componentDidMount() {
+		this.props.initialValue && this.props.requestVerticals( this.props.initialValue, 1 );
+	}
+
 	componentDidUpdate( prevProps ) {
 		// Check if there's a direct match for any subsequent
 		// HTTP requests

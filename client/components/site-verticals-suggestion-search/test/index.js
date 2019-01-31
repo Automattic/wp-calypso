@@ -20,7 +20,6 @@ const defaultProps = {
 	onChange: jest.fn(),
 	requestVerticals: jest.fn(),
 	translate: str => str,
-	initialValue: 'scooby',
 	verticals: [
 		{
 			vertical_name: 'doo',
@@ -44,6 +43,11 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
 		expect( wrapper.find( SuggestionSearch ) ).toHaveLength( 1 );
 		expect( wrapper ).toMatchSnapshot();
+	} );
+
+	test( 'should make an API call onMount where there is a valid initial value', () => {
+		shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } initialValue="scooby" /> );
+		expect( defaultProps.requestVerticals ).toHaveBeenLastCalledWith( 'scooby', 1 );
 	} );
 
 	test( 'should trigger search after > `charsToTriggerSearch` characters and call `onChange` prop', () => {

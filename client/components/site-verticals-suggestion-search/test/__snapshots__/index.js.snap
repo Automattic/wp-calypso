@@ -13,6 +13,6 @@ exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
       "doo",
     ]
   }
-  value="scooby"
+  value=""
 />
 `;
