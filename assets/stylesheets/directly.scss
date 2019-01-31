@@ -193,7 +193,7 @@ textarea {
 		color: $gray;
 	}
 	.unread-message-dot {
-		background: $alert-green;
+		background: var( --color-success );
 		left: 10px;
 		top: 25px;
 	}
@@ -326,14 +326,14 @@ textarea {
 
 	// Green border for success messages
 	&.success {
-		border-color: $alert-green;
+		border-color: var( --color-success );
 		background: #dceee5;
 	}
 
 	// Green background for highlighted success messages
 	&.success.inverted {
 		border-color: transparent;
-		background: $alert-green;
+		background: var( --color-success );
 		color: $white;
 		a {
 			color: $white;
@@ -375,7 +375,7 @@ textarea {
 		}
 		&.icon-success {
 			background-color: $white;
-			color: $alert-green;
+			color: var( --color-success );
 		}
 		&.icon-warning {
 			background-color: $white;
@@ -384,7 +384,7 @@ textarea {
 	}
 	&.inverted .icon.icon-success {
 		background-color: $white;
-		color: $alert-green;
+		color: var( --color-success );
 	}
 }
 
@@ -459,13 +459,13 @@ textarea {
 		color: $gray;
 		border-left: 1px solid $gray-lighten-30;
 		.svg-icon {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 	}
 	.rate-icon {
 		.dot {
 			&.dot-green {
-				background: $alert-green;
+				background: var( --color-success );
 			}
 			&.dot-yellow {
 				background: var( --color-warning );

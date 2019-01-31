@@ -6,12 +6,12 @@
 	}
 
 	.taxes__taxes-calculate {
-		color: $alert-green;
+		color: var( --color-success );
 		margin-bottom: 1.5em;
 	}
 
 	.taxes__taxes-calculate .gridicon {
-		color: $alert-green;
+		color: var( --color-success );
 		vertical-align: top;
 		margin-right: 4px;
 	}

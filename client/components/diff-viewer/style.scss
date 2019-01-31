@@ -47,6 +47,6 @@
 	}
 
 	& ins {
-		background-color: lighten( $alert-green, 20% );
+		background-color: var( --color-success-200 );
 	}
 }

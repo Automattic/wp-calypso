@@ -2,7 +2,7 @@
 	position: relative;
 	width: 100%;
 	max-width: 500px;
-	background-color: darken( $alert-green, 10 );
+	background-color: var( --color-success-400 );
 	border-radius: 8px 8px 6px 6px;
 	overflow: hidden;
 	margin: 12px auto 24px;
@@ -63,7 +63,7 @@
 	&.is-placeholder {
 		@include placeholder();
 
-		background-color: lighten( $alert-green, 40 );
+		background-color: var( --color-success-50 );
 		margin-left: auto;
 		margin-right: auto;
 		width: 35%;
@@ -73,12 +73,12 @@
 .thank-you-card__price {
 	font-size: 15px;
 	font-weight: 500;
-	color: lighten( $alert-green, 40 );
+	color: var( --color-success-50 );
 
 	&.is-placeholder {
 		@include placeholder();
 
-		background-color: lighten( $alert-green, 40 );
+		background-color: var( --color-success-50 );
 		margin-left: auto;
 		margin-right: auto;
 		width: 10%;
