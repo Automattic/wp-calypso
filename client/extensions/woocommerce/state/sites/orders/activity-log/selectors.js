@@ -182,6 +182,11 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 				}
 			}
 
+			// Fall back to `createdDate` if an outdated server does not provide`label_cached`.
+			const labelCached = label.hasOwnProperty( 'label_cached' )
+				? label.label_cached
+				: label.createdDate;
+
 			if ( 'PURCHASE_IN_PROGRESS' === label.status ) {
 				return events.push( {
 					key: label.label_id,
@@ -190,6 +195,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 					labelId: label.label_id,
 					serviceName: label.service_name,
 					carrierId: label.carrier_id,
+					labelCached,
 				} );
 			}
 
@@ -213,6 +219,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 				refundableAmount: label.refundable_amount,
 				currency: label.currency,
 				anonymized: 'ANONYMIZED' === label.status,
+				labelCached,
 				// If there's a refund in progress or completed, the Reprint/Refund buttons or the tracking number must *not* be shown
 				showDetails:
 					! label.refund || 'rejected' === label.refund.status || 'unknown' === label.refund.status,

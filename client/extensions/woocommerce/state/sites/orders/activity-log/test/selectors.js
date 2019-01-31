@@ -106,6 +106,7 @@ const labelsLoadedSubtree = {
 			carrier_id: 'canada_post',
 			service_name: 'Xpress',
 			main_receipt_id: 12345,
+			label_cached: 1600000,
 			refund: {
 				status: 'rejected',
 				request_date: 4100000,
@@ -127,6 +128,7 @@ const labelsLoadedSubtree = {
 			carrier_id: 'usps',
 			service_name: 'First Class',
 			main_receipt_id: 12345,
+			label_cached: 1600000,
 			refund: {
 				status: 'complete',
 				request_date: 3100000,
@@ -149,6 +151,7 @@ const labelsLoadedSubtree = {
 			carrier_id: 'canada_post',
 			service_name: 'Xpress',
 			main_receipt_id: 67890,
+			label_cached: 1600000,
 			refund: {
 				status: 'pending',
 				request_date: 2100000,
@@ -169,6 +172,7 @@ const labelsLoadedSubtree = {
 			carrier_id: 'usps',
 			service_name: 'First Class',
 			main_receipt_id: 654321,
+			label_cached: 1600000,
 		},
 		{
 			label_id: 10000,
@@ -200,6 +204,7 @@ const labelsLoadedSubtree = {
 			tracking: '12345',
 			carrier_id: 'usps',
 			service_name: 'First Class',
+			label_cached: 1600000,
 		},
 	],
 };
@@ -420,6 +425,7 @@ describe( 'selectors', () => {
 					serviceName: 'Xpress',
 					receiptId: 12345,
 					anonymized: false,
+					labelCached: 1600000,
 				},
 				{
 					key: 3,
@@ -450,6 +456,7 @@ describe( 'selectors', () => {
 					serviceName: 'First Class',
 					receiptId: 12345,
 					anonymized: false,
+					labelCached: 1600000,
 				},
 				{
 					key: 2,
@@ -480,6 +487,7 @@ describe( 'selectors', () => {
 					serviceName: 'Xpress',
 					receiptId: 67890,
 					anonymized: false,
+					labelCached: 1600000,
 				},
 				{
 					key: 1,
@@ -501,6 +509,7 @@ describe( 'selectors', () => {
 					serviceName: 'First Class',
 					receiptId: 654321,
 					anonymized: false,
+					labelCached: 1600000,
 				},
 				{
 					key: 10001,
@@ -509,6 +518,7 @@ describe( 'selectors', () => {
 					labelId: 10001,
 					serviceName: 'First Class',
 					carrierId: 'usps',
+					labelCached: 1600000,
 				},
 			] );
 		} );

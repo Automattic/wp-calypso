@@ -98,17 +98,22 @@ export class LabelItem extends Component {
 			createdDate,
 			refundableAmount,
 			currency,
+			labelCached,
 		} = label;
+
+		const statusArgs = {
+			service: label.serviceName,
+			labelIndex: label.labelIndex + 1,
+		};
+
+		const statusText = labelCached
+			? translate( '%(service)s label (#%(labelIndex)d) printed', { args: statusArgs } )
+			: translate( '%(service)s label (#%(labelIndex)d) not printed', { args: statusArgs } );
 
 		return (
 			<div className="shipping-label__item">
 				<p className="shipping-label__item-detail">
-					{ translate( '%(service)s label (#%(labelIndex)d)', {
-						args: {
-							service: label.serviceName,
-							labelIndex: label.labelIndex + 1,
-						},
-					} ) }
+					{ statusText }
 					{ label.showDetails && (
 						<span>
 							<EllipsisMenu position="bottom left">
