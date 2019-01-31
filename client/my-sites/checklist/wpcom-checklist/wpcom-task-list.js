@@ -4,14 +4,19 @@
  */
 import { get, memoize, omit, pick, isBoolean } from 'lodash';
 import debugModule from 'debug';
-
 import config from 'config';
+
+/**
+ * Internal dependencies
+ */
+import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { getVerticalTaskList } from './vertical-task-list';
 
 const debug = debugModule( 'calypso:wpcom-task-list' );
 
 function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, siteVerticals } ) {
 	const tasks = [];
+	const segmentSlug = getSiteTypePropertyValue( 'id', siteSegment, 'slug' );
 
 	const getTask = taskId => get( taskStatuses, taskId );
 	const hasTask = taskId => getTask( taskId ) !== undefined;
@@ -28,7 +33,7 @@ function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, si
 	addTask( 'email_verified' );
 	addTask( 'site_created', true );
 
-	if ( 'business' === siteSegment ) {
+	if ( 'business' === segmentSlug ) {
 		addTask( 'about_text_updated' );
 		addTask( 'homepage_photo_updated' );
 
@@ -70,7 +75,7 @@ function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, si
 		}
 	}
 
-	debug( 'Site info: ', { designType, siteSegment, siteVerticals } );
+	debug( 'Site info: ', { designType, segmentSlug, siteVerticals } );
 	debug( 'Task list: ', tasks );
 
 	return tasks;
