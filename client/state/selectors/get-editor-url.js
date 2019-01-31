@@ -4,15 +4,12 @@
  */
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import { isCalypsoifyGutenbergEnabled } from 'state/selectors/is-calypsoify-gutenberg-enabled';
+import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
-	if (
-		isCalypsoifyGutenbergEnabled( state, siteId ) &&
-		'gutenberg' === getSelectedEditor( state, siteId )
-	) {
+	if ( isGutenbergEnabled( state, siteId ) && 'gutenberg' === getSelectedEditor( state, siteId ) ) {
 		return getGutenbergEditorUrl( state, siteId, postId, postType );
 	}
 

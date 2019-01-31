@@ -2,13 +2,12 @@
 /**
  * Internal dependencies
  */
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 export const getGutenbergEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
-	// Preserve wp-admin redirects for Atomic sites (no iframe support)
-	if ( isAtomicSite( state, siteId ) ) {
+	if ( isCalypsoifyGutenbergEnabled( state, siteId ) ) {
 		const siteAdminUrl = getSiteAdminUrl( state, siteId );
 
 		if ( postId ) {

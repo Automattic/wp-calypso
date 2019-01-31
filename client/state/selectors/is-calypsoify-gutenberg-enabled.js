@@ -5,7 +5,7 @@
 import { isEnabled } from 'config';
 import isVipSite from 'state/selectors/is-vip-site';
 import { isJetpackSite } from 'state/sites/selectors';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import getWordPressVersion from 'state/selectors/get-wordpress-version';
 import versionCompare from 'lib/version-compare';
 import isPluginActive from 'state/selectors/is-plugin-active';
@@ -15,8 +15,8 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 		return false;
 	}
 
-	// For Atomic sites.
-	if ( isAtomicSite( state, siteId ) && isEnabled( 'calypsoify/gutenberg' ) ) {
+	// We do want Calypsoify flows for Atomic sites
+	if ( isSiteAutomatedTransfer( state, siteId ) ) {
 		const wpVersion = getWordPressVersion( state, siteId );
 
 		// But not if they activated Classic editor plugin (effectively opting out of Gutenberg)
@@ -31,12 +31,19 @@ export const isCalypsoifyGutenbergEnabled = ( state, siteId ) => {
 		}
 	}
 
-	// No support for Jetpack and VIP sites yet.
+	// Prevent Calypsoify redirects if Gutenlypso is enabled.
+	// This is intentionally placed after Atomic check - we want to default Atomic sites to
+	// Calypsoify even if Gutenlypso is on for now. This might change in the future if we decide to
+	// move Jetpack and Atomic sites to Gutenlypso too.
+	if ( isEnabled( 'gutenberg' ) ) {
+		return false;
+	}
+
+	// Not ready yet.
 	if ( isJetpackSite( state, siteId ) || isVipSite( state, siteId ) ) {
 		return false;
 	}
 
-	// For Simple sites.
 	return isEnabled( 'calypsoify/gutenberg' );
 };
 

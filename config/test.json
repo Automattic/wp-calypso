@@ -45,6 +45,7 @@
 		"gdpr-banner": false,
 		"google-analytics": false,
 		"google-my-business": false,
+		"gutenberg": true,
 		"gutenberg/opt-in": true,
 		"help": true,
 		"jetpack/checklist": true,

@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import { isEnabled } from 'config';
 import Button from 'components/button';
-import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
+import isGutenbergEnabled from 'state/selectors/is-gutenberg-enabled';
 import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { getSelectedSiteId } from 'state/ui/selectors/';
 
@@ -63,8 +63,7 @@ class EditorGutenbergOptInSidebar extends PureComponent {
 
 const mapStateToProps = state => ( {
 	optInEnabled:
-		isEnabled( 'gutenberg/opt-in' ) &&
-		isCalypsoifyGutenbergEnabled( state, getSelectedSiteId( state ) ),
+		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) ),
 } );
 
 const mapDispatchToProps = { showDialog: showGutenbergOptInDialog };
