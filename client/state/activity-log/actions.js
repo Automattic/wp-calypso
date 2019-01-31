@@ -33,6 +33,7 @@ import 'state/data-layer/wpcom/activity-log/rewind/downloads';
 import 'state/data-layer/wpcom/activity-log/rewind/restore-status';
 import 'state/data-layer/wpcom/activity-log/rewind/to';
 import 'state/data-layer/wpcom/sites/rewind/downloads';
+import 'state/data-layer/wpcom/sites/rewind/restores';
 
 /**
  * Turn the 'rewind' feature on for a site.
@@ -144,10 +145,11 @@ export function rewindClone( siteId, timestamp, payload ) {
 	};
 }
 
-export function dismissRewindRestoreProgress( siteId ) {
+export function dismissRewindRestoreProgress( siteId, restoreId ) {
 	return {
 		type: REWIND_RESTORE_DISMISS_PROGRESS,
 		siteId,
+		restoreId,
 	};
 }
 
