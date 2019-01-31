@@ -39,11 +39,13 @@ import SegmentedControlItem from 'components/segmented-control/item';
 import PaymentMethods from 'blocks/payment-methods';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
-import { isDiscountActive } from 'state/selectors/get-active-discount.js';
-import { getDiscountByName } from 'lib/discounts';
-import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 import { abtest } from 'lib/abtest';
+import { getDiscountByName } from 'lib/discounts';
+import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
+import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
+import { getTld } from 'lib/domains';
+import { isDiscountActive } from 'state/selectors/get-active-discount.js';
+import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 
 export class PlansFeaturesMain extends Component {
 	componentDidUpdate( prevProps ) {
@@ -96,6 +98,7 @@ export class PlansFeaturesMain extends Component {
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					displayJetpackPlans={ displayJetpackPlans }
 					domainName={ domainName }
+					nonDotBlogDomains={ this.filterDotBlogDomains() }
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
@@ -314,6 +317,18 @@ export class PlansFeaturesMain extends Component {
 			</div>
 		);
 	}
+
+	filterDotBlogDomains() {
+		const domains = get( this.props, 'domains', [] );
+		return domains.filter( function( domainInfo ) {
+			if ( domainInfo.type === 'WPCOM' ) {
+				return false;
+			}
+
+			const domainName = get( domainInfo, [ 'domain' ], '' );
+			return ! 'blog'.startsWith( getTld( domainName ) );
+		} );
+	}
 }
 
 PlansFeaturesMain.propTypes = {
@@ -373,6 +388,8 @@ const guessCustomerType = ( state, props ) => {
 
 export default connect(
 	( state, props ) => {
+		const siteId = get( props.site, [ 'ID' ] );
+
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
 			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
@@ -380,8 +397,9 @@ export default connect(
 			// universal.
 			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
 			customerType: guessCustomerType( state, props ),
+			domains: getDecoratedSiteDomains( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
-			siteId: get( props.site, [ 'ID' ] ),
+			siteId: siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 		};
 	},
