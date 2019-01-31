@@ -2,16 +2,11 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { InnerBlocks } from '@wordpress/editor';
 
-export default ( { className, attributes } ) => {
+export default ( { className } ) => {
 	return (
-		<div
-			className={ classNames( className, 'wp-block-jetpack-visited-before-threshold' ) }
-			data-criteria={ attributes.criteria }
-			data-threshold={ attributes.threshold }
-		>
+		<div className={ className }>
 			<InnerBlocks.Content />
 		</div>
 	);

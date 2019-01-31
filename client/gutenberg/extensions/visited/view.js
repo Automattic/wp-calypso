@@ -8,8 +8,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import './view.scss';
-import { COOKIE_NAME, MAX_COOKIE_AGE, CRITERIA_AFTER, CRITERIA_BEFORE } from './constants';
+import { COOKIE_NAME, MAX_COOKIE_AGE } from './constants';
 
 // TODO: Remove debug capability
 const debug = debugFactory( 'wp-gutenberg:visited-block' );
@@ -29,31 +28,13 @@ function setViewCount( value ) {
 	} );
 }
 
-function extractDataAttributes( node ) {
-	return {
-		criteria: node.dataset.criteria,
-		threshold: Number.isFinite( +node.dataset.threshold ) ? node.dataset.threshold : 0,
-	};
-}
-
-function bindToBlocks() {
+function incrementCookieValue() {
 	const visitedBlocks = Array.from( document.querySelectorAll( '.wp-block-jetpack-visited' ) );
 	if ( visitedBlocks.length === 0 ) {
 		return;
 	}
 
-	const count = getViewCount();
-	setViewCount( count + 1 );
-	visitedBlocks.forEach( visitedBlock => {
-		const { criteria, threshold } = extractDataAttributes( visitedBlock );
-		debug( 'criteria and threshold', criteria, threshold );
-		if (
-			( criteria === CRITERIA_AFTER && count >= threshold ) ||
-			( criteria === CRITERIA_BEFORE && count <= threshold )
-		) {
-			visitedBlock.classList.remove( 'wp-block-jetpack-visited-before-threshold' );
-		}
-	} );
+	setViewCount( getViewCount() + 1 );
 }
 
-window && window.addEventListener( 'load', bindToBlocks );
+window && window.addEventListener( 'load', incrementCookieValue );
