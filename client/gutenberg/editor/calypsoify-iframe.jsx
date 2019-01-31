@@ -13,7 +13,7 @@ import { map, pickBy } from 'lodash';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, getSiteAdminUrl } from 'state/sites/selectors';
+import { getSiteOption, getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import {
 	getEnabledFilters,
@@ -62,37 +62,33 @@ class CalypsoifyIframe extends Component {
 		window.removeEventListener( 'message', this.onMessage, false );
 	}
 
-	onMessage = ( { data } ) => {
+	onMessage = ( { data, origin, ports } ) => {
 		const message = parseJSON( data );
-		if ( ! message ) {
+		if ( ! message || origin.indexOf( this.props.siteSlug ) < 0 ) {
 			return;
 		}
 
 		const { action, type, payload } = message;
 
-		if ( type !== 'gutenbergIframeMessage' ) {
+		if ( 'gutenbergIframeMessage' !== type ) {
 			return;
 		}
 
-		if ( action === 'openMediaModal' ) {
+		if ( 'openMediaModal' === action && ports[ 0 ] ) {
+			this.messageChannelPort = ports[ 0 ];
+
 			const { gallery, multiple, allowedTypes } = payload;
 			this.setState( { isMediaModalVisible: true, gallery, multiple, allowedTypes } );
 		}
 	};
 
-	openMediaModal = () => {
-		if ( ! this.state.isMediaModalVisible ) {
-			this.setState( { isMediaModalVisible: true } );
-		}
-	};
-
 	closeMediaModal = media => {
-		if ( media ) {
+		if ( media && this.messageChannelPort ) {
 			const { multiple } = this.state;
 			const formattedMedia = map( media.items, item => mediaCalypsoToGutenberg( item ) );
 			const payload = multiple ? formattedMedia : formattedMedia[ 0 ];
 
-			sendMessage( this.iframeRef, {
+			this.messageChannelPort.postMessage( {
 				action: 'selectMedia',
 				payload,
 			} );
@@ -132,6 +128,7 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = ownProps.postId;
 	const postType = ownProps.postType;
+	const siteSlug = getSiteSlug( state, siteId );
 
 	const iframeUrl = addQueryArgs(
 		pickBy( {
@@ -146,6 +143,7 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		siteId,
+		siteSlug,
 		iframeUrl,
 	};
 } )( CalypsoifyIframe );
