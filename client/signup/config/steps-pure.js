@@ -83,7 +83,7 @@ export function generateSteps( {
 		'domains-launch': {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
-			providesDependencies: [ 'domainItem', 'siteSlug' ],
+			providesDependencies: [ 'domainItem' ],
 			props: {
 				isDomainOnly: true,
 				showExampleSuggestions: false,
@@ -91,7 +91,6 @@ export function generateSteps( {
 				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
 				subHeaderText: i18n.translate( 'Select a domain name for your website' ),
 			},
-			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
 		},
 
@@ -545,8 +544,6 @@ export function generateSteps( {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'siteSlug' ],
-			delayApiRequestUntilComplete: true,
 		},
 	};
 }
