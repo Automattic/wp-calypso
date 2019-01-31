@@ -22,6 +22,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		onChange: PropTypes.func,
 		placeholder: PropTypes.string,
 		charsToTriggerSearch: PropTypes.number,
+		searchResultsLimit: PropTypes.number,
 		verticals: PropTypes.array,
 	};
 
@@ -29,8 +30,9 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		initialValue: '',
 		onChange: noop,
 		placeholder: '',
-		charsToTriggerSearch: 2,
+		charsToTriggerSearch: 1,
 		verticals: [],
+		searchResultsLimit: 5,
 	};
 
 	constructor( props ) {
@@ -51,6 +53,8 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		}
 	}
 
+	// When a user is keying through the results,
+	// only update the vertical when they select a result.
 	searchInResult = ( value = '' ) =>
 		find(
 			this.props.verticals,
@@ -69,6 +73,11 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		this.props.onChange( verticalData );
 	};
 
+	onSiteTopicSelect = value => {
+		this.setState( { searchValue: value } );
+		this.updateVerticalData( this.searchInResult( value ), value );
+	};
+
 	onSiteTopicChange = value => {
 		value = trim( value );
 
@@ -85,11 +94,10 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			// Don't trigger a search if there's already an exact, non-user-defined match from the API
 			! result
 		) {
-			this.props.requestVerticals( value );
+			this.props.requestVerticals( value, 1 === value.length ? 1 : this.props.searchResultsLimit );
 		}
 
 		this.setState( { searchValue: value } );
-		this.updateVerticalData( result, value );
 	};
 
 	getSuggestions = () => this.props.verticals.map( vertical => vertical.vertical_name );
@@ -124,6 +132,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			<SuggestionSearch
 				id="siteTopic"
 				placeholder={ placeholder || translate( 'e.g. Fashion, travel, design, plumber' ) }
+				onSelect={ this.onSiteTopicSelect }
 				onChange={ this.onSiteTopicChange }
 				suggestions={ this.getSuggestions() }
 				value={ this.state.searchValue }

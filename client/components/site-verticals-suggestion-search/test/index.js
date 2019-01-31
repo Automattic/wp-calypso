@@ -30,6 +30,7 @@ const defaultProps = {
 		},
 	],
 	charsToTriggerSearch: 2,
+	lastUpdated: 1,
 };
 
 defaultProps.requestVerticals.cancel = jest.fn();
@@ -45,22 +46,18 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
-	test( 'should trigger search after > 1 characters and call `onChange` prop', () => {
+	test( 'should trigger search after > `charsToTriggerSearch` characters and call `onChange` prop', () => {
 		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
 		wrapper.instance().onSiteTopicChange( 'b' );
 		expect( defaultProps.requestVerticals ).not.toHaveBeenCalled();
 		wrapper.instance().onSiteTopicChange( 'bo' );
-		expect( defaultProps.requestVerticals ).toHaveBeenLastCalledWith( 'bo' );
-		expect( defaultProps.onChange ).toHaveBeenLastCalledWith( {
-			vertical_name: 'bo',
-			vertical_slug: 'bo',
-			is_user_input_vertical: true,
-		} );
+		expect( defaultProps.requestVerticals ).toHaveBeenLastCalledWith( 'bo', 5 );
 	} );
 
 	test( 'should pass an exact non-user vertical match to the `onChange` prop', () => {
 		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
 		wrapper.instance().onSiteTopicChange( 'doo' );
+		wrapper.setProps( { lastUpdated: 2 } );
 		expect( defaultProps.onChange ).toHaveBeenLastCalledWith( defaultProps.verticals[ 0 ] );
 	} );
 

@@ -24,6 +24,7 @@ class SuggestionSearch extends Component {
 		id: PropTypes.string,
 		placeholder: PropTypes.string,
 		onChange: PropTypes.func,
+		onSelect: PropTypes.func,
 		sortResults: PropTypes.func,
 		suggestions: PropTypes.array,
 		value: PropTypes.string,
@@ -101,7 +102,11 @@ class SuggestionSearch extends Component {
 	handleSuggestionMouseDown = position => {
 		this.setState( { inputValue: position.label } );
 		this.hideSuggestions();
-		this.props.onChange( position.label );
+		if ( this.props.onSelect ) {
+			this.props.onSelect( position.label );
+		} else {
+			this.props.onChange( position.label );
+		}
 	};
 
 	getSuggestions() {

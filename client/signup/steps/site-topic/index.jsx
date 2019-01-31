@@ -177,7 +177,7 @@ export default localize(
 			const siteTopic = getSiteVerticalName( state );
 			const isButtonDisabled =
 				! siteTopic ||
-				'success' !== get( getHttpData( SITE_VERTICALS_REQUEST_ID ), 'state', false );
+				'pending' === get( getHttpData( SITE_VERTICALS_REQUEST_ID ), 'state', false );
 			return {
 				siteTopic,
 				siteSlug: getSiteVerticalSlug( state ),
