@@ -7,7 +7,6 @@
  * External dependencies
  */
 import React from 'react';
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { noop } from 'lodash';
 
@@ -67,7 +66,7 @@ describe( 'MediaLibraryContent', () => {
 			};
 			const wrapper = getMediaContentInstance();
 
-			expect( wrapper.isGoogleConnectedAndVisible( props ) ).to.be.equal( true );
+			expect( wrapper.isGoogleConnectedAndVisible( props ) ).toBe( true );
 		} );
 
 		test( 'returns false when not connected and using google source', () => {
@@ -77,7 +76,7 @@ describe( 'MediaLibraryContent', () => {
 			};
 			const wrapper = getMediaContentInstance();
 
-			expect( wrapper.isGoogleConnectedAndVisible( props ) ).to.be.equal( false );
+			expect( wrapper.isGoogleConnectedAndVisible( props ) ).toBe( false );
 		} );
 
 		test( 'returns false when using google source and not connected', () => {
@@ -87,7 +86,7 @@ describe( 'MediaLibraryContent', () => {
 			};
 			const wrapper = getMediaContentInstance();
 
-			expect( wrapper.isGoogleConnectedAndVisible( props ) ).to.be.equal( false );
+			expect( wrapper.isGoogleConnectedAndVisible( props ) ).toBe( false );
 		} );
 	} );
 
@@ -99,7 +98,7 @@ describe( 'MediaLibraryContent', () => {
 			};
 			const wrapper = getMediaContentInstance();
 
-			expect( wrapper.hasGoogleExpired( props ) ).to.be.equal( false );
+			expect( wrapper.hasGoogleExpired( props ) ).toBe( false );
 		} );
 
 		test( 'returns false when media errors and not google service', () => {
@@ -109,7 +108,7 @@ describe( 'MediaLibraryContent', () => {
 			};
 			const wrapper = getMediaContentInstance();
 
-			expect( wrapper.hasGoogleExpired( props ) ).to.be.equal( false );
+			expect( wrapper.hasGoogleExpired( props ) ).toBe( false );
 		} );
 
 		test( 'returns true when media errors and google service', () => {
@@ -119,7 +118,7 @@ describe( 'MediaLibraryContent', () => {
 			};
 			const wrapper = getMediaContentInstance();
 
-			expect( wrapper.hasGoogleExpired( props ) ).to.be.equal( true );
+			expect( wrapper.hasGoogleExpired( props ) ).toBe( true );
 		} );
 	} );
 
@@ -133,7 +132,7 @@ describe( 'MediaLibraryContent', () => {
 			};
 			const wrapper = getMediaContentInstance( props );
 
-			expect( wrapper.needsToBeConnected() ).to.be.equal( false );
+			expect( wrapper.needsToBeConnected() ).toBe( false );
 		} );
 
 		test( 'returns false when google service and already connected', () => {
@@ -145,7 +144,7 @@ describe( 'MediaLibraryContent', () => {
 			};
 			const wrapper = getMediaContentInstance( props );
 
-			expect( wrapper.needsToBeConnected() ).to.be.equal( false );
+			expect( wrapper.needsToBeConnected() ).toBe( false );
 		} );
 
 		test( 'returns false when example service, not connected, and expired', () => {
@@ -157,7 +156,7 @@ describe( 'MediaLibraryContent', () => {
 			};
 			const wrapper = getMediaContentInstance( props );
 
-			expect( wrapper.needsToBeConnected() ).to.be.equal( false );
+			expect( wrapper.needsToBeConnected() ).toBe( false );
 		} );
 
 		test( 'returns true when google service, not connected, and expired', () => {
@@ -169,7 +168,7 @@ describe( 'MediaLibraryContent', () => {
 			};
 			const wrapper = getMediaContentInstance( props );
 
-			expect( wrapper.needsToBeConnected() ).to.be.equal( true );
+			expect( wrapper.needsToBeConnected() ).toBe( true );
 		} );
 	} );
 
@@ -181,7 +180,7 @@ describe( 'MediaLibraryContent', () => {
 
 			wrapper.setProps( { mediaValidationErrorTypes, deleteKeyringConnection } );
 
-			expect( deleteKeyringConnection.mock.calls.length ).to.be.equal( 1 );
+			expect( deleteKeyringConnection.mock.calls.length ).toEqual( 1 );
 		} );
 
 		test( 'deleteKeyringConnection not issued if no service expires', () => {
@@ -191,7 +190,7 @@ describe( 'MediaLibraryContent', () => {
 
 			wrapper.setProps( { deleteKeyringConnection } );
 
-			expect( deleteKeyringConnection.mock.calls.length ).to.be.equal( 0 );
+			expect( deleteKeyringConnection.mock.calls.length ).toEqual( 0 );
 		} );
 
 		test( 'sourceChanged issued when expired google service goes from invalid to ok', () => {
@@ -211,7 +210,7 @@ describe( 'MediaLibraryContent', () => {
 			MediaActions.sourceChanged.mockReset();
 			wrapper.setProps( propsAfter );
 
-			expect( MediaActions.sourceChanged.mock.calls.length ).to.be.equal( 1 );
+			expect( MediaActions.sourceChanged.mock.calls.length ).toEqual( 1 );
 		} );
 
 		test( 'sourceChanged not issued when google service remains constant', () => {
@@ -225,7 +224,7 @@ describe( 'MediaLibraryContent', () => {
 			MediaActions.sourceChanged.mockReset();
 			wrapper.setProps( propsBefore );
 
-			expect( MediaActions.sourceChanged.mock.calls.length ).to.be.equal( 0 );
+			expect( MediaActions.sourceChanged.mock.calls.length ).toEqual( 0 );
 		} );
 	} );
 } );
