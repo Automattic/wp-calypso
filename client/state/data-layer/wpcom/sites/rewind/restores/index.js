@@ -39,6 +39,7 @@ export const dismissRestore = action =>
  *
  * @param {object}   action   Changeset to update state.
  * @param {object}     data     Description of request result.
+ * @returns {function} The dispatched action.
  */
 export const restoreSilentlyDismissed = ( action, data ) =>
 	! data.dismissed
@@ -50,8 +51,7 @@ export const restoreSilentlyDismissed = ( action, data ) =>
  *
  * @returns {function} The dispatched action.
  */
-export const restoreDismissFailed = () =>
-	errorNotice( translate( 'Dismissing restore failed. Please reload and try again.' ) );
+export const restoreDismissFailed = () => null;
 
 /**
  * Parse and merge response data for restore dismiss result with defaults.
@@ -60,7 +60,7 @@ export const restoreDismissFailed = () =>
  * @returns {object} Parsed response data.
  */
 const fromRestoreDismiss = data => ( {
-	restoreId: +data.restore_id,
+	restoreId: parseInt( data.restore_id ),
 	dismissed: data.is_dismissed,
 } );
 
