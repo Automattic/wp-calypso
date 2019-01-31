@@ -15,8 +15,8 @@
 	}
 
 	&.is-failed {
-		background: lighten( $alert-red, 20% );
-		color: darken( $alert-red, 30% );
+		background: var( --color-error-200 );
+		color: var( --color-error-800 );
 
 		span + span {
 			border-color: var( --color-error );
