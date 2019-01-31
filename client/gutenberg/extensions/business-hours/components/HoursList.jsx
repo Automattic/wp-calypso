@@ -52,7 +52,7 @@ class HoursList extends Component {
 		const { localization } = this.state;
 		const { startOfWeek } = localization;
 		return (
-			<dl className={ 'business-hours ' + ( edit ? 'edit' : '' ) }>
+			<dl className={ 'jetpack-business-hours ' + ( edit ? 'edit' : '' ) }>
 				{ Object.keys( hours )
 					.concat( Object.keys( hours ).slice( 0, startOfWeek ) )
 					.slice( startOfWeek )
