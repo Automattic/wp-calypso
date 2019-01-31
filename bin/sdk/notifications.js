@@ -7,7 +7,10 @@ const path = require( 'path' );
 const spawnSync = require( 'child_process' ).spawnSync;
 
 exports.config = ( { argv: { outputDir }, getBaseConfig, calypsoRoot } ) => {
-	const baseConfig = getBaseConfig( { cssFilename: 'build.css' } );
+	const baseConfig = getBaseConfig( {
+		cssFilename: 'build.css',
+		preserveCssCustomProperties: false,
+	} );
 
 	const pageMeta = {
 		nodePlatform: process.platform,
