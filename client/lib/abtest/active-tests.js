@@ -7,7 +7,6 @@ export default {
 			onboarding: 50,
 		},
 		defaultVariation: 'main',
-		localeTargets: 'any',
 	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
