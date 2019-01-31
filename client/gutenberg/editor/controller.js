@@ -31,6 +31,7 @@ import {
 	requestSitePost,
 } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
+import CalypsoifyIframe from './calypsoify-iframe';
 
 const debug = debugFactory( 'calypso:gutenberg:controller' );
 
@@ -196,7 +197,11 @@ export const post = ( context, next ) => {
 		failure: () => <div>Couldn't load everything - try hitting reload in your browser…</div>,
 	} );
 
-	context.primary = <EditorLoader />;
+	if ( config.isEnabled( 'calypsoify/iframe' ) ) {
+		context.primary = <CalypsoifyIframe postId={ postId } postType={ postType } />;
+	} else {
+		context.primary = <EditorLoader />;
+	}
 
 	next();
 };
