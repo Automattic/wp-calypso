@@ -43,9 +43,13 @@ const applyWithSelect = withSelect( select => {
 	const { getEditedPostAttribute } = select( 'core/editor' );
 	const meta = getEditedPostAttribute( 'meta' );
 
+	// todo get site option
+	const shouldFlipSiteLikeSetting = get( meta, [ 'switch_like_status' ] );
+	const isSharingDisabled = get( meta, [ 'sharing_disabled' ] );
+
 	return {
-		areLikesEnabled: ! get( meta, [ 'switch_like_status' ] ), // todo site option
-		isSharingEnabled: ! get( meta, [ 'sharing_disabled' ], '' ),
+		areLikesEnabled: ! shouldFlipSiteLikeSetting,
+		isSharingEnabled: ! isSharingDisabled,
 		meta,
 	};
 } );
@@ -57,11 +61,11 @@ const applyWithDispatch = withDispatch( ( dispatch, { meta } ) => {
 	// todo: handle switch_like_status logic
 
 	return {
-		toggleLikes( value ) {
-			editPost( { meta: { ...meta, switch_like_status: ! value } } );
+		toggleLikes( shouldEnableLiking ) {
+			editPost( { meta: { ...meta, switch_like_status: ! shouldEnableLiking } } );
 		},
-		toggleSharing( value ) {
-			editPost( { meta: { ...meta, sharing_disabled: ! value } } );
+		toggleSharing( shouldEnableSharing ) {
+			editPost( { meta: { ...meta, sharing_disabled: ! shouldEnableSharing } } );
 		},
 	};
 } );
