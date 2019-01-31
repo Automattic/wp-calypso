@@ -7,7 +7,6 @@ import edit from './components/edit';
 import save from './components/save';
 import { CRITERIA_AFTER, DEFAULT_THRESHOLD } from './constants';
 import './editor.scss';
-import './view.scss';
 
 export const name = 'visited';
 export const settings = {
