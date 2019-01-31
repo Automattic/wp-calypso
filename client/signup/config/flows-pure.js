@@ -119,6 +119,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 				'user',
 				'site-type',
 				'site-topic-with-preview',
+				'site-style-with-preview',
 				'site-information-title-with-preview',
 				'site-information-address-with-preview',
 				'site-information-phone-with-preview',
