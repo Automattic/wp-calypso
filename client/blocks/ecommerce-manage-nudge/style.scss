@@ -1,0 +1,16 @@
+.ecommerce-manage-nudge__body {
+	padding: 11px 24px;
+
+	p {
+		margin-bottom: 0;
+	}
+}
+
+.ecommerce-manage-nudge__close-icon {
+	position: absolute;
+	top: 14px;
+	right: 18px;
+	color: $gray;
+	cursor: pointer;
+	z-index: z-index( 'root', '.ecommerce-manage-nudge__close-icon' );
+}
