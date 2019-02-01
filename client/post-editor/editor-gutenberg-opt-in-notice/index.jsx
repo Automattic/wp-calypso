@@ -33,13 +33,14 @@ class EditorGutenbergOptInNotice extends Component {
 		showDialog: PropTypes.func,
 		optInEnabled: PropTypes.bool,
 		noticeDismissed: PropTypes.bool,
+		sidebarOpen: PropTypes.bool,
 		dismissNotice: PropTypes.func,
 	};
 
 	dismissNotice = () => this.props.dismissNotice( 'gutenberg_nudge_notice_dismissed', true );
 
 	render() {
-		if ( ! this.props.optInEnabled || this.props.noticeDismissed ) {
+		if ( ! this.props.optInEnabled || this.props.noticeDismissed || this.props.sidebarOpen ) {
 			return null;
 		}
 
@@ -62,6 +63,7 @@ const mapStateToProps = state => ( {
 	optInEnabled:
 		isEnabled( 'gutenberg/opt-in' ) && isGutenbergEnabled( state, getSelectedSiteId( state ) ),
 	noticeDismissed: getPreference( state, 'gutenberg_nudge_notice_dismissed' ),
+	sidebarOpen: 'open' === getPreference( state, 'editor-sidebar' ),
 } );
 
 const mapDispatchToProps = {
