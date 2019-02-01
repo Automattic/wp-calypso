@@ -73,7 +73,7 @@
 		@include breakpoint( '>660px' ) {
 			border-top: 1px solid var( --color-neutral-100 );
 			border-bottom: 1px solid var( --color-neutral-100 );
-			margin: 0 0 24px 0;
+			margin: 0 0 24px;
 			overflow: hidden auto;
 		}
 	}
@@ -264,6 +264,58 @@
 			}
 		}
 	}
+
+	/*--------------------------------------------------------------
+	## Gutenberg Media & Text Block Fallback for IE11
+	--------------------------------------------------------------*/
+	.wp-block-media-text {
+		&::after {
+			display: table;
+			content: '';
+			clear: both;
+		}
+
+		figure {
+			float: left;
+			width: 50%;
+
+			.has-media-on-the-right & {
+				float: right;
+			}
+		}
+
+		.wp-block-media-text__content {
+			float: right;
+			width: 50%;
+
+			.has-media-on-the-left & {
+				float: left;
+			}
+		}
+	}
+
+	@supports (display: grid) {
+		.wp-block-media-text figure {
+			float: none;
+			width: inherit;
+
+			.wp-block-media-text__content {
+				float: none;
+				width: inherit;
+
+				.has-media-on-the-right & {
+					float: none;
+				}
+			}
+
+			&.has-media-on-the-right figure {
+				float: none;
+			}
+		}
+	}
+	/*--------------------------------------------------------------
+	## End Gutenberg Media & Text Block Fallback for IE11
+	--------------------------------------------------------------*/
 
 	.wp-block-separator {
 		border: none;
