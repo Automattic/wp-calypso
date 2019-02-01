@@ -759,7 +759,7 @@ class WpcomChecklistComponent extends PureComponent {
 						title: translate( 'Your photo looks great!' ),
 						description: translate(
 							'Go ahead and change any other photos to further personalize your site. ' +
-								'When you’re ready, [add your business hours - need to be less specific].'
+								'When you’re ready, add your business hours.'
 						),
 					},
 				] }
