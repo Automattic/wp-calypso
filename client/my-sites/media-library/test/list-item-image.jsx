@@ -35,6 +35,7 @@ describe( 'MediaLibraryListItem image', () => {
 		<ListItemImage
 			media={ fixtures.media[ itemPos ] }
 			scale={ 1 }
+			maxScale={ 1 }
 			maxImageWidth={ WIDTH }
 			thumbnailType={ type }
 		/>

@@ -15,18 +15,18 @@ import MediaLibraryListItemFileDetails from './list-item-file-details';
 
 import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL, SCALE_CHOICES } from 'lib/media/constants';
 
-const scaleMultiplier = 1 / SCALE_CHOICES[ SCALE_CHOICES.length - 1 ];
-
 export default class MediaLibraryListItemImage extends React.Component {
 	static propTypes = {
 		media: PropTypes.object,
 		scale: PropTypes.number,
+		maxScale: PropTypes.number,
 		maxImageWidth: PropTypes.number,
 		thumbnailType: PropTypes.string,
 	};
 
 	static defaultProps = {
 		maxImageWidth: 450,
+		maxScale: SCALE_CHOICES[ SCALE_CHOICES.length - 1 ],
 		thumbnailType: MEDIA_IMAGE_PHOTON,
 	};
 
@@ -75,7 +75,9 @@ export default class MediaLibraryListItemImage extends React.Component {
 	render() {
 		const url = mediaUrl( this.props.media, {
 			photon: this.props.thumbnailType === MEDIA_IMAGE_PHOTON,
-			maxWidth: Math.round( scaleMultiplier * this.state.maxSeenScale * this.props.maxImageWidth ),
+			maxWidth: Math.round(
+				( 1 / this.props.maxScale ) * this.state.maxSeenScale * this.props.maxImageWidth
+			),
 			size: this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL ? 'medium' : false,
 		} );
 
