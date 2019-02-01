@@ -42,14 +42,14 @@ class LikesAndSharingPanel extends Component {
 const applyWithSelect = withSelect( select => {
 	const { getEditedPostAttribute } = select( 'core/editor' );
 	const meta = getEditedPostAttribute( 'meta' );
+	const isSharingEnabled = getEditedPostAttribute( 'jetpack_sharing_enabled' );
 
 	// todo get site option
 	const shouldFlipSiteLikeSetting = get( meta, [ 'switch_like_status' ] );
-	const isSharingDisabled = get( meta, [ 'sharing_disabled' ] );
 
 	return {
 		areLikesEnabled: ! shouldFlipSiteLikeSetting,
-		isSharingEnabled: ! isSharingDisabled,
+		isSharingEnabled,
 		meta,
 	};
 } );
@@ -65,7 +65,7 @@ const applyWithDispatch = withDispatch( ( dispatch, { meta } ) => {
 			editPost( { meta: { ...meta, switch_like_status: ! shouldEnableLiking } } );
 		},
 		toggleSharing( shouldEnableSharing ) {
-			editPost( { meta: { ...meta, sharing_disabled: ! shouldEnableSharing } } );
+			editPost( { jetpack_sharing_enabled: shouldEnableSharing } );
 		},
 	};
 } );
