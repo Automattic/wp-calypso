@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import get from 'lodash/get';
-
-/**
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
@@ -41,28 +36,22 @@ class LikesAndSharingPanel extends Component {
 // Fetch the post meta.
 const applyWithSelect = withSelect( select => {
 	const { getEditedPostAttribute } = select( 'core/editor' );
-	const meta = getEditedPostAttribute( 'meta' );
+	const areLikesEnabled = getEditedPostAttribute( 'jetpack_likes_enabled' );
 	const isSharingEnabled = getEditedPostAttribute( 'jetpack_sharing_enabled' );
 
-	// todo get site option
-	const shouldFlipSiteLikeSetting = get( meta, [ 'switch_like_status' ] );
-
 	return {
-		areLikesEnabled: ! shouldFlipSiteLikeSetting,
+		areLikesEnabled,
 		isSharingEnabled,
-		meta,
 	};
 } );
 
 // Provide method to update post meta.
-const applyWithDispatch = withDispatch( ( dispatch, { meta } ) => {
+const applyWithDispatch = withDispatch( dispatch => {
 	const { editPost } = dispatch( 'core/editor' );
-
-	// todo: handle switch_like_status logic
 
 	return {
 		toggleLikes( shouldEnableLiking ) {
-			editPost( { meta: { ...meta, switch_like_status: ! shouldEnableLiking } } );
+			editPost( { jetpack_likes_enabled: shouldEnableLiking } );
 		},
 		toggleSharing( shouldEnableSharing ) {
 			editPost( { jetpack_sharing_enabled: shouldEnableSharing } );
