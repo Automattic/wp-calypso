@@ -80,11 +80,13 @@ class Document extends React.Component {
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
 				: '' );
 
+		const isIframe = config.isEnabled( 'calypsoify/iframe' ) && sectionName === 'gutenberg-editor';
+
 		return (
 			<html
 				lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
+				className={ classNames( { 'is-fluid-width': isFluidWidth, 'is-iframe': isIframe } ) }
 			>
 				<Head
 					title={ head.title }
