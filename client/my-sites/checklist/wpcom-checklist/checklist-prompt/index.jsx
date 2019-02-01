@@ -38,7 +38,8 @@ export class ChecklistPrompt extends Component {
 
 		const firstIncomplete = taskList.getFirstIncompleteTask();
 		const isFinished = ! firstIncomplete;
-		const theTaskId = promptTaskId || firstIncomplete.id;
+		const promptTask = promptTaskId && taskList.get( promptTaskId );
+		const theTaskId = promptTask ? promptTask.id : firstIncomplete.id;
 
 		return (
 			<div className="checklist-prompt">

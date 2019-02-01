@@ -6,16 +6,25 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { hideChecklistPrompt } from 'state/inline-help/actions';
+import {
+	hideChecklistPrompt,
+	setChecklistPromptTaskId,
+	setChecklistPromptStep,
+} from 'state/inline-help/actions';
+import { getChecklistPromptStep } from 'state/inline-help/selectors';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 class ChecklistPromptTask extends PureComponent {
 	static propTypes = {
+		preset: PropTypes.oneOf( [ 'update-homepage' ] ),
 		buttonText: PropTypes.string,
 		completed: PropTypes.bool,
 		description: PropTypes.node,
@@ -24,45 +33,109 @@ class ChecklistPromptTask extends PureComponent {
 		title: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		closePopover: PropTypes.func.isRequired,
-		autoCloseOnAction: PropTypes.bool.isRequired,
-		canDismiss: PropTypes.bool.isRequired,
-		dismissButtonText: PropTypes.string,
 		onDismiss: PropTypes.func,
 	};
 
-	static defaultProps = {
-		canDismiss: true,
-		autoCloseOnClick: true,
-	};
+	componentDidMount() {
+		const { currentRoute, targetUrl } = this.props;
 
-	handleDismiss = () => {
-		if ( this.props.autoCloseOnAction ) {
-			this.props.hideChecklistPrompt();
-			this.props.closePopover();
+		if ( currentRoute !== targetUrl ) {
+			page( targetUrl );
+		}
+	}
+
+	getExtendedProps() {
+		const { preset, translate } = this.props;
+		let stepProps = null;
+
+		if ( preset === 'update-homepage' ) {
+			stepProps = this.getUpdateHomepageProps();
 		}
 
-		if ( this.props.onDismiss ) {
-			this.props.onDismiss();
+		return {
+			buttonText: translate( 'Do it!' ),
+			secondaryButtonText: translate( 'Dismiss' ),
+			handlePrimaryAction: this.goToAction,
+			handleSecondaryAction: this.dismissPopup,
+			...this.props,
+			...stepProps,
+		};
+	}
+
+	getUpdateHomepageProps() {
+		const { steps, currentStep, title, description, translate } = this.props;
+
+		if ( currentStep === 0 ) {
+			return {
+				handlePrimaryAction: this.progressTaskStep,
+				handleSecondaryAction: this.dismissTaskAndSkipToEnd,
+				secondaryButtonText: translate( 'Mark complete' ),
+			};
 		}
 
+		if ( currentStep === 1 ) {
+			return {
+				title: get( steps, [ currentStep - 1, 'title' ], title ),
+				description: get( steps, [ currentStep - 1, 'description' ], description ),
+				buttonText: translate( 'Done editing' ),
+				handlePrimaryAction: this.dismissTaskAndSkipToEnd,
+				secondaryButtonText: translate( 'Keep editing' ),
+				handleSecondaryAction: this.dismissPopup,
+				duration: null,
+			};
+		}
+
+		if ( currentStep === 2 ) {
+			return {
+				title: get( steps, [ currentStep - 1, 'title' ], title ),
+				description: get( steps, [ currentStep - 1, 'description' ], description ),
+				buttonText: translate( 'Next task' ),
+				handlePrimaryAction: this.props.nextInlineHelp,
+				secondaryButtonText: translate( 'View all tasks' ),
+				handleSecondaryAction: this.backToChecklistAndClose,
+				duration: null,
+			};
+		}
+	}
+
+	dismissPopup = () => {
+		this.props.hideChecklistPrompt();
+		this.props.closePopover();
 		this.props.recordTracksEvent( 'calypso_checklist_prompt_dismiss' );
 	};
 
-	handlePrimaryAction = () => {
-		if ( this.props.autoCloseOnAction ) {
-			this.props.hideChecklistPrompt();
-			this.props.closePopover();
-		}
+	goToAction = () => {
+		this.props.onClick();
+		this.props.closePopover();
+	};
 
-		if ( this.props.onClick ) {
-			this.props.onClick();
-		}
+	progressTaskStep = () => {
+		this.props.setChecklistPromptStep( this.props.currentStep + 1 );
+	};
+
+	dismissTaskAndSkipToEnd = () => {
+		this.props.onDismiss();
+		this.props.setChecklistPromptStep( this.props.steps.length );
+	};
+
+	backToChecklistAndClose = () => {
+		this.props.hideChecklistPrompt();
+		this.props.setChecklistPromptTaskId( null );
+		this.props.closePopover();
+		this.props.backToChecklist();
 	};
 
 	render() {
-		const { canDismiss, description, onClick, title, duration, translate } = this.props;
-		const { buttonText = translate( 'Do it!' ) } = this.props;
-		const { dismissButtonText = translate( 'Dismiss' ) } = this.props;
+		const {
+			description,
+			handlePrimaryAction,
+			handleSecondaryAction,
+			title,
+			duration,
+			translate,
+			buttonText,
+			secondaryButtonText,
+		} = this.getExtendedProps();
 
 		return (
 			<div className="checklist-prompt__content">
@@ -74,20 +147,14 @@ class ChecklistPromptTask extends PureComponent {
 					</div>
 				) }
 				<div className="checklist-prompt__actions">
-					{ onClick && (
+					{ handlePrimaryAction && (
 						<>
-							<Button
-								onClick={ this.handlePrimaryAction }
-								className="checklist-prompt__button"
-								primary
-							>
+							<Button onClick={ handlePrimaryAction } className="checklist-prompt__button" primary>
 								{ buttonText }
 							</Button>
-							{ canDismiss && (
-								<Button onClick={ this.handleDismiss } className="checklist-prompt__button">
-									{ dismissButtonText }
-								</Button>
-							) }
+							<Button onClick={ handleSecondaryAction } className="checklist-prompt__button">
+								{ secondaryButtonText }
+							</Button>
 						</>
 					) }
 				</div>
@@ -98,10 +165,15 @@ class ChecklistPromptTask extends PureComponent {
 
 const mapDispatchToProps = {
 	hideChecklistPrompt,
+	setChecklistPromptTaskId,
+	setChecklistPromptStep,
 	recordTracksEvent,
 };
 
 export default connect(
-	null,
+	state => ( {
+		currentRoute: getCurrentRoute( state ),
+		currentStep: getChecklistPromptStep( state ),
+	} ),
 	mapDispatchToProps
 )( localize( ChecklistPromptTask ) );

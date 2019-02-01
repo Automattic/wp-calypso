@@ -43,9 +43,7 @@ import {
 	setChecklistPromptTaskId,
 	setChecklistPromptStep,
 } from 'state/inline-help/actions';
-import { getChecklistPromptStep } from 'state/inline-help/selectors';
 import getEditorUrl from 'state/selectors/get-editor-url';
-import getCurrentRoute from 'state/selectors/get-current-route';
 
 const userLib = userFactory();
 
@@ -84,10 +82,6 @@ class WpcomChecklistComponent extends PureComponent {
 			service_list_added: this.renderServiceListAddedTask,
 			staff_info_added: this.renderStaffInfoAddedTask,
 			product_list_added: this.renderProductListAddedTask,
-			menu_added: this.renderMenuAddedTask,
-			portfolio_item_added: this.renderPortfolioItemAddedTask,
-			mission_statement_added: this.renderMissionStatementAddedTask,
-			qualifications_added: this.renderQualificationsAddedTask,
 		};
 	}
 
@@ -218,42 +212,26 @@ class WpcomChecklistComponent extends PureComponent {
 		return translate( 'Resend email' );
 	}
 
-	handleInlineHelpProgress = ( task, isPrompt ) => () => {
-		const { taskUrls, taskStep, currentRoute } = this.props;
-
-		if ( task.isCompleted && ! isPrompt ) {
+	handleInlineHelpStart = task => () => {
+		if ( task.isCompleted ) {
 			return;
 		}
 
-		if ( isPrompt ) {
-			this.props.setChecklistPromptStep( taskStep + 1 );
-		} else {
-			this.props.setChecklistPromptTaskId( task.id );
-			this.props.setChecklistPromptStep( 0 );
-			this.props.showInlineHelpPopover();
-			this.props.showChecklistPrompt();
-		}
-
-		if ( currentRoute !== taskUrls[ task.id ] ) {
-			page( taskUrls[ task.id ] );
-		}
+		this.props.setChecklistPromptTaskId( task.id );
+		this.props.setChecklistPromptStep( 0 );
+		this.props.showInlineHelpPopover();
+		this.props.showChecklistPrompt();
 	};
 
-	handleInlineHelpDismiss = ( taskId, { maxStep } ) => () => {
-		this.handleTaskDismiss( taskId )();
-		if ( maxStep ) {
-			this.props.setChecklistPromptStep( maxStep );
-		}
-	};
-
-	handleInlineHelpNext = () => {
+	nextInlineHelp = () => {
 		const taskList = getTaskList( this.props );
 		const firstIncomplete = taskList.getFirstIncompleteTask();
 
 		if ( firstIncomplete ) {
+			this.props.setChecklistPromptTaskId( firstIncomplete.id );
 			this.props.setChecklistPromptStep( 0 );
-			this.handleInlineHelpProgress( firstIncomplete, false )();
 		} else {
+			this.props.setChecklistPromptTaskId( null );
 			this.backToChecklist();
 		}
 	};
@@ -722,138 +700,147 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	renderAboutTextUpdatedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate, viewMode, taskStep } = this.props;
-		const isPrompt = viewMode === 'prompt';
-		const taskProps = Object.assign( {}, baseProps, {
-			title: translate( 'Edit About text' ),
-			description: translate(
-				'Update the text we’ve written for you to describe what makes your business unique. ' +
-					'Make your homepage speak to your customers.'
-			),
-			duration: translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ),
-			onClick: this.handleInlineHelpProgress( task, isPrompt ),
-			onDismiss: this.handleTaskDismiss( task.id ),
-			isPrompt,
-		} );
-
-		if ( isPrompt ) {
-			taskProps.onDismiss = this.handleInlineHelpDismiss( task.id, { maxStep: 2 } );
-			taskProps.canDismiss = taskStep !== 1;
-			taskProps.autoCloseOnAction = false;
-
-			switch ( taskStep ) {
-				case 0:
-					taskProps.buttonText = translate( 'Try it' );
-					taskProps.dismissButtonText = translate( 'Mark complete' );
-					break;
-				case 1:
-					taskProps.title = translate( 'Update your homepage text' );
-					taskProps.description = translate(
-						'Task a moment to review what we’ve written for you. ' +
-							'Click the text to make any additions or changes.'
-					);
-					taskProps.onClick = taskProps.onDismiss;
-					taskProps.buttonText = translate( 'Done editing' );
-					taskProps.duration = null;
-					break;
-				case 2:
-					taskProps.title = translate( 'Homepage updated!' );
-					taskProps.buttonText = translate( 'Next task' );
-					taskProps.dismissButtonText = translate( 'View all tasks' );
-					taskProps.onClick = this.handleInlineHelpNext;
-					taskProps.onDismiss = this.backToChecklist;
-					taskProps.duration = null;
-					taskProps.autoCloseOnAction = true;
-					break;
-			}
-		}
-
-		return <TaskComponent { ...taskProps } />;
-	};
-
-	renderHomepagePhotoUpdatedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate, viewMode, taskStep } = this.props;
-		const isPrompt = viewMode === 'prompt';
-		const taskProps = Object.assign( {}, baseProps, {
-			title: translate( 'Change homepage photo' ),
-			description: translate(
-				'Upload your own photoo or choose from a wide selection of free ones to personalize your new site.'
-			),
-			duration: translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ),
-			onClick: this.handleInlineHelpProgress( task, isPrompt ),
-			onDismiss: this.handleTaskDismiss( task.id ),
-			isPrompt,
-		} );
-
-		if ( isPrompt ) {
-			taskProps.onDismiss = this.handleInlineHelpDismiss( task.id, { maxStep: 2 } );
-			taskProps.canDismiss = taskStep !== 1;
-			taskProps.autoCloseOnAction = false;
-
-			switch ( taskStep ) {
-				case 0:
-					taskProps.buttonText = translate( 'Try it' );
-					taskProps.dismissButtonText = translate( 'Mark complete' );
-					break;
-				case 1:
-					taskProps.title = translate( 'Upload a photo or choose a new one from ours' );
-					taskProps.description = translate(
-						'Make a good first impression. ' +
-							'Change your cover photo by uploading your own or choose from a selection of free ones.'
-					);
-					taskProps.onClick = taskProps.onDismiss;
-					taskProps.buttonText = translate( 'Done editing' );
-					taskProps.duration = null;
-					break;
-				case 2:
-					taskProps.title = translate( 'Your photo looks great!' );
-					taskProps.buttonText = translate( 'Next task' );
-					taskProps.dismissButtonText = translate( 'View all tasks' );
-					taskProps.onClick = this.handleInlineHelpNext;
-					taskProps.onDismiss = this.backToChecklist;
-					taskProps.duration = null;
-					taskProps.autoCloseOnAction = true;
-					break;
-			}
-		}
-
-		return <TaskComponent { ...taskProps } />;
-	};
-
-	renderBusinessHoursAddedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate } = this.props;
+		const { translate, taskUrls } = this.props;
 
 		return (
 			<TaskComponent
 				{ ...baseProps }
+				preset="update-homepage"
+				title={ translate( 'Edit About text' ) }
+				description={ translate(
+					'Update the text we’ve written for you to describe what makes your business unique. ' +
+						'Make your homepage speak to your customers.'
+				) }
+				steps={ [
+					{
+						title: translate( 'Update your homepage text' ),
+						description: translate(
+							'Task a moment to review what we’ve written for you. ' +
+								'Click the text to make any additions or changes.'
+						),
+					},
+					{
+						title: translate( 'Homepage updated!' ),
+						description: translate(
+							'Nide work. If all the text looks good, ' + 'let’s move on to changing your photos.'
+						),
+					},
+				] }
+				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
+				targetUrl={ taskUrls[ task.id ] }
+				onClick={ this.handleInlineHelpStart( task ) }
+				onDismiss={ this.handleTaskDismiss( task.id ) }
+				backToChecklist={ this.backToChecklist }
+				nextInlineHelp={ this.nextInlineHelp }
+			/>
+		);
+	};
+
+	renderHomepagePhotoUpdatedTask = ( TaskComponent, baseProps, task ) => {
+		const { translate, taskUrls } = this.props;
+
+		return (
+			<TaskComponent
+				{ ...baseProps }
+				preset="update-homepage"
+				title={ translate( 'Change homepage photo' ) }
+				description={ translate(
+					'Upload your own photoo or choose from a wide selection of free ones to personalize your new site.'
+				) }
+				steps={ [
+					{
+						title: translate( 'Upload a photo or choose a new one from ours' ),
+						description: translate(
+							'Make a good first impression. ' +
+								'Change your cover photo by uploading your own or choose from a selection of free ones.'
+						),
+					},
+					{
+						title: translate( 'Your photo looks great!' ),
+						description: translate(
+							'Go ahead and change any other photos to further personalize your site. ' +
+								'When you’re ready, [add your business hours - need to be less specific].'
+						),
+					},
+				] }
+				duration={ translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ) }
+				targetUrl={ taskUrls[ task.id ] }
+				onClick={ this.handleInlineHelpStart( task ) }
+				onDismiss={ this.handleTaskDismiss( task.id ) }
+				backToChecklist={ this.backToChecklist }
+				nextInlineHelp={ this.nextInlineHelp }
+			/>
+		);
+	};
+
+	renderBusinessHoursAddedTask = ( TaskComponent, baseProps, task ) => {
+		const { translate, taskUrls } = this.props;
+
+		return (
+			<TaskComponent
+				{ ...baseProps }
+				preset="update-homepage"
 				title={ translate( 'Add business hours' ) }
 				description={ translate(
 					'Let your customers know when you’re open or the best time to contact you.'
 				) }
+				steps={ [
+					{
+						title: translate( 'Add business hours to your homepage' ),
+						description: translate(
+							'Customers love to easily know when they can stop in. ' +
+								'Click the business hours block to add your hours.'
+						),
+					},
+					{
+						title: translate( 'Business hours saved!' ),
+						description: translate( 'Your site is really looking great now.' ),
+					},
+				] }
 				duration={ translate( '%d minute', '%d minutes', { count: 8, args: [ 8 ] } ) }
+				targetUrl={ taskUrls[ task.id ] }
+				onClick={ this.handleInlineHelpStart( task ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
+				backToChecklist={ this.backToChecklist }
+				nextInlineHelp={ this.nextInlineHelp }
 			/>
 		);
 	};
 
 	renderServiceListAddedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate } = this.props;
+		const { translate, taskUrls } = this.props;
 
 		return (
 			<TaskComponent
 				{ ...baseProps }
-				title={ translate( 'Add a list of services' ) }
-				description={ translate(
-					'Let potential customers and clients know what you have to offer.'
-				) }
-				duration={ translate( '%d minute', '%d minutes', { count: 8, args: [ 8 ] } ) }
+				preset="update-homepage"
+				title={ translate( 'Add your services' ) }
+				description={ translate( 'Let customers and clients know how you can help them.' ) }
+				steps={ [
+					{
+						title: translate( 'Add services to your homepage' ),
+						description: translate(
+							'Customers are more likely to contact you if they know what you have to offer. ' +
+								'Click the services block to add your list of services.'
+						),
+					},
+					{
+						title: translate( 'Services added!' ),
+						description: translate( 'Ready to move on?' ),
+					},
+				] }
+				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
+				targetUrl={ taskUrls[ task.id ] }
+				onClick={ this.handleInlineHelpStart( task ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
+				backToChecklist={ this.backToChecklist }
+				nextInlineHelp={ this.nextInlineHelp }
 			/>
 		);
 	};
 
 	renderStaffInfoAddedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate, siteVerticals } = this.props;
+		const { translate, taskUrls, siteVerticals } = this.props;
 		let staff = translate( 'staff' );
 
 		if ( includes( siteVerticals, 'Health & Medical' ) ) {
@@ -867,93 +854,64 @@ class WpcomChecklistComponent extends PureComponent {
 		return (
 			<TaskComponent
 				{ ...baseProps }
+				preset="update-homepage"
 				title={ translate( 'Add info about your %(staff)s', { args: { staff } } ) }
 				description={ translate(
-					'Customers love to learn about who they’re going to interact with if they contact you. ' +
-						'Give them your best.'
+					'Customers love to learn about who they’re going to interact with if they contact you.'
 				) }
-				duration={ translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ) }
+				steps={ [
+					{
+						title: translate( 'Add staff to your homepage' ),
+						description: translate(
+							'Help customers trust you by telling them about your qualifications.' +
+								'Click the services block to add your list of services.'
+						),
+					},
+					{
+						title: translate( 'Services added!' ),
+						description: translate( 'Ready to move on?' ),
+					},
+				] }
+				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
+				targetUrl={ taskUrls[ task.id ] }
+				onClick={ this.handleInlineHelpStart( task ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
+				backToChecklist={ this.backToChecklist }
+				nextInlineHelp={ this.nextInlineHelp }
 			/>
 		);
 	};
 
 	renderProductListAddedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate } = this.props;
+		const { translate, taskUrls } = this.props;
 
 		return (
 			<TaskComponent
 				{ ...baseProps }
-				title={ translate( 'Add a list of your products and services' ) }
+				preset="update-homepage"
+				title={ translate( 'Add products and services' ) }
 				description={ translate(
 					'Let visitors know what you do best and what you have to offer.'
 				) }
+				steps={ [
+					{
+						title: translate( 'Add products to your homepage' ),
+						description: translate(
+							'Customers are more likely to contact you if they know what you have to offer. ' +
+								'Add products and services to your homepage.'
+						),
+					},
+					{
+						title: translate( 'Homepage saved!' ),
+						description: translate( 'Ready to move on?' ),
+					},
+				] }
 				duration={ translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ) }
+				targetUrl={ taskUrls[ task.id ] }
+				onClick={ this.handleInlineHelpStart( task ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
-			/>
-		);
-	};
-
-	renderMenuAddedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate } = this.props;
-
-		return (
-			<TaskComponent
-				{ ...baseProps }
-				title={ translate( 'Add your menu' ) }
-				description={ translate(
-					'Upload your menu so customers know what to expect when they stop in.'
-				) }
-				duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
-				onDismiss={ this.handleTaskDismiss( task.id ) }
-			/>
-		);
-	};
-
-	renderPortfolioItemAddedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate } = this.props;
-
-		return (
-			<TaskComponent
-				{ ...baseProps }
-				title={ translate( 'Add a portfolio item' ) }
-				description={ translate(
-					'You do great work. Show it off to attract new clients or highlight pieces you’re proud of.'
-				) }
-				duration={ translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ) }
-				onDismiss={ this.handleTaskDismiss( task.id ) }
-			/>
-		);
-	};
-
-	renderMissionStatementAddedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate } = this.props;
-
-		return (
-			<TaskComponent
-				{ ...baseProps }
-				title={ translate( 'Add your mission statement' ) }
-				description={ translate(
-					'Inspire visitors by adding a mission statement to your homepage.'
-				) }
-				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
-				onDismiss={ this.handleTaskDismiss( task.id ) }
-			/>
-		);
-	};
-
-	renderQualificationsAddedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate } = this.props;
-
-		return (
-			<TaskComponent
-				{ ...baseProps }
-				title={ translate( 'Add your qualifications' ) }
-				description={ translate(
-					'Instill confidence and trust by telling people why you’re qualified to help them.'
-				) }
-				duration={ translate( '%d minute', '%d minutes', { count: 8, args: [ 8 ] } ) }
-				onDismiss={ this.handleTaskDismiss( task.id ) }
+				backToChecklist={ this.backToChecklist }
+				nextInlineHelp={ this.nextInlineHelp }
 			/>
 		);
 	};
@@ -993,6 +951,10 @@ const getTaskUrls = createSelector(
 			contact_page_updated: contactPageUrl,
 			about_text_updated: frontPageUrl,
 			homepage_photo_updated: frontPageUrl,
+			business_hours_added: frontPageUrl,
+			service_list_added: frontPageUrl,
+			staff_info_added: frontPageUrl,
+			product_list_added: frontPageUrl,
 		};
 	},
 	( state, siteId ) => [ getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY ) ]
@@ -1014,12 +976,10 @@ export default connect(
 			siteVerticals: get( siteChecklist, 'verticals' ),
 			taskStatuses: get( siteChecklist, 'tasks' ),
 			taskUrls,
-			taskStep: getChecklistPromptStep( state ),
 			userEmail: ( user && user.email ) || '',
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 			domains: getDomainsBySiteId( state, siteId ),
-			currentRoute: getCurrentRoute( state ),
 		};
 	},
 	{

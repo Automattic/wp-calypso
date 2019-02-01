@@ -36,6 +36,7 @@ function getTasks( { taskStatuses, designType, isSiteUnlaunched, siteSegment, si
 	if ( 'business' === segmentSlug ) {
 		addTask( 'about_text_updated' );
 		addTask( 'homepage_photo_updated' );
+		addTask( 'business_hours_added' );
 
 		getVerticalTaskList( siteVerticals ).forEach( addTask );
 	} else {
