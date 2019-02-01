@@ -7,7 +7,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +15,7 @@ import Button from 'components/button';
 import StepWrapper from 'signup/step-wrapper';
 import FormFieldset from 'components/forms/form-fieldset';
 import SiteVerticalsSuggestionSearch, {
-	SITE_VERTICALS_REQUEST_ID,
+	isVerticalSearchPending,
 } from 'components/site-verticals-suggestion-search';
 import { submitSiteVertical, setSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import {
@@ -28,7 +27,6 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import { getHttpData } from 'state/data-layer/http-data';
 
 /**
  * Style dependencies
@@ -175,9 +173,7 @@ export default localize(
 	connect(
 		state => {
 			const siteTopic = getSiteVerticalName( state );
-			const isButtonDisabled =
-				! siteTopic ||
-				'pending' === get( getHttpData( SITE_VERTICALS_REQUEST_ID ), 'state', false );
+			const isButtonDisabled = ! siteTopic || isVerticalSearchPending();
 			return {
 				siteTopic,
 				siteSlug: getSiteVerticalSlug( state ),

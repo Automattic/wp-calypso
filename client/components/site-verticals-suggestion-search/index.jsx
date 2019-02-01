@@ -21,6 +21,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		initialValue: PropTypes.string,
 		onChange: PropTypes.func,
 		placeholder: PropTypes.string,
+		lastUpdated: PropTypes.number,
 		charsToTriggerSearch: PropTypes.number,
 		searchResultsLimit: PropTypes.number,
 		verticals: PropTypes.array,
@@ -98,7 +99,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			// Don't trigger a search if there's already an exact, non-user-defined match from the API
 			! result
 		) {
-			this.props.requestVerticals( value, 1 === value.length ? 1 : this.props.searchResultsLimit );
+			this.props.requestVerticals( value, this.props.searchResultsLimit );
 		}
 
 		this.setState( { searchValue: value } );
@@ -147,37 +148,35 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	}
 }
 
-export const SITE_VERTICALS_REQUEST_ID = 'site-verticals-search-results';
-const requestSiteVerticals = debounce(
-	( searchTerm, limit = 5 ) => {
-		return requestHttpData(
-			SITE_VERTICALS_REQUEST_ID,
-			http( {
-				apiNamespace: 'wpcom/v2',
-				method: 'GET',
-				path: '/verticals',
-				query: {
-					search: searchTerm,
-					limit,
-					include_preview: true,
-				},
-			} ),
-			{
-				fromApi: () => data => [ [ SITE_VERTICALS_REQUEST_ID, data ] ],
-				freshness: -Infinity,
-			}
-		);
-	},
-	333,
-	{ leading: false, trailing: true }
-);
+const SITE_VERTICALS_REQUEST_ID = 'site-verticals-search-results';
+export const isVerticalSearchPending = () =>
+	'pending' === get( getHttpData( SITE_VERTICALS_REQUEST_ID ), 'state', false );
+const requestSiteVerticals = debounce( ( searchTerm, limit = 5 ) => {
+	return requestHttpData(
+		SITE_VERTICALS_REQUEST_ID,
+		http( {
+			apiNamespace: 'wpcom/v2',
+			method: 'GET',
+			path: '/verticals',
+			query: {
+				search: searchTerm,
+				limit,
+				include_preview: true,
+			},
+		} ),
+		{
+			fromApi: () => data => [ [ SITE_VERTICALS_REQUEST_ID, data ] ],
+			freshness: -Infinity,
+		}
+	);
+}, 333 );
 
 export default localize(
 	connect(
 		() => {
 			const siteVerticalHttpData = getHttpData( SITE_VERTICALS_REQUEST_ID );
 			return {
-				lastUpdated: get( siteVerticalHttpData, 'lastUpdated', [] ),
+				lastUpdated: get( siteVerticalHttpData, 'lastUpdated', 0 ),
 				verticals: get( siteVerticalHttpData, 'data', [] ),
 			};
 		},
