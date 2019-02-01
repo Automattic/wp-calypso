@@ -83,11 +83,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			}
 		);
 
-	onSiteTopicSelect = value => {
-		this.setState( { searchValue: value } );
-		this.updateVerticalData( this.searchForVerticalMatches( value ), value );
-	};
-
 	onSiteTopicChange = value => {
 		value = trim( value );
 
@@ -144,7 +139,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			<SuggestionSearch
 				id="siteTopic"
 				placeholder={ placeholder || translate( 'e.g. Fashion, travel, design, plumber' ) }
-				onSelect={ this.onSiteTopicSelect }
 				onChange={ this.onSiteTopicChange }
 				suggestions={ this.getSuggestions() }
 				value={ this.state.searchValue }

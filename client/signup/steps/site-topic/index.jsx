@@ -141,7 +141,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
 				value: slug,
-				isUserInput,
+				is_user_input_vertical: isUserInput,
 			} )
 		);
 

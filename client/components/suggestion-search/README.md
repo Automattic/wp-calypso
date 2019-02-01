@@ -38,9 +38,6 @@ The placeholder text to show if there has nothing been entered yet.
 ### `{Func} onChange`
 The callback function for receiving updated value, whether it's by typing, autocompletion, or suggestion picking.
 
-### `{Func} onSelect`
-An optional method callback function for receiving updated value when a user _selects_ (clicks) a suggestion from the list. When not passed, `onChange` is called instead.
-
 ### `{Func} sortResults` 
 An optional method for sorting the results that we display in the suggestion list.
 
