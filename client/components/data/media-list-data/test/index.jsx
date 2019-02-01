@@ -9,7 +9,6 @@
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -35,7 +34,7 @@ const EMPTY_COMPONENT = () => {
 };
 
 describe( 'EditorMediaModal', () => {
-	test( 'should pass search parameter to media query', () => {
+	test( 'should pass search parameter to query for media data', () => {
 		const tree = shallow(
 			<MediaListData siteId={ DUMMY_SITE_ID }>
 				<EMPTY_COMPONENT />
@@ -47,7 +46,7 @@ describe( 'EditorMediaModal', () => {
 		expect( result ).to.eql( query );
 	} );
 
-	test( 'should pass and process filter parameter to media query', () => {
+	test( 'should pass and process filter parameter to query for media data', () => {
 		const tree = shallow(
 			<MediaListData siteId={ DUMMY_SITE_ID }>
 				<EMPTY_COMPONENT />
@@ -59,7 +58,7 @@ describe( 'EditorMediaModal', () => {
 		expect( result ).to.eql( { mime_type: 'image/' } );
 	} );
 
-	test( 'should pass source parameter and set recent path to media query', () => {
+	test( 'should pass source parameter and set recent path to query for media data', () => {
 		const tree = shallow(
 			<MediaListData siteId={ DUMMY_SITE_ID }>
 				<EMPTY_COMPONENT />
@@ -71,23 +70,25 @@ describe( 'EditorMediaModal', () => {
 		expect( result ).to.eql( { path: 'recent', source: 'anything' } );
 	} );
 
-	test( 'should pass dateRange prop to media query as dateFrom and dateTo unix timestamps', () => {
-		const dateRange = {
-			from: moment().subtract( '1 month' ),
-			to: moment(),
+	test( 'should add valid date range as filter prop on query for media data when both from and to are supplied', () => {
+		const queryFilters = {
+			dateRange: {
+				from: '2019-06-01',
+				to: '2019-08-01',
+			},
 		};
 
 		const tree = shallow(
-			<MediaListData siteId={ DUMMY_SITE_ID } dateRange={ dateRange }>
+			<MediaListData siteId={ DUMMY_SITE_ID } queryFilters={ queryFilters }>
 				<EMPTY_COMPONENT />
 			</MediaListData>
 		).instance();
 
-		const result = tree.getQuery();
+		const actual = tree.getQuery();
+		const expected = {
+			filter: [ 'dateRange=2019-06-01:2019-08-01' ],
+		};
 
-		expect( result ).to.eql( {
-			dateFrom: dateRange.from.unix(),
-			dateTo: dateRange.to.unix(),
-		} );
+		expect( actual ).to.eql( expected );
 	} );
 } );

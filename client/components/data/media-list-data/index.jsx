@@ -69,7 +69,9 @@ export default class extends React.Component {
 		props = props || this.props;
 
 		// Initialise here as we may need to append to it later...
-		query.filter = [];
+		if ( has( props, 'queryFilters' ) ) {
+			query.filter = [];
+		}
 
 		if ( props.search ) {
 			query.search = props.search;
