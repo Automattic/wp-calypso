@@ -185,7 +185,7 @@ export default class Devdocs extends React.Component {
 				<DocumentHead title="Calypso Docs" />
 
 				<SearchCard
-					autoFocus
+					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 					placeholder="Search documentation…"
 					analyticsGroup="Docs"
 					initialValue={ this.state.term }
