@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { assign, isEqual, has } from 'lodash';
+import { assign, isEqual, has, isString } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { moment } from 'i18n-calypso';
@@ -104,6 +104,7 @@ export default class extends React.Component {
 
 			if (
 				has( props, 'queryFilters.dateRange.from' ) &&
+				isString( props.queryFilters.dateRange.from ) &&
 				moment( props.queryFilters.dateRange.from, dateFormat ).isValid()
 			) {
 				dateFrom = props.queryFilters.dateRange.from;
@@ -111,6 +112,7 @@ export default class extends React.Component {
 
 			if (
 				has( props, 'queryFilters.dateRange.to' ) &&
+				isString( props.queryFilters.dateRange.to ) &&
 				moment( props.queryFilters.dateRange.to, dateFormat ).isValid()
 			) {
 				dateTo = props.queryFilters.dateRange.to;
@@ -118,7 +120,7 @@ export default class extends React.Component {
 
 			// As long as from/to are not BOTH wildcards then add a range filter
 			// otherwise do not add a filter as there isn't any reason to do so...
-			if ( dateFrom !== wildCardDate && dateTo !== wildCardDate ) {
+			if ( ! ( dateFrom === wildCardDate && dateTo === wildCardDate ) ) {
 				query.filter = [ ...query.filter, `dateRange=${ dateFrom }:${ dateTo }` ];
 			}
 		}
