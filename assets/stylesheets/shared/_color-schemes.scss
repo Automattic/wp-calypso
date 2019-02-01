@@ -320,28 +320,9 @@
 		--color-accent-800: #{$muriel-orange-800};
 		--color-accent-800-rgb: #{hex-to-rgb( $muriel-orange-800 )};
 		--color-accent-900: #{$muriel-orange-900};
-		--color-accent-900-rgb: #{hex-to-rgb( $muriel-orange-900 )};
-
-		--color-success: #{$muriel-hot-green-500};
-		--color-success-light: #{$muriel-hot-green-300};
-		--color-success-dark: #{$muriel-hot-green-700};
-
-		--color-warning: #{$muriel-hot-yellow-500};
-		--color-warning-light: #{$muriel-hot-yellow-300};
-		--color-warning-dark: #{$muriel-hot-yellow-700};
-
-		--color-error: #{$muriel-hot-red-500};
-		--color-error-light: #{$muriel-hot-red-300};
-		--color-error-dark: #{$muriel-hot-red-700};
-		--color-error-600: #{$muriel-hot-red-600};
-
-		--color-text: #{$muriel-gray-800};
-		--color-text-subtle: #{$muriel-gray-500};
-		--color-surface: #{$muriel-white};
-		--color-surface-backdrop: #{$muriel-gray-0};
-
+		--color-accent-900-rgb: #{hex-to-rgb( $muriel-orange-900 )};		
+				
 		--color-button-primary-background-hover: #{$muriel-orange-400};
-		--color-button-primary-scary-background-hover: #{$muriel-hot-red-400};
 
 		--masterbar-color: #{$muriel-white};
 		--masterbar-border-color: #{$gray-lighten-10};
