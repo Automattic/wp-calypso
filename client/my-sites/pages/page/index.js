@@ -39,7 +39,10 @@ import { isEnabled } from 'config';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import getEditorUrl from 'state/selectors/get-editor-url';
-import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
+import {
+	getEditorDuplicatePostPath,
+	getCalypsoifyEditorDuplicatePostPath,
+} from 'state/ui/editor/selectors';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -272,11 +275,10 @@ class Page extends Component {
 	}
 
 	getCopyItem() {
-		const { calypsoifyGutenberg, page: post, duplicateUrl } = this.props;
+		const { page: post, duplicateUrl } = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
-			! utils.userCan( 'edit_post', post ) ||
-			calypsoifyGutenberg
+			! utils.userCan( 'edit_post', post )
 		) {
 			return null;
 		}
@@ -623,6 +625,12 @@ const mapState = ( state, props ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const isPreviewable =
 		false !== isSitePreviewable( state, pageSiteId ) && site && site.ID === selectedSiteId;
+	const calypsoifyGutenberg =
+		isCalypsoifyGutenbergEnabled( state, pageSiteId ) &&
+		'gutenberg' === getSelectedEditor( state, pageSiteId );
+	const duplicateUrl = !! calypsoifyGutenberg
+		? getCalypsoifyEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID )
+		: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' );
 
 	return {
 		hasStaticFrontPage: hasStaticFrontPage( state, pageSiteId ),
@@ -634,10 +642,8 @@ const mapState = ( state, props ) => {
 		siteSlugOrId,
 		editorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.ID' ), 'page' ),
 		parentEditorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.parent.ID' ), 'page' ),
-		calypsoifyGutenberg:
-			isCalypsoifyGutenbergEnabled( state, pageSiteId ) &&
-			'gutenberg' === getSelectedEditor( state, pageSiteId ),
-		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
+		calypsoifyGutenberg,
+		duplicateUrl,
 	};
 };
 
