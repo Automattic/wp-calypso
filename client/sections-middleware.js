@@ -64,6 +64,12 @@ function createPageDefinition( path, sectionDefinition ) {
 	}
 
 	const pathRegex = pathToRegExp( path );
+
+	// if the section doesn't support logged-out views, redirect to login if user is not logged in
+	if ( ! sectionDefinition.enableLoggedOut ) {
+		page( pathRegex, controller.redirectLoggedOut );
+	}
+
 	page( pathRegex, async function( context, next ) {
 		try {
 			const loadedSection = _loadedSections[ sectionDefinition.module ];
