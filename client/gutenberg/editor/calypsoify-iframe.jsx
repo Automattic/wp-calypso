@@ -12,6 +12,7 @@ import { map, pickBy } from 'lodash';
  */
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
+import MediaActions from 'lib/media/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
@@ -25,14 +26,6 @@ import {
  * Style dependencies
  */
 import './style.scss';
-
-const parseJSON = data => {
-	try {
-		return JSON.parse( data );
-	} catch {
-		return;
-	}
-};
 
 class CalypsoifyIframe extends Component {
 	state = {
@@ -52,33 +45,58 @@ class CalypsoifyIframe extends Component {
 		window.removeEventListener( 'message', this.onMessage, false );
 	}
 
-	onMessage = ( { data, origin, ports } ) => {
-		const message = parseJSON( data );
-		if ( ! message || origin.indexOf( this.props.siteSlug ) < 0 ) {
+	onMessage = ( { data, origin } ) => {
+		if ( ! data || origin.indexOf( this.props.siteSlug ) < 0 ) {
 			return;
 		}
 
-		const { action, type, payload } = message;
+		const { action, type } = data;
 
 		if ( 'gutenbergIframeMessage' !== type ) {
 			return;
 		}
 
-		if ( 'openMediaModal' === action && ports[ 0 ] ) {
-			this.messageChannelPort = ports[ 0 ];
+		if ( 'loaded' === action ) {
+			const { port1: portToIframe, port2: portForIframe } = new MessageChannel();
 
-			const { gallery, multiple, allowedTypes } = payload;
-			this.setState( { isMediaModalVisible: true, gallery, multiple, allowedTypes } );
+			this.iframePort = portToIframe;
+			this.iframePort.addEventListener( 'message', this.oniFramePortMessage, false );
+			this.iframePort.start();
+
+			this.iframeRef.current.contentWindow.postMessage( { action: 'initPort' }, '*', [
+				portForIframe,
+			] );
+		}
+	};
+
+	oniFramePortMessage = ( { data } ) => {
+		const { action, payload } = data;
+
+		if ( 'openMediaModal' === action ) {
+			const { siteId } = this.props;
+			const { allowedTypes, gallery, multiple, value } = payload;
+
+			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
+
+			if ( ! value ) {
+				MediaActions.setLibrarySelectedItems( siteId, [] );
+				return;
+			}
+
+			const selectedItems = Array.isArray( value )
+				? map( value, item => ( { ID: parseInt( item, 10 ) } ) )
+				: [ { ID: parseInt( value, 10 ) } ];
+			MediaActions.setLibrarySelectedItems( siteId, selectedItems );
 		}
 	};
 
 	closeMediaModal = media => {
-		if ( media && this.messageChannelPort ) {
+		if ( media && this.iframePort ) {
 			const { multiple } = this.state;
 			const formattedMedia = map( media.items, item => mediaCalypsoToGutenberg( item ) );
 			const payload = multiple ? formattedMedia : formattedMedia[ 0 ];
 
-			this.messageChannelPort.postMessage( {
+			this.iframePort.postMessage( {
 				action: 'selectMedia',
 				payload,
 			} );
@@ -89,7 +107,7 @@ class CalypsoifyIframe extends Component {
 
 	render() {
 		const { iframeUrl, siteId } = this.props;
-		const { isMediaModalVisible, multiple, allowedTypes } = this.state;
+		const { isMediaModalVisible, allowedTypes, multiple } = this.state;
 
 		return (
 			<Fragment>
