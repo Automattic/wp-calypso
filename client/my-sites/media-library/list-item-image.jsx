@@ -73,11 +73,13 @@ export default class MediaLibraryListItemImage extends React.Component {
 	};
 
 	render() {
+		const width = Math.round(
+			( 1 / this.props.maxScale ) * this.state.maxSeenScale * this.props.maxImageWidth
+		);
+
 		const url = mediaUrl( this.props.media, {
 			photon: this.props.thumbnailType === MEDIA_IMAGE_PHOTON,
-			maxWidth: Math.round(
-				( 1 / this.props.maxScale ) * this.state.maxSeenScale * this.props.maxImageWidth
-			),
+			resize: `${ width },${ width }`,
 			size: this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL ? 'medium' : false,
 		} );
 
