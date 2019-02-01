@@ -316,13 +316,12 @@ export class MediaLibraryContent extends React.Component {
 			return false;
 		}
 
-		// Already connected - don't need to be connected again
-		if ( isConnected ) {
+		// Already connected - don't need to be connected, unless our token has expired
+		if ( isConnected && ! this.hasGoogleExpired( this.props ) ) {
 			return false;
 		}
 
-		// If we're on the Google service and it's expired then we need connecting
-		return this.hasGoogleExpired( this.props );
+		return true;
 	}
 
 	renderMediaList() {
@@ -434,7 +433,7 @@ export default connect(
 			isRequesting: isKeyringConnectionsFetching( state ),
 			mediaValidationErrorTypes,
 			shouldPauseGuidedTour,
-			googleConnection: googleConnection ? googleConnection[ 0 ] : null, // There can be only one
+			googleConnection: googleConnection.length === 1 ? googleConnection[ 0 ] : null, // There can be only one
 		};
 	},
 	() => ( {

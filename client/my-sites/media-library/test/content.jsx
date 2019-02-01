@@ -123,22 +123,22 @@ describe( 'MediaLibraryContent', () => {
 	} );
 
 	describe( 'needsToBeConnected', () => {
-		test( 'returns false when default service', () => {
+		test( 'returns false when default service and not connected', () => {
 			const props = {
 				source: '',
 				mediaValidationErrorTypes,
 				isConnected: false,
-				googleConnection,
+				googleConnection: null,
 			};
 			const wrapper = getMediaContentInstance( props );
 
 			expect( wrapper.needsToBeConnected() ).toBe( false );
 		} );
 
-		test( 'returns false when google service and already connected', () => {
+		test( 'returns false when google service, connected, and not expired', () => {
 			const props = {
 				source: 'google_photos',
-				mediaValidationErrorTypes,
+				mediaValidationErrorTypes: [],
 				isConnected: true,
 				googleConnection,
 			};
@@ -147,11 +147,11 @@ describe( 'MediaLibraryContent', () => {
 			expect( wrapper.needsToBeConnected() ).toBe( false );
 		} );
 
-		test( 'returns false when example service, not connected, and expired', () => {
+		test( 'returns false when not google service, is connected, and expired', () => {
 			const props = {
 				source: 'example',
 				mediaValidationErrorTypes,
-				isConnected: false,
+				isConnected: true,
 				googleConnection,
 			};
 			const wrapper = getMediaContentInstance( props );
@@ -163,6 +163,18 @@ describe( 'MediaLibraryContent', () => {
 			const props = {
 				source: 'google_photos',
 				mediaValidationErrorTypes,
+				isConnected: false,
+				googleConnection,
+			};
+			const wrapper = getMediaContentInstance( props );
+
+			expect( wrapper.needsToBeConnected() ).toBe( true );
+		} );
+
+		test( 'returns true when google service, not connected, and not expired', () => {
+			const props = {
+				source: 'google_photos',
+				mediaValidationErrorTypes: [],
 				isConnected: false,
 				googleConnection,
 			};
