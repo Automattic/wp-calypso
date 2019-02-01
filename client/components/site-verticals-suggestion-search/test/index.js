@@ -19,15 +19,22 @@ import SuggestionSearch from 'components/suggestion-search';
 const defaultProps = {
 	onChange: jest.fn(),
 	requestVerticals: jest.fn(),
-	translate: str => str,
 	verticals: [
 		{
-			vertical_name: 'doo',
-			vertical_slug: 'doo',
-			is_user_input_vertical: false,
+			verticalName: 'doo',
+			verticalSlug: 'doo',
+			isUserInputVertical: false,
 			preview: '<marquee />',
 		},
 	],
+	requestDefaultVertical: jest.fn(),
+	defaultVertical: {
+		verticalName: 'eeek',
+		verticalSlug: 'ooofff',
+		isUserInputVertical: true,
+		preview: '<blink />',
+	},
+	translate: str => str,
 	charsToTriggerSearch: 2,
 	lastUpdated: 1,
 };
@@ -73,27 +80,27 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		expect( defaultProps.requestVerticals.cancel ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	describe( 'searchInResult()', () => {
+	describe( 'searchForVerticalMatches()', () => {
 		test( 'should return `undefined` by default', () => {
 			const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
-			expect( wrapper.instance().searchInResult() ).toBeUndefined();
+			expect( wrapper.instance().searchForVerticalMatches() ).toBeUndefined();
 		} );
 
 		test( 'should return `undefined` when vertical preview is not in vertical item', () => {
 			const wrapper = shallow(
 				<SiteVerticalsSuggestionSearch
 					{ ...defaultProps }
-					verticals={ [
-						{ vertical_name: 'doo', vertical_slug: 'doo', is_user_input_vertical: false },
-					] }
+					verticals={ [ { verticalName: 'doo', verticalSlug: 'doo', isUserInputVertical: false } ] }
 				/>
 			);
-			expect( wrapper.instance().searchInResult() ).toBeUndefined();
+			expect( wrapper.instance().searchForVerticalMatches() ).toBeUndefined();
 		} );
 
 		test( 'should return found match', () => {
 			const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } /> );
-			expect( wrapper.instance().searchInResult( 'DOO' ) ).toEqual( defaultProps.verticals[ 0 ] );
+			expect( wrapper.instance().searchForVerticalMatches( 'DOO' ) ).toEqual(
+				defaultProps.verticals[ 0 ]
+			);
 		} );
 	} );
 
@@ -102,18 +109,20 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 		test( 'should return default vertical object', () => {
 			wrapper.instance().updateVerticalData();
 			expect( defaultProps.onChange ).toHaveBeenLastCalledWith( {
-				vertical_name: undefined,
-				vertical_slug: undefined,
-				is_user_input_vertical: true,
+				verticalName: undefined,
+				verticalSlug: undefined,
+				isUserInputVertical: true,
+				preview: defaultProps.defaultVertical.preview,
 			} );
 		} );
 
 		test( 'should return default vertical object with value', () => {
 			wrapper.instance().updateVerticalData( undefined, 'ciao' );
 			expect( defaultProps.onChange ).toHaveBeenLastCalledWith( {
-				vertical_name: 'ciao',
-				vertical_slug: 'ciao',
-				is_user_input_vertical: true,
+				verticalName: 'ciao',
+				verticalSlug: 'ciao',
+				isUserInputVertical: true,
+				preview: defaultProps.defaultVertical.preview,
 			} );
 		} );
 

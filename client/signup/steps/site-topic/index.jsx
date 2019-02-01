@@ -60,15 +60,23 @@ class SiteTopicStep extends Component {
 		} );
 	}
 
-	onSiteTopicChange = verticalData => this.props.setSiteVertical( { ...verticalData } );
+	onSiteTopicChange = verticalData => {
+		this.props.setSiteVertical( {
+			isUserInput: verticalData.isUserInputVertical,
+			name: verticalData.verticalName,
+			preview: verticalData.preview,
+			slug: verticalData.verticalSlug,
+			id: verticalData.verticalId,
+		} );
+	};
 
 	onSubmit = event => {
 		event.preventDefault();
 		const { isUserInput, submitSiteTopic, siteTopic, siteSlug } = this.props;
 		submitSiteTopic( {
-			is_user_input_vertical: isUserInput,
-			vertical_name: siteTopic,
-			vertical_slug: siteSlug,
+			isUserInput,
+			name: siteTopic,
+			slug: siteSlug,
 		} );
 	};
 
@@ -127,22 +135,22 @@ class SiteTopicStep extends Component {
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteTopic: ( { is_user_input_vertical, vertical_name, vertical_slug } ) => {
+	submitSiteTopic: ( { isUserInput, name, slug } ) => {
 		const { flowName, goToNextStep, stepName } = ownProps;
 
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
-				value: vertical_slug,
-				is_user_input_vertical,
+				value: slug,
+				isUserInput,
 			} )
 		);
 
 		dispatch(
 			submitSiteVertical(
 				{
-					isUserInput: is_user_input_vertical,
-					name: vertical_name,
-					slug: vertical_slug,
+					isUserInput,
+					name,
+					slug,
 				},
 				stepName
 			)
@@ -151,22 +159,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 		goToNextStep( flowName );
 	},
 
-	setSiteVertical: ( {
-		is_user_input_vertical,
-		preview,
-		vertical_id,
-		vertical_name,
-		vertical_slug,
-	} ) =>
-		dispatch(
-			setSiteVertical( {
-				isUserInput: is_user_input_vertical,
-				name: vertical_name,
-				preview,
-				slug: vertical_slug,
-				id: vertical_id,
-			} )
-		),
+	setSiteVertical: verticalData => dispatch( setSiteVertical( verticalData ) ),
 } );
 
 export default localize(

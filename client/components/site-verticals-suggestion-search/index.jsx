@@ -15,25 +15,30 @@ import { localize } from 'i18n-calypso';
 import SuggestionSearch from 'components/suggestion-search';
 import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { convertToCamelCase } from 'state/data-layer/utils';
 
 export class SiteVerticalsSuggestionSearch extends Component {
 	static propTypes = {
+		charsToTriggerSearch: PropTypes.number,
 		initialValue: PropTypes.string,
+		lastUpdated: PropTypes.number,
 		onChange: PropTypes.func,
 		placeholder: PropTypes.string,
-		lastUpdated: PropTypes.number,
-		charsToTriggerSearch: PropTypes.number,
+		requestDefaultVertical: PropTypes.func,
+		requestVerticals: PropTypes.func,
 		searchResultsLimit: PropTypes.number,
 		verticals: PropTypes.array,
 	};
 
 	static defaultProps = {
+		charsToTriggerSearch: 1,
 		initialValue: '',
 		onChange: noop,
 		placeholder: '',
-		charsToTriggerSearch: 1,
-		verticals: [],
+		requestDefaultVertical: noop,
+		requestVerticals: noop,
 		searchResultsLimit: 5,
+		verticals: [],
 	};
 
 	constructor( props ) {
@@ -41,9 +46,11 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		this.state = {
 			searchValue: props.initialValue,
 		};
+		props.requestDefaultVertical();
 	}
 
 	componentDidMount() {
+		// If we have a stored vertical, grab the preview
 		this.props.initialValue && this.props.requestVerticals( this.props.initialValue, 1 );
 	}
 
@@ -52,7 +59,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		// HTTP requests
 		if ( prevProps.lastUpdated !== this.props.lastUpdated ) {
 			this.updateVerticalData(
-				this.searchInResult( this.state.searchValue ),
+				this.searchForVerticalMatches( this.state.searchValue ),
 				this.state.searchValue
 			);
 		}
@@ -60,38 +67,37 @@ export class SiteVerticalsSuggestionSearch extends Component {
 
 	// When a user is keying through the results,
 	// only update the vertical when they select a result.
-	searchInResult = ( value = '' ) =>
+	searchForVerticalMatches = ( value = '' ) =>
 		find(
 			this.props.verticals,
-			item => item.vertical_name.toLowerCase() === value.toLowerCase() && ! isEmpty( item.preview )
+			item => item.verticalName.toLowerCase() === value.toLowerCase() && ! isEmpty( item.preview )
 		);
 
-	updateVerticalData = ( result, value ) => {
-		// If there's not direct match
-		// return a default model
-		const verticalData = result || {
-			vertical_name: value,
-			vertical_slug: value,
-			is_user_input_vertical: true,
-		};
-
-		this.props.onChange( verticalData );
-	};
+	updateVerticalData = ( result, value ) =>
+		this.props.onChange(
+			result || {
+				...this.props.defaultVertical,
+				isUserInputVertical: true,
+				verticalName: value,
+				verticalSlug: value,
+			}
+		);
 
 	onSiteTopicSelect = value => {
 		this.setState( { searchValue: value } );
-		this.updateVerticalData( this.searchInResult( value ), value );
+		this.updateVerticalData( this.searchForVerticalMatches( value ), value );
 	};
 
 	onSiteTopicChange = value => {
 		value = trim( value );
 
-		// Cancel delayed invocations in case of deletion.
+		const result = this.searchForVerticalMatches( value );
+
+		// Cancel delayed invocations in case of deletion
+		// and make sure the consuming component knows about it.
 		if ( ! value || value.length < this.props.charsToTriggerSearch ) {
 			this.props.requestVerticals.cancel();
 		}
-
-		const result = this.searchInResult( value );
 
 		if (
 			value &&
@@ -103,9 +109,10 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		}
 
 		this.setState( { searchValue: value } );
+		this.updateVerticalData( result, value );
 	};
 
-	getSuggestions = () => this.props.verticals.map( vertical => vertical.vertical_name );
+	getSuggestions = () => this.props.verticals.map( vertical => vertical.verticalName );
 
 	sortSearchResults = ( suggestionsArray, queryString ) => {
 		let queryMatch;
@@ -149,11 +156,11 @@ export class SiteVerticalsSuggestionSearch extends Component {
 }
 
 const SITE_VERTICALS_REQUEST_ID = 'site-verticals-search-results';
-export const isVerticalSearchPending = () =>
-	'pending' === get( getHttpData( SITE_VERTICALS_REQUEST_ID ), 'state', false );
-const requestSiteVerticals = debounce( ( searchTerm, limit = 5 ) => {
-	return requestHttpData(
-		SITE_VERTICALS_REQUEST_ID,
+const DEFAULT_SITE_VERTICAL_REQUEST_ID = 'default-site-verticals-search-results';
+
+const requestSiteVerticalHttpData = ( searchTerm, limit = 5, id = SITE_VERTICALS_REQUEST_ID ) =>
+	requestHttpData(
+		id,
 		http( {
 			apiNamespace: 'wpcom/v2',
 			method: 'GET',
@@ -165,21 +172,34 @@ const requestSiteVerticals = debounce( ( searchTerm, limit = 5 ) => {
 			},
 		} ),
 		{
-			fromApi: () => data => [ [ SITE_VERTICALS_REQUEST_ID, data ] ],
+			fromApi: () => data => [ [ id, convertToCamelCase( data ) ] ],
 			freshness: -Infinity,
 		}
 	);
-}, 333 );
+
+export const isVerticalSearchPending = () =>
+	'pending' === get( getHttpData( SITE_VERTICALS_REQUEST_ID ), 'state', false );
+
+const requestSiteVerticals = debounce( requestSiteVerticalHttpData, 100, {
+	leading: false,
+	trailing: true,
+} );
 
 export default localize(
 	connect(
 		() => {
 			const siteVerticalHttpData = getHttpData( SITE_VERTICALS_REQUEST_ID );
+			const defaultVerticalHttpData = getHttpData( DEFAULT_SITE_VERTICAL_REQUEST_ID );
 			return {
 				lastUpdated: get( siteVerticalHttpData, 'lastUpdated', 0 ),
 				verticals: get( siteVerticalHttpData, 'data', [] ),
+				defaultVertical: get( defaultVerticalHttpData, 'data[0]', {} ),
 			};
 		},
-		() => ( { requestVerticals: requestSiteVerticals } )
+		() => ( {
+			requestVerticals: requestSiteVerticals,
+			requestDefaultVertical: ( searchTerm = 'business' ) =>
+				requestSiteVerticalHttpData( searchTerm, 1, DEFAULT_SITE_VERTICAL_REQUEST_ID ),
+		} )
 	)( SiteVerticalsSuggestionSearch )
 );
