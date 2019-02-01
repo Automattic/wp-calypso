@@ -37,6 +37,11 @@ import { pauseGuidedTour, resumeGuidedTour } from 'state/ui/guided-tours/actions
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { reduxDispatch } from 'lib/redux-bridge';
 
+/**
+ * Style dependencies
+ */
+import './content.scss';
+
 class MediaLibraryContent extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,

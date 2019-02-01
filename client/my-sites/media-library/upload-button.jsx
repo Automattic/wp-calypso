@@ -17,6 +17,11 @@ import MediaActions from 'lib/media/actions';
 import { getAllowedFileTypesForSite, isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils';
 import { VideoPressFileTypes } from 'lib/media/constants';
 
+/**
+ * Style dependencies
+ */
+import './upload-button.scss';
+
 export default class extends React.Component {
 	static displayName = 'MediaLibraryUploadButton';
 

@@ -97,7 +97,6 @@ const sections = [
 		module: 'my-sites/media',
 		group: 'sites',
 		secondary: true,
-		css: 'media',
 	},
 	{
 		name: 'people',
@@ -471,7 +470,6 @@ sections.push( {
 	paths: [ '/block-editor' ],
 	module: 'gutenberg/editor',
 	group: 'gutenberg',
-	css: 'gutenberg-editor',
 	secondary: false,
 } );
 
