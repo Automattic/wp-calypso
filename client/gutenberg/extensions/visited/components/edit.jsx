@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { memoize } from 'lodash';
-import { Notice, RadioControl, TextControl } from '@wordpress/components';
+import { RadioControl, TextControl } from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
 import { InnerBlocks } from '@wordpress/editor';
 
@@ -52,24 +52,10 @@ export default class VisitedEdit extends Component {
 		return (
 			<Fragment>
 				<div className={ this.props.className }>
-					{ this.renderControls() }
 					<div className="wp-block-jetpack-visited-inner-block">
 						<InnerBlocks />
-						<Notice status="warning" isDismissible={ false }>
-							{ this.props.attributes.criteria === CRITERIA_AFTER
-								? sprintf(
-										'This block will only appear to people who have previously visited this page at least %d times.',
-										this.props.attributes.threshold
-								  )
-								: '' }
-							{ this.props.attributes.criteria === CRITERIA_BEFORE
-								? sprintf(
-										'This block will only appear to people who have visited the page less than %d times',
-										this.props.attributes.threshold
-								  )
-								: '' }
-						</Notice>
 					</div>
+					{ this.renderControls() }
 				</div>
 			</Fragment>
 		);
