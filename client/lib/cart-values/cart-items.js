@@ -1080,15 +1080,22 @@ export function shouldBundleDomainWithPlan(
  *
  * @param {object} selectedSite Site
  * @param {object} cart Cart
+ * @param {string} domain Domain name
  * @return {boolean} See description
  */
-export function hasToUpgradeToPayForADomain( selectedSite, cart ) {
+export function hasToUpgradeToPayForADomain( selectedSite, cart, domain ) {
+	if ( ! domain || ! getTld( domain ) ) {
+		return false;
+	}
+
 	const sitePlanSlug = ( ( selectedSite || {} ).plan || {} ).product_slug;
-	if ( sitePlanSlug && isWpComBloggerPlan( sitePlanSlug ) ) {
+	const isDotBlogDomain = 'blog'.startsWith( getTld( domain ) );
+
+	if ( sitePlanSlug && isWpComBloggerPlan( sitePlanSlug ) && ! isDotBlogDomain ) {
 		return true;
 	}
 
-	if ( hasBloggerPlan( cart ) ) {
+	if ( hasBloggerPlan( cart ) && ! isDotBlogDomain ) {
 		return true;
 	}
 
@@ -1130,7 +1137,7 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		return 'INCLUDED_IN_HIGHER_PLAN';
 	}
 
-	if ( hasToUpgradeToPayForADomain( selectedSite, cart ) ) {
+	if ( hasToUpgradeToPayForADomain( selectedSite, cart, suggestion.domain_name ) ) {
 		return 'UPGRADE_TO_HIGHER_PLAN_TO_BUY';
 	}
 
