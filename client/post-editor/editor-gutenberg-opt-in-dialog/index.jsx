@@ -61,11 +61,11 @@ class EditorGutenbergOptInDialog extends Component {
 		const { translate, isDialogVisible, useClassic } = this.props;
 		const buttons = [
 			<Button key="gutenberg" onClick={ this.optInToGutenberg } primary>
-				{ translate( 'Try the new editor' ) }
+				{ translate( 'Try the block editor' ) }
 			</Button>,
 			{
 				action: 'cancel',
-				label: translate( 'Use the classic editor' ),
+				label: translate( 'Use the current editor' ),
 				onClick: useClassic,
 			},
 		];
@@ -88,13 +88,7 @@ class EditorGutenbergOptInDialog extends Component {
 
 				<p className="editor-gutenberg-opt-in-dialog__subhead">
 					{ translate(
-						'A new publishing experience is coming to WordPress. The new editor lets you pick from a growing collection of blocks to build your ideal layout.'
-					) }
-				</p>
-
-				<p>
-					{ translate(
-						'Be one of the first to try the new editor and help us make it the best publishing experience on the web.'
+						'The new WordPress block editor lets you pick from a growing collection of blocks to build your ideal layout.'
 					) }
 				</p>
 			</Dialog>
