@@ -20,7 +20,7 @@ exports[`DateRange should render 1`] = `
     startDateText="MM/DD/YYYY"
   />
   <Connect(Popover)
-    className="date-range__popover"
+    className="date-range__popover is-dialog-visible"
     context={null}
     isVisible={false}
     onClose={[Function]}
