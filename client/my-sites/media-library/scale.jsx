@@ -19,18 +19,11 @@ import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import { setPreference, savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
+import { SCALE_CHOICES } from 'lib/media/constants';
 
 /**
  * Constants
  */
-
-/**
- * Scale choices are 12, 8, 6, 4, and 3 items per row, with some horizontal
- * padding between items
- *
- * @type {Array}
- */
-const SCALE_CHOICES = [ 0.077, 0.115, 0.157, 0.24, 0.323 ];
 
 /**
  * Number of steps on the rendered input range

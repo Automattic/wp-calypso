@@ -13,11 +13,11 @@ import React from 'react';
 import { url as mediaUrl } from 'lib/media/utils';
 import MediaLibraryListItemFileDetails from './list-item-file-details';
 
-import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
+import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL, SCALE_CHOICES } from 'lib/media/constants';
 
-export default class extends React.Component {
-	static displayName = 'MediaLibraryListItemImage';
+const scaleMultiplier = 1 / SCALE_CHOICES[ SCALE_CHOICES.length - 1 ];
 
+export default class MediaLibraryListItemImage extends React.Component {
 	static propTypes = {
 		media: PropTypes.object,
 		scale: PropTypes.number,
@@ -30,27 +30,18 @@ export default class extends React.Component {
 		thumbnailType: MEDIA_IMAGE_PHOTON,
 	};
 
+	static getDerivedStateFromProps( props, state ) {
+		const maxSeenScale = state.maxSeenScale || 0;
+		return props.scale > maxSeenScale ? { maxSeenScale: props.scale } : null;
+	}
+
 	state = {};
 
 	getImageDimensions = () => {
-		let width, height;
+		const width = this.props.media.width || this.state.imageWidth;
+		const height = this.props.media.height || this.state.imageHeight;
 
-		if ( this.props.media.width ) {
-			width = this.props.media.width;
-		} else {
-			width = this.state.imageWidth;
-		}
-
-		if ( this.props.media.height ) {
-			height = this.props.media.height;
-		} else {
-			height = this.state.imageHeight;
-		}
-
-		return {
-			width: width,
-			height: height,
-		};
+		return { width, height };
 	};
 
 	getImageStyle = () => {
@@ -63,23 +54,28 @@ export default class extends React.Component {
 	};
 
 	setUnknownImageDimensions = event => {
+		let newState = null;
+
 		if ( ! this.props.media.width ) {
-			this.setState( {
+			newState = {
 				imageWidth: event.target.clientWidth,
-			} );
+			};
 		}
 
 		if ( ! this.props.media.height ) {
-			this.setState( {
-				imageHeight: event.target.clientHeight,
-			} );
+			newState = newState || {};
+			newState.imageHeight = event.target.clientHeight;
+		}
+
+		if ( newState ) {
+			this.setState( newState );
 		}
 	};
 
 	render() {
 		const url = mediaUrl( this.props.media, {
 			photon: this.props.thumbnailType === MEDIA_IMAGE_PHOTON,
-			maxWidth: this.props.maxImageWidth,
+			maxWidth: Math.round( scaleMultiplier * this.state.maxSeenScale * this.props.maxImageWidth ),
 			size: this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL ? 'medium' : false,
 		} );
 
