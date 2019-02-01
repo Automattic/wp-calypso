@@ -322,15 +322,7 @@
 		--color-accent-900: #{$muriel-orange-900};
 		--color-accent-900-rgb: #{hex-to-rgb( $muriel-orange-900 )};		
 				
-		--color-button-primary-background-hover: #{$muriel-orange-400};
-
-		--masterbar-color: #{$muriel-white};
-		--masterbar-border-color: #{$gray-lighten-10};
-		--masterbar-item-new-editor-background: #{$muriel-gray-500};
-		--masterbar-item-new-editor-hover-background: #{$muriel-gray-400};
-		--masterbar-toggle-drafts-editor-background: #{$muriel-gray-400};
-		--masterbar-toggle-drafts-editor-border-color: #{$gray-lighten-20};
-		--masterbar-toggle-drafts-editor-hover-background: #{$muriel-gray-400};
+		--color-button-primary-background-hover: #{$muriel-orange-400};		
 
 		--sidebar-background: #{$muriel-gray-50};
 		--sidebar-background-gradient: #{hex-to-rgb( $muriel-gray-50 )};
@@ -348,11 +340,7 @@
 		--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-white )};
 		--sidebar-menu-hover-color: #{$muriel-blue-500};
 
-		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead
-		--button-is-borderless-color: #{$gray-dark};
-		--count-border-color: #{$gray-dark};
-		--count-color: #{$gray-dark};
-		--profile-gravatar-user-secondary-info-color: #{$gray-dark};
+		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead								
 		--button-is-borderless-color: #{$gray-text-min};
 		--count-border-color: #{$gray};
 		--count-color: #{$gray-text-min};
