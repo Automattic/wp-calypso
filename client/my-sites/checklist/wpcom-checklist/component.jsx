@@ -715,7 +715,7 @@ class WpcomChecklistComponent extends PureComponent {
 					{
 						title: translate( 'Update your homepage text' ),
 						description: translate(
-							'Task a moment to review what we’ve written for you. ' +
+							'Take a moment to review what we’ve written for you. ' +
 								'Click the text to make any additions or changes.'
 						),
 					},
@@ -745,7 +745,7 @@ class WpcomChecklistComponent extends PureComponent {
 				preset="update-homepage"
 				title={ translate( 'Change homepage photo' ) }
 				description={ translate(
-					'Upload your own photoo or choose from a wide selection of free ones to personalize your new site.'
+					'Upload your own photo or choose from a wide selection of free ones to personalize your new site.'
 				) }
 				steps={ [
 					{
