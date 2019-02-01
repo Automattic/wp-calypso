@@ -154,7 +154,7 @@ class ThemeShowcase extends React.Component {
 	showUploadButton = () => {
 		const { isMultisite, isLoggedIn } = this.props;
 
-		return config.isEnabled( 'manage/themes/upload' ) && isLoggedIn && ! isMultisite;
+		return isLoggedIn && ! isMultisite;
 	};
 
 	render() {
@@ -221,6 +221,7 @@ class ThemeShowcase extends React.Component {
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<Main className="themes">
 				<DocumentHead title={ title } meta={ metas } link={ links } />
 				<PageViewTracker
