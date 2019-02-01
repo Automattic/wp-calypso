@@ -457,9 +457,7 @@ sections.push( {
 	name: 'domain-connect-authorize',
 	paths: [ '/domain-connect' ],
 	module: 'my-sites/domains/domain-management/domain-connect',
-	enableLoggedOut: true,
 	secondary: false,
-	isomorphic: false,
 } );
 
 sections.push( {
