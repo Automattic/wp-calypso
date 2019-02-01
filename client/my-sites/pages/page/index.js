@@ -27,7 +27,12 @@ import classNames from 'classnames';
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
 import { preload } from 'sections-helper';
-import { getSite, hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
+import {
+	getSite,
+	hasStaticFrontPage,
+	isSitePreviewable,
+	isJetpackMinimumVersion,
+} from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isFrontPage, isPostsPage } from 'state/pages/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -628,9 +633,10 @@ const mapState = ( state, props ) => {
 	const calypsoifyGutenberg =
 		isCalypsoifyGutenbergEnabled( state, pageSiteId ) &&
 		'gutenberg' === getSelectedEditor( state, pageSiteId );
-	const duplicateUrl = !! calypsoifyGutenberg
-		? getCalypsoifyEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID )
-		: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' );
+	const duplicateUrl =
+		!! calypsoifyGutenberg && isJetpackMinimumVersion( state, pageSiteId, '7.0' )
+			? getCalypsoifyEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID )
+			: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' );
 
 	return {
 		hasStaticFrontPage: hasStaticFrontPage( state, pageSiteId ),
