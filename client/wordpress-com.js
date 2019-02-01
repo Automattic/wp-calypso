@@ -214,7 +214,6 @@ const sections = [
 		name: 'google-my-business',
 		paths: [ '/google-my-business' ],
 		module: 'my-sites/google-my-business',
-		enableLoggedOut: true,
 		secondary: true,
 		group: 'sites',
 	},
