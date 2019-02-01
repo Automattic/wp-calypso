@@ -37,8 +37,8 @@ function PostActionsEllipsisMenuDuplicate( {
 	}
 
 	return (
-		<PopoverMenuItem href={ duplicateUrl } onClick={ onDuplicateClick } icon="pages">
-			{ translate( 'Duplicate', { context: 'verb' } ) }
+		<PopoverMenuItem href={ duplicateUrl } onClick={ onDuplicateClick } icon="clipboard">
+			{ translate( 'Copy', { context: 'verb' } ) }
 		</PopoverMenuItem>
 	);
 }
