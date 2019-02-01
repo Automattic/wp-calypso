@@ -295,11 +295,8 @@
 	}
 
 	@supports (display: grid) {
-		.wp-block-media-text figure {
-			float: none;
-			width: inherit;
-
-			.wp-block-media-text__content {
+		.wp-block-media-text {
+			figure {
 				float: none;
 				width: inherit;
 
@@ -308,8 +305,13 @@
 				}
 			}
 
-			&.has-media-on-the-right figure {
+			.wp-block-media-text__content {
 				float: none;
+				width: inherit;
+
+				.has-media-on-the-right & {
+					float: none;
+				}
 			}
 		}
 	}
