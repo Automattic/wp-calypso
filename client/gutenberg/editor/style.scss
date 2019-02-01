@@ -419,7 +419,6 @@ html.is-iframe {
 .main.calypsoify.is-iframe {
 	background-color: $gray-light;
 	margin: 0;
-	overflow-y: hidden;
 	padding: 0;
 	z-index: z-index( 'root', '.main.calypsoify.is-iframe' );
 	-webkit-overflow-scrolling: touch;
