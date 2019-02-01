@@ -20,7 +20,6 @@ import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
-import Gridicon from 'gridicons';
 
 function PostActionsEllipsisMenuDuplicate( {
 	translate,
@@ -38,8 +37,7 @@ function PostActionsEllipsisMenuDuplicate( {
 	}
 
 	return (
-		<PopoverMenuItem href={ duplicateUrl } onClick={ onDuplicateClick }>
-			<Gridicon icon="clipboard" size={ 18 } />
+		<PopoverMenuItem href={ duplicateUrl } onClick={ onDuplicateClick } icon="clipboard">
 			{ translate( 'Copy', { context: 'verb' } ) }
 		</PopoverMenuItem>
 	);
