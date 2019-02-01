@@ -319,7 +319,6 @@ sections.push( {
 	module: 'reader',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -328,7 +327,6 @@ sections.push( {
 	module: 'reader/full-post',
 	secondary: false,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -337,7 +335,6 @@ sections.push( {
 	module: 'reader/discover',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -346,7 +343,6 @@ sections.push( {
 	module: 'reader/following',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -355,7 +351,6 @@ sections.push( {
 	module: 'reader/tag-stream',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -364,7 +359,6 @@ sections.push( {
 	module: 'reader/liked-stream',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -373,7 +367,6 @@ sections.push( {
 	module: 'reader/search',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -382,7 +375,6 @@ sections.push( {
 	module: 'reader/list',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -391,7 +383,6 @@ sections.push( {
 	module: 'reader/conversations',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
