@@ -91,10 +91,9 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete a single item from the list view', done => {
-		let media = DUMMY_MEDIA.slice( 0, 1 ),
-			tree;
+		const media = DUMMY_MEDIA.slice( 0, 1 );
 
-		tree = shallow(
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ media }
@@ -138,10 +137,9 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete a single item from the detail view', done => {
-		let media = DUMMY_MEDIA[ 0 ],
-			tree;
+		const media = DUMMY_MEDIA[ 0 ];
 
-		tree = shallow(
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ [ media ] }
@@ -149,6 +147,7 @@ describe( 'EditorMediaModal', () => {
 				moment={ moment }
 			/>
 		).instance();
+
 		tree.deleteMedia();
 
 		expect( accept ).to.have.been.calledWith(
