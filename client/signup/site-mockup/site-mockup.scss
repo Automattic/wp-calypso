@@ -277,7 +277,7 @@
 
 		figure {
 			float: left;
-			width: 50%;
+			width: 59%;
 
 			.has-media-on-the-right & {
 				float: right;
@@ -286,7 +286,9 @@
 
 		.wp-block-media-text__content {
 			float: right;
-			width: 50%;
+			width: 39%;
+			padding-top: 32px;
+			padding-bottom: 32px;
 
 			.has-media-on-the-left & {
 				float: left;
@@ -308,6 +310,8 @@
 			.wp-block-media-text__content {
 				float: none;
 				width: inherit;
+				padding-top: 0;
+				padding-bottom: 0;
 
 				.has-media-on-the-right & {
 					float: none;
