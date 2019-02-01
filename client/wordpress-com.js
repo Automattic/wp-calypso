@@ -68,7 +68,6 @@ const sections = [
 		module: 'me/purchases',
 		group: 'me',
 		secondary: true,
-		enableLoggedOut: true,
 	},
 	{
 		name: 'notification-settings',
