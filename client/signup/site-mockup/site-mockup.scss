@@ -175,10 +175,11 @@
 			font-size: 50px;
 			font-weight: 400;
 			line-height: 1;
-			margin: 0;
-			padding: 0;
+			margin: 0 auto;
+			padding: 32px 0;
 			max-width: 580px;
 			text-align: center;
+			position: relative;
 			z-index: 1; // Ugh, z-index...
 
 			.is-mobile & {
@@ -277,21 +278,43 @@
 
 		figure {
 			float: left;
-			width: 59%;
+			width: 60%;
+			box-sizing: border-box;
 
-			.has-media-on-the-right & {
-				float: right;
+			.is-mobile & {
+				float: none;
+				width: 100%;
+			}
+		}
+
+		&.has-media-on-the-right figure {
+			float: right;
+
+			.is-mobile & {
+				float: none;
 			}
 		}
 
 		.wp-block-media-text__content {
 			float: right;
-			width: 39%;
+			width: 40%;
+			box-sizing: border-box;
 			padding-top: 32px;
 			padding-bottom: 32px;
 
-			.has-media-on-the-right & {
-				float: left;
+			.is-mobile & {
+				float: none;
+				width: 100%;
+			}
+		}
+
+		&.has-media-on-the-right .wp-block-media-text__content {
+			float: left;
+			padding-top: 32px;
+			padding-bottom: 32px;
+
+			.is-mobile & {
+				float: none;
 			}
 		}
 	}
@@ -301,10 +324,10 @@
 			figure {
 				float: none;
 				width: inherit;
+			}
 
-				.has-media-on-the-right & {
-					float: none;
-				}
+			&.has-media-on-the-right figure {
+				float: none;
 			}
 
 			.wp-block-media-text__content {
@@ -312,10 +335,12 @@
 				width: inherit;
 				padding-top: 0;
 				padding-bottom: 0;
+			}
 
-				.has-media-on-the-right & {
-					float: none;
-				}
+			&.has-media-on-the-right .wp-block-media-text__content {
+				float: none;
+				padding-top: 0;
+				padding-bottom: 0;
 			}
 		}
 	}
