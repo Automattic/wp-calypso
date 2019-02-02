@@ -29,6 +29,16 @@ export const settings = {
 	),
 
 	icon: icon,
+	attributes: {
+		align: {
+			type: 'string',
+			default: 'center',
+		},
+		format: {
+			type: 'string',
+			default: '300x250_mediumrectangle',
+		}
+	},
 
 	category: 'jetpack',
 
