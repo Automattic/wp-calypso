@@ -11,6 +11,8 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import edit from './edit';
 
 export const name = 'wordads';
+export const title = __( 'Ad' );
+
 export const icon = (
 	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 		<Path d="M0 0h24v24H0z" fill="none"/>
@@ -19,7 +21,7 @@ export const icon = (
 )
 
 export const settings = {
-	title: __( 'Ad' ),
+	title: title,
 
 	description: (
 		<Fragment>
