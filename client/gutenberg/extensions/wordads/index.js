@@ -8,6 +8,7 @@ import { Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import edit from './edit';
 
 export const name = 'wordads';
 
@@ -34,10 +35,10 @@ export const settings = {
 
 	supports: {
 		html: false,
+		align: true,
 	},
 
-	/* @TODO edit */
-	edit: () => <div>Hi! The ads edit view will go here.</div>,
+	edit: edit,
 
 	/* @TODO save */
 	save: () => null,
