@@ -287,12 +287,6 @@
 //additional color schemes
 .color-scheme {
 	&.is-classic-blue {
-		--color-primary: #{$muriel-blue-500};
-		--color-primary-light: #{$muriel-blue-300};
-		--color-primary-dark: #{$muriel-blue-700};
-		--color-primary-rgb: #{hex-to-rgb( $muriel-blue-500 )};
-		--color-primary-600: #{$muriel-blue-600};
-
 		--color-accent: #{$muriel-orange-500};
 		--color-accent-rgb: #{hex-to-rgb( $muriel-orange-500 )};
 		--color-accent-dark: #{$muriel-orange-700};
