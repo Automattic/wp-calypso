@@ -157,7 +157,7 @@ class SharingButtonsTray extends React.Component {
 	};
 
 	toggleReorder = () => {
-		this.setState( { isReordering: ! this.state.isReordering } );
+		this.setState( prevState => ( { isReordering: ! prevState.isReordering } ) );
 	};
 
 	getLimitedButtonsNoticeElement = () => {

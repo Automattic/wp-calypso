@@ -144,9 +144,9 @@ export const PluginsList = createReactClass( {
 			{}
 		);
 
-		this.setState( {
-			selectedPlugins: Object.assign( {}, this.state.selectedPlugins, slugsToBeUpdated ),
-		} );
+		this.setState( prevState => ( {
+			selectedPlugins: Object.assign( {}, prevState.selectedPlugins, slugsToBeUpdated ),
+		} ) );
 	},
 
 	getPluginBySlug( slug ) {

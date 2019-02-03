@@ -37,9 +37,9 @@ class MasterbarItemNotifications extends Component {
 	};
 
 	componentWillMount() {
-		this.setState( {
-			newNote: this.props.hasUnseenNotifications,
-		} );
+		this.setState( ( _state, props ) => ( {
+			newNote: props.hasUnseenNotifications,
+		} ) );
 	}
 
 	componentWillReceiveProps( nextProps ) {

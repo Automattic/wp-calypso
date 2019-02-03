@@ -68,7 +68,7 @@ class CalendarButton extends Component {
 			return null;
 		}
 
-		return this.setState( { showPopover: ! this.state.showPopover } );
+		return this.setState( prevState => ( { showPopover: ! prevState.showPopover } ) );
 	};
 
 	setPopoverReference = calendarButtonRef => ( this.reference = calendarButtonRef );

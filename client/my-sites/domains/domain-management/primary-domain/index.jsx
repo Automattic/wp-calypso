@@ -69,16 +69,16 @@ class PrimaryDomain extends React.Component {
 						page.redirect( this.getEditPath() );
 						// no need to set loading to true again, page will redirect
 					} else {
-						this.setState( {
+						this.setState( ( _state, props ) => ( {
 							loading: false,
 							errorMessage:
 								error.message ||
-								this.props.translate(
+								props.translate(
 									'There was a problem updating your primary ' +
 										'domain. Please try again later or contact ' +
 										'support'
 								),
-						} );
+						} ) );
 					}
 				}
 			);

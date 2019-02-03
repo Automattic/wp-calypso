@@ -39,9 +39,9 @@ class CredentialsSetupFlow extends Component {
 		);
 
 	goToNextStep = () =>
-		this.setState( {
-			currentStep: this.getNextStep( this.state.currentStep ),
-		} );
+		this.setState( prevState => ( {
+			currentStep: this.getNextStep( prevState.currentStep ),
+		} ) );
 
 	render() {
 		const { siteId } = this.props;

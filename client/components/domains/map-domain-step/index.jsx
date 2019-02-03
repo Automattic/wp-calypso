@@ -59,7 +59,7 @@ class MapDomainStep extends React.Component {
 
 	UNSAFE_componentWillMount() {
 		if ( this.props.initialState ) {
-			this.setState( Object.assign( {}, this.props.initialState, this.getDefaultState() ) );
+			this.setState( prevState => ( Object.assign( {}, prevState.initialState, this.getDefaultState() ) ) );
 		}
 	}
 

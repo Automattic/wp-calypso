@@ -279,9 +279,9 @@ class PostSelectorPosts extends React.Component {
 			return;
 		}
 
-		this.setState( {
-			requestedPages: requestedPages.concat( pagesToRequest ),
-		} );
+		this.setState( prevState => ( {
+			requestedPages: prevState.concat( pagesToRequest ),
+		} ) );
 	};
 
 	onSearch = event => {

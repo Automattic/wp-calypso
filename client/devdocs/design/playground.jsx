@@ -84,14 +84,14 @@ class DesignAssets extends React.Component {
 	};
 
 	addComponent = exampleCode => () => {
-		this.setState( {
+		this.setState( prevState => ( {
 			code:
 				'<Main>' +
-				this.state.code.replace( /(^<Main>)/, '' ).replace( /(<\/Main>$)/, '' ) +
+				prevState.code.replace( /(^<Main>)/, '' ).replace( /(<\/Main>$)/, '' ) +
 				'\n\t' +
 				exampleCode +
 				'\n</Main>',
-		} );
+		} ) );
 	};
 
 	handleChange = code => {

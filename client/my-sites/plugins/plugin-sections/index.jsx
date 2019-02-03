@@ -135,17 +135,17 @@ class PluginSections extends React.Component {
 	};
 
 	setSelectedSection = ( section, event ) => {
-		this.setState( {
-			readMore: false !== this.state.readMore || this.getSelected() !== section,
+		this.setState( prevState => ( {
+			readMore: false !== prevState.readMore || this.getSelected() !== section,
 			selectedSection: section,
-		} );
+		} ) );
 		if ( event ) {
 			this.recordEvent( 'Clicked Section Tab: ' + section );
 		}
 	};
 
 	toggleReadMore = () => {
-		this.setState( { readMore: ! this.state.readMore } );
+		this.setState( prevState => ( { readMore: ! prevState.readMore } ) );
 	};
 
 	renderReadMore = () => {

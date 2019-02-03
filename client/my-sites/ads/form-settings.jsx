@@ -106,9 +106,9 @@ class AdsFormSettings extends Component {
 	handleToggle = event => {
 		const name = event.currentTarget.name;
 
-		this.setState( {
-			[ name ]: ! this.state[ name ],
-		} );
+		this.setState( prevState => ( {
+			[ name ]: ! prevState[ name ],
+		} ) );
 	};
 
 	handleDisplayToggle = name => () => {

@@ -35,10 +35,10 @@ export class Filterbar extends Component {
 	};
 
 	toggleDateRangeSelector = () => {
-		this.setState( {
-			showActivityDates: ! this.state.showActivityDates,
+		this.setState( prevState => ( {
+			showActivityDates: ! prevState.showActivityDates,
 			showActivityTypes: false,
-		} );
+		} ) );
 		this.scrollIntoView();
 	};
 
@@ -47,10 +47,10 @@ export class Filterbar extends Component {
 	};
 
 	toggleActivityTypesSelector = () => {
-		this.setState( {
-			showActivityTypes: ! this.state.showActivityTypes,
+		this.setState( prevState => ( {
+			showActivityTypes: ! prevState.showActivityTypes,
 			showActivityDates: false,
-		} );
+		} ) );
 		this.scrollIntoView();
 	};
 

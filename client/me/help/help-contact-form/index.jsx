@@ -157,13 +157,13 @@ export class HelpContactForm extends React.PureComponent {
 		wpcom
 			.getQandA( query, site )
 			.then( qanda =>
-				this.setState( {
+				this.setState( prevState => ( {
 					qanda: isArray( qanda ) ? qanda : [],
 					// only keep sibylClicked true if the user is seeing the same set of questions
 					// we don't want to track "questions -> question click -> different questions -> support click",
 					// so we need to set sibylClicked to false here if the questions have changed
-					sibylClicked: this.state.sibylClicked && areSameQuestions( this.state.qanda, qanda ),
-				} )
+					sibylClicked: prevState.sibylClicked && areSameQuestions( prevState.qanda, qanda ),
+				} ) )
 			)
 			.catch( () => this.setState( { qanda: [], sibylClicked: false } ) );
 	};

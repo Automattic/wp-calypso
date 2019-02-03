@@ -52,7 +52,7 @@ class GoogleAppsDialog extends React.Component {
 
 	UNSAFE_componentWillMount() {
 		if ( this.props.initialState ) {
-			this.setState( this.props.initialState );
+			this.setState( ( _state, props ) => { props.initialState } );
 		}
 	}
 

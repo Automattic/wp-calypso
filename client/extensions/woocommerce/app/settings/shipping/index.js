@@ -29,15 +29,15 @@ class Shipping extends Component {
 	};
 
 	onChangeUnits = () => {
-		this.setState( { pristine: Object.assign( {}, this.state.pristine, { units: false } ) } );
+		this.setState( prevState => ( { pristine: Object.assign( {}, prevState.pristine, { units: false } ) } ) );
 	};
 
 	onChangeShipping = () => {
-		this.setState( { pristine: Object.assign( {}, this.state.pristine, { shipping: false } ) } );
+		this.setState( prevState => ( { pristine: Object.assign( {}, prevState.pristine, { shipping: false } ) } ) );
 	};
 
 	onSaveSuccess = option => {
-		this.setState( { pristine: Object.assign( {}, this.state.pristine, { [ option ]: true } ) } );
+		this.setState( prevState => ( { pristine: Object.assign( {}, prevState.pristine, { [ option ]: true } ) } ) );
 	};
 
 	render = () => {

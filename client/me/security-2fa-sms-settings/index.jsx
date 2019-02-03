@@ -112,7 +112,7 @@ const Security2faSMSSettings = createReactClass( {
 		const phoneNumber = this.state.phoneNumber;
 
 		if ( ! phoneNumber.isValid ) {
-			this.setState( { lastError: phoneNumber.validation } );
+			this.setState( prevState => ( { lastError: prevState.phoneNumber.validation } ) );
 			return;
 		}
 

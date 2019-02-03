@@ -233,7 +233,7 @@ class ThemesSelectionWithPage extends React.Component {
 	}
 
 	incrementPage = () => {
-		this.setState( { page: this.state.page + 1 } );
+		this.setState( prevState => ( { page: prevState.page + 1 } ) );
 	};
 
 	resetPage = () => {

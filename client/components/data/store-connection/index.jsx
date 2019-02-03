@@ -48,7 +48,7 @@ class StoreConnection extends React.Component {
 	};
 
 	handleStoresChanged = () => {
-		this.setState( this.props.getStateFromStores( this.props ) );
+		this.setState( ( _state, props ) => ( props.getStateFromStores( props ) ) );
 	};
 
 	isDataLoading = () => {

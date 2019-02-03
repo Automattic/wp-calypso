@@ -58,10 +58,10 @@ class TwoStep extends Component {
 		// }
 
 		if ( ! this.state.initialized ) {
-			this.setState( {
+			this.setState( ( _state, props ) => ( {
 				initialized: true,
-				doingSetup: ! this.props.userSettings.isTwoStepEnabled(),
-			} );
+				doingSetup: ! props.userSettings.isTwoStepEnabled(),
+			} ) );
 			return;
 		}
 

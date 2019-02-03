@@ -137,7 +137,7 @@ class PlansNavigation extends React.Component {
 			event.preventDefault();
 		}
 
-		this.setState( { cartVisible: ! this.state.cartVisible } );
+		this.setState( prevState => ( { cartVisible: ! prevState.cartVisible } ) );
 	};
 
 	onMobileNavPanelOpen = () => {

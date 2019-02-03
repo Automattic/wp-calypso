@@ -108,9 +108,9 @@ class ProductCategoryForm extends Component {
 		}
 
 		if ( ! category.parent ) {
-			this.setState( {
-				isTopLevel: ! this.state.isTopLevel,
-			} );
+			this.setState( prevState => ( {
+				isTopLevel: ! prevState.isTopLevel,
+			} ) );
 		}
 	};
 

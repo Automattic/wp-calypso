@@ -89,10 +89,10 @@ export class AppsBadge extends PureComponent {
 	};
 
 	onLoadImageError = () => {
-		this.setState( {
+		this.setState( ( _state, props ) => ( {
 			hasExternalImageLoaded: false,
-			imageSrc: APP_STORE_BADGE_URLS[ this.props.storeName ].defaultSrc,
-		} );
+			imageSrc: APP_STORE_BADGE_URLS[ props.storeName ].defaultSrc,
+		} ) );
 	};
 
 	onLinkClick() {

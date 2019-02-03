@@ -160,9 +160,9 @@ class TermTreeSelectorList extends Component {
 			return;
 		}
 
-		this.setState( {
-			requestedPages: requestedPages.concat( pagesToRequest ),
-		} );
+		this.setState( prevState => ( {
+			requestedPages: prevState.concat( pagesToRequest ),
+		} ) );
 	};
 
 	setItemRef = ( item, itemRef ) => {

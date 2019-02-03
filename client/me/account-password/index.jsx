@@ -52,11 +52,11 @@ const AccountPassword = createReactClass( {
 	},
 
 	generateStrongPassword: function() {
-		this.setState( {
-			password: this.props.accountPasswordData.generate(),
+		this.setState( ( _state, props ) => ( {
+			password: props.accountPasswordData.generate(),
 			pendingValidation: true,
 			isUnsaved: true,
-		} );
+		} ) );
 		this.debouncedPasswordValidate();
 	},
 

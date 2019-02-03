@@ -36,23 +36,23 @@ export class Translatable extends Component {
 
 	handleTranslationChange = event => {
 		const { name, value } = event.target;
-		this.setState( {
+		this.setState( prevState => ( {
 			formState: {
-				...this.state.formState,
+				...prevState.formState,
 				[ name ]: value,
 			},
 			submitting: false,
 			submissionSuccess: false,
-		} );
+		} ) );
 	};
 
 	closeDialog = () => {
-		this.setState( {
+		this.setState( prevState => ( {
 			showDialog: false,
 			submissionSuccess: false,
-			formState: this.state.submissionSuccess ? {} : this.state.formState,
-			originalData: this.state.submissionSuccess ? {} : this.state.originalData,
-		} );
+			formState: prevState.submissionSuccess ? {} : prevState.formState,
+			originalData: prevState.submissionSuccess ? {} : prevState.originalData,
+		} ) );
 	};
 
 	openDialog = event => {

@@ -81,9 +81,9 @@ class SharingButtons extends Component {
 	handleChange = ( option, value ) => {
 		const pairs = undefined === value ? option : { [ option ]: value };
 		this.props.markChanged();
-		this.setState( {
-			values: Object.assign( {}, this.state.values, pairs ),
-		} );
+		this.setState( prevState => ( {
+			values: Object.assign( {}, prevState.values, pairs ),
+		} ) );
 	};
 
 	handleButtonsChange = buttons => {

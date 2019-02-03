@@ -68,7 +68,7 @@ class InputChrono extends React.Component {
 		const date = chrono.parseDate( event.target.value );
 
 		if ( date ) {
-			this.setState( { value: this.props.moment( date ).calendar() } );
+			this.setState( ( _state, props ) => ( { value: props.moment( date ).calendar() } ) );
 			this.props.onSet( this.props.moment( date ) );
 		}
 	};

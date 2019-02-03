@@ -73,9 +73,9 @@ class Security2faBackupCodesList extends React.Component {
 		this.popup = window.open();
 
 		if ( null === this.popup ) {
-			this.setState( {
-				lastError: this.props.translate( 'Please disable your pop-up blocker and try again.' ),
-			} );
+			this.setState( ( _state, props ) => ( {
+				lastError: props.translate( 'Please disable your pop-up blocker and try again.' ),
+			} ) );
 			return false;
 		}
 

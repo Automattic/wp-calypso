@@ -125,7 +125,7 @@ class Media extends Component {
 
 	onImageEditorCancel = imageEditorProps => {
 		const { resetAllImageEditorState } = imageEditorProps;
-		this.setState( { currentDetail: this.state.editedImageItem, editedImageItem: null } );
+		this.setState( prevState => ( { currentDetail: prevState.editedImageItem, editedImageItem: null } ) );
 
 		resetAllImageEditorState();
 	};
@@ -184,7 +184,7 @@ class Media extends Component {
 	}
 
 	onVideoEditorCancel = () => {
-		this.setState( { currentDetail: this.state.editedVideoItem, editedVideoItem: null } );
+		this.setState( prevState => ( { currentDetail: prevState.editedVideoItem, editedVideoItem: null } ) );
 	};
 
 	onVideoEditorUpdatePoster = ( { ID, posterUrl } ) => {

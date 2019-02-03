@@ -262,10 +262,10 @@ class RequiredPluginsInstallView extends Component {
 		// Otherwise, if we are working on something presently, see if it has appeared in state yet
 		const pluginFound = find( sitePlugins, { slug: this.state.workingOn } );
 		if ( pluginFound ) {
-			this.setState( {
+			this.setState( prevState => ( {
 				workingOn: '',
-				progress: this.state.progress + this.getPluginInstallationTime(),
-			} );
+				progress: prevState.progress + this.getPluginInstallationTime(),
+			} ) );
 		}
 
 		// Or, it's in the error state
@@ -320,10 +320,10 @@ class RequiredPluginsInstallView extends Component {
 		// See if activation has appeared in state yet
 		const pluginFound = find( sitePlugins, { slug: this.state.workingOn } );
 		if ( pluginFound && pluginFound.active ) {
-			this.setState( {
+			this.setState( prevState => ( {
 				workingOn: '',
-				progress: this.state.progress + this.getPluginInstallationTime(),
-			} );
+				progress: prevState.progress + this.getPluginInstallationTime(),
+			} ) );
 		}
 	};
 

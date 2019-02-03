@@ -102,7 +102,7 @@ class PostComment extends React.PureComponent {
 	};
 
 	handleToggleRepliesClick = () => {
-		this.setState( { showReplies: ! this.state.showReplies } );
+		this.setState( prevState => ( { showReplies: ! prevState.showReplies } ) );
 	};
 
 	handleReply = () => {

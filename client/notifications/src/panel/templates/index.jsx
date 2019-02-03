@@ -127,10 +127,10 @@ class Layout extends React.Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.selectedNoteId ) {
-			this.setState( {
+			this.setState( ( _state, props ) => ( {
 				previousDetailScrollTop: this.detailView ? this.detailView.scrollTop : 0,
-				previouslySelectedNoteId: this.props.selectedNoteId,
-			} );
+				previouslySelectedNoteId: props.selectedNoteId,
+			} ) );
 		}
 
 		if ( nextProps.state !== this.props.state ) {

@@ -89,9 +89,9 @@ class ProductImageUploader extends Component {
 	};
 
 	storeValidationErrors = () => {
-		this.setState( {
-			errors: MediaValidationStore.getAllErrors( this.props.site.ID ),
-		} );
+		this.setState( ( _state, props ) => ( {
+			errors: MediaValidationStore.getAllErrors( props.site.ID ),
+		} ) );
 	};
 
 	// https://stackoverflow.com/a/20732091

@@ -258,10 +258,10 @@ export class List extends React.Component {
 
 	enableChangePrimaryDomainMode = () => {
 		this.props.enablePrimaryDomainMode();
-		this.setState( {
+		this.setState( ( _state, props ) => ( {
 			changePrimaryDomainModeEnabled: true,
-			primaryDomainIndex: findIndex( this.props.domains, { isPrimary: true } ),
-		} );
+			primaryDomainIndex: findIndex( props.domains, { isPrimary: true } ),
+		} ) );
 	};
 
 	disableChangePrimaryDomainMode = () => {

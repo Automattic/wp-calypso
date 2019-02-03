@@ -83,12 +83,12 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	};
 
 	getChangeHandler = field => event => {
-		this.setState( {
+		this.setState( prevState => ( {
 			fields: {
-				...this.state.fields,
+				...prevState.fields,
 				[ field ]: event.target.value,
 			},
-		} );
+		} ) );
 	};
 
 	fields = this.getFields();

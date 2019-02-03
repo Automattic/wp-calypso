@@ -29,7 +29,7 @@ class SetupFooter extends Component {
 			this.setState( { popoverContext } );
 		}
 	};
-	togglePopover = () => this.setState( { isPopoverVisible: ! this.state.isPopoverVisible } );
+	togglePopover = () => this.setState( prevState => ( { isPopoverVisible: ! prevState.isPopoverVisible } ) );
 	hidePopover = () => this.setState( { isPopoverVisible: false } );
 
 	render() {

@@ -44,9 +44,9 @@ class ProfileLinks extends React.Component {
 	};
 
 	showPopoverMenu = () => {
-		this.setState( {
+		this.setState( prevState => ( {
 			showPopoverMenu: ! this.state.showPopoverMenu,
-		} );
+		} ) );
 	};
 
 	closePopoverMenu = () => {

@@ -124,16 +124,16 @@ class HelpContact extends React.Component {
 			is_automated_transfer: site ? site.options.is_automated_transfer : null,
 		} );
 
-		this.setState( {
+		this.setState( ( _state, props ) => ( {
 			isSubmitting: false,
 			confirmation: {
-				title: this.props.translate( "We're on it!" ),
-				message: this.props.translate(
+				title: props.translate( "We're on it!" ),
+				message: props.translate(
 					"We've received your message, and you'll hear back from " +
 						'one of our Happiness Engineers shortly.'
 				),
 			},
-		} );
+		} ) );
 		this.clearSavedContactForm();
 
 		if ( ! this.props.compact ) {
@@ -193,16 +193,16 @@ class HelpContact extends React.Component {
 					return;
 				}
 
-				this.setState( {
+				this.setState( ( _state, props ) => ( {
 					isSubmitting: false,
 					confirmation: {
-						title: this.props.translate( "We're on it!" ),
-						message: this.props.translate(
+						title: props.translate( "We're on it!" ),
+						message: props.translate(
 							"We've received your message, and you'll hear back from " +
 								'one of our Happiness Engineers shortly.'
 						),
 					},
-				} );
+				} ) );
 
 				analytics.tracks.recordEvent( 'calypso_help_contact_submit', {
 					ticket_type: 'kayako',
@@ -236,11 +236,11 @@ class HelpContact extends React.Component {
 					return;
 				}
 
-				this.setState( {
+				this.setState( ( _state, props ) => ( {
 					isSubmitting: false,
 					confirmation: {
-						title: this.props.translate( 'Got it!' ),
-						message: this.props.translate(
+						title: props.translate( 'Got it!' ),
+						message: props.translate(
 							'Your message has been submitted to our ' + '{{a}}community forums{{/a}}',
 							{
 								components: {
@@ -249,7 +249,7 @@ class HelpContact extends React.Component {
 							}
 						),
 					},
-				} );
+				} ) );
 
 				analytics.tracks.recordEvent( 'calypso_help_contact_submit', { ticket_type: 'forum' } );
 			}

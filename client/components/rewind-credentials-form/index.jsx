@@ -75,10 +75,10 @@ export class RewindCredentialsForm extends Component {
 			changedProtocol && { port: defaultPort }
 		);
 
-		this.setState( {
+		this.setState( prevState => ( {
 			form,
-			formErrors: { ...this.state.formErrors, [ name ]: false },
-		} );
+			formErrors: { ...prevState.formErrors, [ name ]: false },
+		} ) );
 	};
 
 	handleSubmit = () => {

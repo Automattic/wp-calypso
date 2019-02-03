@@ -212,9 +212,9 @@ class UploadImage extends Component {
 	};
 
 	storeValidationErrors = () => {
-		this.setState( {
-			errors: MediaValidationStore.getAllErrors( this.props.siteId ),
-		} );
+		this.setState( ( _state, props ) => ( {
+			errors: MediaValidationStore.getAllErrors( props.siteId ),
+		} ) );
 	};
 
 	hideImageEditor = () => {

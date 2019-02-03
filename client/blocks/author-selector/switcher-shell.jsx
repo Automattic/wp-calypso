@@ -161,9 +161,9 @@ class AuthorSwitcherShell extends React.Component {
 	}
 
 	toggleShowAuthor = () => {
-		this.setState( {
-			showAuthorMenu: ! this.state.showAuthorMenu,
-		} );
+		this.setState( prevState => ( {
+			showAuthorMenu: ! prevState.showAuthorMenu,
+		} ) );
 	};
 
 	onClose = event => {

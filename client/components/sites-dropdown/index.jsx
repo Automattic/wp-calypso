@@ -75,7 +75,7 @@ export class SitesDropdown extends PureComponent {
 	}
 
 	toggleOpen() {
-		this.props.hasMultipleSites && this.setState( { open: ! this.state.open } );
+		this.props.hasMultipleSites && this.setState( prevState => ( { open: ! prevState.open } ) );
 	}
 
 	onClose( e ) {

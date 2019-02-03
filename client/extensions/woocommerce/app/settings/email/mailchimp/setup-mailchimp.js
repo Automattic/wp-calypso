@@ -198,7 +198,7 @@ class MailChimpSetup extends React.Component {
 		const { siteId } = this.props;
 
 		if ( LOG_INTO_MAILCHIMP_STEP === step ) {
-			this.setState( { step: steps[ this.state.step ].nextStep } );
+			this.setState( prevState => ( { step: steps[ prevState.step ].nextStep } ) );
 		} else if ( step === KEY_INPUT_STEP ) {
 			const validKey = !! this.state.api_key_input;
 			this.setState( {
@@ -243,9 +243,9 @@ class MailChimpSetup extends React.Component {
 	// Right now Store info is combination of values from SettingsPaymentsLocationCurrency
 	// and managed directly - not the greatest option but good for now.
 	onStoreInfoChange = e => {
-		this.setState( {
-			settings: Object.assign( {}, this.state.settings, { [ e.target.name ]: e.target.value } ),
-		} );
+		this.setState( prevState => ( {
+			settings: Object.assign( {}, prevState.settings, { [ e.target.name ]: e.target.value } ),
+		} ) );
 	};
 
 	renderStep = () => {

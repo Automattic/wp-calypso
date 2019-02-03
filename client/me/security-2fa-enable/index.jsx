@@ -86,13 +86,13 @@ class Security2faEnable extends React.Component {
 
 	onSMSRequestResponse = error => {
 		if ( error ) {
-			this.setState( {
+			this.setState( ( _state, props ) => ( {
 				smsRequestPerformed: false,
-				lastError: this.props.translate(
+				lastError: props.translate(
 					'Unable to request a code via SMS right now. Please try again after one minute.'
 				),
 				lastErrorType: 'is-info',
-			} );
+			} ) );
 		} else {
 			this.setState( { smsRequestPerformed: true } );
 		}
@@ -121,12 +121,12 @@ class Security2faEnable extends React.Component {
 
 	onAppAuthCodesRequestResponse = ( error, data ) => {
 		if ( error ) {
-			this.setState( {
-				lastError: this.props.translate(
+			this.setState( ( _state, props ) => ( {
+				lastError: props.translate(
 					'Unable to obtain authorization application setup information. Please try again later.'
 				),
 				lastErrorType: 'is-error',
-			} );
+			} ) );
 			return;
 		}
 
@@ -158,15 +158,15 @@ class Security2faEnable extends React.Component {
 		this.setState( { submittingCode: false } );
 
 		if ( error ) {
-			this.setState( {
-				lastError: this.props.translate( 'An unexpected error occurred. Please try again later.' ),
+			this.setState( ( _state, props ) => ( {
+				lastError: props.translate( 'An unexpected error occurred. Please try again later.' ),
 				lastErrorType: 'is-error',
-			} );
+			} ) );
 		} else if ( ! data.success ) {
-			this.setState( {
-				lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
+			this.setState(  ( _state, props ) => ( {
+				lastError: props.translate( 'You entered an invalid code. Please try again.' ),
 				lastErrorType: 'is-error',
-			} );
+			} ) );
 		} else {
 			this.props.onSuccess();
 		}
@@ -257,7 +257,7 @@ class Security2faEnable extends React.Component {
 
 	toggleMethod = event => {
 		event.preventDefault();
-		this.setState( { method: 'scan' === this.state.method ? 'time' : 'scan' } );
+		this.setState( prevState => ( { method: 'scan' === prevState.method ? 'time' : 'scan' } ) );
 	};
 
 	renderInputOptions = () => {

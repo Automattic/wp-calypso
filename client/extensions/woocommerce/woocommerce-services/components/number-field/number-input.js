@@ -37,10 +37,10 @@ export default class NumberInput extends Component {
 	};
 
 	handleBlur = event => {
-		this.setState( {
+		this.setState( ( _state, props ) => ( {
 			focused: false,
-			text: this.props.value,
-		} );
+			text: props.value,
+		} ) );
 		this.props.onChange( event );
 	};
 

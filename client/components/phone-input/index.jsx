@@ -231,7 +231,7 @@ class PhoneInput extends React.PureComponent {
 			countryCode: newCountryCode,
 			value: this.format( inputValue, newCountryCode ),
 		} );
-		this.setState( { freezeSelection: this.props.enableStickyCountry } );
+		this.setState( ( _state, props ) => ( { freezeSelection: props.enableStickyCountry } ) );
 	}
 
 	setNumberInputRef = c => ( this.numberInput = c );

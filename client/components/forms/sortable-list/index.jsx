@@ -182,9 +182,9 @@ class SortableList extends React.Component {
 
 		this.props.onChange( activeOrder );
 
-		this.setState( {
-			activeIndex: activeOrder[ this.state.activeIndex ],
-		} );
+		this.setState( prevState => ( {
+			activeIndex: activeOrder[ prevState.activeIndex ],
+		} ) );
 	};
 
 	onMouseDown = ( index, event ) => {
@@ -232,13 +232,13 @@ class SortableList extends React.Component {
 			}
 		}
 
-		this.setState( {
+		this.setState( prevState => ( {
 			position: this.getPositionForCursorElement(
-				this.refs[ 'wrap-' + this.state.activeIndex ].firstChild,
+				this.refs[ 'wrap-' + prevState.activeIndex ].firstChild,
 				event
 			),
 			activeOrder: activeOrder,
-		} );
+		} ) );
 	};
 
 	onMouseUp = () => {

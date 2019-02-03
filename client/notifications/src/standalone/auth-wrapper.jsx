@@ -75,7 +75,7 @@ export const AuthWrapper = Wrapped =>
 
 		maybeRedirectToOAuthLogin = () => {
 			if ( this.state.oAuthToken ) {
-				return this.setState( { wpcom: wpcom( this.state.oAuthToken ) } );
+				return this.setState( prevState => ( { wpcom: wpcom( prevState.oAuthToken ) } ) );
 			}
 
 			const baseUrl = 'https://public-api.wordpress.com/oauth2/authorize';

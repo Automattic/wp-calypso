@@ -124,18 +124,18 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 		}
 
 		if ( this.props.primaryEmail && email === this.props.primaryEmail ) {
-			this.setState( {
-				validation: this.props.translate(
+			this.setState( ( _state, props ) => ( {
+				validation: props.translate(
 					'You have entered your primary email address. Please enter a different email address.'
 				),
-			} );
+			} ) );
 			return;
 		}
 
 		if ( ! emailValidator.validate( email ) ) {
-			this.setState( {
-				validation: this.props.translate( 'Please enter a valid email address.' ),
-			} );
+			this.setState( ( _state, props ) => ( {
+				validation: props.translate( 'Please enter a valid email address.' ),
+			} ) );
 			return;
 		}
 

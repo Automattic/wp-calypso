@@ -139,12 +139,12 @@ export class DropZone extends React.Component {
 			isValidDrag = this.props.onVerifyValidTransfer( detail.dataTransfer ),
 			isDraggingOverDocument = isValidDrag && this.dragEnterNodes.length;
 
-		this.setState( {
+		this.setState( ( _state, props ) => ( {
 			isDraggingOverDocument: isDraggingOverDocument,
 			isDraggingOverElement:
 				isDraggingOverDocument &&
-				( this.props.fullScreen || this.isWithinZoneBounds( detail.clientX, detail.clientY ) ),
-		} );
+				( props.fullScreen || this.isWithinZoneBounds( detail.clientX, detail.clientY ) ),
+		} ) );
 
 		if ( window.CustomEvent && event instanceof window.CustomEvent ) {
 			// For redirected CustomEvent instances, immediately remove window

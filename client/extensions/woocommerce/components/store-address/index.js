@@ -72,10 +72,10 @@ class StoreAddress extends Component {
 	};
 
 	onShowDialog = () => {
-		this.setState( {
+		this.setState( ( _state, props ) => ( {
 			showDialog: true,
-			addressEdits: { ...this.props.address },
-		} );
+			addressEdits: { ...props.address },
+		} ) );
 	};
 
 	onCloseDialog = action => {
@@ -93,10 +93,10 @@ class StoreAddress extends Component {
 				}
 				return successNotice( translate( 'Address saved.' ), { duration: 4000 } );
 			};
-			this.setState( {
+			this.setState( prevState => ( {
 				showDialog: false,
-				address: { ...this.state.addressEdits },
-			} );
+				address: { ...prevState.addressEdits },
+			} ) );
 			this.props.setAddress(
 				siteId,
 				this.state.addressEdits.street,

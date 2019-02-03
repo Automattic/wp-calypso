@@ -74,7 +74,7 @@ export class EditorPublishDate extends React.Component {
 	};
 
 	toggleOpenState = () => {
-		this.setState( { isOpen: ! this.state.isOpen } );
+		this.setState( prevState => ( { isOpen: ! prevState.isOpen } ) );
 	};
 
 	getHeaderDescription() {

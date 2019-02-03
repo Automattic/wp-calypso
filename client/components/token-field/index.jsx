@@ -409,22 +409,22 @@ class TokenField extends PureComponent {
 	};
 
 	_handleUpArrowKey = () => {
-		this.setState( {
-			selectedSuggestionIndex: Math.max( ( this.state.selectedSuggestionIndex || 0 ) - 1, 0 ),
+		this.setState( prevState => ( {
+			selectedSuggestionIndex: Math.max( ( prevState.selectedSuggestionIndex || 0 ) - 1, 0 ),
 			selectedSuggestionScroll: true,
-		} );
+		} ) );
 
 		return true; // preventDefault
 	};
 
 	_handleDownArrowKey = () => {
-		this.setState( {
+		this.setState( prevState => ( {
 			selectedSuggestionIndex: Math.min(
-				this.state.selectedSuggestionIndex + 1 || 0,
+				prevState.selectedSuggestionIndex + 1 || 0,
 				this._getMatchingSuggestions().length - 1
 			),
 			selectedSuggestionScroll: true,
-		} );
+		} ) );
 
 		return true; // preventDefault
 	};
@@ -473,21 +473,21 @@ class TokenField extends PureComponent {
 	};
 
 	_moveInputToIndex = index => {
-		this.setState( {
-			inputOffsetFromEnd: this.props.value.length - Math.max( index, -1 ) - 1,
-		} );
+		this.setState( ( _state, props ) => ( {
+			inputOffsetFromEnd: props.value.length - Math.max( index, -1 ) - 1,
+		} ) );
 	};
 
 	_moveInputBeforePreviousToken = () => {
-		this.setState( {
-			inputOffsetFromEnd: Math.min( this.state.inputOffsetFromEnd + 1, this.props.value.length ),
-		} );
+		this.setState( ( prevState, props ) => ( {
+			inputOffsetFromEnd: Math.min( prevState.inputOffsetFromEnd + 1, props.value.length ),
+		} ) );
 	};
 
 	_moveInputAfterNextToken = () => {
-		this.setState( {
-			inputOffsetFromEnd: Math.max( this.state.inputOffsetFromEnd - 1, 0 ),
-		} );
+		this.setState( prevState => ( {
+			inputOffsetFromEnd: Math.max( prevState.inputOffsetFromEnd - 1, 0 ),
+		} ) );
 	};
 
 	_addNewTokens = tokens => {

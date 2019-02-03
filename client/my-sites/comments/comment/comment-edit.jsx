@@ -79,7 +79,7 @@ export class CommentEdit extends Component {
 		this.setState( { commentContent: event.target.value }, callback );
 
 	setCommentDateValue = commentDate =>
-		this.setState( { commentDate: this.props.moment( commentDate ).format() } );
+		this.setState( ( _state, props ) => ( { commentDate: props.moment( commentDate ).format() } ) );
 
 	showNotice = () => {
 		const { translate } = this.props;

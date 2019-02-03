@@ -243,10 +243,10 @@ class Search extends Component {
 			return;
 		}
 
-		this.setState( {
+		this.setState( ( _state, props ) => ( {
 			keyword: '',
-			isOpen: this.props.isOpen || false,
-		} );
+			isOpen: props.isOpen || false,
+		} ) );
 
 		this.searchInput.value = ''; // will not trigger onChange
 		this.searchInput.blur();

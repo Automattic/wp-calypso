@@ -95,7 +95,7 @@ export class PluginsBrowser extends Component {
 	}
 
 	refreshLists = search => {
-		this.setState( this.getPluginsLists( search || this.props.search ) );
+		this.setState( ( _state, props ) => ( this.getPluginsLists( search || props.search ) ) );
 	};
 
 	fetchNextPagePlugins = () => {

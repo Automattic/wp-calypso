@@ -496,7 +496,7 @@ class Signup extends React.Component {
 
 		if ( nextFlowName !== this.props.flowName ) {
 			SignupActions.changeSignupFlow( nextFlowName );
-			this.setState( { previousFlowName: this.props.flowName } );
+			this.setState( ( _state, props ) => ( { previousFlowName: props.flowName } ) );
 		}
 
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );

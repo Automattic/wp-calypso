@@ -47,10 +47,10 @@ class CloneDestinationStep extends Component {
 	};
 
 	handleFieldChange = ( { target: { name, value } } ) =>
-		this.setState( {
-			form: Object.assign( {}, this.state.form, { [ name ]: value } ),
-			formErrors: { ...this.state.formErrors, [ name ]: false },
-		} );
+		this.setState( prevState => ( {
+			form: Object.assign( {}, prevState.form, { [ name ]: value } ),
+			formErrors: { ...prevState.formErrors, [ name ]: false },
+		} ) );
 
 	goToNextStep = () => {
 		const { translate } = this.props;

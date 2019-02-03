@@ -39,9 +39,9 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 	};
 
 	toggleConfirmationChecked = () => {
-		this.setState( {
-			isConfirmationChecked: ! this.state.isConfirmationChecked,
-		} );
+		this.setState( prevState => ( {
+			isConfirmationChecked: ! prevState.isConfirmationChecked,
+		} ) );
 	};
 
 	onConfirm = closeDialog => {

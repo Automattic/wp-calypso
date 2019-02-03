@@ -88,7 +88,7 @@ export class LanguagePicker extends PureComponent {
 	};
 
 	toggleOpen() {
-		this.setState( { open: ! this.state.open } );
+		this.setState( prevState => ( { open: ! prevState.open } ) );
 	}
 
 	handleClick = event => {

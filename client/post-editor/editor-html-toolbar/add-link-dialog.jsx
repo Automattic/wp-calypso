@@ -73,12 +73,11 @@ export class AddLinkDialog extends Component {
 	};
 
 	setLinkUrl = event => {
-		const { selectedPost } = this.state;
-		this.setState( {
+		this.setState( prevState => ( {
 			linkUrl: event.target.value,
 			selectedPost:
-				selectedPost.url === event.target.value ? selectedPost : { id: null, url: null },
-		} );
+				prevState.url === event.target.value ? prevState : { id: null, url: null },
+		} ) );
 	};
 
 	setLinkText = event => {

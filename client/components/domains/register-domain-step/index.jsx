@@ -914,12 +914,12 @@ class RegisterDomainStep extends React.Component {
 			domain = '';
 		}
 
-		this.setState(
-			{
+		this.setState( ( prevState, props ) => 
+			( {
 				lastQuery: searchQuery,
-				lastSurveyVertical: this.props.surveyVertical,
-				lastFilters: this.state.filters,
-			},
+				lastSurveyVertical: props.surveyVertical,
+				lastFilters: prevState.filters,
+			} ),
 			this.save
 		);
 

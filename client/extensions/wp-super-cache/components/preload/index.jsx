@@ -56,15 +56,15 @@ class PreloadTab extends Component {
 	}
 
 	handlePreloadRefreshChange = () => {
-		this.setState( { preloadRefresh: ! this.state.preloadRefresh }, () => {
+		this.setState( prevState => ( { preloadRefresh: ! prevState.preloadRefresh }, () => {
 			const { fields, setFieldValue } = this.props;
 
-			if ( this.state.preloadRefresh ) {
+			if ( prevState.preloadRefresh ) {
 				setFieldValue( 'preload_interval', get( fields, 'minimum_preload_interval', 30 ), true );
 			} else {
 				setFieldValue( 'preload_interval', 0, true );
 			}
-		} );
+		} ) );
 	};
 
 	getPreloadPostsOptions( post_count ) {

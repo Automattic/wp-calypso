@@ -93,7 +93,7 @@ class TransferDomainStep extends React.Component {
 
 	UNSAFE_componentWillMount() {
 		if ( this.props.initialState ) {
-			this.setState( Object.assign( {}, this.props.initialState, this.getDefaultState() ) );
+			this.setState( ( _state, props ) => ( Object.assign( {}, props.initialState, this.getDefaultState() ) ) );
 		}
 
 		if ( this.props.forcePrecheck && isEmpty( this.inboundTransferStatus ) ) {
@@ -477,8 +477,8 @@ class TransferDomainStep extends React.Component {
 						case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
 							const tld = getTld( domain );
 
-							this.setState( {
-								notice: this.props.translate(
+							this.setState( ( _state, props ) => ( {
+								notice: props.translate(
 									"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
 										'but you can {{a}}map it{{/a}} instead.',
 									{
@@ -490,14 +490,14 @@ class TransferDomainStep extends React.Component {
 									}
 								),
 								noticeSeverity: 'info',
-							} );
+							} ) );
 							break;
 						case domainAvailability.UNKNOWN:
 							const mappableStatus = get( result, 'mappable', error );
 
 							if ( domainAvailability.MAPPABLE === mappableStatus ) {
-								this.setState( {
-									notice: this.props.translate(
+								this.setState( ( _state, props ) => ( {
+									notice: props.translate(
 										"{{strong}}%(domain)s{{/strong}} can't be transferred. " +
 											'You can {{a}}manually connect it{{/a}} if you still want to use it for your site.',
 										{
@@ -509,7 +509,7 @@ class TransferDomainStep extends React.Component {
 										}
 									),
 									noticeSeverity: 'info',
-								} );
+								} ) );
 								break;
 							}
 						default:

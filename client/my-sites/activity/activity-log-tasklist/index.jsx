@@ -168,10 +168,10 @@ class ActivityLogTasklist extends Component {
 	 */
 	enqueue = ( item, from = '' ) => {
 		item.from = from;
-		this.setState(
-			{
-				queued: union( this.state.queued, [ item ] ),
-			},
+		this.setState( prevState =>
+			( {
+				queued: union( prevState.queued, [ item ] ),
+			} ),
 			this.continueQueue
 		);
 	};
@@ -182,10 +182,10 @@ class ActivityLogTasklist extends Component {
 	 * @returns {undefined}
 	 */
 	dequeue = () =>
-		this.setState(
-			{
-				queued: this.state.queued.slice( 1 ),
-			},
+		this.setState( prevState =>
+			( {
+				queued: prevState.queued.slice( 1 ),
+			} ),
 			this.continueQueue
 		);
 
@@ -194,15 +194,15 @@ class ActivityLogTasklist extends Component {
 	 */
 	updateAll = () => {
 		this.props.trackUpdateAll();
-		this.setState(
-			{
+		this.setState( ( prevState, props) => 
+			( {
 				queued: union(
-					this.state.queued,
-					this.props.coreWithUpdate,
-					this.props.pluginWithUpdate,
-					this.props.themeWithUpdate
+					prevState.queued,
+					props.coreWithUpdate,
+					props.pluginWithUpdate,
+					props.themeWithUpdate
 				),
-			},
+			} ),
 			this.continueQueue
 		);
 	};

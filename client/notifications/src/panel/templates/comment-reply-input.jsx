@@ -107,13 +107,13 @@ const CommentReplyInput = createReactClass( {
 
 		disableKeyboardShortcuts();
 
-		this.setState( {
+		this.setState( prevState => ( {
 			value: event.target.value,
 			rowCount: Math.min(
 				4,
-				Math.ceil( ( textarea.scrollHeight * this.state.rowCount ) / textarea.clientHeight )
+				Math.ceil( ( textarea.scrollHeight * prevState.rowCount ) / textarea.clientHeight )
 			),
-		} );
+		} ) );
 
 		// persist the comment reply on local storage
 		if ( this.savedReplyKey ) {
@@ -208,9 +208,9 @@ const CommentReplyInput = createReactClass( {
 					this.props.global.updateStatusBar( errorMessageDuplicateComment, [ 'fail' ], 6000 );
 					this.props.unselectNote();
 				} else if ( component.state.retryCount < 3 ) {
-					component.setState( {
-						retryCount: component.state.retryCount + 1,
-					} );
+					component.setState( prevState => ( {
+						retryCount: prevState.retryCount + 1,
+					} ) );
 
 					window.setTimeout( function() {
 						component.handleSubmit();

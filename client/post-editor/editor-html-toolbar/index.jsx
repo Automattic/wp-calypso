@@ -256,17 +256,15 @@ export class EditorHtmlToolbar extends Component {
 		`</${ name }>` + ( options.newLineAfter ? '\n' : '' ) + ( options.paragraph ? '\n\n' : '' );
 
 	insertHtmlTagOpen( tag ) {
-		const { openTags } = this.state;
 		const { before, after } = this.splitEditorContent();
 		this.updateEditorContent( before, this.openHtmlTag( tag ), after );
-		this.setState( { openTags: openTags.concat( tag.name ) } );
+		this.setState( prevState => ( { openTags: prevState.concat( tag.name ) } ) );
 	}
 
 	insertHtmlTagClose( tag ) {
-		const { openTags } = this.state;
 		const { before, after } = this.splitEditorContent();
 		this.updateEditorContent( before, this.closeHtmlTag( tag ), after );
-		this.setState( { openTags: openTags.filter( openTag => openTag !== tag.name ) } );
+		this.setState( prevState => ( { openTags: prevState.filter( openTag => openTag !== tag.name ) } ) );
 	}
 
 	insertHtmlTagOpenClose( tag ) {
@@ -408,7 +406,7 @@ export class EditorHtmlToolbar extends Component {
 	};
 
 	toggleInsertContentMenu = () => {
-		this.setState( { showInsertContentMenu: ! this.state.showInsertContentMenu } );
+		this.setState( prevState => ( { showInsertContentMenu: ! prevState.showInsertContentMenu } ) );
 	};
 
 	openContactFormDialog = () => {
@@ -420,9 +418,9 @@ export class EditorHtmlToolbar extends Component {
 	};
 
 	toggleContactFormDialogTab = () => {
-		this.setState( {
-			contactFormDialogTab: 'fields' === this.state.contactFormDialogTab ? 'settings' : 'fields',
-		} );
+		this.setState( prevState => ( {
+			contactFormDialogTab: 'fields' === prevState.contactFormDialogTab ? 'settings' : 'fields',
+		} ) );
 	};
 
 	closeContactFormDialog = () => {

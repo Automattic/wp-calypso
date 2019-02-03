@@ -48,7 +48,7 @@ class ReaderSiteNotificationSettings extends Component {
 	}
 
 	togglePopoverVisibility = () => {
-		this.setState( { showPopover: ! this.state.showPopover } );
+		this.setState( prevState => ( { showPopover: ! prevState.showPopover } ) );
 	};
 
 	closePopover = () => {

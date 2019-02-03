@@ -77,12 +77,12 @@ export class RedirectPaymentBox extends PureComponent {
 	getFieldValue = fieldName => this.state.paymentDetails[ fieldName ];
 
 	updateFieldValues = ( name, value ) => {
-		this.setState( {
+		this.setState( prevState => ( {
 			paymentDetails: {
-				...this.state.paymentDetails,
-				[ name ]: maskField( name, this.state.paymentDetails[ name ], value ),
+				...prevState.paymentDetails,
+				[ name ]: maskField( name, prevState.paymentDetails[ name ], value ),
 			},
-		} );
+		} ) );
 	};
 
 	createField = ( fieldName, componentClass, props ) => {

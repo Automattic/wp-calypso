@@ -48,13 +48,13 @@ class SiteSettingsFormJetpackMonitor extends Component {
 
 	handleToggle = name => () => {
 		this.props.trackEvent( `Toggled ${ name }` );
-		this.setState(
-			{
-				...this.state,
-				[ name ]: ! this.state[ name ],
+		this.setState( prevState =>
+			( {
+				...prevState,
+				[ name ]: ! prevState[ name ],
 			},
 			this.saveSettings
-		);
+		) );
 	};
 
 	saveSettings = () => {

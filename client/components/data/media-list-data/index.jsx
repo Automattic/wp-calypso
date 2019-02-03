@@ -88,7 +88,7 @@ export default class extends React.Component {
 	};
 
 	updateStateData = () => {
-		this.setState( getStateData( this.props.siteId ) );
+		this.setState( ( _state, props ) => ( getStateData( props.siteId ) ) );
 	};
 
 	render() {

@@ -53,18 +53,18 @@ class Security2faBackupCodesPrompt extends React.Component {
 	onRequestComplete = ( error, data ) => {
 		this.setState( { submittingCode: false } );
 		if ( error ) {
-			this.setState( {
-				lastError: this.props.translate(
+			this.setState( ( _state, props ) => ( {
+				lastError: props.translate(
 					'Unable to validate codes right now. Please try again later.'
 				),
-			} );
+			} ) );
 			return;
 		}
 
 		if ( ! data.success ) {
-			this.setState( {
-				lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
-			} );
+			this.setState( ( _state, props ) => ( {
+				lastError: props.translate( 'You entered an invalid code. Please try again.' ),
+			} ) );
 			return;
 		}
 

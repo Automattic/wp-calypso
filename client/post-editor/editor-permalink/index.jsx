@@ -57,10 +57,10 @@ class EditorPermalink extends Component {
 	}
 
 	showPopover() {
-		this.setState( {
-			showPopover: ! this.state.showPopover,
+		this.setState( prevState => ( {
+			showPopover: ! prevState.showPopover,
 			tooltip: false,
-		} );
+		} ) );
 	}
 
 	showTooltip() {

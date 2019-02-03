@@ -42,7 +42,7 @@ class OrderEvents extends Component {
 	};
 
 	componentWillMount() {
-		this.setState( { openDay: last( keys( this.props.eventsByDay ) ) } );
+		this.setState( ( _state, props ) => ( { openDay: last( keys( props.eventsByDay ) ) } ) );
 	}
 
 	componentWillReceiveProps( nextProps ) {

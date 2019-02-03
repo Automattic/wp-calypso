@@ -115,7 +115,7 @@ export class CartCoupon extends React.Component {
 	toggleCouponDetails = event => {
 		event.preventDefault();
 
-		this.setState( { isCouponFormShowing: ! this.state.isCouponFormShowing } );
+		this.setState( prevState => ( { isCouponFormShowing: ! prevState.isCouponFormShowing } ) );
 
 		if ( this.state.isCouponFormShowing ) {
 			this.props.recordGoogleEvent( 'Upgrades', 'Clicked Hide Coupon Code Link' );

@@ -56,9 +56,9 @@ export class EmbedDialog extends React.Component {
 		/**
 		 * Reset the state to the default state
 		 */
-		this.setState( {
-			embedUrl: this.props.embedUrl,
-		} );
+		this.setState( ( _state, props ) => ( {
+			embedUrl: props.embedUrl,
+		} ) );
 
 		/**
 		 * Prepare the markup for the new embed URL

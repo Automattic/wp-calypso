@@ -45,7 +45,7 @@ class Month extends PureComponent {
 			page( href );
 			return;
 		}
-		this.setState( { showPopover: ! this.state.showPopover } );
+		this.setState( prevState => ( { showPopover: ! prevState.showPopover } ) );
 	};
 
 	render() {

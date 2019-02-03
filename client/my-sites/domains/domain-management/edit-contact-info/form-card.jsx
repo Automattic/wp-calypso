@@ -255,12 +255,12 @@ class EditContactInfoFormCard extends React.Component {
 		if ( data && data.success ) {
 			this.contactFormFieldValues = this.getContactFormFieldValues();
 
-			this.setState( {
+			this.setState( prevState => ( {
 				haveContactDetailsChanged: ! isEqual(
 					this.contactFormFieldValues,
-					this.state.newContactDetails
+					prevState.newContactDetails
 				),
-			} );
+			} ) );
 
 			if ( ! this.state.requiresConfirmation ) {
 				this.props.successNotice(

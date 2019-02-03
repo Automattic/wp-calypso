@@ -102,13 +102,13 @@ class Security2faCodePrompt extends React.Component {
 
 	onCodeRequestResponse = error => {
 		if ( error ) {
-			this.setState( {
+			this.setState( ( _state, props ) => ( {
 				codeRequestPerformed: false,
-				lastError: this.props.translate(
+				lastError: props.translate(
 					'Unable to request a code via SMS right now. Please try again after one minute.'
 				),
 				lastErrorType: 'is-info',
-			} );
+			} ) );
 		}
 	};
 
@@ -133,15 +133,15 @@ class Security2faCodePrompt extends React.Component {
 		this.setState( { submittingCode: false } );
 
 		if ( error ) {
-			this.setState( {
-				lastError: this.props.translate( 'An unexpected error occurred. Please try again later.' ),
+			this.setState( ( _state, props ) => ( {
+				lastError: props.translate( 'An unexpected error occurred. Please try again later.' ),
 				lastErrorType: 'is-error',
-			} );
+			} ) );
 		} else if ( ! data.success ) {
-			this.setState( {
-				lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
+			this.setState( ( _state, props ) => ( {
+				lastError: props.translate( 'You entered an invalid code. Please try again.' ),
 				lastErrorType: 'is-error',
-			} );
+			} ) );
 		} else {
 			this.props.onSuccess();
 		}

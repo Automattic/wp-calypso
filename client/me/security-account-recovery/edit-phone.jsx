@@ -107,9 +107,9 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 		const phoneNumber = this.state.phoneNumber;
 
 		if ( ! phoneNumber.isValid ) {
-			this.setState( {
-				validation: this.props.translate( 'Please enter a valid phone number.' ),
-			} );
+			this.setState( ( _state, props ) => ( {
+				validation: props.translate( 'Please enter a valid phone number.' ),
+			} ) );
 
 			return;
 		}

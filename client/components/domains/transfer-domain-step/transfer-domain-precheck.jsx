@@ -84,7 +84,7 @@ class TransferDomainPrecheck extends React.Component {
 
 	showNextStep = () => {
 		this.props.recordNextStep( this.props.domain, this.state.currentStep + 1 );
-		this.setState( { currentStep: this.state.currentStep + 1 } );
+		this.setState( prevState => ( { currentStep: prevState.currentStep + 1 } ) );
 	};
 
 	statusRefreshed = () => {

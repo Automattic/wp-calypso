@@ -26,9 +26,9 @@ class RandomThemesBanner extends PureComponent {
 
 		// Set the banner component on mount.
 		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( {
-			banner: sample( Object.keys( this.props.banners ) ),
-		} );
+		this.setState( (_state, props ) => ( {
+			banner: sample( Object.keys( props.banners ) ),
+		} ) );
 	}
 
 	componentWillReceiveProps( nextProps ) {

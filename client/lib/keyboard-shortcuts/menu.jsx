@@ -34,7 +34,7 @@ class KeyboardShortcutsMenu extends React.Component {
 	};
 
 	toggleShowDialog = () => {
-		this.setState( { showDialog: ! this.state.showDialog } );
+		this.setState( prevState => ( { showDialog: ! prevState.showDialog } ) );
 	};
 
 	getShortcutsByCategory() {

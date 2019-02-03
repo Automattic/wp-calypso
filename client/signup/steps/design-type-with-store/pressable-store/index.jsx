@@ -75,9 +75,9 @@ class PressableStoreStep extends Component {
 		event.preventDefault();
 
 		if ( ! this.state.isValid ) {
-			this.setState( {
-				error: this.props.translate( 'Please provide a valid email address.' ),
-			} );
+			this.setState( ( _state, props ) => ( {
+				error: props.translate( 'Please provide a valid email address.' ),
+			} ) );
 			return;
 		}
 

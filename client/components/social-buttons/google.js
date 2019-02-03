@@ -145,10 +145,10 @@ class GoogleLoginButton extends Component {
 		this.props.onClick( event );
 
 		if ( this.state.error ) {
-			this.setState( {
-				showError: ! this.state.showError,
+			this.setState( prevState => ( {
+				showError: ! prevState.showError,
 				errorRef: event.currentTarget,
-			} );
+			} ) );
 
 			return;
 		}

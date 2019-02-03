@@ -87,7 +87,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 	};
 
 	onEnabledChange = () => {
-		this.setState( { taxesEnabled: ! this.state.taxesEnabled, pristine: false } );
+		this.setState( prevState => ( { taxesEnabled: ! prevState.taxesEnabled, pristine: false } ) );
 	};
 
 	onCheckboxChange = event => {

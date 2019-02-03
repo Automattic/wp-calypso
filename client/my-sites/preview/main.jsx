@@ -107,10 +107,10 @@ class PreviewMain extends React.Component {
 
 		if ( this.iframeUrl !== newUrl ) {
 			debug( 'loading', newUrl );
-			this.setState( {
+			this.setState( ( _state, props ) => ( {
 				previewUrl: newUrl,
-				externalUrl: this.props.site.URL,
-			} );
+				externalUrl: props.site.URL,
+			} ) );
 		}
 	}
 

@@ -197,13 +197,13 @@ class AddEmailAddressesCard extends React.Component {
 			this.props.domainChange( newValue, index );
 		}
 
-		this.setState( update( this.state, command ) );
+		this.setState( prevState => update( prevState, command ) );
 	}
 
 	addBlankUser = () => {
-		this.setState( {
-			fieldsets: this.state.fieldsets.concat( [ this.getNewFieldset() ] ),
-		} );
+		this.setState( prevState => ( {
+			fieldsets: prevState.fieldsets.concat( [ this.getNewFieldset() ] ),
+		} ) );
 	};
 
 	formButtons() {
