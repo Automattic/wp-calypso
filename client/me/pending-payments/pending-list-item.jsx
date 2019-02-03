@@ -16,6 +16,7 @@ import { getSite, getSiteTitle, getSiteUrl, getSiteDomain } from 'state/sites/se
 import PurchaseSiteHeader from '../purchases/purchases-site/header';
 import { purchaseType } from 'lib/purchases';
 import { paymentMethodName } from 'lib/cart-values';
+import formatCurrency from 'lib/format-currency';
 
 export function PendingListItem( {
 	translate,
@@ -23,6 +24,7 @@ export function PendingListItem( {
 	productSlug,
 	paymentType,
 	totalCost,
+	currency,
 	siteId,
 	siteTitle,
 	siteDomain,
@@ -43,7 +45,7 @@ export function PendingListItem( {
 								'Payment of %(totalCost)s was initiated on %(dateCreated)s via %(paymentType)s.',
 								{
 									args: {
-										totalCost,
+										totalCost: formatCurrency( totalCost, currency ),
 										dateCreated: moment( dateCreated ).format( 'LLL' ),
 										paymentType: paymentMethodName( paymentType ),
 									},

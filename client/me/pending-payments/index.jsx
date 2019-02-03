@@ -139,6 +139,7 @@ export default connect(
 				paymentType: payment.payment_type,
 				redirectUrl: payment.redirect_url,
 				totalCost: payment.total_cost,
+				currency: payment.currency,
 				dateCreated: payment.date_created,
 				dateUpdated: payment.date_status_update,
 				productSlug: payment.products[ 0 ].product_slug,
