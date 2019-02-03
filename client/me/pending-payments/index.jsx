@@ -49,7 +49,6 @@ export class PendingPayments extends Component {
 		requestPendingPayments( this.props.userId );
 	};
 
-	// tofix: Something is wrong with this error handling.
 	componentDidUpdate( prevProps ) {
 		const prevResponse = prevProps.response;
 
