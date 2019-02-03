@@ -142,8 +142,6 @@ export default connect(
 				currency: payment.currency,
 				dateCreated: payment.date_created,
 				dateUpdated: payment.date_status_update,
-				productSlug: payment.products[ 0 ].product_slug,
-				productName: payment.products[ 0 ].product_name,
 				products: payment.products,
 			} );
 		}

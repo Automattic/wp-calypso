@@ -14,14 +14,12 @@ import Card from 'components/card';
 import Button from 'components/button';
 import { getSite, getSiteTitle, getSiteUrl, getSiteDomain } from 'state/sites/selectors';
 import PurchaseSiteHeader from '../purchases/purchases-site/header';
-import { purchaseType } from 'lib/purchases';
+import { purchaseType as getPurchaseType, getName } from 'lib/purchases';
 import { paymentMethodName } from 'lib/cart-values';
 import formatCurrency from 'lib/format-currency';
 
 export function PendingListItem( {
 	translate,
-	productName,
-	productSlug,
 	paymentType,
 	totalCost,
 	currency,
@@ -29,7 +27,22 @@ export function PendingListItem( {
 	siteTitle,
 	siteDomain,
 	dateCreated,
+	products,
 } ) {
+	let productName = '';
+	let purchaseType = '';
+
+	if ( products.length > 1 ) {
+		productName = 'Multiple Items';
+		purchaseType = 'Various';
+	} else if ( products[ 0 ] ) {
+		productName = getName( products[ 0 ] );
+		purchaseType = getPurchaseType( products[ 0 ] );
+	} else {
+		productName = '';
+		purchaseType = '';
+	}
+
 	return (
 		<React.Fragment>
 			<PurchaseSiteHeader siteId={ siteId } name={ siteTitle } domain={ siteDomain } />
@@ -37,9 +50,7 @@ export function PendingListItem( {
 				<span className="pending-payments__list-item-wrapper">
 					<div className="pending-payments__list-item-details">
 						<div className="pending-payments__list-item-title">{ productName }</div>
-						<div className="pending-payments__list-item-product">
-							{ purchaseType( { product_slug: productSlug } ) }
-						</div>
+						<div className="pending-payments__list-item-product">{ purchaseType }</div>
 						<div className="pending-payments__list-item-payment">
 							{ translate(
 								'Payment of %(totalCost)s was initiated on %(dateCreated)s via %(paymentType)s.',
