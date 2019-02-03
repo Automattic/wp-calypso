@@ -24,6 +24,7 @@ import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import Banner from 'components/banner';
+import { convertToCamelCase } from 'state/data-layer/utils';
 
 export const requestId = userId => `pending-payments/${ userId }`;
 
@@ -37,7 +38,7 @@ const requestPendingPayments = userId => {
 			body: { userId },
 		} ),
 		{
-			fromApi: () => pending => [ [ requestId( userId ), pending ] ],
+			fromApi: () => pending => [ [ requestId( userId ), convertToCamelCase( pending ) ] ],
 			freshness: -Infinity,
 		}
 	);
@@ -124,31 +125,11 @@ PendingPayments.propTypes = {
 export default connect(
 	state => {
 		const userId = getCurrentUserId( state );
-
 		const response = getHttpData( requestId( userId ) );
-
-		const data = Object.values( response.data || [] );
-
-		const pending = [];
-
-		for ( const payment of data ) {
-			pending.push( {
-				orderId: payment.order_id,
-				siteId: payment.site_id,
-				paymentMethod: payment.payment_method,
-				paymentType: payment.payment_type,
-				redirectUrl: payment.redirect_url,
-				totalCost: payment.total_cost,
-				currency: payment.currency,
-				dateCreated: payment.date_created,
-				dateUpdated: payment.date_status_update,
-				products: payment.products,
-			} );
-		}
 
 		return {
 			userId,
-			pendingPayments: pending,
+			pendingPayments: Object.values( response.data || [] ),
 			response: response,
 		};
 	},
