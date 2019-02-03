@@ -10,11 +10,12 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import { PendingListItem } from '../pending-list-item';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 describe( 'PendingListItem', () => {
 	const defaultProps = {
 		translate: x => x,
-		productName: 'WordPress.com Business Plan',
+		products: [ { productName: 'WordPress.com Business Plan', productSlug: PLAN_BUSINESS } ],
 		paymentType: 'Sofort',
 		totalCostDisplay: '€204',
 	};
