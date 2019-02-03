@@ -6521,9 +6521,9 @@
 			"integrity": "sha512-gYCwo7kh5S3IDyZPLZf6hSS0MnZT8QmJFqYvbqlDZSbwdZlY6QZWxJ4i/6UhITOJ4XzyI647Bm2MXKCLqnJ4nQ=="
 		},
 		"emoji-regex": {
-			"version": "6.5.1",
-			"resolved": "https://registry.npmjs.org/emoji-regex/-/emoji-regex-6.5.1.tgz",
-			"integrity": "sha512-PAHp6TxrCy7MGMFidro8uikr+zlJJKJ/Q6mm2ExZ7HwkyR9lSVFfE3kt36qcwa24BQL7y0G9axycGjK1A/0uNQ==",
+			"version": "7.0.3",
+			"resolved": "https://registry.npmjs.org/emoji-regex/-/emoji-regex-7.0.3.tgz",
+			"integrity": "sha512-CwBLREIQ7LvYFB0WyRvwhq5N5qPhc6PMjD6bYggFlI5YyDgl+0vxq5VHbMOFqLg7hfWzmu8T5Z1QofhmTIhItA==",
 			"dev": true
 		},
 		"emoji-text": {
@@ -7119,17 +7119,17 @@
 			"dev": true
 		},
 		"eslint-plugin-jsx-a11y": {
-			"version": "6.1.2",
-			"resolved": "https://registry.npmjs.org/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.1.2.tgz",
-			"integrity": "sha512-7gSSmwb3A+fQwtw0arguwMdOdzmKUgnUcbSNlo+GjKLAQFuC2EZxWqG9XHRI8VscBJD5a8raz3RuxQNFW+XJbw==",
+			"version": "6.2.1",
+			"resolved": "https://registry.npmjs.org/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.2.1.tgz",
+			"integrity": "sha512-cjN2ObWrRz0TTw7vEcGQrx+YltMvZoOEx4hWU8eEERDnBIU00OTq7Vr+jA7DFKxiwLNv4tTh5Pq2GUNEa8b6+w==",
 			"dev": true,
 			"requires": {
 				"aria-query": "^3.0.0",
 				"array-includes": "^3.0.3",
 				"ast-types-flow": "^0.0.7",
-				"axobject-query": "^2.0.1",
+				"axobject-query": "^2.0.2",
 				"damerau-levenshtein": "^1.0.4",
-				"emoji-regex": "^6.5.1",
+				"emoji-regex": "^7.0.2",
 				"has": "^1.0.3",
 				"jsx-ast-utils": "^2.0.1"
 			}
