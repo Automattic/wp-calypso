@@ -39,7 +39,7 @@
 }
 
 body {
-	color: $gray-dark;
+	color: var( --color-text );
 	-webkit-font-smoothing: subpixel-antialiased;
 }
 
@@ -263,7 +263,7 @@ textarea {
 				.form-control {
 					margin: 0;
 					padding: 7px 14px;
-					color: $gray-dark;
+					color: var( --color-text );
 					font-size: 16px;
 					line-height: 1.5;
 					border: 1px solid $gray-lighten-20;
@@ -301,7 +301,7 @@ textarea {
 
 				// Error label below each field
 				.text-danger {
-					color: $alert-red;
+					color: var( --color-error );
 					margin: 0;
 					padding: 4px 0;
 				}
@@ -345,7 +345,7 @@ textarea {
 			border-color: $gray-lighten-20;
 			border-style: solid;
 			border-width: 1px 1px 2px;
-			color: $gray-dark;
+			color: var( --color-text );
 			cursor: pointer;
 			display: inline-block;
 			margin: 0;
@@ -401,7 +401,7 @@ textarea {
 		font-size: 14px;
 		margin-right: 0;
 		border-radius: 8px;
-		background: $alert-yellow;
+		background: var( --color-warning );
 		border-color: transparent;
 		color: $white;
 		a {
@@ -697,7 +697,7 @@ body > .ui-select-bootstrap.open {
 
 /* Mark invalid Bootstrap */
 .ui-select-bootstrap.ng-dirty.ng-invalid > button.btn.ui-select-match {
-	border-color: $alert-red;
+	border-color: var( --color-error );
 }
 
 /* Handle up direction Bootstrap */

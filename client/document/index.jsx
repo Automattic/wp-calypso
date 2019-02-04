@@ -80,11 +80,13 @@ class Document extends React.Component {
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
 				: '' );
 
+		const isIframe = config.isEnabled( 'calypsoify/iframe' ) && sectionName === 'gutenberg-editor';
+
 		return (
 			<html
 				lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
+				className={ classNames( { 'is-fluid-width': isFluidWidth, 'is-iframe': isIframe } ) }
 			>
 				<Head
 					title={ head.title }
@@ -226,11 +228,12 @@ class Document extends React.Component {
 					/>
 					<script
 						nonce={ inlineScriptNonce }
-						type="text/javascript"
 						dangerouslySetInnerHTML={ {
 							__html: `
-							if ( 'serviceWorker' in navigator ) {
-								navigator.serviceWorker.register( '/service-worker.js' );
+							if ('serviceWorker' in navigator) {
+								window.addEventListener('load', function() {
+									navigator.serviceWorker.register('/service-worker.js');
+								});
 							}
 						 `,
 						} }

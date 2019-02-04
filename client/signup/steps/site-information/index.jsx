@@ -128,7 +128,7 @@ export class SiteInformation extends Component {
 			>
 				<Card>
 					<form>
-						{ formFields.map( fieldName => {
+						{ formFields.map( ( fieldName, idx ) => {
 							const fieldTexts = this.getFieldTexts( fieldName );
 							const fieldIdentifier = `site-information__${ fieldName }`;
 							return (
@@ -149,6 +149,7 @@ export class SiteInformation extends Component {
 											placeholder={ fieldTexts.fieldPlaceholder }
 											onChange={ this.handleInputChange }
 											value={ this.state[ fieldName ] }
+											autoFocus={ idx === 0 } // eslint-disable-line jsx-a11y/no-autofocus
 										/>
 										{ ! hasMultipleFieldSets && this.renderSubmitButton() }
 									</FormFieldset>

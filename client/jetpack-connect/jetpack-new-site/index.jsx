@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +18,7 @@ import SiteUrlInput from '../site-url-input';
 import WordPressLogo from 'components/wordpress-logo';
 import { cleanUrl } from '../utils';
 import { persistSession } from '../persistence-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
 
 class JetpackNewSite extends Component {
 	constructor() {
@@ -34,6 +33,7 @@ class JetpackNewSite extends Component {
 	};
 
 	componentDidMount() {
+		this.props.loadTrackingTool( 'HotJar' );
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_view' );
 	}
 
@@ -153,5 +153,8 @@ class JetpackNewSite extends Component {
 
 export default connect(
 	null,
-	{ recordTracksEvent }
+	{
+		loadTrackingTool,
+		recordTracksEvent,
+	}
 )( localize( JetpackNewSite ) );

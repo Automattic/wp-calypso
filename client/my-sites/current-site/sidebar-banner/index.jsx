@@ -16,6 +16,11 @@ import Gridicon from 'gridicons';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class SidebarBanner extends Component {
 	static defaultProps = {
 		className: '',

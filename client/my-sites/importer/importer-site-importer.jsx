@@ -23,6 +23,7 @@ class ImporterSiteImporter extends React.PureComponent {
 		// TODO: we could move this to the component itself. Here were trying to stick to a generalisation
 		// that doesn't really apply for this importer - we don't upload anything as such.
 		uploadDescription: this.props.translate( 'Type your existing site URL to start the import.' ),
+		engine: 'wix',
 	};
 
 	static propTypes = {

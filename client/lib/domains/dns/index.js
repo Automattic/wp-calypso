@@ -44,7 +44,8 @@ function validateField( { name, value, type, domainName } ) {
 		case 'weight':
 		case 'aux':
 		case 'port':
-			return value.toString().match( /^\d{1,5}$/ );
+			const intValue = parseInt( value, 10 );
+			return intValue >= 0 && intValue <= 65535;
 		case 'service':
 			return value.match( /^[^\s\.]+$/ );
 		default:

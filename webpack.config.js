@@ -19,6 +19,7 @@ const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
+const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 
 /**
  * Internal dependencies
@@ -48,7 +49,9 @@ const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 class BuildCustomPropertiesCssPlugin {
 	apply( compiler ) {
 		compiler.hooks.compile.tap( 'BuildCustomPropertiesCssPlugin', () =>
-			execSync( 'node bin/build-custom-properties-css.js' )
+			execSync( 'node ' + path.join( __dirname, 'bin', 'build-custom-properties-css.js' ), {
+				cwd: __dirname,
+			} )
 		);
 	}
 }
@@ -163,7 +166,11 @@ const wordpressExternals = ( context, request, callback ) =>
  *
  * @return {object}                                  webpack config
  */
-function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false } = {} ) {
+function getWebpackConfig( {
+	cssFilename,
+	externalizeWordPressPackages = false,
+	preserveCssCustomProperties = true,
+} = {} ) {
 	cssFilename =
 		cssFilename ||
 		( isDevelopment || calypsoEnv === 'desktop' ? '[name].css' : '[name].[chunkhash].css' );
@@ -250,7 +257,16 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 								importLoaders: 2,
 							},
 						},
-						'postcss-loader',
+						{
+							loader: 'postcss-loader',
+							options: {
+								config: {
+									ctx: {
+										preserveCssCustomProperties,
+									},
+								},
+							},
+						},
 						{
 							loader: 'sass-loader',
 							options: {
@@ -348,10 +364,14 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						reasons: shouldEmitStatsWithReasons,
 						optimizationBailout: false,
 						chunkOrigins: false,
+						chunkGroups: true,
 					},
 				} ),
 			shouldEmitStats && new webpack.ProgressPlugin( createProgressHandler() ),
 			new BuildCustomPropertiesCssPlugin(),
+			new MomentTimezoneDataPlugin( {
+				startYear: 2000,
+			} ),
 		] ),
 		externals: _.compact( [
 			externalizeWordPressPackages && wordpressExternals,

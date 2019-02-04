@@ -97,14 +97,14 @@
 	}
 
 	&.error {
-		color: $alert-red;
+		color: var( --color-error );
 		a {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 		.packages__packages-row-icon .gridicon {
 			background-color: unset;
 			border-radius: unset;
-			fill: $alert-red;
+			fill: var( --color-error );
 			padding: unset;
 			margin-left: -1px;
 		}

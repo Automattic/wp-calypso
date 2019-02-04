@@ -31,6 +31,7 @@ import {
 	requestSitePost,
 } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
+import CalypsoifyIframe from './calypsoify-iframe';
 
 const debug = debugFactory( 'calypso:gutenberg:controller' );
 
@@ -142,7 +143,7 @@ export const redirect = ( { store: { getState } }, next ) => {
 	return page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
 };
 
-export const post = async ( context, next ) => {
+export const post = ( context, next ) => {
 	//see post-editor/controller.js for reference
 
 	const uniqueDraftKey = uniqueId( 'gutenberg-draft-' );
@@ -151,7 +152,8 @@ export const post = async ( context, next ) => {
 	const isDemoContent = ! postId && has( context.query, 'gutenberg-demo' );
 	const duplicatePostId = get( context, 'query.copy', null );
 
-	const makeEditor = import( './init' ).then( ( { initGutenberg } ) => {
+	const makeEditor = import( /* webpackChunkName: "gutenberg-init" */ './init' ).then( module => {
+		const { initGutenberg } = module;
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const userId = getCurrentUserId( state );
@@ -195,7 +197,11 @@ export const post = async ( context, next ) => {
 		failure: () => <div>Couldn't load everything - try hitting reload in your browser…</div>,
 	} );
 
-	context.primary = <EditorLoader />;
+	if ( config.isEnabled( 'calypsoify/iframe' ) ) {
+		context.primary = <CalypsoifyIframe postId={ postId } postType={ postType } />;
+	} else {
+		context.primary = <EditorLoader />;
+	}
 
 	next();
 };

@@ -3,6 +3,9 @@ export const siteVerticalSchema = {
 	type: 'object',
 	additionalProperties: false,
 	properties: {
+		id: {
+			type: 'string',
+		},
 		isUserInput: {
 			type: 'boolean',
 		},

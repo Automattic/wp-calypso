@@ -19,6 +19,11 @@ import FormTextInput from 'components/forms/form-text-input';
 import ScreenReaderText from 'components/screen-reader-text';
 import MediaActions from 'lib/media/actions';
 
+/**
+ * Style dependencies
+ */
+import './upload-url.scss';
+
 class MediaLibraryUploadUrl extends Component {
 	static propTypes = {
 		className: PropTypes.string,

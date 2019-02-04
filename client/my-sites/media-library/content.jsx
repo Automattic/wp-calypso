@@ -37,6 +37,11 @@ import { pauseGuidedTour, resumeGuidedTour } from 'state/ui/guided-tours/actions
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { reduxDispatch } from 'lib/redux-bridge';
 
+/**
+ * Style dependencies
+ */
+import './content.scss';
+
 class MediaLibraryContent extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,
@@ -135,6 +140,12 @@ class MediaLibraryContent extends React.Component {
 						i18nOptions
 					);
 					break;
+				case MediaValidationErrors.SERVICE_AUTH_FAILED:
+					message = this.getAuthFailMessageForSource();
+					status = 'is-warning';
+					tryAgain = false;
+					break;
+
 				case MediaValidationErrors.SERVICE_FAILED:
 					message = translate( 'We are unable to retrieve your full media library.' );
 					tryAgain = true;
@@ -155,6 +166,19 @@ class MediaLibraryContent extends React.Component {
 				</Notice>
 			);
 		} );
+	}
+
+	getAuthFailMessageForSource() {
+		const { translate, source } = this.props;
+
+		if ( source === 'google_photos' ) {
+			return translate(
+				'We are moving to a new and faster Photos from Google service. Please reconnect to continue accessing your photos.'
+			);
+		}
+
+		// Generic message. Nothing should use this, but just in case.
+		return translate( 'Your service has been disconnected. Please reconnect to continue.' );
 	}
 
 	renderTryAgain() {

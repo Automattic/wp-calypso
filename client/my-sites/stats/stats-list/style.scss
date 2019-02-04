@@ -560,13 +560,13 @@ ul.module-content-list-item-action-submenu {
 		// Hover state
 		@include breakpoint( '>480px' ) {
 			&:hover {
-				color: tint( $alert-red, 30% );
+				color: var( --color-error-300 );
 			}
 		}
 
 		// Focus state
 		&:focus {
-			color: tint( $alert-red, 30% );
+			color: var( --color-error-300 );
 		}
 	}
 }

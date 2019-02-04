@@ -26,7 +26,7 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import Subscriptions from './subscriptions';
 import wrapSettingsForm from './wrap-settings-form';
-import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import JetpackModuleToggle from './jetpack-module-toggle';
@@ -83,8 +83,8 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	commentDisplaySettings() {
-		const { isJetpack, jetpackSettingsUISupported } = this.props;
-		if ( ! isJetpack || ! jetpackSettingsUISupported ) {
+		const { isJetpack } = this.props;
+		if ( ! isJetpack ) {
 			return null;
 		}
 
@@ -584,7 +584,6 @@ class SiteSettingsFormDiscussion extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			isJetpack,
-			jetpackSettingsUISupported,
 			translate,
 		} = this.props;
 		return (
@@ -614,7 +613,7 @@ class SiteSettingsFormDiscussion extends Component {
 					{ this.commentBlacklistSettings() }
 				</Card>
 
-				{ isJetpack && jetpackSettingsUISupported && (
+				{ isJetpack && (
 					<div>
 						<QueryJetpackModules siteId={ siteId } />
 
@@ -639,14 +638,12 @@ const connectComponent = connect( state => {
 	const siteSlug = getSelectedSiteSlug( state );
 
 	const isJetpack = isJetpackSite( state, siteId );
-	const jetpackSettingsUISupported = siteSupportsJetpackSettingsUi( state, siteId );
 	const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
 
 	return {
 		siteId,
 		siteSlug,
 		isJetpack,
-		jetpackSettingsUISupported,
 		isLikesModuleActive,
 	};
 } );

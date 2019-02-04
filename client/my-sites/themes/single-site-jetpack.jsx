@@ -149,9 +149,7 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 export default connect( ( state, { siteId, tier } ) => {
 	const isMultisite = isJetpackSiteMultiSite( state, siteId );
 	const showWpcomThemesList =
-		config.isEnabled( 'manage/themes/upload' ) &&
-		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) &&
-		! isMultisite;
+		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) && ! isMultisite;
 	let emptyContent = null;
 	if ( showWpcomThemesList ) {
 		const siteQuery = getLastThemeQuery( state, siteId );

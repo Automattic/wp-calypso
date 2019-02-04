@@ -1,9 +1,8 @@
-
 .login {
 	&.is-jetpack {
 		.button.is-primary {
-			background-color: $green-jetpack;
-			border-color: darken( $green-jetpack, 5% );
+			background-color: var( --color-jetpack );
+			border-color: var( --color-jetpack-dark );
 		}
 	}
 }
@@ -27,7 +26,7 @@
 		margin-bottom: 20px;
 		transition: none;
 
-		/*rtl:ignore*/
+		/*!rtl:ignore*/
 		direction: ltr;
 
 		&.is-error {
@@ -46,8 +45,6 @@
 }
 
 .login__form-action {
-	margin-top: 10px;
-	overflow: auto;
 
 	button {
 		width: 100%;
@@ -67,6 +64,10 @@
 	margin-bottom: 24px;
 	margin-top: 16px;
 	text-align: center;
+
+	body.is-section-signup & {
+		color: var( --color-white );
+	}
 }
 
 .login__form-terms,

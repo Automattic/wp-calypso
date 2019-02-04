@@ -18,6 +18,7 @@ const initialState = {
 	name: '',
 	slug: '',
 	preview: '',
+	id: '',
 };
 
 export default createReducer(

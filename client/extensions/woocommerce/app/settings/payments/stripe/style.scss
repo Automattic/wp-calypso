@@ -50,7 +50,7 @@
 				padding: 3px 8px;
 
 				&.account-activated {
-					background-color: $alert-green;
+					background-color: var( --color-success );
 				}
 
 				&.account-not-activated {

@@ -105,15 +105,15 @@
 	border-bottom: 2px solid var( --color-accent );
 
 	.is-personal & {
-		border-bottom: 2px solid var( --color-warning );
+		border-bottom: 2px solid var( --color-plan-personal );
 	}
 
 	.is-premium & {
-		border-bottom: 2px solid $alert-green;
+		border-bottom: 2px solid var( --color-plan-premium );
 	}
 
 	.is-business & {
-		border-bottom: 2px solid $alert-purple;
+		border-bottom: 2px solid var( --color-plan-business );
 	}
 }
 
@@ -128,7 +128,7 @@
 		padding: 4px;
 		border-radius: 50%;
 		background: var( --color-accent );
-		fill: $white;
+		fill: var( --color-white );
 	}
 
 	.gridicons-themes {
@@ -282,7 +282,7 @@
 	border-top: solid 1px var( --color-neutral-0 );
 	margin: 0 auto;
 	padding: 16px;
-	background: $white;
+	background: var( --color-white );
 
 	@include breakpoint( '>480px' ) {
 		padding: 16px 24px;

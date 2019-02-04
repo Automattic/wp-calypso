@@ -104,6 +104,7 @@ class SubmitButton extends Component {
 						className={ buttonClasses }
 						style={ buttonStyle }
 						keepPlaceholderOnFocus
+						formattingControls={ [] }
 					/>
 				</div>
 				<InspectorControls>

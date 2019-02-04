@@ -7,24 +7,24 @@
 	&.is-favorable {
 		.delta__icon {
 			&.gridicon {
-				fill: $alert-green;
+				fill: var( --color-success );
 			}
 		}
 		.delta__labels {
 			.delta__value {
-				color: $alert-green;
+				color: var( --color-success );
 			}
 		}
 	}
 	&.is-unfavorable {
 		.delta__icon {
 			&.gridicon {
-				fill: $alert-red;
+				fill: var( --color-error );
 			}
 		}
 		.delta__labels {
 			.delta__value {
-				color: $alert-red;
+				color: var( --color-error );
 			}
 		}
 	}

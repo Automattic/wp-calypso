@@ -12,7 +12,10 @@
   ],
   "beta": [
     "mailchimp",
-    "giphy",
-    "vr"
+    "gif",
+    "vr",
+    "contact-info",
+    "wordads",
+    "videopress"
   ]
 }

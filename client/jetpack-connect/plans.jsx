@@ -33,7 +33,7 @@ import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 import { JPC_PATH_PLANS } from './constants';
 import { mc } from 'lib/analytics';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -55,6 +55,7 @@ class Plans extends Component {
 	redirecting = false;
 
 	componentDidMount() {
+		this.props.loadTrackingTool( 'HotJar' );
 		this.maybeRedirect();
 		if ( ! this.redirecting ) {
 			this.props.recordTracksEvent( 'calypso_jpc_plans_view', {
@@ -258,6 +259,7 @@ export default connect(
 	},
 	{
 		completeFlow,
+		loadTrackingTool,
 		recordTracksEvent,
 	}
 )( localize( Plans ) );

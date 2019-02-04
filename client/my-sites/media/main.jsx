@@ -31,6 +31,11 @@ import accept from 'lib/accept';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import searchUrl from 'lib/search-url';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Media extends Component {
 	static propTypes = {
 		selectedSite: PropTypes.object,
@@ -48,9 +53,14 @@ class Media extends Component {
 		source: '',
 	};
 
+	containerRef = React.createRef();
+
 	componentDidMount() {
+		/* We need to rerender the inner `<MediaLibrary>` with the `containerWidth` that's
+		 * available only after the container gets actually rendered. */
+		/* eslint-disable-next-line react/no-did-mount-set-state */
 		this.setState( {
-			containerWidth: this.refs.container.clientWidth,
+			containerWidth: this.containerRef.current.clientWidth,
 		} );
 	}
 
@@ -350,7 +360,7 @@ class Media extends Component {
 	render() {
 		const { selectedSite: site, mediaId, previousRoute, translate } = this.props;
 		return (
-			<div ref="container" className="main main-column media" role="main">
+			<div ref={ this.containerRef } className="main main-column media" role="main">
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				<SidebarNavigation />

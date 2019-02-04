@@ -258,29 +258,6 @@
 	}
 }
 
-.inline-help__richresult__dialog.dialog.card {
-	width: 80vw;
-	max-width: 850px;
-}
-
-.inline-help__richresult__dialog__video {
-	position: relative;
-	padding-bottom: 56.25%;
-	padding-top: 30px;
-	height: 0;
-	overflow: hidden;
-
-	iframe,
-	object,
-	embed {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	}
-}
-
 .inline-help__forum-view {
 	text-align: left;
 }
@@ -332,6 +309,7 @@
 
 	.button.is-borderless.inline-help__more-button,
 	.button.is-borderless.inline-help__contact-button,
+	.button.is-borderless.inline-help__back-to-help-button,
 	.button.is-borderless.inline-help__cancel-button {
 		text-align: left;
 		width: 50%;
@@ -366,7 +344,8 @@
 	}
 
 	// Hide/Show buttons as needed
-	.inline-help__cancel-button {
+	.inline-help__cancel-button,
+	.inline-help__back-to-help-button {
 		display: none;
 	}
 
@@ -378,6 +357,17 @@
 
 		.inline-help__cancel-button {
 			display: block;
+		}
+	}
+
+	.is-onboarding-welcome-active & {
+		.inline-help__cancel-button,
+		.inline-help__more-button {
+			display: none;
+		}
+		.inline-help__contact-button,
+		.inline-help__back-to-help-button {
+			display: inline-block;
 		}
 	}
 }

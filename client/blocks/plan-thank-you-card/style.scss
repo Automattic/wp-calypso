@@ -4,19 +4,19 @@
 
 .plan-thank-you-card.is-personal-plan {
 	.thank-you-card__header .plan-icon .plan-icon__personal-0 {
-		fill: darken( $alert-yellow, 10 );
+		fill: var( --color-plan-personal );
 	}
 }
 
 .plan-thank-you-card.is-premium-plan {
 	.thank-you-card__header .plan-icon .plan-icon__premium-0 {
-		fill: darken( $alert-green, 10 );
+		fill: var( --color-plan-premium );
 	}
 }
 
 .plan-thank-you-card.is-business-plan {
-	.thank-you-card__header .plan-icon .plan-icon__business-0 {
-		fill: darken( $alert-purple, 10 );
+	.thank-you-card__header .plan-icon .plan-icon__business {
+		fill: var( --color-plan-business );
 	}
 }
 
@@ -27,13 +27,13 @@
 	}
 
 	.thank-you-card {
-		background: $white;
+		background: var( --color-white );
 		color: var( --color-neutral-700 );
 	}
 
 	.thank-you-card__header {
 		background: var( --color-accent );
-		color: $white;
+		color: var( --color-white );
 	}
 
 	.thank-you-card__price {
@@ -46,7 +46,7 @@
 
 	.thank-you-card__button {
 		background: var( --color-neutral-700 );
-		color: $white;
+		color: var( --color-white );
 		border: 0;
 	}
 }

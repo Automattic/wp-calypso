@@ -34,6 +34,11 @@ export const EVENT_TYPES = {
 	INTERNAL_NOTE: 'INTERNAL_NOTE',
 
 	/**
+	 * A state in which label purchases are still pending.
+	 */
+	LABEL_PURCHASING: 'LABEL_PURCHASING',
+
+	/**
 	 * "Shipping label purchased" event, which will include tracking number, buttons to refund & reprint, and other info
 	 */
 	LABEL_PURCHASED: 'LABEL_PURCHASED',
@@ -136,8 +141,9 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 		const labels = getLabels( state, orderId, siteId );
 		const renderableLabels = filter(
 			labels,
-			label => 'PURCHASED' === label.status || 'ANONYMIZED' === label.status
+			label => -1 !== [ 'PURCHASED', 'ANONYMIZED', 'PURCHASE_IN_PROGRESS' ].indexOf( label.status )
 		);
+
 		renderableLabels.forEach( ( label, index, allLabels ) => {
 			const labelIndex = allLabels.length - 1 - index;
 			if ( label.refund ) {
@@ -175,6 +181,18 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 						} );
 				}
 			}
+
+			if ( 'PURCHASE_IN_PROGRESS' === label.status ) {
+				return events.push( {
+					key: label.label_id,
+					type: EVENT_TYPES.LABEL_PURCHASING,
+					labelIndex,
+					labelId: label.label_id,
+					serviceName: label.service_name,
+					carrierId: label.carrier_id,
+				} );
+			}
+
 			events.push( {
 				key: label.label_id,
 				type: EVENT_TYPES.LABEL_PURCHASED,

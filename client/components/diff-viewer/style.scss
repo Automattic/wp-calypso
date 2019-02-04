@@ -42,11 +42,11 @@
 	}
 
 	& del {
-		background-color: lighten( $alert-red, 20% );
+		background-color: var( --color-error-200 );
 		text-decoration: none;
 	}
 
 	& ins {
-		background-color: lighten( $alert-green, 20% );
+		background-color: var( --color-success-200 );
 	}
 }

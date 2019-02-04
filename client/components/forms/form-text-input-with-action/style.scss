@@ -13,19 +13,19 @@
 		}
 
 		&.is-valid {
-			box-shadow: 0 0 0 2px lighten( $alert-green, 35 );
+			box-shadow: 0 0 0 2px var( --color-success-50 );
 		}
 
 		&.is-valid:hover {
-			box-shadow: 0 0 0 2px lighten( $alert-green, 25 );
+			box-shadow: 0 0 0 2px var( --color-success-50 );
 		}
 
 		&.is-error {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 35 );
+			box-shadow: 0 0 0 2px var( --color-error-50 );
 		}
 
 		&.is-error:hover {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 25 );
+			box-shadow: 0 0 0 2px var( --color-error-100 );
 		}
 	}
 
@@ -50,7 +50,7 @@
 	}
 
 	&.is-valid:hover {
-		border-color: darken( $alert-green, 10 );
+		border-color: var( --color-success-400 );
 	}
 
 	&.is-error {
@@ -58,7 +58,7 @@
 	}
 
 	&.is-error:hover {
-		border-color: darken( $alert-red, 10 );
+		border-color: var( --color-error-500 );
 	}
 }
 

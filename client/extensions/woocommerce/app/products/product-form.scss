@@ -459,7 +459,7 @@
 		top: 0;
 		background: radial-gradient(
 			ellipse at center,
-			rgba( $gray-dark, 0.125 ) 0%,
+			rgba( var( --color-neutral-700-rgb ), 0.125 ) 0%,
 			rgba( $white, 0 ) 75%,
 			rgba( $white, 0 ) 90%
 		);
@@ -604,7 +604,7 @@
 	cursor: pointer;
 	color: var( --color-primary );
 	&:hover {
-		color: $blue-light;
+		color: var( --color-primary-100 );
 	}
 }
 

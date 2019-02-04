@@ -1,13 +1,12 @@
 /** @format */
 export default {
 	improvedOnboarding: {
-		datestamp: '20181023',
+		datestamp: '20190131',
 		variations: {
-			main: 90,
-			onboarding: 10,
+			main: 50,
+			onboarding: 50,
 		},
 		defaultVariation: 'main',
-		localeTargets: 'any',
 	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -73,20 +72,11 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	jetpackFreePlanButtonPosition: {
-		datestamp: '20181212',
-		variations: {
-			locationTop: 50,
-			locationBottom: 50,
-		},
-		defaultVariation: 'locationBottom',
-		allowExistingUsers: true,
-	},
 	showConciergeSessionUpsell: {
 		datestamp: '20181214',
 		variations: {
-			skip: 90,
-			show: 10,
+			skip: 100,
+			show: 0,
 		},
 		defaultVariation: 'skip',
 		allowExistingUsers: true,
@@ -94,8 +84,8 @@ export default {
 	showConciergeSessionUpsellNonGSuite: {
 		datestamp: '20181228',
 		variations: {
-			skip: 90,
-			show: 10,
+			skip: 50,
+			show: 50,
 		},
 		defaultVariation: 'skip',
 		allowExistingUsers: true,
@@ -103,24 +93,24 @@ export default {
 	builderReferralStatsNudge: {
 		datestamp: '20181218',
 		variations: {
-			builderReferralBanner: 50,
-			googleMyBusinessBanner: 50,
+			builderReferralBanner: 25,
+			googleMyBusinessBanner: 75,
 		},
 		defaultVariation: 'googleMyBusinessBanner',
 	},
 	privateByDefault: {
 		datestamp: '20181217',
 		variations: {
-			private: 50,
-			public: 50,
+			private: 0,
+			public: 100,
 		},
 		defaultVariation: 'public',
 	},
 	builderReferralThemesBanner: {
 		datestamp: '20181218',
 		variations: {
-			builderReferralBanner: 10,
-			original: 90,
+			builderReferralBanner: 25,
+			original: 75,
 		},
 		defaultVariation: 'original',
 	},
@@ -135,8 +125,8 @@ export default {
 	gSuitePlan: {
 		datestamp: '20190117',
 		variations: {
-			basic: 99,
-			business: 1,
+			basic: 90,
+			business: 10,
 		},
 		defaultVariation: 'basic',
 	},

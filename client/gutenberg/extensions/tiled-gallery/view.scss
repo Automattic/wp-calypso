@@ -3,7 +3,7 @@
 $tiled-gallery-max-column-count: 20;
 
 .wp-block-jetpack-tiled-gallery {
-	margin: 0 auto;
+	margin: 0 auto 1.5em;
 
 	&.is-style-circle .tiled-gallery__item img {
 		border-radius: 50%;

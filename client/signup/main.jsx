@@ -186,6 +186,10 @@ class Signup extends React.Component {
 		this.checkForCartItems( signupDependencies );
 	}
 
+	componentWillUnmount() {
+		this.signupFlowController.cleanup();
+	}
+
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		this.recordSignupStart();
@@ -193,7 +197,6 @@ class Signup extends React.Component {
 
 	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
 		const filteredDestination = getDestination( destination, dependencies, this.props.flowName );
-
 		return this.handleFlowComplete( dependencies, filteredDestination );
 	};
 
@@ -265,7 +268,7 @@ class Signup extends React.Component {
 		const fulfilledSteps = [];
 
 		// `vertical` query parameter
-		if ( 'undefined' !== typeof vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
+		if ( vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
 			debug( 'From query string: vertical = %s', vertical );
 
 			const siteTopicStepName = 'site-topic';
@@ -296,7 +299,7 @@ class Signup extends React.Component {
 
 		//`site_type` query parameter
 		const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
-		if ( 'undefined' !== typeof siteTypeValue ) {
+		if ( siteTypeValue ) {
 			debug( 'From query string: site_type = %s', siteType );
 			debug( 'Site type value = %s', siteTypeValue );
 

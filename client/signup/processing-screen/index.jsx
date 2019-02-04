@@ -137,7 +137,13 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	showPreviewAfterLogin = () => {
-		this.props.loginHandler( { redirectTo: `/view/${ this.state.siteSlug }` } );
+		const redirectTo = [ 'onboarding', 'onboarding-dev', 'onboarding-for-business' ].includes(
+			this.props.flowName
+		)
+			? `/view/${ this.state.siteSlug }?welcome`
+			: `/checklist/${ this.state.siteSlug }`;
+
+		this.props.loginHandler( { redirectTo } );
 	};
 
 	shouldShowChecklist() {
@@ -148,9 +154,14 @@ export class SignupProcessingScreen extends Component {
 		return (
 			config.isEnabled( 'onboarding-checklist' ) &&
 			'store' !== designType &&
-			[ 'main', 'onboarding', 'onboarding-dev', 'desktop', 'subdomain' ].includes(
-				this.props.flowName
-			)
+			[
+				'main',
+				'onboarding',
+				'onboarding-dev',
+				'onboarding-for-business',
+				'desktop',
+				'subdomain',
+			].includes( this.props.flowName )
 		);
 	}
 

@@ -10,64 +10,51 @@ import { get } from 'lodash';
 export const siteStyleOptions = {
 	business: [
 		{
-			description: i18n.translate(
-				'A bright, versatile canvas, offering a crisp reading experience for visitors.',
-				{
-					comment: 'A description of a WordPress theme style.',
-				}
-			),
+			description: i18n.translate( 'Simple, yet sophisticated, with subtle, elegant typography.', {
+				comment: 'A description of a WordPress theme style.',
+			} ),
 			id: 'default',
-			label: 'Radcliffe Perfect',
-			theme: 'pub/radcliffe-2',
+			label: 'Professional',
+			theme: 'pub/professional-business',
 			font: {
 				name: 'Crimson Text',
-				// variations in fvd format: https://github.com/typekit/fvd
-				variations: [ 'n4', 'n7' ],
+				variations: [ 'n4', 'n7' ], // variations in fvd format: https://github.com/typekit/fvd
 			},
 		},
 		{
-			description: i18n.translate(
-				'The power of minimalism, embodied in a clean black-and-white design.',
-				{
-					comment: 'A description of a WordPress theme style.',
-				}
-			),
+			description: i18n.translate( 'A gutenberg-ready business variation.', {
+				comment: 'A description of a WordPress theme style.',
+			} ),
+			id: 'sophisticated',
+			label: 'Sophisticated',
+			theme: 'pub/professional-business', // this will be 'pub/sophisticated-business'
+			font: {
+				name: 'Poppins',
+				variations: [ 'n4', 'n7' ], // variations in fvd format: https://github.com/typekit/fvd
+			},
+		},
+		{
+			description: i18n.translate( 'A gutenberg-ready business variation.', {
+				comment: 'A description of a WordPress theme style.',
+			} ),
+			id: 'friendly',
+			label: 'Friendly',
+			theme: 'pub/professional-business', // this will be 'pub/friendly-business'
+			font: {
+				name: 'Rubik',
+				variations: [ 'n4', 'n7' ], // variations in fvd format: https://github.com/typekit/fvd
+			},
+		},
+		{
+			description: i18n.translate( 'A gutenberg-ready business variation.', {
+				comment: 'A description of a WordPress theme style.',
+			} ),
 			id: 'modern',
-			label: 'Modern Bauhaus',
-			theme: 'pub/radcliffe-2',
+			label: 'Modern',
+			theme: 'pub/professional-business', // this will be 'pub/modern-business'
 			font: {
-				name: 'Work Sans',
-				variations: [ 'n4', 'n7' ],
-			},
-		},
-		{
-			description: i18n.translate(
-				'Timeless, simple elegance, with classic fonts and a touch of sepia.',
-				{
-					comment: 'A description of a WordPress theme style.',
-				}
-			),
-			id: 'vintage',
-			label: 'Vintage Paper',
-			theme: 'pub/radcliffe-2',
-			font: {
-				name: 'Libre Baskerville',
-				variations: [ 'n4', 'n7' ],
-			},
-		},
-		{
-			description: i18n.translate(
-				'For an extra layer of playfulness, from bold color palettes to a vibrant font.',
-				{
-					comment: 'A description of a WordPress theme style.',
-				}
-			),
-			id: 'colorful',
-			label: 'Upbeat Pop',
-			theme: 'pub/radcliffe-2',
-			font: {
-				name: 'Alegreya Sans',
-				variations: [ 'n4', 'n7' ],
+				name: 'IBM Plex Sans',
+				variations: [ 'n4', 'n7' ], // variations in fvd format: https://github.com/typekit/fvd
 			},
 		},
 	],

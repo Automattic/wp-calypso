@@ -217,6 +217,10 @@
 
 	--color-wpcom: #{$muriel-blue-500};
 	--color-jetpack: #{$green-jetpack};
+	--color-jetpack-light: #81d677;
+	--color-jetpack-dark: #2e8928;
+	--color-jetpack-400: #57ca53;
+
 	--color-email: #f8f8f8;
 	--color-eventbrite: #ff8000;
 	--color-facebook: #39579a;
@@ -234,6 +238,13 @@
 	--color-twitter: #55acee;
 	--color-whatsapp: #43d854;
 	--color-wordpress-org: #585c60;
+
+	--color-plan-free: #{$muriel-gray-500};
+	--color-plan-blogger: #{$muriel-celadon-500};
+	--color-plan-personal: #{$muriel-hot-blue-500};
+	--color-plan-premium: #{$muriel-yellow-500};
+	--color-plan-business: #{$muriel-orange-500};
+	--color-plan-ecommerce: #{$muriel-hot-purple-500};
 
 	--color-section-nav-item-background-hover: #{$muriel-blue-0};
 	--color-themes-active-text: #{$muriel-blue-0};

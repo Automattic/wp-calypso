@@ -2,6 +2,7 @@
 
 exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
 <SuggestionSearch
+  autoFocus={false}
   id="siteTopic"
   onChange={[Function]}
   placeholder="e.g. Fashion, travel, design, plumber"
@@ -11,6 +12,6 @@ exports[`<SiteVerticalsSuggestionSearch /> should render 1`] = `
       "doo",
     ]
   }
-  value="scooby"
+  value=""
 />
 `;

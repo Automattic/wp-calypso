@@ -175,7 +175,7 @@
 		}
 
 		.gridicon {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 	}
 
@@ -225,7 +225,7 @@
 	}
 
 	.reviews__verified-label {
-		color: $alert-green;
+		color: var( --color-success );
 		display: inline-block;
 		margin-left: 6px;
 		font-weight: normal;
@@ -270,7 +270,7 @@
 		&.reviews__action-approve {
 			&:focus,
 			&:hover {
-				color: $alert-green;
+				color: var( --color-success );
 			}
 		}
 
@@ -279,15 +279,15 @@
 		&.reviews__action-delete {
 			&:focus,
 			&:hover {
-				color: $alert-red;
+				color: var( --color-error );
 			}
 		}
 
 		&.is-approved {
-			color: $alert-green;
+			color: var( --color-success );
 		}
 		&.is-spam {
-			color: $alert-red;
+			color: var( --color-error );
 		}
 		&.is-trash {
 			color: var( --color-neutral-700 );
@@ -387,7 +387,7 @@
 
 		.accessible-focus &:focus {
 			border-color: var( --color-primary );
-			box-shadow: 0 0 0 2px $blue-light;
+			box-shadow: 0 0 0 2px var( --color-primary-100 );
 		}
 	}
 }

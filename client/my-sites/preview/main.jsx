@@ -21,7 +21,11 @@ import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import Gridicon from 'gridicons';
 import Main from 'components/main';
-import { showInlineHelpPopover, showChecklistPrompt } from 'state/inline-help/actions';
+import {
+	showInlineHelpPopover,
+	showChecklistPrompt,
+	showOnboardingWelcomePrompt,
+} from 'state/inline-help/actions';
 import WebPreview from 'components/web-preview';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -60,7 +64,11 @@ class PreviewMain extends React.Component {
 			window.addEventListener( 'resize', this.debouncedUpdateLayout );
 		}
 
-		if ( this.props.help ) {
+		if ( this.props.welcome ) {
+			this.props.showOnboardingWelcomePrompt();
+		}
+
+		if ( this.props.help || this.props.welcome ) {
 			this.props.showInlineHelpPopover();
 		}
 
@@ -195,5 +203,6 @@ export default connect(
 		setLayoutFocus,
 		showInlineHelpPopover,
 		showChecklistPrompt,
+		showOnboardingWelcomePrompt,
 	}
 )( localize( PreviewMain ) );

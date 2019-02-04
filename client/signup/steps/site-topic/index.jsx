@@ -14,7 +14,9 @@ import { connect } from 'react-redux';
 import Button from 'components/button';
 import StepWrapper from 'signup/step-wrapper';
 import FormFieldset from 'components/forms/form-fieldset';
-import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
+import SiteVerticalsSuggestionSearch, {
+	isVerticalSearchPending,
+} from 'components/site-verticals-suggestion-search';
 import { submitSiteVertical, setSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import {
 	getSiteVerticalName,
@@ -58,20 +60,28 @@ class SiteTopicStep extends Component {
 		} );
 	}
 
-	onSiteTopicChange = verticalData => this.props.setSiteVertical( { ...verticalData } );
+	onSiteTopicChange = verticalData => {
+		this.props.setSiteVertical( {
+			isUserInput: verticalData.isUserInputVertical,
+			name: verticalData.verticalName,
+			preview: verticalData.preview,
+			slug: verticalData.verticalSlug,
+			id: verticalData.verticalId,
+		} );
+	};
 
 	onSubmit = event => {
 		event.preventDefault();
 		const { isUserInput, submitSiteTopic, siteTopic, siteSlug } = this.props;
 		submitSiteTopic( {
-			is_user_input_vertical: isUserInput,
-			vertical_name: siteTopic,
-			vertical_slug: siteSlug,
+			isUserInput,
+			name: siteTopic,
+			slug: siteSlug,
 		} );
 	};
 
 	renderContent() {
-		const { translate, siteTopic } = this.props;
+		const { isButtonDisabled, siteTopic, translate } = this.props;
 		return (
 			<div className="site-topic__content">
 				<form onSubmit={ this.onSubmit }>
@@ -79,8 +89,9 @@ class SiteTopicStep extends Component {
 						<SiteVerticalsSuggestionSearch
 							onChange={ this.onSiteTopicChange }
 							initialValue={ siteTopic }
+							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						/>
-						<Button type="submit" disabled={ ! siteTopic } primary>
+						<Button type="submit" disabled={ isButtonDisabled } primary>
 							{ translate( 'Continue' ) }
 						</Button>
 					</FormFieldset>
@@ -124,22 +135,22 @@ class SiteTopicStep extends Component {
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteTopic: ( { is_user_input_vertical, vertical_name, vertical_slug } ) => {
+	submitSiteTopic: ( { isUserInput, name, slug } ) => {
 		const { flowName, goToNextStep, stepName } = ownProps;
 
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
-				value: vertical_slug,
-				is_user_input_vertical,
+				value: slug,
+				is_user_input_vertical: isUserInput,
 			} )
 		);
 
 		dispatch(
 			submitSiteVertical(
 				{
-					isUserInput: is_user_input_vertical,
-					name: vertical_name,
-					slug: vertical_slug,
+					isUserInput,
+					name,
+					slug,
 				},
 				stepName
 			)
@@ -148,25 +159,22 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 		goToNextStep( flowName );
 	},
 
-	setSiteVertical: ( { is_user_input_vertical, preview, vertical_name, vertical_slug } ) =>
-		dispatch(
-			setSiteVertical( {
-				isUserInput: is_user_input_vertical,
-				name: vertical_name,
-				preview,
-				slug: vertical_slug,
-			} )
-		),
+	setSiteVertical: verticalData => dispatch( setSiteVertical( verticalData ) ),
 } );
 
 export default localize(
 	connect(
-		state => ( {
-			siteTopic: getSiteVerticalName( state ),
-			siteSlug: getSiteVerticalSlug( state ),
-			siteType: getSiteType( state ),
-			isUserInput: getSiteVerticalIsUserInput( state ),
-		} ),
+		state => {
+			const siteTopic = getSiteVerticalName( state );
+			const isButtonDisabled = ! siteTopic || isVerticalSearchPending();
+			return {
+				siteTopic,
+				siteSlug: getSiteVerticalSlug( state ),
+				siteType: getSiteType( state ),
+				isUserInput: getSiteVerticalIsUserInput( state ),
+				isButtonDisabled,
+			};
+		},
 		mapDispatchToProps
 	)( SiteTopicStep )
 );
