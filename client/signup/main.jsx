@@ -39,6 +39,7 @@ import DocumentHead from 'components/data/document-head';
 import LocaleSuggestions from 'components/locale-suggestions';
 import SignupProcessingScreen from 'signup/processing-screen';
 import SignupHeader from 'signup/signup-header';
+import QuerySiteDomains from 'components/data/query-site-domains';
 
 // Libraries
 import analytics from 'lib/analytics';
@@ -673,6 +674,7 @@ class Signup extends React.Component {
 						redirectTo={ this.state.redirectTo }
 					/>
 				) }
+				{ this.props.siteId && <QuerySiteDomains siteId={ this.props.siteId } /> }
 			</div>
 		);
 	}
@@ -692,6 +694,7 @@ export default connect(
 			isLoggedIn: isUserLoggedIn( state ),
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 			siteDomains,
+			siteId,
 		};
 	},
 	{
