@@ -22,6 +22,8 @@ import {
 	getSiteVerticalName,
 	getSiteVerticalSlug,
 	getSiteVerticalIsUserInput,
+	getSiteVerticalId,
+	getSiteVerticalParentId,
 } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -67,16 +69,26 @@ class SiteTopicStep extends Component {
 			preview: verticalData.preview,
 			slug: verticalData.verticalSlug,
 			id: verticalData.verticalId,
+			parentId: verticalData.parent,
 		} );
 	};
 
 	onSubmit = event => {
 		event.preventDefault();
-		const { isUserInput, submitSiteTopic, siteTopic, siteSlug } = this.props;
+		const {
+			isUserInput,
+			submitSiteTopic,
+			siteTopic,
+			siteSlug,
+			verticalId,
+			verticalParentId,
+		} = this.props;
 		submitSiteTopic( {
 			isUserInput,
 			name: siteTopic,
 			slug: siteSlug,
+			parentId: verticalParentId,
+			id: verticalId,
 		} );
 	};
 
@@ -135,13 +147,14 @@ class SiteTopicStep extends Component {
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
-	submitSiteTopic: ( { isUserInput, name, slug } ) => {
+	submitSiteTopic: ( { id, isUserInput, name, parentId, slug } ) => {
 		const { flowName, goToNextStep, stepName } = ownProps;
 
 		dispatch(
 			recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
 				value: slug,
 				is_user_input_vertical: isUserInput,
+				parent_id: parentId || id,
 			} )
 		);
 
@@ -173,6 +186,8 @@ export default localize(
 				siteType: getSiteType( state ),
 				isUserInput: getSiteVerticalIsUserInput( state ),
 				isButtonDisabled,
+				verticalId: getSiteVerticalId( state ),
+				verticalParentId: getSiteVerticalParentId( state ),
 			};
 		},
 		mapDispatchToProps

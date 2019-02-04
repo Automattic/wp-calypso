@@ -14,11 +14,12 @@ import { createReducer } from 'state/utils';
 import { siteVerticalSchema } from './schema';
 
 const initialState = {
+	id: '',
 	isUserInput: true,
 	name: '',
+	parentId: '',
 	slug: '',
 	preview: '',
-	id: '',
 };
 
 export default createReducer(
