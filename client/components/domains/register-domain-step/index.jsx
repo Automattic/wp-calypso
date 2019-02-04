@@ -529,7 +529,7 @@ class RegisterDomainStep extends React.Component {
 		this.save();
 
 		const { lastQuery } = this.state;
-		const loadingResults = Boolean( getDomainSuggestionSearch( lastQuery ) );
+		const loadingResults = Boolean( getDomainSuggestionSearch( lastQuery, MIN_QUERY_LENGTH ) );
 
 		const nextState = {
 			availabilityError: null,
