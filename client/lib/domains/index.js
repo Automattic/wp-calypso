@@ -180,9 +180,8 @@ function getFixedDomainSearch( domainName ) {
 	return domainName
 		.trim()
 		.toLowerCase()
-		.replace( /^(https?:\/\/)?(www\.)?/, '' )
-		.replace( /^https?/, '' )
-		.replace( /^www/, '' )
+		.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
+		.replace( /^www[0-9]?\./, '' )
 		.replace( /\/$/, '' )
 		.replace( /_/g, '-' );
 }
