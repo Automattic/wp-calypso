@@ -106,17 +106,19 @@ class AboutStep extends Component {
 
 	setPressableStore = ref => ( this.pressableStore = ref );
 
-	onSiteTopicChange = ( { vertical_id, vertical_name, vertical_slug } ) => {
+	onSiteTopicChange = ( { verticalId, verticalName, verticalSlug } ) => {
 		this.setState( {
-			verticalId: vertical_id,
-			siteTopicValue: vertical_name,
-			siteTopicSlug: vertical_slug,
+			verticalId: verticalId,
+			siteTopicValue: verticalName,
+			siteTopicSlug: verticalSlug,
 		} );
 
-		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { vertical_name } );
+		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', {
+			vertical_name: verticalName,
+		} );
 		this.formStateController.handleFieldChange( {
 			name: 'siteTopic',
-			value: vertical_name,
+			value: verticalName,
 		} );
 	};
 
