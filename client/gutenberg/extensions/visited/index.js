@@ -21,9 +21,7 @@ export const settings = {
 		},
 	},
 	category: 'jetpack',
-	description: __(
-		"Control block visibility depending on how many times they've visited the page."
-	),
+	description: __( 'Control block visibility based on how often a visitor has viewed the page.' ),
 	icon: 'universal-access-alt',
 	keywords: [
 		_x( 'traffic', 'block search term' ),
