@@ -89,7 +89,12 @@ export const Composer = createReactClass( {
 						value={ message }
 					/>
 				</div>
-				<Button primary className="happychat__submit" disabled={ disabled } onClick={ this.sendMessage }>
+				<Button
+					primary
+					className="happychat__submit"
+					disabled={ disabled }
+					onClick={ this.sendMessage }
+				>
 					<svg viewBox="0 0 24 24" width="24" height="24">
 						<path d="M2 21l21-9L2 3v7l15 2-15 2z" />
 					</svg>

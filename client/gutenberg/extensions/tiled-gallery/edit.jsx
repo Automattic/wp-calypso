@@ -208,16 +208,15 @@ class TiledGalleryEdit extends Component {
 				{ controls }
 				<InspectorControls>
 					<PanelBody title={ __( 'Tiled gallery settings' ) }>
-						{ layoutSupportsColumns( layoutStyle ) &&
-							images.length > 1 && (
-								<RangeControl
-									label={ __( 'Columns' ) }
-									value={ columns }
-									onChange={ this.setColumnsNumber }
-									min={ 1 }
-									max={ Math.min( MAX_COLUMNS, images.length ) }
-								/>
-							) }
+						{ layoutSupportsColumns( layoutStyle ) && images.length > 1 && (
+							<RangeControl
+								label={ __( 'Columns' ) }
+								value={ columns }
+								onChange={ this.setColumnsNumber }
+								min={ 1 }
+								max={ Math.min( MAX_COLUMNS, images.length ) }
+							/>
+						) }
 						<SelectControl
 							label={ __( 'Link To' ) }
 							value={ linkTo }
