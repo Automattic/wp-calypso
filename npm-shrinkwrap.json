@@ -15355,8 +15355,8 @@
 			"dev": true
 		},
 		"prettier": {
-			"version": "https://github.com/Automattic/wp-prettier/releases/download/wp-1.15.3/wp-prettier-1.15.3.tgz",
-			"integrity": "sha512-lEqY9fXdbKOhOD09O1PcbgG51jx8UEFgOzOpIUvdRtXLd+juU3vmG6oRdOFplKJovSWqSAKwEwqp0ooZKEid4Q==",
+			"version": "https://github.com/Automattic/wp-prettier/releases/download/wp-1.16.4/wp-prettier-1.16.4.tgz",
+			"integrity": "sha512-6zPssCHOXpHkyI4ZnTAoVTZPV/ivDWDaiyrWqQZm71OnwsL7vcMdEzn3ckDLJgibmxPFQs3nxDdRmI7yX6iW+w==",
 			"dev": true
 		},
 		"pretty-error": {
