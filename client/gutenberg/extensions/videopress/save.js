@@ -5,12 +5,6 @@
  */
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { RichText } from '@wordpress/editor';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { getVideoPressUrlFromGuid } from './util';
 
 const VideoPressSave = CoreVideoSave => ( { attributes } ) => {
 	const { caption, guid } = attributes;
@@ -19,11 +13,10 @@ const VideoPressSave = CoreVideoSave => ( { attributes } ) => {
 		return <CoreVideoSave attributes={ attributes } />;
 	}
 
-	const url = getVideoPressUrlFromGuid( guid );
-	const embedClassName = classnames( 'wp-block-embed', 'is-type-video', 'is-provider-videopress' );
+	const url = `https://videopress.com/v/${ guid }`;
 
 	return (
-		<figure className={ embedClassName }>
+		<figure className="wp-block-embed is-type-video is-provider-videopress">
 			<div className="wp-block-embed__wrapper">
 				{ `\n${ url }\n` /* URL needs to be on its own line. */ }
 			</div>

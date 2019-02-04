@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import apiFetch from '@wordpress/api-fetch';
 import { isBlobURL } from '@wordpress/blob';
 import { compose, createHigherOrderComponent } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
@@ -15,41 +16,69 @@ import { get } from 'lodash';
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import Loading from './loading';
-import { getClassNames, getVideoPressUrlFromGuid } from './util';
 
 const VideoPressEdit = CoreVideoEdit =>
 	class extends Component {
+		constructor() {
+			super( ...arguments );
+			this.state = {
+				media: null,
+				isFetchingMedia: false,
+				fallback: false,
+			};
+		}
+
 		componentDidUpdate( prevProps ) {
-			const { setAttributes, guid } = this.props;
-			if ( guid !== prevProps.guid ) {
-				setAttributes( { guid } );
-			}
+			const { attributes } = this.props;
 
-			const hasPreview = undefined !== this.props.preview;
-			const hadPreview = undefined !== prevProps.preview;
-			const previewChanged =
-				prevProps.preview &&
-				this.props.preview &&
-				this.props.preview.html !== prevProps.preview.html;
-			const switchedPreview = previewChanged || ( hasPreview && ! hadPreview );
-			if ( switchedPreview ) {
-				this.setClasses();
+			if ( attributes.id !== prevProps.attributes.id ) {
+				this.setGuid();
 			}
 		}
 
-		setClasses() {
-			const { className } = this.props.attributes;
-			const { html } = this.props.preview;
-			this.props.setAttributes( {
-				className: getClassNames( html, className ),
-			} );
-		}
+		fallbackToCore = () => {
+			this.props.setAttributes( { guid: undefined } );
+			this.setState( { fallback: true } );
+		};
+
+		setGuid = async () => {
+			const { attributes, setAttributes } = this.props;
+			const { id } = attributes;
+
+			if ( ! id ) {
+				setAttributes( { guid: undefined } );
+				return;
+			}
+
+			try {
+				this.setState( { isFetchingMedia: true } );
+				const media = await apiFetch( { path: `/wp/v2/media/${ id }` } );
+				this.setState( { isFetchingMedia: false } );
+
+				const { id: currentId } = this.props.attributes;
+				if ( id && id !== currentId ) {
+					// Video was changed in the editor while fetching data for the previous video;
+					return;
+				}
+
+				this.setState( { media } );
+				const guid = get( media, 'jetpack_videopress.guid' );
+				if ( guid ) {
+					setAttributes( { guid } );
+				} else {
+					this.fallbackToCore();
+				}
+			} catch ( e ) {
+				this.setState( { isFetchingMedia: false } );
+				this.fallbackToCore();
+			}
+		};
 
 		switchToEditing = () => {
 			this.props.setAttributes( {
 				id: undefined,
+				guid: undefined,
 				src: undefined,
-				videoPressGuid: undefined,
 			} );
 		};
 
@@ -63,12 +92,13 @@ const VideoPressEdit = CoreVideoEdit =>
 				preview,
 				setAttributes,
 			} = this.props;
+			const { fallback, isFetchingMedia } = this.state;
 
-			if ( isUploading || isFetchingPreview ) {
+			if ( isUploading || isFetchingMedia || isFetchingPreview ) {
 				return <Loading text={ isUploading ? __( 'Uploading…' ) : __( 'Embedding…' ) } />;
 			}
 
-			if ( ! preview ) {
+			if ( fallback || ! preview ) {
 				return <CoreVideoEdit { ...this.props } />;
 			}
 
@@ -89,9 +119,9 @@ const VideoPressEdit = CoreVideoEdit =>
 					</BlockControls>
 					<figure className={ classnames( className, 'wp-block-embed', 'is-type-video' ) }>
 						{ /*
-						Disable the video player so the user clicking on it won't play the
-						video when the controls are enabled.
-					*/ }
+							Disable the video player so the user clicking on it won't play the
+							video when the controls are enabled.
+						*/ }
 						<Disabled>
 							<div className="wp-block-embed__wrapper">
 								<SandBox html={ html } scripts={ scripts } />
@@ -115,21 +145,18 @@ const VideoPressEdit = CoreVideoEdit =>
 export default createHigherOrderComponent(
 	compose( [
 		withSelect( ( select, ownProps ) => {
-			const { id, src } = ownProps.attributes;
-			const { getEmbedPreview, getMedia, isRequestingEmbedPreview } = select( 'core' );
+			const { guid, src } = ownProps.attributes;
+			const { getEmbedPreview, isRequestingEmbedPreview } = select( 'core' );
 
-			const media = !! id && getMedia( id );
-			const guid = get( media, 'jetpack_videopress.guid' );
-			const url = !! guid && getVideoPressUrlFromGuid( guid );
+			const url = !! guid && `https://videopress.com/v/${ guid }`;
 			const preview = !! url && getEmbedPreview( url );
 
-			const isFetchingMedia = !! id && ! media;
 			const isFetchingEmbedPreview = !! url && isRequestingEmbedPreview( url );
-			const isUploading = ! id && isBlobURL( src );
+			const isUploading = isBlobURL( src );
 
 			return {
 				guid,
-				isFetchingPreview: isFetchingMedia || isFetchingEmbedPreview,
+				isFetchingPreview: isFetchingEmbedPreview,
 				isUploading,
 				preview,
 			};
