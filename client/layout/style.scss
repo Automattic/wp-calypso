@@ -119,7 +119,7 @@
 	top: 47px;
 	left: 0;
 	bottom: 0;
-	color: var( --color-text );
+	color: var( --sidebar-text-color );
 	background: var( --sidebar-background );
 	border-right: 1px solid darken( $sidebar-bg-color, 5% );
 	width: $sidebar-width-max;
