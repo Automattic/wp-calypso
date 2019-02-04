@@ -41,8 +41,8 @@ class ContactsPrivacyCard extends React.PureComponent {
 				<CompactCard className="contacts-privacy-card">
 					<p className="settings-explanation">
 						{ translate(
-							'Domain owners are required to make their contact information available to the public. ' +
-								'{{a}}Learn more.{{/a}}',
+							'Domain owners are required to provide correct contact information. ' +
+								'{{a}}Learn more{{/a}} about private registration and GDPR protection.',
 							{
 								components: {
 									a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
