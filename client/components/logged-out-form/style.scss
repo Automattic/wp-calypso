@@ -9,10 +9,10 @@
 	text-align: center;
 
 	body:not(.is-section-jetpack-connect):not(.is-section-settings) .layout:not(.dops) & a {
-		color: var( --color-white );
+		color: var( --color-link );
 
 		&:hover {
-			color: var( --color-neutral-0 );
+			color: var( --color-link-dark );
 		}
 	}
 }
