@@ -6,6 +6,7 @@
 
 import { Fragment, Component } from '@wordpress/element';
 import { TextControl } from '@wordpress/components';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -14,13 +15,14 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 
 class HoursRow extends Component {
 	render() {
-		const { day, hours, setAttributes, resetFocus, edit = true, data } = this.props;
+		const { day, attributes, setAttributes, resetFocus, edit = true, data } = this.props;
+		const { hours } = attributes;
 		const { days } = data;
 		return (
 			<Fragment>
-				<dt className={ day }>{ days[ day ] }</dt>
+				<dt className={ classNames( day, 'business-hours__day' ) }>{ days[ day ] }</dt>
 				{ edit || ( hours[ day ].opening && hours[ day ].closing ) ? (
-					<dd className={ day }>
+					<dd className={ classNames( day, 'business-hours__hours' ) }>
 						{ edit ? (
 							<TextControl
 								type="time"
@@ -66,7 +68,9 @@ class HoursRow extends Component {
 						) }
 					</dd>
 				) : (
-					<dd className={ day + ' closed' }>{ __( 'CLOSED' ) }</dd>
+					<dd className={ classNames( day, 'closed', 'business-hours__hours' ) }>
+						{ __( 'CLOSED' ) }
+					</dd>
 				) }
 			</Fragment>
 		);

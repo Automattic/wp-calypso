@@ -69,13 +69,7 @@ export const settings = {
 		},
 	},
 
-	edit: props => (
-		<HoursList
-			hours={ props.attributes.hours }
-			setAttributes={ props.setAttributes }
-			edit={ true }
-		/>
-	),
+	edit: props => <HoursList { ...props } edit={ true } />,
 
-	save: props => <HoursList hours={ props.attributes.hours } edit={ false } />,
+	save: props => <HoursList { ...props } edit={ false } />,
 };

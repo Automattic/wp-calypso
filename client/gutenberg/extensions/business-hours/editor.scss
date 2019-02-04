@@ -1,15 +1,15 @@
-.business-hours {
+.wp-block-jetpack-business-hours {
 	overflow: hidden;
 
-	dt {
+	.business-hours__day {
 		width: 7em;
 		float: left;
 		clear: both;
 	}
 
-	dd {
+	.business-hours__hours {
 		overflow: hidden;
-		width: calc(100% - 8em);
+		width: calc( 100% - 8em );
 		float: right;
 		margin: 0;
 

@@ -48,11 +48,12 @@ class HoursList extends Component {
 	}
 
 	render() {
-		const { hours, edit } = this.props;
+		const { className, attributes } = this.props;
+		const { hours } = attributes;
 		const { localization } = this.state;
 		const { startOfWeek } = localization;
 		return (
-			<dl className={ 'jetpack-business-hours ' + ( edit ? 'edit' : '' ) }>
+			<dl className={ className }>
 				{ Object.keys( hours )
 					.concat( Object.keys( hours ).slice( 0, startOfWeek ) )
 					.slice( startOfWeek )
