@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import Card from 'components/card';
 import Button from 'components/button';
-import { getSite, getSiteTitle, getSiteUrl, getSiteDomain } from 'state/sites/selectors';
+import { getSite, getSiteTitle, getSiteDomain } from 'state/sites/selectors';
 import PurchaseSiteHeader from '../purchases/purchases-site/header';
 import { purchaseType as getPurchaseType, getName } from 'lib/purchases';
 import { paymentMethodName } from 'lib/cart-values';
@@ -79,6 +79,5 @@ export function PendingListItem( {
 export default connect( ( state, props ) => ( {
 	site: getSite( state, props.siteId ),
 	siteTitle: getSiteTitle( state, props.siteId ),
-	siteUrl: getSiteUrl( state, props.siteId ),
 	siteDomain: getSiteDomain( state, props.siteId ),
 } ) )( localize( PendingListItem ) );
