@@ -41,6 +41,9 @@
 // use 769, which is just above the general maximum mobile screen width.
 const SERVER_WIDTH = 769;
 
+const MOBILE_BREAKPOINT = '<480px';
+const DESKTOP_BREAKPOINT = '>960px';
+
 const isServer = typeof window === 'undefined' || ! window.matchMedia;
 
 function createMediaQueryList( { min, max } = {} ) {
@@ -102,12 +105,44 @@ export function isWithinBreakpoint( breakpoint ) {
 	return mediaQueryList ? mediaQueryList.matches : undefined;
 }
 
+export function addWithinBreakpointListener( breakpoint, listener ) {
+	const mediaQueryList = getMediaQueryList( breakpoint );
+
+	if ( mediaQueryList && ! isServer ) {
+		mediaQueryList.addListener( evt => listener( evt.matches ) );
+	}
+}
+
+export function removeWithinBreakpointListener( breakpoint, listener ) {
+	const mediaQueryList = getMediaQueryList( breakpoint );
+
+	if ( mediaQueryList && ! isServer ) {
+		mediaQueryList.removeListener( listener );
+	}
+}
+
 export function isMobile() {
-	return isWithinBreakpoint( '<480px' );
+	return isWithinBreakpoint( MOBILE_BREAKPOINT );
+}
+
+export function addIsMobileListener( listener ) {
+	return addWithinBreakpointListener( MOBILE_BREAKPOINT, listener );
+}
+
+export function removeIsMobileListener( listener ) {
+	return removeWithinBreakpointListener( MOBILE_BREAKPOINT, listener );
 }
 
 export function isDesktop() {
-	return isWithinBreakpoint( '>960px' );
+	return isWithinBreakpoint( DESKTOP_BREAKPOINT );
+}
+
+export function addIsDesktopListener( listener ) {
+	return addWithinBreakpointListener( DESKTOP_BREAKPOINT, listener );
+}
+
+export function removeIsDesktopListener( listener ) {
+	return removeWithinBreakpointListener( DESKTOP_BREAKPOINT, listener );
 }
 
 export function getWindowInnerWidth() {
