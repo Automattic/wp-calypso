@@ -9,7 +9,7 @@ import { Component } from '@wordpress/element';
  * Internal dependencies
  */
 
-import HoursRow from './HoursRow';
+import HoursRow from './hours-row';
 import apiFetch from '@wordpress/api-fetch/build/index';
 
 const defaultLocalization = {

@@ -11,7 +11,7 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 
 import './editor.scss';
-import HoursList from './components/HoursList';
+import HoursList from './components/hours-list';
 
 /**
  * Block Registrations:
