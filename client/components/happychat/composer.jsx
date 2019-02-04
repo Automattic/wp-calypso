@@ -26,6 +26,7 @@ const sendThrottledTyping = throttle(
 /*
  * Renders a textarea to be used to comopose a message for the chat.
  */
+// eslint-disable-next-line react/prefer-es6-class
 export const Composer = createReactClass( {
 	displayName: 'Composer',
 	mixins: [ scrollbleed ],
