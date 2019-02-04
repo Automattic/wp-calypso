@@ -123,8 +123,13 @@ class TiledGalleryEdit extends Component {
 		}
 	};
 
-	onSelectImages = images =>
-		this.setAttributes( { images: images.map( image => pickRelevantMediaFiles( image ) ) } );
+	onSelectImages = images => {
+		const { columns } = this.props.attributes;
+		this.setAttributes( {
+			columns: columns ? Math.min( images.length, columns ) : columns,
+			images: images.map( image => pickRelevantMediaFiles( image ) ),
+		} );
+	};
 
 	setColumnsNumber = value => this.setAttributes( { columns: value } );
 
@@ -208,16 +213,15 @@ class TiledGalleryEdit extends Component {
 				{ controls }
 				<InspectorControls>
 					<PanelBody title={ __( 'Tiled gallery settings' ) }>
-						{ layoutSupportsColumns( layoutStyle ) &&
-							images.length > 1 && (
-								<RangeControl
-									label={ __( 'Columns' ) }
-									value={ columns }
-									onChange={ this.setColumnsNumber }
-									min={ 1 }
-									max={ Math.min( MAX_COLUMNS, images.length ) }
-								/>
-							) }
+						{ layoutSupportsColumns( layoutStyle ) && images.length > 1 && (
+							<RangeControl
+								label={ __( 'Columns' ) }
+								value={ columns }
+								onChange={ this.setColumnsNumber }
+								min={ 1 }
+								max={ Math.min( MAX_COLUMNS, images.length ) }
+							/>
+						) }
 						<SelectControl
 							label={ __( 'Link To' ) }
 							value={ linkTo }
