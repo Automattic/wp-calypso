@@ -58,7 +58,4 @@ export const sendLastSeenTime = time =>
 	);
 
 export const subscribeToNoteStream = callback =>
-	wpcom().pinghub.connect(
-		'/wpcom/me/newest-note-data',
-		callback
-	);
+	wpcom().pinghub.connect( '/wpcom/me/newest-note-data', callback );
