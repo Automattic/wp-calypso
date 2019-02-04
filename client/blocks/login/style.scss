@@ -1,4 +1,3 @@
-
 .login {
 	&.is-jetpack {
 		.button.is-primary {
@@ -27,7 +26,7 @@
 		margin-bottom: 20px;
 		transition: none;
 
-		/*rtl:ignore*/
+		/*!rtl:ignore*/
 		direction: ltr;
 
 		&.is-error {

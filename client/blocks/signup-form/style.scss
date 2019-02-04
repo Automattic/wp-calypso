@@ -1,4 +1,3 @@
-/*rtl:ignore*/
 .signup-form .signup-form__input {
 	margin-bottom: 20px;
 	transition: none;
@@ -9,7 +8,7 @@
 	}
 
 	&[name='username'] {
-		/*rtl:ignore*/
+		/*!rtl:ignore*/
 		direction: ltr;
 	}
 }

@@ -89,7 +89,7 @@ textarea,
 	font-family: $sans;
 }
 
-/*rtl:ignore*/
+/*!rtl:ignore*/
 body.rtl,
 .rtl button,
 .rtl input,
@@ -101,7 +101,7 @@ body.rtl,
 	font-family: $sans-rtl;
 }
 
-/*rtl:ignore*/
+/*!rtl:ignore*/
 :lang( he ) body.rtl,
 :lang( he ) .rtl button,
 :lang( he ) .rtl input,
@@ -113,7 +113,7 @@ body.rtl,
 	font-family: $sans;
 }
 
-/*rtl:ignore*/
+/*!rtl:ignore*/
 .rtl {
 	.gridicon {
 		&.gridicons-chevron-left,
