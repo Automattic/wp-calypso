@@ -132,12 +132,12 @@ export class CartItem extends React.Component {
 					<span className="cart__free-with-plan">
 						{ cartItem.product_cost } { cartItem.currency }
 					</span>
-					<span className="cart__free-text">{ translate( 'Free with your plan' ) }</span>
+					<span className="cart__free-text">{ translate( 'First year free with your plan' ) }</span>
 				</span>
 			);
 		}
 
-		return <em>{ translate( 'Free with your plan' ) }</em>;
+		return <em>{ translate( 'First year free with your plan' ) }</em>;
 	}
 
 	getFreeTrialPrice() {
