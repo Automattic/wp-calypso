@@ -298,6 +298,16 @@ export function hasPlan( cart ) {
 }
 
 /**
+ * Determines whether there is a Jetpack plan in the shopping cart.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one Jetpack plan, false otherwise
+ */
+export function hasJetpackPlan( cart ) {
+	return some( getAll( cart ), isJetpackPlan );
+}
+
+/**
  * Determines whether there is an ecommerce plan in the shopping cart.
  *
  * @param {Object} cart - cart as `CartValue` object
@@ -1208,6 +1218,7 @@ export default {
 	hasOnlyProductsOf,
 	hasOnlyRenewalItems,
 	hasPlan,
+	hasJetpackPlan,
 	hasOnlyBundledDomainProducts,
 	hasBloggerPlan,
 	hasPersonalPlan,

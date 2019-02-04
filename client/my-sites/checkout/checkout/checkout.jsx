@@ -400,9 +400,10 @@ export class Checkout extends React.Component {
 				if ( domainsForGSuite.length ) {
 					if ( config.isEnabled( 'upsell/concierge-session' ) ) {
 						if (
-							cartItems.hasBloggerPlan( cart ) ||
-							cartItems.hasPersonalPlan( cart ) ||
-							cartItems.hasPremiumPlan( cart )
+							! cartItems.hasJetpackPlan( cart ) &&
+							( cartItems.hasBloggerPlan( cart ) ||
+								cartItems.hasPersonalPlan( cart ) ||
+								cartItems.hasPremiumPlan( cart ) )
 						) {
 							// Assign a test group as late as possible
 							if ( 'show' === abtest( 'showConciergeSessionUpsell' ) ) {
@@ -426,6 +427,7 @@ export class Checkout extends React.Component {
 		if (
 			config.isEnabled( 'upsell/concierge-session' ) &&
 			! cartItems.hasConciergeSession( cart ) &&
+			! cartItems.hasJetpackPlan( cart ) &&
 			( cartItems.hasBloggerPlan( cart ) ||
 				cartItems.hasPersonalPlan( cart ) ||
 				cartItems.hasPremiumPlan( cart ) )
