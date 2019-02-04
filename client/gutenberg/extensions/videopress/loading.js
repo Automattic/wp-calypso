@@ -3,13 +3,13 @@
 /**
  * External dependencies
  */
-import { Placeholder, Spinner } from '@wordpress/components';
+import { Spinner } from '@wordpress/components';
 
 const Loading = ( { text } ) => (
-	<Placeholder>
+	<div className="wp-block-embed is-loading">
 		<Spinner />
-		{ text }
-	</Placeholder>
+		<p>{ text }</p>
+	</div>
 );
 
 export default Loading;

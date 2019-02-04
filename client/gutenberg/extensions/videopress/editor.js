@@ -8,11 +8,7 @@ import { addFilter } from '@wordpress/hooks';
  */
 import isJetpackExtensionAvailable from 'gutenberg/extensions/presets/jetpack/utils/is-jetpack-extension-available';
 import withVideoPressEdit from './edit';
-
-/**
- * Style dependencies
- */
-import './editor.scss';
+import withVideoPressSave from './save';
 
 const addVideoPressSupport = ( settings, name ) => {
 	if ( 'core/video' !== name ) {
@@ -21,7 +17,20 @@ const addVideoPressSupport = ( settings, name ) => {
 
 	return {
 		...settings,
+		attributes: {
+			...settings.attributes,
+			guid: {
+				type: 'string',
+			},
+		},
 		edit: withVideoPressEdit( settings.edit ),
+		save: withVideoPressSave( settings.save ),
+		deprecated: [
+			{
+				attributes: settings.attributes,
+				save: settings.save,
+			},
+		],
 	};
 };
 
