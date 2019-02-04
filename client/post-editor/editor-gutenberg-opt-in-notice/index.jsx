@@ -20,6 +20,7 @@ import { showGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actio
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
+import { isMobile } from 'lib/viewport';
 
 /**
  * Style dependencies
@@ -37,10 +38,27 @@ class EditorGutenbergOptInNotice extends Component {
 		dismissNotice: PropTypes.func,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = { hasOpenedSidebar: false };
+	}
+
+	static getDerivedStateFromProps( props, state ) {
+		if ( ! state.hasOpenedSidebar && props.sidebarOpen ) {
+			return { hasOpenedSidebar: true };
+		}
+		return null;
+	}
+
 	dismissNotice = () => this.props.dismissNotice( 'gutenberg_nudge_notice_dismissed', true );
 
 	render() {
-		if ( ! this.props.optInEnabled || this.props.noticeDismissed || this.props.sidebarOpen ) {
+		if (
+			! this.props.optInEnabled ||
+			this.props.noticeDismissed ||
+			this.state.hasOpenedSidebar ||
+			isMobile()
+		) {
 			return null;
 		}
 
