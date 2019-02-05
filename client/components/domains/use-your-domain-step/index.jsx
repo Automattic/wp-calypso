@@ -141,6 +141,23 @@ class UseYourDomainStep extends React.Component {
 		this.props.goBack();
 	};
 
+	getTransferFreeText = () => {
+		const { cart, translate, domainsWithPlansOnly, isSignupStep, selectedSite } = this.props;
+		const { searchQuery } = this.state;
+		const domainsWithPlansOnlyButNoPlan =
+			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
+
+		let domainProductFreeText = null;
+
+		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
+			domainProductFreeText = translate( 'Free with your plan' );
+		} else if ( domainsWithPlansOnlyButNoPlan ) {
+			domainProductFreeText = translate( 'Included in paid plans' );
+		}
+
+		return domainProductFreeText;
+	};
+
 	getTransferPriceText = () => {
 		const {
 			cart,
@@ -161,10 +178,12 @@ class UseYourDomainStep extends React.Component {
 			domainProductPrice += ' per year';
 		}
 
-		if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, searchQuery ) ) {
-			domainProductPrice = translate( 'Free with your plan' );
-		} else if ( domainsWithPlansOnlyButNoPlan ) {
-			domainProductPrice = translate( 'Included in paid plans' );
+		if (
+			isNextDomainFree( cart ) ||
+			isDomainBundledWithPlan( cart, searchQuery ) ||
+			domainsWithPlansOnlyButNoPlan
+		) {
+			domainProductPrice = translate( 'Renews at ' ) + domainProductPrice;
 		}
 
 		return domainProductPrice;
@@ -283,6 +302,7 @@ class UseYourDomainStep extends React.Component {
 			),
 			translate( 'Manage your domain and site from your WordPress.com dashboard' ),
 			translate( 'Extends registration by one year' ),
+			this.getTransferFreeText(),
 			this.getTransferPriceText(),
 		];
 		const buttonText = translate( 'Transfer to WordPress.com' );
