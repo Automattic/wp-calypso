@@ -118,6 +118,9 @@ class Signup extends React.Component {
 			plans: false,
 			previousFlowName: null,
 		};
+
+		this.isPlanStepFulfilled = false;
+		this.isDomainStepFulfilled = false;
 	}
 
 	UNSAFE_componentWillMount() {
@@ -126,10 +129,6 @@ class Signup extends React.Component {
 		// here.
 		disableCart();
 
-		if ( this.props.siteId && this.props.siteDomains.length === 0 ) {
-			return;
-		}
-
 		const flow = flows.getFlow( this.props.flowName );
 		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
@@ -137,11 +136,11 @@ class Signup extends React.Component {
 
 		this.submitQueryDependencies();
 
+		this.removeOtherFulfilledSteps( this.props );
+
 		if ( flow.providesDependenciesInQuery ) {
 			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
 		}
-
-		this.removeOtherFulfilledSteps();
 
 		// Caution: any signup Flux actions should happen after this initialization.
 		// Otherwise, the redux adpatation layer won't work and the state can go off.
@@ -171,11 +170,14 @@ class Signup extends React.Component {
 		}
 
 		this.checkForCartItems( this.props.signupDependencies );
-
 		this.recordStep();
 	}
 
-	UNSAFE_componentWillReceiveProps( { signupDependencies, stepName, flowName, progress } ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
+		const { signupDependencies, stepName, flowName, progress } = nextProps;
+
+		this.removeOtherFulfilledSteps( nextProps );
+
 		if ( this.props.stepName !== stepName ) {
 			this.recordStep( stepName, flowName );
 		}
@@ -295,7 +297,6 @@ class Signup extends React.Component {
 		} = this.props;
 
 		const flowSteps = flows.getFlow( flowName ).steps;
-		const fulfilledSteps = [];
 
 		// `vertical` query parameter
 		if ( vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
@@ -322,7 +323,7 @@ class Signup extends React.Component {
 				} );
 			}
 
-			fulfilledSteps.push( siteTopicStepName );
+			flows.excludeStep( siteTopicStepName );
 
 			this.recordExcludeStepEvent( siteTopicStepName, vertical );
 		}
@@ -337,35 +338,46 @@ class Signup extends React.Component {
 
 			this.props.submitSiteType( siteTypeValue );
 
-			fulfilledSteps.push( siteTypeStepName );
+			flows.excludeStep( siteTypeStepName );
 
 			this.recordExcludeStepEvent( siteTypeStepName, siteTypeValue );
 		}
-
-		flows.excludeSteps( fulfilledSteps );
 	};
 
-	removeOtherFulfilledSteps = () => {
-		const { flowName } = this.props;
-		const { isPaidPlan, siteDomains } = this.state;
+	removeOtherFulfilledSteps = nextProps => {
+		const { flowName, isPaidPlan, siteDomains, currentStepName } = nextProps;
 		const flowSteps = flows.getFlow( flowName ).steps;
-		const fulfilledSteps = [];
+		let domainStepName = null,
+			planStepName = null;
 
-		if ( isPaidPlan ) {
-			const planStepName = find( flowSteps, stepName => {
+		if ( isPaidPlan && ! this.isPlanStepFulfilled ) {
+			planStepName = find( flowSteps, stepName => {
 				return startsWith( stepName, 'plan' );
 			} );
-			planStepName && fulfilledSteps.push( planStepName );
+			planStepName && flows.excludeStep( planStepName );
+
+			const cartItem = undefined;
+			SignupActions.submitSignupStep( { stepName: planStepName, cartItem }, [], { cartItem } );
+			this.isPlanStepFulfilled = true;
 		}
 
-		if ( siteDomains && siteDomains.length > 1 ) {
-			const domainStepName = find( flowSteps, stepName => {
+		if ( siteDomains && siteDomains.length > 1 && ! this.isDomainStepFulfilled ) {
+			domainStepName = find( flowSteps, stepName => {
 				return startsWith( stepName, 'domain' );
 			} );
-			domainStepName && fulfilledSteps.push( domainStepName );
+			domainStepName && flows.excludeStep( domainStepName );
+
+			const domainItem = undefined;
+			SignupActions.submitSignupStep( { stepName: domainStepName, domainItem }, [], {
+				domainItem,
+			} );
+			this.isDomainStepFulfilled = true;
 		}
 
-		flows.excludeSteps( fulfilledSteps );
+		// If the current step is fulfilled, then proceed to the next step.
+		if ( currentStepName === domainStepName || currentStepName === planStepName ) {
+			this.goToNextStep( flowName );
+		}
 	};
 
 	checkForCartItems = signupDependencies => {
@@ -645,6 +657,24 @@ class Signup extends React.Component {
 		);
 	}
 
+	shouldWaitToRender() {
+		const isStepRemovedFromFlow =
+			-1 === indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
+		const isDomainsForSiteEmpty =
+			this.props.isLoggedIn &&
+			this.props.signupDependencies.siteSlug &&
+			0 === this.props.siteDomains.length;
+
+		if ( isStepRemovedFromFlow ) {
+			return true;
+		}
+
+		// siteDomains is sometimes empty, so we need to force update.
+		if ( isDomainsForSiteEmpty ) {
+			return <QuerySiteDomains siteId={ this.props.siteId } />;
+		}
+	}
+
 	render() {
 		if (
 			! this.props.stepName ||
@@ -652,6 +682,12 @@ class Signup extends React.Component {
 			this.state.resumingStep
 		) {
 			return null;
+		}
+
+		// Removes flicker of steps that have been removed from the flow
+		const waitToRenderReturnValue = this.shouldWaitToRender();
+		if ( waitToRenderReturnValue ) {
+			return this.props.siteId && waitToRenderReturnValue;
 		}
 
 		const pageTitle =
@@ -678,7 +714,6 @@ class Signup extends React.Component {
 						redirectTo={ this.state.redirectTo }
 					/>
 				) }
-				{ this.props.siteId && <QuerySiteDomains siteId={ this.props.siteId } /> }
 			</div>
 		);
 	}
