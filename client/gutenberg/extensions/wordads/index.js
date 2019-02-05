@@ -30,7 +30,7 @@ export const settings = {
 		</Fragment>
 	),
 
-	icon: icon,
+	icon,
 	attributes: {
 		align: {
 			type: 'string',
