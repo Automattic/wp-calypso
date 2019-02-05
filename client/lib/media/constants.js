@@ -198,3 +198,11 @@ export const MimeTypes = {
 export const MEDIA_IMAGE_THUMBNAIL = 'MEDIA_IMAGE_THUMBNAIL';
 export const MEDIA_IMAGE_PHOTON = 'MEDIA_IMAGE_PHOTON';
 export const MEDIA_IMAGE_RESIZER = 'MEDIA_IMAGE_RESIZER';
+
+/**
+ * Scale choices are 12, 8, 6, 4, and 3 items per row, with some horizontal
+ * padding between items
+ *
+ * @type {Array}
+ */
+export const SCALE_CHOICES = [ 0.077, 0.115, 0.157, 0.24, 0.323 ];

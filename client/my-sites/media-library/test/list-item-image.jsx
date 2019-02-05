@@ -29,12 +29,14 @@ describe( 'MediaLibraryListItem image', () => {
 		}
 	} );
 
-	const getPhotonUrl = () => photon( fixtures.media[ 0 ].URL, { width: WIDTH } );
-	const getResizedUrl = () => resize( fixtures.media[ 0 ].URL, { w: WIDTH } );
+	const getPhotonUrl = () => photon( fixtures.media[ 0 ].URL, { resize: `${ WIDTH },${ WIDTH }` } );
+	const getResizedUrl = () =>
+		resize( fixtures.media[ 0 ].URL, { resize: `${ WIDTH },${ WIDTH }` } );
 	const getItem = ( itemPos, type ) => (
 		<ListItemImage
 			media={ fixtures.media[ itemPos ] }
 			scale={ 1 }
+			maxScale={ 1 }
 			maxImageWidth={ WIDTH }
 			thumbnailType={ type }
 		/>
