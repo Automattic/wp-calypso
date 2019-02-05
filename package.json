@@ -14,11 +14,7 @@
   },
   "browserslist": {
     "defaults": [
-      "last 2 versions",
-      "Safari >= 10",
-      "iOS >= 10",
-      "not ie <= 10",
-      "> 1%"
+      "last 2 chrome versions"
     ]
   },
   "dependencies": {
