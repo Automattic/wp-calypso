@@ -183,28 +183,10 @@ class DomainsStep extends React.Component {
 	};
 
 	handleSkip = () => {
-		const domainItem = undefined,
-			googleAppsCartItem = undefined,
-			isPurchasingItem = false,
-			siteUrl = this.props.selectedSite.slug.replace( '.wordpress.com', '' );
-
-		SignupActions.submitSignupStep(
-			Object.assign(
-				{
-					processingMessage: this.props.translate( 'Adding your domain' ),
-					stepName: this.props.stepName,
-					domainItem,
-					googleAppsCartItem,
-					isPurchasingItem,
-					siteUrl,
-					stepSectionName: this.props.stepSectionName,
-				},
-				this.getThemeArgs()
-			),
-			[],
-			{ domainItem }
-		);
-
+		const domainItem = undefined;
+		SignupActions.submitSignupStep( { stepName: this.props.stepName, domainItem }, [], {
+			domainItem,
+		} );
 		this.props.goToNextStep();
 	};
 
