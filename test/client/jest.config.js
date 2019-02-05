@@ -13,7 +13,7 @@ module.exports = {
 	roots: [ '<rootDir>/client/' ],
 	testEnvironment: 'node',
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!flag-icon-css|redux-form|simple-html-tokenizer)',
+		'node_modules[\\/\\\\](?!flag-icon-css|redux-form|simple-html-tokenizer|draft-js)',
 	],
 	testMatch: [ '<rootDir>/client/**/test/*.js?(x)' ],
 	testURL: 'https://example.com',
