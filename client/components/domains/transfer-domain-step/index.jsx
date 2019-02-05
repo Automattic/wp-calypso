@@ -219,6 +219,7 @@ class TransferDomainStep extends React.Component {
 
 					<div className="transfer-domain-step__add-domain" role="group">
 						<FormTextInputWithAffixes
+							// eslint-disable-next-line jsx-a11y/no-autofocus
 							autoFocus={ true }
 							prefix="http://"
 							type="text"
