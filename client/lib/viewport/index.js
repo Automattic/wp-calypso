@@ -37,48 +37,114 @@
 // [1] https://github.com/Automattic/wp-calypso/blob/master/docs/coding-guidelines/css.md#media-queries
 //
 
-export function isWithinBreakpoint( breakpoint ) {
-	const screenWidth = getWindowInnerWidth(),
-		breakpoints = {
-			'<480px': () => screenWidth <= 480,
-			'<660px': () => screenWidth <= 660,
-			'<800px': () => screenWidth <= 800,
-			'<960px': () => screenWidth <= 960,
-			'<1040px': () => screenWidth <= 1040,
-			'<1280px': () => screenWidth <= 1280,
-			'<1400px': () => screenWidth <= 1400,
-			'>480px': () => screenWidth > 480,
-			'>660px': () => screenWidth > 660,
-			'>800px': () => screenWidth > 800,
-			'>960px': () => screenWidth > 960,
-			'>1040px': () => screenWidth > 1040,
-			'>1280px': () => screenWidth > 1280,
-			'>1400px': () => screenWidth > 1400,
-			'480px-660px': () => screenWidth > 480 && screenWidth <= 660,
-			'660px-960px': () => screenWidth > 660 && screenWidth <= 960,
-			'480px-960px': () => screenWidth > 480 && screenWidth <= 960,
-		};
+// FIXME: We can't detect window size on the server, so until we have more intelligent detection,
+// use 769, which is just above the general maximum mobile screen width.
+const SERVER_WIDTH = 769;
 
-	if ( ! breakpoints.hasOwnProperty( breakpoint ) ) {
+const MOBILE_BREAKPOINT = '<480px';
+const DESKTOP_BREAKPOINT = '>960px';
+
+const isServer = typeof window === 'undefined' || ! window.matchMedia;
+
+function createMediaQueryList( { min, max } = {} ) {
+	if ( min !== undefined && max !== undefined ) {
+		return isServer
+			? { matches: SERVER_WIDTH > min && SERVER_WIDTH <= max }
+			: window.matchMedia( `(min-width: ${ min + 1 }px) and (max-width: ${ max }px)` );
+	}
+
+	if ( min !== undefined ) {
+		return isServer
+			? { matches: SERVER_WIDTH > min }
+			: window.matchMedia( `(min-width: ${ min + 1 }px)` );
+	}
+
+	if ( max !== undefined ) {
+		return isServer
+			? { matches: SERVER_WIDTH <= max }
+			: window.matchMedia( `(max-width: ${ max }px)` );
+	}
+
+	return false;
+}
+
+const mediaQueryLists = {
+	'<480px': createMediaQueryList( { max: 480 } ),
+	'<660px': createMediaQueryList( { max: 660 } ),
+	'<800px': createMediaQueryList( { max: 800 } ),
+	'<960px': createMediaQueryList( { max: 960 } ),
+	'<1040px': createMediaQueryList( { max: 1040 } ),
+	'<1280px': createMediaQueryList( { max: 1280 } ),
+	'<1400px': createMediaQueryList( { max: 1400 } ),
+	'>480px': createMediaQueryList( { min: 480 } ),
+	'>660px': createMediaQueryList( { min: 660 } ),
+	'>800px': createMediaQueryList( { min: 800 } ),
+	'>960px': createMediaQueryList( { min: 960 } ),
+	'>1040px': createMediaQueryList( { min: 1040 } ),
+	'>1280px': createMediaQueryList( { min: 1280 } ),
+	'>1400px': createMediaQueryList( { min: 1400 } ),
+	'480px-660px': createMediaQueryList( { min: 480, max: 660 } ),
+	'660px-960px': createMediaQueryList( { min: 660, max: 960 } ),
+	'480px-960px': createMediaQueryList( { min: 480, max: 960 } ),
+};
+
+function getMediaQueryList( breakpoint ) {
+	if ( ! mediaQueryLists.hasOwnProperty( breakpoint ) ) {
 		try {
 			// eslint-disable-next-line no-console
 			console.warn( 'Undefined breakpoint used in `mobile-first-breakpoint`', breakpoint );
 		} catch ( e ) {}
 		return undefined;
 	}
-	return breakpoints[ breakpoint ]();
+
+	return mediaQueryLists[ breakpoint ];
+}
+
+export function isWithinBreakpoint( breakpoint ) {
+	const mediaQueryList = getMediaQueryList( breakpoint );
+	return mediaQueryList ? mediaQueryList.matches : undefined;
+}
+
+export function addWithinBreakpointListener( breakpoint, listener ) {
+	const mediaQueryList = getMediaQueryList( breakpoint );
+
+	if ( mediaQueryList && ! isServer ) {
+		mediaQueryList.addListener( evt => listener( evt.matches ) );
+	}
+}
+
+export function removeWithinBreakpointListener( breakpoint, listener ) {
+	const mediaQueryList = getMediaQueryList( breakpoint );
+
+	if ( mediaQueryList && ! isServer ) {
+		mediaQueryList.removeListener( listener );
+	}
 }
 
 export function isMobile() {
-	return isWithinBreakpoint( '<480px' );
+	return isWithinBreakpoint( MOBILE_BREAKPOINT );
+}
+
+export function addIsMobileListener( listener ) {
+	return addWithinBreakpointListener( MOBILE_BREAKPOINT, listener );
+}
+
+export function removeIsMobileListener( listener ) {
+	return removeWithinBreakpointListener( MOBILE_BREAKPOINT, listener );
 }
 
 export function isDesktop() {
-	return isWithinBreakpoint( '>960px' );
+	return isWithinBreakpoint( DESKTOP_BREAKPOINT );
 }
 
-// FIXME: We can't detect window size on the server, so until we have more intelligent detection,
-// use 769, which is just above the general maximum mobile screen width.
+export function addIsDesktopListener( listener ) {
+	return addWithinBreakpointListener( DESKTOP_BREAKPOINT, listener );
+}
+
+export function removeIsDesktopListener( listener ) {
+	return removeWithinBreakpointListener( DESKTOP_BREAKPOINT, listener );
+}
+
 export function getWindowInnerWidth() {
-	return typeof window !== 'undefined' ? window.innerWidth : 769;
+	return isServer ? SERVER_WIDTH : window.innerWidth;
 }

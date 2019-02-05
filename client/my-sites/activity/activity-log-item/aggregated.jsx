@@ -25,6 +25,7 @@ import { addQueryArgs } from 'lib/url';
 import ActivityActor from './activity-actor';
 import ActivityMedia from './activity-media';
 import analytics from 'lib/analytics';
+import { isDesktop, addIsDesktopListener, removeIsDesktopListener } from 'lib/viewport';
 
 const MAX_STREAM_ITEMS_IN_AGGREGATE = 10;
 
@@ -70,6 +71,18 @@ class ActivityLogAggregatedItem extends Component {
 		this.trackClick( 'view_all' );
 	};
 
+	sizeChanged = () => {
+		this.forceUpdate();
+	};
+
+	componentDidMount() {
+		addIsDesktopListener( this.sizeChanged );
+	}
+
+	componentWillUnmount() {
+		removeIsDesktopListener( this.sizeChanged );
+	}
+
 	renderHeader() {
 		const { activity } = this.props;
 		const {
@@ -80,6 +93,7 @@ class ActivityLogAggregatedItem extends Component {
 			multipleActors,
 			activityMedia,
 		} = activity;
+		const isDesktopSize = isDesktop();
 		let actor;
 		if ( multipleActors ) {
 			actor = <ActivityActor actorType="Multiple" />;
@@ -90,7 +104,7 @@ class ActivityLogAggregatedItem extends Component {
 		return (
 			<div className="activity-log-item__card-header">
 				{ actor }
-				{ activityMedia && (
+				{ activityMedia && isDesktopSize && (
 					<ActivityMedia
 						className={ classNames( {
 							'activity-log-item__activity-media': true,
@@ -108,7 +122,7 @@ class ActivityLogAggregatedItem extends Component {
 						<ActivityDescription activity={ activity } />
 					</div>
 				</div>
-				{ activityMedia && (
+				{ activityMedia && ! isDesktopSize && (
 					<ActivityMedia
 						className="activity-log-item__activity-media is-mobile"
 						icon={ false }
