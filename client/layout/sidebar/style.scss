@@ -228,14 +228,6 @@ form.sidebar__button input {
 // Menu Hover
 .notouch .sidebar__menu li:hover {
 
-	& > a {
-		color: var( --sidebar-menu-hover-color );
-
-		& > .gridicon {
-			fill: var( --sidebar-menu-hover-color );
-		}
-	}
-
 	&:not( .selected ) {
 		background-color: var( --sidebar-menu-hover-background );
 
@@ -248,6 +240,15 @@ form.sidebar__button input {
 			&.sidebar__button {
 				background-color: lighten( $sidebar-bg-color, 10% );
 				color: var( --color-text );
+			}
+		}
+
+		& > a {
+			color: var( --sidebar-menu-hover-color );
+
+			& > .gridicon,
+			& > .jetpack-logo {
+				fill: var( --sidebar-menu-hover-color );
 			}
 		}
 	}
