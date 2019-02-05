@@ -7,11 +7,11 @@
 .site-style__form {
 	align-items: stretch;
 	height: 100%;
-	background-color: var( --color-neutral-0 );
-	border-color: var( --color-neutral-0 );
+	background-color: var( --color-neutral-50 );
 	border-radius: 5px;
+	padding: 0 6px;
+
 	@include breakpoint( '<660px' ) {
-		padding: 0 10px;
 		width: 100%;
 	}
 }
@@ -33,25 +33,11 @@
 .site-style__option-label {
 	cursor: pointer;
 	display: inline-block;
-	margin: 0 10px 0 0;
-	//height: 100%;
-	//min-width: 60px;
+	margin: 5px 6px 0 0;
 	text-align: center;
-	background: white;
 	border-radius: 3px;
 	background: $white;
-	height: 40px;
-	width: 136px;
-
-	@include breakpoint( '<660px' ) {
-		//min-width: 45%;
-		//margin-bottom: 10px;
-	}
-
-	@include breakpoint( '<480px' ) {
-		//min-width: 100%;
-		//display: block;
-	}
+	box-shadow: 0 0 0 1px inset var( --color-neutral-200 );
 
 	&.is-checked,
 	&.is-checked:hover {
@@ -73,27 +59,18 @@
 		left: -1000px;
 	}
 
-	input[type='radio'] + span {
-		margin: 0;
-		padding: 10px;
-		display: block;
-		@include breakpoint( '<660px' ) {
-			padding: 5px;
-		}
-	}
-
 	svg {
-		display: inline-block;
-		margin: auto;
+		display: block;
+		margin: 4px 8px;
 	}
 
 	&.site-style__variation-default {}
-	&.site-style__variation-calm {
-		background-color: #FAF8F5;
-	}
 	&.site-style__variation-modern {}
 	&.site-style__variation-sophisticated {
 		background-color: #080808;
+	}
+	&.site-style__variation-calm {
+		background-color: #faf8f5;
 	}
 }
 
