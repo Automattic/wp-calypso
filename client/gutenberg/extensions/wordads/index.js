@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { ExternalLink, SVG, Path } from '@wordpress/components';
+import { ExternalLink, Path, SVG } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 
 /**
