@@ -14,7 +14,7 @@ import { icon, title } from './';
 import { AD_FORMATS } from './constants';
 import './editor.scss';
 
-class WordAdEdit extends Component {
+class WordAdsEdit extends Component {
 	render() {
 		const { attributes, className, isSelected, setAttributes } = this.props;
 		const { align, format: selectedFormat } = attributes;
@@ -55,4 +55,4 @@ class WordAdEdit extends Component {
 		);
 	}
 }
-export default WordAdEdit;
+export default WordAdsEdit;
