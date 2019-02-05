@@ -28,6 +28,13 @@ const VideoPressEdit = CoreVideoEdit =>
 			};
 		}
 
+		componentDidMount() {
+			const { guid } = this.props.attributes;
+			if ( ! guid ) {
+				this.setGuid();
+			}
+		}
+
 		componentDidUpdate( prevProps ) {
 			const { attributes } = this.props;
 
@@ -155,7 +162,6 @@ export default createHigherOrderComponent(
 			const isUploading = isBlobURL( src );
 
 			return {
-				guid,
 				isFetchingPreview: isFetchingEmbedPreview,
 				isUploading,
 				preview,
