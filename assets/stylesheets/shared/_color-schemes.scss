@@ -342,6 +342,7 @@
 		--color-primary-light: #{$muriel-gray-300};
 		--color-primary-dark: #{$muriel-gray-700};
 		--color-primary-rgb: #{hex-to-rgb( $muriel-gray-900 )};
+		--color-primary-50: #{$muriel-gray-50};
 		--color-primary-400: #{$muriel-gray-600};
 		--color-primary-600: #{$muriel-gray-700};
 
@@ -388,7 +389,7 @@
 		--color-error-600: #{$muriel-hot-red-600};
 
 		--color-text: #{$muriel-gray-900};
-		--color-text-subtle: #{$muriel-gray-500};
+		--color-text-subtle: #{$muriel-gray-600};
 		--color-surface: #{$muriel-white};
 		--color-surface-backdrop: #{$muriel-white};
 
@@ -412,11 +413,11 @@
 		--sidebar-footer-button-color: #{$muriel-gray-900};
 		--sidebar-menu-link-secondary-text-color: #{$muriel-gray-300};
 		--sidebar-menu-a-first-child-after-background: #{hex-to-rgb( $muriel-gray-50 )};
-		--sidebar-menu-selected-background-color: #{$muriel-gray-300};
+		--sidebar-menu-selected-background-color: #{$muriel-gray-500};
 		--sidebar-menu-selected-a-color: #{$muriel-white};
-		--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $muriel-gray-300 )};
-		--sidebar-menu-hover-background: #{$muriel-gray-300};
-		--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-gray-300 )};
+		--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $muriel-gray-500 )};
+		--sidebar-menu-hover-background: #{$muriel-gray-400};
+		--sidebar-menu-hover-background-gradient: #{hex-to-rgb( $muriel-gray-400 )};
 		--sidebar-menu-hover-color: #{$muriel-white};
 
 		// TODO: once we replace the current default theme with Classic Bright, we can remove these and increase consistency by using the sidebar colors instead

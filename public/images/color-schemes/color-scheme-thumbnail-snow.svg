@@ -5,22 +5,23 @@
 <style type="text/css">
 	.st0{fill:#FFFFFF;}
 	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:#E9E9E9;}
-	.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#969CA1;}
+	.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#636D75;}
 	.st3{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st4{fill-rule:evenodd;clip-rule:evenodd;fill:#B0B5B8;}
-	.st5{fill-rule:evenodd;clip-rule:evenodd;fill:none;stroke:#F6F6F6;stroke-miterlimit:10;}
-	.st6{fill-rule:evenodd;clip-rule:evenodd;fill:#1A1A1A;}
-	.st7{fill-rule:evenodd;clip-rule:evenodd;fill:#005FB7;}
+	.st4{fill-rule:evenodd;clip-rule:evenodd;fill:#969CA1;}
+	.st5{fill-rule:evenodd;clip-rule:evenodd;fill:#B0B5B8;}
+	.st6{fill:none;stroke:#F6F6F6;stroke-miterlimit:10;}
+	.st7{fill-rule:evenodd;clip-rule:evenodd;fill:#1A1A1A;}
+	.st8{fill-rule:evenodd;clip-rule:evenodd;fill:#005FB7;}
 </style>
 <g>
 	<path class="st0" d="M70,20h170v140H70V20z"/>
 	<path class="st1" d="M0,20h70v140H0V20z"/>
 	<path class="st2" d="M0,86h70v16H0V86z"/>
 	<path class="st3" d="M7,91h55v6H7V91z"/>
-	<path class="st2" d="M7,75h37v6H7V75z M7,107h29v6H7V107z M7,123h45v6H7V123z"/>
-	<circle class="st4" cx="35.5" cy="45.5" r="16.5"/>
-	<path class="st5" d="M90,36h130v107H90V36z"/>
-	<path class="st6" d="M0,0h240v20H0V0z"/>
-	<path class="st7" d="M163,48h42c1.7,0,3,1.3,3,3v10c0,1.7-1.3,3-3,3h-42c-1.7,0-3-1.3-3-3V51C160,49.3,161.3,48,163,48z"/>
+	<path class="st4" d="M7,75h37v6H7V75z M7,107h29v6H7V107z M7,123h45v6H7V123z"/>
+	<circle class="st5" cx="35.5" cy="45.5" r="16.5"/>
+	<path class="st6" d="M90,36h130v107H90V36z"/>
+	<path class="st7" d="M0,0h240v20H0V0z"/>
+	<path class="st8" d="M163,48h42c1.7,0,3,1.3,3,3v10c0,1.7-1.3,3-3,3h-42c-1.7,0-3-1.3-3-3V51C160,49.3,161.3,48,163,48z"/>
 </g>
 </svg>
