@@ -30,7 +30,7 @@ import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route';
 
-export const requestId = userId => `pending-payments/${ userId }`;
+export const requestId = userId => `pending-payments:${ userId }`;
 
 const requestPendingPayments = userId => {
 	return requestHttpData(
