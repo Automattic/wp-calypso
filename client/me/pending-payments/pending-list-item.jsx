@@ -6,6 +6,7 @@ import React from 'react';
 import { localize, moment } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -75,6 +76,18 @@ export function PendingListItem( {
 		</React.Fragment>
 	);
 }
+
+PendingListItem.propTypes = {
+	translate: PropTypes.func.isRequired,
+	paymentType: PropTypes.string.isRequired,
+	totalCost: PropTypes.string.isRequired,
+	currency: PropTypes.string.isRequired,
+	siteId: PropTypes.number.isRequired,
+	siteTitle: PropTypes.string.isRequired,
+	siteDomain: PropTypes.string.isRequired,
+	dateCreated: PropTypes.string.isRequired,
+	products: PropTypes.array.isRequired,
+};
 
 export default connect( ( state, props ) => ( {
 	site: getSite( state, props.siteId ),
