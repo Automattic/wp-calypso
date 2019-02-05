@@ -339,12 +339,17 @@
 
 	&.is-powder-snow {
 		--color-primary: #{$muriel-gray-900};
-		--color-primary-light: #{$muriel-gray-300};
-		--color-primary-dark: #{$muriel-gray-700};
 		--color-primary-rgb: #{hex-to-rgb( $muriel-gray-900 )};
+		--color-primary-light: #{$muriel-gray-300};
+		--color-primary-light-rgb: #{hex-to-rgb( $muriel-gray-300 )};
+		--color-primary-dark: #{$muriel-gray-700};
+		--color-primary-dark-rgb: #{hex-to-rgb( $muriel-gray-700 )};
 		--color-primary-50: #{$muriel-blue-0};
+		--color-primary-50-rgb: #{hex-to-rgb( $muriel-blue-0 )};
 		--color-primary-400: #{$muriel-gray-600};
+		--color-primary-400-rgb: #{hex-to-rgb( $muriel-gray-600 )};
 		--color-primary-600: #{$muriel-gray-700};
+		--color-primary-600-rgb: #{hex-to-rgb( $muriel-gray-700 )};
 
 		--color-accent: #{$muriel-hot-blue-500};
 		--color-accent-rgb: #{hex-to-rgb( $muriel-hot-blue-500 )};
@@ -375,25 +380,12 @@
 		--color-accent-900: #{$muriel-hot-blue-900};
 		--color-accent-900-rgb: #{hex-to-rgb( $muriel-hot-blue-900 )};
 
-		--color-success: #{$muriel-hot-green-500};
-		--color-success-light: #{$muriel-hot-green-300};
-		--color-success-dark: #{$muriel-hot-green-700};
-
-		--color-warning: #{$muriel-hot-yellow-500};
-		--color-warning-light: #{$muriel-hot-yellow-300};
-		--color-warning-dark: #{$muriel-hot-yellow-700};
-
-		--color-error: #{$muriel-hot-red-500};
-		--color-error-light: #{$muriel-hot-red-300};
-		--color-error-dark: #{$muriel-hot-red-700};
-		--color-error-600: #{$muriel-hot-red-600};
-
 		--color-text: #{$muriel-gray-900};
 		--color-text-subtle: #{$muriel-gray-600};
 		--color-surface: #{$muriel-white};
 		--color-surface-backdrop: #{$muriel-white};
 
-		--color-button-primary-background-hover: #{$muriel-hot-blue-500};
+		--color-button-primary-background-hover: #{$muriel-hot-blue-400};
 		--color-button-primary-scary-background-hover: #{$muriel-hot-red-400};
 
 		--masterbar-color: #{$muriel-white};
