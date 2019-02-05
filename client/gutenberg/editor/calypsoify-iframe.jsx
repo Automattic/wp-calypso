@@ -66,6 +66,9 @@ class CalypsoifyIframe extends Component {
 			this.iframeRef.current.contentWindow.postMessage( { action: 'initPort' }, '*', [
 				portForIframe,
 			] );
+
+			//once the iframe is loaded and the port exchanged, we no longer need to listen for message
+			window.removeEventListener( 'message', this.onMessage, false );
 		}
 	};
 
