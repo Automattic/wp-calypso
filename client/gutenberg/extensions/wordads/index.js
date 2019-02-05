@@ -45,7 +45,7 @@ export const settings = {
 
 	category: 'jetpack',
 
-	keywords: [ __( 'ads' ), 'WordAds' ],
+	keywords: [ __( 'ads' ), 'WordAds', __( 'Advertisement' ) ],
 
 	supports: {
 		html: false,
