@@ -139,16 +139,17 @@ describe( 'selectors', () => {
 			getPlanRawPrice.mockImplementation( () => 150 );
 
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan ) ).toEqual( {
+			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0 ) ).toEqual( {
 				priceFullBeforeDiscount: 150,
 				priceFull: 120,
 				priceMonthly: 10,
+				priceMinusCredits: 120,
 			} );
 		} );
 	} );
 
 	describe( '#computeProductsWithPrices()', () => {
-		const plans = {
+		const testPlans = {
 			plan1: {
 				id: 1,
 				term: TERM_MONTHLY,
@@ -174,7 +175,7 @@ describe( 'selectors', () => {
 				return isMonthly ? 20 : 240;
 			} );
 
-			getPlan.mockImplementation( slug => plans[ slug ] );
+			getPlan.mockImplementation( slug => testPlans[ slug ] );
 		} );
 
 		test( 'Should return list of shapes { priceFull, priceFullBeforeDiscount, priceMonthly, plan, product, planSlug }', () => {
@@ -187,22 +188,24 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ] ) ).toEqual( [
+			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0 ) ).toEqual( [
 				{
 					planSlug: 'plan1',
-					plan: plans.plan1,
+					plan: testPlans.plan1,
 					product: state.productsList.items.plan1,
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceMonthly: 10,
+					priceMinusCredits: 120,
 				},
 				{
 					planSlug: 'plan2',
-					plan: plans.plan2,
+					plan: testPlans.plan2,
 					product: state.productsList.items.plan2,
 					priceFullBeforeDiscount: 150,
 					priceFull: 240,
 					priceMonthly: 20,
+					priceMinusCredits: 240,
 				},
 			] );
 		} );
@@ -217,14 +220,15 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ] ) ).toEqual( [
+			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0 ) ).toEqual( [
 				{
 					planSlug: 'plan1',
-					plan: plans.plan1,
+					plan: testPlans.plan1,
 					product: state.productsList.items.plan1,
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceMonthly: 10,
+					priceMinusCredits: 120,
 				},
 			] );
 		} );
@@ -238,14 +242,15 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ] ) ).toEqual( [
+			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0 ) ).toEqual( [
 				{
 					planSlug: 'plan1',
-					plan: plans.plan1,
+					plan: testPlans.plan1,
 					product: state.productsList.items.plan1,
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceMonthly: 10,
+					priceMinusCredits: 120,
 				},
 			] );
 		} );
@@ -271,14 +276,15 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ] ) ).toEqual( [
+			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0 ) ).toEqual( [
 				{
 					planSlug: 'plan1',
-					plan: plans.plan1,
+					plan: testPlans.plan2,
 					product: state.productsList.items.plan1,
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceMonthly: 10,
+					priceMinusCredits: 120,
 				},
 			] );
 		} );
