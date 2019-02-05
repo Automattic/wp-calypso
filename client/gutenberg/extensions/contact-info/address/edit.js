@@ -53,6 +53,16 @@ class AddressEdit extends Component {
 			'is-selected': isSelected,
 		} );
 
+		const externalLink = (
+			<ToggleControl
+				label={ __( 'Link address to Google Maps' ) }
+				checked={ linkToGoogleMaps }
+				onChange={ newlinkToGoogleMaps =>
+					setAttributes( { linkToGoogleMaps: newlinkToGoogleMaps } )
+				}
+			/>
+		);
+
 		return (
 			<div className={ classNames }>
 				{ ! isSelected && hasContent && save( this.props ) }
@@ -100,15 +110,10 @@ class AddressEdit extends Component {
 							onChange={ newCountry => setAttributes( { country: newCountry } ) }
 							onKeyDown={ this.preventEnterKey }
 						/>
+						{ externalLink }
 						<InspectorControls>
 							<PanelBody title={ __( 'Link to Google Maps' ) }>
-								<ToggleControl
-									label={ __( 'Link address to Google Maps' ) }
-									checked={ linkToGoogleMaps }
-									onChange={ newlinkToGoogleMaps =>
-										setAttributes( { linkToGoogleMaps: newlinkToGoogleMaps } )
-									}
-								/>
+								{ externalLink }
 								{ hasContent && <ClipboardInput link={ googleMapsUrl( this.props ) } /> }
 								{ hasContent && (
 									<div>
