@@ -227,6 +227,15 @@ form.sidebar__button input {
 
 // Menu Hover
 .notouch .sidebar__menu li:hover {
+
+	& > a {
+		color: var( --sidebar-menu-hover-color );
+
+		& > .gridicon {
+			fill: var( --sidebar-menu-hover-color );
+		}
+	}
+
 	&:not( .selected ) {
 		background-color: var( --sidebar-menu-hover-background );
 
