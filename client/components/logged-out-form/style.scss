@@ -8,7 +8,7 @@
 	max-width: 330px;
 	text-align: center;
 
-	body:not(.is-section-jetpack-connect):not(.is-section-settings) .layout:not(.dops) & a {
+	body.is-section-signup:not(.is-section-jetpack-connect):not(.is-section-settings) .layout:not(.dops) & a {
 		color: var( --color-white );
 
 		&:hover {
