@@ -279,7 +279,7 @@ describe( 'selectors', () => {
 			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0 ) ).toEqual( [
 				{
 					planSlug: 'plan1',
-					plan: testPlans.plan2,
+					plan: testPlans.plan1,
 					product: state.productsList.items.plan1,
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
