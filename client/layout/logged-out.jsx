@@ -19,6 +19,7 @@ import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';
+import BodySectionCssClass from './body-section-css-class';
 
 // Returns true if given section should display sidebar for logged out users.
 const hasSidebar = section => {
@@ -39,9 +40,12 @@ const LayoutLoggedOut = ( {
 	redirectUri,
 	useOAuth2Layout,
 } ) => {
+	const sectionGroup = get( section, 'group', null );
+	const sectionName = get( section, 'name', null );
+
 	const classes = {
-		[ 'is-group-' + section.group ]: !! get( section, 'group' ),
-		[ 'is-section-' + section.name ]: !! get( section, 'name' ),
+		[ 'is-group-' + sectionGroup ]: sectionGroup,
+		[ 'is-section-' + sectionName ]: sectionName,
 		'focus-content': true,
 		'has-no-sidebar': ! hasSidebar( section ),
 		'has-no-masterbar': masterbarIsHidden,
@@ -67,8 +71,8 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ classNames( 'layout', classes ) }>
+			<BodySectionCssClass group={ sectionGroup } section={ sectionName } />
 			{ masterbar }
-
 			<div id="content" className="layout__content">
 				<GlobalNotices
 					id="notices"
