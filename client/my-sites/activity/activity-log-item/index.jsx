@@ -40,6 +40,7 @@ import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { adjustMoment } from '../activity-log/utils';
 import { getSite } from 'state/sites/selectors';
+import { isDesktop, addIsDesktopListener, removeIsDesktopListener } from 'lib/viewport';
 
 class ActivityLogItem extends Component {
 	static propTypes = {
@@ -91,14 +92,27 @@ class ActivityLogItem extends Component {
 			downloadArgs: Object.assign( this.state.downloadArgs, { [ name ]: checked } ),
 		} );
 
+	sizeChanged = () => {
+		this.forceUpdate();
+	};
+
+	componentDidMount() {
+		addIsDesktopListener( this.sizeChanged );
+	}
+
+	componentWillUnmount() {
+		removeIsDesktopListener( this.sizeChanged );
+	}
+
 	renderHeader() {
 		const {
 			activity: { activityTitle, actorAvatarUrl, actorName, actorRole, actorType, activityMedia },
 		} = this.props;
+		const isDesktopSize = isDesktop();
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
-				{ activityMedia && (
+				{ activityMedia && isDesktopSize && (
 					<ActivityMedia
 						className={ classNames( {
 							'activity-log-item__activity-media': true,
@@ -120,7 +134,7 @@ class ActivityLogItem extends Component {
 					</div>
 					<div className="activity-log-item__description-summary">{ activityTitle }</div>
 				</div>
-				{ activityMedia && (
+				{ activityMedia && ! isDesktopSize && (
 					<ActivityMedia
 						className="activity-log-item__activity-media is-mobile"
 						icon={ false }
