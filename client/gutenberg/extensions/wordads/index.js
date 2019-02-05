@@ -26,8 +26,8 @@ export const settings = {
 
 	description: (
 		<Fragment>
-			<p>{ __( 'Earn income by allowing Jetpack to display high quality ads (powered by WordAds)' ) }</p>
-			<ExternalLink href="https://wordads.co/">{ __( 'Support reference' ) }</ExternalLink>
+			<p>{ __( 'Earn income by adding high quality ads to your post' ) }</p>
+			<ExternalLink href="https://wordads.co/">{ __( 'Learn all about WordAds' ) }</ExternalLink>
 		</Fragment>
 	),
 
