@@ -82,7 +82,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	showConciergeSessionUpsellNonGSuite: {
-		datestamp: '20181228',
+		datestamp: '20190104',
 		variations: {
 			skip: 50,
 			show: 50,
