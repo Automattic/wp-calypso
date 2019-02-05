@@ -104,7 +104,7 @@ export const planSlugToPlanProduct = ( products, planSlug ) => {
 export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject, credits ) => ( {
 	priceFullBeforeDiscount: getPlanRawPrice( state, planObject.getProductId(), false ),
 	priceFull: getPlanPrice( state, siteId, planObject, false ),
-	priceWithoutCredits: max( [ getPlanPrice( state, siteId, planObject, false ) - credits, 0 ] ),
+	priceMinusCredits: max( [ getPlanPrice( state, siteId, planObject, false ) - credits, 0 ] ),
 	priceMonthly: getPlanPrice( state, siteId, planObject, true ),
 } );
 
