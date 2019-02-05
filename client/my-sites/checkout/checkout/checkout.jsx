@@ -648,6 +648,7 @@ export class Checkout extends React.Component {
 					plans={ availableTerms }
 					initialValue={ planInCart.product_slug }
 					onChange={ this.handleTermChange }
+					cart={ this.props.cart }
 					key="picker"
 				/>
 				<hr className="checkout__subscription-length-picker-separator" key="separator" />

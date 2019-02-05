@@ -39,6 +39,7 @@ export class SubscriptionLengthPicker extends React.Component {
 		currencyCode: PropTypes.oneOf( Object.keys( CURRENCIES ) ).isRequired,
 		onChange: PropTypes.func,
 		translate: PropTypes.func.isRequired,
+		cart: PropTypes.object,
 
 		// Comes from connect():
 		productsWithPrices: PropTypes.array.isRequired,
@@ -80,7 +81,8 @@ export class SubscriptionLengthPicker extends React.Component {
 	render() {
 		const { productsWithPrices, translate, taxRate, shouldShowTax } = this.props;
 		const hasDiscount = productsWithPrices.some(
-			( { priceFullBeforeDiscount, priceFull } ) => priceFull !== priceFullBeforeDiscount
+			( { priceFullBeforeDiscount, priceWithoutCredits } ) =>
+				priceWithoutCredits !== priceFullBeforeDiscount
 		);
 
 		return (
@@ -102,13 +104,13 @@ export class SubscriptionLengthPicker extends React.Component {
 
 				<div className="subscription-length-picker__options">
 					{ productsWithPrices.map(
-						( { plan, planSlug, priceFullBeforeDiscount, priceFull, priceMonthly } ) => (
+						( { plan, planSlug, priceFullBeforeDiscount, priceWithoutCredits, priceMonthly } ) => (
 							<div className="subscription-length-picker__option-container" key={ planSlug }>
 								<SubscriptionLengthOption
 									type={ hasDiscount ? 'upgrade' : 'new-sale' }
 									term={ plan.term }
 									checked={ planSlug === this.state.checked }
-									price={ myFormatCurrency( priceFull, this.props.currencyCode ) }
+									price={ myFormatCurrency( priceWithoutCredits, this.props.currencyCode ) }
 									priceBeforeDiscount={ myFormatCurrency(
 										priceFullBeforeDiscount,
 										this.props.currencyCode
@@ -120,7 +122,11 @@ export class SubscriptionLengthPicker extends React.Component {
 									value={ planSlug }
 									onCheck={ this.handleCheck }
 									shouldShowTax={ shouldShowTax }
-									taxDisplay={ this.formatTax( taxRate, priceFull, this.props.currencyCode ) }
+									taxDisplay={ this.formatTax(
+										taxRate,
+										priceWithoutCredits,
+										this.props.currencyCode
+									) }
 								/>
 							</div>
 						)
@@ -152,13 +158,14 @@ export function myFormatCurrency( price, code, options = {} ) {
 	return formatCurrency( price, code, hasCents ? options : { ...options, precision: 0 } );
 }
 
-export const mapStateToProps = ( state, { plans } ) => {
+export const mapStateToProps = ( state, { plans, cart } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const paymentCountryCode = getPaymentCountryCode( state );
 	const paymentPostalCode = getPaymentPostalCode( state );
+	const credits = cart.credits;
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		productsWithPrices: computeProductsWithPrices( state, selectedSiteId, plans ),
+		productsWithPrices: computeProductsWithPrices( state, selectedSiteId, plans, credits ),
 		shouldShowTax: getShouldShowTax( state ),
 		taxRate: requestTaxRate( paymentCountryCode, paymentPostalCode ).data,
 	};
