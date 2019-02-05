@@ -179,9 +179,10 @@ class UseYourDomainStep extends React.Component {
 		}
 
 		if (
-			isNextDomainFree( cart ) ||
-			isDomainBundledWithPlan( cart, searchQuery ) ||
-			domainsWithPlansOnlyButNoPlan
+			domainProductPrice &&
+			( isNextDomainFree( cart ) ||
+				isDomainBundledWithPlan( cart, searchQuery ) ||
+				domainsWithPlansOnlyButNoPlan )
 		) {
 			domainProductPrice = translate( 'Renews at ' ) + domainProductPrice;
 		}
