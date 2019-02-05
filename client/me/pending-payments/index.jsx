@@ -25,6 +25,10 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import Banner from 'components/banner';
 import { convertToCamelCase } from 'state/data-layer/utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getStatsPathForTab } from 'lib/route';
 
 export const requestId = userId => `pending-payments/${ userId }`;
 
@@ -61,7 +65,7 @@ export class PendingPayments extends Component {
 	}
 
 	render() {
-		const { response, pendingPayments, translate } = this.props;
+		const { response, pendingPayments, translate, siteSlug } = this.props;
 
 		let content;
 
@@ -92,6 +96,7 @@ export class PendingPayments extends Component {
 						) }
 						event="pending-payment-confirmation"
 						icon="star"
+						href={ getStatsPathForTab( 'day', siteSlug ) }
 						title={ translate( 'Thank you! Your payment is being processed.' ) }
 					/>
 					<div>
@@ -125,11 +130,13 @@ export default connect(
 	state => {
 		const userId = getCurrentUserId( state );
 		const response = getHttpData( requestId( userId ) );
+		const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
 
 		return {
 			userId,
 			pendingPayments: Object.values( response.data || [] ),
 			response: response,
+			siteSlug: getSiteSlug( state, siteId ),
 		};
 	},
 	dispatch => ( {
