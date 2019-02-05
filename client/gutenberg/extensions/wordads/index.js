@@ -51,7 +51,7 @@ export const settings = {
 		align: true,
 	},
 
-	edit: edit,
+	edit,
 
 	/* @TODO save */
 	save: () => null,
