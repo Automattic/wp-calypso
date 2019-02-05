@@ -39,7 +39,6 @@ const requestPendingPayments = userId => {
 			path: '/me/pending-payments',
 			apiVersion: '1',
 			method: 'GET',
-			body: { userId },
 		} ),
 		{
 			fromApi: () => pending => [ [ requestId( userId ), convertToCamelCase( pending ) ] ],
