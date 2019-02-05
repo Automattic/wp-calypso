@@ -24,7 +24,7 @@ export const settings = {
 	icon,
 	description: __( 'A form enabling readers to join a Mailchimp list.' ),
 	category: 'jetpack',
-	keywords: [ __( 'email' ), __( 'mailchimp' ) ],
+	keywords: [ __( 'email' ), __( 'mailchimp' ), __( 'newsletter' ) ],
 	attributes: {
 		title: {
 			type: 'string',
