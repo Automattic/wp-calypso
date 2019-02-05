@@ -21,7 +21,7 @@ export const icon = (
 )
 
 export const settings = {
-	title: title,
+	title,
 
 	description: (
 		<Fragment>
