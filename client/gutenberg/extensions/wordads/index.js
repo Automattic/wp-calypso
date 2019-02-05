@@ -9,6 +9,7 @@ import { Fragment } from '@wordpress/element';
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import edit from './edit';
+import { DEFAULT_FORMAT } from './constants';
 
 export const name = 'wordads';
 export const title = __( 'Ad' );
@@ -38,8 +39,8 @@ export const settings = {
 		},
 		format: {
 			type: 'string',
-			default: '300x250_mediumrectangle',
-		}
+			default: DEFAULT_FORMAT,
+		},
 	},
 
 	category: 'jetpack',

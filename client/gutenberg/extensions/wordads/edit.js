@@ -7,36 +7,11 @@ import { Component } from '@wordpress/element';
 import { PanelBody, Placeholder, SelectControl } from '@wordpress/components';
 import { InspectorControls } from '@wordpress/editor';
 
-const AD_FORMATS = [
-	{
-		name: __( 'Rectangle 300x250' ),
-		tag: '300x250_mediumrectangle',
-		height: 250,
-		width: 300,
-	},
-	{
-		name: __( 'Leaderboard 728x90' ),
-		tag: '728x90_leaderboard',
-		height: 90,
-		width: 728,
-	},
-	{
-		name: __( 'Mobile Leaderboard 320x50' ),
-		tag: '320x50_mobileleaderboard',
-		height: 50,
-		width: 320,
-	},
-	{
-		name: __( 'Wide Skyscraper 160x600' ),
-		tag: '160x600_wideskyscraper',
-		height: 600,
-		width: 160,
-	},
-];
 /**
  * Internal dependencies
  */
 import { icon, title } from './';
+import { AD_FORMATS } from './constants';
 import './editor.scss';
 
 class WordAdEdit extends Component {
