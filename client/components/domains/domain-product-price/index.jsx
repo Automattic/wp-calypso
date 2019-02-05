@@ -34,7 +34,7 @@ class DomainProductPrice extends React.Component {
 				message = this.props.translate( 'First year free with your plan' );
 				break;
 			case 'INCLUDED_IN_HIGHER_PLAN':
-				message = translate( 'Included in paid plans' );
+				message = translate( 'First year included in paid plans' );
 				break;
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
 				message = translate( 'Personal plan required' );
