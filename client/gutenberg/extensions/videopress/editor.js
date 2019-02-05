@@ -6,9 +6,9 @@ import { addFilter } from '@wordpress/hooks';
 /**
  * Internal dependencies
  */
-import isJetpackExtensionAvailable from 'gutenberg/extensions/presets/jetpack/utils/is-jetpack-extension-available';
 import withVideoPressEdit from './edit';
 import withVideoPressSave from './save';
+import { isEnabled } from 'config';
 
 const addVideoPressSupport = ( settings, name ) => {
 	if ( 'core/video' !== name ) {
@@ -34,6 +34,8 @@ const addVideoPressSupport = ( settings, name ) => {
 	};
 };
 
-if ( isJetpackExtensionAvailable( 'videopress' ) ) {
+// TODO: Check availability using the availability endpoint. Since this extension is not registered on the server yet,
+// we need to bypass the `isJetpackExtensionAvailable` check
+if ( isEnabled( 'jetpack/blocks/beta' ) ) {
 	addFilter( 'blocks.registerBlockType', 'gutenberg/extensions/videopress', addVideoPressSupport );
 }
