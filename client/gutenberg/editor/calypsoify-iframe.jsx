@@ -79,17 +79,16 @@ class CalypsoifyIframe extends Component {
 			const { siteId } = this.props;
 			const { allowedTypes, gallery, multiple, value } = payload;
 
-			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
-
-			if ( ! value ) {
+			if ( value ) {
+				const selectedItems = Array.isArray( value )
+					? map( value, item => ( { ID: parseInt( item, 10 ) } ) )
+					: [ { ID: parseInt( value, 10 ) } ];
+				MediaActions.setLibrarySelectedItems( siteId, selectedItems );
+			} else {
 				MediaActions.setLibrarySelectedItems( siteId, [] );
-				return;
 			}
 
-			const selectedItems = Array.isArray( value )
-				? map( value, item => ( { ID: parseInt( item, 10 ) } ) )
-				: [ { ID: parseInt( value, 10 ) } ];
-			MediaActions.setLibrarySelectedItems( siteId, selectedItems );
+			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
 		}
 	};
 
