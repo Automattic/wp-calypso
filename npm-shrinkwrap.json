@@ -2438,6 +2438,11 @@
 					"version": "3.3.1",
 					"resolved": "https://registry.npmjs.org/jquery/-/jquery-3.3.1.tgz",
 					"integrity": "sha512-Ubldcmxp5np52/ENotGxlLe6aGMvmF4R8S6tZjsP6Knsaxd/xp3Zrh50cG93lR6nPXyUFwzN3ZSOQI0wRJNdGg=="
+				},
+				"tinymce": {
+					"version": "4.9.3",
+					"resolved": "https://registry.npmjs.org/tinymce/-/tinymce-4.9.3.tgz",
+					"integrity": "sha512-3IjnswgmzJJSgaJR9+tOPK7UYlHoxv8YzUi8ChqetIt1uljRycyqSu8aq1DOyPc+WJCZi9fWo9fEHCEAIYGaLg=="
 				}
 			}
 		},
@@ -19356,9 +19361,9 @@
 			"integrity": "sha1-9PrTM0R7wLB9TcjpIJ2POaisd+g="
 		},
 		"tinymce": {
-			"version": "4.8.5",
-			"resolved": "https://registry.npmjs.org/tinymce/-/tinymce-4.8.5.tgz",
-			"integrity": "sha512-1V6+PxP5Kp8H/Kuf+EOe6vyrtj1Dlj98q33DgiKGoGPTmbcQaVZWiT+lhqj8ICXKVLV3YxAieOJyJXai4SLHQg=="
+			"version": "5.0.0",
+			"resolved": "https://registry.npmjs.org/tinymce/-/tinymce-5.0.0.tgz",
+			"integrity": "sha512-aWBXuV1S+JaZUoteLgOoDv9Ra7wcohpRFoHhldoRWUg9fdA36zC9XPjWfxNgzaANqKdOICxZ3tguLmi3RLtiLA=="
 		},
 		"tinyqueue": {
 			"version": "1.2.3",
