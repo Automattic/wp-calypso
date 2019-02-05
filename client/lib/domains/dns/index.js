@@ -151,6 +151,13 @@ function isRootARecord( domain ) {
 	} );
 }
 
+function isNsRecord( domain ) {
+	return matches( {
+		type: 'NS',
+		name: `${ domain }.`,
+	} );
+}
+
 function removeDuplicateWpcomRecords( domain, records ) {
 	const rootARecords = filter( records, isRootARecord( domain ) ),
 		wpcomARecord = find( rootARecords, isWpcomRecord ),
@@ -164,6 +171,8 @@ function removeDuplicateWpcomRecords( domain, records ) {
 }
 
 function addMissingWpcomRecords( domain, records ) {
+	let newRecords = records;
+
 	if ( ! some( records, isRootARecord( domain ) ) ) {
 		const defaultRootARecord = {
 			domain,
@@ -173,10 +182,22 @@ function addMissingWpcomRecords( domain, records ) {
 			type: 'A',
 		};
 
-		return records.concat( [ defaultRootARecord ] );
+		newRecords = newRecords.concat( [ defaultRootARecord ] );
 	}
 
-	return records;
+	if ( ! some( records, isNsRecord( domain ) ) ) {
+		const defaultNsRecord = {
+			domain,
+			id: `wpcom:NS:${ domain }.:${ domain }`,
+			name: `${ domain }.`,
+			protected_field: true,
+			type: 'NS',
+		};
+
+		newRecords = newRecords.concat( [ defaultNsRecord ] );
+	}
+
+	return newRecords;
 }
 
 function isBeingProcessed( record ) {
