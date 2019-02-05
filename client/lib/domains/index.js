@@ -96,22 +96,6 @@ function checkInboundTransferStatus( domainName, onComplete ) {
 	} );
 }
 
-function restartInboundTransfer( siteId, domainName, onComplete ) {
-	if ( ! domainName || ! siteId ) {
-		onComplete( null );
-		return;
-	}
-
-	wpcom.undocumented().restartInboundTransfer( siteId, domainName, function( serverError, result ) {
-		if ( serverError ) {
-			onComplete( serverError.error );
-			return;
-		}
-
-		onComplete( null, result );
-	} );
-}
-
 function startInboundTransfer( siteId, domainName, authCode, onComplete ) {
 	if ( ! domainName || ! siteId ) {
 		onComplete( null );
@@ -350,7 +334,6 @@ export {
 	isRegisteredDomain,
 	isSubdomain,
 	resendInboundTransferEmail,
-	restartInboundTransfer,
 	startInboundTransfer,
 	getAvailableTlds,
 };
