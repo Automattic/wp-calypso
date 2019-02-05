@@ -1,5 +1,5 @@
 .cart__header {
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var( --color-border-subtle );
 
 	&.is-compact {
 		padding: 11px 15px;
@@ -17,7 +17,7 @@
 	.cart-item {
 		list-style: none;
 		display: block;
-		border-bottom: 1px solid var( --color-neutral-0 );
+		border-bottom: 1px solid var( --color-border-subtle );
 		padding-bottom: 15px;
 		margin-bottom: 15px;
 		position: relative;
@@ -132,7 +132,7 @@
 
 		.cart__total-amount.last-cell {
 			padding-bottom: 5px;
-			border-bottom: 1px solid var( --color-neutral-0 );
+			border-bottom: 1px solid var( --color-border-subtle );
 		}
 
 		.cart__total-amount.grand-total {
@@ -143,7 +143,7 @@
 	}
 
 	.cart__total-divider {
-		border-top: 1px solid var( --color-neutral-0 );
+		border-top: 1px solid var( --color-border-subtle );
 		height: 0;
 		width: 30%;
 		margin-left: 70%;
@@ -165,7 +165,7 @@
 
 		form {
 			display: block;
-			border-top: 1px solid var( --color-neutral-0 );
+			border-top: 1px solid var( --color-border-subtle );
 			margin: 15px -15px 0 -15px;
 			padding: 15px 15px 0;
 
@@ -318,7 +318,7 @@ div.popover-cart__popover {
 	}
 
 	.cart__total {
-		border-top: 1px solid var( --color-neutral-0 );
+		border-top: 1px solid var( --color-border-subtle );
 		font-size: 16px;
 		padding: 15px;
 	}
@@ -362,7 +362,7 @@ div.popover-cart__popover {
 	}
 
 	.cart__total {
-		border-top: 1px solid var( --color-neutral-0 );
+		border-top: 1px solid var( --color-border-subtle );
 		font-size: 16px;
 		padding: 15px;
 	}
