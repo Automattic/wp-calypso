@@ -19,7 +19,7 @@ import { name as phoneName, settings as phoneSettings } from './phone/';
 const attributes = {};
 
 const save = ( { className } ) => (
-	<div className={ className } itemprop="location" itemscope itemtype="http://schema.org/Place">
+	<div className={ className } itemprop="location" itemscope="" itemtype="http://schema.org/Place">
 		<InnerBlocks.Content />
 	</div>
 );

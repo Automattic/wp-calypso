@@ -92,7 +92,7 @@ const save = props => (
 	<div
 		className={ props.className }
 		itemprop="address"
-		itemscope
+		itemscope=""
 		itemtype="http://schema.org/PostalAddress"
 	>
 		{ props.attributes.linkToGoogleMaps && (
