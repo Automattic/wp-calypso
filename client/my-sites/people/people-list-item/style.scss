@@ -116,7 +116,7 @@
 		}
 	}
 
-	color: $green-text-min;
+	color: var( --color-success );
 
 	&.is-pending {
 		color: var( --color-text-subtle );
