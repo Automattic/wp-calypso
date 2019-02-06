@@ -14,9 +14,9 @@ const JetpackEmailSubscribe = {
 	fetch: ( blogId, email ) => {
 		const url =
 			'https://public-api.wordpress.com/rest/v1.1/sites/' +
-			encodeURI( blogId ) +
+			encodeURIComponent( blogId ) +
 			'/email_follow/subscribe?email=' +
-			encodeURI( email );
+			encodeURIComponent( email );
 		return new Promise( function( resolve, reject ) {
 			const xhr = new XMLHttpRequest();
 			xhr.open( 'GET', url );
