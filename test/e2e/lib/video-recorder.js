@@ -67,7 +67,7 @@ export function startVideo() {
 		.split( '.' )[ 0 ]
 		.replace( /:/g, '-' );
 	const fileName = `${ global.displayNum }-${ dateTime }.mpg`;
-	file = path.resolve( path.join( './screenshots/videos', fileName ) );
+	file = path.resolve( path.join( '/tmp/artifacts/screenshots/videos', fileName ) );
 	createDir( path.dirname( file ) );
 	ffVideo = child_process.spawn( ffmpeg.path, [
 		'-f',
@@ -97,7 +97,7 @@ export function stopVideo( currentTest = null ) {
 			.split( '.' )[ 0 ]
 			.replace( /:/g, '-' );
 		const fileName = `${ currentTestName }-${ dateTime }.mpg`;
-		const newFile = path.resolve( path.join( './screenshots/videos', fileName ) );
+		const newFile = path.resolve( path.join( '/tmp/artifacts/screenshots/videos', fileName ) );
 		ffVideo.kill();
 
 		fs.rename( file, newFile, function( err ) {

@@ -15,11 +15,13 @@ references:
         "$CIRCLE_ARTIFACTS/icfy"                \
         "$CIRCLE_ARTIFACTS/notifications-panel" \
         "$CIRCLE_ARTIFACTS/translate"           \
+        "$CIRCLE_ARTIFACTS/screenshots"         \
         "$CIRCLE_TEST_REPORTS/client"           \
         "$CIRCLE_TEST_REPORTS/eslint"           \
         "$CIRCLE_TEST_REPORTS/integration"      \
         "$CIRCLE_TEST_REPORTS/packages"         \
         "$CIRCLE_TEST_REPORTS/server"           \
+        "$CIRCLE_TEST_REPORTS/e2ereports"       \
         "$HOME/jest-cache"                      \
         "$HOME/terser-cache"
 
@@ -458,13 +460,11 @@ jobs:
             curl --silent "https://hash-${CIRCLE_SHA1}.calypso.live" > /dev/null
             exit 0
   test-e2e:
+	  <<: *defaults
       parallelism: 2
-      working_directory: ~/wp-calypso
-      docker: *docker-image
-      environment:
-        NODE_ENV: test
       steps:
         - prepare
+		- run: export NODE_ENV=test
         - run: npm run decrypt-e2e-config
         - run: ./test/e2e/scripts/circleci-branch-update.sh
         - run: ./test/e2e/scripts/randomize.sh specs
