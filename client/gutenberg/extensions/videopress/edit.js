@@ -63,7 +63,7 @@ const VideoPressEdit = CoreVideoEdit =>
 				this.setState( { isFetchingMedia: false } );
 
 				const { id: currentId } = this.props.attributes;
-				if ( id && id !== currentId ) {
+				if ( id !== currentId ) {
 					// Video was changed in the editor while fetching data for the previous video;
 					return;
 				}
