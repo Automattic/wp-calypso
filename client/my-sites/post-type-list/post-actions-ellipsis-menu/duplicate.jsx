@@ -27,13 +27,13 @@ import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenber
 import { isJetpackSite } from 'state/sites/selectors';
 
 function PostActionsEllipsisMenuDuplicate( {
-	translate,
 	canEdit,
-	isUnsupportedJetpack,
-	status,
-	type,
 	duplicateUrl,
+	isUnsupportedJetpack,
 	onDuplicateClick,
+	status,
+	translate,
+	type,
 } ) {
 	const validStatus = includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], status );
 
@@ -49,13 +49,13 @@ function PostActionsEllipsisMenuDuplicate( {
 }
 
 PostActionsEllipsisMenuDuplicate.propTypes = {
-	globalId: PropTypes.string,
-	translate: PropTypes.func.isRequired,
 	canEdit: PropTypes.bool,
-	status: PropTypes.string,
-	type: PropTypes.string,
 	duplicateUrl: PropTypes.string,
+	isUnsupportedJetpack: PropTypes.bool,
 	onDuplicateClick: PropTypes.func,
+	status: PropTypes.string,
+	translate: PropTypes.func.isRequired,
+	type: PropTypes.string,
 };
 
 const mapStateToProps = ( state, { globalId } ) => {
@@ -77,8 +77,8 @@ const mapStateToProps = ( state, { globalId } ) => {
 
 	return {
 		canEdit: canCurrentUserEditPost( state, globalId ),
-		isUnsupportedJetpack,
 		duplicateUrl,
+		isUnsupportedJetpack,
 		status: post.status,
 		type: post.type,
 	};
