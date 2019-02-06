@@ -106,4 +106,4 @@ fi
 #  TESTARGS+=" -x"
 #fi
 
-npm test-e2e
+npm run test-e2e
