@@ -14,6 +14,10 @@ export function getSiteVerticalId( state ) {
 	return get( state, 'signup.steps.siteVertical.id', '' );
 }
 
+export function getSiteVerticalParentId( state ) {
+	return get( state, 'signup.steps.siteVertical.parentId', '' );
+}
+
 export function getSiteVerticalSlug( state ) {
 	return get( state, 'signup.steps.siteVertical.slug', '' );
 }

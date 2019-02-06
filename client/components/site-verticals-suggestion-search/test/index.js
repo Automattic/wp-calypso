@@ -25,6 +25,8 @@ const defaultProps = {
 			verticalSlug: 'doo',
 			isUserInputVertical: false,
 			preview: '<marquee />',
+			parent: 'hoo',
+			verticalId: 'hoodoo',
 		},
 	],
 	requestDefaultVertical: jest.fn(),
@@ -33,6 +35,8 @@ const defaultProps = {
 		verticalSlug: 'ooofff',
 		isUserInputVertical: true,
 		preview: '<blink />',
+		parent: 'whoops',
+		verticalId: 'argh',
 	},
 	translate: str => str,
 	charsToTriggerSearch: 2,
@@ -113,6 +117,8 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 				verticalSlug: undefined,
 				isUserInputVertical: true,
 				preview: defaultProps.defaultVertical.preview,
+				verticalId: '',
+				parent: '',
 			} );
 		} );
 
@@ -123,6 +129,8 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 				verticalSlug: 'ciao',
 				isUserInputVertical: true,
 				preview: defaultProps.defaultVertical.preview,
+				verticalId: '',
+				parent: '',
 			} );
 		} );
 
