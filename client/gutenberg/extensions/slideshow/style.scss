@@ -7,6 +7,10 @@
 		height: 400px; // This is a default, which will be replaced programmatically
 	}
 	.wp-block-jetpack-slideshow_slide {
+		align-items: center;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 		margin: 0;
 	}
 	.wp-block-jetpack-slideshow_image-container {
