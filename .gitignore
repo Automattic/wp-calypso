@@ -23,6 +23,7 @@ test-results*.xml
 
 # config overrides
 /config/*.local.json
+/test/e2e/config/*local*.json
 
 /coverage
 

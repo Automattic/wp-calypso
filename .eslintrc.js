@@ -44,6 +44,21 @@ module.exports = {
 				'wpcalypso/jsx-classname-namespace': 0,
 			},
 		},
+		{
+			files: [ 'test/e2e/**/*' ],
+			rules: {
+				'import/no-nodejs-modules': 0,
+				'import/no-extraneous-dependencies': 0,
+				'valid-jsdoc': 0,
+				'wpcalypso/import-docblock': 0,
+				'prefer-const': 0,
+				'no-console': 0,
+				'no-var': 0,
+				'jest/valid-describe': 0,
+				'jest/no-test-prefixes': 0,
+				'jest/no-identical-title': 0,
+			},
+		},
 	],
 	parser: 'babel-eslint',
 	env: {
@@ -62,6 +77,8 @@ module.exports = {
 		COMMIT_SHA: true,
 		// this is when Webpack last built the bundle
 		BUILD_TIMESTAMP: true,
+		// this is for e2e tests
+		step: false,
 	},
 	plugins: [ 'jest', 'jsx-a11y', 'import' ],
 	settings: {
