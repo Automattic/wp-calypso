@@ -15,6 +15,8 @@ import {
 } from '@wordpress/editor';
 
 import {
+	DropZone,
+	FormFileUpload,
 	IconButton,
 	PanelBody,
 	RangeControl,
@@ -81,14 +83,22 @@ class SlideshowEdit extends Component {
 			onFileChange: images => {
 				const imagesNormalized = images.map( image => pickRelevantMediaFiles( image ) );
 				setAttributes( {
-					images: currentImages.concat( imagesNormalized ),
+					images: imagesNormalized.concat( currentImages ),
 				} );
 			},
 			onError: noticeOperations.createErrorNotice,
 		} );
 	}
+	uploadFromFiles = event => this.addFiles( event.target.files );
 	render() {
-		const { attributes, className, noticeOperations, noticeUI, setAttributes } = this.props;
+		const {
+			attributes,
+			className,
+			isSelected,
+			noticeOperations,
+			noticeUI,
+			setAttributes,
+		} = this.props;
 		const { align, autoplay, delay, effect, images } = attributes;
 		const controls = (
 			<Fragment>
@@ -182,6 +192,21 @@ class SlideshowEdit extends Component {
 					effect={ effect }
 					images={ images }
 				/>
+				<DropZone onFilesDrop={ this.addFiles } />
+				{ isSelected && (
+					<div className="wp-block-jetpack-slideshow__add-item">
+						<FormFileUpload
+							multiple
+							isLarge
+							className="wp-block-jetpack-slideshow__add-item-button"
+							onChange={ this.uploadFromFiles }
+							accept="image/*"
+							icon="insert"
+						>
+							{ __( 'Upload an image' ) }
+						</FormFileUpload>
+					</div>
+				) }
 			</Fragment>
 		);
 	}
