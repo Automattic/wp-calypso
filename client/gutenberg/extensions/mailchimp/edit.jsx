@@ -38,14 +38,17 @@ class MailchimpSubscribeEdit extends Component {
 		};
 		this.timeout = null;
 	}
+
 	componentDidMount = () => {
 		this.apiCall();
 	};
+
 	onError = ( code, message ) => {
 		const { noticeOperations } = this.props;
 		noticeOperations.removeAllNotices();
 		noticeOperations.createErrorNotice( message );
 	};
+
 	apiCall = () => {
 		const path = '/wpcom/v2/mailchimp';
 		const method = 'GET';
@@ -65,6 +68,7 @@ class MailchimpSubscribeEdit extends Component {
 			}
 		);
 	};
+
 	auditionNotification = notification => {
 		this.setState( { audition: notification } );
 		if ( this.timeout ) {
@@ -72,34 +76,41 @@ class MailchimpSubscribeEdit extends Component {
 		}
 		this.timeout = setTimeout( this.clearAudition, 3000 );
 	};
+
 	clearAudition = () => {
 		this.setState( { audition: null } );
 	};
+
 	updateProcessingText = processingLabel => {
 		const { setAttributes } = this.props;
 		setAttributes( { processingLabel } );
 		this.auditionNotification( NOTIFICATION_PROCESSING );
 	};
+
 	updateSuccessText = successLabel => {
 		const { setAttributes } = this.props;
 		setAttributes( { successLabel } );
 		this.auditionNotification( NOTIFICATION_SUCCESS );
 	};
+
 	updateErrorText = errorLabel => {
 		const { setAttributes } = this.props;
 		setAttributes( { errorLabel } );
 		this.auditionNotification( NOTIFICATION_ERROR );
 	};
+
 	updateEmailPlaceholder = emailPlaceholder => {
 		const { setAttributes } = this.props;
 		setAttributes( { emailPlaceholder } );
 		this.clearAudition();
 	};
+
 	updateSubmitLabel = submitLabel => {
 		const { setAttributes } = this.props;
 		setAttributes( { submitLabel } );
 		this.clearAudition();
 	};
+
 	render = () => {
 		const { attributes, className, notices, noticeUI, setAttributes } = this.props;
 		const { audition, connected, connectURL } = this.state;
