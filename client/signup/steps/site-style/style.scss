@@ -1,43 +1,72 @@
 .site-style__form,
 .site-style__form-wrapper {
-	justify-content: center;
-	display: flex;
+	@include breakpoint( '>660px' ) {
+		display: flex;
+		justify-content: center;
+	}
 }
 
 .site-style__form {
-	align-items: stretch;
-	height: 100%;
-	background-color: var( --color-neutral-50 );
-	border-radius: 5px;
-	padding: 0 6px;
+	margin: auto;
+	max-width: 480px;
+	background-color: $white; // var( --color-neutral-50 );
 
 	@include breakpoint( '<660px' ) {
-		width: 100%;
+		// On small screens the form
+		// slightly resembles a card
+		box-shadow: 0 5px 5px -3px rgba( 0, 0, 0, 0.2),
+					0 8px 10px 1px rgba( 0, 0, 0, 0.14),
+					0 3px 14px 2px rgba( 0, 0, 0, 0.12);
+	}
+
+	@include breakpoint( '>660px' ) {
+		max-width: 100%;
+		padding: 0 4px;
+		border-radius: 5px;
 	}
 }
 
-.site-style__fieldset,
-.site-style__submit-wrapper {
-	align-self: center;
-	margin-bottom: 0;
-
-	@include breakpoint( '<480px' ) {
-		flex-basis: 50%;
-	}
-}
-
-.site-style__submit-wrapper {
-	text-align: center;
+.site-style__fieldset {
+	margin: 0;
 }
 
 .site-style__option-label {
 	cursor: pointer;
 	display: inline-block;
-	margin: 5px 6px 0 0;
+	margin: 0;
 	text-align: center;
-	border-radius: 3px;
 	background: $white;
-	box-shadow: 0 0 0 1px inset var( --color-neutral-200 );
+
+	@include breakpoint( '<660px' ) {
+		width: 50%;
+		padding: 16px 8px;
+		border-bottom: 1px solid var( --color-neutral-200 );
+
+		// This fixes an annoyance with using
+		// display: inline-block above.
+		margin-bottom: -5px;
+
+		// Make the SVGs a little bigger since
+		// we've got the room.
+		svg {
+			transform: scale( 1.4 );
+		}
+	}
+
+	@include breakpoint( '>660px' ) {
+		border: 1px solid var( --color-neutral-200 );
+		border-radius: 3px;
+		min-width: 130px;
+		margin-right: 4px;
+		padding: 4px;
+
+		// Prolly a better way to do
+		// this positioning.
+		position: relative;
+		top: 3px;
+	}
+
+	transition: all 0.15s ease-in-out;
 
 	&.is-checked,
 	&.is-checked:hover {
@@ -52,6 +81,12 @@
 		background-color: var( --color-neutral-0 );
 		//background-color: $gray-lighten-30;
 		opacity: 0.8;
+		border-color: var( --color-accent );
+		box-shadow: 0 0 0 3px inset var( --color-accent );
+
+		@include breakpoint( '>660px' ) {
+			box-shadow: 0 0 0 2px inset var( --color-accent );
+		}
 	}
 
 	input[type='radio'] {
@@ -61,7 +96,7 @@
 
 	svg {
 		display: block;
-		margin: 4px 8px;
+		margin: 0 auto;
 	}
 
 	&.site-style__variation-default {}
@@ -74,6 +109,26 @@
 	}
 }
 
+
+//,
+.site-style__submit-wrapper {
+	align-self: center;
+
+	@include breakpoint( '<660px' ) {
+		padding: 8px;
+
+		.button {
+			width: 100%;
+		}
+	}
+}
+
+.site-style__submit-wrapper {
+	text-align: center;
+}
+
+// Gotta figure out how to port this
+// to the new markup (no span anymore)
 .accessible-focus .site-style__option-label input[type='radio']:focus + span {
 	outline: 1px solid var( --color-link-dark );
 }
