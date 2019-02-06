@@ -458,34 +458,34 @@ jobs:
             curl --silent "https://hash-${CIRCLE_SHA1}.calypso.live" > /dev/null
             exit 0
   test-e2e:
-	  parallelism: 2
-	  working_directory: ~/wp-calypso
-	  docker:
-	  	- image: 'circleci/node:$NODE_VERSION-browsers'
-	  environment:
-	    NODE_ENV: test
-	  steps:
-	    - checkout
-	    - run: npm run decryptconfig
-	    - run: ./test/e2e/scripts/circleci-branch-update.sh
-	    - restore_cache:
-	      keys:
-	        - npm-v1-{{ .Environment.NODE_VERSION }}-{{ checksum ".nvmrc" }}-{{ checksum "package-lock.json" }}
-	        - npm-v1-{{ .Environment.NODE_VERSION }}-{{ checksum ".nvmrc" }}
-	    - run: npm ci
-	    - save_cache:
-	      key: npm-v1-{{ .Environment.NODE_VERSION }}-{{ checksum ".nvmrc" }}-{{ checksum "package-lock.json" }}
-	      paths:
-	        - ~/.npm
+      parallelism: 2
+      working_directory: ~/wp-calypso
+      docker:
+      	- image: 'circleci/node:$NODE_VERSION-browsers'
+      environment:
+        NODE_ENV: test
+      steps:
+        - checkout
+        - run: npm run decryptconfig
+        - run: ./test/e2e/scripts/circleci-branch-update.sh
+        - restore_cache:
+          keys:
+            - npm-v1-{{ .Environment.NODE_VERSION }}-{{ checksum ".nvmrc" }}-{{ checksum "package-lock.json" }}
+            - npm-v1-{{ .Environment.NODE_VERSION }}-{{ checksum ".nvmrc" }}
+        - run: npm ci
+        - save_cache:
+          key: npm-v1-{{ .Environment.NODE_VERSION }}-{{ checksum ".nvmrc" }}-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
         - run: npm run lint
-	    - run: ./test/e2e/scripts/randomize.sh specs
-	    - run: ./test/e2e/scripts/run-wrapper.sh
-	    - store_test_results:
-	      path: reports/
-	    - store_artifacts:
-	      path: reports/
-	    - store_artifacts:
-	      path: screenshots/
+        - run: ./test/e2e/scripts/randomize.sh specs
+        - run: ./test/e2e/scripts/run-wrapper.sh
+        - store_test_results:
+          path: reports/
+        - store_artifacts:
+          path: reports/
+        - store_artifacts:
+          path: screenshots/
 
 workflows:
   version: 2
@@ -517,9 +517,12 @@ workflows:
           requires:
             - test-client
             - test-server
-	  - test-e2e:
-	      requires:
-			- prime-calypso-live
+          filters:
+	        branches:
+		      ignore: master
+      - test-e2e:
+          requires:
+            - prime-calypso-live
           filters:
             branches:
               ignore: master
