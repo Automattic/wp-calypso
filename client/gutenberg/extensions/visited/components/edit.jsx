@@ -15,8 +15,8 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { CRITERIA_AFTER, CRITERIA_BEFORE } from '../constants';
 
 const getRadioOptions = memoize( threshold => [
-	{ label: sprintf( 'Show after %d views', threshold ), value: CRITERIA_AFTER },
-	{ label: sprintf( 'Show before %d views', threshold ), value: CRITERIA_BEFORE },
+	{ label: sprintf( __( 'Show after %d views', threshold ) ), value: CRITERIA_AFTER },
+	{ label: sprintf( __( 'Show before %d views', threshold ) ), value: CRITERIA_BEFORE },
 ] );
 
 export default class VisitedEdit extends Component {
@@ -61,13 +61,17 @@ export default class VisitedEdit extends Component {
 						<Notice status="warning" isDismissible={ false }>
 							{ this.props.attributes.criteria === CRITERIA_AFTER
 								? sprintf(
-										'This block will only appear to people who have previously visited this page at least %d times.',
+										__(
+											'This block will only appear to people who have previously visited this page at least %d times.'
+										),
 										this.props.attributes.threshold
 								  )
 								: '' }
 							{ this.props.attributes.criteria === CRITERIA_BEFORE
 								? sprintf(
-										'This block will only appear to people who have visited the page less than %d times',
+										__(
+											'This block will only appear to people who have visited the page less than %d times'
+										),
 										this.props.attributes.threshold
 								  )
 								: '' }
