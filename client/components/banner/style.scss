@@ -42,7 +42,7 @@
 		}
 
 		&.is-upgrade-business {
-			@include banner-color( var( --color-jetpack-plan-business ) );
+			@include banner-color( var( --color-jetpack-plan-professional ) );
 		}
 	}
 
