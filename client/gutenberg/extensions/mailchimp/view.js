@@ -44,6 +44,7 @@ function activateSubscription( block, blogId ) {
 		const email = emailField.value;
 		if ( ! emailValidator.validate( email ) ) {
 			emailField.classList.add( errorClass );
+			return;
 		}
 		block.classList.add( 'is-processing' );
 		processingEl.classList.add( 'is-visible' );
