@@ -48,10 +48,6 @@ export class SubscriptionLengthPicker extends React.Component {
 		onChange: () => null,
 	};
 
-	state = {
-		checked: this.props.initialValue,
-	};
-
 	formatTax( taxRate, price, currencyCode ) {
 		const { translate } = this.props;
 
@@ -107,7 +103,7 @@ export class SubscriptionLengthPicker extends React.Component {
 								<SubscriptionLengthOption
 									type={ hasDiscount ? 'upgrade' : 'new-sale' }
 									term={ plan.term }
-									checked={ planSlug === this.state.checked }
+									checked={ planSlug === this.props.initialValue }
 									price={ myFormatCurrency( priceFull, this.props.currencyCode ) }
 									priceBeforeDiscount={ myFormatCurrency(
 										priceFullBeforeDiscount,
@@ -118,7 +114,7 @@ export class SubscriptionLengthPicker extends React.Component {
 										100 * ( 1 - priceMonthly / this.getHighestMonthlyPrice() )
 									) }
 									value={ planSlug }
-									onCheck={ this.handleCheck }
+									onCheck={ this.props.onChange }
 									shouldShowTax={ shouldShowTax }
 									taxDisplay={ this.formatTax( taxRate, priceFull, this.props.currencyCode ) }
 								/>
@@ -135,13 +131,6 @@ export class SubscriptionLengthPicker extends React.Component {
 			...this.props.productsWithPrices.map( ( { priceMonthly } ) => Number( priceMonthly ) )
 		);
 	}
-
-	handleCheck = ( { value } ) => {
-		this.setState( {
-			checked: value,
-		} );
-		this.props.onChange( { value } );
-	};
 }
 
 export function myFormatCurrency( price, code, options = {} ) {
