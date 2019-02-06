@@ -21,6 +21,8 @@ import {
 	getDisabledDataSources,
 	mediaCalypsoToGutenberg,
 } from './hooks/components/media-upload/utils';
+import { replaceHistory, setRoute } from 'state/ui/actions';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -60,7 +62,7 @@ class CalypsoifyIframe extends Component {
 			const { port1: portToIframe, port2: portForIframe } = new MessageChannel();
 
 			this.iframePort = portToIframe;
-			this.iframePort.addEventListener( 'message', this.oniFramePortMessage, false );
+			this.iframePort.addEventListener( 'message', this.onIframePortMessage, false );
 			this.iframePort.start();
 
 			this.iframeRef.current.contentWindow.postMessage( { action: 'initPort' }, '*', [
@@ -72,7 +74,7 @@ class CalypsoifyIframe extends Component {
 		}
 	};
 
-	oniFramePortMessage = ( { data } ) => {
+	onIframePortMessage = ( { data } ) => {
 		const { action, payload } = data;
 
 		if ( 'openMediaModal' === action ) {
@@ -89,6 +91,14 @@ class CalypsoifyIframe extends Component {
 			}
 
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
+		}
+
+		if ( 'draftIdSet' === action ) {
+			const { postId } = payload;
+			const { currentRoute } = this.props;
+
+			this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
+			this.props.setRoute( `${ currentRoute }/${ postId }` );
 		}
 	};
 
@@ -134,9 +144,10 @@ class CalypsoifyIframe extends Component {
 	}
 }
 
-export default connect( ( state, { postId, postType } ) => {
+const mapStateToProps = ( state, { postId, postType } ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
+	const currentRoute = getCurrentRoute( state );
 
 	const iframeUrl = addQueryArgs(
 		pickBy( {
@@ -152,6 +163,17 @@ export default connect( ( state, { postId, postType } ) => {
 	return {
 		siteId,
 		siteSlug,
+		currentRoute,
 		iframeUrl,
 	};
-} )( CalypsoifyIframe );
+};
+
+const mapDispatchToProps = {
+	replaceHistory,
+	setRoute,
+};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( CalypsoifyIframe );
