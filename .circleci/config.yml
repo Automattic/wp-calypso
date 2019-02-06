@@ -461,7 +461,7 @@ jobs:
       parallelism: 2
       working_directory: ~/wp-calypso
       docker:
-      	- image: 'circleci/node:$NODE_VERSION-browsers'
+        - image: 'circleci/node:$NODE_VERSION-browsers'
       environment:
         NODE_ENV: test
       steps:
@@ -518,8 +518,8 @@ workflows:
             - test-client
             - test-server
           filters:
-	        branches:
-		      ignore: master
+            branches:
+              ignore: master
       - test-e2e:
           requires:
             - prime-calypso-live
