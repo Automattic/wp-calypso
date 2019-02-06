@@ -19,9 +19,7 @@ class DomainSkipSuggestion extends React.Component {
 
 	render() {
 		const { translate } = this.props;
-		const buttonContent = translate( 'Skip Purchase', {
-			context: 'Button for skipping domain purchase',
-		} );
+		const buttonContent = translate( 'Skip Purchase' );
 
 		return (
 			<DomainSuggestion
@@ -37,7 +35,8 @@ class DomainSkipSuggestion extends React.Component {
 					<h3>{ this.props.selectedSiteSlug }</h3>
 					<p>
 						{ translate( 'This is your current free site address', {
-							context: "Describes the user's currently selected site address",
+							comment:
+								"Explains that the domain name shown above this sentence is this site's currently active domain, and it is free of cost.",
 						} ) }
 					</p>
 				</div>

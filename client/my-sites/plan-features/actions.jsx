@@ -72,7 +72,10 @@ const PlanFeaturesActions = ( {
 		}
 		if ( isLaunchPage ) {
 			if ( freePlan ) {
-				buttonText = translate( 'Keep this plan', { context: 'button' } );
+				buttonText = translate( 'Keep this plan', {
+					comment:
+						'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+				} );
 			}
 		} else if ( isInSignup ) {
 			buttonText = translate( 'Start with %(plan)s', {
