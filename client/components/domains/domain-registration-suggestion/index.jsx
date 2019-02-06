@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { isNumber, includes } from 'lodash';
+import { get, isNumber, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
@@ -27,6 +27,7 @@ import {
 	VALID_MATCH_REASONS,
 } from 'components/domains/domain-registration-suggestion/utility';
 import ProgressBar from 'components/progress-bar';
+import { getDomainPrice } from 'lib/domains';
 
 const NOTICE_GREEN = '#4ab866';
 
@@ -53,6 +54,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		query: PropTypes.string,
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
+		productCost: PropTypes.string,
 	};
 
 	componentDidMount() {
@@ -249,7 +251,8 @@ class DomainRegistrationSuggestion extends React.Component {
 		const {
 			domainsWithPlansOnly,
 			isFeatured,
-			suggestion: { domain_name: domain, product_slug: productSlug, cost },
+			suggestion: { domain_name: domain },
+			productCost,
 		} = this.props;
 
 		const isUnavailableDomain = this.isUnavailableDomain( domain );
@@ -263,7 +266,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			<DomainSuggestion
 				extraClasses={ extraClasses }
 				priceRule={ this.getPriceRule() }
-				price={ productSlug && cost }
+				price={ productCost }
 				domain={ domain }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
@@ -277,7 +280,17 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 }
 
+const mapStateToProps = ( state, props ) => {
+	const productSlug = get( props, 'suggestion.product_slug' );
+	const productItems = get( state, 'productsList.items' );
+	const currencyCode = get( state, 'currentUser.currencyCode' );
+
+	return {
+		productCost: getDomainPrice( productSlug, productItems, currencyCode ),
+	};
+};
+
 export default connect(
-	null,
+	mapStateToProps,
 	{ recordTracksEvent }
 )( localize( DomainRegistrationSuggestion ) );
