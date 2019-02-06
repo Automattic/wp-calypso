@@ -593,9 +593,9 @@ class WpcomChecklistComponent extends PureComponent {
 		return (
 			<TaskComponent
 				{ ...baseProps }
+				bannerImageSrc="/calypso/images/stats/tasks/email.svg"
 				title={ translate( 'Get email for your site' ) }
 				completedTitle={ translate( 'You set up email for your site' ) }
-				bannerImageSrc={ '/calypso/images/stats/tasks/email.svg' } // TODO: get an actual svg for this
 				description={ translate(
 					'Subscribe to G Suite to get a dedicated inbox, docs, and cloud storage.'
 				) }
@@ -612,9 +612,9 @@ class WpcomChecklistComponent extends PureComponent {
 		return (
 			<TaskComponent
 				{ ...baseProps }
+				bannerImageSrc="/calypso/images/stats/tasks/email.svg"
 				title={ translate( 'Get email for your site' ) }
 				completedTitle={ translate( 'You set up email forwarding for your site' ) }
-				bannerImageSrc={ '/calypso/images/stats/tasks/email.svg' } // TODO: get an actual svg for this
 				completedDescription={ translate(
 					'Want a dedicated inbox, docs, and cloud storage? {{link}}Upgrade to G Suite!{{/link}}',
 					{
@@ -651,6 +651,7 @@ class WpcomChecklistComponent extends PureComponent {
 		return (
 			<TaskComponent
 				{ ...baseProps }
+				bannerImageSrc="/calypso/images/stats/tasks/email.svg"
 				title={ translate( 'Accept the G Suite TOS to complete email setup' ) }
 				description={ translate( "You're almost done setting up G Suite!" ) }
 				isWarning={ true }
