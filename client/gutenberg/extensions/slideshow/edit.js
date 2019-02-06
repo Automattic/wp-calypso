@@ -14,7 +14,15 @@ import {
 	mediaUpload,
 } from '@wordpress/editor';
 
-import { IconButton, PanelBody, SelectControl, Toolbar, withNotices } from '@wordpress/components';
+import {
+	IconButton,
+	PanelBody,
+	RangeControl,
+	SelectControl,
+	ToggleControl,
+	Toolbar,
+	withNotices,
+} from '@wordpress/components';
 import { filter, pick } from 'lodash';
 
 /**
@@ -81,10 +89,31 @@ class SlideshowEdit extends Component {
 	}
 	render() {
 		const { attributes, className, noticeOperations, noticeUI, setAttributes } = this.props;
-		const { align, effect, images } = attributes;
+		const { align, autoplay, delay, effect, images } = attributes;
 		const controls = (
 			<Fragment>
 				<InspectorControls>
+					<PanelBody title={ __( 'Autoplay' ) }>
+						<ToggleControl
+							label={ __( 'Autoplay' ) }
+							help={ __( 'Autoplay between slides' ) }
+							checked={ autoplay }
+							onChange={ value => {
+								setAttributes( { autoplay: value } );
+							} }
+						/>
+						{ autoplay && (
+							<RangeControl
+								label={ __( 'Delay between transitions' ) }
+								value={ delay }
+								onChange={ value => {
+									setAttributes( { delay: value } );
+								} }
+								min={ 1 }
+								max={ 5 }
+							/>
+						) }
+					</PanelBody>
 					<PanelBody title={ __( 'Effects' ) }>
 						<SelectControl
 							label={ __( 'Transition effect' ) }
@@ -145,7 +174,14 @@ class SlideshowEdit extends Component {
 			<Fragment>
 				{ controls }
 				{ noticeUI }
-				<Slideshow align={ align } className={ className } effect={ effect } images={ images } />
+				<Slideshow
+					align={ align }
+					autoplay={ autoplay }
+					className={ className }
+					delay={ delay }
+					effect={ effect }
+					images={ images }
+				/>
 			</Fragment>
 		);
 	}

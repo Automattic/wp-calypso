@@ -30,14 +30,18 @@ class Slideshow extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { align, effect, images } = this.props;
+		const { align, autoplay, delay, effect, images } = this.props;
 
 		/* A change in alignment or images only needs an update */
 		if ( align !== prevProps.align || ! isEqual( images, prevProps.images ) ) {
 			this.swiperInstance && this.swiperInstance.update();
 		}
 		/* A change in effect requires a full rebuild */
-		if ( effect !== prevProps.effect ) {
+		if (
+			effect !== prevProps.effect ||
+			autoplay !== prevProps.autoplay ||
+			delay !== prevProps.delay
+		) {
 			const { activeIndex } = this.swiperInstance;
 			this.swiperInstance && this.swiperInstance.destroy( true, true );
 			this.buildSwiper( activeIndex ).then( swiper => ( this.swiperInstance = swiper ) );
@@ -45,10 +49,15 @@ class Slideshow extends Component {
 	}
 
 	render() {
-		const { className, effect, images } = this.props;
+		const { autoplay, className, delay, effect, images } = this.props;
 
 		return (
-			<div className={ className } data-effect={ effect }>
+			<div
+				className={ className }
+				data-autoplay={ autoplay }
+				data-delay={ delay }
+				data-effect={ effect }
+			>
 				<div
 					className="wp-block-jetpack-slideshow_container swiper-container"
 					ref={ this.slideshowRef }
@@ -94,6 +103,11 @@ class Slideshow extends Component {
 		// have multiple swipers on one page without collisions, and
 		// without needing to add IDs or the like.
 		createSwiper( this.slideshowRef.current, {
+			autoplay: this.props.autoplay
+				? {
+						delay: this.props.delay * 1000,
+				  }
+				: false,
 			effect: this.props.effect,
 			initialSlide,
 			navigation: {

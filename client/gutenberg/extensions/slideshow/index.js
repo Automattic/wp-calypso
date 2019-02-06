@@ -25,6 +25,14 @@ const attributes = {
 		default: 'center',
 		type: 'string',
 	},
+	autoplay: {
+		type: 'boolean',
+		default: false,
+	},
+	delay: {
+		type: 'number',
+		default: 3,
+	},
 	images: {
 		type: 'array',
 		default: [],
