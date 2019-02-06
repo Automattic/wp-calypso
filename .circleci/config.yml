@@ -477,7 +477,7 @@ jobs:
         NODE_ENV: test
       steps:
         - checkout
-        - run: npm run decryptconfig
+        - run: npm run decrypt-e2e-config
         - run: ./test/e2e/scripts/circleci-branch-update.sh
         - restore_cache: *restore-e2e-cache
         - run: npm ci
