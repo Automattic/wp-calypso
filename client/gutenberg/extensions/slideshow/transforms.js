@@ -7,7 +7,7 @@
 import { createBlock } from '@wordpress/blocks';
 import { filter } from 'lodash';
 
-export const transforms = {
+const transforms = {
 	from: [
 		{
 			type: 'block',
@@ -53,3 +53,5 @@ export const transforms = {
 		},
 	],
 };
+
+export default transforms;
