@@ -28,6 +28,8 @@ import {
 } from 'components/domains/domain-registration-suggestion/utility';
 import ProgressBar from 'components/progress-bar';
 import { getDomainPrice } from 'lib/domains';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getProductsList } from 'state/products-list/selectors';
 
 const NOTICE_GREEN = '#4ab866';
 
@@ -282,11 +284,13 @@ class DomainRegistrationSuggestion extends React.Component {
 
 const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
-	const productItems = get( state, 'productsList.items' );
-	const currencyCode = get( state, 'currentUser.currencyCode' );
 
 	return {
-		productCost: getDomainPrice( productSlug, productItems, currencyCode ),
+		productCost: getDomainPrice(
+			productSlug,
+			getProductsList( state ),
+			getCurrentUserCurrencyCode( state )
+		),
 	};
 };
 
