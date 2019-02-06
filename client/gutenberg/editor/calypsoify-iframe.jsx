@@ -32,6 +32,7 @@ import './style.scss';
 class CalypsoifyIframe extends Component {
 	state = {
 		isMediaModalVisible: false,
+		isDraftIdUpdated: false,
 	};
 
 	constructor( props ) {
@@ -93,12 +94,13 @@ class CalypsoifyIframe extends Component {
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
 		}
 
-		if ( 'draftIdSet' === action ) {
+		if ( 'draftIdSet' === action && ! this.state.isDraftIdUpdated && ! this.props.postId ) {
 			const { postId } = payload;
 			const { currentRoute } = this.props;
 
 			this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
 			this.props.setRoute( `${ currentRoute }/${ postId }` );
+			this.setState( { isDraftIdUpdated: true } );
 		}
 	};
 
