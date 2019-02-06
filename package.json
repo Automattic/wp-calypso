@@ -249,7 +249,7 @@
     "clean:devdocs": "npx rimraf server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json",
     "clean:packages": "npx rimraf packages/*/dist",
     "clean:public": "npx rimraf public/*.{css,css.map,js,js.map} public/images/*.{gif,jpg,png,svg} public/{sections,sections-rtl,vendors~*}",
-    "distclean": "npm run -s clean && npx rimraf node_modules packages/*/node_modules",
+    "distclean": "npm run -s clean && npx rimraf node_modules packages/*/node_modules test/e2e/node_modules",
     "docker": "docker run -it --name wp-calypso --rm -p 80:3000 wp-calypso",
     "eslint-branch": "node bin/eslint-branch.js",
     "install-if-deps-outdated": "node bin/install-if-deps-outdated.js",
@@ -281,7 +281,7 @@
     "test-server:coverage": "npm run -s test-server -- --coverage",
     "test-server:watch": "npm run -s test-server -- --watch",
     "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -k translate,__,_x,_n,_nx -e date '**/*.js' '**/*.jsx' '!build/**' '!public/**' '!**/test/**' '!node_modules/**' '!**/node_modules/**' '!packages/i18n-calypso/_test/**' # FIXME: when tests are restored",
-    "update-deps": "npx rimraf npm-shrinkwrap.json packages/*/package-lock.json && npm run -s distclean && npx lerna bootstrap && npm shrinkwrap && replace --silent 'http://' 'https://' . --recursive --include='npm-shrinkwrap.json,package-lock.json'",
+    "update-deps": "npx rimraf npm-shrinkwrap.json packages/*/package-lock.json test/e2e/package-lock.json && npm run -s distclean && npx lerna bootstrap && npm shrinkwrap && replace --silent 'http://' 'https://' . --recursive --include='npm-shrinkwrap.json,package-lock.json'",
     "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
     "prewhybundled": "cross-env-shell CALYPSO_ENV=production EMIT_STATS=withreasons npm run -s build-client",
     "whybundled": "whybundled stats.json"
