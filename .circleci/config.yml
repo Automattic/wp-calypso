@@ -467,7 +467,7 @@ jobs:
         - run: export NODE_ENV=test
         - run: npm run decrypt-e2e-config
         - run: ./test/e2e/scripts/circleci-branch-update.sh
-        - run: ./test/e2e/scripts/randomize.sh specs
+        - run: ./test/e2e/scripts/randomize.sh /test/e2e/specs
         - run: ./test/e2e/scripts/run-wrapper.sh
         - store-artifacts-and-test-results
 
