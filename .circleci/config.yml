@@ -469,7 +469,7 @@ jobs:
         - run: ./test/e2e/scripts/circleci-branch-update.sh
         - run: ./test/e2e/scripts/randomize.sh specs
         - run: ./test/e2e/scripts/run-wrapper.sh
-		- store-artifacts-and-test-results
+        - store-artifacts-and-test-results
 
 workflows:
   version: 2
