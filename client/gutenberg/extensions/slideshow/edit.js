@@ -83,7 +83,7 @@ class SlideshowEdit extends Component {
 			onFileChange: images => {
 				const imagesNormalized = images.map( image => pickRelevantMediaFiles( image ) );
 				setAttributes( {
-					images: imagesNormalized.concat( currentImages ),
+					images: [ ...imagesNormalized, ...currentImages ],
 				} );
 			},
 			onError: noticeOperations.createErrorNotice,
