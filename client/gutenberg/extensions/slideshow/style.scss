@@ -2,13 +2,16 @@
 
 .wp-block-jetpack-slideshow {
 	position: relative;
+
 	.wp-block-jetpack-slideshow_container {
 		width: 100%;
 		height: 400px; // This is a default, which will be replaced programmatically
 	}
+
 	.wp-block-jetpack-slideshow_slide {
 		margin: 0;
 	}
+
 	.wp-block-jetpack-slideshow_image-container {
 		align-items: center;
 		background: #f0f0f0;
@@ -18,6 +21,7 @@
 		position: relative;
 		width: 100%;
 	}
+
 	.wp-block-jetpack-slideshow_image {
 		display: block;
 		height: auto;
@@ -26,6 +30,7 @@
 		width: auto;
 		object-fit: contain;
 	}
+
 	.wp-block-jetpack-slideshow_button-prev,
 	.wp-block-jetpack-slideshow_button-next {
 		width: 24px;
@@ -37,6 +42,7 @@
 		margin-top: -32px;
 		transition: background-color 200ms;
 	}
+
 	.wp-block-jetpack-slideshow_caption {
 		cursor: text;
 		position: relative;
@@ -45,6 +51,7 @@
 		vertical-align: center;
 		margin: 0;
 	}
+
 	.wp-block-jetpack-slideshow_pagination {
 		bottom: 32px !important;
 	}

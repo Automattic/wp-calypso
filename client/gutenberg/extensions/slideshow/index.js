@@ -11,6 +11,7 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
  */
 import edit from './edit';
 import save from './save';
+import transforms from './transforms';
 import './style.scss';
 
 const icon = (
@@ -83,4 +84,5 @@ export const settings = {
 	icon,
 	edit,
 	save,
+	transforms,
 };
