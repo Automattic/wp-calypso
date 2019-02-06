@@ -12,6 +12,7 @@ import edit from './edit';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import './editor.scss';
+import './style.scss';
 import { name as addressName, settings as addressSettings } from './address/';
 import { name as emailName, settings as emailSettings } from './email/';
 import { name as phoneName, settings as phoneSettings } from './phone/';
