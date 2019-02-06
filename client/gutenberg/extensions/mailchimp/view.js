@@ -72,7 +72,12 @@ const initializeMailchimpBlocks = () => {
 		const blog_id = block.getAttribute( 'data-blog-id' );
 		try {
 			JetpackEmailSubscribe.activate( block, blog_id );
-		} catch ( e ) {}
+		} catch ( err ) {
+			if ( 'production' !== process.env.NODE_ENV ) {
+				// eslint-disable-next-line no-console
+				console.error( err );
+			}
+		}
 	} );
 };
 
