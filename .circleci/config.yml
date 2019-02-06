@@ -472,8 +472,7 @@ jobs:
   test-e2e:
       parallelism: 2
       working_directory: ~/wp-calypso
-      docker:
-        - image: 'circleci/node:10.14.0-browsers'
+      docker: *docker-image
       environment:
         NODE_ENV: test
       steps:
@@ -487,11 +486,11 @@ jobs:
         - run: ./test/e2e/scripts/randomize.sh specs
         - run: ./test/e2e/scripts/run-wrapper.sh
         - store_test_results:
-          path: reports/
+            path: reports/
         - store_artifacts:
-          path: reports/
+            path: reports/
         - store_artifacts:
-          path: screenshots/
+            path: screenshots/
 
 workflows:
   version: 2
