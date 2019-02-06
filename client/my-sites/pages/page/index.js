@@ -30,8 +30,8 @@ import { preload } from 'sections-helper';
 import {
 	getSite,
 	hasStaticFrontPage,
+	isJetpackSite,
 	isSitePreviewable,
-	isJetpackMinimumVersion,
 } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isFrontPage, isPostsPage } from 'state/pages/selectors';
@@ -42,6 +42,7 @@ import { savePost, deletePost, trashPost, restorePost } from 'state/posts/action
 import { withoutNotice } from 'state/notices/actions';
 import { isEnabled } from 'config';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import {
@@ -284,10 +285,11 @@ class Page extends Component {
 	}
 
 	getCopyItem() {
-		const { page: post, duplicateUrl } = this.props;
+		const { page: post, duplicateUrl, isUnsupportedJetpack } = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
-			! utils.userCan( 'edit_post', post )
+			! utils.userCan( 'edit_post', post ) ||
+			isUnsupportedJetpack
 		) {
 			return null;
 		}
@@ -635,19 +637,22 @@ const mapState = ( state, props ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const isPreviewable =
 		false !== isSitePreviewable( state, pageSiteId ) && site && site.ID === selectedSiteId;
+	const isUnsupportedJetpack =
+		isJetpackSite( state, pageSiteId ) && ! isJetpackModuleActive( state, pageSiteId, 'copy-post' );
 	const calypsoifyGutenberg =
 		isCalypsoifyGutenbergEnabled( state, pageSiteId ) &&
 		'gutenberg' === getSelectedEditor( state, pageSiteId );
 	const duplicateUrl =
-		!! calypsoifyGutenberg && isJetpackMinimumVersion( state, pageSiteId, '7.0' )
-			? getCalypsoifyEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID )
-			: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' );
+		!! calypsoifyGutenberg && ! isUnsupportedJetpack
+			? getCalypsoifyEditorDuplicatePostPath( state, pageSiteId, props.page.ID )
+			: getEditorDuplicatePostPath( state, pageSiteId, props.page.ID, 'page' );
 
 	return {
 		hasStaticFrontPage: hasStaticFrontPage( state, pageSiteId ),
 		isFrontPage: isFrontPage( state, pageSiteId, props.page.ID ),
 		isPostsPage: isPostsPage( state, pageSiteId, props.page.ID ),
 		isPreviewable,
+		isUnsupportedJetpack,
 		previewURL: utils.getPreviewURL( site, props.page ),
 		site,
 		siteSlugOrId,
