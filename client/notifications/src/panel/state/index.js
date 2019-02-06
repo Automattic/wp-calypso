@@ -22,13 +22,18 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const withMiddleware = customMiddleware =>
 	composeEnhancers( applyMiddleware( actionMiddleware( customMiddleware ) ) )( createStore );
 
-export let store = init();
+let store = null;
+init();
 
-export function init( { customEnhancer, customMiddleware = {} } = {} ) {
+// Note: this function has the unexpected side effect of modifying
+// the `store` export. In order to maintain behaviour for consumers,
+// it's being kept this way, but beware this is not a pure function.
+function init( { customEnhancer, customMiddleware = {} } = {} ) {
 	const middle = withMiddleware( customMiddleware );
 	const create = customEnhancer ? customEnhancer( middle ) : middle;
 
 	store = create( reducer, reducer( undefined, { type: '@@INIT' } ) );
-
 	return store;
 }
+
+export { store, init };
