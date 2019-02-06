@@ -123,8 +123,13 @@ class TiledGalleryEdit extends Component {
 		}
 	};
 
-	onSelectImages = images =>
-		this.setAttributes( { images: images.map( image => pickRelevantMediaFiles( image ) ) } );
+	onSelectImages = images => {
+		const { columns } = this.props.attributes;
+		this.setAttributes( {
+			columns: columns ? Math.min( images.length, columns ) : columns,
+			images: images.map( image => pickRelevantMediaFiles( image ) ),
+		} );
+	};
 
 	setColumnsNumber = value => this.setAttributes( { columns: value } );
 
