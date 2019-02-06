@@ -482,13 +482,13 @@ jobs:
         - run:
             name: Run IE11 Canary Tests
             command: ./test/e2e/run.sh -z
-      - run:
-          name: Run Safari Canary Tests
-          command: ./test/e2e/run.sh -y
-      - run:
-          name: Run Woo Canary Tests
-          command: ./test/e2e/run.sh -W
-      - store-artifacts-and-test-results
+        - run:
+            name: Run Safari Canary Tests
+            command: ./test/e2e/run.sh -y
+        - run:
+            name: Run Woo Canary Tests
+            command: ./test/e2e/run.sh -W
+        - store-artifacts-and-test-results
 
 
 workflows:
