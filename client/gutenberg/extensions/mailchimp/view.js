@@ -1,15 +1,16 @@
 /**
  * Internal dependencies
  */
+import emailValidator from 'email-validator';
+
+/**
+ * Internal dependencies
+ */
 import './view.scss';
 
 const blockClassName = 'wp-block-jetpack-mailchimp';
 
 const JetpackEmailSubscribe = {
-	validateEmail: function( email ) {
-		const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-		return re.test( String( email ).toLowerCase() );
-	},
 	fetch: ( blogId, email ) => {
 		const url =
 			'https://public-api.wordpress.com/rest/v1.1/sites/' +
@@ -41,7 +42,7 @@ const JetpackEmailSubscribe = {
 			const emailField = form.querySelector( '.' + blockClassName + '-email' );
 			emailField.classList.remove( errorClass );
 			const email = emailField.value;
-			if ( ! this.validateEmail( email ) ) {
+			if ( ! emailValidator.validate( email ) ) {
 				emailField.classList.add( errorClass );
 			}
 			block.classList.add( 'is-processing' );
