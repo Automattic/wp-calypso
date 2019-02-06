@@ -25,22 +25,22 @@ class Slideshow extends Component {
 		this.paginationRef = createRef();
 	}
 
-	componentDidMount() {
-		this.buildSwiper().then( swiper => ( this.swiperInstance = swiper ) );
+	async componentDidMount() {
+		this.swiperInstance = await this.buildSwiper();
 	}
 
-	componentDidUpdate( prevProps ) {
+	async componentDidUpdate( prevProps ) {
 		const { align, effect, images } = this.props;
 
 		/* A change in alignment or images only needs an update */
 		if ( align !== prevProps.align || ! isEqual( images, prevProps.images ) ) {
-			this.swiperInstance && this.swiperInstance.update();
+			this.swiperInstance.update();
 		}
 		/* A change in effect requires a full rebuild */
 		if ( effect !== prevProps.effect ) {
 			const { activeIndex } = this.swiperInstance;
-			this.swiperInstance && this.swiperInstance.destroy( true, true );
-			this.buildSwiper( activeIndex ).then( swiper => ( this.swiperInstance = swiper ) );
+			this.swiperInstance.destroy( true, true );
+			this.swiperInstance = await this.buildSwiper( activeIndex );
 		}
 	}
 
