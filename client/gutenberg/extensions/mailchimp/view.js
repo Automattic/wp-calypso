@@ -39,6 +39,7 @@ function activateSubscription( block, blogId ) {
 	const errorEl = block.querySelector( '.' + blockClassName + '-error' );
 	const successEl = block.querySelector( '.' + blockClassName + '-success' );
 	form.addEventListener( 'submit', e => {
+		e.preventDefault();
 		const emailField = form.querySelector( '.' + blockClassName + '-email' );
 		emailField.classList.remove( errorClass );
 		const email = emailField.value;
@@ -62,7 +63,6 @@ function activateSubscription( block, blogId ) {
 				errorEl.classList.add( 'is-visible' );
 			}
 		);
-		e.preventDefault();
 	} );
 }
 
