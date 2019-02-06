@@ -460,7 +460,7 @@ jobs:
             curl --silent "https://hash-${CIRCLE_SHA1}.calypso.live" > /dev/null
             exit 0
   test-e2e:
-	  <<: *defaults
+      <<: *defaults
       parallelism: 2
       steps:
         - prepare
