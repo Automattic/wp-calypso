@@ -464,17 +464,12 @@ jobs:
       parallelism: 2
       steps:
         - prepare
-		- run: export NODE_ENV=test
+        - run: export NODE_ENV=test
         - run: npm run decrypt-e2e-config
         - run: ./test/e2e/scripts/circleci-branch-update.sh
         - run: ./test/e2e/scripts/randomize.sh specs
         - run: ./test/e2e/scripts/run-wrapper.sh
-        - store_test_results:
-            path: reports/
-        - store_artifacts:
-            path: reports/
-        - store_artifacts:
-            path: screenshots/
+		- store-artifacts-and-test-results
 
 workflows:
   version: 2
