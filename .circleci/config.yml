@@ -136,18 +136,6 @@ references:
     paths:
       - "build/.babel-client-cache"
 
-  restore-e2e-cache: &restore-e2e-cache
-    name: "Restore npm cache"
-    keys:
-      - v3-e2e-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-      - v3-e2e-npm-modules-{{ checksum ".nvmrc" }}
-
-  save-e2e-cache: &save-e2e-cache
-    name: "Save node_modules cache"
-    key: v3-e2e-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-    paths:
-      - ~/.npm
-
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker: *docker-image
@@ -476,13 +464,9 @@ jobs:
       environment:
         NODE_ENV: test
       steps:
-        - checkout
+        - prepare
         - run: npm run decrypt-e2e-config
         - run: ./test/e2e/scripts/circleci-branch-update.sh
-        - restore_cache: *restore-e2e-cache
-        - run: npm ci
-        - save_cache: *save-e2e-cache
-        - run: npm run lint
         - run: ./test/e2e/scripts/randomize.sh specs
         - run: ./test/e2e/scripts/run-wrapper.sh
         - store_test_results:
@@ -521,7 +505,7 @@ workflows:
       - prime-calypso-live:
           requires:
             - test-client
-            #- test-server
+            - test-server
           filters:
             branches:
               ignore: master
