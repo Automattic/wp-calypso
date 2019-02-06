@@ -521,7 +521,7 @@ workflows:
       - prime-calypso-live:
           requires:
             - test-client
-            - test-server
+            #- test-server
           filters:
             branches:
               ignore: master
