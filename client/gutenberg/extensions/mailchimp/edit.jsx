@@ -43,7 +43,7 @@ class MailchimpSubscribeEdit extends Component {
 		this.apiCall();
 	};
 
-	onError = ( code, message ) => {
+	onError = message => {
 		const { noticeOperations } = this.props;
 		noticeOperations.removeAllNotices();
 		noticeOperations.createErrorNotice( message );
@@ -64,7 +64,7 @@ class MailchimpSubscribeEdit extends Component {
 				const connectURL = null;
 				const connected = API_STATE_NOTCONNECTED;
 				this.setState( { connected, connectURL } );
-				this.onError( null, result.message );
+				this.onError( result.message );
 			}
 		);
 	};
