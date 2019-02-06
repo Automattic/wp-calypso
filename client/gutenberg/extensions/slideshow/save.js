@@ -5,6 +5,13 @@
  */
 import Slideshow from './slideshow';
 
-export default ( { attributes: { align, effect, images }, className } ) => (
-	<Slideshow align={ align } className={ className } effect={ effect } images={ images } />
+export default ( { attributes: { align, autoplay, delay, effect, images }, className } ) => (
+	<Slideshow
+		align={ align }
+		autoplay={ autoplay }
+		className={ className }
+		delay={ delay }
+		effect={ effect }
+		images={ images }
+	/>
 );
