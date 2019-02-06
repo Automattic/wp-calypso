@@ -3,6 +3,11 @@
  */
 import { merge } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import './style.scss';
+
 const SIXTEEN_BY_NINE = 16 / 9;
 
 export default async function createSwiper( container = '.swiper-container', params = {} ) {

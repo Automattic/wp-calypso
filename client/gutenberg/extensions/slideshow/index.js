@@ -12,7 +12,6 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import edit from './edit';
 import save from './save';
 import transforms from './transforms';
-import './editor.scss';
 
 const icon = (
 	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">

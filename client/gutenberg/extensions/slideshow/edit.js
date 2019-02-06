@@ -31,6 +31,7 @@ import { filter, pick } from 'lodash';
  * Internal dependencies
  */
 import Slideshow from './slideshow';
+import './editor.scss';
 
 const ALLOWED_MEDIA_TYPES = [ 'image' ];
 
