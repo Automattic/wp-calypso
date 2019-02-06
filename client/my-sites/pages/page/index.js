@@ -638,7 +638,9 @@ const mapState = ( state, props ) => {
 	const isPreviewable =
 		false !== isSitePreviewable( state, pageSiteId ) && site && site.ID === selectedSiteId;
 	const isUnsupportedJetpack =
-		isJetpackSite( state, pageSiteId ) && ! isJetpackModuleActive( state, pageSiteId, 'copy-post' );
+		! isEnabled( 'calypsoify/iframe' ) ||
+		( isJetpackSite( state, pageSiteId ) &&
+			! isJetpackModuleActive( state, pageSiteId, 'copy-post' ) );
 	const calypsoifyGutenberg =
 		isCalypsoifyGutenbergEnabled( state, pageSiteId ) &&
 		'gutenberg' === getSelectedEditor( state, pageSiteId );

@@ -12,6 +12,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { getPost } from 'state/posts/selectors';
 import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
@@ -65,8 +66,9 @@ const mapStateToProps = ( state, { globalId } ) => {
 	}
 
 	const isUnsupportedJetpack =
-		isJetpackSite( state, post.site_ID ) &&
-		! isJetpackModuleActive( state, post.site_ID, 'copy-post' );
+		! isEnabled( 'calypsoify/iframe' ) ||
+		( isJetpackSite( state, post.site_ID ) &&
+			! isJetpackModuleActive( state, post.site_ID, 'copy-post' ) );
 	const calypsoifyGutenberg =
 		isCalypsoifyGutenbergEnabled( state, post.site_ID ) &&
 		'gutenberg' === getSelectedEditor( state, post.site_ID );
