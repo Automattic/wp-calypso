@@ -81,7 +81,7 @@
 		"me/trophies": false,
 		"network-connection": true,
 		"onboarding-checklist": false,
-		"onboarding-checklist/email-setup": false,
+		"onboarding-checklist/email-setup": true,
 		"perfmon": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,
