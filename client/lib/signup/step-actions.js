@@ -4,22 +4,25 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { assign, defer, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
+import { assign, defer, get, includes, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
 import { parse as parseURL } from 'url';
 
 /**
  * Internal dependencies
  */
+
+// Libraries
 import wpcom from 'lib/wp';
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
-const user = userFactory();
 import { getABTestVariation, getSavedVariations } from 'lib/abtest';
-import SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
-import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
 import { cartItems } from 'lib/cart-values';
 import { isDomainTransfer } from 'lib/products-values';
+import { supportsPrivacyProtectionPurchase } from 'lib/cart-values/cart-items';
+
+// State actions and selectors
+import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
@@ -31,13 +34,24 @@ import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { requestSites } from 'state/sites/actions';
-import { supportsPrivacyProtectionPurchase } from 'lib/cart-values/cart-items';
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import { normalizeImportUrl } from 'state/importer-nux/utils';
-import { promisify } from '../../utils';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
+// Current directory dependencies
+import SignupActions from './actions';
+import { isValidLandingPageVertical } from './verticals';
+import { getSiteTypePropertyValue } from './site-type';
+import SignupCart from './cart';
+import { promisify } from '../../utils';
+
+// Others
+import flows from 'signup/config/flows';
+import { normalizeImportUrl } from 'state/importer-nux/utils';
+
+/**
+ * Constants
+ */
+const user = userFactory();
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
@@ -541,4 +555,116 @@ export function createSite( callback, { themeSlugWithRepo }, { site }, reduxStor
 			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
 		}
 	} );
+}
+
+function recordExcludeStepEvent( step, value ) {
+	analytics.tracks.recordEvent( 'calypso_signup_actions_exclude_step', {
+		step,
+		value,
+	} );
+}
+
+export function isDomainFulfilled( stepName, nextProps ) {
+	if ( includes( flows.excludedSteps, stepName ) ) {
+		return;
+	}
+	console.log( 'in isDomainFulfilled, stepName: ' + stepName );
+	const { siteDomains } = nextProps;
+	console.log( siteDomains.length );
+	if ( siteDomains && siteDomains.length > 1 && ! includes( flows.excludedSteps, stepName ) ) {
+		flows.excludeStep( stepName );
+
+		const domainItem = undefined;
+		SignupActions.submitSignupStep( { stepName: stepName, domainItem }, [], {
+			domainItem,
+		} );
+		recordExcludeStepEvent( stepName, siteDomains );
+	}
+}
+
+export function isPlanFulfilled( stepName, nextProps ) {
+	if ( includes( flows.excludedSteps, stepName ) ) {
+		return;
+	}
+
+	const { isPaidPlan, sitePlanSlug } = nextProps;
+	if ( isPaidPlan ) {
+		flows.excludeStep( stepName );
+
+		const cartItem = undefined;
+		SignupActions.submitSignupStep( { stepName: stepName, cartItem }, [], { cartItem } );
+		recordExcludeStepEvent( stepName, sitePlanSlug );
+	}
+}
+
+export function isSiteTypeFulfilled( stepName, nextProps ) {
+	if ( isEmpty( nextProps.initialContext && nextProps.initialContext.query ) ) {
+		return;
+	}
+
+	if ( includes( flows.excludedSteps, stepName ) ) {
+		return;
+	}
+
+	const {
+		initialContext: {
+			query: { site_type: siteType },
+		},
+	} = nextProps;
+	const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
+	if ( siteTypeValue ) {
+		debug( 'From query string: site_type = %s', siteType );
+		debug( 'Site type value = %s', siteTypeValue );
+
+		flows.excludeStep( stepName );
+		nextProps.submitSiteType( siteType );
+		recordExcludeStepEvent( stepName, siteType );
+	}
+}
+
+export function isSiteTopicFulfilled( stepName, nextProps ) {
+	if ( isEmpty( nextProps.initialContext && nextProps.initialContext.query ) ) {
+		return;
+	}
+
+	if ( includes( flows.excludedSteps, stepName ) ) {
+		return;
+	}
+
+	const {
+		initialContext: {
+			query: { vertical },
+		},
+		flowName,
+	} = nextProps;
+
+	const flowSteps = flows.getFlow( flowName ).steps;
+
+	if ( vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
+		debug( 'From query string: vertical = %s', vertical );
+
+		nextProps.setSurvey( {
+			vertical,
+			otherText: '',
+		} );
+
+		SignupActions.submitSignupStep( { stepName: 'survey' }, [], {
+			surveySiteType: 'blog',
+			surveyQuestion: vertical,
+		} );
+
+		nextProps.submitSiteVertical( { name: vertical }, stepName );
+
+		// Track our landing page verticals
+		if ( isValidLandingPageVertical( vertical ) ) {
+			analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
+				vertical,
+				flow: flowName,
+			} );
+		}
+
+		flows.excludeStep( stepName );
+
+		recordExcludeStepEvent( stepName, vertical );
+	}
 }

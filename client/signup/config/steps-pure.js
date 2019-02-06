@@ -21,6 +21,10 @@ export function generateSteps( {
 	setThemeOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
+	isPlanFulfilled = noop,
+	isDomainFulfilled = noop,
+	isSiteTypeFulfilled = noop,
+	isSiteTopicFulfilled = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -83,6 +87,7 @@ export function generateSteps( {
 		'domains-launch': {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
+			fulfilledStepCallback: isDomainFulfilled,
 			providesDependencies: [ 'domainItem' ],
 			props: {
 				isDomainOnly: true,
@@ -167,6 +172,7 @@ export function generateSteps( {
 		'plans-launch': {
 			stepName: 'plans-launch',
 			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
 			props: {
@@ -402,11 +408,13 @@ export function generateSteps( {
 		'site-type': {
 			stepName: 'site-type',
 			providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isSiteTypeFulfilled,
 		},
 
 		'site-topic': {
 			stepName: 'site-topic',
 			providesDependencies: [ 'siteTopic' ],
+			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 
 		'site-information': {

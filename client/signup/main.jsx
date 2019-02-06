@@ -13,11 +13,13 @@ import {
 	defer,
 	find,
 	get,
+	includes,
 	indexOf,
 	isEmpty,
 	isEqual,
 	kebabCase,
 	last,
+	map,
 	pick,
 	startsWith,
 } from 'lodash';
@@ -48,7 +50,7 @@ import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/pro
 import SignupActions from 'lib/signup/actions';
 import SignupFlowController from 'lib/signup/flow-controller';
 import { disableCart } from 'lib/upgrades/actions';
-import { isValidLandingPageVertical } from 'lib/signup/verticals';
+
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 
 // State actions and selectors
@@ -62,7 +64,7 @@ import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import getSiteId from 'state/selectors/get-site-id';
-import { isCurrentPlanPaid } from 'state/sites/selectors';
+import { isCurrentPlanPaid, getSitePlanSlug } from 'state/sites/selectors';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
 // Current directory dependencies
@@ -136,7 +138,7 @@ class Signup extends React.Component {
 
 		this.submitQueryDependencies();
 
-		this.removeOtherFulfilledSteps( this.props );
+		// this.removeFulfilledSteps( this.props );
 
 		if ( flow.providesDependenciesInQuery ) {
 			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
@@ -176,7 +178,7 @@ class Signup extends React.Component {
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { signupDependencies, stepName, flowName, progress } = nextProps;
 
-		this.removeOtherFulfilledSteps( nextProps );
+		// this.removeFulfilledSteps( nextProps );
 
 		if ( this.props.stepName !== stepName ) {
 			this.recordStep( stepName, flowName );
@@ -277,13 +279,6 @@ class Signup extends React.Component {
 		}
 	};
 
-	recordExcludeStepEvent = ( step, value ) => {
-		analytics.tracks.recordEvent( 'calypso_signup_actions_exclude_step', {
-			step,
-			value,
-		} );
-	};
-
 	submitQueryDependencies = () => {
 		if ( isEmpty( this.props.initialContext && this.props.initialContext.query ) ) {
 			return;
@@ -316,12 +311,12 @@ class Signup extends React.Component {
 			this.props.submitSiteVertical( { name: vertical }, siteTopicStepName );
 
 			// Track our landing page verticals
-			if ( isValidLandingPageVertical( vertical ) ) {
-				analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
-					vertical,
-					flow: flowName,
-				} );
-			}
+			// if ( isValidLandingPageVertical( vertical ) ) {
+			// 	analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
+			// 		vertical,
+			// 		flow: flowName,
+			// 	} );
+			// }
 
 			flows.excludeStep( siteTopicStepName );
 
@@ -340,42 +335,24 @@ class Signup extends React.Component {
 
 			flows.excludeStep( siteTypeStepName );
 
-			this.recordExcludeStepEvent( siteTypeStepName, siteTypeValue );
+			// this.recordExcludeStepEvent( siteTypeStepName, siteTypeValue );
 		}
 	};
 
-	removeOtherFulfilledSteps = nextProps => {
-		const { flowName, isPaidPlan, siteDomains, currentStepName } = nextProps;
+	processFulfilledSteps = ( stepName, nextProps ) => {
+		// console.log('in processFulfilledSteps, stepName: ' + stepName);
+		const isFulfilledCallback = steps[ stepName ].fulfilledStepCallback;
+		isFulfilledCallback && isFulfilledCallback( stepName, nextProps );
+	};
+
+	removeFulfilledSteps = nextProps => {
+		const { flowName, stepName } = nextProps;
 		const flowSteps = flows.getFlow( flowName ).steps;
-		let domainStepName = null,
-			planStepName = null;
+		console.log( flowSteps );
+		map( flowSteps, flowStepName => this.processFulfilledSteps( flowStepName, nextProps ) );
 
-		if ( isPaidPlan && ! this.isPlanStepFulfilled ) {
-			planStepName = find( flowSteps, stepName => {
-				return startsWith( stepName, 'plan' );
-			} );
-			planStepName && flows.excludeStep( planStepName );
-
-			const cartItem = undefined;
-			SignupActions.submitSignupStep( { stepName: planStepName, cartItem }, [], { cartItem } );
-			this.isPlanStepFulfilled = true;
-		}
-
-		if ( siteDomains && siteDomains.length > 1 && ! this.isDomainStepFulfilled ) {
-			domainStepName = find( flowSteps, stepName => {
-				return startsWith( stepName, 'domain' );
-			} );
-			domainStepName && flows.excludeStep( domainStepName );
-
-			const domainItem = undefined;
-			SignupActions.submitSignupStep( { stepName: domainStepName, domainItem }, [], {
-				domainItem,
-			} );
-			this.isDomainStepFulfilled = true;
-		}
-
-		// If the current step is fulfilled, then proceed to the next step.
-		if ( currentStepName === domainStepName || currentStepName === planStepName ) {
+		console.log( 'currentStepName: ' + stepName );
+		if ( includes( flows.excludedSteps, stepName ) ) {
 			this.goToNextStep( flowName );
 		}
 	};
@@ -658,8 +635,10 @@ class Signup extends React.Component {
 	}
 
 	shouldWaitToRender() {
-		const isStepRemovedFromFlow =
-			-1 === indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
+		const isStepRemovedFromFlow = ! includes(
+			flows.getFlow( this.props.flowName ).steps,
+			this.props.stepName
+		);
 		const isDomainsForSiteEmpty =
 			this.props.isLoggedIn &&
 			this.props.signupDependencies.siteSlug &&
@@ -732,6 +711,7 @@ export default connect(
 			signupDependencies,
 			isLoggedIn: isUserLoggedIn( state ),
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
+			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,
 			siteId,
 		};

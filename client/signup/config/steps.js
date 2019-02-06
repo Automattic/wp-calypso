@@ -18,6 +18,10 @@ import {
 	setThemeOnSite,
 	addDomainToCart,
 	launchSiteApi,
+	isPlanFulfilled,
+	isDomainFulfilled,
+	isSiteTypeFulfilled,
+	isSiteTopicFulfilled,
 } from 'lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
@@ -31,4 +35,8 @@ export default generateSteps( {
 	setThemeOnSite,
 	addDomainToCart,
 	launchSiteApi,
+	isPlanFulfilled,
+	isDomainFulfilled,
+	isSiteTypeFulfilled,
+	isSiteTopicFulfilled,
 } );
