@@ -15,6 +15,7 @@ import { includes } from 'lodash';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { getPost } from 'state/posts/selectors';
 import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import {
 	getEditorDuplicatePostPath,
 	getCalypsoifyEditorDuplicatePostPath,
@@ -23,11 +24,12 @@ import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import isCalypsoifyGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
-import { isJetpackMinimumVersion } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 function PostActionsEllipsisMenuDuplicate( {
 	translate,
 	canEdit,
+	isUnsupportedJetpack,
 	status,
 	type,
 	duplicateUrl,
@@ -35,7 +37,7 @@ function PostActionsEllipsisMenuDuplicate( {
 } ) {
 	const validStatus = includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], status );
 
-	if ( ! canEdit || ! validStatus || 'post' !== type ) {
+	if ( ! canEdit || ! validStatus || 'post' !== type || isUnsupportedJetpack ) {
 		return null;
 	}
 
@@ -62,16 +64,20 @@ const mapStateToProps = ( state, { globalId } ) => {
 		return {};
 	}
 
+	const isUnsupportedJetpack =
+		isJetpackSite( state, post.site_ID ) &&
+		! isJetpackModuleActive( state, post.site_ID, 'copy-post' );
 	const calypsoifyGutenberg =
 		isCalypsoifyGutenbergEnabled( state, post.site_ID ) &&
 		'gutenberg' === getSelectedEditor( state, post.site_ID );
 	const duplicateUrl =
-		!! calypsoifyGutenberg && isJetpackMinimumVersion( state, post.site_ID, '7.0' )
+		!! calypsoifyGutenberg && ! isUnsupportedJetpack
 			? getCalypsoifyEditorDuplicatePostPath( state, post.site_ID, post.ID )
 			: getEditorDuplicatePostPath( state, post.site_ID, post.ID );
 
 	return {
 		canEdit: canCurrentUserEditPost( state, globalId ),
+		isUnsupportedJetpack,
 		duplicateUrl,
 		status: post.status,
 		type: post.type,
