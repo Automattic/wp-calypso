@@ -100,38 +100,38 @@ while getopts ":a:RpS:B:s:gjWCJH:wzyl:cm:fiIUvxu:h:F" opt; do
       continue
       ;;
     g)
-      MAGELLAN_CONFIG="magellan.json"
+      MAGELLAN_CONFIG="./test/e2e/magellan.json"
       ;;
     i)
       NODE_CONFIG_ARGS+=$I18N_CONFIG
       LOCALES="en,pt-BR,es,ja,fr,he"
       export SCREENSHOTDIR="screenshots-i18n"
-      MAGELLAN_CONFIG="magellan-i18n-nux.json"
+      MAGELLAN_CONFIG="./test/e2e/magellan-i18n-nux.json"
       ;;
     I)
       SCREENSIZES="desktop"
       WORKERS=1 # We need to be careful to take it slow with Google
       NODE_CONFIG_ARGS+=$I18N_CONFIG
       LOCALES="en,es,pt-br,de,fr,he,ja,it,nl,ru,tr,id,zh-cn,zh-tw,ko,ar,sv"
-      MAGELLAN_CONFIG="magellan-i18n.json"
+      MAGELLAN_CONFIG="./test/e2e/magellan-i18n.json"
       ;;
     w)
       NODE_CONFIG_ARGS+=$IE11_CONFIG
       LOCAL_BROWSER="ie11"
       SCREENSIZES="desktop"
-      MAGELLAN_CONFIG="magellan-ie11.json"
+      MAGELLAN_CONFIG="./test/e2e/magellan-ie11.json"
       ;;
     z)
       NODE_CONFIG_ARGS+=$IE11_CONFIG
       LOCAL_BROWSER="ie11"
       SCREENSIZES="desktop"
-      MAGELLAN_CONFIG="magellan-ie11-canary.json"
+      MAGELLAN_CONFIG="./test/e2e/magellan-ie11-canary.json"
       ;;
     y)
       NODE_CONFIG_ARGS+=$SAFARI_CONFIG
       LOCAL_BROWSER="safari"
       SCREENSIZES="desktop"
-      MAGELLAN_CONFIG="magellan-safari-canary.json"
+      MAGELLAN_CONFIG="./test/e2e/magellan-safari-canary.json"
       ;;
     l)
       NODE_CONFIG_ARGS+=("\"sauce\":\"true\",\"sauceConfig\":\"$OPTARG\"")
@@ -148,23 +148,23 @@ while getopts ":a:RpS:B:s:gjWCJH:wzyl:cm:fiIUvxu:h:F" opt; do
     j)
       WORKERS=3
       SCREENSIZES="desktop,mobile"
-      MAGELLAN_CONFIG="magellan-jetpack.json"
+      MAGELLAN_CONFIG="./test/e2e/magellan-jetpack.json"
       ;;
     J)
       SCREENSIZES="desktop"
-      MAGELLAN_CONFIG="magellan-jetpack-canary.json"
+      MAGELLAN_CONFIG="./test/e2e/magellan-jetpack-canary.json"
       ;;
     W)
       SCREENSIZES="desktop,mobile"
-      MAGELLAN_CONFIG="magellan-woocommerce.json"
+      MAGELLAN_CONFIG="./test/e2e/magellan-woocommerce.json"
       ;;
     C)
       SCREENSIZES="mobile"
-      MAGELLAN_CONFIG="magellan-canary.json"
+      MAGELLAN_CONFIG="./test/e2e/magellan-canary.json"
       ;;
     F)
       SCREENSIZES="desktop"
-      MAGELLAN_CONFIG="magellan-2fa.json"
+      MAGELLAN_CONFIG="./test/e2e/magellan-2fa.json"
       ;;
     H)
       export JETPACKHOST=$OPTARG
@@ -201,6 +201,11 @@ if [ "$SKIP_TEST_REGEX" != "" ]; then
   GREP="-i -g '$SKIP_TEST_REGEX'"
 fi
 
+# Set default Magellan config if one isn't specified
+if [ ${#MAGELLAN_CONFIGS[@]} -eq 0 ]; then
+  MAGELLAN_CONFIGS+=("./test/e2e/magellan.json")
+fi
+
 # Combine any NODE_CONFIG entries into a single object
 NODE_CONFIG_ARG="$(joinStr , ${NODE_CONFIG_ARGS[*]})"
 MOCHA_ARGS+="--NODE_CONFIG={$NODE_CONFIG_ARG}"
@@ -214,14 +219,14 @@ if [ $PARALLEL == 1 ]; then
 
   if [ $CIRCLE_NODE_INDEX == $MOBILE ]; then
       echo "Executing tests at mobile screen width"
-      CMD="env BROWSERSIZE=mobile $MAGELLAN --config=./test/e2e/$MAGELLAN_CONFIGS --mocha_args='$MOCHA_ARGS' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER"
+      CMD="env BROWSERSIZE=mobile $MAGELLAN --config=$MAGELLAN_CONFIGS --mocha_args='$MOCHA_ARGS' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER"
 
       eval $CMD
       RETURN+=$?
   fi
   if [ $CIRCLE_NODE_INDEX == $DESKTOP ]; then
       echo "Executing tests at desktop screen width"
-      CMD="env BROWSERSIZE=desktop $MAGELLAN --config=./test/e2e/$MAGELLAN_CONFIGS --mocha_args='$MOCHA_ARGS' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER"
+      CMD="env BROWSERSIZE=desktop $MAGELLAN --config=$MAGELLAN_CONFIGS --mocha_args='$MOCHA_ARGS' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER"
 
       eval $CMD
       RETURN+=$?
@@ -234,7 +239,7 @@ else # Not using multiple CircleCI containers, just queue up the tests in sequen
       for locale in ${LOCALE_ARRAY[@]}; do
         for config in "${MAGELLAN_CONFIGS[@]}"; do
           if [ "$config" != "" ]; then
-            CMD="env BROWSERSIZE=$size BROWSERLOCALE=$locale $MAGELLAN --mocha_args='$MOCHA_ARGS' --config='./test/e2e/$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER"
+            CMD="env BROWSERSIZE=$size BROWSERLOCALE=$locale $MAGELLAN --mocha_args='$MOCHA_ARGS' --config='$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER"
 
             eval $CMD
             RETURN+=$?

@@ -461,10 +461,11 @@ jobs:
             exit 0
   test-e2e:
       <<: *defaults
+      environment:
+        NODE_ENV: test
       parallelism: 2
       steps:
         - prepare
-        - run: export NODE_ENV=test
         - run: npm run decrypt-e2e-config
         - run: ./test/e2e/scripts/circleci-branch-update.sh
         - run: ./test/e2e/scripts/randomize.sh ./test/e2e/specs
