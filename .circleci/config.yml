@@ -456,12 +456,12 @@ jobs:
   prime-calypso-live:
     docker:
     - image: buildpack-deps
-    working_directory: ~/wp-calypso/test/e2e
+    working_directory: ~/wp-calypso
     steps:
       - restore_cache: *restore-git-cache
       - run:
           name: Prime calypso.live build
-          command: ./scripts/wait-for-running-branch.sh
+          command: ./test/e2e/scripts/wait-for-running-branch.sh
 
   test-e2e:
       <<: *defaults
