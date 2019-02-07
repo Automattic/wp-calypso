@@ -83,13 +83,13 @@
 		[ "jetpackSignupGoogleTop_20180427", "original" ],
 		[ "cartNudgeUpdateToPremium_20180903", "control" ],
 		[ "signupAtomicStoreVsPressable_20171101", "atomic" ],
-		[ "improvedOnboarding_20181023", "main" ],
 		[ "privateByDefault_20181113", "public" ],
 		[ "jetpackFreePlanButtonPosition_20181212", "locationBottom" ],
 		[ "removeUsername_20181213", "showUsername" ],
 		[ "removeDomainsStepFromOnboarding_20181221", "keep" ],
 		[ "showConciergeSessionUpsell_20181214", "skip" ],
-		[ "showConciergeSessionUpsellNonGSuite_20181228", "skip" ],
-		[ "gSuitePlan_20190117", "basic" ]
+		[ "showConciergeSessionUpsellNonGSuite_20190104", "skip" ],
+		[ "gSuitePlan_20190117", "basic" ],
+		[ "improvedOnboarding_20190131", "main" ]
 	]
 }

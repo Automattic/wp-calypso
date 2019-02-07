@@ -136,22 +136,6 @@ export default class EditorPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, backSelector );
 	}
 
-	async selectFirstImage() {
-		await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			by.css( '.media-library__upload-button' )
-		);
-		await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			by.css( '.media-library__list-item:not(.is-placeholder)' )
-		);
-		await driverHelper.clickWhenClickable( this.driver, by.css( '.media-library__list-item' ) );
-		return await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			by.css( '.media-library__list-item.is-selected' )
-		);
-	}
-
 	async insertContactForm() {
 		await driverHelper.clickWhenClickable( this.driver, by.css( '.mce-wpcom-insert-menu button' ) );
 		await driverHelper.clickWhenClickable(
@@ -216,9 +200,14 @@ export default class EditorPage extends AsyncBaseContainer {
 				by.css( '.editor-simple-payments-modal__form .form-toggle__switch' )
 			);
 		}
-		return driverHelper.clickWhenClickable(
+		await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( '.editor-simple-payments-modal button.is-primary' )
+		);
+		return await driverHelper.waitTillNotPresent(
+			this.driver,
+			by.css( '.editor-simple-payments-modal' ),
+			this.explicitWaitMS * 3
 		);
 	}
 
