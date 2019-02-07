@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { map, pickBy } from 'lodash';
+import { map, pickBy, endsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,7 +32,6 @@ import './style.scss';
 class CalypsoifyIframe extends Component {
 	state = {
 		isMediaModalVisible: false,
-		isDraftIdUpdated: false,
 	};
 
 	constructor( props ) {
@@ -94,13 +93,14 @@ class CalypsoifyIframe extends Component {
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
 		}
 
-		if ( 'draftIdSet' === action && ! this.state.isDraftIdUpdated && ! this.props.postId ) {
+		if ( 'draftIdSet' === action && ! this.props.postId ) {
 			const { postId } = payload;
 			const { currentRoute } = this.props;
 
-			this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
-			this.props.setRoute( `${ currentRoute }/${ postId }` );
-			this.setState( { isDraftIdUpdated: true } );
+			if ( ! endsWith( currentRoute, `/${ postId }` ) ) {
+				this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
+				this.props.setRoute( `${ currentRoute }/${ postId }` );
+			}
 		}
 	};
 
