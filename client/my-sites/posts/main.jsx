@@ -28,6 +28,7 @@ import {
 	isJetpackSite,
 	siteHasMinimumJetpackVersion,
 } from 'state/sites/selectors';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 class PostsMain extends React.Component {
 	UNSAFE_componentWillMount() {
@@ -73,7 +74,7 @@ class PostsMain extends React.Component {
 	}
 
 	render() {
-		const { author, category, search, siteId, statusSlug, tag } = this.props;
+		const { author, category, isJetpack, search, siteId, statusSlug, tag } = this.props;
 		const classes = classnames( 'posts', {
 			'is-multisite': ! this.props.siteId,
 			'is-single-site': this.props.siteId,
@@ -99,6 +100,7 @@ class PostsMain extends React.Component {
 				<div className="posts__primary">
 					<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
 					{ siteId && <PostTypeBulkEditBar /> }
+					{ siteId && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 					<PostTypeList query={ query } scrollContainer={ document.body } />
 				</div>
 			</Main>
