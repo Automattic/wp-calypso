@@ -261,11 +261,11 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	renderToggle() {
-		const { displayJetpackPlans, newPlansVisible } = this.props;
+		const { displayJetpackPlans, newPlansVisible, plansWithScroll } = this.props;
 		if ( displayJetpackPlans ) {
 			return this.getIntervalTypeToggle();
 		}
-		if ( newPlansVisible ) {
+		if ( newPlansVisible && ! plansWithScroll ) {
 			return this.getCustomerTypeToggle();
 		}
 		return false;
