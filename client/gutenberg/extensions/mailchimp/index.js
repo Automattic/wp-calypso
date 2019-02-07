@@ -36,7 +36,7 @@ export const settings = {
 		},
 		submitLabel: {
 			type: 'string',
-			default: __( 'Join My Email List' ),
+			default: __( 'Join my email list' ),
 		},
 		consentText: {
 			type: 'string',
