@@ -170,12 +170,12 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getVisiblePlansForPlanFeatures( plans ) {
-		const { displayJetpackPlans, customerType, withWPPlanTabs } = this.props;
+		const { displayJetpackPlans, customerType, plansWithScroll, withWPPlanTabs } = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
 			types.filter( type => planMatches( plan, { type } ) ).length > 0;
 
-		if ( displayJetpackPlans ) {
+		if ( displayJetpackPlans || plansWithScroll ) {
 			return plans;
 		}
 
@@ -306,6 +306,7 @@ PlansFeaturesMain.propTypes = {
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
+	plansWithScroll: PropTypes.bool,
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
 	showFAQ: PropTypes.bool,
@@ -319,6 +320,7 @@ PlansFeaturesMain.defaultProps = {
 	hideFreePlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,
+	plansWithScroll: false,
 	showFAQ: true,
 	siteId: null,
 	siteSlug: '',
@@ -359,6 +361,7 @@ export default connect(
 			// pretty versatile, we could rename it from discounts to flags/features/anything else and make it more
 			// universal.
 			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
+			plansWithScroll: isDiscountActive( getDiscountByName( 'plans_no_tabs' ), state ),
 			customerType: guessCustomerType( state, props ),
 			isChatAvailable: isHappychatAvailable( state ),
 			siteId: get( props.site, [ 'ID' ] ),
