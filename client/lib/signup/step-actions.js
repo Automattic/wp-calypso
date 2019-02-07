@@ -565,10 +565,6 @@ function recordExcludeStepEvent( step, value ) {
 }
 
 export function isDomainFulfilled( stepName, nextProps ) {
-	if ( includes( flows.excludedSteps, stepName ) ) {
-		return;
-	}
-
 	const { siteDomains } = nextProps;
 
 	if ( siteDomains && siteDomains.length > 1 && ! includes( flows.excludedSteps, stepName ) ) {
@@ -583,10 +579,6 @@ export function isDomainFulfilled( stepName, nextProps ) {
 }
 
 export function isPlanFulfilled( stepName, nextProps ) {
-	if ( includes( flows.excludedSteps, stepName ) ) {
-		return;
-	}
-
 	const { isPaidPlan, sitePlanSlug } = nextProps;
 	if ( isPaidPlan ) {
 		flows.excludeStep( stepName );
@@ -599,10 +591,6 @@ export function isPlanFulfilled( stepName, nextProps ) {
 
 export function isSiteTypeFulfilled( stepName, nextProps ) {
 	if ( isEmpty( nextProps.initialContext && nextProps.initialContext.query ) ) {
-		return;
-	}
-
-	if ( includes( flows.excludedSteps, stepName ) ) {
 		return;
 	}
 
@@ -624,10 +612,6 @@ export function isSiteTypeFulfilled( stepName, nextProps ) {
 
 export function isSiteTopicFulfilled( stepName, nextProps ) {
 	if ( isEmpty( nextProps.initialContext && nextProps.initialContext.query ) ) {
-		return;
-	}
-
-	if ( includes( flows.excludedSteps, stepName ) ) {
 		return;
 	}
 
