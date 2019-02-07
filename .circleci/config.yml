@@ -138,6 +138,11 @@ references:
     paths:
       - "build/.babel-client-cache"
 
+  set-e2e-variables: &set-e2e-variables
+    name: Set e2e environment variables
+    command: |
+        echo 'export NODE_ENV=test' >> $BASH_ENV
+
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker: *docker-image
@@ -464,26 +469,28 @@ jobs:
       parallelism: 2
       steps:
         - prepare
+        - run: *set-e2e-variables
         - run: npm run decrypt-e2e-config
         - run: ./test/e2e/scripts/circleci-branch-update.sh
         - run: ./test/e2e/scripts/randomize.sh ./test/e2e/specs
-        - run: env NODE_ENV=test ./test/e2e/scripts/run-wrapper.sh
+        - run: ./test/e2e/scripts/run-wrapper.sh
         - store-artifacts-and-test-results
   test-e2e-canary:
       <<: *defaults
       steps:
         - prepare
+        - run: *set-e2e-variables
         - run: npm run decrypt-e2e-config
         - run: ./test/e2e/scripts/circleci-branch-update.sh
         - run:
             name: Run IE11 Canary Tests
-            command: env NODE_ENV=test ./test/e2e/run.sh -z
+            command: ./test/e2e/run.sh -z
         - run:
             name: Run Safari Canary Tests
-            command: env NODE_ENV=test ./test/e2e/run.sh -y
+            command: ./test/e2e/run.sh -y
         - run:
             name: Run Woo Canary Tests
-            command: env NODE_ENV=test ./test/e2e/run.sh -W
+            command: ./test/e2e/run.sh -W
         - store-artifacts-and-test-results
 
 
