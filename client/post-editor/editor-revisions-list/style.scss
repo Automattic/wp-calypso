@@ -126,7 +126,7 @@
 	&.button[disabled],
 	&.button.disabled {
 		background: transparent;
-		color: var( --color-neutral-0 );
+		color: var( --color-neutral-100 );
 		border-color: darken( $sidebar-bg-color, 5% );
 	}
 	.gridicon {
