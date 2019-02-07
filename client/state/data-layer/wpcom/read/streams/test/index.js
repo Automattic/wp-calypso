@@ -33,6 +33,7 @@ describe( 'streams', () => {
 			meta: QUERY_META,
 			number: INITIAL_FETCH,
 			content_width: 675,
+			smallipop_support: 1,
 		};
 
 		it( 'should return an http request', () => {

@@ -122,9 +122,6 @@ const streamApis = {
 	},
 	a8c: {
 		path: () => '/read/a8c',
-		query: ( { query } ) => {
-			return { ...query, smallipop_support: 1 };
-		},
 		dateProperty: 'date',
 	},
 	'conversations-a8c': {

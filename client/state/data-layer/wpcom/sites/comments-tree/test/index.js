@@ -22,7 +22,7 @@ describe( 'comments-tree', () => {
 					{
 						method: 'GET',
 						path: '/sites/77203074/comments-tree',
-						query: { status: 'approved' },
+						query: { status: 'approved', smallipop_support: 1 },
 						apiVersion: '1.1',
 					},
 					action
