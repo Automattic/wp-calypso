@@ -1,5 +1,5 @@
 --require @babel/register
---require test/e2e/test/mocha.env.js
+--require test/mocha.env.js
 --require mocha-steps
-test/e2e/lib/before.js
-test/e2e/lib/mocha-hooks.js
+lib/before.js
+lib/mocha-hooks.js

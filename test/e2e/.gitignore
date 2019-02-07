@@ -1,0 +1,21 @@
+screenshots/
+image-uploads/
+image-uploads-store/
+logs/
+node_modules/
+.idea/
+# image-uploads/
+screenshots-i18n/
+.*.swp
+spec-xunit-reporter-0.0.1.tgz
+*xunit_*.xml
+.DS_Store
+temp/
+npm-debug.log
+
+# Ignore all local config files, but keep the example there.
+config/local-*
+
+# http://direnv.net
+.envrc
+/temp-cookies/

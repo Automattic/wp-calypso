@@ -24,8 +24,9 @@
 		}
 	},
 	"dependencies": {
-		"@babel/core": "7.2.2",
-		"@babel/register": "7.0.0",
+		"@babel/core": "^7.0.0-beta.44",
+		"@babel/preset-env": "^7.0.0-beta.44",
+		"@babel/register": "^7.0.0-beta.44",
 		"asana-phrase": "0.0.8",
 		"babel-runtime": "^6.3.19",
 		"cached-path-relative": ">=1.0.2",
