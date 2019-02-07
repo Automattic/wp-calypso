@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 const debug = debugFactory( 'calypso:me:security:social-login' );
 
@@ -122,7 +123,7 @@ class SocialLogin extends Component {
 	}
 
 	renderGoogleConnection() {
-		const { isUserConnectedToGoogle } = this.props;
+		const { isUserConnectedToGoogle, socialConnectionEmail } = this.props;
 
 		return (
 			<CompactCard>
@@ -132,6 +133,7 @@ class SocialLogin extends Component {
 							<GoogleIcon width="30" height="30" />
 						</div>
 						<h3>Google</h3>
+						{ socialConnectionEmail && <p>{ ' - ' + socialConnectionEmail }</p> }
 					</div>
 
 					<div className="social-login__header-action">
@@ -175,7 +177,8 @@ export default connect(
 		const currentUser = getCurrentUser( state );
 
 		return {
-			isUserConnectedToGoogle: currentUser && currentUser.social_signup_service === 'google',
+			socialConnectionEmail: get( currentUser, 'social_login.google.email', '' ),
+			isUserConnectedToGoogle: get( currentUser, 'social_login.google.active', false ),
 			isUpdatingSocialConnection: isRequesting( state ),
 			errorUpdatingSocialConnection: getRequestError( state ),
 		};
