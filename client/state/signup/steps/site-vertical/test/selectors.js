@@ -9,6 +9,7 @@ import {
 	getSiteVerticalSlug,
 	getSiteVerticalIsUserInput,
 	getSiteVerticalPreview,
+	getSiteVerticalParentId,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -21,6 +22,7 @@ describe( 'selectors', () => {
 					slug: 'happy',
 					isUserInput: false,
 					preview: '<!--gutenberg-besties-forever <p>Fist bump!</p>-->',
+					parentId: 'gluecklich',
 				},
 			},
 		},
@@ -63,13 +65,24 @@ describe( 'selectors', () => {
 			expect( getSiteVerticalPreview( state ) ).toEqual( state.signup.steps.siteVertical.preview );
 		} );
 	} );
-	describe( 'getSiteVerticalId', () => {
+	describe( '', () => {
 		test( 'should return empty string as a default state', () => {
 			expect( getSiteVerticalId( {} ) ).toBe( '' );
 		} );
 
 		test( 'should return site id from the state', () => {
 			expect( getSiteVerticalId( state ) ).toEqual( state.signup.steps.siteVertical.id );
+		} );
+	} );
+	describe( 'getSiteVerticalParentId', () => {
+		test( 'should return empty string as a default state', () => {
+			expect( getSiteVerticalParentId( {} ) ).toBe( '' );
+		} );
+
+		test( 'should return site id from the state', () => {
+			expect( getSiteVerticalParentId( state ) ).toEqual(
+				state.signup.steps.siteVertical.parentId
+			);
 		} );
 	} );
 } );

@@ -76,8 +76,10 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	updateVerticalData = ( result, value ) =>
 		this.props.onChange(
 			result || {
-				...this.props.defaultVertical,
 				isUserInputVertical: true,
+				parent: '',
+				preview: get( this.props.defaultVertical, 'preview', '' ),
+				verticalId: '',
 				verticalName: value,
 				verticalSlug: value,
 			}

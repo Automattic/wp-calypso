@@ -12,10 +12,12 @@
     "tiled-gallery"
   ],
   "beta": [
-    "mailchimp",
+    "business-hours",
     "contact-info",
-    "wordads",
+    "mailchimp",
+    "slideshow",
     "videopress",
-    "vr"
+    "vr",
+    "wordads"
   ]
 }

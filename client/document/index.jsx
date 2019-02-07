@@ -6,7 +6,6 @@
 
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -51,7 +50,6 @@ class Document extends React.Component {
 			sectionName,
 			clientData,
 			isFluidWidth,
-			sectionCss,
 			env,
 			isDebug,
 			badge,
@@ -112,14 +110,6 @@ class Document extends React.Component {
 					/>
 					{ entrypoint[ csskey ].map( cssChunkLink ) }
 					{ chunkFiles[ csskey ].map( cssChunkLink ) }
-					{ sectionCss && (
-						<link
-							rel="stylesheet"
-							id={ 'section-css-' + sectionCss.id }
-							href={ get( sectionCss, 'urls.' + ( isRTL ? 'rtl' : 'ltr' ) ) }
-							type="text/css"
-						/>
-					) }
 				</Head>
 				<body
 					className={ classNames( {

@@ -8,7 +8,6 @@ const qs = require( 'qs' );
 
 const HASH_LENGTH = 10;
 const URL_BASE_PATH = '/calypso';
-const SERVER_BASE_PATH = '/public';
 
 function hashFile( path ) {
 	const md5 = crypto.createHash( 'md5' );
@@ -38,19 +37,7 @@ function getUrl( filename, hash ) {
 	);
 }
 
-function getHashedUrl( filename ) {
-	return getUrl( filename, hashFile( process.cwd() + SERVER_BASE_PATH + '/' + filename ) );
-}
-
-function getCssUrls( css ) {
-	return {
-		ltr: getHashedUrl( 'sections/' + css + '.css' ),
-		rtl: getHashedUrl( 'sections-rtl/' + css + '.rtl.css' ),
-	};
-}
-
 module.exports = {
 	hashFile: hashFile,
 	getUrl: getUrl,
-	getCssUrls: getCssUrls,
 };

@@ -19,7 +19,6 @@
     "not ie <= 10",
     "> 1%"
   ],
-  "defaultTestArgs": "-g -s $BROWSERSIZE",
   "dependencies": {
     "@automattic/tree-select": "1.0.3",
     "@babel/cli": "7.2.3",
@@ -192,6 +191,7 @@
     "store": "2.0.12",
     "striptags": "2.2.1",
     "superagent": "3.8.3",
+    "swiper": "4.4.6",
     "terser-webpack-plugin": "1.1.0",
     "textarea-caret": "3.1.0",
     "thread-loader": "2.1.2",
@@ -232,7 +232,6 @@
     "build-css:emergent-paywall": "node-sass --include-path client assets/stylesheets/emergent-paywall.scss public/emergent-paywall.css --output-style compressed && npm run -s postcss -- public/emergent-paywall.css",
     "build-css:editor": "node-sass --include-path client assets/stylesheets/editor.scss public/editor.css --output-style compressed && npm run -s postcss -- public/editor.css",
     "build-css:style": "node-sass --include-path client assets/stylesheets/style.scss public/style.css --output-style compressed && npm run -s postcss -- public/style.css && rtlcss public/style.css public/style-rtl.css",
-    "build-css:sections": "node-sass assets/stylesheets/sections --include-path client -o public/sections --source-map public/sections --output-style compressed && npm run -s postcss -- public/sections/*.css && rtlcss -d public/sections public/sections-rtl",
     "build-devdocs:components-usage-stats": "cross-env-shell NODE_PATH=$NODE_PATH:server:client:. npm run -s build-devdocs:components-usage-stats:_env",
     "build-devdocs:components-usage-stats:_env": "node server/devdocs/bin/generate-components-usage-stats.js \"client/**/*.js\" \"client/**/*.jsx\" \"!**/docs/**\" \"!**/test/**\" \"!**/docs-example/**\"",
     "build-devdocs:index": "cross-env-shell NODE_PATH=$NODE_PATH:server:client:. npm run -s build-devdocs:index:_env",
@@ -332,7 +331,6 @@
     "stylelint": "9.9.0",
     "supertest": "3.4.1",
     "webpack-hot-middleware": "2.24.3",
-	"wp-e2e-tests": "./test/e2e",
     "whybundled": "1.4.2"
   },
   "optionalDependencies": {

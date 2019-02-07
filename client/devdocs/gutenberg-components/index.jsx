@@ -21,6 +21,11 @@ import { camelCaseToSlug, slugToCamelCase } from 'devdocs/docs-example/util';
 import GutenbergComponentExample from './example';
 import examples from './examples.json';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const getExampleData = example => {
 	const componentName = get( example, 'component' );
 	const readmeFilePath = get( example, 'readmeFilePath', camelCaseToSlug( componentName ) );

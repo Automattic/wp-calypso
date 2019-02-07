@@ -7,6 +7,7 @@ import reducer from '../reducer';
 import { SIGNUP_STEPS_SITE_VERTICAL_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
+	test( 'should return default  state', () => {} );
 	test( 'should update the site vertical and merge with state', () => {
 		const siteVertical = {
 			name: 'glücklich',

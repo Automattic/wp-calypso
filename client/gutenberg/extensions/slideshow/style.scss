@@ -1,0 +1,58 @@
+/** @format */
+
+.wp-block-jetpack-slideshow {
+	position: relative;
+
+	.wp-block-jetpack-slideshow_container {
+		width: 100%;
+		height: 400px; // This is a default, which will be replaced programmatically
+	}
+
+	.wp-block-jetpack-slideshow_slide {
+		margin: 0;
+	}
+
+	.wp-block-jetpack-slideshow_image-container {
+		align-items: center;
+		background: #f0f0f0;
+		display: flex;
+		height: calc( 100% - 22px );
+		justify-content: center;
+		position: relative;
+		width: 100%;
+	}
+
+	.wp-block-jetpack-slideshow_image {
+		display: block;
+		height: auto;
+		max-height: 100%;
+		max-width: 100%;
+		width: auto;
+		object-fit: contain;
+	}
+
+	.wp-block-jetpack-slideshow_button-prev,
+	.wp-block-jetpack-slideshow_button-next {
+		width: 24px;
+		height: 40px;
+		background-size: 24px 40px;
+		box-sizing: content-box;
+		padding: 12px 10px;
+		border-radius: 2px;
+		margin-top: -32px;
+		transition: background-color 200ms;
+	}
+
+	.wp-block-jetpack-slideshow_caption {
+		cursor: text;
+		position: relative;
+		font-size: 14px;
+		line-height: 14px;
+		vertical-align: center;
+		margin: 0;
+	}
+
+	.wp-block-jetpack-slideshow_pagination {
+		bottom: 32px !important;
+	}
+}

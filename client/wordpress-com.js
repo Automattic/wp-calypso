@@ -53,7 +53,6 @@ const sections = [
 		module: 'me/security',
 		group: 'me',
 		secondary: true,
-		enableLoggedOut: true,
 	},
 	{
 		name: 'privacy',
@@ -68,7 +67,6 @@ const sections = [
 		module: 'me/purchases',
 		group: 'me',
 		secondary: true,
-		enableLoggedOut: true,
 	},
 	{
 		name: 'notification-settings',
@@ -203,7 +201,6 @@ const sections = [
 		module: 'my-sites/stats',
 		secondary: true,
 		group: 'sites',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'checklist',
@@ -216,7 +213,6 @@ const sections = [
 		name: 'google-my-business',
 		paths: [ '/google-my-business' ],
 		module: 'my-sites/google-my-business',
-		enableLoggedOut: true,
 		secondary: true,
 		group: 'sites',
 	},
@@ -255,7 +251,6 @@ const sections = [
 		module: 'my-sites/checkout',
 		secondary: true,
 		group: 'sites',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'plans',
@@ -323,7 +318,6 @@ sections.push( {
 	module: 'reader',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -332,7 +326,6 @@ sections.push( {
 	module: 'reader/full-post',
 	secondary: false,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -341,7 +334,6 @@ sections.push( {
 	module: 'reader/discover',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -350,7 +342,6 @@ sections.push( {
 	module: 'reader/following',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -359,7 +350,6 @@ sections.push( {
 	module: 'reader/tag-stream',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -368,7 +358,6 @@ sections.push( {
 	module: 'reader/liked-stream',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -377,7 +366,6 @@ sections.push( {
 	module: 'reader/search',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -386,7 +374,6 @@ sections.push( {
 	module: 'reader/list',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -395,7 +382,6 @@ sections.push( {
 	module: 'reader/conversations',
 	secondary: true,
 	group: 'reader',
-	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -460,9 +446,7 @@ sections.push( {
 	name: 'domain-connect-authorize',
 	paths: [ '/domain-connect' ],
 	module: 'my-sites/domains/domain-management/domain-connect',
-	enableLoggedOut: true,
 	secondary: false,
-	isomorphic: false,
 } );
 
 sections.push( {
