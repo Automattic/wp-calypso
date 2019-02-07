@@ -32,6 +32,13 @@ export default function( translate ) {
 				cssClass: 'is-powder-snow',
 			},
 		},
+		config.isEnabled( 'me/account/color-schemes/nightfall' ) && {
+			label: translate( 'Nightfall' ),
+			value: 'nightfall',
+			thumbnail: {
+				cssClass: 'is-nightfall',
+			},
+		},
 		config.isEnabled( 'me/account/color-schemes/laser-black' ) && {
 			label: translate( 'Laser Black' ),
 			value: 'laser-black',
