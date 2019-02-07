@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { Fragment, Component } from '@wordpress/element';
-import { TextControl } from '@wordpress/components';
+
+import { Component } from '@wordpress/element';
+import { TextControl, ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 
 /**
@@ -16,8 +17,11 @@ class HoursRow extends Component {
 		const { hours } = attributes;
 		const { days } = data;
 		return (
-			<Fragment>
-				<dt className={ classNames( day, 'business-hours__day' ) }>{ days[ day ] }</dt>
+			<div className="business-hours__row">
+				<dt className={ classNames( day, 'business-hours__day' ) }>
+					<span className="business-hours__day-name">{ days[ day ] }</span>
+					{ edit && <ToggleControl label="open" /> }
+				</dt>
 				{ edit || ( hours[ day ].opening && hours[ day ].closing ) ? (
 					<dd className={ classNames( day, 'business-hours__hours' ) }>
 						{ edit ? (
@@ -69,7 +73,7 @@ class HoursRow extends Component {
 						{ __( 'CLOSED' ) }
 					</dd>
 				) }
-			</Fragment>
+			</div>
 		);
 	}
 }

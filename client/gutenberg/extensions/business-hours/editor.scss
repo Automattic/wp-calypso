@@ -1,30 +1,38 @@
 .wp-block-jetpack-business-hours {
 	overflow: hidden;
 
-	.business-hours__day {
-		width: 7em;
-		float: left;
-		clear: both;
-	}
+	.business-hours__row {
+		display: flex;
+		align-items: center;
+		margin-bottom: 20px;
 
-	.business-hours__hours {
-		overflow: hidden;
-		width: calc( 100% - 8em );
-		float: right;
-		margin: 0;
+		.business-hours__day {
+			width: 48%;
+			display: flex;
+			align-items: baseline;
 
-		> .components-base-control {
-			display: inline-block;
-			max-width: 45%;
-
-			.components-base-control__label {
-				display: inline-block;
-				font-weight: 700;
+			.business-hours__day-name {
+				width: 40%;
 			}
+		}
 
-			.components-text-control__input {
-				width: 9em;
-				margin-left: 0.5em;
+		.business-hours__hours {
+			width: 48%;
+			margin: 0;
+
+			> .components-base-control {
+				display: inline-block;
+				max-width: 45%;
+
+				.components-base-control__label {
+					display: inline-block;
+					margin-bottom: 0;
+				}
+
+				.components-text-control__input {
+					width: 9em;
+					margin-left: 0.5em;
+				}
 			}
 		}
 	}
