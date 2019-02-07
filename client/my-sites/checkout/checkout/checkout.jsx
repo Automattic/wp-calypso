@@ -13,7 +13,12 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { cartItems, getEnabledPaymentMethods, hasPendingPayment } from 'lib/cart-values';
+import {
+	cartItems,
+	getEnabledPaymentMethods,
+	hasPendingPayment,
+	shouldShowTax,
+} from 'lib/cart-values';
 import PendingPaymentBlocker from './pending-payment-blocker';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
@@ -648,6 +653,7 @@ export class Checkout extends React.Component {
 					plans={ availableTerms }
 					initialValue={ planInCart.product_slug }
 					onChange={ this.handleTermChange }
+					shouldShowTax={ shouldShowTax( this.props.cart ) }
 					key="picker"
 				/>
 				<hr className="checkout__subscription-length-picker-separator" key="separator" />

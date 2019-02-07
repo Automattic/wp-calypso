@@ -21,7 +21,6 @@ import { PLANS_LIST } from 'lib/plans/constants';
 import QueryPlans from 'components/data/query-plans';
 import QueryProductsList from 'components/data/query-products-list';
 import SubscriptionLengthOption from './option';
-import getShouldShowTax from 'state/selectors/get-should-show-tax';
 import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
 import getPaymentPostalCode from 'state/selectors/get-payment-postal-code';
 import { requestTaxRate } from 'state/data-getters';
@@ -159,7 +158,6 @@ export const mapStateToProps = ( state, { plans } ) => {
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		productsWithPrices: computeProductsWithPrices( state, selectedSiteId, plans ),
-		shouldShowTax: getShouldShowTax( state ),
 		taxRate: requestTaxRate( paymentCountryCode, paymentPostalCode ).data,
 	};
 };
