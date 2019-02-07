@@ -21,10 +21,10 @@ export function setSiteType( siteType ) {
 export function submitSiteType( siteType ) {
 	return dispatch => {
 		dispatch( setSiteType( siteType ) );
-		console.log( 'in dispatch submitSiteType' );
+
 		const themeSlugWithRepo =
 			getSiteTypePropertyValue( 'slug', siteType, 'theme' ) || 'pub/independent-publisher-2';
-		console.log( 'themeSlugWithRepo: ' + themeSlugWithRepo );
+
 		SignupActions.submitSignupStep(
 			{
 				stepName: 'site-type',
