@@ -217,7 +217,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		selectedPlan: PLAN_FREE,
 		translate: x => x,
 		hideFreePlan: true,
-		withWPPlanTabs: true,
+		newPlansVisible: true,
 	};
 	test( 'Should render <PlanFeatures /> with tab picker when requested', () => {
 		const instance = new PlansFeaturesMain( { ...myProps } );

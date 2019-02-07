@@ -187,7 +187,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getVisiblePlansForPlanFeatures( plans ) {
-		const { displayJetpackPlans, customerType, plansWithScroll, withWPPlanTabs } = this.props;
+		const { displayJetpackPlans, customerType, plansWithScroll, newPlansVisible } = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
 			types.filter( type => planMatches( plan, { type } ) ).length > 0;
@@ -196,7 +196,7 @@ export class PlansFeaturesMain extends Component {
 			return plans;
 		}
 
-		if ( ! withWPPlanTabs ) {
+		if ( ! newPlansVisible ) {
 			return plans.filter( plan =>
 				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ] )
 			);
@@ -278,14 +278,14 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	renderToggle() {
-		const { displayJetpackPlans, withWPPlanTabs, countryCode } = this.props;
+		const { displayJetpackPlans, withWPPlanTabs, newPlansVisible, countryCode } = this.props;
 		if ( displayJetpackPlans ) {
 			if ( countryCode && abtest( 'jetpackMonthlyPlansOnly', countryCode ) === 'monthlyOnly' ) {
 				return false;
 			}
 			return this.getIntervalTypeToggle();
 		}
-		if ( withWPPlanTabs ) {
+		if ( newPlansVisible ) {
 			return this.getCustomerTypeToggle();
 		}
 		return false;
@@ -332,7 +332,7 @@ PlansFeaturesMain.propTypes = {
 	showFAQ: PropTypes.bool,
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
-	withWPPlanTabs: PropTypes.bool,
+	newPlansVisible: PropTypes.bool,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -344,7 +344,7 @@ PlansFeaturesMain.defaultProps = {
 	showFAQ: true,
 	siteId: null,
 	siteSlug: '',
-	withWPPlanTabs: false,
+	newPlansVisible: false,
 };
 
 const guessCustomerType = ( state, props ) => {
@@ -380,7 +380,7 @@ export default connect(
 			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
 			// pretty versatile, we could rename it from discounts to flags/features/anything else and make it more
 			// universal.
-			withWPPlanTabs: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
+			newPlansVisible: isDiscountActive( getDiscountByName( 'new_plans' ), state ),
 			plansWithScroll: isDiscountActive( getDiscountByName( 'plans_no_tabs' ), state ),
 			customerType: guessCustomerType( state, props ),
 			isChatAvailable: isHappychatAvailable( state ),
