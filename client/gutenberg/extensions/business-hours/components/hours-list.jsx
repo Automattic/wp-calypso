@@ -47,13 +47,13 @@ class HoursList extends Component {
 	}
 
 	render() {
-		const { className, attributes } = this.props;
+		const { className, attributes, edit } = this.props;
 		const { hours } = attributes;
 		const { localization, hasFetched } = this.state;
 		const { startOfWeek } = localization;
 		return (
 			<dl className={ className }>
-				{ hasFetched ? (
+				{ hasFetched || ! edit ? (
 					Object.keys( hours )
 						.concat( Object.keys( hours ).slice( 0, startOfWeek ) )
 						.slice( startOfWeek )
