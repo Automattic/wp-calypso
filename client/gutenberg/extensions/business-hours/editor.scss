@@ -37,3 +37,23 @@
 		}
 	}
 }
+
+@media screen and ( max-width: 600px ) {
+	.wp-block-jetpack-business-hours {
+
+		.business-hours__row {
+			display: block;
+
+			.business-hours__day {
+				width: 100%;
+				.business-hours__day-name {
+					width: 20%;
+				}
+			}
+
+			.business-hours__hours {
+				width: 100%;
+			}
+		}
+	}
+}
