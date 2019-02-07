@@ -22,6 +22,26 @@ const addVideoPressSupport = ( settings, name ) => {
 			guid: {
 				type: 'string',
 			},
+			autoplay: {
+				type: 'boolean',
+			},
+			controls: {
+				type: 'boolean',
+				default: true,
+			},
+			loop: {
+				type: 'boolean',
+			},
+			muted: {
+				type: 'boolean',
+			},
+			poster: {
+				type: 'string',
+			},
+			preload: {
+				type: 'string',
+				default: 'metadata',
+			},
 		},
 		edit: withVideoPressEdit( settings.edit ),
 		save: withVideoPressSave( settings.save ),
