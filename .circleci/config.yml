@@ -179,6 +179,7 @@ jobs:
       - restore_cache: *restore-npm-cache
       - run: *npm-install
       - save_cache: *save-npm-cache
+      - run: sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'
       - run: npm run build-packages
       - persist_to_workspace:
           root: '~'
