@@ -137,7 +137,7 @@ export default connect(
 			);
 
 			if ( siteTypeValue === getSiteTypePropertyValue( 'id', 5, 'slug' ) ) {
-				flowName = 'ecommerce';
+				flowName = 'ecommerce-onboarding';
 			}
 
 			if ( 'business' === siteTypeValue ) {
