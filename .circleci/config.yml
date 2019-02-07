@@ -175,7 +175,7 @@ jobs:
       - checkout
       - run: *update-git-master
       - save_cache: *save-git-cache
-	  - run: sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'
+      - run: sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'
       # npm dependencies
       - restore_cache: *restore-npm-cache
       - run: *npm-install
