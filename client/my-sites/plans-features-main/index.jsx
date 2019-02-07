@@ -70,6 +70,7 @@ export class PlansFeaturesMain extends Component {
 			isInSignup,
 			isLandingPage,
 			onUpgradeClick,
+			plansWithScroll,
 			selectedFeature,
 			selectedPlan,
 			withDiscount,
@@ -78,6 +79,7 @@ export class PlansFeaturesMain extends Component {
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+		const popular = customerType === 'personal' || plansWithScroll ? TYPE_PREMIUM : TYPE_BUSINESS;
 		return (
 			<div
 				className={ classNames(
@@ -103,7 +105,7 @@ export class PlansFeaturesMain extends Component {
 					selectedPlan={ selectedPlan }
 					withDiscount={ withDiscount }
 					popularPlanSpec={ {
-						type: customerType === 'personal' ? TYPE_PREMIUM : TYPE_BUSINESS,
+						type: popular,
 						group: GROUP_WPCOM,
 					} }
 					siteId={ siteId }
