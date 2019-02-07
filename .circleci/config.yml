@@ -456,14 +456,13 @@ jobs:
   prime-calypso-live:
     docker:
     - image: buildpack-deps
+    working_directory: ~/wp-calypso/test/e2e
     steps:
+      - restore_cache: *restore-git-cache
       - run:
           name: Prime calypso.live build
-          command: |
-            set +o errexit
-            set -o nounset
-            curl --silent "https://hash-${CIRCLE_SHA1}.calypso.live" > /dev/null
-            exit 0
+          command: ./scripts/wait-for-running-branch.sh
+
   test-e2e:
       <<: *defaults
       parallelism: 2
@@ -471,26 +470,26 @@ jobs:
         - prepare
         - run: *set-e2e-variables
         - run: npm run decrypt-e2e-config
-        - run: ./test/e2e/scripts/circleci-branch-update.sh
         - run: ./test/e2e/scripts/randomize.sh ./test/e2e/specs
         - run: ./test/e2e/scripts/run-wrapper.sh
         - store-artifacts-and-test-results
+
   test-e2e-canary:
       <<: *defaults
+      working_directory: ~/wp-calypso/test/e2e
       steps:
         - prepare
         - run: *set-e2e-variables
         - run: npm run decrypt-e2e-config
-        - run: ./test/e2e/scripts/circleci-branch-update.sh
         - run:
             name: Run IE11 Canary Tests
-            command: ./test/e2e/run.sh -z
+            command: ./run.sh -z
         - run:
             name: Run Safari Canary Tests
-            command: ./test/e2e/run.sh -y
+            command: ./run.sh -y
         - run:
             name: Run Woo Canary Tests
-            command: ./test/e2e/run.sh -W
+            command: ./run.sh -W
         - store-artifacts-and-test-results
 
 
