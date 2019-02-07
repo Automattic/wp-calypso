@@ -75,7 +75,7 @@ class SlideshowEdit extends Component {
 			this.props.setAttributes( { images } );
 		};
 	};
-	addFiles( files ) {
+	addFiles = files => {
 		const currentImages = this.props.attributes.images || [];
 		const { noticeOperations, setAttributes } = this.props;
 		mediaUpload( {
@@ -89,7 +89,7 @@ class SlideshowEdit extends Component {
 			},
 			onError: noticeOperations.createErrorNotice,
 		} );
-	}
+	};
 	uploadFromFiles = event => this.addFiles( event.target.files );
 	render() {
 		const {
