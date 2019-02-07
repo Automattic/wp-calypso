@@ -465,13 +465,14 @@ jobs:
 
   test-e2e:
       <<: *defaults
+      working_directory: ~/wp-calypso/test/e2e
       parallelism: 2
       steps:
         - prepare
         - run: *set-e2e-variables
-        - run: npm run decrypt-e2e-config
-        - run: ./test/e2e/scripts/randomize.sh ./test/e2e/specs
-        - run: ./test/e2e/scripts/run-wrapper.sh
+        - run: npm run decryptconfig
+        - run: ./scripts/randomize.sh specs
+        - run: ./scripts/run-wrapper.sh
         - store-artifacts-and-test-results
 
   test-e2e-canary:
@@ -480,7 +481,7 @@ jobs:
       steps:
         - prepare
         - run: *set-e2e-variables
-        - run: npm run decrypt-e2e-config
+        - run: npm run decryptconfig
         - run:
             name: Run IE11 Canary Tests
             command: ./run.sh -z

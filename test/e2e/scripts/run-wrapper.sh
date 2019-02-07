@@ -42,4 +42,4 @@ fi
 #  TESTARGS+=" -x"
 #fi
 
-npm run test-e2e
+npm run test
