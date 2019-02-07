@@ -15,12 +15,18 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:post-normalizer:wait-for-images-to-load' );
 
 function convertImageToObject( image ) {
-	return {
+	const returnObj = {
 		src: image.src,
 		// use natural height and width
 		width: image.naturalWidth,
 		height: image.naturalHeight,
 	};
+
+	if ( image instanceof Image && image.complete ) {
+		returnObj.fetched = true;
+	}
+
+	return returnObj;
 }
 
 function imageForURL( imageUrl ) {
