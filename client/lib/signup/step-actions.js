@@ -568,9 +568,9 @@ export function isDomainFulfilled( stepName, nextProps ) {
 	if ( includes( flows.excludedSteps, stepName ) ) {
 		return;
 	}
-	console.log( 'in isDomainFulfilled, stepName: ' + stepName );
+
 	const { siteDomains } = nextProps;
-	console.log( siteDomains.length );
+
 	if ( siteDomains && siteDomains.length > 1 && ! includes( flows.excludedSteps, stepName ) ) {
 		flows.excludeStep( stepName );
 
