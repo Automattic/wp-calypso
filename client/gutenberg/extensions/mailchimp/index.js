@@ -50,12 +50,12 @@ export const settings = {
 		},
 		successLabel: {
 			type: 'string',
-			default: __( "Success! You've been added to the list." ),
+			default: __( "Success! You're on the list." ),
 		},
 		errorLabel: {
 			type: 'string',
 			default: __(
-				'Oh no! Unfortunately there was an error. Please try reloading this page and adding your email once more.'
+				"Whoops! There was an error and we couldn't process your subscription. Please reload the page and try again."
 			),
 		},
 	},
