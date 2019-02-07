@@ -91,39 +91,8 @@
 .crowdsignal {
 	background: #f2f2f2;
 
-	.masterbar__oauth-client {
-		background-color: #fff;
-		border: 0;
-		height: 120px;
-
-		nav {
-			box-sizing: border-box;
-			max-width: 1120px;
-			margin: 0 auto;
-			padding: 0 40px;
-		}
-	}
-
-	.masterbar__oauth-client-logo {
-		padding: 20px 0;
-
-		img {
-			max-height: 80px;
-		}
-	}
-
-	.masterbar__oauth-client-close {
-		display: block;
-		float: right;
-		padding: 49px 0;
-
-		a {
-			color: #999;
-			font-size: 0.9em;
-			font-weight: bold;
-			text-decoration: none;
-			text-transform: uppercase;
-		}
+	&.is-section-login .layout__content {
+		padding: 140px 32px 32px;
 	}
 
 	.button.is-primary {
