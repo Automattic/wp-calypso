@@ -61,7 +61,11 @@ describe( `[${ host }] Comments: (${ screenSize })`, function() {
 
 		step( 'Can post a reply', async function() {
 			// NOTE: we need to wait to prevent "You are posting comments too quickly. Slow down." error
-			await driver.sleep( 10000 );
+			if ( host === 'WPCOM' ) {
+				await driver.sleep( 10000 );
+			} else {
+				await driver.sleep( 15000 );
+			}
 			const commentArea = await CommentsAreaComponent.Expect( driver );
 			await commentArea.reply(
 				{

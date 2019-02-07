@@ -22,7 +22,7 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 	}
 
 	// Create global report and screenshots directories
-	let finalScreenshotDir = '/tmp/artifacts/screenshots';
+	let finalScreenshotDir = './screenshots';
 	if ( process.env.SCREENSHOTDIR ) {
 		finalScreenshotDir = `./${ process.env.SCREENSHOTDIR }`;
 	}
@@ -34,7 +34,7 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 	}
 
 	fs.mkdir( finalScreenshotDir, () => {} );
-	fs.mkdir( '/tmp/test_results/reports', () => {} );
+	fs.mkdir( './reports', () => {} );
 
 	// Only enable Slack messages on the master branch
 	let slackClient = getSlackClient();

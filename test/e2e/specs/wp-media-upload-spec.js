@@ -10,6 +10,7 @@ import PostEditorSidebarComponent from '../lib/components/post-editor-sidebar-co
 import * as driverManager from '../lib/driver-manager.js';
 import * as mediaHelper from '../lib/media-helper.js';
 import * as dataHelper from '../lib/data-helper';
+import MediaPage from '../lib/pages/media-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -138,8 +139,10 @@ describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack
 
 				step( 'Can delete uploaded image', async function() {
 					await editorSidebar.expandFeaturedImage();
+					// Opens the media model
 					await editorSidebar.openFeaturedImageDialog();
-					await editorPage.selectFirstImage();
+					let mediaPage = new MediaPage( driver );
+					await mediaPage.selectFirstImage();
 					await editorPage.deleteMedia();
 				} );
 

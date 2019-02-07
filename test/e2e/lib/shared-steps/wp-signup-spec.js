@@ -1,6 +1,7 @@
 /** @format */
 import assert from 'assert';
 import ChecklistPage from '../pages/checklist-page';
+import InlineHelpChecklistComponent from '../components/inline-help-checklist-component.js';
 import SitePreviewComponent from '../components/site-preview-component.js';
 
 export const canSeeTheSitePreview = () => {
@@ -19,6 +20,18 @@ export const canSeeTheSitePreview = () => {
 		assert( siteBody, 'The site body does not appear in the iframe.' );
 
 		return await sitePreviewComponent.leaveSitePreview();
+	} );
+};
+
+export const canSeeTheInlineHelpCongratulations = () => {
+	step( 'Can then see the inlineHelp congratulations', async function() {
+		const inlineHelpChecklistComponent = await InlineHelpChecklistComponent.Expect( this.driver );
+
+		const congratulations = await inlineHelpChecklistComponent.congratulationsExists();
+
+		assert( congratulations, 'The inlineHelp congratulations does not exist.' );
+
+		return await inlineHelpChecklistComponent.leaveInlineHelpChecklist();
 	} );
 };
 

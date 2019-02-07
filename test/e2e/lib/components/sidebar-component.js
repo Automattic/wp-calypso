@@ -64,6 +64,10 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		return await this._scrollToAndClickMenuItem( 'settings' );
 	}
 
+	async selectMedia() {
+		return await this._scrollToAndClickMenuItem( 'side-menu-media' );
+	}
+
 	async selectImport() {
 		return await this._scrollToAndClickMenuItem( 'side-menu-import' );
 	}
@@ -92,6 +96,13 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		return await driverHelper.isElementPresent(
 			this.driver,
 			SidebarComponent._getSidebarSelector( 'settings' )
+		);
+	}
+
+	async mediaOptionExists() {
+		return await driverHelper.isElementPresent(
+			this.driver,
+			SidebarComponent._getSidebarSelector( 'side-menu-media' )
 		);
 	}
 

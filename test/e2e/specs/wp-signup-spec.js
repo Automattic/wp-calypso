@@ -42,8 +42,8 @@ import ImportPage from '../lib/pages/import-page';
 import FindADomainComponent from '../lib/components/find-a-domain-component.js';
 import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
 import NavBarComponent from '../lib/components/nav-bar-component';
+import SideBarComponent from '../lib/components/sidebar-component';
 import NoSitesComponent from '../lib/components/no-sites-component';
-import SidebarComponent from '../lib/components/sidebar-component';
 
 import * as SlackNotifier from '../lib/slack-notifier';
 
@@ -876,7 +876,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 
 		step( 'We should only one option - the settings option', async function() {
-			const sideBarComponent = await SidebarComponent.Expect( driver );
+			const sideBarComponent = await SideBarComponent.Expect( driver );
 			let numberMenuItems = await sideBarComponent.numberOfMenuItems();
 			assert.strictEqual(
 				numberMenuItems,
@@ -892,7 +892,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				await ReaderPage.Visit( driver );
 				const navBarComponent = await NavBarComponent.Expect( driver );
 				await navBarComponent.clickMySites();
-				const sidebarComponent = await SidebarComponent.Expect( driver );
+				const sidebarComponent = await SideBarComponent.Expect( driver );
 				await sidebarComponent.selectSettings();
 				const domainOnlySettingsPage = await DomainOnlySettingsPage.Expect( driver );
 				await domainOnlySettingsPage.manageDomain();
@@ -1363,7 +1363,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can delete site', async function() {
-			const sidebarComponent = await SidebarComponent.Expect( driver );
+			const sidebarComponent = await SideBarComponent.Expect( driver );
 			await sidebarComponent.ensureSidebarMenuVisible();
 			await sidebarComponent.selectSettings();
 			const settingsPage = await SettingsPage.Expect( driver );
@@ -1646,7 +1646,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		let undo = null;
 
 		before( async function() {
-			undo = overrideABTest( 'improvedOnboarding_20181023', 'onboarding' );
+			undo = overrideABTest( 'improvedOnboarding_20190131', 'onboarding' );
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -1724,7 +1724,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		let undo = null;
 
 		before( async function() {
-			undo = overrideABTest( 'improvedOnboarding_20181023', 'onboarding' );
+			undo = overrideABTest( 'improvedOnboarding_20190131', 'onboarding' );
 			await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -1809,6 +1809,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			return await pickAPlanPage.selectFreePlan();
 		} );
 
+		sharedSteps.canSeeTheInlineHelpCongratulations();
 		sharedSteps.canSeeTheSitePreview();
 
 		after( 'Can delete our newly created account', async function() {
