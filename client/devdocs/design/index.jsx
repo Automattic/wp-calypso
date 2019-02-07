@@ -24,6 +24,12 @@ import ReadmeViewer from 'components/readme-viewer';
 import SearchCard from 'components/search-card';
 
 /**
+ * Style Dependencies
+ */
+import './style.scss';
+import './syntax.scss';
+
+/**
  * Docs examples
  */
 import Accordions from 'components/accordion/docs/example';

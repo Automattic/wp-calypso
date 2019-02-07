@@ -113,7 +113,7 @@ export default function switchLocale( localeSlug ) {
 
 const bundles = {};
 
-export async function switchCSS( elementId, cssUrl ) {
+async function switchCSS( elementId, cssUrl ) {
 	if ( bundles.hasOwnProperty( elementId ) && bundles[ elementId ] === cssUrl ) {
 		return;
 	}

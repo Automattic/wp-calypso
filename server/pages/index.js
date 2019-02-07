@@ -210,7 +210,6 @@ function getAcceptedLanguagesFromHeader( header ) {
 
 function getDefaultContext( request ) {
 	let initialServerState = {};
-	let sectionCss;
 	let lang = config( 'i18n_default_locale_slug' );
 	const bodyClasses = [];
 	// We don't compare context.query against a whitelist here. Whitelists are route-specific,
@@ -236,10 +235,6 @@ function getDefaultContext( request ) {
 		prideLocations.indexOf( geoLocation ) > -1
 	) {
 		bodyClasses.push( 'pride' );
-	}
-
-	if ( request.context && request.context.sectionCss ) {
-		sectionCss = request.context.sectionCss;
 	}
 
 	// We assign request.context.lang in the handleLocaleSubdomains()
@@ -268,7 +263,6 @@ function getDefaultContext( request ) {
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
-		sectionCss,
 	} );
 
 	context.app = {
@@ -719,10 +713,6 @@ module.exports = function() {
 
 					if ( section.group && req.context ) {
 						req.context.sectionGroup = section.group;
-					}
-
-					if ( section.css && req.context ) {
-						req.context.sectionCss = section.css;
 					}
 
 					next();

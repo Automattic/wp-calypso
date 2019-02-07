@@ -8,6 +8,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { setSection } from 'state/ui/actions';
 import { activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { bumpStat } from 'state/analytics/actions';
 import * as LoadingError from 'layout/error';
@@ -20,7 +21,7 @@ import sections from './sections';
 receiveSections( sections );
 
 function activateSection( sectionDefinition, context ) {
-	controller.setSection( sectionDefinition )( context );
+	context.store.dispatch( setSection( sectionDefinition ) );
 	context.store.dispatch( activateNextLayoutFocus() );
 }
 
