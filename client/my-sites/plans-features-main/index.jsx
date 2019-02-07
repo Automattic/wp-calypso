@@ -278,14 +278,14 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	renderToggle() {
-		const { displayJetpackPlans, withWPPlanTabs, newPlansVisible, countryCode } = this.props;
+		const { displayJetpackPlans, withWPPlanTabs, newPlansVisible, plansWithScroll } = this.props;
 		if ( displayJetpackPlans ) {
 			if ( countryCode && abtest( 'jetpackMonthlyPlansOnly', countryCode ) === 'monthlyOnly' ) {
 				return false;
 			}
 			return this.getIntervalTypeToggle();
 		}
-		if ( newPlansVisible ) {
+		if ( newPlansVisible && ! plansWithScroll ) {
 			return this.getCustomerTypeToggle();
 		}
 		return false;
