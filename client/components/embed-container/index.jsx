@@ -158,8 +158,9 @@ function embedSmallipop( domNode ) {
 		return;
 	}
 
+	smallipopLoader = true;
+
 	loadjQueryDependentScript( HOVERCARD_URL_PREFIX + 'jquery.smallipop.js', function() {
-		smallipopLoader = true;
 		loadCSS( HOVERCARD_URL_PREFIX + 'jquery.smallipop.custom.css' );
 		loadCSS( HOVERCARD_URL_PREFIX + 'reader-hovercards.css' );
 
