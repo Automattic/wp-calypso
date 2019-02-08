@@ -165,9 +165,6 @@ class GifEdit extends Component {
 						{ isSelected && results && results.length > 1 && (
 							<div className="wp-block-jetpack-gif_thumbnails-container">
 								{ results.map( thumbnail => {
-									if ( thumbnail.embed_url === giphyUrl ) {
-										return null;
-									}
 									const thumbnailStyle = {
 										backgroundImage: `url(${ thumbnail.images.downsized_still.url })`,
 									};
