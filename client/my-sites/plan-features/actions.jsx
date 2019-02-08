@@ -82,7 +82,7 @@ const PlanFeaturesActions = ( {
 						plan: planName,
 					},
 					comment:
-						'A button to select a mew paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+						'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
 				} );
 			}
 		} else if ( isInSignup ) {
