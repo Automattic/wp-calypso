@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { createBlock } from '@wordpress/blocks';
-import { every, filter, get } from 'lodash';
+import { filter } from 'lodash';
 import { Path, SVG } from '@wordpress/components';
 
 /**
@@ -123,29 +123,19 @@ export const settings = {
 				isMultiBlock: true,
 				blocks: [ 'core/image' ],
 				transform: attributes => {
-					// Leave out other than supported aligns: image block supports left and right, Tiled Gallery doesn't.
-					const objectsWithValidAlign = filter( attributes, object =>
-						settings.supports.align.includes( object.align )
-					);
-
-					// Init the align attribute from the first item which may be either the placeholder or an image.
-					let align = get( objectsWithValidAlign, [ 0, 'align' ], undefined );
-
-					// Loop through all the images with valid align and check if they have the same align
-					align = every( objectsWithValidAlign, [ 'align', align ] ) ? align : undefined;
-
 					const validImages = filter( attributes, ( { id, url } ) => id && url );
-
-					return createBlock( `jetpack/${ name }`, {
-						images: validImages.map( ( { id, url, alt, caption } ) => ( {
-							id,
-							url,
-							alt,
-							caption,
-						} ) ),
-						ids: validImages.map( ( { id } ) => id ),
-						align,
-					} );
+					if ( validImages.length > 0 ) {
+						return createBlock( `jetpack/${ name }`, {
+							images: validImages.map( ( { id, url, alt, caption } ) => ( {
+								id,
+								url,
+								alt,
+								caption,
+							} ) ),
+							ids: validImages.map( ( { id } ) => id ),
+						} );
+					}
+					return createBlock( `jetpack/${ name }` );
 				},
 			},
 			{
