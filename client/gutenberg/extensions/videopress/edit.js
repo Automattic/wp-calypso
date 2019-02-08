@@ -101,8 +101,12 @@ const VideoPressEdit = CoreVideoEdit =>
 			} = this.props;
 			const { fallback, isFetchingMedia } = this.state;
 
-			if ( isUploading || isFetchingMedia || isFetchingPreview ) {
-				return <Loading text={ isUploading ? __( 'Uploading…' ) : __( 'Embedding…' ) } />;
+			if ( isUploading ) {
+				return <Loading text={ __( 'Uploading…' ) } />;
+			}
+
+			if ( isFetchingMedia || isFetchingPreview ) {
+				return <Loading text={ __( 'Embedding…' ) } />;
 			}
 
 			if ( fallback || ! preview ) {
