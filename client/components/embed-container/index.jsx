@@ -35,7 +35,7 @@ const SLIDESHOW_URLS = {
 	SPINNER: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/img/slideshow-loader.gif${ cacheBustQuery }`,
 };
 
-const hovercard_URL_Prefix = 'https://s0.wp.com/wp-content/plugins/reader-smallipop/';
+const HOVERCARD_URL_PREFIX = 'https://s0.wp.com/wp-content/plugins/reader-smallipop/';
 
 function processEmbeds( domNode ) {
 	forOwn( embedsToLookFor, ( fn, embedSelector ) => {
@@ -158,11 +158,10 @@ function embedSmallipop( domNode ) {
 		return;
 	}
 
-	// TODO - put the CSS/JS files in a better location
-	loadjQueryDependentScript( hovercard_URL_Prefix + 'jquery.smallipop.js', function() {
+	loadjQueryDependentScript( HOVERCARD_URL_PREFIX + 'jquery.smallipop.js', function() {
 		smallipopLoader = true;
-		loadCSS( hovercard_URL_Prefix + 'jquery.smallipop.custom.css' );
-		loadCSS( hovercard_URL_Prefix + 'reader-hovercards.css' );
+		loadCSS( HOVERCARD_URL_PREFIX + 'jquery.smallipop.custom.css' );
+		loadCSS( HOVERCARD_URL_PREFIX + 'reader-hovercards.css' );
 
 		const options = {
 			popupYOffset: -14,
