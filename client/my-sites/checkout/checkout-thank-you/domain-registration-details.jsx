@@ -11,6 +11,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import { getDomainManagementUrl } from './utils';
 import GoogleAppsDetails from './google-apps-details';
 import { isGoogleApps, isBlogger } from 'lib/products-values';
@@ -45,7 +46,9 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 					/>
 				) }
 
-				{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+				{ googleAppsWasPurchased && abtest( 'gSuitePostCheckoutNotice' ) === 'original' && (
+					<GoogleAppsDetails isRequired />
+				) }
 			</div>
 
 			<PurchaseDetail

@@ -13,6 +13,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import PurchaseButton from './purchase-button';
 import TipInfo from './tip-info';
 
@@ -102,10 +103,15 @@ export default class PurchaseDetail extends PureComponent {
 			'is-placeholder': this.props.isPlaceholder,
 		} );
 
+		let requiredClass = 'purchase-detail__required-notice';
+		if ( abtest( 'gSuitePostCheckoutNotice' ) === 'enhanced' ) {
+			requiredClass = 'purchase-detail__required-error';
+		}
+
 		return (
 			<div className={ classes } id={ id }>
 				{ requiredText && (
-					<div className="purchase-detail__required-notice">
+					<div className={ requiredClass }>
 						<em>{ requiredText }</em>
 					</div>
 				) }
