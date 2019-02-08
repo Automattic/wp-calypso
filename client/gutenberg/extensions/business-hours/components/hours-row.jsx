@@ -27,7 +27,12 @@ class HoursRow extends Component {
 			<div className="business-hours__row">
 				<dt className={ classNames( day, 'business-hours__day' ) }>
 					<span className="business-hours__day-name">{ days[ day ] }</span>
-					{ edit && <ToggleControl label={ this.isClosed() ? __( 'Closed' ) : __( 'Open' ) } /> }
+					{ edit && (
+						<ToggleControl
+							label={ this.isClosed() ? __( 'Closed' ) : __( 'Open' ) }
+							checked={ ! this.isClosed() }
+						/>
+					) }
 				</dt>
 				{ edit || ( hours[ day ].opening && hours[ day ].closing ) ? (
 					<dd className={ classNames( day, 'business-hours__hours' ) }>
