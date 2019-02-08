@@ -118,6 +118,7 @@ export class PlansStep extends Component {
 			disableBloggerPlanWithNonBlogDomain,
 			hideFreePlan,
 			isDomainOnly,
+			isLaunchPage,
 			selectedSite,
 		} = this.props;
 
@@ -129,7 +130,7 @@ export class PlansStep extends Component {
 					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
-					isLaunchPage={ this.props.isLaunchPage }
+					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ this.onSelectPlan }
 					showFAQ={ false }
 					displayJetpackPlans={ false }
