@@ -8,6 +8,7 @@ import { PanelBody, RangeControl, ToggleControl, Toolbar, Path, SVG } from '@wor
 import { Component, Fragment } from '@wordpress/element';
 import { get } from 'lodash';
 import { withSelect } from '@wordpress/data';
+import { compose, withInstanceId } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -18,10 +19,14 @@ export const MAX_POSTS_TO_SHOW = 6;
 
 function PlaceholderPostEdit( props ) {
 	return (
-		<div className="jp-related-posts-i2__post">
-			<h3 className="jp-related-posts-i2__post-heading">
+		<div
+			className="jp-related-posts-i2__post"
+			id={ props.id }
+			aria-labelledby={ props.id + '-heading' }
+		>
+			<strong id={ props.id + '-heading' } class="jp-related-posts-i2__post-link">
 				{ __( 'Preview: Not enough related posts found' ) }
-			</h3>
+			</strong>
 			{ props.displayThumbnails && (
 				<figure
 					className="jp-related-posts-i2__post-image-placeholder"
@@ -67,18 +72,28 @@ function PlaceholderPostEdit( props ) {
 
 function RelatedPostsEditItem( props ) {
 	return (
-		<div className="jp-related-posts-i2__post">
-			<h3 className="jp-related-posts-i2__post-heading">
-				<a className="jp-related-posts-i2__post-link" href={ props.post.url }>
-					{ props.post.title }
-				</a>
-			</h3>
+		<div
+			className="jp-related-posts-i2__post"
+			id={ props.id }
+			aria-labelledby={ props.id + '-heading' }
+		>
+			<a
+				className="jp-related-posts-i2__post-link"
+				id={ props.id + '-heading' }
+				href={ props.post.url }
+				rel="nofollow noopener noreferrer"
+				target="_blank"
+			>
+				{ props.post.title }
+			</a>
 			{ props.displayThumbnails && props.post.img && props.post.img.src && (
 				<a className="jp-related-posts-i2__post-img-link" href={ props.post.url }>
 					<img
 						className="jp-related-posts-i2__post-img"
 						src={ props.post.img.src }
 						alt={ props.post.title }
+						rel="nofollow noopener noreferrer"
+						target="_blank"
 					/>
 				</a>
 			) }
@@ -129,7 +144,7 @@ function RelatedPostsPreviewRows( props ) {
 
 class RelatedPostsEdit extends Component {
 	render() {
-		const { attributes, className, posts, setAttributes } = this.props;
+		const { attributes, className, posts, setAttributes, instanceId } = this.props;
 		const { displayContext, displayDate, displayThumbnails, postLayout, postsToShow } = attributes;
 
 		const layoutControls = [
@@ -161,6 +176,7 @@ class RelatedPostsEdit extends Component {
 			if ( posts[ i ] ) {
 				displayPosts.push(
 					<RelatedPostsEditItem
+						id={ `related-posts-${ instanceId }-post-${ i }` }
 						key={ previewClassName + '-' + i }
 						post={ posts[ i ] }
 						displayThumbnails={ displayThumbnails }
@@ -171,6 +187,7 @@ class RelatedPostsEdit extends Component {
 			} else {
 				displayPosts.push(
 					<PlaceholderPostEdit
+						id={ `related-posts-${ instanceId }-post-${ i }` }
 						key={ 'related-post-placeholder-' + i }
 						displayThumbnails={ displayThumbnails }
 						displayDate={ displayDate }
@@ -215,7 +232,7 @@ class RelatedPostsEdit extends Component {
 					<Toolbar controls={ layoutControls } />
 				</BlockControls>
 
-				<div className={ className }>
+				<div className={ className } id={ `related-posts-${ instanceId }` }>
 					<div className={ previewClassName } data-layout={ postLayout }>
 						<RelatedPostsPreviewRows posts={ displayPosts } />
 					</div>
@@ -225,11 +242,14 @@ class RelatedPostsEdit extends Component {
 	}
 }
 
-export default withSelect( select => {
-	const { getCurrentPost } = select( 'core/editor' );
-	const posts = get( getCurrentPost(), 'jetpack-related-posts', [] );
+export default compose(
+	withInstanceId,
+	withSelect( select => {
+		const { getCurrentPost } = select( 'core/editor' );
+		const posts = get( getCurrentPost(), 'jetpack-related-posts', [] );
 
-	return {
-		posts,
-	};
-} )( RelatedPostsEdit );
+		return {
+			posts,
+		};
+	} )
+)( RelatedPostsEdit );

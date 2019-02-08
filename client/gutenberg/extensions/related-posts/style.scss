@@ -46,6 +46,8 @@ $gray-lighten-30: #f6f6f6;
 	&__post-link {
 		display: block;
 		width: 100%;
+		line-height: 1.2em;
+		margin: 0.2em 0;
 	}
 
 	&__post-img {
@@ -79,6 +81,7 @@ $gray-lighten-30: #f6f6f6;
 	}
 	.jp-related-posts-i2__post-image-placeholder {
 		max-width: 350px;
+		margin: 0;
 	}
 	.jp-related-posts-i2__post-img-link {
 		margin-top: 1rem;
