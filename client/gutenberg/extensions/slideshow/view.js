@@ -9,7 +9,6 @@ import { forEach } from 'lodash';
  * Internal dependencies
  */
 import createSwiper from './create-swiper';
-import './style.scss';
 
 typeof window !== 'undefined' &&
 	window.addEventListener( 'load', function() {

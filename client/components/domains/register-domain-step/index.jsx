@@ -39,7 +39,12 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
 import StickyPanel from 'components/sticky-panel';
-import { checkDomainAvailability, getFixedDomainSearch, getAvailableTlds } from 'lib/domains';
+import {
+	checkDomainAvailability,
+	getFixedDomainSearch,
+	getAvailableTlds,
+	getDomainSuggestionSearch,
+} from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import Search from 'components/search';
@@ -524,7 +529,7 @@ class RegisterDomainStep extends React.Component {
 		this.save();
 
 		const { lastQuery } = this.state;
-		const loadingResults = Boolean( getFixedDomainSearch( lastQuery ) );
+		const loadingResults = Boolean( getDomainSuggestionSearch( lastQuery, MIN_QUERY_LENGTH ) );
 
 		const nextState = {
 			availabilityError: null,
@@ -610,11 +615,7 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		let cleanedQuery = getFixedDomainSearch( searchQuery );
-		if ( cleanedQuery.length < MIN_QUERY_LENGTH ) {
-			cleanedQuery = '';
-		}
-
+		const cleanedQuery = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
 		const loadingResults = Boolean( cleanedQuery );
 
 		this.setState(
@@ -909,10 +910,7 @@ class RegisterDomainStep extends React.Component {
 	onSearch = ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
 		debug( 'onSearch handler was triggered with query', searchQuery );
 
-		let domain = getFixedDomainSearch( searchQuery );
-		if ( domain.length < MIN_QUERY_LENGTH ) {
-			domain = '';
-		}
+		const domain = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
 
 		this.setState(
 			{

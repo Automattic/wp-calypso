@@ -242,7 +242,7 @@ export function deduceImageWidthAndHeight( image ) {
 			width: image.width,
 		};
 	}
-	if ( image.naturalHeight && image.natualWidth ) {
+	if ( image.naturalHeight && image.naturalWidth ) {
 		return {
 			height: image.naturalHeight,
 			width: image.naturalWidth,

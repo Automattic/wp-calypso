@@ -15,6 +15,8 @@ import {
 } from '@wordpress/editor';
 
 import {
+	DropZone,
+	FormFileUpload,
 	IconButton,
 	PanelBody,
 	RangeControl,
@@ -29,6 +31,7 @@ import { filter, pick } from 'lodash';
  * Internal dependencies
  */
 import Slideshow from './slideshow';
+import './editor.scss';
 
 const ALLOWED_MEDIA_TYPES = [ 'image' ];
 
@@ -72,7 +75,7 @@ class SlideshowEdit extends Component {
 			this.props.setAttributes( { images } );
 		};
 	};
-	addFiles( files ) {
+	addFiles = files => {
 		const currentImages = this.props.attributes.images || [];
 		const { noticeOperations, setAttributes } = this.props;
 		mediaUpload( {
@@ -81,14 +84,22 @@ class SlideshowEdit extends Component {
 			onFileChange: images => {
 				const imagesNormalized = images.map( image => pickRelevantMediaFiles( image ) );
 				setAttributes( {
-					images: currentImages.concat( imagesNormalized ),
+					images: [ ...imagesNormalized, ...currentImages ],
 				} );
 			},
 			onError: noticeOperations.createErrorNotice,
 		} );
-	}
+	};
+	uploadFromFiles = event => this.addFiles( event.target.files );
 	render() {
-		const { attributes, className, noticeOperations, noticeUI, setAttributes } = this.props;
+		const {
+			attributes,
+			className,
+			isSelected,
+			noticeOperations,
+			noticeUI,
+			setAttributes,
+		} = this.props;
 		const { align, autoplay, delay, effect, images } = attributes;
 		const controls = (
 			<Fragment>
@@ -182,6 +193,21 @@ class SlideshowEdit extends Component {
 					effect={ effect }
 					images={ images }
 				/>
+				<DropZone onFilesDrop={ this.addFiles } />
+				{ isSelected && (
+					<div className="wp-block-jetpack-slideshow__add-item">
+						<FormFileUpload
+							multiple
+							isLarge
+							className="wp-block-jetpack-slideshow__add-item-button"
+							onChange={ this.uploadFromFiles }
+							accept="image/*"
+							icon="insert"
+						>
+							{ __( 'Upload an image' ) }
+						</FormFileUpload>
+					</div>
+				) }
 			</Fragment>
 		);
 	}
