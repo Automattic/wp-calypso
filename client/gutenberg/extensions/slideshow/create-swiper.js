@@ -19,7 +19,10 @@ export default async function createSwiper( container = '.swiper-container', par
 		const swiperHeight = Math.min( this.width / sanityAspectRatio, sanityHeight );
 		this.$el[ 0 ].style.height = `${ Math.floor( swiperHeight ) }px`;
 	};
-
+	const init = function() {
+		this.$el[ 0 ].classList.add( 'wp-swiper-initialized' );
+		autoSize.call( this );
+	};
 	const defaultParams = {
 		effect: 'slide',
 		grabCursor: true,
@@ -40,13 +43,12 @@ export default async function createSwiper( container = '.swiper-container', par
 		touchStartPreventDefault: false,
 		/* We probably won't end up needing both init and imagesReady. Just casting a wide net for now. */
 		on: {
-			init: autoSize,
+			init,
 			imagesReady: autoSize,
 			observerUpdate: autoSize,
 			resize: autoSize,
 		},
 	};
-
 	const [ { default: Swiper } ] = await Promise.all( [
 		import( /* webpackChunkName: "swiper" */ 'swiper' ),
 		import( /* webpackChunkName: "swiper" */ 'swiper/dist/css/swiper.css' ),

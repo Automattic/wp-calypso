@@ -6,6 +6,11 @@
 	.wp-block-jetpack-slideshow_container {
 		width: 100%;
 		height: 400px; // This is a default, which will be replaced programmatically
+		overflow: hidden;
+		opacity: 0;
+		&.wp-swiper-initialized {
+			opacity: 1;
+		}
 	}
 
 	.wp-block-jetpack-slideshow_slide {
