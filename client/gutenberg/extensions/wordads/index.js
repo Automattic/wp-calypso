@@ -54,6 +54,5 @@ export const settings = {
 
 	edit,
 
-	/* @TODO save */
 	save: () => null,
 };
