@@ -76,6 +76,14 @@ const PlanFeaturesActions = ( {
 					comment:
 						'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
 				} );
+			} else {
+				buttonText = translate( 'Select %(plan)s', {
+					args: {
+						plan: planName,
+					},
+					comment:
+						'A button to select a mew paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+				} );
 			}
 		} else if ( isInSignup ) {
 			buttonText = translate( 'Start with %(plan)s', {
