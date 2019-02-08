@@ -33,7 +33,7 @@ class DomainSuggestion extends React.Component {
 	};
 
 	render() {
-		const { children, extraClasses, hidePrice, isAdded, price, priceRule } = this.props;
+		const { children, extraClasses, hidePrice, isAdded, price, priceRule, salePrice } = this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
@@ -56,7 +56,9 @@ class DomainSuggestion extends React.Component {
 			>
 				<div className="domain-suggestion__content">
 					{ children }
-					{ ! hidePrice && <DomainProductPrice price={ price } rule={ priceRule } /> }
+					{ ! hidePrice && (
+						<DomainProductPrice price={ price } salePrice={ salePrice } rule={ priceRule } />
+					) }
 				</div>
 				<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
 					{ this.props.buttonContent }

@@ -282,6 +282,18 @@ function getDomainPrice( slug, productsList, currencyCode ) {
 	return price;
 }
 
+function getDomainSalePrice( slug, productsList, currencyCode ) {
+	const saleDiscount = get( productsList, [ slug, 'sale_discount' ], null );
+	if ( saleDiscount ) {
+		let salePrice = get( productsList, [ slug, 'cost' ], 0 );
+		salePrice += get( productsList, [ 'domain_map', 'cost' ], 0 );
+		salePrice *= ( 100 - saleDiscount ) / 100;
+		return formatCurrency( salePrice, currencyCode );
+	}
+
+	return null;
+}
+
 function getAvailableTlds( query = {} ) {
 	return wpcom.undocumented().getAvailableTlds( query );
 }
@@ -316,6 +328,7 @@ export {
 	checkInboundTransferStatus,
 	getDomainPrice,
 	getDomainProductSlug,
+	getDomainSalePrice,
 	getDomainTypeText,
 	getFixedDomainSearch,
 	getGoogleAppsSupportedDomains,

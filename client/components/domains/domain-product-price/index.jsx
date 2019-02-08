@@ -53,6 +53,7 @@ class DomainProductPrice extends React.Component {
 
 	renderFree() {
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div className="domain-product-price">
 				<span className="domain-product-price__price">{ this.props.translate( 'Free' ) }</span>
 			</div>
@@ -79,8 +80,27 @@ class DomainProductPrice extends React.Component {
 		);
 	}
 
-	renderPrice() {
+	renderSalePrice() {
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+			<div className="domain-product-price">
+				<span className="domain-product-price__price">
+					{ this.props.translate( 'SALE PRICE: %(cost)s {{small}}/year{{/small}}', {
+						args: { cost: this.props.salePrice },
+						components: { small: <small /> },
+					} ) }
+				</span>
+			</div>
+		);
+	}
+
+	renderPrice() {
+		if ( this.props.salePrice ) {
+			return this.renderSalePrice();
+		}
+
+		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div className="domain-product-price">
 				<span className="domain-product-price__price">
 					{ this.props.translate( '%(cost)s {{small}}/year{{/small}}', {

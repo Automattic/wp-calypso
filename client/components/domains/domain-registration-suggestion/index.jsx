@@ -27,7 +27,7 @@ import {
 	VALID_MATCH_REASONS,
 } from 'components/domains/domain-registration-suggestion/utility';
 import ProgressBar from 'components/progress-bar';
-import { getDomainPrice } from 'lib/domains';
+import { getDomainPrice, getDomainSalePrice } from 'lib/domains';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 
@@ -57,6 +57,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
 		productCost: PropTypes.string,
+		productSaleCost: PropTypes.string,
 	};
 
 	componentDidMount() {
@@ -255,6 +256,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			isFeatured,
 			suggestion: { domain_name: domain },
 			productCost,
+			productSaleCost,
 		} = this.props;
 
 		const isUnavailableDomain = this.isUnavailableDomain( domain );
@@ -269,6 +271,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				extraClasses={ extraClasses }
 				priceRule={ this.getPriceRule() }
 				price={ productCost }
+				salePrice={ productSaleCost }
 				domain={ domain }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
@@ -284,13 +287,12 @@ class DomainRegistrationSuggestion extends React.Component {
 
 const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
+	const productsList = getProductsList( state );
+	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
 
 	return {
-		productCost: getDomainPrice(
-			productSlug,
-			getProductsList( state ),
-			getCurrentUserCurrencyCode( state )
-		),
+		productCost: getDomainPrice( productSlug, productsList, currentUserCurrencyCode ),
+		productSaleCost: getDomainSalePrice( productSlug, productsList, currentUserCurrencyCode ),
 	};
 };
 
