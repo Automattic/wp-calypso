@@ -81,6 +81,7 @@ const PlanFeaturesActions = ( {
 					args: {
 						plan: planName,
 					},
+					context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
 					comment:
 						'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
 				} );
