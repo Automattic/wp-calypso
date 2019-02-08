@@ -52,6 +52,10 @@
 		}
 	}
 
+    .domain-product-price__price {
+      margin: auto 0;
+    }
+
 	&.is-free-domain {
 		font-size: 13px;
 		line-height: 1.7;

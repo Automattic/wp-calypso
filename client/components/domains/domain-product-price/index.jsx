@@ -23,18 +23,29 @@ class DomainProductPrice extends React.Component {
 		freeWithPlan: PropTypes.bool,
 		requiresPlan: PropTypes.bool,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		isMappingProduct: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		isMappingProduct: false,
 	};
 
 	renderFreeWithPlanText() {
-		const { translate } = this.props;
+		const { isMappingProduct, translate } = this.props;
 
 		let message;
 		switch ( this.props.rule ) {
 			case 'FREE_WITH_PLAN':
-				message = this.props.translate( 'First year free with your plan' );
+				message = translate( 'First year free with your plan' );
+				if ( isMappingProduct ) {
+					message = translate( 'Free with your plan' );
+				}
 				break;
 			case 'INCLUDED_IN_HIGHER_PLAN':
 				message = translate( 'First year included in paid plans' );
+				if ( isMappingProduct ) {
+					message = translate( 'Included in paid plans' );
+				}
 				break;
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
 				message = translate( 'Personal plan required' );
@@ -45,6 +56,10 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderFreeWithPlanPrice() {
+		if ( this.props.isMappingProduct ) {
+			return;
+		}
+
 		return (
 			<div className="domain-product-price__price">
 				{ this.props.translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
