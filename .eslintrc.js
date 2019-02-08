@@ -58,6 +58,9 @@ module.exports = {
 				'jest/no-test-prefixes': 0,
 				'jest/no-identical-title': 0,
 			},
+			globals: {
+				step: false,
+			},
 		},
 	],
 	parser: 'babel-eslint',
@@ -77,8 +80,6 @@ module.exports = {
 		COMMIT_SHA: true,
 		// this is when Webpack last built the bundle
 		BUILD_TIMESTAMP: true,
-		// this is for e2e tests
-		step: false,
 	},
 	plugins: [ 'jest', 'jsx-a11y', 'import' ],
 	settings: {
