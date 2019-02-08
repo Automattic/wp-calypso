@@ -115,7 +115,6 @@ class Slideshow extends Component {
 				nextEl: this.btnNextRef.current,
 				prevEl: this.btnPrevRef.current,
 			},
-			observer: true,
 			pagination: {
 				clickable: true,
 				el: this.paginationRef.current,

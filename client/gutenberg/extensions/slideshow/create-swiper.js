@@ -45,7 +45,6 @@ export default async function createSwiper( container = '.swiper-container', par
 		on: {
 			init,
 			imagesReady: autoSize,
-			observerUpdate: autoSize,
 			resize: autoSize,
 		},
 	};
