@@ -139,7 +139,7 @@ export default {
 		defaultVariation: 'allPrimary',
 	},
 	twoYearPlanByDefault: {
-		datestamp: '20190107',
+		datestamp: '20190207',
 		variations: {
 			originalFlavor: 50,
 			twoYearFlavor: 50,
