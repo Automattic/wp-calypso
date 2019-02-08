@@ -15,12 +15,18 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:post-normalizer:wait-for-images-to-load' );
 
 function convertImageToObject( image ) {
-	return {
+	const returnObj = {
 		src: image.src,
 		// use natural height and width
 		width: image.naturalWidth,
 		height: image.naturalHeight,
 	};
+
+	if ( image instanceof Image && image.complete ) {
+		returnObj.fetched = true;
+	}
+
+	return returnObj;
 }
 
 function imageForURL( imageUrl ) {
@@ -75,27 +81,41 @@ export default function waitForImagesToLoad( post ) {
 			resolve( post );
 		}
 
+		const knownImages = {};
 		const imagesToCheck = [];
 
-		if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
-			imagesToCheck.push( post.post_thumbnail.URL );
-		} else if ( post.featured_image ) {
-			imagesToCheck.push( post.featured_image );
-		}
+		function checkAndRememberDimensions( image, url ) {
+			// Check provided image (if any) for dimension info first.
+			let knownDimensions = image && deduceImageWidthAndHeight( image );
 
-		const knownImages = {};
+			// If we still don't know the dimension info, check attachments.
+			if ( ! knownDimensions && post.attachments ) {
+				const attachment = Object.values( post.attachments ).find(
+					att => att.URL === post.featured_image
+				);
+				if ( attachment ) {
+					knownDimensions = deduceImageWidthAndHeight( attachment );
+				}
+			}
 
-		forEach( post.content_images, function( image ) {
-			const knownDimensions = deduceImageWidthAndHeight( image );
+			// Remember dimensions if we have them.
 			if ( knownDimensions ) {
-				knownImages[ image.src ] = {
-					src: image.src,
+				knownImages[ url ] = {
+					src: url,
 					naturalWidth: knownDimensions.width,
 					naturalHeight: knownDimensions.height,
 				};
 			}
-			imagesToCheck.push( image.src );
-		} );
+			imagesToCheck.push( url );
+		}
+
+		if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
+			checkAndRememberDimensions( post.post_thumbnail, post.post_thumbnail.URL );
+		} else if ( post.featured_image ) {
+			checkAndRememberDimensions( null, post.featured_image );
+		}
+
+		forEach( post.content_images, image => checkAndRememberDimensions( image, image.src ) );
 
 		if ( imagesToCheck.length === 0 ) {
 			resolve( post );
