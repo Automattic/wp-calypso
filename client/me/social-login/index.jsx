@@ -178,7 +178,7 @@ export default connect(
 
 		return {
 			socialConnectionEmail: get( currentUser, 'social_login.google.email', '' ),
-			isUserConnectedToGoogle: get( currentUser, 'social_login.google.active', false ),
+			isUserConnectedToGoogle: get( currentUser, 'social_login.google', false ),
 			isUpdatingSocialConnection: isRequesting( state ),
 			errorUpdatingSocialConnection: getRequestError( state ),
 		};
