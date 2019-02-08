@@ -37,32 +37,32 @@ export const settings = {
 				Sun: [], // closed by default
 				Mon: [
 					{
-						opening: '',
-						closing: '',
+						opening: '09:00',
+						closing: '17:00',
 					},
 				],
 				Tue: [
 					{
-						opening: '',
-						closing: '',
+						opening: '09:00',
+						closing: '17:00',
 					},
 				],
 				Wed: [
 					{
-						opening: '',
-						closing: '',
+						opening: '09:00',
+						closing: '17:00',
 					},
 				],
 				Thu: [
 					{
-						opening: '',
-						closing: '',
+						opening: '09:00',
+						closing: '17:00',
 					},
 				],
 				Fri: [
 					{
-						opening: '',
-						closing: '',
+						opening: '09:00',
+						closing: '17:00',
 					},
 				],
 				Sat: [], // closed by default
