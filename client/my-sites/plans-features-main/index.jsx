@@ -86,6 +86,7 @@ export class PlansFeaturesMain extends Component {
 			<div
 				className={ classNames(
 					'plans-features-main__group',
+					{ 'plans-features-main__no-tabs': plansWithScroll },
 					'is-' + ( displayJetpackPlans ? 'jetpack' : 'wpcom' ),
 					{
 						[ `is-customer-${ customerType }` ]: ! displayJetpackPlans,
@@ -101,6 +102,7 @@ export class PlansFeaturesMain extends Component {
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
+					plansWithScroll={ plansWithScroll }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
 					visiblePlans={ visiblePlans }
