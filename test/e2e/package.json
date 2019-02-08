@@ -18,11 +18,6 @@
 		"encryptconfig": "openssl enc -md sha1 -aes-256-cbc -pass env:CONFIG_KEY -out ./config/encrypted.enc -in ./config/local-$NODE_ENV.json",
 		"decryptconfig": "openssl enc -md sha1 -aes-256-cbc -d -pass env:CONFIG_KEY -in ./config/encrypted.enc -out ./config/local-$NODE_ENV.json"
 	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "npm run -s precommit && npm run precommitcirclecivalidate"
-		}
-	},
 	"dependencies": {
 		"@babel/core": "7.2.2",
 		"@babel/preset-env": "7.3.1",
