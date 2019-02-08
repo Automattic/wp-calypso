@@ -43,7 +43,7 @@ class ECommerceManageNudge extends Component {
 	}
 
 	recordView() {
-		if ( this.isVisible() ) {
+		if ( ! this.props.isDismissed ) {
 			this.props.recordTracksEvent( 'calypso_ecommerce_manage_stats_nudge_view' );
 		}
 	}
@@ -53,14 +53,10 @@ class ECommerceManageNudge extends Component {
 		this.props.dismissNudge();
 	};
 
-	isVisible() {
-		return ! this.props.isDismissed;
-	}
-
 	render() {
 		const { translate } = this.props;
 
-		if ( ! this.isVisible() ) {
+		if ( this.props.isDismissed ) {
 			return null;
 		}
 
@@ -73,11 +69,21 @@ class ECommerceManageNudge extends Component {
 					onClick={ this.onDismissClick }
 				/>
 				<div className="ecommerce-manage-nudge__body">
-					<p>
-						{ translate(
-							'To manage your WordPress.com Store powered by WooCommerce, click on Store in the sidebar.'
-						) }
-					</p>
+					<div className="ecommerce-manage-nudge__image-wrapper">
+						<img
+							className="ecommerce-manage-nudge__image"
+							src="/calypso/images/extensions/woocommerce/woocommerce-setup.svg"
+							alt=""
+						/>
+					</div>
+					<div className="ecommerce-manage-nudge__info">
+						<h3 class="ecommerce-manage-nudge__title">Start managing your Store.</h3>
+						<p>
+							{ translate(
+								'To manage your Store powered by WooCommerce click the Store link in the sidebar.'
+							) }
+						</p>
+					</div>
 				</div>
 			</Card>
 		);
