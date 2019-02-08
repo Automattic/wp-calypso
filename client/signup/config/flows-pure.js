@@ -45,10 +45,8 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		personal: {
-			steps: [ 'user', 'about', 'themes', 'domains' ],
-			destination: function( dependencies ) {
-				return '/plans/select/personal/' + dependencies.siteSlug;
-			},
+			steps: [ 'user', 'about', 'plans-personal', 'themes', 'domains' ],
+			destination: getSiteDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
 			lastModified: '2018-11-09',
 		},

@@ -59,8 +59,10 @@ export default {
 	'domains-theme-preselected': DomainsStepComponent,
 	'domains-launch': DomainsStepComponent,
 	'from-url': ImportURLStepComponent,
+	launch: LaunchSiteComponent,
 	plans: PlansStepComponent,
 	'plans-launch': PlansStepComponent,
+	'plans-personal': PlansStepComponent,
 	'plans-store-nux': PlansAtomicStoreComponent,
 	'plans-site-selected': PlansStepWithoutFreePlan,
 	site: SiteComponent,
@@ -103,5 +105,4 @@ export default {
 	'site-information-address-with-preview': SiteInformationComponent,
 	'site-information-phone-with-preview': SiteInformationComponent,
 	'domains-with-preview': DomainsStepComponent,
-	launch: LaunchSiteComponent,
 };

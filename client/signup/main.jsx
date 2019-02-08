@@ -139,6 +139,7 @@ class Signup extends React.Component {
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
 			providedDependencies,
+
 			reduxStore: this.context.store,
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
@@ -277,7 +278,8 @@ class Signup extends React.Component {
 		}
 
 		const isFulfilledCallback = steps[ stepName ].fulfilledStepCallback;
-		isFulfilledCallback && isFulfilledCallback( stepName, nextProps );
+		const defaultDependencies = steps[ stepName ].defaultDependencies;
+		isFulfilledCallback && isFulfilledCallback( stepName, defaultDependencies, nextProps );
 	};
 
 	removeFulfilledSteps = nextProps => {
