@@ -1,6 +1,6 @@
 /** @format */
 
 export const createProductObject = product => {
-	product.cost = parseFloat( product.cost );
+	product.cost = Number( product.cost );
 	return product;
 };
