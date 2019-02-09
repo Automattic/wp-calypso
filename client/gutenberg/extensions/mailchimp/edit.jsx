@@ -105,12 +105,6 @@ class MailchimpSubscribeEdit extends Component {
 		this.clearAudition();
 	};
 
-	updateSubmitLabel = submitLabel => {
-		const { setAttributes } = this.props;
-		setAttributes( { submitLabel } );
-		this.clearAudition();
-	};
-
 	render = () => {
 		const { attributes, className, notices, noticeUI, setAttributes } = this.props;
 		const { audition, connected, connectURL } = this.state;
@@ -152,11 +146,6 @@ class MailchimpSubscribeEdit extends Component {
 						value={ emailPlaceholder }
 						onChange={ this.updateEmailPlaceholder }
 					/>
-					<TextControl
-						label={ __( 'Submit button label' ) }
-						value={ submitLabel }
-						onChange={ this.updateSubmitLabel }
-					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Notifications' ) }>
 					<TextControl
@@ -185,7 +174,13 @@ class MailchimpSubscribeEdit extends Component {
 				{ ! audition && (
 					<form ref={ this.formRef }>
 						<TextControl placeholder={ emailPlaceholder } onChange={ () => false } type="email" />
-						<Button isPrimary>{ submitLabel }</Button>
+						<div className="wp-block-button__link wp-block-jetpack-mailchimp_button">
+							<RichText
+								placeholder={ __( 'Add button text…' ) }
+								value={ submitLabel }
+								onChange={ value => setAttributes( { submitLabel: value } ) }
+							/>
+						</div>
 						<RichText
 							className="wp-block-jetpack-mailchimp_consent-text"
 							tagName="p"

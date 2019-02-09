@@ -34,10 +34,15 @@
 		font-size: 0.8em;
 		font-style: italic;
 	}
-	button {
-		margin: 18px 0 13px;
-	}
 	.wp-block-jetpack-mailchimp-form-error {
 		border: 1px solid #ff0000;
+	}
+	.wp-block-jetpack-mailchimp_button {
+		background-color: #0073aa;
+		border-radius: 5px;
+		color: $white;
+		font-family: $sans;
+		font-weight: bold;
+		margin-bottom: 1.5em;
 	}
 }
