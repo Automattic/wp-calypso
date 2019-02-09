@@ -132,10 +132,10 @@ class MailchimpSubscribeEdit extends Component {
 			<Placeholder icon={ icon } label={ __( 'Mailchimp' ) } notices={ notices }>
 				<div className="components-placeholder__instructions">
 					{ __(
-						'You need to connect your MailChimp account and choose a list in order to start collecting Email subscribers.'
+						'You need to connect your Mailchimp account and choose a list in order to start collecting Email subscribers.'
 					) }
 					<br />
-					<ExternalLink href={ connectURL }>{ __( 'Set up MailChimp form' ) }</ExternalLink>
+					<ExternalLink href={ connectURL }>{ __( 'Set up Mailchimp form' ) }</ExternalLink>
 					<br />
 					<br />
 					<Button isDefault onClick={ this.apiCall }>

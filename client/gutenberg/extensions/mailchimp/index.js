@@ -20,7 +20,7 @@ export const icon = (
 );
 
 export const settings = {
-	title: __( 'MailChimp' ),
+	title: __( 'Mailchimp' ),
 	icon,
 	description: __( 'A form enabling readers to join a Mailchimp list.' ),
 	category: 'jetpack',
@@ -37,7 +37,7 @@ export const settings = {
 		consentText: {
 			type: 'string',
 			default: __(
-				'By clicking submit, you agree to share your email address with the site owner and MailChimp to receive marketing, updates, and other emails from the site owner. Use the unsubscribe link in those emails to opt out at any time.'
+				'By clicking submit, you agree to share your email address with the site owner and Mailchimp to receive marketing, updates, and other emails from the site owner. Use the unsubscribe link in those emails to opt out at any time.'
 			),
 		},
 		processingLabel: {
