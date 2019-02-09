@@ -184,7 +184,7 @@ class MailchimpSubscribeEdit extends Component {
 			<div className={ className }>
 				{ ! audition && (
 					<form ref={ this.formRef }>
-						<TextControl placeholder={ emailPlaceholder } onChange={ () => false } />
+						<TextControl placeholder={ emailPlaceholder } onChange={ () => false } type="email" />
 						<Button isPrimary>{ submitLabel }</Button>
 						<RichText
 							tagName="figcaption"
