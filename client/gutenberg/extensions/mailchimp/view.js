@@ -34,7 +34,7 @@ function fetchSubscription( blogId, email ) {
 
 function activateSubscription( block, blogId ) {
 	const form = block.querySelector( 'form' );
-	const errorClass = blockClassName + '_form-error';
+	const errorClass = 'error';
 	const processingEl = block.querySelector( '.' + blockClassName + '_processing' );
 	const errorEl = block.querySelector( '.' + blockClassName + '_error' );
 	const successEl = block.querySelector( '.' + blockClassName + '_success' );
