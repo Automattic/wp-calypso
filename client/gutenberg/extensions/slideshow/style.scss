@@ -14,15 +14,12 @@
 	}
 
 	.wp-block-jetpack-slideshow_slide {
-		margin: 0;
-	}
-
-	.wp-block-jetpack-slideshow_image-container {
 		align-items: center;
 		background: #f0f0f0;
 		display: flex;
-		height: calc( 100% - 22px );
+		height: calc( 100% - 2em );
 		justify-content: center;
+		margin: 0;
 		position: relative;
 		width: 100%;
 	}
@@ -50,15 +47,29 @@
 	}
 
 	.wp-block-jetpack-slideshow_caption {
+		background-color: rgba( 255, 255, 255, 0.7 );
+		bottom: 0;
+		color: #000000;
 		cursor: text;
-		position: relative;
-		font-size: 14px;
-		line-height: 14px;
-		vertical-align: center;
-		margin: 0;
+		max-width: calc( 100% - 2em );
+		padding: 0.5em;
+		position: absolute;
+		z-index: 1;
 	}
 
-	.wp-block-jetpack-slideshow_pagination {
-		bottom: 32px !important;
+	.wp-block-jetpack-slideshow_pagination.swiper-pagination-bullets {
+		bottom: 0;
+		line-height: 2em;
+		.swiper-pagination-bullet {
+			height: 16px;
+			width: 16px;
+			background: transparent;
+			border: 2px solid #000;
+		}
+		.swiper-pagination-bullet-active {
+			background: #000;
+			border-color: #000;
+		}
 	}
+
 }
