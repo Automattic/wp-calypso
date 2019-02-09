@@ -105,6 +105,19 @@ class MailchimpSubscribeEdit extends Component {
 		this.clearAudition();
 	};
 
+	labelForAuditionType = audition => {
+		const { attributes } = this.props;
+		const { processingLabel, successLabel, errorLabel } = attributes;
+		if ( audition === NOTIFICATION_PROCESSING ) {
+			return processingLabel;
+		} else if ( audition === NOTIFICATION_SUCCESS ) {
+			return successLabel;
+		} else if ( audition === NOTIFICATION_ERROR ) {
+			return errorLabel;
+		}
+		return null;
+	};
+
 	render = () => {
 		const { attributes, className, notices, noticeUI, setAttributes } = this.props;
 		const { audition, connected, connectURL } = this.state;
@@ -191,23 +204,9 @@ class MailchimpSubscribeEdit extends Component {
 						/>
 					</form>
 				) }
-				{ audition === NOTIFICATION_PROCESSING && (
-					<div
-						className={ `${ classPrefix }notification ${ classPrefix }${ NOTIFICATION_PROCESSING }` }
-					>
-						{ processingLabel }
-					</div>
-				) }
-				{ audition === NOTIFICATION_SUCCESS && (
-					<div
-						className={ `${ classPrefix }notification ${ classPrefix }${ NOTIFICATION_SUCCESS }` }
-					>
-						{ successLabel }
-					</div>
-				) }
-				{ audition === NOTIFICATION_ERROR && (
-					<div className={ `${ classPrefix }notification ${ classPrefix }${ NOTIFICATION_ERROR }` }>
-						{ errorLabel }
+				{ audition && (
+					<div className={ `${ classPrefix }notification ${ classPrefix }${ audition }` }>
+						{ this.labelForAuditionType( audition ) }
 					</div>
 				) }
 			</div>
