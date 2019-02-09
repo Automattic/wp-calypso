@@ -22,16 +22,16 @@
 		}
 
 		&.wp-block-jetpack-mailchimp_error {
-			background-color: #da5544;
+			background-color: #eb0001;
 			color: #fff;
 		}
 
 		&.wp-block-jetpack-mailchimp_processing {
-			background-color: #e0e5e9;
+			background-color: rgba(0, 0, 0, 0.025);
 		}
 
 		&.wp-block-jetpack-mailchimp_success {
-			background-color: #73b961;
+			background-color: #1d7819;
 			color: #fff;
 		}
 	}
