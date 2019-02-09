@@ -21,6 +21,10 @@ typeof window !== 'undefined' &&
 				effect,
 				init: true,
 				initialSlide: 0,
+				keyboard: {
+					enabled: true,
+					onlyInViewport: true,
+				},
 			} );
 		} );
 	} );
