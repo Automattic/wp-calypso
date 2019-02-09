@@ -8,6 +8,11 @@ import { Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+const hasAddress = ( { address, addressLine2, addressLine3, city, region, postal, country } ) => {
+	return [ address, addressLine2, addressLine3, city, region, postal, country ].some(
+		value => value !== ''
+	);
+};
 
 const Address = ( {
 	attributes: { address, addressLine2, addressLine3, city, region, postal, country },
@@ -88,25 +93,26 @@ export const googleMapsUrl = ( {
 	);
 };
 
-const save = props => (
-	<div
-		className={ props.className }
-		itemprop="address"
-		itemscope
-		itemtype="http://schema.org/PostalAddress"
-	>
-		{ props.attributes.linkToGoogleMaps && (
-			<a
-				href={ googleMapsUrl( props ) }
-				target="_blank"
-				rel="noopener noreferrer"
-				title={ __( 'Open address in Google Maps' ) }
-			>
-				<Address { ...props } />
-			</a>
-		) }
-		{ ! props.attributes.linkToGoogleMaps && <Address { ...props } /> }
-	</div>
-);
+const save = props =>
+	hasAddress( props.attributes ) && (
+		<div
+			className={ props.className }
+			itemprop="address"
+			itemscope
+			itemtype="http://schema.org/PostalAddress"
+		>
+			{ props.attributes.linkToGoogleMaps && (
+				<a
+					href={ googleMapsUrl( props ) }
+					target="_blank"
+					rel="noopener noreferrer"
+					title={ __( 'Open address in Google Maps' ) }
+				>
+					<Address { ...props } />
+				</a>
+			) }
+			{ ! props.attributes.linkToGoogleMaps && <Address { ...props } /> }
+		</div>
+	);
 
 export default save;
