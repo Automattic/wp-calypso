@@ -116,7 +116,7 @@ class MailchimpSubscribeEdit extends Component {
 			successLabel,
 			errorLabel,
 		} = attributes;
-		const classPrefix = 'wp-block-jetpack-mailchimp-';
+		const classPrefix = 'wp-block-jetpack-mailchimp_';
 		const waiting = (
 			<Placeholder icon={ icon } notices={ notices }>
 				<Spinner />
