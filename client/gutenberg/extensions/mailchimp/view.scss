@@ -29,12 +29,10 @@
 		padding: 3px 9px;
 		width: 50%;
 	}
-	figcaption {
-		color: #999;
-		display: block;
+	.wp-block-jetpack-mailchimp_consent-text {
+		color: $gray;
+		font-size: 0.8em;
 		font-style: italic;
-		line-height: 20px;
-		margin-bottom: 23px;
 	}
 	button {
 		margin: 18px 0 13px;
