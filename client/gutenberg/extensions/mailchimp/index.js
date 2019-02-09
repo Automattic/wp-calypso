@@ -26,10 +26,6 @@ export const settings = {
 	category: 'jetpack',
 	keywords: [ __( 'email' ), __( 'mailchimp' ), __( 'newsletter' ) ],
 	attributes: {
-		title: {
-			type: 'string',
-			default: __( 'Join my email list' ),
-		},
 		emailPlaceholder: {
 			type: 'string',
 			default: __( 'Enter your email' ),

@@ -116,7 +116,6 @@ class MailchimpSubscribeEdit extends Component {
 		const { audition, connected, connectURL } = this.state;
 		const {
 			emailPlaceholder,
-			title,
 			submitLabel,
 			consentText,
 			processingLabel,
@@ -183,13 +182,6 @@ class MailchimpSubscribeEdit extends Component {
 		);
 		const blockContent = (
 			<div className={ className }>
-				<RichText
-					tagName="h3"
-					placeholder={ __( 'Write title' ) }
-					value={ title }
-					onChange={ value => setAttributes( { title: value } ) }
-					inlineToolbar
-				/>
 				{ ! audition && (
 					<form ref={ this.formRef }>
 						<TextControl placeholder={ emailPlaceholder } onChange={ () => false } />
