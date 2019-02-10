@@ -8,17 +8,14 @@ const isBrowser = isCalypsoClient || 'true' === process.env.TARGET_BROWSER;
 const modules = isBrowser ? false : 'commonjs'; // Use commonjs for Node
 const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
 
-const targets = isBrowser
-	? { browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ] }
-	: { node: 'current' };
-
 const config = {
 	presets: [
 		[
 			'@babel/env',
 			{
+				// Override `targets` default behaviour to use Browserslist for non-browsers
+				...( ! isBrowser ? { targets: { node: 'current' } } : {} ),
 				modules,
-				targets,
 				useBuiltIns: 'entry',
 				shippedProposals: true, // allows es7 features like Promise.prototype.finally
 			},
