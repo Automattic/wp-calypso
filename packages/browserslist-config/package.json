@@ -1,0 +1,20 @@
+{
+  "name": "@automattic/browserslist-config",
+  "version": "1.0.0",
+  "description": "WordPress.com Browserslist shared configuration.",
+  "author": "Automattic",
+  "license": "GPL-2.0-or-later",
+  "keywords": [
+    "browserslist",
+    "browserslist-config"
+  ],
+  "homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/browserslist-config/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Automattic/wp-calypso.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Automattic/wp-calypso/issues"
+  },
+  "main": "index.js"
+}
