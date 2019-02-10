@@ -12,13 +12,6 @@
   "bin": {
     "calypso-sdk": "./bin/sdk-cli.js"
   },
-  "browserslist": [
-    "last 2 versions",
-    "Safari >= 10",
-    "iOS >= 10",
-    "not ie <= 10",
-    "> 1%"
-  ],
   "dependencies": {
     "@automattic/tree-select": "1.0.3",
     "@babel/cli": "7.2.3",
@@ -285,6 +278,7 @@
   },
   "devDependencies": {
     "@automattic/babel-plugin-i18n-calypso": "1.0.3",
+    "@automattic/browserslist-config": "1.0.0",
     "@babel/plugin-transform-react-jsx": "7.3.0",
     "@wordpress/babel-plugin-makepot": "2.1.3",
     "babel-core": "7.0.0-bridge.0",
