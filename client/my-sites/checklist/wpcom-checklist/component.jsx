@@ -587,7 +587,7 @@ class WpcomChecklistComponent extends PureComponent {
 						this.trackTaskStart( task );
 						page( `/domains/manage/email/${ siteSlug }` );
 					},
-					onDismiss: () => this.handleTaskDismiss( task.id ),
+					onDismiss: this.handleTaskDismiss( task.id ),
 			  };
 
 		return (
