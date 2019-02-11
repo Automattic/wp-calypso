@@ -11,7 +11,7 @@ import { identity, includes, isEmpty, omit, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'blocks/signup-form';
 import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
@@ -110,6 +110,13 @@ export class UserStep extends Component {
 					},
 					comment:
 						'Link displayed on the Signup page to users willing to sign up for WooCommerce via WordPress.com',
+				} );
+			} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
+				subHeaderText = translate( 'By creating an account via any of the options below,{{br/}}you agree to our {{a}}Terms of Service{{/a}}.', {
+					components: {
+						a: <a href="https://wordpress.com/tos" target="_blank" rel="noopener noreferrer" />,
+						br: <br />,
+					}
 				} );
 			} else {
 				subHeaderText = translate(
@@ -214,7 +221,11 @@ export class UserStep extends Component {
 	getHeaderText() {
 		const { flowName, oauth2Client, translate, headerText } = this.props;
 
-		if ( includes( [ 'wpcc', 'crowdsignal' ], flowName ) && oauth2Client ) {
+		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
+			return translate( 'Sign up for Crowdsignal' );
+		}
+
+		if ( includes( [ 'wpcc' ], flowName ) && oauth2Client ) {
 			return translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
 				args: { clientTitle: oauth2Client.title },
 				comment:
