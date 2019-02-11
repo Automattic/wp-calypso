@@ -8,6 +8,7 @@
 		height: 400px; // This is a default, which will be replaced programmatically
 		overflow: hidden;
 		opacity: 0;
+
 		&.wp-swiper-initialized {
 			opacity: 1;
 		}
@@ -17,7 +18,7 @@
 		align-items: center;
 		background: #f0f0f0;
 		display: flex;
-		height: calc( 100% - 2em );
+		height: calc( 100% - 4em );
 		justify-content: center;
 		margin: 0;
 		position: relative;
@@ -35,7 +36,7 @@
 
 	.wp-block-jetpack-slideshow_button-prev,
 	.wp-block-jetpack-slideshow_button-next {
-		background-color: rgba( 0, 0, 0, 0.5 );
+		background-color: rgba( 0, 0, 0, 0.3 );
 		width: 24px;
 		height: 40px;
 		background-size: 24px 40px;
@@ -47,25 +48,31 @@
 	}
 
 	.wp-block-jetpack-slideshow_caption {
-		background-color: rgba( 255, 255, 255, 0.7 );
+		background-color: rgba( 0, 0, 0, 0.3 );
+		box-sizing: border-box;
 		bottom: 0;
-		color: #000000;
+		color: #fff;
 		cursor: text;
-		max-width: calc( 100% - 2em );
-		padding: 0.5em;
+		font-size: 0.9em;
+		font-style: normal !important;
+		margin: 0 !important;
+		padding: 1em;
 		position: absolute;
+		width: 100%;
 		z-index: 1;
 	}
 
 	.wp-block-jetpack-slideshow_pagination.swiper-pagination-bullets {
 		bottom: 0;
-		line-height: 2em;
+		line-height: 4em;
+
 		.swiper-pagination-bullet {
-			height: 16px;
-			width: 16px;
 			background: transparent;
 			border: 2px solid #000;
+			height: 16px;
+			width: 16px;
 		}
+
 		.swiper-pagination-bullet-active {
 			background: #000;
 			border-color: #000;

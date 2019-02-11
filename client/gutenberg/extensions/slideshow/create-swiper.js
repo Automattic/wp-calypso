@@ -17,7 +17,7 @@ export default async function createSwiper( container = '.swiper-container', par
 		const sanityAspectRatio = Math.max( Math.min( aspectRatio, SIXTEEN_BY_NINE ), 1 );
 		const sanityHeight = typeof window !== 'undefined' ? window.innerHeight * 0.8 : 600;
 		const swiperHeight = Math.min( this.width / sanityAspectRatio, sanityHeight );
-		this.$el[ 0 ].style.height = `calc( ${ Math.floor( swiperHeight ) }px + 2em )`;
+		this.$el[ 0 ].style.height = `calc( ${ Math.floor( swiperHeight ) }px + 4em )`;
 	};
 	const init = function() {
 		this.$el[ 0 ].classList.add( 'wp-swiper-initialized' );
