@@ -6,6 +6,7 @@ import { memoize } from 'lodash';
 import { Notice, PanelBody, RadioControl, TextControl } from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
 import { InnerBlocks, InspectorControls } from '@wordpress/editor';
+import interpolateComponents from 'interpolate-components';
 
 /**
  * Internal dependencies
@@ -58,22 +59,27 @@ export default class VisitedEdit extends Component {
 				<div className={ this.props.className }>
 					<div className="wp-block-jetpack-visited-inner-block">
 						<Notice status="info" isDismissible={ false }>
-							{ this.props.attributes.criteria === CRITERIA_AFTER
-								? sprintf(
-										__(
-											'This block will only appear to people who have previously visited this page at least %d times.'
-										),
-										this.props.attributes.threshold
-								  )
-								: '' }
-							{ this.props.attributes.criteria === CRITERIA_BEFORE
-								? sprintf(
-										__(
-											'This block will only appear to people who have visited the page less than %d times'
-										),
-										this.props.attributes.threshold
-								  )
-								: '' }
+							{ interpolateComponents( {
+								mixedString: __(
+									'This block will only appear to people who have previously visited this page {{select /}} {{input/}} times.'
+								),
+								components: {
+									input: (
+										<TextControl
+											onChange={ this.setThreshold }
+											type="number"
+											min="1"
+											defaultValue={ this.props.attributes.threshold }
+										/>
+									),
+									select: (
+										<select>
+											<option value={ this.props.attributes.criteria }>at least</option>
+											<option value={ this.props.attributes.criteria }>less than</option>
+										</select>
+									),
+								},
+							} ) }
 						</Notice>
 						<InnerBlocks />
 					</div>
