@@ -24,8 +24,13 @@ import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import Banner from 'components/banner';
+import { convertToCamelCase } from 'state/data-layer/utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getStatsPathForTab } from 'lib/route';
 
-export const requestId = userId => `pending-payments/${ userId }`;
+export const requestId = userId => `pending-payments:${ userId }`;
 
 const requestPendingPayments = userId => {
 	return requestHttpData(
@@ -34,10 +39,9 @@ const requestPendingPayments = userId => {
 			path: '/me/pending-payments',
 			apiVersion: '1',
 			method: 'GET',
-			body: { userId },
 		} ),
 		{
-			fromApi: () => pending => [ [ requestId( userId ), pending ] ],
+			fromApi: () => pending => [ [ requestId( userId ), convertToCamelCase( pending ) ] ],
 			freshness: -Infinity,
 		}
 	);
@@ -48,7 +52,6 @@ export class PendingPayments extends Component {
 		requestPendingPayments( this.props.userId );
 	};
 
-	// tofix: Something is wrong with this error handling.
 	componentDidUpdate( prevProps ) {
 		const prevResponse = prevProps.response;
 
@@ -61,7 +64,7 @@ export class PendingPayments extends Component {
 	}
 
 	render() {
-		const { response, pendingPayments, translate } = this.props;
+		const { response, pendingPayments, translate, siteSlug } = this.props;
 
 		let content;
 
@@ -92,6 +95,7 @@ export class PendingPayments extends Component {
 						) }
 						event="pending-payment-confirmation"
 						icon="star"
+						href={ getStatsPathForTab( 'day', siteSlug ) }
 						title={ translate( 'Thank you! Your payment is being processed.' ) }
 					/>
 					<div>
@@ -124,30 +128,14 @@ PendingPayments.propTypes = {
 export default connect(
 	state => {
 		const userId = getCurrentUserId( state );
-
 		const response = getHttpData( requestId( userId ) );
-
-		const data = Object.values( response.data || [] );
-
-		const pending = [];
-
-		for ( const payment of data ) {
-			pending.push( {
-				siteId: payment.site_id,
-				orderId: payment.order_id,
-				paymentType: payment.payment_type,
-				redirectUrl: payment.redirect_url,
-				totalCostDisplay: payment.total_cost,
-				productSlug: payment.products[ 0 ].product_slug,
-				productName: payment.products[ 0 ].product_name,
-				products: payment.products,
-			} );
-		}
+		const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
 
 		return {
 			userId,
-			pendingPayments: pending,
+			pendingPayments: Object.values( response.data || [] ),
 			response: response,
+			siteSlug: getSiteSlug( state, siteId ),
 		};
 	},
 	dispatch => ( {
