@@ -1,3 +1,7 @@
+#### next (…)
+
+- Enhancement: Update `i18n-ellipsis` rule to catch usage in @wordpress/i18n functions
+
 #### v4.0.2 (2018-08-10)
 
 - General: Updated Mocha from 3.0.2 to 5.2.x
