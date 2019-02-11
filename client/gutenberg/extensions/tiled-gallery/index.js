@@ -18,6 +18,10 @@ import { DEFAULT_LAYOUT, LAYOUT_STYLES } from './constants';
  */
 import './editor.scss';
 
+function getValidImages( images ) {
+	return filter( images, ( { id, url } ) => id && url );
+}
+
 const blockAttributes = {
 	// Set default align
 	align: {
@@ -122,27 +126,25 @@ export const settings = {
 				type: 'block',
 				isMultiBlock: true,
 				blocks: [ 'core/image' ],
+				isMatch: attributes => getValidImages( attributes ).length > 0,
 				transform: attributes => {
-					const validImages = filter( attributes, ( { id, url } ) => id && url );
-					if ( validImages.length > 0 ) {
-						return createBlock( `jetpack/${ name }`, {
-							images: validImages.map( ( { id, url, alt, caption } ) => ( {
-								id,
-								url,
-								alt,
-								caption,
-							} ) ),
-							ids: validImages.map( ( { id } ) => id ),
-						} );
-					}
-					return createBlock( `jetpack/${ name }` );
+					const validImages = getValidImages( attributes );
+					return createBlock( `jetpack/${ name }`, {
+						images: validImages.map( ( { id, url, alt, caption } ) => ( {
+							id,
+							url,
+							alt,
+							caption,
+						} ) ),
+						ids: validImages.map( ( { id } ) => id ),
+					} );
 				},
 			},
 			{
 				type: 'block',
 				blocks: [ 'core/gallery' ],
 				transform: attributes => {
-					const validImages = filter( attributes.images, ( { id, url } ) => id && url );
+					const validImages = getValidImages( attributes.images );
 					if ( validImages.length > 0 ) {
 						return createBlock( `jetpack/${ name }`, {
 							images: validImages.map( ( { id, url, alt, caption } ) => ( {
