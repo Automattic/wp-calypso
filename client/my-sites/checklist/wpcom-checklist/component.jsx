@@ -597,7 +597,7 @@ class WpcomChecklistComponent extends PureComponent {
 				title={ translate( 'Get email for your site' ) }
 				completedTitle={ translate( 'You set up email for your site' ) }
 				description={ translate(
-					'Subscribe to G Suite to get a dedicated inbox, docs, and cloud storage.'
+					'Subscribe to G Suite to get a dedicated inbox with a personalized email address using your domain and collaborate in real-time on documents, spreadsheets, and slides.'
 				) }
 				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
 				{ ...clickProps }
@@ -639,7 +639,7 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	renderGSuiteTOSAcceptedTask = ( TaskComponent, baseProps, task ) => {
-		const { domains, translate } = this.props;
+		const { domains, translate, userEmail } = this.props;
 
 		let loginUrlWithTOSRedirect;
 		if ( Array.isArray( domains ) && domains.length > 0 ) {
@@ -652,8 +652,27 @@ class WpcomChecklistComponent extends PureComponent {
 			<TaskComponent
 				{ ...baseProps }
 				bannerImageSrc="/calypso/images/stats/tasks/email.svg"
-				title={ translate( 'Accept the G Suite TOS to complete email setup' ) }
-				description={ translate( "You're almost done setting up G Suite!" ) }
+				title={ translate( 'You set up email for your site' ) }
+				description={ translate(
+					"{{strong}}You're almost done!{{/strong}} We've sent an email to %s. Log in and accept Google's Terms of Service to activate your G Suite account. {{link}}Didn't receive the email?{{/link}}",
+					{
+						components: {
+							strong: <strong />,
+							link: (
+								<a
+									onClick={ () =>
+										this.trackTaskStart( task, {
+											sub_step_name: 'gsuite_tos_accepted',
+											clicked_element: 'no_email_help_link',
+										} )
+									}
+									href={ `/help/contact` }
+								/>
+							),
+						},
+						args: [ userEmail ],
+					}
+				) }
 				isWarning={ true }
 				onClick={ () => {
 					if ( ! loginUrlWithTOSRedirect ) {
