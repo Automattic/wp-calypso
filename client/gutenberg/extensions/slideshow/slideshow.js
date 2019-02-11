@@ -108,6 +108,7 @@ class Slideshow extends Component {
 				  }
 				: false,
 			effect: this.props.effect,
+			loop: true,
 			initialSlide,
 			navigation: {
 				nextEl: this.btnNextRef.current,

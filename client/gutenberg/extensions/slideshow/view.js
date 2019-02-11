@@ -21,6 +21,7 @@ typeof window !== 'undefined' &&
 				effect,
 				init: true,
 				initialSlide: 0,
+				loop: true,
 				keyboard: {
 					enabled: true,
 					onlyInViewport: true,
