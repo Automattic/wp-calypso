@@ -6,6 +6,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { map, pickBy, endsWith } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -23,6 +24,7 @@ import {
 } from './hooks/components/media-upload/utils';
 import { replaceHistory, setRoute } from 'state/ui/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
+import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
 
 /**
  * Style dependencies
@@ -102,6 +104,10 @@ class CalypsoifyIframe extends Component {
 				this.props.setRoute( `${ currentRoute }/${ postId }` );
 			}
 		}
+
+		if ( 'postTrashed' === action ) {
+			page.back( this.props.postTypeTrashUrl );
+		}
 	};
 
 	closeMediaModal = media => {
@@ -150,6 +156,7 @@ const mapStateToProps = ( state, { postId, postType } ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
 	const currentRoute = getCurrentRoute( state );
+	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 
 	const iframeUrl = addQueryArgs(
 		pickBy( {
@@ -167,6 +174,7 @@ const mapStateToProps = ( state, { postId, postType } ) => {
 		siteSlug,
 		currentRoute,
 		iframeUrl,
+		postTypeTrashUrl,
 	};
 };
 
