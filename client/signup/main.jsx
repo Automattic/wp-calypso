@@ -42,7 +42,6 @@ import SignupHeader from 'signup/signup-header';
 
 // Libraries
 import analytics from 'lib/analytics';
-import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
 import * as oauthToken from 'lib/oauth-token';
 import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
 import SignupActions from 'lib/signup/actions';
@@ -201,12 +200,11 @@ class Signup extends React.Component {
 	};
 
 	recordSignupStart() {
-		analytics.tracks.recordEvent( 'calypso_signup_start', {
+		analytics.recordSignupStart( {
 			flow: this.props.flowName,
 			ref: this.props.refParameter,
 		} );
 		this.recordReferralVisit();
-		recordSignupStart();
 	}
 
 	recordReferralVisit() {
@@ -346,14 +344,13 @@ class Signup extends React.Component {
 		);
 		const isNewUserOnFreePlan = isNewUser && isNewSite && ! hasCartItems;
 
-		analytics.tracks.recordEvent( 'calypso_signup_complete', {
+		analytics.recordSignupComplete( {
+			isNewUser,
+			isNewSite,
+			hasCartItems,
+			isNewUserOnFreePlan,
 			flow: this.props.flowName,
-			is_new_user: isNewUser,
-			is_new_site: isNewSite,
-			has_cart_items: hasCartItems,
-			is_new_user_on_free_plan: isNewUserOnFreePlan,
 		} );
-		recordSignupCompletion( { isNewUser, isNewSite, hasCartItems, isNewUserOnFreePlan } );
 
 		if ( dependencies.cartItem || dependencies.domainItem ) {
 			this.handleLogin( dependencies, destination );
