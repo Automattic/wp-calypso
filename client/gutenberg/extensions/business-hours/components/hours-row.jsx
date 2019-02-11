@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { Fragment, Component } from '@wordpress/element';
 import { TextControl } from '@wordpress/components';
 import classNames from 'classnames';

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Publicize settings button component.
  *

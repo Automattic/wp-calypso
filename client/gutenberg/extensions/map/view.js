@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import './style.scss';
 import component from './component.js';
 import { settings } from './settings.js';

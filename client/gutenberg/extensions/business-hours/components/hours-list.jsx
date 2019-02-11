@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,6 @@ import { Component } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-
 import HoursRow from './hours-row';
 import apiFetch from '@wordpress/api-fetch/build/index';
 

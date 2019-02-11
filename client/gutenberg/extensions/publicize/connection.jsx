@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Publicize connection form component.
  *

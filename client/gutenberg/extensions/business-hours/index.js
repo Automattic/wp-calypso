@@ -1,9 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { Path } from '@wordpress/components';
+
 /**
  * Internal dependencies
  */

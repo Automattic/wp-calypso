@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Top-level Publicize plugin for Gutenberg editor.
  *

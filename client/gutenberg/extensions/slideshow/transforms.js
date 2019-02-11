@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { createBlock } from '@wordpress/blocks';
 import { filter } from 'lodash';
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Publicize sharing panel component.
  *

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,6 +8,7 @@ import { Component, Fragment } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import emailValidator from 'email-validator';
 import { compose, withInstanceId } from '@wordpress/compose';
+
 /**
  * Internal dependencies
  */

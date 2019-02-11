@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { __, _x } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import {
