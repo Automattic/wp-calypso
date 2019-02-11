@@ -311,17 +311,18 @@ export class MediaLibraryContent extends React.Component {
 	needsToBeConnected() {
 		const { source, isConnected } = this.props;
 
-		// If on internal service then we don't need to be connected
-		if ( source === '' ) {
-			return false;
+		// We're on an external service and not connected - need connecting
+		if ( source !== '' && ! isConnected ) {
+			return true;
 		}
 
-		// Already connected - don't need to be connected, unless our token has expired
-		if ( isConnected && ! this.hasGoogleExpired( this.props ) ) {
-			return false;
+		// We're think we're connected to an external service but are really expired
+		if ( source !== '' && isConnected && this.hasGoogleExpired( this.props ) ) {
+			return true;
 		}
 
-		return true;
+		// We're on an internal service, or an external service that is connected and not expired
+		return false;
 	}
 
 	renderMediaList() {
@@ -366,10 +367,7 @@ export class MediaLibraryContent extends React.Component {
 	}
 
 	renderHeader() {
-		if (
-			( ! this.props.isConnected && this.needsToBeConnected() ) ||
-			this.hasGoogleExpired( this.props )
-		) {
+		if ( this.needsToBeConnected() ) {
 			return null;
 		}
 
