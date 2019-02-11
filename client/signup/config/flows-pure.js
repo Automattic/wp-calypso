@@ -94,7 +94,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		subdomain: {
-			steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
+			steps: [ 'design-type', 'themes', 'domains-subdomain', 'plans', 'user' ],
 			destination: getSiteDestination,
 			description: 'Provide a vertical for subdomains',
 			lastModified: '2016-10-31',

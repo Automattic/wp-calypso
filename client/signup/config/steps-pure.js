@@ -201,6 +201,18 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
+		'domains-subdomain': {
+			stepName: 'domains',
+			apiRequestFunction: createSiteWithCart,
+			fulfilledStepCallback: isSiteTopicFulfilled,
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			props: {
+				isDomainOnly: false,
+			},
+			dependencies: [ 'themeSlugWithRepo' ],
+			delayApiRequestUntilComplete: true,
+		},
+
 		'domain-only': {
 			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
