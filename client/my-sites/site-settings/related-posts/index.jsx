@@ -40,8 +40,14 @@ const RelatedPosts = ( {
 						text={ translate(
 							'Automatically displays similar content (related posts) at the end of each post.'
 						) }
-						link="https://jetpack.com/support/related-posts/"
+						link="https://en.support.wordpress.com/related-posts/"
 					/>
+					
+					<p className="related-posts__explanation"> 
+						{ translate( 
+							'The following settings will impact all related posts on your site, except for those you created via the block editor:'
+						) }
+					</p>
 
 					<CompactFormToggle
 						checked={ !! fields.jetpack_relatedposts_enabled }
