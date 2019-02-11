@@ -218,6 +218,33 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 
+	.plans-features-main__group.is-no-tabs.is-wpcom & {
+		&.is-blogger-plan {
+			border-top: solid 8px var( --color-plan-blogger );
+			border-bottom: 0;
+		}
+
+		&.is-personal-plan {
+			border-top: solid 8px var( --color-plan-personal );
+			border-bottom: 0;
+		}
+
+		&.is-premium-plan {
+			border-top: solid 8px var( --color-plan-premium );
+			border-bottom: 0;
+		}
+
+		&.is-business-plan {
+			border-top: solid 8px var( --color-plan-business );
+			border-bottom: 0;
+		}
+
+		&.is-ecommerce-plan {
+			border-top: solid 8px var( --color-plan-ecommerce );
+			border-bottom: 0;
+		}
+	}
+
 	.plans-features-main__group.is-jetpack & {
 		&.is-personal-plan {
 			border-bottom: solid 2px var( --color-warning );
@@ -232,6 +259,7 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 }
+
 
 .plan-features__header-figure {
 	position: relative;
