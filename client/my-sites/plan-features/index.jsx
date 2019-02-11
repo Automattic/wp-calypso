@@ -397,6 +397,7 @@ export class PlanFeatures extends Component {
 						newPlan={ newPlan }
 						bestValue={ bestValue }
 						planType={ planName }
+						plansWithScroll={ plansWithScroll }
 						popular={ popular }
 						rawPrice={ rawPrice }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
