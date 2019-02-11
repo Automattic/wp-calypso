@@ -18,6 +18,12 @@ import { DEFAULT_LAYOUT, LAYOUT_STYLES } from './constants';
  */
 import './editor.scss';
 
+/**
+ * Filter valid images
+ *
+ * @param {array} images Array of image objects
+ * @return {array} Array of image objects which have id and url
+ */
 function getValidImages( images ) {
 	return filter( images, ( { id, url } ) => id && url );
 }
