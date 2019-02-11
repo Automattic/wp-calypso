@@ -257,7 +257,9 @@ describe( 'PlanFeatures.renderCreditNotice', () => {
 		canPurchase: true,
 		hasPlaceholders: false,
 		planCredits: 5,
-		planProperties: [ { currencyCode: 'USD' } ],
+		planProperties: [
+			{ currencyCode: 'USD', planName: 'test-bundle', availableForPurchase: true },
+		],
 		showPlanCreditsApplied: true,
 	};
 
