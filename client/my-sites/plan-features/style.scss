@@ -111,6 +111,10 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.is-no-tabs .plan-features__table {
+	border-spacing: 0;
+}
+
 .plan-features__row {
 	background: $white;
 }
@@ -138,6 +142,15 @@ $plan-features-sidebar-width: 272px;
 
 	&.is-selected {
 		display: table-cell;
+	}
+}
+
+.is-no-tabs {
+	.plan-features__table-item {
+		border-right: 0;
+		&:nth-child(5){
+			border-right: solid 1px lighten( $gray, 27% );
+		}
 	}
 }
 
