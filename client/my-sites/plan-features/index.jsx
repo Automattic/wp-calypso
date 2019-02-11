@@ -332,6 +332,7 @@ export class PlanFeatures extends Component {
 			isInSignup,
 			isJetpack,
 			planProperties,
+			plansWithScroll,
 			selectedPlan,
 			siteType,
 			showPlanCreditsApplied,
@@ -352,7 +353,10 @@ export class PlanFeatures extends Component {
 				hideMonthly,
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
-			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
+			const classes = classNames(
+				'plan-features__table-item',
+				plansWithScroll ? 'has-border-bottom' : 'has-border-top'
+			);
 			let audience = planConstantObj.getAudience();
 			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
