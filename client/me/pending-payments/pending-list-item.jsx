@@ -31,13 +31,15 @@ export function PendingListItem( {
 	dateCreated,
 	products,
 } ) {
+	// products being populated is not guaranteed
 	const initialProduct = get( products, '0', {} );
 	let productName = getName( initialProduct ) || '';
 	let purchaseType = getPurchaseType( initialProduct ) || '';
 
+	// match logic in client/me/billing-history/transactions-table.jsx
 	if ( products.length > 1 ) {
-		productName = 'Multiple Items';
-		purchaseType = 'Various';
+		productName = translate( 'Multiple items' );
+		purchaseType = translate( 'Various' );
 	}
 
 	return (
