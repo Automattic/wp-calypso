@@ -33,9 +33,7 @@ export class ChecklistPrompt extends Component {
 
 	render() {
 		const { translate, taskList, children, promptTaskId } = this.props;
-
 		const childrenArray = Children.toArray( children );
-
 		const firstIncomplete = taskList.getFirstIncompleteTask();
 		const isFinished = ! firstIncomplete;
 		const promptTask = promptTaskId && taskList.get( promptTaskId );
