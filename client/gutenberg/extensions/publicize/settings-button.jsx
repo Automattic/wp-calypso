@@ -6,13 +6,6 @@
  * connections will be automatically refreshed.
  */
 
-// Since this is a Jetpack originated block in Calypso codebase,
-// we're relaxing some accessibility rules.
-/* eslint jsx-a11y/anchor-is-valid: 0 */
-/* eslint jsx-a11y/click-events-have-key-events: 0 */
-/* eslint jsx-a11y/no-static-element-interactions: 0 */
-/* eslint jsx-a11y/no-noninteractive-tabindex: 0 */
-
 /**
  * External dependencies
  */

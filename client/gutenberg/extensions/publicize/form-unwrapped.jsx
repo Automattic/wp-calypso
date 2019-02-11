@@ -6,10 +6,6 @@
  * sharing message.
  */
 
-// Since this is a Jetpack originated block in Calypso codebase,
-// we're relaxing some accessibility rules.
-/* eslint jsx-a11y/label-has-for: 0 */
-
 /**
  * External dependencies
  */
