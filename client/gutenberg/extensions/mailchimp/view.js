@@ -34,13 +34,13 @@ function fetchSubscription( blogId, email ) {
 
 function activateSubscription( block, blogId ) {
 	const form = block.querySelector( 'form' );
-	const errorClass = blockClassName + '-form-error';
-	const processingEl = block.querySelector( '.' + blockClassName + '-processing' );
-	const errorEl = block.querySelector( '.' + blockClassName + '-error' );
-	const successEl = block.querySelector( '.' + blockClassName + '-success' );
+	const errorClass = 'error';
+	const processingEl = block.querySelector( '.' + blockClassName + '_processing' );
+	const errorEl = block.querySelector( '.' + blockClassName + '_error' );
+	const successEl = block.querySelector( '.' + blockClassName + '_success' );
 	form.addEventListener( 'submit', e => {
 		e.preventDefault();
-		const emailField = form.querySelector( '.' + blockClassName + '-email' );
+		const emailField = form.querySelector( 'input' );
 		emailField.classList.remove( errorClass );
 		const email = emailField.value;
 		if ( ! emailValidator.validate( email ) ) {
