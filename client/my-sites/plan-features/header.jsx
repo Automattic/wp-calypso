@@ -31,10 +31,14 @@ import { abtest } from 'lib/abtest';
 
 export class PlanFeaturesHeader extends Component {
 	render() {
-		const { isInSignup } = this.props;
-		const content = isInSignup ? this.renderSignupHeader() : this.renderPlansHeader();
+		const { isInSignup, plansWithScroll } = this.props;
+		if ( isInSignup ) {
+			return this.renderSignupHeader();
+		} else if ( plansWithScroll ) {
+			return this.renderPlansHeaderNoTabs();
+		}
 
-		return content;
+		return this.renderPlansHeader();
 	}
 
 	renderPlansHeader() {
@@ -59,6 +63,35 @@ export class PlanFeaturesHeader extends Component {
 					{ this.getPlanFeaturesPrices() }
 					{ this.getBillingTimeframe() }
 				</div>
+			</header>
+		);
+	}
+
+	renderPlansHeaderNoTabs() {
+		const {
+			newPlan,
+			bestValue,
+			planType,
+			popular,
+			selectedPlan,
+			title,
+			audience,
+			translate,
+		} = this.props;
+
+		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
+
+		return (
+			<header className={ headerClasses }>
+				{ planLevelsMatch( selectedPlan, planType ) && (
+					<Ribbon>{ translate( 'Suggested' ) }</Ribbon>
+				) }
+				{ popular && ! selectedPlan && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
+				{ newPlan && ! selectedPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
+				{ bestValue && ! selectedPlan && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
+				{ this.isPlanCurrent() && <Ribbon>{ translate( 'Your Plan' ) }</Ribbon> }
+				<h4 className="plan-features__header-title">{ title }</h4>
+				<div class="plan-features__audience">{ audience }</div>
 			</header>
 		);
 	}

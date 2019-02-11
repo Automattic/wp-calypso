@@ -148,7 +148,7 @@ $plan-features-sidebar-width: 272px;
 .is-no-tabs {
 	.plan-features__table-item {
 		border-right: 0;
-		&:nth-child(5){
+		&:nth-child( 5 ) {
 			border-right: solid 1px lighten( $gray, 27% );
 		}
 	}
@@ -204,6 +204,9 @@ $plan-features-sidebar-width: 272px;
 	padding: 12px 24px 0 15px;
 	border-bottom: solid 2px var( --color-neutral-100 );
 	background-color: var( --color-white );
+	.plans-features-main__group.is-no-tabs.is-wpcom & {
+		display: block;
+	}
 
 	@include breakpoint( '<960px' ) {
 		padding: 12px 12px 0;
@@ -311,6 +314,18 @@ $plan-features-sidebar-width: 272px;
 	@include breakpoint( '<960px' ) {
 		font-size: 20px;
 	}
+	.is-no-tabs & {
+		color: #1a1a1a;
+		padding: 5px 0 0 3px;
+	}
+}
+
+.plan-features__audience {
+	display: block;
+	font-size: 13px;
+	padding: 6px 0 10px 3px;
+	color: #636d75;
+	letter-spacing: 0;
 }
 
 .plan-features__header-price-group,
