@@ -187,7 +187,7 @@ class MailchimpSubscribeEdit extends Component {
 				{ ! audition && (
 					<form ref={ this.formRef }>
 						<TextControl placeholder={ emailPlaceholder } onChange={ () => false } type="email" />
-						<div className="wp-block-button__link wp-block-jetpack-mailchimp_button">
+						<div className="wp-block-jetpack-mailchimp_button">
 							<RichText
 								formattingControls={ [] }
 								placeholder={ __( 'Add button text…' ) }

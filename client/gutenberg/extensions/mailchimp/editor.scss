@@ -1,5 +1,10 @@
 @import './view.scss';
 
+// Variables from the https://github.com/WordPress/gutenberg to maintain style consistency with core Button block
+$big-font-size: 18px;
+$blocks-button__height: 46px;
+$blocks-button__line-height: $big-font-size + 6px;
+
 .wp-block-jetpack-mailchimp {
 
 	.wp-block-jetpack-mailchimp_notification {
@@ -13,6 +18,20 @@
 		font-family: $sans;
 		font-weight: bold;
 		margin-bottom: 1.5em;
+
+		// Styles from the Gutenberg repo to maintain style consistency with core Button block
+		border: none;
+		box-shadow: none;
+		cursor: pointer;
+		display: inline-block;
+		font-size: $big-font-size;
+		line-height: $blocks-button__line-height;
+		margin: 0;
+		padding: ($blocks-button__height - $blocks-button__line-height) / 2 24px;
+		text-align: center;
+		text-decoration: none;
+		white-space: normal;
+		word-break: break-all;
 	}
 
 }
