@@ -23,6 +23,11 @@ import { getSearchPlaceholderText } from 'reader/search/utils';
 import Banner from 'components/banner';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {
 		query,

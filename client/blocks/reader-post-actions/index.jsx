@@ -22,6 +22,11 @@ import * as stats from 'reader/stats';
 import { localize } from 'i18n-calypso';
 import ReaderVisitLink from 'blocks/reader-visit-link';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const ReaderPostActions = props => {
 	const {
 		post,

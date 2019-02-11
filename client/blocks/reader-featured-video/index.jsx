@@ -18,6 +18,11 @@ import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
 import QueryReaderThumbnail from 'components/data/query-reader-thumbnails';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ReaderFeaturedVideo extends React.Component {
 	static propTypes = {
 		thumbnailUrl: PropTypes.string,

@@ -25,6 +25,11 @@ import { preload } from 'sections-helper';
 import SiteSelector from 'components/site-selector';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function preloadEditor() {
 	preload( 'post-editor' );
 }

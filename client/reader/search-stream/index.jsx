@@ -34,6 +34,11 @@ import FollowButton from 'reader/follow-button';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import { getSearchPlaceholderText } from 'reader/search/utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const WIDE_DISPLAY_CUTOFF = 660;
 
 const updateQueryArg = params =>

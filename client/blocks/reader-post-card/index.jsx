@@ -33,6 +33,11 @@ import DiscoverFollowButton from 'reader/discover/follow-button';
 import { expandCard as expandCardAction } from 'state/ui/reader/card-expansions/actions';
 import isReaderCardExpanded from 'state/selectors/is-reader-card-expanded';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ReaderPostCard extends React.Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired,

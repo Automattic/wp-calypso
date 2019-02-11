@@ -20,6 +20,11 @@ import SiteIcon from 'blocks/site-icon';
 import { getSite } from 'state/reader/sites/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 
+/**
+ * Style dependencies
+ */
+import './site-attribution.scss';
+
 class DiscoverSiteAttribution extends React.Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired,

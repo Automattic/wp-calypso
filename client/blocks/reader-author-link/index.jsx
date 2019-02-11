@@ -14,6 +14,11 @@ import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import * as stats from 'reader/stats';
 import Emojify from 'components/emojify';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick } ) => {
 	const recordAuthorClick = ( {} ) => {
 		stats.recordAction( 'click_author' );

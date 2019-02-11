@@ -24,6 +24,11 @@ import {
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function forceTeamA8C( context, next ) {
 	context.params.team = 'a8c';
 	next();

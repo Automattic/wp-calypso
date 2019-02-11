@@ -5,6 +5,11 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ReadingTime extends React.PureComponent {
 	render() {
 		const words = this.props.words || 0;

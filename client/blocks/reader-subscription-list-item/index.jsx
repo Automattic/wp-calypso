@@ -28,6 +28,11 @@ import { recordTrack, recordTrackWithRailcar } from 'reader/stats';
 import ExternalLink from 'components/external-link';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Takes in a string and removes the starting https, www., and removes a trailing slash
  *
  * @param {String} url - the url to format

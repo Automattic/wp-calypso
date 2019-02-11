@@ -48,6 +48,11 @@ import { viewStream } from 'state/reader/watermarks/actions';
 import Interval, { EVERY_MINUTE } from 'lib/interval';
 import { PER_FETCH, INITIAL_FETCH } from 'state/data-layer/wpcom/read/streams';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 
