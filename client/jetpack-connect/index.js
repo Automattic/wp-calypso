@@ -114,6 +114,14 @@ export default function() {
 	);
 
 	page(
+		'/jetpack/connect/site-type/:site?',
+		siteSelection,
+		controller.siteType,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/jetpack/connect/:locale?',
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.persistMobileAppFlow,
