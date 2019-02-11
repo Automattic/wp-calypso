@@ -67,6 +67,11 @@
 	}
 }
 
+.layout__secondary .all-sites .count {
+	color: var( --sidebar-text-color );
+	border-color: var( --sidebar-text-color );
+}
+
 // Highlight & hover effects
 .site-selector .site.is-highlighted,
 .site-selector .all-sites.is-highlighted,
@@ -180,6 +185,14 @@
 		margin-right: 6px;
 		top: auto;
 		margin-top: auto;
+	}
+}
+
+.layout__secondary .site-selector__add-new-site .button {
+	color: var( --sidebar-heading-color );
+
+	&:hover {
+		color: var( --sidebar-text-color );
 	}
 }
 

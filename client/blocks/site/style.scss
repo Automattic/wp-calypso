@@ -102,12 +102,20 @@
 	line-height: 1.4;
 }
 
+.layout__secondary .site__title {
+	color: var( --sidebar-text-color );
+}
+
 .site__domain {
 	color: var( --color-text-subtle );
 	display: block;
 	max-width: 95%;
 	font-size: 11px;
 	line-height: 1.4;
+}
+
+.layout__secondary .site__domain {
+	color: var( --sidebar-heading-color );
 }
 
 .site__title,
