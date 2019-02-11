@@ -7,6 +7,7 @@ import { localize, moment } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,18 +31,13 @@ export function PendingListItem( {
 	dateCreated,
 	products,
 } ) {
-	let productName = '';
-	let purchaseType = '';
+	const initialProduct = get( products, '0', {} );
+	let productName = getName( initialProduct ) || '';
+	let purchaseType = getPurchaseType( initialProduct ) || '';
 
 	if ( products.length > 1 ) {
 		productName = 'Multiple Items';
 		purchaseType = 'Various';
-	} else if ( products[ 0 ] ) {
-		productName = getName( products[ 0 ] );
-		purchaseType = getPurchaseType( products[ 0 ] );
-	} else {
-		productName = '';
-		purchaseType = '';
 	}
 
 	return (
