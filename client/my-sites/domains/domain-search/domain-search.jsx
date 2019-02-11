@@ -33,6 +33,7 @@ import { getProductsList } from 'state/products-list/selectors';
 import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
+import { type as domainTypes } from 'lib/domains/constants';
 
 class DomainSearch extends Component {
 	static propTypes = {
@@ -127,7 +128,7 @@ class DomainSearch extends Component {
 		} );
 		const { domainRegistrationMaintenanceEndTime } = this.state;
 
-		const domains = this.props.domains.filter( domain => domain.type !== 'WPCOM' );
+		const domains = this.props.domains.filter( domain => domain.type !== domainTypes.WPCOM );
 		const products = get( this.props, 'cart.products', [] );
 		const plan = get( this.props, 'selectedSite.plan', false );
 
