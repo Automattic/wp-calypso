@@ -196,7 +196,6 @@ class MailchimpSubscribeEdit extends Component {
 							/>
 						</div>
 						<RichText
-							className="wp-block-jetpack-mailchimp_consent-text"
 							tagName="small"
 							placeholder={ __( 'Write consent text' ) }
 							value={ consentText }
