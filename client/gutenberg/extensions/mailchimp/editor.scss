@@ -32,6 +32,16 @@ $blocks-button__line-height: $big-font-size + 6px;
 		text-decoration: none;
 		white-space: normal;
 		word-break: break-all;
+		.editor-rich-text__tinymce {
+			cursor: text;
+		}
+	}
+
+	.editor-rich-text__inline-toolbar {
+		pointer-events: none;
+		.components-toolbar  {
+			pointer-events: all;
+		}
 	}
 
 }
