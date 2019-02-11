@@ -57,8 +57,7 @@ export default class VisitedEdit extends Component {
 
 				<div className={ this.props.className }>
 					<div className="wp-block-jetpack-visited-inner-block">
-						<InnerBlocks />
-						<Notice status="warning" isDismissible={ false }>
+						<Notice status="info" isDismissible={ false }>
 							{ this.props.attributes.criteria === CRITERIA_AFTER
 								? sprintf(
 										__(
@@ -76,6 +75,7 @@ export default class VisitedEdit extends Component {
 								  )
 								: '' }
 						</Notice>
+						<InnerBlocks />
 					</div>
 				</div>
 			</Fragment>
