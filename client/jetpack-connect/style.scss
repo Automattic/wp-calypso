@@ -58,9 +58,15 @@
 		&[disabled],
 		&:disabled {
 			background: var( --color-white );
-			border-color: var( --color-neutral-50);
+			border-color: var( --color-neutral-50 );
 			color: var( --color-neutral-50 );
 		}
+	}
+
+	.jetpack-connect__step {
+		margin: 0 auto;
+		max-width: 600px;
+		text-align: initial;
 	}
 }
 
@@ -540,7 +546,7 @@
 	border: none;
 	color: var( --color-neutral-500 );
 	font-weight: normal;
-	padding: 16px 24px;	
+	padding: 16px 24px;
 	width: 100%;
 
 	&:hover {
