@@ -483,6 +483,7 @@ export function generateSteps( {
 		'site-topic-with-preview': {
 			stepName: 'site-topic-with-preview',
 			providesDependencies: [ 'siteTopic' ],
+			fulfilledStepCallback: isSiteTopicFulfilled,
 			props: {
 				showSiteMockups: true,
 			},

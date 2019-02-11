@@ -4,7 +4,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { assign, defer, get, includes, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
+import { assign, defer, difference, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
 import { parse as parseURL } from 'url';
 
 /**
@@ -46,6 +46,7 @@ import { promisify } from '../../utils';
 
 // Others
 import flows from 'signup/config/flows';
+import steps from 'signup/config/steps';
 import { normalizeImportUrl } from 'state/importer-nux/utils';
 
 /**
@@ -564,28 +565,49 @@ function recordExcludeStepEvent( step, value ) {
 	} );
 }
 
+function shouldExcludeStep( stepName, fulfilledDependencies ) {
+	if ( isEmpty( fulfilledDependencies ) ) {
+		return false;
+	}
+
+	const stepProvidesDependencies = steps[ stepName ].providedDependencies;
+	const dependenciesNotProvided = difference( stepProvidesDependencies, fulfilledDependencies );
+	return isEmpty( dependenciesNotProvided );
+}
+
 export function isDomainFulfilled( stepName, nextProps ) {
 	const { siteDomains } = nextProps;
+	let fulfilledDependencies = [];
 
-	if ( siteDomains && siteDomains.length > 1 && ! includes( flows.excludedSteps, stepName ) ) {
-		flows.excludeStep( stepName );
-
+	if ( siteDomains && siteDomains.length > 1 ) {
 		const domainItem = undefined;
 		SignupActions.submitSignupStep( { stepName: stepName, domainItem }, [], {
 			domainItem,
 		} );
 		recordExcludeStepEvent( stepName, siteDomains );
+
+		fulfilledDependencies = fulfilledDependencies.concat( [ 'domainItem' ] );
+	}
+
+	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
 	}
 }
 
 export function isPlanFulfilled( stepName, nextProps ) {
 	const { isPaidPlan, sitePlanSlug } = nextProps;
-	if ( isPaidPlan ) {
-		flows.excludeStep( stepName );
+	let fulfilledDependencies = [];
 
+	if ( isPaidPlan ) {
 		const cartItem = undefined;
 		SignupActions.submitSignupStep( { stepName: stepName, cartItem }, [], { cartItem } );
 		recordExcludeStepEvent( stepName, sitePlanSlug );
+
+		fulfilledDependencies = fulfilledDependencies.concat( [ 'cartItem' ] );
+	}
+
+	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
 	}
 }
 
@@ -600,13 +622,21 @@ export function isSiteTypeFulfilled( stepName, nextProps ) {
 		},
 	} = nextProps;
 	const siteTypeValue = getSiteTypePropertyValue( 'slug', siteType, 'slug' );
+	let fulfilledDependencies = [];
+
 	if ( siteTypeValue ) {
 		debug( 'From query string: site_type = %s', siteType );
 		debug( 'Site type value = %s', siteTypeValue );
 
-		flows.excludeStep( stepName );
 		nextProps.submitSiteType( siteType );
 		recordExcludeStepEvent( stepName, siteType );
+
+		// nextProps.submitSiteType( siteType ) above provides dependencies
+		fulfilledDependencies = fulfilledDependencies.concat( [ 'siteType', 'themeSlugWithRepo' ] );
+	}
+
+	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
 	}
 }
 
@@ -623,6 +653,7 @@ export function isSiteTopicFulfilled( stepName, nextProps ) {
 	} = nextProps;
 
 	const flowSteps = flows.getFlow( flowName ).steps;
+	let fulfilledDependencies = [];
 
 	if ( vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
 		debug( 'From query string: vertical = %s', vertical );
@@ -647,8 +678,17 @@ export function isSiteTopicFulfilled( stepName, nextProps ) {
 			} );
 		}
 
-		flows.excludeStep( stepName );
+		//Add to fulfilled dependencies
+		fulfilledDependencies = fulfilledDependencies.concat( [
+			'surveySiteType',
+			'surveyQuestion',
+			'siteTopic',
+		] );
 
 		recordExcludeStepEvent( stepName, vertical );
+	}
+
+	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
 	}
 }
