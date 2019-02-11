@@ -189,6 +189,7 @@ class MailchimpSubscribeEdit extends Component {
 						<TextControl placeholder={ emailPlaceholder } onChange={ () => false } type="email" />
 						<div className="wp-block-button__link wp-block-jetpack-mailchimp_button">
 							<RichText
+								formattingControls={ [] }
 								placeholder={ __( 'Add button text…' ) }
 								value={ submitLabel }
 								onChange={ value => setAttributes( { submitLabel: value } ) }
