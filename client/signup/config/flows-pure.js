@@ -21,7 +21,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		business: {
-			steps: [ 'user', 'about', 'themes', 'domains' ],
+			steps: [ 'about', 'themes', 'domains', 'user' ],
 			destination: function( dependencies ) {
 				return '/plans/select/business/' + dependencies.siteSlug;
 			},
@@ -33,7 +33,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		premium: {
-			steps: [ 'user', 'about', 'themes', 'domains' ],
+			steps: [ 'about', 'themes', 'domains', 'user' ],
 			destination: function( dependencies ) {
 				return '/plans/select/premium/' + dependencies.siteSlug;
 			},
@@ -45,7 +45,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		personal: {
-			steps: [ 'user', 'about', 'themes', 'domains' ],
+			steps: [ 'about', 'themes', 'domains', 'user' ],
 			destination: function( dependencies ) {
 				return '/plans/select/personal/' + dependencies.siteSlug;
 			},
@@ -54,21 +54,21 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		free: {
-			steps: [ 'user', 'about', 'themes', 'domains' ],
+			steps: [ 'about', 'themes', 'domains', 'user' ],
 			destination: getSiteDestination,
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2018-01-24',
 		},
 
 		blog: {
-			steps: [ 'user', 'blog-themes', 'domains', 'plans' ],
+			steps: [ 'blog-themes', 'domains', 'plans', 'user' ],
 			destination: getSiteDestination,
 			description: 'Signup flow starting with blog themes',
 			lastModified: '2017-09-01',
 		},
 
 		website: {
-			steps: [ 'user', 'website-themes', 'domains', 'plans' ],
+			steps: [ 'website-themes', 'domains', 'plans', 'user' ],
 			destination: getSiteDestination,
 			description: 'Signup flow starting with website themes',
 			lastModified: '2017-09-01',
@@ -101,7 +101,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		main: {
-			steps: [ 'user', 'about', 'domains', 'plans' ],
+			steps: [ 'about', 'domains', 'plans', 'user' ],
 			destination: getSiteDestination,
 			description: 'The current best performing flow in AB tests',
 			lastModified: '2018-10-16',
