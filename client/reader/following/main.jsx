@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import BlankSuggestions from 'reader/components/reader-blank-suggestions';
 import Stream from 'reader/stream';
 import CompactCard from 'components/card/compact';
 import SearchInput from 'components/search';
@@ -79,15 +80,7 @@ const FollowingStream = props => {
 					placeholder={ placeholderText }
 				/>
 			</CompactCard>
-			<div className="search-stream__blank-suggestions">
-				{ suggestionList &&
-					props.translate( 'Suggestions: {{suggestions /}}.', {
-						components: {
-							suggestions: suggestionList,
-						},
-					} ) }
-				&nbsp;
-			</div>
+			<BlankSuggestions suggestions={ suggestionList } />
 		</Stream>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */

@@ -13,6 +13,7 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
+import BlankSuggestions from 'reader/components/reader-blank-suggestions';
 import ControlItem from 'components/segmented-control/item';
 import SegmentedControl from 'components/segmented-control';
 import CompactCard from 'components/card/compact';
@@ -204,16 +205,7 @@ class SearchStream extends React.Component {
 							wideDisplay={ wideDisplay }
 						/>
 					) }
-					{ ! query && (
-						<div className="search-stream__blank-suggestions">
-							{ suggestions &&
-								this.props.translate( 'Suggestions: {{suggestions /}}.', {
-									components: {
-										suggestions: suggestionList,
-									},
-								} ) }
-						</div>
-					) }
+					{ ! query && <BlankSuggestions suggestions={ suggestionList } /> }
 				</div>
 				<SpacerDiv domTarget={ this.fixedAreaRef } />
 				{ wideDisplay && (
