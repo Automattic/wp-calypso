@@ -82,17 +82,23 @@ export class PlanFeaturesHeader extends Component {
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
 		return (
-			<header className={ headerClasses }>
-				{ planLevelsMatch( selectedPlan, planType ) && (
-					<Ribbon>{ translate( 'Suggested' ) }</Ribbon>
-				) }
-				{ popular && ! selectedPlan && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
-				{ newPlan && ! selectedPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
-				{ bestValue && ! selectedPlan && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
-				{ this.isPlanCurrent() && <Ribbon>{ translate( 'Your Plan' ) }</Ribbon> }
-				<h4 className="plan-features__header-title">{ title }</h4>
-				<div class="plan-features__audience">{ audience }</div>
-			</header>
+			<div>
+				<header className={ headerClasses }>
+					{ planLevelsMatch( selectedPlan, planType ) && (
+						<Ribbon>{ translate( 'Suggested' ) }</Ribbon>
+					) }
+					{ popular && ! selectedPlan && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
+					{ newPlan && ! selectedPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
+					{ bestValue && ! selectedPlan && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
+					{ this.isPlanCurrent() && <Ribbon>{ translate( 'Your Plan' ) }</Ribbon> }
+					<h4 className="plan-features__header-title">{ title }</h4>
+					<div class="plan-features__audience">{ audience }</div>
+				</header>
+				<div className="plan-features__pricing">
+					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
+					{ this.getIntervalDiscount() }
+				</div>
+			</div>
 		);
 	}
 
@@ -159,6 +165,7 @@ export class PlanFeaturesHeader extends Component {
 			isJetpack,
 			hideMonthly,
 			isInSignup,
+			plansWithScroll,
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
@@ -167,7 +174,7 @@ export class PlanFeaturesHeader extends Component {
 			'is-placeholder': isPlaceholder,
 		} );
 
-		if ( isInSignup ) {
+		if ( isInSignup || plansWithScroll ) {
 			return (
 				<span>
 					<span>{ billingTimeFrame }</span>
