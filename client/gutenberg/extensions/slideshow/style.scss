@@ -49,16 +49,16 @@
 
 	.wp-block-jetpack-slideshow_caption {
 		background-color: rgba( 0, 0, 0, 0.3 );
+		border-radius: 2px;
 		box-sizing: border-box;
-		bottom: 0;
+		bottom: 10px;
 		color: #fff;
 		cursor: text;
-		font-size: 0.9em;
-		font-style: normal !important;
+		left: 10px;
 		margin: 0 !important;
-		padding: 1em;
+		padding: 0.75em;
 		position: absolute;
-		width: 100%;
+		right: 10px;
 		z-index: 1;
 	}
 
