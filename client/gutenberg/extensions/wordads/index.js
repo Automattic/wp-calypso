@@ -49,7 +49,7 @@ export const settings = {
 
 	supports: {
 		align: [ 'left', 'center', 'right' ],
-		alignWide: false
+		alignWide: false,
 		className: false,
 		customClassName: false,
 		html: false,
