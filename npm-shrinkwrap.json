@@ -1852,9 +1852,9 @@
 			"integrity": "sha512-y+h7tNlxDPDrH/TrSw1wCSm6FoEAY8FrbUxYng3BMSYBTUsX1utLooizk9v8J1yy6F9AioXNnPZ1qiu2vsa08Q=="
 		},
 		"@types/node": {
-			"version": "10.12.21",
-			"resolved": "https://registry.npmjs.org/@types/node/-/node-10.12.21.tgz",
-			"integrity": "sha512-CBgLNk4o3XMnqMc0rhb6lc77IwShMEglz05deDcn2lQxyXEZivfwgYJu7SMha9V5XcrP6qZuevTHV/QrN2vjKQ==",
+			"version": "11.9.0",
+			"resolved": "https://registry.npmjs.org/@types/node/-/node-11.9.0.tgz",
+			"integrity": "sha512-ry4DOrC+xenhQbzk1iIPzCZGhhPGEFv7ia7Iu6XXSLVluiJIe9FfG7Iu3mObH9mpxEXCWLCMU4JWbCCR9Oy1Zg==",
 			"dev": true
 		},
 		"@types/q": {
@@ -6556,9 +6556,9 @@
 			}
 		},
 		"enzyme": {
-			"version": "3.7.0",
-			"resolved": "https://registry.npmjs.org/enzyme/-/enzyme-3.7.0.tgz",
-			"integrity": "sha512-QLWx+krGK6iDNyR1KlH5YPZqxZCQaVF6ike1eDJAOg0HvSkSCVImPsdWaNw6v+VrnK92Kg8jIOYhuOSS9sBpyg==",
+			"version": "3.8.0",
+			"resolved": "https://registry.npmjs.org/enzyme/-/enzyme-3.8.0.tgz",
+			"integrity": "sha512-bfsWo5nHyZm1O1vnIsbwdfhU989jk+squU9NKvB+Puwo5j6/Wg9pN5CO0YJelm98Dao3NPjkDZk+vvgwpMwYxw==",
 			"dev": true,
 			"requires": {
 				"array.prototype.flat": "^1.2.1",
