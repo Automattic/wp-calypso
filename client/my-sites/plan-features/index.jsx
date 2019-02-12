@@ -574,7 +574,7 @@ export class PlanFeatures extends Component {
 	}
 
 	renderPlanFeatureColumns( rowIndex ) {
-		const { planProperties, selectedFeature } = this.props;
+		const { planProperties, selectedFeature, plansWithScroll } = this.props;
 
 		return map( planProperties, properties => {
 			const { features, planName } = properties;
@@ -584,7 +584,8 @@ export class PlanFeatures extends Component {
 				currentFeature = features[ key ];
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
-				'has-partial-border': rowIndex + 1 < featureKeys.length,
+				'has-partial-border': rowIndex + 1 < featureKeys.length && ! plansWithScroll,
+				'has-border-bottom': plansWithScroll,
 				'is-highlighted':
 					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
 			} );
