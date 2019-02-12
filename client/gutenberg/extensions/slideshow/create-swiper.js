@@ -8,7 +8,18 @@ import { merge } from 'lodash';
  */
 import './style.scss';
 
-export default async function createSwiper( container = '.swiper-container', params = {} ) {
+export default async function createSwiper(
+	container = '.swiper-container',
+	params = {},
+	callbacks = {}
+) {
+	const on = {};
+	for ( const id in callbacks ) {
+		const callback = callbacks[ id ];
+		on[ id ] = function() {
+			callback( this );
+		};
+	}
 	const defaultParams = {
 		effect: 'slide',
 		grabCursor: true,
@@ -27,6 +38,8 @@ export default async function createSwiper( container = '.swiper-container', par
 		releaseFormElements: false,
 		setWrapperSize: true,
 		touchStartPreventDefault: false,
+		/* We probably won't end up needing both init and imagesReady. Just casting a wide net for now. */
+		on,
 	};
 	const [ { default: Swiper } ] = await Promise.all( [
 		import( /* webpackChunkName: "swiper" */ 'swiper' ),
