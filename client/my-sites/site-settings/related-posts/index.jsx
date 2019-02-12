@@ -43,7 +43,7 @@ const RelatedPosts = ( {
 						) }
 						link="https://jetpack.com/support/related-posts/"
 					/>
-										
+					
 					<CompactFormToggle
 						checked={ !! fields.jetpack_relatedposts_enabled }
 						disabled={ isRequestingSettings || isSavingSettings }
