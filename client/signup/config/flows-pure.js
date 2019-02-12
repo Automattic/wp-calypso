@@ -108,7 +108,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		},
 
 		onboarding: {
-			steps: [ 'user', 'site-type', 'site-topic', 'site-information', 'domains', 'plans' ],
+			steps: [ 'site-type', 'site-topic', 'site-information', 'domains', 'plans', 'user' ],
 			destination: getSiteDestination,
 			description: 'The improved onboarding flow.',
 			lastModified: '2019-01-24',
@@ -116,7 +116,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 
 		'onboarding-for-business': {
 			steps: [
-				'user',
 				'site-type',
 				'site-topic-with-preview',
 				'site-information-title-with-preview',
@@ -124,6 +123,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 				'site-information-phone-with-preview',
 				'domains-with-preview',
 				'plans',
+				'user',
 			],
 			destination: getSiteDestination,
 			description: 'The improved onboarding flow for business site types.',
@@ -132,7 +132,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 
 		'onboarding-dev': {
 			steps: [
-				'user',
 				'site-type',
 				'site-topic-with-preview',
 				'site-style-with-preview',
@@ -141,6 +140,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 				'site-information-phone-with-preview',
 				'domains-with-preview',
 				'plans',
+				'user',
 			],
 			destination: getSiteDestination,
 			description: 'A temporary flow for holding under-development steps',
