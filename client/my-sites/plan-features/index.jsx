@@ -424,11 +424,13 @@ export class PlanFeatures extends Component {
 	}
 
 	renderPlanDescriptions() {
-		const { planProperties } = this.props;
+		const { planProperties, plansWithScroll } = this.props;
 
 		return map( planProperties, properties => {
 			const { planName, planConstantObj, isPlaceholder } = properties;
-
+			const description = plansWithScroll
+				? planConstantObj.getShortDescription()
+				: planConstantObj.getDescription( abtest );
 			const classes = classNames( 'plan-features__table-item', {
 				'is-placeholder': isPlaceholder,
 			} );
@@ -437,7 +439,7 @@ export class PlanFeatures extends Component {
 				<td key={ planName } className={ classes }>
 					{ isPlaceholder ? <SpinnerLine /> : null }
 
-					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
+					<p className="plan-features__description">{ description }</p>
 				</td>
 			);
 		} );
