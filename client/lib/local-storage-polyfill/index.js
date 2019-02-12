@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import localStorageBypass from '../support/support-user/localstorage-bypass';
+import localStorageBypass from '../local-storage-bypass';
 
 const debug = debugFactory( 'calypso:local-storage' );
 

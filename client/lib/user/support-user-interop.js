@@ -14,7 +14,7 @@ import wpcom from 'lib/wp';
 import config from 'config';
 import localforage from 'lib/localforage';
 import { supportUserActivate } from 'state/support/actions';
-import localStorageBypass from 'lib/support/support-user/localstorage-bypass';
+import localStorageBypass from 'lib/local-storage-bypass';
 
 /**
  * Connects the Redux store and the low-level support user functions

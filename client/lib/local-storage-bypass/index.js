@@ -106,17 +106,27 @@ export default function( {
 		removeItem: removeItem( memoryStore, allowedKeys, _removeItem ),
 		key: key( memoryStore ),
 		clear: clear( memoryStore ),
-		get length() {
-			return getMemoryStoreLength();
-		},
 	};
 
-	// Redefine `window.localStorage` instead of assigning to localStorage methods
-	// like `getItem` and `setItem` because it is not effective in Firefox.
-	// https://github.com/whatwg/html/issues/183#issuecomment-142944605
-	Object.defineProperty( root, 'localStorage', {
-		value: localStorageOverride,
-		enumerable: true,
-		configurable: true,
-	} );
+	try {
+		// Try redefining `window.localStorage` instead of assigning to localStorage methods
+		// like `getItem` and `setItem` because it is not effective in Firefox.
+		// https://github.com/whatwg/html/issues/183#issuecomment-142944605
+		Object.defineProperty( root, 'localStorage', {
+			value: localStorageOverride,
+			enumerable: true,
+			configurable: true,
+		} );
+		Object.defineProperty( root.localStorage, 'length', { get: getMemoryStoreLength } );
+	} catch ( error ) {
+		// Attempt to assign to localStorage methods as a last effort.
+		// This is necessary in desktop Safari versions 6-9 as they do not allow
+		// window.localStorage to be redefined.
+		Object.assign( root.localStorage, localStorageOverride );
+
+		// ATTENTION: No `length` getter is provided in this case, so
+		// localStorage.length will always be zero. Previous implementations used
+		// localStorage.__defineGetter__ which does not throw but also is ineffective.
+		// This behavior was observed in testing Safari versions 6-12.
+	}
 }
