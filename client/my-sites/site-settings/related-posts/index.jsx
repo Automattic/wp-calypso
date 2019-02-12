@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import SupportInfo from 'components/support-info';
 import RelatedContentPreview from './related-content-preview';
@@ -40,15 +41,9 @@ const RelatedPosts = ( {
 						text={ translate(
 							'Automatically displays similar content (related posts) at the end of each post.'
 						) }
-						link="https://en.support.wordpress.com/related-posts/"
+						link="https://jetpack.com/support/related-posts/"
 					/>
-					
-					<p className="related-posts__explanation"> 
-						{ translate( 
-							'The following settings will impact all related posts on your site, except for those you created via the block editor:'
-						) }
-					</p>
-
+										
 					<CompactFormToggle
 						checked={ !! fields.jetpack_relatedposts_enabled }
 						disabled={ isRequestingSettings || isSavingSettings }
@@ -80,7 +75,13 @@ const RelatedPosts = ( {
 							{ translate( 'Show a thumbnail image where available' ) }
 						</CompactFormToggle>
 					</div>
-
+					
+					<FormSettingExplanation> 
+						{ translate( 
+							"These settings won't apply to related posts added using the block editor."
+						) }
+					</FormSettingExplanation>
+	
 					<RelatedContentPreview
 						showHeadline={ fields.jetpack_relatedposts_show_headline }
 						showThumbnails={ fields.jetpack_relatedposts_show_thumbnails }
