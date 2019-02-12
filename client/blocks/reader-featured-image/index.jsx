@@ -13,6 +13,11 @@ import classnames from 'classnames';
 import cssSafeUrl from 'lib/css-safe-url';
 import resizeImageUrl from 'lib/resize-image-url';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const ReaderFeaturedImage = ( {
 	imageUrl,
 	imageWidth,

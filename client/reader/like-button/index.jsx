@@ -19,6 +19,11 @@ import QueryPostLikes from 'components/data/query-post-likes';
 import getPostLikeCount from 'state/selectors/get-post-like-count';
 import isLikedPost from 'state/selectors/is-liked-post';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ReaderLikeButton extends React.Component {
 	constructor( props ) {
 		super( props );

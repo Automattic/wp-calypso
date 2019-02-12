@@ -30,6 +30,11 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import QueryUserSettings from 'components/data/query-user-settings';
 import getUserSetting from 'state/selectors/get-user-setting';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ReaderSiteNotificationSettings extends Component {
 	static displayName = 'ReaderSiteNotificationSettings';
 	static propTypes = {

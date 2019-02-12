@@ -15,6 +15,11 @@ import { connect } from 'react-redux';
 import wpcom from 'lib/wp';
 import { errorNotice } from 'state/notices/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ReaderExportButton extends React.Component {
 	static propTypes = {
 		saveAs: PropTypes.string,

@@ -17,6 +17,11 @@ import Button from 'components/button';
 import { dismissSite } from 'state/reader/site-dismissals/actions';
 import ConnectedSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class RecommendedSites extends React.PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,

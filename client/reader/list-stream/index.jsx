@@ -24,6 +24,11 @@ import {
 import QueryReaderList from 'components/data/query-reader-list';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ListStream extends React.Component {
 	constructor( props ) {
 		super( props );

@@ -23,6 +23,11 @@ import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const RELATED_IMAGE_WIDTH = 385; // usual width of featured images in related post card
 
 function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
