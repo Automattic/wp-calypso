@@ -579,7 +579,10 @@ export class PlanFeatures extends Component {
 					{ this.renderFeatureItem( currentFeature ) }
 				</td>
 			) : (
-				<td key={ `${ planName }-none` } className="plan-features__table-item" />
+				<td
+					key={ `${ planName }-none` }
+					className="plan-features__table-item is-empty-feature-item"
+				/>
 			);
 		} );
 	}

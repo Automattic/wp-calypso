@@ -143,6 +143,10 @@ $plan-features-sidebar-width: 272px;
 	&.is-selected {
 		display: table-cell;
 	}
+	&.is-empty-feature-item {
+		background: #f6f6f6;
+	}
+
 }
 
 .is-no-tabs {
@@ -577,6 +581,7 @@ $plan-features-sidebar-width: 272px;
 		margin: 0;
 		padding: 0 8px 0 16px;
 	}
+
 }
 
 .plan-features__item-title {
@@ -610,6 +615,10 @@ $plan-features-sidebar-width: 272px;
 	@include breakpoint( '<660px' ) {
 		padding: 0 20px 20px;
 		border-bottom: solid 1px var( --color-neutral-0 );
+	}
+
+	.is-no-tabs & {
+		padding: 0 12px;
 	}
 }
 
