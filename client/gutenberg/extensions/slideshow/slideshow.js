@@ -66,14 +66,12 @@ class Slideshow extends Component {
 					<div className="swiper-wrapper">
 						{ images.map( ( { alt, caption, id, url } ) => (
 							<figure className="wp-block-jetpack-slideshow_slide swiper-slide" key={ id }>
-								<div className="wp-block-jetpack-slideshow_image-container">
-									<img
-										alt={ alt }
-										className="wp-block-jetpack-slideshow_image"
-										data-id={ id }
-										src={ url }
-									/>
-								</div>
+								<img
+									alt={ alt }
+									className="wp-block-jetpack-slideshow_image"
+									data-id={ id }
+									src={ url }
+								/>
 								{ caption && (
 									<figcaption className="wp-block-jetpack-slideshow_caption">
 										{ caption }
@@ -110,6 +108,7 @@ class Slideshow extends Component {
 				  }
 				: false,
 			effect: this.props.effect,
+			loop: true,
 			initialSlide,
 			navigation: {
 				nextEl: this.btnNextRef.current,
