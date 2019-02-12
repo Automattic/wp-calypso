@@ -6,6 +6,7 @@ import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import { Component } from '@wordpress/element';
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { isBlobURL } from '@wordpress/blob';
+import { range } from 'lodash';
 import { sprintf } from '@wordpress/i18n';
 
 /**
@@ -18,31 +19,6 @@ import Square from './square';
 import { PHOTON_MAX_RESIZE } from '../constants';
 
 export default class Layout extends Component {
-	photonize( { height, width, url } ) {
-		if ( ! url ) {
-			return;
-		}
-
-		// Do not Photonize images that are still uploading or from localhost
-		if ( isBlobURL( url ) || /^https?:\/\/localhost/.test( url ) ) {
-			return url;
-		}
-
-		// Drop query args, photon URLs can't handle them
-		// This should be the "raw" url, we'll add dimensions later
-		const cleanUrl = url.split( '?', 1 )[ 0 ];
-
-		const photonImplementation = isWpcomFilesUrl( url ) ? photonWpcomImage : photon;
-
-		const { layoutStyle } = this.props;
-
-		if ( isSquareishLayout( layoutStyle ) && width && height ) {
-			const size = Math.min( PHOTON_MAX_RESIZE, width, height );
-			return photonImplementation( cleanUrl, { resize: `${ size },${ size }` } );
-		}
-		return photonImplementation( cleanUrl );
-	}
-
 	// This is tricky:
 	// - We need to "photonize" to resize the images at appropriate dimensions
 	// - The resize will depend on the image size and the layout in some cases
@@ -52,6 +28,7 @@ export default class Layout extends Component {
 		const {
 			images,
 			isSave,
+			layoutStyle,
 			linkTo,
 			onRemoveImage,
 			onSelectImage,
@@ -79,7 +56,8 @@ export default class Layout extends Component {
 				onRemove={ isSave ? undefined : onRemoveImage( i ) }
 				onSelect={ isSave ? undefined : onSelectImage( i ) }
 				setAttributes={ isSave ? undefined : setImageAttributes( i ) }
-				url={ this.photonize( img ) }
+				url={ photonize( img, undefined, { layoutStyle } ) }
+				srcset={ buildSrcset( img, { layoutStyle } ) }
 				width={ img.width }
 			/>
 		);
@@ -154,4 +132,88 @@ function photonWpcomImage( url, opts = {} ) {
 	);
 
 	return formatUrl( urlParts );
+}
+
+/**
+ * @param {Object} img        Image
+ * @param {number} img.height Image height
+ * @param {number} img.width  Image width
+ * @param {url}    img.url    Image url
+ *
+ * @param {Object} _             Layout props
+ * @param {string} _.layoutStyle Layout style: `rectangular`, `circle`, etc.
+ *
+ * @return {string} Photon URL
+ */
+function buildSrcset( img, { layoutStyle } ) {
+	const { url, width } = img;
+
+	if ( ! url ) {
+		return;
+	}
+
+	// Do not Photonize images that are still uploading or from localhost
+	if ( isBlobURL( url ) || /^https?:\/\/localhost/.test( url ) ) {
+		return null;
+	}
+
+	const minWidth = Math.min( 600, width );
+	const maxWidth = Math.min( PHOTON_MAX_RESIZE, width );
+	const step = 300;
+
+	// This may be buggy for wide images in square layouts.
+	// It may produce the same src for multiple sizes
+	const srcset = range( minWidth, maxWidth, step )
+		.map( w => {
+			const photonized = photonize( img, { w }, { layoutStyle } );
+			return photonized ? `${ photonized } ${ w }w` : '';
+		} )
+		.filter( Boolean )
+		.join( ',' );
+
+	return srcset;
+}
+
+const defaultPhotonArgs = {
+	strip: 'all',
+};
+
+/**
+ * @param {Object} img        Image
+ * @param {number} img.height Image height
+ * @param {number} img.width  Image width
+ * @param {url}    img.url    Image url
+ *
+ * @param {Object} photonArgs Photon arguments. @see photon.js lib
+ *
+ * @param {Object} _             Layout props
+ * @param {string} _.layoutStyle Layout style: `rectangular`, `circle`, etc.
+ *
+ * @return {string} Photon URL
+ */
+function photonize( { height, width, url }, photonArgs = {}, { layoutStyle } = {} ) {
+	if ( ! url ) {
+		return;
+	}
+
+	// Do not Photonize images that are still uploading or from localhost
+	if ( isBlobURL( url ) || /^https?:\/\/localhost/.test( url ) ) {
+		return url;
+	}
+
+	// Drop query args, photon URLs can't handle them
+	// This should be the "raw" url, we'll add dimensions later
+	const cleanUrl = url.split( '?', 1 )[ 0 ];
+
+	const photonImplementation = isWpcomFilesUrl( url ) ? photonWpcomImage : photon;
+
+	if ( isSquareishLayout( layoutStyle ) && width && height ) {
+		const size = Math.min( PHOTON_MAX_RESIZE, width, height );
+		return photonImplementation( cleanUrl, {
+			...defaultPhotonArgs,
+			...photonArgs,
+			resize: `${ size },${ size }`,
+		} );
+	}
+	return photonImplementation( cleanUrl, { ...defaultPhotonArgs, ...photonArgs } );
 }
