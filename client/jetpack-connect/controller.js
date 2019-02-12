@@ -18,7 +18,11 @@ import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
 import JetpackSignup from './signup';
+<<<<<<< HEAD
 import JetpackSiteType from './site-type';
+=======
+import JetpackSiteTopic from './site-topic';
+>>>>>>> Jetpack Connect: Introduce site topic controller
 import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
@@ -296,10 +300,17 @@ export function plansSelection( context, next ) {
 	next();
 }
 
+<<<<<<< HEAD
 export function siteType( context, next ) {
 	analytics.pageView.record( 'jetpack/connect/site-type', 'Jetpack Site Type Selection' );
 
 	context.primary = <JetpackSiteType />;
+=======
+export function siteTopic( context, next ) {
+	analytics.pageView.record( 'jetpack/connect/site-topic', 'Jetpack Site Topic Selection' );
+
+	context.primary = <JetpackSiteTopic />;
+>>>>>>> Jetpack Connect: Introduce site topic controller
 
 	next();
 }
