@@ -10,6 +10,7 @@ export const settings = {
 	prefix: 'jetpack',
 	title: __( 'Map' ),
 	icon: (
+		/* Do not use SVG components from @wordpress/component to avoid frontend bloat */
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="24"
@@ -81,6 +82,7 @@ export const settings = {
 	],
 	validAlignments: [ 'center', 'wide', 'full' ],
 	markerIcon: (
+		/* Do not use SVG components from @wordpress/component to avoid frontend bloat */
 		<svg width="14" height="20" viewBox="0 0 14 20" xmlns="http://www.w3.org/2000/svg">
 			<g id="Page-1" fill="none" fillRule="evenodd">
 				<g id="outline-add_location-24px" transform="translate(-5 -2)">
