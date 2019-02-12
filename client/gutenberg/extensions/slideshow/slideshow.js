@@ -11,6 +11,33 @@ import createSwiper from './create-swiper';
 
 const SIXTEEN_BY_NINE = 16 / 9;
 
+/**
+ * Swiper event handler.
+ *
+ * A Swiper instance is passed as `this` to this function.
+ */
+function swiperInit() {
+	this.el.classList.add( 'wp-swiper-initialized' );
+	swiperAutoSize.bind( this )();
+}
+
+/**
+ * Swiper event handler.
+ *
+ * A Swiper instance is passed as `this` to this function.
+ */
+function swiperAutoSize() {
+	const img = this.el.querySelector( '.swiper-slide[data-swiper-slide-index="0"] img' );
+	if ( ! img ) {
+		return;
+	}
+	const aspectRatio = img.clientWidth / img.clientHeight;
+	const sanityAspectRatio = Math.max( Math.min( aspectRatio, SIXTEEN_BY_NINE ), 1 );
+	const sanityHeight = typeof window !== 'undefined' ? window.innerHeight * 0.8 : 600;
+	const swiperHeight = Math.min( this.width / sanityAspectRatio, sanityHeight );
+	this.el.style.height = `calc( ${ Math.floor( swiperHeight ) }px + 4em )`;
+}
+
 class Slideshow extends Component {
 	static defaultProps = {
 		effect: 'slide',
@@ -97,54 +124,34 @@ class Slideshow extends Component {
 		);
 	}
 
-	swiperInit = swiper => {
-		swiper.el.classList.add( 'wp-swiper-initialized' );
-		this.swiperAutoSize( swiper );
-	};
-
-	swiperAutoSize = swiper => {
-		const img = swiper.el.querySelector( '.swiper-slide[data-swiper-slide-index="0"] img' );
-		if ( ! img ) {
-			return;
-		}
-		const aspectRatio = img.clientWidth / img.clientHeight;
-		const sanityAspectRatio = Math.max( Math.min( aspectRatio, SIXTEEN_BY_NINE ), 1 );
-		const sanityHeight = typeof window !== 'undefined' ? window.innerHeight * 0.8 : 600;
-		const swiperHeight = Math.min( swiper.width / sanityAspectRatio, sanityHeight );
-		swiper.el.style.height = `calc( ${ Math.floor( swiperHeight ) }px + 4em )`;
-	};
-
 	buildSwiper = ( initialSlide = 0 ) =>
 		// Using refs instead of className-based selectors allows us to
 		// have multiple swipers on one page without collisions, and
 		// without needing to add IDs or the like.
-		createSwiper(
-			this.slideshowRef.current,
-			{
-				autoplay: this.props.autoplay
-					? {
-							delay: this.props.delay * 1000,
-					  }
-					: false,
-				effect: this.props.effect,
-				loop: true,
-				initialSlide,
-				navigation: {
-					nextEl: this.btnNextRef.current,
-					prevEl: this.btnPrevRef.current,
-				},
-				pagination: {
-					clickable: true,
-					el: this.paginationRef.current,
-					type: 'bullets',
-				},
+		createSwiper( this.slideshowRef.current, {
+			autoplay: this.props.autoplay
+				? {
+						delay: this.props.delay * 1000,
+				  }
+				: false,
+			effect: this.props.effect,
+			loop: true,
+			initialSlide,
+			navigation: {
+				nextEl: this.btnNextRef.current,
+				prevEl: this.btnPrevRef.current,
 			},
-			{
-				init: this.swiperInit,
-				imagesReady: this.swiperAutoSize,
-				resize: this.swiperAutoSize,
-			}
-		);
+			on: {
+				init: swiperInit,
+				imagesReady: swiperAutoSize,
+				resize: swiperAutoSize,
+			},
+			pagination: {
+				clickable: true,
+				el: this.paginationRef.current,
+				type: 'bullets',
+			},
+		} );
 }
 
 export default Slideshow;
