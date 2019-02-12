@@ -77,7 +77,9 @@ class ECommerceManageNudge extends Component {
 						/>
 					</div>
 					<div className="ecommerce-manage-nudge__info">
-						<h3 class="ecommerce-manage-nudge__title">Start managing your Store.</h3>
+						<h3 className="ecommerce-manage-nudge__title">
+							{ translate( 'Start managing your Store.' ) }
+						</h3>
 						<p>
 							{ translate(
 								'To manage your Store powered by WooCommerce click the Store link in the sidebar.'
