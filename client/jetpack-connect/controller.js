@@ -299,11 +299,6 @@ export function plansSelection( context, next ) {
 export function siteType( context, next ) {
 	analytics.pageView.record( 'jetpack/connect/site-type', 'Jetpack Site Type Selection' );
 
-	const site = context.params.site;
-	if ( ! site ) {
-		return page.redirect( '/jetpack/connect' );
-	}
-
 	context.primary = <JetpackSiteType />;
 
 	next();
