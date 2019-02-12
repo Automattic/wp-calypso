@@ -18,7 +18,9 @@ class WordAdsEdit extends Component {
 	render() {
 		const { attributes, className, isSelected, setAttributes } = this.props;
 		const { align, format: selectedFormat } = attributes;
-		const classes = classNames( className, `align${ align }`, 'jetpack-' );
+		const classes = classNames( className, `align${ align }`, 'jetpack-wordads-' + selectedFormat, {
+			'is-selected': isSelected,
+		} );
 		const selectedFormatObject = AD_FORMATS.filter( format => format.tag === selectedFormat )[ 0 ];
 		const formatSelector = (
 			<SelectControl
@@ -30,10 +32,7 @@ class WordAdsEdit extends Component {
 		);
 
 		return (
-			<div
-				className={ classes }
-				style={ { width: selectedFormatObject.width, height: selectedFormatObject.height + 30 } }
-			>
+			<div className={ classes }>
 				<InspectorControls>
 					<PanelBody>{ formatSelector }</PanelBody>
 				</InspectorControls>

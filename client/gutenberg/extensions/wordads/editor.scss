@@ -1,6 +1,13 @@
-.aligncenter .wp-block-jetpack-wordads {
-justify-content:center;
+.wp-block-jetpack-wordads {
+	background: #FFF;
 }
+
+.wp-block-jetpack-wordads.aligncenter {
+	.jetpack-wordads__ad {
+			margin: 0 auto;
+	}
+}
+
 .jetpack-wordads__header,
 .jetpack-wordads__footer {
 	font-size: 10px;
@@ -18,8 +25,19 @@ justify-content:center;
 	display: flex;
 	overflow: hidden;
 	flex-direction: column;
+	max-width: 100%;
 
 	.components-placeholder {
 		flex-grow: 2;
 	}
+}
+.jetpack-wordads-leaderboard .components-placeholder {
+	min-height:90px;
+}
+.jetpack-wordads-mobile_leaderboard .components-placeholder {
+	min-height: 72px;
+}
+.jetpack-wordads-leaderboard.is-selected .components-placeholder,
+.jetpack-wordads-mobile_leaderboard.is-selected .components-placeholder {
+		flex-direction: row;
 }
