@@ -20,10 +20,7 @@ import {
 	requestTransferCode,
 } from 'lib/upgrades/actions';
 import notices from 'notices';
-import {
-	displayRequestTransferCodeResponseNotice,
-	renderGdprTransferWarningNotice,
-} from './shared';
+import { displayRequestTransferCodeResponseNotice } from './shared';
 import { CALYPSO_CONTACT, TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 
 class Unlocked extends React.Component {
@@ -288,8 +285,6 @@ class Unlocked extends React.Component {
 
 		return (
 			<div>
-				{ renderGdprTransferWarningNotice() }
-
 				<SectionHeader
 					label={ translate( 'Transfer Domain' ) }
 					className="transfer-out__section-header"
@@ -298,7 +293,7 @@ class Unlocked extends React.Component {
 					{ this.renderSendButton( domain ) }
 				</SectionHeader>
 
-				<Card className="transfer-card">
+				<Card className="transfer-out__card">
 					<div>
 						{ submitting && <p>{ translate( 'Sending request…' ) }</p> }
 						{ domainStateMessage && <p>{ domainStateMessage }</p> }
