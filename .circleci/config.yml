@@ -113,7 +113,7 @@ references:
 
   npm-install: &npm-install
     name: Install npm dependencies
-    command: npx lerna bootstrap
+    command: npm ci
 
   save-npm-cache: &save-npm-cache
     name: "Save node_modules cache"
